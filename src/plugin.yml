@@ -1,5 +1,5 @@
 name: MedievalFactions
 version: 0.1
 author: Daniel&Andrew
-main: us.kingdom.medievalfactions.Main
+main: plugin.Main
 api-version: 1.15

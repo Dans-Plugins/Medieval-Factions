@@ -1,4 +1,4 @@
-package us.kingdom.medievalfactions;
+package plugin;
 
 import org.bukkit.plugin.java.JavaPlugin;
 
