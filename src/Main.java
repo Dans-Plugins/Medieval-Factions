@@ -18,7 +18,7 @@ public class Main extends JavaPlugin {
 	}
 	
 	public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
-		if (label.equalsIgnoreCase("fly")) {
+		if (label.equalsIgnoreCase("mftest")) {
 			if (!(sender instanceof Player)) {
 				sender.sendMessage("Alert: Can't be used by console.");
 				return true;
