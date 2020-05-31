@@ -16,18 +16,30 @@ public class Main extends JavaPlugin {
 	}
 	
 	public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
-		if (label.equalsIgnoreCase("test")) {
-			if (!(sender instanceof Player)) {
+		if (label.equalsIgnoreCase("mf") || label.equalsIgnoreCase("medievalfactions")) {
+			if (!(sender instanceof Player)) { // if sender is not a player
 				sender.sendMessage("Alert: Can't be used by console.");
 				return true;
 			}
-			else {
+			else { // if sender is a player
+				
 				Player player = (Player) sender;
-				player.sendMessage("Test Complete");
-				return true;
+				
+				if (args[0].equalsIgnoreCase("help")) {
+					sendHelpMessage(player);
+					return true;
+				}
+				else {
+					player.sendMessage("Incorrect usage. Try /mf help!");
+				}
+
 			}
 		}
 		return false;
+	}
+	
+	public void sendHelpMessage(Player player) {
+		player.sendMessage("Nothing to help with yet.");
 	}
 	
 }
