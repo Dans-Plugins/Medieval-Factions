@@ -1,6 +1,6 @@
 <component name="ArtifactManager">
   <artifact type="jar" name="medieval-factions:jar">
-    <output-path>$PROJECT_DIR$/out/artifacts/medieval_factions_jar</output-path>
+    <output-path>$PROJECT_DIR$/out</output-path>
     <root id="archive" name="medieval-factions.jar">
       <element id="module-output" name="medieval-factions" />
       <element id="extracted-dir" path="$USER_HOME$/Downloads/spigot-1.15.2.jar" path-in-jar="/" />
