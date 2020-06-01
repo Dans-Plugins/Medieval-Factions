@@ -7,8 +7,8 @@ import java.io.IOException;
 import java.util.Scanner;
 
 public class Faction {
-    private String name = "";
-    private String description = "";
+    private String name = "defaultName";
+    private String description = "defaultDescription";
 
     // constructor
     Faction(String initialName) {
