@@ -4,7 +4,7 @@ import org.bukkit.plugin.java.JavaPlugin;
 
 public class Main extends JavaPlugin {
 
-    Faction myFaction = new Faction("Alexandria");
+    Faction myFaction = new Faction("Leyton");
 
     @Override
     public void onEnable() {
