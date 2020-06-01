@@ -36,6 +36,7 @@ public class Faction {
 
             // actual saving takes place here
             saveWriter.write(name);
+            saveWriter.write(description);
 
             saveWriter.close();
 
@@ -57,7 +58,12 @@ public class Faction {
             int counter = 0;
 
             // actual loading
-            changeName(loadReader.nextLine());
+            if (loadReader.hasNextLine()) {
+                changeName(loadReader.nextLine());
+            }
+            if (loadReader.hasNextLine()) {
+                changeDescription(loadReader.nextLine());
+            }
 
             loadReader.close();
             System.out.println("Faction " + name + " successfully loaded.");
