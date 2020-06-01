@@ -8,6 +8,7 @@ import java.util.Scanner;
 
 public class Faction {
     private String name = "";
+    private String description = "";
 
     // constructor
     Faction(String initialName) {
@@ -16,6 +17,10 @@ public class Faction {
 
     void changeName(String newName) {
         name = newName;
+    }
+
+    void changeDescription(String newDesc) {
+        description = newDesc;
     }
 
     boolean save() {
@@ -34,7 +39,7 @@ public class Faction {
 
             saveWriter.close();
 
-            System.out.println("Successfuly saved faction " + name + ".");
+            System.out.println("Successfully saved faction " + name + ".");
             return true;
 
         } catch (IOException e) {
