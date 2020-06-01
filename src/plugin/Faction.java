@@ -35,7 +35,7 @@ public class Faction {
             FileWriter saveWriter = new FileWriter(name + ".txt");
 
             // actual saving takes place here
-            saveWriter.write(name);
+            saveWriter.write(name + "\n");
             saveWriter.write(description);
 
             saveWriter.close();
