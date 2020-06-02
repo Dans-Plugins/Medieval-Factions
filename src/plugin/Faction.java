@@ -48,6 +48,10 @@ public class Faction {
             saveWriter.write(name + "\n");
             saveWriter.write(description);
 
+            for (int i = 0; i < members.size(); i++) {
+                saveWriter.write(members.get(i));
+            }
+
             saveWriter.close();
 
             System.out.println("Successfully saved faction " + name + ".");
@@ -73,6 +77,11 @@ public class Faction {
             }
             if (loadReader.hasNextLine()) {
                 changeDescription(loadReader.nextLine());
+            }
+
+            while (loadReader.hasNextLine()) {
+                String temp = loadReader.nextLine();
+                members.add(temp);
             }
 
             loadReader.close();
