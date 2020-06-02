@@ -41,6 +41,16 @@ public class Faction {
         members.remove(playerName);
     }
 
+    boolean isMember(String playerName) {
+        boolean membership = false;
+        for (int i = 0; i < members.size(); i++) {
+            if (members.get(i).equalsIgnoreCase(playerName)) {
+                membership = true;
+            }
+        }
+        return membership;
+    }
+
     boolean save() {
         try {
             File saveFile = new File(name + ".txt");

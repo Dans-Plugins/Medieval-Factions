@@ -105,6 +105,14 @@ public class Main extends JavaPlugin {
                     if (sender instanceof Player) {
                         Player player = (Player) sender;
 
+                        // player membership check
+                        for (int i = 0; i < factions.size(); i++) {
+                            if (factions.get(i).isMember(player.getName())) {
+                                player.sendMessage("Sorry, you're already in a faction. Leave if you want to create a different one.");
+                                return false;
+                            }
+                        }
+
                         // argument check
                         if (args.length > 1) {
 
@@ -126,12 +134,13 @@ public class Main extends JavaPlugin {
                             }
                             else {
                                 player.sendMessage("Sorry! That faction already exists.");
+                                return false;
                             }
                         } else {
 
                             // wrong usage
                             sender.sendMessage("Usage: /mf create [faction-name]");
-
+                            return false;
                         }
                     }
                 }
