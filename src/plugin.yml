@@ -3,3 +3,6 @@ version: "0.1"
 author: Daniel&Andrew
 main: plugin.Main
 api-version: "1.15"
+
+commands:
+  mf:
