@@ -75,7 +75,8 @@ public class Main extends JavaPlugin {
 
             // actual loading
             while (loadReader.hasNextLine()) {
-                Faction temp = new Faction(loadReader.nextLine());
+                String nextName = loadReader.nextLine();
+                Faction temp = new Faction(nextName);
                 factions.add(temp);
             }
 
