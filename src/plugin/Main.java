@@ -121,12 +121,19 @@ public class Main extends JavaPlugin {
                         }
                     }
                 }
-            } else {
+
+                // list command
+                if  (args[0].equalsIgnoreCase("list")) {
+                    for (int i = 0; i < factions.size(); i++) {
+                        sender.sendMessage(factions.get(i).getName());
+                    }
+                }
+
                 // TODO:
                 // Show help message
+
             }
         }
-
         return false;
     }
 
