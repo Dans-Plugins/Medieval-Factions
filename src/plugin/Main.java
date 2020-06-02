@@ -22,7 +22,14 @@ public class Main extends JavaPlugin {
 
     @Override
     public void onDisable(){
+        System.out.println("Medieval Factions plugin disabling....");
 
+        System.out.println("Saving factions...");
+        for (int i = 0; i < factions.size(); i++) {
+            factions.get(i).save();
+        }
+
+        System.out.println("Medieval Factions plugin disabled.");
     }
 
     public boolean onCommand(CommandSender sender, Command cmd, String label, String[] args) {

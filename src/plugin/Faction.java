@@ -14,14 +14,14 @@ public class Faction {
 
     // constructor
     Faction(String initialName) {
-        changeName(initialName);
+        setName(initialName);
     }
 
-    void changeName(String newName) {
+    void setName(String newName) {
         name = newName;
     }
 
-    void changeDescription(String newDesc) {
+    void setDescription(String newDesc) {
         description = newDesc;
     }
 
@@ -72,10 +72,10 @@ public class Faction {
 
             // actual loading
             if (loadReader.hasNextLine()) {
-                changeName(loadReader.nextLine());
+                setName(loadReader.nextLine());
             }
             if (loadReader.hasNextLine()) {
-                changeDescription(loadReader.nextLine());
+                setDescription(loadReader.nextLine());
             }
 
             while (loadReader.hasNextLine()) {
