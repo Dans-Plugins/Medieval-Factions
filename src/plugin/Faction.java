@@ -10,7 +10,7 @@ import java.util.Scanner;
 public class Faction {
     private String name = "defaultName";
     private String description = "defaultDescription";
-    private ArrayList<String> members;
+    private ArrayList<String> members = new ArrayList<String>();
 
     // constructor
     Faction(String initialName) {
@@ -46,10 +46,10 @@ public class Faction {
 
             // actual saving takes place here
             saveWriter.write(name + "\n");
-            saveWriter.write(description);
+            saveWriter.write(description + "\n");
 
             for (int i = 0; i < members.size(); i++) {
-                saveWriter.write(members.get(i));
+                saveWriter.write(members.get(i) + "\n");
             }
 
             saveWriter.close();
@@ -69,7 +69,6 @@ public class Faction {
         try {
             File loadFile = new File(filename);
             Scanner loadReader = new Scanner(loadFile);
-            int counter = 0;
 
             // actual loading
             if (loadReader.hasNextLine()) {

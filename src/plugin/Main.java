@@ -12,6 +12,10 @@ public class Main extends JavaPlugin {
 
         myFaction.load("Leyton.txt");
 
+//        myFaction.changeDescription("Led by King Marquess");
+//        myFaction.addMember("Dan");
+//        myFaction.addMember("Cardinal");
+
         System.out.println("Medieval Factions plugin enabled.");
     }
 
