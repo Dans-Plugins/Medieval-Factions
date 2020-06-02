@@ -55,6 +55,7 @@ public class Main extends JavaPlugin {
             return true;
 
         } catch (IOException e) {
+            System.out.println("An error occurred while saving faction names.");
             return false;
         }
     }
