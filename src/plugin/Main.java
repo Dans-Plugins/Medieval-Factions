@@ -6,9 +6,11 @@ import org.bukkit.entity.Player;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Scanner;
 
 public class Main extends JavaPlugin {
 
@@ -58,8 +60,30 @@ public class Main extends JavaPlugin {
     }
 
     public void saveFactions() {
+        System.out.println("Saving factions...");
         for (int i = 0; i < factions.size(); i++) {
             factions.get(i).save();
+        }
+    }
+
+    public boolean loadFactions() {
+        try {
+            System.out.println("Attempting to load factions...");
+            File loadFile = new File("faction-names.txt");
+            Scanner loadReader = new Scanner(loadFile);
+
+            // actual loading
+            while (loadReader.hasNextLine()) {
+                Faction temp = new Faction(loadReader.nextLine());
+                factions.add(temp);
+            }
+
+            loadReader.close();
+            System.out.println("Factions successfully loaded.");
+            return true;
+        } catch (FileNotFoundException e) {
+            System.out.println("Error loading the factions!");
+            return false;
         }
     }
 
