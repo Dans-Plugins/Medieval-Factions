@@ -129,8 +129,12 @@ public class Main extends JavaPlugin {
                     }
                 }
 
-                // TODO:
-                // Show help message
+                // help command
+                if (args[0].equalsIgnoreCase("help")) {
+                    sender.sendMessage("create" + "\n");
+                    sender.sendMessage("list" + "\n");
+                    sender.sendMessage("help" + "\n");
+                }
 
             }
         }
