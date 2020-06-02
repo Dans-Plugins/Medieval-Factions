@@ -20,7 +20,7 @@ public class Main extends JavaPlugin {
     public void onEnable() {
         System.out.println("Medieval Factions plugin enabling....");
 
-
+        loadFactions();
 
         System.out.println("Medieval Factions plugin enabled.");
     }
