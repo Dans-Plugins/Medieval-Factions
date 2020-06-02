@@ -6,9 +6,11 @@ import org.bukkit.entity.Player;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Scanner;
 
 public class Main extends JavaPlugin {
 
@@ -18,7 +20,7 @@ public class Main extends JavaPlugin {
     public void onEnable() {
         System.out.println("Medieval Factions plugin enabling....");
 
-
+        loadFactions();
 
         System.out.println("Medieval Factions plugin enabled.");
     }
@@ -53,13 +55,36 @@ public class Main extends JavaPlugin {
             return true;
 
         } catch (IOException e) {
+            System.out.println("An error occurred while saving faction names.");
             return false;
         }
     }
 
     public void saveFactions() {
+        System.out.println("Saving factions...");
         for (int i = 0; i < factions.size(); i++) {
             factions.get(i).save();
+        }
+    }
+
+    public boolean loadFactions() {
+        try {
+            System.out.println("Attempting to load factions...");
+            File loadFile = new File("faction-names.txt");
+            Scanner loadReader = new Scanner(loadFile);
+
+            // actual loading
+            while (loadReader.hasNextLine()) {
+                Faction temp = new Faction(loadReader.nextLine());
+                factions.add(temp);
+            }
+
+            loadReader.close();
+            System.out.println("Factions successfully loaded.");
+            return true;
+        } catch (FileNotFoundException e) {
+            System.out.println("Error loading the factions!");
+            return false;
         }
     }
 
@@ -96,12 +121,23 @@ public class Main extends JavaPlugin {
                         }
                     }
                 }
-            } else {
-                // TODO:
-                // Show help message
+
+                // list command
+                if  (args[0].equalsIgnoreCase("list")) {
+                    for (int i = 0; i < factions.size(); i++) {
+                        sender.sendMessage(factions.get(i).getName());
+                    }
+                }
+
+                // help command
+                if (args[0].equalsIgnoreCase("help")) {
+                    sender.sendMessage("create" + "\n");
+                    sender.sendMessage("list" + "\n");
+                    sender.sendMessage("help" + "\n");
+                }
+
             }
         }
-
         return false;
     }
 
