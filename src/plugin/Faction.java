@@ -21,8 +21,16 @@ public class Faction {
         name = newName;
     }
 
+    String getName() {
+        return name;
+    }
+
     void setDescription(String newDesc) {
         description = newDesc;
+    }
+
+    String getDescription() {
+        return description;
     }
 
     void addMember(String playerName) {
