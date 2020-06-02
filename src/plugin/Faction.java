@@ -4,11 +4,13 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Scanner;
 
 public class Faction {
     private String name = "defaultName";
     private String description = "defaultDescription";
+    private ArrayList<String> members;
 
     // constructor
     Faction(String initialName) {
@@ -21,6 +23,14 @@ public class Faction {
 
     void changeDescription(String newDesc) {
         description = newDesc;
+    }
+
+    void addMember(String playerName) {
+        members.add(playerName);
+    }
+
+    void removeMember(String playerName) {
+        members.remove(playerName);
     }
 
     boolean save() {
