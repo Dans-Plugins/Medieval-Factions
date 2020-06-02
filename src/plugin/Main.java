@@ -5,6 +5,9 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.java.JavaPlugin;
 
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.util.ArrayList;
 
 public class Main extends JavaPlugin {
@@ -24,12 +27,40 @@ public class Main extends JavaPlugin {
     public void onDisable(){
         System.out.println("Medieval Factions plugin disabling....");
 
-        System.out.println("Saving factions...");
+        saveFactionNames();
+        saveFactions();
+
+        System.out.println("Medieval Factions plugin disabled.");
+    }
+
+    public boolean saveFactionNames() {
+        try {
+            File saveFile = new File("faction-names.txt");
+            if (saveFile.createNewFile()) {
+                System.out.println("Save file for faction names created.");
+            } else {
+                System.out.println("Save file for faction names already exists. Overwriting.");
+            }
+
+            FileWriter saveWriter = new FileWriter(saveFile);
+
+            // actual saving takes place here
+            for (int i = 0; i < factions.size(); i++) {
+                saveWriter.write(factions.get(i).getName() + "\n");
+            }
+
+            saveWriter.close();
+            return true;
+
+        } catch (IOException e) {
+            return false;
+        }
+    }
+
+    public void saveFactions() {
         for (int i = 0; i < factions.size(); i++) {
             factions.get(i).save();
         }
-
-        System.out.println("Medieval Factions plugin disabled.");
     }
 
     public boolean onCommand(CommandSender sender, Command cmd, String label, String[] args) {
