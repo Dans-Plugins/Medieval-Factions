@@ -125,8 +125,15 @@ public class Main extends JavaPlugin {
 
                 // list command
                 if  (args[0].equalsIgnoreCase("list")) {
-                    for (int i = 0; i < factions.size(); i++) {
-                        sender.sendMessage(factions.get(i).getName());
+                    // if there aren't any factions
+                    if (factions.size() == 0) {
+                        sender.sendMessage("There are currently no factions.");
+                    }
+                    // factions exist, list them
+                    else {
+                        for (int i = 0; i < factions.size(); i++) {
+                            sender.sendMessage(factions.get(i).getName());
+                        }
                     }
                 }
 
