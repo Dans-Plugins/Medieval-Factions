@@ -108,13 +108,25 @@ public class Main extends JavaPlugin {
                         // argument check
                         if (args.length > 1) {
 
-                            // actual faction creation
-                            Faction temp = new Faction(args[1]);
-                            factions.add(temp);
-                            factions.get(factions.size() - 1).addMember(player.getName());
-                            System.out.println("Faction " + args[1] + " created.");
-                            return true;
+                            // faction existence check
+                            boolean factionExists = false;
+                            for (int i = 0; i < factions.size(); i++) {
+                                if (factions.get(i).getName().equalsIgnoreCase(args[1])) {
+                                    factionExists = true;
+                                }
+                            }
 
+                            if (factionExists == false) {
+                                // actual faction creation
+                                Faction temp = new Faction(args[1]);
+                                factions.add(temp);
+                                factions.get(factions.size() - 1).addMember(player.getName());
+                                System.out.println("Faction " + args[1] + " created.");
+                                return true;
+                            }
+                            else {
+                                player.sendMessage("Sorry! That faction already exists.");
+                            }
                         } else {
 
                             // wrong usage
