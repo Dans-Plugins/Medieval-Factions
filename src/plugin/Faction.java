@@ -46,6 +46,10 @@ public class Faction {
         }
     }
 
+    String getOwner() {
+        return owner;
+    }
+
     void setName(String newName) {
         name = newName;
     }
