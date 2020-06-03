@@ -11,10 +11,34 @@ public class Faction {
     private String name = "defaultName";
     private String description = "defaultDescription";
     private ArrayList<String> members = new ArrayList<String>();
+    private String owner = "defaultOwner";
 
-    // constructor
+    // player constructor
+    Faction(String initialName, String creator) {
+        setName(initialName);
+        setOwner(creator);
+    }
+
+    // server constructor
     Faction(String initialName) {
         setName(initialName);
+    }
+
+    int getPopulation() {
+        return members.size();
+    }
+
+    void setOwner(String playerName) {
+        owner = playerName;
+    }
+
+    boolean isOwner(String playerName) {
+        if (playerName.equalsIgnoreCase(owner)) {
+            return true;
+        }
+        else {
+            return false;
+        }
     }
 
     void setName(String newName) {
@@ -64,6 +88,7 @@ public class Faction {
 
             // actual saving takes place here
             saveWriter.write(name + "\n");
+            saveWriter.write(owner + "\n");
             saveWriter.write(description + "\n");
 
             for (int i = 0; i < members.size(); i++) {
@@ -91,6 +116,9 @@ public class Faction {
             // actual loading
             if (loadReader.hasNextLine()) {
                 setName(loadReader.nextLine());
+            }
+            if (loadReader.hasNextLine()) {
+                setOwner(loadReader.nextLine());
             }
             if (loadReader.hasNextLine()) {
                 setDescription(loadReader.nextLine());
