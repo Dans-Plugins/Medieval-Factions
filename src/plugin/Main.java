@@ -100,12 +100,12 @@ public class Main extends JavaPlugin {
 
                 // help command
                 if (args[0].equalsIgnoreCase("help")) {
-                    sender.sendMessage("/help - Show list of useful commands." + "\n");
-                    sender.sendMessage("/create - Create a new faction." + "\n");
-                    sender.sendMessage("/list - List all factions on the server." + "\n");
-                    sender.sendMessage("/delete - Delete your faction (must be owner)." + "\n");
-                    sender.sendMessage("/members - List the members of your faction." + "\n");
-                    sender.sendMessage("/info - See your faction information." + "\n");
+                    sender.sendMessage("/mf help - Show list of useful commands." + "\n");
+                    sender.sendMessage("/mf create - Create a new faction." + "\n");
+                    sender.sendMessage("/mf list - List all factions on the server." + "\n");
+                    sender.sendMessage("/mf delete - Delete your faction (must be owner)." + "\n");
+                    sender.sendMessage("/mf members - List the members of your faction." + "\n");
+                    sender.sendMessage("/mf info - See your faction information." + "\n");
                 }
 
                 // create command
