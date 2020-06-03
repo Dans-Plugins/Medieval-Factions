@@ -30,8 +30,8 @@ public class Faction {
 
     void invite(String playerName) {
         invited.add(playerName);
-        Player target = Bukkit.getPlayer(playerName);
-        target.sendMessage("You've been invited to the faction " + name + "! Type /mf join " + name + " + to join.");
+        Player target = Bukkit.getServer().getPlayer(playerName);
+        target.sendMessage("You've been invited to the faction " + name + "! Type /mf join " + name + " to join.");
     }
 
     boolean isInvited(String playerName) {
