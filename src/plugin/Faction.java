@@ -1,5 +1,8 @@
 package plugin;
 
+import org.bukkit.Bukkit;
+import org.bukkit.entity.Player;
+
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileWriter;
@@ -27,6 +30,8 @@ public class Faction {
 
     void invite(String playerName) {
         invited.add(playerName);
+        Player target = Bukkit.getPlayer(playerName);
+        target.sendMessage("You've been invited to the faction " + name + "! Type /mf join " + name + " + to join.");
     }
 
     boolean isInvited(String playerName) {
