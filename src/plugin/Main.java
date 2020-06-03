@@ -1,5 +1,6 @@
 package plugin;
 
+import org.bukkit.Bukkit;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
@@ -278,6 +279,31 @@ public class Main extends JavaPlugin {
                         }
                         else {
                             player.sendMessage("Usage: /mf join (faction-name)");
+                        }
+                    }
+
+                    // kick command
+                    if (args[0].equalsIgnoreCase("kick")) {
+                        if (sender instanceof Player) {
+                            Player player = (Player) sender;
+                            if (args.length > 1) {
+                                for (Faction faction : factions) {
+                                    if (faction.isOwner(player.getName())) {
+                                        if (faction.isMember(args[1])) {
+                                            faction.removeMember(args[1]);
+                                            player.sendMessage(args[1] + " kicked.");
+                                            Player target = Bukkit.getPlayer(args[1]);
+                                            target.sendMessage("You have been kicked from your faction by " + player.getName() + ".");
+                                        }
+                                    }
+                                    else {
+                                        player.sendMessage("Sorry! You must be the owner to kick people.");
+                                    }
+                                }
+                            }
+                            else {
+                                player.sendMessage("Usage: /mf kick (player-name)");
+                            }
                         }
                     }
                 }
