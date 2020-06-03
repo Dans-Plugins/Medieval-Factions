@@ -24,6 +24,11 @@ public class Faction {
         setName(initialName);
     }
 
+    ArrayList<String> getMemberList() {
+        ArrayList<String> membersCopy = members;
+        return membersCopy;
+    }
+
     int getPopulation() {
         return members.size();
     }
