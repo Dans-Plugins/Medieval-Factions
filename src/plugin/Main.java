@@ -268,6 +268,9 @@ public class Main extends JavaPlugin {
                                     }
                                 }
                             }
+                            else {
+                                player.sendMessage("Usage: /mf join (faction-name)");
+                            }
                         }
                     }
                 }
