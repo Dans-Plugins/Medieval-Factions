@@ -175,6 +175,7 @@ public class Main extends JavaPlugin {
                             if (factions.get(i).isOwner(player.getName())) {
                                 if (factions.get(i).getPopulation() == 1) {
                                     factions.remove(i);
+                                    player.sendMessage("Faction successfully deleted.");
                                 }
                                 else {
                                     player.sendMessage("You need to kick all players before you can delete your faction.");
