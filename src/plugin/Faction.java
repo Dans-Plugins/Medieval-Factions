@@ -10,8 +10,9 @@ import java.util.Scanner;
 public class Faction {
     private String name = "defaultName";
     private String description = "defaultDescription";
-    private ArrayList<String> members = new ArrayList<String>();
+    private ArrayList<String> members = new ArrayList<>();
     private String owner = "defaultOwner";
+    private ArrayList<String> invited = new ArrayList<>();
 
     // player constructor
     Faction(String initialName, String creator) {
@@ -22,6 +23,19 @@ public class Faction {
     // server constructor
     Faction(String initialName) {
         setName(initialName);
+    }
+
+    void invite(String playerName) {
+        invited.add(playerName);
+    }
+
+    boolean isInvited(String playerName) {
+        for (String player : invited) {
+            if (player.equalsIgnoreCase(playerName)) {
+                return true;
+            }
+        }
+        return false;
     }
 
     ArrayList<String> getMemberList() {
