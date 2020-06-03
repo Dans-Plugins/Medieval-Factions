@@ -102,6 +102,7 @@ public class Main extends JavaPlugin {
                     sender.sendMessage("/mf delete - Delete your faction (must be owner)." + "\n");
                     sender.sendMessage("/mf members - List the members of your faction." + "\n");
                     sender.sendMessage("/mf info - See your faction information." + "\n");
+                    sender.sendMessage("/mf desc - Set your faction description." + "\n");
                 }
 
                 // create command
@@ -210,6 +211,26 @@ public class Main extends JavaPlugin {
                                 player.sendMessage("Owner: " + faction.getOwner() + "\n");
                                 player.sendMessage("Description: " + faction.getDescription() + "\n");
                                 player.sendMessage("Population: " + faction.getMemberList().size() + "\n");
+                            }
+                        }
+                    }
+
+                    // desc command
+                    if (args[0].equalsIgnoreCase("desc")) {
+                        if (sender instanceof Player) {
+                            Player player = (Player) sender;
+                            for (Faction faction : factions) {
+                                if (faction.isOwner(player.getName())) {
+                                    if (args.length > 1) {
+                                        faction.setDescription(args[1]);
+                                    }
+                                    else {
+                                        player.sendMessage("Usage: /mf desc \"this is the description\" [quotes required]");
+                                    }
+                                }
+                                else {
+                                    player.sendMessage("Sorry! You must own a faction to use this command.");
+                                }
                             }
                         }
                     }
