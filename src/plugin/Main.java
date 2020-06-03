@@ -257,7 +257,18 @@ public class Main extends JavaPlugin {
 
                     // join command
                     if (args[0].equalsIgnoreCase("join")) {
-
+                        if (sender instanceof Player) {
+                            Player player = (Player) sender;
+                            if (args.length > 1) {
+                                for (Faction faction : factions) {
+                                    if (faction.getName().equalsIgnoreCase(args[1])) {
+                                        if (faction.isInvited(player.getName())) {
+                                            faction.addMember(player.getName());
+                                        }
+                                    }
+                                }
+                            }
+                        }
                     }
                 }
 
