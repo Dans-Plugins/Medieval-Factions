@@ -139,6 +139,7 @@ public class Main extends JavaPlugin {
                                 factions.add(temp);
                                 factions.get(factions.size() - 1).addMember(player.getName());
                                 System.out.println("Faction " + args[1] + " created.");
+                                player.sendMessage("Faction " + args[1] + " created.");
                                 return true;
                             }
                             else {
