@@ -270,6 +270,9 @@ public class Main extends JavaPlugin {
                                         faction.addMember(player.getName());
                                         player.sendMessage("You joined the faction!");
                                     }
+                                    else {
+                                        player.sendMessage("You're not invited to this faction!");
+                                    }
                                 }
                             }
                         }
