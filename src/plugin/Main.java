@@ -14,7 +14,7 @@ import java.util.Scanner;
 
 public class Main extends JavaPlugin {
 
-    ArrayList<Faction> factions = new ArrayList<Faction>();
+    ArrayList<Faction> factions = new ArrayList<>();
 
     @Override
     public void onEnable() {
@@ -35,7 +35,7 @@ public class Main extends JavaPlugin {
         System.out.println("Medieval Factions plugin disabled.");
     }
 
-    public boolean saveFactionNames() {
+    public void saveFactionNames() {
         try {
             File saveFile = new File("faction-names.txt");
             if (saveFile.createNewFile()) {
@@ -47,16 +47,14 @@ public class Main extends JavaPlugin {
             FileWriter saveWriter = new FileWriter(saveFile);
 
             // actual saving takes place here
-            for (int i = 0; i < factions.size(); i++) {
-                saveWriter.write(factions.get(i).getName() + "\n");
+            for (Faction faction : factions) {
+                saveWriter.write(faction.getName() + "\n");
             }
 
             saveWriter.close();
-            return true;
 
         } catch (IOException e) {
             System.out.println("An error occurred while saving faction names.");
-            return false;
         }
     }
 
@@ -67,7 +65,7 @@ public class Main extends JavaPlugin {
         }
     }
 
-    public boolean loadFactions() {
+    public void loadFactions() {
         try {
             System.out.println("Attempting to load factions...");
             File loadFile = new File("faction-names.txt");
@@ -83,10 +81,8 @@ public class Main extends JavaPlugin {
 
             loadReader.close();
             System.out.println("Factions successfully loaded.");
-            return true;
         } catch (FileNotFoundException e) {
             System.out.println("Error loading the factions!");
-            return false;
         }
     }
 
@@ -116,8 +112,8 @@ public class Main extends JavaPlugin {
                         Player player = (Player) sender;
 
                         // player membership check
-                        for (int i = 0; i < factions.size(); i++) {
-                            if (factions.get(i).isMember(player.getName())) {
+                        for (Faction faction : factions) {
+                            if (faction.isMember(player.getName())) {
                                 player.sendMessage("Sorry, you're already in a faction. Leave if you want to create a different one.");
                                 return false;
                             }
@@ -128,13 +124,13 @@ public class Main extends JavaPlugin {
 
                             // faction existence check
                             boolean factionExists = false;
-                            for (int i = 0; i < factions.size(); i++) {
-                                if (factions.get(i).getName().equalsIgnoreCase(args[1])) {
+                            for (Faction faction : factions) {
+                                if (faction.getName().equalsIgnoreCase(args[1])) {
                                     factionExists = true;
                                 }
                             }
 
-                            if (factionExists == false) {
+                            if (!factionExists) {
                                 // actual faction creation
                                 Faction temp = new Faction(args[1], player.getName());
                                 factions.add(temp);
@@ -163,8 +159,8 @@ public class Main extends JavaPlugin {
                     }
                     // factions exist, list them
                     else {
-                        for (int i = 0; i < factions.size(); i++) {
-                            sender.sendMessage(factions.get(i).getName());
+                        for (Faction faction : factions) {
+                            sender.sendMessage(faction.getName());
                         }
                     }
                 }
@@ -193,11 +189,11 @@ public class Main extends JavaPlugin {
                 if (args[0].equalsIgnoreCase("members")) {
                     if (sender instanceof Player) {
                         Player player = (Player) sender;
-                        for (int i = 0; i < factions.size(); i++) {
-                            if (factions.get(i).isMember(player.getName())) {
-                                ArrayList<String> members = factions.get(i).getMemberList();
-                                for (int j = 0; j < members.size(); j++) {
-                                    player.sendMessage(members.get(j) + "\n");
+                        for (Faction faction : factions) {
+                            if (faction.isMember(player.getName())) {
+                                ArrayList<String> members = faction.getMemberList();
+                                for (String member : members) {
+                                    player.sendMessage(member + "\n");
                                 }
                             }
                         }
@@ -208,12 +204,12 @@ public class Main extends JavaPlugin {
                 if (args[0].equalsIgnoreCase("info")) {
                     if (sender instanceof Player) {
                         Player player = (Player) sender;
-                        for (int i = 0; i < factions.size(); i++) {
-                            if (factions.get(i).isMember(player.getName())) {
-                                player.sendMessage("Name: " + factions.get(i).getName() + "\n");
-                                player.sendMessage("Owner: " + factions.get(i).getOwner() + "\n");
-                                player.sendMessage("Description: " + factions.get(i).getDescription() + "\n");
-                                player.sendMessage("Population: " + factions.get(i).getMemberList().size() + "\n");
+                        for (Faction faction : factions) {
+                            if (faction.isMember(player.getName())) {
+                                player.sendMessage("Name: " + faction.getName() + "\n");
+                                player.sendMessage("Owner: " + faction.getOwner() + "\n");
+                                player.sendMessage("Description: " + faction.getDescription() + "\n");
+                                player.sendMessage("Population: " + faction.getMemberList().size() + "\n");
                             }
                         }
                     }
