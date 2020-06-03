@@ -76,8 +76,8 @@ public class Main extends JavaPlugin {
             // actual loading
             while (loadReader.hasNextLine()) {
                 String nextName = loadReader.nextLine();
-                Faction temp = new Faction(nextName);
-                temp.load(nextName + ".txt");
+                Faction temp = new Faction(nextName); // uses server constructor, only temporary
+                temp.load(nextName + ".txt"); // provides owner field among other things
                 factions.add(temp);
             }
 
@@ -97,6 +97,14 @@ public class Main extends JavaPlugin {
 
             // argument check
             if (args.length > 0) {
+
+                // help command
+                if (args[0].equalsIgnoreCase("help")) {
+                    sender.sendMessage("help" + "\n");
+                    sender.sendMessage("create" + "\n");
+                    sender.sendMessage("list" + "\n");
+                    sender.sendMessage("delete" + "\n");
+                }
 
                 // create command
                 if (args[0].equalsIgnoreCase("create")) {
@@ -126,7 +134,7 @@ public class Main extends JavaPlugin {
 
                             if (factionExists == false) {
                                 // actual faction creation
-                                Faction temp = new Faction(args[1]);
+                                Faction temp = new Faction(args[1], player.getName());
                                 factions.add(temp);
                                 factions.get(factions.size() - 1).addMember(player.getName());
                                 System.out.println("Faction " + args[1] + " created.");
@@ -159,11 +167,24 @@ public class Main extends JavaPlugin {
                     }
                 }
 
-                // help command
-                if (args[0].equalsIgnoreCase("help")) {
-                    sender.sendMessage("create" + "\n");
-                    sender.sendMessage("list" + "\n");
-                    sender.sendMessage("help" + "\n");
+                // delete command
+                if (args[0].equalsIgnoreCase("delete")) {
+                    if (sender instanceof Player) {
+                        Player player = (Player) sender;
+                        for (int i = 0; i < factions.size(); i++) {
+                            if (factions.get(i).isOwner(player.getName())) {
+                                String nameOfFaction = factions.get(i).getName();
+                                if (factions.get(i).getPopulation() == 1) {
+                                    factions.remove(i);
+                                }
+                                else {
+                                    player.sendMessage("You need to kick all players before you can delete your faction.");
+                                }
+                            }
+                        }
+
+                    }
+
                 }
 
             }
