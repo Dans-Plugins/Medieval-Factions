@@ -103,6 +103,8 @@ public class Main extends JavaPlugin {
                     sender.sendMessage("/mf members - List the members of your faction." + "\n");
                     sender.sendMessage("/mf info - See your faction information." + "\n");
                     sender.sendMessage("/mf desc - Set your faction description." + "\n");
+                    sender.sendMessage("/mf invite - Invite a player to your faction." + "\n");
+                    sender.sendMessage("/mf join - Join a faction if you've been invited." + "\n");
                 }
 
                 // create command
@@ -264,6 +266,7 @@ public class Main extends JavaPlugin {
                                     if (faction.getName().equalsIgnoreCase(args[1])) {
                                         if (faction.isInvited(player.getName())) {
                                             faction.addMember(player.getName());
+                                            player.sendMessage("You joined the faction!");
                                         }
                                     }
                                 }
