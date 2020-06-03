@@ -228,9 +228,6 @@ public class Main extends JavaPlugin {
                                         player.sendMessage("Usage: /mf desc \"this is the description\" [quotes required]");
                                     }
                                 }
-                                else {
-                                    player.sendMessage("Sorry! You must own a faction to use this command.");
-                                }
                             }
                         }
                     }
