@@ -100,10 +100,11 @@ public class Main extends JavaPlugin {
 
                 // help command
                 if (args[0].equalsIgnoreCase("help")) {
-                    sender.sendMessage("help" + "\n");
-                    sender.sendMessage("create" + "\n");
-                    sender.sendMessage("list" + "\n");
-                    sender.sendMessage("delete" + "\n");
+                    sender.sendMessage("/help" + "\n");
+                    sender.sendMessage("/create" + "\n");
+                    sender.sendMessage("/list" + "\n");
+                    sender.sendMessage("/delete" + "\n");
+                    sender.sendMessage("/members" + "\n");
                 }
 
                 // create command
@@ -185,6 +186,21 @@ public class Main extends JavaPlugin {
 
                     }
 
+                }
+
+                // members command
+                if (args[0].equalsIgnoreCase("members")) {
+                    if (sender instanceof Player) {
+                        Player player = (Player) sender;
+                        for (int i = 0; i < factions.size(); i++) {
+                            if (factions.get(i).isMember(player.getName())) {
+                                ArrayList<String> members = factions.get(i).getMemberList();
+                                for (int j = 0; j < members.size(); j++) {
+                                    player.sendMessage(members.get(j));
+                                }
+                            }
+                        }
+                    }
                 }
 
             }
