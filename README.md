@@ -6,7 +6,8 @@ A minecraft plugin for players to use to organize politically.
 - Testing can be done by running a local spigot server with the compiled JAR in the plugins folder and checking the console.
 
 # Versions
--  0.1 barebones initial project trying to get a faction class working
--  0.2 'Allow Faction Creation' update
--  0.3 'Help' update
--  0.4 'More Commands' Update
+-  0.1 Initial Build
+-  0.2 'Faction Class' Update
+-  0.3 'Allow Faction Creation' update
+-  0.4 'Help' update
+-  0.5 'More Commands' Update
