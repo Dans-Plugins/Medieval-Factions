@@ -9,5 +9,6 @@ A minecraft plugin for players to use to organize politically.
 -  0.1 Initial Build
 -  0.2 'Faction Class' Update
 -  0.3 'Allow Faction Creation' update
--  0.4 'Help' update
--  0.5 'More Commands' Update
+-  0.4 'Allow Faction Deletion' update
+-  0.5 'Help' update
+-  0.6 'More Commands' Update
