@@ -100,11 +100,12 @@ public class Main extends JavaPlugin {
 
                 // help command
                 if (args[0].equalsIgnoreCase("help")) {
-                    sender.sendMessage("/help" + "\n");
-                    sender.sendMessage("/create" + "\n");
-                    sender.sendMessage("/list" + "\n");
-                    sender.sendMessage("/delete" + "\n");
-                    sender.sendMessage("/members" + "\n");
+                    sender.sendMessage("/help - Show list of useful commands." + "\n");
+                    sender.sendMessage("/create - Create a new faction." + "\n");
+                    sender.sendMessage("/list - List all factions on the server." + "\n");
+                    sender.sendMessage("/delete - Delete your faction (must be owner)." + "\n");
+                    sender.sendMessage("/members - List the members of your faction." + "\n");
+                    sender.sendMessage("/info - See your faction information." + "\n");
                 }
 
                 // create command
@@ -196,8 +197,23 @@ public class Main extends JavaPlugin {
                             if (factions.get(i).isMember(player.getName())) {
                                 ArrayList<String> members = factions.get(i).getMemberList();
                                 for (int j = 0; j < members.size(); j++) {
-                                    player.sendMessage(members.get(j));
+                                    player.sendMessage(members.get(j) + "\n");
                                 }
+                            }
+                        }
+                    }
+                }
+
+                // info command
+                if (args[0].equalsIgnoreCase("info")) {
+                    if (sender instanceof Player) {
+                        Player player = (Player) sender;
+                        for (int i = 0; i < factions.size(); i++) {
+                            if (factions.get(i).isMember(player.getName())) {
+                                player.sendMessage("Name: " + factions.get(i).getName() + "\n");
+                                player.sendMessage("Owner: " + factions.get(i).getOwner() + "\n");
+                                player.sendMessage("Description: " + factions.get(i).getDescription() + "\n");
+                                player.sendMessage("Population: " + factions.get(i).getMemberList().size() + "\n");
                             }
                         }
                     }
