@@ -1,5 +1,5 @@
 name: MedievalFactions
-version: "0.5"
+version: "0.6"
 author: Daniel&Andrew
 main: plugin.Main
 api-version: "1.15"
