@@ -292,6 +292,9 @@ public class Main extends JavaPlugin {
                                             target.sendMessage("You have been kicked from your faction by " + player.getName() + ".");
                                         }
                                     }
+                                    else {
+                                        player.sendMessage("Sorry! You must be the owner to kick people.");
+                                    }
                                 }
                             }
                             else {
