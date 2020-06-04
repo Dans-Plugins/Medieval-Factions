@@ -290,76 +290,72 @@ public class Main extends JavaPlugin {
                                     if (faction.isInvited(player.getName())) {
                                         faction.addMember(player.getName());
                                         player.sendMessage("You joined the faction!");
-                                    }
-                                    else {
+                                    } else {
                                         player.sendMessage("You're not invited to this faction!");
                                     }
                                 }
                             }
-                        }
-                        else {
+                        } else {
                             player.sendMessage("Usage: /mf join (faction-name)");
                         }
                     }
+                }
 
-                    // kick command
-                    if (args[0].equalsIgnoreCase("kick")) {
-                        if (sender instanceof Player) {
-                            Player player = (Player) sender;
-                            if (args.length > 1) {
-                                for (Faction faction : factions) {
-                                    if (faction.isOwner(player.getName())) {
-                                        if (faction.isMember(args[1])) {
-                                            faction.removeMember(args[1]);
-                                            player.sendMessage(args[1] + " kicked.");
-                                            try {
-                                                Player target = Bukkit.getServer().getPlayer(args[1]);
-                                                target.sendMessage("You have been kicked from your faction by " + player.getName() + ".");
-                                            }
-                                            catch (Exception e) {
+                // kick command
+                if (args[0].equalsIgnoreCase("kick")) {
+                    if (sender instanceof Player) {
+                        Player player = (Player) sender;
+                        if (args.length > 1) {
+                            for (Faction faction : factions) {
+                                if (faction.isOwner(player.getName())) {
+                                    if (faction.isMember(args[1])) {
+                                        faction.removeMember(args[1]);
+                                        player.sendMessage(args[1] + " kicked.");
+                                        try {
+                                            Player target = Bukkit.getServer().getPlayer(args[1]);
+                                            target.sendMessage("You have been kicked from your faction by " + player.getName() + ".");
+                                        } catch (Exception e) {
 
-                                            }
                                         }
                                     }
-                                    else {
-                                        player.sendMessage("Sorry! You must be the owner to kick people.");
-                                    }
+                                } else {
+                                    player.sendMessage("Sorry! You must be the owner to kick people.");
                                 }
                             }
-                            else {
-                                player.sendMessage("Usage: /mf kick (player-name)");
-                            }
+                        } else {
+                            player.sendMessage("Usage: /mf kick (player-name)");
                         }
                     }
+                }
 
-                    // leave commmand
-                    if (args[0].equalsIgnoreCase("leave")) {
-                        if (sender instanceof Player) {
-                            Player player = (Player) sender;
-                            for (Faction faction : factions) {
-                                if (faction.isMember(player.getName())) {
-                                    if (faction.isOwner(player.getName())) {
-                                        // is faction empty?
-                                        if (faction.getPopulation() == 1) {
-                                            // able to leave
-                                            faction.removeMember(player.getName());
-                                            factions.remove(faction);
-                                            player.sendMessage("You left your faction. It was deleted since no one else was a member.");
-                                        }
-                                        else {
-                                            player.sendMessage("Sorry! You must transfer ownership or kick everyone in your faction to leave.");
-                                        }
-                                    }
-                                    else {
+                // leave commmand
+                if (args[0].equalsIgnoreCase("leave")) {
+                    if (sender instanceof Player) {
+                        Player player = (Player) sender;
+                        for (Faction faction : factions) {
+                            if (faction.isMember(player.getName())) {
+                                if (faction.isOwner(player.getName())) {
+                                    // is faction empty?
+                                    if (faction.getPopulation() == 1) {
                                         // able to leave
                                         faction.removeMember(player.getName());
-                                        player.sendMessage("You left your faction.");
+                                        factions.remove(faction);
+                                        player.sendMessage("You left your faction. It was deleted since no one else was a member.");
                                     }
+                                    else {
+                                        player.sendMessage("Sorry! You must transfer ownership or kick everyone in your faction to leave.");
+                                    }
+                                }
+                                else {
+                                    // able to leave
+                                    faction.removeMember(player.getName());
+                                    player.sendMessage("You left your faction.");
                                 }
                             }
                         }
                     }
                 }
+
             }
         }
         return false;
