@@ -346,7 +346,7 @@ public class Main extends JavaPlugin {
                                             faction.addMember(player.getName());
                                             try {
                                                 Player target = Bukkit.getServer().getPlayer(faction.getOwner());
-                                                target.sendMessage(ChatColor.GREEN + args[1] + " has joined your faction.");
+                                                target.sendMessage(ChatColor.GREEN + player.getName() + " has joined your faction.");
                                             } catch (Exception e) {
 
                                             }
