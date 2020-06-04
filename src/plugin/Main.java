@@ -344,6 +344,7 @@ public class Main extends JavaPlugin {
                                         // join if player isn't in a faction already
                                         if (!(isInFaction(player.getName()))) {
                                             faction.addMember(player.getName());
+                                            faction.uninvite(player.getName());
                                             try {
                                                 Player target = Bukkit.getServer().getPlayer(faction.getOwner());
                                                 target.sendMessage(ChatColor.GREEN + player.getName() + " has joined your faction.");
