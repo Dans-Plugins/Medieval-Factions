@@ -265,6 +265,7 @@ public class Main extends JavaPlugin {
                                         return true;
                                     }
                                     else {
+                                        // this branch isn't executing
                                         player.sendMessage("That player is already in a faction, sorry!");
                                         return false;
                                     }
