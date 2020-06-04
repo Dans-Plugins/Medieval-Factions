@@ -157,13 +157,7 @@ public class Main extends JavaPlugin {
                             if (!factionExists) {
 
                                 // creating name from arguments 1 to the last one
-                                String name = "";
-                                for (int i = 1; i < args.length; i++) {
-                                    name = name + args[i];
-                                    if (!(i == args.length - 1)) {
-                                        name = name + " ";
-                                    }
-                                }
+                                String name = createStringFromFirstArgOnwards(args);
 
                                 // actual faction creation
                                 Faction temp = new Faction(name, player.getName());
@@ -234,14 +228,21 @@ public class Main extends JavaPlugin {
                 if (args[0].equalsIgnoreCase("members")) {
                     if (sender instanceof Player) {
                         Player player = (Player) sender;
-                        for (Faction faction : factions) {
-                            if (faction.isMember(player.getName())) {
-                                ArrayList<String> members = faction.getMemberList();
-                                sender.sendMessage(ChatColor.BOLD + "" + ChatColor.AQUA + "Members of " + faction.getName() + "\n----------\n");
-                                for (String member : members) {
-                                    player.sendMessage(ChatColor.AQUA + member + "\n");
+                        if (args.length == 1) {
+                            for (Faction faction : factions) {
+                                if (faction.isMember(player.getName())) {
+                                    sendFactionMembers(player, faction);
                                 }
-                                sender.sendMessage(ChatColor.AQUA + "----------\n");
+                            }
+                        }
+                        else {
+                            // creating name from arguments 1 to the last one
+                            String name = createStringFromFirstArgOnwards(args);
+
+                            for (Faction faction : factions) {
+                                if (faction.getName().equalsIgnoreCase(name)) {
+                                    sendFactionMembers(player, faction);
+                                }
                             }
                         }
                     }
@@ -260,13 +261,8 @@ public class Main extends JavaPlugin {
                         }
                         else {
                             // creating name from arguments 1 to the last one
-                            String name = "";
-                            for (int i = 1; i < args.length; i++) {
-                                name = name + args[i];
-                                if (!(i == args.length - 1)) {
-                                    name = name + " ";
-                                }
-                            }
+                            String name = createStringFromFirstArgOnwards(args);
+
                             boolean exists = false;
                             for (Faction faction : factions) {
                                 if (faction.getName().equals(name)) {
@@ -359,13 +355,7 @@ public class Main extends JavaPlugin {
                         if (args.length > 1) {
 
                             // creating name from arguments 1 to the last one
-                            String factionName = "";
-                            for (int i = 1; i < args.length; i++) {
-                                factionName = factionName + args[i];
-                                if (!(i == args.length - 1)) {
-                                    factionName = factionName + " ";
-                                }
-                            }
+                            String factionName = createStringFromFirstArgOnwards(args);
 
                             for (Faction faction : factions) {
                                 if (faction.getName().equalsIgnoreCase(factionName)) {
@@ -547,6 +537,26 @@ public class Main extends JavaPlugin {
         player.sendMessage(ChatColor.AQUA + "Description: " + faction.getDescription() + "\n");
         player.sendMessage(ChatColor.AQUA + "Population: " + faction.getMemberList().size() + "\n");
         player.sendMessage(ChatColor.AQUA + "----------\n");
+    }
+
+    void sendFactionMembers(Player player, Faction faction) {
+        ArrayList<String> members = faction.getMemberList();
+        player.sendMessage(ChatColor.BOLD + "" + ChatColor.AQUA + "Members of " + faction.getName() + "\n----------\n");
+        for (String member : members) {
+            player.sendMessage(ChatColor.AQUA + member + "\n");
+        }
+        player.sendMessage(ChatColor.AQUA + "----------\n");
+    }
+
+    String createStringFromFirstArgOnwards(String[] args) {
+        String name = "";
+        for (int i = 1; i < args.length; i++) {
+            name = name + args[i];
+            if (!(i == args.length - 1)) {
+                name = name + " ";
+            }
+        }
+        return name;
     }
 
 }
