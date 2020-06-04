@@ -120,11 +120,12 @@ public class Main extends JavaPlugin {
                     sender.sendMessage(ChatColor.AQUA + "/mf join - Join a faction if you've been invited." + "\n");
                     sender.sendMessage(ChatColor.AQUA + "/mf kick - Kick a player from your faction (must be owner). " + "\n");
                     sender.sendMessage(ChatColor.AQUA + "/mf leave - Leave your current faction." + "\n");
-                    sender.sendMessage(ChatColor.AQUA + "/mf transfer - Transfer ownership of your faction to another player (must be owner).");
+                    sender.sendMessage(ChatColor.AQUA + "/mf transfer - Transfer ownership of your faction to another player (must be owner).\n");
                     if (!(sender instanceof Player)) {
                         sender.sendMessage(ChatColor.AQUA + "/mf forcesave - Force the plugin to save.");
                         sender.sendMessage(ChatColor.AQUA + "/mf forceload - Force the plugin to load.");
                     }
+                    sender.sendMessage("----------\n");
                 }
 
                 // create command
@@ -197,6 +198,7 @@ public class Main extends JavaPlugin {
                         for (Faction faction : factions) {
                             sender.sendMessage(ChatColor.AQUA + faction.getName());
                         }
+                        sender.sendMessage("----------\n");
                     }
                 }
 
@@ -231,6 +233,7 @@ public class Main extends JavaPlugin {
                                     sender.sendMessage(ChatColor.BOLD + "" + ChatColor.AQUA + "Members of " + faction.getName() + "\n----------\n");
                                     player.sendMessage(ChatColor.AQUA + member + "\n");
                                 }
+                                sender.sendMessage("----------\n");
                             }
                         }
                     }
@@ -242,11 +245,12 @@ public class Main extends JavaPlugin {
                         Player player = (Player) sender;
                         for (Faction faction : factions) {
                             if (faction.isMember(player.getName())) {
-                                sender.sendMessage(ChatColor.BOLD + "" + ChatColor.AQUA + faction.getName() + "Info" + "\n----------\n");
+                                sender.sendMessage(ChatColor.BOLD + "" + ChatColor.AQUA + faction.getName() + " Faction Info" + "\n----------\n");
                                 player.sendMessage(ChatColor.AQUA + "Name: " + faction.getName() + "\n");
                                 player.sendMessage(ChatColor.AQUA + "Owner: " + faction.getOwner() + "\n");
                                 player.sendMessage(ChatColor.AQUA + "Description: " + faction.getDescription() + "\n");
                                 player.sendMessage(ChatColor.AQUA + "Population: " + faction.getMemberList().size() + "\n");
+                                player.sendMessage("----------\n");
                             }
                         }
                     }
