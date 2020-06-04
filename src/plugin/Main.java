@@ -108,6 +108,19 @@ public class Main extends JavaPlugin {
                     sender.sendMessage("/mf join - Join a faction if you've been invited." + "\n");
                     sender.sendMessage("/mf kick - Kick a player from your faction (must be owner). " + "\n");
                     sender.sendMessage("/mf leave - Leave your current faction." + "\n");
+                    if (sender instanceof Player) {
+                        Player player = (Player) sender;
+                        if (player.hasPermission("medievalfactions.forcesave")) {
+                            player.sendMessage("/mf forcesave");
+                        }
+                        if (player.hasPermission("medievalfactions.forceload")) {
+                            player.sendMessage("/mf forceload");
+                        }
+                    }
+                    else {
+                        sender.sendMessage("/mf forcesave");
+                        sender.sendMessage("/mf forceload");
+                    }
                 }
 
                 // create command
@@ -355,6 +368,43 @@ public class Main extends JavaPlugin {
                     }
                 }
 
+                // forcesave command
+                if (args[0].equalsIgnoreCase("forcesave")) {
+                    if (sender instanceof Player) {
+                        Player player = (Player) sender;
+                        if (player.hasPermission("medievalfactions.forcesave")) {
+                            player.sendMessage("Medieval Factions plugin is saving...");
+                            saveFactionNames();
+                            saveFactions();
+                        }
+                        else {
+                            player.sendMessage("You don't have permission to use this command!");
+                        }
+                    }
+                    else {
+                        System.out.println("Medieval Factions plugin is saving...");
+                        saveFactionNames();
+                        saveFactions();
+                    }
+                }
+
+                // forceload command
+                if (args[0].equalsIgnoreCase("forceload")) {
+                    if (sender instanceof Player) {
+                        Player player = (Player) sender;
+                        if (player.hasPermission("medievalfactions.forceload")) {
+                            player.sendMessage("Medieval Factions plugin is loading...");
+                            loadFactions();
+                        }
+                        else {
+                            player.sendMessage("You don't have permission to use this command!");
+                        }
+                    }
+                    else {
+                        System.out.println("Medieval Factions plugin is loading...");
+                        loadFactions();
+                    }
+                }
             }
         }
         return false;
