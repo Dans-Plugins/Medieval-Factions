@@ -151,8 +151,18 @@ public class Main extends JavaPlugin {
                             }
 
                             if (!factionExists) {
+
+                                // creating name from arguments 1 to the last one
+                                String name = "";
+                                for (int i = 1; i < args.length; i++) {
+                                    name = name + args[i];
+                                    if (!(i == args.length - 1)) {
+                                        name = name + " ";
+                                    }
+                                }
+
                                 // actual faction creation
-                                Faction temp = new Faction(args[1], player.getName());
+                                Faction temp = new Faction(name, player.getName());
                                 factions.add(temp);
                                 factions.get(factions.size() - 1).addMember(player.getName());
                                 System.out.println("Faction " + args[1] + " created.");
