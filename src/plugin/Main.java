@@ -118,16 +118,7 @@ public class Main extends JavaPlugin {
                     sender.sendMessage("/mf join - Join a faction if you've been invited." + "\n");
                     sender.sendMessage("/mf kick - Kick a player from your faction (must be owner). " + "\n");
                     sender.sendMessage("/mf leave - Leave your current faction." + "\n");
-                    if (sender instanceof Player) {
-                        Player player = (Player) sender;
-                        if (player.hasPermission("medievalfactions.forcesave")) {
-                            player.sendMessage("/mf forcesave");
-                        }
-                        if (player.hasPermission("medievalfactions.forceload")) {
-                            player.sendMessage("/mf forceload");
-                        }
-                    }
-                    else {
+                    if (!(sender instanceof Player)) {
                         sender.sendMessage("/mf forcesave");
                         sender.sendMessage("/mf forceload");
                     }
@@ -273,22 +264,13 @@ public class Main extends JavaPlugin {
                             if (faction.isOwner(player.getName())) {
                                 if (args.length > 1) {
 
-                                    // membership check
-                                    boolean isAlreadyInFaction = false;
-                                    for (int i = 0; i < factions.size(); i++) {
-                                        if (faction.isMember(args[1])) {
-                                            isAlreadyInFaction = true;
-                                            break;
-                                        }
-                                    }
-
-                                    if (!isAlreadyInFaction) {
+                                    // invite if player isn't in a faction already
+                                    if (!(isInFaction(args[1]))) {
                                         faction.invite(args[1]);
                                         player.sendMessage("Invitation sent!");
                                         return true;
                                     }
                                     else {
-                                        // this branch isn't executing
                                         player.sendMessage("That player is already in a faction, sorry!");
                                         return false;
                                     }
@@ -312,8 +294,18 @@ public class Main extends JavaPlugin {
                             for (Faction faction : factions) {
                                 if (faction.getName().equalsIgnoreCase(args[1])) {
                                     if (faction.isInvited(player.getName())) {
-                                        faction.addMember(player.getName());
-                                        player.sendMessage("You joined the faction!");
+
+                                        // invite if player isn't in a faction already
+                                        if (!(isInFaction(args[1]))) {
+                                            faction.addMember(player.getName());
+                                            player.sendMessage("You joined the faction!");
+                                            return true;
+                                        }
+                                        else {
+                                            player.sendMessage("You're already in a faction, sorry!");
+                                            return false;
+                                        }
+
                                     } else {
                                         player.sendMessage("You're not invited to this faction!");
                                     }
@@ -397,6 +389,18 @@ public class Main extends JavaPlugin {
             }
         }
         return false;
+    }
+
+    boolean isInFaction(String playerName) {
+        // membership check
+        boolean isAlreadyInFaction = false;
+        for (int i = 0; i < factions.size(); i++) {
+            if (factions.get(i).isMember(playerName)) {
+                isAlreadyInFaction = true;
+                break;
+            }
+        }
+        return isAlreadyInFaction;
     }
 
 }
