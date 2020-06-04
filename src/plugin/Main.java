@@ -77,7 +77,17 @@ public class Main extends JavaPlugin {
                 String nextName = loadReader.nextLine();
                 Faction temp = new Faction(nextName); // uses server constructor, only temporary
                 temp.load(nextName + ".txt"); // provides owner field among other things
+
+                // existence check
+                boolean exists = false;
+                for (int i = 0; i < factions.size(); i++) {
+                    if (factions.get(i).getName().equalsIgnoreCase(temp.getName())) {
+                        factions.remove(i);
+                    }
+                }
+
                 factions.add(temp);
+
             }
 
             loadReader.close();
