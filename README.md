@@ -12,3 +12,4 @@ A minecraft plugin for players to use to organize politically.
 -  0.4 'Allow Faction Deletion' update
 -  0.5 'Help' update
 -  0.6 'More Commands' Update
+-  0.7 'Inviting/Kicking/Leaving' update
