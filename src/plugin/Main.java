@@ -229,8 +229,8 @@ public class Main extends JavaPlugin {
                         for (Faction faction : factions) {
                             if (faction.isMember(player.getName())) {
                                 ArrayList<String> members = faction.getMemberList();
+                                sender.sendMessage(ChatColor.BOLD + "" + ChatColor.AQUA + "Members of " + faction.getName() + "\n----------\n");
                                 for (String member : members) {
-                                    sender.sendMessage(ChatColor.BOLD + "" + ChatColor.AQUA + "Members of " + faction.getName() + "\n----------\n");
                                     player.sendMessage(ChatColor.AQUA + member + "\n");
                                 }
                                 sender.sendMessage(ChatColor.AQUA + "----------\n");
@@ -297,6 +297,12 @@ public class Main extends JavaPlugin {
                                     // invite if player isn't in a faction already
                                     if (!(isInFaction(args[1]))) {
                                         faction.invite(args[1]);
+                                        try {
+                                            Player target = Bukkit.getServer().getPlayer(args[1]);
+                                            target.sendMessage(ChatColor.GREEN + "You've been invited to " + faction.getName() + "! Type /mf join " + faction.getName() + " to join.");
+                                        } catch (Exception e) {
+
+                                        }
                                         player.sendMessage(ChatColor.GREEN + "Invitation sent!");
                                         return true;
                                     }
@@ -321,13 +327,29 @@ public class Main extends JavaPlugin {
                     if (sender instanceof Player) {
                         Player player = (Player) sender;
                         if (args.length > 1) {
+
+                            // creating name from arguments 1 to the last one
+                            String factionName = "";
+                            for (int i = 1; i < args.length; i++) {
+                                factionName = factionName + args[i];
+                                if (!(i == args.length - 1)) {
+                                    factionName = factionName + " ";
+                                }
+                            }
+
                             for (Faction faction : factions) {
-                                if (faction.getName().equalsIgnoreCase(args[1])) {
+                                if (faction.getName().equalsIgnoreCase(factionName)) {
                                     if (faction.isInvited(player.getName())) {
 
-                                        // invite if player isn't in a faction already
-                                        if (!(isInFaction(args[1]))) {
+                                        // join if player isn't in a faction already
+                                        if (!(isInFaction(player.getName()))) {
                                             faction.addMember(player.getName());
+                                            try {
+                                                Player target = Bukkit.getServer().getPlayer(faction.getOwner());
+                                                target.sendMessage(ChatColor.GREEN + args[1] + " has joined your faction.");
+                                            } catch (Exception e) {
+
+                                            }
                                             player.sendMessage(ChatColor.GREEN + "You joined the faction!");
                                             return true;
                                         }

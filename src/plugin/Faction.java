@@ -31,12 +31,6 @@ public class Faction {
 
     void invite(String playerName) {
         invited.add(playerName);
-        try {
-            Player target = Bukkit.getServer().getPlayer(playerName);
-            target.sendMessage(ChatColor.GREEN + name + "! Type /mf join " + name + " to join.");
-        } catch (Exception e) {
-
-        }
     }
 
     boolean isInvited(String playerName) {
