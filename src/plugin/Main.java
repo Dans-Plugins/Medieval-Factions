@@ -206,18 +206,26 @@ public class Main extends JavaPlugin {
                 if (args[0].equalsIgnoreCase("delete")) {
                     if (sender instanceof Player) {
                         Player player = (Player) sender;
+                        boolean owner = false;
                         for (int i = 0; i < factions.size(); i++) {
                             if (factions.get(i).isOwner(player.getName())) {
+                                owner = true;
                                 if (factions.get(i).getPopulation() == 1) {
                                     factions.remove(i);
                                     player.sendMessage(ChatColor.AQUA + "Faction successfully deleted.");
+                                    return true;
                                 }
                                 else {
                                     player.sendMessage(ChatColor.RED + "You need to kick all players before you can delete your faction.");
+                                    return false;
                                 }
                             }
                         }
 
+                        if (!owner) {
+                            player.sendMessage(ChatColor.RED + "You need to be the owner of a faction to use this command.");
+                            return false;
+                        }
                     }
 
                 }
@@ -380,8 +388,10 @@ public class Main extends JavaPlugin {
                     if (sender instanceof Player) {
                         Player player = (Player) sender;
                         if (args.length > 1) {
+                            boolean owner = false;
                             for (Faction faction : factions) {
                                 if (faction.isOwner(player.getName())) {
+                                    owner = true;
                                     if (faction.isMember(args[1])) {
                                         faction.removeMember(args[1]);
                                         player.sendMessage(ChatColor.AQUA + args[1] + " kicked.");
@@ -394,8 +404,15 @@ public class Main extends JavaPlugin {
                                     }
                                 }
                             }
+
+                            if (!owner) {
+                                player.sendMessage(ChatColor.RED + "You need to be the owner of a faction to use this command.");
+                                return false;
+                            }
+
                         } else {
                             player.sendMessage(ChatColor.RED + "Usage: /mf kick (player-name)");
+                            return false;
                         }
                     }
                 }
