@@ -424,13 +424,17 @@ public class Main extends JavaPlugin {
                                         // save
                                         saveFactionNames();
                                         saveFactions();
+
+                                        return true;
                                     }
                                     else {
                                         player.sendMessage("That player isn't in your faction!");
+                                        return false;
                                     }
                                 }
                                 else {
                                     player.sendMessage("Usage: /mf transfer (player-name)");
+                                    return false;
                                 }
                             }
                         }
