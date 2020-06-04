@@ -244,9 +244,9 @@ public class Main extends JavaPlugin {
                             if (faction.isOwner(player.getName())) {
                                 if (args.length > 1) {
 
-                                    // set args 1-args.length-1 to be the description with spaces put in between
+                                    // set arg[1] - args[args.length-1] to be the description with spaces put in between
                                     String newDesc = "";
-                                    for (int i = 0; i < args.length; i++) {
+                                    for (int i = 1; i < args.length; i++) {
                                         newDesc = newDesc + args[i];
                                         if (!(i == args.length - 1)) {
                                             newDesc = newDesc + " ";
