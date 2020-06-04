@@ -15,3 +15,4 @@ A minecraft plugin for players to use to organize politically.
 -  0.7 'Inviting/Kicking/Leaving' update
 -  0.8 'Manual Saving/Loading' update
 -  0.9 'Ownership Transfer' update
+-  1.0 'Message Improvements' update
