@@ -108,7 +108,7 @@ public class Main extends JavaPlugin {
 
                 // help command
                 if (args[0].equalsIgnoreCase("help")) {
-                    sender.sendMessage(ChatColor.BOLD + "" + ChatColor.AQUA + "Medieval Factions Commands");
+                    sender.sendMessage(ChatColor.BOLD + "" + ChatColor.AQUA + "Medieval Factions Commands" + "\n----------\n");
                     sender.sendMessage(ChatColor.AQUA + "/mf help - Show list of useful commands." + "\n");
                     sender.sendMessage(ChatColor.AQUA + "/mf create - Create a new faction." + "\n");
                     sender.sendMessage(ChatColor.AQUA + "/mf list - List all factions on the server." + "\n");
@@ -193,6 +193,7 @@ public class Main extends JavaPlugin {
                     }
                     // factions exist, list them
                     else {
+                        sender.sendMessage(ChatColor.BOLD + "" + ChatColor.AQUA + "Factions" + "\n----------\n");
                         for (Faction faction : factions) {
                             sender.sendMessage(ChatColor.AQUA + faction.getName());
                         }
@@ -227,7 +228,7 @@ public class Main extends JavaPlugin {
                             if (faction.isMember(player.getName())) {
                                 ArrayList<String> members = faction.getMemberList();
                                 for (String member : members) {
-                                    sender.sendMessage(ChatColor.BOLD + "" + ChatColor.AQUA + "Members of " + faction.getName());
+                                    sender.sendMessage(ChatColor.BOLD + "" + ChatColor.AQUA + "Members of " + faction.getName() + "\n----------\n");
                                     player.sendMessage(ChatColor.AQUA + member + "\n");
                                 }
                             }
@@ -241,7 +242,7 @@ public class Main extends JavaPlugin {
                         Player player = (Player) sender;
                         for (Faction faction : factions) {
                             if (faction.isMember(player.getName())) {
-                                sender.sendMessage(ChatColor.BOLD + "" + ChatColor.AQUA + faction.getName() + "Info");
+                                sender.sendMessage(ChatColor.BOLD + "" + ChatColor.AQUA + faction.getName() + "Info" + "\n----------\n");
                                 player.sendMessage(ChatColor.AQUA + "Name: " + faction.getName() + "\n");
                                 player.sendMessage(ChatColor.AQUA + "Owner: " + faction.getOwner() + "\n");
                                 player.sendMessage(ChatColor.AQUA + "Description: " + faction.getDescription() + "\n");
