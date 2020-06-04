@@ -312,8 +312,13 @@ public class Main extends JavaPlugin {
                                         if (faction.isMember(args[1])) {
                                             faction.removeMember(args[1]);
                                             player.sendMessage(args[1] + " kicked.");
-                                            Player target = Bukkit.getPlayer(args[1]);
-                                            target.sendMessage("You have been kicked from your faction by " + player.getName() + ".");
+                                            try {
+                                                Player target = Bukkit.getServer().getPlayer(args[1]);
+                                                target.sendMessage("You have been kicked from your faction by " + player.getName() + ".");
+                                            }
+                                            catch (Exception e) {
+
+                                            }
                                         }
                                     }
                                     else {
