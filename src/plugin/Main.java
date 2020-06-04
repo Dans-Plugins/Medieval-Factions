@@ -118,6 +118,7 @@ public class Main extends JavaPlugin {
                     sender.sendMessage("/mf join - Join a faction if you've been invited." + "\n");
                     sender.sendMessage("/mf kick - Kick a player from your faction (must be owner). " + "\n");
                     sender.sendMessage("/mf leave - Leave your current faction." + "\n");
+                    sender.sendMessage("/mf transfer - Transfer ownership of your faction to another player (must be owner).");
                     if (!(sender instanceof Player)) {
                         sender.sendMessage("/mf forcesave - Force the plugin to save.");
                         sender.sendMessage("/mf forceload - Force the plugin to load.");
