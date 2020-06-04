@@ -260,8 +260,10 @@ public class Main extends JavaPlugin {
                 if (args[0].equalsIgnoreCase("desc")) {
                     if (sender instanceof Player) {
                         Player player = (Player) sender;
+                        boolean owner = false;
                         for (Faction faction : factions) {
                             if (faction.isOwner(player.getName())) {
+                                owner = true;
                                 if (args.length > 1) {
 
                                     // set arg[1] - args[args.length-1] to be the description with spaces put in between
@@ -282,6 +284,9 @@ public class Main extends JavaPlugin {
                                     return false;
                                 }
                             }
+                        }
+                        if (owner == false) {
+                            player.sendMessage(ChatColor.RED + "You need to be the owner of a faction to use this command.");
                         }
                     }
                 }
