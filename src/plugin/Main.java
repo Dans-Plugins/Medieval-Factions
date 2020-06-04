@@ -251,14 +251,31 @@ public class Main extends JavaPlugin {
                 if (args[0].equalsIgnoreCase("info")) {
                     if (sender instanceof Player) {
                         Player player = (Player) sender;
-                        for (Faction faction : factions) {
-                            if (faction.isMember(player.getName())) {
-                                sender.sendMessage(ChatColor.BOLD + "" + ChatColor.AQUA + faction.getName() + " Faction Info" + "\n----------\n");
-                                player.sendMessage(ChatColor.AQUA + "Name: " + faction.getName() + "\n");
-                                player.sendMessage(ChatColor.AQUA + "Owner: " + faction.getOwner() + "\n");
-                                player.sendMessage(ChatColor.AQUA + "Description: " + faction.getDescription() + "\n");
-                                player.sendMessage(ChatColor.AQUA + "Population: " + faction.getMemberList().size() + "\n");
-                                player.sendMessage(ChatColor.AQUA + "----------\n");
+                        if (args.length == 1) {
+                            for (Faction faction : factions) {
+                                if (faction.isMember(player.getName())) {
+                                    sendFactionInfo(player, faction);
+                                }
+                            }
+                        }
+                        else {
+                            // creating name from arguments 1 to the last one
+                            String name = "";
+                            for (int i = 1; i < args.length; i++) {
+                                name = name + args[i];
+                                if (!(i == args.length - 1)) {
+                                    name = name + " ";
+                                }
+                            }
+                            boolean exists = false;
+                            for (Faction faction : factions) {
+                                if (faction.getName().equals(name)) {
+                                    exists = true;
+                                    sendFactionInfo(player, faction);
+                                }
+                            }
+                            if (!exists) {
+                                player.sendMessage(ChatColor.RED + "That faction wasn't found!");
                             }
                         }
                     }
@@ -521,6 +538,15 @@ public class Main extends JavaPlugin {
             }
         }
         return isAlreadyInFaction;
+    }
+
+    void sendFactionInfo(Player player, Faction faction) {
+        player.sendMessage(ChatColor.BOLD + "" + ChatColor.AQUA + faction.getName() + " Faction Info" + "\n----------\n");
+        player.sendMessage(ChatColor.AQUA + "Name: " + faction.getName() + "\n");
+        player.sendMessage(ChatColor.AQUA + "Owner: " + faction.getOwner() + "\n");
+        player.sendMessage(ChatColor.AQUA + "Description: " + faction.getDescription() + "\n");
+        player.sendMessage(ChatColor.AQUA + "Population: " + faction.getMemberList().size() + "\n");
+        player.sendMessage(ChatColor.AQUA + "----------\n");
     }
 
 }
