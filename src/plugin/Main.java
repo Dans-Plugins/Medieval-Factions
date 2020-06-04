@@ -119,8 +119,8 @@ public class Main extends JavaPlugin {
                     sender.sendMessage("/mf kick - Kick a player from your faction (must be owner). " + "\n");
                     sender.sendMessage("/mf leave - Leave your current faction." + "\n");
                     if (!(sender instanceof Player)) {
-                        sender.sendMessage("/mf forcesave");
-                        sender.sendMessage("/mf forceload");
+                        sender.sendMessage("/mf forcesave - Force the plugin to save.");
+                        sender.sendMessage("/mf forceload - Force the plugin to load.");
                     }
                 }
 
@@ -151,8 +151,18 @@ public class Main extends JavaPlugin {
                             }
 
                             if (!factionExists) {
+
+                                // creating name from arguments 1 to the last one
+                                String name = "";
+                                for (int i = 1; i < args.length; i++) {
+                                    name = name + args[i];
+                                    if (!(i == args.length - 1)) {
+                                        name = name + " ";
+                                    }
+                                }
+
                                 // actual faction creation
-                                Faction temp = new Faction(args[1], player.getName());
+                                Faction temp = new Faction(name, player.getName());
                                 factions.add(temp);
                                 factions.get(factions.size() - 1).addMember(player.getName());
                                 System.out.println("Faction " + args[1] + " created.");
@@ -243,12 +253,22 @@ public class Main extends JavaPlugin {
                         for (Faction faction : factions) {
                             if (faction.isOwner(player.getName())) {
                                 if (args.length > 1) {
-                                    faction.setDescription(args[1]);
+
+                                    // set arg[1] - args[args.length-1] to be the description with spaces put in between
+                                    String newDesc = "";
+                                    for (int i = 1; i < args.length; i++) {
+                                        newDesc = newDesc + args[i];
+                                        if (!(i == args.length - 1)) {
+                                            newDesc = newDesc + " ";
+                                        }
+                                    }
+
+                                    faction.setDescription(newDesc);
                                     player.sendMessage("Description set!");
                                     return true;
                                 }
                                 else {
-                                    player.sendMessage("Usage: /mf desc \"this is the description\" [quotes required]");
+                                    player.sendMessage("Usage: /mf desc (description)");
                                     return false;
                                 }
                             }
