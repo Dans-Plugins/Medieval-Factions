@@ -318,8 +318,6 @@ public class Main extends JavaPlugin {
 
                                         }
                                     }
-                                } else {
-                                    player.sendMessage("Sorry! You must be the owner to kick people.");
                                 }
                             }
                         } else {
@@ -332,14 +330,14 @@ public class Main extends JavaPlugin {
                 if (args[0].equalsIgnoreCase("leave")) {
                     if (sender instanceof Player) {
                         Player player = (Player) sender;
-                        for (Faction faction : factions) {
-                            if (faction.isMember(player.getName())) {
-                                if (faction.isOwner(player.getName())) {
+                        for (int i = 0; i < factions.size(); i++) {
+                            if (factions.get(i).isMember(player.getName())) {
+                                if (factions.get(i).isOwner(player.getName())) {
                                     // is faction empty?
-                                    if (faction.getPopulation() == 1) {
+                                    if (factions.get(i).getPopulation() == 1) {
                                         // able to leave
-                                        faction.removeMember(player.getName());
-                                        factions.remove(faction);
+                                        factions.get(i).removeMember(player.getName());
+                                        factions.remove(i);
                                         player.sendMessage("You left your faction. It was deleted since no one else was a member.");
                                     }
                                     else {
@@ -348,7 +346,7 @@ public class Main extends JavaPlugin {
                                 }
                                 else {
                                     // able to leave
-                                    faction.removeMember(player.getName());
+                                    factions.get(i).removeMember(player.getName());
                                     player.sendMessage("You left your faction.");
                                 }
                             }
