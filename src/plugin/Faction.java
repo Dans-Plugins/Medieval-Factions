@@ -1,6 +1,7 @@
 package plugin;
 
 import org.bukkit.Bukkit;
+import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 
 import java.io.File;
@@ -32,7 +33,7 @@ public class Faction {
         invited.add(playerName);
         try {
             Player target = Bukkit.getServer().getPlayer(playerName);
-            target.sendMessage("You've been invited to the faction " + name + "! Type /mf join " + name + " to join.");
+            target.sendMessage(ChatColor.GREEN + name + "! Type /mf join " + name + " to join.");
         } catch (Exception e) {
 
         }
