@@ -285,7 +285,7 @@ public class Main extends JavaPlugin {
                                 }
                             }
                         }
-                        if (owner == false) {
+                        if (!owner) {
                             player.sendMessage(ChatColor.RED + "You need to be the owner of a faction to use this command.");
                         }
                     }
