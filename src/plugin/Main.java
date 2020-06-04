@@ -273,13 +273,13 @@ public class Main extends JavaPlugin {
                                         }
                                     }
 
+                                    // invite if player isn't in a faction already
                                     if (!isAlreadyInFaction) {
                                         faction.invite(args[1]);
                                         player.sendMessage("Invitation sent!");
                                         return true;
                                     }
                                     else {
-                                        // this branch isn't executing
                                         player.sendMessage("That player is already in a faction, sorry!");
                                         return false;
                                     }
@@ -302,7 +302,7 @@ public class Main extends JavaPlugin {
                         if (args.length > 1) {
                             for (Faction faction : factions) {
                                 if (faction.getName().equalsIgnoreCase(args[1])) {
-                                    if (faction.isInvited(player.getName())) {
+                                    if (faction.isInvited(player.getName())) { // can't be invited unless you're not in a faction
                                         faction.addMember(player.getName());
                                         player.sendMessage("You joined the faction!");
                                     } else {
