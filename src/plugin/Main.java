@@ -264,17 +264,8 @@ public class Main extends JavaPlugin {
                             if (faction.isOwner(player.getName())) {
                                 if (args.length > 1) {
 
-                                    // membership check
-                                    boolean isAlreadyInFaction = false;
-                                    for (int i = 0; i < factions.size(); i++) {
-                                        if (factions.get(i).isMember(args[1])) {
-                                            isAlreadyInFaction = true;
-                                            break;
-                                        }
-                                    }
-
                                     // invite if player isn't in a faction already
-                                    if (!isAlreadyInFaction) {
+                                    if (!(isInFaction(args[1]))) {
                                         faction.invite(args[1]);
                                         player.sendMessage("Invitation sent!");
                                         return true;
@@ -302,9 +293,19 @@ public class Main extends JavaPlugin {
                         if (args.length > 1) {
                             for (Faction faction : factions) {
                                 if (faction.getName().equalsIgnoreCase(args[1])) {
-                                    if (faction.isInvited(player.getName())) { // can't be invited unless you're not in a faction
-                                        faction.addMember(player.getName());
-                                        player.sendMessage("You joined the faction!");
+                                    if (faction.isInvited(player.getName())) {
+
+                                        // invite if player isn't in a faction already
+                                        if (!(isInFaction(args[1]))) {
+                                            faction.addMember(player.getName());
+                                            player.sendMessage("You joined the faction!");
+                                            return true;
+                                        }
+                                        else {
+                                            player.sendMessage("You're already in a faction, sorry!");
+                                            return false;
+                                        }
+
                                     } else {
                                         player.sendMessage("You're not invited to this faction!");
                                     }
@@ -388,6 +389,18 @@ public class Main extends JavaPlugin {
             }
         }
         return false;
+    }
+
+    boolean isInFaction(String playerName) {
+        // membership check
+        boolean isAlreadyInFaction = false;
+        for (int i = 0; i < factions.size(); i++) {
+            if (factions.get(i).isMember(playerName) {
+                isAlreadyInFaction = true;
+                break;
+            }
+        }
+        return isAlreadyInFaction;
     }
 
 }
