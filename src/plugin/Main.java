@@ -370,18 +370,7 @@ public class Main extends JavaPlugin {
 
                 // forcesave command
                 if (args[0].equalsIgnoreCase("forcesave")) {
-                    if (sender instanceof Player) {
-                        Player player = (Player) sender;
-                        if (player.hasPermission("medievalfactions.forcesave")) {
-                            player.sendMessage("Medieval Factions plugin is saving...");
-                            saveFactionNames();
-                            saveFactions();
-                        }
-                        else {
-                            player.sendMessage("You don't have permission to use this command!");
-                        }
-                    }
-                    else {
+                    if (!(sender instanceof Player)) {
                         System.out.println("Medieval Factions plugin is saving...");
                         saveFactionNames();
                         saveFactions();
@@ -390,17 +379,7 @@ public class Main extends JavaPlugin {
 
                 // forceload command
                 if (args[0].equalsIgnoreCase("forceload")) {
-                    if (sender instanceof Player) {
-                        Player player = (Player) sender;
-                        if (player.hasPermission("medievalfactions.forceload")) {
-                            player.sendMessage("Medieval Factions plugin is loading...");
-                            loadFactions();
-                        }
-                        else {
-                            player.sendMessage("You don't have permission to use this command!");
-                        }
-                    }
-                    else {
+                    if (!(sender instanceof Player)) {
                         System.out.println("Medieval Factions plugin is loading...");
                         loadFactions();
                     }
