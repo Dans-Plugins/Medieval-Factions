@@ -125,7 +125,7 @@ public class Main extends JavaPlugin {
                         sender.sendMessage(ChatColor.AQUA + "/mf forcesave - Force the plugin to save.");
                         sender.sendMessage(ChatColor.AQUA + "/mf forceload - Force the plugin to load.");
                     }
-                    sender.sendMessage("----------\n");
+                    sender.sendMessage(ChatColor.AQUA + "----------\n");
                 }
 
                 // create command
@@ -198,7 +198,7 @@ public class Main extends JavaPlugin {
                         for (Faction faction : factions) {
                             sender.sendMessage(ChatColor.AQUA + faction.getName());
                         }
-                        sender.sendMessage("----------\n");
+                        sender.sendMessage(ChatColor.AQUA + "----------\n");
                     }
                 }
 
@@ -233,7 +233,7 @@ public class Main extends JavaPlugin {
                                     sender.sendMessage(ChatColor.BOLD + "" + ChatColor.AQUA + "Members of " + faction.getName() + "\n----------\n");
                                     player.sendMessage(ChatColor.AQUA + member + "\n");
                                 }
-                                sender.sendMessage("----------\n");
+                                sender.sendMessage(ChatColor.AQUA + "----------\n");
                             }
                         }
                     }
@@ -250,7 +250,7 @@ public class Main extends JavaPlugin {
                                 player.sendMessage(ChatColor.AQUA + "Owner: " + faction.getOwner() + "\n");
                                 player.sendMessage(ChatColor.AQUA + "Description: " + faction.getDescription() + "\n");
                                 player.sendMessage(ChatColor.AQUA + "Population: " + faction.getMemberList().size() + "\n");
-                                player.sendMessage("----------\n");
+                                player.sendMessage(ChatColor.AQUA + "----------\n");
                             }
                         }
                     }
