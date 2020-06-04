@@ -119,8 +119,8 @@ public class Main extends JavaPlugin {
                     sender.sendMessage("/mf kick - Kick a player from your faction (must be owner). " + "\n");
                     sender.sendMessage("/mf leave - Leave your current faction." + "\n");
                     if (!(sender instanceof Player)) {
-                        sender.sendMessage("/mf forcesave");
-                        sender.sendMessage("/mf forceload");
+                        sender.sendMessage("/mf forcesave - Force the plugin to save.");
+                        sender.sendMessage("/mf forceload - Force the plugin to load.");
                     }
                 }
 
