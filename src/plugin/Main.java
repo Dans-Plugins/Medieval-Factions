@@ -406,6 +406,35 @@ public class Main extends JavaPlugin {
                         loadFactions();
                     }
                 }
+
+                // transfer command
+                if (args[0].equalsIgnoreCase("transfer")) {
+                    if (sender instanceof Player) {
+                        Player player = (Player) sender;
+                        for (Faction faction : factions) {
+                            if (faction.isOwner(player.getName())) {
+                                if (args.length > 1) {
+                                    if (faction.isMember(args[1])) {
+
+                                        // set owner
+                                        faction.setOwner(args[1]);
+                                        player.sendMessage("Ownership transferred to " + args[1]);
+
+                                        // save
+                                        saveFactionNames();
+                                        saveFactions();
+                                    }
+                                    else {
+                                        player.sendMessage("That player isn't in your faction!");
+                                    }
+                                }
+                                else {
+                                    player.sendMessage("Usage: /mf transfer (player-name)");
+                                }
+                            }
+                        }
+                    }
+                }
             }
         }
         return false;
