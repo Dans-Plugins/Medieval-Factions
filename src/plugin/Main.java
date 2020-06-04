@@ -393,14 +393,20 @@ public class Main extends JavaPlugin {
                                 if (faction.isOwner(player.getName())) {
                                     owner = true;
                                     if (faction.isMember(args[1])) {
-                                        faction.removeMember(args[1]);
-                                        player.sendMessage(ChatColor.AQUA + args[1] + " kicked.");
-                                        try {
-                                            Player target = Bukkit.getServer().getPlayer(args[1]);
-                                            target.sendMessage(ChatColor.RED + "You have been kicked from your faction by " + player.getName() + ".");
-                                        } catch (Exception e) {
+                                        if (!(args[1].equalsIgnoreCase(player.getName()))) {
+                                            faction.removeMember(args[1]);
+                                            player.sendMessage(ChatColor.AQUA + args[1] + " kicked.");
+                                            try {
+                                                Player target = Bukkit.getServer().getPlayer(args[1]);
+                                                target.sendMessage(ChatColor.RED + "You have been kicked from your faction by " + player.getName() + ".");
+                                            } catch (Exception e) {
 
+                                            }
                                         }
+                                        else {
+                                            player.sendMessage(ChatColor.RED + "You can't kick yourself.");
+                                        }
+
                                     }
                                 }
                             }
