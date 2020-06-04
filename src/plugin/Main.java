@@ -395,7 +395,7 @@ public class Main extends JavaPlugin {
         // membership check
         boolean isAlreadyInFaction = false;
         for (int i = 0; i < factions.size(); i++) {
-            if (factions.get(i).isMember(playerName) {
+            if (factions.get(i).isMember(playerName)) {
                 isAlreadyInFaction = true;
                 break;
             }
