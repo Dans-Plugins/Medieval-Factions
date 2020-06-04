@@ -247,9 +247,27 @@ public class Main extends JavaPlugin {
                         for (Faction faction : factions) {
                             if (faction.isOwner(player.getName())) {
                                 if (args.length > 1) {
-                                    faction.invite(args[1]);
-                                    player.sendMessage("Invitation sent!");
-                                    return true;
+
+                                    // membership check
+                                    boolean isAlreadyInFaction = false;
+                                    for (int i = 0; i < factions.size(); i++) {
+                                        if (faction.isMember(args[1])) {
+                                            isAlreadyInFaction = true;
+                                            break;
+                                        }
+                                    }
+
+                                    if (!isAlreadyInFaction) {
+                                        faction.invite(args[1]);
+                                        player.sendMessage("Invitation sent!");
+                                        return true;
+                                    }
+                                    else {
+                                        player.sendMessage("That player is already in a faction, sorry!");
+                                        return false;
+                                    }
+
+
                                 }
                                 else {
                                     player.sendMessage("Usage: /mf invite (player-name)");
