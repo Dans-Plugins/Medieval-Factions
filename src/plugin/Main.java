@@ -106,6 +106,8 @@ public class Main extends JavaPlugin {
                     sender.sendMessage("/mf desc - Set your faction description." + "\n");
                     sender.sendMessage("/mf invite - Invite a player to your faction." + "\n");
                     sender.sendMessage("/mf join - Join a faction if you've been invited." + "\n");
+                    sender.sendMessage("/mf kick - Kick a player from your faction (must be owner). " + "\n");
+                    sender.sendMessage("/mf leave - Leave your current faction." + "\n");
                 }
 
                 // create command
@@ -321,6 +323,34 @@ public class Main extends JavaPlugin {
                             }
                             else {
                                 player.sendMessage("Usage: /mf kick (player-name)");
+                            }
+                        }
+                    }
+
+                    // leave commmand
+                    if (args[0].equalsIgnoreCase("leave")) {
+                        if (sender instanceof Player) {
+                            Player player = (Player) sender;
+                            for (Faction faction : factions) {
+                                if (faction.isMember(player.getName())) {
+                                    if (faction.isOwner(player.getName())) {
+                                        // is faction empty?
+                                        if (faction.getPopulation() == 1) {
+                                            // able to leave
+                                            faction.removeMember(player.getName());
+                                            factions.remove(faction);
+                                            player.sendMessage("You left your faction. It was deleted since no one else was a member.");
+                                        }
+                                        else {
+                                            player.sendMessage("Sorry! You must transfer ownership or kick everyone in your faction to leave.");
+                                        }
+                                    }
+                                    else {
+                                        // able to leave
+                                        faction.removeMember(player.getName());
+                                        player.sendMessage("You left your faction.");
+                                    }
+                                }
                             }
                         }
                     }
