@@ -1,6 +1,7 @@
 package plugin;
 
 import org.bukkit.Bukkit;
+import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
@@ -107,21 +108,21 @@ public class Main extends JavaPlugin {
 
                 // help command
                 if (args[0].equalsIgnoreCase("help")) {
-                    sender.sendMessage("/mf help - Show list of useful commands." + "\n");
-                    sender.sendMessage("/mf create - Create a new faction." + "\n");
-                    sender.sendMessage("/mf list - List all factions on the server." + "\n");
-                    sender.sendMessage("/mf delete - Delete your faction (must be owner)." + "\n");
-                    sender.sendMessage("/mf members - List the members of your faction." + "\n");
-                    sender.sendMessage("/mf info - See your faction information." + "\n");
-                    sender.sendMessage("/mf desc - Set your faction description." + "\n");
-                    sender.sendMessage("/mf invite - Invite a player to your faction." + "\n");
-                    sender.sendMessage("/mf join - Join a faction if you've been invited." + "\n");
-                    sender.sendMessage("/mf kick - Kick a player from your faction (must be owner). " + "\n");
-                    sender.sendMessage("/mf leave - Leave your current faction." + "\n");
-                    sender.sendMessage("/mf transfer - Transfer ownership of your faction to another player (must be owner).");
+                    sender.sendMessage(ChatColor.AQUA + "/mf help - Show list of useful commands." + "\n");
+                    sender.sendMessage(ChatColor.AQUA + "/mf create - Create a new faction." + "\n");
+                    sender.sendMessage(ChatColor.AQUA + "/mf list - List all factions on the server." + "\n");
+                    sender.sendMessage(ChatColor.AQUA + "/mf delete - Delete your faction (must be owner)." + "\n");
+                    sender.sendMessage(ChatColor.AQUA + "/mf members - List the members of your faction." + "\n");
+                    sender.sendMessage(ChatColor.AQUA + "/mf info - See your faction information." + "\n");
+                    sender.sendMessage(ChatColor.AQUA + "/mf desc - Set your faction description." + "\n");
+                    sender.sendMessage(ChatColor.AQUA + "/mf invite - Invite a player to your faction." + "\n");
+                    sender.sendMessage(ChatColor.AQUA + "/mf join - Join a faction if you've been invited." + "\n");
+                    sender.sendMessage(ChatColor.AQUA + "/mf kick - Kick a player from your faction (must be owner). " + "\n");
+                    sender.sendMessage(ChatColor.AQUA + "/mf leave - Leave your current faction." + "\n");
+                    sender.sendMessage(ChatColor.AQUA + "/mf transfer - Transfer ownership of your faction to another player (must be owner).");
                     if (!(sender instanceof Player)) {
-                        sender.sendMessage("/mf forcesave - Force the plugin to save.");
-                        sender.sendMessage("/mf forceload - Force the plugin to load.");
+                        sender.sendMessage(ChatColor.AQUA + "/mf forcesave - Force the plugin to save.");
+                        sender.sendMessage(ChatColor.AQUA + "/mf forceload - Force the plugin to load.");
                     }
                 }
 
@@ -135,7 +136,7 @@ public class Main extends JavaPlugin {
                         // player membership check
                         for (Faction faction : factions) {
                             if (faction.isMember(player.getName())) {
-                                player.sendMessage("Sorry, you're already in a faction. Leave if you want to create a different one.");
+                                player.sendMessage(ChatColor.RED + "Sorry, you're already in a faction. Leave if you want to create a different one.");
                                 return false;
                             }
                         }
@@ -167,17 +168,17 @@ public class Main extends JavaPlugin {
                                 factions.add(temp);
                                 factions.get(factions.size() - 1).addMember(player.getName());
                                 System.out.println("Faction " + args[1] + " created.");
-                                player.sendMessage("Faction " + args[1] + " created.");
+                                player.sendMessage(ChatColor.AQUA + "Faction " + args[1] + " created.");
                                 return true;
                             }
                             else {
-                                player.sendMessage("Sorry! That faction already exists.");
+                                player.sendMessage(ChatColor.RED + "Sorry! That faction already exists.");
                                 return false;
                             }
                         } else {
 
                             // wrong usage
-                            sender.sendMessage("Usage: /mf create [faction-name]");
+                            sender.sendMessage(ChatColor.RED + "Usage: /mf create [faction-name]");
                             return false;
                         }
                     }
@@ -187,12 +188,12 @@ public class Main extends JavaPlugin {
                 if  (args[0].equalsIgnoreCase("list")) {
                     // if there aren't any factions
                     if (factions.size() == 0) {
-                        sender.sendMessage("There are currently no factions.");
+                        sender.sendMessage(ChatColor.AQUA + "There are currently no factions.");
                     }
                     // factions exist, list them
                     else {
                         for (Faction faction : factions) {
-                            sender.sendMessage(faction.getName());
+                            sender.sendMessage(ChatColor.AQUA + faction.getName());
                         }
                     }
                 }
@@ -205,10 +206,10 @@ public class Main extends JavaPlugin {
                             if (factions.get(i).isOwner(player.getName())) {
                                 if (factions.get(i).getPopulation() == 1) {
                                     factions.remove(i);
-                                    player.sendMessage("Faction successfully deleted.");
+                                    player.sendMessage(ChatColor.AQUA + "Faction successfully deleted.");
                                 }
                                 else {
-                                    player.sendMessage("You need to kick all players before you can delete your faction.");
+                                    player.sendMessage(ChatColor.RED + "You need to kick all players before you can delete your faction.");
                                 }
                             }
                         }
@@ -225,7 +226,7 @@ public class Main extends JavaPlugin {
                             if (faction.isMember(player.getName())) {
                                 ArrayList<String> members = faction.getMemberList();
                                 for (String member : members) {
-                                    player.sendMessage(member + "\n");
+                                    player.sendMessage(ChatColor.AQUA + member + "\n");
                                 }
                             }
                         }
@@ -238,10 +239,10 @@ public class Main extends JavaPlugin {
                         Player player = (Player) sender;
                         for (Faction faction : factions) {
                             if (faction.isMember(player.getName())) {
-                                player.sendMessage("Name: " + faction.getName() + "\n");
-                                player.sendMessage("Owner: " + faction.getOwner() + "\n");
-                                player.sendMessage("Description: " + faction.getDescription() + "\n");
-                                player.sendMessage("Population: " + faction.getMemberList().size() + "\n");
+                                player.sendMessage(ChatColor.AQUA + "Name: " + faction.getName() + "\n");
+                                player.sendMessage(ChatColor.AQUA + "Owner: " + faction.getOwner() + "\n");
+                                player.sendMessage(ChatColor.AQUA + "Description: " + faction.getDescription() + "\n");
+                                player.sendMessage(ChatColor.AQUA + "Population: " + faction.getMemberList().size() + "\n");
                             }
                         }
                     }
@@ -265,11 +266,11 @@ public class Main extends JavaPlugin {
                                     }
 
                                     faction.setDescription(newDesc);
-                                    player.sendMessage("Description set!");
+                                    player.sendMessage(ChatColor.AQUA + "Description set!");
                                     return true;
                                 }
                                 else {
-                                    player.sendMessage("Usage: /mf desc (description)");
+                                    player.sendMessage(ChatColor.RED + "Usage: /mf desc (description)");
                                     return false;
                                 }
                             }
@@ -288,18 +289,18 @@ public class Main extends JavaPlugin {
                                     // invite if player isn't in a faction already
                                     if (!(isInFaction(args[1]))) {
                                         faction.invite(args[1]);
-                                        player.sendMessage("Invitation sent!");
+                                        player.sendMessage(ChatColor.GREEN + "Invitation sent!");
                                         return true;
                                     }
                                     else {
-                                        player.sendMessage("That player is already in a faction, sorry!");
+                                        player.sendMessage(ChatColor.RED + "That player is already in a faction, sorry!");
                                         return false;
                                     }
 
 
                                 }
                                 else {
-                                    player.sendMessage("Usage: /mf invite (player-name)");
+                                    player.sendMessage(ChatColor.RED + "Usage: /mf invite (player-name)");
                                     return false;
                                 }
                             }
@@ -319,21 +320,21 @@ public class Main extends JavaPlugin {
                                         // invite if player isn't in a faction already
                                         if (!(isInFaction(args[1]))) {
                                             faction.addMember(player.getName());
-                                            player.sendMessage("You joined the faction!");
+                                            player.sendMessage(ChatColor.GREEN + "You joined the faction!");
                                             return true;
                                         }
                                         else {
-                                            player.sendMessage("You're already in a faction, sorry!");
+                                            player.sendMessage(ChatColor.RED + "You're already in a faction, sorry!");
                                             return false;
                                         }
 
                                     } else {
-                                        player.sendMessage("You're not invited to this faction!");
+                                        player.sendMessage(ChatColor.RED + "You're not invited to this faction!");
                                     }
                                 }
                             }
                         } else {
-                            player.sendMessage("Usage: /mf join (faction-name)");
+                            player.sendMessage(ChatColor.RED + "Usage: /mf join (faction-name)");
                         }
                     }
                 }
@@ -347,10 +348,10 @@ public class Main extends JavaPlugin {
                                 if (faction.isOwner(player.getName())) {
                                     if (faction.isMember(args[1])) {
                                         faction.removeMember(args[1]);
-                                        player.sendMessage(args[1] + " kicked.");
+                                        player.sendMessage(ChatColor.AQUA + args[1] + " kicked.");
                                         try {
                                             Player target = Bukkit.getServer().getPlayer(args[1]);
-                                            target.sendMessage("You have been kicked from your faction by " + player.getName() + ".");
+                                            target.sendMessage(ChatColor.RED + "You have been kicked from your faction by " + player.getName() + ".");
                                         } catch (Exception e) {
 
                                         }
@@ -358,7 +359,7 @@ public class Main extends JavaPlugin {
                                 }
                             }
                         } else {
-                            player.sendMessage("Usage: /mf kick (player-name)");
+                            player.sendMessage(ChatColor.RED + "Usage: /mf kick (player-name)");
                         }
                     }
                 }
@@ -375,16 +376,16 @@ public class Main extends JavaPlugin {
                                         // able to leave
                                         factions.get(i).removeMember(player.getName());
                                         factions.remove(i);
-                                        player.sendMessage("You left your faction. It was deleted since no one else was a member.");
+                                        player.sendMessage(ChatColor.AQUA + "You left your faction. It was deleted since no one else was a member.");
                                     }
                                     else {
-                                        player.sendMessage("Sorry! You must transfer ownership or kick everyone in your faction to leave.");
+                                        player.sendMessage(ChatColor.RED + "Sorry! You must transfer ownership or kick everyone in your faction to leave.");
                                     }
                                 }
                                 else {
                                     // able to leave
                                     factions.get(i).removeMember(player.getName());
-                                    player.sendMessage("You left your faction.");
+                                    player.sendMessage(ChatColor.AQUA + "You left your faction.");
                                 }
                             }
                         }
@@ -419,7 +420,7 @@ public class Main extends JavaPlugin {
 
                                         // set owner
                                         faction.setOwner(args[1]);
-                                        player.sendMessage("Ownership transferred to " + args[1]);
+                                        player.sendMessage(ChatColor.AQUA + "Ownership transferred to " + args[1]);
 
                                         // save
                                         saveFactionNames();
@@ -428,12 +429,12 @@ public class Main extends JavaPlugin {
                                         return true;
                                     }
                                     else {
-                                        player.sendMessage("That player isn't in your faction!");
+                                        player.sendMessage(ChatColor.RED + "That player isn't in your faction!");
                                         return false;
                                     }
                                 }
                                 else {
-                                    player.sendMessage("Usage: /mf transfer (player-name)");
+                                    player.sendMessage(ChatColor.RED + "Usage: /mf transfer (player-name)");
                                     return false;
                                 }
                             }
