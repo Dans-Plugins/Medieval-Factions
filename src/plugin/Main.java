@@ -466,8 +466,10 @@ public class Main extends JavaPlugin {
                 if (args[0].equalsIgnoreCase("transfer")) {
                     if (sender instanceof Player) {
                         Player player = (Player) sender;
+                        boolean owner = false;
                         for (Faction faction : factions) {
                             if (faction.isOwner(player.getName())) {
+                                owner = true;
                                 if (args.length > 1) {
                                     if (faction.isMember(args[1])) {
 
@@ -491,6 +493,10 @@ public class Main extends JavaPlugin {
                                     return false;
                                 }
                             }
+                        }
+                        if (!owner) {
+                            player.sendMessage(ChatColor.RED + "You need to be the owner of a faction to use this command.");
+                            return false;
                         }
                     }
                 }
