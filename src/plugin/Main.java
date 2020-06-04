@@ -77,7 +77,17 @@ public class Main extends JavaPlugin {
                 String nextName = loadReader.nextLine();
                 Faction temp = new Faction(nextName); // uses server constructor, only temporary
                 temp.load(nextName + ".txt"); // provides owner field among other things
+
+                // existence check
+                boolean exists = false;
+                for (int i = 0; i < factions.size(); i++) {
+                    if (factions.get(i).getName().equalsIgnoreCase(temp.getName())) {
+                        factions.remove(i);
+                    }
+                }
+
                 factions.add(temp);
+
             }
 
             loadReader.close();
@@ -370,18 +380,7 @@ public class Main extends JavaPlugin {
 
                 // forcesave command
                 if (args[0].equalsIgnoreCase("forcesave")) {
-                    if (sender instanceof Player) {
-                        Player player = (Player) sender;
-                        if (player.hasPermission("medievalfactions.forcesave")) {
-                            player.sendMessage("Medieval Factions plugin is saving...");
-                            saveFactionNames();
-                            saveFactions();
-                        }
-                        else {
-                            player.sendMessage("You don't have permission to use this command!");
-                        }
-                    }
-                    else {
+                    if (!(sender instanceof Player)) {
                         System.out.println("Medieval Factions plugin is saving...");
                         saveFactionNames();
                         saveFactions();
@@ -390,17 +389,7 @@ public class Main extends JavaPlugin {
 
                 // forceload command
                 if (args[0].equalsIgnoreCase("forceload")) {
-                    if (sender instanceof Player) {
-                        Player player = (Player) sender;
-                        if (player.hasPermission("medievalfactions.forceload")) {
-                            player.sendMessage("Medieval Factions plugin is loading...");
-                            loadFactions();
-                        }
-                        else {
-                            player.sendMessage("You don't have permission to use this command!");
-                        }
-                    }
-                    else {
+                    if (!(sender instanceof Player)) {
                         System.out.println("Medieval Factions plugin is loading...");
                         loadFactions();
                     }
