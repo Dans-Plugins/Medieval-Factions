@@ -243,12 +243,22 @@ public class Main extends JavaPlugin {
                         for (Faction faction : factions) {
                             if (faction.isOwner(player.getName())) {
                                 if (args.length > 1) {
-                                    faction.setDescription(args[1]);
+
+                                    // set args 1-args.length-1 to be the description with spaces put in between
+                                    String newDesc = "";
+                                    for (int i = 0; i < args.length; i++) {
+                                        newDesc = newDesc + args[i];
+                                        if (!(i == args.length - 1)) {
+                                            newDesc = newDesc + " ";
+                                        }
+                                    }
+
+                                    faction.setDescription(newDesc);
                                     player.sendMessage("Description set!");
                                     return true;
                                 }
                                 else {
-                                    player.sendMessage("Usage: /mf desc \"this is the description\" [quotes required]");
+                                    player.sendMessage("Usage: /mf desc (description)");
                                     return false;
                                 }
                             }
