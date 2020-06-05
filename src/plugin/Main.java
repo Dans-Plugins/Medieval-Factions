@@ -230,6 +230,7 @@ public class Main extends JavaPlugin implements Listener {
         player.sendMessage(ChatColor.AQUA + "Owner: " + faction.getOwner() + "\n");
         player.sendMessage(ChatColor.AQUA + "Description: " + faction.getDescription() + "\n");
         player.sendMessage(ChatColor.AQUA + "Population: " + faction.getMemberList().size() + "\n");
+        player.sendMessage(ChatColor.AQUA + "At War With: " + faction.getEnemiesSeparatedByCommas() + "\n");
         player.sendMessage(ChatColor.AQUA + "----------\n");
     }
 

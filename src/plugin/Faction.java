@@ -47,6 +47,17 @@ public class Faction {
         return false;
     }
 
+    public String getEnemiesSeparatedByCommas() {
+        String enemies = "";
+        for (int i = 0; i < enemyFactions.size(); i++) {
+            enemies = enemies + enemyFactions.get(i);
+            if (i != enemyFactions.size() - 1) {
+                enemies = enemies + ", ";
+            }
+        }
+        return enemies;
+    }
+
     public void invite(String playerName) {
         invited.add(playerName);
     }
