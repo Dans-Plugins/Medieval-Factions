@@ -108,6 +108,10 @@ public class Faction {
 
     boolean save() {
         try {
+            File saveFolder = new File("./plugins/medievalfactions/");
+            if (!saveFolder.exists()) {
+                saveFolder.createNewFile();
+            }
             File saveFile = new File("./plugins/medievalfactions/" + name + ".txt");
             if (saveFile.createNewFile()) {
                 System.out.println("Save file for faction " + name + " created.");
