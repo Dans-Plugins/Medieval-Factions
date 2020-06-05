@@ -108,7 +108,11 @@ public class Faction {
 
     boolean save() {
         try {
-            File saveFile = new File(name + ".txt");
+            File saveFolder = new File("./plugins/medievalfactions/");
+            if (!saveFolder.exists()) {
+                saveFolder.mkdir();
+            }
+            File saveFile = new File("./plugins/medievalfactions/" + name + ".txt");
             if (saveFile.createNewFile()) {
                 System.out.println("Save file for faction " + name + " created.");
             } else {
@@ -141,7 +145,7 @@ public class Faction {
 
     boolean load(String filename) {
         try {
-            File loadFile = new File(filename);
+            File loadFile = new File("./plugins/medievalfactions/" + filename);
             Scanner loadReader = new Scanner(loadFile);
 
             // actual loading
