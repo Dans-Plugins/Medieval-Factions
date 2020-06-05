@@ -19,7 +19,7 @@ public class Faction {
     private ArrayList<String> invited = new ArrayList<>();
 
     // player constructor
-    Faction(String initialName, String creator) {
+    public Faction(String initialName, String creator) {
         setName(initialName);
         setOwner(creator);
     }
@@ -29,15 +29,15 @@ public class Faction {
         setName(initialName);
     }
 
-    void invite(String playerName) {
+    public void invite(String playerName) {
         invited.add(playerName);
     }
 
-    void uninvite(String playerName) {
+    public void uninvite(String playerName) {
         invited.remove(playerName);
     }
 
-    boolean isInvited(String playerName) {
+    public boolean isInvited(String playerName) {
         for (String player : invited) {
             if (player.equalsIgnoreCase(playerName)) {
                 return true;
@@ -51,15 +51,15 @@ public class Faction {
         return membersCopy;
     }
 
-    int getPopulation() {
+    public int getPopulation() {
         return members.size();
     }
 
-    void setOwner(String playerName) {
+    public void setOwner(String playerName) {
         owner = playerName;
     }
 
-    boolean isOwner(String playerName) {
+    public boolean isOwner(String playerName) {
         if (playerName.equalsIgnoreCase(owner)) {
             return true;
         }
@@ -68,7 +68,7 @@ public class Faction {
         }
     }
 
-    String getOwner() {
+    public String getOwner() {
         return owner;
     }
 
@@ -76,11 +76,11 @@ public class Faction {
         name = newName;
     }
 
-    String getName() {
+    public String getName() {
         return name;
     }
 
-    void setDescription(String newDesc) {
+    public void setDescription(String newDesc) {
         description = newDesc;
     }
 
@@ -88,15 +88,15 @@ public class Faction {
         return description;
     }
 
-    void addMember(String playerName) {
+    public void addMember(String playerName) {
         members.add(playerName);
     }
 
-    void removeMember(String playerName) {
+    public void removeMember(String playerName) {
         members.remove(playerName);
     }
 
-    boolean isMember(String playerName) {
+    public boolean isMember(String playerName) {
         boolean membership = false;
         for (int i = 0; i < members.size(); i++) {
             if (members.get(i).equalsIgnoreCase(playerName)) {
