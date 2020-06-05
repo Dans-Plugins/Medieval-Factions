@@ -108,6 +108,11 @@ public class Main extends JavaPlugin {
         // mf commands
         if (label.equalsIgnoreCase("mf")) {
 
+            // no arguments check
+            if (args.length == 0) {
+                HelpCommand.sendHelpMessage(sender);
+            }
+
             // argument check
             if (args.length > 0) {
 
