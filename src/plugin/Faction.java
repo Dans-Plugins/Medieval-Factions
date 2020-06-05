@@ -119,7 +119,7 @@ public class Faction {
                 System.out.println("Save file for faction " + name + " already exists. Altering.");
             }
 
-            FileWriter saveWriter = new FileWriter(name + ".txt");
+            FileWriter saveWriter = new FileWriter("./plugins/medievalfactions/" + name + ".txt");
 
             // actual saving takes place here
             saveWriter.write(name + "\n");
