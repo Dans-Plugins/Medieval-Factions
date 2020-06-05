@@ -25,7 +25,7 @@ public class InviteCommand {
                             try {
                                 Player target = Bukkit.getServer().getPlayer(args[1]);
                                 target.sendMessage(ChatColor.GREEN + "You've been invited to " + faction.getName() + "! Type /mf join " + faction.getName() + " to join.");
-                            } catch (Exception e) {
+                            } catch (Exception ignored) {
 
                             }
                             player.sendMessage(ChatColor.GREEN + "Invitation sent!");
