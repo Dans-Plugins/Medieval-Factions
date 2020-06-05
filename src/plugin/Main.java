@@ -74,7 +74,7 @@ public class Main extends JavaPlugin {
     public void loadFactions() {
         try {
             System.out.println("Attempting to load factions...");
-            File loadFile = new File("faction-names.txt");
+            File loadFile = new File("./plugins/medievalfactions/" + "faction-names.txt");
             Scanner loadReader = new Scanner(loadFile);
 
             // actual loading
