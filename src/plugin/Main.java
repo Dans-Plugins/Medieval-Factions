@@ -153,44 +153,7 @@ public class Main extends JavaPlugin {
 
                 // join command
                 if (args[0].equalsIgnoreCase("join")) {
-                    if (sender instanceof Player) {
-                        Player player = (Player) sender;
-                        if (args.length > 1) {
-
-                            // creating name from arguments 1 to the last one
-                            String factionName = createStringFromFirstArgOnwards(args);
-
-                            for (Faction faction : factions) {
-                                if (faction.getName().equalsIgnoreCase(factionName)) {
-                                    if (faction.isInvited(player.getName())) {
-
-                                        // join if player isn't in a faction already
-                                        if (!(isInFaction(player.getName(), factions))) {
-                                            faction.addMember(player.getName());
-                                            faction.uninvite(player.getName());
-                                            try {
-                                                Player target = Bukkit.getServer().getPlayer(faction.getOwner());
-                                                target.sendMessage(ChatColor.GREEN + player.getName() + " has joined your faction.");
-                                            } catch (Exception e) {
-
-                                            }
-                                            player.sendMessage(ChatColor.GREEN + "You joined the faction!");
-                                            return true;
-                                        }
-                                        else {
-                                            player.sendMessage(ChatColor.RED + "You're already in a faction, sorry!");
-                                            return false;
-                                        }
-
-                                    } else {
-                                        player.sendMessage(ChatColor.RED + "You're not invited to this faction!");
-                                    }
-                                }
-                            }
-                        } else {
-                            player.sendMessage(ChatColor.RED + "Usage: /mf join (faction-name)");
-                        }
-                    }
+                    JoinCommand.joinFaction(sender, args, factions);
                 }
 
                 // kick command

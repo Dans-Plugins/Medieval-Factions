@@ -33,11 +33,11 @@ public class Faction {
         invited.add(playerName);
     }
 
-    void uninvite(String playerName) {
+    public void uninvite(String playerName) {
         invited.remove(playerName);
     }
 
-    boolean isInvited(String playerName) {
+    public boolean isInvited(String playerName) {
         for (String player : invited) {
             if (player.equalsIgnoreCase(playerName)) {
                 return true;
@@ -68,7 +68,7 @@ public class Faction {
         }
     }
 
-    String getOwner() {
+    public String getOwner() {
         return owner;
     }
 
