@@ -138,66 +138,12 @@ public class Main extends JavaPlugin {
 
                 // info command
                 if (args[0].equalsIgnoreCase("info")) {
-                    if (sender instanceof Player) {
-                        Player player = (Player) sender;
-                        if (args.length == 1) {
-                            for (Faction faction : factions) {
-                                if (faction.isMember(player.getName())) {
-                                    sendFactionInfo(player, faction);
-                                }
-                            }
-                        }
-                        else {
-                            // creating name from arguments 1 to the last one
-                            String name = createStringFromFirstArgOnwards(args);
-
-                            boolean exists = false;
-                            for (Faction faction : factions) {
-                                if (faction.getName().equals(name)) {
-                                    exists = true;
-                                    sendFactionInfo(player, faction);
-                                }
-                            }
-                            if (!exists) {
-                                player.sendMessage(ChatColor.RED + "That faction wasn't found!");
-                            }
-                        }
-                    }
+                    InfoCommand.showInfo(sender, args, factions);
                 }
 
                 // desc command
                 if (args[0].equalsIgnoreCase("desc")) {
-                    if (sender instanceof Player) {
-                        Player player = (Player) sender;
-                        boolean owner = false;
-                        for (Faction faction : factions) {
-                            if (faction.isOwner(player.getName())) {
-                                owner = true;
-                                if (args.length > 1) {
-
-                                    // set arg[1] - args[args.length-1] to be the description with spaces put in between
-                                    String newDesc = "";
-                                    for (int i = 1; i < args.length; i++) {
-                                        newDesc = newDesc + args[i];
-                                        if (!(i == args.length - 1)) {
-                                            newDesc = newDesc + " ";
-                                        }
-                                    }
-
-                                    faction.setDescription(newDesc);
-                                    player.sendMessage(ChatColor.AQUA + "Description set!");
-                                    return true;
-                                }
-                                else {
-                                    player.sendMessage(ChatColor.RED + "Usage: /mf desc (description)");
-                                    return false;
-                                }
-                            }
-                        }
-                        if (!owner) {
-                            player.sendMessage(ChatColor.RED + "You need to be the owner of a faction to use this command.");
-                        }
-                    }
+                    DescCommand.setDescription(sender, args, factions);
                 }
 
                 // invite command
@@ -418,7 +364,7 @@ public class Main extends JavaPlugin {
         return isAlreadyInFaction;
     }
 
-    void sendFactionInfo(Player player, Faction faction) {
+    public static void sendFactionInfo(Player player, Faction faction) {
         player.sendMessage(ChatColor.BOLD + "" + ChatColor.AQUA + faction.getName() + " Faction Info" + "\n----------\n");
         player.sendMessage(ChatColor.AQUA + "Name: " + faction.getName() + "\n");
         player.sendMessage(ChatColor.AQUA + "Owner: " + faction.getOwner() + "\n");

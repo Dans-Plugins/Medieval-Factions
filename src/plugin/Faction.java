@@ -80,7 +80,7 @@ public class Faction {
         return name;
     }
 
-    void setDescription(String newDesc) {
+    public void setDescription(String newDesc) {
         description = newDesc;
     }
 
