@@ -6,10 +6,7 @@ import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.java.JavaPlugin;
-import plugin.Commands.CreateCommand;
-import plugin.Commands.DeleteCommand;
-import plugin.Commands.HelpCommand;
-import plugin.Commands.ListCommand;
+import plugin.Commands.*;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -136,26 +133,7 @@ public class Main extends JavaPlugin {
 
                 // members command
                 if (args[0].equalsIgnoreCase("members")) {
-                    if (sender instanceof Player) {
-                        Player player = (Player) sender;
-                        if (args.length == 1) {
-                            for (Faction faction : factions) {
-                                if (faction.isMember(player.getName())) {
-                                    sendFactionMembers(player, faction);
-                                }
-                            }
-                        }
-                        else {
-                            // creating name from arguments 1 to the last one
-                            String name = createStringFromFirstArgOnwards(args);
-
-                            for (Faction faction : factions) {
-                                if (faction.getName().equalsIgnoreCase(name)) {
-                                    sendFactionMembers(player, faction);
-                                }
-                            }
-                        }
-                    }
+                    MembersCommand.showMembers(sender, args, factions);
                 }
 
                 // info command
@@ -449,7 +427,7 @@ public class Main extends JavaPlugin {
         player.sendMessage(ChatColor.AQUA + "----------\n");
     }
 
-    void sendFactionMembers(Player player, Faction faction) {
+    public static void sendFactionMembers(Player player, Faction faction) {
         ArrayList<String> members = faction.getMemberList();
         player.sendMessage(ChatColor.BOLD + "" + ChatColor.AQUA + "Members of " + faction.getName() + "\n----------\n");
         for (String member : members) {
