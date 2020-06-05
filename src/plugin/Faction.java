@@ -159,6 +159,12 @@ public class Faction {
                 saveWriter.write(members.get(i) + "\n");
             }
 
+            saveWriter.write("0" + "\n");
+
+            for (int i = 0; i < enemyFactions.size(); i++) {
+                saveWriter.write(enemyFactions.get(i) + "\n");
+            }
+
             saveWriter.close();
 
             System.out.println("Successfully saved faction " + name + ".");
@@ -190,7 +196,17 @@ public class Faction {
 
             while (loadReader.hasNextLine()) {
                 String temp = loadReader.nextLine();
+
+                if (temp.equalsIgnoreCase("0")) {
+                    break;
+                }
+
                 members.add(temp);
+            }
+
+            while (loadReader.hasNextLine()) {
+                String temp = loadReader.nextLine();
+                enemyFactions.add(temp);
             }
 
             loadReader.close();
