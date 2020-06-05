@@ -159,7 +159,7 @@ public class Faction {
                 saveWriter.write(members.get(i) + "\n");
             }
 
-            saveWriter.write("0");
+            saveWriter.write("0" + "\n");
 
             for (int i = 0; i < enemyFactions.size(); i++) {
                 saveWriter.write(enemyFactions.get(i) + "\n");
