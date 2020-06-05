@@ -29,7 +29,7 @@ public class Faction {
         setName(initialName);
     }
 
-    void invite(String playerName) {
+    public void invite(String playerName) {
         invited.add(playerName);
     }
 

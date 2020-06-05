@@ -148,38 +148,7 @@ public class Main extends JavaPlugin {
 
                 // invite command
                 if (args[0].equalsIgnoreCase("invite")) {
-                    if (sender instanceof Player) {
-                        Player player = (Player) sender;
-                        for (Faction faction : factions) {
-                            if (faction.isOwner(player.getName())) {
-                                if (args.length > 1) {
-
-                                    // invite if player isn't in a faction already
-                                    if (!(isInFaction(args[1]))) {
-                                        faction.invite(args[1]);
-                                        try {
-                                            Player target = Bukkit.getServer().getPlayer(args[1]);
-                                            target.sendMessage(ChatColor.GREEN + "You've been invited to " + faction.getName() + "! Type /mf join " + faction.getName() + " to join.");
-                                        } catch (Exception e) {
-
-                                        }
-                                        player.sendMessage(ChatColor.GREEN + "Invitation sent!");
-                                        return true;
-                                    }
-                                    else {
-                                        player.sendMessage(ChatColor.RED + "That player is already in a faction, sorry!");
-                                        return false;
-                                    }
-
-
-                                }
-                                else {
-                                    player.sendMessage(ChatColor.RED + "Usage: /mf invite (player-name)");
-                                    return false;
-                                }
-                            }
-                        }
-                    }
+                    InviteCommand.invitePlayer(sender, args, factions);
                 }
 
                 // join command
@@ -196,7 +165,7 @@ public class Main extends JavaPlugin {
                                     if (faction.isInvited(player.getName())) {
 
                                         // join if player isn't in a faction already
-                                        if (!(isInFaction(player.getName()))) {
+                                        if (!(isInFaction(player.getName(), factions))) {
                                             faction.addMember(player.getName());
                                             faction.uninvite(player.getName());
                                             try {
@@ -352,7 +321,7 @@ public class Main extends JavaPlugin {
         return false;
     }
 
-    boolean isInFaction(String playerName) {
+    public static boolean isInFaction(String playerName, ArrayList<Faction> factions) {
         // membership check
         boolean isAlreadyInFaction = false;
         for (int i = 0; i < factions.size(); i++) {
