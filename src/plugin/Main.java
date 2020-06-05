@@ -158,42 +158,7 @@ public class Main extends JavaPlugin {
 
                 // kick command
                 if (args[0].equalsIgnoreCase("kick")) {
-                    if (sender instanceof Player) {
-                        Player player = (Player) sender;
-                        if (args.length > 1) {
-                            boolean owner = false;
-                            for (Faction faction : factions) {
-                                if (faction.isOwner(player.getName())) {
-                                    owner = true;
-                                    if (faction.isMember(args[1])) {
-                                        if (!(args[1].equalsIgnoreCase(player.getName()))) {
-                                            faction.removeMember(args[1]);
-                                            player.sendMessage(ChatColor.AQUA + args[1] + " kicked.");
-                                            try {
-                                                Player target = Bukkit.getServer().getPlayer(args[1]);
-                                                target.sendMessage(ChatColor.RED + "You have been kicked from your faction by " + player.getName() + ".");
-                                            } catch (Exception ignored) {
-
-                                            }
-                                        }
-                                        else {
-                                            player.sendMessage(ChatColor.RED + "You can't kick yourself.");
-                                        }
-
-                                    }
-                                }
-                            }
-
-                            if (!owner) {
-                                player.sendMessage(ChatColor.RED + "You need to be the owner of a faction to use this command.");
-                                return false;
-                            }
-
-                        } else {
-                            player.sendMessage(ChatColor.RED + "Usage: /mf kick (player-name)");
-                            return false;
-                        }
-                    }
+                    KickCommand.kickPlayer(sender, args, factions);
                 }
 
                 // leave commmand

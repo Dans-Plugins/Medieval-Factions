@@ -92,7 +92,7 @@ public class Faction {
         members.add(playerName);
     }
 
-    void removeMember(String playerName) {
+    public void removeMember(String playerName) {
         members.remove(playerName);
     }
 
