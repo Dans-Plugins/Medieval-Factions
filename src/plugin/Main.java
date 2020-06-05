@@ -62,8 +62,8 @@ public class Main extends JavaPlugin {
 
     public void saveFactions() {
         System.out.println("Saving factions...");
-        for (int i = 0; i < factions.size(); i++) {
-            factions.get(i).save();
+        for (Faction faction : factions) {
+            faction.save();
         }
     }
 
@@ -151,6 +151,7 @@ public class Main extends JavaPlugin {
                             for (Faction faction : factions) {
                                 if (faction.getName().equalsIgnoreCase(args[1])) {
                                     factionExists = true;
+                                    break;
                                 }
                             }
 
@@ -406,7 +407,7 @@ public class Main extends JavaPlugin {
                                             try {
                                                 Player target = Bukkit.getServer().getPlayer(args[1]);
                                                 target.sendMessage(ChatColor.RED + "You have been kicked from your faction by " + player.getName() + ".");
-                                            } catch (Exception e) {
+                                            } catch (Exception ignored) {
 
                                             }
                                         }
