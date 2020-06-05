@@ -39,7 +39,11 @@ public class Main extends JavaPlugin {
 
     public void saveFactionNames() {
         try {
-            File saveFile = new File("faction-names.txt");
+            File saveFolder = new File("./plugins/medievalfactions/");
+            if (!saveFolder.exists()) {
+                saveFolder.mkdir();
+            }
+            File saveFile = new File("./plugins/medievalfactions/" + "faction-names.txt");
             if (saveFile.createNewFile()) {
                 System.out.println("Save file for faction names created.");
             } else {
