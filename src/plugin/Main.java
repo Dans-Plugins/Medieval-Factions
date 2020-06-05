@@ -186,8 +186,8 @@ public class Main extends JavaPlugin implements Listener {
                     DeclareWarCommand.declareWar(sender, args, factions);
                 }
 
-                // make pace command
-                if (args[0].equalsIgnoreCase("makepace")) {
+                // make peace command
+                if (args[0].equalsIgnoreCase("makepeace")) {
                     MakePeaceCommand.makePeace(sender, args, factions);
                 }
 
