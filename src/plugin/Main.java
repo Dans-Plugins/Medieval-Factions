@@ -8,6 +8,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.plugin.java.JavaPlugin;
 import plugin.Commands.CreateCommand;
 import plugin.Commands.HelpCommand;
+import plugin.Commands.ListCommand;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -124,18 +125,7 @@ public class Main extends JavaPlugin {
 
                 // list command
                 if  (args[0].equalsIgnoreCase("list")) {
-                    // if there aren't any factions
-                    if (factions.size() == 0) {
-                        sender.sendMessage(ChatColor.AQUA + "There are currently no factions.");
-                    }
-                    // factions exist, list them
-                    else {
-                        sender.sendMessage(ChatColor.BOLD + "" + ChatColor.AQUA + "Factions" + "\n----------\n");
-                        for (Faction faction : factions) {
-                            sender.sendMessage(ChatColor.AQUA + faction.getName());
-                        }
-                        sender.sendMessage(ChatColor.AQUA + "----------\n");
-                    }
+                    ListCommand.listFactions(sender, factions);
                 }
 
                 // delete command

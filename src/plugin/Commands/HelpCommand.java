@@ -6,7 +6,7 @@ import org.bukkit.entity.Player;
 
 public class HelpCommand {
 
-    public static void sendHelpMessage(CommandSender sender) {
+    public static boolean sendHelpMessage(CommandSender sender) {
         sender.sendMessage(ChatColor.BOLD + "" + ChatColor.AQUA + "Medieval Factions Commands" + "\n----------\n");
         sender.sendMessage(ChatColor.AQUA + "/mf help - Show list of useful commands." + "\n");
         sender.sendMessage(ChatColor.AQUA + "/mf create - Create a new faction." + "\n");
@@ -25,6 +25,6 @@ public class HelpCommand {
             sender.sendMessage(ChatColor.AQUA + "/mf forceload - Force the plugin to load.");
         }
         sender.sendMessage(ChatColor.AQUA + "----------\n");
+        return true;
     }
-
 }
