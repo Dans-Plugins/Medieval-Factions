@@ -19,7 +19,7 @@ public class Faction {
     private ArrayList<String> invited = new ArrayList<>();
 
     // player constructor
-    Faction(String initialName, String creator) {
+    public Faction(String initialName, String creator) {
         setName(initialName);
         setOwner(creator);
     }
@@ -76,7 +76,7 @@ public class Faction {
         name = newName;
     }
 
-    String getName() {
+    public String getName() {
         return name;
     }
 
@@ -88,7 +88,7 @@ public class Faction {
         return description;
     }
 
-    void addMember(String playerName) {
+    public void addMember(String playerName) {
         members.add(playerName);
     }
 
@@ -96,7 +96,7 @@ public class Faction {
         members.remove(playerName);
     }
 
-    boolean isMember(String playerName) {
+    public boolean isMember(String playerName) {
         boolean membership = false;
         for (int i = 0; i < members.size(); i++) {
             if (members.get(i).equalsIgnoreCase(playerName)) {
