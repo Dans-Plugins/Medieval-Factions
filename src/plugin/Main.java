@@ -251,6 +251,7 @@ public class Main extends JavaPlugin implements Listener {
     @EventHandler()
     public void onDamage(EntityDamageByEntityEvent event) {
         // this method disallows PVP between members of the same faction and between factions who are not at war
+        // PVP is allowed between factionless players, players who belong to a faction and the factionless, and players whose factions are at war.
 
         // if this was between two players
         if (event.getDamager() instanceof Player && event.getEntity() instanceof Player) {
