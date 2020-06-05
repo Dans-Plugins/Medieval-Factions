@@ -163,30 +163,7 @@ public class Main extends JavaPlugin {
 
                 // leave commmand
                 if (args[0].equalsIgnoreCase("leave")) {
-                    if (sender instanceof Player) {
-                        Player player = (Player) sender;
-                        for (int i = 0; i < factions.size(); i++) {
-                            if (factions.get(i).isMember(player.getName())) {
-                                if (factions.get(i).isOwner(player.getName())) {
-                                    // is faction empty?
-                                    if (factions.get(i).getPopulation() == 1) {
-                                        // able to leave
-                                        factions.get(i).removeMember(player.getName());
-                                        factions.remove(i);
-                                        player.sendMessage(ChatColor.AQUA + "You left your faction. It was deleted since no one else was a member.");
-                                    }
-                                    else {
-                                        player.sendMessage(ChatColor.RED + "Sorry! You must transfer ownership or kick everyone in your faction to leave.");
-                                    }
-                                }
-                                else {
-                                    // able to leave
-                                    factions.get(i).removeMember(player.getName());
-                                    player.sendMessage(ChatColor.AQUA + "You left your faction.");
-                                }
-                            }
-                        }
-                    }
+                    LeaveCommand.leaveFaction(sender, factions);
                 }
 
                 // forcesave command
