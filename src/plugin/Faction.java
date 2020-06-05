@@ -110,7 +110,7 @@ public class Faction {
         try {
             File saveFolder = new File("./plugins/medievalfactions/");
             if (!saveFolder.exists()) {
-                saveFolder.createNewFile();
+                saveFolder.mkdir();
             }
             File saveFile = new File("./plugins/medievalfactions/" + name + ".txt");
             if (saveFile.createNewFile()) {
