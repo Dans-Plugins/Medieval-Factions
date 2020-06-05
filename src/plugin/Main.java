@@ -278,7 +278,8 @@ public class Main extends JavaPlugin implements Listener {
                 }
 
                 // if attacker's faction and victim's faction are not at war
-                if (!(factions.get(attackersFactionIndex).isEnemy(factions.get(victimsFactionIndex).getName()))) {
+                if (!(factions.get(attackersFactionIndex).isEnemy(factions.get(victimsFactionIndex).getName())) &&
+                    !(factions.get(victimsFactionIndex).isEnemy(factions.get(attackersFactionIndex).getName()))) {
                     event.setCancelled(true);
                     attacker.sendMessage(ChatColor.RED + "You can't attack another player if your factions aren't at war.");
                 }
