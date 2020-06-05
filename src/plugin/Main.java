@@ -252,7 +252,11 @@ public class Main extends JavaPlugin implements Listener {
             if (event.getEntity() instanceof Player) {
                 Player victim = (Player) event.getEntity();
 
-                System.out.println(attacker.getName() + " just attacked " + victim.getName());
+                for (int i = 0; i < factions.size(); i++) {
+                    if (factions.get(i).isMember(attacker.getName()) && factions.get(i).isMember(victim.getName())) {
+                        event.setCancelled(true);
+                    }
+                }
 
             }
         }
