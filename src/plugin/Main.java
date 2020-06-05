@@ -182,6 +182,10 @@ public class Main extends JavaPlugin implements Listener {
                     TransferCommand.transferOwnership(sender, args, factions);
                 }
 
+                if (args[0].equalsIgnoreCase("declarewar")) {
+                    DeclareWarCommand.declareWar(sender, args, factions);
+                }
+
                 // forcesave command
                 if (args[0].equalsIgnoreCase("forcesave")) {
                     if (!(sender instanceof Player)) {

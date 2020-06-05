@@ -20,6 +20,7 @@ public class HelpCommand {
         sender.sendMessage(ChatColor.AQUA + "/mf kick - Kick a player from your faction. " + "\n");
         sender.sendMessage(ChatColor.AQUA + "/mf transfer - Transfer ownership of your faction to another player.\n");
         sender.sendMessage(ChatColor.AQUA + "/mf delete - Delete your faction (must be owner)." + "\n");
+        sender.sendMessage(ChatColor.AQUA + "/mf declarewar - Declare war against another faction." + "\n");
         if (!(sender instanceof Player)) {
             sender.sendMessage(ChatColor.AQUA + "/mf forcesave - Force the plugin to save.");
             sender.sendMessage(ChatColor.AQUA + "/mf forceload - Force the plugin to load.");
