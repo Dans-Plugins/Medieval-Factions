@@ -17,6 +17,7 @@ public class Faction {
     private ArrayList<String> members = new ArrayList<>();
     private String owner = "defaultOwner";
     private ArrayList<String> invited = new ArrayList<>();
+    private ArrayList<String> enemyFactions = new ArrayList<>();
 
     // player constructor
     public Faction(String initialName, String creator) {
@@ -27,6 +28,23 @@ public class Faction {
     // server constructor
     Faction(String initialName) {
         setName(initialName);
+    }
+
+    public void addEnemy(String factionName) {
+        enemyFactions.add(factionName);
+    }
+
+    public void removeEnemy(String factionName) {
+        enemyFactions.remove(factionName);
+    }
+
+    public boolean isEnemy(String factionName) {
+        for (String faction : enemyFactions) {
+            if (faction.equalsIgnoreCase(factionName)) {
+                return true;
+            }
+        }
+        return false;
     }
 
     public void invite(String playerName) {
