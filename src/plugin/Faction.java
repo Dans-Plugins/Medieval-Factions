@@ -51,7 +51,7 @@ public class Faction {
         return membersCopy;
     }
 
-    int getPopulation() {
+    public int getPopulation() {
         return members.size();
     }
 
@@ -59,7 +59,7 @@ public class Faction {
         owner = playerName;
     }
 
-    boolean isOwner(String playerName) {
+    public boolean isOwner(String playerName) {
         if (playerName.equalsIgnoreCase(owner)) {
             return true;
         }
