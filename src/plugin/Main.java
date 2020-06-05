@@ -246,18 +246,36 @@ public class Main extends JavaPlugin implements Listener {
 
     @EventHandler()
     public void onDamage(EntityDamageByEntityEvent event) {
-        if (event.getDamager() instanceof Player) {
+        // this method disallows PVP between members of the same faction and between factions who are not at war
+
+        // if this was between two players
+        if (event.getDamager() instanceof Player && event.getEntity() instanceof Player) {
             Player attacker = (Player) event.getDamager();
+            Player victim = (Player) event.getEntity();
 
-            if (event.getEntity() instanceof Player) {
-                Player victim = (Player) event.getEntity();
+            int attackersFactionIndex = 0;
+            int victimsFactionIndex = 0;
 
-                for (int i = 0; i < factions.size(); i++) {
-                    if (factions.get(i).isMember(attacker.getName()) && factions.get(i).isMember(victim.getName())) {
-                        event.setCancelled(true);
-                    }
+            for (int i = 0; i < factions.size(); i++) {
+                if (factions.get(i).isMember(attacker.getName())) {
+                    attackersFactionIndex = i;
+                }
+                if (factions.get(i).isMember(victim.getName())) {
+                    victimsFactionIndex = i;
+                }
+            }
+
+            // if attacker and victim are both in a faction
+            if (isInFaction(attacker.getName(), factions) && isInFaction(victim.getName(), factions)) {
+                // if attacker and victim are part of the same faction
+                if (attackersFactionIndex == victimsFactionIndex) {
+                    event.setCancelled(true);
                 }
 
+                // if attacker's faction and victim's faction are not at war
+                if (!(factions.get(attackersFactionIndex).isEnemy(factions.get(victimsFactionIndex).getName()))) {
+                    event.setCancelled(true);
+                }
             }
         }
     }
