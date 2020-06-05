@@ -166,6 +166,11 @@ public class Main extends JavaPlugin {
                     LeaveCommand.leaveFaction(sender, factions);
                 }
 
+                // transfer command
+                if (args[0].equalsIgnoreCase("transfer")) {
+                    TransferCommand.transferOwnership(sender, args, factions);
+                }
+
                 // forcesave command
                 if (args[0].equalsIgnoreCase("forcesave")) {
                     if (!(sender instanceof Player)) {
@@ -180,45 +185,6 @@ public class Main extends JavaPlugin {
                     if (!(sender instanceof Player)) {
                         System.out.println("Medieval Factions plugin is loading...");
                         loadFactions();
-                    }
-                }
-
-                // transfer command
-                if (args[0].equalsIgnoreCase("transfer")) {
-                    if (sender instanceof Player) {
-                        Player player = (Player) sender;
-                        boolean owner = false;
-                        for (Faction faction : factions) {
-                            if (faction.isOwner(player.getName())) {
-                                owner = true;
-                                if (args.length > 1) {
-                                    if (faction.isMember(args[1])) {
-
-                                        // set owner
-                                        faction.setOwner(args[1]);
-                                        player.sendMessage(ChatColor.AQUA + "Ownership transferred to " + args[1]);
-
-                                        // save
-                                        saveFactionNames();
-                                        saveFactions();
-
-                                        return true;
-                                    }
-                                    else {
-                                        player.sendMessage(ChatColor.RED + "That player isn't in your faction!");
-                                        return false;
-                                    }
-                                }
-                                else {
-                                    player.sendMessage(ChatColor.RED + "Usage: /mf transfer (player-name)");
-                                    return false;
-                                }
-                            }
-                        }
-                        if (!owner) {
-                            player.sendMessage(ChatColor.RED + "You need to be the owner of a faction to use this command.");
-                            return false;
-                        }
                     }
                 }
             }

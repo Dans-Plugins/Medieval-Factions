@@ -55,7 +55,7 @@ public class Faction {
         return members.size();
     }
 
-    void setOwner(String playerName) {
+    public void setOwner(String playerName) {
         owner = playerName;
     }
 
