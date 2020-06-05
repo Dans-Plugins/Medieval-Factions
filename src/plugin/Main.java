@@ -5,6 +5,10 @@ import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
+import org.bukkit.event.EventHandler;
+import org.bukkit.event.Listener;
+import org.bukkit.event.entity.EntityDamageByEntityEvent;
+import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.plugin.java.JavaPlugin;
 import plugin.Commands.*;
 
@@ -15,13 +19,15 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Scanner;
 
-public class Main extends JavaPlugin {
+public class Main extends JavaPlugin implements Listener {
 
     ArrayList<Faction> factions = new ArrayList<>();
 
     @Override
     public void onEnable() {
         System.out.println("Medieval Factions plugin enabling....");
+
+        this.getServer().getPluginManager().registerEvents(this, this);
 
         loadFactions();
 
@@ -236,6 +242,20 @@ public class Main extends JavaPlugin {
             }
         }
         return name;
+    }
+
+    @EventHandler()
+    public void onDamage(EntityDamageByEntityEvent event) {
+        if (event.getDamager() instanceof Player) {
+            Player attacker = (Player) event.getDamager();
+
+            if (event.getEntity() instanceof Player) {
+                Player victim = (Player) event.getEntity();
+
+                System.out.println(attacker.getName() + " just attacked " + victim.getName());
+
+            }
+        }
     }
 
 }
