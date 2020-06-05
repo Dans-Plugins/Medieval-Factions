@@ -246,18 +246,16 @@ public class Main extends JavaPlugin implements Listener {
 
     @EventHandler()
     public void onDamage(EntityDamageByEntityEvent event) {
-        if (event.getDamager() instanceof Player) {
+
+        // if this was between two players
+        if (event.getDamager() instanceof Player && event.getEntity() instanceof Player) {
             Player attacker = (Player) event.getDamager();
+            Player victim = (Player) event.getEntity();
 
-            if (event.getEntity() instanceof Player) {
-                Player victim = (Player) event.getEntity();
-
-                for (int i = 0; i < factions.size(); i++) {
-                    if (factions.get(i).isMember(attacker.getName()) && factions.get(i).isMember(victim.getName())) {
-                        event.setCancelled(true);
-                    }
+            for (int i = 0; i < factions.size(); i++) {
+                if (factions.get(i).isMember(attacker.getName()) && factions.get(i).isMember(victim.getName())) {
+                    event.setCancelled(true);
                 }
-
             }
         }
     }
