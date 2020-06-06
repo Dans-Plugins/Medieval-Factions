@@ -208,6 +208,31 @@ public class Main extends JavaPlugin implements Listener {
                         loadFactions();
                     }
                 }
+
+                // claim command
+                if (args[0].equalsIgnoreCase("claim")) {
+                    if (sender instanceof Player) {
+                        Player player = (Player) sender;
+                        addChunkAtPlayerLocation(player);
+                    }
+                }
+
+                // unclaim command
+                if (args[0].equalsIgnoreCase("unclaim")) {
+                    if (sender instanceof Player) {
+                        Player player = (Player) sender;
+                        removeChunkAtPlayerLocation(player);
+                    }
+                }
+
+                // checkclaim command
+                if (args[0].equalsIgnoreCase("checkclaim")) {
+                    if (sender instanceof Player) {
+                        Player player = (Player) sender;
+                        checkOwnershipAtPlayerLocation(player);
+                    }
+                }
+
             }
         }
         return false;
