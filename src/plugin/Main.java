@@ -501,6 +501,8 @@ public class Main extends JavaPlugin implements Listener {
                     }
                 }
             }
+            // player not in a faction
+            event.setCancelled(true);
 
         }
     }
