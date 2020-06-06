@@ -35,7 +35,7 @@ public class MakePeaceCommand {
 
                                 try {
                                     Player target = Bukkit.getServer().getPlayer(factions.get(i).getOwner());
-                                    target.sendMessage(ChatColor.AQUA + faction.getName() + "has sent your faction a peace offer!");
+                                    target.sendMessage(ChatColor.AQUA + faction.getName() + " has sent your faction a peace offer!");
                                 } catch (Exception ignored) {
 
                                 }
