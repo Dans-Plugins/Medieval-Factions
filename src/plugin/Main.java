@@ -127,7 +127,7 @@ public class Main extends JavaPlugin implements Listener {
 
         try {
             System.out.println("Attempting to load claimed chunks...");
-            File loadFile = new File("./plugins/medievalfactions/claimedchunks/" + "claimed-chunks.txt");
+            File loadFile = new File("./plugins/medievalfactions/claimedchunks/" + "claimed-chunks");
             Scanner loadReader = new Scanner(loadFile);
 
             // actual loading
