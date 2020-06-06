@@ -91,7 +91,7 @@ public class Main extends JavaPlugin implements Listener {
             if (!saveFolder.exists()) {
                 saveFolder.mkdir();
             }
-            File saveFile = new File("./plugins/medievalfactions/claimedchunks/" + "claimed-chunks.txt");
+            File saveFile = new File("./plugins/medievalfactions/claimedchunks/" + "claimedchunks.txt");
             if (saveFile.createNewFile()) {
                 System.out.println("Save file for claimed chunk filenames created.");
             } else {
