@@ -214,6 +214,7 @@ public class Main extends JavaPlugin implements Listener {
                     if (sender instanceof Player) {
                         Player player = (Player) sender;
                         addChunkAtPlayerLocation(player);
+                        player.sendMessage(ChatColor.GREEN + "Land claimed!");
                     }
                 }
 
@@ -222,6 +223,7 @@ public class Main extends JavaPlugin implements Listener {
                     if (sender instanceof Player) {
                         Player player = (Player) sender;
                         removeChunkAtPlayerLocation(player);
+                        player.sendMessage(ChatColor.GREEN + "Land unclaimed.");
                     }
                 }
 
@@ -229,7 +231,13 @@ public class Main extends JavaPlugin implements Listener {
                 if (args[0].equalsIgnoreCase("checkclaim")) {
                     if (sender instanceof Player) {
                         Player player = (Player) sender;
-                        checkOwnershipAtPlayerLocation(player);
+                        String result = checkOwnershipAtPlayerLocation(player);
+                        if (result.equalsIgnoreCase("unclaimed")) {
+                            player.sendMessage(ChatColor.GREEN + "This land is unclaimed.");
+                        }
+                        else {
+                            player.sendMessage(ChatColor.RED + "This land is claimed by " + result + ".");
+                        }
                     }
                 }
 
