@@ -412,11 +412,13 @@ public class Main extends JavaPlugin implements Listener {
             // if new chunk is claimed and old chunk was not
             if (isClaimed(event.getTo().getChunk()) && !isClaimed(event.getFrom().getChunk())) {
                 event.getPlayer().sendMessage(ChatColor.GREEN + "Entering the territory of " + getClaimedChunk(event.getTo().getChunk().getX(), event.getTo().getChunk().getZ()).getHolder());
+                return;
             }
 
             // if new chunk is unclaimed and old chunk was not
             if (!isClaimed(event.getTo().getChunk()) && isClaimed(event.getFrom().getChunk())) {
                 event.getPlayer().sendMessage(ChatColor.GREEN + "Entering the wilderness");
+                return;
             }
 
 
@@ -426,6 +428,7 @@ public class Main extends JavaPlugin implements Listener {
                 if (event.getTo().getChunk() != event.getFrom().getChunk()) {
                     event.getPlayer().sendMessage(ChatColor.GREEN + "Leaving the territory of " + getClaimedChunk(event.getFrom().getChunk().getX(), event.getFrom().getChunk().getZ()).getHolder());
                     event.getPlayer().sendMessage(ChatColor.GREEN + "Entering the territory of " + getClaimedChunk(event.getTo().getChunk().getX(), event.getTo().getChunk().getZ()).getHolder());
+                    return;
                 }
             }
 
