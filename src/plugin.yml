@@ -1,6 +1,6 @@
 name: MedievalFactions
 version: "1.2"
-author: Daniel&Andrew
+author: KingdomProgrammers
 main: plugin.Main
 api-version: "1.15"
 
