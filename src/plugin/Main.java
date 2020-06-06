@@ -456,4 +456,12 @@ public class Main extends JavaPlugin implements Listener {
         return null;
     }
 
+    void removeAllClaimedChunks(String factionName) {
+        for (ClaimedChunk claimedChunk : claimedChunks) {
+            if (claimedChunk.getHolder().equalsIgnoreCase(factionName)) {
+                claimedChunks.remove(claimedChunk);
+            }
+        }
+    }
+
 }
