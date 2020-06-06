@@ -20,11 +20,12 @@ public class DeleteCommand {
                 if (factions.get(i).isOwner(player.getName())) {
                     owner = true;
                     if (factions.get(i).getPopulation() == 1) {
-                        factions.remove(i);
-                        player.sendMessage(ChatColor.AQUA + "Faction successfully deleted.");
 
                         // remove claimed land objects associated with this faction
                         removeAllClaimedChunks(factions.get(i).getName(), chunks);
+
+                        factions.remove(i);
+                        player.sendMessage(ChatColor.AQUA + "Faction successfully deleted.");
 
                         return true;
                     }
