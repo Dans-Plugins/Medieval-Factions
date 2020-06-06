@@ -2,6 +2,7 @@ package plugin;
 
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
+import org.bukkit.Chunk;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
@@ -407,42 +408,47 @@ public class Main extends JavaPlugin implements Listener {
     public void onPlayerMove(PlayerMoveEvent event) {
         // if player enters a new chunk
         if (event.getFrom().getChunk() != event.getTo().getChunk()) {
-            Player player = event.getPlayer();
 
-            double[] playerCoords = new double[2];
-            playerCoords[0] = player.getLocation().getChunk().getX();
-            playerCoords[1] = player.getLocation().getChunk().getZ();
-
-            for (ClaimedChunk chunk : claimedChunks) {
-
-                // if new chunk is claimed
-                if (playerCoords[0] == chunk.getCoordinates()[0] && playerCoords[1] == chunk.getCoordinates()[1]) {
-
-                    // if old chunk was claimed
-                    for (ClaimedChunk chunk2 : claimedChunks) {
-                        if (event.getFrom().getChunk().getX() == chunk2.getCoordinates()[0] && event.getFrom().getChunk().getZ() == chunk2.getCoordinates()[1]) {
-
-                            // if new chunk and old chunk were claimed by different factions
-                            if (chunk.getHolder() != chunk2.getHolder()) {
-                                player.sendMessage(ChatColor.GREEN + "Leaving the territory of " + chunk2.getHolder());
-                                player.sendMessage(ChatColor.GREEN + "Entering the territory of " + chunk.getHolder());
-                                return;
-                            }
-
-                        }
-                    }
-
-                    // otherwise if old chunk was unclaimed
-                    player.sendMessage(ChatColor.GREEN + "Entering the territory of " + chunk.getHolder());
-                    return;
-
-                }
-
+            // if new chunk is claimed and old chunk was not
+            if (isClaimed(event.getTo().getChunk()) && !isClaimed(event.getFrom().getChunk())) {
+                event.getPlayer().sendMessage(ChatColor.GREEN + "Entering the territory of " + getClaimedChunk(event.getTo().getChunk().getX(), event.getTo().getChunk().getZ()).getHolder());
             }
-            // otherwise new chunk is unclaimed
-            player.sendMessage(ChatColor.GREEN + "Entering the wilderness.");
-            return;
+
+            // if new chunk is unclaimed and old chunk was not
+            if (!isClaimed(event.getTo().getChunk()) && isClaimed(event.getFrom().getChunk())) {
+                event.getPlayer().sendMessage(ChatColor.GREEN + "Entering the wilderness");
+            }
+
+
+            // if new chunk is claimed and old chunk was also claimed
+            if (isClaimed(event.getTo().getChunk()) && isClaimed(event.getFrom().getChunk())) {
+                // if chunks are not equal
+                if (event.getTo().getChunk() != event.getFrom().getChunk()) {
+                    event.getPlayer().sendMessage(ChatColor.GREEN + "Leaving the territory of " + getClaimedChunk(event.getFrom().getChunk().getX(), event.getFrom().getChunk().getZ()).getHolder());
+                    event.getPlayer().sendMessage(ChatColor.GREEN + "Entering the territory of " + getClaimedChunk(event.getTo().getChunk().getX(), event.getTo().getChunk().getZ()).getHolder());
+                }
+            }
+
         }
+
+    }
+
+    boolean isClaimed(Chunk chunk) {
+        for (ClaimedChunk claimedChunk : claimedChunks) {
+            if (claimedChunk.getCoordinates()[0] == chunk.getX() && claimedChunk.getCoordinates()[1] == chunk.getZ()) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    ClaimedChunk getClaimedChunk(int x, int z) {
+        for (ClaimedChunk claimedChunk : claimedChunks) {
+            if (claimedChunk.getCoordinates()[0] == x && claimedChunk.getCoordinates()[1] == z) {
+                return claimedChunk;
+            }
+        }
+        return null;
     }
 
 }
