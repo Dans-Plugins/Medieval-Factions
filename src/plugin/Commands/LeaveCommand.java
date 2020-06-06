@@ -3,13 +3,16 @@ package plugin.Commands;
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
+import plugin.ClaimedChunk;
 import plugin.Faction;
 
 import java.util.ArrayList;
 
+import static plugin.Main.removeAllClaimedChunks;
+
 public class LeaveCommand {
 
-    public static boolean leaveFaction(CommandSender sender, ArrayList<Faction> factions) {
+    public static boolean leaveFaction(CommandSender sender, ArrayList<Faction> factions, ArrayList<ClaimedChunk> chunks) {
         if (sender instanceof Player) {
             Player player = (Player) sender;
             for (int i = 0; i < factions.size(); i++) {
@@ -21,6 +24,10 @@ public class LeaveCommand {
                             factions.get(i).removeMember(player.getName());
                             factions.remove(i);
                             player.sendMessage(ChatColor.AQUA + "You left your faction. It was deleted since no one else was a member.");
+
+                            // remove claimed land objects associated with this faction
+                            removeAllClaimedChunks(factions.get(i).getName(), chunks);
+
                             return true;
                         }
                         else {
