@@ -214,7 +214,6 @@ public class Main extends JavaPlugin implements Listener {
                     if (sender instanceof Player) {
                         Player player = (Player) sender;
                         addChunkAtPlayerLocation(player);
-                        player.sendMessage(ChatColor.GREEN + "Land claimed!");
                     }
                 }
 
@@ -223,7 +222,6 @@ public class Main extends JavaPlugin implements Listener {
                     if (sender instanceof Player) {
                         Player player = (Player) sender;
                         removeChunkAtPlayerLocation(player);
-                        player.sendMessage(ChatColor.GREEN + "Land unclaimed.");
                     }
                 }
 
@@ -331,35 +329,41 @@ public class Main extends JavaPlugin implements Listener {
     }
 
     public void addChunkAtPlayerLocation(Player player) {
-        ClaimedChunk newChunk = new ClaimedChunk(player.getLocation().getChunk());
         for (Faction faction : factions) {
             if (faction.isOwner(player.getName())) {
+                ClaimedChunk newChunk = new ClaimedChunk(player.getLocation().getChunk());
                 newChunk.setHolder(faction.getName());
                 claimedChunks.add(newChunk);
+                player.sendMessage(ChatColor.GREEN + "Land claimed!");
             }
         }
     }
 
     public void removeChunkAtPlayerLocation(Player player) {
-        ClaimedChunk selectedChunk = new ClaimedChunk(player.getLocation().getChunk());
         for (Faction faction : factions) {
             if (faction.isOwner(player.getName())) {
+                ClaimedChunk selectedChunk = new ClaimedChunk(player.getLocation().getChunk());
                 selectedChunk.setHolder(faction.getName());
                 claimedChunks.remove(selectedChunk);
+                player.sendMessage(ChatColor.GREEN + "Land unclaimed.");
             }
         }
     }
 
     public String checkOwnershipAtPlayerLocation(Player player) {
+        System.out.println("Checking if chunk at location of player " + player.getName() + " is claimed.");
         for (ClaimedChunk chunk : claimedChunks) {
             double[] playerCoords = new double[2];
             playerCoords[0] = player.getLocation().getChunk().getX();
             playerCoords[1] = player.getLocation().getChunk().getZ();
 
+            System.out.println("Comparing player coords " + playerCoords + " to chunk coords " + chunk.getCoordinates());
             if (playerCoords == chunk.getCoordinates()) {
+                System.out.println("Match!");
                 return chunk.getHolder();
             }
         }
+        System.out.println("No match found.");
         return "unclaimed";
     }
 
