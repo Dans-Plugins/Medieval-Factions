@@ -73,7 +73,7 @@ public class Main extends JavaPlugin implements Listener {
     public void saveFactions() {
         System.out.println("Saving factions...");
         for (Faction faction : factions) {
-            faction.save();
+            faction.save(factions);
         }
     }
 

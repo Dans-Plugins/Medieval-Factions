@@ -135,7 +135,7 @@ public class Faction {
         return membership;
     }
 
-    boolean save() {
+    boolean save(ArrayList<Faction> factions) {
         try {
             File saveFolder = new File("./plugins/medievalfactions/");
             if (!saveFolder.exists()) {
@@ -162,7 +162,14 @@ public class Faction {
             saveWriter.write("0" + "\n");
 
             for (int i = 0; i < enemyFactions.size(); i++) {
-                saveWriter.write(enemyFactions.get(i) + "\n");
+
+                // if enemy faction exists, save it
+                for (Faction faction : factions) {
+                    if (faction.getName().equalsIgnoreCase(enemyFactions.get(i))) {
+                        saveWriter.write(enemyFactions.get(i) + "\n");
+                    }
+                }
+
             }
 
             saveWriter.close();
