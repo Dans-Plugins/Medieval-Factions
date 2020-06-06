@@ -1,6 +1,5 @@
 package plugin;
 
-import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Chunk;
 import org.bukkit.command.Command;
@@ -18,6 +17,7 @@ import java.io.FileNotFoundException;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Objects;
 import java.util.Scanner;
 
 public class Main extends JavaPlugin implements Listener {
@@ -249,8 +249,8 @@ public class Main extends JavaPlugin implements Listener {
     public static boolean isInFaction(String playerName, ArrayList<Faction> factions) {
         // membership check
         boolean isAlreadyInFaction = false;
-        for (int i = 0; i < factions.size(); i++) {
-            if (factions.get(i).isMember(playerName)) {
+        for (Faction faction : factions) {
+            if (faction.isMember(playerName)) {
                 isAlreadyInFaction = true;
                 break;
             }
@@ -278,14 +278,14 @@ public class Main extends JavaPlugin implements Listener {
     }
 
     public static String createStringFromFirstArgOnwards(String[] args) {
-        String name = "";
+        StringBuilder name = new StringBuilder();
         for (int i = 1; i < args.length; i++) {
-            name = name + args[i];
+            name.append(args[i]);
             if (!(i == args.length - 1)) {
-                name = name + " ";
+                name.append(" ");
             }
         }
-        return name;
+        return name.toString();
     }
 
     @EventHandler()
@@ -324,7 +324,6 @@ public class Main extends JavaPlugin implements Listener {
                     !(factions.get(victimsFactionIndex).isEnemy(factions.get(attackersFactionIndex).getName()))) {
                     event.setCancelled(true);
                     attacker.sendMessage(ChatColor.RED + "You can't attack another player if your factions aren't at war.");
-                    return;
                 }
             }
         }
@@ -411,7 +410,7 @@ public class Main extends JavaPlugin implements Listener {
         // - Dan
 
         // if player enters a new chunk
-        if (event.getFrom().getChunk() != event.getTo().getChunk()) {
+        if (event.getFrom().getChunk() != Objects.requireNonNull(event.getTo()).getChunk()) {
 
             // if new chunk is claimed and old chunk was not
             if (isClaimed(event.getTo().getChunk()) && !isClaimed(event.getFrom().getChunk())) {
@@ -432,7 +431,6 @@ public class Main extends JavaPlugin implements Listener {
                 if (!(getClaimedChunk(event.getFrom().getChunk().getX(), event.getFrom().getChunk().getZ()).getHolder().equalsIgnoreCase(getClaimedChunk(event.getTo().getChunk().getX(), event.getTo().getChunk().getZ()).getHolder()))) {
                     event.getPlayer().sendMessage(ChatColor.GREEN + "Leaving the territory of " + getClaimedChunk(event.getFrom().getChunk().getX(), event.getFrom().getChunk().getZ()).getHolder());
                     event.getPlayer().sendMessage(ChatColor.GREEN + "Entering the territory of " + getClaimedChunk(event.getTo().getChunk().getX(), event.getTo().getChunk().getZ()).getHolder());
-                    return;
                 }
             }
 
