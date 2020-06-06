@@ -10,6 +10,7 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.event.block.BlockPlaceEvent;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
+import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.player.PlayerMoveEvent;
 import org.bukkit.plugin.java.JavaPlugin;
 import plugin.Commands.*;
@@ -21,6 +22,8 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Objects;
 import java.util.Scanner;
+
+import static org.bukkit.event.block.Action.RIGHT_CLICK_BLOCK;
 
 public class Main extends JavaPlugin implements Listener {
 
@@ -616,6 +619,36 @@ public class Main extends JavaPlugin implements Listener {
 
         // get chunk
         ClaimedChunk chunk = getClaimedChunk(event.getBlock().getLocation().getChunk().getX(), event.getBlock().getLocation().getChunk().getZ());
+
+        // if chunk is claimed
+        if (chunk != null) {
+
+            // player not in a faction
+            if (!isInFaction(event.getPlayer().getName(), factions)) {
+                event.setCancelled(true);
+            }
+
+            // if player is in faction
+            for (Faction faction : factions) {
+                if (faction.isMember(player.getName())) {
+
+                    // if player's faction is not the same as the holder of the chunk
+                    if (!(faction.getName().equalsIgnoreCase(chunk.getHolder()))) {
+                        event.setCancelled(true);
+                        return;
+                    }
+                }
+            }
+        }
+    }
+
+    @EventHandler()
+    public void onRightClick(PlayerInteractEvent event) {
+        // get player
+        Player player = event.getPlayer();
+
+        // get chunk
+        ClaimedChunk chunk = getClaimedChunk(event.getClickedBlock().getLocation().getChunk().getX(), event.getClickedBlock().getLocation().getChunk().getZ());
 
         // if chunk is claimed
         if (chunk != null) {
