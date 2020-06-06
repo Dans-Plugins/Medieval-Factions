@@ -17,7 +17,7 @@ public class HelpCommand {
                 sendPageOne(sender);
             }
             if (args[1].equalsIgnoreCase("2")) {
-                sender.sendMessage(ChatColor.BOLD + "" + ChatColor.AQUA + "\n----------\n" + "Medieval Factions Commands Page 2" + "\n----------\n");
+                sender.sendMessage(ChatColor.BOLD + "" + ChatColor.AQUA + "\n----------\n" + "Medieval Factions Commands - Page 2" + "\n----------\n");
                 sender.sendMessage(ChatColor.AQUA + "/mf create - Create a new faction." + "\n");
                 sender.sendMessage(ChatColor.AQUA + "/mf invite - Invite a player to your faction." + "\n");
                 sender.sendMessage(ChatColor.AQUA + "/mf desc - Set your faction description." + "\n");
@@ -26,6 +26,7 @@ public class HelpCommand {
                 sender.sendMessage(ChatColor.AQUA + "/mf delete - Delete your faction (must be owner)." + "\n");
             }
             if (args[1].equalsIgnoreCase("3")) {
+                sender.sendMessage(ChatColor.BOLD + "" + ChatColor.AQUA + "\n----------\n" + "Medieval Factions Commands - Page 3" + "\n----------\n");
                 sender.sendMessage(ChatColor.AQUA + "/mf declarewar - Declare war against another faction." + "\n");
                 sender.sendMessage(ChatColor.AQUA + "/mf makepeace - Send peace offer to another faction." + "\n");
                 sender.sendMessage(ChatColor.AQUA + "/mf claim - Claim land for your faction." + "\n");
@@ -43,7 +44,7 @@ public class HelpCommand {
     }
 
     static void sendPageOne(CommandSender sender) {
-        sender.sendMessage(ChatColor.BOLD + "" + ChatColor.AQUA + "\n----------\n" + "Medieval Factions Commands Page 1" + "\n----------\n");
+        sender.sendMessage(ChatColor.BOLD + "" + ChatColor.AQUA + "\n----------\n" + "Medieval Factions Commands - Page 1" + "\n----------\n");
         sender.sendMessage(ChatColor.AQUA + "/mf help # - Show lists of useful commands." + "\n");
         sender.sendMessage(ChatColor.AQUA + "/mf list - List all factions on the server." + "\n");
         sender.sendMessage(ChatColor.AQUA + "/mf info - See your faction or another faction's information." + "\n");
