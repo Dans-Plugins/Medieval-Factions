@@ -282,6 +282,7 @@ public class Main extends JavaPlugin implements Listener {
                 if (attackersFactionIndex == victimsFactionIndex) {
                     event.setCancelled(true);
                     attacker.sendMessage(ChatColor.RED + "You can't attack another player if you are part of the same faction.");
+                    return;
                 }
 
                 // if attacker's faction and victim's faction are not at war
@@ -289,6 +290,7 @@ public class Main extends JavaPlugin implements Listener {
                     !(factions.get(victimsFactionIndex).isEnemy(factions.get(attackersFactionIndex).getName()))) {
                     event.setCancelled(true);
                     attacker.sendMessage(ChatColor.RED + "You can't attack another player if your factions aren't at war.");
+                    return;
                 }
             }
         }
