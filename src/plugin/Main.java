@@ -227,6 +227,18 @@ public class Main extends JavaPlugin implements Listener {
                     }
                 }
 
+                // unclaimall command
+                if (args[0].equalsIgnoreCase("unclaimall")) {
+                    if (sender instanceof Player) {
+                        Player player = (Player) sender;
+                        for (Faction faction : factions) {
+                            if (faction.isOwner(player.getName())) {
+                                removeAllClaimedChunks(faction.getName());
+                            }
+                        }
+                    }
+                }
+
                 // checkclaim command
                 if (args[0].equalsIgnoreCase("checkclaim")) {
                     if (sender instanceof Player) {
