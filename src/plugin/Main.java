@@ -8,6 +8,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.BlockBreakEvent;
+import org.bukkit.event.block.BlockPlaceEvent;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.player.PlayerMoveEvent;
 import org.bukkit.plugin.java.JavaPlugin;
@@ -478,6 +479,8 @@ public class Main extends JavaPlugin implements Listener {
         }
     }
 
+    // the following two event handlers are identical except in their event types
+    // might have to fix this duplication later
 
     @EventHandler()
     public void onBlockBreak(BlockBreakEvent event) {
@@ -507,5 +510,32 @@ public class Main extends JavaPlugin implements Listener {
         }
     }
 
+    @EventHandler()
+    public void onBlockPlace(BlockPlaceEvent event) {
+        // get player
+        Player player = event.getPlayer();
+
+        // get chunk
+        ClaimedChunk chunk = getClaimedChunk(event.getBlock().getLocation().getChunk().getX(), event.getBlock().getLocation().getChunk().getZ());
+
+        // if chunk is claimed
+        if (chunk != null) {
+
+            // if player is in faction
+            for (Faction faction : factions) {
+                if (faction.isMember(player.getName())) {
+
+                    // if player's faction is not the same as the holder of the chunk
+                    if (!(faction.getName().equalsIgnoreCase(chunk.getHolder()))) {
+                        event.setCancelled(true);
+                        return;
+                    }
+                }
+            }
+            // player not in a faction
+            event.setCancelled(true);
+
+        }
+    }
 
 }
