@@ -24,6 +24,7 @@ public class HelpCommand {
         sender.sendMessage(ChatColor.AQUA + "/mf makepeace - Send peace offer to another faction." + "\n");
         sender.sendMessage(ChatColor.AQUA + "/mf claim - Claim land for your faction." + "\n");
         sender.sendMessage(ChatColor.AQUA + "/mf unclaim - Unclaim land for your faction." + "\n");
+        sender.sendMessage(ChatColor.AQUA + "/mf unclaimall - Unclaim all land for your faction." + "\n");
         sender.sendMessage(ChatColor.AQUA + "/mf checkclaim - Check if land is claimed." + "\n");
         if (!(sender instanceof Player)) {
             sender.sendMessage(ChatColor.AQUA + "/mf forcesave - Force the plugin to save.");
