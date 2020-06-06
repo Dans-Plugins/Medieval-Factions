@@ -21,12 +21,13 @@ public class LeaveCommand {
                         // is faction empty?
                         if (factions.get(i).getPopulation() == 1) {
                             // able to leave
-                            factions.get(i).removeMember(player.getName());
-                            factions.remove(i);
-                            player.sendMessage(ChatColor.AQUA + "You left your faction. It was deleted since no one else was a member.");
 
                             // remove claimed land objects associated with this faction
                             removeAllClaimedChunks(factions.get(i).getName(), chunks);
+
+                            factions.get(i).removeMember(player.getName());
+                            factions.remove(i);
+                            player.sendMessage(ChatColor.AQUA + "You left your faction. It was deleted since no one else was a member.");
 
                             return true;
                         }
