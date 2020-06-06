@@ -217,12 +217,7 @@ public class Main extends JavaPlugin implements Listener {
                         Player player = (Player) sender;
                         for (Faction faction : factions) {
                             if (faction.isOwner(player.getName())) {
-                                try {
-                                    removeAllClaimedChunks(faction.getName(), claimedChunks);
-                                } catch(Exception ignored) {
-
-                                }
-
+                                removeAllClaimedChunks(faction.getName(), claimedChunks);
                             }
                         }
                     }
@@ -475,12 +470,14 @@ public class Main extends JavaPlugin implements Listener {
     }
 
     public static void removeAllClaimedChunks(String factionName, ArrayList<ClaimedChunk> claimedChunks) {
-        for (ClaimedChunk claimedChunk : claimedChunks) {
-            if (claimedChunk.getHolder().equalsIgnoreCase(factionName)) {
-                claimedChunks.remove(claimedChunk);
-            }
+        try {
+            claimedChunks.removeIf(claimedChunk -> claimedChunk.getHolder().equalsIgnoreCase(factionName));
+        }
+        catch(Exception ignored) {
+
         }
     }
+
 
     @EventHandler()
     public void onBlockBreak(BlockBreakEvent event) {
