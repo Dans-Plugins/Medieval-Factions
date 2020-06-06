@@ -518,6 +518,11 @@ public class Main extends JavaPlugin implements Listener {
         // if chunk is claimed
         if (chunk != null) {
 
+            // player not in a faction
+            if (!isInFaction(event.getPlayer().getName(), factions)) {
+                event.setCancelled(true);
+            }
+
             // if player is in faction
             for (Faction faction : factions) {
                 if (faction.isMember(player.getName())) {
@@ -529,11 +534,6 @@ public class Main extends JavaPlugin implements Listener {
                     }
                 }
             }
-            // player not in a faction
-            if (!isInFaction(event.getPlayer().getName(), factions)) {
-                event.setCancelled(true);
-            }
-
         }
     }
 
@@ -548,6 +548,11 @@ public class Main extends JavaPlugin implements Listener {
         // if chunk is claimed
         if (chunk != null) {
 
+            // player not in a faction
+            if (!isInFaction(event.getPlayer().getName(), factions)) {
+                event.setCancelled(true);
+            }
+
             // if player is in faction
             for (Faction faction : factions) {
                 if (faction.isMember(player.getName())) {
@@ -559,11 +564,6 @@ public class Main extends JavaPlugin implements Listener {
                     }
                 }
             }
-            // player not in a faction
-            if (!isInFaction(event.getPlayer().getName(), factions)) {
-                event.setCancelled(true);
-            }
-
         }
     }
 
