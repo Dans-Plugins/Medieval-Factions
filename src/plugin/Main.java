@@ -119,7 +119,7 @@ public class Main extends JavaPlugin implements Listener {
 
             // no arguments check
             if (args.length == 0) {
-                HelpCommand.sendHelpMessage(sender);
+                HelpCommand.sendHelpMessage(sender, args);
             }
 
             // argument check
@@ -127,7 +127,7 @@ public class Main extends JavaPlugin implements Listener {
 
                 // help command
                 if (args[0].equalsIgnoreCase("help")) {
-                    HelpCommand.sendHelpMessage(sender);
+                    HelpCommand.sendHelpMessage(sender, args);
                 }
 
                 // create command
