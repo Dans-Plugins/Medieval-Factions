@@ -104,7 +104,7 @@ public class Main extends JavaPlugin implements Listener {
             for (ClaimedChunk chunk : claimedChunks) {
                 double[] coords = chunk.getCoordinates();
 
-                saveWriter.write((int)coords[0] + "-" + (int)coords[1] + ".txt" + "\n");
+                saveWriter.write((int)coords[0] + "_" + (int)coords[1] + ".txt" + "\n");
             }
 
             saveWriter.close();
