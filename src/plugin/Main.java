@@ -82,6 +82,26 @@ public class Main extends JavaPlugin implements Listener {
         }
     }
 
+    public void saveClaimedChunkFilenames() {
+
+    }
+
+    public void saveClaimedChunks() {
+        System.out.println("Saving claimed chunks...");
+        for (ClaimedChunk chunk : claimedChunks) {
+            chunk.save();
+        }
+        System.out.println("Claimed chunks saved.");
+    }
+
+    public void loadClaimedChunks() {
+        System.out.println("Loading claimed chunks...");
+
+
+
+        System.out.println("Claimed chunks loaded.");
+    }
+
     public void loadFactions() {
         try {
             System.out.println("Attempting to load factions...");
@@ -258,6 +278,8 @@ public class Main extends JavaPlugin implements Listener {
                         System.out.println("Medieval Factions plugin is saving...");
                         saveFactionNames();
                         saveFactions();
+                        saveClaimedChunkFilenames();
+                        saveClaimedChunks();
                     }
                 }
 
@@ -266,6 +288,7 @@ public class Main extends JavaPlugin implements Listener {
                     if (!(sender instanceof Player)) {
                         System.out.println("Medieval Factions plugin is loading...");
                         loadFactions();
+                        loadClaimedChunks();
                     }
                 }
 
