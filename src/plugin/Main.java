@@ -141,7 +141,7 @@ public class Main extends JavaPlugin implements Listener {
 
                 // delete command
                 if (args[0].equalsIgnoreCase("delete")) {
-                    DeleteCommand.deleteFaction(sender, factions);
+                    DeleteCommand.deleteFaction(sender, factions, claimedChunks);
                 }
 
                 // members command
@@ -176,7 +176,7 @@ public class Main extends JavaPlugin implements Listener {
 
                 // leave commmand
                 if (args[0].equalsIgnoreCase("leave")) {
-                    LeaveCommand.leaveFaction(sender, factions);
+                    LeaveCommand.leaveFaction(sender, factions, claimedChunks);
                 }
 
                 // transfer command
@@ -192,23 +192,6 @@ public class Main extends JavaPlugin implements Listener {
                 // make peace command
                 if (args[0].equalsIgnoreCase("makepeace")) {
                     MakePeaceCommand.makePeace(sender, args, factions);
-                }
-
-                // forcesave command
-                if (args[0].equalsIgnoreCase("forcesave")) {
-                    if (!(sender instanceof Player)) {
-                        System.out.println("Medieval Factions plugin is saving...");
-                        saveFactionNames();
-                        saveFactions();
-                    }
-                }
-
-                // forceload command
-                if (args[0].equalsIgnoreCase("forceload")) {
-                    if (!(sender instanceof Player)) {
-                        System.out.println("Medieval Factions plugin is loading...");
-                        loadFactions();
-                    }
                 }
 
                 // claim command
@@ -233,7 +216,7 @@ public class Main extends JavaPlugin implements Listener {
                         Player player = (Player) sender;
                         for (Faction faction : factions) {
                             if (faction.isOwner(player.getName())) {
-                                removeAllClaimedChunks(faction.getName());
+                                removeAllClaimedChunks(faction.getName(), claimedChunks);
                             }
                         }
                     }
@@ -250,6 +233,23 @@ public class Main extends JavaPlugin implements Listener {
                         else {
                             player.sendMessage(ChatColor.RED + "This land is claimed by " + result + ".");
                         }
+                    }
+                }
+
+                // forcesave command
+                if (args[0].equalsIgnoreCase("forcesave")) {
+                    if (!(sender instanceof Player)) {
+                        System.out.println("Medieval Factions plugin is saving...");
+                        saveFactionNames();
+                        saveFactions();
+                    }
+                }
+
+                // forceload command
+                if (args[0].equalsIgnoreCase("forceload")) {
+                    if (!(sender instanceof Player)) {
+                        System.out.println("Medieval Factions plugin is loading...");
+                        loadFactions();
                     }
                 }
 
@@ -468,7 +468,7 @@ public class Main extends JavaPlugin implements Listener {
         return null;
     }
 
-    void removeAllClaimedChunks(String factionName) {
+    public static void removeAllClaimedChunks(String factionName, ArrayList<ClaimedChunk> claimedChunks) {
         for (ClaimedChunk claimedChunk : claimedChunks) {
             if (claimedChunk.getHolder().equalsIgnoreCase(factionName)) {
                 claimedChunks.remove(claimedChunk);
