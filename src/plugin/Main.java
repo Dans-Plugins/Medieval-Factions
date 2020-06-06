@@ -8,6 +8,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
+import org.bukkit.event.player.PlayerMoveEvent;
 import org.bukkit.plugin.java.JavaPlugin;
 import plugin.Commands.*;
 
@@ -390,9 +391,9 @@ public class Main extends JavaPlugin implements Listener {
         double[] playerCoords = new double[2];
         playerCoords[0] = player.getLocation().getChunk().getX();
         playerCoords[1] = player.getLocation().getChunk().getZ();
-//        System.out.println("Checking if chunk at location of player " + player.getName() + " is claimed.");
+        System.out.println("Checking if chunk at location of player " + player.getName() + " is claimed.");
         for (ClaimedChunk chunk : claimedChunks) {
-            System.out.println("Comparing player coords " + playerCoords[0] + ", " + playerCoords[1] + " to chunk coords " + chunk.getCoordinates()[0] + ", " + chunk.getCoordinates()[1]);
+//            System.out.println("Comparing player coords " + playerCoords[0] + ", " + playerCoords[1] + " to chunk coords " + chunk.getCoordinates()[0] + ", " + chunk.getCoordinates()[1]);
             if (playerCoords[0] == chunk.getCoordinates()[0] && playerCoords[1] == chunk.getCoordinates()[1]) {
                 System.out.println("Match!");
                 return chunk.getHolder();
@@ -400,6 +401,48 @@ public class Main extends JavaPlugin implements Listener {
         }
         System.out.println("No match found.");
         return "unclaimed";
+    }
+
+    @EventHandler()
+    public void onPlayerMove(PlayerMoveEvent event) {
+        // if player enters a new chunk
+        if (event.getFrom().getChunk() != event.getTo().getChunk()) {
+            Player player = event.getPlayer();
+
+            double[] playerCoords = new double[2];
+            playerCoords[0] = player.getLocation().getChunk().getX();
+            playerCoords[1] = player.getLocation().getChunk().getZ();
+
+            for (ClaimedChunk chunk : claimedChunks) {
+
+                // if new chunk is claimed
+                if (playerCoords[0] == chunk.getCoordinates()[0] && playerCoords[1] == chunk.getCoordinates()[1]) {
+
+                    // if old chunk was claimed
+                    for (ClaimedChunk chunk2 : claimedChunks) {
+                        if (event.getFrom().getChunk().getX() == chunk2.getCoordinates()[0] && event.getFrom().getChunk().getZ() == chunk2.getCoordinates()[1]) {
+
+                            // if new chunk and old chunk were claimed by different factions
+                            if (chunk.getHolder() != chunk2.getHolder()) {
+                                player.sendMessage(ChatColor.GREEN + "Leaving the territory of " + chunk2.getHolder());
+                                player.sendMessage(ChatColor.GREEN + "Entering the territory of " + chunk.getHolder());
+                                return;
+                            }
+
+                        }
+                    }
+
+                    // otherwise if old chunk was unclaimed
+                    player.sendMessage(ChatColor.GREEN + "Entering the territory of " + chunk.getHolder());
+                    return;
+
+                }
+
+            }
+            // otherwise new chunk is unclaimed
+            player.sendMessage(ChatColor.GREEN + "Entering the wilderness.");
+            return;
+        }
     }
 
 }
