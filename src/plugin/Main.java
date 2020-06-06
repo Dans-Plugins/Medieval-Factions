@@ -134,7 +134,7 @@ public class Main extends JavaPlugin implements Listener {
             while (loadReader.hasNextLine()) {
                 String nextName = loadReader.nextLine();
                 ClaimedChunk temp = new ClaimedChunk(); // uses no-parameter constructor since load provides chunk
-                temp.load(nextName + ".txt"); // provides owner field among other things
+                temp.load(nextName); // provides owner field among other things
 
                 claimedChunks.add(temp);
 
