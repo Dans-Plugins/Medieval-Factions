@@ -530,7 +530,9 @@ public class Main extends JavaPlugin implements Listener {
                 }
             }
             // player not in a faction
-            event.setCancelled(true);
+            if (!isInFaction(event.getPlayer().getName(), factions)) {
+                event.setCancelled(true);
+            }
 
         }
     }
@@ -558,7 +560,9 @@ public class Main extends JavaPlugin implements Listener {
                 }
             }
             // player not in a faction
-            event.setCancelled(true);
+            if (!isInFaction(event.getPlayer().getName(), factions)) {
+                event.setCancelled(true);
+            }
 
         }
     }
