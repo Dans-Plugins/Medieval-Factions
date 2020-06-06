@@ -21,6 +21,7 @@ import java.util.Scanner;
 public class Main extends JavaPlugin implements Listener {
 
     ArrayList<Faction> factions = new ArrayList<>();
+    ArrayList<ClaimedChunk> claimedChunks = new ArrayList<>();
 
     @Override
     public void onEnable() {
@@ -294,6 +295,39 @@ public class Main extends JavaPlugin implements Listener {
                 }
             }
         }
+    }
+
+    public void addChunkAtPlayerLocation(Player player) {
+        ClaimedChunk newChunk = new ClaimedChunk(player.getLocation().getChunk());
+        for (Faction faction : factions) {
+            if (faction.isOwner(player.getName())) {
+                newChunk.setHolder(faction.getName());
+                claimedChunks.add(newChunk);
+            }
+        }
+    }
+
+    public void removeChunkAtPlayerLocation(Player player) {
+        ClaimedChunk selectedChunk = new ClaimedChunk(player.getLocation().getChunk());
+        for (Faction faction : factions) {
+            if (faction.isOwner(player.getName())) {
+                selectedChunk.setHolder(faction.getName());
+                claimedChunks.remove(selectedChunk);
+            }
+        }
+    }
+
+    public String checkOwnershipAtPlayerLocation(Player player) {
+        for (ClaimedChunk chunk : claimedChunks) {
+            double[] playerCoords = new double[2];
+            playerCoords[0] = player.getLocation().getChunk().getX();
+            playerCoords[1] = player.getLocation().getChunk().getZ();
+
+            if (playerCoords == chunk.getCoordinates()) {
+                return chunk.getHolder();
+            }
+        }
+        return "unclaimed";
     }
 
 }
