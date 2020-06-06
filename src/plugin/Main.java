@@ -34,6 +34,7 @@ public class Main extends JavaPlugin implements Listener {
         this.getServer().getPluginManager().registerEvents(this, this);
 
         loadFactions();
+        loadClaimedChunks();
 
         System.out.println("Medieval Factions plugin enabled.");
     }
@@ -44,6 +45,8 @@ public class Main extends JavaPlugin implements Listener {
 
         saveFactionNames();
         saveFactions();
+        saveClaimedChunkFilenames();
+        saveClaimedChunks();
 
         System.out.println("Medieval Factions plugin disabled.");
     }
@@ -83,7 +86,31 @@ public class Main extends JavaPlugin implements Listener {
     }
 
     public void saveClaimedChunkFilenames() {
+        try {
+            File saveFolder = new File("./plugins/medievalfactions/claimedchunks/");
+            if (!saveFolder.exists()) {
+                saveFolder.mkdir();
+            }
+            File saveFile = new File("./plugins/medievalfactions/claimedchunks/" + "claimed-chunks.txt");
+            if (saveFile.createNewFile()) {
+                System.out.println("Save file for claimed chunk filenames created.");
+            } else {
+                System.out.println("Save file for claimed chunk filenames already exists. Overwriting.");
+            }
 
+            FileWriter saveWriter = new FileWriter(saveFile);
+
+            // actual saving takes place here
+            for (ClaimedChunk chunk : claimedChunks) {
+                double[] coords = chunk.getCoordinates();
+                saveWriter.write(coords[0] + "-" + coords[1] + "\n");
+            }
+
+            saveWriter.close();
+
+        } catch (IOException e) {
+            System.out.println("An error occurred while saving claimed chunk filenames.");
+        }
     }
 
     public void saveClaimedChunks() {
@@ -97,7 +124,26 @@ public class Main extends JavaPlugin implements Listener {
     public void loadClaimedChunks() {
         System.out.println("Loading claimed chunks...");
 
+        try {
+            System.out.println("Attempting to load claimed chunks...");
+            File loadFile = new File("./plugins/medievalfactions/claimedchunks/" + "claimed-chunks.txt");
+            Scanner loadReader = new Scanner(loadFile);
 
+            // actual loading
+            while (loadReader.hasNextLine()) {
+                String nextName = loadReader.nextLine();
+                ClaimedChunk temp = new ClaimedChunk(); // uses no-parameter constructor since load provides chunk
+                temp.load(nextName + ".txt"); // provides owner field among other things
+
+                claimedChunks.add(temp);
+
+            }
+
+            loadReader.close();
+            System.out.println("Claimed chunks successfully loaded.");
+        } catch (FileNotFoundException e) {
+            System.out.println("Error loading the claimed chunks!");
+        }
 
         System.out.println("Claimed chunks loaded.");
     }

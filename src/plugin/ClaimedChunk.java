@@ -1,5 +1,6 @@
 package plugin;
 
+import org.bukkit.Bukkit;
 import org.bukkit.Chunk;
 import org.bukkit.entity.Player;
 
@@ -14,6 +15,10 @@ public class ClaimedChunk {
 
     private Chunk chunk;
     private String holder;
+
+    public ClaimedChunk() {
+
+    }
 
     public ClaimedChunk(Chunk initialChunk) {
         setChunk(initialChunk);
@@ -80,16 +85,19 @@ public class ClaimedChunk {
             File loadFile = new File("./plugins/medievalfactions/claimedchunks/" + filename);
             Scanner loadReader = new Scanner(loadFile);
 
-            double x = 0;
-            double z = 0;
+            int x = 0;
+            int z = 0;
 
             // actual loading
             if (loadReader.hasNextLine()) {
-                x = Double.parseDouble(loadReader.nextLine());
+                x = Integer.parseInt(loadReader.nextLine());
             }
             if (loadReader.hasNextLine()) {
-                z = Double.parseDouble(loadReader.nextLine());
+                z = Integer.parseInt(loadReader.nextLine());
             }
+
+            chunk = Bukkit.getServer().getWorld("flatworld").getChunkAt(x, z); // need to change 'flatworld'
+
             if (loadReader.hasNextLine()) {
                 setHolder(loadReader.nextLine());
             }
