@@ -452,6 +452,7 @@ public class Main extends JavaPlugin implements Listener {
 
                 ClaimedChunk newChunk = new ClaimedChunk(player.getLocation().getChunk());
                 newChunk.setHolder(faction.getName());
+                newChunk.setWorld(player.getLocation().getWorld().getName());
                 claimedChunks.add(newChunk);
                 player.sendMessage(ChatColor.GREEN + "Land claimed!");
                 return;

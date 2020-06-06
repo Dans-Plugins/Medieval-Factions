@@ -15,6 +15,7 @@ public class ClaimedChunk {
 
     private Chunk chunk;
     private String holder;
+    private String world;
 
     public ClaimedChunk() {
 
@@ -47,6 +48,14 @@ public class ClaimedChunk {
         return coordinates;
     }
 
+    public void setWorld(String worldName) {
+        world = worldName;
+    }
+
+    public String getWorld() {
+        return world;
+    }
+
     public void save() {
 
         String identifier = (int)chunk.getX() + "_" + (int)chunk.getZ();
@@ -68,6 +77,7 @@ public class ClaimedChunk {
             // actual saving takes place here
             saveWriter.write(chunk.getX() + "\n");
             saveWriter.write(chunk.getZ() + "\n");
+            saveWriter.write(world + "\n");
             saveWriter.write(holder);
 
             saveWriter.close();
@@ -96,9 +106,13 @@ public class ClaimedChunk {
                 z = Integer.parseInt(loadReader.nextLine());
             }
 
+            if (loadReader.hasNextLine()) {
+                world = loadReader.nextLine();
+            }
+
             try {
                 System.out.println("Attempting to get chunk...");
-                chunk = Bukkit.getServer().getWorld("flatworld").getChunkAt(x, z); // need to change 'flatworld'
+                chunk = Bukkit.getServer().getWorld(world).getChunkAt(x, z);
                 System.out.println("Chunk acquired.");
             } catch(Exception e) {
                 System.out.println("Failed.");
