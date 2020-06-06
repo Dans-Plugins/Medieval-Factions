@@ -194,23 +194,6 @@ public class Main extends JavaPlugin implements Listener {
                     MakePeaceCommand.makePeace(sender, args, factions);
                 }
 
-                // forcesave command
-                if (args[0].equalsIgnoreCase("forcesave")) {
-                    if (!(sender instanceof Player)) {
-                        System.out.println("Medieval Factions plugin is saving...");
-                        saveFactionNames();
-                        saveFactions();
-                    }
-                }
-
-                // forceload command
-                if (args[0].equalsIgnoreCase("forceload")) {
-                    if (!(sender instanceof Player)) {
-                        System.out.println("Medieval Factions plugin is loading...");
-                        loadFactions();
-                    }
-                }
-
                 // claim command
                 if (args[0].equalsIgnoreCase("claim")) {
                     if (sender instanceof Player) {
@@ -250,6 +233,23 @@ public class Main extends JavaPlugin implements Listener {
                         else {
                             player.sendMessage(ChatColor.RED + "This land is claimed by " + result + ".");
                         }
+                    }
+                }
+
+                // forcesave command
+                if (args[0].equalsIgnoreCase("forcesave")) {
+                    if (!(sender instanceof Player)) {
+                        System.out.println("Medieval Factions plugin is saving...");
+                        saveFactionNames();
+                        saveFactions();
+                    }
+                }
+
+                // forceload command
+                if (args[0].equalsIgnoreCase("forceload")) {
+                    if (!(sender instanceof Player)) {
+                        System.out.println("Medieval Factions plugin is loading...");
+                        loadFactions();
                     }
                 }
 
