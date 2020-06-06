@@ -49,7 +49,7 @@ public class ClaimedChunk {
 
     public void save() {
 
-        String identifier = (int)chunk.getX() + "-" + (int)chunk.getZ();
+        String identifier = (int)chunk.getX() + "" + (int)chunk.getZ();
 
         try {
             File saveFolder = new File("./plugins/medievalfactions/claimedchunks/");
@@ -96,7 +96,14 @@ public class ClaimedChunk {
                 z = Integer.parseInt(loadReader.nextLine());
             }
 
-            chunk = Bukkit.getServer().getWorld("flatworld").getChunkAt(x, z); // need to change 'flatworld'
+            try {
+                System.out.println("Attempting to get chunk...");
+                chunk = Bukkit.getServer().getWorld("flatworld").getChunkAt(x, z); // need to change 'flatworld'
+                System.out.println("Chunk acquired.");
+            } catch(Exception e) {
+                System.out.println("Failed.");
+            }
+
 
             if (loadReader.hasNextLine()) {
                 setHolder(loadReader.nextLine());
@@ -104,7 +111,7 @@ public class ClaimedChunk {
 
             loadReader.close();
 
-            System.out.println("Faction " + x + "-" + z + " successfully loaded.");
+            System.out.println("Claimed chunk " + x + "" + z + " successfully loaded.");
 
         } catch (FileNotFoundException e) {
             System.out.println("An error occurred loading the file " + filename + ".");
