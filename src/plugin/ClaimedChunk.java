@@ -56,14 +56,14 @@ public class ClaimedChunk {
             if (!saveFolder.exists()) {
                 saveFolder.mkdir();
             }
-            File saveFile = new File("./plugins/medievalfactions/claimedchunks" + identifier + ".txt");
+            File saveFile = new File("./plugins/medievalfactions/claimedchunks/" + identifier + ".txt");
             if (saveFile.createNewFile()) {
                 System.out.println("Save file for claimed chunk " + identifier + " created.");
             } else {
                 System.out.println("Save file for claimed chunk " + identifier + " already exists. Altering.");
             }
 
-            FileWriter saveWriter = new FileWriter("./plugins/medievalfactions/claimedchunks" + identifier + ".txt");
+            FileWriter saveWriter = new FileWriter("./plugins/medievalfactions/claimedchunks/" + identifier + ".txt");
 
             // actual saving takes place here
             saveWriter.write(chunk.getX() + "\n");
