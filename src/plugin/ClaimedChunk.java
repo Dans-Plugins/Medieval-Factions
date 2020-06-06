@@ -49,7 +49,7 @@ public class ClaimedChunk {
 
     public void save() {
 
-        String identifier = (int)chunk.getX() + "" + (int)chunk.getZ();
+        String identifier = (int)chunk.getX() + "-" + (int)chunk.getZ();
 
         try {
             File saveFolder = new File("./plugins/medievalfactions/claimedchunks/");

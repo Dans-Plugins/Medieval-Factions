@@ -104,7 +104,7 @@ public class Main extends JavaPlugin implements Listener {
             for (ClaimedChunk chunk : claimedChunks) {
                 double[] coords = chunk.getCoordinates();
 
-                saveWriter.write((int)coords[0] + "" + (int)coords[1] + ".txt" + "\n");
+                saveWriter.write((int)coords[0] + "-" + (int)coords[1] + ".txt" + "\n");
             }
 
             saveWriter.close();
@@ -144,6 +144,7 @@ public class Main extends JavaPlugin implements Listener {
             System.out.println("Claimed chunks successfully loaded.");
         } catch (FileNotFoundException e) {
             System.out.println("Error loading the claimed chunks!");
+            e.printStackTrace();
         }
 
         System.out.println("Claimed chunks loaded.");
