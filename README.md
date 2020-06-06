@@ -17,3 +17,4 @@ A minecraft plugin for players to use to organize politically.
 -  0.9 'Ownership Transfer' update
 -  1.0 'Message Improvements' update
 -  1.1 'Player Versus Player' update
+-  1.2 'Land Claiming' update
