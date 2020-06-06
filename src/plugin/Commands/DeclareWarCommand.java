@@ -30,18 +30,26 @@ public class DeclareWarCommand {
                             if (factions.get(i).getName().equalsIgnoreCase(factionName)) {
 
                                 if (!(faction.getName().equalsIgnoreCase(factionName))) {
-                                    // add enemy to declarer's faction's enemyList
-                                    faction.addEnemy(factionName);
-                                    player.sendMessage(ChatColor.AQUA + "War has been declared against " + factionName + "!");
 
-                                    // add declarer's faction to new enemy's enemyList
-                                    factions.get(i).addEnemy(faction.getName());
-                                    try {
-                                        Player target = Bukkit.getServer().getPlayer(factions.get(i).getOwner());
-                                        target.sendMessage(ChatColor.AQUA + faction.getName() + "has declared war against your faction!");
-                                    } catch (Exception ignored) {
+                                    // check that enemy is not already on list
+                                    if (!(faction.isEnemy(factionName))) {
+                                        // add enemy to declarer's faction's enemyList
+                                        faction.addEnemy(factionName);
+                                        player.sendMessage(ChatColor.AQUA + "War has been declared against " + factionName + "!");
 
+                                        // add declarer's faction to new enemy's enemyList
+                                        factions.get(i).addEnemy(faction.getName());
+                                        try {
+                                            Player target = Bukkit.getServer().getPlayer(factions.get(i).getOwner());
+                                            target.sendMessage(ChatColor.AQUA + faction.getName() + "has declared war against your faction!");
+                                        } catch (Exception ignored) {
+
+                                        }
                                     }
+                                    else {
+                                        player.sendMessage(ChatColor.RED + "Your faction is already at war with " + factionName);
+                                    }
+
                                 }
                                 else {
                                     player.sendMessage(ChatColor.RED + "You can't declare war on your own faction.");

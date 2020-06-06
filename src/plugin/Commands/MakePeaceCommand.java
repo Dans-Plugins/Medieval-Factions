@@ -30,16 +30,25 @@ public class MakePeaceCommand {
                             if (factions.get(i).getName().equalsIgnoreCase(factionName)) {
 
                                 if (!(faction.getName().equalsIgnoreCase(factionName))) {
-                                    // add enemy to declarer's faction's enemyList
-                                    faction.removeEnemy(factionName);
-                                    player.sendMessage(ChatColor.AQUA + "Peace offer has been sent to " + factionName + "!");
 
-                                    try {
-                                        Player target = Bukkit.getServer().getPlayer(factions.get(i).getOwner());
-                                        target.sendMessage(ChatColor.AQUA + faction.getName() + " has sent your faction a peace offer!");
-                                    } catch (Exception ignored) {
+                                    // check that enemy exists
+                                    if (faction.isEnemy(factionName)) {
+                                        // add enemy to declarer's faction's enemyList
+                                        faction.removeEnemy(factionName);
+                                        player.sendMessage(ChatColor.AQUA + "You have tried to make peace with " + factionName + "!");
 
+                                        try {
+                                            Player target = Bukkit.getServer().getPlayer(factions.get(i).getOwner());
+                                            target.sendMessage(ChatColor.AQUA + faction.getName() + " has tried to make peace with your faction!");
+                                        } catch (Exception ignored) {
+
+                                        }
                                     }
+                                    else {
+                                        player.sendMessage(ChatColor.RED + "Your faction is not currently at war with " + factionName + ".");
+                                    }
+
+
                                 }
                                 else {
                                     player.sendMessage(ChatColor.RED + "You can't make peace with your own faction.");
