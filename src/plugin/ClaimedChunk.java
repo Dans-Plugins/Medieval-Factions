@@ -4,9 +4,11 @@ import org.bukkit.Chunk;
 import org.bukkit.entity.Player;
 
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Scanner;
 
 public class ClaimedChunk {
 
@@ -74,7 +76,32 @@ public class ClaimedChunk {
     }
 
     public void load(String filename) {
+        try {
+            File loadFile = new File("./plugins/medievalfactions/claimedchunks/" + filename);
+            Scanner loadReader = new Scanner(loadFile);
 
+            double x = 0;
+            double z = 0;
+
+            // actual loading
+            if (loadReader.hasNextLine()) {
+                x = Double.parseDouble(loadReader.nextLine());
+            }
+            if (loadReader.hasNextLine()) {
+                z = Double.parseDouble(loadReader.nextLine());
+            }
+            if (loadReader.hasNextLine()) {
+                setHolder(loadReader.nextLine());
+            }
+
+            loadReader.close();
+
+            System.out.println("Faction " + x + "-" + z + " successfully loaded.");
+
+        } catch (FileNotFoundException e) {
+            System.out.println("An error occurred loading the file " + filename + ".");
+            e.printStackTrace();
+        }
     }
 
 }
