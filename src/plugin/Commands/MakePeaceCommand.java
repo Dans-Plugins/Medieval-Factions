@@ -29,15 +29,20 @@ public class MakePeaceCommand {
                         for (int i = 0; i < factions.size(); i++) {
                             if (factions.get(i).getName().equalsIgnoreCase(factionName)) {
 
-                                // add enemy to declarer's faction's enemyList
-                                faction.removeEnemy(factionName);
-                                player.sendMessage(ChatColor.AQUA + "Peace offer has been sent to " + factionName + "!");
+                                if (!(faction.getName().equalsIgnoreCase(factionName))) {
+                                    // add enemy to declarer's faction's enemyList
+                                    faction.removeEnemy(factionName);
+                                    player.sendMessage(ChatColor.AQUA + "Peace offer has been sent to " + factionName + "!");
 
-                                try {
-                                    Player target = Bukkit.getServer().getPlayer(factions.get(i).getOwner());
-                                    target.sendMessage(ChatColor.AQUA + faction.getName() + " has sent your faction a peace offer!");
-                                } catch (Exception ignored) {
+                                    try {
+                                        Player target = Bukkit.getServer().getPlayer(factions.get(i).getOwner());
+                                        target.sendMessage(ChatColor.AQUA + faction.getName() + " has sent your faction a peace offer!");
+                                    } catch (Exception ignored) {
 
+                                    }
+                                }
+                                else {
+                                    player.sendMessage(ChatColor.RED + "You can't make peace with your own faction.");
                                 }
                             }
                         }
