@@ -217,7 +217,12 @@ public class Main extends JavaPlugin implements Listener {
                         Player player = (Player) sender;
                         for (Faction faction : factions) {
                             if (faction.isOwner(player.getName())) {
-                                removeAllClaimedChunks(faction.getName(), claimedChunks);
+                                try {
+                                    removeAllClaimedChunks(faction.getName(), claimedChunks);
+                                } catch(Exception ignored) {
+
+                                }
+
                             }
                         }
                     }
