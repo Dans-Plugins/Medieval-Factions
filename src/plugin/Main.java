@@ -470,12 +470,14 @@ public class Main extends JavaPlugin implements Listener {
     }
 
     public static void removeAllClaimedChunks(String factionName, ArrayList<ClaimedChunk> claimedChunks) {
-        for (ClaimedChunk claimedChunk : claimedChunks) {
-            if (claimedChunk.getHolder().equalsIgnoreCase(factionName)) {
-                claimedChunks.remove(claimedChunk);
-            }
+        try {
+            claimedChunks.removeIf(claimedChunk -> claimedChunk.getHolder().equalsIgnoreCase(factionName));
+        }
+        catch(Exception ignored) {
+
         }
     }
+
 
     @EventHandler()
     public void onBlockBreak(BlockBreakEvent event) {
@@ -499,6 +501,8 @@ public class Main extends JavaPlugin implements Listener {
                     }
                 }
             }
+            // player not in a faction
+            event.setCancelled(true);
 
         }
     }
