@@ -371,9 +371,7 @@ public class Main extends JavaPlugin implements Listener {
                     if (playerCoords[0] == chunk.getCoordinates()[0] && playerCoords[1] == chunk.getCoordinates()[1]) {
                         // if holder is player's faction
                         if (chunk.getHolder().equalsIgnoreCase(faction.getName())) {
-                            ClaimedChunk selectedChunk = new ClaimedChunk(player.getLocation().getChunk());
-                            selectedChunk.setHolder(faction.getName());
-                            claimedChunks.remove(selectedChunk);
+                            claimedChunks.remove(chunk);
                             player.sendMessage(ChatColor.GREEN + "Land unclaimed.");
                             return;
                         }
