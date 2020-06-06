@@ -18,6 +18,7 @@ public class Faction {
     private String owner = "defaultOwner";
     private ArrayList<String> invited = new ArrayList<>();
     private ArrayList<String> enemyFactions = new ArrayList<>();
+    private boolean autoclaim = false;
 
     // player constructor
     public Faction(String initialName, String creator) {
@@ -28,6 +29,14 @@ public class Faction {
     // server constructor
     Faction(String initialName) {
         setName(initialName);
+    }
+
+    public void toggleAutoClaim() {
+        autoclaim = !autoclaim;
+    }
+
+    public boolean getAutoClaimStatus() {
+        return autoclaim;
     }
 
     public void addEnemy(String factionName) {

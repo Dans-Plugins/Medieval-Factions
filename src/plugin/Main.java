@@ -238,6 +238,20 @@ public class Main extends JavaPlugin implements Listener {
                     }
                 }
 
+                // autoclaim command
+                if (args[0].equalsIgnoreCase("autoclaim")) {
+                    if (sender instanceof Player) {
+                        Player player = (Player) sender;
+                        for (Faction faction : factions) {
+                            if (faction.isOwner(player.getName())) {
+                                faction.toggleAutoClaim();
+                                player.sendMessage(ChatColor.AQUA + "Autoclaim toggled.");
+                            }
+                        }
+                    }
+
+                }
+
                 // forcesave command
                 if (args[0].equalsIgnoreCase("forcesave")) {
                     if (!(sender instanceof Player)) {
@@ -425,6 +439,17 @@ public class Main extends JavaPlugin implements Listener {
 
         // if player enters a new chunk
         if (event.getFrom().getChunk() != Objects.requireNonNull(event.getTo()).getChunk()) {
+
+            // auto claim check
+            for (Faction faction : factions) {
+                if (faction.isOwner(event.getPlayer().getName())) {
+                    if (faction.getAutoClaimStatus()) {
+                        // add new chunk to claimed chunks
+                        addChunkAtPlayerLocation(event.getPlayer());
+                    }
+                }
+            }
+
 
             // if new chunk is claimed and old chunk was not
             if (isClaimed(event.getTo().getChunk()) && !isClaimed(event.getFrom().getChunk())) {
