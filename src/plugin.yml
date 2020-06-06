@@ -1,7 +1,7 @@
 name: MedievalFactions
 version: "1.2"
 author: KingdomProgrammers
-main: plugin.Main
+main: factionsystem.Main
 api-version: "1.15"
 
 commands:

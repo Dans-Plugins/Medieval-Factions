@@ -1,13 +1,13 @@
-package plugin.Commands;
+package factionsystem.Commands;
 
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
-import plugin.Faction;
+import factionsystem.Faction;
 
 import java.util.ArrayList;
 
-import static plugin.Main.createStringFromFirstArgOnwards;
-import static plugin.Main.sendFactionMembers;
+import static factionsystem.Main.createStringFromFirstArgOnwards;
+import static factionsystem.Main.sendFactionMembers;
 
 public class MembersCommand {
 

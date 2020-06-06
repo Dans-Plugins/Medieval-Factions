@@ -1,15 +1,15 @@
-package plugin.Commands;
+package factionsystem.Commands;
 
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
-import plugin.Faction;
+import factionsystem.Faction;
 
 import java.util.ArrayList;
 
-import static plugin.Main.createStringFromFirstArgOnwards;
-import static plugin.Main.isInFaction;
+import static factionsystem.Main.createStringFromFirstArgOnwards;
+import static factionsystem.Main.isInFaction;
 
 public class JoinCommand {
 

@@ -1,8 +1,8 @@
-package plugin.Commands;
+package factionsystem.Commands;
 
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
-import plugin.Faction;
+import factionsystem.Faction;
 
 import java.util.ArrayList;
 

@@ -1,8 +1,4 @@
-package plugin;
-
-import org.bukkit.Bukkit;
-import org.bukkit.ChatColor;
-import org.bukkit.entity.Player;
+package factionsystem;
 
 import java.io.File;
 import java.io.FileNotFoundException;

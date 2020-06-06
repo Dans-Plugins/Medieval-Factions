@@ -1,4 +1,4 @@
-package plugin;
+package factionsystem;
 
 import org.bukkit.ChatColor;
 import org.bukkit.Chunk;
@@ -13,7 +13,7 @@ import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.player.PlayerMoveEvent;
 import org.bukkit.plugin.java.JavaPlugin;
-import plugin.Commands.*;
+import factionsystem.Commands.*;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -22,8 +22,6 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Objects;
 import java.util.Scanner;
-
-import static org.bukkit.event.block.Action.RIGHT_CLICK_BLOCK;
 
 public class Main extends JavaPlugin implements Listener {
 

@@ -1,14 +1,14 @@
-package plugin.Commands;
+package factionsystem.Commands;
 
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
-import plugin.ClaimedChunk;
-import plugin.Faction;
+import factionsystem.ClaimedChunk;
+import factionsystem.Faction;
 
 import java.util.ArrayList;
 
-import static plugin.Main.removeAllClaimedChunks;
+import static factionsystem.Main.removeAllClaimedChunks;
 
 public class DeleteCommand {
 
