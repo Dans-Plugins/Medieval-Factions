@@ -8,15 +8,13 @@ public class HelpCommand {
 
     public static boolean sendHelpMessage(CommandSender sender, String[] args) {
 
+        if (args.length == 1) {
+            sendPageOne(sender);
+        }
+
         if (args.length > 1) {
             if (args[1].equalsIgnoreCase("1")) {
-                sender.sendMessage(ChatColor.BOLD + "" + ChatColor.AQUA + "\n----------\n" + "Medieval Factions Commands Page 1" + "\n----------\n");
-                sender.sendMessage(ChatColor.AQUA + "/mf help # - Show lists of useful commands." + "\n");
-                sender.sendMessage(ChatColor.AQUA + "/mf list - List all factions on the server." + "\n");
-                sender.sendMessage(ChatColor.AQUA + "/mf info - See your faction or another faction's information." + "\n");
-                sender.sendMessage(ChatColor.AQUA + "/mf members - List the members of your faction or another faction." + "\n");
-                sender.sendMessage(ChatColor.AQUA + "/mf join - Join a faction if you've been invited." + "\n");
-                sender.sendMessage(ChatColor.AQUA + "/mf leave - Leave your current faction." + "\n");
+                sendPageOne(sender);
             }
             if (args[1].equalsIgnoreCase("2")) {
                 sender.sendMessage(ChatColor.BOLD + "" + ChatColor.AQUA + "\n----------\n" + "Medieval Factions Commands Page 2" + "\n----------\n");
@@ -42,5 +40,15 @@ public class HelpCommand {
         }
         sender.sendMessage(ChatColor.AQUA + "----------\n");
         return true;
+    }
+
+    static void sendPageOne(CommandSender sender) {
+        sender.sendMessage(ChatColor.BOLD + "" + ChatColor.AQUA + "\n----------\n" + "Medieval Factions Commands Page 1" + "\n----------\n");
+        sender.sendMessage(ChatColor.AQUA + "/mf help # - Show lists of useful commands." + "\n");
+        sender.sendMessage(ChatColor.AQUA + "/mf list - List all factions on the server." + "\n");
+        sender.sendMessage(ChatColor.AQUA + "/mf info - See your faction or another faction's information." + "\n");
+        sender.sendMessage(ChatColor.AQUA + "/mf members - List the members of your faction or another faction." + "\n");
+        sender.sendMessage(ChatColor.AQUA + "/mf join - Join a faction if you've been invited." + "\n");
+        sender.sendMessage(ChatColor.AQUA + "/mf leave - Leave your current faction." + "\n");
     }
 }
