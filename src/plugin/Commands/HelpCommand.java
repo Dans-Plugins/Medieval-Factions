@@ -22,6 +22,9 @@ public class HelpCommand {
         sender.sendMessage(ChatColor.AQUA + "/mf delete - Delete your faction (must be owner)." + "\n");
         sender.sendMessage(ChatColor.AQUA + "/mf declarewar - Declare war against another faction." + "\n");
         sender.sendMessage(ChatColor.AQUA + "/mf makepeace - Send peace offer to another faction." + "\n");
+        sender.sendMessage(ChatColor.AQUA + "/mf claim - Claim land for your faction." + "\n");
+        sender.sendMessage(ChatColor.AQUA + "/mf unclaim - Unclaim land for your faction." + "\n");
+        sender.sendMessage(ChatColor.AQUA + "/mf checkclaim - Check if land is claimed." + "\n");
         if (!(sender instanceof Player)) {
             sender.sendMessage(ChatColor.AQUA + "/mf forcesave - Force the plugin to save.");
             sender.sendMessage(ChatColor.AQUA + "/mf forceload - Force the plugin to load.");
