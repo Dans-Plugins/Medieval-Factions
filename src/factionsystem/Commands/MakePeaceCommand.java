@@ -17,8 +17,8 @@ public class MakePeaceCommand {
             Player player = (Player) sender;
             boolean owner = false;
             for (Faction faction : factions) {
-                // if player is the owner
-                if (faction.isOwner(player.getName())) {
+                // if player is the owner or an officer
+                if (faction.isOwner(player.getName()) || faction.isOfficer(player.getName())) {
                     owner = true;
                     // if there's more than one argument
                     if (args.length > 1) {

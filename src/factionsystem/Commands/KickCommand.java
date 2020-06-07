@@ -18,7 +18,7 @@ public class KickCommand {
             if (args.length > 1) {
                 boolean owner = false;
                 for (Faction faction : factions) {
-                    if (faction.isOwner(player.getName())) {
+                    if (faction.isOwner(player.getName()) || faction.isOfficer(player.getName())) {
                         owner = true;
                         if (faction.isMember(args[1])) {
                             if (!(args[1].equalsIgnoreCase(player.getName()))) {

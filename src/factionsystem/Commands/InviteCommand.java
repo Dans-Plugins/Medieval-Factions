@@ -16,7 +16,7 @@ public class InviteCommand {
         if (sender instanceof Player) {
             Player player = (Player) sender;
             for (Faction faction : factions) {
-                if (faction.isOwner(player.getName())) {
+                if (faction.isOwner(player.getName()) || faction.isOfficer(player.getName())) {
                     if (args.length > 1) {
 
                         // invite if player isn't in a faction already
