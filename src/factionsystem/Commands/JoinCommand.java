@@ -29,7 +29,7 @@ public class JoinCommand {
                                 faction.addMember(player.getName());
                                 faction.uninvite(player.getName());
                                 try {
-                                    sendAllPlayersInFactionMessage(faction, ChatColor.GREEN + player.getName() + " has joined your faction.");
+                                    sendAllPlayersInFactionMessage(faction, ChatColor.GREEN + player.getName() + " has joined " + faction.getName());
                                 } catch (Exception ignored) {
 
                                 }

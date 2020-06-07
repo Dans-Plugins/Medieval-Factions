@@ -10,6 +10,7 @@ import java.io.File;
 import java.util.ArrayList;
 
 import static factionsystem.Main.removeAllClaimedChunks;
+import static factionsystem.Main.sendAllPlayersInFactionMessage;
 
 public class LeaveCommand {
 
@@ -56,6 +57,11 @@ public class LeaveCommand {
                         // able to leave
                         factions.get(i).removeMember(player.getName());
                         player.sendMessage(ChatColor.AQUA + "You left your faction.");
+                        try {
+                            sendAllPlayersInFactionMessage(factions.get(i), ChatColor.GREEN + player.getName() + " has left " + factions.get(i).getName());
+                        } catch (Exception ignored) {
+
+                        }
                         return true;
                     }
                 }

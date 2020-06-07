@@ -8,6 +8,8 @@ import factionsystem.Faction;
 
 import java.util.ArrayList;
 
+import static factionsystem.Main.sendAllPlayersInFactionMessage;
+
 public class KickCommand {
 
     public static boolean kickPlayer(CommandSender sender, String[] args, ArrayList<Faction> factions) {
@@ -21,7 +23,11 @@ public class KickCommand {
                         if (faction.isMember(args[1])) {
                             if (!(args[1].equalsIgnoreCase(player.getName()))) {
                                 faction.removeMember(args[1]);
-                                player.sendMessage(ChatColor.AQUA + args[1] + " kicked.");
+                                try {
+                                    sendAllPlayersInFactionMessage(faction, ChatColor.RED + player.getName() + " has been kicked from " + faction.getName());
+                                } catch (Exception ignored) {
+
+                                }
                                 try {
                                     Player target = Bukkit.getServer().getPlayer(args[1]);
                                     target.sendMessage(ChatColor.RED + "You have been kicked from your faction by " + player.getName() + ".");
