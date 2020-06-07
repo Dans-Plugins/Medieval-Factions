@@ -36,6 +36,15 @@ public class Faction {
         officers.removeIf(officer -> officer.equalsIgnoreCase(officerToRemove));
     }
 
+    public boolean isOfficer(String playerName) {
+        for (String officer : officers) {
+            if (officer.equalsIgnoreCase(playerName)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
     ArrayList<String> getMemberArrayList() {
         return members;
     }
