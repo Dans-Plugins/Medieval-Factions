@@ -596,24 +596,18 @@ public class Main extends JavaPlugin implements Listener {
 
                     // delete file associated with chunk
                     System.out.println("Attempting to delete file plugins plugins/medievalfactions/claimedchunks/" + identifier + ".txt");
-                    try {
-                        File fileToDelete = new File("plugins/medievalfactions/claimedchunks/" + identifier + ".txt");
-                        if (fileToDelete.delete()) {
-                            System.out.println("Success. File deleted.");
-                        }
-                        else {
-                            System.out.println("There was a problem deleting the file.");
-                        }
-                    } catch(Exception e) {
-                        System.out.println("An error has occurred during file deletion.");
-                        e.printStackTrace();
+                    File fileToDelete = new File("plugins/medievalfactions/claimedchunks/" + identifier + ".txt");
+                    if (fileToDelete.delete()) {
+                        System.out.println("Success. File deleted.");
+                    }
+                    else {
+                        System.out.println("There was a problem deleting the file.");
                     }
 
                     // remove chunk from list
                     claimedChunks.remove(chunk);
                 }
             }
-
         }
         catch(Exception e) {
             System.out.println("An error has occurred during claimed chunk removal.");
