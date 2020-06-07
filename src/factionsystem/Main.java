@@ -2,6 +2,7 @@ package factionsystem;
 
 import org.bukkit.ChatColor;
 import org.bukkit.Chunk;
+import org.bukkit.block.Block;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
@@ -646,28 +647,30 @@ public class Main extends JavaPlugin implements Listener {
         Player player = event.getPlayer();
 
         // get chunk
-        ClaimedChunk chunk = getClaimedChunk(event.getClickedBlock().getLocation().getChunk().getX(), event.getClickedBlock().getLocation().getChunk().getZ());
+        Block clickedBlock = event.getClickedBlock();
+        if (clickedBlock != null) {
+            ClaimedChunk chunk = getClaimedChunk(event.getClickedBlock().getLocation().getChunk().getX(), event.getClickedBlock().getLocation().getChunk().getZ());
 
-        // if chunk is claimed
-        if (chunk != null) {
+            // if chunk is claimed
+            if (chunk != null) {
 
-            // player not in a faction
-            if (!isInFaction(event.getPlayer().getName(), factions)) {
-                event.setCancelled(true);
-            }
+                // player not in a faction
+                if (!isInFaction(event.getPlayer().getName(), factions)) {
+                    event.setCancelled(true);
+                }
 
-            // if player is in faction
-            for (Faction faction : factions) {
-                if (faction.isMember(player.getName())) {
+                // if player is in faction
+                for (Faction faction : factions) {
+                    if (faction.isMember(player.getName())) {
 
-                    // if player's faction is not the same as the holder of the chunk
-                    if (!(faction.getName().equalsIgnoreCase(chunk.getHolder()))) {
-                        event.setCancelled(true);
-                        return;
+                        // if player's faction is not the same as the holder of the chunk
+                        if (!(faction.getName().equalsIgnoreCase(chunk.getHolder()))) {
+                            event.setCancelled(true);
+                            return;
+                        }
                     }
                 }
             }
         }
     }
-
 }
