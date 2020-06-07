@@ -38,7 +38,11 @@ public class MakePeaceCommand {
                                         faction.removeEnemy(factionName);
                                         player.sendMessage(ChatColor.AQUA + "You have tried to make peace with " + factionName + "!");
                                         try {
-                                            sendAllPlayersInFactionMessage(faction, ChatColor.AQUA + faction.getName() + " has tried to make peace with your faction!");
+                                            for (int j = 0; j < factions.size(); j++) {
+                                                if (factions.get(j).getName().equalsIgnoreCase(factionName)) {
+                                                    sendAllPlayersInFactionMessage(factions.get(j), ChatColor.AQUA + faction.getName() + " has tried to make peace with your faction!");
+                                                }
+                                            }
                                         } catch (Exception ignored) {
 
                                         }

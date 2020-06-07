@@ -41,7 +41,11 @@ public class DeclareWarCommand {
                                         // add declarer's faction to new enemy's enemyList
                                         factions.get(i).addEnemy(faction.getName());
                                         try {
-                                            sendAllPlayersInFactionMessage(faction, ChatColor.AQUA + faction.getName() + "has declared war against your faction!");
+                                            for (int j = 0; j < factions.size(); j++) {
+                                                if (factions.get(j).getName().equalsIgnoreCase(factionName)) {
+                                                    sendAllPlayersInFactionMessage(factions.get(j), ChatColor.AQUA + faction.getName() + " has declared war against your faction!");
+                                                }
+                                            }
                                         } catch (Exception ignored) {
 
                                         }
