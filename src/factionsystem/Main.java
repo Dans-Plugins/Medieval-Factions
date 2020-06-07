@@ -589,10 +589,35 @@ public class Main extends JavaPlugin implements Listener {
 
     public static void removeAllClaimedChunks(String factionName, ArrayList<ClaimedChunk> claimedChunks) {
         try {
-            claimedChunks.removeIf(claimedChunk -> claimedChunk.getHolder().equalsIgnoreCase(factionName));
-        }
-        catch(Exception ignored) {
+            for (ClaimedChunk chunk : claimedChunks) {
+                if (chunk.getHolder().equalsIgnoreCase(factionName)) {
 
+                    String identifier = (int)chunk.getChunk().getX() + "_" + (int)chunk.getChunk().getZ();
+
+                    // delete file associated with chunk
+                    System.out.println("Attempting to delete file plugins plugins/medievalfactions/claimedchunks/" + identifier + ".txt");
+                    try {
+                        File fileToDelete = new File("plugins/medievalfactions/claimedchunks/" + identifier + ".txt");
+                        if (fileToDelete.delete()) {
+                            System.out.println("Success. File deleted.");
+                        }
+                        else {
+                            System.out.println("There was a problem deleting the file.");
+                        }
+                    } catch(Exception e) {
+                        System.out.println("An error has occurred during file deletion.");
+                        e.printStackTrace();
+                    }
+
+                    // remove chunk from list
+                    claimedChunks.remove(chunk);
+                }
+            }
+
+        }
+        catch(Exception e) {
+            System.out.println("An error has occurred during claimed chunk removal.");
+            e.printStackTrace();
         }
     }
 
