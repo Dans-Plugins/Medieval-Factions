@@ -37,6 +37,7 @@ public class HelpCommand {
             if (args[1].equalsIgnoreCase("4")) {
                 sender.sendMessage(ChatColor.BOLD + "" + ChatColor.AQUA + "\n----------\n" + "Medieval Factions Commands - Page 4/4" + "\n----------\n");
                 sender.sendMessage(ChatColor.AQUA + "/mf autoclaim - Toggle auto claim, making land claiming easier." + "\n");
+                sender.sendMessage(ChatColor.AQUA + "/mf promote - Promote a player to officer status." + "\n");
             }
         }
         if (!(sender instanceof Player)) {
