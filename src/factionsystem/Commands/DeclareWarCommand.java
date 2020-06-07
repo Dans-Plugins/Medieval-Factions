@@ -9,6 +9,7 @@ import factionsystem.Faction;
 import java.util.ArrayList;
 
 import static factionsystem.Main.createStringFromFirstArgOnwards;
+import static factionsystem.Main.sendAllPlayersInFactionMessage;
 
 public class DeclareWarCommand {
     public static void declareWar(CommandSender sender, String[] args, ArrayList<Faction> factions) {
@@ -40,8 +41,7 @@ public class DeclareWarCommand {
                                         // add declarer's faction to new enemy's enemyList
                                         factions.get(i).addEnemy(faction.getName());
                                         try {
-                                            Player target = Bukkit.getServer().getPlayer(factions.get(i).getOwner());
-                                            target.sendMessage(ChatColor.AQUA + faction.getName() + "has declared war against your faction!");
+                                            sendAllPlayersInFactionMessage(faction, ChatColor.AQUA + faction.getName() + "has declared war against your faction!");
                                         } catch (Exception ignored) {
 
                                         }

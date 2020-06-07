@@ -9,6 +9,7 @@ import factionsystem.Faction;
 import java.util.ArrayList;
 
 import static factionsystem.Main.createStringFromFirstArgOnwards;
+import static factionsystem.Main.sendAllPlayersInFactionMessage;
 
 public class MakePeaceCommand {
         public static void makePeace(CommandSender sender, String[] args, ArrayList<Faction> factions) {
@@ -36,10 +37,8 @@ public class MakePeaceCommand {
                                         // add enemy to declarer's faction's enemyList
                                         faction.removeEnemy(factionName);
                                         player.sendMessage(ChatColor.AQUA + "You have tried to make peace with " + factionName + "!");
-
                                         try {
-                                            Player target = Bukkit.getServer().getPlayer(factions.get(i).getOwner());
-                                            target.sendMessage(ChatColor.AQUA + faction.getName() + " has tried to make peace with your faction!");
+                                            sendAllPlayersInFactionMessage(faction, ChatColor.AQUA + faction.getName() + " has tried to make peace with your faction!");
                                         } catch (Exception ignored) {
 
                                         }
