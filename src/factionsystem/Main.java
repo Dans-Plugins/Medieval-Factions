@@ -474,6 +474,24 @@ public class Main extends JavaPlugin implements Listener {
                     if (playerCoords[0] == chunk.getCoordinates()[0] && playerCoords[1] == chunk.getCoordinates()[1]) {
                         // if holder is player's faction
                         if (chunk.getHolder().equalsIgnoreCase(faction.getName())) {
+
+                            String identifier = (int)chunk.getChunk().getX() + "_" + (int)chunk.getChunk().getZ();
+
+                            // delete file associated with chunk
+                            System.out.println("Attempting to delete file plugins plugins/medievalfactions/claimedchunks/" + identifier + ".txt");
+                            try {
+                                File fileToDelete = new File("plugins/medievalfactions/claimedchunks/" + identifier + ".txt");
+                                if (fileToDelete.delete()) {
+                                    System.out.println("Success. File deleted.");
+                                }
+                                else {
+                                    System.out.println("There was a problem deleting the file.");
+                                }
+                            } catch(Exception e) {
+                                System.out.println("An error has occurred during file deletion.");
+                                e.printStackTrace();
+                            }
+
                             claimedChunks.remove(chunk);
                             player.sendMessage(ChatColor.GREEN + "Land unclaimed.");
                             return;
