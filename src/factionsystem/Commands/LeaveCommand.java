@@ -6,6 +6,7 @@ import org.bukkit.entity.Player;
 import factionsystem.ClaimedChunk;
 import factionsystem.Faction;
 
+import java.io.File;
 import java.util.ArrayList;
 
 import static factionsystem.Main.removeAllClaimedChunks;
@@ -21,6 +22,21 @@ public class LeaveCommand {
                         // is faction empty?
                         if (factions.get(i).getPopulation() == 1) {
                             // able to leave
+
+                            // delete file associated with faction
+                            System.out.println("Attempting to delete file plugins/medievalfactions/" + factions.get(i).getName() + ".txt");
+                            try {
+                                File fileToDelete = new File("plugins/medievalfactions/" + factions.get(i).getName() + ".txt");
+                                if (fileToDelete.delete()) {
+                                    System.out.println("Success. File deleted.");
+                                }
+                                else {
+                                    System.out.println("There was a problem deleting the file.");
+                                }
+                            } catch(Exception e) {
+                                System.out.println("An error has occurred during file deletion.");
+                                e.printStackTrace();
+                            }
 
                             // remove claimed land objects associated with this faction
                             removeAllClaimedChunks(factions.get(i).getName(), chunks);

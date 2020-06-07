@@ -21,6 +21,7 @@ import java.io.FileNotFoundException;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.Objects;
 import java.util.Scanner;
 
@@ -474,6 +475,24 @@ public class Main extends JavaPlugin implements Listener {
                     if (playerCoords[0] == chunk.getCoordinates()[0] && playerCoords[1] == chunk.getCoordinates()[1]) {
                         // if holder is player's faction
                         if (chunk.getHolder().equalsIgnoreCase(faction.getName())) {
+
+                            String identifier = (int)chunk.getChunk().getX() + "_" + (int)chunk.getChunk().getZ();
+
+                            // delete file associated with chunk
+                            System.out.println("Attempting to delete file plugins plugins/medievalfactions/claimedchunks/" + identifier + ".txt");
+                            try {
+                                File fileToDelete = new File("plugins/medievalfactions/claimedchunks/" + identifier + ".txt");
+                                if (fileToDelete.delete()) {
+                                    System.out.println("Success. File deleted.");
+                                }
+                                else {
+                                    System.out.println("There was a problem deleting the file.");
+                                }
+                            } catch(Exception e) {
+                                System.out.println("An error has occurred during file deletion.");
+                                e.printStackTrace();
+                            }
+
                             claimedChunks.remove(chunk);
                             player.sendMessage(ChatColor.GREEN + "Land unclaimed.");
                             return;
@@ -570,11 +589,34 @@ public class Main extends JavaPlugin implements Listener {
     }
 
     public static void removeAllClaimedChunks(String factionName, ArrayList<ClaimedChunk> claimedChunks) {
-        try {
-            claimedChunks.removeIf(claimedChunk -> claimedChunk.getHolder().equalsIgnoreCase(factionName));
-        }
-        catch(Exception ignored) {
 
+        Iterator<ClaimedChunk> itr = claimedChunks.iterator();
+
+
+        while (itr.hasNext()) {
+            ClaimedChunk currentChunk = itr.next();
+            if (currentChunk.getHolder().equalsIgnoreCase(factionName)) {
+
+                String identifier = (int) currentChunk.getChunk().getX() + "_" + (int) currentChunk.getChunk().getZ();
+
+                try {
+
+                    // delete file associated with chunk
+                    System.out.println("Attempting to delete file plugins plugins/medievalfactions/claimedchunks/" + identifier + ".txt");
+                    File fileToDelete = new File("plugins/medievalfactions/claimedchunks/" + identifier + ".txt");
+                    if (fileToDelete.delete()) {
+                        System.out.println("Success. File deleted.");
+                    } else {
+                        System.out.println("There was a problem deleting the file.");
+                    }
+
+                    itr.remove();
+                }
+                catch(Exception e) {
+                    System.out.println("An error has occurred during claimed chunk removal.");
+                    e.printStackTrace();
+                }
+            }
         }
     }
 
