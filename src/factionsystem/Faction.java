@@ -190,6 +190,12 @@ public class Faction {
 
             }
 
+            saveWriter.write("0" + "\n");
+
+            for (String officer : officers) {
+                saveWriter.write(officer + "\n");
+            }
+
             saveWriter.close();
 
             System.out.println("Successfully saved faction " + name + ".");
@@ -231,7 +237,12 @@ public class Faction {
 
             while (loadReader.hasNextLine()) {
                 String temp = loadReader.nextLine();
-                enemyFactions.add(temp);
+
+                if (temp.equalsIgnoreCase("0")) {
+                    break;
+                }
+
+                officers.add(temp);
             }
 
             loadReader.close();
