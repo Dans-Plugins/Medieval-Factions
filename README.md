@@ -18,3 +18,4 @@ A minecraft plugin for players to use to organize politically.
 -  1.0 'Message Improvements' update
 -  1.1 'Player Versus Player' update
 -  1.2 'Land Claiming' update
+-  1.3 'File Deletion' update
