@@ -720,11 +720,12 @@ public class Main extends JavaPlugin implements Listener {
     public static void sendAllPlayersInFactionMessage(Faction faction, String message) {
         ArrayList<String> members = faction.getMemberArrayList();
         for (String member : members) {
-            ArrayList<Player> onlinePlayers = (ArrayList<Player>) Bukkit.getServer().getOnlinePlayers();
-            for (Player player : onlinePlayers) {
-                if (player.getName().equalsIgnoreCase(member)) {
-                    player.sendMessage(message);
-                }
+            try {
+                Player target = Bukkit.getServer().getPlayer(member);
+                target.sendMessage(message);
+            }
+            catch(Exception ignored) {
+
             }
         }
     }
