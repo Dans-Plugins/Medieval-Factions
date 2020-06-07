@@ -15,6 +15,7 @@ public class Faction {
     private ArrayList<String> invited = new ArrayList<>();
     private ArrayList<String> enemyFactions = new ArrayList<>();
     private boolean autoclaim = false;
+    private ArrayList<String> officers = new ArrayList<>();
 
     // player constructor
     public Faction(String initialName, String creator) {
@@ -25,6 +26,18 @@ public class Faction {
     // server constructor
     Faction(String initialName) {
         setName(initialName);
+    }
+
+    public void addOfficer(String newOfficer) {
+        officers.add(newOfficer);
+    }
+
+    public void removeOfficer(String officerToRemove) {
+        for (String officer : officers) {
+            if (officer.equalsIgnoreCase(officerToRemove)) {
+                officers.remove(officer);
+            }
+        }
     }
 
     ArrayList<String> getMemberArrayList() {
