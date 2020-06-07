@@ -330,7 +330,7 @@ public class Main extends JavaPlugin implements Listener {
                 }
 
                 // demote command
-                if (args[0].equalsIgnoreCase("promote")) {
+                if (args[0].equalsIgnoreCase("demote")) {
                     DemoteCommand.demotePlayer(sender, args, factions);
                 }
 
