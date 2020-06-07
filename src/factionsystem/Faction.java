@@ -33,11 +33,7 @@ public class Faction {
     }
 
     public void removeOfficer(String officerToRemove) {
-        for (String officer : officers) {
-            if (officer.equalsIgnoreCase(officerToRemove)) {
-                officers.remove(officer);
-            }
-        }
+        officers.removeIf(officer -> officer.equalsIgnoreCase(officerToRemove));
     }
 
     ArrayList<String> getMemberArrayList() {
