@@ -1,5 +1,9 @@
 package factionsystem;
 
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
+
 public class PlayerPowerRecord {
     private String playerName = "";
     private int powerLevel = 0;
@@ -44,5 +48,13 @@ public class PlayerPowerRecord {
         else {
             return false;
         }
+    }
+
+    public void save() {
+
+    }
+
+    public void load() {
+
     }
 }
