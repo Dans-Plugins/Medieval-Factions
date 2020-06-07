@@ -22,19 +22,26 @@ public class KickCommand {
                         owner = true;
                         if (faction.isMember(args[1])) {
                             if (!(args[1].equalsIgnoreCase(player.getName()))) {
-                                faction.removeMember(args[1]);
-                                try {
-                                    sendAllPlayersInFactionMessage(faction, ChatColor.RED + player.getName() + " has been kicked from " + faction.getName());
-                                } catch (Exception ignored) {
+                                if (!(args[1].equalsIgnoreCase(faction.getOwner()))) {
+                                    faction.removeMember(args[1]);
+                                    try {
+                                        sendAllPlayersInFactionMessage(faction, ChatColor.RED + player.getName() + " has been kicked from " + faction.getName());
+                                    } catch (Exception ignored) {
 
-                                }
-                                try {
-                                    Player target = Bukkit.getServer().getPlayer(args[1]);
-                                    target.sendMessage(ChatColor.RED + "You have been kicked from your faction by " + player.getName() + ".");
-                                } catch (Exception ignored) {
+                                    }
+                                    try {
+                                        Player target = Bukkit.getServer().getPlayer(args[1]);
+                                        target.sendMessage(ChatColor.RED + "You have been kicked from your faction by " + player.getName() + ".");
+                                    } catch (Exception ignored) {
 
+                                    }
+                                    return true;
                                 }
-                                return true;
+                                else {
+                                    player.sendMessage(ChatColor.RED + "You can't kick the owner.");
+                                    return false;
+                                }
+
                             }
                             else {
                                 player.sendMessage(ChatColor.RED + "You can't kick yourself.");
