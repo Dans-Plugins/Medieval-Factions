@@ -1,5 +1,6 @@
 package factionsystem;
 
+import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Chunk;
 import org.bukkit.block.Block;
@@ -712,6 +713,23 @@ public class Main extends JavaPlugin implements Listener {
                         }
                     }
                 }
+            }
+        }
+    }
+
+    public void sendAllPlayersInFactionMessage(String factionName, String message) {
+        for (Faction faction : factions) {
+            if (faction.getName().equalsIgnoreCase(factionName)) {
+                ArrayList<String> members = faction.getMemberArrayList();
+                for (String member : members) {
+                    ArrayList<Player> onlinePlayers = (ArrayList<Player>) Bukkit.getServer().getOnlinePlayers();
+                    for (Player player : onlinePlayers) {
+                        if (player.getName().equalsIgnoreCase(member)) {
+                            player.sendMessage(message);
+                        }
+                    }
+                }
+                break;
             }
         }
     }

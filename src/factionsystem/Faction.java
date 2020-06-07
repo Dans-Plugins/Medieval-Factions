@@ -27,6 +27,10 @@ public class Faction {
         setName(initialName);
     }
 
+    ArrayList<String> getMemberArrayList() {
+        return members;
+    }
+
     public void toggleAutoClaim() {
         autoclaim = !autoclaim;
     }
