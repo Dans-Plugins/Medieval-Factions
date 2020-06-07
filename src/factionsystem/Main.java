@@ -589,10 +589,11 @@ public class Main extends JavaPlugin implements Listener {
 
     public static void removeAllClaimedChunks(String factionName, ArrayList<ClaimedChunk> claimedChunks) {
         try {
-            for (ClaimedChunk chunk : claimedChunks) {
-                if (chunk.getHolder().equalsIgnoreCase(factionName)) {
+            for (int i = 0; i < claimedChunks.size(); i++) {
 
-                    String identifier = (int)chunk.getChunk().getX() + "_" + (int)chunk.getChunk().getZ();
+                if (claimedChunks.get(i).getHolder().equalsIgnoreCase(factionName)) {
+
+                    String identifier = (int)claimedChunks.get(i).getChunk().getX() + "_" + (int)claimedChunks.get(i).getChunk().getZ();
 
                     // delete file associated with chunk
                     System.out.println("Attempting to delete file plugins plugins/medievalfactions/claimedchunks/" + identifier + ".txt");
@@ -605,7 +606,7 @@ public class Main extends JavaPlugin implements Listener {
                     }
 
                     // remove chunk from list
-                    claimedChunks.remove(chunk);
+                    claimedChunks.remove(i);
                 }
             }
         }
