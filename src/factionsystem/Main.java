@@ -21,6 +21,7 @@ import java.io.FileNotFoundException;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.Objects;
 import java.util.Scanner;
 
@@ -589,26 +590,27 @@ public class Main extends JavaPlugin implements Listener {
 
     public static void removeAllClaimedChunks(String factionName, ArrayList<ClaimedChunk> claimedChunks) {
 
-        for (int i = 0; i < claimedChunks.size(); i++) {
+        Iterator<ClaimedChunk> itr = claimedChunks.iterator();
 
-            if (claimedChunks.get(i).getHolder().equalsIgnoreCase(factionName)) {
+
+        while (itr.hasNext()) {
+            ClaimedChunk currentChunk = itr.next();
+            if (currentChunk.getHolder().equalsIgnoreCase(factionName)) {
+
+                String identifier = (int) currentChunk.getChunk().getX() + "_" + (int) currentChunk.getChunk().getZ();
 
                 try {
 
-                String identifier = (int)claimedChunks.get(i).getChunk().getX() + "_" + (int)claimedChunks.get(i).getChunk().getZ();
+                    // delete file associated with chunk
+                    System.out.println("Attempting to delete file plugins plugins/medievalfactions/claimedchunks/" + identifier + ".txt");
+                    File fileToDelete = new File("plugins/medievalfactions/claimedchunks/" + identifier + ".txt");
+                    if (fileToDelete.delete()) {
+                        System.out.println("Success. File deleted.");
+                    } else {
+                        System.out.println("There was a problem deleting the file.");
+                    }
 
-                // delete file associated with chunk
-                System.out.println("Attempting to delete file plugins plugins/medievalfactions/claimedchunks/" + identifier + ".txt");
-                File fileToDelete = new File("plugins/medievalfactions/claimedchunks/" + identifier + ".txt");
-                if (fileToDelete.delete()) {
-                    System.out.println("Success. File deleted.");
-                }
-                else {
-                    System.out.println("There was a problem deleting the file.");
-                }
-
-                // remove chunk from list
-                claimedChunks.remove(i);
+                    itr.remove();
                 }
                 catch(Exception e) {
                     System.out.println("An error has occurred during claimed chunk removal.");
