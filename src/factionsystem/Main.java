@@ -588,31 +588,33 @@ public class Main extends JavaPlugin implements Listener {
     }
 
     public static void removeAllClaimedChunks(String factionName, ArrayList<ClaimedChunk> claimedChunks) {
-        try {
-            for (int i = 0; i < claimedChunks.size(); i++) {
 
-                if (claimedChunks.get(i).getHolder().equalsIgnoreCase(factionName)) {
+        for (int i = 0; i < claimedChunks.size(); i++) {
 
-                    String identifier = (int)claimedChunks.get(i).getChunk().getX() + "_" + (int)claimedChunks.get(i).getChunk().getZ();
+            if (claimedChunks.get(i).getHolder().equalsIgnoreCase(factionName)) {
 
-                    // delete file associated with chunk
-                    System.out.println("Attempting to delete file plugins plugins/medievalfactions/claimedchunks/" + identifier + ".txt");
-                    File fileToDelete = new File("plugins/medievalfactions/claimedchunks/" + identifier + ".txt");
-                    if (fileToDelete.delete()) {
-                        System.out.println("Success. File deleted.");
-                    }
-                    else {
-                        System.out.println("There was a problem deleting the file.");
-                    }
+                try {
 
-                    // remove chunk from list
-                    claimedChunks.remove(i);
+                String identifier = (int)claimedChunks.get(i).getChunk().getX() + "_" + (int)claimedChunks.get(i).getChunk().getZ();
+
+                // delete file associated with chunk
+                System.out.println("Attempting to delete file plugins plugins/medievalfactions/claimedchunks/" + identifier + ".txt");
+                File fileToDelete = new File("plugins/medievalfactions/claimedchunks/" + identifier + ".txt");
+                if (fileToDelete.delete()) {
+                    System.out.println("Success. File deleted.");
+                }
+                else {
+                    System.out.println("There was a problem deleting the file.");
+                }
+
+                // remove chunk from list
+                claimedChunks.remove(i);
+                }
+                catch(Exception e) {
+                    System.out.println("An error has occurred during claimed chunk removal.");
+                    e.printStackTrace();
                 }
             }
-        }
-        catch(Exception e) {
-            System.out.println("An error has occurred during claimed chunk removal.");
-            e.printStackTrace();
         }
     }
 
