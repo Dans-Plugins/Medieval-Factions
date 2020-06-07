@@ -717,19 +717,14 @@ public class Main extends JavaPlugin implements Listener {
         }
     }
 
-    public void sendAllPlayersInFactionMessage(String factionName, String message) {
-        for (Faction faction : factions) {
-            if (faction.getName().equalsIgnoreCase(factionName)) {
-                ArrayList<String> members = faction.getMemberArrayList();
-                for (String member : members) {
-                    ArrayList<Player> onlinePlayers = (ArrayList<Player>) Bukkit.getServer().getOnlinePlayers();
-                    for (Player player : onlinePlayers) {
-                        if (player.getName().equalsIgnoreCase(member)) {
-                            player.sendMessage(message);
-                        }
-                    }
+    public static void sendAllPlayersInFactionMessage(Faction faction, String message) {
+        ArrayList<String> members = faction.getMemberArrayList();
+        for (String member : members) {
+            ArrayList<Player> onlinePlayers = (ArrayList<Player>) Bukkit.getServer().getOnlinePlayers();
+            for (Player player : onlinePlayers) {
+                if (player.getName().equalsIgnoreCase(member)) {
+                    player.sendMessage(message);
                 }
-                break;
             }
         }
     }

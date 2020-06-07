@@ -8,8 +8,7 @@ import factionsystem.Faction;
 
 import java.util.ArrayList;
 
-import static factionsystem.Main.createStringFromFirstArgOnwards;
-import static factionsystem.Main.isInFaction;
+import static factionsystem.Main.*;
 
 public class JoinCommand {
 
@@ -30,8 +29,7 @@ public class JoinCommand {
                                 faction.addMember(player.getName());
                                 faction.uninvite(player.getName());
                                 try {
-                                    Player target = Bukkit.getServer().getPlayer(faction.getOwner());
-                                    target.sendMessage(ChatColor.GREEN + player.getName() + " has joined your faction.");
+                                    sendAllPlayersInFactionMessage(faction, ChatColor.GREEN + player.getName() + " has joined your faction.");
                                 } catch (Exception ignored) {
 
                                 }
