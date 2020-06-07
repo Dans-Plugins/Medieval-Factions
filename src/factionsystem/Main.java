@@ -329,6 +329,11 @@ public class Main extends JavaPlugin implements Listener {
                     PromoteCommand.promotePlayer(sender, args, factions);
                 }
 
+                // demote command
+                if (args[0].equalsIgnoreCase("promote")) {
+                    DemoteCommand.demotePlayer(sender, args, factions);
+                }
+
                 // forcesave command
                 if (args[0].equalsIgnoreCase("forcesave")) {
                     if (!(sender instanceof Player)) {
