@@ -25,8 +25,7 @@ import java.util.ArrayList;
 import java.util.Objects;
 import java.util.Scanner;
 
-import static factionsystem.UtilityFunctions.isInFaction;
-import static factionsystem.UtilityFunctions.removeAllClaimedChunks;
+import static factionsystem.UtilityFunctions.*;
 
 public class Main extends JavaPlugin implements Listener {
 
@@ -743,6 +742,7 @@ public class Main extends JavaPlugin implements Listener {
     public void onJoin(PlayerJoinEvent event) {
         if (!hasPowerRecord(event.getPlayer().getName())) {
             PlayerPowerRecord newRecord = new PlayerPowerRecord(event.getPlayer().getName());
+
             playerPowerRecords.add(newRecord);
         }
     }

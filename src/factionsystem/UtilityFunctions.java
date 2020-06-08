@@ -22,6 +22,17 @@ public class UtilityFunctions {
         return isAlreadyInFaction;
     }
 
+    public static Faction getPlayersFaction(String playerName, ArrayList<Faction> factions) {
+        // membership check
+        boolean isAlreadyInFaction = false;
+        for (Faction faction : factions) {
+            if (faction.isMember(playerName)) {
+                return faction;
+            }
+        }
+        return null;
+    }
+
     public static void sendFactionInfo(Player player, Faction faction, int power) {
         player.sendMessage(ChatColor.BOLD + "" + ChatColor.AQUA + faction.getName() + " Faction Info" + "\n----------\n");
         player.sendMessage(ChatColor.AQUA + "Name: " + faction.getName() + "\n");

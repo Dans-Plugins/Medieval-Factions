@@ -9,7 +9,6 @@ import java.util.Scanner;
 public class PlayerPowerRecord {
     private String playerName = "";
     private int powerLevel = 0;
-    private String playerFaction = "";
 
     public PlayerPowerRecord(String nameOfPlayer) {
         playerName = nameOfPlayer;
@@ -23,17 +22,8 @@ public class PlayerPowerRecord {
         playerName = newName;
     }
 
-
     public String getPlayerName() {
         return playerName;
-    }
-
-    public void setFaction(String faction) {
-        playerFaction = faction;
-    }
-
-    public String getFaction() {
-        return playerFaction;
     }
 
     public boolean increasePower() {
@@ -76,9 +66,8 @@ public class PlayerPowerRecord {
             FileWriter saveWriter = new FileWriter("./plugins/medievalfactions/player-power-records/" + playerName + ".txt");
 
             // actual saving takes place here
-            saveWriter.write(playerName);
-            saveWriter.write(powerLevel);
-            saveWriter.write(playerFaction);
+            saveWriter.write(playerName + "\n");
+            saveWriter.write(powerLevel + "\n");
 
             saveWriter.close();
 
@@ -101,9 +90,6 @@ public class PlayerPowerRecord {
             }
             if (loadReader.hasNextLine()) {
                 powerLevel = Integer.parseInt(loadReader.nextLine());
-            }
-            if (loadReader.hasNextLine()) {
-                playerFaction = loadReader.nextLine();
             }
 
             loadReader.close();
