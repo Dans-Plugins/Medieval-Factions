@@ -13,6 +13,7 @@ import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.event.block.BlockPlaceEvent;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
+import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerMoveEvent;
 import org.bukkit.plugin.java.JavaPlugin;
 import factionsystem.Commands.*;
@@ -807,6 +808,23 @@ public class Main extends JavaPlugin implements Listener {
             catch(Exception ignored) {
 
             }
+        }
+    }
+
+    public boolean hasPowerRecord(String playerName) {
+        for (PlayerPowerRecord record : playerPowerRecords) {
+            if (record.getPlayerName().equalsIgnoreCase(playerName)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    @EventHandler()
+    public void onJoin(PlayerJoinEvent event) {
+        if (!hasPowerRecord(event.getPlayer().getName())) {
+            PlayerPowerRecord newRecord = new PlayerPowerRecord(event.getPlayer().getName());
+            playerPowerRecords.add(newRecord);
         }
     }
 }
