@@ -449,6 +449,8 @@ public class Main extends JavaPlugin implements Listener {
         player.sendMessage(ChatColor.AQUA + "Description: " + faction.getDescription() + "\n");
         player.sendMessage(ChatColor.AQUA + "Population: " + faction.getMemberList().size() + "\n");
         player.sendMessage(ChatColor.AQUA + "At War With: " + faction.getEnemiesSeparatedByCommas() + "\n");
+        player.sendMessage(ChatColor.AQUA + "Power Level: " + faction.getCumulativePowerLevel());
+        player.sendMessage(ChatColor.AQUA + "Demesne Size: " + getChunksClaimedByFaction(faction.getName()) + "/" + faction.getCumulativePowerLevel());
         player.sendMessage(ChatColor.AQUA + "----------\n");
     }
 
@@ -826,5 +828,15 @@ public class Main extends JavaPlugin implements Listener {
             PlayerPowerRecord newRecord = new PlayerPowerRecord(event.getPlayer().getName());
             playerPowerRecords.add(newRecord);
         }
+    }
+
+    public static int getChunksClaimedByFaction(String factionName) {
+        int counter = 0;
+        for (ClaimedChunk chunk : claimedChunks) {
+            if (chunk.getHolder().equalsIgnoreCase(factionName)) {
+                counter++;
+            }
+        }
+        return counter;
     }
 }
