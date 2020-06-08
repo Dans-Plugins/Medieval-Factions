@@ -149,7 +149,7 @@ public class Main extends JavaPlugin implements Listener {
 
             // actual saving takes place here
             for (PlayerPowerRecord record : playerPowerRecords) {
-                saveWriter.write(record.getPlayerName() + ".txt");
+                saveWriter.write(record.getPlayerName() + ".txt" + "\n");
             }
 
             saveWriter.close();
