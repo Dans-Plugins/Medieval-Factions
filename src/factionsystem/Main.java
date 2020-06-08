@@ -518,7 +518,7 @@ public class Main extends JavaPlugin implements Listener {
                 newChunk.setHolder(faction.getName());
                 newChunk.setWorld(player.getLocation().getWorld().getName());
                 claimedChunks.add(newChunk);
-                player.sendMessage(ChatColor.GREEN + "Land claimed!");
+                player.sendMessage(ChatColor.GREEN + "Land claimed! Demesne Size: " + getChunksClaimedByFaction(faction.getName(), claimedChunks) + "/" + faction.getCumulativePowerLevel());
                 return;
             }
         }
@@ -605,6 +605,8 @@ public class Main extends JavaPlugin implements Listener {
                         if (getChunksClaimedByFaction(playersFaction.getName(), claimedChunks) < playersFaction.getCumulativePowerLevel()) {
                             // add new chunk to claimed chunks
                             addChunkAtPlayerLocation(event.getPlayer());
+                            event.getPlayer().sendMessage(ChatColor.GREEN + "Land claimed! Demesne Size: " + getChunksClaimedByFaction(faction.getName(), claimedChunks) + "/" + faction.getCumulativePowerLevel());
+
                         }
                         else {
                             event.getPlayer().sendMessage(ChatColor.RED + "You have reached your demesne limit! Invite more players to increase this.");
