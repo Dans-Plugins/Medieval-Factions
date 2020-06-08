@@ -403,6 +403,11 @@ public class Main extends JavaPlugin implements Listener {
                     DemoteCommand.demotePlayer(sender, args, factions);
                 }
 
+                // power command
+                if  (args[0].equalsIgnoreCase("power")) {
+                    PowerCommand.powerCheck(sender, playerPowerRecords);
+                }
+
                 // forcesave command
                 if (args[0].equalsIgnoreCase("forcesave")) {
                     if (!(sender instanceof Player)) {

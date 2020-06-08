@@ -39,6 +39,7 @@ public class HelpCommand {
                 sender.sendMessage(ChatColor.AQUA + "/mf autoclaim - Toggle auto claim, making land claiming easier." + "\n");
                 sender.sendMessage(ChatColor.AQUA + "/mf promote - Promote a player to officer status." + "\n");
                 sender.sendMessage(ChatColor.AQUA + "/mf demote - Demote an officer to member status." + "\n");
+                sender.sendMessage(ChatColor.AQUA + "/mf power - Check your power level." + "\n");
             }
         }
         if (!(sender instanceof Player)) {
