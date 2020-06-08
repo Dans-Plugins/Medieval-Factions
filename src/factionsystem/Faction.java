@@ -223,7 +223,7 @@ public class Faction {
                 saveWriter.write(members.get(i) + "\n");
             }
 
-            saveWriter.write("0" + "\n");
+            saveWriter.write("-" + "\n");
 
             for (int i = 0; i < enemyFactions.size(); i++) {
 
@@ -236,13 +236,13 @@ public class Faction {
 
             }
 
-            saveWriter.write("0" + "\n");
+            saveWriter.write("-" + "\n");
 
             for (String officer : officers) {
                 saveWriter.write(officer + "\n");
             }
 
-            saveWriter.write("0" + "\n");
+            saveWriter.write("-" + "\n");
 
             if (factionHome != null) {
                 // save faction details
@@ -289,7 +289,7 @@ public class Faction {
             while (loadReader.hasNextLine()) {
                 String temp = loadReader.nextLine();
 
-                if (temp.equalsIgnoreCase("0")) {
+                if (temp.equalsIgnoreCase("-")) {
                     break;
                 }
 
@@ -299,7 +299,15 @@ public class Faction {
             while (loadReader.hasNextLine()) {
                 String temp = loadReader.nextLine();
 
-                if (temp.equalsIgnoreCase("0")) {
+                if (temp.equalsIgnoreCase("-")) {
+
+                }
+            }
+
+            while (loadReader.hasNextLine()) {
+                String temp = loadReader.nextLine();
+
+                if (temp.equalsIgnoreCase("-")) {
                     break;
                 }
 
@@ -311,23 +319,37 @@ public class Faction {
             double y = 0;
             double z = 0;
 
-            // load faction home details (this must be done last)
-            if (loadReader.hasNextLine()) {
-                world = getServer().createWorld(new WorldCreator(loadReader.nextLine()));
-            }
-            if (loadReader.hasNextLine()) {
-                x = Double.parseDouble(loadReader.nextLine());
-            }
-            if (loadReader.hasNextLine()) {
-                y = Double.parseDouble(loadReader.nextLine());
-            }
-            if (loadReader.hasNextLine()) {
-                z = Double.parseDouble(loadReader.nextLine());
-            }
+            try {
+                System.out.println("Attempting to load faction home location for " + name + "...");
 
-            // set location
-            if (world != null && x != 0 && y != 0 && z != 0) {
-                factionHome = new Location(world, x, y, z);
+                // load faction home details (this must be done last)
+                if (loadReader.hasNextLine()) {
+                    world = getServer().createWorld(new WorldCreator(loadReader.nextLine()));
+                    System.out.println("World successfully acquired.");
+                }
+                if (loadReader.hasNextLine()) {
+                    x = Double.parseDouble(loadReader.nextLine());
+                    System.out.println("X position successfully acquired.");
+                }
+                if (loadReader.hasNextLine()) {
+                    y = Double.parseDouble(loadReader.nextLine());
+                    System.out.println("Y position successfully acquired.");
+                }
+                if (loadReader.hasNextLine()) {
+                    z = Double.parseDouble(loadReader.nextLine());
+                    System.out.println("Z position successfully acquired.");
+                }
+
+                // set location
+                if (world != null && x != 0 && y != 0 && z != 0) {
+                    factionHome = new Location(world, x, y, z);
+                    System.out.println("Faction home successfully set to " + x + ", " + y + ", " + z + ".");
+                }
+
+            }
+            catch(Exception e) {
+                System.out.println("An error occurred loading the faction home position.");
+                e.printStackTrace();
             }
 
             loadReader.close();
