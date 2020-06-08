@@ -22,3 +22,4 @@ A minecraft plugin for players to use to organize politically.
 -  1.4 'Faction-wide Messages' update
 -  1.5 'Officers' update
 -  1.6 'Power Levels' update
+-  1.7 'Faction Homes' update
