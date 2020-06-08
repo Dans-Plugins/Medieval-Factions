@@ -30,6 +30,7 @@ public class Main extends JavaPlugin implements Listener {
 
     ArrayList<Faction> factions = new ArrayList<>();
     ArrayList<ClaimedChunk> claimedChunks = new ArrayList<>();
+    ArrayList<PlayerPowerRecord> powerRecords = new ArrayList<>();
 
     @Override
     public void onEnable() {
