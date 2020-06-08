@@ -424,6 +424,16 @@ public class Main extends JavaPlugin implements Listener {
                     PowerCommand.powerCheck(sender, playerPowerRecords);
                 }
 
+                // sethome command
+                if (args[0].equalsIgnoreCase("sethome")) {
+                    SetHomeCommand.setHome(sender, factions);
+                }
+
+                // home command
+                if (args[0].equalsIgnoreCase("home")) {
+                    HomeCommand.teleportPlayer(sender, factions);
+                }
+
                 // forcesave command
                 if (args[0].equalsIgnoreCase("forcesave")) {
                     if (!(sender instanceof Player)) {

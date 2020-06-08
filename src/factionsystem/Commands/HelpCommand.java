@@ -40,6 +40,8 @@ public class HelpCommand {
                 sender.sendMessage(ChatColor.AQUA + "/mf promote - Promote a player to officer status." + "\n");
                 sender.sendMessage(ChatColor.AQUA + "/mf demote - Demote an officer to member status." + "\n");
                 sender.sendMessage(ChatColor.AQUA + "/mf power - Check your power level." + "\n");
+                sender.sendMessage(ChatColor.AQUA + "/mf sethome - Set your faction home." + "\n");
+                sender.sendMessage(ChatColor.AQUA + "/mf home - Teleport to your faction home." + "\n");
             }
         }
         if (!(sender instanceof Player)) {

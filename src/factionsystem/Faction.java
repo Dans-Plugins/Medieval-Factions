@@ -1,5 +1,7 @@
 package factionsystem;
 
+import org.bukkit.Location;
+
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileWriter;
@@ -17,6 +19,7 @@ public class Faction {
     private boolean autoclaim = false;
     private ArrayList<String> officers = new ArrayList<>();
     private int cumulativePowerLevel = 0;
+    private Location factionHome = null;
 
     // player constructor
     public Faction(String initialName, String creator) {
@@ -27,6 +30,14 @@ public class Faction {
     // server constructor
     Faction(String initialName) {
         setName(initialName);
+    }
+
+    public void setFactionHome(Location l) {
+        factionHome = l;
+    }
+
+    public Location getFactionHome() {
+        return factionHome;
     }
 
     public void setCumulativePowerLevel(int newPowerLevel) {
