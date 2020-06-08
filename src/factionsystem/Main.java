@@ -226,7 +226,31 @@ public class Main extends JavaPlugin implements Listener {
     }
 
     public void loadPlayerPowerRecords() {
+        System.out.println("Loading player power records...");
 
+        try {
+            System.out.println("Attempting to load player power record filenames...");
+            File loadFile = new File("./plugins/medievalfactions/player-power-records/" + "playerpowerrecords.txt");
+            Scanner loadReader = new Scanner(loadFile);
+
+            // actual loading
+            while (loadReader.hasNextLine()) {
+                String nextName = loadReader.nextLine();
+                PlayerPowerRecord temp = new PlayerPowerRecord(); // uses no-parameter constructor since load provides name
+                temp.load(nextName); // provides power field among other things
+
+                playerPowerRecords.add(temp);
+
+            }
+
+            loadReader.close();
+            System.out.println("Player power records loaded.");
+        } catch (FileNotFoundException e) {
+            System.out.println("Error loading the player power records!");
+            e.printStackTrace();
+        }
+
+        System.out.println("Player power records loaded.");
     }
 
     public boolean onCommand(CommandSender sender, Command cmd, String label, String[] args) {
