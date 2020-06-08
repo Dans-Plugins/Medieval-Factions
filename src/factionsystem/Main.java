@@ -340,7 +340,23 @@ public class Main extends JavaPlugin implements Listener {
                 if (args[0].equalsIgnoreCase("claim")) {
                     if (sender instanceof Player) {
                         Player player = (Player) sender;
-                        addChunkAtPlayerLocation(player);
+
+                        // if not at demesne limit
+                        if (isInFaction(player.getName(), factions)) {
+                            Faction playersFaction = getPlayersFaction(player.getName(), factions);
+                            if (getChunksClaimedByFaction(playersFaction.getName(), claimedChunks) < playersFaction.getCumulativePowerLevel()) {
+                                addChunkAtPlayerLocation(player);
+                                return true;
+                            }
+                            else {
+                                player.sendMessage(ChatColor.RED + "You have reached your demesne limit! Invite more players to increase this.");
+                                return false;
+                            }
+                        }
+                        else {
+                            player.sendMessage(ChatColor.RED + "You must be in a faction to use this command.");
+                            return false;
+                        }
                     }
                 }
 
@@ -581,9 +597,18 @@ public class Main extends JavaPlugin implements Listener {
             // auto claim check
             for (Faction faction : factions) {
                 if (faction.isOwner(event.getPlayer().getName())) {
+
                     if (faction.getAutoClaimStatus()) {
-                        // add new chunk to claimed chunks
-                        addChunkAtPlayerLocation(event.getPlayer());
+
+                        // if not at demesne limit
+                        Faction playersFaction = getPlayersFaction(event.getPlayer().getName(), factions);
+                        if (getChunksClaimedByFaction(playersFaction.getName(), claimedChunks) < playersFaction.getCumulativePowerLevel()) {
+                            // add new chunk to claimed chunks
+                            addChunkAtPlayerLocation(event.getPlayer());
+                        }
+                        else {
+                            event.getPlayer().sendMessage(ChatColor.RED + "You have reached your demesne limit! Invite more players to increase this.");
+                        }
                     }
                 }
             }
