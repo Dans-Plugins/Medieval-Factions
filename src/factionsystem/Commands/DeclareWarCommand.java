@@ -67,7 +67,7 @@ public class DeclareWarCommand {
                 }
             }
             if (!owner) {
-                player.sendMessage(ChatColor.RED + "You have to own a faction to use this command.");
+                player.sendMessage(ChatColor.RED + "You have to own a faction or be an officer of a faction to use this command.");
             }
         }
     }

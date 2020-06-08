@@ -498,7 +498,7 @@ public class Main extends JavaPlugin implements Listener {
         playerCoords[0] = player.getLocation().getChunk().getX();
         playerCoords[1] = player.getLocation().getChunk().getZ();
         for (Faction faction : factions) {
-            if (faction.isOwner(player.getName())) {
+            if (faction.isOwner(player.getName()) || faction.isOfficer(player.getName())) {
 
                 // check if land is already claimed
                 for (ClaimedChunk chunk : claimedChunks) {
@@ -530,7 +530,7 @@ public class Main extends JavaPlugin implements Listener {
         playerCoords[0] = player.getLocation().getChunk().getX();
         playerCoords[1] = player.getLocation().getChunk().getZ();
         for (Faction faction : factions) {
-            if (faction.isOwner(player.getName())) {
+            if (faction.isOwner(player.getName()) || faction.isOfficer(player.getName())) {
 
                 // check if land is claimed by player's faction
                 for (ClaimedChunk chunk : claimedChunks) {
