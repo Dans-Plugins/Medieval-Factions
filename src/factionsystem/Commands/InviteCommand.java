@@ -8,7 +8,7 @@ import factionsystem.Faction;
 
 import java.util.ArrayList;
 
-import static factionsystem.Main.isInFaction;
+import static factionsystem.UtilityFunctions.isInFaction;
 
 public class InviteCommand {
 

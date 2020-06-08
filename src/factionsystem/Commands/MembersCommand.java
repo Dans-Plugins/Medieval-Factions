@@ -6,8 +6,9 @@ import factionsystem.Faction;
 
 import java.util.ArrayList;
 
-import static factionsystem.Main.createStringFromFirstArgOnwards;
-import static factionsystem.Main.sendFactionMembers;
+
+import static factionsystem.UtilityFunctions.createStringFromFirstArgOnwards;
+import static factionsystem.UtilityFunctions.sendFactionMembers;
 
 public class MembersCommand {
 

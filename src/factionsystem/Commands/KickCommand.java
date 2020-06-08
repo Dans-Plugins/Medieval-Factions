@@ -8,7 +8,7 @@ import factionsystem.Faction;
 
 import java.util.ArrayList;
 
-import static factionsystem.Main.sendAllPlayersInFactionMessage;
+import static factionsystem.UtilityFunctions.sendAllPlayersInFactionMessage;
 
 public class KickCommand {
 

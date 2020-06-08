@@ -64,7 +64,7 @@ public class Faction {
         return false;
     }
 
-    ArrayList<String> getMemberArrayList() {
+    public ArrayList<String> getMemberArrayList() {
         return members;
     }
 
@@ -121,7 +121,7 @@ public class Faction {
         return false;
     }
 
-    ArrayList<String> getMemberList() {
+    public ArrayList<String> getMemberList() {
         ArrayList<String> membersCopy = members;
         return membersCopy;
     }
@@ -159,7 +159,7 @@ public class Faction {
         description = newDesc;
     }
 
-    String getDescription() {
+    public String getDescription() {
         return description;
     }
 

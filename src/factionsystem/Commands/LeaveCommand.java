@@ -9,8 +9,8 @@ import factionsystem.Faction;
 import java.io.File;
 import java.util.ArrayList;
 
-import static factionsystem.Main.removeAllClaimedChunks;
-import static factionsystem.Main.sendAllPlayersInFactionMessage;
+import static factionsystem.UtilityFunctions.removeAllClaimedChunks;
+import static factionsystem.UtilityFunctions.sendAllPlayersInFactionMessage;
 
 public class LeaveCommand {
 
