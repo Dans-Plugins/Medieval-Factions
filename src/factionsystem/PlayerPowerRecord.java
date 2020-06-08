@@ -58,9 +58,9 @@ public class PlayerPowerRecord {
             }
             File saveFile = new File("./plugins/medievalfactions/player-power-records/" + playerName + ".txt");
             if (saveFile.createNewFile()) {
-                System.out.println("Save file for claimed chunk " + playerName + " created.");
+                System.out.println("Save file for player power record associated with  " + playerName + " created.");
             } else {
-                System.out.println("Save file for claimed chunk " + playerName + " already exists. Altering.");
+                System.out.println("Save file for player power record associated with  " + playerName + " already exists. Altering.");
             }
 
             FileWriter saveWriter = new FileWriter("./plugins/medievalfactions/player-power-records/" + playerName + ".txt");

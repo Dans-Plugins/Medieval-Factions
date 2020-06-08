@@ -1,13 +1,16 @@
 package factionsystem;
 
-import org.bukkit.Bukkit;
 import org.bukkit.Chunk;
+import org.bukkit.World;
+import org.bukkit.WorldCreator;
 
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.Scanner;
+
+import static org.bukkit.Bukkit.getServer;
 
 public class ClaimedChunk {
 
@@ -110,7 +113,21 @@ public class ClaimedChunk {
 
             try {
                 System.out.println("Attempting to get chunk...");
-                chunk = Bukkit.getServer().getWorld(world).getChunkAt(x, z);
+
+                World chunksworld;
+
+                chunksworld = getServer().createWorld(new WorldCreator(world));
+
+                if (chunksworld != null) {
+                    chunk = chunksworld.getChunkAt(x, z);
+
+                    if (chunk == null) {
+                        System.out.println("Chunk is null!");
+                    }
+                }
+                else  {
+                    System.out.println("World is null!");
+                }
                 System.out.println("Chunk acquired.");
             } catch(Exception e) {
                 System.out.println("Failed.");

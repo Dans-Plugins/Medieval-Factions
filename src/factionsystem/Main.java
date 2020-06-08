@@ -400,7 +400,7 @@ public class Main extends JavaPlugin implements Listener {
                     if (sender instanceof Player) {
                         Player player = (Player) sender;
                         for (Faction faction : factions) {
-                            if (faction.isOwner(player.getName())) {
+                            if (faction.isOwner(player.getName()) || faction.isOfficer(player.getName())) {
                                 faction.toggleAutoClaim();
                                 player.sendMessage(ChatColor.AQUA + "Autoclaim toggled.");
                             }
