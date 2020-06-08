@@ -165,10 +165,12 @@ public class Faction {
 
     public void addMember(String playerName) {
         members.add(playerName);
+        cumulativePowerLevel = cumulativePowerLevel + 10;
     }
 
     public void removeMember(String playerName) {
         members.remove(playerName);
+        cumulativePowerLevel = cumulativePowerLevel - 10;
     }
 
     public boolean isMember(String playerName) {
