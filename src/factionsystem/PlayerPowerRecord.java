@@ -76,9 +76,9 @@ public class PlayerPowerRecord {
             FileWriter saveWriter = new FileWriter("./plugins/medievalfactions/player-power-records/" + playerName + ".txt");
 
             // actual saving takes place here
-            saveWriter.write(playerName);
-            saveWriter.write(powerLevel);
-            saveWriter.write(playerFaction);
+            saveWriter.write(playerName + "\n");
+            saveWriter.write(powerLevel + "\n");
+            saveWriter.write(playerFaction + "\n");
 
             saveWriter.close();
 
