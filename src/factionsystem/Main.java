@@ -30,7 +30,7 @@ public class Main extends JavaPlugin implements Listener {
 
     ArrayList<Faction> factions = new ArrayList<>();
     ArrayList<ClaimedChunk> claimedChunks = new ArrayList<>();
-    ArrayList<PlayerPowerRecord> powerRecords = new ArrayList<>();
+    ArrayList<PlayerPowerRecord> playerPowerRecords = new ArrayList<>();
 
     @Override
     public void onEnable() {
@@ -40,6 +40,7 @@ public class Main extends JavaPlugin implements Listener {
 
         loadFactions();
         loadClaimedChunks();
+        loadPlayerPowerRecords();
 
         System.out.println("Medieval Factions plugin enabled.");
     }
@@ -52,6 +53,8 @@ public class Main extends JavaPlugin implements Listener {
         saveFactions();
         saveClaimedChunkFilenames();
         saveClaimedChunks();
+        savePlayerPowerRecordFilenames();
+        savePlayerPowerRecords();
 
         System.out.println("Medieval Factions plugin disabled.");
     }
@@ -88,6 +91,7 @@ public class Main extends JavaPlugin implements Listener {
         for (Faction faction : factions) {
             faction.save(factions);
         }
+        System.out.println("Factions saved.");
     }
 
     public void saveClaimedChunkFilenames() {
@@ -127,32 +131,39 @@ public class Main extends JavaPlugin implements Listener {
         System.out.println("Claimed chunks saved.");
     }
 
-    public void loadClaimedChunks() {
-        System.out.println("Loading claimed chunks...");
-
+    public void savePlayerPowerRecordFilenames() {
         try {
-            System.out.println("Attempting to load claimed chunks...");
-            File loadFile = new File("./plugins/medievalfactions/claimedchunks/" + "claimedchunks.txt");
-            Scanner loadReader = new Scanner(loadFile);
-
-            // actual loading
-            while (loadReader.hasNextLine()) {
-                String nextName = loadReader.nextLine();
-                ClaimedChunk temp = new ClaimedChunk(); // uses no-parameter constructor since load provides chunk
-                temp.load(nextName); // provides owner field among other things
-
-                claimedChunks.add(temp);
-
+            File saveFolder = new File("./plugins/medievalfactions/player-power-records/");
+            if (!saveFolder.exists()) {
+                saveFolder.mkdir();
+            }
+            File saveFile = new File("./plugins/medievalfactions/player-power-records/" + "playerpowerrecords.txt");
+            if (saveFile.createNewFile()) {
+                System.out.println("Save file for player power record filenames created.");
+            } else {
+                System.out.println("Save file for player power record filenames already exists. Overwriting.");
             }
 
-            loadReader.close();
-            System.out.println("Claimed chunks successfully loaded.");
-        } catch (FileNotFoundException e) {
-            System.out.println("Error loading the claimed chunks!");
-            e.printStackTrace();
-        }
+            FileWriter saveWriter = new FileWriter(saveFile);
 
-        System.out.println("Claimed chunks loaded.");
+            // actual saving takes place here
+            for (PlayerPowerRecord record : playerPowerRecords) {
+                saveWriter.write(record.getPlayerName() + ".txt");
+            }
+
+            saveWriter.close();
+
+        } catch (IOException e) {
+            System.out.println("An error occurred while saving player power record filenames.");
+        }
+    }
+
+    public void savePlayerPowerRecords() {
+        System.out.println("Saving player power records...");
+        for (PlayerPowerRecord record: playerPowerRecords) {
+            record.save();
+        }
+        System.out.println("Player power records saved.");
     }
 
     public void loadFactions() {
@@ -184,6 +195,61 @@ public class Main extends JavaPlugin implements Listener {
         } catch (FileNotFoundException e) {
             System.out.println("Error loading the factions!");
         }
+    }
+
+    public void loadClaimedChunks() {
+        System.out.println("Loading claimed chunks...");
+
+        try {
+            System.out.println("Attempting to load claimed chunks...");
+            File loadFile = new File("./plugins/medievalfactions/claimedchunks/" + "claimedchunks.txt");
+            Scanner loadReader = new Scanner(loadFile);
+
+            // actual loading
+            while (loadReader.hasNextLine()) {
+                String nextName = loadReader.nextLine();
+                ClaimedChunk temp = new ClaimedChunk(); // uses no-parameter constructor since load provides chunk
+                temp.load(nextName); // provides owner field among other things
+
+                claimedChunks.add(temp);
+
+            }
+
+            loadReader.close();
+            System.out.println("Claimed chunks successfully loaded.");
+        } catch (FileNotFoundException e) {
+            System.out.println("Error loading the claimed chunks!");
+            e.printStackTrace();
+        }
+
+        System.out.println("Claimed chunks loaded.");
+    }
+
+    public void loadPlayerPowerRecords() {
+        System.out.println("Loading player power records...");
+
+        try {
+            System.out.println("Attempting to load player power record filenames...");
+            File loadFile = new File("./plugins/medievalfactions/player-power-records/" + "playerpowerrecords.txt");
+            Scanner loadReader = new Scanner(loadFile);
+
+            // actual loading
+            while (loadReader.hasNextLine()) {
+                String nextName = loadReader.nextLine();
+                PlayerPowerRecord temp = new PlayerPowerRecord(); // uses no-parameter constructor since load provides name
+                temp.load(nextName); // provides power field among other things
+
+                playerPowerRecords.add(temp);
+            }
+
+            loadReader.close();
+            System.out.println("Player power records loaded.");
+        } catch (FileNotFoundException e) {
+            System.out.println("Error loading the player power records!");
+            e.printStackTrace();
+        }
+
+        System.out.println("Player power records loaded.");
     }
 
     public boolean onCommand(CommandSender sender, Command cmd, String label, String[] args) {
@@ -343,6 +409,8 @@ public class Main extends JavaPlugin implements Listener {
                         saveFactions();
                         saveClaimedChunkFilenames();
                         saveClaimedChunks();
+                        savePlayerPowerRecordFilenames();
+                        savePlayerPowerRecords();
                     }
                 }
 
@@ -352,6 +420,7 @@ public class Main extends JavaPlugin implements Listener {
                         System.out.println("Medieval Factions plugin is loading...");
                         loadFactions();
                         loadClaimedChunks();
+                        loadPlayerPowerRecords();
                     }
                 }
 

@@ -17,10 +17,14 @@ public class PlayerPowerRecord {
         playerName = nameOfPlayer;
         powerLevel = 10;
     }
+    public PlayerPowerRecord() { // server constructor for loading
+
+    }
 
     public void setPlayerName(String newName) {
         playerName = newName;
     }
+
 
     public String getPlayerName() {
         return playerName;
