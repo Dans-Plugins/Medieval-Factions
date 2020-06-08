@@ -37,6 +37,16 @@ public class Faction {
         return cumulativePowerLevel;
     }
 
+    public void addPower() {
+        cumulativePowerLevel++;
+    }
+
+    public void subtractPower() {
+        if (cumulativePowerLevel > 0) {
+            cumulativePowerLevel--;
+        }
+    }
+
     public void addOfficer(String newOfficer) {
         officers.add(newOfficer);
     }
@@ -190,6 +200,7 @@ public class Faction {
             saveWriter.write(name + "\n");
             saveWriter.write(owner + "\n");
             saveWriter.write(description + "\n");
+            saveWriter.write(cumulativePowerLevel + "\n");
 
             for (int i = 0; i < members.size(); i++) {
                 saveWriter.write(members.get(i) + "\n");
@@ -241,6 +252,10 @@ public class Faction {
             }
             if (loadReader.hasNextLine()) {
                 setDescription(loadReader.nextLine());
+            }
+
+            if (loadReader.hasNextLine()) {
+                setCumulativePowerLevel(Integer.parseInt(loadReader.nextLine()));
             }
 
             while (loadReader.hasNextLine()) {
