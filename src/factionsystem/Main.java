@@ -240,7 +240,6 @@ public class Main extends JavaPlugin implements Listener {
                 temp.load(nextName); // provides power field among other things
 
                 playerPowerRecords.add(temp);
-
             }
 
             loadReader.close();

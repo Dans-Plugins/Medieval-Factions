@@ -16,6 +16,7 @@ public class Faction {
     private ArrayList<String> enemyFactions = new ArrayList<>();
     private boolean autoclaim = false;
     private ArrayList<String> officers = new ArrayList<>();
+    private int cumulativePowerLevel = 0;
 
     // player constructor
     public Faction(String initialName, String creator) {
@@ -26,6 +27,14 @@ public class Faction {
     // server constructor
     Faction(String initialName) {
         setName(initialName);
+    }
+
+    public void setCumulativePowerLevel(int newPowerLevel) {
+        cumulativePowerLevel = newPowerLevel;
+    }
+
+    public int getCumulativePowerLevel() {
+        return cumulativePowerLevel;
     }
 
     public void addOfficer(String newOfficer) {
