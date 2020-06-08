@@ -16,8 +16,13 @@ public class HomeCommand {
             Player player = (Player) sender;
             if (isInFaction(player.getName(), factions)) {
                 Faction playersFaction = getPlayersFaction(player.getName(), factions);
-                player.teleport(playersFaction.getFactionHome());
-                player.sendMessage(ChatColor.GREEN + "Teleporting.");
+                if (playersFaction.getFactionHome() != null) {
+                    player.sendMessage(ChatColor.GREEN + "Teleporting.");
+                    player.teleport(playersFaction.getFactionHome());
+                }
+                else {
+                    player.sendMessage(ChatColor.RED + "The faction home isn't set yet.");
+                }
             }
             else {
                 player.sendMessage(ChatColor.RED + "You need to be in a faction to use this command.");
