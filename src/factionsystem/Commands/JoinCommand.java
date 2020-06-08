@@ -1,6 +1,5 @@
 package factionsystem.Commands;
 
-import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
@@ -8,7 +7,7 @@ import factionsystem.Faction;
 
 import java.util.ArrayList;
 
-import static factionsystem.Main.*;
+import static factionsystem.UtilityFunctions.*;
 
 public class JoinCommand {
 

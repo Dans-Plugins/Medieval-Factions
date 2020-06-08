@@ -1,7 +1,5 @@
 package factionsystem;
 
-import org.bukkit.Bukkit;
-
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileWriter;
@@ -56,6 +54,10 @@ public class PlayerPowerRecord {
         else {
             return false;
         }
+    }
+
+    public int getPowerLevel() {
+        return powerLevel;
     }
 
     public void save() {

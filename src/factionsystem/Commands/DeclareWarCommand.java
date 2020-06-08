@@ -1,6 +1,5 @@
 package factionsystem.Commands;
 
-import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
@@ -8,8 +7,8 @@ import factionsystem.Faction;
 
 import java.util.ArrayList;
 
-import static factionsystem.Main.createStringFromFirstArgOnwards;
-import static factionsystem.Main.sendAllPlayersInFactionMessage;
+import static factionsystem.UtilityFunctions.createStringFromFirstArgOnwards;
+import static factionsystem.UtilityFunctions.sendAllPlayersInFactionMessage;
 
 public class DeclareWarCommand {
     public static void declareWar(CommandSender sender, String[] args, ArrayList<Faction> factions) {

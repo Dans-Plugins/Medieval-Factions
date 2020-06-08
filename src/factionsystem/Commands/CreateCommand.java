@@ -7,7 +7,7 @@ import factionsystem.Faction;
 
 import java.util.ArrayList;
 
-import static factionsystem.Main.createStringFromFirstArgOnwards;
+import static factionsystem.UtilityFunctions.createStringFromFirstArgOnwards;
 
 public class CreateCommand {
 
