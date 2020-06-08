@@ -307,22 +307,22 @@ public class Faction {
             }
 
             World world = null;
-            int x = 0;
-            int y = 0;
-            int z = 0;
+            double x = 0;
+            double y = 0;
+            double z = 0;
 
             // load faction home details (this must be done last)
             if (loadReader.hasNextLine()) {
                 world = getServer().createWorld(new WorldCreator(loadReader.nextLine()));
             }
             if (loadReader.hasNextLine()) {
-                x = Integer.parseInt(loadReader.nextLine());
+                x = Double.parseDouble(loadReader.nextLine());
             }
             if (loadReader.hasNextLine()) {
-                y = Integer.parseInt(loadReader.nextLine());
+                y = Double.parseDouble(loadReader.nextLine());
             }
             if (loadReader.hasNextLine()) {
-                z = Integer.parseInt(loadReader.nextLine());
+                z = Double.parseDouble(loadReader.nextLine());
             }
 
             // set location
