@@ -132,7 +132,30 @@ public class Main extends JavaPlugin implements Listener {
     }
 
     public void savePlayerPowerRecordFilenames() {
+        try {
+            File saveFolder = new File("./plugins/medievalfactions/player-power-records/");
+            if (!saveFolder.exists()) {
+                saveFolder.mkdir();
+            }
+            File saveFile = new File("./plugins/medievalfactions/player-power-records/" + "playerpowerrecords.txt");
+            if (saveFile.createNewFile()) {
+                System.out.println("Save file for player power record filenames created.");
+            } else {
+                System.out.println("Save file for player power record filenames already exists. Overwriting.");
+            }
 
+            FileWriter saveWriter = new FileWriter(saveFile);
+
+            // actual saving takes place here
+            for (PlayerPowerRecord record : playerPowerRecords) {
+                saveWriter.write(record.getPlayerName() + ".txt");
+            }
+
+            saveWriter.close();
+
+        } catch (IOException e) {
+            System.out.println("An error occurred while saving player power record filenames.");
+        }
     }
 
     public void savePlayerPowerRecords() {
