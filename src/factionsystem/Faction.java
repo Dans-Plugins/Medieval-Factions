@@ -1,6 +1,8 @@
 package factionsystem;
 
 import org.bukkit.Location;
+import org.bukkit.World;
+import org.bukkit.WorldCreator;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -8,6 +10,8 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Scanner;
+
+import static org.bukkit.Bukkit.getServer;
 
 public class Faction {
     private String name = "defaultName";
@@ -238,6 +242,17 @@ public class Faction {
                 saveWriter.write(officer + "\n");
             }
 
+            saveWriter.write("0" + "\n");
+
+            if (factionHome != null) {
+                // save faction details
+                saveWriter.write(factionHome.getWorld().getName() + "\n");
+                saveWriter.write(factionHome.getX() + "\n");
+                saveWriter.write(factionHome.getY() + "\n");
+                saveWriter.write(factionHome.getZ() + "\n");
+            }
+
+
             saveWriter.close();
 
             System.out.println("Successfully saved faction " + name + ".");
@@ -289,6 +304,30 @@ public class Faction {
                 }
 
                 officers.add(temp);
+            }
+
+            World world = null;
+            int x = 0;
+            int y = 0;
+            int z = 0;
+
+            // load faction home details (this must be done last)
+            if (loadReader.hasNextLine()) {
+                world = getServer().createWorld(new WorldCreator(loadReader.nextLine()));
+            }
+            if (loadReader.hasNextLine()) {
+                x = Integer.parseInt(loadReader.nextLine());
+            }
+            if (loadReader.hasNextLine()) {
+                y = Integer.parseInt(loadReader.nextLine());
+            }
+            if (loadReader.hasNextLine()) {
+                z = Integer.parseInt(loadReader.nextLine());
+            }
+
+            // set location
+            if (world != null && x != 0 && y != 0 && z != 0) {
+                factionHome = new Location(world, x, y, z);
             }
 
             loadReader.close();
