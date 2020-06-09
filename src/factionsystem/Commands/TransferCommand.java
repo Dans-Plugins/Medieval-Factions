@@ -7,6 +7,8 @@ import factionsystem.Faction;
 
 import java.util.ArrayList;
 
+import static org.bukkit.Bukkit.getServer;
+
 public class TransferCommand {
 
     public static boolean transferOwnership(CommandSender sender, String[] args, ArrayList<Faction> factions) {
@@ -22,6 +24,15 @@ public class TransferCommand {
                             // set owner
                             faction.setOwner(args[1]);
                             player.sendMessage(ChatColor.AQUA + "Ownership transferred to " + args[1]);
+
+                            try {
+                                Player target = getServer().getPlayer(args[1]);
+                                target.sendMessage(ChatColor.GREEN + "Ownership of " + faction.getName() + " has been transferred to you.");
+                            }
+                            catch(Exception ignored) {
+
+                            }
+
 
                             return true;
                         }

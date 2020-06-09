@@ -7,6 +7,8 @@ import org.bukkit.entity.Player;
 
 import java.util.ArrayList;
 
+import static org.bukkit.Bukkit.getServer;
+
 public class DemoteCommand {
     public static void demotePlayer(CommandSender sender, String[] args, ArrayList<Faction> factions) {
         if (sender instanceof Player) {
@@ -17,6 +19,15 @@ public class DemoteCommand {
                         if (faction.isOwner(player.getName())) {
                             faction.removeOfficer(args[1]);
                             player.sendMessage(ChatColor.GREEN + "Player demoted!");
+
+                            try {
+                                Player target = getServer().getPlayer(args[1]);
+                                target.sendMessage(ChatColor.RED + "You have been demoted to member status in your faction.");
+                            }
+                            catch(Exception ignored) {
+
+                            }
+
                             return;
                         }
                     }
