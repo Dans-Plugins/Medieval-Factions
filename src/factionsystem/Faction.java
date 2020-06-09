@@ -300,8 +300,10 @@ public class Faction {
                 String temp = loadReader.nextLine();
 
                 if (temp.equalsIgnoreCase("-")) {
-
+                    break;
                 }
+
+                enemyFactions.add(temp);
             }
 
             while (loadReader.hasNextLine()) {
@@ -324,26 +326,45 @@ public class Faction {
 
                 // load faction home details (this must be done last)
                 if (loadReader.hasNextLine()) {
+//                    System.out.println("Creating world...");
                     world = getServer().createWorld(new WorldCreator(loadReader.nextLine()));
                     System.out.println("World successfully acquired.");
                 }
+                else {
+                    System.out.println("World name not found in file!");
+                }
                 if (loadReader.hasNextLine()) {
+//                    System.out.println("Parsing double...");
                     x = Double.parseDouble(loadReader.nextLine());
-                    System.out.println("X position successfully acquired.");
+//                    System.out.println("X position successfully acquired.");
                 }
-                if (loadReader.hasNextLine()) {
+                else {
+                    System.out.println("X position not found in file!");
+                }
+                if (loadReader.hasNextLine()) {//
+                    System.out.println("Parsing double...");
                     y = Double.parseDouble(loadReader.nextLine());
-                    System.out.println("Y position successfully acquired.");
+//                    System.out.println("Y position successfully acquired.");
+                }
+                else {
+                    System.out.println("Y position not found in file!");
                 }
                 if (loadReader.hasNextLine()) {
+                    System.out.println("Parsing double...");
                     z = Double.parseDouble(loadReader.nextLine());
-                    System.out.println("Z position successfully acquired.");
+//                    System.out.println("Z position successfully acquired.");
+                }
+                else {
+                    System.out.println("Z position not found in file!");
                 }
 
                 // set location
                 if (world != null && x != 0 && y != 0 && z != 0) {
                     factionHome = new Location(world, x, y, z);
                     System.out.println("Faction home successfully set to " + x + ", " + y + ", " + z + ".");
+                }
+                else {
+                    System.out.println("One of the variables the faction home location depends on wasn't loaded!");
                 }
 
             }
