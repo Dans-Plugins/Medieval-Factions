@@ -326,7 +326,7 @@ public class Faction {
 
                 // load faction home details (this must be done last)
                 if (loadReader.hasNextLine()) {
-                    System.out.println("Creating world...");
+//                    System.out.println("Creating world...");
                     world = getServer().createWorld(new WorldCreator(loadReader.nextLine()));
                     System.out.println("World successfully acquired.");
                 }
@@ -334,17 +334,17 @@ public class Faction {
                     System.out.println("World name not found in file!");
                 }
                 if (loadReader.hasNextLine()) {
-                    System.out.println("Parsing double...");
+//                    System.out.println("Parsing double...");
                     x = Double.parseDouble(loadReader.nextLine());
-                    System.out.println("X position successfully acquired.");
+//                    System.out.println("X position successfully acquired.");
                 }
                 else {
                     System.out.println("X position not found in file!");
                 }
-                if (loadReader.hasNextLine()) {
+                if (loadReader.hasNextLine()) {//
                     System.out.println("Parsing double...");
                     y = Double.parseDouble(loadReader.nextLine());
-                    System.out.println("Y position successfully acquired.");
+//                    System.out.println("Y position successfully acquired.");
                 }
                 else {
                     System.out.println("Y position not found in file!");
@@ -352,7 +352,7 @@ public class Faction {
                 if (loadReader.hasNextLine()) {
                     System.out.println("Parsing double...");
                     z = Double.parseDouble(loadReader.nextLine());
-                    System.out.println("Z position successfully acquired.");
+//                    System.out.println("Z position successfully acquired.");
                 }
                 else {
                     System.out.println("Z position not found in file!");
