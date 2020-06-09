@@ -300,8 +300,10 @@ public class Faction {
                 String temp = loadReader.nextLine();
 
                 if (temp.equalsIgnoreCase("-")) {
-
+                    break;
                 }
+
+                enemyFactions.add(temp);
             }
 
             while (loadReader.hasNextLine()) {
