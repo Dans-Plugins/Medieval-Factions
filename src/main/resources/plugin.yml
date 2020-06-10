@@ -1,0 +1,8 @@
+name: MedievalFactions
+version: 1.8.1
+author: KingdomProgrammers
+main: factionsystem.Main
+api-version: 1.13
+
+commands:
+  mf:
