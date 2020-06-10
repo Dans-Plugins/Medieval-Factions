@@ -476,6 +476,7 @@ public class Main extends JavaPlugin implements Listener {
 
             // this following part will be about power
             if (victim.isDead()) {
+                System.out.println(attacker.getName() + " has killed " + victim.getName());
 
                 for (PlayerPowerRecord record : playerPowerRecords) {
                     if (record.getPlayerName().equalsIgnoreCase(attacker.getName())) {
