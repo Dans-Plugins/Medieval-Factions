@@ -1,5 +1,6 @@
 package factionsystem;
 
+import factionsystem.Commands.*;
 import org.bukkit.ChatColor;
 import org.bukkit.Chunk;
 import org.bukkit.block.Block;
@@ -11,11 +12,11 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.event.block.BlockPlaceEvent;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
+import org.bukkit.event.entity.PlayerDeathEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerMoveEvent;
 import org.bukkit.plugin.java.JavaPlugin;
-import factionsystem.Commands.*;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -472,6 +473,21 @@ public class Main extends JavaPlugin implements Listener {
             Player attacker = (Player) event.getDamager();
             Player victim = (Player) event.getEntity();
 
+
+            // this following part will be about power
+            if (victim.isDead()) {
+
+                for (PlayerPowerRecord record : playerPowerRecords) {
+                    if (record.getPlayerName().equalsIgnoreCase(attacker.getName())) {
+                        record.increasePower();
+                    }
+                }
+
+                if (isInFaction(victim.getName(), factions)) {
+                    getPlayersFaction(attacker.getName(), factions).addPower();
+                }
+            }
+
             int attackersFactionIndex = 0;
             int victimsFactionIndex = 0;
 
@@ -513,12 +529,32 @@ public class Main extends JavaPlugin implements Listener {
                 // check if land is already claimed
                 for (ClaimedChunk chunk : claimedChunks) {
                     if (playerCoords[0] == chunk.getCoordinates()[0] && playerCoords[1] == chunk.getCoordinates()[1]) {
+
                         // if holder is player's faction
                         if (chunk.getHolder().equalsIgnoreCase(faction.getName())) {
                             player.sendMessage(ChatColor.RED + "This land is already claimed by your faction!");
                             return;
                         }
                         else {
+
+                            // check if faction has more land than their demesne limit
+                            for (Faction targetFaction : factions) {
+                                if (chunk.getHolder().equalsIgnoreCase(targetFaction.getName())) {
+                                    if (targetFaction.getCumulativePowerLevel() < getChunksClaimedByFaction(targetFaction.getName(), claimedChunks)) {
+
+                                        claimedChunks.remove(chunk);
+
+                                        ClaimedChunk newChunk = new ClaimedChunk(player.getLocation().getChunk());
+                                        newChunk.setHolder(faction.getName());
+                                        newChunk.setWorld(player.getLocation().getWorld().getName());
+                                        claimedChunks.add(newChunk);
+                                        player.sendMessage(ChatColor.GREEN + "Land conquered from " + faction.getName() + "! Demesne Size: " + getChunksClaimedByFaction(faction.getName(), claimedChunks) + "/" + faction.getCumulativePowerLevel());
+                                        return;
+                                    }
+                                }
+                            }
+
+
                             player.sendMessage(ChatColor.RED + "This land is already claimed by " + chunk.getHolder());
                             return;
                         }
@@ -780,6 +816,22 @@ public class Main extends JavaPlugin implements Listener {
             PlayerPowerRecord newRecord = new PlayerPowerRecord(event.getPlayer().getName());
 
             playerPowerRecords.add(newRecord);
+        }
+    }
+
+    @EventHandler()
+    public void onDeath(PlayerDeathEvent event) {
+        event.getEntity();
+        Player player = (Player) event.getEntity();
+
+        for (PlayerPowerRecord record : playerPowerRecords) {
+            if (record.getPlayerName().equalsIgnoreCase(player.getName())) {
+                record.decreasePower();
+            }
+        }
+
+        if (isInFaction(player.getName(), factions)) {
+            getPlayersFaction(player.getName(), factions).subtractPower();
         }
     }
 }
