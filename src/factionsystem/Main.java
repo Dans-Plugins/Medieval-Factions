@@ -549,6 +549,9 @@ public class Main extends JavaPlugin implements Listener {
                                         newChunk.setWorld(player.getLocation().getWorld().getName());
                                         claimedChunks.add(newChunk);
                                         player.sendMessage(ChatColor.GREEN + "Land conquered from " + faction.getName() + "! Demesne Size: " + getChunksClaimedByFaction(faction.getName(), claimedChunks) + "/" + faction.getCumulativePowerLevel());
+
+                                        sendAllPlayersInFactionMessage(faction, ChatColor.RED + getPlayersFaction(player.getName(), factions).getName() + " has conquered land from your faction!");
+
                                         return;
                                     }
                                 }
