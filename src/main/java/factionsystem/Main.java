@@ -481,6 +481,7 @@ public class Main extends JavaPlugin implements Listener {
                 for (PlayerPowerRecord record : playerPowerRecords) {
                     if (record.getPlayerName().equalsIgnoreCase(attacker.getName())) {
                         record.increasePower();
+                        attacker.sendMessage(ChatColor.GREEN + "Your power level has increased!");
                     }
                 }
 
@@ -831,6 +832,7 @@ public class Main extends JavaPlugin implements Listener {
         for (PlayerPowerRecord record : playerPowerRecords) {
             if (record.getPlayerName().equalsIgnoreCase(player.getName())) {
                 record.decreasePower();
+                player.sendMessage(ChatColor.GREEN + "Your power level has decreased!");
             }
         }
 
