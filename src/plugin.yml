@@ -1,5 +1,5 @@
 name: MedievalFactions
-version: "1.7"
+version: "1.8"
 author: KingdomProgrammers
 main: factionsystem.Main
 api-version: "1.15"
