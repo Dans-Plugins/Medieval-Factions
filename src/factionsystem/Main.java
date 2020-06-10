@@ -274,7 +274,7 @@ public class Main extends JavaPlugin implements Listener {
 
                 // create command
                 if (args[0].equalsIgnoreCase("create")) {
-                    CreateCommand.createFaction(sender, args, factions);
+                    CreateCommand.createFaction(sender, args, factions, playerPowerRecords);
                 }
 
                 // list command

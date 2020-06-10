@@ -1,5 +1,6 @@
 package factionsystem.Commands;
 
+import factionsystem.PlayerPowerRecord;
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
@@ -8,10 +9,11 @@ import factionsystem.Faction;
 import java.util.ArrayList;
 
 import static factionsystem.UtilityFunctions.createStringFromFirstArgOnwards;
+import static factionsystem.UtilityFunctions.getPlayersPowerRecord;
 
 public class CreateCommand {
 
-    public static boolean createFaction(CommandSender sender, String[] args, ArrayList<Faction> factions) {
+    public static boolean createFaction(CommandSender sender, String[] args, ArrayList<Faction> factions, ArrayList<PlayerPowerRecord> powerRecords) {
         // player check
         if (sender instanceof Player) {
             Player player = (Player) sender;
@@ -44,7 +46,7 @@ public class CreateCommand {
                     // actual faction creation
                     Faction temp = new Faction(name, player.getName());
                     factions.add(temp);
-                    factions.get(factions.size() - 1).addMember(player.getName());
+                    factions.get(factions.size() - 1).addMember(player.getName(), getPlayersPowerRecord(player.getName(), powerRecords).getPowerLevel());
                     System.out.println("Faction " + name + " created.");
                     player.sendMessage(ChatColor.AQUA + "Faction " + name + " created.");
                     return true;
