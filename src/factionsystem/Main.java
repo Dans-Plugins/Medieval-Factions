@@ -309,17 +309,17 @@ public class Main extends JavaPlugin implements Listener {
 
                 // join command
                 if (args[0].equalsIgnoreCase("join")) {
-                    JoinCommand.joinFaction(sender, args, factions);
+                    JoinCommand.joinFaction(sender, args, factions, playerPowerRecords);
                 }
 
                 // kick command
                 if (args[0].equalsIgnoreCase("kick")) {
-                    KickCommand.kickPlayer(sender, args, factions);
+                    KickCommand.kickPlayer(sender, args, factions, playerPowerRecords);
                 }
 
                 // leave commmand
                 if (args[0].equalsIgnoreCase("leave")) {
-                    LeaveCommand.leaveFaction(sender, factions, claimedChunks);
+                    LeaveCommand.leaveFaction(sender, factions, claimedChunks, playerPowerRecords);
                 }
 
                 // transfer command

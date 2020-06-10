@@ -120,4 +120,12 @@ public class UtilityFunctions {
         return counter;
     }
 
+    public static PlayerPowerRecord getPlayersPowerRecord(String playerName, ArrayList<PlayerPowerRecord> powerRecords ) {
+        for (PlayerPowerRecord record : powerRecords) {
+            if (record.getPlayerName().equalsIgnoreCase(playerName)) {
+                return record;
+            }
+        }
+        return null;
+    }
 }

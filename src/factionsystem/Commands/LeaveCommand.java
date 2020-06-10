@@ -1,5 +1,6 @@
 package factionsystem.Commands;
 
+import factionsystem.PlayerPowerRecord;
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
@@ -9,12 +10,11 @@ import factionsystem.Faction;
 import java.io.File;
 import java.util.ArrayList;
 
-import static factionsystem.UtilityFunctions.removeAllClaimedChunks;
-import static factionsystem.UtilityFunctions.sendAllPlayersInFactionMessage;
+import static factionsystem.UtilityFunctions.*;
 
 public class LeaveCommand {
 
-    public static boolean leaveFaction(CommandSender sender, ArrayList<Faction> factions, ArrayList<ClaimedChunk> chunks) {
+    public static boolean leaveFaction(CommandSender sender, ArrayList<Faction> factions, ArrayList<ClaimedChunk> chunks, ArrayList<PlayerPowerRecord> powerRecords) {
         if (sender instanceof Player) {
             Player player = (Player) sender;
             for (int i = 0; i < factions.size(); i++) {
@@ -42,7 +42,7 @@ public class LeaveCommand {
                             // remove claimed land objects associated with this faction
                             removeAllClaimedChunks(factions.get(i).getName(), chunks);
 
-                            factions.get(i).removeMember(player.getName());
+                            factions.get(i).removeMember(player.getName(), getPlayersPowerRecord(player.getName(), powerRecords).getPowerLevel());
                             factions.remove(i);
                             player.sendMessage(ChatColor.AQUA + "You left your faction. It was deleted since no one else was a member.");
 
@@ -55,7 +55,7 @@ public class LeaveCommand {
                     }
                     else {
                         // able to leave
-                        factions.get(i).removeMember(player.getName());
+                        factions.get(i).removeMember(player.getName(), getPlayersPowerRecord(player.getName(), powerRecords).getPowerLevel());
                         player.sendMessage(ChatColor.AQUA + "You left your faction.");
                         try {
                             sendAllPlayersInFactionMessage(factions.get(i), ChatColor.GREEN + player.getName() + " has left " + factions.get(i).getName());
