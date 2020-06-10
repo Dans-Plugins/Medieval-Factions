@@ -529,12 +529,25 @@ public class Main extends JavaPlugin implements Listener {
                 // check if land is already claimed
                 for (ClaimedChunk chunk : claimedChunks) {
                     if (playerCoords[0] == chunk.getCoordinates()[0] && playerCoords[1] == chunk.getCoordinates()[1]) {
+
                         // if holder is player's faction
                         if (chunk.getHolder().equalsIgnoreCase(faction.getName())) {
                             player.sendMessage(ChatColor.RED + "This land is already claimed by your faction!");
                             return;
                         }
                         else {
+
+                            // check if faction has more land than their demesne limit
+                            for (Faction targetFaction : factions) {
+                                if (chunk.getHolder().equalsIgnoreCase(targetFaction.getName())) {
+                                    if (targetFaction.getCumulativePowerLevel() < getChunksClaimedByFaction(targetFaction.getName(), claimedChunks)) {
+                                        player.sendMessage(ChatColor.GREEN + "The faction who owns this land is living beyond their demesne limit, so it is claimable.");
+                                        break;
+                                    }
+                                }
+                            }
+
+
                             player.sendMessage(ChatColor.RED + "This land is already claimed by " + chunk.getHolder());
                             return;
                         }
