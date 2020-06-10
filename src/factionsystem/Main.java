@@ -542,6 +542,8 @@ public class Main extends JavaPlugin implements Listener {
                                 if (chunk.getHolder().equalsIgnoreCase(targetFaction.getName())) {
                                     if (targetFaction.getCumulativePowerLevel() < getChunksClaimedByFaction(targetFaction.getName(), claimedChunks)) {
 
+                                        claimedChunks.remove(chunk);
+
                                         ClaimedChunk newChunk = new ClaimedChunk(player.getLocation().getChunk());
                                         newChunk.setHolder(faction.getName());
                                         newChunk.setWorld(player.getLocation().getWorld().getName());
