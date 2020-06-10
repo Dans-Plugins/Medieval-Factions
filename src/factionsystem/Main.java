@@ -1,5 +1,6 @@
 package factionsystem;
 
+import factionsystem.Commands.*;
 import org.bukkit.ChatColor;
 import org.bukkit.Chunk;
 import org.bukkit.block.Block;
@@ -11,11 +12,11 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.event.block.BlockPlaceEvent;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
+import org.bukkit.event.entity.PlayerDeathEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerMoveEvent;
 import org.bukkit.plugin.java.JavaPlugin;
-import factionsystem.Commands.*;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -472,6 +473,21 @@ public class Main extends JavaPlugin implements Listener {
             Player attacker = (Player) event.getDamager();
             Player victim = (Player) event.getEntity();
 
+
+            // this following part will be about power
+            if (victim.isDead()) {
+
+                for (PlayerPowerRecord record : playerPowerRecords) {
+                    if (record.getPlayerName().equalsIgnoreCase(attacker.getName())) {
+                        record.increasePower();
+                    }
+                }
+
+                if (isInFaction(victim.getName(), factions)) {
+                    getPlayersFaction(attacker.getName(), factions).addPower();
+                }
+            }
+
             int attackersFactionIndex = 0;
             int victimsFactionIndex = 0;
 
@@ -780,6 +796,22 @@ public class Main extends JavaPlugin implements Listener {
             PlayerPowerRecord newRecord = new PlayerPowerRecord(event.getPlayer().getName());
 
             playerPowerRecords.add(newRecord);
+        }
+    }
+
+    @EventHandler()
+    public void onDeath(PlayerDeathEvent event) {
+        event.getEntity();
+        Player player = (Player) event.getEntity();
+
+        for (PlayerPowerRecord record : playerPowerRecords) {
+            if (record.getPlayerName().equalsIgnoreCase(player.getName())) {
+                record.decreasePower();
+            }
+        }
+
+        if (isInFaction(player.getName(), factions)) {
+            getPlayersFaction(player.getName(), factions).subtractPower();
         }
     }
 }
