@@ -541,13 +541,12 @@ public class Main extends JavaPlugin implements Listener {
                             for (Faction targetFaction : factions) {
                                 if (chunk.getHolder().equalsIgnoreCase(targetFaction.getName())) {
                                     if (targetFaction.getCumulativePowerLevel() < getChunksClaimedByFaction(targetFaction.getName(), claimedChunks)) {
-                                        player.sendMessage(ChatColor.GREEN + "The faction who owns this land is living beyond their demesne limit, so it is claimable.");
 
                                         ClaimedChunk newChunk = new ClaimedChunk(player.getLocation().getChunk());
                                         newChunk.setHolder(faction.getName());
                                         newChunk.setWorld(player.getLocation().getWorld().getName());
                                         claimedChunks.add(newChunk);
-                                        player.sendMessage(ChatColor.GREEN + "Land claimed! Demesne Size: " + getChunksClaimedByFaction(faction.getName(), claimedChunks) + "/" + faction.getCumulativePowerLevel());
+                                        player.sendMessage(ChatColor.GREEN + "Land conquered from " + faction.getName() + "! Demesne Size: " + getChunksClaimedByFaction(faction.getName(), claimedChunks) + "/" + faction.getCumulativePowerLevel());
                                         return;
                                     }
                                 }
