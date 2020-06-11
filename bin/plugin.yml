@@ -1,7 +1,0 @@
-main: Main
-name: Medieval-Factions
-version: 1.0
-api-version: 1.13
-
-commands:
-  Test:
