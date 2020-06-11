@@ -28,12 +28,10 @@ public class PlayerPowerRecord {
 
     public boolean increasePower() {
         if (powerLevel < 10) {
-            System.out.println("DEBUG: Power level under ten! Increasing!.");
             powerLevel++;
             return true;
         }
         else {
-            System.out.println("DEBUG: Max power level reached!");
             return false;
         }
     }

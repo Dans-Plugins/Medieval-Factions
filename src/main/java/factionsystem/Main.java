@@ -473,27 +473,6 @@ public class Main extends JavaPlugin implements Listener {
             Player attacker = (Player) event.getDamager();
             Player victim = (Player) event.getEntity();
 
-
-            // this following part will be about power
-            if (victim.isDead()) { // TODO: FIX THIS PART
-                System.out.println(attacker.getName() + " has killed " + victim.getName());
-
-                System.out.println("DEBUG: Searching for attacker's record.");
-                for (PlayerPowerRecord record : playerPowerRecords) {
-                    System.out.println("DEBUG: Checking record of " + record.getPlayerName() + ".");
-                    if (record.getPlayerName().equalsIgnoreCase(attacker.getName())) {
-                        System.out.println("DEBUG: Found " + attacker.getName());
-                        record.increasePower();
-                        System.out.println("DEBUG: Power increased.");
-                        attacker.sendMessage(ChatColor.GREEN + "Your power level has increased!");
-                    }
-                }
-
-                if (isInFaction(victim.getName(), factions)) {
-                    getPlayersFaction(attacker.getName(), factions).addPower();
-                }
-            }
-
             int attackersFactionIndex = 0;
             int victimsFactionIndex = 0;
 
@@ -833,10 +812,27 @@ public class Main extends JavaPlugin implements Listener {
         event.getEntity();
         Player player = (Player) event.getEntity();
 
+        // decrease dying player's power
         for (PlayerPowerRecord record : playerPowerRecords) {
             if (record.getPlayerName().equalsIgnoreCase(player.getName())) {
                 record.decreasePower();
                 player.sendMessage(ChatColor.RED + "Your power level has decreased!");
+            }
+        }
+
+        // if player's cause of death was another player killing them
+        if (player.getKiller() instanceof Player) {
+            Player killer = (Player) player.getKiller();
+            System.out.println(player.getName() + " has killed " + killer.getName());
+
+            for (PlayerPowerRecord record : playerPowerRecords) {
+                record.increasePower();
+                System.out.println("DEBUG: Power increased.");
+                killer.sendMessage(ChatColor.GREEN + "Your power level has increased!");
+            }
+
+            if (isInFaction(player.getName(), factions)) {
+                getPlayersFaction(killer.getName(), factions).addPower();
             }
         }
 

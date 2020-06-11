@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="6724bea6-bc8c-4e88-a483-3caa737a8d9c" name="Default Changelist" comment="added a bunch of debug print statements">
+    <list default="true" id="6724bea6-bc8c-4e88-a483-3caa737a8d9c" name="Default Changelist" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/factionsystem/PlayerPowerRecord.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/factionsystem/PlayerPowerRecord.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/factionsystem/Main.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/factionsystem/Main.java" afterDir="false" />
@@ -90,7 +90,8 @@
       <updated>1591787368471</updated>
       <workItem from="1591787376729" duration="1061000" />
       <workItem from="1591810796718" duration="619000" />
-      <workItem from="1591826315837" duration="4100000" />
+      <workItem from="1591826315837" duration="4354000" />
+      <workItem from="1591833576020" duration="752000" />
     </task>
     <task id="LOCAL-00001" summary="maven">
       <created>1591788716055</created>
@@ -127,7 +128,14 @@
       <option name="project" value="LOCAL" />
       <updated>1591829719065</updated>
     </task>
-    <option name="localTasksCounter" value="6" />
+    <task id="LOCAL-00006" summary="added a TODO">
+      <created>1591830788933</created>
+      <option name="number" value="00006" />
+      <option name="presentableId" value="LOCAL-00006" />
+      <option name="project" value="LOCAL" />
+      <updated>1591830788933</updated>
+    </task>
+    <option name="localTasksCounter" value="7" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -140,41 +148,42 @@
     <MESSAGE value="informs players when their power increases or decreases, also enacts power limits on factions" />
     <MESSAGE value="changed message to red color" />
     <MESSAGE value="added a bunch of debug print statements" />
-    <option name="LAST_COMMIT_MESSAGE" value="added a bunch of debug print statements" />
+    <MESSAGE value="added a TODO" />
+    <option name="LAST_COMMIT_MESSAGE" value="added a TODO" />
   </component>
   <component name="WindowStateProjectService">
     <state x="361" y="71" key="#Notifications" timestamp="1591810885175">
       <screen x="0" y="0" width="1536" height="824" />
     </state>
     <state x="361" y="71" key="#Notifications/0.0.1536.824/-1440.0.1440.860@0.0.1536.824" timestamp="1591810885175" />
-    <state x="354" y="7" key="CommitChangelistDialog2" timestamp="1591829941146">
+    <state x="354" y="7" key="CommitChangelistDialog2" timestamp="1591830782440">
       <screen x="0" y="0" width="1536" height="824" />
     </state>
-    <state x="354" y="7" key="CommitChangelistDialog2/0.0.1536.824/-1440.0.1440.860@0.0.1536.824" timestamp="1591829941146" />
-    <state width="1493" height="210" key="GridCell.Tab.0.bottom" timestamp="1591829954702">
+    <state x="354" y="7" key="CommitChangelistDialog2/0.0.1536.824/-1440.0.1440.860@0.0.1536.824" timestamp="1591830782440" />
+    <state width="1493" height="210" key="GridCell.Tab.0.bottom" timestamp="1591830805090">
       <screen x="0" y="0" width="1536" height="824" />
     </state>
-    <state width="1493" height="210" key="GridCell.Tab.0.bottom/0.0.1536.824/-1440.0.1440.860@0.0.1536.824" timestamp="1591829954702" />
-    <state width="1493" height="210" key="GridCell.Tab.0.center" timestamp="1591829954699">
+    <state width="1493" height="210" key="GridCell.Tab.0.bottom/0.0.1536.824/-1440.0.1440.860@0.0.1536.824" timestamp="1591830805090" />
+    <state width="1493" height="210" key="GridCell.Tab.0.center" timestamp="1591830805089">
       <screen x="0" y="0" width="1536" height="824" />
     </state>
-    <state width="1493" height="210" key="GridCell.Tab.0.center/0.0.1536.824/-1440.0.1440.860@0.0.1536.824" timestamp="1591829954699" />
-    <state width="1493" height="210" key="GridCell.Tab.0.left" timestamp="1591829954698">
+    <state width="1493" height="210" key="GridCell.Tab.0.center/0.0.1536.824/-1440.0.1440.860@0.0.1536.824" timestamp="1591830805089" />
+    <state width="1493" height="210" key="GridCell.Tab.0.left" timestamp="1591830805088">
       <screen x="0" y="0" width="1536" height="824" />
     </state>
-    <state width="1493" height="210" key="GridCell.Tab.0.left/0.0.1536.824/-1440.0.1440.860@0.0.1536.824" timestamp="1591829954698" />
-    <state width="1493" height="210" key="GridCell.Tab.0.right" timestamp="1591829954701">
+    <state width="1493" height="210" key="GridCell.Tab.0.left/0.0.1536.824/-1440.0.1440.860@0.0.1536.824" timestamp="1591830805088" />
+    <state width="1493" height="210" key="GridCell.Tab.0.right" timestamp="1591830805089">
       <screen x="0" y="0" width="1536" height="824" />
     </state>
-    <state width="1493" height="210" key="GridCell.Tab.0.right/0.0.1536.824/-1440.0.1440.860@0.0.1536.824" timestamp="1591829954701" />
+    <state width="1493" height="210" key="GridCell.Tab.0.right/0.0.1536.824/-1440.0.1440.860@0.0.1536.824" timestamp="1591830805089" />
     <state x="481" y="128" key="MultipleFileMergeDialog" timestamp="1591811060729">
       <screen x="0" y="0" width="1536" height="824" />
     </state>
     <state x="481" y="128" key="MultipleFileMergeDialog/0.0.1536.824/-1440.0.1440.860@0.0.1536.824" timestamp="1591811060729" />
-    <state x="361" y="145" key="Vcs.Push.Dialog.v2" timestamp="1591826913348">
+    <state x="361" y="145" key="Vcs.Push.Dialog.v2" timestamp="1591830793836">
       <screen x="0" y="0" width="1536" height="824" />
     </state>
-    <state x="361" y="145" key="Vcs.Push.Dialog.v2/0.0.1536.824/-1440.0.1440.860@0.0.1536.824" timestamp="1591826913347" />
+    <state x="361" y="145" key="Vcs.Push.Dialog.v2/0.0.1536.824/-1440.0.1440.860@0.0.1536.824" timestamp="1591830793836" />
     <state x="578" y="329" key="com.intellij.openapi.vcs.update.UpdateOrStatusOptionsDialogupdate-v2" timestamp="1591826518614">
       <screen x="0" y="0" width="1536" height="824" />
     </state>
