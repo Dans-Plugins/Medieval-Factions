@@ -363,7 +363,13 @@ public class Main extends JavaPlugin implements Listener {
                 if (args[0].equalsIgnoreCase("unclaim")) {
                     if (sender instanceof Player) {
                         Player player = (Player) sender;
-                        removeChunkAtPlayerLocation(player);
+                        if (isInFaction(player.getName(), factions)) {
+                            removeChunkAtPlayerLocation(player);
+                        }
+                        else {
+                            player.sendMessage(ChatColor.RED + "You need to be in a faction to use this command.");
+                        }
+
                     }
                 }
 
@@ -398,12 +404,19 @@ public class Main extends JavaPlugin implements Listener {
                 if (args[0].equalsIgnoreCase("autoclaim")) {
                     if (sender instanceof Player) {
                         Player player = (Player) sender;
-                        for (Faction faction : factions) {
-                            if (faction.isOwner(player.getName()) || faction.isOfficer(player.getName())) {
-                                faction.toggleAutoClaim();
-                                player.sendMessage(ChatColor.AQUA + "Autoclaim toggled.");
+
+                        if (isInFaction(player.getName(), factions)) {
+                            for (Faction faction : factions) {
+                                if (faction.isOwner(player.getName()) || faction.isOfficer(player.getName())) {
+                                    faction.toggleAutoClaim();
+                                    player.sendMessage(ChatColor.AQUA + "Autoclaim toggled.");
+                                }
                             }
                         }
+                        else {
+                            player.sendMessage(ChatColor.RED + "You need to be in a faction to use this command.");
+                        }
+
                     }
 
                 }
@@ -525,17 +538,23 @@ public class Main extends JavaPlugin implements Listener {
                                 if (chunk.getHolder().equalsIgnoreCase(targetFaction.getName())) {
                                     if (targetFaction.getCumulativePowerLevel() < getChunksClaimedByFaction(targetFaction.getName(), claimedChunks)) {
 
-                                        claimedChunks.remove(chunk);
+                                        // if at war with target faction
+                                        if (!(faction.isEnemy(targetFaction.getName()))) {
+                                            claimedChunks.remove(chunk);
 
-                                        ClaimedChunk newChunk = new ClaimedChunk(player.getLocation().getChunk());
-                                        newChunk.setHolder(faction.getName());
-                                        newChunk.setWorld(player.getLocation().getWorld().getName());
-                                        claimedChunks.add(newChunk);
-                                        player.sendMessage(ChatColor.GREEN + "Land conquered from " + faction.getName() + "! Demesne Size: " + getChunksClaimedByFaction(faction.getName(), claimedChunks) + "/" + faction.getCumulativePowerLevel());
+                                            ClaimedChunk newChunk = new ClaimedChunk(player.getLocation().getChunk());
+                                            newChunk.setHolder(faction.getName());
+                                            newChunk.setWorld(player.getLocation().getWorld().getName());
+                                            claimedChunks.add(newChunk);
+                                            player.sendMessage(ChatColor.GREEN + "Land conquered from " + faction.getName() + "! Demesne Size: " + getChunksClaimedByFaction(faction.getName(), claimedChunks) + "/" + faction.getCumulativePowerLevel());
 
-                                        sendAllPlayersInFactionMessage(targetFaction, ChatColor.RED + getPlayersFaction(player.getName(), factions).getName() + " has conquered land from your faction!");
+                                            sendAllPlayersInFactionMessage(targetFaction, ChatColor.RED + getPlayersFaction(player.getName(), factions).getName() + " has conquered land from your faction!");
 
-                                        return;
+                                            return;
+                                        }
+                                        else {
+                                            player.sendMessage(ChatColor.RED + "Your factions have to be at war in order for you to conquer land.");
+                                        }
                                     }
                                 }
                             }

@@ -15,6 +15,7 @@ public class JoinCommand {
     public static boolean joinFaction(CommandSender sender, String[] args, ArrayList<Faction> factions, ArrayList<PlayerPowerRecord> powerRecords) {
         if (sender instanceof Player) {
             Player player = (Player) sender;
+
             if (args.length > 1) {
 
                 // creating name from arguments 1 to the last one

@@ -68,8 +68,8 @@ public class Faction {
         officers.add(newOfficer);
     }
 
-    public void removeOfficer(String officerToRemove) {
-        officers.removeIf(officer -> officer.equalsIgnoreCase(officerToRemove));
+    public boolean removeOfficer(String officerToRemove) {
+        return officers.removeIf(officer -> officer.equalsIgnoreCase(officerToRemove));
     }
 
     public boolean isOfficer(String playerName) {
