@@ -554,6 +554,7 @@ public class Main extends JavaPlugin implements Listener {
                                         }
                                         else {
                                             player.sendMessage(ChatColor.RED + "Your factions have to be at war in order for you to conquer land.");
+                                            return;
                                         }
                                     }
                                 }
