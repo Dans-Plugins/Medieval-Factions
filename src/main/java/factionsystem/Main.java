@@ -363,7 +363,13 @@ public class Main extends JavaPlugin implements Listener {
                 if (args[0].equalsIgnoreCase("unclaim")) {
                     if (sender instanceof Player) {
                         Player player = (Player) sender;
-                        removeChunkAtPlayerLocation(player);
+                        if (isInFaction(player.getName(), factions)) {
+                            removeChunkAtPlayerLocation(player);
+                        }
+                        else {
+                            player.sendMessage(ChatColor.RED + "You need to be in a faction to use this command.");
+                        }
+
                     }
                 }
 
@@ -398,12 +404,19 @@ public class Main extends JavaPlugin implements Listener {
                 if (args[0].equalsIgnoreCase("autoclaim")) {
                     if (sender instanceof Player) {
                         Player player = (Player) sender;
-                        for (Faction faction : factions) {
-                            if (faction.isOwner(player.getName()) || faction.isOfficer(player.getName())) {
-                                faction.toggleAutoClaim();
-                                player.sendMessage(ChatColor.AQUA + "Autoclaim toggled.");
+
+                        if (isInFaction(player.getName(), factions)) {
+                            for (Faction faction : factions) {
+                                if (faction.isOwner(player.getName()) || faction.isOfficer(player.getName())) {
+                                    faction.toggleAutoClaim();
+                                    player.sendMessage(ChatColor.AQUA + "Autoclaim toggled.");
+                                }
                             }
                         }
+                        else {
+                            player.sendMessage(ChatColor.RED + "You need to be in a faction to use this command.");
+                        }
+
                     }
 
                 }

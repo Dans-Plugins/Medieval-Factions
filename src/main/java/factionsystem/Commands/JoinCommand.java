@@ -15,41 +15,47 @@ public class JoinCommand {
     public static boolean joinFaction(CommandSender sender, String[] args, ArrayList<Faction> factions, ArrayList<PlayerPowerRecord> powerRecords) {
         if (sender instanceof Player) {
             Player player = (Player) sender;
-            if (args.length > 1) {
 
-                // creating name from arguments 1 to the last one
-                String factionName = createStringFromFirstArgOnwards(args);
+            if (isInFaction(player.getName(), factions)) {
+                if (args.length > 1) {
 
-                for (Faction faction : factions) {
-                    if (faction.getName().equalsIgnoreCase(factionName)) {
-                        if (faction.isInvited(player.getName())) {
+                    // creating name from arguments 1 to the last one
+                    String factionName = createStringFromFirstArgOnwards(args);
 
-                            // join if player isn't in a faction already
-                            if (!(isInFaction(player.getName(), factions))) {
-                                faction.addMember(player.getName(), getPlayersPowerRecord(player.getName(), powerRecords).getPowerLevel());
-                                faction.uninvite(player.getName());
-                                try {
-                                    sendAllPlayersInFactionMessage(faction, ChatColor.GREEN + player.getName() + " has joined " + faction.getName());
-                                } catch (Exception ignored) {
+                    for (Faction faction : factions) {
+                        if (faction.getName().equalsIgnoreCase(factionName)) {
+                            if (faction.isInvited(player.getName())) {
 
+                                // join if player isn't in a faction already
+                                if (!(isInFaction(player.getName(), factions))) {
+                                    faction.addMember(player.getName(), getPlayersPowerRecord(player.getName(), powerRecords).getPowerLevel());
+                                    faction.uninvite(player.getName());
+                                    try {
+                                        sendAllPlayersInFactionMessage(faction, ChatColor.GREEN + player.getName() + " has joined " + faction.getName());
+                                    } catch (Exception ignored) {
+
+                                    }
+                                    player.sendMessage(ChatColor.GREEN + "You joined the faction!");
+                                    return true;
                                 }
-                                player.sendMessage(ChatColor.GREEN + "You joined the faction!");
-                                return true;
-                            }
-                            else {
-                                player.sendMessage(ChatColor.RED + "You're already in a faction, sorry!");
+                                else {
+                                    player.sendMessage(ChatColor.RED + "You're already in a faction, sorry!");
+                                    return false;
+                                }
+
+                            } else {
+                                player.sendMessage(ChatColor.RED + "You're not invited to this faction!");
                                 return false;
                             }
-
-                        } else {
-                            player.sendMessage(ChatColor.RED + "You're not invited to this faction!");
-                            return false;
                         }
                     }
+                } else {
+                    player.sendMessage(ChatColor.RED + "Usage: /mf join (faction-name)");
+                    return false;
                 }
-            } else {
-                player.sendMessage(ChatColor.RED + "Usage: /mf join (faction-name)");
-                return false;
+            }
+            else {
+                player.sendMessage(ChatColor.RED + "You need to be in a faction to use this command.");
             }
         }
         return false;
