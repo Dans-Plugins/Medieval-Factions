@@ -475,11 +475,17 @@ public class Main extends JavaPlugin implements Listener {
 
 
             // this following part will be about power
-            if (victim.isDead()) {
+            if (victim.isDead()) { // TODO: FIX THIS PART
+                System.out.println(attacker.getName() + " has killed " + victim.getName());
 
+                System.out.println("DEBUG: Searching for attacker's record.");
                 for (PlayerPowerRecord record : playerPowerRecords) {
+                    System.out.println("DEBUG: Checking record of " + record.getPlayerName() + ".");
                     if (record.getPlayerName().equalsIgnoreCase(attacker.getName())) {
+                        System.out.println("DEBUG: Found " + attacker.getName());
                         record.increasePower();
+                        System.out.println("DEBUG: Power increased.");
+                        attacker.sendMessage(ChatColor.GREEN + "Your power level has increased!");
                     }
                 }
 
@@ -830,6 +836,7 @@ public class Main extends JavaPlugin implements Listener {
         for (PlayerPowerRecord record : playerPowerRecords) {
             if (record.getPlayerName().equalsIgnoreCase(player.getName())) {
                 record.decreasePower();
+                player.sendMessage(ChatColor.RED + "Your power level has decreased!");
             }
         }
 

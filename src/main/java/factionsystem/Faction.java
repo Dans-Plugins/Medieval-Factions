@@ -53,7 +53,9 @@ public class Faction {
     }
 
     public void addPower() {
-        cumulativePowerLevel++;
+        if (cumulativePowerLevel < members.size() * 10) {
+            cumulativePowerLevel++;
+        }
     }
 
     public void subtractPower() {
