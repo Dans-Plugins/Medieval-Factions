@@ -535,7 +535,7 @@ public class Main extends JavaPlugin implements Listener {
                                         claimedChunks.add(newChunk);
                                         player.sendMessage(ChatColor.GREEN + "Land conquered from " + faction.getName() + "! Demesne Size: " + getChunksClaimedByFaction(faction.getName(), claimedChunks) + "/" + faction.getCumulativePowerLevel());
 
-                                        sendAllPlayersInFactionMessage(faction, ChatColor.RED + getPlayersFaction(player.getName(), factions).getName() + " has conquered land from your faction!");
+                                        sendAllPlayersInFactionMessage(targetFaction, ChatColor.RED + getPlayersFaction(player.getName(), factions).getName() + " has conquered land from your faction!");
 
                                         return;
                                     }
@@ -826,9 +826,11 @@ public class Main extends JavaPlugin implements Listener {
             System.out.println(player.getName() + " has killed " + killer.getName());
 
             for (PlayerPowerRecord record : playerPowerRecords) {
-                record.increasePower();
-                System.out.println("DEBUG: Power increased.");
-                killer.sendMessage(ChatColor.GREEN + "Your power level has increased!");
+                if (record.getPlayerName().equalsIgnoreCase(killer.getName())) {
+                    record.increasePower();
+                    System.out.println("DEBUG: Power increased.");
+                    killer.sendMessage(ChatColor.GREEN + "Your power level has increased!");
+                }
             }
 
             if (isInFaction(player.getName(), factions)) {
