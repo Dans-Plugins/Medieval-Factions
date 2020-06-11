@@ -1,13 +1,26 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="6724bea6-bc8c-4e88-a483-3caa737a8d9c" name="Default Changelist" comment="" />
+    <list default="true" id="6724bea6-bc8c-4e88-a483-3caa737a8d9c" name="Default Changelist" comment="">
+      <change beforePath="$PROJECT_DIR$/src/main/java/factionsystem/ClaimedChunk.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/factionsystem/ClaimedChunk.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/factionsystem/Commands/DeleteCommand.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/factionsystem/Commands/DeleteCommand.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/factionsystem/Commands/LeaveCommand.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/factionsystem/Commands/LeaveCommand.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/factionsystem/Faction.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/factionsystem/Faction.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/factionsystem/Main.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/factionsystem/Main.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/factionsystem/PlayerPowerRecord.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/factionsystem/PlayerPowerRecord.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/factionsystem/UtilityFunctions.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/factionsystem/UtilityFunctions.java" afterDir="false" />
+    </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
     <option name="LAST_RESOLUTION" value="IGNORE" />
   </component>
   <component name="Git.Settings">
+    <option name="RECENT_BRANCH_BY_REPOSITORY">
+      <map>
+        <entry key="$PROJECT_DIR$" value="bug-fixing" />
+      </map>
+    </option>
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
     <option name="UPDATE_TYPE" value="MERGE" />
   </component>

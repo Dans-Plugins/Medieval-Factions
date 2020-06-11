@@ -34,7 +34,6 @@ public class DeleteCommand {
                             }
                         } catch(Exception e) {
                             System.out.println("An error has occurred during file deletion.");
-                            e.printStackTrace();
                         }
 
                         // remove claimed land objects associated with this faction

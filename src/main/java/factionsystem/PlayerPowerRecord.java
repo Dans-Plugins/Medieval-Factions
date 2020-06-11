@@ -75,7 +75,6 @@ public class PlayerPowerRecord {
 
         } catch (IOException e) {
             System.out.println("An error occurred saving the player power record associated with " + playerName);
-            e.printStackTrace();
         }
     }
 
@@ -98,7 +97,6 @@ public class PlayerPowerRecord {
 
         } catch (FileNotFoundException e) {
             System.out.println("An error occurred loading the file " + filename + ".");
-            e.printStackTrace();
         }
     }
 }

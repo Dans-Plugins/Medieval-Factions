@@ -260,7 +260,6 @@ public class Faction {
 
         } catch (IOException e) {
             System.out.println("An error occurred saving the faction named " + name);
-            e.printStackTrace();
             return false;
         }
 
@@ -370,7 +369,6 @@ public class Faction {
             }
             catch(Exception e) {
                 System.out.println("An error occurred loading the faction home position.");
-                e.printStackTrace();
             }
 
             loadReader.close();
@@ -378,7 +376,6 @@ public class Faction {
             return true;
         } catch (FileNotFoundException e) {
             System.out.println("An error occurred loading the file " + filename + ".");
-            e.printStackTrace();
             return false;
         }
     }

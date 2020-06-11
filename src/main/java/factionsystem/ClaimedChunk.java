@@ -87,7 +87,6 @@ public class ClaimedChunk {
 
         } catch (IOException e) {
             System.out.println("An error occurred saving the claimed chunk with identifier " + identifier);
-            e.printStackTrace();
         }
     }
 
@@ -144,7 +143,6 @@ public class ClaimedChunk {
 
         } catch (FileNotFoundException e) {
             System.out.println("An error occurred loading the file " + filename + ".");
-            e.printStackTrace();
         }
     }
 

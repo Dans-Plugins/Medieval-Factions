@@ -195,7 +195,7 @@ public class Main extends JavaPlugin implements Listener {
             loadReader.close();
             System.out.println("Factions successfully loaded.");
         } catch (FileNotFoundException e) {
-            System.out.println("Error loading the factions!");
+            System.out.println("There was a problem loading the factions!");
         }
     }
 
@@ -220,8 +220,7 @@ public class Main extends JavaPlugin implements Listener {
             loadReader.close();
             System.out.println("Claimed chunks successfully loaded.");
         } catch (FileNotFoundException e) {
-            System.out.println("Error loading the claimed chunks!");
-            e.printStackTrace();
+            System.out.println("There was a problem loading the claimed chunks!");
         }
 
         System.out.println("Claimed chunks loaded.");
@@ -247,8 +246,7 @@ public class Main extends JavaPlugin implements Listener {
             loadReader.close();
             System.out.println("Player power records loaded.");
         } catch (FileNotFoundException e) {
-            System.out.println("Error loading the player power records!");
-            e.printStackTrace();
+            System.out.println("There was a problem loading the player power records!");
         }
 
         System.out.println("Player power records loaded.");
@@ -600,8 +598,7 @@ public class Main extends JavaPlugin implements Listener {
                                     System.out.println("There was a problem deleting the file.");
                                 }
                             } catch(Exception e) {
-                                System.out.println("An error has occurred during file deletion.");
-                                e.printStackTrace();
+                                System.out.println("There was a problem encountered during file deletion.");
                             }
 
                             claimedChunks.remove(chunk);

@@ -91,7 +91,6 @@ public class UtilityFunctions {
                 }
                 catch(Exception e) {
                     System.out.println("An error has occurred during claimed chunk removal.");
-                    e.printStackTrace();
                 }
             }
         }
