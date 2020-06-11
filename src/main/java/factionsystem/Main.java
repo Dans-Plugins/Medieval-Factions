@@ -538,8 +538,8 @@ public class Main extends JavaPlugin implements Listener {
                                 if (chunk.getHolder().equalsIgnoreCase(targetFaction.getName())) {
                                     if (targetFaction.getCumulativePowerLevel() < getChunksClaimedByFaction(targetFaction.getName(), claimedChunks)) {
 
-                                        // if at war with target faction
-                                        if (!(faction.isEnemy(targetFaction.getName()))) {
+                                        // is at war with target faction
+                                        if (faction.isEnemy(targetFaction.getName())) {
                                             claimedChunks.remove(chunk);
 
                                             ClaimedChunk newChunk = new ClaimedChunk(player.getLocation().getChunk());
