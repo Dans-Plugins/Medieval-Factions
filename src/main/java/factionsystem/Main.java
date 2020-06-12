@@ -409,7 +409,7 @@ public class Main extends JavaPlugin implements Listener {
 
                         if (isInFaction(player.getName(), factions)) {
                             for (Faction faction : factions) {
-                                if (faction.isOwner(player.getName()) || faction.isOfficer(player.getName())) {
+                                if (faction.isOwner(player.getName())) {
                                     faction.toggleAutoClaim();
                                     player.sendMessage(ChatColor.AQUA + "Autoclaim toggled.");
                                 }
@@ -451,6 +451,11 @@ public class Main extends JavaPlugin implements Listener {
                 // version command
                 if (args[0].equalsIgnoreCase("version")) {
                     sender.sendMessage(ChatColor.AQUA + "Medieval-Factions-v" + version);
+                }
+
+                // who command
+                if (args[0].equalsIgnoreCase("who")) {
+                    WhoCommand.sendInformation(sender, args, factions);
                 }
 
                 // forcesave command
