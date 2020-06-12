@@ -15,9 +15,15 @@ public class WhoCommand {
     public static void sendInformation(CommandSender sender, String[] args, ArrayList<Faction> factions) {
         if (sender instanceof Player) {
             Player player = (Player) sender;
-            String name = createStringFromFirstArgOnwards(args);
-            Faction faction = getPlayersFaction(name, factions);
-            sendFactionInfo(player, faction, faction.getCumulativePowerLevel());
+            if (args.length > 1) {
+                String name = createStringFromFirstArgOnwards(args);
+                Faction faction = getPlayersFaction(name, factions);
+                sendFactionInfo(player, faction, faction.getCumulativePowerLevel());
+            }
+            else {
+                player.sendMessage(ChatColor.RED + "Usage: /mf who (player-name)");
+            }
+
         }
     }
 
