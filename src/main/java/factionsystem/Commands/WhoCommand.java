@@ -18,7 +18,13 @@ public class WhoCommand {
             if (args.length > 1) {
                 String name = createStringFromFirstArgOnwards(args);
                 Faction faction = getPlayersFaction(name, factions);
-                sendFactionInfo(player, faction, faction.getCumulativePowerLevel());
+                if (faction != null) {
+                    sendFactionInfo(player, faction, faction.getCumulativePowerLevel());
+                }
+                else {
+                    player.sendMessage(ChatColor.RED + "That player isn't in a faction.");
+                }
+
             }
             else {
                 player.sendMessage(ChatColor.RED + "Usage: /mf who (player-name)");
