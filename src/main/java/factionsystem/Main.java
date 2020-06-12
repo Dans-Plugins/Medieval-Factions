@@ -413,6 +413,9 @@ public class Main extends JavaPlugin implements Listener {
                                     faction.toggleAutoClaim();
                                     player.sendMessage(ChatColor.AQUA + "Autoclaim toggled.");
                                 }
+                                else {
+                                    player.sendMessage(ChatColor.RED + "You must be the owner to use this command.");
+                                }
                             }
                         }
                         else {
