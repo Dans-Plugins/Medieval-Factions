@@ -11,7 +11,7 @@ import java.util.ArrayList;
 
 import static factionsystem.UtilityFunctions.removeAllClaimedChunks;
 
-public class DeleteCommand {
+public class DisbandCommand {
 
     public static boolean deleteFaction(CommandSender sender, ArrayList<Faction> factions, ArrayList<ClaimedChunk> chunks) {
         if (sender instanceof Player) {

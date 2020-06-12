@@ -30,6 +30,8 @@ import static factionsystem.UtilityFunctions.*;
 
 public class Main extends JavaPlugin implements Listener {
 
+    public static double version = 1.9;
+
     ArrayList<Faction> factions = new ArrayList<>();
     ArrayList<ClaimedChunk> claimedChunks = new ArrayList<>();
     ArrayList<PlayerPowerRecord> playerPowerRecords = new ArrayList<>();
@@ -282,7 +284,7 @@ public class Main extends JavaPlugin implements Listener {
 
                 // delete command
                 if (args[0].equalsIgnoreCase("delete")) {
-                    DeleteCommand.deleteFaction(sender, factions, claimedChunks);
+                    DisbandCommand.deleteFaction(sender, factions, claimedChunks);
                 }
 
                 // members command
@@ -444,6 +446,11 @@ public class Main extends JavaPlugin implements Listener {
                 // home command
                 if (args[0].equalsIgnoreCase("home")) {
                     HomeCommand.teleportPlayer(sender, factions);
+                }
+
+                // version command
+                if (args[0].equalsIgnoreCase("version")) {
+                    sender.sendMessage(ChatColor.AQUA + "Medieval-Factions-v" + version);
                 }
 
                 // forcesave command
