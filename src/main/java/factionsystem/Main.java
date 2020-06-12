@@ -30,6 +30,8 @@ import static factionsystem.UtilityFunctions.*;
 
 public class Main extends JavaPlugin implements Listener {
 
+    public static double version = 1.9;
+
     ArrayList<Faction> factions = new ArrayList<>();
     ArrayList<ClaimedChunk> claimedChunks = new ArrayList<>();
     ArrayList<PlayerPowerRecord> playerPowerRecords = new ArrayList<>();
@@ -280,9 +282,9 @@ public class Main extends JavaPlugin implements Listener {
                     ListCommand.listFactions(sender, factions);
                 }
 
-                // delete command
-                if (args[0].equalsIgnoreCase("delete")) {
-                    DeleteCommand.deleteFaction(sender, factions, claimedChunks);
+                // disband command
+                if (args[0].equalsIgnoreCase("disband")) {
+                    DisbandCommand.deleteFaction(sender, factions, claimedChunks);
                 }
 
                 // members command
@@ -407,9 +409,12 @@ public class Main extends JavaPlugin implements Listener {
 
                         if (isInFaction(player.getName(), factions)) {
                             for (Faction faction : factions) {
-                                if (faction.isOwner(player.getName()) || faction.isOfficer(player.getName())) {
+                                if (faction.isOwner(player.getName())) {
                                     faction.toggleAutoClaim();
                                     player.sendMessage(ChatColor.AQUA + "Autoclaim toggled.");
+                                }
+                                else {
+                                    player.sendMessage(ChatColor.RED + "You must be the owner to use this command.");
                                 }
                             }
                         }
@@ -444,6 +449,16 @@ public class Main extends JavaPlugin implements Listener {
                 // home command
                 if (args[0].equalsIgnoreCase("home")) {
                     HomeCommand.teleportPlayer(sender, factions);
+                }
+
+                // version command
+                if (args[0].equalsIgnoreCase("version")) {
+                    sender.sendMessage(ChatColor.AQUA + "Medieval-Factions-v" + version);
+                }
+
+                // who command
+                if (args[0].equalsIgnoreCase("who")) {
+                    WhoCommand.sendInformation(sender, args, factions);
                 }
 
                 // forcesave command
