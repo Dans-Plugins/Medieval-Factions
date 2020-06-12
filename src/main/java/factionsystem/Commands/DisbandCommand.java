@@ -40,12 +40,12 @@ public class DisbandCommand {
                         removeAllClaimedChunks(factions.get(i).getName(), chunks);
 
                         factions.remove(i);
-                        player.sendMessage(ChatColor.AQUA + "Faction successfully deleted.");
+                        player.sendMessage(ChatColor.GREEN + "Faction successfully disbanded.");
 
                         return true;
                     }
                     else {
-                        player.sendMessage(ChatColor.RED + "You need to kick all players before you can delete your faction.");
+                        player.sendMessage(ChatColor.RED + "You need to kick all players before you can disband your faction.");
                         return false;
                     }
                 }

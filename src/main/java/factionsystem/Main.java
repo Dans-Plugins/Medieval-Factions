@@ -282,8 +282,8 @@ public class Main extends JavaPlugin implements Listener {
                     ListCommand.listFactions(sender, factions);
                 }
 
-                // delete command
-                if (args[0].equalsIgnoreCase("delete")) {
+                // disband command
+                if (args[0].equalsIgnoreCase("disband")) {
                     DisbandCommand.deleteFaction(sender, factions, claimedChunks);
                 }
 
