@@ -415,11 +415,13 @@ public class Main extends JavaPlugin implements Listener {
                                 }
                                 else {
                                     player.sendMessage(ChatColor.RED + "You must be the owner to use this command.");
+                                    return false;
                                 }
                             }
                         }
                         else {
                             player.sendMessage(ChatColor.RED + "You need to be in a faction to use this command.");
+                            return false;
                         }
 
                     }
