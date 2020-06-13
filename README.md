@@ -25,3 +25,5 @@ A minecraft plugin for players to use to organize politically.
 -  1.6 'Power Levels' update
 -  1.7 'Faction Homes' update
 -  1.8 'Advanced Warfare' update
+-  1.9 'More Commands' update
+-  2.0 'Alliances' update
