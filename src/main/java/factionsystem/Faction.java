@@ -45,7 +45,7 @@ public class Faction {
     }
 
     public boolean isRequestedAlly(String factionName) {
-        for (String faction : allyFactions) {
+        for (String faction : attemptedAlliances) {
             if (faction.equalsIgnoreCase(factionName)) {
                 return true;
             }

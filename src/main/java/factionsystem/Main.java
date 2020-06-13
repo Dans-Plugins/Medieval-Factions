@@ -462,12 +462,12 @@ public class Main extends JavaPlugin implements Listener {
                 }
 
                 // ally command
-                if (args[0].equalsIgnoreCase("who")) {
+                if (args[0].equalsIgnoreCase("ally")) {
                     AllyCommand.requestAlliance(sender, args, factions);
                 }
 
                 // breakalliance command
-                if (args[0].equalsIgnoreCase("who")) {
+                if (args[0].equalsIgnoreCase("breakalliance")) {
                     BreakAllianceCommand.breakAlliance(sender, args, factions);
                 }
 
