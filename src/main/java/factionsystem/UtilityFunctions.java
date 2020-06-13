@@ -39,9 +39,10 @@ public class UtilityFunctions {
         player.sendMessage(ChatColor.AQUA + "Owner: " + faction.getOwner() + "\n");
         player.sendMessage(ChatColor.AQUA + "Description: " + faction.getDescription() + "\n");
         player.sendMessage(ChatColor.AQUA + "Population: " + faction.getMemberList().size() + "\n");
+        player.sendMessage(ChatColor.AQUA + "Allied With " + faction.getAlliesSeparatedByCommas() + "\n");
         player.sendMessage(ChatColor.AQUA + "At War With: " + faction.getEnemiesSeparatedByCommas() + "\n");
-        player.sendMessage(ChatColor.AQUA + "Power Level: " + faction.getCumulativePowerLevel());
-        player.sendMessage(ChatColor.AQUA + "Demesne Size: " + power + "/" + faction.getCumulativePowerLevel());
+        player.sendMessage(ChatColor.AQUA + "Power Level: " + faction.getCumulativePowerLevel() + "\n");
+        player.sendMessage(ChatColor.AQUA + "Demesne Size: " + power + "/" + faction.getCumulativePowerLevel() + "\n");
         player.sendMessage(ChatColor.AQUA + "----------\n");
     }
 

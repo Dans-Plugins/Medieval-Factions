@@ -155,6 +155,17 @@ public class Faction {
         return enemies;
     }
 
+    public String getAlliesSeparatedByCommas() {
+        String allies = "";
+        for (int i = 0; i < allyFactions.size(); i++) {
+            allies = allies + allyFactions.get(i);
+            if (i != allyFactions.size() - 1) {
+                allies = allies + ", ";
+            }
+        }
+        return allies;
+    }
+
     public void invite(String playerName) {
         invited.add(playerName);
     }
