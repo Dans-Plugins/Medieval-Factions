@@ -127,4 +127,13 @@ public class UtilityFunctions {
         }
         return null;
     }
+
+    public static Faction getFaction(String name, ArrayList<Faction> factions) {
+        for (Faction faction : factions) {
+            if (faction.getName().equalsIgnoreCase(name)) {
+                return faction;
+            }
+        }
+        return null;
+    }
 }

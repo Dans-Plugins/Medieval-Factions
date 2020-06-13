@@ -24,6 +24,7 @@ public class Faction {
     private ArrayList<String> officers = new ArrayList<>();
     private int cumulativePowerLevel = 0;
     private Location factionHome = null;
+    private ArrayList<String> attemptedAlliances = new ArrayList<>();
     private ArrayList<String> allyFactions = new ArrayList<>();
 
     // player constructor
@@ -35,6 +36,21 @@ public class Faction {
     // server constructor
     Faction(String initialName) {
         setName(initialName);
+    }
+
+    public void requestAlly(String factionName) {
+        if (!attemptedAlliances.contains(factionName)) {
+            attemptedAlliances.add(factionName);
+        }
+    }
+
+    public boolean isRequestedAlly(String factionName) {
+        for (String faction : allyFactions) {
+            if (faction.equalsIgnoreCase(factionName)) {
+                return true;
+            }
+        }
+        return false;
     }
 
     public void addAlly(String factionName) {
