@@ -45,6 +45,15 @@ public class Faction {
         allyFactions.remove(factionName);
     }
 
+    public boolean isAlly(String factionName) {
+        for (String faction : allyFactions) {
+            if (faction.equalsIgnoreCase(factionName)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
     public void setFactionHome(Location l) {
         factionHome = l;
     }

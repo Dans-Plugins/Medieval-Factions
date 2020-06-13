@@ -461,6 +461,16 @@ public class Main extends JavaPlugin implements Listener {
                     WhoCommand.sendInformation(sender, args, factions);
                 }
 
+                // ally command
+                if (args[0].equalsIgnoreCase("who")) {
+                    AllyCommand.requestAlliance(sender, args, factions);
+                }
+
+                // breakalliance command
+                if (args[0].equalsIgnoreCase("who")) {
+                    BreakAllianceCommand.breakAlliance(sender, args, factions);
+                }
+
                 // forcesave command
                 if (args[0].equalsIgnoreCase("forcesave")) {
                     if (!(sender instanceof Player)) {
