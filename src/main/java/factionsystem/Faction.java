@@ -24,6 +24,7 @@ public class Faction {
     private ArrayList<String> officers = new ArrayList<>();
     private int cumulativePowerLevel = 0;
     private Location factionHome = null;
+    private ArrayList<String> allyFactions = new ArrayList<>();
 
     // player constructor
     public Faction(String initialName, String creator) {
@@ -34,6 +35,14 @@ public class Faction {
     // server constructor
     Faction(String initialName) {
         setName(initialName);
+    }
+
+    public void addAlly(String factionName) {
+        allyFactions.add(factionName);
+    }
+
+    public void removeAlly(String factionName) {
+        allyFactions.remove(factionName);
     }
 
     public void setFactionHome(Location l) {
@@ -240,6 +249,19 @@ public class Faction {
 
             saveWriter.write("-" + "\n");
 
+            for (int i = 0; i < allyFactions.size(); i++) {
+
+                // if enemy faction exists, save it
+                for (Faction faction : factions) {
+                    if (faction.getName().equalsIgnoreCase(allyFactions.get(i))) {
+                        saveWriter.write(allyFactions.get(i) + "\n");
+                    }
+                }
+
+            }
+
+            saveWriter.write("-" + "\n");
+
             for (String officer : officers) {
                 saveWriter.write(officer + "\n");
             }
@@ -305,6 +327,16 @@ public class Faction {
                 }
 
                 enemyFactions.add(temp);
+            }
+
+            while (loadReader.hasNextLine()) {
+                String temp = loadReader.nextLine();
+
+                if (temp.equalsIgnoreCase("-")) {
+                    break;
+                }
+
+                allyFactions.add(temp);
             }
 
             while (loadReader.hasNextLine()) {
