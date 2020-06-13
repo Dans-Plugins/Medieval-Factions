@@ -65,6 +65,9 @@ public class AllyCommand {
                     player.sendMessage(ChatColor.RED + "You need to be the owner of a faction or an officer of a faction to use this command.");
                 }
             }
+            else {
+                player.sendMessage(ChatColor.RED + "You need to be in a faction to use this command.");
+            }
         }
     }
 }
