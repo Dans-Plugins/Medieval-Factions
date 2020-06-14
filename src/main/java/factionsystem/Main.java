@@ -408,14 +408,16 @@ public class Main extends JavaPlugin implements Listener {
                         Player player = (Player) sender;
 
                         if (isInFaction(player.getName(), factions)) {
+                            boolean owner = false;
                             for (Faction faction : factions) {
                                 if (faction.isOwner(player.getName())) {
+                                    owner = true;
                                     faction.toggleAutoClaim();
                                     player.sendMessage(ChatColor.AQUA + "Autoclaim toggled.");
                                 }
-                                else {
-                                    player.sendMessage(ChatColor.RED + "You must be the owner to use this command.");
-                                }
+                            }
+                            if (owner) {
+                                player.sendMessage(ChatColor.RED + "You must be the owner to use this command.");
                             }
                         }
                         else {
