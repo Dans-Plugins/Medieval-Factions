@@ -416,7 +416,7 @@ public class Main extends JavaPlugin implements Listener {
                                     player.sendMessage(ChatColor.AQUA + "Autoclaim toggled.");
                                 }
                             }
-                            if (owner) {
+                            if (!owner) {
                                 player.sendMessage(ChatColor.RED + "You must be the owner to use this command.");
                             }
                         }
