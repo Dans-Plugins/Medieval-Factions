@@ -20,6 +20,7 @@ public class Faction {
     private String owner = "defaultOwner";
     private ArrayList<String> invited = new ArrayList<>();
     private ArrayList<String> enemyFactions = new ArrayList<>();
+    private ArrayList<String> attemptedTruces;
     private boolean autoclaim = false;
     private ArrayList<String> officers = new ArrayList<>();
     private int cumulativePowerLevel = 0;
@@ -36,6 +37,21 @@ public class Faction {
     // server constructor
     Faction(String initialName) {
         setName(initialName);
+    }
+
+    public void requestTruce(String factionName) {
+        if (!attemptedTruces.contains(factionName)) {
+            attemptedTruces.add(factionName);
+        }
+    }
+
+    public boolean isTruceRequested(String factionName) {
+        for (String faction : attemptedTruces) {
+            if (faction.equalsIgnoreCase(factionName)) {
+                return true;
+            }
+        }
+        return false;
     }
 
     public void requestAlly(String factionName) {

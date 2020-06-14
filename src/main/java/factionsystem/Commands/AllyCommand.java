@@ -26,46 +26,53 @@ public class AllyCommand {
                         String targetFactionName = createStringFromFirstArgOnwards(args);
                         Faction targetFaction = getFaction(targetFactionName, factions);
 
-                        if (targetFaction != null) {
-                            if (!playersFaction.isAlly(targetFactionName)) {
-                                // if not already ally
+                        if (!playersFaction.getName().equalsIgnoreCase(targetFactionName)) {
 
-                                if (!playersFaction.isRequestedAlly(targetFactionName)) {
-                                    // if not already requested
+                            if (targetFaction != null) {
 
-                                    if (!playersFaction.isEnemy(targetFactionName)) {
+                                if (!playersFaction.isAlly(targetFactionName)) {
+                                    // if not already ally
 
-                                        playersFaction.requestAlly(targetFactionName);
-                                        player.sendMessage(ChatColor.GREEN + "Attempted to ally with " + targetFactionName);
+                                    if (!playersFaction.isRequestedAlly(targetFactionName)) {
+                                        // if not already requested
 
-                                        sendAllPlayersInFactionMessage(targetFaction,ChatColor.GREEN + "" + playersFaction.getName() + " has attempted to ally with " + targetFactionName + "!");
+                                        if (!playersFaction.isEnemy(targetFactionName)) {
 
-                                        if (playersFaction.isRequestedAlly(targetFactionName) && targetFaction.isRequestedAlly(playersFaction.getName())) {
-                                            System.out.println("DEBUG: Both factions want to ally! Allying!");
-                                            // ally factions
-                                            playersFaction.addAlly(targetFactionName);
-                                            getFaction(targetFactionName, factions).addAlly(playersFaction.getName());
-                                            player.sendMessage("Your faction is now allied with " + targetFactionName + "!");
-                                            sendAllPlayersInFactionMessage(targetFaction, ChatColor.GREEN + "Your faction is now allied with " + playersFaction.getName() + "!");
+                                            playersFaction.requestAlly(targetFactionName);
+                                            player.sendMessage(ChatColor.GREEN + "Attempted to ally with " + targetFactionName);
+
+                                            sendAllPlayersInFactionMessage(targetFaction,ChatColor.GREEN + "" + playersFaction.getName() + " has attempted to ally with " + targetFactionName + "!");
+
+                                            if (playersFaction.isRequestedAlly(targetFactionName) && targetFaction.isRequestedAlly(playersFaction.getName())) {
+                                                // ally factions
+                                                playersFaction.addAlly(targetFactionName);
+                                                getFaction(targetFactionName, factions).addAlly(playersFaction.getName());
+                                                player.sendMessage("Your faction is now allied with " + targetFactionName + "!");
+                                                sendAllPlayersInFactionMessage(targetFaction, ChatColor.GREEN + "Your faction is now allied with " + playersFaction.getName() + "!");
+                                            }
                                         }
+                                        else {
+                                            player.sendMessage(ChatColor.RED + "That faction is currently your enemy! Make peace before trying to ally with them.");
+                                        }
+
                                     }
                                     else {
-                                        player.sendMessage(ChatColor.RED + "That faction is currently your enemy! Make peace before trying to ally with them.");
+                                        player.sendMessage(ChatColor.RED + "You've already requested an alliance with this faction!");
                                     }
 
                                 }
                                 else {
-                                    player.sendMessage(ChatColor.RED + "You've already requested an alliance with this faction!");
+                                    player.sendMessage(ChatColor.RED + "That faction is already your ally!");
                                 }
-
                             }
                             else {
-                                player.sendMessage(ChatColor.RED + "That faction is already your ally!");
+                                player.sendMessage(ChatColor.RED + "That faction wasn't found!");
                             }
                         }
                         else {
-                            player.sendMessage(ChatColor.RED + "That faction wasn't found!");
+                            player.sendMessage(ChatColor.RED + "You can't ally with your own faction?");
                         }
+
                     }
                     else {
                         player.sendMessage(ChatColor.RED + "Usage: /mf ally (faction-name)");
