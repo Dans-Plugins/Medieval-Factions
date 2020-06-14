@@ -54,14 +54,14 @@ public class Faction {
         return false;
     }
 
+    public void removeRequestedTruce(String factionName) {
+        attemptedTruces.remove(factionName);
+    }
+
     public void requestAlly(String factionName) {
         if (!attemptedAlliances.contains(factionName)) {
             attemptedAlliances.add(factionName);
         }
-    }
-
-    public void removeRequestedTruce(String factionName) {
-        attemptedAlliances.remove(factionName);
     }
 
     public boolean isRequestedAlly(String factionName) {
