@@ -12,35 +12,28 @@ import static factionsystem.UtilityFunctions.*;
 public class AllyCommand {
 
     public static void requestAlliance(CommandSender sender, String[] args, ArrayList<Faction> factions) {
-        System.out.println("DEBUG: Starting requestAlliance() method");
         if (sender instanceof Player) {
             Player player = (Player) sender;
 
             if (isInFaction(player.getName(), factions)) {
-                System.out.println("DEBUG: Player in faction!");
                 Faction playersFaction = getPlayersFaction(player.getName(), factions);
 
                 if (playersFaction.isOwner(player.getName()) || playersFaction.isOfficer(player.getName())) {
-                    System.out.println("DEBUG: Player has permission");
 
                     // player is able to do this command
 
                     if (args.length > 1) {
-                        System.out.println("DEBUG: Found more than one argument!");
                         String targetFactionName = createStringFromFirstArgOnwards(args);
                         Faction targetFaction = getFaction(targetFactionName, factions);
 
                         if (targetFaction != null) {
-                            System.out.println("DEBUG: Target faction found!");
                             if (!playersFaction.isAlly(targetFactionName)) {
                                 // if not already ally
 
                                 if (!playersFaction.isRequestedAlly(targetFactionName)) {
-                                    System.out.println("DEBUG: Target faction not requested ally already, continuing!");
                                     // if not already requested
 
                                     if (!playersFaction.isEnemy(targetFactionName)) {
-                                        System.out.println("DEBUG: Target faction not enemy, continuing!");
 
                                         playersFaction.requestAlly(targetFactionName);
                                         player.sendMessage(ChatColor.GREEN + "Attempted to ally with " + targetFactionName);
@@ -55,7 +48,6 @@ public class AllyCommand {
                                             player.sendMessage("Your faction is now allied with " + targetFactionName + "!");
                                             sendAllPlayersInFactionMessage(targetFaction, ChatColor.GREEN + "Your faction is now allied with " + playersFaction.getName() + "!");
                                         }
-                                        System.out.println("DEBUG: Success");
                                     }
                                     else {
                                         player.sendMessage(ChatColor.RED + "That faction is currently your enemy! Make peace before trying to ally with them.");
