@@ -35,7 +35,7 @@ public class BreakAllianceCommand {
                                     if ((faction.isAlly(factionName))) {
                                         // remove alliance
                                         faction.removeAlly(factionName);
-                                        player.sendMessage(ChatColor.AQUA + "Alliance has been broken with " + factionName + "!");
+                                        player.sendMessage(ChatColor.GREEN + "Alliance has been broken with " + factionName + "!");
 
                                         // add declarer's faction to new enemy's enemyList
                                         factions.get(i).removeAlly(faction.getName());
