@@ -267,24 +267,46 @@ public class Main extends JavaPlugin implements Listener {
             // argument check
             if (args.length > 0) {
 
+                // default commands ----------------------------------------------------------------------------------
+
                 // help command
                 if (args[0].equalsIgnoreCase("help")) {
-                    HelpCommand.sendHelpMessage(sender, args);
+                    if (sender.hasPermission("mf.help")) {
+                        HelpCommand.sendHelpMessage(sender, args);
+                    }
+                    else {
+                        sender.sendMessage(ChatColor.RED + "Sorry! You need the following permission to use this command: 'mf.help'");
+                    }
                 }
 
                 // create command
                 if (args[0].equalsIgnoreCase("create")) {
-                    CreateCommand.createFaction(sender, args, factions, playerPowerRecords);
+                    if (sender.hasPermission("mf.create")) {
+                        CreateCommand.createFaction(sender, args, factions, playerPowerRecords);
+                    }
+                    else {
+                        sender.sendMessage(ChatColor.RED + "Sorry! You need the following permission to use this command: 'mf.create'");
+                    }
                 }
 
                 // list command
                 if  (args[0].equalsIgnoreCase("list")) {
-                    ListCommand.listFactions(sender, factions);
+                    if (sender.hasPermission("mf.list")) {
+                        ListCommand.listFactions(sender, factions);
+                    }
+                    else {
+                        sender.sendMessage(ChatColor.RED + "Sorry! You need the following permission to use this command: 'mf.list'");
+                    }
                 }
 
                 // disband command
                 if (args[0].equalsIgnoreCase("disband")) {
-                    DisbandCommand.deleteFaction(sender, factions, claimedChunks);
+                    if (sender.hasPermission("mf.disband")) {
+                        DisbandCommand.deleteFaction(sender, factions, claimedChunks);
+                    }
+                    else {
+                        sender.sendMessage(ChatColor.RED + "Sorry! You need the following permission to use this command: 'mf.disband'");
+                    }
                 }
 
                 // members command
@@ -474,6 +496,8 @@ public class Main extends JavaPlugin implements Listener {
                 if (args[0].equalsIgnoreCase("breakalliance")) {
                     BreakAllianceCommand.breakAlliance(sender, args, factions);
                 }
+
+                // admin commands ----------------------------------------------------------------------------------
 
                 // forcesave command
                 if (args[0].equalsIgnoreCase("forcesave")) {
