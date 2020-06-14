@@ -311,17 +311,34 @@ public class Main extends JavaPlugin implements Listener {
 
                 // members command
                 if (args[0].equalsIgnoreCase("members")) {
-                    MembersCommand.showMembers(sender, args, factions);
+                    if (sender.hasPermission("mf.members")) {
+                        MembersCommand.showMembers(sender, args, factions);
+                    }
+                    else {
+                        sender.sendMessage(ChatColor.RED + "Sorry! You need the following permission to use this command: 'mf.members'");
+                    }
                 }
 
                 // info command
                 if (args[0].equalsIgnoreCase("info")) {
-                    InfoCommand.showInfo(sender, args, factions, claimedChunks);
+                    if (sender.hasPermission("mf.info")) {
+                        InfoCommand.showInfo(sender, args, factions, claimedChunks);
+                    }
+                    else {
+                        sender.sendMessage(ChatColor.RED + "Sorry! You need the following permission to use this command: 'mf.info'");
+                    }
+
                 }
 
                 // desc command
                 if (args[0].equalsIgnoreCase("desc")) {
-                    DescCommand.setDescription(sender, args, factions);
+                    if (sender.hasPermission("mf.desc")) {
+                        DescCommand.setDescription(sender, args, factions);
+                    }
+                    else {
+                        sender.sendMessage(ChatColor.RED + "Sorry! You need the following permission to use this command: 'mf.desc'");
+                    }
+
                 }
 
                 // invite command
@@ -331,7 +348,12 @@ public class Main extends JavaPlugin implements Listener {
 
                 // join command
                 if (args[0].equalsIgnoreCase("join")) {
-                    JoinCommand.joinFaction(sender, args, factions, playerPowerRecords);
+                    if (sender.hasPermission("mf.join")) {
+                        JoinCommand.joinFaction(sender, args, factions, playerPowerRecords);
+                    }
+                    else {
+                        sender.sendMessage(ChatColor.RED + "Sorry! You need the following permission to use this command: 'mf.join'");
+                    }
                 }
 
                 // kick command
@@ -341,7 +363,12 @@ public class Main extends JavaPlugin implements Listener {
 
                 // leave commmand
                 if (args[0].equalsIgnoreCase("leave")) {
-                    LeaveCommand.leaveFaction(sender, factions, claimedChunks, playerPowerRecords);
+                    if (sender.hasPermission("mf.leave")) {
+                        LeaveCommand.leaveFaction(sender, factions, claimedChunks, playerPowerRecords);
+                    }
+                    else {
+                        sender.sendMessage(ChatColor.RED + "Sorry! You need the following permission to use this command: 'mf.leave'");
+                    }
                 }
 
                 // transfer command
