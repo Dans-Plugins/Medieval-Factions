@@ -275,8 +275,8 @@ public class Main extends JavaPlugin implements Listener {
                 // default commands ----------------------------------------------------------------------------------
 
                 // help command
-                if (args[0].equalsIgnoreCase("help") || sender.hasPermission("mf.default")) {
-                    if (sender.hasPermission("mf.help")) {
+                if (args[0].equalsIgnoreCase("help")) {
+                    if (sender.hasPermission("mf.help") || sender.hasPermission("mf.default")) {
                         HelpCommand.sendHelpMessage(sender, args);
                     }
                     else {
@@ -285,8 +285,8 @@ public class Main extends JavaPlugin implements Listener {
                 }
 
                 // create command
-                if (args[0].equalsIgnoreCase("create") || sender.hasPermission("mf.default")) {
-                    if (sender.hasPermission("mf.create")) {
+                if (args[0].equalsIgnoreCase("create") ) {
+                    if (sender.hasPermission("mf.create")|| sender.hasPermission("mf.default")) {
                         CreateCommand.createFaction(sender, args, factions, playerPowerRecords);
                     }
                     else {
@@ -295,8 +295,8 @@ public class Main extends JavaPlugin implements Listener {
                 }
 
                 // list command
-                if  (args[0].equalsIgnoreCase("list") || sender.hasPermission("mf.default")) {
-                    if (sender.hasPermission("mf.list")) {
+                if  (args[0].equalsIgnoreCase("list")) {
+                    if (sender.hasPermission("mf.list") || sender.hasPermission("mf.default")) {
                         ListCommand.listFactions(sender, factions);
                     }
                     else {
@@ -305,8 +305,8 @@ public class Main extends JavaPlugin implements Listener {
                 }
 
                 // disband command
-                if (args[0].equalsIgnoreCase("disband") || sender.hasPermission("mf.default")) {
-                    if (sender.hasPermission("mf.disband")) {
+                if (args[0].equalsIgnoreCase("disband")) {
+                    if (sender.hasPermission("mf.disband") || sender.hasPermission("mf.default")) {
                         DisbandCommand.deleteFaction(sender, factions, claimedChunks);
                     }
                     else {
@@ -315,8 +315,8 @@ public class Main extends JavaPlugin implements Listener {
                 }
 
                 // members command
-                if (args[0].equalsIgnoreCase("members") || sender.hasPermission("mf.default")) {
-                    if (sender.hasPermission("mf.members")) {
+                if (args[0].equalsIgnoreCase("members")) {
+                    if (sender.hasPermission("mf.members") || sender.hasPermission("mf.default")) {
                         MembersCommand.showMembers(sender, args, factions);
                     }
                     else {
@@ -325,8 +325,8 @@ public class Main extends JavaPlugin implements Listener {
                 }
 
                 // info command
-                if (args[0].equalsIgnoreCase("info") || sender.hasPermission("mf.default")) {
-                    if (sender.hasPermission("mf.info")) {
+                if (args[0].equalsIgnoreCase("info")) {
+                    if (sender.hasPermission("mf.info") || sender.hasPermission("mf.default")) {
                         InfoCommand.showInfo(sender, args, factions, claimedChunks);
                     }
                     else {
@@ -336,8 +336,8 @@ public class Main extends JavaPlugin implements Listener {
                 }
 
                 // desc command
-                if (args[0].equalsIgnoreCase("desc") || sender.hasPermission("mf.default")) {
-                    if (sender.hasPermission("mf.desc")) {
+                if (args[0].equalsIgnoreCase("desc")) {
+                    if (sender.hasPermission("mf.desc") || sender.hasPermission("mf.default")) {
                         DescCommand.setDescription(sender, args, factions);
                     }
                     else {
@@ -348,7 +348,7 @@ public class Main extends JavaPlugin implements Listener {
 
                 // invite command
                 if (args[0].equalsIgnoreCase("invite")) {
-                    if (sender.hasPermission("mf.invite")) {
+                    if (sender.hasPermission("mf.invite") || sender.hasPermission("mf.default")) {
                         InviteCommand.invitePlayer(sender, args, factions);
                     }
                     else {
@@ -377,8 +377,8 @@ public class Main extends JavaPlugin implements Listener {
                 }
 
                 // leave commmand
-                if (args[0].equalsIgnoreCase("leave") || sender.hasPermission("mf.default")) {
-                    if (sender.hasPermission("mf.leave")) {
+                if (args[0].equalsIgnoreCase("leave")) {
+                    if (sender.hasPermission("mf.leave") || sender.hasPermission("mf.default")) {
                         LeaveCommand.leaveFaction(sender, factions, claimedChunks, playerPowerRecords);
                     }
                     else {
@@ -387,8 +387,8 @@ public class Main extends JavaPlugin implements Listener {
                 }
 
                 // transfer command
-                if (args[0].equalsIgnoreCase("transfer") || sender.hasPermission("mf.default")) {
-                    if (sender.hasPermission("mf.transfer")) {
+                if (args[0].equalsIgnoreCase("transfer")) {
+                    if (sender.hasPermission("mf.transfer") || sender.hasPermission("mf.default")) {
                         TransferCommand.transferOwnership(sender, args, factions);
                     }
                     else {
@@ -397,8 +397,8 @@ public class Main extends JavaPlugin implements Listener {
                 }
 
                 // declare war command
-                if (args[0].equalsIgnoreCase("declarewar") || sender.hasPermission("mf.default")) {
-                    if (sender.hasPermission("mf.declarewar")) {
+                if (args[0].equalsIgnoreCase("declarewar")) {
+                    if (sender.hasPermission("mf.declarewar") || sender.hasPermission("mf.default")) {
                         DeclareWarCommand.declareWar(sender, args, factions);
                     }
                     else {
@@ -408,8 +408,8 @@ public class Main extends JavaPlugin implements Listener {
                 }
 
                 // make peace command
-                if (args[0].equalsIgnoreCase("makepeace") || sender.hasPermission("mf.default")) {
-                    if (sender.hasPermission("mf.makepeace")) {
+                if (args[0].equalsIgnoreCase("makepeace")) {
+                    if (sender.hasPermission("mf.makepeace") || sender.hasPermission("mf.default")) {
                         MakePeaceCommand.makePeace(sender, args, factions);
                     }
                     else {
@@ -418,8 +418,8 @@ public class Main extends JavaPlugin implements Listener {
                 }
 
                 // claim command
-                if (args[0].equalsIgnoreCase("claim") || sender.hasPermission("mf.default")) {
-                    if (sender.hasPermission("mf.claim")) {
+                if (args[0].equalsIgnoreCase("claim")) {
+                    if (sender.hasPermission("mf.claim") || sender.hasPermission("mf.default")) {
                         if (sender instanceof Player) {
                             Player player = (Player) sender;
 
