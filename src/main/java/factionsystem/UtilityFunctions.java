@@ -2,6 +2,7 @@ package factionsystem;
 
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
+import org.bukkit.Chunk;
 import org.bukkit.entity.Player;
 
 import java.io.File;
@@ -155,5 +156,23 @@ public class UtilityFunctions {
             }
         }
 
+    }
+
+    public static boolean isClaimed(Chunk chunk, ArrayList<ClaimedChunk> claimedChunks) {
+        for (ClaimedChunk claimedChunk : claimedChunks) {
+            if (claimedChunk.getCoordinates()[0] == chunk.getX() && claimedChunk.getCoordinates()[1] == chunk.getZ()) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    public static ClaimedChunk getClaimedChunk(int x, int z, ArrayList<ClaimedChunk> claimedChunks) {
+        for (ClaimedChunk claimedChunk : claimedChunks) {
+            if (claimedChunk.getCoordinates()[0] == x && claimedChunk.getCoordinates()[1] == z) {
+                return claimedChunk;
+            }
+        }
+        return null;
     }
 }
