@@ -343,7 +343,12 @@ public class Main extends JavaPlugin implements Listener {
 
                 // invite command
                 if (args[0].equalsIgnoreCase("invite")) {
-                    InviteCommand.invitePlayer(sender, args, factions);
+                    if (sender.hasPermission("mf.invite")) {
+                        InviteCommand.invitePlayer(sender, args, factions);
+                    }
+                    else {
+                        sender.sendMessage(ChatColor.RED + "Sorry! You need the following permission to use this command: 'mf.invite'");
+                    }
                 }
 
                 // join command
@@ -358,7 +363,12 @@ public class Main extends JavaPlugin implements Listener {
 
                 // kick command
                 if (args[0].equalsIgnoreCase("kick")) {
-                    KickCommand.kickPlayer(sender, args, factions, playerPowerRecords);
+                    if (sender.hasPermission("mf.kick")) {
+                        KickCommand.kickPlayer(sender, args, factions, playerPowerRecords);
+                    }
+                    else {
+                        sender.sendMessage(ChatColor.RED + "Sorry! You need the following permission to use this command: 'mf.kick'");
+                    }
                 }
 
                 // leave commmand
@@ -373,81 +383,117 @@ public class Main extends JavaPlugin implements Listener {
 
                 // transfer command
                 if (args[0].equalsIgnoreCase("transfer")) {
-                    TransferCommand.transferOwnership(sender, args, factions);
+                    if (sender.hasPermission("mf.transfer")) {
+                        TransferCommand.transferOwnership(sender, args, factions);
+                    }
+                    else {
+                        sender.sendMessage(ChatColor.RED + "Sorry! You need the following permission to use this command: 'mf.transfer'");
+                    }
                 }
 
                 // declare war command
                 if (args[0].equalsIgnoreCase("declarewar")) {
-                    DeclareWarCommand.declareWar(sender, args, factions);
+                    if (sender.hasPermission("mf.declarewar")) {
+                        DeclareWarCommand.declareWar(sender, args, factions);
+                    }
+                    else {
+                        sender.sendMessage(ChatColor.RED + "Sorry! You need the following permission to use this command: 'mf.declarewar'");
+                    }
+
                 }
 
                 // make peace command
                 if (args[0].equalsIgnoreCase("makepeace")) {
-                    MakePeaceCommand.makePeace(sender, args, factions);
+                    if (sender.hasPermission("mf.makepeace")) {
+                        MakePeaceCommand.makePeace(sender, args, factions);
+                    }
+                    else {
+                        sender.sendMessage(ChatColor.RED + "Sorry! You need the following permission to use this command: 'mf.makepeace'");
+                    }
                 }
 
                 // claim command
                 if (args[0].equalsIgnoreCase("claim")) {
-                    if (sender instanceof Player) {
-                        Player player = (Player) sender;
+                    if (sender.hasPermission("mf.claim")) {
+                        if (sender instanceof Player) {
+                            Player player = (Player) sender;
 
-                        // if not at demesne limit
-                        if (isInFaction(player.getName(), factions)) {
-                            Faction playersFaction = getPlayersFaction(player.getName(), factions);
-                            if (getChunksClaimedByFaction(playersFaction.getName(), claimedChunks) < playersFaction.getCumulativePowerLevel()) {
-                                addChunkAtPlayerLocation(player);
-                                return true;
+                            // if not at demesne limit
+                            if (isInFaction(player.getName(), factions)) {
+                                Faction playersFaction = getPlayersFaction(player.getName(), factions);
+                                if (getChunksClaimedByFaction(playersFaction.getName(), claimedChunks) < playersFaction.getCumulativePowerLevel()) {
+                                    addChunkAtPlayerLocation(player);
+                                    return true;
+                                }
+                                else {
+                                    player.sendMessage(ChatColor.RED + "You have reached your demesne limit! Invite more players to increase this.");
+                                    return false;
+                                }
                             }
                             else {
-                                player.sendMessage(ChatColor.RED + "You have reached your demesne limit! Invite more players to increase this.");
+                                player.sendMessage(ChatColor.RED + "You must be in a faction to use this command.");
                                 return false;
                             }
                         }
-                        else {
-                            player.sendMessage(ChatColor.RED + "You must be in a faction to use this command.");
-                            return false;
-                        }
+                    }
+                    else {
+                        sender.sendMessage(ChatColor.RED + "Sorry! You need the following permission to use this command: 'mf.claim'");
                     }
                 }
 
                 // unclaim command
                 if (args[0].equalsIgnoreCase("unclaim")) {
-                    if (sender instanceof Player) {
-                        Player player = (Player) sender;
-                        if (isInFaction(player.getName(), factions)) {
-                            removeChunkAtPlayerLocation(player);
-                        }
-                        else {
-                            player.sendMessage(ChatColor.RED + "You need to be in a faction to use this command.");
-                        }
+                    if (sender.hasPermission("mf.unclaim")) {
+                        if (sender instanceof Player) {
+                            Player player = (Player) sender;
+                            if (isInFaction(player.getName(), factions)) {
+                                removeChunkAtPlayerLocation(player);
+                            }
+                            else {
+                                player.sendMessage(ChatColor.RED + "You need to be in a faction to use this command.");
+                            }
 
+                        }
+                    }
+                    else {
+                        sender.sendMessage(ChatColor.RED + "Sorry! You need the following permission to use this command: 'mf.unclaim'");
                     }
                 }
 
                 // unclaimall command
                 if (args[0].equalsIgnoreCase("unclaimall")) {
-                    if (sender instanceof Player) {
-                        Player player = (Player) sender;
-                        for (Faction faction : factions) {
-                            if (faction.isOwner(player.getName())) {
-                                removeAllClaimedChunks(faction.getName(), claimedChunks);
-                                player.sendMessage(ChatColor.AQUA + "All land unclaimed.");
+                    if (sender.hasPermission("mf.unclaimall")) {
+                        if (sender instanceof Player) {
+                            Player player = (Player) sender;
+                            for (Faction faction : factions) {
+                                if (faction.isOwner(player.getName())) {
+                                    removeAllClaimedChunks(faction.getName(), claimedChunks);
+                                    player.sendMessage(ChatColor.AQUA + "All land unclaimed.");
+                                }
                             }
                         }
+                    }
+                    else {
+                        sender.sendMessage(ChatColor.RED + "Sorry! You need the following permission to use this command: 'mf.unclaimall'");
                     }
                 }
 
                 // checkclaim command
                 if (args[0].equalsIgnoreCase("checkclaim")) {
-                    if (sender instanceof Player) {
-                        Player player = (Player) sender;
-                        String result = checkOwnershipAtPlayerLocation(player);
-                        if (result.equalsIgnoreCase("unclaimed")) {
-                            player.sendMessage(ChatColor.GREEN + "This land is unclaimed.");
+                    if (sender.hasPermission("mf.unclaimall")) {
+                        if (sender instanceof Player) {
+                            Player player = (Player) sender;
+                            String result = checkOwnershipAtPlayerLocation(player);
+                            if (result.equalsIgnoreCase("unclaimed")) {
+                                player.sendMessage(ChatColor.GREEN + "This land is unclaimed.");
+                            }
+                            else {
+                                player.sendMessage(ChatColor.RED + "This land is claimed by " + result + ".");
+                            }
                         }
-                        else {
-                            player.sendMessage(ChatColor.RED + "This land is claimed by " + result + ".");
-                        }
+                    }
+                    else {
+                        sender.sendMessage(ChatColor.RED + "Sorry! You need the following permission to use this command: 'mf.unclaimall'");
                     }
                 }
 
