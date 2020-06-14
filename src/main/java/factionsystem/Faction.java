@@ -86,6 +86,10 @@ public class Faction {
         return false;
     }
 
+    public ArrayList<String> getAllies() {
+        return allyFactions;
+    }
+
     public void setFactionHome(Location l) {
         factionHome = l;
     }

@@ -137,4 +137,23 @@ public class UtilityFunctions {
         }
         return null;
     }
+
+    public static void invokeAlliances(String victimFactionName, String declaringFactionName, ArrayList<Faction> factions) {
+        Faction victimFaction = getFaction(victimFactionName, factions);
+        Faction declaringFaction = getFaction(declaringFactionName, factions);
+
+        if (victimFaction != null && declaringFaction != null)  {
+            for (String alliedFaction : victimFaction.getAllies()) {
+                // add enemies
+                getFaction(alliedFaction, factions).addEnemy(declaringFactionName);
+                declaringFaction.addEnemy(alliedFaction);
+
+                // inform parties
+                sendAllPlayersInFactionMessage(victimFaction, ChatColor.GREEN + "Your ally " + alliedFaction + " has joined you in war!");
+                sendAllPlayersInFactionMessage(getFaction(alliedFaction, factions), ChatColor.RED + "Your ally " + victimFactionName + " has called you into war with " + declaringFactionName + "!");
+                sendAllPlayersInFactionMessage(declaringFaction, ChatColor.RED  + alliedFaction + " has joined the war on your enemy's side!");
+            }
+        }
+
+    }
 }

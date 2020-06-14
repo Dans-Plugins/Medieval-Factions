@@ -7,8 +7,7 @@ import org.bukkit.entity.Player;
 
 import java.util.ArrayList;
 
-import static factionsystem.UtilityFunctions.createStringFromFirstArgOnwards;
-import static factionsystem.UtilityFunctions.sendAllPlayersInFactionMessage;
+import static factionsystem.UtilityFunctions.*;
 
 public class DeclareWarCommand {
     public static void declareWar(CommandSender sender, String[] args, ArrayList<Faction> factions) {
@@ -36,7 +35,7 @@ public class DeclareWarCommand {
 
                                         // check to make sure we're not allied with this faction
                                         if (!faction.isAlly(factionName)) {
-                                            // add enemy to declarer's faction's enemyList
+                                            // add enemy to declarer's faction's enemyList and the enemyLists of its allies
                                             faction.addEnemy(factionName);
                                             player.sendMessage(ChatColor.AQUA + "War has been declared against " + factionName + "!");
 
@@ -47,6 +46,9 @@ public class DeclareWarCommand {
                                                     sendAllPlayersInFactionMessage(factions.get(j), ChatColor.AQUA + faction.getName() + " has declared war against your faction!");
                                                 }
                                             }
+
+                                            // invoke alliances
+                                            invokeAlliances(factions.get(i).getName(), faction.getName(), factions);
                                         }
                                         else {
                                             player.sendMessage(ChatColor.RED + "You can't declare war on your ally!");
