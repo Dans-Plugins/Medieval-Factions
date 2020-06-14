@@ -60,6 +60,14 @@ public class Faction {
         }
     }
 
+    public void removeRequestedAlly(String factionName) {
+        for (String faction : attemptedAlliances) {
+            if (faction.equalsIgnoreCase(factionName)) {
+                attemptedAlliances.remove(factionName);
+            }
+        }
+    }
+
     public boolean isRequestedAlly(String factionName) {
         for (String faction : attemptedAlliances) {
             if (faction.equalsIgnoreCase(factionName)) {

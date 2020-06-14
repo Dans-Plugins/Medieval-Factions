@@ -41,6 +41,10 @@ public class MakePeaceCommand {
                                         sendAllPlayersInFactionMessage(targetFaction,ChatColor.GREEN + "" + playersFaction.getName() + " has attempted to make peace with " + targetFactionName + "!");
 
                                         if (playersFaction.isTruceRequested(targetFactionName) && targetFaction.isTruceRequested(playersFaction.getName())) {
+                                            // remove requests in case war breaks out again and they need to make peace aagain
+                                            playersFaction.removeRequestedAlly(targetFactionName);
+                                            playersFaction.removeRequestedAlly(playersFaction.getName());
+
                                             // make peace between factions
                                             playersFaction.removeEnemy(targetFactionName);
                                             getFaction(targetFactionName, factions).removeEnemy(playersFaction.getName());

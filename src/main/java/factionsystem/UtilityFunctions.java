@@ -145,14 +145,17 @@ public class UtilityFunctions {
 
         if (victimFaction != null && declaringFaction != null)  {
             for (String alliedFaction : victimFaction.getAllies()) {
-                // add enemies
-                getFaction(alliedFaction, factions).addEnemy(declaringFactionName);
-                declaringFaction.addEnemy(alliedFaction);
+                if (!(getFaction(alliedFaction, factions).isEnemy(declaringFactionName)) && !(declaringFaction.isEnemy(alliedFaction))) {
+                    // add enemies
+                    getFaction(alliedFaction, factions).addEnemy(declaringFactionName);
+                    declaringFaction.addEnemy(alliedFaction);
 
-                // inform parties
-                sendAllPlayersInFactionMessage(victimFaction, ChatColor.GREEN + "Your ally " + alliedFaction + " has joined you in war!");
-                sendAllPlayersInFactionMessage(getFaction(alliedFaction, factions), ChatColor.RED + "Your ally " + victimFactionName + " has called you into war with " + declaringFactionName + "!");
-                sendAllPlayersInFactionMessage(declaringFaction, ChatColor.RED  + alliedFaction + " has joined the war on your enemy's side!");
+                    // inform parties
+                    sendAllPlayersInFactionMessage(victimFaction, ChatColor.GREEN + "Your ally " + alliedFaction + " has joined you in war!");
+                    sendAllPlayersInFactionMessage(getFaction(alliedFaction, factions), ChatColor.RED + "Your ally " + victimFactionName + " has called you into war with " + declaringFactionName + "!");
+                    sendAllPlayersInFactionMessage(declaringFaction, ChatColor.RED  + alliedFaction + " has joined the war on your enemy's side!");
+
+                }
             }
         }
 
