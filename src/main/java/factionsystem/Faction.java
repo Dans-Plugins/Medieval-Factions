@@ -60,7 +60,7 @@ public class Faction {
         }
     }
 
-    public void removeRequestedAlly(String factionName) {
+    public void removeRequestedTruce(String factionName) {
         attemptedAlliances.remove(factionName);
     }
 

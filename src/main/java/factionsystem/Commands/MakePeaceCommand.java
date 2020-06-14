@@ -42,13 +42,13 @@ public class MakePeaceCommand {
 
                                         if (playersFaction.isTruceRequested(targetFactionName) && targetFaction.isTruceRequested(playersFaction.getName())) {
                                             // remove requests in case war breaks out again and they need to make peace aagain
-                                            playersFaction.removeRequestedAlly(targetFactionName);
-                                            targetFaction.removeRequestedAlly(playersFaction.getName());
+                                            playersFaction.removeRequestedTruce(targetFactionName);
+                                            targetFaction.removeRequestedTruce(playersFaction.getName());
 
                                             // make peace between factions
                                             playersFaction.removeEnemy(targetFactionName);
                                             getFaction(targetFactionName, factions).removeEnemy(playersFaction.getName());
-                                            player.sendMessage(ChatColor.GREEN + "Your faction is now at peace with " + targetFactionName + "!");
+                                            sendAllPlayersInFactionMessage(playersFaction, ChatColor.GREEN + "Your faction is now at peace with " + targetFactionName + "!");
                                             sendAllPlayersInFactionMessage(targetFaction, ChatColor.GREEN + "Your faction is now at peace with " + playersFaction.getName() + "!");
                                         }
                                     }
