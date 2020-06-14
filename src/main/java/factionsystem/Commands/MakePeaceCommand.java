@@ -43,7 +43,7 @@ public class MakePeaceCommand {
                                         if (playersFaction.isTruceRequested(targetFactionName) && targetFaction.isTruceRequested(playersFaction.getName())) {
                                             // remove requests in case war breaks out again and they need to make peace aagain
                                             playersFaction.removeRequestedAlly(targetFactionName);
-                                            playersFaction.removeRequestedAlly(playersFaction.getName());
+                                            targetFaction.removeRequestedAlly(playersFaction.getName());
 
                                             // make peace between factions
                                             playersFaction.removeEnemy(targetFactionName);
