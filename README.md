@@ -27,3 +27,4 @@ A minecraft plugin for players to use to organize politically.
 -  1.8 'Advanced Warfare' update
 -  1.9 'More Commands' update
 -  2.0 'Alliances' update
+-  2.1 'Permissions' update
