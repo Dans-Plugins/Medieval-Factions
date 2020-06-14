@@ -47,7 +47,7 @@ public class AllyCommand {
                                                 // ally factions
                                                 playersFaction.addAlly(targetFactionName);
                                                 getFaction(targetFactionName, factions).addAlly(playersFaction.getName());
-                                                player.sendMessage("Your faction is now allied with " + targetFactionName + "!");
+                                                player.sendMessage(ChatColor.GREEN + "Your faction is now allied with " + targetFactionName + "!");
                                                 sendAllPlayersInFactionMessage(targetFaction, ChatColor.GREEN + "Your faction is now allied with " + playersFaction.getName() + "!");
                                             }
                                         }
