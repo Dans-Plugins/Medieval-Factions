@@ -30,7 +30,7 @@ import static factionsystem.UtilityFunctions.*;
 
 public class Main extends JavaPlugin implements Listener {
 
-    public static double version = 1.9;
+    public static double version = 2.0;
 
     ArrayList<Faction> factions = new ArrayList<>();
     ArrayList<ClaimedChunk> claimedChunks = new ArrayList<>();
