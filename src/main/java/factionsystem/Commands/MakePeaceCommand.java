@@ -63,7 +63,7 @@ public class MakePeaceCommand {
                             }
                         }
                         else {
-                            player.sendMessage(ChatColor.RED + "You can't make peace with your own faction?");
+                            player.sendMessage(ChatColor.RED + "You can't make peace with your own faction!");
                         }
 
                     }

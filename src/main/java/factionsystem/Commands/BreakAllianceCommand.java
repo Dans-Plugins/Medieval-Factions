@@ -41,7 +41,7 @@ public class BreakAllianceCommand {
                                         factions.get(i).removeAlly(faction.getName());
                                         for (int j = 0; j < factions.size(); j++) {
                                             if (factions.get(j).getName().equalsIgnoreCase(factionName)) {
-                                                sendAllPlayersInFactionMessage(factions.get(j), ChatColor.AQUA + faction.getName() + " has broken their alliance your faction!");
+                                                sendAllPlayersInFactionMessage(factions.get(j), ChatColor.RED + faction.getName() + " has broken their alliance your faction!");
                                             }
                                         }
                                     }

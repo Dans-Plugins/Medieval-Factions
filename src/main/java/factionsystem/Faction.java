@@ -20,7 +20,7 @@ public class Faction {
     private String owner = "defaultOwner";
     private ArrayList<String> invited = new ArrayList<>();
     private ArrayList<String> enemyFactions = new ArrayList<>();
-    private ArrayList<String> attemptedTruces;
+    private ArrayList<String> attemptedTruces = new ArrayList<>();
     private boolean autoclaim = false;
     private ArrayList<String> officers = new ArrayList<>();
     private int cumulativePowerLevel = 0;
