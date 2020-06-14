@@ -46,6 +46,8 @@ public class HelpCommand {
             if (args[1].equalsIgnoreCase("5")) {
                 sender.sendMessage(ChatColor.BOLD + "" + ChatColor.AQUA + "\n----------\n" + "Medieval Factions Commands - Page 5/5" + "\n----------\n");
                 sender.sendMessage(ChatColor.AQUA + "/mf version - Check plugin version.");
+                sender.sendMessage(ChatColor.AQUA + "/mf ally - Attempt to ally with a faction.");
+                sender.sendMessage(ChatColor.AQUA + "/mf breakalliance - Break an alliance with a faction.");
             }
         }
         if (!(sender instanceof Player)) {

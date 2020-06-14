@@ -20,10 +20,13 @@ public class Faction {
     private String owner = "defaultOwner";
     private ArrayList<String> invited = new ArrayList<>();
     private ArrayList<String> enemyFactions = new ArrayList<>();
+    private ArrayList<String> attemptedTruces = new ArrayList<>();
     private boolean autoclaim = false;
     private ArrayList<String> officers = new ArrayList<>();
     private int cumulativePowerLevel = 0;
     private Location factionHome = null;
+    private ArrayList<String> attemptedAlliances = new ArrayList<>();
+    private ArrayList<String> allyFactions = new ArrayList<>();
 
     // player constructor
     public Faction(String initialName, String creator) {
@@ -34,6 +37,61 @@ public class Faction {
     // server constructor
     Faction(String initialName) {
         setName(initialName);
+    }
+
+    public void requestTruce(String factionName) {
+        if (!attemptedTruces.contains(factionName)) {
+            attemptedTruces.add(factionName);
+        }
+    }
+
+    public boolean isTruceRequested(String factionName) {
+        for (String faction : attemptedTruces) {
+            if (faction.equalsIgnoreCase(factionName)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    public void removeRequestedTruce(String factionName) {
+        attemptedTruces.remove(factionName);
+    }
+
+    public void requestAlly(String factionName) {
+        if (!attemptedAlliances.contains(factionName)) {
+            attemptedAlliances.add(factionName);
+        }
+    }
+
+    public boolean isRequestedAlly(String factionName) {
+        for (String faction : attemptedAlliances) {
+            if (faction.equalsIgnoreCase(factionName)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    public void addAlly(String factionName) {
+        allyFactions.add(factionName);
+    }
+
+    public void removeAlly(String factionName) {
+        allyFactions.remove(factionName);
+    }
+
+    public boolean isAlly(String factionName) {
+        for (String faction : allyFactions) {
+            if (faction.equalsIgnoreCase(factionName)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    public ArrayList<String> getAllies() {
+        return allyFactions;
     }
 
     public void setFactionHome(Location l) {
@@ -119,6 +177,17 @@ public class Faction {
             }
         }
         return enemies;
+    }
+
+    public String getAlliesSeparatedByCommas() {
+        String allies = "";
+        for (int i = 0; i < allyFactions.size(); i++) {
+            allies = allies + allyFactions.get(i);
+            if (i != allyFactions.size() - 1) {
+                allies = allies + ", ";
+            }
+        }
+        return allies;
     }
 
     public void invite(String playerName) {
@@ -240,6 +309,19 @@ public class Faction {
 
             saveWriter.write("-" + "\n");
 
+            for (int i = 0; i < allyFactions.size(); i++) {
+
+                // if enemy faction exists, save it
+                for (Faction faction : factions) {
+                    if (faction.getName().equalsIgnoreCase(allyFactions.get(i))) {
+                        saveWriter.write(allyFactions.get(i) + "\n");
+                    }
+                }
+
+            }
+
+            saveWriter.write("-" + "\n");
+
             for (String officer : officers) {
                 saveWriter.write(officer + "\n");
             }
@@ -305,6 +387,16 @@ public class Faction {
                 }
 
                 enemyFactions.add(temp);
+            }
+
+            while (loadReader.hasNextLine()) {
+                String temp = loadReader.nextLine();
+
+                if (temp.equalsIgnoreCase("-")) {
+                    break;
+                }
+
+                allyFactions.add(temp);
             }
 
             while (loadReader.hasNextLine()) {

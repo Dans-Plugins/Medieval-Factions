@@ -2,6 +2,7 @@ package factionsystem;
 
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
+import org.bukkit.Chunk;
 import org.bukkit.entity.Player;
 
 import java.io.File;
@@ -39,9 +40,10 @@ public class UtilityFunctions {
         player.sendMessage(ChatColor.AQUA + "Owner: " + faction.getOwner() + "\n");
         player.sendMessage(ChatColor.AQUA + "Description: " + faction.getDescription() + "\n");
         player.sendMessage(ChatColor.AQUA + "Population: " + faction.getMemberList().size() + "\n");
+        player.sendMessage(ChatColor.AQUA + "Allied With: " + faction.getAlliesSeparatedByCommas() + "\n");
         player.sendMessage(ChatColor.AQUA + "At War With: " + faction.getEnemiesSeparatedByCommas() + "\n");
-        player.sendMessage(ChatColor.AQUA + "Power Level: " + faction.getCumulativePowerLevel());
-        player.sendMessage(ChatColor.AQUA + "Demesne Size: " + power + "/" + faction.getCumulativePowerLevel());
+        player.sendMessage(ChatColor.AQUA + "Power Level: " + faction.getCumulativePowerLevel() + "\n");
+        player.sendMessage(ChatColor.AQUA + "Demesne Size: " + power + "/" + faction.getCumulativePowerLevel() + "\n");
         player.sendMessage(ChatColor.AQUA + "----------\n");
     }
 
@@ -123,6 +125,55 @@ public class UtilityFunctions {
         for (PlayerPowerRecord record : powerRecords) {
             if (record.getPlayerName().equalsIgnoreCase(playerName)) {
                 return record;
+            }
+        }
+        return null;
+    }
+
+    public static Faction getFaction(String name, ArrayList<Faction> factions) {
+        for (Faction faction : factions) {
+            if (faction.getName().equalsIgnoreCase(name)) {
+                return faction;
+            }
+        }
+        return null;
+    }
+
+    public static void invokeAlliances(String victimFactionName, String declaringFactionName, ArrayList<Faction> factions) {
+        Faction victimFaction = getFaction(victimFactionName, factions);
+        Faction declaringFaction = getFaction(declaringFactionName, factions);
+
+        if (victimFaction != null && declaringFaction != null)  {
+            for (String alliedFaction : victimFaction.getAllies()) {
+                if (!(getFaction(alliedFaction, factions).isEnemy(declaringFactionName)) && !(declaringFaction.isEnemy(alliedFaction))) {
+                    // add enemies
+                    getFaction(alliedFaction, factions).addEnemy(declaringFactionName);
+                    declaringFaction.addEnemy(alliedFaction);
+
+                    // inform parties
+                    sendAllPlayersInFactionMessage(victimFaction, ChatColor.GREEN + "Your ally " + alliedFaction + " has joined you in war!");
+                    sendAllPlayersInFactionMessage(getFaction(alliedFaction, factions), ChatColor.RED + "Your ally " + victimFactionName + " has called you into war with " + declaringFactionName + "!");
+                    sendAllPlayersInFactionMessage(declaringFaction, ChatColor.RED  + alliedFaction + " has joined the war on your enemy's side!");
+
+                }
+            }
+        }
+
+    }
+
+    public static boolean isClaimed(Chunk chunk, ArrayList<ClaimedChunk> claimedChunks) {
+        for (ClaimedChunk claimedChunk : claimedChunks) {
+            if (claimedChunk.getCoordinates()[0] == chunk.getX() && claimedChunk.getCoordinates()[1] == chunk.getZ()) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    public static ClaimedChunk getClaimedChunk(int x, int z, ArrayList<ClaimedChunk> claimedChunks) {
+        for (ClaimedChunk claimedChunk : claimedChunks) {
+            if (claimedChunk.getCoordinates()[0] == x && claimedChunk.getCoordinates()[1] == z) {
+                return claimedChunk;
             }
         }
         return null;

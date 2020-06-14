@@ -30,7 +30,7 @@ import static factionsystem.UtilityFunctions.*;
 
 public class Main extends JavaPlugin implements Listener {
 
-    public static double version = 1.9;
+    public static double version = 2.0;
 
     ArrayList<Faction> factions = new ArrayList<>();
     ArrayList<ClaimedChunk> claimedChunks = new ArrayList<>();
@@ -408,15 +408,17 @@ public class Main extends JavaPlugin implements Listener {
                         Player player = (Player) sender;
 
                         if (isInFaction(player.getName(), factions)) {
+                            boolean owner = false;
                             for (Faction faction : factions) {
                                 if (faction.isOwner(player.getName())) {
+                                    owner = true;
                                     faction.toggleAutoClaim();
                                     player.sendMessage(ChatColor.AQUA + "Autoclaim toggled.");
                                 }
-                                else {
-                                    player.sendMessage(ChatColor.RED + "You must be the owner to use this command.");
-                                    return false;
-                                }
+
+                            }
+                            if (!owner) {
+                                player.sendMessage(ChatColor.RED + "You must be the owner to use this command.");
                             }
                         }
                         else {
@@ -445,7 +447,7 @@ public class Main extends JavaPlugin implements Listener {
 
                 // sethome command
                 if (args[0].equalsIgnoreCase("sethome")) {
-                    SetHomeCommand.setHome(sender, factions);
+                    SetHomeCommand.setHome(sender, factions, claimedChunks);
                 }
 
                 // home command
@@ -461,6 +463,16 @@ public class Main extends JavaPlugin implements Listener {
                 // who command
                 if (args[0].equalsIgnoreCase("who")) {
                     WhoCommand.sendInformation(sender, args, factions);
+                }
+
+                // ally command
+                if (args[0].equalsIgnoreCase("ally")) {
+                    AllyCommand.requestAlliance(sender, args, factions);
+                }
+
+                // breakalliance command
+                if (args[0].equalsIgnoreCase("breakalliance")) {
+                    BreakAllianceCommand.breakAlliance(sender, args, factions);
                 }
 
                 // forcesave command
@@ -684,47 +696,29 @@ public class Main extends JavaPlugin implements Listener {
 
 
             // if new chunk is claimed and old chunk was not
-            if (isClaimed(event.getTo().getChunk()) && !isClaimed(event.getFrom().getChunk())) {
-                event.getPlayer().sendMessage(ChatColor.GREEN + "Entering the territory of " + getClaimedChunk(event.getTo().getChunk().getX(), event.getTo().getChunk().getZ()).getHolder());
+            if (isClaimed(event.getTo().getChunk(), claimedChunks) && !isClaimed(event.getFrom().getChunk(), claimedChunks)) {
+                event.getPlayer().sendMessage(ChatColor.GREEN + "Entering the territory of " + getClaimedChunk(event.getTo().getChunk().getX(), event.getTo().getChunk().getZ(), claimedChunks).getHolder());
                 return;
             }
 
             // if new chunk is unclaimed and old chunk was not
-            if (!isClaimed(event.getTo().getChunk()) && isClaimed(event.getFrom().getChunk())) {
+            if (!isClaimed(event.getTo().getChunk(), claimedChunks) && isClaimed(event.getFrom().getChunk(), claimedChunks)) {
                 event.getPlayer().sendMessage(ChatColor.GREEN + "Entering the wilderness");
                 return;
             }
 
 
             // if new chunk is claimed and old chunk was also claimed
-            if (isClaimed(event.getTo().getChunk()) && isClaimed(event.getFrom().getChunk())) {
+            if (isClaimed(event.getTo().getChunk(), claimedChunks) && isClaimed(event.getFrom().getChunk(), claimedChunks)) {
                 // if chunk holders are not equal
-                if (!(getClaimedChunk(event.getFrom().getChunk().getX(), event.getFrom().getChunk().getZ()).getHolder().equalsIgnoreCase(getClaimedChunk(event.getTo().getChunk().getX(), event.getTo().getChunk().getZ()).getHolder()))) {
-                    event.getPlayer().sendMessage(ChatColor.GREEN + "Leaving the territory of " + getClaimedChunk(event.getFrom().getChunk().getX(), event.getFrom().getChunk().getZ()).getHolder());
-                    event.getPlayer().sendMessage(ChatColor.GREEN + "Entering the territory of " + getClaimedChunk(event.getTo().getChunk().getX(), event.getTo().getChunk().getZ()).getHolder());
+                if (!(getClaimedChunk(event.getFrom().getChunk().getX(), event.getFrom().getChunk().getZ(), claimedChunks).getHolder().equalsIgnoreCase(getClaimedChunk(event.getTo().getChunk().getX(), event.getTo().getChunk().getZ(), claimedChunks).getHolder()))) {
+                    event.getPlayer().sendMessage(ChatColor.GREEN + "Leaving the territory of " + getClaimedChunk(event.getFrom().getChunk().getX(), event.getFrom().getChunk().getZ(), claimedChunks).getHolder());
+                    event.getPlayer().sendMessage(ChatColor.GREEN + "Entering the territory of " + getClaimedChunk(event.getTo().getChunk().getX(), event.getTo().getChunk().getZ(), claimedChunks).getHolder());
                 }
             }
 
         }
 
-    }
-
-    boolean isClaimed(Chunk chunk) {
-        for (ClaimedChunk claimedChunk : claimedChunks) {
-            if (claimedChunk.getCoordinates()[0] == chunk.getX() && claimedChunk.getCoordinates()[1] == chunk.getZ()) {
-                return true;
-            }
-        }
-        return false;
-    }
-
-    ClaimedChunk getClaimedChunk(int x, int z) {
-        for (ClaimedChunk claimedChunk : claimedChunks) {
-            if (claimedChunk.getCoordinates()[0] == x && claimedChunk.getCoordinates()[1] == z) {
-                return claimedChunk;
-            }
-        }
-        return null;
     }
 
     // the following two event handlers are identical except in their event types
@@ -736,7 +730,7 @@ public class Main extends JavaPlugin implements Listener {
         Player player = event.getPlayer();
 
         // get chunk
-        ClaimedChunk chunk = getClaimedChunk(event.getBlock().getLocation().getChunk().getX(), event.getBlock().getLocation().getChunk().getZ());
+        ClaimedChunk chunk = getClaimedChunk(event.getBlock().getLocation().getChunk().getX(), event.getBlock().getLocation().getChunk().getZ(), claimedChunks);
 
         // if chunk is claimed
         if (chunk != null) {
@@ -766,7 +760,7 @@ public class Main extends JavaPlugin implements Listener {
         Player player = event.getPlayer();
 
         // get chunk
-        ClaimedChunk chunk = getClaimedChunk(event.getBlock().getLocation().getChunk().getX(), event.getBlock().getLocation().getChunk().getZ());
+        ClaimedChunk chunk = getClaimedChunk(event.getBlock().getLocation().getChunk().getX(), event.getBlock().getLocation().getChunk().getZ(), claimedChunks);
 
         // if chunk is claimed
         if (chunk != null) {
@@ -798,7 +792,7 @@ public class Main extends JavaPlugin implements Listener {
         // get chunk
         Block clickedBlock = event.getClickedBlock();
         if (clickedBlock != null) {
-            ClaimedChunk chunk = getClaimedChunk(event.getClickedBlock().getLocation().getChunk().getX(), event.getClickedBlock().getLocation().getChunk().getZ());
+            ClaimedChunk chunk = getClaimedChunk(event.getClickedBlock().getLocation().getChunk().getX(), event.getClickedBlock().getLocation().getChunk().getZ(), claimedChunks);
 
             // if chunk is claimed
             if (chunk != null) {
