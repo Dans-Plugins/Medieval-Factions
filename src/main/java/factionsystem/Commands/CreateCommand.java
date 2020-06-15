@@ -1,6 +1,7 @@
 package factionsystem.Commands;
 
 import factionsystem.Faction;
+import factionsystem.Main;
 import factionsystem.PlayerPowerRecord;
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
@@ -13,13 +14,19 @@ import static factionsystem.UtilityFunctions.getPlayersPowerRecord;
 
 public class CreateCommand {
 
-    public static boolean createFaction(CommandSender sender, String[] args, ArrayList<Faction> factions, ArrayList<PlayerPowerRecord> powerRecords) {
+    Main main = null;
+
+    public CreateCommand(Main plugin) {
+        main = plugin;
+    }
+
+    public boolean createFaction(CommandSender sender, String[] args) {
         // player check
         if (sender instanceof Player) {
             Player player = (Player) sender;
 
             // player membership check
-            for (Faction faction : factions) {
+            for (Faction faction : main.factions) {
                 if (faction.isMember(player.getName())) {
                     player.sendMessage(ChatColor.RED + "Sorry, you're already in a faction. Leave if you want to create a different one.");
                     return false;
@@ -34,7 +41,7 @@ public class CreateCommand {
 
                 // faction existence check
                 boolean factionExists = false;
-                for (Faction faction : factions) {
+                for (Faction faction : main.factions) {
                     if (faction.getName().equalsIgnoreCase(name)) {
                         factionExists = true;
                         break;
@@ -45,8 +52,8 @@ public class CreateCommand {
 
                     // actual faction creation
                     Faction temp = new Faction(name, player.getName());
-                    factions.add(temp);
-                    factions.get(factions.size() - 1).addMember(player.getName(), getPlayersPowerRecord(player.getName(), powerRecords).getPowerLevel());
+                    main.factions.add(temp);
+                    main.factions.get(main.factions.size() - 1).addMember(player.getName(), getPlayersPowerRecord(player.getName(), main.playerPowerRecords).getPowerLevel());
                     System.out.println("Faction " + name + " created.");
                     player.sendMessage(ChatColor.AQUA + "Faction " + name + " created.");
                     return true;

@@ -287,7 +287,8 @@ public class Main extends JavaPlugin implements Listener {
                 // create command
                 if (args[0].equalsIgnoreCase("create") ) {
                     if (sender.hasPermission("mf.create")|| sender.hasPermission("mf.default")) {
-                        CreateCommand.createFaction(sender, args, factions, playerPowerRecords);
+                        CreateCommand command = new CreateCommand(this);
+                        command.createFaction(sender, args);
                     }
                     else {
                         sender.sendMessage(ChatColor.RED + "Sorry! You need the following permission to use this command: 'mf.create'");
