@@ -401,7 +401,8 @@ public class Main extends JavaPlugin implements Listener {
                 // transfer command
                 if (args[0].equalsIgnoreCase("transfer")) {
                     if (sender.hasPermission("mf.transfer") || sender.hasPermission("mf.default")) {
-                        TransferCommand.transferOwnership(sender, args, factions);
+                        TransferCommand command = new TransferCommand(this);
+                        command.transferOwnership(sender, args);
                     }
                     else {
                         sender.sendMessage(ChatColor.RED + "Sorry! You need the following permission to use this command: 'mf.transfer'");
