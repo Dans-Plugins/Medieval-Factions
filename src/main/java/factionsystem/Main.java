@@ -331,7 +331,8 @@ public class Main extends JavaPlugin implements Listener {
                 // info command
                 if (args[0].equalsIgnoreCase("info")) {
                     if (sender.hasPermission("mf.info") || sender.hasPermission("mf.default")) {
-                        InfoCommand.showInfo(sender, args, factions, claimedChunks);
+                        InfoCommand command = new InfoCommand(this);
+                        command.showInfo(sender, args);
                     }
                     else {
                         sender.sendMessage(ChatColor.RED + "Sorry! You need the following permission to use this command: 'mf.info'");
