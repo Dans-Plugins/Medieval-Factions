@@ -322,7 +322,8 @@ public class Main extends JavaPlugin implements Listener {
                 // members command
                 if (args[0].equalsIgnoreCase("members")) {
                     if (sender.hasPermission("mf.members") || sender.hasPermission("mf.default")) {
-                        MembersCommand.showMembers(sender, args, factions);
+                        MembersCommand command = new MembersCommand(this);
+                        command.showMembers(sender, args);
                     }
                     else {
                         sender.sendMessage(ChatColor.RED + "Sorry! You need the following permission to use this command: 'mf.members'");

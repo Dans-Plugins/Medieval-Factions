@@ -1,6 +1,7 @@
 package factionsystem.Commands;
 
 import factionsystem.Faction;
+import factionsystem.Main;
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
@@ -11,12 +12,18 @@ import static factionsystem.UtilityFunctions.*;
 
 public class MembersCommand {
 
-    public static void showMembers(CommandSender sender, String[] args, ArrayList<Faction> factions) {
+    Main main = null;
+
+    public MembersCommand(Main plugin) {
+        main = plugin;
+    }
+
+    public void showMembers(CommandSender sender, String[] args) {
         if (sender instanceof Player) {
             Player player = (Player) sender;
-            if (isInFaction(player.getName(), factions)) {
+            if (isInFaction(player.getName(), main.factions)) {
                 if (args.length == 1) {
-                    for (Faction faction : factions) {
+                    for (Faction faction : main.factions) {
                         if (faction.isMember(player.getName())) {
                             sendFactionMembers(player, faction);
                         }
@@ -26,7 +33,7 @@ public class MembersCommand {
                     // creating name from arguments 1 to the last one
                     String name = createStringFromFirstArgOnwards(args);
 
-                    for (Faction faction : factions) {
+                    for (Faction faction : main.factions) {
                         if (faction.getName().equalsIgnoreCase(name)) {
                             sendFactionMembers(player, faction);
                         }
