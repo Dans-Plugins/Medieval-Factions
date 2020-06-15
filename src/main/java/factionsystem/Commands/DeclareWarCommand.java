@@ -1,6 +1,7 @@
 package factionsystem.Commands;
 
 import factionsystem.Faction;
+import factionsystem.Main;
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
@@ -10,11 +11,18 @@ import java.util.ArrayList;
 import static factionsystem.UtilityFunctions.*;
 
 public class DeclareWarCommand {
-    public static void declareWar(CommandSender sender, String[] args, ArrayList<Faction> factions) {
+
+    Main main = null;
+
+    public DeclareWarCommand(Main plugin) {
+        main = plugin;
+    }
+
+    public void declareWar(CommandSender sender, String[] args) {
         if (sender instanceof Player) {
             Player player = (Player) sender;
             boolean owner = false;
-            for (Faction faction : factions) {
+            for (Faction faction : main.factions) {
                 // if player is the owner or officer
                 if (faction.isOwner(player.getName()) || faction.isOfficer(player.getName())) {
                     owner = true;
@@ -25,8 +33,8 @@ public class DeclareWarCommand {
                         String factionName = createStringFromFirstArgOnwards(args);
 
                         // check if faction exists
-                        for (int i = 0; i < factions.size(); i++) {
-                            if (factions.get(i).getName().equalsIgnoreCase(factionName)) {
+                        for (int i = 0; i < main.factions.size(); i++) {
+                            if (main.factions.get(i).getName().equalsIgnoreCase(factionName)) {
 
                                 if (!(faction.getName().equalsIgnoreCase(factionName))) {
 
@@ -40,15 +48,15 @@ public class DeclareWarCommand {
                                             player.sendMessage(ChatColor.AQUA + "War has been declared against " + factionName + "!");
 
                                             // add declarer's faction to new enemy's enemyList
-                                            factions.get(i).addEnemy(faction.getName());
-                                            for (int j = 0; j < factions.size(); j++) {
-                                                if (factions.get(j).getName().equalsIgnoreCase(factionName)) {
-                                                    sendAllPlayersInFactionMessage(factions.get(j), ChatColor.RED + faction.getName() + " has declared war against your faction!");
+                                            main.factions.get(i).addEnemy(faction.getName());
+                                            for (int j = 0; j < main.factions.size(); j++) {
+                                                if (main.factions.get(j).getName().equalsIgnoreCase(factionName)) {
+                                                    sendAllPlayersInFactionMessage(main.factions.get(j), ChatColor.RED + faction.getName() + " has declared war against your faction!");
                                                 }
                                             }
 
                                             // invoke alliances
-                                            invokeAlliances(factions.get(i).getName(), faction.getName(), factions);
+                                            invokeAlliances(main.factions.get(i).getName(), faction.getName(), main.factions);
                                         }
                                         else {
                                             player.sendMessage(ChatColor.RED + "You can't declare war on your ally!");

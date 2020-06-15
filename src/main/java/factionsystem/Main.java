@@ -400,7 +400,8 @@ public class Main extends JavaPlugin implements Listener {
                 // declare war command
                 if (args[0].equalsIgnoreCase("declarewar")) {
                     if (sender.hasPermission("mf.declarewar") || sender.hasPermission("mf.default")) {
-                        DeclareWarCommand.declareWar(sender, args, factions);
+                        DeclareWarCommand command = new DeclareWarCommand(this);
+                        command.declareWar(sender, args);
                     }
                     else {
                         sender.sendMessage(ChatColor.RED + "Sorry! You need the following permission to use this command: 'mf.declarewar'");
