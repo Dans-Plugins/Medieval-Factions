@@ -549,7 +549,8 @@ public class Main extends JavaPlugin implements Listener {
                 // demote command
                 if (args[0].equalsIgnoreCase("demote")) {
                     if (sender.hasPermission("mf.demote")) {
-                        DemoteCommand.demotePlayer(sender, args, factions);
+                        DemoteCommand command = new DemoteCommand(this);
+                        command.demotePlayer(sender, args);
                     }
                     else {
                         sender.sendMessage(ChatColor.RED + "Sorry! You need the following permission to use this command: 'mf.demote'");

@@ -1,6 +1,7 @@
 package factionsystem.Commands;
 
 import factionsystem.Faction;
+import factionsystem.Main;
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
@@ -11,13 +12,20 @@ import static factionsystem.UtilityFunctions.isInFaction;
 import static org.bukkit.Bukkit.getServer;
 
 public class DemoteCommand {
-    public static void demotePlayer(CommandSender sender, String[] args, ArrayList<Faction> factions) {
+
+    Main main = null;
+
+    public DemoteCommand(Main plugin) {
+        main = plugin;
+    }
+
+    public void demotePlayer(CommandSender sender, String[] args) {
         if (sender instanceof Player) {
             Player player = (Player) sender;
 
-            if (isInFaction(player.getName(), factions)) {
+            if (isInFaction(player.getName(), main.factions)) {
                 if (args.length > 1) {
-                    for (Faction faction : factions) {
+                    for (Faction faction : main.factions) {
                         if (faction.isOfficer(args[1])) {
                             if (faction.isOwner(player.getName())) {
                                 if (faction.removeOfficer(args[1]) == true) {
