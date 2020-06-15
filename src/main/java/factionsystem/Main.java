@@ -339,7 +339,8 @@ public class Main extends JavaPlugin implements Listener {
                 // desc command
                 if (args[0].equalsIgnoreCase("desc")) {
                     if (sender.hasPermission("mf.desc") || sender.hasPermission("mf.default")) {
-                        DescCommand.setDescription(sender, args, factions);
+                        DescCommand command = new DescCommand(this);
+                        command.setDescription(sender, args);
                     }
                     else {
                         sender.sendMessage(ChatColor.RED + "Sorry! You need the following permission to use this command: 'mf.desc'");
