@@ -2,6 +2,7 @@ package factionsystem.Commands;
 
 import factionsystem.ClaimedChunk;
 import factionsystem.Faction;
+import factionsystem.Main;
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
@@ -13,19 +14,25 @@ import static factionsystem.UtilityFunctions.removeAllClaimedChunks;
 
 public class DisbandCommand {
 
-    public static boolean deleteFaction(CommandSender sender, ArrayList<Faction> factions, ArrayList<ClaimedChunk> chunks) {
+    Main main = null;
+
+    public DisbandCommand(Main plugin) {
+        main = plugin;
+    }
+
+    public boolean deleteFaction(CommandSender sender) {
         if (sender instanceof Player) {
             Player player = (Player) sender;
             boolean owner = false;
-            for (int i = 0; i < factions.size(); i++) {
-                if (factions.get(i).isOwner(player.getName())) {
+            for (int i = 0; i < main.factions.size(); i++) {
+                if (main.factions.get(i).isOwner(player.getName())) {
                     owner = true;
-                    if (factions.get(i).getPopulation() == 1) {
+                    if (main.factions.get(i).getPopulation() == 1) {
 
                         // delete file associated with faction
-                        System.out.println("Attempting to delete file plugins/medievalfactions/" + factions.get(i).getName() + ".txt");
+                        System.out.println("Attempting to delete file plugins/medievalfactions/" + main.factions.get(i).getName() + ".txt");
                         try {
-                            File fileToDelete = new File("plugins/medievalfactions/" + factions.get(i).getName() + ".txt");
+                            File fileToDelete = new File("plugins/medievalfactions/" + main.factions.get(i).getName() + ".txt");
                             if (fileToDelete.delete()) {
                                 System.out.println("Success. File deleted.");
                             }
@@ -37,9 +44,9 @@ public class DisbandCommand {
                         }
 
                         // remove claimed land objects associated with this faction
-                        removeAllClaimedChunks(factions.get(i).getName(), chunks);
+                        removeAllClaimedChunks(main.factions.get(i).getName(), main.claimedChunks);
 
-                        factions.remove(i);
+                        main.factions.remove(i);
                         player.sendMessage(ChatColor.GREEN + "Faction successfully disbanded.");
 
                         return true;
