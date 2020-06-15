@@ -551,7 +551,8 @@ public class Main extends JavaPlugin implements Listener {
                 // promote command
                 if (args[0].equalsIgnoreCase("promote")) {
                     if (sender.hasPermission("mf.promote") || sender.hasPermission("mf.default")) {
-                        PromoteCommand.promotePlayer(sender, args, factions);
+                        PromoteCommand command = new PromoteCommand(this);
+                        command.promotePlayer(sender, args);
                     }
                     else {
                         sender.sendMessage(ChatColor.RED + "Sorry! You need the following permission to use this command: 'mf.promote'");
