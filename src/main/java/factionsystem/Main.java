@@ -585,7 +585,8 @@ public class Main extends JavaPlugin implements Listener {
                 // sethome command
                 if (args[0].equalsIgnoreCase("sethome")) {
                     if (sender.hasPermission("mf.sethome") || sender.hasPermission("mf.default")) {
-                        SetHomeCommand.setHome(sender, factions, claimedChunks);
+                        SetHomeCommand command = new SetHomeCommand(this);
+                        command.setHome(sender);
                     }
                     else {
                         sender.sendMessage(ChatColor.RED + "Sorry! You need the following permission to use this command: 'mf.sethome'");
