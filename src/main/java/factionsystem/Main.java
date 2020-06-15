@@ -30,11 +30,11 @@ import static factionsystem.UtilityFunctions.*;
 
 public class Main extends JavaPlugin implements Listener {
 
-    public static double version = 2.1;
+    public static String version = "v2.1.1";
 
-    ArrayList<Faction> factions = new ArrayList<>();
-    ArrayList<ClaimedChunk> claimedChunks = new ArrayList<>();
-    ArrayList<PlayerPowerRecord> playerPowerRecords = new ArrayList<>();
+    public ArrayList<Faction> factions = new ArrayList<>();
+    public ArrayList<ClaimedChunk> claimedChunks = new ArrayList<>();
+    public ArrayList<PlayerPowerRecord> playerPowerRecords = new ArrayList<>();
 
     @Override
     public void onEnable() {
@@ -262,7 +262,8 @@ public class Main extends JavaPlugin implements Listener {
             // no arguments check
             if (args.length == 0) {
                 if (sender.hasPermission("mf.help") || sender.hasPermission("mf.default")) {
-                    HelpCommand.sendHelpMessage(sender, args);
+                    HelpCommand command = new HelpCommand();
+                    command.sendHelpMessage(sender, args);
                 }
                 else {
                     sender.sendMessage(ChatColor.RED + "Sorry! You need the following permission to use this command: 'mf.help'");
@@ -277,7 +278,8 @@ public class Main extends JavaPlugin implements Listener {
                 // help command
                 if (args[0].equalsIgnoreCase("help")) {
                     if (sender.hasPermission("mf.help") || sender.hasPermission("mf.default")) {
-                        HelpCommand.sendHelpMessage(sender, args);
+                        HelpCommand command = new HelpCommand();
+                        command.sendHelpMessage(sender, args);
                     }
                     else {
                         sender.sendMessage(ChatColor.RED + "Sorry! You need the following permission to use this command: 'mf.help'");
@@ -287,7 +289,8 @@ public class Main extends JavaPlugin implements Listener {
                 // create command
                 if (args[0].equalsIgnoreCase("create") ) {
                     if (sender.hasPermission("mf.create")|| sender.hasPermission("mf.default")) {
-                        CreateCommand.createFaction(sender, args, factions, playerPowerRecords);
+                        CreateCommand command = new CreateCommand(this);
+                        command.createFaction(sender, args);
                     }
                     else {
                         sender.sendMessage(ChatColor.RED + "Sorry! You need the following permission to use this command: 'mf.create'");
@@ -297,7 +300,8 @@ public class Main extends JavaPlugin implements Listener {
                 // list command
                 if  (args[0].equalsIgnoreCase("list")) {
                     if (sender.hasPermission("mf.list") || sender.hasPermission("mf.default")) {
-                        ListCommand.listFactions(sender, factions);
+                        ListCommand command = new ListCommand(this);
+                        command.listFactions(sender);
                     }
                     else {
                         sender.sendMessage(ChatColor.RED + "Sorry! You need the following permission to use this command: 'mf.list'");
@@ -307,7 +311,8 @@ public class Main extends JavaPlugin implements Listener {
                 // disband command
                 if (args[0].equalsIgnoreCase("disband")) {
                     if (sender.hasPermission("mf.disband") || sender.hasPermission("mf.default")) {
-                        DisbandCommand.deleteFaction(sender, factions, claimedChunks);
+                        DisbandCommand command = new DisbandCommand(this);
+                        command.deleteFaction(sender);
                     }
                     else {
                         sender.sendMessage(ChatColor.RED + "Sorry! You need the following permission to use this command: 'mf.disband'");
@@ -317,7 +322,8 @@ public class Main extends JavaPlugin implements Listener {
                 // members command
                 if (args[0].equalsIgnoreCase("members")) {
                     if (sender.hasPermission("mf.members") || sender.hasPermission("mf.default")) {
-                        MembersCommand.showMembers(sender, args, factions);
+                        MembersCommand command = new MembersCommand(this);
+                        command.showMembers(sender, args);
                     }
                     else {
                         sender.sendMessage(ChatColor.RED + "Sorry! You need the following permission to use this command: 'mf.members'");
@@ -327,7 +333,8 @@ public class Main extends JavaPlugin implements Listener {
                 // info command
                 if (args[0].equalsIgnoreCase("info")) {
                     if (sender.hasPermission("mf.info") || sender.hasPermission("mf.default")) {
-                        InfoCommand.showInfo(sender, args, factions, claimedChunks);
+                        InfoCommand command = new InfoCommand(this);
+                        command.showInfo(sender, args);
                     }
                     else {
                         sender.sendMessage(ChatColor.RED + "Sorry! You need the following permission to use this command: 'mf.info'");
@@ -338,7 +345,8 @@ public class Main extends JavaPlugin implements Listener {
                 // desc command
                 if (args[0].equalsIgnoreCase("desc")) {
                     if (sender.hasPermission("mf.desc") || sender.hasPermission("mf.default")) {
-                        DescCommand.setDescription(sender, args, factions);
+                        DescCommand command = new DescCommand(this);
+                        command.setDescription(sender, args);
                     }
                     else {
                         sender.sendMessage(ChatColor.RED + "Sorry! You need the following permission to use this command: 'mf.desc'");
@@ -349,7 +357,8 @@ public class Main extends JavaPlugin implements Listener {
                 // invite command
                 if (args[0].equalsIgnoreCase("invite")) {
                     if (sender.hasPermission("mf.invite") || sender.hasPermission("mf.default")) {
-                        InviteCommand.invitePlayer(sender, args, factions);
+                        InviteCommand command = new InviteCommand(this);
+                        command.invitePlayer(sender, args);
                     }
                     else {
                         sender.sendMessage(ChatColor.RED + "Sorry! You need the following permission to use this command: 'mf.invite'");
@@ -359,7 +368,8 @@ public class Main extends JavaPlugin implements Listener {
                 // join command
                 if (args[0].equalsIgnoreCase("join")) {
                     if (sender.hasPermission("mf.join") || sender.hasPermission("mf.default")) {
-                        JoinCommand.joinFaction(sender, args, factions, playerPowerRecords);
+                        JoinCommand command = new JoinCommand(this);
+                        command.joinFaction(sender, args);
                     }
                     else {
                         sender.sendMessage(ChatColor.RED + "Sorry! You need the following permission to use this command: 'mf.join'");
@@ -369,7 +379,8 @@ public class Main extends JavaPlugin implements Listener {
                 // kick command
                 if (args[0].equalsIgnoreCase("kick")) {
                     if (sender.hasPermission("mf.kick") || sender.hasPermission("mf.default")) {
-                        KickCommand.kickPlayer(sender, args, factions, playerPowerRecords);
+                        KickCommand command = new KickCommand(this);
+                        command.kickPlayer(sender, args);
                     }
                     else {
                         sender.sendMessage(ChatColor.RED + "Sorry! You need the following permission to use this command: 'mf.kick'");
@@ -379,7 +390,8 @@ public class Main extends JavaPlugin implements Listener {
                 // leave commmand
                 if (args[0].equalsIgnoreCase("leave")) {
                     if (sender.hasPermission("mf.leave") || sender.hasPermission("mf.default")) {
-                        LeaveCommand.leaveFaction(sender, factions, claimedChunks, playerPowerRecords);
+                        LeaveCommand command = new LeaveCommand(this);
+                        command.leaveFaction(sender);
                     }
                     else {
                         sender.sendMessage(ChatColor.RED + "Sorry! You need the following permission to use this command: 'mf.leave'");
@@ -389,7 +401,8 @@ public class Main extends JavaPlugin implements Listener {
                 // transfer command
                 if (args[0].equalsIgnoreCase("transfer")) {
                     if (sender.hasPermission("mf.transfer") || sender.hasPermission("mf.default")) {
-                        TransferCommand.transferOwnership(sender, args, factions);
+                        TransferCommand command = new TransferCommand(this);
+                        command.transferOwnership(sender, args);
                     }
                     else {
                         sender.sendMessage(ChatColor.RED + "Sorry! You need the following permission to use this command: 'mf.transfer'");
@@ -399,7 +412,8 @@ public class Main extends JavaPlugin implements Listener {
                 // declare war command
                 if (args[0].equalsIgnoreCase("declarewar")) {
                     if (sender.hasPermission("mf.declarewar") || sender.hasPermission("mf.default")) {
-                        DeclareWarCommand.declareWar(sender, args, factions);
+                        DeclareWarCommand command = new DeclareWarCommand(this);
+                        command.declareWar(sender, args);
                     }
                     else {
                         sender.sendMessage(ChatColor.RED + "Sorry! You need the following permission to use this command: 'mf.declarewar'");
@@ -410,7 +424,8 @@ public class Main extends JavaPlugin implements Listener {
                 // make peace command
                 if (args[0].equalsIgnoreCase("makepeace")) {
                     if (sender.hasPermission("mf.makepeace") || sender.hasPermission("mf.default")) {
-                        MakePeaceCommand.makePeace(sender, args, factions);
+                        MakePeaceCommand command = new MakePeaceCommand(this);
+                        command.makePeace(sender, args);
                     }
                     else {
                         sender.sendMessage(ChatColor.RED + "Sorry! You need the following permission to use this command: 'mf.makepeace'");
@@ -537,7 +552,8 @@ public class Main extends JavaPlugin implements Listener {
                 // promote command
                 if (args[0].equalsIgnoreCase("promote")) {
                     if (sender.hasPermission("mf.promote") || sender.hasPermission("mf.default")) {
-                        PromoteCommand.promotePlayer(sender, args, factions);
+                        PromoteCommand command = new PromoteCommand(this);
+                        command.promotePlayer(sender, args);
                     }
                     else {
                         sender.sendMessage(ChatColor.RED + "Sorry! You need the following permission to use this command: 'mf.promote'");
@@ -547,7 +563,8 @@ public class Main extends JavaPlugin implements Listener {
                 // demote command
                 if (args[0].equalsIgnoreCase("demote")) {
                     if (sender.hasPermission("mf.demote")) {
-                        DemoteCommand.demotePlayer(sender, args, factions);
+                        DemoteCommand command = new DemoteCommand(this);
+                        command.demotePlayer(sender, args);
                     }
                     else {
                         sender.sendMessage(ChatColor.RED + "Sorry! You need the following permission to use this command: 'mf.demote'");
@@ -557,7 +574,8 @@ public class Main extends JavaPlugin implements Listener {
                 // power command
                 if  (args[0].equalsIgnoreCase("power")) {
                     if (sender.hasPermission("mf.power") || sender.hasPermission("mf.default")) {
-                        PowerCommand.powerCheck(sender, playerPowerRecords);
+                        PowerCommand command = new PowerCommand(this);
+                        command.powerCheck(sender);
                     }
                     else {
                         sender.sendMessage(ChatColor.RED + "Sorry! You need the following permission to use this command: 'mf.power'");
@@ -568,7 +586,8 @@ public class Main extends JavaPlugin implements Listener {
                 // sethome command
                 if (args[0].equalsIgnoreCase("sethome")) {
                     if (sender.hasPermission("mf.sethome") || sender.hasPermission("mf.default")) {
-                        SetHomeCommand.setHome(sender, factions, claimedChunks);
+                        SetHomeCommand command = new SetHomeCommand(this);
+                        command.setHome(sender);
                     }
                     else {
                         sender.sendMessage(ChatColor.RED + "Sorry! You need the following permission to use this command: 'mf.sethome'");
@@ -578,7 +597,8 @@ public class Main extends JavaPlugin implements Listener {
                 // home command
                 if (args[0].equalsIgnoreCase("home")) {
                     if (sender.hasPermission("mf.home") || sender.hasPermission("mf.default")) {
-                        HomeCommand.teleportPlayer(sender, factions);
+                        HomeCommand command = new HomeCommand(this);
+                        command.teleportPlayer(sender);
                     }
                     else {
                         sender.sendMessage(ChatColor.RED + "Sorry! You need the following permission to use this command: 'mf.home'");
@@ -588,7 +608,7 @@ public class Main extends JavaPlugin implements Listener {
                 // version command
                 if (args[0].equalsIgnoreCase("version")) {
                     if (sender.hasPermission("mf.version") || sender.hasPermission("mf.default")) {
-                        sender.sendMessage(ChatColor.AQUA + "Medieval-Factions-v" + version);
+                        sender.sendMessage(ChatColor.AQUA + "Medieval-Factions-" + version);
                     }
                     else {
                         sender.sendMessage(ChatColor.RED + "Sorry! You need the following permission to use this command: 'mf.version'");
@@ -599,7 +619,8 @@ public class Main extends JavaPlugin implements Listener {
                 // who command
                 if (args[0].equalsIgnoreCase("who")) {
                     if (sender.hasPermission("mf.who") || sender.hasPermission("mf.default")) {
-                        WhoCommand.sendInformation(sender, args, factions);
+                        WhoCommand command = new WhoCommand(this);
+                        command.sendInformation(sender, args);
                     }
                     else {
                         sender.sendMessage(ChatColor.RED + "Sorry! You need the following permission to use this command: 'mf.who'");
@@ -610,7 +631,8 @@ public class Main extends JavaPlugin implements Listener {
                 // ally command
                 if (args[0].equalsIgnoreCase("ally")) {
                     if (sender.hasPermission("mf.ally") || sender.hasPermission("mf.default")) {
-                        AllyCommand.requestAlliance(sender, args, factions);
+                        AllyCommand command = new AllyCommand(this);
+                        command.requestAlliance(sender, args);
                     }
                     else {
                         sender.sendMessage(ChatColor.RED + "Sorry! You need the following permission to use this command: 'mf.ally'");
@@ -621,7 +643,8 @@ public class Main extends JavaPlugin implements Listener {
                 // breakalliance command
                 if (args[0].equalsIgnoreCase("breakalliance")) {
                     if (sender.hasPermission("mf.breakalliance") || sender.hasPermission("mf.default")) {
-                        BreakAllianceCommand.breakAlliance(sender, args, factions);
+                        BreakAllianceCommand command = new BreakAllianceCommand(this);
+                        command.breakAlliance(sender, args);
                     }
                     else {
                         sender.sendMessage(ChatColor.RED + "Sorry! You need the following permission to use this command: 'mf.breakalliance'");

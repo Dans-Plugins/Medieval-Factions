@@ -1,6 +1,7 @@
 package factionsystem.Commands;
 
 import factionsystem.Faction;
+import factionsystem.Main;
 import factionsystem.PlayerPowerRecord;
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
@@ -12,7 +13,13 @@ import static factionsystem.UtilityFunctions.*;
 
 public class JoinCommand {
 
-    public static boolean joinFaction(CommandSender sender, String[] args, ArrayList<Faction> factions, ArrayList<PlayerPowerRecord> powerRecords) {
+    Main main = null;
+
+    public JoinCommand(Main plugin) {
+        main = plugin;
+    }
+
+    public boolean joinFaction(CommandSender sender, String[] args) {
         if (sender instanceof Player) {
             Player player = (Player) sender;
 
@@ -21,13 +28,13 @@ public class JoinCommand {
                 // creating name from arguments 1 to the last one
                 String factionName = createStringFromFirstArgOnwards(args);
 
-                for (Faction faction : factions) {
+                for (Faction faction : main.factions) {
                     if (faction.getName().equalsIgnoreCase(factionName)) {
                         if (faction.isInvited(player.getName())) {
 
                             // join if player isn't in a faction already
-                            if (!(isInFaction(player.getName(), factions))) {
-                                faction.addMember(player.getName(), getPlayersPowerRecord(player.getName(), powerRecords).getPowerLevel());
+                            if (!(isInFaction(player.getName(), main.factions))) {
+                                faction.addMember(player.getName(), getPlayersPowerRecord(player.getName(), main.playerPowerRecords).getPowerLevel());
                                 faction.uninvite(player.getName());
                                 try {
                                     sendAllPlayersInFactionMessage(faction, ChatColor.GREEN + player.getName() + " has joined " + faction.getName());

@@ -2,6 +2,7 @@ package factionsystem.Commands;
 
 import factionsystem.ClaimedChunk;
 import factionsystem.Faction;
+import factionsystem.Main;
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
@@ -11,15 +12,22 @@ import java.util.ArrayList;
 import static factionsystem.UtilityFunctions.*;
 
 public class SetHomeCommand {
-    public static void setHome(CommandSender sender, ArrayList<Faction> factions, ArrayList<ClaimedChunk> claimedChunks) {
+
+    Main main = null;
+
+    public SetHomeCommand(Main plugin) {
+        main = plugin;
+    }
+
+    public void setHome(CommandSender sender) {
         if (sender instanceof Player) {
             Player player = (Player) sender;
-            if (isInFaction(player.getName(), factions)) {
-                Faction playersFaction = getPlayersFaction(player.getName(), factions);
+            if (isInFaction(player.getName(), main.factions)) {
+                Faction playersFaction = getPlayersFaction(player.getName(), main.factions);
                 if (playersFaction.isOwner(player.getName()) || playersFaction.isOfficer(player.getName())) {
 
-                    if (isClaimed(player.getLocation().getChunk(), claimedChunks)) {
-                        ClaimedChunk chunk = getClaimedChunk(player.getLocation().getChunk().getX(), player.getLocation().getChunk().getZ(), claimedChunks);
+                    if (isClaimed(player.getLocation().getChunk(), main.claimedChunks)) {
+                        ClaimedChunk chunk = getClaimedChunk(player.getLocation().getChunk().getX(), player.getLocation().getChunk().getZ(), main.claimedChunks);
                         if (chunk.getHolder().equalsIgnoreCase(playersFaction.getName())) {
                             playersFaction.setFactionHome(player.getLocation());
                             player.sendMessage(ChatColor.GREEN + "Faction home set!");

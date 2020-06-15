@@ -2,6 +2,7 @@ package factionsystem.Commands;
 
 import factionsystem.ClaimedChunk;
 import factionsystem.Faction;
+import factionsystem.Main;
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
@@ -12,14 +13,20 @@ import static factionsystem.UtilityFunctions.*;
 
 public class InfoCommand {
 
-    public static void showInfo(CommandSender sender, String[] args, ArrayList<Faction> factions, ArrayList<ClaimedChunk> chunks) {
+    Main main = null;
+
+    public InfoCommand(Main plugin) {
+        main = plugin;
+    }
+
+    public void showInfo(CommandSender sender, String[] args) {
         if (sender instanceof Player) {
             Player player = (Player) sender;
-            if (isInFaction(player.getName(), factions)) {
+            if (isInFaction(player.getName(), main.factions)) {
                 if (args.length == 1) {
-                    for (Faction faction : factions) {
+                    for (Faction faction : main.factions) {
                         if (faction.isMember(player.getName())) {
-                            sendFactionInfo(player, faction, getChunksClaimedByFaction(faction.getName(), chunks));
+                            sendFactionInfo(player, faction, getChunksClaimedByFaction(faction.getName(), main.claimedChunks));
                         }
                     }
                 }
@@ -28,10 +35,10 @@ public class InfoCommand {
                     String name = createStringFromFirstArgOnwards(args);
 
                     boolean exists = false;
-                    for (Faction faction : factions) {
+                    for (Faction faction : main.factions) {
                         if (faction.getName().equals(name)) {
                             exists = true;
-                            sendFactionInfo(player, faction, getChunksClaimedByFaction(faction.getName(), chunks));
+                            sendFactionInfo(player, faction, getChunksClaimedByFaction(faction.getName(), main.claimedChunks));
                         }
                     }
                     if (!exists) {

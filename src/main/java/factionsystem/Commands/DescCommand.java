@@ -1,6 +1,7 @@
 package factionsystem.Commands;
 
 import factionsystem.Faction;
+import factionsystem.Main;
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
@@ -9,11 +10,17 @@ import java.util.ArrayList;
 
 public class DescCommand {
 
-    public static boolean setDescription(CommandSender sender, String[] args, ArrayList<Faction> factions) {
+    Main main = null;
+
+    public DescCommand(Main plugin) {
+        main = plugin;
+    }
+
+    public boolean setDescription(CommandSender sender, String[] args) {
         if (sender instanceof Player) {
             Player player = (Player) sender;
             boolean owner = false;
-            for (Faction faction : factions) {
+            for (Faction faction : main.factions) {
                 if (faction.isOwner(player.getName())) {
                     owner = true;
                     if (args.length > 1) {

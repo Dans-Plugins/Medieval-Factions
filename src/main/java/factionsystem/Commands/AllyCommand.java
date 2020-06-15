@@ -1,6 +1,7 @@
 package factionsystem.Commands;
 
 import factionsystem.Faction;
+import factionsystem.Main;
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
@@ -11,12 +12,18 @@ import static factionsystem.UtilityFunctions.*;
 
 public class AllyCommand {
 
-    public static void requestAlliance(CommandSender sender, String[] args, ArrayList<Faction> factions) {
+    Main main = null;
+
+    public AllyCommand(Main plugin) {
+        main = plugin;
+    }
+
+    public void requestAlliance(CommandSender sender, String[] args) {
         if (sender instanceof Player) {
             Player player = (Player) sender;
 
-            if (isInFaction(player.getName(), factions)) {
-                Faction playersFaction = getPlayersFaction(player.getName(), factions);
+            if (isInFaction(player.getName(), main.factions)) {
+                Faction playersFaction = getPlayersFaction(player.getName(), main.factions);
 
                 if (playersFaction.isOwner(player.getName()) || playersFaction.isOfficer(player.getName())) {
 
@@ -24,7 +31,7 @@ public class AllyCommand {
 
                     if (args.length > 1) {
                         String targetFactionName = createStringFromFirstArgOnwards(args);
-                        Faction targetFaction = getFaction(targetFactionName, factions);
+                        Faction targetFaction = getFaction(targetFactionName, main.factions);
 
                         if (!playersFaction.getName().equalsIgnoreCase(targetFactionName)) {
 
@@ -46,7 +53,7 @@ public class AllyCommand {
                                             if (playersFaction.isRequestedAlly(targetFactionName) && targetFaction.isRequestedAlly(playersFaction.getName())) {
                                                 // ally factions
                                                 playersFaction.addAlly(targetFactionName);
-                                                getFaction(targetFactionName, factions).addAlly(playersFaction.getName());
+                                                getFaction(targetFactionName, main.factions).addAlly(playersFaction.getName());
                                                 player.sendMessage(ChatColor.GREEN + "Your faction is now allied with " + targetFactionName + "!");
                                                 sendAllPlayersInFactionMessage(targetFaction, ChatColor.GREEN + "Your faction is now allied with " + playersFaction.getName() + "!");
                                             }

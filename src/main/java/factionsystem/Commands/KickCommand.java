@@ -1,6 +1,7 @@
 package factionsystem.Commands;
 
 import factionsystem.Faction;
+import factionsystem.Main;
 import factionsystem.PlayerPowerRecord;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
@@ -14,18 +15,24 @@ import static factionsystem.UtilityFunctions.sendAllPlayersInFactionMessage;
 
 public class KickCommand {
 
-    public static boolean kickPlayer(CommandSender sender, String[] args, ArrayList<Faction> factions, ArrayList<PlayerPowerRecord> powerRecords) {
+    Main main = null;
+
+    public KickCommand(Main plugin) {
+        main = plugin;
+    }
+
+    public boolean kickPlayer(CommandSender sender, String[] args) {
         if (sender instanceof Player) {
             Player player = (Player) sender;
             if (args.length > 1) {
                 boolean owner = false;
-                for (Faction faction : factions) {
+                for (Faction faction : main.factions) {
                     if (faction.isOwner(player.getName()) || faction.isOfficer(player.getName())) {
                         owner = true;
                         if (faction.isMember(args[1])) {
                             if (!(args[1].equalsIgnoreCase(player.getName()))) {
                                 if (!(args[1].equalsIgnoreCase(faction.getOwner()))) {
-                                    faction.removeMember(args[1], getPlayersPowerRecord(player.getName(), powerRecords).getPowerLevel());
+                                    faction.removeMember(args[1], getPlayersPowerRecord(player.getName(), main.playerPowerRecords).getPowerLevel());
                                     try {
                                         sendAllPlayersInFactionMessage(faction, ChatColor.RED + player.getName() + " has been kicked from " + faction.getName());
                                     } catch (Exception ignored) {
