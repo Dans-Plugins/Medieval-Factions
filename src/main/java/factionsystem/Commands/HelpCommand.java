@@ -6,7 +6,7 @@ import org.bukkit.entity.Player;
 
 public class HelpCommand {
 
-    public static boolean sendHelpMessage(CommandSender sender, String[] args) {
+    public boolean sendHelpMessage(CommandSender sender, String[] args) {
 
         if (args.length == 1 || args.length == 0) {
             sendPageOne(sender);

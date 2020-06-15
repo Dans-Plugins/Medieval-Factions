@@ -262,7 +262,8 @@ public class Main extends JavaPlugin implements Listener {
             // no arguments check
             if (args.length == 0) {
                 if (sender.hasPermission("mf.help") || sender.hasPermission("mf.default")) {
-                    HelpCommand.sendHelpMessage(sender, args);
+                    HelpCommand command = new HelpCommand();
+                    command.sendHelpMessage(sender, args);
                 }
                 else {
                     sender.sendMessage(ChatColor.RED + "Sorry! You need the following permission to use this command: 'mf.help'");
@@ -277,7 +278,8 @@ public class Main extends JavaPlugin implements Listener {
                 // help command
                 if (args[0].equalsIgnoreCase("help")) {
                     if (sender.hasPermission("mf.help") || sender.hasPermission("mf.default")) {
-                        HelpCommand.sendHelpMessage(sender, args);
+                        HelpCommand command = new HelpCommand();
+                        command.sendHelpMessage(sender, args);
                     }
                     else {
                         sender.sendMessage(ChatColor.RED + "Sorry! You need the following permission to use this command: 'mf.help'");
