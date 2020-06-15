@@ -32,9 +32,9 @@ public class Main extends JavaPlugin implements Listener {
 
     public static double version = 2.1;
 
-    ArrayList<Faction> factions = new ArrayList<>();
-    ArrayList<ClaimedChunk> claimedChunks = new ArrayList<>();
-    ArrayList<PlayerPowerRecord> playerPowerRecords = new ArrayList<>();
+    public ArrayList<Faction> factions = new ArrayList<>();
+    public ArrayList<ClaimedChunk> claimedChunks = new ArrayList<>();
+    public ArrayList<PlayerPowerRecord> playerPowerRecords = new ArrayList<>();
 
     @Override
     public void onEnable() {
@@ -610,7 +610,8 @@ public class Main extends JavaPlugin implements Listener {
                 // ally command
                 if (args[0].equalsIgnoreCase("ally")) {
                     if (sender.hasPermission("mf.ally") || sender.hasPermission("mf.default")) {
-                        AllyCommand.requestAlliance(sender, args, factions);
+                        AllyCommand command = new AllyCommand(this);
+                        command.requestAlliance(sender, args);
                     }
                     else {
                         sender.sendMessage(ChatColor.RED + "Sorry! You need the following permission to use this command: 'mf.ally'");
