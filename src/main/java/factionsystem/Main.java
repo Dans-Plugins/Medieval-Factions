@@ -30,7 +30,7 @@ import static factionsystem.UtilityFunctions.*;
 
 public class Main extends JavaPlugin implements Listener {
 
-    public static double version = 2.1;
+    public static String version = "v2.1.1";
 
     public ArrayList<Faction> factions = new ArrayList<>();
     public ArrayList<ClaimedChunk> claimedChunks = new ArrayList<>();
@@ -608,7 +608,7 @@ public class Main extends JavaPlugin implements Listener {
                 // version command
                 if (args[0].equalsIgnoreCase("version")) {
                     if (sender.hasPermission("mf.version") || sender.hasPermission("mf.default")) {
-                        sender.sendMessage(ChatColor.AQUA + "Medieval-Factions-v" + version);
+                        sender.sendMessage(ChatColor.AQUA + "Medieval-Factions-" + version);
                     }
                     else {
                         sender.sendMessage(ChatColor.RED + "Sorry! You need the following permission to use this command: 'mf.version'");
