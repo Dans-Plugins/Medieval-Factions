@@ -388,7 +388,8 @@ public class Main extends JavaPlugin implements Listener {
                 // leave commmand
                 if (args[0].equalsIgnoreCase("leave")) {
                     if (sender.hasPermission("mf.leave") || sender.hasPermission("mf.default")) {
-                        LeaveCommand.leaveFaction(sender, factions, claimedChunks, playerPowerRecords);
+                        LeaveCommand command = new LeaveCommand(this);
+                        command.leaveFaction(sender);
                     }
                     else {
                         sender.sendMessage(ChatColor.RED + "Sorry! You need the following permission to use this command: 'mf.leave'");
