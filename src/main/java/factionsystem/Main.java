@@ -300,7 +300,8 @@ public class Main extends JavaPlugin implements Listener {
                 // list command
                 if  (args[0].equalsIgnoreCase("list")) {
                     if (sender.hasPermission("mf.list") || sender.hasPermission("mf.default")) {
-                        ListCommand.listFactions(sender, factions);
+                        ListCommand command = new ListCommand(this);
+                        command.listFactions(sender);
                     }
                     else {
                         sender.sendMessage(ChatColor.RED + "Sorry! You need the following permission to use this command: 'mf.list'");
