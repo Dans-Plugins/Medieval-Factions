@@ -622,7 +622,8 @@ public class Main extends JavaPlugin implements Listener {
                 // breakalliance command
                 if (args[0].equalsIgnoreCase("breakalliance")) {
                     if (sender.hasPermission("mf.breakalliance") || sender.hasPermission("mf.default")) {
-                        BreakAllianceCommand.breakAlliance(sender, args, factions);
+                        BreakAllianceCommand command = new BreakAllianceCommand(this);
+                        command.breakAlliance(sender, args);
                     }
                     else {
                         sender.sendMessage(ChatColor.RED + "Sorry! You need the following permission to use this command: 'mf.breakalliance'");
