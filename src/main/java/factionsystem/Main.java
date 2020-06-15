@@ -572,7 +572,8 @@ public class Main extends JavaPlugin implements Listener {
                 // power command
                 if  (args[0].equalsIgnoreCase("power")) {
                     if (sender.hasPermission("mf.power") || sender.hasPermission("mf.default")) {
-                        PowerCommand.powerCheck(sender, playerPowerRecords);
+                        PowerCommand command = new PowerCommand(this);
+                        command.powerCheck(sender);
                     }
                     else {
                         sender.sendMessage(ChatColor.RED + "Sorry! You need the following permission to use this command: 'mf.power'");
