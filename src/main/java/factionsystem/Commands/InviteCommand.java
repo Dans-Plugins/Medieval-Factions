@@ -1,6 +1,7 @@
 package factionsystem.Commands;
 
 import factionsystem.Faction;
+import factionsystem.Main;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
@@ -12,17 +13,23 @@ import static factionsystem.UtilityFunctions.isInFaction;
 
 public class InviteCommand {
 
-    public static boolean invitePlayer(CommandSender sender, String[] args, ArrayList<Faction> factions) {
+    Main main = null;
+
+    public InviteCommand(Main plugin) {
+        main = plugin;
+    }
+
+    public boolean invitePlayer(CommandSender sender, String[] args) {
         if (sender instanceof Player) {
             Player player = (Player) sender;
 
-            if (isInFaction(player.getName(), factions)) {
-                for (Faction faction : factions) {
+            if (isInFaction(player.getName(), main.factions)) {
+                for (Faction faction : main.factions) {
                     if (faction.isOwner(player.getName()) || faction.isOfficer(player.getName())) {
                         if (args.length > 1) {
 
                             // invite if player isn't in a faction already
-                            if (!(isInFaction(args[1], factions))) {
+                            if (!(isInFaction(args[1], main.factions))) {
                                 faction.invite(args[1]);
                                 try {
                                     Player target = Bukkit.getServer().getPlayer(args[1]);
