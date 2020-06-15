@@ -619,7 +619,8 @@ public class Main extends JavaPlugin implements Listener {
                 // who command
                 if (args[0].equalsIgnoreCase("who")) {
                     if (sender.hasPermission("mf.who") || sender.hasPermission("mf.default")) {
-                        WhoCommand.sendInformation(sender, args, factions);
+                        WhoCommand command = new WhoCommand(this);
+                        command.sendInformation(sender, args);
                     }
                     else {
                         sender.sendMessage(ChatColor.RED + "Sorry! You need the following permission to use this command: 'mf.who'");
