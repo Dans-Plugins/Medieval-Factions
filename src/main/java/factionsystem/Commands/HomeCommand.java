@@ -35,8 +35,13 @@ public class HomeCommand {
                     getServer().getScheduler().runTaskLater(main, new Runnable() {
                         @Override
                         public void run() {
-                            if (initialLocation.distance(player.getLocation()) == 0) {
+                            if (initialLocation.getX() == player.getLocation().getX() &&
+                                initialLocation.getY() == player.getLocation().getY() &&
+                                initialLocation.getZ() == player.getLocation().getZ()) {
+
+                                // teleport the player
                                 player.teleport(playersFaction.getFactionHome());
+
                             }
                             else {
                                 player.sendMessage(ChatColor.RED + "Movement Detected. Teleport cancelled.");
