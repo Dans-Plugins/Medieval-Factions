@@ -492,6 +492,10 @@ public class Main extends JavaPlugin implements Listener {
                                 if (faction.isOwner(player.getName())) {
                                     removeAllClaimedChunks(faction.getName(), claimedChunks);
                                     player.sendMessage(ChatColor.GREEN + "All land unclaimed.");
+
+                                    // remove faction home
+                                    faction.setFactionHome(null);
+                                    sendAllPlayersInFactionMessage(faction, ChatColor.RED + "Your faction home has been removed!");
                                 }
                             }
                         }
@@ -822,8 +826,19 @@ public class Main extends JavaPlugin implements Listener {
                                 System.out.println("There was a problem encountered during file deletion.");
                             }
 
+                            // if faction home is located on this chunk
+                            if (getPlayersFaction(player.getName(), factions).getFactionHome().getChunk().getX() == chunk.getChunk().getX() &&
+                                getPlayersFaction(player.getName(), factions).getFactionHome().getChunk().getZ() == chunk.getChunk().getZ()) {
+
+                                // remove faction home
+                                faction.setFactionHome(null);
+                                sendAllPlayersInFactionMessage(faction, ChatColor.RED + "Your faction home has been removed!");
+
+                            }
+
                             claimedChunks.remove(chunk);
                             player.sendMessage(ChatColor.GREEN + "Land unclaimed.");
+
                             return;
                         }
                         else {
