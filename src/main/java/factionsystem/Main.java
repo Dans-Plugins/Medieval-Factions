@@ -1,6 +1,7 @@
 package factionsystem;
 
 import factionsystem.Commands.*;
+import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Chunk;
 import org.bukkit.block.Block;
@@ -39,6 +40,8 @@ public class Main extends JavaPlugin implements Listener {
     @Override
     public void onEnable() {
         System.out.println("Medieval Factions plugin enabling....");
+
+        schedulePowerIncrease();
 
         this.getServer().getPluginManager().registerEvents(this, this);
 
@@ -1053,5 +1056,27 @@ public class Main extends JavaPlugin implements Listener {
         if (isInFaction(player.getName(), factions)) {
             getPlayersFaction(player.getName(), factions).subtractPower();
         }
+    }
+
+    public void schedulePowerIncrease() {
+        System.out.println("Scheduling hourly power increase...");
+        int delay = 0;
+        int secondsUntilRepeat = 60 * 60;
+        Bukkit.getScheduler().scheduleSyncRepeatingTask(this, new Runnable() {
+            @Override
+            public void run() {
+                System.out.println("Medieval Factions is increasing the power of every player by 1 if their power is below 10. This will happen hourly.");
+                for (PlayerPowerRecord powerRecord : playerPowerRecords) {
+                    try {
+                        if (powerRecord.getPowerLevel() < 10) {
+                            powerRecord.increasePower();
+                            Bukkit.getServer().getPlayer(powerRecord.getPlayerName()).sendMessage(ChatColor.GREEN + "You feel stronger. Your power has increased.");
+                        }
+                    } catch (Exception ignored) {
+                        // player offline
+                    }
+                }
+            }
+        }, delay, secondsUntilRepeat);
     }
 }

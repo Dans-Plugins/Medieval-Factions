@@ -10,6 +10,7 @@ import org.bukkit.entity.Player;
 import java.util.ArrayList;
 
 import static factionsystem.UtilityFunctions.isInFaction;
+import static org.bukkit.Bukkit.getServer;
 
 public class InviteCommand {
 
@@ -38,6 +39,23 @@ public class InviteCommand {
 
                                 }
                                 player.sendMessage(ChatColor.GREEN + "Invitation sent!");
+
+                                int seconds = 60 * 60 * 24;
+
+                                // make invitation expire in 24 hours, if server restarts it also expires since invites aren't saved
+                                getServer().getScheduler().runTaskLater(main, new Runnable() {
+                                    @Override
+                                    public void run() {
+                                        faction.uninvite(args[1]);
+                                        try {
+                                            Player target = Bukkit.getServer().getPlayer(args[1]);
+                                            target.sendMessage(ChatColor.RED + "Your invitation to " + faction.getName() + " has expired!.");
+                                        } catch (Exception ignored) {
+                                            // player offline
+                                        }
+                                    }
+                                }, seconds * 20);
+
                                 return true;
                             }
                             else {
