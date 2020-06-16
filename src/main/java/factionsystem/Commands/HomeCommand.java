@@ -3,6 +3,7 @@ package factionsystem.Commands;
 import factionsystem.Faction;
 import factionsystem.Main;
 import org.bukkit.ChatColor;
+import org.bukkit.Location;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
@@ -29,10 +30,18 @@ public class HomeCommand {
                     player.sendMessage(ChatColor.GREEN + "Teleporting in 3 seconds...");
                     int seconds = 3;
 
+                    Location initialLocation = player.getLocation();
+
                     getServer().getScheduler().runTaskLater(main, new Runnable() {
                         @Override
                         public void run() {
-                            player.teleport(playersFaction.getFactionHome());
+                            if (initialLocation.distance(player.getLocation()) == 0) {
+                                player.teleport(playersFaction.getFactionHome());
+                            }
+                            else {
+                                player.sendMessage(ChatColor.RED + "Movement Detected. Teleport cancelled.");
+                            }
+
                         }
                     }, seconds * 20);
 
