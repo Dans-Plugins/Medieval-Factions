@@ -256,7 +256,7 @@ public class Main extends JavaPlugin implements Listener {
 
                 for (int i = 0; i < playerPowerRecords.size(); i++) {
                     if (playerPowerRecords.get(i).getPlayerName() == temp.getPlayerName()) {
-                        claimedChunks.remove(i);
+                        playerPowerRecords.remove(i);
                         break;
                     }
                 }
