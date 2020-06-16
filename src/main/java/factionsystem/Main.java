@@ -490,12 +490,13 @@ public class Main extends JavaPlugin implements Listener {
                             Player player = (Player) sender;
                             for (Faction faction : factions) {
                                 if (faction.isOwner(player.getName())) {
-                                    removeAllClaimedChunks(faction.getName(), claimedChunks);
-                                    player.sendMessage(ChatColor.GREEN + "All land unclaimed.");
-
                                     // remove faction home
                                     faction.setFactionHome(null);
                                     sendAllPlayersInFactionMessage(faction, ChatColor.RED + "Your faction home has been removed!");
+
+                                    // remove claimed chunks
+                                    removeAllClaimedChunks(faction.getName(), claimedChunks);
+                                    player.sendMessage(ChatColor.GREEN + "All land unclaimed.");
                                 }
                             }
                         }
