@@ -216,6 +216,7 @@ public class Main extends JavaPlugin implements Listener {
             while (loadReader.hasNextLine()) {
                 String nextName = loadReader.nextLine();
                 ClaimedChunk temp = new ClaimedChunk(); // uses no-parameter constructor since load provides chunk
+                temp.load(nextName); // provides owner field among other things
 
                 // existence check
                 for (int i = 0; i < claimedChunks.size(); i++) {
@@ -225,8 +226,6 @@ public class Main extends JavaPlugin implements Listener {
                         break;
                     }
                 }
-
-                temp.load(nextName); // provides owner field among other things
 
                 claimedChunks.add(temp);
 
@@ -253,6 +252,7 @@ public class Main extends JavaPlugin implements Listener {
             while (loadReader.hasNextLine()) {
                 String nextName = loadReader.nextLine();
                 PlayerPowerRecord temp = new PlayerPowerRecord(); // uses no-parameter constructor since load provides name
+                temp.load(nextName); // provides power field among other things
 
                 for (int i = 0; i < playerPowerRecords.size(); i++) {
                     if (playerPowerRecords.get(i).getPlayerName() == temp.getPlayerName()) {
@@ -260,9 +260,6 @@ public class Main extends JavaPlugin implements Listener {
                         break;
                     }
                 }
-
-
-                temp.load(nextName); // provides power field among other things
 
                 playerPowerRecords.add(temp);
             }
