@@ -255,7 +255,7 @@ public class Main extends JavaPlugin implements Listener {
                 temp.load(nextName); // provides power field among other things
 
                 for (int i = 0; i < playerPowerRecords.size(); i++) {
-                    if (playerPowerRecords.get(i).getPlayerName().equalsIgnoreCase(temp.getPlayerName()) {
+                    if (playerPowerRecords.get(i).getPlayerName().equalsIgnoreCase(temp.getPlayerName())) {
                         playerPowerRecords.remove(i);
                         break;
                     }
