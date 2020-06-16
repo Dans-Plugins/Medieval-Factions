@@ -10,6 +10,7 @@ import java.util.ArrayList;
 
 import static factionsystem.UtilityFunctions.getPlayersFaction;
 import static factionsystem.UtilityFunctions.isInFaction;
+import static org.bukkit.Bukkit.getServer;
 
 public class HomeCommand {
 
@@ -25,8 +26,16 @@ public class HomeCommand {
             if (isInFaction(player.getName(), main.factions)) {
                 Faction playersFaction = getPlayersFaction(player.getName(), main.factions);
                 if (playersFaction.getFactionHome() != null) {
-                    player.sendMessage(ChatColor.GREEN + "Teleporting.");
-                    player.teleport(playersFaction.getFactionHome());
+                    player.sendMessage(ChatColor.GREEN + "Teleporting in 3 seconds...");
+                    int seconds = 3;
+
+                    getServer().getScheduler().runTaskLater(main, new Runnable() {
+                        @Override
+                        public void run() {
+                            player.teleport(playersFaction.getFactionHome());
+                        }
+                    }, seconds * 20);
+
                 }
                 else {
                     player.sendMessage(ChatColor.RED + "The faction home isn't set yet.");
