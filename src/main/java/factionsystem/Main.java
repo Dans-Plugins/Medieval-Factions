@@ -1,6 +1,7 @@
 package factionsystem;
 
 import factionsystem.Commands.*;
+import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Chunk;
 import org.bukkit.block.Block;
@@ -30,7 +31,7 @@ import static factionsystem.UtilityFunctions.*;
 
 public class Main extends JavaPlugin implements Listener {
 
-    public static String version = "v2.1.1";
+    public static String version = "v2.2";
 
     public ArrayList<Faction> factions = new ArrayList<>();
     public ArrayList<ClaimedChunk> claimedChunks = new ArrayList<>();
@@ -39,6 +40,8 @@ public class Main extends JavaPlugin implements Listener {
     @Override
     public void onEnable() {
         System.out.println("Medieval Factions plugin enabling....");
+
+        schedulePowerIncrease();
 
         this.getServer().getPluginManager().registerEvents(this, this);
 
@@ -489,6 +492,10 @@ public class Main extends JavaPlugin implements Listener {
                                 if (faction.isOwner(player.getName())) {
                                     removeAllClaimedChunks(faction.getName(), claimedChunks);
                                     player.sendMessage(ChatColor.GREEN + "All land unclaimed.");
+
+                                    // remove faction home
+                                    faction.setFactionHome(null);
+                                    sendAllPlayersInFactionMessage(faction, ChatColor.RED + "Your faction home has been removed!");
                                 }
                             }
                         }
@@ -819,8 +826,19 @@ public class Main extends JavaPlugin implements Listener {
                                 System.out.println("There was a problem encountered during file deletion.");
                             }
 
+                            // if faction home is located on this chunk
+                            if (getPlayersFaction(player.getName(), factions).getFactionHome().getChunk().getX() == chunk.getChunk().getX() &&
+                                getPlayersFaction(player.getName(), factions).getFactionHome().getChunk().getZ() == chunk.getChunk().getZ()) {
+
+                                // remove faction home
+                                faction.setFactionHome(null);
+                                sendAllPlayersInFactionMessage(faction, ChatColor.RED + "Your faction home has been removed!");
+
+                            }
+
                             claimedChunks.remove(chunk);
                             player.sendMessage(ChatColor.GREEN + "Land unclaimed.");
+
                             return;
                         }
                         else {
@@ -1053,5 +1071,27 @@ public class Main extends JavaPlugin implements Listener {
         if (isInFaction(player.getName(), factions)) {
             getPlayersFaction(player.getName(), factions).subtractPower();
         }
+    }
+
+    public void schedulePowerIncrease() {
+        System.out.println("Scheduling hourly power increase...");
+        int delay = 0;
+        int secondsUntilRepeat = 60 * 60;
+        Bukkit.getScheduler().scheduleSyncRepeatingTask(this, new Runnable() {
+            @Override
+            public void run() {
+                System.out.println("Medieval Factions is increasing the power of every player by 1 if their power is below 10. This will happen hourly.");
+                for (PlayerPowerRecord powerRecord : playerPowerRecords) {
+                    try {
+                        if (powerRecord.getPowerLevel() < 10) {
+                            powerRecord.increasePower();
+                            Bukkit.getServer().getPlayer(powerRecord.getPlayerName()).sendMessage(ChatColor.GREEN + "You feel stronger. Your power has increased.");
+                        }
+                    } catch (Exception ignored) {
+                        // player offline
+                    }
+                }
+            }
+        }, delay, secondsUntilRepeat);
     }
 }
