@@ -664,7 +664,7 @@ public class Main extends JavaPlugin implements Listener {
                 // forcesave command
                 if (args[0].equalsIgnoreCase("forcesave")) {
                     if (sender.hasPermission("mf.forcesave") || sender.hasPermission("mf.admin")) {
-                        System.out.println("Medieval Factions plugin is saving...");
+                        sender.sendMessage(ChatColor.GREEN + "Medieval Factions plugin is saving...");
                         saveFactionNames();
                         saveFactions();
                         saveClaimedChunkFilenames();
@@ -680,7 +680,7 @@ public class Main extends JavaPlugin implements Listener {
                 // forceload command
                 if (args[0].equalsIgnoreCase("forceload")) {
                     if (sender.hasPermission("mf.forceload") || sender.hasPermission("mf.admin")) {
-                        System.out.println("Medieval Factions plugin is loading...");
+                        sender.sendMessage(ChatColor.GREEN + "Medieval Factions plugin is loading...");
                         loadFactions();
                         loadClaimedChunks();
                         loadPlayerPowerRecords();
