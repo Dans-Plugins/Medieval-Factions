@@ -1101,8 +1101,10 @@ public class Main extends JavaPlugin implements Listener {
                 for (PlayerPowerRecord powerRecord : playerPowerRecords) {
                     try {
                         if (powerRecord.getPowerLevel() < 10) {
-                            powerRecord.increasePower();
-                            Bukkit.getServer().getPlayer(powerRecord.getPlayerName()).sendMessage(ChatColor.GREEN + "You feel stronger. Your power has increased.");
+                            if (Bukkit.getServer().getPlayer(powerRecord.getPlayerName()).isOnline()) {
+                                powerRecord.increasePower();
+                                Bukkit.getServer().getPlayer(powerRecord.getPlayerName()).sendMessage(ChatColor.GREEN + "You feel stronger. Your power has increased.");
+                            }
                         }
                     } catch (Exception ignored) {
                         // player offline
