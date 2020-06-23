@@ -27,7 +27,7 @@ public class PlayerPowerRecord {
     }
 
     public boolean increasePower() {
-        if (powerLevel < 10) {
+        if (powerLevel < 20) {
             powerLevel++;
             return true;
         }

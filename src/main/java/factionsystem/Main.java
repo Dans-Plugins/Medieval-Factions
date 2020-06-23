@@ -1100,7 +1100,7 @@ public class Main extends JavaPlugin implements Listener {
                 System.out.println("Medieval Factions is increasing the power of every player by 1 if their power is below 10. This will happen hourly.");
                 for (PlayerPowerRecord powerRecord : playerPowerRecords) {
                     try {
-                        if (powerRecord.getPowerLevel() < 10) {
+                        if (powerRecord.getPowerLevel() < 20) {
                             if (Bukkit.getServer().getPlayer(powerRecord.getPlayerName()).isOnline()) {
                                 powerRecord.increasePower();
                                 Bukkit.getServer().getPlayer(powerRecord.getPlayerName()).sendMessage(ChatColor.GREEN + "You feel stronger. Your power has increased.");
