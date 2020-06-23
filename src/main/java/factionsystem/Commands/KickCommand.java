@@ -34,7 +34,7 @@ public class KickCommand {
                                 if (!(args[1].equalsIgnoreCase(faction.getOwner()))) {
                                     faction.removeMember(args[1], getPlayersPowerRecord(player.getName(), main.playerPowerRecords).getPowerLevel());
                                     try {
-                                        sendAllPlayersInFactionMessage(faction, ChatColor.RED + player.getName() + " has been kicked from " + faction.getName());
+                                        sendAllPlayersInFactionMessage(faction, ChatColor.RED + args[1] + " has been kicked from " + faction.getName());
                                     } catch (Exception ignored) {
 
                                     }
