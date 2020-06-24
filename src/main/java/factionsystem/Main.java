@@ -706,6 +706,17 @@ public class Main extends JavaPlugin implements Listener {
                     }
                 }
 
+                // reset power levels command
+                if (args[0].equalsIgnoreCase("resetpowerlevels")) {
+                    if (sender.hasPermission("mf.resetpowerlevels") || sender.hasPermission("mf.admin")) {
+                        sender.sendMessage(ChatColor.GREEN + "Power level resetting...");
+                        resetPowerRecords();
+                    }
+                    else {
+                        sender.sendMessage(ChatColor.RED + "Sorry! You need the following permission to use this command: 'mf.resetpowerlevels'");
+                    }
+                }
+
             }
         }
         return false;
@@ -1118,6 +1129,21 @@ public class Main extends JavaPlugin implements Listener {
     }
 
     public void resetPowerRecords() {
+        // reset individual records
+        System.out.println("Resetting individual power records.");
+        for (PlayerPowerRecord record : playerPowerRecords) {
+            record.setPowerLevel(10);
+        }
+
+        // reset faction cumulative power levels
+        System.out.println("Resetting faction cumulative power records.");
+        for (Faction faction : factions) {
+            int sum = 0;
+            for (String playerName : faction.getMemberArrayList()) {
+                sum = sum + getPlayersPowerRecord(playerName, playerPowerRecords).getPowerLevel();
+            }
+            faction.setCumulativePowerLevel(sum);
+        }
 
     }
 }
