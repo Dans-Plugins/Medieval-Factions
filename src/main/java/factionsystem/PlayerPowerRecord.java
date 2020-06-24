@@ -50,6 +50,10 @@ public class PlayerPowerRecord {
         return powerLevel;
     }
 
+    public void setPowerLevel(int newPower) {
+        powerLevel = newPower;
+    }
+
     public void save() {
         try {
             File saveFolder = new File("./plugins/medievalfactions/player-power-records/");
