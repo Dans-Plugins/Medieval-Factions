@@ -111,7 +111,7 @@ public class Faction {
     }
 
     public void addPower() {
-        if (cumulativePowerLevel < members.size() * 10) {
+        if (cumulativePowerLevel < members.size() * 20) {
             cumulativePowerLevel++;
         }
     }
