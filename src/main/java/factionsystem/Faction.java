@@ -269,7 +269,29 @@ public class Faction {
         return membership;
     }
 
-    boolean save(ArrayList<Faction> factions) {
+    public void changeName(String newName) {
+        // record old name
+        String oldName = name;
+
+        // rename
+        name = newName;
+
+        // delete old save file
+        System.out.println("Attempting to delete file plugins/medievalfactions/" + oldName + ".txt");
+        try {
+            File fileToDelete = new File("plugins/medievalfactions/" + oldName + ".txt");
+            if (fileToDelete.delete()) {
+                System.out.println("Success. File deleted.");
+            }
+            else {
+                System.out.println("There was a problem deleting the file.");
+            }
+        } catch(Exception e) {
+            System.out.println("There was a problem encountered during file deletion.");
+        }
+    }
+
+    public boolean save(ArrayList<Faction> factions) {
         try {
             File saveFolder = new File("./plugins/medievalfactions/");
             if (!saveFolder.exists()) {
@@ -349,7 +371,7 @@ public class Faction {
 
     }
 
-    boolean load(String filename) {
+    public boolean load(String filename) {
         try {
             File loadFile = new File("./plugins/medievalfactions/" + filename);
             Scanner loadReader = new Scanner(loadFile);

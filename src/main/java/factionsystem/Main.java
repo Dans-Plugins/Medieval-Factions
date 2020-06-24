@@ -675,6 +675,12 @@ public class Main extends JavaPlugin implements Listener {
                     }
                 }
 
+                // rename command
+                if (args[0].equalsIgnoreCase("rename")) {
+                    RenameCommand command = new RenameCommand(this);
+                    command.renameFaction(sender, args);
+                }
+
                 // admin commands ----------------------------------------------------------------------------------
 
                 // forcesave command
