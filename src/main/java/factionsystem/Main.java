@@ -1103,7 +1103,9 @@ public class Main extends JavaPlugin implements Listener {
                         if (powerRecord.getPowerLevel() < 20) {
                             if (Bukkit.getServer().getPlayer(powerRecord.getPlayerName()).isOnline()) {
                                 powerRecord.increasePower();
-                                getPlayersFaction(powerRecord.getPlayerName(), factions).addPower();
+                                if (isInFaction(powerRecord.getPlayerName(), factions)) {
+                                    getPlayersFaction(powerRecord.getPlayerName(), factions).addPower();
+                                }
                                 Bukkit.getServer().getPlayer(powerRecord.getPlayerName()).sendMessage(ChatColor.GREEN + "You feel stronger. Your power has increased.");
                             }
                         }
@@ -1113,5 +1115,9 @@ public class Main extends JavaPlugin implements Listener {
                 }
             }
         }, delay, secondsUntilRepeat * 20);
+    }
+
+    public void resetPowerRecords() {
+
     }
 }
