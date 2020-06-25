@@ -17,7 +17,7 @@ public class HelpCommand {
                 sendPageOne(sender);
             }
             if (args[1].equalsIgnoreCase("2")) {
-                sender.sendMessage(ChatColor.BOLD + "" + ChatColor.AQUA + "\n----------\n" + "Medieval Factions Commands - Page 2/5" + "\n----------\n");
+                sender.sendMessage(ChatColor.BOLD + "" + ChatColor.AQUA + "\n----------\n" + "Medieval Factions Commands - Page 2/6" + "\n----------\n");
                 sender.sendMessage(ChatColor.AQUA + "/mf create - Create a new faction." + "\n");
                 sender.sendMessage(ChatColor.AQUA + "/mf invite - Invite a player to your faction." + "\n");
                 sender.sendMessage(ChatColor.AQUA + "/mf desc - Set your faction description." + "\n");
@@ -26,7 +26,7 @@ public class HelpCommand {
                 sender.sendMessage(ChatColor.AQUA + "/mf disband - Disband your faction (must be owner)." + "\n");
             }
             if (args[1].equalsIgnoreCase("3")) {
-                sender.sendMessage(ChatColor.BOLD + "" + ChatColor.AQUA + "\n----------\n" + "Medieval Factions Commands - Page 3/5" + "\n----------\n");
+                sender.sendMessage(ChatColor.BOLD + "" + ChatColor.AQUA + "\n----------\n" + "Medieval Factions Commands - Page 3/6" + "\n----------\n");
                 sender.sendMessage(ChatColor.AQUA + "/mf declarewar - Declare war against another faction." + "\n");
                 sender.sendMessage(ChatColor.AQUA + "/mf makepeace - Send peace offer to another faction." + "\n");
                 sender.sendMessage(ChatColor.AQUA + "/mf claim - Claim land for your faction." + "\n");
@@ -35,7 +35,7 @@ public class HelpCommand {
                 sender.sendMessage(ChatColor.AQUA + "/mf checkclaim - Check if land is claimed." + "\n");
             }
             if (args[1].equalsIgnoreCase("4")) {
-                sender.sendMessage(ChatColor.BOLD + "" + ChatColor.AQUA + "\n----------\n" + "Medieval Factions Commands - Page 4/5" + "\n----------\n");
+                sender.sendMessage(ChatColor.BOLD + "" + ChatColor.AQUA + "\n----------\n" + "Medieval Factions Commands - Page 4/6" + "\n----------\n");
                 sender.sendMessage(ChatColor.AQUA + "/mf autoclaim - Toggle auto claim, making land claiming easier." + "\n");
                 sender.sendMessage(ChatColor.AQUA + "/mf promote - Promote a player to officer status." + "\n");
                 sender.sendMessage(ChatColor.AQUA + "/mf demote - Demote an officer to member status." + "\n");
@@ -44,13 +44,17 @@ public class HelpCommand {
                 sender.sendMessage(ChatColor.AQUA + "/mf home - Teleport to your faction home." + "\n");
             }
             if (args[1].equalsIgnoreCase("5")) {
-                sender.sendMessage(ChatColor.BOLD + "" + ChatColor.AQUA + "\n----------\n" + "Medieval Factions Commands - Page 5/5" + "\n----------\n");
+                sender.sendMessage(ChatColor.BOLD + "" + ChatColor.AQUA + "\n----------\n" + "Medieval Factions Commands - Page 5/6" + "\n----------\n");
                 sender.sendMessage(ChatColor.AQUA + "/mf version - Check plugin version." + "\n");
                 sender.sendMessage(ChatColor.AQUA + "/mf who - View the faction info a specific player." + "\n");
                 sender.sendMessage(ChatColor.AQUA + "/mf ally - Attempt to ally with a faction." + "\n");
                 sender.sendMessage(ChatColor.AQUA + "/mf breakalliance - Break an alliance with a faction." + "\n");
                 sender.sendMessage(ChatColor.AQUA + "/mf forcesave - Force the plugin to save." + "\n");
                 sender.sendMessage(ChatColor.AQUA + "/mf forceload - Force the plugin to load." + "\n");
+            }
+            if (args[1].equalsIgnoreCase("6")) {
+                sender.sendMessage(ChatColor.BOLD + "" + ChatColor.AQUA + "\n----------\n" + "Medieval Factions Commands - Page 6/6" + "\n----------\n");
+                sender.sendMessage(ChatColor.AQUA + "/mf resetpowerlevels - Reset player power records and faction cumulative power levels." + "\n");
             }
         }
         sender.sendMessage(ChatColor.AQUA + "----------\n");

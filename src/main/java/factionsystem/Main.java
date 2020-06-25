@@ -31,7 +31,7 @@ import static factionsystem.UtilityFunctions.*;
 
 public class Main extends JavaPlugin implements Listener {
 
-    public static String version = "v2.2.4";
+    public static String version = "v2.3";
 
     public ArrayList<Faction> factions = new ArrayList<>();
     public ArrayList<ClaimedChunk> claimedChunks = new ArrayList<>();
@@ -42,12 +42,11 @@ public class Main extends JavaPlugin implements Listener {
         System.out.println("Medieval Factions plugin enabling....");
 
         schedulePowerIncrease();
+        scheduleAutosave();
 
         this.getServer().getPluginManager().registerEvents(this, this);
 
-        loadFactions();
-        loadClaimedChunks();
-        loadPlayerPowerRecords();
+        load();
 
         System.out.println("Medieval Factions plugin enabled.");
     }
@@ -56,14 +55,18 @@ public class Main extends JavaPlugin implements Listener {
     public void onDisable(){
         System.out.println("Medieval Factions plugin disabling....");
 
+        save();
+
+        System.out.println("Medieval Factions plugin disabled.");
+    }
+
+    public void save() {
         saveFactionNames();
         saveFactions();
         saveClaimedChunkFilenames();
         saveClaimedChunks();
         savePlayerPowerRecordFilenames();
         savePlayerPowerRecords();
-
-        System.out.println("Medieval Factions plugin disabled.");
     }
 
     public void saveFactionNames() {
@@ -171,6 +174,12 @@ public class Main extends JavaPlugin implements Listener {
             record.save();
         }
         System.out.println("Player power records saved.");
+    }
+
+    public void load() {
+        loadFactions();
+        loadClaimedChunks();
+        loadPlayerPowerRecords();
     }
 
     public void loadFactions() {
@@ -687,12 +696,7 @@ public class Main extends JavaPlugin implements Listener {
                 if (args[0].equalsIgnoreCase("forcesave")) {
                     if (sender.hasPermission("mf.forcesave") || sender.hasPermission("mf.admin")) {
                         sender.sendMessage(ChatColor.GREEN + "Medieval Factions plugin is saving...");
-                        saveFactionNames();
-                        saveFactions();
-                        saveClaimedChunkFilenames();
-                        saveClaimedChunks();
-                        savePlayerPowerRecordFilenames();
-                        savePlayerPowerRecords();
+                        save();
                     }
                     else {
                         sender.sendMessage(ChatColor.RED + "Sorry! You need the following permission to use this command: 'mf.forcesave'");
@@ -703,12 +707,21 @@ public class Main extends JavaPlugin implements Listener {
                 if (args[0].equalsIgnoreCase("forceload")) {
                     if (sender.hasPermission("mf.forceload") || sender.hasPermission("mf.admin")) {
                         sender.sendMessage(ChatColor.GREEN + "Medieval Factions plugin is loading...");
-                        loadFactions();
-                        loadClaimedChunks();
-                        loadPlayerPowerRecords();
+                        load();
                     }
                     else {
                         sender.sendMessage(ChatColor.RED + "Sorry! You need the following permission to use this command: 'mf.forceload'");
+                    }
+                }
+
+                // reset power levels command
+                if (args[0].equalsIgnoreCase("resetpowerlevels")) {
+                    if (sender.hasPermission("mf.resetpowerlevels") || sender.hasPermission("mf.admin")) {
+                        sender.sendMessage(ChatColor.GREEN + "Power level resetting...");
+                        resetPowerRecords();
+                    }
+                    else {
+                        sender.sendMessage(ChatColor.RED + "Sorry! You need the following permission to use this command: 'mf.resetpowerlevels'");
                     }
                 }
 
@@ -1098,8 +1111,8 @@ public class Main extends JavaPlugin implements Listener {
 
     public void schedulePowerIncrease() {
         System.out.println("Scheduling hourly power increase...");
-        int delay = 0;
-        int secondsUntilRepeat = 60 * 60;
+        int delay = 30 * 60; // 30 minutes
+        int secondsUntilRepeat = 60 * 60; // 1 hour
         Bukkit.getScheduler().scheduleSyncRepeatingTask(this, new Runnable() {
             @Override
             public void run() {
@@ -1120,10 +1133,38 @@ public class Main extends JavaPlugin implements Listener {
                     }
                 }
             }
-        }, delay, secondsUntilRepeat * 20);
+        }, delay * 20, secondsUntilRepeat * 20);
+    }
+
+    public void scheduleAutosave() {
+        System.out.println("Scheduling hourly auto save...");
+        int delay = 60 * 60; // 1 hour
+        int secondsUntilRepeat = 60 * 60; // 1 hour
+        Bukkit.getScheduler().scheduleSyncRepeatingTask(this, new Runnable() {
+            @Override
+            public void run() {
+                System.out.println("Medieval Factions is saving. This will happen every hour.");
+                save();
+            }
+        }, delay * 20, secondsUntilRepeat * 20);
     }
 
     public void resetPowerRecords() {
+        // reset individual records
+        System.out.println("Resetting individual power records.");
+        for (PlayerPowerRecord record : playerPowerRecords) {
+            record.setPowerLevel(10);
+        }
+
+        // reset faction cumulative power levels
+        System.out.println("Resetting faction cumulative power records.");
+        for (Faction faction : factions) {
+            int sum = 0;
+            for (String playerName : faction.getMemberArrayList()) {
+                sum = sum + getPlayersPowerRecord(playerName, playerPowerRecords).getPowerLevel();
+            }
+            faction.setCumulativePowerLevel(sum);
+        }
 
     }
 }
