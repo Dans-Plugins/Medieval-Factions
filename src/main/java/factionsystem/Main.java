@@ -31,7 +31,7 @@ import static factionsystem.UtilityFunctions.*;
 
 public class Main extends JavaPlugin implements Listener {
 
-    public static String version = "v2.3";
+    public static String version = "v2.4";
 
     public ArrayList<Faction> factions = new ArrayList<>();
     public ArrayList<ClaimedChunk> claimedChunks = new ArrayList<>();
@@ -682,6 +682,12 @@ public class Main extends JavaPlugin implements Listener {
                     else {
                         sender.sendMessage(ChatColor.RED + "Sorry! You need the following permission to use this command: 'mf.breakalliance'");
                     }
+                }
+
+                // rename command
+                if (args[0].equalsIgnoreCase("rename")) {
+                    RenameCommand command = new RenameCommand(this);
+                    command.renameFaction(sender, args);
                 }
 
                 // admin commands ----------------------------------------------------------------------------------
