@@ -29,3 +29,4 @@ A minecraft plugin for players to use to organize politically.
 -  2.0 'Alliances' update
 -  2.1 'Permissions' update
 -  2.2 'Timers' update
+-  2.3 'Autosave' update
