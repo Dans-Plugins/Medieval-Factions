@@ -1,5 +1,6 @@
 package factionsystem.Commands;
 
+import factionsystem.ClaimedChunk;
 import factionsystem.Faction;
 import factionsystem.Main;
 import org.bukkit.ChatColor;
@@ -21,6 +22,7 @@ public class RenameCommand {
             Player player = (Player) sender;
             if (player.hasPermission("mf.rename") || player.hasPermission("mf.default")) {
                 if (args.length > 1) {
+                    String oldName = getPlayersFaction(player.getName(), main.factions).getName();
                     String newName = createStringFromFirstArgOnwards(args);
 
                     // existence check
@@ -42,6 +44,16 @@ public class RenameCommand {
                             // save faction and faction names
                             playersFaction.save(main.factions);
                             main.saveFactionNames();
+
+                            // change holder of claimed chunks
+                            for (ClaimedChunk chunk : main.claimedChunks) {
+                                if (chunk.getHolder().equalsIgnoreCase(oldName)) {
+                                    chunk.setHolder(newName);
+                                }
+                            }
+
+                            // save claimed chunks
+                            main.saveClaimedChunks();
                         }
                         else {
                             player.sendMessage(ChatColor.RED + "You are not the owner of this faction!");

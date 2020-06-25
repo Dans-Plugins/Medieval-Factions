@@ -4,6 +4,7 @@ import factionsystem.Commands.*;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Chunk;
+import org.bukkit.Location;
 import org.bukkit.block.Block;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
@@ -31,7 +32,7 @@ import static factionsystem.UtilityFunctions.*;
 
 public class Main extends JavaPlugin implements Listener {
 
-    public static String version = "v2.4";
+    public static String version = "v2.4.1";
 
     public ArrayList<Faction> factions = new ArrayList<>();
     public ArrayList<ClaimedChunk> claimedChunks = new ArrayList<>();
@@ -863,13 +864,15 @@ public class Main extends JavaPlugin implements Listener {
                             }
 
                             // if faction home is located on this chunk
-                            if (getPlayersFaction(player.getName(), factions).getFactionHome().getChunk().getX() == chunk.getChunk().getX() &&
-                                getPlayersFaction(player.getName(), factions).getFactionHome().getChunk().getZ() == chunk.getChunk().getZ()) {
+                            Location factionHome = getPlayersFaction(player.getName(), factions).getFactionHome();
+                            if (factionHome != null) {
+                                if (factionHome.getChunk().getX() == chunk.getChunk().getX() && factionHome.getChunk().getZ() == chunk.getChunk().getZ()) {
 
-                                // remove faction home
-                                faction.setFactionHome(null);
-                                sendAllPlayersInFactionMessage(faction, ChatColor.RED + "Your faction home has been removed!");
+                                    // remove faction home
+                                    faction.setFactionHome(null);
+                                    sendAllPlayersInFactionMessage(faction, ChatColor.RED + "Your faction home has been removed!");
 
+                                }
                             }
 
                             claimedChunks.remove(chunk);
