@@ -27,9 +27,14 @@ public class RenameCommand {
                         if (playersFaction.isOwner(player.getName())) {
                             // change name
                             playersFaction.changeName(newName);
+                            player.sendMessage(ChatColor.GREEN + "Faction name changed!");
 
-                            // save faction
+                            // save faction and faction names
                             playersFaction.save(main.factions);
+                            main.saveFactionNames();
+                        }
+                        else {
+                            player.sendMessage(ChatColor.RED + "You are not the owner of this faction!");
                         }
                     }
                 }
