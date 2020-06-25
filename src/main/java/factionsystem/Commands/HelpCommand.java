@@ -63,7 +63,7 @@ public class HelpCommand {
     }
 
     static void sendPageOne(CommandSender sender) {
-        sender.sendMessage(ChatColor.BOLD + "" + ChatColor.AQUA + "\n----------\n" + "Medieval Factions Commands - Page 1/5" + "\n----------\n");
+        sender.sendMessage(ChatColor.BOLD + "" + ChatColor.AQUA + "\n----------\n" + "Medieval Factions Commands - Page 1/6" + "\n----------\n");
         sender.sendMessage(ChatColor.AQUA + "/mf help # - Show lists of useful commands." + "\n");
         sender.sendMessage(ChatColor.AQUA + "/mf list - List all factions on the server." + "\n");
         sender.sendMessage(ChatColor.AQUA + "/mf info - See your faction or another faction's information." + "\n");
