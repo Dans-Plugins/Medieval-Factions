@@ -32,7 +32,7 @@ import static factionsystem.UtilityFunctions.*;
 
 public class Main extends JavaPlugin implements Listener {
 
-    public static String version = "v2.4.1";
+    public static String version = "v2.4.2";
 
     public ArrayList<Faction> factions = new ArrayList<>();
     public ArrayList<ClaimedChunk> claimedChunks = new ArrayList<>();
@@ -784,7 +784,7 @@ public class Main extends JavaPlugin implements Listener {
                     if (playerCoords[0] == chunk.getCoordinates()[0] && playerCoords[1] == chunk.getCoordinates()[1]) {
 
                         // if holder is player's faction
-                        if (chunk.getHolder().equalsIgnoreCase(faction.getName())) {
+                        if (chunk.getHolder().equalsIgnoreCase(faction.getName()) && getPlayersFaction(player.getName(), factions).getAutoClaimStatus() == false) {
                             player.sendMessage(ChatColor.RED + "This land is already claimed by your faction!");
                             return;
                         }
@@ -817,8 +817,10 @@ public class Main extends JavaPlugin implements Listener {
                                 }
                             }
 
+                            if (getPlayersFaction(player.getName(), factions).getAutoClaimStatus() == false) {
+                                player.sendMessage(ChatColor.RED + "This land is already claimed by " + chunk.getHolder());
+                            }
 
-                            player.sendMessage(ChatColor.RED + "This land is already claimed by " + chunk.getHolder());
                             return;
                         }
                     }
@@ -925,8 +927,14 @@ public class Main extends JavaPlugin implements Listener {
                         // if not at demesne limit
                         Faction playersFaction = getPlayersFaction(event.getPlayer().getName(), factions);
                         if (getChunksClaimedByFaction(playersFaction.getName(), claimedChunks) < playersFaction.getCumulativePowerLevel()) {
-                            // add new chunk to claimed chunks
-                            addChunkAtPlayerLocation(event.getPlayer());
+                            int seconds = 1;
+                            getServer().getScheduler().runTaskLater(this, new Runnable() {
+                                @Override
+                                public void run() {
+                                    // add new chunk to claimed chunks
+                                    addChunkAtPlayerLocation(event.getPlayer());
+                                }
+                            }, seconds * 20);
                         }
                         else {
                             event.getPlayer().sendMessage(ChatColor.RED + "You have reached your demesne limit! Invite more players to increase this.");
