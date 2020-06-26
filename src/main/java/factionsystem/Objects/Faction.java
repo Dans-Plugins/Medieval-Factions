@@ -1,4 +1,4 @@
-package factionsystem;
+package factionsystem.Objects;
 
 import org.bukkit.Location;
 import org.bukkit.World;
@@ -35,7 +35,7 @@ public class Faction {
     }
 
     // server constructor
-    Faction(String initialName) {
+    public Faction(String initialName) {
         setName(initialName);
     }
 

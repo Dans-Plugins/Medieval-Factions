@@ -1,16 +1,13 @@
 package factionsystem.Commands;
 
-import factionsystem.ClaimedChunk;
-import factionsystem.Faction;
 import factionsystem.Main;
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
 import java.io.File;
-import java.util.ArrayList;
 
-import static factionsystem.UtilityFunctions.removeAllClaimedChunks;
+import static factionsystem.Utility.UtilityFunctions.removeAllClaimedChunks;
 
 public class DisbandCommand {
 

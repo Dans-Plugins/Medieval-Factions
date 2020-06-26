@@ -1,9 +1,11 @@
 package factionsystem;
 
 import factionsystem.Commands.*;
+import factionsystem.Objects.ClaimedChunk;
+import factionsystem.Objects.Faction;
+import factionsystem.Objects.PlayerPowerRecord;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
-import org.bukkit.Chunk;
 import org.bukkit.Location;
 import org.bukkit.block.Block;
 import org.bukkit.command.Command;
@@ -28,7 +30,7 @@ import java.util.ArrayList;
 import java.util.Objects;
 import java.util.Scanner;
 
-import static factionsystem.UtilityFunctions.*;
+import static factionsystem.Utility.UtilityFunctions.*;
 
 public class Main extends JavaPlugin implements Listener {
 

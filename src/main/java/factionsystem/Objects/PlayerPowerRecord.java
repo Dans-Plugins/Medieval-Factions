@@ -1,4 +1,4 @@
-package factionsystem;
+package factionsystem.Objects;
 
 import java.io.File;
 import java.io.FileNotFoundException;
