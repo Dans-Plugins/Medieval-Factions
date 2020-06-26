@@ -3,6 +3,7 @@ package factionsystem;
 import factionsystem.Commands.*;
 import factionsystem.Objects.ClaimedChunk;
 import factionsystem.Objects.Faction;
+import factionsystem.Objects.LockedBlock;
 import factionsystem.Objects.PlayerPowerRecord;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
@@ -39,6 +40,7 @@ public class Main extends JavaPlugin implements Listener {
     public ArrayList<Faction> factions = new ArrayList<>();
     public ArrayList<ClaimedChunk> claimedChunks = new ArrayList<>();
     public ArrayList<PlayerPowerRecord> playerPowerRecords = new ArrayList<>();
+    public ArrayList<LockedBlock> lockedBlocks = new ArrayList<>();
 
     @Override
     public void onEnable() {

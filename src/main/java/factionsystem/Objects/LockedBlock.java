@@ -7,9 +7,9 @@ public class LockedBlock {
     private String owner = "";
     private String factionName = "";
     private ArrayList<String> accessList = new ArrayList<>();
-    int x = 0;
-    int y = 0;
-    int z = 0;
+    private int x = 0;
+    private int y = 0;
+    private int z = 0;
 
     public LockedBlock(String o, String f, int newX, int newY, int newZ) {
         owner = o;
