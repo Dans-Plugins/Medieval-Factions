@@ -30,6 +30,10 @@ public class LockedBlock {
         accessList.add(owner);
     }
 
+    public LockedBlock() {
+        // server constructor
+    }
+
     public int getX() {
         return x;
     }
