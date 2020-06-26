@@ -1,4 +1,4 @@
-package factionsystem;
+package factionsystem.Objects;
 
 import org.bukkit.Chunk;
 import org.bukkit.World;

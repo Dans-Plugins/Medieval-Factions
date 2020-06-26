@@ -1,17 +1,14 @@
 package factionsystem.Commands;
 
-import factionsystem.Faction;
+import factionsystem.Objects.Faction;
 import factionsystem.Main;
-import factionsystem.PlayerPowerRecord;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
-import java.util.ArrayList;
-
-import static factionsystem.UtilityFunctions.getPlayersPowerRecord;
-import static factionsystem.UtilityFunctions.sendAllPlayersInFactionMessage;
+import static factionsystem.Utility.UtilityFunctions.getPlayersPowerRecord;
+import static factionsystem.Utility.UtilityFunctions.sendAllPlayersInFactionMessage;
 
 public class KickCommand {
 

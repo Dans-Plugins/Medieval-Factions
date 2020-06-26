@@ -1,9 +1,12 @@
 package factionsystem;
 
 import factionsystem.Commands.*;
+import factionsystem.Objects.ClaimedChunk;
+import factionsystem.Objects.Faction;
+import factionsystem.Objects.LockedBlock;
+import factionsystem.Objects.PlayerPowerRecord;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
-import org.bukkit.Chunk;
 import org.bukkit.Location;
 import org.bukkit.block.Block;
 import org.bukkit.command.Command;
@@ -28,15 +31,16 @@ import java.util.ArrayList;
 import java.util.Objects;
 import java.util.Scanner;
 
-import static factionsystem.UtilityFunctions.*;
+import static factionsystem.Utility.UtilityFunctions.*;
 
 public class Main extends JavaPlugin implements Listener {
 
-    public static String version = "v2.4.2";
+    public static String version = "v2.5";
 
     public ArrayList<Faction> factions = new ArrayList<>();
     public ArrayList<ClaimedChunk> claimedChunks = new ArrayList<>();
     public ArrayList<PlayerPowerRecord> playerPowerRecords = new ArrayList<>();
+    public ArrayList<LockedBlock> lockedBlocks = new ArrayList<>();
 
     @Override
     public void onEnable() {
@@ -68,6 +72,8 @@ public class Main extends JavaPlugin implements Listener {
         saveClaimedChunks();
         savePlayerPowerRecordFilenames();
         savePlayerPowerRecords();
+        saveLockedBlockFilenames();
+        saveLockedBlocks();
     }
 
     public void saveFactionNames() {
@@ -177,10 +183,44 @@ public class Main extends JavaPlugin implements Listener {
         System.out.println("Player power records saved.");
     }
 
+    public void saveLockedBlockFilenames() {
+        try {
+            File saveFolder = new File("./plugins/medievalfactions/lockedblocks/");
+            if (!saveFolder.exists()) {
+                saveFolder.mkdir();
+            }
+            File saveFile = new File("./plugins/medievalfactions/lockedblocks/" + "lockedblocks.txt");
+            if (saveFile.createNewFile()) {
+                System.out.println("Save file for locked block filenames created.");
+            } else {
+                System.out.println("Save file for locked block filenames already exists. Overwriting.");
+            }
+
+            FileWriter saveWriter = new FileWriter(saveFile);
+
+            // actual saving takes place here
+            for (LockedBlock block : lockedBlocks) {
+                saveWriter.write(block.getX() + "_" + block.getY() + "_" + block.getZ() + ".txt" + "\n");
+            }
+
+            saveWriter.close();
+
+        } catch (IOException e) {
+            System.out.println("An error occurred while saving locked block filenames.");
+        }
+    }
+
+    public void saveLockedBlocks() {
+        for (LockedBlock block : lockedBlocks) {
+            block.save();
+        }
+    }
+
     public void load() {
         loadFactions();
         loadClaimedChunks();
         loadPlayerPowerRecords();
+        loadLockedBlocks();
     }
 
     public void loadFactions() {
@@ -281,6 +321,40 @@ public class Main extends JavaPlugin implements Listener {
         }
 
         System.out.println("Player power records loaded.");
+    }
+
+    public void loadLockedBlocks() {
+        System.out.println("Loading locked blocks...");
+
+        try {
+            System.out.println("Attempting to load locked blocks...");
+            File loadFile = new File("./plugins/medievalfactions/lockedblocks/" + "lockedblocks.txt");
+            Scanner loadReader = new Scanner(loadFile);
+
+            // actual loading
+            while (loadReader.hasNextLine()) {
+                String nextName = loadReader.nextLine();
+                LockedBlock temp = new LockedBlock(); // uses no-parameter constructor since load provides chunk
+                temp.load(nextName);
+
+                // existence check
+                for (int i = 0; i < lockedBlocks.size(); i++) {
+                    if (lockedBlocks.get(i).getX() == temp.getX() && lockedBlocks.get(i).getY() == temp.getY() && lockedBlocks.get(i).getZ() == temp.getZ()) {
+                        lockedBlocks.remove(i);
+                    }
+                }
+
+                lockedBlocks.add(temp);
+
+            }
+
+            loadReader.close();
+            System.out.println("Claimed chunks successfully loaded.");
+        } catch (FileNotFoundException e) {
+            System.out.println("There was a problem loading the claimed chunks!");
+        }
+
+        System.out.println("Claimed chunks loaded.");
     }
 
     public boolean onCommand(CommandSender sender, Command cmd, String label, String[] args) {

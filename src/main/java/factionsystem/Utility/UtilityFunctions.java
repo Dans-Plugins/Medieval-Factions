@@ -1,5 +1,8 @@
-package factionsystem;
+package factionsystem.Utility;
 
+import factionsystem.Objects.ClaimedChunk;
+import factionsystem.Objects.Faction;
+import factionsystem.Objects.PlayerPowerRecord;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Chunk;

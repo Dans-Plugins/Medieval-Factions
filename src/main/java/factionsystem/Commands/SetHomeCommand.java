@@ -1,15 +1,13 @@
 package factionsystem.Commands;
 
-import factionsystem.ClaimedChunk;
-import factionsystem.Faction;
+import factionsystem.Objects.ClaimedChunk;
+import factionsystem.Objects.Faction;
 import factionsystem.Main;
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
-import java.util.ArrayList;
-
-import static factionsystem.UtilityFunctions.*;
+import static factionsystem.Utility.UtilityFunctions.*;
 
 public class SetHomeCommand {
 

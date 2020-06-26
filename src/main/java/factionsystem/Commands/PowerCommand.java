@@ -1,12 +1,10 @@
 package factionsystem.Commands;
 
 import factionsystem.Main;
-import factionsystem.PlayerPowerRecord;
+import factionsystem.Objects.PlayerPowerRecord;
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
-
-import java.util.ArrayList;
 
 public class PowerCommand {
 
