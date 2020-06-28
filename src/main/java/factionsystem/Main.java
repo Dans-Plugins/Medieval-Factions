@@ -1167,7 +1167,9 @@ public class Main extends JavaPlugin implements Listener {
         for (PlayerPowerRecord record : playerPowerRecords) {
             if (record.getPlayerName().equalsIgnoreCase(player.getName())) {
                 record.decreasePower();
-                player.sendMessage(ChatColor.RED + "Your power level has decreased!");
+                if (getPlayersPowerRecord(player.getName(), playerPowerRecords).getPowerLevel() > 0) {
+                    player.sendMessage(ChatColor.RED + "Your power level has decreased!");
+                }
             }
         }
 
@@ -1179,18 +1181,25 @@ public class Main extends JavaPlugin implements Listener {
             for (PlayerPowerRecord record : playerPowerRecords) {
                 if (record.getPlayerName().equalsIgnoreCase(killer.getName())) {
                     record.increasePower();
-                    System.out.println("DEBUG: Power increased.");
-                    killer.sendMessage(ChatColor.GREEN + "Your power level has increased!");
+                    if (getPlayersPowerRecord(killer.getName(), playerPowerRecords).getPowerLevel() < 20) {
+                        killer.sendMessage(ChatColor.GREEN + "Your power level has increased!");
+                    }
                 }
             }
 
-            if (isInFaction(player.getName(), factions)) {
-                getPlayersFaction(killer.getName(), factions).addPower();
+            // add power to killer's faction
+            if (isInFaction(killer.getName(), factions)) {
+                if (getPlayersPowerRecord(killer.getName(), playerPowerRecords).getPowerLevel() < 20) {
+                    getPlayersFaction(killer.getName(), factions).addPower();
+                }
             }
         }
 
+        // decrease power from player's faction
         if (isInFaction(player.getName(), factions)) {
-            getPlayersFaction(player.getName(), factions).subtractPower();
+            if (getPlayersPowerRecord(player.getName(), playerPowerRecords).getPowerLevel() > 0) {
+                getPlayersFaction(player.getName(), factions).subtractPower();
+            }
         }
     }
 
