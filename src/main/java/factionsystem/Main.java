@@ -1181,19 +1181,21 @@ public class Main extends JavaPlugin implements Listener {
             for (PlayerPowerRecord record : playerPowerRecords) {
                 if (record.getPlayerName().equalsIgnoreCase(killer.getName())) {
                     record.increasePower();
-                    if (getPlayersPowerRecord(player.getName(), playerPowerRecords).getPowerLevel() < 20) {
+                    if (getPlayersPowerRecord(killer.getName(), playerPowerRecords).getPowerLevel() < 20) {
                         killer.sendMessage(ChatColor.GREEN + "Your power level has increased!");
                     }
                 }
             }
 
-            if (isInFaction(player.getName(), factions)) {
-                if (getPlayersPowerRecord(player.getName(), playerPowerRecords).getPowerLevel() < 20) {
-                    getPlayersFaction(player.getName(), factions).addPower();
+            // add power to killer's faction
+            if (isInFaction(killer.getName(), factions)) {
+                if (getPlayersPowerRecord(killer.getName(), playerPowerRecords).getPowerLevel() < 20) {
+                    getPlayersFaction(killer.getName(), factions).addPower();
                 }
             }
         }
 
+        // decrease power from player's faction
         if (isInFaction(player.getName(), factions)) {
             if (getPlayersPowerRecord(player.getName(), playerPowerRecords).getPowerLevel() > 0) {
                 getPlayersFaction(player.getName(), factions).subtractPower();
