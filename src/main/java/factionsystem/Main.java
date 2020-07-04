@@ -1150,9 +1150,7 @@ public class Main extends JavaPlugin implements Listener {
                     return;
                 }
                 else {
-                    if (lockingPlayers.contains(player.getName())) {
-                        player.sendMessage(ChatColor.RED + "You can only lock blocks on land claimed by your faction!");
-                    }
+                    player.sendMessage(ChatColor.RED + "You can only lock blocks on land claimed by your faction!");
                 }
             }
 
