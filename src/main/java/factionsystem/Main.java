@@ -1149,6 +1149,11 @@ public class Main extends JavaPlugin implements Listener {
                     lockingPlayers.remove(player.getName());
                     return;
                 }
+                else {
+                    if (lockingPlayers.contains(player.getName())) {
+                        player.sendMessage(ChatColor.RED + "You can only lock blocks on land claimed by your faction!");
+                    }
+                }
             }
 
             // if chunk is claimed
