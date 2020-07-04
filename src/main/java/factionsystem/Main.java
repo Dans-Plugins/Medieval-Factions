@@ -42,7 +42,7 @@ public class Main extends JavaPlugin implements Listener {
     public ArrayList<PlayerPowerRecord> playerPowerRecords = new ArrayList<>();
     public ArrayList<LockedBlock> lockedBlocks = new ArrayList<>();
 
-    public ArrayList<String> lockingPlayers;
+    public ArrayList<String> lockingPlayers = new ArrayList<>();
 
     @Override
     public void onEnable() {
