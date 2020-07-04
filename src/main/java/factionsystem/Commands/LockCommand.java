@@ -29,6 +29,7 @@ public class LockCommand {
                     if (args[0].equalsIgnoreCase("cancel")) {
                         if (main.lockingPlayers.contains(player.getName())) {
                             main.lockingPlayers.remove(player.getName());
+                            player.sendMessage(ChatColor.RED + "Locking cancelled!");
                             return;
                         }
                     }
