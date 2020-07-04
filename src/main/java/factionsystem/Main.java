@@ -767,6 +767,12 @@ public class Main extends JavaPlugin implements Listener {
                     command.renameFaction(sender, args);
                 }
 
+                // lock command
+                if (args[0].equalsIgnoreCase("lock")) {
+                    LockCommand command = new LockCommand(this);
+                    command.lockBlock(sender, args);
+                }
+
                 // admin commands ----------------------------------------------------------------------------------
 
                 // forcesave command
@@ -1169,7 +1175,7 @@ public class Main extends JavaPlugin implements Listener {
             LockedBlock lockedBlock = getLockedBlock(clickedBlock.getX(), clickedBlock.getY(), clickedBlock.getZ());
             if (lockedBlock != null) {
 
-                // if player doesn't have accses
+                // if player doesn't have access
                 if (!lockedBlock.hasAccess(player.getName())) {
                     event.setCancelled(true);
                     player.sendMessage(ChatColor.RED + "Locked by " + lockedBlock.getOwner());
