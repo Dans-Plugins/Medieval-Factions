@@ -42,6 +42,8 @@ public class Main extends JavaPlugin implements Listener {
     public ArrayList<PlayerPowerRecord> playerPowerRecords = new ArrayList<>();
     public ArrayList<LockedBlock> lockedBlocks = new ArrayList<>();
 
+    public ArrayList<String> lockingPlayers;
+
     @Override
     public void onEnable() {
         System.out.println("Medieval Factions plugin enabling....");
@@ -1137,6 +1139,19 @@ public class Main extends JavaPlugin implements Listener {
                     }
                 }
             }
+
+            // if block is locked
+            LockedBlock lockedBlock = getLockedBlock(clickedBlock.getX(), clickedBlock.getY(), clickedBlock.getZ());
+            if (lockedBlock != null) {
+
+                // if player doesn't have accses
+                if (!lockedBlock.hasAccess(player.getName())) {
+                    event.setCancelled(true);
+                    player.sendMessage(ChatColor.RED + "Locked by " + lockedBlock.getOwner());
+                    return;
+                }
+
+            }
         }
     }
 
@@ -1260,5 +1275,23 @@ public class Main extends JavaPlugin implements Listener {
             faction.setCumulativePowerLevel(sum);
         }
 
+    }
+
+    public boolean isBlockLocked(int x, int y, int z) {
+        for (LockedBlock block : lockedBlocks) {
+            if (block.getX() == x && block.getY() == y && block.getZ() == z) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    public LockedBlock getLockedBlock(int x, int y, int z) {
+        for (LockedBlock block : lockedBlocks) {
+            if (block.getX() == x && block.getY() == y && block.getZ() == z) {
+                return block;
+            }
+        }
+        return null;
     }
 }
