@@ -1117,9 +1117,34 @@ public class Main extends JavaPlugin implements Listener {
         // get chunk
         Block clickedBlock = event.getClickedBlock();
         if (clickedBlock != null) {
-            ClaimedChunk chunk = getClaimedChunk(event.getClickedBlock().getLocation().getChunk().getX(), event.getClickedBlock().getLocation().getChunk().getZ(), claimedChunks);
+
+            // if player is attempting to lock a block
+            if (lockingPlayers.contains(player.getName())) {
+                // if chunk is claimed
+                ClaimedChunk chunk = getClaimedChunk(event.getClickedBlock().getLocation().getChunk().getX(), event.getClickedBlock().getLocation().getChunk().getZ(), claimedChunks);
+                if (chunk != null) {
+
+                    // if claimed by other faction
+                    if (!chunk.getHolder().equalsIgnoreCase(getPlayersFaction(player.getName(), factions).getName())) {
+                        player.sendMessage(ChatColor.RED + "You can only lock things in your faction's territory!");
+                        return;
+                    }
+
+                    // if already locked
+                    if (isBlockLocked(clickedBlock.getX(), clickedBlock.getY(), clickedBlock.getZ())) {
+                        player.sendMessage(ChatColor.RED + "This block is already locked!");
+                        return;
+                    }
+
+                    // lock block
+                    LockedBlock newLockedBlock = new LockedBlock(player.getName(), getPlayersFaction(player.getName(), factions).getName(), clickedBlock.getX(), clickedBlock.getY(), clickedBlock.getZ());
+                    lockedBlocks.add(newLockedBlock);
+                    player.sendMessage(ChatColor.GREEN + "Locked!");
+                }
+            }
 
             // if chunk is claimed
+            ClaimedChunk chunk = getClaimedChunk(event.getClickedBlock().getLocation().getChunk().getX(), event.getClickedBlock().getLocation().getChunk().getZ(), claimedChunks);
             if (chunk != null) {
 
                 // player not in a faction
