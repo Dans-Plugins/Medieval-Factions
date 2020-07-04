@@ -42,6 +42,8 @@ public class Main extends JavaPlugin implements Listener {
     public ArrayList<PlayerPowerRecord> playerPowerRecords = new ArrayList<>();
     public ArrayList<LockedBlock> lockedBlocks = new ArrayList<>();
 
+    public ArrayList<String> lockingPlayers = new ArrayList<>();
+
     @Override
     public void onEnable() {
         System.out.println("Medieval Factions plugin enabling....");
@@ -765,6 +767,12 @@ public class Main extends JavaPlugin implements Listener {
                     command.renameFaction(sender, args);
                 }
 
+                // lock command
+                if (args[0].equalsIgnoreCase("lock")) {
+                    LockCommand command = new LockCommand(this);
+                    command.lockBlock(sender, args);
+                }
+
                 // admin commands ----------------------------------------------------------------------------------
 
                 // forcesave command
@@ -1115,9 +1123,41 @@ public class Main extends JavaPlugin implements Listener {
         // get chunk
         Block clickedBlock = event.getClickedBlock();
         if (clickedBlock != null) {
-            ClaimedChunk chunk = getClaimedChunk(event.getClickedBlock().getLocation().getChunk().getX(), event.getClickedBlock().getLocation().getChunk().getZ(), claimedChunks);
+
+            // if player is attempting to lock a block
+            if (lockingPlayers.contains(player.getName())) {
+                // if chunk is claimed
+                ClaimedChunk chunk = getClaimedChunk(event.getClickedBlock().getLocation().getChunk().getX(), event.getClickedBlock().getLocation().getChunk().getZ(), claimedChunks);
+                if (chunk != null) {
+
+                    // if claimed by other faction
+                    if (!chunk.getHolder().equalsIgnoreCase(getPlayersFaction(player.getName(), factions).getName())) {
+                        player.sendMessage(ChatColor.RED + "You can only lock things in your faction's territory!");
+                        return;
+                    }
+
+                    // if already locked
+                    if (isBlockLocked(clickedBlock.getX(), clickedBlock.getY(), clickedBlock.getZ())) {
+                        player.sendMessage(ChatColor.RED + "This block is already locked!");
+                        return;
+                    }
+
+                    // lock block
+                    LockedBlock newLockedBlock = new LockedBlock(player.getName(), getPlayersFaction(player.getName(), factions).getName(), clickedBlock.getX(), clickedBlock.getY(), clickedBlock.getZ());
+                    lockedBlocks.add(newLockedBlock);
+                    player.sendMessage(ChatColor.GREEN + "This block is now locked!");
+                    lockingPlayers.remove(player.getName());
+                    return;
+                }
+                else {
+                    if (lockingPlayers.contains(player.getName())) {
+                        player.sendMessage(ChatColor.RED + "You can only lock blocks on land claimed by your faction!");
+                    }
+                }
+            }
 
             // if chunk is claimed
+            ClaimedChunk chunk = getClaimedChunk(event.getClickedBlock().getLocation().getChunk().getX(), event.getClickedBlock().getLocation().getChunk().getZ(), claimedChunks);
             if (chunk != null) {
 
                 // player not in a faction
@@ -1136,6 +1176,19 @@ public class Main extends JavaPlugin implements Listener {
                         }
                     }
                 }
+            }
+
+            // if block is locked
+            LockedBlock lockedBlock = getLockedBlock(clickedBlock.getX(), clickedBlock.getY(), clickedBlock.getZ());
+            if (lockedBlock != null) {
+
+                // if player doesn't have access
+                if (!lockedBlock.hasAccess(player.getName())) {
+                    event.setCancelled(true);
+                    player.sendMessage(ChatColor.RED + "Locked by " + lockedBlock.getOwner());
+                    return;
+                }
+
             }
         }
     }
@@ -1260,5 +1313,23 @@ public class Main extends JavaPlugin implements Listener {
             faction.setCumulativePowerLevel(sum);
         }
 
+    }
+
+    public boolean isBlockLocked(int x, int y, int z) {
+        for (LockedBlock block : lockedBlocks) {
+            if (block.getX() == x && block.getY() == y && block.getZ() == z) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    public LockedBlock getLockedBlock(int x, int y, int z) {
+        for (LockedBlock block : lockedBlocks) {
+            if (block.getX() == x && block.getY() == y && block.getZ() == z) {
+                return block;
+            }
+        }
+        return null;
     }
 }
