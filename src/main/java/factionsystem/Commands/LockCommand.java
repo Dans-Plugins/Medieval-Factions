@@ -33,17 +33,18 @@ public class LockCommand {
                             return;
                         }
                     }
-
-                    // check that player has not already invoked this command without locking something
-                    if (!main.lockingPlayers.contains(player.getName())) {
-                        // add player to playersAboutToLockSomething list
-                        main.lockingPlayers.add(player.getName());
-
-                        // inform them they need to right click the block that they want to lock or type /mf lock cancel to cancel it
-                        player.sendMessage(ChatColor.GREEN + "Right click a chest or door to lock it! (Type /mf lock cancel to cancel)");
-                    }
-
                 }
+
+                // check that player has not already invoked this command without locking something
+                if (!main.lockingPlayers.contains(player.getName())) {
+                    // add player to playersAboutToLockSomething list
+                    main.lockingPlayers.add(player.getName());
+
+                    // inform them they need to right click the block that they want to lock or type /mf lock cancel to cancel it
+                    player.sendMessage(ChatColor.GREEN + "Right click a chest or door to lock it! (Type /mf lock cancel to cancel)");
+                }
+
+
 
             }
             else {
