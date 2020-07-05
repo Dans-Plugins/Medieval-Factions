@@ -1167,11 +1167,16 @@ public class Main extends JavaPlugin implements Listener {
                     if (getLockedBlock(clickedBlock.getX(), clickedBlock.getY(), clickedBlock.getZ()).getOwner().equalsIgnoreCase(player.getName())) {
 
                         // able to unlock
-                        lockedBlocks.remove(getLockedBlock(clickedBlock.getX(), clickedBlock.getY(), clickedBlock.getZ()).getOwner().equalsIgnoreCase(player.getName()));
+                        for (LockedBlock block : lockedBlocks) {
+                            if (block.getX() == clickedBlock.getX() && block.getY() == clickedBlock.getY() && block.getZ() == clickedBlock.getZ()) {
 
-                        unlockingPlayers.remove(player.getName());
+                                lockedBlocks.remove(block);
+                                unlockingPlayers.remove(player.getName());
 
-                        player.sendMessage(ChatColor.GREEN + "Unlocked!");
+                                player.sendMessage(ChatColor.GREEN + "Unlocked!");
+                                break;
+                            }
+                        }
 
                     }
                 }
