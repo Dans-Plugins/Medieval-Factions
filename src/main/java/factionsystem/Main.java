@@ -43,6 +43,7 @@ public class Main extends JavaPlugin implements Listener {
     public ArrayList<LockedBlock> lockedBlocks = new ArrayList<>();
 
     public ArrayList<String> lockingPlayers = new ArrayList<>();
+    public ArrayList<String> unlockingPlayers = new ArrayList<>();
 
     @Override
     public void onEnable() {
@@ -773,6 +774,11 @@ public class Main extends JavaPlugin implements Listener {
                     command.lockBlock(sender, args);
                 }
 
+                // unlock command
+                if (args[0].equalsIgnoreCase("unlock")) {
+                    UnlockCommand command = new UnlockCommand(this);
+                    command.unlockBlock(sender, args);
+                }
                 // admin commands ----------------------------------------------------------------------------------
 
                 // forcesave command
