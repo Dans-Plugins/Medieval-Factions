@@ -1160,7 +1160,7 @@ public class Main extends JavaPlugin implements Listener {
                     if (isDoor(clickedBlock) || isChest(clickedBlock)) {
 
                         if (isChest(clickedBlock)) {
-                            InventoryHolder holder = ((Chest) clickedBlock).getInventory().getHolder();
+                            InventoryHolder holder = ((Chest) clickedBlock.getState()).getInventory().getHolder();
                             if (holder instanceof DoubleChest) {
                                 // chest multi-lock
                                 DoubleChest doubleChest = (DoubleChest) holder;
@@ -1261,7 +1261,7 @@ public class Main extends JavaPlugin implements Listener {
                             }
 
                             player.sendMessage(ChatColor.GREEN + "Unlocked!");
-                            lockingPlayers.remove(player.getName());
+                            unlockingPlayers.remove(player.getName());
                         }
 
                     }
