@@ -1225,7 +1225,7 @@ public class Main extends JavaPlugin implements Listener {
                     if (getLockedBlock(clickedBlock.getX(), clickedBlock.getY(), clickedBlock.getZ()).getOwner().equalsIgnoreCase(player.getName())) {
 
                         if (isChest(clickedBlock)) {
-                            InventoryHolder holder = ((Chest) clickedBlock).getInventory().getHolder();
+                            InventoryHolder holder = ((Chest) clickedBlock.getState()).getInventory().getHolder();
                             if (holder instanceof DoubleChest) {
                                 // chest multi-unlock
                                 DoubleChest doubleChest = (DoubleChest) holder;
