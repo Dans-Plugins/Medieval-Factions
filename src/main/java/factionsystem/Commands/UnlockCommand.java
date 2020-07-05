@@ -23,10 +23,10 @@ public class UnlockCommand {
             if (player.hasPermission("mf.unlock") || player.hasPermission("mf.default")) {
 
                 // check if argument exists
-                if (args.length > 0) {
+                if (args.length > 1) {
 
                     // cancel unlock status if first argument is "cancel"
-                    if (args[0].equalsIgnoreCase("cancel")) {
+                    if (args[1].equalsIgnoreCase("cancel")) {
                         if (main.unlockingPlayers.contains(player.getName())) {
                             main.unlockingPlayers.remove(player.getName());
                             player.sendMessage(ChatColor.RED + "Unlocking cancelled!");

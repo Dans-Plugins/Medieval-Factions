@@ -23,10 +23,10 @@ public class LockCommand {
             if (player.hasPermission("mf.lock") || player.hasPermission("mf.default")) {
 
                 // check if argument exists
-                if (args.length > 0) {
+                if (args.length > 1) {
 
                     // cancel lock status if first argument is "cancel"
-                    if (args[0].equalsIgnoreCase("cancel")) {
+                    if (args[1].equalsIgnoreCase("cancel")) {
                         if (main.lockingPlayers.contains(player.getName())) {
                             main.lockingPlayers.remove(player.getName());
                             player.sendMessage(ChatColor.RED + "Locking cancelled!");
