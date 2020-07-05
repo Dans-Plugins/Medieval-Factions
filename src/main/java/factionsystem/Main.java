@@ -8,6 +8,7 @@ import factionsystem.Objects.PlayerPowerRecord;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
+import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
@@ -1148,15 +1149,24 @@ public class Main extends JavaPlugin implements Listener {
                         return;
                     }
 
-                    // lock block
-                    LockedBlock newLockedBlock = new LockedBlock(player.getName(), getPlayersFaction(player.getName(), factions).getName(), clickedBlock.getX(), clickedBlock.getY(), clickedBlock.getZ());
-                    lockedBlocks.add(newLockedBlock);
-                    player.sendMessage(ChatColor.GREEN + "This block is now locked!");
-                    lockingPlayers.remove(player.getName());
-                    return;
+                    // block type check
+                    if (isDoor(clickedBlock) || isChest(clickedBlock)) {
+                        // lock block
+                        LockedBlock newLockedBlock = new LockedBlock(player.getName(), getPlayersFaction(player.getName(), factions).getName(), clickedBlock.getX(), clickedBlock.getY(), clickedBlock.getZ());
+                        lockedBlocks.add(newLockedBlock);
+                        player.sendMessage(ChatColor.GREEN + "This block is now locked!");
+                        lockingPlayers.remove(player.getName());
+                        return;
+                    }
+                    else {
+                        player.sendMessage(ChatColor.RED + "You can only lock chests or doors.");
+                        return;
+                    }
+
                 }
                 else {
                     player.sendMessage(ChatColor.RED + "You can only lock blocks on land claimed by your faction!");
+                    return;
                 }
             }
 
@@ -1174,7 +1184,7 @@ public class Main extends JavaPlugin implements Listener {
                                 unlockingPlayers.remove(player.getName());
 
                                 player.sendMessage(ChatColor.GREEN + "Unlocked!");
-                                break;
+                                return;
                             }
                         }
 
@@ -1182,6 +1192,7 @@ public class Main extends JavaPlugin implements Listener {
                 }
                 else {
                     player.sendMessage(ChatColor.RED + "That block isn't locked!");
+                    return;
                 }
             }
 
@@ -1220,6 +1231,28 @@ public class Main extends JavaPlugin implements Listener {
 
             }
         }
+    }
+
+    public boolean isDoor(Block block) {
+        if (block.getType() == Material.ACACIA_DOOR ||
+                block.getType() == Material.BIRCH_DOOR ||
+                block.getType() == Material.DARK_OAK_DOOR ||
+                block.getType() == Material.IRON_DOOR ||
+                block.getType() == Material.JUNGLE_DOOR ||
+                block.getType() == Material.OAK_DOOR ||
+                block.getType() == Material.ACACIA_DOOR) {
+
+            return true;
+
+        }
+        return false;
+    }
+
+    public boolean isChest(Block block) {
+        if (block.getType() == Material.CHEST) {
+            return true;
+        }
+        return false;
     }
 
     public boolean hasPowerRecord(String playerName) {
