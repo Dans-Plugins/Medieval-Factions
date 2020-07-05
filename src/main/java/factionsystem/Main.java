@@ -1224,17 +1224,44 @@ public class Main extends JavaPlugin implements Listener {
                 if (isBlockLocked(clickedBlock.getX(), clickedBlock.getY(), clickedBlock.getZ())) {
                     if (getLockedBlock(clickedBlock.getX(), clickedBlock.getY(), clickedBlock.getZ()).getOwner().equalsIgnoreCase(player.getName())) {
 
-                        // able to unlock
-                        for (LockedBlock block : lockedBlocks) {
-                            if (block.getX() == clickedBlock.getX() && block.getY() == clickedBlock.getY() && block.getZ() == clickedBlock.getZ()) {
+                        if (isChest(clickedBlock)) {
+                            InventoryHolder holder = ((Chest) clickedBlock).getInventory().getHolder();
+                            if (holder instanceof DoubleChest) {
+                                // chest multi-unlock
+                                DoubleChest doubleChest = (DoubleChest) holder;
+                                Block leftChest = ((Chest) doubleChest.getLeftSide()).getBlock();
+                                Block rightChest = ((Chest) doubleChest.getRightSide()).getBlock();
 
-                                lockedBlocks.remove(block);
-                                unlockingPlayers.remove(player.getName());
+                                // unlock leftChest and rightChest
+                                removeLock(leftChest);
+                                removeLock(rightChest);
 
                                 player.sendMessage(ChatColor.GREEN + "Unlocked!");
-                                event.setCancelled(true);
-                                return;
+                                unlockingPlayers.remove(player.getName());
                             }
+                            else {
+                                // unlock single chest
+                                removeLock(clickedBlock);
+                                player.sendMessage(ChatColor.GREEN + "Unlocked!");
+                                unlockingPlayers.remove(player.getName());
+                            }
+                        }
+
+                        // door multi-unlock
+                        if (isDoor(clickedBlock)) {
+                            // lock initial block
+                            removeLock(clickedBlock);
+                            // check block above
+                            if (isDoor(clickedBlock.getWorld().getBlockAt(clickedBlock.getX(), clickedBlock.getY() + 1, clickedBlock.getZ()))) {
+                                removeLock(clickedBlock.getWorld().getBlockAt(clickedBlock.getX(), clickedBlock.getY() + 1, clickedBlock.getZ()));
+                            }
+                            // check block below
+                            if (isDoor(clickedBlock.getWorld().getBlockAt(clickedBlock.getX(), clickedBlock.getY() - 1, clickedBlock.getZ()))) {
+                                removeLock(clickedBlock.getWorld().getBlockAt(clickedBlock.getX(), clickedBlock.getY() - 1, clickedBlock.getZ()));
+                            }
+
+                            player.sendMessage(ChatColor.GREEN + "Unlocked!");
+                            lockingPlayers.remove(player.getName());
                         }
 
                     }
@@ -1278,6 +1305,15 @@ public class Main extends JavaPlugin implements Listener {
                     return;
                 }
 
+            }
+        }
+    }
+
+    public void removeLock(Block block) {
+        for (LockedBlock b : lockedBlocks) {
+            if (b.getX() == block.getX() && b.getY() == block.getY() && b.getZ() == block.getZ()) {
+                lockedBlocks.remove(block);
+                return;
             }
         }
     }
