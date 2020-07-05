@@ -40,6 +40,10 @@ public class LockCommand {
                     // add player to playersAboutToLockSomething list
                     main.lockingPlayers.add(player.getName());
 
+                    if (main.unlockingPlayers.contains(player.getName())) {
+                        main.unlockingPlayers.remove(player.getName());
+                    }
+
                     // inform them they need to right click the block that they want to lock or type /mf lock cancel to cancel it
                     player.sendMessage(ChatColor.GREEN + "Right click a chest or door to lock it! (Type /mf lock cancel to cancel)");
                 }

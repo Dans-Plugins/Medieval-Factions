@@ -1159,10 +1159,10 @@ public class Main extends JavaPlugin implements Listener {
                     // block type check
                     if (isDoor(clickedBlock) || isChest(clickedBlock)) {
 
-                        // chest multi-lock
                         if (isChest(clickedBlock)) {
                             InventoryHolder holder = ((Chest) clickedBlock).getInventory().getHolder();
                             if (holder instanceof DoubleChest) {
+                                // chest multi-lock
                                 DoubleChest doubleChest = (DoubleChest) holder;
                                 Block leftChest = ((Chest) doubleChest.getLeftSide()).getBlock();
                                 Block rightChest = ((Chest) doubleChest.getRightSide()).getBlock();
