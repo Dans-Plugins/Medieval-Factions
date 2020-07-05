@@ -38,13 +38,17 @@ public class Main extends JavaPlugin implements Listener {
 
     public static String version = "v2.5";
 
+    // saved lists
     public ArrayList<Faction> factions = new ArrayList<>();
     public ArrayList<ClaimedChunk> claimedChunks = new ArrayList<>();
     public ArrayList<PlayerPowerRecord> playerPowerRecords = new ArrayList<>();
     public ArrayList<LockedBlock> lockedBlocks = new ArrayList<>();
 
+    // temporary lists
     public ArrayList<String> lockingPlayers = new ArrayList<>();
     public ArrayList<String> unlockingPlayers = new ArrayList<>();
+    public ArrayList<String> playersGrantingAccess = new ArrayList<>();
+    public ArrayList<String> playersRevokingAccess = new ArrayList<>();
 
     @Override
     public void onEnable() {
