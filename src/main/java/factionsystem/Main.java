@@ -10,6 +10,8 @@ import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
+import org.bukkit.block.Chest;
+import org.bukkit.block.DoubleChest;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
@@ -22,6 +24,7 @@ import org.bukkit.event.entity.PlayerDeathEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerMoveEvent;
+import org.bukkit.inventory.InventoryHolder;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import java.io.File;
@@ -1155,23 +1158,52 @@ public class Main extends JavaPlugin implements Listener {
 
                     // block type check
                     if (isDoor(clickedBlock) || isChest(clickedBlock)) {
-                        // lock block
-                        LockedBlock newLockedBlock = new LockedBlock(player.getName(), getPlayersFaction(player.getName(), factions).getName(), clickedBlock.getX(), clickedBlock.getY(), clickedBlock.getZ());
-                        lockedBlocks.add(newLockedBlock);
-                        player.sendMessage(ChatColor.GREEN + "Locked!");
-                        lockingPlayers.remove(player.getName());
-                        event.setCancelled(true);
 
-                        // check block above
-                        if (isDoor(clickedBlock.getWorld().getBlockAt(clickedBlock.getX(), clickedBlock.getY() + 1, clickedBlock.getZ()))) {
-                            LockedBlock newLockedBlock2 = new LockedBlock(player.getName(), getPlayersFaction(player.getName(), factions).getName(), clickedBlock.getX(), clickedBlock.getY() + 1, clickedBlock.getZ());
-                            lockedBlocks.add(newLockedBlock2);
+                        // chest multi-lock
+                        if (isChest(clickedBlock)) {
+                            InventoryHolder holder = ((Chest) clickedBlock).getInventory().getHolder();
+                            if (holder instanceof DoubleChest) {
+                                DoubleChest doubleChest = (DoubleChest) holder;
+                                Block leftChest = ((Chest) doubleChest.getLeftSide()).getBlock();
+                                Block rightChest = ((Chest) doubleChest.getRightSide()).getBlock();
+
+                                LockedBlock left = new LockedBlock(player.getName(), getPlayersFaction(player.getName(), factions).getName(), leftChest.getX(), leftChest.getY(), leftChest.getZ());
+                                lockedBlocks.add(left);
+
+                                LockedBlock right = new LockedBlock(player.getName(), getPlayersFaction(player.getName(), factions).getName(), rightChest.getX(), rightChest.getY(), rightChest.getZ());
+                                lockedBlocks.add(right);
+
+                                player.sendMessage(ChatColor.GREEN + "Locked!");
+                                lockingPlayers.remove(player.getName());
+                            }
+                            else {
+                                // lock single chest
+                                LockedBlock single = new LockedBlock(player.getName(), getPlayersFaction(player.getName(), factions).getName(), clickedBlock.getX(), clickedBlock.getY(), clickedBlock.getZ());
+                                lockedBlocks.add(single);
+                            }
                         }
-                        // check block below
-                        if (isDoor(clickedBlock.getWorld().getBlockAt(clickedBlock.getX(), clickedBlock.getY() - 1, clickedBlock.getZ()))) {
-                            LockedBlock newLockedBlock2 = new LockedBlock(player.getName(), getPlayersFaction(player.getName(), factions).getName(), clickedBlock.getX(), clickedBlock.getY() - 1, clickedBlock.getZ());
-                            lockedBlocks.add(newLockedBlock2);
+
+                        // door multi-lock
+                        if (isDoor(clickedBlock)) {
+                            // lock initial block
+                            LockedBlock initial = new LockedBlock(player.getName(), getPlayersFaction(player.getName(), factions).getName(), clickedBlock.getX(), clickedBlock.getY(), clickedBlock.getZ());
+                            lockedBlocks.add(initial);
+                            // check block above
+                            if (isDoor(clickedBlock.getWorld().getBlockAt(clickedBlock.getX(), clickedBlock.getY() + 1, clickedBlock.getZ()))) {
+                                LockedBlock newLockedBlock2 = new LockedBlock(player.getName(), getPlayersFaction(player.getName(), factions).getName(), clickedBlock.getX(), clickedBlock.getY() + 1, clickedBlock.getZ());
+                                lockedBlocks.add(newLockedBlock2);
+                            }
+                            // check block below
+                            if (isDoor(clickedBlock.getWorld().getBlockAt(clickedBlock.getX(), clickedBlock.getY() - 1, clickedBlock.getZ()))) {
+                                LockedBlock newLockedBlock2 = new LockedBlock(player.getName(), getPlayersFaction(player.getName(), factions).getName(), clickedBlock.getX(), clickedBlock.getY() - 1, clickedBlock.getZ());
+                                lockedBlocks.add(newLockedBlock2);
+                            }
+
+                            player.sendMessage(ChatColor.GREEN + "Locked!");
+                            lockingPlayers.remove(player.getName());
                         }
+
+                        event.setCancelled(true);
                         return;
                     }
                     else {
