@@ -1249,7 +1249,7 @@ public class Main extends JavaPlugin implements Listener {
 
                         // door multi-unlock
                         if (isDoor(clickedBlock)) {
-                            // lock initial block
+                            // unlock initial block
                             removeLock(clickedBlock);
                             // check block above
                             if (isDoor(clickedBlock.getWorld().getBlockAt(clickedBlock.getX(), clickedBlock.getY() + 1, clickedBlock.getZ()))) {
@@ -1312,7 +1312,7 @@ public class Main extends JavaPlugin implements Listener {
     public void removeLock(Block block) {
         for (LockedBlock b : lockedBlocks) {
             if (b.getX() == block.getX() && b.getY() == block.getY() && b.getZ() == block.getZ()) {
-                lockedBlocks.remove(block);
+                lockedBlocks.remove(b);
                 return;
             }
         }
