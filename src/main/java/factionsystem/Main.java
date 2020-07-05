@@ -1161,6 +1161,17 @@ public class Main extends JavaPlugin implements Listener {
                         player.sendMessage(ChatColor.GREEN + "Locked!");
                         lockingPlayers.remove(player.getName());
                         event.setCancelled(true);
+
+                        // check block above
+                        if (isDoor(clickedBlock.getWorld().getBlockAt(clickedBlock.getX(), clickedBlock.getY() + 1, clickedBlock.getZ()))) {
+                            LockedBlock newLockedBlock2 = new LockedBlock(player.getName(), getPlayersFaction(player.getName(), factions).getName(), clickedBlock.getX(), clickedBlock.getY() + 1, clickedBlock.getZ());
+                            lockedBlocks.add(newLockedBlock2);
+                        }
+                        // check block below
+                        if (isDoor(clickedBlock.getWorld().getBlockAt(clickedBlock.getX(), clickedBlock.getY() - 1, clickedBlock.getZ()))) {
+                            LockedBlock newLockedBlock2 = new LockedBlock(player.getName(), getPlayersFaction(player.getName(), factions).getName(), clickedBlock.getX(), clickedBlock.getY() - 1, clickedBlock.getZ());
+                            lockedBlocks.add(newLockedBlock2);
+                        }
                         return;
                     }
                     else {
