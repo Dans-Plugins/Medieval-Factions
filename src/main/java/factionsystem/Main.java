@@ -1160,6 +1160,26 @@ public class Main extends JavaPlugin implements Listener {
                 }
             }
 
+            // if player is trying to unlock a block
+            if (unlockingPlayers.contains(player.getName())) {
+                // if locked
+                if (isBlockLocked(clickedBlock.getX(), clickedBlock.getY(), clickedBlock.getZ())) {
+                    if (getLockedBlock(clickedBlock.getX(), clickedBlock.getY(), clickedBlock.getZ()).getOwner().equalsIgnoreCase(player.getName())) {
+
+                        // able to unlock
+                        lockedBlocks.remove(getLockedBlock(clickedBlock.getX(), clickedBlock.getY(), clickedBlock.getZ()).getOwner().equalsIgnoreCase(player.getName()));
+
+                        unlockingPlayers.remove(player.getName());
+
+                        player.sendMessage(ChatColor.GREEN + "Unlocked!");
+
+                    }
+                }
+                else {
+                    player.sendMessage(ChatColor.RED + "That block isn't locked!");
+                }
+            }
+
             // if chunk is claimed
             ClaimedChunk chunk = getClaimedChunk(event.getClickedBlock().getLocation().getChunk().getX(), event.getClickedBlock().getLocation().getChunk().getZ(), claimedChunks);
             if (chunk != null) {
