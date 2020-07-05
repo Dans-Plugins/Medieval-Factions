@@ -1158,8 +1158,9 @@ public class Main extends JavaPlugin implements Listener {
                         // lock block
                         LockedBlock newLockedBlock = new LockedBlock(player.getName(), getPlayersFaction(player.getName(), factions).getName(), clickedBlock.getX(), clickedBlock.getY(), clickedBlock.getZ());
                         lockedBlocks.add(newLockedBlock);
-                        player.sendMessage(ChatColor.GREEN + "This block is now locked!");
+                        player.sendMessage(ChatColor.GREEN + "Locked!");
                         lockingPlayers.remove(player.getName());
+                        event.setCancelled(true);
                         return;
                     }
                     else {
@@ -1188,6 +1189,7 @@ public class Main extends JavaPlugin implements Listener {
                                 unlockingPlayers.remove(player.getName());
 
                                 player.sendMessage(ChatColor.GREEN + "Unlocked!");
+                                event.setCancelled(true);
                                 return;
                             }
                         }
