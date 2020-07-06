@@ -11,8 +11,6 @@ import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
-import org.bukkit.block.Chest;
-import org.bukkit.block.DoubleChest;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
@@ -25,7 +23,6 @@ import org.bukkit.event.entity.PlayerDeathEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerMoveEvent;
-import org.bukkit.inventory.InventoryHolder;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import java.io.File;
@@ -1094,6 +1091,17 @@ public class Main extends JavaPlugin implements Listener {
                     if (!(faction.getName().equalsIgnoreCase(chunk.getHolder()))) {
                         event.setCancelled(true);
                         return;
+                    }
+
+                    // if block is locked
+                    if (isBlockLocked(event.getBlock().getX(), event.getBlock().getY(), event.getBlock().getZ())) {
+
+                        // if player is not the owner
+                        if (!getLockedBlock(event.getBlock().getX(), event.getBlock().getY(), event.getBlock().getZ()).getOwner().equalsIgnoreCase(player.getName())) {
+                            event.setCancelled(true);
+                            player.sendMessage(ChatColor.RED + "You don't own this!");
+                            return;
+                        }
                     }
                 }
             }

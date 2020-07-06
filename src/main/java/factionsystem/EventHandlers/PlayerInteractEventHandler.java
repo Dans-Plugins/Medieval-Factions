@@ -39,12 +39,14 @@ public class PlayerInteractEventHandler {
                     // if claimed by other faction
                     if (!chunk.getHolder().equalsIgnoreCase(getPlayersFaction(player.getName(), main.factions).getName())) {
                         player.sendMessage(ChatColor.RED + "You can only lock things in your faction's territory!");
+                        event.setCancelled(true);
                         return;
                     }
 
                     // if already locked
                     if (main.isBlockLocked(clickedBlock.getX(), clickedBlock.getY(), clickedBlock.getZ())) {
                         player.sendMessage(ChatColor.RED + "This block is already locked!");
+                        event.setCancelled(true);
                         return;
                     }
 
@@ -106,9 +108,12 @@ public class PlayerInteractEventHandler {
                 }
                 else {
                     player.sendMessage(ChatColor.RED + "You can only lock blocks on land claimed by your faction!");
+                    event.setCancelled(true);
                     return;
                 }
             }
+
+            // ---------------------------------------------------------------------------------------------------------------
 
             // if player is trying to unlock a block
             if (main.unlockingPlayers.contains(player.getName())) {
@@ -162,9 +167,12 @@ public class PlayerInteractEventHandler {
                 }
                 else {
                     player.sendMessage(ChatColor.RED + "That block isn't locked!");
+                    event.setCancelled(true);
                     return;
                 }
             }
+
+            // ---------------------------------------------------------------------------------------------------------------
 
             // if chunk is claimed
             ClaimedChunk chunk = getClaimedChunk(event.getClickedBlock().getLocation().getChunk().getX(), event.getClickedBlock().getLocation().getChunk().getZ(), main.claimedChunks);
@@ -187,6 +195,8 @@ public class PlayerInteractEventHandler {
                     }
                 }
             }
+
+            // ---------------------------------------------------------------------------------------------------------------
 
             // if block is locked
             LockedBlock lockedBlock = main.getLockedBlock(clickedBlock.getX(), clickedBlock.getY(), clickedBlock.getZ());
