@@ -30,6 +30,7 @@ import java.io.FileNotFoundException;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Objects;
 import java.util.Scanner;
 
@@ -48,8 +49,8 @@ public class Main extends JavaPlugin implements Listener {
     // temporary lists
     public ArrayList<String> lockingPlayers = new ArrayList<>();
     public ArrayList<String> unlockingPlayers = new ArrayList<>();
-    public ArrayList<String> playersGrantingAccess = new ArrayList<>();
-    public ArrayList<String> playersRevokingAccess = new ArrayList<>();
+    public HashMap<String, String> playersGrantingAccess = new HashMap<>();
+    public HashMap<String, String> playersRevokingAccess = new HashMap<>();
 
     @Override
     public void onEnable() {

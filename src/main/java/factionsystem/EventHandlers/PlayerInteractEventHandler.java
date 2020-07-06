@@ -209,6 +209,25 @@ public class PlayerInteractEventHandler {
                     return;
                 }
 
+                // if player is trying to grant access
+                if (main.playersGrantingAccess.containsKey(player.getName())) {
+
+                    // if chest
+
+                        // if double chest
+
+                            // grant access to both chests
+
+                        // if single chest
+
+                            // grant access to single chest
+
+                    // if door
+
+                        // grant access to top and bottom of door
+
+                }
+
             }
         }
     }
