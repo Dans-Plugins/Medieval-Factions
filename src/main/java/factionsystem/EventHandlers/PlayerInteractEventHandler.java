@@ -113,6 +113,8 @@ public class PlayerInteractEventHandler {
                 }
             }
 
+            // ---------------------------------------------------------------------------------------------------------------
+
             // if player is trying to unlock a block
             if (main.unlockingPlayers.contains(player.getName())) {
                 // if locked
@@ -170,6 +172,8 @@ public class PlayerInteractEventHandler {
                 }
             }
 
+            // ---------------------------------------------------------------------------------------------------------------
+
             // if chunk is claimed
             ClaimedChunk chunk = getClaimedChunk(event.getClickedBlock().getLocation().getChunk().getX(), event.getClickedBlock().getLocation().getChunk().getZ(), main.claimedChunks);
             if (chunk != null) {
@@ -191,6 +195,8 @@ public class PlayerInteractEventHandler {
                     }
                 }
             }
+
+            // ---------------------------------------------------------------------------------------------------------------
 
             // if block is locked
             LockedBlock lockedBlock = main.getLockedBlock(clickedBlock.getX(), clickedBlock.getY(), clickedBlock.getZ());
