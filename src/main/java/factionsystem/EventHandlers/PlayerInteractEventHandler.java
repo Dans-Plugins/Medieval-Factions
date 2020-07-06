@@ -156,6 +156,8 @@ public class PlayerInteractEventHandler {
                             main.unlockingPlayers.remove(player.getName());
                         }
 
+                        event.setCancelled(true);
+                        return;
                     }
                 }
                 else {
