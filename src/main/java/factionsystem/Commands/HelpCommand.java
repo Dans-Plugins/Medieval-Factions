@@ -45,15 +45,17 @@ public class HelpCommand {
             }
             if (args[1].equalsIgnoreCase("5")) {
                 sender.sendMessage(ChatColor.BOLD + "" + ChatColor.AQUA + "\n----------\n" + "Medieval Factions Commands - Page 5/6" + "\n----------\n");
-                sender.sendMessage(ChatColor.AQUA + "/mf version - Check plugin version." + "\n");
                 sender.sendMessage(ChatColor.AQUA + "/mf who - View the faction info a specific player." + "\n");
                 sender.sendMessage(ChatColor.AQUA + "/mf ally - Attempt to ally with a faction." + "\n");
                 sender.sendMessage(ChatColor.AQUA + "/mf breakalliance - Break an alliance with a faction." + "\n");
                 sender.sendMessage(ChatColor.AQUA + "/mf rename - Rename your faction" + "\n");
-                sender.sendMessage(ChatColor.AQUA + "/mf forcesave - Force the plugin to save." + "\n");
+                sender.sendMessage(ChatColor.AQUA + "/mf lock - Lock a chest or door." + "\n");
+                sender.sendMessage(ChatColor.AQUA + "/mf unlock Unlcok a chest or door." + "\n");
             }
             if (args[1].equalsIgnoreCase("6")) {
                 sender.sendMessage(ChatColor.BOLD + "" + ChatColor.AQUA + "\n----------\n" + "Medieval Factions Commands - Page 6/6" + "\n----------\n");
+                sender.sendMessage(ChatColor.AQUA + "/mf forcesave - Force the plugin to save." + "\n");
+                sender.sendMessage(ChatColor.AQUA + "/mf version - Check plugin version." + "\n");
                 sender.sendMessage(ChatColor.AQUA + "/mf forceload - Force the plugin to load." + "\n");
                 sender.sendMessage(ChatColor.AQUA + "/mf resetpowerlevels - Reset player power records and faction cumulative power levels." + "\n");
             }

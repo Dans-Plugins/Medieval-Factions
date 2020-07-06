@@ -1,6 +1,7 @@
 package factionsystem;
 
 import factionsystem.Commands.*;
+import factionsystem.EventHandlers.PlayerInteractEventHandler;
 import factionsystem.Objects.ClaimedChunk;
 import factionsystem.Objects.Faction;
 import factionsystem.Objects.LockedBlock;
@@ -8,7 +9,10 @@ import factionsystem.Objects.PlayerPowerRecord;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
+import org.bukkit.Material;
 import org.bukkit.block.Block;
+import org.bukkit.block.Chest;
+import org.bukkit.block.DoubleChest;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
@@ -21,6 +25,7 @@ import org.bukkit.event.entity.PlayerDeathEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerMoveEvent;
+import org.bukkit.inventory.InventoryHolder;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import java.io.File;
@@ -37,12 +42,17 @@ public class Main extends JavaPlugin implements Listener {
 
     public static String version = "v2.5";
 
+    // saved lists
     public ArrayList<Faction> factions = new ArrayList<>();
     public ArrayList<ClaimedChunk> claimedChunks = new ArrayList<>();
     public ArrayList<PlayerPowerRecord> playerPowerRecords = new ArrayList<>();
     public ArrayList<LockedBlock> lockedBlocks = new ArrayList<>();
 
+    // temporary lists
     public ArrayList<String> lockingPlayers = new ArrayList<>();
+    public ArrayList<String> unlockingPlayers = new ArrayList<>();
+    public ArrayList<String> playersGrantingAccess = new ArrayList<>();
+    public ArrayList<String> playersRevokingAccess = new ArrayList<>();
 
     @Override
     public void onEnable() {
@@ -773,6 +783,11 @@ public class Main extends JavaPlugin implements Listener {
                     command.lockBlock(sender, args);
                 }
 
+                // unlock command
+                if (args[0].equalsIgnoreCase("unlock")) {
+                    UnlockCommand command = new UnlockCommand(this);
+                    command.unlockBlock(sender, args);
+                }
                 // admin commands ----------------------------------------------------------------------------------
 
                 // forcesave command
@@ -1117,80 +1132,39 @@ public class Main extends JavaPlugin implements Listener {
 
     @EventHandler()
     public void onRightClick(PlayerInteractEvent event) {
-        // get player
-        Player player = event.getPlayer();
+        PlayerInteractEventHandler handler = new PlayerInteractEventHandler(this);
+        handler.handle(event);
+    }
 
-        // get chunk
-        Block clickedBlock = event.getClickedBlock();
-        if (clickedBlock != null) {
-
-            // if player is attempting to lock a block
-            if (lockingPlayers.contains(player.getName())) {
-                // if chunk is claimed
-                ClaimedChunk chunk = getClaimedChunk(event.getClickedBlock().getLocation().getChunk().getX(), event.getClickedBlock().getLocation().getChunk().getZ(), claimedChunks);
-                if (chunk != null) {
-
-                    // if claimed by other faction
-                    if (!chunk.getHolder().equalsIgnoreCase(getPlayersFaction(player.getName(), factions).getName())) {
-                        player.sendMessage(ChatColor.RED + "You can only lock things in your faction's territory!");
-                        return;
-                    }
-
-                    // if already locked
-                    if (isBlockLocked(clickedBlock.getX(), clickedBlock.getY(), clickedBlock.getZ())) {
-                        player.sendMessage(ChatColor.RED + "This block is already locked!");
-                        return;
-                    }
-
-                    // lock block
-                    LockedBlock newLockedBlock = new LockedBlock(player.getName(), getPlayersFaction(player.getName(), factions).getName(), clickedBlock.getX(), clickedBlock.getY(), clickedBlock.getZ());
-                    lockedBlocks.add(newLockedBlock);
-                    player.sendMessage(ChatColor.GREEN + "This block is now locked!");
-                    lockingPlayers.remove(player.getName());
-                    return;
-                }
-                else {
-                    if (lockingPlayers.contains(player.getName())) {
-                        player.sendMessage(ChatColor.RED + "You can only lock blocks on land claimed by your faction!");
-                    }
-                }
-            }
-
-            // if chunk is claimed
-            ClaimedChunk chunk = getClaimedChunk(event.getClickedBlock().getLocation().getChunk().getX(), event.getClickedBlock().getLocation().getChunk().getZ(), claimedChunks);
-            if (chunk != null) {
-
-                // player not in a faction
-                if (!isInFaction(event.getPlayer().getName(), factions)) {
-                    event.setCancelled(true);
-                }
-
-                // if player is in faction
-                for (Faction faction : factions) {
-                    if (faction.isMember(player.getName())) {
-
-                        // if player's faction is not the same as the holder of the chunk
-                        if (!(faction.getName().equalsIgnoreCase(chunk.getHolder()))) {
-                            event.setCancelled(true);
-                            return;
-                        }
-                    }
-                }
-            }
-
-            // if block is locked
-            LockedBlock lockedBlock = getLockedBlock(clickedBlock.getX(), clickedBlock.getY(), clickedBlock.getZ());
-            if (lockedBlock != null) {
-
-                // if player doesn't have access
-                if (!lockedBlock.hasAccess(player.getName())) {
-                    event.setCancelled(true);
-                    player.sendMessage(ChatColor.RED + "Locked by " + lockedBlock.getOwner());
-                    return;
-                }
-
+    public void removeLock(Block block) {
+        for (LockedBlock b : lockedBlocks) {
+            if (b.getX() == block.getX() && b.getY() == block.getY() && b.getZ() == block.getZ()) {
+                lockedBlocks.remove(b);
+                return;
             }
         }
+    }
+
+    public boolean isDoor(Block block) {
+        if (block.getType() == Material.ACACIA_DOOR ||
+                block.getType() == Material.BIRCH_DOOR ||
+                block.getType() == Material.DARK_OAK_DOOR ||
+                block.getType() == Material.IRON_DOOR ||
+                block.getType() == Material.JUNGLE_DOOR ||
+                block.getType() == Material.OAK_DOOR ||
+                block.getType() == Material.ACACIA_DOOR) {
+
+            return true;
+
+        }
+        return false;
+    }
+
+    public boolean isChest(Block block) {
+        if (block.getType() == Material.CHEST) {
+            return true;
+        }
+        return false;
     }
 
     public boolean hasPowerRecord(String playerName) {

@@ -23,27 +23,32 @@ public class LockCommand {
             if (player.hasPermission("mf.lock") || player.hasPermission("mf.default")) {
 
                 // check if argument exists
-                if (args.length > 0) {
+                if (args.length > 1) {
 
                     // cancel lock status if first argument is "cancel"
-                    if (args[0].equalsIgnoreCase("cancel")) {
+                    if (args[1].equalsIgnoreCase("cancel")) {
                         if (main.lockingPlayers.contains(player.getName())) {
                             main.lockingPlayers.remove(player.getName());
                             player.sendMessage(ChatColor.RED + "Locking cancelled!");
                             return;
                         }
                     }
+                }
 
-                    // check that player has not already invoked this command without locking something
-                    if (!main.lockingPlayers.contains(player.getName())) {
-                        // add player to playersAboutToLockSomething list
-                        main.lockingPlayers.add(player.getName());
+                // check that player has not already invoked this command without locking something
+                if (!main.lockingPlayers.contains(player.getName())) {
+                    // add player to playersAboutToLockSomething list
+                    main.lockingPlayers.add(player.getName());
 
-                        // inform them they need to right click the block that they want to lock or type /mf lock cancel to cancel it
-                        player.sendMessage(ChatColor.GREEN + "Right click a chest or door to lock it! (Type /mf lock cancel to cancel)");
+                    if (main.unlockingPlayers.contains(player.getName())) {
+                        main.unlockingPlayers.remove(player.getName());
                     }
 
+                    // inform them they need to right click the block that they want to lock or type /mf lock cancel to cancel it
+                    player.sendMessage(ChatColor.GREEN + "Right click a chest or door to lock it! (Type /mf lock cancel to cancel)");
                 }
+
+
 
             }
             else {
