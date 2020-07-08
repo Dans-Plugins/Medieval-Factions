@@ -150,15 +150,14 @@ public class Main extends JavaPlugin implements Listener {
                                         if (faction.isEnemy(targetFaction.getName())) {
 
                                             // remove locks on this chunk
-                                            for (LockedBlock block : lockedBlocks) {
+                                            for (int i = 0; i < lockedBlocks.size(); i++) {
+                                                LockedBlock block = lockedBlocks.get(i);
                                                 // if block is on this chunk
                                                 if (chunk.getChunk().getWorld().getBlockAt(block.getX(), block.getY(), block.getZ()).getChunk().getX() == chunk.getChunk().getX() &&
                                                         chunk.getChunk().getWorld().getBlockAt(block.getX(), block.getY(), block.getZ()).getChunk().getZ() == chunk.getChunk().getZ()) {
-                                                    lockedBlocks.remove(block);
+                                                    lockedBlocks.remove(i);
                                                 }
-
                                             }
-
                                             claimedChunks.remove(chunk);
 
                                             ClaimedChunk newChunk = new ClaimedChunk(player.getLocation().getChunk());
