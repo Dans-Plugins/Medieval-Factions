@@ -1,6 +1,7 @@
 package factionsystem.Commands;
 
 import factionsystem.Main;
+import factionsystem.Objects.Faction;
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
@@ -46,6 +47,16 @@ public class DisbandCommand {
 
                         // remove locks associated with this faction
                         removeAllLocks(main.factions.get(i).getName(), main.lockedBlocks);
+
+                        // remove records of alliances/wars associated with this faction
+                        for (Faction faction : main.factions) {
+                            if (faction.isAlly(main.factions.get(i).getName())) {
+                                faction.removeAlly(main.factions.get(i).getName());
+                            }
+                            if (faction.isEnemy(main.factions.get(i).getName())) {
+                                faction.removeEnemy(main.factions.get(i).getName());
+                            }
+                        }
 
                         main.factions.remove(i);
                         player.sendMessage(ChatColor.GREEN + "Faction successfully disbanded.");
