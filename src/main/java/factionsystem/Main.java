@@ -3,6 +3,7 @@ package factionsystem;
 import factionsystem.Commands.*;
 import factionsystem.EventHandlers.EntityDamageByEntityEventHandler;
 import factionsystem.EventHandlers.PlayerInteractEventHandler;
+import factionsystem.EventHandlers.PlayerMoveEventHandler;
 import factionsystem.Objects.ClaimedChunk;
 import factionsystem.Objects.Faction;
 import factionsystem.Objects.LockedBlock;
@@ -696,67 +697,9 @@ public class Main extends JavaPlugin implements Listener {
 
     @EventHandler()
     public void onPlayerMove(PlayerMoveEvent event) {
-        // Full disclosure, I feel like this method might be extremely laggy, especially if a player is travelling.
-        // May have to optimise this, or just not have this mechanic.
-        // - Dan
-
-        // if player enters a new chunk
-        if (event.getFrom().getChunk() != Objects.requireNonNull(event.getTo()).getChunk()) {
-
-            // auto claim check
-            for (Faction faction : factions) {
-                if (faction.isOwner(event.getPlayer().getName())) {
-
-                    if (faction.getAutoClaimStatus()) {
-
-                        // if not at demesne limit
-                        Faction playersFaction = getPlayersFaction(event.getPlayer().getName(), factions);
-                        if (getChunksClaimedByFaction(playersFaction.getName(), claimedChunks) < playersFaction.getCumulativePowerLevel()) {
-                            int seconds = 1;
-                            getServer().getScheduler().runTaskLater(this, new Runnable() {
-                                @Override
-                                public void run() {
-                                    // add new chunk to claimed chunks
-                                    addChunkAtPlayerLocation(event.getPlayer());
-                                }
-                            }, seconds * 20);
-                        }
-                        else {
-                            event.getPlayer().sendMessage(ChatColor.RED + "You have reached your demesne limit! Invite more players to increase this.");
-                        }
-                    }
-                }
-            }
-
-
-            // if new chunk is claimed and old chunk was not
-            if (isClaimed(event.getTo().getChunk(), claimedChunks) && !isClaimed(event.getFrom().getChunk(), claimedChunks)) {
-                event.getPlayer().sendMessage(ChatColor.GREEN + "Entering the territory of " + getClaimedChunk(event.getTo().getChunk().getX(), event.getTo().getChunk().getZ(), claimedChunks).getHolder());
-                return;
-            }
-
-            // if new chunk is unclaimed and old chunk was not
-            if (!isClaimed(event.getTo().getChunk(), claimedChunks) && isClaimed(event.getFrom().getChunk(), claimedChunks)) {
-                event.getPlayer().sendMessage(ChatColor.GREEN + "Entering the wilderness");
-                return;
-            }
-
-
-            // if new chunk is claimed and old chunk was also claimed
-            if (isClaimed(event.getTo().getChunk(), claimedChunks) && isClaimed(event.getFrom().getChunk(), claimedChunks)) {
-                // if chunk holders are not equal
-                if (!(getClaimedChunk(event.getFrom().getChunk().getX(), event.getFrom().getChunk().getZ(), claimedChunks).getHolder().equalsIgnoreCase(getClaimedChunk(event.getTo().getChunk().getX(), event.getTo().getChunk().getZ(), claimedChunks).getHolder()))) {
-                    event.getPlayer().sendMessage(ChatColor.GREEN + "Leaving the territory of " + getClaimedChunk(event.getFrom().getChunk().getX(), event.getFrom().getChunk().getZ(), claimedChunks).getHolder());
-                    event.getPlayer().sendMessage(ChatColor.GREEN + "Entering the territory of " + getClaimedChunk(event.getTo().getChunk().getX(), event.getTo().getChunk().getZ(), claimedChunks).getHolder());
-                }
-            }
-
-        }
-
+        PlayerMoveEventHandler handler = new PlayerMoveEventHandler(this);
+        handler.handle(event);
     }
-
-    // the following two event handlers are identical except in their event types
-    // might have to fix this duplication later
 
     @EventHandler()
     public void onBlockBreak(BlockBreakEvent event) {
