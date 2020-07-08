@@ -3,6 +3,7 @@ package factionsystem.Commands;
 import factionsystem.Objects.ClaimedChunk;
 import factionsystem.Objects.Faction;
 import factionsystem.Main;
+import factionsystem.Objects.LockedBlock;
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
@@ -49,6 +50,13 @@ public class RenameCommand {
                             for (ClaimedChunk chunk : main.claimedChunks) {
                                 if (chunk.getHolder().equalsIgnoreCase(oldName)) {
                                     chunk.setHolder(newName);
+                                }
+                            }
+
+                            // change faction name of locked blocks
+                            for (LockedBlock block : main.lockedBlocks) {
+                                if (block.getFactionName().equalsIgnoreCase(playersFaction.getName())) {
+                                    block.setFaction(newName);
                                 }
                             }
 
