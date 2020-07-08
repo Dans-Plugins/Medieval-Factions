@@ -42,7 +42,7 @@ public class Main extends JavaPlugin implements Listener {
     public static String version = "v2.5";
 
     // subsysytems
-    StorageSubsystem storage = new StorageSubsystem(this);
+    public StorageSubsystem storage = new StorageSubsystem(this);
 
     // saved lists
     public ArrayList<Faction> factions = new ArrayList<>();

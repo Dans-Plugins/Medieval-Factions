@@ -43,7 +43,7 @@ public class RenameCommand {
 
                             // save faction and faction names
                             playersFaction.save(main.factions);
-                            main.saveFactionNames();
+                            main.storage.saveFactionNames();
 
                             // change holder of claimed chunks
                             for (ClaimedChunk chunk : main.claimedChunks) {
@@ -53,7 +53,7 @@ public class RenameCommand {
                             }
 
                             // save claimed chunks
-                            main.saveClaimedChunks();
+                            main.storage.saveClaimedChunks();
                         }
                         else {
                             player.sendMessage(ChatColor.RED + "You are not the owner of this faction!");
