@@ -68,6 +68,11 @@ public class PlayerInteractEventHandler {
                     handleGrantingAccess(clickedBlock, player);
                 }
 
+                // if player is trying to check access
+                if (main.playersCheckingAccess.contains(player.getName())) {
+                    handleCheckingAccess(lockedBlock, player);
+                }
+
             }
         }
     }
@@ -271,6 +276,13 @@ public class PlayerInteractEventHandler {
             main.playersGrantingAccess.remove(player.getName());
         }
 
+    }
+
+    private void handleCheckingAccess(LockedBlock lockedBlock, Player player) {
+        player.sendMessage(ChatColor.AQUA + "The following players have access to this block:");
+        for (String playerName : lockedBlock.getAccessList()) {
+            player.sendMessage(ChatColor.AQUA + " - " + playerName);
+        }
     }
 
 }

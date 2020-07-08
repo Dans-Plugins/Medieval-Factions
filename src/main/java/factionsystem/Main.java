@@ -54,6 +54,7 @@ public class Main extends JavaPlugin implements Listener {
     public ArrayList<String> lockingPlayers = new ArrayList<>();
     public ArrayList<String> unlockingPlayers = new ArrayList<>();
     public HashMap<String, String> playersGrantingAccess = new HashMap<>();
+    public ArrayList<String> playersCheckingAccess = new ArrayList<>();
     public HashMap<String, String> playersRevokingAccess = new HashMap<>();
 
     @Override
@@ -505,6 +506,12 @@ public class Main extends JavaPlugin implements Listener {
                 if (args[0].equalsIgnoreCase("grantaccess")) {
                     GrantAccessCommand command = new GrantAccessCommand(this);
                     command.grantAccess(sender, args);
+                }
+
+                // checkaccess command
+                if (args[0].equalsIgnoreCase("checkaccess")) {
+                    CheckAccessCommand command = new CheckAccessCommand(this);
+                    command.checkAccess(sender, args);
                 }
 
                 // admin commands ----------------------------------------------------------------------------------
