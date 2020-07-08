@@ -56,7 +56,8 @@ public class BlockBreakEventHandler {
 
                         for (LockedBlock block : main.lockedBlocks) {
                             if (block.getX() == event.getBlock().getX() && block.getY() == event.getBlock().getY() && block.getZ() == event.getBlock().getZ()) {
-
+                                main.lockedBlocks.remove(block);
+                                break;
                             }
                         }
 
