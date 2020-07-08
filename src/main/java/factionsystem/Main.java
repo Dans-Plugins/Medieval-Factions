@@ -769,6 +769,8 @@ public class Main extends JavaPlugin implements Listener {
                     }
                 }
 
+                // TODO: shift responsibility of perm checking from Main to the Command class of each command, like below
+
                 // rename command
                 if (args[0].equalsIgnoreCase("rename")) {
                     RenameCommand command = new RenameCommand(this);
@@ -786,6 +788,13 @@ public class Main extends JavaPlugin implements Listener {
                     UnlockCommand command = new UnlockCommand(this);
                     command.unlockBlock(sender, args);
                 }
+
+                // grantaccess command
+                if (args[0].equalsIgnoreCase("grantaccess")) {
+                    GrantAccessCommand command = new GrantAccessCommand(this);
+                    command.grantAccess(sender, args);
+                }
+
                 // admin commands ----------------------------------------------------------------------------------
 
                 // forcesave command
