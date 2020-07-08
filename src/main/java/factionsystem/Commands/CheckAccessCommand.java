@@ -30,6 +30,7 @@ public class CheckAccessCommand {
 
             if (!main.playersCheckingAccess.contains(player.getName())) {
                 main.playersCheckingAccess.add(player.getName());
+                player.sendMessage(ChatColor.GREEN + "Right click a locked block to check who has access to it! Type '/mf checkaccess cancel' to cancel!");
             }
             else {
                 player.sendMessage(ChatColor.RED + "You have already entered this command! Type '/mf checkaccess cancel' to cancel!");

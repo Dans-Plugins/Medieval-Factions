@@ -65,12 +65,12 @@ public class PlayerInteractEventHandler {
 
                 // if player is trying to grant access
                 if (main.playersGrantingAccess.containsKey(player.getName())) {
-                    handleGrantingAccess(clickedBlock, player);
+                    handleGrantingAccess(event, clickedBlock, player);
                 }
 
                 // if player is trying to check access
                 if (main.playersCheckingAccess.contains(player.getName())) {
-                    handleCheckingAccess(lockedBlock, player);
+                    handleCheckingAccess(event, lockedBlock, player);
                 }
 
             }
@@ -234,7 +234,7 @@ public class PlayerInteractEventHandler {
         }
     }
 
-    private void handleGrantingAccess(Block clickedBlock, Player player) {
+    private void handleGrantingAccess(PlayerInteractEvent event, Block clickedBlock, Player player) {
         // if chest
         if (main.isChest(clickedBlock)) {
             InventoryHolder holder = ((Chest) clickedBlock.getState()).getInventory().getHolder();
@@ -275,14 +275,16 @@ public class PlayerInteractEventHandler {
             player.sendMessage(ChatColor.GREEN + "Access granted to " + main.playersGrantingAccess.get(player.getName()));
             main.playersGrantingAccess.remove(player.getName());
         }
-
+        event.setCancelled(true);
     }
 
-    private void handleCheckingAccess(LockedBlock lockedBlock, Player player) {
+    private void handleCheckingAccess(PlayerInteractEvent event, LockedBlock lockedBlock, Player player) {
         player.sendMessage(ChatColor.AQUA + "The following players have access to this block:");
         for (String playerName : lockedBlock.getAccessList()) {
             player.sendMessage(ChatColor.AQUA + " - " + playerName);
         }
+        main.playersCheckingAccess.remove(player.getName());
+        event.setCancelled(true);
     }
 
 }
