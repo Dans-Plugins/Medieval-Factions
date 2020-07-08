@@ -34,9 +34,10 @@ import static factionsystem.Utility.UtilityFunctions.*;
 
 public class Main extends JavaPlugin implements Listener {
 
+    // version
     public static String version = "v2.5";
 
-    // subsysytems
+    // subsystems
     public StorageSubsystem storage = new StorageSubsystem(this);
 
     // saved lists
@@ -74,7 +75,7 @@ public class Main extends JavaPlugin implements Listener {
         return commandInterpreter.interpretCommand(sender, label, args);
     }
 
-    // event handlers ------------------------------------------------------------------------------------------------------------------
+    // event handlers
 
     @EventHandler()
     public void onDamage(EntityDamageByEntityEvent event) {
@@ -93,7 +94,6 @@ public class Main extends JavaPlugin implements Listener {
         BlockBreakEventHandler handler = new BlockBreakEventHandler(this);
         handler.handle(event);
     }
-
     @EventHandler()
     public void onBlockPlace(BlockPlaceEvent event) {
         BlockPlaceEventHandler handler = new BlockPlaceEventHandler(this);
@@ -120,7 +120,7 @@ public class Main extends JavaPlugin implements Listener {
         handler.handle(event);
     }
 
-    // main utility methods
+    // main utility methods ----------------------------------------------------------------------------------------------------------------
     // TODO: move these into classes that use them rather than referencing them from main
 
     public void addChunkAtPlayerLocation(Player player) {
@@ -168,7 +168,7 @@ public class Main extends JavaPlugin implements Listener {
                                 }
                             }
 
-                            if (getPlayersFaction(player.getName(), factions).getAutoClaimStatus() == false) {
+                            if (!getPlayersFaction(player.getName(), factions).getAutoClaimStatus()) {
                                 player.sendMessage(ChatColor.RED + "This land is already claimed by " + chunk.getHolder());
                             }
 

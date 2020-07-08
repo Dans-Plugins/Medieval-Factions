@@ -344,7 +344,7 @@ public class PlayerInteractEventHandler {
                 main.getLockedBlock(clickedBlock.getX(), clickedBlock.getY() - 1, clickedBlock.getZ()).removeFromAccessList(main.playersRevokingAccess.get(player.getName()));
             }
 
-            player.sendMessage(ChatColor.GREEN + "Access granted to " + main.playersRevokingAccess.get(player.getName()));
+            player.sendMessage(ChatColor.GREEN + "Access revoked for " + main.playersRevokingAccess.get(player.getName()));
             main.playersRevokingAccess.remove(player.getName());
         }
         event.setCancelled(true);
