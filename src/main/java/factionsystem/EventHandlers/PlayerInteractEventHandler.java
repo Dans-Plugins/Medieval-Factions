@@ -331,13 +331,13 @@ public class PlayerInteractEventHandler {
                 main.getLockedBlock(leftChest.getX(), leftChest.getY(), leftChest.getZ()).removeFromAccessList(main.playersRevokingAccess.get(player.getName()));
                 main.getLockedBlock(rightChest.getX(), rightChest.getY(), rightChest.getZ()).removeFromAccessList(main.playersRevokingAccess.get(player.getName()));
 
-                player.sendMessage(ChatColor.GREEN + "Access granted to " + main.playersRevokingAccess.get(player.getName()));
+                player.sendMessage(ChatColor.GREEN + "Access revoked for " + main.playersRevokingAccess.get(player.getName()));
                 main.playersRevokingAccess.remove(player.getName());
             }
             else { // if single chest
                 // revoke access to single chest
                 main.getLockedBlock(clickedBlock.getX(), clickedBlock.getY(), clickedBlock.getZ()).removeFromAccessList(main.playersRevokingAccess.get(player.getName()));
-                player.sendMessage(ChatColor.GREEN + "Access granted to " + main.playersRevokingAccess.get(player.getName()));
+                player.sendMessage(ChatColor.GREEN + "Access revoked for " + main.playersRevokingAccess.get(player.getName()));
                 main.playersRevokingAccess.remove(player.getName());
             }
 
