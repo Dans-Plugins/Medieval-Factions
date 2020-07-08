@@ -57,7 +57,6 @@ public class HelpCommand {
                 sender.sendMessage(ChatColor.AQUA + "/mf resetpowerlevels - Reset player power records and faction cumulative power levels." + "\n");
             }
         }
-        sender.sendMessage(ChatColor.AQUA + "----------\n");
         return true;
     }
 

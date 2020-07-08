@@ -22,9 +22,9 @@ public class RevokeAccessCommand {
 
             if (args.length > 1) {
                 if (args[1].equalsIgnoreCase("cancel")) {
-                    player.sendMessage(ChatColor.GREEN + "Cancelled!");
                     if (main.playersRevokingAccess.containsKey(player.getName())) {
                         main.playersRevokingAccess.remove(player.getName());
+                        player.sendMessage(ChatColor.GREEN + "Cancelled!");
                         return;
                     }
                 }
@@ -34,7 +34,7 @@ public class RevokeAccessCommand {
                 return;
             }
 
-            if (!main.playersCheckingAccess.contains(player.getName())) {
+            if (!main.playersRevokingAccess.containsKey(player.getName())) {
                 main.playersRevokingAccess.put(player.getName(), args[1]);
                 player.sendMessage(ChatColor.GREEN + "Right click a locked block to revoke this player's access to it! Type '/mf revokeaccess cancel' to cancel!");
             }
