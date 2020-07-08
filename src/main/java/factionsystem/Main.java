@@ -1,8 +1,6 @@
 package factionsystem;
 
-import factionsystem.EventHandlers.EntityDamageByEntityEventHandler;
-import factionsystem.EventHandlers.PlayerInteractEventHandler;
-import factionsystem.EventHandlers.PlayerMoveEventHandler;
+import factionsystem.EventHandlers.*;
 import factionsystem.Objects.ClaimedChunk;
 import factionsystem.Objects.Faction;
 import factionsystem.Objects.LockedBlock;
@@ -92,73 +90,14 @@ public class Main extends JavaPlugin implements Listener {
 
     @EventHandler()
     public void onBlockBreak(BlockBreakEvent event) {
-        // get player
-        Player player = event.getPlayer();
-
-        // get chunk
-        ClaimedChunk chunk = getClaimedChunk(event.getBlock().getLocation().getChunk().getX(), event.getBlock().getLocation().getChunk().getZ(), claimedChunks);
-
-        // if chunk is claimed
-        if (chunk != null) {
-
-            // player not in a faction
-            if (!isInFaction(event.getPlayer().getName(), factions)) {
-                event.setCancelled(true);
-            }
-
-            // if player is in faction
-            for (Faction faction : factions) {
-                if (faction.isMember(player.getName())) {
-
-                    // if player's faction is not the same as the holder of the chunk
-                    if (!(faction.getName().equalsIgnoreCase(chunk.getHolder()))) {
-                        event.setCancelled(true);
-                        return;
-                    }
-
-                    // if block is locked
-                    if (isBlockLocked(event.getBlock().getX(), event.getBlock().getY(), event.getBlock().getZ())) {
-
-                        // if player is not the owner
-                        if (!getLockedBlock(event.getBlock().getX(), event.getBlock().getY(), event.getBlock().getZ()).getOwner().equalsIgnoreCase(player.getName())) {
-                            event.setCancelled(true);
-                            player.sendMessage(ChatColor.RED + "You don't own this!");
-                            return;
-                        }
-                    }
-                }
-            }
-        }
+        BlockBreakEventHandler handler = new BlockBreakEventHandler(this);
+        handler.handle(event);
     }
 
     @EventHandler()
     public void onBlockPlace(BlockPlaceEvent event) {
-        // get player
-        Player player = event.getPlayer();
-
-        // get chunk
-        ClaimedChunk chunk = getClaimedChunk(event.getBlock().getLocation().getChunk().getX(), event.getBlock().getLocation().getChunk().getZ(), claimedChunks);
-
-        // if chunk is claimed
-        if (chunk != null) {
-
-            // player not in a faction
-            if (!isInFaction(event.getPlayer().getName(), factions)) {
-                event.setCancelled(true);
-            }
-
-            // if player is in faction
-            for (Faction faction : factions) {
-                if (faction.isMember(player.getName())) {
-
-                    // if player's faction is not the same as the holder of the chunk
-                    if (!(faction.getName().equalsIgnoreCase(chunk.getHolder()))) {
-                        event.setCancelled(true);
-                        return;
-                    }
-                }
-            }
-        }
+        BlockPlaceEventHandler handler = new BlockPlaceEventHandler(this);
+        handler.handle(event);
     }
 
     @EventHandler()
@@ -171,54 +110,14 @@ public class Main extends JavaPlugin implements Listener {
     public void onJoin(PlayerJoinEvent event) {
         if (!hasPowerRecord(event.getPlayer().getName())) {
             PlayerPowerRecord newRecord = new PlayerPowerRecord(event.getPlayer().getName());
-
             playerPowerRecords.add(newRecord);
         }
     }
 
     @EventHandler()
     public void onDeath(PlayerDeathEvent event) {
-        event.getEntity();
-        Player player = (Player) event.getEntity();
-
-        // decrease dying player's power
-        for (PlayerPowerRecord record : playerPowerRecords) {
-            if (record.getPlayerName().equalsIgnoreCase(player.getName())) {
-                record.decreasePower();
-                if (getPlayersPowerRecord(player.getName(), playerPowerRecords).getPowerLevel() > 0) {
-                    player.sendMessage(ChatColor.RED + "Your power level has decreased!");
-                }
-            }
-        }
-
-        // if player's cause of death was another player killing them
-        if (player.getKiller() instanceof Player) {
-            Player killer = (Player) player.getKiller();
-            System.out.println(player.getName() + " has killed " + killer.getName());
-
-            for (PlayerPowerRecord record : playerPowerRecords) {
-                if (record.getPlayerName().equalsIgnoreCase(killer.getName())) {
-                    record.increasePower();
-                    if (getPlayersPowerRecord(killer.getName(), playerPowerRecords).getPowerLevel() < 20) {
-                        killer.sendMessage(ChatColor.GREEN + "Your power level has increased!");
-                    }
-                }
-            }
-
-            // add power to killer's faction
-            if (isInFaction(killer.getName(), factions)) {
-                if (getPlayersPowerRecord(killer.getName(), playerPowerRecords).getPowerLevel() < 20) {
-                    getPlayersFaction(killer.getName(), factions).addPower();
-                }
-            }
-        }
-
-        // decrease power from player's faction
-        if (isInFaction(player.getName(), factions)) {
-            if (getPlayersPowerRecord(player.getName(), playerPowerRecords).getPowerLevel() > 0) {
-                getPlayersFaction(player.getName(), factions).subtractPower();
-            }
-        }
+        PlayerDeathEventHandler handler = new PlayerDeathEventHandler(this);
+        handler.handle(event);
     }
 
     // main utility methods
