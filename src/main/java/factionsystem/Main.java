@@ -301,7 +301,7 @@ public class Main extends JavaPlugin implements Listener {
                 block.getType() == Material.IRON_DOOR ||
                 block.getType() == Material.JUNGLE_DOOR ||
                 block.getType() == Material.OAK_DOOR ||
-                block.getType() == Material.ACACIA_DOOR) {
+                block.getType() == Material.SPRUCE_DOOR) {
 
             return true;
 
