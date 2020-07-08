@@ -17,7 +17,7 @@ public class HelpCommand {
                 sendPageOne(sender);
             }
             if (args[1].equalsIgnoreCase("2")) {
-                sender.sendMessage(ChatColor.BOLD + "" + ChatColor.AQUA + " == Medieval Factions Commands Page 2/5 == " + "\n");
+                sender.sendMessage(ChatColor.BOLD + "" + ChatColor.AQUA + "\n == Medieval Factions Commands Page 2/5 == " + "\n");
                 sender.sendMessage(ChatColor.AQUA + "/mf kick - Kick a player from your faction. " + "\n");
                 sender.sendMessage(ChatColor.AQUA + "/mf transfer - Transfer ownership of your faction to another player.\n");
                 sender.sendMessage(ChatColor.AQUA + "/mf disband - Disband your faction (must be owner)." + "\n");
@@ -29,7 +29,7 @@ public class HelpCommand {
                 sender.sendMessage(ChatColor.AQUA + "/mf checkclaim - Check if land is claimed." + "\n");
             }
             if (args[1].equalsIgnoreCase("3")) {
-                sender.sendMessage(ChatColor.BOLD + "" + ChatColor.AQUA + " == Medieval Factions Commands Page 3/5 == " + "\n");
+                sender.sendMessage(ChatColor.BOLD + "" + ChatColor.AQUA + "\n == Medieval Factions Commands Page 3/5 == " + "\n");
                 sender.sendMessage(ChatColor.AQUA + "/mf autoclaim - Toggle auto claim, making land claiming easier." + "\n");
                 sender.sendMessage(ChatColor.AQUA + "/mf promote - Promote a player to officer status." + "\n");
                 sender.sendMessage(ChatColor.AQUA + "/mf demote - Demote an officer to member status." + "\n");
@@ -41,7 +41,7 @@ public class HelpCommand {
                 sender.sendMessage(ChatColor.AQUA + "/mf breakalliance - Break an alliance with a faction." + "\n");
             }
             if (args[1].equalsIgnoreCase("4")) {
-                sender.sendMessage(ChatColor.BOLD + "" + ChatColor.AQUA + " == Medieval Factions Commands Page 4/5 == " + "\n");
+                sender.sendMessage(ChatColor.BOLD + "" + ChatColor.AQUA + "\n == Medieval Factions Commands Page 4/5 == " + "\n");
                 sender.sendMessage(ChatColor.AQUA + "/mf rename - Rename your faction" + "\n");
                 sender.sendMessage(ChatColor.AQUA + "/mf lock - Lock a chest or door." + "\n");
                 sender.sendMessage(ChatColor.AQUA + "/mf unlock Unlock a chest or door." + "\n");
@@ -50,7 +50,7 @@ public class HelpCommand {
                 sender.sendMessage(ChatColor.AQUA + "/mf revokeaccess - Revoke someone's access to a locked block.");
             }
             if (args[1].equalsIgnoreCase("5")) {
-                sender.sendMessage(ChatColor.BOLD + "" + ChatColor.AQUA + " == Medieval Factions Commands Page 4/5 == " + "\n");
+                sender.sendMessage(ChatColor.BOLD + "" + ChatColor.AQUA + "\n == Medieval Factions Commands Page 5/5 == " + "\n");
                 sender.sendMessage(ChatColor.AQUA + "/mf forcesave - Force the plugin to save." + "\n");
                 sender.sendMessage(ChatColor.AQUA + "/mf version - Check plugin version." + "\n");
                 sender.sendMessage(ChatColor.AQUA + "/mf forceload - Force the plugin to load." + "\n");
@@ -61,7 +61,7 @@ public class HelpCommand {
     }
 
     static void sendPageOne(CommandSender sender) {
-        sender.sendMessage(ChatColor.BOLD + "" + ChatColor.AQUA + " == Medieval Factions Commands Page 1/5 == " + "\n");
+        sender.sendMessage(ChatColor.BOLD + "" + ChatColor.AQUA + "\n == Medieval Factions Commands Page 1/5 == " + "\n");
         sender.sendMessage(ChatColor.AQUA + "/mf help # - Show lists of useful commands." + "\n");
         sender.sendMessage(ChatColor.AQUA + "/mf list - List all factions on the server." + "\n");
         sender.sendMessage(ChatColor.AQUA + "/mf info - See your faction or another faction's information." + "\n");
