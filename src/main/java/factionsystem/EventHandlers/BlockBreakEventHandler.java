@@ -3,6 +3,7 @@ package factionsystem.EventHandlers;
 import factionsystem.Main;
 import factionsystem.Objects.ClaimedChunk;
 import factionsystem.Objects.Faction;
+import factionsystem.Objects.LockedBlock;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 import org.bukkit.event.block.BlockBreakEvent;
@@ -52,6 +53,13 @@ public class BlockBreakEventHandler {
                             player.sendMessage(ChatColor.RED + "You don't own this!");
                             return;
                         }
+
+                        for (LockedBlock block : main.lockedBlocks) {
+                            if (block.getX() == event.getBlock().getX() && block.getY() == event.getBlock().getY() && block.getZ() == event.getBlock().getZ()) {
+
+                            }
+                        }
+
                     }
                 }
             }
