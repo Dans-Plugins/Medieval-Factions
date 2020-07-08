@@ -31,7 +31,6 @@ import org.bukkit.plugin.java.JavaPlugin;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Objects;
 
 import static factionsystem.Utility.UtilityFunctions.*;
 
@@ -510,6 +509,12 @@ public class Main extends JavaPlugin implements Listener {
                 if (args[0].equalsIgnoreCase("checkaccess")) {
                     CheckAccessCommand command = new CheckAccessCommand(this);
                     command.checkAccess(sender, args);
+                }
+
+                // revokeaccess command
+                if (args[0].equalsIgnoreCase("revokeaccess")) {
+                    RevokeAccessCommand command = new RevokeAccessCommand(this);
+                    command.revokeAccess(sender, args);
                 }
 
                 // admin commands ----------------------------------------------------------------------------------
