@@ -237,6 +237,13 @@ public class PlayerInteractEventHandler {
     private void handleGrantingAccess(PlayerInteractEvent event, Block clickedBlock, Player player) {
         // if chest
         if (main.isChest(clickedBlock)) {
+
+            // if not owner
+            if (!main.getLockedBlock(clickedBlock.getX(), clickedBlock.getY(), clickedBlock.getZ()).getOwner().equalsIgnoreCase(player.getName())) {
+                player.sendMessage(ChatColor.RED + "You are not the owner of this block!");
+                return;
+            }
+
             InventoryHolder holder = ((Chest) clickedBlock.getState()).getInventory().getHolder();
             if (holder instanceof DoubleChest) { // if double chest
                 // grant access to both chests
@@ -285,6 +292,12 @@ public class PlayerInteractEventHandler {
         }
         main.playersCheckingAccess.remove(player.getName());
         event.setCancelled(true);
+    }
+
+    private void handleRevokingAccess(PlayerInteractEvent event, LockedBlock lockedBlock, Player player) {
+
+
+
     }
 
 }
