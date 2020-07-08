@@ -1,4 +1,4 @@
-package factionsystem.subsystems;
+package factionsystem.Subsystems;
 
 import factionsystem.Main;
 import factionsystem.Objects.ClaimedChunk;

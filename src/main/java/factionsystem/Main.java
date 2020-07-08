@@ -1,12 +1,13 @@
 package factionsystem;
 
 import factionsystem.Commands.*;
+import factionsystem.EventHandlers.EntityDamageByEntityEventHandler;
 import factionsystem.EventHandlers.PlayerInteractEventHandler;
 import factionsystem.Objects.ClaimedChunk;
 import factionsystem.Objects.Faction;
 import factionsystem.Objects.LockedBlock;
 import factionsystem.Objects.PlayerPowerRecord;
-import factionsystem.subsystems.StorageSubsystem;
+import factionsystem.Subsystems.StorageSubsystem;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
@@ -27,13 +28,9 @@ import org.bukkit.event.player.PlayerMoveEvent;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileWriter;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Objects;
-import java.util.Scanner;
 
 import static factionsystem.Utility.UtilityFunctions.*;
 
@@ -556,43 +553,8 @@ public class Main extends JavaPlugin implements Listener {
 
     @EventHandler()
     public void onDamage(EntityDamageByEntityEvent event) {
-        // this method disallows PVP between members of the same faction and between factions who are not at war
-        // PVP is allowed between factionless players, players who belong to a faction and the factionless, and players whose factions are at war.
-
-        // if this was between two players
-        if (event.getDamager() instanceof Player && event.getEntity() instanceof Player) {
-            Player attacker = (Player) event.getDamager();
-            Player victim = (Player) event.getEntity();
-
-            int attackersFactionIndex = 0;
-            int victimsFactionIndex = 0;
-
-            for (int i = 0; i < factions.size(); i++) {
-                if (factions.get(i).isMember(attacker.getName())) {
-                    attackersFactionIndex = i;
-                }
-                if (factions.get(i).isMember(victim.getName())) {
-                    victimsFactionIndex = i;
-                }
-            }
-
-            // if attacker and victim are both in a faction
-            if (isInFaction(attacker.getName(), factions) && isInFaction(victim.getName(), factions)) {
-                // if attacker and victim are part of the same faction
-                if (attackersFactionIndex == victimsFactionIndex) {
-                    event.setCancelled(true);
-                    attacker.sendMessage(ChatColor.RED + "You can't attack another player if you are part of the same faction.");
-                    return;
-                }
-
-                // if attacker's faction and victim's faction are not at war
-                if (!(factions.get(attackersFactionIndex).isEnemy(factions.get(victimsFactionIndex).getName())) &&
-                    !(factions.get(victimsFactionIndex).isEnemy(factions.get(attackersFactionIndex).getName()))) {
-                    event.setCancelled(true);
-                    attacker.sendMessage(ChatColor.RED + "You can't attack another player if your factions aren't at war.");
-                }
-            }
-        }
+        EntityDamageByEntityEventHandler handler = new EntityDamageByEntityEventHandler(this);
+        handler.handle(event);
     }
 
     public void addChunkAtPlayerLocation(Player player) {
