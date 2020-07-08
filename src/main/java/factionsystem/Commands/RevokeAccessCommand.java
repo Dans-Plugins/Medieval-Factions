@@ -22,7 +22,7 @@ public class RevokeAccessCommand {
 
             if (args.length > 1) {
                 if (args[1].equalsIgnoreCase("cancel")) {
-                    player.sendMessage(ChatColor.RED + "Cancelled!");
+                    player.sendMessage(ChatColor.GREEN + "Cancelled!");
                     if (main.playersRevokingAccess.containsKey(player.getName())) {
                         main.playersRevokingAccess.remove(player.getName());
                         return;
