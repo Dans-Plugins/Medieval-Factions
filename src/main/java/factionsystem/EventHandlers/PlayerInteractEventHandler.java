@@ -125,6 +125,9 @@ public class PlayerInteractEventHandler {
                         // lock single chest
                         LockedBlock single = new LockedBlock(player.getName(), getPlayersFaction(player.getName(), main.factions).getName(), clickedBlock.getX(), clickedBlock.getY(), clickedBlock.getZ());
                         main.lockedBlocks.add(single);
+
+                        player.sendMessage(ChatColor.GREEN + "Locked!");
+                        main.lockingPlayers.remove(player.getName());
                     }
                 }
 
@@ -264,7 +267,7 @@ public class PlayerInteractEventHandler {
             }
             else { // if single chest
                 // grant access to single chest
-                main.removeLock(clickedBlock);main.getLockedBlock(clickedBlock.getX(), clickedBlock.getY(), clickedBlock.getZ()).addToAccessList(main.playersGrantingAccess.get(player.getName()));
+                main.getLockedBlock(clickedBlock.getX(), clickedBlock.getY(), clickedBlock.getZ()).addToAccessList(main.playersGrantingAccess.get(player.getName()));
                 player.sendMessage(ChatColor.GREEN + "Access granted to " + main.playersGrantingAccess.get(player.getName()));
                 main.playersGrantingAccess.remove(player.getName());
             }
