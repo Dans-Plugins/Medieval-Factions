@@ -79,6 +79,15 @@ public class PlayerInteractEventHandler {
                 }
 
             }
+            else {
+                // if player is using an access command
+                if (main.playersGrantingAccess.containsKey(player.getName()) ||
+                    main.playersCheckingAccess.contains(player.getName()) ||
+                    main.playersRevokingAccess.containsKey(player.getName())) {
+
+                    player.sendMessage(ChatColor.RED + "That block isn't locked!");
+                }
+            }
         }
     }
 
