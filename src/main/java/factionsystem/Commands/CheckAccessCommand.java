@@ -24,6 +24,7 @@ public class CheckAccessCommand {
                     player.sendMessage(ChatColor.RED + "Cancelled!");
                     if (main.playersCheckingAccess.contains(player.getName())) {
                         main.playersCheckingAccess.remove(player.getName());
+                        return;
                     }
                 }
             }
