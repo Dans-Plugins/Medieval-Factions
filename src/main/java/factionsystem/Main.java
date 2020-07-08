@@ -29,6 +29,7 @@ import org.bukkit.plugin.java.JavaPlugin;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Iterator;
 
 import static factionsystem.Utility.UtilityFunctions.*;
 
@@ -150,14 +151,15 @@ public class Main extends JavaPlugin implements Listener {
                                         if (faction.isEnemy(targetFaction.getName())) {
 
                                             // remove locks on this chunk
-                                            for (int i = 0; i < lockedBlocks.size(); i++) {
-                                                LockedBlock block = lockedBlocks.get(i);
-                                                // if block is on this chunk
+                                            Iterator<LockedBlock> itr = lockedBlocks.iterator();
+                                            while (itr.hasNext()) {
+                                                LockedBlock block = itr.next();
                                                 if (chunk.getChunk().getWorld().getBlockAt(block.getX(), block.getY(), block.getZ()).getChunk().getX() == chunk.getChunk().getX() &&
                                                         chunk.getChunk().getWorld().getBlockAt(block.getX(), block.getY(), block.getZ()).getChunk().getZ() == chunk.getChunk().getZ()) {
-                                                    lockedBlocks.remove(i);
+                                                    itr.remove();
                                                 }
                                             }
+
                                             claimedChunks.remove(chunk);
 
                                             ClaimedChunk newChunk = new ClaimedChunk(player.getLocation().getChunk());
@@ -239,12 +241,12 @@ public class Main extends JavaPlugin implements Listener {
                             }
 
                             // remove locks on this chunk
-                            for (int i = 0; i < lockedBlocks.size(); i++) {
-                                LockedBlock block = lockedBlocks.get(i);
-                                // if block is on this chunk
+                            Iterator<LockedBlock> itr = lockedBlocks.iterator();
+                            while (itr.hasNext()) {
+                                LockedBlock block = itr.next();
                                 if (chunk.getChunk().getWorld().getBlockAt(block.getX(), block.getY(), block.getZ()).getChunk().getX() == chunk.getChunk().getX() &&
                                         chunk.getChunk().getWorld().getBlockAt(block.getX(), block.getY(), block.getZ()).getChunk().getZ() == chunk.getChunk().getZ()) {
-                                    lockedBlocks.remove(i);
+                                    itr.remove();
                                 }
                             }
 
