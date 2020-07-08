@@ -53,15 +53,32 @@ public class RenameCommand {
                                 }
                             }
 
+                            // save claimed chunks
+                            main.storage.saveClaimedChunks();
+
                             // change faction name of locked blocks
                             for (LockedBlock block : main.lockedBlocks) {
-                                if (block.getFactionName().equalsIgnoreCase(playersFaction.getName())) {
+                                if (block.getFactionName().equalsIgnoreCase(oldName)) {
                                     block.setFaction(newName);
                                 }
                             }
 
-                            // save claimed chunks
-                            main.storage.saveClaimedChunks();
+                            // save locked blocks
+                            main.storage.saveLockedBlocks();
+
+                            // rename alliance and enemy records
+                            for (Faction faction : main.factions) {
+                                if (faction.isAlly(oldName)) {
+                                    faction.removeAlly(oldName);
+                                    faction.addAlly(newName);
+                                }
+                                if (faction.isEnemy(oldName)) {
+                                    faction.removeEnemy(oldName);
+                                    faction.addEnemy(newName);
+                                }
+                            }
+
+
                         }
                         else {
                             player.sendMessage(ChatColor.RED + "You are not the owner of this faction!");
