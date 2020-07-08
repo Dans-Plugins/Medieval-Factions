@@ -109,7 +109,7 @@ public class LockedBlock {
             saveWriter.write(factionName + "\n");
 
             for (String playerName : accessList) {
-                saveWriter.write(playerName);
+                saveWriter.write(playerName + "\n");
             }
 
             saveWriter.close();

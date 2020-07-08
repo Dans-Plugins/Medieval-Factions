@@ -3,6 +3,7 @@ package factionsystem.Commands;
 import factionsystem.Objects.ClaimedChunk;
 import factionsystem.Objects.Faction;
 import factionsystem.Main;
+import factionsystem.Objects.LockedBlock;
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
@@ -43,7 +44,7 @@ public class RenameCommand {
 
                             // save faction and faction names
                             playersFaction.save(main.factions);
-                            main.saveFactionNames();
+                            main.storage.saveFactionNames();
 
                             // change holder of claimed chunks
                             for (ClaimedChunk chunk : main.claimedChunks) {
@@ -52,8 +53,15 @@ public class RenameCommand {
                                 }
                             }
 
+                            // change faction name of locked blocks
+                            for (LockedBlock block : main.lockedBlocks) {
+                                if (block.getFactionName().equalsIgnoreCase(playersFaction.getName())) {
+                                    block.setFaction(newName);
+                                }
+                            }
+
                             // save claimed chunks
-                            main.saveClaimedChunks();
+                            main.storage.saveClaimedChunks();
                         }
                         else {
                             player.sendMessage(ChatColor.RED + "You are not the owner of this faction!");

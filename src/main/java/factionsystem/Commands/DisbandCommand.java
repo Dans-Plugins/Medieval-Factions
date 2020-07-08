@@ -8,6 +8,7 @@ import org.bukkit.entity.Player;
 import java.io.File;
 
 import static factionsystem.Utility.UtilityFunctions.removeAllClaimedChunks;
+import static factionsystem.Utility.UtilityFunctions.removeAllLocks;
 
 public class DisbandCommand {
 
@@ -42,6 +43,9 @@ public class DisbandCommand {
 
                         // remove claimed land objects associated with this faction
                         removeAllClaimedChunks(main.factions.get(i).getName(), main.claimedChunks);
+
+                        // remove locks associated with this faction
+                        removeAllLocks(main.factions.get(i).getName(), main.lockedBlocks);
 
                         main.factions.remove(i);
                         player.sendMessage(ChatColor.GREEN + "Faction successfully disbanded.");
