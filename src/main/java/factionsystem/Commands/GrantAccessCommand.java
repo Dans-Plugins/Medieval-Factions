@@ -31,7 +31,7 @@ public class GrantAccessCommand {
                 if (!main.playersGrantingAccess.containsKey(player.getName())) {
                     // save target name and player name in hashmap in main
                     main.playersGrantingAccess.put(player.getName(), args[1]);
-                    player.sendMessage(ChatColor.RED + "Right click a chest or door to grant " + args[1] + " access.");
+                    player.sendMessage(ChatColor.GREEN + "Right click a chest or door to grant " + args[1] + " access. Type /mf grantaccess cancel to cancel this.");
                 }
                 else {
                     player.sendMessage(ChatColor.RED + "You are already granting access to someone! Type /mf grantaccess cancel to cancel this.");

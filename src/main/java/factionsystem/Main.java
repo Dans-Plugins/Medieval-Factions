@@ -6,6 +6,7 @@ import factionsystem.Objects.ClaimedChunk;
 import factionsystem.Objects.Faction;
 import factionsystem.Objects.LockedBlock;
 import factionsystem.Objects.PlayerPowerRecord;
+import factionsystem.subsystems.StorageSubsystem;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
@@ -40,6 +41,9 @@ public class Main extends JavaPlugin implements Listener {
 
     public static String version = "v2.5";
 
+    // subsysytems
+    StorageSubsystem storage = new StorageSubsystem(this);
+
     // saved lists
     public ArrayList<Faction> factions = new ArrayList<>();
     public ArrayList<ClaimedChunk> claimedChunks = new ArrayList<>();
@@ -61,7 +65,7 @@ public class Main extends JavaPlugin implements Listener {
 
         this.getServer().getPluginManager().registerEvents(this, this);
 
-        load();
+        storage.load();
 
         System.out.println("Medieval Factions plugin enabled.");
     }
@@ -70,301 +74,9 @@ public class Main extends JavaPlugin implements Listener {
     public void onDisable(){
         System.out.println("Medieval Factions plugin disabling....");
 
-        save();
+        storage.save();
 
         System.out.println("Medieval Factions plugin disabled.");
-    }
-
-    public void save() {
-        saveFactionNames();
-        saveFactions();
-        saveClaimedChunkFilenames();
-        saveClaimedChunks();
-        savePlayerPowerRecordFilenames();
-        savePlayerPowerRecords();
-        saveLockedBlockFilenames();
-        saveLockedBlocks();
-    }
-
-    public void saveFactionNames() {
-        try {
-            File saveFolder = new File("./plugins/medievalfactions/");
-            if (!saveFolder.exists()) {
-                saveFolder.mkdir();
-            }
-            File saveFile = new File("./plugins/medievalfactions/" + "faction-names.txt");
-            if (saveFile.createNewFile()) {
-                System.out.println("Save file for faction names created.");
-            } else {
-                System.out.println("Save file for faction names already exists. Overwriting.");
-            }
-
-            FileWriter saveWriter = new FileWriter(saveFile);
-
-            // actual saving takes place here
-            for (Faction faction : factions) {
-                saveWriter.write(faction.getName() + "\n");
-            }
-
-            saveWriter.close();
-
-        } catch (IOException e) {
-            System.out.println("An error occurred while saving faction names.");
-        }
-    }
-
-    public void saveFactions() {
-        System.out.println("Saving factions...");
-        for (Faction faction : factions) {
-            faction.save(factions);
-        }
-        System.out.println("Factions saved.");
-    }
-
-    public void saveClaimedChunkFilenames() {
-        try {
-            File saveFolder = new File("./plugins/medievalfactions/claimedchunks/");
-            if (!saveFolder.exists()) {
-                saveFolder.mkdir();
-            }
-            File saveFile = new File("./plugins/medievalfactions/claimedchunks/" + "claimedchunks.txt");
-            if (saveFile.createNewFile()) {
-                System.out.println("Save file for claimed chunk filenames created.");
-            } else {
-                System.out.println("Save file for claimed chunk filenames already exists. Overwriting.");
-            }
-
-            FileWriter saveWriter = new FileWriter(saveFile);
-
-            // actual saving takes place here
-            for (ClaimedChunk chunk : claimedChunks) {
-                double[] coords = chunk.getCoordinates();
-
-                saveWriter.write((int)coords[0] + "_" + (int)coords[1] + ".txt" + "\n");
-            }
-
-            saveWriter.close();
-
-        } catch (IOException e) {
-            System.out.println("An error occurred while saving claimed chunk filenames.");
-        }
-    }
-
-    public void saveClaimedChunks() {
-        System.out.println("Saving claimed chunks...");
-        for (ClaimedChunk chunk : claimedChunks) {
-            chunk.save();
-        }
-        System.out.println("Claimed chunks saved.");
-    }
-
-    public void savePlayerPowerRecordFilenames() {
-        try {
-            File saveFolder = new File("./plugins/medievalfactions/player-power-records/");
-            if (!saveFolder.exists()) {
-                saveFolder.mkdir();
-            }
-            File saveFile = new File("./plugins/medievalfactions/player-power-records/" + "playerpowerrecords.txt");
-            if (saveFile.createNewFile()) {
-                System.out.println("Save file for player power record filenames created.");
-            } else {
-                System.out.println("Save file for player power record filenames already exists. Overwriting.");
-            }
-
-            FileWriter saveWriter = new FileWriter(saveFile);
-
-            // actual saving takes place here
-            for (PlayerPowerRecord record : playerPowerRecords) {
-                saveWriter.write(record.getPlayerName() + ".txt" + "\n");
-            }
-
-            saveWriter.close();
-
-        } catch (IOException e) {
-            System.out.println("An error occurred while saving player power record filenames.");
-        }
-    }
-
-    public void savePlayerPowerRecords() {
-        System.out.println("Saving player power records...");
-        for (PlayerPowerRecord record: playerPowerRecords) {
-            record.save();
-        }
-        System.out.println("Player power records saved.");
-    }
-
-    public void saveLockedBlockFilenames() {
-        try {
-            File saveFolder = new File("./plugins/medievalfactions/lockedblocks/");
-            if (!saveFolder.exists()) {
-                saveFolder.mkdir();
-            }
-            File saveFile = new File("./plugins/medievalfactions/lockedblocks/" + "lockedblocks.txt");
-            if (saveFile.createNewFile()) {
-                System.out.println("Save file for locked block filenames created.");
-            } else {
-                System.out.println("Save file for locked block filenames already exists. Overwriting.");
-            }
-
-            FileWriter saveWriter = new FileWriter(saveFile);
-
-            // actual saving takes place here
-            for (LockedBlock block : lockedBlocks) {
-                saveWriter.write(block.getX() + "_" + block.getY() + "_" + block.getZ() + ".txt" + "\n");
-            }
-
-            saveWriter.close();
-
-        } catch (IOException e) {
-            System.out.println("An error occurred while saving locked block filenames.");
-        }
-    }
-
-    public void saveLockedBlocks() {
-        for (LockedBlock block : lockedBlocks) {
-            block.save();
-        }
-    }
-
-    public void load() {
-        loadFactions();
-        loadClaimedChunks();
-        loadPlayerPowerRecords();
-        loadLockedBlocks();
-    }
-
-    public void loadFactions() {
-        try {
-            System.out.println("Attempting to load factions...");
-            File loadFile = new File("./plugins/medievalfactions/" + "faction-names.txt");
-            Scanner loadReader = new Scanner(loadFile);
-
-            // actual loading
-            while (loadReader.hasNextLine()) {
-                String nextName = loadReader.nextLine();
-                Faction temp = new Faction(nextName); // uses server constructor, only temporary
-                temp.load(nextName + ".txt"); // provides owner field among other things
-
-                // existence check
-                for (int i = 0; i < factions.size(); i++) {
-                    if (factions.get(i).getName().equalsIgnoreCase(temp.getName())) {
-                        factions.remove(i);
-                        break;
-                    }
-                }
-
-                factions.add(temp);
-
-            }
-
-            loadReader.close();
-            System.out.println("Factions successfully loaded.");
-        } catch (FileNotFoundException e) {
-            System.out.println("There was a problem loading the factions!");
-        }
-    }
-
-    public void loadClaimedChunks() {
-        System.out.println("Loading claimed chunks...");
-
-        try {
-            System.out.println("Attempting to load claimed chunks...");
-            File loadFile = new File("./plugins/medievalfactions/claimedchunks/" + "claimedchunks.txt");
-            Scanner loadReader = new Scanner(loadFile);
-
-            // actual loading
-            while (loadReader.hasNextLine()) {
-                String nextName = loadReader.nextLine();
-                ClaimedChunk temp = new ClaimedChunk(); // uses no-parameter constructor since load provides chunk
-                temp.load(nextName); // provides owner field among other things
-
-                // existence check
-                for (int i = 0; i < claimedChunks.size(); i++) {
-                    if (claimedChunks.get(i).getChunk().getX() == temp.getChunk().getX() &&
-                        claimedChunks.get(i).getChunk().getZ() == temp.getChunk().getZ()) {
-                        claimedChunks.remove(i);
-                        break;
-                    }
-                }
-
-                claimedChunks.add(temp);
-
-            }
-
-            loadReader.close();
-            System.out.println("Claimed chunks successfully loaded.");
-        } catch (FileNotFoundException e) {
-            System.out.println("There was a problem loading the claimed chunks!");
-        }
-
-        System.out.println("Claimed chunks loaded.");
-    }
-
-    public void loadPlayerPowerRecords() {
-        System.out.println("Loading player power records...");
-
-        try {
-            System.out.println("Attempting to load player power record filenames...");
-            File loadFile = new File("./plugins/medievalfactions/player-power-records/" + "playerpowerrecords.txt");
-            Scanner loadReader = new Scanner(loadFile);
-
-            // actual loading
-            while (loadReader.hasNextLine()) {
-                String nextName = loadReader.nextLine();
-                PlayerPowerRecord temp = new PlayerPowerRecord(); // uses no-parameter constructor since load provides name
-                temp.load(nextName); // provides power field among other things
-
-                for (int i = 0; i < playerPowerRecords.size(); i++) {
-                    if (playerPowerRecords.get(i).getPlayerName().equalsIgnoreCase(temp.getPlayerName())) {
-                        playerPowerRecords.remove(i);
-                        break;
-                    }
-                }
-
-                playerPowerRecords.add(temp);
-            }
-
-            loadReader.close();
-            System.out.println("Player power records loaded.");
-        } catch (FileNotFoundException e) {
-            System.out.println("There was a problem loading the player power records!");
-        }
-
-        System.out.println("Player power records loaded.");
-    }
-
-    public void loadLockedBlocks() {
-        System.out.println("Loading locked blocks...");
-
-        try {
-            System.out.println("Attempting to load locked blocks...");
-            File loadFile = new File("./plugins/medievalfactions/lockedblocks/" + "lockedblocks.txt");
-            Scanner loadReader = new Scanner(loadFile);
-
-            // actual loading
-            while (loadReader.hasNextLine()) {
-                String nextName = loadReader.nextLine();
-                LockedBlock temp = new LockedBlock(); // uses no-parameter constructor since load provides chunk
-                temp.load(nextName);
-
-                // existence check
-                for (int i = 0; i < lockedBlocks.size(); i++) {
-                    if (lockedBlocks.get(i).getX() == temp.getX() && lockedBlocks.get(i).getY() == temp.getY() && lockedBlocks.get(i).getZ() == temp.getZ()) {
-                        lockedBlocks.remove(i);
-                    }
-                }
-
-                lockedBlocks.add(temp);
-
-            }
-
-            loadReader.close();
-            System.out.println("Claimed chunks successfully loaded.");
-        } catch (FileNotFoundException e) {
-            System.out.println("There was a problem loading the claimed chunks!");
-        }
-
-        System.out.println("Claimed chunks loaded.");
     }
 
     public boolean onCommand(CommandSender sender, Command cmd, String label, String[] args) {
@@ -801,7 +513,7 @@ public class Main extends JavaPlugin implements Listener {
                 if (args[0].equalsIgnoreCase("forcesave")) {
                     if (sender.hasPermission("mf.forcesave") || sender.hasPermission("mf.admin")) {
                         sender.sendMessage(ChatColor.GREEN + "Medieval Factions plugin is saving...");
-                        save();
+                        storage.save();
                     }
                     else {
                         sender.sendMessage(ChatColor.RED + "Sorry! You need the following permission to use this command: 'mf.forcesave'");
@@ -812,7 +524,7 @@ public class Main extends JavaPlugin implements Listener {
                 if (args[0].equalsIgnoreCase("forceload")) {
                     if (sender.hasPermission("mf.forceload") || sender.hasPermission("mf.admin")) {
                         sender.sendMessage(ChatColor.GREEN + "Medieval Factions plugin is loading...");
-                        load();
+                        storage.load();
                     }
                     else {
                         sender.sendMessage(ChatColor.RED + "Sorry! You need the following permission to use this command: 'mf.forceload'");
@@ -1283,7 +995,7 @@ public class Main extends JavaPlugin implements Listener {
             @Override
             public void run() {
                 System.out.println("Medieval Factions is saving. This will happen every hour.");
-                save();
+                storage.save();
             }
         }, delay * 20, secondsUntilRepeat * 20);
     }
