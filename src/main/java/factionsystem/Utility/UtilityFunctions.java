@@ -2,6 +2,7 @@ package factionsystem.Utility;
 
 import factionsystem.Objects.ClaimedChunk;
 import factionsystem.Objects.Faction;
+import factionsystem.Objects.LockedBlock;
 import factionsystem.Objects.PlayerPowerRecord;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
@@ -73,7 +74,6 @@ public class UtilityFunctions {
     public static void removeAllClaimedChunks(String factionName, ArrayList<ClaimedChunk> claimedChunks) {
 
         Iterator<ClaimedChunk> itr = claimedChunks.iterator();
-
 
         while (itr.hasNext()) {
             ClaimedChunk currentChunk = itr.next();
@@ -180,5 +180,34 @@ public class UtilityFunctions {
             }
         }
         return null;
+    }
+
+    public static void removeAllLocks(String factionName, ArrayList<LockedBlock> lockedBlocks) {
+        Iterator<LockedBlock> itr = lockedBlocks.iterator();
+
+        while (itr.hasNext()) {
+            LockedBlock currentBlock = itr.next();
+            if (currentBlock.getFactionName().equalsIgnoreCase(factionName)) {
+
+                String identifier = currentBlock.getX() + "_" + currentBlock.getY() + "_" + currentBlock.getZ();
+
+                try {
+
+                    // delete file associated with chunk
+                    System.out.println("Attempting to delete file plugins/medievalfactions/lockedblocks/" + identifier + ".txt");
+                    File fileToDelete = new File("plugins/medievalfactions/lockedblocks/" + identifier + ".txt");
+                    if (fileToDelete.delete()) {
+                        System.out.println("Success. File deleted.");
+                    } else {
+                        System.out.println("There was a problem deleting the file.");
+                    }
+
+                    itr.remove();
+                }
+                catch(Exception e) {
+                    System.out.println("An error has occurred during lock removal.");
+                }
+            }
+        }
     }
 }

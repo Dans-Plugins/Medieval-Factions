@@ -253,6 +253,9 @@ public class CommandSubsystem {
                                     // remove claimed chunks
                                     removeAllClaimedChunks(faction.getName(), main.claimedChunks);
                                     player.sendMessage(ChatColor.GREEN + "All land unclaimed.");
+
+                                    // remove locks associated with this faction
+                                    removeAllLocks(faction.getName(), main.lockedBlocks);
                                 }
                             }
                         }
