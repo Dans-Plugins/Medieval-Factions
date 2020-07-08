@@ -16,7 +16,7 @@ public class RevokeAccessCommand {
     public void revokeAccess(CommandSender sender, String[] args) {
 
         // player & perm check
-        if (sender instanceof Player && ( ((Player) sender).hasPermission("mf.revokeaccess") && ((Player) sender).hasPermission("mf.default")) ) {
+        if (sender instanceof Player && ( ((Player) sender).hasPermission("mf.revokeaccess") || ((Player) sender).hasPermission("mf.default")) ) {
 
             Player player = (Player) sender;
 
@@ -25,6 +25,7 @@ public class RevokeAccessCommand {
                     player.sendMessage(ChatColor.RED + "Cancelled!");
                     if (main.playersRevokingAccess.containsKey(player.getName())) {
                         main.playersRevokingAccess.remove(player.getName());
+                        return;
                     }
                 }
             }
