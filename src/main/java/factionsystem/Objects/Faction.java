@@ -50,6 +50,14 @@ public class Faction {
         }
     }
 
+    public int getNumLaws() {
+        return laws.size();
+    }
+
+    public ArrayList<String> getLaws() {
+        return laws;
+    }
+
     public void requestTruce(String factionName) {
         if (!attemptedTruces.contains(factionName)) {
             attemptedTruces.add(factionName);

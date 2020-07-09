@@ -455,6 +455,12 @@ public class CommandSubsystem {
                     command.revokeAccess(sender, args);
                 }
 
+                // laws command
+                if (args[0].equalsIgnoreCase("laws")) {
+                    LawsCommand command = new LawsCommand(main);
+                    command.showLawsToPlayer(sender);
+                }
+
                 // admin commands ----------------------------------------------------------------------------------
 
                 // forcesave command
