@@ -43,11 +43,14 @@ public class BlockPlaceEventHandler {
                         return;
                     }
 
-                    // if next to non-owned locked block
-                    if (isNextToNonOwnedLockedBlock(event.getPlayer(), event.getBlock())) {
-                        event.setCancelled(true);
-                        player.sendMessage(ChatColor.RED + "You can't place chests/doors next to blocks you don't own.");
-                        return;
+                    // if chest
+                    if (main.isChest(event.getBlock())) {
+                        // if next to non-owned locked block
+                        if (isNextToNonOwnedLockedBlock(event.getPlayer(), event.getBlock())) {
+                            event.setCancelled(true);
+                            player.sendMessage(ChatColor.RED + "You can't place chests/doors next to blocks you don't own.");
+                            return;
+                        }
                     }
                 }
             }
