@@ -39,7 +39,7 @@ public class ListCommand {
         int longestNameLength = main.utilities.getLongestStringLength(factionNames);
 
         String headers = "";
-        headers = headers + "Name" + " ";
+        headers = headers + "Name";
         for (int i = 0; i < longestNameLength - 4; i++) {
             headers = headers + " ";
         }
