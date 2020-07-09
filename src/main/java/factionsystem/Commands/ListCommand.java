@@ -31,23 +31,8 @@ public class ListCommand {
     }
 
     public void listFactionsWithFormatting(CommandSender sender) {
-        // create list of faction names
-        ArrayList<String> factionNames = new ArrayList<>();
-        for (Faction faction : main.factions) {
-            factionNames.add(faction.getName());
-        }
-        int longestNameLength = main.utilities.getLongestStringLength(factionNames);
-
-        String headers = "";
-        headers = headers + "Name" + " ";
-        for (int i = 0; i < longestNameLength - 4; i++) {
-            headers = headers + " ";
-        }
-        headers = headers + " Power Population Land";
-
-        sender.sendMessage(ChatColor.AQUA + headers);
+        sender.sendMessage(String.format("%10s%10s%10s%10s", "Name", "Power", "Population", "Land"));
         for (Faction faction : main.utilities.getFactionsSortedByPower()) {
-            sender.sendMessage(ChatColor.AQUA + "" + faction.getName() + "  " + faction.getCumulativePowerLevel() + "      " + faction.getPopulation() + "           " + getChunksClaimedByFaction(faction.getName(), main.claimedChunks));
-        }
+            sender.sendMessage(String.format("%10s%10s%10s%10s", faction.getName(), faction.getCumulativePowerLevel(), faction.getPopulation(), getChunksClaimedByFaction(faction.getName(), main.claimedChunks))); }
     }
 }
