@@ -306,17 +306,6 @@ public class UtilitySubsystem {
         return null;
     }
 
-    public int getLongestStringLength(ArrayList<String> list) {
-        int max = 0;
-        for (String string : list) {
-            if (string.length() > max) {
-                max = string.length();
-            }
-        }
-        return max;
-    }
-
-
     public ArrayList<Faction> getFactionsSortedByPower() {
         ArrayList<Faction> copiedList = new ArrayList<>(main.factions);
         ArrayList<Faction> sortedList = new ArrayList<>();
