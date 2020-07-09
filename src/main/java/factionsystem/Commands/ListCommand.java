@@ -31,8 +31,9 @@ public class ListCommand {
     }
 
     public void listFactionsWithFormatting(CommandSender sender) {
-        sender.sendMessage(String.format("%10s%10s%10s%10s", "Name", "Power", "Population", "Land"));
+        sender.sendMessage(String.format("%-10s %-5s %-12s %-4s", "Name", "Power", "Population", "Land"));
         for (Faction faction : main.utilities.getFactionsSortedByPower()) {
-            sender.sendMessage(String.format("%10s%10s%10s%10s", faction.getName(), faction.getCumulativePowerLevel(), faction.getPopulation(), getChunksClaimedByFaction(faction.getName(), main.claimedChunks))); }
+            sender.sendMessage(String.format("%-10s %-5d %-12d %-4d", faction.getName(), faction.getCumulativePowerLevel(), faction.getPopulation(), getChunksClaimedByFaction(faction.getName(), main.claimedChunks)));
+        }
     }
 }
