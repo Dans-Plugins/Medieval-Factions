@@ -4,6 +4,7 @@ import factionsystem.Main;
 import factionsystem.Objects.ClaimedChunk;
 import factionsystem.Objects.Faction;
 import org.bukkit.ChatColor;
+import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
 import org.bukkit.event.block.BlockPlaceEvent;
@@ -45,10 +46,20 @@ public class BlockPlaceEventHandler {
 
                     // if chest
                     if (main.isChest(event.getBlock())) {
-                        // if next to non-owned locked block
-                        if (isNextToNonOwnedLockedBlock(event.getPlayer(), event.getBlock())) {
+                        // if next to non-owned locked chest
+                        if (isNextToNonOwnedLockedChest(event.getPlayer(), event.getBlock())) {
                             event.setCancelled(true);
                             player.sendMessage(ChatColor.RED + "You can't place chests next to locked chests you don't own.");
+                            return;
+                        }
+                    }
+
+                    // if hopper
+                    if (event.getBlock().getType() == Material.HOPPER) {
+                        // if next to or under/above non-owned locked chest
+                        if (isNextToNonOwnedLockedChest(event.getPlayer(), event.getBlock()) || isUnderOrAboveNonOwnedLockedChest(event.getPlayer(), event.getBlock())) {
+                            event.setCancelled(true);
+                            player.sendMessage(ChatColor.RED + "You can't place hoppers next to, under or above locked chests you don't own.");
                             return;
                         }
                     }
@@ -57,7 +68,7 @@ public class BlockPlaceEventHandler {
         }
     }
 
-    private boolean isNextToNonOwnedLockedBlock(Player player, Block block) {
+    private boolean isNextToNonOwnedLockedChest(Player player, Block block) {
 
         // define blocks
         Block neighbor1 = block.getWorld().getBlockAt(block.getX() + 1, block.getY(), block.getZ());
@@ -85,6 +96,26 @@ public class BlockPlaceEventHandler {
 
         if (main.isChest(neighbor1)) {
             if (main.isBlockLocked(neighbor4) && !main.getLockedBlock(neighbor4).getOwner().equalsIgnoreCase(player.getName())) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    private boolean isUnderOrAboveNonOwnedLockedChest(Player player, Block block) {
+        // define blocks
+        Block neighbor1 = block.getWorld().getBlockAt(block.getX(), block.getY() + 1, block.getZ());
+        Block neighbor2 = block.getWorld().getBlockAt(block.getX(), block.getY() - 1, block.getZ());
+
+        if (main.isChest(neighbor1)) {
+            if (main.isBlockLocked(neighbor1) && !main.getLockedBlock(neighbor1).getOwner().equalsIgnoreCase(player.getName())) {
+                return true;
+            }
+        }
+
+        if (main.isChest(neighbor1)) {
+            if (main.isBlockLocked(neighbor2) && !main.getLockedBlock(neighbor2).getOwner().equalsIgnoreCase(player.getName())) {
                 return true;
             }
         }
