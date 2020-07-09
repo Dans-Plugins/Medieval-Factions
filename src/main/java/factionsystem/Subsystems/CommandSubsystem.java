@@ -467,6 +467,12 @@ public class CommandSubsystem {
                     command.addLaw(sender, args);
                 }
 
+                // removelaw command
+                if (args[0].equalsIgnoreCase("removelaw")) {
+                    RemoveLawCommand command = new RemoveLawCommand(main);
+                    command.removeLaw(sender, args);
+                }
+
                 // admin commands ----------------------------------------------------------------------------------
 
                 // forcesave command

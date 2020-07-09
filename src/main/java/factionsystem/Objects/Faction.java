@@ -50,6 +50,12 @@ public class Faction {
         }
     }
 
+    public void removeLaw(int i) {
+        if (laws.size() > i) {
+            laws.remove(i);
+        }
+    }
+
     public int getNumLaws() {
         return laws.size();
     }
