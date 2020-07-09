@@ -487,7 +487,7 @@ public class CommandSubsystem {
                 }
 
                 // forceload command
-                if (args[0].equalsIgnoreCase("forceload")|| args[0].equalsIgnoreCase("fd")) {
+                if (args[0].equalsIgnoreCase("forceload")|| args[0].equalsIgnoreCase("fl")) {
                     if (sender.hasPermission("mf.forceload") || sender.hasPermission("mf.admin")) {
                         sender.sendMessage(ChatColor.GREEN + "Medieval Factions plugin is loading...");
                         main.storage.load();
