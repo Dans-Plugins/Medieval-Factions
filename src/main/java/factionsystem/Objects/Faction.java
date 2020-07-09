@@ -480,15 +480,10 @@ public class Faction {
                 try {
                     System.out.println("Attempting to load faction home location for " + name + "...");
 
-                    // load faction home details (this must be done last)
-                    if (loadReader.hasNextLine()) {
-//                    System.out.println("Creating world...");
-                        world = getServer().createWorld(new WorldCreator(loadReader.nextLine()));
-                        System.out.println("World successfully acquired.");
-                    }
-                    else {
-                        System.out.println("World name not found in file!");
-                    }
+                    // load faction home details
+                    world = getServer().createWorld(new WorldCreator(worldname));
+                    System.out.println("World successfully acquired.");
+
                     if (loadReader.hasNextLine()) {
 //                    System.out.println("Parsing double...");
                         x = Double.parseDouble(loadReader.nextLine());
