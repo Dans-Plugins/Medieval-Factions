@@ -172,7 +172,7 @@ public class CommandSubsystem {
                 }
 
                 // declare war command
-                if (args[0].equalsIgnoreCase("declarewar")) {
+                if (args[0].equalsIgnoreCase("declarewar") || args[0].equalsIgnoreCase("dw")) {
                     if (sender.hasPermission("mf.declarewar") || sender.hasPermission("mf.default")) {
                         DeclareWarCommand command = new DeclareWarCommand(main);
                         command.declareWar(sender, args);
@@ -184,7 +184,7 @@ public class CommandSubsystem {
                 }
 
                 // make peace command
-                if (args[0].equalsIgnoreCase("makepeace")) {
+                if (args[0].equalsIgnoreCase("makepeace") || args[0].equalsIgnoreCase("mp")) {
                     if (sender.hasPermission("mf.makepeace") || sender.hasPermission("mf.default")) {
                         MakePeaceCommand command = new MakePeaceCommand(main);
                         command.makePeace(sender, args);
@@ -240,7 +240,7 @@ public class CommandSubsystem {
                 }
 
                 // unclaimall command
-                if (args[0].equalsIgnoreCase("unclaimall")) {
+                if (args[0].equalsIgnoreCase("unclaimall")|| args[0].equalsIgnoreCase("ua")) {
                     if (sender.hasPermission("mf.unclaimall") || sender.hasPermission("mf.default")) {
                         if (sender instanceof Player) {
                             Player player = (Player) sender;
@@ -266,7 +266,7 @@ public class CommandSubsystem {
                 }
 
                 // checkclaim command
-                if (args[0].equalsIgnoreCase("checkclaim")) {
+                if (args[0].equalsIgnoreCase("checkclaim")|| args[0].equalsIgnoreCase("cc")) {
                     if (sender.hasPermission("mf.unclaimall") || sender.hasPermission("mf.default")) {
                         if (sender instanceof Player) {
                             Player player = (Player) sender;
@@ -285,7 +285,7 @@ public class CommandSubsystem {
                 }
 
                 // autoclaim command
-                if (args[0].equalsIgnoreCase("autoclaim")) {
+                if (args[0].equalsIgnoreCase("autoclaim")|| args[0].equalsIgnoreCase("ac")) {
                     if (sender.hasPermission("mf.autoclaim") || sender.hasPermission("mf.default")) {
                         if (sender instanceof Player) {
                             Player player = (Player) sender;
@@ -350,7 +350,7 @@ public class CommandSubsystem {
                 }
 
                 // sethome command
-                if (args[0].equalsIgnoreCase("sethome")) {
+                if (args[0].equalsIgnoreCase("sethome")|| args[0].equalsIgnoreCase("sh")) {
                     if (sender.hasPermission("mf.sethome") || sender.hasPermission("mf.default")) {
                         SetHomeCommand command = new SetHomeCommand(main);
                         command.setHome(sender);
@@ -407,7 +407,7 @@ public class CommandSubsystem {
                 }
 
                 // breakalliance command
-                if (args[0].equalsIgnoreCase("breakalliance")) {
+                if (args[0].equalsIgnoreCase("breakalliance")|| args[0].equalsIgnoreCase("ba")) {
                     if (sender.hasPermission("mf.breakalliance") || sender.hasPermission("mf.default")) {
                         BreakAllianceCommand command = new BreakAllianceCommand(main);
                         command.breakAlliance(sender, args);
@@ -438,19 +438,19 @@ public class CommandSubsystem {
                 }
 
                 // grantaccess command
-                if (args[0].equalsIgnoreCase("grantaccess")) {
+                if (args[0].equalsIgnoreCase("grantaccess")|| args[0].equalsIgnoreCase("ga")) {
                     GrantAccessCommand command = new GrantAccessCommand(main);
                     command.grantAccess(sender, args);
                 }
 
                 // checkaccess command
-                if (args[0].equalsIgnoreCase("checkaccess")) {
+                if (args[0].equalsIgnoreCase("checkaccess")|| args[0].equalsIgnoreCase("ca")) {
                     CheckAccessCommand command = new CheckAccessCommand(main);
                     command.checkAccess(sender, args);
                 }
 
                 // revokeaccess command
-                if (args[0].equalsIgnoreCase("revokeaccess")) {
+                if (args[0].equalsIgnoreCase("revokeaccess")|| args[0].equalsIgnoreCase("ra")) {
                     RevokeAccessCommand command = new RevokeAccessCommand(main);
                     command.revokeAccess(sender, args);
                 }
@@ -462,13 +462,13 @@ public class CommandSubsystem {
                 }
 
                 // addlaw command
-                if (args[0].equalsIgnoreCase("addlaw")) {
+                if (args[0].equalsIgnoreCase("addlaw")|| args[0].equalsIgnoreCase("al")) {
                     AddLawCommand command = new AddLawCommand(main);
                     command.addLaw(sender, args);
                 }
 
                 // removelaw command
-                if (args[0].equalsIgnoreCase("removelaw")) {
+                if (args[0].equalsIgnoreCase("removelaw")|| args[0].equalsIgnoreCase("rl")) {
                     RemoveLawCommand command = new RemoveLawCommand(main);
                     command.removeLaw(sender, args);
                 }
@@ -476,7 +476,7 @@ public class CommandSubsystem {
                 // admin commands ----------------------------------------------------------------------------------
 
                 // forcesave command
-                if (args[0].equalsIgnoreCase("forcesave")) {
+                if (args[0].equalsIgnoreCase("forcesave")|| args[0].equalsIgnoreCase("fs")) {
                     if (sender.hasPermission("mf.forcesave") || sender.hasPermission("mf.admin")) {
                         sender.sendMessage(ChatColor.GREEN + "Medieval Factions plugin is saving...");
                         main.storage.save();
@@ -487,7 +487,7 @@ public class CommandSubsystem {
                 }
 
                 // forceload command
-                if (args[0].equalsIgnoreCase("forceload")) {
+                if (args[0].equalsIgnoreCase("forceload")|| args[0].equalsIgnoreCase("fd")) {
                     if (sender.hasPermission("mf.forceload") || sender.hasPermission("mf.admin")) {
                         sender.sendMessage(ChatColor.GREEN + "Medieval Factions plugin is loading...");
                         main.storage.load();
@@ -498,7 +498,7 @@ public class CommandSubsystem {
                 }
 
                 // reset power levels command
-                if (args[0].equalsIgnoreCase("resetpowerlevels")) {
+                if (args[0].equalsIgnoreCase("resetpowerlevels")|| args[0].equalsIgnoreCase("rpl")) {
                     if (sender.hasPermission("mf.resetpowerlevels") || sender.hasPermission("mf.admin")) {
                         sender.sendMessage(ChatColor.GREEN + "Power level resetting...");
                         main.utilities.resetPowerRecords();
