@@ -28,7 +28,7 @@ import java.util.HashMap;
 public class Main extends JavaPlugin implements Listener {
 
     // version
-    public static String version = "v2.5";
+    public static String version = "v2.7";
 
     // subsystems
     public StorageSubsystem storage = new StorageSubsystem(this);
