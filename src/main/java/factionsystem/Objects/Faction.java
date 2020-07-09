@@ -386,6 +386,9 @@ public class Faction {
                 saveWriter.write(factionHome.getY() + "\n");
                 saveWriter.write(factionHome.getZ() + "\n");
             }
+            else {
+                saveWriter.write("null" + "\n");
+            }
 
             for (String law : laws) {
                 saveWriter.write(law + "\n");
@@ -465,79 +468,86 @@ public class Faction {
                 officers.add(temp);
             }
 
-            World world = null;
-            double x = 0;
-            double y = 0;
-            double z = 0;
+            String worldname;
+            worldname = loadReader.nextLine();
+            if (!worldname.equalsIgnoreCase("null")) {
 
-            try {
-                System.out.println("Attempting to load faction home location for " + name + "...");
+                World world = null;
+                double x = 0;
+                double y = 0;
+                double z = 0;
 
-                // load faction home details (this must be done last)
-                if (loadReader.hasNextLine()) {
+                try {
+                    System.out.println("Attempting to load faction home location for " + name + "...");
+
+                    // load faction home details (this must be done last)
+                    if (loadReader.hasNextLine()) {
 //                    System.out.println("Creating world...");
-                    world = getServer().createWorld(new WorldCreator(loadReader.nextLine()));
-                    System.out.println("World successfully acquired.");
-                }
-                else {
-                    System.out.println("World name not found in file!");
-                }
-                if (loadReader.hasNextLine()) {
+                        world = getServer().createWorld(new WorldCreator(loadReader.nextLine()));
+                        System.out.println("World successfully acquired.");
+                    }
+                    else {
+                        System.out.println("World name not found in file!");
+                    }
+                    if (loadReader.hasNextLine()) {
 //                    System.out.println("Parsing double...");
-                    x = Double.parseDouble(loadReader.nextLine());
+                        x = Double.parseDouble(loadReader.nextLine());
 //                    System.out.println("X position successfully acquired.");
-                }
-                else {
-                    System.out.println("X position not found in file!");
-                }
-                if (loadReader.hasNextLine()) {//
-                    System.out.println("Parsing double...");
-                    y = Double.parseDouble(loadReader.nextLine());
+                    }
+                    else {
+                        System.out.println("X position not found in file!");
+                    }
+                    if (loadReader.hasNextLine()) {//
+                        System.out.println("Parsing double...");
+                        y = Double.parseDouble(loadReader.nextLine());
 //                    System.out.println("Y position successfully acquired.");
-                }
-                else {
-                    System.out.println("Y position not found in file!");
-                }
-                if (loadReader.hasNextLine()) {
-                    System.out.println("Parsing double...");
-                    z = Double.parseDouble(loadReader.nextLine());
+                    }
+                    else {
+                        System.out.println("Y position not found in file!");
+                    }
+                    if (loadReader.hasNextLine()) {
+                        System.out.println("Parsing double...");
+                        z = Double.parseDouble(loadReader.nextLine());
 //                    System.out.println("Z position successfully acquired.");
-                }
-                else {
-                    System.out.println("Z position not found in file!");
-                }
-
-                // set location
-                if (world != null && x != 0 && y != 0 && z != 0) {
-                    factionHome = new Location(world, x, y, z);
-                    System.out.println("Faction home successfully set to " + x + ", " + y + ", " + z + ".");
-                }
-                else {
-                    System.out.println("One of the variables the faction home location depends on wasn't loaded!");
-                }
-
-                while (loadReader.hasNextLine()) {
-                    String temp = loadReader.nextLine();
-
-                    if (temp.equalsIgnoreCase("-")) {
-                        break;
+                    }
+                    else {
+                        System.out.println("Z position not found in file!");
                     }
 
-                    laws.add(temp);
+                    // set location
+                    if (world != null && x != 0 && y != 0 && z != 0) {
+                        factionHome = new Location(world, x, y, z);
+                        System.out.println("Faction home successfully set to " + x + ", " + y + ", " + z + ".");
+                    }
+                    else {
+                        System.out.println("One of the variables the faction home location depends on wasn't loaded!");
+                    }
+
+                }
+                catch(Exception e) {
+                    System.out.println("An error occurred loading the faction home position.");
+                }
+            }
+
+            while (loadReader.hasNextLine()) {
+                String temp = loadReader.nextLine();
+
+                if (temp.equalsIgnoreCase("-")) {
+                    break;
                 }
 
-            }
-            catch(Exception e) {
-                System.out.println("An error occurred loading the faction home position.");
+                laws.add(temp);
+
+                loadReader.close();
+                System.out.println("Faction " + name + " successfully loaded.");
+                return true;
             }
 
-            loadReader.close();
-            System.out.println("Faction " + name + " successfully loaded.");
-            return true;
         } catch (FileNotFoundException e) {
             System.out.println("An error occurred loading the file " + filename + ".");
             return false;
         }
+        return false;
     }
 
 }
