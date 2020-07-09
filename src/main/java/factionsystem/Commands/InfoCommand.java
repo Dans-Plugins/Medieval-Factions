@@ -33,7 +33,7 @@ public class InfoCommand {
 
                     boolean exists = false;
                     for (Faction faction : main.factions) {
-                        if (faction.getName().equals(name)) {
+                        if (faction.getName().equalsIgnoreCase(name)) {
                             exists = true;
                             sendFactionInfo(player, faction, getChunksClaimedByFaction(faction.getName(), main.claimedChunks));
                         }
