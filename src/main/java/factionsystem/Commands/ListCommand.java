@@ -39,15 +39,15 @@ public class ListCommand {
         int longestNameLength = main.utilities.getLongestStringLength(factionNames);
 
         String headers = "";
-        headers = headers + "Name" + "   ";
+        headers = headers + "Name" + " ";
         for (int i = 0; i < longestNameLength - 4; i++) {
             headers = headers + " ";
         }
-        headers = headers + " Power  Population  Land";
+        headers = headers + " Power Population Land";
 
         sender.sendMessage(ChatColor.AQUA + headers);
         for (Faction faction : main.utilities.getFactionsSortedByPower()) {
-            sender.sendMessage(ChatColor.AQUA + "" + faction.getName() + " | " + faction.getCumulativePowerLevel() + "      | " + faction.getPopulation() + "          | " + getChunksClaimedByFaction(faction.getName(), main.claimedChunks));
+            sender.sendMessage(ChatColor.AQUA + "" + faction.getName() + " " + faction.getCumulativePowerLevel() + "     " + faction.getPopulation() + "           " + getChunksClaimedByFaction(faction.getName(), main.claimedChunks));
         }
     }
 }
