@@ -117,9 +117,7 @@ public class Main extends JavaPlugin implements Listener {
 
     @EventHandler()
     public void onJoin(PlayerJoinEvent event) {
-        if (!utilities.hasPowerRecord(event.getPlayer().getName())) {
-            PlayerPowerRecord newRecord = new PlayerPowerRecord(event.getPlayer().getName());
-            playerPowerRecords.add(newRecord);
-        }
+        PlayerJoinEventHandler handler = new PlayerJoinEventHandler(this);
+        handler.handle(event);
     }
 }
