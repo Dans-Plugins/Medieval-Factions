@@ -14,20 +14,24 @@ import java.util.Scanner;
 import static org.bukkit.Bukkit.getServer;
 
 public class Faction {
+
+    // saved
     private String name = "defaultName";
     private String description = "defaultDescription";
     private ArrayList<String> members = new ArrayList<>();
     private String owner = "defaultOwner";
-    private ArrayList<String> invited = new ArrayList<>();
     private ArrayList<String> enemyFactions = new ArrayList<>();
-    private ArrayList<String> attemptedTruces = new ArrayList<>();
-    private boolean autoclaim = false;
     private ArrayList<String> officers = new ArrayList<>();
     private int cumulativePowerLevel = 0;
-    private Location factionHome = null;
-    private ArrayList<String> attemptedAlliances = new ArrayList<>();
     private ArrayList<String> allyFactions = new ArrayList<>();
     private ArrayList<String> laws = new ArrayList<>();
+
+    // temporary
+    private ArrayList<String> invited = new ArrayList<>();
+    private ArrayList<String> attemptedTruces = new ArrayList<>();
+    private ArrayList<String> attemptedAlliances = new ArrayList<>();
+    private boolean autoclaim = false;
+    private Location factionHome = null;
 
     // player constructor
     public Faction(String initialName, String creator) {
@@ -532,17 +536,16 @@ public class Faction {
                 }
 
                 laws.add(temp);
-
-                loadReader.close();
-                System.out.println("Faction " + name + " successfully loaded.");
-                return true;
             }
+
+            loadReader.close();
+            System.out.println("Faction " + name + " successfully loaded.");
+            return true;
 
         } catch (FileNotFoundException e) {
             System.out.println("An error occurred loading the file " + filename + ".");
             return false;
         }
-        return false;
     }
 
 }
