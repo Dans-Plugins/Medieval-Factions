@@ -36,7 +36,7 @@ import static factionsystem.Utility.UtilityFunctions.*;
 public class Main extends JavaPlugin implements Listener {
 
     // version
-    public static String version = "v2.6";
+    public static String version = "v2.5";
 
     // subsystems
     public StorageSubsystem storage = new StorageSubsystem(this);
