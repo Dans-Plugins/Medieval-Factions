@@ -9,8 +9,8 @@ import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
 import org.bukkit.event.block.BlockPlaceEvent;
 
-import static factionsystem.Utility.UtilityFunctions.getClaimedChunk;
-import static factionsystem.Utility.UtilityFunctions.isInFaction;
+import static factionsystem.Subsystems.UtilitySubsystem.getClaimedChunk;
+import static factionsystem.Subsystems.UtilitySubsystem.isInFaction;
 
 public class BlockPlaceEventHandler {
     Main main = null;
@@ -45,7 +45,7 @@ public class BlockPlaceEventHandler {
                     }
 
                     // if chest
-                    if (main.isChest(event.getBlock())) {
+                    if (main.utilities.isChest(event.getBlock())) {
                         // if next to non-owned locked chest
                         if (isNextToNonOwnedLockedChest(event.getPlayer(), event.getBlock())) {
                             event.setCancelled(true);
@@ -76,26 +76,26 @@ public class BlockPlaceEventHandler {
         Block neighbor3 = block.getWorld().getBlockAt(block.getX(), block.getY(), block.getZ() + 1);
         Block neighbor4 = block.getWorld().getBlockAt(block.getX(), block.getY(), block.getZ() - 1);
 
-        if (main.isChest(neighbor1)) {
-            if (main.isBlockLocked(neighbor1) && !main.getLockedBlock(neighbor1).getOwner().equalsIgnoreCase(player.getName())) {
+        if (main.utilities.isChest(neighbor1)) {
+            if (main.utilities.isBlockLocked(neighbor1) && !main.utilities.getLockedBlock(neighbor1).getOwner().equalsIgnoreCase(player.getName())) {
                 return true;
             }
         }
 
-        if (main.isChest(neighbor2)) {
-            if (main.isBlockLocked(neighbor2) && !main.getLockedBlock(neighbor2).getOwner().equalsIgnoreCase(player.getName())) {
+        if (main.utilities.isChest(neighbor2)) {
+            if (main.utilities.isBlockLocked(neighbor2) && !main.utilities.getLockedBlock(neighbor2).getOwner().equalsIgnoreCase(player.getName())) {
                 return true;
             }
         }
 
-        if (main.isChest(neighbor3)) {
-            if (main.isBlockLocked(neighbor3) && !main.getLockedBlock(neighbor3).getOwner().equalsIgnoreCase(player.getName())) {
+        if (main.utilities.isChest(neighbor3)) {
+            if (main.utilities.isBlockLocked(neighbor3) && !main.utilities.getLockedBlock(neighbor3).getOwner().equalsIgnoreCase(player.getName())) {
                 return true;
             }
         }
 
-        if (main.isChest(neighbor4)) {
-            if (main.isBlockLocked(neighbor4) && !main.getLockedBlock(neighbor4).getOwner().equalsIgnoreCase(player.getName())) {
+        if (main.utilities.isChest(neighbor4)) {
+            if (main.utilities.isBlockLocked(neighbor4) && !main.utilities.getLockedBlock(neighbor4).getOwner().equalsIgnoreCase(player.getName())) {
                 return true;
             }
         }
@@ -108,14 +108,14 @@ public class BlockPlaceEventHandler {
         Block neighbor1 = block.getWorld().getBlockAt(block.getX(), block.getY() + 1, block.getZ());
         Block neighbor2 = block.getWorld().getBlockAt(block.getX(), block.getY() - 1, block.getZ());
 
-        if (main.isChest(neighbor1)) {
-            if (main.isBlockLocked(neighbor1) && !main.getLockedBlock(neighbor1).getOwner().equalsIgnoreCase(player.getName())) {
+        if (main.utilities.isChest(neighbor1)) {
+            if (main.utilities.isBlockLocked(neighbor1) && !main.utilities.getLockedBlock(neighbor1).getOwner().equalsIgnoreCase(player.getName())) {
                 return true;
             }
         }
 
-        if (main.isChest(neighbor2)) {
-            if (main.isBlockLocked(neighbor2) && !main.getLockedBlock(neighbor2).getOwner().equalsIgnoreCase(player.getName())) {
+        if (main.utilities.isChest(neighbor2)) {
+            if (main.utilities.isBlockLocked(neighbor2) && !main.utilities.getLockedBlock(neighbor2).getOwner().equalsIgnoreCase(player.getName())) {
                 return true;
             }
         }

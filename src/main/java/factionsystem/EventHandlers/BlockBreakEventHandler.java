@@ -8,8 +8,8 @@ import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 import org.bukkit.event.block.BlockBreakEvent;
 
-import static factionsystem.Utility.UtilityFunctions.getClaimedChunk;
-import static factionsystem.Utility.UtilityFunctions.isInFaction;
+import static factionsystem.Subsystems.UtilitySubsystem.getClaimedChunk;
+import static factionsystem.Subsystems.UtilitySubsystem.isInFaction;
 
 public class BlockBreakEventHandler {
 
@@ -45,10 +45,10 @@ public class BlockBreakEventHandler {
                     }
 
                     // if block is locked
-                    if (main.isBlockLocked(event.getBlock().getX(), event.getBlock().getY(), event.getBlock().getZ())) {
+                    if (main.utilities.isBlockLocked(event.getBlock().getX(), event.getBlock().getY(), event.getBlock().getZ())) {
 
                         // if player is not the owner
-                        if (!main.getLockedBlock(event.getBlock().getX(), event.getBlock().getY(), event.getBlock().getZ()).getOwner().equalsIgnoreCase(player.getName())) {
+                        if (!main.utilities.getLockedBlock(event.getBlock().getX(), event.getBlock().getY(), event.getBlock().getZ()).getOwner().equalsIgnoreCase(player.getName())) {
                             event.setCancelled(true);
                             player.sendMessage(ChatColor.RED + "You don't own this!");
                             return;

@@ -7,8 +7,8 @@ import org.bukkit.Location;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
-import static factionsystem.Utility.UtilityFunctions.getPlayersFaction;
-import static factionsystem.Utility.UtilityFunctions.isInFaction;
+import static factionsystem.Subsystems.UtilitySubsystem.getPlayersFaction;
+import static factionsystem.Subsystems.UtilitySubsystem.isInFaction;
 import static org.bukkit.Bukkit.getServer;
 
 public class HomeCommand {

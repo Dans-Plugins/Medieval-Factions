@@ -6,7 +6,7 @@ import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
-import static factionsystem.Utility.UtilityFunctions.*;
+import static factionsystem.Subsystems.UtilitySubsystem.*;
 
 public class MakePeaceCommand {
 

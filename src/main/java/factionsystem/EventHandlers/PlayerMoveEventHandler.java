@@ -7,8 +7,8 @@ import org.bukkit.event.player.PlayerMoveEvent;
 
 import java.util.Objects;
 
-import static factionsystem.Utility.UtilityFunctions.*;
-import static factionsystem.Utility.UtilityFunctions.getClaimedChunk;
+import static factionsystem.Subsystems.UtilitySubsystem.*;
+import static factionsystem.Subsystems.UtilitySubsystem.getClaimedChunk;
 import static org.bukkit.Bukkit.getServer;
 
 public class PlayerMoveEventHandler {
@@ -41,7 +41,7 @@ public class PlayerMoveEventHandler {
                                 @Override
                                 public void run() {
                                     // add new chunk to claimed chunks
-                                    main.addChunkAtPlayerLocation(event.getPlayer());
+                                    main.utilities.addChunkAtPlayerLocation(event.getPlayer());
                                 }
                             }, seconds * 20);
                         }

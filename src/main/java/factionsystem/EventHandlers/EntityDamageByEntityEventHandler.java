@@ -5,7 +5,7 @@ import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
 
-import static factionsystem.Utility.UtilityFunctions.isInFaction;
+import static factionsystem.Subsystems.UtilitySubsystem.isInFaction;
 
 public class EntityDamageByEntityEventHandler {
 

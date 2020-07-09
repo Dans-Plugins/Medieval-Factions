@@ -8,8 +8,8 @@ import org.bukkit.entity.Player;
 
 import java.io.File;
 
-import static factionsystem.Utility.UtilityFunctions.removeAllClaimedChunks;
-import static factionsystem.Utility.UtilityFunctions.removeAllLocks;
+import static factionsystem.Subsystems.UtilitySubsystem.removeAllClaimedChunks;
+import static factionsystem.Subsystems.UtilitySubsystem.removeAllLocks;
 
 public class DisbandCommand {
 

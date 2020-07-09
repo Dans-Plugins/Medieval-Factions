@@ -27,6 +27,7 @@ public class Faction {
     private Location factionHome = null;
     private ArrayList<String> attemptedAlliances = new ArrayList<>();
     private ArrayList<String> allyFactions = new ArrayList<>();
+    private ArrayList<String> laws = new ArrayList<>();
 
     // player constructor
     public Faction(String initialName, String creator) {
@@ -37,6 +38,30 @@ public class Faction {
     // server constructor
     public Faction(String initialName) {
         setName(initialName);
+    }
+
+    public void addLaw(String newLaw) {
+        laws.add(newLaw);
+    }
+
+    public void removeLaw(String lawToRemove) {
+        if (laws.contains(lawToRemove)) {
+            laws.remove(lawToRemove);
+        }
+    }
+
+    public void removeLaw(int i) {
+        if (laws.size() > i) {
+            laws.remove(i);
+        }
+    }
+
+    public int getNumLaws() {
+        return laws.size();
+    }
+
+    public ArrayList<String> getLaws() {
+        return laws;
     }
 
     public void requestTruce(String factionName) {
@@ -358,6 +383,11 @@ public class Faction {
                 saveWriter.write(factionHome.getZ() + "\n");
             }
 
+            for (String law : laws) {
+                saveWriter.write(law + "\n");
+            }
+
+            saveWriter.write("-" + "\n");
 
             saveWriter.close();
 
@@ -480,6 +510,16 @@ public class Faction {
                 }
                 else {
                     System.out.println("One of the variables the faction home location depends on wasn't loaded!");
+                }
+
+                while (loadReader.hasNextLine()) {
+                    String temp = loadReader.nextLine();
+
+                    if (temp.equalsIgnoreCase("-")) {
+                        break;
+                    }
+
+                    laws.add(temp);
                 }
 
             }
