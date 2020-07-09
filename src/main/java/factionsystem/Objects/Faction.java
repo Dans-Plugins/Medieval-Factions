@@ -377,6 +377,11 @@ public class Faction {
                 saveWriter.write(factionHome.getZ() + "\n");
             }
 
+            for (String law : laws) {
+                saveWriter.write(law + "\n");
+            }
+
+            saveWriter.write("-" + "\n");
 
             saveWriter.close();
 
@@ -499,6 +504,16 @@ public class Faction {
                 }
                 else {
                     System.out.println("One of the variables the faction home location depends on wasn't loaded!");
+                }
+
+                while (loadReader.hasNextLine()) {
+                    String temp = loadReader.nextLine();
+
+                    if (temp.equalsIgnoreCase("-")) {
+                        break;
+                    }
+
+                    laws.add(temp);
                 }
 
             }
