@@ -27,6 +27,7 @@ public class Faction {
     private Location factionHome = null;
     private ArrayList<String> attemptedAlliances = new ArrayList<>();
     private ArrayList<String> allyFactions = new ArrayList<>();
+    private ArrayList<String> laws = new ArrayList<>();
 
     // player constructor
     public Faction(String initialName, String creator) {

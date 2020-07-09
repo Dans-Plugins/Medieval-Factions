@@ -108,17 +108,17 @@ public class Main extends JavaPlugin implements Listener {
     }
 
     @EventHandler()
+    public void onDeath(PlayerDeathEvent event) {
+        PlayerDeathEventHandler handler = new PlayerDeathEventHandler(this);
+        handler.handle(event);
+    }
+
+    @EventHandler()
     public void onJoin(PlayerJoinEvent event) {
         if (!hasPowerRecord(event.getPlayer().getName())) {
             PlayerPowerRecord newRecord = new PlayerPowerRecord(event.getPlayer().getName());
             playerPowerRecords.add(newRecord);
         }
-    }
-
-    @EventHandler()
-    public void onDeath(PlayerDeathEvent event) {
-        PlayerDeathEventHandler handler = new PlayerDeathEventHandler(this);
-        handler.handle(event);
     }
 
     // main utility methods ----------------------------------------------------------------------------------------------------------------
