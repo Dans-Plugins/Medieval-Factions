@@ -65,6 +65,14 @@ public class Faction {
         return false;
     }
 
+    public boolean editLaw(int i, String newString) {
+        if (laws.size() > i) {
+            laws.set(i, newString);
+            return true;
+        }
+        return false;
+    }
+
     public int getNumLaws() {
         return laws.size();
     }

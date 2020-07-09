@@ -458,7 +458,7 @@ public class CommandSubsystem {
                 // laws command
                 if (args[0].equalsIgnoreCase("laws")) {
                     LawsCommand command = new LawsCommand(main);
-                    command.showLawsToPlayer(sender);
+                    command.showLawsToPlayer(sender, args);
                 }
 
                 // addlaw command
@@ -471,6 +471,12 @@ public class CommandSubsystem {
                 if (args[0].equalsIgnoreCase("removelaw")|| args[0].equalsIgnoreCase("rl")) {
                     RemoveLawCommand command = new RemoveLawCommand(main);
                     command.removeLaw(sender, args);
+                }
+
+                // editlaw command
+                if (args[0].equalsIgnoreCase("editlaw")) {
+                    EditLawCommand command = new EditLawCommand(main);
+                    command.editLaw(sender, args);
                 }
 
                 // admin commands ----------------------------------------------------------------------------------

@@ -16,35 +16,55 @@ public class LawsCommand {
         main = plugin;
     }
 
-    public void showLawsToPlayer(CommandSender sender) {
+    public void showLawsToPlayer(CommandSender sender, String[] args) {
         // player & perm check
         if (sender instanceof Player && ( ((Player) sender).hasPermission("mf.laws") || ((Player) sender).hasPermission("mf.default")) ) {
 
             Player player = (Player) sender;
 
-            Faction playersFaction = getPlayersFaction(player.getName(), main.factions);
+            Faction faction = null;
 
-            if (playersFaction != null) {
+            if (args.length == 1) {
+                faction = getPlayersFaction(player.getName(), main.factions);
+            }
+            else {
+                faction = getPlayersFaction(args[1], main.factions);
+            }
 
-                if (playersFaction.getNumLaws() != 0) {
 
-                    player.sendMessage(ChatColor.AQUA + "\n == Laws of " + playersFaction.getName() + " == ");
+            if (faction != null) {
+
+                if (faction.getNumLaws() != 0) {
+
+                    player.sendMessage(ChatColor.AQUA + "\n == Laws of " + faction.getName() + " == ");
 
                     // list laws
                     int counter = 1;
-                    for (String law : playersFaction.getLaws()) {
-                        player.sendMessage(ChatColor.AQUA + "" + counter + ". " + playersFaction.getLaws().get(counter - 1));
+                    for (String law : faction.getLaws()) {
+                        player.sendMessage(ChatColor.AQUA + "" + counter + ". " + faction.getLaws().get(counter - 1));
                         counter++;
                     }
 
                 }
                 else {
-                    player.sendMessage(ChatColor.RED + "Your faction doesn't have any laws.");
+                    if (args.length == 1) {
+                        player.sendMessage(ChatColor.RED + "Your faction doesn't have any laws.");
+                    }
+                    else {
+                        player.sendMessage(ChatColor.RED + "That faction doesn't have any laws.");
+                    }
+
                 }
 
             }
             else {
-                player.sendMessage(ChatColor.RED + "You need to be in a faction to use this command!");
+                if (args.length == 1) {
+                    player.sendMessage(ChatColor.RED + "You need to be in a faction to use this command!");
+                }
+                else {
+                    player.sendMessage(ChatColor.RED + "That faction doesn't exist!");
+                }
+
             }
 
         }
