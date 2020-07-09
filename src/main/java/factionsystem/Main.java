@@ -381,6 +381,10 @@ public class Main extends JavaPlugin implements Listener {
 
     }
 
+    public boolean isBlockLocked(Block block) {
+        return isBlockLocked(block.getX(), block.getY(), block.getZ());
+    }
+
     public boolean isBlockLocked(int x, int y, int z) {
         for (LockedBlock block : lockedBlocks) {
             if (block.getX() == x && block.getY() == y && block.getZ() == z) {
@@ -388,6 +392,10 @@ public class Main extends JavaPlugin implements Listener {
             }
         }
         return false;
+    }
+
+    public LockedBlock getLockedBlock(Block block) {
+        return getLockedBlock(block.getX(), block.getY(), block.getZ());
     }
 
     public LockedBlock getLockedBlock(int x, int y, int z) {
