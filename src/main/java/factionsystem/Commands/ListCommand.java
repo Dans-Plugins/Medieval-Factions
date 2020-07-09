@@ -43,7 +43,7 @@ public class ListCommand {
         for (int i = 0; i < longestNameLength - 4; i++) {
             headers = headers + " ";
         }
-        headers = headers + " Power   Population   Land";
+        headers = headers + " Power  Population  Land";
 
         sender.sendMessage(ChatColor.AQUA + headers);
         for (Faction faction : main.utilities.getFactionsSortedByPower()) {
