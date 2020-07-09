@@ -6,8 +6,8 @@ import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
-import static factionsystem.Utility.UtilityFunctions.createStringFromFirstArgOnwards;
-import static factionsystem.Utility.UtilityFunctions.sendAllPlayersInFactionMessage;
+import static factionsystem.Subsystems.UtilitySubsystem.createStringFromFirstArgOnwards;
+import static factionsystem.Subsystems.UtilitySubsystem.sendAllPlayersInFactionMessage;
 
 public class BreakAllianceCommand {
 

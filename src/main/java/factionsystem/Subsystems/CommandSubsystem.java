@@ -7,7 +7,7 @@ import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
-import static factionsystem.Utility.UtilityFunctions.*;
+import static factionsystem.Subsystems.UtilitySubsystem.*;
 
 public class CommandSubsystem {
 
@@ -204,7 +204,7 @@ public class CommandSubsystem {
                             if (isInFaction(player.getName(), main.factions)) {
                                 Faction playersFaction = getPlayersFaction(player.getName(), main.factions);
                                 if (getChunksClaimedByFaction(playersFaction.getName(), main.claimedChunks) < playersFaction.getCumulativePowerLevel()) {
-                                    main.addChunkAtPlayerLocation(player);
+                                    main.utilities.addChunkAtPlayerLocation(player);
                                 }
                                 else {
                                     player.sendMessage(ChatColor.RED + "You have reached your demesne limit! Invite more players to increase this.");
@@ -226,7 +226,7 @@ public class CommandSubsystem {
                         if (sender instanceof Player) {
                             Player player = (Player) sender;
                             if (isInFaction(player.getName(), main.factions)) {
-                                main.removeChunkAtPlayerLocation(player);
+                                main.utilities.removeChunkAtPlayerLocation(player);
                             }
                             else {
                                 player.sendMessage(ChatColor.RED + "You need to be in a faction to use this command.");
@@ -270,7 +270,7 @@ public class CommandSubsystem {
                     if (sender.hasPermission("mf.unclaimall") || sender.hasPermission("mf.default")) {
                         if (sender instanceof Player) {
                             Player player = (Player) sender;
-                            String result = main.checkOwnershipAtPlayerLocation(player);
+                            String result = main.utilities.checkOwnershipAtPlayerLocation(player);
                             if (result.equalsIgnoreCase("unclaimed")) {
                                 player.sendMessage(ChatColor.GREEN + "This land is unclaimed.");
                             }
@@ -489,7 +489,7 @@ public class CommandSubsystem {
                 if (args[0].equalsIgnoreCase("resetpowerlevels")) {
                     if (sender.hasPermission("mf.resetpowerlevels") || sender.hasPermission("mf.admin")) {
                         sender.sendMessage(ChatColor.GREEN + "Power level resetting...");
-                        main.resetPowerRecords();
+                        main.utilities.resetPowerRecords();
                     }
                     else {
                         sender.sendMessage(ChatColor.RED + "Sorry! You need the following permission to use this command: 'mf.resetpowerlevels'");
