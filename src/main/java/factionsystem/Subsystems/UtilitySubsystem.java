@@ -316,6 +316,27 @@ public class UtilitySubsystem {
         return max;
     }
 
+
+    public ArrayList<Faction> getFactionsSortedByPower() {
+        ArrayList<Faction> copiedList = new ArrayList<>(main.factions);
+        ArrayList<Faction> sortedList = new ArrayList<>();
+        while (copiedList.size() != 0) {
+            int mostPower = 0;
+            int counter = 0;
+            int nextMostPowerfulFaction = 0;
+            for (Faction faction : copiedList) {
+                if (faction.getCumulativePowerLevel() > mostPower) {
+                    mostPower = faction.getCumulativePowerLevel();
+                    nextMostPowerfulFaction = counter;
+                }
+                counter++;
+            }
+            sortedList.add(copiedList.get(nextMostPowerfulFaction));
+            copiedList.remove(nextMostPowerfulFaction);
+        }
+        return sortedList;
+    }
+
     // static methods ----------------------------
 
     public static boolean isInFaction(String playerName, ArrayList<Faction> factions) {

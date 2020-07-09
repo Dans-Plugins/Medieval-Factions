@@ -46,7 +46,7 @@ public class ListCommand {
         headers = headers + " Power Population Land";
 
         sender.sendMessage(ChatColor.AQUA + headers);
-        for (Faction faction : main.factions) {
+        for (Faction faction : main.utilities.getFactionsSortedByPower()) {
             sender.sendMessage(ChatColor.AQUA + "" + faction.getName() + " " + faction.getCumulativePowerLevel() + " " + faction.getPopulation() + " " + getChunksClaimedByFaction(faction.getName(), main.claimedChunks));
         }
     }
