@@ -40,6 +40,16 @@ public class Faction {
         setName(initialName);
     }
 
+    public void addLaw(String newLaw) {
+        laws.add(newLaw);
+    }
+
+    public void removeLaw(String lawToRemove) {
+        if (laws.contains(lawToRemove)) {
+            laws.remove(lawToRemove);
+        }
+    }
+
     public void requestTruce(String factionName) {
         if (!attemptedTruces.contains(factionName)) {
             attemptedTruces.add(factionName);
