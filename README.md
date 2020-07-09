@@ -32,3 +32,4 @@ A minecraft plugin for players to use to organize politically.
 -  2.3 'Autosave' update
 -  2.4 'Rename' update
 -  2.5 'Locks' update
+-  2.6 'Laws' update
