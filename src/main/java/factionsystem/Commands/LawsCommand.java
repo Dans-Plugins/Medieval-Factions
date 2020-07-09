@@ -6,7 +6,8 @@ import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
-import static factionsystem.Subsystems.UtilitySubsystem.getPlayersFaction;
+import static factionsystem.Subsystems.UtilitySubsystem.*;
+import static factionsystem.Subsystems.UtilitySubsystem.getChunksClaimedByFaction;
 
 public class LawsCommand {
 
@@ -28,9 +29,19 @@ public class LawsCommand {
                 faction = getPlayersFaction(player.getName(), main.factions);
             }
             else {
-                faction = getPlayersFaction(args[1], main.factions);
+                String target = createStringFromFirstArgOnwards(args);
+                boolean exists = false;
+                for (Faction f : main.factions) {
+                    if (f.getName().equalsIgnoreCase(target)) {
+                        faction = getFaction(target, main.factions);
+                        exists = true;
+                    }
+                }
+                if (!exists) {
+                    player.sendMessage(ChatColor.RED + "That faction wasn't found!");
+                    return;
+                }
             }
-
 
             if (faction != null) {
 
@@ -58,12 +69,7 @@ public class LawsCommand {
 
             }
             else {
-                if (args.length == 1) {
-                    player.sendMessage(ChatColor.RED + "You need to be in a faction to use this command!");
-                }
-                else {
-                    player.sendMessage(ChatColor.RED + "That faction doesn't exist!");
-                }
+                player.sendMessage(ChatColor.RED + "You need to be in a faction to use this command!");
 
             }
 
