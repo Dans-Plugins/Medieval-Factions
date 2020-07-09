@@ -30,7 +30,7 @@ public class EditLawCommand {
                         int lawToEdit = Integer.parseInt(args[1]) - 1;
                         String newLaw = "";
                         for (int i = 2; i < args.length; i++) {
-                            newLaw = newLaw + " " + args[i];
+                            newLaw = newLaw + args[i] + " ";
                         }
 
                         if (playersFaction.editLaw(lawToEdit, newLaw)) {
