@@ -33,7 +33,7 @@ public class LawsCommand {
                     // list laws
                     int counter = 1;
                     for (String law : playersFaction.getLaws()) {
-                        player.sendMessage(ChatColor.AQUA + "" + counter + ": " + playersFaction.getLaws().get(counter - 1));
+                        player.sendMessage(ChatColor.AQUA + "" + counter + ". " + playersFaction.getLaws().get(counter - 1));
                         counter++;
                     }
 
