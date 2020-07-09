@@ -82,19 +82,19 @@ public class BlockPlaceEventHandler {
             }
         }
 
-        if (main.isChest(neighbor1)) {
+        if (main.isChest(neighbor2)) {
             if (main.isBlockLocked(neighbor2) && !main.getLockedBlock(neighbor2).getOwner().equalsIgnoreCase(player.getName())) {
                 return true;
             }
         }
 
-        if (main.isChest(neighbor1)) {
+        if (main.isChest(neighbor3)) {
             if (main.isBlockLocked(neighbor3) && !main.getLockedBlock(neighbor3).getOwner().equalsIgnoreCase(player.getName())) {
                 return true;
             }
         }
 
-        if (main.isChest(neighbor1)) {
+        if (main.isChest(neighbor4)) {
             if (main.isBlockLocked(neighbor4) && !main.getLockedBlock(neighbor4).getOwner().equalsIgnoreCase(player.getName())) {
                 return true;
             }
@@ -114,7 +114,7 @@ public class BlockPlaceEventHandler {
             }
         }
 
-        if (main.isChest(neighbor1)) {
+        if (main.isChest(neighbor2)) {
             if (main.isBlockLocked(neighbor2) && !main.getLockedBlock(neighbor2).getOwner().equalsIgnoreCase(player.getName())) {
                 return true;
             }
