@@ -16,15 +16,16 @@ import static org.bukkit.Bukkit.getServer;
 public class Faction {
 
     // saved
-    private String name = "defaultName";
-    private String description = "defaultDescription";
     private ArrayList<String> members = new ArrayList<>();
-    private String owner = "defaultOwner";
     private ArrayList<String> enemyFactions = new ArrayList<>();
     private ArrayList<String> officers = new ArrayList<>();
-    private int cumulativePowerLevel = 0;
     private ArrayList<String> allyFactions = new ArrayList<>();
     private ArrayList<String> laws = new ArrayList<>();
+    private String name = "defaultName";
+    private String description = "defaultDescription";
+    private String owner = "defaultOwner";
+    private int cumulativePowerLevel = 0;
+
 
     // temporary
     private ArrayList<String> invited = new ArrayList<>();
