@@ -8,6 +8,7 @@ import factionsystem.Objects.PlayerPowerRecord;
 import factionsystem.Subsystems.CommandSubsystem;
 import factionsystem.Subsystems.StorageSubsystem;
 import factionsystem.Subsystems.UtilitySubsystem;
+
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.event.EventHandler;
