@@ -47,7 +47,7 @@ public class ListCommand {
 
         sender.sendMessage(ChatColor.AQUA + headers);
         for (Faction faction : main.utilities.getFactionsSortedByPower()) {
-            sender.sendMessage(ChatColor.AQUA + "" + faction.getName() + " " + faction.getCumulativePowerLevel() + "      " + faction.getPopulation() + "          " + getChunksClaimedByFaction(faction.getName(), main.claimedChunks));
+            sender.sendMessage(ChatColor.AQUA + "" + faction.getName() + " | " + faction.getCumulativePowerLevel() + "      | " + faction.getPopulation() + "          | " + getChunksClaimedByFaction(faction.getName(), main.claimedChunks));
         }
     }
 }
