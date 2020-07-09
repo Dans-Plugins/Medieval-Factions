@@ -306,6 +306,16 @@ public class UtilitySubsystem {
         return null;
     }
 
+    public int getLongestStringLength(ArrayList<String> list) {
+        int max = 0;
+        for (String string : list) {
+            if (string.length() > max) {
+                max = string.length();
+            }
+        }
+        return max;
+    }
+
     // static methods ----------------------------
 
     public static boolean isInFaction(String playerName, ArrayList<Faction> factions) {
