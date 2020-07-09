@@ -44,16 +44,20 @@ public class Faction {
         laws.add(newLaw);
     }
 
-    public void removeLaw(String lawToRemove) {
+    public boolean removeLaw(String lawToRemove) {
         if (laws.contains(lawToRemove)) {
             laws.remove(lawToRemove);
+            return true;
         }
+        return false;
     }
 
-    public void removeLaw(int i) {
+    public boolean removeLaw(int i) {
         if (laws.size() > i) {
             laws.remove(i);
+            return true;
         }
+        return false;
     }
 
     public int getNumLaws() {

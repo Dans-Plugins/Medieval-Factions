@@ -29,9 +29,9 @@ public class RemoveLawCommand {
                     if (args.length > 1) {
                         int lawToRemove = Integer.parseInt(args[1]) - 1;
 
-                        playersFaction.removeLaw(lawToRemove);
-
-                        player.sendMessage(ChatColor.GREEN + "Law " + lawToRemove + 1 + " removed!");
+                        if (playersFaction.removeLaw(lawToRemove)) {
+                            player.sendMessage(ChatColor.GREEN + "Law " + (lawToRemove + 1) + " removed!");
+                        }
                     }
                     else {
                         player.sendMessage(ChatColor.RED + "Usage: /mf removelaw (number)");

@@ -28,7 +28,7 @@ public class LawsCommand {
 
                 if (playersFaction.getNumLaws() != 0) {
 
-                    player.sendMessage(ChatColor.RED + " == Laws of " + playersFaction.getName() + " == ");
+                    player.sendMessage(ChatColor.AQUA + "\n == Laws of " + playersFaction.getName() + " == ");
 
                     // list laws
                     int counter = 1;
@@ -39,7 +39,7 @@ public class LawsCommand {
 
                 }
                 else {
-                    player.sendMessage(ChatColor.RED + "Your faction hasn't set any laws yet.");
+                    player.sendMessage(ChatColor.RED + "Your faction doesn't have any laws.");
                 }
 
             }
