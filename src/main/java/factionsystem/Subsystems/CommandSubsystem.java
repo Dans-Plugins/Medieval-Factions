@@ -461,6 +461,12 @@ public class CommandSubsystem {
                     command.showLawsToPlayer(sender);
                 }
 
+                // addlaw command
+                if (args[0].equalsIgnoreCase("addlaw")) {
+                    AddLawCommand command = new AddLawCommand(main);
+                    command.addLaw(sender, args);
+                }
+
                 // admin commands ----------------------------------------------------------------------------------
 
                 // forcesave command

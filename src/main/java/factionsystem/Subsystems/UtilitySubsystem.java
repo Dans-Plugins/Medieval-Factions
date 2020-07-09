@@ -21,7 +21,7 @@ public class UtilitySubsystem {
         main = plugin;
     }
 
-    // class methods
+    // non-static methods
 
     public void addChunkAtPlayerLocation(Player player) {
         double[] playerCoords = new double[2];
