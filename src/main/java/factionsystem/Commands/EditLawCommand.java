@@ -38,7 +38,7 @@ public class EditLawCommand {
                         }
                     }
                     else {
-                        player.sendMessage(ChatColor.RED + "Usage: /mf editlaw (number)");
+                        player.sendMessage(ChatColor.RED + "Usage: /mf editlaw (number) (edited law)");
                     }
 
                 }
