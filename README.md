@@ -35,3 +35,4 @@ A minecraft plugin for players to use to organize politically.
 -  2.6 'Laws' update
 -  2.7 'Improved List Command' update
 -  2.8 'Power Changes' update
+-  2.9 'More Claimed Chunk Behavior' update
