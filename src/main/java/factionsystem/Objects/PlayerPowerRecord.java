@@ -108,4 +108,22 @@ public class PlayerPowerRecord {
             System.out.println("An error occurred loading the file " + filename + ".");
         }
     }
+
+    public void increasePowerByTenPercent() {
+        if (powerLevel + (powerLevel * 0.10) < maxPower) {
+            powerLevel = (int) (powerLevel + (powerLevel * 0.10));
+        }
+        else {
+            powerLevel = maxPower;
+        }
+    }
+
+    public void decreasePowerByTenPercent() {
+        if (powerLevel - (powerLevel * 0.10) > 0) {
+            powerLevel = (int) (powerLevel - (powerLevel * 0.10));
+        }
+        else {
+            decreasePower();
+        }
+    }
 }

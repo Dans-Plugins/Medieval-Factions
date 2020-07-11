@@ -159,9 +159,27 @@ public class Faction {
         }
     }
 
+    public void addPower(int powerToAdd) {
+        if ((cumulativePowerLevel + powerToAdd) < members.size() * maxPower) {
+            cumulativePowerLevel = cumulativePowerLevel + powerToAdd;
+        }
+        else {
+            cumulativePowerLevel = members.size() * maxPower;
+        }
+    }
+
     public void subtractPower() {
         if (cumulativePowerLevel > 0) {
             cumulativePowerLevel--;
+        }
+    }
+
+    public void subtractPower(int powerToSubtract) {
+        if ((cumulativePowerLevel - powerToSubtract) > 0) {
+            cumulativePowerLevel = cumulativePowerLevel - powerToSubtract;
+        }
+        else {
+            subtractPower();
         }
     }
 
