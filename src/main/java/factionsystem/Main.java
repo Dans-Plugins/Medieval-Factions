@@ -16,6 +16,7 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.event.block.BlockPlaceEvent;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
+import org.bukkit.event.entity.EntitySpawnEvent;
 import org.bukkit.event.entity.PlayerDeathEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
@@ -109,6 +110,12 @@ public class Main extends JavaPlugin implements Listener {
     @EventHandler()
     public void onJoin(PlayerJoinEvent event) {
         PlayerJoinEventHandler handler = new PlayerJoinEventHandler(this);
+        handler.handle(event);
+    }
+
+    @EventHandler()
+    public void onJoin(EntitySpawnEvent event) {
+        EntitySpawnEventHandler handler = new EntitySpawnEventHandler(this);
         handler.handle(event);
     }
 }
