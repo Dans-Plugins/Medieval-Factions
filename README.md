@@ -34,3 +34,4 @@ A minecraft plugin for players to use to organize politically.
 -  2.5 'Locks' update
 -  2.6 'Laws' update
 -  2.7 'Improved List Command' update
+-  2.8 'Power Changes' update
