@@ -52,7 +52,7 @@ public class PlayerDeathEventHandler {
             if (isInFaction(killer.getName(), main.factions)) {
                 if (getPlayersPowerRecord(killer.getName(), main.playerPowerRecords).getPowerLevel() < maxPower) {
                     int powerToAdd = 0;
-                    if (getPlayersPowerRecord(player.getName(), main.playerPowerRecords).getPowerLevel() * 0.10 < maxPower) {
+                    if (getPlayersPowerRecord(player.getName(), main.playerPowerRecords).getPowerLevel() * 1.10 < maxPower) {
                         powerToAdd = (int) (getPlayersPowerRecord(player.getName(), main.playerPowerRecords).getPowerLevel() * 1.10);
                     }
                     else {
@@ -67,8 +67,8 @@ public class PlayerDeathEventHandler {
         if (isInFaction(player.getName(), main.factions)) {
             if (getPlayersPowerRecord(player.getName(), main.playerPowerRecords).getPowerLevel() > 0) {
                 int powerToSubtract = 0;
-                if (getPlayersPowerRecord(player.getName(), main.playerPowerRecords).getPowerLevel() * 0.10 != 0) {
-                    powerToSubtract = (int) (getPlayersPowerRecord(player.getName(), main.playerPowerRecords).getPowerLevel() * 1.10);
+                if (getPlayersPowerRecord(player.getName(), main.playerPowerRecords).getPowerLevel() * 0.90 != 0) {
+                    powerToSubtract = (int) (getPlayersPowerRecord(player.getName(), main.playerPowerRecords).getPowerLevel() * 0.10);
                 }
                 else {
                     powerToSubtract = 1;
