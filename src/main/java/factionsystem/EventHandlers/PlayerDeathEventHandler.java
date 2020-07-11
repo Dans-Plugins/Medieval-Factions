@@ -69,7 +69,7 @@ public class PlayerDeathEventHandler {
             playerCoords[0] = player.getLocation().getChunk().getX();
             playerCoords[1] = player.getLocation().getChunk().getZ();
 
-            // check if land is already claimed
+            // check if land is claimed
             for (ClaimedChunk chunk : main.claimedChunks) {
                 if (playerCoords[0] == chunk.getCoordinates()[0] && playerCoords[1] == chunk.getCoordinates()[1]) {
 
