@@ -19,13 +19,16 @@ public class PlayerDeathEventHandler {
     }
 
     public void handle(PlayerDeathEvent event) {
+
+        int maxPower = 50;
+
         event.getEntity();
         Player player = (Player) event.getEntity();
 
         // decrease dying player's power
         for (PlayerPowerRecord record : main.playerPowerRecords) {
             if (record.getPlayerName().equalsIgnoreCase(player.getName())) {
-                record.decreasePower();
+                record.decreasePowerByTenPercent();
                 if (getPlayersPowerRecord(player.getName(), main.playerPowerRecords).getPowerLevel() > 0) {
                     player.sendMessage(ChatColor.RED + "Your power level has decreased!");
                 }
@@ -39,8 +42,8 @@ public class PlayerDeathEventHandler {
 
             for (PlayerPowerRecord record : main.playerPowerRecords) {
                 if (record.getPlayerName().equalsIgnoreCase(killer.getName())) {
-                    record.increasePower();
-                    if (getPlayersPowerRecord(killer.getName(), main.playerPowerRecords).getPowerLevel() < 20) {
+                    record.increasePowerByTenPercent();
+                    if (getPlayersPowerRecord(killer.getName(), main.playerPowerRecords).getPowerLevel() < maxPower) {
                         killer.sendMessage(ChatColor.GREEN + "Your power level has increased!");
                     }
                 }
@@ -48,8 +51,15 @@ public class PlayerDeathEventHandler {
 
             // add power to killer's faction
             if (isInFaction(killer.getName(), main.factions)) {
-                if (getPlayersPowerRecord(killer.getName(), main.playerPowerRecords).getPowerLevel() < 20) {
-                    getPlayersFaction(killer.getName(), main.factions).addPower();
+                if (getPlayersPowerRecord(killer.getName(), main.playerPowerRecords).getPowerLevel() < maxPower) {
+                    int powerToAdd = 0;
+                    if (getPlayersPowerRecord(player.getName(), main.playerPowerRecords).getPowerLevel() * 1.10 < maxPower) {
+                        powerToAdd = (int) (getPlayersPowerRecord(player.getName(), main.playerPowerRecords).getPowerLevel() * 1.10);
+                    }
+                    else {
+                        powerToAdd = 1;
+                    }
+                    getPlayersFaction(killer.getName(), main.factions).addPower(powerToAdd);
                 }
             }
         }
@@ -57,7 +67,14 @@ public class PlayerDeathEventHandler {
         // decrease power from player's faction
         if (isInFaction(player.getName(), main.factions)) {
             if (getPlayersPowerRecord(player.getName(), main.playerPowerRecords).getPowerLevel() > 0) {
-                getPlayersFaction(player.getName(), main.factions).subtractPower();
+                int powerToSubtract = 0;
+                if (getPlayersPowerRecord(player.getName(), main.playerPowerRecords).getPowerLevel() * 0.90 != 0) {
+                    powerToSubtract = (int) (getPlayersPowerRecord(player.getName(), main.playerPowerRecords).getPowerLevel() * 0.10);
+                }
+                else {
+                    powerToSubtract = 1;
+                }
+                getPlayersFaction(player.getName(), main.factions).subtractPower(powerToSubtract);
             }
         }
 

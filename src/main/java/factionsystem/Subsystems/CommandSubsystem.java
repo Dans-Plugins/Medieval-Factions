@@ -474,7 +474,7 @@ public class CommandSubsystem {
                 }
 
                 // editlaw command
-                if (args[0].equalsIgnoreCase("editlaw")) {
+                if (args[0].equalsIgnoreCase("editlaw") || args[0].equalsIgnoreCase("el")) {
                     EditLawCommand command = new EditLawCommand(main);
                     command.editLaw(sender, args);
                 }
