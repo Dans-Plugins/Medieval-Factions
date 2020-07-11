@@ -30,7 +30,6 @@ public class EntitySpawnEventHandler {
 
                 if (event.getEntity() instanceof Monster) {
                     event.setCancelled(true);
-                    System.out.println("Entity spawn cancelled!"); // delete this line after test
                 }
 
             }
