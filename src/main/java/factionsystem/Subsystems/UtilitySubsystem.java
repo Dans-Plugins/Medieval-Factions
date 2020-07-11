@@ -222,6 +222,9 @@ public class UtilitySubsystem {
     }
 
     public void schedulePowerIncrease() {
+
+        int maxPower = 50;
+
         System.out.println("Scheduling hourly power increase...");
         int delay = 30 * 60; // 30 minutes
         int secondsUntilRepeat = 60 * 60; // 1 hour
@@ -231,7 +234,7 @@ public class UtilitySubsystem {
                 System.out.println("Medieval Factions is increasing the power of every player by 1 if their power is below 10. This will happen hourly.");
                 for (PlayerPowerRecord powerRecord : main.playerPowerRecords) {
                     try {
-                        if (powerRecord.getPowerLevel() < 20) {
+                        if (powerRecord.getPowerLevel() < maxPower) {
                             if (Bukkit.getServer().getPlayer(powerRecord.getPlayerName()).isOnline()) {
                                 powerRecord.increasePower();
                                 if (isInFaction(powerRecord.getPlayerName(), main.factions)) {

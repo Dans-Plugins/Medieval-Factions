@@ -18,6 +18,9 @@ public class PlayerDeathEventHandler {
     }
 
     public void handle(PlayerDeathEvent event) {
+
+        int maxPower = 50;
+
         event.getEntity();
         Player player = (Player) event.getEntity();
 
@@ -39,7 +42,7 @@ public class PlayerDeathEventHandler {
             for (PlayerPowerRecord record : main.playerPowerRecords) {
                 if (record.getPlayerName().equalsIgnoreCase(killer.getName())) {
                     record.increasePower();
-                    if (getPlayersPowerRecord(killer.getName(), main.playerPowerRecords).getPowerLevel() < 20) {
+                    if (getPlayersPowerRecord(killer.getName(), main.playerPowerRecords).getPowerLevel() < maxPower) {
                         killer.sendMessage(ChatColor.GREEN + "Your power level has increased!");
                     }
                 }
@@ -47,7 +50,7 @@ public class PlayerDeathEventHandler {
 
             // add power to killer's faction
             if (isInFaction(killer.getName(), main.factions)) {
-                if (getPlayersPowerRecord(killer.getName(), main.playerPowerRecords).getPowerLevel() < 20) {
+                if (getPlayersPowerRecord(killer.getName(), main.playerPowerRecords).getPowerLevel() < maxPower) {
                     getPlayersFaction(killer.getName(), main.factions).addPower();
                 }
             }

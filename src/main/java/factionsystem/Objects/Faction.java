@@ -28,6 +28,7 @@ public class Faction {
 
 
     // temporary
+    int maxPower = 50;
     private ArrayList<String> invited = new ArrayList<>();
     private ArrayList<String> attemptedTruces = new ArrayList<>();
     private ArrayList<String> attemptedAlliances = new ArrayList<>();
@@ -153,7 +154,7 @@ public class Faction {
     }
 
     public void addPower() {
-        if (cumulativePowerLevel < members.size() * 20) {
+        if (cumulativePowerLevel < members.size() * maxPower) {
             cumulativePowerLevel++;
         }
     }

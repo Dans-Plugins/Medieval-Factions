@@ -7,8 +7,13 @@ import java.io.IOException;
 import java.util.Scanner;
 
 public class PlayerPowerRecord {
+
+    // saved
     private String playerName = "";
     private int powerLevel = 0;
+
+    // temporary
+    int maxPower = 50;
 
     public PlayerPowerRecord(String nameOfPlayer) {
         playerName = nameOfPlayer;
@@ -27,7 +32,7 @@ public class PlayerPowerRecord {
     }
 
     public boolean increasePower() {
-        if (powerLevel < 20) {
+        if (powerLevel < maxPower) {
             powerLevel++;
             return true;
         }
