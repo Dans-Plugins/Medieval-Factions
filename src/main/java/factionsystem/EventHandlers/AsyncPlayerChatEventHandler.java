@@ -20,7 +20,8 @@ public class AsyncPlayerChatEventHandler {
         if (main.playersInFactionChat.contains(event.getPlayer().getName())) {
             Faction playersFaction = getPlayersFaction(event.getPlayer().getName(), main.factions);
             if (playersFaction != null) {
-                sendAllPlayersInFactionMessage(playersFaction, ChatColor.GOLD + String.format("%s: %s", event.getPlayer().getDisplayName(), event.getMessage()));
+                String message = String.format("%s: %s", event.getPlayer().getName(), event.getMessage());
+                sendAllPlayersInFactionMessage(playersFaction, ChatColor.GOLD + "" + message);
                 event.setCancelled(true);
             }
         }
