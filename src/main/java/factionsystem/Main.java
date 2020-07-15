@@ -47,6 +47,7 @@ public class Main extends JavaPlugin implements Listener {
     public HashMap<String, String> playersGrantingAccess = new HashMap<>();
     public ArrayList<String> playersCheckingAccess = new ArrayList<>();
     public HashMap<String, String> playersRevokingAccess = new HashMap<>();
+    public ArrayList<String> playersInFactionChat = new ArrayList<>();
 
     @Override
     public void onEnable() {
