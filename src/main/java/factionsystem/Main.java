@@ -18,6 +18,7 @@ import org.bukkit.event.block.BlockPlaceEvent;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.entity.EntitySpawnEvent;
 import org.bukkit.event.entity.PlayerDeathEvent;
+import org.bukkit.event.player.AsyncPlayerChatEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerMoveEvent;
@@ -47,6 +48,7 @@ public class Main extends JavaPlugin implements Listener {
     public HashMap<String, String> playersGrantingAccess = new HashMap<>();
     public ArrayList<String> playersCheckingAccess = new ArrayList<>();
     public HashMap<String, String> playersRevokingAccess = new HashMap<>();
+    public ArrayList<String> playersInFactionChat = new ArrayList<>();
 
     @Override
     public void onEnable() {
@@ -116,6 +118,12 @@ public class Main extends JavaPlugin implements Listener {
     @EventHandler()
     public void onJoin(EntitySpawnEvent event) {
         EntitySpawnEventHandler handler = new EntitySpawnEventHandler(this);
+        handler.handle(event);
+    }
+
+    @EventHandler()
+    public void onChat(AsyncPlayerChatEvent event) {
+        AsyncPlayerChatEventHandler handler = new AsyncPlayerChatEventHandler(this);
         handler.handle(event);
     }
 }

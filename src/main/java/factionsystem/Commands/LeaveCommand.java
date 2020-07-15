@@ -29,6 +29,8 @@ public class LeaveCommand {
                             if (main.factions.get(i).getPopulation() == 1) {
                                 // able to leave
 
+                                main.playersInFactionChat.remove(player.getName());
+
                                 // delete file associated with faction
                                 System.out.println("Attempting to delete file plugins/medievalfactions/" + main.factions.get(i).getName() + ".txt");
                                 try {
@@ -59,6 +61,11 @@ public class LeaveCommand {
                         }
                         else {
                             // able to leave
+
+                            if (main.playersInFactionChat.contains(player.getName())) {
+                                main.playersInFactionChat.remove(player.getName());
+                            }
+
                             main.factions.get(i).removeMember(player.getName(), getPlayersPowerRecord(player.getName(), main.playerPowerRecords).getPowerLevel());
                             player.sendMessage(ChatColor.AQUA + "You left your faction.");
                             try {

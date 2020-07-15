@@ -1,5 +1,5 @@
 name: MedievalFactions
-version: 2.9.1
+version: 3.0
 author: KingdomProgrammers
 main: factionsystem.Main
 api-version: 1.13

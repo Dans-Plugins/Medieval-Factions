@@ -55,6 +55,7 @@ public class HelpCommand {
             if (args[1].equalsIgnoreCase("5")) {
                 sender.sendMessage(ChatColor.BOLD + "" + ChatColor.AQUA + "\n == Medieval Factions Commands Page 5/5 == " + "\n");
                 sender.sendMessage(ChatColor.AQUA + "/mf editlaw - Edit an already existing law in your faction.");
+                sender.sendMessage(ChatColor.AQUA + "/mf chat - Toggle faction chat.");
                 sender.sendMessage(ChatColor.AQUA + "/mf forcesave - Force the plugin to save." + "\n");
                 sender.sendMessage(ChatColor.AQUA + "/mf version - Check plugin version." + "\n");
                 sender.sendMessage(ChatColor.AQUA + "/mf forceload - Force the plugin to load." + "\n");

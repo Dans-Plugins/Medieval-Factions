@@ -479,6 +479,12 @@ public class CommandSubsystem {
                     command.editLaw(sender, args);
                 }
 
+                // chat command
+                if (args[0].equalsIgnoreCase("chat")) {
+                    ChatCommand command = new ChatCommand(main);
+                    command.toggleFactionChat(sender);
+                }
+
                 // admin commands ----------------------------------------------------------------------------------
 
                 // forcesave command
