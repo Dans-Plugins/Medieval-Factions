@@ -28,6 +28,8 @@ public class DisbandCommand {
                     owner = true;
                     if (main.factions.get(i).getPopulation() == 1) {
 
+                        main.playersInFactionChat.remove(player.getName());
+
                         // delete file associated with faction
                         System.out.println("Attempting to delete file plugins/medievalfactions/" + main.factions.get(i).getName() + ".txt");
                         try {
