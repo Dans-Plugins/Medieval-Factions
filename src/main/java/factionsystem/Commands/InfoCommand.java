@@ -18,33 +18,28 @@ public class InfoCommand {
 
     public void showInfo(CommandSender sender, String[] args) {
         if (sender instanceof Player) {
-            Player player = (Player) sender;
-            if (isInFaction(player.getName(), main.factions)) {
-                if (args.length == 1) {
-                    for (Faction faction : main.factions) {
-                        if (faction.isMember(player.getName())) {
-                            sendFactionInfo(player, faction, getChunksClaimedByFaction(faction.getName(), main.claimedChunks));
-                        }
-                    }
-                }
-                else {
-                    // creating name from arguments 1 to the last one
-                    String name = createStringFromFirstArgOnwards(args);
-
-                    boolean exists = false;
-                    for (Faction faction : main.factions) {
-                        if (faction.getName().equalsIgnoreCase(name)) {
-                            exists = true;
-                            sendFactionInfo(player, faction, getChunksClaimedByFaction(faction.getName(), main.claimedChunks));
-                        }
-                    }
-                    if (!exists) {
-                        player.sendMessage(ChatColor.RED + "That faction wasn't found!");
+           Player player = (Player) sender;
+            if (args.length == 1) {
+                for (Faction faction : main.factions) {
+                    if (faction.isMember(player.getName())) {
+                        sendFactionInfo(player, faction, getChunksClaimedByFaction(faction.getName(), main.claimedChunks));
                     }
                 }
             }
             else {
-                player.sendMessage(ChatColor.RED + "You need to be in a faction to use /mf info. To view an existing faction's info page, type /mf info (player-name).");
+                // creating name from arguments 1 to the last one
+                String name = createStringFromFirstArgOnwards(args);
+
+                boolean exists = false;
+                for (Faction faction : main.factions) {
+                    if (faction.getName().equalsIgnoreCase(name)) {
+                        exists = true;
+                        sendFactionInfo(player, faction, getChunksClaimedByFaction(faction.getName(), main.claimedChunks));
+                    }
+                }
+                if (!exists) {
+                    player.sendMessage(ChatColor.RED + "That faction wasn't found!");
+                }
             }
         }
 
