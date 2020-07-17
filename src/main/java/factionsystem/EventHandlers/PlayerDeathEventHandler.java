@@ -97,7 +97,7 @@ public class PlayerDeathEventHandler {
                         if (!(player.getKiller() instanceof Player)) {
 
                             // player keeps items
-                            event.setKeepInventory(true);
+                            // event.setKeepInventory(true); // TODO: fix this duplicating items
 
                         }
 
