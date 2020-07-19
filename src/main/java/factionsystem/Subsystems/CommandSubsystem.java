@@ -520,6 +520,12 @@ public class CommandSubsystem {
                     }
                 }
 
+                // bypass command
+                if (args[0].equalsIgnoreCase("bypass")) {
+                    BypassCommand command = new BypassCommand(main);
+                    command.toggleBypass(sender);
+                }
+
             }
         }
         return true;
