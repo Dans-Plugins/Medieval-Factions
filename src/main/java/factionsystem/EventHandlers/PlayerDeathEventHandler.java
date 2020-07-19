@@ -35,6 +35,21 @@ public class PlayerDeathEventHandler {
             }
         }
 
+        // decrease power from player's faction
+        if (isInFaction(player.getName(), main.factions)) {
+            if (getPlayersPowerRecord(player.getName(), main.playerPowerRecords).getPowerLevel() > 0) {
+                int powerToSubtract = 0;
+                if (getPlayersPowerRecord(player.getName(), main.playerPowerRecords).getPowerLevel() * 0.90 >= 0) {
+                    powerToSubtract = (int) (getPlayersPowerRecord(player.getName(), main.playerPowerRecords).getPowerLevel() * 0.10);
+                }
+                else {
+                    powerToSubtract = 1;
+                }
+                getPlayersFaction(player.getName(), main.factions).subtractPower(powerToSubtract);
+                System.out.println("Subtracted " + powerToSubtract + " from " + getPlayersFaction(player.getName(), main.factions));
+            }
+        }
+
         // if player's cause of death was another player killing them
         if (player.getKiller() instanceof Player) {
             Player killer = (Player) player.getKiller();
@@ -62,21 +77,6 @@ public class PlayerDeathEventHandler {
                     getPlayersFaction(killer.getName(), main.factions).addPower(powerToAdd);
                     System.out.println("Added " + powerToAdd + " to " + getPlayersFaction(player.getName(), main.factions));
                 }
-            }
-        }
-
-        // decrease power from player's faction
-        if (isInFaction(player.getName(), main.factions)) {
-            if (getPlayersPowerRecord(player.getName(), main.playerPowerRecords).getPowerLevel() > 0) {
-                int powerToSubtract = 0;
-                if (getPlayersPowerRecord(player.getName(), main.playerPowerRecords).getPowerLevel() * 0.90 >= 0) {
-                    powerToSubtract = (int) (getPlayersPowerRecord(player.getName(), main.playerPowerRecords).getPowerLevel() * 0.10);
-                }
-                else {
-                    powerToSubtract = 1;
-                }
-                getPlayersFaction(player.getName(), main.factions).subtractPower(powerToSubtract);
-                System.out.println("Subtracted " + powerToSubtract + " from " + getPlayersFaction(player.getName(), main.factions));
             }
         }
 
