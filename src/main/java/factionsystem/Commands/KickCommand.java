@@ -29,7 +29,13 @@ public class KickCommand {
                         if (faction.isMember(args[1])) {
                             if (!(args[1].equalsIgnoreCase(player.getName()))) {
                                 if (!(args[1].equalsIgnoreCase(faction.getOwner()))) {
+
+                                    if (faction.isOfficer(args[1])) {
+                                        faction.removeOfficer(args[1]);
+                                    }
+
                                     main.playersInFactionChat.remove(args[1]);
+
                                     faction.removeMember(args[1], getPlayersPowerRecord(player.getName(), main.playerPowerRecords).getPowerLevel());
                                     try {
                                         sendAllPlayersInFactionMessage(faction, ChatColor.RED + args[1] + " has been kicked from " + faction.getName());

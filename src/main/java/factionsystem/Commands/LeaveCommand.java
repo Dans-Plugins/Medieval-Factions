@@ -29,6 +29,10 @@ public class LeaveCommand {
                             if (main.factions.get(i).getPopulation() == 1) {
                                 // able to leave
 
+                                if (main.factions.get(i).isOfficer(player.getName())) {
+                                    main.factions.get(i).removeOfficer(player.getName());
+                                }
+
                                 main.playersInFactionChat.remove(player.getName());
 
                                 // delete file associated with faction

@@ -54,12 +54,13 @@ public class PlayerDeathEventHandler {
                 if (getPlayersPowerRecord(killer.getName(), main.playerPowerRecords).getPowerLevel() < maxPower) {
                     int powerToAdd = 0;
                     if (getPlayersPowerRecord(player.getName(), main.playerPowerRecords).getPowerLevel() * 1.10 <= maxPower) {
-                        powerToAdd = (int) (getPlayersPowerRecord(player.getName(), main.playerPowerRecords).getPowerLevel() * 1.10);
+                        powerToAdd = (int) (getPlayersPowerRecord(player.getName(), main.playerPowerRecords).getPowerLevel() * 0.10);
                     }
                     else {
                         powerToAdd = 1;
                     }
                     getPlayersFaction(killer.getName(), main.factions).addPower(powerToAdd);
+                    System.out.println("Added " + powerToAdd + " to " + getPlayersFaction(player.getName(), main.factions));
                 }
             }
         }
@@ -68,13 +69,14 @@ public class PlayerDeathEventHandler {
         if (isInFaction(player.getName(), main.factions)) {
             if (getPlayersPowerRecord(player.getName(), main.playerPowerRecords).getPowerLevel() > 0) {
                 int powerToSubtract = 0;
-                if (getPlayersPowerRecord(player.getName(), main.playerPowerRecords).getPowerLevel() * 0.90 != 0) {
+                if (getPlayersPowerRecord(player.getName(), main.playerPowerRecords).getPowerLevel() * 0.90 >= 0) {
                     powerToSubtract = (int) (getPlayersPowerRecord(player.getName(), main.playerPowerRecords).getPowerLevel() * 0.10);
                 }
                 else {
                     powerToSubtract = 1;
                 }
                 getPlayersFaction(player.getName(), main.factions).subtractPower(powerToSubtract);
+                System.out.println("Subtracted " + powerToSubtract + " from " + getPlayersFaction(player.getName(), main.factions));
             }
         }
 

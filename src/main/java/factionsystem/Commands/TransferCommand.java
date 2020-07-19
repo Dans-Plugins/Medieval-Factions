@@ -26,6 +26,10 @@ public class TransferCommand {
                     if (args.length > 1) {
                         if (faction.isMember(args[1])) {
 
+                            if (faction.isOfficer(args[1])) {
+                                faction.removeOfficer(args[1]);
+                            }
+
                             // set owner
                             faction.setOwner(args[1]);
                             player.sendMessage(ChatColor.AQUA + "Ownership transferred to " + args[1]);
