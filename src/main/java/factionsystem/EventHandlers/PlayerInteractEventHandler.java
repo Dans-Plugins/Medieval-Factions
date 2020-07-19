@@ -56,8 +56,8 @@ public class PlayerInteractEventHandler {
             LockedBlock lockedBlock = main.utilities.getLockedBlock(clickedBlock.getX(), clickedBlock.getY(), clickedBlock.getZ());
             if (lockedBlock != null) {
 
-                // if player doesn't have access
-                if (!lockedBlock.hasAccess(player.getName())) {
+                // if player doesn't have access and isn't overriding
+                if (!lockedBlock.hasAccess(player.getName()) && !main.adminsBypassingProtections.contains(player.getName())) {
                     event.setCancelled(true);
                     player.sendMessage(ChatColor.RED + "Locked by " + lockedBlock.getOwner());
                     return;
