@@ -233,8 +233,8 @@ public class PlayerInteractEventHandler {
     }
 
     private void handleClaimedChunk(PlayerInteractEvent event, ClaimedChunk chunk) {
-        // player not in a faction
-        if (!isInFaction(event.getPlayer().getName(), main.factions)) {
+        // player not in a faction and isn't overriding
+        if (!isInFaction(event.getPlayer().getName(), main.factions) && !main.adminsBypassingProtections.contains(event.getPlayer().getName())) {
             event.setCancelled(true);
         }
 
@@ -242,8 +242,8 @@ public class PlayerInteractEventHandler {
         for (Faction faction : main.factions) {
             if (faction.isMember(event.getPlayer().getName())) {
 
-                // if player's faction is not the same as the holder of the chunk
-                if (!(faction.getName().equalsIgnoreCase(chunk.getHolder()))) {
+                // if player's faction is not the same as the holder of the chunk and player isn't overriding
+                if (!(faction.getName().equalsIgnoreCase(chunk.getHolder())) && !main.adminsBypassingProtections.contains(event.getPlayer().getName())) {
                     event.setCancelled(true);
                     return;
                 }
