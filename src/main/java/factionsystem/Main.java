@@ -30,7 +30,7 @@ import java.util.HashMap;
 public class Main extends JavaPlugin implements Listener {
 
     // version
-    public static String version = "v3.0.3";
+    public static String version = "v3.1";
 
     // subsystems
     public StorageSubsystem storage = new StorageSubsystem(this);
@@ -49,6 +49,7 @@ public class Main extends JavaPlugin implements Listener {
     public ArrayList<String> playersCheckingAccess = new ArrayList<>();
     public HashMap<String, String> playersRevokingAccess = new HashMap<>();
     public ArrayList<String> playersInFactionChat = new ArrayList<>();
+    public ArrayList<String> adminsBypassingProtections = new ArrayList<>();
 
     @Override
     public void onEnable() {

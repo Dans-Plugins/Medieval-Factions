@@ -30,7 +30,7 @@ public class BlockPlaceEventHandler {
         if (chunk != null) {
 
             // player not in a faction
-            if (!isInFaction(event.getPlayer().getName(), main.factions)) {
+            if (!isInFaction(event.getPlayer().getName(), main.factions) && !main.adminsBypassingProtections.contains(event.getPlayer().getName())) {
                 event.setCancelled(true);
             }
 
@@ -39,7 +39,7 @@ public class BlockPlaceEventHandler {
                 if (faction.isMember(player.getName())) {
 
                     // if player's faction is not the same as the holder of the chunk
-                    if (!(faction.getName().equalsIgnoreCase(chunk.getHolder()))) {
+                    if (!(faction.getName().equalsIgnoreCase(chunk.getHolder())) && !main.adminsBypassingProtections.contains(event.getPlayer().getName())) {
                         event.setCancelled(true);
                         return;
                     }
@@ -47,7 +47,7 @@ public class BlockPlaceEventHandler {
                     // if chest
                     if (main.utilities.isChest(event.getBlock())) {
                         // if next to non-owned locked chest
-                        if (isNextToNonOwnedLockedChest(event.getPlayer(), event.getBlock())) {
+                        if (isNextToNonOwnedLockedChest(event.getPlayer(), event.getBlock()) && !main.adminsBypassingProtections.contains(event.getPlayer().getName())) {
                             event.setCancelled(true);
                             player.sendMessage(ChatColor.RED + "You can't place chests next to locked chests you don't own.");
                             return;
@@ -57,7 +57,7 @@ public class BlockPlaceEventHandler {
                     // if hopper
                     if (event.getBlock().getType() == Material.HOPPER) {
                         // if next to or under/above non-owned locked chest
-                        if (isNextToNonOwnedLockedChest(event.getPlayer(), event.getBlock()) || isUnderOrAboveNonOwnedLockedChest(event.getPlayer(), event.getBlock())) {
+                        if (isNextToNonOwnedLockedChest(event.getPlayer(), event.getBlock()) || isUnderOrAboveNonOwnedLockedChest(event.getPlayer(), event.getBlock()) && !main.adminsBypassingProtections.contains(event.getPlayer().getName())) {
                             event.setCancelled(true);
                             player.sendMessage(ChatColor.RED + "You can't place hoppers next to, under or above locked chests you don't own.");
                             return;

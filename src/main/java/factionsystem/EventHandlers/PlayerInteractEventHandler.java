@@ -56,8 +56,8 @@ public class PlayerInteractEventHandler {
             LockedBlock lockedBlock = main.utilities.getLockedBlock(clickedBlock.getX(), clickedBlock.getY(), clickedBlock.getZ());
             if (lockedBlock != null) {
 
-                // if player doesn't have access
-                if (!lockedBlock.hasAccess(player.getName())) {
+                // if player doesn't have access and isn't overriding
+                if (!lockedBlock.hasAccess(player.getName()) && !main.adminsBypassingProtections.contains(player.getName())) {
                     event.setCancelled(true);
                     player.sendMessage(ChatColor.RED + "Locked by " + lockedBlock.getOwner());
                     return;
@@ -233,8 +233,8 @@ public class PlayerInteractEventHandler {
     }
 
     private void handleClaimedChunk(PlayerInteractEvent event, ClaimedChunk chunk) {
-        // player not in a faction
-        if (!isInFaction(event.getPlayer().getName(), main.factions)) {
+        // player not in a faction and isn't overriding
+        if (!isInFaction(event.getPlayer().getName(), main.factions) && !main.adminsBypassingProtections.contains(event.getPlayer().getName())) {
             event.setCancelled(true);
         }
 
@@ -242,8 +242,8 @@ public class PlayerInteractEventHandler {
         for (Faction faction : main.factions) {
             if (faction.isMember(event.getPlayer().getName())) {
 
-                // if player's faction is not the same as the holder of the chunk
-                if (!(faction.getName().equalsIgnoreCase(chunk.getHolder()))) {
+                // if player's faction is not the same as the holder of the chunk and player isn't overriding
+                if (!(faction.getName().equalsIgnoreCase(chunk.getHolder())) && !main.adminsBypassingProtections.contains(event.getPlayer().getName())) {
                     event.setCancelled(true);
                     return;
                 }
