@@ -46,7 +46,7 @@ public class PlayerDeathEventHandler {
                     powerToSubtract = 1;
                 }
                 getPlayersFaction(player.getName(), main.factions).subtractPower(powerToSubtract);
-                System.out.println("Subtracted " + powerToSubtract + " from " + getPlayersFaction(player.getName(), main.factions));
+                System.out.println("Subtracted " + powerToSubtract + " from " + getPlayersFaction(player.getName(), main.factions).getName());
             }
         }
 
@@ -75,7 +75,7 @@ public class PlayerDeathEventHandler {
                         powerToAdd = 1;
                     }
                     getPlayersFaction(killer.getName(), main.factions).addPower(powerToAdd);
-                    System.out.println("Added " + powerToAdd + " to " + getPlayersFaction(player.getName(), main.factions));
+                    System.out.println("Added " + powerToAdd + " to " + getPlayersFaction(player.getName(), main.factions).getName());
                 }
             }
         }
