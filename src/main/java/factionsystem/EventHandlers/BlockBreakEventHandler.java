@@ -38,8 +38,8 @@ public class BlockBreakEventHandler {
             for (Faction faction : main.factions) {
                 if (faction.isMember(player.getName())) {
 
-                    // if player's faction is not the same as the holder of the chunk
-                    if (!(faction.getName().equalsIgnoreCase(chunk.getHolder()))) {
+                    // if player's faction is not the same as the holder of the chunk and player isn't bypassing
+                    if (!(faction.getName().equalsIgnoreCase(chunk.getHolder())) && !main.adminsBypassingProtections.contains(player.getName())) {
                         event.setCancelled(true);
                         return;
                     }
@@ -47,8 +47,9 @@ public class BlockBreakEventHandler {
                     // if block is locked
                     if (main.utilities.isBlockLocked(event.getBlock().getX(), event.getBlock().getY(), event.getBlock().getZ())) {
 
-                        // if player is not the owner
-                        if (!main.utilities.getLockedBlock(event.getBlock().getX(), event.getBlock().getY(), event.getBlock().getZ()).getOwner().equalsIgnoreCase(player.getName())) {
+                        // if player is not the owner and isn't bypassing
+                        if (!main.utilities.getLockedBlock(event.getBlock().getX(), event.getBlock().getY(), event.getBlock().getZ()).getOwner().equalsIgnoreCase(player.getName())
+                                && !main.adminsBypassingProtections.contains(event.getPlayer().getName())) {
                             event.setCancelled(true);
                             player.sendMessage(ChatColor.RED + "You don't own this!");
                             return;
