@@ -30,7 +30,7 @@ import java.util.HashMap;
 public class Main extends JavaPlugin implements Listener {
 
     // version
-    public static String version = "v3.0.3";
+    public static String version = "v3.1";
 
     // subsystems
     public StorageSubsystem storage = new StorageSubsystem(this);
