@@ -39,7 +39,7 @@ public class PlayerDeathEventHandler {
         if (isInFaction(player.getName(), main.factions)) {
             if (getPlayersPowerRecord(player.getName(), main.playerPowerRecords).getPowerLevel() > 0) {
                 int powerToSubtract = 0;
-                if (getPlayersPowerRecord(player.getName(), main.playerPowerRecords).getPowerLevel() * 0.90 >= 0) {
+                if (getPlayersPowerRecord(player.getName(), main.playerPowerRecords).getPowerLevel() * 0.90 >= 10) {
                     powerToSubtract = (int) (getPlayersPowerRecord(player.getName(), main.playerPowerRecords).getPowerLevel() * 0.10);
                 }
                 else {
