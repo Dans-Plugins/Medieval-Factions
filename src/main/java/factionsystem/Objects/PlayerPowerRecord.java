@@ -62,18 +62,18 @@ public class PlayerPowerRecord {
 
     public void save() {
         try {
-            File saveFolder = new File("./plugins/medievalfactions/player-power-records/");
+            File saveFolder = new File("./plugins/MedievalFactions/player-power-records/");
             if (!saveFolder.exists()) {
                 saveFolder.mkdir();
             }
-            File saveFile = new File("./plugins/medievalfactions/player-power-records/" + playerName + ".txt");
+            File saveFile = new File("./plugins/MedievalFactions/player-power-records/" + playerName + ".txt");
             if (saveFile.createNewFile()) {
                 System.out.println("Save file for player power record associated with  " + playerName + " created.");
             } else {
                 System.out.println("Save file for player power record associated with  " + playerName + " already exists. Altering.");
             }
 
-            FileWriter saveWriter = new FileWriter("./plugins/medievalfactions/player-power-records/" + playerName + ".txt");
+            FileWriter saveWriter = new FileWriter("./plugins/MedievalFactions/player-power-records/" + playerName + ".txt");
 
             // actual saving takes place here
             saveWriter.write(playerName + "\n");
@@ -90,7 +90,7 @@ public class PlayerPowerRecord {
 
     public void load(String filename) {
         try {
-            File loadFile = new File("./plugins/medievalfactions/player-power-records/" + filename);
+            File loadFile = new File("./plugins/MedievalFactions/player-power-records/" + filename);
             Scanner loadReader = new Scanner(loadFile);
 
             // actual loading

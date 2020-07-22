@@ -87,18 +87,18 @@ public class LockedBlock {
         String identifier = x + "_" + y + "_" + z;
 
         try {
-            File saveFolder = new File("./plugins/medievalfactions/lockedblocks/");
+            File saveFolder = new File("./plugins/MedievalFactions/lockedblocks/");
             if (!saveFolder.exists()) {
                 saveFolder.mkdir();
             }
-            File saveFile = new File("./plugins/medievalfactions/lockedblocks/" + identifier + ".txt");
+            File saveFile = new File("./plugins/MedievalFactions/lockedblocks/" + identifier + ".txt");
             if (saveFile.createNewFile()) {
                 System.out.println("Save file for locked block " + identifier + " created.");
             } else {
                 System.out.println("Save file for locked block " + identifier + " already exists. Altering.");
             }
 
-            FileWriter saveWriter = new FileWriter("./plugins/medievalfactions/lockedblocks/" + identifier + ".txt");
+            FileWriter saveWriter = new FileWriter("./plugins/MedievalFactions/lockedblocks/" + identifier + ".txt");
 
             // actual saving takes place here
             saveWriter.write(x + "\n");
@@ -123,7 +123,7 @@ public class LockedBlock {
 
     public void load(String filename) {
         try {
-            File loadFile = new File("./plugins/medievalfactions/lockedblocks/" + filename);
+            File loadFile = new File("./plugins/MedievalFactions/lockedblocks/" + filename);
             Scanner loadReader = new Scanner(loadFile);
 
 

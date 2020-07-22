@@ -339,9 +339,9 @@ public class Faction {
         name = newName;
 
         // delete old save file
-        System.out.println("Attempting to delete file plugins/medievalfactions/" + oldName + ".txt");
+        System.out.println("Attempting to delete file plugins/MedievalFactions/" + oldName + ".txt");
         try {
-            File fileToDelete = new File("plugins/medievalfactions/" + oldName + ".txt");
+            File fileToDelete = new File("plugins/MedievalFactions/" + oldName + ".txt");
             if (fileToDelete.delete()) {
                 System.out.println("Success. File deleted.");
             }
@@ -355,18 +355,18 @@ public class Faction {
 
     public boolean save(ArrayList<Faction> factions) {
         try {
-            File saveFolder = new File("./plugins/medievalfactions/");
+            File saveFolder = new File("./plugins/MedievalFactions/");
             if (!saveFolder.exists()) {
                 saveFolder.mkdir();
             }
-            File saveFile = new File("./plugins/medievalfactions/" + name + ".txt");
+            File saveFile = new File("./plugins/MedievalFactions/" + name + ".txt");
             if (saveFile.createNewFile()) {
                 System.out.println("Save file for faction " + name + " created.");
             } else {
                 System.out.println("Save file for faction " + name + " already exists. Altering.");
             }
 
-            FileWriter saveWriter = new FileWriter("./plugins/medievalfactions/" + name + ".txt");
+            FileWriter saveWriter = new FileWriter("./plugins/MedievalFactions/" + name + ".txt");
 
             // actual saving takes place here
             saveWriter.write(name + "\n");
@@ -443,7 +443,7 @@ public class Faction {
 
     public boolean load(String filename) {
         try {
-            File loadFile = new File("./plugins/medievalfactions/" + filename);
+            File loadFile = new File("./plugins/MedievalFactions/" + filename);
             Scanner loadReader = new Scanner(loadFile);
 
             // actual loading

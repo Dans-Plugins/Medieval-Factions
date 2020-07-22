@@ -36,9 +36,9 @@ public class LeaveCommand {
                                 main.playersInFactionChat.remove(player.getName());
 
                                 // delete file associated with faction
-                                System.out.println("Attempting to delete file plugins/medievalfactions/" + main.factions.get(i).getName() + ".txt");
+                                System.out.println("Attempting to delete file plugins/MedievalFactions/" + main.factions.get(i).getName() + ".txt");
                                 try {
-                                    File fileToDelete = new File("plugins/medievalfactions/" + main.factions.get(i).getName() + ".txt");
+                                    File fileToDelete = new File("plugins/MedievalFactions/" + main.factions.get(i).getName() + ".txt");
                                     if (fileToDelete.delete()) {
                                         System.out.println("Success. File deleted.");
                                     }

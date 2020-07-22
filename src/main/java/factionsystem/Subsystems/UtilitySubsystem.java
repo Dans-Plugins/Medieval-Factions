@@ -114,9 +114,9 @@ public class UtilitySubsystem {
                             String identifier = (int)chunk.getChunk().getX() + "_" + (int)chunk.getChunk().getZ();
 
                             // delete file associated with chunk
-                            System.out.println("Attempting to delete file plugins plugins/medievalfactions/claimedchunks/" + identifier + ".txt");
+                            System.out.println("Attempting to delete file plugins plugins/MedievalFactions/claimedchunks/" + identifier + ".txt");
                             try {
-                                File fileToDelete = new File("plugins/medievalfactions/claimedchunks/" + identifier + ".txt");
+                                File fileToDelete = new File("plugins/MedievalFactions/claimedchunks/" + identifier + ".txt");
                                 if (fileToDelete.delete()) {
                                     System.out.println("Success. File deleted.");
                                 }
@@ -400,8 +400,8 @@ public class UtilitySubsystem {
                 try {
 
                     // delete file associated with chunk
-                    System.out.println("Attempting to delete file plugins plugins/medievalfactions/claimedchunks/" + identifier + ".txt");
-                    File fileToDelete = new File("plugins/medievalfactions/claimedchunks/" + identifier + ".txt");
+                    System.out.println("Attempting to delete file plugins plugins/MedievalFactions/claimedchunks/" + identifier + ".txt");
+                    File fileToDelete = new File("plugins/MedievalFactions/claimedchunks/" + identifier + ".txt");
                     if (fileToDelete.delete()) {
                         System.out.println("Success. File deleted.");
                     } else {
@@ -510,8 +510,8 @@ public class UtilitySubsystem {
                 try {
 
                     // delete file associated with chunk
-                    System.out.println("Attempting to delete file plugins/medievalfactions/lockedblocks/" + identifier + ".txt");
-                    File fileToDelete = new File("plugins/medievalfactions/lockedblocks/" + identifier + ".txt");
+                    System.out.println("Attempting to delete file plugins/MedievalFactions/lockedblocks/" + identifier + ".txt");
+                    File fileToDelete = new File("plugins/Medievalfactions/lockedblocks/" + identifier + ".txt");
                     if (fileToDelete.delete()) {
                         System.out.println("Success. File deleted.");
                     } else {
@@ -528,7 +528,7 @@ public class UtilitySubsystem {
     }
 
     public void ensureSmoothTransitionBetweenVersions() {
-        // check if 'medievalfactions folder exists'
+        // this piece of code is to ensure that saves don't become broken when updating to v3.2 from a previous version
         File saveFolder = new File("./plugins/medievalfactions/");
         if (saveFolder.exists()) {
             // rename directory

@@ -33,11 +33,11 @@ public class StorageSubsystem {
 
     public void saveFactionNames() {
         try {
-            File saveFolder = new File("./plugins/medievalfactions/");
+            File saveFolder = new File("./plugins/MedievalFactions/");
             if (!saveFolder.exists()) {
                 saveFolder.mkdir();
             }
-            File saveFile = new File("./plugins/medievalfactions/" + "faction-names.txt");
+            File saveFile = new File("./plugins/MedievalFactions/" + "faction-names.txt");
             if (saveFile.createNewFile()) {
                 System.out.println("Save file for faction names created.");
             } else {
@@ -68,11 +68,11 @@ public class StorageSubsystem {
 
     public void saveClaimedChunkFilenames() {
         try {
-            File saveFolder = new File("./plugins/medievalfactions/claimedchunks/");
+            File saveFolder = new File("./plugins/MedievalFactions/claimedchunks/");
             if (!saveFolder.exists()) {
                 saveFolder.mkdir();
             }
-            File saveFile = new File("./plugins/medievalfactions/claimedchunks/" + "claimedchunks.txt");
+            File saveFile = new File("./plugins/MedievalFactions/claimedchunks/" + "claimedchunks.txt");
             if (saveFile.createNewFile()) {
                 System.out.println("Save file for claimed chunk filenames created.");
             } else {
@@ -105,11 +105,11 @@ public class StorageSubsystem {
 
     public void savePlayerPowerRecordFilenames() {
         try {
-            File saveFolder = new File("./plugins/medievalfactions/player-power-records/");
+            File saveFolder = new File("./plugins/MedievalFactions/player-power-records/");
             if (!saveFolder.exists()) {
                 saveFolder.mkdir();
             }
-            File saveFile = new File("./plugins/medievalfactions/player-power-records/" + "playerpowerrecords.txt");
+            File saveFile = new File("./plugins/MedievalFactions/player-power-records/" + "playerpowerrecords.txt");
             if (saveFile.createNewFile()) {
                 System.out.println("Save file for player power record filenames created.");
             } else {
@@ -140,11 +140,11 @@ public class StorageSubsystem {
 
     public void saveLockedBlockFilenames() {
         try {
-            File saveFolder = new File("./plugins/medievalfactions/lockedblocks/");
+            File saveFolder = new File("./plugins/MedievalFactions/lockedblocks/");
             if (!saveFolder.exists()) {
                 saveFolder.mkdir();
             }
-            File saveFile = new File("./plugins/medievalfactions/lockedblocks/" + "lockedblocks.txt");
+            File saveFile = new File("./plugins/MedievalFactions/lockedblocks/" + "lockedblocks.txt");
             if (saveFile.createNewFile()) {
                 System.out.println("Save file for locked block filenames created.");
             } else {
@@ -181,7 +181,7 @@ public class StorageSubsystem {
     public void loadFactions() {
         try {
             System.out.println("Attempting to load factions...");
-            File loadFile = new File("./plugins/medievalfactions/" + "faction-names.txt");
+            File loadFile = new File("./plugins/MedievalFactions/" + "faction-names.txt");
             Scanner loadReader = new Scanner(loadFile);
 
             // actual loading
@@ -214,7 +214,7 @@ public class StorageSubsystem {
 
         try {
             System.out.println("Attempting to load claimed chunks...");
-            File loadFile = new File("./plugins/medievalfactions/claimedchunks/" + "claimedchunks.txt");
+            File loadFile = new File("./plugins/MedievalFactions/claimedchunks/" + "claimedchunks.txt");
             Scanner loadReader = new Scanner(loadFile);
 
             // actual loading
@@ -250,7 +250,7 @@ public class StorageSubsystem {
 
         try {
             System.out.println("Attempting to load player power record filenames...");
-            File loadFile = new File("./plugins/medievalfactions/player-power-records/" + "playerpowerrecords.txt");
+            File loadFile = new File("./plugins/MedievalFactions/player-power-records/" + "playerpowerrecords.txt");
             Scanner loadReader = new Scanner(loadFile);
 
             // actual loading
@@ -283,7 +283,7 @@ public class StorageSubsystem {
 
         try {
             System.out.println("Attempting to load locked blocks...");
-            File loadFile = new File("./plugins/medievalfactions/lockedblocks/" + "lockedblocks.txt");
+            File loadFile = new File("./plugins/MedievalFactions/lockedblocks/" + "lockedblocks.txt");
             Scanner loadReader = new Scanner(loadFile);
 
             // actual loading

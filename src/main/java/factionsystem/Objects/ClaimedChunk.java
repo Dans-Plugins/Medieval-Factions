@@ -62,18 +62,18 @@ public class ClaimedChunk {
         String identifier = (int)chunk.getX() + "_" + (int)chunk.getZ();
 
         try {
-            File saveFolder = new File("./plugins/medievalfactions/claimedchunks/");
+            File saveFolder = new File("./plugins/MedievalFactions/claimedchunks/");
             if (!saveFolder.exists()) {
                 saveFolder.mkdir();
             }
-            File saveFile = new File("./plugins/medievalfactions/claimedchunks/" + identifier + ".txt");
+            File saveFile = new File("./plugins/MedievalFactions/claimedchunks/" + identifier + ".txt");
             if (saveFile.createNewFile()) {
                 System.out.println("Save file for claimed chunk " + identifier + " created.");
             } else {
                 System.out.println("Save file for claimed chunk " + identifier + " already exists. Altering.");
             }
 
-            FileWriter saveWriter = new FileWriter("./plugins/medievalfactions/claimedchunks/" + identifier + ".txt");
+            FileWriter saveWriter = new FileWriter("./plugins/MedievalFactions/claimedchunks/" + identifier + ".txt");
 
             // actual saving takes place here
             saveWriter.write(chunk.getX() + "\n");
@@ -92,7 +92,7 @@ public class ClaimedChunk {
 
     public void load(String filename) {
         try {
-            File loadFile = new File("./plugins/medievalfactions/claimedchunks/" + filename);
+            File loadFile = new File("./plugins/MedievalFactions/claimedchunks/" + filename);
             Scanner loadReader = new Scanner(loadFile);
 
             int x = 0;

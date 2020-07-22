@@ -59,7 +59,7 @@ public class Main extends JavaPlugin implements Listener {
         utilities.ensureSmoothTransitionBetweenVersions();
 
         // config creation/loading
-        if (!(new File("./plugins/medievalfactions/config.yml").exists())) {
+        if (!(new File("./plugins/MedievalFactions/config.yml").exists())) {
             getConfig().addDefault("maxPowerLevel", 50);
             getConfig().addDefault("initialPowerLevel", 10);
             getConfig().addDefault("hourlyPowerIncreaseAmount", 1);
