@@ -8,7 +8,6 @@ import org.bukkit.event.player.PlayerMoveEvent;
 import java.util.Objects;
 
 import static factionsystem.Subsystems.UtilitySubsystem.*;
-import static factionsystem.Subsystems.UtilitySubsystem.getClaimedChunk;
 import static org.bukkit.Bukkit.getServer;
 
 public class PlayerMoveEventHandler {

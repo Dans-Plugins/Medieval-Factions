@@ -1,8 +1,8 @@
 package factionsystem.Commands;
 
+import factionsystem.Main;
 import factionsystem.Objects.ClaimedChunk;
 import factionsystem.Objects.Faction;
-import factionsystem.Main;
 import factionsystem.Objects.LockedBlock;
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;

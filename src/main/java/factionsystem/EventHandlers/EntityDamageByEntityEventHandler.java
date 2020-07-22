@@ -3,7 +3,6 @@ package factionsystem.EventHandlers;
 import factionsystem.Main;
 import javafx.util.Pair;
 import org.bukkit.ChatColor;
-import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.bukkit.entity.Projectile;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
