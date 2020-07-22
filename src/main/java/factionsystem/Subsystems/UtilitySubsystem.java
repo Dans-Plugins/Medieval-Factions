@@ -531,6 +531,8 @@ public class UtilitySubsystem {
         // this piece of code is to ensure that saves don't become broken when updating to v3.2 from a previous version
         File saveFolder = new File("./plugins/medievalfactions/");
         if (saveFolder.exists()) {
+            System.out.println("[ALERT] Old save folder name (pre v3.2) detected. Updating for compatibility.");
+
             // rename directory
             File newSaveFolder = new File("./plugins/MedievalFactions/");
             saveFolder.renameTo(newSaveFolder);
