@@ -28,7 +28,7 @@ public class EntitySpawnEventHandler {
         for (ClaimedChunk chunk : main.claimedChunks) {
             if (x == chunk.getCoordinates()[0] && z == chunk.getCoordinates()[1]) {
 
-                if (event.getEntity() instanceof Monster) {
+                if (event.getEntity() instanceof Monster && !main.getConfig().getBoolean("mobsSpawnInFactionTerritory")) {
                     event.setCancelled(true);
                 }
 

@@ -11,6 +11,7 @@ import factionsystem.Subsystems.UtilitySubsystem;
 
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
+import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.BlockBreakEvent;
@@ -24,6 +25,7 @@ import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerMoveEvent;
 import org.bukkit.plugin.java.JavaPlugin;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.HashMap;
 
@@ -58,6 +60,20 @@ public class Main extends JavaPlugin implements Listener {
         utilities.scheduleAutosave();
         this.getServer().getPluginManager().registerEvents(this, this);
         storage.load();
+
+        // config creation/loading
+        if (!(new File("./plugins/medievalfactions/config.yml").exists())) {
+            getConfig().addDefault("maxPowerLevel", 50);
+            getConfig().addDefault("initialPowerLevel", 10);
+            getConfig().addDefault("hourlyPowerIncreaseAmount", 10);
+            getConfig().addDefault("mobsSpawnInFactionTerritory", false);
+            getConfig().options().copyDefaults(true);
+            saveConfig();
+        }
+        else {
+            reloadConfig();
+        }
+
         System.out.println("Medieval Factions plugin enabled.");
     }
 
@@ -127,4 +143,5 @@ public class Main extends JavaPlugin implements Listener {
         AsyncPlayerChatEventHandler handler = new AsyncPlayerChatEventHandler(this);
         handler.handle(event);
     }
+
 }

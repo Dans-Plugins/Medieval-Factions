@@ -13,14 +13,15 @@ public class PlayerPowerRecord {
     private int powerLevel = 0;
 
     // temporary
-    int maxPower = 50;
+    int maxPower = 0;
 
-    public PlayerPowerRecord(String nameOfPlayer) {
+    public PlayerPowerRecord(String nameOfPlayer, int initial, int max) {
         playerName = nameOfPlayer;
-        powerLevel = 10;
+        powerLevel = initial;
+        maxPower = max;
     }
-    public PlayerPowerRecord() { // server constructor for loading
-
+    public PlayerPowerRecord(int max) { // server constructor for loading
+        maxPower = max;
     }
 
     public void setPlayerName(String newName) {

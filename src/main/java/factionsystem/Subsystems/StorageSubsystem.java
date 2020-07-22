@@ -187,7 +187,7 @@ public class StorageSubsystem {
             // actual loading
             while (loadReader.hasNextLine()) {
                 String nextName = loadReader.nextLine();
-                Faction temp = new Faction(nextName); // uses server constructor, only temporary
+                Faction temp = new Faction(nextName, main.getConfig().getInt("maxPowerLevel")); // uses server constructor, only temporary
                 temp.load(nextName + ".txt"); // provides owner field among other things
 
                 // existence check
@@ -256,7 +256,7 @@ public class StorageSubsystem {
             // actual loading
             while (loadReader.hasNextLine()) {
                 String nextName = loadReader.nextLine();
-                PlayerPowerRecord temp = new PlayerPowerRecord(); // uses no-parameter constructor since load provides name
+                PlayerPowerRecord temp = new PlayerPowerRecord(main.getConfig().getInt("maxPowerLevel")); // uses no-parameter constructor since load provides name
                 temp.load(nextName); // provides power field among other things
 
                 for (int i = 0; i < main.playerPowerRecords.size(); i++) {
