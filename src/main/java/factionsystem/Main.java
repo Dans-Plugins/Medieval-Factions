@@ -55,10 +55,6 @@ public class Main extends JavaPlugin implements Listener {
     @Override
     public void onEnable() {
         System.out.println("Medieval Factions plugin enabling....");
-        utilities.schedulePowerIncrease();
-        utilities.scheduleAutosave();
-        this.getServer().getPluginManager().registerEvents(this, this);
-        storage.load();
 
         // config creation/loading
         if (!(new File("./plugins/medievalfactions/config.yml").exists())) {
@@ -72,6 +68,11 @@ public class Main extends JavaPlugin implements Listener {
         else {
             reloadConfig();
         }
+
+        utilities.schedulePowerIncrease();
+        utilities.scheduleAutosave();
+        this.getServer().getPluginManager().registerEvents(this, this);
+        storage.load();
 
         System.out.println("Medieval Factions plugin enabled.");
     }
