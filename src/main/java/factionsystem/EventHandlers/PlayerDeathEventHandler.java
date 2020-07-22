@@ -20,7 +20,7 @@ public class PlayerDeathEventHandler {
 
     public void handle(PlayerDeathEvent event) {
 
-        int maxPower = 50;
+        int maxPower = main.getConfig().getInt("maxPowerLevel");
 
         event.getEntity();
         Player player = (Player) event.getEntity();

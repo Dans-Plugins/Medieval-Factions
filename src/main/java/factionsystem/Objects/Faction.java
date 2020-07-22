@@ -26,9 +26,8 @@ public class Faction {
     private String owner = "defaultOwner";
     private int cumulativePowerLevel = 0;
 
-
     // temporary
-    int maxPower = 50;
+    int maxPower = 0;
     private ArrayList<String> invited = new ArrayList<>();
     private ArrayList<String> attemptedTruces = new ArrayList<>();
     private ArrayList<String> attemptedAlliances = new ArrayList<>();
@@ -36,14 +35,16 @@ public class Faction {
     private Location factionHome = null;
 
     // player constructor
-    public Faction(String initialName, String creator) {
+    public Faction(String initialName, String creator, int max) {
         setName(initialName);
         setOwner(creator);
+        maxPower = max;
     }
 
     // server constructor
-    public Faction(String initialName) {
+    public Faction(String initialName, int max) {
         setName(initialName);
+        maxPower = max;
     }
 
     public void addLaw(String newLaw) {

@@ -503,6 +503,7 @@ public class CommandSubsystem {
                     if (sender.hasPermission("mf.forceload") || sender.hasPermission("mf.admin")) {
                         sender.sendMessage(ChatColor.GREEN + "Medieval Factions plugin is loading...");
                         main.storage.load();
+                        main.reloadConfig();
                     }
                     else {
                         sender.sendMessage(ChatColor.RED + "Sorry! You need the following permission to use this command: 'mf.forceload'");
