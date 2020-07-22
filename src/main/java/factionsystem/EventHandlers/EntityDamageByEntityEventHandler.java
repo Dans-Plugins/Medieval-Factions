@@ -1,7 +1,8 @@
 package factionsystem.EventHandlers;
 
 import factionsystem.Main;
-import javafx.util.Pair;
+import org.apache.commons.lang3.tuple.ImmutablePair;
+import org.apache.commons.lang3.tuple.Pair;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 import org.bukkit.entity.Projectile;
@@ -95,7 +96,7 @@ public class EntityDamageByEntityEventHandler {
             }
         }
 
-        return new Pair<>(attackersFactionIndex, victimsFactionIndex);
+        return new ImmutablePair<>(attackersFactionIndex, victimsFactionIndex);
     }
 
 }
