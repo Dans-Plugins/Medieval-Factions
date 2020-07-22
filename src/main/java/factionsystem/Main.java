@@ -17,6 +17,7 @@ import org.bukkit.event.block.BlockPlaceEvent;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.entity.EntitySpawnEvent;
 import org.bukkit.event.entity.PlayerDeathEvent;
+import org.bukkit.event.entity.PotionSplashEvent;
 import org.bukkit.event.player.AsyncPlayerChatEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
@@ -142,6 +143,12 @@ public class Main extends JavaPlugin implements Listener {
     @EventHandler()
     public void onChat(AsyncPlayerChatEvent event) {
         AsyncPlayerChatEventHandler handler = new AsyncPlayerChatEventHandler(this);
+        handler.handle(event);
+    }
+
+    @EventHandler
+    public void onPotionSplash(PotionSplashEvent event) {
+        PotionSplashEventHandler handler = new PotionSplashEventHandler(this);
         handler.handle(event);
     }
 

@@ -5,9 +5,11 @@ import factionsystem.Objects.ClaimedChunk;
 import factionsystem.Objects.Faction;
 import factionsystem.Objects.LockedBlock;
 import factionsystem.Objects.PlayerPowerRecord;
+import javafx.util.Pair;
 import org.bukkit.*;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
+import org.bukkit.event.entity.EntityDamageByEntityEvent;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -537,6 +539,49 @@ public class UtilitySubsystem {
             File newSaveFolder = new File("./plugins/MedievalFactions/");
             saveFolder.renameTo(newSaveFolder);
         }
+    }
+
+    public boolean arePlayersFactionsNotEnemies(Player player1, Player player2) {
+        Pair<Integer, Integer> factionIndices = getFactionIndices(player1, player2);
+        int attackersFactionIndex = factionIndices.getKey();
+        int victimsFactionIndex = factionIndices.getValue();
+
+        return !(main.factions.get(attackersFactionIndex).isEnemy(main.factions.get(victimsFactionIndex).getName())) &&
+                !(main.factions.get(victimsFactionIndex).isEnemy(main.factions.get(attackersFactionIndex).getName()));
+    }
+
+    public boolean arePlayersInSameFaction(Player player1, Player player2) {
+        Pair<Integer, Integer> factionIndices = getFactionIndices(player1, player2);
+        int attackersFactionIndex = factionIndices.getKey();
+        int victimsFactionIndex = factionIndices.getValue();
+
+        // if attacker and victim are both in a faction
+        if (arePlayersInAFaction(player1, player2)){
+            // if attacker and victim are part of the same faction
+            return attackersFactionIndex == victimsFactionIndex;
+        } else {
+            return false;
+        }
+    }
+
+    public boolean arePlayersInAFaction(Player player1, Player player2) {
+        return isInFaction(player1.getName(), main.factions) && isInFaction(player2.getName(), main.factions);
+    }
+
+    public Pair<Integer, Integer> getFactionIndices(Player player1, Player player2){
+        int attackersFactionIndex = 0;
+        int victimsFactionIndex = 0;
+
+        for (int i = 0; i < main.factions.size(); i++) {
+            if (main.factions.get(i).isMember(player1.getName())) {
+                attackersFactionIndex = i;
+            }
+            if (main.factions.get(i).isMember(player2.getName())) {
+                victimsFactionIndex = i;
+            }
+        }
+
+        return new Pair<>(attackersFactionIndex, victimsFactionIndex);
     }
 
 }
