@@ -526,4 +526,15 @@ public class UtilitySubsystem {
             }
         }
     }
+
+    public void ensureSmoothTransitionBetweenVersions() {
+        // check if 'medievalfactions folder exists'
+        File saveFolder = new File("./plugins/medievalfactions/");
+        if (saveFolder.exists()) {
+            // rename directory
+            File newSaveFolder = new File("./plugins/MedievalFactions/");
+            saveFolder.renameTo(newSaveFolder);
+        }
+    }
+
 }

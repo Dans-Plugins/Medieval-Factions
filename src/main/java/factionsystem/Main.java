@@ -56,6 +56,8 @@ public class Main extends JavaPlugin implements Listener {
     public void onEnable() {
         System.out.println("Medieval Factions plugin enabling....");
 
+        utilities.ensureSmoothTransitionBetweenVersions();
+
         // config creation/loading
         if (!(new File("./plugins/medievalfactions/config.yml").exists())) {
             getConfig().addDefault("maxPowerLevel", 50);
