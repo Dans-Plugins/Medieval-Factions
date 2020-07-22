@@ -1,11 +1,9 @@
 package factionsystem.Commands;
 
-import factionsystem.Objects.Faction;
 import factionsystem.Main;
+import factionsystem.Objects.Faction;
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
-
-import java.util.ArrayList;
 
 import static factionsystem.Subsystems.UtilitySubsystem.getChunksClaimedByFaction;
 

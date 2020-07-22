@@ -1,7 +1,7 @@
 package factionsystem.Commands;
 
-import factionsystem.Objects.Faction;
 import factionsystem.Main;
+import factionsystem.Objects.Faction;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
