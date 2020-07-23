@@ -8,15 +8,16 @@ import factionsystem.Objects.PlayerPowerRecord;
 import factionsystem.Subsystems.CommandSubsystem;
 import factionsystem.Subsystems.StorageSubsystem;
 import factionsystem.Subsystems.UtilitySubsystem;
+import factionsystem.Util.Pair;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
+import org.bukkit.entity.AreaEffectCloud;
+import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.event.block.BlockPlaceEvent;
-import org.bukkit.event.entity.EntityDamageByEntityEvent;
-import org.bukkit.event.entity.EntitySpawnEvent;
-import org.bukkit.event.entity.PlayerDeathEvent;
+import org.bukkit.event.entity.*;
 import org.bukkit.event.player.AsyncPlayerChatEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
@@ -50,6 +51,8 @@ public class Main extends JavaPlugin implements Listener {
     public HashMap<String, String> playersRevokingAccess = new HashMap<>();
     public ArrayList<String> playersInFactionChat = new ArrayList<>();
     public ArrayList<String> adminsBypassingProtections = new ArrayList<>();
+    // List of players who made the cloud and the cloud itself in a pair
+    public ArrayList<Pair<Player, AreaEffectCloud>> activeAOEClouds = new ArrayList<>();
 
     @Override
     public void onEnable() {
@@ -142,6 +145,24 @@ public class Main extends JavaPlugin implements Listener {
     @EventHandler()
     public void onChat(AsyncPlayerChatEvent event) {
         AsyncPlayerChatEventHandler handler = new AsyncPlayerChatEventHandler(this);
+        handler.handle(event);
+    }
+
+    @EventHandler
+    public void onPotionSplash(PotionSplashEvent event) {
+        PotionSplashEventHandler handler = new PotionSplashEventHandler(this);
+        handler.handle(event);
+    }
+
+    @EventHandler
+    public void onLingeringPotionSplash(LingeringPotionSplashEvent event) {
+        LingeringPotionSplashEventHandler handler = new LingeringPotionSplashEventHandler(this);
+        handler.handle(event);
+    }
+
+    @EventHandler
+    public void onAreaOfEffectCloudApply(AreaEffectCloudApplyEvent event){
+        AreaEffectCloudApplyEventHandler handler = new AreaEffectCloudApplyEventHandler(this);
         handler.handle(event);
     }
 
