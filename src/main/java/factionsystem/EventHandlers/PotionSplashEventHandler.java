@@ -6,28 +6,11 @@ import org.bukkit.entity.Player;
 import org.bukkit.entity.ThrownPotion;
 import org.bukkit.event.entity.PotionSplashEvent;
 import org.bukkit.potion.PotionEffect;
-import org.bukkit.potion.PotionEffectType;
-
-import java.util.Arrays;
-import java.util.List;
 
 
 public class PotionSplashEventHandler {
 
     Main main = null;
-
-    private static List<PotionEffectType> BAD_POTION_EFFECTS = Arrays.asList(
-            PotionEffectType.BLINDNESS,
-            PotionEffectType.CONFUSION,
-            PotionEffectType.HARM,
-            PotionEffectType.HUNGER,
-            PotionEffectType.POISON,
-            PotionEffectType.SLOW,
-            PotionEffectType.SLOW_DIGGING,
-            PotionEffectType.UNLUCK,
-            PotionEffectType.WEAKNESS,
-            PotionEffectType.WITHER
-    );
 
     public PotionSplashEventHandler(Main plugin) {
         main = plugin;
@@ -42,7 +25,7 @@ public class PotionSplashEventHandler {
 
         for(PotionEffect effect : potion.getEffects()) {
             // Is potion effect bad?
-            if (potionEffectBad(effect.getType())) {
+            if (main.utilities.potionEffectBad(effect.getType())) {
 
                 // If any victim is a allied player remove potion intensity
                 for (LivingEntity victimEntity : event.getAffectedEntities()) {
@@ -64,9 +47,5 @@ public class PotionSplashEventHandler {
                 }
             }
         }
-    }
-
-    private boolean potionEffectBad(PotionEffectType effect) {
-        return BAD_POTION_EFFECTS.contains(effect);
     }
 }

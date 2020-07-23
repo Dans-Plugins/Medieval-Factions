@@ -5,15 +5,18 @@ import factionsystem.Objects.ClaimedChunk;
 import factionsystem.Objects.Faction;
 import factionsystem.Objects.LockedBlock;
 import factionsystem.Objects.PlayerPowerRecord;
-import javafx.util.Pair;
+import factionsystem.Util.Pair;
 import org.bukkit.*;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
-import org.bukkit.event.entity.EntityDamageByEntityEvent;
+import org.bukkit.potion.PotionEffectType;
+import org.bukkit.potion.PotionType;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Iterator;
+import java.util.List;
 
 public class UtilitySubsystem {
 
@@ -543,8 +546,8 @@ public class UtilitySubsystem {
 
     public boolean arePlayersFactionsNotEnemies(Player player1, Player player2) {
         Pair<Integer, Integer> factionIndices = getFactionIndices(player1, player2);
-        int attackersFactionIndex = factionIndices.getKey();
-        int victimsFactionIndex = factionIndices.getValue();
+        int attackersFactionIndex = factionIndices.getLeft();
+        int victimsFactionIndex = factionIndices.getRight();
 
         return !(main.factions.get(attackersFactionIndex).isEnemy(main.factions.get(victimsFactionIndex).getName())) &&
                 !(main.factions.get(victimsFactionIndex).isEnemy(main.factions.get(attackersFactionIndex).getName()));
@@ -552,8 +555,8 @@ public class UtilitySubsystem {
 
     public boolean arePlayersInSameFaction(Player player1, Player player2) {
         Pair<Integer, Integer> factionIndices = getFactionIndices(player1, player2);
-        int attackersFactionIndex = factionIndices.getKey();
-        int victimsFactionIndex = factionIndices.getValue();
+        int attackersFactionIndex = factionIndices.getLeft();
+        int victimsFactionIndex = factionIndices.getRight();
 
         // if attacker and victim are both in a faction
         if (arePlayersInAFaction(player1, player2)){
@@ -582,6 +585,36 @@ public class UtilitySubsystem {
         }
 
         return new Pair<>(attackersFactionIndex, victimsFactionIndex);
+    }
+
+    // Placed lower as it goes with the method below it.
+    private static List<PotionEffectType> BAD_POTION_EFFECTS = Arrays.asList(
+            PotionEffectType.BLINDNESS,
+            PotionEffectType.CONFUSION,
+            PotionEffectType.HARM,
+            PotionEffectType.HUNGER,
+            PotionEffectType.POISON,
+            PotionEffectType.SLOW,
+            PotionEffectType.SLOW_DIGGING,
+            PotionEffectType.UNLUCK,
+            PotionEffectType.WEAKNESS,
+            PotionEffectType.WITHER
+    );
+
+    public boolean potionEffectBad(PotionEffectType effect) {
+        return BAD_POTION_EFFECTS.contains(effect);
+    }
+
+    private static List<PotionType> BAD_POTION_TYPES = Arrays.asList(
+            PotionType.INSTANT_DAMAGE,
+            PotionType.POISON,
+            PotionType.SLOWNESS,
+            PotionType.WEAKNESS,
+            PotionType.TURTLE_MASTER
+    );
+
+    public boolean potionTypeBad(PotionType type){
+        return BAD_POTION_TYPES.contains(type);
     }
 
 }
