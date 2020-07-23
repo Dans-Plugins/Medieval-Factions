@@ -29,6 +29,10 @@ public class ClaimedChunk {
         setChunk(initialChunk);
     }
 
+    public ClaimedChunk(Map<String, String> data){
+        this.load(data);
+    }
+
     public void setChunk(Chunk newChunk) {
         chunk = newChunk;
     }
@@ -70,6 +74,19 @@ public class ClaimedChunk {
             saveMap.put("holder", holder);
 
             return saveMap;
+    }
+
+    private void load(Map<String, String> data) {
+        Gson gson = new Gson();
+
+        world = data.get("world");
+        holder = data.get("holder");
+
+        World chunkWorld = getServer().createWorld(new WorldCreator(world));
+        if (chunkWorld != null) {
+            chunk = chunkWorld.getChunkAt(gson.fromJson(data.get("X"), Integer.TYPE),
+                                            gson.fromJson(data.get("Z"), Integer.TYPE));
+        }
     }
 
     public void legacyLoad(String filename) {

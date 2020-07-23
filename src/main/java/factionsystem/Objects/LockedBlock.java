@@ -1,6 +1,7 @@
 package factionsystem.Objects;
 
 import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -31,6 +32,10 @@ public class LockedBlock {
 
     public LockedBlock() {
         // server constructor
+    }
+
+    public LockedBlock(Map<String, String> lockedBlockData) {
+        this.load(lockedBlockData);
     }
 
     public int getX() {
@@ -89,10 +94,21 @@ public class LockedBlock {
         saveMap.put("Y", gson.toJson(y));
         saveMap.put("Z", gson.toJson(z));
         saveMap.put("owner", owner);
-        saveMap.put("factioName", factionName);
+        saveMap.put("factionName", factionName);
         saveMap.put("accessList", gson.toJson(accessList));
 
         return saveMap;
+    }
+
+    private void load(Map<String, String> data) {
+        Gson gson = new Gson();
+
+        x = gson.fromJson(data.get("X"), Integer.TYPE);
+        y = gson.fromJson(data.get("Y"), Integer.TYPE);
+        z = gson.fromJson(data.get("Z"), Integer.TYPE);
+        owner = data.get("owner");
+        factionName = data.get("factionName");
+        accessList = gson.fromJson(data.get("accessList"), new TypeToken<ArrayList<String>>(){}.getType());
     }
 
     public void legacyLoad(String filename) {

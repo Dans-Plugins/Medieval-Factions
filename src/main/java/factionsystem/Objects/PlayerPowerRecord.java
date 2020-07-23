@@ -29,6 +29,10 @@ public class PlayerPowerRecord {
         maxPower = max;
     }
 
+    public PlayerPowerRecord(Map<String, String> data) {
+        this.load(data);
+    }
+
     public void setPlayerName(String newName) {
         playerName = newName;
     }
@@ -73,6 +77,12 @@ public class PlayerPowerRecord {
         saveMap.put("powerLevel", gson.toJson(powerLevel));
 
         return saveMap;
+    }
+
+    private void load(Map<String, String> data) {
+        Gson gson = new Gson();
+        playerName = data.get("playerName");
+        powerLevel = gson.fromJson(data.get("powerLevel"), Integer.TYPE);
     }
 
     public void legacyLoad(String filename) {

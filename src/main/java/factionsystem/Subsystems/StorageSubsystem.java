@@ -1,20 +1,17 @@
 package factionsystem.Subsystems;
 
 import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
+import com.google.gson.stream.JsonReader;
 import factionsystem.Main;
 import factionsystem.Objects.ClaimedChunk;
 import factionsystem.Objects.Faction;
 import factionsystem.Objects.LockedBlock;
 import factionsystem.Objects.PlayerPowerRecord;
 
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileWriter;
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.Scanner;
+import java.io.*;
+import java.lang.reflect.Type;
+import java.util.*;
 
 public class StorageSubsystem {
 
@@ -29,6 +26,8 @@ public class StorageSubsystem {
     private final static String CHUNKS_FILE_NAME = "claimedchunks.json";
     private final static String PLAYERPOWER_FILE_NAME = "playerpowerrecords.json";
     private final static String LOCKED_BLOCKS_FILE_NAME = "lockedblocks.json";
+
+    private final static Type LIST_MAP_TYPE = new TypeToken<ArrayList<HashMap<String, String>>>(){}.getType();
 
     private Gson gson = new Gson();
 
@@ -117,111 +116,6 @@ public class StorageSubsystem {
         }
     }
 
-//    public void saveClaimedChunkFilenames() {
-//        try {
-//            File saveFolder = new File("./plugins/MedievalFactions/claimedchunks/");
-//            if (!saveFolder.exists()) {
-//                saveFolder.mkdir();
-//            }
-//            File saveFile = new File("./plugins/MedievalFactions/claimedchunks/" + "claimedchunks.txt");
-//            if (saveFile.createNewFile()) {
-//                System.out.println("Save file for claimed chunk filenames created.");
-//            } else {
-//                System.out.println("Save file for claimed chunk filenames already exists. Overwriting.");
-//            }
-//
-//            FileWriter saveWriter = new FileWriter(saveFile);
-//
-//            // actual saving takes place here
-//            for (ClaimedChunk chunk : main.claimedChunks) {
-//                double[] coords = chunk.getCoordinates();
-//
-//                saveWriter.write((int)coords[0] + "_" + (int)coords[1] + ".txt" + "\n");
-//            }
-//
-//            saveWriter.close();
-//
-//        } catch (IOException e) {
-//            System.out.println("An error occurred while saving claimed chunk filenames.");
-//        }
-//    }
-//
-//    public void saveClaimedChunks() {
-//        System.out.println("Saving claimed chunks...");
-//        for (ClaimedChunk chunk : main.claimedChunks) {
-//            chunk.save();
-//        }
-//        System.out.println("Claimed chunks saved.");
-//    }
-//
-//    public void savePlayerPowerRecordFilenames() {
-//        try {
-//            File saveFolder = new File("./plugins/MedievalFactions/player-power-records/");
-//            if (!saveFolder.exists()) {
-//                saveFolder.mkdir();
-//            }
-//            File saveFile = new File("./plugins/MedievalFactions/player-power-records/" + "playerpowerrecords.txt");
-//            if (saveFile.createNewFile()) {
-//                System.out.println("Save file for player power record filenames created.");
-//            } else {
-//                System.out.println("Save file for player power record filenames already exists. Overwriting.");
-//            }
-//
-//            FileWriter saveWriter = new FileWriter(saveFile);
-//
-//            // actual saving takes place here
-//            for (PlayerPowerRecord record : main.playerPowerRecords) {
-//                saveWriter.write(record.getPlayerName() + ".txt" + "\n");
-//            }
-//
-//            saveWriter.close();
-//
-//        } catch (IOException e) {
-//            System.out.println("An error occurred while saving player power record filenames.");
-//        }
-//    }
-//
-//    public void savePlayerPowerRecords() {
-//        System.out.println("Saving player power records...");
-//        for (PlayerPowerRecord record: main.playerPowerRecords) {
-//            record.save();
-//        }
-//        System.out.println("Player power records saved.");
-//    }
-//
-//    public void saveLockedBlockFilenames() {
-//        try {
-//            File saveFolder = new File("./plugins/MedievalFactions/lockedblocks/");
-//            if (!saveFolder.exists()) {
-//                saveFolder.mkdir();
-//            }
-//            File saveFile = new File("./plugins/MedievalFactions/lockedblocks/" + "lockedblocks.txt");
-//            if (saveFile.createNewFile()) {
-//                System.out.println("Save file for locked block filenames created.");
-//            } else {
-//                System.out.println("Save file for locked block filenames already exists. Overwriting.");
-//            }
-//
-//            FileWriter saveWriter = new FileWriter(saveFile);
-//
-//            // actual saving takes place here
-//            for (LockedBlock block : main.lockedBlocks) {
-//                saveWriter.write(block.getX() + "_" + block.getY() + "_" + block.getZ() + ".txt" + "\n");
-//            }
-//
-//            saveWriter.close();
-//
-//        } catch (IOException e) {
-//            System.out.println("An error occurred while saving locked block filenames.");
-//        }
-//    }
-//
-//    public void saveLockedBlocks() {
-//        for (LockedBlock block : main.lockedBlocks) {
-//            block.save();
-//        }
-//    }
-
     public void load() {
         if (legacyFilesExists()){
             legacyLoadFactions();
@@ -229,11 +123,14 @@ public class StorageSubsystem {
             legacyLoadPlayerPowerRecords();
             legacyLoadLockedBlocks();
             deleteLegacyFiles();
+            save();
         } else {
+            System.out.println("Attempting to load Factions data...");
             loadFactions();
             loadClaimedChunks();
             loadPlayerPowerRecords();
             loadLockedBlocks();
+            System.out.println("Faction data loaded successfully");
         }
     }
 
@@ -245,30 +142,77 @@ public class StorageSubsystem {
     }
 
     private void deleteLegacyFiles() {
-        boolean factionFile = new File(FILE_PATH + LEGACY_FACTIONS_FILE_NAME).delete();
-        boolean chunkFile = new File(FILE_PATH + LEGACY_CHUNKS_FILE_NAME).delete();
-        boolean lockedBlockFile = new File(FILE_PATH + LEGACY_LOCKED_BLOCKS_FILE_NAME).delete();
-        boolean playerPowerFile = new File(FILE_PATH + LEGACY_PLAYERPOWER_FILE_NAME).delete();
-        if (!factionFile || !chunkFile || !lockedBlockFile || !playerPowerFile){
-            System.out.println("One of the legacy files failed to be deleted, please remove it.");
+        if (new File(FILE_PATH).delete()){
+            throw new RuntimeException("Legacy Files are not removed, and must be removable. If you are about to" +
+                    " lose data, go back to before the save changes, v3.2 and below.");
         }
     }
 
     private void loadFactions() {
-        // Clean arraylist before loading
+        System.out.println("Attempting to load factions...");
         main.factions.clear();
+
+        ArrayList<HashMap<String, String>> data = loadDataFromFilename(FILE_PATH + FACTIONS_FILE_NAME);
+
+        for (Map<String, String> factionData : data){
+            Faction newFaction = new Faction(factionData);
+            main.factions.add(newFaction);
+        }
+
+        System.out.println("Factions successfully loaded.");
     }
 
     private void loadClaimedChunks() {
+        System.out.println("Attempting to load claimed chunks...");
         main.claimedChunks.clear();
+
+        ArrayList<HashMap<String, String>> data = loadDataFromFilename(FILE_PATH + CHUNKS_FILE_NAME);
+
+        for (Map<String, String> chunkData : data){
+            ClaimedChunk chunk = new ClaimedChunk(chunkData);
+            main.claimedChunks.add(chunk);
+        }
+
+        System.out.println("Claimed chunks successfully loaded.");
     }
 
     private void loadPlayerPowerRecords() {
+        System.out.println("Loading player power records...");
         main.playerPowerRecords.clear();
+
+        ArrayList<HashMap<String, String>> data = loadDataFromFilename(FILE_PATH + PLAYERPOWER_FILE_NAME);
+
+        for (Map<String, String> powerRecord : data){
+            PlayerPowerRecord player = new PlayerPowerRecord(powerRecord);
+            main.playerPowerRecords.add(player);
+        }
+
+        System.out.println("Player power records loaded.");
     }
 
     private void loadLockedBlocks() {
+        System.out.println("Loading locked blocks...");
         main.lockedBlocks.clear();
+
+        ArrayList<HashMap<String, String>> data = loadDataFromFilename(FILE_PATH + LOCKED_BLOCKS_FILE_NAME);
+
+        for (Map<String, String> lockedBlockData : data){
+            LockedBlock lockedBlock = new LockedBlock(lockedBlockData);
+            main.lockedBlocks.add(lockedBlock);
+        }
+
+        System.out.println("Claimed chunks loaded.");
+    }
+
+    private ArrayList<HashMap<String, String>> loadDataFromFilename(String filename) {
+        try{
+            Gson gson = new Gson();
+            JsonReader reader = new JsonReader(new FileReader(filename));
+            return gson.fromJson(reader, LIST_MAP_TYPE);
+        } catch (FileNotFoundException e) {
+            System.out.println("Faction loading failed.");
+        }
+        return new ArrayList<>();
     }
 
     public void legacyLoadFactions() {

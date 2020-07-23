@@ -1,6 +1,7 @@
 package factionsystem.Objects;
 
 import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
 import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.WorldCreator;
@@ -9,6 +10,7 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
@@ -49,6 +51,11 @@ public class Faction {
     public Faction(String initialName, int max) {
         setName(initialName);
         maxPower = max;
+    }
+
+    // Must recieve json data
+    public Faction(Map<String, String> data) {
+        this.load(data);
     }
 
     public void addLaw(String newLaw) {
@@ -384,6 +391,32 @@ public class Faction {
         saveMap.put("z", gson.toJson(factionHome.getZ()));
 
         return saveMap;
+    }
+
+    private void load(Map<String, String> data) {
+        Gson gson = new Gson();
+
+        Type arrayListType = new TypeToken<ArrayList<String>>(){}.getType();
+        Type mapType = new TypeToken<HashMap<String, String>>(){}.getType();
+
+        members = gson.fromJson(data.get("members"), arrayListType);
+        enemyFactions = gson.fromJson(data.get("enemyFactions"), arrayListType);
+        officers = gson.fromJson(data.get("officers"), arrayListType);
+        allyFactions = gson.fromJson(data.get("allyFactions"), arrayListType);
+        laws = gson.fromJson(data.get("laws"), arrayListType);
+        name = data.get("name");
+        description = data.get("description");
+        owner = data.get("owner");
+        cumulativePowerLevel = gson.fromJson(data.get("cumulativePowerLevel"), Integer.TYPE);
+        factionHome = loadLocation(gson.fromJson(data.get("location"), mapType), gson);
+    }
+
+    private Location loadLocation(HashMap<String, String> data, Gson gson){
+        World world = getServer().createWorld(new WorldCreator(data.get("worldName")));
+        double x = gson.fromJson(data.get("x"), Double.TYPE);
+        double y = gson.fromJson(data.get("y"), Double.TYPE);
+        double z = gson.fromJson(data.get("z"), Double.TYPE);
+        return new Location(world, x, y, z);
     }
 
     public boolean legacyLoad(String filename) {

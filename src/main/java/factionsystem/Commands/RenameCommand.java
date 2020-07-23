@@ -42,30 +42,6 @@ public class RenameCommand {
                             playersFaction.changeName(newName);
                             player.sendMessage(ChatColor.GREEN + "Faction name changed!");
 
-                            // save faction and faction names
-                            playersFaction.save(main.factions);
-                            main.storage.saveFactionNames();
-
-                            // change holder of claimed chunks
-                            for (ClaimedChunk chunk : main.claimedChunks) {
-                                if (chunk.getHolder().equalsIgnoreCase(oldName)) {
-                                    chunk.setHolder(newName);
-                                }
-                            }
-
-                            // save claimed chunks
-                            main.storage.saveClaimedChunks();
-
-                            // change faction name of locked blocks
-                            for (LockedBlock block : main.lockedBlocks) {
-                                if (block.getFactionName().equalsIgnoreCase(oldName)) {
-                                    block.setFaction(newName);
-                                }
-                            }
-
-                            // save locked blocks
-                            main.storage.saveLockedBlocks();
-
                             // rename alliance and enemy records
                             for (Faction faction : main.factions) {
                                 if (faction.isAlly(oldName)) {
@@ -78,6 +54,8 @@ public class RenameCommand {
                                 }
                             }
 
+                            // Save again to overwrite current data
+                            main.storage.save();
 
                         }
                         else {
