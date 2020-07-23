@@ -1,10 +1,14 @@
 package factionsystem.Objects;
 
+import com.google.gson.Gson;
+
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Scanner;
 
 public class LockedBlock {
@@ -77,46 +81,21 @@ public class LockedBlock {
         return accessList;
     }
 
-    public void save() {
+    public Map<String, String> save() {
+        Gson gson = new Gson();
 
-        String identifier = x + "_" + y + "_" + z;
+        Map<String, String> saveMap = new HashMap<>();
+        saveMap.put("X", gson.toJson(x));
+        saveMap.put("Y", gson.toJson(y));
+        saveMap.put("Z", gson.toJson(z));
+        saveMap.put("owner", owner);
+        saveMap.put("factioName", factionName);
+        saveMap.put("accessList", gson.toJson(accessList));
 
-        try {
-            File saveFolder = new File("./plugins/MedievalFactions/lockedblocks/");
-            if (!saveFolder.exists()) {
-                saveFolder.mkdir();
-            }
-            File saveFile = new File("./plugins/MedievalFactions/lockedblocks/" + identifier + ".txt");
-            if (saveFile.createNewFile()) {
-                System.out.println("Save file for locked block " + identifier + " created.");
-            } else {
-                System.out.println("Save file for locked block " + identifier + " already exists. Altering.");
-            }
-
-            FileWriter saveWriter = new FileWriter("./plugins/MedievalFactions/lockedblocks/" + identifier + ".txt");
-
-            // actual saving takes place here
-            saveWriter.write(x + "\n");
-            saveWriter.write(y + "\n");
-            saveWriter.write(z + "\n");
-
-            saveWriter.write(owner + "\n");
-            saveWriter.write(factionName + "\n");
-
-            for (String playerName : accessList) {
-                saveWriter.write(playerName + "\n");
-            }
-
-            saveWriter.close();
-
-            System.out.println("Successfully saved locked block " + identifier + ".");
-
-        } catch (IOException e) {
-            System.out.println("An error occurred saving the locked block with identifier " + identifier);
-        }
+        return saveMap;
     }
 
-    public void load(String filename) {
+    public void legacyLoad(String filename) {
         try {
             File loadFile = new File("./plugins/MedievalFactions/lockedblocks/" + filename);
             Scanner loadReader = new Scanner(loadFile);

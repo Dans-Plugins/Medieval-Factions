@@ -1,5 +1,6 @@
 package factionsystem.Objects;
 
+import com.google.gson.Gson;
 import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.WorldCreator;
@@ -9,6 +10,8 @@ import java.io.FileNotFoundException;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Scanner;
 
 import static org.bukkit.Bukkit.getServer;
@@ -25,6 +28,7 @@ public class Faction {
     private String description = "defaultDescription";
     private String owner = "defaultOwner";
     private int cumulativePowerLevel = 0;
+    private Location factionHome = null;
 
     // temporary
     int maxPower = 0;
@@ -32,7 +36,7 @@ public class Faction {
     private ArrayList<String> attemptedTruces = new ArrayList<>();
     private ArrayList<String> attemptedAlliances = new ArrayList<>();
     private boolean autoclaim = false;
-    private Location factionHome = null;
+
 
     // player constructor
     public Faction(String initialName, String creator, int max) {
@@ -353,95 +357,36 @@ public class Faction {
         }
     }
 
-    public boolean save(ArrayList<Faction> factions) {
-        try {
-            File saveFolder = new File("./plugins/MedievalFactions/");
-            if (!saveFolder.exists()) {
-                saveFolder.mkdir();
-            }
-            File saveFile = new File("./plugins/MedievalFactions/" + name + ".txt");
-            if (saveFile.createNewFile()) {
-                System.out.println("Save file for faction " + name + " created.");
-            } else {
-                System.out.println("Save file for faction " + name + " already exists. Altering.");
-            }
+    public Map<String, String> save() {
+        Gson gson = new Gson();
+        Map<String, String> saveMap = new HashMap<>();
 
-            FileWriter saveWriter = new FileWriter("./plugins/MedievalFactions/" + name + ".txt");
+        saveMap.put("members", gson.toJson(members));
+        saveMap.put("enemyFactions", gson.toJson(enemyFactions));
+        saveMap.put("officers", gson.toJson(officers));
+        saveMap.put("allyFactions", gson.toJson(allyFactions));
+        saveMap.put("laws", gson.toJson(laws));
+        saveMap.put("name", gson.toJson(name));
+        saveMap.put("description", gson.toJson(description));
+        saveMap.put("owner", gson.toJson(owner));
+        saveMap.put("cumulativePowerLevel", gson.toJson(cumulativePowerLevel));
+        saveMap.put("location", gson.toJson(saveLocation(gson)));
 
-            // actual saving takes place here
-            saveWriter.write(name + "\n");
-            saveWriter.write(owner + "\n");
-            saveWriter.write(description + "\n");
-            saveWriter.write(cumulativePowerLevel + "\n");
-
-            for (int i = 0; i < members.size(); i++) {
-                saveWriter.write(members.get(i) + "\n");
-            }
-
-            saveWriter.write("-" + "\n");
-
-            for (int i = 0; i < enemyFactions.size(); i++) {
-
-                // if enemy faction exists, save it
-                for (Faction faction : factions) {
-                    if (faction.getName().equalsIgnoreCase(enemyFactions.get(i))) {
-                        saveWriter.write(enemyFactions.get(i) + "\n");
-                    }
-                }
-
-            }
-
-            saveWriter.write("-" + "\n");
-
-            for (int i = 0; i < allyFactions.size(); i++) {
-
-                // if enemy faction exists, save it
-                for (Faction faction : factions) {
-                    if (faction.getName().equalsIgnoreCase(allyFactions.get(i))) {
-                        saveWriter.write(allyFactions.get(i) + "\n");
-                    }
-                }
-
-            }
-
-            saveWriter.write("-" + "\n");
-
-            for (String officer : officers) {
-                saveWriter.write(officer + "\n");
-            }
-
-            saveWriter.write("-" + "\n");
-
-            if (factionHome != null) {
-                // save faction details
-                saveWriter.write(factionHome.getWorld().getName() + "\n");
-                saveWriter.write(factionHome.getX() + "\n");
-                saveWriter.write(factionHome.getY() + "\n");
-                saveWriter.write(factionHome.getZ() + "\n");
-            }
-            else {
-                saveWriter.write("null" + "\n");
-            }
-
-            for (String law : laws) {
-                saveWriter.write(law + "\n");
-            }
-
-            saveWriter.write("-" + "\n");
-
-            saveWriter.close();
-
-            System.out.println("Successfully saved faction " + name + ".");
-            return true;
-
-        } catch (IOException e) {
-            System.out.println("An error occurred saving the faction named " + name);
-            return false;
-        }
-
+        return saveMap;
     }
 
-    public boolean load(String filename) {
+    private Map<String, String> saveLocation(Gson gson) {
+        Map<String, String> saveMap = new HashMap<>();
+
+        saveMap.put("worldName", factionHome.getWorld().getName());
+        saveMap.put("x", gson.toJson(factionHome.getX()));
+        saveMap.put("y", gson.toJson(factionHome.getY()));
+        saveMap.put("z", gson.toJson(factionHome.getZ()));
+
+        return saveMap;
+    }
+
+    public boolean legacyLoad(String filename) {
         try {
             File loadFile = new File("./plugins/MedievalFactions/" + filename);
             Scanner loadReader = new Scanner(loadFile);
