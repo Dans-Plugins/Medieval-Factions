@@ -325,12 +325,7 @@ public class Faction {
     }
 
     public boolean isMember(UUID uuid) {
-        for (UUID member : members) {
-            if (member == uuid) {
-                return true;
-            }
-        }
-        return false;
+        return members.contains(uuid);
     }
 
     public Map<String, String> save() {
