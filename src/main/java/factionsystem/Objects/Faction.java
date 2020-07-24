@@ -411,7 +411,7 @@ public class Faction {
                 if (temp.equalsIgnoreCase("-")) {
                     break;
                 }
-                members.add(UUID.fromString(temp));
+                members.add(findUUIDBasedOnPlayerName(temp));
             }
 
             while (loadReader.hasNextLine()) {
