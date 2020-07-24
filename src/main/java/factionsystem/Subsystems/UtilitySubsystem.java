@@ -217,12 +217,7 @@ public class UtilitySubsystem {
     }
 
     public boolean hasPowerRecord(UUID playerUUID) {
-        for (PlayerPowerRecord record : main.playerPowerRecords) {
-            if (record.getPlayerUUID() == playerUUID) {
-                return true;
-            }
-        }
-        return false;
+        return main.playerPowerRecords.contains(playerUUID);
     }
 
     public void schedulePowerIncrease() {
@@ -443,7 +438,7 @@ public class UtilitySubsystem {
 
     public static PlayerPowerRecord getPlayersPowerRecord(UUID playerUUID, ArrayList<PlayerPowerRecord> powerRecords ) {
         for (PlayerPowerRecord record : powerRecords) {
-            if (record.getPlayerUUID() == playerUUID) {
+            if (record.getPlayerUUID().equals(playerUUID)) {
                 return record;
             }
         }
@@ -616,14 +611,14 @@ public class UtilitySubsystem {
     public static String findPlayerNameBasedOnUUID(UUID playerUUID) {
         // Check online
         for (Player player : getOnlinePlayers()){
-            if (player.getUniqueId() == playerUUID){
+            if (player.getUniqueId().equals(playerUUID)){
                 return player.getName();
             }
         }
 
         // Check offline
         for (OfflinePlayer player : getOfflinePlayers()){
-            if (player.getUniqueId() == playerUUID){
+            if (player.getUniqueId().equals(playerUUID)){
                 return player.getName();
             }
         }

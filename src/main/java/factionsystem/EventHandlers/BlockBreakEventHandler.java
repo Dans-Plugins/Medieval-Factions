@@ -48,7 +48,7 @@ public class BlockBreakEventHandler {
                     if (main.utilities.isBlockLocked(event.getBlock().getX(), event.getBlock().getY(), event.getBlock().getZ())) {
 
                         // if player is not the owner and isn't bypassing
-                        if (main.utilities.getLockedBlock(event.getBlock().getX(), event.getBlock().getY(), event.getBlock().getZ()).getOwner() != player.getUniqueId()
+                        if (!main.utilities.getLockedBlock(event.getBlock().getX(), event.getBlock().getY(), event.getBlock().getZ()).getOwner().equals(player.getUniqueId())
                                 && !main.adminsBypassingProtections.contains(event.getPlayer().getUniqueId())) {
                             event.setCancelled(true);
                             player.sendMessage(ChatColor.RED + "You don't own this!");

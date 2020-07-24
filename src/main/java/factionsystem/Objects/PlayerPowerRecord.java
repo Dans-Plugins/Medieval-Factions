@@ -86,8 +86,7 @@ public class PlayerPowerRecord {
 
     private void load(Map<String, String> data) {
         Gson gson = new GsonBuilder().setPrettyPrinting().create();
-        System.out.println();
-        playerUUID = UUID.fromString(gson.fromJson(data.get("playerName"), String.class));
+        playerUUID = UUID.fromString(gson.fromJson(data.get("playerUUID"), String.class));
         powerLevel = gson.fromJson(data.get("powerLevel"), Integer.TYPE);
     }
 

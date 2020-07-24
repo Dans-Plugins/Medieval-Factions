@@ -270,7 +270,7 @@ public class StorageSubsystem {
                 temp.legacyLoad(nextName); // provides power field among other things
 
                 for (int i = 0; i < main.playerPowerRecords.size(); i++) {
-                    if (main.playerPowerRecords.get(i).getPlayerUUID() == temp.getPlayerUUID()) {
+                    if (main.playerPowerRecords.get(i).getPlayerUUID().equals(temp.getPlayerUUID())) {
                         main.playerPowerRecords.remove(i);
                         break;
                     }

@@ -26,7 +26,7 @@ public class PlayerDeathEventHandler {
 
         // decrease dying player's power
         for (PlayerPowerRecord record : main.playerPowerRecords) {
-            if (record.getPlayerUUID() == player.getUniqueId()) {
+            if (record.getPlayerUUID().equals(player.getUniqueId())) {
                 record.decreasePowerByTenPercent();
                 if (getPlayersPowerRecord(player.getUniqueId(), main.playerPowerRecords).getPowerLevel() > 0) {
                     player.sendMessage(ChatColor.RED + "Your power level has decreased!");
@@ -55,7 +55,7 @@ public class PlayerDeathEventHandler {
             System.out.println(player.getName() + " has killed " + killer.getName());
 
             for (PlayerPowerRecord record : main.playerPowerRecords) {
-                if (record.getPlayerUUID() == killer.getUniqueId()) {
+                if (record.getPlayerUUID().equals(killer.getUniqueId())) {
                     record.increasePowerByTenPercent();
                     if (getPlayersPowerRecord(killer.getUniqueId(), main.playerPowerRecords).getPowerLevel() < maxPower) {
                         killer.sendMessage(ChatColor.GREEN + "Your power level has increased!");

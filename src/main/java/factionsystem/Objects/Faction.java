@@ -203,12 +203,7 @@ public class Faction {
     }
 
     public boolean isOfficer(UUID uuid) {
-        for (UUID officer : officers) {
-            if (officer == uuid) {
-                return true;
-            }
-        }
-        return false;
+        return officers.contains(uuid);
     }
 
     public ArrayList<UUID> getMemberArrayList() {
@@ -291,7 +286,7 @@ public class Faction {
     }
 
     public boolean isOwner(UUID UUID) {
-        return owner == UUID;
+        return owner.equals(UUID);
     }
 
     public UUID getOwner() {
@@ -376,7 +371,6 @@ public class Faction {
         owner = UUID.fromString(gson.fromJson(data.get("owner"), String.class));
         cumulativePowerLevel = gson.fromJson(data.get("cumulativePowerLevel"), Integer.TYPE);
         factionHome = loadLocation(gson.fromJson(data.get("location"), mapType), gson);
-        System.out.println(toString());
     }
 
     private Location loadLocation(HashMap<String, String> data, Gson gson){

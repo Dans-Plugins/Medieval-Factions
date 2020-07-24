@@ -30,7 +30,7 @@ public class KickCommand {
                         UUID playerUUID = findUUIDBasedOnPlayerName(args[1]);
                         if (faction.isMember(playerUUID)) {
                             if (!(args[1].equalsIgnoreCase(player.getName()))) {
-                                if (!(playerUUID == faction.getOwner())) {
+                                if (!(playerUUID.equals(faction.getOwner()))) {
 
                                     if (faction.isOfficer(playerUUID)) {
                                         faction.removeOfficer(playerUUID);
