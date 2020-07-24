@@ -39,3 +39,4 @@ A minecraft plugin for players to use to organize politically.
 -  3.0 'Faction Chats' update
 -  3.1 'Admin Bypass' update
 -  3.2 'Config.yml' update
+-  3.3 'Major Overhauls & Bug Fixes' update
