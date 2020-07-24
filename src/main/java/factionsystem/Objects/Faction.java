@@ -385,10 +385,12 @@ public class Faction {
     private Map<String, String> saveLocation(Gson gson) {
         Map<String, String> saveMap = new HashMap<>();
 
-        saveMap.put("worldName", factionHome.getWorld().getName());
-        saveMap.put("x", gson.toJson(factionHome.getX()));
-        saveMap.put("y", gson.toJson(factionHome.getY()));
-        saveMap.put("z", gson.toJson(factionHome.getZ()));
+        if (factionHome != null && factionHome.getWorld() != null){
+            saveMap.put("worldName", factionHome.getWorld().getName());
+            saveMap.put("x", gson.toJson(factionHome.getX()));
+            saveMap.put("y", gson.toJson(factionHome.getY()));
+            saveMap.put("z", gson.toJson(factionHome.getZ()));
+        }
 
         return saveMap;
     }
@@ -412,11 +414,14 @@ public class Faction {
     }
 
     private Location loadLocation(HashMap<String, String> data, Gson gson){
-        World world = getServer().createWorld(new WorldCreator(data.get("worldName")));
-        double x = gson.fromJson(data.get("x"), Double.TYPE);
-        double y = gson.fromJson(data.get("y"), Double.TYPE);
-        double z = gson.fromJson(data.get("z"), Double.TYPE);
-        return new Location(world, x, y, z);
+        if (data.size() != 0){
+            World world = getServer().createWorld(new WorldCreator(data.get("worldName")));
+            double x = gson.fromJson(data.get("x"), Double.TYPE);
+            double y = gson.fromJson(data.get("y"), Double.TYPE);
+            double z = gson.fromJson(data.get("z"), Double.TYPE);
+            return new Location(world, x, y, z);
+        }
+        return null;
     }
 
     public boolean legacyLoad(String filename) {

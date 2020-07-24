@@ -31,8 +31,6 @@ public class StorageSubsystem {
 
     private Gson gson = new Gson();
 
-
-
     public StorageSubsystem(Main plugin) {
         main = plugin;
     }
@@ -45,8 +43,6 @@ public class StorageSubsystem {
     }
 
     private void saveFactions() {
-        System.out.println("Saving factions...");
-
         List<Map<String, String>> factions = new ArrayList<>();
         for (Faction faction : main.factions){
             factions.add(faction.save());
@@ -54,13 +50,9 @@ public class StorageSubsystem {
 
         File file = new File(FILE_PATH + FACTIONS_FILE_NAME);
         writeOutFiles(file, factions);
-
-        System.out.println("Factions saved.");
     }
 
     private void saveClaimedChunks() {
-        System.out.println("Saving Claimed Chunks...");
-
         List<Map<String, String>> chunks = new ArrayList<>();
         for (ClaimedChunk chunk : main.claimedChunks){
             chunks.add(chunk.save());
@@ -68,49 +60,34 @@ public class StorageSubsystem {
 
         File file = new File(FILE_PATH + CHUNKS_FILE_NAME);
         writeOutFiles(file, chunks);
-
-        System.out.println("Claimed Chunks saved.");
     }
 
     private void savePlayerPowerRecords() {
-        System.out.println("Saving player power records...");
-
         List<Map<String, String>> playerPowerRecords = new ArrayList<>();
         for (PlayerPowerRecord record : main.playerPowerRecords){
             playerPowerRecords.add(record.save());
         }
 
-        File factionFile = new File(FILE_PATH + PLAYERPOWER_FILE_NAME);
-        writeOutFiles(factionFile, playerPowerRecords);
-
-        System.out.println("player power records saved.");
+        File file = new File(FILE_PATH + PLAYERPOWER_FILE_NAME);
+        writeOutFiles(file, playerPowerRecords);
     }
 
     private void saveLockedBlocks() {
-        System.out.println("Saving locked blocks...");
-
         List<Map<String, String>> lockedBlocks = new ArrayList<>();
         for (LockedBlock block : main.lockedBlocks){
             lockedBlocks.add(block.save());
         }
 
-        File factionFile = new File(FILE_PATH + LOCKED_BLOCKS_FILE_NAME);
-        writeOutFiles(factionFile, lockedBlocks);
-
-        System.out.println("Locked blocks saved.");
+        File file = new File(FILE_PATH + LOCKED_BLOCKS_FILE_NAME);
+        writeOutFiles(file, lockedBlocks);
     }
 
     private void writeOutFiles(File file, List<Map<String, String>> saveData) {
         try {
-            if (file.createNewFile()) {
-                System.out.println("Creating save file.");
-            } else {
-                System.out.println("Save file already exists, overwriting.");
-            }
-
+            file.createNewFile();
             FileWriter saveWriter = new FileWriter(file);
             saveWriter.write(gson.toJson(saveData));
-
+            saveWriter.close();
         } catch(IOException e) {
             System.out.println("ERROR: " + e.toString());
         }
@@ -142,14 +119,24 @@ public class StorageSubsystem {
     }
 
     private void deleteLegacyFiles() {
-        if (new File(FILE_PATH).delete()){
+        if (!deleteDirectory(new File(FILE_PATH))){
             throw new RuntimeException("Legacy Files are not removed, and must be removable. If you are about to" +
                     " lose data, go back to before the save changes, v3.2 and below.");
         }
     }
 
+    // Recursive file delete from https://www.baeldung.com/java-delete-directory
+    boolean deleteDirectory(File directoryToBeDeleted) {
+        File[] allContents = directoryToBeDeleted.listFiles();
+        if (allContents != null) {
+            for (File file : allContents) {
+                deleteDirectory(file);
+            }
+        }
+        return directoryToBeDeleted.delete();
+    }
+
     private void loadFactions() {
-        System.out.println("Attempting to load factions...");
         main.factions.clear();
 
         ArrayList<HashMap<String, String>> data = loadDataFromFilename(FILE_PATH + FACTIONS_FILE_NAME);
@@ -158,12 +145,9 @@ public class StorageSubsystem {
             Faction newFaction = new Faction(factionData);
             main.factions.add(newFaction);
         }
-
-        System.out.println("Factions successfully loaded.");
     }
 
     private void loadClaimedChunks() {
-        System.out.println("Attempting to load claimed chunks...");
         main.claimedChunks.clear();
 
         ArrayList<HashMap<String, String>> data = loadDataFromFilename(FILE_PATH + CHUNKS_FILE_NAME);
@@ -172,12 +156,9 @@ public class StorageSubsystem {
             ClaimedChunk chunk = new ClaimedChunk(chunkData);
             main.claimedChunks.add(chunk);
         }
-
-        System.out.println("Claimed chunks successfully loaded.");
     }
 
     private void loadPlayerPowerRecords() {
-        System.out.println("Loading player power records...");
         main.playerPowerRecords.clear();
 
         ArrayList<HashMap<String, String>> data = loadDataFromFilename(FILE_PATH + PLAYERPOWER_FILE_NAME);
@@ -186,12 +167,9 @@ public class StorageSubsystem {
             PlayerPowerRecord player = new PlayerPowerRecord(powerRecord);
             main.playerPowerRecords.add(player);
         }
-
-        System.out.println("Player power records loaded.");
     }
 
     private void loadLockedBlocks() {
-        System.out.println("Loading locked blocks...");
         main.lockedBlocks.clear();
 
         ArrayList<HashMap<String, String>> data = loadDataFromFilename(FILE_PATH + LOCKED_BLOCKS_FILE_NAME);
@@ -200,8 +178,6 @@ public class StorageSubsystem {
             LockedBlock lockedBlock = new LockedBlock(lockedBlockData);
             main.lockedBlocks.add(lockedBlock);
         }
-
-        System.out.println("Claimed chunks loaded.");
     }
 
     private ArrayList<HashMap<String, String>> loadDataFromFilename(String filename) {
@@ -210,7 +186,7 @@ public class StorageSubsystem {
             JsonReader reader = new JsonReader(new FileReader(filename));
             return gson.fromJson(reader, LIST_MAP_TYPE);
         } catch (FileNotFoundException e) {
-            System.out.println("Faction loading failed.");
+            // Fail silently because this can actually happen in normal use
         }
         return new ArrayList<>();
     }
