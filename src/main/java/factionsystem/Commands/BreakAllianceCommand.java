@@ -24,7 +24,7 @@ public class BreakAllianceCommand {
             boolean owner = false;
             for (Faction faction : main.factions) {
                 // if player is the owner or officer
-                if (faction.isOwner(player.getName()) || faction.isOfficer(player.getName())) {
+                if (faction.isOwner(player.getUniqueId()) || faction.isOfficer(player.getUniqueId())) {
                     owner = true;
                     // if there's more than one argument
                     if (args.length > 1) {

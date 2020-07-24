@@ -24,7 +24,7 @@ public class DisbandCommand {
             Player player = (Player) sender;
             boolean owner = false;
             for (int i = 0; i < main.factions.size(); i++) {
-                if (main.factions.get(i).isOwner(player.getName())) {
+                if (main.factions.get(i).isOwner(player.getUniqueId())) {
                     owner = true;
                     if (main.factions.get(i).getPopulation() == 1) {
 

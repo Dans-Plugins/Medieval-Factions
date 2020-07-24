@@ -20,7 +20,7 @@ public class ChatCommand {
             Player player = (Player) sender;
 
             if (player.hasPermission("mf.chat") || player.hasPermission("mf.default")) {
-                if (isInFaction(player.getName(), main.factions)) {
+                if (isInFaction(player.getUniqueId(), main.factions)) {
                     if (!main.playersInFactionChat.contains(player.getName())) {
                         main.playersInFactionChat.add(player.getName());
                         player.sendMessage(ChatColor.GREEN + "You are now speaking in faction chat!");

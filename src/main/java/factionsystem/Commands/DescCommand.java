@@ -19,7 +19,7 @@ public class DescCommand {
             Player player = (Player) sender;
             boolean owner = false;
             for (Faction faction : main.factions) {
-                if (faction.isOwner(player.getName())) {
+                if (faction.isOwner(player.getUniqueId())) {
                     owner = true;
                     if (args.length > 1) {
 

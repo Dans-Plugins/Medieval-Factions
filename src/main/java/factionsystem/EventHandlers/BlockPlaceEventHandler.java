@@ -30,13 +30,13 @@ public class BlockPlaceEventHandler {
         if (chunk != null) {
 
             // player not in a faction
-            if (!isInFaction(event.getPlayer().getName(), main.factions) && !main.adminsBypassingProtections.contains(event.getPlayer().getName())) {
+            if (!isInFaction(event.getPlayer().getUniqueId(), main.factions) && !main.adminsBypassingProtections.contains(event.getPlayer().getName())) {
                 event.setCancelled(true);
             }
 
             // if player is in faction
             for (Faction faction : main.factions) {
-                if (faction.isMember(player.getName())) {
+                if (faction.isMember(player.getUniqueId())) {
 
                     // if player's faction is not the same as the holder of the chunk
                     if (!(faction.getName().equalsIgnoreCase(chunk.getHolder())) && !main.adminsBypassingProtections.contains(event.getPlayer().getName())) {

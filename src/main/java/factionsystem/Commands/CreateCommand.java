@@ -24,7 +24,7 @@ public class CreateCommand {
 
             // player membership check
             for (Faction faction : main.factions) {
-                if (faction.isMember(player.getName())) {
+                if (faction.isMember(player.getUniqueId())) {
                     player.sendMessage(ChatColor.RED + "Sorry, you're already in a faction. Leave if you want to create a different one.");
                     return false;
                 }
@@ -48,9 +48,10 @@ public class CreateCommand {
                 if (!factionExists) {
 
                     // actual faction creation
-                    Faction temp = new Faction(name, player.getName(), main.getConfig().getInt("maxPowerLevel"));
+                    Faction temp = new Faction(name, player.getUniqueId(), main.getConfig().getInt("maxPowerLevel"));
                     main.factions.add(temp);
-                    main.factions.get(main.factions.size() - 1).addMember(player.getName(), getPlayersPowerRecord(player.getName(), main.playerPowerRecords).getPowerLevel());
+                    // TODO: Make thread safe
+                    main.factions.get(main.factions.size() - 1).addMember(player.getUniqueId(), getPlayersPowerRecord(player.getUniqueId(), main.playerPowerRecords).getPowerLevel());
                     System.out.println("Faction " + name + " created.");
                     player.sendMessage(ChatColor.AQUA + "Faction " + name + " created.");
                     return true;

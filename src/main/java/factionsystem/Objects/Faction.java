@@ -3,45 +3,43 @@ package factionsystem.Objects;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 import org.bukkit.Location;
+import org.bukkit.OfflinePlayer;
 import org.bukkit.World;
 import org.bukkit.WorldCreator;
+import org.bukkit.entity.Player;
 
 import java.io.File;
 import java.io.FileNotFoundException;
-import java.io.FileWriter;
-import java.io.IOException;
 import java.lang.reflect.Type;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Scanner;
+import java.util.*;
 
+import static factionsystem.Subsystems.UtilitySubsystem.findUUIDBasedOnPlayerName;
 import static org.bukkit.Bukkit.getServer;
 
 public class Faction {
 
     // saved
-    private ArrayList<String> members = new ArrayList<>();
+    private ArrayList<UUID> members = new ArrayList<>();
     private ArrayList<String> enemyFactions = new ArrayList<>();
-    private ArrayList<String> officers = new ArrayList<>();
+    private ArrayList<UUID> officers = new ArrayList<>();
     private ArrayList<String> allyFactions = new ArrayList<>();
     private ArrayList<String> laws = new ArrayList<>();
     private String name = "defaultName";
     private String description = "defaultDescription";
-    private String owner = "defaultOwner";
+    private UUID owner = UUID.randomUUID();
     private int cumulativePowerLevel = 0;
     private Location factionHome = null;
 
     // temporary
     int maxPower = 0;
-    private ArrayList<String> invited = new ArrayList<>();
+    private ArrayList<UUID> invited = new ArrayList<>();
     private ArrayList<String> attemptedTruces = new ArrayList<>();
     private ArrayList<String> attemptedAlliances = new ArrayList<>();
     private boolean autoclaim = false;
 
 
     // player constructor
-    public Faction(String initialName, String creator, int max) {
+    public Faction(String initialName, UUID creator, int max) {
         setName(initialName);
         setOwner(creator);
         maxPower = max;
@@ -195,24 +193,24 @@ public class Faction {
         }
     }
 
-    public void addOfficer(String newOfficer) {
+    public void addOfficer(UUID newOfficer) {
         officers.add(newOfficer);
     }
 
-    public boolean removeOfficer(String officerToRemove) {
-        return officers.removeIf(officer -> officer.equalsIgnoreCase(officerToRemove));
+    public boolean removeOfficer(UUID officerToRemove) {
+        return officers.remove(officerToRemove);
     }
 
-    public boolean isOfficer(String playerName) {
-        for (String officer : officers) {
-            if (officer.equalsIgnoreCase(playerName)) {
+    public boolean isOfficer(UUID uuid) {
+        for (UUID officer : officers) {
+            if (officer == uuid) {
                 return true;
             }
         }
         return false;
     }
 
-    public ArrayList<String> getMemberArrayList() {
+    public ArrayList<UUID> getMemberArrayList() {
         return members;
     }
 
@@ -263,50 +261,43 @@ public class Faction {
         return allies;
     }
 
-    public void invite(String playerName) {
-        invited.add(playerName);
-    }
-
-    public void uninvite(String playerName) {
-        invited.remove(playerName);
-    }
-
-    public boolean isInvited(String playerName) {
-        for (String player : invited) {
-            if (player.equalsIgnoreCase(playerName)) {
-                return true;
-            }
+    public void invite(UUID playerName) {
+        Player player = getServer().getPlayer(playerName);
+        if (player != null) {
+            UUID playerUUID = getServer().getPlayer(playerName).getUniqueId();
+            invited.add(playerUUID);
         }
-        return false;
     }
 
-    public ArrayList<String> getMemberList() {
-        ArrayList<String> membersCopy = members;
-        return membersCopy;
+    public void uninvite(UUID player) {
+        invited.remove(player);
+    }
+
+    public boolean isInvited(UUID uuid) {
+        return invited.contains(uuid);
+    }
+
+    public ArrayList<UUID> getMemberList() {
+        return members;
     }
 
     public int getPopulation() {
         return members.size();
     }
 
-    public void setOwner(String playerName) {
-        owner = playerName;
+    public void setOwner(UUID UUID) {
+        owner = UUID;
     }
 
-    public boolean isOwner(String playerName) {
-        if (playerName.equalsIgnoreCase(owner)) {
-            return true;
-        }
-        else {
-            return false;
-        }
+    public boolean isOwner(UUID UUID) {
+        return owner == UUID;
     }
 
-    public String getOwner() {
+    public UUID getOwner() {
         return owner;
     }
 
-    void setName(String newName) {
+    public void setName(String newName) {
         name = newName;
     }
 
@@ -322,46 +313,23 @@ public class Faction {
         return description;
     }
 
-    public void addMember(String playerName, int power) {
-        members.add(playerName);
+    public void addMember(UUID UUID, int power) {
+        members.add(UUID);
         cumulativePowerLevel = cumulativePowerLevel + power;
     }
 
-    public void removeMember(String playerName, int power) {
-        members.remove(playerName);
+    public void removeMember(UUID UUID, int power) {
+        members.remove(UUID);
         cumulativePowerLevel = cumulativePowerLevel - power;
     }
 
-    public boolean isMember(String playerName) {
-        boolean membership = false;
-        for (int i = 0; i < members.size(); i++) {
-            if (members.get(i).equalsIgnoreCase(playerName)) {
-                membership = true;
+    public boolean isMember(UUID uuid) {
+        for (UUID member : members) {
+            if (member == uuid) {
+                return true;
             }
         }
-        return membership;
-    }
-
-    public void changeName(String newName) {
-        // record old name
-        String oldName = name;
-
-        // rename
-        name = newName;
-
-        // delete old save file
-        System.out.println("Attempting to delete file plugins/MedievalFactions/" + oldName + ".txt");
-        try {
-            File fileToDelete = new File("plugins/MedievalFactions/" + oldName + ".txt");
-            if (fileToDelete.delete()) {
-                System.out.println("Success. File deleted.");
-            }
-            else {
-                System.out.println("There was a problem deleting the file.");
-            }
-        } catch(Exception e) {
-            System.out.println("There was a problem encountered during file deletion.");
-        }
+        return false;
     }
 
     public Map<String, String> save() {
@@ -398,17 +366,18 @@ public class Faction {
     private void load(Map<String, String> data) {
         Gson gson = new Gson();
 
-        Type arrayListType = new TypeToken<ArrayList<String>>(){}.getType();
+        Type arrayListTypeString = new TypeToken<ArrayList<String>>(){}.getType();
+        Type arrayListTypeUUID = new TypeToken<ArrayList<UUID>>(){}.getType();
         Type mapType = new TypeToken<HashMap<String, String>>(){}.getType();
 
-        members = gson.fromJson(data.get("members"), arrayListType);
-        enemyFactions = gson.fromJson(data.get("enemyFactions"), arrayListType);
-        officers = gson.fromJson(data.get("officers"), arrayListType);
-        allyFactions = gson.fromJson(data.get("allyFactions"), arrayListType);
-        laws = gson.fromJson(data.get("laws"), arrayListType);
+        members = gson.fromJson(data.get("members"), arrayListTypeUUID);
+        enemyFactions = gson.fromJson(data.get("enemyFactions"), arrayListTypeString);
+        officers = gson.fromJson(data.get("officers"), arrayListTypeUUID);
+        allyFactions = gson.fromJson(data.get("allyFactions"), arrayListTypeString);
+        laws = gson.fromJson(data.get("laws"), arrayListTypeString);
         name = data.get("name");
         description = data.get("description");
-        owner = data.get("owner");
+        owner = UUID.fromString(data.get("owner"));
         cumulativePowerLevel = gson.fromJson(data.get("cumulativePowerLevel"), Integer.TYPE);
         factionHome = loadLocation(gson.fromJson(data.get("location"), mapType), gson);
     }
@@ -434,7 +403,8 @@ public class Faction {
                 setName(loadReader.nextLine());
             }
             if (loadReader.hasNextLine()) {
-                setOwner(loadReader.nextLine());
+                String playerName = loadReader.nextLine();
+                setOwner(findUUIDBasedOnPlayerName(playerName));
             }
             if (loadReader.hasNextLine()) {
                 setDescription(loadReader.nextLine());
@@ -450,8 +420,7 @@ public class Faction {
                 if (temp.equalsIgnoreCase("-")) {
                     break;
                 }
-
-                members.add(temp);
+                members.add(UUID.fromString(temp));
             }
 
             while (loadReader.hasNextLine()) {
@@ -475,13 +444,13 @@ public class Faction {
             }
 
             while (loadReader.hasNextLine()) {
-                String temp = loadReader.nextLine();
+                String playerName = loadReader.nextLine();
 
-                if (temp.equalsIgnoreCase("-")) {
+                if (playerName.equalsIgnoreCase("-")) {
                     break;
                 }
 
-                officers.add(temp);
+                officers.add(findUUIDBasedOnPlayerName(playerName));
             }
 
             String worldname;

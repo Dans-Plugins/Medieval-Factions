@@ -27,12 +27,12 @@ public class JoinCommand {
 
                 for (Faction faction : main.factions) {
                     if (faction.getName().equalsIgnoreCase(factionName)) {
-                        if (faction.isInvited(player.getName())) {
+                        if (faction.isInvited(player.getUniqueId())) {
 
                             // join if player isn't in a faction already
-                            if (!(isInFaction(player.getName(), main.factions))) {
-                                faction.addMember(player.getName(), getPlayersPowerRecord(player.getName(), main.playerPowerRecords).getPowerLevel());
-                                faction.uninvite(player.getName());
+                            if (!(isInFaction(player.getUniqueId(), main.factions))) {
+                                faction.addMember(player.getUniqueId(), getPlayersPowerRecord(player.getUniqueId(), main.playerPowerRecords).getPowerLevel());
+                                faction.uninvite(player.getUniqueId());
                                 try {
                                     sendAllPlayersInFactionMessage(faction, ChatColor.GREEN + player.getName() + " has joined " + faction.getName());
                                 } catch (Exception ignored) {

@@ -21,7 +21,7 @@ public class WhoCommand {
             Player player = (Player) sender;
             if (args.length > 1) {
                 String name = createStringFromFirstArgOnwards(args);
-                Faction faction = getPlayersFaction(name, main.factions);
+                Faction faction = getPlayersFaction(findUUIDBasedOnPlayerName(name), main.factions);
                 if (faction != null) {
                     sendFactionInfo(player, faction, faction.getCumulativePowerLevel());
                 }

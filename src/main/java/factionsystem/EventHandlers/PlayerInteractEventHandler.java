@@ -97,7 +97,7 @@ public class PlayerInteractEventHandler {
         if (chunk != null) {
 
             // if claimed by other faction
-            if (!chunk.getHolder().equalsIgnoreCase(getPlayersFaction(player.getName(), main.factions).getName())) {
+            if (!chunk.getHolder().equalsIgnoreCase(getPlayersFaction(player.getUniqueId(), main.factions).getName())) {
                 player.sendMessage(ChatColor.RED + "You can only lock things in your faction's territory!");
                 event.setCancelled(true);
                 return;
@@ -121,10 +121,10 @@ public class PlayerInteractEventHandler {
                         Block leftChest = ((Chest) doubleChest.getLeftSide()).getBlock();
                         Block rightChest = ((Chest) doubleChest.getRightSide()).getBlock();
 
-                        LockedBlock left = new LockedBlock(player.getName(), getPlayersFaction(player.getName(), main.factions).getName(), leftChest.getX(), leftChest.getY(), leftChest.getZ());
+                        LockedBlock left = new LockedBlock(player.getName(), getPlayersFaction(player.getUniqueId(), main.factions).getName(), leftChest.getX(), leftChest.getY(), leftChest.getZ());
                         main.lockedBlocks.add(left);
 
-                        LockedBlock right = new LockedBlock(player.getName(), getPlayersFaction(player.getName(), main.factions).getName(), rightChest.getX(), rightChest.getY(), rightChest.getZ());
+                        LockedBlock right = new LockedBlock(player.getName(), getPlayersFaction(player.getUniqueId(), main.factions).getName(), rightChest.getX(), rightChest.getY(), rightChest.getZ());
                         main.lockedBlocks.add(right);
 
                         player.sendMessage(ChatColor.GREEN + "Locked!");
@@ -132,7 +132,7 @@ public class PlayerInteractEventHandler {
                     }
                     else {
                         // lock single chest
-                        LockedBlock single = new LockedBlock(player.getName(), getPlayersFaction(player.getName(), main.factions).getName(), clickedBlock.getX(), clickedBlock.getY(), clickedBlock.getZ());
+                        LockedBlock single = new LockedBlock(player.getName(), getPlayersFaction(player.getUniqueId(), main.factions).getName(), clickedBlock.getX(), clickedBlock.getY(), clickedBlock.getZ());
                         main.lockedBlocks.add(single);
 
                         player.sendMessage(ChatColor.GREEN + "Locked!");
@@ -143,16 +143,16 @@ public class PlayerInteractEventHandler {
                 // door multi-lock
                 if (main.utilities.isDoor(clickedBlock)) {
                     // lock initial block
-                    LockedBlock initial = new LockedBlock(player.getName(), getPlayersFaction(player.getName(), main.factions).getName(), clickedBlock.getX(), clickedBlock.getY(), clickedBlock.getZ());
+                    LockedBlock initial = new LockedBlock(player.getName(), getPlayersFaction(player.getUniqueId(), main.factions).getName(), clickedBlock.getX(), clickedBlock.getY(), clickedBlock.getZ());
                     main.lockedBlocks.add(initial);
                     // check block above
                     if (main.utilities.isDoor(clickedBlock.getWorld().getBlockAt(clickedBlock.getX(), clickedBlock.getY() + 1, clickedBlock.getZ()))) {
-                        LockedBlock newLockedBlock2 = new LockedBlock(player.getName(), getPlayersFaction(player.getName(), main.factions).getName(), clickedBlock.getX(), clickedBlock.getY() + 1, clickedBlock.getZ());
+                        LockedBlock newLockedBlock2 = new LockedBlock(player.getName(), getPlayersFaction(player.getUniqueId(), main.factions).getName(), clickedBlock.getX(), clickedBlock.getY() + 1, clickedBlock.getZ());
                         main.lockedBlocks.add(newLockedBlock2);
                     }
                     // check block below
                     if (main.utilities.isDoor(clickedBlock.getWorld().getBlockAt(clickedBlock.getX(), clickedBlock.getY() - 1, clickedBlock.getZ()))) {
-                        LockedBlock newLockedBlock2 = new LockedBlock(player.getName(), getPlayersFaction(player.getName(), main.factions).getName(), clickedBlock.getX(), clickedBlock.getY() - 1, clickedBlock.getZ());
+                        LockedBlock newLockedBlock2 = new LockedBlock(player.getName(), getPlayersFaction(player.getUniqueId(), main.factions).getName(), clickedBlock.getX(), clickedBlock.getY() - 1, clickedBlock.getZ());
                         main.lockedBlocks.add(newLockedBlock2);
                     }
 
@@ -234,13 +234,13 @@ public class PlayerInteractEventHandler {
 
     private void handleClaimedChunk(PlayerInteractEvent event, ClaimedChunk chunk) {
         // player not in a faction and isn't overriding
-        if (!isInFaction(event.getPlayer().getName(), main.factions) && !main.adminsBypassingProtections.contains(event.getPlayer().getName())) {
+        if (!isInFaction(event.getPlayer().getUniqueId(), main.factions) && !main.adminsBypassingProtections.contains(event.getPlayer().getName())) {
             event.setCancelled(true);
         }
 
         // if player is in faction
         for (Faction faction : main.factions) {
-            if (faction.isMember(event.getPlayer().getName())) {
+            if (faction.isMember(event.getPlayer().getUniqueId())) {
 
                 // if player's faction is not the same as the holder of the chunk and player isn't overriding
                 if (!(faction.getName().equalsIgnoreCase(chunk.getHolder())) && !main.adminsBypassingProtections.contains(event.getPlayer().getName())) {

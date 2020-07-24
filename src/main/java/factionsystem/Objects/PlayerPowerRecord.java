@@ -1,6 +1,7 @@
 package factionsystem.Objects;
 
 import com.google.gson.Gson;
+import org.bukkit.OfflinePlayer;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -9,19 +10,22 @@ import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Scanner;
+import java.util.UUID;
+
+import static factionsystem.Subsystems.UtilitySubsystem.findUUIDBasedOnPlayerName;
+import static org.bukkit.Bukkit.getServer;
 
 public class PlayerPowerRecord {
 
     // saved
-    // TODO: Replace with UUID
-    private String playerName = "";
+    private UUID playerUUID = UUID.randomUUID();
     private int powerLevel = 0;
 
     // temporary
     int maxPower = 0;
 
-    public PlayerPowerRecord(String nameOfPlayer, int initial, int max) {
-        playerName = nameOfPlayer;
+    public PlayerPowerRecord(UUID playerUUID, int initial, int max) {
+        this.playerUUID = playerUUID;
         powerLevel = initial;
         maxPower = max;
     }
@@ -33,12 +37,12 @@ public class PlayerPowerRecord {
         this.load(data);
     }
 
-    public void setPlayerName(String newName) {
-        playerName = newName;
+    public void setPlayerName(UUID UUID) {
+        playerUUID = UUID;
     }
 
-    public String getPlayerName() {
-        return playerName;
+    public UUID getPlayerUUID() {
+        return playerUUID;
     }
 
     public boolean increasePower() {
@@ -73,7 +77,7 @@ public class PlayerPowerRecord {
         Gson gson = new Gson();
 
         Map<String, String> saveMap = new HashMap<>();
-        saveMap.put("playerName", playerName);
+        saveMap.put("playerUUID", playerUUID.toString());
         saveMap.put("powerLevel", gson.toJson(powerLevel));
 
         return saveMap;
@@ -81,7 +85,7 @@ public class PlayerPowerRecord {
 
     private void load(Map<String, String> data) {
         Gson gson = new Gson();
-        playerName = data.get("playerName");
+        playerUUID = UUID.fromString(data.get("playerName"));
         powerLevel = gson.fromJson(data.get("powerLevel"), Integer.TYPE);
     }
 
@@ -92,15 +96,13 @@ public class PlayerPowerRecord {
 
             // actual loading
             if (loadReader.hasNextLine()) {
-                playerName = loadReader.nextLine();
+                playerUUID = findUUIDBasedOnPlayerName(loadReader.nextLine());
             }
             if (loadReader.hasNextLine()) {
                 powerLevel = Integer.parseInt(loadReader.nextLine());
             }
 
             loadReader.close();
-
-            System.out.println("Player power record for " + playerName + " successfully loaded.");
 
         } catch (FileNotFoundException e) {
             System.out.println("An error occurred loading the file " + filename + ".");

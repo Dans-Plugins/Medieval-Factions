@@ -6,6 +6,9 @@ import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
+import java.util.UUID;
+
+import static factionsystem.Subsystems.UtilitySubsystem.findUUIDBasedOnPlayerName;
 import static org.bukkit.Bukkit.getServer;
 
 public class TransferCommand {
@@ -21,17 +24,18 @@ public class TransferCommand {
             Player player = (Player) sender;
             boolean owner = false;
             for (Faction faction : main.factions) {
-                if (faction.isOwner(player.getName())) {
+                if (faction.isOwner(player.getUniqueId())) {
                     owner = true;
                     if (args.length > 1) {
-                        if (faction.isMember(args[1])) {
+                        UUID playerUUID = findUUIDBasedOnPlayerName(args[1]);
+                        if (faction.isMember(playerUUID)) {
 
-                            if (faction.isOfficer(args[1])) {
-                                faction.removeOfficer(args[1]);
+                            if (faction.isOfficer(playerUUID)) {
+                                faction.removeOfficer(playerUUID);
                             }
 
                             // set owner
-                            faction.setOwner(args[1]);
+                            faction.setOwner(playerUUID);
                             player.sendMessage(ChatColor.AQUA + "Ownership transferred to " + args[1]);
 
                             try {

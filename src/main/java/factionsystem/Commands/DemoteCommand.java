@@ -6,7 +6,9 @@ import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
-import static factionsystem.Subsystems.UtilitySubsystem.isInFaction;
+import java.util.UUID;
+
+import static factionsystem.Subsystems.UtilitySubsystem.*;
 import static org.bukkit.Bukkit.getServer;
 
 public class DemoteCommand {
@@ -21,17 +23,18 @@ public class DemoteCommand {
         if (sender instanceof Player) {
             Player player = (Player) sender;
 
-            if (isInFaction(player.getName(), main.factions)) {
+            if (isInFaction(player.getUniqueId(), main.factions)) {
                 if (args.length > 1) {
                     for (Faction faction : main.factions) {
-                        if (faction.isOfficer(args[1])) {
-                            if (faction.isOwner(player.getName())) {
-                                if (faction.removeOfficer(args[1]) == true) {
+                        UUID officerUUID = findUUIDBasedOnPlayerName(args[1]);
+                        if (faction.isOfficer(officerUUID)) {
+                            if (faction.isOwner(player.getUniqueId())) {
+                                if (faction.removeOfficer(officerUUID) == true) {
 
                                     player.sendMessage(ChatColor.GREEN + "Player demoted!");
 
                                     try {
-                                        Player target = getServer().getPlayer(args[1]);
+                                        Player target = getServer().getPlayer(officerUUID);
                                         target.sendMessage(ChatColor.RED + "You have been demoted to member status in your faction.");
                                     }
                                     catch(Exception ignored) {

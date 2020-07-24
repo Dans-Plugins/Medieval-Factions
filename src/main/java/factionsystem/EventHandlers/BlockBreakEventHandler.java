@@ -30,13 +30,13 @@ public class BlockBreakEventHandler {
         if (chunk != null) {
 
             // player not in a faction
-            if (!isInFaction(event.getPlayer().getName(), main.factions)) {
+            if (!isInFaction(event.getPlayer().getUniqueId(), main.factions)) {
                 event.setCancelled(true);
             }
 
             // if player is in faction
             for (Faction faction : main.factions) {
-                if (faction.isMember(player.getName())) {
+                if (faction.isMember(player.getUniqueId())) {
 
                     // if player's faction is not the same as the holder of the chunk and player isn't bypassing
                     if (!(faction.getName().equalsIgnoreCase(chunk.getHolder())) && !main.adminsBypassingProtections.contains(player.getName())) {

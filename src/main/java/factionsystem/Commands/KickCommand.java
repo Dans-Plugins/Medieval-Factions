@@ -7,8 +7,9 @@ import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
-import static factionsystem.Subsystems.UtilitySubsystem.getPlayersPowerRecord;
-import static factionsystem.Subsystems.UtilitySubsystem.sendAllPlayersInFactionMessage;
+import java.util.UUID;
+
+import static factionsystem.Subsystems.UtilitySubsystem.*;
 
 public class KickCommand {
 
@@ -24,19 +25,20 @@ public class KickCommand {
             if (args.length > 1) {
                 boolean owner = false;
                 for (Faction faction : main.factions) {
-                    if (faction.isOwner(player.getName()) || faction.isOfficer(player.getName())) {
+                    if (faction.isOwner(player.getUniqueId()) || faction.isOfficer(player.getUniqueId())) {
                         owner = true;
-                        if (faction.isMember(args[1])) {
+                        UUID playerUUID = findUUIDBasedOnPlayerName(args[1]);
+                        if (faction.isMember(playerUUID)) {
                             if (!(args[1].equalsIgnoreCase(player.getName()))) {
-                                if (!(args[1].equalsIgnoreCase(faction.getOwner()))) {
+                                if (!(playerUUID == faction.getOwner())) {
 
-                                    if (faction.isOfficer(args[1])) {
-                                        faction.removeOfficer(args[1]);
+                                    if (faction.isOfficer(playerUUID)) {
+                                        faction.removeOfficer(playerUUID);
                                     }
 
                                     main.playersInFactionChat.remove(args[1]);
 
-                                    faction.removeMember(args[1], getPlayersPowerRecord(player.getName(), main.playerPowerRecords).getPowerLevel());
+                                    faction.removeMember(playerUUID, getPlayersPowerRecord(player.getUniqueId(), main.playerPowerRecords).getPowerLevel());
                                     try {
                                         sendAllPlayersInFactionMessage(faction, ChatColor.RED + args[1] + " has been kicked from " + faction.getName());
                                     } catch (Exception ignored) {
