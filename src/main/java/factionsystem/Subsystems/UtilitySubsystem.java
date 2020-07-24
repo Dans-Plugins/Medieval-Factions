@@ -367,7 +367,7 @@ public class UtilitySubsystem {
         ArrayList<UUID> members = faction.getMemberList();
         player.sendMessage(ChatColor.BOLD + "" + ChatColor.AQUA + "Members of " + faction.getName() + "\n----------\n");
         for (UUID member : members) {
-            player.sendMessage(ChatColor.AQUA + getServer().getPlayer(member).getName() + "\n");
+            player.sendMessage(ChatColor.AQUA + findPlayerNameBasedOnUUID(member) + "\n");
         }
         player.sendMessage(ChatColor.AQUA + "----------\n");
     }
