@@ -21,7 +21,7 @@ public class InfoCommand {
            Player player = (Player) sender;
             if (args.length == 1) {
                 for (Faction faction : main.factions) {
-                    if (faction.isMember(player.getName())) {
+                    if (faction.isMember(player.getUniqueId())) {
                         sendFactionInfo(player, faction, getChunksClaimedByFaction(faction.getName(), main.claimedChunks));
                     }
                 }

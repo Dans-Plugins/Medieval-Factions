@@ -19,10 +19,10 @@ public class MembersCommand {
     public void showMembers(CommandSender sender, String[] args) {
         if (sender instanceof Player) {
             Player player = (Player) sender;
-            if (isInFaction(player.getName(), main.factions)) {
+            if (isInFaction(player.getUniqueId(), main.factions)) {
                 if (args.length == 1) {
                     for (Faction faction : main.factions) {
-                        if (faction.isMember(player.getName())) {
+                        if (faction.isMember(player.getUniqueId())) {
                             sendFactionMembers(player, faction);
                         }
                     }

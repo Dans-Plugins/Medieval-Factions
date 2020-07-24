@@ -7,6 +7,9 @@ import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
+import java.util.UUID;
+
+import static factionsystem.Subsystems.UtilitySubsystem.findUUIDBasedOnPlayerName;
 import static factionsystem.Subsystems.UtilitySubsystem.isInFaction;
 import static org.bukkit.Bukkit.getServer;
 
@@ -22,14 +25,14 @@ public class InviteCommand {
         if (sender instanceof Player) {
             Player player = (Player) sender;
 
-            if (isInFaction(player.getName(), main.factions)) {
+            if (isInFaction(player.getUniqueId(), main.factions)) {
                 for (Faction faction : main.factions) {
-                    if (faction.isOwner(player.getName()) || faction.isOfficer(player.getName())) {
+                    if (faction.isOwner(player.getUniqueId()) || faction.isOfficer(player.getUniqueId())) {
                         if (args.length > 1) {
-
+                            UUID playerUUID = findUUIDBasedOnPlayerName(args[1]);
                             // invite if player isn't in a faction already
-                            if (!(isInFaction(args[1], main.factions))) {
-                                faction.invite(args[1]);
+                            if (!(isInFaction(playerUUID, main.factions))) {
+                                faction.invite(playerUUID);
                                 try {
                                     Player target = Bukkit.getServer().getPlayer(args[1]);
                                     target.sendMessage(ChatColor.GREEN + "You've been invited to " + faction.getName() + "! Type /mf join " + faction.getName() + " to join.");
@@ -44,7 +47,7 @@ public class InviteCommand {
                                 getServer().getScheduler().runTaskLater(main, new Runnable() {
                                     @Override
                                     public void run() {
-                                        faction.uninvite(args[1]);
+                                        faction.uninvite(playerUUID);
                                         try {
                                             Player target = Bukkit.getServer().getPlayer(args[1]);
                                             target.sendMessage(ChatColor.RED + "Your invitation to " + faction.getName() + " has expired!.");

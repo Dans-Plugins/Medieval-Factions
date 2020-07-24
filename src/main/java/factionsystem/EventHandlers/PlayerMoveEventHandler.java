@@ -28,12 +28,12 @@ public class PlayerMoveEventHandler {
 
             // auto claim check
             for (Faction faction : main.factions) {
-                if (faction.isOwner(event.getPlayer().getName())) {
+                if (faction.isOwner(event.getPlayer().getUniqueId())) {
 
                     if (faction.getAutoClaimStatus()) {
 
                         // if not at demesne limit
-                        Faction playersFaction = getPlayersFaction(event.getPlayer().getName(), main.factions);
+                        Faction playersFaction = getPlayersFaction(event.getPlayer().getUniqueId(), main.factions);
                         if (getChunksClaimedByFaction(playersFaction.getName(), main.claimedChunks) < playersFaction.getCumulativePowerLevel()) {
                             int seconds = 1;
                             getServer().getScheduler().runTaskLater(main, new Runnable() {

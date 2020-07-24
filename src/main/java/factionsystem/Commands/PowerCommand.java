@@ -19,7 +19,7 @@ public class PowerCommand {
             Player player = (Player) sender;
 
             for (PlayerPowerRecord record : main.playerPowerRecords) {
-                if (record.getPlayerName().equalsIgnoreCase(player.getName())) {
+                if (record.getPlayerUUID().equals(player.getUniqueId())) {
                     player.sendMessage(ChatColor.AQUA + "Your current power level is " + record.getPowerLevel());
                 }
             }

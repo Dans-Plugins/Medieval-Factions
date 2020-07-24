@@ -22,15 +22,15 @@ public class CheckAccessCommand {
             if (args.length > 1) {
                 if (args[1].equalsIgnoreCase("cancel")) {
                     player.sendMessage(ChatColor.RED + "Cancelled!");
-                    if (main.playersCheckingAccess.contains(player.getName())) {
-                        main.playersCheckingAccess.remove(player.getName());
+                    if (main.playersCheckingAccess.contains(player.getUniqueId())) {
+                        main.playersCheckingAccess.remove(player.getUniqueId());
                         return;
                     }
                 }
             }
 
-            if (!main.playersCheckingAccess.contains(player.getName())) {
-                main.playersCheckingAccess.add(player.getName());
+            if (!main.playersCheckingAccess.contains(player.getUniqueId())) {
+                main.playersCheckingAccess.add(player.getUniqueId());
                 player.sendMessage(ChatColor.GREEN + "Right click a locked block to check who has access to it! Type '/mf checkaccess cancel' to cancel!");
             }
             else {

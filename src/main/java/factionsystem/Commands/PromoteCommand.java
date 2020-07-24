@@ -6,6 +6,9 @@ import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
+import java.util.UUID;
+
+import static factionsystem.Subsystems.UtilitySubsystem.findUUIDBasedOnPlayerName;
 import static factionsystem.Subsystems.UtilitySubsystem.isInFaction;
 import static org.bukkit.Bukkit.getServer;
 
@@ -21,13 +24,14 @@ public class PromoteCommand {
         if (sender instanceof Player) {
             Player player = (Player) sender;
 
-            if (isInFaction(player.getName(), main.factions)) {
+            if (isInFaction(player.getUniqueId(), main.factions)) {
                 if (args.length > 1) {
                     for (Faction faction : main.factions) {
-                        if (faction.isMember(args[1])) {
-                            if (faction.isOwner(player.getName())) {
-                                if (faction.isMember(args[1])) {
-                                    faction.addOfficer(args[1]);
+                        UUID playerUUID = findUUIDBasedOnPlayerName(args[1]);
+                        if (faction.isMember(playerUUID)) {
+                            if (faction.isOwner(player.getUniqueId())) {
+                                if (faction.isMember(playerUUID)) {
+                                    faction.addOfficer(playerUUID);
                                     player.sendMessage(ChatColor.GREEN + "Player promoted!");
 
                                     try {

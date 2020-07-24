@@ -1,22 +1,27 @@
 package factionsystem.Objects;
 
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+import com.google.gson.reflect.TypeToken;
+
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Scanner;
+import java.util.*;
+
+import static factionsystem.Subsystems.UtilitySubsystem.findUUIDBasedOnPlayerName;
 
 public class LockedBlock {
 
     private int x = 0;
     private int y = 0;
     private int z = 0;
-    private String owner = "";
+    private UUID owner = UUID.randomUUID();
     private String factionName = "";
-    private ArrayList<String> accessList = new ArrayList<>();
+    private ArrayList<UUID> accessList = new ArrayList<>();
 
-    public LockedBlock(String o, String f, int newX, int newY, int newZ) {
+    public LockedBlock(UUID o, String f, int newX, int newY, int newZ) {
         owner = o;
         factionName = f;
         x = newX;
@@ -27,6 +32,10 @@ public class LockedBlock {
 
     public LockedBlock() {
         // server constructor
+    }
+
+    public LockedBlock(Map<String, String> lockedBlockData) {
+        this.load(lockedBlockData);
     }
 
     public int getX() {
@@ -41,11 +50,11 @@ public class LockedBlock {
         return z;
     }
 
-    public void setOwner(String s) {
+    public void setOwner(UUID s) {
         owner = s;
     }
 
-    public String getOwner() {
+    public UUID getOwner() {
         return owner;
     }
 
@@ -57,66 +66,50 @@ public class LockedBlock {
         return factionName;
     }
 
-    public void addToAccessList(String playerName) {
+    public void addToAccessList(UUID playerName) {
         if (!accessList.contains(playerName)) {
             accessList.add(playerName);
         }
     }
 
-    public void removeFromAccessList(String playerName) {
-        if (accessList.contains(playerName)) {
-            accessList.remove(playerName);
-        }
+    public void removeFromAccessList(UUID playerName) {
+        accessList.remove(playerName);
     }
 
-    public boolean hasAccess(String playerName) {
+    public boolean hasAccess(UUID playerName) {
         return accessList.contains(playerName);
     }
 
-    public ArrayList<String> getAccessList() {
+    public ArrayList<UUID> getAccessList() {
         return accessList;
     }
 
-    public void save() {
+    public Map<String, String> save() {
+        Gson gson = new GsonBuilder().setPrettyPrinting().create();;
 
-        String identifier = x + "_" + y + "_" + z;
+        Map<String, String> saveMap = new HashMap<>();
+        saveMap.put("X", gson.toJson(x));
+        saveMap.put("Y", gson.toJson(y));
+        saveMap.put("Z", gson.toJson(z));
+        saveMap.put("owner", gson.toJson(owner));
+        saveMap.put("factionName", gson.toJson(factionName));
+        saveMap.put("accessList", gson.toJson(accessList));
 
-        try {
-            File saveFolder = new File("./plugins/MedievalFactions/lockedblocks/");
-            if (!saveFolder.exists()) {
-                saveFolder.mkdir();
-            }
-            File saveFile = new File("./plugins/MedievalFactions/lockedblocks/" + identifier + ".txt");
-            if (saveFile.createNewFile()) {
-                System.out.println("Save file for locked block " + identifier + " created.");
-            } else {
-                System.out.println("Save file for locked block " + identifier + " already exists. Altering.");
-            }
-
-            FileWriter saveWriter = new FileWriter("./plugins/MedievalFactions/lockedblocks/" + identifier + ".txt");
-
-            // actual saving takes place here
-            saveWriter.write(x + "\n");
-            saveWriter.write(y + "\n");
-            saveWriter.write(z + "\n");
-
-            saveWriter.write(owner + "\n");
-            saveWriter.write(factionName + "\n");
-
-            for (String playerName : accessList) {
-                saveWriter.write(playerName + "\n");
-            }
-
-            saveWriter.close();
-
-            System.out.println("Successfully saved locked block " + identifier + ".");
-
-        } catch (IOException e) {
-            System.out.println("An error occurred saving the locked block with identifier " + identifier);
-        }
+        return saveMap;
     }
 
-    public void load(String filename) {
+    private void load(Map<String, String> data) {
+        Gson gson = new GsonBuilder().setPrettyPrinting().create();;
+
+        x = gson.fromJson(data.get("X"), Integer.TYPE);
+        y = gson.fromJson(data.get("Y"), Integer.TYPE);
+        z = gson.fromJson(data.get("Z"), Integer.TYPE);
+        owner = UUID.fromString(gson.fromJson(data.get("owner"), String.class));
+        factionName =  gson.fromJson(data.get("factionName"), String.class);
+        accessList = gson.fromJson(data.get("accessList"), new TypeToken<ArrayList<String>>(){}.getType());
+    }
+
+    public void legacyLoad(String filename) {
         try {
             File loadFile = new File("./plugins/MedievalFactions/lockedblocks/" + filename);
             Scanner loadReader = new Scanner(loadFile);
@@ -135,7 +128,7 @@ public class LockedBlock {
 
             // owner
             if (loadReader.hasNextLine()) {
-                owner = loadReader.nextLine();
+                owner = findUUIDBasedOnPlayerName(loadReader.nextLine());
             }
 
             // faction name
@@ -145,7 +138,7 @@ public class LockedBlock {
 
             // access list
             while (loadReader.hasNextLine()) {
-                accessList.add(loadReader.nextLine());
+                accessList.add(findUUIDBasedOnPlayerName(loadReader.nextLine()));
             }
 
             loadReader.close();

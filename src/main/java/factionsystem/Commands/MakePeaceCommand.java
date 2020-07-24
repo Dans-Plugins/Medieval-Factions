@@ -20,10 +20,10 @@ public class MakePeaceCommand {
         if (sender instanceof Player) {
             Player player = (Player) sender;
 
-            if (isInFaction(player.getName(), main.factions)) {
-                Faction playersFaction = getPlayersFaction(player.getName(), main.factions);
+            if (isInFaction(player.getUniqueId(), main.factions)) {
+                Faction playersFaction = getPlayersFaction(player.getUniqueId(), main.factions);
 
-                if (playersFaction.isOwner(player.getName()) || playersFaction.isOfficer(player.getName())) {
+                if (playersFaction.isOwner(player.getUniqueId()) || playersFaction.isOfficer(player.getUniqueId())) {
 
                     // player is able to do this command
 

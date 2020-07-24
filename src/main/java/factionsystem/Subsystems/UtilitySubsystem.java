@@ -13,10 +13,9 @@ import org.bukkit.potion.PotionEffectType;
 import org.bukkit.potion.PotionType;
 
 import java.io.File;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Iterator;
-import java.util.List;
+import java.util.*;
+
+import static org.bukkit.Bukkit.*;
 
 public class UtilitySubsystem {
 
@@ -33,14 +32,14 @@ public class UtilitySubsystem {
         playerCoords[0] = player.getLocation().getChunk().getX();
         playerCoords[1] = player.getLocation().getChunk().getZ();
         for (Faction faction : main.factions) {
-            if (faction.isOwner(player.getName()) || faction.isOfficer(player.getName())) {
+            if (faction.isOwner(player.getUniqueId()) || faction.isOfficer(player.getUniqueId())) {
 
                 // check if land is already claimed
                 for (ClaimedChunk chunk : main.claimedChunks) {
                     if (playerCoords[0] == chunk.getCoordinates()[0] && playerCoords[1] == chunk.getCoordinates()[1]) {
 
                         // if holder is player's faction
-                        if (chunk.getHolder().equalsIgnoreCase(faction.getName()) && getPlayersFaction(player.getName(), main.factions).getAutoClaimStatus() == false) {
+                        if (chunk.getHolder().equalsIgnoreCase(faction.getName()) && !getPlayersFaction(player.getUniqueId(), main.factions).getAutoClaimStatus()) {
                             player.sendMessage(ChatColor.RED + "This land is already claimed by your faction!");
                             return;
                         }
@@ -72,7 +71,7 @@ public class UtilitySubsystem {
                                             main.claimedChunks.add(newChunk);
                                             player.sendMessage(ChatColor.GREEN + "Land conquered from " + targetFaction.getName() + "! Demesne Size: " + getChunksClaimedByFaction(faction.getName(), main.claimedChunks) + "/" + faction.getCumulativePowerLevel());
 
-                                            sendAllPlayersInFactionMessage(targetFaction, ChatColor.RED + getPlayersFaction(player.getName(), main.factions).getName() + " has conquered land from your faction!");
+                                            sendAllPlayersInFactionMessage(targetFaction, ChatColor.RED + getPlayersFaction(player.getUniqueId(), main.factions).getName() + " has conquered land from your faction!");
 
                                             return;
                                         }
@@ -84,7 +83,7 @@ public class UtilitySubsystem {
                                 }
                             }
 
-                            if (!getPlayersFaction(player.getName(), main.factions).getAutoClaimStatus()) {
+                            if (!getPlayersFaction(player.getUniqueId(), main.factions).getAutoClaimStatus()) {
                                 player.sendMessage(ChatColor.RED + "This land is already claimed by " + chunk.getHolder());
                             }
 
@@ -108,7 +107,7 @@ public class UtilitySubsystem {
         playerCoords[0] = player.getLocation().getChunk().getX();
         playerCoords[1] = player.getLocation().getChunk().getZ();
         for (Faction faction : main.factions) {
-            if (faction.isOwner(player.getName()) || faction.isOfficer(player.getName())) {
+            if (faction.isOwner(player.getUniqueId()) || faction.isOfficer(player.getUniqueId())) {
 
                 // check if land is claimed by player's faction
                 for (ClaimedChunk chunk : main.claimedChunks) {
@@ -133,7 +132,7 @@ public class UtilitySubsystem {
                             }
 
                             // if faction home is located on this chunk
-                            Location factionHome = getPlayersFaction(player.getName(), main.factions).getFactionHome();
+                            Location factionHome = getPlayersFaction(player.getUniqueId(), main.factions).getFactionHome();
                             if (factionHome != null) {
                                 if (factionHome.getChunk().getX() == chunk.getChunk().getX() && factionHome.getChunk().getZ() == chunk.getChunk().getZ()) {
 
@@ -217,13 +216,8 @@ public class UtilitySubsystem {
         return false;
     }
 
-    public boolean hasPowerRecord(String playerName) {
-        for (PlayerPowerRecord record : main.playerPowerRecords) {
-            if (record.getPlayerName().equalsIgnoreCase(playerName)) {
-                return true;
-            }
-        }
-        return false;
+    public boolean hasPowerRecord(UUID playerUUID) {
+        return main.playerPowerRecords.contains(playerUUID);
     }
 
     public void schedulePowerIncrease() {
@@ -240,12 +234,12 @@ public class UtilitySubsystem {
                 for (PlayerPowerRecord powerRecord : main.playerPowerRecords) {
                     try {
                         if (powerRecord.getPowerLevel() < maxPower) {
-                            if (Bukkit.getServer().getPlayer(powerRecord.getPlayerName()).isOnline()) {
+                            if (getServer().getPlayer(powerRecord.getPlayerUUID()).isOnline()) {
                                 powerRecord.increasePower();
-                                if (isInFaction(powerRecord.getPlayerName(), main.factions)) {
-                                    getPlayersFaction(powerRecord.getPlayerName(), main.factions).addPower(main.getConfig().getInt("hourlyPowerIncreaseAmount"));
+                                if (isInFaction(powerRecord.getPlayerUUID(), main.factions)) {
+                                    getPlayersFaction(powerRecord.getPlayerUUID(), main.factions).addPower(main.getConfig().getInt("hourlyPowerIncreaseAmount"));
                                 }
-                                Bukkit.getServer().getPlayer(powerRecord.getPlayerName()).sendMessage(ChatColor.GREEN + "You feel stronger. Your power has increased.");
+                                getServer().getPlayer(powerRecord.getPlayerUUID()).sendMessage(ChatColor.GREEN + "You feel stronger. Your power has increased.");
                             }
                         }
                     } catch (Exception ignored) {
@@ -280,8 +274,8 @@ public class UtilitySubsystem {
         System.out.println("Resetting faction cumulative power records.");
         for (Faction faction : main.factions) {
             int sum = 0;
-            for (String playerName : faction.getMemberArrayList()) {
-                sum = sum + getPlayersPowerRecord(playerName, main.playerPowerRecords).getPowerLevel();
+            for (UUID playerUUID : faction.getMemberArrayList()) {
+                sum = sum + getPlayersPowerRecord(playerUUID, main.playerPowerRecords).getPowerLevel();
             }
             faction.setCumulativePowerLevel(sum);
         }
@@ -336,23 +330,20 @@ public class UtilitySubsystem {
 
     // static methods ----------------------------
 
-    public static boolean isInFaction(String playerName, ArrayList<Faction> factions) {
+    public static boolean isInFaction(UUID playerUUID, ArrayList<Faction> factions) {
         // membership check
-        boolean isAlreadyInFaction = false;
         for (Faction faction : factions) {
-            if (faction.isMember(playerName)) {
-                isAlreadyInFaction = true;
-                break;
+            if (faction.isMember(playerUUID)) {
+                return true;
             }
         }
-        return isAlreadyInFaction;
+        return false;
     }
 
-    public static Faction getPlayersFaction(String playerName, ArrayList<Faction> factions) {
+    public static Faction getPlayersFaction(UUID playerUUID, ArrayList<Faction> factions) {
         // membership check
-        boolean isAlreadyInFaction = false;
         for (Faction faction : factions) {
-            if (faction.isMember(playerName)) {
+            if (faction.isMember(playerUUID)) {
                 return faction;
             }
         }
@@ -362,7 +353,7 @@ public class UtilitySubsystem {
     public static void sendFactionInfo(Player player, Faction faction, int power) {
         player.sendMessage(ChatColor.BOLD + "" + ChatColor.AQUA + faction.getName() + " Faction Info" + "\n----------\n");
         player.sendMessage(ChatColor.AQUA + "Name: " + faction.getName() + "\n");
-        player.sendMessage(ChatColor.AQUA + "Owner: " + faction.getOwner() + "\n");
+        player.sendMessage(ChatColor.AQUA + "Owner: " + findPlayerNameBasedOnUUID(faction.getOwner()) + "\n");
         player.sendMessage(ChatColor.AQUA + "Description: " + faction.getDescription() + "\n");
         player.sendMessage(ChatColor.AQUA + "Population: " + faction.getMemberList().size() + "\n");
         player.sendMessage(ChatColor.AQUA + "Allied With: " + faction.getAlliesSeparatedByCommas() + "\n");
@@ -373,10 +364,10 @@ public class UtilitySubsystem {
     }
 
     public static void sendFactionMembers(Player player, Faction faction) {
-        ArrayList<String> members = faction.getMemberList();
+        ArrayList<UUID> members = faction.getMemberList();
         player.sendMessage(ChatColor.BOLD + "" + ChatColor.AQUA + "Members of " + faction.getName() + "\n----------\n");
-        for (String member : members) {
-            player.sendMessage(ChatColor.AQUA + member + "\n");
+        for (UUID member : members) {
+            player.sendMessage(ChatColor.AQUA + findPlayerNameBasedOnUUID(member) + "\n");
         }
         player.sendMessage(ChatColor.AQUA + "----------\n");
     }
@@ -423,10 +414,10 @@ public class UtilitySubsystem {
     }
 
     public static void sendAllPlayersInFactionMessage(Faction faction, String message) {
-        ArrayList<String> members = faction.getMemberArrayList();
-        for (String member : members) {
+        ArrayList<UUID> members = faction.getMemberArrayList();
+        for (UUID member : members) {
             try {
-                Player target = Bukkit.getServer().getPlayer(member);
+                Player target = getServer().getPlayer(member);
                 target.sendMessage(message);
             }
             catch(Exception ignored) {
@@ -445,9 +436,9 @@ public class UtilitySubsystem {
         return counter;
     }
 
-    public static PlayerPowerRecord getPlayersPowerRecord(String playerName, ArrayList<PlayerPowerRecord> powerRecords ) {
+    public static PlayerPowerRecord getPlayersPowerRecord(UUID playerUUID, ArrayList<PlayerPowerRecord> powerRecords ) {
         for (PlayerPowerRecord record : powerRecords) {
-            if (record.getPlayerName().equalsIgnoreCase(playerName)) {
+            if (record.getPlayerUUID().equals(playerUUID)) {
                 return record;
             }
         }
@@ -568,7 +559,7 @@ public class UtilitySubsystem {
     }
 
     public boolean arePlayersInAFaction(Player player1, Player player2) {
-        return isInFaction(player1.getName(), main.factions) && isInFaction(player2.getName(), main.factions);
+        return isInFaction(player1.getUniqueId(), main.factions) && isInFaction(player2.getUniqueId(), main.factions);
     }
 
     public Pair<Integer, Integer> getFactionIndices(Player player1, Player player2){
@@ -576,10 +567,10 @@ public class UtilitySubsystem {
         int victimsFactionIndex = 0;
 
         for (int i = 0; i < main.factions.size(); i++) {
-            if (main.factions.get(i).isMember(player1.getName())) {
+            if (main.factions.get(i).isMember(player1.getUniqueId())) {
                 attackersFactionIndex = i;
             }
-            if (main.factions.get(i).isMember(player2.getName())) {
+            if (main.factions.get(i).isMember(player2.getUniqueId())) {
                 victimsFactionIndex = i;
             }
         }
@@ -615,6 +606,47 @@ public class UtilitySubsystem {
 
     public boolean potionTypeBad(PotionType type){
         return BAD_POTION_TYPES.contains(type);
+    }
+
+    public static String findPlayerNameBasedOnUUID(UUID playerUUID) {
+        // Check online
+        for (Player player : getOnlinePlayers()){
+            if (player.getUniqueId().equals(playerUUID)){
+                return player.getName();
+            }
+        }
+
+        // Check offline
+        for (OfflinePlayer player : getOfflinePlayers()){
+            if (player.getUniqueId().equals(playerUUID)){
+                return player.getName();
+            }
+        }
+
+        return "";
+    }
+
+    public static UUID findUUIDBasedOnPlayerName(String playerName){
+        // Check online
+        for (Player player : getOnlinePlayers()){
+            if (player.getName().equals(playerName)){
+                return player.getUniqueId();
+            }
+        }
+
+        // Check offline
+        for (OfflinePlayer player : getOfflinePlayers()){
+            try {
+                if (player.getName().equals(playerName)){
+                    return player.getUniqueId();
+                }
+            } catch (NullPointerException e) {
+                // Fail silently as quit possibly common.
+            }
+
+        }
+
+        return null;
     }
 
 }

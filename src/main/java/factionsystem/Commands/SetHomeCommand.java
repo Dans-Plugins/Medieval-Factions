@@ -20,9 +20,9 @@ public class SetHomeCommand {
     public void setHome(CommandSender sender) {
         if (sender instanceof Player) {
             Player player = (Player) sender;
-            if (isInFaction(player.getName(), main.factions)) {
-                Faction playersFaction = getPlayersFaction(player.getName(), main.factions);
-                if (playersFaction.isOwner(player.getName()) || playersFaction.isOfficer(player.getName())) {
+            if (isInFaction(player.getUniqueId(), main.factions)) {
+                Faction playersFaction = getPlayersFaction(player.getUniqueId(), main.factions);
+                if (playersFaction.isOwner(player.getUniqueId()) || playersFaction.isOfficer(player.getUniqueId())) {
 
                     if (isClaimed(player.getLocation().getChunk(), main.claimedChunks)) {
                         ClaimedChunk chunk = getClaimedChunk(player.getLocation().getChunk().getX(), player.getLocation().getChunk().getZ(), main.claimedChunks);

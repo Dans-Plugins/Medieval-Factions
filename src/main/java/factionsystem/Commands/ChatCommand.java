@@ -20,13 +20,13 @@ public class ChatCommand {
             Player player = (Player) sender;
 
             if (player.hasPermission("mf.chat") || player.hasPermission("mf.default")) {
-                if (isInFaction(player.getName(), main.factions)) {
-                    if (!main.playersInFactionChat.contains(player.getName())) {
-                        main.playersInFactionChat.add(player.getName());
+                if (isInFaction(player.getUniqueId(), main.factions)) {
+                    if (!main.playersInFactionChat.contains(player.getUniqueId())) {
+                        main.playersInFactionChat.add(player.getUniqueId());
                         player.sendMessage(ChatColor.GREEN + "You are now speaking in faction chat!");
                     }
                     else {
-                        main.playersInFactionChat.remove(player.getName());
+                        main.playersInFactionChat.remove(player.getUniqueId());
                         player.sendMessage(ChatColor.GREEN + "You are no longer in faction chat!");
                     }
                 }

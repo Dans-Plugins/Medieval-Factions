@@ -1,5 +1,7 @@
 package factionsystem.Objects;
 
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 import org.bukkit.Chunk;
 import org.bukkit.World;
 import org.bukkit.WorldCreator;
@@ -8,6 +10,8 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Scanner;
 
 import static org.bukkit.Bukkit.getServer;
@@ -24,6 +28,10 @@ public class ClaimedChunk {
 
     public ClaimedChunk(Chunk initialChunk) {
         setChunk(initialChunk);
+    }
+
+    public ClaimedChunk(Map<String, String> data){
+        this.load(data);
     }
 
     public void setChunk(Chunk newChunk) {
@@ -57,40 +65,32 @@ public class ClaimedChunk {
         return world;
     }
 
-    public void save() {
+    public Map<String, String> save() {
+            Gson gson = new GsonBuilder().setPrettyPrinting().create();;
 
-        String identifier = (int)chunk.getX() + "_" + (int)chunk.getZ();
+            Map<String, String> saveMap = new HashMap<>();
+            saveMap.put("X", gson.toJson(chunk.getX()));
+            saveMap.put("Z", gson.toJson(chunk.getZ()));
+            saveMap.put("world", gson.toJson(world));
+            saveMap.put("holder", gson.toJson(holder));
 
-        try {
-            File saveFolder = new File("./plugins/MedievalFactions/claimedchunks/");
-            if (!saveFolder.exists()) {
-                saveFolder.mkdir();
-            }
-            File saveFile = new File("./plugins/MedievalFactions/claimedchunks/" + identifier + ".txt");
-            if (saveFile.createNewFile()) {
-                System.out.println("Save file for claimed chunk " + identifier + " created.");
-            } else {
-                System.out.println("Save file for claimed chunk " + identifier + " already exists. Altering.");
-            }
+            return saveMap;
+    }
 
-            FileWriter saveWriter = new FileWriter("./plugins/MedievalFactions/claimedchunks/" + identifier + ".txt");
+    private void load(Map<String, String> data) {
+        Gson gson = new GsonBuilder().setPrettyPrinting().create();
 
-            // actual saving takes place here
-            saveWriter.write(chunk.getX() + "\n");
-            saveWriter.write(chunk.getZ() + "\n");
-            saveWriter.write(world + "\n");
-            saveWriter.write(holder);
+        world = gson.fromJson(data.get("world"), String.class);
+        holder = gson.fromJson(data.get("holder"), String.class);
 
-            saveWriter.close();
-
-            System.out.println("Successfully saved claimed chunk " + identifier + ".");
-
-        } catch (IOException e) {
-            System.out.println("An error occurred saving the claimed chunk with identifier " + identifier);
+        World chunkWorld = getServer().createWorld(new WorldCreator(world));
+        if (chunkWorld != null) {
+            chunk = chunkWorld.getChunkAt(gson.fromJson(data.get("X"), Integer.TYPE),
+                                            gson.fromJson(data.get("Z"), Integer.TYPE));
         }
     }
 
-    public void load(String filename) {
+    public void legacyLoad(String filename) {
         try {
             File loadFile = new File("./plugins/MedievalFactions/claimedchunks/" + filename);
             Scanner loadReader = new Scanner(loadFile);

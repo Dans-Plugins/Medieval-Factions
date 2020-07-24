@@ -1,22 +1,32 @@
 package factionsystem.Objects;
 
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+import org.bukkit.OfflinePlayer;
+
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Scanner;
+import java.util.UUID;
+
+import static factionsystem.Subsystems.UtilitySubsystem.findUUIDBasedOnPlayerName;
+import static org.bukkit.Bukkit.getServer;
 
 public class PlayerPowerRecord {
 
     // saved
-    private String playerName = "";
+    private UUID playerUUID = UUID.randomUUID();
     private int powerLevel = 0;
 
     // temporary
     int maxPower = 0;
 
-    public PlayerPowerRecord(String nameOfPlayer, int initial, int max) {
-        playerName = nameOfPlayer;
+    public PlayerPowerRecord(UUID playerUUID, int initial, int max) {
+        this.playerUUID = playerUUID;
         powerLevel = initial;
         maxPower = max;
     }
@@ -24,12 +34,16 @@ public class PlayerPowerRecord {
         maxPower = max;
     }
 
-    public void setPlayerName(String newName) {
-        playerName = newName;
+    public PlayerPowerRecord(Map<String, String> data) {
+        this.load(data);
     }
 
-    public String getPlayerName() {
-        return playerName;
+    public void setPlayerName(UUID UUID) {
+        playerUUID = UUID;
+    }
+
+    public UUID getPlayerUUID() {
+        return playerUUID;
     }
 
     public boolean increasePower() {
@@ -60,50 +74,36 @@ public class PlayerPowerRecord {
         powerLevel = newPower;
     }
 
-    public void save() {
-        try {
-            File saveFolder = new File("./plugins/MedievalFactions/player-power-records/");
-            if (!saveFolder.exists()) {
-                saveFolder.mkdir();
-            }
-            File saveFile = new File("./plugins/MedievalFactions/player-power-records/" + playerName + ".txt");
-            if (saveFile.createNewFile()) {
-                System.out.println("Save file for player power record associated with  " + playerName + " created.");
-            } else {
-                System.out.println("Save file for player power record associated with  " + playerName + " already exists. Altering.");
-            }
+    public Map<String, String> save() {
+        Gson gson = new GsonBuilder().setPrettyPrinting().create();
 
-            FileWriter saveWriter = new FileWriter("./plugins/MedievalFactions/player-power-records/" + playerName + ".txt");
+        Map<String, String> saveMap = new HashMap<>();
+        saveMap.put("playerUUID", gson.toJson(playerUUID.toString()));
+        saveMap.put("powerLevel", gson.toJson(powerLevel));
 
-            // actual saving takes place here
-            saveWriter.write(playerName + "\n");
-            saveWriter.write(powerLevel + "\n");
-
-            saveWriter.close();
-
-            System.out.println("Successfully saved player power record associated with " + playerName + ".");
-
-        } catch (IOException e) {
-            System.out.println("An error occurred saving the player power record associated with " + playerName);
-        }
+        return saveMap;
     }
 
-    public void load(String filename) {
+    private void load(Map<String, String> data) {
+        Gson gson = new GsonBuilder().setPrettyPrinting().create();
+        playerUUID = UUID.fromString(gson.fromJson(data.get("playerUUID"), String.class));
+        powerLevel = gson.fromJson(data.get("powerLevel"), Integer.TYPE);
+    }
+
+    public void legacyLoad(String filename) {
         try {
             File loadFile = new File("./plugins/MedievalFactions/player-power-records/" + filename);
             Scanner loadReader = new Scanner(loadFile);
 
             // actual loading
             if (loadReader.hasNextLine()) {
-                playerName = loadReader.nextLine();
+                playerUUID = findUUIDBasedOnPlayerName(loadReader.nextLine());
             }
             if (loadReader.hasNextLine()) {
                 powerLevel = Integer.parseInt(loadReader.nextLine());
             }
 
             loadReader.close();
-
-            System.out.println("Player power record for " + playerName + " successfully loaded.");
 
         } catch (FileNotFoundException e) {
             System.out.println("An error occurred loading the file " + filename + ".");

@@ -21,19 +21,19 @@ public class LeaveCommand {
         if (sender instanceof Player) {
             Player player = (Player) sender;
 
-            if (isInFaction(player.getName(), main.factions)) {
+            if (isInFaction(player.getUniqueId(), main.factions)) {
                 for (int i = 0; i < main.factions.size(); i++) {
-                    if (main.factions.get(i).isMember(player.getName())) {
-                        if (main.factions.get(i).isOwner(player.getName())) {
+                    if (main.factions.get(i).isMember(player.getUniqueId())) {
+                        if (main.factions.get(i).isOwner(player.getUniqueId())) {
                             // is faction empty?
                             if (main.factions.get(i).getPopulation() == 1) {
                                 // able to leave
 
-                                if (main.factions.get(i).isOfficer(player.getName())) {
-                                    main.factions.get(i).removeOfficer(player.getName());
+                                if (main.factions.get(i).isOfficer(player.getUniqueId())) {
+                                    main.factions.get(i).removeOfficer(player.getUniqueId());
                                 }
 
-                                main.playersInFactionChat.remove(player.getName());
+                                main.playersInFactionChat.remove(player.getUniqueId());
 
                                 // delete file associated with faction
                                 System.out.println("Attempting to delete file plugins/MedievalFactions/" + main.factions.get(i).getName() + ".txt");
@@ -52,7 +52,7 @@ public class LeaveCommand {
                                 // remove claimed land objects associated with this faction
                                 removeAllClaimedChunks(main.factions.get(i).getName(), main.claimedChunks);
 
-                                main.factions.get(i).removeMember(player.getName(), getPlayersPowerRecord(player.getName(), main.playerPowerRecords).getPowerLevel());
+                                main.factions.get(i).removeMember(player.getUniqueId(), getPlayersPowerRecord(player.getUniqueId(), main.playerPowerRecords).getPowerLevel());
                                 main.factions.remove(i);
                                 player.sendMessage(ChatColor.AQUA + "You left your faction. It was deleted since no one else was a member.");
 
@@ -66,11 +66,11 @@ public class LeaveCommand {
                         else {
                             // able to leave
 
-                            if (main.playersInFactionChat.contains(player.getName())) {
-                                main.playersInFactionChat.remove(player.getName());
+                            if (main.playersInFactionChat.contains(player.getUniqueId())) {
+                                main.playersInFactionChat.remove(player.getUniqueId());
                             }
 
-                            main.factions.get(i).removeMember(player.getName(), getPlayersPowerRecord(player.getName(), main.playerPowerRecords).getPowerLevel());
+                            main.factions.get(i).removeMember(player.getUniqueId(), getPlayersPowerRecord(player.getUniqueId(), main.playerPowerRecords).getPowerLevel());
                             player.sendMessage(ChatColor.AQUA + "You left your faction.");
                             try {
                                 sendAllPlayersInFactionMessage(main.factions.get(i), ChatColor.GREEN + player.getName() + " has left " + main.factions.get(i).getName());

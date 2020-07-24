@@ -25,7 +25,7 @@ public class LawsCommand {
             Faction faction = null;
 
             if (args.length == 1) {
-                faction = getPlayersFaction(player.getName(), main.factions);
+                faction = getPlayersFaction(player.getUniqueId(), main.factions);
             }
             else {
                 String target = createStringFromFirstArgOnwards(args);

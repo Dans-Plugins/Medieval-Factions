@@ -23,10 +23,10 @@ public class EditLawCommand {
 
             Player player = (Player) sender;
 
-            if (isInFaction(player.getName(), main.factions)) {
-                Faction playersFaction = getPlayersFaction(player.getName(), main.factions);
+            if (isInFaction(player.getUniqueId(), main.factions)) {
+                Faction playersFaction = getPlayersFaction(player.getUniqueId(), main.factions);
 
-                if (playersFaction.isOwner(player.getName())) {
+                if (playersFaction.isOwner(player.getUniqueId())) {
                     if (args.length > 1) {
                         int lawToEdit = Integer.parseInt(args[1]) - 1;
                         String newLaw = "";

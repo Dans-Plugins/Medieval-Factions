@@ -30,16 +30,16 @@ public class BlockBreakEventHandler {
         if (chunk != null) {
 
             // player not in a faction
-            if (!isInFaction(event.getPlayer().getName(), main.factions)) {
+            if (!isInFaction(event.getPlayer().getUniqueId(), main.factions)) {
                 event.setCancelled(true);
             }
 
             // if player is in faction
             for (Faction faction : main.factions) {
-                if (faction.isMember(player.getName())) {
+                if (faction.isMember(player.getUniqueId())) {
 
                     // if player's faction is not the same as the holder of the chunk and player isn't bypassing
-                    if (!(faction.getName().equalsIgnoreCase(chunk.getHolder())) && !main.adminsBypassingProtections.contains(player.getName())) {
+                    if (!(faction.getName().equalsIgnoreCase(chunk.getHolder())) && !main.adminsBypassingProtections.contains(player.getUniqueId())) {
                         event.setCancelled(true);
                         return;
                     }
@@ -48,8 +48,8 @@ public class BlockBreakEventHandler {
                     if (main.utilities.isBlockLocked(event.getBlock().getX(), event.getBlock().getY(), event.getBlock().getZ())) {
 
                         // if player is not the owner and isn't bypassing
-                        if (!main.utilities.getLockedBlock(event.getBlock().getX(), event.getBlock().getY(), event.getBlock().getZ()).getOwner().equalsIgnoreCase(player.getName())
-                                && !main.adminsBypassingProtections.contains(event.getPlayer().getName())) {
+                        if (!main.utilities.getLockedBlock(event.getBlock().getX(), event.getBlock().getY(), event.getBlock().getZ()).getOwner().equals(player.getUniqueId())
+                                && !main.adminsBypassingProtections.contains(event.getPlayer().getUniqueId())) {
                             event.setCancelled(true);
                             player.sendMessage(ChatColor.RED + "You don't own this!");
                             return;

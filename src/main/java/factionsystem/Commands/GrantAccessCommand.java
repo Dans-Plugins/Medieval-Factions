@@ -5,6 +5,9 @@ import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
+import static factionsystem.Subsystems.UtilitySubsystem.findPlayerNameBasedOnUUID;
+import static factionsystem.Subsystems.UtilitySubsystem.findUUIDBasedOnPlayerName;
+
 public class GrantAccessCommand {
 
     Main main = null;
@@ -26,9 +29,9 @@ public class GrantAccessCommand {
                 }
 
                 // if not already granting access
-                if (!main.playersGrantingAccess.containsKey(player.getName())) {
+                if (!main.playersGrantingAccess.containsKey(player.getUniqueId())) {
                     // save target name and player name in hashmap in main
-                    main.playersGrantingAccess.put(player.getName(), args[1]);
+                    main.playersGrantingAccess.put(player.getUniqueId(), findUUIDBasedOnPlayerName(args[1]));
                     player.sendMessage(ChatColor.GREEN + "Right click a chest or door to grant " + args[1] + " access. Type /mf grantaccess cancel to cancel this.");
                 }
                 else {

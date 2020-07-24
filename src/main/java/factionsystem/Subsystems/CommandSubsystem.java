@@ -201,8 +201,8 @@ public class CommandSubsystem {
                             Player player = (Player) sender;
 
                             // if not at demesne limit
-                            if (isInFaction(player.getName(), main.factions)) {
-                                Faction playersFaction = getPlayersFaction(player.getName(), main.factions);
+                            if (isInFaction(player.getUniqueId(), main.factions)) {
+                                Faction playersFaction = getPlayersFaction(player.getUniqueId(), main.factions);
                                 if (getChunksClaimedByFaction(playersFaction.getName(), main.claimedChunks) < playersFaction.getCumulativePowerLevel()) {
                                     main.utilities.addChunkAtPlayerLocation(player);
                                 }
@@ -225,7 +225,7 @@ public class CommandSubsystem {
                     if (sender.hasPermission("mf.unclaim") || sender.hasPermission("mf.default")) {
                         if (sender instanceof Player) {
                             Player player = (Player) sender;
-                            if (isInFaction(player.getName(), main.factions)) {
+                            if (isInFaction(player.getUniqueId(), main.factions)) {
                                 main.utilities.removeChunkAtPlayerLocation(player);
                             }
                             else {
@@ -245,7 +245,7 @@ public class CommandSubsystem {
                         if (sender instanceof Player) {
                             Player player = (Player) sender;
                             for (Faction faction : main.factions) {
-                                if (faction.isOwner(player.getName())) {
+                                if (faction.isOwner(player.getUniqueId())) {
                                     // remove faction home
                                     faction.setFactionHome(null);
                                     sendAllPlayersInFactionMessage(faction, ChatColor.RED + "Your faction home has been removed!");
@@ -290,10 +290,10 @@ public class CommandSubsystem {
                         if (sender instanceof Player) {
                             Player player = (Player) sender;
 
-                            if (isInFaction(player.getName(), main.factions)) {
+                            if (isInFaction(player.getUniqueId(), main.factions)) {
                                 boolean owner = false;
                                 for (Faction faction : main.factions) {
-                                    if (faction.isOwner(player.getName())) {
+                                    if (faction.isOwner(player.getUniqueId())) {
                                         owner = true;
                                         faction.toggleAutoClaim();
                                         player.sendMessage(ChatColor.AQUA + "Autoclaim toggled.");

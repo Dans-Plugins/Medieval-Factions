@@ -27,8 +27,8 @@ public class LockCommand {
 
                     // cancel lock status if first argument is "cancel"
                     if (args[1].equalsIgnoreCase("cancel")) {
-                        if (main.lockingPlayers.contains(player.getName())) {
-                            main.lockingPlayers.remove(player.getName());
+                        if (main.lockingPlayers.contains(player.getUniqueId())) {
+                            main.lockingPlayers.remove(player.getUniqueId());
                             player.sendMessage(ChatColor.RED + "Locking cancelled!");
                             return;
                         }
@@ -36,13 +36,11 @@ public class LockCommand {
                 }
 
                 // check that player has not already invoked this command without locking something
-                if (!main.lockingPlayers.contains(player.getName())) {
+                if (!main.lockingPlayers.contains(player.getUniqueId())) {
                     // add player to playersAboutToLockSomething list
-                    main.lockingPlayers.add(player.getName());
+                    main.lockingPlayers.add(player.getUniqueId());
 
-                    if (main.unlockingPlayers.contains(player.getName())) {
-                        main.unlockingPlayers.remove(player.getName());
-                    }
+                    main.unlockingPlayers.remove(player.getUniqueId());
 
                     // inform them they need to right click the block that they want to lock or type /mf lock cancel to cancel it
                     player.sendMessage(ChatColor.GREEN + "Right click a chest or door to lock it! (Type /mf lock cancel to cancel)");

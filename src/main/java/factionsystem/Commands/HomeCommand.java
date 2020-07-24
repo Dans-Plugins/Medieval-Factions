@@ -22,8 +22,8 @@ public class HomeCommand {
     public void teleportPlayer(CommandSender sender) {
         if (sender instanceof Player) {
             Player player = (Player) sender;
-            if (isInFaction(player.getName(), main.factions)) {
-                Faction playersFaction = getPlayersFaction(player.getName(), main.factions);
+            if (isInFaction(player.getUniqueId(), main.factions)) {
+                Faction playersFaction = getPlayersFaction(player.getUniqueId(), main.factions);
                 if (playersFaction.getFactionHome() != null) {
                     player.sendMessage(ChatColor.GREEN + "Teleporting in 3 seconds...");
                     int seconds = 3;
