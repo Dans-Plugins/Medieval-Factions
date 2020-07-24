@@ -1,6 +1,7 @@
 package factionsystem.Objects;
 
 import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 import com.google.gson.reflect.TypeToken;
 import org.bukkit.Location;
 import org.bukkit.OfflinePlayer;
@@ -333,7 +334,7 @@ public class Faction {
     }
 
     public Map<String, String> save() {
-        Gson gson = new Gson();
+        Gson gson = new GsonBuilder().setPrettyPrinting().create();;
         Map<String, String> saveMap = new HashMap<>();
 
         saveMap.put("members", gson.toJson(members));
@@ -354,7 +355,7 @@ public class Faction {
         Map<String, String> saveMap = new HashMap<>();
 
         if (factionHome != null && factionHome.getWorld() != null){
-            saveMap.put("worldName", factionHome.getWorld().getName());
+            saveMap.put("worldName", gson.toJson(factionHome.getWorld().getName()));
             saveMap.put("x", gson.toJson(factionHome.getX()));
             saveMap.put("y", gson.toJson(factionHome.getY()));
             saveMap.put("z", gson.toJson(factionHome.getZ()));
@@ -364,7 +365,7 @@ public class Faction {
     }
 
     private void load(Map<String, String> data) {
-        Gson gson = new Gson();
+        Gson gson = new GsonBuilder().setPrettyPrinting().create();;
 
         Type arrayListTypeString = new TypeToken<ArrayList<String>>(){}.getType();
         Type arrayListTypeUUID = new TypeToken<ArrayList<UUID>>(){}.getType();
@@ -375,16 +376,17 @@ public class Faction {
         officers = gson.fromJson(data.get("officers"), arrayListTypeUUID);
         allyFactions = gson.fromJson(data.get("allyFactions"), arrayListTypeString);
         laws = gson.fromJson(data.get("laws"), arrayListTypeString);
-        name = data.get("name");
-        description = data.get("description");
-        owner = UUID.fromString(data.get("owner"));
+        name = gson.fromJson(data.get("name"), String.class);
+        description = gson.fromJson(data.get("description"),String.class);
+        owner = UUID.fromString(gson.fromJson(data.get("owner"), String.class));
         cumulativePowerLevel = gson.fromJson(data.get("cumulativePowerLevel"), Integer.TYPE);
         factionHome = loadLocation(gson.fromJson(data.get("location"), mapType), gson);
+        System.out.println(toString());
     }
 
     private Location loadLocation(HashMap<String, String> data, Gson gson){
         if (data.size() != 0){
-            World world = getServer().createWorld(new WorldCreator(data.get("worldName")));
+            World world = getServer().createWorld(new WorldCreator(gson.fromJson(data.get("worldName"), String.class)));
             double x = gson.fromJson(data.get("x"), Double.TYPE);
             double y = gson.fromJson(data.get("y"), Double.TYPE);
             double z = gson.fromJson(data.get("z"), Double.TYPE);
@@ -529,4 +531,18 @@ public class Faction {
         }
     }
 
+    @Override
+    public String toString() {
+        return "Faction{" +
+                "members=" + members +
+                ", enemyFactions=" + enemyFactions +
+                ", officers=" + officers +
+                ", allyFactions=" + allyFactions +
+                ", laws=" + laws +
+                ", name='" + name + '\'' +
+                ", description='" + description + '\'' +
+                ", owner=" + owner +
+                ", cumulativePowerLevel=" + cumulativePowerLevel +
+                '}';
+    }
 }

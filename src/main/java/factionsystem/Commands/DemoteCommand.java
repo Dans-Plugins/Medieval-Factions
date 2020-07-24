@@ -27,9 +27,9 @@ public class DemoteCommand {
                 if (args.length > 1) {
                     for (Faction faction : main.factions) {
                         UUID officerUUID = findUUIDBasedOnPlayerName(args[1]);
-                        if (faction.isOfficer(officerUUID)) {
+                        if (officerUUID != null && faction.isOfficer(officerUUID)) {
                             if (faction.isOwner(player.getUniqueId())) {
-                                if (faction.removeOfficer(officerUUID) == true) {
+                                if (faction.removeOfficer(officerUUID)) {
 
                                     player.sendMessage(ChatColor.GREEN + "Player demoted!");
 

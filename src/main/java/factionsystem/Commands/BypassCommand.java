@@ -20,12 +20,12 @@ public class BypassCommand {
 
             if (player.hasPermission("mf.bypass") || player.hasPermission("mf.admin")) {
 
-                if (!main.adminsBypassingProtections.contains(player.getName())) {
-                    main.adminsBypassingProtections.add(player.getName());
+                if (!main.adminsBypassingProtections.contains(player.getUniqueId())) {
+                    main.adminsBypassingProtections.add(player.getUniqueId());
                     player.sendMessage(ChatColor.GREEN + "You are now bypassing protections provided by Medieval Factions.");
                 }
                 else {
-                    main.adminsBypassingProtections.remove(player.getName());
+                    main.adminsBypassingProtections.remove(player.getUniqueId());
                     player.sendMessage(ChatColor.GREEN + "You are no longer bypassing protections provided by Medieval Factions.");
                 }
 

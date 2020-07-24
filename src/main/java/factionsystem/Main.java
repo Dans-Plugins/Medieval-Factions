@@ -27,6 +27,7 @@ import org.bukkit.plugin.java.JavaPlugin;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.UUID;
 
 public class Main extends JavaPlugin implements Listener {
 
@@ -44,13 +45,15 @@ public class Main extends JavaPlugin implements Listener {
     public ArrayList<LockedBlock> lockedBlocks = new ArrayList<>();
 
     // temporary lists
-    public ArrayList<String> lockingPlayers = new ArrayList<>();
-    public ArrayList<String> unlockingPlayers = new ArrayList<>();
-    public HashMap<String, String> playersGrantingAccess = new HashMap<>();
-    public ArrayList<String> playersCheckingAccess = new ArrayList<>();
-    public HashMap<String, String> playersRevokingAccess = new HashMap<>();
-    public ArrayList<String> playersInFactionChat = new ArrayList<>();
-    public ArrayList<String> adminsBypassingProtections = new ArrayList<>();
+    public ArrayList<UUID> lockingPlayers = new ArrayList<>();
+    public ArrayList<UUID> unlockingPlayers = new ArrayList<>();
+    // Left user granting access, right user receiving access;
+    public HashMap<UUID, UUID> playersGrantingAccess = new HashMap<>();
+    public ArrayList<UUID> playersCheckingAccess = new ArrayList<>();
+    // Left user granting access, right user receiving access;
+    public HashMap<UUID, UUID> playersRevokingAccess = new HashMap<>();
+    public ArrayList<UUID> playersInFactionChat = new ArrayList<>();
+    public ArrayList<UUID> adminsBypassingProtections = new ArrayList<>();
     // List of players who made the cloud and the cloud itself in a pair
     public ArrayList<Pair<Player, AreaEffectCloud>> activeAOEClouds = new ArrayList<>();
 

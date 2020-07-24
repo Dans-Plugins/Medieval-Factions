@@ -1,6 +1,7 @@
 package factionsystem.Objects;
 
 import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 import org.bukkit.OfflinePlayer;
 
 import java.io.File;
@@ -74,18 +75,19 @@ public class PlayerPowerRecord {
     }
 
     public Map<String, String> save() {
-        Gson gson = new Gson();
+        Gson gson = new GsonBuilder().setPrettyPrinting().create();
 
         Map<String, String> saveMap = new HashMap<>();
-        saveMap.put("playerUUID", playerUUID.toString());
+        saveMap.put("playerUUID", gson.toJson(playerUUID.toString()));
         saveMap.put("powerLevel", gson.toJson(powerLevel));
 
         return saveMap;
     }
 
     private void load(Map<String, String> data) {
-        Gson gson = new Gson();
-        playerUUID = UUID.fromString(data.get("playerName"));
+        Gson gson = new GsonBuilder().setPrettyPrinting().create();
+        System.out.println();
+        playerUUID = UUID.fromString(gson.fromJson(data.get("playerName"), String.class));
         powerLevel = gson.fromJson(data.get("powerLevel"), Integer.TYPE);
     }
 

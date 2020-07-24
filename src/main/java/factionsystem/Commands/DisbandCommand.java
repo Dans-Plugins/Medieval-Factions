@@ -28,21 +28,7 @@ public class DisbandCommand {
                     owner = true;
                     if (main.factions.get(i).getPopulation() == 1) {
 
-                        main.playersInFactionChat.remove(player.getName());
-
-                        // delete file associated with faction
-                        System.out.println("Attempting to delete file plugins/MedievalFactions/" + main.factions.get(i).getName() + ".txt");
-                        try {
-                            File fileToDelete = new File("plugins/MedievalFactions/" + main.factions.get(i).getName() + ".txt");
-                            if (fileToDelete.delete()) {
-                                System.out.println("Success. File deleted.");
-                            }
-                            else {
-                                System.out.println("There was a problem deleting the file.");
-                            }
-                        } catch(Exception e) {
-                            System.out.println("An error has occurred during file deletion.");
-                        }
+                        main.playersInFactionChat.remove(player.getUniqueId());
 
                         // remove claimed land objects associated with this faction
                         removeAllClaimedChunks(main.factions.get(i).getName(), main.claimedChunks);

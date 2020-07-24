@@ -1,6 +1,7 @@
 package factionsystem.Objects;
 
 import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 import org.bukkit.Chunk;
 import org.bukkit.World;
 import org.bukkit.WorldCreator;
@@ -65,22 +66,22 @@ public class ClaimedChunk {
     }
 
     public Map<String, String> save() {
-            Gson gson = new Gson();
+            Gson gson = new GsonBuilder().setPrettyPrinting().create();;
 
             Map<String, String> saveMap = new HashMap<>();
             saveMap.put("X", gson.toJson(chunk.getX()));
             saveMap.put("Z", gson.toJson(chunk.getZ()));
-            saveMap.put("world", world);
-            saveMap.put("holder", holder);
+            saveMap.put("world", gson.toJson(world));
+            saveMap.put("holder", gson.toJson(holder));
 
             return saveMap;
     }
 
     private void load(Map<String, String> data) {
-        Gson gson = new Gson();
+        Gson gson = new GsonBuilder().setPrettyPrinting().create();
 
-        world = data.get("world");
-        holder = data.get("holder");
+        world = gson.fromJson(data.get("world"), String.class);
+        holder = gson.fromJson(data.get("holder"), String.class);
 
         World chunkWorld = getServer().createWorld(new WorldCreator(world));
         if (chunkWorld != null) {

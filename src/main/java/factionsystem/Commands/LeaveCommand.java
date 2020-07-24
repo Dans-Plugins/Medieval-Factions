@@ -33,7 +33,7 @@ public class LeaveCommand {
                                     main.factions.get(i).removeOfficer(player.getUniqueId());
                                 }
 
-                                main.playersInFactionChat.remove(player.getName());
+                                main.playersInFactionChat.remove(player.getUniqueId());
 
                                 // delete file associated with faction
                                 System.out.println("Attempting to delete file plugins/MedievalFactions/" + main.factions.get(i).getName() + ".txt");
@@ -66,8 +66,8 @@ public class LeaveCommand {
                         else {
                             // able to leave
 
-                            if (main.playersInFactionChat.contains(player.getName())) {
-                                main.playersInFactionChat.remove(player.getName());
+                            if (main.playersInFactionChat.contains(player.getUniqueId())) {
+                                main.playersInFactionChat.remove(player.getUniqueId());
                             }
 
                             main.factions.get(i).removeMember(player.getUniqueId(), getPlayersPowerRecord(player.getUniqueId(), main.playerPowerRecords).getPowerLevel());

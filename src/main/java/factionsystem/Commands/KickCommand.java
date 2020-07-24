@@ -36,7 +36,7 @@ public class KickCommand {
                                         faction.removeOfficer(playerUUID);
                                     }
 
-                                    main.playersInFactionChat.remove(args[1]);
+                                    main.playersInFactionChat.remove(playerUUID);
 
                                     faction.removeMember(playerUUID, getPlayersPowerRecord(player.getUniqueId(), main.playerPowerRecords).getPowerLevel());
                                     try {

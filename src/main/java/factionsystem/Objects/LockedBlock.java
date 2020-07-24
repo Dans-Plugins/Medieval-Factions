@@ -1,27 +1,27 @@
 package factionsystem.Objects;
 
 import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 import com.google.gson.reflect.TypeToken;
 
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Scanner;
+import java.util.*;
+
+import static factionsystem.Subsystems.UtilitySubsystem.findUUIDBasedOnPlayerName;
 
 public class LockedBlock {
 
     private int x = 0;
     private int y = 0;
     private int z = 0;
-    private String owner = "";
+    private UUID owner = UUID.randomUUID();
     private String factionName = "";
-    private ArrayList<String> accessList = new ArrayList<>();
+    private ArrayList<UUID> accessList = new ArrayList<>();
 
-    public LockedBlock(String o, String f, int newX, int newY, int newZ) {
+    public LockedBlock(UUID o, String f, int newX, int newY, int newZ) {
         owner = o;
         factionName = f;
         x = newX;
@@ -50,11 +50,11 @@ public class LockedBlock {
         return z;
     }
 
-    public void setOwner(String s) {
+    public void setOwner(UUID s) {
         owner = s;
     }
 
-    public String getOwner() {
+    public UUID getOwner() {
         return owner;
     }
 
@@ -66,48 +66,46 @@ public class LockedBlock {
         return factionName;
     }
 
-    public void addToAccessList(String playerName) {
+    public void addToAccessList(UUID playerName) {
         if (!accessList.contains(playerName)) {
             accessList.add(playerName);
         }
     }
 
-    public void removeFromAccessList(String playerName) {
-        if (accessList.contains(playerName)) {
-            accessList.remove(playerName);
-        }
+    public void removeFromAccessList(UUID playerName) {
+        accessList.remove(playerName);
     }
 
-    public boolean hasAccess(String playerName) {
+    public boolean hasAccess(UUID playerName) {
         return accessList.contains(playerName);
     }
 
-    public ArrayList<String> getAccessList() {
+    public ArrayList<UUID> getAccessList() {
         return accessList;
     }
 
     public Map<String, String> save() {
-        Gson gson = new Gson();
+        Gson gson = new GsonBuilder().setPrettyPrinting().create();;
 
         Map<String, String> saveMap = new HashMap<>();
         saveMap.put("X", gson.toJson(x));
         saveMap.put("Y", gson.toJson(y));
         saveMap.put("Z", gson.toJson(z));
-        saveMap.put("owner", owner);
-        saveMap.put("factionName", factionName);
+        saveMap.put("owner", gson.toJson(owner));
+        saveMap.put("factionName", gson.toJson(factionName));
         saveMap.put("accessList", gson.toJson(accessList));
 
         return saveMap;
     }
 
     private void load(Map<String, String> data) {
-        Gson gson = new Gson();
+        Gson gson = new GsonBuilder().setPrettyPrinting().create();;
 
         x = gson.fromJson(data.get("X"), Integer.TYPE);
         y = gson.fromJson(data.get("Y"), Integer.TYPE);
         z = gson.fromJson(data.get("Z"), Integer.TYPE);
-        owner = data.get("owner");
-        factionName = data.get("factionName");
+        owner = UUID.fromString(gson.fromJson(data.get("owner"), String.class));
+        factionName =  gson.fromJson(data.get("factionName"), String.class);
         accessList = gson.fromJson(data.get("accessList"), new TypeToken<ArrayList<String>>(){}.getType());
     }
 
@@ -130,7 +128,7 @@ public class LockedBlock {
 
             // owner
             if (loadReader.hasNextLine()) {
-                owner = loadReader.nextLine();
+                owner = findUUIDBasedOnPlayerName(loadReader.nextLine());
             }
 
             // faction name
@@ -140,7 +138,7 @@ public class LockedBlock {
 
             // access list
             while (loadReader.hasNextLine()) {
-                accessList.add(loadReader.nextLine());
+                accessList.add(findUUIDBasedOnPlayerName(loadReader.nextLine()));
             }
 
             loadReader.close();

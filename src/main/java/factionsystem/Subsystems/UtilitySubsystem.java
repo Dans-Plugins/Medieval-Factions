@@ -39,7 +39,7 @@ public class UtilitySubsystem {
                     if (playerCoords[0] == chunk.getCoordinates()[0] && playerCoords[1] == chunk.getCoordinates()[1]) {
 
                         // if holder is player's faction
-                        if (chunk.getHolder().equalsIgnoreCase(faction.getName()) && getPlayersFaction(player.getUniqueId(), main.factions).getAutoClaimStatus() == false) {
+                        if (chunk.getHolder().equalsIgnoreCase(faction.getName()) && !getPlayersFaction(player.getUniqueId(), main.factions).getAutoClaimStatus()) {
                             player.sendMessage(ChatColor.RED + "This land is already claimed by your faction!");
                             return;
                         }
@@ -358,7 +358,7 @@ public class UtilitySubsystem {
     public static void sendFactionInfo(Player player, Faction faction, int power) {
         player.sendMessage(ChatColor.BOLD + "" + ChatColor.AQUA + faction.getName() + " Faction Info" + "\n----------\n");
         player.sendMessage(ChatColor.AQUA + "Name: " + faction.getName() + "\n");
-        player.sendMessage(ChatColor.AQUA + "Owner: " + faction.getOwner() + "\n");
+        player.sendMessage(ChatColor.AQUA + "Owner: " + findPlayerNameBasedOnUUID(faction.getOwner()) + "\n");
         player.sendMessage(ChatColor.AQUA + "Description: " + faction.getDescription() + "\n");
         player.sendMessage(ChatColor.AQUA + "Population: " + faction.getMemberList().size() + "\n");
         player.sendMessage(ChatColor.AQUA + "Allied With: " + faction.getAlliesSeparatedByCommas() + "\n");

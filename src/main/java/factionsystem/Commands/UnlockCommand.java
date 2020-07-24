@@ -27,8 +27,8 @@ public class UnlockCommand {
 
                     // cancel unlock status if first argument is "cancel"
                     if (args[1].equalsIgnoreCase("cancel")) {
-                        if (main.unlockingPlayers.contains(player.getName())) {
-                            main.unlockingPlayers.remove(player.getName());
+                        if (main.unlockingPlayers.contains(player.getUniqueId())) {
+                            main.unlockingPlayers.remove(player.getUniqueId());
                             player.sendMessage(ChatColor.RED + "Unlocking cancelled!");
                             return;
                         }
@@ -36,13 +36,11 @@ public class UnlockCommand {
                 }
 
                 // check that player has not already invoked this command without unlocking something
-                if (!main.unlockingPlayers.contains(player.getName())) {
+                if (!main.unlockingPlayers.contains(player.getUniqueId())) {
                     // add player to playersAboutToLockSomething list
-                    main.unlockingPlayers.add(player.getName());
+                    main.unlockingPlayers.add(player.getUniqueId());
 
-                    if (main.lockingPlayers.contains(player.getName())) {
-                        main.lockingPlayers.remove(player.getName());
-                    }
+                    main.lockingPlayers.remove(player.getUniqueId());
 
                     // inform them they need to right click the block that they want to lock or type /mf lock cancel to cancel it
                     player.sendMessage(ChatColor.GREEN + "Right click a chest or door to unlock it! (Type /mf unlock cancel to cancel)");

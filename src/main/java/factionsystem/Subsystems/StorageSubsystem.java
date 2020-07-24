@@ -1,6 +1,7 @@
 package factionsystem.Subsystems;
 
 import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 import com.google.gson.reflect.TypeToken;
 import com.google.gson.stream.JsonReader;
 import factionsystem.Main;
@@ -29,7 +30,7 @@ public class StorageSubsystem {
 
     private final static Type LIST_MAP_TYPE = new TypeToken<ArrayList<HashMap<String, String>>>(){}.getType();
 
-    private Gson gson = new Gson();
+    private Gson gson = new GsonBuilder().setPrettyPrinting().create();;
 
     public StorageSubsystem(Main plugin) {
         main = plugin;
@@ -99,7 +100,7 @@ public class StorageSubsystem {
             legacyLoadClaimedChunks();
             legacyLoadPlayerPowerRecords();
             legacyLoadLockedBlocks();
-            deleteLegacyFiles();
+            deleteLegacyFiles(new File(FILE_PATH));
             save();
         } else {
             System.out.println("Attempting to load Factions data...");
@@ -118,20 +119,16 @@ public class StorageSubsystem {
                 new File(FILE_PATH + LEGACY_PLAYERPOWER_FILE_NAME).exists();
     }
 
-    private void deleteLegacyFiles() {
-        if (!deleteDirectory(new File(FILE_PATH))){
-            throw new RuntimeException("Legacy Files are not removed, and must be removable. If you are about to" +
-                    " lose data, go back to before the save changes, v3.2 and below.");
-        }
-    }
-
     // Recursive file delete from https://www.baeldung.com/java-delete-directory
-    boolean deleteDirectory(File directoryToBeDeleted) {
+    boolean deleteLegacyFiles(File directoryToBeDeleted) {
         File[] allContents = directoryToBeDeleted.listFiles();
         if (allContents != null) {
             for (File file : allContents) {
-                deleteDirectory(file);
+                deleteLegacyFiles(file);
             }
+        }
+        if (directoryToBeDeleted.getAbsolutePath().contains("config.yml")){
+            return true;
         }
         return directoryToBeDeleted.delete();
     }
@@ -182,7 +179,7 @@ public class StorageSubsystem {
 
     private ArrayList<HashMap<String, String>> loadDataFromFilename(String filename) {
         try{
-            Gson gson = new Gson();
+            Gson gson = new GsonBuilder().setPrettyPrinting().create();;
             JsonReader reader = new JsonReader(new FileReader(filename));
             return gson.fromJson(reader, LIST_MAP_TYPE);
         } catch (FileNotFoundException e) {

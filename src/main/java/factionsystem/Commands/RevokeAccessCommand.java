@@ -5,6 +5,8 @@ import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
+import static factionsystem.Subsystems.UtilitySubsystem.findUUIDBasedOnPlayerName;
+
 public class RevokeAccessCommand {
 
     Main main = null;
@@ -22,8 +24,8 @@ public class RevokeAccessCommand {
 
             if (args.length > 1) {
                 if (args[1].equalsIgnoreCase("cancel")) {
-                    if (main.playersRevokingAccess.containsKey(player.getName())) {
-                        main.playersRevokingAccess.remove(player.getName());
+                    if (main.playersRevokingAccess.containsKey(player.getUniqueId())) {
+                        main.playersRevokingAccess.remove(player.getUniqueId());
                         player.sendMessage(ChatColor.GREEN + "Cancelled!");
                         return;
                     }
@@ -34,8 +36,8 @@ public class RevokeAccessCommand {
                 return;
             }
 
-            if (!main.playersRevokingAccess.containsKey(player.getName())) {
-                main.playersRevokingAccess.put(player.getName(), args[1]);
+            if (!main.playersRevokingAccess.containsKey(player.getUniqueId())) {
+                main.playersRevokingAccess.put(player.getUniqueId(), findUUIDBasedOnPlayerName(args[1]));
                 player.sendMessage(ChatColor.GREEN + "Right click a locked block to revoke this player's access to it! Type '/mf revokeaccess cancel' to cancel!");
             }
             else {
