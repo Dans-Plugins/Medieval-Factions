@@ -61,7 +61,7 @@ public class PlayerInteractEventHandler {
                 // if player doesn't have access and isn't overriding
                 if (!lockedBlock.hasAccess(player.getUniqueId()) && !main.adminsBypassingProtections.contains(player.getUniqueId())) {
                     event.setCancelled(true);
-                    player.sendMessage(ChatColor.RED + "Locked by " + lockedBlock.getOwner());
+                    player.sendMessage(ChatColor.RED + "Locked by " + findPlayerNameBasedOnUUID(lockedBlock.getOwner()));
                     return;
                 }
 
