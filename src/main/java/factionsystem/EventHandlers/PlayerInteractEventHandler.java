@@ -5,6 +5,7 @@ import factionsystem.Objects.ClaimedChunk;
 import factionsystem.Objects.Faction;
 import factionsystem.Objects.LockedBlock;
 import org.bukkit.ChatColor;
+import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.block.Chest;
 import org.bukkit.block.DoubleChest;
@@ -246,6 +247,20 @@ public class PlayerInteractEventHandler {
 
                 // if player's faction is not the same as the holder of the chunk and player isn't overriding
                 if (!(faction.getName().equalsIgnoreCase(chunk.getHolder())) && !main.adminsBypassingProtections.contains(event.getPlayer().getUniqueId())) {
+
+                    if (main.getConfig().getBoolean("laddersPlaceableInEnemyFactionTerritory")) {
+                        // if player's faction is an enemy of the holder of the chunk
+                        if (faction.isEnemy(getPlayersFaction(event.getPlayer().getName(), main.factions).getName())) {
+
+                            // if player is trying to place a ladder
+                            if (event.getPlayer().getInventory().getItemInMainHand().getType() == Material.LADDER) {
+
+                                // return, no cancellation
+                                return;
+
+                            }
+                        }
+                    }
                     event.setCancelled(true);
                     return;
                 }
