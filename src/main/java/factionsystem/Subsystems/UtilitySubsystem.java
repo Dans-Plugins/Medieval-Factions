@@ -173,15 +173,12 @@ public class UtilitySubsystem {
         double[] playerCoords = new double[2];
         playerCoords[0] = player.getLocation().getChunk().getX();
         playerCoords[1] = player.getLocation().getChunk().getZ();
-        System.out.println("Checking if chunk at location of player " + player.getName() + " is claimed.");
         for (ClaimedChunk chunk : main.claimedChunks) {
-//            System.out.println("Comparing player coords " + playerCoords[0] + ", " + playerCoords[1] + " to chunk coords " + chunk.getCoordinates()[0] + ", " + chunk.getCoordinates()[1]);
-            if (playerCoords[0] == chunk.getCoordinates()[0] && playerCoords[1] == chunk.getCoordinates()[1]) {
-                System.out.println("Match!");
+            if (playerCoords[0] == chunk.getCoordinates()[0] && playerCoords[1] == chunk.getCoordinates()[1]
+                    && player.getWorld().getName().equals(chunk.getWorld())) {
                 return chunk.getHolder();
             }
         }
-        System.out.println("No match found.");
         return "unclaimed";
     }
 
