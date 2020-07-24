@@ -40,7 +40,11 @@ public class EntityDamageByEntityEventHandler {
     }
 
     private void handleIfFriendlyFire(EntityDamageByEntityEvent event, Player attacker, Player victim) {
-        if (main.utilities.arePlayersInSameFaction(attacker, victim)) {
+        if (!main.utilities.arePlayersInAFaction(attacker, victim)){
+            // Factionless can fight anyone.
+            return;
+        }
+        else if (main.utilities.arePlayersInSameFaction(attacker, victim)) {
             event.setCancelled(true);
             attacker.sendMessage(ChatColor.RED + "You can't attack another player if you are part of the same faction.");
         }
