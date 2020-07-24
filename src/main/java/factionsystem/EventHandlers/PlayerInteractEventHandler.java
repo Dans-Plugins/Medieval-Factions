@@ -273,13 +273,13 @@ public class PlayerInteractEventHandler {
                 main.utilities.getLockedBlock(leftChest.getX(), leftChest.getY(), leftChest.getZ()).addToAccessList(main.playersGrantingAccess.get(player.getUniqueId()));
                 main.utilities.getLockedBlock(rightChest.getX(), rightChest.getY(), rightChest.getZ()).addToAccessList(main.playersGrantingAccess.get(player.getUniqueId()));
 
-                player.sendMessage(ChatColor.GREEN + "Access granted to " + main.playersGrantingAccess.get(player.getUniqueId()));
+                player.sendMessage(ChatColor.GREEN + "Access granted to " + findPlayerNameBasedOnUUID(main.playersGrantingAccess.get(player.getUniqueId())));
                 main.playersGrantingAccess.remove(player.getUniqueId());
             }
             else { // if single chest
                 // grant access to single chest
                 main.utilities.getLockedBlock(clickedBlock.getX(), clickedBlock.getY(), clickedBlock.getZ()).addToAccessList(main.playersGrantingAccess.get(player.getUniqueId()));
-                player.sendMessage(ChatColor.GREEN + "Access granted to " + main.playersGrantingAccess.get(player.getUniqueId()));
+                player.sendMessage(ChatColor.GREEN + "Access granted to " + findPlayerNameBasedOnUUID(main.playersGrantingAccess.get(player.getUniqueId())));
                 main.playersGrantingAccess.remove(player.getUniqueId());
             }
 
@@ -358,7 +358,7 @@ public class PlayerInteractEventHandler {
                 main.utilities.getLockedBlock(clickedBlock.getX(), clickedBlock.getY() - 1, clickedBlock.getZ()).removeFromAccessList(main.playersRevokingAccess.get(player.getUniqueId()));
             }
 
-            player.sendMessage(ChatColor.GREEN + "Access revoked for " + main.playersRevokingAccess.get(player.getUniqueId()));
+            player.sendMessage(ChatColor.GREEN + "Access revoked for " + findPlayerNameBasedOnUUID(main.playersRevokingAccess.get(player.getUniqueId())));
             main.playersRevokingAccess.remove(player.getUniqueId());
         }
         event.setCancelled(true);
