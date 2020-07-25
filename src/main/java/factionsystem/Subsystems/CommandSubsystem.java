@@ -197,9 +197,11 @@ public class CommandSubsystem {
                     if (sender.hasPermission("mf.declarewar") || sender.hasPermission("mf.default")) {
                         DeclareWarCommand command = new DeclareWarCommand(main);
                         command.declareWar(sender, args);
+                        return true;
                     }
                     else {
                         sender.sendMessage(ChatColor.RED + "Sorry! You need the following permission to use this command: 'mf.declarewar'");
+                        return false;
                     }
 
                 }
@@ -270,7 +272,7 @@ public class CommandSubsystem {
                 }
 
                 // unclaimall command
-                if (args[0].equalsIgnoreCase("unclaimall")|| args[0].equalsIgnoreCase("ua")) {
+                if (args[0].equalsIgnoreCase("unclaimall") || args[0].equalsIgnoreCase("ua")) {
                     if (sender.hasPermission("mf.unclaimall") || sender.hasPermission("mf.default")) {
                         if (sender instanceof Player) {
                             Player player = (Player) sender;
@@ -289,6 +291,8 @@ public class CommandSubsystem {
                                     return true;
                                 }
                             }
+                            player.sendMessage(ChatColor.RED + "You're not in a faction!");
+                            return false;
                         }
                     }
                     else {
