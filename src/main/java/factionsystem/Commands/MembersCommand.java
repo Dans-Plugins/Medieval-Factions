@@ -19,27 +19,26 @@ public class MembersCommand {
     public void showMembers(CommandSender sender, String[] args) {
         if (sender instanceof Player) {
             Player player = (Player) sender;
-            if (isInFaction(player.getUniqueId(), main.factions)) {
-                if (args.length == 1) {
-                    for (Faction faction : main.factions) {
-                        if (faction.isMember(player.getUniqueId())) {
-                            sendFactionMembers(player, faction);
-                        }
+            if (args.length == 1) {
+                for (Faction faction : main.factions) {
+                    if (faction.isMember(player.getUniqueId())) {
+                        sendFactionMembers(player, faction);
+                        return;
                     }
                 }
-                else {
-                    // creating name from arguments 1 to the last one
-                    String name = createStringFromFirstArgOnwards(args);
-
-                    for (Faction faction : main.factions) {
-                        if (faction.getName().equalsIgnoreCase(name)) {
-                            sendFactionMembers(player, faction);
-                        }
-                    }
-                }
+                player.sendMessage(ChatColor.RED + "You're not in a faction!");
             }
             else {
-                player.sendMessage(ChatColor.RED + "You need to be in a faction to use this command.");
+                // creating name from arguments 1 to the last one
+                String name = createStringFromFirstArgOnwards(args);
+
+                for (Faction faction : main.factions) {
+                    if (faction.getName().equalsIgnoreCase(name)) {
+                        sendFactionMembers(player, faction);
+                        return;
+                    }
+                }
+                player.sendMessage(ChatColor.RED + "That faction name isn't recognized!");
             }
         }
     }

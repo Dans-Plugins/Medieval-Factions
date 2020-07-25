@@ -26,6 +26,7 @@ public class CommandSubsystem {
                 // send plugin information
                 sender.sendMessage(ChatColor.AQUA + " == Medieval Factions " + main.version + " == ");
                 sender.sendMessage(ChatColor.AQUA + "Developers: DanTheTechMan, Pasarus");
+                return true;
             }
 
             // argument check
@@ -38,9 +39,11 @@ public class CommandSubsystem {
                     if (sender.hasPermission("mf.help") || sender.hasPermission("mf.default")) {
                         HelpCommand command = new HelpCommand();
                         command.sendHelpMessage(sender, args);
+                        return true;
                     }
                     else {
                         sender.sendMessage(ChatColor.RED + "Sorry! You need the following permission to use this command: 'mf.help'");
+                        return false;
                     }
                 }
 
@@ -49,9 +52,11 @@ public class CommandSubsystem {
                     if (sender.hasPermission("mf.create")|| sender.hasPermission("mf.default")) {
                         CreateCommand command = new CreateCommand(main);
                         command.createFaction(sender, args);
+                        return true;
                     }
                     else {
                         sender.sendMessage(ChatColor.RED + "Sorry! You need the following permission to use this command: 'mf.create'");
+                        return false;
                     }
                 }
 
@@ -60,9 +65,11 @@ public class CommandSubsystem {
                     if (sender.hasPermission("mf.list") || sender.hasPermission("mf.default")) {
                         ListCommand command = new ListCommand(main);
                         command.listFactions(sender);
+                        return true;
                     }
                     else {
                         sender.sendMessage(ChatColor.RED + "Sorry! You need the following permission to use this command: 'mf.list'");
+                        return false;
                     }
                 }
 
@@ -71,9 +78,11 @@ public class CommandSubsystem {
                     if (sender.hasPermission("mf.disband") || sender.hasPermission("mf.default")) {
                         DisbandCommand command = new DisbandCommand(main);
                         command.deleteFaction(sender);
+                        return true;
                     }
                     else {
                         sender.sendMessage(ChatColor.RED + "Sorry! You need the following permission to use this command: 'mf.disband'");
+                        return false;
                     }
                 }
 
@@ -82,9 +91,11 @@ public class CommandSubsystem {
                     if (sender.hasPermission("mf.members") || sender.hasPermission("mf.default")) {
                         MembersCommand command = new MembersCommand(main);
                         command.showMembers(sender, args);
+                        return true;
                     }
                     else {
                         sender.sendMessage(ChatColor.RED + "Sorry! You need the following permission to use this command: 'mf.members'");
+                        return false;
                     }
                 }
 
@@ -93,9 +104,11 @@ public class CommandSubsystem {
                     if (sender.hasPermission("mf.info") || sender.hasPermission("mf.default")) {
                         InfoCommand command = new InfoCommand(main);
                         command.showInfo(sender, args);
+                        return true;
                     }
                     else {
                         sender.sendMessage(ChatColor.RED + "Sorry! You need the following permission to use this command: 'mf.info'");
+                        return false;
                     }
 
                 }
@@ -105,9 +118,11 @@ public class CommandSubsystem {
                     if (sender.hasPermission("mf.desc") || sender.hasPermission("mf.default")) {
                         DescCommand command = new DescCommand(main);
                         command.setDescription(sender, args);
+                        return true;
                     }
                     else {
                         sender.sendMessage(ChatColor.RED + "Sorry! You need the following permission to use this command: 'mf.desc'");
+                        return false;
                     }
 
                 }
@@ -117,9 +132,11 @@ public class CommandSubsystem {
                     if (sender.hasPermission("mf.invite") || sender.hasPermission("mf.default")) {
                         InviteCommand command = new InviteCommand(main);
                         command.invitePlayer(sender, args);
+                        return true;
                     }
                     else {
                         sender.sendMessage(ChatColor.RED + "Sorry! You need the following permission to use this command: 'mf.invite'");
+                        return false;
                     }
                 }
 
@@ -128,9 +145,11 @@ public class CommandSubsystem {
                     if (sender.hasPermission("mf.join") || sender.hasPermission("mf.default")) {
                         JoinCommand command = new JoinCommand(main);
                         command.joinFaction(sender, args);
+                        return true;
                     }
                     else {
                         sender.sendMessage(ChatColor.RED + "Sorry! You need the following permission to use this command: 'mf.join'");
+                        return false;
                     }
                 }
 
@@ -139,9 +158,11 @@ public class CommandSubsystem {
                     if (sender.hasPermission("mf.kick") || sender.hasPermission("mf.default")) {
                         KickCommand command = new KickCommand(main);
                         command.kickPlayer(sender, args);
+                        return true;
                     }
                     else {
                         sender.sendMessage(ChatColor.RED + "Sorry! You need the following permission to use this command: 'mf.kick'");
+                        return false;
                     }
                 }
 
@@ -150,9 +171,11 @@ public class CommandSubsystem {
                     if (sender.hasPermission("mf.leave") || sender.hasPermission("mf.default")) {
                         LeaveCommand command = new LeaveCommand(main);
                         command.leaveFaction(sender);
+                        return true;
                     }
                     else {
                         sender.sendMessage(ChatColor.RED + "Sorry! You need the following permission to use this command: 'mf.leave'");
+                        return false;
                     }
                 }
 
@@ -161,9 +184,11 @@ public class CommandSubsystem {
                     if (sender.hasPermission("mf.transfer") || sender.hasPermission("mf.default")) {
                         TransferCommand command = new TransferCommand(main);
                         command.transferOwnership(sender, args);
+                        return true;
                     }
                     else {
                         sender.sendMessage(ChatColor.RED + "Sorry! You need the following permission to use this command: 'mf.transfer'");
+                        return false;
                     }
                 }
 
@@ -172,9 +197,11 @@ public class CommandSubsystem {
                     if (sender.hasPermission("mf.declarewar") || sender.hasPermission("mf.default")) {
                         DeclareWarCommand command = new DeclareWarCommand(main);
                         command.declareWar(sender, args);
+                        return true;
                     }
                     else {
                         sender.sendMessage(ChatColor.RED + "Sorry! You need the following permission to use this command: 'mf.declarewar'");
+                        return false;
                     }
 
                 }
@@ -184,9 +211,11 @@ public class CommandSubsystem {
                     if (sender.hasPermission("mf.makepeace") || sender.hasPermission("mf.default")) {
                         MakePeaceCommand command = new MakePeaceCommand(main);
                         command.makePeace(sender, args);
+                        return true;
                     }
                     else {
                         sender.sendMessage(ChatColor.RED + "Sorry! You need the following permission to use this command: 'mf.makepeace'");
+                        return false;
                     }
                 }
 
@@ -201,18 +230,22 @@ public class CommandSubsystem {
                                 Faction playersFaction = getPlayersFaction(player.getUniqueId(), main.factions);
                                 if (getChunksClaimedByFaction(playersFaction.getName(), main.claimedChunks) < playersFaction.getCumulativePowerLevel()) {
                                     main.utilities.addChunkAtPlayerLocation(player);
+                                    return true;
                                 }
                                 else {
                                     player.sendMessage(ChatColor.RED + "You have reached your demesne limit! Invite more players to increase this.");
+                                    return false;
                                 }
                             }
                             else {
                                 player.sendMessage(ChatColor.RED + "You must be in a faction to use this command.");
+                                return false;
                             }
                         }
                     }
                     else {
                         sender.sendMessage(ChatColor.RED + "Sorry! You need the following permission to use this command: 'mf.claim'");
+                        return false;
                     }
                 }
 
@@ -223,20 +256,23 @@ public class CommandSubsystem {
                             Player player = (Player) sender;
                             if (isInFaction(player.getUniqueId(), main.factions)) {
                                 main.utilities.removeChunkAtPlayerLocation(player);
+                                return true;
                             }
                             else {
                                 player.sendMessage(ChatColor.RED + "You need to be in a faction to use this command.");
+                                return false;
                             }
 
                         }
                     }
                     else {
                         sender.sendMessage(ChatColor.RED + "Sorry! You need the following permission to use this command: 'mf.unclaim'");
+                        return false;
                     }
                 }
 
                 // unclaimall command
-                if (args[0].equalsIgnoreCase("unclaimall")|| args[0].equalsIgnoreCase("ua")) {
+                if (args[0].equalsIgnoreCase("unclaimall") || args[0].equalsIgnoreCase("ua")) {
                     if (sender.hasPermission("mf.unclaimall") || sender.hasPermission("mf.default")) {
                         if (sender instanceof Player) {
                             Player player = (Player) sender;
@@ -252,12 +288,16 @@ public class CommandSubsystem {
 
                                     // remove locks associated with this faction
                                     removeAllLocks(faction.getName(), main.lockedBlocks);
+                                    return true;
                                 }
                             }
+                            player.sendMessage(ChatColor.RED + "You're not in a faction!");
+                            return false;
                         }
                     }
                     else {
                         sender.sendMessage(ChatColor.RED + "Sorry! You need the following permission to use this command: 'mf.unclaimall'");
+                        return false;
                     }
                 }
 
@@ -269,14 +309,17 @@ public class CommandSubsystem {
                             String result = main.utilities.checkOwnershipAtPlayerLocation(player);
                             if (result.equalsIgnoreCase("unclaimed")) {
                                 player.sendMessage(ChatColor.GREEN + "This land is unclaimed.");
+                                return true;
                             }
                             else {
                                 player.sendMessage(ChatColor.RED + "This land is claimed by " + result + ".");
+                                return false;
                             }
                         }
                     }
                     else {
                         sender.sendMessage(ChatColor.RED + "Sorry! You need the following permission to use this command: 'mf.unclaimall'");
+                        return false;
                     }
                 }
 
@@ -293,21 +336,25 @@ public class CommandSubsystem {
                                         owner = true;
                                         faction.toggleAutoClaim();
                                         player.sendMessage(ChatColor.AQUA + "Autoclaim toggled.");
+                                        return true;
                                     }
 
                                 }
                                 if (!owner) {
                                     player.sendMessage(ChatColor.RED + "You must be the owner to use this command.");
+                                    return false;
                                 }
                             }
                             else {
                                 player.sendMessage(ChatColor.RED + "You need to be in a faction to use this command.");
+                                return false;
                             }
 
                         }
                     }
                     else {
                         sender.sendMessage(ChatColor.RED + "Sorry! You need the following permission to use this command: 'mf.autoclaim'");
+                        return false;
                     }
                 }
 
@@ -316,9 +363,11 @@ public class CommandSubsystem {
                     if (sender.hasPermission("mf.promote") || sender.hasPermission("mf.default")) {
                         PromoteCommand command = new PromoteCommand(main);
                         command.promotePlayer(sender, args);
+                        return true;
                     }
                     else {
                         sender.sendMessage(ChatColor.RED + "Sorry! You need the following permission to use this command: 'mf.promote'");
+                        return false;
                     }
                 }
 
@@ -327,9 +376,11 @@ public class CommandSubsystem {
                     if (sender.hasPermission("mf.demote")) {
                         DemoteCommand command = new DemoteCommand(main);
                         command.demotePlayer(sender, args);
+                        return true;
                     }
                     else {
                         sender.sendMessage(ChatColor.RED + "Sorry! You need the following permission to use this command: 'mf.demote'");
+                        return false;
                     }
                 }
 
@@ -338,9 +389,11 @@ public class CommandSubsystem {
                     if (sender.hasPermission("mf.power") || sender.hasPermission("mf.default")) {
                         PowerCommand command = new PowerCommand(main);
                         command.powerCheck(sender);
+                        return true;
                     }
                     else {
                         sender.sendMessage(ChatColor.RED + "Sorry! You need the following permission to use this command: 'mf.power'");
+                        return false;
                     }
 
                 }
@@ -350,9 +403,11 @@ public class CommandSubsystem {
                     if (sender.hasPermission("mf.sethome") || sender.hasPermission("mf.default")) {
                         SetHomeCommand command = new SetHomeCommand(main);
                         command.setHome(sender);
+                        return true;
                     }
                     else {
                         sender.sendMessage(ChatColor.RED + "Sorry! You need the following permission to use this command: 'mf.sethome'");
+                        return false;
                     }
                 }
 
@@ -361,9 +416,11 @@ public class CommandSubsystem {
                     if (sender.hasPermission("mf.home") || sender.hasPermission("mf.default")) {
                         HomeCommand command = new HomeCommand(main);
                         command.teleportPlayer(sender);
+                        return true;
                     }
                     else {
                         sender.sendMessage(ChatColor.RED + "Sorry! You need the following permission to use this command: 'mf.home'");
+                        return false;
                     }
                 }
 
@@ -371,9 +428,11 @@ public class CommandSubsystem {
                 if (args[0].equalsIgnoreCase("version")) {
                     if (sender.hasPermission("mf.version") || sender.hasPermission("mf.default")) {
                         sender.sendMessage(ChatColor.AQUA + "Medieval-Factions-" + main.version);
+                        return true;
                     }
                     else {
                         sender.sendMessage(ChatColor.RED + "Sorry! You need the following permission to use this command: 'mf.version'");
+                        return false;
                     }
 
                 }
@@ -383,9 +442,11 @@ public class CommandSubsystem {
                     if (sender.hasPermission("mf.who") || sender.hasPermission("mf.default")) {
                         WhoCommand command = new WhoCommand(main);
                         command.sendInformation(sender, args);
+                        return true;
                     }
                     else {
                         sender.sendMessage(ChatColor.RED + "Sorry! You need the following permission to use this command: 'mf.who'");
+                        return false;
                     }
 
                 }
@@ -395,9 +456,11 @@ public class CommandSubsystem {
                     if (sender.hasPermission("mf.ally") || sender.hasPermission("mf.default")) {
                         AllyCommand command = new AllyCommand(main);
                         command.requestAlliance(sender, args);
+                        return true;
                     }
                     else {
                         sender.sendMessage(ChatColor.RED + "Sorry! You need the following permission to use this command: 'mf.ally'");
+                        return false;
                     }
 
                 }
@@ -407,9 +470,11 @@ public class CommandSubsystem {
                     if (sender.hasPermission("mf.breakalliance") || sender.hasPermission("mf.default")) {
                         BreakAllianceCommand command = new BreakAllianceCommand(main);
                         command.breakAlliance(sender, args);
+                        return true;
                     }
                     else {
                         sender.sendMessage(ChatColor.RED + "Sorry! You need the following permission to use this command: 'mf.breakalliance'");
+                        return false;
                     }
                 }
 
@@ -419,66 +484,77 @@ public class CommandSubsystem {
                 if (args[0].equalsIgnoreCase("rename")) {
                     RenameCommand command = new RenameCommand(main);
                     command.renameFaction(sender, args);
+                    return true;
                 }
 
                 // lock command
                 if (args[0].equalsIgnoreCase("lock")) {
                     LockCommand command = new LockCommand(main);
                     command.lockBlock(sender, args);
+                    return true;
                 }
 
                 // unlock command
                 if (args[0].equalsIgnoreCase("unlock")) {
                     UnlockCommand command = new UnlockCommand(main);
                     command.unlockBlock(sender, args);
+                    return true;
                 }
 
                 // grantaccess command
                 if (args[0].equalsIgnoreCase("grantaccess")|| args[0].equalsIgnoreCase("ga")) {
                     GrantAccessCommand command = new GrantAccessCommand(main);
                     command.grantAccess(sender, args);
+                    return true;
                 }
 
                 // checkaccess command
                 if (args[0].equalsIgnoreCase("checkaccess")|| args[0].equalsIgnoreCase("ca")) {
                     CheckAccessCommand command = new CheckAccessCommand(main);
                     command.checkAccess(sender, args);
+                    return true;
                 }
 
                 // revokeaccess command
                 if (args[0].equalsIgnoreCase("revokeaccess")|| args[0].equalsIgnoreCase("ra")) {
                     RevokeAccessCommand command = new RevokeAccessCommand(main);
                     command.revokeAccess(sender, args);
+                    return true;
                 }
 
                 // laws command
                 if (args[0].equalsIgnoreCase("laws")) {
                     LawsCommand command = new LawsCommand(main);
                     command.showLawsToPlayer(sender, args);
+                    return true;
                 }
 
                 // addlaw command
                 if (args[0].equalsIgnoreCase("addlaw")|| args[0].equalsIgnoreCase("al")) {
                     AddLawCommand command = new AddLawCommand(main);
                     command.addLaw(sender, args);
+                    return true;
                 }
 
                 // removelaw command
                 if (args[0].equalsIgnoreCase("removelaw")|| args[0].equalsIgnoreCase("rl")) {
                     RemoveLawCommand command = new RemoveLawCommand(main);
                     command.removeLaw(sender, args);
+                    return true;
                 }
 
                 // editlaw command
                 if (args[0].equalsIgnoreCase("editlaw") || args[0].equalsIgnoreCase("el")) {
                     EditLawCommand command = new EditLawCommand(main);
                     command.editLaw(sender, args);
+                    return true;
                 }
 
                 // chat command
                 if (args[0].equalsIgnoreCase("chat")) {
                     ChatCommand command = new ChatCommand(main);
                     command.toggleFactionChat(sender);
+                    return true;
                 }
 
                 // admin commands ----------------------------------------------------------------------------------
@@ -488,9 +564,11 @@ public class CommandSubsystem {
                     if (sender.hasPermission("mf.forcesave") || sender.hasPermission("mf.admin")) {
                         sender.sendMessage(ChatColor.GREEN + "Medieval Factions plugin is saving...");
                         main.storage.save();
+                        return true;
                     }
                     else {
                         sender.sendMessage(ChatColor.RED + "Sorry! You need the following permission to use this command: 'mf.forcesave'");
+                        return false;
                     }
                 }
 
@@ -500,9 +578,11 @@ public class CommandSubsystem {
                         sender.sendMessage(ChatColor.GREEN + "Medieval Factions plugin is loading...");
                         main.storage.load();
                         main.reloadConfig();
+                        return true;
                     }
                     else {
                         sender.sendMessage(ChatColor.RED + "Sorry! You need the following permission to use this command: 'mf.forceload'");
+                        return false;
                     }
                 }
 
@@ -511,9 +591,11 @@ public class CommandSubsystem {
                     if (sender.hasPermission("mf.resetpowerlevels") || sender.hasPermission("mf.admin")) {
                         sender.sendMessage(ChatColor.GREEN + "Power level resetting...");
                         main.utilities.resetPowerRecords();
+                        return true;
                     }
                     else {
                         sender.sendMessage(ChatColor.RED + "Sorry! You need the following permission to use this command: 'mf.resetpowerlevels'");
+                        return false;
                     }
                 }
 
@@ -521,11 +603,13 @@ public class CommandSubsystem {
                 if (args[0].equalsIgnoreCase("bypass")) {
                     BypassCommand command = new BypassCommand(main);
                     command.toggleBypass(sender);
+                    return true;
                 }
 
             }
+            sender.sendMessage(ChatColor.RED + "Medieval Factions doesn't recognize that command!");
         }
-        return true;
+        return false;
     }
 
 }
