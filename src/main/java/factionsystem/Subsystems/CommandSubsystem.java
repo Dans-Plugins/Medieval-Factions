@@ -524,6 +524,7 @@ public class CommandSubsystem {
                 }
 
             }
+            sender.sendMessage(ChatColor.RED + "Medieval Factions doesn't recognize that command!");
         }
         return true;
     }
