@@ -19,17 +19,13 @@ public class CommandSubsystem {
 
     public boolean interpretCommand(CommandSender sender, String label, String[] args) {
         // mf commands
-        if (label.equalsIgnoreCase("mf")) {
+        if (label.equalsIgnoreCase("mf") || label.equalsIgnoreCase("medievalfactions")) {
 
             // no arguments check
             if (args.length == 0) {
-                if (sender.hasPermission("mf.help") || sender.hasPermission("mf.default")) {
-                    HelpCommand command = new HelpCommand();
-                    command.sendHelpMessage(sender, args);
-                }
-                else {
-                    sender.sendMessage(ChatColor.RED + "Sorry! You need the following permission to use this command: 'mf.help'");
-                }
+                // send plugin information
+                sender.sendMessage(ChatColor.AQUA + " == Medieval Factions " + main.version + " == ");
+                sender.sendMessage(ChatColor.AQUA + "Developers: DanTheTechMan, Pasarus");
             }
 
             // argument check
