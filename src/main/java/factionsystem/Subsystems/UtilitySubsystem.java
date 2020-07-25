@@ -207,14 +207,16 @@ public class UtilitySubsystem {
     }
 
     public boolean isChest(Block block) {
-        if (block.getType() == Material.CHEST) {
-            return true;
-        }
-        return false;
+        return block.getType() == Material.CHEST;
     }
 
     public boolean hasPowerRecord(UUID playerUUID) {
-        return main.playerPowerRecords.contains(playerUUID);
+        for (PlayerPowerRecord record : main.playerPowerRecords){
+            if (record.getPlayerUUID().equals(playerUUID)){
+                return true;
+            }
+        }
+        return false;
     }
 
     public void schedulePowerIncrease() {
