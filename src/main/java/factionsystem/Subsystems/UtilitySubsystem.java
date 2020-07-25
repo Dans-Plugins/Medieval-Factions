@@ -646,4 +646,35 @@ public class UtilitySubsystem {
         return null;
     }
 
+    public void handleVersionMismatch() {
+
+        if (!main.getConfig().getString("version").equalsIgnoreCase(main.version)) {
+
+            // save old config as config.yml.old
+            File saveFile = new File("./plugins/MedievalFactions/config.yml");
+            if (saveFile.exists()) {
+                System.out.println("[ALERT] Verson mismatch! Saving old config as config.yml.old and loading in the default values.");
+
+                // rename directory
+                File newSaveFile = new File("./plugins/MedievalFactions/config.yml.old");
+                saveFile.renameTo(newSaveFile);
+
+                // save defaults
+                saveConfigDefaults();
+            }
+
+        }
+
+    }
+
+    public void saveConfigDefaults() {
+        main.getConfig().addDefault("version", main.version);
+        main.getConfig().addDefault("maxPowerLevel", 20);
+        main.getConfig().addDefault("initialPowerLevel", 5);
+        main.getConfig().addDefault("hourlyPowerIncreaseAmount", 2);
+        main.getConfig().addDefault("mobsSpawnInFactionTerritory", false);
+        main.getConfig().addDefault("laddersPlaceableInEnemyFactionTerritory", true);
+        main.getConfig().options().copyDefaults(true);
+        main.saveConfig();
+    }
 }

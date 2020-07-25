@@ -65,15 +65,10 @@ public class Main extends JavaPlugin implements Listener {
 
         // config creation/loading
         if (!(new File("./plugins/MedievalFactions/config.yml").exists())) {
-            getConfig().addDefault("maxPowerLevel", 20);
-            getConfig().addDefault("initialPowerLevel", 5);
-            getConfig().addDefault("hourlyPowerIncreaseAmount", 2);
-            getConfig().addDefault("mobsSpawnInFactionTerritory", false);
-            getConfig().addDefault("laddersPlaceableInEnemyFactionTerritory", true);
-            getConfig().options().copyDefaults(true);
-            saveConfig();
+            utilities.saveConfigDefaults();
         }
         else {
+            utilities.handleVersionMismatch();
             reloadConfig();
         }
 
