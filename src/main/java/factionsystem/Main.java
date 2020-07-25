@@ -69,6 +69,7 @@ public class Main extends JavaPlugin implements Listener {
             getConfig().addDefault("initialPowerLevel", 5);
             getConfig().addDefault("hourlyPowerIncreaseAmount", 2);
             getConfig().addDefault("mobsSpawnInFactionTerritory", false);
+            getConfig().addDefault("laddersPlaceableInEnemyFactionTerritory", true);
             getConfig().options().copyDefaults(true);
             saveConfig();
         }

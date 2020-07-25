@@ -11,6 +11,7 @@ import org.bukkit.event.block.BlockPlaceEvent;
 
 import static factionsystem.Subsystems.UtilitySubsystem.getClaimedChunk;
 import static factionsystem.Subsystems.UtilitySubsystem.isInFaction;
+import static org.bukkit.Material.LADDER;
 
 public class BlockPlaceEventHandler {
     Main main = null;
@@ -40,6 +41,14 @@ public class BlockPlaceEventHandler {
 
                     // if player's faction is not the same as the holder of the chunk
                     if (!(faction.getName().equalsIgnoreCase(chunk.getHolder())) && !main.adminsBypassingProtections.contains(event.getPlayer().getUniqueId())) {
+
+                        if (main.getConfig().getBoolean("laddersPlaceableInEnemyFactionTerritory")) {
+                            // if trying to place ladder on enemy territory
+                            if (event.getBlockPlaced().getType() == LADDER && faction.isEnemy(chunk.getHolder())) {
+                                return;
+                            }
+                        }
+
                         event.setCancelled(true);
                         return;
                     }

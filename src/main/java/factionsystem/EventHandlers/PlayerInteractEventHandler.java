@@ -16,6 +16,7 @@ import org.bukkit.inventory.InventoryHolder;
 import java.util.UUID;
 
 import static factionsystem.Subsystems.UtilitySubsystem.*;
+import static org.bukkit.Material.LADDER;
 
 public class PlayerInteractEventHandler {
 
@@ -249,18 +250,14 @@ public class PlayerInteractEventHandler {
                 if (!(faction.getName().equalsIgnoreCase(chunk.getHolder())) && !main.adminsBypassingProtections.contains(event.getPlayer().getUniqueId())) {
 
                     if (main.getConfig().getBoolean("laddersPlaceableInEnemyFactionTerritory")) {
-                        // if player's faction is an enemy of the holder of the chunk
-                        if (faction.isEnemy(getPlayersFaction(event.getPlayer().getUniqueId(), main.factions).getName())) {
-
-                            // if player is trying to place a ladder
-                            if (event.getPlayer().getInventory().getItemInMainHand().getType() == Material.LADDER) {
-
-                                // return, no cancellation
-                                return;
-
-                            }
+                        System.out.println("ladders are placeable!");
+                        // if trying to place ladder on enemy territory
+                        if (event.getMaterial() == LADDER && faction.isEnemy(chunk.getHolder())) {
+                            System.out.println("player trying to place ladder!");
+                            return;
                         }
                     }
+                    System.out.println("cancelled!");
                     event.setCancelled(true);
                     return;
                 }
