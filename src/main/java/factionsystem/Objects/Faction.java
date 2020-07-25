@@ -3,6 +3,7 @@ package factionsystem.Objects;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.reflect.TypeToken;
+import factionsystem.Main;
 import org.bukkit.Location;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.World;
@@ -15,6 +16,7 @@ import java.lang.reflect.Type;
 import java.util.*;
 
 import static factionsystem.Subsystems.UtilitySubsystem.findUUIDBasedOnPlayerName;
+import static factionsystem.Subsystems.UtilitySubsystem.getPlayersPowerRecord;
 import static org.bukkit.Bukkit.getServer;
 
 public class Faction {
@@ -37,24 +39,28 @@ public class Faction {
     private ArrayList<String> attemptedTruces = new ArrayList<>();
     private ArrayList<String> attemptedAlliances = new ArrayList<>();
     private boolean autoclaim = false;
+    private Main main;
 
 
     // player constructor
-    public Faction(String initialName, UUID creator, int max) {
+    public Faction(String initialName, UUID creator, int max, Main main) {
         setName(initialName);
         setOwner(creator);
         maxPower = max;
+        this.main = main;
     }
 
     // server constructor
-    public Faction(String initialName, int max) {
+    public Faction(String initialName, int max, Main main) {
         setName(initialName);
         maxPower = max;
+        this.main = main;
     }
 
     // Must recieve json data
-    public Faction(Map<String, String> data) {
+    public Faction(Map<String, String> data, Main main) {
         this.load(data);
+        this.main = main;
     }
 
     public void addLaw(String newLaw) {
@@ -156,42 +162,12 @@ public class Faction {
         return factionHome;
     }
 
-    public void setCumulativePowerLevel(int newPowerLevel) {
-        cumulativePowerLevel = newPowerLevel;
-    }
-
     public int getCumulativePowerLevel() {
-        return cumulativePowerLevel;
-    }
-
-    public void addPower() {
-        if (cumulativePowerLevel < members.size() * maxPower) {
-            cumulativePowerLevel++;
+        int powerLevel = 0;
+        for (UUID playerUUID : members){
+            powerLevel += getPlayersPowerRecord(playerUUID, main.playerPowerRecords).getPowerLevel();
         }
-    }
-
-    public void addPower(int powerToAdd) {
-        if ((cumulativePowerLevel + powerToAdd) < members.size() * maxPower) {
-            cumulativePowerLevel = cumulativePowerLevel + powerToAdd;
-        }
-        else {
-            cumulativePowerLevel = members.size() * maxPower;
-        }
-    }
-
-    public void subtractPower() {
-        if (cumulativePowerLevel > 0) {
-            cumulativePowerLevel--;
-        }
-    }
-
-    public void subtractPower(int powerToSubtract) {
-        if ((cumulativePowerLevel - powerToSubtract) > 0) {
-            cumulativePowerLevel = cumulativePowerLevel - powerToSubtract;
-        }
-        else {
-            subtractPower();
-        }
+        return powerLevel;
     }
 
     public void addOfficer(UUID newOfficer) {
@@ -402,7 +378,8 @@ public class Faction {
             }
 
             if (loadReader.hasNextLine()) {
-                setCumulativePowerLevel(Integer.parseInt(loadReader.nextLine()));
+                // Read legacy line and move along across Cumulative Power Record.
+                loadReader.nextLine();
             }
 
             while (loadReader.hasNextLine()) {

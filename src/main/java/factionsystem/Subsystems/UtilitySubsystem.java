@@ -235,9 +235,6 @@ public class UtilitySubsystem {
                         if (powerRecord.getPowerLevel() < maxPower) {
                             if (getServer().getPlayer(powerRecord.getPlayerUUID()).isOnline()) {
                                 powerRecord.increasePower();
-                                if (isInFaction(powerRecord.getPlayerUUID(), main.factions)) {
-                                    getPlayersFaction(powerRecord.getPlayerUUID(), main.factions).addPower(main.getConfig().getInt("hourlyPowerIncreaseAmount"));
-                                }
                                 getServer().getPlayer(powerRecord.getPlayerUUID()).sendMessage(ChatColor.GREEN + "You feel stronger. Your power has increased.");
                             }
                         }
@@ -268,17 +265,6 @@ public class UtilitySubsystem {
         for (PlayerPowerRecord record : main.playerPowerRecords) {
             record.setPowerLevel(main.getConfig().getInt("initialPowerLevel"));
         }
-
-        // reset faction cumulative power levels
-        System.out.println("Resetting faction cumulative power records.");
-        for (Faction faction : main.factions) {
-            int sum = 0;
-            for (UUID playerUUID : faction.getMemberArrayList()) {
-                sum = sum + getPlayersPowerRecord(playerUUID, main.playerPowerRecords).getPowerLevel();
-            }
-            faction.setCumulativePowerLevel(sum);
-        }
-
     }
 
     public boolean isBlockLocked(Block block) {

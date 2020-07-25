@@ -139,7 +139,7 @@ public class StorageSubsystem {
         ArrayList<HashMap<String, String>> data = loadDataFromFilename(FILE_PATH + FACTIONS_FILE_NAME);
 
         for (Map<String, String> factionData : data){
-            Faction newFaction = new Faction(factionData);
+            Faction newFaction = new Faction(factionData, main);
             main.factions.add(newFaction);
         }
     }
@@ -161,7 +161,7 @@ public class StorageSubsystem {
         ArrayList<HashMap<String, String>> data = loadDataFromFilename(FILE_PATH + PLAYERPOWER_FILE_NAME);
 
         for (Map<String, String> powerRecord : data){
-            PlayerPowerRecord player = new PlayerPowerRecord(powerRecord);
+            PlayerPowerRecord player = new PlayerPowerRecord(powerRecord, main);
             main.playerPowerRecords.add(player);
         }
     }
@@ -197,7 +197,7 @@ public class StorageSubsystem {
             // actual loading
             while (loadReader.hasNextLine()) {
                 String nextName = loadReader.nextLine();
-                Faction temp = new Faction(nextName, main.getConfig().getInt("maxPowerLevel")); // uses server constructor, only temporary
+                Faction temp = new Faction(nextName, main.getConfig().getInt("maxPowerLevel"), main); // uses server constructor, only temporary
                 temp.legacyLoad(nextName + ".txt"); // provides owner field among other things
 
                 // existence check

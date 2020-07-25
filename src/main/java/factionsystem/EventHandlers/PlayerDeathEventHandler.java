@@ -3,6 +3,7 @@ package factionsystem.EventHandlers;
 import factionsystem.Main;
 import factionsystem.Objects.ClaimedChunk;
 import factionsystem.Objects.PlayerPowerRecord;
+import factionsystem.Subsystems.UtilitySubsystem;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 import org.bukkit.event.entity.PlayerDeathEvent;
@@ -18,11 +19,8 @@ public class PlayerDeathEventHandler {
     }
 
     public void handle(PlayerDeathEvent event) {
-
-        int maxPower = main.getConfig().getInt("maxPowerLevel");
-
         event.getEntity();
-        Player player = (Player) event.getEntity();
+        Player player = event.getEntity();
 
         // decrease dying player's power
         for (PlayerPowerRecord record : main.playerPowerRecords) {
@@ -34,47 +32,14 @@ public class PlayerDeathEventHandler {
             }
         }
 
-        // decrease power from player's faction
-        if (isInFaction(player.getUniqueId(), main.factions)) {
-            if (getPlayersPowerRecord(player.getUniqueId(), main.playerPowerRecords).getPowerLevel() > 0) {
-                int powerToSubtract = 0;
-                if (getPlayersPowerRecord(player.getUniqueId(), main.playerPowerRecords).getPowerLevel() * 0.90 >= 10) {
-                    powerToSubtract = (int) (getPlayersPowerRecord(player.getUniqueId(), main.playerPowerRecords).getPowerLevel() * 0.10);
-                }
-                else {
-                    powerToSubtract = 1;
-                }
-                getPlayersFaction(player.getUniqueId(), main.factions).subtractPower(powerToSubtract);
-                System.out.println("Subtracted " + powerToSubtract + " power from " + getPlayersFaction(player.getUniqueId(), main.factions).getName());
-            }
-        }
-
         // if player's cause of death was another player killing them
-        if (player.getKiller() instanceof Player) {
-            Player killer = (Player) player.getKiller();
-            System.out.println(player.getName() + " has killed " + killer.getName());
+        if (player.getKiller() != null) {
+            Player killer = player.getKiller();
 
-            for (PlayerPowerRecord record : main.playerPowerRecords) {
-                if (record.getPlayerUUID().equals(killer.getUniqueId())) {
-                    record.increasePowerByTenPercent();
-                    if (getPlayersPowerRecord(killer.getUniqueId(), main.playerPowerRecords).getPowerLevel() < maxPower) {
-                        killer.sendMessage(ChatColor.GREEN + "Your power level has increased!");
-                    }
-                }
-            }
-
-            // add power to killer's faction
-            if (isInFaction(killer.getUniqueId(), main.factions)) {
-                if (getPlayersPowerRecord(killer.getUniqueId(), main.playerPowerRecords).getPowerLevel() < maxPower) {
-                    int powerToAdd = 0;
-                    if (getPlayersPowerRecord(player.getUniqueId(), main.playerPowerRecords).getPowerLevel() * 1.10 <= maxPower) {
-                        powerToAdd = (int) (getPlayersPowerRecord(player.getUniqueId(), main.playerPowerRecords).getPowerLevel() * 0.10);
-                    }
-                    else {
-                        powerToAdd = 1;
-                    }
-                    getPlayersFaction(killer.getUniqueId(), main.factions).addPower(powerToAdd);
-                    System.out.println("Added " + powerToAdd + " power to " + getPlayersFaction(player.getUniqueId(), main.factions).getName());
+            PlayerPowerRecord record = UtilitySubsystem.getPlayersPowerRecord(killer.getUniqueId(), main.playerPowerRecords);
+            if (record != null) {
+                if (record.increasePowerByTenPercent()){
+                    killer.sendMessage(ChatColor.GREEN + "Your power level has increased!");
                 }
             }
         }
