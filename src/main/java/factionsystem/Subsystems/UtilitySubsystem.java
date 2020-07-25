@@ -264,7 +264,7 @@ public class UtilitySubsystem {
         // reset individual records
         System.out.println("Resetting individual power records.");
         for (PlayerPowerRecord record : main.playerPowerRecords) {
-            record.setPowerLevel(10);
+            record.setPowerLevel(main.getConfig().getInt("initialPowerLevel"));
         }
 
         // reset faction cumulative power levels
