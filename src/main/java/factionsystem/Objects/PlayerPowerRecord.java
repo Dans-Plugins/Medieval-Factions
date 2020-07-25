@@ -35,9 +35,9 @@ public class PlayerPowerRecord {
         maxPower = max;
     }
 
-    public PlayerPowerRecord(Map<String, String> data) {
+    public PlayerPowerRecord(Map<String, String> data, Main main) {
         this.load(data);
-
+        maxPower = main.getConfig().getInt("maxPowerLevel");
     }
 
     public void setPlayerName(UUID UUID) {
@@ -112,9 +112,25 @@ public class PlayerPowerRecord {
         }
     }
 
-    public void increasePowerByTenPercent() {
+    /**
+     * @return True if powerlevel changed else false
+     */
+    public boolean increasePowerByTenPercent() {
+        System.out.println("Original Power:" + powerLevel);
+        int originalLevel = powerLevel;
         int newLevel = (int) (powerLevel * 1.10);
+
+        // If not 10 percent, then add 1!
+        if (originalLevel == newLevel){
+            newLevel++;
+        }
+
         powerLevel = Math.min(newLevel, maxPower);
+        System.out.println("End power level:" + powerLevel);
+        if (powerLevel == 0){
+            powerLevel = 1;
+        }
+        return powerLevel != originalLevel;
     }
 
     public void decreasePowerByTenPercent() {

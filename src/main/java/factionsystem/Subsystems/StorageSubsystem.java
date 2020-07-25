@@ -161,7 +161,7 @@ public class StorageSubsystem {
         ArrayList<HashMap<String, String>> data = loadDataFromFilename(FILE_PATH + PLAYERPOWER_FILE_NAME);
 
         for (Map<String, String> powerRecord : data){
-            PlayerPowerRecord player = new PlayerPowerRecord(powerRecord);
+            PlayerPowerRecord player = new PlayerPowerRecord(powerRecord, main);
             main.playerPowerRecords.add(player);
         }
     }

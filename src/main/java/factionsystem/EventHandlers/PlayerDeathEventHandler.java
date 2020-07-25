@@ -3,6 +3,7 @@ package factionsystem.EventHandlers;
 import factionsystem.Main;
 import factionsystem.Objects.ClaimedChunk;
 import factionsystem.Objects.PlayerPowerRecord;
+import factionsystem.Subsystems.UtilitySubsystem;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 import org.bukkit.event.entity.PlayerDeathEvent;
@@ -18,11 +19,8 @@ public class PlayerDeathEventHandler {
     }
 
     public void handle(PlayerDeathEvent event) {
-
-        int maxPower = main.getConfig().getInt("maxPowerLevel");
-
         event.getEntity();
-        Player player = (Player) event.getEntity();
+        Player player = event.getEntity();
 
         // decrease dying player's power
         for (PlayerPowerRecord record : main.playerPowerRecords) {
@@ -35,16 +33,13 @@ public class PlayerDeathEventHandler {
         }
 
         // if player's cause of death was another player killing them
-        if (player.getKiller() instanceof Player) {
-            Player killer = (Player) player.getKiller();
-            System.out.println(player.getName() + " has killed " + killer.getName());
+        if (player.getKiller() != null) {
+            Player killer = player.getKiller();
 
-            for (PlayerPowerRecord record : main.playerPowerRecords) {
-                if (record.getPlayerUUID().equals(killer.getUniqueId())) {
-                    record.increasePowerByTenPercent();
-                    if (getPlayersPowerRecord(killer.getUniqueId(), main.playerPowerRecords).getPowerLevel() < maxPower) {
-                        killer.sendMessage(ChatColor.GREEN + "Your power level has increased!");
-                    }
+            PlayerPowerRecord record = UtilitySubsystem.getPlayersPowerRecord(killer.getUniqueId(), main.playerPowerRecords);
+            if (record != null) {
+                if (record.increasePowerByTenPercent()){
+                    killer.sendMessage(ChatColor.GREEN + "Your power level has increased!");
                 }
             }
         }
