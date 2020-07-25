@@ -35,14 +35,13 @@ public class PlayerMoveEventHandler {
                         // if not at demesne limit
                         Faction playersFaction = getPlayersFaction(event.getPlayer().getUniqueId(), main.factions);
                         if (getChunksClaimedByFaction(playersFaction.getName(), main.claimedChunks) < playersFaction.getCumulativePowerLevel()) {
-                            int seconds = 1;
                             getServer().getScheduler().runTaskLater(main, new Runnable() {
                                 @Override
                                 public void run() {
                                     // add new chunk to claimed chunks
                                     main.utilities.addChunkAtPlayerLocation(event.getPlayer());
                                 }
-                            }, seconds * 20);
+                            }, 1); // delayed by 1 tick (1/20th of a second) because otherwise players will claim the chunk they just left
                         }
                         else {
                             event.getPlayer().sendMessage(ChatColor.RED + "You have reached your demesne limit! Invite more players to increase this.");
