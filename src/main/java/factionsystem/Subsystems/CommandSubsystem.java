@@ -19,7 +19,8 @@ public class CommandSubsystem {
 
     public boolean interpretCommand(CommandSender sender, String label, String[] args) {
         // mf commands
-        if (label.equalsIgnoreCase("mf") || label.equalsIgnoreCase("medievalfactions")) {
+        if (label.equalsIgnoreCase("mf") || label.equalsIgnoreCase("f") ||
+                label.equalsIgnoreCase("medievalfactions") || label.equalsIgnoreCase("factions")) {
 
             // no arguments check
             if (args.length == 0) {
