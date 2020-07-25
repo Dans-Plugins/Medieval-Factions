@@ -6,12 +6,10 @@
         <sourceOutputDir name="target/generated-sources/annotations" />
         <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
         <outputRelativeToContentRoot value="true" />
-        <module name="Medieval-Factions" />
         <module name="Medieval-Factions-Working" />
       </profile>
     </annotationProcessing>
     <bytecodeTargetLevel>
-      <module name="Medieval-Factions" target="1.8" />
       <module name="Medieval-Factions-Working" target="1.8" />
     </bytecodeTargetLevel>
   </component>
