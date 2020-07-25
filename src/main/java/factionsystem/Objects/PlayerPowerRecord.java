@@ -2,6 +2,7 @@ package factionsystem.Objects;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import factionsystem.Main;
 import org.bukkit.OfflinePlayer;
 
 import java.io.File;
@@ -36,6 +37,7 @@ public class PlayerPowerRecord {
 
     public PlayerPowerRecord(Map<String, String> data) {
         this.load(data);
+
     }
 
     public void setPlayerName(UUID UUID) {
@@ -111,20 +113,16 @@ public class PlayerPowerRecord {
     }
 
     public void increasePowerByTenPercent() {
-        if (powerLevel + (powerLevel * 0.10) < maxPower) {
-            powerLevel = (int) (powerLevel + (powerLevel * 0.10));
-        }
-        else {
-            powerLevel = maxPower;
-        }
+        int newLevel = (int) (powerLevel * 1.10);
+        powerLevel = Math.min(newLevel, maxPower);
     }
 
     public void decreasePowerByTenPercent() {
-        if (powerLevel - (powerLevel * 0.10) > 0) {
-            powerLevel = (int) (powerLevel - (powerLevel * 0.10));
-        }
-        else {
-            decreasePower();
+        int newLevel = (int) (powerLevel * 0.90);
+        if (powerLevel > 0){
+            powerLevel = newLevel;
+        } else {
+            powerLevel = 0;
         }
     }
 }

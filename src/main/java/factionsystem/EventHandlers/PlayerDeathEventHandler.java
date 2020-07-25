@@ -34,21 +34,6 @@ public class PlayerDeathEventHandler {
             }
         }
 
-        // decrease power from player's faction
-        if (isInFaction(player.getUniqueId(), main.factions)) {
-            if (getPlayersPowerRecord(player.getUniqueId(), main.playerPowerRecords).getPowerLevel() > 0) {
-                int powerToSubtract = 0;
-                if (getPlayersPowerRecord(player.getUniqueId(), main.playerPowerRecords).getPowerLevel() * 0.90 >= 10) {
-                    powerToSubtract = (int) (getPlayersPowerRecord(player.getUniqueId(), main.playerPowerRecords).getPowerLevel() * 0.10);
-                }
-                else {
-                    powerToSubtract = 1;
-                }
-                getPlayersFaction(player.getUniqueId(), main.factions).subtractPower(powerToSubtract);
-                System.out.println("Subtracted " + powerToSubtract + " power from " + getPlayersFaction(player.getUniqueId(), main.factions).getName());
-            }
-        }
-
         // if player's cause of death was another player killing them
         if (player.getKiller() instanceof Player) {
             Player killer = (Player) player.getKiller();
@@ -60,21 +45,6 @@ public class PlayerDeathEventHandler {
                     if (getPlayersPowerRecord(killer.getUniqueId(), main.playerPowerRecords).getPowerLevel() < maxPower) {
                         killer.sendMessage(ChatColor.GREEN + "Your power level has increased!");
                     }
-                }
-            }
-
-            // add power to killer's faction
-            if (isInFaction(killer.getUniqueId(), main.factions)) {
-                if (getPlayersPowerRecord(killer.getUniqueId(), main.playerPowerRecords).getPowerLevel() < maxPower) {
-                    int powerToAdd = 0;
-                    if (getPlayersPowerRecord(player.getUniqueId(), main.playerPowerRecords).getPowerLevel() * 1.10 <= maxPower) {
-                        powerToAdd = (int) (getPlayersPowerRecord(player.getUniqueId(), main.playerPowerRecords).getPowerLevel() * 0.10);
-                    }
-                    else {
-                        powerToAdd = 1;
-                    }
-                    getPlayersFaction(killer.getUniqueId(), main.factions).addPower(powerToAdd);
-                    System.out.println("Added " + powerToAdd + " power to " + getPlayersFaction(player.getUniqueId(), main.factions).getName());
                 }
             }
         }
