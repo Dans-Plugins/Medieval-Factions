@@ -250,12 +250,14 @@ public class PlayerInteractEventHandler {
                 if (!(faction.getName().equalsIgnoreCase(chunk.getHolder())) && !main.adminsBypassingProtections.contains(event.getPlayer().getUniqueId())) {
 
                     if (main.getConfig().getBoolean("laddersPlaceableInEnemyFactionTerritory")) {
+                        System.out.println("ladders are placeable!");
                         // if trying to place ladder on enemy territory
                         if (event.getMaterial() == LADDER && faction.isEnemy(chunk.getHolder())) {
+                            System.out.println("player trying to place ladder!");
                             return;
                         }
                     }
-
+                    System.out.println("cancelled!");
                     event.setCancelled(true);
                     return;
                 }
