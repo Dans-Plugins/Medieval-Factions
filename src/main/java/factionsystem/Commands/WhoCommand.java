@@ -23,7 +23,7 @@ public class WhoCommand {
                 String name = createStringFromFirstArgOnwards(args);
                 Faction faction = getPlayersFaction(findUUIDBasedOnPlayerName(name), main.factions);
                 if (faction != null) {
-                    sendFactionInfo(player, faction, faction.getCumulativePowerLevel());
+                    sendFactionInfo(player, faction, getChunksClaimedByFaction(faction.getName(), main.claimedChunks));
                 }
                 else {
                     player.sendMessage(ChatColor.RED + "That player isn't in a faction.");
