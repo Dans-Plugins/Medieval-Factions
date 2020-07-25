@@ -1,6 +1,7 @@
 package factionsystem.Commands;
 
 import factionsystem.Main;
+import factionsystem.Objects.Faction;
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
@@ -31,6 +32,16 @@ public class LeaveCommand {
 
                                 if (main.factions.get(i).isOfficer(player.getUniqueId())) {
                                     main.factions.get(i).removeOfficer(player.getUniqueId());
+                                }
+
+                                // remove records of alliances/wars associated with this faction
+                                for (Faction faction : main.factions) {
+                                    if (faction.isAlly(main.factions.get(i).getName())) {
+                                        faction.removeAlly(main.factions.get(i).getName());
+                                    }
+                                    if (faction.isEnemy(main.factions.get(i).getName())) {
+                                        faction.removeEnemy(main.factions.get(i).getName());
+                                    }
                                 }
 
                                 main.playersInFactionChat.remove(player.getUniqueId());
