@@ -255,7 +255,6 @@ public class PlayerInteractEventHandler {
                             return;
                         }
                     }
-                    System.out.println("cancelled!");
                     event.setCancelled(true);
                     return;
                 }
