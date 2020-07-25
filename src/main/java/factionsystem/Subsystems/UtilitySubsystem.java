@@ -530,6 +530,12 @@ public class UtilitySubsystem {
             File newSaveFolder = new File("./plugins/MedievalFactions/");
             saveFolder.renameTo(newSaveFolder);
         }
+
+        // this piece of code is to fix config values not matching when updating to v3.3 (after v3.3 there is version mismatch handling)
+        if (main.getConfig().getString("version") == null) {
+            System.out.println("Config.yml doesn't have version entry! Loading defaults!");
+            renameConfigToConfigDotOldAndSaveDefaults();
+        }
     }
 
     public boolean arePlayersFactionsNotEnemies(Player player1, Player player2) {
@@ -646,4 +652,38 @@ public class UtilitySubsystem {
         return null;
     }
 
+    public void handleVersionMismatch() {
+
+        if (!main.getConfig().getString("version").equalsIgnoreCase(main.version)) {
+            System.out.println("[ALERT] Verson mismatch! Saving old config as config.yml.old and loading in the default values.");
+            renameConfigToConfigDotOldAndSaveDefaults();
+        }
+
+    }
+
+    public void renameConfigToConfigDotOldAndSaveDefaults() {
+        // save old config as config.yml.old
+        File saveFile = new File("./plugins/MedievalFactions/config.yml");
+        if (saveFile.exists()) {
+
+            // rename file
+            File newSaveFile = new File("./plugins/MedievalFactions/config.yml.old");
+            saveFile.renameTo(newSaveFile);
+
+            // save defaults
+            saveConfigDefaults();
+
+        }
+    }
+
+    public void saveConfigDefaults() {
+        main.getConfig().addDefault("version", main.version);
+        main.getConfig().addDefault("maxPowerLevel", 20);
+        main.getConfig().addDefault("initialPowerLevel", 5);
+        main.getConfig().addDefault("hourlyPowerIncreaseAmount", 2);
+        main.getConfig().addDefault("mobsSpawnInFactionTerritory", false);
+        main.getConfig().addDefault("laddersPlaceableInEnemyFactionTerritory", true);
+        main.getConfig().options().copyDefaults(true);
+        main.saveConfig();
+    }
 }
