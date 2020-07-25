@@ -6,4 +6,6 @@ api-version: 1.13
 
 commands:
   mf:
+  f:
   medievalfactions:
+  factions:
