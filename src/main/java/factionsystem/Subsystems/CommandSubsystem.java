@@ -279,7 +279,7 @@ public class CommandSubsystem {
                         Player player = (Player) sender;
 
                         if (args.length > 1) {
-                            if (player.hasPermission("mf.disband.others") || player.hasPermission("mf.admin")) {
+                            if (player.hasPermission("mf.unclaimall.others") || player.hasPermission("mf.admin")) {
 
                                 String factionName = createStringFromFirstArgOnwards(args);
 
