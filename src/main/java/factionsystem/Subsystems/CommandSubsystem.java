@@ -274,9 +274,41 @@ public class CommandSubsystem {
 
                 // unclaimall command
                 if (args[0].equalsIgnoreCase("unclaimall") || args[0].equalsIgnoreCase("ua")) {
-                    if (sender.hasPermission("mf.unclaimall") || sender.hasPermission("mf.default")) {
-                        if (sender instanceof Player) {
-                            Player player = (Player) sender;
+                    if (sender instanceof Player) {
+
+                        Player player = (Player) sender;
+
+                        if (args.length > 1) {
+                            if (player.hasPermission("mf.unclaimall.others") || player.hasPermission("mf.admin")) {
+
+                                String factionName = createStringFromFirstArgOnwards(args);
+
+                                Faction faction = getFaction(factionName, main.factions);
+
+                                if (faction != null) {
+                                    // remove faction home
+                                    faction.setFactionHome(null);
+                                    sendAllPlayersInFactionMessage(faction, ChatColor.RED + "Your faction home has been removed!");
+
+                                    // remove claimed chunks
+                                    removeAllClaimedChunks(faction.getName(), main.claimedChunks);
+                                    player.sendMessage(ChatColor.GREEN + "All land unclaimed from " + factionName + "!");
+
+                                    // remove locks associated with this faction
+                                    removeAllLocks(faction.getName(), main.lockedBlocks);
+                                    return true;
+                                } else {
+                                    player.sendMessage(ChatColor.RED + "That faction wasn't found!");
+                                    return false;
+                                }
+                            } else {
+                                player.sendMessage(ChatColor.RED + "Sorry! In order to use this command you need the following permission: 'mf.disband.others'");
+                                return false;
+                            }
+                        }
+
+                        if (sender.hasPermission("mf.unclaimall") || sender.hasPermission("mf.default")) {
+
                             for (Faction faction : main.factions) {
                                 if (faction.isOwner(player.getUniqueId())) {
                                     // remove faction home
@@ -295,10 +327,10 @@ public class CommandSubsystem {
                             player.sendMessage(ChatColor.RED + "You're not in a faction!");
                             return false;
                         }
-                    }
-                    else {
-                        sender.sendMessage(ChatColor.RED + "Sorry! You need the following permission to use this command: 'mf.unclaimall'");
-                        return false;
+                        else {
+                            sender.sendMessage(ChatColor.RED + "Sorry! You need the following permission to use this command: 'mf.unclaimall'");
+                            return false;
+                        }
                     }
                 }
 
