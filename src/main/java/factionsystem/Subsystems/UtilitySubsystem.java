@@ -146,20 +146,6 @@ public class UtilitySubsystem {
     public void removeChunk(ClaimedChunk chunk, Player player, Faction faction) {
         String identifier = (int)chunk.getChunk().getX() + "_" + (int)chunk.getChunk().getZ();
 
-        // delete file associated with chunk
-        System.out.println("Attempting to delete file plugins plugins/MedievalFactions/claimedchunks/" + identifier + ".txt");
-        try {
-            File fileToDelete = new File("plugins/MedievalFactions/claimedchunks/" + identifier + ".txt");
-            if (fileToDelete.delete()) {
-                System.out.println("Success. File deleted.");
-            }
-            else {
-                System.out.println("There was a problem deleting the file.");
-            }
-        } catch(Exception e) {
-            System.out.println("There was a problem encountered during file deletion.");
-        }
-
         // if faction home is located on this chunk
         Location factionHome = getPlayersFaction(player.getUniqueId(), main.factions).getFactionHome();
         if (factionHome != null) {
