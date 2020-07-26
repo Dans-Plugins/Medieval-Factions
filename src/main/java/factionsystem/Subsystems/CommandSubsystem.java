@@ -78,7 +78,7 @@ public class CommandSubsystem {
                 if (args[0].equalsIgnoreCase("disband")) {
                     if (sender.hasPermission("mf.disband") || sender.hasPermission("mf.default")) {
                         DisbandCommand command = new DisbandCommand(main);
-                        command.deleteFaction(sender);
+                        command.deleteFaction(sender, args);
                         return true;
                     }
                     else {
