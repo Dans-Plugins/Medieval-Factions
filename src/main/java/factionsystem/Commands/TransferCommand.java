@@ -30,6 +30,11 @@ public class TransferCommand {
                         UUID playerUUID = findUUIDBasedOnPlayerName(args[1]);
                         if (faction.isMember(playerUUID)) {
 
+                            if (playerUUID.equals(player.getUniqueId())) {
+                                player.sendMessage(ChatColor.RED + "You can't transfer ownership of your faction to yourself!");
+                                return false;
+                            }
+
                             if (faction.isOfficer(playerUUID)) {
                                 faction.removeOfficer(playerUUID);
                             }
