@@ -302,7 +302,7 @@ public class CommandSubsystem {
                                     return false;
                                 }
                             } else {
-                                player.sendMessage(ChatColor.RED + "Sorry! In order to use this command you need the following permission: 'mf.disband.others'");
+                                player.sendMessage(ChatColor.RED + "Sorry! In order to use this command you need the following permission: 'mf.unclaimall.others'");
                                 return false;
                             }
                         }

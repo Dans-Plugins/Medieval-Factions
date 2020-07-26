@@ -249,17 +249,67 @@ public class PlayerInteractEventHandler {
                 // if player's faction is not the same as the holder of the chunk and player isn't overriding
                 if (!(faction.getName().equalsIgnoreCase(chunk.getHolder())) && !main.adminsBypassingProtections.contains(event.getPlayer().getUniqueId())) {
 
-                    if (main.getConfig().getBoolean("laddersPlaceableInEnemyFactionTerritory")) {
-                        // if trying to place ladder on enemy territory
-                        if (event.getMaterial() == LADDER && faction.isEnemy(chunk.getHolder())) {
+                    if (faction.isEnemy(chunk.getHolder())) {
+                        if (main.getConfig().getBoolean("laddersPlaceableInEnemyFactionTerritory")) {
+                            if (event.getMaterial() == LADDER) {
+                                return;
+                            }
+                        }
+
+                        if (materialAllowed(event.getMaterial())) {
+                            return;
+                        }
+
+                        if (event.getPlayer().getInventory().getItemInOffHand().getType() == Material.SHIELD) {
                             return;
                         }
                     }
+
                     event.setCancelled(true);
                     return;
                 }
             }
         }
+    }
+
+    public boolean materialAllowed(Material material) {
+        switch(material) {
+            case BREAD:
+            case POTATO:
+            case CARROT:
+            case BEETROOT:
+            case BEEF:
+            case PORKCHOP:
+            case CHICKEN:
+            case COD:
+            case SALMON:
+            case MUTTON:
+            case RABBIT:
+            case TROPICAL_FISH:
+            case PUFFERFISH:
+            case MUSHROOM_STEW:
+            case RABBIT_STEW:
+            case BEETROOT_SOUP:
+            case COOKED_BEEF:
+            case COOKED_PORKCHOP:
+            case COOKED_CHICKEN:
+            case COOKED_SALMON:
+            case COOKED_MUTTON:
+            case COOKED_COD:
+            case MELON:
+            case PUMPKIN:
+            case MELON_SLICE:
+            case CAKE:
+            case PUMPKIN_PIE:
+            case APPLE:
+            case COOKIE:
+            case POISONOUS_POTATO:
+            case CHORUS_FRUIT:
+            case DRIED_KELP:
+            case BAKED_POTATO:
+                return true;
+        }
+        return false;
     }
 
     private void handleGrantingAccess(PlayerInteractEvent event, Block clickedBlock, Player player) {
