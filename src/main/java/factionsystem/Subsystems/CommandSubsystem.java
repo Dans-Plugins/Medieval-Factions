@@ -292,7 +292,7 @@ public class CommandSubsystem {
 
                                     // remove claimed chunks
                                     removeAllClaimedChunks(faction.getName(), main.claimedChunks);
-                                    player.sendMessage(ChatColor.GREEN + "All land unclaimed from " + factionName + " using admin bypass.");
+                                    player.sendMessage(ChatColor.GREEN + "All land unclaimed from " + factionName + "!");
 
                                     // remove locks associated with this faction
                                     removeAllLocks(faction.getName(), main.lockedBlocks);
