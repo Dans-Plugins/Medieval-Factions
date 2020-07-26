@@ -107,7 +107,7 @@ public class UtilitySubsystem {
         playerCoords[0] = player.getLocation().getChunk().getX();
         playerCoords[1] = player.getLocation().getChunk().getZ();
 
-        if (main.adminsBypassingProtections.contains(player.getName())) {
+        if (main.adminsBypassingProtections.contains(player.getUniqueId())) {
             for (ClaimedChunk chunk : main.claimedChunks) {
                 if (playerCoords[0] == chunk.getCoordinates()[0] && playerCoords[1] == chunk.getCoordinates()[1]) {
                     removeChunk(chunk, player, getFaction(chunk.getHolder(), main.factions));
