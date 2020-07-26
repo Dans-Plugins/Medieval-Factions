@@ -259,6 +259,10 @@ public class PlayerInteractEventHandler {
                         if (materialAllowed(event.getMaterial())) {
                             return;
                         }
+
+                        if (event.getPlayer().getInventory().getItemInOffHand().getType() == Material.SHIELD) {
+                            return;
+                        }
                     }
 
                     event.setCancelled(true);
