@@ -23,8 +23,10 @@ public class InfoCommand {
                 for (Faction faction : main.factions) {
                     if (faction.isMember(player.getUniqueId())) {
                         sendFactionInfo(player, faction, getChunksClaimedByFaction(faction.getName(), main.claimedChunks));
+                        return;
                     }
                 }
+                player.sendMessage(ChatColor.RED + "You're not in a faction!");
             }
             else {
                 // creating name from arguments 1 to the last one
