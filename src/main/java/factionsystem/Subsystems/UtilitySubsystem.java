@@ -106,6 +106,19 @@ public class UtilitySubsystem {
         double[] playerCoords = new double[2];
         playerCoords[0] = player.getLocation().getChunk().getX();
         playerCoords[1] = player.getLocation().getChunk().getZ();
+
+        if (main.adminsBypassingProtections.contains(player.getUniqueId())) {
+            for (ClaimedChunk chunk : main.claimedChunks) {
+                if (playerCoords[0] == chunk.getCoordinates()[0] && playerCoords[1] == chunk.getCoordinates()[1]) {
+                    removeChunk(chunk, player, getFaction(chunk.getHolder(), main.factions));
+                    player.sendMessage(ChatColor.GREEN + "Land unclaimed using admin bypass!");
+                    return;
+                }
+            }
+            player.sendMessage(ChatColor.RED + "This land is not currently claimed!");
+            return;
+        }
+
         for (Faction faction : main.factions) {
             if (faction.isOwner(player.getUniqueId()) || faction.isOfficer(player.getUniqueId())) {
 
@@ -114,46 +127,7 @@ public class UtilitySubsystem {
                     if (playerCoords[0] == chunk.getCoordinates()[0] && playerCoords[1] == chunk.getCoordinates()[1]) {
                         // if holder is player's faction
                         if (chunk.getHolder().equalsIgnoreCase(faction.getName())) {
-
-                            String identifier = (int)chunk.getChunk().getX() + "_" + (int)chunk.getChunk().getZ();
-
-                            // delete file associated with chunk
-                            System.out.println("Attempting to delete file plugins plugins/MedievalFactions/claimedchunks/" + identifier + ".txt");
-                            try {
-                                File fileToDelete = new File("plugins/MedievalFactions/claimedchunks/" + identifier + ".txt");
-                                if (fileToDelete.delete()) {
-                                    System.out.println("Success. File deleted.");
-                                }
-                                else {
-                                    System.out.println("There was a problem deleting the file.");
-                                }
-                            } catch(Exception e) {
-                                System.out.println("There was a problem encountered during file deletion.");
-                            }
-
-                            // if faction home is located on this chunk
-                            Location factionHome = getPlayersFaction(player.getUniqueId(), main.factions).getFactionHome();
-                            if (factionHome != null) {
-                                if (factionHome.getChunk().getX() == chunk.getChunk().getX() && factionHome.getChunk().getZ() == chunk.getChunk().getZ()) {
-
-                                    // remove faction home
-                                    faction.setFactionHome(null);
-                                    sendAllPlayersInFactionMessage(faction, ChatColor.RED + "Your faction home has been removed!");
-
-                                }
-                            }
-
-                            // remove locks on this chunk
-                            Iterator<LockedBlock> itr = main.lockedBlocks.iterator();
-                            while (itr.hasNext()) {
-                                LockedBlock block = itr.next();
-                                if (chunk.getChunk().getWorld().getBlockAt(block.getX(), block.getY(), block.getZ()).getChunk().getX() == chunk.getChunk().getX() &&
-                                        chunk.getChunk().getWorld().getBlockAt(block.getX(), block.getY(), block.getZ()).getChunk().getZ() == chunk.getChunk().getZ()) {
-                                    itr.remove();
-                                }
-                            }
-
-                            main.claimedChunks.remove(chunk);
+                            removeChunk(chunk, player, faction);
                             player.sendMessage(ChatColor.GREEN + "Land unclaimed.");
 
                             return;
@@ -167,6 +141,34 @@ public class UtilitySubsystem {
 
             }
         }
+    }
+
+    public void removeChunk(ClaimedChunk chunk, Player player, Faction faction) {
+        String identifier = (int)chunk.getChunk().getX() + "_" + (int)chunk.getChunk().getZ();
+
+        // if faction home is located on this chunk
+        Location factionHome = getPlayersFaction(player.getUniqueId(), main.factions).getFactionHome();
+        if (factionHome != null) {
+            if (factionHome.getChunk().getX() == chunk.getChunk().getX() && factionHome.getChunk().getZ() == chunk.getChunk().getZ()) {
+
+                // remove faction home
+                faction.setFactionHome(null);
+                sendAllPlayersInFactionMessage(faction, ChatColor.RED + "Your faction home has been removed!");
+
+            }
+        }
+
+        // remove locks on this chunk
+        Iterator<LockedBlock> itr = main.lockedBlocks.iterator();
+        while (itr.hasNext()) {
+            LockedBlock block = itr.next();
+            if (chunk.getChunk().getWorld().getBlockAt(block.getX(), block.getY(), block.getZ()).getChunk().getX() == chunk.getChunk().getX() &&
+                    chunk.getChunk().getWorld().getBlockAt(block.getX(), block.getY(), block.getZ()).getChunk().getZ() == chunk.getChunk().getZ()) {
+                itr.remove();
+            }
+        }
+
+        main.claimedChunks.remove(chunk);
     }
 
     public String checkOwnershipAtPlayerLocation(Player player) {
