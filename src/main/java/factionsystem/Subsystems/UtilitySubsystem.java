@@ -354,7 +354,14 @@ public class UtilitySubsystem {
         ArrayList<UUID> members = faction.getMemberList();
         player.sendMessage(ChatColor.BOLD + "" + ChatColor.AQUA + "Members of " + faction.getName() + "\n----------\n");
         for (UUID member : members) {
-            player.sendMessage(ChatColor.AQUA + findPlayerNameBasedOnUUID(member) + "\n");
+            // Is Owner
+            if (member.equals(faction.getOwner())){
+                player.sendMessage(ChatColor.AQUA + findPlayerNameBasedOnUUID(member) + "**\n");
+            } else if (faction.isOfficer(member)) {
+                player.sendMessage(ChatColor.AQUA + findPlayerNameBasedOnUUID(member) + "*\n");
+            } else {
+                player.sendMessage(ChatColor.AQUA + findPlayerNameBasedOnUUID(member) + "\n");
+            }
         }
         player.sendMessage(ChatColor.AQUA + "----------\n");
     }
