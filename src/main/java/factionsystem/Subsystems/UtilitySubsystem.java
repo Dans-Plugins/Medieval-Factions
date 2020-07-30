@@ -673,7 +673,7 @@ public class UtilitySubsystem {
         }
         if (!main.getConfig().isBoolean("mobsSpawnInFactionTerritory")) {
             System.out.println("Mobs spawn in faction territory not set! Setting to default!");
-            main.getConfig().addDefault("mobsSpawnInFactionTerritory", main.version);
+            main.getConfig().addDefault("mobsSpawnInFactionTerritory", false);
         }
         if (!main.getConfig().isInt("hourlyPowerIncreaseAmount")) {
             System.out.println("Hourly power increase amount not set! Setting to default!");
@@ -683,6 +683,8 @@ public class UtilitySubsystem {
             System.out.println("Ladders placeable in enemy faction territory not set! Setting to default!");
             main.getConfig().addDefault("laddersPlaceableInEnemyFactionTerritory", true);
         }
+
+        main.saveConfig();
     }
 
     public void renameConfigToConfigDotOldAndSaveDefaults() {
