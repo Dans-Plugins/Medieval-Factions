@@ -77,12 +77,14 @@ public class ConfigCommand {
             }
 
             // booleans
-            if (option.equalsIgnoreCase("mobsSpawnInFactionTerritory") || option.equalsIgnoreCase("")) {
-
+            if (option.equalsIgnoreCase("mobsSpawnInFactionTerritory") || option.equalsIgnoreCase("laddersPlaceableInEnemyFactionTerritory")) {
+                main.getConfig().set(option, Boolean.parseBoolean(value));
             }
 
             // strings
+            main.getConfig().set(option, value);
 
+            // save
             main.saveConfig();
         }
 
