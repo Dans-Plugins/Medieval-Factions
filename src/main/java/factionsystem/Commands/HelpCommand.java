@@ -5,6 +5,7 @@ import org.bukkit.command.CommandSender;
 
 public class HelpCommand {
 
+    // Each page of the help command should have a title and nine commands. This is for ease of use.
     public boolean sendHelpMessage(CommandSender sender, String[] args) {
 
         if (args.length == 1 || args.length == 0) {
