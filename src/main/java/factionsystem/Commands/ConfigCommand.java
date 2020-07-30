@@ -44,7 +44,7 @@ public class ConfigCommand {
                             String option = args[2];
                             String value = args[3];
 
-                            setConfigOption(option, value);
+                            setConfigOption(option, value, player);
                             return;
                         }
                         else {
@@ -68,21 +68,28 @@ public class ConfigCommand {
 
     }
 
-    private void setConfigOption(String option, String value) {
+    private void setConfigOption(String option, String value, Player player) {
 
         if (main.getConfig().isSet(option)) {
-            // ints
-            if (option.equalsIgnoreCase("maxPowerLevel") || option.equalsIgnoreCase("initialPowerLevel") || option.equalsIgnoreCase("hourlyPowerIncreaseAmount")) {
+
+            if (option.equalsIgnoreCase("version")) {
+                player.sendMessage(ChatColor.RED + "Can't set version!");
+                return;
+            }
+            else if (option.equalsIgnoreCase("maxPowerLevel") || option.equalsIgnoreCase("initialPowerLevel") || option.equalsIgnoreCase("hourlyPowerIncreaseAmount")) {
                 main.getConfig().set(option, Integer.parseInt(value));
+                player.sendMessage(ChatColor.GREEN + "Integer set!");
+                return;
             }
-
-            // booleans
-            if (option.equalsIgnoreCase("mobsSpawnInFactionTerritory") || option.equalsIgnoreCase("laddersPlaceableInEnemyFactionTerritory")) {
+            else if (option.equalsIgnoreCase("mobsSpawnInFactionTerritory") || option.equalsIgnoreCase("laddersPlaceableInEnemyFactionTerritory")) {
                 main.getConfig().set(option, Boolean.parseBoolean(value));
+                player.sendMessage(ChatColor.GREEN + "Boolean set!");
+                return;
             }
-
-            // strings
-            main.getConfig().set(option, value);
+            else {
+                main.getConfig().set(option, value);
+                player.sendMessage(ChatColor.GREEN + "String set!");
+            }
 
             // save
             main.saveConfig();
