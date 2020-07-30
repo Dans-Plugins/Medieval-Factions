@@ -69,9 +69,12 @@ public class ConfigCommand {
 
     }
 
-    public void setConfigOption(String option, String value) {
+    private void setConfigOption(String option, String value) {
 
-
+        if (main.getConfig().isSet(option)) {
+            main.getConfig().set(option, value);
+            main.saveConfig();
+        }
 
     }
 }
