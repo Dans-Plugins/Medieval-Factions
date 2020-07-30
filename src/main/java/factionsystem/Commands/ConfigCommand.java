@@ -27,11 +27,11 @@ public class ConfigCommand {
 
                         // no further arguments needed, list config
                         player.sendMessage(ChatColor.AQUA + "version: " + main.getConfig().getString("version")
-                                + ", maxPowerLevel: " + main.getConfig().getString("maxPowerLevel")
-                                + ", initialPowerLevel: " +  main.getConfig().getString("initialPowerLevel")
-                                + ", hourlyPowerIncreaseAmount: " + main.getConfig().getString("hourlyPowerIncreaseAmount"
+                                + ", maxPowerLevel: " + main.getConfig().getInt("maxPowerLevel")
+                                + ", initialPowerLevel: " +  main.getConfig().getInt("initialPowerLevel")
+                                + ", hourlyPowerIncreaseAmount: " + main.getConfig().getInt("hourlyPowerIncreaseAmount")
                                 + ", mobsSpawnInFactionTerritory: " + main.getConfig().getBoolean("mobsSpawnInFactionTerritory")
-                                + ", laddersPlaceableInEnemyFactionTerritory: " + main.getConfig().getBoolean("laddersPlaceableInEnemyFactionTerritory")));
+                                + ", laddersPlaceableInEnemyFactionTerritory: " + main.getConfig().getBoolean("laddersPlaceableInEnemyFactionTerritory"));
 
                         return;
                     }

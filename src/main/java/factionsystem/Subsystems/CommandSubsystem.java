@@ -643,6 +643,7 @@ public class CommandSubsystem {
                 if (args[0].equalsIgnoreCase("config")) {
                     ConfigCommand command = new ConfigCommand(main);
                     command.handleConfigAccess(sender, args);
+                    return true;
                 }
 
             }
