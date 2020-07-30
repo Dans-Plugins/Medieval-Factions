@@ -650,33 +650,39 @@ public class UtilitySubsystem {
     }
 
     public void handleVersionMismatch() {
-        System.out.println("[ALERT] Version mismatch!.");
+        System.out.println("[ALERT] Version mismatch! Adding missing defaults and setting version!");
 
         // set version
-        if (!main.getConfig().isSet("version")) {
+        if (!main.getConfig().isString("version")) {
+            System.out.println("Version not set! Setting version to " + main.version);
             main.getConfig().addDefault("version", main.version);
         }
         else {
+            System.out.println("Version set but mismatched! Setting version to " + main.version);
             main.getConfig().set("version", main.version);
         }
 
         // add defaults if they don't exist
-        if (!main.getConfig().isSet("version")) {
-            main.getConfig().addDefault("version", main.version);
-        }
-        if (!main.getConfig().isSet("maxPowerLevel")) {
+        if (!main.getConfig().isInt("maxPowerLevel")) {
+            System.out.println("Max power level not set! Setting to default!");
             main.getConfig().addDefault("maxPowerLevel", 20);
         }
-        if (!main.getConfig().isSet("initialPowerLevel")) {
+        if (!main.getConfig().isInt("initialPowerLevel")) {
+            System.out.println("Initial power level not set! Setting to default!");
             main.getConfig().addDefault("initialPowerLevel", 5);
         }
-        if (!main.getConfig().isSet("hourlyPowerIncreaseAmount")) {
+        if (!main.getConfig().isBoolean("mobsSpawnInFactionTerritory")) {
+            System.out.println("Mobs spawn in faction territory not set! Setting to default!");
+            main.getConfig().addDefault("mobsSpawnInFactionTerritory", main.version);
+        }
+        if (!main.getConfig().isInt("hourlyPowerIncreaseAmount")) {
+            System.out.println("Hourly power increase amount not set! Setting to default!");
             main.getConfig().addDefault("hourlyPowerIncreaseAmount", 2);
         }
-        if (!main.getConfig().isSet("laddersPlaceableInEnemyFactionTerritory")) {
+        if (!main.getConfig().isBoolean("laddersPlaceableInEnemyFactionTerritory")) {
+            System.out.println("Ladders placeable in enemy faction territory not set! Setting to default!");
             main.getConfig().addDefault("laddersPlaceableInEnemyFactionTerritory", true);
         }
-
     }
 
     public void renameConfigToConfigDotOldAndSaveDefaults() {
