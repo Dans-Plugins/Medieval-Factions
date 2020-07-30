@@ -651,7 +651,7 @@ public class UtilitySubsystem {
 
     public void handleVersionMismatch() {
 
-        if (!Objects.requireNonNull(main.getConfig().getString("version")).equalsIgnoreCase(Main.version)) {
+        if (!main.getConfig().getString("version").equalsIgnoreCase(Main.version)) {
             System.out.println("[ALERT] Verson mismatch! Saving old config as config.yml.old and loading in the default values.");
             renameConfigToConfigDotOldAndSaveDefaults();
         }
