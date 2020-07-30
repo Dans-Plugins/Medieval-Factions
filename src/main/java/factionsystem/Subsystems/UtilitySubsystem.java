@@ -531,7 +531,7 @@ public class UtilitySubsystem {
         // this piece of code is to fix config values not matching when updating to v3.3 (after v3.3 there is version mismatch handling)
         if (!main.getConfig().isSet("version")) {
             System.out.println("Config.yml doesn't have version entry! Loading defaults!");
-            renameConfigToConfigDotOldAndSaveDefaults();
+            handleVersionMismatch();
         }
     }
 
@@ -650,10 +650,31 @@ public class UtilitySubsystem {
     }
 
     public void handleVersionMismatch() {
+        System.out.println("[ALERT] Version mismatch!.");
 
-        if (!main.getConfig().getString("version").equalsIgnoreCase(Main.version)) {
-            System.out.println("[ALERT] Verson mismatch! Saving old config as config.yml.old and loading in the default values.");
-            renameConfigToConfigDotOldAndSaveDefaults();
+        // set version
+        if (!main.getConfig().isSet("version")) {
+            main.getConfig().addDefault("version", main.version);
+        }
+        else {
+            main.getConfig().set("version", main.version);
+        }
+
+        // add defaults if they don't exist
+        if (!main.getConfig().isSet("version")) {
+            main.getConfig().addDefault("version", main.version);
+        }
+        if (!main.getConfig().isSet("maxPowerLevel")) {
+            main.getConfig().addDefault("maxPowerLevel", 20);
+        }
+        if (!main.getConfig().isSet("initialPowerLevel")) {
+            main.getConfig().addDefault("initialPowerLevel", 5);
+        }
+        if (!main.getConfig().isSet("hourlyPowerIncreaseAmount")) {
+            main.getConfig().addDefault("hourlyPowerIncreaseAmount", 2);
+        }
+        if (!main.getConfig().isSet("laddersPlaceableInEnemyFactionTerritory")) {
+            main.getConfig().addDefault("laddersPlaceableInEnemyFactionTerritory", true);
         }
 
     }
