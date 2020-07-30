@@ -683,27 +683,8 @@ public class UtilitySubsystem {
             System.out.println("Ladders placeable in enemy faction territory not set! Setting to default!");
             main.getConfig().addDefault("laddersPlaceableInEnemyFactionTerritory", true);
         }
-
+        main.getConfig().options().copyDefaults(true);
         main.saveConfig();
-    }
-
-    public void renameConfigToConfigDotOldAndSaveDefaults() {
-        // save old config as config.yml.old
-        File saveFile = new File("./plugins/MedievalFactions/config.yml");
-        if (saveFile.exists()) {
-
-            // rename file
-            File newSaveFile = new File("./plugins/MedievalFactions/old-config.yml");
-            saveFile.renameTo(newSaveFile);
-
-            // delete old file
-            File oldFile = new File("./plugins/MedievalFactions/config.yml");
-            oldFile.delete();
-
-            // save defaults
-            saveConfigDefaults();
-
-        }
     }
 
     public void saveConfigDefaults() {
