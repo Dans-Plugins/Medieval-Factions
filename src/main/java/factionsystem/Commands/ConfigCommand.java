@@ -66,7 +66,6 @@ public class ConfigCommand {
             }
         }
 
-
     }
 
     private void setConfigOption(String option, String value) {
