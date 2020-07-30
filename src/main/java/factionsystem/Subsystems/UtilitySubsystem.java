@@ -664,8 +664,12 @@ public class UtilitySubsystem {
         if (saveFile.exists()) {
 
             // rename file
-            File newSaveFile = new File("./plugins/MedievalFactions/config.yml.old");
+            File newSaveFile = new File("./plugins/MedievalFactions/old-config.yml");
             saveFile.renameTo(newSaveFile);
+
+            // delete old file
+            File oldFile = new File("./plugins/MedievalFactions/config.yml");
+            oldFile.delete();
 
             // save defaults
             saveConfigDefaults();
