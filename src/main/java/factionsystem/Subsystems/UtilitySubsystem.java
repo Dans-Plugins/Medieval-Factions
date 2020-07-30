@@ -530,8 +530,8 @@ public class UtilitySubsystem {
 
         // this piece of code is to fix config values not matching when updating to v3.3 (after v3.3 there is version mismatch handling)
         if (!main.getConfig().isSet("version")) {
-            System.out.println("Config.yml doesn't have version entry! Loading defaults!");
-            renameConfigToConfigDotOldAndSaveDefaults();
+            System.out.println("Config.yml doesn't have version entry!");
+            handleVersionMismatch();
         }
     }
 
@@ -650,31 +650,39 @@ public class UtilitySubsystem {
     }
 
     public void handleVersionMismatch() {
-
-        if (!main.getConfig().getString("version").equalsIgnoreCase(Main.version)) {
-            System.out.println("[ALERT] Verson mismatch! Saving old config as config.yml.old and loading in the default values.");
-            renameConfigToConfigDotOldAndSaveDefaults();
+        // set version
+        if (!main.getConfig().isString("version")) {
+            System.out.println("Version not set! Setting version to " + main.version);
+            main.getConfig().addDefault("version", main.version);
+        }
+        else {
+            System.out.println("Version set but mismatched! Setting version to " + main.version);
+            main.getConfig().set("version", main.version);
         }
 
-    }
-
-    public void renameConfigToConfigDotOldAndSaveDefaults() {
-        // save old config as config.yml.old
-        File saveFile = new File("./plugins/MedievalFactions/config.yml");
-        if (saveFile.exists()) {
-
-            // rename file
-            File newSaveFile = new File("./plugins/MedievalFactions/old-config.yml");
-            saveFile.renameTo(newSaveFile);
-
-            // delete old file
-            File oldFile = new File("./plugins/MedievalFactions/config.yml");
-            oldFile.delete();
-
-            // save defaults
-            saveConfigDefaults();
-
+        // add defaults if they don't exist
+        if (!main.getConfig().isInt("maxPowerLevel")) {
+            System.out.println("Max power level not set! Setting to default!");
+            main.getConfig().addDefault("maxPowerLevel", 20);
         }
+        if (!main.getConfig().isInt("initialPowerLevel")) {
+            System.out.println("Initial power level not set! Setting to default!");
+            main.getConfig().addDefault("initialPowerLevel", 5);
+        }
+        if (!main.getConfig().isBoolean("mobsSpawnInFactionTerritory")) {
+            System.out.println("Mobs spawn in faction territory not set! Setting to default!");
+            main.getConfig().addDefault("mobsSpawnInFactionTerritory", false);
+        }
+        if (!main.getConfig().isInt("hourlyPowerIncreaseAmount")) {
+            System.out.println("Hourly power increase amount not set! Setting to default!");
+            main.getConfig().addDefault("hourlyPowerIncreaseAmount", 2);
+        }
+        if (!main.getConfig().isBoolean("laddersPlaceableInEnemyFactionTerritory")) {
+            System.out.println("Ladders placeable in enemy faction territory not set! Setting to default!");
+            main.getConfig().addDefault("laddersPlaceableInEnemyFactionTerritory", true);
+        }
+        main.getConfig().options().copyDefaults(true);
+        main.saveConfig();
     }
 
     public void saveConfigDefaults() {

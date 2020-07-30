@@ -68,7 +68,10 @@ public class Main extends JavaPlugin implements Listener {
             utilities.saveConfigDefaults();
         }
         else {
-            utilities.handleVersionMismatch();
+            if (!getConfig().getString("version").equalsIgnoreCase(Main.version)) {
+                System.out.println("[ALERT] Version mismatch! Adding missing defaults and setting version!");
+                utilities.handleVersionMismatch();
+            }
             reloadConfig();
         }
 
