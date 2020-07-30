@@ -5,6 +5,7 @@ import org.bukkit.command.CommandSender;
 
 public class HelpCommand {
 
+    // Each page of the help command should have a title and nine commands. This is for ease of use.
     public boolean sendHelpMessage(CommandSender sender, String[] args) {
 
         if (args.length == 1 || args.length == 0) {
@@ -60,6 +61,8 @@ public class HelpCommand {
                 sender.sendMessage(ChatColor.AQUA + "/mf forceload - Force the plugin to load." + "\n");
                 sender.sendMessage(ChatColor.AQUA + "/mf resetpowerlevels - Reset player power records and faction cumulative power levels." + "\n");
                 sender.sendMessage(ChatColor.AQUA + "/mf bypass - Bypass protections.");
+                sender.sendMessage(ChatColor.AQUA + "/mf config show - Show config values.");
+                sender.sendMessage(ChatColor.AQUA + "/mf config set (option) (value) - Set a config value.");
             }
         }
         return true;

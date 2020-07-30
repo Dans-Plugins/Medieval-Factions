@@ -520,8 +520,8 @@ public class UtilitySubsystem {
     public void ensureSmoothTransitionBetweenVersions() {
         // this piece of code is to ensure that saves don't become broken when updating to v3.2 from a previous version
         File saveFolder = new File("./plugins/medievalfactions/");
-        if (saveFolder.exists()) {
-            System.out.println("[ALERT] Old save folder name (pre v3.2) detected. Updating for compatibility.");
+        if (saveFolder.exists()) { // TODO: fix this so that it doesn't run every time
+//            System.out.println("[ALERT] Old save folder name (pre v3.2) detected. Updating for compatibility.");
 
             // rename directory
             File newSaveFolder = new File("./plugins/MedievalFactions/");
@@ -529,7 +529,7 @@ public class UtilitySubsystem {
         }
 
         // this piece of code is to fix config values not matching when updating to v3.3 (after v3.3 there is version mismatch handling)
-        if (!main.getConfig().isBoolean("version")) {
+        if (!main.getConfig().isSet("version")) {
             System.out.println("Config.yml doesn't have version entry! Loading defaults!");
             renameConfigToConfigDotOldAndSaveDefaults();
         }
@@ -651,7 +651,7 @@ public class UtilitySubsystem {
 
     public void handleVersionMismatch() {
 
-        if (!main.getConfig().getString("version").equalsIgnoreCase(main.version)) {
+        if (!main.getConfig().getString("version").equalsIgnoreCase(Main.version)) {
             System.out.println("[ALERT] Verson mismatch! Saving old config as config.yml.old and loading in the default values.");
             renameConfigToConfigDotOldAndSaveDefaults();
         }
@@ -664,8 +664,12 @@ public class UtilitySubsystem {
         if (saveFile.exists()) {
 
             // rename file
-            File newSaveFile = new File("./plugins/MedievalFactions/config.yml.old");
+            File newSaveFile = new File("./plugins/MedievalFactions/old-config.yml");
             saveFile.renameTo(newSaveFile);
+
+            // delete old file
+            File oldFile = new File("./plugins/MedievalFactions/config.yml");
+            oldFile.delete();
 
             // save defaults
             saveConfigDefaults();

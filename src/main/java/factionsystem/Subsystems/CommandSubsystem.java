@@ -639,6 +639,13 @@ public class CommandSubsystem {
                     return true;
                 }
 
+                // config command
+                if (args[0].equalsIgnoreCase("config")) {
+                    ConfigCommand command = new ConfigCommand(main);
+                    command.handleConfigAccess(sender, args);
+                    return true;
+                }
+
             }
             sender.sendMessage(ChatColor.RED + "Medieval Factions doesn't recognize that command!");
         }
