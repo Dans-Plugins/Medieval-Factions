@@ -32,7 +32,7 @@ import java.util.UUID;
 public class Main extends JavaPlugin implements Listener {
 
     // version
-    public static String version = "v3.3";
+    public static String version = "v3.4";
 
     // subsystems
     public StorageSubsystem storage = new StorageSubsystem(this);
