@@ -529,7 +529,7 @@ public class UtilitySubsystem {
         }
 
         // this piece of code is to fix config values not matching when updating to v3.3 (after v3.3 there is version mismatch handling)
-        if (!main.getConfig().isBoolean("version")) {
+        if (!main.getConfig().isString("version") || !main.getConfig().getString("version").equalsIgnoreCase(main.version)) {
             System.out.println("Config.yml doesn't have version entry! Loading defaults!");
             renameConfigToConfigDotOldAndSaveDefaults();
         }

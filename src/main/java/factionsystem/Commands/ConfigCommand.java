@@ -45,7 +45,7 @@ public class ConfigCommand {
                             String value = args[3];
 
                             setConfigOption(option, value);
-
+                            return;
                         }
                         else {
                             player.sendMessage(ChatColor.RED + "Usage: /mf config set (option) (value)");
@@ -71,7 +71,18 @@ public class ConfigCommand {
     private void setConfigOption(String option, String value) {
 
         if (main.getConfig().isSet(option)) {
-            main.getConfig().set(option, value);
+            // ints
+            if (option.equalsIgnoreCase("maxPowerLevel") || option.equalsIgnoreCase("initialPowerLevel") || option.equalsIgnoreCase("hourlyPowerIncreaseAmount")) {
+                main.getConfig().set(option, Integer.parseInt(value));
+            }
+
+            // booleans
+            if (option.equalsIgnoreCase("mobsSpawnInFactionTerritory") || option.equalsIgnoreCase("")) {
+
+            }
+
+            // strings
+
             main.saveConfig();
         }
 
