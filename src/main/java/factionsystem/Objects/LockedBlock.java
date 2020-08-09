@@ -106,7 +106,7 @@ public class LockedBlock {
         z = gson.fromJson(data.get("Z"), Integer.TYPE);
         owner = UUID.fromString(gson.fromJson(data.get("owner"), String.class));
         factionName =  gson.fromJson(data.get("factionName"), String.class);
-        accessList = gson.fromJson(data.get("accessList"), new TypeToken<ArrayList<String>>(){}.getType());
+        accessList = gson.fromJson(data.get("accessList"), new TypeToken<ArrayList<UUID>>(){}.getType());
     }
 
     public void legacyLoad(String filename) {
