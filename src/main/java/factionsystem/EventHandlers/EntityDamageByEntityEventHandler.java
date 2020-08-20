@@ -51,8 +51,10 @@ public class EntityDamageByEntityEventHandler {
 
         // if attacker's faction and victim's faction are not at war
         else if (main.utilities.arePlayersFactionsNotEnemies(attacker, victim)) {
-            event.setCancelled(true);
-            attacker.sendMessage(ChatColor.RED + "You can't attack another player if your factions aren't at war.");
+            if (main.getConfig().getBoolean("warsRequiredForPVP")) {
+                event.setCancelled(true);
+                attacker.sendMessage(ChatColor.RED + "You can't attack another player if your factions aren't at war.");
+            }
         }
     }
 

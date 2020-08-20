@@ -222,19 +222,16 @@ public class UtilitySubsystem {
     }
 
     public void schedulePowerIncrease() {
-
-        int maxPower = 50;
-
         System.out.println("Scheduling hourly power increase...");
-        int delay = 30 * 60; // 30 minutes
-        int secondsUntilRepeat = 60 * 60; // 1 hour
+        int delay = main.getConfig().getInt("minutesBeforeInitialPowerIncrease") * 60; // 30 minutes
+        int secondsUntilRepeat = main.getConfig().getInt("minutesBetweenPowerIncreases") * 60; // 1 hour
         Bukkit.getScheduler().scheduleSyncRepeatingTask(main, new Runnable() {
             @Override
             public void run() {
-                System.out.println("Medieval Factions is increasing the power of every player by " + main.getConfig().getInt("hourlyPowerIncreaseAmount") + " if their power is below 10. This will happen hourly.");
+                System.out.println("Medieval Factions is increasing the power of every player by " + main.getConfig().getInt("hourlyPowerIncreaseAmount") + " if their power is below " + main.getConfig().getInt("maxPowerLevel") + ". This will happen every " + main.getConfig().getInt("minutesBetweenPowerIncreases") + " minutes.");
                 for (PlayerPowerRecord powerRecord : main.playerPowerRecords) {
                     try {
-                        if (powerRecord.getPowerLevel() < maxPower) {
+                        if (powerRecord.getPowerLevel() < main.getConfig().getInt("maxPowerLevel")) {
                             if (getServer().getPlayer(powerRecord.getPlayerUUID()).isOnline()) {
                                 powerRecord.increasePower();
                                 getServer().getPlayer(powerRecord.getPlayerUUID()).sendMessage(ChatColor.GREEN + "You feel stronger. Your power has increased.");
@@ -681,6 +678,20 @@ public class UtilitySubsystem {
             System.out.println("Ladders placeable in enemy faction territory not set! Setting to default!");
             main.getConfig().addDefault("laddersPlaceableInEnemyFactionTerritory", true);
         }
+        if (!main.getConfig().isInt("minutesBeforeInitialPowerIncrease")) {
+            System.out.println("minutesBeforeInitialPowerIncrease not set! Setting to default!");
+            main.getConfig().addDefault("minutesBeforeInitialPowerIncrease", 30);
+        }
+        if (!main.getConfig().isInt("minutesBetweenPowerIncreases")) {
+            System.out.println("minutesBetweenPowerIncreases not set! Setting to default!");
+            main.getConfig().addDefault("minutesBetweenPowerIncreases", 60);
+        }
+
+        if (!main.getConfig().isBoolean("warsRequiredForPVP")) {
+            System.out.println("warsRequiredForPVP not set! Setting to default!");
+            main.getConfig().addDefault("warsRequiredForPVP", true);
+        }
+
         main.getConfig().options().copyDefaults(true);
         main.saveConfig();
     }
@@ -692,6 +703,10 @@ public class UtilitySubsystem {
         main.getConfig().addDefault("hourlyPowerIncreaseAmount", 2);
         main.getConfig().addDefault("mobsSpawnInFactionTerritory", false);
         main.getConfig().addDefault("laddersPlaceableInEnemyFactionTerritory", true);
+        main.getConfig().addDefault("minutesBeforeInitialPowerIncrease", 30);
+        main.getConfig().addDefault("minutesBetweenPowerIncreases", 60);
+        main.getConfig().addDefault("warsRequiredForPVP", true);
+        main.getConfig().addDefault("officerLimit", 0);
         main.getConfig().options().copyDefaults(true);
         main.saveConfig();
     }
