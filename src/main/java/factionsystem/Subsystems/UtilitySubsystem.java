@@ -687,6 +687,11 @@ public class UtilitySubsystem {
             main.getConfig().addDefault("minutesBetweenPowerIncreases", 60);
         }
 
+        if (!main.getConfig().isBoolean("warsRequiredForPVP")) {
+            System.out.println("warsRequiredForPVP not set! Setting to default!");
+            main.getConfig().addDefault("warsRequiredForPVP", true);
+        }
+
         main.getConfig().options().copyDefaults(true);
         main.saveConfig();
     }
@@ -698,8 +703,9 @@ public class UtilitySubsystem {
         main.getConfig().addDefault("hourlyPowerIncreaseAmount", 2);
         main.getConfig().addDefault("mobsSpawnInFactionTerritory", false);
         main.getConfig().addDefault("laddersPlaceableInEnemyFactionTerritory", true);
-        main.getConfig().addDefault("minutesBeforeInitialPowerIncrease", 30); // 30 minutes
-        main.getConfig().addDefault("minutesBetweenPowerIncreases", 60); // 1 hour
+        main.getConfig().addDefault("minutesBeforeInitialPowerIncrease", 30);
+        main.getConfig().addDefault("minutesBetweenPowerIncreases", 60);
+        main.getConfig().addDefault("warsRequiredForPVP", true);
         main.getConfig().options().copyDefaults(true);
         main.saveConfig();
     }
