@@ -63,6 +63,10 @@ public class Faction {
         this.main = main;
     }
 
+    public int getNumOfficers() {
+        return officers.size();
+    }
+
     public void addLaw(String newLaw) {
         laws.add(newLaw);
     }

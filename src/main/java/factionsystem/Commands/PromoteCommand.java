@@ -31,6 +31,16 @@ public class PromoteCommand {
                         if (faction.isMember(playerUUID)) {
                             if (faction.isOwner(player.getUniqueId())) {
                                 if (faction.isMember(playerUUID)) {
+
+                                    // if limit exists
+                                    if (main.getConfig().getInt("officerLimit") != 0) {
+                                        // if limit reached
+                                        if (faction.getNumOfficers() >= main.getConfig().getInt("officerLimit")) {
+                                            player.sendMessage(ChatColor.RED + "Officer limit of " + main.getConfig().getInt("officerLimit") + " reached!");
+                                            return;
+                                        }
+                                    }
+
                                     faction.addOfficer(playerUUID);
                                     player.sendMessage(ChatColor.GREEN + "Player promoted!");
 
