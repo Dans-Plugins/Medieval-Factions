@@ -222,9 +222,6 @@ public class UtilitySubsystem {
     }
 
     public void schedulePowerIncrease() {
-
-        int maxPower = 50;
-
         System.out.println("Scheduling hourly power increase...");
         int delay = 30 * 60; // 30 minutes
         int secondsUntilRepeat = 60 * 60; // 1 hour
@@ -234,7 +231,7 @@ public class UtilitySubsystem {
                 System.out.println("Medieval Factions is increasing the power of every player by " + main.getConfig().getInt("hourlyPowerIncreaseAmount") + " if their power is below 10. This will happen hourly.");
                 for (PlayerPowerRecord powerRecord : main.playerPowerRecords) {
                     try {
-                        if (powerRecord.getPowerLevel() < maxPower) {
+                        if (powerRecord.getPowerLevel() < main.getConfig().getInt("maxPowerLevel")) {
                             if (getServer().getPlayer(powerRecord.getPlayerUUID()).isOnline()) {
                                 powerRecord.increasePower();
                                 getServer().getPlayer(powerRecord.getPlayerUUID()).sendMessage(ChatColor.GREEN + "You feel stronger. Your power has increased.");
