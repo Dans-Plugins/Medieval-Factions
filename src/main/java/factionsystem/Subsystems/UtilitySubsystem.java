@@ -678,6 +678,15 @@ public class UtilitySubsystem {
             System.out.println("Ladders placeable in enemy faction territory not set! Setting to default!");
             main.getConfig().addDefault("laddersPlaceableInEnemyFactionTerritory", true);
         }
+        if (!main.getConfig().isBoolean("minutesBeforeInitialPowerIncrease")) {
+            System.out.println("minutesBeforeInitialPowerIncrease not set! Setting to default!");
+            main.getConfig().addDefault("minutesBeforeInitialPowerIncrease", 30);
+        }
+        if (!main.getConfig().isBoolean("minutesBetweenPowerIncreases")) {
+            System.out.println("minutesBetweenPowerIncreases not set! Setting to default!");
+            main.getConfig().addDefault("minutesBetweenPowerIncreases", 60);
+        }
+
         main.getConfig().options().copyDefaults(true);
         main.saveConfig();
     }
