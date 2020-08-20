@@ -223,12 +223,12 @@ public class UtilitySubsystem {
 
     public void schedulePowerIncrease() {
         System.out.println("Scheduling hourly power increase...");
-        int delay = 30 * 60; // 30 minutes
-        int secondsUntilRepeat = 60 * 60; // 1 hour
+        int delay = main.getConfig().getInt("minutesBeforeInitialPowerIncrease") * 60; // 30 minutes
+        int secondsUntilRepeat = main.getConfig().getInt("minutesBetweenPowerIncreases") * 60; // 1 hour
         Bukkit.getScheduler().scheduleSyncRepeatingTask(main, new Runnable() {
             @Override
             public void run() {
-                System.out.println("Medieval Factions is increasing the power of every player by " + main.getConfig().getInt("hourlyPowerIncreaseAmount") + " if their power is below " + main.getConfig().getInt("maxPowerLevel") + ". This will happen hourly.");
+                System.out.println("Medieval Factions is increasing the power of every player by " + main.getConfig().getInt("hourlyPowerIncreaseAmount") + " if their power is below " + main.getConfig().getInt("maxPowerLevel") + ". This will happen every " + main.getConfig().getInt("minutesBetweenPowerIncreases") + " minutes.");
                 for (PlayerPowerRecord powerRecord : main.playerPowerRecords) {
                     try {
                         if (powerRecord.getPowerLevel() < main.getConfig().getInt("maxPowerLevel")) {
@@ -689,6 +689,8 @@ public class UtilitySubsystem {
         main.getConfig().addDefault("hourlyPowerIncreaseAmount", 2);
         main.getConfig().addDefault("mobsSpawnInFactionTerritory", false);
         main.getConfig().addDefault("laddersPlaceableInEnemyFactionTerritory", true);
+        main.getConfig().addDefault("minutesBeforeInitialPowerIncrease", 30); // 30 minutes
+        main.getConfig().addDefault("minutesBetweenPowerIncreases", 60); // 1 hour
         main.getConfig().options().copyDefaults(true);
         main.saveConfig();
     }
