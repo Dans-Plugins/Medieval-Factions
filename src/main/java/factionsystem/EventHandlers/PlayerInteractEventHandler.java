@@ -251,6 +251,7 @@ public class PlayerInteractEventHandler {
                 // if player's faction is not the same as the holder of the chunk and player isn't overriding
                 if (!(faction.getName().equalsIgnoreCase(chunk.getHolder())) && !main.adminsBypassingProtections.contains(event.getPlayer().getUniqueId())) {
 
+                    // if enemy territory
                     if (faction.isEnemy(chunk.getHolder())) {
                         // if not interacting with chest
                         if (!interactingWithChest(event)) {
