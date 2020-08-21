@@ -13,6 +13,8 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.inventory.InventoryHolder;
 
+import java.util.HashSet;
+import java.util.Set;
 import java.util.UUID;
 
 import static factionsystem.Subsystems.UtilitySubsystem.*;
@@ -249,19 +251,24 @@ public class PlayerInteractEventHandler {
                 // if player's faction is not the same as the holder of the chunk and player isn't overriding
                 if (!(faction.getName().equalsIgnoreCase(chunk.getHolder())) && !main.adminsBypassingProtections.contains(event.getPlayer().getUniqueId())) {
 
+                    // if enemy territory
                     if (faction.isEnemy(chunk.getHolder())) {
-                        if (main.getConfig().getBoolean("laddersPlaceableInEnemyFactionTerritory")) {
-                            if (event.getMaterial() == LADDER) {
+                        // if not interacting with chest
+                        if (!interactingWithChest(event)) {
+                            // allow placing ladders
+                            if (main.getConfig().getBoolean("laddersPlaceableInEnemyFactionTerritory")) {
+                                if (event.getMaterial() == LADDER) {
+                                    return;
+                                }
+                            }
+                            // allow eating
+                            if (materialAllowed(event.getMaterial())) {
                                 return;
                             }
-                        }
-
-                        if (materialAllowed(event.getMaterial())) {
-                            return;
-                        }
-
-                        if (event.getPlayer().getInventory().getItemInOffHand().getType() == Material.SHIELD) {
-                            return;
+                            // allow blocking
+                            if (event.getPlayer().getInventory().getItemInOffHand().getType() == Material.SHIELD) {
+                                return;
+                            }
                         }
                     }
 
@@ -270,6 +277,13 @@ public class PlayerInteractEventHandler {
                 }
             }
         }
+    }
+
+    public boolean interactingWithChest(PlayerInteractEvent event) {
+        if (event.getClickedBlock() != null && main.utilities.isChest(event.getClickedBlock())) {
+            return true;
+        }
+        return false;
     }
 
     public boolean materialAllowed(Material material) {
