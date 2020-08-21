@@ -54,6 +54,20 @@ public class RenameCommand {
                                 }
                             }
 
+                            // rename claimed chunk records
+                            for (ClaimedChunk claimedChunk : main.claimedChunks) {
+                                if (claimedChunk.getHolder().equalsIgnoreCase(oldName)) {
+                                    claimedChunk.setHolder(newName);
+                                }
+                            }
+
+                            // rename locked block records
+                            for (LockedBlock lockedBlock : main.lockedBlocks) {
+                                if (lockedBlock.getFactionName().equalsIgnoreCase(oldName)) {
+                                    lockedBlock.setFaction(newName);
+                                }
+                            }
+
                             // Save again to overwrite current data
                             main.storage.save();
 
