@@ -692,6 +692,11 @@ public class UtilitySubsystem {
             main.getConfig().addDefault("warsRequiredForPVP", true);
         }
 
+        if (!main.getConfig().isBoolean("officerLimit")) {
+            System.out.println("officerLimit not set! Setting to default!");
+            main.getConfig().addDefault("officerLimit", 0);
+        }
+
         main.getConfig().options().copyDefaults(true);
         main.saveConfig();
     }

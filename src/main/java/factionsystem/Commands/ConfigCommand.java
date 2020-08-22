@@ -31,7 +31,11 @@ public class ConfigCommand {
                                 + ", initialPowerLevel: " +  main.getConfig().getInt("initialPowerLevel")
                                 + ", hourlyPowerIncreaseAmount: " + main.getConfig().getInt("hourlyPowerIncreaseAmount")
                                 + ", mobsSpawnInFactionTerritory: " + main.getConfig().getBoolean("mobsSpawnInFactionTerritory")
-                                + ", laddersPlaceableInEnemyFactionTerritory: " + main.getConfig().getBoolean("laddersPlaceableInEnemyFactionTerritory"));
+                                + ", laddersPlaceableInEnemyFactionTerritory: " + main.getConfig().getBoolean("laddersPlaceableInEnemyFactionTerritory")
+                                + ", minutesBeforeInitialPowerIncrease: " + main.getConfig().getInt("minutesBeforeInitialPowerIncrease")
+                                + ", minutesBetweenPowerIncreases: " + main.getConfig().getInt("minutesBetweenPowerIncreases")
+                                + ", warsRequiredForPVP: " + main.getConfig().getBoolean("warsRequiredForPVP")
+                                + ", officerLimit" + main.getConfig().getInt("officerLimit"));
 
                         return;
                     }
@@ -76,12 +80,18 @@ public class ConfigCommand {
                 player.sendMessage(ChatColor.RED + "Can't set version!");
                 return;
             }
-            else if (option.equalsIgnoreCase("maxPowerLevel") || option.equalsIgnoreCase("initialPowerLevel") || option.equalsIgnoreCase("hourlyPowerIncreaseAmount")) {
+            else if (option.equalsIgnoreCase("maxPowerLevel") || option.equalsIgnoreCase("initialPowerLevel")
+                    || option.equalsIgnoreCase("hourlyPowerIncreaseAmount")
+                    || option.equalsIgnoreCase("minutesBeforeInitialPowerIncrease")
+                    || option.equalsIgnoreCase("minutesBetweenPowerIncreases")
+                    || option.equalsIgnoreCase("officerLimit")) {
                 main.getConfig().set(option, Integer.parseInt(value));
                 player.sendMessage(ChatColor.GREEN + "Integer set!");
                 return;
             }
-            else if (option.equalsIgnoreCase("mobsSpawnInFactionTerritory") || option.equalsIgnoreCase("laddersPlaceableInEnemyFactionTerritory")) {
+            else if (option.equalsIgnoreCase("mobsSpawnInFactionTerritory")
+                    || option.equalsIgnoreCase("laddersPlaceableInEnemyFactionTerritory")
+                    || option.equalsIgnoreCase("warsRequiredForPVP")) {
                 main.getConfig().set(option, Boolean.parseBoolean(value));
                 player.sendMessage(ChatColor.GREEN + "Boolean set!");
                 return;
