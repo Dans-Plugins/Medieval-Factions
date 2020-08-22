@@ -35,7 +35,7 @@ public class ConfigCommand {
                                 + ", minutesBeforeInitialPowerIncrease: " + main.getConfig().getInt("minutesBeforeInitialPowerIncrease")
                                 + ", minutesBetweenPowerIncreases: " + main.getConfig().getInt("minutesBetweenPowerIncreases")
                                 + ", warsRequiredForPVP: " + main.getConfig().getBoolean("warsRequiredForPVP")
-                                + ", officerLimit" + main.getConfig().getInt("officerLimit"));
+                                + ", officerLimit: " + main.getConfig().getInt("officerLimit"));
 
                         return;
                     }
