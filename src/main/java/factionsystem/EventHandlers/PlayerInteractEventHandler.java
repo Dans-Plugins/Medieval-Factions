@@ -18,7 +18,7 @@ import java.util.Set;
 import java.util.UUID;
 
 import static factionsystem.Subsystems.UtilitySubsystem.*;
-import static org.bukkit.Material.LADDER;
+import static org.bukkit.Material.*;
 
 public class PlayerInteractEventHandler {
 
@@ -254,7 +254,7 @@ public class PlayerInteractEventHandler {
                     // if enemy territory
                     if (faction.isEnemy(chunk.getHolder())) {
                         // if not interacting with chest
-                        if (!interactingWithChest(event)) {
+                        if (isBlockInteractable(event)) {
                             // allow placing ladders
                             if (main.getConfig().getBoolean("laddersPlaceableInEnemyFactionTerritory")) {
                                 if (event.getMaterial() == LADDER) {
@@ -279,11 +279,46 @@ public class PlayerInteractEventHandler {
         }
     }
 
-    public boolean interactingWithChest(PlayerInteractEvent event) {
-        if (event.getClickedBlock() != null && main.utilities.isChest(event.getClickedBlock())) {
-            return true;
+    public boolean isBlockInteractable(PlayerInteractEvent event) {
+        if (event.getClickedBlock() != null) {
+            // CHEST
+            if (main.utilities.isChest(event.getClickedBlock())) {
+                return false;
+            }
+            switch(event.getClickedBlock().getType()) {
+                case ACACIA_DOOR:
+                case BIRCH_DOOR:
+                case DARK_OAK_DOOR:
+                case IRON_DOOR:
+                case JUNGLE_DOOR:
+                case OAK_DOOR:
+                case SPRUCE_DOOR:
+                case ACACIA_TRAPDOOR:
+                case BIRCH_TRAPDOOR:
+                case DARK_OAK_TRAPDOOR:
+                case IRON_TRAPDOOR:
+                case JUNGLE_TRAPDOOR:
+                case OAK_TRAPDOOR:
+                case SPRUCE_TRAPDOOR:
+                case ACACIA_FENCE_GATE:
+                case BIRCH_FENCE_GATE:
+                case DARK_OAK_FENCE_GATE:
+                case JUNGLE_FENCE_GATE:
+                case OAK_FENCE_GATE:
+                case SPRUCE_FENCE_GATE:
+                case BARREL:
+                case LEVER:
+                case ACACIA_BUTTON:
+                case BIRCH_BUTTON:
+                case DARK_OAK_BUTTON:
+                case JUNGLE_BUTTON:
+                case OAK_BUTTON:
+                case SPRUCE_BUTTON:
+                case STONE_BUTTON:
+                    return false;
+            }
         }
-        return false;
+        return true;
     }
 
     public boolean materialAllowed(Material material) {
