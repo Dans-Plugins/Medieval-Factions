@@ -445,6 +445,15 @@ public class UtilitySubsystem {
         return null;
     }
 
+    public static boolean isPlayerAFactionOwner(UUID player, ArrayList<Faction> factions){
+        if (isInFaction(player, factions)){
+            Faction faction = getPlayersFaction(player, factions);
+            return faction.getOwner().equals(player);
+        } else {
+            return false;
+        }
+    }
+
     public static void invokeAlliances(String victimFactionName, String declaringFactionName, ArrayList<Faction> factions) {
         Faction victimFaction = getFaction(victimFactionName, factions);
         Faction declaringFaction = getFaction(declaringFactionName, factions);
@@ -697,6 +706,11 @@ public class UtilitySubsystem {
             main.getConfig().addDefault("officerLimit", 0);
         }
 
+        if (!main.getConfig().isDouble("factionOwnerMultiplier")) {
+            System.out.println("factionOwnerMultiplier not set! Setting to default");
+            main.getConfig().addDefault("factionOwnerMultiplier", 2.0);
+        }
+
         main.getConfig().options().copyDefaults(true);
         main.saveConfig();
     }
@@ -712,6 +726,7 @@ public class UtilitySubsystem {
         main.getConfig().addDefault("minutesBetweenPowerIncreases", 60);
         main.getConfig().addDefault("warsRequiredForPVP", true);
         main.getConfig().addDefault("officerLimit", 0);
+        main.getConfig().addDefault("factionOwnerMultiplier", 2.0);
         main.getConfig().options().copyDefaults(true);
         main.saveConfig();
     }

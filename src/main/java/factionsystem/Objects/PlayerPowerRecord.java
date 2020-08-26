@@ -3,6 +3,7 @@ package factionsystem.Objects;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import factionsystem.Main;
+import factionsystem.Subsystems.UtilitySubsystem;
 import org.bukkit.OfflinePlayer;
 
 import java.io.File;
@@ -26,10 +27,11 @@ public class PlayerPowerRecord {
     // temporary
     int maxPower = 0;
 
-    public PlayerPowerRecord(UUID playerUUID, int initial, int max) {
+    public PlayerPowerRecord(UUID playerUUID, int initial, int max, Main main) {
         this.playerUUID = playerUUID;
         powerLevel = initial;
         maxPower = max;
+        ensureFactionOwnerMaxPower(playerUUID, main);
     }
     public PlayerPowerRecord(int max) { // server constructor for loading
         maxPower = max;
@@ -38,6 +40,13 @@ public class PlayerPowerRecord {
     public PlayerPowerRecord(Map<String, String> data, Main main) {
         this.load(data);
         maxPower = main.getConfig().getInt("maxPowerLevel");
+        ensureFactionOwnerMaxPower(playerUUID, main);
+    }
+
+    private void ensureFactionOwnerMaxPower(UUID player, Main main){
+        if (UtilitySubsystem.isPlayerAFactionOwner(player, main.factions)){
+            maxPower *= main.getConfig().getDouble("factionOwnerMultiplier", 2.0);
+        }
     }
 
     public void setPlayerName(UUID UUID) {

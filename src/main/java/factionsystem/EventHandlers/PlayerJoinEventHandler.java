@@ -16,7 +16,8 @@ public class PlayerJoinEventHandler {
         if (!main.utilities.hasPowerRecord(event.getPlayer().getUniqueId())) {
             PlayerPowerRecord newRecord = new PlayerPowerRecord(event.getPlayer().getUniqueId(),
                     main.getConfig().getInt("initialPowerLevel"),
-                    main.getConfig().getInt("maxPowerLevel"));
+                    main.getConfig().getInt("maxPowerLevel"),
+                    main);
             main.playerPowerRecords.add(newRecord);
         }
     }
