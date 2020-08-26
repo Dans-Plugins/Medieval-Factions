@@ -35,7 +35,8 @@ public class ConfigCommand {
                                 + ", minutesBeforeInitialPowerIncrease: " + main.getConfig().getInt("minutesBeforeInitialPowerIncrease")
                                 + ", minutesBetweenPowerIncreases: " + main.getConfig().getInt("minutesBetweenPowerIncreases")
                                 + ", warsRequiredForPVP: " + main.getConfig().getBoolean("warsRequiredForPVP")
-                                + ", officerLimit: " + main.getConfig().getInt("officerLimit"));
+                                + ", officerLimit: " + main.getConfig().getInt("officerLimit")
+                                + ", factionOwnerMultiplier: " + main.getConfig().getDouble("factionOwnerMultiplier"));
 
                         return;
                     }
@@ -95,6 +96,9 @@ public class ConfigCommand {
                 main.getConfig().set(option, Boolean.parseBoolean(value));
                 player.sendMessage(ChatColor.GREEN + "Boolean set!");
                 return;
+            }
+            else if (option.equalsIgnoreCase("factionOwnerMultiplier")){
+                main.getConfig().set(option, Double.parseDouble(value));
             }
             else {
                 main.getConfig().set(option, value);
