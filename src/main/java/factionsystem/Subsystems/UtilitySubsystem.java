@@ -730,4 +730,16 @@ public class UtilitySubsystem {
         main.getConfig().options().copyDefaults(true);
         main.saveConfig();
     }
+
+    public void sendAllPlayersOnServerMessage(String message) {
+        try {
+            for (Player player : Bukkit.getOnlinePlayers()) {
+                player.sendMessage(message);
+            }
+        }
+        catch(Exception ignored) {
+
+        }
+
+    }
 }

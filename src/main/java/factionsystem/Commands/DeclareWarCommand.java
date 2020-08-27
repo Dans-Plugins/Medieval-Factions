@@ -43,13 +43,12 @@ public class DeclareWarCommand {
                                         if (!faction.isAlly(factionName)) {
                                             // add enemy to declarer's faction's enemyList and the enemyLists of its allies
                                             faction.addEnemy(factionName);
-                                            player.sendMessage(ChatColor.AQUA + "War has been declared against " + factionName + "!");
 
                                             // add declarer's faction to new enemy's enemyList
                                             main.factions.get(i).addEnemy(faction.getName());
                                             for (int j = 0; j < main.factions.size(); j++) {
                                                 if (main.factions.get(j).getName().equalsIgnoreCase(factionName)) {
-                                                    sendAllPlayersInFactionMessage(main.factions.get(j), ChatColor.RED + faction.getName() + " has declared war against your faction!");
+                                                    main.utilities.sendAllPlayersOnServerMessage(ChatColor.RED + faction.getName() + " has declared war against " + factionName + "!");
                                                 }
                                             }
 
