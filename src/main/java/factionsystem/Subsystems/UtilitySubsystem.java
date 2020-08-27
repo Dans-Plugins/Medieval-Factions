@@ -234,7 +234,7 @@ public class UtilitySubsystem {
                         if (powerRecord.getPowerLevel() < main.getConfig().getInt("maxPowerLevel")) {
                             if (getServer().getPlayer(powerRecord.getPlayerUUID()).isOnline()) {
                                 powerRecord.increasePower();
-                                getServer().getPlayer(powerRecord.getPlayerUUID()).sendMessage(ChatColor.GREEN + "You feel stronger. Your power has increased.");
+                                getServer().getPlayer(powerRecord.getPlayerUUID()).sendMessage(ChatColor.GREEN + "You feel stronger. Your power has increased by " + main.getConfig().getInt("hourlyPowerIncreaseAmount") + ".");
                             }
                         }
                     } catch (Exception ignored) {
