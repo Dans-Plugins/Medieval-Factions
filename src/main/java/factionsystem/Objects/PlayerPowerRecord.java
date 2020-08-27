@@ -150,4 +150,8 @@ public class PlayerPowerRecord {
             powerLevel = 0;
         }
     }
+
+    public int getMaxPower() {
+        return maxPower;
+    }
 }
