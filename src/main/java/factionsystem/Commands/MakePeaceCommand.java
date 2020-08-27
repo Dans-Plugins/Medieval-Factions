@@ -53,8 +53,7 @@ public class MakePeaceCommand {
                                             // make peace between factions
                                             playersFaction.removeEnemy(targetFactionName);
                                             getFaction(targetFactionName, main.factions).removeEnemy(playersFaction.getName());
-                                            sendAllPlayersInFactionMessage(playersFaction, ChatColor.GREEN + "Your faction is now at peace with " + targetFactionName + "!");
-                                            sendAllPlayersInFactionMessage(targetFaction, ChatColor.GREEN + "Your faction is now at peace with " + playersFaction.getName() + "!");
+                                            main.utilities.sendAllPlayersOnServerMessage(ChatColor.GREEN + playersFaction.getName() + " is now at peace with " + targetFactionName + "!");
                                         }
                                     }
                                     else {
