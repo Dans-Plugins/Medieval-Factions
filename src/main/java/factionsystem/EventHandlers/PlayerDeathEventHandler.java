@@ -53,21 +53,20 @@ public class PlayerDeathEventHandler {
             playerCoords[1] = player.getLocation().getChunk().getZ();
 
             // check if land is claimed
-            for (ClaimedChunk chunk : main.claimedChunks) {
-                if (playerCoords[0] == chunk.getCoordinates()[0] && playerCoords[1] == chunk.getCoordinates()[1]) {
+            ClaimedChunk chunk = isChunkClaimed(playerCoords[0], playerCoords[1], player.getLocation().getWorld().getName());
+            if (chunk != null)
+            {
+                // if holder is player's faction
+                if (chunk.getHolder().equalsIgnoreCase(getPlayersFaction(player.getUniqueId(), main.factions).getName()) && getPlayersFaction(player.getUniqueId(), main.factions).getAutoClaimStatus() == false) {
 
-                    // if holder is player's faction
-                    if (chunk.getHolder().equalsIgnoreCase(getPlayersFaction(player.getUniqueId(), main.factions).getName()) && getPlayersFaction(player.getUniqueId(), main.factions).getAutoClaimStatus() == false) {
+                    // if not killed by another player
+                    if (!(player.getKiller() instanceof Player)) {
 
-                        // if not killed by another player
-                        if (!(player.getKiller() instanceof Player)) {
-
-                            // player keeps items
-                            // event.setKeepInventory(true); // TODO: fix this duplicating items
-
-                        }
+                        // player keeps items
+                        // event.setKeepInventory(true); // TODO: fix this duplicating items
 
                     }
+
                 }
             }
 

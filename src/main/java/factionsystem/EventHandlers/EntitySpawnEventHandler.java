@@ -25,13 +25,11 @@ public class EntitySpawnEventHandler {
         z = event.getEntity().getLocation().getChunk().getZ();
 
         // check if land is claimed
-        for (ClaimedChunk chunk : main.claimedChunks) {
-            if (x == chunk.getCoordinates()[0] && z == chunk.getCoordinates()[1]) {
-
-                if (event.getEntity() instanceof Monster && !main.getConfig().getBoolean("mobsSpawnInFactionTerritory")) {
-                    event.setCancelled(true);
-                }
-
+        ClaimedChunk chunk = isChunkClaimed(x, y], event.getLocation().getWorld().getName());
+        if (chunk != null)
+        {
+            if (event.getEntity() instanceof Monster && !main.getConfig().getBoolean("mobsSpawnInFactionTerritory")) {
+                event.setCancelled(true);
             }
         }
     }
