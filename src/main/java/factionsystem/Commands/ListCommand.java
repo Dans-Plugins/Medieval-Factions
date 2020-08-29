@@ -33,7 +33,7 @@ public class ListCommand {
         sender.sendMessage(ChatColor.AQUA + "P: power, M: members, L: land");
         sender.sendMessage(ChatColor.AQUA + "-----");
         for (Faction faction : main.utilities.getFactionsSortedByPower()) {
-            sender.sendMessage(ChatColor.AQUA + String.format("%-20s %10s %10s %10s", faction.getName(), "P: " + faction.getCumulativePowerLevel(), "M: " + faction.getPopulation(), "L: " + getChunksClaimedByFaction(faction.getName(), main.claimedChunks)));
+            sender.sendMessage(ChatColor.AQUA + String.format("%-25s %10s %10s %10s", faction.getName(), "P: " + faction.getCumulativePowerLevel(), "M: " + faction.getPopulation(), "L: " + getChunksClaimedByFaction(faction.getName(), main.claimedChunks)));
         }
     }
 }
