@@ -37,7 +37,7 @@ public class ConfigCommand {
                                 + ", warsRequiredForPVP: " + main.getConfig().getBoolean("warsRequiredForPVP")
                                 + ", officerLimit: " + main.getConfig().getInt("officerLimit")
                                 + ", factionOwnerMultiplier: " + main.getConfig().getDouble("factionOwnerMultiplier")
-                                + ", officerPerMemberCount: " + main.getConfig().getDouble("officerPerMemberCount"));
+                                + ", officerPerMemberCount: " + main.getConfig().getInt("officerPerMemberCount"));
 
                         return;
                     }
