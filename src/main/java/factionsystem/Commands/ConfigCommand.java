@@ -37,7 +37,8 @@ public class ConfigCommand {
                                 + ", warsRequiredForPVP: " + main.getConfig().getBoolean("warsRequiredForPVP")
                                 + ", officerLimit: " + main.getConfig().getInt("officerLimit")
                                 + ", factionOwnerMultiplier: " + main.getConfig().getDouble("factionOwnerMultiplier")
-                                + ", officerPerMemberCount: " + main.getConfig().getInt("officerPerMemberCount"));
+                                + ", officerPerMemberCount: " + main.getConfig().getInt("officerPerMemberCount")
+                                + ", factionOfficerMultiplier: " + main.getConfig().getDouble("factionOfficerMultiplier"));
 
                         return;
                     }
@@ -99,8 +100,10 @@ public class ConfigCommand {
                 player.sendMessage(ChatColor.GREEN + "Boolean set!");
                 return;
             }
-            else if (option.equalsIgnoreCase("factionOwnerMultiplier")){
+            else if (option.equalsIgnoreCase("factionOwnerMultiplier")
+                    || option.equalsIgnoreCase("factionOfficerMultiplier")){
                 main.getConfig().set(option, Double.parseDouble(value));
+                player.sendMessage(ChatColor.GREEN + "Double set!");
             }
             else {
                 main.getConfig().set(option, value);

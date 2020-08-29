@@ -31,7 +31,7 @@ public class PlayerPowerRecord {
         this.playerUUID = playerUUID;
         powerLevel = initial;
         maxPower = max;
-        ensureFactionOwnerMaxPower(playerUUID, main);
+        ensureMaxPower(playerUUID, main);
     }
     public PlayerPowerRecord(int max) { // server constructor for loading
         maxPower = max;
@@ -40,7 +40,18 @@ public class PlayerPowerRecord {
     public PlayerPowerRecord(Map<String, String> data, Main main) {
         this.load(data);
         maxPower = main.getConfig().getInt("maxPowerLevel");
-        ensureFactionOwnerMaxPower(playerUUID, main);
+        ensureMaxPower(playerUUID, main);
+    }
+
+    private void ensureMaxPower(UUID player, Main main){
+        ensureFactionOwnerMaxPower(player, main);
+        ensureFactionOfficerMaxPower(player, main);
+    }
+
+    private void ensureFactionOfficerMaxPower(UUID player, Main main) {
+        if (UtilitySubsystem.isPlayerAFactionOfficer(player, main.factions)){
+            maxPower *= main.getConfig().getDouble("factionOfficerMultiplier", 1.5);
+        }
     }
 
     private void ensureFactionOwnerMaxPower(UUID player, Main main){

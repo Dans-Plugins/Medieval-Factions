@@ -467,6 +467,15 @@ public class UtilitySubsystem {
         }
     }
 
+    public static boolean isPlayerAFactionOfficer(UUID player, ArrayList<Faction> factions) {
+        if (isInFaction(player, factions)){
+            Faction faction = getPlayersFaction(player, factions);
+            return faction.isOfficer(player);
+        } else {
+            return false;
+        }
+    }
+
     public static void invokeAlliances(String victimFactionName, String declaringFactionName, ArrayList<Faction> factions) {
         Faction victimFaction = getFaction(victimFactionName, factions);
         Faction declaringFaction = getFaction(declaringFactionName, factions);
@@ -731,6 +740,11 @@ public class UtilitySubsystem {
             main.getConfig().addDefault("officerPerMemberCount", 5);
         }
 
+        if (!main.getConfig().isDouble("factionOfficerMultiplier")){
+            System.out.println("factionOfficerMultiplier is not set! Setting to default");
+            main.getConfig().addDefault("factionOfficerMultiplier", 5);
+        }
+
         main.getConfig().options().copyDefaults(true);
         main.saveConfig();
     }
@@ -748,6 +762,7 @@ public class UtilitySubsystem {
         main.getConfig().addDefault("officerLimit", 0);
         main.getConfig().addDefault("factionOwnerMultiplier", 2.0);
         main.getConfig().addDefault("officerPerMemberCount", 5);
+        main.getConfig().addDefault("factionOfficerMultiplier", 1.5);
         main.getConfig().options().copyDefaults(true);
         main.saveConfig();
     }
