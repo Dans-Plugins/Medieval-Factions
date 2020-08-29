@@ -26,6 +26,19 @@ public class UtilitySubsystem {
     }
 
     // non-static methods
+    
+    public ClaimedChunk isChunkClaimed(double x, double y, String world)
+    {
+    	for (ClaimedChunk chunk : main.claimedChunks)
+    	{
+    		if (x == chunk.getCoordinates()[0] && y == chunk.getCoordinates()[1] && world == chunk.getWorld())
+    		{
+    			return chunk;
+    		}
+    	}
+    	
+    	return null;
+    }
 
     public void addChunkAtPlayerLocation(Player player) {
         double[] playerCoords = new double[2];
@@ -35,7 +48,9 @@ public class UtilitySubsystem {
             if (faction.isOwner(player.getUniqueId()) || faction.isOfficer(player.getUniqueId())) {
 
                 // check if land is already claimed
-                for (ClaimedChunk chunk : main.claimedChunks) {
+                ClaimedChunk chunk = isChunkClaimed(playerCoords[0], playerCoords[1], player.getLocation().getWorld().getName());
+                if (chunk != null)
+        		{
                     if (playerCoords[0] == chunk.getCoordinates()[0] && playerCoords[1] == chunk.getCoordinates()[1]) {
 
                         // if holder is player's faction
@@ -108,12 +123,12 @@ public class UtilitySubsystem {
         playerCoords[1] = player.getLocation().getChunk().getZ();
 
         if (main.adminsBypassingProtections.contains(player.getUniqueId())) {
-            for (ClaimedChunk chunk : main.claimedChunks) {
-                if (playerCoords[0] == chunk.getCoordinates()[0] && playerCoords[1] == chunk.getCoordinates()[1]) {
-                    removeChunk(chunk, player, getFaction(chunk.getHolder(), main.factions));
-                    player.sendMessage(ChatColor.GREEN + "Land unclaimed using admin bypass!");
-                    return;
-                }
+        	ClaimedChunk chunk = isChunkClaimed(playerCoords[0], playerCoords[1], player.getLocation().getWorld().getName());
+            if (chunk != null)
+            {
+                removeChunk(chunk, player, getFaction(chunk.getHolder(), main.factions));
+                player.sendMessage(ChatColor.GREEN + "Land unclaimed using admin bypass!");
+                return;
             }
             player.sendMessage(ChatColor.RED + "This land is not currently claimed!");
             return;
@@ -121,21 +136,20 @@ public class UtilitySubsystem {
 
         for (Faction faction : main.factions) {
             if (faction.isOwner(player.getUniqueId()) || faction.isOfficer(player.getUniqueId())) {
-
                 // check if land is claimed by player's faction
-                for (ClaimedChunk chunk : main.claimedChunks) {
-                    if (playerCoords[0] == chunk.getCoordinates()[0] && playerCoords[1] == chunk.getCoordinates()[1]) {
-                        // if holder is player's faction
-                        if (chunk.getHolder().equalsIgnoreCase(faction.getName())) {
-                            removeChunk(chunk, player, faction);
-                            player.sendMessage(ChatColor.GREEN + "Land unclaimed.");
+            	ClaimedChunk chunk = isChunkClaimed(playerCoords[0], playerCoords[1], player.getLocation().getWorld().getName());
+            	if (chunk != null)
+            	{
+                    // if holder is player's faction
+                    if (chunk.getHolder().equalsIgnoreCase(faction.getName())) {
+                        removeChunk(chunk, player, faction);
+                        player.sendMessage(ChatColor.GREEN + "Land unclaimed.");
 
-                            return;
-                        }
-                        else {
-                            player.sendMessage(ChatColor.RED + "This land is claimed by " + chunk.getHolder());
-                            return;
-                        }
+                        return;
+                    }
+                    else {
+                        player.sendMessage(ChatColor.RED + "This land is claimed by " + chunk.getHolder());
+                        return;
                     }
                 }
 
@@ -149,8 +163,8 @@ public class UtilitySubsystem {
         // if faction home is located on this chunk
         Location factionHome = getPlayersFaction(player.getUniqueId(), main.factions).getFactionHome();
         if (factionHome != null) {
-            if (factionHome.getChunk().getX() == chunk.getChunk().getX() && factionHome.getChunk().getZ() == chunk.getChunk().getZ()) {
-
+            if (factionHome.getChunk().getX() == chunk.getChunk().getX() && factionHome.getChunk().getZ() == chunk.getChunk().getZ()
+            		&& chunk.getWorld() == player.getLocation().getWorld().getName()) {
                 // remove faction home
                 faction.setFactionHome(null);
                 sendAllPlayersInFactionMessage(faction, ChatColor.RED + "Your faction home has been removed!");
@@ -175,11 +189,10 @@ public class UtilitySubsystem {
         double[] playerCoords = new double[2];
         playerCoords[0] = player.getLocation().getChunk().getX();
         playerCoords[1] = player.getLocation().getChunk().getZ();
-        for (ClaimedChunk chunk : main.claimedChunks) {
-            if (playerCoords[0] == chunk.getCoordinates()[0] && playerCoords[1] == chunk.getCoordinates()[1]
-                    && player.getWorld().getName().equals(chunk.getWorld())) {
-                return chunk.getHolder();
-            }
+        ClaimedChunk chunk = isChunkClaimed(playerCoords[0], playerCoords[1], player.getLocation().getWorld().getName());
+        if (chunk != null)
+        {
+            return chunk.getHolder();
         }
         return "unclaimed";
     }
@@ -475,19 +488,21 @@ public class UtilitySubsystem {
         }
 
     }
-
+    
     public static boolean isClaimed(Chunk chunk, ArrayList<ClaimedChunk> claimedChunks) {
+
         for (ClaimedChunk claimedChunk : claimedChunks) {
-            if (claimedChunk.getCoordinates()[0] == chunk.getX() && claimedChunk.getCoordinates()[1] == chunk.getZ()) {
+            if (claimedChunk.getCoordinates()[0] == chunk.getX() && claimedChunk.getCoordinates()[1] == chunk.getZ()
+            		&& claimedChunk.getWorld() == chunk.getWorld().getName()) {
                 return true;
             }
         }
         return false;
     }
 
-    public static ClaimedChunk getClaimedChunk(int x, int z, ArrayList<ClaimedChunk> claimedChunks) {
+    public static ClaimedChunk getClaimedChunk(int x, int z, String world, ArrayList<ClaimedChunk> claimedChunks) {
         for (ClaimedChunk claimedChunk : claimedChunks) {
-            if (claimedChunk.getCoordinates()[0] == x && claimedChunk.getCoordinates()[1] == z) {
+            if (claimedChunk.getCoordinates()[0] == x && claimedChunk.getCoordinates()[1] == z && claimedChunk.getWorld() == world) {
                 return claimedChunk;
             }
         }

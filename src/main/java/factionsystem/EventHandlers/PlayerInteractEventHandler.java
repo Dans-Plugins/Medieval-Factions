@@ -51,7 +51,7 @@ public class PlayerInteractEventHandler {
             // ---------------------------------------------------------------------------------------------------------------
 
             // if chunk is claimed
-            ClaimedChunk chunk = getClaimedChunk(event.getClickedBlock().getLocation().getChunk().getX(), event.getClickedBlock().getLocation().getChunk().getZ(), main.claimedChunks);
+            ClaimedChunk chunk = getClaimedChunk(event.getClickedBlock().getLocation().getChunk().getX(), event.getClickedBlock().getLocation().getChunk().getZ(), event.getClickedBlock().getLocation().getWorld().getName(), main.claimedChunks);
             if (chunk != null) {
                 handleClaimedChunk(event, chunk);
             }
@@ -99,7 +99,8 @@ public class PlayerInteractEventHandler {
 
     private void handleLockingBlock(PlayerInteractEvent event, Player player, Block clickedBlock) {
         // if chunk is claimed
-        ClaimedChunk chunk = getClaimedChunk(event.getClickedBlock().getLocation().getChunk().getX(), event.getClickedBlock().getLocation().getChunk().getZ(), main.claimedChunks);
+        ClaimedChunk chunk = getClaimedChunk(event.getClickedBlock().getLocation().getChunk().getX(), event.getClickedBlock().getLocation().getChunk().getZ(),
+        		event.getClickedBlock().getLocation().getWorld().getName(), main.claimedChunks);
         if (chunk != null) {
 
             // if claimed by other faction
