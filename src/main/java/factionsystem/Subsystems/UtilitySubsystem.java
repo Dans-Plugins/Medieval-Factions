@@ -27,7 +27,7 @@ public class UtilitySubsystem {
 
     // non-static methods
     
-    public ClaimedChunk isChunkClaimed(double x, double y, string world)
+    public ClaimedChunk isChunkClaimed(double x, double y, String world)
     {
     	for (ClaimedChunk chunk : main.claimedChunks)
     	{
@@ -488,14 +488,15 @@ public class UtilitySubsystem {
         }
 
     }
-
+    
     public static boolean isClaimed(Chunk chunk, ArrayList<ClaimedChunk> claimedChunks) {
 
-    	ClaimedChunk chunk = isChunkClaimed(chunk.getX(), chunk.getY(), chunk.getWorld());
-    	if (chunk != null)
-    	{
-    		return true;
-    	}
+        for (ClaimedChunk claimedChunk : claimedChunks) {
+            if (claimedChunk.getCoordinates()[0] == chunk.getX() && claimedChunk.getCoordinates()[1] == chunk.getZ()
+            		&& claimedChunk.getWorld() == chunk.getWorld().getName()) {
+                return true;
+            }
+        }
         return false;
     }
 

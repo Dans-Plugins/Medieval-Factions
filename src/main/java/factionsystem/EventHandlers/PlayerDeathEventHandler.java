@@ -53,9 +53,10 @@ public class PlayerDeathEventHandler {
             playerCoords[1] = player.getLocation().getChunk().getZ();
 
             // check if land is claimed
-            ClaimedChunk chunk = isChunkClaimed(playerCoords[0], playerCoords[1], player.getLocation().getWorld().getName());
-            if (chunk != null)
+            if (UtilitySubsystem.isClaimed(player.getLocation().getChunk(), main.claimedChunks))
             {
+            	ClaimedChunk chunk = UtilitySubsystem.getClaimedChunk(player.getLocation().getChunk().getX(), player.getLocation().getChunk().getZ(),
+            			player.getLocation().getWorld().getName(), main.claimedChunks);
                 // if holder is player's faction
                 if (chunk.getHolder().equalsIgnoreCase(getPlayersFaction(player.getUniqueId(), main.factions).getName()) && getPlayersFaction(player.getUniqueId(), main.factions).getAutoClaimStatus() == false) {
 
