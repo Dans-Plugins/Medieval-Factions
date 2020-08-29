@@ -726,6 +726,11 @@ public class UtilitySubsystem {
             main.getConfig().addDefault("factionOwnerMultiplier", 2.0);
         }
 
+        if (!main.getConfig().isDouble("officerPerMemberCount")){
+            System.out.println("officerPerMemberCount is not set! Setting to default");
+            main.getConfig().addDefault("officerPerMemberCount", 5);
+        }
+
         main.getConfig().options().copyDefaults(true);
         main.saveConfig();
     }
@@ -742,6 +747,7 @@ public class UtilitySubsystem {
         main.getConfig().addDefault("warsRequiredForPVP", true);
         main.getConfig().addDefault("officerLimit", 0);
         main.getConfig().addDefault("factionOwnerMultiplier", 2.0);
+        main.getConfig().addDefault("officerPerMemberCount", 5);
         main.getConfig().options().copyDefaults(true);
         main.saveConfig();
     }
