@@ -742,7 +742,7 @@ public class UtilitySubsystem {
 
         if (!main.getConfig().isDouble("factionOfficerMultiplier")){
             System.out.println("factionOfficerMultiplier is not set! Setting to default");
-            main.getConfig().addDefault("factionOfficerMultiplier", 5);
+            main.getConfig().addDefault("factionOfficerMultiplier", 2.0);
         }
 
         main.getConfig().options().copyDefaults(true);

@@ -266,7 +266,7 @@ public class StorageSubsystem {
             // actual loading
             while (loadReader.hasNextLine()) {
                 String nextName = loadReader.nextLine();
-                PlayerPowerRecord temp = new PlayerPowerRecord(main.getConfig().getInt("maxPowerLevel")); // uses no-parameter constructor since load provides name
+                PlayerPowerRecord temp = new PlayerPowerRecord(main); // uses no-parameter constructor since load provides name
                 temp.legacyLoad(nextName); // provides power field among other things
 
                 for (int i = 0; i < main.playerPowerRecords.size(); i++) {

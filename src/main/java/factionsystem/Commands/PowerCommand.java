@@ -29,7 +29,7 @@ public class PowerCommand {
             		if (playerUUID != null)
             		{
 	            		PlayerPowerRecord record = getPlayersPowerRecord(playerUUID, main.playerPowerRecords);
-	                    player.sendMessage(ChatColor.AQUA + args[1] + "'s current power level is " + record.getPowerLevel() + "/" + record.getMaxPower() + ".");
+	                    player.sendMessage(ChatColor.AQUA + args[1] + "'s current power level is " + record.getPowerLevel() + "/" + record.maxPower() + ".");
 	                    return true;
             		}
             		else
@@ -41,7 +41,7 @@ public class PowerCommand {
             	else
             	{
                     PlayerPowerRecord record = getPlayersPowerRecord(player.getUniqueId(), main.playerPowerRecords);
-                    player.sendMessage(ChatColor.AQUA + "Your current power level is " + record.getPowerLevel() + "/" + record.getMaxPower() + ".");
+                    player.sendMessage(ChatColor.AQUA + "Your current power level is " + record.getPowerLevel() + "/" + record.maxPower() + ".");
                     return true;
             	}
             }

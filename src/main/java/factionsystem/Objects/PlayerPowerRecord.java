@@ -25,40 +25,34 @@ public class PlayerPowerRecord {
     private int powerLevel = 0;
 
     // temporary
-    int maxPower = 0;
+    private Main main;
 
-    public PlayerPowerRecord(UUID playerUUID, int initial, int max, Main main) {
+    public PlayerPowerRecord(UUID playerUUID, int initial, Main main) {
         this.playerUUID = playerUUID;
         powerLevel = initial;
-        maxPower = max;
-        ensureMaxPower(playerUUID, main);
+        this.main = main;
     }
-    public PlayerPowerRecord(int max) { // server constructor for loading
-        maxPower = max;
+    public PlayerPowerRecord(Main main) { // server constructor for loading
+        this.main = main;
     }
 
     public PlayerPowerRecord(Map<String, String> data, Main main) {
         this.load(data);
-        maxPower = main.getConfig().getInt("maxPowerLevel");
-        ensureMaxPower(playerUUID, main);
+        this.main = main;
     }
 
-    private void ensureMaxPower(UUID player, Main main){
-        ensureFactionOwnerMaxPower(player, main);
-        ensureFactionOfficerMaxPower(player, main);
-    }
-
-    private void ensureFactionOfficerMaxPower(UUID player, Main main) {
-        if (UtilitySubsystem.isPlayerAFactionOfficer(player, main.factions)){
-            maxPower *= main.getConfig().getDouble("factionOfficerMultiplier", 1.5);
+    public int maxPower() {
+        if (UtilitySubsystem.isPlayerAFactionOwner(playerUUID, main.factions)){
+            return (int) (main.getConfig().getDouble("maxPowerLevel") * main.getConfig().getDouble("factionOwnerMultiplier", 2.0));
         }
+
+        if (UtilitySubsystem.isPlayerAFactionOfficer(playerUUID, main.factions)){
+            return (int) (main.getConfig().getDouble("maxPowerLevel") * main.getConfig().getDouble("factionOfficerMultiplier", 1.5));
+        }
+
+        return main.getConfig().getInt("maxPowerLevel");
     }
 
-    private void ensureFactionOwnerMaxPower(UUID player, Main main){
-        if (UtilitySubsystem.isPlayerAFactionOwner(player, main.factions)){
-            maxPower *= main.getConfig().getDouble("factionOwnerMultiplier", 2.0);
-        }
-    }
 
     public void setPlayerName(UUID UUID) {
         playerUUID = UUID;
@@ -69,7 +63,7 @@ public class PlayerPowerRecord {
     }
 
     public boolean increasePower() {
-        if (powerLevel < maxPower) {
+        if (powerLevel < maxPower()) {
             powerLevel++;
             return true;
         }
@@ -145,7 +139,7 @@ public class PlayerPowerRecord {
             newLevel++;
         }
 
-        powerLevel = Math.min(newLevel, maxPower);
+        powerLevel = Math.min(newLevel, maxPower());
         System.out.println("End power level:" + powerLevel);
         if (powerLevel == 0){
             powerLevel = 1;
@@ -160,9 +154,5 @@ public class PlayerPowerRecord {
         } else {
             powerLevel = 0;
         }
-    }
-
-    public int getMaxPower() {
-        return maxPower;
     }
 }

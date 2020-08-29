@@ -181,7 +181,7 @@ public class Faction {
     }
 
     public boolean addOfficer(UUID newOfficer) {
-        if (officers.size() < calculateMaxOfficers()){
+        if (officers.size() < calculateMaxOfficers() && !officers.contains(newOfficer)){
             officers.add(newOfficer);
             return true;
         } else {
