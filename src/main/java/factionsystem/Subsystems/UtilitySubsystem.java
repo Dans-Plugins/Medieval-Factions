@@ -241,10 +241,10 @@ public class UtilitySubsystem {
         Bukkit.getScheduler().scheduleSyncRepeatingTask(main, new Runnable() {
             @Override
             public void run() {
-                System.out.println("Medieval Factions is increasing the power of every player by " + main.getConfig().getInt("hourlyPowerIncreaseAmount") + " if their power is below " + main.getConfig().getInt("maxPowerLevel") + ". This will happen every " + main.getConfig().getInt("minutesBetweenPowerIncreases") + " minutes.");
+                System.out.println("Medieval Factions is increasing the power of every player by " + main.getConfig().getInt("hourlyPowerIncreaseAmount") + " if their power is below " + main.getConfig().getInt("initialMaxPowerLevel") + ". This will happen every " + main.getConfig().getInt("minutesBetweenPowerIncreases") + " minutes.");
                 for (PlayerPowerRecord powerRecord : main.playerPowerRecords) {
                     try {
-                        if (powerRecord.getPowerLevel() < main.getConfig().getInt("maxPowerLevel")) {
+                        if (powerRecord.getPowerLevel() < main.getConfig().getInt("initialMaxPowerLevel")) {
                             if (getServer().getPlayer(powerRecord.getPlayerUUID()).isOnline()) {
                                 powerRecord.increasePower();
                                 getServer().getPlayer(powerRecord.getPlayerUUID()).sendMessage(ChatColor.GREEN + "You feel stronger. Your power has increased by " + main.getConfig().getInt("hourlyPowerIncreaseAmount") + ".");

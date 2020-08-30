@@ -197,7 +197,7 @@ public class StorageSubsystem {
             // actual loading
             while (loadReader.hasNextLine()) {
                 String nextName = loadReader.nextLine();
-                Faction temp = new Faction(nextName, main.getConfig().getInt("maxPowerLevel"), main); // uses server constructor, only temporary
+                Faction temp = new Faction(nextName, main.getConfig().getInt("initialMaxPowerLevel"), main); // uses server constructor, only temporary
                 temp.legacyLoad(nextName + ".txt"); // provides owner field among other things
 
                 // existence check

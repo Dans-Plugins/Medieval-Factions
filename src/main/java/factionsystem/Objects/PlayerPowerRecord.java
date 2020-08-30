@@ -43,14 +43,14 @@ public class PlayerPowerRecord {
 
     public int maxPower() {
         if (UtilitySubsystem.isPlayerAFactionOwner(playerUUID, main.factions)){
-            return (int) (main.getConfig().getDouble("maxPowerLevel") * main.getConfig().getDouble("factionOwnerMultiplier", 2.0));
+            return (int) (main.getConfig().getDouble("initialMaxPowerLevel") * main.getConfig().getDouble("factionOwnerMultiplier", 2.0));
         }
 
         if (UtilitySubsystem.isPlayerAFactionOfficer(playerUUID, main.factions)){
-            return (int) (main.getConfig().getDouble("maxPowerLevel") * main.getConfig().getDouble("factionOfficerMultiplier", 1.5));
+            return (int) (main.getConfig().getDouble("initialMaxPowerLevel") * main.getConfig().getDouble("factionOfficerMultiplier", 1.5));
         }
 
-        return main.getConfig().getInt("maxPowerLevel");
+        return main.getConfig().getInt("initialMaxPowerLevel");
     }
 
 

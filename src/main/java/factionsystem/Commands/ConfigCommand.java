@@ -27,7 +27,7 @@ public class ConfigCommand {
 
                         // no further arguments needed, list config
                         player.sendMessage(ChatColor.AQUA + "version: " + main.getConfig().getString("version")
-                                + ", maxPowerLevel: " + main.getConfig().getInt("maxPowerLevel")
+                                + ", initialMaxPowerLevel: " + main.getConfig().getInt("initialMaxPowerLevel")
                                 + ", initialPowerLevel: " +  main.getConfig().getInt("initialPowerLevel")
                                 + ", hourlyPowerIncreaseAmount: " + main.getConfig().getInt("hourlyPowerIncreaseAmount")
                                 + ", mobsSpawnInFactionTerritory: " + main.getConfig().getBoolean("mobsSpawnInFactionTerritory")
@@ -83,7 +83,7 @@ public class ConfigCommand {
                 player.sendMessage(ChatColor.RED + "Can't set version!");
                 return;
             }
-            else if (option.equalsIgnoreCase("maxPowerLevel") || option.equalsIgnoreCase("initialPowerLevel")
+            else if (option.equalsIgnoreCase("initialMaxPowerLevel") || option.equalsIgnoreCase("initialPowerLevel")
                     || option.equalsIgnoreCase("hourlyPowerIncreaseAmount")
                     || option.equalsIgnoreCase("minutesBeforeInitialPowerIncrease")
                     || option.equalsIgnoreCase("minutesBetweenPowerIncreases")

@@ -48,7 +48,7 @@ public class CreateCommand {
                 if (!factionExists) {
 
                     // actual faction creation
-                    Faction temp = new Faction(name, player.getUniqueId(), main.getConfig().getInt("maxPowerLevel"), main);
+                    Faction temp = new Faction(name, player.getUniqueId(), main.getConfig().getInt("initialMaxPowerLevel"), main);
                     main.factions.add(temp);
                     // TODO: Make thread safe
                     main.factions.get(main.factions.size() - 1).addMember(player.getUniqueId(), getPlayersPowerRecord(player.getUniqueId(), main.playerPowerRecords).getPowerLevel());
