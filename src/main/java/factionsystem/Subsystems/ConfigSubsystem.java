@@ -90,9 +90,7 @@ public class ConfigSubsystem {
 
     private void deleteOldConfigOptionsIfPresent() {
         for (String option : oldConfigOptions) {
-            if (main.getConfig().isSet(option)) {
-                deleteConfigOption(option);
-            }
+            deleteConfigOption(option);
         }
     }
 
