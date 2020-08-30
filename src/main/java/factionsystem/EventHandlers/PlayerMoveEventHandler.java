@@ -52,7 +52,7 @@ public class PlayerMoveEventHandler {
 
             // if new chunk is claimed and old chunk was not
             if (isClaimed(event.getTo().getChunk(), main.claimedChunks) && !isClaimed(event.getFrom().getChunk(), main.claimedChunks)) {
-                String title = getClaimedChunk(event.getTo().getChunk().getX(), event.getTo().getChunk().getZ(), event.getTo().getWorld().getName(), main.claimedChunks).getHolder();
+                String title = getClaimedChunk(event.getTo().getChunk().getX(), event.getTo().getChunk().getZ(), event.getTo().getChunk().getWorld().getName(), main.claimedChunks).getHolder();
                 event.getPlayer().sendTitle(title, null, 10, 70, 20);
                 return;
             }
@@ -66,8 +66,8 @@ public class PlayerMoveEventHandler {
             // if new chunk is claimed and old chunk was also claimed
             if (isClaimed(event.getTo().getChunk(), main.claimedChunks) && isClaimed(event.getFrom().getChunk(), main.claimedChunks)) {
                 // if chunk holders are not equal
-                if (!(getClaimedChunk(event.getFrom().getChunk().getX(), event.getFrom().getChunk().getZ(), event.getFrom().getWorld().getName(), main.claimedChunks).getHolder().equalsIgnoreCase(getClaimedChunk(event.getTo().getChunk().getX(), event.getTo().getChunk().getZ(), event.getTo().getWorld().getName(), main.claimedChunks).getHolder()))) {
-                    String title = getClaimedChunk(event.getTo().getChunk().getX(), event.getTo().getChunk().getZ(), event.getTo().getWorld().getName(), main.claimedChunks).getHolder();
+                if (!(getClaimedChunk(event.getFrom().getChunk().getX(), event.getFrom().getChunk().getZ(), event.getFrom().getWorld().getName(), main.claimedChunks).getHolder().equalsIgnoreCase(getClaimedChunk(event.getTo().getChunk().getX(), event.getTo().getChunk().getZ(), event.getTo().getChunk().getWorld().getName(), main.claimedChunks).getHolder()))) {
+                    String title = getClaimedChunk(event.getTo().getChunk().getX(), event.getTo().getChunk().getZ(), event.getTo().getChunk().getWorld().getName(), main.claimedChunks).getHolder();
                     event.getPlayer().sendTitle(title, null, 10, 70, 20);
                 }
             }

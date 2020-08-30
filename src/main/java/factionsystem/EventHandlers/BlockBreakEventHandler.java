@@ -4,6 +4,8 @@ import factionsystem.Main;
 import factionsystem.Objects.ClaimedChunk;
 import factionsystem.Objects.Faction;
 import factionsystem.Objects.LockedBlock;
+import factionsystem.Subsystems.UtilitySubsystem;
+
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 import org.bukkit.event.block.BlockBreakEvent;
@@ -45,22 +47,17 @@ public class BlockBreakEventHandler {
                     }
 
                     // if block is locked
-                    if (main.utilities.isBlockLocked(event.getBlock().getX(), event.getBlock().getY(), event.getBlock().getZ())) {
+                    if (main.utilities.isBlockLocked(event.getBlock())) {
 
                         // if player is not the owner and isn't bypassing
-                        if (!main.utilities.getLockedBlock(event.getBlock().getX(), event.getBlock().getY(), event.getBlock().getZ()).getOwner().equals(player.getUniqueId())
+                        if (!main.utilities.getLockedBlock(event.getBlock()).getOwner().equals(player.getUniqueId())
                                 && !main.adminsBypassingProtections.contains(event.getPlayer().getUniqueId())) {
                             event.setCancelled(true);
                             player.sendMessage(ChatColor.RED + "You don't own this!");
                             return;
                         }
 
-                        for (LockedBlock block : main.lockedBlocks) {
-                            if (block.getX() == event.getBlock().getX() && block.getY() == event.getBlock().getY() && block.getZ() == event.getBlock().getZ()) {
-                                main.lockedBlocks.remove(block);
-                                break;
-                            }
-                        }
+                    	UtilitySubsystem.removeLock(event.getBlock(), main.lockedBlocks);
 
                     }
                 }

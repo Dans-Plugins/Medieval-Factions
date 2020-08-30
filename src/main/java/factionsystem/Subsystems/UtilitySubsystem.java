@@ -177,14 +177,15 @@ public class UtilitySubsystem {
         while (itr.hasNext()) {
             LockedBlock block = itr.next();
             if (chunk.getChunk().getWorld().getBlockAt(block.getX(), block.getY(), block.getZ()).getChunk().getX() == chunk.getChunk().getX() &&
-                    chunk.getChunk().getWorld().getBlockAt(block.getX(), block.getY(), block.getZ()).getChunk().getZ() == chunk.getChunk().getZ()) {
+                    chunk.getChunk().getWorld().getBlockAt(block.getX(), block.getY(), block.getZ()).getChunk().getZ() == chunk.getChunk().getZ() &&
+                    block.getWorld() == chunk.getWorld()) {
                 itr.remove();
             }
         }
 
         main.claimedChunks.remove(chunk);
     }
-
+    
     public String checkOwnershipAtPlayerLocation(Player player) {
         double[] playerCoords = new double[2];
         playerCoords[0] = player.getLocation().getChunk().getX();
@@ -199,7 +200,7 @@ public class UtilitySubsystem {
 
     public void removeLock(Block block) {
         for (LockedBlock b : main.lockedBlocks) {
-            if (b.getX() == block.getX() && b.getY() == block.getY() && b.getZ() == block.getZ()) {
+            if (b.getX() == block.getX() && b.getY() == block.getY() && b.getZ() == block.getZ() && block.getWorld().getName() == b.getWorld()) {
                 main.lockedBlocks.remove(b);
                 return;
             }
@@ -280,12 +281,12 @@ public class UtilitySubsystem {
     }
 
     public boolean isBlockLocked(Block block) {
-        return isBlockLocked(block.getX(), block.getY(), block.getZ());
+        return isBlockLocked(block.getX(), block.getY(), block.getZ(), block.getWorld().getName());
     }
 
-    public boolean isBlockLocked(int x, int y, int z) {
+    public boolean isBlockLocked(int x, int y, int z, String world) {
         for (LockedBlock block : main.lockedBlocks) {
-            if (block.getX() == x && block.getY() == y && block.getZ() == z) {
+            if (block.getX() == x && block.getY() == y && block.getZ() == z && block.getWorld() == world) {
                 return true;
             }
         }
@@ -293,12 +294,12 @@ public class UtilitySubsystem {
     }
 
     public LockedBlock getLockedBlock(Block block) {
-        return getLockedBlock(block.getX(), block.getY(), block.getZ());
+        return getLockedBlock(block.getX(), block.getY(), block.getZ(), block.getWorld().getName());
     }
 
-    public LockedBlock getLockedBlock(int x, int y, int z) {
+    public LockedBlock getLockedBlock(int x, int y, int z, String world) {
         for (LockedBlock block : main.lockedBlocks) {
-            if (block.getX() == x && block.getY() == y && block.getZ() == z) {
+            if (block.getX() == x && block.getY() == y && block.getZ() == z && block.getWorld() == world) {
                 return block;
             }
         }
@@ -327,6 +328,42 @@ public class UtilitySubsystem {
 
     // static methods ----------------------------
 
+
+    public static void removeLock(Block block, ArrayList<LockedBlock> lockedBlocks) {
+        for (LockedBlock b : lockedBlocks) {
+            if (b.getX() == block.getX() && b.getY() == block.getY() && b.getZ() == block.getZ() && block.getWorld().getName() == b.getWorld()) {
+                lockedBlocks.remove(b);
+                return;
+            }
+        }
+    }
+
+    public static LockedBlock getLockedBlock(Block block, ArrayList<LockedBlock> lockedBlocks) {
+        return getLockedBlock(block.getX(), block.getY(), block.getZ(), block.getWorld().getName(), lockedBlocks);
+    }
+
+    public static LockedBlock getLockedBlock(int x, int y, int z, String world, ArrayList<LockedBlock> lockedBlocks) {
+        for (LockedBlock block : lockedBlocks) {
+            if (block.getX() == x && block.getY() == y && block.getZ() == z && block.getWorld() == world) {
+                return block;
+            }
+        }
+        return null;
+    }    
+
+    public static boolean isBlockLocked(Block block, ArrayList<LockedBlock> lockedBlocks) {
+        return isBlockLocked(block.getX(), block.getY(), block.getZ(), block.getWorld().getName(), lockedBlocks);
+    }
+
+    public static boolean isBlockLocked(int x, int y, int z, String world, ArrayList<LockedBlock> lockedBlocks) {
+        for (LockedBlock block : lockedBlocks) {
+            if (block.getX() == x && block.getY() == y && block.getZ() == z && block.getWorld() == world) {
+                return true;
+            }
+        }
+        return false;
+    }
+   
     public static boolean isInFaction(UUID playerUUID, ArrayList<Faction> factions) {
         // membership check
         for (Faction faction : factions) {
@@ -501,8 +538,7 @@ public class UtilitySubsystem {
     public static boolean isClaimed(Chunk chunk, ArrayList<ClaimedChunk> claimedChunks) {
 
         for (ClaimedChunk claimedChunk : claimedChunks) {
-            if (claimedChunk.getCoordinates()[0] == chunk.getX() && claimedChunk.getCoordinates()[1] == chunk.getZ()
-            		&& claimedChunk.getWorld() == chunk.getWorld().getName()) {
+            if (claimedChunk.getCoordinates()[0] == chunk.getX() && claimedChunk.getCoordinates()[1] == chunk.getZ() && claimedChunk.getWorld() == chunk.getWorld().getName()) {
                 return true;
             }
         }

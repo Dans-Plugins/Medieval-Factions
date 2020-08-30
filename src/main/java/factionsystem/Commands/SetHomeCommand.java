@@ -25,7 +25,7 @@ public class SetHomeCommand {
                 if (playersFaction.isOwner(player.getUniqueId()) || playersFaction.isOfficer(player.getUniqueId())) {
 
                     if (isClaimed(player.getLocation().getChunk(), main.claimedChunks)) {
-                        ClaimedChunk chunk = getClaimedChunk(player.getLocation().getChunk().getX(), player.getLocation().getChunk().getZ(), player.getLocation().getWorld().getName(), main.claimedChunks);
+                        ClaimedChunk chunk = getClaimedChunk(player.getLocation().getChunk().getX(), player.getLocation().getChunk().getZ(), player.getWorld().getName(), main.claimedChunks);
                         if (chunk.getHolder().equalsIgnoreCase(playersFaction.getName())) {
                             playersFaction.setFactionHome(player.getLocation());
                             player.sendMessage(ChatColor.GREEN + "Faction home set!");

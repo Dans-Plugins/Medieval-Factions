@@ -51,7 +51,7 @@ public class PlayerInteractEventHandler {
             // ---------------------------------------------------------------------------------------------------------------
 
             // if chunk is claimed
-            ClaimedChunk chunk = getClaimedChunk(event.getClickedBlock().getLocation().getChunk().getX(), event.getClickedBlock().getLocation().getChunk().getZ(), event.getClickedBlock().getLocation().getWorld().getName(), main.claimedChunks);
+            ClaimedChunk chunk = getClaimedChunk(event.getClickedBlock().getLocation().getChunk().getX(), event.getClickedBlock().getLocation().getChunk().getZ(), event.getClickedBlock().getWorld().getName(), main.claimedChunks);
             if (chunk != null) {
                 handleClaimedChunk(event, chunk);
             }
@@ -59,7 +59,7 @@ public class PlayerInteractEventHandler {
             // ---------------------------------------------------------------------------------------------------------------
 
             // if block is locked
-            LockedBlock lockedBlock = main.utilities.getLockedBlock(clickedBlock.getX(), clickedBlock.getY(), clickedBlock.getZ());
+            LockedBlock lockedBlock = main.utilities.getLockedBlock(clickedBlock);
             if (lockedBlock != null) {
 
                 // if player doesn't have access and isn't overriding
@@ -100,7 +100,7 @@ public class PlayerInteractEventHandler {
     private void handleLockingBlock(PlayerInteractEvent event, Player player, Block clickedBlock) {
         // if chunk is claimed
         ClaimedChunk chunk = getClaimedChunk(event.getClickedBlock().getLocation().getChunk().getX(), event.getClickedBlock().getLocation().getChunk().getZ(),
-        		event.getClickedBlock().getLocation().getWorld().getName(), main.claimedChunks);
+        		event.getClickedBlock().getWorld().getName(), main.claimedChunks);
         if (chunk != null) {
 
             // if claimed by other faction
@@ -111,7 +111,7 @@ public class PlayerInteractEventHandler {
             }
 
             // if already locked
-            if (main.utilities.isBlockLocked(clickedBlock.getX(), clickedBlock.getY(), clickedBlock.getZ())) {
+            if (main.utilities.isBlockLocked(clickedBlock, main.lockedBlocks)) {
                 player.sendMessage(ChatColor.RED + "This block is already locked!");
                 event.setCancelled(true);
                 return;
@@ -128,10 +128,10 @@ public class PlayerInteractEventHandler {
                         Block leftChest = ((Chest) doubleChest.getLeftSide()).getBlock();
                         Block rightChest = ((Chest) doubleChest.getRightSide()).getBlock();
 
-                        LockedBlock left = new LockedBlock(player.getUniqueId(), getPlayersFaction(player.getUniqueId(), main.factions).getName(), leftChest.getX(), leftChest.getY(), leftChest.getZ());
+                        LockedBlock left = new LockedBlock(player.getUniqueId(), getPlayersFaction(player.getUniqueId(), main.factions).getName(), leftChest.getX(), leftChest.getY(), leftChest.getZ(), leftChest.getWorld().getName());
                         main.lockedBlocks.add(left);
 
-                        LockedBlock right = new LockedBlock(player.getUniqueId(), getPlayersFaction(player.getUniqueId(), main.factions).getName(), rightChest.getX(), rightChest.getY(), rightChest.getZ());
+                        LockedBlock right = new LockedBlock(player.getUniqueId(), getPlayersFaction(player.getUniqueId(), main.factions).getName(), rightChest.getX(), rightChest.getY(), rightChest.getZ(), rightChest.getWorld().getName());
                         main.lockedBlocks.add(right);
 
                         player.sendMessage(ChatColor.GREEN + "Locked!");
@@ -139,7 +139,7 @@ public class PlayerInteractEventHandler {
                     }
                     else {
                         // lock single chest
-                        LockedBlock single = new LockedBlock(player.getUniqueId(), getPlayersFaction(player.getUniqueId(), main.factions).getName(), clickedBlock.getX(), clickedBlock.getY(), clickedBlock.getZ());
+                        LockedBlock single = new LockedBlock(player.getUniqueId(), getPlayersFaction(player.getUniqueId(), main.factions).getName(), clickedBlock.getX(), clickedBlock.getY(), clickedBlock.getZ(), clickedBlock.getWorld().getName());
                         main.lockedBlocks.add(single);
 
                         player.sendMessage(ChatColor.GREEN + "Locked!");
@@ -150,16 +150,16 @@ public class PlayerInteractEventHandler {
                 // door multi-lock
                 if (main.utilities.isDoor(clickedBlock)) {
                     // lock initial block
-                    LockedBlock initial = new LockedBlock(player.getUniqueId(), getPlayersFaction(player.getUniqueId(), main.factions).getName(), clickedBlock.getX(), clickedBlock.getY(), clickedBlock.getZ());
+                    LockedBlock initial = new LockedBlock(player.getUniqueId(), getPlayersFaction(player.getUniqueId(), main.factions).getName(), clickedBlock.getX(), clickedBlock.getY(), clickedBlock.getZ(), clickedBlock.getWorld().getName());
                     main.lockedBlocks.add(initial);
                     // check block above
                     if (main.utilities.isDoor(clickedBlock.getWorld().getBlockAt(clickedBlock.getX(), clickedBlock.getY() + 1, clickedBlock.getZ()))) {
-                        LockedBlock newLockedBlock2 = new LockedBlock(player.getUniqueId(), getPlayersFaction(player.getUniqueId(), main.factions).getName(), clickedBlock.getX(), clickedBlock.getY() + 1, clickedBlock.getZ());
+                        LockedBlock newLockedBlock2 = new LockedBlock(player.getUniqueId(), getPlayersFaction(player.getUniqueId(), main.factions).getName(), clickedBlock.getX(), clickedBlock.getY() + 1, clickedBlock.getZ(), clickedBlock.getWorld().getName());
                         main.lockedBlocks.add(newLockedBlock2);
                     }
                     // check block below
                     if (main.utilities.isDoor(clickedBlock.getWorld().getBlockAt(clickedBlock.getX(), clickedBlock.getY() - 1, clickedBlock.getZ()))) {
-                        LockedBlock newLockedBlock2 = new LockedBlock(player.getUniqueId(), getPlayersFaction(player.getUniqueId(), main.factions).getName(), clickedBlock.getX(), clickedBlock.getY() - 1, clickedBlock.getZ());
+                        LockedBlock newLockedBlock2 = new LockedBlock(player.getUniqueId(), getPlayersFaction(player.getUniqueId(), main.factions).getName(), clickedBlock.getX(), clickedBlock.getY() - 1, clickedBlock.getZ(), clickedBlock.getWorld().getName());
                         main.lockedBlocks.add(newLockedBlock2);
                     }
 
@@ -185,8 +185,8 @@ public class PlayerInteractEventHandler {
 
     private void handleUnlockingBlock(PlayerInteractEvent event, Player player, Block clickedBlock) {
         // if locked
-        if (main.utilities.isBlockLocked(clickedBlock.getX(), clickedBlock.getY(), clickedBlock.getZ())) {
-            if (main.utilities.getLockedBlock(clickedBlock.getX(), clickedBlock.getY(), clickedBlock.getZ()).getOwner().equals(player.getUniqueId())) {
+        if (main.utilities.isBlockLocked(clickedBlock, main.lockedBlocks)) {
+            if (main.utilities.getLockedBlock(clickedBlock).getOwner().equals(player.getUniqueId())) {
 
                 if (main.utilities.isChest(clickedBlock)) {
                     InventoryHolder holder = ((Chest) clickedBlock.getState()).getInventory().getHolder();
@@ -365,7 +365,7 @@ public class PlayerInteractEventHandler {
     private void handleGrantingAccess(PlayerInteractEvent event, Block clickedBlock, Player player) {
 
         // if not owner
-        if (main.utilities.getLockedBlock(clickedBlock.getX(), clickedBlock.getY(), clickedBlock.getZ()).getOwner() != player.getUniqueId()) {
+        if (main.utilities.getLockedBlock(clickedBlock, main.lockedBlocks).getOwner() != player.getUniqueId()) {
             player.sendMessage(ChatColor.RED + "You are not the owner of this block!");
             return;
         }
@@ -379,15 +379,15 @@ public class PlayerInteractEventHandler {
                 Block leftChest = ((Chest) doubleChest.getLeftSide()).getBlock();
                 Block rightChest = ((Chest) doubleChest.getRightSide()).getBlock();
 
-                main.utilities.getLockedBlock(leftChest.getX(), leftChest.getY(), leftChest.getZ()).addToAccessList(main.playersGrantingAccess.get(player.getUniqueId()));
-                main.utilities.getLockedBlock(rightChest.getX(), rightChest.getY(), rightChest.getZ()).addToAccessList(main.playersGrantingAccess.get(player.getUniqueId()));
+                main.utilities.getLockedBlock(leftChest, main.lockedBlocks).addToAccessList(main.playersGrantingAccess.get(player.getUniqueId()));
+                main.utilities.getLockedBlock(rightChest, main.lockedBlocks).addToAccessList(main.playersGrantingAccess.get(player.getUniqueId()));
 
                 player.sendMessage(ChatColor.GREEN + "Access granted to " + findPlayerNameBasedOnUUID(main.playersGrantingAccess.get(player.getUniqueId())));
                 main.playersGrantingAccess.remove(player.getUniqueId());
             }
             else { // if single chest
                 // grant access to single chest
-                main.utilities.getLockedBlock(clickedBlock.getX(), clickedBlock.getY(), clickedBlock.getZ()).addToAccessList(main.playersGrantingAccess.get(player.getUniqueId()));
+                main.utilities.getLockedBlock(clickedBlock, main.lockedBlocks).addToAccessList(main.playersGrantingAccess.get(player.getUniqueId()));
                 player.sendMessage(ChatColor.GREEN + "Access granted to " + findPlayerNameBasedOnUUID(main.playersGrantingAccess.get(player.getUniqueId())));
                 main.playersGrantingAccess.remove(player.getUniqueId());
             }
@@ -397,14 +397,14 @@ public class PlayerInteractEventHandler {
         // if door
         if (main.utilities.isDoor(clickedBlock)) {
             // grant access to initial block
-            main.utilities.getLockedBlock(clickedBlock.getX(), clickedBlock.getY(), clickedBlock.getZ()).addToAccessList(main.playersGrantingAccess.get(player.getUniqueId()));
+            main.utilities.getLockedBlock(clickedBlock, main.lockedBlocks).addToAccessList(main.playersGrantingAccess.get(player.getUniqueId()));
             // check block above
             if (main.utilities.isDoor(clickedBlock.getWorld().getBlockAt(clickedBlock.getX(), clickedBlock.getY() + 1, clickedBlock.getZ()))) {
-                main.utilities.getLockedBlock(clickedBlock.getX(), clickedBlock.getY() + 1, clickedBlock.getZ()).addToAccessList(main.playersGrantingAccess.get(player.getUniqueId()));
+                main.utilities.getLockedBlock(clickedBlock, main.lockedBlocks).addToAccessList(main.playersGrantingAccess.get(player.getUniqueId()));
             }
             // check block below
             if (main.utilities.isDoor(clickedBlock.getWorld().getBlockAt(clickedBlock.getX(), clickedBlock.getY() - 1, clickedBlock.getZ()))) {
-                main.utilities.getLockedBlock(clickedBlock.getX(), clickedBlock.getY() - 1, clickedBlock.getZ()).addToAccessList(main.playersGrantingAccess.get(player.getUniqueId()));
+                main.utilities.getLockedBlock(clickedBlock, main.lockedBlocks).addToAccessList(main.playersGrantingAccess.get(player.getUniqueId()));
             }
 
             player.sendMessage(ChatColor.GREEN + "Access granted to " + findPlayerNameBasedOnUUID(main.playersGrantingAccess.get(player.getUniqueId())));
@@ -425,7 +425,7 @@ public class PlayerInteractEventHandler {
     private void handleRevokingAccess(PlayerInteractEvent event, Block clickedBlock, Player player) {
 
         // if not owner
-        if (main.utilities.getLockedBlock(clickedBlock.getX(), clickedBlock.getY(), clickedBlock.getZ()).getOwner() != player.getUniqueId()) {
+        if (main.utilities.getLockedBlock(clickedBlock, main.lockedBlocks).getOwner() != player.getUniqueId()) {
             player.sendMessage(ChatColor.RED + "You are not the owner of this block!");
             return;
         }
@@ -439,15 +439,15 @@ public class PlayerInteractEventHandler {
                 Block leftChest = ((Chest) doubleChest.getLeftSide()).getBlock();
                 Block rightChest = ((Chest) doubleChest.getRightSide()).getBlock();
 
-                main.utilities.getLockedBlock(leftChest.getX(), leftChest.getY(), leftChest.getZ()).removeFromAccessList(main.playersRevokingAccess.get(player.getUniqueId()));
-                main.utilities.getLockedBlock(rightChest.getX(), rightChest.getY(), rightChest.getZ()).removeFromAccessList(main.playersRevokingAccess.get(player.getUniqueId()));
+                main.utilities.getLockedBlock(leftChest, main.lockedBlocks).removeFromAccessList(main.playersRevokingAccess.get(player.getUniqueId()));
+                main.utilities.getLockedBlock(rightChest, main.lockedBlocks).removeFromAccessList(main.playersRevokingAccess.get(player.getUniqueId()));
 
                 player.sendMessage(ChatColor.GREEN + "Access revoked for " + findPlayerNameBasedOnUUID(main.playersRevokingAccess.get(player.getUniqueId())));
                 main.playersRevokingAccess.remove(player.getUniqueId());
             }
             else { // if single chest
                 // revoke access to single chest
-                main.utilities.getLockedBlock(clickedBlock.getX(), clickedBlock.getY(), clickedBlock.getZ()).removeFromAccessList(main.playersRevokingAccess.get(player.getUniqueId()));
+                main.utilities.getLockedBlock(clickedBlock, main.lockedBlocks).removeFromAccessList(main.playersRevokingAccess.get(player.getUniqueId()));
                 player.sendMessage(ChatColor.GREEN + "Access revoked for " + findPlayerNameBasedOnUUID(main.playersRevokingAccess.get(player.getUniqueId())));
                 main.playersRevokingAccess.remove(player.getUniqueId());
             }
@@ -457,14 +457,14 @@ public class PlayerInteractEventHandler {
         // if door
         if (main.utilities.isDoor(clickedBlock)) {
             // revoke access to initial block
-            main.utilities.getLockedBlock(clickedBlock.getX(), clickedBlock.getY(), clickedBlock.getZ()).removeFromAccessList(main.playersRevokingAccess.get(player.getUniqueId()));
+            main.utilities.getLockedBlock(clickedBlock, main.lockedBlocks).removeFromAccessList(main.playersRevokingAccess.get(player.getUniqueId()));
             // check block above
             if (main.utilities.isDoor(clickedBlock.getWorld().getBlockAt(clickedBlock.getX(), clickedBlock.getY() + 1, clickedBlock.getZ()))) {
-                main.utilities.getLockedBlock(clickedBlock.getX(), clickedBlock.getY() + 1, clickedBlock.getZ()).removeFromAccessList(main.playersRevokingAccess.get(player.getUniqueId()));
+                main.utilities.getLockedBlock(clickedBlock, main.lockedBlocks).removeFromAccessList(main.playersRevokingAccess.get(player.getUniqueId()));
             }
             // check block below
             if (main.utilities.isDoor(clickedBlock.getWorld().getBlockAt(clickedBlock.getX(), clickedBlock.getY() - 1, clickedBlock.getZ()))) {
-                main.utilities.getLockedBlock(clickedBlock.getX(), clickedBlock.getY() - 1, clickedBlock.getZ()).removeFromAccessList(main.playersRevokingAccess.get(player.getUniqueId()));
+                main.utilities.getLockedBlock(clickedBlock, main.lockedBlocks).removeFromAccessList(main.playersRevokingAccess.get(player.getUniqueId()));
             }
 
             player.sendMessage(ChatColor.GREEN + "Access revoked for " + findPlayerNameBasedOnUUID(main.playersRevokingAccess.get(player.getUniqueId())));
