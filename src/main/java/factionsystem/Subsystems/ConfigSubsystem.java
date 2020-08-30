@@ -28,7 +28,7 @@ public class ConfigSubsystem {
         }
 
         // add defaults if they don't exist
-        if (!main.getConfig().isInt("initialMaxPowerLevel")) { // TODO: change all references to maxPowerLevel
+        if (!main.getConfig().isInt("initialMaxPowerLevel")) {
             System.out.println("Max power level not set! Setting to default!");
             main.getConfig().addDefault("initialMaxPowerLevel", 20);
         }
@@ -40,9 +40,9 @@ public class ConfigSubsystem {
             System.out.println("Mobs spawn in faction territory not set! Setting to default!");
             main.getConfig().addDefault("mobsSpawnInFactionTerritory", false);
         }
-        if (!main.getConfig().isInt("powerIncreaseAmount")) { // TODO: change all references to hourlyPowerIncreaseAmount
+        if (!main.getConfig().isInt("powerIncreaseAmount")) {
             System.out.println("Hourly power increase amount not set! Setting to default!");
-            main.getConfig().addDefault("hourlyPowerIncreaseAmount", 2);
+            main.getConfig().addDefault("powerIncreaseAmount", 2);
         }
         if (!main.getConfig().isBoolean("laddersPlaceableInEnemyFactionTerritory")) {
             System.out.println("Ladders placeable in enemy faction territory not set! Setting to default!");
@@ -130,7 +130,7 @@ public class ConfigSubsystem {
         main.getConfig().addDefault("version", main.version);
         main.getConfig().addDefault("maxPowerLevel", 20);
         main.getConfig().addDefault("initialPowerLevel", 5);
-        main.getConfig().addDefault("hourlyPowerIncreaseAmount", 2);
+        main.getConfig().addDefault("powerIncreaseAmount", 2);
         main.getConfig().addDefault("mobsSpawnInFactionTerritory", false);
         main.getConfig().addDefault("laddersPlaceableInEnemyFactionTerritory", true);
         main.getConfig().addDefault("minutesBeforeInitialPowerIncrease", 30);

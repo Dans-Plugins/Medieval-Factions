@@ -29,7 +29,7 @@ public class ConfigCommand {
                         player.sendMessage(ChatColor.AQUA + "version: " + main.getConfig().getString("version")
                                 + ", initialMaxPowerLevel: " + main.getConfig().getInt("initialMaxPowerLevel")
                                 + ", initialPowerLevel: " +  main.getConfig().getInt("initialPowerLevel")
-                                + ", hourlyPowerIncreaseAmount: " + main.getConfig().getInt("hourlyPowerIncreaseAmount")
+                                + ", powerIncreaseAmount: " + main.getConfig().getInt("powerIncreaseAmount")
                                 + ", mobsSpawnInFactionTerritory: " + main.getConfig().getBoolean("mobsSpawnInFactionTerritory")
                                 + ", laddersPlaceableInEnemyFactionTerritory: " + main.getConfig().getBoolean("laddersPlaceableInEnemyFactionTerritory")
                                 + ", minutesBeforeInitialPowerIncrease: " + main.getConfig().getInt("minutesBeforeInitialPowerIncrease")
@@ -84,7 +84,7 @@ public class ConfigCommand {
                 return;
             }
             else if (option.equalsIgnoreCase("initialMaxPowerLevel") || option.equalsIgnoreCase("initialPowerLevel")
-                    || option.equalsIgnoreCase("hourlyPowerIncreaseAmount")
+                    || option.equalsIgnoreCase("powerIncreaseAmount")
                     || option.equalsIgnoreCase("minutesBeforeInitialPowerIncrease")
                     || option.equalsIgnoreCase("minutesBetweenPowerIncreases")
                     || option.equalsIgnoreCase("officerLimit")
