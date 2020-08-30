@@ -30,8 +30,10 @@ public class ListCommand {
 
     public void listFactionsWithFormatting(CommandSender sender) {
 //        sender.sendMessage(ChatColor.AQUA + String.format("%-20s %10s %12s %10s", "Name", "Power", "Population", "Land"));
+        sender.sendMessage(ChatColor.AQUA + "P: power, M: members, L: land");
+        sender.sendMessage(ChatColor.AQUA + "-----");
         for (Faction faction : main.utilities.getFactionsSortedByPower()) {
-            sender.sendMessage(ChatColor.AQUA + String.format("%-30s %12s %12s %12s", faction.getName(), "power: " + faction.getCumulativePowerLevel(), "pop: " + faction.getPopulation(), "land: " + getChunksClaimedByFaction(faction.getName(), main.claimedChunks)));
+            sender.sendMessage(ChatColor.AQUA + String.format("%-25s %10s %10s %10s", faction.getName(), "P: " + faction.getCumulativePowerLevel(), "M: " + faction.getPopulation(), "L: " + getChunksClaimedByFaction(faction.getName(), main.claimedChunks)));
         }
     }
 }

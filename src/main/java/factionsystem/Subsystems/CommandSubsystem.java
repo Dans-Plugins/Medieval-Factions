@@ -417,18 +417,12 @@ public class CommandSubsystem {
                     }
                 }
 
+
                 // power command
                 if  (args[0].equalsIgnoreCase("power")) {
-                    if (sender.hasPermission("mf.power") || sender.hasPermission("mf.default")) {
-                        PowerCommand command = new PowerCommand(main);
-                        command.powerCheck(sender);
-                        return true;
-                    }
-                    else {
-                        sender.sendMessage(ChatColor.RED + "Sorry! You need the following permission to use this command: 'mf.power'");
-                        return false;
-                    }
-
+                    PowerCommand command = new PowerCommand(main);
+                    command.powerCheck(sender, args);
+                    return true;
                 }
 
                 // sethome command

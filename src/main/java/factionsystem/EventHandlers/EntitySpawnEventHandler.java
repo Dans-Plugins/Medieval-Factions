@@ -1,6 +1,7 @@
 package factionsystem.EventHandlers;
 
 import factionsystem.Main;
+import factionsystem.Subsystems.UtilitySubsystem;
 import factionsystem.Objects.ClaimedChunk;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Monster;
@@ -25,13 +26,10 @@ public class EntitySpawnEventHandler {
         z = event.getEntity().getLocation().getChunk().getZ();
 
         // check if land is claimed
-        for (ClaimedChunk chunk : main.claimedChunks) {
-            if (x == chunk.getCoordinates()[0] && z == chunk.getCoordinates()[1]) {
-
-                if (event.getEntity() instanceof Monster && !main.getConfig().getBoolean("mobsSpawnInFactionTerritory")) {
-                    event.setCancelled(true);
-                }
-
+        if (UtilitySubsystem.isClaimed(event.getLocation().getChunk(), main.claimedChunks))
+        {
+            if (event.getEntity() instanceof Monster && !main.getConfig().getBoolean("mobsSpawnInFactionTerritory")) {
+                event.setCancelled(true);
             }
         }
     }

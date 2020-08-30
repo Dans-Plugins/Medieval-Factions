@@ -174,8 +174,19 @@ public class Faction {
         return powerLevel;
     }
 
-    public void addOfficer(UUID newOfficer) {
-        officers.add(newOfficer);
+    public int calculateMaxOfficers(){
+        int officersPerXNumber = main.getConfig().getInt("officerPerMemberCount");
+        int officersFromConfig = members.size() / officersPerXNumber;
+        return 1 + officersFromConfig;
+    }
+
+    public boolean addOfficer(UUID newOfficer) {
+        if (officers.size() < calculateMaxOfficers() && !officers.contains(newOfficer)){
+            officers.add(newOfficer);
+            return true;
+        } else {
+            return false;
+        }
     }
 
     public boolean removeOfficer(UUID officerToRemove) {

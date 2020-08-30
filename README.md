@@ -1,12 +1,12 @@
 # What is this?
-A minecraft plugin for players to use to organize politically.
+An open source minecraft plugin licensed under GPL3 for players to use to organize politically. Allows them to create/manage factions, declare/end wars, and claim/unclaim land. It also supports promoting/demoting players to and from officer positions as well as a power level system to decide land limits. Finally, it supports faction homes, alliances, locks and more.
 
 # Notes
 - Project building must be done with Java 8 unless your test server is expecting another version.
 - This project uses the IntelliJ plugin Minecraft Development and Maven to compile its code.
 - Testing can be done by running a local spigot server with the compiled JAR in the plugins folder and checking the console.
 
-# Versions
+# Major Version Changes [X.Y]
 - 0.1 Initial Build
 - 0.2 'Faction Class' update
 - 0.3 'Allow Faction Creation' update

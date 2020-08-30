@@ -31,25 +31,25 @@ public class PromoteCommand {
                         if (faction.isMember(playerUUID)) {
                             if (faction.isOwner(player.getUniqueId())) {
                                 if (faction.isMember(playerUUID)) {
+                                    if (faction.isOfficer(playerUUID)) {
+                                        player.sendMessage(ChatColor.GREEN + "Player is already an officer!");
+                                        return;
+                                    }
 
-                                    // if limit exists
-                                    if (main.getConfig().getInt("officerLimit") != 0) {
-                                        // if limit reached
-                                        if (faction.getNumOfficers() >= main.getConfig().getInt("officerLimit")) {
-                                            player.sendMessage(ChatColor.RED + "Officer limit of " + main.getConfig().getInt("officerLimit") + " reached!");
-                                            return;
+                                    if(faction.addOfficer(playerUUID)){
+                                        player.sendMessage(ChatColor.GREEN + "Player promoted!");
+
+                                        try {
+                                            Player target = getServer().getPlayer(args[1]);
+                                            target.sendMessage(ChatColor.GREEN + "You have been promoted to officer status in your faction!");
                                         }
-                                    }
+                                        catch(Exception ignored) {
 
-                                    faction.addOfficer(playerUUID);
-                                    player.sendMessage(ChatColor.GREEN + "Player promoted!");
-
-                                    try {
-                                        Player target = getServer().getPlayer(args[1]);
-                                        target.sendMessage(ChatColor.GREEN + "You have been promoted to officer status in your faction!");
-                                    }
-                                    catch(Exception ignored) {
-
+                                        }
+                                    } else {
+                                        player.sendMessage(ChatColor.RED +
+                                                "Player can't be promoted because you have reached your limit! Limit: "
+                                                + faction.calculateMaxOfficers());
                                     }
                                 }
                                 else {

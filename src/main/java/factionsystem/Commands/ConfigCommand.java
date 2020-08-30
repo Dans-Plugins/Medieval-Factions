@@ -36,7 +36,9 @@ public class ConfigCommand {
                                 + ", minutesBetweenPowerIncreases: " + main.getConfig().getInt("minutesBetweenPowerIncreases")
                                 + ", warsRequiredForPVP: " + main.getConfig().getBoolean("warsRequiredForPVP")
                                 + ", officerLimit: " + main.getConfig().getInt("officerLimit")
-                                + ", factionOwnerMultiplier: " + main.getConfig().getDouble("factionOwnerMultiplier"));
+                                + ", factionOwnerMultiplier: " + main.getConfig().getDouble("factionOwnerMultiplier")
+                                + ", officerPerMemberCount: " + main.getConfig().getInt("officerPerMemberCount")
+                                + ", factionOfficerMultiplier: " + main.getConfig().getDouble("factionOfficerMultiplier"));
 
                         return;
                     }
@@ -85,7 +87,8 @@ public class ConfigCommand {
                     || option.equalsIgnoreCase("hourlyPowerIncreaseAmount")
                     || option.equalsIgnoreCase("minutesBeforeInitialPowerIncrease")
                     || option.equalsIgnoreCase("minutesBetweenPowerIncreases")
-                    || option.equalsIgnoreCase("officerLimit")) {
+                    || option.equalsIgnoreCase("officerLimit")
+                    || option.equalsIgnoreCase("officerPerMemberCount")) {
                 main.getConfig().set(option, Integer.parseInt(value));
                 player.sendMessage(ChatColor.GREEN + "Integer set!");
                 return;
@@ -97,8 +100,10 @@ public class ConfigCommand {
                 player.sendMessage(ChatColor.GREEN + "Boolean set!");
                 return;
             }
-            else if (option.equalsIgnoreCase("factionOwnerMultiplier")){
+            else if (option.equalsIgnoreCase("factionOwnerMultiplier")
+                    || option.equalsIgnoreCase("factionOfficerMultiplier")){
                 main.getConfig().set(option, Double.parseDouble(value));
+                player.sendMessage(ChatColor.GREEN + "Double set!");
             }
             else {
                 main.getConfig().set(option, value);
