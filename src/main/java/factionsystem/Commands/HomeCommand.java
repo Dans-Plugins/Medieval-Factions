@@ -31,7 +31,7 @@ public class HomeCommand {
                     Chunk homeChunk = playersFaction.getFactionHome().getBlock().getChunk();
                     if (isClaimed(homeChunk, main.claimedChunks)){
                         // Ensure is in your faction
-                        ClaimedChunk claimedHomeChunk = getClaimedChunk(homeChunk.getX(), homeChunk.getZ(), main.claimedChunks);
+                        ClaimedChunk claimedHomeChunk = getClaimedChunk(homeChunk.getX(), homeChunk.getZ(), homeChunk.getWorld().getName(), main.claimedChunks);
                         if (claimedHomeChunk.getHolder() != null && !playersFaction.getName().equals(claimedHomeChunk.getHolder())) {
                             // Area is claimed by someone else and cannot be home. Cancel teleport and return;
                             player.sendMessage(ChatColor.RED + "Home was claimed by another faction, and has been lost.");

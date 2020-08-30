@@ -10,6 +10,8 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.util.*;
 
+import org.bukkit.Bukkit;
+
 import static factionsystem.Subsystems.UtilitySubsystem.findUUIDBasedOnPlayerName;
 
 public class LockedBlock {
@@ -19,14 +21,16 @@ public class LockedBlock {
     private int z = 0;
     private UUID owner = UUID.randomUUID();
     private String factionName = "";
+    private String world = "";
     private ArrayList<UUID> accessList = new ArrayList<>();
 
-    public LockedBlock(UUID o, String f, int newX, int newY, int newZ) {
+    public LockedBlock(UUID o, String f, int newX, int newY, int newZ, String newW) {
         owner = o;
         factionName = f;
         x = newX;
         y = newY;
         z = newZ;
+        world = newW;
         accessList.add(owner);
     }
 
@@ -38,6 +42,14 @@ public class LockedBlock {
         this.load(lockedBlockData);
     }
 
+    public String getWorld() {
+    	return world;
+    }
+    
+    public void setWorld(String name) {
+    	world = name;
+    }
+    
     public int getX() {
         return x;
     }
@@ -93,6 +105,7 @@ public class LockedBlock {
         saveMap.put("Z", gson.toJson(z));
         saveMap.put("owner", gson.toJson(owner));
         saveMap.put("factionName", gson.toJson(factionName));
+        saveMap.put("world", gson.toJson(world));
         saveMap.put("accessList", gson.toJson(accessList));
 
         return saveMap;
@@ -106,7 +119,13 @@ public class LockedBlock {
         z = gson.fromJson(data.get("Z"), Integer.TYPE);
         owner = UUID.fromString(gson.fromJson(data.get("owner"), String.class));
         factionName =  gson.fromJson(data.get("factionName"), String.class);
+        world = gson.fromJson(data.get("world"), String.class);
+        if (world == null)
+        {
+        	world = Bukkit.getServer().getWorlds().get(0).getName();
+        }
         accessList = gson.fromJson(data.get("accessList"), new TypeToken<ArrayList<UUID>>(){}.getType());
+        
     }
 
     public void legacyLoad(String filename) {
