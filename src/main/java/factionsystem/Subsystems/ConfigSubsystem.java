@@ -5,6 +5,7 @@ import factionsystem.Main;
 import java.io.*;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Scanner;
 
 public class ConfigSubsystem {
 
@@ -62,11 +63,6 @@ public class ConfigSubsystem {
             main.getConfig().addDefault("warsRequiredForPVP", true);
         }
 
-        if (!main.getConfig().isBoolean("officerLimit")) {
-            System.out.println("officerLimit not set! Setting to default!");
-            main.getConfig().addDefault("officerLimit", 0);
-        }
-
         if (!main.getConfig().isDouble("factionOwnerMultiplier")) {
             System.out.println("factionOwnerMultiplier not set! Setting to default");
             main.getConfig().addDefault("factionOwnerMultiplier", 2.0);
@@ -94,35 +90,29 @@ public class ConfigSubsystem {
         }
     }
 
-    // Credit: https://stackoverflow.com/questions/1377279/find-a-line-in-a-file-and-remove-it
     private void deleteConfigOption(String option) {
+        File configFile = new File("/plugins/MedievalFactions/config.yml");
+        File tempFile = new File("/plugins/MedievalFactions/temp-config.yml");
         System.out.println("Attempting to delete old config option: " + option);
         try {
-            // iterate through lines in config.yml
-            File inputFile = new File("/plugins/MedievalFactions/config.yml");
-            File tempFile = new File("/plugins/MedievalFactions/temp-config.yml");
-
-            BufferedReader reader = new BufferedReader(new FileReader(inputFile));
-            BufferedWriter writer = new BufferedWriter(new FileWriter(tempFile));
-
-            String lineToRemove = option;
+            Scanner scanner = new Scanner(configFile);
+            FileWriter writer = new FileWriter(tempFile);
             String currentLine;
 
-            while((currentLine = reader.readLine()) != null) {
-                // trim newline when comparing with lineToRemove
-                String trimmedLine = currentLine.trim();
-                if(trimmedLine.contains(lineToRemove)) {
-                    System.out.println("Found old config option: " + option);
-                    continue;
+            while((currentLine = scanner.nextLine()) != null) {
+                if(!currentLine.contains(option)) {
+                    writer.write(currentLine);
                 }
-                writer.write(currentLine + System.getProperty("line.separator"));
             }
+            configFile.delete();
+            tempFile.renameTo(configFile);
+
             writer.close();
-            reader.close();
-            tempFile.renameTo(inputFile);
+            scanner.close();
         }
         catch(Exception e) {
             System.out.println("Something went wrong when deleting a config option.");
+            e.printStackTrace();
         }
     }
 
