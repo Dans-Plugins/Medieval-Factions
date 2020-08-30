@@ -2,9 +2,16 @@ package factionsystem.Subsystems;
 
 import factionsystem.Main;
 
+import java.io.*;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Scanner;
+
 public class ConfigSubsystem {
 
     Main main = null;
+
+    private final List<String> oldConfigOptions = Arrays.asList("officerLimit", "hourlyPowerIncreaseAmount", "maxPowerLevel");
 
     public ConfigSubsystem(Main plugin) {
         main = plugin;
@@ -22,9 +29,9 @@ public class ConfigSubsystem {
         }
 
         // add defaults if they don't exist
-        if (!main.getConfig().isInt("maxPowerLevel")) {
+        if (!main.getConfig().isInt("initialMaxPowerLevel")) { // TODO: change all references to maxPowerLevel
             System.out.println("Max power level not set! Setting to default!");
-            main.getConfig().addDefault("maxPowerLevel", 20);
+            main.getConfig().addDefault("initialMaxPowerLevel", 20);
         }
         if (!main.getConfig().isInt("initialPowerLevel")) {
             System.out.println("Initial power level not set! Setting to default!");
@@ -34,7 +41,7 @@ public class ConfigSubsystem {
             System.out.println("Mobs spawn in faction territory not set! Setting to default!");
             main.getConfig().addDefault("mobsSpawnInFactionTerritory", false);
         }
-        if (!main.getConfig().isInt("hourlyPowerIncreaseAmount")) {
+        if (!main.getConfig().isInt("powerIncreaseAmount")) { // TODO: change all references to hourlyPowerIncreaseAmount
             System.out.println("Hourly power increase amount not set! Setting to default!");
             main.getConfig().addDefault("hourlyPowerIncreaseAmount", 2);
         }
@@ -76,8 +83,48 @@ public class ConfigSubsystem {
             main.getConfig().addDefault("factionOfficerMultiplier", 2.0);
         }
 
+        deleteOldConfigOptionsIfPresent();
+
         main.getConfig().options().copyDefaults(true);
         main.saveConfig();
+    }
+
+    private void deleteOldConfigOptionsIfPresent() {
+        for (String option : oldConfigOptions) {
+            if (main.getConfig().isSet(option)) {
+                deleteConfigOption(option);
+            }
+        }
+    }
+
+    // Credit: https://stackoverflow.com/questions/1377279/find-a-line-in-a-file-and-remove-it
+    private void deleteConfigOption(String option) {
+        try {
+            // iterate through lines in config.yml
+            File inputFile = new File("/plugins/MedievalFactions/config.yml");
+            File tempFile = new File("/plugins/MedievalFactions/temp-config.yml");
+
+            BufferedReader reader = new BufferedReader(new FileReader(inputFile));
+            BufferedWriter writer = new BufferedWriter(new FileWriter(tempFile));
+
+            String lineToRemove = option;
+            String currentLine;
+
+            while((currentLine = reader.readLine()) != null) {
+                // trim newline when comparing with lineToRemove
+                String trimmedLine = currentLine.trim();
+                if(trimmedLine.contains(lineToRemove)) continue;
+                writer.write(currentLine + System.getProperty("line.separator"));
+            }
+            writer.close();
+            reader.close();
+            tempFile.renameTo(inputFile);
+        }
+        catch(Exception e) {
+            System.out.println("Something went wrong when deleting a config option.");
+        }
+
+
     }
 
     public void saveConfigDefaults() {
