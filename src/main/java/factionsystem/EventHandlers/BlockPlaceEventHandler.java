@@ -26,7 +26,6 @@ public class BlockPlaceEventHandler {
 
         // get chunk
         ClaimedChunk chunk = getClaimedChunk(event.getBlock().getLocation().getChunk().getX(), event.getBlock().getLocation().getChunk().getZ(),
-<<<<<<< issue-608
         		event.getBlock().getWorld().getName(), main.claimedChunks);
 
         // if chunk is claimed
