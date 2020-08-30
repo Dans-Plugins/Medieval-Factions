@@ -96,6 +96,7 @@ public class ConfigSubsystem {
 
     // Credit: https://stackoverflow.com/questions/1377279/find-a-line-in-a-file-and-remove-it
     private void deleteConfigOption(String option) {
+        System.out.println("Attempting to delete old config option: " + option);
         try {
             // iterate through lines in config.yml
             File inputFile = new File("/plugins/MedievalFactions/config.yml");
@@ -110,7 +111,10 @@ public class ConfigSubsystem {
             while((currentLine = reader.readLine()) != null) {
                 // trim newline when comparing with lineToRemove
                 String trimmedLine = currentLine.trim();
-                if(trimmedLine.contains(lineToRemove)) continue;
+                if(trimmedLine.contains(lineToRemove)) {
+                    System.out.println("Found old config option: " + option);
+                    continue;
+                }
                 writer.write(currentLine + System.getProperty("line.separator"));
             }
             writer.close();
@@ -120,8 +124,6 @@ public class ConfigSubsystem {
         catch(Exception e) {
             System.out.println("Something went wrong when deleting a config option.");
         }
-
-
     }
 
     public void saveConfigDefaults() {
