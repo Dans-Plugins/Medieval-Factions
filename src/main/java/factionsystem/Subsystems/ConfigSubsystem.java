@@ -126,7 +126,7 @@ public class ConfigSubsystem {
 
     public void saveConfigDefaults() {
         main.getConfig().addDefault("version", main.version);
-        main.getConfig().addDefault("maxPowerLevel", 20);
+        main.getConfig().addDefault("initialMaxPowerLevel", 20);
         main.getConfig().addDefault("initialPowerLevel", 5);
         main.getConfig().addDefault("powerIncreaseAmount", 2);
         main.getConfig().addDefault("mobsSpawnInFactionTerritory", false);
@@ -134,7 +134,6 @@ public class ConfigSubsystem {
         main.getConfig().addDefault("minutesBeforeInitialPowerIncrease", 30);
         main.getConfig().addDefault("minutesBetweenPowerIncreases", 60);
         main.getConfig().addDefault("warsRequiredForPVP", true);
-        main.getConfig().addDefault("officerLimit", 0);
         main.getConfig().addDefault("factionOwnerMultiplier", 2.0);
         main.getConfig().addDefault("officerPerMemberCount", 5);
         main.getConfig().addDefault("factionOfficerMultiplier", 1.5);
