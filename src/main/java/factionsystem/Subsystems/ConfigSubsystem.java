@@ -91,21 +91,24 @@ public class ConfigSubsystem {
     }
 
     private void deleteConfigOption(String option) {
-        File configFile = new File("/plugins/MedievalFactions/config.yml");
-        File tempFile = new File("/plugins/MedievalFactions/temp-config.yml");
+        File configFile = new File("./plugins/MedievalFactions/config.yml");
+        File tempFile = new File("./plugins/MedievalFactions/temp-config.yml");
         System.out.println("Attempting to delete old config option: " + option);
         try {
             Scanner scanner = new Scanner(configFile);
             FileWriter writer = new FileWriter(tempFile);
             String currentLine;
 
-            while((currentLine = scanner.nextLine()) != null) {
+            while(scanner.hasNextLine() && ((currentLine = scanner.nextLine()) != null)) {
                 if(!currentLine.contains(option)) {
-                    writer.write(currentLine);
+                    System.out.println("Found old config option: " + option + ". Writing to new file.");
+                    writer.write(currentLine + "\n");
                 }
             }
+
             configFile.delete();
-            tempFile.renameTo(configFile);
+            File newFile = new File("./plugins/MedievalFactions/config.yml");
+            tempFile.renameTo(newFile);
 
             writer.close();
             scanner.close();
