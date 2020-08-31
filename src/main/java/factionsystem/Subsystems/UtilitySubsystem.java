@@ -389,6 +389,9 @@ public class UtilitySubsystem {
         player.sendMessage(ChatColor.AQUA + "Name: " + faction.getName() + "\n");
         player.sendMessage(ChatColor.AQUA + "Owner: " + findPlayerNameBasedOnUUID(faction.getOwner()) + "\n");
         player.sendMessage(ChatColor.AQUA + "Description: " + faction.getDescription() + "\n");
+        if (faction.hasLiege()) {
+            player.sendMessage(ChatColor.AQUA + "Liege: " + faction.getLiege() + "\n");
+        }
         player.sendMessage(ChatColor.AQUA + "Population: " + faction.getMemberList().size() + "\n");
         player.sendMessage(ChatColor.AQUA + "Allied With: " + faction.getAlliesSeparatedByCommas() + "\n");
         player.sendMessage(ChatColor.AQUA + "At War With: " + faction.getEnemiesSeparatedByCommas() + "\n");
