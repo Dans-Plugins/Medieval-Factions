@@ -27,8 +27,10 @@ public class Faction {
     private ArrayList<UUID> officers = new ArrayList<>();
     private ArrayList<String> allyFactions = new ArrayList<>();
     private ArrayList<String> laws = new ArrayList<>();
+    private ArrayList<String> vassals = new ArrayList<>();
     private String name = "defaultName";
     private String description = "defaultDescription";
+    private String liege = "none";
     private UUID owner = UUID.randomUUID();
     private int cumulativePowerLevel = 0;
     private Location factionHome = null;
@@ -324,6 +326,7 @@ public class Faction {
         saveMap.put("allyFactions", gson.toJson(allyFactions));
         saveMap.put("laws", gson.toJson(laws));
         saveMap.put("name", gson.toJson(name));
+        saveMap.put("vassals", gson.toJson(vassals));
         saveMap.put("description", gson.toJson(description));
         saveMap.put("owner", gson.toJson(owner));
         saveMap.put("cumulativePowerLevel", gson.toJson(cumulativePowerLevel));
@@ -357,6 +360,7 @@ public class Faction {
         officers = gson.fromJson(data.get("officers"), arrayListTypeUUID);
         allyFactions = gson.fromJson(data.get("allyFactions"), arrayListTypeString);
         laws = gson.fromJson(data.get("laws"), arrayListTypeString);
+        vassals = gson.fromJson(data.get("vassals"), arrayListTypeString);
         name = gson.fromJson(data.get("name"), String.class);
         description = gson.fromJson(data.get("description"),String.class);
         owner = UUID.fromString(gson.fromJson(data.get("owner"), String.class));
@@ -525,5 +529,40 @@ public class Faction {
                 ", owner=" + owner +
                 ", cumulativePowerLevel=" + cumulativePowerLevel +
                 '}';
+    }
+
+    public boolean isVassal(String faction) {
+        for (String vassal : vassals) {
+            if (vassal.equalsIgnoreCase(faction)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    public boolean hasLiege() {
+        return !liege.equalsIgnoreCase("none");
+    }
+
+    public boolean isLiege(String faction) {
+        return liege.equalsIgnoreCase(faction);
+    }
+
+    public void addVassal(String faction) {
+        if (!vassals.contains(faction)) {
+            vassals.add(faction);
+        }
+    }
+
+    public void removeVassal(String faction) {
+        vassals.remove(faction);
+    }
+
+    public void setLiege(String newLiege) {
+        liege = newLiege;
+    }
+
+    public String getLiege() {
+        return liege;
     }
 }
