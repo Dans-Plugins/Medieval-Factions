@@ -92,29 +92,36 @@ public class ConfigSubsystem {
 
     private void deleteConfigOption(String option) {
         File configFile = new File("./plugins/MedievalFactions/config.yml");
-        File tempFile = new File("./plugins/MedievalFactions/temp-config.yml");
         System.out.println("Attempting to delete old config option: " + option);
         try {
-            Scanner scanner = new Scanner(configFile);
+            System.out.println("Creating temporary config file");
+            File tempFile = new File("./plugins/MedievalFactions/temp-config.yml");
+            Scanner loadReader = new Scanner(configFile);
             FileWriter writer = new FileWriter(tempFile);
-            String currentLine;
 
-            while(scanner.hasNextLine() && ((currentLine = scanner.nextLine()) != null)) {
-                if(!currentLine.contains(option)) {
-                    System.out.println("Found old config option: " + option + ". Writing to new file.");
-                    writer.write(currentLine + "\n");
+            // actual loading
+            while (loadReader.hasNextLine()) {
+                String next = loadReader.nextLine();
+                if (next.contains(option)) {
+                    System.out.println("Line contains the option! Doing nothing!");
+                    System.out.println("Line: '" + next + "'");
+                    System.out.println("----------------------------------------");
+                }
+                else {
+                    System.out.println("Line does not contain the option! Copying over to the temporary config file!");
+                    System.out.println("----------------------------------------");
+                    writer.write(next);
                 }
             }
+            System.out.println("No more lines found.");
+            System.out.println("----------------------------------------");
 
+            System.out.println("Deleting config.yml");
             configFile.delete();
-            File newFile = new File("./plugins/MedievalFactions/config.yml");
-            tempFile.renameTo(newFile);
 
-            writer.close();
-            scanner.close();
-        }
-        catch(Exception e) {
-            System.out.println("Something went wrong when deleting a config option.");
+            loadReader.close();
+        } catch (Exception e) {
+            System.out.println("There was a problem deleting the config option.");
             e.printStackTrace();
         }
     }
