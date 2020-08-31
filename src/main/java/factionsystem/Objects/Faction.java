@@ -565,4 +565,19 @@ public class Faction {
     public String getLiege() {
         return liege;
     }
+
+    public boolean isLiege() {
+        return vassals.size() != 0;
+    }
+
+    public String getVassalsSeparatedByCommas() {
+        String toReturn = "";
+        for (int i = 0; i < vassals.size(); i++) {
+            toReturn = toReturn + vassals.get(i);
+            if (i != vassals.size() - 1) {
+                toReturn = toReturn + ", ";
+            }
+        }
+        return toReturn;
+    }
 }
