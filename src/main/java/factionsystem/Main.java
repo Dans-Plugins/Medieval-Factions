@@ -6,6 +6,7 @@ import factionsystem.Objects.Faction;
 import factionsystem.Objects.LockedBlock;
 import factionsystem.Objects.PlayerPowerRecord;
 import factionsystem.Subsystems.CommandSubsystem;
+import factionsystem.Subsystems.ConfigSubsystem;
 import factionsystem.Subsystems.StorageSubsystem;
 import factionsystem.Subsystems.UtilitySubsystem;
 import factionsystem.Util.Pair;
@@ -32,11 +33,12 @@ import java.util.UUID;
 public class Main extends JavaPlugin implements Listener {
 
     // version
-    public static String version = "v3.4.3";
+    public static String version = "v3.4.4";
 
     // subsystems
     public StorageSubsystem storage = new StorageSubsystem(this);
     public UtilitySubsystem utilities = new UtilitySubsystem(this);
+    public ConfigSubsystem config = new ConfigSubsystem(this);
 
     // saved lists
     public ArrayList<Faction> factions = new ArrayList<>();
@@ -65,12 +67,12 @@ public class Main extends JavaPlugin implements Listener {
 
         // config creation/loading
         if (!(new File("./plugins/MedievalFactions/config.yml").exists())) {
-            utilities.saveConfigDefaults();
+            config.saveConfigDefaults();
         }
         else {
             if (!getConfig().getString("version").equalsIgnoreCase(Main.version)) {
                 System.out.println("[ALERT] Version mismatch! Adding missing defaults and setting version!");
-                utilities.handleVersionMismatch();
+                config.handleVersionMismatch();
             }
             reloadConfig();
         }

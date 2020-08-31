@@ -25,7 +25,7 @@ public class UtilitySubsystem {
         main = plugin;
     }
 
-    // non-static methods
+    // non-static methodsow I 
     
     public ClaimedChunk isChunkClaimed(double x, double y, String world)
     {
@@ -242,13 +242,13 @@ public class UtilitySubsystem {
         Bukkit.getScheduler().scheduleSyncRepeatingTask(main, new Runnable() {
             @Override
             public void run() {
-                System.out.println("Medieval Factions is increasing the power of every player by " + main.getConfig().getInt("hourlyPowerIncreaseAmount") + " if their power is below " + main.getConfig().getInt("maxPowerLevel") + ". This will happen every " + main.getConfig().getInt("minutesBetweenPowerIncreases") + " minutes.");
+                System.out.println("Medieval Factions is increasing the power of every player by " + main.getConfig().getInt("powerIncreaseAmount") + " if their power is below " + main.getConfig().getInt("initialMaxPowerLevel") + ". This will happen every " + main.getConfig().getInt("minutesBetweenPowerIncreases") + " minutes.");
                 for (PlayerPowerRecord powerRecord : main.playerPowerRecords) {
                     try {
-                        if (powerRecord.getPowerLevel() < main.getConfig().getInt("maxPowerLevel")) {
+                        if (powerRecord.getPowerLevel() < main.getConfig().getInt("initialMaxPowerLevel")) {
                             if (getServer().getPlayer(powerRecord.getPlayerUUID()).isOnline()) {
                                 powerRecord.increasePower();
-                                getServer().getPlayer(powerRecord.getPlayerUUID()).sendMessage(ChatColor.GREEN + "You feel stronger. Your power has increased by " + main.getConfig().getInt("hourlyPowerIncreaseAmount") + ".");
+                                getServer().getPlayer(powerRecord.getPlayerUUID()).sendMessage(ChatColor.GREEN + "You feel stronger. Your power has increased by " + main.getConfig().getInt("powerIncreaseAmount") + ".");
                             }
                         }
                     } catch (Exception ignored) {
@@ -597,7 +597,7 @@ public class UtilitySubsystem {
         // this piece of code is to fix config values not matching when updating to v3.3 (after v3.3 there is version mismatch handling)
         if (!main.getConfig().isSet("version")) {
             System.out.println("Config.yml doesn't have version entry!");
-            handleVersionMismatch();
+            main.config.handleVersionMismatch();
         }
     }
 
@@ -713,94 +713,6 @@ public class UtilitySubsystem {
         }
 
         return null;
-    }
-
-    public void handleVersionMismatch() {
-        // set version
-        if (!main.getConfig().isString("version")) {
-            System.out.println("Version not set! Setting version to " + main.version);
-            main.getConfig().addDefault("version", main.version);
-        }
-        else {
-            System.out.println("Version set but mismatched! Setting version to " + main.version);
-            main.getConfig().set("version", main.version);
-        }
-
-        // add defaults if they don't exist
-        if (!main.getConfig().isInt("maxPowerLevel")) {
-            System.out.println("Max power level not set! Setting to default!");
-            main.getConfig().addDefault("maxPowerLevel", 20);
-        }
-        if (!main.getConfig().isInt("initialPowerLevel")) {
-            System.out.println("Initial power level not set! Setting to default!");
-            main.getConfig().addDefault("initialPowerLevel", 5);
-        }
-        if (!main.getConfig().isBoolean("mobsSpawnInFactionTerritory")) {
-            System.out.println("Mobs spawn in faction territory not set! Setting to default!");
-            main.getConfig().addDefault("mobsSpawnInFactionTerritory", false);
-        }
-        if (!main.getConfig().isInt("hourlyPowerIncreaseAmount")) {
-            System.out.println("Hourly power increase amount not set! Setting to default!");
-            main.getConfig().addDefault("hourlyPowerIncreaseAmount", 2);
-        }
-        if (!main.getConfig().isBoolean("laddersPlaceableInEnemyFactionTerritory")) {
-            System.out.println("Ladders placeable in enemy faction territory not set! Setting to default!");
-            main.getConfig().addDefault("laddersPlaceableInEnemyFactionTerritory", true);
-        }
-        if (!main.getConfig().isInt("minutesBeforeInitialPowerIncrease")) {
-            System.out.println("minutesBeforeInitialPowerIncrease not set! Setting to default!");
-            main.getConfig().addDefault("minutesBeforeInitialPowerIncrease", 30);
-        }
-        if (!main.getConfig().isInt("minutesBetweenPowerIncreases")) {
-            System.out.println("minutesBetweenPowerIncreases not set! Setting to default!");
-            main.getConfig().addDefault("minutesBetweenPowerIncreases", 60);
-        }
-
-        if (!main.getConfig().isBoolean("warsRequiredForPVP")) {
-            System.out.println("warsRequiredForPVP not set! Setting to default!");
-            main.getConfig().addDefault("warsRequiredForPVP", true);
-        }
-
-        if (!main.getConfig().isBoolean("officerLimit")) {
-            System.out.println("officerLimit not set! Setting to default!");
-            main.getConfig().addDefault("officerLimit", 0);
-        }
-
-        if (!main.getConfig().isDouble("factionOwnerMultiplier")) {
-            System.out.println("factionOwnerMultiplier not set! Setting to default");
-            main.getConfig().addDefault("factionOwnerMultiplier", 2.0);
-        }
-
-        if (!main.getConfig().isDouble("officerPerMemberCount")){
-            System.out.println("officerPerMemberCount is not set! Setting to default");
-            main.getConfig().addDefault("officerPerMemberCount", 5);
-        }
-
-        if (!main.getConfig().isDouble("factionOfficerMultiplier")){
-            System.out.println("factionOfficerMultiplier is not set! Setting to default");
-            main.getConfig().addDefault("factionOfficerMultiplier", 2.0);
-        }
-
-        main.getConfig().options().copyDefaults(true);
-        main.saveConfig();
-    }
-
-    public void saveConfigDefaults() {
-        main.getConfig().addDefault("version", main.version);
-        main.getConfig().addDefault("maxPowerLevel", 20);
-        main.getConfig().addDefault("initialPowerLevel", 5);
-        main.getConfig().addDefault("hourlyPowerIncreaseAmount", 2);
-        main.getConfig().addDefault("mobsSpawnInFactionTerritory", false);
-        main.getConfig().addDefault("laddersPlaceableInEnemyFactionTerritory", true);
-        main.getConfig().addDefault("minutesBeforeInitialPowerIncrease", 30);
-        main.getConfig().addDefault("minutesBetweenPowerIncreases", 60);
-        main.getConfig().addDefault("warsRequiredForPVP", true);
-        main.getConfig().addDefault("officerLimit", 0);
-        main.getConfig().addDefault("factionOwnerMultiplier", 2.0);
-        main.getConfig().addDefault("officerPerMemberCount", 5);
-        main.getConfig().addDefault("factionOfficerMultiplier", 1.5);
-        main.getConfig().options().copyDefaults(true);
-        main.saveConfig();
     }
 
     public void sendAllPlayersOnServerMessage(String message) {
