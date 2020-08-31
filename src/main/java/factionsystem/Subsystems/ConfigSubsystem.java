@@ -11,8 +11,6 @@ public class ConfigSubsystem {
 
     Main main = null;
 
-    private final List<String> oldConfigOptions = Arrays.asList("officerLimit", "hourlyPowerIncreaseAmount", "maxPowerLevel");
-
     public ConfigSubsystem(Main plugin) {
         main = plugin;
     }
@@ -85,55 +83,19 @@ public class ConfigSubsystem {
     }
 
     private void deleteOldConfigOptionsIfPresent() {
-        for (String option : oldConfigOptions) {
-            deleteConfigOption(option);
+
+        if (main.getConfig().isInt("officerLimit")) {
+            main.getConfig().set("officerLimit", null);
         }
-    }
 
-    private void deleteConfigOption(String option) {
-        System.out.println("Attempting to delete old config option: " + option);
-        try {
-            System.out.println("Creating temporary config file");
-            File tempFile = new File("./plugins/MedievalFactions/temp-config.yml");
-            FileWriter writer = new FileWriter(tempFile);
-
-            File configFile = new File("./plugins/MedievalFactions/config.yml");
-            Scanner loadReader = new Scanner(configFile);
-
-            // actual loading
-            while (loadReader.hasNextLine()) {
-                String next = loadReader.nextLine();
-                if (next.contains(option)) {
-                    System.out.println("Line contains the option! Doing nothing!");
-                    System.out.println("Line: '" + next + "'");
-                    System.out.println("----------------------------------------");
-                }
-                else {
-                    System.out.println("Line does not contain the option! Copying over to the temporary config file!");
-                    System.out.println("----------------------------------------");
-                    writer.write(next + "\n");
-                }
-            }
-            System.out.println("No more lines found.");
-            System.out.println("----------------------------------------");
-
-            loadReader.close();
-            writer.close();
-
-            System.out.println("Deleting config.yml");
-            if (!configFile.delete()) {
-                System.out.println("Something went wrong deleting the config file!");
-            }
-
-            System.out.println("Renaming temporary config to config.yml");
-            if (!tempFile.renameTo(new File("./plugins/MedievalFactions/config.yml"))) {
-                System.out.println("Something went wrong renaming the temporary config!");
-            }
-
-        } catch (Exception e) {
-            System.out.println("There was a problem deleting the config option.");
-            e.printStackTrace();
+        if (main.getConfig().isInt("hourlyPowerIncreaseAmount")) {
+            main.getConfig().set("hourlyPowerIncreaseAmount", null);
         }
+
+        if (main.getConfig().isInt("maxPowerLevel")) {
+            main.getConfig().set("maxPowerLevel", null);
+        }
+
     }
 
     public void saveConfigDefaults() {

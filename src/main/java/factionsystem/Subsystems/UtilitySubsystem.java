@@ -25,7 +25,7 @@ public class UtilitySubsystem {
         main = plugin;
     }
 
-    // non-static methods
+    // non-static methodsow I 
     
     public ClaimedChunk isChunkClaimed(double x, double y, String world)
     {
