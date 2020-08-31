@@ -91,13 +91,14 @@ public class ConfigSubsystem {
     }
 
     private void deleteConfigOption(String option) {
-        File configFile = new File("./plugins/MedievalFactions/config.yml");
         System.out.println("Attempting to delete old config option: " + option);
         try {
             System.out.println("Creating temporary config file");
             File tempFile = new File("./plugins/MedievalFactions/temp-config.yml");
-            Scanner loadReader = new Scanner(configFile);
             FileWriter writer = new FileWriter(tempFile);
+
+            File configFile = new File("./plugins/MedievalFactions/config.yml");
+            Scanner loadReader = new Scanner(configFile);
 
             // actual loading
             while (loadReader.hasNextLine()) {
@@ -110,16 +111,25 @@ public class ConfigSubsystem {
                 else {
                     System.out.println("Line does not contain the option! Copying over to the temporary config file!");
                     System.out.println("----------------------------------------");
-                    writer.write(next);
+                    writer.write(next + "\n");
                 }
             }
             System.out.println("No more lines found.");
             System.out.println("----------------------------------------");
 
-            System.out.println("Deleting config.yml");
-            configFile.delete();
-
             loadReader.close();
+            writer.close();
+
+            System.out.println("Deleting config.yml");
+            if (!configFile.delete()) {
+                System.out.println("Something went wrong deleting the config file!");
+            }
+
+            System.out.println("Renaming temporary config to config.yml");
+            if (!tempFile.renameTo(new File("./plugins/MedievalFactions/config.yml"))) {
+                System.out.println("Something went wrong renaming the temporary config!");
+            }
+
         } catch (Exception e) {
             System.out.println("There was a problem deleting the config option.");
             e.printStackTrace();
