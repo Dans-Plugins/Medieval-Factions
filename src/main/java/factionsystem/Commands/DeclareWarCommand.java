@@ -41,6 +41,13 @@ public class DeclareWarCommand {
 
                                         // if trying to declare war on a vassal
                                         if (main.factions.get(i).hasLiege()) {
+
+                                            // if faction is vassal of declarer
+                                            if (faction.isVassal(factionName)) {
+                                                player.sendMessage(ChatColor.RED + "You can't declare war on your own vassal!");
+                                                return;
+                                            }
+
                                             // if lieges aren't the same
                                             if (!main.factions.get(i).getLiege().equalsIgnoreCase(faction.getLiege())) {
                                                 player.sendMessage(ChatColor.RED + "You can't declare war on this faction as they are a vassal! You must declare war on their liege " + main.factions.get(i).getLiege() + " instead!");
