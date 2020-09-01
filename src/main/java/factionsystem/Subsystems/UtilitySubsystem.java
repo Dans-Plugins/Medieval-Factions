@@ -206,10 +206,18 @@ public class UtilitySubsystem {
             }
         }
     }
+    
+    public boolean isBarrel(Block block)
+    {
+    	if (block.getType() == Material.BARREL)
+    	{
+    		return true;
+    	}
+    	return false;
+    }
 
     public boolean isGate(Block block)
     {
-    	// Oak, Spruce, Birch, Jungle, Acacia, Dark Oak, Crimson, Warped
     	if (block.getType() == Material.OAK_FENCE_GATE ||
     			block.getType() == Material.SPRUCE_FENCE_GATE ||
     			block.getType() == Material.BIRCH_FENCE_GATE ||
