@@ -276,6 +276,17 @@ public class UtilitySubsystem {
     	return false;
     }
     
+    public boolean isAnvil(Block block)
+    {
+    	if (block.getType() == Material.ANVIL ||
+    			block.getType() == Material.CHIPPED_ANVIL ||
+    			block.getType() == Material.DAMAGED_ANVIL)
+    	{
+    		return true;
+    	}
+    	return false;
+    }
+    
     public boolean isChest(Block block) {
         return block.getType() == Material.CHEST;
     }

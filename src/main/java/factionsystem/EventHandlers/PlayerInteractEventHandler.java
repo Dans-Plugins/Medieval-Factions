@@ -118,7 +118,7 @@ public class PlayerInteractEventHandler {
             }
 
             // block type check
-            if (main.utilities.isDoor(clickedBlock) || main.utilities.isChest(clickedBlock) || main.utilities.isGate(clickedBlock) || main.utilities.isBarrel(clickedBlock) || main.utilities.isTrapdoor(clickedBlock) || main.utilities.isFurnace(clickedBlock)) {
+            if (main.utilities.isDoor(clickedBlock) || main.utilities.isChest(clickedBlock) || main.utilities.isGate(clickedBlock) || main.utilities.isBarrel(clickedBlock) || main.utilities.isTrapdoor(clickedBlock) || main.utilities.isFurnace(clickedBlock) || main.utilities.isAnvil(clickedBlock)) {
 
             	// specific to chests because they can be single or double.
                 if (main.utilities.isChest(clickedBlock)) {
@@ -181,7 +181,7 @@ public class PlayerInteractEventHandler {
                 return;
             }
             else {
-                player.sendMessage(ChatColor.RED + "You can only lock chests, doors, barrels, trapdoors, furnaces or gates.");
+                player.sendMessage(ChatColor.RED + "You can only lock chests, doors, barrels, trapdoors, furnaces, anvils or gates.");
                 return;
             }
 
