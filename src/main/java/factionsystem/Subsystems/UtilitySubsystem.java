@@ -248,7 +248,24 @@ public class UtilitySubsystem {
         }
         return false;
     }
-
+    
+    public boolean isTrapdoor(Block block)
+    {
+    	if (block.getType() == Material.IRON_TRAPDOOR ||
+    			block.getType() == Material.OAK_TRAPDOOR ||
+    			block.getType() == Material.SPRUCE_TRAPDOOR ||
+    			block.getType() == Material.BIRCH_TRAPDOOR ||
+    			block.getType() == Material.JUNGLE_TRAPDOOR ||
+    			block.getType() == Material.ACACIA_TRAPDOOR ||
+    			block.getType() == Material.DARK_OAK_TRAPDOOR ||
+    			block.getType() == Material.CRIMSON_TRAPDOOR ||
+    			block.getType() == Material.WARPED_TRAPDOOR)
+    	{
+    		return true;
+    	}
+    	return false;
+    }
+    
     public boolean isChest(Block block) {
         return block.getType() == Material.CHEST;
     }
