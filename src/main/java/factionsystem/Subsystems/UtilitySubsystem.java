@@ -207,6 +207,23 @@ public class UtilitySubsystem {
         }
     }
 
+    public boolean isGate(Block block)
+    {
+    	// Oak, Spruce, Birch, Jungle, Acacia, Dark Oak, Crimson, Warped
+    	if (block.getType() == Material.OAK_FENCE_GATE ||
+    			block.getType() == Material.SPRUCE_FENCE_GATE ||
+    			block.getType() == Material.BIRCH_FENCE_GATE ||
+    			block.getType() == Material.JUNGLE_FENCE_GATE ||
+    			block.getType() == Material.ACACIA_FENCE_GATE ||
+    			block.getType() == Material.DARK_OAK_FENCE_GATE ||
+    			block.getType() == Material.CRIMSON_FENCE_GATE ||
+    			block.getType() == Material.WARPED_FENCE_GATE)
+    	{
+    		return true;
+    	}
+    	return false;
+    }
+    
     public boolean isDoor(Block block) {
         if (block.getType() == Material.ACACIA_DOOR ||
                 block.getType() == Material.BIRCH_DOOR ||
@@ -214,7 +231,9 @@ public class UtilitySubsystem {
                 block.getType() == Material.IRON_DOOR ||
                 block.getType() == Material.JUNGLE_DOOR ||
                 block.getType() == Material.OAK_DOOR ||
-                block.getType() == Material.SPRUCE_DOOR) {
+                block.getType() == Material.SPRUCE_DOOR ||
+                block.getType() == Material.CRIMSON_DOOR ||
+                block.getType() == Material.WARPED_DOOR) {
 
             return true;
 
