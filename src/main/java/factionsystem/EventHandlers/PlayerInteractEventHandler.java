@@ -118,7 +118,7 @@ public class PlayerInteractEventHandler {
             }
 
             // block type check
-            if (main.utilities.isDoor(clickedBlock) || main.utilities.isChest(clickedBlock) || main.utilities.isGate(clickedBlock) || main.utilities.isBarrel(clickedBlock) || main.utilities.isTrapdoor(clickedBlock)) {
+            if (main.utilities.isDoor(clickedBlock) || main.utilities.isChest(clickedBlock) || main.utilities.isGate(clickedBlock) || main.utilities.isBarrel(clickedBlock) || main.utilities.isTrapdoor(clickedBlock) || main.utilities.isFurnace(clickedBlock)) {
 
             	// specific to chests because they can be single or double.
                 if (main.utilities.isChest(clickedBlock)) {
@@ -169,7 +169,7 @@ public class PlayerInteractEventHandler {
                 }
                 
                 // Remainder of lockable blocks are only 1x1 so generic code will suffice.
-                if (main.utilities.isGate(clickedBlock) || main.utilities.isBarrel(clickedBlock) || main.utilities.isTrapdoor(clickedBlock)) {
+                if (main.utilities.isGate(clickedBlock) || main.utilities.isBarrel(clickedBlock) || main.utilities.isTrapdoor(clickedBlock) || main.utilities.isFurnace(clickedBlock)) {
                 	LockedBlock block = new LockedBlock(player.getUniqueId(), getPlayersFaction(player.getUniqueId(), main.factions).getName(), 
                 			clickedBlock.getX(), clickedBlock.getY(), clickedBlock.getZ(), clickedBlock.getWorld().getName());
                 	main.lockedBlocks.add(block);
@@ -181,7 +181,7 @@ public class PlayerInteractEventHandler {
                 return;
             }
             else {
-                player.sendMessage(ChatColor.RED + "You can only lock chests, doors, barrels, trapdoors or gates.");
+                player.sendMessage(ChatColor.RED + "You can only lock chests, doors, barrels, trapdoors, furnaces or gates.");
                 return;
             }
 
@@ -239,7 +239,7 @@ public class PlayerInteractEventHandler {
                 }
                 
                 // single block size lock logic.
-                if (main.utilities.isGate(clickedBlock) || main.utilities.isBarrel(clickedBlock) || main.utilities.isTrapdoor(clickedBlock)) {
+                if (main.utilities.isGate(clickedBlock) || main.utilities.isBarrel(clickedBlock) || main.utilities.isTrapdoor(clickedBlock) || main.utilities.isFurnace(clickedBlock)) {
                 	main.utilities.removeLock(clickedBlock);
 
                 	player.sendMessage(ChatColor.GREEN + "Unlocked!");
@@ -430,7 +430,7 @@ public class PlayerInteractEventHandler {
         }
         
         // if gate (or single-block sized lock)
-        if (main.utilities.isGate(clickedBlock) || main.utilities.isBarrel(clickedBlock) || main.utilities.isTrapdoor(clickedBlock)) {
+        if (main.utilities.isGate(clickedBlock) || main.utilities.isBarrel(clickedBlock) || main.utilities.isTrapdoor(clickedBlock) || main.utilities.isFurnace(clickedBlock)) {
         	main.utilities.getLockedBlock(clickedBlock, main.lockedBlocks).addToAccessList(main.playersGrantingAccess.get(player.getUniqueId()));
         	
             player.sendMessage(ChatColor.GREEN + "Access granted to " + findPlayerNameBasedOnUUID(main.playersGrantingAccess.get(player.getUniqueId())));
@@ -499,7 +499,7 @@ public class PlayerInteractEventHandler {
         }
         
         // if gate or other single-block sized lock
-        if (main.utilities.isGate(clickedBlock) || main.utilities.isBarrel(clickedBlock) || main.utilities.isTrapdoor(clickedBlock)) {
+        if (main.utilities.isGate(clickedBlock) || main.utilities.isBarrel(clickedBlock) || main.utilities.isTrapdoor(clickedBlock) || main.utilities.isFurnace(clickedBlock)) {
         	main.utilities.getLockedBlock(clickedBlock, main.lockedBlocks).removeFromAccessList(main.playersRevokingAccess.get(player.getUniqueId()));
 
             player.sendMessage(ChatColor.GREEN + "Access revoked for " + findPlayerNameBasedOnUUID(main.playersRevokingAccess.get(player.getUniqueId())));

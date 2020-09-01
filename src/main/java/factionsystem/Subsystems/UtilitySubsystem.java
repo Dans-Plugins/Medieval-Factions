@@ -266,6 +266,16 @@ public class UtilitySubsystem {
     	return false;
     }
     
+    public boolean isFurnace(Block block)
+    {
+    	if (block.getType() == Material.FURNACE ||
+    			block.getType() == Material.BLAST_FURNACE)
+    	{
+    		return true;
+    	}
+    	return false;
+    }
+    
     public boolean isChest(Block block) {
         return block.getType() == Material.CHEST;
     }
