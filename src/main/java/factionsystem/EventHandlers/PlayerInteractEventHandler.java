@@ -50,14 +50,6 @@ public class PlayerInteractEventHandler {
 
             // ---------------------------------------------------------------------------------------------------------------
 
-            // if chunk is claimed
-            ClaimedChunk chunk = getClaimedChunk(event.getClickedBlock().getLocation().getChunk().getX(), event.getClickedBlock().getLocation().getChunk().getZ(), event.getClickedBlock().getWorld().getName(), main.claimedChunks);
-            if (chunk != null) {
-                handleClaimedChunk(event, chunk);
-            }
-
-            // ---------------------------------------------------------------------------------------------------------------
-
             // if block is locked
             LockedBlock lockedBlock = main.utilities.getLockedBlock(clickedBlock);
             if (lockedBlock != null) {
@@ -94,6 +86,19 @@ public class PlayerInteractEventHandler {
                     player.sendMessage(ChatColor.RED + "That block isn't locked!");
                 }
             }
+            
+            // pgarner Sep 2, 2020: Moved this to after test to see if the block is locked because it could be a block they have been granted
+            // access to (or in future, a 'public' locked block).
+            
+            // if chunk is claimed
+            ClaimedChunk chunk = getClaimedChunk(event.getClickedBlock().getLocation().getChunk().getX(), event.getClickedBlock().getLocation().getChunk().getZ(), event.getClickedBlock().getWorld().getName(), main.claimedChunks);
+            if (chunk != null) {
+                handleClaimedChunk(event, chunk);
+            }
+
+            // ---------------------------------------------------------------------------------------------------------------
+
+
         }
     }
 
