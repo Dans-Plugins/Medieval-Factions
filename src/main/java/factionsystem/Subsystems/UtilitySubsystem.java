@@ -4,6 +4,7 @@ import factionsystem.Main;
 import factionsystem.Objects.ClaimedChunk;
 import factionsystem.Objects.Faction;
 import factionsystem.Objects.LockedBlock;
+import factionsystem.Objects.PlayerActivityRecord;
 import factionsystem.Objects.PlayerPowerRecord;
 import factionsystem.Util.Pair;
 import org.bukkit.*;
@@ -330,6 +331,15 @@ public class UtilitySubsystem {
         }
         return false;
     }
+    
+    public boolean hasActivityRecord(UUID playerUUID) {
+        for (PlayerActivityRecord record : main.playerActivityRecords){
+            if (record.getPlayerUUID().equals(playerUUID)){
+                return true;
+            }
+        }
+        return false;
+    }
 
     public void schedulePowerIncrease() {
         System.out.println("Scheduling hourly power increase...");
@@ -353,6 +363,20 @@ public class UtilitySubsystem {
                 }
             }
         }, delay * 20, secondsUntilRepeat * 20);
+    }
+    
+    public void schedulePowerDecrease() {
+    	System.out.println("Scheduling power decrease...");
+    	int delay = main.getConfig().getInt("minutesBeforePowerDecrease") * 60;
+    	int secondsUntilRepeat = main.getConfig().getInt("minutesBetweenPowerDecreases") * 60;
+    	Bukkit.getScheduler().scheduleSyncRepeatingTask(main, new Runnable () {
+    		@Override
+    		public void run() {
+    			System.out.println("Medieval Factions is decreasing the power of every player by " + main.getConfig().getInt("powerDecreaseAmount") + ". This will happen every " + main.getConfig().getInt("minutesBetweenPowerDecreases") + ".");
+    			
+                // TODO: Iterate the player activity record classes and calculate the decreases.
+    		}
+    	}, delay * 20, secondsUntilRepeat * 20);
     }
 
     public void scheduleAutosave() {

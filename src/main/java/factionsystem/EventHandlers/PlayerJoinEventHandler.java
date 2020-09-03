@@ -2,6 +2,7 @@ package factionsystem.EventHandlers;
 
 import factionsystem.Main;
 import factionsystem.Objects.Faction;
+import factionsystem.Objects.PlayerActivityRecord;
 import factionsystem.Objects.PlayerPowerRecord;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
@@ -24,6 +25,10 @@ public class PlayerJoinEventHandler {
                     main.getConfig().getInt("initialPowerLevel"),
                     main);
             main.playerPowerRecords.add(newRecord);
+        }
+        if (!main.utilities.hasActivityRecord(event.getPlayer().getUniqueId())) {
+        	PlayerActivityRecord newRecord = new PlayerActivityRecord(event.getPlayer().getUniqueId(), 1, main);
+        	main.playerActivityRecords.add(newRecord);
         }
 
         informPlayerIfTheirLandIsInDanger(event.getPlayer());

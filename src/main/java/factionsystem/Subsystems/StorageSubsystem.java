@@ -8,6 +8,7 @@ import factionsystem.Main;
 import factionsystem.Objects.ClaimedChunk;
 import factionsystem.Objects.Faction;
 import factionsystem.Objects.LockedBlock;
+import factionsystem.Objects.PlayerActivityRecord;
 import factionsystem.Objects.PlayerPowerRecord;
 
 import java.io.*;
@@ -26,6 +27,7 @@ public class StorageSubsystem {
     private final static String FACTIONS_FILE_NAME = "factions.json";
     private final static String CHUNKS_FILE_NAME = "claimedchunks.json";
     private final static String PLAYERPOWER_FILE_NAME = "playerpowerrecords.json";
+    private final static String PLAYERACTIVITY_FILE_NAME = "playeractivityrecords.json";
     private final static String LOCKED_BLOCKS_FILE_NAME = "lockedblocks.json";
 
     private final static Type LIST_MAP_TYPE = new TypeToken<ArrayList<HashMap<String, String>>>(){}.getType();
@@ -40,6 +42,7 @@ public class StorageSubsystem {
         saveFactions();
         saveClaimedChunks();
         savePlayerPowerRecords();
+        savePlayerActivityRecords();
         saveLockedBlocks();
     }
 
@@ -72,6 +75,18 @@ public class StorageSubsystem {
         File file = new File(FILE_PATH + PLAYERPOWER_FILE_NAME);
         writeOutFiles(file, playerPowerRecords);
     }
+    
+    private void savePlayerActivityRecords()
+    {
+    	List<Map<String, String>> playerActivityRecords = new ArrayList<>();
+    	for (PlayerActivityRecord record : main.playerActivityRecords)
+    	{
+    		playerActivityRecords.add(record.save());
+    		
+    		File file = new File(FILE_PATH + PLAYERACTIVITY_FILE_NAME);
+    		writeOutFiles(file, playerActivityRecords);
+    	}
+    }
 
     private void saveLockedBlocks() {
         List<Map<String, String>> lockedBlocks = new ArrayList<>();
@@ -99,6 +114,7 @@ public class StorageSubsystem {
             legacyLoadFactions();
             legacyLoadClaimedChunks();
             legacyLoadPlayerPowerRecords();
+            loadPlayerActivityRecords();
             legacyLoadLockedBlocks();
             deleteLegacyFiles(new File(FILE_PATH));
             save();
@@ -107,6 +123,7 @@ public class StorageSubsystem {
             loadFactions();
             loadClaimedChunks();
             loadPlayerPowerRecords();
+            loadPlayerActivityRecords();
             loadLockedBlocks();
             System.out.println("Faction data loaded successfully");
         }
@@ -163,6 +180,17 @@ public class StorageSubsystem {
         for (Map<String, String> powerRecord : data){
             PlayerPowerRecord player = new PlayerPowerRecord(powerRecord, main);
             main.playerPowerRecords.add(player);
+        }
+    }
+    
+    private void loadPlayerActivityRecords() {
+        main.playerActivityRecords.clear();
+
+        ArrayList<HashMap<String, String>> data = loadDataFromFilename(FILE_PATH + PLAYERACTIVITY_FILE_NAME);
+
+        for (Map<String, String> powerRecord : data){
+        	PlayerActivityRecord player = new PlayerActivityRecord(powerRecord, main);
+            main.playerActivityRecords.add(player);
         }
     }
 

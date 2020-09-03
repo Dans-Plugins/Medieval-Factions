@@ -1,9 +1,16 @@
 package factionsystem.Objects;
 
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Scanner;
 import java.util.UUID;
 
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+
 import factionsystem.Main;
+
+import static factionsystem.Subsystems.UtilitySubsystem.findUUIDBasedOnPlayerName;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -17,12 +24,20 @@ public class PlayerActivityRecord {
     private UUID playerUUID = null;
     private int logins = 0;
     private ZonedDateTime lastLogout = null;
+    private Main main;
+    
+    public PlayerActivityRecord(UUID uuid, int logins, Main main)
+    {
+    	playerUUID = uuid;
+    	this.logins = logins;
+    	this.main = main;
+    }
 
     public void setPlayerUUID(UUID uuid) {
         playerUUID = uuid;
     }
 
-    public UUID setPlayerUUID() {
+    public UUID getPlayerUUID() {
         return playerUUID;
     }
 
@@ -40,6 +55,24 @@ public class PlayerActivityRecord {
 
     public int getLogins() {
         return logins;
+    }
+    
+    public PlayerActivityRecord(Map<String, String> data, Main main) {
+        this.load(data);
+        this.main = main;
+    }
+    
+    public int getMinutesSinceLastLogout()
+    {
+    	if (lastLogout != null)
+    	{
+    		ZonedDateTime now = ZonedDateTime.now();
+    		Duration duration = Duration.between(lastLogout, now);
+    		double totalSeconds = duration.getSeconds();
+    		int minutes = (int)totalSeconds / 60;
+    		return minutes;
+    	}
+    	return 0;
     }
 
     public String getTimeSinceLastLogout() {
@@ -60,72 +93,22 @@ public class PlayerActivityRecord {
         }
     }
 
-    public void save() {
-        try {
-            File saveFolder = new File("./plugins/Medieval-Essentials/");
-            if (!saveFolder.exists()) {
-                saveFolder.mkdir();
-            }
-            File saveFolder2 = new File("./plugins/Medieval-Essentials/Activity-Records/");
-            if (!saveFolder2.exists()) {
-                saveFolder2.mkdir();
-            }
-            File saveFile = new File("./plugins/Medieval-Essentials/Activity-Records/" + playerUUID + ".txt");
-            if (saveFile.createNewFile()) {
-                System.out.println("Activity Record for " +  playerUUID + " created.");
-            } else {
-                System.out.println("Activity Record for " +  playerUUID + " already exists. Altering.");
-            }
+    public Map<String, String> save() {
+        Gson gson = new GsonBuilder().setPrettyPrinting().create();
 
-            FileWriter saveWriter = new FileWriter("./plugins/Medieval-Essentials/Activity-Records/" + playerUUID + ".txt");
+        Map<String, String> saveMap = new HashMap<>();
+        saveMap.put("playerUUID", gson.toJson(playerUUID.toString()));
+        saveMap.put("logins", gson.toJson(logins));
+        saveMap.put("lastLogout", gson.toJson(lastLogout));
 
-            // actual saving takes place here
-            saveWriter.write(playerUUID + "\n");
-            saveWriter.write(logins + "\n");
-
-            // saving date of last logout
-            if (lastLogout != null) {
-                saveWriter.write(lastLogout.format(DateTimeFormatter.ISO_ZONED_DATE_TIME) + "\n");
-            }
-            else {
-                System.out.println("Error! Last logout was null!");
-                return;
-            }
-
-            saveWriter.close();
-
-            System.out.println("Successfully saved activity record.");
-
-        } catch (IOException e) {
-            System.out.println("An error occurred saving an activity record.");
-            e.printStackTrace();
-        }
+        return saveMap;
+    }   
+    
+    private void load(Map<String, String> data) {
+        Gson gson = new GsonBuilder().setPrettyPrinting().create();
+        playerUUID = UUID.fromString(gson.fromJson(data.get("playerUUID"), String.class));
+        logins = gson.fromJson(data.get("logins"), Integer.TYPE);
+        lastLogout = ZonedDateTime.parse(gson.fromJson(data.get("lastLogout"), String.class), DateTimeFormatter.ISO_ZONED_DATE_TIME);
     }
 
-    public void load(String filename) {
-        try {
-            File loadFile = new File("./plugins/Medieval-Essentials/Activity-Records/" + filename);
-            Scanner loadReader = new Scanner(loadFile);
-
-            // actual loading
-            if (loadReader.hasNextLine()) {
-            	playerUUID = UUID.fromString(loadReader.nextLine());
-            }
-            if (loadReader.hasNextLine()) {
-                logins = Integer.parseInt(loadReader.nextLine());
-            }
-            if (loadReader.hasNextLine()) {
-                lastLogout = ZonedDateTime.parse(loadReader.nextLine(), DateTimeFormatter.ISO_ZONED_DATE_TIME);
-            }
-            else {
-                System.out.println("Error! Last logout not found!");
-            }
-
-            loadReader.close();
-            System.out.println(filename + " successfully loaded.");
-        } catch (FileNotFoundException e) {
-            System.out.println("An error occurred loading " + filename + ".");
-            e.printStackTrace();
-        }
-    }
 }

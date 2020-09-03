@@ -91,9 +91,9 @@ public class ConfigSubsystem {
         	main.getConfig().addDefault("minutesBetweenPowerDecreases", 60);
         }
         
-        if (!main.getConfig().isInt("hoursBeforePowerDecrease")) {
-        	System.out.println("hoursBeforePowerDecrease is not set! Setting to default");
-        	main.getConfig().addDefault("hoursBeforePowerDecrease", 6);
+        if (!main.getConfig().isInt("minutesBeforePowerDecrease")) {
+        	System.out.println("minutesBeforePowerDecrease is not set! Setting to default");
+        	main.getConfig().addDefault("minutesBeforePowerDecrease", 6);
         }
         
         

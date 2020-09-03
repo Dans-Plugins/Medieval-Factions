@@ -88,7 +88,8 @@ public class PlayerInteractEventHandler {
             }
             
             // pgarner Sep 2, 2020: Moved this to after test to see if the block is locked because it could be a block they have been granted
-            // access to (or in future, a 'public' locked block).
+            // access to (or in future, a 'public' locked block), so if they're not in the faction whose territory the block exists in we want that
+            // check to be handled before the interaction is rejected for not being a faction member.
             
             // if chunk is claimed
             ClaimedChunk chunk = getClaimedChunk(event.getClickedBlock().getLocation().getChunk().getX(), event.getClickedBlock().getLocation().getChunk().getZ(), event.getClickedBlock().getWorld().getName(), main.claimedChunks);
