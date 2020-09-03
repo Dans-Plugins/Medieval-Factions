@@ -24,6 +24,7 @@ import org.bukkit.event.player.AsyncPlayerChatEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerMoveEvent;
+import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import java.io.File;
@@ -141,6 +142,13 @@ public class Main extends JavaPlugin implements Listener {
     public void onJoin(PlayerJoinEvent event) {
         PlayerJoinEventHandler handler = new PlayerJoinEventHandler(this);
         handler.handle(event);
+    }
+    
+    @EventHandler()
+    public void onLeave(PlayerQuitEvent event)
+    {
+    	PlayerLeaveEventHandler handler = new PlayerLeaveEventHandler(this);
+    	handler.handle(event);
     }
 
     @EventHandler()

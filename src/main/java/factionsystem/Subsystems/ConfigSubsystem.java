@@ -79,8 +79,6 @@ public class ConfigSubsystem {
             main.getConfig().addDefault("factionOfficerMultiplier", 2.0);
         }
 
-        // New options added for this branch. TODO: Remove this note before committing.
-        
         if (!main.getConfig().isBoolean("powerDecreases")) {
         	System.out.println("powerDecreases is not set! Setting to default");
         	main.getConfig().addDefault("powerDecreases", true);
