@@ -4,6 +4,7 @@ import factionsystem.Main;
 import factionsystem.Objects.ClaimedChunk;
 import factionsystem.Objects.Faction;
 import factionsystem.Objects.LockedBlock;
+import factionsystem.Objects.PlayerActivityRecord;
 import factionsystem.Objects.PlayerPowerRecord;
 import factionsystem.Util.Pair;
 import org.bukkit.*;
@@ -15,6 +16,8 @@ import org.bukkit.potion.PotionType;
 import java.io.File;
 import java.util.*;
 
+import static factionsystem.Subsystems.UtilitySubsystem.getChunksClaimedByFaction;
+import static factionsystem.Subsystems.UtilitySubsystem.getPlayersFaction;
 import static org.bukkit.Bukkit.*;
 
 public class UtilitySubsystem {
@@ -330,6 +333,15 @@ public class UtilitySubsystem {
         }
         return false;
     }
+    
+    public boolean hasActivityRecord(UUID playerUUID) {
+        for (PlayerActivityRecord record : main.playerActivityRecords){
+            if (record.getPlayerUUID().equals(playerUUID)){
+                return true;
+            }
+        }
+        return false;
+    }
 
     public void schedulePowerIncrease() {
         System.out.println("Scheduling hourly power increase...");
@@ -353,6 +365,59 @@ public class UtilitySubsystem {
                 }
             }
         }, delay * 20, secondsUntilRepeat * 20);
+    }
+    
+    public void schedulePowerDecrease() {
+    	System.out.println("Scheduling power decrease...");
+    	int delay = main.getConfig().getInt("minutesBetweenPowerDecreases") * 60;
+    	int secondsUntilRepeat = main.getConfig().getInt("minutesBetweenPowerDecreases") * 60;
+    	Bukkit.getScheduler().scheduleSyncRepeatingTask(main, new Runnable () {
+    		@Override
+    		public void run() {
+    			System.out.println("Medieval Factions is decreasing the power of every player by " + main.getConfig().getInt("powerDecreaseAmount") + ". This will happen every " + main.getConfig().getInt("minutesBetweenPowerDecreases") + ".");
+    			
+    			for (PlayerActivityRecord record : main.playerActivityRecords)
+    			{
+    				if (!getServer().getPlayer(record.getPlayerUUID()).isOnline() && main.getConfig().getBoolean("powerDecreases")
+    						&& record.getMinutesSinceLastLogout() > main.getConfig().getInt("minutesBeforePowerDecrease"))
+    				{
+    					record.incrementPowerLost();
+    					PlayerPowerRecord power = getPlayersPowerRecord(record.getPlayerUUID(), main.playerPowerRecords);
+    					power.decreasePower();
+    				}
+    			}
+    			
+    			for (Player player : main.getServer().getOnlinePlayers())
+    			{
+    				informPlayerIfTheirLandIsInDanger(player);
+    			}
+    		}
+    	}, delay * 20, secondsUntilRepeat * 20);
+    }
+    
+    public boolean isFactionExceedingTheirDemesneLimit(Faction faction) {
+        return (getChunksClaimedByFaction(faction.getName(), main.claimedChunks) > faction.getCumulativePowerLevel());
+    }
+    
+    public void informPlayerIfTheirLandIsInDanger(Player player) {
+        Faction faction = getPlayersFaction(player.getUniqueId(), main.factions);
+        if (faction != null) {
+            if (isFactionExceedingTheirDemesneLimit(faction)) {
+                player.sendMessage(ChatColor.RED + "Your faction has more claimed chunks than power! Your land can be conquered!");
+            }
+        }
+    }
+    
+    public static PlayerActivityRecord getPlayerActivityRecord(UUID uuid, ArrayList<PlayerActivityRecord> playerActivityRecords)
+    {
+    	for (PlayerActivityRecord record : playerActivityRecords)
+    	{
+    		if (record.getPlayerUUID() == uuid)
+    		{
+    			return record;
+    		}
+    	}
+    	return null;
     }
 
     public void scheduleAutosave() {
@@ -424,6 +489,18 @@ public class UtilitySubsystem {
 
     // static methods ----------------------------
 
+    public static boolean isFactionExceedingTheirDemesneLimit(Faction faction, ArrayList<ClaimedChunk> claimedChunks) {
+        return (getChunksClaimedByFaction(faction.getName(), claimedChunks) > faction.getCumulativePowerLevel());
+    }
+    
+    public static void informPlayerIfTheirLandIsInDanger(Player player, ArrayList<Faction> factions, ArrayList<ClaimedChunk> claimedChunks) {
+        Faction faction = getPlayersFaction(player.getUniqueId(), factions);
+        if (faction != null) {
+            if (isFactionExceedingTheirDemesneLimit(faction, claimedChunks)) {
+                player.sendMessage(ChatColor.RED + "Your faction has more claimed chunks than power! Your land can be conquered!");
+            }
+        }
+    }
 
     public static void removeLock(Block block, ArrayList<LockedBlock> lockedBlocks) {
         for (LockedBlock b : lockedBlocks) {

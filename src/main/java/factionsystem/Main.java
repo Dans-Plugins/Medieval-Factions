@@ -4,6 +4,7 @@ import factionsystem.EventHandlers.*;
 import factionsystem.Objects.ClaimedChunk;
 import factionsystem.Objects.Faction;
 import factionsystem.Objects.LockedBlock;
+import factionsystem.Objects.PlayerActivityRecord;
 import factionsystem.Objects.PlayerPowerRecord;
 import factionsystem.Subsystems.CommandSubsystem;
 import factionsystem.Subsystems.ConfigSubsystem;
@@ -44,6 +45,7 @@ public class Main extends JavaPlugin implements Listener {
     public ArrayList<Faction> factions = new ArrayList<>();
     public ArrayList<ClaimedChunk> claimedChunks = new ArrayList<>();
     public ArrayList<PlayerPowerRecord> playerPowerRecords = new ArrayList<>();
+    public ArrayList<PlayerActivityRecord> playerActivityRecords = new ArrayList<>();
     public ArrayList<LockedBlock> lockedBlocks = new ArrayList<>();
 
     // temporary lists
@@ -78,6 +80,7 @@ public class Main extends JavaPlugin implements Listener {
         }
 
         utilities.schedulePowerIncrease();
+        utilities.schedulePowerDecrease();
         utilities.scheduleAutosave();
         this.getServer().getPluginManager().registerEvents(this, this);
         storage.load();

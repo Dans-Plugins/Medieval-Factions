@@ -64,7 +64,10 @@ public class PlayerPowerRecord {
 
     public boolean increasePower() {
         if (powerLevel < maxPower()) {
-            powerLevel++;
+        	powerLevel += main.getConfig().getInt("powerIncreaseAmount");
+        	if (powerLevel > maxPower())
+        		powerLevel = maxPower();
+        	
             return true;
         }
         else {
@@ -74,7 +77,9 @@ public class PlayerPowerRecord {
 
     public boolean decreasePower() {
         if (powerLevel > 0) {
-            powerLevel--;
+            powerLevel -= main.getConfig().getInt("powerDecreaseAmount");
+            if (powerLevel < 0)
+            	powerLevel = 0;
             return true;
         }
         else {
