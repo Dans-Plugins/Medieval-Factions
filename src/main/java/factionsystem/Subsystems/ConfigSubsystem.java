@@ -7,6 +7,9 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Scanner;
 
+import org.bukkit.ChatColor;
+import org.bukkit.entity.Player;
+
 public class ConfigSubsystem {
 
     Main main = null;
@@ -114,6 +117,47 @@ public class ConfigSubsystem {
 
         if (main.getConfig().isInt("maxPowerLevel")) {
             main.getConfig().set("maxPowerLevel", null);
+        }
+
+    }
+    
+    public static void setConfigOption(String option, String value, Player player, Main main) {
+
+        if (main.getConfig().isSet(option)) {
+
+            if (option.equalsIgnoreCase("version")) {
+                player.sendMessage(ChatColor.RED + "Can't set version!");
+                return;
+            }
+            else if (option.equalsIgnoreCase("initialMaxPowerLevel") || option.equalsIgnoreCase("initialPowerLevel")
+                    || option.equalsIgnoreCase("powerIncreaseAmount")
+                    || option.equalsIgnoreCase("minutesBeforeInitialPowerIncrease")
+                    || option.equalsIgnoreCase("minutesBetweenPowerIncreases")
+                    || option.equalsIgnoreCase("officerLimit")
+                    || option.equalsIgnoreCase("officerPerMemberCount")) {
+                main.getConfig().set(option, Integer.parseInt(value));
+                player.sendMessage(ChatColor.GREEN + "Integer set!");
+                return;
+            }
+            else if (option.equalsIgnoreCase("mobsSpawnInFactionTerritory")
+                    || option.equalsIgnoreCase("laddersPlaceableInEnemyFactionTerritory")
+                    || option.equalsIgnoreCase("warsRequiredForPVP")) {
+                main.getConfig().set(option, Boolean.parseBoolean(value));
+                player.sendMessage(ChatColor.GREEN + "Boolean set!");
+                return;
+            }
+            else if (option.equalsIgnoreCase("factionOwnerMultiplier")
+                    || option.equalsIgnoreCase("factionOfficerMultiplier")){
+                main.getConfig().set(option, Double.parseDouble(value));
+                player.sendMessage(ChatColor.GREEN + "Double set!");
+            }
+            else {
+                main.getConfig().set(option, value);
+                player.sendMessage(ChatColor.GREEN + "String set!");
+            }
+
+            // save
+            main.saveConfig();
         }
 
     }

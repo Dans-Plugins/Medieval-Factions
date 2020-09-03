@@ -1,6 +1,8 @@
 package factionsystem.Commands;
 
 import factionsystem.Main;
+import factionsystem.Subsystems.ConfigSubsystem;
+
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
@@ -51,7 +53,7 @@ public class ConfigCommand {
                             String option = args[2];
                             String value = args[3];
 
-                            setConfigOption(option, value, player);
+                            ConfigSubsystem.setConfigOption(option, value, player, main);
                             return;
                         }
                         else {
@@ -75,44 +77,4 @@ public class ConfigCommand {
 
     }
 
-    private void setConfigOption(String option, String value, Player player) {
-
-        if (main.getConfig().isSet(option)) {
-
-            if (option.equalsIgnoreCase("version")) {
-                player.sendMessage(ChatColor.RED + "Can't set version!");
-                return;
-            }
-            else if (option.equalsIgnoreCase("initialMaxPowerLevel") || option.equalsIgnoreCase("initialPowerLevel")
-                    || option.equalsIgnoreCase("powerIncreaseAmount")
-                    || option.equalsIgnoreCase("minutesBeforeInitialPowerIncrease")
-                    || option.equalsIgnoreCase("minutesBetweenPowerIncreases")
-                    || option.equalsIgnoreCase("officerLimit")
-                    || option.equalsIgnoreCase("officerPerMemberCount")) {
-                main.getConfig().set(option, Integer.parseInt(value));
-                player.sendMessage(ChatColor.GREEN + "Integer set!");
-                return;
-            }
-            else if (option.equalsIgnoreCase("mobsSpawnInFactionTerritory")
-                    || option.equalsIgnoreCase("laddersPlaceableInEnemyFactionTerritory")
-                    || option.equalsIgnoreCase("warsRequiredForPVP")) {
-                main.getConfig().set(option, Boolean.parseBoolean(value));
-                player.sendMessage(ChatColor.GREEN + "Boolean set!");
-                return;
-            }
-            else if (option.equalsIgnoreCase("factionOwnerMultiplier")
-                    || option.equalsIgnoreCase("factionOfficerMultiplier")){
-                main.getConfig().set(option, Double.parseDouble(value));
-                player.sendMessage(ChatColor.GREEN + "Double set!");
-            }
-            else {
-                main.getConfig().set(option, value);
-                player.sendMessage(ChatColor.GREEN + "String set!");
-            }
-
-            // save
-            main.saveConfig();
-        }
-
-    }
 }
