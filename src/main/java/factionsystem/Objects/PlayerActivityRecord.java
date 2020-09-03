@@ -23,6 +23,7 @@ import java.time.format.DateTimeFormatter;
 public class PlayerActivityRecord {
     private UUID playerUUID = null;
     private int logins = 0;
+    private int powerLost = 0;
     private ZonedDateTime lastLogout = null;
     private Main main;
     
@@ -31,8 +32,24 @@ public class PlayerActivityRecord {
     	playerUUID = uuid;
     	this.logins = logins;
     	this.main = main;
+    	this.powerLost = 0;
     }
 
+    public void setPowerLost(int power)
+    {
+    	powerLost = power;
+    }
+    
+    public int getPowerLost()
+    {
+    	return powerLost;
+    }
+    
+    public void incrementPowerLost()
+    {
+    	powerLost += main.getConfig().getInt("powerDecreaseAmount");
+    }
+    
     public void setPlayerUUID(UUID uuid) {
         playerUUID = uuid;
     }
@@ -100,6 +117,7 @@ public class PlayerActivityRecord {
         saveMap.put("playerUUID", gson.toJson(playerUUID.toString()));
         saveMap.put("logins", gson.toJson(logins));
         saveMap.put("lastLogout", gson.toJson(lastLogout));
+        saveMap.put("powerLost", gson.toJson(powerLost));
 
         return saveMap;
     }   
@@ -109,6 +127,7 @@ public class PlayerActivityRecord {
         playerUUID = UUID.fromString(gson.fromJson(data.get("playerUUID"), String.class));
         logins = gson.fromJson(data.get("logins"), Integer.TYPE);
         lastLogout = ZonedDateTime.parse(gson.fromJson(data.get("lastLogout"), String.class), DateTimeFormatter.ISO_ZONED_DATE_TIME);
+        powerLost = gson.fromJson(data.get("powerLost"), Integer.TYPE);
     }
 
 }
