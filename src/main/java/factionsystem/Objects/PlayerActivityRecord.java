@@ -68,6 +68,7 @@ public class PlayerActivityRecord {
 
     public void incrementLogins() {
         logins++;
+        System.out.println("Incrementing logins for uuid " + getPlayerUUID().toString() + ": logins=" + Integer.toString(logins));
     }
 
     public int getLogins() {
@@ -116,7 +117,7 @@ public class PlayerActivityRecord {
         Map<String, String> saveMap = new HashMap<>();
         saveMap.put("playerUUID", gson.toJson(playerUUID.toString()));
         saveMap.put("logins", gson.toJson(logins));
-        saveMap.put("lastLogout", gson.toJson(lastLogout));
+        saveMap.put("lastLogout", gson.toJson(lastLogout.toString()));
         saveMap.put("powerLost", gson.toJson(powerLost));
 
         return saveMap;
