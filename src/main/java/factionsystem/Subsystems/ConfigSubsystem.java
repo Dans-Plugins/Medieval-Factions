@@ -7,6 +7,9 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Scanner;
 
+import org.bukkit.ChatColor;
+import org.bukkit.entity.Player;
+
 public class ConfigSubsystem {
 
     Main main = null;
@@ -76,6 +79,31 @@ public class ConfigSubsystem {
             main.getConfig().addDefault("factionOfficerMultiplier", 2.0);
         }
 
+        if (!main.getConfig().isBoolean("powerDecreases")) {
+        	System.out.println("powerDecreases is not set! Setting to default");
+        	main.getConfig().addDefault("powerDecreases", true);
+        }
+
+        if (!main.getConfig().isInt("minutesBetweenPowerDecreases")) {
+        	System.out.println("minutesBetweenPowerDecreases is not set! Setting to default");
+        	main.getConfig().addDefault("minutesBetweenPowerDecreases", 60);
+        }
+
+        if (!main.getConfig().isInt("minutesBeforePowerDecrease")) {
+        	System.out.println("minutesBeforePowerDecrease is not set! Setting to default");
+        	main.getConfig().addDefault("minutesBeforePowerDecrease", 60);
+        }
+        
+        if (!main.getConfig().isInt("powerDecreaseAmount")) {
+            System.out.println("powerDecreaseAmount not set! Setting to default!");
+            main.getConfig().addDefault("powerDecreaseAmount", 2);
+        }
+        
+        if (!main.getConfig().isInt("factionMaxNameLength")) {
+        	System.out.println("factionMaxNameLength not set! Setting to default!");
+            main.getConfig().addDefault("factionMaxNameLength", 2);
+        }
+                
         deleteOldConfigOptionsIfPresent();
 
         main.getConfig().options().copyDefaults(true);
@@ -97,6 +125,52 @@ public class ConfigSubsystem {
         }
 
     }
+    
+    public static void setConfigOption(String option, String value, Player player, Main main) {
+
+        if (main.getConfig().isSet(option)) {
+
+            if (option.equalsIgnoreCase("version")) {
+                player.sendMessage(ChatColor.RED + "Can't set version!");
+                return;
+            }
+            else if (option.equalsIgnoreCase("initialMaxPowerLevel") || option.equalsIgnoreCase("initialPowerLevel")
+                    || option.equalsIgnoreCase("powerIncreaseAmount")
+                    || option.equalsIgnoreCase("minutesBeforeInitialPowerIncrease")
+                    || option.equalsIgnoreCase("minutesBetweenPowerIncreases")
+                    || option.equalsIgnoreCase("officerLimit")
+                    || option.equalsIgnoreCase("officerPerMemberCount")
+                    || option.equalsIgnoreCase("minutesBetweenPowerDecreases")
+                    || option.equalsIgnoreCase("minutesBeforePowerDecrease")
+                    || option.equalsIgnoreCase("powerDecreaseAmount")
+                    || option.equalsIgnoreCase("factionMaxNameLength")) {
+                main.getConfig().set(option, Integer.parseInt(value));
+                player.sendMessage(ChatColor.GREEN + "Integer set!");
+                return;
+            }
+            else if (option.equalsIgnoreCase("mobsSpawnInFactionTerritory")
+                    || option.equalsIgnoreCase("laddersPlaceableInEnemyFactionTerritory")
+                    || option.equalsIgnoreCase("warsRequiredForPVP")
+                    || option.equalsIgnoreCase("powerDecreases")) {
+                main.getConfig().set(option, Boolean.parseBoolean(value));
+                player.sendMessage(ChatColor.GREEN + "Boolean set!");
+                return;
+            }
+            else if (option.equalsIgnoreCase("factionOwnerMultiplier")
+                    || option.equalsIgnoreCase("factionOfficerMultiplier")){
+                main.getConfig().set(option, Double.parseDouble(value));
+                player.sendMessage(ChatColor.GREEN + "Double set!");
+            }
+            else {
+                main.getConfig().set(option, value);
+                player.sendMessage(ChatColor.GREEN + "String set!");
+            }
+
+            // save
+            main.saveConfig();
+        }
+
+    }
 
     public void saveConfigDefaults() {
         main.getConfig().addDefault("version", main.version);
@@ -111,6 +185,11 @@ public class ConfigSubsystem {
         main.getConfig().addDefault("factionOwnerMultiplier", 2.0);
         main.getConfig().addDefault("officerPerMemberCount", 5);
         main.getConfig().addDefault("factionOfficerMultiplier", 1.5);
+        main.getConfig().addDefault("powerDecreases", true);
+        main.getConfig().addDefault("minutesBetweenPowerDecreases", 60);
+        main.getConfig().addDefault("minutesBeforePowerDecrease", 60);
+        main.getConfig().addDefault("powerDecreaseAmount", 2);
+        main.getConfig().addDefault("factionMaxNameLength", 20);
         main.getConfig().options().copyDefaults(true);
         main.saveConfig();
     }

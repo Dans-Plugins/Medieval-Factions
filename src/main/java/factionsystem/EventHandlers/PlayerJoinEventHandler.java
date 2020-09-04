@@ -2,7 +2,10 @@ package factionsystem.EventHandlers;
 
 import factionsystem.Main;
 import factionsystem.Objects.Faction;
+import factionsystem.Objects.PlayerActivityRecord;
 import factionsystem.Objects.PlayerPowerRecord;
+import factionsystem.Subsystems.UtilitySubsystem;
+
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 import org.bukkit.event.player.PlayerJoinEvent;
@@ -25,20 +28,39 @@ public class PlayerJoinEventHandler {
                     main);
             main.playerPowerRecords.add(newRecord);
         }
-
-        informPlayerIfTheirLandIsInDanger(event.getPlayer());
-    }
-
-    public void informPlayerIfTheirLandIsInDanger(Player player) {
-        Faction faction = getPlayersFaction(player.getUniqueId(), main.factions);
-        if (faction != null) {
-            if (isFactionExceedingTheirDemesneLimit(faction)) {
-                player.sendMessage(ChatColor.RED + "Your faction has more claimed chunks than power! Your land can be conquered!");
-            }
+        if (!main.utilities.hasActivityRecord(event.getPlayer().getUniqueId())) {
+        	PlayerActivityRecord newRecord = new PlayerActivityRecord(event.getPlayer().getUniqueId(), 1, main);
+        	main.playerActivityRecords.add(newRecord);
         }
+        else
+        {
+        	PlayerActivityRecord record = UtilitySubsystem.getPlayerActivityRecord(event.getPlayer().getUniqueId(), main.playerActivityRecords);
+        	if (record != null)
+        	{
+        		PlayerPowerRecord power = UtilitySubsystem.getPlayersPowerRecord(event.getPlayer().getUniqueId(), main.playerPowerRecords);
+        		record.incrementLogins();
+        		
+        		int newPower = power.getPowerLevel() - record.getPowerLost();
+        		if (newPower < 0)
+        			newPower = 0;
+        		
+        		if (record.getLastLogout() != null)
+        		{
+        			if (record.getMinutesSinceLastLogout() > 1)
+        			{
+        				event.getPlayer().sendMessage(ChatColor.GREEN + "Welcome back " + event.getPlayer().getName() + "! You last logged out " + record.getTimeSinceLastLogout() + " ago.");
+        			}
+        		}
+        		if (record.getPowerLost() > 0)
+        		{
+        			event.getPlayer().sendMessage(ChatColor.RED + "Your power has decayed by " + record.getPowerLost() + " since you last logged out. Your power is now " + newPower + ".");
+        		}
+        		power.setPowerLevel(newPower);
+        		record.setPowerLost(0);
+        	}
+        }
+
+        UtilitySubsystem.informPlayerIfTheirLandIsInDanger(event.getPlayer(), main.factions, main.claimedChunks);
     }
 
-    public boolean isFactionExceedingTheirDemesneLimit(Faction faction) {
-        return (getChunksClaimedByFaction(faction.getName(), main.claimedChunks) > faction.getCumulativePowerLevel());
-    }
 }

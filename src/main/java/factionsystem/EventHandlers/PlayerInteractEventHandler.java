@@ -50,14 +50,6 @@ public class PlayerInteractEventHandler {
 
             // ---------------------------------------------------------------------------------------------------------------
 
-            // if chunk is claimed
-            ClaimedChunk chunk = getClaimedChunk(event.getClickedBlock().getLocation().getChunk().getX(), event.getClickedBlock().getLocation().getChunk().getZ(), event.getClickedBlock().getWorld().getName(), main.claimedChunks);
-            if (chunk != null) {
-                handleClaimedChunk(event, chunk);
-            }
-
-            // ---------------------------------------------------------------------------------------------------------------
-
             // if block is locked
             LockedBlock lockedBlock = main.utilities.getLockedBlock(clickedBlock);
             if (lockedBlock != null) {
@@ -94,6 +86,20 @@ public class PlayerInteractEventHandler {
                     player.sendMessage(ChatColor.RED + "That block isn't locked!");
                 }
             }
+            
+            // pgarner Sep 2, 2020: Moved this to after test to see if the block is locked because it could be a block they have been granted
+            // access to (or in future, a 'public' locked block), so if they're not in the faction whose territory the block exists in we want that
+            // check to be handled before the interaction is rejected for not being a faction member.
+            
+            // if chunk is claimed
+            ClaimedChunk chunk = getClaimedChunk(event.getClickedBlock().getLocation().getChunk().getX(), event.getClickedBlock().getLocation().getChunk().getZ(), event.getClickedBlock().getWorld().getName(), main.claimedChunks);
+            if (chunk != null) {
+                handleClaimedChunk(event, chunk);
+            }
+
+            // ---------------------------------------------------------------------------------------------------------------
+
+
         }
     }
 
@@ -111,15 +117,16 @@ public class PlayerInteractEventHandler {
             }
 
             // if already locked
-            if (main.utilities.isBlockLocked(clickedBlock, main.lockedBlocks)) {
+            if (main.utilities.isBlockLocked(clickedBlock)) {
                 player.sendMessage(ChatColor.RED + "This block is already locked!");
                 event.setCancelled(true);
                 return;
             }
 
             // block type check
-            if (main.utilities.isDoor(clickedBlock) || main.utilities.isChest(clickedBlock)) {
+            if (main.utilities.isDoor(clickedBlock) || main.utilities.isChest(clickedBlock) || main.utilities.isGate(clickedBlock) || main.utilities.isBarrel(clickedBlock) || main.utilities.isTrapdoor(clickedBlock) || main.utilities.isFurnace(clickedBlock) || main.utilities.isAnvil(clickedBlock)) {
 
+            	// specific to chests because they can be single or double.
                 if (main.utilities.isChest(clickedBlock)) {
                     InventoryHolder holder = ((Chest) clickedBlock.getState()).getInventory().getHolder();
                     if (holder instanceof DoubleChest) {
@@ -147,7 +154,7 @@ public class PlayerInteractEventHandler {
                     }
                 }
 
-                // door multi-lock
+                // door multi-lock (specific to doors because they have two block heights but you could have clicked either block).
                 if (main.utilities.isDoor(clickedBlock)) {
                     // lock initial block
                     LockedBlock initial = new LockedBlock(player.getUniqueId(), getPlayersFaction(player.getUniqueId(), main.factions).getName(), clickedBlock.getX(), clickedBlock.getY(), clickedBlock.getZ(), clickedBlock.getWorld().getName());
@@ -166,12 +173,21 @@ public class PlayerInteractEventHandler {
                     player.sendMessage(ChatColor.GREEN + "Locked!");
                     main.lockingPlayers.remove(player.getUniqueId());
                 }
+                
+                // Remainder of lockable blocks are only 1x1 so generic code will suffice.
+                if (main.utilities.isGate(clickedBlock) || main.utilities.isBarrel(clickedBlock) || main.utilities.isTrapdoor(clickedBlock) || main.utilities.isFurnace(clickedBlock)) {
+                	LockedBlock block = new LockedBlock(player.getUniqueId(), getPlayersFaction(player.getUniqueId(), main.factions).getName(), 
+                			clickedBlock.getX(), clickedBlock.getY(), clickedBlock.getZ(), clickedBlock.getWorld().getName());
+                	main.lockedBlocks.add(block);
+                	player.sendMessage(ChatColor.GREEN + "Locked!");
+                	main.lockingPlayers.remove(player.getUniqueId());
+                }
 
                 event.setCancelled(true);
                 return;
             }
             else {
-                player.sendMessage(ChatColor.RED + "You can only lock chests or doors.");
+                player.sendMessage(ChatColor.RED + "You can only lock chests, doors, barrels, trapdoors, furnaces, anvils or gates.");
                 return;
             }
 
@@ -185,7 +201,7 @@ public class PlayerInteractEventHandler {
 
     private void handleUnlockingBlock(PlayerInteractEvent event, Player player, Block clickedBlock) {
         // if locked
-        if (main.utilities.isBlockLocked(clickedBlock, main.lockedBlocks)) {
+        if (main.utilities.isBlockLocked(clickedBlock)) {
             if (main.utilities.getLockedBlock(clickedBlock).getOwner().equals(player.getUniqueId())) {
 
                 if (main.utilities.isChest(clickedBlock)) {
@@ -225,6 +241,14 @@ public class PlayerInteractEventHandler {
                     }
 
                     player.sendMessage(ChatColor.GREEN + "Unlocked!");
+                    main.unlockingPlayers.remove(player.getUniqueId());
+                }
+                
+                // single block size lock logic.
+                if (main.utilities.isGate(clickedBlock) || main.utilities.isBarrel(clickedBlock) || main.utilities.isTrapdoor(clickedBlock) || main.utilities.isFurnace(clickedBlock)) {
+                	main.utilities.removeLock(clickedBlock);
+
+                	player.sendMessage(ChatColor.GREEN + "Unlocked!");
                     main.unlockingPlayers.remove(player.getUniqueId());
                 }
 
@@ -410,6 +434,15 @@ public class PlayerInteractEventHandler {
             player.sendMessage(ChatColor.GREEN + "Access granted to " + findPlayerNameBasedOnUUID(main.playersGrantingAccess.get(player.getUniqueId())));
             main.playersGrantingAccess.remove(player.getUniqueId());
         }
+        
+        // if gate (or single-block sized lock)
+        if (main.utilities.isGate(clickedBlock) || main.utilities.isBarrel(clickedBlock) || main.utilities.isTrapdoor(clickedBlock) || main.utilities.isFurnace(clickedBlock)) {
+        	main.utilities.getLockedBlock(clickedBlock, main.lockedBlocks).addToAccessList(main.playersGrantingAccess.get(player.getUniqueId()));
+        	
+            player.sendMessage(ChatColor.GREEN + "Access granted to " + findPlayerNameBasedOnUUID(main.playersGrantingAccess.get(player.getUniqueId())));
+            main.playersGrantingAccess.remove(player.getUniqueId());
+        }
+        
         event.setCancelled(true);
     }
 
@@ -470,6 +503,15 @@ public class PlayerInteractEventHandler {
             player.sendMessage(ChatColor.GREEN + "Access revoked for " + findPlayerNameBasedOnUUID(main.playersRevokingAccess.get(player.getUniqueId())));
             main.playersRevokingAccess.remove(player.getUniqueId());
         }
+        
+        // if gate or other single-block sized lock
+        if (main.utilities.isGate(clickedBlock) || main.utilities.isBarrel(clickedBlock) || main.utilities.isTrapdoor(clickedBlock) || main.utilities.isFurnace(clickedBlock)) {
+        	main.utilities.getLockedBlock(clickedBlock, main.lockedBlocks).removeFromAccessList(main.playersRevokingAccess.get(player.getUniqueId()));
+
+            player.sendMessage(ChatColor.GREEN + "Access revoked for " + findPlayerNameBasedOnUUID(main.playersRevokingAccess.get(player.getUniqueId())));
+            main.playersRevokingAccess.remove(player.getUniqueId());
+        }
+        
         event.setCancelled(true);
 
     }

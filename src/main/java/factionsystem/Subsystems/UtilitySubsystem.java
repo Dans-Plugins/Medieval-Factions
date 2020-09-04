@@ -4,6 +4,7 @@ import factionsystem.Main;
 import factionsystem.Objects.ClaimedChunk;
 import factionsystem.Objects.Faction;
 import factionsystem.Objects.LockedBlock;
+import factionsystem.Objects.PlayerActivityRecord;
 import factionsystem.Objects.PlayerPowerRecord;
 import factionsystem.Util.Pair;
 import org.bukkit.*;
@@ -15,6 +16,8 @@ import org.bukkit.potion.PotionType;
 import java.io.File;
 import java.util.*;
 
+import static factionsystem.Subsystems.UtilitySubsystem.getChunksClaimedByFaction;
+import static factionsystem.Subsystems.UtilitySubsystem.getPlayersFaction;
 import static org.bukkit.Bukkit.*;
 
 public class UtilitySubsystem {
@@ -206,7 +209,63 @@ public class UtilitySubsystem {
             }
         }
     }
+    
+    public boolean isBarrel(Block block)
+    {
+    	if (block.getType() == Material.BARREL)
+    	{
+    		return true;
+    	}
+    	return false;
+    }
 
+    public boolean isGate(Block block)
+    {
+    	if (block.getType() == Material.OAK_FENCE_GATE ||
+    			block.getType() == Material.SPRUCE_FENCE_GATE ||
+    			block.getType() == Material.BIRCH_FENCE_GATE ||
+    			block.getType() == Material.JUNGLE_FENCE_GATE ||
+    			block.getType() == Material.ACACIA_FENCE_GATE ||
+    			block.getType() == Material.DARK_OAK_FENCE_GATE ||
+    			block.getType() == compatMaterial("CRIMSON_FENCE_GATE") ||
+    			block.getType() == compatMaterial("WARPED_FENCE_GATE"))
+    	{
+    		return true;
+    	}
+    	return false;
+    }
+    
+    public Material compatMaterial(String materialName)
+    {
+    	Material mat = Material.getMaterial(materialName);
+    	if (mat == null)
+    	{
+    		// Find compatible substitute.
+    		switch(materialName)
+    		{
+    			case "CRIMSON_FENCE_GATE":
+    				return Material.OAK_FENCE_GATE;
+    			case "WARPED_FENCE_GATE":
+    				return Material.OAK_FENCE_GATE;
+    			case "CRIMSON_DOOR":
+    				return Material.OAK_DOOR;
+    			case "WARPED_DOOR":
+    				return Material.OAK_DOOR;
+    			case "CRIMSON_TRAPDOOR":
+    				return Material.OAK_TRAPDOOR;
+    			case "WARPED_TRAPDOOR":
+    				return Material.OAK_TRAPDOOR;
+    			default:
+    				getLogger().info("ERROR: Could not locate a compatable material matching '" + materialName + "'.");
+    				return null;
+    		}
+    	}
+    	else
+    	{
+    		return mat;
+    	}
+    }
+    
     public boolean isDoor(Block block) {
         if (block.getType() == Material.ACACIA_DOOR ||
                 block.getType() == Material.BIRCH_DOOR ||
@@ -214,20 +273,69 @@ public class UtilitySubsystem {
                 block.getType() == Material.IRON_DOOR ||
                 block.getType() == Material.JUNGLE_DOOR ||
                 block.getType() == Material.OAK_DOOR ||
-                block.getType() == Material.SPRUCE_DOOR) {
+                block.getType() == Material.SPRUCE_DOOR ||
+                block.getType() == compatMaterial("CRIMSON_DOOR") ||
+                block.getType() == compatMaterial("WARPED_DOOR")) {
 
             return true;
 
         }
         return false;
     }
-
+    
+    public boolean isTrapdoor(Block block)
+    {
+    	if (block.getType() == Material.IRON_TRAPDOOR ||
+    			block.getType() == Material.OAK_TRAPDOOR ||
+    			block.getType() == Material.SPRUCE_TRAPDOOR ||
+    			block.getType() == Material.BIRCH_TRAPDOOR ||
+    			block.getType() == Material.JUNGLE_TRAPDOOR ||
+    			block.getType() == Material.ACACIA_TRAPDOOR ||
+    			block.getType() == Material.DARK_OAK_TRAPDOOR ||
+    			block.getType() == compatMaterial("CRIMSON_TRAPDOOR") ||
+    			block.getType() == compatMaterial("WARPED_TRAPDOOR"))
+    	{
+    		return true;
+    	}
+    	return false;
+    }
+    
+    public boolean isFurnace(Block block)
+    {
+    	if (block.getType() == Material.FURNACE ||
+    			block.getType() == Material.BLAST_FURNACE)
+    	{
+    		return true;
+    	}
+    	return false;
+    }
+    
+    public boolean isAnvil(Block block)
+    {
+    	if (block.getType() == Material.ANVIL ||
+    			block.getType() == Material.CHIPPED_ANVIL ||
+    			block.getType() == Material.DAMAGED_ANVIL)
+    	{
+    		return true;
+    	}
+    	return false;
+    }
+    
     public boolean isChest(Block block) {
         return block.getType() == Material.CHEST;
     }
 
     public boolean hasPowerRecord(UUID playerUUID) {
         for (PlayerPowerRecord record : main.playerPowerRecords){
+            if (record.getPlayerUUID().equals(playerUUID)){
+                return true;
+            }
+        }
+        return false;
+    }
+    
+    public boolean hasActivityRecord(UUID playerUUID) {
+        for (PlayerActivityRecord record : main.playerActivityRecords){
             if (record.getPlayerUUID().equals(playerUUID)){
                 return true;
             }
@@ -257,6 +365,59 @@ public class UtilitySubsystem {
                 }
             }
         }, delay * 20, secondsUntilRepeat * 20);
+    }
+    
+    public void schedulePowerDecrease() {
+    	System.out.println("Scheduling power decrease...");
+    	int delay = main.getConfig().getInt("minutesBetweenPowerDecreases") * 60;
+    	int secondsUntilRepeat = main.getConfig().getInt("minutesBetweenPowerDecreases") * 60;
+    	Bukkit.getScheduler().scheduleSyncRepeatingTask(main, new Runnable () {
+    		@Override
+    		public void run() {
+    			System.out.println("Medieval Factions is decreasing the power of every player by " + main.getConfig().getInt("powerDecreaseAmount") + ". This will happen every " + main.getConfig().getInt("minutesBetweenPowerDecreases") + ".");
+    			
+    			for (PlayerActivityRecord record : main.playerActivityRecords)
+    			{
+    				if (!getServer().getPlayer(record.getPlayerUUID()).isOnline() && main.getConfig().getBoolean("powerDecreases")
+    						&& record.getMinutesSinceLastLogout() > main.getConfig().getInt("minutesBeforePowerDecrease"))
+    				{
+    					record.incrementPowerLost();
+    					PlayerPowerRecord power = getPlayersPowerRecord(record.getPlayerUUID(), main.playerPowerRecords);
+    					power.decreasePower();
+    				}
+    			}
+    			
+    			for (Player player : main.getServer().getOnlinePlayers())
+    			{
+    				informPlayerIfTheirLandIsInDanger(player);
+    			}
+    		}
+    	}, delay * 20, secondsUntilRepeat * 20);
+    }
+    
+    public boolean isFactionExceedingTheirDemesneLimit(Faction faction) {
+        return (getChunksClaimedByFaction(faction.getName(), main.claimedChunks) > faction.getCumulativePowerLevel());
+    }
+    
+    public void informPlayerIfTheirLandIsInDanger(Player player) {
+        Faction faction = getPlayersFaction(player.getUniqueId(), main.factions);
+        if (faction != null) {
+            if (isFactionExceedingTheirDemesneLimit(faction)) {
+                player.sendMessage(ChatColor.RED + "Your faction has more claimed chunks than power! Your land can be conquered!");
+            }
+        }
+    }
+    
+    public static PlayerActivityRecord getPlayerActivityRecord(UUID uuid, ArrayList<PlayerActivityRecord> playerActivityRecords)
+    {
+    	for (PlayerActivityRecord record : playerActivityRecords)
+    	{
+    		if (record.getPlayerUUID().equals(uuid))
+    		{
+    			return record;
+    		}
+    	}
+    	return null;
     }
 
     public void scheduleAutosave() {
@@ -328,6 +489,18 @@ public class UtilitySubsystem {
 
     // static methods ----------------------------
 
+    public static boolean isFactionExceedingTheirDemesneLimit(Faction faction, ArrayList<ClaimedChunk> claimedChunks) {
+        return (getChunksClaimedByFaction(faction.getName(), claimedChunks) > faction.getCumulativePowerLevel());
+    }
+    
+    public static void informPlayerIfTheirLandIsInDanger(Player player, ArrayList<Faction> factions, ArrayList<ClaimedChunk> claimedChunks) {
+        Faction faction = getPlayersFaction(player.getUniqueId(), factions);
+        if (faction != null) {
+            if (isFactionExceedingTheirDemesneLimit(faction, claimedChunks)) {
+                player.sendMessage(ChatColor.RED + "Your faction has more claimed chunks than power! Your land can be conquered!");
+            }
+        }
+    }
 
     public static void removeLock(Block block, ArrayList<LockedBlock> lockedBlocks) {
         for (LockedBlock b : lockedBlocks) {

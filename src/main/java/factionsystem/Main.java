@@ -4,6 +4,7 @@ import factionsystem.EventHandlers.*;
 import factionsystem.Objects.ClaimedChunk;
 import factionsystem.Objects.Faction;
 import factionsystem.Objects.LockedBlock;
+import factionsystem.Objects.PlayerActivityRecord;
 import factionsystem.Objects.PlayerPowerRecord;
 import factionsystem.Subsystems.CommandSubsystem;
 import factionsystem.Subsystems.ConfigSubsystem;
@@ -23,6 +24,7 @@ import org.bukkit.event.player.AsyncPlayerChatEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerMoveEvent;
+import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import java.io.File;
@@ -44,6 +46,7 @@ public class Main extends JavaPlugin implements Listener {
     public ArrayList<Faction> factions = new ArrayList<>();
     public ArrayList<ClaimedChunk> claimedChunks = new ArrayList<>();
     public ArrayList<PlayerPowerRecord> playerPowerRecords = new ArrayList<>();
+    public ArrayList<PlayerActivityRecord> playerActivityRecords = new ArrayList<>();
     public ArrayList<LockedBlock> lockedBlocks = new ArrayList<>();
 
     // temporary lists
@@ -78,6 +81,7 @@ public class Main extends JavaPlugin implements Listener {
         }
 
         utilities.schedulePowerIncrease();
+        utilities.schedulePowerDecrease();
         utilities.scheduleAutosave();
         this.getServer().getPluginManager().registerEvents(this, this);
         storage.load();
@@ -138,6 +142,13 @@ public class Main extends JavaPlugin implements Listener {
     public void onJoin(PlayerJoinEvent event) {
         PlayerJoinEventHandler handler = new PlayerJoinEventHandler(this);
         handler.handle(event);
+    }
+    
+    @EventHandler()
+    public void onLeave(PlayerQuitEvent event)
+    {
+    	PlayerLeaveEventHandler handler = new PlayerLeaveEventHandler(this);
+    	handler.handle(event);
     }
 
     @EventHandler()
