@@ -412,7 +412,7 @@ public class UtilitySubsystem {
     {
     	for (PlayerActivityRecord record : playerActivityRecords)
     	{
-    		if (record.getPlayerUUID() == uuid)
+    		if (record.getPlayerUUID().equals(uuid))
     		{
     			return record;
     		}

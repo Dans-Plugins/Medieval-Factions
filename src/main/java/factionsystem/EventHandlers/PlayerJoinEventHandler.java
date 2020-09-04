@@ -44,7 +44,17 @@ public class PlayerJoinEventHandler {
         		if (newPower < 0)
         			newPower = 0;
         		
-        		event.getPlayer().sendMessage(ChatColor.RED + "Your power has decayed by " + record.getPowerLost() + " since you last logged out. Your power is now " + newPower + ".");
+        		if (record.getLastLogout() != null)
+        		{
+        			if (record.getMinutesSinceLastLogout() > 1)
+        			{
+        				event.getPlayer().sendMessage(ChatColor.GREEN + "Welcome back " + event.getPlayer().getName() + "! You last logged out " + record.getTimeSinceLastLogout() + " ago.");
+        			}
+        		}
+        		if (record.getPowerLost() > 0)
+        		{
+        			event.getPlayer().sendMessage(ChatColor.RED + "Your power has decayed by " + record.getPowerLost() + " since you last logged out. Your power is now " + newPower + ".");
+        		}
         		power.setPowerLevel(newPower);
         		record.setPowerLost(0);
         	}
