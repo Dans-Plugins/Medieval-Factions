@@ -584,6 +584,13 @@ public class CommandSubsystem {
                     return true;
                 }
 
+                // vassalize command
+                if (args[0].equalsIgnoreCase("vassalize")) {
+                    VassalizeCommand command = new VassalizeCommand(main);
+                    command.sendVassalizationOffer(sender, args);
+                    return true;
+                }
+
                 // admin commands ----------------------------------------------------------------------------------
 
                 // forcesave command

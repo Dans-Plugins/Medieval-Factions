@@ -40,6 +40,7 @@ public class Faction {
     private ArrayList<UUID> invited = new ArrayList<>();
     private ArrayList<String> attemptedTruces = new ArrayList<>();
     private ArrayList<String> attemptedAlliances = new ArrayList<>();
+    private ArrayList<String> attemptedVassalizations = new ArrayList<>();
     private boolean autoclaim = false;
     private Main main;
 
@@ -579,5 +580,21 @@ public class Faction {
             }
         }
         return toReturn;
+    }
+
+    public void addAttemptedVassalization(String factionName) {
+        if (!attemptedVassalizations.contains(factionName)) {
+            attemptedVassalizations.add(factionName);
+        }
+    }
+
+    public boolean hasBeenOfferedVassalization(String factionName) {
+        return attemptedVassalizations.contains(factionName);
+    }
+
+    public void removeAttemptedVassalization(String factionName) {
+        if (attemptedVassalizations.contains(factionName)) {
+            attemptedVassalizations.remove(factionName);
+        }
     }
 }
