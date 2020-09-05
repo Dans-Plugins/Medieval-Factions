@@ -30,11 +30,26 @@ public class VassalizeCommand {
 
                     if (targetFaction != null) {
 
-                        // add faction to attemptedVassalizations
-                        playersFaction.addAttemptedVassalization(targetFactionName);
+                        if (playersFaction != null) {
 
-                        // inform all players in that faction that they are trying to be vassalized
-                        main.utilities.sendAllPlayersInFactionMessage(targetFaction, ChatColor.GREEN + "" + targetFactionName + " has attempted to vassalize your faction! If you are the owner, type '/mf swearfealty' to accept.");
+                            if (playersFaction.isOwner(player.getUniqueId())) {
+                                // add faction to attemptedVassalizations
+                                playersFaction.addAttemptedVassalization(targetFactionName);
+
+                                // inform all players in that faction that they are trying to be vassalized
+                                main.utilities.sendAllPlayersInFactionMessage(targetFaction, ChatColor.GREEN + "" + targetFactionName + " has attempted to vassalize your faction! If you are the owner, type '/mf swearfealty (faction-name)' to accept.");
+
+                                // inform all players in players faction that a vassalization offer was sent
+                                main.utilities.sendAllPlayersInFactionMessage(playersFaction, ChatColor.GREEN + "Your faction has attempted to vassalize " + targetFactionName + "!");
+
+                            }
+                            else {
+                                player.sendMessage(ChatColor.RED + "You must be the owner of your faction to use this command!");
+                            }
+                        }
+                        else {
+                            player.sendMessage(ChatColor.RED + "You must be in a faction to use this command!");
+                        }
                     }
                     else {
                         // faction doesn't exist, send message

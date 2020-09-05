@@ -591,6 +591,13 @@ public class CommandSubsystem {
                     return true;
                 }
 
+                // swearfealty command
+                if (args[0].equalsIgnoreCase("swearfealty") || args[0].equalsIgnoreCase("sf")) {
+                    SwearFealtyCommand command = new SwearFealtyCommand(main);
+                    command.swearFealty(sender, args);
+                    return true;
+                }
+
                 // admin commands ----------------------------------------------------------------------------------
 
                 // forcesave command
