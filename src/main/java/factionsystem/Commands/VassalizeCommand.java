@@ -33,6 +33,13 @@ public class VassalizeCommand {
                         if (playersFaction != null) {
 
                             if (playersFaction.isOwner(player.getUniqueId())) {
+
+                                // make sure player isn't trying to vassalize their own faction
+                                if (playersFaction.getName().equalsIgnoreCase(targetFaction.getName())) {
+                                    player.sendMessage(ChatColor.RED + "You can't vassalize your own faction!");
+                                    return;
+                                }
+
                                 // add faction to attemptedVassalizations
                                 playersFaction.addAttemptedVassalization(targetFactionName);
 
