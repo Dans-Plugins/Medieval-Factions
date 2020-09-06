@@ -56,6 +56,12 @@ public class DeclareWarCommand {
 
                                         }
 
+                                        // disallow if trying to declare war on liege
+                                        if (faction.isLiege(factionName)) {
+                                            player.sendMessage(ChatColor.RED + "You can't declare war on your liege! Try '/mf declareindependence' instead!");
+                                            return;
+                                        }
+
                                         // check to make sure we're not allied with this faction
                                         if (!faction.isAlly(factionName)) {
 
