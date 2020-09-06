@@ -37,7 +37,7 @@ public class VassalizeCommand {
                                 playersFaction.addAttemptedVassalization(targetFactionName);
 
                                 // inform all players in that faction that they are trying to be vassalized
-                                main.utilities.sendAllPlayersInFactionMessage(targetFaction, ChatColor.GREEN + "" + targetFactionName + " has attempted to vassalize your faction! If you are the owner, type '/mf swearfealty (faction-name)' to accept.");
+                                main.utilities.sendAllPlayersInFactionMessage(targetFaction, ChatColor.GREEN + "" + playersFaction.getName() + " has attempted to vassalize your faction! If you are the owner, type '/mf swearfealty " + playersFaction.getName() + "' to accept.");
 
                                 // inform all players in players faction that a vassalization offer was sent
                                 main.utilities.sendAllPlayersInFactionMessage(playersFaction, ChatColor.GREEN + "Your faction has attempted to vassalize " + targetFactionName + "!");
