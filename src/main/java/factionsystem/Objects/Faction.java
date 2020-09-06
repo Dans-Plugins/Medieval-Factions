@@ -339,6 +339,7 @@ public class Faction {
         saveMap.put("owner", gson.toJson(owner));
         saveMap.put("cumulativePowerLevel", gson.toJson(cumulativePowerLevel));
         saveMap.put("location", gson.toJson(saveLocation(gson)));
+        saveMap.put("liege", gson.toJson(liege));
 
         return saveMap;
     }
@@ -370,10 +371,15 @@ public class Faction {
         laws = gson.fromJson(data.get("laws"), arrayListTypeString);
         vassals = gson.fromJson(data.get("vassals"), arrayListTypeString);
         name = gson.fromJson(data.get("name"), String.class);
-        description = gson.fromJson(data.get("description"),String.class);
+        description = gson.fromJson(data.get("description"), String.class);
         owner = UUID.fromString(gson.fromJson(data.get("owner"), String.class));
         cumulativePowerLevel = gson.fromJson(data.get("cumulativePowerLevel"), Integer.TYPE);
         factionHome = loadLocation(gson.fromJson(data.get("location"), mapType), gson);
+        liege = gson.fromJson(data.get("liege"), String.class);
+
+        if (liege == null) {
+            liege = "none";
+        }
     }
 
     private Location loadLocation(HashMap<String, String> data, Gson gson){
