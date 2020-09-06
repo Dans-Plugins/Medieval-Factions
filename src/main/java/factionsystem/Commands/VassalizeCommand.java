@@ -57,6 +57,9 @@ public class VassalizeCommand {
                     }
 
                 }
+                else {
+                    player.sendMessage(ChatColor.RED + "Usage: /mf vassalize (faction-name)");
+                }
 
             }
             else {

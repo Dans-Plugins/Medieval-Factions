@@ -71,6 +71,9 @@ public class SwearFealtyCommand {
                     }
 
                 }
+                else {
+                    player.sendMessage(ChatColor.RED + "Usage: /mf swearfealty (faction-name)");
+                }
 
             }
             else {

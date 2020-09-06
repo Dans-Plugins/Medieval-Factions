@@ -58,6 +58,7 @@ public class HelpCommand {
                 sender.sendMessage(ChatColor.AQUA + "/mf chat - Toggle faction chat.");
                 sender.sendMessage(ChatColor.AQUA + "/mf vassalize - Offer to vassalize a faction.");
                 sender.sendMessage(ChatColor.AQUA + "/mf swearfealty - Swear fealty to a faction.");
+                sender.sendMessage(ChatColor.AQUA + "/mf declareindependence - Declare independence from your liege.");
             }
             if (args[1].equalsIgnoreCase("6")) {
                 sender.sendMessage(ChatColor.BOLD + "" + ChatColor.AQUA + "\n == Medieval Factions Commands Page 5/6 == " + "\n");

@@ -598,6 +598,13 @@ public class CommandSubsystem {
                     return true;
                 }
 
+                // declare independence command
+                if (args[0].equalsIgnoreCase("declareindependence") || args[0].equalsIgnoreCase("di")) {
+                    DeclareIndependenceCommand command = new DeclareIndependenceCommand(main);
+                    command.declareIndependence(sender);
+                    return true;
+                }
+
                 // admin commands ----------------------------------------------------------------------------------
 
                 // forcesave command
