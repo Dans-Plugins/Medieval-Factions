@@ -40,6 +40,12 @@ public class VassalizeCommand {
                                     return;
                                 }
 
+                                // make sure player isn't trying to vassalize their liege
+                                if (targetFaction.getName().equalsIgnoreCase(playersFaction.getLiege())) {
+                                    player.sendMessage(ChatColor.RED + "You can't vassalize your liege!");
+                                    return;
+                                }
+
                                 // add faction to attemptedVassalizations
                                 playersFaction.addAttemptedVassalization(targetFactionName);
 
