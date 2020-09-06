@@ -26,7 +26,7 @@ public class CommandSubsystem {
             if (args.length == 0) {
                 // send plugin information
                 sender.sendMessage(ChatColor.AQUA + " == Medieval Factions " + main.version + " == ");
-                sender.sendMessage(ChatColor.AQUA + "Developers: DanTheTechMan, Pasarus");
+                sender.sendMessage(ChatColor.AQUA + "Developers: DanTheTechMan, Pasarus, Caibinus");
                 return true;
             }
 
