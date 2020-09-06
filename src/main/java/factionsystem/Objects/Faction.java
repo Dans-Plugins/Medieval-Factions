@@ -378,7 +378,7 @@ public class Faction {
         liege = gson.fromJson(data.get("liege"), String.class);
 
         if (liege == null) {
-            liege = "none";
+            liege = "none"; // when updating to v3.5, liege might be null. liege needs to be "none" for things to work
         }
     }
 
