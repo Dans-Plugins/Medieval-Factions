@@ -46,6 +46,12 @@ public class VassalizeCommand {
                                     return;
                                 }
 
+                                // make sure player isn't trying to vassalize a vassal
+                                if (targetFaction.hasLiege()) {
+                                    player.sendMessage(ChatColor.RED + "You can't vassalize a faction who already has a liege!");
+                                    return;
+                                }
+
                                 // add faction to attemptedVassalizations
                                 playersFaction.addAttemptedVassalization(targetFactionName);
 
