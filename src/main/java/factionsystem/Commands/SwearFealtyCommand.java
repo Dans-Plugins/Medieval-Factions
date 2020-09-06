@@ -32,7 +32,7 @@ public class SwearFealtyCommand {
 
                         if (playersFaction != null) {
                             // if offered vassalization
-                            if (playersFaction.hasBeenOfferedVassalization(targetFaction.getName())) {
+                            if (targetFaction.hasBeenOfferedVassalization(playersFaction.getName())) {
 
                                 // if owner of faction
                                 if (playersFaction.isOwner(player.getUniqueId())) {

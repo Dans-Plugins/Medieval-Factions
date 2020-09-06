@@ -194,4 +194,25 @@ public class ConfigSubsystem {
         main.saveConfig();
     }
 
+    public void sendPlayerConfigList(Player player) {
+        player.sendMessage(ChatColor.AQUA + "version: " + main.getConfig().getString("version")
+                + ", initialMaxPowerLevel: " + main.getConfig().getInt("initialMaxPowerLevel")
+                + ", initialPowerLevel: " +  main.getConfig().getInt("initialPowerLevel")
+                + ", powerIncreaseAmount: " + main.getConfig().getInt("powerIncreaseAmount")
+                + ", mobsSpawnInFactionTerritory: " + main.getConfig().getBoolean("mobsSpawnInFactionTerritory")
+                + ", laddersPlaceableInEnemyFactionTerritory: " + main.getConfig().getBoolean("laddersPlaceableInEnemyFactionTerritory")
+                + ", minutesBeforeInitialPowerIncrease: " + main.getConfig().getInt("minutesBeforeInitialPowerIncrease")
+                + ", minutesBetweenPowerIncreases: " + main.getConfig().getInt("minutesBetweenPowerIncreases")
+                + ", warsRequiredForPVP: " + main.getConfig().getBoolean("warsRequiredForPVP")
+                + ", officerLimit: " + main.getConfig().getInt("officerLimit")
+                + ", factionOwnerMultiplier: " + main.getConfig().getDouble("factionOwnerMultiplier")
+                + ", officerPerMemberCount: " + main.getConfig().getInt("officerPerMemberCount")
+                + ", factionOfficerMultiplier: " + main.getConfig().getDouble("factionOfficerMultiplier")
+                + ", powerDecreases: " + main.getConfig().getBoolean("powerDecreases")
+                + ", minutesBetweenPowerDecreases: " + main.getConfig().getInt("minutesBetweenPowerDecreases")
+                + ", minutesBeforePowerDecrease: " + main.getConfig().getInt("minutesBeforePowerDecrease")
+                + ", powerDecreaseAmount: " + main.getConfig().getInt("powerDecreaseAmount")
+                + ", factionMaxNameLength: " + main.getConfig().getInt("factionMaxNameLength"));
+    }
+
 }
