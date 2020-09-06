@@ -548,7 +548,7 @@ public class Faction {
     }
 
     public boolean hasLiege() {
-        return !liege.equalsIgnoreCase("none");
+        return !liege.equalsIgnoreCase("none"); // TODO: fix null error
     }
 
     public boolean isLiege(String faction) {
