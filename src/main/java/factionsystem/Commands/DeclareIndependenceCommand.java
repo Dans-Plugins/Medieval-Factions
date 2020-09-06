@@ -19,7 +19,7 @@ public class DeclareIndependenceCommand {
         if (sender instanceof Player) {
             Player player = (Player) sender;
 
-            if (player.hasPermission("mf.declareIndependence")) {
+            if (player.hasPermission("mf.declareIndependence") || player.hasPermission("mf.default")) {
 
                 Faction playersFaction = main.utilities.getPlayersFaction(player.getUniqueId(), main.factions);
 
@@ -58,6 +58,9 @@ public class DeclareIndependenceCommand {
                         player.sendMessage(ChatColor.RED + "Sorry! You must be in a faction to use this command!");
                     }
 
+            }
+            else {
+                player.sendMessage(ChatColor.RED + "Sorry! In order to use this command, you must have the following permission: 'mf.declareindependence'");
             }
         }
 

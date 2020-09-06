@@ -6,20 +6,20 @@ import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
-public class VassalizeCommand {
+public class GrantIndependenceCommand {
 
     Main main = null;
 
-    public VassalizeCommand(Main plugin) {
+    public GrantIndependenceCommand(Main plugin) {
         main = plugin;
     }
 
-    public void sendVassalizationOffer(CommandSender sender, String[] args) {
+    public void grantIndependence(CommandSender sender, String[] args) {
 
         if (sender instanceof Player) {
             Player player = (Player) sender;
 
-            if (player.hasPermission("mf.vassalize") || player.hasPermission("mf.default")) {
+            if (player.hasPermission("mf.grantindependence") || player.hasPermission("mf.default")) {
 
                 if (args.length > 1) {
 
@@ -33,14 +33,20 @@ public class VassalizeCommand {
                         if (playersFaction != null) {
 
                             if (playersFaction.isOwner(player.getUniqueId())) {
-                                // add faction to attemptedVassalizations
-                                playersFaction.addAttemptedVassalization(targetFactionName);
+                                // if target faction is a vassal
+                                if (targetFaction.isLiege(playersFaction.getName())) {
+                                    targetFaction.setLiege("none");
+                                    playersFaction.removeVassal(targetFaction.getName());
 
-                                // inform all players in that faction that they are trying to be vassalized
-                                main.utilities.sendAllPlayersInFactionMessage(targetFaction, ChatColor.GREEN + "" + targetFactionName + " has attempted to vassalize your faction! If you are the owner, type '/mf swearfealty (faction-name)' to accept.");
+                                    // inform all players in that faction that they are now independent
+                                    main.utilities.sendAllPlayersInFactionMessage(targetFaction, ChatColor.GREEN + "" + targetFactionName + " has granted your faction independence!");
 
-                                // inform all players in players faction that a vassalization offer was sent
-                                main.utilities.sendAllPlayersInFactionMessage(playersFaction, ChatColor.GREEN + "Your faction has attempted to vassalize " + targetFactionName + "!");
+                                    // inform all players in players faction that a vassal was granted independence
+                                    main.utilities.sendAllPlayersInFactionMessage(playersFaction, ChatColor.GREEN + "" + targetFactionName + " is no longer a vassal faction!");
+                                }
+                                else {
+                                    player.sendMessage(ChatColor.RED + "That faction isn't a vassal of yours!");
+                                }
 
                             }
                             else {
@@ -58,13 +64,13 @@ public class VassalizeCommand {
 
                 }
                 else {
-                    player.sendMessage(ChatColor.RED + "Usage: /mf vassalize (faction-name)");
+                    player.sendMessage(ChatColor.RED + "Usage: /mf grantindependence (faction-name)");
                 }
 
             }
             else {
                 // send perm message
-                player.sendMessage(ChatColor.RED + "Sorry! In order to use this command, you need the following permission: 'mf.vassalize'");
+                player.sendMessage(ChatColor.RED + "Sorry! In order to use this command, you need the following permission: 'mf.grantindependence'");
             }
         }
 

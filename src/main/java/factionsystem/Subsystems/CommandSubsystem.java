@@ -605,6 +605,12 @@ public class CommandSubsystem {
                     return true;
                 }
 
+                // grant independence command
+                if (args[0].equalsIgnoreCase("grantindependence") || args[0].equalsIgnoreCase("gi")) {
+                    GrantIndependenceCommand command = new GrantIndependenceCommand(main);
+                    command.grantIndependence(sender, args);
+                }
+
                 // admin commands ----------------------------------------------------------------------------------
 
                 // forcesave command
