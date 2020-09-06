@@ -26,7 +26,7 @@ public class CommandSubsystem {
             if (args.length == 0) {
                 // send plugin information
                 sender.sendMessage(ChatColor.AQUA + " == Medieval Factions " + main.version + " == ");
-                sender.sendMessage(ChatColor.AQUA + "Developers: DanTheTechMan, Pasarus");
+                sender.sendMessage(ChatColor.AQUA + "Developers: DanTheTechMan, Pasarus, Caibinus");
                 return true;
             }
 
@@ -581,6 +581,34 @@ public class CommandSubsystem {
                 if (args[0].equalsIgnoreCase("chat")) {
                     ChatCommand command = new ChatCommand(main);
                     command.toggleFactionChat(sender);
+                    return true;
+                }
+
+                // vassalize command
+                if (args[0].equalsIgnoreCase("vassalize")) {
+                    VassalizeCommand command = new VassalizeCommand(main);
+                    command.sendVassalizationOffer(sender, args);
+                    return true;
+                }
+
+                // swearfealty command
+                if (args[0].equalsIgnoreCase("swearfealty") || args[0].equalsIgnoreCase("sf")) {
+                    SwearFealtyCommand command = new SwearFealtyCommand(main);
+                    command.swearFealty(sender, args);
+                    return true;
+                }
+
+                // declare independence command
+                if (args[0].equalsIgnoreCase("declareindependence") || args[0].equalsIgnoreCase("di")) {
+                    DeclareIndependenceCommand command = new DeclareIndependenceCommand(main);
+                    command.declareIndependence(sender);
+                    return true;
+                }
+
+                // grant independence command
+                if (args[0].equalsIgnoreCase("grantindependence") || args[0].equalsIgnoreCase("gi")) {
+                    GrantIndependenceCommand command = new GrantIndependenceCommand(main);
+                    command.grantIndependence(sender, args);
                     return true;
                 }
 

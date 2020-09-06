@@ -39,13 +39,38 @@ public class DeclareWarCommand {
                                     // check that enemy is not already on list
                                     if (!(faction.isEnemy(factionName))) {
 
+                                        // if trying to declare war on a vassal
+                                        if (main.factions.get(i).hasLiege()) {
+
+                                            // if faction is vassal of declarer
+                                            if (faction.isVassal(factionName)) {
+                                                player.sendMessage(ChatColor.RED + "You can't declare war on your own vassal!");
+                                                return;
+                                            }
+
+                                            // if lieges aren't the same
+                                            if (!main.factions.get(i).getLiege().equalsIgnoreCase(faction.getLiege())) {
+                                                player.sendMessage(ChatColor.RED + "You can't declare war on this faction as they are a vassal! You must declare war on their liege " + main.factions.get(i).getLiege() + " instead!");
+                                                return;
+                                            }
+
+                                        }
+
+                                        // disallow if trying to declare war on liege
+                                        if (faction.isLiege(factionName)) {
+                                            player.sendMessage(ChatColor.RED + "You can't declare war on your liege! Try '/mf declareindependence' instead!");
+                                            return;
+                                        }
+
                                         // check to make sure we're not allied with this faction
                                         if (!faction.isAlly(factionName)) {
+
                                             // add enemy to declarer's faction's enemyList and the enemyLists of its allies
                                             faction.addEnemy(factionName);
 
                                             // add declarer's faction to new enemy's enemyList
                                             main.factions.get(i).addEnemy(faction.getName());
+
                                             for (int j = 0; j < main.factions.size(); j++) {
                                                 if (main.factions.get(j).getName().equalsIgnoreCase(factionName)) {
                                                     main.utilities.sendAllPlayersOnServerMessage(ChatColor.RED + faction.getName() + " has declared war against " + factionName + "!");
