@@ -31,11 +31,12 @@ public class PlayerInteractEventHandler {
     public void handle(PlayerInteractEvent event) {
         // get player
         Player player = event.getPlayer();
-
+        event.getPlayer().sendMessage("Player interact event.");
         // get chunk
         Block clickedBlock = event.getClickedBlock();
         if (clickedBlock != null) {
 
+        	event.getPlayer().sendMessage("if player is attempting to lock a block");
             // if player is attempting to lock a block
             if (main.lockingPlayers.contains(player.getUniqueId())) {
                 handleLockingBlock(event, player, clickedBlock);
@@ -43,6 +44,7 @@ public class PlayerInteractEventHandler {
 
             // ---------------------------------------------------------------------------------------------------------------
 
+        	event.getPlayer().sendMessage("if player is trying to unlock a block");
             // if player is trying to unlock a block
             if (main.unlockingPlayers.contains(player.getUniqueId())) {
                 handleUnlockingBlock(event, player, clickedBlock);
@@ -50,6 +52,7 @@ public class PlayerInteractEventHandler {
 
             // ---------------------------------------------------------------------------------------------------------------
 
+        	event.getPlayer().sendMessage("if block is locked");
             // if block is locked
             LockedBlock lockedBlock = main.utilities.getLockedBlock(clickedBlock);
             if (lockedBlock != null) {
@@ -90,7 +93,7 @@ public class PlayerInteractEventHandler {
             // pgarner Sep 2, 2020: Moved this to after test to see if the block is locked because it could be a block they have been granted
             // access to (or in future, a 'public' locked block), so if they're not in the faction whose territory the block exists in we want that
             // check to be handled before the interaction is rejected for not being a faction member.
-            
+        	event.getPlayer().sendMessage("if chunk is claimed");
             // if chunk is claimed
             ClaimedChunk chunk = getClaimedChunk(event.getClickedBlock().getLocation().getChunk().getX(), event.getClickedBlock().getLocation().getChunk().getZ(), event.getClickedBlock().getWorld().getName(), main.claimedChunks);
             if (chunk != null) {
