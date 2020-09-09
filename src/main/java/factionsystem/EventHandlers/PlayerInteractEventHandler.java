@@ -31,7 +31,6 @@ public class PlayerInteractEventHandler {
     public void handle(PlayerInteractEvent event) {
         // get player
         Player player = event.getPlayer();
-
         // get chunk
         Block clickedBlock = event.getClickedBlock();
         if (clickedBlock != null) {
@@ -75,6 +74,14 @@ public class PlayerInteractEventHandler {
                 if (main.playersRevokingAccess.containsKey(player.getUniqueId())) {
                     handleRevokingAccess(event, clickedBlock, player);
                 }
+                
+                if (lockedBlock.hasAccess(player.getUniqueId()))
+        		{
+                	// Don't process any more checks so that the event is not cancelled
+                	// when a player who is not part of the faction has access granted
+                	// to a lock.
+                	return;
+        		}
 
             }
             else {
@@ -90,7 +97,6 @@ public class PlayerInteractEventHandler {
             // pgarner Sep 2, 2020: Moved this to after test to see if the block is locked because it could be a block they have been granted
             // access to (or in future, a 'public' locked block), so if they're not in the faction whose territory the block exists in we want that
             // check to be handled before the interaction is rejected for not being a faction member.
-            
             // if chunk is claimed
             ClaimedChunk chunk = getClaimedChunk(event.getClickedBlock().getLocation().getChunk().getX(), event.getClickedBlock().getLocation().getChunk().getZ(), event.getClickedBlock().getWorld().getName(), main.claimedChunks);
             if (chunk != null) {

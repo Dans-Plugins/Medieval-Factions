@@ -22,7 +22,6 @@ public class PlayerMoveEventHandler {
         // Full disclosure, I feel like this method might be extremely laggy, especially if a player is travelling.
         // May have to optimise this, or just not have this mechanic.
         // - Dan
-
         // if player enters a new chunk
         if (event.getFrom().getChunk() != Objects.requireNonNull(event.getTo()).getChunk()) {
 
