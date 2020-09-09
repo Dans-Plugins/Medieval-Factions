@@ -101,8 +101,6 @@ public class Main extends JavaPlugin implements Listener {
         return commandInterpreter.interpretCommand(sender, label, args);
     }
 
-    // event handlers
-
     @EventHandler()
     public void onDamage(EntityDamageByEntityEvent event) {
         EntityDamageByEntityEventHandler handler = new EntityDamageByEntityEventHandler(this);
@@ -120,6 +118,7 @@ public class Main extends JavaPlugin implements Listener {
         BlockBreakEventHandler handler = new BlockBreakEventHandler(this);
         handler.handle(event);
     }
+
     @EventHandler()
     public void onBlockPlace(BlockPlaceEvent event) {
         BlockPlaceEventHandler handler = new BlockPlaceEventHandler(this);
