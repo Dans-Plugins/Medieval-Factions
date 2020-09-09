@@ -167,7 +167,7 @@ public class UtilitySubsystem {
         Location factionHome = getPlayersFaction(player.getUniqueId(), main.factions).getFactionHome();
         if (factionHome != null) {
             if (factionHome.getChunk().getX() == chunk.getChunk().getX() && factionHome.getChunk().getZ() == chunk.getChunk().getZ()
-            		&& chunk.getWorld() == player.getLocation().getWorld().getName()) {
+            		&& chunk.getWorld().equalsIgnoreCase(player.getLocation().getWorld().getName())) {
                 // remove faction home
                 faction.setFactionHome(null);
                 sendAllPlayersInFactionMessage(faction, ChatColor.RED + "Your faction home has been removed!");
@@ -181,7 +181,7 @@ public class UtilitySubsystem {
             LockedBlock block = itr.next();
             if (chunk.getChunk().getWorld().getBlockAt(block.getX(), block.getY(), block.getZ()).getChunk().getX() == chunk.getChunk().getX() &&
                     chunk.getChunk().getWorld().getBlockAt(block.getX(), block.getY(), block.getZ()).getChunk().getZ() == chunk.getChunk().getZ() &&
-                    block.getWorld() == chunk.getWorld()) {
+                    block.getWorld().equalsIgnoreCase(chunk.getWorld())) {
                 itr.remove();
             }
         }
@@ -378,7 +378,13 @@ public class UtilitySubsystem {
     			
     			for (PlayerActivityRecord record : main.playerActivityRecords)
     			{
-    				if (!getServer().getPlayer(record.getPlayerUUID()).isOnline() && main.getConfig().getBoolean("powerDecreases")
+    				Player player = getServer().getPlayer(record.getPlayerUUID());
+    				boolean isOnline = false;
+    				if (player != null)
+    				{
+    					isOnline = player.isOnline();
+    				}
+    				if (isOnline && main.getConfig().getBoolean("powerDecreases")
     						&& record.getMinutesSinceLastLogout() > main.getConfig().getInt("minutesBeforePowerDecrease"))
     				{
     					record.incrementPowerLost();
@@ -447,7 +453,7 @@ public class UtilitySubsystem {
 
     public boolean isBlockLocked(int x, int y, int z, String world) {
         for (LockedBlock block : main.lockedBlocks) {
-            if (block.getX() == x && block.getY() == y && block.getZ() == z && block.getWorld() == world) {
+            if (block.getX() == x && block.getY() == y && block.getZ() == z && block.getWorld().equalsIgnoreCase(world)) {
                 return true;
             }
         }
@@ -460,7 +466,7 @@ public class UtilitySubsystem {
 
     public LockedBlock getLockedBlock(int x, int y, int z, String world) {
         for (LockedBlock block : main.lockedBlocks) {
-            if (block.getX() == x && block.getY() == y && block.getZ() == z && block.getWorld() == world) {
+            if (block.getX() == x && block.getY() == y && block.getZ() == z && block.getWorld().equalsIgnoreCase(world)) {
                 return block;
             }
         }
@@ -517,7 +523,7 @@ public class UtilitySubsystem {
 
     public static LockedBlock getLockedBlock(int x, int y, int z, String world, ArrayList<LockedBlock> lockedBlocks) {
         for (LockedBlock block : lockedBlocks) {
-            if (block.getX() == x && block.getY() == y && block.getZ() == z && block.getWorld() == world) {
+            if (block.getX() == x && block.getY() == y && block.getZ() == z && block.getWorld().equalsIgnoreCase(world)) {
                 return block;
             }
         }
@@ -530,7 +536,7 @@ public class UtilitySubsystem {
 
     public static boolean isBlockLocked(int x, int y, int z, String world, ArrayList<LockedBlock> lockedBlocks) {
         for (LockedBlock block : lockedBlocks) {
-            if (block.getX() == x && block.getY() == y && block.getZ() == z && block.getWorld() == world) {
+            if (block.getX() == x && block.getY() == y && block.getZ() == z && block.getWorld().equalsIgnoreCase(world)) {
                 return true;
             }
         }
@@ -717,7 +723,7 @@ public class UtilitySubsystem {
     public static boolean isClaimed(Chunk chunk, ArrayList<ClaimedChunk> claimedChunks) {
 
         for (ClaimedChunk claimedChunk : claimedChunks) {
-            if (claimedChunk.getCoordinates()[0] == chunk.getX() && claimedChunk.getCoordinates()[1] == chunk.getZ() && claimedChunk.getWorld() == chunk.getWorld().getName()) {
+            if (claimedChunk.getCoordinates()[0] == chunk.getX() && claimedChunk.getCoordinates()[1] == chunk.getZ() && claimedChunk.getWorld().equalsIgnoreCase(chunk.getWorld().getName())) {
                 return true;
             }
         }
@@ -726,7 +732,7 @@ public class UtilitySubsystem {
 
     public static ClaimedChunk getClaimedChunk(int x, int z, String world, ArrayList<ClaimedChunk> claimedChunks) {
         for (ClaimedChunk claimedChunk : claimedChunks) {
-            if (claimedChunk.getCoordinates()[0] == x && claimedChunk.getCoordinates()[1] == z && claimedChunk.getWorld() == world) {
+            if (claimedChunk.getCoordinates()[0] == x && claimedChunk.getCoordinates()[1] == z && claimedChunk.getWorld().equalsIgnoreCase(world)) {
                 return claimedChunk;
             }
         }

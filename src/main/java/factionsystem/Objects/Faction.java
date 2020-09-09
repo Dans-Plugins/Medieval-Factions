@@ -172,7 +172,14 @@ public class Faction {
     public int getCumulativePowerLevel() {
         int powerLevel = 0;
         for (UUID playerUUID : members){
-            powerLevel += getPlayersPowerRecord(playerUUID, main.playerPowerRecords).getPowerLevel();
+            try
+            {
+            	powerLevel += getPlayersPowerRecord(playerUUID, main.playerPowerRecords).getPowerLevel();
+            }
+            catch (Exception e)
+            {
+            	System.out.println("ERROR: Player's Power Record for uuid " + playerUUID + " not found. Could not get cumulative power level.");
+            }
         }
         return powerLevel;
     }

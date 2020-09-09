@@ -41,7 +41,7 @@ public class PromoteCommand {
 
                                         try {
                                             Player target = getServer().getPlayer(args[1]);
-                                            target.sendMessage(ChatColor.GREEN + "You have been promoted to officer status in your faction!");
+                                            target.sendMessage(ChatColor.RED + "You have been promoted to officer status in your faction!");
                                         }
                                         catch(Exception ignored) {
 
