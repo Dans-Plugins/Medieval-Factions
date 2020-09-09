@@ -31,7 +31,6 @@ public class PlayerInteractEventHandler {
     public void handle(PlayerInteractEvent event) {
         // get player
         Player player = event.getPlayer();
-        event.getPlayer().sendMessage("Player interact event.");
         // get chunk
         Block clickedBlock = event.getClickedBlock();
         if (clickedBlock != null) {
@@ -78,6 +77,14 @@ public class PlayerInteractEventHandler {
                 if (main.playersRevokingAccess.containsKey(player.getUniqueId())) {
                     handleRevokingAccess(event, clickedBlock, player);
                 }
+                
+                if (lockedBlock.hasAccess(player.getUniqueId()))
+        		{
+                	// Don't process any more checks so that the event is not cancelled
+                	// when a player who is not part of the faction has access granted
+                	// to a lock.
+                	return;
+        		}
 
             }
             else {
