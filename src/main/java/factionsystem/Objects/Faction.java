@@ -376,10 +376,6 @@ public class Faction {
         cumulativePowerLevel = gson.fromJson(data.get("cumulativePowerLevel"), Integer.TYPE);
         factionHome = loadLocation(gson.fromJson(data.get("location"), mapType), gson);
         liege = gson.fromJson(data.get("liege"), String.class);
-
-        if (liege == null) {
-            liege = "none"; // when updating to v3.5, liege might be null. liege needs to be "none" for things to work
-        }
     }
 
     private Location loadLocation(HashMap<String, String> data, Gson gson){
@@ -542,6 +538,7 @@ public class Faction {
                 ", description='" + description + '\'' +
                 ", owner=" + owner +
                 ", cumulativePowerLevel=" + cumulativePowerLevel +
+                ", liege=" + liege +
                 '}';
     }
 
