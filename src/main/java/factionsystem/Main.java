@@ -73,6 +73,7 @@ public class Main extends JavaPlugin implements Listener {
             config.saveConfigDefaults();
         }
         else {
+            // pre load compatibility checks
             if (!getConfig().getString("version").equalsIgnoreCase(Main.version)) {
                 System.out.println("[ALERT] Version mismatch! Adding missing defaults and setting version!");
                 config.handleVersionMismatch();
@@ -86,9 +87,10 @@ public class Main extends JavaPlugin implements Listener {
         this.getServer().getPluginManager().registerEvents(this, this);
         storage.load();
 
-        // make sure every player experiences power decay in case we updated from pre-v3.5
+        // post load compatibility checks
         if (!getConfig().getString("version").equalsIgnoreCase(Main.version)) {
-            utilities.createActivityRecordForEveryOfflinePlayer();
+            utilities.createActivityRecordForEveryOfflinePlayer(); // make sure every player experiences power decay in case we updated from pre-v3.5
+            utilities.trimOfficerListsIfOverLimit(); // make sure factions aren't exceeding officer limits in case we updated from pre-v3.5
         }
 
         System.out.println("Medieval Factions plugin enabled.");

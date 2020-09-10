@@ -604,4 +604,9 @@ public class Faction {
             attemptedVassalizations.remove(factionName);
         }
     }
+
+    public void removeLastOfficer() {
+        UUID officerToRemove = officers.get(officers.size() - 1);
+        removeOfficer(officerToRemove);
+    }
 }
