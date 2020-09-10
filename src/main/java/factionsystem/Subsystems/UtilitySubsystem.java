@@ -925,19 +925,4 @@ public class UtilitySubsystem {
             }
         }
     }
-
-    public void trimOfficerListsIfOverLimit() {
-
-        for (Faction faction : main.factions) {
-            if (faction.getNumOfficers() > faction.calculateMaxOfficers()) { // if over limit
-
-                // remove however many officers faction is exceeding limit by
-                for (int i = 0; i < (faction.getNumOfficers() - faction.calculateMaxOfficers()); i++) {
-                    faction.removeLastOfficer();
-                }
-
-            }
-        }
-
-    }
 }

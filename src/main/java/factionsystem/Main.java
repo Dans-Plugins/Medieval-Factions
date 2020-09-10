@@ -90,7 +90,6 @@ public class Main extends JavaPlugin implements Listener {
         // post load compatibility checks
         if (!getConfig().getString("version").equalsIgnoreCase(Main.version)) {
             utilities.createActivityRecordForEveryOfflinePlayer(); // make sure every player experiences power decay in case we updated from pre-v3.5
-            utilities.trimOfficerListsIfOverLimit(); // make sure factions aren't exceeding officer limits in case we updated from pre-v3.5
         }
 
         System.out.println("Medieval Factions plugin enabled.");

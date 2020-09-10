@@ -604,11 +604,4 @@ public class Faction {
             attemptedVassalizations.remove(factionName);
         }
     }
-
-    public void removeLastOfficer() {
-        if (officers.size() > 0) {
-            UUID officerToRemove = officers.get(officers.size() - 1);
-            removeOfficer(officerToRemove);
-        }
-    }
 }
