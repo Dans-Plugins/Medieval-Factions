@@ -375,7 +375,9 @@ public class Faction {
         owner = UUID.fromString(gson.fromJson(data.get("owner"), String.class));
         cumulativePowerLevel = gson.fromJson(data.get("cumulativePowerLevel"), Integer.TYPE);
         factionHome = loadLocation(gson.fromJson(data.get("location"), mapType), gson);
-        liege = gson.fromJson(data.get("liege"), String.class);
+        if (data.containsKey("liege")) {
+            liege = gson.fromJson(data.get("liege"), String.class);
+        }
     }
 
     private Location loadLocation(HashMap<String, String> data, Gson gson){
