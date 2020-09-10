@@ -86,6 +86,11 @@ public class Main extends JavaPlugin implements Listener {
         this.getServer().getPluginManager().registerEvents(this, this);
         storage.load();
 
+        // make sure every player experiences power decay in case we updated from pre-v3.5
+        if (!getConfig().getString("version").equalsIgnoreCase(Main.version)) {
+            utilities.createActivityRecordForEveryOfflinePlayer();
+        }
+
         System.out.println("Medieval Factions plugin enabled.");
     }
 
