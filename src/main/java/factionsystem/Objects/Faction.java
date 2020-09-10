@@ -8,6 +8,7 @@ import org.bukkit.Location;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.World;
 import org.bukkit.WorldCreator;
+import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
 
 import java.io.File;
@@ -28,6 +29,8 @@ public class Faction {
     private ArrayList<String> allyFactions = new ArrayList<>();
     private ArrayList<String> laws = new ArrayList<>();
     private ArrayList<String> vassals = new ArrayList<>();
+    private ArrayList<Gate> gates = new ArrayList<>();
+    
     private String name = "defaultName";
     private String description = "defaultDescription";
     private String liege = "none";
@@ -64,6 +67,50 @@ public class Faction {
     public Faction(Map<String, String> data, Main main) {
         this.load(data);
         this.main = main;
+    }
+    
+    public ArrayList<Gate> getGates()
+    {
+    	return gates;
+    }
+    
+    public boolean hasGateTrigger(Block block)
+    {
+    	for(Gate g : gates)
+    	{
+    		if (g.getTrigger().getX() == block.getX() && g.getTrigger().getY() == block.getY() && g.getTrigger().getZ() == block.getZ() &&
+    				g.getTrigger().getWorld() == block.getWorld().getName())
+    		{
+    			return true;
+    		}
+    	}
+		return false;
+    }
+    
+    public ArrayList<Gate> getGatesForTrigger(Block block)
+    {
+    	ArrayList<Gate> gateList = new ArrayList<>();
+    	for(Gate g : gates)
+    	{
+    		if (g.getTrigger().getX() == block.getX() && g.getTrigger().getY() == block.getY() && g.getTrigger().getZ() == block.getZ() &&
+    				g.getTrigger().getWorld() == block.getWorld().getName())
+    		{
+    			gateList.add(g);
+    		}
+    	}
+		return gateList;
+    }
+    
+    public void AddGate(Gate gate)
+    {
+    	gates.add(gate);
+    }
+    
+    public void RemoveGate(Gate gate)
+    {
+    	// TODO: Call a cleanup/remove method on the gate that clears its blocks before
+    	// getting removed from the save list.
+    	gates.remove(gate);
     }
 
     public int getNumOfficers() {

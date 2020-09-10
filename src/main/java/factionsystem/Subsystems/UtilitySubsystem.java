@@ -3,6 +3,7 @@ package factionsystem.Subsystems;
 import factionsystem.Main;
 import factionsystem.Objects.ClaimedChunk;
 import factionsystem.Objects.Faction;
+import factionsystem.Objects.Gate;
 import factionsystem.Objects.LockedBlock;
 import factionsystem.Objects.PlayerActivityRecord;
 import factionsystem.Objects.PlayerPowerRecord;
@@ -495,6 +496,20 @@ public class UtilitySubsystem {
 
     // static methods ----------------------------
 
+    public static void startCreatingGate(Main main, Player player, Block clickedBlock)
+    {
+    	if (!main.creatingGatePlayers.containsKey(player.getUniqueId()))
+    	{
+    		Gate gate = new Gate(main);
+    		gate.AddCoord(clickedBlock);
+    		main.creatingGatePlayers.put(player.getUniqueId(), gate);
+    	}
+    	else
+    	{
+    		System.out.println("WARNING: Player has already started creating the gate. startCreatingGate() call ignored.");
+    	}
+    }
+    
     public static boolean isFactionExceedingTheirDemesneLimit(Faction faction, ArrayList<ClaimedChunk> claimedChunks) {
         return (getChunksClaimedByFaction(faction.getName(), claimedChunks) > faction.getCumulativePowerLevel());
     }

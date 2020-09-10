@@ -117,7 +117,13 @@ public class PlayerActivityRecord {
         Map<String, String> saveMap = new HashMap<>();
         saveMap.put("playerUUID", gson.toJson(playerUUID.toString()));
         saveMap.put("logins", gson.toJson(logins));
-        saveMap.put("lastLogout", gson.toJson(lastLogout.toString()));
+        String lastLog = "";
+        try
+        {
+        	lastLog = lastLogout.toString();
+        } catch (Exception e)
+        { }
+        saveMap.put("lastLogout", gson.toJson(lastLog));
         saveMap.put("powerLost", gson.toJson(powerLost));
 
         return saveMap;
