@@ -918,7 +918,7 @@ public class UtilitySubsystem {
     public void createActivityRecordForEveryOfflinePlayer() {
         for (OfflinePlayer player : Bukkit.getOfflinePlayers()) {
             PlayerActivityRecord record = UtilitySubsystem.getPlayerActivityRecord(player.getUniqueId(), main.playerActivityRecords);
-            if (record != null) {
+            if (record == null) {
                 PlayerActivityRecord newRecord = new PlayerActivityRecord(player.getUniqueId(), 1, main);
                 newRecord.setLastLogout(ZonedDateTime.now());
                 main.playerActivityRecords.add(newRecord);
