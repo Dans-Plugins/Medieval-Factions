@@ -76,6 +76,7 @@ public class Main extends JavaPlugin implements Listener {
             if (!getConfig().getString("version").equalsIgnoreCase(Main.version)) {
                 System.out.println("[ALERT] Version mismatch! Adding missing defaults and setting version!");
                 config.handleVersionMismatch();
+                utilities.createActivityRecordForEveryOfflinePlayer();
             }
             reloadConfig();
         }

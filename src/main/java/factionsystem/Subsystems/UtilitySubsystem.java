@@ -14,6 +14,7 @@ import org.bukkit.potion.PotionEffectType;
 import org.bukkit.potion.PotionType;
 
 import java.io.File;
+import java.time.ZonedDateTime;
 import java.util.*;
 
 import static factionsystem.Subsystems.UtilitySubsystem.getChunksClaimedByFaction;
@@ -910,5 +911,18 @@ public class UtilitySubsystem {
 
         }
 
+    }
+
+    // this method is to ensure that when updating to a version with power decay, even players who
+    // never log in again will experience power decay.
+    public void createActivityRecordForEveryOfflinePlayer() {
+        for (OfflinePlayer player : Bukkit.getOfflinePlayers()) {
+            PlayerActivityRecord record = UtilitySubsystem.getPlayerActivityRecord(player.getUniqueId(), main.playerActivityRecords);
+            if (record != null) {
+                PlayerActivityRecord newRecord = new PlayerActivityRecord(player.getUniqueId(), 1, main);
+                newRecord.setLastLogout(ZonedDateTime.now());
+                main.playerActivityRecords.add(newRecord);
+            }
+        }
     }
 }
