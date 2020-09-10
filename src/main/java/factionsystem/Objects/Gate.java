@@ -53,17 +53,52 @@ public class Gate {
 		main = plugin;
 	}
 	
+	public boolean isParallelToZ()
+	{
+		if (coord1 != null && coord2 != null)
+		{
+			if (coord1.getZ() != coord2.getZ())
+			{
+				return true;
+			}
+			else
+			{
+				return false;
+			}
+		}
+		else
+		{
+			return false;
+		}
+	}
+	public boolean isParallelToX()
+	{
+		if (coord1 != null && coord2 != null)
+		{
+			if (coord1.getX() != coord2.getX())
+			{
+				return true;
+			}
+			else
+			{
+				return false;
+			}
+		}
+		else
+		{
+			return false;
+		}
+	}
+	
 	public boolean AddCoord(Block clickedBlock)
 	{
 		if (coord1 == null)
 		{
 			world = clickedBlock.getWorld();
 			coord1 = new GateCoord(clickedBlock);
-			System.out.println("coord1 =" + clickedBlock.toString());
 		}
 		else if (coord2 == null)
 		{
-			System.out.println("coord2 = " + clickedBlock.toString());
 			if (!coord1.getWorld().equalsIgnoreCase(clickedBlock.getWorld().getName()))
 			{
 				return false;
@@ -75,7 +110,6 @@ public class Gate {
 		}
 		else
 		{
-			System.out.println("trigger = " + clickedBlock.toString());
 			trigger = new GateCoord(clickedBlock);
 		}
 		return true;
@@ -85,37 +119,91 @@ public class Gate {
 	{
 		if (open)
 			return;
-		
+		System.out.println("Opening Gate");
 		open = true;
 		// For vertical we only need to iterate over x/y
 		if (vertical)
 		{
-			int topY = coord1.getY();
-			int bottomY = coord2.getY();
-			
-			int _leftX = coord1.getX();
-			int _rightX = coord2.getX();
-
-			final int leftX = _leftX;
-			final int rightX = _rightX;
-			
-			int c = 0;
-			for (int y = bottomY; y <= topY; y++)
+			if (isParallelToX())
 			{
-				c++;
-				final int blockY = y;
-				Bukkit.getScheduler().runTaskLater(main, new Runnable() {
-					Block b;
-                    @Override
-                    public void run() {
-        				for (int x = leftX; x <= rightX; x++)
-        				{
-        					b = world.getBlockAt(x, blockY, coord1.getZ());
-        					b.setType(Material.AIR);
-        					world.playSound(b.getLocation(), soundEffect, 0.1f, 0.1f);
-        				}
-                    }
-                }, c * 10);
+				int topY = coord1.getY();
+				int bottomY = coord2.getY();
+				if (coord2.getY() > coord1.getY())
+				{
+					topY = coord2.getY();
+					bottomY = coord1.getY();
+				}
+				
+				int _leftX = coord1.getX();
+				int _rightX = coord2.getX();
+				if (coord2.getX() < coord1.getX())
+				{
+					_leftX = coord2.getX();
+					_rightX = coord1.getX();
+				}
+	
+				final int leftX = _leftX;
+				final int rightX = _rightX;
+				
+				int c = 0;
+				for (int y = bottomY; y <= topY; y++)
+				{
+					c++;
+					final int blockY = y;
+					Bukkit.getScheduler().runTaskLater(main, new Runnable() {
+						Block b;
+	                    @Override
+	                    public void run() {
+	        				for (int x = leftX; x <= rightX; x++)
+	        				{
+	        					b = world.getBlockAt(x, blockY, coord1.getZ());
+	        					b.setType(Material.AIR);
+	        					world.playSound(b.getLocation(), soundEffect, 0.1f, 0.1f);
+	        				}
+	                    }
+	                }, c * 10);
+				}
+			}
+			else if (isParallelToZ())
+			{
+				System.out.println("isParallelToZ()");
+				int topY = coord1.getY();
+				int bottomY = coord2.getY();
+				if (coord2.getY() > coord1.getY())
+				{
+					topY = coord2.getY();
+					bottomY = coord1.getY();
+				}
+				
+				int _leftZ = coord1.getZ();
+				int _rightZ = coord2.getZ();
+				if (coord2.getZ() < coord1.getZ())
+				{
+					_leftZ = coord2.getZ();
+					_rightZ = coord1.getZ();
+				}
+	
+				final int leftZ = _leftZ;
+				final int rightZ = _rightZ;
+				
+				int c = 0;
+				for (int y = bottomY; y <= topY; y++)
+				{
+					c++;
+					final int blockY = y;
+					Bukkit.getScheduler().runTaskLater(main, new Runnable() {
+						Block b;
+	                    @Override
+	                    public void run() {
+	        				for (int z = leftZ; z <= rightZ; z++)
+	        				{
+	        					b = world.getBlockAt(coord1.getX(), blockY, z);
+	        					b.setType(Material.AIR);
+	        					world.playSound(b.getLocation(), soundEffect, 0.1f, 0.1f);
+	        				}
+	                    }
+	                }, c * 10);
+				}			
 			}
 			
 		}
@@ -127,51 +215,96 @@ public class Gate {
 	
 	public void CloseGate()
 	{
+
 		if (!open)
 			return;
 		
+		System.out.println("Closing Gate");
 		open = false;
 		// For vertical we only need to iterate over x/y
 		if (vertical)
 		{
-			int topY = coord1.getY();
-			int bottomY = coord2.getY();
-			if (coord2.getY() > coord1.getY())
+			if (isParallelToX())
 			{
-				topY = coord2.getY();
-				bottomY = coord1.getY();
+				int topY = coord1.getY();
+				int bottomY = coord2.getY();
+				if (coord2.getY() > coord1.getY())
+				{
+					topY = coord2.getY();
+					bottomY = coord1.getY();
+				}
+				
+				int _leftX = coord1.getX();
+				int _rightX = coord2.getX();
+				if (coord2.getX() < coord1.getX())
+				{
+					_leftX = coord2.getX();
+					_rightX = coord1.getX();
+				}
+	
+				final int leftX = _leftX;
+				final int rightX = _rightX;
+				
+				int c = 0;
+				for (int y = topY; y >= bottomY; y--)
+				{
+					c++;
+					final int blockY = y;
+					Bukkit.getScheduler().runTaskLater(main, new Runnable() {
+						Block b;
+	                    @Override
+	                    public void run() {
+	        				for (int x = leftX; x <= rightX; x++)
+	        				{
+	        					b = world.getBlockAt(x, blockY, coord1.getZ());
+	        					System.out.println(b.toString());
+	        					b.setType(Material.OAK_FENCE);
+	        					world.playSound(b.getLocation(), soundEffect, 0.1f, 0.1f);
+	        				}
+	                    }
+	                }, c * 10);
+				}
 			}
-			
-			int _leftX = coord1.getX();
-			int _rightX = coord2.getX();
-			if (coord2.getX() < coord1.getX())
+			else if (isParallelToZ())
 			{
-				_leftX = coord2.getX();
-				_rightX = coord1.getX();
+				int topY = coord1.getY();
+				int bottomY = coord2.getY();
+				if (coord2.getY() > coord1.getY())
+				{
+					topY = coord2.getY();
+					bottomY = coord1.getY();
+				}
+				
+				int _leftZ = coord1.getZ();
+				int _rightZ = coord2.getZ();
+	
+				if (coord2.getZ() < coord1.getZ())
+				{
+					_leftZ = coord2.getZ();
+					_rightZ = coord1.getZ();
+				}
+				final int leftZ = _leftZ;
+				final int rightZ = _rightZ;
+				
+				int c = 0;
+				for (int y = topY; y >= bottomY; y--)
+				{
+					c++;
+					final int blockY = y;
+					Bukkit.getScheduler().runTaskLater(main, new Runnable() {
+						Block b;
+	                    @Override
+	                    public void run() {
+	        				for (int z = leftZ; z <= rightZ; z++)
+	        				{
+	        					b = world.getBlockAt(coord1.getX(), blockY, z);
+	        					b.setType(Material.OAK_FENCE);
+	        					world.playSound(b.getLocation(), soundEffect, 0.1f, 0.1f);
+	        				}
+	                    }
+	                }, c * 10);
+				}			
 			}
-			final int leftX = _leftX;
-			final int rightX = _rightX;
-			
-			
-			int c = 0;
-			for (int y = topY; y >= bottomY; y--)
-			{
-				c++;
-				final int blockY = y;
-				Bukkit.getScheduler().runTaskLater(main, new Runnable() {
-					Block b;
-                    @Override
-                    public void run() {
-        				for (int x = leftX; x <= rightX; x++)
-        				{
-        					b = world.getBlockAt(x, blockY, coord1.getZ());
-        					b.setType(material);
-        					world.playSound(b.getLocation(), soundEffect, 0.1f, 1.1f);
-        				}
-                    }
-                }, c * 10);
-			}
-			
 		}
 		else
 		{
