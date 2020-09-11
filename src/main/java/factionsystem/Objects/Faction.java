@@ -339,6 +339,7 @@ public class Faction {
         saveMap.put("owner", gson.toJson(owner));
         saveMap.put("cumulativePowerLevel", gson.toJson(cumulativePowerLevel));
         saveMap.put("location", gson.toJson(saveLocation(gson)));
+        saveMap.put("liege", gson.toJson(liege));
 
         return saveMap;
     }
@@ -368,12 +369,13 @@ public class Faction {
         officers = gson.fromJson(data.get("officers"), arrayListTypeUUID);
         allyFactions = gson.fromJson(data.get("allyFactions"), arrayListTypeString);
         laws = gson.fromJson(data.get("laws"), arrayListTypeString);
-        vassals = gson.fromJson(data.get("vassals"), arrayListTypeString);
         name = gson.fromJson(data.get("name"), String.class);
-        description = gson.fromJson(data.get("description"),String.class);
+        description = gson.fromJson(data.get("description"), String.class);
         owner = UUID.fromString(gson.fromJson(data.get("owner"), String.class));
         cumulativePowerLevel = gson.fromJson(data.get("cumulativePowerLevel"), Integer.TYPE);
         factionHome = loadLocation(gson.fromJson(data.get("location"), mapType), gson);
+        liege = gson.fromJson(data.getOrDefault("liege", "none"), String.class);
+        vassals = gson.fromJson(data.getOrDefault("vassals", "[]"), arrayListTypeString);
     }
 
     private Location loadLocation(HashMap<String, String> data, Gson gson){
@@ -536,6 +538,7 @@ public class Faction {
                 ", description='" + description + '\'' +
                 ", owner=" + owner +
                 ", cumulativePowerLevel=" + cumulativePowerLevel +
+                ", liege=" + liege +
                 '}';
     }
 
@@ -549,7 +552,7 @@ public class Faction {
     }
 
     public boolean hasLiege() {
-        return !liege.equalsIgnoreCase("none");
+        return !liege.equalsIgnoreCase("none"); // TODO: fix null error
     }
 
     public boolean isLiege(String faction) {
