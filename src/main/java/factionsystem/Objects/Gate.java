@@ -21,6 +21,12 @@ public class Gate {
 	
 	private Sound soundEffect = Sound.BLOCK_ANVIL_HIT;
 	
+	public boolean isIntersecting(Gate gate)
+	{
+		// TODO implement intersecting logic.
+		return false;
+	}
+	
 	public boolean isOpen()
 	{
 		return open ? true : false;

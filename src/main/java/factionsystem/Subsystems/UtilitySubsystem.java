@@ -426,6 +426,16 @@ public class UtilitySubsystem {
     	}
     	return null;
     }
+    
+    public boolean isGateOverlapping(String factionName, Gate gate)
+    {
+    	Faction faction = getFaction(factionName, main.factions);
+    	for (Gate factionGate : faction.getGates())
+    	{
+    		return true;	
+    	}
+    	return false;
+    }
 
     public void scheduleAutosave() {
         System.out.println("Scheduling hourly auto save...");
