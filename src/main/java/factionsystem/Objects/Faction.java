@@ -369,13 +369,13 @@ public class Faction {
         officers = gson.fromJson(data.get("officers"), arrayListTypeUUID);
         allyFactions = gson.fromJson(data.get("allyFactions"), arrayListTypeString);
         laws = gson.fromJson(data.get("laws"), arrayListTypeString);
-        vassals = gson.fromJson(data.getOrDefault("vassals", "[]"), arrayListTypeString);
         name = gson.fromJson(data.get("name"), String.class);
         description = gson.fromJson(data.get("description"), String.class);
         owner = UUID.fromString(gson.fromJson(data.get("owner"), String.class));
         cumulativePowerLevel = gson.fromJson(data.get("cumulativePowerLevel"), Integer.TYPE);
         factionHome = loadLocation(gson.fromJson(data.get("location"), mapType), gson);
         liege = gson.fromJson(data.getOrDefault("liege", "none"), String.class);
+        vassals = gson.fromJson(data.getOrDefault("vassals", "[]"), arrayListTypeString);
     }
 
     private Location loadLocation(HashMap<String, String> data, Gson gson){
