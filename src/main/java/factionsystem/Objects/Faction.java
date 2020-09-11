@@ -369,7 +369,7 @@ public class Faction {
         officers = gson.fromJson(data.get("officers"), arrayListTypeUUID);
         allyFactions = gson.fromJson(data.get("allyFactions"), arrayListTypeString);
         laws = gson.fromJson(data.get("laws"), arrayListTypeString);
-        vassals = gson.fromJson(data.get("vassals"), arrayListTypeString);
+        vassals = gson.fromJson(data.getOrDefault("vassals", "[]"), arrayListTypeString);
         name = gson.fromJson(data.get("name"), String.class);
         description = gson.fromJson(data.get("description"), String.class);
         owner = UUID.fromString(gson.fromJson(data.get("owner"), String.class));
