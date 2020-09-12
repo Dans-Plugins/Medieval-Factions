@@ -76,7 +76,7 @@ public class ConfigSubsystem {
 
         if (!main.getConfig().isDouble("factionOfficerMultiplier")){
             System.out.println("factionOfficerMultiplier is not set! Setting to default");
-            main.getConfig().addDefault("factionOfficerMultiplier", 2.0);
+            main.getConfig().addDefault("factionOfficerMultiplier", 1.5);
         }
 
         if (!main.getConfig().isBoolean("powerDecreases")) {
@@ -86,22 +86,22 @@ public class ConfigSubsystem {
 
         if (!main.getConfig().isInt("minutesBetweenPowerDecreases")) {
         	System.out.println("minutesBetweenPowerDecreases is not set! Setting to default");
-        	main.getConfig().addDefault("minutesBetweenPowerDecreases", 60);
+        	main.getConfig().addDefault("minutesBetweenPowerDecreases", 1440);
         }
 
         if (!main.getConfig().isInt("minutesBeforePowerDecrease")) {
         	System.out.println("minutesBeforePowerDecrease is not set! Setting to default");
-        	main.getConfig().addDefault("minutesBeforePowerDecrease", 60);
+        	main.getConfig().addDefault("minutesBeforePowerDecrease", 20160);
         }
         
         if (!main.getConfig().isInt("powerDecreaseAmount")) {
             System.out.println("powerDecreaseAmount not set! Setting to default!");
-            main.getConfig().addDefault("powerDecreaseAmount", 2);
+            main.getConfig().addDefault("powerDecreaseAmount", 1);
         }
         
         if (!main.getConfig().isInt("factionMaxNameLength")) {
         	System.out.println("factionMaxNameLength not set! Setting to default!");
-            main.getConfig().addDefault("factionMaxNameLength", 2);
+            main.getConfig().addDefault("factionMaxNameLength", 20);
         }
                 
         deleteOldConfigOptionsIfPresent();
@@ -186,9 +186,9 @@ public class ConfigSubsystem {
         main.getConfig().addDefault("officerPerMemberCount", 5);
         main.getConfig().addDefault("factionOfficerMultiplier", 1.5);
         main.getConfig().addDefault("powerDecreases", true);
-        main.getConfig().addDefault("minutesBetweenPowerDecreases", 60);
-        main.getConfig().addDefault("minutesBeforePowerDecrease", 60);
-        main.getConfig().addDefault("powerDecreaseAmount", 2);
+        main.getConfig().addDefault("minutesBetweenPowerDecreases", 1440);
+        main.getConfig().addDefault("minutesBeforePowerDecrease", 20160);
+        main.getConfig().addDefault("powerDecreaseAmount", 1);
         main.getConfig().addDefault("factionMaxNameLength", 20);
         main.getConfig().options().copyDefaults(true);
         main.saveConfig();
@@ -204,7 +204,6 @@ public class ConfigSubsystem {
                 + ", minutesBeforeInitialPowerIncrease: " + main.getConfig().getInt("minutesBeforeInitialPowerIncrease")
                 + ", minutesBetweenPowerIncreases: " + main.getConfig().getInt("minutesBetweenPowerIncreases")
                 + ", warsRequiredForPVP: " + main.getConfig().getBoolean("warsRequiredForPVP")
-                + ", officerLimit: " + main.getConfig().getInt("officerLimit")
                 + ", factionOwnerMultiplier: " + main.getConfig().getDouble("factionOwnerMultiplier")
                 + ", officerPerMemberCount: " + main.getConfig().getInt("officerPerMemberCount")
                 + ", factionOfficerMultiplier: " + main.getConfig().getDouble("factionOfficerMultiplier")
