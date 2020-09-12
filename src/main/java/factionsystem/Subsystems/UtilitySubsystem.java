@@ -35,7 +35,7 @@ public class UtilitySubsystem {
     {
     	for (ClaimedChunk chunk : main.claimedChunks)
     	{
-    		if (x == chunk.getCoordinates()[0] && y == chunk.getCoordinates()[1] && world == chunk.getWorld())
+    		if (x == chunk.getCoordinates()[0] && y == chunk.getCoordinates()[1] && world.equalsIgnoreCase(chunk.getWorld()))
     		{
     			return chunk;
     		}
@@ -204,7 +204,7 @@ public class UtilitySubsystem {
 
     public void removeLock(Block block) {
         for (LockedBlock b : main.lockedBlocks) {
-            if (b.getX() == block.getX() && b.getY() == block.getY() && b.getZ() == block.getZ() && block.getWorld().getName() == b.getWorld()) {
+            if (b.getX() == block.getX() && b.getY() == block.getY() && b.getZ() == block.getZ() && block.getWorld().getName().equalsIgnoreCase(b.getWorld())) {
                 main.lockedBlocks.remove(b);
                 return;
             }
