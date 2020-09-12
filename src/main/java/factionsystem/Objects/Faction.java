@@ -559,10 +559,13 @@ public class Faction {
         return liege.equalsIgnoreCase(faction);
     }
 
-    public void addVassal(String faction) {
-        if (!vassals.contains(faction)) {
-            vassals.add(faction);
+    public void addVassal(String factionName) {
+        for (String faction : vassals) {
+            if (faction.equalsIgnoreCase(factionName)) {
+                return;
+            }
         }
+        vassals.add(factionName);
     }
 
     public void removeVassal(String faction) {
@@ -593,18 +596,31 @@ public class Faction {
     }
 
     public void addAttemptedVassalization(String factionName) {
-        if (!attemptedVassalizations.contains(factionName)) {
-            attemptedVassalizations.add(factionName);
+        for (String attempt : attemptedVassalizations) {
+            if (attempt.equalsIgnoreCase(factionName)) {
+                return;
+            }
         }
+        attemptedVassalizations.add(factionName);
     }
 
     public boolean hasBeenOfferedVassalization(String factionName) {
-        return attemptedVassalizations.contains(factionName);
+        for (String attempt : attemptedVassalizations) {
+            if (attempt.equalsIgnoreCase(factionName)) {
+                return true;
+            }
+        }
+        return false;
     }
 
     public void removeAttemptedVassalization(String factionName) {
-        if (attemptedVassalizations.contains(factionName)) {
-            attemptedVassalizations.remove(factionName);
+        String toRemove = "";
+        for (String attempt : attemptedVassalizations) {
+            if (attempt.equalsIgnoreCase(factionName)) {
+                toRemove = factionName;
+                break;
+            }
         }
+        attemptedVassalizations.remove(toRemove);
     }
 }
