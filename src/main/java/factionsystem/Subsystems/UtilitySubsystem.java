@@ -925,4 +925,25 @@ public class UtilitySubsystem {
             }
         }
     }
+
+    public boolean containsIgnoreCase(ArrayList<String> list, String str) {
+        for (String string : list) {
+            if (string.equalsIgnoreCase(str)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    public void removeIfContainsIgnoreCase(ArrayList<String> list, String str) {
+        String toRemove = "";
+        for (String string : list) {
+            if (string.equalsIgnoreCase(str)) {
+                toRemove = string;
+                break;
+            }
+        }
+        list.remove(toRemove);
+    }
+
 }
