@@ -24,7 +24,7 @@ public class PlayerActivityRecord {
     private UUID playerUUID = null;
     private int logins = 0;
     private int powerLost = 0;
-    private ZonedDateTime lastLogout = null;
+    private ZonedDateTime lastLogout = ZonedDateTime.now();
     private Main main;
     
     public PlayerActivityRecord(UUID uuid, int logins, Main main)
