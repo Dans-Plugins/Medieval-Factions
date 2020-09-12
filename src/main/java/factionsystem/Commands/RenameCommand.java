@@ -42,7 +42,7 @@ public class RenameCommand {
                             playersFaction.setName(newName);
                             player.sendMessage(ChatColor.GREEN + "Faction name changed!");
 
-                            // rename alliance and enemy records
+                            // rename alliance, enemy, liege and vassal records
                             for (Faction faction : main.factions) {
                                 if (faction.isAlly(oldName)) {
                                     faction.removeAlly(oldName);
@@ -51,6 +51,13 @@ public class RenameCommand {
                                 if (faction.isEnemy(oldName)) {
                                     faction.removeEnemy(oldName);
                                     faction.addEnemy(newName);
+                                }
+                                if (faction.isLiege(oldName)) {
+                                    faction.setLiege(newName);
+                                }
+                                if (faction.isVassal(oldName)) {
+                                    faction.removeVassal(oldName);
+                                    faction.addVassal(newName);
                                 }
                             }
 
