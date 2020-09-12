@@ -406,7 +406,7 @@ public class CommandSubsystem {
 
                 // demote command
                 if (args[0].equalsIgnoreCase("demote")) {
-                    if (sender.hasPermission("mf.demote")) {
+                    if (sender.hasPermission("mf.demote") || sender.hasPermission("mf.default")) {
                         DemoteCommand command = new DemoteCommand(main);
                         command.demotePlayer(sender, args);
                         return true;
