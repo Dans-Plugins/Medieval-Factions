@@ -131,7 +131,7 @@ public class Faction {
     }
 
     public void addAlly(String factionName) {
-        if (main.utilities.containsIgnoreCase(allyFactions, factionName)) {
+        if (!main.utilities.containsIgnoreCase(allyFactions, factionName)) {
             allyFactions.add(factionName);
         }
     }
