@@ -45,6 +45,10 @@ public class LeaveCommand {
                                     if (faction.isVassal(main.factions.get(i).getName())) {
                                     	faction.removeVassal(main.factions.get(i).getName());
                                     }
+                                    if (main.factions.get(i).isLiege(faction.getName()))
+                                    {
+                                    	main.factions.get(i).setLiege("none");
+                                    }
                                 }
 
                                 main.playersInFactionChat.remove(player.getUniqueId());
