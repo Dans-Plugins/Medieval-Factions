@@ -84,6 +84,10 @@ public class LeaveCommand {
                         else {
                             // able to leave
 
+                            if (main.factions.get(i).isOfficer(player.getUniqueId())) {
+                                main.factions.get(i).removeOfficer(player.getUniqueId());
+                            }
+
                             if (main.playersInFactionChat.contains(player.getUniqueId())) {
                                 main.playersInFactionChat.remove(player.getUniqueId());
                             }
