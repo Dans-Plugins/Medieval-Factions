@@ -30,6 +30,7 @@ public class ForceCommand {
         sender.sendMessage(ChatColor.RED + "Sub-commands:");
         sender.sendMessage(ChatColor.RED + "/mf force save");
         sender.sendMessage(ChatColor.RED + "/mf force load");
+        sender.sendMessage(ChatColor.RED + "/mf force peace 'faction1' 'faction2'");
         return false;
     }
 
@@ -111,9 +112,32 @@ public class ForceCommand {
     private String[] getArgumentsInsideSingleQuotes(String[] args) {
         ArrayList<String> toReturn = new ArrayList<>();
 
-        // TODO: implement this method
+        String argumentString = main.utilities.createStringFromFirstArgOnwards(args);
+
+        int index = 0;
+        while (true) {
+            int start = findIndexOfFirstSingleQuote(index, argumentString);
+            if (start == -1) {
+                break;
+            }
+            int end = findIndexOfFirstSingleQuote(start + 1, argumentString) + 1;
+
+            if (end == -1) {
+                break;
+            }
+
+            toReturn.add(argumentString.substring(start, end));
+            index = end;
+        }
 
         return (String[]) toReturn.toArray();
+    }
+
+    private int findIndexOfFirstSingleQuote(int startingIndex, String argumentString) {
+
+        // TODO
+
+        return -1;
     }
 
 }
