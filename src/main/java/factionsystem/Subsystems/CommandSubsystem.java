@@ -614,31 +614,10 @@ public class CommandSubsystem {
 
                 // admin commands ----------------------------------------------------------------------------------
 
-                // forcesave command
-                if (args[0].equalsIgnoreCase("forcesave")|| args[0].equalsIgnoreCase("fs")) {
-                    if (sender.hasPermission("mf.forcesave") || sender.hasPermission("mf.admin")) {
-                        sender.sendMessage(ChatColor.GREEN + "Medieval Factions plugin is saving...");
-                        main.storage.save();
-                        return true;
-                    }
-                    else {
-                        sender.sendMessage(ChatColor.RED + "Sorry! You need the following permission to use this command: 'mf.forcesave'");
-                        return false;
-                    }
-                }
-
-                // forceload command
-                if (args[0].equalsIgnoreCase("forceload")|| args[0].equalsIgnoreCase("fl")) {
-                    if (sender.hasPermission("mf.forceload") || sender.hasPermission("mf.admin")) {
-                        sender.sendMessage(ChatColor.GREEN + "Medieval Factions plugin is loading...");
-                        main.storage.load();
-                        main.reloadConfig();
-                        return true;
-                    }
-                    else {
-                        sender.sendMessage(ChatColor.RED + "Sorry! You need the following permission to use this command: 'mf.forceload'");
-                        return false;
-                    }
+                // force command
+                if (args[0].equalsIgnoreCase("force")) {
+                    ForceCommand command = new ForceCommand(main);
+                    return command.force(sender, args);
                 }
 
                 // reset power levels command
