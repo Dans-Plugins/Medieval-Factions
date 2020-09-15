@@ -37,7 +37,7 @@ public class ForceCommand {
             return true;
         }
         else {
-            sender.sendMessage(ChatColor.RED + "Sorry! You need the following permission to use this command: 'mf.forcesave'");
+            sender.sendMessage(ChatColor.RED + "Sorry! You need the following permission to use this command: 'mf.force.save'");
             return false;
         }
     }
@@ -50,7 +50,7 @@ public class ForceCommand {
             return true;
         }
         else {
-            sender.sendMessage(ChatColor.RED + "Sorry! You need the following permission to use this command: 'mf.forceload'");
+            sender.sendMessage(ChatColor.RED + "Sorry! You need the following permission to use this command: 'mf.force.load'");
             return false;
         }
     }
