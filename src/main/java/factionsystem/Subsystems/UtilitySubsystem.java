@@ -375,7 +375,7 @@ public class UtilitySubsystem {
     	Bukkit.getScheduler().scheduleSyncRepeatingTask(main, new Runnable () {
     		@Override
     		public void run() {
-    			System.out.println("Medieval Factions is decreasing the power of every player by " + main.getConfig().getInt("powerDecreaseAmount") + ". This will happen every " + main.getConfig().getInt("minutesBetweenPowerDecreases") + ".");
+    			System.out.println("Medieval Factions is decreasing the power of every player by " + main.getConfig().getInt("powerDecreaseAmount") + ". This will happen every " + main.getConfig().getInt("minutesBetweenPowerDecreases") + " minutes.");
     			
     			for (PlayerActivityRecord record : main.playerActivityRecords)
     			{

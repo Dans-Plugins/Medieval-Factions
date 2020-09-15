@@ -39,8 +39,8 @@ public class PlayerJoinEventHandler {
         	{
         		PlayerPowerRecord power = UtilitySubsystem.getPlayersPowerRecord(event.getPlayer().getUniqueId(), main.playerPowerRecords);
         		record.incrementLogins();
-        		
-        		int newPower = power.getPowerLevel() - record.getPowerLost();
+
+        		int newPower = power.getPowerLevel();
         		if (newPower < 0)
         			newPower = 0;
         		
