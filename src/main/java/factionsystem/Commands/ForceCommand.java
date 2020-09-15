@@ -19,10 +19,14 @@ public class ForceCommand {
             }
 
             // forceload command
-            if (args[1].equalsIgnoreCase(".load")) {
+            if (args[1].equalsIgnoreCase("load")) {
                 return forceLoad(sender);
             }
         }
+        // show usages
+        sender.sendMessage(ChatColor.RED + "Sub-commands:");
+        sender.sendMessage(ChatColor.RED + "/mf force save");
+        sender.sendMessage(ChatColor.RED + "/mf force load");
         return false;
     }
 
