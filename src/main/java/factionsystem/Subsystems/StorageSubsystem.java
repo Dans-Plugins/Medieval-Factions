@@ -44,6 +44,7 @@ public class StorageSubsystem {
         savePlayerPowerRecords();
         savePlayerActivityRecords();
         saveLockedBlocks();
+        main.saveConfig();
     }
 
     private void saveFactions() {
