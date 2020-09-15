@@ -55,7 +55,6 @@ public class PlayerJoinEventHandler {
         		{
         			event.getPlayer().sendMessage(ChatColor.RED + "Your power has decayed by " + record.getPowerLost() + " since you last logged out. Your power is now " + newPower + ".");
         		}
-        		power.setPowerLevel(newPower);
         		record.setPowerLost(0);
         	}
         }

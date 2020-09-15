@@ -385,7 +385,7 @@ public class UtilitySubsystem {
     				{
     					isOnline = player.isOnline();
     				}
-    				if (isOnline && main.getConfig().getBoolean("powerDecreases")
+    				if (!isOnline && main.getConfig().getBoolean("powerDecreases")
     						&& record.getMinutesSinceLastLogout() > main.getConfig().getInt("minutesBeforePowerDecrease"))
     				{
     					record.incrementPowerLost();
