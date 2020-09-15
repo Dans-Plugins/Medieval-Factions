@@ -21,9 +21,12 @@ public class ForceCommand {
                 return forceSave(sender);
             }
 
-            // forceload command
             if (args[1].equalsIgnoreCase("load")) {
                 return forceLoad(sender);
+            }
+
+            if (args[1].equalsIgnoreCase("peace")) {
+                return forcePeace(sender, args);
             }
         }
         // show usages
@@ -60,13 +63,13 @@ public class ForceCommand {
     }
 
     public boolean forcePeace(CommandSender sender, String[] args) {
-
+        System.out.println("DEBUG: forcePeace() method started");
         if (sender.hasPermission("mf.force.peace") || sender.hasPermission("mf.force.*")|| sender.hasPermission("mf.admin")) {
 
             if (args.length >= 4) {
 
                 // get arguments designated by single quotes
-                String[] singleQuoteArgs = getArgumentsInsideSingleQuotes(args);
+                String[] singleQuoteArgs = main.utilities.getArgumentsInsideSingleQuotes(args);
 
                 if (singleQuoteArgs.length < 2) {
                     sender.sendMessage(ChatColor.RED + "No factions designated. Must be designated inside single quotes!");
@@ -79,6 +82,8 @@ public class ForceCommand {
                 Faction faction1 = main.utilities.getFaction(factionName1, main.factions);
                 Faction faction2 = main.utilities.getFaction(factionName2, main.factions);
 
+                System.out.println("DEBUG: attempting to force peace between " + faction1.getName() + " and " + faction2.getName());
+
                 // force peace
                 if (faction1 != null && faction2 != null) {
                     if (faction1.isEnemy(faction2.getName())) {
@@ -90,6 +95,7 @@ public class ForceCommand {
 
                     // announce peace to all players on server.
                     main.utilities.sendAllPlayersOnServerMessage(ChatColor.GREEN + faction1.getName() + " is now at peace with " + faction2.getName() + "!");
+                    System.out.println("DEBUG: forcePeace() method successful");
                     return true;
                 }
                 else {
@@ -107,37 +113,6 @@ public class ForceCommand {
             return false;
         }
 
-    }
-
-    private String[] getArgumentsInsideSingleQuotes(String[] args) {
-        ArrayList<String> toReturn = new ArrayList<>();
-
-        String argumentString = main.utilities.createStringFromFirstArgOnwards(args);
-
-        int index = 0;
-        while (true) {
-            int start = findIndexOfFirstSingleQuote(index, argumentString);
-            if (start == -1) {
-                break;
-            }
-            int end = findIndexOfFirstSingleQuote(start + 1, argumentString) + 1;
-
-            if (end == -1) {
-                break;
-            }
-
-            toReturn.add(argumentString.substring(start, end));
-            index = end;
-        }
-
-        return (String[]) toReturn.toArray();
-    }
-
-    private int findIndexOfFirstSingleQuote(int startingIndex, String argumentString) {
-
-        // TODO
-
-        return -1;
     }
 
 }
