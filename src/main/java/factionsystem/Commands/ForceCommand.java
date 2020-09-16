@@ -79,10 +79,10 @@ public class ForceCommand {
                 String factionName1 = singleQuoteArgs.get(0);
                 String factionName2 = singleQuoteArgs.get(1);
 
+                System.out.println("DEBUG: attempting to force peace between " + factionName1 + " and " + factionName2);
+
                 Faction faction1 = main.utilities.getFaction(factionName1, main.factions);
                 Faction faction2 = main.utilities.getFaction(factionName2, main.factions);
-
-                System.out.println("DEBUG: attempting to force peace between " + faction1.getName() + " and " + faction2.getName());
 
                 // force peace
                 if (faction1 != null && faction2 != null) {
