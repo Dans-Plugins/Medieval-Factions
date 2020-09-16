@@ -946,7 +946,7 @@ public class UtilitySubsystem {
         list.remove(toRemove);
     }
 
-    public String[] getArgumentsInsideSingleQuotes(String[] args) {
+    public ArrayList<String> getArgumentsInsideSingleQuotes(String[] args) {
         ArrayList<String> toReturn = new ArrayList<>();
 
         String argumentString = createStringFromFirstArgOnwards(args);
@@ -968,7 +968,7 @@ public class UtilitySubsystem {
             index = end;
         }
 
-        return (String[]) toReturn.toArray();
+        return toReturn;
     }
 
     public int findIndexOfFirstSingleQuote(int startingIndex, String argumentString) {

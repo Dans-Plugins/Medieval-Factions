@@ -69,15 +69,15 @@ public class ForceCommand {
             if (args.length >= 4) {
 
                 // get arguments designated by single quotes
-                String[] singleQuoteArgs = main.utilities.getArgumentsInsideSingleQuotes(args);
+                ArrayList<String> singleQuoteArgs = main.utilities.getArgumentsInsideSingleQuotes(args);
 
-                if (singleQuoteArgs.length < 2) {
+                if (singleQuoteArgs.size() < 2) {
                     sender.sendMessage(ChatColor.RED + "No factions designated. Must be designated inside single quotes!");
                     return false;
                 }
 
-                String factionName1 = singleQuoteArgs[0];
-                String factionName2 = singleQuoteArgs[1];
+                String factionName1 = singleQuoteArgs.get(0);
+                String factionName2 = singleQuoteArgs.get(1);
 
                 Faction faction1 = main.utilities.getFaction(factionName1, main.factions);
                 Faction faction2 = main.utilities.getFaction(factionName2, main.factions);
