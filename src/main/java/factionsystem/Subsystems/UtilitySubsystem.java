@@ -957,7 +957,7 @@ public class UtilitySubsystem {
             if (start == -1) {
                 break;
             }
-            int end = findIndexOfFirstSingleQuote(start + 1, argumentString) + 1;
+            int end = findIndexOfFirstSingleQuote(start + 1, argumentString);
 
             if (end == -1) {
                 break;
