@@ -965,7 +965,7 @@ public class UtilitySubsystem {
 
             toReturn.add(argumentString.substring(start + 1, end));
             System.out.println("DEBUG: argument '" + toReturn.get(toReturn.size() - 1) + "' found!");
-            index = end;
+            index = end + 1;
         }
 
         return toReturn;
