@@ -27,6 +27,7 @@ public class CommandSubsystem {
                 // send plugin information
                 sender.sendMessage(ChatColor.AQUA + " == Medieval Factions " + main.version + " == ");
                 sender.sendMessage(ChatColor.AQUA + "Developers: DanTheTechMan, Pasarus, Caibinus");
+                sender.sendMessage(ChatColor.AQUA + "Wiki: https://github.com/DansPlugins/Medieval-Factions/wiki");
                 return true;
             }
 
