@@ -42,3 +42,4 @@ An open source minecraft plugin licensed under GPL3 for players to use to organi
 - 3.3 'Major Overhauls & Bug Fixes' update
 - 3.4 'Config Command + Bug Fix/Tweaks' update
 - 3.5 'Vassal Factions, Power Decay & Many Tweaks' update
+- 3.6
