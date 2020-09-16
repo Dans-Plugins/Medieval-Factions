@@ -63,9 +63,8 @@ public class HelpCommand {
             }
             if (args[1].equalsIgnoreCase("6")) {
                 sender.sendMessage(ChatColor.BOLD + "" + ChatColor.AQUA + "\n == Medieval Factions Commands Page 5/6 == " + "\n");
-                sender.sendMessage(ChatColor.AQUA + "/mf forcesave - Force the plugin to save." + "\n");
+                sender.sendMessage(ChatColor.AQUA + "/mf force - Force the plugin to perform certain actions." + "\n");
                 sender.sendMessage(ChatColor.AQUA + "/mf version - Check plugin version." + "\n");
-                sender.sendMessage(ChatColor.AQUA + "/mf forceload - Force the plugin to load." + "\n");
                 sender.sendMessage(ChatColor.AQUA + "/mf resetpowerlevels - Reset player power records and faction cumulative power levels." + "\n");
                 sender.sendMessage(ChatColor.AQUA + "/mf bypass - Bypass protections.");
                 sender.sendMessage(ChatColor.AQUA + "/mf config show - Show config values.");
