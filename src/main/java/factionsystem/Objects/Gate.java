@@ -59,7 +59,7 @@ public class Gate {
         saveMap.put("open", String.valueOf(open));
         saveMap.put("vertical", String.valueOf(vertical));
         saveMap.put("material", material.name());
-        saveMap.put("world", world.getName());
+        saveMap.put("world", coord1.getWorld());
         saveMap.put("coord1", coord1.toString());
         saveMap.put("coord2", coord2.toString());
         saveMap.put("triggerCoord", trigger.toString());
