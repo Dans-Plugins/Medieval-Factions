@@ -41,7 +41,24 @@ public class Gate {
 	private GateCoord coord2 = null;
 	private GateCoord trigger = null;
 	private Material material = Material.IRON_BARS;
-	private World world = null;
+	private World _world = null;
+	private String world = "";
+	private Main main = null;
+	
+	public World getWorld()
+	{
+		if (_world != null)
+		{
+			return _world;
+		}
+		_world = main.getServer().getWorld(world);
+		return _world;
+	}
+	public void setWorld(String worldName)
+	{
+		world = worldName;
+		_world = null;
+	}
 	
 	private Sound soundEffect = Sound.BLOCK_ANVIL_HIT;
 	
@@ -79,20 +96,23 @@ public class Gate {
         {
 	        GateJson data = gson.fromJson(jsonData, GateJson.class);
 	        
-	        System.out.println("Loading gate " + data.name);
+	        System.out.println("Loading world " + data.world);
 	        
-	        newGate.world = main.getServer().getWorld(data.world);
+	        newGate.world = data.world;
 	        newGate.coord1 = new GateCoord();
 	        newGate.coord1 = GateCoord.fromString(data.coord1, main);
 	        newGate.coord2 = new GateCoord();
 	        newGate.coord2 = GateCoord.fromString(data.coord2, main);
+	        System.out.println("Loaded coords, loading trigger.");
 	        newGate.trigger = new GateCoord();
 	        newGate.trigger = GateCoord.fromString(data.triggerCoord, main);
+	        System.out.println(newGate.coordsToString());
+	        System.out.println("Loading material " + data.material);
 	        newGate.material = Material.getMaterial(data.material);
         }
         catch (Exception e)
         {
-        	System.out.println("ERROR: Could not load faction gate.\n" + jsonData + "\n" + e.getMessage());
+        	System.out.println("ERROR: Could not load faction gate.\n");
         }
         
         return newGate;
@@ -139,8 +159,6 @@ public class Gate {
 	{
 		return coord2;
 	}
-	
-	private Main main;
 	
 	public Gate(Main plugin)
 	{
@@ -193,7 +211,7 @@ public class Gate {
 			{
 				for (int x = coord1.getX(); x < coord2.getX(); x++)
 				{
-					blocks.add(world.getBlockAt(x, y, z));
+					blocks.add(getWorld().getBlockAt(x, y, z));
 				}
 			}
 		}
@@ -241,7 +259,7 @@ public class Gate {
 			{
 				for (int x = leftX; x < rightX; x++)
 				{
-					if (!world.getBlockAt(x, y, z).getType().equals(mat))
+					if (!getWorld().getBlockAt(x, y, z).getType().equals(mat))
 					{
 						return false;
 					}
@@ -255,7 +273,7 @@ public class Gate {
 	{
 		if (coord1 == null)
 		{
-			world = clickedBlock.getWorld();
+			setWorld(clickedBlock.getWorld().getName());
 			coord1 = new GateCoord(clickedBlock);
 			material = clickedBlock.getType(); 
 		}
@@ -422,9 +440,9 @@ public class Gate {
 	                    public void run() {
 	        				for (int x = leftX; x <= rightX; x++)
 	        				{
-	        					b = world.getBlockAt(x, blockY, coord1.getZ());
+	        					b = getWorld().getBlockAt(x, blockY, coord1.getZ());
 	        					b.setType(Material.AIR);
-	        					world.playSound(b.getLocation(), soundEffect, 0.1f, 0.1f);
+	        					getWorld().playSound(b.getLocation(), soundEffect, 0.1f, 0.1f);
 	        				}
 	        				if (blockY == bottomY + 1)
 	        				{
@@ -466,9 +484,9 @@ public class Gate {
 	                    public void run() {
 	        				for (int z = leftZ; z <= rightZ; z++)
 	        				{
-	        					b = world.getBlockAt(coord1.getX(), blockY, z);
+	        					b = getWorld().getBlockAt(coord1.getX(), blockY, z);
 	        					b.setType(Material.AIR);
-	        					world.playSound(b.getLocation(), soundEffect, 0.1f, 0.1f);
+	        					getWorld().playSound(b.getLocation(), soundEffect, 0.1f, 0.1f);
 	        				}
 	        				if (blockY == bottomY + 1)
 	        				{
@@ -529,9 +547,9 @@ public class Gate {
 	                    public void run() {
 	        				for (int x = leftX; x <= rightX; x++)
 	        				{
-	        					b = world.getBlockAt(x, blockY, coord1.getZ());
+	        					b = getWorld().getBlockAt(x, blockY, coord1.getZ());
 	        					b.setType(material);
-	        					world.playSound(b.getLocation(), soundEffect, 0.1f, 0.1f);
+	        					getWorld().playSound(b.getLocation(), soundEffect, 0.1f, 0.1f);
 	        				}
 	        				if (blockY == bottomY + 1)
 	        				{
@@ -573,10 +591,10 @@ public class Gate {
 	                    public void run() {
 	        				for (int z = leftZ; z <= rightZ; z++)
 	        				{
-	        					b = world.getBlockAt(coord1.getX(), blockY, z);
+	        					b = getWorld().getBlockAt(coord1.getX(), blockY, z);
 	        					b.setType(material);
 	        					b.getState().update(true);
-	        					world.playSound(b.getLocation(), soundEffect, 0.1f, 0.1f);
+	        					getWorld().playSound(b.getLocation(), soundEffect, 0.1f, 0.1f);
 	        				}
 	        				if (blockY == bottomY + 1)
 	        				{
@@ -629,11 +647,11 @@ public class Gate {
 					Block b = null;
     				for (int x = leftX; x <= rightX; x++)
     				{
-    					b = world.getBlockAt(x, y, coord1.getZ());
+    					b = getWorld().getBlockAt(x, y, coord1.getZ());
     					b.setType(material);
     				};
 					if (b != null)
-						world.playSound(b.getLocation(), soundEffect, 0.1f, 0.1f);
+						getWorld().playSound(b.getLocation(), soundEffect, 0.1f, 0.1f);
 				}
 			}
 			else if (isParallelToZ())
@@ -662,11 +680,11 @@ public class Gate {
 					Block b = null;
     				for (int z = leftZ; z <= rightZ; z++)
     				{
-    					b = world.getBlockAt(coord1.getX(), y, z);
+    					b = getWorld().getBlockAt(coord1.getX(), y, z);
     					b.setType(material);
     				};
 					if (b != null)
-						world.playSound(b.getLocation(), soundEffect, 0.1f, 0.1f);
+						getWorld().playSound(b.getLocation(), soundEffect, 0.1f, 0.1f);
 				}		
 			}
 		}
@@ -690,7 +708,7 @@ public class Gate {
 	
 	public String coordsToString()
 	{
-		if (coord1 == null || coord2 == null)
+		if (coord1 == null || coord2 == null || trigger == null)
 			return "";
 		
 		return String.format("(%d, %d, %d to %d, %d, %d) Trigger (%d, %d, %d)", coord1.getX(), coord1.getY(), coord1.getZ(), coord2.getX(), coord2.getY(), coord2.getZ(),

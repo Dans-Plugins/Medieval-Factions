@@ -69,8 +69,8 @@ public class Faction {
     
     // Must recieve json data
     public Faction(Map<String, String> data, Main main) {
-        this.load(data);
         this.main = main;
+        this.load(data);
     }
 
     public int getNumOfficers() {
