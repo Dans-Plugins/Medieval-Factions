@@ -332,6 +332,13 @@ public class Faction {
         saveMap.put("location", gson.toJson(saveLocation(gson)));
         saveMap.put("liege", gson.toJson(liege));
 
+        ArrayList<String> gateList = new ArrayList<String>(); 
+        for (Gate gate : gates)
+        {
+        	Map <String, String> map = gate.save();
+        	gateList.add(gson.toJson(map));
+        }
+        saveMap.put("factionGates", gson.toJson(gateList));        
         return saveMap;
     }
 
@@ -367,6 +374,24 @@ public class Faction {
         factionHome = loadLocation(gson.fromJson(data.get("location"), mapType), gson);
         liege = gson.fromJson(data.getOrDefault("liege", "none"), String.class);
         vassals = gson.fromJson(data.getOrDefault("vassals", "[]"), arrayListTypeString);
+        
+        System.out.println("Loading Fation Gates...");
+        ArrayList<String> gateList = new ArrayList<String>();
+        gateList = gson.fromJson(data.get("factionGates"), arrayListTypeString);
+        if (gateList != null)
+        {
+	        for (String item : gateList)
+	        {
+	        	System.out.println("Loading " + item);
+	        	Gate g = Gate.load(item, main);
+	        	System.out.println("Gate trigger at " + g.coordsToString());
+	        	gates.add(g);
+	        }
+        }
+        else
+        {
+        	System.out.println("Could not load gates because the collection 'factionGates' did not exist in the factions JSON file. Are you upgrading from a previous version? Setting default.");
+        }
     }
 
     private Location loadLocation(HashMap<String, String> data, Gson gson){

@@ -191,11 +191,30 @@ public class PlayerInteractEventHandler {
 	        			if (main.creatingGatePlayers.get(event.getPlayer().getUniqueId()).getCoord2() == null
 	        					&& !main.creatingGatePlayers.get(event.getPlayer().getUniqueId()).getCoord1().equals(clickedBlock))
 	        			{
-		        			if (main.creatingGatePlayers.get(event.getPlayer().getUniqueId()).addCoord(clickedBlock))
+	        				Gate.ErrorCodeAddCoord e = main.creatingGatePlayers.get(event.getPlayer().getUniqueId()).addCoord(clickedBlock);
+		        			if (e.equals(Gate.ErrorCodeAddCoord.None))
 		        			{
 			        			event.getPlayer().sendMessage(ChatColor.GREEN + "Creating Gate 2/4: Point 2 placed successfully.");
 			        			event.getPlayer().sendMessage(ChatColor.YELLOW + "Click on the trigger lever...");
 			        			return;
+		        			}
+		        			else if (e.equals(Gate.ErrorCodeAddCoord.MaterialMismatch))
+		        			{
+		        				event.getPlayer().sendMessage(ChatColor.RED + "Error placing point 2: Materials mismatch.");
+		        				main.creatingGatePlayers.remove(event.getPlayer().getUniqueId());
+		        				return;
+		        			}
+		        			else if (e.equals(Gate.ErrorCodeAddCoord.WorldMismatch))
+		        			{
+		        				event.getPlayer().sendMessage(ChatColor.RED + "Error placing point 2: Worlds mismatch.");
+		        				main.creatingGatePlayers.remove(event.getPlayer().getUniqueId());
+		        				return;
+		        			}
+		        			else if (e.equals(Gate.ErrorCodeAddCoord.NoCuboids))
+		        			{
+		        				event.getPlayer().sendMessage(ChatColor.RED + "Error placing point 2: You cannot place a cuboid.");
+		        				main.creatingGatePlayers.remove(event.getPlayer().getUniqueId());
+		        				return;
 		        			}
 		        			else
 		        			{
@@ -212,13 +231,8 @@ public class PlayerInteractEventHandler {
 	        				{
 			        			if (UtilitySubsystem.isClaimed(clickedBlock.getChunk(), main.claimedChunks))
 			        			{
-			        				if (!main.creatingGatePlayers.get(event.getPlayer().getUniqueId()).addCoord(clickedBlock))
-			        				{
-				        				event.getPlayer().sendMessage(ChatColor.RED + "Error linking to lever. Cancelled gate placement.");
-				        				main.creatingGatePlayers.remove(event.getPlayer().getUniqueId());
-				        				return;
-			        				}
-			        				else
+			        				Gate.ErrorCodeAddCoord e = main.creatingGatePlayers.get(event.getPlayer().getUniqueId()).addCoord(clickedBlock);
+			        				if (e.equals(Gate.ErrorCodeAddCoord.None))
 			        				{
 					        			ClaimedChunk claim = UtilitySubsystem.getClaimedChunk(clickedBlock.getChunk().getX(), clickedBlock.getChunk().getZ(),
 					        					clickedBlock.getChunk().getWorld().getName(), main.claimedChunks);
@@ -228,6 +242,12 @@ public class PlayerInteractEventHandler {
 					        			event.getPlayer().sendMessage(ChatColor.GREEN + "Creating Gate 4/4: Lever successfully linked.");
 					        			event.getPlayer().sendMessage(ChatColor.GREEN + "Gate successfully created.");
 					        			return;
+			        				}
+			        				else
+			        				{
+				        				event.getPlayer().sendMessage(ChatColor.RED + "Error linking to lever. Cancelled gate placement.");
+				        				main.creatingGatePlayers.remove(event.getPlayer().getUniqueId());
+				        				return;
 			        				}
 			        			}
 			        			else

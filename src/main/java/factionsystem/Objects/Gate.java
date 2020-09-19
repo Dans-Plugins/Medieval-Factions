@@ -48,6 +48,8 @@ public class Gate {
 	private enum GateStatus { READY, OPENING, CLOSING };
 	private GateStatus gateStatus = GateStatus.READY;
 	
+	public enum ErrorCodeAddCoord { None, WorldMismatch, MaterialMismatch, NoCuboids, Oversized } 
+	
     public Map<String, String> save() {
         Gson gson = new GsonBuilder().setPrettyPrinting().create();;
         Map<String, String> saveMap = new HashMap<>();
@@ -249,7 +251,7 @@ public class Gate {
 		return true;
 	}
 	
-	public boolean addCoord(Block clickedBlock)
+	public ErrorCodeAddCoord addCoord(Block clickedBlock)
 	{
 		if (coord1 == null)
 		{
@@ -261,11 +263,11 @@ public class Gate {
 		{
 			if (!coord1.getWorld().equalsIgnoreCase(clickedBlock.getWorld().getName()))
 			{
-				return false;
+				return ErrorCodeAddCoord.WorldMismatch;
 			}
 			if (!clickedBlock.getType().equals(material))
 			{
-				return false;
+				return ErrorCodeAddCoord.MaterialMismatch;
 			}		
 			// GetDim methods use coord2 object.
 			coord2 = new GateCoord(clickedBlock);
@@ -273,7 +275,7 @@ public class Gate {
 			{
 				// No cuboids.
 				coord2 = null;
-				return false;
+				return ErrorCodeAddCoord.NoCuboids;
 			}
 
 			if (isParallelToX() && getDimY() > 1)
@@ -316,19 +318,19 @@ public class Gate {
 			{
 				// Gate size exceeds config limit.
 				coord2 = null;
-				return false;
+				return ErrorCodeAddCoord.Oversized;
 			}
 			if (!gateBlocksMatch(material))
 			{
 				coord2 = null;
-				return false;
+				return ErrorCodeAddCoord.MaterialMismatch;
 			}
 		}
 		else
 		{
 			trigger = new GateCoord(clickedBlock);
 		}
-		return true;
+		return ErrorCodeAddCoord.None;
 	}
 	
 	public int getDimX()
