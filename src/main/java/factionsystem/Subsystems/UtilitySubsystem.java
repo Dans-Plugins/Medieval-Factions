@@ -3,6 +3,7 @@ package factionsystem.Subsystems;
 import factionsystem.Main;
 import factionsystem.Objects.ClaimedChunk;
 import factionsystem.Objects.Faction;
+import factionsystem.Objects.Gate;
 import factionsystem.Objects.LockedBlock;
 import factionsystem.Objects.PlayerActivityRecord;
 import factionsystem.Objects.PlayerPowerRecord;
@@ -44,6 +45,17 @@ public class UtilitySubsystem {
     	return null;
     }
 
+    public static String createStringFromArgIndexOnwards(int index, String[] args) {
+        StringBuilder name = new StringBuilder();
+        for (int i = index; i < args.length; i++) {
+            name.append(args[i]);
+            if (!(i == args.length - 1)) {
+                name.append(" ");
+            }
+        }
+        return name.toString();
+    }
+    
     public void addChunkAtPlayerLocation(Player player) {
         double[] playerCoords = new double[2];
         playerCoords[0] = player.getLocation().getChunk().getX();
@@ -493,8 +505,67 @@ public class UtilitySubsystem {
         }
         return sortedList;
     }
+    
+    public boolean isGateBlock(Block targetBlock)
+    {
+    	for (Faction faction : main.factions)
+    	{
+    		for (Gate gate : faction.getGates())
+    		{
+    			if (gate.hasBlock(targetBlock))
+    			{
+    				return true;
+    			}
+    		}
+    	}
+    	return false;
+    }
 
     // static methods ----------------------------
+    
+    public static Gate getGate(Block targetBlock, ArrayList<Faction> factions)
+    {
+    	for (Faction faction : factions)
+    	{
+    		for (Gate gate : faction.getGates())
+    		{
+    			if (gate.hasBlock(targetBlock))
+    			{
+    				return gate;
+    			}
+    		}
+    	}
+    	return null;
+    }
+    
+    public static void startCreatingGate(Main main, Player player, Block clickedBlock)
+    {
+    	if (!main.creatingGatePlayers.containsKey(player.getUniqueId()))
+    	{
+    		Gate gate = new Gate(main);
+    		gate.AddCoord(clickedBlock);
+    		main.creatingGatePlayers.put(player.getUniqueId(), gate);
+    	}
+    	else
+    	{
+    		System.out.println("WARNING: Player has already started creating the gate. startCreatingGate() call ignored.");
+    	}
+    }
+    
+    public static boolean isGateBlock(Block targetBlock, ArrayList<Faction> factions)
+    {
+    	for (Faction faction : factions)
+    	{
+    		for (Gate gate : faction.getGates())
+    		{
+    			if (gate.hasBlock(targetBlock))
+    			{
+    				return true;
+    			}
+    		}
+    	}
+    	return false;
+    }
 
     public static boolean isFactionExceedingTheirDemesneLimit(Faction faction, ArrayList<ClaimedChunk> claimedChunks) {
         return (getChunksClaimedByFaction(faction.getName(), claimedChunks) > faction.getCumulativePowerLevel());

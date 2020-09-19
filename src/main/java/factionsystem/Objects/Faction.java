@@ -8,6 +8,7 @@ import org.bukkit.Location;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.World;
 import org.bukkit.WorldCreator;
+import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
 
 import java.io.File;
@@ -34,6 +35,7 @@ public class Faction {
     private UUID owner = UUID.randomUUID();
     private int cumulativePowerLevel = 0;
     private Location factionHome = null;
+    private ArrayList<Gate> gates = new ArrayList<>();
 
     // temporary
     int maxPower = 0;
@@ -60,6 +62,11 @@ public class Faction {
         this.main = main;
     }
 
+    public ArrayList<Gate> getGates()
+    {
+    	return gates;
+    }    
+    
     // Must recieve json data
     public Faction(Map<String, String> data, Main main) {
         this.load(data);
@@ -550,6 +557,44 @@ public class Faction {
 
     public void setLiege(String newLiege) {
         liege = newLiege;
+    }
+
+    public void addGate(Gate gate)
+    {
+    	gates.add(gate);
+    }
+    
+    public void removeGate(Gate gate)
+    {
+    	gate.FillGate();
+    	gates.remove(gate);
+    }
+
+    public boolean hasGateTrigger(Block block)
+    {
+    	for(Gate g : gates)
+    	{
+    		if (g.getTrigger().getX() == block.getX() && g.getTrigger().getY() == block.getY() && g.getTrigger().getZ() == block.getZ() &&
+    				g.getTrigger().getWorld().equalsIgnoreCase(block.getWorld().getName()))
+    		{
+    			return true;
+    		}
+    	}
+		return false;
+    }
+    
+    public ArrayList<Gate> getGatesForTrigger(Block block)
+    {
+    	ArrayList<Gate> gateList = new ArrayList<>();
+    	for(Gate g : gates)
+    	{
+    		if (g.getTrigger().getX() == block.getX() && g.getTrigger().getY() == block.getY() && g.getTrigger().getZ() == block.getZ() &&
+    				g.getTrigger().getWorld().equalsIgnoreCase(block.getWorld().getName()))
+    		{
+    			gateList.add(g);
+    		}
+    	}
+		return gateList;
     }
 
     public String getLiege() {

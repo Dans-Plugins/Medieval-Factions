@@ -3,6 +3,7 @@ package factionsystem;
 import factionsystem.EventHandlers.*;
 import factionsystem.Objects.ClaimedChunk;
 import factionsystem.Objects.Faction;
+import factionsystem.Objects.Gate;
 import factionsystem.Objects.LockedBlock;
 import factionsystem.Objects.PlayerActivityRecord;
 import factionsystem.Objects.PlayerPowerRecord;
@@ -50,6 +51,7 @@ public class Main extends JavaPlugin implements Listener {
     public ArrayList<LockedBlock> lockedBlocks = new ArrayList<>();
 
     // temporary lists
+    public HashMap<UUID, Gate> creatingGatePlayers = new HashMap<>(); 
     public ArrayList<UUID> lockingPlayers = new ArrayList<>();
     public ArrayList<UUID> unlockingPlayers = new ArrayList<>();
     // Left user granting access, right user receiving access;
