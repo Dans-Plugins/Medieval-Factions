@@ -84,6 +84,17 @@ public class UtilitySubsystem {
                                         // is at war with target faction
                                         if (faction.isEnemy(targetFaction.getName())) {
 
+                                            // if border conquering only flag is toggled
+                                            if (main.getConfig().getBoolean("borderConqueringOnly")) {
+
+                                                // ensure that claimed chunk is a border chunk
+                                                if (!isBorderChunk(chunk)) {
+                                                    player.sendMessage(ChatColor.RED + "You can only conquer non-border chunks! (claimed chunks that are not surrounded by 4 claimed chunks)");
+                                                    return;
+                                                }
+
+                                            }
+
                                             // remove locks on this chunk
                                             Iterator<LockedBlock> itr = main.lockedBlocks.iterator();
                                             while (itr.hasNext()) {
@@ -131,6 +142,49 @@ public class UtilitySubsystem {
                 return;
             }
         }
+    }
+
+    // this method checks if a claimed chunk is not surrounded by 4 claimed chunks (claimed by the same faction)
+    public boolean isBorderChunk(ClaimedChunk chunk) {
+        if (chunk != null) {
+            // check northern chunk
+            if (!isClaimed(getNorthernChunk(chunk).getChunk(), main.claimedChunks) && getNorthernChunk(chunk).getHolder().equalsIgnoreCase(chunk.getHolder())) {
+                return true;
+            }
+
+            // check eastern chunk
+            if (!isClaimed(getEasternChunk(chunk).getChunk(), main.claimedChunks) && getNorthernChunk(chunk).getHolder().equalsIgnoreCase(chunk.getHolder())) {
+                return true;
+            }
+
+            // check southern chunk
+            if (!isClaimed(getSouthernChunk(chunk).getChunk(), main.claimedChunks) && getNorthernChunk(chunk).getHolder().equalsIgnoreCase(chunk.getHolder())) {
+                return true;
+            }
+
+            // check western chunk
+            if (!isClaimed(getWesternChunk(chunk).getChunk(), main.claimedChunks) && getNorthernChunk(chunk).getHolder().equalsIgnoreCase(chunk.getHolder())) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    public ClaimedChunk getNorthernChunk(ClaimedChunk chunk) {
+        return getClaimedChunk(chunk.getChunk().getX(), chunk.getChunk().getZ() + 1, chunk.getWorld(), main.claimedChunks);
+    }
+
+    public ClaimedChunk getEasternChunk(ClaimedChunk chunk) {
+        return getClaimedChunk(chunk.getChunk().getX() + 1, chunk.getChunk().getZ(), chunk.getWorld(), main.claimedChunks);
+    }
+
+    public ClaimedChunk getSouthernChunk(ClaimedChunk chunk) {
+        return getClaimedChunk(chunk.getChunk().getX(), chunk.getChunk().getZ() - 1, chunk.getWorld(), main.claimedChunks);
+    }
+
+    public ClaimedChunk getWesternChunk(ClaimedChunk chunk) {
+        return getClaimedChunk(chunk.getChunk().getX() - 1, chunk.getChunk().getZ(), chunk.getWorld(), main.claimedChunks);
     }
 
     public void removeChunkAtPlayerLocation(Player player) {
