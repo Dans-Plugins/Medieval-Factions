@@ -3,12 +3,17 @@ package factionsystem.EventHandlers;
 import factionsystem.Main;
 import factionsystem.Objects.ClaimedChunk;
 import factionsystem.Objects.Faction;
+import factionsystem.Objects.Gate;
 import factionsystem.Objects.LockedBlock;
+import factionsystem.Subsystems.UtilitySubsystem;
+
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.block.Chest;
 import org.bukkit.block.DoubleChest;
+import org.bukkit.block.data.BlockData;
+import org.bukkit.block.data.Powerable;
 import org.bukkit.entity.Player;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.inventory.InventoryHolder;
@@ -94,6 +99,40 @@ public class PlayerInteractEventHandler {
                 }
             }
             
+        	// Check if it's a lever, and if it is and it's connected to a gate in the faction
+        	// territory then open/close the gate.
+        	if (clickedBlock.getType().equals(Material.LEVER))
+        	{
+    			if (UtilitySubsystem.isClaimed(clickedBlock.getChunk(), main.claimedChunks))
+    			{
+        			ClaimedChunk claim = UtilitySubsystem.getClaimedChunk(clickedBlock.getChunk().getX(), clickedBlock.getChunk().getZ(),
+        					clickedBlock.getChunk().getWorld().getName(), main.claimedChunks);
+        			Faction faction = UtilitySubsystem.getFaction(claim.getHolder(), main.factions);
+        			System.out.println("Lever check for faction " + faction.getName());
+        			if (faction.hasGateTrigger(clickedBlock))
+        			{
+        				System.out.println("Has gate check for faction " + faction.getName());
+        				for (Gate g : faction.getGatesForTrigger(clickedBlock))
+        				{
+        					System.out.println("Gate for trigger" + g.getName());
+        					BlockData blockData = clickedBlock.getBlockData();
+        					Powerable powerable = (Powerable) blockData;
+        					if (powerable.isPowered())
+        					{
+        						g.openGate();
+        					}
+        					else
+        					{
+        						g.closeGate();
+        					}
+        				}
+            			return;
+        			}
+    			}
+        	}
+            
+            // ---------------------------------------------------------------------------------------------------------------
+            
             // pgarner Sep 2, 2020: Moved this to after test to see if the block is locked because it could be a block they have been granted
             // access to (or in future, a 'public' locked block), so if they're not in the faction whose territory the block exists in we want that
             // check to be handled before the interaction is rejected for not being a faction member.
@@ -105,6 +144,133 @@ public class PlayerInteractEventHandler {
 
             // ---------------------------------------------------------------------------------------------------------------
 
+            // get tool in player's hand, if it's the gate tool
+            // then we want to let them create the gate.
+        	if (player.getInventory().getItemInMainHand().getType().equals(Material.GOLDEN_HOE))
+        	{
+        		if (!UtilitySubsystem.isClaimed(clickedBlock.getChunk(), main.claimedChunks))
+        		{
+        			player.sendMessage(ChatColor.RED + "You can only create gates in claimed territory.");
+        			return;
+        		}
+        		else
+        		{
+        			ClaimedChunk claimedChunk = UtilitySubsystem.getClaimedChunk(clickedBlock.getChunk().getX(), clickedBlock.getChunk().getZ(), clickedBlock.getWorld().getName(), main.claimedChunks);
+        			if (claimedChunk != null)
+        			{
+        				if (!UtilitySubsystem.getFaction(claimedChunk.getHolder(), main.factions).isMember(player.getUniqueId()))
+        				{
+        					player.sendMessage(ChatColor.RED + "You must be a member of this faction to create a gate.");
+        					return;
+        				}
+        				else
+        				{
+        					if (!UtilitySubsystem.getFaction(claimedChunk.getHolder(), main.factions).isOwner(player.getUniqueId())
+        							&& !UtilitySubsystem.getFaction(claimedChunk.getHolder(), main.factions).isOfficer(player.getUniqueId()))
+        					{
+            					player.sendMessage(ChatColor.RED + "You must be a faction owner or officer to create a gate.");
+            					return;
+        					}
+        				}
+        			}
+        		}
+        		
+    			if (player.hasPermission("mf.gate") || player.hasPermission("mf.default"))
+    			{
+	        		// TODO: Check if a gate already exists here, and if it does, print out some info
+	        		// of that existing gate instead of trying to create a new one.
+	        		if (!main.creatingGatePlayers.containsKey(event.getPlayer().getUniqueId()))
+	        		{
+	        			UtilitySubsystem.startCreatingGate(main, event.getPlayer(), clickedBlock);
+	        			event.getPlayer().sendMessage(ChatColor.GREEN + "Creating Gate 1/4: Point 1 placed successfully.");
+	        			event.getPlayer().sendMessage(ChatColor.YELLOW + "Click to place the second point...");
+	        			return;
+	        		}
+	        		else
+	        		{
+	        			if (main.creatingGatePlayers.get(event.getPlayer().getUniqueId()).getCoord2() == null
+	        					&& !main.creatingGatePlayers.get(event.getPlayer().getUniqueId()).getCoord1().equals(clickedBlock))
+	        			{
+	        				Gate.ErrorCodeAddCoord e = main.creatingGatePlayers.get(event.getPlayer().getUniqueId()).addCoord(clickedBlock);
+		        			if (e.equals(Gate.ErrorCodeAddCoord.None))
+		        			{
+			        			event.getPlayer().sendMessage(ChatColor.GREEN + "Creating Gate 2/4: Point 2 placed successfully.");
+			        			event.getPlayer().sendMessage(ChatColor.YELLOW + "Click on the trigger lever...");
+			        			return;
+		        			}
+		        			else if (e.equals(Gate.ErrorCodeAddCoord.MaterialMismatch))
+		        			{
+		        				event.getPlayer().sendMessage(ChatColor.RED + "Error placing point 2: Materials mismatch.");
+		        				main.creatingGatePlayers.remove(event.getPlayer().getUniqueId());
+		        				return;
+		        			}
+		        			else if (e.equals(Gate.ErrorCodeAddCoord.WorldMismatch))
+		        			{
+		        				event.getPlayer().sendMessage(ChatColor.RED + "Error placing point 2: Worlds mismatch.");
+		        				main.creatingGatePlayers.remove(event.getPlayer().getUniqueId());
+		        				return;
+		        			}
+		        			else if (e.equals(Gate.ErrorCodeAddCoord.NoCuboids))
+		        			{
+		        				event.getPlayer().sendMessage(ChatColor.RED + "Error placing point 2: You cannot place a cuboid.");
+		        				main.creatingGatePlayers.remove(event.getPlayer().getUniqueId());
+		        				return;
+		        			}
+		        			else
+		        			{
+		        				event.getPlayer().sendMessage(ChatColor.RED + "Error placing point 2. Cancelled gate placement.");
+		        				main.creatingGatePlayers.remove(event.getPlayer().getUniqueId());
+		        				return;
+		        			}
+	        			}
+	        			else if (main.creatingGatePlayers.get(event.getPlayer().getUniqueId()).getCoord2() != null
+	        					&& main.creatingGatePlayers.get(event.getPlayer().getUniqueId()).getTrigger() == null
+	        					&& !main.creatingGatePlayers.get(event.getPlayer().getUniqueId()).getCoord2().equals(clickedBlock))
+	        			{
+	        				if (clickedBlock.getType().equals(Material.LEVER))
+	        				{
+			        			if (UtilitySubsystem.isClaimed(clickedBlock.getChunk(), main.claimedChunks))
+			        			{
+			        				Gate.ErrorCodeAddCoord e = main.creatingGatePlayers.get(event.getPlayer().getUniqueId()).addCoord(clickedBlock);
+			        				if (e.equals(Gate.ErrorCodeAddCoord.None))
+			        				{
+					        			ClaimedChunk claim = UtilitySubsystem.getClaimedChunk(clickedBlock.getChunk().getX(), clickedBlock.getChunk().getZ(),
+					        					clickedBlock.getChunk().getWorld().getName(), main.claimedChunks);
+					        			Faction faction = UtilitySubsystem.getFaction(claim.getHolder(), main.factions);
+				        				faction.addGate(main.creatingGatePlayers.get(event.getPlayer().getUniqueId()));
+					        			main.creatingGatePlayers.remove(event.getPlayer().getUniqueId());     	
+					        			event.getPlayer().sendMessage(ChatColor.GREEN + "Creating Gate 4/4: Lever successfully linked.");
+					        			event.getPlayer().sendMessage(ChatColor.GREEN + "Gate successfully created.");
+					        			return;
+			        				}
+			        				else
+			        				{
+				        				event.getPlayer().sendMessage(ChatColor.RED + "Error linking to lever. Cancelled gate placement.");
+				        				main.creatingGatePlayers.remove(event.getPlayer().getUniqueId());
+				        				return;
+			        				}
+			        			}
+			        			else
+			        			{
+			        				event.getPlayer().sendMessage(ChatColor.RED + "Error: Can only use levers in claimed territory.");
+			        				main.creatingGatePlayers.remove(event.getPlayer().getUniqueId());
+			        				return;
+			        			}
+	        				}
+	        				else
+	        				{
+		        				event.getPlayer().sendMessage(ChatColor.RED + "Trigger block was not a lever. Cancelled gate placement.");
+		        				main.creatingGatePlayers.remove(event.getPlayer().getUniqueId());
+		        				return;
+	        				}
+	        			}
+	        		}
+    			}
+    			else
+    			{
+    				player.sendMessage(ChatColor.RED + "Sorry! In order to create a gate you need the following permission: 'mf.gate'");
+    			}
+        	}
 
         }
     }

@@ -8,6 +8,7 @@ import org.bukkit.Location;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.World;
 import org.bukkit.WorldCreator;
+import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
 
 import java.io.File;
@@ -34,6 +35,7 @@ public class Faction {
     private UUID owner = UUID.randomUUID();
     private int cumulativePowerLevel = 0;
     private Location factionHome = null;
+    private ArrayList<Gate> gates = new ArrayList<>();
 
     // temporary
     int maxPower = 0;
@@ -60,10 +62,15 @@ public class Faction {
         this.main = main;
     }
 
+    public ArrayList<Gate> getGates()
+    {
+    	return gates;
+    }    
+    
     // Must recieve json data
     public Faction(Map<String, String> data, Main main) {
-        this.load(data);
         this.main = main;
+        this.load(data);
     }
 
     public int getNumOfficers() {
@@ -325,6 +332,13 @@ public class Faction {
         saveMap.put("location", gson.toJson(saveLocation(gson)));
         saveMap.put("liege", gson.toJson(liege));
 
+        ArrayList<String> gateList = new ArrayList<String>(); 
+        for (Gate gate : gates)
+        {
+        	Map <String, String> map = gate.save();
+        	gateList.add(gson.toJson(map));
+        }
+        saveMap.put("factionGates", gson.toJson(gateList));        
         return saveMap;
     }
 
@@ -360,6 +374,24 @@ public class Faction {
         factionHome = loadLocation(gson.fromJson(data.get("location"), mapType), gson);
         liege = gson.fromJson(data.getOrDefault("liege", "none"), String.class);
         vassals = gson.fromJson(data.getOrDefault("vassals", "[]"), arrayListTypeString);
+        
+        System.out.println("Loading Fation Gates...");
+        ArrayList<String> gateList = new ArrayList<String>();
+        gateList = gson.fromJson(data.get("factionGates"), arrayListTypeString);
+        if (gateList != null)
+        {
+	        for (String item : gateList)
+	        {
+	        	System.out.println("Loading " + item);
+	        	Gate g = Gate.load(item, main);
+	        	System.out.println("Gate trigger at " + g.coordsToString());
+	        	gates.add(g);
+	        }
+        }
+        else
+        {
+        	System.out.println("Could not load gates because the collection 'factionGates' did not exist in the factions JSON file. Are you upgrading from a previous version? Setting default.");
+        }
     }
 
     private Location loadLocation(HashMap<String, String> data, Gson gson){
@@ -550,6 +582,44 @@ public class Faction {
 
     public void setLiege(String newLiege) {
         liege = newLiege;
+    }
+
+    public void addGate(Gate gate)
+    {
+    	gates.add(gate);
+    }
+    
+    public void removeGate(Gate gate)
+    {
+    	gate.fillGate();
+    	gates.remove(gate);
+    }
+
+    public boolean hasGateTrigger(Block block)
+    {
+    	for(Gate g : gates)
+    	{
+    		if (g.getTrigger().getX() == block.getX() && g.getTrigger().getY() == block.getY() && g.getTrigger().getZ() == block.getZ() &&
+    				g.getTrigger().getWorld().equalsIgnoreCase(block.getWorld().getName()))
+    		{
+    			return true;
+    		}
+    	}
+		return false;
+    }
+    
+    public ArrayList<Gate> getGatesForTrigger(Block block)
+    {
+    	ArrayList<Gate> gateList = new ArrayList<>();
+    	for(Gate g : gates)
+    	{
+    		if (g.getTrigger().getX() == block.getX() && g.getTrigger().getY() == block.getY() && g.getTrigger().getZ() == block.getZ() &&
+    				g.getTrigger().getWorld().equalsIgnoreCase(block.getWorld().getName()))
+    		{
+    			gateList.add(g);
+    		}
+    	}
+		return gateList;
     }
 
     public String getLiege() {
