@@ -249,7 +249,7 @@ public class Gate {
 		return true;
 	}
 	
-	public boolean AddCoord(Block clickedBlock)
+	public boolean addCoord(Block clickedBlock)
 	{
 		if (coord1 == null)
 		{
@@ -269,18 +269,18 @@ public class Gate {
 			}		
 			// GetDim methods use coord2 object.
 			coord2 = new GateCoord(clickedBlock);
-			if (GetDimX() > 1 && GetDimY() > 1 && GetDimZ() > 1)
+			if (getDimX() > 1 && getDimY() > 1 && getDimZ() > 1)
 			{
 				// No cuboids.
 				coord2 = null;
 				return false;
 			}
 
-			if (isParallelToX() && GetDimY() > 1)
+			if (isParallelToX() && getDimY() > 1)
 			{
 				vertical = true;
 			}
-			else if (isParallelToZ() && GetDimY() > 1)
+			else if (isParallelToZ() && getDimY() > 1)
 			{
 				vertical = true;
 			}
@@ -294,22 +294,22 @@ public class Gate {
 			{
 				if (isParallelToX())
 				{
-					area = GetDimX() * GetDimY();
+					area = getDimX() * getDimY();
 				}
 				else if (isParallelToZ())
 				{
-					area = GetDimZ() * GetDimY();
+					area = getDimZ() * getDimY();
 				}
 			}
 			else if (!vertical)
 			{
 				if (isParallelToX())
 				{
-					area = GetDimX() * GetDimY();
+					area = getDimX() * getDimY();
 				}
 				else if (isParallelToZ())
 				{
-					area = GetDimZ() * GetDimY();
+					area = getDimZ() * getDimY();
 				}
 			}
 			if (area > main.getConfig().getInt("factionMaxGateArea"))
@@ -331,20 +331,20 @@ public class Gate {
 		return true;
 	}
 	
-	public int GetDimX()
+	public int getDimX()
 	{
-		return GetDimX(coord1, coord2);
+		return getDimX(coord1, coord2);
 	}
-	public int GetDimY()
+	public int getDimY()
 	{
-		return GetDimY(coord1, coord2);
+		return getDimY(coord1, coord2);
 	}
-	public int GetDimZ()
+	public int getDimZ()
 	{
-		return GetDimZ(coord1, coord2);
+		return getDimZ(coord1, coord2);
 	}
 	
-	public int GetDimX(GateCoord first, GateCoord second)
+	public int getDimX(GateCoord first, GateCoord second)
 	{
 		GateCoord tmp;
 		if (first.getX() > second.getX())
@@ -355,7 +355,7 @@ public class Gate {
 		}
 		return second.getX() - first.getX();
 	}
-	public int GetDimY(GateCoord first, GateCoord second)
+	public int getDimY(GateCoord first, GateCoord second)
 	{
 		GateCoord tmp;
 		if (first.getY() > second.getY())
@@ -366,7 +366,7 @@ public class Gate {
 		}
 		return second.getY() - first.getY();
 	}
-	public int GetDimZ(GateCoord first, GateCoord second)
+	public int getDimZ(GateCoord first, GateCoord second)
 	{
 		GateCoord tmp;
 		if (first.getZ() > second.getZ())
@@ -378,7 +378,7 @@ public class Gate {
 		return second.getZ() - first.getZ();
 	}
 	
-	public void OpenGate()
+	public void openGate()
 	{
 		if (open || !gateStatus.equals(GateStatus.READY))
 			return;
@@ -484,7 +484,7 @@ public class Gate {
 		}
 	}
 	
-	public void CloseGate()
+	public void closeGate()
 	{
 
 		if (!open || !gateStatus.equals(GateStatus.READY))
@@ -591,7 +591,7 @@ public class Gate {
 		}
 	}
 	
-	public void FillGate()
+	public void fillGate()
 	{
 
 		if (!open)

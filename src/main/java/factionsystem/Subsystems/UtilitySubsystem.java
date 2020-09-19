@@ -543,7 +543,7 @@ public class UtilitySubsystem {
     	if (!main.creatingGatePlayers.containsKey(player.getUniqueId()))
     	{
     		Gate gate = new Gate(main);
-    		gate.AddCoord(clickedBlock);
+    		gate.addCoord(clickedBlock);
     		main.creatingGatePlayers.put(player.getUniqueId(), gate);
     	}
     	else

@@ -566,7 +566,7 @@ public class Faction {
     
     public void removeGate(Gate gate)
     {
-    	gate.FillGate();
+    	gate.fillGate();
     	gates.remove(gate);
     }
 

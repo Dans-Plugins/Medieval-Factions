@@ -119,11 +119,11 @@ public class PlayerInteractEventHandler {
         					Powerable powerable = (Powerable) blockData;
         					if (powerable.isPowered())
         					{
-        						g.OpenGate();
+        						g.openGate();
         					}
         					else
         					{
-        						g.CloseGate();
+        						g.closeGate();
         					}
         				}
             			return;
@@ -191,7 +191,7 @@ public class PlayerInteractEventHandler {
 	        			if (main.creatingGatePlayers.get(event.getPlayer().getUniqueId()).getCoord2() == null
 	        					&& !main.creatingGatePlayers.get(event.getPlayer().getUniqueId()).getCoord1().equals(clickedBlock))
 	        			{
-		        			if (main.creatingGatePlayers.get(event.getPlayer().getUniqueId()).AddCoord(clickedBlock))
+		        			if (main.creatingGatePlayers.get(event.getPlayer().getUniqueId()).addCoord(clickedBlock))
 		        			{
 			        			event.getPlayer().sendMessage(ChatColor.GREEN + "Creating Gate 2/4: Point 2 placed successfully.");
 			        			event.getPlayer().sendMessage(ChatColor.YELLOW + "Click on the trigger lever...");
@@ -212,7 +212,7 @@ public class PlayerInteractEventHandler {
 	        				{
 			        			if (UtilitySubsystem.isClaimed(clickedBlock.getChunk(), main.claimedChunks))
 			        			{
-			        				if (!main.creatingGatePlayers.get(event.getPlayer().getUniqueId()).AddCoord(clickedBlock))
+			        				if (!main.creatingGatePlayers.get(event.getPlayer().getUniqueId()).addCoord(clickedBlock))
 			        				{
 				        				event.getPlayer().sendMessage(ChatColor.RED + "Error linking to lever. Cancelled gate placement.");
 				        				main.creatingGatePlayers.remove(event.getPlayer().getUniqueId());
