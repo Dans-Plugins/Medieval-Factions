@@ -103,7 +103,16 @@ public class ConfigSubsystem {
         	System.out.println("factionMaxNameLength not set! Setting to default!");
             main.getConfig().addDefault("factionMaxNameLength", 20);
         }
-                
+
+        if (!main.getConfig().isInt("factionMaxNumberGates")) {
+        	System.out.println("factionMaxNumberGates not set! Setting to default!");
+            main.getConfig().addDefault("factionMaxNumberGates", 5);
+        }
+        if (!main.getConfig().isInt("factionMaxGateArea")) {
+        	System.out.println("factionMaxGateArea not set! Setting to default!");
+            main.getConfig().addDefault("factionMaxGateArea", 64);
+        }        
+        
         deleteOldConfigOptionsIfPresent();
 
         main.getConfig().options().copyDefaults(true);
@@ -143,7 +152,10 @@ public class ConfigSubsystem {
                     || option.equalsIgnoreCase("minutesBetweenPowerDecreases")
                     || option.equalsIgnoreCase("minutesBeforePowerDecrease")
                     || option.equalsIgnoreCase("powerDecreaseAmount")
-                    || option.equalsIgnoreCase("factionMaxNameLength")) {
+                    || option.equalsIgnoreCase("factionMaxNameLength")
+	                || option.equalsIgnoreCase("factionMaxNumberGates")
+	                || option.equalsIgnoreCase("factionMaxGateArea")) 
+            {
                 main.getConfig().set(option, Integer.parseInt(value));
                 player.sendMessage(ChatColor.GREEN + "Integer set!");
                 return;
@@ -190,6 +202,8 @@ public class ConfigSubsystem {
         main.getConfig().addDefault("minutesBeforePowerDecrease", 20160);
         main.getConfig().addDefault("powerDecreaseAmount", 1);
         main.getConfig().addDefault("factionMaxNameLength", 20);
+        main.getConfig().addDefault("factionMaxNumberGates", 5);
+        main.getConfig().addDefault("factionMaxGateArea", 64);
         main.getConfig().options().copyDefaults(true);
         main.saveConfig();
     }
@@ -211,7 +225,9 @@ public class ConfigSubsystem {
                 + ", minutesBetweenPowerDecreases: " + main.getConfig().getInt("minutesBetweenPowerDecreases")
                 + ", minutesBeforePowerDecrease: " + main.getConfig().getInt("minutesBeforePowerDecrease")
                 + ", powerDecreaseAmount: " + main.getConfig().getInt("powerDecreaseAmount")
-                + ", factionMaxNameLength: " + main.getConfig().getInt("factionMaxNameLength"));
+                + ", factionMaxNameLength: " + main.getConfig().getInt("factionMaxNameLength")
+		        + ", factionMaxNumberGates: " + main.getConfig().getInt("factionMaxNumberGates")
+		        + ", factionMaxGateArea: " + main.getConfig().getInt("factionMaxGateArea"));
     }
 
 }
