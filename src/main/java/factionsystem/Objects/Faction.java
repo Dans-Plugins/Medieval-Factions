@@ -382,9 +382,7 @@ public class Faction {
         {
 	        for (String item : gateList)
 	        {
-	        	System.out.println("Loading " + item);
 	        	Gate g = Gate.load(item, main);
-	        	System.out.println("Gate trigger at " + g.coordsToString());
 	        	gates.add(g);
 	        }
         }

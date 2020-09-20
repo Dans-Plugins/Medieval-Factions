@@ -47,31 +47,53 @@ public class GateCommand {
 						Faction faction = UtilitySubsystem.getPlayersFaction(player.getUniqueId(), main.factions);
 						if (faction != null)
 						{
-							player.sendMessage(ChatColor.AQUA + "Faction Gates");
-							for (Gate gate : faction.getGates())
+							if (faction.getGates().size() > 0)
 							{
-								player.sendMessage(ChatColor.AQUA + String.format("%s: %s", gate.getName(), gate.coordsToString()));
+								player.sendMessage(ChatColor.AQUA + "Faction Gates");
+								for (Gate gate : faction.getGates())
+								{
+									player.sendMessage(ChatColor.AQUA + String.format("%s: %s", gate.getName(), gate.coordsToString()));
+								}
+							}
+							else
+							{
+								player.sendMessage(ChatColor.RED + "Your fation has no gates defined.");
+								return;
 							}
 						}
 					}
 					if (args[1].equalsIgnoreCase("name"))
 					{
-						if (player.getLineOfSight((Set<Material>) null, 16).size() > 0)
+						
+						if (player.getTargetBlock(null, 16) != null)
+						//if (player.getLineOfSight((Set<Material>) null, 16).size() > 0)
 						{
-							if (UtilitySubsystem.isGateBlock(player.getLineOfSight((Set<Material>) null, 16).get(0), main.factions))
+							if (UtilitySubsystem.isGateBlock(player.getTargetBlock(null, 16), main.factions))
 							{
-								Gate gate = UtilitySubsystem.getGate(player.getLineOfSight((Set<Material>) null, 16).get(0), main.factions);
+								Gate gate = UtilitySubsystem.getGate(player.getTargetBlock(null, 16), main.factions);
 								if (args.length > 2)
 								{
 									String name = UtilitySubsystem.createStringFromArgIndexOnwards(2, args);
 									gate.setName(name);
+									player.sendMessage(ChatColor.AQUA + String.format("Changed gate name to '%s'.", gate.getName()));
+									return;
 								}
 								else
 								{
-									player.sendMessage(ChatColor.AQUA + String.format("%s Gate.", gate.getName()));
+									player.sendMessage(ChatColor.AQUA + String.format("That is the '%s' gate.", gate.getName()));
 									return;
 								}
 							}
+							else
+							{
+								player.sendMessage(ChatColor.RED + "Target block is not part of a gate.");
+								return;
+							}
+						}
+						else
+						{
+							player.sendMessage(ChatColor.RED + "No block detected to check for gate.");
+							return;
 						}
 					}						
 				}

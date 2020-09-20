@@ -4,6 +4,7 @@ import factionsystem.Main;
 import factionsystem.Objects.ClaimedChunk;
 import factionsystem.Objects.Faction;
 import factionsystem.Objects.LockedBlock;
+import factionsystem.Objects.Gate;
 import factionsystem.Subsystems.UtilitySubsystem;
 
 import org.bukkit.ChatColor;
@@ -59,6 +60,18 @@ public class BlockBreakEventHandler {
 
                     	UtilitySubsystem.removeLock(event.getBlock(), main.lockedBlocks);
 
+                    }
+                    
+                    // if block is in a gate
+                    for (Gate gate : faction.getGates())
+                    {
+                    	System.out.println("Gate " + gate.getName() + "?");
+                    	if (gate.hasBlock(event.getBlock()))
+                    	{
+                    		event.setCancelled(true);
+                            player.sendMessage(ChatColor.RED + "This block is part of gate '" + gate.getName() + "'. You must remove the gate first.");
+                            return;
+                    	}
                     }
                 }
             }
