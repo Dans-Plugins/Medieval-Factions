@@ -96,18 +96,13 @@ public class Gate {
         {
 	        GateJson data = gson.fromJson(jsonData, GateJson.class);
 	        
-	        System.out.println("Loading world " + data.world);
-	        
 	        newGate.world = data.world;
 	        newGate.coord1 = new GateCoord();
 	        newGate.coord1 = GateCoord.fromString(data.coord1, main);
 	        newGate.coord2 = new GateCoord();
 	        newGate.coord2 = GateCoord.fromString(data.coord2, main);
-	        System.out.println("Loaded coords, loading trigger.");
 	        newGate.trigger = new GateCoord();
 	        newGate.trigger = GateCoord.fromString(data.triggerCoord, main);
-	        System.out.println(newGate.coordsToString());
-	        System.out.println("Loading material " + data.material);
 	        newGate.material = Material.getMaterial(data.material);
         }
         catch (Exception e)
@@ -696,13 +691,50 @@ public class Gate {
 	
 	public boolean hasBlock(Block targetBlock)
 	{
-		if (targetBlock.getX() >= coord1.getX() && targetBlock.getX() <= coord2.getX()
-				&& targetBlock.getY() >= coord1.getY() && targetBlock.getY() <= coord2.getY()
-				&& targetBlock.getZ() >= coord1.getZ() && targetBlock.getZ() <= coord2.getZ()
+		
+		int topY = coord1.getY();
+		int bottomY = coord2.getY();
+		if (coord2.getY() > coord1.getY())
+		{
+			topY = coord2.getY();
+			bottomY = coord1.getY();
+		}
+		
+		int _leftZ = coord1.getZ();
+		int _rightZ = coord2.getZ();
+
+		if (coord2.getZ() < coord1.getZ())
+		{
+			_leftZ = coord2.getZ();
+			_rightZ = coord1.getZ();
+		}
+		int leftZ = _leftZ;
+		int rightZ = _rightZ;
+		
+		int _leftX = coord1.getX();
+		int _rightX = coord2.getX();
+		if (coord2.getX() < coord1.getX())
+		{
+			_leftX = coord2.getX();
+			_rightX = coord1.getX();
+		}
+
+		int leftX = _leftX;
+		int rightX = _rightX;
+
+		if (targetBlock.getX() >= leftX && targetBlock.getX() <= rightX
+				&& targetBlock.getY() >= bottomY && targetBlock.getY() <= topY
+				&& targetBlock.getZ() >= leftZ && targetBlock.getZ() <= rightZ
 				&& targetBlock.getWorld().getName().equalsIgnoreCase(coord1.getWorld()))
 		{
 			return true;
 		}
+		
+		if (trigger.equals(targetBlock))
+		{
+			return true;
+		}
+		
 		return false;
 	}
 	
