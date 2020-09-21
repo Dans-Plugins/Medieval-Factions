@@ -135,9 +135,19 @@ public class Gate {
 		return open ? true : false;
 	}
 	
+	public boolean isReady()
+	{
+		return gateStatus.equals(GateStatus.READY); 
+	}
+	
 	public boolean isClosed()
 	{
 		return open ? false : true;
+	}
+	
+	public String getStatus()
+	{
+		return gateStatus.toString().substring(0,1).toUpperCase() + gateStatus.toString().substring(1).toLowerCase();
 	}
 	
 	public GateCoord getTrigger()
@@ -439,13 +449,17 @@ public class Gate {
 	        					b.setType(Material.AIR);
 	        					getWorld().playSound(b.getLocation(), soundEffect, 0.1f, 0.1f);
 	        				}
-	        				if (blockY == bottomY + 1)
-	        				{
-	        					gateStatus = GateStatus.READY;
-	        				}
 	                    }
 	                }, c * 10);
 				}
+				Bukkit.getScheduler().runTaskLater(main, new Runnable() {
+					Block b;
+                    @Override
+                    public void run() {
+    					gateStatus = GateStatus.READY;
+    					open = true;
+                    }
+				}, (topY - bottomY + 2) * 10);
 			}
 			else if (isParallelToZ())
 			{
@@ -483,13 +497,18 @@ public class Gate {
 	        					b.setType(Material.AIR);
 	        					getWorld().playSound(b.getLocation(), soundEffect, 0.1f, 0.1f);
 	        				}
-	        				if (blockY == bottomY + 1)
-	        				{
-	        					gateStatus = GateStatus.READY;
-	        				}
 	                    }
 	                }, c * 10);
-				}			
+				}
+				Bukkit.getScheduler().runTaskLater(main, new Runnable() {
+					Block b;
+                    @Override
+                    public void run() {
+    					gateStatus = GateStatus.READY;
+    					open = true;
+                    }
+				}, (topY - bottomY + 2) * 10);
+
 			}
 			
 		}
@@ -546,13 +565,17 @@ public class Gate {
 	        					b.setType(material);
 	        					getWorld().playSound(b.getLocation(), soundEffect, 0.1f, 0.1f);
 	        				}
-	        				if (blockY == bottomY + 1)
-	        				{
-	        					gateStatus = GateStatus.READY;
-	        				}
 	                    }
 	                }, c * 10);
 				}
+				Bukkit.getScheduler().runTaskLater(main, new Runnable() {
+					Block b;
+                    @Override
+                    public void run() {
+    					gateStatus = GateStatus.READY;
+    					open = false;
+                    }
+				}, (topY - bottomY + 2) * 10);
 			}
 			else if (isParallelToZ())
 			{
@@ -591,13 +614,17 @@ public class Gate {
 	        					b.getState().update(true);
 	        					getWorld().playSound(b.getLocation(), soundEffect, 0.1f, 0.1f);
 	        				}
-	        				if (blockY == bottomY + 1)
-	        				{
-	        					gateStatus = GateStatus.READY;
-	        				}
 	                    }
 	                }, c * 10);
-				}			
+				}
+				Bukkit.getScheduler().runTaskLater(main, new Runnable() {
+					Block b;
+                    @Override
+                    public void run() {
+    					gateStatus = GateStatus.READY;
+    					open = false;
+                    }
+				}, (topY - bottomY + 2) * 10);
 			}
 		}
 		else
