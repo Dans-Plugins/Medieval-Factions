@@ -148,24 +148,33 @@ public class UtilitySubsystem {
     public boolean isBorderChunk(ClaimedChunk chunk) {
         if (chunk != null) {
             // check northern chunk
-            if (!isClaimed(getNorthernChunk(chunk).getChunk(), main.claimedChunks) && getNorthernChunk(chunk).getHolder().equalsIgnoreCase(chunk.getHolder())) {
-                return true;
+            if (getNorthernChunk(chunk) != null) {
+                if (getNorthernChunk(chunk).getHolder().equalsIgnoreCase(chunk.getHolder())) {
+                    return true;
+                }
             }
 
             // check eastern chunk
-            if (!isClaimed(getEasternChunk(chunk).getChunk(), main.claimedChunks) && getNorthernChunk(chunk).getHolder().equalsIgnoreCase(chunk.getHolder())) {
-                return true;
+            if (getEasternChunk(chunk) != null) {
+                if (getEasternChunk(chunk).getHolder().equalsIgnoreCase(chunk.getHolder())) {
+                    return true;
+                }
             }
 
             // check southern chunk
-            if (!isClaimed(getSouthernChunk(chunk).getChunk(), main.claimedChunks) && getNorthernChunk(chunk).getHolder().equalsIgnoreCase(chunk.getHolder())) {
-                return true;
+            if (getSouthernChunk(chunk) != null) {
+                if (getSouthernChunk(chunk).getHolder().equalsIgnoreCase(chunk.getHolder())) {
+                    return true;
+                }
             }
 
             // check western chunk
-            if (!isClaimed(getWesternChunk(chunk).getChunk(), main.claimedChunks) && getNorthernChunk(chunk).getHolder().equalsIgnoreCase(chunk.getHolder())) {
-                return true;
+            if (getWesternChunk(chunk) != null) {
+                if (getWesternChunk(chunk).getHolder().equalsIgnoreCase(chunk.getHolder())) {
+                    return true;
+                }
             }
+
         }
 
         return false;
