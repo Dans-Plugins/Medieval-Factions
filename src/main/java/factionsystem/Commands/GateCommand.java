@@ -61,6 +61,11 @@ public class GateCommand {
 								return;
 							}
 						}
+						else
+						{
+							player.sendMessage(ChatColor.RED + String.format("You are not a member of any faction."));
+							return;
+						}
 					}
 					else if (args[1].equalsIgnoreCase("remove"))
 					{
