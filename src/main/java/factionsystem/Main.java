@@ -95,7 +95,7 @@ public class Main extends JavaPlugin implements Listener {
             utilities.createActivityRecordForEveryOfflinePlayer(); // make sure every player experiences power decay in case we updated from pre-v3.5
         }
 
-        int pluginId = 1234;
+        int pluginId = 8929;
         Metrics metrics = new Metrics(this, pluginId);
 
         System.out.println("Medieval Factions plugin enabled.");
