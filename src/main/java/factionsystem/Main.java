@@ -12,6 +12,7 @@ import factionsystem.Subsystems.ConfigSubsystem;
 import factionsystem.Subsystems.StorageSubsystem;
 import factionsystem.Subsystems.UtilitySubsystem;
 import factionsystem.Util.Pair;
+import factionsystem.bStats.Metrics;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.AreaEffectCloud;
@@ -93,6 +94,9 @@ public class Main extends JavaPlugin implements Listener {
         if (!getConfig().getString("version").equalsIgnoreCase(Main.version)) {
             utilities.createActivityRecordForEveryOfflinePlayer(); // make sure every player experiences power decay in case we updated from pre-v3.5
         }
+
+        int pluginId = 8929;
+        Metrics metrics = new Metrics(this, pluginId);
 
         System.out.println("Medieval Factions plugin enabled.");
     }
