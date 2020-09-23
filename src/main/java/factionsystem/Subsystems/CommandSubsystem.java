@@ -223,32 +223,8 @@ public class CommandSubsystem {
 
                 // claim command
                 if (args[0].equalsIgnoreCase("claim")) {
-                    if (sender.hasPermission("mf.claim") || sender.hasPermission("mf.default")) {
-                        if (sender instanceof Player) {
-                            Player player = (Player) sender;
-
-                            // if not at demesne limit
-                            if (isInFaction(player.getUniqueId(), main.factions)) {
-                                Faction playersFaction = getPlayersFaction(player.getUniqueId(), main.factions);
-                                if (getChunksClaimedByFaction(playersFaction.getName(), main.claimedChunks) < playersFaction.getCumulativePowerLevel()) {
-                                    main.utilities.addChunkAtPlayerLocation(player);
-                                    return true;
-                                }
-                                else {
-                                    player.sendMessage(ChatColor.RED + "You have reached your demesne limit! Invite more players to increase this.");
-                                    return false;
-                                }
-                            }
-                            else {
-                                player.sendMessage(ChatColor.RED + "You must be in a faction to use this command.");
-                                return false;
-                            }
-                        }
-                    }
-                    else {
-                        sender.sendMessage(ChatColor.RED + "Sorry! You need the following permission to use this command: 'mf.claim'");
-                        return false;
-                    }
+                    ClaimCommand command = new ClaimCommand(main);
+                    return command.claimChunk(sender);
                 }
 
                 // unclaim command
