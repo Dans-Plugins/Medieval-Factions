@@ -82,10 +82,12 @@ public class UtilitySubsystem {
                                         // is at war with target faction
                                         if (faction.isEnemy(targetFaction.getName()))
 
-                                            // if chunk is next to chunk that is unclaimed && chunk is next to chunk that is not claimed by the target faction
-                                            if (!chunkIsNextToChunkChunkNotClaimedByFaction(chunk, targetFaction)) {
-                                                player.sendMessage(ChatColor.RED + "You can only conquer a chunk if it is next to a chunk that is not owned by the target faction!");
-                                                return;
+                                            if (main.getConfig().getBoolean("borderConqueringOnly")) {
+                                                // if chunk is next to chunk that is unclaimed && chunk is next to chunk that is not claimed by the target faction
+                                                if (!chunkIsNextToChunkChunkNotClaimedByFaction(chunk, targetFaction)) {
+                                                    player.sendMessage(ChatColor.RED + "You can only conquer a chunk if it is next to a chunk that is not owned by the target faction!");
+                                                    return;
+                                                }
                                             }
 
                                             // able to conquer
