@@ -121,6 +121,96 @@ public class Gate {
 		return xoverlap && yoverlap && zoverlap;
 	}
 	
+	public int getTopLeftX()
+	{
+		if (coord1 != null && coord2 != null)
+		{
+			return coord1.getX() < coord2.getX() ? coord1.getX() : coord2.getX();
+		}
+		return 0;
+	}
+	
+	public int getTopLeftY()
+	{
+		if (coord1 != null && coord2 != null)
+		{
+			return coord1.getY() > coord2.getY() ? coord1.getY() : coord2.getY();
+		}
+		return 0;
+	}
+	
+	public int getTopLeftZ()
+	{
+		if (coord1 != null && coord2 != null)
+		{
+			return coord1.getZ() < coord2.getZ() ? coord1.getZ() : coord2.getZ();
+		}
+		return 0;
+	}
+	
+	public int getBottomRightX()
+	{
+		if (coord1 != null && coord2 != null)
+		{
+			return coord1.getX() < coord2.getX() ? coord2.getX() : coord1.getX();
+		}
+		return 0;
+	}
+	
+	public int getBottomRightY()
+	{
+		if (coord1 != null && coord2 != null)
+		{
+			return coord1.getY() < coord2.getY() ? coord1.getY() : coord2.getY();
+		}
+		return 0;
+	}
+	
+	public int getBottomRightZ()
+	{
+		if (coord1 != null && coord2 != null)
+		{
+			return coord1.getZ() < coord2.getZ() ? coord2.getZ() : coord1.getZ();
+		}
+		return 0;
+	}
+	
+	public int getTopLeftChunkX()
+	{
+		if (coord1 != null && coord2 != null)
+		{
+			return coord1.getX() < coord2.getX() ? coord1.getX() / 16: coord2.getX() / 16;
+		}
+		return 0;
+	}
+	
+	public int getTopLeftChunkZ()
+	{
+		if (coord1 != null && coord2 != null)
+		{
+			return coord1.getZ() < coord2.getZ() ? coord1.getZ() / 16 : coord2.getZ() / 16;
+		}
+		return 0;
+	}
+	
+	public int getBottomRightChunkX()
+	{
+		if (coord1 != null && coord2 != null)
+		{
+			return coord1.getX() < coord2.getX() ? coord2.getX() / 16: coord1.getX() / 16;
+		}
+		return 0;
+	}
+
+	public int getBottomRightChunkZ()
+	{
+		if (coord1 != null && coord2 != null)
+		{
+			return coord1.getZ() < coord2.getZ() ? coord2.getZ() / 16 : coord1.getZ() / 16;
+		}
+		return 0;
+	}
+	
 	public String getName()
 	{
 		return name;

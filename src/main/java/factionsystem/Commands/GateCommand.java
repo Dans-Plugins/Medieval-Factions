@@ -42,7 +42,7 @@ public class GateCommand {
 							return;
 						}
 					}
-					if (args[1].equalsIgnoreCase("list"))
+					else if (args[1].equalsIgnoreCase("list"))
 					{
 						Faction faction = UtilitySubsystem.getPlayersFaction(player.getUniqueId(), main.factions);
 						if (faction != null)
@@ -61,22 +61,75 @@ public class GateCommand {
 								return;
 							}
 						}
+						else
+						{
+							player.sendMessage(ChatColor.RED + String.format("You are not a member of any faction."));
+							return;
+						}
 					}
-					if (args[1].equalsIgnoreCase("name"))
+					else if (args[1].equalsIgnoreCase("remove"))
 					{
-						
 						if (player.getTargetBlock(null, 16) != null)
-						//if (player.getLineOfSight((Set<Material>) null, 16).size() > 0)
+						{
+							if (UtilitySubsystem.isGateBlock(player.getTargetBlock(null, 16), main.factions))
+							{
+								Gate gate = UtilitySubsystem.getGate(player.getTargetBlock(null, 16), main.factions);
+								Faction faction = UtilitySubsystem.getGateFaction(gate, main.factions);
+								if (faction != null)
+								{
+									if (!faction.isOfficer(player.getUniqueId()) || !faction.isOwner(player.getUniqueId()))
+									{
+										player.sendMessage(ChatColor.RED + "You must be a faction officer or owner to use this command.");
+										return;
+									}
+									player.sendMessage(ChatColor.AQUA + String.format("Removed gate '%s'.", gate.getName()));
+									return;
+								}
+								else
+								{
+									player.sendMessage(ChatColor.RED + String.format("Error: Could not find gate faction.", gate.getName()));
+									return;
+								}
+							}
+							else
+							{
+								player.sendMessage(ChatColor.RED + "Target block is not part of a gate.");
+								return;
+							}
+						}
+						else
+						{
+							player.sendMessage(ChatColor.RED + "No block detected to check for gate.");
+							return;
+						}
+					}
+					else if (args[1].equalsIgnoreCase("name"))
+					{						
+						if (player.getTargetBlock(null, 16) != null)
 						{
 							if (UtilitySubsystem.isGateBlock(player.getTargetBlock(null, 16), main.factions))
 							{
 								Gate gate = UtilitySubsystem.getGate(player.getTargetBlock(null, 16), main.factions);
 								if (args.length > 2)
 								{
-									String name = UtilitySubsystem.createStringFromArgIndexOnwards(2, args);
-									gate.setName(name);
-									player.sendMessage(ChatColor.AQUA + String.format("Changed gate name to '%s'.", gate.getName()));
-									return;
+									Faction faction = UtilitySubsystem.getGateFaction(gate, main.factions);
+									if (faction != null)
+									{
+										if (!faction.isOfficer(player.getUniqueId()) || !faction.isOwner(player.getUniqueId()))
+										{
+											player.sendMessage(ChatColor.RED + "You must be a faction officer or owner to use this command.");
+											return;
+										}
+										String name = UtilitySubsystem.createStringFromArgIndexOnwards(2, args);
+										gate.setName(name);
+										player.sendMessage(ChatColor.AQUA + String.format("Changed gate name to '%s'.", gate.getName()));
+										return;
+									}
+									else
+									{
+										player.sendMessage(ChatColor.RED + "Error: Could not find gate's faction.");
+										return;
+									}
 								}
 								else
 								{
@@ -96,6 +149,15 @@ public class GateCommand {
 							return;
 						}
 					}						
+				}
+				else
+				{
+			        sender.sendMessage(ChatColor.RED + "Sub-commands:");
+			        sender.sendMessage(ChatColor.RED + "/mf gate name");
+			        sender.sendMessage(ChatColor.RED + "/mf gate list");
+			        sender.sendMessage(ChatColor.RED + "/mf gate remove");
+			        sender.sendMessage(ChatColor.RED + "/mf gate cancel");
+			        return;
 				}
 			}
             else {

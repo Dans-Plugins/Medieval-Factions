@@ -198,6 +198,19 @@ public class UtilitySubsystem {
                 itr.remove();
             }
         }
+        
+        // remove any gates in this chunk
+        Iterator<Gate> gtr = faction.getGates().iterator();
+        while(gtr.hasNext())
+        {
+        	Gate gate = gtr.next();
+        	if (isGateInChunk(gate, chunk))
+        	{
+        		System.out.println("Removing gate " + gate.getName());
+        		faction.removeGate(gate);
+        		gtr.remove();
+        	}
+        }
 
         main.claimedChunks.remove(chunk);
     }
@@ -242,6 +255,16 @@ public class UtilitySubsystem {
     			block.getType() == Material.DARK_OAK_FENCE_GATE ||
     			block.getType() == compatMaterial("CRIMSON_FENCE_GATE") ||
     			block.getType() == compatMaterial("WARPED_FENCE_GATE"))
+    	{
+    		return true;
+    	}
+    	return false;
+    }
+    
+    public boolean isGateInChunk(Gate gate, ClaimedChunk chunk)
+    {
+    	if ((gate.getTopLeftChunkX() == chunk.getCoordinates()[0] || gate.getBottomRightChunkX() == chunk.getCoordinates()[0])
+			&& (gate.getTopLeftChunkZ() == chunk.getCoordinates()[1] || gate.getBottomRightChunkZ() == chunk.getCoordinates()[1]))
     	{
     		return true;
     	}
@@ -522,6 +545,18 @@ public class UtilitySubsystem {
     }
 
     // static methods ----------------------------
+    
+    public static Faction getGateFaction(Gate gate, ArrayList<Faction> factions)
+    {
+    	for (Faction faction : factions)
+    	{
+    		if (faction.getGates().contains(gate))
+    		{
+    			return faction;
+    		}
+    	}
+    	return null;
+    }
     
     public static Gate getGate(Block targetBlock, ArrayList<Faction> factions)
     {
