@@ -152,13 +152,15 @@ public class ForceCommand {
                 sender.sendMessage(ChatColor.GREEN + "Success!");
                 return true;
             }
+            else {
+                sender.sendMessage(ChatColor.RED + "Usage: /mf force demote (player)");
+                return false;
+            }
         }
         else {
             sender.sendMessage(ChatColor.RED + "Sorry! You need the following permission to use this command: 'mf.force.demote'");
             return false;
         }
-
-        return false;
     }
 
     private boolean forceJoin(CommandSender sender, String[] args) { // 2 arguments
@@ -228,6 +230,11 @@ public class ForceCommand {
                 for (OfflinePlayer player : Bukkit.getOfflinePlayers()) {
                     if (player.getName().equalsIgnoreCase(playerName)) {
                         for (Faction faction : main.factions) {
+                            if (faction.isOwner(player.getUniqueId())) {
+                                sender.sendMessage(ChatColor.RED + "Cannot forcibly kick an owner from their faction! Try disbanding the faction!");
+                                return false;
+                            }
+
                             if (faction.isMember(player.getUniqueId())) {
                                 faction.removeMember(player.getUniqueId(), getPlayersPowerRecord(player.getUniqueId(), main.playerPowerRecords).getPowerLevel());
 
@@ -246,13 +253,15 @@ public class ForceCommand {
                 sender.sendMessage(ChatColor.GREEN + "Success!");
                 return true;
             }
+            else {
+                sender.sendMessage(ChatColor.RED + "Usage: /mf force kick (player)");
+                return false;
+            }
         }
         else {
             sender.sendMessage(ChatColor.RED + "Sorry! You need the following permission to use this command: 'mf.force.kick'");
             return false;
         }
-
-        return false;
     }
 
 }
