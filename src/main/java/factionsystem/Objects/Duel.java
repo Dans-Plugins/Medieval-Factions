@@ -128,7 +128,10 @@ public class Duel {
 	
 	public void acceptDuel()
 	{
-		//TODO: Notify challenger that the challenged accepted.
+		// Participants that the challenged was accepted and that it's game-on.
+		getChallenger().sendMessage(String.format(ChatColor.AQUA + "%s has accepted your challenge, the duel has begun!", winner, loser));
+		getChallenged().sendMessage(String.format(ChatColor.AQUA + "You have accepted %s's challenge, the duel has begun!", winner, loser));
+		
 		challengerHealth = _challenger.getHealth(); 
 		challengedHealth = _challenged.getHealth();
 		duelState = DuelState.DUELLING;
