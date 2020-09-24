@@ -551,7 +551,7 @@ public class UtilitySubsystem {
     {
     	for (Duel duel : main.duelingPlayers)
     	{
-    		if (duel.hasPlayer(player))
+    		if (duel.hasPlayer(player) && duel.getStatus().equals(Duel.DuelState.DUELLING))
     		{
     			return true;
     		}
