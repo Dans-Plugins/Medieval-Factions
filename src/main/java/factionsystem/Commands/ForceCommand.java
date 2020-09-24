@@ -170,7 +170,7 @@ public class ForceCommand {
                 ArrayList<String> singleQuoteArgs = main.utilities.getArgumentsInsideSingleQuotes(args);
 
                 if (singleQuoteArgs.size() < 2) {
-                    sender.sendMessage(ChatColor.RED + "No factions designated. Must be designated inside single quotes!");
+                    sender.sendMessage(ChatColor.RED + "Not enough arguments designated. Must be designated inside single quotes!");
                     return false;
                 }
 
@@ -202,7 +202,7 @@ public class ForceCommand {
                             }
                         }
                         else {
-                            sender.sendMessage(ChatColor.RED + "One of the factions designated wasn't found!");
+                            sender.sendMessage(ChatColor.RED + "That faction wasn't found!");
                             return false;
                         }
                     }
@@ -212,7 +212,7 @@ public class ForceCommand {
             }
 
             // send usage
-            sender.sendMessage(ChatColor.RED + "Usage: /mf force peace 'faction-1' 'faction-2'");
+            sender.sendMessage(ChatColor.RED + "Usage: /mf force join 'player' 'faction'");
             return false;
         }
         else {
