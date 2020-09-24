@@ -4,6 +4,7 @@ import static org.bukkit.Bukkit.getServer;
 
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
+import org.bukkit.Particle;
 import org.bukkit.block.Block;
 import org.bukkit.boss.BarColor;
 import org.bukkit.boss.BossBar;
@@ -40,6 +41,8 @@ public class Duel {
 	
 	float nearbyPlayerRadius = 64;
 	int defaultTimeLimit = 2; // minutes. 
+	int timeLimit = defaultTimeLimit; 
+	double timeDecrementAmount = 0;
 	
 	public boolean isChallenged(Player player)
 	{
@@ -146,13 +149,14 @@ public class Duel {
 		bar = plugin.getServer().createBossBar(String.format(ChatColor.AQUA + "%s vs %s", _challenger.getName(), _challenged.getName())
 				, BarColor.WHITE, BarStyle.SEGMENTED_20);
 		bar.setProgress(1);
+		timeDecrementAmount = 1.0 / (timeLimit * 60);
 		bar.addPlayer(_challenger);
 		bar.addPlayer(_challenged);
 		
     	repeatingTaskId = Bukkit.getScheduler().scheduleSyncRepeatingTask(plugin, new Runnable () {
     		@Override
     		public void run() {
-    			double progress = bar.getProgress() - 0.01;
+    			double progress = bar.getProgress() - timeDecrementAmount;
     			if (progress <= 0)
     			{
         			bar.setProgress(0);
@@ -169,7 +173,10 @@ public class Duel {
 	public void finishDuel(boolean tied)
 	{
 		_challenger.setHealth(challengerHealth);
+		_challenger.spawnParticle(Particle.HEART, _challenger.getLocation(), 10);
 		_challenged.setHealth(challengedHealth);
+		_challenged.spawnParticle(Particle.HEART, _challenged.getLocation(), 10);
+		
 		if (!tied)
 		{
 			// Announce winner to nearby players.

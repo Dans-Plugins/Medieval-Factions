@@ -29,6 +29,11 @@ public class DuelCommand {
 					{
 						if (args.length > 2)
 						{
+							if (args[2].equalsIgnoreCase(player.getName()))
+							{
+								player.sendMessage(ChatColor.RED + "You cannot duel yourself!");
+								return;
+							}
 							if (UtilitySubsystem.isDuelling(player, main))
 							{
 								player.sendMessage(ChatColor.RED + "You are already duelling someone!");
@@ -137,7 +142,18 @@ public class DuelCommand {
 									return;
 		                		}
 		                	}
+		                	else
+		                	{
+								player.sendMessage(ChatColor.AQUA + "You have no pending challenges to cancel.");
+								return;
+		                	}
 		                }
+	                	else
+	                	{
+							player.sendMessage(ChatColor.AQUA + "You have no pending challenges to cancel.");
+							return;
+	                	}
+
 					}
 					else
 					{
