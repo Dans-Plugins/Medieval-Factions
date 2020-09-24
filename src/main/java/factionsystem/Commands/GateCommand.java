@@ -42,6 +42,27 @@ public class GateCommand {
 							return;
 						}
 					}
+					if (args[1].equalsIgnoreCase("create"))
+					{
+						if (main.creatingGatePlayers.containsKey(player.getUniqueId()))
+						{
+							main.creatingGatePlayers.remove(player.getUniqueId());
+							player.sendMessage(ChatColor.RED + "You are already creating a gate!");
+							return;
+						}
+						else
+						{
+		        			String gateName = "Unnamed Gate";
+		        			if (args.length > 2)
+		        			{
+		        				gateName = UtilitySubsystem.createStringFromArgIndexOnwards(2, args);
+		        			}
+							UtilitySubsystem.startCreatingGate(main, player, gateName);
+							//TODO: Config setting for magic gate tool.
+							player.sendMessage(ChatColor.AQUA + "Creating gate '" + gateName + "'.\nClick on a block with a Golden Hoe to select the first point.");
+							return;
+						}
+					}
 					else if (args[1].equalsIgnoreCase("list"))
 					{
 						Faction faction = UtilitySubsystem.getPlayersFaction(player.getUniqueId(), main.factions);
@@ -153,7 +174,8 @@ public class GateCommand {
 				else
 				{
 			        sender.sendMessage(ChatColor.RED + "Sub-commands:");
-			        sender.sendMessage(ChatColor.RED + "/mf gate name");
+			        sender.sendMessage(ChatColor.AQUA + "/mf gate create (<optional>name)");
+			        sender.sendMessage(ChatColor.RED + "/mf gate name (<optional>name)");
 			        sender.sendMessage(ChatColor.RED + "/mf gate list");
 			        sender.sendMessage(ChatColor.RED + "/mf gate remove");
 			        sender.sendMessage(ChatColor.RED + "/mf gate cancel");

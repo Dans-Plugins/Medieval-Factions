@@ -2,6 +2,7 @@ package factionsystem;
 
 import factionsystem.EventHandlers.*;
 import factionsystem.Objects.ClaimedChunk;
+import factionsystem.Objects.Duel;
 import factionsystem.Objects.Faction;
 import factionsystem.Objects.Gate;
 import factionsystem.Objects.LockedBlock;
@@ -49,6 +50,7 @@ public class Main extends JavaPlugin implements Listener {
     public ArrayList<PlayerPowerRecord> playerPowerRecords = new ArrayList<>();
     public ArrayList<PlayerActivityRecord> playerActivityRecords = new ArrayList<>();
     public ArrayList<LockedBlock> lockedBlocks = new ArrayList<>();
+    public ArrayList<Duel> duelingPlayers = new ArrayList<Duel>();
 
     // temporary lists
     public HashMap<UUID, Gate> creatingGatePlayers = new HashMap<>(); 

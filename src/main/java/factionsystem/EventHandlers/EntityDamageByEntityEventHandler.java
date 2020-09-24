@@ -1,6 +1,9 @@
 package factionsystem.EventHandlers;
 
 import factionsystem.Main;
+import factionsystem.Objects.Duel;
+import factionsystem.Subsystems.UtilitySubsystem;
+
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 import org.bukkit.entity.Projectile;
@@ -16,6 +19,8 @@ public class EntityDamageByEntityEventHandler {
     }
 
     public void handle(EntityDamageByEntityEvent event) {
+    	
+   	
         // this method disallows PVP between members of the same faction and between factions who are not at war
         // PVP is allowed between factionless players, players who belong to a faction and the factionless, and players whose factions are at war.
 
@@ -24,7 +29,22 @@ public class EntityDamageByEntityEventHandler {
             Player attacker = (Player) event.getDamager();
             Player victim = (Player) event.getEntity();
 
-            handleIfFriendlyFire(event, attacker, victim);
+        	// if these players are actively duelling then we don't want to handle friendly fire.
+            Duel duel = UtilitySubsystem.getDuel(attacker, victim, main);
+            if (duel == null)
+            {
+            	handleIfFriendlyFire(event, attacker, victim);	
+            }
+            else
+            {
+            	if (victim.getHealth() < 0.5)
+            	{
+        			duel.setLoser(victim);
+            		duel.finishDuel(false);
+            		main.duelingPlayers.remove(this);
+            		event.setCancelled(true);
+            	}
+            }
         }
         else if (event.getDamager() instanceof Projectile && event.getEntity() instanceof Player) {
             Projectile arrow = (Projectile) event.getDamager();
@@ -34,7 +54,22 @@ public class EntityDamageByEntityEventHandler {
                 Player attacker = (Player) source;
                 Player victim = (Player) event.getEntity();
 
-                handleIfFriendlyFire(event, attacker, victim);
+            	// if these players are actively duelling then we don't want to handle friendly fire.
+                Duel duel = UtilitySubsystem.getDuel(attacker, victim, main);
+                if (duel == null)
+                {
+                	handleIfFriendlyFire(event, attacker, victim);	
+                }          
+                else
+                {
+                	if (victim.getHealth() < 0.5)
+                	{
+            			duel.setLoser(victim);
+                		duel.finishDuel(false);
+                		main.duelingPlayers.remove(this);
+                		event.setCancelled(true);
+                	}
+                }
             }
         }
     }

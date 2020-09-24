@@ -162,7 +162,8 @@ public class PlayerInteractEventHandler {
 
             // get tool in player's hand, if it's the gate tool
             // then we want to let them create the gate.
-        	if (player.getInventory().getItemInMainHand().getType().equals(Material.GOLDEN_HOE))
+        	if (main.creatingGatePlayers.containsKey(event.getPlayer().getUniqueId())
+        			&& player.getInventory().getItemInMainHand().getType().equals(Material.GOLDEN_HOE))
         	{
         		if (!UtilitySubsystem.isClaimed(clickedBlock.getChunk(), main.claimedChunks))
         		{
@@ -195,17 +196,45 @@ public class PlayerInteractEventHandler {
     			{
 	        		// TODO: Check if a gate already exists here, and if it does, print out some info
 	        		// of that existing gate instead of trying to create a new one.
-	        		if (!main.creatingGatePlayers.containsKey(event.getPlayer().getUniqueId()))
+	        		if (main.creatingGatePlayers.containsKey(event.getPlayer().getUniqueId()) && main.creatingGatePlayers.get(event.getPlayer().getUniqueId()).getCoord1() == null)
 	        		{
-	        			UtilitySubsystem.startCreatingGate(main, event.getPlayer(), clickedBlock);
-	        			event.getPlayer().sendMessage(ChatColor.GREEN + "Creating Gate 1/4: Point 1 placed successfully.");
-	        			event.getPlayer().sendMessage(ChatColor.YELLOW + "Click to place the second point...");
-	        			return;
+        				Gate.ErrorCodeAddCoord e = main.creatingGatePlayers.get(event.getPlayer().getUniqueId()).addCoord(clickedBlock);
+	        			if (e.equals(Gate.ErrorCodeAddCoord.None))
+	        			{
+		        			event.getPlayer().sendMessage(ChatColor.GREEN + "Creating Gate 1/4: Point 1 placed successfully.");
+		        			event.getPlayer().sendMessage(ChatColor.YELLOW + "Click to place the second corner...");
+		        			return;
+	        			}
+	        			else if (e.equals(Gate.ErrorCodeAddCoord.MaterialMismatch))
+	        			{
+	        				event.getPlayer().sendMessage(ChatColor.RED + "Error placing point 1: Materials mismatch.");
+	        				main.creatingGatePlayers.remove(event.getPlayer().getUniqueId());
+	        				return;
+	        			}
+	        			else if (e.equals(Gate.ErrorCodeAddCoord.WorldMismatch))
+	        			{
+	        				event.getPlayer().sendMessage(ChatColor.RED + "Error placing point 1: Worlds mismatch.");
+	        				main.creatingGatePlayers.remove(event.getPlayer().getUniqueId());
+	        				return;
+	        			}
+	        			else if (e.equals(Gate.ErrorCodeAddCoord.NoCuboids))
+	        			{
+	        				event.getPlayer().sendMessage(ChatColor.RED + "Error placing point 1: You cannot place a cuboid.");
+	        				main.creatingGatePlayers.remove(event.getPlayer().getUniqueId());
+	        				return;
+	        			}
+	        			else
+	        			{
+	        				event.getPlayer().sendMessage(ChatColor.RED + "Error placing point 1. Cancelled gate placement.");
+	        				main.creatingGatePlayers.remove(event.getPlayer().getUniqueId());
+	        				return;
+	        			}
 	        		}
-	        		else
+	        		else if (main.creatingGatePlayers.containsKey(event.getPlayer().getUniqueId()) && main.creatingGatePlayers.get(event.getPlayer().getUniqueId()).getCoord1() != null
+	        				&& main.creatingGatePlayers.get(event.getPlayer().getUniqueId()).getCoord2() == null
+	        				&& main.creatingGatePlayers.get(event.getPlayer().getUniqueId()).getTrigger() == null)
 	        		{
-	        			if (main.creatingGatePlayers.get(event.getPlayer().getUniqueId()).getCoord2() == null
-	        					&& !main.creatingGatePlayers.get(event.getPlayer().getUniqueId()).getCoord1().equals(clickedBlock))
+	        			if (!main.creatingGatePlayers.get(event.getPlayer().getUniqueId()).getCoord1().equals(clickedBlock))
 	        			{
 	        				Gate.ErrorCodeAddCoord e = main.creatingGatePlayers.get(event.getPlayer().getUniqueId()).addCoord(clickedBlock);
 		        			if (e.equals(Gate.ErrorCodeAddCoord.None))
@@ -239,49 +268,49 @@ public class PlayerInteractEventHandler {
 		        				return;
 		        			}
 	        			}
-	        			else if (main.creatingGatePlayers.get(event.getPlayer().getUniqueId()).getCoord2() != null
-	        					&& main.creatingGatePlayers.get(event.getPlayer().getUniqueId()).getTrigger() == null
-	        					&& !main.creatingGatePlayers.get(event.getPlayer().getUniqueId()).getCoord2().equals(clickedBlock))
-	        			{
-	        				if (clickedBlock.getType().equals(Material.LEVER))
-	        				{
-			        			if (UtilitySubsystem.isClaimed(clickedBlock.getChunk(), main.claimedChunks))
-			        			{
-			        				Gate.ErrorCodeAddCoord e = main.creatingGatePlayers.get(event.getPlayer().getUniqueId()).addCoord(clickedBlock);
-			        				if (e.equals(Gate.ErrorCodeAddCoord.None))
-			        				{
-					        			ClaimedChunk claim = UtilitySubsystem.getClaimedChunk(clickedBlock.getChunk().getX(), clickedBlock.getChunk().getZ(),
-					        					clickedBlock.getChunk().getWorld().getName(), main.claimedChunks);
-					        			Faction faction = UtilitySubsystem.getFaction(claim.getHolder(), main.factions);
-				        				faction.addGate(main.creatingGatePlayers.get(event.getPlayer().getUniqueId()));
-					        			main.creatingGatePlayers.remove(event.getPlayer().getUniqueId());     	
-					        			event.getPlayer().sendMessage(ChatColor.GREEN + "Creating Gate 4/4: Lever successfully linked.");
-					        			event.getPlayer().sendMessage(ChatColor.GREEN + "Gate successfully created.");
-					        			return;
-			        				}
-			        				else
-			        				{
-				        				event.getPlayer().sendMessage(ChatColor.RED + "Error linking to lever. Cancelled gate placement.");
-				        				main.creatingGatePlayers.remove(event.getPlayer().getUniqueId());
-				        				return;
-			        				}
-			        			}
-			        			else
-			        			{
-			        				event.getPlayer().sendMessage(ChatColor.RED + "Error: Can only use levers in claimed territory.");
+	        		}
+	    			else if (main.creatingGatePlayers.get(event.getPlayer().getUniqueId()).getCoord2() != null
+	    					&& main.creatingGatePlayers.get(event.getPlayer().getUniqueId()).getTrigger() == null
+	    					&& !main.creatingGatePlayers.get(event.getPlayer().getUniqueId()).getCoord2().equals(clickedBlock))
+	    			{
+	    				if (clickedBlock.getType().equals(Material.LEVER))
+	    				{
+		        			if (UtilitySubsystem.isClaimed(clickedBlock.getChunk(), main.claimedChunks))
+		        			{
+		        				Gate.ErrorCodeAddCoord e = main.creatingGatePlayers.get(event.getPlayer().getUniqueId()).addCoord(clickedBlock);
+		        				if (e.equals(Gate.ErrorCodeAddCoord.None))
+		        				{
+				        			ClaimedChunk claim = UtilitySubsystem.getClaimedChunk(clickedBlock.getChunk().getX(), clickedBlock.getChunk().getZ(),
+				        					clickedBlock.getChunk().getWorld().getName(), main.claimedChunks);
+				        			Faction faction = UtilitySubsystem.getFaction(claim.getHolder(), main.factions);
+			        				faction.addGate(main.creatingGatePlayers.get(event.getPlayer().getUniqueId()));
+				        			main.creatingGatePlayers.remove(event.getPlayer().getUniqueId());     	
+				        			event.getPlayer().sendMessage(ChatColor.GREEN + "Creating Gate 4/4: Lever successfully linked.");
+				        			event.getPlayer().sendMessage(ChatColor.GREEN + "Gate successfully created.");
+				        			return;
+		        				}
+		        				else
+		        				{
+			        				event.getPlayer().sendMessage(ChatColor.RED + "Error linking to lever. Cancelled gate placement.");
 			        				main.creatingGatePlayers.remove(event.getPlayer().getUniqueId());
 			        				return;
-			        			}
-	        				}
-	        				else
-	        				{
-		        				event.getPlayer().sendMessage(ChatColor.RED + "Trigger block was not a lever. Cancelled gate placement.");
+		        				}
+		        			}
+		        			else
+		        			{
+		        				event.getPlayer().sendMessage(ChatColor.RED + "Error: Can only use levers in claimed territory.");
 		        				main.creatingGatePlayers.remove(event.getPlayer().getUniqueId());
 		        				return;
-	        				}
-	        			}
-	        		}
-    			}
+		        			}
+	    				}
+	    				else
+	    				{
+	        				event.getPlayer().sendMessage(ChatColor.RED + "Trigger block was not a lever. Cancelled gate placement.");
+	        				main.creatingGatePlayers.remove(event.getPlayer().getUniqueId());
+	        				return;
+	    				}
+	    			}
+	        	}
     			else
     			{
     				player.sendMessage(ChatColor.RED + "Sorry! In order to create a gate you need the following permission: 'mf.gate'");

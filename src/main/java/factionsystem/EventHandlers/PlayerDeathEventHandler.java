@@ -2,6 +2,7 @@ package factionsystem.EventHandlers;
 
 import factionsystem.Main;
 import factionsystem.Objects.ClaimedChunk;
+import factionsystem.Objects.Duel;
 import factionsystem.Objects.PlayerPowerRecord;
 import factionsystem.Subsystems.UtilitySubsystem;
 import org.bukkit.ChatColor;
@@ -21,7 +22,7 @@ public class PlayerDeathEventHandler {
     public void handle(PlayerDeathEvent event) {
         event.getEntity();
         Player player = event.getEntity();
-
+        
         // decrease dying player's power
         for (PlayerPowerRecord record : main.playerPowerRecords) {
             if (record.getPlayerUUID().equals(player.getUniqueId())) {
@@ -72,5 +73,6 @@ public class PlayerDeathEventHandler {
             }
 
         }
+
     }
 }

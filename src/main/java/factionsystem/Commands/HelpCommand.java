@@ -60,19 +60,23 @@ public class HelpCommand {
                 sender.sendMessage(ChatColor.AQUA + "/mf swearfealty - Swear fealty to a faction.");
                 sender.sendMessage(ChatColor.AQUA + "/mf declareindependence - Declare independence from your liege.");
                 sender.sendMessage(ChatColor.AQUA + "/mf grantindependence - Grant a vassal vaction independence.");
-                sender.sendMessage(ChatColor.AQUA + "/mf force - Force the plugin to perform certain actions." + "\n");
-                sender.sendMessage(ChatColor.AQUA + "/mf version - Check plugin version." + "\n");
-                sender.sendMessage(ChatColor.AQUA + "/mf resetpowerlevels - Reset player power records and faction cumulative power levels." + "\n");
-            }
-            if (args[1].equalsIgnoreCase("6")) {
-                sender.sendMessage(ChatColor.BOLD + "" + ChatColor.AQUA + "\n == Medieval Factions Commands Page 5/6 == " + "\n");
-                sender.sendMessage(ChatColor.AQUA + "/mf bypass - Bypass protections.");
-                sender.sendMessage(ChatColor.AQUA + "/mf config show - Show config values.");
-                sender.sendMessage(ChatColor.AQUA + "/mf config set (option) (value) - Set a config value.");
-		        sender.sendMessage(ChatColor.AQUA + "/mf gate name");
+		        sender.sendMessage(ChatColor.AQUA + "/mf gate create (<optional>name)");
+		        sender.sendMessage(ChatColor.AQUA + "/mf gate name (<optional>name)");
 		        sender.sendMessage(ChatColor.AQUA + "/mf gate list");
 		        sender.sendMessage(ChatColor.AQUA + "/mf gate remove");
 		        sender.sendMessage(ChatColor.AQUA + "/mf gate cancel");
+            }
+            if (args[1].equalsIgnoreCase("6")) {
+                sender.sendMessage(ChatColor.BOLD + "" + ChatColor.AQUA + "\n == Medieval Factions Commands Page 6/6 == " + "\n");
+		        sender.sendMessage(ChatColor.AQUA + "/mf duel challenge (player)");
+		        sender.sendMessage(ChatColor.AQUA + "/mf duel accept (<optional>player)");
+		        sender.sendMessage(ChatColor.AQUA + "/mf duel cancel");
+                sender.sendMessage(ChatColor.AQUA + "/mf bypass - Bypass protections.");
+                sender.sendMessage(ChatColor.AQUA + "/mf config show - Show config values.");
+                sender.sendMessage(ChatColor.AQUA + "/mf config set (option) (value) - Set a config value.");
+                sender.sendMessage(ChatColor.AQUA + "/mf force - Force the plugin to perform certain actions." + "\n");
+                sender.sendMessage(ChatColor.AQUA + "/mf version - Check plugin version." + "\n");
+                sender.sendMessage(ChatColor.AQUA + "/mf resetpowerlevels - Reset player power records and faction cumulative power levels." + "\n");
             }
         }
         return true;
