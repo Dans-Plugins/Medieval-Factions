@@ -2,10 +2,14 @@ package factionsystem.Commands;
 
 import factionsystem.Main;
 import factionsystem.Objects.Faction;
+import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
+import org.bukkit.OfflinePlayer;
 import org.bukkit.command.CommandSender;
 
 import java.util.ArrayList;
+
+import static factionsystem.Subsystems.UtilitySubsystem.*;
 
 public class ForceCommand {
 
@@ -46,6 +50,9 @@ public class ForceCommand {
         sender.sendMessage(ChatColor.RED + "/mf force save");
         sender.sendMessage(ChatColor.RED + "/mf force load");
         sender.sendMessage(ChatColor.RED + "/mf force peace 'faction1' 'faction2'");
+        sender.sendMessage(ChatColor.RED + "/mf force demote (player)");
+        sender.sendMessage(ChatColor.RED + "/mf force join 'player' 'faction2'");
+        sender.sendMessage(ChatColor.RED + "/mf force kick 'player'");
         return false;
     }
 
@@ -124,17 +131,72 @@ public class ForceCommand {
 
     }
 
-    private boolean forceDemote(CommandSender sender, String[] args) {
+    private boolean forceDemote(CommandSender sender, String[] args) { // 1 argument
 
         return false;
     }
 
-    private boolean forceJoin(CommandSender sender, String[] args) {
+    private boolean forceJoin(CommandSender sender, String[] args) { // 2 arguments
+        if (sender.hasPermission("mf.force.join") || sender.hasPermission("mf.force.*")|| sender.hasPermission("mf.admin")) {
 
-        return false;
+            if (args.length >= 4) {
+
+                // get arguments designated by single quotes
+                ArrayList<String> singleQuoteArgs = main.utilities.getArgumentsInsideSingleQuotes(args);
+
+                if (singleQuoteArgs.size() < 2) {
+                    sender.sendMessage(ChatColor.RED + "No factions designated. Must be designated inside single quotes!");
+                    return false;
+                }
+
+                String playerName = singleQuoteArgs.get(0);
+                String factionName = singleQuoteArgs.get(1);
+
+                Faction faction = main.utilities.getFaction(factionName, main.factions);
+
+                for (OfflinePlayer player : Bukkit.getOfflinePlayers()) {
+                    if (player.getName().equalsIgnoreCase(playerName)) {
+
+                        if (faction != null) {
+                            if (!(isInFaction(player.getUniqueId(), main.factions))) {
+                                faction.addMember(player.getUniqueId(), getPlayersPowerRecord(player.getUniqueId(), main.playerPowerRecords).getPowerLevel());
+                                try {
+                                    sendAllPlayersInFactionMessage(faction, ChatColor.GREEN + player.getName() + " has joined " + faction.getName());
+                                } catch (Exception ignored) {
+
+                                }
+                                if (player.isOnline()) {
+                                    Bukkit.getPlayer(player.getUniqueId()).sendMessage(ChatColor.AQUA + "You were forced to join the faction " + faction.getName() + "!");
+                                }
+                                sender.sendMessage(ChatColor.GREEN + "Success!");
+                                return true;
+                            }
+                            else {
+                                sender.sendMessage(ChatColor.RED + "That player is already in a faction, sorry!");
+                                return false;
+                            }
+                        }
+                        else {
+                            sender.sendMessage(ChatColor.RED + "One of the factions designated wasn't found!");
+                            return false;
+                        }
+                    }
+                }
+                sender.sendMessage(ChatColor.RED + "Player not found!");
+                return false;
+            }
+
+            // send usage
+            sender.sendMessage(ChatColor.RED + "Usage: /mf force peace 'faction-1' 'faction-2'");
+            return false;
+        }
+        else {
+            sender.sendMessage(ChatColor.RED + "Sorry! You need the following permission to use this command: 'mf.force.peace'");
+            return false;
+        }
     }
 
-    private boolean forceKick(CommandSender sender, String[] args) {
+    private boolean forceKick(CommandSender sender, String[] args) { // 1 argument
 
         return false;
     }
