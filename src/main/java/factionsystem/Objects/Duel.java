@@ -128,6 +128,7 @@ public class Duel {
 	
 	public void acceptDuel()
 	{
+		//TODO: Notify challenger that the challenged accepted.
 		challengerHealth = _challenger.getHealth(); 
 		challengedHealth = _challenged.getHealth();
 		duelState = DuelState.DUELLING;

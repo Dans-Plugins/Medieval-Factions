@@ -561,6 +561,7 @@ public class UtilitySubsystem {
     
     public static void inviteDuel(Player player, Player target, Main main)
     {
+    	target.sendMessage(ChatColor.AQUA + player.getName() + " has challenged you to a duel! Type /mf duel accept to begin.");
     	main.duelingPlayers.add(new Duel(player, target, main));
     }
 
