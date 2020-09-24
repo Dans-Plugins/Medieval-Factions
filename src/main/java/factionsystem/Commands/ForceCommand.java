@@ -52,7 +52,7 @@ public class ForceCommand {
         sender.sendMessage(ChatColor.RED + "/mf force peace 'faction1' 'faction2'");
         sender.sendMessage(ChatColor.RED + "/mf force demote (player)");
         sender.sendMessage(ChatColor.RED + "/mf force join 'player' 'faction2'");
-        sender.sendMessage(ChatColor.RED + "/mf force kick 'player'");
+        sender.sendMessage(ChatColor.RED + "/mf force kick (player)");
         return false;
     }
 
