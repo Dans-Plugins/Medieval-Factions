@@ -28,6 +28,18 @@ public class ForceCommand {
             if (args[1].equalsIgnoreCase("peace")) {
                 return forcePeace(sender, args);
             }
+            
+            if (args[1].equalsIgnoreCase("demote")) {
+                return forceDemote(sender, args);
+            }
+
+            if (args[1].equalsIgnoreCase("join")) {
+                return forceJoin(sender, args);
+            }
+
+            if (args[1].equalsIgnoreCase("kick")) {
+                return forceKick(sender, args);
+            }
         }
         // show usages
         sender.sendMessage(ChatColor.RED + "Sub-commands:");
@@ -37,7 +49,7 @@ public class ForceCommand {
         return false;
     }
 
-    public boolean forceSave(CommandSender sender) {
+    private boolean forceSave(CommandSender sender) {
         if (sender.hasPermission("mf.force.save") || sender.hasPermission("mf.force.*") || sender.hasPermission("mf.admin")) {
             sender.sendMessage(ChatColor.GREEN + "Medieval Factions plugin is saving...");
             main.storage.save();
@@ -49,7 +61,7 @@ public class ForceCommand {
         }
     }
 
-    public boolean forceLoad(CommandSender sender) {
+    private boolean forceLoad(CommandSender sender) {
         if (sender.hasPermission("mf.force.load") || sender.hasPermission("mf.force.*")|| sender.hasPermission("mf.admin")) {
             sender.sendMessage(ChatColor.GREEN + "Medieval Factions plugin is loading...");
             main.storage.load();
@@ -62,8 +74,8 @@ public class ForceCommand {
         }
     }
 
-    public boolean forcePeace(CommandSender sender, String[] args) {
-        System.out.println("DEBUG: forcePeace() method started");
+    private boolean forcePeace(CommandSender sender, String[] args) {
+
         if (sender.hasPermission("mf.force.peace") || sender.hasPermission("mf.force.*")|| sender.hasPermission("mf.admin")) {
 
             if (args.length >= 4) {
@@ -79,8 +91,6 @@ public class ForceCommand {
                 String factionName1 = singleQuoteArgs.get(0);
                 String factionName2 = singleQuoteArgs.get(1);
 
-                System.out.println("DEBUG: attempting to force peace between " + factionName1 + " and " + factionName2);
-
                 Faction faction1 = main.utilities.getFaction(factionName1, main.factions);
                 Faction faction2 = main.utilities.getFaction(factionName2, main.factions);
 
@@ -95,7 +105,6 @@ public class ForceCommand {
 
                     // announce peace to all players on server.
                     main.utilities.sendAllPlayersOnServerMessage(ChatColor.GREEN + faction1.getName() + " is now at peace with " + faction2.getName() + "!");
-                    System.out.println("DEBUG: forcePeace() method successful");
                     return true;
                 }
                 else {
@@ -113,6 +122,21 @@ public class ForceCommand {
             return false;
         }
 
+    }
+
+    private boolean forceDemote(CommandSender sender, String[] args) {
+
+        return false;
+    }
+
+    private boolean forceJoin(CommandSender sender, String[] args) {
+
+        return false;
+    }
+
+    private boolean forceKick(CommandSender sender, String[] args) {
+
+        return false;
     }
 
 }
