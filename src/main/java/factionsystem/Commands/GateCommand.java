@@ -52,15 +52,27 @@ public class GateCommand {
 						}
 						else
 						{
-		        			String gateName = "Unnamed Gate";
-		        			if (args.length > 2)
-		        			{
-		        				gateName = UtilitySubsystem.createStringFromArgIndexOnwards(2, args);
-		        			}
-							UtilitySubsystem.startCreatingGate(main, player, gateName);
-							//TODO: Config setting for magic gate tool.
-							player.sendMessage(ChatColor.AQUA + "Creating gate '" + gateName + "'.\nClick on a block with a Golden Hoe to select the first point.");
-							return;
+							Faction faction = UtilitySubsystem.getPlayersFaction(player.getUniqueId(), main.factions);
+							if (faction != null)
+							{
+								if (faction.isOfficer(player.getUniqueId()) || faction.isOwner(player.getUniqueId()))
+								{
+				        			String gateName = "Unnamed Gate";
+				        			if (args.length > 2)
+				        			{
+				        				gateName = UtilitySubsystem.createStringFromArgIndexOnwards(2, args);
+				        			}
+									UtilitySubsystem.startCreatingGate(main, player, gateName);
+									//TODO: Config setting for magic gate tool.
+									player.sendMessage(ChatColor.AQUA + "Creating gate '" + gateName + "'.\nClick on a block with a Golden Hoe to select the first point.");
+									return;
+								}
+								else
+								{
+									player.sendMessage(ChatColor.RED + "You must be a faction officer or owner to use this command.");
+									return;
+								}
+							}
 						}
 					}
 					else if (args[1].equalsIgnoreCase("list"))
@@ -98,13 +110,17 @@ public class GateCommand {
 								Faction faction = UtilitySubsystem.getGateFaction(gate, main.factions);
 								if (faction != null)
 								{
-									if (!faction.isOfficer(player.getUniqueId()) || !faction.isOwner(player.getUniqueId()))
+									if (faction.isOfficer(player.getUniqueId()) || faction.isOwner(player.getUniqueId()))
+									{
+										faction.removeGate(gate);
+										player.sendMessage(ChatColor.AQUA + String.format("Removed gate '%s'.", gate.getName()));
+										return;
+									}
+									else
 									{
 										player.sendMessage(ChatColor.RED + "You must be a faction officer or owner to use this command.");
 										return;
 									}
-									player.sendMessage(ChatColor.AQUA + String.format("Removed gate '%s'.", gate.getName()));
-									return;
 								}
 								else
 								{
@@ -136,15 +152,18 @@ public class GateCommand {
 									Faction faction = UtilitySubsystem.getGateFaction(gate, main.factions);
 									if (faction != null)
 									{
-										if (!faction.isOfficer(player.getUniqueId()) || !faction.isOwner(player.getUniqueId()))
+										if (faction.isOfficer(player.getUniqueId()) || faction.isOwner(player.getUniqueId()))
+										{
+											String name = UtilitySubsystem.createStringFromArgIndexOnwards(2, args);
+											gate.setName(name);
+											player.sendMessage(ChatColor.AQUA + String.format("Changed gate name to '%s'.", gate.getName()));
+											return;
+										}
+										else
 										{
 											player.sendMessage(ChatColor.RED + "You must be a faction officer or owner to use this command.");
 											return;
 										}
-										String name = UtilitySubsystem.createStringFromArgIndexOnwards(2, args);
-										gate.setName(name);
-										player.sendMessage(ChatColor.AQUA + String.format("Changed gate name to '%s'.", gate.getName()));
-										return;
 									}
 									else
 									{
