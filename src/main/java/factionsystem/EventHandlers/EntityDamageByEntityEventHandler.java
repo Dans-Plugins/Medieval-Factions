@@ -28,7 +28,6 @@ public class EntityDamageByEntityEventHandler {
         if (event.getDamager() instanceof Player && event.getEntity() instanceof Player) {
             Player attacker = (Player) event.getDamager();
             Player victim = (Player) event.getEntity();
-
         	// if these players are actively duelling then we don't want to handle friendly fire.
             Duel duel = UtilitySubsystem.getDuel(attacker, victim, main);
             if (duel == null)
@@ -37,13 +36,17 @@ public class EntityDamageByEntityEventHandler {
             }
             else if (duel.getStatus().equals(Duel.DuelState.DUELLING))
             {
-            	if (victim.getHealth() <= 0.5)
+            	if (victim.getHealth() - event.getFinalDamage() <= 0)
             	{
         			duel.setLoser(victim);
             		duel.finishDuel(false);
             		main.duelingPlayers.remove(this);
             		event.setCancelled(true);
             	}
+            }
+            else
+            {
+            	handleIfFriendlyFire(event, attacker, victim);
             }
         }
         else if (event.getDamager() instanceof Projectile && event.getEntity() instanceof Player) {
@@ -56,24 +59,23 @@ public class EntityDamageByEntityEventHandler {
 
             	// if these players are actively duelling then we don't want to handle friendly fire.
                 Duel duel = UtilitySubsystem.getDuel(attacker, victim, main);
-                if (duel != null)
+                if (duel == null)
                 {
-                	if (duel.getStatus().equals(Duel.DuelState.DUELLING))
-                    {
-                    	if (victim.getHealth() <= 0.5)
-                    	{
-                			duel.setLoser(victim);
-                    		duel.finishDuel(false);
-                    		main.duelingPlayers.remove(this);
-                    		event.setCancelled(true);
-                    	}
-                    }
-                    else {
-                    	handleIfFriendlyFire(event, attacker, victim);	
-                    }
-                }     
-                else {
                 	handleIfFriendlyFire(event, attacker, victim);	
+                }
+                else if (duel.getStatus().equals(Duel.DuelState.DUELLING))
+                {
+                	if (victim.getHealth() - event.getFinalDamage() <= 0)
+                	{
+            			duel.setLoser(victim);
+                		duel.finishDuel(false);
+                		main.duelingPlayers.remove(this);
+                		event.setCancelled(true);
+                	}
+                }
+                else
+                {
+                	handleIfFriendlyFire(event, attacker, victim);
                 }
             }
         }

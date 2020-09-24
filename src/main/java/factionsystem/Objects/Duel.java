@@ -147,15 +147,20 @@ public class Duel {
 				, BarColor.WHITE, BarStyle.SEGMENTED_20);
 		bar.setProgress(1);
 		bar.addPlayer(_challenger);
+		bar.addPlayer(_challenged);
 		
     	repeatingTaskId = Bukkit.getScheduler().scheduleSyncRepeatingTask(plugin, new Runnable () {
     		@Override
     		public void run() {
-    			bar.setProgress(bar.getProgress() - 0.1);
-    			if (bar.getProgress() <= 0)
+    			double progress = bar.getProgress() - 0.01;
+    			if (progress <= 0)
     			{
-    				bar.removeAll();
+        			bar.setProgress(0);
     				finishDuel(true);
+    			}
+    			else
+    			{
+    				bar.setProgress(progress);
     			}
     		}
     	}, 1 * 20, 1 * 20);
@@ -184,17 +189,18 @@ public class Duel {
     			}
     		}
 		}
+		bar.removeAll();
 		plugin.getServer().getScheduler().cancelTask(repeatingTaskId);
     	plugin.duelingPlayers.remove(this);
 	}
 	
 	public Duel(Player challenger, Player challenged, Main main)
 	{
-		challenger.getHealth();
 		_challenger = challenger;
 		challengerHealth = challenger.getHealth(); 
 		_challenged = challenged;
 		challengedHealth = challenged.getHealth();
+		duelState = DuelState.INVITED;
 		plugin = main;
 	}
 	
