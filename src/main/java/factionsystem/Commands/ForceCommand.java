@@ -132,6 +132,32 @@ public class ForceCommand {
     }
 
     private boolean forceDemote(CommandSender sender, String[] args) { // 1 argument
+        if (sender.hasPermission("mf.force.demote") || sender.hasPermission("mf.force.*")|| sender.hasPermission("mf.admin")) {
+            if (args.length > 2) {
+                String playerName = args[3];
+                for (OfflinePlayer player : Bukkit.getOfflinePlayers()) {
+                    if (player.getName().equalsIgnoreCase(playerName)) {
+                        for (Faction faction : main.factions) {
+                            if (faction.isOfficer(player.getUniqueId())) {
+                                faction.removeOfficer(player.getUniqueId());
+
+                                if (player.isOnline()) {
+                                    Bukkit.getPlayer(player.getUniqueId()).sendMessage(ChatColor.AQUA + "You were forcibly demoted from officer status in the faction " + faction.getName() + "!");
+                                }
+                            }
+                        }
+                    }
+                }
+
+                sender.sendMessage(ChatColor.GREEN + "Success!");
+                return true;
+            }
+        }
+        else {
+            sender.sendMessage(ChatColor.RED + "Sorry! You need the following permission to use this command: 'mf.force.demote'");
+            return false;
+        }
+
 
         return false;
     }
@@ -191,7 +217,7 @@ public class ForceCommand {
             return false;
         }
         else {
-            sender.sendMessage(ChatColor.RED + "Sorry! You need the following permission to use this command: 'mf.force.peace'");
+            sender.sendMessage(ChatColor.RED + "Sorry! You need the following permission to use this command: 'mf.force.join'");
             return false;
         }
     }
