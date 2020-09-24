@@ -158,7 +158,6 @@ public class ForceCommand {
             return false;
         }
 
-
         return false;
     }
 
@@ -223,6 +222,35 @@ public class ForceCommand {
     }
 
     private boolean forceKick(CommandSender sender, String[] args) { // 1 argument
+        if (sender.hasPermission("mf.force.kick") || sender.hasPermission("mf.force.*")|| sender.hasPermission("mf.admin")) {
+            if (args.length > 2) {
+                String playerName = args[3];
+                for (OfflinePlayer player : Bukkit.getOfflinePlayers()) {
+                    if (player.getName().equalsIgnoreCase(playerName)) {
+                        for (Faction faction : main.factions) {
+                            if (faction.isMember(player.getUniqueId())) {
+                                faction.removeMember(player.getUniqueId(), getPlayersPowerRecord(player.getUniqueId(), main.playerPowerRecords).getPowerLevel());
+
+                                if (player.isOnline()) {
+                                    Bukkit.getPlayer(player.getUniqueId()).sendMessage(ChatColor.AQUA + "You were forcibly kicked from the faction " + faction.getName() + "!");
+                                }
+
+                                if (faction.isOfficer(player.getUniqueId())) {
+                                    faction.removeOfficer(player.getUniqueId());
+                                }
+                            }
+                        }
+                    }
+                }
+
+                sender.sendMessage(ChatColor.GREEN + "Success!");
+                return true;
+            }
+        }
+        else {
+            sender.sendMessage(ChatColor.RED + "Sorry! You need the following permission to use this command: 'mf.force.kick'");
+            return false;
+        }
 
         return false;
     }
