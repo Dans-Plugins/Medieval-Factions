@@ -35,9 +35,9 @@ public class EntityDamageByEntityEventHandler {
             {
             	handleIfFriendlyFire(event, attacker, victim);	
             }
-            else
+            else if (duel.getStatus().equals(Duel.DuelState.DUELLING))
             {
-            	if (victim.getHealth() < 0.5)
+            	if (victim.getHealth() <= 0.5)
             	{
         			duel.setLoser(victim);
             		duel.finishDuel(false);
@@ -56,19 +56,24 @@ public class EntityDamageByEntityEventHandler {
 
             	// if these players are actively duelling then we don't want to handle friendly fire.
                 Duel duel = UtilitySubsystem.getDuel(attacker, victim, main);
-                if (duel == null)
+                if (duel != null)
                 {
+                	if (duel.getStatus().equals(Duel.DuelState.DUELLING))
+                    {
+                    	if (victim.getHealth() <= 0.5)
+                    	{
+                			duel.setLoser(victim);
+                    		duel.finishDuel(false);
+                    		main.duelingPlayers.remove(this);
+                    		event.setCancelled(true);
+                    	}
+                    }
+                    else {
+                    	handleIfFriendlyFire(event, attacker, victim);	
+                    }
+                }     
+                else {
                 	handleIfFriendlyFire(event, attacker, victim);	
-                }          
-                else
-                {
-                	if (victim.getHealth() < 0.5)
-                	{
-            			duel.setLoser(victim);
-                		duel.finishDuel(false);
-                		main.duelingPlayers.remove(this);
-                		event.setCancelled(true);
-                	}
                 }
             }
         }
