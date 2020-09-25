@@ -104,6 +104,8 @@ public class Gate {
 	        newGate.trigger = new GateCoord();
 	        newGate.trigger = GateCoord.fromString(data.triggerCoord, main);
 	        newGate.material = Material.getMaterial(data.material);
+	        newGate.open = Boolean.parseBoolean(data.open);
+	        newGate.vertical = Boolean.parseBoolean(data.vertical);
         }
         catch (Exception e)
         {

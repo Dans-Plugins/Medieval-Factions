@@ -620,6 +620,12 @@ public class CommandSubsystem {
                 	return true;
                 }
                 
+                if (args[0].equalsIgnoreCase("duel") || args[0].equalsIgnoreCase("dl")) {
+                	DuelCommand command = new DuelCommand(main);
+                	command.handleDuel(sender, args);
+                	return true;
+                }
+                
                 // admin commands ----------------------------------------------------------------------------------
 
                 // force command

@@ -2,6 +2,7 @@ package factionsystem.Subsystems;
 
 import factionsystem.Main;
 import factionsystem.Objects.ClaimedChunk;
+import factionsystem.Objects.Duel;
 import factionsystem.Objects.Faction;
 import factionsystem.Objects.Gate;
 import factionsystem.Objects.LockedBlock;
@@ -30,7 +31,7 @@ public class UtilitySubsystem {
         main = plugin;
     }
 
-    // non-static methodsow I 
+    // non-static methods
     
     public ClaimedChunk isChunkClaimed(double x, double y, String world)
     {
@@ -546,6 +547,48 @@ public class UtilitySubsystem {
 
     // static methods ----------------------------
     
+    public static boolean isDuelling(Player player, Main main)
+    {
+    	for (Duel duel : main.duelingPlayers)
+    	{
+    		if (duel.hasPlayer(player) && duel.getStatus().equals(Duel.DuelState.DUELLING))
+    		{
+    			return true;
+    		}
+    	}
+    	return false;
+    }
+    
+    public static void inviteDuel(Player player, Player target, int limit, Main main)
+    {
+    	target.sendMessage(ChatColor.AQUA + player.getName() + " has challenged you to a duel! Type /mf duel accept to begin.");
+    	main.duelingPlayers.add(new Duel(player, target, limit, main));
+    }
+
+    public static Duel getDuel(Player player, Player target, Main main)
+    {
+    	for (Duel duel : main.duelingPlayers)
+    	{
+    		if (duel.hasPlayer(player) && duel.hasPlayer(target))
+    		{
+    			return duel;
+    		}
+    	}
+    	return null;
+    }
+    
+    public static Duel getDuel(Player player, Main main)
+    {
+    	for (Duel duel : main.duelingPlayers)
+    	{
+    		if (duel.isChallenged(player) || duel.isChallenger(player))
+    		{
+    			return duel;
+    		}
+    	}
+    	return null;
+    }
+    
     public static Faction getGateFaction(Gate gate, ArrayList<Faction> factions)
     {
     	for (Faction faction : factions)
@@ -573,12 +616,12 @@ public class UtilitySubsystem {
     	return null;
     }
     
-    public static void startCreatingGate(Main main, Player player, Block clickedBlock)
+    public static void startCreatingGate(Main main, Player player, String name)
     {
     	if (!main.creatingGatePlayers.containsKey(player.getUniqueId()))
     	{
     		Gate gate = new Gate(main);
-    		gate.addCoord(clickedBlock);
+    		gate.setName(name);
     		main.creatingGatePlayers.put(player.getUniqueId(), gate);
     	}
     	else
