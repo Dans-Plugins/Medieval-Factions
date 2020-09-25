@@ -40,8 +40,7 @@ public class Duel {
 	int repeatingTaskId = 0;
 	
 	float nearbyPlayerRadius = 64;
-	int defaultTimeLimit = 2; // minutes. 
-	int timeLimit = defaultTimeLimit; 
+	int timeLimit = 120; 
 	double timeDecrementAmount = 0;
 	
 	public boolean isChallenged(Player player)
@@ -201,12 +200,13 @@ public class Duel {
     	plugin.duelingPlayers.remove(this);
 	}
 	
-	public Duel(Player challenger, Player challenged, Main main)
+	public Duel(Player challenger, Player challenged, int limit, Main main)
 	{
 		_challenger = challenger;
 		challengerHealth = challenger.getHealth(); 
 		_challenged = challenged;
 		challengedHealth = challenged.getHealth();
+		timeLimit = limit;
 		duelState = DuelState.INVITED;
 		plugin = main;
 	}

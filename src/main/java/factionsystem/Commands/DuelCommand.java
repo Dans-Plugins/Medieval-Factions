@@ -44,7 +44,12 @@ public class DuelCommand {
 							{
 								if (!UtilitySubsystem.isDuelling(target, main))
 								{
-									UtilitySubsystem.inviteDuel(player, target, main);
+									int timeLimit = 120; // Time limit in seconds. TODO: Make config option.
+									if (args.length == 4)
+									{
+										timeLimit = Integer.parseInt(args[3]);
+									}
+									UtilitySubsystem.inviteDuel(player, target, timeLimit, main);
 									player.sendMessage(ChatColor.AQUA + "You have challenged " + target.getName() + " to a duel!");
 									return;
 								}
@@ -166,7 +171,7 @@ public class DuelCommand {
 				else
 				{
 			        sender.sendMessage(ChatColor.RED + "Sub-commands:");
-			        sender.sendMessage(ChatColor.RED + "/mf duel challenge (player)");
+			        sender.sendMessage(ChatColor.RED + "/mf duel challenge (player) (<optional>time limit in seconds)");
 			        sender.sendMessage(ChatColor.RED + "/mf duel accept (<optional>player)");
 			        sender.sendMessage(ChatColor.RED + "/mf duel cancel");
 				}

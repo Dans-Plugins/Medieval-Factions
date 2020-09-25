@@ -68,7 +68,7 @@ public class HelpCommand {
             }
             if (args[1].equalsIgnoreCase("6")) {
                 sender.sendMessage(ChatColor.BOLD + "" + ChatColor.AQUA + "\n == Medieval Factions Commands Page 6/6 == " + "\n");
-		        sender.sendMessage(ChatColor.AQUA + "/mf duel challenge (player)");
+		        sender.sendMessage(ChatColor.AQUA + "/mf duel challenge (player) (<optional>time limit in seconds)");
 		        sender.sendMessage(ChatColor.AQUA + "/mf duel accept (<optional>player)");
 		        sender.sendMessage(ChatColor.AQUA + "/mf duel cancel");
                 sender.sendMessage(ChatColor.AQUA + "/mf bypass - Bypass protections.");

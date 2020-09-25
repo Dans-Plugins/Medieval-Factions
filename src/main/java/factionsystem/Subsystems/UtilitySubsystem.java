@@ -559,10 +559,10 @@ public class UtilitySubsystem {
     	return false;
     }
     
-    public static void inviteDuel(Player player, Player target, Main main)
+    public static void inviteDuel(Player player, Player target, int limit, Main main)
     {
     	target.sendMessage(ChatColor.AQUA + player.getName() + " has challenged you to a duel! Type /mf duel accept to begin.");
-    	main.duelingPlayers.add(new Duel(player, target, main));
+    	main.duelingPlayers.add(new Duel(player, target, limit, main));
     }
 
     public static Duel getDuel(Player player, Player target, Main main)
