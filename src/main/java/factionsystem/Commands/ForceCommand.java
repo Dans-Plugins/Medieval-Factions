@@ -134,7 +134,7 @@ public class ForceCommand {
     private boolean forceDemote(CommandSender sender, String[] args) { // 1 argument
         if (sender.hasPermission("mf.force.demote") || sender.hasPermission("mf.force.*")|| sender.hasPermission("mf.admin")) {
             if (args.length > 2) {
-                String playerName = args[3];
+                String playerName = args[2];
                 for (OfflinePlayer player : Bukkit.getOfflinePlayers()) {
                     if (player.getName().equalsIgnoreCase(playerName)) {
                         for (Faction faction : main.factions) {
@@ -226,7 +226,7 @@ public class ForceCommand {
     private boolean forceKick(CommandSender sender, String[] args) { // 1 argument
         if (sender.hasPermission("mf.force.kick") || sender.hasPermission("mf.force.*")|| sender.hasPermission("mf.admin")) {
             if (args.length > 2) {
-                String playerName = args[3];
+                String playerName = args[2];
                 for (OfflinePlayer player : Bukkit.getOfflinePlayers()) {
                     if (player.getName().equalsIgnoreCase(playerName)) {
                         for (Faction faction : main.factions) {
