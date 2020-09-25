@@ -149,7 +149,7 @@ public class ForceCommand {
                     }
                 }
 
-                sender.sendMessage(ChatColor.GREEN + "Success!");
+                sender.sendMessage(ChatColor.GREEN + "Success! If player was considered an officer in any faction, they are no longer.");
                 return true;
             }
             else {
@@ -195,7 +195,7 @@ public class ForceCommand {
                                 if (player.isOnline()) {
                                     Bukkit.getPlayer(player.getUniqueId()).sendMessage(ChatColor.AQUA + "You were forced to join the faction " + faction.getName() + "!");
                                 }
-                                sender.sendMessage(ChatColor.GREEN + "Success!");
+                                sender.sendMessage(ChatColor.GREEN + "Success! Player was forced to join faction.");
                                 return true;
                             }
                             else {
@@ -250,7 +250,7 @@ public class ForceCommand {
                     }
                 }
 
-                sender.sendMessage(ChatColor.GREEN + "Success!");
+                sender.sendMessage(ChatColor.GREEN + "Success! If the player was in a faction, they are no longer a member.");
                 return true;
             }
             else {
