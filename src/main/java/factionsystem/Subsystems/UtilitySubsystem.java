@@ -1174,10 +1174,24 @@ public class UtilitySubsystem {
 
     // this will return true if the chunks to the North, East, South and West of the target are claimed by the same faction as the target
     public boolean isClaimedChunkSurroundedByChunksClaimedBySameFaction(ClaimedChunk target) {
-        boolean northernChunkClaimedBySameFaction = target.getHolder().equalsIgnoreCase(getClaimedChunk(getChunkByDirection(target.getChunk(), "north")).getHolder());
-        boolean easternChunkClaimedBySameFaction = target.getHolder().equalsIgnoreCase(getClaimedChunk(getChunkByDirection(target.getChunk(), "east")).getHolder());
-        boolean southernChunkClaimedBySameFaction = target.getHolder().equalsIgnoreCase(getClaimedChunk(getChunkByDirection(target.getChunk(), "south")).getHolder());
-        boolean westernChunkClaimedBySameFaction = target.getHolder().equalsIgnoreCase(getClaimedChunk(getChunkByDirection(target.getChunk(), "west")).getHolder());
+        ClaimedChunk northernClaimedChunk = getClaimedChunk(getChunkByDirection(target.getChunk(), "north"));
+        ClaimedChunk easternClaimedChunk = getClaimedChunk(getChunkByDirection(target.getChunk(), "east");
+        ClaimedChunk southernClaimedChunk = getClaimedChunk(getChunkByDirection(target.getChunk(), "south");
+        ClaimedChunk westernClaimedChunk = getClaimedChunk(getChunkByDirection(target.getChunk(), "west");
+
+        if (northernClaimedChunk == null ||
+            easternClaimedChunk == null ||
+            southernClaimedChunk == null ||
+            westernClaimedChunk == null) {
+
+            return false;
+
+        }
+
+        boolean northernChunkClaimedBySameFaction = target.getHolder().equalsIgnoreCase(northernClaimedChunk.getHolder());
+        boolean easternChunkClaimedBySameFaction = target.getHolder().equalsIgnoreCase(easternClaimedChunk.getHolder());
+        boolean southernChunkClaimedBySameFaction = target.getHolder().equalsIgnoreCase(southernClaimedChunk.getHolder());
+        boolean westernChunkClaimedBySameFaction = target.getHolder().equalsIgnoreCase(westernClaimedChunk.getHolder());
 
         return (northernChunkClaimedBySameFaction &&
                 easternChunkClaimedBySameFaction &&
