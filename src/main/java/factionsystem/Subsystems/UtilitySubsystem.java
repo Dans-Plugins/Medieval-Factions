@@ -85,9 +85,11 @@ public class UtilitySubsystem {
                                         // is at war with target faction
                                         if (faction.isEnemy(targetFaction.getName())) {
 
-                                            if (isClaimedChunkSurroundedByChunksClaimedBySameFaction(chunk)) {
-                                                player.sendMessage(ChatColor.RED + "Target faction has claimed the chunks to the north, east, south and west of this chunk! It cannot be conquered!");
-                                                return;
+                                            if (main.getConfig().getBoolean("surroundedChunksProtected")) {
+                                                if (isClaimedChunkSurroundedByChunksClaimedBySameFaction(chunk)) {
+                                                    player.sendMessage(ChatColor.RED + "Target faction has claimed the chunks to the north, east, south and west of this chunk! It cannot be conquered!");
+                                                    return;
+                                                }
                                             }
 
                                             // CONQUERABLE
