@@ -1159,4 +1159,21 @@ public class UtilitySubsystem {
         return origin.getWorld().getChunkAt(xpos, zpos);
     }
 
+    public ClaimedChunk getClaimedChunk(Chunk chunk) {
+        return getClaimedChunk(chunk.getX(), chunk.getZ(), chunk.getWorld().getName(), main.claimedChunks);
+    }
+
+    // this will return true if the chunks to the North, East, South and West of the target are claimed by the same faction as the target
+    public boolean isClaimedChunkSurroundedByChunksClaimedBySameFaction(ClaimedChunk target) {
+        boolean northernChunkClaimedBySameFaction = target.getHolder().equalsIgnoreCase(getClaimedChunk(getChunkByDirection(target.getChunk(), "north")).getHolder());
+        boolean easternChunkClaimedBySameFaction = target.getHolder().equalsIgnoreCase(getClaimedChunk(getChunkByDirection(target.getChunk(), "east")).getHolder());
+        boolean southernChunkClaimedBySameFaction = target.getHolder().equalsIgnoreCase(getClaimedChunk(getChunkByDirection(target.getChunk(), "south")).getHolder());
+        boolean westernChunkClaimedBySameFaction = target.getHolder().equalsIgnoreCase(getClaimedChunk(getChunkByDirection(target.getChunk(), "west")).getHolder());
+
+        return (northernChunkClaimedBySameFaction &&
+                easternChunkClaimedBySameFaction &&
+                southernChunkClaimedBySameFaction &&
+                westernChunkClaimedBySameFaction);
+    }
+
 }
