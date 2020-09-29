@@ -1134,4 +1134,29 @@ public class UtilitySubsystem {
         return -1;
     }
 
+    public Chunk getChunkByDirection(Chunk origin, String direction) {
+
+        int xpos = -1;
+        int zpos = -1;
+
+        if (direction.equalsIgnoreCase("north")) {
+            xpos = origin.getX();
+            zpos = origin.getZ() + 1;
+        }
+        if (direction.equalsIgnoreCase("east")) {
+            xpos = origin.getX() + 1;
+            zpos = origin.getZ();
+        }
+        if (direction.equalsIgnoreCase("south")) {
+            xpos = origin.getX();
+            zpos = origin.getZ() - 1;
+        }
+        if (direction.equalsIgnoreCase("west")) {
+            xpos = origin.getX() - 1;
+            zpos = origin.getZ();
+        }
+
+        return origin.getWorld().getChunkAt(xpos, zpos);
+    }
+
 }
