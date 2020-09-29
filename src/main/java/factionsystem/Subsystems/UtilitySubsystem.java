@@ -1175,9 +1175,9 @@ public class UtilitySubsystem {
     // this will return true if the chunks to the North, East, South and West of the target are claimed by the same faction as the target
     public boolean isClaimedChunkSurroundedByChunksClaimedBySameFaction(ClaimedChunk target) {
         ClaimedChunk northernClaimedChunk = getClaimedChunk(getChunkByDirection(target.getChunk(), "north"));
-        ClaimedChunk easternClaimedChunk = getClaimedChunk(getChunkByDirection(target.getChunk(), "east");
-        ClaimedChunk southernClaimedChunk = getClaimedChunk(getChunkByDirection(target.getChunk(), "south");
-        ClaimedChunk westernClaimedChunk = getClaimedChunk(getChunkByDirection(target.getChunk(), "west");
+        ClaimedChunk easternClaimedChunk = getClaimedChunk(getChunkByDirection(target.getChunk(), "east"));
+        ClaimedChunk southernClaimedChunk = getClaimedChunk(getChunkByDirection(target.getChunk(), "south"));
+        ClaimedChunk westernClaimedChunk = getClaimedChunk(getChunkByDirection(target.getChunk(), "west"));
 
         if (northernClaimedChunk == null ||
             easternClaimedChunk == null ||
