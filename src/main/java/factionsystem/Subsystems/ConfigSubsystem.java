@@ -108,11 +108,17 @@ public class ConfigSubsystem {
         	System.out.println("factionMaxNumberGates not set! Setting to default!");
             main.getConfig().addDefault("factionMaxNumberGates", 5);
         }
+
         if (!main.getConfig().isInt("factionMaxGateArea")) {
         	System.out.println("factionMaxGateArea not set! Setting to default!");
             main.getConfig().addDefault("factionMaxGateArea", 64);
-        }        
-        
+        }
+
+        if (!main.getConfig().isBoolean("surroundedChunksProtected")) {
+            System.out.println("surroundedChunksProtected not set! Setting to default!");
+            main.getConfig().addDefault("surroundedChunksProtected", true);
+        }
+
         deleteOldConfigOptionsIfPresent();
 
         main.getConfig().options().copyDefaults(true);
@@ -163,7 +169,8 @@ public class ConfigSubsystem {
             else if (option.equalsIgnoreCase("mobsSpawnInFactionTerritory")
                     || option.equalsIgnoreCase("laddersPlaceableInEnemyFactionTerritory")
                     || option.equalsIgnoreCase("warsRequiredForPVP")
-                    || option.equalsIgnoreCase("powerDecreases")) {
+                    || option.equalsIgnoreCase("powerDecreases")
+                    || option.equalsIgnoreCase("surroundedChunksProtected")) {
                 main.getConfig().set(option, Boolean.parseBoolean(value));
                 player.sendMessage(ChatColor.GREEN + "Boolean set!");
                 return;
@@ -204,6 +211,7 @@ public class ConfigSubsystem {
         main.getConfig().addDefault("factionMaxNameLength", 20);
         main.getConfig().addDefault("factionMaxNumberGates", 5);
         main.getConfig().addDefault("factionMaxGateArea", 64);
+        main.getConfig().addDefault("surroundedChunksProtected", true);
         main.getConfig().options().copyDefaults(true);
         main.saveConfig();
     }
@@ -227,7 +235,8 @@ public class ConfigSubsystem {
                 + ", powerDecreaseAmount: " + main.getConfig().getInt("powerDecreaseAmount")
                 + ", factionMaxNameLength: " + main.getConfig().getInt("factionMaxNameLength")
 		        + ", factionMaxNumberGates: " + main.getConfig().getInt("factionMaxNumberGates")
-		        + ", factionMaxGateArea: " + main.getConfig().getInt("factionMaxGateArea"));
+		        + ", factionMaxGateArea: " + main.getConfig().getInt("factionMaxGateArea")
+                + ", surroundedChunksProtected: " + main.getConfig().getBoolean("surroundedChunksProtected"));
     }
 
 }

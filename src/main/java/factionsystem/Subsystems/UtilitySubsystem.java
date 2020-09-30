@@ -85,6 +85,15 @@ public class UtilitySubsystem {
                                         // is at war with target faction
                                         if (faction.isEnemy(targetFaction.getName())) {
 
+                                            if (main.getConfig().getBoolean("surroundedChunksProtected")) {
+                                                if (isClaimedChunkSurroundedByChunksClaimedBySameFaction(chunk)) {
+                                                    player.sendMessage(ChatColor.RED + "Target faction has claimed the chunks to the north, east, south and west of this chunk! It cannot be conquered!");
+                                                    return;
+                                                }
+                                            }
+
+                                            // CONQUERABLE
+
                                             // remove locks on this chunk
                                             Iterator<LockedBlock> itr = main.lockedBlocks.iterator();
                                             while (itr.hasNext()) {
@@ -1132,6 +1141,62 @@ public class UtilitySubsystem {
         }
 
         return -1;
+    }
+
+    public Chunk getChunkByDirection(Chunk origin, String direction) {
+
+        int xpos = -1;
+        int zpos = -1;
+
+        if (direction.equalsIgnoreCase("north")) {
+            xpos = origin.getX();
+            zpos = origin.getZ() + 1;
+        }
+        if (direction.equalsIgnoreCase("east")) {
+            xpos = origin.getX() + 1;
+            zpos = origin.getZ();
+        }
+        if (direction.equalsIgnoreCase("south")) {
+            xpos = origin.getX();
+            zpos = origin.getZ() - 1;
+        }
+        if (direction.equalsIgnoreCase("west")) {
+            xpos = origin.getX() - 1;
+            zpos = origin.getZ();
+        }
+
+        return origin.getWorld().getChunkAt(xpos, zpos);
+    }
+
+    public ClaimedChunk getClaimedChunk(Chunk chunk) {
+        return getClaimedChunk(chunk.getX(), chunk.getZ(), chunk.getWorld().getName(), main.claimedChunks);
+    }
+
+    // this will return true if the chunks to the North, East, South and West of the target are claimed by the same faction as the target
+    public boolean isClaimedChunkSurroundedByChunksClaimedBySameFaction(ClaimedChunk target) {
+        ClaimedChunk northernClaimedChunk = getClaimedChunk(getChunkByDirection(target.getChunk(), "north"));
+        ClaimedChunk easternClaimedChunk = getClaimedChunk(getChunkByDirection(target.getChunk(), "east"));
+        ClaimedChunk southernClaimedChunk = getClaimedChunk(getChunkByDirection(target.getChunk(), "south"));
+        ClaimedChunk westernClaimedChunk = getClaimedChunk(getChunkByDirection(target.getChunk(), "west"));
+
+        if (northernClaimedChunk == null ||
+            easternClaimedChunk == null ||
+            southernClaimedChunk == null ||
+            westernClaimedChunk == null) {
+
+            return false;
+
+        }
+
+        boolean northernChunkClaimedBySameFaction = target.getHolder().equalsIgnoreCase(northernClaimedChunk.getHolder());
+        boolean easternChunkClaimedBySameFaction = target.getHolder().equalsIgnoreCase(easternClaimedChunk.getHolder());
+        boolean southernChunkClaimedBySameFaction = target.getHolder().equalsIgnoreCase(southernClaimedChunk.getHolder());
+        boolean westernChunkClaimedBySameFaction = target.getHolder().equalsIgnoreCase(westernClaimedChunk.getHolder());
+
+        return (northernChunkClaimedBySameFaction &&
+                easternChunkClaimedBySameFaction &&
+                southernChunkClaimedBySameFaction &&
+                westernChunkClaimedBySameFaction);
     }
 
 }
