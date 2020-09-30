@@ -6,7 +6,7 @@
 
     <groupId>KingdomProgrammers</groupId>
     <artifactId>Medieval-Factions</artifactId>
-    <version>v3.6</version>
+    <version>v3.6-beta</version>
     <packaging>jar</packaging>
 
     <name>Medieval Factions</name>
