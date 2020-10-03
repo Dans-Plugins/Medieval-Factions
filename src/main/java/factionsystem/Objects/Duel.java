@@ -4,6 +4,7 @@ import static org.bukkit.Bukkit.getServer;
 
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
+import org.bukkit.OfflinePlayer;
 import org.bukkit.Particle;
 import org.bukkit.block.Block;
 import org.bukkit.boss.BarColor;
@@ -13,6 +14,10 @@ import org.bukkit.entity.Player;
 
 import factionsystem.Main;
 import net.md_5.bungee.api.ChatColor;
+import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.meta.SkullMeta;
+
+import java.util.ArrayList;
 
 public class Duel {
 
@@ -35,12 +40,12 @@ public class Duel {
 	double challengedHealth = 0;
 	Player _challenger = null;
 	double challengerHealth = 0;
-	String winner = "";
-	String loser = "";
+	Player winner = null;
+	Player loser = null;
 	int repeatingTaskId = 0;
 	
 	float nearbyPlayerRadius = 64;
-	int timeLimit = 120; 
+	double timeLimit = 120.0;
 	double timeDecrementAmount = 0;
 	
 	public boolean isChallenged(Player player)
@@ -95,35 +100,35 @@ public class Duel {
 	public void setWinner(Player player)
 	{
 		duelState = DuelState.WINNER;
-		winner = player.getName();
+		winner = player;
 		if (isChallenger(player))
 		{
-			loser = getChallenged().getName();
+			loser = getChallenged();
 		}
 		else
 		{
-			loser = getChallenger().getName();
+			loser = getChallenger();
 		}
 	}
-	public String getWinner()
+	public Player getWinner()
 	{
 		return winner;
 	}
-	
+
 	public void setLoser(Player player)
 	{		
 		duelState = DuelState.WINNER;
-		loser = player.getName();
+		loser = player;
 		if (isChallenger(player))
 		{
-			winner = getChallenged().getName();
+			winner = getChallenged();
 		}
 		else
 		{
-			winner = getChallenger().getName();
+			winner = getChallenger();
 		}
 	}
-	public String getLoser()
+	public Player getLoser()
 	{
 		return loser;
 	}
@@ -148,7 +153,7 @@ public class Duel {
 		bar = plugin.getServer().createBossBar(String.format(ChatColor.AQUA + "%s vs %s", _challenger.getName(), _challenged.getName())
 				, BarColor.WHITE, BarStyle.SEGMENTED_20);
 		bar.setProgress(1);
-		timeDecrementAmount = 1.0 / (timeLimit * 60);
+		timeDecrementAmount = 1.0 / timeLimit;
 		bar.addPlayer(_challenger);
 		bar.addPlayer(_challenged);
 		
@@ -168,13 +173,24 @@ public class Duel {
     		}
     	}, 1 * 20, 1 * 20);
 	}
+
+	private ItemStack getHead(Player player) {
+		ItemStack item = new ItemStack(Material.PLAYER_HEAD, 1);
+		SkullMeta skull = (SkullMeta) item.getItemMeta();
+		skull.setDisplayName(player.getName() + "'s head.");
+		OfflinePlayer offlinePlayer = (OfflinePlayer) getLoser();
+		skull.setOwningPlayer(offlinePlayer);
+		ArrayList<String> lore = new ArrayList<String>();
+		lore.add("Lost in a duel against " + getWinner().getPlayer().getName() + ".");
+		skull.setLore(lore);
+		item.setItemMeta(skull);
+		return item;
+	}
 	
 	public void finishDuel(boolean tied)
 	{
 		_challenger.setHealth(challengerHealth);
-		_challenger.spawnParticle(Particle.HEART, _challenger.getLocation(), 10);
 		_challenged.setHealth(challengedHealth);
-		_challenged.spawnParticle(Particle.HEART, _challenged.getLocation(), 10);
 		
 		if (!tied)
 		{
@@ -182,8 +198,16 @@ public class Duel {
 			for (Player other : plugin.getServer().getOnlinePlayers()) {
 				if (other.getLocation().distance(_challenger.getLocation()) <= nearbyPlayerRadius ||
 						other.getLocation().distance(_challenged.getLocation()) <= nearbyPlayerRadius) {
-					other.sendMessage(String.format(ChatColor.AQUA + "%s has defeated %s in a duel!", winner, loser));
+					other.sendMessage(String.format(ChatColor.AQUA + "%s has defeated %s in a duel!", winner.getName(), loser.getName()));
 				}
+			}
+			if (getWinner().getInventory().firstEmpty() > -1)
+			{
+				getWinner().getInventory().addItem(getHead(getLoser()));
+			}
+			else
+			{
+				getWinner().getWorld().dropItemNaturally(getWinner().getLocation(), getHead(getLoser()));
 			}
 		}
 		else
