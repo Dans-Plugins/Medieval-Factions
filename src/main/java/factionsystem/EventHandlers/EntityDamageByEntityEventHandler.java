@@ -23,7 +23,7 @@ public class EntityDamageByEntityEventHandler {
    	
         // this method disallows PVP between members of the same faction and between factions who are not at war
         // PVP is allowed between factionless players, players who belong to a faction and the factionless, and players whose factions are at war.
-        System.out.println("EntityDamageByIntity" + event.toString());
+        // System.out.println("EntityDamageByIntity" + event.toString());
 
         // if this was between two players melee
         if (event.getDamager() instanceof Player && event.getEntity() instanceof Player) {
