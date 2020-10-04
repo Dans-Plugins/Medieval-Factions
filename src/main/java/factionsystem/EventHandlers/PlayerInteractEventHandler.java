@@ -217,12 +217,12 @@ public class PlayerInteractEventHandler {
 	        				main.creatingGatePlayers.remove(event.getPlayer().getUniqueId());
 	        				return;
 	        			}
-	        			else if (e.equals(Gate.ErrorCodeAddCoord.NoCuboids))
-	        			{
-	        				event.getPlayer().sendMessage(ChatColor.RED + "Error placing point 1: You cannot place a cuboid.");
-	        				main.creatingGatePlayers.remove(event.getPlayer().getUniqueId());
-	        				return;
-	        			}
+                        else if (e.equals(Gate.ErrorCodeAddCoord.NoCuboids))
+                        {
+                            event.getPlayer().sendMessage(ChatColor.RED + "Error placing point 1: You cannot place a cuboid.");
+                            main.creatingGatePlayers.remove(event.getPlayer().getUniqueId());
+                            return;
+                        }
 	        			else
 	        			{
 	        				event.getPlayer().sendMessage(ChatColor.RED + "Error placing point 1. Cancelled gate placement.");
@@ -261,6 +261,12 @@ public class PlayerInteractEventHandler {
 		        				main.creatingGatePlayers.remove(event.getPlayer().getUniqueId());
 		        				return;
 		        			}
+                            else if (e.equals(Gate.ErrorCodeAddCoord.LessThanThreeHigh))
+                            {
+                                event.getPlayer().sendMessage(ChatColor.RED + "Error placing point 2: Gate must be 3 blocks or taller.");
+                                main.creatingGatePlayers.remove(event.getPlayer().getUniqueId());
+                                return;
+                            }
 		        			else
 		        			{
 		        				event.getPlayer().sendMessage(ChatColor.RED + "Error placing point 2. Cancelled gate placement.");

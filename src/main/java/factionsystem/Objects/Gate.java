@@ -65,7 +65,7 @@ public class Gate {
 	private enum GateStatus { READY, OPENING, CLOSING };
 	private GateStatus gateStatus = GateStatus.READY;
 	
-	public enum ErrorCodeAddCoord { None, WorldMismatch, MaterialMismatch, NoCuboids, Oversized } 
+	public enum ErrorCodeAddCoord { None, WorldMismatch, MaterialMismatch, NoCuboids, Oversized, LessThanThreeHigh }
 	
     public Map<String, String> save() {
         Gson gson = new GsonBuilder().setPrettyPrinting().create();;
@@ -391,6 +391,11 @@ public class Gate {
 				// No cuboids.
 				coord2 = null;
 				return ErrorCodeAddCoord.NoCuboids;
+			}
+			if (getDimY() <= 2)
+			{
+				coord2 = null;
+				return ErrorCodeAddCoord.LessThanThreeHigh;
 			}
 
 			if (isParallelToX() && getDimY() > 1)
