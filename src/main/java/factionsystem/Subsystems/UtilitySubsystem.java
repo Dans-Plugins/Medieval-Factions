@@ -1184,7 +1184,7 @@ public class UtilitySubsystem {
         for (int i = startingIndex; i < argumentString.length(); i++) {
 
             if (argumentString.charAt(i) == '\'') {
-                System.out.println("DEBUG: first index of a single quote character in '" + argumentString + "' is " + i);
+//                System.out.println("DEBUG: first index of a single quote character in '" + argumentString + "' is " + i);
                 return i;
             }
 
