@@ -33,7 +33,7 @@ public class Faction {
     private String description = "defaultDescription";
     private String liege = "none";
     private UUID owner = UUID.randomUUID();
-    private int cumulativePowerLevel = 0;
+    private int cumulativePowerLevel = 0; // I'm not sure this variable is used anymore... -Dan 11/27/2020
     private Location factionHome = null;
     private ArrayList<Gate> gates = new ArrayList<>();
 
