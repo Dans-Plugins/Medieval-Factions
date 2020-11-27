@@ -438,6 +438,10 @@ public class UtilitySubsystem {
     					power.decreasePower();
     				}
     			}
+
+    			if (main.getConfig().getBoolean("zeroPowerFactionsGetDisbanded")) {
+    			    disbandAllZeroPowerFactions();
+                }
     			
     			for (Player player : main.getServer().getOnlinePlayers())
     			{
@@ -445,6 +449,52 @@ public class UtilitySubsystem {
     			}
     		}
     	}, delay * 20, secondsUntilRepeat * 20);
+    }
+
+    public void disbandAllZeroPowerFactions() {
+        ArrayList<String> factionsToDisband = new ArrayList<>();
+        for (Faction faction : main.factions) {
+            if (faction.getCumulativePowerLevel() == 0) {
+                factionsToDisband.add(faction.getName());
+            }
+        }
+        for (String factionName : factionsToDisband) {
+            removeFaction(factionName);
+            System.out.println(factionName + " has been disbanded due to their power reaching 0.");
+        }
+    }
+
+    public void removeFaction(String name) {
+
+        Faction factionToRemove = getFaction(name, main.factions);
+
+        if (factionToRemove != null) {
+            // remove claimed land objects associated with this faction
+            removeAllClaimedChunks(factionToRemove.getName(), main.claimedChunks);
+
+            // remove locks associated with this faction
+            removeAllLocks(factionToRemove.getName(), main.lockedBlocks);
+
+            // remove records of alliances/wars associated with this faction
+            for (Faction faction : main.factions) {
+                if (faction.isAlly(factionToRemove.getName())) {
+                    faction.removeAlly(factionToRemove.getName());
+                }
+                if (faction.isEnemy(factionToRemove.getName())) {
+                    faction.removeEnemy(factionToRemove.getName());
+                }
+            }
+
+            int index = -1;
+            for (int i = 0; i < main.factions.size(); i++) {
+                if (main.factions.get(i).getName().equalsIgnoreCase(name)) {
+                    index = i;
+                }
+            }
+            if (index != -1) {
+                main.factions.remove(index);
+            }
+        }
     }
     
     public boolean isFactionExceedingTheirDemesneLimit(Faction faction) {
