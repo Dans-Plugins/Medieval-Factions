@@ -216,7 +216,7 @@ public class UtilitySubsystem {
         	Gate gate = gtr.next();
         	if (isGateInChunk(gate, chunk))
         	{
-        		System.out.println("Removing gate " + gate.getName());
+//        		System.out.println("Removing gate " + gate.getName());
         		faction.removeGate(gate);
         		gtr.remove();
         	}
@@ -390,13 +390,13 @@ public class UtilitySubsystem {
     }
 
     public void schedulePowerIncrease() {
-        System.out.println("Scheduling hourly power increase...");
+        System.out.println("Scheduling power increase...");
         int delay = main.getConfig().getInt("minutesBeforeInitialPowerIncrease") * 60; // 30 minutes
         int secondsUntilRepeat = main.getConfig().getInt("minutesBetweenPowerIncreases") * 60; // 1 hour
         Bukkit.getScheduler().scheduleSyncRepeatingTask(main, new Runnable() {
             @Override
             public void run() {
-                System.out.println("Medieval Factions is increasing the power of every player by " + main.getConfig().getInt("powerIncreaseAmount") + " if their power is below " + main.getConfig().getInt("initialMaxPowerLevel") + ". This will happen every " + main.getConfig().getInt("minutesBetweenPowerIncreases") + " minutes.");
+                System.out.println("Medieval Factions is increasing the power of every player by " + main.getConfig().getInt("powerIncreaseAmount") + ". This will happen every " + main.getConfig().getInt("minutesBetweenPowerIncreases") + " minutes.");
                 for (PlayerPowerRecord powerRecord : main.playerPowerRecords) {
                     try {
                         if (powerRecord.getPowerLevel() < powerRecord.maxPower()) {

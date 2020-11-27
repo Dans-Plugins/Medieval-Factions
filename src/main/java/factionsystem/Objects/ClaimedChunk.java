@@ -111,7 +111,7 @@ public class ClaimedChunk {
             }
 
             try {
-                System.out.println("Attempting to get chunk...");
+//                System.out.println("Attempting to get chunk...");
 
                 World chunksworld;
 
@@ -121,15 +121,15 @@ public class ClaimedChunk {
                     chunk = chunksworld.getChunkAt(x, z);
 
                     if (chunk == null) {
-                        System.out.println("Chunk is null!");
+//                        System.out.println("Chunk is null!");
                     }
                 }
                 else  {
-                    System.out.println("World is null!");
+//                    System.out.println("World is null!");
                 }
-                System.out.println("Chunk acquired.");
+//                System.out.println("Chunk acquired.");
             } catch(Exception e) {
-                System.out.println("Failed.");
+//                System.out.println("Failed.");
             }
 
 
@@ -139,7 +139,7 @@ public class ClaimedChunk {
 
             loadReader.close();
 
-            System.out.println("Claimed chunk " + x + "" + z + " successfully loaded.");
+//            System.out.println("Claimed chunk " + x + "" + z + " successfully loaded.");
 
         } catch (FileNotFoundException e) {
             System.out.println("An error occurred loading the file " + filename + ".");

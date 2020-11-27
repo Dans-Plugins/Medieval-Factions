@@ -135,7 +135,7 @@ public class PlayerPowerRecord {
      * @return True if powerlevel changed else false
      */
     public boolean increasePowerByTenPercent() {
-        System.out.println("Original Power:" + powerLevel);
+//        System.out.println("Original Power:" + powerLevel);
         int originalLevel = powerLevel;
         int newLevel = (int) (powerLevel * 1.10);
 
@@ -145,7 +145,7 @@ public class PlayerPowerRecord {
         }
 
         powerLevel = Math.min(newLevel, maxPower());
-        System.out.println("End power level:" + powerLevel);
+//        System.out.println("End power level:" + powerLevel);
         if (powerLevel == 0){
             powerLevel = 1;
         }

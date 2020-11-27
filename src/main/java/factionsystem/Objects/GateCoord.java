@@ -26,7 +26,7 @@ public class GateCoord {
 		String parts[] = data.split(",");
 		for (String part : parts)
 		{
-			System.out.println(part);
+//			System.out.println(part);
 		}
 
 		GateCoord coord = new GateCoord();

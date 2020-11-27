@@ -68,7 +68,7 @@ public class PlayerActivityRecord {
 
     public void incrementLogins() {
         logins++;
-        System.out.println("Incrementing logins for uuid " + getPlayerUUID().toString() + ": logins=" + Integer.toString(logins));
+//        System.out.println("Incrementing logins for uuid " + getPlayerUUID().toString() + ": logins=" + Integer.toString(logins));
     }
 
     public int getLogins() {

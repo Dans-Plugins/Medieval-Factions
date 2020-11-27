@@ -86,7 +86,7 @@ public class Gate {
     
 
     public static Gate load(String jsonData, Main main) {
-    	System.out.println("Gate Load");
+//    	System.out.println("Gate Load");
     	
         Gson gson = new GsonBuilder().setPrettyPrinting().create();;
 

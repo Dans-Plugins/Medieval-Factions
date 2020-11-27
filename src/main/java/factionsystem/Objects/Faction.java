@@ -375,7 +375,7 @@ public class Faction {
         liege = gson.fromJson(data.getOrDefault("liege", "none"), String.class);
         vassals = gson.fromJson(data.getOrDefault("vassals", "[]"), arrayListTypeString);
         
-        System.out.println("Loading Fation Gates...");
+//        System.out.println("Loading Faction Gates...");
         ArrayList<String> gateList = new ArrayList<String>();
         gateList = gson.fromJson(data.get("factionGates"), arrayListTypeString);
         if (gateList != null)
@@ -474,11 +474,11 @@ public class Faction {
                 double z = 0;
 
                 try {
-                    System.out.println("Attempting to load faction home location for " + name + "...");
+//                    System.out.println("Attempting to load faction home location for " + name + "...");
 
                     // load faction home details
                     world = getServer().createWorld(new WorldCreator(worldname));
-                    System.out.println("World successfully acquired.");
+//                    System.out.println("World successfully acquired.");
 
                     if (loadReader.hasNextLine()) {
 //                    System.out.println("Parsing double...");
@@ -486,32 +486,32 @@ public class Faction {
 //                    System.out.println("X position successfully acquired.");
                     }
                     else {
-                        System.out.println("X position not found in file!");
+//                        System.out.println("X position not found in file!");
                     }
                     if (loadReader.hasNextLine()) {//
-                        System.out.println("Parsing double...");
+//                        System.out.println("Parsing double...");
                         y = Double.parseDouble(loadReader.nextLine());
 //                    System.out.println("Y position successfully acquired.");
                     }
                     else {
-                        System.out.println("Y position not found in file!");
+//                        System.out.println("Y position not found in file!");
                     }
                     if (loadReader.hasNextLine()) {
-                        System.out.println("Parsing double...");
+//                        System.out.println("Parsing double...");
                         z = Double.parseDouble(loadReader.nextLine());
 //                    System.out.println("Z position successfully acquired.");
                     }
                     else {
-                        System.out.println("Z position not found in file!");
+//                        System.out.println("Z position not found in file!");
                     }
 
                     // set location
                     if (world != null && x != 0 && y != 0 && z != 0) {
                         factionHome = new Location(world, x, y, z);
-                        System.out.println("Faction home successfully set to " + x + ", " + y + ", " + z + ".");
+//                        System.out.println("Faction home successfully set to " + x + ", " + y + ", " + z + ".");
                     }
                     else {
-                        System.out.println("One of the variables the faction home location depends on wasn't loaded!");
+//                        System.out.println("One of the variables the faction home location depends on wasn't loaded!");
                     }
 
                 }
@@ -561,7 +561,7 @@ public class Faction {
     }
 
     public boolean hasLiege() {
-        return !liege.equalsIgnoreCase("none"); // TODO: fix null error
+        return !liege.equalsIgnoreCase("none");
     }
 
     public boolean isLiege(String faction) {
