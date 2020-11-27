@@ -171,7 +171,6 @@ public class ConfigSubsystem {
             {
                 main.getConfig().set(option, Integer.parseInt(value));
                 player.sendMessage(ChatColor.GREEN + "Integer set!");
-                return;
             }
             else if (option.equalsIgnoreCase("mobsSpawnInFactionTerritory")
                     || option.equalsIgnoreCase("laddersPlaceableInEnemyFactionTerritory")
@@ -181,7 +180,6 @@ public class ConfigSubsystem {
                     || option.equalsIgnoreCase("zeroPowerFactionsGetDisbanded")) {
                 main.getConfig().set(option, Boolean.parseBoolean(value));
                 player.sendMessage(ChatColor.GREEN + "Boolean set!");
-                return;
             }
             else if (option.equalsIgnoreCase("factionOwnerMultiplier")
                     || option.equalsIgnoreCase("factionOfficerMultiplier")){
@@ -197,7 +195,7 @@ public class ConfigSubsystem {
             main.saveConfig();
         }
         else {
-            player.sendMessage("'" + option + "' wasn't found.");
+            player.sendMessage(ChatColor.RED + "'" + option + "' wasn't found.");
         }
 
     }
