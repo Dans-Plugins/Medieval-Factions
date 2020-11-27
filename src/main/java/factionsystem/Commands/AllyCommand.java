@@ -44,52 +44,52 @@ public class AllyCommand {
                                         if (!playersFaction.isEnemy(targetFactionName)) {
 
                                             playersFaction.requestAlly(targetFactionName);
-                                            player.sendMessage(ChatColor.GREEN + "Attempted to ally with " + targetFactionName);
+                                            player.sendMessage(ChatColor.GREEN + "▎Попытка вступить в союз с " + targetFactionName);
 
-                                            sendAllPlayersInFactionMessage(targetFaction,ChatColor.GREEN + "" + playersFaction.getName() + " has attempted to ally with " + targetFactionName + "!");
+                                            sendAllPlayersInFactionMessage(targetFaction,ChatColor.GREEN + "" + playersFaction.getName() + " пытался заключить союз с " + targetFactionName + "!");
 
                                             if (playersFaction.isRequestedAlly(targetFactionName) && targetFaction.isRequestedAlly(playersFaction.getName())) {
                                                 // ally factions
                                                 playersFaction.addAlly(targetFactionName);
                                                 getFaction(targetFactionName, main.factions).addAlly(playersFaction.getName());
-                                                player.sendMessage(ChatColor.GREEN + "Your faction is now allied with " + targetFactionName + "!");
-                                                sendAllPlayersInFactionMessage(targetFaction, ChatColor.GREEN + "Your faction is now allied with " + playersFaction.getName() + "!");
+                                                player.sendMessage(ChatColor.GREEN + "▎Ваша фракция теперь в союзе с" + targetFactionName + "!");
+                                                sendAllPlayersInFactionMessage(targetFaction, ChatColor.GREEN + "▎Ваша фракция теперь в союзе с " + playersFaction.getName() + "!");
                                             }
                                         }
                                         else {
-                                            player.sendMessage(ChatColor.RED + "That faction is currently your enemy! Make peace before trying to ally with them.");
+                                            player.sendMessage(ChatColor.RED + "▎Эта фракция сейчас ваш враг! Помиритесь, прежде чем пытаться объединиться с ними.");
                                         }
 
                                     }
                                     else {
-                                        player.sendMessage(ChatColor.RED + "You've already requested an alliance with this faction!");
+                                        player.sendMessage(ChatColor.RED + "▎Вы уже запросили союз с этой фракцией!");
                                     }
 
                                 }
                                 else {
-                                    player.sendMessage(ChatColor.RED + "That faction is already your ally!");
+                                    player.sendMessage(ChatColor.RED + "▎Эта фракция уже является вашим союзником!");
                                 }
                             }
                             else {
-                                player.sendMessage(ChatColor.RED + "That faction wasn't found!");
+                                player.sendMessage(ChatColor.RED + "▎Эта фракция не найдена!");
                             }
                         }
                         else {
-                            player.sendMessage(ChatColor.RED + "You can't ally with your own faction?");
+                            player.sendMessage(ChatColor.RED + "▎Вы не можете вступить в союз с собственной фракцией?");
                         }
 
                     }
                     else {
-                        player.sendMessage(ChatColor.RED + "Usage: /mf ally (faction-name)");
+                        player.sendMessage(ChatColor.RED + "▎Использование: /mf ally (имя фракции)");
                     }
 
                 }
                 else {
-                    player.sendMessage(ChatColor.RED + "You need to be the owner of a faction or an officer of a faction to use this command.");
+                    player.sendMessage(ChatColor.RED + "▎Вы должны быть владельцем фракции или офицером фракции, чтобы использовать эту команду.");
                 }
             }
             else {
-                player.sendMessage(ChatColor.RED + "You need to be in a faction to use this command.");
+                player.sendMessage(ChatColor.RED + "▎Чтобы использовать эту команду, вы должны быть во фракции.");
             }
         }
     }
