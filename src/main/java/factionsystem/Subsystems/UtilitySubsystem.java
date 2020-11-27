@@ -459,8 +459,9 @@ public class UtilitySubsystem {
             }
         }
         for (String factionName : factionsToDisband) {
+            sendAllPlayersInFactionMessage(getFaction(factionName, main.factions), ChatColor.RED + "Your faction has been disbanded due to its cumulative power reaching zero.");
             removeFaction(factionName);
-            System.out.println(factionName + " has been disbanded due to their power reaching 0.");
+            System.out.println(factionName + " has been disbanded due to its cumulative power reaching zero.");
         }
     }
 
