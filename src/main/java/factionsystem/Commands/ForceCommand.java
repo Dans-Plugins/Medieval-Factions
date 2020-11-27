@@ -2,6 +2,7 @@ package factionsystem.Commands;
 
 import factionsystem.Main;
 import factionsystem.Objects.Faction;
+import factionsystem.Objects.PlayerPowerRecord;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.OfflinePlayer;
@@ -44,6 +45,9 @@ public class ForceCommand {
             if (args[1].equalsIgnoreCase("kick")) {
                 return forceKick(sender, args);
             }
+            if (args[1].equalsIgnoreCase("power")) {
+                return forcePower(sender, args);
+            }
         }
         // show usages
         sender.sendMessage(ChatColor.RED + "Sub-commands:");
@@ -53,6 +57,7 @@ public class ForceCommand {
         sender.sendMessage(ChatColor.RED + "/mf force demote (player)");
         sender.sendMessage(ChatColor.RED + "/mf force join 'player' 'faction2'");
         sender.sendMessage(ChatColor.RED + "/mf force kick (player)");
+        sender.sendMessage(ChatColor.RED + "/mf force power 'player' 'number'");
         return false;
     }
 
@@ -260,6 +265,45 @@ public class ForceCommand {
         }
         else {
             sender.sendMessage(ChatColor.RED + "Sorry! You need the following permission to use this command: 'mf.force.kick'");
+            return false;
+        }
+    }
+
+    public boolean forcePower(CommandSender sender, String[] args) {
+        if (sender.hasPermission("mf.force.power") || sender.hasPermission("mf.force.*") || sender.hasPermission("mf.admin")) {
+
+            if (args.length >= 4) {
+
+                // get arguments designated by single quotes
+                ArrayList<String> singleQuoteArgs = main.utilities.getArgumentsInsideSingleQuotes(args);
+
+                if (singleQuoteArgs.size() < 2) {
+                    sender.sendMessage(ChatColor.RED + "Player and desired power must be designated inside single quotes!");
+                    return false;
+                }
+
+                String player = singleQuoteArgs.get(0);
+                int desiredPower = -1;
+
+                try {
+                    desiredPower = Integer.parseInt(singleQuoteArgs.get(1));
+                } catch (Exception e) {
+                    sender.sendMessage(ChatColor.RED + "Desired power must be a number!");
+                    return false;
+                }
+
+                PlayerPowerRecord record = getPlayersPowerRecord(findUUIDBasedOnPlayerName(player), main.playerPowerRecords);
+
+                record.setPowerLevel(desiredPower);
+                sender.sendMessage(ChatColor.GREEN + "The power level of '" + player + "' has been set to " + desiredPower);
+                return true;
+            }
+
+            // send usage
+            sender.sendMessage(ChatColor.RED + "Usage: /mf force power 'player' 'number'");
+            return false;
+        } else {
+            sender.sendMessage(ChatColor.RED + "Sorry! You need the following permission to use this command: 'mf.force.power'");
             return false;
         }
     }
