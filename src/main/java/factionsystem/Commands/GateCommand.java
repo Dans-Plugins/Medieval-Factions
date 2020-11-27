@@ -90,7 +90,7 @@ public class GateCommand {
 							}
 							else
 							{
-								player.sendMessage(ChatColor.RED + "Your fation has no gates defined.");
+								player.sendMessage(ChatColor.RED + "Your faction has no gates defined.");
 								return;
 							}
 						}
