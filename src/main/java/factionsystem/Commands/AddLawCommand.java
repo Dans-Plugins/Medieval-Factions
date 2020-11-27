@@ -31,20 +31,20 @@ public class AddLawCommand {
 
                         playersFaction.addLaw(newLaw);
 
-                        player.sendMessage(ChatColor.GREEN + "Law added!");
+                        player.sendMessage(ChatColor.GREEN + "▎Закон добавлен!");
                     }
                     else {
-                        player.sendMessage(ChatColor.RED + "Usage: /mf addlaw (new law)");
+                        player.sendMessage(ChatColor.YELLOW+ "▎Использование: /mf addlaw (новый закон");
                     }
 
                 }
                 else {
-                    player.sendMessage(ChatColor.RED + "You need to be the owner of your faction to use this command!");
+                    player.sendMessage(ChatColor.RED + "▎Ты должен быть лидером фракции чтобы сделать это!");
                 }
 
             }
             else {
-                player.sendMessage(ChatColor.RED + "You need to be in a faction to use this command!");
+                player.sendMessage(ChatColor.RED + "▎Ты должен состоять в фракции чтобы сделать это!");
             }
         }
         else {
