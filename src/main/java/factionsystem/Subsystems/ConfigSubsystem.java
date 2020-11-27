@@ -196,6 +196,9 @@ public class ConfigSubsystem {
             // save
             main.saveConfig();
         }
+        else {
+            player.sendMessage("'" + option + "' wasn't found.");
+        }
 
     }
 
