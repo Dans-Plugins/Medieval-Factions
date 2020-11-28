@@ -65,7 +65,7 @@ public class BlockBreakEventHandler {
                     // if block is in a gate
                     for (Gate gate : faction.getGates())
                     {
-                    	System.out.println("Gate " + gate.getName() + "?");
+//                    	System.out.println("Gate " + gate.getName() + "?");
                     	if (gate.hasBlock(event.getBlock()))
                     	{
                     		event.setCancelled(true);
