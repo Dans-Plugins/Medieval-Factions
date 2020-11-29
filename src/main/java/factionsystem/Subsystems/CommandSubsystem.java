@@ -170,15 +170,9 @@ public class CommandSubsystem {
 
                 // leave commmand
                 if (args[0].equalsIgnoreCase("leave")) {
-                    if (sender.hasPermission("mf.leave") || sender.hasPermission("mf.default")) {
-                        LeaveCommand command = new LeaveCommand(main);
-                        command.leaveFaction(sender);
-                        return true;
-                    }
-                    else {
-                        sender.sendMessage(ChatColor.RED + "Sorry! You need the following permission to use this command: 'mf.leave'");
-                        return false;
-                    }
+                    LeaveCommand command = new LeaveCommand(main);
+                    command.leaveFaction(sender);
+                    return true;
                 }
 
                 // transfer command
