@@ -467,16 +467,9 @@ public class CommandSubsystem {
 
                 // who command
                 if (args[0].equalsIgnoreCase("who")) {
-                    if (sender.hasPermission("mf.who") || sender.hasPermission("mf.default")) {
-                        WhoCommand command = new WhoCommand(main);
-                        command.sendInformation(sender, args);
-                        return true;
-                    }
-                    else {
-                        sender.sendMessage(ChatColor.RED + "Sorry! You need the following permission to use this command: 'mf.who'");
-                        return false;
-                    }
-
+                    WhoCommand command = new WhoCommand(main);
+                    command.sendInformation(sender, args);
+                    return true;
                 }
 
                 // ally command
