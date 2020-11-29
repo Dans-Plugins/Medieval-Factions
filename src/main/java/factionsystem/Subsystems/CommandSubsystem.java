@@ -144,15 +144,9 @@ public class CommandSubsystem {
 
                 // join command
                 if (args[0].equalsIgnoreCase("join")) {
-                    if (sender.hasPermission("mf.join") || sender.hasPermission("mf.default")) {
-                        JoinCommand command = new JoinCommand(main);
-                        command.joinFaction(sender, args);
-                        return true;
-                    }
-                    else {
-                        sender.sendMessage(ChatColor.RED + "Sorry! You need the following permission to use this command: 'mf.join'");
-                        return false;
-                    }
+                    JoinCommand command = new JoinCommand(main);
+                    command.joinFaction(sender, args);
+                    return true;
                 }
 
                 // kick command
