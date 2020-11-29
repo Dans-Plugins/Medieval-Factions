@@ -428,15 +428,9 @@ public class CommandSubsystem {
 
                 // sethome command
                 if (args[0].equalsIgnoreCase("sethome")|| args[0].equalsIgnoreCase("sh")) {
-                    if (sender.hasPermission("mf.sethome") || sender.hasPermission("mf.default")) {
-                        SetHomeCommand command = new SetHomeCommand(main);
-                        command.setHome(sender);
-                        return true;
-                    }
-                    else {
-                        sender.sendMessage(ChatColor.RED + "Sorry! You need the following permission to use this command: 'mf.sethome'");
-                        return false;
-                    }
+                    SetHomeCommand command = new SetHomeCommand(main);
+                    command.setHome(sender);
+                    return true;
                 }
 
                 // home command
