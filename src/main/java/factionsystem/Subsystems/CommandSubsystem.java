@@ -183,15 +183,9 @@ public class CommandSubsystem {
 
                 // transfer command
                 if (args[0].equalsIgnoreCase("transfer")) {
-                    if (sender.hasPermission("mf.transfer") || sender.hasPermission("mf.default")) {
-                        TransferCommand command = new TransferCommand(main);
-                        command.transferOwnership(sender, args);
-                        return true;
-                    }
-                    else {
-                        sender.sendMessage(ChatColor.RED + "Sorry! You need the following permission to use this command: 'mf.transfer'");
-                        return false;
-                    }
+                    TransferCommand command = new TransferCommand(main);
+                    command.transferOwnership(sender, args);
+                    return true;
                 }
 
                 // declare war command
