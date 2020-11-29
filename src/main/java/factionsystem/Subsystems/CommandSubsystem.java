@@ -500,8 +500,6 @@ public class CommandSubsystem {
                     return true;
                 }
 
-                // TODO: shift responsibility of perm checking from Main to the Command class of each command, like below
-
                 // rename command
                 if (args[0].equalsIgnoreCase("rename")) {
                     RenameCommand command = new RenameCommand(main);
