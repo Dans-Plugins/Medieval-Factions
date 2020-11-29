@@ -17,26 +17,32 @@ public class MembersCommand extends Command {
     public void showMembers(CommandSender sender, String[] args) {
         if (sender instanceof Player) {
             Player player = (Player) sender;
-            if (args.length == 1) {
-                for (Faction faction : main.factions) {
-                    if (faction.isMember(player.getUniqueId())) {
-                        sendFactionMembers(player, faction);
-                        return;
+
+            if (sender.hasPermission("mf.members") || sender.hasPermission("mf.default")) {
+                if (args.length == 1) {
+                    for (Faction faction : main.factions) {
+                        if (faction.isMember(player.getUniqueId())) {
+                            sendFactionMembers(player, faction);
+                            return;
+                        }
                     }
+                    player.sendMessage(ChatColor.RED + "You're not in a faction!");
                 }
-                player.sendMessage(ChatColor.RED + "You're not in a faction!");
+                else {
+                    // creating name from arguments 1 to the last one
+                    String name = createStringFromFirstArgOnwards(args);
+
+                    for (Faction faction : main.factions) {
+                        if (faction.getName().equalsIgnoreCase(name)) {
+                            sendFactionMembers(player, faction);
+                            return;
+                        }
+                    }
+                    player.sendMessage(ChatColor.RED + "That faction name isn't recognized!");
+                }
             }
             else {
-                // creating name from arguments 1 to the last one
-                String name = createStringFromFirstArgOnwards(args);
-
-                for (Faction faction : main.factions) {
-                    if (faction.getName().equalsIgnoreCase(name)) {
-                        sendFactionMembers(player, faction);
-                        return;
-                    }
-                }
-                player.sendMessage(ChatColor.RED + "That faction name isn't recognized!");
+                sender.sendMessage(ChatColor.RED + "Sorry! You need the following permission to use this command: 'mf.members'");
             }
         }
     }
