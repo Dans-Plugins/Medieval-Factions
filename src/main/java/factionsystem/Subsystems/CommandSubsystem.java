@@ -196,16 +196,9 @@ public class CommandSubsystem {
 
                 // declare war command
                 if (args[0].equalsIgnoreCase("declarewar") || args[0].equalsIgnoreCase("dw")) {
-                    if (sender.hasPermission("mf.declarewar") || sender.hasPermission("mf.default")) {
-                        DeclareWarCommand command = new DeclareWarCommand(main);
-                        command.declareWar(sender, args);
-                        return true;
-                    }
-                    else {
-                        sender.sendMessage(ChatColor.RED + "Sorry! You need the following permission to use this command: 'mf.declarewar'");
-                        return false;
-                    }
-
+                    DeclareWarCommand command = new DeclareWarCommand(main);
+                    command.declareWar(sender, args);
+                    return true;
                 }
 
                 // make peace command
