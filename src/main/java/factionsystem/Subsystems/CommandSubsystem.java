@@ -441,15 +441,9 @@ public class CommandSubsystem {
 
                 // home command
                 if (args[0].equalsIgnoreCase("home")) {
-                    if (sender.hasPermission("mf.home") || sender.hasPermission("mf.default")) {
-                        HomeCommand command = new HomeCommand(main);
-                        command.teleportPlayer(sender);
-                        return true;
-                    }
-                    else {
-                        sender.sendMessage(ChatColor.RED + "Sorry! You need the following permission to use this command: 'mf.home'");
-                        return false;
-                    }
+                    HomeCommand command = new HomeCommand(main);
+                    command.teleportPlayer(sender);
+                    return true;
                 }
 
                 // version command
