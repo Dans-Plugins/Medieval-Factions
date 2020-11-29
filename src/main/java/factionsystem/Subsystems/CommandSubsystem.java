@@ -38,189 +38,103 @@ public class CommandSubsystem {
 
                 // help command
                 if (args[0].equalsIgnoreCase("help")) {
-                    if (sender.hasPermission("mf.help") || sender.hasPermission("mf.default")) {
-                        HelpCommand command = new HelpCommand(main);
-                        command.sendHelpMessage(sender, args);
-                        return true;
-                    }
-                    else {
-                        sender.sendMessage(ChatColor.RED + "Sorry! You need the following permission to use this command: 'mf.help'");
-                        return false;
-                    }
+                    HelpCommand command = new HelpCommand(main);
+                    command.sendHelpMessage(sender, args);
+                    return true;
                 }
 
                 // create command
                 if (args[0].equalsIgnoreCase("create") ) {
-                    if (sender.hasPermission("mf.create")|| sender.hasPermission("mf.default")) {
-                        CreateCommand command = new CreateCommand(main);
-                        command.createFaction(sender, args);
-                        return true;
-                    }
-                    else {
-                        sender.sendMessage(ChatColor.RED + "Sorry! You need the following permission to use this command: 'mf.create'");
-                        return false;
-                    }
+                    CreateCommand command = new CreateCommand(main);
+                    command.createFaction(sender, args);
+                    return true;
                 }
 
                 // list command
                 if  (args[0].equalsIgnoreCase("list")) {
-                    if (sender.hasPermission("mf.list") || sender.hasPermission("mf.default")) {
-                        ListCommand command = new ListCommand(main);
-                        command.listFactions(sender);
-                        return true;
-                    }
-                    else {
-                        sender.sendMessage(ChatColor.RED + "Sorry! You need the following permission to use this command: 'mf.list'");
-                        return false;
-                    }
+                    ListCommand command = new ListCommand(main);
+                    command.listFactions(sender);
+                    return true;
                 }
 
                 // disband command
                 if (args[0].equalsIgnoreCase("disband")) {
-                    if (sender.hasPermission("mf.disband") || sender.hasPermission("mf.default")) {
-                        DisbandCommand command = new DisbandCommand(main);
-                        command.deleteFaction(sender, args);
-                        return true;
-                    }
-                    else {
-                        sender.sendMessage(ChatColor.RED + "Sorry! You need the following permission to use this command: 'mf.disband'");
-                        return false;
-                    }
+                    DisbandCommand command = new DisbandCommand(main);
+                    command.deleteFaction(sender, args);
+                    return true;
                 }
 
                 // members command
                 if (args[0].equalsIgnoreCase("members")) {
-                    if (sender.hasPermission("mf.members") || sender.hasPermission("mf.default")) {
-                        MembersCommand command = new MembersCommand(main);
-                        command.showMembers(sender, args);
-                        return true;
-                    }
-                    else {
-                        sender.sendMessage(ChatColor.RED + "Sorry! You need the following permission to use this command: 'mf.members'");
-                        return false;
-                    }
+                    MembersCommand command = new MembersCommand(main);
+                    command.showMembers(sender, args);
+                    return true;
                 }
 
                 // info command
                 if (args[0].equalsIgnoreCase("info")) {
-                    if (sender.hasPermission("mf.info") || sender.hasPermission("mf.default")) {
-                        InfoCommand command = new InfoCommand(main);
-                        command.showInfo(sender, args);
-                        return true;
-                    }
-                    else {
-                        sender.sendMessage(ChatColor.RED + "Sorry! You need the following permission to use this command: 'mf.info'");
-                        return false;
-                    }
-
+                    InfoCommand command = new InfoCommand(main);
+                    command.showInfo(sender, args);
+                    return true;
                 }
 
                 // desc command
                 if (args[0].equalsIgnoreCase("desc")) {
-                    if (sender.hasPermission("mf.desc") || sender.hasPermission("mf.default")) {
-                        DescCommand command = new DescCommand(main);
-                        command.setDescription(sender, args);
-                        return true;
-                    }
-                    else {
-                        sender.sendMessage(ChatColor.RED + "Sorry! You need the following permission to use this command: 'mf.desc'");
-                        return false;
-                    }
-
+                    DescCommand command = new DescCommand(main);
+                    command.setDescription(sender, args);
+                    return true;
                 }
 
                 // invite command
                 if (args[0].equalsIgnoreCase("invite")) {
-                    if (sender.hasPermission("mf.invite") || sender.hasPermission("mf.default")) {
-                        InviteCommand command = new InviteCommand(main);
-                        command.invitePlayer(sender, args);
-                        return true;
-                    }
-                    else {
-                        sender.sendMessage(ChatColor.RED + "Sorry! You need the following permission to use this command: 'mf.invite'");
-                        return false;
-                    }
+                    InviteCommand command = new InviteCommand(main);
+                    command.invitePlayer(sender, args);
+                    return true;
                 }
 
                 // join command
                 if (args[0].equalsIgnoreCase("join")) {
-                    if (sender.hasPermission("mf.join") || sender.hasPermission("mf.default")) {
-                        JoinCommand command = new JoinCommand(main);
-                        command.joinFaction(sender, args);
-                        return true;
-                    }
-                    else {
-                        sender.sendMessage(ChatColor.RED + "Sorry! You need the following permission to use this command: 'mf.join'");
-                        return false;
-                    }
+                    JoinCommand command = new JoinCommand(main);
+                    command.joinFaction(sender, args);
+                    return true;
                 }
 
                 // kick command
                 if (args[0].equalsIgnoreCase("kick")) {
-                    if (sender.hasPermission("mf.kick") || sender.hasPermission("mf.default")) {
-                        KickCommand command = new KickCommand(main);
-                        command.kickPlayer(sender, args);
-                        return true;
-                    }
-                    else {
-                        sender.sendMessage(ChatColor.RED + "Sorry! You need the following permission to use this command: 'mf.kick'");
-                        return false;
-                    }
+                    KickCommand command = new KickCommand(main);
+                    command.kickPlayer(sender, args);
+                    return true;
                 }
 
                 // leave commmand
                 if (args[0].equalsIgnoreCase("leave")) {
-                    if (sender.hasPermission("mf.leave") || sender.hasPermission("mf.default")) {
-                        LeaveCommand command = new LeaveCommand(main);
-                        command.leaveFaction(sender);
-                        return true;
-                    }
-                    else {
-                        sender.sendMessage(ChatColor.RED + "Sorry! You need the following permission to use this command: 'mf.leave'");
-                        return false;
-                    }
+                    LeaveCommand command = new LeaveCommand(main);
+                    command.leaveFaction(sender);
+                    return true;
                 }
 
                 // transfer command
                 if (args[0].equalsIgnoreCase("transfer")) {
-                    if (sender.hasPermission("mf.transfer") || sender.hasPermission("mf.default")) {
-                        TransferCommand command = new TransferCommand(main);
-                        command.transferOwnership(sender, args);
-                        return true;
-                    }
-                    else {
-                        sender.sendMessage(ChatColor.RED + "Sorry! You need the following permission to use this command: 'mf.transfer'");
-                        return false;
-                    }
+                    TransferCommand command = new TransferCommand(main);
+                    command.transferOwnership(sender, args);
+                    return true;
                 }
 
                 // declare war command
                 if (args[0].equalsIgnoreCase("declarewar") || args[0].equalsIgnoreCase("dw")) {
-                    if (sender.hasPermission("mf.declarewar") || sender.hasPermission("mf.default")) {
-                        DeclareWarCommand command = new DeclareWarCommand(main);
-                        command.declareWar(sender, args);
-                        return true;
-                    }
-                    else {
-                        sender.sendMessage(ChatColor.RED + "Sorry! You need the following permission to use this command: 'mf.declarewar'");
-                        return false;
-                    }
-
+                    DeclareWarCommand command = new DeclareWarCommand(main);
+                    command.declareWar(sender, args);
+                    return true;
                 }
 
                 // make peace command
                 if (args[0].equalsIgnoreCase("makepeace") || args[0].equalsIgnoreCase("mp")) {
-                    if (sender.hasPermission("mf.makepeace") || sender.hasPermission("mf.default")) {
-                        MakePeaceCommand command = new MakePeaceCommand(main);
-                        command.makePeace(sender, args);
-                        return true;
-                    }
-                    else {
-                        sender.sendMessage(ChatColor.RED + "Sorry! You need the following permission to use this command: 'mf.makepeace'");
-                        return false;
-                    }
+                    MakePeaceCommand command = new MakePeaceCommand(main);
+                    command.makePeace(sender, args);
+                    return true;
                 }
 
+                // TODO: move into command class
                 // claim command
                 if (args[0].equalsIgnoreCase("claim")) {
                     if (sender.hasPermission("mf.claim") || sender.hasPermission("mf.default")) {
@@ -251,6 +165,7 @@ public class CommandSubsystem {
                     }
                 }
 
+                // TODO: move into command class
                 // unclaim command
                 if (args[0].equalsIgnoreCase("unclaim")) {
                     if (sender.hasPermission("mf.unclaim") || sender.hasPermission("mf.default")) {
@@ -273,6 +188,7 @@ public class CommandSubsystem {
                     }
                 }
 
+                // TODO: move into command class
                 // unclaimall command
                 if (args[0].equalsIgnoreCase("unclaimall") || args[0].equalsIgnoreCase("ua")) {
                     if (sender instanceof Player) {
@@ -335,6 +251,7 @@ public class CommandSubsystem {
                     }
                 }
 
+                // TODO: move into command class
                 // checkclaim command
                 if (args[0].equalsIgnoreCase("checkclaim")|| args[0].equalsIgnoreCase("cc")) {
                     if (sender.hasPermission("mf.unclaimall") || sender.hasPermission("mf.default")) {
@@ -357,6 +274,7 @@ public class CommandSubsystem {
                     }
                 }
 
+                // TODO: move into command class
                 // autoclaim command
                 if (args[0].equalsIgnoreCase("autoclaim")|| args[0].equalsIgnoreCase("ac")) {
                     if (sender.hasPermission("mf.autoclaim") || sender.hasPermission("mf.default")) {
@@ -394,30 +312,17 @@ public class CommandSubsystem {
 
                 // promote command
                 if (args[0].equalsIgnoreCase("promote")) {
-                    if (sender.hasPermission("mf.promote") || sender.hasPermission("mf.default")) {
-                        PromoteCommand command = new PromoteCommand(main);
-                        command.promotePlayer(sender, args);
-                        return true;
-                    }
-                    else {
-                        sender.sendMessage(ChatColor.RED + "Sorry! You need the following permission to use this command: 'mf.promote'");
-                        return false;
-                    }
+                    PromoteCommand command = new PromoteCommand(main);
+                    command.promotePlayer(sender, args);
+                    return true;
                 }
 
                 // demote command
                 if (args[0].equalsIgnoreCase("demote")) {
-                    if (sender.hasPermission("mf.demote") || sender.hasPermission("mf.default")) {
-                        DemoteCommand command = new DemoteCommand(main);
-                        command.demotePlayer(sender, args);
-                        return true;
-                    }
-                    else {
-                        sender.sendMessage(ChatColor.RED + "Sorry! You need the following permission to use this command: 'mf.demote'");
-                        return false;
-                    }
+                    DemoteCommand command = new DemoteCommand(main);
+                    command.demotePlayer(sender, args);
+                    return true;
                 }
-
 
                 // power command
                 if  (args[0].equalsIgnoreCase("power")) {
@@ -428,30 +333,19 @@ public class CommandSubsystem {
 
                 // sethome command
                 if (args[0].equalsIgnoreCase("sethome")|| args[0].equalsIgnoreCase("sh")) {
-                    if (sender.hasPermission("mf.sethome") || sender.hasPermission("mf.default")) {
-                        SetHomeCommand command = new SetHomeCommand(main);
-                        command.setHome(sender);
-                        return true;
-                    }
-                    else {
-                        sender.sendMessage(ChatColor.RED + "Sorry! You need the following permission to use this command: 'mf.sethome'");
-                        return false;
-                    }
+                    SetHomeCommand command = new SetHomeCommand(main);
+                    command.setHome(sender);
+                    return true;
                 }
 
                 // home command
                 if (args[0].equalsIgnoreCase("home")) {
-                    if (sender.hasPermission("mf.home") || sender.hasPermission("mf.default")) {
-                        HomeCommand command = new HomeCommand(main);
-                        command.teleportPlayer(sender);
-                        return true;
-                    }
-                    else {
-                        sender.sendMessage(ChatColor.RED + "Sorry! You need the following permission to use this command: 'mf.home'");
-                        return false;
-                    }
+                    HomeCommand command = new HomeCommand(main);
+                    command.teleportPlayer(sender);
+                    return true;
                 }
 
+                // TODO: move into command class
                 // version command
                 if (args[0].equalsIgnoreCase("version")) {
                     if (sender.hasPermission("mf.version") || sender.hasPermission("mf.default")) {
@@ -467,30 +361,16 @@ public class CommandSubsystem {
 
                 // who command
                 if (args[0].equalsIgnoreCase("who")) {
-                    if (sender.hasPermission("mf.who") || sender.hasPermission("mf.default")) {
-                        WhoCommand command = new WhoCommand(main);
-                        command.sendInformation(sender, args);
-                        return true;
-                    }
-                    else {
-                        sender.sendMessage(ChatColor.RED + "Sorry! You need the following permission to use this command: 'mf.who'");
-                        return false;
-                    }
-
+                    WhoCommand command = new WhoCommand(main);
+                    command.sendInformation(sender, args);
+                    return true;
                 }
 
                 // ally command
                 if (args[0].equalsIgnoreCase("ally")) {
-                    if (sender.hasPermission("mf.ally") || sender.hasPermission("mf.default")) {
-                        AllyCommand command = new AllyCommand(main);
-                        command.requestAlliance(sender, args);
-                        return true;
-                    }
-                    else {
-                        sender.sendMessage(ChatColor.RED + "Sorry! You need the following permission to use this command: 'mf.ally'");
-                        return false;
-                    }
-
+                    AllyCommand command = new AllyCommand(main);
+                    command.requestAlliance(sender, args);
+                    return true;
                 }
 
                 // breakalliance command

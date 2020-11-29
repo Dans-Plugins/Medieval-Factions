@@ -21,38 +21,43 @@ public class DemoteCommand extends Command {
         if (sender instanceof Player) {
             Player player = (Player) sender;
 
-            if (isInFaction(player.getUniqueId(), main.factions)) {
-                if (args.length > 1) {
-                    for (Faction faction : main.factions) {
-                        UUID officerUUID = findUUIDBasedOnPlayerName(args[1]);
-                        if (officerUUID != null && faction.isOfficer(officerUUID)) {
-                            if (faction.isOwner(player.getUniqueId())) {
-                                if (faction.removeOfficer(officerUUID)) {
+            if (sender.hasPermission("mf.demote") || sender.hasPermission("mf.default")) {
+                if (isInFaction(player.getUniqueId(), main.factions)) {
+                    if (args.length > 1) {
+                        for (Faction faction : main.factions) {
+                            UUID officerUUID = findUUIDBasedOnPlayerName(args[1]);
+                            if (officerUUID != null && faction.isOfficer(officerUUID)) {
+                                if (faction.isOwner(player.getUniqueId())) {
+                                    if (faction.removeOfficer(officerUUID)) {
 
-                                    player.sendMessage(ChatColor.GREEN + "Player demoted!");
+                                        player.sendMessage(ChatColor.GREEN + "Player demoted!");
 
-                                    try {
-                                        Player target = getServer().getPlayer(officerUUID);
-                                        target.sendMessage(ChatColor.RED + "You have been demoted to member status in your faction.");
+                                        try {
+                                            Player target = getServer().getPlayer(officerUUID);
+                                            target.sendMessage(ChatColor.RED + "You have been demoted to member status in your faction.");
+                                        }
+                                        catch(Exception ignored) {
+
+                                        }
                                     }
-                                    catch(Exception ignored) {
-
+                                    else {
+                                        player.sendMessage(ChatColor.RED + "That player isn't an officer in your faction!");
                                     }
+                                    return;
                                 }
-                                else {
-                                    player.sendMessage(ChatColor.RED + "That player isn't an officer in your faction!");
-                                }
-                                return;
                             }
                         }
                     }
+                    else {
+                        player.sendMessage(ChatColor.RED + "Usage: /mf demote (player-name)");
+                    }
                 }
                 else {
-                    player.sendMessage(ChatColor.RED + "Usage: /mf demote (player-name)");
+                    player.sendMessage(ChatColor.RED + "You need to be in a faction to use this command.");
                 }
             }
             else {
-                player.sendMessage(ChatColor.RED + "You need to be in a faction to use this command.");
+                sender.sendMessage(ChatColor.RED + "Sorry! You need the following permission to use this command: 'mf.demote'");
             }
         }
     }

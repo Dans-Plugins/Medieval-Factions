@@ -18,51 +18,57 @@ public class DisbandCommand extends Command {
         if (sender instanceof Player) {
             Player player = (Player) sender;
 
-            if (args.length > 1) {
-                if (player.hasPermission("mf.disband.others") || player.hasPermission("mf.admin")) {
+            if (sender.hasPermission("mf.disband") || sender.hasPermission("mf.default")) {
+                if (args.length > 1) {
+                    if (player.hasPermission("mf.disband.others") || player.hasPermission("mf.admin")) {
 
-                    String factionName = createStringFromFirstArgOnwards(args);
+                        String factionName = createStringFromFirstArgOnwards(args);
 
-                    for (int i = 0; i < main.factions.size(); i++) {
+                        for (int i = 0; i < main.factions.size(); i++) {
 
-                        if (main.factions.get(i).getName().equalsIgnoreCase(factionName)) {
+                            if (main.factions.get(i).getName().equalsIgnoreCase(factionName)) {
 
-                            removeFaction(i);
-                            player.sendMessage(ChatColor.GREEN + factionName + " has been successfully disbanded.");
-                            return true;
+                                removeFaction(i);
+                                player.sendMessage(ChatColor.GREEN + factionName + " has been successfully disbanded.");
+                                return true;
+
+                            }
 
                         }
-
-                    }
-                    player.sendMessage(ChatColor.RED + "That faction wasn't found!");
-                    return false;
-                }
-                else {
-                    player.sendMessage(ChatColor.RED + "Sorry! In order to use this command you need the following permission: 'mf.disband.others'");
-                    return false;
-                }
-
-            }
-
-            boolean owner = false;
-            for (int i = 0; i < main.factions.size(); i++) {
-                if (main.factions.get(i).isOwner(player.getUniqueId())) {
-                    owner = true;
-                    if (main.factions.get(i).getPopulation() == 1) {
-                        main.playersInFactionChat.remove(player.getUniqueId());
-                        removeFaction(i);
-                        player.sendMessage(ChatColor.GREEN + "Faction successfully disbanded.");
-                        return true;
-                    }
-                    else {
-                        player.sendMessage(ChatColor.RED + "You need to kick all players before you can disband your faction.");
+                        player.sendMessage(ChatColor.RED + "That faction wasn't found!");
                         return false;
                     }
+                    else {
+                        player.sendMessage(ChatColor.RED + "Sorry! In order to use this command you need the following permission: 'mf.disband.others'");
+                        return false;
+                    }
+
+                }
+
+                boolean owner = false;
+                for (int i = 0; i < main.factions.size(); i++) {
+                    if (main.factions.get(i).isOwner(player.getUniqueId())) {
+                        owner = true;
+                        if (main.factions.get(i).getPopulation() == 1) {
+                            main.playersInFactionChat.remove(player.getUniqueId());
+                            removeFaction(i);
+                            player.sendMessage(ChatColor.GREEN + "Faction successfully disbanded.");
+                            return true;
+                        }
+                        else {
+                            player.sendMessage(ChatColor.RED + "You need to kick all players before you can disband your faction.");
+                            return false;
+                        }
+                    }
+                }
+
+                if (!owner) {
+                    player.sendMessage(ChatColor.RED + "You need to be the owner of a faction to use this command.");
+                    return false;
                 }
             }
-
-            if (!owner) {
-                player.sendMessage(ChatColor.RED + "You need to be the owner of a faction to use this command.");
+            else {
+                sender.sendMessage(ChatColor.RED + "Sorry! You need the following permission to use this command: 'mf.disband'");
                 return false;
             }
         }

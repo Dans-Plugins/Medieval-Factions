@@ -18,40 +18,46 @@ public class JoinCommand extends Command {
         if (sender instanceof Player) {
             Player player = (Player) sender;
 
-            if (args.length > 1) {
+            if (sender.hasPermission("mf.join") || sender.hasPermission("mf.default")) {
+                if (args.length > 1) {
 
-                // creating name from arguments 1 to the last one
-                String factionName = createStringFromFirstArgOnwards(args);
+                    // creating name from arguments 1 to the last one
+                    String factionName = createStringFromFirstArgOnwards(args);
 
-                for (Faction faction : main.factions) {
-                    if (faction.getName().equalsIgnoreCase(factionName)) {
-                        if (faction.isInvited(player.getUniqueId())) {
+                    for (Faction faction : main.factions) {
+                        if (faction.getName().equalsIgnoreCase(factionName)) {
+                            if (faction.isInvited(player.getUniqueId())) {
 
-                            // join if player isn't in a faction already
-                            if (!(isInFaction(player.getUniqueId(), main.factions))) {
-                                faction.addMember(player.getUniqueId(), getPlayersPowerRecord(player.getUniqueId(), main.playerPowerRecords).getPowerLevel());
-                                faction.uninvite(player.getUniqueId());
-                                try {
-                                    sendAllPlayersInFactionMessage(faction, ChatColor.GREEN + player.getName() + " has joined " + faction.getName());
-                                } catch (Exception ignored) {
+                                // join if player isn't in a faction already
+                                if (!(isInFaction(player.getUniqueId(), main.factions))) {
+                                    faction.addMember(player.getUniqueId(), getPlayersPowerRecord(player.getUniqueId(), main.playerPowerRecords).getPowerLevel());
+                                    faction.uninvite(player.getUniqueId());
+                                    try {
+                                        sendAllPlayersInFactionMessage(faction, ChatColor.GREEN + player.getName() + " has joined " + faction.getName());
+                                    } catch (Exception ignored) {
 
+                                    }
+                                    player.sendMessage(ChatColor.GREEN + "You joined the faction!");
+                                    return true;
                                 }
-                                player.sendMessage(ChatColor.GREEN + "You joined the faction!");
-                                return true;
-                            }
-                            else {
-                                player.sendMessage(ChatColor.RED + "You're already in a faction, sorry!");
+                                else {
+                                    player.sendMessage(ChatColor.RED + "You're already in a faction, sorry!");
+                                    return false;
+                                }
+
+                            } else {
+                                player.sendMessage(ChatColor.RED + "You're not invited to this faction!");
                                 return false;
                             }
-
-                        } else {
-                            player.sendMessage(ChatColor.RED + "You're not invited to this faction!");
-                            return false;
                         }
                     }
+                } else {
+                    player.sendMessage(ChatColor.RED + "Usage: /mf join (faction-name)");
+                    return false;
                 }
-            } else {
-                player.sendMessage(ChatColor.RED + "Usage: /mf join (faction-name)");
+            }
+            else {
+                sender.sendMessage(ChatColor.RED + "Sorry! You need the following permission to use this command: 'mf.join'");
                 return false;
             }
         }
