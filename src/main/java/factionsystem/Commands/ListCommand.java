@@ -33,7 +33,7 @@ public class ListCommand extends Command {
         }
     }
 
-    public void listFactionsWithFormatting(CommandSender sender) {
+    private void listFactionsWithFormatting(CommandSender sender) {
         sender.sendMessage(ChatColor.AQUA + "P: power, M: members, L: land");
         sender.sendMessage(ChatColor.AQUA + "-----");
         for (Faction faction : main.utilities.getFactionsSortedByPower()) {
