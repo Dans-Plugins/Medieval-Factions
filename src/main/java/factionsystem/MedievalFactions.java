@@ -38,7 +38,7 @@ import java.util.UUID;
 public class MedievalFactions extends JavaPlugin implements Listener {
 
     // version
-    public static String version = "v3.6.0.3";
+    public static String version = "v3.6.0.3-beta";
 
     // subsystems
     public StorageSubsystem storage = new StorageSubsystem(this);
