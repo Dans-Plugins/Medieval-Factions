@@ -38,15 +38,9 @@ public class CommandSubsystem {
 
                 // help command
                 if (args[0].equalsIgnoreCase("help")) {
-                    if (sender.hasPermission("mf.help") || sender.hasPermission("mf.default")) {
-                        HelpCommand command = new HelpCommand(main);
-                        command.sendHelpMessage(sender, args);
-                        return true;
-                    }
-                    else {
-                        sender.sendMessage(ChatColor.RED + "Sorry! You need the following permission to use this command: 'mf.help'");
-                        return false;
-                    }
+                    HelpCommand command = new HelpCommand(main);
+                    command.sendHelpMessage(sender, args);
+                    return true;
                 }
 
                 // create command
