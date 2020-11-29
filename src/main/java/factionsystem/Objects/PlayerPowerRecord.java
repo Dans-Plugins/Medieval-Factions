@@ -2,21 +2,17 @@ package factionsystem.Objects;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
-import factionsystem.Main;
+import factionsystem.MedievalFactions;
 import factionsystem.Subsystems.UtilitySubsystem;
-import org.bukkit.OfflinePlayer;
 
 import java.io.File;
 import java.io.FileNotFoundException;
-import java.io.FileWriter;
-import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Scanner;
 import java.util.UUID;
 
 import static factionsystem.Subsystems.UtilitySubsystem.findUUIDBasedOnPlayerName;
-import static org.bukkit.Bukkit.getServer;
 
 public class PlayerPowerRecord {
 
@@ -25,18 +21,18 @@ public class PlayerPowerRecord {
     private int powerLevel = 0;
 
     // temporary
-    private Main main;
+    private MedievalFactions main;
 
-    public PlayerPowerRecord(UUID playerUUID, int initial, Main main) {
+    public PlayerPowerRecord(UUID playerUUID, int initial, MedievalFactions main) {
         this.playerUUID = playerUUID;
         powerLevel = initial;
         this.main = main;
     }
-    public PlayerPowerRecord(Main main) { // server constructor for loading
+    public PlayerPowerRecord(MedievalFactions main) { // server constructor for loading
         this.main = main;
     }
 
-    public PlayerPowerRecord(Map<String, String> data, Main main) {
+    public PlayerPowerRecord(Map<String, String> data, MedievalFactions main) {
         this.load(data);
         this.main = main;
     }

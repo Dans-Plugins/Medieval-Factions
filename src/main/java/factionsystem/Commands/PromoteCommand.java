@@ -1,6 +1,6 @@
 package factionsystem.Commands;
 
-import factionsystem.Main;
+import factionsystem.MedievalFactions;
 import factionsystem.Objects.Faction;
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
@@ -12,12 +12,10 @@ import static factionsystem.Subsystems.UtilitySubsystem.findUUIDBasedOnPlayerNam
 import static factionsystem.Subsystems.UtilitySubsystem.isInFaction;
 import static org.bukkit.Bukkit.getServer;
 
-public class PromoteCommand {
+public class PromoteCommand extends Command {
 
-    Main main = null;
-
-    public PromoteCommand(Main plugin) {
-        main = plugin;
+    public PromoteCommand(MedievalFactions plugin) {
+        super(plugin);
     }
 
     public void promotePlayer(CommandSender sender, String[] args) {

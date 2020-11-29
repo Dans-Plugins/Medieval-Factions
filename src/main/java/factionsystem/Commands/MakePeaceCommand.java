@@ -1,6 +1,6 @@
 package factionsystem.Commands;
 
-import factionsystem.Main;
+import factionsystem.MedievalFactions;
 import factionsystem.Objects.Faction;
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
@@ -8,12 +8,10 @@ import org.bukkit.entity.Player;
 
 import static factionsystem.Subsystems.UtilitySubsystem.*;
 
-public class MakePeaceCommand {
+public class MakePeaceCommand extends Command {
 
-    Main main = null;
-
-    public MakePeaceCommand(Main plugin) {
-        main = plugin;
+    public MakePeaceCommand(MedievalFactions plugin) {
+        super(plugin);
     }
 
     public void makePeace(CommandSender sender, String[] args) {

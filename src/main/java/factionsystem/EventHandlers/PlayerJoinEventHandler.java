@@ -1,23 +1,18 @@
 package factionsystem.EventHandlers;
 
-import factionsystem.Main;
-import factionsystem.Objects.Faction;
+import factionsystem.MedievalFactions;
 import factionsystem.Objects.PlayerActivityRecord;
 import factionsystem.Objects.PlayerPowerRecord;
 import factionsystem.Subsystems.UtilitySubsystem;
 
 import org.bukkit.ChatColor;
-import org.bukkit.entity.Player;
 import org.bukkit.event.player.PlayerJoinEvent;
-
-import static factionsystem.Subsystems.UtilitySubsystem.getChunksClaimedByFaction;
-import static factionsystem.Subsystems.UtilitySubsystem.getPlayersFaction;
 
 public class PlayerJoinEventHandler {
 
-    Main main = null;
+    MedievalFactions main = null;
 
-    public PlayerJoinEventHandler(Main plugin) {
+    public PlayerJoinEventHandler(MedievalFactions plugin) {
         main = plugin;
     }
 

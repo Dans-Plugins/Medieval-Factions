@@ -1,6 +1,6 @@
 package factionsystem.Commands;
 
-import factionsystem.Main;
+import factionsystem.MedievalFactions;
 import factionsystem.Objects.ClaimedChunk;
 import factionsystem.Objects.Faction;
 import org.bukkit.ChatColor;
@@ -12,12 +12,10 @@ import org.bukkit.entity.Player;
 import static factionsystem.Subsystems.UtilitySubsystem.*;
 import static org.bukkit.Bukkit.getServer;
 
-public class HomeCommand {
+public class HomeCommand extends Command {
 
-    Main main = null;
-
-    public HomeCommand(Main plugin) {
-        main = plugin;
+    public HomeCommand(MedievalFactions plugin) {
+        super(plugin);
     }
 
     public void teleportPlayer(CommandSender sender) {

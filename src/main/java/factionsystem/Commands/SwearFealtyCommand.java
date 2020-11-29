@@ -1,17 +1,15 @@
 package factionsystem.Commands;
 
-import factionsystem.Main;
+import factionsystem.MedievalFactions;
 import factionsystem.Objects.Faction;
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
-public class SwearFealtyCommand {
+public class SwearFealtyCommand extends Command {
 
-    Main main = null;
-
-    public SwearFealtyCommand(Main plugin) {
-        main = plugin;
+    public SwearFealtyCommand(MedievalFactions plugin) {
+        super(plugin);
     }
 
     public void swearFealty(CommandSender sender, String[] args) {

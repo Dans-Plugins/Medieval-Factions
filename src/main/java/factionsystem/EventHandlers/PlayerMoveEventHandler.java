@@ -1,6 +1,6 @@
 package factionsystem.EventHandlers;
 
-import factionsystem.Main;
+import factionsystem.MedievalFactions;
 import factionsystem.Objects.Faction;
 import org.bukkit.ChatColor;
 import org.bukkit.event.player.PlayerMoveEvent;
@@ -12,9 +12,9 @@ import static org.bukkit.Bukkit.getServer;
 
 public class PlayerMoveEventHandler {
 
-    Main main = null;
+    MedievalFactions main = null;
 
-    public PlayerMoveEventHandler(Main plugin) {
+    public PlayerMoveEventHandler(MedievalFactions plugin) {
         main = plugin;
     }
 

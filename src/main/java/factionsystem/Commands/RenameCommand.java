@@ -1,6 +1,6 @@
 package factionsystem.Commands;
 
-import factionsystem.Main;
+import factionsystem.MedievalFactions;
 import factionsystem.Objects.ClaimedChunk;
 import factionsystem.Objects.Faction;
 import factionsystem.Objects.LockedBlock;
@@ -10,12 +10,10 @@ import org.bukkit.entity.Player;
 
 import static factionsystem.Subsystems.UtilitySubsystem.*;
 
-public class RenameCommand {
+public class RenameCommand extends Command {
 
-    Main main = null;
-
-    public RenameCommand(Main plugin) {
-        main = plugin;
+    public RenameCommand(MedievalFactions plugin) {
+        super(plugin);
     }
 
     public void renameFaction(CommandSender sender, String[] args) {

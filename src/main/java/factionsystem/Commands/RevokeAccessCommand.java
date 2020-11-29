@@ -1,18 +1,16 @@
 package factionsystem.Commands;
 
-import factionsystem.Main;
+import factionsystem.MedievalFactions;
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
 import static factionsystem.Subsystems.UtilitySubsystem.findUUIDBasedOnPlayerName;
 
-public class RevokeAccessCommand {
+public class RevokeAccessCommand extends Command {
 
-    Main main = null;
-
-    public RevokeAccessCommand(Main plugin) {
-        main = plugin;
+    public RevokeAccessCommand(MedievalFactions plugin) {
+        super(plugin);
     }
 
     public void revokeAccess(CommandSender sender, String[] args) {

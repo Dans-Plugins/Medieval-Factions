@@ -1,6 +1,6 @@
 package factionsystem.Commands;
 
-import factionsystem.Main;
+import factionsystem.MedievalFactions;
 import factionsystem.Objects.Faction;
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
@@ -8,12 +8,10 @@ import org.bukkit.entity.Player;
 
 import static factionsystem.Subsystems.UtilitySubsystem.*;
 
-public class MembersCommand {
+public class MembersCommand extends Command {
 
-    Main main = null;
-
-    public MembersCommand(Main plugin) {
-        main = plugin;
+    public MembersCommand(MedievalFactions plugin) {
+        super(plugin);
     }
 
     public void showMembers(CommandSender sender, String[] args) {

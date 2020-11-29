@@ -1,26 +1,19 @@
 package factionsystem.Commands;
 
-import static factionsystem.Subsystems.UtilitySubsystem.createStringFromFirstArgOnwards;
-
-import java.util.Set;
-
 import org.bukkit.ChatColor;
-import org.bukkit.Material;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
-import factionsystem.Main;
+import factionsystem.MedievalFactions;
 import factionsystem.Objects.Faction;
 import factionsystem.Objects.Gate;
 import factionsystem.Subsystems.UtilitySubsystem;
 
-public class GateCommand {
-
-	Main main = null;
+public class GateCommand extends Command {
 	
-	public GateCommand(Main plugin)
+	public GateCommand(MedievalFactions plugin)
 	{
-		main = plugin;
+		super(plugin);
 	}
 	
 	public void handleGate(CommandSender sender, String[] args)

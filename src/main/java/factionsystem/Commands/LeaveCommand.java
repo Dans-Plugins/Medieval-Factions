@@ -1,6 +1,6 @@
 package factionsystem.Commands;
 
-import factionsystem.Main;
+import factionsystem.MedievalFactions;
 import factionsystem.Objects.Faction;
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
@@ -10,12 +10,10 @@ import java.io.File;
 
 import static factionsystem.Subsystems.UtilitySubsystem.*;
 
-public class LeaveCommand {
+public class LeaveCommand extends Command {
 
-    Main main = null;
-
-    public LeaveCommand(Main plugin) {
-        main = plugin;
+    public LeaveCommand(MedievalFactions plugin) {
+        super(plugin);
     }
 
     public boolean leaveFaction(CommandSender sender) {

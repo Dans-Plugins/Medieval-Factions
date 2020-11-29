@@ -1,6 +1,6 @@
 package factionsystem.Commands;
 
-import factionsystem.Main;
+import factionsystem.MedievalFactions;
 import factionsystem.Objects.Faction;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
@@ -11,12 +11,10 @@ import java.util.UUID;
 
 import static factionsystem.Subsystems.UtilitySubsystem.*;
 
-public class KickCommand {
+public class KickCommand extends Command {
 
-    Main main = null;
-
-    public KickCommand(Main plugin) {
-        main = plugin;
+    public KickCommand(MedievalFactions plugin) {
+        super(plugin);
     }
 
     public boolean kickPlayer(CommandSender sender, String[] args) {

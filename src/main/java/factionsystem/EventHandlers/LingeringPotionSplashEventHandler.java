@@ -1,6 +1,6 @@
 package factionsystem.EventHandlers;
 
-import factionsystem.Main;
+import factionsystem.MedievalFactions;
 import factionsystem.Util.Pair;
 import org.bukkit.entity.AreaEffectCloud;
 import org.bukkit.entity.Player;
@@ -8,9 +8,9 @@ import org.bukkit.event.entity.LingeringPotionSplashEvent;
 
 public class LingeringPotionSplashEventHandler {
 
-    Main main = null;
+    MedievalFactions main = null;
 
-    public LingeringPotionSplashEventHandler(Main plugin) {
+    public LingeringPotionSplashEventHandler(MedievalFactions plugin) {
         main = plugin;
     }
 

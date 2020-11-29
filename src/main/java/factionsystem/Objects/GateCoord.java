@@ -2,7 +2,7 @@ package factionsystem.Objects;
 
 import org.bukkit.block.Block;
 
-import factionsystem.Main;
+import factionsystem.MedievalFactions;
 
 public class GateCoord {
 	
@@ -21,7 +21,7 @@ public class GateCoord {
 		return String.format("%d,%d,%d,%s", x, y, z, world);
 	}
 	
-	public static GateCoord fromString(String data, Main main)
+	public static GateCoord fromString(String data, MedievalFactions main)
 	{
 		String parts[] = data.split(",");
 		for (String part : parts)

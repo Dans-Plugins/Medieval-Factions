@@ -1,18 +1,16 @@
 package factionsystem.Commands;
 
-import factionsystem.Main;
+import factionsystem.MedievalFactions;
 import factionsystem.Subsystems.ConfigSubsystem;
 
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
-public class ConfigCommand {
+public class ConfigCommand extends Command {
 
-    Main main = null;
-
-    public ConfigCommand(Main plugin) {
-        main = plugin;
+    public ConfigCommand(MedievalFactions plugin) {
+        super(plugin);
     }
 
     // args count is at least 1 at this point (/mf config)

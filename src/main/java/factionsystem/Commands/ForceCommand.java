@@ -1,6 +1,6 @@
 package factionsystem.Commands;
 
-import factionsystem.Main;
+import factionsystem.MedievalFactions;
 import factionsystem.Objects.Faction;
 import factionsystem.Objects.PlayerPowerRecord;
 import org.bukkit.Bukkit;
@@ -12,12 +12,10 @@ import java.util.ArrayList;
 
 import static factionsystem.Subsystems.UtilitySubsystem.*;
 
-public class ForceCommand {
+public class ForceCommand extends Command {
 
-    Main main = null;
-
-    public ForceCommand(Main plugin) {
-        main = plugin;
+    public ForceCommand(MedievalFactions plugin) {
+        super(plugin);
     }
 
     public boolean force(CommandSender sender, String[] args) {

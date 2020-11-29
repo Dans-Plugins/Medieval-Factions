@@ -1,6 +1,6 @@
 package factionsystem.Commands;
 
-import factionsystem.Main;
+import factionsystem.MedievalFactions;
 import factionsystem.Objects.Faction;
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
@@ -11,12 +11,10 @@ import java.util.UUID;
 import static factionsystem.Subsystems.UtilitySubsystem.*;
 import static org.bukkit.Bukkit.getServer;
 
-public class DemoteCommand {
+public class DemoteCommand extends Command {
 
-    Main main = null;
-
-    public DemoteCommand(Main plugin) {
-        main = plugin;
+    public DemoteCommand(MedievalFactions plugin) {
+        super(plugin);
     }
 
     public void demotePlayer(CommandSender sender, String[] args) {

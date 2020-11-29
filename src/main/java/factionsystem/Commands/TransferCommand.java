@@ -1,6 +1,6 @@
 package factionsystem.Commands;
 
-import factionsystem.Main;
+import factionsystem.MedievalFactions;
 import factionsystem.Objects.Faction;
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
@@ -11,12 +11,10 @@ import java.util.UUID;
 import static factionsystem.Subsystems.UtilitySubsystem.findUUIDBasedOnPlayerName;
 import static org.bukkit.Bukkit.getServer;
 
-public class TransferCommand {
+public class TransferCommand extends Command {
 
-    Main main = null;
-
-    public TransferCommand(Main plugin) {
-        main = plugin;
+    public TransferCommand(MedievalFactions plugin) {
+        super(plugin);
     }
 
     public boolean transferOwnership(CommandSender sender, String[] args) {

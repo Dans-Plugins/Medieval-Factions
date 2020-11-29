@@ -1,18 +1,16 @@
 package factionsystem.Commands;
 
-import factionsystem.Main;
+import factionsystem.MedievalFactions;
 import factionsystem.Objects.Faction;
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
 
 import static factionsystem.Subsystems.UtilitySubsystem.getChunksClaimedByFaction;
 
-public class ListCommand {
+public class ListCommand extends Command {
 
-    Main main = null;
-
-    public ListCommand(Main plugin) {
-        main = plugin;
+    public ListCommand(MedievalFactions plugin) {
+        super(plugin);
     }
 
     public boolean listFactions(CommandSender sender) {

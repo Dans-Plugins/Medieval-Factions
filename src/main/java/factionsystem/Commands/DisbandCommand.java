@@ -1,21 +1,17 @@
 package factionsystem.Commands;
 
-import factionsystem.Main;
+import factionsystem.MedievalFactions;
 import factionsystem.Objects.Faction;
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
-import java.io.File;
-
 import static factionsystem.Subsystems.UtilitySubsystem.*;
 
-public class DisbandCommand {
+public class DisbandCommand extends Command {
 
-    Main main = null;
-
-    public DisbandCommand(Main plugin) {
-        main = plugin;
+    public DisbandCommand(MedievalFactions plugin) {
+        super(plugin);
     }
 
     public boolean deleteFaction(CommandSender sender, String[] args) {

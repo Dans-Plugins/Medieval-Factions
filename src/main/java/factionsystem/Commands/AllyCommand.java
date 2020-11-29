@@ -1,6 +1,6 @@
 package factionsystem.Commands;
 
-import factionsystem.Main;
+import factionsystem.MedievalFactions;
 import factionsystem.Objects.Faction;
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
@@ -8,12 +8,10 @@ import org.bukkit.entity.Player;
 
 import static factionsystem.Subsystems.UtilitySubsystem.*;
 
-public class AllyCommand {
+public class AllyCommand extends Command {
 
-    Main main = null;
-
-    public AllyCommand(Main plugin) {
-        main = plugin;
+    public AllyCommand(MedievalFactions plugin) {
+        super(plugin);
     }
 
     public void requestAlliance(CommandSender sender, String[] args) {

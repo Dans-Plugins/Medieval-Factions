@@ -1,19 +1,16 @@
 package factionsystem.Commands;
 
-import factionsystem.Main;
+import factionsystem.MedievalFactions;
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
-import static factionsystem.Subsystems.UtilitySubsystem.findPlayerNameBasedOnUUID;
 import static factionsystem.Subsystems.UtilitySubsystem.findUUIDBasedOnPlayerName;
 
-public class GrantAccessCommand {
+public class GrantAccessCommand extends Command {
 
-    Main main = null;
-
-    public GrantAccessCommand(Main plugin) {
-        main = plugin;
+    public GrantAccessCommand(MedievalFactions plugin) {
+        super(plugin);
     }
 
     public void grantAccess(CommandSender sender, String[] args) {

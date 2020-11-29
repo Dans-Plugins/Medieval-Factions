@@ -1,17 +1,15 @@
 package factionsystem.Commands;
 
-import factionsystem.Main;
+import factionsystem.MedievalFactions;
 import factionsystem.Objects.Faction;
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
-public class GrantIndependenceCommand {
+public class GrantIndependenceCommand extends Command {
 
-    Main main = null;
-
-    public GrantIndependenceCommand(Main plugin) {
-        main = plugin;
+    public GrantIndependenceCommand(MedievalFactions plugin) {
+        super(plugin);
     }
 
     public void grantIndependence(CommandSender sender, String[] args) {

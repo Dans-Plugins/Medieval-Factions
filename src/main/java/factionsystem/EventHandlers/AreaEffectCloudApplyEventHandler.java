@@ -1,6 +1,6 @@
 package factionsystem.EventHandlers;
 
-import factionsystem.Main;
+import factionsystem.MedievalFactions;
 import factionsystem.Util.Pair;
 import org.bukkit.entity.AreaEffectCloud;
 import org.bukkit.entity.Entity;
@@ -13,9 +13,9 @@ import java.util.List;
 
 public class AreaEffectCloudApplyEventHandler {
 
-        Main main = null;
+        MedievalFactions main = null;
 
-        public AreaEffectCloudApplyEventHandler(Main plugin) {
+        public AreaEffectCloudApplyEventHandler(MedievalFactions plugin) {
             main = plugin;
         }
 

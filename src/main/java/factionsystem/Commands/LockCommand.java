@@ -1,16 +1,14 @@
 package factionsystem.Commands;
 
-import factionsystem.Main;
+import factionsystem.MedievalFactions;
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
-public class LockCommand {
+public class LockCommand extends Command { ;
 
-    Main main = null;
-
-    public LockCommand(Main plugin) {
-        main = plugin;
+    public LockCommand(MedievalFactions plugin) {
+        super(plugin);
     }
 
     public void lockBlock(CommandSender sender, String[] args) {

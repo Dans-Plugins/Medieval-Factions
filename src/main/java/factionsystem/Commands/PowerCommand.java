@@ -1,6 +1,6 @@
 package factionsystem.Commands;
 
-import factionsystem.Main;
+import factionsystem.MedievalFactions;
 import factionsystem.Objects.PlayerPowerRecord;
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
@@ -10,12 +10,10 @@ import static factionsystem.Subsystems.UtilitySubsystem.*;
 
 import java.util.UUID;
 
-public class PowerCommand {
+public class PowerCommand extends Command {
 
-    Main main = null;
-
-    public PowerCommand(Main plugin) {
-        main = plugin;
+    public PowerCommand(MedievalFactions plugin) {
+        super(plugin);
     }
 
     public boolean powerCheck(CommandSender sender, String[] args) {

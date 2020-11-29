@@ -1,17 +1,15 @@
 package factionsystem.Commands;
 
-import factionsystem.Main;
+import factionsystem.MedievalFactions;
 import factionsystem.Objects.Faction;
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
-public class VassalizeCommand {
+public class VassalizeCommand extends Command {
 
-    Main main = null;
-
-    public VassalizeCommand(Main plugin) {
-        main = plugin;
+    public VassalizeCommand(MedievalFactions plugin) {
+        super(plugin);
     }
 
     public void sendVassalizationOffer(CommandSender sender, String[] args) {

@@ -1,17 +1,15 @@
 package factionsystem.Commands;
 
-import factionsystem.Main;
+import factionsystem.MedievalFactions;
 import factionsystem.Objects.Faction;
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
-public class DescCommand {
+public class DescCommand extends Command {
 
-    Main main = null;
-
-    public DescCommand(Main plugin) {
-        main = plugin;
+    public DescCommand(MedievalFactions plugin) {
+        super(plugin);
     }
 
     public boolean setDescription(CommandSender sender, String[] args) {

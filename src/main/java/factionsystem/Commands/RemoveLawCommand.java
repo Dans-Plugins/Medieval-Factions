@@ -1,6 +1,6 @@
 package factionsystem.Commands;
 
-import factionsystem.Main;
+import factionsystem.MedievalFactions;
 import factionsystem.Objects.Faction;
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
@@ -9,12 +9,10 @@ import org.bukkit.entity.Player;
 import static factionsystem.Subsystems.UtilitySubsystem.getPlayersFaction;
 import static factionsystem.Subsystems.UtilitySubsystem.isInFaction;
 
-public class RemoveLawCommand {
+public class RemoveLawCommand extends Command {
 
-    Main main = null;
-
-    public RemoveLawCommand(Main plugin) {
-        main = plugin;
+    public RemoveLawCommand(MedievalFactions plugin) {
+        super(plugin);
     }
 
     public void removeLaw(CommandSender sender, String[] args) {

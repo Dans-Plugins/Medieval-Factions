@@ -5,15 +5,14 @@ import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
-import factionsystem.Main;
+import factionsystem.MedievalFactions;
 import factionsystem.Objects.Duel;
 import factionsystem.Subsystems.UtilitySubsystem;
 
-public class DuelCommand {
-	Main main = null;
-	
-	public DuelCommand(Main plugin) {
-		main = plugin;
+public class DuelCommand extends Command {
+
+	public DuelCommand(MedievalFactions plugin) {
+		super(plugin);
 	}
 	
 	public void handleDuel(CommandSender sender, String[] args) {

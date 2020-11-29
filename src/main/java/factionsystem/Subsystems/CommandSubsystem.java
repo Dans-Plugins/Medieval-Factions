@@ -1,7 +1,7 @@
 package factionsystem.Subsystems;
 
 import factionsystem.Commands.*;
-import factionsystem.Main;
+import factionsystem.MedievalFactions;
 import factionsystem.Objects.Faction;
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
@@ -11,9 +11,9 @@ import static factionsystem.Subsystems.UtilitySubsystem.*;
 
 public class CommandSubsystem {
 
-    Main main = null;
+    MedievalFactions main = null;
 
-    public CommandSubsystem(Main plugin) {
+    public CommandSubsystem(MedievalFactions plugin) {
         main = plugin;
     }
 
@@ -39,7 +39,7 @@ public class CommandSubsystem {
                 // help command
                 if (args[0].equalsIgnoreCase("help")) {
                     if (sender.hasPermission("mf.help") || sender.hasPermission("mf.default")) {
-                        HelpCommand command = new HelpCommand();
+                        HelpCommand command = new HelpCommand(main);
                         command.sendHelpMessage(sender, args);
                         return true;
                     }
@@ -495,18 +495,10 @@ public class CommandSubsystem {
 
                 // breakalliance command
                 if (args[0].equalsIgnoreCase("breakalliance")|| args[0].equalsIgnoreCase("ba")) {
-                    if (sender.hasPermission("mf.breakalliance") || sender.hasPermission("mf.default")) {
-                        BreakAllianceCommand command = new BreakAllianceCommand(main);
-                        command.breakAlliance(sender, args);
-                        return true;
-                    }
-                    else {
-                        sender.sendMessage(ChatColor.RED + "Sorry! You need the following permission to use this command: 'mf.breakalliance'");
-                        return false;
-                    }
+                    BreakAllianceCommand command = new BreakAllianceCommand(main);
+                    command.breakAlliance(sender, args);
+                    return true;
                 }
-
-                // TODO: shift responsibility of perm checking from Main to the Command class of each command, like below
 
                 // rename command
                 if (args[0].equalsIgnoreCase("rename")) {

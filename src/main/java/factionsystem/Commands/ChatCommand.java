@@ -1,18 +1,16 @@
 package factionsystem.Commands;
 
-import factionsystem.Main;
+import factionsystem.MedievalFactions;
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
 import static factionsystem.Subsystems.UtilitySubsystem.isInFaction;
 
-public class ChatCommand {
+public class ChatCommand extends Command {
 
-    Main main = null;
-
-    public ChatCommand(Main plugin) {
-        main = plugin;
+    public ChatCommand(MedievalFactions plugin) {
+        super(plugin);
     }
 
     public void toggleFactionChat(CommandSender sender) {

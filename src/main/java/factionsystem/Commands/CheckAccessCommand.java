@@ -1,16 +1,14 @@
 package factionsystem.Commands;
 
-import factionsystem.Main;
+import factionsystem.MedievalFactions;
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
-public class CheckAccessCommand {
+public class CheckAccessCommand extends Command {
 
-    Main main = null;
-
-    public CheckAccessCommand(Main plugin) {
-        main = plugin;
+    public CheckAccessCommand(MedievalFactions plugin) {
+        super(plugin);
     }
 
     public void checkAccess(CommandSender sender, String[] args) {
