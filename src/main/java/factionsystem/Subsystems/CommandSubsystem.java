@@ -394,15 +394,9 @@ public class CommandSubsystem {
 
                 // promote command
                 if (args[0].equalsIgnoreCase("promote")) {
-                    if (sender.hasPermission("mf.promote") || sender.hasPermission("mf.default")) {
-                        PromoteCommand command = new PromoteCommand(main);
-                        command.promotePlayer(sender, args);
-                        return true;
-                    }
-                    else {
-                        sender.sendMessage(ChatColor.RED + "Sorry! You need the following permission to use this command: 'mf.promote'");
-                        return false;
-                    }
+                    PromoteCommand command = new PromoteCommand(main);
+                    command.promotePlayer(sender, args);
+                    return true;
                 }
 
                 // demote command
@@ -411,7 +405,6 @@ public class CommandSubsystem {
                     command.demotePlayer(sender, args);
                     return true;
                 }
-
 
                 // power command
                 if  (args[0].equalsIgnoreCase("power")) {
