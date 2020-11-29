@@ -51,15 +51,9 @@ public class CommandSubsystem {
 
                 // create command
                 if (args[0].equalsIgnoreCase("create") ) {
-                    if (sender.hasPermission("mf.create")|| sender.hasPermission("mf.default")) {
-                        CreateCommand command = new CreateCommand(main);
-                        command.createFaction(sender, args);
-                        return true;
-                    }
-                    else {
-                        sender.sendMessage(ChatColor.RED + "Sorry! You need the following permission to use this command: 'mf.create'");
-                        return false;
-                    }
+                    CreateCommand command = new CreateCommand(main);
+                    command.createFaction(sender, args);
+                    return true;
                 }
 
                 // list command
