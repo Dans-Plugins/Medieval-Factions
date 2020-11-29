@@ -103,16 +103,9 @@ public class CommandSubsystem {
 
                 // info command
                 if (args[0].equalsIgnoreCase("info")) {
-                    if (sender.hasPermission("mf.info") || sender.hasPermission("mf.default")) {
-                        InfoCommand command = new InfoCommand(main);
-                        command.showInfo(sender, args);
-                        return true;
-                    }
-                    else {
-                        sender.sendMessage(ChatColor.RED + "Sorry! You need the following permission to use this command: 'mf.info'");
-                        return false;
-                    }
-
+                    InfoCommand command = new InfoCommand(main);
+                    command.showInfo(sender, args);
+                    return true;
                 }
 
                 // desc command
