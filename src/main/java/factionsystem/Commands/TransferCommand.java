@@ -11,12 +11,10 @@ import java.util.UUID;
 import static factionsystem.Subsystems.UtilitySubsystem.findUUIDBasedOnPlayerName;
 import static org.bukkit.Bukkit.getServer;
 
-public class TransferCommand {
-
-    MedievalFactions main = null;
+public class TransferCommand extends Command {
 
     public TransferCommand(MedievalFactions plugin) {
-        main = plugin;
+        super(plugin);
     }
 
     public boolean transferOwnership(CommandSender sender, String[] args) {

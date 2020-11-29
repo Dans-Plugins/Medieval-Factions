@@ -8,12 +8,10 @@ import org.bukkit.entity.Player;
 
 import static factionsystem.Subsystems.UtilitySubsystem.*;
 
-public class LawsCommand {
-
-    MedievalFactions main = null;
+public class LawsCommand extends Command {
 
     public LawsCommand(MedievalFactions plugin) {
-        main = plugin;
+        super(plugin);
     }
 
     public void showLawsToPlayer(CommandSender sender, String[] args) {

@@ -6,12 +6,10 @@ import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
-public class GrantIndependenceCommand {
-
-    MedievalFactions main = null;
+public class GrantIndependenceCommand extends Command {
 
     public GrantIndependenceCommand(MedievalFactions plugin) {
-        main = plugin;
+        super(plugin);
     }
 
     public void grantIndependence(CommandSender sender, String[] args) {

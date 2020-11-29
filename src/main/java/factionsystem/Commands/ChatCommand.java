@@ -7,12 +7,10 @@ import org.bukkit.entity.Player;
 
 import static factionsystem.Subsystems.UtilitySubsystem.isInFaction;
 
-public class ChatCommand {
-
-    MedievalFactions main = null;
+public class ChatCommand extends Command {
 
     public ChatCommand(MedievalFactions plugin) {
-        main = plugin;
+        super(plugin);
     }
 
     public void toggleFactionChat(CommandSender sender) {

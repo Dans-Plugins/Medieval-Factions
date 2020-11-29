@@ -6,12 +6,10 @@ import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
-public class VassalizeCommand {
-
-    MedievalFactions main = null;
+public class VassalizeCommand extends Command {
 
     public VassalizeCommand(MedievalFactions plugin) {
-        main = plugin;
+        super(plugin);
     }
 
     public void sendVassalizationOffer(CommandSender sender, String[] args) {

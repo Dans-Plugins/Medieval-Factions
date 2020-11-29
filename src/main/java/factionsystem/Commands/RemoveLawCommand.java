@@ -9,12 +9,10 @@ import org.bukkit.entity.Player;
 import static factionsystem.Subsystems.UtilitySubsystem.getPlayersFaction;
 import static factionsystem.Subsystems.UtilitySubsystem.isInFaction;
 
-public class RemoveLawCommand {
-
-    MedievalFactions main = null;
+public class RemoveLawCommand extends Command {
 
     public RemoveLawCommand(MedievalFactions plugin) {
-        main = plugin;
+        super(plugin);
     }
 
     public void removeLaw(CommandSender sender, String[] args) {

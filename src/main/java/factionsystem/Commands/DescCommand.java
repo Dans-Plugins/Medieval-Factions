@@ -6,12 +6,10 @@ import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
-public class DescCommand {
-
-    MedievalFactions main = null;
+public class DescCommand extends Command {
 
     public DescCommand(MedievalFactions plugin) {
-        main = plugin;
+        super(plugin);
     }
 
     public boolean setDescription(CommandSender sender, String[] args) {

@@ -8,12 +8,10 @@ import org.bukkit.entity.Player;
 
 import static factionsystem.Subsystems.UtilitySubsystem.*;
 
-public class DeclareWarCommand {
-
-    MedievalFactions main = null;
+public class DeclareWarCommand extends Command {
 
     public DeclareWarCommand(MedievalFactions plugin) {
-        main = plugin;
+        super(plugin);
     }
 
     public void declareWar(CommandSender sender, String[] args) {

@@ -39,7 +39,7 @@ public class CommandSubsystem {
                 // help command
                 if (args[0].equalsIgnoreCase("help")) {
                     if (sender.hasPermission("mf.help") || sender.hasPermission("mf.default")) {
-                        HelpCommand command = new HelpCommand();
+                        HelpCommand command = new HelpCommand(main);
                         command.sendHelpMessage(sender, args);
                         return true;
                     }

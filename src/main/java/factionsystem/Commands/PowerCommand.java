@@ -10,12 +10,10 @@ import static factionsystem.Subsystems.UtilitySubsystem.*;
 
 import java.util.UUID;
 
-public class PowerCommand {
-
-    MedievalFactions main = null;
+public class PowerCommand extends Command {
 
     public PowerCommand(MedievalFactions plugin) {
-        main = plugin;
+        super(plugin);
     }
 
     public boolean powerCheck(CommandSender sender, String[] args) {

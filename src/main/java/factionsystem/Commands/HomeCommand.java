@@ -12,12 +12,10 @@ import org.bukkit.entity.Player;
 import static factionsystem.Subsystems.UtilitySubsystem.*;
 import static org.bukkit.Bukkit.getServer;
 
-public class HomeCommand {
-
-    MedievalFactions main = null;
+public class HomeCommand extends Command {
 
     public HomeCommand(MedievalFactions plugin) {
-        main = plugin;
+        super(plugin);
     }
 
     public void teleportPlayer(CommandSender sender) {

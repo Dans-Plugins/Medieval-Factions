@@ -11,8 +11,6 @@ import static factionsystem.Subsystems.UtilitySubsystem.sendAllPlayersInFactionM
 
 public class BreakAllianceCommand extends Command {
 
-    MedievalFactions main = null;
-
     public BreakAllianceCommand(MedievalFactions plugin) {
         super(plugin);
     }

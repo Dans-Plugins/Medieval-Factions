@@ -5,12 +5,10 @@ import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
-public class BypassCommand {
-
-    MedievalFactions main = null;
+public class BypassCommand extends Command {
 
     public BypassCommand(MedievalFactions plugin) {
-        main = plugin;
+        super(plugin);
     }
 
     public void toggleBypass(CommandSender sender) {

@@ -5,12 +5,10 @@ import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
-public class UnlockCommand {
-
-    MedievalFactions main = null;
+public class UnlockCommand extends Command {
 
     public UnlockCommand(MedievalFactions plugin) {
-        main = plugin;
+        super(plugin);
     }
 
     public void unlockBlock(CommandSender sender, String[] args) {

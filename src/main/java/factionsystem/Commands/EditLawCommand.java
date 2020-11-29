@@ -9,12 +9,10 @@ import org.bukkit.entity.Player;
 import static factionsystem.Subsystems.UtilitySubsystem.getPlayersFaction;
 import static factionsystem.Subsystems.UtilitySubsystem.isInFaction;
 
-public class EditLawCommand {
-
-    MedievalFactions main = null;
+public class EditLawCommand extends Command {
 
     public EditLawCommand(MedievalFactions plugin) {
-        main = plugin;
+        super(plugin);
     }
 
     public void editLaw(CommandSender sender, String[] args) {

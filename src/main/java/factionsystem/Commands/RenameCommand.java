@@ -10,12 +10,10 @@ import org.bukkit.entity.Player;
 
 import static factionsystem.Subsystems.UtilitySubsystem.*;
 
-public class RenameCommand {
-
-    MedievalFactions main = null;
+public class RenameCommand extends Command {
 
     public RenameCommand(MedievalFactions plugin) {
-        main = plugin;
+        super(plugin);
     }
 
     public void renameFaction(CommandSender sender, String[] args) {

@@ -8,12 +8,10 @@ import org.bukkit.entity.Player;
 
 import static factionsystem.Subsystems.UtilitySubsystem.*;
 
-public class DisbandCommand {
-
-    MedievalFactions main = null;
+public class DisbandCommand extends Command {
 
     public DisbandCommand(MedievalFactions plugin) {
-        main = plugin;
+        super(plugin);
     }
 
     public boolean deleteFaction(CommandSender sender, String[] args) {

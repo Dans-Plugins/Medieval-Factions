@@ -8,12 +8,10 @@ import org.bukkit.entity.Player;
 
 import static factionsystem.Subsystems.UtilitySubsystem.*;
 
-public class MakePeaceCommand {
-
-    MedievalFactions main = null;
+public class MakePeaceCommand extends Command {
 
     public MakePeaceCommand(MedievalFactions plugin) {
-        main = plugin;
+        super(plugin);
     }
 
     public void makePeace(CommandSender sender, String[] args) {

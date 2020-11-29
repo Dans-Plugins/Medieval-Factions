@@ -9,12 +9,10 @@ import org.bukkit.entity.Player;
 import static factionsystem.Subsystems.UtilitySubsystem.createStringFromFirstArgOnwards;
 import static factionsystem.Subsystems.UtilitySubsystem.getPlayersPowerRecord;
 
-public class CreateCommand {
-
-    MedievalFactions main = null;
+public class CreateCommand extends Command {
 
     public CreateCommand(MedievalFactions plugin) {
-        main = plugin;
+        super(plugin);
     }
 
     public boolean createFaction(CommandSender sender, String[] args) {

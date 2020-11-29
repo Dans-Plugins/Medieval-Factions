@@ -12,12 +12,10 @@ import static factionsystem.Subsystems.UtilitySubsystem.findUUIDBasedOnPlayerNam
 import static factionsystem.Subsystems.UtilitySubsystem.isInFaction;
 import static org.bukkit.Bukkit.getServer;
 
-public class PromoteCommand {
-
-    MedievalFactions main = null;
+public class PromoteCommand extends Command {
 
     public PromoteCommand(MedievalFactions plugin) {
-        main = plugin;
+        super(plugin);
     }
 
     public void promotePlayer(CommandSender sender, String[] args) {
