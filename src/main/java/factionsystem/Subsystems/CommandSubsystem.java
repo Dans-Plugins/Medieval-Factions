@@ -134,6 +134,7 @@ public class CommandSubsystem {
                     return true;
                 }
 
+                // TODO: move into command class
                 // claim command
                 if (args[0].equalsIgnoreCase("claim")) {
                     if (sender.hasPermission("mf.claim") || sender.hasPermission("mf.default")) {
@@ -164,6 +165,7 @@ public class CommandSubsystem {
                     }
                 }
 
+                // TODO: move into command class
                 // unclaim command
                 if (args[0].equalsIgnoreCase("unclaim")) {
                     if (sender.hasPermission("mf.unclaim") || sender.hasPermission("mf.default")) {
@@ -186,6 +188,7 @@ public class CommandSubsystem {
                     }
                 }
 
+                // TODO: move into command class
                 // unclaimall command
                 if (args[0].equalsIgnoreCase("unclaimall") || args[0].equalsIgnoreCase("ua")) {
                     if (sender instanceof Player) {
@@ -248,6 +251,7 @@ public class CommandSubsystem {
                     }
                 }
 
+                // TODO: move into command class
                 // checkclaim command
                 if (args[0].equalsIgnoreCase("checkclaim")|| args[0].equalsIgnoreCase("cc")) {
                     if (sender.hasPermission("mf.unclaimall") || sender.hasPermission("mf.default")) {
@@ -270,6 +274,7 @@ public class CommandSubsystem {
                     }
                 }
 
+                // TODO: move into command class
                 // autoclaim command
                 if (args[0].equalsIgnoreCase("autoclaim")|| args[0].equalsIgnoreCase("ac")) {
                     if (sender.hasPermission("mf.autoclaim") || sender.hasPermission("mf.default")) {
@@ -340,6 +345,7 @@ public class CommandSubsystem {
                     return true;
                 }
 
+                // TODO: move into command class
                 // version command
                 if (args[0].equalsIgnoreCase("version")) {
                     if (sender.hasPermission("mf.version") || sender.hasPermission("mf.default")) {
