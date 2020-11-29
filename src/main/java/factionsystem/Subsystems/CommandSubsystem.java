@@ -157,15 +157,9 @@ public class CommandSubsystem {
 
                 // kick command
                 if (args[0].equalsIgnoreCase("kick")) {
-                    if (sender.hasPermission("mf.kick") || sender.hasPermission("mf.default")) {
-                        KickCommand command = new KickCommand(main);
-                        command.kickPlayer(sender, args);
-                        return true;
-                    }
-                    else {
-                        sender.sendMessage(ChatColor.RED + "Sorry! You need the following permission to use this command: 'mf.kick'");
-                        return false;
-                    }
+                    KickCommand command = new KickCommand(main);
+                    command.kickPlayer(sender, args);
+                    return true;
                 }
 
                 // leave commmand
