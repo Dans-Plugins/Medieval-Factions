@@ -131,15 +131,9 @@ public class CommandSubsystem {
 
                 // invite command
                 if (args[0].equalsIgnoreCase("invite")) {
-                    if (sender.hasPermission("mf.invite") || sender.hasPermission("mf.default")) {
-                        InviteCommand command = new InviteCommand(main);
-                        command.invitePlayer(sender, args);
-                        return true;
-                    }
-                    else {
-                        sender.sendMessage(ChatColor.RED + "Sorry! You need the following permission to use this command: 'mf.invite'");
-                        return false;
-                    }
+                    InviteCommand command = new InviteCommand(main);
+                    command.invitePlayer(sender, args);
+                    return true;
                 }
 
                 // join command
