@@ -1,6 +1,6 @@
 package factionsystem.Commands;
 
-import factionsystem.Main;
+import factionsystem.MedievalFactions;
 import factionsystem.Objects.Faction;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
@@ -15,9 +15,9 @@ import static org.bukkit.Bukkit.getServer;
 
 public class InviteCommand {
 
-    Main main = null;
+    MedievalFactions main = null;
 
-    public InviteCommand(Main plugin) {
+    public InviteCommand(MedievalFactions plugin) {
         main = plugin;
     }
 

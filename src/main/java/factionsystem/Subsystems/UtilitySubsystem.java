@@ -1,6 +1,6 @@
 package factionsystem.Subsystems;
 
-import factionsystem.Main;
+import factionsystem.MedievalFactions;
 import factionsystem.Objects.ClaimedChunk;
 import factionsystem.Objects.Duel;
 import factionsystem.Objects.Faction;
@@ -19,15 +19,13 @@ import java.io.File;
 import java.time.ZonedDateTime;
 import java.util.*;
 
-import static factionsystem.Subsystems.UtilitySubsystem.getChunksClaimedByFaction;
-import static factionsystem.Subsystems.UtilitySubsystem.getPlayersFaction;
 import static org.bukkit.Bukkit.*;
 
 public class UtilitySubsystem {
 
-    Main main = null;
+    MedievalFactions main = null;
 
-    public UtilitySubsystem(Main plugin) {
+    public UtilitySubsystem(MedievalFactions plugin) {
         main = plugin;
     }
 
@@ -607,7 +605,7 @@ public class UtilitySubsystem {
 
     // static methods ----------------------------
     
-    public static boolean isDuelling(Player player, Main main)
+    public static boolean isDuelling(Player player, MedievalFactions main)
     {
     	for (Duel duel : main.duelingPlayers)
     	{
@@ -619,13 +617,13 @@ public class UtilitySubsystem {
     	return false;
     }
     
-    public static void inviteDuel(Player player, Player target, int limit, Main main)
+    public static void inviteDuel(Player player, Player target, int limit, MedievalFactions main)
     {
     	target.sendMessage(ChatColor.AQUA + player.getName() + " has challenged you to a duel! Type /mf duel accept to begin.");
     	main.duelingPlayers.add(new Duel(player, target, limit, main));
     }
 
-    public static Duel getDuel(Player player, Player target, Main main)
+    public static Duel getDuel(Player player, Player target, MedievalFactions main)
     {
     	for (Duel duel : main.duelingPlayers)
     	{
@@ -637,7 +635,7 @@ public class UtilitySubsystem {
     	return null;
     }
     
-    public static Duel getDuel(Player player, Main main)
+    public static Duel getDuel(Player player, MedievalFactions main)
     {
     	for (Duel duel : main.duelingPlayers)
     	{
@@ -676,7 +674,7 @@ public class UtilitySubsystem {
     	return null;
     }
     
-    public static void startCreatingGate(Main main, Player player, String name)
+    public static void startCreatingGate(MedievalFactions main, Player player, String name)
     {
     	if (!main.creatingGatePlayers.containsKey(player.getUniqueId()))
     	{

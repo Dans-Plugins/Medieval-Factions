@@ -1,6 +1,6 @@
 package factionsystem.EventHandlers;
 
-import factionsystem.Main;
+import factionsystem.MedievalFactions;
 import factionsystem.Objects.Faction;
 import org.bukkit.ChatColor;
 import org.bukkit.event.player.AsyncPlayerChatEvent;
@@ -10,9 +10,9 @@ import static factionsystem.Subsystems.UtilitySubsystem.sendAllPlayersInFactionM
 
 public class AsyncPlayerChatEventHandler {
 
-    Main main = null;
+    MedievalFactions main = null;
 
-    public AsyncPlayerChatEventHandler(Main plugin) {
+    public AsyncPlayerChatEventHandler(MedievalFactions plugin) {
         main = plugin;
     }
 

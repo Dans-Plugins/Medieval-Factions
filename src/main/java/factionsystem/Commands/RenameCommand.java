@@ -1,6 +1,6 @@
 package factionsystem.Commands;
 
-import factionsystem.Main;
+import factionsystem.MedievalFactions;
 import factionsystem.Objects.ClaimedChunk;
 import factionsystem.Objects.Faction;
 import factionsystem.Objects.LockedBlock;
@@ -12,9 +12,9 @@ import static factionsystem.Subsystems.UtilitySubsystem.*;
 
 public class RenameCommand {
 
-    Main main = null;
+    MedievalFactions main = null;
 
-    public RenameCommand(Main plugin) {
+    public RenameCommand(MedievalFactions plugin) {
         main = plugin;
     }
 

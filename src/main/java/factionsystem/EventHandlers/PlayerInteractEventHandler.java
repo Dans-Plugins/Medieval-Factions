@@ -1,6 +1,6 @@
 package factionsystem.EventHandlers;
 
-import factionsystem.Main;
+import factionsystem.MedievalFactions;
 import factionsystem.Objects.ClaimedChunk;
 import factionsystem.Objects.Faction;
 import factionsystem.Objects.Gate;
@@ -18,8 +18,6 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.inventory.InventoryHolder;
 
-import java.util.HashSet;
-import java.util.Set;
 import java.util.UUID;
 
 import static factionsystem.Subsystems.UtilitySubsystem.*;
@@ -27,9 +25,9 @@ import static org.bukkit.Material.*;
 
 public class PlayerInteractEventHandler {
 
-    Main main = null;
+    MedievalFactions main = null;
 
-    public PlayerInteractEventHandler(Main plugin) {
+    public PlayerInteractEventHandler(MedievalFactions plugin) {
         main = plugin;
     }
 

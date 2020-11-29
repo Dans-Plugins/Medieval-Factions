@@ -1,10 +1,8 @@
 package factionsystem.Objects;
 
-import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.UUID;
 
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
@@ -14,10 +12,8 @@ import org.bukkit.block.Block;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
-import com.google.gson.reflect.TypeToken;
 
-import factionsystem.Main;
-import factionsystem.Subsystems.ConfigSubsystem;
+import factionsystem.MedievalFactions;
 
 public class Gate {
 	
@@ -43,7 +39,7 @@ public class Gate {
 	private Material material = Material.IRON_BARS;
 	private World _world = null;
 	private String world = "";
-	private Main main = null;
+	private MedievalFactions main = null;
 	
 	public World getWorld()
 	{
@@ -85,7 +81,7 @@ public class Gate {
     }
     
 
-    public static Gate load(String jsonData, Main main) {
+    public static Gate load(String jsonData, MedievalFactions main) {
 //    	System.out.println("Gate Load");
     	
         Gson gson = new GsonBuilder().setPrettyPrinting().create();;
@@ -257,7 +253,7 @@ public class Gate {
 		return coord2;
 	}
 	
-	public Gate(Main plugin)
+	public Gate(MedievalFactions plugin)
 	{
 		main = plugin;
 	}

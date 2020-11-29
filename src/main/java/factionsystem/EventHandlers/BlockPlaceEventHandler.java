@@ -1,6 +1,6 @@
 package factionsystem.EventHandlers;
 
-import factionsystem.Main;
+import factionsystem.MedievalFactions;
 import factionsystem.Objects.ClaimedChunk;
 import factionsystem.Objects.Faction;
 import org.bukkit.ChatColor;
@@ -14,9 +14,9 @@ import static factionsystem.Subsystems.UtilitySubsystem.isInFaction;
 import static org.bukkit.Material.LADDER;
 
 public class BlockPlaceEventHandler {
-    Main main = null;
+    MedievalFactions main = null;
 
-    public BlockPlaceEventHandler(Main plugin) {
+    public BlockPlaceEventHandler(MedievalFactions plugin) {
         main = plugin;
     }
 

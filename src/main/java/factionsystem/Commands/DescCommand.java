@@ -1,6 +1,6 @@
 package factionsystem.Commands;
 
-import factionsystem.Main;
+import factionsystem.MedievalFactions;
 import factionsystem.Objects.Faction;
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
@@ -8,9 +8,9 @@ import org.bukkit.entity.Player;
 
 public class DescCommand {
 
-    Main main = null;
+    MedievalFactions main = null;
 
-    public DescCommand(Main plugin) {
+    public DescCommand(MedievalFactions plugin) {
         main = plugin;
     }
 

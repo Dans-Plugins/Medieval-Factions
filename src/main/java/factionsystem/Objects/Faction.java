@@ -3,7 +3,7 @@ package factionsystem.Objects;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.reflect.TypeToken;
-import factionsystem.Main;
+import factionsystem.MedievalFactions;
 import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.WorldCreator;
@@ -43,11 +43,11 @@ public class Faction {
     private ArrayList<String> attemptedAlliances = new ArrayList<>();
     private ArrayList<String> attemptedVassalizations = new ArrayList<>();
     private boolean autoclaim = false;
-    private Main main;
+    private MedievalFactions main;
 
 
     // player constructor
-    public Faction(String initialName, UUID creator, int max, Main main) {
+    public Faction(String initialName, UUID creator, int max, MedievalFactions main) {
         setName(initialName);
         setOwner(creator);
         maxPower = max;
@@ -55,7 +55,7 @@ public class Faction {
     }
 
     // server constructor
-    public Faction(String initialName, int max, Main main) {
+    public Faction(String initialName, int max, MedievalFactions main) {
         setName(initialName);
         maxPower = max;
         this.main = main;
@@ -67,7 +67,7 @@ public class Faction {
     }    
     
     // Must recieve json data
-    public Faction(Map<String, String> data, Main main) {
+    public Faction(Map<String, String> data, MedievalFactions main) {
         this.main = main;
         this.load(data);
     }

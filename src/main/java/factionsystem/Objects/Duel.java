@@ -1,18 +1,14 @@
 package factionsystem.Objects;
 
-import static org.bukkit.Bukkit.getServer;
-
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.OfflinePlayer;
-import org.bukkit.Particle;
-import org.bukkit.block.Block;
 import org.bukkit.boss.BarColor;
 import org.bukkit.boss.BossBar;
 import org.bukkit.boss.BarStyle;
 import org.bukkit.entity.Player;
 
-import factionsystem.Main;
+import factionsystem.MedievalFactions;
 import net.md_5.bungee.api.ChatColor;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.SkullMeta;
@@ -35,7 +31,7 @@ public class Duel {
 	}
 	
 	private BossBar bar = null;
-	Main plugin = null;
+	MedievalFactions plugin = null;
 	Player _challenged = null;
 	double challengedHealth = 0;
 	Player _challenger = null;
@@ -224,7 +220,7 @@ public class Duel {
     	plugin.duelingPlayers.remove(this);
 	}
 	
-	public Duel(Player challenger, Player challenged, int limit, Main main)
+	public Duel(Player challenger, Player challenged, int limit, MedievalFactions main)
 	{
 		_challenger = challenger;
 		challengerHealth = challenger.getHealth(); 

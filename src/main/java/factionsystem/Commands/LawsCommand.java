@@ -1,6 +1,6 @@
 package factionsystem.Commands;
 
-import factionsystem.Main;
+import factionsystem.MedievalFactions;
 import factionsystem.Objects.Faction;
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
@@ -10,9 +10,9 @@ import static factionsystem.Subsystems.UtilitySubsystem.*;
 
 public class LawsCommand {
 
-    Main main = null;
+    MedievalFactions main = null;
 
-    public LawsCommand(Main plugin) {
+    public LawsCommand(MedievalFactions plugin) {
         main = plugin;
     }
 
