@@ -117,16 +117,9 @@ public class CommandSubsystem {
 
                 // desc command
                 if (args[0].equalsIgnoreCase("desc")) {
-                    if (sender.hasPermission("mf.desc") || sender.hasPermission("mf.default")) {
-                        DescCommand command = new DescCommand(main);
-                        command.setDescription(sender, args);
-                        return true;
-                    }
-                    else {
-                        sender.sendMessage(ChatColor.RED + "Sorry! You need the following permission to use this command: 'mf.desc'");
-                        return false;
-                    }
-
+                    DescCommand command = new DescCommand(main);
+                    command.setDescription(sender, args);
+                    return true;
                 }
 
                 // invite command
