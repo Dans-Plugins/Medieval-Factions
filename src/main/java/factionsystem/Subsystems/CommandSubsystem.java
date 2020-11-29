@@ -495,15 +495,9 @@ public class CommandSubsystem {
 
                 // breakalliance command
                 if (args[0].equalsIgnoreCase("breakalliance")|| args[0].equalsIgnoreCase("ba")) {
-                    if (sender.hasPermission("mf.breakalliance") || sender.hasPermission("mf.default")) {
-                        BreakAllianceCommand command = new BreakAllianceCommand(main);
-                        command.breakAlliance(sender, args);
-                        return true;
-                    }
-                    else {
-                        sender.sendMessage(ChatColor.RED + "Sorry! You need the following permission to use this command: 'mf.breakalliance'");
-                        return false;
-                    }
+                    BreakAllianceCommand command = new BreakAllianceCommand(main);
+                    command.breakAlliance(sender, args);
+                    return true;
                 }
 
                 // TODO: shift responsibility of perm checking from Main to the Command class of each command, like below
