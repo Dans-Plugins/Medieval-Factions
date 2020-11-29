@@ -64,15 +64,9 @@ public class CommandSubsystem {
 
                 // list command
                 if  (args[0].equalsIgnoreCase("list")) {
-                    if (sender.hasPermission("mf.list") || sender.hasPermission("mf.default")) {
-                        ListCommand command = new ListCommand(main);
-                        command.listFactions(sender);
-                        return true;
-                    }
-                    else {
-                        sender.sendMessage(ChatColor.RED + "Sorry! You need the following permission to use this command: 'mf.list'");
-                        return false;
-                    }
+                    ListCommand command = new ListCommand(main);
+                    command.listFactions(sender);
+                    return true;
                 }
 
                 // disband command
