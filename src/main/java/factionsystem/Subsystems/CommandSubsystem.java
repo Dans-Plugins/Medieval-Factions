@@ -481,16 +481,9 @@ public class CommandSubsystem {
 
                 // ally command
                 if (args[0].equalsIgnoreCase("ally")) {
-                    if (sender.hasPermission("mf.ally") || sender.hasPermission("mf.default")) {
-                        AllyCommand command = new AllyCommand(main);
-                        command.requestAlliance(sender, args);
-                        return true;
-                    }
-                    else {
-                        sender.sendMessage(ChatColor.RED + "Sorry! You need the following permission to use this command: 'mf.ally'");
-                        return false;
-                    }
-
+                    AllyCommand command = new AllyCommand(main);
+                    command.requestAlliance(sender, args);
+                    return true;
                 }
 
                 // breakalliance command
