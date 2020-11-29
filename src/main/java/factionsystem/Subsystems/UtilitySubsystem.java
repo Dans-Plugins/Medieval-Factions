@@ -81,7 +81,7 @@ public class UtilitySubsystem {
                                     if (targetFaction.getCumulativePowerLevel() < getChunksClaimedByFaction(targetFaction.getName(), main.claimedChunks)) {
 
                                         // is at war with target faction
-                                        if (faction.isEnemy(targetFaction.getName())) {
+                                        if (faction.isEnemy(targetFaction.getName()) || everyPlayerInFactionExperiencingPowerDecay(targetFaction)) {
 
                                             if (main.getConfig().getBoolean("surroundedChunksProtected")) {
                                                 if (isClaimedChunkSurroundedByChunksClaimedBySameFaction(chunk)) {
@@ -115,7 +115,11 @@ public class UtilitySubsystem {
                                             return;
                                         }
                                         else {
-                                            player.sendMessage(ChatColor.RED + "Your factions have to be at war in order for you to conquer land.");
+                                            if (main.getConfig().getBoolean("powerDecreases")) {
+                                                player.sendMessage(ChatColor.RED + "In order for you to conquer land, this faction must be at war with you or every member must be experiencing power decay.");
+                                            } else {
+                                                player.sendMessage(ChatColor.RED + "Your factions have to be at war in order for you to conquer land.");
+                                            }
                                             return;
                                         }
                                     }
@@ -139,6 +143,18 @@ public class UtilitySubsystem {
                 return;
             }
         }
+    }
+
+    private boolean everyPlayerInFactionExperiencingPowerDecay(Faction faction) {
+        int numExperiencingPowerDecay = 0;
+        for (UUID uuid : faction.getMemberArrayList()) {
+            PlayerActivityRecord record = getPlayerActivityRecord(uuid, main.playerActivityRecords);
+            if (!getPlayer(uuid).isOnline() && main.getConfig().getBoolean("powerDecreases")
+                    && record.getMinutesSinceLastLogout() > main.getConfig().getInt("minutesBeforePowerDecrease")) {
+                numExperiencingPowerDecay++;
+            }
+        }
+        return (numExperiencingPowerDecay == faction.getMemberArrayList().size());
     }
 
     public void removeChunkAtPlayerLocation(Player player) {
