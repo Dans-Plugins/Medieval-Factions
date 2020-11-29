@@ -11,12 +11,10 @@ import java.util.UUID;
 import static factionsystem.Subsystems.UtilitySubsystem.*;
 import static org.bukkit.Bukkit.getServer;
 
-public class DemoteCommand {
-
-    MedievalFactions main = null;
+public class DemoteCommand extends Command {
 
     public DemoteCommand(MedievalFactions plugin) {
-        main = plugin;
+        super(plugin);
     }
 
     public void demotePlayer(CommandSender sender, String[] args) {

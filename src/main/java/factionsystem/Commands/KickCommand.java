@@ -11,12 +11,10 @@ import java.util.UUID;
 
 import static factionsystem.Subsystems.UtilitySubsystem.*;
 
-public class KickCommand {
-
-    MedievalFactions main = null;
+public class KickCommand extends Command {
 
     public KickCommand(MedievalFactions plugin) {
-        main = plugin;
+        super(plugin);
     }
 
     public boolean kickPlayer(CommandSender sender, String[] args) {

@@ -5,12 +5,10 @@ import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
-public class CheckAccessCommand {
-
-    MedievalFactions main = null;
+public class CheckAccessCommand extends Command {
 
     public CheckAccessCommand(MedievalFactions plugin) {
-        main = plugin;
+        super(plugin);
     }
 
     public void checkAccess(CommandSender sender, String[] args) {

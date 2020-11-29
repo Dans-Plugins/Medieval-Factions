@@ -5,12 +5,10 @@ import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
-public class LockCommand {
-
-    MedievalFactions main = null;
+public class LockCommand extends Command { ;
 
     public LockCommand(MedievalFactions plugin) {
-        main = plugin;
+        super(plugin);
     }
 
     public void lockBlock(CommandSender sender, String[] args) {

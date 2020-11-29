@@ -12,12 +12,10 @@ import java.util.ArrayList;
 
 import static factionsystem.Subsystems.UtilitySubsystem.*;
 
-public class ForceCommand {
-
-    MedievalFactions main = null;
+public class ForceCommand extends Command {
 
     public ForceCommand(MedievalFactions plugin) {
-        main = plugin;
+        super(plugin);
     }
 
     public boolean force(CommandSender sender, String[] args) {

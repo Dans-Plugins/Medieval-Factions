@@ -7,12 +7,10 @@ import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
-public class ConfigCommand {
-
-    MedievalFactions main = null;
+public class ConfigCommand extends Command {
 
     public ConfigCommand(MedievalFactions plugin) {
-        main = plugin;
+        super(plugin);
     }
 
     // args count is at least 1 at this point (/mf config)

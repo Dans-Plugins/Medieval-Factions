@@ -7,12 +7,10 @@ import org.bukkit.entity.Player;
 
 import static factionsystem.Subsystems.UtilitySubsystem.findUUIDBasedOnPlayerName;
 
-public class GrantAccessCommand {
-
-    MedievalFactions main = null;
+public class GrantAccessCommand extends Command {
 
     public GrantAccessCommand(MedievalFactions plugin) {
-        main = plugin;
+        super(plugin);
     }
 
     public void grantAccess(CommandSender sender, String[] args) {

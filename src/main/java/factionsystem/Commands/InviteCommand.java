@@ -13,12 +13,10 @@ import static factionsystem.Subsystems.UtilitySubsystem.findUUIDBasedOnPlayerNam
 import static factionsystem.Subsystems.UtilitySubsystem.isInFaction;
 import static org.bukkit.Bukkit.getServer;
 
-public class InviteCommand {
-
-    MedievalFactions main = null;
+public class InviteCommand extends Command {
 
     public InviteCommand(MedievalFactions plugin) {
-        main = plugin;
+        super(plugin);
     }
 
     public boolean invitePlayer(CommandSender sender, String[] args) {

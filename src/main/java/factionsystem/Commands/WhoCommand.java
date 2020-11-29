@@ -8,12 +8,10 @@ import org.bukkit.entity.Player;
 
 import static factionsystem.Subsystems.UtilitySubsystem.*;
 
-public class WhoCommand {
-
-    MedievalFactions main = null;
+public class WhoCommand extends Command {
 
     public WhoCommand(MedievalFactions plugin) {
-        main = plugin;
+        super(plugin);
     }
 
     public void sendInformation(CommandSender sender, String[] args) {

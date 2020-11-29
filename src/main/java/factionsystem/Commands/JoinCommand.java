@@ -8,12 +8,10 @@ import org.bukkit.entity.Player;
 
 import static factionsystem.Subsystems.UtilitySubsystem.*;
 
-public class JoinCommand {
-
-    MedievalFactions main = null;
+public class JoinCommand extends Command {
 
     public JoinCommand(MedievalFactions plugin) {
-        main = plugin;
+        super(plugin);
     }
 
     public boolean joinFaction(CommandSender sender, String[] args) {

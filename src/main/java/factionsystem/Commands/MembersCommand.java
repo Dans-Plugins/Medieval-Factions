@@ -8,12 +8,10 @@ import org.bukkit.entity.Player;
 
 import static factionsystem.Subsystems.UtilitySubsystem.*;
 
-public class MembersCommand {
-
-    MedievalFactions main = null;
+public class MembersCommand extends Command {
 
     public MembersCommand(MedievalFactions plugin) {
-        main = plugin;
+        super(plugin);
     }
 
     public void showMembers(CommandSender sender, String[] args) {

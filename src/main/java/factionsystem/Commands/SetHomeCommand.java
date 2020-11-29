@@ -9,12 +9,10 @@ import org.bukkit.entity.Player;
 
 import static factionsystem.Subsystems.UtilitySubsystem.*;
 
-public class SetHomeCommand {
-
-    MedievalFactions main = null;
+public class SetHomeCommand extends Command {
 
     public SetHomeCommand(MedievalFactions plugin) {
-        main = plugin;
+        super(plugin);
     }
 
     public void setHome(CommandSender sender) {

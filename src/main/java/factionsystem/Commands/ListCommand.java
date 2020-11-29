@@ -7,12 +7,10 @@ import org.bukkit.command.CommandSender;
 
 import static factionsystem.Subsystems.UtilitySubsystem.getChunksClaimedByFaction;
 
-public class ListCommand {
-
-    MedievalFactions main = null;
+public class ListCommand extends Command {
 
     public ListCommand(MedievalFactions plugin) {
-        main = plugin;
+        super(plugin);
     }
 
     public boolean listFactions(CommandSender sender) {

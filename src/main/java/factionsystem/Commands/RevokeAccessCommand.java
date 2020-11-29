@@ -7,12 +7,10 @@ import org.bukkit.entity.Player;
 
 import static factionsystem.Subsystems.UtilitySubsystem.findUUIDBasedOnPlayerName;
 
-public class RevokeAccessCommand {
-
-    MedievalFactions main = null;
+public class RevokeAccessCommand extends Command {
 
     public RevokeAccessCommand(MedievalFactions plugin) {
-        main = plugin;
+        super(plugin);
     }
 
     public void revokeAccess(CommandSender sender, String[] args) {

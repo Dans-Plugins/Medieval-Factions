@@ -9,13 +9,11 @@ import factionsystem.Objects.Faction;
 import factionsystem.Objects.Gate;
 import factionsystem.Subsystems.UtilitySubsystem;
 
-public class GateCommand {
-
-	MedievalFactions main = null;
+public class GateCommand extends Command {
 	
 	public GateCommand(MedievalFactions plugin)
 	{
-		main = plugin;
+		super(plugin);
 	}
 	
 	public void handleGate(CommandSender sender, String[] args)

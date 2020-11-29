@@ -10,12 +10,10 @@ import java.io.File;
 
 import static factionsystem.Subsystems.UtilitySubsystem.*;
 
-public class LeaveCommand {
-
-    MedievalFactions main = null;
+public class LeaveCommand extends Command {
 
     public LeaveCommand(MedievalFactions plugin) {
-        main = plugin;
+        super(plugin);
     }
 
     public boolean leaveFaction(CommandSender sender) {

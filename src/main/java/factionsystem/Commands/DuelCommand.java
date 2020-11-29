@@ -9,11 +9,10 @@ import factionsystem.MedievalFactions;
 import factionsystem.Objects.Duel;
 import factionsystem.Subsystems.UtilitySubsystem;
 
-public class DuelCommand {
-	MedievalFactions main = null;
-	
+public class DuelCommand extends Command {
+
 	public DuelCommand(MedievalFactions plugin) {
-		main = plugin;
+		super(plugin);
 	}
 	
 	public void handleDuel(CommandSender sender, String[] args) {
