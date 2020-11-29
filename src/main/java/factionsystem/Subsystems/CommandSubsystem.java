@@ -77,15 +77,9 @@ public class CommandSubsystem {
 
                 // disband command
                 if (args[0].equalsIgnoreCase("disband")) {
-                    if (sender.hasPermission("mf.disband") || sender.hasPermission("mf.default")) {
-                        DisbandCommand command = new DisbandCommand(main);
-                        command.deleteFaction(sender, args);
-                        return true;
-                    }
-                    else {
-                        sender.sendMessage(ChatColor.RED + "Sorry! You need the following permission to use this command: 'mf.disband'");
-                        return false;
-                    }
+                    DisbandCommand command = new DisbandCommand(main);
+                    command.deleteFaction(sender, args);
+                    return true;
                 }
 
                 // members command
