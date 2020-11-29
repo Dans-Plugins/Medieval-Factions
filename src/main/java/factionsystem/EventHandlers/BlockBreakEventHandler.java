@@ -1,9 +1,8 @@
 package factionsystem.EventHandlers;
 
-import factionsystem.Main;
+import factionsystem.MedievalFactions;
 import factionsystem.Objects.ClaimedChunk;
 import factionsystem.Objects.Faction;
-import factionsystem.Objects.LockedBlock;
 import factionsystem.Objects.Gate;
 import factionsystem.Subsystems.UtilitySubsystem;
 
@@ -16,9 +15,9 @@ import static factionsystem.Subsystems.UtilitySubsystem.isInFaction;
 
 public class BlockBreakEventHandler {
 
-    Main main = null;
+    MedievalFactions main = null;
 
-    public BlockBreakEventHandler(Main plugin) {
+    public BlockBreakEventHandler(MedievalFactions plugin) {
         main = plugin;
     }
 

@@ -1,6 +1,6 @@
 package factionsystem.Commands;
 
-import factionsystem.Main;
+import factionsystem.MedievalFactions;
 import factionsystem.Objects.Faction;
 import factionsystem.Objects.PlayerPowerRecord;
 import org.bukkit.Bukkit;
@@ -14,9 +14,9 @@ import static factionsystem.Subsystems.UtilitySubsystem.*;
 
 public class ForceCommand {
 
-    Main main = null;
+    MedievalFactions main = null;
 
-    public ForceCommand(Main plugin) {
+    public ForceCommand(MedievalFactions plugin) {
         main = plugin;
     }
 

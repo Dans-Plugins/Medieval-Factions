@@ -1,6 +1,6 @@
 package factionsystem.EventHandlers;
 
-import factionsystem.Main;
+import factionsystem.MedievalFactions;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.entity.ThrownPotion;
@@ -10,9 +10,9 @@ import org.bukkit.potion.PotionEffect;
 
 public class PotionSplashEventHandler {
 
-    Main main = null;
+    MedievalFactions main = null;
 
-    public PotionSplashEventHandler(Main plugin) {
+    public PotionSplashEventHandler(MedievalFactions plugin) {
         main = plugin;
     }
 

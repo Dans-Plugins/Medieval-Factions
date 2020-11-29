@@ -2,20 +2,13 @@ package factionsystem.Objects;
 
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Scanner;
 import java.util.UUID;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 
-import factionsystem.Main;
+import factionsystem.MedievalFactions;
 
-import static factionsystem.Subsystems.UtilitySubsystem.findUUIDBasedOnPlayerName;
-
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileWriter;
-import java.io.IOException;
 import java.time.Duration;
 import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
@@ -25,9 +18,9 @@ public class PlayerActivityRecord {
     private int logins = 0;
     private int powerLost = 0;
     private ZonedDateTime lastLogout = ZonedDateTime.now();
-    private Main main;
+    private MedievalFactions main;
     
-    public PlayerActivityRecord(UUID uuid, int logins, Main main)
+    public PlayerActivityRecord(UUID uuid, int logins, MedievalFactions main)
     {
     	playerUUID = uuid;
     	this.logins = logins;
@@ -75,7 +68,7 @@ public class PlayerActivityRecord {
         return logins;
     }
     
-    public PlayerActivityRecord(Map<String, String> data, Main main) {
+    public PlayerActivityRecord(Map<String, String> data, MedievalFactions main) {
         this.load(data);
         this.main = main;
     }

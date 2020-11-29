@@ -1,19 +1,15 @@
 package factionsystem.EventHandlers;
 
-import factionsystem.Main;
+import factionsystem.MedievalFactions;
 import factionsystem.Subsystems.UtilitySubsystem;
-import factionsystem.Objects.ClaimedChunk;
-import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Monster;
 import org.bukkit.event.entity.EntitySpawnEvent;
 
-import static factionsystem.Subsystems.UtilitySubsystem.getPlayersFaction;
-
 public class EntitySpawnEventHandler {
 
-    Main main = null;
+    MedievalFactions main = null;
 
-    public EntitySpawnEventHandler(Main plugin) {
+    public EntitySpawnEventHandler(MedievalFactions plugin) {
         main = plugin;
     }
 

@@ -1,6 +1,6 @@
 package factionsystem.Commands;
 
-import factionsystem.Main;
+import factionsystem.MedievalFactions;
 import factionsystem.Objects.Faction;
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
@@ -11,9 +11,9 @@ import static factionsystem.Subsystems.UtilitySubsystem.getPlayersPowerRecord;
 
 public class CreateCommand {
 
-    Main main = null;
+    MedievalFactions main = null;
 
-    public CreateCommand(Main plugin) {
+    public CreateCommand(MedievalFactions plugin) {
         main = plugin;
     }
 

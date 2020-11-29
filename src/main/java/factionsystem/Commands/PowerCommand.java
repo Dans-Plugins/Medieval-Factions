@@ -1,6 +1,6 @@
 package factionsystem.Commands;
 
-import factionsystem.Main;
+import factionsystem.MedievalFactions;
 import factionsystem.Objects.PlayerPowerRecord;
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
@@ -12,9 +12,9 @@ import java.util.UUID;
 
 public class PowerCommand {
 
-    Main main = null;
+    MedievalFactions main = null;
 
-    public PowerCommand(Main plugin) {
+    public PowerCommand(MedievalFactions plugin) {
         main = plugin;
     }
 

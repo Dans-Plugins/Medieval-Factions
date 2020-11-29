@@ -1,6 +1,6 @@
 package factionsystem.Commands;
 
-import factionsystem.Main;
+import factionsystem.MedievalFactions;
 import factionsystem.Objects.Faction;
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
@@ -10,9 +10,9 @@ import static factionsystem.Subsystems.UtilitySubsystem.*;
 
 public class JoinCommand {
 
-    Main main = null;
+    MedievalFactions main = null;
 
-    public JoinCommand(Main plugin) {
+    public JoinCommand(MedievalFactions plugin) {
         main = plugin;
     }
 

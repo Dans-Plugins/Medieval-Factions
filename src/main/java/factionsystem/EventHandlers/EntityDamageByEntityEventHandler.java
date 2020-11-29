@@ -1,6 +1,6 @@
 package factionsystem.EventHandlers;
 
-import factionsystem.Main;
+import factionsystem.MedievalFactions;
 import factionsystem.Objects.Duel;
 import factionsystem.Subsystems.UtilitySubsystem;
 
@@ -12,9 +12,9 @@ import org.bukkit.projectiles.ProjectileSource;
 
 public class EntityDamageByEntityEventHandler {
 
-    Main main = null;
+    MedievalFactions main = null;
 
-    public EntityDamageByEntityEventHandler(Main plugin) {
+    public EntityDamageByEntityEventHandler(MedievalFactions plugin) {
         main = plugin;
     }
 

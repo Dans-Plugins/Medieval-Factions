@@ -1,6 +1,6 @@
 package factionsystem.Commands;
 
-import factionsystem.Main;
+import factionsystem.MedievalFactions;
 import factionsystem.Objects.Faction;
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
@@ -9,14 +9,13 @@ import org.bukkit.entity.Player;
 import static factionsystem.Subsystems.UtilitySubsystem.createStringFromFirstArgOnwards;
 import static factionsystem.Subsystems.UtilitySubsystem.sendAllPlayersInFactionMessage;
 
-public class BreakAllianceCommand {
+public class BreakAllianceCommand extends Command {
 
-    Main main = null;
+    MedievalFactions main = null;
 
-    public BreakAllianceCommand(Main plugin) {
-        main = plugin;
+    public BreakAllianceCommand(MedievalFactions plugin) {
+        super(plugin);
     }
-
 
     public void breakAlliance(CommandSender sender, String[] args) {
         if (sender instanceof Player) {

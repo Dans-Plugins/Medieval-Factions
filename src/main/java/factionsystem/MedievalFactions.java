@@ -35,10 +35,10 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.UUID;
 
-public class Main extends JavaPlugin implements Listener {
+public class MedievalFactions extends JavaPlugin implements Listener {
 
     // version
-    public static String version = "v3.6.0.2";
+    public static String version = "v3.6.0.3";
 
     // subsystems
     public StorageSubsystem storage = new StorageSubsystem(this);
@@ -79,7 +79,7 @@ public class Main extends JavaPlugin implements Listener {
         }
         else {
             // pre load compatibility checks
-            if (!getConfig().getString("version").equalsIgnoreCase(Main.version)) {
+            if (!getConfig().getString("version").equalsIgnoreCase(MedievalFactions.version)) {
                 System.out.println("[ALERT] Version mismatch! Adding missing defaults and setting version!");
                 config.handleVersionMismatch();
             }
@@ -93,7 +93,7 @@ public class Main extends JavaPlugin implements Listener {
         storage.load();
 
         // post load compatibility checks
-        if (!getConfig().getString("version").equalsIgnoreCase(Main.version)) {
+        if (!getConfig().getString("version").equalsIgnoreCase(MedievalFactions.version)) {
             utilities.createActivityRecordForEveryOfflinePlayer(); // make sure every player experiences power decay in case we updated from pre-v3.5
         }
 

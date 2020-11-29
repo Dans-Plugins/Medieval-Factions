@@ -1,6 +1,6 @@
 package factionsystem.Commands;
 
-import factionsystem.Main;
+import factionsystem.MedievalFactions;
 import factionsystem.Subsystems.ConfigSubsystem;
 
 import org.bukkit.ChatColor;
@@ -9,9 +9,9 @@ import org.bukkit.entity.Player;
 
 public class ConfigCommand {
 
-    Main main = null;
+    MedievalFactions main = null;
 
-    public ConfigCommand(Main plugin) {
+    public ConfigCommand(MedievalFactions plugin) {
         main = plugin;
     }
 

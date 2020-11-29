@@ -1,6 +1,6 @@
 package factionsystem.Commands;
 
-import factionsystem.Main;
+import factionsystem.MedievalFactions;
 import factionsystem.Objects.ClaimedChunk;
 import factionsystem.Objects.Faction;
 import org.bukkit.ChatColor;
@@ -11,9 +11,9 @@ import static factionsystem.Subsystems.UtilitySubsystem.*;
 
 public class SetHomeCommand {
 
-    Main main = null;
+    MedievalFactions main = null;
 
-    public SetHomeCommand(Main plugin) {
+    public SetHomeCommand(MedievalFactions plugin) {
         main = plugin;
     }
 

@@ -1,20 +1,15 @@
 package factionsystem.Subsystems;
 
-import factionsystem.Main;
-
-import java.io.*;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Scanner;
+import factionsystem.MedievalFactions;
 
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 
 public class ConfigSubsystem {
 
-    Main main = null;
+    MedievalFactions main = null;
 
-    public ConfigSubsystem(Main plugin) {
+    public ConfigSubsystem(MedievalFactions plugin) {
         main = plugin;
     }
 
@@ -148,7 +143,7 @@ public class ConfigSubsystem {
 
     }
     
-    public static void setConfigOption(String option, String value, Player player, Main main) {
+    public static void setConfigOption(String option, String value, Player player, MedievalFactions main) {
 
         if (main.getConfig().isSet(option)) {
 

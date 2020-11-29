@@ -1,6 +1,6 @@
 package factionsystem.Commands;
 
-import factionsystem.Main;
+import factionsystem.MedievalFactions;
 import factionsystem.Objects.Faction;
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
@@ -13,9 +13,9 @@ import static org.bukkit.Bukkit.getServer;
 
 public class DemoteCommand {
 
-    Main main = null;
+    MedievalFactions main = null;
 
-    public DemoteCommand(Main plugin) {
+    public DemoteCommand(MedievalFactions plugin) {
         main = plugin;
     }
 

@@ -2,19 +2,17 @@ package factionsystem.EventHandlers;
 
 import java.time.ZonedDateTime;
 
-import org.bukkit.ChatColor;
 import org.bukkit.event.player.PlayerQuitEvent;
 
-import factionsystem.Main;
+import factionsystem.MedievalFactions;
 import factionsystem.Objects.PlayerActivityRecord;
-import factionsystem.Objects.PlayerPowerRecord;
 import factionsystem.Subsystems.UtilitySubsystem;
 
 public class PlayerLeaveEventHandler {
 
-	Main main = null;
+	MedievalFactions main = null;
 	
-	public PlayerLeaveEventHandler(Main plugin)
+	public PlayerLeaveEventHandler(MedievalFactions plugin)
 	{
 		main = plugin;
 	}

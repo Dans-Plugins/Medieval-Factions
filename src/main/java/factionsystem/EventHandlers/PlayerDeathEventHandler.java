@@ -1,8 +1,7 @@
 package factionsystem.EventHandlers;
 
-import factionsystem.Main;
+import factionsystem.MedievalFactions;
 import factionsystem.Objects.ClaimedChunk;
-import factionsystem.Objects.Duel;
 import factionsystem.Objects.PlayerPowerRecord;
 import factionsystem.Subsystems.UtilitySubsystem;
 import org.bukkit.ChatColor;
@@ -13,9 +12,9 @@ import static factionsystem.Subsystems.UtilitySubsystem.*;
 
 public class PlayerDeathEventHandler {
 
-    Main main = null;
+    MedievalFactions main = null;
 
-    public PlayerDeathEventHandler(Main plugin) {
+    public PlayerDeathEventHandler(MedievalFactions plugin) {
         main = plugin;
     }
 
