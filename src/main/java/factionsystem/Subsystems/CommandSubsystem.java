@@ -210,15 +210,9 @@ public class CommandSubsystem {
 
                 // make peace command
                 if (args[0].equalsIgnoreCase("makepeace") || args[0].equalsIgnoreCase("mp")) {
-                    if (sender.hasPermission("mf.makepeace") || sender.hasPermission("mf.default")) {
-                        MakePeaceCommand command = new MakePeaceCommand(main);
-                        command.makePeace(sender, args);
-                        return true;
-                    }
-                    else {
-                        sender.sendMessage(ChatColor.RED + "Sorry! You need the following permission to use this command: 'mf.makepeace'");
-                        return false;
-                    }
+                    MakePeaceCommand command = new MakePeaceCommand(main);
+                    command.makePeace(sender, args);
+                    return true;
                 }
 
                 // claim command
