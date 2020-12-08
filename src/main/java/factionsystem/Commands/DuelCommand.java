@@ -48,7 +48,7 @@ public class DuelCommand extends Command {
 									{
 										timeLimit = Integer.parseInt(args[3]);
 									}
-									UtilitySubsystem.inviteDuel(player, target, timeLimit);
+									inviteDuel(player, target, timeLimit);
 									player.sendMessage(ChatColor.AQUA + "You have challenged " + target.getName() + " to a duel!");
 									return;
 								}
@@ -91,7 +91,7 @@ public class DuelCommand extends Command {
 		                		else
 		                		{
 									player.sendMessage(ChatColor.RED + "You have not been challenged to a duel by '" + args[2] + "'.");
-									return;	
+									return;
 		                		}
 		                	}
 		                	else
@@ -117,7 +117,7 @@ public class DuelCommand extends Command {
 		                		else
 		                		{
 									player.sendMessage(ChatColor.RED + "You have not been challenged to a duel by anyone.");
-									return;	
+									return;
 		                		}
 		                	}
 		                	else
@@ -188,5 +188,11 @@ public class DuelCommand extends Command {
 			}
 		}
 		return false;
+	}
+
+	private void inviteDuel(Player player, Player target, int limit)
+	{
+		target.sendMessage(ChatColor.AQUA + player.getName() + " has challenged you to a duel! Type /mf duel accept to begin.");
+		MedievalFactions.getInstance().duelingPlayers.add(new Duel(player, target, limit));
 	}
 }

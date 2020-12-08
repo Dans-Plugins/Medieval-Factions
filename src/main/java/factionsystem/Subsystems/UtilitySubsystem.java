@@ -352,12 +352,6 @@ public class UtilitySubsystem {
     }
 
     // static methods ----------------------------
-    
-    public static void inviteDuel(Player player, Player target, int limit)
-    {
-    	target.sendMessage(ChatColor.AQUA + player.getName() + " has challenged you to a duel! Type /mf duel accept to begin.");
-    	MedievalFactions.getInstance().duelingPlayers.add(new Duel(player, target, limit));
-    }
 
     public static Duel getDuel(Player player, Player target)
     {
@@ -370,7 +364,7 @@ public class UtilitySubsystem {
     	}
     	return null;
     }
-    
+
     public static Duel getDuel(Player player)
     {
     	for (Duel duel : MedievalFactions.getInstance().duelingPlayers)
