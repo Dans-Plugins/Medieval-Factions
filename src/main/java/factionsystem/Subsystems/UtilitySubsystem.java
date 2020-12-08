@@ -267,15 +267,6 @@ public class UtilitySubsystem {
         }
         return false;
     }
-    
-    public boolean hasActivityRecord(UUID playerUUID) {
-        for (PlayerActivityRecord record : MedievalFactions.getInstance().playerActivityRecords){
-            if (record.getPlayerUUID().equals(playerUUID)){
-                return true;
-            }
-        }
-        return false;
-    }
 
     public void schedulePowerIncrease() {
         System.out.println("Scheduling power increase...");

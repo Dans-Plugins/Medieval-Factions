@@ -8,6 +8,8 @@ import factionsystem.Subsystems.UtilitySubsystem;
 import org.bukkit.ChatColor;
 import org.bukkit.event.player.PlayerJoinEvent;
 
+import java.util.UUID;
+
 public class PlayerJoinEventHandler {
 
     public void handle(PlayerJoinEvent event) {
@@ -16,7 +18,7 @@ public class PlayerJoinEventHandler {
                     MedievalFactions.getInstance().getConfig().getInt("initialPowerLevel"));
             MedievalFactions.getInstance().playerPowerRecords.add(newRecord);
         }
-        if (!MedievalFactions.getInstance().utilities.hasActivityRecord(event.getPlayer().getUniqueId())) {
+        if (!hasActivityRecord(event.getPlayer().getUniqueId())) {
         	PlayerActivityRecord newRecord = new PlayerActivityRecord(event.getPlayer().getUniqueId(), 1);
         	MedievalFactions.getInstance().playerActivityRecords.add(newRecord);
         }
@@ -49,5 +51,14 @@ public class PlayerJoinEventHandler {
 
         UtilitySubsystem.informPlayerIfTheirLandIsInDanger(event.getPlayer(), MedievalFactions.getInstance().factions, MedievalFactions.getInstance().claimedChunks);
     }
+
+	private boolean hasActivityRecord(UUID playerUUID) {
+		for (PlayerActivityRecord record : MedievalFactions.getInstance().playerActivityRecords){
+			if (record.getPlayerUUID().equals(playerUUID)){
+				return true;
+			}
+		}
+		return false;
+	}
 
 }
