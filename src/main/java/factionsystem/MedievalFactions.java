@@ -107,18 +107,6 @@ public class MedievalFactions extends JavaPlugin {
         // chat
         this.getServer().getPluginManager().registerEvents(new ChatHandler(), this);
 
-
-
-
-
-
-
-
-
-
-
-
-
         storage.load();
 
         // post load compatibility checks
