@@ -1,24 +1,28 @@
 package factionsystem;
 
 import factionsystem.EventHandlers.*;
+import org.bukkit.plugin.PluginManager;
 
 public class EventRegistry {
     public static void registerEvents() {
 
+        MedievalFactions instance = MedievalFactions.getInstance();
+        PluginManager manager = instance.getServer().getPluginManager();
+
         // blocks and interaction
-        MedievalFactions.getInstance().getServer().getPluginManager().registerEvents(new BlockInteractionHandler(), MedievalFactions.getInstance());
+        manager.registerEvents(new BlockInteractionHandler(), instance);
 
         // joining, leaving and spawning
-        MedievalFactions.getInstance().getServer().getPluginManager().registerEvents(new JoiningLeavingAndSpawningHandler(), MedievalFactions.getInstance());
+        manager.registerEvents(new JoiningLeavingAndSpawningHandler(), instance);
 
         // damage, effects and death
-        MedievalFactions.getInstance().getServer().getPluginManager().registerEvents(new DamageEffectsAndDeathHandler(), MedievalFactions.getInstance());
+        manager.registerEvents(new DamageEffectsAndDeathHandler(), instance);
 
         // movement
-        MedievalFactions.getInstance().getServer().getPluginManager().registerEvents(new MoveHandler(), MedievalFactions.getInstance());
+        manager.registerEvents(new MoveHandler(), instance);
 
         // chat
-        MedievalFactions.getInstance().getServer().getPluginManager().registerEvents(new ChatHandler(), MedievalFactions.getInstance());
+        manager.registerEvents(new ChatHandler(), instance);
         
     }
 }
