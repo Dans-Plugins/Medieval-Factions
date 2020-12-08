@@ -43,6 +43,9 @@ public class MedievalFactions extends JavaPlugin implements Listener {
     // version
     public static String version = "v3.6.0.3-beta-3";
 
+    // scheduler
+    public Scheduler scheduler = new Scheduler();
+
     // subsystems
     public StorageSubsystem storage = new StorageSubsystem();
     public UtilitySubsystem utilities = new UtilitySubsystem();
@@ -95,10 +98,12 @@ public class MedievalFactions extends JavaPlugin implements Listener {
             reloadConfig();
         }
 
-        utilities.schedulePowerIncrease();
-        utilities.schedulePowerDecrease();
-        utilities.scheduleAutosave();
+        scheduler.schedulePowerIncrease();
+        scheduler.schedulePowerDecrease();
+        scheduler.scheduleAutosave();
+
         this.getServer().getPluginManager().registerEvents(this, this);
+
         storage.load();
 
         // post load compatibility checks
