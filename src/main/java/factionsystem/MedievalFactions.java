@@ -37,6 +37,9 @@ import java.util.UUID;
 
 public class MedievalFactions extends JavaPlugin implements Listener {
 
+    // instance
+    private static MedievalFactions instance;
+
     // version
     public static String version = "v3.6.0.3-beta";
 
@@ -67,9 +70,15 @@ public class MedievalFactions extends JavaPlugin implements Listener {
     // List of players who made the cloud and the cloud itself in a pair
     public ArrayList<Pair<Player, AreaEffectCloud>> activeAOEClouds = new ArrayList<>();
 
+    public static MedievalFactions getInstance() {
+        return instance;
+    }
+
     @Override
     public void onEnable() {
         System.out.println("Medieval Factions plugin enabling....");
+
+        instance = this;
 
         utilities.ensureSmoothTransitionBetweenVersions();
 
