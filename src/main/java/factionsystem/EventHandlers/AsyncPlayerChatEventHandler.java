@@ -3,13 +3,16 @@ package factionsystem.EventHandlers;
 import factionsystem.MedievalFactions;
 import factionsystem.Objects.Faction;
 import org.bukkit.ChatColor;
+import org.bukkit.event.EventHandler;
+import org.bukkit.event.Listener;
 import org.bukkit.event.player.AsyncPlayerChatEvent;
 
 import static factionsystem.Subsystems.UtilitySubsystem.getPlayersFaction;
 import static factionsystem.Subsystems.UtilitySubsystem.sendAllPlayersInFactionMessage;
 
-public class AsyncPlayerChatEventHandler {
+public class AsyncPlayerChatEventHandler implements Listener {
 
+    @EventHandler()
     public void handle(AsyncPlayerChatEvent event) {
         if (MedievalFactions.getInstance().playersInFactionChat.contains(event.getPlayer().getUniqueId())) {
             Faction playersFaction = getPlayersFaction(event.getPlayer().getUniqueId(), MedievalFactions.getInstance().factions);

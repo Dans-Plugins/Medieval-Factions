@@ -2,14 +2,17 @@ package factionsystem.EventHandlers;
 
 import java.time.ZonedDateTime;
 
+import org.bukkit.event.EventHandler;
+import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerQuitEvent;
 
 import factionsystem.MedievalFactions;
 import factionsystem.Objects.PlayerActivityRecord;
 import factionsystem.Subsystems.UtilitySubsystem;
 
-public class PlayerLeaveEventHandler {
-	
+public class PlayerLeaveEventHandler implements Listener {
+
+	@EventHandler()
 	public void handle(PlayerQuitEvent event)
 	{
 		if (MedievalFactions.getInstance().lockingPlayers.contains(event.getPlayer().getUniqueId()))

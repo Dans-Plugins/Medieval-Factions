@@ -4,10 +4,13 @@ import factionsystem.MedievalFactions;
 import factionsystem.Util.Pair;
 import org.bukkit.entity.AreaEffectCloud;
 import org.bukkit.entity.Player;
+import org.bukkit.event.EventHandler;
+import org.bukkit.event.Listener;
 import org.bukkit.event.entity.LingeringPotionSplashEvent;
 
-public class LingeringPotionSplashEventHandler {
+public class LingeringPotionSplashEventHandler implements Listener {
 
+    @EventHandler()
     public void handle(LingeringPotionSplashEvent event) {
         Player thrower = (Player) event.getEntity().getShooter();
         AreaEffectCloud cloud = event.getAreaEffectCloud();

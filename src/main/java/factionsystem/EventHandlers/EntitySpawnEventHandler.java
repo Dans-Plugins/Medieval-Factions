@@ -3,10 +3,13 @@ package factionsystem.EventHandlers;
 import factionsystem.MedievalFactions;
 import factionsystem.Subsystems.UtilitySubsystem;
 import org.bukkit.entity.Monster;
+import org.bukkit.event.EventHandler;
+import org.bukkit.event.Listener;
 import org.bukkit.event.entity.EntitySpawnEvent;
 
-public class EntitySpawnEventHandler {
+public class EntitySpawnEventHandler implements Listener {
 
+    @EventHandler()
     public void handle(EntitySpawnEvent event) {
 
         int x = 0;

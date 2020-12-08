@@ -7,14 +7,17 @@ import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
+import org.bukkit.event.EventHandler;
+import org.bukkit.event.Listener;
 import org.bukkit.event.block.BlockPlaceEvent;
 
 import static factionsystem.Subsystems.UtilitySubsystem.getClaimedChunk;
 import static factionsystem.Subsystems.UtilitySubsystem.isInFaction;
 import static org.bukkit.Material.LADDER;
 
-public class BlockPlaceEventHandler {
+public class BlockPlaceEventHandler implements Listener {
 
+    @EventHandler()
     public void handle(BlockPlaceEvent event) {
         // get player
         Player player = event.getPlayer();

@@ -6,12 +6,15 @@ import factionsystem.Objects.PlayerPowerRecord;
 import factionsystem.Subsystems.UtilitySubsystem;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
+import org.bukkit.event.EventHandler;
+import org.bukkit.event.Listener;
 import org.bukkit.event.entity.PlayerDeathEvent;
 
 import static factionsystem.Subsystems.UtilitySubsystem.*;
 
-public class PlayerDeathEventHandler {
+public class PlayerDeathEventHandler implements Listener {
 
+    @EventHandler()
     public void handle(PlayerDeathEvent event) {
         event.getEntity();
         Player player = event.getEntity();

@@ -4,12 +4,15 @@ import factionsystem.MedievalFactions;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.entity.ThrownPotion;
+import org.bukkit.event.EventHandler;
+import org.bukkit.event.Listener;
 import org.bukkit.event.entity.PotionSplashEvent;
 import org.bukkit.potion.PotionEffect;
 
 
-public class PotionSplashEventHandler {
+public class PotionSplashEventHandler implements Listener {
 
+    @EventHandler()
     public void handle(PotionSplashEvent event) {
         ThrownPotion potion = event.getPotion();
 

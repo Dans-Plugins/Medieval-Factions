@@ -15,6 +15,8 @@ import org.bukkit.block.DoubleChest;
 import org.bukkit.block.data.BlockData;
 import org.bukkit.block.data.Powerable;
 import org.bukkit.entity.Player;
+import org.bukkit.event.EventHandler;
+import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.inventory.InventoryHolder;
 
@@ -24,8 +26,9 @@ import static factionsystem.Subsystems.UtilitySubsystem.*;
 import static org.bukkit.Bukkit.getLogger;
 import static org.bukkit.Material.*;
 
-public class PlayerInteractEventHandler {
+public class PlayerInteractEventHandler implements Listener {
 
+    @EventHandler()
     public void handle(PlayerInteractEvent event) {
         // get player
         Player player = event.getPlayer();

@@ -6,12 +6,15 @@ import factionsystem.Objects.PlayerPowerRecord;
 import factionsystem.Subsystems.UtilitySubsystem;
 
 import org.bukkit.ChatColor;
+import org.bukkit.event.EventHandler;
+import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerJoinEvent;
 
 import java.util.UUID;
 
-public class PlayerJoinEventHandler {
+public class PlayerJoinEventHandler implements Listener {
 
+	@EventHandler()
     public void handle(PlayerJoinEvent event) {
         if (!hasPowerRecord(event.getPlayer().getUniqueId())) {
             PlayerPowerRecord newRecord = new PlayerPowerRecord(event.getPlayer().getUniqueId(),

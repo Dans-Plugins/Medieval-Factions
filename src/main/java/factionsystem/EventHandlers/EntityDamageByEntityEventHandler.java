@@ -7,11 +7,14 @@ import factionsystem.Subsystems.UtilitySubsystem;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 import org.bukkit.entity.Projectile;
+import org.bukkit.event.EventHandler;
+import org.bukkit.event.Listener;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.projectiles.ProjectileSource;
 
-public class EntityDamageByEntityEventHandler {
+public class EntityDamageByEntityEventHandler implements Listener {
 
+    @EventHandler()
     public void handle(EntityDamageByEntityEvent event) {
     	
    	

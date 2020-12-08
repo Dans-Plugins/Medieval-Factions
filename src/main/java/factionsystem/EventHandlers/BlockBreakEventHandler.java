@@ -8,13 +8,16 @@ import factionsystem.Subsystems.UtilitySubsystem;
 
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
+import org.bukkit.event.EventHandler;
+import org.bukkit.event.Listener;
 import org.bukkit.event.block.BlockBreakEvent;
 
 import static factionsystem.Subsystems.UtilitySubsystem.getClaimedChunk;
 import static factionsystem.Subsystems.UtilitySubsystem.isInFaction;
 
-public class BlockBreakEventHandler {
+public class BlockBreakEventHandler implements Listener {
 
+    @EventHandler()
     public void handle(BlockBreakEvent event) {
         // get player
         Player player = event.getPlayer();
