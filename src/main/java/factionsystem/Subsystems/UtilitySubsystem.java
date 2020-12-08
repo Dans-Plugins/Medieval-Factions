@@ -25,7 +25,7 @@ public class UtilitySubsystem {
 
     // non-static methods
     
-    public ClaimedChunk isChunkClaimed(double x, double y, String world)
+    private ClaimedChunk isChunkClaimed(double x, double y, String world)
     {
     	for (ClaimedChunk chunk : MedievalFactions.getInstance().claimedChunks)
     	{
@@ -36,17 +36,6 @@ public class UtilitySubsystem {
     	}
     	
     	return null;
-    }
-
-    public static String createStringFromArgIndexOnwards(int index, String[] args) {
-        StringBuilder name = new StringBuilder();
-        for (int i = index; i < args.length; i++) {
-            name.append(args[i]);
-            if (!(i == args.length - 1)) {
-                name.append(" ");
-            }
-        }
-        return name.toString();
     }
     
     public void addChunkAtPlayerLocation(Player player) {
