@@ -428,15 +428,15 @@ public class PlayerInteractEventHandler {
                         Block rightChest = ((Chest) doubleChest.getRightSide()).getBlock();
 
                         // unlock leftChest and rightChest
-                        MedievalFactions.getInstance().utilities.removeLock(leftChest);
-                        MedievalFactions.getInstance().utilities.removeLock(rightChest);
+                        removeLock(leftChest);
+                        removeLock(rightChest);
 
                         player.sendMessage(ChatColor.GREEN + "Unlocked!");
                         MedievalFactions.getInstance().unlockingPlayers.remove(player.getUniqueId());
                     }
                     else {
                         // unlock single chest
-                        MedievalFactions.getInstance().utilities.removeLock(clickedBlock);
+                        removeLock(clickedBlock);
                         player.sendMessage(ChatColor.GREEN + "Unlocked!");
                         MedievalFactions.getInstance().unlockingPlayers.remove(player.getUniqueId());
                     }
@@ -445,14 +445,14 @@ public class PlayerInteractEventHandler {
                 // door multi-unlock
                 if (MedievalFactions.getInstance().utilities.isDoor(clickedBlock)) {
                     // unlock initial block
-                    MedievalFactions.getInstance().utilities.removeLock(clickedBlock);
+                    removeLock(clickedBlock);
                     // check block above
                     if (MedievalFactions.getInstance().utilities.isDoor(clickedBlock.getWorld().getBlockAt(clickedBlock.getX(), clickedBlock.getY() + 1, clickedBlock.getZ()))) {
-                        MedievalFactions.getInstance().utilities.removeLock(clickedBlock.getWorld().getBlockAt(clickedBlock.getX(), clickedBlock.getY() + 1, clickedBlock.getZ()));
+                        removeLock(clickedBlock.getWorld().getBlockAt(clickedBlock.getX(), clickedBlock.getY() + 1, clickedBlock.getZ()));
                     }
                     // check block below
                     if (MedievalFactions.getInstance().utilities.isDoor(clickedBlock.getWorld().getBlockAt(clickedBlock.getX(), clickedBlock.getY() - 1, clickedBlock.getZ()))) {
-                        MedievalFactions.getInstance().utilities.removeLock(clickedBlock.getWorld().getBlockAt(clickedBlock.getX(), clickedBlock.getY() - 1, clickedBlock.getZ()));
+                        removeLock(clickedBlock.getWorld().getBlockAt(clickedBlock.getX(), clickedBlock.getY() - 1, clickedBlock.getZ()));
                     }
 
                     player.sendMessage(ChatColor.GREEN + "Unlocked!");
@@ -461,7 +461,7 @@ public class PlayerInteractEventHandler {
                 
                 // single block size lock logic.
                 if (MedievalFactions.getInstance().utilities.isGate(clickedBlock) || MedievalFactions.getInstance().utilities.isBarrel(clickedBlock) || MedievalFactions.getInstance().utilities.isTrapdoor(clickedBlock) || MedievalFactions.getInstance().utilities.isFurnace(clickedBlock)) {
-                	MedievalFactions.getInstance().utilities.removeLock(clickedBlock);
+                	removeLock(clickedBlock);
 
                 	player.sendMessage(ChatColor.GREEN + "Unlocked!");
                     MedievalFactions.getInstance().unlockingPlayers.remove(player.getUniqueId());
@@ -475,6 +475,15 @@ public class PlayerInteractEventHandler {
             player.sendMessage(ChatColor.RED + "That block isn't locked!");
             event.setCancelled(true);
             return;
+        }
+    }
+
+    private void removeLock(Block block) {
+        for (LockedBlock b : MedievalFactions.getInstance().lockedBlocks) {
+            if (b.getX() == block.getX() && b.getY() == block.getY() && b.getZ() == block.getZ() && block.getWorld().getName().equalsIgnoreCase(b.getWorld())) {
+                MedievalFactions.getInstance().lockedBlocks.remove(b);
+                return;
+            }
         }
     }
 

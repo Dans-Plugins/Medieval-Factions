@@ -244,15 +244,6 @@ public class UtilitySubsystem {
         }
         return "unclaimed";
     }
-
-    public void removeLock(Block block) {
-        for (LockedBlock b : MedievalFactions.getInstance().lockedBlocks) {
-            if (b.getX() == block.getX() && b.getY() == block.getY() && b.getZ() == block.getZ() && block.getWorld().getName().equalsIgnoreCase(b.getWorld())) {
-                MedievalFactions.getInstance().lockedBlocks.remove(b);
-                return;
-            }
-        }
-    }
     
     public boolean isBarrel(Block block)
     {
