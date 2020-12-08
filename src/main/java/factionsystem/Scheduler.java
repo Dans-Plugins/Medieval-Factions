@@ -116,7 +116,7 @@ public class Scheduler {
         }
     }
 
-    public void removeFaction(String name) {
+    private void removeFaction(String name) {
 
         Faction factionToRemove = getFaction(name, MedievalFactions.getInstance().factions);
 
