@@ -45,8 +45,8 @@ public class MedievalFactions extends JavaPlugin implements Listener {
 
     // subsystems
     public StorageSubsystem storage = new StorageSubsystem();
-    public UtilitySubsystem utilities = new UtilitySubsystem(this);
-    public ConfigSubsystem config = new ConfigSubsystem(this);
+    public UtilitySubsystem utilities = new UtilitySubsystem();
+    public ConfigSubsystem config = new ConfigSubsystem();
 
     // saved lists
     public ArrayList<Faction> factions = new ArrayList<>();
@@ -120,86 +120,86 @@ public class MedievalFactions extends JavaPlugin implements Listener {
     }
 
     public boolean onCommand(CommandSender sender, Command cmd, String label, String[] args) {
-        CommandSubsystem commandInterpreter = new CommandSubsystem(this);
+        CommandSubsystem commandInterpreter = new CommandSubsystem();
         return commandInterpreter.interpretCommand(sender, label, args);
     }
 
     @EventHandler()
     public void onDamage(EntityDamageByEntityEvent event) {
-        EntityDamageByEntityEventHandler handler = new EntityDamageByEntityEventHandler(this);
+        EntityDamageByEntityEventHandler handler = new EntityDamageByEntityEventHandler();
         handler.handle(event);
     }
 
     @EventHandler()
     public void onPlayerMove(PlayerMoveEvent event) {
-        PlayerMoveEventHandler handler = new PlayerMoveEventHandler(this);
+        PlayerMoveEventHandler handler = new PlayerMoveEventHandler();
         handler.handle(event);
     }
 
     @EventHandler()
     public void onBlockBreak(BlockBreakEvent event) {
-        BlockBreakEventHandler handler = new BlockBreakEventHandler(this);
+        BlockBreakEventHandler handler = new BlockBreakEventHandler();
         handler.handle(event);
     }
 
     @EventHandler()
     public void onBlockPlace(BlockPlaceEvent event) {
-        BlockPlaceEventHandler handler = new BlockPlaceEventHandler(this);
+        BlockPlaceEventHandler handler = new BlockPlaceEventHandler();
         handler.handle(event);
     }
 
     @EventHandler()
     public void onRightClick(PlayerInteractEvent event) {
-        PlayerInteractEventHandler handler = new PlayerInteractEventHandler(this);
+        PlayerInteractEventHandler handler = new PlayerInteractEventHandler();
         handler.handle(event);
     }
 
     @EventHandler()
     public void onDeath(PlayerDeathEvent event) {
-        PlayerDeathEventHandler handler = new PlayerDeathEventHandler(this);
+        PlayerDeathEventHandler handler = new PlayerDeathEventHandler();
         handler.handle(event);
     }
 
     @EventHandler()
     public void onJoin(PlayerJoinEvent event) {
-        PlayerJoinEventHandler handler = new PlayerJoinEventHandler(this);
+        PlayerJoinEventHandler handler = new PlayerJoinEventHandler();
         handler.handle(event);
     }
     
     @EventHandler()
     public void onLeave(PlayerQuitEvent event)
     {
-    	PlayerLeaveEventHandler handler = new PlayerLeaveEventHandler(this);
+    	PlayerLeaveEventHandler handler = new PlayerLeaveEventHandler();
     	handler.handle(event);
     }
 
     @EventHandler()
     public void onJoin(EntitySpawnEvent event) {
-        EntitySpawnEventHandler handler = new EntitySpawnEventHandler(this);
+        EntitySpawnEventHandler handler = new EntitySpawnEventHandler();
         handler.handle(event);
     }
 
     @EventHandler()
     public void onChat(AsyncPlayerChatEvent event) {
-        AsyncPlayerChatEventHandler handler = new AsyncPlayerChatEventHandler(this);
+        AsyncPlayerChatEventHandler handler = new AsyncPlayerChatEventHandler();
         handler.handle(event);
     }
 
     @EventHandler
     public void onPotionSplash(PotionSplashEvent event) {
-        PotionSplashEventHandler handler = new PotionSplashEventHandler(this);
+        PotionSplashEventHandler handler = new PotionSplashEventHandler();
         handler.handle(event);
     }
 
     @EventHandler
     public void onLingeringPotionSplash(LingeringPotionSplashEvent event) {
-        LingeringPotionSplashEventHandler handler = new LingeringPotionSplashEventHandler(this);
+        LingeringPotionSplashEventHandler handler = new LingeringPotionSplashEventHandler();
         handler.handle(event);
     }
 
     @EventHandler
     public void onAreaOfEffectCloudApply(AreaEffectCloudApplyEvent event){
-        AreaEffectCloudApplyEventHandler handler = new AreaEffectCloudApplyEventHandler(this);
+        AreaEffectCloudApplyEventHandler handler = new AreaEffectCloudApplyEventHandler();
         handler.handle(event);
     }
 
