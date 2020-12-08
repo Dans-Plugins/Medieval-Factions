@@ -33,7 +33,7 @@ public class DuelCommand extends Command {
 								player.sendMessage(ChatColor.RED + "You cannot duel yourself!");
 								return;
 							}
-							if (UtilitySubsystem.isDuelling(player))
+							if (isDuelling(player))
 							{
 								player.sendMessage(ChatColor.RED + "You are already duelling someone!");
 								return;
@@ -41,7 +41,7 @@ public class DuelCommand extends Command {
 							Player target = Bukkit.getServer().getPlayer(args[2]);
 							if (target != null)
 							{
-								if (!UtilitySubsystem.isDuelling(target))
+								if (!isDuelling(target))
 								{
 									int timeLimit = 120; // Time limit in seconds. TODO: Make config option.
 									if (args.length == 4)
@@ -67,7 +67,7 @@ public class DuelCommand extends Command {
 					}
 					else if (args[1].equalsIgnoreCase("accept"))
 					{
-						if (UtilitySubsystem.isDuelling(player))
+						if (isDuelling(player))
 						{
 							player.sendMessage(ChatColor.RED + "You are already duelling someone!");
 							return;
@@ -129,7 +129,7 @@ public class DuelCommand extends Command {
 					}
 					else if (args[1].equalsIgnoreCase("cancel"))
 					{
-		                if (UtilitySubsystem.isDuelling(player))
+		                if (isDuelling(player))
 		                {
 		                	Duel duel = UtilitySubsystem.getDuel(player);
 		                	if (duel != null)
@@ -176,5 +176,17 @@ public class DuelCommand extends Command {
 				}
 			}
 		}
+	}
+
+	private boolean isDuelling(Player player)
+	{
+		for (Duel duel : MedievalFactions.getInstance().duelingPlayers)
+		{
+			if (duel.hasPlayer(player) && duel.getStatus().equals(Duel.DuelState.DUELLING))
+			{
+				return true;
+			}
+		}
+		return false;
 	}
 }

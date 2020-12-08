@@ -353,18 +353,6 @@ public class UtilitySubsystem {
 
     // static methods ----------------------------
     
-    public static boolean isDuelling(Player player)
-    {
-    	for (Duel duel : MedievalFactions.getInstance().duelingPlayers)
-    	{
-    		if (duel.hasPlayer(player) && duel.getStatus().equals(Duel.DuelState.DUELLING))
-    		{
-    			return true;
-    		}
-    	}
-    	return false;
-    }
-    
     public static void inviteDuel(Player player, Player target, int limit)
     {
     	target.sendMessage(ChatColor.AQUA + player.getName() + " has challenged you to a duel! Type /mf duel accept to begin.");
