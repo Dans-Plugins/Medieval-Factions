@@ -21,7 +21,7 @@ public class GateCoord {
 		return String.format("%d,%d,%d,%s", x, y, z, world);
 	}
 	
-	public static GateCoord fromString(String data, MedievalFactions main)
+	public static GateCoord fromString(String data)
 	{
 		String parts[] = data.split(",");
 		for (String part : parts)

@@ -44,7 +44,7 @@ public class MedievalFactions extends JavaPlugin implements Listener {
     public static String version = "v3.6.0.3-beta";
 
     // subsystems
-    public StorageSubsystem storage = new StorageSubsystem(this);
+    public StorageSubsystem storage = new StorageSubsystem();
     public UtilitySubsystem utilities = new UtilitySubsystem(this);
     public ConfigSubsystem config = new ConfigSubsystem(this);
 

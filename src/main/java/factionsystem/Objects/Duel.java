@@ -31,7 +31,6 @@ public class Duel {
 	}
 	
 	private BossBar bar = null;
-	MedievalFactions plugin = null;
 	Player _challenged = null;
 	double challengedHealth = 0;
 	Player _challenger = null;
@@ -139,21 +138,21 @@ public class Duel {
 		challengedHealth = _challenged.getHealth();
 		duelState = DuelState.DUELLING;
 		// Announce to nearby players that a duel has started.
-		for (Player other : plugin.getServer().getOnlinePlayers()) {
+		for (Player other : MedievalFactions.getInstance().getServer().getOnlinePlayers()) {
 			if (other.getLocation().distance(_challenger.getLocation()) <= nearbyPlayerRadius ||
 					other.getLocation().distance(_challenged.getLocation()) <= nearbyPlayerRadius) {
 				other.sendMessage(String.format(ChatColor.AQUA + "%s has challenged %s to a duel!", _challenger.getName(), _challenged.getName()));
 			}
 		}
 		
-		bar = plugin.getServer().createBossBar(String.format(ChatColor.AQUA + "%s vs %s", _challenger.getName(), _challenged.getName())
+		bar = MedievalFactions.getInstance().getServer().createBossBar(String.format(ChatColor.AQUA + "%s vs %s", _challenger.getName(), _challenged.getName())
 				, BarColor.WHITE, BarStyle.SEGMENTED_20);
 		bar.setProgress(1);
 		timeDecrementAmount = 1.0 / timeLimit;
 		bar.addPlayer(_challenger);
 		bar.addPlayer(_challenged);
 		
-    	repeatingTaskId = Bukkit.getScheduler().scheduleSyncRepeatingTask(plugin, new Runnable () {
+    	repeatingTaskId = Bukkit.getScheduler().scheduleSyncRepeatingTask(MedievalFactions.getInstance(), new Runnable () {
     		@Override
     		public void run() {
     			double progress = bar.getProgress() - timeDecrementAmount;
@@ -191,7 +190,7 @@ public class Duel {
 		if (!tied)
 		{
 			// Announce winner to nearby players.
-			for (Player other : plugin.getServer().getOnlinePlayers()) {
+			for (Player other : MedievalFactions.getInstance().getServer().getOnlinePlayers()) {
 				if (other.getLocation().distance(_challenger.getLocation()) <= nearbyPlayerRadius ||
 						other.getLocation().distance(_challenged.getLocation()) <= nearbyPlayerRadius) {
 					other.sendMessage(String.format(ChatColor.AQUA + "%s has defeated %s in a duel!", winner.getName(), loser.getName()));
@@ -208,7 +207,7 @@ public class Duel {
 		}
 		else
 		{
-    		for (Player other : plugin.getServer().getOnlinePlayers()) {
+    		for (Player other : MedievalFactions.getInstance().getServer().getOnlinePlayers()) {
     			if (other.getLocation().distance(_challenger.getLocation()) <= nearbyPlayerRadius ||
     					other.getLocation().distance(_challenged.getLocation()) <= nearbyPlayerRadius) {
     				other.sendMessage(String.format(ChatColor.YELLOW + "%s and %s's duel has ended in a tie.", _challenger.getName(), _challenged.getName()));
@@ -216,11 +215,11 @@ public class Duel {
     		}
 		}
 		bar.removeAll();
-		plugin.getServer().getScheduler().cancelTask(repeatingTaskId);
-    	plugin.duelingPlayers.remove(this);
+		MedievalFactions.getInstance().getServer().getScheduler().cancelTask(repeatingTaskId);
+    	MedievalFactions.getInstance().duelingPlayers.remove(this);
 	}
 	
-	public Duel(Player challenger, Player challenged, int limit, MedievalFactions main)
+	public Duel(Player challenger, Player challenged, int limit)
 	{
 		_challenger = challenger;
 		challengerHealth = challenger.getHealth(); 
@@ -228,7 +227,6 @@ public class Duel {
 		challengedHealth = challenged.getHealth();
 		timeLimit = limit;
 		duelState = DuelState.INVITED;
-		plugin = main;
 	}
 	
 	

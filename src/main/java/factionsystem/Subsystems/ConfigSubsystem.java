@@ -7,145 +7,139 @@ import org.bukkit.entity.Player;
 
 public class ConfigSubsystem {
 
-    MedievalFactions main = null;
-
-    public ConfigSubsystem(MedievalFactions plugin) {
-        main = plugin;
-    }
-
     public void handleVersionMismatch() {
         // set version
-        if (!main.getConfig().isString("version")) {
-            System.out.println("Version not set! Setting version to " + main.version);
-            main.getConfig().addDefault("version", main.version);
+        if (!MedievalFactions.getInstance().getConfig().isString("version")) {
+            System.out.println("Version not set! Setting version to " + MedievalFactions.getInstance().version);
+            MedievalFactions.getInstance().getConfig().addDefault("version", MedievalFactions.getInstance().version);
         }
         else {
-            System.out.println("Version set but mismatched! Setting version to " + main.version);
-            main.getConfig().set("version", main.version);
+            System.out.println("Version set but mismatched! Setting version to " + MedievalFactions.getInstance().version);
+            MedievalFactions.getInstance().getConfig().set("version", MedievalFactions.getInstance().version);
         }
 
         // add defaults if they don't exist
-        if (!main.getConfig().isInt("initialMaxPowerLevel")) {
+        if (!MedievalFactions.getInstance().getConfig().isInt("initialMaxPowerLevel")) {
             System.out.println("Max power level not set! Setting to default!");
-            main.getConfig().addDefault("initialMaxPowerLevel", 20);
+            MedievalFactions.getInstance().getConfig().addDefault("initialMaxPowerLevel", 20);
         }
-        if (!main.getConfig().isInt("initialPowerLevel")) {
+        if (!MedievalFactions.getInstance().getConfig().isInt("initialPowerLevel")) {
             System.out.println("Initial power level not set! Setting to default!");
-            main.getConfig().addDefault("initialPowerLevel", 5);
+            MedievalFactions.getInstance().getConfig().addDefault("initialPowerLevel", 5);
         }
-        if (!main.getConfig().isBoolean("mobsSpawnInFactionTerritory")) {
+        if (!MedievalFactions.getInstance().getConfig().isBoolean("mobsSpawnInFactionTerritory")) {
             System.out.println("Mobs spawn in faction territory not set! Setting to default!");
-            main.getConfig().addDefault("mobsSpawnInFactionTerritory", false);
+            MedievalFactions.getInstance().getConfig().addDefault("mobsSpawnInFactionTerritory", false);
         }
-        if (!main.getConfig().isInt("powerIncreaseAmount")) {
+        if (!MedievalFactions.getInstance().getConfig().isInt("powerIncreaseAmount")) {
             System.out.println("Hourly power increase amount not set! Setting to default!");
-            main.getConfig().addDefault("powerIncreaseAmount", 2);
+            MedievalFactions.getInstance().getConfig().addDefault("powerIncreaseAmount", 2);
         }
-        if (!main.getConfig().isBoolean("laddersPlaceableInEnemyFactionTerritory")) {
+        if (!MedievalFactions.getInstance().getConfig().isBoolean("laddersPlaceableInEnemyFactionTerritory")) {
             System.out.println("Ladders placeable in enemy faction territory not set! Setting to default!");
-            main.getConfig().addDefault("laddersPlaceableInEnemyFactionTerritory", true);
+            MedievalFactions.getInstance().getConfig().addDefault("laddersPlaceableInEnemyFactionTerritory", true);
         }
-        if (!main.getConfig().isInt("minutesBeforeInitialPowerIncrease")) {
+        if (!MedievalFactions.getInstance().getConfig().isInt("minutesBeforeInitialPowerIncrease")) {
             System.out.println("minutesBeforeInitialPowerIncrease not set! Setting to default!");
-            main.getConfig().addDefault("minutesBeforeInitialPowerIncrease", 30);
+            MedievalFactions.getInstance().getConfig().addDefault("minutesBeforeInitialPowerIncrease", 30);
         }
-        if (!main.getConfig().isInt("minutesBetweenPowerIncreases")) {
+        if (!MedievalFactions.getInstance().getConfig().isInt("minutesBetweenPowerIncreases")) {
             System.out.println("minutesBetweenPowerIncreases not set! Setting to default!");
-            main.getConfig().addDefault("minutesBetweenPowerIncreases", 60);
+            MedievalFactions.getInstance().getConfig().addDefault("minutesBetweenPowerIncreases", 60);
         }
 
-        if (!main.getConfig().isBoolean("warsRequiredForPVP")) {
+        if (!MedievalFactions.getInstance().getConfig().isBoolean("warsRequiredForPVP")) {
             System.out.println("warsRequiredForPVP not set! Setting to default!");
-            main.getConfig().addDefault("warsRequiredForPVP", true);
+            MedievalFactions.getInstance().getConfig().addDefault("warsRequiredForPVP", true);
         }
 
-        if (!main.getConfig().isDouble("factionOwnerMultiplier")) {
+        if (!MedievalFactions.getInstance().getConfig().isDouble("factionOwnerMultiplier")) {
             System.out.println("factionOwnerMultiplier not set! Setting to default");
-            main.getConfig().addDefault("factionOwnerMultiplier", 2.0);
+            MedievalFactions.getInstance().getConfig().addDefault("factionOwnerMultiplier", 2.0);
         }
 
-        if (!main.getConfig().isDouble("officerPerMemberCount")){
+        if (!MedievalFactions.getInstance().getConfig().isDouble("officerPerMemberCount")){
             System.out.println("officerPerMemberCount is not set! Setting to default");
-            main.getConfig().addDefault("officerPerMemberCount", 5);
+            MedievalFactions.getInstance().getConfig().addDefault("officerPerMemberCount", 5);
         }
 
-        if (!main.getConfig().isDouble("factionOfficerMultiplier")){
+        if (!MedievalFactions.getInstance().getConfig().isDouble("factionOfficerMultiplier")){
             System.out.println("factionOfficerMultiplier is not set! Setting to default");
-            main.getConfig().addDefault("factionOfficerMultiplier", 1.5);
+            MedievalFactions.getInstance().getConfig().addDefault("factionOfficerMultiplier", 1.5);
         }
 
-        if (!main.getConfig().isBoolean("powerDecreases")) {
+        if (!MedievalFactions.getInstance().getConfig().isBoolean("powerDecreases")) {
         	System.out.println("powerDecreases is not set! Setting to default");
-        	main.getConfig().addDefault("powerDecreases", true);
+        	MedievalFactions.getInstance().getConfig().addDefault("powerDecreases", true);
         }
 
-        if (!main.getConfig().isInt("minutesBetweenPowerDecreases")) {
+        if (!MedievalFactions.getInstance().getConfig().isInt("minutesBetweenPowerDecreases")) {
         	System.out.println("minutesBetweenPowerDecreases is not set! Setting to default");
-        	main.getConfig().addDefault("minutesBetweenPowerDecreases", 1440);
+        	MedievalFactions.getInstance().getConfig().addDefault("minutesBetweenPowerDecreases", 1440);
         }
 
-        if (!main.getConfig().isInt("minutesBeforePowerDecrease")) {
+        if (!MedievalFactions.getInstance().getConfig().isInt("minutesBeforePowerDecrease")) {
         	System.out.println("minutesBeforePowerDecrease is not set! Setting to default");
-        	main.getConfig().addDefault("minutesBeforePowerDecrease", 20160);
+        	MedievalFactions.getInstance().getConfig().addDefault("minutesBeforePowerDecrease", 20160);
         }
         
-        if (!main.getConfig().isInt("powerDecreaseAmount")) {
+        if (!MedievalFactions.getInstance().getConfig().isInt("powerDecreaseAmount")) {
             System.out.println("powerDecreaseAmount not set! Setting to default!");
-            main.getConfig().addDefault("powerDecreaseAmount", 1);
+            MedievalFactions.getInstance().getConfig().addDefault("powerDecreaseAmount", 1);
         }
         
-        if (!main.getConfig().isInt("factionMaxNameLength")) {
+        if (!MedievalFactions.getInstance().getConfig().isInt("factionMaxNameLength")) {
         	System.out.println("factionMaxNameLength not set! Setting to default!");
-            main.getConfig().addDefault("factionMaxNameLength", 20);
+            MedievalFactions.getInstance().getConfig().addDefault("factionMaxNameLength", 20);
         }
 
-        if (!main.getConfig().isInt("factionMaxNumberGates")) {
+        if (!MedievalFactions.getInstance().getConfig().isInt("factionMaxNumberGates")) {
         	System.out.println("factionMaxNumberGates not set! Setting to default!");
-            main.getConfig().addDefault("factionMaxNumberGates", 5);
+            MedievalFactions.getInstance().getConfig().addDefault("factionMaxNumberGates", 5);
         }
 
-        if (!main.getConfig().isInt("factionMaxGateArea")) {
+        if (!MedievalFactions.getInstance().getConfig().isInt("factionMaxGateArea")) {
         	System.out.println("factionMaxGateArea not set! Setting to default!");
-            main.getConfig().addDefault("factionMaxGateArea", 64);
+            MedievalFactions.getInstance().getConfig().addDefault("factionMaxGateArea", 64);
         }
 
-        if (!main.getConfig().isBoolean("surroundedChunksProtected")) {
+        if (!MedievalFactions.getInstance().getConfig().isBoolean("surroundedChunksProtected")) {
             System.out.println("surroundedChunksProtected not set! Setting to default!");
-            main.getConfig().addDefault("surroundedChunksProtected", true);
+            MedievalFactions.getInstance().getConfig().addDefault("surroundedChunksProtected", true);
         }
 
-        if (!main.getConfig().isBoolean("zeroPowerFactionsGetDisbanded")) {
+        if (!MedievalFactions.getInstance().getConfig().isBoolean("zeroPowerFactionsGetDisbanded")) {
             System.out.println("zeroPowerFactionsGetDisbanded not set! Setting to default!");
-            main.getConfig().addDefault("zeroPowerFactionsGetDisbanded", false);
+            MedievalFactions.getInstance().getConfig().addDefault("zeroPowerFactionsGetDisbanded", false);
         }
 
 
 
         deleteOldConfigOptionsIfPresent();
 
-        main.getConfig().options().copyDefaults(true);
-        main.saveConfig();
+        MedievalFactions.getInstance().getConfig().options().copyDefaults(true);
+        MedievalFactions.getInstance().saveConfig();
     }
 
     private void deleteOldConfigOptionsIfPresent() {
 
-        if (main.getConfig().isInt("officerLimit")) {
-            main.getConfig().set("officerLimit", null);
+        if (MedievalFactions.getInstance().getConfig().isInt("officerLimit")) {
+            MedievalFactions.getInstance().getConfig().set("officerLimit", null);
         }
 
-        if (main.getConfig().isInt("hourlyPowerIncreaseAmount")) {
-            main.getConfig().set("hourlyPowerIncreaseAmount", null);
+        if (MedievalFactions.getInstance().getConfig().isInt("hourlyPowerIncreaseAmount")) {
+            MedievalFactions.getInstance().getConfig().set("hourlyPowerIncreaseAmount", null);
         }
 
-        if (main.getConfig().isInt("maxPowerLevel")) {
-            main.getConfig().set("maxPowerLevel", null);
+        if (MedievalFactions.getInstance().getConfig().isInt("maxPowerLevel")) {
+            MedievalFactions.getInstance().getConfig().set("maxPowerLevel", null);
         }
 
     }
     
-    public static void setConfigOption(String option, String value, Player player, MedievalFactions main) {
+    public static void setConfigOption(String option, String value, Player player) {
 
-        if (main.getConfig().isSet(option)) {
+        if (MedievalFactions.getInstance().getConfig().isSet(option)) {
 
             if (option.equalsIgnoreCase("version")) {
                 player.sendMessage(ChatColor.RED + "Can't set version!");
@@ -164,7 +158,7 @@ public class ConfigSubsystem {
 	                || option.equalsIgnoreCase("factionMaxNumberGates")
 	                || option.equalsIgnoreCase("factionMaxGateArea")) 
             {
-                main.getConfig().set(option, Integer.parseInt(value));
+                MedievalFactions.getInstance().getConfig().set(option, Integer.parseInt(value));
                 player.sendMessage(ChatColor.GREEN + "Integer set!");
             }
             else if (option.equalsIgnoreCase("mobsSpawnInFactionTerritory")
@@ -173,21 +167,21 @@ public class ConfigSubsystem {
                     || option.equalsIgnoreCase("powerDecreases")
                     || option.equalsIgnoreCase("surroundedChunksProtected")
                     || option.equalsIgnoreCase("zeroPowerFactionsGetDisbanded")) {
-                main.getConfig().set(option, Boolean.parseBoolean(value));
+                MedievalFactions.getInstance().getConfig().set(option, Boolean.parseBoolean(value));
                 player.sendMessage(ChatColor.GREEN + "Boolean set!");
             }
             else if (option.equalsIgnoreCase("factionOwnerMultiplier")
                     || option.equalsIgnoreCase("factionOfficerMultiplier")){
-                main.getConfig().set(option, Double.parseDouble(value));
+                MedievalFactions.getInstance().getConfig().set(option, Double.parseDouble(value));
                 player.sendMessage(ChatColor.GREEN + "Double set!");
             }
             else {
-                main.getConfig().set(option, value);
+                MedievalFactions.getInstance().getConfig().set(option, value);
                 player.sendMessage(ChatColor.GREEN + "String set!");
             }
 
             // save
-            main.saveConfig();
+            MedievalFactions.getInstance().saveConfig();
         }
         else {
             player.sendMessage(ChatColor.RED + "'" + option + "' wasn't found.");
@@ -196,53 +190,53 @@ public class ConfigSubsystem {
     }
 
     public void saveConfigDefaults() {
-        main.getConfig().addDefault("version", main.version);
-        main.getConfig().addDefault("initialMaxPowerLevel", 20);
-        main.getConfig().addDefault("initialPowerLevel", 5);
-        main.getConfig().addDefault("powerIncreaseAmount", 2);
-        main.getConfig().addDefault("mobsSpawnInFactionTerritory", false);
-        main.getConfig().addDefault("laddersPlaceableInEnemyFactionTerritory", true);
-        main.getConfig().addDefault("minutesBeforeInitialPowerIncrease", 30);
-        main.getConfig().addDefault("minutesBetweenPowerIncreases", 60);
-        main.getConfig().addDefault("warsRequiredForPVP", true);
-        main.getConfig().addDefault("factionOwnerMultiplier", 2.0);
-        main.getConfig().addDefault("officerPerMemberCount", 5);
-        main.getConfig().addDefault("factionOfficerMultiplier", 1.5);
-        main.getConfig().addDefault("powerDecreases", true);
-        main.getConfig().addDefault("minutesBetweenPowerDecreases", 1440);
-        main.getConfig().addDefault("minutesBeforePowerDecrease", 20160);
-        main.getConfig().addDefault("powerDecreaseAmount", 1);
-        main.getConfig().addDefault("factionMaxNameLength", 20);
-        main.getConfig().addDefault("factionMaxNumberGates", 5);
-        main.getConfig().addDefault("factionMaxGateArea", 64);
-        main.getConfig().addDefault("surroundedChunksProtected", true);
-        main.getConfig().addDefault("zeroPowerFactionsGetDisbanded", false);
-        main.getConfig().options().copyDefaults(true);
-        main.saveConfig();
+        MedievalFactions.getInstance().getConfig().addDefault("version", MedievalFactions.getInstance().version);
+        MedievalFactions.getInstance().getConfig().addDefault("initialMaxPowerLevel", 20);
+        MedievalFactions.getInstance().getConfig().addDefault("initialPowerLevel", 5);
+        MedievalFactions.getInstance().getConfig().addDefault("powerIncreaseAmount", 2);
+        MedievalFactions.getInstance().getConfig().addDefault("mobsSpawnInFactionTerritory", false);
+        MedievalFactions.getInstance().getConfig().addDefault("laddersPlaceableInEnemyFactionTerritory", true);
+        MedievalFactions.getInstance().getConfig().addDefault("minutesBeforeInitialPowerIncrease", 30);
+        MedievalFactions.getInstance().getConfig().addDefault("minutesBetweenPowerIncreases", 60);
+        MedievalFactions.getInstance().getConfig().addDefault("warsRequiredForPVP", true);
+        MedievalFactions.getInstance().getConfig().addDefault("factionOwnerMultiplier", 2.0);
+        MedievalFactions.getInstance().getConfig().addDefault("officerPerMemberCount", 5);
+        MedievalFactions.getInstance().getConfig().addDefault("factionOfficerMultiplier", 1.5);
+        MedievalFactions.getInstance().getConfig().addDefault("powerDecreases", true);
+        MedievalFactions.getInstance().getConfig().addDefault("minutesBetweenPowerDecreases", 1440);
+        MedievalFactions.getInstance().getConfig().addDefault("minutesBeforePowerDecrease", 20160);
+        MedievalFactions.getInstance().getConfig().addDefault("powerDecreaseAmount", 1);
+        MedievalFactions.getInstance().getConfig().addDefault("factionMaxNameLength", 20);
+        MedievalFactions.getInstance().getConfig().addDefault("factionMaxNumberGates", 5);
+        MedievalFactions.getInstance().getConfig().addDefault("factionMaxGateArea", 64);
+        MedievalFactions.getInstance().getConfig().addDefault("surroundedChunksProtected", true);
+        MedievalFactions.getInstance().getConfig().addDefault("zeroPowerFactionsGetDisbanded", false);
+        MedievalFactions.getInstance().getConfig().options().copyDefaults(true);
+        MedievalFactions.getInstance().saveConfig();
     }
 
     public void sendPlayerConfigList(Player player) {
-        player.sendMessage(ChatColor.AQUA + "version: " + main.getConfig().getString("version")
-                + ", initialMaxPowerLevel: " + main.getConfig().getInt("initialMaxPowerLevel")
-                + ", initialPowerLevel: " +  main.getConfig().getInt("initialPowerLevel")
-                + ", powerIncreaseAmount: " + main.getConfig().getInt("powerIncreaseAmount")
-                + ", mobsSpawnInFactionTerritory: " + main.getConfig().getBoolean("mobsSpawnInFactionTerritory")
-                + ", laddersPlaceableInEnemyFactionTerritory: " + main.getConfig().getBoolean("laddersPlaceableInEnemyFactionTerritory")
-                + ", minutesBeforeInitialPowerIncrease: " + main.getConfig().getInt("minutesBeforeInitialPowerIncrease")
-                + ", minutesBetweenPowerIncreases: " + main.getConfig().getInt("minutesBetweenPowerIncreases")
-                + ", warsRequiredForPVP: " + main.getConfig().getBoolean("warsRequiredForPVP")
-                + ", factionOwnerMultiplier: " + main.getConfig().getDouble("factionOwnerMultiplier")
-                + ", officerPerMemberCount: " + main.getConfig().getInt("officerPerMemberCount")
-                + ", factionOfficerMultiplier: " + main.getConfig().getDouble("factionOfficerMultiplier")
-                + ", powerDecreases: " + main.getConfig().getBoolean("powerDecreases")
-                + ", minutesBetweenPowerDecreases: " + main.getConfig().getInt("minutesBetweenPowerDecreases")
-                + ", minutesBeforePowerDecrease: " + main.getConfig().getInt("minutesBeforePowerDecrease")
-                + ", powerDecreaseAmount: " + main.getConfig().getInt("powerDecreaseAmount")
-                + ", factionMaxNameLength: " + main.getConfig().getInt("factionMaxNameLength")
-		        + ", factionMaxNumberGates: " + main.getConfig().getInt("factionMaxNumberGates")
-		        + ", factionMaxGateArea: " + main.getConfig().getInt("factionMaxGateArea")
-                + ", surroundedChunksProtected: " + main.getConfig().getBoolean("surroundedChunksProtected")
-                + ", zeroPowerFactionsGetDisbanded: " + main.getConfig().getBoolean("zeroPowerFactionsGetDisbanded"));
+        player.sendMessage(ChatColor.AQUA + "version: " + MedievalFactions.getInstance().getConfig().getString("version")
+                + ", initialMaxPowerLevel: " + MedievalFactions.getInstance().getConfig().getInt("initialMaxPowerLevel")
+                + ", initialPowerLevel: " +  MedievalFactions.getInstance().getConfig().getInt("initialPowerLevel")
+                + ", powerIncreaseAmount: " + MedievalFactions.getInstance().getConfig().getInt("powerIncreaseAmount")
+                + ", mobsSpawnInFactionTerritory: " + MedievalFactions.getInstance().getConfig().getBoolean("mobsSpawnInFactionTerritory")
+                + ", laddersPlaceableInEnemyFactionTerritory: " + MedievalFactions.getInstance().getConfig().getBoolean("laddersPlaceableInEnemyFactionTerritory")
+                + ", minutesBeforeInitialPowerIncrease: " + MedievalFactions.getInstance().getConfig().getInt("minutesBeforeInitialPowerIncrease")
+                + ", minutesBetweenPowerIncreases: " + MedievalFactions.getInstance().getConfig().getInt("minutesBetweenPowerIncreases")
+                + ", warsRequiredForPVP: " + MedievalFactions.getInstance().getConfig().getBoolean("warsRequiredForPVP")
+                + ", factionOwnerMultiplier: " + MedievalFactions.getInstance().getConfig().getDouble("factionOwnerMultiplier")
+                + ", officerPerMemberCount: " + MedievalFactions.getInstance().getConfig().getInt("officerPerMemberCount")
+                + ", factionOfficerMultiplier: " + MedievalFactions.getInstance().getConfig().getDouble("factionOfficerMultiplier")
+                + ", powerDecreases: " + MedievalFactions.getInstance().getConfig().getBoolean("powerDecreases")
+                + ", minutesBetweenPowerDecreases: " + MedievalFactions.getInstance().getConfig().getInt("minutesBetweenPowerDecreases")
+                + ", minutesBeforePowerDecrease: " + MedievalFactions.getInstance().getConfig().getInt("minutesBeforePowerDecrease")
+                + ", powerDecreaseAmount: " + MedievalFactions.getInstance().getConfig().getInt("powerDecreaseAmount")
+                + ", factionMaxNameLength: " + MedievalFactions.getInstance().getConfig().getInt("factionMaxNameLength")
+		        + ", factionMaxNumberGates: " + MedievalFactions.getInstance().getConfig().getInt("factionMaxNumberGates")
+		        + ", factionMaxGateArea: " + MedievalFactions.getInstance().getConfig().getInt("factionMaxGateArea")
+                + ", surroundedChunksProtected: " + MedievalFactions.getInstance().getConfig().getBoolean("surroundedChunksProtected")
+                + ", zeroPowerFactionsGetDisbanded: " + MedievalFactions.getInstance().getConfig().getBoolean("zeroPowerFactionsGetDisbanded"));
     }
 
 }

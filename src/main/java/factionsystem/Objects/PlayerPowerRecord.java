@@ -20,33 +20,25 @@ public class PlayerPowerRecord {
     private UUID playerUUID = UUID.randomUUID();
     private int powerLevel = 0;
 
-    // temporary
-    private MedievalFactions main;
-
-    public PlayerPowerRecord(UUID playerUUID, int initial, MedievalFactions main) {
+    public PlayerPowerRecord(UUID playerUUID, int initial) {
         this.playerUUID = playerUUID;
         powerLevel = initial;
-        this.main = main;
-    }
-    public PlayerPowerRecord(MedievalFactions main) { // server constructor for loading
-        this.main = main;
     }
 
-    public PlayerPowerRecord(Map<String, String> data, MedievalFactions main) {
+    public PlayerPowerRecord(Map<String, String> data) {
         this.load(data);
-        this.main = main;
     }
 
     public int maxPower() {
-        if (UtilitySubsystem.isPlayerAFactionOwner(playerUUID, main.factions)){
-            return (int) (main.getConfig().getDouble("initialMaxPowerLevel") * main.getConfig().getDouble("factionOwnerMultiplier", 2.0));
+        if (UtilitySubsystem.isPlayerAFactionOwner(playerUUID, MedievalFactions.getInstance().factions)){
+            return (int) (MedievalFactions.getInstance().getConfig().getDouble("initialMaxPowerLevel") * MedievalFactions.getInstance().getConfig().getDouble("factionOwnerMultiplier", 2.0));
         }
 
-        if (UtilitySubsystem.isPlayerAFactionOfficer(playerUUID, main.factions)){
-            return (int) (main.getConfig().getDouble("initialMaxPowerLevel") * main.getConfig().getDouble("factionOfficerMultiplier", 1.5));
+        if (UtilitySubsystem.isPlayerAFactionOfficer(playerUUID, MedievalFactions.getInstance().factions)){
+            return (int) (MedievalFactions.getInstance().getConfig().getDouble("initialMaxPowerLevel") * MedievalFactions.getInstance().getConfig().getDouble("factionOfficerMultiplier", 1.5));
         }
 
-        return main.getConfig().getInt("initialMaxPowerLevel");
+        return MedievalFactions.getInstance().getConfig().getInt("initialMaxPowerLevel");
     }
 
 
@@ -60,7 +52,7 @@ public class PlayerPowerRecord {
 
     public boolean increasePower() {
         if (powerLevel < maxPower()) {
-        	powerLevel += main.getConfig().getInt("powerIncreaseAmount");
+        	powerLevel += MedievalFactions.getInstance().getConfig().getInt("powerIncreaseAmount");
         	if (powerLevel > maxPower())
         		powerLevel = maxPower();
         	
@@ -73,7 +65,7 @@ public class PlayerPowerRecord {
 
     public boolean decreasePower() {
         if (powerLevel > 0) {
-            powerLevel -= main.getConfig().getInt("powerDecreaseAmount");
+            powerLevel -= MedievalFactions.getInstance().getConfig().getInt("powerDecreaseAmount");
             if (powerLevel < 0)
             	powerLevel = 0;
             return true;

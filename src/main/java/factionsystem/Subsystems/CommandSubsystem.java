@@ -11,12 +11,6 @@ import static factionsystem.Subsystems.UtilitySubsystem.*;
 
 public class CommandSubsystem {
 
-    MedievalFactions main = null;
-
-    public CommandSubsystem(MedievalFactions plugin) {
-        main = plugin;
-    }
-
     public boolean interpretCommand(CommandSender sender, String label, String[] args) {
         // mf commands
         if (label.equalsIgnoreCase("mf") || label.equalsIgnoreCase("f") ||
@@ -25,7 +19,7 @@ public class CommandSubsystem {
             // no arguments check
             if (args.length == 0) {
                 // send plugin information
-                sender.sendMessage(ChatColor.AQUA + " == Medieval Factions " + main.version + " == ");
+                sender.sendMessage(ChatColor.AQUA + " == Medieval Factions " + MedievalFactions.getInstance().version + " == ");
                 sender.sendMessage(ChatColor.AQUA + "Developers: DanTheTechMan, Pasarus, Caibinus");
                 sender.sendMessage(ChatColor.AQUA + "Wiki: https://github.com/DansPlugins/Medieval-Factions/wiki");
                 return true;
@@ -38,98 +32,98 @@ public class CommandSubsystem {
 
                 // help command
                 if (args[0].equalsIgnoreCase("help")) {
-                    HelpCommand command = new HelpCommand(main);
+                    HelpCommand command = new HelpCommand(MedievalFactions.getInstance());
                     command.sendHelpMessage(sender, args);
                     return true;
                 }
 
                 // create command
                 if (args[0].equalsIgnoreCase("create") ) {
-                    CreateCommand command = new CreateCommand(main);
+                    CreateCommand command = new CreateCommand(MedievalFactions.getInstance());
                     command.createFaction(sender, args);
                     return true;
                 }
 
                 // list command
                 if  (args[0].equalsIgnoreCase("list")) {
-                    ListCommand command = new ListCommand(main);
+                    ListCommand command = new ListCommand(MedievalFactions.getInstance());
                     command.listFactions(sender);
                     return true;
                 }
 
                 // disband command
                 if (args[0].equalsIgnoreCase("disband")) {
-                    DisbandCommand command = new DisbandCommand(main);
+                    DisbandCommand command = new DisbandCommand(MedievalFactions.getInstance());
                     command.deleteFaction(sender, args);
                     return true;
                 }
 
                 // members command
                 if (args[0].equalsIgnoreCase("members")) {
-                    MembersCommand command = new MembersCommand(main);
+                    MembersCommand command = new MembersCommand(MedievalFactions.getInstance());
                     command.showMembers(sender, args);
                     return true;
                 }
 
                 // info command
                 if (args[0].equalsIgnoreCase("info")) {
-                    InfoCommand command = new InfoCommand(main);
+                    InfoCommand command = new InfoCommand(MedievalFactions.getInstance());
                     command.showInfo(sender, args);
                     return true;
                 }
 
                 // desc command
                 if (args[0].equalsIgnoreCase("desc")) {
-                    DescCommand command = new DescCommand(main);
+                    DescCommand command = new DescCommand(MedievalFactions.getInstance());
                     command.setDescription(sender, args);
                     return true;
                 }
 
                 // invite command
                 if (args[0].equalsIgnoreCase("invite")) {
-                    InviteCommand command = new InviteCommand(main);
+                    InviteCommand command = new InviteCommand(MedievalFactions.getInstance());
                     command.invitePlayer(sender, args);
                     return true;
                 }
 
                 // join command
                 if (args[0].equalsIgnoreCase("join")) {
-                    JoinCommand command = new JoinCommand(main);
+                    JoinCommand command = new JoinCommand(MedievalFactions.getInstance());
                     command.joinFaction(sender, args);
                     return true;
                 }
 
                 // kick command
                 if (args[0].equalsIgnoreCase("kick")) {
-                    KickCommand command = new KickCommand(main);
+                    KickCommand command = new KickCommand(MedievalFactions.getInstance());
                     command.kickPlayer(sender, args);
                     return true;
                 }
 
                 // leave commmand
                 if (args[0].equalsIgnoreCase("leave")) {
-                    LeaveCommand command = new LeaveCommand(main);
+                    LeaveCommand command = new LeaveCommand(MedievalFactions.getInstance());
                     command.leaveFaction(sender);
                     return true;
                 }
 
                 // transfer command
                 if (args[0].equalsIgnoreCase("transfer")) {
-                    TransferCommand command = new TransferCommand(main);
+                    TransferCommand command = new TransferCommand(MedievalFactions.getInstance());
                     command.transferOwnership(sender, args);
                     return true;
                 }
 
                 // declare war command
                 if (args[0].equalsIgnoreCase("declarewar") || args[0].equalsIgnoreCase("dw")) {
-                    DeclareWarCommand command = new DeclareWarCommand(main);
+                    DeclareWarCommand command = new DeclareWarCommand(MedievalFactions.getInstance());
                     command.declareWar(sender, args);
                     return true;
                 }
 
                 // make peace command
                 if (args[0].equalsIgnoreCase("makepeace") || args[0].equalsIgnoreCase("mp")) {
-                    MakePeaceCommand command = new MakePeaceCommand(main);
+                    MakePeaceCommand command = new MakePeaceCommand(MedievalFactions.getInstance());
                     command.makePeace(sender, args);
                     return true;
                 }
@@ -142,10 +136,10 @@ public class CommandSubsystem {
                             Player player = (Player) sender;
 
                             // if not at demesne limit
-                            if (isInFaction(player.getUniqueId(), main.factions)) {
-                                Faction playersFaction = getPlayersFaction(player.getUniqueId(), main.factions);
-                                if (getChunksClaimedByFaction(playersFaction.getName(), main.claimedChunks) < playersFaction.getCumulativePowerLevel()) {
-                                    main.utilities.addChunkAtPlayerLocation(player);
+                            if (isInFaction(player.getUniqueId(), MedievalFactions.getInstance().factions)) {
+                                Faction playersFaction = getPlayersFaction(player.getUniqueId(), MedievalFactions.getInstance().factions);
+                                if (getChunksClaimedByFaction(playersFaction.getName(), MedievalFactions.getInstance().claimedChunks) < playersFaction.getCumulativePowerLevel()) {
+                                    MedievalFactions.getInstance().utilities.addChunkAtPlayerLocation(player);
                                     return true;
                                 }
                                 else {
@@ -171,8 +165,8 @@ public class CommandSubsystem {
                     if (sender.hasPermission("mf.unclaim") || sender.hasPermission("mf.default")) {
                         if (sender instanceof Player) {
                             Player player = (Player) sender;
-                            if (isInFaction(player.getUniqueId(), main.factions)) {
-                                main.utilities.removeChunkAtPlayerLocation(player);
+                            if (isInFaction(player.getUniqueId(), MedievalFactions.getInstance().factions)) {
+                                MedievalFactions.getInstance().utilities.removeChunkAtPlayerLocation(player);
                                 return true;
                             }
                             else {
@@ -200,7 +194,7 @@ public class CommandSubsystem {
 
                                 String factionName = createStringFromFirstArgOnwards(args);
 
-                                Faction faction = getFaction(factionName, main.factions);
+                                Faction faction = getFaction(factionName, MedievalFactions.getInstance().factions);
 
                                 if (faction != null) {
                                     // remove faction home
@@ -208,11 +202,11 @@ public class CommandSubsystem {
                                     sendAllPlayersInFactionMessage(faction, ChatColor.RED + "Your faction home has been removed!");
 
                                     // remove claimed chunks
-                                    removeAllClaimedChunks(faction.getName(), main.claimedChunks);
+                                    removeAllClaimedChunks(faction.getName(), MedievalFactions.getInstance().claimedChunks);
                                     player.sendMessage(ChatColor.GREEN + "All land unclaimed from " + factionName + "!");
 
                                     // remove locks associated with this faction
-                                    removeAllLocks(faction.getName(), main.lockedBlocks);
+                                    removeAllLocks(faction.getName(), MedievalFactions.getInstance().lockedBlocks);
                                     return true;
                                 } else {
                                     player.sendMessage(ChatColor.RED + "That faction wasn't found!");
@@ -226,18 +220,18 @@ public class CommandSubsystem {
 
                         if (sender.hasPermission("mf.unclaimall") || sender.hasPermission("mf.default")) {
 
-                            for (Faction faction : main.factions) {
+                            for (Faction faction : MedievalFactions.getInstance().factions) {
                                 if (faction.isOwner(player.getUniqueId())) {
                                     // remove faction home
                                     faction.setFactionHome(null);
                                     sendAllPlayersInFactionMessage(faction, ChatColor.RED + "Your faction home has been removed!");
 
                                     // remove claimed chunks
-                                    removeAllClaimedChunks(faction.getName(), main.claimedChunks);
+                                    removeAllClaimedChunks(faction.getName(), MedievalFactions.getInstance().claimedChunks);
                                     player.sendMessage(ChatColor.GREEN + "All land unclaimed.");
 
                                     // remove locks associated with this faction
-                                    removeAllLocks(faction.getName(), main.lockedBlocks);
+                                    removeAllLocks(faction.getName(), MedievalFactions.getInstance().lockedBlocks);
                                     return true;
                                 }
                             }
@@ -257,7 +251,7 @@ public class CommandSubsystem {
                     if (sender.hasPermission("mf.unclaimall") || sender.hasPermission("mf.default")) {
                         if (sender instanceof Player) {
                             Player player = (Player) sender;
-                            String result = main.utilities.checkOwnershipAtPlayerLocation(player);
+                            String result = MedievalFactions.getInstance().utilities.checkOwnershipAtPlayerLocation(player);
                             if (result.equalsIgnoreCase("unclaimed")) {
                                 player.sendMessage(ChatColor.GREEN + "This land is unclaimed.");
                                 return true;
@@ -281,9 +275,9 @@ public class CommandSubsystem {
                         if (sender instanceof Player) {
                             Player player = (Player) sender;
 
-                            if (isInFaction(player.getUniqueId(), main.factions)) {
+                            if (isInFaction(player.getUniqueId(), MedievalFactions.getInstance().factions)) {
                                 boolean owner = false;
-                                for (Faction faction : main.factions) {
+                                for (Faction faction : MedievalFactions.getInstance().factions) {
                                     if (faction.isOwner(player.getUniqueId())) {
                                         owner = true;
                                         faction.toggleAutoClaim();
@@ -312,35 +306,35 @@ public class CommandSubsystem {
 
                 // promote command
                 if (args[0].equalsIgnoreCase("promote")) {
-                    PromoteCommand command = new PromoteCommand(main);
+                    PromoteCommand command = new PromoteCommand(MedievalFactions.getInstance());
                     command.promotePlayer(sender, args);
                     return true;
                 }
 
                 // demote command
                 if (args[0].equalsIgnoreCase("demote")) {
-                    DemoteCommand command = new DemoteCommand(main);
+                    DemoteCommand command = new DemoteCommand(MedievalFactions.getInstance());
                     command.demotePlayer(sender, args);
                     return true;
                 }
 
                 // power command
                 if  (args[0].equalsIgnoreCase("power")) {
-                    PowerCommand command = new PowerCommand(main);
+                    PowerCommand command = new PowerCommand(MedievalFactions.getInstance());
                     command.powerCheck(sender, args);
                     return true;
                 }
 
                 // sethome command
                 if (args[0].equalsIgnoreCase("sethome")|| args[0].equalsIgnoreCase("sh")) {
-                    SetHomeCommand command = new SetHomeCommand(main);
+                    SetHomeCommand command = new SetHomeCommand(MedievalFactions.getInstance());
                     command.setHome(sender);
                     return true;
                 }
 
                 // home command
                 if (args[0].equalsIgnoreCase("home")) {
-                    HomeCommand command = new HomeCommand(main);
+                    HomeCommand command = new HomeCommand(MedievalFactions.getInstance());
                     command.teleportPlayer(sender);
                     return true;
                 }
@@ -349,7 +343,7 @@ public class CommandSubsystem {
                 // version command
                 if (args[0].equalsIgnoreCase("version")) {
                     if (sender.hasPermission("mf.version") || sender.hasPermission("mf.default")) {
-                        sender.sendMessage(ChatColor.AQUA + "Medieval-Factions-" + main.version);
+                        sender.sendMessage(ChatColor.AQUA + "Medieval-Factions-" + MedievalFactions.getInstance().version);
                         return true;
                     }
                     else {
@@ -361,139 +355,139 @@ public class CommandSubsystem {
 
                 // who command
                 if (args[0].equalsIgnoreCase("who")) {
-                    WhoCommand command = new WhoCommand(main);
+                    WhoCommand command = new WhoCommand(MedievalFactions.getInstance());
                     command.sendInformation(sender, args);
                     return true;
                 }
 
                 // ally command
                 if (args[0].equalsIgnoreCase("ally")) {
-                    AllyCommand command = new AllyCommand(main);
+                    AllyCommand command = new AllyCommand(MedievalFactions.getInstance());
                     command.requestAlliance(sender, args);
                     return true;
                 }
 
                 // breakalliance command
                 if (args[0].equalsIgnoreCase("breakalliance")|| args[0].equalsIgnoreCase("ba")) {
-                    BreakAllianceCommand command = new BreakAllianceCommand(main);
+                    BreakAllianceCommand command = new BreakAllianceCommand(MedievalFactions.getInstance());
                     command.breakAlliance(sender, args);
                     return true;
                 }
 
                 // rename command
                 if (args[0].equalsIgnoreCase("rename")) {
-                    RenameCommand command = new RenameCommand(main);
+                    RenameCommand command = new RenameCommand(MedievalFactions.getInstance());
                     command.renameFaction(sender, args);
                     return true;
                 }
 
                 // lock command
                 if (args[0].equalsIgnoreCase("lock")) {
-                    LockCommand command = new LockCommand(main);
+                    LockCommand command = new LockCommand(MedievalFactions.getInstance());
                     command.lockBlock(sender, args);
                     return true;
                 }
 
                 // unlock command
                 if (args[0].equalsIgnoreCase("unlock")) {
-                    UnlockCommand command = new UnlockCommand(main);
+                    UnlockCommand command = new UnlockCommand(MedievalFactions.getInstance());
                     command.unlockBlock(sender, args);
                     return true;
                 }
 
                 // grantaccess command
                 if (args[0].equalsIgnoreCase("grantaccess")|| args[0].equalsIgnoreCase("ga")) {
-                    GrantAccessCommand command = new GrantAccessCommand(main);
+                    GrantAccessCommand command = new GrantAccessCommand(MedievalFactions.getInstance());
                     command.grantAccess(sender, args);
                     return true;
                 }
 
                 // checkaccess command
                 if (args[0].equalsIgnoreCase("checkaccess")|| args[0].equalsIgnoreCase("ca")) {
-                    CheckAccessCommand command = new CheckAccessCommand(main);
+                    CheckAccessCommand command = new CheckAccessCommand(MedievalFactions.getInstance());
                     command.checkAccess(sender, args);
                     return true;
                 }
 
                 // revokeaccess command
                 if (args[0].equalsIgnoreCase("revokeaccess")|| args[0].equalsIgnoreCase("ra")) {
-                    RevokeAccessCommand command = new RevokeAccessCommand(main);
+                    RevokeAccessCommand command = new RevokeAccessCommand(MedievalFactions.getInstance());
                     command.revokeAccess(sender, args);
                     return true;
                 }
 
                 // laws command
                 if (args[0].equalsIgnoreCase("laws")) {
-                    LawsCommand command = new LawsCommand(main);
+                    LawsCommand command = new LawsCommand(MedievalFactions.getInstance());
                     command.showLawsToPlayer(sender, args);
                     return true;
                 }
 
                 // addlaw command
                 if (args[0].equalsIgnoreCase("addlaw")|| args[0].equalsIgnoreCase("al")) {
-                    AddLawCommand command = new AddLawCommand(main);
+                    AddLawCommand command = new AddLawCommand(MedievalFactions.getInstance());
                     command.addLaw(sender, args);
                     return true;
                 }
 
                 // removelaw command
                 if (args[0].equalsIgnoreCase("removelaw")|| args[0].equalsIgnoreCase("rl")) {
-                    RemoveLawCommand command = new RemoveLawCommand(main);
+                    RemoveLawCommand command = new RemoveLawCommand(MedievalFactions.getInstance());
                     command.removeLaw(sender, args);
                     return true;
                 }
 
                 // editlaw command
                 if (args[0].equalsIgnoreCase("editlaw") || args[0].equalsIgnoreCase("el")) {
-                    EditLawCommand command = new EditLawCommand(main);
+                    EditLawCommand command = new EditLawCommand(MedievalFactions.getInstance());
                     command.editLaw(sender, args);
                     return true;
                 }
 
                 // chat command
                 if (args[0].equalsIgnoreCase("chat")) {
-                    ChatCommand command = new ChatCommand(main);
+                    ChatCommand command = new ChatCommand(MedievalFactions.getInstance());
                     command.toggleFactionChat(sender);
                     return true;
                 }
 
                 // vassalize command
                 if (args[0].equalsIgnoreCase("vassalize")) {
-                    VassalizeCommand command = new VassalizeCommand(main);
+                    VassalizeCommand command = new VassalizeCommand(MedievalFactions.getInstance());
                     command.sendVassalizationOffer(sender, args);
                     return true;
                 }
 
                 // swearfealty command
                 if (args[0].equalsIgnoreCase("swearfealty") || args[0].equalsIgnoreCase("sf")) {
-                    SwearFealtyCommand command = new SwearFealtyCommand(main);
+                    SwearFealtyCommand command = new SwearFealtyCommand(MedievalFactions.getInstance());
                     command.swearFealty(sender, args);
                     return true;
                 }
 
                 // declare independence command
                 if (args[0].equalsIgnoreCase("declareindependence") || args[0].equalsIgnoreCase("di")) {
-                    DeclareIndependenceCommand command = new DeclareIndependenceCommand(main);
+                    DeclareIndependenceCommand command = new DeclareIndependenceCommand(MedievalFactions.getInstance());
                     command.declareIndependence(sender);
                     return true;
                 }
 
                 // grant independence command
                 if (args[0].equalsIgnoreCase("grantindependence") || args[0].equalsIgnoreCase("gi")) {
-                    GrantIndependenceCommand command = new GrantIndependenceCommand(main);
+                    GrantIndependenceCommand command = new GrantIndependenceCommand(MedievalFactions.getInstance());
                     command.grantIndependence(sender, args);
                     return true;
                 }
 
                 // gate management commands
                 if (args[0].equalsIgnoreCase("gate") || args[0].equalsIgnoreCase("gt")) {
-                	GateCommand command = new GateCommand(main);
+                	GateCommand command = new GateCommand(MedievalFactions.getInstance());
                 	command.handleGate(sender, args);
                 	return true;
                 }
                 
                 if (args[0].equalsIgnoreCase("duel") || args[0].equalsIgnoreCase("dl")) {
-                	DuelCommand command = new DuelCommand(main);
+                	DuelCommand command = new DuelCommand(MedievalFactions.getInstance());
                 	command.handleDuel(sender, args);
                 	return true;
                 }
@@ -502,7 +496,7 @@ public class CommandSubsystem {
 
                 // force command
                 if (args[0].equalsIgnoreCase("force")) {
-                    ForceCommand command = new ForceCommand(main);
+                    ForceCommand command = new ForceCommand(MedievalFactions.getInstance());
                     return command.force(sender, args);
                 }
 
@@ -510,7 +504,7 @@ public class CommandSubsystem {
                 if (args[0].equalsIgnoreCase("resetpowerlevels")|| args[0].equalsIgnoreCase("rpl")) {
                     if (sender.hasPermission("mf.resetpowerlevels") || sender.hasPermission("mf.admin")) {
                         sender.sendMessage(ChatColor.GREEN + "Power level resetting...");
-                        main.utilities.resetPowerRecords();
+                        MedievalFactions.getInstance().utilities.resetPowerRecords();
                         return true;
                     }
                     else {
@@ -521,14 +515,14 @@ public class CommandSubsystem {
 
                 // bypass command
                 if (args[0].equalsIgnoreCase("bypass")) {
-                    BypassCommand command = new BypassCommand(main);
+                    BypassCommand command = new BypassCommand(MedievalFactions.getInstance());
                     command.toggleBypass(sender);
                     return true;
                 }
 
                 // config command
                 if (args[0].equalsIgnoreCase("config")) {
-                    ConfigCommand command = new ConfigCommand(main);
+                    ConfigCommand command = new ConfigCommand(MedievalFactions.getInstance());
                     command.handleConfigAccess(sender, args);
                     return true;
                 }
