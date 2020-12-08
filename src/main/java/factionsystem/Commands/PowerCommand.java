@@ -10,11 +10,7 @@ import static factionsystem.Subsystems.UtilitySubsystem.*;
 
 import java.util.UUID;
 
-public class PowerCommand extends Command {
-
-    public PowerCommand() {
-        super();
-    }
+public class PowerCommand {
 
     public boolean powerCheck(CommandSender sender, String[] args) {
         if (sender instanceof Player) {

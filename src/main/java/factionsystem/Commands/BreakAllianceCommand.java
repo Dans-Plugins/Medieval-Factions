@@ -9,11 +9,7 @@ import org.bukkit.entity.Player;
 import static factionsystem.Subsystems.UtilitySubsystem.createStringFromFirstArgOnwards;
 import static factionsystem.Subsystems.UtilitySubsystem.sendAllPlayersInFactionMessage;
 
-public class BreakAllianceCommand extends Command {
-
-    public BreakAllianceCommand() {
-        super();
-    }
+public class BreakAllianceCommand {
 
     public void breakAlliance(CommandSender sender, String[] args) {
         if (sender instanceof Player) {

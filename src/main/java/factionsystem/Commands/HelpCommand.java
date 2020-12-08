@@ -1,14 +1,9 @@
 package factionsystem.Commands;
 
-import factionsystem.MedievalFactions;
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
 
-public class HelpCommand extends Command {
-
-    public HelpCommand() {
-        super();
-    }
+public class HelpCommand {
 
     // Each page of the help command should have a title and nine commands. This is for ease of use.
     public boolean sendHelpMessage(CommandSender sender, String[] args) {

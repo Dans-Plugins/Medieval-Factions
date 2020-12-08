@@ -8,11 +8,7 @@ import org.bukkit.entity.Player;
 
 import static factionsystem.Subsystems.UtilitySubsystem.*;
 
-public class DisbandCommand extends Command {
-
-    public DisbandCommand() {
-        super();
-    }
+public class DisbandCommand {
 
     public boolean deleteFaction(CommandSender sender, String[] args) {
         if (sender instanceof Player) {

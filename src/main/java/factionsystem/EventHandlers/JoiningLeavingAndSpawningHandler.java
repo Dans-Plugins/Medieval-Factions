@@ -6,12 +6,19 @@ import factionsystem.Objects.PlayerPowerRecord;
 import factionsystem.Subsystems.UtilitySubsystem;
 
 import org.bukkit.ChatColor;
+import org.bukkit.entity.Monster;
+import org.bukkit.event.EventHandler;
+import org.bukkit.event.Listener;
+import org.bukkit.event.entity.EntitySpawnEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
+import org.bukkit.event.player.PlayerQuitEvent;
 
+import java.time.ZonedDateTime;
 import java.util.UUID;
 
-public class PlayerJoinEventHandler {
+public class JoiningLeavingAndSpawningHandler implements Listener {
 
+	@EventHandler()
     public void handle(PlayerJoinEvent event) {
         if (!hasPowerRecord(event.getPlayer().getUniqueId())) {
             PlayerPowerRecord newRecord = new PlayerPowerRecord(event.getPlayer().getUniqueId(),
@@ -68,6 +75,55 @@ public class PlayerJoinEventHandler {
 			}
 		}
 		return false;
+	}
+
+	@EventHandler()
+	public void handle(PlayerQuitEvent event)
+	{
+		if (MedievalFactions.getInstance().lockingPlayers.contains(event.getPlayer().getUniqueId()))
+		{
+			MedievalFactions.getInstance().lockingPlayers.remove(event.getPlayer().getUniqueId());
+		}
+		if (MedievalFactions.getInstance().unlockingPlayers.contains(event.getPlayer().getUniqueId()))
+		{
+			MedievalFactions.getInstance().unlockingPlayers.remove(event.getPlayer().getUniqueId());
+		}
+		if (MedievalFactions.getInstance().playersGrantingAccess.containsKey(event.getPlayer().getUniqueId()))
+		{
+			MedievalFactions.getInstance().playersGrantingAccess.remove(event.getPlayer().getUniqueId());
+		}
+		if (MedievalFactions.getInstance().playersCheckingAccess.contains(event.getPlayer().getUniqueId()))
+		{
+			MedievalFactions.getInstance().playersCheckingAccess.remove(event.getPlayer().getUniqueId());
+		}
+		if (MedievalFactions.getInstance().playersRevokingAccess.containsKey(event.getPlayer().getUniqueId()))
+		{
+			MedievalFactions.getInstance().playersRevokingAccess.remove(event.getPlayer().getUniqueId());
+		}
+
+		PlayerActivityRecord record = UtilitySubsystem.getPlayerActivityRecord(event.getPlayer().getUniqueId(), MedievalFactions.getInstance().playerActivityRecords);
+		if (record != null)
+		{
+			record.setLastLogout(ZonedDateTime.now());
+		}
+	}
+
+	@EventHandler()
+	public void handle(EntitySpawnEvent event) {
+
+		int x = 0;
+		int z = 0;
+
+		x = event.getEntity().getLocation().getChunk().getX();
+		z = event.getEntity().getLocation().getChunk().getZ();
+
+		// check if land is claimed
+		if (UtilitySubsystem.isClaimed(event.getLocation().getChunk(), MedievalFactions.getInstance().claimedChunks))
+		{
+			if (event.getEntity() instanceof Monster && !MedievalFactions.getInstance().getConfig().getBoolean("mobsSpawnInFactionTerritory")) {
+				event.setCancelled(true);
+			}
+		}
 	}
 
 }

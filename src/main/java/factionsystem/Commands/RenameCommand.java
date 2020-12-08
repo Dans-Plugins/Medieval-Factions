@@ -10,11 +10,7 @@ import org.bukkit.entity.Player;
 
 import static factionsystem.Subsystems.UtilitySubsystem.*;
 
-public class RenameCommand extends Command {
-
-    public RenameCommand() {
-        super();
-    }
+public class RenameCommand {
 
     public void renameFaction(CommandSender sender, String[] args) {
         if (sender instanceof Player) {

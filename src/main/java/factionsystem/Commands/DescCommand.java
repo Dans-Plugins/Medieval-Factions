@@ -6,11 +6,7 @@ import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
-public class DescCommand extends Command {
-
-    public DescCommand() {
-        super();
-    }
+public class DescCommand {
 
     public boolean setDescription(CommandSender sender, String[] args) {
         if (sender instanceof Player) {

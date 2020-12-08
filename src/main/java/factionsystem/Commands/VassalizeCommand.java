@@ -6,11 +6,7 @@ import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
-public class VassalizeCommand extends Command {
-
-    public VassalizeCommand() {
-        super();
-    }
+public class VassalizeCommand {
 
     public void sendVassalizationOffer(CommandSender sender, String[] args) {
 

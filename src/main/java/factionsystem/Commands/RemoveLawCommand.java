@@ -9,11 +9,7 @@ import org.bukkit.entity.Player;
 import static factionsystem.Subsystems.UtilitySubsystem.getPlayersFaction;
 import static factionsystem.Subsystems.UtilitySubsystem.isInFaction;
 
-public class RemoveLawCommand extends Command {
-
-    public RemoveLawCommand() {
-        super();
-    }
+public class RemoveLawCommand {
 
     public void removeLaw(CommandSender sender, String[] args) {
         // player & perm check

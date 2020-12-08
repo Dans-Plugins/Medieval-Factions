@@ -11,11 +11,7 @@ import java.util.UUID;
 
 import static factionsystem.Subsystems.UtilitySubsystem.*;
 
-public class KickCommand extends Command {
-
-    public KickCommand() {
-        super();
-    }
+public class KickCommand {
 
     public boolean kickPlayer(CommandSender sender, String[] args) {
         if (sender instanceof Player) {

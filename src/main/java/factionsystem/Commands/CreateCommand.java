@@ -9,11 +9,7 @@ import org.bukkit.entity.Player;
 import static factionsystem.Subsystems.UtilitySubsystem.createStringFromFirstArgOnwards;
 import static factionsystem.Subsystems.UtilitySubsystem.getPlayersPowerRecord;
 
-public class CreateCommand extends Command {
-
-    public CreateCommand() {
-        super();
-    }
+public class CreateCommand {
 
     public boolean createFaction(CommandSender sender, String[] args) {
         // player check

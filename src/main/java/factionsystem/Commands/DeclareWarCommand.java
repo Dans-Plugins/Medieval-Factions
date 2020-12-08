@@ -8,11 +8,7 @@ import org.bukkit.entity.Player;
 
 import static factionsystem.Subsystems.UtilitySubsystem.*;
 
-public class DeclareWarCommand extends Command {
-
-    public DeclareWarCommand() {
-        super();
-    }
+public class DeclareWarCommand {
 
     public void declareWar(CommandSender sender, String[] args) {
         if (sender instanceof Player) {

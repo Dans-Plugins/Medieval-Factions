@@ -11,11 +11,7 @@ import java.util.UUID;
 import static factionsystem.Subsystems.UtilitySubsystem.*;
 import static org.bukkit.Bukkit.getServer;
 
-public class DemoteCommand extends Command {
-
-    public DemoteCommand() {
-        super();
-    }
+public class DemoteCommand {
 
     public void demotePlayer(CommandSender sender, String[] args) {
         if (sender instanceof Player) {

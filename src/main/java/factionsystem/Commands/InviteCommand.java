@@ -13,11 +13,7 @@ import static factionsystem.Subsystems.UtilitySubsystem.findUUIDBasedOnPlayerNam
 import static factionsystem.Subsystems.UtilitySubsystem.isInFaction;
 import static org.bukkit.Bukkit.getServer;
 
-public class InviteCommand extends Command {
-
-    public InviteCommand() {
-        super();
-    }
+public class InviteCommand {
 
     public boolean invitePlayer(CommandSender sender, String[] args) {
         if (sender instanceof Player) {

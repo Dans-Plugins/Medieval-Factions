@@ -7,11 +7,7 @@ import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
-public class ConfigCommand extends Command {
-
-    public ConfigCommand() {
-        super();
-    }
+public class ConfigCommand {
 
     // args count is at least 1 at this point (/mf config)
     // possible sub-commands are show and set

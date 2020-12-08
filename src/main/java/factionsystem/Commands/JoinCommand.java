@@ -8,11 +8,7 @@ import org.bukkit.entity.Player;
 
 import static factionsystem.Subsystems.UtilitySubsystem.*;
 
-public class JoinCommand extends Command {
-
-    public JoinCommand() {
-        super();
-    }
+public class JoinCommand {
 
     public boolean joinFaction(CommandSender sender, String[] args) {
         if (sender instanceof Player) {

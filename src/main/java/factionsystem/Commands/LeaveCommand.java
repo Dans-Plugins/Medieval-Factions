@@ -10,11 +10,7 @@ import java.io.File;
 
 import static factionsystem.Subsystems.UtilitySubsystem.*;
 
-public class LeaveCommand extends Command {
-
-    public LeaveCommand() {
-        super();
-    }
+public class LeaveCommand {
 
     public boolean leaveFaction(CommandSender sender) {
         if (sender instanceof Player) {

@@ -12,11 +12,7 @@ import static factionsystem.Subsystems.UtilitySubsystem.findUUIDBasedOnPlayerNam
 import static factionsystem.Subsystems.UtilitySubsystem.isInFaction;
 import static org.bukkit.Bukkit.getServer;
 
-public class PromoteCommand extends Command {
-
-    public PromoteCommand() {
-        super();
-    }
+public class PromoteCommand {
 
     public void promotePlayer(CommandSender sender, String[] args) {
         if (sender instanceof Player) {

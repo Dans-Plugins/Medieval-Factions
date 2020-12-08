@@ -9,12 +9,7 @@ import factionsystem.Objects.Faction;
 import factionsystem.Objects.Gate;
 import factionsystem.Subsystems.UtilitySubsystem;
 
-public class GateCommand extends Command {
-	
-	public GateCommand()
-	{
-		super();
-	}
+public class GateCommand {
 	
 	public void handleGate(CommandSender sender, String[] args)
 	{
