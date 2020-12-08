@@ -9,8 +9,8 @@ import static factionsystem.Subsystems.UtilitySubsystem.findUUIDBasedOnPlayerNam
 
 public class RevokeAccessCommand extends Command {
 
-    public RevokeAccessCommand(MedievalFactions plugin) {
-        super(plugin);
+    public RevokeAccessCommand() {
+        super();
     }
 
     public void revokeAccess(CommandSender sender, String[] args) {
@@ -22,8 +22,8 @@ public class RevokeAccessCommand extends Command {
 
             if (args.length > 1) {
                 if (args[1].equalsIgnoreCase("cancel")) {
-                    if (main.playersRevokingAccess.containsKey(player.getUniqueId())) {
-                        main.playersRevokingAccess.remove(player.getUniqueId());
+                    if (MedievalFactions.getInstance().playersRevokingAccess.containsKey(player.getUniqueId())) {
+                        MedievalFactions.getInstance().playersRevokingAccess.remove(player.getUniqueId());
                         player.sendMessage(ChatColor.GREEN + "Cancelled!");
                         return;
                     }
@@ -34,8 +34,8 @@ public class RevokeAccessCommand extends Command {
                 return;
             }
 
-            if (!main.playersRevokingAccess.containsKey(player.getUniqueId())) {
-                main.playersRevokingAccess.put(player.getUniqueId(), findUUIDBasedOnPlayerName(args[1]));
+            if (!MedievalFactions.getInstance().playersRevokingAccess.containsKey(player.getUniqueId())) {
+                MedievalFactions.getInstance().playersRevokingAccess.put(player.getUniqueId(), findUUIDBasedOnPlayerName(args[1]));
                 player.sendMessage(ChatColor.GREEN + "Right click a locked block to revoke this player's access to it! Type '/mf revokeaccess cancel' to cancel!");
             }
             else {

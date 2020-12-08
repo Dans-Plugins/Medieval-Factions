@@ -11,8 +11,8 @@ import static factionsystem.Subsystems.UtilitySubsystem.sendAllPlayersInFactionM
 
 public class BreakAllianceCommand extends Command {
 
-    public BreakAllianceCommand(MedievalFactions plugin) {
-        super(plugin);
+    public BreakAllianceCommand() {
+        super();
     }
 
     public void breakAlliance(CommandSender sender, String[] args) {
@@ -21,7 +21,7 @@ public class BreakAllianceCommand extends Command {
 
             if (sender.hasPermission("mf.breakalliance") || sender.hasPermission("mf.default")) {
                 boolean owner = false;
-                for (Faction faction : main.factions) {
+                for (Faction faction : MedievalFactions.getInstance().factions) {
                     // if player is the owner or officer
                     if (faction.isOwner(player.getUniqueId()) || faction.isOfficer(player.getUniqueId())) {
                         owner = true;
@@ -32,8 +32,8 @@ public class BreakAllianceCommand extends Command {
                             String factionName = createStringFromFirstArgOnwards(args);
 
                             // check if faction exists
-                            for (int i = 0; i < main.factions.size(); i++) {
-                                if (main.factions.get(i).getName().equalsIgnoreCase(factionName)) {
+                            for (int i = 0; i < MedievalFactions.getInstance().factions.size(); i++) {
+                                if (MedievalFactions.getInstance().factions.get(i).getName().equalsIgnoreCase(factionName)) {
 
                                     if (!(faction.getName().equalsIgnoreCase(factionName))) {
 
@@ -44,10 +44,10 @@ public class BreakAllianceCommand extends Command {
                                             player.sendMessage(ChatColor.GREEN + "Alliance has been broken with " + factionName + "!");
 
                                             // add declarer's faction to new enemy's enemyList
-                                            main.factions.get(i).removeAlly(faction.getName());
-                                            for (int j = 0; j < main.factions.size(); j++) {
-                                                if (main.factions.get(j).getName().equalsIgnoreCase(factionName)) {
-                                                    sendAllPlayersInFactionMessage(main.factions.get(j), ChatColor.RED + faction.getName() + " has broken their alliance your faction!");
+                                            MedievalFactions.getInstance().factions.get(i).removeAlly(faction.getName());
+                                            for (int j = 0; j < MedievalFactions.getInstance().factions.size(); j++) {
+                                                if (MedievalFactions.getInstance().factions.get(j).getName().equalsIgnoreCase(factionName)) {
+                                                    sendAllPlayersInFactionMessage(MedievalFactions.getInstance().factions.get(j), ChatColor.RED + faction.getName() + " has broken their alliance your faction!");
                                                 }
                                             }
                                         }

@@ -10,15 +10,9 @@ import static factionsystem.Subsystems.UtilitySubsystem.sendAllPlayersInFactionM
 
 public class AsyncPlayerChatEventHandler {
 
-    MedievalFactions main = null;
-
-    public AsyncPlayerChatEventHandler(MedievalFactions plugin) {
-        main = plugin;
-    }
-
     public void handle(AsyncPlayerChatEvent event) {
-        if (main.playersInFactionChat.contains(event.getPlayer().getUniqueId())) {
-            Faction playersFaction = getPlayersFaction(event.getPlayer().getUniqueId(), main.factions);
+        if (MedievalFactions.getInstance().playersInFactionChat.contains(event.getPlayer().getUniqueId())) {
+            Faction playersFaction = getPlayersFaction(event.getPlayer().getUniqueId(), MedievalFactions.getInstance().factions);
             if (playersFaction != null) {
                 String message = event.getMessage();
                 sendAllPlayersInFactionMessage(playersFaction, ChatColor.WHITE + "" + event.getPlayer().getName() + ": " + ChatColor.GOLD + message);

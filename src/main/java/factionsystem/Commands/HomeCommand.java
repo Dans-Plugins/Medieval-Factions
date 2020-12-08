@@ -14,8 +14,8 @@ import static org.bukkit.Bukkit.getServer;
 
 public class HomeCommand extends Command {
 
-    public HomeCommand(MedievalFactions plugin) {
-        super(plugin);
+    public HomeCommand() {
+        super();
     }
 
     public void teleportPlayer(CommandSender sender) {
@@ -23,15 +23,15 @@ public class HomeCommand extends Command {
             Player player = (Player) sender;
 
             if (sender.hasPermission("mf.home") || sender.hasPermission("mf.default")) {
-                if (isInFaction(player.getUniqueId(), main.factions)) {
-                    Faction playersFaction = getPlayersFaction(player.getUniqueId(), main.factions);
+                if (isInFaction(player.getUniqueId(), MedievalFactions.getInstance().factions)) {
+                    Faction playersFaction = getPlayersFaction(player.getUniqueId(), MedievalFactions.getInstance().factions);
                     if (playersFaction.getFactionHome() != null) {
 
                         // Check that factionHome is in it's own factions land and not claimed by someone else.
                         Chunk homeChunk = playersFaction.getFactionHome().getBlock().getChunk();
-                        if (isClaimed(homeChunk, main.claimedChunks)){
+                        if (isClaimed(homeChunk, MedievalFactions.getInstance().claimedChunks)){
                             // Ensure is in your faction
-                            ClaimedChunk claimedHomeChunk = getClaimedChunk(homeChunk.getX(), homeChunk.getZ(), homeChunk.getWorld().getName(), main.claimedChunks);
+                            ClaimedChunk claimedHomeChunk = getClaimedChunk(homeChunk.getX(), homeChunk.getZ(), homeChunk.getWorld().getName(), MedievalFactions.getInstance().claimedChunks);
                             if (claimedHomeChunk.getHolder() != null && !playersFaction.getName().equals(claimedHomeChunk.getHolder())) {
                                 // Area is claimed by someone else and cannot be home. Cancel teleport and return;
                                 player.sendMessage(ChatColor.RED + "Home was claimed by another faction, and has been lost.");
@@ -49,7 +49,7 @@ public class HomeCommand extends Command {
 
                         Location initialLocation = player.getLocation();
 
-                        getServer().getScheduler().runTaskLater(main, new Runnable() {
+                        getServer().getScheduler().runTaskLater(MedievalFactions.getInstance(), new Runnable() {
                             @Override
                             public void run() {
                                 if (initialLocation.getX() == player.getLocation().getX() &&

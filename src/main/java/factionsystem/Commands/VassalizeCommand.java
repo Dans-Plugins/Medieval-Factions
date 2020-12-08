@@ -8,8 +8,8 @@ import org.bukkit.entity.Player;
 
 public class VassalizeCommand extends Command {
 
-    public VassalizeCommand(MedievalFactions plugin) {
-        super(plugin);
+    public VassalizeCommand() {
+        super();
     }
 
     public void sendVassalizationOffer(CommandSender sender, String[] args) {
@@ -21,10 +21,10 @@ public class VassalizeCommand extends Command {
 
                 if (args.length > 1) {
 
-                    String targetFactionName = main.utilities.createStringFromFirstArgOnwards(args);
+                    String targetFactionName = MedievalFactions.getInstance().utilities.createStringFromFirstArgOnwards(args);
 
-                    Faction playersFaction = main.utilities.getPlayersFaction(player.getUniqueId(), main.factions);
-                    Faction targetFaction = main.utilities.getFaction(targetFactionName, main.factions);
+                    Faction playersFaction = MedievalFactions.getInstance().utilities.getPlayersFaction(player.getUniqueId(), MedievalFactions.getInstance().factions);
+                    Faction targetFaction = MedievalFactions.getInstance().utilities.getFaction(targetFactionName, MedievalFactions.getInstance().factions);
 
                     if (targetFaction != null) {
 
@@ -54,10 +54,10 @@ public class VassalizeCommand extends Command {
                                 playersFaction.addAttemptedVassalization(targetFactionName);
 
                                 // inform all players in that faction that they are trying to be vassalized
-                                main.utilities.sendAllPlayersInFactionMessage(targetFaction, ChatColor.GREEN + "" + playersFaction.getName() + " has attempted to vassalize your faction! If you are the owner, type '/mf swearfealty " + playersFaction.getName() + "' to accept.");
+                                MedievalFactions.getInstance().utilities.sendAllPlayersInFactionMessage(targetFaction, ChatColor.GREEN + "" + playersFaction.getName() + " has attempted to vassalize your faction! If you are the owner, type '/mf swearfealty " + playersFaction.getName() + "' to accept.");
 
                                 // inform all players in players faction that a vassalization offer was sent
-                                main.utilities.sendAllPlayersInFactionMessage(playersFaction, ChatColor.GREEN + "Your faction has attempted to vassalize " + targetFactionName + "!");
+                                MedievalFactions.getInstance().utilities.sendAllPlayersInFactionMessage(playersFaction, ChatColor.GREEN + "Your faction has attempted to vassalize " + targetFactionName + "!");
 
                             }
                             else {

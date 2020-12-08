@@ -15,8 +15,8 @@ import static org.bukkit.Bukkit.getServer;
 
 public class InviteCommand extends Command {
 
-    public InviteCommand(MedievalFactions plugin) {
-        super(plugin);
+    public InviteCommand() {
+        super();
     }
 
     public boolean invitePlayer(CommandSender sender, String[] args) {
@@ -24,13 +24,13 @@ public class InviteCommand extends Command {
             Player player = (Player) sender;
 
             if (sender.hasPermission("mf.invite") || sender.hasPermission("mf.default")) {
-                if (isInFaction(player.getUniqueId(), main.factions)) {
-                    for (Faction faction : main.factions) {
+                if (isInFaction(player.getUniqueId(), MedievalFactions.getInstance().factions)) {
+                    for (Faction faction : MedievalFactions.getInstance().factions) {
                         if (faction.isOwner(player.getUniqueId()) || faction.isOfficer(player.getUniqueId())) {
                             if (args.length > 1) {
                                 UUID playerUUID = findUUIDBasedOnPlayerName(args[1]);
                                 // invite if player isn't in a faction already
-                                if (!(isInFaction(playerUUID, main.factions))) {
+                                if (!(isInFaction(playerUUID, MedievalFactions.getInstance().factions))) {
                                     faction.invite(playerUUID);
                                     try {
                                         Player target = Bukkit.getServer().getPlayer(args[1]);
@@ -43,7 +43,7 @@ public class InviteCommand extends Command {
                                     int seconds = 60 * 60 * 24;
 
                                     // make invitation expire in 24 hours, if server restarts it also expires since invites aren't saved
-                                    getServer().getScheduler().runTaskLater(main, new Runnable() {
+                                    getServer().getScheduler().runTaskLater(MedievalFactions.getInstance(), new Runnable() {
                                         @Override
                                         public void run() {
                                             faction.uninvite(playerUUID);

@@ -18,13 +18,11 @@ public class PlayerActivityRecord {
     private int logins = 0;
     private int powerLost = 0;
     private ZonedDateTime lastLogout = ZonedDateTime.now();
-    private MedievalFactions main;
     
-    public PlayerActivityRecord(UUID uuid, int logins, MedievalFactions main)
+    public PlayerActivityRecord(UUID uuid, int logins)
     {
     	playerUUID = uuid;
     	this.logins = logins;
-    	this.main = main;
     	this.powerLost = 0;
     }
 
@@ -40,7 +38,7 @@ public class PlayerActivityRecord {
     
     public void incrementPowerLost()
     {
-    	powerLost += main.getConfig().getInt("powerDecreaseAmount");
+    	powerLost += MedievalFactions.getInstance().getConfig().getInt("powerDecreaseAmount");
     }
     
     public void setPlayerUUID(UUID uuid) {
@@ -68,9 +66,8 @@ public class PlayerActivityRecord {
         return logins;
     }
     
-    public PlayerActivityRecord(Map<String, String> data, MedievalFactions main) {
+    public PlayerActivityRecord(Map<String, String> data) {
         this.load(data);
-        this.main = main;
     }
     
     public int getMinutesSinceLastLogout()

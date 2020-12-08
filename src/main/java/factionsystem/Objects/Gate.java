@@ -39,7 +39,6 @@ public class Gate {
 	private Material material = Material.IRON_BARS;
 	private World _world = null;
 	private String world = "";
-	private MedievalFactions main = null;
 	
 	public World getWorld()
 	{
@@ -47,7 +46,7 @@ public class Gate {
 		{
 			return _world;
 		}
-		_world = main.getServer().getWorld(world);
+		_world = MedievalFactions.getInstance().getServer().getWorld(world);
 		return _world;
 	}
 	public void setWorld(String worldName)
@@ -81,12 +80,12 @@ public class Gate {
     }
     
 
-    public static Gate load(String jsonData, MedievalFactions main) {
+    public static Gate load(String jsonData) {
 //    	System.out.println("Gate Load");
     	
         Gson gson = new GsonBuilder().setPrettyPrinting().create();;
 
-        Gate newGate = new Gate(main);
+        Gate newGate = new Gate();
 
         try
         {
@@ -94,11 +93,11 @@ public class Gate {
 	        
 	        newGate.world = data.world;
 	        newGate.coord1 = new GateCoord();
-	        newGate.coord1 = GateCoord.fromString(data.coord1, main);
+	        newGate.coord1 = GateCoord.fromString(data.coord1);
 	        newGate.coord2 = new GateCoord();
-	        newGate.coord2 = GateCoord.fromString(data.coord2, main);
+	        newGate.coord2 = GateCoord.fromString(data.coord2);
 	        newGate.trigger = new GateCoord();
-	        newGate.trigger = GateCoord.fromString(data.triggerCoord, main);
+	        newGate.trigger = GateCoord.fromString(data.triggerCoord);
 	        newGate.material = Material.getMaterial(data.material);
 	        newGate.open = Boolean.parseBoolean(data.open);
 	        newGate.vertical = Boolean.parseBoolean(data.vertical);
@@ -251,11 +250,6 @@ public class Gate {
 	public GateCoord getCoord2()
 	{
 		return coord2;
-	}
-	
-	public Gate(MedievalFactions plugin)
-	{
-		main = plugin;
 	}
 	
 	public boolean isParallelToZ()
@@ -430,7 +424,7 @@ public class Gate {
 					area = getDimZ() * getDimY();
 				}
 			}
-			if (area > main.getConfig().getInt("factionMaxGateArea"))
+			if (area > MedievalFactions.getInstance().getConfig().getInt("factionMaxGateArea"))
 			{
 				// Gate size exceeds config limit.
 				coord2 = null;
@@ -532,7 +526,7 @@ public class Gate {
 				{
 					c++;
 					final int blockY = y;
-					Bukkit.getScheduler().runTaskLater(main, new Runnable() {
+					Bukkit.getScheduler().runTaskLater(MedievalFactions.getInstance(), new Runnable() {
 						Block b;
 	                    @Override
 	                    public void run() {
@@ -545,7 +539,7 @@ public class Gate {
 	                    }
 	                }, c * 10);
 				}
-				Bukkit.getScheduler().runTaskLater(main, new Runnable() {
+				Bukkit.getScheduler().runTaskLater(MedievalFactions.getInstance(), new Runnable() {
 					Block b;
                     @Override
                     public void run() {
@@ -580,7 +574,7 @@ public class Gate {
 				{
 					c++;
 					final int blockY = y;
-					Bukkit.getScheduler().runTaskLater(main, new Runnable() {
+					Bukkit.getScheduler().runTaskLater(MedievalFactions.getInstance(), new Runnable() {
 						Block b;
 	                    @Override
 	                    public void run() {
@@ -593,7 +587,7 @@ public class Gate {
 	                    }
 	                }, c * 10);
 				}
-				Bukkit.getScheduler().runTaskLater(main, new Runnable() {
+				Bukkit.getScheduler().runTaskLater(MedievalFactions.getInstance(), new Runnable() {
 					Block b;
                     @Override
                     public void run() {
@@ -648,7 +642,7 @@ public class Gate {
 				{
 					c++;
 					final int blockY = y;
-					Bukkit.getScheduler().runTaskLater(main, new Runnable() {
+					Bukkit.getScheduler().runTaskLater(MedievalFactions.getInstance(), new Runnable() {
 						Block b;
 	                    @Override
 	                    public void run() {
@@ -661,7 +655,7 @@ public class Gate {
 	                    }
 	                }, c * 10);
 				}
-				Bukkit.getScheduler().runTaskLater(main, new Runnable() {
+				Bukkit.getScheduler().runTaskLater(MedievalFactions.getInstance(), new Runnable() {
 					Block b;
                     @Override
                     public void run() {
@@ -696,7 +690,7 @@ public class Gate {
 				{
 					c++;
 					final int blockY = y;
-					Bukkit.getScheduler().runTaskLater(main, new Runnable() {
+					Bukkit.getScheduler().runTaskLater(MedievalFactions.getInstance(), new Runnable() {
 						Block b;
 	                    @Override
 	                    public void run() {
@@ -710,7 +704,7 @@ public class Gate {
 	                    }
 	                }, c * 10);
 				}
-				Bukkit.getScheduler().runTaskLater(main, new Runnable() {
+				Bukkit.getScheduler().runTaskLater(MedievalFactions.getInstance(), new Runnable() {
 					Block b;
                     @Override
                     public void run() {

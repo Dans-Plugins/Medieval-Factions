@@ -17,8 +17,6 @@ import java.util.*;
 
 public class StorageSubsystem {
 
-    MedievalFactions main = null;
-
     private final static String FILE_PATH = "./plugins/MedievalFactions/";
     private final static String LEGACY_FACTIONS_FILE_NAME = "faction-names.txt";
     private final static String LEGACY_CHUNKS_FILE_NAME = "claimedchunks/claimedchunks.txt";
@@ -34,22 +32,18 @@ public class StorageSubsystem {
 
     private Gson gson = new GsonBuilder().setPrettyPrinting().create();;
 
-    public StorageSubsystem(MedievalFactions plugin) {
-        main = plugin;
-    }
-
     public void save() {
         saveFactions();
         saveClaimedChunks();
         savePlayerPowerRecords();
         savePlayerActivityRecords();
         saveLockedBlocks();
-        main.saveConfig();
+        MedievalFactions.getInstance().saveConfig();
     }
 
     private void saveFactions() {
         List<Map<String, String>> factions = new ArrayList<>();
-        for (Faction faction : main.factions){
+        for (Faction faction : MedievalFactions.getInstance().factions){
             factions.add(faction.save());
         }
 
@@ -59,7 +53,7 @@ public class StorageSubsystem {
 
     private void saveClaimedChunks() {
         List<Map<String, String>> chunks = new ArrayList<>();
-        for (ClaimedChunk chunk : main.claimedChunks){
+        for (ClaimedChunk chunk : MedievalFactions.getInstance().claimedChunks){
             chunks.add(chunk.save());
         }
 
@@ -69,7 +63,7 @@ public class StorageSubsystem {
 
     private void savePlayerPowerRecords() {
         List<Map<String, String>> playerPowerRecords = new ArrayList<>();
-        for (PlayerPowerRecord record : main.playerPowerRecords){
+        for (PlayerPowerRecord record : MedievalFactions.getInstance().playerPowerRecords){
             playerPowerRecords.add(record.save());
         }
 
@@ -80,7 +74,7 @@ public class StorageSubsystem {
     private void savePlayerActivityRecords()
     {
     	List<Map<String, String>> playerActivityRecords = new ArrayList<>();
-    	for (PlayerActivityRecord record : main.playerActivityRecords)
+    	for (PlayerActivityRecord record : MedievalFactions.getInstance().playerActivityRecords)
     	{
     		playerActivityRecords.add(record.save());
     		
@@ -91,7 +85,7 @@ public class StorageSubsystem {
 
     private void saveLockedBlocks() {
         List<Map<String, String>> lockedBlocks = new ArrayList<>();
-        for (LockedBlock block : main.lockedBlocks){
+        for (LockedBlock block : MedievalFactions.getInstance().lockedBlocks){
             lockedBlocks.add(block.save());
         }
 
@@ -152,57 +146,57 @@ public class StorageSubsystem {
     }
 
     private void loadFactions() {
-        main.factions.clear();
+        MedievalFactions.getInstance().factions.clear();
 
         ArrayList<HashMap<String, String>> data = loadDataFromFilename(FILE_PATH + FACTIONS_FILE_NAME);
 
         for (Map<String, String> factionData : data){
-            Faction newFaction = new Faction(factionData, main);
-            main.factions.add(newFaction);
+            Faction newFaction = new Faction(factionData);
+            MedievalFactions.getInstance().factions.add(newFaction);
         }
     }
 
     private void loadClaimedChunks() {
-        main.claimedChunks.clear();
+        MedievalFactions.getInstance().claimedChunks.clear();
 
         ArrayList<HashMap<String, String>> data = loadDataFromFilename(FILE_PATH + CHUNKS_FILE_NAME);
 
         for (Map<String, String> chunkData : data){
             ClaimedChunk chunk = new ClaimedChunk(chunkData);
-            main.claimedChunks.add(chunk);
+            MedievalFactions.getInstance().claimedChunks.add(chunk);
         }
     }
 
     private void loadPlayerPowerRecords() {
-        main.playerPowerRecords.clear();
+        MedievalFactions.getInstance().playerPowerRecords.clear();
 
         ArrayList<HashMap<String, String>> data = loadDataFromFilename(FILE_PATH + PLAYERPOWER_FILE_NAME);
 
         for (Map<String, String> powerRecord : data){
-            PlayerPowerRecord player = new PlayerPowerRecord(powerRecord, main);
-            main.playerPowerRecords.add(player);
+            PlayerPowerRecord player = new PlayerPowerRecord(powerRecord);
+            MedievalFactions.getInstance().playerPowerRecords.add(player);
         }
     }
     
     private void loadPlayerActivityRecords() {
-        main.playerActivityRecords.clear();
+        MedievalFactions.getInstance().playerActivityRecords.clear();
 
         ArrayList<HashMap<String, String>> data = loadDataFromFilename(FILE_PATH + PLAYERACTIVITY_FILE_NAME);
 
         for (Map<String, String> powerRecord : data){
-        	PlayerActivityRecord player = new PlayerActivityRecord(powerRecord, main);
-            main.playerActivityRecords.add(player);
+        	PlayerActivityRecord player = new PlayerActivityRecord(powerRecord);
+            MedievalFactions.getInstance().playerActivityRecords.add(player);
         }
     }
 
     private void loadLockedBlocks() {
-        main.lockedBlocks.clear();
+        MedievalFactions.getInstance().lockedBlocks.clear();
 
         ArrayList<HashMap<String, String>> data = loadDataFromFilename(FILE_PATH + LOCKED_BLOCKS_FILE_NAME);
 
         for (Map<String, String> lockedBlockData : data){
             LockedBlock lockedBlock = new LockedBlock(lockedBlockData);
-            main.lockedBlocks.add(lockedBlock);
+            MedievalFactions.getInstance().lockedBlocks.add(lockedBlock);
         }
     }
 
@@ -226,18 +220,18 @@ public class StorageSubsystem {
             // actual loading
             while (loadReader.hasNextLine()) {
                 String nextName = loadReader.nextLine();
-                Faction temp = new Faction(nextName, main.getConfig().getInt("initialMaxPowerLevel"), main); // uses server constructor, only temporary
+                Faction temp = new Faction(nextName, MedievalFactions.getInstance().getConfig().getInt("initialMaxPowerLevel")); // uses server constructor, only temporary
                 temp.legacyLoad(nextName + ".txt"); // provides owner field among other things
 
                 // existence check
-                for (int i = 0; i < main.factions.size(); i++) {
-                    if (main.factions.get(i).getName().equalsIgnoreCase(temp.getName())) {
-                        main.factions.remove(i);
+                for (int i = 0; i < MedievalFactions.getInstance().factions.size(); i++) {
+                    if (MedievalFactions.getInstance().factions.get(i).getName().equalsIgnoreCase(temp.getName())) {
+                        MedievalFactions.getInstance().factions.remove(i);
                         break;
                     }
                 }
 
-                main.factions.add(temp);
+                MedievalFactions.getInstance().factions.add(temp);
 
             }
 
@@ -263,15 +257,15 @@ public class StorageSubsystem {
                 temp.legacyLoad(nextName); // provides owner field among other things
 
                 // existence check
-                for (int i = 0; i < main.claimedChunks.size(); i++) {
-                    if (main.claimedChunks.get(i).getChunk().getX() == temp.getChunk().getX() &&
-                            main.claimedChunks.get(i).getChunk().getZ() == temp.getChunk().getZ()) {
-                        main.claimedChunks.remove(i);
+                for (int i = 0; i < MedievalFactions.getInstance().claimedChunks.size(); i++) {
+                    if (MedievalFactions.getInstance().claimedChunks.get(i).getChunk().getX() == temp.getChunk().getX() &&
+                            MedievalFactions.getInstance().claimedChunks.get(i).getChunk().getZ() == temp.getChunk().getZ()) {
+                        MedievalFactions.getInstance().claimedChunks.remove(i);
                         break;
                     }
                 }
 
-                main.claimedChunks.add(temp);
+                MedievalFactions.getInstance().claimedChunks.add(temp);
 
             }
 
@@ -295,17 +289,17 @@ public class StorageSubsystem {
             // actual loading
             while (loadReader.hasNextLine()) {
                 String nextName = loadReader.nextLine();
-                PlayerPowerRecord temp = new PlayerPowerRecord(main); // uses no-parameter constructor since load provides name
+                PlayerPowerRecord temp = new PlayerPowerRecord(); // uses no-parameter constructor since load provides name
                 temp.legacyLoad(nextName); // provides power field among other things
 
-                for (int i = 0; i < main.playerPowerRecords.size(); i++) {
-                    if (main.playerPowerRecords.get(i).getPlayerUUID().equals(temp.getPlayerUUID())) {
-                        main.playerPowerRecords.remove(i);
+                for (int i = 0; i < MedievalFactions.getInstance().playerPowerRecords.size(); i++) {
+                    if (MedievalFactions.getInstance().playerPowerRecords.get(i).getPlayerUUID().equals(temp.getPlayerUUID())) {
+                        MedievalFactions.getInstance().playerPowerRecords.remove(i);
                         break;
                     }
                 }
 
-                main.playerPowerRecords.add(temp);
+                MedievalFactions.getInstance().playerPowerRecords.add(temp);
             }
 
             loadReader.close();
@@ -332,13 +326,13 @@ public class StorageSubsystem {
                 temp.legacyLoad(nextName);
 
                 // existence check
-                for (int i = 0; i < main.lockedBlocks.size(); i++) {
-                    if (main.lockedBlocks.get(i).getX() == temp.getX() && main.lockedBlocks.get(i).getY() == temp.getY() && main.lockedBlocks.get(i).getZ() == temp.getZ()) {
-                        main.lockedBlocks.remove(i);
+                for (int i = 0; i < MedievalFactions.getInstance().lockedBlocks.size(); i++) {
+                    if (MedievalFactions.getInstance().lockedBlocks.get(i).getX() == temp.getX() && MedievalFactions.getInstance().lockedBlocks.get(i).getY() == temp.getY() && MedievalFactions.getInstance().lockedBlocks.get(i).getZ() == temp.getZ()) {
+                        MedievalFactions.getInstance().lockedBlocks.remove(i);
                     }
                 }
 
-                main.lockedBlocks.add(temp);
+                MedievalFactions.getInstance().lockedBlocks.add(temp);
 
             }
 

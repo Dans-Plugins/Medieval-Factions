@@ -12,12 +12,6 @@ import org.bukkit.projectiles.ProjectileSource;
 
 public class EntityDamageByEntityEventHandler {
 
-    MedievalFactions main = null;
-
-    public EntityDamageByEntityEventHandler(MedievalFactions plugin) {
-        main = plugin;
-    }
-
     public void handle(EntityDamageByEntityEvent event) {
     	
    	
@@ -30,7 +24,7 @@ public class EntityDamageByEntityEventHandler {
             Player attacker = (Player) event.getDamager();
             Player victim = (Player) event.getEntity();
         	// if these players are actively duelling then we don't want to handle friendly fire.
-            Duel duel = UtilitySubsystem.getDuel(attacker, victim, main);
+            Duel duel = UtilitySubsystem.getDuel(attacker, victim);
             if (duel == null)
             {
             	handleIfFriendlyFire(event, attacker, victim);	
@@ -41,7 +35,7 @@ public class EntityDamageByEntityEventHandler {
             	{
         			duel.setLoser(victim);
             		duel.finishDuel(false);
-            		main.duelingPlayers.remove(this);
+            		MedievalFactions.getInstance().duelingPlayers.remove(this);
             		event.setCancelled(true);
             	}
             }
@@ -59,7 +53,7 @@ public class EntityDamageByEntityEventHandler {
                 Player victim = (Player) event.getEntity();
 
             	// if these players are actively duelling then we don't want to handle friendly fire.
-                Duel duel = UtilitySubsystem.getDuel(attacker, victim, main);
+                Duel duel = UtilitySubsystem.getDuel(attacker, victim);
                 if (duel == null)
                 {
                 	handleIfFriendlyFire(event, attacker, victim);	
@@ -70,7 +64,7 @@ public class EntityDamageByEntityEventHandler {
                 	{
             			duel.setLoser(victim);
                 		duel.finishDuel(false);
-                		main.duelingPlayers.remove(this);
+                		MedievalFactions.getInstance().duelingPlayers.remove(this);
                 		event.setCancelled(true);
                 	}
                 }
@@ -83,18 +77,18 @@ public class EntityDamageByEntityEventHandler {
     }
 
     private void handleIfFriendlyFire(EntityDamageByEntityEvent event, Player attacker, Player victim) {
-        if (!main.utilities.arePlayersInAFaction(attacker, victim)){
+        if (!MedievalFactions.getInstance().utilities.arePlayersInAFaction(attacker, victim)){
             // Factionless can fight anyone.
             return;
         }
-        else if (main.utilities.arePlayersInSameFaction(attacker, victim)) {
+        else if (MedievalFactions.getInstance().utilities.arePlayersInSameFaction(attacker, victim)) {
             event.setCancelled(true);
             attacker.sendMessage(ChatColor.RED + "You can't attack another player if you are part of the same faction.");
         }
 
         // if attacker's faction and victim's faction are not at war
-        else if (main.utilities.arePlayersFactionsNotEnemies(attacker, victim)) {
-            if (main.getConfig().getBoolean("warsRequiredForPVP")) {
+        else if (MedievalFactions.getInstance().utilities.arePlayersFactionsNotEnemies(attacker, victim)) {
+            if (MedievalFactions.getInstance().getConfig().getBoolean("warsRequiredForPVP")) {
                 event.setCancelled(true);
                 attacker.sendMessage(ChatColor.RED + "You can't attack another player if your factions aren't at war.");
             }

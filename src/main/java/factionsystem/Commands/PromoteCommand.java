@@ -14,8 +14,8 @@ import static org.bukkit.Bukkit.getServer;
 
 public class PromoteCommand extends Command {
 
-    public PromoteCommand(MedievalFactions plugin) {
-        super(plugin);
+    public PromoteCommand() {
+        super();
     }
 
     public void promotePlayer(CommandSender sender, String[] args) {
@@ -23,9 +23,9 @@ public class PromoteCommand extends Command {
             Player player = (Player) sender;
 
             if (sender.hasPermission("mf.promote") || sender.hasPermission("mf.default")) {
-                if (isInFaction(player.getUniqueId(), main.factions)) {
+                if (isInFaction(player.getUniqueId(), MedievalFactions.getInstance().factions)) {
                     if (args.length > 1) {
-                        for (Faction faction : main.factions) {
+                        for (Faction faction : MedievalFactions.getInstance().factions) {
                             UUID playerUUID = findUUIDBasedOnPlayerName(args[1]);
                             if (faction.isMember(playerUUID)) {
                                 if (faction.isOwner(player.getUniqueId())) {

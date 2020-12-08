@@ -13,8 +13,8 @@ import static org.bukkit.Bukkit.getServer;
 
 public class DemoteCommand extends Command {
 
-    public DemoteCommand(MedievalFactions plugin) {
-        super(plugin);
+    public DemoteCommand() {
+        super();
     }
 
     public void demotePlayer(CommandSender sender, String[] args) {
@@ -22,9 +22,9 @@ public class DemoteCommand extends Command {
             Player player = (Player) sender;
 
             if (sender.hasPermission("mf.demote") || sender.hasPermission("mf.default")) {
-                if (isInFaction(player.getUniqueId(), main.factions)) {
+                if (isInFaction(player.getUniqueId(), MedievalFactions.getInstance().factions)) {
                     if (args.length > 1) {
-                        for (Faction faction : main.factions) {
+                        for (Faction faction : MedievalFactions.getInstance().factions) {
                             UUID officerUUID = findUUIDBasedOnPlayerName(args[1]);
                             if (officerUUID != null && faction.isOfficer(officerUUID)) {
                                 if (faction.isOwner(player.getUniqueId())) {

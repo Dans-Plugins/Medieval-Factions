@@ -10,8 +10,8 @@ import static factionsystem.Subsystems.UtilitySubsystem.*;
 
 public class LawsCommand extends Command {
 
-    public LawsCommand(MedievalFactions plugin) {
-        super(plugin);
+    public LawsCommand() {
+        super();
     }
 
     public void showLawsToPlayer(CommandSender sender, String[] args) {
@@ -23,14 +23,14 @@ public class LawsCommand extends Command {
             Faction faction = null;
 
             if (args.length == 1) {
-                faction = getPlayersFaction(player.getUniqueId(), main.factions);
+                faction = getPlayersFaction(player.getUniqueId(), MedievalFactions.getInstance().factions);
             }
             else {
                 String target = createStringFromFirstArgOnwards(args);
                 boolean exists = false;
-                for (Faction f : main.factions) {
+                for (Faction f : MedievalFactions.getInstance().factions) {
                     if (f.getName().equalsIgnoreCase(target)) {
-                        faction = getFaction(target, main.factions);
+                        faction = getFaction(target, MedievalFactions.getInstance().factions);
                         exists = true;
                     }
                 }

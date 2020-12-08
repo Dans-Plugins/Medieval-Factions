@@ -10,8 +10,8 @@ import static factionsystem.Subsystems.UtilitySubsystem.*;
 
 public class DisbandCommand extends Command {
 
-    public DisbandCommand(MedievalFactions plugin) {
-        super(plugin);
+    public DisbandCommand() {
+        super();
     }
 
     public boolean deleteFaction(CommandSender sender, String[] args) {
@@ -24,9 +24,9 @@ public class DisbandCommand extends Command {
 
                         String factionName = createStringFromFirstArgOnwards(args);
 
-                        for (int i = 0; i < main.factions.size(); i++) {
+                        for (int i = 0; i < MedievalFactions.getInstance().factions.size(); i++) {
 
-                            if (main.factions.get(i).getName().equalsIgnoreCase(factionName)) {
+                            if (MedievalFactions.getInstance().factions.get(i).getName().equalsIgnoreCase(factionName)) {
 
                                 removeFaction(i);
                                 player.sendMessage(ChatColor.GREEN + factionName + " has been successfully disbanded.");
@@ -46,11 +46,11 @@ public class DisbandCommand extends Command {
                 }
 
                 boolean owner = false;
-                for (int i = 0; i < main.factions.size(); i++) {
-                    if (main.factions.get(i).isOwner(player.getUniqueId())) {
+                for (int i = 0; i < MedievalFactions.getInstance().factions.size(); i++) {
+                    if (MedievalFactions.getInstance().factions.get(i).isOwner(player.getUniqueId())) {
                         owner = true;
-                        if (main.factions.get(i).getPopulation() == 1) {
-                            main.playersInFactionChat.remove(player.getUniqueId());
+                        if (MedievalFactions.getInstance().factions.get(i).getPopulation() == 1) {
+                            MedievalFactions.getInstance().playersInFactionChat.remove(player.getUniqueId());
                             removeFaction(i);
                             player.sendMessage(ChatColor.GREEN + "Faction successfully disbanded.");
                             return true;
@@ -78,21 +78,21 @@ public class DisbandCommand extends Command {
     public void removeFaction(int i) {
 
         // remove claimed land objects associated with this faction
-        removeAllClaimedChunks(main.factions.get(i).getName(), main.claimedChunks);
+        removeAllClaimedChunks(MedievalFactions.getInstance().factions.get(i).getName(), MedievalFactions.getInstance().claimedChunks);
 
         // remove locks associated with this faction
-        removeAllLocks(main.factions.get(i).getName(), main.lockedBlocks);
+        removeAllLocks(MedievalFactions.getInstance().factions.get(i).getName(), MedievalFactions.getInstance().lockedBlocks);
 
         // remove records of alliances/wars associated with this faction
-        for (Faction faction : main.factions) {
-            if (faction.isAlly(main.factions.get(i).getName())) {
-                faction.removeAlly(main.factions.get(i).getName());
+        for (Faction faction : MedievalFactions.getInstance().factions) {
+            if (faction.isAlly(MedievalFactions.getInstance().factions.get(i).getName())) {
+                faction.removeAlly(MedievalFactions.getInstance().factions.get(i).getName());
             }
-            if (faction.isEnemy(main.factions.get(i).getName())) {
-                faction.removeEnemy(main.factions.get(i).getName());
+            if (faction.isEnemy(MedievalFactions.getInstance().factions.get(i).getName())) {
+                faction.removeEnemy(MedievalFactions.getInstance().factions.get(i).getName());
             }
         }
 
-        main.factions.remove(i);
+        MedievalFactions.getInstance().factions.remove(i);
     }
 }

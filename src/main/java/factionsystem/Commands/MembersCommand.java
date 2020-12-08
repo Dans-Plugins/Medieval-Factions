@@ -10,8 +10,8 @@ import static factionsystem.Subsystems.UtilitySubsystem.*;
 
 public class MembersCommand extends Command {
 
-    public MembersCommand(MedievalFactions plugin) {
-        super(plugin);
+    public MembersCommand() {
+        super();
     }
 
     public void showMembers(CommandSender sender, String[] args) {
@@ -20,7 +20,7 @@ public class MembersCommand extends Command {
 
             if (sender.hasPermission("mf.members") || sender.hasPermission("mf.default")) {
                 if (args.length == 1) {
-                    for (Faction faction : main.factions) {
+                    for (Faction faction : MedievalFactions.getInstance().factions) {
                         if (faction.isMember(player.getUniqueId())) {
                             sendFactionMembers(player, faction);
                             return;
@@ -32,7 +32,7 @@ public class MembersCommand extends Command {
                     // creating name from arguments 1 to the last one
                     String name = createStringFromFirstArgOnwards(args);
 
-                    for (Faction faction : main.factions) {
+                    for (Faction faction : MedievalFactions.getInstance().factions) {
                         if (faction.getName().equalsIgnoreCase(name)) {
                             sendFactionMembers(player, faction);
                             return;

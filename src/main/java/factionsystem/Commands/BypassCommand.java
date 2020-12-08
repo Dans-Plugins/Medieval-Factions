@@ -7,8 +7,8 @@ import org.bukkit.entity.Player;
 
 public class BypassCommand extends Command {
 
-    public BypassCommand(MedievalFactions plugin) {
-        super(plugin);
+    public BypassCommand() {
+        super();
     }
 
     public void toggleBypass(CommandSender sender) {
@@ -18,12 +18,12 @@ public class BypassCommand extends Command {
 
             if (player.hasPermission("mf.bypass") || player.hasPermission("mf.admin")) {
 
-                if (!main.adminsBypassingProtections.contains(player.getUniqueId())) {
-                    main.adminsBypassingProtections.add(player.getUniqueId());
+                if (!MedievalFactions.getInstance().adminsBypassingProtections.contains(player.getUniqueId())) {
+                    MedievalFactions.getInstance().adminsBypassingProtections.add(player.getUniqueId());
                     player.sendMessage(ChatColor.GREEN + "You are now bypassing protections provided by Medieval Factions.");
                 }
                 else {
-                    main.adminsBypassingProtections.remove(player.getUniqueId());
+                    MedievalFactions.getInstance().adminsBypassingProtections.remove(player.getUniqueId());
                     player.sendMessage(ChatColor.GREEN + "You are no longer bypassing protections provided by Medieval Factions.");
                 }
 

@@ -9,8 +9,8 @@ import static factionsystem.Subsystems.UtilitySubsystem.isInFaction;
 
 public class ChatCommand extends Command {
 
-    public ChatCommand(MedievalFactions plugin) {
-        super(plugin);
+    public ChatCommand() {
+        super();
     }
 
     public void toggleFactionChat(CommandSender sender) {
@@ -18,13 +18,13 @@ public class ChatCommand extends Command {
             Player player = (Player) sender;
 
             if (player.hasPermission("mf.chat") || player.hasPermission("mf.default")) {
-                if (isInFaction(player.getUniqueId(), main.factions)) {
-                    if (!main.playersInFactionChat.contains(player.getUniqueId())) {
-                        main.playersInFactionChat.add(player.getUniqueId());
+                if (isInFaction(player.getUniqueId(), MedievalFactions.getInstance().factions)) {
+                    if (!MedievalFactions.getInstance().playersInFactionChat.contains(player.getUniqueId())) {
+                        MedievalFactions.getInstance().playersInFactionChat.add(player.getUniqueId());
                         player.sendMessage(ChatColor.GREEN + "You are now speaking in faction chat!");
                     }
                     else {
-                        main.playersInFactionChat.remove(player.getUniqueId());
+                        MedievalFactions.getInstance().playersInFactionChat.remove(player.getUniqueId());
                         player.sendMessage(ChatColor.GREEN + "You are no longer in faction chat!");
                     }
                 }

@@ -14,8 +14,8 @@ import static factionsystem.Subsystems.UtilitySubsystem.*;
 
 public class ForceCommand extends Command {
 
-    public ForceCommand(MedievalFactions plugin) {
-        super(plugin);
+    public ForceCommand() {
+        super();
     }
 
     public boolean force(CommandSender sender, String[] args) {
@@ -62,7 +62,7 @@ public class ForceCommand extends Command {
     private boolean forceSave(CommandSender sender) {
         if (sender.hasPermission("mf.force.save") || sender.hasPermission("mf.force.*") || sender.hasPermission("mf.admin")) {
             sender.sendMessage(ChatColor.GREEN + "Medieval Factions plugin is saving...");
-            main.storage.save();
+            MedievalFactions.getInstance().storage.save();
             return true;
         }
         else {
@@ -74,8 +74,8 @@ public class ForceCommand extends Command {
     private boolean forceLoad(CommandSender sender) {
         if (sender.hasPermission("mf.force.load") || sender.hasPermission("mf.force.*")|| sender.hasPermission("mf.admin")) {
             sender.sendMessage(ChatColor.GREEN + "Medieval Factions plugin is loading...");
-            main.storage.load();
-            main.reloadConfig();
+            MedievalFactions.getInstance().storage.load();
+            MedievalFactions.getInstance().reloadConfig();
             return true;
         }
         else {
@@ -91,7 +91,7 @@ public class ForceCommand extends Command {
             if (args.length >= 4) {
 
                 // get arguments designated by single quotes
-                ArrayList<String> singleQuoteArgs = main.utilities.getArgumentsInsideSingleQuotes(args);
+                ArrayList<String> singleQuoteArgs = MedievalFactions.getInstance().utilities.getArgumentsInsideSingleQuotes(args);
 
                 if (singleQuoteArgs.size() < 2) {
                     sender.sendMessage(ChatColor.RED + "No factions designated. Must be designated inside single quotes!");
@@ -101,8 +101,8 @@ public class ForceCommand extends Command {
                 String factionName1 = singleQuoteArgs.get(0);
                 String factionName2 = singleQuoteArgs.get(1);
 
-                Faction faction1 = main.utilities.getFaction(factionName1, main.factions);
-                Faction faction2 = main.utilities.getFaction(factionName2, main.factions);
+                Faction faction1 = MedievalFactions.getInstance().utilities.getFaction(factionName1, MedievalFactions.getInstance().factions);
+                Faction faction2 = MedievalFactions.getInstance().utilities.getFaction(factionName2, MedievalFactions.getInstance().factions);
 
                 // force peace
                 if (faction1 != null && faction2 != null) {
@@ -114,7 +114,7 @@ public class ForceCommand extends Command {
                     }
 
                     // announce peace to all players on server.
-                    main.utilities.sendAllPlayersOnServerMessage(ChatColor.GREEN + faction1.getName() + " is now at peace with " + faction2.getName() + "!");
+                    MedievalFactions.getInstance().utilities.sendAllPlayersOnServerMessage(ChatColor.GREEN + faction1.getName() + " is now at peace with " + faction2.getName() + "!");
                     return true;
                 }
                 else {
@@ -140,7 +140,7 @@ public class ForceCommand extends Command {
                 String playerName = args[2];
                 for (OfflinePlayer player : Bukkit.getOfflinePlayers()) {
                     if (player.getName().equalsIgnoreCase(playerName)) {
-                        for (Faction faction : main.factions) {
+                        for (Faction faction : MedievalFactions.getInstance().factions) {
                             if (faction.isOfficer(player.getUniqueId())) {
                                 faction.removeOfficer(player.getUniqueId());
 
@@ -172,7 +172,7 @@ public class ForceCommand extends Command {
             if (args.length >= 4) {
 
                 // get arguments designated by single quotes
-                ArrayList<String> singleQuoteArgs = main.utilities.getArgumentsInsideSingleQuotes(args);
+                ArrayList<String> singleQuoteArgs = MedievalFactions.getInstance().utilities.getArgumentsInsideSingleQuotes(args);
 
                 if (singleQuoteArgs.size() < 2) {
                     sender.sendMessage(ChatColor.RED + "Not enough arguments designated. Must be designated inside single quotes!");
@@ -182,14 +182,14 @@ public class ForceCommand extends Command {
                 String playerName = singleQuoteArgs.get(0);
                 String factionName = singleQuoteArgs.get(1);
 
-                Faction faction = main.utilities.getFaction(factionName, main.factions);
+                Faction faction = MedievalFactions.getInstance().utilities.getFaction(factionName, MedievalFactions.getInstance().factions);
 
                 for (OfflinePlayer player : Bukkit.getOfflinePlayers()) {
                     if (player.getName().equalsIgnoreCase(playerName)) {
 
                         if (faction != null) {
-                            if (!(isInFaction(player.getUniqueId(), main.factions))) {
-                                faction.addMember(player.getUniqueId(), getPlayersPowerRecord(player.getUniqueId(), main.playerPowerRecords).getPowerLevel());
+                            if (!(isInFaction(player.getUniqueId(), MedievalFactions.getInstance().factions))) {
+                                faction.addMember(player.getUniqueId(), getPlayersPowerRecord(player.getUniqueId(), MedievalFactions.getInstance().playerPowerRecords).getPowerLevel());
                                 try {
                                     sendAllPlayersInFactionMessage(faction, ChatColor.GREEN + player.getName() + " has joined " + faction.getName());
                                 } catch (Exception ignored) {
@@ -232,14 +232,14 @@ public class ForceCommand extends Command {
                 String playerName = args[2];
                 for (OfflinePlayer player : Bukkit.getOfflinePlayers()) {
                     if (player.getName().equalsIgnoreCase(playerName)) {
-                        for (Faction faction : main.factions) {
+                        for (Faction faction : MedievalFactions.getInstance().factions) {
                             if (faction.isOwner(player.getUniqueId())) {
                                 sender.sendMessage(ChatColor.RED + "Cannot forcibly kick an owner from their faction! Try disbanding the faction!");
                                 return false;
                             }
 
                             if (faction.isMember(player.getUniqueId())) {
-                                faction.removeMember(player.getUniqueId(), getPlayersPowerRecord(player.getUniqueId(), main.playerPowerRecords).getPowerLevel());
+                                faction.removeMember(player.getUniqueId(), getPlayersPowerRecord(player.getUniqueId(), MedievalFactions.getInstance().playerPowerRecords).getPowerLevel());
 
                                 if (player.isOnline()) {
                                     Bukkit.getPlayer(player.getUniqueId()).sendMessage(ChatColor.AQUA + "You were forcibly kicked from the faction " + faction.getName() + "!");
@@ -273,7 +273,7 @@ public class ForceCommand extends Command {
             if (args.length >= 4) {
 
                 // get arguments designated by single quotes
-                ArrayList<String> singleQuoteArgs = main.utilities.getArgumentsInsideSingleQuotes(args);
+                ArrayList<String> singleQuoteArgs = MedievalFactions.getInstance().utilities.getArgumentsInsideSingleQuotes(args);
 
                 if (singleQuoteArgs.size() < 2) {
                     sender.sendMessage(ChatColor.RED + "Player and desired power must be designated inside single quotes!");
@@ -290,7 +290,7 @@ public class ForceCommand extends Command {
                     return false;
                 }
 
-                PlayerPowerRecord record = getPlayersPowerRecord(findUUIDBasedOnPlayerName(player), main.playerPowerRecords);
+                PlayerPowerRecord record = getPlayersPowerRecord(findUUIDBasedOnPlayerName(player), MedievalFactions.getInstance().playerPowerRecords);
 
                 record.setPowerLevel(desiredPower);
                 sender.sendMessage(ChatColor.GREEN + "The power level of '" + player + "' has been set to " + desiredPower);

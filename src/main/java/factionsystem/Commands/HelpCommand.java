@@ -6,8 +6,8 @@ import org.bukkit.command.CommandSender;
 
 public class HelpCommand extends Command {
 
-    public HelpCommand(MedievalFactions plugin) {
-        super(plugin);
+    public HelpCommand() {
+        super();
     }
 
     // Each page of the help command should have a title and nine commands. This is for ease of use.

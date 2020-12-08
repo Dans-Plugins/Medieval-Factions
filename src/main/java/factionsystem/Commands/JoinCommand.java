@@ -10,8 +10,8 @@ import static factionsystem.Subsystems.UtilitySubsystem.*;
 
 public class JoinCommand extends Command {
 
-    public JoinCommand(MedievalFactions plugin) {
-        super(plugin);
+    public JoinCommand() {
+        super();
     }
 
     public boolean joinFaction(CommandSender sender, String[] args) {
@@ -24,13 +24,13 @@ public class JoinCommand extends Command {
                     // creating name from arguments 1 to the last one
                     String factionName = createStringFromFirstArgOnwards(args);
 
-                    for (Faction faction : main.factions) {
+                    for (Faction faction : MedievalFactions.getInstance().factions) {
                         if (faction.getName().equalsIgnoreCase(factionName)) {
                             if (faction.isInvited(player.getUniqueId())) {
 
                                 // join if player isn't in a faction already
-                                if (!(isInFaction(player.getUniqueId(), main.factions))) {
-                                    faction.addMember(player.getUniqueId(), getPlayersPowerRecord(player.getUniqueId(), main.playerPowerRecords).getPowerLevel());
+                                if (!(isInFaction(player.getUniqueId(), MedievalFactions.getInstance().factions))) {
+                                    faction.addMember(player.getUniqueId(), getPlayersPowerRecord(player.getUniqueId(), MedievalFactions.getInstance().playerPowerRecords).getPowerLevel());
                                     faction.uninvite(player.getUniqueId());
                                     try {
                                         sendAllPlayersInFactionMessage(faction, ChatColor.GREEN + player.getName() + " has joined " + faction.getName());

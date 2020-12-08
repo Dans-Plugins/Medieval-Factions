@@ -12,8 +12,8 @@ import static factionsystem.Subsystems.UtilitySubsystem.*;
 
 public class RenameCommand extends Command {
 
-    public RenameCommand(MedievalFactions plugin) {
-        super(plugin);
+    public RenameCommand() {
+        super();
     }
 
     public void renameFaction(CommandSender sender, String[] args) {
@@ -21,19 +21,19 @@ public class RenameCommand extends Command {
             Player player = (Player) sender;
             if (player.hasPermission("mf.rename") || player.hasPermission("mf.default")) {
                 if (args.length > 1) {
-                    String oldName = getPlayersFaction(player.getUniqueId(), main.factions).getName();
+                    String oldName = getPlayersFaction(player.getUniqueId(), MedievalFactions.getInstance().factions).getName();
                     String newName = createStringFromFirstArgOnwards(args);
 
                     // existence check
-                    for (Faction faction : main.factions) {
+                    for (Faction faction : MedievalFactions.getInstance().factions) {
                         if (faction.getName().equalsIgnoreCase(newName)) {
                             player.sendMessage(ChatColor.RED + "That name is already taken!");
                             return;
                         }
                     }
 
-                    if (isInFaction(player.getUniqueId(), main.factions)) {
-                        Faction playersFaction = getPlayersFaction(player.getUniqueId(), main.factions);
+                    if (isInFaction(player.getUniqueId(), MedievalFactions.getInstance().factions)) {
+                        Faction playersFaction = getPlayersFaction(player.getUniqueId(), MedievalFactions.getInstance().factions);
                         if (playersFaction.isOwner(player.getUniqueId())) {
 
                             // change name
@@ -41,7 +41,7 @@ public class RenameCommand extends Command {
                             player.sendMessage(ChatColor.GREEN + "Faction name changed!");
 
                             // rename alliance, enemy, liege and vassal records
-                            for (Faction faction : main.factions) {
+                            for (Faction faction : MedievalFactions.getInstance().factions) {
                                 if (faction.isAlly(oldName)) {
                                     faction.removeAlly(oldName);
                                     faction.addAlly(newName);
@@ -60,21 +60,21 @@ public class RenameCommand extends Command {
                             }
 
                             // rename claimed chunk records
-                            for (ClaimedChunk claimedChunk : main.claimedChunks) {
+                            for (ClaimedChunk claimedChunk : MedievalFactions.getInstance().claimedChunks) {
                                 if (claimedChunk.getHolder().equalsIgnoreCase(oldName)) {
                                     claimedChunk.setHolder(newName);
                                 }
                             }
 
                             // rename locked block records
-                            for (LockedBlock lockedBlock : main.lockedBlocks) {
+                            for (LockedBlock lockedBlock : MedievalFactions.getInstance().lockedBlocks) {
                                 if (lockedBlock.getFactionName().equalsIgnoreCase(oldName)) {
                                     lockedBlock.setFaction(newName);
                                 }
                             }
 
                             // Save again to overwrite current data
-                            main.storage.save();
+                            MedievalFactions.getInstance().storage.save();
 
                         }
                         else {

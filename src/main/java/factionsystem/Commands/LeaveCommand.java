@@ -12,8 +12,8 @@ import static factionsystem.Subsystems.UtilitySubsystem.*;
 
 public class LeaveCommand extends Command {
 
-    public LeaveCommand(MedievalFactions plugin) {
-        super(plugin);
+    public LeaveCommand() {
+        super();
     }
 
     public boolean leaveFaction(CommandSender sender) {
@@ -21,41 +21,41 @@ public class LeaveCommand extends Command {
             Player player = (Player) sender;
 
             if (sender.hasPermission("mf.leave") || sender.hasPermission("mf.default")) {
-                if (isInFaction(player.getUniqueId(), main.factions)) {
-                    for (int i = 0; i < main.factions.size(); i++) {
-                        if (main.factions.get(i).isMember(player.getUniqueId())) {
-                            if (main.factions.get(i).isOwner(player.getUniqueId())) {
+                if (isInFaction(player.getUniqueId(), MedievalFactions.getInstance().factions)) {
+                    for (int i = 0; i < MedievalFactions.getInstance().factions.size(); i++) {
+                        if (MedievalFactions.getInstance().factions.get(i).isMember(player.getUniqueId())) {
+                            if (MedievalFactions.getInstance().factions.get(i).isOwner(player.getUniqueId())) {
                                 // is faction empty?
-                                if (main.factions.get(i).getPopulation() == 1) {
+                                if (MedievalFactions.getInstance().factions.get(i).getPopulation() == 1) {
                                     // able to leave
 
-                                    if (main.factions.get(i).isOfficer(player.getUniqueId())) {
-                                        main.factions.get(i).removeOfficer(player.getUniqueId());
+                                    if (MedievalFactions.getInstance().factions.get(i).isOfficer(player.getUniqueId())) {
+                                        MedievalFactions.getInstance().factions.get(i).removeOfficer(player.getUniqueId());
                                     }
 
                                     // remove records of alliances/wars associated with this faction
-                                    for (Faction faction : main.factions) {
-                                        if (faction.isAlly(main.factions.get(i).getName())) {
-                                            faction.removeAlly(main.factions.get(i).getName());
+                                    for (Faction faction : MedievalFactions.getInstance().factions) {
+                                        if (faction.isAlly(MedievalFactions.getInstance().factions.get(i).getName())) {
+                                            faction.removeAlly(MedievalFactions.getInstance().factions.get(i).getName());
                                         }
-                                        if (faction.isEnemy(main.factions.get(i).getName())) {
-                                            faction.removeEnemy(main.factions.get(i).getName());
+                                        if (faction.isEnemy(MedievalFactions.getInstance().factions.get(i).getName())) {
+                                            faction.removeEnemy(MedievalFactions.getInstance().factions.get(i).getName());
                                         }
-                                        if (faction.isVassal(main.factions.get(i).getName())) {
-                                            faction.removeVassal(main.factions.get(i).getName());
+                                        if (faction.isVassal(MedievalFactions.getInstance().factions.get(i).getName())) {
+                                            faction.removeVassal(MedievalFactions.getInstance().factions.get(i).getName());
                                         }
-                                        if (main.factions.get(i).isLiege(faction.getName()))
+                                        if (MedievalFactions.getInstance().factions.get(i).isLiege(faction.getName()))
                                         {
-                                            main.factions.get(i).setLiege("none");
+                                            MedievalFactions.getInstance().factions.get(i).setLiege("none");
                                         }
                                     }
 
-                                    main.playersInFactionChat.remove(player.getUniqueId());
+                                    MedievalFactions.getInstance().playersInFactionChat.remove(player.getUniqueId());
 
                                     // delete file associated with faction
-                                    System.out.println("Attempting to delete file plugins/MedievalFactions/" + main.factions.get(i).getName() + ".txt");
+                                    System.out.println("Attempting to delete file plugins/MedievalFactions/" + MedievalFactions.getInstance().factions.get(i).getName() + ".txt");
                                     try {
-                                        File fileToDelete = new File("plugins/MedievalFactions/" + main.factions.get(i).getName() + ".txt");
+                                        File fileToDelete = new File("plugins/MedievalFactions/" + MedievalFactions.getInstance().factions.get(i).getName() + ".txt");
                                         if (fileToDelete.delete()) {
                                             System.out.println("Success. File deleted.");
                                         }
@@ -67,10 +67,10 @@ public class LeaveCommand extends Command {
                                     }
 
                                     // remove claimed land objects associated with this faction
-                                    removeAllClaimedChunks(main.factions.get(i).getName(), main.claimedChunks);
+                                    removeAllClaimedChunks(MedievalFactions.getInstance().factions.get(i).getName(), MedievalFactions.getInstance().claimedChunks);
 
-                                    main.factions.get(i).removeMember(player.getUniqueId(), getPlayersPowerRecord(player.getUniqueId(), main.playerPowerRecords).getPowerLevel());
-                                    main.factions.remove(i);
+                                    MedievalFactions.getInstance().factions.get(i).removeMember(player.getUniqueId(), getPlayersPowerRecord(player.getUniqueId(), MedievalFactions.getInstance().playerPowerRecords).getPowerLevel());
+                                    MedievalFactions.getInstance().factions.remove(i);
                                     player.sendMessage(ChatColor.AQUA + "You left your faction. It was deleted since no one else was a member.");
 
                                     return true;
@@ -83,18 +83,18 @@ public class LeaveCommand extends Command {
                             else {
                                 // able to leave
 
-                                if (main.factions.get(i).isOfficer(player.getUniqueId())) {
-                                    main.factions.get(i).removeOfficer(player.getUniqueId());
+                                if (MedievalFactions.getInstance().factions.get(i).isOfficer(player.getUniqueId())) {
+                                    MedievalFactions.getInstance().factions.get(i).removeOfficer(player.getUniqueId());
                                 }
 
-                                if (main.playersInFactionChat.contains(player.getUniqueId())) {
-                                    main.playersInFactionChat.remove(player.getUniqueId());
+                                if (MedievalFactions.getInstance().playersInFactionChat.contains(player.getUniqueId())) {
+                                    MedievalFactions.getInstance().playersInFactionChat.remove(player.getUniqueId());
                                 }
 
-                                main.factions.get(i).removeMember(player.getUniqueId(), getPlayersPowerRecord(player.getUniqueId(), main.playerPowerRecords).getPowerLevel());
+                                MedievalFactions.getInstance().factions.get(i).removeMember(player.getUniqueId(), getPlayersPowerRecord(player.getUniqueId(), MedievalFactions.getInstance().playerPowerRecords).getPowerLevel());
                                 player.sendMessage(ChatColor.AQUA + "You left your faction.");
                                 try {
-                                    sendAllPlayersInFactionMessage(main.factions.get(i), ChatColor.GREEN + player.getName() + " has left " + main.factions.get(i).getName());
+                                    sendAllPlayersInFactionMessage(MedievalFactions.getInstance().factions.get(i), ChatColor.GREEN + player.getName() + " has left " + MedievalFactions.getInstance().factions.get(i).getName());
                                 } catch (Exception ignored) {
 
                                 }

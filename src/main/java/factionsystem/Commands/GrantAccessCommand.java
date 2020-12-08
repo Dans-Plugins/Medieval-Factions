@@ -9,8 +9,8 @@ import static factionsystem.Subsystems.UtilitySubsystem.findUUIDBasedOnPlayerNam
 
 public class GrantAccessCommand extends Command {
 
-    public GrantAccessCommand(MedievalFactions plugin) {
-        super(plugin);
+    public GrantAccessCommand() {
+        super();
     }
 
     public void grantAccess(CommandSender sender, String[] args) {
@@ -26,9 +26,9 @@ public class GrantAccessCommand extends Command {
                 }
 
                 // if not already granting access
-                if (!main.playersGrantingAccess.containsKey(player.getUniqueId())) {
+                if (!MedievalFactions.getInstance().playersGrantingAccess.containsKey(player.getUniqueId())) {
                     // save target name and player name in hashmap in main
-                    main.playersGrantingAccess.put(player.getUniqueId(), findUUIDBasedOnPlayerName(args[1]));
+                    MedievalFactions.getInstance().playersGrantingAccess.put(player.getUniqueId(), findUUIDBasedOnPlayerName(args[1]));
                     player.sendMessage(ChatColor.GREEN + "Right click a chest or door to grant " + args[1] + " access. Type /mf grantaccess cancel to cancel this.");
                 }
                 else {

@@ -9,8 +9,8 @@ import org.bukkit.entity.Player;
 
 public class ConfigCommand extends Command {
 
-    public ConfigCommand(MedievalFactions plugin) {
-        super(plugin);
+    public ConfigCommand() {
+        super();
     }
 
     // args count is at least 1 at this point (/mf config)
@@ -25,7 +25,7 @@ public class ConfigCommand extends Command {
 
                     if (args[1].equalsIgnoreCase("show")) {
                         // no further arguments needed, list config
-                        main.config.sendPlayerConfigList(player);
+                        MedievalFactions.getInstance().config.sendPlayerConfigList(player);
                         return;
                     }
 
@@ -37,7 +37,7 @@ public class ConfigCommand extends Command {
                             String option = args[2];
                             String value = args[3];
 
-                            ConfigSubsystem.setConfigOption(option, value, player, main);
+                            ConfigSubsystem.setConfigOption(option, value, player);
                             return;
                         }
                         else {

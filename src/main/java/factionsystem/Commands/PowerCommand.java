@@ -12,8 +12,8 @@ import java.util.UUID;
 
 public class PowerCommand extends Command {
 
-    public PowerCommand(MedievalFactions plugin) {
-        super(plugin);
+    public PowerCommand() {
+        super();
     }
 
     public boolean powerCheck(CommandSender sender, String[] args) {
@@ -26,7 +26,7 @@ public class PowerCommand extends Command {
             		UUID playerUUID = findUUIDBasedOnPlayerName(args[1]);
             		if (playerUUID != null)
             		{
-	            		PlayerPowerRecord record = getPlayersPowerRecord(playerUUID, main.playerPowerRecords);
+	            		PlayerPowerRecord record = getPlayersPowerRecord(playerUUID, MedievalFactions.getInstance().playerPowerRecords);
 	                    player.sendMessage(ChatColor.AQUA + args[1] + "'s current power level is " + record.getPowerLevel() + "/" + record.maxPower() + ".");
 	                    return true;
             		}
@@ -38,7 +38,7 @@ public class PowerCommand extends Command {
             	}
             	else
             	{
-                    PlayerPowerRecord record = getPlayersPowerRecord(player.getUniqueId(), main.playerPowerRecords);
+                    PlayerPowerRecord record = getPlayersPowerRecord(player.getUniqueId(), MedievalFactions.getInstance().playerPowerRecords);
                     player.sendMessage(ChatColor.AQUA + "Your current power level is " + record.getPowerLevel() + "/" + record.maxPower() + ".");
                     return true;
             	}

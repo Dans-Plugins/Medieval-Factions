@@ -8,8 +8,8 @@ import org.bukkit.entity.Player;
 
 public class DeclareIndependenceCommand extends Command {
 
-    public DeclareIndependenceCommand(MedievalFactions plugin) {
-        super(plugin);
+    public DeclareIndependenceCommand() {
+        super();
     }
 
     public void declareIndependence(CommandSender sender) {
@@ -19,13 +19,13 @@ public class DeclareIndependenceCommand extends Command {
 
             if (player.hasPermission("mf.declareIndependence") || player.hasPermission("mf.default")) {
 
-                Faction playersFaction = main.utilities.getPlayersFaction(player.getUniqueId(), main.factions);
+                Faction playersFaction = MedievalFactions.getInstance().utilities.getPlayersFaction(player.getUniqueId(), MedievalFactions.getInstance().factions);
 
                     if (playersFaction != null) {
                         // if faction has liege
                         if (playersFaction.hasLiege()) {
 
-                            Faction targetFaction = main.utilities.getFaction(playersFaction.getLiege(), main.factions);
+                            Faction targetFaction = MedievalFactions.getInstance().utilities.getFaction(playersFaction.getLiege(), MedievalFactions.getInstance().factions);
 
                             // if owner of faction
                             if (playersFaction.isOwner(player.getUniqueId())) {
@@ -40,7 +40,7 @@ public class DeclareIndependenceCommand extends Command {
                                 // add declarer's faction to new enemy's enemyList
                                 targetFaction.addEnemy(playersFaction.getName());
 
-                                main.utilities.sendAllPlayersOnServerMessage(ChatColor.RED + playersFaction.getName() + " has declared independence from " + targetFaction.getName() + "!");
+                                MedievalFactions.getInstance().utilities.sendAllPlayersOnServerMessage(ChatColor.RED + playersFaction.getName() + " has declared independence from " + targetFaction.getName() + "!");
                            }
                             else {
                                 // tell player they must be owner
