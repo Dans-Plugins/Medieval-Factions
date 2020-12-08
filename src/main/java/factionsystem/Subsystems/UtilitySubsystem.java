@@ -244,15 +244,6 @@ public class UtilitySubsystem {
         }
         return "unclaimed";
     }
-    
-    public boolean isBarrel(Block block)
-    {
-    	if (block.getType() == Material.BARREL)
-    	{
-    		return true;
-    	}
-    	return false;
-    }
 
     public boolean isGate(Block block)
     {
