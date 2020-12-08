@@ -93,11 +93,11 @@ public class Gate {
 	        
 	        newGate.world = data.world;
 	        newGate.coord1 = new GateCoord();
-	        newGate.coord1 = GateCoord.fromString(data.coord1, MedievalFactions.getInstance());
+	        newGate.coord1 = GateCoord.fromString(data.coord1);
 	        newGate.coord2 = new GateCoord();
-	        newGate.coord2 = GateCoord.fromString(data.coord2, MedievalFactions.getInstance());
+	        newGate.coord2 = GateCoord.fromString(data.coord2);
 	        newGate.trigger = new GateCoord();
-	        newGate.trigger = GateCoord.fromString(data.triggerCoord, MedievalFactions.getInstance());
+	        newGate.trigger = GateCoord.fromString(data.triggerCoord);
 	        newGate.material = Material.getMaterial(data.material);
 	        newGate.open = Boolean.parseBoolean(data.open);
 	        newGate.vertical = Boolean.parseBoolean(data.vertical);

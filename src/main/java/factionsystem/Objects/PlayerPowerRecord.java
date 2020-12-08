@@ -29,6 +29,10 @@ public class PlayerPowerRecord {
         this.load(data);
     }
 
+    public PlayerPowerRecord() {
+
+    }
+
     public int maxPower() {
         if (UtilitySubsystem.isPlayerAFactionOwner(playerUUID, MedievalFactions.getInstance().factions)){
             return (int) (MedievalFactions.getInstance().getConfig().getDouble("initialMaxPowerLevel") * MedievalFactions.getInstance().getConfig().getDouble("factionOwnerMultiplier", 2.0));

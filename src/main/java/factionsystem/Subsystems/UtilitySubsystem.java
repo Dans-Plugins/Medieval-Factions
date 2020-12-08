@@ -630,7 +630,7 @@ public class UtilitySubsystem {
     public static void inviteDuel(Player player, Player target, int limit)
     {
     	target.sendMessage(ChatColor.AQUA + player.getName() + " has challenged you to a duel! Type /mf duel accept to begin.");
-    	MedievalFactions.getInstance().duelingPlayers.add(new Duel(player, target, limit, MedievalFactions.getInstance()));
+    	MedievalFactions.getInstance().duelingPlayers.add(new Duel(player, target, limit));
     }
 
     public static Duel getDuel(Player player, Player target)
@@ -688,7 +688,7 @@ public class UtilitySubsystem {
     {
     	if (!MedievalFactions.getInstance().creatingGatePlayers.containsKey(player.getUniqueId()))
     	{
-    		Gate gate = new Gate(MedievalFactions.getInstance());
+    		Gate gate = new Gate();
     		gate.setName(name);
     		MedievalFactions.getInstance().creatingGatePlayers.put(player.getUniqueId(), gate);
     	}
@@ -1136,7 +1136,7 @@ public class UtilitySubsystem {
         for (OfflinePlayer player : Bukkit.getOfflinePlayers()) {
             PlayerActivityRecord record = UtilitySubsystem.getPlayerActivityRecord(player.getUniqueId(), MedievalFactions.getInstance().playerActivityRecords);
             if (record == null) {
-                PlayerActivityRecord newRecord = new PlayerActivityRecord(player.getUniqueId(), 1, MedievalFactions.getInstance());
+                PlayerActivityRecord newRecord = new PlayerActivityRecord(player.getUniqueId(), 1);
                 newRecord.setLastLogout(ZonedDateTime.now());
                 MedievalFactions.getInstance().playerActivityRecords.add(newRecord);
             }

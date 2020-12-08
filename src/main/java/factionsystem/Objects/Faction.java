@@ -377,7 +377,7 @@ public class Faction {
         {
 	        for (String item : gateList)
 	        {
-	        	Gate g = Gate.load(item, MedievalFactions.getInstance());
+	        	Gate g = Gate.load(item);
 	        	gates.add(g);
 	        }
         }

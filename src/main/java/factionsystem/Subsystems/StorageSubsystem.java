@@ -151,7 +151,7 @@ public class StorageSubsystem {
         ArrayList<HashMap<String, String>> data = loadDataFromFilename(FILE_PATH + FACTIONS_FILE_NAME);
 
         for (Map<String, String> factionData : data){
-            Faction newFaction = new Faction(factionData, MedievalFactions.getInstance());
+            Faction newFaction = new Faction(factionData);
             MedievalFactions.getInstance().factions.add(newFaction);
         }
     }
@@ -173,7 +173,7 @@ public class StorageSubsystem {
         ArrayList<HashMap<String, String>> data = loadDataFromFilename(FILE_PATH + PLAYERPOWER_FILE_NAME);
 
         for (Map<String, String> powerRecord : data){
-            PlayerPowerRecord player = new PlayerPowerRecord(powerRecord, MedievalFactions.getInstance());
+            PlayerPowerRecord player = new PlayerPowerRecord(powerRecord);
             MedievalFactions.getInstance().playerPowerRecords.add(player);
         }
     }
@@ -184,7 +184,7 @@ public class StorageSubsystem {
         ArrayList<HashMap<String, String>> data = loadDataFromFilename(FILE_PATH + PLAYERACTIVITY_FILE_NAME);
 
         for (Map<String, String> powerRecord : data){
-        	PlayerActivityRecord player = new PlayerActivityRecord(powerRecord, MedievalFactions.getInstance());
+        	PlayerActivityRecord player = new PlayerActivityRecord(powerRecord);
             MedievalFactions.getInstance().playerActivityRecords.add(player);
         }
     }
@@ -220,7 +220,7 @@ public class StorageSubsystem {
             // actual loading
             while (loadReader.hasNextLine()) {
                 String nextName = loadReader.nextLine();
-                Faction temp = new Faction(nextName, MedievalFactions.getInstance().getConfig().getInt("initialMaxPowerLevel"), MedievalFactions.getInstance()); // uses server constructor, only temporary
+                Faction temp = new Faction(nextName, MedievalFactions.getInstance().getConfig().getInt("initialMaxPowerLevel")); // uses server constructor, only temporary
                 temp.legacyLoad(nextName + ".txt"); // provides owner field among other things
 
                 // existence check
@@ -289,7 +289,7 @@ public class StorageSubsystem {
             // actual loading
             while (loadReader.hasNextLine()) {
                 String nextName = loadReader.nextLine();
-                PlayerPowerRecord temp = new PlayerPowerRecord(MedievalFactions.getInstance()); // uses no-parameter constructor since load provides name
+                PlayerPowerRecord temp = new PlayerPowerRecord(); // uses no-parameter constructor since load provides name
                 temp.legacyLoad(nextName); // provides power field among other things
 
                 for (int i = 0; i < MedievalFactions.getInstance().playerPowerRecords.size(); i++) {
