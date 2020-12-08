@@ -53,7 +53,7 @@ public class GateCommand extends Command {
 				        			String gateName = "Unnamed Gate";
 				        			if (args.length > 2)
 				        			{
-				        				gateName = UtilitySubsystem.createStringFromArgIndexOnwards(2, args);
+				        				gateName = createStringFromArgIndexOnwards(2, args);
 				        			}
 									UtilitySubsystem.startCreatingGate(player, gateName);
 									//TODO: Config setting for magic gate tool.
@@ -147,7 +147,7 @@ public class GateCommand extends Command {
 									{
 										if (faction.isOfficer(player.getUniqueId()) || faction.isOwner(player.getUniqueId()))
 										{
-											String name = UtilitySubsystem.createStringFromArgIndexOnwards(2, args);
+											String name = createStringFromArgIndexOnwards(2, args);
 											gate.setName(name);
 											player.sendMessage(ChatColor.AQUA + String.format("Changed gate name to '%s'.", gate.getName()));
 											return;
@@ -199,6 +199,17 @@ public class GateCommand extends Command {
             }
 
 		}
+	}
+
+	private String createStringFromArgIndexOnwards(int index, String[] args) {
+		StringBuilder name = new StringBuilder();
+		for (int i = index; i < args.length; i++) {
+			name.append(args[i]);
+			if (!(i == args.length - 1)) {
+				name.append(" ");
+			}
+		}
+		return name.toString();
 	}
 	
 }

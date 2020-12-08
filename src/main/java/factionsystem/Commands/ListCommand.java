@@ -5,6 +5,8 @@ import factionsystem.Objects.Faction;
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
 
+import java.util.ArrayList;
+
 import static factionsystem.Subsystems.UtilitySubsystem.getChunksClaimedByFaction;
 
 public class ListCommand extends Command {
@@ -36,8 +38,28 @@ public class ListCommand extends Command {
     private void listFactionsWithFormatting(CommandSender sender) {
         sender.sendMessage(ChatColor.AQUA + "P: power, M: members, L: land");
         sender.sendMessage(ChatColor.AQUA + "-----");
-        for (Faction faction : MedievalFactions.getInstance().utilities.getFactionsSortedByPower()) {
+        for (Faction faction : getFactionsSortedByPower()) {
             sender.sendMessage(ChatColor.AQUA + String.format("%-25s %10s %10s %10s", faction.getName(), "P: " + faction.getCumulativePowerLevel(), "M: " + faction.getPopulation(), "L: " + getChunksClaimedByFaction(faction.getName(), MedievalFactions.getInstance().claimedChunks)));
         }
+    }
+
+    private ArrayList<Faction> getFactionsSortedByPower() {
+        ArrayList<Faction> copiedList = new ArrayList<>(MedievalFactions.getInstance().factions);
+        ArrayList<Faction> sortedList = new ArrayList<>();
+        while (copiedList.size() != 0) {
+            int mostPower = 0;
+            int counter = 0;
+            int nextMostPowerfulFaction = 0;
+            for (Faction faction : copiedList) {
+                if (faction.getCumulativePowerLevel() > mostPower) {
+                    mostPower = faction.getCumulativePowerLevel();
+                    nextMostPowerfulFaction = counter;
+                }
+                counter++;
+            }
+            sortedList.add(copiedList.get(nextMostPowerfulFaction));
+            copiedList.remove(nextMostPowerfulFaction);
+        }
+        return sortedList;
     }
 }

@@ -8,15 +8,17 @@ import factionsystem.Subsystems.UtilitySubsystem;
 import org.bukkit.ChatColor;
 import org.bukkit.event.player.PlayerJoinEvent;
 
+import java.util.UUID;
+
 public class PlayerJoinEventHandler {
 
     public void handle(PlayerJoinEvent event) {
-        if (!MedievalFactions.getInstance().utilities.hasPowerRecord(event.getPlayer().getUniqueId())) {
+        if (!hasPowerRecord(event.getPlayer().getUniqueId())) {
             PlayerPowerRecord newRecord = new PlayerPowerRecord(event.getPlayer().getUniqueId(),
                     MedievalFactions.getInstance().getConfig().getInt("initialPowerLevel"));
             MedievalFactions.getInstance().playerPowerRecords.add(newRecord);
         }
-        if (!MedievalFactions.getInstance().utilities.hasActivityRecord(event.getPlayer().getUniqueId())) {
+        if (!hasActivityRecord(event.getPlayer().getUniqueId())) {
         	PlayerActivityRecord newRecord = new PlayerActivityRecord(event.getPlayer().getUniqueId(), 1);
         	MedievalFactions.getInstance().playerActivityRecords.add(newRecord);
         }
@@ -49,5 +51,23 @@ public class PlayerJoinEventHandler {
 
         UtilitySubsystem.informPlayerIfTheirLandIsInDanger(event.getPlayer(), MedievalFactions.getInstance().factions, MedievalFactions.getInstance().claimedChunks);
     }
+
+	private boolean hasPowerRecord(UUID playerUUID) {
+		for (PlayerPowerRecord record : MedievalFactions.getInstance().playerPowerRecords){
+			if (record.getPlayerUUID().equals(playerUUID)){
+				return true;
+			}
+		}
+		return false;
+	}
+
+	private boolean hasActivityRecord(UUID playerUUID) {
+		for (PlayerActivityRecord record : MedievalFactions.getInstance().playerActivityRecords){
+			if (record.getPlayerUUID().equals(playerUUID)){
+				return true;
+			}
+		}
+		return false;
+	}
 
 }
