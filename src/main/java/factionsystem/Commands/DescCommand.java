@@ -8,8 +8,8 @@ import org.bukkit.entity.Player;
 
 public class DescCommand extends Command {
 
-    public DescCommand(MedievalFactions plugin) {
-        super(plugin);
+    public DescCommand() {
+        super();
     }
 
     public boolean setDescription(CommandSender sender, String[] args) {
@@ -18,7 +18,7 @@ public class DescCommand extends Command {
 
             if (sender.hasPermission("mf.desc") || sender.hasPermission("mf.default")) {
                 boolean owner = false;
-                for (Faction faction : main.factions) {
+                for (Faction faction : MedievalFactions.getInstance().factions) {
                     if (faction.isOwner(player.getUniqueId())) {
                         owner = true;
                         if (args.length > 1) {

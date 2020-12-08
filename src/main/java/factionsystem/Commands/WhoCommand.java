@@ -10,8 +10,8 @@ import static factionsystem.Subsystems.UtilitySubsystem.*;
 
 public class WhoCommand extends Command {
 
-    public WhoCommand(MedievalFactions plugin) {
-        super(plugin);
+    public WhoCommand() {
+        super();
     }
 
     public void sendInformation(CommandSender sender, String[] args) {
@@ -21,9 +21,9 @@ public class WhoCommand extends Command {
             if (sender.hasPermission("mf.who") || sender.hasPermission("mf.default")) {
                 if (args.length > 1) {
                     String name = createStringFromFirstArgOnwards(args);
-                    Faction faction = getPlayersFaction(findUUIDBasedOnPlayerName(name), main.factions);
+                    Faction faction = getPlayersFaction(findUUIDBasedOnPlayerName(name), MedievalFactions.getInstance().factions);
                     if (faction != null) {
-                        sendFactionInfo(player, faction, getChunksClaimedByFaction(faction.getName(), main.claimedChunks));
+                        sendFactionInfo(player, faction, getChunksClaimedByFaction(faction.getName(), MedievalFactions.getInstance().claimedChunks));
                     }
                     else {
                         player.sendMessage(ChatColor.RED + "That player isn't in a faction.");

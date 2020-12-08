@@ -10,29 +10,22 @@ import org.bukkit.event.player.PlayerJoinEvent;
 
 public class PlayerJoinEventHandler {
 
-    MedievalFactions main = null;
-
-    public PlayerJoinEventHandler(MedievalFactions plugin) {
-        main = plugin;
-    }
-
     public void handle(PlayerJoinEvent event) {
-        if (!main.utilities.hasPowerRecord(event.getPlayer().getUniqueId())) {
+        if (!MedievalFactions.getInstance().utilities.hasPowerRecord(event.getPlayer().getUniqueId())) {
             PlayerPowerRecord newRecord = new PlayerPowerRecord(event.getPlayer().getUniqueId(),
-                    main.getConfig().getInt("initialPowerLevel"),
-                    main);
-            main.playerPowerRecords.add(newRecord);
+                    MedievalFactions.getInstance().getConfig().getInt("initialPowerLevel"));
+            MedievalFactions.getInstance().playerPowerRecords.add(newRecord);
         }
-        if (!main.utilities.hasActivityRecord(event.getPlayer().getUniqueId())) {
-        	PlayerActivityRecord newRecord = new PlayerActivityRecord(event.getPlayer().getUniqueId(), 1, main);
-        	main.playerActivityRecords.add(newRecord);
+        if (!MedievalFactions.getInstance().utilities.hasActivityRecord(event.getPlayer().getUniqueId())) {
+        	PlayerActivityRecord newRecord = new PlayerActivityRecord(event.getPlayer().getUniqueId(), 1);
+        	MedievalFactions.getInstance().playerActivityRecords.add(newRecord);
         }
         else
         {
-        	PlayerActivityRecord record = UtilitySubsystem.getPlayerActivityRecord(event.getPlayer().getUniqueId(), main.playerActivityRecords);
+        	PlayerActivityRecord record = UtilitySubsystem.getPlayerActivityRecord(event.getPlayer().getUniqueId(), MedievalFactions.getInstance().playerActivityRecords);
         	if (record != null)
         	{
-        		PlayerPowerRecord power = UtilitySubsystem.getPlayersPowerRecord(event.getPlayer().getUniqueId(), main.playerPowerRecords);
+        		PlayerPowerRecord power = UtilitySubsystem.getPlayersPowerRecord(event.getPlayer().getUniqueId(), MedievalFactions.getInstance().playerPowerRecords);
         		record.incrementLogins();
 
         		int newPower = power.getPowerLevel();
@@ -54,7 +47,7 @@ public class PlayerJoinEventHandler {
         	}
         }
 
-        UtilitySubsystem.informPlayerIfTheirLandIsInDanger(event.getPlayer(), main.factions, main.claimedChunks);
+        UtilitySubsystem.informPlayerIfTheirLandIsInDanger(event.getPlayer(), MedievalFactions.getInstance().factions, MedievalFactions.getInstance().claimedChunks);
     }
 
 }

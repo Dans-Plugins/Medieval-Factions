@@ -10,8 +10,8 @@ import static factionsystem.Subsystems.UtilitySubsystem.*;
 
 public class DeclareWarCommand extends Command {
 
-    public DeclareWarCommand(MedievalFactions plugin) {
-        super(plugin);
+    public DeclareWarCommand() {
+        super();
     }
 
     public void declareWar(CommandSender sender, String[] args) {
@@ -20,7 +20,7 @@ public class DeclareWarCommand extends Command {
 
             if (sender.hasPermission("mf.declarewar") || sender.hasPermission("mf.default")) {
                 boolean owner = false;
-                for (Faction faction : main.factions) {
+                for (Faction faction : MedievalFactions.getInstance().factions) {
                     // if player is the owner or officer
                     if (faction.isOwner(player.getUniqueId()) || faction.isOfficer(player.getUniqueId())) {
                         owner = true;
@@ -31,8 +31,8 @@ public class DeclareWarCommand extends Command {
                             String factionName = createStringFromFirstArgOnwards(args);
 
                             // check if faction exists
-                            for (int i = 0; i < main.factions.size(); i++) {
-                                if (main.factions.get(i).getName().equalsIgnoreCase(factionName)) {
+                            for (int i = 0; i < MedievalFactions.getInstance().factions.size(); i++) {
+                                if (MedievalFactions.getInstance().factions.get(i).getName().equalsIgnoreCase(factionName)) {
 
                                     if (!(faction.getName().equalsIgnoreCase(factionName))) {
 
@@ -40,7 +40,7 @@ public class DeclareWarCommand extends Command {
                                         if (!(faction.isEnemy(factionName))) {
 
                                             // if trying to declare war on a vassal
-                                            if (main.factions.get(i).hasLiege()) {
+                                            if (MedievalFactions.getInstance().factions.get(i).hasLiege()) {
 
                                                 // if faction is vassal of declarer
                                                 if (faction.isVassal(factionName)) {
@@ -49,8 +49,8 @@ public class DeclareWarCommand extends Command {
                                                 }
 
                                                 // if lieges aren't the same
-                                                if (!main.factions.get(i).getLiege().equalsIgnoreCase(faction.getLiege())) {
-                                                    player.sendMessage(ChatColor.RED + "You can't declare war on this faction as they are a vassal! You must declare war on their liege " + main.factions.get(i).getLiege() + " instead!");
+                                                if (!MedievalFactions.getInstance().factions.get(i).getLiege().equalsIgnoreCase(faction.getLiege())) {
+                                                    player.sendMessage(ChatColor.RED + "You can't declare war on this faction as they are a vassal! You must declare war on their liege " + MedievalFactions.getInstance().factions.get(i).getLiege() + " instead!");
                                                     return;
                                                 }
 
@@ -69,16 +69,16 @@ public class DeclareWarCommand extends Command {
                                                 faction.addEnemy(factionName);
 
                                                 // add declarer's faction to new enemy's enemyList
-                                                main.factions.get(i).addEnemy(faction.getName());
+                                                MedievalFactions.getInstance().factions.get(i).addEnemy(faction.getName());
 
-                                                for (int j = 0; j < main.factions.size(); j++) {
-                                                    if (main.factions.get(j).getName().equalsIgnoreCase(factionName)) {
-                                                        main.utilities.sendAllPlayersOnServerMessage(ChatColor.RED + faction.getName() + " has declared war against " + factionName + "!");
+                                                for (int j = 0; j < MedievalFactions.getInstance().factions.size(); j++) {
+                                                    if (MedievalFactions.getInstance().factions.get(j).getName().equalsIgnoreCase(factionName)) {
+                                                        MedievalFactions.getInstance().utilities.sendAllPlayersOnServerMessage(ChatColor.RED + faction.getName() + " has declared war against " + factionName + "!");
                                                     }
                                                 }
 
                                                 // invoke alliances
-                                                invokeAlliances(main.factions.get(i).getName(), faction.getName(), main.factions);
+                                                invokeAlliances(MedievalFactions.getInstance().factions.get(i).getName(), faction.getName(), MedievalFactions.getInstance().factions);
                                             }
                                             else {
                                                 player.sendMessage(ChatColor.RED + "You can't declare war on your ally!");

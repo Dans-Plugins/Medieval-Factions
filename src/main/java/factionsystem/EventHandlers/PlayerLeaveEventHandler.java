@@ -9,38 +9,31 @@ import factionsystem.Objects.PlayerActivityRecord;
 import factionsystem.Subsystems.UtilitySubsystem;
 
 public class PlayerLeaveEventHandler {
-
-	MedievalFactions main = null;
-	
-	public PlayerLeaveEventHandler(MedievalFactions plugin)
-	{
-		main = plugin;
-	}
 	
 	public void handle(PlayerQuitEvent event)
 	{
-		if (main.lockingPlayers.contains(event.getPlayer().getUniqueId()))
+		if (MedievalFactions.getInstance().lockingPlayers.contains(event.getPlayer().getUniqueId()))
 		{
-			main.lockingPlayers.remove(event.getPlayer().getUniqueId());
+			MedievalFactions.getInstance().lockingPlayers.remove(event.getPlayer().getUniqueId());
 		}
-		if (main.unlockingPlayers.contains(event.getPlayer().getUniqueId()))
+		if (MedievalFactions.getInstance().unlockingPlayers.contains(event.getPlayer().getUniqueId()))
 		{
-			main.unlockingPlayers.remove(event.getPlayer().getUniqueId());
+			MedievalFactions.getInstance().unlockingPlayers.remove(event.getPlayer().getUniqueId());
 		}
-		if (main.playersGrantingAccess.containsKey(event.getPlayer().getUniqueId()))
+		if (MedievalFactions.getInstance().playersGrantingAccess.containsKey(event.getPlayer().getUniqueId()))
 		{
-			main.playersGrantingAccess.remove(event.getPlayer().getUniqueId());
+			MedievalFactions.getInstance().playersGrantingAccess.remove(event.getPlayer().getUniqueId());
 		}
-		if (main.playersCheckingAccess.contains(event.getPlayer().getUniqueId()))
+		if (MedievalFactions.getInstance().playersCheckingAccess.contains(event.getPlayer().getUniqueId()))
 		{
-			main.playersCheckingAccess.remove(event.getPlayer().getUniqueId());
+			MedievalFactions.getInstance().playersCheckingAccess.remove(event.getPlayer().getUniqueId());
 		}
-		if (main.playersRevokingAccess.containsKey(event.getPlayer().getUniqueId()))
+		if (MedievalFactions.getInstance().playersRevokingAccess.containsKey(event.getPlayer().getUniqueId()))
 		{
-			main.playersRevokingAccess.remove(event.getPlayer().getUniqueId());
+			MedievalFactions.getInstance().playersRevokingAccess.remove(event.getPlayer().getUniqueId());
 		}
 			
-    	PlayerActivityRecord record = UtilitySubsystem.getPlayerActivityRecord(event.getPlayer().getUniqueId(), main.playerActivityRecords);
+    	PlayerActivityRecord record = UtilitySubsystem.getPlayerActivityRecord(event.getPlayer().getUniqueId(), MedievalFactions.getInstance().playerActivityRecords);
     	if (record != null)
     	{
     		record.setLastLogout(ZonedDateTime.now());

@@ -10,8 +10,8 @@ import static factionsystem.Subsystems.UtilitySubsystem.*;
 
 public class InfoCommand extends Command {
 
-    public InfoCommand(MedievalFactions plugin) {
-        super(plugin);
+    public InfoCommand() {
+        super();
     }
 
     public void showInfo(CommandSender sender, String[] args) {
@@ -20,9 +20,9 @@ public class InfoCommand extends Command {
 
             if (sender.hasPermission("mf.info") || sender.hasPermission("mf.default")) {
                 if (args.length == 1) {
-                    for (Faction faction : main.factions) {
+                    for (Faction faction : MedievalFactions.getInstance().factions) {
                         if (faction.isMember(player.getUniqueId())) {
-                            sendFactionInfo(player, faction, getChunksClaimedByFaction(faction.getName(), main.claimedChunks));
+                            sendFactionInfo(player, faction, getChunksClaimedByFaction(faction.getName(), MedievalFactions.getInstance().claimedChunks));
                             return;
                         }
                     }
@@ -33,10 +33,10 @@ public class InfoCommand extends Command {
                     String name = createStringFromFirstArgOnwards(args);
 
                     boolean exists = false;
-                    for (Faction faction : main.factions) {
+                    for (Faction faction : MedievalFactions.getInstance().factions) {
                         if (faction.getName().equalsIgnoreCase(name)) {
                             exists = true;
-                            sendFactionInfo(player, faction, getChunksClaimedByFaction(faction.getName(), main.claimedChunks));
+                            sendFactionInfo(player, faction, getChunksClaimedByFaction(faction.getName(), MedievalFactions.getInstance().claimedChunks));
                         }
                     }
                     if (!exists) {

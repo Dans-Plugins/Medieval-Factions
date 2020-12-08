@@ -14,11 +14,6 @@ import static factionsystem.Subsystems.UtilitySubsystem.isInFaction;
 import static org.bukkit.Material.LADDER;
 
 public class BlockPlaceEventHandler {
-    MedievalFactions main = null;
-
-    public BlockPlaceEventHandler(MedievalFactions plugin) {
-        main = plugin;
-    }
 
     public void handle(BlockPlaceEvent event) {
         // get player
@@ -26,24 +21,24 @@ public class BlockPlaceEventHandler {
 
         // get chunk
         ClaimedChunk chunk = getClaimedChunk(event.getBlock().getLocation().getChunk().getX(), event.getBlock().getLocation().getChunk().getZ(),
-        		event.getBlock().getWorld().getName(), main.claimedChunks);
+        		event.getBlock().getWorld().getName(), MedievalFactions.getInstance().claimedChunks);
 
         // if chunk is claimed
         if (chunk != null) {
 
             // player not in a faction
-            if (!isInFaction(event.getPlayer().getUniqueId(), main.factions) && !main.adminsBypassingProtections.contains(event.getPlayer().getUniqueId())) {
+            if (!isInFaction(event.getPlayer().getUniqueId(), MedievalFactions.getInstance().factions) && !MedievalFactions.getInstance().adminsBypassingProtections.contains(event.getPlayer().getUniqueId())) {
                 event.setCancelled(true);
             }
 
             // if player is in faction
-            for (Faction faction : main.factions) {
+            for (Faction faction : MedievalFactions.getInstance().factions) {
                 if (faction.isMember(player.getUniqueId())) {
 
                     // if player's faction is not the same as the holder of the chunk
-                    if (!(faction.getName().equalsIgnoreCase(chunk.getHolder())) && !main.adminsBypassingProtections.contains(event.getPlayer().getUniqueId())) {
+                    if (!(faction.getName().equalsIgnoreCase(chunk.getHolder())) && !MedievalFactions.getInstance().adminsBypassingProtections.contains(event.getPlayer().getUniqueId())) {
 
-                        if (main.getConfig().getBoolean("laddersPlaceableInEnemyFactionTerritory")) {
+                        if (MedievalFactions.getInstance().getConfig().getBoolean("laddersPlaceableInEnemyFactionTerritory")) {
                             // if trying to place ladder on enemy territory
                             if (event.getBlockPlaced().getType() == LADDER && faction.isEnemy(chunk.getHolder())) {
                                 return;
@@ -55,9 +50,9 @@ public class BlockPlaceEventHandler {
                     }
 
                     // if chest
-                    if (main.utilities.isChest(event.getBlock())) {
+                    if (MedievalFactions.getInstance().utilities.isChest(event.getBlock())) {
                         // if next to non-owned locked chest
-                        if (isNextToNonOwnedLockedChest(event.getPlayer(), event.getBlock()) && !main.adminsBypassingProtections.contains(event.getPlayer().getUniqueId())) {
+                        if (isNextToNonOwnedLockedChest(event.getPlayer(), event.getBlock()) && !MedievalFactions.getInstance().adminsBypassingProtections.contains(event.getPlayer().getUniqueId())) {
                             event.setCancelled(true);
                             player.sendMessage(ChatColor.RED + "You can't place chests next to locked chests you don't own.");
                             return;
@@ -67,7 +62,7 @@ public class BlockPlaceEventHandler {
                     // if hopper
                     if (event.getBlock().getType() == Material.HOPPER) {
                         // if next to or under/above non-owned locked chest
-                        if (isNextToNonOwnedLockedChest(event.getPlayer(), event.getBlock()) || isUnderOrAboveNonOwnedLockedChest(event.getPlayer(), event.getBlock()) && !main.adminsBypassingProtections.contains(event.getPlayer().getUniqueId())) {
+                        if (isNextToNonOwnedLockedChest(event.getPlayer(), event.getBlock()) || isUnderOrAboveNonOwnedLockedChest(event.getPlayer(), event.getBlock()) && !MedievalFactions.getInstance().adminsBypassingProtections.contains(event.getPlayer().getUniqueId())) {
                             event.setCancelled(true);
                             player.sendMessage(ChatColor.RED + "You can't place hoppers next to, under or above locked chests you don't own.");
                             return;
@@ -86,26 +81,26 @@ public class BlockPlaceEventHandler {
         Block neighbor3 = block.getWorld().getBlockAt(block.getX(), block.getY(), block.getZ() + 1);
         Block neighbor4 = block.getWorld().getBlockAt(block.getX(), block.getY(), block.getZ() - 1);
 
-        if (main.utilities.isChest(neighbor1)) {
-            if (main.utilities.isBlockLocked(neighbor1) && main.utilities.getLockedBlock(neighbor1).getOwner() != player.getUniqueId()) {
+        if (MedievalFactions.getInstance().utilities.isChest(neighbor1)) {
+            if (MedievalFactions.getInstance().utilities.isBlockLocked(neighbor1) && MedievalFactions.getInstance().utilities.getLockedBlock(neighbor1).getOwner() != player.getUniqueId()) {
                 return true;
             }
         }
 
-        if (main.utilities.isChest(neighbor2)) {
-            if (main.utilities.isBlockLocked(neighbor2) && main.utilities.getLockedBlock(neighbor2).getOwner() != player.getUniqueId()) {
+        if (MedievalFactions.getInstance().utilities.isChest(neighbor2)) {
+            if (MedievalFactions.getInstance().utilities.isBlockLocked(neighbor2) && MedievalFactions.getInstance().utilities.getLockedBlock(neighbor2).getOwner() != player.getUniqueId()) {
                 return true;
             }
         }
 
-        if (main.utilities.isChest(neighbor3)) {
-            if (main.utilities.isBlockLocked(neighbor3) && main.utilities.getLockedBlock(neighbor3).getOwner() != player.getUniqueId()) {
+        if (MedievalFactions.getInstance().utilities.isChest(neighbor3)) {
+            if (MedievalFactions.getInstance().utilities.isBlockLocked(neighbor3) && MedievalFactions.getInstance().utilities.getLockedBlock(neighbor3).getOwner() != player.getUniqueId()) {
                 return true;
             }
         }
 
-        if (main.utilities.isChest(neighbor4)) {
-            if (main.utilities.isBlockLocked(neighbor4) && main.utilities.getLockedBlock(neighbor4).getOwner() != player.getUniqueId()) {
+        if (MedievalFactions.getInstance().utilities.isChest(neighbor4)) {
+            if (MedievalFactions.getInstance().utilities.isBlockLocked(neighbor4) && MedievalFactions.getInstance().utilities.getLockedBlock(neighbor4).getOwner() != player.getUniqueId()) {
                 return true;
             }
         }
@@ -118,14 +113,14 @@ public class BlockPlaceEventHandler {
         Block neighbor1 = block.getWorld().getBlockAt(block.getX(), block.getY() + 1, block.getZ());
         Block neighbor2 = block.getWorld().getBlockAt(block.getX(), block.getY() - 1, block.getZ());
 
-        if (main.utilities.isChest(neighbor1)) {
-            if (main.utilities.isBlockLocked(neighbor1) && main.utilities.getLockedBlock(neighbor1).getOwner() != player.getUniqueId()) {
+        if (MedievalFactions.getInstance().utilities.isChest(neighbor1)) {
+            if (MedievalFactions.getInstance().utilities.isBlockLocked(neighbor1) && MedievalFactions.getInstance().utilities.getLockedBlock(neighbor1).getOwner() != player.getUniqueId()) {
                 return true;
             }
         }
 
-        if (main.utilities.isChest(neighbor2)) {
-            if (main.utilities.isBlockLocked(neighbor2) && main.utilities.getLockedBlock(neighbor2).getOwner() != player.getUniqueId()) {
+        if (MedievalFactions.getInstance().utilities.isChest(neighbor2)) {
+            if (MedievalFactions.getInstance().utilities.isBlockLocked(neighbor2) && MedievalFactions.getInstance().utilities.getLockedBlock(neighbor2).getOwner() != player.getUniqueId()) {
                 return true;
             }
         }

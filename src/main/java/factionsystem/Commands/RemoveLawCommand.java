@@ -11,8 +11,8 @@ import static factionsystem.Subsystems.UtilitySubsystem.isInFaction;
 
 public class RemoveLawCommand extends Command {
 
-    public RemoveLawCommand(MedievalFactions plugin) {
-        super(plugin);
+    public RemoveLawCommand() {
+        super();
     }
 
     public void removeLaw(CommandSender sender, String[] args) {
@@ -21,8 +21,8 @@ public class RemoveLawCommand extends Command {
 
             Player player = (Player) sender;
 
-            if (isInFaction(player.getUniqueId(), main.factions)) {
-                Faction playersFaction = getPlayersFaction(player.getUniqueId(), main.factions);
+            if (isInFaction(player.getUniqueId(), MedievalFactions.getInstance().factions)) {
+                Faction playersFaction = getPlayersFaction(player.getUniqueId(), MedievalFactions.getInstance().factions);
 
                 if (playersFaction.isOwner(player.getUniqueId())) {
                     if (args.length > 1) {

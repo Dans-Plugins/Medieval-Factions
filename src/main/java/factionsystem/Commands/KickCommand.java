@@ -13,8 +13,8 @@ import static factionsystem.Subsystems.UtilitySubsystem.*;
 
 public class KickCommand extends Command {
 
-    public KickCommand(MedievalFactions plugin) {
-        super(plugin);
+    public KickCommand() {
+        super();
     }
 
     public boolean kickPlayer(CommandSender sender, String[] args) {
@@ -24,7 +24,7 @@ public class KickCommand extends Command {
             if (sender.hasPermission("mf.kick") || sender.hasPermission("mf.default")) {
                 if (args.length > 1) {
                     boolean owner = false;
-                    for (Faction faction : main.factions) {
+                    for (Faction faction : MedievalFactions.getInstance().factions) {
                         if (faction.isOwner(player.getUniqueId()) || faction.isOfficer(player.getUniqueId())) {
                             owner = true;
                             UUID playerUUID = findUUIDBasedOnPlayerName(args[1]);
@@ -36,9 +36,9 @@ public class KickCommand extends Command {
                                             faction.removeOfficer(playerUUID);
                                         }
 
-                                        main.playersInFactionChat.remove(playerUUID);
+                                        MedievalFactions.getInstance().playersInFactionChat.remove(playerUUID);
 
-                                        faction.removeMember(playerUUID, getPlayersPowerRecord(player.getUniqueId(), main.playerPowerRecords).getPowerLevel());
+                                        faction.removeMember(playerUUID, getPlayersPowerRecord(player.getUniqueId(), MedievalFactions.getInstance().playerPowerRecords).getPowerLevel());
                                         try {
                                             sendAllPlayersInFactionMessage(faction, ChatColor.RED + args[1] + " has been kicked from " + faction.getName());
                                         } catch (Exception ignored) {

@@ -15,49 +15,43 @@ import static factionsystem.Subsystems.UtilitySubsystem.isInFaction;
 
 public class BlockBreakEventHandler {
 
-    MedievalFactions main = null;
-
-    public BlockBreakEventHandler(MedievalFactions plugin) {
-        main = plugin;
-    }
-
     public void handle(BlockBreakEvent event) {
         // get player
         Player player = event.getPlayer();
 
         // get chunk
-        ClaimedChunk chunk = getClaimedChunk(event.getBlock().getLocation().getChunk().getX(), event.getBlock().getLocation().getChunk().getZ(), event.getBlock().getWorld().getName(), main.claimedChunks);
+        ClaimedChunk chunk = getClaimedChunk(event.getBlock().getLocation().getChunk().getX(), event.getBlock().getLocation().getChunk().getZ(), event.getBlock().getWorld().getName(), MedievalFactions.getInstance().claimedChunks);
 
         // if chunk is claimed
         if (chunk != null) {
 
             // player not in a faction
-            if (!isInFaction(event.getPlayer().getUniqueId(), main.factions)) {
+            if (!isInFaction(event.getPlayer().getUniqueId(), MedievalFactions.getInstance().factions)) {
                 event.setCancelled(true);
             }
 
             // if player is in faction
-            for (Faction faction : main.factions) {
+            for (Faction faction : MedievalFactions.getInstance().factions) {
                 if (faction.isMember(player.getUniqueId())) {
 
                     // if player's faction is not the same as the holder of the chunk and player isn't bypassing
-                    if (!(faction.getName().equalsIgnoreCase(chunk.getHolder())) && !main.adminsBypassingProtections.contains(player.getUniqueId())) {
+                    if (!(faction.getName().equalsIgnoreCase(chunk.getHolder())) && !MedievalFactions.getInstance().adminsBypassingProtections.contains(player.getUniqueId())) {
                         event.setCancelled(true);
                         return;
                     }
 
                     // if block is locked
-                    if (main.utilities.isBlockLocked(event.getBlock())) {
+                    if (MedievalFactions.getInstance().utilities.isBlockLocked(event.getBlock())) {
 
                         // if player is not the owner and isn't bypassing
-                        if (!main.utilities.getLockedBlock(event.getBlock()).getOwner().equals(player.getUniqueId())
-                                && !main.adminsBypassingProtections.contains(event.getPlayer().getUniqueId())) {
+                        if (!MedievalFactions.getInstance().utilities.getLockedBlock(event.getBlock()).getOwner().equals(player.getUniqueId())
+                                && !MedievalFactions.getInstance().adminsBypassingProtections.contains(event.getPlayer().getUniqueId())) {
                             event.setCancelled(true);
                             player.sendMessage(ChatColor.RED + "You don't own this!");
                             return;
                         }
 
-                    	UtilitySubsystem.removeLock(event.getBlock(), main.lockedBlocks);
+                    	UtilitySubsystem.removeLock(event.getBlock(), MedievalFactions.getInstance().lockedBlocks);
 
                     }
                     

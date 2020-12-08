@@ -25,12 +25,6 @@ import static org.bukkit.Material.*;
 
 public class PlayerInteractEventHandler {
 
-    MedievalFactions main = null;
-
-    public PlayerInteractEventHandler(MedievalFactions plugin) {
-        main = plugin;
-    }
-
     public void handle(PlayerInteractEvent event) {
         // get player
         Player player = event.getPlayer();
@@ -39,42 +33,42 @@ public class PlayerInteractEventHandler {
         if (clickedBlock != null) {
 
             // if player is attempting to lock a block
-            if (main.lockingPlayers.contains(player.getUniqueId())) {
+            if (MedievalFactions.getInstance().lockingPlayers.contains(player.getUniqueId())) {
                 handleLockingBlock(event, player, clickedBlock);
             }
 
             // ---------------------------------------------------------------------------------------------------------------
 
             // if player is trying to unlock a block
-            if (main.unlockingPlayers.contains(player.getUniqueId())) {
+            if (MedievalFactions.getInstance().unlockingPlayers.contains(player.getUniqueId())) {
                 handleUnlockingBlock(event, player, clickedBlock);
             }
 
             // ---------------------------------------------------------------------------------------------------------------
 
             // if block is locked
-            LockedBlock lockedBlock = main.utilities.getLockedBlock(clickedBlock);
+            LockedBlock lockedBlock = MedievalFactions.getInstance().utilities.getLockedBlock(clickedBlock);
             if (lockedBlock != null) {
 
                 // if player doesn't have access and isn't overriding
-                if (!lockedBlock.hasAccess(player.getUniqueId()) && !main.adminsBypassingProtections.contains(player.getUniqueId())) {
+                if (!lockedBlock.hasAccess(player.getUniqueId()) && !MedievalFactions.getInstance().adminsBypassingProtections.contains(player.getUniqueId())) {
                     event.setCancelled(true);
                     player.sendMessage(ChatColor.RED + "Locked by " + findPlayerNameBasedOnUUID(lockedBlock.getOwner()));
                     return;
                 }
 
                 // if player is trying to grant access
-                if (main.playersGrantingAccess.containsKey(player.getUniqueId())) {
+                if (MedievalFactions.getInstance().playersGrantingAccess.containsKey(player.getUniqueId())) {
                     handleGrantingAccess(event, clickedBlock, player);
                 }
 
                 // if player is trying to check access
-                if (main.playersCheckingAccess.contains(player.getUniqueId())) {
+                if (MedievalFactions.getInstance().playersCheckingAccess.contains(player.getUniqueId())) {
                     handleCheckingAccess(event, lockedBlock, player);
                 }
 
                 // if player is trying to revoke access
-                if (main.playersRevokingAccess.containsKey(player.getUniqueId())) {
+                if (MedievalFactions.getInstance().playersRevokingAccess.containsKey(player.getUniqueId())) {
                     handleRevokingAccess(event, clickedBlock, player);
                 }
                 
@@ -89,9 +83,9 @@ public class PlayerInteractEventHandler {
             }
             else {
                 // if player is using an access command
-                if (main.playersGrantingAccess.containsKey(player.getUniqueId()) ||
-                    main.playersCheckingAccess.contains(player.getUniqueId()) ||
-                    main.playersRevokingAccess.containsKey(player.getUniqueId())) {
+                if (MedievalFactions.getInstance().playersGrantingAccess.containsKey(player.getUniqueId()) ||
+                    MedievalFactions.getInstance().playersCheckingAccess.contains(player.getUniqueId()) ||
+                    MedievalFactions.getInstance().playersRevokingAccess.containsKey(player.getUniqueId())) {
 
                     player.sendMessage(ChatColor.RED + "That block isn't locked!");
                 }
@@ -101,11 +95,11 @@ public class PlayerInteractEventHandler {
         	// territory then open/close the gate.
         	if (clickedBlock.getType().equals(Material.LEVER))
         	{
-    			if (UtilitySubsystem.isClaimed(clickedBlock.getChunk(), main.claimedChunks))
+    			if (UtilitySubsystem.isClaimed(clickedBlock.getChunk(), MedievalFactions.getInstance().claimedChunks))
     			{
         			ClaimedChunk claim = UtilitySubsystem.getClaimedChunk(clickedBlock.getChunk().getX(), clickedBlock.getChunk().getZ(),
-        					clickedBlock.getChunk().getWorld().getName(), main.claimedChunks);
-        			Faction faction = UtilitySubsystem.getFaction(claim.getHolder(), main.factions);
+        					clickedBlock.getChunk().getWorld().getName(), MedievalFactions.getInstance().claimedChunks);
+        			Faction faction = UtilitySubsystem.getFaction(claim.getHolder(), MedievalFactions.getInstance().factions);
 
         			if (faction.hasGateTrigger(clickedBlock))
         			{
@@ -151,7 +145,7 @@ public class PlayerInteractEventHandler {
             // access to (or in future, a 'public' locked block), so if they're not in the faction whose territory the block exists in we want that
             // check to be handled before the interaction is rejected for not being a faction member.
             // if chunk is claimed
-            ClaimedChunk chunk = getClaimedChunk(event.getClickedBlock().getLocation().getChunk().getX(), event.getClickedBlock().getLocation().getChunk().getZ(), event.getClickedBlock().getWorld().getName(), main.claimedChunks);
+            ClaimedChunk chunk = getClaimedChunk(event.getClickedBlock().getLocation().getChunk().getX(), event.getClickedBlock().getLocation().getChunk().getZ(), event.getClickedBlock().getWorld().getName(), MedievalFactions.getInstance().claimedChunks);
             if (chunk != null) {
                 handleClaimedChunk(event, chunk);
             }
@@ -160,28 +154,28 @@ public class PlayerInteractEventHandler {
 
             // get tool in player's hand, if it's the gate tool
             // then we want to let them create the gate.
-        	if (main.creatingGatePlayers.containsKey(event.getPlayer().getUniqueId())
+        	if (MedievalFactions.getInstance().creatingGatePlayers.containsKey(event.getPlayer().getUniqueId())
         			&& player.getInventory().getItemInMainHand().getType().equals(Material.GOLDEN_HOE))
         	{
-        		if (!UtilitySubsystem.isClaimed(clickedBlock.getChunk(), main.claimedChunks))
+        		if (!UtilitySubsystem.isClaimed(clickedBlock.getChunk(), MedievalFactions.getInstance().claimedChunks))
         		{
         			player.sendMessage(ChatColor.RED + "You can only create gates in claimed territory.");
         			return;
         		}
         		else
         		{
-        			ClaimedChunk claimedChunk = UtilitySubsystem.getClaimedChunk(clickedBlock.getChunk().getX(), clickedBlock.getChunk().getZ(), clickedBlock.getWorld().getName(), main.claimedChunks);
+        			ClaimedChunk claimedChunk = UtilitySubsystem.getClaimedChunk(clickedBlock.getChunk().getX(), clickedBlock.getChunk().getZ(), clickedBlock.getWorld().getName(), MedievalFactions.getInstance().claimedChunks);
         			if (claimedChunk != null)
         			{
-        				if (!UtilitySubsystem.getFaction(claimedChunk.getHolder(), main.factions).isMember(player.getUniqueId()))
+        				if (!UtilitySubsystem.getFaction(claimedChunk.getHolder(), MedievalFactions.getInstance().factions).isMember(player.getUniqueId()))
         				{
         					player.sendMessage(ChatColor.RED + "You must be a member of this faction to create a gate.");
         					return;
         				}
         				else
         				{
-        					if (!UtilitySubsystem.getFaction(claimedChunk.getHolder(), main.factions).isOwner(player.getUniqueId())
-        							&& !UtilitySubsystem.getFaction(claimedChunk.getHolder(), main.factions).isOfficer(player.getUniqueId()))
+        					if (!UtilitySubsystem.getFaction(claimedChunk.getHolder(), MedievalFactions.getInstance().factions).isOwner(player.getUniqueId())
+        							&& !UtilitySubsystem.getFaction(claimedChunk.getHolder(), MedievalFactions.getInstance().factions).isOfficer(player.getUniqueId()))
         					{
             					player.sendMessage(ChatColor.RED + "You must be a faction owner or officer to create a gate.");
             					return;
@@ -194,9 +188,9 @@ public class PlayerInteractEventHandler {
     			{
 	        		// TODO: Check if a gate already exists here, and if it does, print out some info
 	        		// of that existing gate instead of trying to create a new one.
-	        		if (main.creatingGatePlayers.containsKey(event.getPlayer().getUniqueId()) && main.creatingGatePlayers.get(event.getPlayer().getUniqueId()).getCoord1() == null)
+	        		if (MedievalFactions.getInstance().creatingGatePlayers.containsKey(event.getPlayer().getUniqueId()) && MedievalFactions.getInstance().creatingGatePlayers.get(event.getPlayer().getUniqueId()).getCoord1() == null)
 	        		{
-        				Gate.ErrorCodeAddCoord e = main.creatingGatePlayers.get(event.getPlayer().getUniqueId()).addCoord(clickedBlock);
+        				Gate.ErrorCodeAddCoord e = MedievalFactions.getInstance().creatingGatePlayers.get(event.getPlayer().getUniqueId()).addCoord(clickedBlock);
 	        			if (e.equals(Gate.ErrorCodeAddCoord.None))
 	        			{
 		        			event.getPlayer().sendMessage(ChatColor.GREEN + "Creating Gate 1/4: Point 1 placed successfully.");
@@ -206,35 +200,35 @@ public class PlayerInteractEventHandler {
 	        			else if (e.equals(Gate.ErrorCodeAddCoord.MaterialMismatch))
 	        			{
 	        				event.getPlayer().sendMessage(ChatColor.RED + "Error placing point 1: Materials mismatch.");
-	        				main.creatingGatePlayers.remove(event.getPlayer().getUniqueId());
+	        				MedievalFactions.getInstance().creatingGatePlayers.remove(event.getPlayer().getUniqueId());
 	        				return;
 	        			}
 	        			else if (e.equals(Gate.ErrorCodeAddCoord.WorldMismatch))
 	        			{
 	        				event.getPlayer().sendMessage(ChatColor.RED + "Error placing point 1: Worlds mismatch.");
-	        				main.creatingGatePlayers.remove(event.getPlayer().getUniqueId());
+	        				MedievalFactions.getInstance().creatingGatePlayers.remove(event.getPlayer().getUniqueId());
 	        				return;
 	        			}
                         else if (e.equals(Gate.ErrorCodeAddCoord.NoCuboids))
                         {
                             event.getPlayer().sendMessage(ChatColor.RED + "Error placing point 1: You cannot place a cuboid.");
-                            main.creatingGatePlayers.remove(event.getPlayer().getUniqueId());
+                            MedievalFactions.getInstance().creatingGatePlayers.remove(event.getPlayer().getUniqueId());
                             return;
                         }
 	        			else
 	        			{
 	        				event.getPlayer().sendMessage(ChatColor.RED + "Error placing point 1. Cancelled gate placement.");
-	        				main.creatingGatePlayers.remove(event.getPlayer().getUniqueId());
+	        				MedievalFactions.getInstance().creatingGatePlayers.remove(event.getPlayer().getUniqueId());
 	        				return;
 	        			}
 	        		}
-	        		else if (main.creatingGatePlayers.containsKey(event.getPlayer().getUniqueId()) && main.creatingGatePlayers.get(event.getPlayer().getUniqueId()).getCoord1() != null
-	        				&& main.creatingGatePlayers.get(event.getPlayer().getUniqueId()).getCoord2() == null
-	        				&& main.creatingGatePlayers.get(event.getPlayer().getUniqueId()).getTrigger() == null)
+	        		else if (MedievalFactions.getInstance().creatingGatePlayers.containsKey(event.getPlayer().getUniqueId()) && MedievalFactions.getInstance().creatingGatePlayers.get(event.getPlayer().getUniqueId()).getCoord1() != null
+	        				&& MedievalFactions.getInstance().creatingGatePlayers.get(event.getPlayer().getUniqueId()).getCoord2() == null
+	        				&& MedievalFactions.getInstance().creatingGatePlayers.get(event.getPlayer().getUniqueId()).getTrigger() == null)
 	        		{
-	        			if (!main.creatingGatePlayers.get(event.getPlayer().getUniqueId()).getCoord1().equals(clickedBlock))
+	        			if (!MedievalFactions.getInstance().creatingGatePlayers.get(event.getPlayer().getUniqueId()).getCoord1().equals(clickedBlock))
 	        			{
-	        				Gate.ErrorCodeAddCoord e = main.creatingGatePlayers.get(event.getPlayer().getUniqueId()).addCoord(clickedBlock);
+	        				Gate.ErrorCodeAddCoord e = MedievalFactions.getInstance().creatingGatePlayers.get(event.getPlayer().getUniqueId()).addCoord(clickedBlock);
 		        			if (e.equals(Gate.ErrorCodeAddCoord.None))
 		        			{
 			        			event.getPlayer().sendMessage(ChatColor.GREEN + "Creating Gate 2/4: Point 2 placed successfully.");
@@ -244,51 +238,51 @@ public class PlayerInteractEventHandler {
 		        			else if (e.equals(Gate.ErrorCodeAddCoord.MaterialMismatch))
 		        			{
 		        				event.getPlayer().sendMessage(ChatColor.RED + "Error placing point 2: Materials mismatch.");
-		        				main.creatingGatePlayers.remove(event.getPlayer().getUniqueId());
+		        				MedievalFactions.getInstance().creatingGatePlayers.remove(event.getPlayer().getUniqueId());
 		        				return;
 		        			}
 		        			else if (e.equals(Gate.ErrorCodeAddCoord.WorldMismatch))
 		        			{
 		        				event.getPlayer().sendMessage(ChatColor.RED + "Error placing point 2: Worlds mismatch.");
-		        				main.creatingGatePlayers.remove(event.getPlayer().getUniqueId());
+		        				MedievalFactions.getInstance().creatingGatePlayers.remove(event.getPlayer().getUniqueId());
 		        				return;
 		        			}
 		        			else if (e.equals(Gate.ErrorCodeAddCoord.NoCuboids))
 		        			{
 		        				event.getPlayer().sendMessage(ChatColor.RED + "Error placing point 2: You cannot place a cuboid.");
-		        				main.creatingGatePlayers.remove(event.getPlayer().getUniqueId());
+		        				MedievalFactions.getInstance().creatingGatePlayers.remove(event.getPlayer().getUniqueId());
 		        				return;
 		        			}
                             else if (e.equals(Gate.ErrorCodeAddCoord.LessThanThreeHigh))
                             {
                                 event.getPlayer().sendMessage(ChatColor.RED + "Error placing point 2: Gate must be 3 blocks or taller.");
-                                main.creatingGatePlayers.remove(event.getPlayer().getUniqueId());
+                                MedievalFactions.getInstance().creatingGatePlayers.remove(event.getPlayer().getUniqueId());
                                 return;
                             }
 		        			else
 		        			{
 		        				event.getPlayer().sendMessage(ChatColor.RED + "Error placing point 2. Cancelled gate placement.");
-		        				main.creatingGatePlayers.remove(event.getPlayer().getUniqueId());
+		        				MedievalFactions.getInstance().creatingGatePlayers.remove(event.getPlayer().getUniqueId());
 		        				return;
 		        			}
 	        			}
 	        		}
-	    			else if (main.creatingGatePlayers.get(event.getPlayer().getUniqueId()).getCoord2() != null
-	    					&& main.creatingGatePlayers.get(event.getPlayer().getUniqueId()).getTrigger() == null
-	    					&& !main.creatingGatePlayers.get(event.getPlayer().getUniqueId()).getCoord2().equals(clickedBlock))
+	    			else if (MedievalFactions.getInstance().creatingGatePlayers.get(event.getPlayer().getUniqueId()).getCoord2() != null
+	    					&& MedievalFactions.getInstance().creatingGatePlayers.get(event.getPlayer().getUniqueId()).getTrigger() == null
+	    					&& !MedievalFactions.getInstance().creatingGatePlayers.get(event.getPlayer().getUniqueId()).getCoord2().equals(clickedBlock))
 	    			{
 	    				if (clickedBlock.getType().equals(Material.LEVER))
 	    				{
-		        			if (UtilitySubsystem.isClaimed(clickedBlock.getChunk(), main.claimedChunks))
+		        			if (UtilitySubsystem.isClaimed(clickedBlock.getChunk(), MedievalFactions.getInstance().claimedChunks))
 		        			{
-		        				Gate.ErrorCodeAddCoord e = main.creatingGatePlayers.get(event.getPlayer().getUniqueId()).addCoord(clickedBlock);
+		        				Gate.ErrorCodeAddCoord e = MedievalFactions.getInstance().creatingGatePlayers.get(event.getPlayer().getUniqueId()).addCoord(clickedBlock);
 		        				if (e.equals(Gate.ErrorCodeAddCoord.None))
 		        				{
 				        			ClaimedChunk claim = UtilitySubsystem.getClaimedChunk(clickedBlock.getChunk().getX(), clickedBlock.getChunk().getZ(),
-				        					clickedBlock.getChunk().getWorld().getName(), main.claimedChunks);
-				        			Faction faction = UtilitySubsystem.getFaction(claim.getHolder(), main.factions);
-			        				faction.addGate(main.creatingGatePlayers.get(event.getPlayer().getUniqueId()));
-				        			main.creatingGatePlayers.remove(event.getPlayer().getUniqueId());     	
+				        					clickedBlock.getChunk().getWorld().getName(), MedievalFactions.getInstance().claimedChunks);
+				        			Faction faction = UtilitySubsystem.getFaction(claim.getHolder(), MedievalFactions.getInstance().factions);
+			        				faction.addGate(MedievalFactions.getInstance().creatingGatePlayers.get(event.getPlayer().getUniqueId()));
+				        			MedievalFactions.getInstance().creatingGatePlayers.remove(event.getPlayer().getUniqueId());     	
 				        			event.getPlayer().sendMessage(ChatColor.GREEN + "Creating Gate 4/4: Lever successfully linked.");
 				        			event.getPlayer().sendMessage(ChatColor.GREEN + "Gate successfully created.");
 				        			return;
@@ -296,21 +290,21 @@ public class PlayerInteractEventHandler {
 		        				else
 		        				{
 			        				event.getPlayer().sendMessage(ChatColor.RED + "Error linking to lever. Cancelled gate placement.");
-			        				main.creatingGatePlayers.remove(event.getPlayer().getUniqueId());
+			        				MedievalFactions.getInstance().creatingGatePlayers.remove(event.getPlayer().getUniqueId());
 			        				return;
 		        				}
 		        			}
 		        			else
 		        			{
 		        				event.getPlayer().sendMessage(ChatColor.RED + "Error: Can only use levers in claimed territory.");
-		        				main.creatingGatePlayers.remove(event.getPlayer().getUniqueId());
+		        				MedievalFactions.getInstance().creatingGatePlayers.remove(event.getPlayer().getUniqueId());
 		        				return;
 		        			}
 	    				}
 	    				else
 	    				{
 	        				event.getPlayer().sendMessage(ChatColor.RED + "Trigger block was not a lever. Cancelled gate placement.");
-	        				main.creatingGatePlayers.remove(event.getPlayer().getUniqueId());
+	        				MedievalFactions.getInstance().creatingGatePlayers.remove(event.getPlayer().getUniqueId());
 	        				return;
 	    				}
 	    			}
@@ -327,28 +321,28 @@ public class PlayerInteractEventHandler {
     private void handleLockingBlock(PlayerInteractEvent event, Player player, Block clickedBlock) {
         // if chunk is claimed
         ClaimedChunk chunk = getClaimedChunk(event.getClickedBlock().getLocation().getChunk().getX(), event.getClickedBlock().getLocation().getChunk().getZ(),
-        		event.getClickedBlock().getWorld().getName(), main.claimedChunks);
+        		event.getClickedBlock().getWorld().getName(), MedievalFactions.getInstance().claimedChunks);
         if (chunk != null) {
 
             // if claimed by other faction
-            if (!chunk.getHolder().equalsIgnoreCase(getPlayersFaction(player.getUniqueId(), main.factions).getName())) {
+            if (!chunk.getHolder().equalsIgnoreCase(getPlayersFaction(player.getUniqueId(), MedievalFactions.getInstance().factions).getName())) {
                 player.sendMessage(ChatColor.RED + "You can only lock things in your faction's territory!");
                 event.setCancelled(true);
                 return;
             }
 
             // if already locked
-            if (main.utilities.isBlockLocked(clickedBlock)) {
+            if (MedievalFactions.getInstance().utilities.isBlockLocked(clickedBlock)) {
                 player.sendMessage(ChatColor.RED + "This block is already locked!");
                 event.setCancelled(true);
                 return;
             }
 
             // block type check
-            if (main.utilities.isDoor(clickedBlock) || main.utilities.isChest(clickedBlock) || main.utilities.isGate(clickedBlock) || main.utilities.isBarrel(clickedBlock) || main.utilities.isTrapdoor(clickedBlock) || main.utilities.isFurnace(clickedBlock) || main.utilities.isAnvil(clickedBlock)) {
+            if (MedievalFactions.getInstance().utilities.isDoor(clickedBlock) || MedievalFactions.getInstance().utilities.isChest(clickedBlock) || MedievalFactions.getInstance().utilities.isGate(clickedBlock) || MedievalFactions.getInstance().utilities.isBarrel(clickedBlock) || MedievalFactions.getInstance().utilities.isTrapdoor(clickedBlock) || MedievalFactions.getInstance().utilities.isFurnace(clickedBlock) || MedievalFactions.getInstance().utilities.isAnvil(clickedBlock)) {
 
             	// specific to chests because they can be single or double.
-                if (main.utilities.isChest(clickedBlock)) {
+                if (MedievalFactions.getInstance().utilities.isChest(clickedBlock)) {
                     InventoryHolder holder = ((Chest) clickedBlock.getState()).getInventory().getHolder();
                     if (holder instanceof DoubleChest) {
                         // chest multi-lock
@@ -356,52 +350,52 @@ public class PlayerInteractEventHandler {
                         Block leftChest = ((Chest) doubleChest.getLeftSide()).getBlock();
                         Block rightChest = ((Chest) doubleChest.getRightSide()).getBlock();
 
-                        LockedBlock left = new LockedBlock(player.getUniqueId(), getPlayersFaction(player.getUniqueId(), main.factions).getName(), leftChest.getX(), leftChest.getY(), leftChest.getZ(), leftChest.getWorld().getName());
-                        main.lockedBlocks.add(left);
+                        LockedBlock left = new LockedBlock(player.getUniqueId(), getPlayersFaction(player.getUniqueId(), MedievalFactions.getInstance().factions).getName(), leftChest.getX(), leftChest.getY(), leftChest.getZ(), leftChest.getWorld().getName());
+                        MedievalFactions.getInstance().lockedBlocks.add(left);
 
-                        LockedBlock right = new LockedBlock(player.getUniqueId(), getPlayersFaction(player.getUniqueId(), main.factions).getName(), rightChest.getX(), rightChest.getY(), rightChest.getZ(), rightChest.getWorld().getName());
-                        main.lockedBlocks.add(right);
+                        LockedBlock right = new LockedBlock(player.getUniqueId(), getPlayersFaction(player.getUniqueId(), MedievalFactions.getInstance().factions).getName(), rightChest.getX(), rightChest.getY(), rightChest.getZ(), rightChest.getWorld().getName());
+                        MedievalFactions.getInstance().lockedBlocks.add(right);
 
                         player.sendMessage(ChatColor.GREEN + "Locked!");
-                        main.lockingPlayers.remove(player.getUniqueId());
+                        MedievalFactions.getInstance().lockingPlayers.remove(player.getUniqueId());
                     }
                     else {
                         // lock single chest
-                        LockedBlock single = new LockedBlock(player.getUniqueId(), getPlayersFaction(player.getUniqueId(), main.factions).getName(), clickedBlock.getX(), clickedBlock.getY(), clickedBlock.getZ(), clickedBlock.getWorld().getName());
-                        main.lockedBlocks.add(single);
+                        LockedBlock single = new LockedBlock(player.getUniqueId(), getPlayersFaction(player.getUniqueId(), MedievalFactions.getInstance().factions).getName(), clickedBlock.getX(), clickedBlock.getY(), clickedBlock.getZ(), clickedBlock.getWorld().getName());
+                        MedievalFactions.getInstance().lockedBlocks.add(single);
 
                         player.sendMessage(ChatColor.GREEN + "Locked!");
-                        main.lockingPlayers.remove(player.getUniqueId());
+                        MedievalFactions.getInstance().lockingPlayers.remove(player.getUniqueId());
                     }
                 }
 
                 // door multi-lock (specific to doors because they have two block heights but you could have clicked either block).
-                if (main.utilities.isDoor(clickedBlock)) {
+                if (MedievalFactions.getInstance().utilities.isDoor(clickedBlock)) {
                     // lock initial block
-                    LockedBlock initial = new LockedBlock(player.getUniqueId(), getPlayersFaction(player.getUniqueId(), main.factions).getName(), clickedBlock.getX(), clickedBlock.getY(), clickedBlock.getZ(), clickedBlock.getWorld().getName());
-                    main.lockedBlocks.add(initial);
+                    LockedBlock initial = new LockedBlock(player.getUniqueId(), getPlayersFaction(player.getUniqueId(), MedievalFactions.getInstance().factions).getName(), clickedBlock.getX(), clickedBlock.getY(), clickedBlock.getZ(), clickedBlock.getWorld().getName());
+                    MedievalFactions.getInstance().lockedBlocks.add(initial);
                     // check block above
-                    if (main.utilities.isDoor(clickedBlock.getWorld().getBlockAt(clickedBlock.getX(), clickedBlock.getY() + 1, clickedBlock.getZ()))) {
-                        LockedBlock newLockedBlock2 = new LockedBlock(player.getUniqueId(), getPlayersFaction(player.getUniqueId(), main.factions).getName(), clickedBlock.getX(), clickedBlock.getY() + 1, clickedBlock.getZ(), clickedBlock.getWorld().getName());
-                        main.lockedBlocks.add(newLockedBlock2);
+                    if (MedievalFactions.getInstance().utilities.isDoor(clickedBlock.getWorld().getBlockAt(clickedBlock.getX(), clickedBlock.getY() + 1, clickedBlock.getZ()))) {
+                        LockedBlock newLockedBlock2 = new LockedBlock(player.getUniqueId(), getPlayersFaction(player.getUniqueId(), MedievalFactions.getInstance().factions).getName(), clickedBlock.getX(), clickedBlock.getY() + 1, clickedBlock.getZ(), clickedBlock.getWorld().getName());
+                        MedievalFactions.getInstance().lockedBlocks.add(newLockedBlock2);
                     }
                     // check block below
-                    if (main.utilities.isDoor(clickedBlock.getWorld().getBlockAt(clickedBlock.getX(), clickedBlock.getY() - 1, clickedBlock.getZ()))) {
-                        LockedBlock newLockedBlock2 = new LockedBlock(player.getUniqueId(), getPlayersFaction(player.getUniqueId(), main.factions).getName(), clickedBlock.getX(), clickedBlock.getY() - 1, clickedBlock.getZ(), clickedBlock.getWorld().getName());
-                        main.lockedBlocks.add(newLockedBlock2);
+                    if (MedievalFactions.getInstance().utilities.isDoor(clickedBlock.getWorld().getBlockAt(clickedBlock.getX(), clickedBlock.getY() - 1, clickedBlock.getZ()))) {
+                        LockedBlock newLockedBlock2 = new LockedBlock(player.getUniqueId(), getPlayersFaction(player.getUniqueId(), MedievalFactions.getInstance().factions).getName(), clickedBlock.getX(), clickedBlock.getY() - 1, clickedBlock.getZ(), clickedBlock.getWorld().getName());
+                        MedievalFactions.getInstance().lockedBlocks.add(newLockedBlock2);
                     }
 
                     player.sendMessage(ChatColor.GREEN + "Locked!");
-                    main.lockingPlayers.remove(player.getUniqueId());
+                    MedievalFactions.getInstance().lockingPlayers.remove(player.getUniqueId());
                 }
                 
                 // Remainder of lockable blocks are only 1x1 so generic code will suffice.
-                if (main.utilities.isGate(clickedBlock) || main.utilities.isBarrel(clickedBlock) || main.utilities.isTrapdoor(clickedBlock) || main.utilities.isFurnace(clickedBlock)) {
-                	LockedBlock block = new LockedBlock(player.getUniqueId(), getPlayersFaction(player.getUniqueId(), main.factions).getName(), 
+                if (MedievalFactions.getInstance().utilities.isGate(clickedBlock) || MedievalFactions.getInstance().utilities.isBarrel(clickedBlock) || MedievalFactions.getInstance().utilities.isTrapdoor(clickedBlock) || MedievalFactions.getInstance().utilities.isFurnace(clickedBlock)) {
+                	LockedBlock block = new LockedBlock(player.getUniqueId(), getPlayersFaction(player.getUniqueId(), MedievalFactions.getInstance().factions).getName(), 
                 			clickedBlock.getX(), clickedBlock.getY(), clickedBlock.getZ(), clickedBlock.getWorld().getName());
-                	main.lockedBlocks.add(block);
+                	MedievalFactions.getInstance().lockedBlocks.add(block);
                 	player.sendMessage(ChatColor.GREEN + "Locked!");
-                	main.lockingPlayers.remove(player.getUniqueId());
+                	MedievalFactions.getInstance().lockingPlayers.remove(player.getUniqueId());
                 }
 
                 event.setCancelled(true);
@@ -422,10 +416,10 @@ public class PlayerInteractEventHandler {
 
     private void handleUnlockingBlock(PlayerInteractEvent event, Player player, Block clickedBlock) {
         // if locked
-        if (main.utilities.isBlockLocked(clickedBlock)) {
-            if (main.utilities.getLockedBlock(clickedBlock).getOwner().equals(player.getUniqueId())) {
+        if (MedievalFactions.getInstance().utilities.isBlockLocked(clickedBlock)) {
+            if (MedievalFactions.getInstance().utilities.getLockedBlock(clickedBlock).getOwner().equals(player.getUniqueId())) {
 
-                if (main.utilities.isChest(clickedBlock)) {
+                if (MedievalFactions.getInstance().utilities.isChest(clickedBlock)) {
                     InventoryHolder holder = ((Chest) clickedBlock.getState()).getInventory().getHolder();
                     if (holder instanceof DoubleChest) {
                         // chest multi-unlock
@@ -434,43 +428,43 @@ public class PlayerInteractEventHandler {
                         Block rightChest = ((Chest) doubleChest.getRightSide()).getBlock();
 
                         // unlock leftChest and rightChest
-                        main.utilities.removeLock(leftChest);
-                        main.utilities.removeLock(rightChest);
+                        MedievalFactions.getInstance().utilities.removeLock(leftChest);
+                        MedievalFactions.getInstance().utilities.removeLock(rightChest);
 
                         player.sendMessage(ChatColor.GREEN + "Unlocked!");
-                        main.unlockingPlayers.remove(player.getUniqueId());
+                        MedievalFactions.getInstance().unlockingPlayers.remove(player.getUniqueId());
                     }
                     else {
                         // unlock single chest
-                        main.utilities.removeLock(clickedBlock);
+                        MedievalFactions.getInstance().utilities.removeLock(clickedBlock);
                         player.sendMessage(ChatColor.GREEN + "Unlocked!");
-                        main.unlockingPlayers.remove(player.getUniqueId());
+                        MedievalFactions.getInstance().unlockingPlayers.remove(player.getUniqueId());
                     }
                 }
 
                 // door multi-unlock
-                if (main.utilities.isDoor(clickedBlock)) {
+                if (MedievalFactions.getInstance().utilities.isDoor(clickedBlock)) {
                     // unlock initial block
-                    main.utilities.removeLock(clickedBlock);
+                    MedievalFactions.getInstance().utilities.removeLock(clickedBlock);
                     // check block above
-                    if (main.utilities.isDoor(clickedBlock.getWorld().getBlockAt(clickedBlock.getX(), clickedBlock.getY() + 1, clickedBlock.getZ()))) {
-                        main.utilities.removeLock(clickedBlock.getWorld().getBlockAt(clickedBlock.getX(), clickedBlock.getY() + 1, clickedBlock.getZ()));
+                    if (MedievalFactions.getInstance().utilities.isDoor(clickedBlock.getWorld().getBlockAt(clickedBlock.getX(), clickedBlock.getY() + 1, clickedBlock.getZ()))) {
+                        MedievalFactions.getInstance().utilities.removeLock(clickedBlock.getWorld().getBlockAt(clickedBlock.getX(), clickedBlock.getY() + 1, clickedBlock.getZ()));
                     }
                     // check block below
-                    if (main.utilities.isDoor(clickedBlock.getWorld().getBlockAt(clickedBlock.getX(), clickedBlock.getY() - 1, clickedBlock.getZ()))) {
-                        main.utilities.removeLock(clickedBlock.getWorld().getBlockAt(clickedBlock.getX(), clickedBlock.getY() - 1, clickedBlock.getZ()));
+                    if (MedievalFactions.getInstance().utilities.isDoor(clickedBlock.getWorld().getBlockAt(clickedBlock.getX(), clickedBlock.getY() - 1, clickedBlock.getZ()))) {
+                        MedievalFactions.getInstance().utilities.removeLock(clickedBlock.getWorld().getBlockAt(clickedBlock.getX(), clickedBlock.getY() - 1, clickedBlock.getZ()));
                     }
 
                     player.sendMessage(ChatColor.GREEN + "Unlocked!");
-                    main.unlockingPlayers.remove(player.getUniqueId());
+                    MedievalFactions.getInstance().unlockingPlayers.remove(player.getUniqueId());
                 }
                 
                 // single block size lock logic.
-                if (main.utilities.isGate(clickedBlock) || main.utilities.isBarrel(clickedBlock) || main.utilities.isTrapdoor(clickedBlock) || main.utilities.isFurnace(clickedBlock)) {
-                	main.utilities.removeLock(clickedBlock);
+                if (MedievalFactions.getInstance().utilities.isGate(clickedBlock) || MedievalFactions.getInstance().utilities.isBarrel(clickedBlock) || MedievalFactions.getInstance().utilities.isTrapdoor(clickedBlock) || MedievalFactions.getInstance().utilities.isFurnace(clickedBlock)) {
+                	MedievalFactions.getInstance().utilities.removeLock(clickedBlock);
 
                 	player.sendMessage(ChatColor.GREEN + "Unlocked!");
-                    main.unlockingPlayers.remove(player.getUniqueId());
+                    MedievalFactions.getInstance().unlockingPlayers.remove(player.getUniqueId());
                 }
 
                 event.setCancelled(true);
@@ -486,23 +480,23 @@ public class PlayerInteractEventHandler {
 
     private void handleClaimedChunk(PlayerInteractEvent event, ClaimedChunk chunk) {
         // player not in a faction and isn't overriding
-        if (!isInFaction(event.getPlayer().getUniqueId(), main.factions) && !main.adminsBypassingProtections.contains(event.getPlayer().getUniqueId())) {
+        if (!isInFaction(event.getPlayer().getUniqueId(), MedievalFactions.getInstance().factions) && !MedievalFactions.getInstance().adminsBypassingProtections.contains(event.getPlayer().getUniqueId())) {
             event.setCancelled(true);
         }
 
         // if player is in faction
-        for (Faction faction : main.factions) {
+        for (Faction faction : MedievalFactions.getInstance().factions) {
             if (faction.isMember(event.getPlayer().getUniqueId())) {
 
                 // if player's faction is not the same as the holder of the chunk and player isn't overriding
-                if (!(faction.getName().equalsIgnoreCase(chunk.getHolder())) && !main.adminsBypassingProtections.contains(event.getPlayer().getUniqueId())) {
+                if (!(faction.getName().equalsIgnoreCase(chunk.getHolder())) && !MedievalFactions.getInstance().adminsBypassingProtections.contains(event.getPlayer().getUniqueId())) {
 
                     // if enemy territory
                     if (faction.isEnemy(chunk.getHolder())) {
                         // if not interacting with chest
                         if (isBlockInteractable(event)) {
                             // allow placing ladders
-                            if (main.getConfig().getBoolean("laddersPlaceableInEnemyFactionTerritory")) {
+                            if (MedievalFactions.getInstance().getConfig().getBoolean("laddersPlaceableInEnemyFactionTerritory")) {
                                 if (event.getMaterial() == LADDER) {
                                     return;
                                 }
@@ -528,7 +522,7 @@ public class PlayerInteractEventHandler {
     public boolean isBlockInteractable(PlayerInteractEvent event) {
         if (event.getClickedBlock() != null) {
             // CHEST
-            if (main.utilities.isChest(event.getClickedBlock())) {
+            if (MedievalFactions.getInstance().utilities.isChest(event.getClickedBlock())) {
                 return false;
             }
             switch(event.getClickedBlock().getType()) {
@@ -610,13 +604,13 @@ public class PlayerInteractEventHandler {
     private void handleGrantingAccess(PlayerInteractEvent event, Block clickedBlock, Player player) {
 
         // if not owner
-        if (main.utilities.getLockedBlock(clickedBlock, main.lockedBlocks).getOwner() != player.getUniqueId()) {
+        if (MedievalFactions.getInstance().utilities.getLockedBlock(clickedBlock, MedievalFactions.getInstance().lockedBlocks).getOwner() != player.getUniqueId()) {
             player.sendMessage(ChatColor.RED + "You are not the owner of this block!");
             return;
         }
 
         // if chest
-        if (main.utilities.isChest(clickedBlock)) {
+        if (MedievalFactions.getInstance().utilities.isChest(clickedBlock)) {
             InventoryHolder holder = ((Chest) clickedBlock.getState()).getInventory().getHolder();
             if (holder instanceof DoubleChest) { // if double chest
                 // grant access to both chests
@@ -624,44 +618,44 @@ public class PlayerInteractEventHandler {
                 Block leftChest = ((Chest) doubleChest.getLeftSide()).getBlock();
                 Block rightChest = ((Chest) doubleChest.getRightSide()).getBlock();
 
-                main.utilities.getLockedBlock(leftChest, main.lockedBlocks).addToAccessList(main.playersGrantingAccess.get(player.getUniqueId()));
-                main.utilities.getLockedBlock(rightChest, main.lockedBlocks).addToAccessList(main.playersGrantingAccess.get(player.getUniqueId()));
+                MedievalFactions.getInstance().utilities.getLockedBlock(leftChest, MedievalFactions.getInstance().lockedBlocks).addToAccessList(MedievalFactions.getInstance().playersGrantingAccess.get(player.getUniqueId()));
+                MedievalFactions.getInstance().utilities.getLockedBlock(rightChest, MedievalFactions.getInstance().lockedBlocks).addToAccessList(MedievalFactions.getInstance().playersGrantingAccess.get(player.getUniqueId()));
 
-                player.sendMessage(ChatColor.GREEN + "Access granted to " + findPlayerNameBasedOnUUID(main.playersGrantingAccess.get(player.getUniqueId())));
-                main.playersGrantingAccess.remove(player.getUniqueId());
+                player.sendMessage(ChatColor.GREEN + "Access granted to " + findPlayerNameBasedOnUUID(MedievalFactions.getInstance().playersGrantingAccess.get(player.getUniqueId())));
+                MedievalFactions.getInstance().playersGrantingAccess.remove(player.getUniqueId());
             }
             else { // if single chest
                 // grant access to single chest
-                main.utilities.getLockedBlock(clickedBlock, main.lockedBlocks).addToAccessList(main.playersGrantingAccess.get(player.getUniqueId()));
-                player.sendMessage(ChatColor.GREEN + "Access granted to " + findPlayerNameBasedOnUUID(main.playersGrantingAccess.get(player.getUniqueId())));
-                main.playersGrantingAccess.remove(player.getUniqueId());
+                MedievalFactions.getInstance().utilities.getLockedBlock(clickedBlock, MedievalFactions.getInstance().lockedBlocks).addToAccessList(MedievalFactions.getInstance().playersGrantingAccess.get(player.getUniqueId()));
+                player.sendMessage(ChatColor.GREEN + "Access granted to " + findPlayerNameBasedOnUUID(MedievalFactions.getInstance().playersGrantingAccess.get(player.getUniqueId())));
+                MedievalFactions.getInstance().playersGrantingAccess.remove(player.getUniqueId());
             }
 
         }
 
         // if door
-        if (main.utilities.isDoor(clickedBlock)) {
+        if (MedievalFactions.getInstance().utilities.isDoor(clickedBlock)) {
             // grant access to initial block
-            main.utilities.getLockedBlock(clickedBlock, main.lockedBlocks).addToAccessList(main.playersGrantingAccess.get(player.getUniqueId()));
+            MedievalFactions.getInstance().utilities.getLockedBlock(clickedBlock, MedievalFactions.getInstance().lockedBlocks).addToAccessList(MedievalFactions.getInstance().playersGrantingAccess.get(player.getUniqueId()));
             // check block above
-            if (main.utilities.isDoor(clickedBlock.getWorld().getBlockAt(clickedBlock.getX(), clickedBlock.getY() + 1, clickedBlock.getZ()))) {
-                main.utilities.getLockedBlock(clickedBlock, main.lockedBlocks).addToAccessList(main.playersGrantingAccess.get(player.getUniqueId()));
+            if (MedievalFactions.getInstance().utilities.isDoor(clickedBlock.getWorld().getBlockAt(clickedBlock.getX(), clickedBlock.getY() + 1, clickedBlock.getZ()))) {
+                MedievalFactions.getInstance().utilities.getLockedBlock(clickedBlock, MedievalFactions.getInstance().lockedBlocks).addToAccessList(MedievalFactions.getInstance().playersGrantingAccess.get(player.getUniqueId()));
             }
             // check block below
-            if (main.utilities.isDoor(clickedBlock.getWorld().getBlockAt(clickedBlock.getX(), clickedBlock.getY() - 1, clickedBlock.getZ()))) {
-                main.utilities.getLockedBlock(clickedBlock, main.lockedBlocks).addToAccessList(main.playersGrantingAccess.get(player.getUniqueId()));
+            if (MedievalFactions.getInstance().utilities.isDoor(clickedBlock.getWorld().getBlockAt(clickedBlock.getX(), clickedBlock.getY() - 1, clickedBlock.getZ()))) {
+                MedievalFactions.getInstance().utilities.getLockedBlock(clickedBlock, MedievalFactions.getInstance().lockedBlocks).addToAccessList(MedievalFactions.getInstance().playersGrantingAccess.get(player.getUniqueId()));
             }
 
-            player.sendMessage(ChatColor.GREEN + "Access granted to " + findPlayerNameBasedOnUUID(main.playersGrantingAccess.get(player.getUniqueId())));
-            main.playersGrantingAccess.remove(player.getUniqueId());
+            player.sendMessage(ChatColor.GREEN + "Access granted to " + findPlayerNameBasedOnUUID(MedievalFactions.getInstance().playersGrantingAccess.get(player.getUniqueId())));
+            MedievalFactions.getInstance().playersGrantingAccess.remove(player.getUniqueId());
         }
         
         // if gate (or single-block sized lock)
-        if (main.utilities.isGate(clickedBlock) || main.utilities.isBarrel(clickedBlock) || main.utilities.isTrapdoor(clickedBlock) || main.utilities.isFurnace(clickedBlock)) {
-        	main.utilities.getLockedBlock(clickedBlock, main.lockedBlocks).addToAccessList(main.playersGrantingAccess.get(player.getUniqueId()));
+        if (MedievalFactions.getInstance().utilities.isGate(clickedBlock) || MedievalFactions.getInstance().utilities.isBarrel(clickedBlock) || MedievalFactions.getInstance().utilities.isTrapdoor(clickedBlock) || MedievalFactions.getInstance().utilities.isFurnace(clickedBlock)) {
+        	MedievalFactions.getInstance().utilities.getLockedBlock(clickedBlock, MedievalFactions.getInstance().lockedBlocks).addToAccessList(MedievalFactions.getInstance().playersGrantingAccess.get(player.getUniqueId()));
         	
-            player.sendMessage(ChatColor.GREEN + "Access granted to " + findPlayerNameBasedOnUUID(main.playersGrantingAccess.get(player.getUniqueId())));
-            main.playersGrantingAccess.remove(player.getUniqueId());
+            player.sendMessage(ChatColor.GREEN + "Access granted to " + findPlayerNameBasedOnUUID(MedievalFactions.getInstance().playersGrantingAccess.get(player.getUniqueId())));
+            MedievalFactions.getInstance().playersGrantingAccess.remove(player.getUniqueId());
         }
         
         event.setCancelled(true);
@@ -672,20 +666,20 @@ public class PlayerInteractEventHandler {
         for (UUID playerUUID : lockedBlock.getAccessList()) {
             player.sendMessage(ChatColor.AQUA + " - " + findPlayerNameBasedOnUUID(playerUUID));
         }
-        main.playersCheckingAccess.remove(player.getUniqueId());
+        MedievalFactions.getInstance().playersCheckingAccess.remove(player.getUniqueId());
         event.setCancelled(true);
     }
 
     private void handleRevokingAccess(PlayerInteractEvent event, Block clickedBlock, Player player) {
 
         // if not owner
-        if (main.utilities.getLockedBlock(clickedBlock, main.lockedBlocks).getOwner() != player.getUniqueId()) {
+        if (MedievalFactions.getInstance().utilities.getLockedBlock(clickedBlock, MedievalFactions.getInstance().lockedBlocks).getOwner() != player.getUniqueId()) {
             player.sendMessage(ChatColor.RED + "You are not the owner of this block!");
             return;
         }
 
         // if chest
-        if (main.utilities.isChest(clickedBlock)) {
+        if (MedievalFactions.getInstance().utilities.isChest(clickedBlock)) {
             InventoryHolder holder = ((Chest) clickedBlock.getState()).getInventory().getHolder();
             if (holder instanceof DoubleChest) { // if double chest
                 // revoke access to both chests
@@ -693,44 +687,44 @@ public class PlayerInteractEventHandler {
                 Block leftChest = ((Chest) doubleChest.getLeftSide()).getBlock();
                 Block rightChest = ((Chest) doubleChest.getRightSide()).getBlock();
 
-                main.utilities.getLockedBlock(leftChest, main.lockedBlocks).removeFromAccessList(main.playersRevokingAccess.get(player.getUniqueId()));
-                main.utilities.getLockedBlock(rightChest, main.lockedBlocks).removeFromAccessList(main.playersRevokingAccess.get(player.getUniqueId()));
+                MedievalFactions.getInstance().utilities.getLockedBlock(leftChest, MedievalFactions.getInstance().lockedBlocks).removeFromAccessList(MedievalFactions.getInstance().playersRevokingAccess.get(player.getUniqueId()));
+                MedievalFactions.getInstance().utilities.getLockedBlock(rightChest, MedievalFactions.getInstance().lockedBlocks).removeFromAccessList(MedievalFactions.getInstance().playersRevokingAccess.get(player.getUniqueId()));
 
-                player.sendMessage(ChatColor.GREEN + "Access revoked for " + findPlayerNameBasedOnUUID(main.playersRevokingAccess.get(player.getUniqueId())));
-                main.playersRevokingAccess.remove(player.getUniqueId());
+                player.sendMessage(ChatColor.GREEN + "Access revoked for " + findPlayerNameBasedOnUUID(MedievalFactions.getInstance().playersRevokingAccess.get(player.getUniqueId())));
+                MedievalFactions.getInstance().playersRevokingAccess.remove(player.getUniqueId());
             }
             else { // if single chest
                 // revoke access to single chest
-                main.utilities.getLockedBlock(clickedBlock, main.lockedBlocks).removeFromAccessList(main.playersRevokingAccess.get(player.getUniqueId()));
-                player.sendMessage(ChatColor.GREEN + "Access revoked for " + findPlayerNameBasedOnUUID(main.playersRevokingAccess.get(player.getUniqueId())));
-                main.playersRevokingAccess.remove(player.getUniqueId());
+                MedievalFactions.getInstance().utilities.getLockedBlock(clickedBlock, MedievalFactions.getInstance().lockedBlocks).removeFromAccessList(MedievalFactions.getInstance().playersRevokingAccess.get(player.getUniqueId()));
+                player.sendMessage(ChatColor.GREEN + "Access revoked for " + findPlayerNameBasedOnUUID(MedievalFactions.getInstance().playersRevokingAccess.get(player.getUniqueId())));
+                MedievalFactions.getInstance().playersRevokingAccess.remove(player.getUniqueId());
             }
 
         }
 
         // if door
-        if (main.utilities.isDoor(clickedBlock)) {
+        if (MedievalFactions.getInstance().utilities.isDoor(clickedBlock)) {
             // revoke access to initial block
-            main.utilities.getLockedBlock(clickedBlock, main.lockedBlocks).removeFromAccessList(main.playersRevokingAccess.get(player.getUniqueId()));
+            MedievalFactions.getInstance().utilities.getLockedBlock(clickedBlock, MedievalFactions.getInstance().lockedBlocks).removeFromAccessList(MedievalFactions.getInstance().playersRevokingAccess.get(player.getUniqueId()));
             // check block above
-            if (main.utilities.isDoor(clickedBlock.getWorld().getBlockAt(clickedBlock.getX(), clickedBlock.getY() + 1, clickedBlock.getZ()))) {
-                main.utilities.getLockedBlock(clickedBlock, main.lockedBlocks).removeFromAccessList(main.playersRevokingAccess.get(player.getUniqueId()));
+            if (MedievalFactions.getInstance().utilities.isDoor(clickedBlock.getWorld().getBlockAt(clickedBlock.getX(), clickedBlock.getY() + 1, clickedBlock.getZ()))) {
+                MedievalFactions.getInstance().utilities.getLockedBlock(clickedBlock, MedievalFactions.getInstance().lockedBlocks).removeFromAccessList(MedievalFactions.getInstance().playersRevokingAccess.get(player.getUniqueId()));
             }
             // check block below
-            if (main.utilities.isDoor(clickedBlock.getWorld().getBlockAt(clickedBlock.getX(), clickedBlock.getY() - 1, clickedBlock.getZ()))) {
-                main.utilities.getLockedBlock(clickedBlock, main.lockedBlocks).removeFromAccessList(main.playersRevokingAccess.get(player.getUniqueId()));
+            if (MedievalFactions.getInstance().utilities.isDoor(clickedBlock.getWorld().getBlockAt(clickedBlock.getX(), clickedBlock.getY() - 1, clickedBlock.getZ()))) {
+                MedievalFactions.getInstance().utilities.getLockedBlock(clickedBlock, MedievalFactions.getInstance().lockedBlocks).removeFromAccessList(MedievalFactions.getInstance().playersRevokingAccess.get(player.getUniqueId()));
             }
 
-            player.sendMessage(ChatColor.GREEN + "Access revoked for " + findPlayerNameBasedOnUUID(main.playersRevokingAccess.get(player.getUniqueId())));
-            main.playersRevokingAccess.remove(player.getUniqueId());
+            player.sendMessage(ChatColor.GREEN + "Access revoked for " + findPlayerNameBasedOnUUID(MedievalFactions.getInstance().playersRevokingAccess.get(player.getUniqueId())));
+            MedievalFactions.getInstance().playersRevokingAccess.remove(player.getUniqueId());
         }
         
         // if gate or other single-block sized lock
-        if (main.utilities.isGate(clickedBlock) || main.utilities.isBarrel(clickedBlock) || main.utilities.isTrapdoor(clickedBlock) || main.utilities.isFurnace(clickedBlock)) {
-        	main.utilities.getLockedBlock(clickedBlock, main.lockedBlocks).removeFromAccessList(main.playersRevokingAccess.get(player.getUniqueId()));
+        if (MedievalFactions.getInstance().utilities.isGate(clickedBlock) || MedievalFactions.getInstance().utilities.isBarrel(clickedBlock) || MedievalFactions.getInstance().utilities.isTrapdoor(clickedBlock) || MedievalFactions.getInstance().utilities.isFurnace(clickedBlock)) {
+        	MedievalFactions.getInstance().utilities.getLockedBlock(clickedBlock, MedievalFactions.getInstance().lockedBlocks).removeFromAccessList(MedievalFactions.getInstance().playersRevokingAccess.get(player.getUniqueId()));
 
-            player.sendMessage(ChatColor.GREEN + "Access revoked for " + findPlayerNameBasedOnUUID(main.playersRevokingAccess.get(player.getUniqueId())));
-            main.playersRevokingAccess.remove(player.getUniqueId());
+            player.sendMessage(ChatColor.GREEN + "Access revoked for " + findPlayerNameBasedOnUUID(MedievalFactions.getInstance().playersRevokingAccess.get(player.getUniqueId())));
+            MedievalFactions.getInstance().playersRevokingAccess.remove(player.getUniqueId());
         }
         
         event.setCancelled(true);

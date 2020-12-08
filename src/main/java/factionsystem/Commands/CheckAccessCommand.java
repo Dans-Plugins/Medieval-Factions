@@ -7,8 +7,8 @@ import org.bukkit.entity.Player;
 
 public class CheckAccessCommand extends Command {
 
-    public CheckAccessCommand(MedievalFactions plugin) {
-        super(plugin);
+    public CheckAccessCommand() {
+        super();
     }
 
     public void checkAccess(CommandSender sender, String[] args) {
@@ -20,15 +20,15 @@ public class CheckAccessCommand extends Command {
             if (args.length > 1) {
                 if (args[1].equalsIgnoreCase("cancel")) {
                     player.sendMessage(ChatColor.RED + "Cancelled!");
-                    if (main.playersCheckingAccess.contains(player.getUniqueId())) {
-                        main.playersCheckingAccess.remove(player.getUniqueId());
+                    if (MedievalFactions.getInstance().playersCheckingAccess.contains(player.getUniqueId())) {
+                        MedievalFactions.getInstance().playersCheckingAccess.remove(player.getUniqueId());
                         return;
                     }
                 }
             }
 
-            if (!main.playersCheckingAccess.contains(player.getUniqueId())) {
-                main.playersCheckingAccess.add(player.getUniqueId());
+            if (!MedievalFactions.getInstance().playersCheckingAccess.contains(player.getUniqueId())) {
+                MedievalFactions.getInstance().playersCheckingAccess.add(player.getUniqueId());
                 player.sendMessage(ChatColor.GREEN + "Right click a locked block to check who has access to it! Type '/mf checkaccess cancel' to cancel!");
             }
             else {

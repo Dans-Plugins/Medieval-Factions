@@ -8,24 +8,18 @@ import org.bukkit.event.entity.LingeringPotionSplashEvent;
 
 public class LingeringPotionSplashEventHandler {
 
-    MedievalFactions main = null;
-
-    public LingeringPotionSplashEventHandler(MedievalFactions plugin) {
-        main = plugin;
-    }
-
     public void handle(LingeringPotionSplashEvent event) {
         Player thrower = (Player) event.getEntity().getShooter();
         AreaEffectCloud cloud = event.getAreaEffectCloud();
 
         Pair<Player, AreaEffectCloud> storedCloud  = new Pair<>(thrower, cloud);
-        main.activeAOEClouds.add(storedCloud);
+        MedievalFactions.getInstance().activeAOEClouds.add(storedCloud);
 
         // Add scheduled task to remove the cloud from the activeClouds list
         long delay = cloud.getDuration();
-        main.getServer().getScheduler().scheduleSyncDelayedTask(main, new Runnable() {
+        MedievalFactions.getInstance().getServer().getScheduler().scheduleSyncDelayedTask(MedievalFactions.getInstance(), new Runnable() {
             public void run(){
-                main.activeAOEClouds.remove(storedCloud);
+                MedievalFactions.getInstance().activeAOEClouds.remove(storedCloud);
             }
         }, delay);
     }

@@ -8,8 +8,8 @@ import org.bukkit.entity.Player;
 
 public class SwearFealtyCommand extends Command {
 
-    public SwearFealtyCommand(MedievalFactions plugin) {
-        super(plugin);
+    public SwearFealtyCommand() {
+        super();
     }
 
     public void swearFealty(CommandSender sender, String[] args) {
@@ -21,10 +21,10 @@ public class SwearFealtyCommand extends Command {
 
                 if (args.length > 1) {
 
-                    String targetFactionName = main.utilities.createStringFromFirstArgOnwards(args);
+                    String targetFactionName = MedievalFactions.getInstance().utilities.createStringFromFirstArgOnwards(args);
 
-                    Faction playersFaction = main.utilities.getPlayersFaction(player.getUniqueId(), main.factions);
-                    Faction targetFaction = main.utilities.getFaction(targetFactionName, main.factions);
+                    Faction playersFaction = MedievalFactions.getInstance().utilities.getPlayersFaction(player.getUniqueId(), MedievalFactions.getInstance().factions);
+                    Faction targetFaction = MedievalFactions.getInstance().utilities.getFaction(targetFactionName, MedievalFactions.getInstance().factions);
 
                     if (targetFaction != null) {
 
@@ -40,13 +40,13 @@ public class SwearFealtyCommand extends Command {
                                     targetFaction.removeAttemptedVassalization(playersFaction.getName());
 
                                     // inform target faction that they have a new vassal
-                                    main.utilities.sendAllPlayersInFactionMessage(targetFaction, ChatColor.GREEN + "Your faction has a new vassal: " + playersFaction.getName());
+                                    MedievalFactions.getInstance().utilities.sendAllPlayersInFactionMessage(targetFaction, ChatColor.GREEN + "Your faction has a new vassal: " + playersFaction.getName());
 
                                     // set liege
                                     playersFaction.setLiege(targetFactionName);
 
                                     // inform players faction that they have a new liege
-                                    main.utilities.sendAllPlayersInFactionMessage(playersFaction, ChatColor.GREEN + "Your faction has been vassalized and has a new liege: " + targetFactionName);
+                                    MedievalFactions.getInstance().utilities.sendAllPlayersInFactionMessage(playersFaction, ChatColor.GREEN + "Your faction has been vassalized and has a new liege: " + targetFactionName);
                                 }
                                 else {
                                     // tell player they must be owner

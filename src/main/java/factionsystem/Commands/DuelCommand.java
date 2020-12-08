@@ -11,8 +11,8 @@ import factionsystem.Subsystems.UtilitySubsystem;
 
 public class DuelCommand extends Command {
 
-	public DuelCommand(MedievalFactions plugin) {
-		super(plugin);
+	public DuelCommand() {
+		super();
 	}
 	
 	public void handleDuel(CommandSender sender, String[] args) {
@@ -33,7 +33,7 @@ public class DuelCommand extends Command {
 								player.sendMessage(ChatColor.RED + "You cannot duel yourself!");
 								return;
 							}
-							if (UtilitySubsystem.isDuelling(player, main))
+							if (UtilitySubsystem.isDuelling(player))
 							{
 								player.sendMessage(ChatColor.RED + "You are already duelling someone!");
 								return;
@@ -41,14 +41,14 @@ public class DuelCommand extends Command {
 							Player target = Bukkit.getServer().getPlayer(args[2]);
 							if (target != null)
 							{
-								if (!UtilitySubsystem.isDuelling(target, main))
+								if (!UtilitySubsystem.isDuelling(target))
 								{
 									int timeLimit = 120; // Time limit in seconds. TODO: Make config option.
 									if (args.length == 4)
 									{
 										timeLimit = Integer.parseInt(args[3]);
 									}
-									UtilitySubsystem.inviteDuel(player, target, timeLimit, main);
+									UtilitySubsystem.inviteDuel(player, target, timeLimit);
 									player.sendMessage(ChatColor.AQUA + "You have challenged " + target.getName() + " to a duel!");
 									return;
 								}
@@ -67,7 +67,7 @@ public class DuelCommand extends Command {
 					}
 					else if (args[1].equalsIgnoreCase("accept"))
 					{
-						if (UtilitySubsystem.isDuelling(player, main))
+						if (UtilitySubsystem.isDuelling(player))
 						{
 							player.sendMessage(ChatColor.RED + "You are already duelling someone!");
 							return;
@@ -76,7 +76,7 @@ public class DuelCommand extends Command {
 						if (args.length > 2)
 						{
 		                	Player challenger = Bukkit.getServer().getPlayer(args[2]);
-		                	Duel duel = UtilitySubsystem.getDuel(challenger, player, main);
+		                	Duel duel = UtilitySubsystem.getDuel(challenger, player);
 		                	if (duel != null)
 		                	{
 		                		if (duel.getStatus().equals(Duel.DuelState.DUELLING))
@@ -102,7 +102,7 @@ public class DuelCommand extends Command {
 						}
 						else
 						{
-		                	Duel duel = UtilitySubsystem.getDuel(player, main);
+		                	Duel duel = UtilitySubsystem.getDuel(player);
 		                	if (duel != null)
 		                	{
 		                		if (duel.getStatus().equals(Duel.DuelState.DUELLING))
@@ -129,9 +129,9 @@ public class DuelCommand extends Command {
 					}
 					else if (args[1].equalsIgnoreCase("cancel"))
 					{
-		                if (UtilitySubsystem.isDuelling(player, main))
+		                if (UtilitySubsystem.isDuelling(player))
 		                {
-		                	Duel duel = UtilitySubsystem.getDuel(player, main);
+		                	Duel duel = UtilitySubsystem.getDuel(player);
 		                	if (duel != null)
 		                	{
 		                		if (duel.getStatus().equals(Duel.DuelState.DUELLING))
@@ -141,7 +141,7 @@ public class DuelCommand extends Command {
 		                		}
 		                		else
 		                		{
-		                			main.duelingPlayers.remove(duel);
+		                			MedievalFactions.getInstance().duelingPlayers.remove(duel);
 									player.sendMessage(ChatColor.AQUA + "Duel challenge cancelled.");
 									return;
 		                		}

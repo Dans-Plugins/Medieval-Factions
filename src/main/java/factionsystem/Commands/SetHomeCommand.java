@@ -11,8 +11,8 @@ import static factionsystem.Subsystems.UtilitySubsystem.*;
 
 public class SetHomeCommand extends Command {
 
-    public SetHomeCommand(MedievalFactions plugin) {
-        super(plugin);
+    public SetHomeCommand() {
+        super();
     }
 
     public void setHome(CommandSender sender) {
@@ -20,12 +20,12 @@ public class SetHomeCommand extends Command {
             Player player = (Player) sender;
 
             if (sender.hasPermission("mf.sethome") || sender.hasPermission("mf.default")) {
-                if (isInFaction(player.getUniqueId(), main.factions)) {
-                    Faction playersFaction = getPlayersFaction(player.getUniqueId(), main.factions);
+                if (isInFaction(player.getUniqueId(), MedievalFactions.getInstance().factions)) {
+                    Faction playersFaction = getPlayersFaction(player.getUniqueId(), MedievalFactions.getInstance().factions);
                     if (playersFaction.isOwner(player.getUniqueId()) || playersFaction.isOfficer(player.getUniqueId())) {
 
-                        if (isClaimed(player.getLocation().getChunk(), main.claimedChunks)) {
-                            ClaimedChunk chunk = getClaimedChunk(player.getLocation().getChunk().getX(), player.getLocation().getChunk().getZ(), player.getWorld().getName(), main.claimedChunks);
+                        if (isClaimed(player.getLocation().getChunk(), MedievalFactions.getInstance().claimedChunks)) {
+                            ClaimedChunk chunk = getClaimedChunk(player.getLocation().getChunk().getX(), player.getLocation().getChunk().getZ(), player.getWorld().getName(), MedievalFactions.getInstance().claimedChunks);
                             if (chunk.getHolder().equalsIgnoreCase(playersFaction.getName())) {
                                 playersFaction.setFactionHome(player.getLocation());
                                 player.sendMessage(ChatColor.GREEN + "Faction home set!");

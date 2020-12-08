@@ -11,8 +11,8 @@ import static factionsystem.Subsystems.UtilitySubsystem.getPlayersPowerRecord;
 
 public class CreateCommand extends Command {
 
-    public CreateCommand(MedievalFactions plugin) {
-        super(plugin);
+    public CreateCommand() {
+        super();
     }
 
     public boolean createFaction(CommandSender sender, String[] args) {
@@ -22,7 +22,7 @@ public class CreateCommand extends Command {
 
             if (sender.hasPermission("mf.create")|| sender.hasPermission("mf.default")) {
                 // player membership check
-                for (Faction faction : main.factions) {
+                for (Faction faction : MedievalFactions.getInstance().factions) {
                     if (faction.isMember(player.getUniqueId())) {
                         player.sendMessage(ChatColor.RED + "Sorry, you're already in a faction. Leave if you want to create a different one.");
                         return false;
@@ -37,7 +37,7 @@ public class CreateCommand extends Command {
 
                     // faction existence check
                     boolean factionExists = false;
-                    for (Faction faction : main.factions) {
+                    for (Faction faction : MedievalFactions.getInstance().factions) {
                         if (faction.getName().equalsIgnoreCase(name)) {
                             factionExists = true;
                             break;
@@ -47,10 +47,10 @@ public class CreateCommand extends Command {
                     if (!factionExists) {
 
                         // actual faction creation
-                        Faction temp = new Faction(name, player.getUniqueId(), main.getConfig().getInt("initialMaxPowerLevel"), main);
-                        main.factions.add(temp);
+                        Faction temp = new Faction(name, player.getUniqueId(), MedievalFactions.getInstance().getConfig().getInt("initialMaxPowerLevel"));
+                        MedievalFactions.getInstance().factions.add(temp);
                         // TODO: Make thread safe
-                        main.factions.get(main.factions.size() - 1).addMember(player.getUniqueId(), getPlayersPowerRecord(player.getUniqueId(), main.playerPowerRecords).getPowerLevel());
+                        MedievalFactions.getInstance().factions.get(MedievalFactions.getInstance().factions.size() - 1).addMember(player.getUniqueId(), getPlayersPowerRecord(player.getUniqueId(), MedievalFactions.getInstance().playerPowerRecords).getPowerLevel());
                         System.out.println("Faction " + name + " created.");
                         player.sendMessage(ChatColor.AQUA + "Faction " + name + " created.");
                         return true;

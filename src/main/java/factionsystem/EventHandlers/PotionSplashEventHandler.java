@@ -10,12 +10,6 @@ import org.bukkit.potion.PotionEffect;
 
 public class PotionSplashEventHandler {
 
-    MedievalFactions main = null;
-
-    public PotionSplashEventHandler(MedievalFactions plugin) {
-        main = plugin;
-    }
-
     public void handle(PotionSplashEvent event) {
         ThrownPotion potion = event.getPotion();
 
@@ -25,7 +19,7 @@ public class PotionSplashEventHandler {
 
         for(PotionEffect effect : potion.getEffects()) {
             // Is potion effect bad?
-            if (main.utilities.potionEffectBad(effect.getType())) {
+            if (MedievalFactions.getInstance().utilities.potionEffectBad(effect.getType())) {
 
                 // If any victim is a allied player remove potion intensity
                 for (LivingEntity victimEntity : event.getAffectedEntities()) {
@@ -38,9 +32,9 @@ public class PotionSplashEventHandler {
                         }
 
                         // If players are in faction and not at war
-                        if (main.utilities.arePlayersInAFaction(attacker, victim) &&
-                                (main.utilities.arePlayersFactionsNotEnemies(attacker, victim) ||
-                                        main.utilities.arePlayersInSameFaction(attacker, victim))) {
+                        if (MedievalFactions.getInstance().utilities.arePlayersInAFaction(attacker, victim) &&
+                                (MedievalFactions.getInstance().utilities.arePlayersFactionsNotEnemies(attacker, victim) ||
+                                        MedievalFactions.getInstance().utilities.arePlayersInSameFaction(attacker, victim))) {
                             event.setIntensity(victimEntity, 0);
                         }
                     }

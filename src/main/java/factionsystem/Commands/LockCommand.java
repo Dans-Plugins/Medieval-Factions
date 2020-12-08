@@ -7,8 +7,8 @@ import org.bukkit.entity.Player;
 
 public class LockCommand extends Command { ;
 
-    public LockCommand(MedievalFactions plugin) {
-        super(plugin);
+    public LockCommand() {
+        super();
     }
 
     public void lockBlock(CommandSender sender, String[] args) {
@@ -25,8 +25,8 @@ public class LockCommand extends Command { ;
 
                     // cancel lock status if first argument is "cancel"
                     if (args[1].equalsIgnoreCase("cancel")) {
-                        if (main.lockingPlayers.contains(player.getUniqueId())) {
-                            main.lockingPlayers.remove(player.getUniqueId());
+                        if (MedievalFactions.getInstance().lockingPlayers.contains(player.getUniqueId())) {
+                            MedievalFactions.getInstance().lockingPlayers.remove(player.getUniqueId());
                             player.sendMessage(ChatColor.RED + "Locking cancelled!");
                             return;
                         }
@@ -34,11 +34,11 @@ public class LockCommand extends Command { ;
                 }
 
                 // check that player has not already invoked this command without locking something
-                if (!main.lockingPlayers.contains(player.getUniqueId())) {
+                if (!MedievalFactions.getInstance().lockingPlayers.contains(player.getUniqueId())) {
                     // add player to playersAboutToLockSomething list
-                    main.lockingPlayers.add(player.getUniqueId());
+                    MedievalFactions.getInstance().lockingPlayers.add(player.getUniqueId());
 
-                    main.unlockingPlayers.remove(player.getUniqueId());
+                    MedievalFactions.getInstance().unlockingPlayers.remove(player.getUniqueId());
 
                     // inform them they need to right click the block that they want to lock or type /mf lock cancel to cancel it
                     player.sendMessage(ChatColor.GREEN + "Right click a chest or door to lock it! (Type /mf lock cancel to cancel)");

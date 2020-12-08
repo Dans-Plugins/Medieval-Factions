@@ -13,8 +13,8 @@ import static org.bukkit.Bukkit.getServer;
 
 public class TransferCommand extends Command {
 
-    public TransferCommand(MedievalFactions plugin) {
-        super(plugin);
+    public TransferCommand() {
+        super();
     }
 
     public boolean transferOwnership(CommandSender sender, String[] args) {
@@ -23,7 +23,7 @@ public class TransferCommand extends Command {
 
             if (sender.hasPermission("mf.transfer") || sender.hasPermission("mf.default")) {
                 boolean owner = false;
-                for (Faction faction : main.factions) {
+                for (Faction faction : MedievalFactions.getInstance().factions) {
                     if (faction.isOwner(player.getUniqueId())) {
                         owner = true;
                         if (args.length > 1) {

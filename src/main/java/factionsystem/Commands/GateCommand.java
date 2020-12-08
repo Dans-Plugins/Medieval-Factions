@@ -11,9 +11,9 @@ import factionsystem.Subsystems.UtilitySubsystem;
 
 public class GateCommand extends Command {
 	
-	public GateCommand(MedievalFactions plugin)
+	public GateCommand()
 	{
-		super(plugin);
+		super();
 	}
 	
 	public void handleGate(CommandSender sender, String[] args)
@@ -28,24 +28,24 @@ public class GateCommand extends Command {
 				{
 					if (args[1].equalsIgnoreCase("cancel"))
 					{
-						if (main.creatingGatePlayers.containsKey(player.getUniqueId()))
+						if (MedievalFactions.getInstance().creatingGatePlayers.containsKey(player.getUniqueId()))
 						{
-							main.creatingGatePlayers.remove(player.getUniqueId());
+							MedievalFactions.getInstance().creatingGatePlayers.remove(player.getUniqueId());
 							player.sendMessage(ChatColor.RED + "Creating gate cancelled!");
 							return;
 						}
 					}
 					if (args[1].equalsIgnoreCase("create"))
 					{
-						if (main.creatingGatePlayers.containsKey(player.getUniqueId()))
+						if (MedievalFactions.getInstance().creatingGatePlayers.containsKey(player.getUniqueId()))
 						{
-							main.creatingGatePlayers.remove(player.getUniqueId());
+							MedievalFactions.getInstance().creatingGatePlayers.remove(player.getUniqueId());
 							player.sendMessage(ChatColor.RED + "You are already creating a gate!");
 							return;
 						}
 						else
 						{
-							Faction faction = UtilitySubsystem.getPlayersFaction(player.getUniqueId(), main.factions);
+							Faction faction = UtilitySubsystem.getPlayersFaction(player.getUniqueId(), MedievalFactions.getInstance().factions);
 							if (faction != null)
 							{
 								if (faction.isOfficer(player.getUniqueId()) || faction.isOwner(player.getUniqueId()))
@@ -55,7 +55,7 @@ public class GateCommand extends Command {
 				        			{
 				        				gateName = UtilitySubsystem.createStringFromArgIndexOnwards(2, args);
 				        			}
-									UtilitySubsystem.startCreatingGate(main, player, gateName);
+									UtilitySubsystem.startCreatingGate(player, gateName);
 									//TODO: Config setting for magic gate tool.
 									player.sendMessage(ChatColor.AQUA + "Creating gate '" + gateName + "'.\nClick on a block with a Golden Hoe to select the first point.");
 									return;
@@ -70,7 +70,7 @@ public class GateCommand extends Command {
 					}
 					else if (args[1].equalsIgnoreCase("list"))
 					{
-						Faction faction = UtilitySubsystem.getPlayersFaction(player.getUniqueId(), main.factions);
+						Faction faction = UtilitySubsystem.getPlayersFaction(player.getUniqueId(), MedievalFactions.getInstance().factions);
 						if (faction != null)
 						{
 							if (faction.getGates().size() > 0)
@@ -97,10 +97,10 @@ public class GateCommand extends Command {
 					{
 						if (player.getTargetBlock(null, 16) != null)
 						{
-							if (UtilitySubsystem.isGateBlock(player.getTargetBlock(null, 16), main.factions))
+							if (UtilitySubsystem.isGateBlock(player.getTargetBlock(null, 16), MedievalFactions.getInstance().factions))
 							{
-								Gate gate = UtilitySubsystem.getGate(player.getTargetBlock(null, 16), main.factions);
-								Faction faction = UtilitySubsystem.getGateFaction(gate, main.factions);
+								Gate gate = UtilitySubsystem.getGate(player.getTargetBlock(null, 16), MedievalFactions.getInstance().factions);
+								Faction faction = UtilitySubsystem.getGateFaction(gate, MedievalFactions.getInstance().factions);
 								if (faction != null)
 								{
 									if (faction.isOfficer(player.getUniqueId()) || faction.isOwner(player.getUniqueId()))
@@ -137,12 +137,12 @@ public class GateCommand extends Command {
 					{						
 						if (player.getTargetBlock(null, 16) != null)
 						{
-							if (UtilitySubsystem.isGateBlock(player.getTargetBlock(null, 16), main.factions))
+							if (UtilitySubsystem.isGateBlock(player.getTargetBlock(null, 16), MedievalFactions.getInstance().factions))
 							{
-								Gate gate = UtilitySubsystem.getGate(player.getTargetBlock(null, 16), main.factions);
+								Gate gate = UtilitySubsystem.getGate(player.getTargetBlock(null, 16), MedievalFactions.getInstance().factions);
 								if (args.length > 2)
 								{
-									Faction faction = UtilitySubsystem.getGateFaction(gate, main.factions);
+									Faction faction = UtilitySubsystem.getGateFaction(gate, MedievalFactions.getInstance().factions);
 									if (faction != null)
 									{
 										if (faction.isOfficer(player.getUniqueId()) || faction.isOwner(player.getUniqueId()))

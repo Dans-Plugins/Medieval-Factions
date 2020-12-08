@@ -13,18 +13,12 @@ import java.util.List;
 
 public class AreaEffectCloudApplyEventHandler {
 
-        MedievalFactions main = null;
-
-        public AreaEffectCloudApplyEventHandler(MedievalFactions plugin) {
-            main = plugin;
-        }
-
         public void handle(AreaEffectCloudApplyEvent event) {
             AreaEffectCloud cloud = event.getEntity();
 
-            if (main.utilities.potionTypeBad(cloud.getBasePotionData().getType())){
-                // Search to see if cloud is in the stored list in main
-                for (Pair<Player, AreaEffectCloud> storedCloudPair : main.activeAOEClouds){
+            if (MedievalFactions.getInstance().utilities.potionTypeBad(cloud.getBasePotionData().getType())){
+                // Search to see if cloud is in the stored list in MedievalFactions.getInstance()
+                for (Pair<Player, AreaEffectCloud> storedCloudPair : MedievalFactions.getInstance().activeAOEClouds){
                     if (storedCloudPair.getRight() == cloud){
                         //Check player is not allied with effected entities if any allied remove entity from list.
                         Player attacker = storedCloudPair.getLeft();
@@ -39,9 +33,9 @@ public class AreaEffectCloudApplyEventHandler {
                                     }
 
                                     // If both are in a faction and not at war.
-                                    if (main.utilities.arePlayersInAFaction(attacker, potentialVictim) &&
-                                            (main.utilities.arePlayersFactionsNotEnemies(attacker, potentialVictim) ||
-                                                    main.utilities.arePlayersInSameFaction(attacker, potentialVictim))) {
+                                    if (MedievalFactions.getInstance().utilities.arePlayersInAFaction(attacker, potentialVictim) &&
+                                            (MedievalFactions.getInstance().utilities.arePlayersFactionsNotEnemies(attacker, potentialVictim) ||
+                                                    MedievalFactions.getInstance().utilities.arePlayersInSameFaction(attacker, potentialVictim))) {
                                         alliedVictims.add(potentialVictim);
                                     }
                                 }

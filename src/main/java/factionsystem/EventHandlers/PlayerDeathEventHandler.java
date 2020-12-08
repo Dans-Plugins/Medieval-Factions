@@ -12,21 +12,15 @@ import static factionsystem.Subsystems.UtilitySubsystem.*;
 
 public class PlayerDeathEventHandler {
 
-    MedievalFactions main = null;
-
-    public PlayerDeathEventHandler(MedievalFactions plugin) {
-        main = plugin;
-    }
-
     public void handle(PlayerDeathEvent event) {
         event.getEntity();
         Player player = event.getEntity();
         
         // decrease dying player's power
-        for (PlayerPowerRecord record : main.playerPowerRecords) {
+        for (PlayerPowerRecord record : MedievalFactions.getInstance().playerPowerRecords) {
             if (record.getPlayerUUID().equals(player.getUniqueId())) {
                 record.decreasePowerByTenPercent();
-                if (getPlayersPowerRecord(player.getUniqueId(), main.playerPowerRecords).getPowerLevel() > 0) {
+                if (getPlayersPowerRecord(player.getUniqueId(), MedievalFactions.getInstance().playerPowerRecords).getPowerLevel() > 0) {
                     player.sendMessage(ChatColor.RED + "Your power level has decreased!");
                 }
             }
@@ -36,7 +30,7 @@ public class PlayerDeathEventHandler {
         if (player.getKiller() != null) {
             Player killer = player.getKiller();
 
-            PlayerPowerRecord record = UtilitySubsystem.getPlayersPowerRecord(killer.getUniqueId(), main.playerPowerRecords);
+            PlayerPowerRecord record = UtilitySubsystem.getPlayersPowerRecord(killer.getUniqueId(), MedievalFactions.getInstance().playerPowerRecords);
             if (record != null) {
                 if (record.increasePowerByTenPercent()){
                     killer.sendMessage(ChatColor.GREEN + "Your power level has increased!");
@@ -45,7 +39,7 @@ public class PlayerDeathEventHandler {
         }
 
         // if player is in faction
-        if (isInFaction(player.getUniqueId(), main.factions)) {
+        if (isInFaction(player.getUniqueId(), MedievalFactions.getInstance().factions)) {
 
             // if player is in land claimed by their faction
             double[] playerCoords = new double[2];
@@ -53,12 +47,12 @@ public class PlayerDeathEventHandler {
             playerCoords[1] = player.getLocation().getChunk().getZ();
 
             // check if land is claimed
-            if (UtilitySubsystem.isClaimed(player.getLocation().getChunk(), main.claimedChunks))
+            if (UtilitySubsystem.isClaimed(player.getLocation().getChunk(), MedievalFactions.getInstance().claimedChunks))
             {
             	ClaimedChunk chunk = UtilitySubsystem.getClaimedChunk(player.getLocation().getChunk().getX(), player.getLocation().getChunk().getZ(),
-            			player.getLocation().getWorld().getName(), main.claimedChunks);
+            			player.getLocation().getWorld().getName(), MedievalFactions.getInstance().claimedChunks);
                 // if holder is player's faction
-                if (chunk.getHolder().equalsIgnoreCase(getPlayersFaction(player.getUniqueId(), main.factions).getName()) && getPlayersFaction(player.getUniqueId(), main.factions).getAutoClaimStatus() == false) {
+                if (chunk.getHolder().equalsIgnoreCase(getPlayersFaction(player.getUniqueId(), MedievalFactions.getInstance().factions).getName()) && getPlayersFaction(player.getUniqueId(), MedievalFactions.getInstance().factions).getAutoClaimStatus() == false) {
 
                     // if not killed by another player
                     if (!(player.getKiller() instanceof Player)) {
