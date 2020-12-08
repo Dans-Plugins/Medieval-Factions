@@ -99,11 +99,7 @@ public class MedievalFactions extends JavaPlugin {
         this.getServer().getPluginManager().registerEvents(new JoiningLeavingAndSpawningHandler(), this);
 
         // damage, effects and death
-        this.getServer().getPluginManager().registerEvents(new EntityDamageByEntityEventHandler(), this);
-        this.getServer().getPluginManager().registerEvents(new AreaEffectCloudApplyEventHandler(), this);
-        this.getServer().getPluginManager().registerEvents(new LingeringPotionSplashEventHandler(), this);
-        this.getServer().getPluginManager().registerEvents(new PlayerDeathEventHandler(), this);
-        this.getServer().getPluginManager().registerEvents(new PotionSplashEventHandler(), this);
+        this.getServer().getPluginManager().registerEvents(new DamageEffectsAndDeathHandler(), this);
 
         // movement
         this.getServer().getPluginManager().registerEvents(new MoveHandler(), this);
