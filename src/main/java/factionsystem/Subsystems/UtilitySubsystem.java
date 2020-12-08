@@ -880,7 +880,7 @@ public class UtilitySubsystem {
         return -1;
     }
 
-    public Chunk getChunkByDirection(Chunk origin, String direction) {
+    private Chunk getChunkByDirection(Chunk origin, String direction) {
 
         int xpos = -1;
         int zpos = -1;
@@ -905,12 +905,12 @@ public class UtilitySubsystem {
         return origin.getWorld().getChunkAt(xpos, zpos);
     }
 
-    public ClaimedChunk getClaimedChunk(Chunk chunk) {
+    private ClaimedChunk getClaimedChunk(Chunk chunk) {
         return getClaimedChunk(chunk.getX(), chunk.getZ(), chunk.getWorld().getName(), MedievalFactions.getInstance().claimedChunks);
     }
 
     // this will return true if the chunks to the North, East, South and West of the target are claimed by the same faction as the target
-    public boolean isClaimedChunkSurroundedByChunksClaimedBySameFaction(ClaimedChunk target) {
+    private boolean isClaimedChunkSurroundedByChunksClaimedBySameFaction(ClaimedChunk target) {
         ClaimedChunk northernClaimedChunk = getClaimedChunk(getChunkByDirection(target.getChunk(), "north"));
         ClaimedChunk easternClaimedChunk = getClaimedChunk(getChunkByDirection(target.getChunk(), "east"));
         ClaimedChunk southernClaimedChunk = getClaimedChunk(getChunkByDirection(target.getChunk(), "south"));
