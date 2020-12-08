@@ -3,6 +3,8 @@ package factionsystem.EventHandlers;
 import factionsystem.MedievalFactions;
 import factionsystem.Objects.Faction;
 import org.bukkit.ChatColor;
+import org.bukkit.event.EventHandler;
+import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerMoveEvent;
 
 import java.util.Objects;
@@ -10,8 +12,9 @@ import java.util.Objects;
 import static factionsystem.Subsystems.UtilitySubsystem.*;
 import static org.bukkit.Bukkit.getServer;
 
-public class PlayerMoveEventHandler {
+public class PlayerMoveEventHandler implements Listener {
 
+    @EventHandler()
     public void handle(PlayerMoveEvent event) {
         // Full disclosure, I feel like this method might be extremely laggy, especially if a player is travelling.
         // May have to optimise this, or just not have this mechanic.

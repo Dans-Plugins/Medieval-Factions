@@ -41,7 +41,7 @@ public class MedievalFactions extends JavaPlugin implements Listener {
     private static MedievalFactions instance;
 
     // version
-    public static String version = "v3.6.0.3-beta-3";
+    public static String version = "v3.6.0.3-beta-4";
 
     // scheduler
     public Scheduler scheduler = new Scheduler();
@@ -103,6 +103,7 @@ public class MedievalFactions extends JavaPlugin implements Listener {
         scheduler.scheduleAutosave();
 
         this.getServer().getPluginManager().registerEvents(this, this);
+        this.getServer().getPluginManager().registerEvents(new PlayerMoveEventHandler(), this);
 
         storage.load();
 
@@ -132,12 +133,6 @@ public class MedievalFactions extends JavaPlugin implements Listener {
     @EventHandler()
     public void onDamage(EntityDamageByEntityEvent event) {
         EntityDamageByEntityEventHandler handler = new EntityDamageByEntityEventHandler();
-        handler.handle(event);
-    }
-
-    @EventHandler()
-    public void onPlayerMove(PlayerMoveEvent event) {
-        PlayerMoveEventHandler handler = new PlayerMoveEventHandler();
         handler.handle(event);
     }
 
