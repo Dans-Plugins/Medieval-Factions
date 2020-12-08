@@ -12,7 +12,7 @@ import java.util.Objects;
 import static factionsystem.Subsystems.UtilitySubsystem.*;
 import static org.bukkit.Bukkit.getServer;
 
-public class PlayerMoveEventHandler implements Listener {
+public class MoveHandler implements Listener {
 
     @EventHandler()
     public void handle(PlayerMoveEvent event) {

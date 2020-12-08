@@ -18,16 +18,6 @@ import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.AreaEffectCloud;
 import org.bukkit.entity.Player;
-import org.bukkit.event.EventHandler;
-import org.bukkit.event.Listener;
-import org.bukkit.event.block.BlockBreakEvent;
-import org.bukkit.event.block.BlockPlaceEvent;
-import org.bukkit.event.entity.*;
-import org.bukkit.event.player.AsyncPlayerChatEvent;
-import org.bukkit.event.player.PlayerInteractEvent;
-import org.bukkit.event.player.PlayerJoinEvent;
-import org.bukkit.event.player.PlayerMoveEvent;
-import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import java.io.File;
@@ -102,19 +92,38 @@ public class MedievalFactions extends JavaPlugin {
         scheduler.schedulePowerDecrease();
         scheduler.scheduleAutosave();
 
-        this.getServer().getPluginManager().registerEvents(new AreaEffectCloudApplyEventHandler(), this);
-        this.getServer().getPluginManager().registerEvents(new AsyncPlayerChatEventHandler(), this);
-        this.getServer().getPluginManager().registerEvents(new BlockBreakEventHandler(), this);
-        this.getServer().getPluginManager().registerEvents(new BlockPlaceEventHandler(), this);
-        this.getServer().getPluginManager().registerEvents(new EntityDamageByEntityEventHandler(), this);
-        this.getServer().getPluginManager().registerEvents(new EntitySpawnEventHandler(), this);
-        this.getServer().getPluginManager().registerEvents(new LingeringPotionSplashEventHandler(), this);
-        this.getServer().getPluginManager().registerEvents(new PlayerDeathEventHandler(), this);
-        this.getServer().getPluginManager().registerEvents(new PlayerInteractEventHandler(), this);
+        // blocks and interaction
+        this.getServer().getPluginManager().registerEvents(new BlockInteractionHandler(), this);
+
+        // joining, leaving and spawning
         this.getServer().getPluginManager().registerEvents(new PlayerJoinEventHandler(), this);
         this.getServer().getPluginManager().registerEvents(new PlayerLeaveEventHandler(), this);
-        this.getServer().getPluginManager().registerEvents(new PlayerMoveEventHandler(), this);
+        this.getServer().getPluginManager().registerEvents(new EntitySpawnEventHandler(), this);
+
+        // damage, effects and death
+        this.getServer().getPluginManager().registerEvents(new EntityDamageByEntityEventHandler(), this);
+        this.getServer().getPluginManager().registerEvents(new AreaEffectCloudApplyEventHandler(), this);
+        this.getServer().getPluginManager().registerEvents(new LingeringPotionSplashEventHandler(), this);
+        this.getServer().getPluginManager().registerEvents(new PlayerDeathEventHandler(), this);
         this.getServer().getPluginManager().registerEvents(new PotionSplashEventHandler(), this);
+
+        // movement
+        this.getServer().getPluginManager().registerEvents(new MoveHandler(), this);
+
+        // chat
+        this.getServer().getPluginManager().registerEvents(new ChatHandler(), this);
+
+
+
+
+
+
+
+
+
+
+
+
 
         storage.load();
 

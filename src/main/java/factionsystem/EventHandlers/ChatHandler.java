@@ -10,7 +10,7 @@ import org.bukkit.event.player.AsyncPlayerChatEvent;
 import static factionsystem.Subsystems.UtilitySubsystem.getPlayersFaction;
 import static factionsystem.Subsystems.UtilitySubsystem.sendAllPlayersInFactionMessage;
 
-public class AsyncPlayerChatEventHandler implements Listener {
+public class ChatHandler implements Listener {
 
     @EventHandler()
     public void handle(AsyncPlayerChatEvent event) {
