@@ -8,11 +8,7 @@ import org.bukkit.entity.Player;
 
 import static factionsystem.Subsystems.UtilitySubsystem.*;
 
-public class AllyCommand extends Command {
-
-    public AllyCommand() {
-        super();
-    }
+public class AllyCommand {
 
     public void requestAlliance(CommandSender sender, String[] args) {
         if (sender instanceof Player) {

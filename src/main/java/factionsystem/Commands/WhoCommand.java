@@ -8,11 +8,7 @@ import org.bukkit.entity.Player;
 
 import static factionsystem.Subsystems.UtilitySubsystem.*;
 
-public class WhoCommand extends Command {
-
-    public WhoCommand() {
-        super();
-    }
+public class WhoCommand {
 
     public void sendInformation(CommandSender sender, String[] args) {
         if (sender instanceof Player) {

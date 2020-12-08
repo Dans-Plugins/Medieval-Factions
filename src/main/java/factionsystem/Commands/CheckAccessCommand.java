@@ -5,11 +5,7 @@ import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
-public class CheckAccessCommand extends Command {
-
-    public CheckAccessCommand() {
-        super();
-    }
+public class CheckAccessCommand {
 
     public void checkAccess(CommandSender sender, String[] args) {
         // if sender is player and if player has permission

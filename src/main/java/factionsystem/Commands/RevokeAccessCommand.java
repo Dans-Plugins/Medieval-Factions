@@ -7,11 +7,7 @@ import org.bukkit.entity.Player;
 
 import static factionsystem.Subsystems.UtilitySubsystem.findUUIDBasedOnPlayerName;
 
-public class RevokeAccessCommand extends Command {
-
-    public RevokeAccessCommand() {
-        super();
-    }
+public class RevokeAccessCommand {
 
     public void revokeAccess(CommandSender sender, String[] args) {
 

@@ -9,11 +9,7 @@ import org.bukkit.entity.Player;
 
 import static factionsystem.Subsystems.UtilitySubsystem.*;
 
-public class SetHomeCommand extends Command {
-
-    public SetHomeCommand() {
-        super();
-    }
+public class SetHomeCommand {
 
     public void setHome(CommandSender sender) {
         if (sender instanceof Player) {

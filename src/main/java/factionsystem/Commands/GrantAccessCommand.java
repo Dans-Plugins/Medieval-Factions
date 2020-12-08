@@ -7,11 +7,7 @@ import org.bukkit.entity.Player;
 
 import static factionsystem.Subsystems.UtilitySubsystem.findUUIDBasedOnPlayerName;
 
-public class GrantAccessCommand extends Command {
-
-    public GrantAccessCommand() {
-        super();
-    }
+public class GrantAccessCommand {
 
     public void grantAccess(CommandSender sender, String[] args) {
         if (sender instanceof Player) {

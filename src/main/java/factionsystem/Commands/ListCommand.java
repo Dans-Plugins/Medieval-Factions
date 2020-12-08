@@ -9,11 +9,7 @@ import java.util.ArrayList;
 
 import static factionsystem.Subsystems.UtilitySubsystem.getChunksClaimedByFaction;
 
-public class ListCommand extends Command {
-
-    public ListCommand() {
-        super();
-    }
+public class ListCommand {
 
     public boolean listFactions(CommandSender sender) {
 

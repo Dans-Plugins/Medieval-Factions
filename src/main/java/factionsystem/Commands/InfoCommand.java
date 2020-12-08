@@ -8,11 +8,7 @@ import org.bukkit.entity.Player;
 
 import static factionsystem.Subsystems.UtilitySubsystem.*;
 
-public class InfoCommand extends Command {
-
-    public InfoCommand() {
-        super();
-    }
+public class InfoCommand {
 
     public void showInfo(CommandSender sender, String[] args) {
         if (sender instanceof Player) {

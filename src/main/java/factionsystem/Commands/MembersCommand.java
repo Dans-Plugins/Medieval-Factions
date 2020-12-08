@@ -8,11 +8,7 @@ import org.bukkit.entity.Player;
 
 import static factionsystem.Subsystems.UtilitySubsystem.*;
 
-public class MembersCommand extends Command {
-
-    public MembersCommand() {
-        super();
-    }
+public class MembersCommand {
 
     public void showMembers(CommandSender sender, String[] args) {
         if (sender instanceof Player) {

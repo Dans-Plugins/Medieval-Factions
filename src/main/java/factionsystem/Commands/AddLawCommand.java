@@ -8,11 +8,7 @@ import org.bukkit.entity.Player;
 
 import static factionsystem.Subsystems.UtilitySubsystem.*;
 
-public class AddLawCommand extends Command {
-
-    public AddLawCommand() {
-        super();
-    }
+public class AddLawCommand {
 
     public void addLaw(CommandSender sender, String[] args) {
         // player & perm check

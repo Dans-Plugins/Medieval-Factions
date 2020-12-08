@@ -11,11 +11,7 @@ import java.util.UUID;
 import static factionsystem.Subsystems.UtilitySubsystem.findUUIDBasedOnPlayerName;
 import static org.bukkit.Bukkit.getServer;
 
-public class TransferCommand extends Command {
-
-    public TransferCommand() {
-        super();
-    }
+public class TransferCommand {
 
     public boolean transferOwnership(CommandSender sender, String[] args) {
         if (sender instanceof Player) {

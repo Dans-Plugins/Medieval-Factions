@@ -5,11 +5,7 @@ import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
-public class LockCommand extends Command { ;
-
-    public LockCommand() {
-        super();
-    }
+public class LockCommand { ;
 
     public void lockBlock(CommandSender sender, String[] args) {
         // check if player

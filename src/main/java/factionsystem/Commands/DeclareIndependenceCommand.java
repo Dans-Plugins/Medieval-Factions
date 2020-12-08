@@ -6,11 +6,7 @@ import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
-public class DeclareIndependenceCommand extends Command {
-
-    public DeclareIndependenceCommand() {
-        super();
-    }
+public class DeclareIndependenceCommand {
 
     public void declareIndependence(CommandSender sender) {
 

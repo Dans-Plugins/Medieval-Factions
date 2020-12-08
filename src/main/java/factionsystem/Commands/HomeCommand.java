@@ -12,11 +12,7 @@ import org.bukkit.entity.Player;
 import static factionsystem.Subsystems.UtilitySubsystem.*;
 import static org.bukkit.Bukkit.getServer;
 
-public class HomeCommand extends Command {
-
-    public HomeCommand() {
-        super();
-    }
+public class HomeCommand {
 
     public void teleportPlayer(CommandSender sender) {
         if (sender instanceof Player) {

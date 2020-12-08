@@ -8,11 +8,8 @@ import org.bukkit.entity.Player;
 
 import static factionsystem.Subsystems.UtilitySubsystem.*;
 
-public class MakePeaceCommand extends Command {
+public class MakePeaceCommand {
 
-    public MakePeaceCommand() {
-        super();
-    }
 
     public void makePeace(CommandSender sender, String[] args) {
         if (sender instanceof Player) {

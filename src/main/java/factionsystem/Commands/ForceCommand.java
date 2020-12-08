@@ -12,11 +12,7 @@ import java.util.ArrayList;
 
 import static factionsystem.Subsystems.UtilitySubsystem.*;
 
-public class ForceCommand extends Command {
-
-    public ForceCommand() {
-        super();
-    }
+public class ForceCommand {
 
     public boolean force(CommandSender sender, String[] args) {
         if (args.length > 1) {

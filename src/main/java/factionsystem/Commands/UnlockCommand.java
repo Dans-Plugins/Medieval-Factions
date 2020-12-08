@@ -5,11 +5,7 @@ import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
-public class UnlockCommand extends Command {
-
-    public UnlockCommand() {
-        super();
-    }
+public class UnlockCommand {
 
     public void unlockBlock(CommandSender sender, String[] args) {
         // check if player

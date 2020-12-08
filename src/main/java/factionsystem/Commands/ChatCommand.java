@@ -7,11 +7,7 @@ import org.bukkit.entity.Player;
 
 import static factionsystem.Subsystems.UtilitySubsystem.isInFaction;
 
-public class ChatCommand extends Command {
-
-    public ChatCommand() {
-        super();
-    }
+public class ChatCommand {
 
     public void toggleFactionChat(CommandSender sender) {
         if (sender instanceof Player) {

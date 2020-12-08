@@ -9,11 +9,7 @@ import factionsystem.MedievalFactions;
 import factionsystem.Objects.Duel;
 import factionsystem.Subsystems.UtilitySubsystem;
 
-public class DuelCommand extends Command {
-
-	public DuelCommand() {
-		super();
-	}
+public class DuelCommand {
 	
 	public void handleDuel(CommandSender sender, String[] args) {
 		if (sender instanceof Player)
