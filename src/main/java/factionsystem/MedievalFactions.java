@@ -92,20 +92,7 @@ public class MedievalFactions extends JavaPlugin {
         scheduler.schedulePowerDecrease();
         scheduler.scheduleAutosave();
 
-        // blocks and interaction
-        this.getServer().getPluginManager().registerEvents(new BlockInteractionHandler(), this);
-
-        // joining, leaving and spawning
-        this.getServer().getPluginManager().registerEvents(new JoiningLeavingAndSpawningHandler(), this);
-
-        // damage, effects and death
-        this.getServer().getPluginManager().registerEvents(new DamageEffectsAndDeathHandler(), this);
-
-        // movement
-        this.getServer().getPluginManager().registerEvents(new MoveHandler(), this);
-
-        // chat
-        this.getServer().getPluginManager().registerEvents(new ChatHandler(), this);
+        EventRegistry.registerEvents();
 
         storage.load();
 
