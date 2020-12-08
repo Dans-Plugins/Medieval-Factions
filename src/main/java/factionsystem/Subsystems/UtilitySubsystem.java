@@ -248,17 +248,6 @@ public class UtilitySubsystem {
         return block.getType() == Material.CHEST;
     }
 
-    public boolean hasPowerRecord(UUID playerUUID) {
-        for (PlayerPowerRecord record : MedievalFactions.getInstance().playerPowerRecords){
-            if (record.getPlayerUUID().equals(playerUUID)){
-                return true;
-            }
-        }
-        return false;
-    }
-    
-
-    
     public static PlayerActivityRecord getPlayerActivityRecord(UUID uuid, ArrayList<PlayerActivityRecord> playerActivityRecords)
     {
     	for (PlayerActivityRecord record : playerActivityRecords)
@@ -303,26 +292,6 @@ public class UtilitySubsystem {
             }
         }
         return null;
-    }
-
-    public ArrayList<Faction> getFactionsSortedByPower() {
-        ArrayList<Faction> copiedList = new ArrayList<>(MedievalFactions.getInstance().factions);
-        ArrayList<Faction> sortedList = new ArrayList<>();
-        while (copiedList.size() != 0) {
-            int mostPower = 0;
-            int counter = 0;
-            int nextMostPowerfulFaction = 0;
-            for (Faction faction : copiedList) {
-                if (faction.getCumulativePowerLevel() > mostPower) {
-                    mostPower = faction.getCumulativePowerLevel();
-                    nextMostPowerfulFaction = counter;
-                }
-                counter++;
-            }
-            sortedList.add(copiedList.get(nextMostPowerfulFaction));
-            copiedList.remove(nextMostPowerfulFaction);
-        }
-        return sortedList;
     }
     
     public boolean isGateBlock(Block targetBlock)
