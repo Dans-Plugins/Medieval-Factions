@@ -144,6 +144,11 @@ public class UtilitySubsystem {
                     numExperiencingPowerDecay++;
                 }
             }
+            else {
+                PlayerActivityRecord newRecord = new PlayerActivityRecord(uuid, 1);
+                newRecord.setLastLogout(ZonedDateTime.now());
+                MedievalFactions.getInstance().playerActivityRecords.add(newRecord);
+            }
         }
         return (numExperiencingPowerDecay == faction.getMemberArrayList().size());
     }
