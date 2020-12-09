@@ -132,9 +132,17 @@ public class UtilitySubsystem {
         int numExperiencingPowerDecay = 0;
         for (UUID uuid : faction.getMemberArrayList()) {
             PlayerActivityRecord record = getPlayerActivityRecord(uuid, MedievalFactions.getInstance().playerActivityRecords);
-            if (!getPlayer(uuid).isOnline() && MedievalFactions.getInstance().getConfig().getBoolean("powerDecreases")
-                    && record.getMinutesSinceLastLogout() > MedievalFactions.getInstance().getConfig().getInt("minutesBeforePowerDecrease")) {
-                numExperiencingPowerDecay++;
+            if (record != null) {
+                Player player = getServer().getPlayer(record.getPlayerUUID());
+                boolean isOnline = false;
+                if (player != null)
+                {
+                    isOnline = player.isOnline();
+                }
+                if (!isOnline && MedievalFactions.getInstance().getConfig().getBoolean("powerDecreases")
+                        && record.getMinutesSinceLastLogout() > MedievalFactions.getInstance().getConfig().getInt("minutesBeforePowerDecrease")) {
+                    numExperiencingPowerDecay++;
+                }
             }
         }
         return (numExperiencingPowerDecay == faction.getMemberArrayList().size());
