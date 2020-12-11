@@ -1,5 +1,6 @@
 package factionsystem.Commands;
 
+import factionsystem.EphemeralData;
 import factionsystem.MedievalFactions;
 import factionsystem.Objects.Faction;
 import org.bukkit.Bukkit;
@@ -32,7 +33,7 @@ public class KickCommand {
                                             faction.removeOfficer(playerUUID);
                                         }
 
-                                        MedievalFactions.getInstance().playersInFactionChat.remove(playerUUID);
+                                        EphemeralData.getInstance().getPlayersInFactionChat().remove(playerUUID);
 
                                         faction.removeMember(playerUUID, getPlayersPowerRecord(player.getUniqueId(), MedievalFactions.getInstance().playerPowerRecords).getPowerLevel());
                                         try {

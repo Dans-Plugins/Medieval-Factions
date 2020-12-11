@@ -1,5 +1,6 @@
 package factionsystem.Commands;
 
+import factionsystem.EphemeralData;
 import factionsystem.MedievalFactions;
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
@@ -22,9 +23,9 @@ public class GrantAccessCommand {
                 }
 
                 // if not already granting access
-                if (!MedievalFactions.getInstance().playersGrantingAccess.containsKey(player.getUniqueId())) {
+                if (!EphemeralData.getInstance().getPlayersGrantingAccess().containsKey(player.getUniqueId())) {
                     // save target name and player name in hashmap in main
-                    MedievalFactions.getInstance().playersGrantingAccess.put(player.getUniqueId(), findUUIDBasedOnPlayerName(args[1]));
+                    EphemeralData.getInstance().getPlayersGrantingAccess().put(player.getUniqueId(), findUUIDBasedOnPlayerName(args[1]));
                     player.sendMessage(ChatColor.GREEN + "Right click a chest or door to grant " + args[1] + " access. Type /mf grantaccess cancel to cancel this.");
                 }
                 else {

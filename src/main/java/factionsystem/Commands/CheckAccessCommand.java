@@ -1,5 +1,6 @@
 package factionsystem.Commands;
 
+import factionsystem.EphemeralData;
 import factionsystem.MedievalFactions;
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
@@ -16,15 +17,15 @@ public class CheckAccessCommand {
             if (args.length > 1) {
                 if (args[1].equalsIgnoreCase("cancel")) {
                     player.sendMessage(ChatColor.RED + "Cancelled!");
-                    if (MedievalFactions.getInstance().playersCheckingAccess.contains(player.getUniqueId())) {
-                        MedievalFactions.getInstance().playersCheckingAccess.remove(player.getUniqueId());
+                    if (EphemeralData.getInstance().getPlayersCheckingAccess().contains(player.getUniqueId())) {
+                        EphemeralData.getInstance().getPlayersCheckingAccess().remove(player.getUniqueId());
                         return;
                     }
                 }
             }
 
-            if (!MedievalFactions.getInstance().playersCheckingAccess.contains(player.getUniqueId())) {
-                MedievalFactions.getInstance().playersCheckingAccess.add(player.getUniqueId());
+            if (!EphemeralData.getInstance().getPlayersCheckingAccess().contains(player.getUniqueId())) {
+                EphemeralData.getInstance().getPlayersCheckingAccess().add(player.getUniqueId());
                 player.sendMessage(ChatColor.GREEN + "Right click a locked block to check who has access to it! Type '/mf checkaccess cancel' to cancel!");
             }
             else {

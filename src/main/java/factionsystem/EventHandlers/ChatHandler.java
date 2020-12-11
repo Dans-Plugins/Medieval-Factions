@@ -1,5 +1,6 @@
 package factionsystem.EventHandlers;
 
+import factionsystem.EphemeralData;
 import factionsystem.MedievalFactions;
 import factionsystem.Objects.Faction;
 import org.bukkit.ChatColor;
@@ -14,7 +15,7 @@ public class ChatHandler implements Listener {
 
     @EventHandler()
     public void handle(AsyncPlayerChatEvent event) {
-        if (MedievalFactions.getInstance().playersInFactionChat.contains(event.getPlayer().getUniqueId())) {
+        if (EphemeralData.getInstance().getPlayersInFactionChat().contains(event.getPlayer().getUniqueId())) {
             Faction playersFaction = getPlayersFaction(event.getPlayer().getUniqueId(), MedievalFactions.getInstance().factions);
             if (playersFaction != null) {
                 String message = event.getMessage();

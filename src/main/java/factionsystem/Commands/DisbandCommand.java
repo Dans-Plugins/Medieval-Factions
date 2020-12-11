@@ -1,5 +1,6 @@
 package factionsystem.Commands;
 
+import factionsystem.EphemeralData;
 import factionsystem.MedievalFactions;
 import factionsystem.Objects.Faction;
 import org.bukkit.ChatColor;
@@ -46,7 +47,7 @@ public class DisbandCommand {
                     if (MedievalFactions.getInstance().factions.get(i).isOwner(player.getUniqueId())) {
                         owner = true;
                         if (MedievalFactions.getInstance().factions.get(i).getPopulation() == 1) {
-                            MedievalFactions.getInstance().playersInFactionChat.remove(player.getUniqueId());
+                            EphemeralData.getInstance().getPlayersInFactionChat().remove(player.getUniqueId());
                             removeFaction(i);
                             player.sendMessage(ChatColor.GREEN + "Faction successfully disbanded.");
                             return true;

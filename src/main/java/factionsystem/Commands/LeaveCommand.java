@@ -1,5 +1,6 @@
 package factionsystem.Commands;
 
+import factionsystem.EphemeralData;
 import factionsystem.MedievalFactions;
 import factionsystem.Objects.Faction;
 import org.bukkit.ChatColor;
@@ -46,7 +47,7 @@ public class LeaveCommand {
                                         }
                                     }
 
-                                    MedievalFactions.getInstance().playersInFactionChat.remove(player.getUniqueId());
+                                    EphemeralData.getInstance().getPlayersInFactionChat().remove(player.getUniqueId());
 
                                     // delete file associated with faction
                                     System.out.println("Attempting to delete file plugins/MedievalFactions/" + MedievalFactions.getInstance().factions.get(i).getName() + ".txt");
@@ -83,8 +84,8 @@ public class LeaveCommand {
                                     MedievalFactions.getInstance().factions.get(i).removeOfficer(player.getUniqueId());
                                 }
 
-                                if (MedievalFactions.getInstance().playersInFactionChat.contains(player.getUniqueId())) {
-                                    MedievalFactions.getInstance().playersInFactionChat.remove(player.getUniqueId());
+                                if (EphemeralData.getInstance().getPlayersInFactionChat().contains(player.getUniqueId())) {
+                                    EphemeralData.getInstance().getPlayersInFactionChat().remove(player.getUniqueId());
                                 }
 
                                 MedievalFactions.getInstance().factions.get(i).removeMember(player.getUniqueId(), getPlayersPowerRecord(player.getUniqueId(), MedievalFactions.getInstance().playerPowerRecords).getPowerLevel());

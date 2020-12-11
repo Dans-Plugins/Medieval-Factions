@@ -49,20 +49,6 @@ public class MedievalFactions extends JavaPlugin {
     public ArrayList<LockedBlock> lockedBlocks = new ArrayList<>();
     public ArrayList<Duel> duelingPlayers = new ArrayList<Duel>();
 
-    // temporary lists
-    public HashMap<UUID, Gate> creatingGatePlayers = new HashMap<>(); 
-    public ArrayList<UUID> lockingPlayers = new ArrayList<>();
-    public ArrayList<UUID> unlockingPlayers = new ArrayList<>();
-    // Left user granting access, right user receiving access;
-    public HashMap<UUID, UUID> playersGrantingAccess = new HashMap<>();
-    public ArrayList<UUID> playersCheckingAccess = new ArrayList<>();
-    // Left user granting access, right user receiving access;
-    public HashMap<UUID, UUID> playersRevokingAccess = new HashMap<>();
-    public ArrayList<UUID> playersInFactionChat = new ArrayList<>();
-    public ArrayList<UUID> adminsBypassingProtections = new ArrayList<>();
-    // List of players who made the cloud and the cloud itself in a pair
-    public ArrayList<Pair<Player, AreaEffectCloud>> activeAOEClouds = new ArrayList<>();
-
     public static MedievalFactions getInstance() {
         return instance;
     }

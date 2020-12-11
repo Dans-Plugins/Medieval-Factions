@@ -1,5 +1,6 @@
 package factionsystem.Commands;
 
+import factionsystem.EphemeralData;
 import factionsystem.MedievalFactions;
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
@@ -14,12 +15,12 @@ public class BypassCommand {
 
             if (player.hasPermission("mf.bypass") || player.hasPermission("mf.admin")) {
 
-                if (!MedievalFactions.getInstance().adminsBypassingProtections.contains(player.getUniqueId())) {
-                    MedievalFactions.getInstance().adminsBypassingProtections.add(player.getUniqueId());
+                if (!EphemeralData.getInstance().getAdminsBypassingProtections().contains(player.getUniqueId())) {
+                    EphemeralData.getInstance().getAdminsBypassingProtections().add(player.getUniqueId());
                     player.sendMessage(ChatColor.GREEN + "You are now bypassing protections provided by Medieval Factions.");
                 }
                 else {
-                    MedievalFactions.getInstance().adminsBypassingProtections.remove(player.getUniqueId());
+                    EphemeralData.getInstance().getAdminsBypassingProtections().remove(player.getUniqueId());
                     player.sendMessage(ChatColor.GREEN + "You are no longer bypassing protections provided by Medieval Factions.");
                 }
 

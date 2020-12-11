@@ -1,5 +1,6 @@
 package factionsystem.Subsystems;
 
+import factionsystem.EphemeralData;
 import factionsystem.MedievalFactions;
 import factionsystem.Objects.ClaimedChunk;
 import factionsystem.Objects.Duel;
@@ -158,7 +159,7 @@ public class UtilitySubsystem {
         playerCoords[0] = player.getLocation().getChunk().getX();
         playerCoords[1] = player.getLocation().getChunk().getZ();
 
-        if (MedievalFactions.getInstance().adminsBypassingProtections.contains(player.getUniqueId())) {
+        if (EphemeralData.getInstance().getAdminsBypassingProtections().contains(player.getUniqueId())) {
         	ClaimedChunk chunk = isChunkClaimed(playerCoords[0], playerCoords[1], player.getLocation().getWorld().getName());
             if (chunk != null)
             {
@@ -377,11 +378,11 @@ public class UtilitySubsystem {
     
     public static void startCreatingGate(Player player, String name)
     {
-    	if (!MedievalFactions.getInstance().creatingGatePlayers.containsKey(player.getUniqueId()))
+    	if (!EphemeralData.getInstance().getCreatingGatePlayers().containsKey(player.getUniqueId()))
     	{
     		Gate gate = new Gate();
     		gate.setName(name);
-    		MedievalFactions.getInstance().creatingGatePlayers.put(player.getUniqueId(), gate);
+    		EphemeralData.getInstance().getCreatingGatePlayers().put(player.getUniqueId(), gate);
     	}
     	else
     	{
