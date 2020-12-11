@@ -32,10 +32,13 @@ public class EphemeralData {
     private ArrayList<Pair<Player, AreaEffectCloud>> activeAOEClouds = new ArrayList<>();
 
     private EphemeralData() {
-        instance = this;
+
     }
 
     public static EphemeralData getInstance() {
+        if (instance == null) {
+            instance = new EphemeralData();
+        }
         return instance;
     }
 
