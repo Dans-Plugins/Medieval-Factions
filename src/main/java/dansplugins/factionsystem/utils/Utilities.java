@@ -4,7 +4,7 @@ import dansplugins.factionsystem.ConfigManager;
 import dansplugins.factionsystem.MedievalFactions;
 import dansplugins.factionsystem.data.EphemeralData;
 import dansplugins.factionsystem.data.PersistentData;
-import dansplugins.factionsystem.domainobjects.*;
+import dansplugins.factionsystem.objects.*;
 import org.bukkit.*;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Player;

@@ -1,9 +1,9 @@
 package dansplugins.factionsystem;
 
 import dansplugins.factionsystem.data.PersistentData;
-import dansplugins.factionsystem.domainobjects.Faction;
-import dansplugins.factionsystem.domainobjects.PlayerActivityRecord;
-import dansplugins.factionsystem.domainobjects.PlayerPowerRecord;
+import dansplugins.factionsystem.objects.Faction;
+import dansplugins.factionsystem.objects.PlayerActivityRecord;
+import dansplugins.factionsystem.objects.PlayerPowerRecord;
 import dansplugins.factionsystem.utils.Utilities;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;

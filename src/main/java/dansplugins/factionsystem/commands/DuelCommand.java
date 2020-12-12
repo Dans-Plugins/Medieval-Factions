@@ -1,7 +1,7 @@
 package dansplugins.factionsystem.commands;
 
 import dansplugins.factionsystem.data.EphemeralData;
-import dansplugins.factionsystem.domainobjects.Duel;
+import dansplugins.factionsystem.objects.Duel;
 import dansplugins.factionsystem.utils.Utilities;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;

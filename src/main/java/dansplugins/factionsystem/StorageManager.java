@@ -5,7 +5,7 @@ import com.google.gson.GsonBuilder;
 import com.google.gson.reflect.TypeToken;
 import com.google.gson.stream.JsonReader;
 import dansplugins.factionsystem.data.PersistentData;
-import dansplugins.factionsystem.domainobjects.*;
+import dansplugins.factionsystem.objects.*;
 
 import java.io.*;
 import java.lang.reflect.Type;

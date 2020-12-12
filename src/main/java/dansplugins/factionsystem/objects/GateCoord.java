@@ -1,4 +1,4 @@
-package dansplugins.factionsystem.domainobjects;
+package dansplugins.factionsystem.objects;
 
 import org.bukkit.block.Block;
 

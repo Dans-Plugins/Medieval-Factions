@@ -1,4 +1,4 @@
-package dansplugins.factionsystem.domainobjects;
+package dansplugins.factionsystem.objects;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;

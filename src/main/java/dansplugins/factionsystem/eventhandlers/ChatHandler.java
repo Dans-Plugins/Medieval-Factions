@@ -2,7 +2,7 @@ package dansplugins.factionsystem.eventhandlers;
 
 import dansplugins.factionsystem.data.EphemeralData;
 import dansplugins.factionsystem.data.PersistentData;
-import dansplugins.factionsystem.domainobjects.Faction;
+import dansplugins.factionsystem.objects.Faction;
 import dansplugins.factionsystem.utils.Utilities;
 import org.bukkit.ChatColor;
 import org.bukkit.event.EventHandler;
