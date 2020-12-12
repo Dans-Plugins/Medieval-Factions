@@ -70,7 +70,7 @@ public class MedievalFactions extends JavaPlugin {
     }
 
     @Override
-    public void onDisable(){
+    public void onDisable() {
         System.out.println("Medieval Factions plugin disabling....");
         StorageSubsystem.getInstance().save();
         System.out.println("Medieval Factions plugin disabled.");
