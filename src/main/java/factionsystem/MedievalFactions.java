@@ -17,7 +17,7 @@ public class MedievalFactions extends JavaPlugin {
     private static MedievalFactions instance;
 
     // version
-    public static String version = "v3.6.0.3-beta-7";
+    public static String version = "v3.6.0.3-beta-8";
 
     // scheduler
     public Scheduler scheduler = new Scheduler();
