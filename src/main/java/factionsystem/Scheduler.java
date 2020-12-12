@@ -1,5 +1,6 @@
 package factionsystem;
 
+import factionsystem.Data.PersistentData;
 import factionsystem.Objects.Faction;
 import factionsystem.Objects.PlayerActivityRecord;
 import factionsystem.Objects.PlayerPowerRecord;

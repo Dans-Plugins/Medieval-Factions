@@ -3,7 +3,7 @@ package factionsystem.Objects;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import factionsystem.MedievalFactions;
-import factionsystem.PersistentData;
+import factionsystem.Data.PersistentData;
 import factionsystem.Subsystems.UtilitySubsystem;
 
 import java.io.File;

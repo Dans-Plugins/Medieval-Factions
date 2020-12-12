@@ -1,11 +1,11 @@
 package factionsystem.EventHandlers;
 
-import factionsystem.EphemeralData;
+import factionsystem.Data.EphemeralData;
 import factionsystem.MedievalFactions;
 import factionsystem.Objects.ClaimedChunk;
 import factionsystem.Objects.Duel;
 import factionsystem.Objects.PlayerPowerRecord;
-import factionsystem.PersistentData;
+import factionsystem.Data.PersistentData;
 import factionsystem.Subsystems.UtilitySubsystem;
 import factionsystem.Util.Pair;
 import org.bukkit.ChatColor;

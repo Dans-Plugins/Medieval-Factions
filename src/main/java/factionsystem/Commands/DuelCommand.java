@@ -1,6 +1,6 @@
 package factionsystem.Commands;
 
-import factionsystem.EphemeralData;
+import factionsystem.Data.EphemeralData;
 import factionsystem.Objects.Duel;
 import factionsystem.Subsystems.UtilitySubsystem;
 import org.bukkit.Bukkit;

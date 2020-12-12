@@ -1,10 +1,10 @@
 package factionsystem.EventHandlers;
 
-import factionsystem.EphemeralData;
+import factionsystem.Data.EphemeralData;
 import factionsystem.MedievalFactions;
 import factionsystem.Objects.PlayerActivityRecord;
 import factionsystem.Objects.PlayerPowerRecord;
-import factionsystem.PersistentData;
+import factionsystem.Data.PersistentData;
 import factionsystem.Subsystems.UtilitySubsystem;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Monster;

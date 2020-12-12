@@ -2,7 +2,7 @@ package factionsystem.Commands;
 
 import factionsystem.MedievalFactions;
 import factionsystem.Objects.Faction;
-import factionsystem.PersistentData;
+import factionsystem.Data.PersistentData;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;

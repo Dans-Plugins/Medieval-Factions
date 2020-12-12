@@ -1,7 +1,7 @@
 package factionsystem.Commands;
 
 import factionsystem.Objects.Faction;
-import factionsystem.PersistentData;
+import factionsystem.Data.PersistentData;
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
 

@@ -1,9 +1,9 @@
 package factionsystem.Subsystems;
 
-import factionsystem.EphemeralData;
+import factionsystem.Data.EphemeralData;
 import factionsystem.MedievalFactions;
 import factionsystem.Objects.*;
-import factionsystem.PersistentData;
+import factionsystem.Data.PersistentData;
 import factionsystem.Util.Pair;
 import org.bukkit.*;
 import org.bukkit.block.Block;
@@ -20,7 +20,7 @@ import static org.bukkit.Bukkit.*;
 public class UtilitySubsystem {
 
     // non-static methods
-    
+
     private ClaimedChunk isChunkClaimed(double x, double y, String world)
     {
     	for (ClaimedChunk chunk : PersistentData.getInstance().getClaimedChunks())
@@ -30,10 +30,10 @@ public class UtilitySubsystem {
     			return chunk;
     		}
     	}
-    	
+
     	return null;
     }
-    
+
     public void addChunkAtPlayerLocation(Player player) {
         double[] playerCoords = new double[2];
         playerCoords[0] = player.getLocation().getChunk().getX();
@@ -214,7 +214,7 @@ public class UtilitySubsystem {
                 itr.remove();
             }
         }
-        
+
         // remove any gates in this chunk
         Iterator<Gate> gtr = faction.getGates().iterator();
         while(gtr.hasNext())
@@ -230,7 +230,7 @@ public class UtilitySubsystem {
 
         PersistentData.getInstance().getClaimedChunks().remove(chunk);
     }
-    
+
     public String checkOwnershipAtPlayerLocation(Player player) {
         double[] playerCoords = new double[2];
         playerCoords[0] = player.getLocation().getChunk().getX();
@@ -242,7 +242,7 @@ public class UtilitySubsystem {
         }
         return "unclaimed";
     }
-    
+
     public boolean isGateInChunk(Gate gate, ClaimedChunk chunk)
     {
     	if ((gate.getTopLeftChunkX() == chunk.getCoordinates()[0] || gate.getBottomRightChunkX() == chunk.getCoordinates()[0])

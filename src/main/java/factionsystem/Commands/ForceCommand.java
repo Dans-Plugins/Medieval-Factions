@@ -3,7 +3,7 @@ package factionsystem.Commands;
 import factionsystem.MedievalFactions;
 import factionsystem.Objects.Faction;
 import factionsystem.Objects.PlayerPowerRecord;
-import factionsystem.PersistentData;
+import factionsystem.Data.PersistentData;
 import factionsystem.Subsystems.StorageSubsystem;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;

@@ -2,7 +2,7 @@ package factionsystem.EventHandlers;
 
 import factionsystem.MedievalFactions;
 import factionsystem.Objects.Faction;
-import factionsystem.PersistentData;
+import factionsystem.Data.PersistentData;
 import org.bukkit.ChatColor;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;

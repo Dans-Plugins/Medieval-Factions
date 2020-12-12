@@ -3,7 +3,7 @@ package factionsystem.Commands;
 import factionsystem.MedievalFactions;
 import factionsystem.Objects.ClaimedChunk;
 import factionsystem.Objects.Faction;
-import factionsystem.PersistentData;
+import factionsystem.Data.PersistentData;
 import org.bukkit.ChatColor;
 import org.bukkit.Chunk;
 import org.bukkit.Location;

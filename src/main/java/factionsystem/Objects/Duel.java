@@ -1,6 +1,6 @@
 package factionsystem.Objects;
 
-import factionsystem.EphemeralData;
+import factionsystem.Data.EphemeralData;
 import factionsystem.MedievalFactions;
 import net.md_5.bungee.api.ChatColor;
 import org.bukkit.Bukkit;

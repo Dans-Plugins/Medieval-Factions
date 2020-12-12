@@ -1,8 +1,8 @@
 package factionsystem.EventHandlers;
 
-import factionsystem.EphemeralData;
+import factionsystem.Data.EphemeralData;
 import factionsystem.Objects.Faction;
-import factionsystem.PersistentData;
+import factionsystem.Data.PersistentData;
 import org.bukkit.ChatColor;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;

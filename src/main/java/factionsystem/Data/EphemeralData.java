@@ -1,4 +1,4 @@
-package factionsystem;
+package factionsystem.Data;
 
 import factionsystem.Objects.Duel;
 import factionsystem.Objects.Gate;

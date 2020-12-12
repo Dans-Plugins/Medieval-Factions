@@ -6,7 +6,7 @@ import com.google.gson.reflect.TypeToken;
 import com.google.gson.stream.JsonReader;
 import factionsystem.MedievalFactions;
 import factionsystem.Objects.*;
-import factionsystem.PersistentData;
+import factionsystem.Data.PersistentData;
 
 import java.io.*;
 import java.lang.reflect.Type;
