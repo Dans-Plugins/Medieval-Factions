@@ -1,5 +1,6 @@
 package factionsystem.Commands;
 
+import factionsystem.EphemeralData;
 import factionsystem.MedievalFactions;
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
@@ -21,8 +22,8 @@ public class LockCommand { ;
 
                     // cancel lock status if first argument is "cancel"
                     if (args[1].equalsIgnoreCase("cancel")) {
-                        if (MedievalFactions.getInstance().lockingPlayers.contains(player.getUniqueId())) {
-                            MedievalFactions.getInstance().lockingPlayers.remove(player.getUniqueId());
+                        if (EphemeralData.getInstance().getLockingPlayers().contains(player.getUniqueId())) {
+                            EphemeralData.getInstance().getLockingPlayers().remove(player.getUniqueId());
                             player.sendMessage(ChatColor.RED + "Locking cancelled!");
                             return;
                         }
@@ -30,11 +31,11 @@ public class LockCommand { ;
                 }
 
                 // check that player has not already invoked this command without locking something
-                if (!MedievalFactions.getInstance().lockingPlayers.contains(player.getUniqueId())) {
+                if (!EphemeralData.getInstance().getLockingPlayers().contains(player.getUniqueId())) {
                     // add player to playersAboutToLockSomething list
-                    MedievalFactions.getInstance().lockingPlayers.add(player.getUniqueId());
+                    EphemeralData.getInstance().getLockingPlayers().add(player.getUniqueId());
 
-                    MedievalFactions.getInstance().unlockingPlayers.remove(player.getUniqueId());
+                    EphemeralData.getInstance().getUnlockingPlayers().remove(player.getUniqueId());
 
                     // inform them they need to right click the block that they want to lock or type /mf lock cancel to cancel it
                     player.sendMessage(ChatColor.GREEN + "Right click a chest or door to lock it! (Type /mf lock cancel to cancel)");

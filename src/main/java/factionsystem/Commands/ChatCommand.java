@@ -1,5 +1,6 @@
 package factionsystem.Commands;
 
+import factionsystem.EphemeralData;
 import factionsystem.MedievalFactions;
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
@@ -15,12 +16,12 @@ public class ChatCommand {
 
             if (player.hasPermission("mf.chat") || player.hasPermission("mf.default")) {
                 if (isInFaction(player.getUniqueId(), MedievalFactions.getInstance().factions)) {
-                    if (!MedievalFactions.getInstance().playersInFactionChat.contains(player.getUniqueId())) {
-                        MedievalFactions.getInstance().playersInFactionChat.add(player.getUniqueId());
+                    if (!EphemeralData.getInstance().getPlayersInFactionChat().contains(player.getUniqueId())) {
+                        EphemeralData.getInstance().getPlayersInFactionChat().add(player.getUniqueId());
                         player.sendMessage(ChatColor.GREEN + "You are now speaking in faction chat!");
                     }
                     else {
-                        MedievalFactions.getInstance().playersInFactionChat.remove(player.getUniqueId());
+                        EphemeralData.getInstance().getPlayersInFactionChat().remove(player.getUniqueId());
                         player.sendMessage(ChatColor.GREEN + "You are no longer in faction chat!");
                     }
                 }

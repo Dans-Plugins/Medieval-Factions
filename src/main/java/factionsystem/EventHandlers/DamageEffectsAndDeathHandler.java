@@ -1,5 +1,6 @@
 package factionsystem.EventHandlers;
 
+import factionsystem.EphemeralData;
 import factionsystem.MedievalFactions;
 import factionsystem.Objects.ClaimedChunk;
 import factionsystem.Objects.Duel;
@@ -113,7 +114,7 @@ public class DamageEffectsAndDeathHandler implements Listener {
 
         if (MedievalFactions.getInstance().utilities.potionTypeBad(cloud.getBasePotionData().getType())){
             // Search to see if cloud is in the stored list in MedievalFactions.getInstance()
-            for (Pair<Player, AreaEffectCloud> storedCloudPair : MedievalFactions.getInstance().activeAOEClouds){
+            for (Pair<Player, AreaEffectCloud> storedCloudPair : EphemeralData.getInstance().getActiveAOEClouds()){
                 if (storedCloudPair.getRight() == cloud){
                     //Check player is not allied with effected entities if any allied remove entity from list.
                     Player attacker = storedCloudPair.getLeft();
@@ -149,13 +150,13 @@ public class DamageEffectsAndDeathHandler implements Listener {
         AreaEffectCloud cloud = event.getAreaEffectCloud();
 
         Pair<Player, AreaEffectCloud> storedCloud  = new Pair<>(thrower, cloud);
-        MedievalFactions.getInstance().activeAOEClouds.add(storedCloud);
+        EphemeralData.getInstance().getActiveAOEClouds().add(storedCloud);
 
         // Add scheduled task to remove the cloud from the activeClouds list
         long delay = cloud.getDuration();
         MedievalFactions.getInstance().getServer().getScheduler().scheduleSyncDelayedTask(MedievalFactions.getInstance(), new Runnable() {
             public void run(){
-                MedievalFactions.getInstance().activeAOEClouds.remove(storedCloud);
+                EphemeralData.getInstance().getActiveAOEClouds().remove(storedCloud);
             }
         }, delay);
     }

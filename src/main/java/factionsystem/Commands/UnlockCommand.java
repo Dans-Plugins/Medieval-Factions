@@ -1,5 +1,6 @@
 package factionsystem.Commands;
 
+import factionsystem.EphemeralData;
 import factionsystem.MedievalFactions;
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
@@ -21,8 +22,8 @@ public class UnlockCommand {
 
                     // cancel unlock status if first argument is "cancel"
                     if (args[1].equalsIgnoreCase("cancel")) {
-                        if (MedievalFactions.getInstance().unlockingPlayers.contains(player.getUniqueId())) {
-                            MedievalFactions.getInstance().unlockingPlayers.remove(player.getUniqueId());
+                        if (EphemeralData.getInstance().getUnlockingPlayers().contains(player.getUniqueId())) {
+                            EphemeralData.getInstance().getUnlockingPlayers().remove(player.getUniqueId());
                             player.sendMessage(ChatColor.RED + "Unlocking cancelled!");
                             return;
                         }
@@ -30,11 +31,11 @@ public class UnlockCommand {
                 }
 
                 // check that player has not already invoked this command without unlocking something
-                if (!MedievalFactions.getInstance().unlockingPlayers.contains(player.getUniqueId())) {
+                if (!EphemeralData.getInstance().getUnlockingPlayers().contains(player.getUniqueId())) {
                     // add player to playersAboutToLockSomething list
-                    MedievalFactions.getInstance().unlockingPlayers.add(player.getUniqueId());
+                    EphemeralData.getInstance().getUnlockingPlayers().add(player.getUniqueId());
 
-                    MedievalFactions.getInstance().lockingPlayers.remove(player.getUniqueId());
+                    EphemeralData.getInstance().getLockingPlayers().remove(player.getUniqueId());
 
                     // inform them they need to right click the block that they want to lock or type /mf lock cancel to cancel it
                     player.sendMessage(ChatColor.GREEN + "Right click a chest or door to unlock it! (Type /mf unlock cancel to cancel)");

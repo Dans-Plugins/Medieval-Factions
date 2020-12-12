@@ -1,5 +1,6 @@
 package factionsystem.EventHandlers;
 
+import factionsystem.EphemeralData;
 import factionsystem.MedievalFactions;
 import factionsystem.Objects.PlayerActivityRecord;
 import factionsystem.Objects.PlayerPowerRecord;
@@ -80,25 +81,25 @@ public class JoiningLeavingAndSpawningHandler implements Listener {
 	@EventHandler()
 	public void handle(PlayerQuitEvent event)
 	{
-		if (MedievalFactions.getInstance().lockingPlayers.contains(event.getPlayer().getUniqueId()))
+		if (EphemeralData.getInstance().getLockingPlayers().contains(event.getPlayer().getUniqueId()))
 		{
-			MedievalFactions.getInstance().lockingPlayers.remove(event.getPlayer().getUniqueId());
+			EphemeralData.getInstance().getLockingPlayers().remove(event.getPlayer().getUniqueId());
 		}
-		if (MedievalFactions.getInstance().unlockingPlayers.contains(event.getPlayer().getUniqueId()))
+		if (EphemeralData.getInstance().getUnlockingPlayers().contains(event.getPlayer().getUniqueId()))
 		{
-			MedievalFactions.getInstance().unlockingPlayers.remove(event.getPlayer().getUniqueId());
+			EphemeralData.getInstance().getUnlockingPlayers().remove(event.getPlayer().getUniqueId());
 		}
-		if (MedievalFactions.getInstance().playersGrantingAccess.containsKey(event.getPlayer().getUniqueId()))
+		if (EphemeralData.getInstance().getPlayersGrantingAccess().containsKey(event.getPlayer().getUniqueId()))
 		{
-			MedievalFactions.getInstance().playersGrantingAccess.remove(event.getPlayer().getUniqueId());
+			EphemeralData.getInstance().getPlayersGrantingAccess().remove(event.getPlayer().getUniqueId());
 		}
-		if (MedievalFactions.getInstance().playersCheckingAccess.contains(event.getPlayer().getUniqueId()))
+		if (EphemeralData.getInstance().getPlayersCheckingAccess().contains(event.getPlayer().getUniqueId()))
 		{
-			MedievalFactions.getInstance().playersCheckingAccess.remove(event.getPlayer().getUniqueId());
+			EphemeralData.getInstance().getPlayersCheckingAccess().remove(event.getPlayer().getUniqueId());
 		}
-		if (MedievalFactions.getInstance().playersRevokingAccess.containsKey(event.getPlayer().getUniqueId()))
+		if (EphemeralData.getInstance().getPlayersRevokingAccess().containsKey(event.getPlayer().getUniqueId()))
 		{
-			MedievalFactions.getInstance().playersRevokingAccess.remove(event.getPlayer().getUniqueId());
+			EphemeralData.getInstance().getPlayersRevokingAccess().remove(event.getPlayer().getUniqueId());
 		}
 
 		PlayerActivityRecord record = UtilitySubsystem.getPlayerActivityRecord(event.getPlayer().getUniqueId(), MedievalFactions.getInstance().playerActivityRecords);

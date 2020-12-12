@@ -1,5 +1,6 @@
 package factionsystem.Commands;
 
+import factionsystem.EphemeralData;
 import factionsystem.MedievalFactions;
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
@@ -18,8 +19,8 @@ public class RevokeAccessCommand {
 
             if (args.length > 1) {
                 if (args[1].equalsIgnoreCase("cancel")) {
-                    if (MedievalFactions.getInstance().playersRevokingAccess.containsKey(player.getUniqueId())) {
-                        MedievalFactions.getInstance().playersRevokingAccess.remove(player.getUniqueId());
+                    if (EphemeralData.getInstance().getPlayersRevokingAccess().containsKey(player.getUniqueId())) {
+                        EphemeralData.getInstance().getPlayersRevokingAccess().remove(player.getUniqueId());
                         player.sendMessage(ChatColor.GREEN + "Cancelled!");
                         return;
                     }
@@ -30,8 +31,8 @@ public class RevokeAccessCommand {
                 return;
             }
 
-            if (!MedievalFactions.getInstance().playersRevokingAccess.containsKey(player.getUniqueId())) {
-                MedievalFactions.getInstance().playersRevokingAccess.put(player.getUniqueId(), findUUIDBasedOnPlayerName(args[1]));
+            if (!EphemeralData.getInstance().getPlayersRevokingAccess().containsKey(player.getUniqueId())) {
+                EphemeralData.getInstance().getPlayersRevokingAccess().put(player.getUniqueId(), findUUIDBasedOnPlayerName(args[1]));
                 player.sendMessage(ChatColor.GREEN + "Right click a locked block to revoke this player's access to it! Type '/mf revokeaccess cancel' to cancel!");
             }
             else {

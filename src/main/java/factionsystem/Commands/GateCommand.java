@@ -1,5 +1,6 @@
 package factionsystem.Commands;
 
+import factionsystem.EphemeralData;
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
@@ -23,18 +24,18 @@ public class GateCommand {
 				{
 					if (args[1].equalsIgnoreCase("cancel"))
 					{
-						if (MedievalFactions.getInstance().creatingGatePlayers.containsKey(player.getUniqueId()))
+						if (EphemeralData.getInstance().getCreatingGatePlayers().containsKey(player.getUniqueId()))
 						{
-							MedievalFactions.getInstance().creatingGatePlayers.remove(player.getUniqueId());
+							EphemeralData.getInstance().getCreatingGatePlayers().remove(player.getUniqueId());
 							player.sendMessage(ChatColor.RED + "Creating gate cancelled!");
 							return;
 						}
 					}
 					if (args[1].equalsIgnoreCase("create"))
 					{
-						if (MedievalFactions.getInstance().creatingGatePlayers.containsKey(player.getUniqueId()))
+						if (EphemeralData.getInstance().getCreatingGatePlayers().containsKey(player.getUniqueId()))
 						{
-							MedievalFactions.getInstance().creatingGatePlayers.remove(player.getUniqueId());
+							EphemeralData.getInstance().getCreatingGatePlayers().remove(player.getUniqueId());
 							player.sendMessage(ChatColor.RED + "You are already creating a gate!");
 							return;
 						}
