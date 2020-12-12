@@ -2,6 +2,7 @@ package dansplugins.factionsystem.utils;
 
 import dansplugins.factionsystem.ConfigManager;
 import dansplugins.factionsystem.MedievalFactions;
+import dansplugins.factionsystem.Scheduler;
 import dansplugins.factionsystem.data.EphemeralData;
 import dansplugins.factionsystem.data.PersistentData;
 import dansplugins.factionsystem.objects.*;
@@ -18,6 +19,19 @@ import java.util.*;
 import static org.bukkit.Bukkit.*;
 
 public class Utilities {
+
+    private static Utilities instance;
+
+    private Utilities() {
+
+    }
+
+    public static Utilities getInstance() {
+        if (instance == null) {
+            instance = new Utilities();
+        }
+        return instance;
+    }
 
     // non-static methods
 

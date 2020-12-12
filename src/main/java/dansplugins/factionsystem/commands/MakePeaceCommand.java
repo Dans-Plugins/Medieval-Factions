@@ -48,7 +48,7 @@ public class MakePeaceCommand {
                                                 // make peace between factions
                                                 playersFaction.removeEnemy(targetFactionName);
                                                 Utilities.getFaction(targetFactionName, PersistentData.getInstance().getFactions()).removeEnemy(playersFaction.getName());
-                                                MedievalFactions.getInstance().utilities.sendAllPlayersOnServerMessage(ChatColor.GREEN + playersFaction.getName() + " is now at peace with " + targetFactionName + "!");
+                                                Utilities.getInstance().sendAllPlayersOnServerMessage(ChatColor.GREEN + playersFaction.getName() + " is now at peace with " + targetFactionName + "!");
                                             }
                                         }
                                         else {

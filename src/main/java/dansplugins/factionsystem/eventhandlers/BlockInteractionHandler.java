@@ -57,10 +57,10 @@ public class BlockInteractionHandler implements Listener {
                     }
 
                     // if block is locked
-                    if (MedievalFactions.getInstance().utilities.isBlockLocked(event.getBlock())) {
+                    if (Utilities.getInstance().isBlockLocked(event.getBlock())) {
 
                         // if player is not the owner and isn't bypassing
-                        if (!MedievalFactions.getInstance().utilities.getLockedBlock(event.getBlock()).getOwner().equals(player.getUniqueId())
+                        if (!Utilities.getInstance().getLockedBlock(event.getBlock()).getOwner().equals(player.getUniqueId())
                                 && !EphemeralData.getInstance().getAdminsBypassingProtections().contains(event.getPlayer().getUniqueId())) {
                             event.setCancelled(true);
                             player.sendMessage(ChatColor.RED + "You don't own this!");
@@ -123,7 +123,7 @@ public class BlockInteractionHandler implements Listener {
                     }
 
                     // if chest
-                    if (MedievalFactions.getInstance().utilities.isChest(event.getBlock())) {
+                    if (Utilities.getInstance().isChest(event.getBlock())) {
                         // if next to non-owned locked chest
                         if (isNextToNonOwnedLockedChest(event.getPlayer(), event.getBlock()) && !EphemeralData.getInstance().getAdminsBypassingProtections().contains(event.getPlayer().getUniqueId())) {
                             event.setCancelled(true);
@@ -154,26 +154,26 @@ public class BlockInteractionHandler implements Listener {
         Block neighbor3 = block.getWorld().getBlockAt(block.getX(), block.getY(), block.getZ() + 1);
         Block neighbor4 = block.getWorld().getBlockAt(block.getX(), block.getY(), block.getZ() - 1);
 
-        if (MedievalFactions.getInstance().utilities.isChest(neighbor1)) {
-            if (MedievalFactions.getInstance().utilities.isBlockLocked(neighbor1) && MedievalFactions.getInstance().utilities.getLockedBlock(neighbor1).getOwner() != player.getUniqueId()) {
+        if (Utilities.getInstance().isChest(neighbor1)) {
+            if (Utilities.getInstance().isBlockLocked(neighbor1) && Utilities.getInstance().getLockedBlock(neighbor1).getOwner() != player.getUniqueId()) {
                 return true;
             }
         }
 
-        if (MedievalFactions.getInstance().utilities.isChest(neighbor2)) {
-            if (MedievalFactions.getInstance().utilities.isBlockLocked(neighbor2) && MedievalFactions.getInstance().utilities.getLockedBlock(neighbor2).getOwner() != player.getUniqueId()) {
+        if (Utilities.getInstance().isChest(neighbor2)) {
+            if (Utilities.getInstance().isBlockLocked(neighbor2) && Utilities.getInstance().getLockedBlock(neighbor2).getOwner() != player.getUniqueId()) {
                 return true;
             }
         }
 
-        if (MedievalFactions.getInstance().utilities.isChest(neighbor3)) {
-            if (MedievalFactions.getInstance().utilities.isBlockLocked(neighbor3) && MedievalFactions.getInstance().utilities.getLockedBlock(neighbor3).getOwner() != player.getUniqueId()) {
+        if (Utilities.getInstance().isChest(neighbor3)) {
+            if (Utilities.getInstance().isBlockLocked(neighbor3) && Utilities.getInstance().getLockedBlock(neighbor3).getOwner() != player.getUniqueId()) {
                 return true;
             }
         }
 
-        if (MedievalFactions.getInstance().utilities.isChest(neighbor4)) {
-            if (MedievalFactions.getInstance().utilities.isBlockLocked(neighbor4) && MedievalFactions.getInstance().utilities.getLockedBlock(neighbor4).getOwner() != player.getUniqueId()) {
+        if (Utilities.getInstance().isChest(neighbor4)) {
+            if (Utilities.getInstance().isBlockLocked(neighbor4) && Utilities.getInstance().getLockedBlock(neighbor4).getOwner() != player.getUniqueId()) {
                 return true;
             }
         }
@@ -186,14 +186,14 @@ public class BlockInteractionHandler implements Listener {
         Block neighbor1 = block.getWorld().getBlockAt(block.getX(), block.getY() + 1, block.getZ());
         Block neighbor2 = block.getWorld().getBlockAt(block.getX(), block.getY() - 1, block.getZ());
 
-        if (MedievalFactions.getInstance().utilities.isChest(neighbor1)) {
-            if (MedievalFactions.getInstance().utilities.isBlockLocked(neighbor1) && MedievalFactions.getInstance().utilities.getLockedBlock(neighbor1).getOwner() != player.getUniqueId()) {
+        if (Utilities.getInstance().isChest(neighbor1)) {
+            if (Utilities.getInstance().isBlockLocked(neighbor1) && Utilities.getInstance().getLockedBlock(neighbor1).getOwner() != player.getUniqueId()) {
                 return true;
             }
         }
 
-        if (MedievalFactions.getInstance().utilities.isChest(neighbor2)) {
-            if (MedievalFactions.getInstance().utilities.isBlockLocked(neighbor2) && MedievalFactions.getInstance().utilities.getLockedBlock(neighbor2).getOwner() != player.getUniqueId()) {
+        if (Utilities.getInstance().isChest(neighbor2)) {
+            if (Utilities.getInstance().isBlockLocked(neighbor2) && Utilities.getInstance().getLockedBlock(neighbor2).getOwner() != player.getUniqueId()) {
                 return true;
             }
         }
@@ -224,7 +224,7 @@ public class BlockInteractionHandler implements Listener {
             // ---------------------------------------------------------------------------------------------------------------
 
             // if block is locked
-            LockedBlock lockedBlock = MedievalFactions.getInstance().utilities.getLockedBlock(clickedBlock);
+            LockedBlock lockedBlock = Utilities.getInstance().getLockedBlock(clickedBlock);
             if (lockedBlock != null) {
 
                 // if player doesn't have access and isn't overriding
@@ -509,17 +509,17 @@ public class BlockInteractionHandler implements Listener {
             }
 
             // if already locked
-            if (MedievalFactions.getInstance().utilities.isBlockLocked(clickedBlock)) {
+            if (Utilities.getInstance().isBlockLocked(clickedBlock)) {
                 player.sendMessage(ChatColor.RED + "This block is already locked!");
                 event.setCancelled(true);
                 return;
             }
 
             // block type check
-            if (isDoor(clickedBlock) || MedievalFactions.getInstance().utilities.isChest(clickedBlock) || isGate(clickedBlock) || isBarrel(clickedBlock) || isTrapdoor(clickedBlock) || isFurnace(clickedBlock) || isAnvil(clickedBlock)) {
+            if (isDoor(clickedBlock) || Utilities.getInstance().isChest(clickedBlock) || isGate(clickedBlock) || isBarrel(clickedBlock) || isTrapdoor(clickedBlock) || isFurnace(clickedBlock) || isAnvil(clickedBlock)) {
 
                 // specific to chests because they can be single or double.
-                if (MedievalFactions.getInstance().utilities.isChest(clickedBlock)) {
+                if (Utilities.getInstance().isChest(clickedBlock)) {
                     InventoryHolder holder = ((Chest) clickedBlock.getState()).getInventory().getHolder();
                     if (holder instanceof DoubleChest) {
                         // chest multi-lock
@@ -704,10 +704,10 @@ public class BlockInteractionHandler implements Listener {
 
     private void handleUnlockingBlock(PlayerInteractEvent event, Player player, Block clickedBlock) {
         // if locked
-        if (MedievalFactions.getInstance().utilities.isBlockLocked(clickedBlock)) {
-            if (MedievalFactions.getInstance().utilities.getLockedBlock(clickedBlock).getOwner().equals(player.getUniqueId())) {
+        if (Utilities.getInstance().isBlockLocked(clickedBlock)) {
+            if (Utilities.getInstance().getLockedBlock(clickedBlock).getOwner().equals(player.getUniqueId())) {
 
-                if (MedievalFactions.getInstance().utilities.isChest(clickedBlock)) {
+                if (Utilities.getInstance().isChest(clickedBlock)) {
                     InventoryHolder holder = ((Chest) clickedBlock.getState()).getInventory().getHolder();
                     if (holder instanceof DoubleChest) {
                         // chest multi-unlock
@@ -819,7 +819,7 @@ public class BlockInteractionHandler implements Listener {
     private boolean isBlockInteractable(PlayerInteractEvent event) {
         if (event.getClickedBlock() != null) {
             // CHEST
-            if (MedievalFactions.getInstance().utilities.isChest(event.getClickedBlock())) {
+            if (Utilities.getInstance().isChest(event.getClickedBlock())) {
                 return false;
             }
             switch(event.getClickedBlock().getType()) {
@@ -901,13 +901,13 @@ public class BlockInteractionHandler implements Listener {
     private void handleGrantingAccess(PlayerInteractEvent event, Block clickedBlock, Player player) {
 
         // if not owner
-        if (MedievalFactions.getInstance().utilities.getLockedBlock(clickedBlock, PersistentData.getInstance().getLockedBlocks()).getOwner() != player.getUniqueId()) {
+        if (Utilities.getInstance().getLockedBlock(clickedBlock, PersistentData.getInstance().getLockedBlocks()).getOwner() != player.getUniqueId()) {
             player.sendMessage(ChatColor.RED + "You are not the owner of this block!");
             return;
         }
 
         // if chest
-        if (MedievalFactions.getInstance().utilities.isChest(clickedBlock)) {
+        if (Utilities.getInstance().isChest(clickedBlock)) {
             InventoryHolder holder = ((Chest) clickedBlock.getState()).getInventory().getHolder();
             if (holder instanceof DoubleChest) { // if double chest
                 // grant access to both chests
@@ -915,15 +915,15 @@ public class BlockInteractionHandler implements Listener {
                 Block leftChest = ((Chest) doubleChest.getLeftSide()).getBlock();
                 Block rightChest = ((Chest) doubleChest.getRightSide()).getBlock();
 
-                MedievalFactions.getInstance().utilities.getLockedBlock(leftChest, PersistentData.getInstance().getLockedBlocks()).addToAccessList(EphemeralData.getInstance().getPlayersGrantingAccess().get(player.getUniqueId()));
-                MedievalFactions.getInstance().utilities.getLockedBlock(rightChest, PersistentData.getInstance().getLockedBlocks()).addToAccessList(EphemeralData.getInstance().getPlayersGrantingAccess().get(player.getUniqueId()));
+                Utilities.getInstance().getLockedBlock(leftChest, PersistentData.getInstance().getLockedBlocks()).addToAccessList(EphemeralData.getInstance().getPlayersGrantingAccess().get(player.getUniqueId()));
+                Utilities.getInstance().getLockedBlock(rightChest, PersistentData.getInstance().getLockedBlocks()).addToAccessList(EphemeralData.getInstance().getPlayersGrantingAccess().get(player.getUniqueId()));
 
                 player.sendMessage(ChatColor.GREEN + "Access granted to " + Utilities.findPlayerNameBasedOnUUID(EphemeralData.getInstance().getPlayersGrantingAccess().get(player.getUniqueId())));
                 EphemeralData.getInstance().getPlayersGrantingAccess().remove(player.getUniqueId());
             }
             else { // if single chest
                 // grant access to single chest
-                MedievalFactions.getInstance().utilities.getLockedBlock(clickedBlock, PersistentData.getInstance().getLockedBlocks()).addToAccessList(EphemeralData.getInstance().getPlayersGrantingAccess().get(player.getUniqueId()));
+                Utilities.getInstance().getLockedBlock(clickedBlock, PersistentData.getInstance().getLockedBlocks()).addToAccessList(EphemeralData.getInstance().getPlayersGrantingAccess().get(player.getUniqueId()));
                 player.sendMessage(ChatColor.GREEN + "Access granted to " + Utilities.findPlayerNameBasedOnUUID(EphemeralData.getInstance().getPlayersGrantingAccess().get(player.getUniqueId())));
                 EphemeralData.getInstance().getPlayersGrantingAccess().remove(player.getUniqueId());
             }
@@ -933,14 +933,14 @@ public class BlockInteractionHandler implements Listener {
         // if door
         if (isDoor(clickedBlock)) {
             // grant access to initial block
-            MedievalFactions.getInstance().utilities.getLockedBlock(clickedBlock, PersistentData.getInstance().getLockedBlocks()).addToAccessList(EphemeralData.getInstance().getPlayersGrantingAccess().get(player.getUniqueId()));
+            Utilities.getInstance().getLockedBlock(clickedBlock, PersistentData.getInstance().getLockedBlocks()).addToAccessList(EphemeralData.getInstance().getPlayersGrantingAccess().get(player.getUniqueId()));
             // check block above
             if (isDoor(clickedBlock.getWorld().getBlockAt(clickedBlock.getX(), clickedBlock.getY() + 1, clickedBlock.getZ()))) {
-                MedievalFactions.getInstance().utilities.getLockedBlock(clickedBlock, PersistentData.getInstance().getLockedBlocks()).addToAccessList(EphemeralData.getInstance().getPlayersGrantingAccess().get(player.getUniqueId()));
+                Utilities.getInstance().getLockedBlock(clickedBlock, PersistentData.getInstance().getLockedBlocks()).addToAccessList(EphemeralData.getInstance().getPlayersGrantingAccess().get(player.getUniqueId()));
             }
             // check block below
             if (isDoor(clickedBlock.getWorld().getBlockAt(clickedBlock.getX(), clickedBlock.getY() - 1, clickedBlock.getZ()))) {
-                MedievalFactions.getInstance().utilities.getLockedBlock(clickedBlock, PersistentData.getInstance().getLockedBlocks()).addToAccessList(EphemeralData.getInstance().getPlayersGrantingAccess().get(player.getUniqueId()));
+                Utilities.getInstance().getLockedBlock(clickedBlock, PersistentData.getInstance().getLockedBlocks()).addToAccessList(EphemeralData.getInstance().getPlayersGrantingAccess().get(player.getUniqueId()));
             }
 
             player.sendMessage(ChatColor.GREEN + "Access granted to " + Utilities.findPlayerNameBasedOnUUID(EphemeralData.getInstance().getPlayersGrantingAccess().get(player.getUniqueId())));
@@ -949,7 +949,7 @@ public class BlockInteractionHandler implements Listener {
 
         // if gate (or single-block sized lock)
         if (isGate(clickedBlock) || isBarrel(clickedBlock) || isTrapdoor(clickedBlock) || isFurnace(clickedBlock)) {
-            MedievalFactions.getInstance().utilities.getLockedBlock(clickedBlock, PersistentData.getInstance().getLockedBlocks()).addToAccessList(EphemeralData.getInstance().getPlayersGrantingAccess().get(player.getUniqueId()));
+            Utilities.getInstance().getLockedBlock(clickedBlock, PersistentData.getInstance().getLockedBlocks()).addToAccessList(EphemeralData.getInstance().getPlayersGrantingAccess().get(player.getUniqueId()));
 
             player.sendMessage(ChatColor.GREEN + "Access granted to " + Utilities.findPlayerNameBasedOnUUID(EphemeralData.getInstance().getPlayersGrantingAccess().get(player.getUniqueId())));
             EphemeralData.getInstance().getPlayersGrantingAccess().remove(player.getUniqueId());
@@ -970,13 +970,13 @@ public class BlockInteractionHandler implements Listener {
     private void handleRevokingAccess(PlayerInteractEvent event, Block clickedBlock, Player player) {
 
         // if not owner
-        if (MedievalFactions.getInstance().utilities.getLockedBlock(clickedBlock, PersistentData.getInstance().getLockedBlocks()).getOwner() != player.getUniqueId()) {
+        if (Utilities.getInstance().getLockedBlock(clickedBlock, PersistentData.getInstance().getLockedBlocks()).getOwner() != player.getUniqueId()) {
             player.sendMessage(ChatColor.RED + "You are not the owner of this block!");
             return;
         }
 
         // if chest
-        if (MedievalFactions.getInstance().utilities.isChest(clickedBlock)) {
+        if (Utilities.getInstance().isChest(clickedBlock)) {
             InventoryHolder holder = ((Chest) clickedBlock.getState()).getInventory().getHolder();
             if (holder instanceof DoubleChest) { // if double chest
                 // revoke access to both chests
@@ -984,15 +984,15 @@ public class BlockInteractionHandler implements Listener {
                 Block leftChest = ((Chest) doubleChest.getLeftSide()).getBlock();
                 Block rightChest = ((Chest) doubleChest.getRightSide()).getBlock();
 
-                MedievalFactions.getInstance().utilities.getLockedBlock(leftChest, PersistentData.getInstance().getLockedBlocks()).removeFromAccessList(EphemeralData.getInstance().getPlayersRevokingAccess().get(player.getUniqueId()));
-                MedievalFactions.getInstance().utilities.getLockedBlock(rightChest, PersistentData.getInstance().getLockedBlocks()).removeFromAccessList(EphemeralData.getInstance().getPlayersRevokingAccess().get(player.getUniqueId()));
+                Utilities.getInstance().getLockedBlock(leftChest, PersistentData.getInstance().getLockedBlocks()).removeFromAccessList(EphemeralData.getInstance().getPlayersRevokingAccess().get(player.getUniqueId()));
+                Utilities.getInstance().getLockedBlock(rightChest, PersistentData.getInstance().getLockedBlocks()).removeFromAccessList(EphemeralData.getInstance().getPlayersRevokingAccess().get(player.getUniqueId()));
 
                 player.sendMessage(ChatColor.GREEN + "Access revoked for " + Utilities.findPlayerNameBasedOnUUID(EphemeralData.getInstance().getPlayersRevokingAccess().get(player.getUniqueId())));
                 EphemeralData.getInstance().getPlayersRevokingAccess().remove(player.getUniqueId());
             }
             else { // if single chest
                 // revoke access to single chest
-                MedievalFactions.getInstance().utilities.getLockedBlock(clickedBlock, PersistentData.getInstance().getLockedBlocks()).removeFromAccessList(EphemeralData.getInstance().getPlayersRevokingAccess().get(player.getUniqueId()));
+                Utilities.getInstance().getLockedBlock(clickedBlock, PersistentData.getInstance().getLockedBlocks()).removeFromAccessList(EphemeralData.getInstance().getPlayersRevokingAccess().get(player.getUniqueId()));
                 player.sendMessage(ChatColor.GREEN + "Access revoked for " + Utilities.findPlayerNameBasedOnUUID(EphemeralData.getInstance().getPlayersRevokingAccess().get(player.getUniqueId())));
                 EphemeralData.getInstance().getPlayersRevokingAccess().remove(player.getUniqueId());
             }
@@ -1002,14 +1002,14 @@ public class BlockInteractionHandler implements Listener {
         // if door
         if (isDoor(clickedBlock)) {
             // revoke access to initial block
-            MedievalFactions.getInstance().utilities.getLockedBlock(clickedBlock, PersistentData.getInstance().getLockedBlocks()).removeFromAccessList(EphemeralData.getInstance().getPlayersRevokingAccess().get(player.getUniqueId()));
+            Utilities.getInstance().getLockedBlock(clickedBlock, PersistentData.getInstance().getLockedBlocks()).removeFromAccessList(EphemeralData.getInstance().getPlayersRevokingAccess().get(player.getUniqueId()));
             // check block above
             if (isDoor(clickedBlock.getWorld().getBlockAt(clickedBlock.getX(), clickedBlock.getY() + 1, clickedBlock.getZ()))) {
-                MedievalFactions.getInstance().utilities.getLockedBlock(clickedBlock, PersistentData.getInstance().getLockedBlocks()).removeFromAccessList(EphemeralData.getInstance().getPlayersRevokingAccess().get(player.getUniqueId()));
+                Utilities.getInstance().getLockedBlock(clickedBlock, PersistentData.getInstance().getLockedBlocks()).removeFromAccessList(EphemeralData.getInstance().getPlayersRevokingAccess().get(player.getUniqueId()));
             }
             // check block below
             if (isDoor(clickedBlock.getWorld().getBlockAt(clickedBlock.getX(), clickedBlock.getY() - 1, clickedBlock.getZ()))) {
-                MedievalFactions.getInstance().utilities.getLockedBlock(clickedBlock, PersistentData.getInstance().getLockedBlocks()).removeFromAccessList(EphemeralData.getInstance().getPlayersRevokingAccess().get(player.getUniqueId()));
+                Utilities.getInstance().getLockedBlock(clickedBlock, PersistentData.getInstance().getLockedBlocks()).removeFromAccessList(EphemeralData.getInstance().getPlayersRevokingAccess().get(player.getUniqueId()));
             }
 
             player.sendMessage(ChatColor.GREEN + "Access revoked for " + Utilities.findPlayerNameBasedOnUUID(EphemeralData.getInstance().getPlayersRevokingAccess().get(player.getUniqueId())));
@@ -1018,7 +1018,7 @@ public class BlockInteractionHandler implements Listener {
 
         // if gate or other single-block sized lock
         if (isGate(clickedBlock) || isBarrel(clickedBlock) || isTrapdoor(clickedBlock) || isFurnace(clickedBlock)) {
-            MedievalFactions.getInstance().utilities.getLockedBlock(clickedBlock, PersistentData.getInstance().getLockedBlocks()).removeFromAccessList(EphemeralData.getInstance().getPlayersRevokingAccess().get(player.getUniqueId()));
+            Utilities.getInstance().getLockedBlock(clickedBlock, PersistentData.getInstance().getLockedBlocks()).removeFromAccessList(EphemeralData.getInstance().getPlayersRevokingAccess().get(player.getUniqueId()));
 
             player.sendMessage(ChatColor.GREEN + "Access revoked for " + Utilities.findPlayerNameBasedOnUUID(EphemeralData.getInstance().getPlayersRevokingAccess().get(player.getUniqueId())));
             EphemeralData.getInstance().getPlayersRevokingAccess().remove(player.getUniqueId());

@@ -36,7 +36,7 @@ public class MoveHandler implements Listener {
                                 @Override
                                 public void run() {
                                     // add new chunk to claimed chunks
-                                    MedievalFactions.getInstance().utilities.addChunkAtPlayerLocation(event.getPlayer());
+                                    Utilities.getInstance().addChunkAtPlayerLocation(event.getPlayer());
                                 }
                             }, 1); // delayed by 1 tick (1/20th of a second) because otherwise players will claim the chunk they just left
                         }

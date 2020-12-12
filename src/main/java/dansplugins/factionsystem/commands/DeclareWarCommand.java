@@ -69,7 +69,7 @@ public class DeclareWarCommand {
 
                                                 for (int j = 0; j < PersistentData.getInstance().getFactions().size(); j++) {
                                                     if (PersistentData.getInstance().getFactions().get(j).getName().equalsIgnoreCase(factionName)) {
-                                                        MedievalFactions.getInstance().utilities.sendAllPlayersOnServerMessage(ChatColor.RED + faction.getName() + " has declared war against " + factionName + "!");
+                                                        Utilities.getInstance().sendAllPlayersOnServerMessage(ChatColor.RED + faction.getName() + " has declared war against " + factionName + "!");
                                                     }
                                                 }
 

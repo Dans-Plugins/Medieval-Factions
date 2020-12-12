@@ -77,7 +77,7 @@ public class Faction {
     }
 
     public boolean removeLaw(String lawToRemove) {
-        if (MedievalFactions.getInstance().utilities.containsIgnoreCase(laws, lawToRemove)) {
+        if (Utilities.getInstance().containsIgnoreCase(laws, lawToRemove)) {
             laws.remove(lawToRemove);
             return true;
         }
@@ -109,41 +109,41 @@ public class Faction {
     }
 
     public void requestTruce(String factionName) {
-        if (!MedievalFactions.getInstance().utilities.containsIgnoreCase(attemptedTruces, factionName)) {
+        if (!Utilities.getInstance().containsIgnoreCase(attemptedTruces, factionName)) {
             attemptedTruces.add(factionName);
         }
     }
 
     public boolean isTruceRequested(String factionName) {
-        return MedievalFactions.getInstance().utilities.containsIgnoreCase(attemptedTruces, factionName);
+        return Utilities.getInstance().containsIgnoreCase(attemptedTruces, factionName);
     }
 
     public void removeRequestedTruce(String factionName) {
-        MedievalFactions.getInstance().utilities.removeIfContainsIgnoreCase(attemptedTruces, factionName);
+        Utilities.getInstance().removeIfContainsIgnoreCase(attemptedTruces, factionName);
     }
 
     public void requestAlly(String factionName) {
-        if (!MedievalFactions.getInstance().utilities.containsIgnoreCase(attemptedAlliances, factionName)) {
+        if (!Utilities.getInstance().containsIgnoreCase(attemptedAlliances, factionName)) {
             attemptedAlliances.add(factionName);
         }
     }
 
     public boolean isRequestedAlly(String factionName) {
-        return MedievalFactions.getInstance().utilities.containsIgnoreCase(attemptedAlliances, factionName);
+        return Utilities.getInstance().containsIgnoreCase(attemptedAlliances, factionName);
     }
 
     public void addAlly(String factionName) {
-        if (!MedievalFactions.getInstance().utilities.containsIgnoreCase(allyFactions, factionName)) {
+        if (!Utilities.getInstance().containsIgnoreCase(allyFactions, factionName)) {
             allyFactions.add(factionName);
         }
     }
 
     public void removeAlly(String factionName) {
-        MedievalFactions.getInstance().utilities.removeIfContainsIgnoreCase(allyFactions, factionName);
+        Utilities.getInstance().removeIfContainsIgnoreCase(allyFactions, factionName);
     }
 
     public boolean isAlly(String factionName) {
-        return MedievalFactions.getInstance().utilities.containsIgnoreCase(allyFactions, factionName);
+        return Utilities.getInstance().containsIgnoreCase(allyFactions, factionName);
     }
 
     public ArrayList<String> getAllies() {
@@ -209,17 +209,17 @@ public class Faction {
     }
 
     public void addEnemy(String factionName) {
-        if (!MedievalFactions.getInstance().utilities.containsIgnoreCase(enemyFactions, factionName)) {
+        if (!Utilities.getInstance().containsIgnoreCase(enemyFactions, factionName)) {
             enemyFactions.add(factionName);
         }
     }
 
     public void removeEnemy(String factionName) {
-        MedievalFactions.getInstance().utilities.removeIfContainsIgnoreCase(enemyFactions, factionName);
+        Utilities.getInstance().removeIfContainsIgnoreCase(enemyFactions, factionName);
     }
 
     public boolean isEnemy(String factionName) {
-        return MedievalFactions.getInstance().utilities.containsIgnoreCase(enemyFactions, factionName);
+        return Utilities.getInstance().containsIgnoreCase(enemyFactions, factionName);
     }
 
     public String getEnemiesSeparatedByCommas() {
@@ -552,7 +552,7 @@ public class Faction {
     }
 
     public boolean isVassal(String faction) {
-        return(MedievalFactions.getInstance().utilities.containsIgnoreCase(vassals, faction));
+        return(Utilities.getInstance().containsIgnoreCase(vassals, faction));
     }
 
     public boolean hasLiege() {
@@ -564,13 +564,13 @@ public class Faction {
     }
 
     public void addVassal(String factionName) {
-        if (!MedievalFactions.getInstance().utilities.containsIgnoreCase(vassals, factionName)) {
+        if (!Utilities.getInstance().containsIgnoreCase(vassals, factionName)) {
             vassals.add(factionName);
         }
     }
 
     public void removeVassal(String faction) {
-        MedievalFactions.getInstance().utilities.removeIfContainsIgnoreCase(vassals, faction);
+        Utilities.getInstance().removeIfContainsIgnoreCase(vassals, faction);
     }
 
     public void setLiege(String newLiege) {
@@ -635,16 +635,16 @@ public class Faction {
     }
 
     public void addAttemptedVassalization(String factionName) {
-        if (!MedievalFactions.getInstance().utilities.containsIgnoreCase(attemptedVassalizations, factionName)) {
+        if (!Utilities.getInstance().containsIgnoreCase(attemptedVassalizations, factionName)) {
             attemptedVassalizations.add(factionName);
         }
     }
 
     public boolean hasBeenOfferedVassalization(String factionName) {
-        return MedievalFactions.getInstance().utilities.containsIgnoreCase(attemptedVassalizations, factionName);
+        return Utilities.getInstance().containsIgnoreCase(attemptedVassalizations, factionName);
     }
 
     public void removeAttemptedVassalization(String factionName) {
-        MedievalFactions.getInstance().utilities.removeIfContainsIgnoreCase(attemptedVassalizations, factionName);
+        Utilities.getInstance().removeIfContainsIgnoreCase(attemptedVassalizations, factionName);
     }
 }

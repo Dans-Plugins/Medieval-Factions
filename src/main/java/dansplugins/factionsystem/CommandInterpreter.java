@@ -151,7 +151,7 @@ public class CommandInterpreter {
                             if (Utilities.isInFaction(player.getUniqueId(), PersistentData.getInstance().getFactions())) {
                                 Faction playersFaction = Utilities.getPlayersFaction(player.getUniqueId(), PersistentData.getInstance().getFactions());
                                 if (Utilities.getChunksClaimedByFaction(playersFaction.getName(), PersistentData.getInstance().getClaimedChunks()) < playersFaction.getCumulativePowerLevel()) {
-                                    MedievalFactions.getInstance().utilities.addChunkAtPlayerLocation(player);
+                                    Utilities.getInstance().addChunkAtPlayerLocation(player);
                                     return true;
                                 }
                                 else {
@@ -178,7 +178,7 @@ public class CommandInterpreter {
                         if (sender instanceof Player) {
                             Player player = (Player) sender;
                             if (Utilities.isInFaction(player.getUniqueId(), PersistentData.getInstance().getFactions())) {
-                                MedievalFactions.getInstance().utilities.removeChunkAtPlayerLocation(player);
+                                Utilities.getInstance().removeChunkAtPlayerLocation(player);
                                 return true;
                             }
                             else {
@@ -263,7 +263,7 @@ public class CommandInterpreter {
                     if (sender.hasPermission("mf.unclaimall") || sender.hasPermission("mf.default")) {
                         if (sender instanceof Player) {
                             Player player = (Player) sender;
-                            String result = MedievalFactions.getInstance().utilities.checkOwnershipAtPlayerLocation(player);
+                            String result = Utilities.getInstance().checkOwnershipAtPlayerLocation(player);
                             if (result.equalsIgnoreCase("unclaimed")) {
                                 player.sendMessage(ChatColor.GREEN + "This land is unclaimed.");
                                 return true;
@@ -516,7 +516,7 @@ public class CommandInterpreter {
                 if (args[0].equalsIgnoreCase("resetpowerlevels")|| args[0].equalsIgnoreCase("rpl")) {
                     if (sender.hasPermission("mf.resetpowerlevels") || sender.hasPermission("mf.admin")) {
                         sender.sendMessage(ChatColor.GREEN + "Power level resetting...");
-                        MedievalFactions.getInstance().utilities.resetPowerRecords();
+                        Utilities.getInstance().resetPowerRecords();
                         return true;
                     }
                     else {

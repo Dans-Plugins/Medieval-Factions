@@ -86,7 +86,7 @@ public class Scheduler {
                             && record.getMinutesSinceLastLogout() > MedievalFactions.getInstance().getConfig().getInt("minutesBeforePowerDecrease"))
                     {
                         record.incrementPowerLost();
-                        PlayerPowerRecord power = Utilities.getPlayersPowerRecord(record.getPlayerUUID(), PersistentData.getInstance().getPlayerPowerRecords());
+                        PlayerPowerRecord power = Utilities.getInstance().getPlayersPowerRecord(record.getPlayerUUID(), PersistentData.getInstance().getPlayerPowerRecords());
                         power.decreasePower();
                     }
                 }
@@ -104,7 +104,7 @@ public class Scheduler {
     }
 
     private void informPlayerIfTheirLandIsInDanger(Player player) {
-        Faction faction = Utilities.getPlayersFaction(player.getUniqueId(), PersistentData.getInstance().getFactions());
+        Faction faction = Utilities.getInstance().getPlayersFaction(player.getUniqueId(), PersistentData.getInstance().getFactions());
         if (faction != null) {
             if (isFactionExceedingTheirDemesneLimit(faction)) {
                 player.sendMessage(ChatColor.RED + "Your faction has more claimed chunks than power! Your land can be conquered!");
@@ -113,7 +113,7 @@ public class Scheduler {
     }
 
     private boolean isFactionExceedingTheirDemesneLimit(Faction faction) {
-        return (Utilities.getChunksClaimedByFaction(faction.getName(), PersistentData.getInstance().getClaimedChunks()) > faction.getCumulativePowerLevel());
+        return (Utilities.getInstance().getChunksClaimedByFaction(faction.getName(), PersistentData.getInstance().getClaimedChunks()) > faction.getCumulativePowerLevel());
     }
 
     private void disbandAllZeroPowerFactions() {
@@ -124,7 +124,7 @@ public class Scheduler {
             }
         }
         for (String factionName : factionsToDisband) {
-            MedievalFactions.getInstance().utilities.sendAllPlayersInFactionMessage(Utilities.getFaction(factionName, PersistentData.getInstance().getFactions()), ChatColor.RED + "Your faction has been disbanded due to its cumulative power reaching zero.");
+            Utilities.getInstance().sendAllPlayersInFactionMessage(Utilities.getInstance().getFaction(factionName, PersistentData.getInstance().getFactions()), ChatColor.RED + "Your faction has been disbanded due to its cumulative power reaching zero.");
             removeFaction(factionName);
             System.out.println(factionName + " has been disbanded due to its cumulative power reaching zero.");
         }
@@ -132,14 +132,14 @@ public class Scheduler {
 
     private void removeFaction(String name) {
 
-        Faction factionToRemove = Utilities.getFaction(name, PersistentData.getInstance().getFactions());
+        Faction factionToRemove = Utilities.getInstance().getFaction(name, PersistentData.getInstance().getFactions());
 
         if (factionToRemove != null) {
             // remove claimed land objects associated with this faction
-            Utilities.removeAllClaimedChunks(factionToRemove.getName(), PersistentData.getInstance().getClaimedChunks());
+            Utilities.getInstance().removeAllClaimedChunks(factionToRemove.getName(), PersistentData.getInstance().getClaimedChunks());
 
             // remove locks associated with this faction
-            Utilities.removeAllLocks(factionToRemove.getName(), PersistentData.getInstance().getLockedBlocks());
+            Utilities.getInstance().removeAllLocks(factionToRemove.getName(), PersistentData.getInstance().getLockedBlocks());
 
             // remove records of alliances/wars associated with this faction
             for (Faction faction : PersistentData.getInstance().getFactions()) {

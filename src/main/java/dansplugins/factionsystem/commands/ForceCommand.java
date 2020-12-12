@@ -98,8 +98,8 @@ public class ForceCommand {
                 String factionName1 = singleQuoteArgs.get(0);
                 String factionName2 = singleQuoteArgs.get(1);
 
-                Faction faction1 = MedievalFactions.getInstance().utilities.getFaction(factionName1, PersistentData.getInstance().getFactions());
-                Faction faction2 = MedievalFactions.getInstance().utilities.getFaction(factionName2, PersistentData.getInstance().getFactions());
+                Faction faction1 = Utilities.getInstance().getFaction(factionName1, PersistentData.getInstance().getFactions());
+                Faction faction2 = Utilities.getInstance().getFaction(factionName2, PersistentData.getInstance().getFactions());
 
                 // force peace
                 if (faction1 != null && faction2 != null) {
@@ -111,7 +111,7 @@ public class ForceCommand {
                     }
 
                     // announce peace to all players on server.
-                    MedievalFactions.getInstance().utilities.sendAllPlayersOnServerMessage(ChatColor.GREEN + faction1.getName() + " is now at peace with " + faction2.getName() + "!");
+                    Utilities.getInstance().sendAllPlayersOnServerMessage(ChatColor.GREEN + faction1.getName() + " is now at peace with " + faction2.getName() + "!");
                     return true;
                 }
                 else {
@@ -179,7 +179,7 @@ public class ForceCommand {
                 String playerName = singleQuoteArgs.get(0);
                 String factionName = singleQuoteArgs.get(1);
 
-                Faction faction = MedievalFactions.getInstance().utilities.getFaction(factionName, PersistentData.getInstance().getFactions());
+                Faction faction = Utilities.getInstance().getFaction(factionName, PersistentData.getInstance().getFactions());
 
                 for (OfflinePlayer player : Bukkit.getOfflinePlayers()) {
                     if (player.getName().equalsIgnoreCase(playerName)) {

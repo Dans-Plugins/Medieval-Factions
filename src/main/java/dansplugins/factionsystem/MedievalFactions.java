@@ -16,8 +16,6 @@ public class MedievalFactions extends JavaPlugin {
     // version
     public static String version = "v3.6.0.3-beta-8";
 
-    public Utilities utilities = new Utilities();
-
     public static MedievalFactions getInstance() {
         return instance;
     }
@@ -28,7 +26,7 @@ public class MedievalFactions extends JavaPlugin {
 
         instance = this;
 
-        utilities.ensureSmoothTransitionBetweenVersions();
+        Utilities.getInstance().ensureSmoothTransitionBetweenVersions();
 
         // config creation/loading
         if (!(new File("./plugins/MedievalFactions/config.yml").exists())) {
@@ -53,7 +51,7 @@ public class MedievalFactions extends JavaPlugin {
 
         // post load compatibility checks
         if (!getConfig().getString("version").equalsIgnoreCase(MedievalFactions.version)) {
-            utilities.createActivityRecordForEveryOfflinePlayer(); // make sure every player experiences power decay in case we updated from pre-v3.5
+            Utilities.getInstance().createActivityRecordForEveryOfflinePlayer(); // make sure every player experiences power decay in case we updated from pre-v3.5
         }
 
         int pluginId = 8929;
