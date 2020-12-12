@@ -1,7 +1,7 @@
 package factionsystem.Commands;
 
-import factionsystem.MedievalFactions;
 import factionsystem.Objects.Faction;
+import factionsystem.PersistentData;
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
@@ -15,8 +15,8 @@ public class AllyCommand {
             Player player = (Player) sender;
 
             if (sender.hasPermission("mf.ally") || sender.hasPermission("mf.default")) {
-                if (isInFaction(player.getUniqueId(), MedievalFactions.getInstance().factions)) {
-                    Faction playersFaction = getPlayersFaction(player.getUniqueId(), MedievalFactions.getInstance().factions);
+                if (isInFaction(player.getUniqueId(), PersistentData.getInstance().getFactions())) {
+                    Faction playersFaction = getPlayersFaction(player.getUniqueId(), PersistentData.getInstance().getFactions());
 
                     if (playersFaction.isOwner(player.getUniqueId()) || playersFaction.isOfficer(player.getUniqueId())) {
 
@@ -24,7 +24,7 @@ public class AllyCommand {
 
                         if (args.length > 1) {
                             String targetFactionName = createStringFromFirstArgOnwards(args);
-                            Faction targetFaction = getFaction(targetFactionName, MedievalFactions.getInstance().factions);
+                            Faction targetFaction = getFaction(targetFactionName, PersistentData.getInstance().getFactions());
 
                             if (!playersFaction.getName().equalsIgnoreCase(targetFactionName)) {
 
@@ -46,7 +46,7 @@ public class AllyCommand {
                                                 if (playersFaction.isRequestedAlly(targetFactionName) && targetFaction.isRequestedAlly(playersFaction.getName())) {
                                                     // ally factions
                                                     playersFaction.addAlly(targetFactionName);
-                                                    getFaction(targetFactionName, MedievalFactions.getInstance().factions).addAlly(playersFaction.getName());
+                                                    getFaction(targetFactionName, PersistentData.getInstance().getFactions()).addAlly(playersFaction.getName());
                                                     player.sendMessage(ChatColor.GREEN + "Your faction is now allied with " + targetFactionName + "!");
                                                     sendAllPlayersInFactionMessage(targetFaction, ChatColor.GREEN + "Your faction is now allied with " + playersFaction.getName() + "!");
                                                 }

@@ -1,29 +1,15 @@
 package factionsystem;
 
-import factionsystem.EventHandlers.*;
-import factionsystem.Objects.ClaimedChunk;
-import factionsystem.Objects.Duel;
-import factionsystem.Objects.Faction;
-import factionsystem.Objects.Gate;
-import factionsystem.Objects.LockedBlock;
-import factionsystem.Objects.PlayerActivityRecord;
-import factionsystem.Objects.PlayerPowerRecord;
 import factionsystem.Subsystems.CommandSubsystem;
 import factionsystem.Subsystems.ConfigSubsystem;
 import factionsystem.Subsystems.StorageSubsystem;
 import factionsystem.Subsystems.UtilitySubsystem;
-import factionsystem.Util.Pair;
 import factionsystem.bStats.Metrics;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
-import org.bukkit.entity.AreaEffectCloud;
-import org.bukkit.entity.Player;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import java.io.File;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.UUID;
 
 public class MedievalFactions extends JavaPlugin {
 
@@ -31,7 +17,7 @@ public class MedievalFactions extends JavaPlugin {
     private static MedievalFactions instance;
 
     // version
-    public static String version = "v3.6.0.3-beta-6";
+    public static String version = "v3.6.0.3-beta-7";
 
     // scheduler
     public Scheduler scheduler = new Scheduler();
@@ -40,14 +26,6 @@ public class MedievalFactions extends JavaPlugin {
     public StorageSubsystem storage = new StorageSubsystem();
     public UtilitySubsystem utilities = new UtilitySubsystem();
     public ConfigSubsystem config = new ConfigSubsystem();
-
-    // saved lists
-    public ArrayList<Faction> factions = new ArrayList<>();
-    public ArrayList<ClaimedChunk> claimedChunks = new ArrayList<>();
-    public ArrayList<PlayerPowerRecord> playerPowerRecords = new ArrayList<>();
-    public ArrayList<PlayerActivityRecord> playerActivityRecords = new ArrayList<>();
-    public ArrayList<LockedBlock> lockedBlocks = new ArrayList<>();
-    public ArrayList<Duel> duelingPlayers = new ArrayList<Duel>();
 
     public static MedievalFactions getInstance() {
         return instance;

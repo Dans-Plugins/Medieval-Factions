@@ -2,7 +2,6 @@ package factionsystem.Commands;
 
 import factionsystem.MedievalFactions;
 import factionsystem.Subsystems.ConfigSubsystem;
-
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;

@@ -1,8 +1,8 @@
 package factionsystem.Commands;
 
 import factionsystem.EphemeralData;
-import factionsystem.MedievalFactions;
 import factionsystem.Objects.Faction;
+import factionsystem.PersistentData;
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
@@ -21,9 +21,9 @@ public class DisbandCommand {
 
                         String factionName = createStringFromFirstArgOnwards(args);
 
-                        for (int i = 0; i < MedievalFactions.getInstance().factions.size(); i++) {
+                        for (int i = 0; i < PersistentData.getInstance().getFactions().size(); i++) {
 
-                            if (MedievalFactions.getInstance().factions.get(i).getName().equalsIgnoreCase(factionName)) {
+                            if (PersistentData.getInstance().getFactions().get(i).getName().equalsIgnoreCase(factionName)) {
 
                                 removeFaction(i);
                                 player.sendMessage(ChatColor.GREEN + factionName + " has been successfully disbanded.");
@@ -43,10 +43,10 @@ public class DisbandCommand {
                 }
 
                 boolean owner = false;
-                for (int i = 0; i < MedievalFactions.getInstance().factions.size(); i++) {
-                    if (MedievalFactions.getInstance().factions.get(i).isOwner(player.getUniqueId())) {
+                for (int i = 0; i < PersistentData.getInstance().getFactions().size(); i++) {
+                    if (PersistentData.getInstance().getFactions().get(i).isOwner(player.getUniqueId())) {
                         owner = true;
-                        if (MedievalFactions.getInstance().factions.get(i).getPopulation() == 1) {
+                        if (PersistentData.getInstance().getFactions().get(i).getPopulation() == 1) {
                             EphemeralData.getInstance().getPlayersInFactionChat().remove(player.getUniqueId());
                             removeFaction(i);
                             player.sendMessage(ChatColor.GREEN + "Faction successfully disbanded.");
@@ -75,21 +75,21 @@ public class DisbandCommand {
     public void removeFaction(int i) {
 
         // remove claimed land objects associated with this faction
-        removeAllClaimedChunks(MedievalFactions.getInstance().factions.get(i).getName(), MedievalFactions.getInstance().claimedChunks);
+        removeAllClaimedChunks(PersistentData.getInstance().getFactions().get(i).getName(), PersistentData.getInstance().getClaimedChunks());
 
         // remove locks associated with this faction
-        removeAllLocks(MedievalFactions.getInstance().factions.get(i).getName(), MedievalFactions.getInstance().lockedBlocks);
+        removeAllLocks(PersistentData.getInstance().getFactions().get(i).getName(), PersistentData.getInstance().getLockedBlocks());
 
         // remove records of alliances/wars associated with this faction
-        for (Faction faction : MedievalFactions.getInstance().factions) {
-            if (faction.isAlly(MedievalFactions.getInstance().factions.get(i).getName())) {
-                faction.removeAlly(MedievalFactions.getInstance().factions.get(i).getName());
+        for (Faction faction : PersistentData.getInstance().getFactions()) {
+            if (faction.isAlly(PersistentData.getInstance().getFactions().get(i).getName())) {
+                faction.removeAlly(PersistentData.getInstance().getFactions().get(i).getName());
             }
-            if (faction.isEnemy(MedievalFactions.getInstance().factions.get(i).getName())) {
-                faction.removeEnemy(MedievalFactions.getInstance().factions.get(i).getName());
+            if (faction.isEnemy(PersistentData.getInstance().getFactions().get(i).getName())) {
+                faction.removeEnemy(PersistentData.getInstance().getFactions().get(i).getName());
             }
         }
 
-        MedievalFactions.getInstance().factions.remove(i);
+        PersistentData.getInstance().getFactions().remove(i);
     }
 }

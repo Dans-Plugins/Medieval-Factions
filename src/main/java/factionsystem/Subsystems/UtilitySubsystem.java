@@ -2,13 +2,8 @@ package factionsystem.Subsystems;
 
 import factionsystem.EphemeralData;
 import factionsystem.MedievalFactions;
-import factionsystem.Objects.ClaimedChunk;
-import factionsystem.Objects.Duel;
-import factionsystem.Objects.Faction;
-import factionsystem.Objects.Gate;
-import factionsystem.Objects.LockedBlock;
-import factionsystem.Objects.PlayerActivityRecord;
-import factionsystem.Objects.PlayerPowerRecord;
+import factionsystem.Objects.*;
+import factionsystem.PersistentData;
 import factionsystem.Util.Pair;
 import org.bukkit.*;
 import org.bukkit.block.Block;
@@ -28,7 +23,7 @@ public class UtilitySubsystem {
     
     private ClaimedChunk isChunkClaimed(double x, double y, String world)
     {
-    	for (ClaimedChunk chunk : MedievalFactions.getInstance().claimedChunks)
+    	for (ClaimedChunk chunk : PersistentData.getInstance().getClaimedChunks())
     	{
     		if (x == chunk.getCoordinates()[0] && y == chunk.getCoordinates()[1] && world.equalsIgnoreCase(chunk.getWorld()))
     		{
@@ -43,7 +38,7 @@ public class UtilitySubsystem {
         double[] playerCoords = new double[2];
         playerCoords[0] = player.getLocation().getChunk().getX();
         playerCoords[1] = player.getLocation().getChunk().getZ();
-        for (Faction faction : MedievalFactions.getInstance().factions) {
+        for (Faction faction : PersistentData.getInstance().getFactions()) {
             if (faction.isOwner(player.getUniqueId()) || faction.isOfficer(player.getUniqueId())) {
 
                 // check if land is already claimed
@@ -53,16 +48,16 @@ public class UtilitySubsystem {
                     if (playerCoords[0] == chunk.getCoordinates()[0] && playerCoords[1] == chunk.getCoordinates()[1]) {
 
                         // if holder is player's faction
-                        if (chunk.getHolder().equalsIgnoreCase(faction.getName()) && !getPlayersFaction(player.getUniqueId(), MedievalFactions.getInstance().factions).getAutoClaimStatus()) {
+                        if (chunk.getHolder().equalsIgnoreCase(faction.getName()) && !getPlayersFaction(player.getUniqueId(), PersistentData.getInstance().getFactions()).getAutoClaimStatus()) {
                             player.sendMessage(ChatColor.RED + "This land is already claimed by your faction!");
                             return;
                         }
                         else {
 
                             // check if faction has more land than their demesne limit
-                            for (Faction targetFaction : MedievalFactions.getInstance().factions) {
+                            for (Faction targetFaction : PersistentData.getInstance().getFactions()) {
                                 if (chunk.getHolder().equalsIgnoreCase(targetFaction.getName())) {
-                                    if (targetFaction.getCumulativePowerLevel() < getChunksClaimedByFaction(targetFaction.getName(), MedievalFactions.getInstance().claimedChunks)) {
+                                    if (targetFaction.getCumulativePowerLevel() < getChunksClaimedByFaction(targetFaction.getName(), PersistentData.getInstance().getClaimedChunks())) {
 
                                         // is at war with target faction
                                         if (faction.isEnemy(targetFaction.getName()) || everyPlayerInFactionExperiencingPowerDecay(targetFaction)) {
@@ -77,7 +72,7 @@ public class UtilitySubsystem {
                                             // CONQUERABLE
 
                                             // remove locks on this chunk
-                                            Iterator<LockedBlock> itr = MedievalFactions.getInstance().lockedBlocks.iterator();
+                                            Iterator<LockedBlock> itr = PersistentData.getInstance().getLockedBlocks().iterator();
                                             while (itr.hasNext()) {
                                                 LockedBlock block = itr.next();
                                                 if (chunk.getChunk().getWorld().getBlockAt(block.getX(), block.getY(), block.getZ()).getChunk().getX() == chunk.getChunk().getX() &&
@@ -86,15 +81,15 @@ public class UtilitySubsystem {
                                                 }
                                             }
 
-                                            MedievalFactions.getInstance().claimedChunks.remove(chunk);
+                                            PersistentData.getInstance().getClaimedChunks().remove(chunk);
 
                                             ClaimedChunk newChunk = new ClaimedChunk(player.getLocation().getChunk());
                                             newChunk.setHolder(faction.getName());
                                             newChunk.setWorld(player.getLocation().getWorld().getName());
-                                            MedievalFactions.getInstance().claimedChunks.add(newChunk);
-                                            player.sendMessage(ChatColor.GREEN + "Land conquered from " + targetFaction.getName() + "! Demesne Size: " + getChunksClaimedByFaction(faction.getName(), MedievalFactions.getInstance().claimedChunks) + "/" + faction.getCumulativePowerLevel());
+                                            PersistentData.getInstance().getClaimedChunks().add(newChunk);
+                                            player.sendMessage(ChatColor.GREEN + "Land conquered from " + targetFaction.getName() + "! Demesne Size: " + getChunksClaimedByFaction(faction.getName(), PersistentData.getInstance().getClaimedChunks()) + "/" + faction.getCumulativePowerLevel());
 
-                                            sendAllPlayersInFactionMessage(targetFaction, ChatColor.RED + getPlayersFaction(player.getUniqueId(), MedievalFactions.getInstance().factions).getName() + " has conquered land from your faction!");
+                                            sendAllPlayersInFactionMessage(targetFaction, ChatColor.RED + getPlayersFaction(player.getUniqueId(), PersistentData.getInstance().getFactions()).getName() + " has conquered land from your faction!");
 
                                             return;
                                         }
@@ -110,7 +105,7 @@ public class UtilitySubsystem {
                                 }
                             }
 
-                            if (!getPlayersFaction(player.getUniqueId(), MedievalFactions.getInstance().factions).getAutoClaimStatus()) {
+                            if (!getPlayersFaction(player.getUniqueId(), PersistentData.getInstance().getFactions()).getAutoClaimStatus()) {
                                 player.sendMessage(ChatColor.RED + "This land is already claimed by " + chunk.getHolder());
                             }
 
@@ -122,8 +117,8 @@ public class UtilitySubsystem {
                 ClaimedChunk newChunk = new ClaimedChunk(player.getLocation().getChunk());
                 newChunk.setHolder(faction.getName());
                 newChunk.setWorld(player.getLocation().getWorld().getName());
-                MedievalFactions.getInstance().claimedChunks.add(newChunk);
-                player.sendMessage(ChatColor.GREEN + "Land claimed! Demesne Size: " + getChunksClaimedByFaction(faction.getName(), MedievalFactions.getInstance().claimedChunks) + "/" + faction.getCumulativePowerLevel());
+                PersistentData.getInstance().getClaimedChunks().add(newChunk);
+                player.sendMessage(ChatColor.GREEN + "Land claimed! Demesne Size: " + getChunksClaimedByFaction(faction.getName(), PersistentData.getInstance().getClaimedChunks()) + "/" + faction.getCumulativePowerLevel());
                 return;
             }
         }
@@ -132,7 +127,7 @@ public class UtilitySubsystem {
     private boolean everyPlayerInFactionExperiencingPowerDecay(Faction faction) {
         int numExperiencingPowerDecay = 0;
         for (UUID uuid : faction.getMemberArrayList()) {
-            PlayerActivityRecord record = getPlayerActivityRecord(uuid, MedievalFactions.getInstance().playerActivityRecords);
+            PlayerActivityRecord record = getPlayerActivityRecord(uuid, PersistentData.getInstance().getPlayerActivityRecords());
             if (record != null) {
                 Player player = getServer().getPlayer(record.getPlayerUUID());
                 boolean isOnline = false;
@@ -148,7 +143,7 @@ public class UtilitySubsystem {
             else {
                 PlayerActivityRecord newRecord = new PlayerActivityRecord(uuid, 1);
                 newRecord.setLastLogout(ZonedDateTime.now());
-                MedievalFactions.getInstance().playerActivityRecords.add(newRecord);
+                PersistentData.getInstance().getPlayerActivityRecords().add(newRecord);
             }
         }
         return (numExperiencingPowerDecay == faction.getMemberArrayList().size());
@@ -163,7 +158,7 @@ public class UtilitySubsystem {
         	ClaimedChunk chunk = isChunkClaimed(playerCoords[0], playerCoords[1], player.getLocation().getWorld().getName());
             if (chunk != null)
             {
-                removeChunk(chunk, player, getFaction(chunk.getHolder(), MedievalFactions.getInstance().factions));
+                removeChunk(chunk, player, getFaction(chunk.getHolder(), PersistentData.getInstance().getFactions()));
                 player.sendMessage(ChatColor.GREEN + "Land unclaimed using admin bypass!");
                 return;
             }
@@ -171,7 +166,7 @@ public class UtilitySubsystem {
             return;
         }
 
-        for (Faction faction : MedievalFactions.getInstance().factions) {
+        for (Faction faction : PersistentData.getInstance().getFactions()) {
             if (faction.isOwner(player.getUniqueId()) || faction.isOfficer(player.getUniqueId())) {
                 // check if land is claimed by player's faction
             	ClaimedChunk chunk = isChunkClaimed(playerCoords[0], playerCoords[1], player.getLocation().getWorld().getName());
@@ -198,7 +193,7 @@ public class UtilitySubsystem {
         String identifier = (int)chunk.getChunk().getX() + "_" + (int)chunk.getChunk().getZ();
 
         // if faction home is located on this chunk
-        Location factionHome = getPlayersFaction(player.getUniqueId(), MedievalFactions.getInstance().factions).getFactionHome();
+        Location factionHome = getPlayersFaction(player.getUniqueId(), PersistentData.getInstance().getFactions()).getFactionHome();
         if (factionHome != null) {
             if (factionHome.getChunk().getX() == chunk.getChunk().getX() && factionHome.getChunk().getZ() == chunk.getChunk().getZ()
             		&& chunk.getWorld().equalsIgnoreCase(player.getLocation().getWorld().getName())) {
@@ -210,7 +205,7 @@ public class UtilitySubsystem {
         }
 
         // remove locks on this chunk
-        Iterator<LockedBlock> itr = MedievalFactions.getInstance().lockedBlocks.iterator();
+        Iterator<LockedBlock> itr = PersistentData.getInstance().getLockedBlocks().iterator();
         while (itr.hasNext()) {
             LockedBlock block = itr.next();
             if (chunk.getChunk().getWorld().getBlockAt(block.getX(), block.getY(), block.getZ()).getChunk().getX() == chunk.getChunk().getX() &&
@@ -233,7 +228,7 @@ public class UtilitySubsystem {
         	}
         }
 
-        MedievalFactions.getInstance().claimedChunks.remove(chunk);
+        PersistentData.getInstance().getClaimedChunks().remove(chunk);
     }
     
     public String checkOwnershipAtPlayerLocation(Player player) {
@@ -277,7 +272,7 @@ public class UtilitySubsystem {
     public void resetPowerRecords() {
         // reset individual records
         System.out.println("Resetting individual power records.");
-        for (PlayerPowerRecord record : MedievalFactions.getInstance().playerPowerRecords) {
+        for (PlayerPowerRecord record : PersistentData.getInstance().getPlayerPowerRecords()) {
             record.setPowerLevel(MedievalFactions.getInstance().getConfig().getInt("initialPowerLevel"));
         }
     }
@@ -287,7 +282,7 @@ public class UtilitySubsystem {
     }
 
     public boolean isBlockLocked(int x, int y, int z, String world) {
-        for (LockedBlock block : MedievalFactions.getInstance().lockedBlocks) {
+        for (LockedBlock block : PersistentData.getInstance().getLockedBlocks()) {
             if (block.getX() == x && block.getY() == y && block.getZ() == z && block.getWorld().equalsIgnoreCase(world)) {
                 return true;
             }
@@ -300,7 +295,7 @@ public class UtilitySubsystem {
     }
 
     public LockedBlock getLockedBlock(int x, int y, int z, String world) {
-        for (LockedBlock block : MedievalFactions.getInstance().lockedBlocks) {
+        for (LockedBlock block : PersistentData.getInstance().getLockedBlocks()) {
             if (block.getX() == x && block.getY() == y && block.getZ() == z && block.getWorld().equalsIgnoreCase(world)) {
                 return block;
             }
@@ -310,7 +305,7 @@ public class UtilitySubsystem {
     
     public boolean isGateBlock(Block targetBlock)
     {
-    	for (Faction faction : MedievalFactions.getInstance().factions)
+    	for (Faction faction : PersistentData.getInstance().getFactions())
     	{
     		for (Gate gate : faction.getGates())
     		{
@@ -327,7 +322,7 @@ public class UtilitySubsystem {
 
     public static Duel getDuel(Player player, Player target)
     {
-    	for (Duel duel : MedievalFactions.getInstance().duelingPlayers)
+    	for (Duel duel : EphemeralData.getInstance().getDuelingPlayers())
     	{
     		if (duel.hasPlayer(player) && duel.hasPlayer(target))
     		{
@@ -339,7 +334,7 @@ public class UtilitySubsystem {
 
     public static Duel getDuel(Player player)
     {
-    	for (Duel duel : MedievalFactions.getInstance().duelingPlayers)
+    	for (Duel duel : EphemeralData.getInstance().getDuelingPlayers())
     	{
     		if (duel.isChallenged(player) || duel.isChallenger(player))
     		{
@@ -701,8 +696,8 @@ public class UtilitySubsystem {
         int attackersFactionIndex = factionIndices.getLeft();
         int victimsFactionIndex = factionIndices.getRight();
 
-        return !(MedievalFactions.getInstance().factions.get(attackersFactionIndex).isEnemy(MedievalFactions.getInstance().factions.get(victimsFactionIndex).getName())) &&
-                !(MedievalFactions.getInstance().factions.get(victimsFactionIndex).isEnemy(MedievalFactions.getInstance().factions.get(attackersFactionIndex).getName()));
+        return !(PersistentData.getInstance().getFactions().get(attackersFactionIndex).isEnemy(PersistentData.getInstance().getFactions().get(victimsFactionIndex).getName())) &&
+                !(PersistentData.getInstance().getFactions().get(victimsFactionIndex).isEnemy(PersistentData.getInstance().getFactions().get(attackersFactionIndex).getName()));
     }
 
     public boolean arePlayersInSameFaction(Player player1, Player player2) {
@@ -720,18 +715,18 @@ public class UtilitySubsystem {
     }
 
     public boolean arePlayersInAFaction(Player player1, Player player2) {
-        return isInFaction(player1.getUniqueId(), MedievalFactions.getInstance().factions) && isInFaction(player2.getUniqueId(), MedievalFactions.getInstance().factions);
+        return isInFaction(player1.getUniqueId(), PersistentData.getInstance().getFactions()) && isInFaction(player2.getUniqueId(), PersistentData.getInstance().getFactions());
     }
 
     public Pair<Integer, Integer> getFactionIndices(Player player1, Player player2){
         int attackersFactionIndex = 0;
         int victimsFactionIndex = 0;
 
-        for (int i = 0; i < MedievalFactions.getInstance().factions.size(); i++) {
-            if (MedievalFactions.getInstance().factions.get(i).isMember(player1.getUniqueId())) {
+        for (int i = 0; i < PersistentData.getInstance().getFactions().size(); i++) {
+            if (PersistentData.getInstance().getFactions().get(i).isMember(player1.getUniqueId())) {
                 attackersFactionIndex = i;
             }
-            if (MedievalFactions.getInstance().factions.get(i).isMember(player2.getUniqueId())) {
+            if (PersistentData.getInstance().getFactions().get(i).isMember(player2.getUniqueId())) {
                 victimsFactionIndex = i;
             }
         }
@@ -826,11 +821,11 @@ public class UtilitySubsystem {
     // never log in again will experience power decay.
     public void createActivityRecordForEveryOfflinePlayer() {
         for (OfflinePlayer player : Bukkit.getOfflinePlayers()) {
-            PlayerActivityRecord record = UtilitySubsystem.getPlayerActivityRecord(player.getUniqueId(), MedievalFactions.getInstance().playerActivityRecords);
+            PlayerActivityRecord record = UtilitySubsystem.getPlayerActivityRecord(player.getUniqueId(), PersistentData.getInstance().getPlayerActivityRecords());
             if (record == null) {
                 PlayerActivityRecord newRecord = new PlayerActivityRecord(player.getUniqueId(), 1);
                 newRecord.setLastLogout(ZonedDateTime.now());
-                MedievalFactions.getInstance().playerActivityRecords.add(newRecord);
+                PersistentData.getInstance().getPlayerActivityRecords().add(newRecord);
             }
         }
     }
@@ -881,7 +876,7 @@ public class UtilitySubsystem {
     }
 
     private ClaimedChunk getClaimedChunk(Chunk chunk) {
-        return getClaimedChunk(chunk.getX(), chunk.getZ(), chunk.getWorld().getName(), MedievalFactions.getInstance().claimedChunks);
+        return getClaimedChunk(chunk.getX(), chunk.getZ(), chunk.getWorld().getName(), PersistentData.getInstance().getClaimedChunks());
     }
 
     // this will return true if the chunks to the North, East, South and West of the target are claimed by the same faction as the target

@@ -3,6 +3,7 @@ package factionsystem.Objects;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import factionsystem.MedievalFactions;
+import factionsystem.PersistentData;
 import factionsystem.Subsystems.UtilitySubsystem;
 
 import java.io.File;
@@ -34,11 +35,11 @@ public class PlayerPowerRecord {
     }
 
     public int maxPower() {
-        if (UtilitySubsystem.isPlayerAFactionOwner(playerUUID, MedievalFactions.getInstance().factions)){
+        if (UtilitySubsystem.isPlayerAFactionOwner(playerUUID, PersistentData.getInstance().getFactions())){
             return (int) (MedievalFactions.getInstance().getConfig().getDouble("initialMaxPowerLevel") * MedievalFactions.getInstance().getConfig().getDouble("factionOwnerMultiplier", 2.0));
         }
 
-        if (UtilitySubsystem.isPlayerAFactionOfficer(playerUUID, MedievalFactions.getInstance().factions)){
+        if (UtilitySubsystem.isPlayerAFactionOfficer(playerUUID, PersistentData.getInstance().getFactions())){
             return (int) (MedievalFactions.getInstance().getConfig().getDouble("initialMaxPowerLevel") * MedievalFactions.getInstance().getConfig().getDouble("factionOfficerMultiplier", 1.5));
         }
 

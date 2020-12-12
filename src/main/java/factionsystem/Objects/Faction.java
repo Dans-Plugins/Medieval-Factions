@@ -4,6 +4,7 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.reflect.TypeToken;
 import factionsystem.MedievalFactions;
+import factionsystem.PersistentData;
 import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.WorldCreator;
@@ -163,7 +164,7 @@ public class Faction {
         for (UUID playerUUID : members){
             try
             {
-            	powerLevel += getPlayersPowerRecord(playerUUID, MedievalFactions.getInstance().playerPowerRecords).getPowerLevel();
+            	powerLevel += getPlayersPowerRecord(playerUUID, PersistentData.getInstance().getPlayerPowerRecords()).getPowerLevel();
             }
             catch (Exception e)
             {

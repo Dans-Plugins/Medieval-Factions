@@ -2,6 +2,7 @@ package factionsystem.EventHandlers;
 
 import factionsystem.MedievalFactions;
 import factionsystem.Objects.Faction;
+import factionsystem.PersistentData;
 import org.bukkit.ChatColor;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -23,14 +24,14 @@ public class MoveHandler implements Listener {
         if (event.getFrom().getChunk() != Objects.requireNonNull(event.getTo()).getChunk()) {
 
             // auto claim check
-            for (Faction faction : MedievalFactions.getInstance().factions) {
+            for (Faction faction : PersistentData.getInstance().getFactions()) {
                 if (faction.isOwner(event.getPlayer().getUniqueId())) {
 
                     if (faction.getAutoClaimStatus()) {
 
                         // if not at demesne limit
-                        Faction playersFaction = getPlayersFaction(event.getPlayer().getUniqueId(), MedievalFactions.getInstance().factions);
-                        if (getChunksClaimedByFaction(playersFaction.getName(), MedievalFactions.getInstance().claimedChunks) < playersFaction.getCumulativePowerLevel()) {
+                        Faction playersFaction = getPlayersFaction(event.getPlayer().getUniqueId(), PersistentData.getInstance().getFactions());
+                        if (getChunksClaimedByFaction(playersFaction.getName(), PersistentData.getInstance().getClaimedChunks()) < playersFaction.getCumulativePowerLevel()) {
                             getServer().getScheduler().runTaskLater(MedievalFactions.getInstance(), new Runnable() {
                                 @Override
                                 public void run() {
@@ -47,23 +48,23 @@ public class MoveHandler implements Listener {
             }
 
             // if new chunk is claimed and old chunk was not
-            if (isClaimed(event.getTo().getChunk(), MedievalFactions.getInstance().claimedChunks) && !isClaimed(event.getFrom().getChunk(), MedievalFactions.getInstance().claimedChunks)) {
-                String title = getClaimedChunk(event.getTo().getChunk().getX(), event.getTo().getChunk().getZ(), event.getTo().getChunk().getWorld().getName(), MedievalFactions.getInstance().claimedChunks).getHolder();
+            if (isClaimed(event.getTo().getChunk(), PersistentData.getInstance().getClaimedChunks()) && !isClaimed(event.getFrom().getChunk(), PersistentData.getInstance().getClaimedChunks())) {
+                String title = getClaimedChunk(event.getTo().getChunk().getX(), event.getTo().getChunk().getZ(), event.getTo().getChunk().getWorld().getName(), PersistentData.getInstance().getClaimedChunks()).getHolder();
                 event.getPlayer().sendTitle(title, null, 10, 70, 20);
                 return;
             }
 
             // if new chunk is unclaimed and old chunk was not
-            if (!isClaimed(event.getTo().getChunk(), MedievalFactions.getInstance().claimedChunks) && isClaimed(event.getFrom().getChunk(), MedievalFactions.getInstance().claimedChunks)) {
+            if (!isClaimed(event.getTo().getChunk(), PersistentData.getInstance().getClaimedChunks()) && isClaimed(event.getFrom().getChunk(), PersistentData.getInstance().getClaimedChunks())) {
                 event.getPlayer().sendTitle("Wilderness", null, 10, 70, 20);
                 return;
             }
 
             // if new chunk is claimed and old chunk was also claimed
-            if (isClaimed(event.getTo().getChunk(), MedievalFactions.getInstance().claimedChunks) && isClaimed(event.getFrom().getChunk(), MedievalFactions.getInstance().claimedChunks)) {
+            if (isClaimed(event.getTo().getChunk(), PersistentData.getInstance().getClaimedChunks()) && isClaimed(event.getFrom().getChunk(), PersistentData.getInstance().getClaimedChunks())) {
                 // if chunk holders are not equal
-                if (!(getClaimedChunk(event.getFrom().getChunk().getX(), event.getFrom().getChunk().getZ(), event.getFrom().getWorld().getName(), MedievalFactions.getInstance().claimedChunks).getHolder().equalsIgnoreCase(getClaimedChunk(event.getTo().getChunk().getX(), event.getTo().getChunk().getZ(), event.getTo().getChunk().getWorld().getName(), MedievalFactions.getInstance().claimedChunks).getHolder()))) {
-                    String title = getClaimedChunk(event.getTo().getChunk().getX(), event.getTo().getChunk().getZ(), event.getTo().getChunk().getWorld().getName(), MedievalFactions.getInstance().claimedChunks).getHolder();
+                if (!(getClaimedChunk(event.getFrom().getChunk().getX(), event.getFrom().getChunk().getZ(), event.getFrom().getWorld().getName(), PersistentData.getInstance().getClaimedChunks()).getHolder().equalsIgnoreCase(getClaimedChunk(event.getTo().getChunk().getX(), event.getTo().getChunk().getZ(), event.getTo().getChunk().getWorld().getName(), PersistentData.getInstance().getClaimedChunks()).getHolder()))) {
+                    String title = getClaimedChunk(event.getTo().getChunk().getX(), event.getTo().getChunk().getZ(), event.getTo().getChunk().getWorld().getName(), PersistentData.getInstance().getClaimedChunks()).getHolder();
                     event.getPlayer().sendTitle(title, null, 10, 70, 20);
                 }
             }

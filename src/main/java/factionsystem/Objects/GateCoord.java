@@ -2,8 +2,6 @@ package factionsystem.Objects;
 
 import org.bukkit.block.Block;
 
-import factionsystem.MedievalFactions;
-
 public class GateCoord {
 	
 	private int x;

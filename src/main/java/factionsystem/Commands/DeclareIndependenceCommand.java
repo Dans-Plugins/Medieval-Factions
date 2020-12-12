@@ -2,6 +2,7 @@ package factionsystem.Commands;
 
 import factionsystem.MedievalFactions;
 import factionsystem.Objects.Faction;
+import factionsystem.PersistentData;
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
@@ -15,13 +16,13 @@ public class DeclareIndependenceCommand {
 
             if (player.hasPermission("mf.declareIndependence") || player.hasPermission("mf.default")) {
 
-                Faction playersFaction = MedievalFactions.getInstance().utilities.getPlayersFaction(player.getUniqueId(), MedievalFactions.getInstance().factions);
+                Faction playersFaction = MedievalFactions.getInstance().utilities.getPlayersFaction(player.getUniqueId(), PersistentData.getInstance().getFactions());
 
                     if (playersFaction != null) {
                         // if faction has liege
                         if (playersFaction.hasLiege()) {
 
-                            Faction targetFaction = MedievalFactions.getInstance().utilities.getFaction(playersFaction.getLiege(), MedievalFactions.getInstance().factions);
+                            Faction targetFaction = MedievalFactions.getInstance().utilities.getFaction(playersFaction.getLiege(), PersistentData.getInstance().getFactions());
 
                             // if owner of faction
                             if (playersFaction.isOwner(player.getUniqueId())) {

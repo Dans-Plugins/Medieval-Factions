@@ -1,7 +1,6 @@
 package factionsystem.Subsystems;
 
 import factionsystem.MedievalFactions;
-
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 

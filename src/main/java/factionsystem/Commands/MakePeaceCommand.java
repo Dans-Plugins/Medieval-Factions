@@ -2,6 +2,7 @@ package factionsystem.Commands;
 
 import factionsystem.MedievalFactions;
 import factionsystem.Objects.Faction;
+import factionsystem.PersistentData;
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
@@ -10,14 +11,13 @@ import static factionsystem.Subsystems.UtilitySubsystem.*;
 
 public class MakePeaceCommand {
 
-
     public void makePeace(CommandSender sender, String[] args) {
         if (sender instanceof Player) {
             Player player = (Player) sender;
 
             if (sender.hasPermission("mf.makepeace") || sender.hasPermission("mf.default")) {
-                if (isInFaction(player.getUniqueId(), MedievalFactions.getInstance().factions)) {
-                    Faction playersFaction = getPlayersFaction(player.getUniqueId(), MedievalFactions.getInstance().factions);
+                if (isInFaction(player.getUniqueId(), PersistentData.getInstance().getFactions())) {
+                    Faction playersFaction = getPlayersFaction(player.getUniqueId(), PersistentData.getInstance().getFactions());
 
                     if (playersFaction.isOwner(player.getUniqueId()) || playersFaction.isOfficer(player.getUniqueId())) {
 
@@ -25,7 +25,7 @@ public class MakePeaceCommand {
 
                         if (args.length > 1) {
                             String targetFactionName = createStringFromFirstArgOnwards(args);
-                            Faction targetFaction = getFaction(targetFactionName, MedievalFactions.getInstance().factions);
+                            Faction targetFaction = getFaction(targetFactionName, PersistentData.getInstance().getFactions());
 
                             if (!playersFaction.getName().equalsIgnoreCase(targetFactionName)) {
 
@@ -48,7 +48,7 @@ public class MakePeaceCommand {
 
                                                 // make peace between factions
                                                 playersFaction.removeEnemy(targetFactionName);
-                                                getFaction(targetFactionName, MedievalFactions.getInstance().factions).removeEnemy(playersFaction.getName());
+                                                getFaction(targetFactionName, PersistentData.getInstance().getFactions()).removeEnemy(playersFaction.getName());
                                                 MedievalFactions.getInstance().utilities.sendAllPlayersOnServerMessage(ChatColor.GREEN + playersFaction.getName() + " is now at peace with " + targetFactionName + "!");
                                             }
                                         }

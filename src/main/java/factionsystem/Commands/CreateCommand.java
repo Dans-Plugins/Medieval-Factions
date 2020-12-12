@@ -2,6 +2,7 @@ package factionsystem.Commands;
 
 import factionsystem.MedievalFactions;
 import factionsystem.Objects.Faction;
+import factionsystem.PersistentData;
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
@@ -18,7 +19,7 @@ public class CreateCommand {
 
             if (sender.hasPermission("mf.create")|| sender.hasPermission("mf.default")) {
                 // player membership check
-                for (Faction faction : MedievalFactions.getInstance().factions) {
+                for (Faction faction : PersistentData.getInstance().getFactions()) {
                     if (faction.isMember(player.getUniqueId())) {
                         player.sendMessage(ChatColor.RED + "Sorry, you're already in a faction. Leave if you want to create a different one.");
                         return false;
@@ -33,7 +34,7 @@ public class CreateCommand {
 
                     // faction existence check
                     boolean factionExists = false;
-                    for (Faction faction : MedievalFactions.getInstance().factions) {
+                    for (Faction faction : PersistentData.getInstance().getFactions()) {
                         if (faction.getName().equalsIgnoreCase(name)) {
                             factionExists = true;
                             break;
@@ -44,9 +45,9 @@ public class CreateCommand {
 
                         // actual faction creation
                         Faction temp = new Faction(name, player.getUniqueId(), MedievalFactions.getInstance().getConfig().getInt("initialMaxPowerLevel"));
-                        MedievalFactions.getInstance().factions.add(temp);
+                        PersistentData.getInstance().getFactions().add(temp);
                         // TODO: Make thread safe
-                        MedievalFactions.getInstance().factions.get(MedievalFactions.getInstance().factions.size() - 1).addMember(player.getUniqueId(), getPlayersPowerRecord(player.getUniqueId(), MedievalFactions.getInstance().playerPowerRecords).getPowerLevel());
+                        PersistentData.getInstance().getFactions().get(PersistentData.getInstance().getFactions().size() - 1).addMember(player.getUniqueId(), getPlayersPowerRecord(player.getUniqueId(), PersistentData.getInstance().getPlayerPowerRecords()).getPowerLevel());
                         System.out.println("Faction " + name + " created.");
                         player.sendMessage(ChatColor.AQUA + "Faction " + name + " created.");
                         return true;

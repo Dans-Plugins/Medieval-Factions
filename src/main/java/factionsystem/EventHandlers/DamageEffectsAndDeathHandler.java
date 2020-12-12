@@ -5,8 +5,8 @@ import factionsystem.MedievalFactions;
 import factionsystem.Objects.ClaimedChunk;
 import factionsystem.Objects.Duel;
 import factionsystem.Objects.PlayerPowerRecord;
+import factionsystem.PersistentData;
 import factionsystem.Subsystems.UtilitySubsystem;
-
 import factionsystem.Util.Pair;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.*;
@@ -20,7 +20,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import static factionsystem.Subsystems.UtilitySubsystem.*;
-import static factionsystem.Subsystems.UtilitySubsystem.getPlayersFaction;
 
 public class DamageEffectsAndDeathHandler implements Listener {
 
@@ -48,7 +47,7 @@ public class DamageEffectsAndDeathHandler implements Listener {
             	{
         			duel.setLoser(victim);
             		duel.finishDuel(false);
-            		MedievalFactions.getInstance().duelingPlayers.remove(this);
+            		EphemeralData.getInstance().getDuelingPlayers().remove(this);
             		event.setCancelled(true);
             	}
             }
@@ -77,7 +76,7 @@ public class DamageEffectsAndDeathHandler implements Listener {
                 	{
             			duel.setLoser(victim);
                 		duel.finishDuel(false);
-                		MedievalFactions.getInstance().duelingPlayers.remove(this);
+                		EphemeralData.getInstance().getDuelingPlayers().remove(this);
                 		event.setCancelled(true);
                 	}
                 }
@@ -167,10 +166,10 @@ public class DamageEffectsAndDeathHandler implements Listener {
         Player player = event.getEntity();
 
         // decrease dying player's power
-        for (PlayerPowerRecord record : MedievalFactions.getInstance().playerPowerRecords) {
+        for (PlayerPowerRecord record : PersistentData.getInstance().getPlayerPowerRecords()) {
             if (record.getPlayerUUID().equals(player.getUniqueId())) {
                 record.decreasePowerByTenPercent();
-                if (getPlayersPowerRecord(player.getUniqueId(), MedievalFactions.getInstance().playerPowerRecords).getPowerLevel() > 0) {
+                if (getPlayersPowerRecord(player.getUniqueId(), PersistentData.getInstance().getPlayerPowerRecords()).getPowerLevel() > 0) {
                     player.sendMessage(ChatColor.RED + "Your power level has decreased!");
                 }
             }
@@ -180,7 +179,7 @@ public class DamageEffectsAndDeathHandler implements Listener {
         if (player.getKiller() != null) {
             Player killer = player.getKiller();
 
-            PlayerPowerRecord record = UtilitySubsystem.getPlayersPowerRecord(killer.getUniqueId(), MedievalFactions.getInstance().playerPowerRecords);
+            PlayerPowerRecord record = UtilitySubsystem.getPlayersPowerRecord(killer.getUniqueId(), PersistentData.getInstance().getPlayerPowerRecords());
             if (record != null) {
                 if (record.increasePowerByTenPercent()){
                     killer.sendMessage(ChatColor.GREEN + "Your power level has increased!");
@@ -189,7 +188,7 @@ public class DamageEffectsAndDeathHandler implements Listener {
         }
 
         // if player is in faction
-        if (isInFaction(player.getUniqueId(), MedievalFactions.getInstance().factions)) {
+        if (isInFaction(player.getUniqueId(), PersistentData.getInstance().getFactions())) {
 
             // if player is in land claimed by their faction
             double[] playerCoords = new double[2];
@@ -197,12 +196,12 @@ public class DamageEffectsAndDeathHandler implements Listener {
             playerCoords[1] = player.getLocation().getChunk().getZ();
 
             // check if land is claimed
-            if (UtilitySubsystem.isClaimed(player.getLocation().getChunk(), MedievalFactions.getInstance().claimedChunks))
+            if (UtilitySubsystem.isClaimed(player.getLocation().getChunk(), PersistentData.getInstance().getClaimedChunks()))
             {
                 ClaimedChunk chunk = UtilitySubsystem.getClaimedChunk(player.getLocation().getChunk().getX(), player.getLocation().getChunk().getZ(),
-                        player.getLocation().getWorld().getName(), MedievalFactions.getInstance().claimedChunks);
+                        player.getLocation().getWorld().getName(), PersistentData.getInstance().getClaimedChunks());
                 // if holder is player's faction
-                if (chunk.getHolder().equalsIgnoreCase(getPlayersFaction(player.getUniqueId(), MedievalFactions.getInstance().factions).getName()) && getPlayersFaction(player.getUniqueId(), MedievalFactions.getInstance().factions).getAutoClaimStatus() == false) {
+                if (chunk.getHolder().equalsIgnoreCase(getPlayersFaction(player.getUniqueId(), PersistentData.getInstance().getFactions()).getName()) && getPlayersFaction(player.getUniqueId(), PersistentData.getInstance().getFactions()).getAutoClaimStatus() == false) {
 
                     // if not killed by another player
                     if (!(player.getKiller() instanceof Player)) {

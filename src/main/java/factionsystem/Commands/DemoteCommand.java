@@ -1,14 +1,15 @@
 package factionsystem.Commands;
 
-import factionsystem.MedievalFactions;
 import factionsystem.Objects.Faction;
+import factionsystem.PersistentData;
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
 import java.util.UUID;
 
-import static factionsystem.Subsystems.UtilitySubsystem.*;
+import static factionsystem.Subsystems.UtilitySubsystem.findUUIDBasedOnPlayerName;
+import static factionsystem.Subsystems.UtilitySubsystem.isInFaction;
 import static org.bukkit.Bukkit.getServer;
 
 public class DemoteCommand {
@@ -18,9 +19,9 @@ public class DemoteCommand {
             Player player = (Player) sender;
 
             if (sender.hasPermission("mf.demote") || sender.hasPermission("mf.default")) {
-                if (isInFaction(player.getUniqueId(), MedievalFactions.getInstance().factions)) {
+                if (isInFaction(player.getUniqueId(), PersistentData.getInstance().getFactions())) {
                     if (args.length > 1) {
-                        for (Faction faction : MedievalFactions.getInstance().factions) {
+                        for (Faction faction : PersistentData.getInstance().getFactions()) {
                             UUID officerUUID = findUUIDBasedOnPlayerName(args[1]);
                             if (officerUUID != null && faction.isOfficer(officerUUID)) {
                                 if (faction.isOwner(player.getUniqueId())) {

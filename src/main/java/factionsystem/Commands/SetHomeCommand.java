@@ -1,8 +1,8 @@
 package factionsystem.Commands;
 
-import factionsystem.MedievalFactions;
 import factionsystem.Objects.ClaimedChunk;
 import factionsystem.Objects.Faction;
+import factionsystem.PersistentData;
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
@@ -16,12 +16,12 @@ public class SetHomeCommand {
             Player player = (Player) sender;
 
             if (sender.hasPermission("mf.sethome") || sender.hasPermission("mf.default")) {
-                if (isInFaction(player.getUniqueId(), MedievalFactions.getInstance().factions)) {
-                    Faction playersFaction = getPlayersFaction(player.getUniqueId(), MedievalFactions.getInstance().factions);
+                if (isInFaction(player.getUniqueId(), PersistentData.getInstance().getFactions())) {
+                    Faction playersFaction = getPlayersFaction(player.getUniqueId(), PersistentData.getInstance().getFactions());
                     if (playersFaction.isOwner(player.getUniqueId()) || playersFaction.isOfficer(player.getUniqueId())) {
 
-                        if (isClaimed(player.getLocation().getChunk(), MedievalFactions.getInstance().claimedChunks)) {
-                            ClaimedChunk chunk = getClaimedChunk(player.getLocation().getChunk().getX(), player.getLocation().getChunk().getZ(), player.getWorld().getName(), MedievalFactions.getInstance().claimedChunks);
+                        if (isClaimed(player.getLocation().getChunk(), PersistentData.getInstance().getClaimedChunks())) {
+                            ClaimedChunk chunk = getClaimedChunk(player.getLocation().getChunk().getX(), player.getLocation().getChunk().getZ(), player.getWorld().getName(), PersistentData.getInstance().getClaimedChunks());
                             if (chunk.getHolder().equalsIgnoreCase(playersFaction.getName())) {
                                 playersFaction.setFactionHome(player.getLocation());
                                 player.sendMessage(ChatColor.GREEN + "Faction home set!");

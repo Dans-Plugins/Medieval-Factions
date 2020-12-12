@@ -1,17 +1,15 @@
 package factionsystem.Objects;
 
-import java.util.HashMap;
-import java.util.Map;
-import java.util.UUID;
-
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
-
 import factionsystem.MedievalFactions;
 
 import java.time.Duration;
 import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.UUID;
 
 public class PlayerActivityRecord {
     private UUID playerUUID = null;

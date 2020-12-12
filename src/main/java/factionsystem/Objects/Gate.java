@@ -1,19 +1,17 @@
 package factionsystem.Objects;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Map;
-
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+import factionsystem.MedievalFactions;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.Sound;
 import org.bukkit.World;
 import org.bukkit.block.Block;
 
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
-
-import factionsystem.MedievalFactions;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
 
 public class Gate {
 	
