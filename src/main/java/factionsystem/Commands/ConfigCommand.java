@@ -20,7 +20,7 @@ public class ConfigCommand {
 
                     if (args[1].equalsIgnoreCase("show")) {
                         // no further arguments needed, list config
-                        MedievalFactions.getInstance().config.sendPlayerConfigList(player);
+                        ConfigSubsystem.getInstance().sendPlayerConfigList(player);
                         return;
                     }
 

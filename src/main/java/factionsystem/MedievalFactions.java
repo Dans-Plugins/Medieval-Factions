@@ -24,7 +24,6 @@ public class MedievalFactions extends JavaPlugin {
 
     // subsystems
     public UtilitySubsystem utilities = new UtilitySubsystem();
-    public ConfigSubsystem config = new ConfigSubsystem();
 
     public static MedievalFactions getInstance() {
         return instance;
@@ -40,13 +39,13 @@ public class MedievalFactions extends JavaPlugin {
 
         // config creation/loading
         if (!(new File("./plugins/MedievalFactions/config.yml").exists())) {
-            config.saveConfigDefaults();
+            ConfigSubsystem.getInstance().saveConfigDefaults();
         }
         else {
             // pre load compatibility checks
             if (!getConfig().getString("version").equalsIgnoreCase(MedievalFactions.version)) {
                 System.out.println("[ALERT] Version mismatch! Adding missing defaults and setting version!");
-                config.handleVersionMismatch();
+                ConfigSubsystem.getInstance().handleVersionMismatch();
             }
             reloadConfig();
         }

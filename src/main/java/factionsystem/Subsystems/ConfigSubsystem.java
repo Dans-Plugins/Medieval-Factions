@@ -1,10 +1,24 @@
 package factionsystem.Subsystems;
 
+import factionsystem.Commands.ConfigCommand;
 import factionsystem.MedievalFactions;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 
 public class ConfigSubsystem {
+
+    private static ConfigSubsystem instance;
+
+    private ConfigSubsystem() {
+
+    }
+
+    public static ConfigSubsystem getInstance() {
+        if (instance == null) {
+            instance = new ConfigSubsystem();
+        }
+        return instance;
+    }
 
     public void handleVersionMismatch() {
         // set version
