@@ -5,7 +5,7 @@ import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
-import static factionsystem.Subsystems.UtilitySubsystem.findUUIDBasedOnPlayerName;
+import static factionsystem.Util.Utilities.findUUIDBasedOnPlayerName;
 
 public class GrantAccessCommand {
 

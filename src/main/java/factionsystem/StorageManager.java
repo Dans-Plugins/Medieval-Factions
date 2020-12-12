@@ -1,10 +1,9 @@
-package factionsystem.Subsystems;
+package factionsystem;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.reflect.TypeToken;
 import com.google.gson.stream.JsonReader;
-import factionsystem.MedievalFactions;
 import factionsystem.Objects.*;
 import factionsystem.Data.PersistentData;
 
@@ -12,9 +11,9 @@ import java.io.*;
 import java.lang.reflect.Type;
 import java.util.*;
 
-public class StorageSubsystem {
+public class StorageManager {
 
-    private static StorageSubsystem instance;
+    private static StorageManager instance;
 
     private final static String FILE_PATH = "./plugins/MedievalFactions/";
     private final static String LEGACY_FACTIONS_FILE_NAME = "faction-names.txt";
@@ -31,13 +30,13 @@ public class StorageSubsystem {
 
     private Gson gson = new GsonBuilder().setPrettyPrinting().create();;
 
-    private StorageSubsystem() {
+    private StorageManager() {
 
     }
 
-    public static StorageSubsystem getInstance() {
+    public static StorageManager getInstance() {
         if (instance == null) {
-            instance = new StorageSubsystem();
+            instance = new StorageManager();
         }
         return instance;
     }

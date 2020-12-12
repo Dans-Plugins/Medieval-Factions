@@ -1,7 +1,6 @@
 package factionsystem.Commands;
 
-import factionsystem.MedievalFactions;
-import factionsystem.Subsystems.ConfigSubsystem;
+import factionsystem.ConfigManager;
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
@@ -20,7 +19,7 @@ public class ConfigCommand {
 
                     if (args[1].equalsIgnoreCase("show")) {
                         // no further arguments needed, list config
-                        ConfigSubsystem.getInstance().sendPlayerConfigList(player);
+                        ConfigManager.getInstance().sendPlayerConfigList(player);
                         return;
                     }
 
@@ -32,7 +31,7 @@ public class ConfigCommand {
                             String option = args[2];
                             String value = args[3];
 
-                            ConfigSubsystem.setConfigOption(option, value, player);
+                            ConfigManager.setConfigOption(option, value, player);
                             return;
                         }
                         else {

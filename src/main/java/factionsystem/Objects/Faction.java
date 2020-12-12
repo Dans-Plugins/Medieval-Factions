@@ -16,8 +16,8 @@ import java.io.FileNotFoundException;
 import java.lang.reflect.Type;
 import java.util.*;
 
-import static factionsystem.Subsystems.UtilitySubsystem.findUUIDBasedOnPlayerName;
-import static factionsystem.Subsystems.UtilitySubsystem.getPlayersPowerRecord;
+import static factionsystem.Util.Utilities.findUUIDBasedOnPlayerName;
+import static factionsystem.Util.Utilities.getPlayersPowerRecord;
 import static org.bukkit.Bukkit.getServer;
 
 public class Faction {

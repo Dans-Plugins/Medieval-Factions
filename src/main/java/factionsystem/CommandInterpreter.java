@@ -1,26 +1,25 @@
-package factionsystem.Subsystems;
+package factionsystem;
 
 import factionsystem.Commands.*;
-import factionsystem.MedievalFactions;
 import factionsystem.Objects.Faction;
 import factionsystem.Data.PersistentData;
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
-import static factionsystem.Subsystems.UtilitySubsystem.*;
+import static factionsystem.Util.Utilities.*;
 
-public class CommandSubsystem {
+public class CommandInterpreter {
 
-    private static CommandSubsystem instance;
+    private static CommandInterpreter instance;
 
-    private CommandSubsystem() {
+    private CommandInterpreter() {
 
     }
 
-    public static CommandSubsystem getInstance() {
+    public static CommandInterpreter getInstance() {
         if (instance == null) {
-            instance = new CommandSubsystem();
+            instance = new CommandInterpreter();
         }
         return instance;
     }

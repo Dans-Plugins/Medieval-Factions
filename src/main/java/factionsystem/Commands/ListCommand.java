@@ -7,7 +7,7 @@ import org.bukkit.command.CommandSender;
 
 import java.util.ArrayList;
 
-import static factionsystem.Subsystems.UtilitySubsystem.getChunksClaimedByFaction;
+import static factionsystem.Util.Utilities.getChunksClaimedByFaction;
 
 public class ListCommand {
 

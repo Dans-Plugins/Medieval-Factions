@@ -4,14 +4,13 @@ import factionsystem.Data.PersistentData;
 import factionsystem.Objects.Faction;
 import factionsystem.Objects.PlayerActivityRecord;
 import factionsystem.Objects.PlayerPowerRecord;
-import factionsystem.Subsystems.StorageSubsystem;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 
 import java.util.ArrayList;
 
-import static factionsystem.Subsystems.UtilitySubsystem.*;
+import static factionsystem.Util.Utilities.*;
 import static org.bukkit.Bukkit.getServer;
 
 public class Scheduler {
@@ -37,7 +36,7 @@ public class Scheduler {
             @Override
             public void run() {
                 System.out.println("Medieval Factions is saving. This will happen every hour.");
-                StorageSubsystem.getInstance().save();
+                StorageManager.getInstance().save();
             }
         }, delay * 20, secondsUntilRepeat * 20);
     }

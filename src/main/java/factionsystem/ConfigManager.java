@@ -1,21 +1,19 @@
-package factionsystem.Subsystems;
+package factionsystem;
 
-import factionsystem.Commands.ConfigCommand;
-import factionsystem.MedievalFactions;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 
-public class ConfigSubsystem {
+public class ConfigManager {
 
-    private static ConfigSubsystem instance;
+    private static ConfigManager instance;
 
-    private ConfigSubsystem() {
+    private ConfigManager() {
 
     }
 
-    public static ConfigSubsystem getInstance() {
+    public static ConfigManager getInstance() {
         if (instance == null) {
-            instance = new ConfigSubsystem();
+            instance = new ConfigManager();
         }
         return instance;
     }

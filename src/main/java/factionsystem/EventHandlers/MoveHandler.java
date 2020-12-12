@@ -10,7 +10,7 @@ import org.bukkit.event.player.PlayerMoveEvent;
 
 import java.util.Objects;
 
-import static factionsystem.Subsystems.UtilitySubsystem.*;
+import static factionsystem.Util.Utilities.*;
 import static org.bukkit.Bukkit.getServer;
 
 public class MoveHandler implements Listener {

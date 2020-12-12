@@ -2,7 +2,7 @@ package factionsystem.Commands;
 
 import factionsystem.Data.EphemeralData;
 import factionsystem.Objects.Duel;
-import factionsystem.Subsystems.UtilitySubsystem;
+import factionsystem.Util.Utilities;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
@@ -71,7 +71,7 @@ public class DuelCommand {
 						if (args.length > 2)
 						{
 		                	Player challenger = Bukkit.getServer().getPlayer(args[2]);
-		                	Duel duel = UtilitySubsystem.getDuel(challenger, player);
+		                	Duel duel = Utilities.getDuel(challenger, player);
 		                	if (duel != null)
 		                	{
 		                		if (duel.getStatus().equals(Duel.DuelState.DUELLING))
@@ -97,7 +97,7 @@ public class DuelCommand {
 						}
 						else
 						{
-		                	Duel duel = UtilitySubsystem.getDuel(player);
+		                	Duel duel = Utilities.getDuel(player);
 		                	if (duel != null)
 		                	{
 		                		if (duel.getStatus().equals(Duel.DuelState.DUELLING))
@@ -126,7 +126,7 @@ public class DuelCommand {
 					{
 		                if (isDuelling(player))
 		                {
-		                	Duel duel = UtilitySubsystem.getDuel(player);
+		                	Duel duel = Utilities.getDuel(player);
 		                	if (duel != null)
 		                	{
 		                		if (duel.getStatus().equals(Duel.DuelState.DUELLING))

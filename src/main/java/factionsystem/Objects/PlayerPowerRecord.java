@@ -4,7 +4,7 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import factionsystem.MedievalFactions;
 import factionsystem.Data.PersistentData;
-import factionsystem.Subsystems.UtilitySubsystem;
+import factionsystem.Util.Utilities;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -13,7 +13,7 @@ import java.util.Map;
 import java.util.Scanner;
 import java.util.UUID;
 
-import static factionsystem.Subsystems.UtilitySubsystem.findUUIDBasedOnPlayerName;
+import static factionsystem.Util.Utilities.findUUIDBasedOnPlayerName;
 
 public class PlayerPowerRecord {
 
@@ -35,11 +35,11 @@ public class PlayerPowerRecord {
     }
 
     public int maxPower() {
-        if (UtilitySubsystem.isPlayerAFactionOwner(playerUUID, PersistentData.getInstance().getFactions())){
+        if (Utilities.isPlayerAFactionOwner(playerUUID, PersistentData.getInstance().getFactions())){
             return (int) (MedievalFactions.getInstance().getConfig().getDouble("initialMaxPowerLevel") * MedievalFactions.getInstance().getConfig().getDouble("factionOwnerMultiplier", 2.0));
         }
 
-        if (UtilitySubsystem.isPlayerAFactionOfficer(playerUUID, PersistentData.getInstance().getFactions())){
+        if (Utilities.isPlayerAFactionOfficer(playerUUID, PersistentData.getInstance().getFactions())){
             return (int) (MedievalFactions.getInstance().getConfig().getDouble("initialMaxPowerLevel") * MedievalFactions.getInstance().getConfig().getDouble("factionOfficerMultiplier", 1.5));
         }
 

@@ -8,7 +8,7 @@ import org.bukkit.entity.Player;
 
 import java.util.UUID;
 
-import static factionsystem.Subsystems.UtilitySubsystem.findUUIDBasedOnPlayerName;
+import static factionsystem.Util.Utilities.findUUIDBasedOnPlayerName;
 import static org.bukkit.Bukkit.getServer;
 
 public class TransferCommand {

@@ -6,8 +6,8 @@ import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
-import static factionsystem.Subsystems.UtilitySubsystem.getPlayersFaction;
-import static factionsystem.Subsystems.UtilitySubsystem.isInFaction;
+import static factionsystem.Util.Utilities.getPlayersFaction;
+import static factionsystem.Util.Utilities.isInFaction;
 
 public class RemoveLawCommand {
 

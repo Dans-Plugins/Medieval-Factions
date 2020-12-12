@@ -8,8 +8,8 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.AsyncPlayerChatEvent;
 
-import static factionsystem.Subsystems.UtilitySubsystem.getPlayersFaction;
-import static factionsystem.Subsystems.UtilitySubsystem.sendAllPlayersInFactionMessage;
+import static factionsystem.Util.Utilities.getPlayersFaction;
+import static factionsystem.Util.Utilities.sendAllPlayersInFactionMessage;
 
 public class ChatHandler implements Listener {
 

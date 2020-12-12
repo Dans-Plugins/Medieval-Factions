@@ -4,12 +4,12 @@ import factionsystem.Objects.ClaimedChunk;
 import factionsystem.Objects.Faction;
 import factionsystem.Objects.LockedBlock;
 import factionsystem.Data.PersistentData;
-import factionsystem.Subsystems.StorageSubsystem;
+import factionsystem.StorageManager;
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
-import static factionsystem.Subsystems.UtilitySubsystem.*;
+import static factionsystem.Util.Utilities.*;
 
 public class RenameCommand {
 
@@ -71,7 +71,7 @@ public class RenameCommand {
                             }
 
                             // Save again to overwrite current data
-                            StorageSubsystem.getInstance().save();
+                            StorageManager.getInstance().save();
 
                         }
                         else {

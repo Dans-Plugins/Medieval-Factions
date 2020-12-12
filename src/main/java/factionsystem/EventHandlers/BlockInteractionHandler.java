@@ -7,7 +7,7 @@ import factionsystem.Objects.Faction;
 import factionsystem.Objects.Gate;
 import factionsystem.Objects.LockedBlock;
 import factionsystem.Data.PersistentData;
-import factionsystem.Subsystems.UtilitySubsystem;
+import factionsystem.Util.Utilities;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
@@ -25,7 +25,7 @@ import org.bukkit.inventory.InventoryHolder;
 
 import java.util.UUID;
 
-import static factionsystem.Subsystems.UtilitySubsystem.*;
+import static factionsystem.Util.Utilities.*;
 import static org.bukkit.Bukkit.getLogger;
 import static org.bukkit.Material.LADDER;
 
@@ -68,7 +68,7 @@ public class BlockInteractionHandler implements Listener {
                             return;
                         }
 
-                    	UtilitySubsystem.removeLock(event.getBlock(), PersistentData.getInstance().getLockedBlocks());
+                    	Utilities.removeLock(event.getBlock(), PersistentData.getInstance().getLockedBlocks());
 
                     }
                     
@@ -273,11 +273,11 @@ public class BlockInteractionHandler implements Listener {
             // territory then open/close the gate.
             if (clickedBlock.getType().equals(Material.LEVER))
             {
-                if (UtilitySubsystem.isClaimed(clickedBlock.getChunk(), PersistentData.getInstance().getClaimedChunks()))
+                if (Utilities.isClaimed(clickedBlock.getChunk(), PersistentData.getInstance().getClaimedChunks()))
                 {
-                    ClaimedChunk claim = UtilitySubsystem.getClaimedChunk(clickedBlock.getChunk().getX(), clickedBlock.getChunk().getZ(),
+                    ClaimedChunk claim = Utilities.getClaimedChunk(clickedBlock.getChunk().getX(), clickedBlock.getChunk().getZ(),
                             clickedBlock.getChunk().getWorld().getName(), PersistentData.getInstance().getClaimedChunks());
-                    Faction faction = UtilitySubsystem.getFaction(claim.getHolder(), PersistentData.getInstance().getFactions());
+                    Faction faction = Utilities.getFaction(claim.getHolder(), PersistentData.getInstance().getFactions());
 
                     if (faction.hasGateTrigger(clickedBlock))
                     {
@@ -335,25 +335,25 @@ public class BlockInteractionHandler implements Listener {
             if (EphemeralData.getInstance().getCreatingGatePlayers().containsKey(event.getPlayer().getUniqueId())
                     && player.getInventory().getItemInMainHand().getType().equals(Material.GOLDEN_HOE))
             {
-                if (!UtilitySubsystem.isClaimed(clickedBlock.getChunk(), PersistentData.getInstance().getClaimedChunks()))
+                if (!Utilities.isClaimed(clickedBlock.getChunk(), PersistentData.getInstance().getClaimedChunks()))
                 {
                     player.sendMessage(ChatColor.RED + "You can only create gates in claimed territory.");
                     return;
                 }
                 else
                 {
-                    ClaimedChunk claimedChunk = UtilitySubsystem.getClaimedChunk(clickedBlock.getChunk().getX(), clickedBlock.getChunk().getZ(), clickedBlock.getWorld().getName(), PersistentData.getInstance().getClaimedChunks());
+                    ClaimedChunk claimedChunk = Utilities.getClaimedChunk(clickedBlock.getChunk().getX(), clickedBlock.getChunk().getZ(), clickedBlock.getWorld().getName(), PersistentData.getInstance().getClaimedChunks());
                     if (claimedChunk != null)
                     {
-                        if (!UtilitySubsystem.getFaction(claimedChunk.getHolder(), PersistentData.getInstance().getFactions()).isMember(player.getUniqueId()))
+                        if (!Utilities.getFaction(claimedChunk.getHolder(), PersistentData.getInstance().getFactions()).isMember(player.getUniqueId()))
                         {
                             player.sendMessage(ChatColor.RED + "You must be a member of this faction to create a gate.");
                             return;
                         }
                         else
                         {
-                            if (!UtilitySubsystem.getFaction(claimedChunk.getHolder(), PersistentData.getInstance().getFactions()).isOwner(player.getUniqueId())
-                                    && !UtilitySubsystem.getFaction(claimedChunk.getHolder(), PersistentData.getInstance().getFactions()).isOfficer(player.getUniqueId()))
+                            if (!Utilities.getFaction(claimedChunk.getHolder(), PersistentData.getInstance().getFactions()).isOwner(player.getUniqueId())
+                                    && !Utilities.getFaction(claimedChunk.getHolder(), PersistentData.getInstance().getFactions()).isOfficer(player.getUniqueId()))
                             {
                                 player.sendMessage(ChatColor.RED + "You must be a faction owner or officer to create a gate.");
                                 return;
@@ -451,14 +451,14 @@ public class BlockInteractionHandler implements Listener {
                     {
                         if (clickedBlock.getType().equals(Material.LEVER))
                         {
-                            if (UtilitySubsystem.isClaimed(clickedBlock.getChunk(), PersistentData.getInstance().getClaimedChunks()))
+                            if (Utilities.isClaimed(clickedBlock.getChunk(), PersistentData.getInstance().getClaimedChunks()))
                             {
                                 Gate.ErrorCodeAddCoord e = EphemeralData.getInstance().getCreatingGatePlayers().get(event.getPlayer().getUniqueId()).addCoord(clickedBlock);
                                 if (e.equals(Gate.ErrorCodeAddCoord.None))
                                 {
-                                    ClaimedChunk claim = UtilitySubsystem.getClaimedChunk(clickedBlock.getChunk().getX(), clickedBlock.getChunk().getZ(),
+                                    ClaimedChunk claim = Utilities.getClaimedChunk(clickedBlock.getChunk().getX(), clickedBlock.getChunk().getZ(),
                                             clickedBlock.getChunk().getWorld().getName(), PersistentData.getInstance().getClaimedChunks());
-                                    Faction faction = UtilitySubsystem.getFaction(claim.getHolder(), PersistentData.getInstance().getFactions());
+                                    Faction faction = Utilities.getFaction(claim.getHolder(), PersistentData.getInstance().getFactions());
                                     faction.addGate(EphemeralData.getInstance().getCreatingGatePlayers().get(event.getPlayer().getUniqueId()));
                                     EphemeralData.getInstance().getCreatingGatePlayers().remove(event.getPlayer().getUniqueId());
                                     event.getPlayer().sendMessage(ChatColor.GREEN + "Creating Gate 4/4: Lever successfully linked.");

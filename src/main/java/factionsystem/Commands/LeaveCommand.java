@@ -9,7 +9,7 @@ import org.bukkit.entity.Player;
 
 import java.io.File;
 
-import static factionsystem.Subsystems.UtilitySubsystem.*;
+import static factionsystem.Util.Utilities.*;
 
 public class LeaveCommand {
 

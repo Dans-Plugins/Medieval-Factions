@@ -1,10 +1,10 @@
-package factionsystem.Subsystems;
+package factionsystem.Util;
 
 import factionsystem.Data.EphemeralData;
 import factionsystem.MedievalFactions;
 import factionsystem.Objects.*;
 import factionsystem.Data.PersistentData;
-import factionsystem.Util.Pair;
+import factionsystem.ConfigManager;
 import org.bukkit.*;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
@@ -17,7 +17,7 @@ import java.util.*;
 
 import static org.bukkit.Bukkit.*;
 
-public class UtilitySubsystem {
+public class Utilities {
 
     // non-static methods
 
@@ -687,7 +687,7 @@ public class UtilitySubsystem {
         // this piece of code is to fix config values not matching when updating to v3.3 (after v3.3 there is version mismatch handling)
         if (!MedievalFactions.getInstance().getConfig().isSet("version")) {
             System.out.println("Config.yml doesn't have version entry!");
-            ConfigSubsystem.getInstance().handleVersionMismatch();
+            ConfigManager.getInstance().handleVersionMismatch();
         }
     }
 
@@ -821,7 +821,7 @@ public class UtilitySubsystem {
     // never log in again will experience power decay.
     public void createActivityRecordForEveryOfflinePlayer() {
         for (OfflinePlayer player : Bukkit.getOfflinePlayers()) {
-            PlayerActivityRecord record = UtilitySubsystem.getPlayerActivityRecord(player.getUniqueId(), PersistentData.getInstance().getPlayerActivityRecords());
+            PlayerActivityRecord record = Utilities.getPlayerActivityRecord(player.getUniqueId(), PersistentData.getInstance().getPlayerActivityRecords());
             if (record == null) {
                 PlayerActivityRecord newRecord = new PlayerActivityRecord(player.getUniqueId(), 1);
                 newRecord.setLastLogout(ZonedDateTime.now());

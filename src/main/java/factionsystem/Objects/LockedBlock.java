@@ -9,7 +9,7 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.util.*;
 
-import static factionsystem.Subsystems.UtilitySubsystem.findUUIDBasedOnPlayerName;
+import static factionsystem.Util.Utilities.findUUIDBasedOnPlayerName;
 
 public class LockedBlock {
 

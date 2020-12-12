@@ -6,7 +6,7 @@ import factionsystem.Objects.ClaimedChunk;
 import factionsystem.Objects.Duel;
 import factionsystem.Objects.PlayerPowerRecord;
 import factionsystem.Data.PersistentData;
-import factionsystem.Subsystems.UtilitySubsystem;
+import factionsystem.Util.Utilities;
 import factionsystem.Util.Pair;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.*;
@@ -19,7 +19,7 @@ import org.bukkit.projectiles.ProjectileSource;
 import java.util.ArrayList;
 import java.util.List;
 
-import static factionsystem.Subsystems.UtilitySubsystem.*;
+import static factionsystem.Util.Utilities.*;
 
 public class DamageEffectsAndDeathHandler implements Listener {
 
@@ -36,7 +36,7 @@ public class DamageEffectsAndDeathHandler implements Listener {
             Player attacker = (Player) event.getDamager();
             Player victim = (Player) event.getEntity();
         	// if these players are actively duelling then we don't want to handle friendly fire.
-            Duel duel = UtilitySubsystem.getDuel(attacker, victim);
+            Duel duel = Utilities.getDuel(attacker, victim);
             if (duel == null)
             {
             	handleIfFriendlyFire(event, attacker, victim);	
@@ -65,7 +65,7 @@ public class DamageEffectsAndDeathHandler implements Listener {
                 Player victim = (Player) event.getEntity();
 
             	// if these players are actively duelling then we don't want to handle friendly fire.
-                Duel duel = UtilitySubsystem.getDuel(attacker, victim);
+                Duel duel = Utilities.getDuel(attacker, victim);
                 if (duel == null)
                 {
                 	handleIfFriendlyFire(event, attacker, victim);	
@@ -179,7 +179,7 @@ public class DamageEffectsAndDeathHandler implements Listener {
         if (player.getKiller() != null) {
             Player killer = player.getKiller();
 
-            PlayerPowerRecord record = UtilitySubsystem.getPlayersPowerRecord(killer.getUniqueId(), PersistentData.getInstance().getPlayerPowerRecords());
+            PlayerPowerRecord record = Utilities.getPlayersPowerRecord(killer.getUniqueId(), PersistentData.getInstance().getPlayerPowerRecords());
             if (record != null) {
                 if (record.increasePowerByTenPercent()){
                     killer.sendMessage(ChatColor.GREEN + "Your power level has increased!");
@@ -196,9 +196,9 @@ public class DamageEffectsAndDeathHandler implements Listener {
             playerCoords[1] = player.getLocation().getChunk().getZ();
 
             // check if land is claimed
-            if (UtilitySubsystem.isClaimed(player.getLocation().getChunk(), PersistentData.getInstance().getClaimedChunks()))
+            if (Utilities.isClaimed(player.getLocation().getChunk(), PersistentData.getInstance().getClaimedChunks()))
             {
-                ClaimedChunk chunk = UtilitySubsystem.getClaimedChunk(player.getLocation().getChunk().getX(), player.getLocation().getChunk().getZ(),
+                ClaimedChunk chunk = Utilities.getClaimedChunk(player.getLocation().getChunk().getX(), player.getLocation().getChunk().getZ(),
                         player.getLocation().getWorld().getName(), PersistentData.getInstance().getClaimedChunks());
                 // if holder is player's faction
                 if (chunk.getHolder().equalsIgnoreCase(getPlayersFaction(player.getUniqueId(), PersistentData.getInstance().getFactions()).getName()) && getPlayersFaction(player.getUniqueId(), PersistentData.getInstance().getFactions()).getAutoClaimStatus() == false) {

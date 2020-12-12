@@ -1,9 +1,6 @@
 package factionsystem;
 
-import factionsystem.Subsystems.CommandSubsystem;
-import factionsystem.Subsystems.ConfigSubsystem;
-import factionsystem.Subsystems.StorageSubsystem;
-import factionsystem.Subsystems.UtilitySubsystem;
+import factionsystem.Util.Utilities;
 import factionsystem.bStats.Metrics;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
@@ -19,7 +16,7 @@ public class MedievalFactions extends JavaPlugin {
     // version
     public static String version = "v3.6.0.3-beta-8";
 
-    public UtilitySubsystem utilities = new UtilitySubsystem();
+    public Utilities utilities = new Utilities();
 
     public static MedievalFactions getInstance() {
         return instance;
@@ -35,13 +32,13 @@ public class MedievalFactions extends JavaPlugin {
 
         // config creation/loading
         if (!(new File("./plugins/MedievalFactions/config.yml").exists())) {
-            ConfigSubsystem.getInstance().saveConfigDefaults();
+            ConfigManager.getInstance().saveConfigDefaults();
         }
         else {
             // pre load compatibility checks
             if (!getConfig().getString("version").equalsIgnoreCase(MedievalFactions.version)) {
                 System.out.println("[ALERT] Version mismatch! Adding missing defaults and setting version!");
-                ConfigSubsystem.getInstance().handleVersionMismatch();
+                ConfigManager.getInstance().handleVersionMismatch();
             }
             reloadConfig();
         }
@@ -52,7 +49,7 @@ public class MedievalFactions extends JavaPlugin {
 
         EventRegistry.registerEvents();
 
-        StorageSubsystem.getInstance().load();
+        StorageManager.getInstance().load();
 
         // post load compatibility checks
         if (!getConfig().getString("version").equalsIgnoreCase(MedievalFactions.version)) {
@@ -68,12 +65,12 @@ public class MedievalFactions extends JavaPlugin {
     @Override
     public void onDisable() {
         System.out.println("Medieval Factions plugin disabling....");
-        StorageSubsystem.getInstance().save();
+        StorageManager.getInstance().save();
         System.out.println("Medieval Factions plugin disabled.");
     }
 
     public boolean onCommand(CommandSender sender, Command cmd, String label, String[] args) {
-        return CommandSubsystem.getInstance().interpretCommand(sender, label, args);
+        return CommandInterpreter.getInstance().interpretCommand(sender, label, args);
     }
 
 }

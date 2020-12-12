@@ -10,7 +10,7 @@ import org.bukkit.entity.Player;
 
 import java.util.UUID;
 
-import static factionsystem.Subsystems.UtilitySubsystem.*;
+import static factionsystem.Util.Utilities.*;
 
 public class KickCommand {
 
