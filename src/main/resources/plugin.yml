@@ -1,7 +1,7 @@
 name: MedievalFactions
 version: 3.6.0.3-beta-8
 author: KingdomProgrammers
-main: factionsystem.MedievalFactions
+main: dansplugins.factionsystem.MedievalFactions
 api-version: 1.13
 
 commands:
