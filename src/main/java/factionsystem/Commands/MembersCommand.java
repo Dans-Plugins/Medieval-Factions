@@ -2,6 +2,7 @@ package factionsystem.Commands;
 
 import factionsystem.MedievalFactions;
 import factionsystem.Objects.Faction;
+import factionsystem.PersistentData;
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
@@ -16,7 +17,7 @@ public class MembersCommand {
 
             if (sender.hasPermission("mf.members") || sender.hasPermission("mf.default")) {
                 if (args.length == 1) {
-                    for (Faction faction : MedievalFactions.getInstance().factions) {
+                    for (Faction faction : PersistentData.getInstance().getFactions()) {
                         if (faction.isMember(player.getUniqueId())) {
                             sendFactionMembers(player, faction);
                             return;
@@ -28,7 +29,7 @@ public class MembersCommand {
                     // creating name from arguments 1 to the last one
                     String name = createStringFromFirstArgOnwards(args);
 
-                    for (Faction faction : MedievalFactions.getInstance().factions) {
+                    for (Faction faction : PersistentData.getInstance().getFactions()) {
                         if (faction.getName().equalsIgnoreCase(name)) {
                             sendFactionMembers(player, faction);
                             return;

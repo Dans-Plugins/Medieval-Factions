@@ -2,6 +2,7 @@ package factionsystem.Commands;
 
 import factionsystem.MedievalFactions;
 import factionsystem.Objects.Faction;
+import factionsystem.PersistentData;
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
@@ -19,14 +20,14 @@ public class LawsCommand {
             Faction faction = null;
 
             if (args.length == 1) {
-                faction = getPlayersFaction(player.getUniqueId(), MedievalFactions.getInstance().factions);
+                faction = getPlayersFaction(player.getUniqueId(), PersistentData.getInstance().getFactions());
             }
             else {
                 String target = createStringFromFirstArgOnwards(args);
                 boolean exists = false;
-                for (Faction f : MedievalFactions.getInstance().factions) {
+                for (Faction f : PersistentData.getInstance().getFactions()) {
                     if (f.getName().equalsIgnoreCase(target)) {
-                        faction = getFaction(target, MedievalFactions.getInstance().factions);
+                        faction = getFaction(target, PersistentData.getInstance().getFactions());
                         exists = true;
                     }
                 }

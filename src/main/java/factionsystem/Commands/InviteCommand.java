@@ -2,6 +2,7 @@ package factionsystem.Commands;
 
 import factionsystem.MedievalFactions;
 import factionsystem.Objects.Faction;
+import factionsystem.PersistentData;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
@@ -20,13 +21,13 @@ public class InviteCommand {
             Player player = (Player) sender;
 
             if (sender.hasPermission("mf.invite") || sender.hasPermission("mf.default")) {
-                if (isInFaction(player.getUniqueId(), MedievalFactions.getInstance().factions)) {
-                    for (Faction faction : MedievalFactions.getInstance().factions) {
+                if (isInFaction(player.getUniqueId(), PersistentData.getInstance().getFactions())) {
+                    for (Faction faction : PersistentData.getInstance().getFactions()) {
                         if (faction.isOwner(player.getUniqueId()) || faction.isOfficer(player.getUniqueId())) {
                             if (args.length > 1) {
                                 UUID playerUUID = findUUIDBasedOnPlayerName(args[1]);
                                 // invite if player isn't in a faction already
-                                if (!(isInFaction(playerUUID, MedievalFactions.getInstance().factions))) {
+                                if (!(isInFaction(playerUUID, PersistentData.getInstance().getFactions()))) {
                                     faction.invite(playerUUID);
                                     try {
                                         Player target = Bukkit.getServer().getPlayer(args[1]);

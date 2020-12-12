@@ -3,6 +3,7 @@ package factionsystem.Commands;
 import factionsystem.MedievalFactions;
 import factionsystem.Objects.ClaimedChunk;
 import factionsystem.Objects.Faction;
+import factionsystem.PersistentData;
 import org.bukkit.ChatColor;
 import org.bukkit.Chunk;
 import org.bukkit.Location;
@@ -19,15 +20,15 @@ public class HomeCommand {
             Player player = (Player) sender;
 
             if (sender.hasPermission("mf.home") || sender.hasPermission("mf.default")) {
-                if (isInFaction(player.getUniqueId(), MedievalFactions.getInstance().factions)) {
-                    Faction playersFaction = getPlayersFaction(player.getUniqueId(), MedievalFactions.getInstance().factions);
+                if (isInFaction(player.getUniqueId(), PersistentData.getInstance().getFactions())) {
+                    Faction playersFaction = getPlayersFaction(player.getUniqueId(), PersistentData.getInstance().getFactions());
                     if (playersFaction.getFactionHome() != null) {
 
                         // Check that factionHome is in it's own factions land and not claimed by someone else.
                         Chunk homeChunk = playersFaction.getFactionHome().getBlock().getChunk();
-                        if (isClaimed(homeChunk, MedievalFactions.getInstance().claimedChunks)){
+                        if (isClaimed(homeChunk, PersistentData.getInstance().getClaimedChunks())){
                             // Ensure is in your faction
-                            ClaimedChunk claimedHomeChunk = getClaimedChunk(homeChunk.getX(), homeChunk.getZ(), homeChunk.getWorld().getName(), MedievalFactions.getInstance().claimedChunks);
+                            ClaimedChunk claimedHomeChunk = getClaimedChunk(homeChunk.getX(), homeChunk.getZ(), homeChunk.getWorld().getName(), PersistentData.getInstance().getClaimedChunks());
                             if (claimedHomeChunk.getHolder() != null && !playersFaction.getName().equals(claimedHomeChunk.getHolder())) {
                                 // Area is claimed by someone else and cannot be home. Cancel teleport and return;
                                 player.sendMessage(ChatColor.RED + "Home was claimed by another faction, and has been lost.");

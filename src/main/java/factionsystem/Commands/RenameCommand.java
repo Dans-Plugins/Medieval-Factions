@@ -4,6 +4,7 @@ import factionsystem.MedievalFactions;
 import factionsystem.Objects.ClaimedChunk;
 import factionsystem.Objects.Faction;
 import factionsystem.Objects.LockedBlock;
+import factionsystem.PersistentData;
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
@@ -17,19 +18,19 @@ public class RenameCommand {
             Player player = (Player) sender;
             if (player.hasPermission("mf.rename") || player.hasPermission("mf.default")) {
                 if (args.length > 1) {
-                    String oldName = getPlayersFaction(player.getUniqueId(), MedievalFactions.getInstance().factions).getName();
+                    String oldName = getPlayersFaction(player.getUniqueId(), PersistentData.getInstance().getFactions()).getName();
                     String newName = createStringFromFirstArgOnwards(args);
 
                     // existence check
-                    for (Faction faction : MedievalFactions.getInstance().factions) {
+                    for (Faction faction : PersistentData.getInstance().getFactions()) {
                         if (faction.getName().equalsIgnoreCase(newName)) {
                             player.sendMessage(ChatColor.RED + "That name is already taken!");
                             return;
                         }
                     }
 
-                    if (isInFaction(player.getUniqueId(), MedievalFactions.getInstance().factions)) {
-                        Faction playersFaction = getPlayersFaction(player.getUniqueId(), MedievalFactions.getInstance().factions);
+                    if (isInFaction(player.getUniqueId(), PersistentData.getInstance().getFactions())) {
+                        Faction playersFaction = getPlayersFaction(player.getUniqueId(), PersistentData.getInstance().getFactions());
                         if (playersFaction.isOwner(player.getUniqueId())) {
 
                             // change name
@@ -37,7 +38,7 @@ public class RenameCommand {
                             player.sendMessage(ChatColor.GREEN + "Faction name changed!");
 
                             // rename alliance, enemy, liege and vassal records
-                            for (Faction faction : MedievalFactions.getInstance().factions) {
+                            for (Faction faction : PersistentData.getInstance().getFactions()) {
                                 if (faction.isAlly(oldName)) {
                                     faction.removeAlly(oldName);
                                     faction.addAlly(newName);
@@ -56,14 +57,14 @@ public class RenameCommand {
                             }
 
                             // rename claimed chunk records
-                            for (ClaimedChunk claimedChunk : MedievalFactions.getInstance().claimedChunks) {
+                            for (ClaimedChunk claimedChunk : PersistentData.getInstance().getClaimedChunks()) {
                                 if (claimedChunk.getHolder().equalsIgnoreCase(oldName)) {
                                     claimedChunk.setHolder(newName);
                                 }
                             }
 
                             // rename locked block records
-                            for (LockedBlock lockedBlock : MedievalFactions.getInstance().lockedBlocks) {
+                            for (LockedBlock lockedBlock : PersistentData.getInstance().getLockedBlocks()) {
                                 if (lockedBlock.getFactionName().equalsIgnoreCase(oldName)) {
                                     lockedBlock.setFaction(newName);
                                 }

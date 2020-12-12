@@ -3,6 +3,7 @@ package factionsystem.Commands;
 import factionsystem.EphemeralData;
 import factionsystem.MedievalFactions;
 import factionsystem.Objects.Faction;
+import factionsystem.PersistentData;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
@@ -21,7 +22,7 @@ public class KickCommand {
             if (sender.hasPermission("mf.kick") || sender.hasPermission("mf.default")) {
                 if (args.length > 1) {
                     boolean owner = false;
-                    for (Faction faction : MedievalFactions.getInstance().factions) {
+                    for (Faction faction : PersistentData.getInstance().getFactions()) {
                         if (faction.isOwner(player.getUniqueId()) || faction.isOfficer(player.getUniqueId())) {
                             owner = true;
                             UUID playerUUID = findUUIDBasedOnPlayerName(args[1]);
@@ -35,7 +36,7 @@ public class KickCommand {
 
                                         EphemeralData.getInstance().getPlayersInFactionChat().remove(playerUUID);
 
-                                        faction.removeMember(playerUUID, getPlayersPowerRecord(player.getUniqueId(), MedievalFactions.getInstance().playerPowerRecords).getPowerLevel());
+                                        faction.removeMember(playerUUID, getPlayersPowerRecord(player.getUniqueId(), PersistentData.getInstance().getPlayerPowerRecords()).getPowerLevel());
                                         try {
                                             sendAllPlayersInFactionMessage(faction, ChatColor.RED + args[1] + " has been kicked from " + faction.getName());
                                         } catch (Exception ignored) {

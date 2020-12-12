@@ -41,13 +41,6 @@ public class MedievalFactions extends JavaPlugin {
     public UtilitySubsystem utilities = new UtilitySubsystem();
     public ConfigSubsystem config = new ConfigSubsystem();
 
-    // saved lists
-    public ArrayList<Faction> factions = new ArrayList<>();
-    public ArrayList<ClaimedChunk> claimedChunks = new ArrayList<>();
-    public ArrayList<PlayerPowerRecord> playerPowerRecords = new ArrayList<>();
-    public ArrayList<PlayerActivityRecord> playerActivityRecords = new ArrayList<>();
-    public ArrayList<LockedBlock> lockedBlocks = new ArrayList<>();
-
     public static MedievalFactions getInstance() {
         return instance;
     }

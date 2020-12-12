@@ -2,6 +2,7 @@ package factionsystem.Commands;
 
 import factionsystem.MedievalFactions;
 import factionsystem.Objects.Faction;
+import factionsystem.PersistentData;
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
@@ -17,9 +18,9 @@ public class WhoCommand {
             if (sender.hasPermission("mf.who") || sender.hasPermission("mf.default")) {
                 if (args.length > 1) {
                     String name = createStringFromFirstArgOnwards(args);
-                    Faction faction = getPlayersFaction(findUUIDBasedOnPlayerName(name), MedievalFactions.getInstance().factions);
+                    Faction faction = getPlayersFaction(findUUIDBasedOnPlayerName(name), PersistentData.getInstance().getFactions());
                     if (faction != null) {
-                        sendFactionInfo(player, faction, getChunksClaimedByFaction(faction.getName(), MedievalFactions.getInstance().claimedChunks));
+                        sendFactionInfo(player, faction, getChunksClaimedByFaction(faction.getName(), PersistentData.getInstance().getClaimedChunks()));
                     }
                     else {
                         player.sendMessage(ChatColor.RED + "That player isn't in a faction.");

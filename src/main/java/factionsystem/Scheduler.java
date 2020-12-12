@@ -35,7 +35,7 @@ public class Scheduler {
             @Override
             public void run() {
                 System.out.println("Medieval Factions is increasing the power of every player by " + MedievalFactions.getInstance().getConfig().getInt("powerIncreaseAmount") + ". This will happen every " + MedievalFactions.getInstance().getConfig().getInt("minutesBetweenPowerIncreases") + " minutes.");
-                for (PlayerPowerRecord powerRecord : MedievalFactions.getInstance().playerPowerRecords) {
+                for (PlayerPowerRecord powerRecord : PersistentData.getInstance().getPlayerPowerRecords()) {
                     try {
                         if (powerRecord.getPowerLevel() < powerRecord.maxPower()) {
                             if (getServer().getPlayer(powerRecord.getPlayerUUID()).isOnline()) {
@@ -60,7 +60,7 @@ public class Scheduler {
             public void run() {
                 System.out.println("Medieval Factions is decreasing the power of every player by " + MedievalFactions.getInstance().getConfig().getInt("powerDecreaseAmount") + " if they haven't been online in over " + MedievalFactions.getInstance().getConfig().getInt("minutesBeforePowerDecrease") + " minutes. This will happen every " + MedievalFactions.getInstance().getConfig().getInt("minutesBetweenPowerDecreases") + " minutes.");
 
-                for (PlayerActivityRecord record : MedievalFactions.getInstance().playerActivityRecords)
+                for (PlayerActivityRecord record : PersistentData.getInstance().getPlayerActivityRecords())
                 {
                     Player player = getServer().getPlayer(record.getPlayerUUID());
                     boolean isOnline = false;
@@ -72,7 +72,7 @@ public class Scheduler {
                             && record.getMinutesSinceLastLogout() > MedievalFactions.getInstance().getConfig().getInt("minutesBeforePowerDecrease"))
                     {
                         record.incrementPowerLost();
-                        PlayerPowerRecord power = getPlayersPowerRecord(record.getPlayerUUID(), MedievalFactions.getInstance().playerPowerRecords);
+                        PlayerPowerRecord power = getPlayersPowerRecord(record.getPlayerUUID(), PersistentData.getInstance().getPlayerPowerRecords());
                         power.decreasePower();
                     }
                 }
@@ -90,7 +90,7 @@ public class Scheduler {
     }
 
     private void informPlayerIfTheirLandIsInDanger(Player player) {
-        Faction faction = getPlayersFaction(player.getUniqueId(), MedievalFactions.getInstance().factions);
+        Faction faction = getPlayersFaction(player.getUniqueId(), PersistentData.getInstance().getFactions());
         if (faction != null) {
             if (isFactionExceedingTheirDemesneLimit(faction)) {
                 player.sendMessage(ChatColor.RED + "Your faction has more claimed chunks than power! Your land can be conquered!");
@@ -99,18 +99,18 @@ public class Scheduler {
     }
 
     private boolean isFactionExceedingTheirDemesneLimit(Faction faction) {
-        return (getChunksClaimedByFaction(faction.getName(), MedievalFactions.getInstance().claimedChunks) > faction.getCumulativePowerLevel());
+        return (getChunksClaimedByFaction(faction.getName(), PersistentData.getInstance().getClaimedChunks()) > faction.getCumulativePowerLevel());
     }
 
     private void disbandAllZeroPowerFactions() {
         ArrayList<String> factionsToDisband = new ArrayList<>();
-        for (Faction faction : MedievalFactions.getInstance().factions) {
+        for (Faction faction : PersistentData.getInstance().getFactions()) {
             if (faction.getCumulativePowerLevel() == 0) {
                 factionsToDisband.add(faction.getName());
             }
         }
         for (String factionName : factionsToDisband) {
-            MedievalFactions.getInstance().utilities.sendAllPlayersInFactionMessage(getFaction(factionName, MedievalFactions.getInstance().factions), ChatColor.RED + "Your faction has been disbanded due to its cumulative power reaching zero.");
+            MedievalFactions.getInstance().utilities.sendAllPlayersInFactionMessage(getFaction(factionName, PersistentData.getInstance().getFactions()), ChatColor.RED + "Your faction has been disbanded due to its cumulative power reaching zero.");
             removeFaction(factionName);
             System.out.println(factionName + " has been disbanded due to its cumulative power reaching zero.");
         }
@@ -118,17 +118,17 @@ public class Scheduler {
 
     private void removeFaction(String name) {
 
-        Faction factionToRemove = getFaction(name, MedievalFactions.getInstance().factions);
+        Faction factionToRemove = getFaction(name, PersistentData.getInstance().getFactions());
 
         if (factionToRemove != null) {
             // remove claimed land objects associated with this faction
-            removeAllClaimedChunks(factionToRemove.getName(), MedievalFactions.getInstance().claimedChunks);
+            removeAllClaimedChunks(factionToRemove.getName(), PersistentData.getInstance().getClaimedChunks());
 
             // remove locks associated with this faction
-            removeAllLocks(factionToRemove.getName(), MedievalFactions.getInstance().lockedBlocks);
+            removeAllLocks(factionToRemove.getName(), PersistentData.getInstance().getLockedBlocks());
 
             // remove records of alliances/wars associated with this faction
-            for (Faction faction : MedievalFactions.getInstance().factions) {
+            for (Faction faction : PersistentData.getInstance().getFactions()) {
                 if (faction.isAlly(factionToRemove.getName())) {
                     faction.removeAlly(factionToRemove.getName());
                 }
@@ -138,13 +138,13 @@ public class Scheduler {
             }
 
             int index = -1;
-            for (int i = 0; i < MedievalFactions.getInstance().factions.size(); i++) {
-                if (MedievalFactions.getInstance().factions.get(i).getName().equalsIgnoreCase(name)) {
+            for (int i = 0; i < PersistentData.getInstance().getFactions().size(); i++) {
+                if (PersistentData.getInstance().getFactions().get(i).getName().equalsIgnoreCase(name)) {
                     index = i;
                 }
             }
             if (index != -1) {
-                MedievalFactions.getInstance().factions.remove(index);
+                PersistentData.getInstance().getFactions().remove(index);
             }
         }
     }

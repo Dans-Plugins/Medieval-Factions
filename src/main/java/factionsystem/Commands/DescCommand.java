@@ -2,6 +2,7 @@ package factionsystem.Commands;
 
 import factionsystem.MedievalFactions;
 import factionsystem.Objects.Faction;
+import factionsystem.PersistentData;
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
@@ -14,7 +15,7 @@ public class DescCommand {
 
             if (sender.hasPermission("mf.desc") || sender.hasPermission("mf.default")) {
                 boolean owner = false;
-                for (Faction faction : MedievalFactions.getInstance().factions) {
+                for (Faction faction : PersistentData.getInstance().getFactions()) {
                     if (faction.isOwner(player.getUniqueId())) {
                         owner = true;
                         if (args.length > 1) {

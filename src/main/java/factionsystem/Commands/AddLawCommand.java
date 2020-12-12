@@ -2,6 +2,7 @@ package factionsystem.Commands;
 
 import factionsystem.MedievalFactions;
 import factionsystem.Objects.Faction;
+import factionsystem.PersistentData;
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
@@ -16,8 +17,8 @@ public class AddLawCommand {
 
             Player player = (Player) sender;
 
-            if (isInFaction(player.getUniqueId(), MedievalFactions.getInstance().factions)) {
-                Faction playersFaction = getPlayersFaction(player.getUniqueId(), MedievalFactions.getInstance().factions);
+            if (isInFaction(player.getUniqueId(), PersistentData.getInstance().getFactions())) {
+                Faction playersFaction = getPlayersFaction(player.getUniqueId(), PersistentData.getInstance().getFactions());
 
                 if (playersFaction.isOwner(player.getUniqueId())) {
                     if (args.length > 1) {

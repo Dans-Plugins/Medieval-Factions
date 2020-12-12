@@ -3,6 +3,7 @@ package factionsystem.Subsystems;
 import factionsystem.Commands.*;
 import factionsystem.MedievalFactions;
 import factionsystem.Objects.Faction;
+import factionsystem.PersistentData;
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
@@ -136,9 +137,9 @@ public class CommandSubsystem {
                             Player player = (Player) sender;
 
                             // if not at demesne limit
-                            if (isInFaction(player.getUniqueId(), MedievalFactions.getInstance().factions)) {
-                                Faction playersFaction = getPlayersFaction(player.getUniqueId(), MedievalFactions.getInstance().factions);
-                                if (getChunksClaimedByFaction(playersFaction.getName(), MedievalFactions.getInstance().claimedChunks) < playersFaction.getCumulativePowerLevel()) {
+                            if (isInFaction(player.getUniqueId(), PersistentData.getInstance().getFactions())) {
+                                Faction playersFaction = getPlayersFaction(player.getUniqueId(), PersistentData.getInstance().getFactions());
+                                if (getChunksClaimedByFaction(playersFaction.getName(), PersistentData.getInstance().getClaimedChunks()) < playersFaction.getCumulativePowerLevel()) {
                                     MedievalFactions.getInstance().utilities.addChunkAtPlayerLocation(player);
                                     return true;
                                 }
@@ -165,7 +166,7 @@ public class CommandSubsystem {
                     if (sender.hasPermission("mf.unclaim") || sender.hasPermission("mf.default")) {
                         if (sender instanceof Player) {
                             Player player = (Player) sender;
-                            if (isInFaction(player.getUniqueId(), MedievalFactions.getInstance().factions)) {
+                            if (isInFaction(player.getUniqueId(), PersistentData.getInstance().getFactions())) {
                                 MedievalFactions.getInstance().utilities.removeChunkAtPlayerLocation(player);
                                 return true;
                             }
@@ -194,7 +195,7 @@ public class CommandSubsystem {
 
                                 String factionName = createStringFromFirstArgOnwards(args);
 
-                                Faction faction = getFaction(factionName, MedievalFactions.getInstance().factions);
+                                Faction faction = getFaction(factionName, PersistentData.getInstance().getFactions());
 
                                 if (faction != null) {
                                     // remove faction home
@@ -202,11 +203,11 @@ public class CommandSubsystem {
                                     sendAllPlayersInFactionMessage(faction, ChatColor.RED + "Your faction home has been removed!");
 
                                     // remove claimed chunks
-                                    removeAllClaimedChunks(faction.getName(), MedievalFactions.getInstance().claimedChunks);
+                                    removeAllClaimedChunks(faction.getName(), PersistentData.getInstance().getClaimedChunks());
                                     player.sendMessage(ChatColor.GREEN + "All land unclaimed from " + factionName + "!");
 
                                     // remove locks associated with this faction
-                                    removeAllLocks(faction.getName(), MedievalFactions.getInstance().lockedBlocks);
+                                    removeAllLocks(faction.getName(), PersistentData.getInstance().getLockedBlocks());
                                     return true;
                                 } else {
                                     player.sendMessage(ChatColor.RED + "That faction wasn't found!");
@@ -220,18 +221,18 @@ public class CommandSubsystem {
 
                         if (sender.hasPermission("mf.unclaimall") || sender.hasPermission("mf.default")) {
 
-                            for (Faction faction : MedievalFactions.getInstance().factions) {
+                            for (Faction faction : PersistentData.getInstance().getFactions()) {
                                 if (faction.isOwner(player.getUniqueId())) {
                                     // remove faction home
                                     faction.setFactionHome(null);
                                     sendAllPlayersInFactionMessage(faction, ChatColor.RED + "Your faction home has been removed!");
 
                                     // remove claimed chunks
-                                    removeAllClaimedChunks(faction.getName(), MedievalFactions.getInstance().claimedChunks);
+                                    removeAllClaimedChunks(faction.getName(), PersistentData.getInstance().getClaimedChunks());
                                     player.sendMessage(ChatColor.GREEN + "All land unclaimed.");
 
                                     // remove locks associated with this faction
-                                    removeAllLocks(faction.getName(), MedievalFactions.getInstance().lockedBlocks);
+                                    removeAllLocks(faction.getName(), PersistentData.getInstance().getLockedBlocks());
                                     return true;
                                 }
                             }
@@ -275,9 +276,9 @@ public class CommandSubsystem {
                         if (sender instanceof Player) {
                             Player player = (Player) sender;
 
-                            if (isInFaction(player.getUniqueId(), MedievalFactions.getInstance().factions)) {
+                            if (isInFaction(player.getUniqueId(), PersistentData.getInstance().getFactions())) {
                                 boolean owner = false;
-                                for (Faction faction : MedievalFactions.getInstance().factions) {
+                                for (Faction faction : PersistentData.getInstance().getFactions()) {
                                     if (faction.isOwner(player.getUniqueId())) {
                                         owner = true;
                                         faction.toggleAutoClaim();

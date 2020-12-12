@@ -2,6 +2,7 @@ package factionsystem.Commands;
 
 import factionsystem.MedievalFactions;
 import factionsystem.Objects.PlayerPowerRecord;
+import factionsystem.PersistentData;
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
@@ -22,7 +23,7 @@ public class PowerCommand {
             		UUID playerUUID = findUUIDBasedOnPlayerName(args[1]);
             		if (playerUUID != null)
             		{
-	            		PlayerPowerRecord record = getPlayersPowerRecord(playerUUID, MedievalFactions.getInstance().playerPowerRecords);
+	            		PlayerPowerRecord record = getPlayersPowerRecord(playerUUID, PersistentData.getInstance().getPlayerPowerRecords());
 	                    player.sendMessage(ChatColor.AQUA + args[1] + "'s current power level is " + record.getPowerLevel() + "/" + record.maxPower() + ".");
 	                    return true;
             		}
@@ -34,7 +35,7 @@ public class PowerCommand {
             	}
             	else
             	{
-                    PlayerPowerRecord record = getPlayersPowerRecord(player.getUniqueId(), MedievalFactions.getInstance().playerPowerRecords);
+                    PlayerPowerRecord record = getPlayersPowerRecord(player.getUniqueId(), PersistentData.getInstance().getPlayerPowerRecords());
                     player.sendMessage(ChatColor.AQUA + "Your current power level is " + record.getPowerLevel() + "/" + record.maxPower() + ".");
                     return true;
             	}

@@ -3,6 +3,7 @@ package factionsystem.Commands;
 import factionsystem.MedievalFactions;
 import factionsystem.Objects.Faction;
 import factionsystem.Objects.PlayerPowerRecord;
+import factionsystem.PersistentData;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.OfflinePlayer;
@@ -97,8 +98,8 @@ public class ForceCommand {
                 String factionName1 = singleQuoteArgs.get(0);
                 String factionName2 = singleQuoteArgs.get(1);
 
-                Faction faction1 = MedievalFactions.getInstance().utilities.getFaction(factionName1, MedievalFactions.getInstance().factions);
-                Faction faction2 = MedievalFactions.getInstance().utilities.getFaction(factionName2, MedievalFactions.getInstance().factions);
+                Faction faction1 = MedievalFactions.getInstance().utilities.getFaction(factionName1, PersistentData.getInstance().getFactions());
+                Faction faction2 = MedievalFactions.getInstance().utilities.getFaction(factionName2, PersistentData.getInstance().getFactions());
 
                 // force peace
                 if (faction1 != null && faction2 != null) {
@@ -136,7 +137,7 @@ public class ForceCommand {
                 String playerName = args[2];
                 for (OfflinePlayer player : Bukkit.getOfflinePlayers()) {
                     if (player.getName().equalsIgnoreCase(playerName)) {
-                        for (Faction faction : MedievalFactions.getInstance().factions) {
+                        for (Faction faction : PersistentData.getInstance().getFactions()) {
                             if (faction.isOfficer(player.getUniqueId())) {
                                 faction.removeOfficer(player.getUniqueId());
 
@@ -178,14 +179,14 @@ public class ForceCommand {
                 String playerName = singleQuoteArgs.get(0);
                 String factionName = singleQuoteArgs.get(1);
 
-                Faction faction = MedievalFactions.getInstance().utilities.getFaction(factionName, MedievalFactions.getInstance().factions);
+                Faction faction = MedievalFactions.getInstance().utilities.getFaction(factionName, PersistentData.getInstance().getFactions());
 
                 for (OfflinePlayer player : Bukkit.getOfflinePlayers()) {
                     if (player.getName().equalsIgnoreCase(playerName)) {
 
                         if (faction != null) {
-                            if (!(isInFaction(player.getUniqueId(), MedievalFactions.getInstance().factions))) {
-                                faction.addMember(player.getUniqueId(), getPlayersPowerRecord(player.getUniqueId(), MedievalFactions.getInstance().playerPowerRecords).getPowerLevel());
+                            if (!(isInFaction(player.getUniqueId(), PersistentData.getInstance().getFactions()))) {
+                                faction.addMember(player.getUniqueId(), getPlayersPowerRecord(player.getUniqueId(), PersistentData.getInstance().getPlayerPowerRecords()).getPowerLevel());
                                 try {
                                     sendAllPlayersInFactionMessage(faction, ChatColor.GREEN + player.getName() + " has joined " + faction.getName());
                                 } catch (Exception ignored) {
@@ -228,14 +229,14 @@ public class ForceCommand {
                 String playerName = args[2];
                 for (OfflinePlayer player : Bukkit.getOfflinePlayers()) {
                     if (player.getName().equalsIgnoreCase(playerName)) {
-                        for (Faction faction : MedievalFactions.getInstance().factions) {
+                        for (Faction faction : PersistentData.getInstance().getFactions()) {
                             if (faction.isOwner(player.getUniqueId())) {
                                 sender.sendMessage(ChatColor.RED + "Cannot forcibly kick an owner from their faction! Try disbanding the faction!");
                                 return false;
                             }
 
                             if (faction.isMember(player.getUniqueId())) {
-                                faction.removeMember(player.getUniqueId(), getPlayersPowerRecord(player.getUniqueId(), MedievalFactions.getInstance().playerPowerRecords).getPowerLevel());
+                                faction.removeMember(player.getUniqueId(), getPlayersPowerRecord(player.getUniqueId(), PersistentData.getInstance().getPlayerPowerRecords()).getPowerLevel());
 
                                 if (player.isOnline()) {
                                     Bukkit.getPlayer(player.getUniqueId()).sendMessage(ChatColor.AQUA + "You were forcibly kicked from the faction " + faction.getName() + "!");
@@ -286,7 +287,7 @@ public class ForceCommand {
                     return false;
                 }
 
-                PlayerPowerRecord record = getPlayersPowerRecord(findUUIDBasedOnPlayerName(player), MedievalFactions.getInstance().playerPowerRecords);
+                PlayerPowerRecord record = getPlayersPowerRecord(findUUIDBasedOnPlayerName(player), PersistentData.getInstance().getPlayerPowerRecords());
 
                 record.setPowerLevel(desiredPower);
                 sender.sendMessage(ChatColor.GREEN + "The power level of '" + player + "' has been set to " + desiredPower);

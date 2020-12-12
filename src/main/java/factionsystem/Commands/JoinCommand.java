@@ -2,6 +2,7 @@ package factionsystem.Commands;
 
 import factionsystem.MedievalFactions;
 import factionsystem.Objects.Faction;
+import factionsystem.PersistentData;
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
@@ -20,13 +21,13 @@ public class JoinCommand {
                     // creating name from arguments 1 to the last one
                     String factionName = createStringFromFirstArgOnwards(args);
 
-                    for (Faction faction : MedievalFactions.getInstance().factions) {
+                    for (Faction faction : PersistentData.getInstance().getFactions()) {
                         if (faction.getName().equalsIgnoreCase(factionName)) {
                             if (faction.isInvited(player.getUniqueId())) {
 
                                 // join if player isn't in a faction already
-                                if (!(isInFaction(player.getUniqueId(), MedievalFactions.getInstance().factions))) {
-                                    faction.addMember(player.getUniqueId(), getPlayersPowerRecord(player.getUniqueId(), MedievalFactions.getInstance().playerPowerRecords).getPowerLevel());
+                                if (!(isInFaction(player.getUniqueId(), PersistentData.getInstance().getFactions()))) {
+                                    faction.addMember(player.getUniqueId(), getPlayersPowerRecord(player.getUniqueId(), PersistentData.getInstance().getPlayerPowerRecords()).getPowerLevel());
                                     faction.uninvite(player.getUniqueId());
                                     try {
                                         sendAllPlayersInFactionMessage(faction, ChatColor.GREEN + player.getName() + " has joined " + faction.getName());

@@ -2,6 +2,7 @@ package factionsystem.Commands;
 
 import factionsystem.MedievalFactions;
 import factionsystem.Objects.Faction;
+import factionsystem.PersistentData;
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
 
@@ -15,7 +16,7 @@ public class ListCommand {
 
         if (sender.hasPermission("mf.list") || sender.hasPermission("mf.default")) {
             // if there aren't any factions
-            if (MedievalFactions.getInstance().factions.size() == 0) {
+            if (PersistentData.getInstance().getFactions().size() == 0) {
                 sender.sendMessage(ChatColor.AQUA + "There are currently no factions.");
             }
             // factions exist, list them
@@ -35,12 +36,12 @@ public class ListCommand {
         sender.sendMessage(ChatColor.AQUA + "P: power, M: members, L: land");
         sender.sendMessage(ChatColor.AQUA + "-----");
         for (Faction faction : getFactionsSortedByPower()) {
-            sender.sendMessage(ChatColor.AQUA + String.format("%-25s %10s %10s %10s", faction.getName(), "P: " + faction.getCumulativePowerLevel(), "M: " + faction.getPopulation(), "L: " + getChunksClaimedByFaction(faction.getName(), MedievalFactions.getInstance().claimedChunks)));
+            sender.sendMessage(ChatColor.AQUA + String.format("%-25s %10s %10s %10s", faction.getName(), "P: " + faction.getCumulativePowerLevel(), "M: " + faction.getPopulation(), "L: " + getChunksClaimedByFaction(faction.getName(), PersistentData.getInstance().getClaimedChunks())));
         }
     }
 
     private ArrayList<Faction> getFactionsSortedByPower() {
-        ArrayList<Faction> copiedList = new ArrayList<>(MedievalFactions.getInstance().factions);
+        ArrayList<Faction> copiedList = new ArrayList<>(PersistentData.getInstance().getFactions());
         ArrayList<Faction> sortedList = new ArrayList<>();
         while (copiedList.size() != 0) {
             int mostPower = 0;

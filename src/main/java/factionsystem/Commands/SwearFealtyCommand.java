@@ -2,6 +2,7 @@ package factionsystem.Commands;
 
 import factionsystem.MedievalFactions;
 import factionsystem.Objects.Faction;
+import factionsystem.PersistentData;
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
@@ -19,8 +20,8 @@ public class SwearFealtyCommand {
 
                     String targetFactionName = MedievalFactions.getInstance().utilities.createStringFromFirstArgOnwards(args);
 
-                    Faction playersFaction = MedievalFactions.getInstance().utilities.getPlayersFaction(player.getUniqueId(), MedievalFactions.getInstance().factions);
-                    Faction targetFaction = MedievalFactions.getInstance().utilities.getFaction(targetFactionName, MedievalFactions.getInstance().factions);
+                    Faction playersFaction = MedievalFactions.getInstance().utilities.getPlayersFaction(player.getUniqueId(), PersistentData.getInstance().getFactions());
+                    Faction targetFaction = MedievalFactions.getInstance().utilities.getFaction(targetFactionName, PersistentData.getInstance().getFactions());
 
                     if (targetFaction != null) {
 

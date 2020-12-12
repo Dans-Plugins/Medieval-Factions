@@ -2,6 +2,7 @@ package factionsystem.Commands;
 
 import factionsystem.MedievalFactions;
 import factionsystem.Objects.Faction;
+import factionsystem.PersistentData;
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
@@ -16,7 +17,7 @@ public class DeclareWarCommand {
 
             if (sender.hasPermission("mf.declarewar") || sender.hasPermission("mf.default")) {
                 boolean owner = false;
-                for (Faction faction : MedievalFactions.getInstance().factions) {
+                for (Faction faction : PersistentData.getInstance().getFactions()) {
                     // if player is the owner or officer
                     if (faction.isOwner(player.getUniqueId()) || faction.isOfficer(player.getUniqueId())) {
                         owner = true;
@@ -27,8 +28,8 @@ public class DeclareWarCommand {
                             String factionName = createStringFromFirstArgOnwards(args);
 
                             // check if faction exists
-                            for (int i = 0; i < MedievalFactions.getInstance().factions.size(); i++) {
-                                if (MedievalFactions.getInstance().factions.get(i).getName().equalsIgnoreCase(factionName)) {
+                            for (int i = 0; i < PersistentData.getInstance().getFactions().size(); i++) {
+                                if (PersistentData.getInstance().getFactions().get(i).getName().equalsIgnoreCase(factionName)) {
 
                                     if (!(faction.getName().equalsIgnoreCase(factionName))) {
 
@@ -36,7 +37,7 @@ public class DeclareWarCommand {
                                         if (!(faction.isEnemy(factionName))) {
 
                                             // if trying to declare war on a vassal
-                                            if (MedievalFactions.getInstance().factions.get(i).hasLiege()) {
+                                            if (PersistentData.getInstance().getFactions().get(i).hasLiege()) {
 
                                                 // if faction is vassal of declarer
                                                 if (faction.isVassal(factionName)) {
@@ -45,8 +46,8 @@ public class DeclareWarCommand {
                                                 }
 
                                                 // if lieges aren't the same
-                                                if (!MedievalFactions.getInstance().factions.get(i).getLiege().equalsIgnoreCase(faction.getLiege())) {
-                                                    player.sendMessage(ChatColor.RED + "You can't declare war on this faction as they are a vassal! You must declare war on their liege " + MedievalFactions.getInstance().factions.get(i).getLiege() + " instead!");
+                                                if (!PersistentData.getInstance().getFactions().get(i).getLiege().equalsIgnoreCase(faction.getLiege())) {
+                                                    player.sendMessage(ChatColor.RED + "You can't declare war on this faction as they are a vassal! You must declare war on their liege " + PersistentData.getInstance().getFactions().get(i).getLiege() + " instead!");
                                                     return;
                                                 }
 
@@ -65,16 +66,16 @@ public class DeclareWarCommand {
                                                 faction.addEnemy(factionName);
 
                                                 // add declarer's faction to new enemy's enemyList
-                                                MedievalFactions.getInstance().factions.get(i).addEnemy(faction.getName());
+                                                PersistentData.getInstance().getFactions().get(i).addEnemy(faction.getName());
 
-                                                for (int j = 0; j < MedievalFactions.getInstance().factions.size(); j++) {
-                                                    if (MedievalFactions.getInstance().factions.get(j).getName().equalsIgnoreCase(factionName)) {
+                                                for (int j = 0; j < PersistentData.getInstance().getFactions().size(); j++) {
+                                                    if (PersistentData.getInstance().getFactions().get(j).getName().equalsIgnoreCase(factionName)) {
                                                         MedievalFactions.getInstance().utilities.sendAllPlayersOnServerMessage(ChatColor.RED + faction.getName() + " has declared war against " + factionName + "!");
                                                     }
                                                 }
 
                                                 // invoke alliances
-                                                invokeAlliances(MedievalFactions.getInstance().factions.get(i).getName(), faction.getName(), MedievalFactions.getInstance().factions);
+                                                invokeAlliances(PersistentData.getInstance().getFactions().get(i).getName(), faction.getName(), PersistentData.getInstance().getFactions());
                                             }
                                             else {
                                                 player.sendMessage(ChatColor.RED + "You can't declare war on your ally!");

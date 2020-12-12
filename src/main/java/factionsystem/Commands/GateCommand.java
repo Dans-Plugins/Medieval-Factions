@@ -1,6 +1,7 @@
 package factionsystem.Commands;
 
 import factionsystem.EphemeralData;
+import factionsystem.PersistentData;
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
@@ -41,7 +42,7 @@ public class GateCommand {
 						}
 						else
 						{
-							Faction faction = UtilitySubsystem.getPlayersFaction(player.getUniqueId(), MedievalFactions.getInstance().factions);
+							Faction faction = UtilitySubsystem.getPlayersFaction(player.getUniqueId(), PersistentData.getInstance().getFactions());
 							if (faction != null)
 							{
 								if (faction.isOfficer(player.getUniqueId()) || faction.isOwner(player.getUniqueId()))
@@ -66,7 +67,7 @@ public class GateCommand {
 					}
 					else if (args[1].equalsIgnoreCase("list"))
 					{
-						Faction faction = UtilitySubsystem.getPlayersFaction(player.getUniqueId(), MedievalFactions.getInstance().factions);
+						Faction faction = UtilitySubsystem.getPlayersFaction(player.getUniqueId(), PersistentData.getInstance().getFactions());
 						if (faction != null)
 						{
 							if (faction.getGates().size() > 0)
@@ -93,10 +94,10 @@ public class GateCommand {
 					{
 						if (player.getTargetBlock(null, 16) != null)
 						{
-							if (UtilitySubsystem.isGateBlock(player.getTargetBlock(null, 16), MedievalFactions.getInstance().factions))
+							if (UtilitySubsystem.isGateBlock(player.getTargetBlock(null, 16), PersistentData.getInstance().getFactions()))
 							{
-								Gate gate = UtilitySubsystem.getGate(player.getTargetBlock(null, 16), MedievalFactions.getInstance().factions);
-								Faction faction = UtilitySubsystem.getGateFaction(gate, MedievalFactions.getInstance().factions);
+								Gate gate = UtilitySubsystem.getGate(player.getTargetBlock(null, 16), PersistentData.getInstance().getFactions());
+								Faction faction = UtilitySubsystem.getGateFaction(gate, PersistentData.getInstance().getFactions());
 								if (faction != null)
 								{
 									if (faction.isOfficer(player.getUniqueId()) || faction.isOwner(player.getUniqueId()))
@@ -133,12 +134,12 @@ public class GateCommand {
 					{						
 						if (player.getTargetBlock(null, 16) != null)
 						{
-							if (UtilitySubsystem.isGateBlock(player.getTargetBlock(null, 16), MedievalFactions.getInstance().factions))
+							if (UtilitySubsystem.isGateBlock(player.getTargetBlock(null, 16), PersistentData.getInstance().getFactions()))
 							{
-								Gate gate = UtilitySubsystem.getGate(player.getTargetBlock(null, 16), MedievalFactions.getInstance().factions);
+								Gate gate = UtilitySubsystem.getGate(player.getTargetBlock(null, 16), PersistentData.getInstance().getFactions());
 								if (args.length > 2)
 								{
-									Faction faction = UtilitySubsystem.getGateFaction(gate, MedievalFactions.getInstance().factions);
+									Faction faction = UtilitySubsystem.getGateFaction(gate, PersistentData.getInstance().getFactions());
 									if (faction != null)
 									{
 										if (faction.isOfficer(player.getUniqueId()) || faction.isOwner(player.getUniqueId()))

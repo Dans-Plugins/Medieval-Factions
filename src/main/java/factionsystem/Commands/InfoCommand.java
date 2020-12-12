@@ -2,6 +2,7 @@ package factionsystem.Commands;
 
 import factionsystem.MedievalFactions;
 import factionsystem.Objects.Faction;
+import factionsystem.PersistentData;
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
@@ -16,9 +17,9 @@ public class InfoCommand {
 
             if (sender.hasPermission("mf.info") || sender.hasPermission("mf.default")) {
                 if (args.length == 1) {
-                    for (Faction faction : MedievalFactions.getInstance().factions) {
+                    for (Faction faction : PersistentData.getInstance().getFactions()) {
                         if (faction.isMember(player.getUniqueId())) {
-                            sendFactionInfo(player, faction, getChunksClaimedByFaction(faction.getName(), MedievalFactions.getInstance().claimedChunks));
+                            sendFactionInfo(player, faction, getChunksClaimedByFaction(faction.getName(), PersistentData.getInstance().getClaimedChunks()));
                             return;
                         }
                     }
@@ -29,10 +30,10 @@ public class InfoCommand {
                     String name = createStringFromFirstArgOnwards(args);
 
                     boolean exists = false;
-                    for (Faction faction : MedievalFactions.getInstance().factions) {
+                    for (Faction faction : PersistentData.getInstance().getFactions()) {
                         if (faction.getName().equalsIgnoreCase(name)) {
                             exists = true;
-                            sendFactionInfo(player, faction, getChunksClaimedByFaction(faction.getName(), MedievalFactions.getInstance().claimedChunks));
+                            sendFactionInfo(player, faction, getChunksClaimedByFaction(faction.getName(), PersistentData.getInstance().getClaimedChunks()));
                         }
                     }
                     if (!exists) {

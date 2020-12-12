@@ -2,6 +2,7 @@ package factionsystem.Commands;
 
 import factionsystem.MedievalFactions;
 import factionsystem.Objects.Faction;
+import factionsystem.PersistentData;
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
@@ -19,9 +20,9 @@ public class PromoteCommand {
             Player player = (Player) sender;
 
             if (sender.hasPermission("mf.promote") || sender.hasPermission("mf.default")) {
-                if (isInFaction(player.getUniqueId(), MedievalFactions.getInstance().factions)) {
+                if (isInFaction(player.getUniqueId(), PersistentData.getInstance().getFactions())) {
                     if (args.length > 1) {
-                        for (Faction faction : MedievalFactions.getInstance().factions) {
+                        for (Faction faction : PersistentData.getInstance().getFactions()) {
                             UUID playerUUID = findUUIDBasedOnPlayerName(args[1]);
                             if (faction.isMember(playerUUID)) {
                                 if (faction.isOwner(player.getUniqueId())) {
