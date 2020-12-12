@@ -21,12 +21,12 @@ public class ConfigManager {
     public void handleVersionMismatch() {
         // set version
         if (!MedievalFactions.getInstance().getConfig().isString("version")) {
-            System.out.println("Version not set! Setting version to " + MedievalFactions.getInstance().version);
-            MedievalFactions.getInstance().getConfig().addDefault("version", MedievalFactions.getInstance().version);
+            System.out.println("Version not set! Setting version to " + MedievalFactions.getInstance().getVersion());
+            MedievalFactions.getInstance().getConfig().addDefault("version", MedievalFactions.getInstance().getVersion());
         }
         else {
-            System.out.println("Version set but mismatched! Setting version to " + MedievalFactions.getInstance().version);
-            MedievalFactions.getInstance().getConfig().set("version", MedievalFactions.getInstance().version);
+            System.out.println("Version set but mismatched! Setting version to " + MedievalFactions.getInstance().getVersion());
+            MedievalFactions.getInstance().getConfig().set("version", MedievalFactions.getInstance().getVersion());
         }
 
         // add defaults if they don't exist
@@ -93,12 +93,12 @@ public class ConfigManager {
         	System.out.println("minutesBeforePowerDecrease is not set! Setting to default");
         	MedievalFactions.getInstance().getConfig().addDefault("minutesBeforePowerDecrease", 20160);
         }
-        
+
         if (!MedievalFactions.getInstance().getConfig().isInt("powerDecreaseAmount")) {
             System.out.println("powerDecreaseAmount not set! Setting to default!");
             MedievalFactions.getInstance().getConfig().addDefault("powerDecreaseAmount", 1);
         }
-        
+
         if (!MedievalFactions.getInstance().getConfig().isInt("factionMaxNameLength")) {
         	System.out.println("factionMaxNameLength not set! Setting to default!");
             MedievalFactions.getInstance().getConfig().addDefault("factionMaxNameLength", 20);
@@ -147,7 +147,7 @@ public class ConfigManager {
         }
 
     }
-    
+
     public static void setConfigOption(String option, String value, Player player) {
 
         if (MedievalFactions.getInstance().getConfig().isSet(option)) {
@@ -167,7 +167,7 @@ public class ConfigManager {
                     || option.equalsIgnoreCase("powerDecreaseAmount")
                     || option.equalsIgnoreCase("factionMaxNameLength")
 	                || option.equalsIgnoreCase("factionMaxNumberGates")
-	                || option.equalsIgnoreCase("factionMaxGateArea")) 
+	                || option.equalsIgnoreCase("factionMaxGateArea"))
             {
                 MedievalFactions.getInstance().getConfig().set(option, Integer.parseInt(value));
                 player.sendMessage(ChatColor.GREEN + "Integer set!");
@@ -201,7 +201,7 @@ public class ConfigManager {
     }
 
     public void saveConfigDefaults() {
-        MedievalFactions.getInstance().getConfig().addDefault("version", MedievalFactions.getInstance().version);
+        MedievalFactions.getInstance().getConfig().addDefault("version", MedievalFactions.getInstance().getVersion());
         MedievalFactions.getInstance().getConfig().addDefault("initialMaxPowerLevel", 20);
         MedievalFactions.getInstance().getConfig().addDefault("initialPowerLevel", 5);
         MedievalFactions.getInstance().getConfig().addDefault("powerIncreaseAmount", 2);

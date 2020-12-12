@@ -31,7 +31,7 @@ public class CommandInterpreter {
             // no arguments check
             if (args.length == 0) {
                 // send plugin information
-                sender.sendMessage(ChatColor.AQUA + " == Medieval Factions " + MedievalFactions.getInstance().version + " == ");
+                sender.sendMessage(ChatColor.AQUA + " == Medieval Factions " + MedievalFactions.getInstance().getVersion() + " == ");
                 sender.sendMessage(ChatColor.AQUA + "Developers: DanTheTechMan, Pasarus, Caibinus");
                 sender.sendMessage(ChatColor.AQUA + "Wiki: https://github.com/DansPlugins/Medieval-Factions/wiki");
                 return true;
@@ -352,14 +352,14 @@ public class CommandInterpreter {
                 }
 
                 // TODO: move into command class
-                // version command
-                if (args[0].equalsIgnoreCase("version")) {
-                    if (sender.hasPermission("mf.version") || sender.hasPermission("mf.default")) {
-                        sender.sendMessage(ChatColor.AQUA + "Medieval-Factions-" + MedievalFactions.getInstance().version);
+                // getVersion() command
+                if (args[0].equalsIgnoreCase("getVersion()")) {
+                    if (sender.hasPermission("mf.getVersion()") || sender.hasPermission("mf.default")) {
+                        sender.sendMessage(ChatColor.AQUA + "Medieval-Factions-" + MedievalFactions.getInstance().getVersion());
                         return true;
                     }
                     else {
-                        sender.sendMessage(ChatColor.RED + "Sorry! You need the following permission to use this command: 'mf.version'");
+                        sender.sendMessage(ChatColor.RED + "Sorry! You need the following permission to use this command: 'mf.getVersion()'");
                         return false;
                     }
 
