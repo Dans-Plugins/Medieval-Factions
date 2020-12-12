@@ -14,6 +14,8 @@ import java.util.*;
 
 public class StorageSubsystem {
 
+    private static StorageSubsystem instance;
+
     private final static String FILE_PATH = "./plugins/MedievalFactions/";
     private final static String LEGACY_FACTIONS_FILE_NAME = "faction-names.txt";
     private final static String LEGACY_CHUNKS_FILE_NAME = "claimedchunks/claimedchunks.txt";
@@ -28,6 +30,17 @@ public class StorageSubsystem {
     private final static Type LIST_MAP_TYPE = new TypeToken<ArrayList<HashMap<String, String>>>(){}.getType();
 
     private Gson gson = new GsonBuilder().setPrettyPrinting().create();;
+
+    private StorageSubsystem() {
+
+    }
+
+    public static StorageSubsystem getInstance() {
+        if (instance == null) {
+            instance = new StorageSubsystem();
+        }
+        return instance;
+    }
 
     public void save() {
         saveFactions();

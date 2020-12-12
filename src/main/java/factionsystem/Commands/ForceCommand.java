@@ -4,6 +4,7 @@ import factionsystem.MedievalFactions;
 import factionsystem.Objects.Faction;
 import factionsystem.Objects.PlayerPowerRecord;
 import factionsystem.PersistentData;
+import factionsystem.Subsystems.StorageSubsystem;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.OfflinePlayer;
@@ -59,7 +60,7 @@ public class ForceCommand {
     private boolean forceSave(CommandSender sender) {
         if (sender.hasPermission("mf.force.save") || sender.hasPermission("mf.force.*") || sender.hasPermission("mf.admin")) {
             sender.sendMessage(ChatColor.GREEN + "Medieval Factions plugin is saving...");
-            MedievalFactions.getInstance().storage.save();
+            StorageSubsystem.getInstance().save();
             return true;
         }
         else {
@@ -71,7 +72,7 @@ public class ForceCommand {
     private boolean forceLoad(CommandSender sender) {
         if (sender.hasPermission("mf.force.load") || sender.hasPermission("mf.force.*")|| sender.hasPermission("mf.admin")) {
             sender.sendMessage(ChatColor.GREEN + "Medieval Factions plugin is loading...");
-            MedievalFactions.getInstance().storage.load();
+            StorageSubsystem.getInstance().load();
             MedievalFactions.getInstance().reloadConfig();
             return true;
         }

@@ -23,7 +23,6 @@ public class MedievalFactions extends JavaPlugin {
     public Scheduler scheduler = new Scheduler();
 
     // subsystems
-    public StorageSubsystem storage = new StorageSubsystem();
     public UtilitySubsystem utilities = new UtilitySubsystem();
     public ConfigSubsystem config = new ConfigSubsystem();
 
@@ -58,7 +57,7 @@ public class MedievalFactions extends JavaPlugin {
 
         EventRegistry.registerEvents();
 
-        storage.load();
+        StorageSubsystem.getInstance().load();
 
         // post load compatibility checks
         if (!getConfig().getString("version").equalsIgnoreCase(MedievalFactions.version)) {
@@ -74,7 +73,7 @@ public class MedievalFactions extends JavaPlugin {
     @Override
     public void onDisable(){
         System.out.println("Medieval Factions plugin disabling....");
-        storage.save();
+        StorageSubsystem.getInstance().save();
         System.out.println("Medieval Factions plugin disabled.");
     }
 

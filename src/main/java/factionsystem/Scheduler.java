@@ -3,6 +3,7 @@ package factionsystem;
 import factionsystem.Objects.Faction;
 import factionsystem.Objects.PlayerActivityRecord;
 import factionsystem.Objects.PlayerPowerRecord;
+import factionsystem.Subsystems.StorageSubsystem;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
@@ -22,7 +23,7 @@ public class Scheduler {
             @Override
             public void run() {
                 System.out.println("Medieval Factions is saving. This will happen every hour.");
-                MedievalFactions.getInstance().storage.save();
+                StorageSubsystem.getInstance().save();
             }
         }, delay * 20, secondsUntilRepeat * 20);
     }

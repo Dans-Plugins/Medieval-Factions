@@ -5,6 +5,7 @@ import factionsystem.Objects.ClaimedChunk;
 import factionsystem.Objects.Faction;
 import factionsystem.Objects.LockedBlock;
 import factionsystem.PersistentData;
+import factionsystem.Subsystems.StorageSubsystem;
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
@@ -71,7 +72,7 @@ public class RenameCommand {
                             }
 
                             // Save again to overwrite current data
-                            MedievalFactions.getInstance().storage.save();
+                            StorageSubsystem.getInstance().save();
 
                         }
                         else {
