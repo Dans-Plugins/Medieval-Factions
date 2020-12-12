@@ -77,8 +77,7 @@ public class MedievalFactions extends JavaPlugin {
     }
 
     public boolean onCommand(CommandSender sender, Command cmd, String label, String[] args) {
-        CommandSubsystem commandInterpreter = new CommandSubsystem();
-        return commandInterpreter.interpretCommand(sender, label, args);
+        return CommandSubsystem.getInstance().interpretCommand(sender, label, args);
     }
 
 }

@@ -12,6 +12,19 @@ import static factionsystem.Subsystems.UtilitySubsystem.*;
 
 public class CommandSubsystem {
 
+    private static CommandSubsystem instance;
+
+    private CommandSubsystem() {
+
+    }
+
+    public static CommandSubsystem getInstance() {
+        if (instance == null) {
+            instance = new CommandSubsystem();
+        }
+        return instance;
+    }
+
     public boolean interpretCommand(CommandSender sender, String label, String[] args) {
         // mf commands
         if (label.equalsIgnoreCase("mf") || label.equalsIgnoreCase("f") ||
