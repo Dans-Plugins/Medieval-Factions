@@ -1,5 +1,6 @@
 package factionsystem;
 
+import factionsystem.Objects.Duel;
 import factionsystem.Objects.Gate;
 import factionsystem.Util.Pair;
 import org.bukkit.entity.AreaEffectCloud;
@@ -30,6 +31,9 @@ public class EphemeralData {
 
     // List of players who made the cloud and the cloud itself in a pair
     private ArrayList<Pair<Player, AreaEffectCloud>> activeAOEClouds = new ArrayList<>();
+
+    // duels
+    private ArrayList<Duel> duelingPlayers = new ArrayList<>();
 
     private EphemeralData() {
 
@@ -76,6 +80,10 @@ public class EphemeralData {
 
     public ArrayList<Pair<Player, AreaEffectCloud>> getActiveAOEClouds() {
         return activeAOEClouds;
+    }
+
+    public ArrayList<Duel> getDuelingPlayers() {
+        return duelingPlayers;
     }
 
 

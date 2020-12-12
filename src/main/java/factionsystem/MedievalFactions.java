@@ -47,7 +47,6 @@ public class MedievalFactions extends JavaPlugin {
     public ArrayList<PlayerPowerRecord> playerPowerRecords = new ArrayList<>();
     public ArrayList<PlayerActivityRecord> playerActivityRecords = new ArrayList<>();
     public ArrayList<LockedBlock> lockedBlocks = new ArrayList<>();
-    public ArrayList<Duel> duelingPlayers = new ArrayList<Duel>();
 
     public static MedievalFactions getInstance() {
         return instance;

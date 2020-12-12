@@ -327,7 +327,7 @@ public class UtilitySubsystem {
 
     public static Duel getDuel(Player player, Player target)
     {
-    	for (Duel duel : MedievalFactions.getInstance().duelingPlayers)
+    	for (Duel duel : EphemeralData.getInstance().getDuelingPlayers())
     	{
     		if (duel.hasPlayer(player) && duel.hasPlayer(target))
     		{
@@ -339,7 +339,7 @@ public class UtilitySubsystem {
 
     public static Duel getDuel(Player player)
     {
-    	for (Duel duel : MedievalFactions.getInstance().duelingPlayers)
+    	for (Duel duel : EphemeralData.getInstance().getDuelingPlayers())
     	{
     		if (duel.isChallenged(player) || duel.isChallenger(player))
     		{

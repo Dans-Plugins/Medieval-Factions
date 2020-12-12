@@ -48,7 +48,7 @@ public class DamageEffectsAndDeathHandler implements Listener {
             	{
         			duel.setLoser(victim);
             		duel.finishDuel(false);
-            		MedievalFactions.getInstance().duelingPlayers.remove(this);
+            		EphemeralData.getInstance().getDuelingPlayers().remove(this);
             		event.setCancelled(true);
             	}
             }
@@ -77,7 +77,7 @@ public class DamageEffectsAndDeathHandler implements Listener {
                 	{
             			duel.setLoser(victim);
                 		duel.finishDuel(false);
-                		MedievalFactions.getInstance().duelingPlayers.remove(this);
+                		EphemeralData.getInstance().getDuelingPlayers().remove(this);
                 		event.setCancelled(true);
                 	}
                 }

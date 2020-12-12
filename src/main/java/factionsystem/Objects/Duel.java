@@ -1,5 +1,6 @@
 package factionsystem.Objects;
 
+import factionsystem.EphemeralData;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.OfflinePlayer;
@@ -216,7 +217,7 @@ public class Duel {
 		}
 		bar.removeAll();
 		MedievalFactions.getInstance().getServer().getScheduler().cancelTask(repeatingTaskId);
-    	MedievalFactions.getInstance().duelingPlayers.remove(this);
+    	EphemeralData.getInstance().getDuelingPlayers().remove(this);
 	}
 	
 	public Duel(Player challenger, Player challenged, int limit)

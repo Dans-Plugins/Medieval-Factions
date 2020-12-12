@@ -1,5 +1,7 @@
 package factionsystem.Commands;
 
+import factionsystem.EphemeralData;
+import factionsystem.PersistentData;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
@@ -137,7 +139,7 @@ public class DuelCommand {
 		                		}
 		                		else
 		                		{
-		                			MedievalFactions.getInstance().duelingPlayers.remove(duel);
+		                			EphemeralData.getInstance().getDuelingPlayers().remove(duel);
 									player.sendMessage(ChatColor.AQUA + "Duel challenge cancelled.");
 									return;
 		                		}
@@ -176,7 +178,7 @@ public class DuelCommand {
 
 	private boolean isDuelling(Player player)
 	{
-		for (Duel duel : MedievalFactions.getInstance().duelingPlayers)
+		for (Duel duel : EphemeralData.getInstance().getDuelingPlayers())
 		{
 			if (duel.hasPlayer(player) && duel.getStatus().equals(Duel.DuelState.DUELLING))
 			{
@@ -189,6 +191,6 @@ public class DuelCommand {
 	private void inviteDuel(Player player, Player target, int limit)
 	{
 		target.sendMessage(ChatColor.AQUA + player.getName() + " has challenged you to a duel! Type /mf duel accept to begin.");
-		MedievalFactions.getInstance().duelingPlayers.add(new Duel(player, target, limit));
+		EphemeralData.getInstance().getDuelingPlayers().add(new Duel(player, target, limit));
 	}
 }
