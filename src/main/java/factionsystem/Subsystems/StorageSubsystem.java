@@ -5,11 +5,7 @@ import com.google.gson.GsonBuilder;
 import com.google.gson.reflect.TypeToken;
 import com.google.gson.stream.JsonReader;
 import factionsystem.MedievalFactions;
-import factionsystem.Objects.ClaimedChunk;
-import factionsystem.Objects.Faction;
-import factionsystem.Objects.LockedBlock;
-import factionsystem.Objects.PlayerActivityRecord;
-import factionsystem.Objects.PlayerPowerRecord;
+import factionsystem.Objects.*;
 import factionsystem.PersistentData;
 
 import java.io.*;

@@ -6,7 +6,6 @@ import factionsystem.Objects.PlayerActivityRecord;
 import factionsystem.Objects.PlayerPowerRecord;
 import factionsystem.PersistentData;
 import factionsystem.Subsystems.UtilitySubsystem;
-
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Monster;
 import org.bukkit.event.EventHandler;

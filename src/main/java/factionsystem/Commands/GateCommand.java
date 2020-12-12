@@ -1,15 +1,13 @@
 package factionsystem.Commands;
 
 import factionsystem.EphemeralData;
+import factionsystem.Objects.Faction;
+import factionsystem.Objects.Gate;
 import factionsystem.PersistentData;
+import factionsystem.Subsystems.UtilitySubsystem;
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
-
-import factionsystem.MedievalFactions;
-import factionsystem.Objects.Faction;
-import factionsystem.Objects.Gate;
-import factionsystem.Subsystems.UtilitySubsystem;
 
 public class GateCommand {
 	

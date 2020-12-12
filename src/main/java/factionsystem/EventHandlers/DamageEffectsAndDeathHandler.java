@@ -7,7 +7,6 @@ import factionsystem.Objects.Duel;
 import factionsystem.Objects.PlayerPowerRecord;
 import factionsystem.PersistentData;
 import factionsystem.Subsystems.UtilitySubsystem;
-
 import factionsystem.Util.Pair;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.*;
@@ -21,7 +20,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import static factionsystem.Subsystems.UtilitySubsystem.*;
-import static factionsystem.Subsystems.UtilitySubsystem.getPlayersFaction;
 
 public class DamageEffectsAndDeathHandler implements Listener {
 

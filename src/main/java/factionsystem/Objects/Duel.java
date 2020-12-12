@@ -1,16 +1,15 @@
 package factionsystem.Objects;
 
 import factionsystem.EphemeralData;
+import factionsystem.MedievalFactions;
+import net.md_5.bungee.api.ChatColor;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.boss.BarColor;
-import org.bukkit.boss.BossBar;
 import org.bukkit.boss.BarStyle;
+import org.bukkit.boss.BossBar;
 import org.bukkit.entity.Player;
-
-import factionsystem.MedievalFactions;
-import net.md_5.bungee.api.ChatColor;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.SkullMeta;
 

@@ -8,7 +8,6 @@ import factionsystem.Objects.Gate;
 import factionsystem.Objects.LockedBlock;
 import factionsystem.PersistentData;
 import factionsystem.Subsystems.UtilitySubsystem;
-
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
@@ -27,7 +26,6 @@ import org.bukkit.inventory.InventoryHolder;
 import java.util.UUID;
 
 import static factionsystem.Subsystems.UtilitySubsystem.*;
-import static factionsystem.Subsystems.UtilitySubsystem.findPlayerNameBasedOnUUID;
 import static org.bukkit.Bukkit.getLogger;
 import static org.bukkit.Material.LADDER;
 

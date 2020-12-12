@@ -2,13 +2,7 @@ package factionsystem.Subsystems;
 
 import factionsystem.EphemeralData;
 import factionsystem.MedievalFactions;
-import factionsystem.Objects.ClaimedChunk;
-import factionsystem.Objects.Duel;
-import factionsystem.Objects.Faction;
-import factionsystem.Objects.Gate;
-import factionsystem.Objects.LockedBlock;
-import factionsystem.Objects.PlayerActivityRecord;
-import factionsystem.Objects.PlayerPowerRecord;
+import factionsystem.Objects.*;
 import factionsystem.PersistentData;
 import factionsystem.Util.Pair;
 import org.bukkit.*;

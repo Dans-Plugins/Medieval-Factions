@@ -1,15 +1,12 @@
 package factionsystem.Commands;
 
 import factionsystem.EphemeralData;
-import factionsystem.PersistentData;
+import factionsystem.Objects.Duel;
+import factionsystem.Subsystems.UtilitySubsystem;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
-
-import factionsystem.MedievalFactions;
-import factionsystem.Objects.Duel;
-import factionsystem.Subsystems.UtilitySubsystem;
 
 public class DuelCommand {
 	

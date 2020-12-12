@@ -7,7 +7,8 @@ import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
-import static factionsystem.Subsystems.UtilitySubsystem.*;
+import static factionsystem.Subsystems.UtilitySubsystem.createStringFromFirstArgOnwards;
+import static factionsystem.Subsystems.UtilitySubsystem.invokeAlliances;
 
 public class DeclareWarCommand {
 

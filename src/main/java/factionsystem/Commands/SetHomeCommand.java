@@ -1,6 +1,5 @@
 package factionsystem.Commands;
 
-import factionsystem.MedievalFactions;
 import factionsystem.Objects.ClaimedChunk;
 import factionsystem.Objects.Faction;
 import factionsystem.PersistentData;
