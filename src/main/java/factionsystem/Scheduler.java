@@ -16,6 +16,19 @@ import static org.bukkit.Bukkit.getServer;
 
 public class Scheduler {
 
+    private static Scheduler instance;
+
+    private Scheduler() {
+
+    }
+
+    public static Scheduler getInstance() {
+        if (instance == null) {
+            instance = new Scheduler();
+        }
+        return instance;
+    }
+
     public void scheduleAutosave() {
         System.out.println("Scheduling hourly auto save...");
         int delay = 60 * 60; // 1 hour

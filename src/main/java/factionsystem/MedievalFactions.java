@@ -19,10 +19,6 @@ public class MedievalFactions extends JavaPlugin {
     // version
     public static String version = "v3.6.0.3-beta-8";
 
-    // scheduler
-    public Scheduler scheduler = new Scheduler();
-
-    // subsystems
     public UtilitySubsystem utilities = new UtilitySubsystem();
 
     public static MedievalFactions getInstance() {
@@ -50,9 +46,9 @@ public class MedievalFactions extends JavaPlugin {
             reloadConfig();
         }
 
-        scheduler.schedulePowerIncrease();
-        scheduler.schedulePowerDecrease();
-        scheduler.scheduleAutosave();
+        Scheduler.getInstance().schedulePowerIncrease();
+        Scheduler.getInstance().schedulePowerDecrease();
+        Scheduler.getInstance().scheduleAutosave();
 
         EventRegistry.registerEvents();
 
