@@ -1,7 +1,7 @@
 package dansplugins.factionsystem;
 
-import dansplugins.factionsystem.util.Utilities;
 import dansplugins.factionsystem.bstats.Metrics;
+import dansplugins.factionsystem.utils.Utilities;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.plugin.java.JavaPlugin;

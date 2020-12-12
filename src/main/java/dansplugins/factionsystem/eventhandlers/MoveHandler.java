@@ -1,9 +1,9 @@
 package dansplugins.factionsystem.eventhandlers;
 
 import dansplugins.factionsystem.MedievalFactions;
-import dansplugins.factionsystem.domainobjects.Faction;
-import dansplugins.factionsystem.util.Utilities;
 import dansplugins.factionsystem.data.PersistentData;
+import dansplugins.factionsystem.domainobjects.Faction;
+import dansplugins.factionsystem.utils.Utilities;
 import org.bukkit.ChatColor;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;

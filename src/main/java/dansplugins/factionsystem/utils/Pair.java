@@ -1,4 +1,4 @@
-package dansplugins.factionsystem.util;
+package dansplugins.factionsystem.utils;
 
 
 // Found from this answer on https://stackoverflow.com/a/521235 From user Paul Brinkly and edited by Dave Jarvis

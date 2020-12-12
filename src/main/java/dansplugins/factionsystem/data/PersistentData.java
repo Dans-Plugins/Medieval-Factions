@@ -1,7 +1,6 @@
 package dansplugins.factionsystem.data;
 
 import dansplugins.factionsystem.domainobjects.*;
-import factionsystem.Objects.*;
 
 import java.util.ArrayList;
 

@@ -1,7 +1,6 @@
 package dansplugins.factionsystem;
 
 import dansplugins.factionsystem.eventhandlers.*;
-import factionsystem.EventHandlers.*;
 import org.bukkit.plugin.PluginManager;
 
 public class EventRegistry {

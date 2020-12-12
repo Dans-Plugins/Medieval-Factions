@@ -1,11 +1,10 @@
-package dansplugins.factionsystem.util;
+package dansplugins.factionsystem.utils;
 
-import dansplugins.factionsystem.data.EphemeralData;
-import dansplugins.factionsystem.MedievalFactions;
-import dansplugins.factionsystem.domainobjects.*;
-import factionsystem.Objects.*;
-import dansplugins.factionsystem.data.PersistentData;
 import dansplugins.factionsystem.ConfigManager;
+import dansplugins.factionsystem.MedievalFactions;
+import dansplugins.factionsystem.data.EphemeralData;
+import dansplugins.factionsystem.data.PersistentData;
+import dansplugins.factionsystem.domainobjects.*;
 import org.bukkit.*;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Player;

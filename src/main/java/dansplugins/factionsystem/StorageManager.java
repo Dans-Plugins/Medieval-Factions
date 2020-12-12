@@ -4,9 +4,8 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.reflect.TypeToken;
 import com.google.gson.stream.JsonReader;
-import dansplugins.factionsystem.domainobjects.*;
-import factionsystem.Objects.*;
 import dansplugins.factionsystem.data.PersistentData;
+import dansplugins.factionsystem.domainobjects.*;
 
 import java.io.*;
 import java.lang.reflect.Type;

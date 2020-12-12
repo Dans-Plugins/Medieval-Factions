@@ -1,11 +1,11 @@
 package dansplugins.factionsystem.eventhandlers;
 
-import dansplugins.factionsystem.data.EphemeralData;
 import dansplugins.factionsystem.MedievalFactions;
+import dansplugins.factionsystem.data.EphemeralData;
+import dansplugins.factionsystem.data.PersistentData;
 import dansplugins.factionsystem.domainobjects.PlayerActivityRecord;
 import dansplugins.factionsystem.domainobjects.PlayerPowerRecord;
-import dansplugins.factionsystem.util.Utilities;
-import dansplugins.factionsystem.data.PersistentData;
+import dansplugins.factionsystem.utils.Utilities;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Monster;
 import org.bukkit.event.EventHandler;

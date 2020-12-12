@@ -1,11 +1,11 @@
 package dansplugins.factionsystem.commands;
 
 import dansplugins.factionsystem.StorageManager;
-import dansplugins.factionsystem.util.Utilities;
+import dansplugins.factionsystem.data.PersistentData;
 import dansplugins.factionsystem.domainobjects.ClaimedChunk;
 import dansplugins.factionsystem.domainobjects.Faction;
 import dansplugins.factionsystem.domainobjects.LockedBlock;
-import dansplugins.factionsystem.data.PersistentData;
+import dansplugins.factionsystem.utils.Utilities;
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;

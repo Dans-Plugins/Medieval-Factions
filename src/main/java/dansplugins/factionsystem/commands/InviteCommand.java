@@ -1,9 +1,9 @@
 package dansplugins.factionsystem.commands;
 
-import dansplugins.factionsystem.util.Utilities;
 import dansplugins.factionsystem.MedievalFactions;
-import dansplugins.factionsystem.domainobjects.Faction;
 import dansplugins.factionsystem.data.PersistentData;
+import dansplugins.factionsystem.domainobjects.Faction;
+import dansplugins.factionsystem.utils.Utilities;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;

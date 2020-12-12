@@ -1,13 +1,13 @@
 package dansplugins.factionsystem.eventhandlers;
 
-import dansplugins.factionsystem.data.EphemeralData;
 import dansplugins.factionsystem.MedievalFactions;
+import dansplugins.factionsystem.data.EphemeralData;
+import dansplugins.factionsystem.data.PersistentData;
 import dansplugins.factionsystem.domainobjects.ClaimedChunk;
 import dansplugins.factionsystem.domainobjects.Faction;
 import dansplugins.factionsystem.domainobjects.Gate;
 import dansplugins.factionsystem.domainobjects.LockedBlock;
-import dansplugins.factionsystem.util.Utilities;
-import dansplugins.factionsystem.data.PersistentData;
+import dansplugins.factionsystem.utils.Utilities;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.block.Block;

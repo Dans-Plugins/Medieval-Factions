@@ -2,9 +2,9 @@ package dansplugins.factionsystem.domainobjects;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
-import dansplugins.factionsystem.util.Utilities;
 import dansplugins.factionsystem.MedievalFactions;
 import dansplugins.factionsystem.data.PersistentData;
+import dansplugins.factionsystem.utils.Utilities;
 
 import java.io.File;
 import java.io.FileNotFoundException;

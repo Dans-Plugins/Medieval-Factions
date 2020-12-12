@@ -1,10 +1,10 @@
 package dansplugins.factionsystem.commands;
 
-import dansplugins.factionsystem.util.Utilities;
 import dansplugins.factionsystem.MedievalFactions;
+import dansplugins.factionsystem.data.PersistentData;
 import dansplugins.factionsystem.domainobjects.ClaimedChunk;
 import dansplugins.factionsystem.domainobjects.Faction;
-import dansplugins.factionsystem.data.PersistentData;
+import dansplugins.factionsystem.utils.Utilities;
 import org.bukkit.ChatColor;
 import org.bukkit.Chunk;
 import org.bukkit.Location;

@@ -1,8 +1,8 @@
 package dansplugins.factionsystem.data;
 
 import dansplugins.factionsystem.domainobjects.Duel;
-import dansplugins.factionsystem.util.Pair;
 import dansplugins.factionsystem.domainobjects.Gate;
+import dansplugins.factionsystem.utils.Pair;
 import org.bukkit.entity.AreaEffectCloud;
 import org.bukkit.entity.Player;
 
