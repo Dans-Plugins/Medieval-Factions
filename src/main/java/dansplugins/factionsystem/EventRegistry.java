@@ -6,23 +6,23 @@ import org.bukkit.plugin.PluginManager;
 public class EventRegistry {
     public static void registerEvents() {
 
-        MedievalFactions instance = MedievalFactions.getInstance();
-        PluginManager manager = instance.getServer().getPluginManager();
+        MedievalFactions mainInstance = MedievalFactions.getInstance();
+        PluginManager manager = mainInstance.getServer().getPluginManager();
 
         // blocks and interaction
-        manager.registerEvents(new BlockInteractionHandler(), instance);
+        manager.registerEvents(new BlockInteractionHandler(), mainInstance);
 
         // joining, leaving and spawning
-        manager.registerEvents(new JoiningLeavingAndSpawningHandler(), instance);
+        manager.registerEvents(new JoiningLeavingAndSpawningHandler(), mainInstance);
 
         // damage, effects and death
-        manager.registerEvents(new DamageEffectsAndDeathHandler(), instance);
+        manager.registerEvents(new DamageEffectsAndDeathHandler(), mainInstance);
 
         // movement
-        manager.registerEvents(new MoveHandler(), instance);
+        manager.registerEvents(new MoveHandler(), mainInstance);
 
         // chat
-        manager.registerEvents(new ChatHandler(), instance);
+        manager.registerEvents(new ChatHandler(), mainInstance);
         
     }
 }
