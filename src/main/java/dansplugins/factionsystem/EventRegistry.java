@@ -4,7 +4,21 @@ import dansplugins.factionsystem.eventhandlers.*;
 import org.bukkit.plugin.PluginManager;
 
 public class EventRegistry {
-    public static void registerEvents() {
+
+    private static EventRegistry instance;
+
+    private EventRegistry() {
+
+    }
+
+    public static EventRegistry getInstance() {
+        if (instance == null) {
+            instance = new EventRegistry();
+        }
+        return instance;
+    }
+
+    public void registerEvents() {
 
         MedievalFactions mainInstance = MedievalFactions.getInstance();
         PluginManager manager = mainInstance.getServer().getPluginManager();

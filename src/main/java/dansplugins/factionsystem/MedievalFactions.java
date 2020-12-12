@@ -47,7 +47,7 @@ public class MedievalFactions extends JavaPlugin {
         Scheduler.getInstance().schedulePowerDecrease();
         Scheduler.getInstance().scheduleAutosave();
 
-        EventRegistry.registerEvents();
+        EventRegistry.getInstance().registerEvents();
 
         StorageManager.getInstance().load();
 
