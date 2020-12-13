@@ -8,10 +8,7 @@ import dansplugins.factionsystem.utils.Utilities;
 
 import java.io.File;
 import java.io.FileNotFoundException;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Scanner;
-import java.util.UUID;
+import java.util.*;
 
 public class PlayerPowerRecord {
 
@@ -33,17 +30,34 @@ public class PlayerPowerRecord {
     }
 
     public int maxPower() {
-        if (Utilities.getInstance().isPlayerAFactionOwner(playerUUID, PersistentData.getInstance().getFactions())){
+        if (isPlayerAFactionOwner(playerUUID, PersistentData.getInstance().getFactions())){
             return (int) (MedievalFactions.getInstance().getConfig().getDouble("initialMaxPowerLevel") * MedievalFactions.getInstance().getConfig().getDouble("factionOwnerMultiplier", 2.0));
         }
 
-        if (Utilities.getInstance().isPlayerAFactionOfficer(playerUUID, PersistentData.getInstance().getFactions())){
+        if (isPlayerAFactionOfficer(playerUUID, PersistentData.getInstance().getFactions())){
             return (int) (MedievalFactions.getInstance().getConfig().getDouble("initialMaxPowerLevel") * MedievalFactions.getInstance().getConfig().getDouble("factionOfficerMultiplier", 1.5));
         }
 
         return MedievalFactions.getInstance().getConfig().getInt("initialMaxPowerLevel");
     }
 
+    private boolean isPlayerAFactionOwner(UUID player, ArrayList<Faction> factions){
+        if (Utilities.getInstance().isInFaction(player, factions)){
+            Faction faction = Utilities.getInstance().getPlayersFaction(player, factions);
+            return faction.getOwner().equals(player);
+        } else {
+            return false;
+        }
+    }
+
+    public boolean isPlayerAFactionOfficer(UUID player, ArrayList<Faction> factions) {
+        if (Utilities.getInstance().isInFaction(player, factions)){
+            Faction faction = Utilities.getInstance().getPlayersFaction(player, factions);
+            return faction.isOfficer(player);
+        } else {
+            return false;
+        }
+    }
 
     public void setPlayerName(UUID UUID) {
         playerUUID = UUID;

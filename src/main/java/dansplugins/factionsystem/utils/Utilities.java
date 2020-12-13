@@ -79,21 +79,6 @@ public class Utilities {
         }
         return null;
     }
-    
-    public boolean isGateBlock(Block targetBlock)
-    {
-    	for (Faction faction : PersistentData.getInstance().getFactions())
-    	{
-    		for (Gate gate : faction.getGates())
-    		{
-    			if (gate.hasBlock(targetBlock))
-    			{
-    				return true;
-    			}
-    		}
-    	}
-    	return false;
-    }
 
     public Duel getDuel(Player player, Player target)
     {
@@ -186,22 +171,9 @@ public class Utilities {
             }
         }
         return null;
-    }    
-
-    public  boolean isBlockLocked(Block block, ArrayList<LockedBlock> lockedBlocks) {
-        return isBlockLocked(block.getX(), block.getY(), block.getZ(), block.getWorld().getName(), lockedBlocks);
-    }
-
-    public boolean isBlockLocked(int x, int y, int z, String world, ArrayList<LockedBlock> lockedBlocks) {
-        for (LockedBlock block : lockedBlocks) {
-            if (block.getX() == x && block.getY() == y && block.getZ() == z && block.getWorld().equalsIgnoreCase(world)) {
-                return true;
-            }
-        }
-        return false;
     }
    
-    public  boolean isInFaction(UUID playerUUID, ArrayList<Faction> factions) {
+    public boolean isInFaction(UUID playerUUID, ArrayList<Faction> factions) {
         // membership check
         for (Faction faction : factions) {
             if (faction.isMember(playerUUID)) {
@@ -211,7 +183,7 @@ public class Utilities {
         return false;
     }
 
-    public  Faction getPlayersFaction(UUID playerUUID, ArrayList<Faction> factions) {
+    public Faction getPlayersFaction(UUID playerUUID, ArrayList<Faction> factions) {
         // membership check
         for (Faction faction : factions) {
             if (faction.isMember(playerUUID)) {
@@ -237,22 +209,6 @@ public class Utilities {
         player.sendMessage(ChatColor.AQUA + "At War With: " + faction.getEnemiesSeparatedByCommas() + "\n");
         player.sendMessage(ChatColor.AQUA + "Power Level: " + faction.getCumulativePowerLevel() + "\n");
         player.sendMessage(ChatColor.AQUA + "Demesne Size: " + power + "/" + faction.getCumulativePowerLevel() + "\n");
-        player.sendMessage(ChatColor.AQUA + "----------\n");
-    }
-
-    public void sendFactionMembers(Player player, Faction faction) {
-        ArrayList<UUID> members = faction.getMemberList();
-        player.sendMessage(ChatColor.BOLD + "" + ChatColor.AQUA + "Members of " + faction.getName() + "\n----------\n");
-        for (UUID member : members) {
-            // Is Owner
-            if (member.equals(faction.getOwner())){
-                player.sendMessage(ChatColor.AQUA + findPlayerNameBasedOnUUID(member) + "**\n");
-            } else if (faction.isOfficer(member)) {
-                player.sendMessage(ChatColor.AQUA + findPlayerNameBasedOnUUID(member) + "*\n");
-            } else {
-                player.sendMessage(ChatColor.AQUA + findPlayerNameBasedOnUUID(member) + "\n");
-            }
-        }
         player.sendMessage(ChatColor.AQUA + "----------\n");
     }
 
@@ -296,46 +252,6 @@ public class Utilities {
             }
         }
         return null;
-    }
-
-    public boolean isPlayerAFactionOwner(UUID player, ArrayList<Faction> factions){
-        if (isInFaction(player, factions)){
-            Faction faction = getPlayersFaction(player, factions);
-            return faction.getOwner().equals(player);
-        } else {
-            return false;
-        }
-    }
-
-    public boolean isPlayerAFactionOfficer(UUID player, ArrayList<Faction> factions) {
-        if (isInFaction(player, factions)){
-            Faction faction = getPlayersFaction(player, factions);
-            return faction.isOfficer(player);
-        } else {
-            return false;
-        }
-    }
-
-    public void invokeAlliances(String victimFactionName, String declaringFactionName, ArrayList<Faction> factions) {
-        Faction victimFaction = getFaction(victimFactionName, factions);
-        Faction declaringFaction = getFaction(declaringFactionName, factions);
-
-        if (victimFaction != null && declaringFaction != null)  {
-            for (String alliedFaction : victimFaction.getAllies()) {
-                if (!(getFaction(alliedFaction, factions).isEnemy(declaringFactionName)) && !(declaringFaction.isEnemy(alliedFaction))) {
-                    // add enemies
-                    getFaction(alliedFaction, factions).addEnemy(declaringFactionName);
-                    declaringFaction.addEnemy(alliedFaction);
-
-                    // inform parties
-                    sendAllPlayersInFactionMessage(victimFaction, ChatColor.GREEN + "Your ally " + alliedFaction + " has joined you in war!");
-                    sendAllPlayersInFactionMessage(getFaction(alliedFaction, factions), ChatColor.RED + "Your ally " + victimFactionName + " has called you into war with " + declaringFactionName + "!");
-                    sendAllPlayersInFactionMessage(declaringFaction, ChatColor.RED  + alliedFaction + " has joined the war on your enemy's side!");
-
-                }
-            }
-        }
-
     }
 
     public void removeAllLocks(String factionName, ArrayList<LockedBlock> lockedBlocks) {
@@ -449,26 +365,6 @@ public class Utilities {
                 PersistentData.getInstance().getPlayerActivityRecords().add(newRecord);
             }
         }
-    }
-
-    public boolean containsIgnoreCase(ArrayList<String> list, String str) {
-        for (String string : list) {
-            if (string.equalsIgnoreCase(str)) {
-                return true;
-            }
-        }
-        return false;
-    }
-
-    public void removeIfContainsIgnoreCase(ArrayList<String> list, String str) {
-        String toRemove = "";
-        for (String string : list) {
-            if (string.equalsIgnoreCase(str)) {
-                toRemove = string;
-                break;
-            }
-        }
-        list.remove(toRemove);
     }
 
 }

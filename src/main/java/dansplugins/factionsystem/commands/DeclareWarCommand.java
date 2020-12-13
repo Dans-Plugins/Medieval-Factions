@@ -7,6 +7,8 @@ import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
+import java.util.ArrayList;
+
 public class DeclareWarCommand {
 
     public void declareWar(CommandSender sender, String[] args) {
@@ -73,7 +75,7 @@ public class DeclareWarCommand {
                                                 }
 
                                                 // invoke alliances
-                                                Utilities.getInstance().invokeAlliances(PersistentData.getInstance().getFactions().get(i).getName(), faction.getName(), PersistentData.getInstance().getFactions());
+                                                invokeAlliances(PersistentData.getInstance().getFactions().get(i).getName(), faction.getName(), PersistentData.getInstance().getFactions());
                                             }
                                             else {
                                                 player.sendMessage(ChatColor.RED + "You can't declare war on your ally!");
@@ -105,5 +107,27 @@ public class DeclareWarCommand {
                 sender.sendMessage(ChatColor.RED + "Sorry! You need the following permission to use this command: 'mf.declarewar'");
             }
         }
+    }
+
+    private void invokeAlliances(String victimFactionName, String declaringFactionName, ArrayList<Faction> factions) {
+        Faction victimFaction = Utilities.getInstance().getFaction(victimFactionName, factions);
+        Faction declaringFaction = Utilities.getInstance().getFaction(declaringFactionName, factions);
+
+        if (victimFaction != null && declaringFaction != null)  {
+            for (String alliedFaction : victimFaction.getAllies()) {
+                if (!(Utilities.getInstance().getFaction(alliedFaction, factions).isEnemy(declaringFactionName)) && !(declaringFaction.isEnemy(alliedFaction))) {
+                    // add enemies
+                    Utilities.getInstance().getFaction(alliedFaction, factions).addEnemy(declaringFactionName);
+                    declaringFaction.addEnemy(alliedFaction);
+
+                    // inform parties
+                    Utilities.getInstance().sendAllPlayersInFactionMessage(victimFaction, ChatColor.GREEN + "Your ally " + alliedFaction + " has joined you in war!");
+                    Utilities.getInstance().sendAllPlayersInFactionMessage(Utilities.getInstance().getFaction(alliedFaction, factions), ChatColor.RED + "Your ally " + victimFactionName + " has called you into war with " + declaringFactionName + "!");
+                    Utilities.getInstance().sendAllPlayersInFactionMessage(declaringFaction, ChatColor.RED  + alliedFaction + " has joined the war on your enemy's side!");
+
+                }
+            }
+        }
+
     }
 }
