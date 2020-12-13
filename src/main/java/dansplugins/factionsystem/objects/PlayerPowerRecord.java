@@ -33,11 +33,11 @@ public class PlayerPowerRecord {
     }
 
     public int maxPower() {
-        if (Utilities.isPlayerAFactionOwner(playerUUID, PersistentData.getInstance().getFactions())){
+        if (Utilities.getInstance().isPlayerAFactionOwner(playerUUID, PersistentData.getInstance().getFactions())){
             return (int) (MedievalFactions.getInstance().getConfig().getDouble("initialMaxPowerLevel") * MedievalFactions.getInstance().getConfig().getDouble("factionOwnerMultiplier", 2.0));
         }
 
-        if (Utilities.isPlayerAFactionOfficer(playerUUID, PersistentData.getInstance().getFactions())){
+        if (Utilities.getInstance().isPlayerAFactionOfficer(playerUUID, PersistentData.getInstance().getFactions())){
             return (int) (MedievalFactions.getInstance().getConfig().getDouble("initialMaxPowerLevel") * MedievalFactions.getInstance().getConfig().getDouble("factionOfficerMultiplier", 1.5));
         }
 
@@ -109,7 +109,7 @@ public class PlayerPowerRecord {
 
             // actual loading
             if (loadReader.hasNextLine()) {
-                playerUUID = Utilities.findUUIDBasedOnPlayerName(loadReader.nextLine());
+                playerUUID = Utilities.getInstance().findUUIDBasedOnPlayerName(loadReader.nextLine());
             }
             if (loadReader.hasNextLine()) {
                 powerLevel = Integer.parseInt(loadReader.nextLine());

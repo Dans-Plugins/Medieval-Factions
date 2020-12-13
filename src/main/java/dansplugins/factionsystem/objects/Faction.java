@@ -163,7 +163,7 @@ public class Faction {
         for (UUID playerUUID : members){
             try
             {
-            	powerLevel += Utilities.getPlayersPowerRecord(playerUUID, PersistentData.getInstance().getPlayerPowerRecords()).getPowerLevel();
+            	powerLevel += Utilities.getInstance().getPlayersPowerRecord(playerUUID, PersistentData.getInstance().getPlayerPowerRecords()).getPowerLevel();
             }
             catch (Exception e)
             {
@@ -409,7 +409,7 @@ public class Faction {
             }
             if (loadReader.hasNextLine()) {
                 String playerName = loadReader.nextLine();
-                setOwner(Utilities.findUUIDBasedOnPlayerName(playerName));
+                setOwner(Utilities.getInstance().findUUIDBasedOnPlayerName(playerName));
             }
             if (loadReader.hasNextLine()) {
                 setDescription(loadReader.nextLine());
@@ -426,7 +426,7 @@ public class Faction {
                 if (temp.equalsIgnoreCase("-")) {
                     break;
                 }
-                members.add(Utilities.findUUIDBasedOnPlayerName(temp));
+                members.add(Utilities.getInstance().findUUIDBasedOnPlayerName(temp));
             }
 
             while (loadReader.hasNextLine()) {
@@ -456,7 +456,7 @@ public class Faction {
                     break;
                 }
 
-                officers.add(Utilities.findUUIDBasedOnPlayerName(playerName));
+                officers.add(Utilities.getInstance().findUUIDBasedOnPlayerName(playerName));
             }
 
             String worldname;

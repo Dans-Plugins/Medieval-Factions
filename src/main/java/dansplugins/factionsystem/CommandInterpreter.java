@@ -148,8 +148,8 @@ public class CommandInterpreter {
                             Player player = (Player) sender;
 
                             // if not at demesne limit
-                            if (Utilities.isInFaction(player.getUniqueId(), PersistentData.getInstance().getFactions())) {
-                                Faction playersFaction = Utilities.getPlayersFaction(player.getUniqueId(), PersistentData.getInstance().getFactions());
+                            if (Utilities.getInstance().isInFaction(player.getUniqueId(), PersistentData.getInstance().getFactions())) {
+                                Faction playersFaction = Utilities.getInstance().getPlayersFaction(player.getUniqueId(), PersistentData.getInstance().getFactions());
                                 if (ChunkManager.getInstance().getChunksClaimedByFaction(playersFaction.getName(), PersistentData.getInstance().getClaimedChunks()) < playersFaction.getCumulativePowerLevel()) {
                                     ChunkManager.getInstance().addChunkAtPlayerLocation(player);
                                     return true;
@@ -177,7 +177,7 @@ public class CommandInterpreter {
                     if (sender.hasPermission("mf.unclaim") || sender.hasPermission("mf.default")) {
                         if (sender instanceof Player) {
                             Player player = (Player) sender;
-                            if (Utilities.isInFaction(player.getUniqueId(), PersistentData.getInstance().getFactions())) {
+                            if (Utilities.getInstance().isInFaction(player.getUniqueId(), PersistentData.getInstance().getFactions())) {
                                 ChunkManager.getInstance().removeChunkAtPlayerLocation(player);
                                 return true;
                             }
@@ -204,21 +204,21 @@ public class CommandInterpreter {
                         if (args.length > 1) {
                             if (player.hasPermission("mf.unclaimall.others") || player.hasPermission("mf.admin")) {
 
-                                String factionName = Utilities.createStringFromFirstArgOnwards(args);
+                                String factionName = Utilities.getInstance().createStringFromFirstArgOnwards(args);
 
-                                Faction faction = Utilities.getFaction(factionName, PersistentData.getInstance().getFactions());
+                                Faction faction = Utilities.getInstance().getFaction(factionName, PersistentData.getInstance().getFactions());
 
                                 if (faction != null) {
                                     // remove faction home
                                     faction.setFactionHome(null);
-                                    Utilities.sendAllPlayersInFactionMessage(faction, ChatColor.RED + "Your faction home has been removed!");
+                                    Utilities.getInstance().sendAllPlayersInFactionMessage(faction, ChatColor.RED + "Your faction home has been removed!");
 
                                     // remove claimed chunks
                                     ChunkManager.getInstance().removeAllClaimedChunks(faction.getName(), PersistentData.getInstance().getClaimedChunks());
                                     player.sendMessage(ChatColor.GREEN + "All land unclaimed from " + factionName + "!");
 
                                     // remove locks associated with this faction
-                                    Utilities.removeAllLocks(faction.getName(), PersistentData.getInstance().getLockedBlocks());
+                                    Utilities.getInstance().removeAllLocks(faction.getName(), PersistentData.getInstance().getLockedBlocks());
                                     return true;
                                 } else {
                                     player.sendMessage(ChatColor.RED + "That faction wasn't found!");
@@ -236,14 +236,14 @@ public class CommandInterpreter {
                                 if (faction.isOwner(player.getUniqueId())) {
                                     // remove faction home
                                     faction.setFactionHome(null);
-                                    Utilities.sendAllPlayersInFactionMessage(faction, ChatColor.RED + "Your faction home has been removed!");
+                                    Utilities.getInstance().sendAllPlayersInFactionMessage(faction, ChatColor.RED + "Your faction home has been removed!");
 
                                     // remove claimed chunks
                                     ChunkManager.getInstance().removeAllClaimedChunks(faction.getName(), PersistentData.getInstance().getClaimedChunks());
                                     player.sendMessage(ChatColor.GREEN + "All land unclaimed.");
 
                                     // remove locks associated with this faction
-                                    Utilities.removeAllLocks(faction.getName(), PersistentData.getInstance().getLockedBlocks());
+                                    Utilities.getInstance().removeAllLocks(faction.getName(), PersistentData.getInstance().getLockedBlocks());
                                     return true;
                                 }
                             }
@@ -287,7 +287,7 @@ public class CommandInterpreter {
                         if (sender instanceof Player) {
                             Player player = (Player) sender;
 
-                            if (Utilities.isInFaction(player.getUniqueId(), PersistentData.getInstance().getFactions())) {
+                            if (Utilities.getInstance().isInFaction(player.getUniqueId(), PersistentData.getInstance().getFactions())) {
                                 boolean owner = false;
                                 for (Faction faction : PersistentData.getInstance().getFactions()) {
                                     if (faction.isOwner(player.getUniqueId())) {

@@ -35,7 +35,7 @@ public class DamageEffectsAndDeathHandler implements Listener {
             Player attacker = (Player) event.getDamager();
             Player victim = (Player) event.getEntity();
         	// if these players are actively duelling then we don't want to handle friendly fire.
-            Duel duel = Utilities.getDuel(attacker, victim);
+            Duel duel = Utilities.getInstance().getDuel(attacker, victim);
             if (duel == null)
             {
             	handleIfFriendlyFire(event, attacker, victim);	
@@ -64,7 +64,7 @@ public class DamageEffectsAndDeathHandler implements Listener {
                 Player victim = (Player) event.getEntity();
 
             	// if these players are actively duelling then we don't want to handle friendly fire.
-                Duel duel = Utilities.getDuel(attacker, victim);
+                Duel duel = Utilities.getInstance().getDuel(attacker, victim);
                 if (duel == null)
                 {
                 	handleIfFriendlyFire(event, attacker, victim);	
@@ -168,7 +168,7 @@ public class DamageEffectsAndDeathHandler implements Listener {
         for (PlayerPowerRecord record : PersistentData.getInstance().getPlayerPowerRecords()) {
             if (record.getPlayerUUID().equals(player.getUniqueId())) {
                 record.decreasePowerByTenPercent();
-                if (Utilities.getPlayersPowerRecord(player.getUniqueId(), PersistentData.getInstance().getPlayerPowerRecords()).getPowerLevel() > 0) {
+                if (Utilities.getInstance().getPlayersPowerRecord(player.getUniqueId(), PersistentData.getInstance().getPlayerPowerRecords()).getPowerLevel() > 0) {
                     player.sendMessage(ChatColor.RED + "Your power level has decreased!");
                 }
             }
@@ -178,7 +178,7 @@ public class DamageEffectsAndDeathHandler implements Listener {
         if (player.getKiller() != null) {
             Player killer = player.getKiller();
 
-            PlayerPowerRecord record = Utilities.getPlayersPowerRecord(killer.getUniqueId(), PersistentData.getInstance().getPlayerPowerRecords());
+            PlayerPowerRecord record = Utilities.getInstance().getPlayersPowerRecord(killer.getUniqueId(), PersistentData.getInstance().getPlayerPowerRecords());
             if (record != null) {
                 if (record.increasePowerByTenPercent()){
                     killer.sendMessage(ChatColor.GREEN + "Your power level has increased!");
@@ -187,7 +187,7 @@ public class DamageEffectsAndDeathHandler implements Listener {
         }
 
         // if player is in faction
-        if (Utilities.isInFaction(player.getUniqueId(), PersistentData.getInstance().getFactions())) {
+        if (Utilities.getInstance().isInFaction(player.getUniqueId(), PersistentData.getInstance().getFactions())) {
 
             // if player is in land claimed by their faction
             double[] playerCoords = new double[2];
@@ -200,7 +200,7 @@ public class DamageEffectsAndDeathHandler implements Listener {
                 ClaimedChunk chunk = ChunkManager.getInstance().getClaimedChunk(player.getLocation().getChunk().getX(), player.getLocation().getChunk().getZ(),
                         player.getLocation().getWorld().getName(), PersistentData.getInstance().getClaimedChunks());
                 // if holder is player's faction
-                if (chunk.getHolder().equalsIgnoreCase(Utilities.getPlayersFaction(player.getUniqueId(), PersistentData.getInstance().getFactions()).getName()) && Utilities.getPlayersFaction(player.getUniqueId(), PersistentData.getInstance().getFactions()).getAutoClaimStatus() == false) {
+                if (chunk.getHolder().equalsIgnoreCase(Utilities.getInstance().getPlayersFaction(player.getUniqueId(), PersistentData.getInstance().getFactions()).getName()) && Utilities.getInstance().getPlayersFaction(player.getUniqueId(), PersistentData.getInstance().getFactions()).getAutoClaimStatus() == false) {
 
                     // if not killed by another player
                     if (!(player.getKiller() instanceof Player)) {

@@ -20,13 +20,13 @@ public class InviteCommand {
             Player player = (Player) sender;
 
             if (sender.hasPermission("mf.invite") || sender.hasPermission("mf.default")) {
-                if (Utilities.isInFaction(player.getUniqueId(), PersistentData.getInstance().getFactions())) {
+                if (Utilities.getInstance().isInFaction(player.getUniqueId(), PersistentData.getInstance().getFactions())) {
                     for (Faction faction : PersistentData.getInstance().getFactions()) {
                         if (faction.isOwner(player.getUniqueId()) || faction.isOfficer(player.getUniqueId())) {
                             if (args.length > 1) {
-                                UUID playerUUID = Utilities.findUUIDBasedOnPlayerName(args[1]);
+                                UUID playerUUID = Utilities.getInstance().findUUIDBasedOnPlayerName(args[1]);
                                 // invite if player isn't in a faction already
-                                if (!(Utilities.isInFaction(playerUUID, PersistentData.getInstance().getFactions()))) {
+                                if (!(Utilities.getInstance().isInFaction(playerUUID, PersistentData.getInstance().getFactions()))) {
                                     faction.invite(playerUUID);
                                     try {
                                         Player target = Bukkit.getServer().getPlayer(args[1]);

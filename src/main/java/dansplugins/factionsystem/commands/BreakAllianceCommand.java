@@ -23,7 +23,7 @@ public class BreakAllianceCommand {
                         if (args.length > 1) {
 
                             // get name of faction
-                            String factionName = Utilities.createStringFromFirstArgOnwards(args);
+                            String factionName = Utilities.getInstance().createStringFromFirstArgOnwards(args);
 
                             // check if faction exists
                             for (int i = 0; i < PersistentData.getInstance().getFactions().size(); i++) {
@@ -41,7 +41,7 @@ public class BreakAllianceCommand {
                                             PersistentData.getInstance().getFactions().get(i).removeAlly(faction.getName());
                                             for (int j = 0; j < PersistentData.getInstance().getFactions().size(); j++) {
                                                 if (PersistentData.getInstance().getFactions().get(j).getName().equalsIgnoreCase(factionName)) {
-                                                    Utilities.sendAllPlayersInFactionMessage(PersistentData.getInstance().getFactions().get(j), ChatColor.RED + faction.getName() + " has broken their alliance your faction!");
+                                                    Utilities.getInstance().sendAllPlayersInFactionMessage(PersistentData.getInstance().getFactions().get(j), ChatColor.RED + faction.getName() + " has broken their alliance your faction!");
                                                 }
                                             }
                                         }

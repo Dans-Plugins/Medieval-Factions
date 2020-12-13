@@ -37,7 +37,7 @@ public class Utilities {
         return block.getType() == Material.CHEST;
     }
 
-    public static PlayerActivityRecord getPlayerActivityRecord(UUID uuid, ArrayList<PlayerActivityRecord> playerActivityRecords)
+    public PlayerActivityRecord getPlayerActivityRecord(UUID uuid, ArrayList<PlayerActivityRecord> playerActivityRecords)
     {
     	for (PlayerActivityRecord record : playerActivityRecords)
     	{
@@ -98,9 +98,9 @@ public class Utilities {
     	return false;
     }
 
-    // static methods ----------------------------
+    //  methods ----------------------------
 
-    public static Duel getDuel(Player player, Player target)
+    public Duel getDuel(Player player, Player target)
     {
     	for (Duel duel : EphemeralData.getInstance().getDuelingPlayers())
     	{
@@ -112,7 +112,7 @@ public class Utilities {
     	return null;
     }
 
-    public static Duel getDuel(Player player)
+    public Duel getDuel(Player player)
     {
     	for (Duel duel : EphemeralData.getInstance().getDuelingPlayers())
     	{
@@ -124,7 +124,7 @@ public class Utilities {
     	return null;
     }
     
-    public static Faction getGateFaction(Gate gate, ArrayList<Faction> factions)
+    public Faction getGateFaction(Gate gate, ArrayList<Faction> factions)
     {
     	for (Faction faction : factions)
     	{
@@ -136,7 +136,7 @@ public class Utilities {
     	return null;
     }
     
-    public static Gate getGate(Block targetBlock, ArrayList<Faction> factions)
+    public Gate getGate(Block targetBlock, ArrayList<Faction> factions)
     {
     	for (Faction faction : factions)
     	{
@@ -151,7 +151,7 @@ public class Utilities {
     	return null;
     }
     
-    public static void startCreatingGate(Player player, String name)
+    public void startCreatingGate(Player player, String name)
     {
     	if (!EphemeralData.getInstance().getCreatingGatePlayers().containsKey(player.getUniqueId()))
     	{
@@ -165,7 +165,7 @@ public class Utilities {
     	}
     }
     
-    public static boolean isGateBlock(Block targetBlock, ArrayList<Faction> factions)
+    public boolean isGateBlock(Block targetBlock, ArrayList<Faction> factions)
     {
     	for (Faction faction : factions)
     	{
@@ -180,20 +180,11 @@ public class Utilities {
     	return false;
     }
 
-    public static void removeLock(Block block, ArrayList<LockedBlock> lockedBlocks) {
-        for (LockedBlock b : lockedBlocks) {
-            if (b.getX() == block.getX() && b.getY() == block.getY() && b.getZ() == block.getZ() && block.getWorld().getName().equalsIgnoreCase(b.getWorld())) {
-                lockedBlocks.remove(b);
-                return;
-            }
-        }
-    }
-
-    public static LockedBlock getLockedBlock(Block block, ArrayList<LockedBlock> lockedBlocks) {
+    public LockedBlock getLockedBlock(Block block, ArrayList<LockedBlock> lockedBlocks) {
         return getLockedBlock(block.getX(), block.getY(), block.getZ(), block.getWorld().getName(), lockedBlocks);
     }
 
-    public static LockedBlock getLockedBlock(int x, int y, int z, String world, ArrayList<LockedBlock> lockedBlocks) {
+    public  LockedBlock getLockedBlock(int x, int y, int z, String world, ArrayList<LockedBlock> lockedBlocks) {
         for (LockedBlock block : lockedBlocks) {
             if (block.getX() == x && block.getY() == y && block.getZ() == z && block.getWorld().equalsIgnoreCase(world)) {
                 return block;
@@ -202,11 +193,11 @@ public class Utilities {
         return null;
     }    
 
-    public static boolean isBlockLocked(Block block, ArrayList<LockedBlock> lockedBlocks) {
+    public  boolean isBlockLocked(Block block, ArrayList<LockedBlock> lockedBlocks) {
         return isBlockLocked(block.getX(), block.getY(), block.getZ(), block.getWorld().getName(), lockedBlocks);
     }
 
-    public static boolean isBlockLocked(int x, int y, int z, String world, ArrayList<LockedBlock> lockedBlocks) {
+    public  boolean isBlockLocked(int x, int y, int z, String world, ArrayList<LockedBlock> lockedBlocks) {
         for (LockedBlock block : lockedBlocks) {
             if (block.getX() == x && block.getY() == y && block.getZ() == z && block.getWorld().equalsIgnoreCase(world)) {
                 return true;
@@ -215,7 +206,7 @@ public class Utilities {
         return false;
     }
    
-    public static boolean isInFaction(UUID playerUUID, ArrayList<Faction> factions) {
+    public  boolean isInFaction(UUID playerUUID, ArrayList<Faction> factions) {
         // membership check
         for (Faction faction : factions) {
             if (faction.isMember(playerUUID)) {
@@ -225,7 +216,7 @@ public class Utilities {
         return false;
     }
 
-    public static Faction getPlayersFaction(UUID playerUUID, ArrayList<Faction> factions) {
+    public  Faction getPlayersFaction(UUID playerUUID, ArrayList<Faction> factions) {
         // membership check
         for (Faction faction : factions) {
             if (faction.isMember(playerUUID)) {
@@ -235,7 +226,7 @@ public class Utilities {
         return null;
     }
 
-    public static void sendFactionInfo(Player player, Faction faction, int power) {
+    public void sendFactionInfo(Player player, Faction faction, int power) {
         player.sendMessage(ChatColor.BOLD + "" + ChatColor.AQUA + faction.getName() + " Faction Info" + "\n----------\n");
         player.sendMessage(ChatColor.AQUA + "Name: " + faction.getName() + "\n");
         player.sendMessage(ChatColor.AQUA + "Owner: " + findPlayerNameBasedOnUUID(faction.getOwner()) + "\n");
@@ -254,7 +245,7 @@ public class Utilities {
         player.sendMessage(ChatColor.AQUA + "----------\n");
     }
 
-    public static void sendFactionMembers(Player player, Faction faction) {
+    public void sendFactionMembers(Player player, Faction faction) {
         ArrayList<UUID> members = faction.getMemberList();
         player.sendMessage(ChatColor.BOLD + "" + ChatColor.AQUA + "Members of " + faction.getName() + "\n----------\n");
         for (UUID member : members) {
@@ -270,7 +261,7 @@ public class Utilities {
         player.sendMessage(ChatColor.AQUA + "----------\n");
     }
 
-    public static String createStringFromFirstArgOnwards(String[] args) {
+    public String createStringFromFirstArgOnwards(String[] args) {
         StringBuilder name = new StringBuilder();
         for (int i = 1; i < args.length; i++) {
             name.append(args[i]);
@@ -281,7 +272,7 @@ public class Utilities {
         return name.toString();
     }
 
-    public static void sendAllPlayersInFactionMessage(Faction faction, String message) {
+    public void sendAllPlayersInFactionMessage(Faction faction, String message) {
         ArrayList<UUID> members = faction.getMemberArrayList();
         for (UUID member : members) {
             try {
@@ -294,7 +285,7 @@ public class Utilities {
         }
     }
 
-    public static PlayerPowerRecord getPlayersPowerRecord(UUID playerUUID, ArrayList<PlayerPowerRecord> powerRecords ) {
+    public PlayerPowerRecord getPlayersPowerRecord(UUID playerUUID, ArrayList<PlayerPowerRecord> powerRecords ) {
         for (PlayerPowerRecord record : powerRecords) {
             if (record.getPlayerUUID().equals(playerUUID)) {
                 return record;
@@ -303,7 +294,7 @@ public class Utilities {
         return null;
     }
 
-    public static Faction getFaction(String name, ArrayList<Faction> factions) {
+    public Faction getFaction(String name, ArrayList<Faction> factions) {
         for (Faction faction : factions) {
             if (faction.getName().equalsIgnoreCase(name)) {
                 return faction;
@@ -312,7 +303,7 @@ public class Utilities {
         return null;
     }
 
-    public static boolean isPlayerAFactionOwner(UUID player, ArrayList<Faction> factions){
+    public boolean isPlayerAFactionOwner(UUID player, ArrayList<Faction> factions){
         if (isInFaction(player, factions)){
             Faction faction = getPlayersFaction(player, factions);
             return faction.getOwner().equals(player);
@@ -321,7 +312,7 @@ public class Utilities {
         }
     }
 
-    public static boolean isPlayerAFactionOfficer(UUID player, ArrayList<Faction> factions) {
+    public boolean isPlayerAFactionOfficer(UUID player, ArrayList<Faction> factions) {
         if (isInFaction(player, factions)){
             Faction faction = getPlayersFaction(player, factions);
             return faction.isOfficer(player);
@@ -330,7 +321,7 @@ public class Utilities {
         }
     }
 
-    public static void invokeAlliances(String victimFactionName, String declaringFactionName, ArrayList<Faction> factions) {
+    public void invokeAlliances(String victimFactionName, String declaringFactionName, ArrayList<Faction> factions) {
         Faction victimFaction = getFaction(victimFactionName, factions);
         Faction declaringFaction = getFaction(declaringFactionName, factions);
 
@@ -352,7 +343,7 @@ public class Utilities {
 
     }
 
-    public static void removeAllLocks(String factionName, ArrayList<LockedBlock> lockedBlocks) {
+    public void removeAllLocks(String factionName, ArrayList<LockedBlock> lockedBlocks) {
         Iterator<LockedBlock> itr = lockedBlocks.iterator();
 
         while (itr.hasNext()) {
@@ -443,7 +434,7 @@ public class Utilities {
     }
 
     // Placed lower as it goes with the method below it.
-    private static List<PotionEffectType> BAD_POTION_EFFECTS = Arrays.asList(
+    private  List<PotionEffectType> BAD_POTION_EFFECTS = Arrays.asList(
             PotionEffectType.BLINDNESS,
             PotionEffectType.CONFUSION,
             PotionEffectType.HARM,
@@ -460,7 +451,7 @@ public class Utilities {
         return BAD_POTION_EFFECTS.contains(effect);
     }
 
-    private static List<PotionType> BAD_POTION_TYPES = Arrays.asList(
+    private List<PotionType> BAD_POTION_TYPES = Arrays.asList(
             PotionType.INSTANT_DAMAGE,
             PotionType.POISON,
             PotionType.SLOWNESS,
@@ -472,7 +463,7 @@ public class Utilities {
         return BAD_POTION_TYPES.contains(type);
     }
 
-    public static String findPlayerNameBasedOnUUID(UUID playerUUID) {
+    public String findPlayerNameBasedOnUUID(UUID playerUUID) {
         // Check online
         for (Player player : getOnlinePlayers()){
             if (player.getUniqueId().equals(playerUUID)){
@@ -490,7 +481,7 @@ public class Utilities {
         return "";
     }
 
-    public static UUID findUUIDBasedOnPlayerName(String playerName){
+    public  UUID findUUIDBasedOnPlayerName(String playerName){
         // Check online
         for (Player player : getOnlinePlayers()){
             if (player.getName().equals(playerName)){
@@ -529,7 +520,7 @@ public class Utilities {
     // never log in again will experience power decay.
     public void createActivityRecordForEveryOfflinePlayer() {
         for (OfflinePlayer player : Bukkit.getOfflinePlayers()) {
-            PlayerActivityRecord record = Utilities.getPlayerActivityRecord(player.getUniqueId(), PersistentData.getInstance().getPlayerActivityRecords());
+            PlayerActivityRecord record = getPlayerActivityRecord(player.getUniqueId(), PersistentData.getInstance().getPlayerActivityRecords());
             if (record == null) {
                 PlayerActivityRecord newRecord = new PlayerActivityRecord(player.getUniqueId(), 1);
                 newRecord.setLastLogout(ZonedDateTime.now());

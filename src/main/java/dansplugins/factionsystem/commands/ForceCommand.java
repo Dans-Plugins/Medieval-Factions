@@ -185,10 +185,10 @@ public class ForceCommand {
                     if (player.getName().equalsIgnoreCase(playerName)) {
 
                         if (faction != null) {
-                            if (!(Utilities.isInFaction(player.getUniqueId(), PersistentData.getInstance().getFactions()))) {
-                                faction.addMember(player.getUniqueId(), Utilities.getPlayersPowerRecord(player.getUniqueId(), PersistentData.getInstance().getPlayerPowerRecords()).getPowerLevel());
+                            if (!(Utilities.getInstance().isInFaction(player.getUniqueId(), PersistentData.getInstance().getFactions()))) {
+                                faction.addMember(player.getUniqueId(), Utilities.getInstance().getPlayersPowerRecord(player.getUniqueId(), PersistentData.getInstance().getPlayerPowerRecords()).getPowerLevel());
                                 try {
-                                    Utilities.sendAllPlayersInFactionMessage(faction, ChatColor.GREEN + player.getName() + " has joined " + faction.getName());
+                                    Utilities.getInstance().sendAllPlayersInFactionMessage(faction, ChatColor.GREEN + player.getName() + " has joined " + faction.getName());
                                 } catch (Exception ignored) {
 
                                 }
@@ -236,7 +236,7 @@ public class ForceCommand {
                             }
 
                             if (faction.isMember(player.getUniqueId())) {
-                                faction.removeMember(player.getUniqueId(), Utilities.getPlayersPowerRecord(player.getUniqueId(), PersistentData.getInstance().getPlayerPowerRecords()).getPowerLevel());
+                                faction.removeMember(player.getUniqueId(), Utilities.getInstance().getPlayersPowerRecord(player.getUniqueId(), PersistentData.getInstance().getPlayerPowerRecords()).getPowerLevel());
 
                                 if (player.isOnline()) {
                                     Bukkit.getPlayer(player.getUniqueId()).sendMessage(ChatColor.AQUA + "You were forcibly kicked from the faction " + faction.getName() + "!");
@@ -287,7 +287,7 @@ public class ForceCommand {
                     return false;
                 }
 
-                PlayerPowerRecord record = Utilities.getPlayersPowerRecord(Utilities.findUUIDBasedOnPlayerName(player), PersistentData.getInstance().getPlayerPowerRecords());
+                PlayerPowerRecord record = Utilities.getInstance().getPlayersPowerRecord(Utilities.getInstance().findUUIDBasedOnPlayerName(player), PersistentData.getInstance().getPlayerPowerRecords());
 
                 record.setPowerLevel(desiredPower);
                 sender.sendMessage(ChatColor.GREEN + "The power level of '" + player + "' has been set to " + desiredPower);
@@ -306,7 +306,7 @@ public class ForceCommand {
     private ArrayList<String> getArgumentsInsideSingleQuotes(String[] args) {
         ArrayList<String> toReturn = new ArrayList<>();
 
-        String argumentString = Utilities.createStringFromFirstArgOnwards(args);
+        String argumentString = Utilities.getInstance().createStringFromFirstArgOnwards(args);
 
         int index = 0;
         while (true) {

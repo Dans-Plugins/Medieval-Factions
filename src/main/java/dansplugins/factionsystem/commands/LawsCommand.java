@@ -18,14 +18,14 @@ public class LawsCommand {
             Faction faction = null;
 
             if (args.length == 1) {
-                faction = Utilities.getPlayersFaction(player.getUniqueId(), PersistentData.getInstance().getFactions());
+                faction = Utilities.getInstance().getPlayersFaction(player.getUniqueId(), PersistentData.getInstance().getFactions());
             }
             else {
-                String target = Utilities.createStringFromFirstArgOnwards(args);
+                String target = Utilities.getInstance().createStringFromFirstArgOnwards(args);
                 boolean exists = false;
                 for (Faction f : PersistentData.getInstance().getFactions()) {
                     if (f.getName().equalsIgnoreCase(target)) {
-                        faction = Utilities.getFaction(target, PersistentData.getInstance().getFactions());
+                        faction = Utilities.getInstance().getFaction(target, PersistentData.getInstance().getFactions());
                         exists = true;
                     }
                 }

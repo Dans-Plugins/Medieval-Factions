@@ -14,16 +14,16 @@ public class AllyCommand {
             Player player = (Player) sender;
 
             if (sender.hasPermission("mf.ally") || sender.hasPermission("mf.default")) {
-                if (Utilities.isInFaction(player.getUniqueId(), PersistentData.getInstance().getFactions())) {
-                    Faction playersFaction = Utilities.getPlayersFaction(player.getUniqueId(), PersistentData.getInstance().getFactions());
+                if (Utilities.getInstance().isInFaction(player.getUniqueId(), PersistentData.getInstance().getFactions())) {
+                    Faction playersFaction = Utilities.getInstance().getPlayersFaction(player.getUniqueId(), PersistentData.getInstance().getFactions());
 
                     if (playersFaction.isOwner(player.getUniqueId()) || playersFaction.isOfficer(player.getUniqueId())) {
 
                         // player is able to do this command
 
                         if (args.length > 1) {
-                            String targetFactionName = Utilities.createStringFromFirstArgOnwards(args);
-                            Faction targetFaction = Utilities.getFaction(targetFactionName, PersistentData.getInstance().getFactions());
+                            String targetFactionName = Utilities.getInstance().createStringFromFirstArgOnwards(args);
+                            Faction targetFaction = Utilities.getInstance().getFaction(targetFactionName, PersistentData.getInstance().getFactions());
 
                             if (!playersFaction.getName().equalsIgnoreCase(targetFactionName)) {
 
@@ -40,14 +40,14 @@ public class AllyCommand {
                                                 playersFaction.requestAlly(targetFactionName);
                                                 player.sendMessage(ChatColor.GREEN + "Attempted to ally with " + targetFactionName);
 
-                                                Utilities.sendAllPlayersInFactionMessage(targetFaction,ChatColor.GREEN + "" + playersFaction.getName() + " has attempted to ally with " + targetFactionName + "!");
+                                                Utilities.getInstance().sendAllPlayersInFactionMessage(targetFaction,ChatColor.GREEN + "" + playersFaction.getName() + " has attempted to ally with " + targetFactionName + "!");
 
                                                 if (playersFaction.isRequestedAlly(targetFactionName) && targetFaction.isRequestedAlly(playersFaction.getName())) {
                                                     // ally factions
                                                     playersFaction.addAlly(targetFactionName);
-                                                    Utilities.getFaction(targetFactionName, PersistentData.getInstance().getFactions()).addAlly(playersFaction.getName());
+                                                    Utilities.getInstance().getFaction(targetFactionName, PersistentData.getInstance().getFactions()).addAlly(playersFaction.getName());
                                                     player.sendMessage(ChatColor.GREEN + "Your faction is now allied with " + targetFactionName + "!");
-                                                    Utilities.sendAllPlayersInFactionMessage(targetFaction, ChatColor.GREEN + "Your faction is now allied with " + playersFaction.getName() + "!");
+                                                    Utilities.getInstance().sendAllPlayersInFactionMessage(targetFaction, ChatColor.GREEN + "Your faction is now allied with " + playersFaction.getName() + "!");
                                                 }
                                             }
                                             else {

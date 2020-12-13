@@ -18,10 +18,10 @@ public class PromoteCommand {
             Player player = (Player) sender;
 
             if (sender.hasPermission("mf.promote") || sender.hasPermission("mf.default")) {
-                if (Utilities.isInFaction(player.getUniqueId(), PersistentData.getInstance().getFactions())) {
+                if (Utilities.getInstance().isInFaction(player.getUniqueId(), PersistentData.getInstance().getFactions())) {
                     if (args.length > 1) {
                         for (Faction faction : PersistentData.getInstance().getFactions()) {
-                            UUID playerUUID = Utilities.findUUIDBasedOnPlayerName(args[1]);
+                            UUID playerUUID = Utilities.getInstance().findUUIDBasedOnPlayerName(args[1]);
                             if (faction.isMember(playerUUID)) {
                                 if (faction.isOwner(player.getUniqueId())) {
                                     if (faction.isMember(playerUUID)) {

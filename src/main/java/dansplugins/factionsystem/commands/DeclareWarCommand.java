@@ -24,7 +24,7 @@ public class DeclareWarCommand {
                         if (args.length > 1) {
 
                             // get name of faction
-                            String factionName = Utilities.createStringFromFirstArgOnwards(args);
+                            String factionName = Utilities.getInstance().createStringFromFirstArgOnwards(args);
 
                             // check if faction exists
                             for (int i = 0; i < PersistentData.getInstance().getFactions().size(); i++) {
@@ -74,7 +74,7 @@ public class DeclareWarCommand {
                                                 }
 
                                                 // invoke alliances
-                                                Utilities.invokeAlliances(PersistentData.getInstance().getFactions().get(i).getName(), faction.getName(), PersistentData.getInstance().getFactions());
+                                                Utilities.getInstance().invokeAlliances(PersistentData.getInstance().getFactions().get(i).getName(), faction.getName(), PersistentData.getInstance().getFactions());
                                             }
                                             else {
                                                 player.sendMessage(ChatColor.RED + "You can't declare war on your ally!");

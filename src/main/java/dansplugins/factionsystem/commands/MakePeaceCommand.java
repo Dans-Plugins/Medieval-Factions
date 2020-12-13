@@ -15,16 +15,16 @@ public class MakePeaceCommand {
             Player player = (Player) sender;
 
             if (sender.hasPermission("mf.makepeace") || sender.hasPermission("mf.default")) {
-                if (Utilities.isInFaction(player.getUniqueId(), PersistentData.getInstance().getFactions())) {
-                    Faction playersFaction = Utilities.getPlayersFaction(player.getUniqueId(), PersistentData.getInstance().getFactions());
+                if (Utilities.getInstance().isInFaction(player.getUniqueId(), PersistentData.getInstance().getFactions())) {
+                    Faction playersFaction = Utilities.getInstance().getPlayersFaction(player.getUniqueId(), PersistentData.getInstance().getFactions());
 
                     if (playersFaction.isOwner(player.getUniqueId()) || playersFaction.isOfficer(player.getUniqueId())) {
 
                         // player is able to do this command
 
                         if (args.length > 1) {
-                            String targetFactionName = Utilities.createStringFromFirstArgOnwards(args);
-                            Faction targetFaction = Utilities.getFaction(targetFactionName, PersistentData.getInstance().getFactions());
+                            String targetFactionName = Utilities.getInstance().createStringFromFirstArgOnwards(args);
+                            Faction targetFaction = Utilities.getInstance().getFaction(targetFactionName, PersistentData.getInstance().getFactions());
 
                             if (!playersFaction.getName().equalsIgnoreCase(targetFactionName)) {
 
@@ -38,7 +38,7 @@ public class MakePeaceCommand {
                                             playersFaction.requestTruce(targetFactionName);
                                             player.sendMessage(ChatColor.GREEN + "Attempted to make peace with " + targetFactionName);
 
-                                            Utilities.sendAllPlayersInFactionMessage(targetFaction,ChatColor.GREEN + "" + playersFaction.getName() + " has attempted to make peace with " + targetFactionName + "!");
+                                            Utilities.getInstance().sendAllPlayersInFactionMessage(targetFaction,ChatColor.GREEN + "" + playersFaction.getName() + " has attempted to make peace with " + targetFactionName + "!");
 
                                             if (playersFaction.isTruceRequested(targetFactionName) && targetFaction.isTruceRequested(playersFaction.getName())) {
                                                 // remove requests in case war breaks out again and they need to make peace aagain
@@ -47,7 +47,7 @@ public class MakePeaceCommand {
 
                                                 // make peace between factions
                                                 playersFaction.removeEnemy(targetFactionName);
-                                                Utilities.getFaction(targetFactionName, PersistentData.getInstance().getFactions()).removeEnemy(playersFaction.getName());
+                                                Utilities.getInstance().getFaction(targetFactionName, PersistentData.getInstance().getFactions()).removeEnemy(playersFaction.getName());
                                                 Utilities.getInstance().sendAllPlayersOnServerMessage(ChatColor.GREEN + playersFaction.getName() + " is now at peace with " + targetFactionName + "!");
                                             }
                                         }

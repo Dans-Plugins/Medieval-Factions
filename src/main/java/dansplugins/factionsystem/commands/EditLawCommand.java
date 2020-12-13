@@ -15,8 +15,8 @@ public class EditLawCommand {
 
             Player player = (Player) sender;
 
-            if (Utilities.isInFaction(player.getUniqueId(), PersistentData.getInstance().getFactions())) {
-                Faction playersFaction = Utilities.getPlayersFaction(player.getUniqueId(), PersistentData.getInstance().getFactions());
+            if (Utilities.getInstance().isInFaction(player.getUniqueId(), PersistentData.getInstance().getFactions())) {
+                Faction playersFaction = Utilities.getInstance().getPlayersFaction(player.getUniqueId(), PersistentData.getInstance().getFactions());
 
                 if (playersFaction.isOwner(player.getUniqueId())) {
                     if (args.length > 1) {

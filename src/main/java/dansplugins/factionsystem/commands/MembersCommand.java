@@ -17,7 +17,7 @@ public class MembersCommand {
                 if (args.length == 1) {
                     for (Faction faction : PersistentData.getInstance().getFactions()) {
                         if (faction.isMember(player.getUniqueId())) {
-                            Utilities.sendFactionMembers(player, faction);
+                            Utilities.getInstance().sendFactionMembers(player, faction);
                             return;
                         }
                     }
@@ -25,11 +25,11 @@ public class MembersCommand {
                 }
                 else {
                     // creating name from arguments 1 to the last one
-                    String name = Utilities.createStringFromFirstArgOnwards(args);
+                    String name = Utilities.getInstance().createStringFromFirstArgOnwards(args);
 
                     for (Faction faction : PersistentData.getInstance().getFactions()) {
                         if (faction.getName().equalsIgnoreCase(name)) {
-                            Utilities.sendFactionMembers(player, faction);
+                            Utilities.getInstance().sendFactionMembers(player, faction);
                             return;
                         }
                     }

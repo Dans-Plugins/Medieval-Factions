@@ -18,10 +18,10 @@ public class DemoteCommand {
             Player player = (Player) sender;
 
             if (sender.hasPermission("mf.demote") || sender.hasPermission("mf.default")) {
-                if (Utilities.isInFaction(player.getUniqueId(), PersistentData.getInstance().getFactions())) {
+                if (Utilities.getInstance().isInFaction(player.getUniqueId(), PersistentData.getInstance().getFactions())) {
                     if (args.length > 1) {
                         for (Faction faction : PersistentData.getInstance().getFactions()) {
-                            UUID officerUUID = Utilities.findUUIDBasedOnPlayerName(args[1]);
+                            UUID officerUUID = Utilities.getInstance().findUUIDBasedOnPlayerName(args[1]);
                             if (officerUUID != null && faction.isOfficer(officerUUID)) {
                                 if (faction.isOwner(player.getUniqueId())) {
                                     if (faction.removeOfficer(officerUUID)) {

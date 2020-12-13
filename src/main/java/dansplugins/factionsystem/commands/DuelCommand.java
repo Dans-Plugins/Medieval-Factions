@@ -71,7 +71,7 @@ public class DuelCommand {
 						if (args.length > 2)
 						{
 		                	Player challenger = Bukkit.getServer().getPlayer(args[2]);
-		                	Duel duel = Utilities.getDuel(challenger, player);
+		                	Duel duel = Utilities.getInstance().getDuel(challenger, player);
 		                	if (duel != null)
 		                	{
 		                		if (duel.getStatus().equals(Duel.DuelState.DUELLING))
@@ -97,7 +97,7 @@ public class DuelCommand {
 						}
 						else
 						{
-		                	Duel duel = Utilities.getDuel(player);
+		                	Duel duel = Utilities.getInstance().getDuel(player);
 		                	if (duel != null)
 		                	{
 		                		if (duel.getStatus().equals(Duel.DuelState.DUELLING))
@@ -126,7 +126,7 @@ public class DuelCommand {
 					{
 		                if (isDuelling(player))
 		                {
-		                	Duel duel = Utilities.getDuel(player);
+		                	Duel duel = Utilities.getInstance().getDuel(player);
 		                	if (duel != null)
 		                	{
 		                		if (duel.getStatus().equals(Duel.DuelState.DUELLING))

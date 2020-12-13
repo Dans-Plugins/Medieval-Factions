@@ -19,7 +19,7 @@ public class DisbandCommand {
                 if (args.length > 1) {
                     if (player.hasPermission("mf.disband.others") || player.hasPermission("mf.admin")) {
 
-                        String factionName = Utilities.createStringFromFirstArgOnwards(args);
+                        String factionName = Utilities.getInstance().createStringFromFirstArgOnwards(args);
 
                         for (int i = 0; i < PersistentData.getInstance().getFactions().size(); i++) {
 
@@ -78,7 +78,7 @@ public class DisbandCommand {
         ChunkManager.getInstance().removeAllClaimedChunks(PersistentData.getInstance().getFactions().get(i).getName(), PersistentData.getInstance().getClaimedChunks());
 
         // remove locks associated with this faction
-        Utilities.removeAllLocks(PersistentData.getInstance().getFactions().get(i).getName(), PersistentData.getInstance().getLockedBlocks());
+        Utilities.getInstance().removeAllLocks(PersistentData.getInstance().getFactions().get(i).getName(), PersistentData.getInstance().getLockedBlocks());
 
         // remove records of alliances/wars associated with this faction
         for (Faction faction : PersistentData.getInstance().getFactions()) {

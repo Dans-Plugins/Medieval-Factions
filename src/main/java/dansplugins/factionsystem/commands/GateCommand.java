@@ -40,7 +40,7 @@ public class GateCommand {
 						}
 						else
 						{
-							Faction faction = Utilities.getPlayersFaction(player.getUniqueId(), PersistentData.getInstance().getFactions());
+							Faction faction = Utilities.getInstance().getPlayersFaction(player.getUniqueId(), PersistentData.getInstance().getFactions());
 							if (faction != null)
 							{
 								if (faction.isOfficer(player.getUniqueId()) || faction.isOwner(player.getUniqueId()))
@@ -50,7 +50,7 @@ public class GateCommand {
 				        			{
 				        				gateName = createStringFromArgIndexOnwards(2, args);
 				        			}
-									Utilities.startCreatingGate(player, gateName);
+									Utilities.getInstance().startCreatingGate(player, gateName);
 									//TODO: Config setting for magic gate tool.
 									player.sendMessage(ChatColor.AQUA + "Creating gate '" + gateName + "'.\nClick on a block with a Golden Hoe to select the first point.");
 									return;
@@ -65,7 +65,7 @@ public class GateCommand {
 					}
 					else if (args[1].equalsIgnoreCase("list"))
 					{
-						Faction faction = Utilities.getPlayersFaction(player.getUniqueId(), PersistentData.getInstance().getFactions());
+						Faction faction = Utilities.getInstance().getPlayersFaction(player.getUniqueId(), PersistentData.getInstance().getFactions());
 						if (faction != null)
 						{
 							if (faction.getGates().size() > 0)
@@ -92,10 +92,10 @@ public class GateCommand {
 					{
 						if (player.getTargetBlock(null, 16) != null)
 						{
-							if (Utilities.isGateBlock(player.getTargetBlock(null, 16), PersistentData.getInstance().getFactions()))
+							if (Utilities.getInstance().isGateBlock(player.getTargetBlock(null, 16), PersistentData.getInstance().getFactions()))
 							{
-								Gate gate = Utilities.getGate(player.getTargetBlock(null, 16), PersistentData.getInstance().getFactions());
-								Faction faction = Utilities.getGateFaction(gate, PersistentData.getInstance().getFactions());
+								Gate gate = Utilities.getInstance().getGate(player.getTargetBlock(null, 16), PersistentData.getInstance().getFactions());
+								Faction faction = Utilities.getInstance().getGateFaction(gate, PersistentData.getInstance().getFactions());
 								if (faction != null)
 								{
 									if (faction.isOfficer(player.getUniqueId()) || faction.isOwner(player.getUniqueId()))
@@ -132,12 +132,12 @@ public class GateCommand {
 					{						
 						if (player.getTargetBlock(null, 16) != null)
 						{
-							if (Utilities.isGateBlock(player.getTargetBlock(null, 16), PersistentData.getInstance().getFactions()))
+							if (Utilities.getInstance().isGateBlock(player.getTargetBlock(null, 16), PersistentData.getInstance().getFactions()))
 							{
-								Gate gate = Utilities.getGate(player.getTargetBlock(null, 16), PersistentData.getInstance().getFactions());
+								Gate gate = Utilities.getInstance().getGate(player.getTargetBlock(null, 16), PersistentData.getInstance().getFactions());
 								if (args.length > 2)
 								{
-									Faction faction = Utilities.getGateFaction(gate, PersistentData.getInstance().getFactions());
+									Faction faction = Utilities.getInstance().getGateFaction(gate, PersistentData.getInstance().getFactions());
 									if (faction != null)
 									{
 										if (faction.isOfficer(player.getUniqueId()) || faction.isOwner(player.getUniqueId()))

@@ -31,7 +31,7 @@ public class MoveHandler implements Listener {
                     if (faction.getAutoClaimStatus()) {
 
                         // if not at demesne limit
-                        Faction playersFaction = Utilities.getPlayersFaction(event.getPlayer().getUniqueId(), PersistentData.getInstance().getFactions());
+                        Faction playersFaction = Utilities.getInstance().getPlayersFaction(event.getPlayer().getUniqueId(), PersistentData.getInstance().getFactions());
                         if (ChunkManager.getInstance().getChunksClaimedByFaction(playersFaction.getName(), PersistentData.getInstance().getClaimedChunks()) < playersFaction.getCumulativePowerLevel()) {
                             getServer().getScheduler().runTaskLater(MedievalFactions.getInstance(), new Runnable() {
                                 @Override
