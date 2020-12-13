@@ -6,8 +6,11 @@ import dansplugins.factionsystem.objects.Faction;
 import dansplugins.factionsystem.objects.Gate;
 import dansplugins.factionsystem.utils.Utilities;
 import org.bukkit.ChatColor;
+import org.bukkit.block.Block;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
+
+import java.util.ArrayList;
 
 public class GateCommand {
 	
@@ -50,7 +53,7 @@ public class GateCommand {
 				        			{
 				        				gateName = createStringFromArgIndexOnwards(2, args);
 				        			}
-									Utilities.getInstance().startCreatingGate(player, gateName);
+									startCreatingGate(player, gateName);
 									//TODO: Config setting for magic gate tool.
 									player.sendMessage(ChatColor.AQUA + "Creating gate '" + gateName + "'.\nClick on a block with a Golden Hoe to select the first point.");
 									return;
@@ -94,8 +97,8 @@ public class GateCommand {
 						{
 							if (Utilities.getInstance().isGateBlock(player.getTargetBlock(null, 16), PersistentData.getInstance().getFactions()))
 							{
-								Gate gate = Utilities.getInstance().getGate(player.getTargetBlock(null, 16), PersistentData.getInstance().getFactions());
-								Faction faction = Utilities.getInstance().getGateFaction(gate, PersistentData.getInstance().getFactions());
+								Gate gate = getGate(player.getTargetBlock(null, 16), PersistentData.getInstance().getFactions());
+								Faction faction = getGateFaction(gate, PersistentData.getInstance().getFactions());
 								if (faction != null)
 								{
 									if (faction.isOfficer(player.getUniqueId()) || faction.isOwner(player.getUniqueId()))
@@ -134,10 +137,10 @@ public class GateCommand {
 						{
 							if (Utilities.getInstance().isGateBlock(player.getTargetBlock(null, 16), PersistentData.getInstance().getFactions()))
 							{
-								Gate gate = Utilities.getInstance().getGate(player.getTargetBlock(null, 16), PersistentData.getInstance().getFactions());
+								Gate gate = getGate(player.getTargetBlock(null, 16), PersistentData.getInstance().getFactions());
 								if (args.length > 2)
 								{
-									Faction faction = Utilities.getInstance().getGateFaction(gate, PersistentData.getInstance().getFactions());
+									Faction faction = getGateFaction(gate, PersistentData.getInstance().getFactions());
 									if (faction != null)
 									{
 										if (faction.isOfficer(player.getUniqueId()) || faction.isOwner(player.getUniqueId()))
@@ -194,6 +197,47 @@ public class GateCommand {
             }
 
 		}
+	}
+
+	private void startCreatingGate(Player player, String name)
+	{
+		if (!EphemeralData.getInstance().getCreatingGatePlayers().containsKey(player.getUniqueId()))
+		{
+			Gate gate = new Gate();
+			gate.setName(name);
+			EphemeralData.getInstance().getCreatingGatePlayers().put(player.getUniqueId(), gate);
+		}
+		else
+		{
+			System.out.println("WARNING: Player has already started creating the gate. startCreatingGate() call ignored.");
+		}
+	}
+
+	private Gate getGate(Block targetBlock, ArrayList<Faction> factions)
+	{
+		for (Faction faction : factions)
+		{
+			for (Gate gate : faction.getGates())
+			{
+				if (gate.hasBlock(targetBlock))
+				{
+					return gate;
+				}
+			}
+		}
+		return null;
+	}
+
+	private Faction getGateFaction(Gate gate, ArrayList<Faction> factions)
+	{
+		for (Faction faction : factions)
+		{
+			if (faction.getGates().contains(gate))
+			{
+				return faction;
+			}
+		}
+		return null;
 	}
 
 	private String createStringFromArgIndexOnwards(int index, String[] args) {

@@ -46,19 +46,11 @@ public class Utilities {
     	return null;
     }
 
-    public void resetPowerRecords() {
-        // reset individual records
-        System.out.println("Resetting individual power records.");
-        for (PlayerPowerRecord record : PersistentData.getInstance().getPlayerPowerRecords()) {
-            record.setPowerLevel(MedievalFactions.getInstance().getConfig().getInt("initialPowerLevel"));
-        }
-    }
-
     public boolean isBlockLocked(Block block) {
         return isBlockLocked(block.getX(), block.getY(), block.getZ(), block.getWorld().getName());
     }
 
-    public boolean isBlockLocked(int x, int y, int z, String world) {
+    private boolean isBlockLocked(int x, int y, int z, String world) {
         for (LockedBlock block : PersistentData.getInstance().getLockedBlocks()) {
             if (block.getX() == x && block.getY() == y && block.getZ() == z && block.getWorld().equalsIgnoreCase(world)) {
                 return true;
@@ -71,7 +63,7 @@ public class Utilities {
         return getLockedBlock(block.getX(), block.getY(), block.getZ(), block.getWorld().getName());
     }
 
-    public LockedBlock getLockedBlock(int x, int y, int z, String world) {
+    private LockedBlock getLockedBlock(int x, int y, int z, String world) {
         for (LockedBlock block : PersistentData.getInstance().getLockedBlocks()) {
             if (block.getX() == x && block.getY() == y && block.getZ() == z && block.getWorld().equalsIgnoreCase(world)) {
                 return block;
@@ -90,59 +82,6 @@ public class Utilities {
     		}
     	}
     	return null;
-    }
-
-    public Duel getDuel(Player player)
-    {
-    	for (Duel duel : EphemeralData.getInstance().getDuelingPlayers())
-    	{
-    		if (duel.isChallenged(player) || duel.isChallenger(player))
-    		{
-    			return duel;
-    		}
-    	}
-    	return null;
-    }
-    
-    public Faction getGateFaction(Gate gate, ArrayList<Faction> factions)
-    {
-    	for (Faction faction : factions)
-    	{
-    		if (faction.getGates().contains(gate))
-    		{
-    			return faction;
-    		}
-    	}
-    	return null;
-    }
-    
-    public Gate getGate(Block targetBlock, ArrayList<Faction> factions)
-    {
-    	for (Faction faction : factions)
-    	{
-    		for (Gate gate : faction.getGates())
-    		{
-    			if (gate.hasBlock(targetBlock))
-    			{
-    				return gate;
-    			}
-    		}
-    	}
-    	return null;
-    }
-    
-    public void startCreatingGate(Player player, String name)
-    {
-    	if (!EphemeralData.getInstance().getCreatingGatePlayers().containsKey(player.getUniqueId()))
-    	{
-    		Gate gate = new Gate();
-    		gate.setName(name);
-    		EphemeralData.getInstance().getCreatingGatePlayers().put(player.getUniqueId(), gate);
-    	}
-    	else
-    	{
-    		System.out.println("WARNING: Player has already started creating the gate. startCreatingGate() call ignored.");
-    	}
     }
     
     public boolean isGateBlock(Block targetBlock, ArrayList<Faction> factions)
@@ -164,7 +103,7 @@ public class Utilities {
         return getLockedBlock(block.getX(), block.getY(), block.getZ(), block.getWorld().getName(), lockedBlocks);
     }
 
-    public LockedBlock getLockedBlock(int x, int y, int z, String world, ArrayList<LockedBlock> lockedBlocks) {
+    private LockedBlock getLockedBlock(int x, int y, int z, String world, ArrayList<LockedBlock> lockedBlocks) {
         for (LockedBlock block : lockedBlocks) {
             if (block.getX() == x && block.getY() == y && block.getZ() == z && block.getWorld().equalsIgnoreCase(world)) {
                 return block;
@@ -283,24 +222,6 @@ public class Utilities {
         }
     }
 
-    public void ensureSmoothTransitionBetweenVersions() {
-        // this piece of code is to ensure that saves don't become broken when updating to v3.2 from a previous version
-        File saveFolder = new File("./plugins/medievalfactions/");
-        if (saveFolder.exists()) { // TODO: fix this so that it doesn't run every time
-//            System.out.println("[ALERT] Old save folder name (pre v3.2) detected. Updating for compatibility.");
-
-            // rename directory
-            File newSaveFolder = new File("./plugins/MedievalFactions/");
-            saveFolder.renameTo(newSaveFolder);
-        }
-
-        // this piece of code is to fix config values not matching when updating to v3.3 (after v3.3 there is version mismatch handling)
-        if (!MedievalFactions.getInstance().getConfig().isSet("version")) {
-            System.out.println("Config.yml doesn't have version entry!");
-            ConfigManager.getInstance().handleVersionMismatch();
-        }
-    }
-
     public String findPlayerNameBasedOnUUID(UUID playerUUID) {
         // Check online
         for (Player player : getOnlinePlayers()){
@@ -352,19 +273,6 @@ public class Utilities {
 
         }
 
-    }
-
-    // this method is to ensure that when updating to a version with power decay, even players who
-    // never log in again will experience power decay.
-    public void createActivityRecordForEveryOfflinePlayer() {
-        for (OfflinePlayer player : Bukkit.getOfflinePlayers()) {
-            PlayerActivityRecord record = getPlayerActivityRecord(player.getUniqueId(), PersistentData.getInstance().getPlayerActivityRecords());
-            if (record == null) {
-                PlayerActivityRecord newRecord = new PlayerActivityRecord(player.getUniqueId(), 1);
-                newRecord.setLastLogout(ZonedDateTime.now());
-                PersistentData.getInstance().getPlayerActivityRecords().add(newRecord);
-            }
-        }
     }
 
 }

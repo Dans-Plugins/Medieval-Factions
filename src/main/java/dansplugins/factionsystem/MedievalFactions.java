@@ -1,12 +1,17 @@
 package dansplugins.factionsystem;
 
 import dansplugins.factionsystem.bstats.Metrics;
+import dansplugins.factionsystem.data.PersistentData;
+import dansplugins.factionsystem.objects.PlayerActivityRecord;
 import dansplugins.factionsystem.utils.Utilities;
+import org.bukkit.Bukkit;
+import org.bukkit.OfflinePlayer;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import java.io.File;
+import java.time.ZonedDateTime;
 
 public class MedievalFactions extends JavaPlugin {
 
@@ -24,7 +29,7 @@ public class MedievalFactions extends JavaPlugin {
 
         instance = this;
 
-        Utilities.getInstance().ensureSmoothTransitionBetweenVersions();
+        ensureSmoothTransitionBetweenVersions();
 
         // config creation/loading
         if (!(new File("./plugins/MedievalFactions/config.yml").exists())) {
@@ -49,7 +54,7 @@ public class MedievalFactions extends JavaPlugin {
 
         // post load compatibility checks
         if (!getConfig().getString("version").equalsIgnoreCase(getVersion())) {
-            Utilities.getInstance().createActivityRecordForEveryOfflinePlayer(); // make sure every player experiences power decay in case we updated from pre-v3.5
+            createActivityRecordForEveryOfflinePlayer(); // make sure every player experiences power decay in case we updated from pre-v3.5
         }
 
         int pluginId = 8929;
@@ -71,6 +76,36 @@ public class MedievalFactions extends JavaPlugin {
 
     public String getVersion() {
         return version;
+    }
+
+    private void ensureSmoothTransitionBetweenVersions() {
+        // this piece of code is to ensure that saves don't become broken when updating to v3.2 from a previous version
+        File saveFolder = new File("./plugins/medievalfactions/");
+        if (saveFolder.exists()) { // TODO: fix this so that it doesn't run every time
+//            System.out.println("[ALERT] Old save folder name (pre v3.2) detected. Updating for compatibility.");
+
+            // rename directory
+            File newSaveFolder = new File("./plugins/MedievalFactions/");
+            saveFolder.renameTo(newSaveFolder);
+        }
+
+        // this piece of code is to fix config values not matching when updating to v3.3 (after v3.3 there is version mismatch handling)
+        if (!MedievalFactions.getInstance().getConfig().isSet("version")) {
+            System.out.println("Config.yml doesn't have version entry!");
+            ConfigManager.getInstance().handleVersionMismatch();
+        }
+    }
+
+    // this method is to ensure that when updating to a version with power decay, even players who never log in again will experience power decay
+    private void createActivityRecordForEveryOfflinePlayer() { // TODO: ensure that this is working
+        for (OfflinePlayer player : Bukkit.getOfflinePlayers()) {
+            PlayerActivityRecord record = Utilities.getInstance().getPlayerActivityRecord(player.getUniqueId(), PersistentData.getInstance().getPlayerActivityRecords());
+            if (record == null) {
+                PlayerActivityRecord newRecord = new PlayerActivityRecord(player.getUniqueId(), 1);
+                newRecord.setLastLogout(ZonedDateTime.now());
+                PersistentData.getInstance().getPlayerActivityRecords().add(newRecord);
+            }
+        }
     }
 
 }

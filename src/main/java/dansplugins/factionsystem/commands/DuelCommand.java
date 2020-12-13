@@ -97,7 +97,7 @@ public class DuelCommand {
 						}
 						else
 						{
-		                	Duel duel = Utilities.getInstance().getDuel(player);
+		                	Duel duel = getDuel(player);
 		                	if (duel != null)
 		                	{
 		                		if (duel.getStatus().equals(Duel.DuelState.DUELLING))
@@ -126,7 +126,7 @@ public class DuelCommand {
 					{
 		                if (isDuelling(player))
 		                {
-		                	Duel duel = Utilities.getInstance().getDuel(player);
+		                	Duel duel = getDuel(player);
 		                	if (duel != null)
 		                	{
 		                		if (duel.getStatus().equals(Duel.DuelState.DUELLING))
@@ -171,6 +171,18 @@ public class DuelCommand {
 				}
 			}
 		}
+	}
+
+	private Duel getDuel(Player player)
+	{
+		for (Duel duel : EphemeralData.getInstance().getDuelingPlayers())
+		{
+			if (duel.isChallenged(player) || duel.isChallenger(player))
+			{
+				return duel;
+			}
+		}
+		return null;
 	}
 
 	private boolean isDuelling(Player player)

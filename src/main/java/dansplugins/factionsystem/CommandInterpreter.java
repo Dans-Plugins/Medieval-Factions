@@ -3,6 +3,7 @@ package dansplugins.factionsystem;
 import dansplugins.factionsystem.commands.*;
 import dansplugins.factionsystem.data.PersistentData;
 import dansplugins.factionsystem.objects.Faction;
+import dansplugins.factionsystem.objects.PlayerPowerRecord;
 import dansplugins.factionsystem.utils.Utilities;
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
@@ -516,7 +517,7 @@ public class CommandInterpreter {
                 if (args[0].equalsIgnoreCase("resetpowerlevels")|| args[0].equalsIgnoreCase("rpl")) {
                     if (sender.hasPermission("mf.resetpowerlevels") || sender.hasPermission("mf.admin")) {
                         sender.sendMessage(ChatColor.GREEN + "Power level resetting...");
-                        Utilities.getInstance().resetPowerRecords();
+                        resetPowerRecords();
                         return true;
                     }
                     else {
@@ -543,6 +544,14 @@ public class CommandInterpreter {
             sender.sendMessage(ChatColor.RED + "Medieval Factions doesn't recognize that command!");
         }
         return false;
+    }
+
+    private void resetPowerRecords() {
+        // reset individual records
+        System.out.println("Resetting individual power records.");
+        for (PlayerPowerRecord record : PersistentData.getInstance().getPlayerPowerRecords()) {
+            record.setPowerLevel(MedievalFactions.getInstance().getConfig().getInt("initialPowerLevel"));
+        }
     }
 
 }
