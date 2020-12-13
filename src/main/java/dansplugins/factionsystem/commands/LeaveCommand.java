@@ -1,5 +1,6 @@
 package dansplugins.factionsystem.commands;
 
+import dansplugins.factionsystem.ChunkManager;
 import dansplugins.factionsystem.data.EphemeralData;
 import dansplugins.factionsystem.data.PersistentData;
 import dansplugins.factionsystem.objects.Faction;
@@ -17,7 +18,7 @@ public class LeaveCommand {
             Player player = (Player) sender;
 
             if (sender.hasPermission("mf.leave") || sender.hasPermission("mf.default")) {
-                if (Utilities.isInFaction(player.getUniqueId(), PersistentData.getInstance().getFactions())) {
+                if (Utilities.getInstance().isInFaction(player.getUniqueId(), PersistentData.getInstance().getFactions())) {
                     for (int i = 0; i < PersistentData.getInstance().getFactions().size(); i++) {
                         if (PersistentData.getInstance().getFactions().get(i).isMember(player.getUniqueId())) {
                             if (PersistentData.getInstance().getFactions().get(i).isOwner(player.getUniqueId())) {
@@ -63,9 +64,9 @@ public class LeaveCommand {
                                     }
 
                                     // remove claimed land objects associated with this faction
-                                    Utilities.removeAllClaimedChunks(PersistentData.getInstance().getFactions().get(i).getName(), PersistentData.getInstance().getClaimedChunks());
+                                    ChunkManager.getInstance().removeAllClaimedChunks(PersistentData.getInstance().getFactions().get(i).getName(), PersistentData.getInstance().getClaimedChunks());
 
-                                    PersistentData.getInstance().getFactions().get(i).removeMember(player.getUniqueId(), Utilities.getPlayersPowerRecord(player.getUniqueId(), PersistentData.getInstance().getPlayerPowerRecords()).getPowerLevel());
+                                    PersistentData.getInstance().getFactions().get(i).removeMember(player.getUniqueId(), Utilities.getInstance().getPlayersPowerRecord(player.getUniqueId(), PersistentData.getInstance().getPlayerPowerRecords()).getPowerLevel());
                                     PersistentData.getInstance().getFactions().remove(i);
                                     player.sendMessage(ChatColor.AQUA + "You left your faction. It was deleted since no one else was a member.");
 
@@ -87,10 +88,10 @@ public class LeaveCommand {
                                     EphemeralData.getInstance().getPlayersInFactionChat().remove(player.getUniqueId());
                                 }
 
-                                PersistentData.getInstance().getFactions().get(i).removeMember(player.getUniqueId(), Utilities.getPlayersPowerRecord(player.getUniqueId(), PersistentData.getInstance().getPlayerPowerRecords()).getPowerLevel());
+                                PersistentData.getInstance().getFactions().get(i).removeMember(player.getUniqueId(), Utilities.getInstance().getPlayersPowerRecord(player.getUniqueId(), PersistentData.getInstance().getPlayerPowerRecords()).getPowerLevel());
                                 player.sendMessage(ChatColor.AQUA + "You left your faction.");
                                 try {
-                                    Utilities.sendAllPlayersInFactionMessage(PersistentData.getInstance().getFactions().get(i), ChatColor.GREEN + player.getName() + " has left " + PersistentData.getInstance().getFactions().get(i).getName());
+                                    Utilities.getInstance().sendAllPlayersInFactionMessage(PersistentData.getInstance().getFactions().get(i), ChatColor.GREEN + player.getName() + " has left " + PersistentData.getInstance().getFactions().get(i).getName());
                                 } catch (Exception ignored) {
 
                                 }

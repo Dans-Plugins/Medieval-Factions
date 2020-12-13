@@ -1,5 +1,6 @@
 package dansplugins.factionsystem.eventhandlers;
 
+import dansplugins.factionsystem.ChunkManager;
 import dansplugins.factionsystem.MedievalFactions;
 import dansplugins.factionsystem.data.EphemeralData;
 import dansplugins.factionsystem.data.PersistentData;
@@ -32,10 +33,10 @@ public class JoiningLeavingAndSpawningHandler implements Listener {
         }
         else
         {
-        	PlayerActivityRecord record = Utilities.getPlayerActivityRecord(event.getPlayer().getUniqueId(), PersistentData.getInstance().getPlayerActivityRecords());
+        	PlayerActivityRecord record = Utilities.getInstance().getPlayerActivityRecord(event.getPlayer().getUniqueId(), PersistentData.getInstance().getPlayerActivityRecords());
         	if (record != null)
         	{
-        		PlayerPowerRecord power = Utilities.getPlayersPowerRecord(event.getPlayer().getUniqueId(), PersistentData.getInstance().getPlayerPowerRecords());
+        		PlayerPowerRecord power = Utilities.getInstance().getPlayersPowerRecord(event.getPlayer().getUniqueId(), PersistentData.getInstance().getPlayerPowerRecords());
         		record.incrementLogins();
 
         		int newPower = power.getPowerLevel();
@@ -57,7 +58,7 @@ public class JoiningLeavingAndSpawningHandler implements Listener {
         	}
         }
 
-        Utilities.informPlayerIfTheirLandIsInDanger(event.getPlayer(), PersistentData.getInstance().getFactions(), PersistentData.getInstance().getClaimedChunks());
+        ChunkManager.getInstance().informPlayerIfTheirLandIsInDanger(event.getPlayer(), PersistentData.getInstance().getFactions(), PersistentData.getInstance().getClaimedChunks());
     }
 
 	private boolean hasPowerRecord(UUID playerUUID) {
@@ -102,7 +103,7 @@ public class JoiningLeavingAndSpawningHandler implements Listener {
 			EphemeralData.getInstance().getPlayersRevokingAccess().remove(event.getPlayer().getUniqueId());
 		}
 
-		PlayerActivityRecord record = Utilities.getPlayerActivityRecord(event.getPlayer().getUniqueId(), PersistentData.getInstance().getPlayerActivityRecords());
+		PlayerActivityRecord record = Utilities.getInstance().getPlayerActivityRecord(event.getPlayer().getUniqueId(), PersistentData.getInstance().getPlayerActivityRecords());
 		if (record != null)
 		{
 			record.setLastLogout(ZonedDateTime.now());
@@ -119,7 +120,7 @@ public class JoiningLeavingAndSpawningHandler implements Listener {
 		z = event.getEntity().getLocation().getChunk().getZ();
 
 		// check if land is claimed
-		if (Utilities.isClaimed(event.getLocation().getChunk(), PersistentData.getInstance().getClaimedChunks()))
+		if (ChunkManager.getInstance().isClaimed(event.getLocation().getChunk(), PersistentData.getInstance().getClaimedChunks()))
 		{
 			if (event.getEntity() instanceof Monster && !MedievalFactions.getInstance().getConfig().getBoolean("mobsSpawnInFactionTerritory")) {
 				event.setCancelled(true);

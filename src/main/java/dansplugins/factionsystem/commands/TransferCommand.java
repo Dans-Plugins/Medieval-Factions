@@ -23,7 +23,7 @@ public class TransferCommand {
                     if (faction.isOwner(player.getUniqueId())) {
                         owner = true;
                         if (args.length > 1) {
-                            UUID playerUUID = Utilities.findUUIDBasedOnPlayerName(args[1]);
+                            UUID playerUUID = Utilities.getInstance().findUUIDBasedOnPlayerName(args[1]);
                             if (faction.isMember(playerUUID)) {
 
                                 if (playerUUID.equals(player.getUniqueId())) {

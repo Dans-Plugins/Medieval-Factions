@@ -18,10 +18,10 @@ public class PowerCommand {
             {
             	if (args.length > 1)
             	{
-            		UUID playerUUID = Utilities.findUUIDBasedOnPlayerName(args[1]);
+            		UUID playerUUID = Utilities.getInstance().findUUIDBasedOnPlayerName(args[1]);
             		if (playerUUID != null)
             		{
-	            		PlayerPowerRecord record = Utilities.getPlayersPowerRecord(playerUUID, PersistentData.getInstance().getPlayerPowerRecords());
+	            		PlayerPowerRecord record = Utilities.getInstance().getPlayersPowerRecord(playerUUID, PersistentData.getInstance().getPlayerPowerRecords());
 	                    player.sendMessage(ChatColor.AQUA + args[1] + "'s current power level is " + record.getPowerLevel() + "/" + record.maxPower() + ".");
 	                    return true;
             		}
@@ -33,7 +33,7 @@ public class PowerCommand {
             	}
             	else
             	{
-                    PlayerPowerRecord record = Utilities.getPlayersPowerRecord(player.getUniqueId(), PersistentData.getInstance().getPlayerPowerRecords());
+                    PlayerPowerRecord record = Utilities.getInstance().getPlayersPowerRecord(player.getUniqueId(), PersistentData.getInstance().getPlayerPowerRecords());
                     player.sendMessage(ChatColor.AQUA + "Your current power level is " + record.getPowerLevel() + "/" + record.maxPower() + ".");
                     return true;
             	}

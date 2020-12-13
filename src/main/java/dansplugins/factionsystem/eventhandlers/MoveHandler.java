@@ -1,5 +1,6 @@
 package dansplugins.factionsystem.eventhandlers;
 
+import dansplugins.factionsystem.ChunkManager;
 import dansplugins.factionsystem.MedievalFactions;
 import dansplugins.factionsystem.data.PersistentData;
 import dansplugins.factionsystem.objects.Faction;
@@ -30,13 +31,13 @@ public class MoveHandler implements Listener {
                     if (faction.getAutoClaimStatus()) {
 
                         // if not at demesne limit
-                        Faction playersFaction = Utilities.getPlayersFaction(event.getPlayer().getUniqueId(), PersistentData.getInstance().getFactions());
-                        if (Utilities.getChunksClaimedByFaction(playersFaction.getName(), PersistentData.getInstance().getClaimedChunks()) < playersFaction.getCumulativePowerLevel()) {
+                        Faction playersFaction = Utilities.getInstance().getPlayersFaction(event.getPlayer().getUniqueId(), PersistentData.getInstance().getFactions());
+                        if (ChunkManager.getInstance().getChunksClaimedByFaction(playersFaction.getName(), PersistentData.getInstance().getClaimedChunks()) < playersFaction.getCumulativePowerLevel()) {
                             getServer().getScheduler().runTaskLater(MedievalFactions.getInstance(), new Runnable() {
                                 @Override
                                 public void run() {
                                     // add new chunk to claimed chunks
-                                    Utilities.getInstance().addChunkAtPlayerLocation(event.getPlayer());
+                                    ChunkManager.getInstance().addChunkAtPlayerLocation(event.getPlayer());
                                 }
                             }, 1); // delayed by 1 tick (1/20th of a second) because otherwise players will claim the chunk they just left
                         }
@@ -48,23 +49,23 @@ public class MoveHandler implements Listener {
             }
 
             // if new chunk is claimed and old chunk was not
-            if (Utilities.isClaimed(event.getTo().getChunk(), PersistentData.getInstance().getClaimedChunks()) && !Utilities.isClaimed(event.getFrom().getChunk(), PersistentData.getInstance().getClaimedChunks())) {
-                String title = Utilities.getClaimedChunk(event.getTo().getChunk().getX(), event.getTo().getChunk().getZ(), event.getTo().getChunk().getWorld().getName(), PersistentData.getInstance().getClaimedChunks()).getHolder();
+            if (ChunkManager.getInstance().isClaimed(event.getTo().getChunk(), PersistentData.getInstance().getClaimedChunks()) && !ChunkManager.getInstance().isClaimed(event.getFrom().getChunk(), PersistentData.getInstance().getClaimedChunks())) {
+                String title = ChunkManager.getInstance().getClaimedChunk(event.getTo().getChunk().getX(), event.getTo().getChunk().getZ(), event.getTo().getChunk().getWorld().getName(), PersistentData.getInstance().getClaimedChunks()).getHolder();
                 event.getPlayer().sendTitle(title, null, 10, 70, 20);
                 return;
             }
 
             // if new chunk is unclaimed and old chunk was not
-            if (!Utilities.isClaimed(event.getTo().getChunk(), PersistentData.getInstance().getClaimedChunks()) && Utilities.isClaimed(event.getFrom().getChunk(), PersistentData.getInstance().getClaimedChunks())) {
+            if (!ChunkManager.getInstance().isClaimed(event.getTo().getChunk(), PersistentData.getInstance().getClaimedChunks()) && ChunkManager.getInstance().isClaimed(event.getFrom().getChunk(), PersistentData.getInstance().getClaimedChunks())) {
                 event.getPlayer().sendTitle("Wilderness", null, 10, 70, 20);
                 return;
             }
 
             // if new chunk is claimed and old chunk was also claimed
-            if (Utilities.isClaimed(event.getTo().getChunk(), PersistentData.getInstance().getClaimedChunks()) && Utilities.isClaimed(event.getFrom().getChunk(), PersistentData.getInstance().getClaimedChunks())) {
+            if (ChunkManager.getInstance().isClaimed(event.getTo().getChunk(), PersistentData.getInstance().getClaimedChunks()) && ChunkManager.getInstance().isClaimed(event.getFrom().getChunk(), PersistentData.getInstance().getClaimedChunks())) {
                 // if chunk holders are not equal
-                if (!(Utilities.getClaimedChunk(event.getFrom().getChunk().getX(), event.getFrom().getChunk().getZ(), event.getFrom().getWorld().getName(), PersistentData.getInstance().getClaimedChunks()).getHolder().equalsIgnoreCase(Utilities.getClaimedChunk(event.getTo().getChunk().getX(), event.getTo().getChunk().getZ(), event.getTo().getChunk().getWorld().getName(), PersistentData.getInstance().getClaimedChunks()).getHolder()))) {
-                    String title = Utilities.getClaimedChunk(event.getTo().getChunk().getX(), event.getTo().getChunk().getZ(), event.getTo().getChunk().getWorld().getName(), PersistentData.getInstance().getClaimedChunks()).getHolder();
+                if (!(ChunkManager.getInstance().getClaimedChunk(event.getFrom().getChunk().getX(), event.getFrom().getChunk().getZ(), event.getFrom().getWorld().getName(), PersistentData.getInstance().getClaimedChunks()).getHolder().equalsIgnoreCase(ChunkManager.getInstance().getClaimedChunk(event.getTo().getChunk().getX(), event.getTo().getChunk().getZ(), event.getTo().getChunk().getWorld().getName(), PersistentData.getInstance().getClaimedChunks()).getHolder()))) {
+                    String title = ChunkManager.getInstance().getClaimedChunk(event.getTo().getChunk().getX(), event.getTo().getChunk().getZ(), event.getTo().getChunk().getWorld().getName(), PersistentData.getInstance().getClaimedChunks()).getHolder();
                     event.getPlayer().sendTitle(title, null, 10, 70, 20);
                 }
             }

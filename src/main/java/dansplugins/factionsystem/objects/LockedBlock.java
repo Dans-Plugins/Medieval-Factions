@@ -143,7 +143,7 @@ public class LockedBlock {
 
             // owner
             if (loadReader.hasNextLine()) {
-                owner = Utilities.findUUIDBasedOnPlayerName(loadReader.nextLine());
+                owner = Utilities.getInstance().findUUIDBasedOnPlayerName(loadReader.nextLine());
             }
 
             // faction name
@@ -153,7 +153,7 @@ public class LockedBlock {
 
             // access list
             while (loadReader.hasNextLine()) {
-                accessList.add(Utilities.findUUIDBasedOnPlayerName(loadReader.nextLine()));
+                accessList.add(Utilities.getInstance().findUUIDBasedOnPlayerName(loadReader.nextLine()));
             }
 
             loadReader.close();

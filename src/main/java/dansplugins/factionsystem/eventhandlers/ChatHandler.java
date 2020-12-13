@@ -14,10 +14,10 @@ public class ChatHandler implements Listener {
     @EventHandler()
     public void handle(AsyncPlayerChatEvent event) {
         if (EphemeralData.getInstance().getPlayersInFactionChat().contains(event.getPlayer().getUniqueId())) {
-            Faction playersFaction = Utilities.getPlayersFaction(event.getPlayer().getUniqueId(), PersistentData.getInstance().getFactions());
+            Faction playersFaction = Utilities.getInstance().getPlayersFaction(event.getPlayer().getUniqueId(), PersistentData.getInstance().getFactions());
             if (playersFaction != null) {
                 String message = event.getMessage();
-                Utilities.sendAllPlayersInFactionMessage(playersFaction, ChatColor.WHITE + "" + event.getPlayer().getName() + ": " + ChatColor.GOLD + message);
+                Utilities.getInstance().sendAllPlayersInFactionMessage(playersFaction, ChatColor.WHITE + "" + event.getPlayer().getName() + ": " + ChatColor.GOLD + message);
                 event.setCancelled(true);
             }
         }

@@ -1,5 +1,6 @@
 package dansplugins.factionsystem.commands;
 
+import dansplugins.factionsystem.ChunkManager;
 import dansplugins.factionsystem.data.PersistentData;
 import dansplugins.factionsystem.objects.ClaimedChunk;
 import dansplugins.factionsystem.objects.Faction;
@@ -15,12 +16,12 @@ public class SetHomeCommand {
             Player player = (Player) sender;
 
             if (sender.hasPermission("mf.sethome") || sender.hasPermission("mf.default")) {
-                if (Utilities.isInFaction(player.getUniqueId(), PersistentData.getInstance().getFactions())) {
-                    Faction playersFaction = Utilities.getPlayersFaction(player.getUniqueId(), PersistentData.getInstance().getFactions());
+                if (Utilities.getInstance().isInFaction(player.getUniqueId(), PersistentData.getInstance().getFactions())) {
+                    Faction playersFaction = Utilities.getInstance().getPlayersFaction(player.getUniqueId(), PersistentData.getInstance().getFactions());
                     if (playersFaction.isOwner(player.getUniqueId()) || playersFaction.isOfficer(player.getUniqueId())) {
 
-                        if (Utilities.isClaimed(player.getLocation().getChunk(), PersistentData.getInstance().getClaimedChunks())) {
-                            ClaimedChunk chunk = Utilities.getClaimedChunk(player.getLocation().getChunk().getX(), player.getLocation().getChunk().getZ(), player.getWorld().getName(), PersistentData.getInstance().getClaimedChunks());
+                        if (ChunkManager.getInstance().isClaimed(player.getLocation().getChunk(), PersistentData.getInstance().getClaimedChunks())) {
+                            ClaimedChunk chunk = ChunkManager.getInstance().getClaimedChunk(player.getLocation().getChunk().getX(), player.getLocation().getChunk().getZ(), player.getWorld().getName(), PersistentData.getInstance().getClaimedChunks());
                             if (chunk.getHolder().equalsIgnoreCase(playersFaction.getName())) {
                                 playersFaction.setFactionHome(player.getLocation());
                                 player.sendMessage(ChatColor.GREEN + "Faction home set!");

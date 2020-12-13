@@ -17,8 +17,8 @@ public class RenameCommand {
             Player player = (Player) sender;
             if (player.hasPermission("mf.rename") || player.hasPermission("mf.default")) {
                 if (args.length > 1) {
-                    String oldName = Utilities.getPlayersFaction(player.getUniqueId(), PersistentData.getInstance().getFactions()).getName();
-                    String newName = Utilities.createStringFromFirstArgOnwards(args);
+                    String oldName = Utilities.getInstance().getPlayersFaction(player.getUniqueId(), PersistentData.getInstance().getFactions()).getName();
+                    String newName = Utilities.getInstance().createStringFromFirstArgOnwards(args);
 
                     // existence check
                     for (Faction faction : PersistentData.getInstance().getFactions()) {
@@ -28,8 +28,8 @@ public class RenameCommand {
                         }
                     }
 
-                    if (Utilities.isInFaction(player.getUniqueId(), PersistentData.getInstance().getFactions())) {
-                        Faction playersFaction = Utilities.getPlayersFaction(player.getUniqueId(), PersistentData.getInstance().getFactions());
+                    if (Utilities.getInstance().isInFaction(player.getUniqueId(), PersistentData.getInstance().getFactions())) {
+                        Faction playersFaction = Utilities.getInstance().getPlayersFaction(player.getUniqueId(), PersistentData.getInstance().getFactions());
                         if (playersFaction.isOwner(player.getUniqueId())) {
 
                             // change name

@@ -1,12 +1,13 @@
 package dansplugins.factionsystem.commands;
 
-import dansplugins.factionsystem.MedievalFactions;
 import dansplugins.factionsystem.data.PersistentData;
 import dansplugins.factionsystem.objects.Faction;
 import dansplugins.factionsystem.utils.Utilities;
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
+
+import java.util.ArrayList;
 
 public class DeclareWarCommand {
 
@@ -24,7 +25,7 @@ public class DeclareWarCommand {
                         if (args.length > 1) {
 
                             // get name of faction
-                            String factionName = Utilities.createStringFromFirstArgOnwards(args);
+                            String factionName = Utilities.getInstance().createStringFromFirstArgOnwards(args);
 
                             // check if faction exists
                             for (int i = 0; i < PersistentData.getInstance().getFactions().size(); i++) {
@@ -74,7 +75,7 @@ public class DeclareWarCommand {
                                                 }
 
                                                 // invoke alliances
-                                                Utilities.invokeAlliances(PersistentData.getInstance().getFactions().get(i).getName(), faction.getName(), PersistentData.getInstance().getFactions());
+                                                invokeAlliances(PersistentData.getInstance().getFactions().get(i).getName(), faction.getName(), PersistentData.getInstance().getFactions());
                                             }
                                             else {
                                                 player.sendMessage(ChatColor.RED + "You can't declare war on your ally!");
@@ -106,5 +107,27 @@ public class DeclareWarCommand {
                 sender.sendMessage(ChatColor.RED + "Sorry! You need the following permission to use this command: 'mf.declarewar'");
             }
         }
+    }
+
+    private void invokeAlliances(String victimFactionName, String declaringFactionName, ArrayList<Faction> factions) {
+        Faction victimFaction = Utilities.getInstance().getFaction(victimFactionName, factions);
+        Faction declaringFaction = Utilities.getInstance().getFaction(declaringFactionName, factions);
+
+        if (victimFaction != null && declaringFaction != null)  {
+            for (String alliedFaction : victimFaction.getAllies()) {
+                if (!(Utilities.getInstance().getFaction(alliedFaction, factions).isEnemy(declaringFactionName)) && !(declaringFaction.isEnemy(alliedFaction))) {
+                    // add enemies
+                    Utilities.getInstance().getFaction(alliedFaction, factions).addEnemy(declaringFactionName);
+                    declaringFaction.addEnemy(alliedFaction);
+
+                    // inform parties
+                    Utilities.getInstance().sendAllPlayersInFactionMessage(victimFaction, ChatColor.GREEN + "Your ally " + alliedFaction + " has joined you in war!");
+                    Utilities.getInstance().sendAllPlayersInFactionMessage(Utilities.getInstance().getFaction(alliedFaction, factions), ChatColor.RED + "Your ally " + victimFactionName + " has called you into war with " + declaringFactionName + "!");
+                    Utilities.getInstance().sendAllPlayersInFactionMessage(declaringFaction, ChatColor.RED  + alliedFaction + " has joined the war on your enemy's side!");
+
+                }
+            }
+        }
+
     }
 }

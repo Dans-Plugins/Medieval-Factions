@@ -1,5 +1,6 @@
 package dansplugins.factionsystem.commands;
 
+import dansplugins.factionsystem.ChunkManager;
 import dansplugins.factionsystem.data.PersistentData;
 import dansplugins.factionsystem.objects.Faction;
 import dansplugins.factionsystem.utils.Utilities;
@@ -17,7 +18,7 @@ public class InfoCommand {
                 if (args.length == 1) {
                     for (Faction faction : PersistentData.getInstance().getFactions()) {
                         if (faction.isMember(player.getUniqueId())) {
-                            Utilities.sendFactionInfo(player, faction, Utilities.getChunksClaimedByFaction(faction.getName(), PersistentData.getInstance().getClaimedChunks()));
+                            Utilities.getInstance().sendFactionInfo(player, faction, ChunkManager.getInstance().getChunksClaimedByFaction(faction.getName(), PersistentData.getInstance().getClaimedChunks()));
                             return;
                         }
                     }
@@ -25,13 +26,13 @@ public class InfoCommand {
                 }
                 else {
                     // creating name from arguments 1 to the last one
-                    String name = Utilities.createStringFromFirstArgOnwards(args);
+                    String name = Utilities.getInstance().createStringFromFirstArgOnwards(args);
 
                     boolean exists = false;
                     for (Faction faction : PersistentData.getInstance().getFactions()) {
                         if (faction.getName().equalsIgnoreCase(name)) {
                             exists = true;
-                            Utilities.sendFactionInfo(player, faction, Utilities.getChunksClaimedByFaction(faction.getName(), PersistentData.getInstance().getClaimedChunks()));
+                            Utilities.getInstance().sendFactionInfo(player, faction, ChunkManager.getInstance().getChunksClaimedByFaction(faction.getName(), PersistentData.getInstance().getClaimedChunks()));
                         }
                     }
                     if (!exists) {

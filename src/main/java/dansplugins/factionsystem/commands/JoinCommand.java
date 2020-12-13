@@ -17,18 +17,18 @@ public class JoinCommand {
                 if (args.length > 1) {
 
                     // creating name from arguments 1 to the last one
-                    String factionName = Utilities.createStringFromFirstArgOnwards(args);
+                    String factionName = Utilities.getInstance().createStringFromFirstArgOnwards(args);
 
                     for (Faction faction : PersistentData.getInstance().getFactions()) {
                         if (faction.getName().equalsIgnoreCase(factionName)) {
                             if (faction.isInvited(player.getUniqueId())) {
 
                                 // join if player isn't in a faction already
-                                if (!(Utilities.isInFaction(player.getUniqueId(), PersistentData.getInstance().getFactions()))) {
-                                    faction.addMember(player.getUniqueId(), Utilities.getPlayersPowerRecord(player.getUniqueId(), PersistentData.getInstance().getPlayerPowerRecords()).getPowerLevel());
+                                if (!(Utilities.getInstance().isInFaction(player.getUniqueId(), PersistentData.getInstance().getFactions()))) {
+                                    faction.addMember(player.getUniqueId(), Utilities.getInstance().getPlayersPowerRecord(player.getUniqueId(), PersistentData.getInstance().getPlayerPowerRecords()).getPowerLevel());
                                     faction.uninvite(player.getUniqueId());
                                     try {
-                                        Utilities.sendAllPlayersInFactionMessage(faction, ChatColor.GREEN + player.getName() + " has joined " + faction.getName());
+                                        Utilities.getInstance().sendAllPlayersInFactionMessage(faction, ChatColor.GREEN + player.getName() + " has joined " + faction.getName());
                                     } catch (Exception ignored) {
 
                                     }

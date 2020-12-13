@@ -113,7 +113,7 @@ public class Scheduler {
     }
 
     private boolean isFactionExceedingTheirDemesneLimit(Faction faction) {
-        return (Utilities.getInstance().getChunksClaimedByFaction(faction.getName(), PersistentData.getInstance().getClaimedChunks()) > faction.getCumulativePowerLevel());
+        return (ChunkManager.getInstance().getChunksClaimedByFaction(faction.getName(), PersistentData.getInstance().getClaimedChunks()) > faction.getCumulativePowerLevel());
     }
 
     private void disbandAllZeroPowerFactions() {
@@ -136,7 +136,7 @@ public class Scheduler {
 
         if (factionToRemove != null) {
             // remove claimed land objects associated with this faction
-            Utilities.getInstance().removeAllClaimedChunks(factionToRemove.getName(), PersistentData.getInstance().getClaimedChunks());
+            ChunkManager.getInstance().removeAllClaimedChunks(factionToRemove.getName(), PersistentData.getInstance().getClaimedChunks());
 
             // remove locks associated with this faction
             Utilities.getInstance().removeAllLocks(factionToRemove.getName(), PersistentData.getInstance().getLockedBlocks());
