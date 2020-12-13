@@ -1,5 +1,6 @@
 package dansplugins.factionsystem.commands;
 
+import dansplugins.factionsystem.ChunkManager;
 import dansplugins.factionsystem.MedievalFactions;
 import dansplugins.factionsystem.data.PersistentData;
 import dansplugins.factionsystem.objects.ClaimedChunk;
@@ -26,9 +27,9 @@ public class HomeCommand {
 
                         // Check that factionHome is in it's own factions land and not claimed by someone else.
                         Chunk homeChunk = playersFaction.getFactionHome().getBlock().getChunk();
-                        if (Utilities.isClaimed(homeChunk, PersistentData.getInstance().getClaimedChunks())){
+                        if (ChunkManager.getInstance().isClaimed(homeChunk, PersistentData.getInstance().getClaimedChunks())){
                             // Ensure is in your faction
-                            ClaimedChunk claimedHomeChunk = Utilities.getClaimedChunk(homeChunk.getX(), homeChunk.getZ(), homeChunk.getWorld().getName(), PersistentData.getInstance().getClaimedChunks());
+                            ClaimedChunk claimedHomeChunk = ChunkManager.getInstance().getClaimedChunk(homeChunk.getX(), homeChunk.getZ(), homeChunk.getWorld().getName(), PersistentData.getInstance().getClaimedChunks());
                             if (claimedHomeChunk.getHolder() != null && !playersFaction.getName().equals(claimedHomeChunk.getHolder())) {
                                 // Area is claimed by someone else and cannot be home. Cancel teleport and return;
                                 player.sendMessage(ChatColor.RED + "Home was claimed by another faction, and has been lost.");

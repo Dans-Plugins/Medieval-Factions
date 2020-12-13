@@ -1,5 +1,6 @@
 package dansplugins.factionsystem.commands;
 
+import dansplugins.factionsystem.ChunkManager;
 import dansplugins.factionsystem.data.PersistentData;
 import dansplugins.factionsystem.objects.Faction;
 import dansplugins.factionsystem.utils.Utilities;
@@ -18,7 +19,7 @@ public class WhoCommand {
                     String name = Utilities.createStringFromFirstArgOnwards(args);
                     Faction faction = Utilities.getPlayersFaction(Utilities.findUUIDBasedOnPlayerName(name), PersistentData.getInstance().getFactions());
                     if (faction != null) {
-                        Utilities.sendFactionInfo(player, faction, Utilities.getChunksClaimedByFaction(faction.getName(), PersistentData.getInstance().getClaimedChunks()));
+                        Utilities.sendFactionInfo(player, faction, ChunkManager.getInstance().getChunksClaimedByFaction(faction.getName(), PersistentData.getInstance().getClaimedChunks()));
                     }
                     else {
                         player.sendMessage(ChatColor.RED + "That player isn't in a faction.");

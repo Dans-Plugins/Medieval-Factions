@@ -1,5 +1,6 @@
 package dansplugins.factionsystem.eventhandlers;
 
+import dansplugins.factionsystem.ChunkManager;
 import dansplugins.factionsystem.MedievalFactions;
 import dansplugins.factionsystem.data.EphemeralData;
 import dansplugins.factionsystem.data.PersistentData;
@@ -57,7 +58,7 @@ public class JoiningLeavingAndSpawningHandler implements Listener {
         	}
         }
 
-        Utilities.informPlayerIfTheirLandIsInDanger(event.getPlayer(), PersistentData.getInstance().getFactions(), PersistentData.getInstance().getClaimedChunks());
+        ChunkManager.getInstance().informPlayerIfTheirLandIsInDanger(event.getPlayer(), PersistentData.getInstance().getFactions(), PersistentData.getInstance().getClaimedChunks());
     }
 
 	private boolean hasPowerRecord(UUID playerUUID) {
@@ -119,7 +120,7 @@ public class JoiningLeavingAndSpawningHandler implements Listener {
 		z = event.getEntity().getLocation().getChunk().getZ();
 
 		// check if land is claimed
-		if (Utilities.isClaimed(event.getLocation().getChunk(), PersistentData.getInstance().getClaimedChunks()))
+		if (ChunkManager.getInstance().isClaimed(event.getLocation().getChunk(), PersistentData.getInstance().getClaimedChunks()))
 		{
 			if (event.getEntity() instanceof Monster && !MedievalFactions.getInstance().getConfig().getBoolean("mobsSpawnInFactionTerritory")) {
 				event.setCancelled(true);

@@ -1,5 +1,6 @@
 package dansplugins.factionsystem.commands;
 
+import dansplugins.factionsystem.ChunkManager;
 import dansplugins.factionsystem.data.PersistentData;
 import dansplugins.factionsystem.objects.Faction;
 import dansplugins.factionsystem.utils.Utilities;
@@ -34,7 +35,7 @@ public class ListCommand {
         sender.sendMessage(ChatColor.AQUA + "P: power, M: members, L: land");
         sender.sendMessage(ChatColor.AQUA + "-----");
         for (Faction faction : getFactionsSortedByPower()) {
-            sender.sendMessage(ChatColor.AQUA + String.format("%-25s %10s %10s %10s", faction.getName(), "P: " + faction.getCumulativePowerLevel(), "M: " + faction.getPopulation(), "L: " + Utilities.getChunksClaimedByFaction(faction.getName(), PersistentData.getInstance().getClaimedChunks())));
+            sender.sendMessage(ChatColor.AQUA + String.format("%-25s %10s %10s %10s", faction.getName(), "P: " + faction.getCumulativePowerLevel(), "M: " + faction.getPopulation(), "L: " + ChunkManager.getInstance().getChunksClaimedByFaction(faction.getName(), PersistentData.getInstance().getClaimedChunks())));
         }
     }
 

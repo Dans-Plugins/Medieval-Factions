@@ -1,5 +1,6 @@
 package dansplugins.factionsystem.commands;
 
+import dansplugins.factionsystem.ChunkManager;
 import dansplugins.factionsystem.data.EphemeralData;
 import dansplugins.factionsystem.data.PersistentData;
 import dansplugins.factionsystem.objects.Faction;
@@ -74,7 +75,7 @@ public class DisbandCommand {
     public void removeFaction(int i) {
 
         // remove claimed land objects associated with this faction
-        Utilities.removeAllClaimedChunks(PersistentData.getInstance().getFactions().get(i).getName(), PersistentData.getInstance().getClaimedChunks());
+        ChunkManager.getInstance().removeAllClaimedChunks(PersistentData.getInstance().getFactions().get(i).getName(), PersistentData.getInstance().getClaimedChunks());
 
         // remove locks associated with this faction
         Utilities.removeAllLocks(PersistentData.getInstance().getFactions().get(i).getName(), PersistentData.getInstance().getLockedBlocks());

@@ -1,5 +1,6 @@
 package dansplugins.factionsystem.eventhandlers;
 
+import dansplugins.factionsystem.ChunkManager;
 import dansplugins.factionsystem.MedievalFactions;
 import dansplugins.factionsystem.data.EphemeralData;
 import dansplugins.factionsystem.data.PersistentData;
@@ -36,7 +37,7 @@ public class BlockInteractionHandler implements Listener {
         Player player = event.getPlayer();
 
         // get chunk
-        ClaimedChunk chunk = Utilities.getClaimedChunk(event.getBlock().getLocation().getChunk().getX(), event.getBlock().getLocation().getChunk().getZ(), event.getBlock().getWorld().getName(), PersistentData.getInstance().getClaimedChunks());
+        ClaimedChunk chunk = ChunkManager.getInstance().getClaimedChunk(event.getBlock().getLocation().getChunk().getX(), event.getBlock().getLocation().getChunk().getZ(), event.getBlock().getWorld().getName(), PersistentData.getInstance().getClaimedChunks());
 
         // if chunk is claimed
         if (chunk != null) {
@@ -93,7 +94,7 @@ public class BlockInteractionHandler implements Listener {
         Player player = event.getPlayer();
 
         // get chunk
-        ClaimedChunk chunk = Utilities.getClaimedChunk(event.getBlock().getLocation().getChunk().getX(), event.getBlock().getLocation().getChunk().getZ(),
+        ClaimedChunk chunk = ChunkManager.getInstance().getClaimedChunk(event.getBlock().getLocation().getChunk().getX(), event.getBlock().getLocation().getChunk().getZ(),
                 event.getBlock().getWorld().getName(), PersistentData.getInstance().getClaimedChunks());
 
         // if chunk is claimed
@@ -272,9 +273,9 @@ public class BlockInteractionHandler implements Listener {
             // territory then open/close the gate.
             if (clickedBlock.getType().equals(Material.LEVER))
             {
-                if (Utilities.isClaimed(clickedBlock.getChunk(), PersistentData.getInstance().getClaimedChunks()))
+                if (ChunkManager.getInstance().isClaimed(clickedBlock.getChunk(), PersistentData.getInstance().getClaimedChunks()))
                 {
-                    ClaimedChunk claim = Utilities.getClaimedChunk(clickedBlock.getChunk().getX(), clickedBlock.getChunk().getZ(),
+                    ClaimedChunk claim = ChunkManager.getInstance().getClaimedChunk(clickedBlock.getChunk().getX(), clickedBlock.getChunk().getZ(),
                             clickedBlock.getChunk().getWorld().getName(), PersistentData.getInstance().getClaimedChunks());
                     Faction faction = Utilities.getFaction(claim.getHolder(), PersistentData.getInstance().getFactions());
 
@@ -322,7 +323,7 @@ public class BlockInteractionHandler implements Listener {
             // access to (or in future, a 'public' locked block), so if they're not in the faction whose territory the block exists in we want that
             // check to be handled before the interaction is rejected for not being a faction member.
             // if chunk is claimed
-            ClaimedChunk chunk = Utilities.getClaimedChunk(event.getClickedBlock().getLocation().getChunk().getX(), event.getClickedBlock().getLocation().getChunk().getZ(), event.getClickedBlock().getWorld().getName(), PersistentData.getInstance().getClaimedChunks());
+            ClaimedChunk chunk = ChunkManager.getInstance().getClaimedChunk(event.getClickedBlock().getLocation().getChunk().getX(), event.getClickedBlock().getLocation().getChunk().getZ(), event.getClickedBlock().getWorld().getName(), PersistentData.getInstance().getClaimedChunks());
             if (chunk != null) {
                 handleClaimedChunk(event, chunk);
             }
@@ -334,14 +335,14 @@ public class BlockInteractionHandler implements Listener {
             if (EphemeralData.getInstance().getCreatingGatePlayers().containsKey(event.getPlayer().getUniqueId())
                     && player.getInventory().getItemInMainHand().getType().equals(Material.GOLDEN_HOE))
             {
-                if (!Utilities.isClaimed(clickedBlock.getChunk(), PersistentData.getInstance().getClaimedChunks()))
+                if (!ChunkManager.getInstance().isClaimed(clickedBlock.getChunk(), PersistentData.getInstance().getClaimedChunks()))
                 {
                     player.sendMessage(ChatColor.RED + "You can only create gates in claimed territory.");
                     return;
                 }
                 else
                 {
-                    ClaimedChunk claimedChunk = Utilities.getClaimedChunk(clickedBlock.getChunk().getX(), clickedBlock.getChunk().getZ(), clickedBlock.getWorld().getName(), PersistentData.getInstance().getClaimedChunks());
+                    ClaimedChunk claimedChunk = ChunkManager.getInstance().getClaimedChunk(clickedBlock.getChunk().getX(), clickedBlock.getChunk().getZ(), clickedBlock.getWorld().getName(), PersistentData.getInstance().getClaimedChunks());
                     if (claimedChunk != null)
                     {
                         if (!Utilities.getFaction(claimedChunk.getHolder(), PersistentData.getInstance().getFactions()).isMember(player.getUniqueId()))
@@ -450,12 +451,12 @@ public class BlockInteractionHandler implements Listener {
                     {
                         if (clickedBlock.getType().equals(Material.LEVER))
                         {
-                            if (Utilities.isClaimed(clickedBlock.getChunk(), PersistentData.getInstance().getClaimedChunks()))
+                            if (ChunkManager.getInstance().isClaimed(clickedBlock.getChunk(), PersistentData.getInstance().getClaimedChunks()))
                             {
                                 Gate.ErrorCodeAddCoord e = EphemeralData.getInstance().getCreatingGatePlayers().get(event.getPlayer().getUniqueId()).addCoord(clickedBlock);
                                 if (e.equals(Gate.ErrorCodeAddCoord.None))
                                 {
-                                    ClaimedChunk claim = Utilities.getClaimedChunk(clickedBlock.getChunk().getX(), clickedBlock.getChunk().getZ(),
+                                    ClaimedChunk claim = ChunkManager.getInstance().getClaimedChunk(clickedBlock.getChunk().getX(), clickedBlock.getChunk().getZ(),
                                             clickedBlock.getChunk().getWorld().getName(), PersistentData.getInstance().getClaimedChunks());
                                     Faction faction = Utilities.getFaction(claim.getHolder(), PersistentData.getInstance().getFactions());
                                     faction.addGate(EphemeralData.getInstance().getCreatingGatePlayers().get(event.getPlayer().getUniqueId()));
@@ -497,7 +498,7 @@ public class BlockInteractionHandler implements Listener {
 
     private void handleLockingBlock(PlayerInteractEvent event, Player player, Block clickedBlock) {
         // if chunk is claimed
-        ClaimedChunk chunk = Utilities.getClaimedChunk(event.getClickedBlock().getLocation().getChunk().getX(), event.getClickedBlock().getLocation().getChunk().getZ(),
+        ClaimedChunk chunk = ChunkManager.getInstance().getClaimedChunk(event.getClickedBlock().getLocation().getChunk().getX(), event.getClickedBlock().getLocation().getChunk().getZ(),
                 event.getClickedBlock().getWorld().getName(), PersistentData.getInstance().getClaimedChunks());
         if (chunk != null) {
 

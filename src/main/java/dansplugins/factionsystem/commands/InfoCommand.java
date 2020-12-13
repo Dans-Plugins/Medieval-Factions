@@ -1,5 +1,6 @@
 package dansplugins.factionsystem.commands;
 
+import dansplugins.factionsystem.ChunkManager;
 import dansplugins.factionsystem.data.PersistentData;
 import dansplugins.factionsystem.objects.Faction;
 import dansplugins.factionsystem.utils.Utilities;
@@ -17,7 +18,7 @@ public class InfoCommand {
                 if (args.length == 1) {
                     for (Faction faction : PersistentData.getInstance().getFactions()) {
                         if (faction.isMember(player.getUniqueId())) {
-                            Utilities.sendFactionInfo(player, faction, Utilities.getChunksClaimedByFaction(faction.getName(), PersistentData.getInstance().getClaimedChunks()));
+                            Utilities.sendFactionInfo(player, faction, ChunkManager.getInstance().getChunksClaimedByFaction(faction.getName(), PersistentData.getInstance().getClaimedChunks()));
                             return;
                         }
                     }
@@ -31,7 +32,7 @@ public class InfoCommand {
                     for (Faction faction : PersistentData.getInstance().getFactions()) {
                         if (faction.getName().equalsIgnoreCase(name)) {
                             exists = true;
-                            Utilities.sendFactionInfo(player, faction, Utilities.getChunksClaimedByFaction(faction.getName(), PersistentData.getInstance().getClaimedChunks()));
+                            Utilities.sendFactionInfo(player, faction, ChunkManager.getInstance().getChunksClaimedByFaction(faction.getName(), PersistentData.getInstance().getClaimedChunks()));
                         }
                     }
                     if (!exists) {

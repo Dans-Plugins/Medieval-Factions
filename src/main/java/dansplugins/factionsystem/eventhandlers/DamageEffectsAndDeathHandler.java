@@ -1,5 +1,6 @@
 package dansplugins.factionsystem.eventhandlers;
 
+import dansplugins.factionsystem.ChunkManager;
 import dansplugins.factionsystem.MedievalFactions;
 import dansplugins.factionsystem.data.EphemeralData;
 import dansplugins.factionsystem.data.PersistentData;
@@ -194,9 +195,9 @@ public class DamageEffectsAndDeathHandler implements Listener {
             playerCoords[1] = player.getLocation().getChunk().getZ();
 
             // check if land is claimed
-            if (Utilities.isClaimed(player.getLocation().getChunk(), PersistentData.getInstance().getClaimedChunks()))
+            if (ChunkManager.getInstance().isClaimed(player.getLocation().getChunk(), PersistentData.getInstance().getClaimedChunks()))
             {
-                ClaimedChunk chunk = Utilities.getClaimedChunk(player.getLocation().getChunk().getX(), player.getLocation().getChunk().getZ(),
+                ClaimedChunk chunk = ChunkManager.getInstance().getClaimedChunk(player.getLocation().getChunk().getX(), player.getLocation().getChunk().getZ(),
                         player.getLocation().getWorld().getName(), PersistentData.getInstance().getClaimedChunks());
                 // if holder is player's faction
                 if (chunk.getHolder().equalsIgnoreCase(Utilities.getPlayersFaction(player.getUniqueId(), PersistentData.getInstance().getFactions()).getName()) && Utilities.getPlayersFaction(player.getUniqueId(), PersistentData.getInstance().getFactions()).getAutoClaimStatus() == false) {
