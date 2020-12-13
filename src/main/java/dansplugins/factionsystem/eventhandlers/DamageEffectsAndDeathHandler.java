@@ -15,9 +15,12 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.*;
 import org.bukkit.potion.PotionEffect;
+import org.bukkit.potion.PotionEffectType;
+import org.bukkit.potion.PotionType;
 import org.bukkit.projectiles.ProjectileSource;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 public class DamageEffectsAndDeathHandler implements Listener {
@@ -88,17 +91,17 @@ public class DamageEffectsAndDeathHandler implements Listener {
     }
 
     private void handleIfFriendlyFire(EntityDamageByEntityEvent event, Player attacker, Player victim) {
-        if (!Utilities.getInstance().arePlayersInAFaction(attacker, victim)){
+        if (!arePlayersInAFaction(attacker, victim)){
             // Factionless can fight anyone.
             return;
         }
-        else if (Utilities.getInstance().arePlayersInSameFaction(attacker, victim)) {
+        else if (arePlayersInSameFaction(attacker, victim)) {
             event.setCancelled(true);
             attacker.sendMessage(ChatColor.RED + "You can't attack another player if you are part of the same faction.");
         }
 
         // if attacker's faction and victim's faction are not at war
-        else if (Utilities.getInstance().arePlayersFactionsNotEnemies(attacker, victim)) {
+        else if (arePlayersFactionsNotEnemies(attacker, victim)) {
             if (MedievalFactions.getInstance().getConfig().getBoolean("warsRequiredForPVP")) {
                 event.setCancelled(true);
                 attacker.sendMessage(ChatColor.RED + "You can't attack another player if your factions aren't at war.");
@@ -106,11 +109,54 @@ public class DamageEffectsAndDeathHandler implements Listener {
         }
     }
 
+    private boolean arePlayersFactionsNotEnemies(Player player1, Player player2) {
+        Pair<Integer, Integer> factionIndices = getFactionIndices(player1, player2);
+        int attackersFactionIndex = factionIndices.getLeft();
+        int victimsFactionIndex = factionIndices.getRight();
+
+        return !(PersistentData.getInstance().getFactions().get(attackersFactionIndex).isEnemy(PersistentData.getInstance().getFactions().get(victimsFactionIndex).getName())) &&
+                !(PersistentData.getInstance().getFactions().get(victimsFactionIndex).isEnemy(PersistentData.getInstance().getFactions().get(attackersFactionIndex).getName()));
+    }
+
+    private Pair<Integer, Integer> getFactionIndices(Player player1, Player player2){
+        int attackersFactionIndex = 0;
+        int victimsFactionIndex = 0;
+
+        for (int i = 0; i < PersistentData.getInstance().getFactions().size(); i++) {
+            if (PersistentData.getInstance().getFactions().get(i).isMember(player1.getUniqueId())) {
+                attackersFactionIndex = i;
+            }
+            if (PersistentData.getInstance().getFactions().get(i).isMember(player2.getUniqueId())) {
+                victimsFactionIndex = i;
+            }
+        }
+
+        return new Pair<>(attackersFactionIndex, victimsFactionIndex);
+    }
+
+    private boolean arePlayersInSameFaction(Player player1, Player player2) {
+        Pair<Integer, Integer> factionIndices = getFactionIndices(player1, player2);
+        int attackersFactionIndex = factionIndices.getLeft();
+        int victimsFactionIndex = factionIndices.getRight();
+
+        // if attacker and victim are both in a faction
+        if (arePlayersInAFaction(player1, player2)){
+            // if attacker and victim are part of the same faction
+            return attackersFactionIndex == victimsFactionIndex;
+        } else {
+            return false;
+        }
+    }
+
+    private boolean arePlayersInAFaction(Player player1, Player player2) {
+        return Utilities.getInstance().isInFaction(player1.getUniqueId(), PersistentData.getInstance().getFactions()) && Utilities.getInstance().isInFaction(player2.getUniqueId(), PersistentData.getInstance().getFactions());
+    }
+
     @EventHandler()
     public void handle(AreaEffectCloudApplyEvent event) {
         AreaEffectCloud cloud = event.getEntity();
 
-        if (Utilities.getInstance().potionTypeBad(cloud.getBasePotionData().getType())){
+        if (potionTypeBad(cloud.getBasePotionData().getType())){
             // Search to see if cloud is in the stored list in MedievalFactions.getInstance()
             for (Pair<Player, AreaEffectCloud> storedCloudPair : EphemeralData.getInstance().getActiveAOEClouds()){
                 if (storedCloudPair.getRight() == cloud){
@@ -127,9 +173,9 @@ public class DamageEffectsAndDeathHandler implements Listener {
                             }
 
                             // If both are in a faction and not at war.
-                            if (Utilities.getInstance().arePlayersInAFaction(attacker, potentialVictim) &&
-                                    (Utilities.getInstance().arePlayersFactionsNotEnemies(attacker, potentialVictim) ||
-                                            Utilities.getInstance().arePlayersInSameFaction(attacker, potentialVictim))) {
+                            if (arePlayersInAFaction(attacker, potentialVictim) &&
+                                    (arePlayersFactionsNotEnemies(attacker, potentialVictim) ||
+                                            arePlayersInSameFaction(attacker, potentialVictim))) {
                                 alliedVictims.add(potentialVictim);
                             }
                         }
@@ -140,6 +186,18 @@ public class DamageEffectsAndDeathHandler implements Listener {
                 }
             }
         }
+    }
+
+    private List<PotionType> BAD_POTION_TYPES = Arrays.asList(
+            PotionType.INSTANT_DAMAGE,
+            PotionType.POISON,
+            PotionType.SLOWNESS,
+            PotionType.WEAKNESS,
+            PotionType.TURTLE_MASTER
+    );
+
+    private boolean potionTypeBad(PotionType type){
+        return BAD_POTION_TYPES.contains(type);
     }
 
     @EventHandler()
@@ -227,7 +285,7 @@ public class DamageEffectsAndDeathHandler implements Listener {
 
         for(PotionEffect effect : potion.getEffects()) {
             // Is potion effect bad?
-            if (Utilities.getInstance().potionEffectBad(effect.getType())) {
+            if (potionEffectBad(effect.getType())) {
 
                 // If any victim is a allied player remove potion intensity
                 for (LivingEntity victimEntity : event.getAffectedEntities()) {
@@ -240,15 +298,33 @@ public class DamageEffectsAndDeathHandler implements Listener {
                         }
 
                         // If players are in faction and not at war
-                        if (Utilities.getInstance().arePlayersInAFaction(attacker, victim) &&
-                                (Utilities.getInstance().arePlayersFactionsNotEnemies(attacker, victim) ||
-                                        Utilities.getInstance().arePlayersInSameFaction(attacker, victim))) {
+                        if (arePlayersInAFaction(attacker, victim) &&
+                                (arePlayersFactionsNotEnemies(attacker, victim) ||
+                                        arePlayersInSameFaction(attacker, victim))) {
                             event.setIntensity(victimEntity, 0);
                         }
                     }
                 }
             }
         }
+    }
+
+    // Placed lower as it goes with the method below it.
+    private  List<PotionEffectType> BAD_POTION_EFFECTS = Arrays.asList(
+            PotionEffectType.BLINDNESS,
+            PotionEffectType.CONFUSION,
+            PotionEffectType.HARM,
+            PotionEffectType.HUNGER,
+            PotionEffectType.POISON,
+            PotionEffectType.SLOW,
+            PotionEffectType.SLOW_DIGGING,
+            PotionEffectType.UNLUCK,
+            PotionEffectType.WEAKNESS,
+            PotionEffectType.WITHER
+    );
+
+    private boolean potionEffectBad(PotionEffectType effect) {
+        return BAD_POTION_EFFECTS.contains(effect);
     }
 
 }

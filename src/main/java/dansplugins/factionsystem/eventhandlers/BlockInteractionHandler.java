@@ -134,7 +134,7 @@ public class BlockInteractionHandler implements Listener {
                     }
 
                     // if chest
-                    if (Utilities.getInstance().isChest(event.getBlock())) {
+                    if (isChest(event.getBlock())) {
                         // if next to non-owned locked chest
                         if (isNextToNonOwnedLockedChest(event.getPlayer(), event.getBlock()) && !EphemeralData.getInstance().getAdminsBypassingProtections().contains(event.getPlayer().getUniqueId())) {
                             event.setCancelled(true);
@@ -165,25 +165,25 @@ public class BlockInteractionHandler implements Listener {
         Block neighbor3 = block.getWorld().getBlockAt(block.getX(), block.getY(), block.getZ() + 1);
         Block neighbor4 = block.getWorld().getBlockAt(block.getX(), block.getY(), block.getZ() - 1);
 
-        if (Utilities.getInstance().isChest(neighbor1)) {
+        if (isChest(neighbor1)) {
             if (Utilities.getInstance().isBlockLocked(neighbor1) && Utilities.getInstance().getLockedBlock(neighbor1).getOwner() != player.getUniqueId()) {
                 return true;
             }
         }
 
-        if (Utilities.getInstance().isChest(neighbor2)) {
+        if (isChest(neighbor2)) {
             if (Utilities.getInstance().isBlockLocked(neighbor2) && Utilities.getInstance().getLockedBlock(neighbor2).getOwner() != player.getUniqueId()) {
                 return true;
             }
         }
 
-        if (Utilities.getInstance().isChest(neighbor3)) {
+        if (isChest(neighbor3)) {
             if (Utilities.getInstance().isBlockLocked(neighbor3) && Utilities.getInstance().getLockedBlock(neighbor3).getOwner() != player.getUniqueId()) {
                 return true;
             }
         }
 
-        if (Utilities.getInstance().isChest(neighbor4)) {
+        if (isChest(neighbor4)) {
             if (Utilities.getInstance().isBlockLocked(neighbor4) && Utilities.getInstance().getLockedBlock(neighbor4).getOwner() != player.getUniqueId()) {
                 return true;
             }
@@ -197,13 +197,13 @@ public class BlockInteractionHandler implements Listener {
         Block neighbor1 = block.getWorld().getBlockAt(block.getX(), block.getY() + 1, block.getZ());
         Block neighbor2 = block.getWorld().getBlockAt(block.getX(), block.getY() - 1, block.getZ());
 
-        if (Utilities.getInstance().isChest(neighbor1)) {
+        if (isChest(neighbor1)) {
             if (Utilities.getInstance().isBlockLocked(neighbor1) && Utilities.getInstance().getLockedBlock(neighbor1).getOwner() != player.getUniqueId()) {
                 return true;
             }
         }
 
-        if (Utilities.getInstance().isChest(neighbor2)) {
+        if (isChest(neighbor2)) {
             if (Utilities.getInstance().isBlockLocked(neighbor2) && Utilities.getInstance().getLockedBlock(neighbor2).getOwner() != player.getUniqueId()) {
                 return true;
             }
@@ -527,10 +527,10 @@ public class BlockInteractionHandler implements Listener {
             }
 
             // block type check
-            if (isDoor(clickedBlock) || Utilities.getInstance().isChest(clickedBlock) || isGate(clickedBlock) || isBarrel(clickedBlock) || isTrapdoor(clickedBlock) || isFurnace(clickedBlock) || isAnvil(clickedBlock)) {
+            if (isDoor(clickedBlock) || isChest(clickedBlock) || isGate(clickedBlock) || isBarrel(clickedBlock) || isTrapdoor(clickedBlock) || isFurnace(clickedBlock) || isAnvil(clickedBlock)) {
 
                 // specific to chests because they can be single or double.
-                if (Utilities.getInstance().isChest(clickedBlock)) {
+                if (isChest(clickedBlock)) {
                     InventoryHolder holder = ((Chest) clickedBlock.getState()).getInventory().getHolder();
                     if (holder instanceof DoubleChest) {
                         // chest multi-lock
@@ -718,7 +718,7 @@ public class BlockInteractionHandler implements Listener {
         if (Utilities.getInstance().isBlockLocked(clickedBlock)) {
             if (Utilities.getInstance().getLockedBlock(clickedBlock).getOwner().equals(player.getUniqueId())) {
 
-                if (Utilities.getInstance().isChest(clickedBlock)) {
+                if (isChest(clickedBlock)) {
                     InventoryHolder holder = ((Chest) clickedBlock.getState()).getInventory().getHolder();
                     if (holder instanceof DoubleChest) {
                         // chest multi-unlock
@@ -830,7 +830,7 @@ public class BlockInteractionHandler implements Listener {
     private boolean isBlockInteractable(PlayerInteractEvent event) {
         if (event.getClickedBlock() != null) {
             // CHEST
-            if (Utilities.getInstance().isChest(event.getClickedBlock())) {
+            if (isChest(event.getClickedBlock())) {
                 return false;
             }
             switch(event.getClickedBlock().getType()) {
@@ -918,7 +918,7 @@ public class BlockInteractionHandler implements Listener {
         }
 
         // if chest
-        if (Utilities.getInstance().isChest(clickedBlock)) {
+        if (isChest(clickedBlock)) {
             InventoryHolder holder = ((Chest) clickedBlock.getState()).getInventory().getHolder();
             if (holder instanceof DoubleChest) { // if double chest
                 // grant access to both chests
@@ -987,7 +987,7 @@ public class BlockInteractionHandler implements Listener {
         }
 
         // if chest
-        if (Utilities.getInstance().isChest(clickedBlock)) {
+        if (isChest(clickedBlock)) {
             InventoryHolder holder = ((Chest) clickedBlock.getState()).getInventory().getHolder();
             if (holder instanceof DoubleChest) { // if double chest
                 // revoke access to both chests
@@ -1037,6 +1037,10 @@ public class BlockInteractionHandler implements Listener {
 
         event.setCancelled(true);
 
+    }
+
+    private boolean isChest(Block block) {
+        return block.getType() == Material.CHEST;
     }
 
 }

@@ -32,10 +32,6 @@ public class Utilities {
         }
         return instance;
     }
-    
-    public boolean isChest(Block block) {
-        return block.getType() == Material.CHEST;
-    }
 
     public PlayerActivityRecord getPlayerActivityRecord(UUID uuid, ArrayList<PlayerActivityRecord> playerActivityRecords)
     {
@@ -97,8 +93,6 @@ public class Utilities {
     	}
     	return false;
     }
-
-    //  methods ----------------------------
 
     public Duel getDuel(Player player, Player target)
     {
@@ -184,7 +178,7 @@ public class Utilities {
         return getLockedBlock(block.getX(), block.getY(), block.getZ(), block.getWorld().getName(), lockedBlocks);
     }
 
-    public  LockedBlock getLockedBlock(int x, int y, int z, String world, ArrayList<LockedBlock> lockedBlocks) {
+    public LockedBlock getLockedBlock(int x, int y, int z, String world, ArrayList<LockedBlock> lockedBlocks) {
         for (LockedBlock block : lockedBlocks) {
             if (block.getX() == x && block.getY() == y && block.getZ() == z && block.getWorld().equalsIgnoreCase(world)) {
                 return block;
@@ -197,7 +191,7 @@ public class Utilities {
         return isBlockLocked(block.getX(), block.getY(), block.getZ(), block.getWorld().getName(), lockedBlocks);
     }
 
-    public  boolean isBlockLocked(int x, int y, int z, String world, ArrayList<LockedBlock> lockedBlocks) {
+    public boolean isBlockLocked(int x, int y, int z, String world, ArrayList<LockedBlock> lockedBlocks) {
         for (LockedBlock block : lockedBlocks) {
             if (block.getX() == x && block.getY() == y && block.getZ() == z && block.getWorld().equalsIgnoreCase(world)) {
                 return true;
@@ -388,79 +382,6 @@ public class Utilities {
             System.out.println("Config.yml doesn't have version entry!");
             ConfigManager.getInstance().handleVersionMismatch();
         }
-    }
-
-    public boolean arePlayersFactionsNotEnemies(Player player1, Player player2) {
-        Pair<Integer, Integer> factionIndices = getFactionIndices(player1, player2);
-        int attackersFactionIndex = factionIndices.getLeft();
-        int victimsFactionIndex = factionIndices.getRight();
-
-        return !(PersistentData.getInstance().getFactions().get(attackersFactionIndex).isEnemy(PersistentData.getInstance().getFactions().get(victimsFactionIndex).getName())) &&
-                !(PersistentData.getInstance().getFactions().get(victimsFactionIndex).isEnemy(PersistentData.getInstance().getFactions().get(attackersFactionIndex).getName()));
-    }
-
-    public boolean arePlayersInSameFaction(Player player1, Player player2) {
-        Pair<Integer, Integer> factionIndices = getFactionIndices(player1, player2);
-        int attackersFactionIndex = factionIndices.getLeft();
-        int victimsFactionIndex = factionIndices.getRight();
-
-        // if attacker and victim are both in a faction
-        if (arePlayersInAFaction(player1, player2)){
-            // if attacker and victim are part of the same faction
-            return attackersFactionIndex == victimsFactionIndex;
-        } else {
-            return false;
-        }
-    }
-
-    public boolean arePlayersInAFaction(Player player1, Player player2) {
-        return isInFaction(player1.getUniqueId(), PersistentData.getInstance().getFactions()) && isInFaction(player2.getUniqueId(), PersistentData.getInstance().getFactions());
-    }
-
-    public Pair<Integer, Integer> getFactionIndices(Player player1, Player player2){
-        int attackersFactionIndex = 0;
-        int victimsFactionIndex = 0;
-
-        for (int i = 0; i < PersistentData.getInstance().getFactions().size(); i++) {
-            if (PersistentData.getInstance().getFactions().get(i).isMember(player1.getUniqueId())) {
-                attackersFactionIndex = i;
-            }
-            if (PersistentData.getInstance().getFactions().get(i).isMember(player2.getUniqueId())) {
-                victimsFactionIndex = i;
-            }
-        }
-
-        return new Pair<>(attackersFactionIndex, victimsFactionIndex);
-    }
-
-    // Placed lower as it goes with the method below it.
-    private  List<PotionEffectType> BAD_POTION_EFFECTS = Arrays.asList(
-            PotionEffectType.BLINDNESS,
-            PotionEffectType.CONFUSION,
-            PotionEffectType.HARM,
-            PotionEffectType.HUNGER,
-            PotionEffectType.POISON,
-            PotionEffectType.SLOW,
-            PotionEffectType.SLOW_DIGGING,
-            PotionEffectType.UNLUCK,
-            PotionEffectType.WEAKNESS,
-            PotionEffectType.WITHER
-    );
-
-    public boolean potionEffectBad(PotionEffectType effect) {
-        return BAD_POTION_EFFECTS.contains(effect);
-    }
-
-    private List<PotionType> BAD_POTION_TYPES = Arrays.asList(
-            PotionType.INSTANT_DAMAGE,
-            PotionType.POISON,
-            PotionType.SLOWNESS,
-            PotionType.WEAKNESS,
-            PotionType.TURTLE_MASTER
-    );
-
-    public boolean potionTypeBad(PotionType type){
-        return BAD_POTION_TYPES.contains(type);
     }
 
     public String findPlayerNameBasedOnUUID(UUID playerUUID) {
