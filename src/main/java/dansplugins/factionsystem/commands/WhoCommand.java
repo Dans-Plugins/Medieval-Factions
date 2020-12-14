@@ -1,6 +1,7 @@
 package dansplugins.factionsystem.commands;
 
 import dansplugins.factionsystem.ChunkManager;
+import dansplugins.factionsystem.UUIDChecker;
 import dansplugins.factionsystem.data.PersistentData;
 import dansplugins.factionsystem.objects.Faction;
 import dansplugins.factionsystem.utils.Utilities;
@@ -17,7 +18,7 @@ public class WhoCommand {
             if (sender.hasPermission("mf.who") || sender.hasPermission("mf.default")) {
                 if (args.length > 1) {
                     String name = Utilities.getInstance().createStringFromFirstArgOnwards(args);
-                    Faction faction = PersistentData.getInstance().getPlayersFaction(Utilities.getInstance().findUUIDBasedOnPlayerName(name));
+                    Faction faction = PersistentData.getInstance().getPlayersFaction(UUIDChecker.getInstance().findUUIDBasedOnPlayerName(name));
                     if (faction != null) {
                         Utilities.getInstance().sendFactionInfo(player, faction, ChunkManager.getInstance().getChunksClaimedByFaction(faction.getName(), PersistentData.getInstance().getClaimedChunks()));
                     }

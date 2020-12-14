@@ -3,6 +3,7 @@ package dansplugins.factionsystem.objects;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.reflect.TypeToken;
+import dansplugins.factionsystem.UUIDChecker;
 import dansplugins.factionsystem.utils.Utilities;
 import org.bukkit.Bukkit;
 
@@ -143,7 +144,7 @@ public class LockedBlock {
 
             // owner
             if (loadReader.hasNextLine()) {
-                owner = Utilities.getInstance().findUUIDBasedOnPlayerName(loadReader.nextLine());
+                owner = UUIDChecker.getInstance().findUUIDBasedOnPlayerName(loadReader.nextLine());
             }
 
             // faction name
@@ -153,7 +154,7 @@ public class LockedBlock {
 
             // access list
             while (loadReader.hasNextLine()) {
-                accessList.add(Utilities.getInstance().findUUIDBasedOnPlayerName(loadReader.nextLine()));
+                accessList.add(UUIDChecker.getInstance().findUUIDBasedOnPlayerName(loadReader.nextLine()));
             }
 
             loadReader.close();

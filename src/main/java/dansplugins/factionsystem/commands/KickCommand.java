@@ -1,5 +1,6 @@
 package dansplugins.factionsystem.commands;
 
+import dansplugins.factionsystem.UUIDChecker;
 import dansplugins.factionsystem.data.EphemeralData;
 import dansplugins.factionsystem.data.PersistentData;
 import dansplugins.factionsystem.objects.Faction;
@@ -23,7 +24,7 @@ public class KickCommand {
                     for (Faction faction : PersistentData.getInstance().getFactions()) {
                         if (faction.isOwner(player.getUniqueId()) || faction.isOfficer(player.getUniqueId())) {
                             owner = true;
-                            UUID playerUUID = Utilities.getInstance().findUUIDBasedOnPlayerName(args[1]);
+                            UUID playerUUID = UUIDChecker.getInstance().findUUIDBasedOnPlayerName(args[1]);
                             if (faction.isMember(playerUUID)) {
                                 if (!(args[1].equalsIgnoreCase(player.getName()))) {
                                     if (!(playerUUID.equals(faction.getOwner()))) {

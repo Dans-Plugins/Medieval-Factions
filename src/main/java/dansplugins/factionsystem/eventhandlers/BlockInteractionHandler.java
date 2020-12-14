@@ -2,6 +2,7 @@ package dansplugins.factionsystem.eventhandlers;
 
 import dansplugins.factionsystem.ChunkManager;
 import dansplugins.factionsystem.MedievalFactions;
+import dansplugins.factionsystem.UUIDChecker;
 import dansplugins.factionsystem.data.EphemeralData;
 import dansplugins.factionsystem.data.PersistentData;
 import dansplugins.factionsystem.objects.ClaimedChunk;
@@ -241,7 +242,7 @@ public class BlockInteractionHandler implements Listener {
                 // if player doesn't have access and isn't overriding
                 if (!lockedBlock.hasAccess(player.getUniqueId()) && !EphemeralData.getInstance().getAdminsBypassingProtections().contains(player.getUniqueId())) {
                     event.setCancelled(true);
-                    player.sendMessage(ChatColor.RED + "Locked by " + Utilities.getInstance().findPlayerNameBasedOnUUID(lockedBlock.getOwner()));
+                    player.sendMessage(ChatColor.RED + "Locked by " + UUIDChecker.getInstance().findPlayerNameBasedOnUUID(lockedBlock.getOwner()));
                     return;
                 }
 
@@ -929,13 +930,13 @@ public class BlockInteractionHandler implements Listener {
                 PersistentData.getInstance().getLockedBlock(leftChest).addToAccessList(EphemeralData.getInstance().getPlayersGrantingAccess().get(player.getUniqueId()));
                 PersistentData.getInstance().getLockedBlock(rightChest).addToAccessList(EphemeralData.getInstance().getPlayersGrantingAccess().get(player.getUniqueId()));
 
-                player.sendMessage(ChatColor.GREEN + "Access granted to " + Utilities.getInstance().findPlayerNameBasedOnUUID(EphemeralData.getInstance().getPlayersGrantingAccess().get(player.getUniqueId())));
+                player.sendMessage(ChatColor.GREEN + "Access granted to " + UUIDChecker.getInstance().findPlayerNameBasedOnUUID(EphemeralData.getInstance().getPlayersGrantingAccess().get(player.getUniqueId())));
                 EphemeralData.getInstance().getPlayersGrantingAccess().remove(player.getUniqueId());
             }
             else { // if single chest
                 // grant access to single chest
                 PersistentData.getInstance().getLockedBlock(clickedBlock).addToAccessList(EphemeralData.getInstance().getPlayersGrantingAccess().get(player.getUniqueId()));
-                player.sendMessage(ChatColor.GREEN + "Access granted to " + Utilities.getInstance().findPlayerNameBasedOnUUID(EphemeralData.getInstance().getPlayersGrantingAccess().get(player.getUniqueId())));
+                player.sendMessage(ChatColor.GREEN + "Access granted to " + UUIDChecker.getInstance().findPlayerNameBasedOnUUID(EphemeralData.getInstance().getPlayersGrantingAccess().get(player.getUniqueId())));
                 EphemeralData.getInstance().getPlayersGrantingAccess().remove(player.getUniqueId());
             }
 
@@ -954,7 +955,7 @@ public class BlockInteractionHandler implements Listener {
                 PersistentData.getInstance().getLockedBlock(clickedBlock).addToAccessList(EphemeralData.getInstance().getPlayersGrantingAccess().get(player.getUniqueId()));
             }
 
-            player.sendMessage(ChatColor.GREEN + "Access granted to " + Utilities.getInstance().findPlayerNameBasedOnUUID(EphemeralData.getInstance().getPlayersGrantingAccess().get(player.getUniqueId())));
+            player.sendMessage(ChatColor.GREEN + "Access granted to " + UUIDChecker.getInstance().findPlayerNameBasedOnUUID(EphemeralData.getInstance().getPlayersGrantingAccess().get(player.getUniqueId())));
             EphemeralData.getInstance().getPlayersGrantingAccess().remove(player.getUniqueId());
         }
 
@@ -962,7 +963,7 @@ public class BlockInteractionHandler implements Listener {
         if (isGate(clickedBlock) || isBarrel(clickedBlock) || isTrapdoor(clickedBlock) || isFurnace(clickedBlock)) {
             PersistentData.getInstance().getLockedBlock(clickedBlock).addToAccessList(EphemeralData.getInstance().getPlayersGrantingAccess().get(player.getUniqueId()));
 
-            player.sendMessage(ChatColor.GREEN + "Access granted to " + Utilities.getInstance().findPlayerNameBasedOnUUID(EphemeralData.getInstance().getPlayersGrantingAccess().get(player.getUniqueId())));
+            player.sendMessage(ChatColor.GREEN + "Access granted to " + UUIDChecker.getInstance().findPlayerNameBasedOnUUID(EphemeralData.getInstance().getPlayersGrantingAccess().get(player.getUniqueId())));
             EphemeralData.getInstance().getPlayersGrantingAccess().remove(player.getUniqueId());
         }
 
@@ -972,7 +973,7 @@ public class BlockInteractionHandler implements Listener {
     private void handleCheckingAccess(PlayerInteractEvent event, LockedBlock lockedBlock, Player player) {
         player.sendMessage(ChatColor.AQUA + "The following players have access to this block:");
         for (UUID playerUUID : lockedBlock.getAccessList()) {
-            player.sendMessage(ChatColor.AQUA + " - " + Utilities.getInstance().findPlayerNameBasedOnUUID(playerUUID));
+            player.sendMessage(ChatColor.AQUA + " - " + UUIDChecker.getInstance().findPlayerNameBasedOnUUID(playerUUID));
         }
         EphemeralData.getInstance().getPlayersCheckingAccess().remove(player.getUniqueId());
         event.setCancelled(true);
@@ -998,13 +999,13 @@ public class BlockInteractionHandler implements Listener {
                 PersistentData.getInstance().getLockedBlock(leftChest).removeFromAccessList(EphemeralData.getInstance().getPlayersRevokingAccess().get(player.getUniqueId()));
                 PersistentData.getInstance().getLockedBlock(rightChest).removeFromAccessList(EphemeralData.getInstance().getPlayersRevokingAccess().get(player.getUniqueId()));
 
-                player.sendMessage(ChatColor.GREEN + "Access revoked for " + Utilities.getInstance().findPlayerNameBasedOnUUID(EphemeralData.getInstance().getPlayersRevokingAccess().get(player.getUniqueId())));
+                player.sendMessage(ChatColor.GREEN + "Access revoked for " + UUIDChecker.getInstance().findPlayerNameBasedOnUUID(EphemeralData.getInstance().getPlayersRevokingAccess().get(player.getUniqueId())));
                 EphemeralData.getInstance().getPlayersRevokingAccess().remove(player.getUniqueId());
             }
             else { // if single chest
                 // revoke access to single chest
                 PersistentData.getInstance().getLockedBlock(clickedBlock).removeFromAccessList(EphemeralData.getInstance().getPlayersRevokingAccess().get(player.getUniqueId()));
-                player.sendMessage(ChatColor.GREEN + "Access revoked for " + Utilities.getInstance().findPlayerNameBasedOnUUID(EphemeralData.getInstance().getPlayersRevokingAccess().get(player.getUniqueId())));
+                player.sendMessage(ChatColor.GREEN + "Access revoked for " + UUIDChecker.getInstance().findPlayerNameBasedOnUUID(EphemeralData.getInstance().getPlayersRevokingAccess().get(player.getUniqueId())));
                 EphemeralData.getInstance().getPlayersRevokingAccess().remove(player.getUniqueId());
             }
 
@@ -1023,7 +1024,7 @@ public class BlockInteractionHandler implements Listener {
                 PersistentData.getInstance().getLockedBlock(clickedBlock).removeFromAccessList(EphemeralData.getInstance().getPlayersRevokingAccess().get(player.getUniqueId()));
             }
 
-            player.sendMessage(ChatColor.GREEN + "Access revoked for " + Utilities.getInstance().findPlayerNameBasedOnUUID(EphemeralData.getInstance().getPlayersRevokingAccess().get(player.getUniqueId())));
+            player.sendMessage(ChatColor.GREEN + "Access revoked for " + UUIDChecker.getInstance().findPlayerNameBasedOnUUID(EphemeralData.getInstance().getPlayersRevokingAccess().get(player.getUniqueId())));
             EphemeralData.getInstance().getPlayersRevokingAccess().remove(player.getUniqueId());
         }
 
@@ -1031,7 +1032,7 @@ public class BlockInteractionHandler implements Listener {
         if (isGate(clickedBlock) || isBarrel(clickedBlock) || isTrapdoor(clickedBlock) || isFurnace(clickedBlock)) {
             PersistentData.getInstance().getLockedBlock(clickedBlock).removeFromAccessList(EphemeralData.getInstance().getPlayersRevokingAccess().get(player.getUniqueId()));
 
-            player.sendMessage(ChatColor.GREEN + "Access revoked for " + Utilities.getInstance().findPlayerNameBasedOnUUID(EphemeralData.getInstance().getPlayersRevokingAccess().get(player.getUniqueId())));
+            player.sendMessage(ChatColor.GREEN + "Access revoked for " + UUIDChecker.getInstance().findPlayerNameBasedOnUUID(EphemeralData.getInstance().getPlayersRevokingAccess().get(player.getUniqueId())));
             EphemeralData.getInstance().getPlayersRevokingAccess().remove(player.getUniqueId());
         }
 

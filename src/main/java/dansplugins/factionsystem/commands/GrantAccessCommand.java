@@ -1,5 +1,6 @@
 package dansplugins.factionsystem.commands;
 
+import dansplugins.factionsystem.UUIDChecker;
 import dansplugins.factionsystem.data.EphemeralData;
 import dansplugins.factionsystem.utils.Utilities;
 import org.bukkit.ChatColor;
@@ -23,7 +24,7 @@ public class GrantAccessCommand {
                 // if not already granting access
                 if (!EphemeralData.getInstance().getPlayersGrantingAccess().containsKey(player.getUniqueId())) {
                     // save target name and player name in hashmap in main
-                    EphemeralData.getInstance().getPlayersGrantingAccess().put(player.getUniqueId(), Utilities.getInstance().findUUIDBasedOnPlayerName(args[1]));
+                    EphemeralData.getInstance().getPlayersGrantingAccess().put(player.getUniqueId(), UUIDChecker.getInstance().findUUIDBasedOnPlayerName(args[1]));
                     player.sendMessage(ChatColor.GREEN + "Right click a chest or door to grant " + args[1] + " access. Type /mf grantaccess cancel to cancel this.");
                 }
                 else {

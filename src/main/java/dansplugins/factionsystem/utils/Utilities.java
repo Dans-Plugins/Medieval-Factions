@@ -1,5 +1,6 @@
 package dansplugins.factionsystem.utils;
 
+import dansplugins.factionsystem.UUIDChecker;
 import dansplugins.factionsystem.objects.Faction;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
@@ -29,7 +30,7 @@ public class Utilities {
     public void sendFactionInfo(Player player, Faction faction, int power) {
         player.sendMessage(ChatColor.BOLD + "" + ChatColor.AQUA + faction.getName() + " Faction Info" + "\n----------\n");
         player.sendMessage(ChatColor.AQUA + "Name: " + faction.getName() + "\n");
-        player.sendMessage(ChatColor.AQUA + "Owner: " + findPlayerNameBasedOnUUID(faction.getOwner()) + "\n");
+        player.sendMessage(ChatColor.AQUA + "Owner: " + UUIDChecker.getInstance().findPlayerNameBasedOnUUID(faction.getOwner()) + "\n");
         player.sendMessage(ChatColor.AQUA + "Description: " + faction.getDescription() + "\n");
         player.sendMessage(ChatColor.AQUA + "Population: " + faction.getMemberList().size() + "\n");
         if (faction.hasLiege()) {
@@ -67,47 +68,6 @@ public class Utilities {
 
             }
         }
-    }
-
-    public String findPlayerNameBasedOnUUID(UUID playerUUID) {
-        // Check online
-        for (Player player : getOnlinePlayers()){
-            if (player.getUniqueId().equals(playerUUID)){
-                return player.getName();
-            }
-        }
-
-        // Check offline
-        for (OfflinePlayer player : getOfflinePlayers()){
-            if (player.getUniqueId().equals(playerUUID)){
-                return player.getName();
-            }
-        }
-
-        return "";
-    }
-
-    public UUID findUUIDBasedOnPlayerName(String playerName){
-        // Check online
-        for (Player player : getOnlinePlayers()){
-            if (player.getName().equals(playerName)){
-                return player.getUniqueId();
-            }
-        }
-
-        // Check offline
-        for (OfflinePlayer player : getOfflinePlayers()){
-            try {
-                if (player.getName().equals(playerName)){
-                    return player.getUniqueId();
-                }
-            } catch (NullPointerException e) {
-                // Fail silently as quit possibly common.
-            }
-
-        }
-
-        return null;
     }
 
     public void sendAllPlayersOnServerMessage(String message) {

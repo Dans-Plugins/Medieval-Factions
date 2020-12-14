@@ -1,5 +1,6 @@
 package dansplugins.factionsystem.commands;
 
+import dansplugins.factionsystem.UUIDChecker;
 import dansplugins.factionsystem.data.PersistentData;
 import dansplugins.factionsystem.objects.Faction;
 import dansplugins.factionsystem.utils.Utilities;
@@ -21,7 +22,7 @@ public class PromoteCommand {
                 if (PersistentData.getInstance().isInFaction(player.getUniqueId())) {
                     if (args.length > 1) {
                         for (Faction faction : PersistentData.getInstance().getFactions()) {
-                            UUID playerUUID = Utilities.getInstance().findUUIDBasedOnPlayerName(args[1]);
+                            UUID playerUUID = UUIDChecker.getInstance().findUUIDBasedOnPlayerName(args[1]);
                             if (faction.isMember(playerUUID)) {
                                 if (faction.isOwner(player.getUniqueId())) {
                                     if (faction.isMember(playerUUID)) {

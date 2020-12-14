@@ -1,5 +1,6 @@
 package dansplugins.factionsystem.commands;
 
+import dansplugins.factionsystem.UUIDChecker;
 import dansplugins.factionsystem.data.PersistentData;
 import dansplugins.factionsystem.objects.Faction;
 import dansplugins.factionsystem.utils.Utilities;
@@ -51,11 +52,11 @@ public class MembersCommand {
         for (UUID member : members) {
             // Is Owner
             if (member.equals(faction.getOwner())){
-                player.sendMessage(ChatColor.AQUA + Utilities.getInstance().findPlayerNameBasedOnUUID(member) + "**\n");
+                player.sendMessage(ChatColor.AQUA + UUIDChecker.getInstance().findPlayerNameBasedOnUUID(member) + "**\n");
             } else if (faction.isOfficer(member)) {
-                player.sendMessage(ChatColor.AQUA + Utilities.getInstance().findPlayerNameBasedOnUUID(member) + "*\n");
+                player.sendMessage(ChatColor.AQUA + UUIDChecker.getInstance().findPlayerNameBasedOnUUID(member) + "*\n");
             } else {
-                player.sendMessage(ChatColor.AQUA + Utilities.getInstance().findPlayerNameBasedOnUUID(member) + "\n");
+                player.sendMessage(ChatColor.AQUA + UUIDChecker.getInstance().findPlayerNameBasedOnUUID(member) + "\n");
             }
         }
         player.sendMessage(ChatColor.AQUA + "----------\n");

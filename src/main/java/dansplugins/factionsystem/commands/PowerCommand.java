@@ -1,5 +1,6 @@
 package dansplugins.factionsystem.commands;
 
+import dansplugins.factionsystem.UUIDChecker;
 import dansplugins.factionsystem.data.PersistentData;
 import dansplugins.factionsystem.objects.PlayerPowerRecord;
 import dansplugins.factionsystem.utils.Utilities;
@@ -18,7 +19,7 @@ public class PowerCommand {
             {
             	if (args.length > 1)
             	{
-            		UUID playerUUID = Utilities.getInstance().findUUIDBasedOnPlayerName(args[1]);
+            		UUID playerUUID = UUIDChecker.getInstance().findUUIDBasedOnPlayerName(args[1]);
             		if (playerUUID != null)
             		{
 	            		PlayerPowerRecord record = PersistentData.getInstance().getPlayersPowerRecord(playerUUID);

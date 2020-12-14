@@ -2,6 +2,7 @@ package dansplugins.factionsystem.commands;
 
 import dansplugins.factionsystem.MedievalFactions;
 import dansplugins.factionsystem.StorageManager;
+import dansplugins.factionsystem.UUIDChecker;
 import dansplugins.factionsystem.data.PersistentData;
 import dansplugins.factionsystem.objects.Faction;
 import dansplugins.factionsystem.objects.PlayerPowerRecord;
@@ -287,7 +288,7 @@ public class ForceCommand {
                     return false;
                 }
 
-                PlayerPowerRecord record = PersistentData.getInstance().getPlayersPowerRecord(Utilities.getInstance().findUUIDBasedOnPlayerName(player));
+                PlayerPowerRecord record = PersistentData.getInstance().getPlayersPowerRecord(UUIDChecker.getInstance().findUUIDBasedOnPlayerName(player));
 
                 record.setPowerLevel(desiredPower);
                 sender.sendMessage(ChatColor.GREEN + "The power level of '" + player + "' has been set to " + desiredPower);
