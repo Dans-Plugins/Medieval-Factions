@@ -4,7 +4,6 @@ import dansplugins.factionsystem.data.PersistentData;
 import dansplugins.factionsystem.objects.Faction;
 import dansplugins.factionsystem.objects.PlayerActivityRecord;
 import dansplugins.factionsystem.objects.PlayerPowerRecord;
-import dansplugins.factionsystem.utils.Utilities;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
@@ -124,7 +123,7 @@ public class Scheduler {
             }
         }
         for (String factionName : factionsToDisband) {
-            Utilities.getInstance().sendAllPlayersInFactionMessage(PersistentData.getInstance().getFaction(factionName), ChatColor.RED + "Your faction has been disbanded due to its cumulative power reaching zero.");
+            Messenger.getInstance().sendAllPlayersInFactionMessage(PersistentData.getInstance().getFaction(factionName), ChatColor.RED + "Your faction has been disbanded due to its cumulative power reaching zero.");
             removeFaction(factionName);
             System.out.println(factionName + " has been disbanded due to its cumulative power reaching zero.");
         }

@@ -1,8 +1,9 @@
 package dansplugins.factionsystem.commands;
 
+import dansplugins.factionsystem.Messenger;
 import dansplugins.factionsystem.data.PersistentData;
 import dansplugins.factionsystem.objects.Faction;
-import dansplugins.factionsystem.utils.Utilities;
+import dansplugins.factionsystem.utils.StringBuilder;
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
@@ -23,7 +24,7 @@ public class BreakAllianceCommand {
                         if (args.length > 1) {
 
                             // get name of faction
-                            String factionName = Utilities.getInstance().createStringFromFirstArgOnwards(args);
+                            String factionName = StringBuilder.getInstance().createStringFromFirstArgOnwards(args);
 
                             // check if faction exists
                             for (int i = 0; i < PersistentData.getInstance().getFactions().size(); i++) {
@@ -41,7 +42,7 @@ public class BreakAllianceCommand {
                                             PersistentData.getInstance().getFactions().get(i).removeAlly(faction.getName());
                                             for (int j = 0; j < PersistentData.getInstance().getFactions().size(); j++) {
                                                 if (PersistentData.getInstance().getFactions().get(j).getName().equalsIgnoreCase(factionName)) {
-                                                    Utilities.getInstance().sendAllPlayersInFactionMessage(PersistentData.getInstance().getFactions().get(j), ChatColor.RED + faction.getName() + " has broken their alliance your faction!");
+                                                    Messenger.getInstance().sendAllPlayersInFactionMessage(PersistentData.getInstance().getFactions().get(j), ChatColor.RED + faction.getName() + " has broken their alliance your faction!");
                                                 }
                                             }
                                         }

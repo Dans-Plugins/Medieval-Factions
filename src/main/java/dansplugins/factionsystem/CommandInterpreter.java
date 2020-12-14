@@ -4,7 +4,7 @@ import dansplugins.factionsystem.commands.*;
 import dansplugins.factionsystem.data.PersistentData;
 import dansplugins.factionsystem.objects.Faction;
 import dansplugins.factionsystem.objects.PlayerPowerRecord;
-import dansplugins.factionsystem.utils.Utilities;
+import dansplugins.factionsystem.utils.StringBuilder;
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
@@ -205,14 +205,14 @@ public class CommandInterpreter {
                         if (args.length > 1) {
                             if (player.hasPermission("mf.unclaimall.others") || player.hasPermission("mf.admin")) {
 
-                                String factionName = Utilities.getInstance().createStringFromFirstArgOnwards(args);
+                                String factionName = StringBuilder.getInstance().createStringFromFirstArgOnwards(args);
 
                                 Faction faction = PersistentData.getInstance().getFaction(factionName);
 
                                 if (faction != null) {
                                     // remove faction home
                                     faction.setFactionHome(null);
-                                    Utilities.getInstance().sendAllPlayersInFactionMessage(faction, ChatColor.RED + "Your faction home has been removed!");
+                                    Messenger.getInstance().sendAllPlayersInFactionMessage(faction, ChatColor.RED + "Your faction home has been removed!");
 
                                     // remove claimed chunks
                                     ChunkManager.getInstance().removeAllClaimedChunks(faction.getName(), PersistentData.getInstance().getClaimedChunks());
@@ -237,7 +237,7 @@ public class CommandInterpreter {
                                 if (faction.isOwner(player.getUniqueId())) {
                                     // remove faction home
                                     faction.setFactionHome(null);
-                                    Utilities.getInstance().sendAllPlayersInFactionMessage(faction, ChatColor.RED + "Your faction home has been removed!");
+                                    Messenger.getInstance().sendAllPlayersInFactionMessage(faction, ChatColor.RED + "Your faction home has been removed!");
 
                                     // remove claimed chunks
                                     ChunkManager.getInstance().removeAllClaimedChunks(faction.getName(), PersistentData.getInstance().getClaimedChunks());

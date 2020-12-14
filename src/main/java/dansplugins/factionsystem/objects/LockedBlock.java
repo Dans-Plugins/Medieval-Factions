@@ -4,7 +4,6 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.reflect.TypeToken;
 import dansplugins.factionsystem.UUIDChecker;
-import dansplugins.factionsystem.utils.Utilities;
 import org.bukkit.Bukkit;
 
 import java.io.File;

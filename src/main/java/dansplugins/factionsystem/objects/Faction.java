@@ -6,7 +6,6 @@ import com.google.gson.reflect.TypeToken;
 import dansplugins.factionsystem.MedievalFactions;
 import dansplugins.factionsystem.UUIDChecker;
 import dansplugins.factionsystem.data.PersistentData;
-import dansplugins.factionsystem.utils.Utilities;
 import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.WorldCreator;

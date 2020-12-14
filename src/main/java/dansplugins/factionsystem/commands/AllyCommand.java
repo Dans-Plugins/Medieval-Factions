@@ -1,8 +1,9 @@
 package dansplugins.factionsystem.commands;
 
+import dansplugins.factionsystem.Messenger;
 import dansplugins.factionsystem.data.PersistentData;
 import dansplugins.factionsystem.objects.Faction;
-import dansplugins.factionsystem.utils.Utilities;
+import dansplugins.factionsystem.utils.StringBuilder;
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
@@ -22,7 +23,7 @@ public class AllyCommand {
                         // player is able to do this command
 
                         if (args.length > 1) {
-                            String targetFactionName = Utilities.getInstance().createStringFromFirstArgOnwards(args);
+                            String targetFactionName = StringBuilder.getInstance().createStringFromFirstArgOnwards(args);
                             Faction targetFaction = PersistentData.getInstance().getFaction(targetFactionName);
 
                             if (!playersFaction.getName().equalsIgnoreCase(targetFactionName)) {
@@ -40,14 +41,14 @@ public class AllyCommand {
                                                 playersFaction.requestAlly(targetFactionName);
                                                 player.sendMessage(ChatColor.GREEN + "Attempted to ally with " + targetFactionName);
 
-                                                Utilities.getInstance().sendAllPlayersInFactionMessage(targetFaction,ChatColor.GREEN + "" + playersFaction.getName() + " has attempted to ally with " + targetFactionName + "!");
+                                                Messenger.getInstance().sendAllPlayersInFactionMessage(targetFaction,ChatColor.GREEN + "" + playersFaction.getName() + " has attempted to ally with " + targetFactionName + "!");
 
                                                 if (playersFaction.isRequestedAlly(targetFactionName) && targetFaction.isRequestedAlly(playersFaction.getName())) {
                                                     // ally factions
                                                     playersFaction.addAlly(targetFactionName);
                                                     PersistentData.getInstance().getFaction(targetFactionName).addAlly(playersFaction.getName());
                                                     player.sendMessage(ChatColor.GREEN + "Your faction is now allied with " + targetFactionName + "!");
-                                                    Utilities.getInstance().sendAllPlayersInFactionMessage(targetFaction, ChatColor.GREEN + "Your faction is now allied with " + playersFaction.getName() + "!");
+                                                    Messenger.getInstance().sendAllPlayersInFactionMessage(targetFaction, ChatColor.GREEN + "Your faction is now allied with " + playersFaction.getName() + "!");
                                                 }
                                             }
                                             else {

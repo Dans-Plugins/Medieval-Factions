@@ -5,7 +5,7 @@ import dansplugins.factionsystem.data.PersistentData;
 import dansplugins.factionsystem.objects.ClaimedChunk;
 import dansplugins.factionsystem.objects.Faction;
 import dansplugins.factionsystem.objects.LockedBlock;
-import dansplugins.factionsystem.utils.Utilities;
+import dansplugins.factionsystem.utils.StringBuilder;
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
@@ -18,7 +18,7 @@ public class RenameCommand {
             if (player.hasPermission("mf.rename") || player.hasPermission("mf.default")) {
                 if (args.length > 1) {
                     String oldName = PersistentData.getInstance().getPlayersFaction(player.getUniqueId()).getName();
-                    String newName = Utilities.getInstance().createStringFromFirstArgOnwards(args);
+                    String newName = StringBuilder.getInstance().createStringFromFirstArgOnwards(args);
 
                     // existence check
                     for (Faction faction : PersistentData.getInstance().getFactions()) {

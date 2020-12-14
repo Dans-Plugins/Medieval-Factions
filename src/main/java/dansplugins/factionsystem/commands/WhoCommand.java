@@ -1,10 +1,11 @@
 package dansplugins.factionsystem.commands;
 
 import dansplugins.factionsystem.ChunkManager;
+import dansplugins.factionsystem.Messenger;
 import dansplugins.factionsystem.UUIDChecker;
 import dansplugins.factionsystem.data.PersistentData;
 import dansplugins.factionsystem.objects.Faction;
-import dansplugins.factionsystem.utils.Utilities;
+import dansplugins.factionsystem.utils.StringBuilder;
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
@@ -17,10 +18,10 @@ public class WhoCommand {
 
             if (sender.hasPermission("mf.who") || sender.hasPermission("mf.default")) {
                 if (args.length > 1) {
-                    String name = Utilities.getInstance().createStringFromFirstArgOnwards(args);
+                    String name = StringBuilder.getInstance().createStringFromFirstArgOnwards(args);
                     Faction faction = PersistentData.getInstance().getPlayersFaction(UUIDChecker.getInstance().findUUIDBasedOnPlayerName(name));
                     if (faction != null) {
-                        Utilities.getInstance().sendFactionInfo(player, faction, ChunkManager.getInstance().getChunksClaimedByFaction(faction.getName(), PersistentData.getInstance().getClaimedChunks()));
+                        Messenger.getInstance().sendFactionInfo(player, faction, ChunkManager.getInstance().getChunksClaimedByFaction(faction.getName(), PersistentData.getInstance().getClaimedChunks()));
                     }
                     else {
                         player.sendMessage(ChatColor.RED + "That player isn't in a faction.");

@@ -1,10 +1,10 @@
 package dansplugins.factionsystem.commands;
 
+import dansplugins.factionsystem.Messenger;
 import dansplugins.factionsystem.UUIDChecker;
 import dansplugins.factionsystem.data.EphemeralData;
 import dansplugins.factionsystem.data.PersistentData;
 import dansplugins.factionsystem.objects.Faction;
-import dansplugins.factionsystem.utils.Utilities;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
@@ -37,7 +37,7 @@ public class KickCommand {
 
                                         faction.removeMember(playerUUID, PersistentData.getInstance().getPlayersPowerRecord(player.getUniqueId()).getPowerLevel());
                                         try {
-                                            Utilities.getInstance().sendAllPlayersInFactionMessage(faction, ChatColor.RED + args[1] + " has been kicked from " + faction.getName());
+                                            Messenger.getInstance().sendAllPlayersInFactionMessage(faction, ChatColor.RED + args[1] + " has been kicked from " + faction.getName());
                                         } catch (Exception ignored) {
 
                                         }

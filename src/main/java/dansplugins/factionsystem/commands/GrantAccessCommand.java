@@ -2,7 +2,6 @@ package dansplugins.factionsystem.commands;
 
 import dansplugins.factionsystem.UUIDChecker;
 import dansplugins.factionsystem.data.EphemeralData;
-import dansplugins.factionsystem.utils.Utilities;
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;

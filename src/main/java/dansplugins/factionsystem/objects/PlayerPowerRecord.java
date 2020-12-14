@@ -5,7 +5,6 @@ import com.google.gson.GsonBuilder;
 import dansplugins.factionsystem.MedievalFactions;
 import dansplugins.factionsystem.UUIDChecker;
 import dansplugins.factionsystem.data.PersistentData;
-import dansplugins.factionsystem.utils.Utilities;
 
 import java.io.File;
 import java.io.FileNotFoundException;

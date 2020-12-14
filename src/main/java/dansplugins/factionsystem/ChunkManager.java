@@ -3,7 +3,6 @@ package dansplugins.factionsystem;
 import dansplugins.factionsystem.data.EphemeralData;
 import dansplugins.factionsystem.data.PersistentData;
 import dansplugins.factionsystem.objects.*;
-import dansplugins.factionsystem.utils.Utilities;
 import org.bukkit.ChatColor;
 import org.bukkit.Chunk;
 import org.bukkit.Location;
@@ -87,7 +86,7 @@ public class ChunkManager {
                                             PersistentData.getInstance().getClaimedChunks().add(newChunk);
                                             player.sendMessage(ChatColor.GREEN + "Land conquered from " + targetFaction.getName() + "! Demesne Size: " + getChunksClaimedByFaction(faction.getName(), PersistentData.getInstance().getClaimedChunks()) + "/" + faction.getCumulativePowerLevel());
 
-                                            Utilities.getInstance().sendAllPlayersInFactionMessage(targetFaction, ChatColor.RED + PersistentData.getInstance().getPlayersFaction(player.getUniqueId()).getName() + " has conquered land from your faction!");
+                                            Messenger.getInstance().sendAllPlayersInFactionMessage(targetFaction, ChatColor.RED + PersistentData.getInstance().getPlayersFaction(player.getUniqueId()).getName() + " has conquered land from your faction!");
 
                                             return;
                                         }
@@ -210,7 +209,7 @@ public class ChunkManager {
                     && chunk.getWorld().equalsIgnoreCase(player.getLocation().getWorld().getName())) {
                 // remove faction home
                 faction.setFactionHome(null);
-                Utilities.getInstance().sendAllPlayersInFactionMessage(faction, ChatColor.RED + "Your faction home has been removed!");
+                Messenger.getInstance().sendAllPlayersInFactionMessage(faction, ChatColor.RED + "Your faction home has been removed!");
 
             }
         }

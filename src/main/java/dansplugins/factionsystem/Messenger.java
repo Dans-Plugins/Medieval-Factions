@@ -1,28 +1,26 @@
-package dansplugins.factionsystem.utils;
+package dansplugins.factionsystem;
 
-import dansplugins.factionsystem.UUIDChecker;
 import dansplugins.factionsystem.objects.Faction;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
-import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Player;
 
 import java.util.ArrayList;
 import java.util.UUID;
 
-import static org.bukkit.Bukkit.*;
+import static org.bukkit.Bukkit.getServer;
 
-public class Utilities {
+public class Messenger {
 
-    private static Utilities instance;
+    private static Messenger instance;
 
-    private Utilities() {
+    private Messenger() {
 
     }
 
-    public static Utilities getInstance() {
+    public static Messenger getInstance() {
         if (instance == null) {
-            instance = new Utilities();
+            instance = new Messenger();
         }
         return instance;
     }
@@ -44,17 +42,6 @@ public class Utilities {
         player.sendMessage(ChatColor.AQUA + "Power Level: " + faction.getCumulativePowerLevel() + "\n");
         player.sendMessage(ChatColor.AQUA + "Demesne Size: " + power + "/" + faction.getCumulativePowerLevel() + "\n");
         player.sendMessage(ChatColor.AQUA + "----------\n");
-    }
-
-    public String createStringFromFirstArgOnwards(String[] args) {
-        StringBuilder name = new StringBuilder();
-        for (int i = 1; i < args.length; i++) {
-            name.append(args[i]);
-            if (!(i == args.length - 1)) {
-                name.append(" ");
-            }
-        }
-        return name.toString();
     }
 
     public void sendAllPlayersInFactionMessage(Faction faction, String message) {

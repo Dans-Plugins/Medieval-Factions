@@ -1,12 +1,13 @@
 package dansplugins.factionsystem.commands;
 
 import dansplugins.factionsystem.MedievalFactions;
+import dansplugins.factionsystem.Messenger;
 import dansplugins.factionsystem.StorageManager;
 import dansplugins.factionsystem.UUIDChecker;
 import dansplugins.factionsystem.data.PersistentData;
 import dansplugins.factionsystem.objects.Faction;
 import dansplugins.factionsystem.objects.PlayerPowerRecord;
-import dansplugins.factionsystem.utils.Utilities;
+import dansplugins.factionsystem.utils.StringBuilder;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.OfflinePlayer;
@@ -112,7 +113,7 @@ public class ForceCommand {
                     }
 
                     // announce peace to all players on server.
-                    Utilities.getInstance().sendAllPlayersOnServerMessage(ChatColor.GREEN + faction1.getName() + " is now at peace with " + faction2.getName() + "!");
+                    Messenger.getInstance().sendAllPlayersOnServerMessage(ChatColor.GREEN + faction1.getName() + " is now at peace with " + faction2.getName() + "!");
                     return true;
                 }
                 else {
@@ -189,7 +190,7 @@ public class ForceCommand {
                             if (!(PersistentData.getInstance().isInFaction(player.getUniqueId()))) {
                                 faction.addMember(player.getUniqueId(), PersistentData.getInstance().getPlayersPowerRecord(player.getUniqueId()).getPowerLevel());
                                 try {
-                                    Utilities.getInstance().sendAllPlayersInFactionMessage(faction, ChatColor.GREEN + player.getName() + " has joined " + faction.getName());
+                                    Messenger.getInstance().sendAllPlayersInFactionMessage(faction, ChatColor.GREEN + player.getName() + " has joined " + faction.getName());
                                 } catch (Exception ignored) {
 
                                 }
@@ -307,7 +308,7 @@ public class ForceCommand {
     private ArrayList<String> getArgumentsInsideSingleQuotes(String[] args) {
         ArrayList<String> toReturn = new ArrayList<>();
 
-        String argumentString = Utilities.getInstance().createStringFromFirstArgOnwards(args);
+        String argumentString = StringBuilder.getInstance().createStringFromFirstArgOnwards(args);
 
         int index = 0;
         while (true) {
