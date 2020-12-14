@@ -44,19 +44,6 @@ public class Utilities {
         return false;
     }
 
-    public LockedBlock getLockedBlock(Block block) {
-        return getLockedBlock(block.getX(), block.getY(), block.getZ(), block.getWorld().getName());
-    }
-
-    private LockedBlock getLockedBlock(int x, int y, int z, String world) {
-        for (LockedBlock block : PersistentData.getInstance().getLockedBlocks()) {
-            if (block.getX() == x && block.getY() == y && block.getZ() == z && block.getWorld().equalsIgnoreCase(world)) {
-                return block;
-            }
-        }
-        return null;
-    }
-
     public Duel getDuel(Player player, Player target)
     {
     	for (Duel duel : EphemeralData.getInstance().getDuelingPlayers())
@@ -82,19 +69,6 @@ public class Utilities {
     		}
     	}
     	return false;
-    }
-
-    public LockedBlock getLockedBlock(Block block, ArrayList<LockedBlock> lockedBlocks) {
-        return getLockedBlock(block.getX(), block.getY(), block.getZ(), block.getWorld().getName(), lockedBlocks);
-    }
-
-    private LockedBlock getLockedBlock(int x, int y, int z, String world, ArrayList<LockedBlock> lockedBlocks) {
-        for (LockedBlock block : lockedBlocks) {
-            if (block.getX() == x && block.getY() == y && block.getZ() == z && block.getWorld().equalsIgnoreCase(world)) {
-                return block;
-            }
-        }
-        return null;
     }
    
     public boolean isInFaction(UUID playerUUID, ArrayList<Faction> factions) {

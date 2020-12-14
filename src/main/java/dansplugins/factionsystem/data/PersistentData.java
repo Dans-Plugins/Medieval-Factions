@@ -1,6 +1,7 @@
 package dansplugins.factionsystem.data;
 
 import dansplugins.factionsystem.objects.*;
+import org.bukkit.block.Block;
 
 import java.util.ArrayList;
 import java.util.UUID;
@@ -58,6 +59,19 @@ public class PersistentData {
             if (record.getPlayerUUID().equals(uuid))
             {
                 return record;
+            }
+        }
+        return null;
+    }
+
+    public LockedBlock getLockedBlock(Block block) {
+        return getLockedBlock(block.getX(), block.getY(), block.getZ(), block.getWorld().getName());
+    }
+
+    private LockedBlock getLockedBlock(int x, int y, int z, String world) {
+        for (LockedBlock block : getLockedBlocks()) {
+            if (block.getX() == x && block.getY() == y && block.getZ() == z && block.getWorld().equalsIgnoreCase(world)) {
+                return block;
             }
         }
         return null;
