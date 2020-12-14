@@ -10,7 +10,6 @@ import java.util.UUID;
 
 public class PersistentData {
 
-    // instance
     private static PersistentData instance;
 
     public ArrayList<Faction> factions = new ArrayList<>();
