@@ -30,19 +30,6 @@ public class Utilities {
         }
         return instance;
     }
-
-    public boolean isBlockLocked(Block block) {
-        return isBlockLocked(block.getX(), block.getY(), block.getZ(), block.getWorld().getName());
-    }
-
-    private boolean isBlockLocked(int x, int y, int z, String world) {
-        for (LockedBlock block : PersistentData.getInstance().getLockedBlocks()) {
-            if (block.getX() == x && block.getY() == y && block.getZ() == z && block.getWorld().equalsIgnoreCase(world)) {
-                return true;
-            }
-        }
-        return false;
-    }
     
     public boolean isGateBlock(Block targetBlock, ArrayList<Faction> factions)
     {

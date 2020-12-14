@@ -59,7 +59,7 @@ public class BlockInteractionHandler implements Listener {
                     }
 
                     // if block is locked
-                    if (Utilities.getInstance().isBlockLocked(event.getBlock())) {
+                    if (PersistentData.getInstance().isBlockLocked(event.getBlock())) {
 
                         // if player is not the owner and isn't bypassing
                         if (!PersistentData.getInstance().getLockedBlock(event.getBlock()).getOwner().equals(player.getUniqueId())
@@ -166,25 +166,25 @@ public class BlockInteractionHandler implements Listener {
         Block neighbor4 = block.getWorld().getBlockAt(block.getX(), block.getY(), block.getZ() - 1);
 
         if (isChest(neighbor1)) {
-            if (Utilities.getInstance().isBlockLocked(neighbor1) && PersistentData.getInstance().getLockedBlock(neighbor1).getOwner() != player.getUniqueId()) {
+            if (PersistentData.getInstance().isBlockLocked(neighbor1) && PersistentData.getInstance().getLockedBlock(neighbor1).getOwner() != player.getUniqueId()) {
                 return true;
             }
         }
 
         if (isChest(neighbor2)) {
-            if (Utilities.getInstance().isBlockLocked(neighbor2) && PersistentData.getInstance().getLockedBlock(neighbor2).getOwner() != player.getUniqueId()) {
+            if (PersistentData.getInstance().isBlockLocked(neighbor2) && PersistentData.getInstance().getLockedBlock(neighbor2).getOwner() != player.getUniqueId()) {
                 return true;
             }
         }
 
         if (isChest(neighbor3)) {
-            if (Utilities.getInstance().isBlockLocked(neighbor3) && PersistentData.getInstance().getLockedBlock(neighbor3).getOwner() != player.getUniqueId()) {
+            if (PersistentData.getInstance().isBlockLocked(neighbor3) && PersistentData.getInstance().getLockedBlock(neighbor3).getOwner() != player.getUniqueId()) {
                 return true;
             }
         }
 
         if (isChest(neighbor4)) {
-            if (Utilities.getInstance().isBlockLocked(neighbor4) && PersistentData.getInstance().getLockedBlock(neighbor4).getOwner() != player.getUniqueId()) {
+            if (PersistentData.getInstance().isBlockLocked(neighbor4) && PersistentData.getInstance().getLockedBlock(neighbor4).getOwner() != player.getUniqueId()) {
                 return true;
             }
         }
@@ -198,13 +198,13 @@ public class BlockInteractionHandler implements Listener {
         Block neighbor2 = block.getWorld().getBlockAt(block.getX(), block.getY() - 1, block.getZ());
 
         if (isChest(neighbor1)) {
-            if (Utilities.getInstance().isBlockLocked(neighbor1) && PersistentData.getInstance().getLockedBlock(neighbor1).getOwner() != player.getUniqueId()) {
+            if (PersistentData.getInstance().isBlockLocked(neighbor1) && PersistentData.getInstance().getLockedBlock(neighbor1).getOwner() != player.getUniqueId()) {
                 return true;
             }
         }
 
         if (isChest(neighbor2)) {
-            if (Utilities.getInstance().isBlockLocked(neighbor2) && PersistentData.getInstance().getLockedBlock(neighbor2).getOwner() != player.getUniqueId()) {
+            if (PersistentData.getInstance().isBlockLocked(neighbor2) && PersistentData.getInstance().getLockedBlock(neighbor2).getOwner() != player.getUniqueId()) {
                 return true;
             }
         }
@@ -520,7 +520,7 @@ public class BlockInteractionHandler implements Listener {
             }
 
             // if already locked
-            if (Utilities.getInstance().isBlockLocked(clickedBlock)) {
+            if (PersistentData.getInstance().isBlockLocked(clickedBlock)) {
                 player.sendMessage(ChatColor.RED + "This block is already locked!");
                 event.setCancelled(true);
                 return;
@@ -715,7 +715,7 @@ public class BlockInteractionHandler implements Listener {
 
     private void handleUnlockingBlock(PlayerInteractEvent event, Player player, Block clickedBlock) {
         // if locked
-        if (Utilities.getInstance().isBlockLocked(clickedBlock)) {
+        if (PersistentData.getInstance().isBlockLocked(clickedBlock)) {
             if (PersistentData.getInstance().getLockedBlock(clickedBlock).getOwner().equals(player.getUniqueId())) {
 
                 if (isChest(clickedBlock)) {
