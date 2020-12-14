@@ -8,7 +8,6 @@ import dansplugins.factionsystem.objects.ClaimedChunk;
 import dansplugins.factionsystem.objects.Duel;
 import dansplugins.factionsystem.objects.PlayerPowerRecord;
 import dansplugins.factionsystem.utils.Pair;
-import dansplugins.factionsystem.utils.Utilities;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.*;
 import org.bukkit.event.EventHandler;

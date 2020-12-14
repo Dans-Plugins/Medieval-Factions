@@ -4,7 +4,6 @@ import dansplugins.factionsystem.ChunkManager;
 import dansplugins.factionsystem.data.PersistentData;
 import dansplugins.factionsystem.objects.ClaimedChunk;
 import dansplugins.factionsystem.objects.Faction;
-import dansplugins.factionsystem.utils.Utilities;
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;

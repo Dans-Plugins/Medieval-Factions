@@ -1,17 +1,12 @@
 package dansplugins.factionsystem.utils;
 
-import dansplugins.factionsystem.data.EphemeralData;
-import dansplugins.factionsystem.data.PersistentData;
-import dansplugins.factionsystem.objects.*;
+import dansplugins.factionsystem.objects.Faction;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.OfflinePlayer;
-import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
 
-import java.io.File;
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.UUID;
 
 import static org.bukkit.Bukkit.*;

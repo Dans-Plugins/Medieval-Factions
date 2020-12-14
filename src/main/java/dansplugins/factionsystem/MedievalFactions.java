@@ -3,7 +3,6 @@ package dansplugins.factionsystem;
 import dansplugins.factionsystem.bstats.Metrics;
 import dansplugins.factionsystem.data.PersistentData;
 import dansplugins.factionsystem.objects.PlayerActivityRecord;
-import dansplugins.factionsystem.utils.Utilities;
 import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.command.Command;
@@ -17,7 +16,7 @@ public class MedievalFactions extends JavaPlugin {
 
     private static MedievalFactions instance;
 
-    private String version = "v3.6.0.3-beta-9";
+    private String version = "v3.6.0.3-beta-10";
 
     public static MedievalFactions getInstance() {
         return instance;

@@ -6,7 +6,6 @@ import dansplugins.factionsystem.data.EphemeralData;
 import dansplugins.factionsystem.data.PersistentData;
 import dansplugins.factionsystem.objects.PlayerActivityRecord;
 import dansplugins.factionsystem.objects.PlayerPowerRecord;
-import dansplugins.factionsystem.utils.Utilities;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Monster;
 import org.bukkit.event.EventHandler;
