@@ -33,7 +33,7 @@ public class JoiningLeavingAndSpawningHandler implements Listener {
         }
         else
         {
-        	PlayerActivityRecord record = Utilities.getInstance().getPlayerActivityRecord(event.getPlayer().getUniqueId(), PersistentData.getInstance().getPlayerActivityRecords());
+        	PlayerActivityRecord record = PersistentData.getInstance().getPlayerActivityRecord(event.getPlayer().getUniqueId());
         	if (record != null)
         	{
         		PlayerPowerRecord power = Utilities.getInstance().getPlayersPowerRecord(event.getPlayer().getUniqueId(), PersistentData.getInstance().getPlayerPowerRecords());
@@ -103,7 +103,7 @@ public class JoiningLeavingAndSpawningHandler implements Listener {
 			EphemeralData.getInstance().getPlayersRevokingAccess().remove(event.getPlayer().getUniqueId());
 		}
 
-		PlayerActivityRecord record = Utilities.getInstance().getPlayerActivityRecord(event.getPlayer().getUniqueId(), PersistentData.getInstance().getPlayerActivityRecords());
+		PlayerActivityRecord record = PersistentData.getInstance().getPlayerActivityRecord(event.getPlayer().getUniqueId());
 		if (record != null)
 		{
 			record.setLastLogout(ZonedDateTime.now());

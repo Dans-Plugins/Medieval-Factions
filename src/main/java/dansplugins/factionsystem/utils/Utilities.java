@@ -31,18 +31,6 @@ public class Utilities {
         return instance;
     }
 
-    public PlayerActivityRecord getPlayerActivityRecord(UUID uuid, ArrayList<PlayerActivityRecord> playerActivityRecords)
-    {
-    	for (PlayerActivityRecord record : playerActivityRecords)
-    	{
-    		if (record.getPlayerUUID().equals(uuid))
-    		{
-    			return record;
-    		}
-    	}
-    	return null;
-    }
-
     public boolean isBlockLocked(Block block) {
         return isBlockLocked(block.getX(), block.getY(), block.getZ(), block.getWorld().getName());
     }

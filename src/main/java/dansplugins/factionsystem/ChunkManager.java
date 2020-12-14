@@ -138,7 +138,7 @@ public class ChunkManager {
     private boolean everyPlayerInFactionExperiencingPowerDecay(Faction faction) {
         int numExperiencingPowerDecay = 0;
         for (UUID uuid : faction.getMemberArrayList()) {
-            PlayerActivityRecord record = Utilities.getInstance().getPlayerActivityRecord(uuid, PersistentData.getInstance().getPlayerActivityRecords());
+            PlayerActivityRecord record = PersistentData.getInstance().getPlayerActivityRecord(uuid);
             if (record != null) {
                 Player player = getServer().getPlayer(record.getPlayerUUID());
                 boolean isOnline = false;

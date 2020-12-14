@@ -3,6 +3,7 @@ package dansplugins.factionsystem.data;
 import dansplugins.factionsystem.objects.*;
 
 import java.util.ArrayList;
+import java.util.UUID;
 
 public class PersistentData {
 
@@ -26,6 +27,8 @@ public class PersistentData {
         return instance;
     }
 
+    // arraylist getters ---
+
     public ArrayList<Faction> getFactions() {
         return factions;
     }
@@ -44,5 +47,19 @@ public class PersistentData {
 
     public ArrayList<LockedBlock> getLockedBlocks() {
         return lockedBlocks;
+    }
+
+    // specific getters ---
+
+    public PlayerActivityRecord getPlayerActivityRecord(UUID uuid)
+    {
+        for (PlayerActivityRecord record : getPlayerActivityRecords())
+        {
+            if (record.getPlayerUUID().equals(uuid))
+            {
+                return record;
+            }
+        }
+        return null;
     }
 }
