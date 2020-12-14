@@ -34,7 +34,7 @@ public class KickCommand {
 
                                         EphemeralData.getInstance().getPlayersInFactionChat().remove(playerUUID);
 
-                                        faction.removeMember(playerUUID, Utilities.getInstance().getPlayersPowerRecord(player.getUniqueId(), PersistentData.getInstance().getPlayerPowerRecords()).getPowerLevel());
+                                        faction.removeMember(playerUUID, PersistentData.getInstance().getPlayersPowerRecord(player.getUniqueId()).getPowerLevel());
                                         try {
                                             Utilities.getInstance().sendAllPlayersInFactionMessage(faction, ChatColor.RED + args[1] + " has been kicked from " + faction.getName());
                                         } catch (Exception ignored) {

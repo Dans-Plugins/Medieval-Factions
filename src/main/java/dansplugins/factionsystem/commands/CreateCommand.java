@@ -45,7 +45,7 @@ public class CreateCommand {
                         Faction temp = new Faction(name, player.getUniqueId(), MedievalFactions.getInstance().getConfig().getInt("initialMaxPowerLevel"));
                         PersistentData.getInstance().getFactions().add(temp);
                         // TODO: Make thread safe
-                        PersistentData.getInstance().getFactions().get(PersistentData.getInstance().getFactions().size() - 1).addMember(player.getUniqueId(), Utilities.getInstance().getPlayersPowerRecord(player.getUniqueId(), PersistentData.getInstance().getPlayerPowerRecords()).getPowerLevel());
+                        PersistentData.getInstance().getFactions().get(PersistentData.getInstance().getFactions().size() - 1).addMember(player.getUniqueId(), PersistentData.getInstance().getPlayersPowerRecord(player.getUniqueId()).getPowerLevel());
                         System.out.println("Faction " + name + " created.");
                         player.sendMessage(ChatColor.AQUA + "Faction " + name + " created.");
                         return true;

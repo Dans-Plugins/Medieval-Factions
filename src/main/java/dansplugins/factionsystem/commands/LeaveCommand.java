@@ -66,7 +66,7 @@ public class LeaveCommand {
                                     // remove claimed land objects associated with this faction
                                     ChunkManager.getInstance().removeAllClaimedChunks(PersistentData.getInstance().getFactions().get(i).getName(), PersistentData.getInstance().getClaimedChunks());
 
-                                    PersistentData.getInstance().getFactions().get(i).removeMember(player.getUniqueId(), Utilities.getInstance().getPlayersPowerRecord(player.getUniqueId(), PersistentData.getInstance().getPlayerPowerRecords()).getPowerLevel());
+                                    PersistentData.getInstance().getFactions().get(i).removeMember(player.getUniqueId(), PersistentData.getInstance().getPlayersPowerRecord(player.getUniqueId()).getPowerLevel());
                                     PersistentData.getInstance().getFactions().remove(i);
                                     player.sendMessage(ChatColor.AQUA + "You left your faction. It was deleted since no one else was a member.");
 
@@ -88,7 +88,7 @@ public class LeaveCommand {
                                     EphemeralData.getInstance().getPlayersInFactionChat().remove(player.getUniqueId());
                                 }
 
-                                PersistentData.getInstance().getFactions().get(i).removeMember(player.getUniqueId(), Utilities.getInstance().getPlayersPowerRecord(player.getUniqueId(), PersistentData.getInstance().getPlayerPowerRecords()).getPowerLevel());
+                                PersistentData.getInstance().getFactions().get(i).removeMember(player.getUniqueId(), PersistentData.getInstance().getPlayersPowerRecord(player.getUniqueId()).getPowerLevel());
                                 player.sendMessage(ChatColor.AQUA + "You left your faction.");
                                 try {
                                     Utilities.getInstance().sendAllPlayersInFactionMessage(PersistentData.getInstance().getFactions().get(i), ChatColor.GREEN + player.getName() + " has left " + PersistentData.getInstance().getFactions().get(i).getName());

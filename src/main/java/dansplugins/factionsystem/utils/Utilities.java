@@ -112,15 +112,6 @@ public class Utilities {
         }
     }
 
-    public PlayerPowerRecord getPlayersPowerRecord(UUID playerUUID, ArrayList<PlayerPowerRecord> powerRecords ) {
-        for (PlayerPowerRecord record : powerRecords) {
-            if (record.getPlayerUUID().equals(playerUUID)) {
-                return record;
-            }
-        }
-        return null;
-    }
-
     public Faction getFaction(String name, ArrayList<Faction> factions) {
         for (Faction faction : factions) {
             if (faction.getName().equalsIgnoreCase(name)) {

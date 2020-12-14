@@ -163,7 +163,7 @@ public class Faction {
         for (UUID playerUUID : members){
             try
             {
-            	powerLevel += Utilities.getInstance().getPlayersPowerRecord(playerUUID, PersistentData.getInstance().getPlayerPowerRecords()).getPowerLevel();
+            	powerLevel += PersistentData.getInstance().getPlayersPowerRecord(playerUUID).getPowerLevel();
             }
             catch (Exception e)
             {

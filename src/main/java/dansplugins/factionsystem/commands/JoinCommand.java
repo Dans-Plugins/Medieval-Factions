@@ -25,7 +25,7 @@ public class JoinCommand {
 
                                 // join if player isn't in a faction already
                                 if (!(Utilities.getInstance().isInFaction(player.getUniqueId(), PersistentData.getInstance().getFactions()))) {
-                                    faction.addMember(player.getUniqueId(), Utilities.getInstance().getPlayersPowerRecord(player.getUniqueId(), PersistentData.getInstance().getPlayerPowerRecords()).getPowerLevel());
+                                    faction.addMember(player.getUniqueId(), PersistentData.getInstance().getPlayersPowerRecord(player.getUniqueId()).getPowerLevel());
                                     faction.uninvite(player.getUniqueId());
                                     try {
                                         Utilities.getInstance().sendAllPlayersInFactionMessage(faction, ChatColor.GREEN + player.getName() + " has joined " + faction.getName());

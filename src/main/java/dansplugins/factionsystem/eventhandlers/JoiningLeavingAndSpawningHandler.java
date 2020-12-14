@@ -36,7 +36,7 @@ public class JoiningLeavingAndSpawningHandler implements Listener {
         	PlayerActivityRecord record = PersistentData.getInstance().getPlayerActivityRecord(event.getPlayer().getUniqueId());
         	if (record != null)
         	{
-        		PlayerPowerRecord power = Utilities.getInstance().getPlayersPowerRecord(event.getPlayer().getUniqueId(), PersistentData.getInstance().getPlayerPowerRecords());
+        		PlayerPowerRecord power = PersistentData.getInstance().getPlayersPowerRecord(event.getPlayer().getUniqueId());
         		record.incrementLogins();
 
         		int newPower = power.getPowerLevel();

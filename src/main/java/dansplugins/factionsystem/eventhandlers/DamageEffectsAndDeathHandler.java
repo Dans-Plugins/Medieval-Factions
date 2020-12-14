@@ -226,7 +226,7 @@ public class DamageEffectsAndDeathHandler implements Listener {
         for (PlayerPowerRecord record : PersistentData.getInstance().getPlayerPowerRecords()) {
             if (record.getPlayerUUID().equals(player.getUniqueId())) {
                 record.decreasePowerByTenPercent();
-                if (Utilities.getInstance().getPlayersPowerRecord(player.getUniqueId(), PersistentData.getInstance().getPlayerPowerRecords()).getPowerLevel() > 0) {
+                if (PersistentData.getInstance().getPlayersPowerRecord(player.getUniqueId()).getPowerLevel() > 0) {
                     player.sendMessage(ChatColor.RED + "Your power level has decreased!");
                 }
             }
@@ -236,7 +236,7 @@ public class DamageEffectsAndDeathHandler implements Listener {
         if (player.getKiller() != null) {
             Player killer = player.getKiller();
 
-            PlayerPowerRecord record = Utilities.getInstance().getPlayersPowerRecord(killer.getUniqueId(), PersistentData.getInstance().getPlayerPowerRecords());
+            PlayerPowerRecord record = PersistentData.getInstance().getPlayersPowerRecord(killer.getUniqueId());
             if (record != null) {
                 if (record.increasePowerByTenPercent()){
                     killer.sendMessage(ChatColor.GREEN + "Your power level has increased!");

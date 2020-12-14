@@ -86,7 +86,7 @@ public class Scheduler {
                             && record.getMinutesSinceLastLogout() > MedievalFactions.getInstance().getConfig().getInt("minutesBeforePowerDecrease"))
                     {
                         record.incrementPowerLost();
-                        PlayerPowerRecord power = Utilities.getInstance().getPlayersPowerRecord(record.getPlayerUUID(), PersistentData.getInstance().getPlayerPowerRecords());
+                        PlayerPowerRecord power = PersistentData.getInstance().getPlayersPowerRecord(record.getPlayerUUID());
                         power.decreasePower();
                     }
                 }

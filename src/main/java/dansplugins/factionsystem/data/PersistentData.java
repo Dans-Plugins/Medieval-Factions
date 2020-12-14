@@ -62,6 +62,15 @@ public class PersistentData {
         return null;
     }
 
+    public PlayerPowerRecord getPlayersPowerRecord(UUID playerUUID) {
+        for (PlayerPowerRecord record : getPlayerPowerRecords()) {
+            if (record.getPlayerUUID().equals(playerUUID)) {
+                return record;
+            }
+        }
+        return null;
+    }
+
     public PlayerActivityRecord getPlayerActivityRecord(UUID uuid)
     {
         for (PlayerActivityRecord record : getPlayerActivityRecords())
