@@ -38,7 +38,7 @@ public class DamageEffectsAndDeathHandler implements Listener {
             Player attacker = (Player) event.getDamager();
             Player victim = (Player) event.getEntity();
         	// if these players are actively duelling then we don't want to handle friendly fire.
-            Duel duel = Utilities.getInstance().getDuel(attacker, victim);
+            Duel duel = EphemeralData.getInstance().getDuel(attacker, victim);
             if (duel == null)
             {
             	handleIfFriendlyFire(event, attacker, victim);	
@@ -67,7 +67,7 @@ public class DamageEffectsAndDeathHandler implements Listener {
                 Player victim = (Player) event.getEntity();
 
             	// if these players are actively duelling then we don't want to handle friendly fire.
-                Duel duel = Utilities.getInstance().getDuel(attacker, victim);
+                Duel duel = EphemeralData.getInstance().getDuel(attacker, victim);
                 if (duel == null)
                 {
                 	handleIfFriendlyFire(event, attacker, victim);	

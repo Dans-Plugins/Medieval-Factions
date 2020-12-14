@@ -43,18 +43,6 @@ public class Utilities {
         }
         return false;
     }
-
-    public Duel getDuel(Player player, Player target)
-    {
-    	for (Duel duel : EphemeralData.getInstance().getDuelingPlayers())
-    	{
-    		if (duel.hasPlayer(player) && duel.hasPlayer(target))
-    		{
-    			return duel;
-    		}
-    	}
-    	return null;
-    }
     
     public boolean isGateBlock(Block targetBlock, ArrayList<Faction> factions)
     {
