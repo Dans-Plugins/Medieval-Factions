@@ -20,7 +20,7 @@ public class SwearFealtyCommand {
 
                     String targetFactionName = Utilities.getInstance().createStringFromFirstArgOnwards(args);
 
-                    Faction playersFaction = Utilities.getInstance().getPlayersFaction(player.getUniqueId(), PersistentData.getInstance().getFactions());
+                    Faction playersFaction = PersistentData.getInstance().getPlayersFaction(player.getUniqueId());
                     Faction targetFaction = Utilities.getInstance().getFaction(targetFactionName, PersistentData.getInstance().getFactions());
 
                     if (targetFaction != null) {

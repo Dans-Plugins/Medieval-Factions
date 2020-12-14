@@ -15,7 +15,7 @@ public class AllyCommand {
 
             if (sender.hasPermission("mf.ally") || sender.hasPermission("mf.default")) {
                 if (Utilities.getInstance().isInFaction(player.getUniqueId(), PersistentData.getInstance().getFactions())) {
-                    Faction playersFaction = Utilities.getInstance().getPlayersFaction(player.getUniqueId(), PersistentData.getInstance().getFactions());
+                    Faction playersFaction = PersistentData.getInstance().getPlayersFaction(player.getUniqueId());
 
                     if (playersFaction.isOwner(player.getUniqueId()) || playersFaction.isOfficer(player.getUniqueId())) {
 

@@ -16,7 +16,7 @@ public class DeclareIndependenceCommand {
 
             if (player.hasPermission("mf.declareIndependence") || player.hasPermission("mf.default")) {
 
-                Faction playersFaction = Utilities.getInstance().getPlayersFaction(player.getUniqueId(), PersistentData.getInstance().getFactions());
+                Faction playersFaction = PersistentData.getInstance().getPlayersFaction(player.getUniqueId());
 
                     if (playersFaction != null) {
                         // if faction has liege

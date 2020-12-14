@@ -17,7 +17,7 @@ public class WhoCommand {
             if (sender.hasPermission("mf.who") || sender.hasPermission("mf.default")) {
                 if (args.length > 1) {
                     String name = Utilities.getInstance().createStringFromFirstArgOnwards(args);
-                    Faction faction = Utilities.getInstance().getPlayersFaction(Utilities.getInstance().findUUIDBasedOnPlayerName(name), PersistentData.getInstance().getFactions());
+                    Faction faction = PersistentData.getInstance().getPlayersFaction(Utilities.getInstance().findUUIDBasedOnPlayerName(name));
                     if (faction != null) {
                         Utilities.getInstance().sendFactionInfo(player, faction, ChunkManager.getInstance().getChunksClaimedByFaction(faction.getName(), PersistentData.getInstance().getClaimedChunks()));
                     }

@@ -22,7 +22,7 @@ public class HomeCommand {
 
             if (sender.hasPermission("mf.home") || sender.hasPermission("mf.default")) {
                 if (Utilities.getInstance().isInFaction(player.getUniqueId(), PersistentData.getInstance().getFactions())) {
-                    Faction playersFaction = Utilities.getInstance().getPlayersFaction(player.getUniqueId(), PersistentData.getInstance().getFactions());
+                    Faction playersFaction = PersistentData.getInstance().getPlayersFaction(player.getUniqueId());
                     if (playersFaction.getFactionHome() != null) {
 
                         // Check that factionHome is in it's own factions land and not claimed by someone else.

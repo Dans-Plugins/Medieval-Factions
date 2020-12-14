@@ -52,6 +52,16 @@ public class PersistentData {
 
     // specific getters ---
 
+    public Faction getPlayersFaction(UUID playerUUID) {
+        // membership check
+        for (Faction faction : getFactions()) {
+            if (faction.isMember(playerUUID)) {
+                return faction;
+            }
+        }
+        return null;
+    }
+
     public PlayerActivityRecord getPlayerActivityRecord(UUID uuid)
     {
         for (PlayerActivityRecord record : getPlayerActivityRecords())

@@ -16,7 +16,7 @@ public class RemoveLawCommand {
             Player player = (Player) sender;
 
             if (Utilities.getInstance().isInFaction(player.getUniqueId(), PersistentData.getInstance().getFactions())) {
-                Faction playersFaction = Utilities.getInstance().getPlayersFaction(player.getUniqueId(), PersistentData.getInstance().getFactions());
+                Faction playersFaction = PersistentData.getInstance().getPlayersFaction(player.getUniqueId());
 
                 if (playersFaction.isOwner(player.getUniqueId())) {
                     if (args.length > 1) {

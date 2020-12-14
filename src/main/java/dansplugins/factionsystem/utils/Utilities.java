@@ -81,16 +81,6 @@ public class Utilities {
         return false;
     }
 
-    public Faction getPlayersFaction(UUID playerUUID, ArrayList<Faction> factions) {
-        // membership check
-        for (Faction faction : factions) {
-            if (faction.isMember(playerUUID)) {
-                return faction;
-            }
-        }
-        return null;
-    }
-
     public void sendFactionInfo(Player player, Faction faction, int power) {
         player.sendMessage(ChatColor.BOLD + "" + ChatColor.AQUA + faction.getName() + " Faction Info" + "\n----------\n");
         player.sendMessage(ChatColor.AQUA + "Name: " + faction.getName() + "\n");

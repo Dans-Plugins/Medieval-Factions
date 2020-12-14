@@ -150,7 +150,7 @@ public class CommandInterpreter {
 
                             // if not at demesne limit
                             if (Utilities.getInstance().isInFaction(player.getUniqueId(), PersistentData.getInstance().getFactions())) {
-                                Faction playersFaction = Utilities.getInstance().getPlayersFaction(player.getUniqueId(), PersistentData.getInstance().getFactions());
+                                Faction playersFaction = PersistentData.getInstance().getPlayersFaction(player.getUniqueId());
                                 if (ChunkManager.getInstance().getChunksClaimedByFaction(playersFaction.getName(), PersistentData.getInstance().getClaimedChunks()) < playersFaction.getCumulativePowerLevel()) {
                                     ChunkManager.getInstance().addChunkAtPlayerLocation(player);
                                     return true;

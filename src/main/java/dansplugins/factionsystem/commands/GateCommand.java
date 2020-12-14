@@ -43,7 +43,7 @@ public class GateCommand {
 						}
 						else
 						{
-							Faction faction = Utilities.getInstance().getPlayersFaction(player.getUniqueId(), PersistentData.getInstance().getFactions());
+							Faction faction = PersistentData.getInstance().getPlayersFaction(player.getUniqueId());
 							if (faction != null)
 							{
 								if (faction.isOfficer(player.getUniqueId()) || faction.isOwner(player.getUniqueId()))
@@ -68,7 +68,7 @@ public class GateCommand {
 					}
 					else if (args[1].equalsIgnoreCase("list"))
 					{
-						Faction faction = Utilities.getInstance().getPlayersFaction(player.getUniqueId(), PersistentData.getInstance().getFactions());
+						Faction faction = PersistentData.getInstance().getPlayersFaction(player.getUniqueId());
 						if (faction != null)
 						{
 							if (faction.getGates().size() > 0)

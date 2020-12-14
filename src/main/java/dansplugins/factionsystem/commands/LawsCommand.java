@@ -18,7 +18,7 @@ public class LawsCommand {
             Faction faction = null;
 
             if (args.length == 1) {
-                faction = Utilities.getInstance().getPlayersFaction(player.getUniqueId(), PersistentData.getInstance().getFactions());
+                faction = PersistentData.getInstance().getPlayersFaction(player.getUniqueId());
             }
             else {
                 String target = Utilities.getInstance().createStringFromFirstArgOnwards(args);
