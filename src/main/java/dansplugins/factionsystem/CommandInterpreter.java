@@ -219,7 +219,7 @@ public class CommandInterpreter {
                                     player.sendMessage(ChatColor.GREEN + "All land unclaimed from " + factionName + "!");
 
                                     // remove locks associated with this faction
-                                    Utilities.getInstance().removeAllLocks(faction.getName(), PersistentData.getInstance().getLockedBlocks());
+                                    PersistentData.getInstance().removeAllLocks(faction.getName());
                                     return true;
                                 } else {
                                     player.sendMessage(ChatColor.RED + "That faction wasn't found!");
@@ -244,7 +244,7 @@ public class CommandInterpreter {
                                     player.sendMessage(ChatColor.GREEN + "All land unclaimed.");
 
                                     // remove locks associated with this faction
-                                    Utilities.getInstance().removeAllLocks(faction.getName(), PersistentData.getInstance().getLockedBlocks());
+                                    PersistentData.getInstance().removeAllLocks(faction.getName());
                                     return true;
                                 }
                             }

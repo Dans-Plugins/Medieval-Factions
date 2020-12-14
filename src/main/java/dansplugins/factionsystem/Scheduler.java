@@ -139,7 +139,7 @@ public class Scheduler {
             ChunkManager.getInstance().removeAllClaimedChunks(factionToRemove.getName(), PersistentData.getInstance().getClaimedChunks());
 
             // remove locks associated with this faction
-            Utilities.getInstance().removeAllLocks(factionToRemove.getName(), PersistentData.getInstance().getLockedBlocks());
+            PersistentData.getInstance().removeAllLocks(factionToRemove.getName());
 
             // remove records of alliances/wars associated with this faction
             for (Faction faction : PersistentData.getInstance().getFactions()) {

@@ -78,7 +78,7 @@ public class DisbandCommand {
         ChunkManager.getInstance().removeAllClaimedChunks(PersistentData.getInstance().getFactions().get(i).getName(), PersistentData.getInstance().getClaimedChunks());
 
         // remove locks associated with this faction
-        Utilities.getInstance().removeAllLocks(PersistentData.getInstance().getFactions().get(i).getName(), PersistentData.getInstance().getLockedBlocks());
+        PersistentData.getInstance().removeAllLocks(PersistentData.getInstance().getFactions().get(i).getName());
 
         // remove records of alliances/wars associated with this faction
         for (Faction faction : PersistentData.getInstance().getFactions()) {
