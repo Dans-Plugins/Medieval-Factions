@@ -23,7 +23,7 @@ public class AllyCommand {
 
                         if (args.length > 1) {
                             String targetFactionName = Utilities.getInstance().createStringFromFirstArgOnwards(args);
-                            Faction targetFaction = Utilities.getInstance().getFaction(targetFactionName, PersistentData.getInstance().getFactions());
+                            Faction targetFaction = PersistentData.getInstance().getFaction(targetFactionName);
 
                             if (!playersFaction.getName().equalsIgnoreCase(targetFactionName)) {
 
@@ -45,7 +45,7 @@ public class AllyCommand {
                                                 if (playersFaction.isRequestedAlly(targetFactionName) && targetFaction.isRequestedAlly(playersFaction.getName())) {
                                                     // ally factions
                                                     playersFaction.addAlly(targetFactionName);
-                                                    Utilities.getInstance().getFaction(targetFactionName, PersistentData.getInstance().getFactions()).addAlly(playersFaction.getName());
+                                                    PersistentData.getInstance().getFaction(targetFactionName).addAlly(playersFaction.getName());
                                                     player.sendMessage(ChatColor.GREEN + "Your faction is now allied with " + targetFactionName + "!");
                                                     Utilities.getInstance().sendAllPlayersInFactionMessage(targetFaction, ChatColor.GREEN + "Your faction is now allied with " + playersFaction.getName() + "!");
                                                 }

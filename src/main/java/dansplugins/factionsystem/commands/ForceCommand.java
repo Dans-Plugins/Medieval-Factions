@@ -98,8 +98,8 @@ public class ForceCommand {
                 String factionName1 = singleQuoteArgs.get(0);
                 String factionName2 = singleQuoteArgs.get(1);
 
-                Faction faction1 = Utilities.getInstance().getFaction(factionName1, PersistentData.getInstance().getFactions());
-                Faction faction2 = Utilities.getInstance().getFaction(factionName2, PersistentData.getInstance().getFactions());
+                Faction faction1 = PersistentData.getInstance().getFaction(factionName1);
+                Faction faction2 = PersistentData.getInstance().getFaction(factionName2);
 
                 // force peace
                 if (faction1 != null && faction2 != null) {
@@ -179,7 +179,7 @@ public class ForceCommand {
                 String playerName = singleQuoteArgs.get(0);
                 String factionName = singleQuoteArgs.get(1);
 
-                Faction faction = Utilities.getInstance().getFaction(factionName, PersistentData.getInstance().getFactions());
+                Faction faction = PersistentData.getInstance().getFaction(factionName);
 
                 for (OfflinePlayer player : Bukkit.getOfflinePlayers()) {
                     if (player.getName().equalsIgnoreCase(playerName)) {

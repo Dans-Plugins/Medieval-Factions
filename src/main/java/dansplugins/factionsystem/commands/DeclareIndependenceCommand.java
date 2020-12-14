@@ -22,7 +22,7 @@ public class DeclareIndependenceCommand {
                         // if faction has liege
                         if (playersFaction.hasLiege()) {
 
-                            Faction targetFaction = Utilities.getInstance().getFaction(playersFaction.getLiege(), PersistentData.getInstance().getFactions());
+                            Faction targetFaction = PersistentData.getInstance().getFaction(playersFaction.getLiege());
 
                             // if owner of faction
                             if (playersFaction.isOwner(player.getUniqueId())) {

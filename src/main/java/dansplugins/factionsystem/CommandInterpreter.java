@@ -207,7 +207,7 @@ public class CommandInterpreter {
 
                                 String factionName = Utilities.getInstance().createStringFromFirstArgOnwards(args);
 
-                                Faction faction = Utilities.getInstance().getFaction(factionName, PersistentData.getInstance().getFactions());
+                                Faction faction = PersistentData.getInstance().getFaction(factionName);
 
                                 if (faction != null) {
                                     // remove faction home

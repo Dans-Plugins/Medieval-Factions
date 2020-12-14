@@ -21,7 +21,7 @@ public class VassalizeCommand {
                     String targetFactionName = Utilities.getInstance().createStringFromFirstArgOnwards(args);
 
                     Faction playersFaction = PersistentData.getInstance().getPlayersFaction(player.getUniqueId());
-                    Faction targetFaction = Utilities.getInstance().getFaction(targetFactionName, PersistentData.getInstance().getFactions());
+                    Faction targetFaction = PersistentData.getInstance().getFaction(targetFactionName);
 
                     if (targetFaction != null) {
 

@@ -112,15 +112,6 @@ public class Utilities {
         }
     }
 
-    public Faction getFaction(String name, ArrayList<Faction> factions) {
-        for (Faction faction : factions) {
-            if (faction.getName().equalsIgnoreCase(name)) {
-                return faction;
-            }
-        }
-        return null;
-    }
-
     public void removeAllLocks(String factionName, ArrayList<LockedBlock> lockedBlocks) {
         Iterator<LockedBlock> itr = lockedBlocks.iterator();
 

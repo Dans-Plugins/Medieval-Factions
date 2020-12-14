@@ -25,7 +25,7 @@ public class LawsCommand {
                 boolean exists = false;
                 for (Faction f : PersistentData.getInstance().getFactions()) {
                     if (f.getName().equalsIgnoreCase(target)) {
-                        faction = Utilities.getInstance().getFaction(target, PersistentData.getInstance().getFactions());
+                        faction = PersistentData.getInstance().getFaction(target);
                         exists = true;
                     }
                 }

@@ -23,7 +23,7 @@ public class MakePeaceCommand {
 
                         if (args.length > 1) {
                             String targetFactionName = Utilities.getInstance().createStringFromFirstArgOnwards(args);
-                            Faction targetFaction = Utilities.getInstance().getFaction(targetFactionName, PersistentData.getInstance().getFactions());
+                            Faction targetFaction = PersistentData.getInstance().getFaction(targetFactionName);
 
                             if (!playersFaction.getName().equalsIgnoreCase(targetFactionName)) {
 
@@ -46,7 +46,7 @@ public class MakePeaceCommand {
 
                                                 // make peace between factions
                                                 playersFaction.removeEnemy(targetFactionName);
-                                                Utilities.getInstance().getFaction(targetFactionName, PersistentData.getInstance().getFactions()).removeEnemy(playersFaction.getName());
+                                                PersistentData.getInstance().getFaction(targetFactionName).removeEnemy(playersFaction.getName());
                                                 Utilities.getInstance().sendAllPlayersOnServerMessage(ChatColor.GREEN + playersFaction.getName() + " is now at peace with " + targetFactionName + "!");
                                             }
                                         }

@@ -52,6 +52,15 @@ public class PersistentData {
 
     // specific getters ---
 
+    public Faction getFaction(String name) {
+        for (Faction faction : getFactions()) {
+            if (faction.getName().equalsIgnoreCase(name)) {
+                return faction;
+            }
+        }
+        return null;
+    }
+
     public Faction getPlayersFaction(UUID playerUUID) {
         // membership check
         for (Faction faction : getFactions()) {

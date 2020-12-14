@@ -124,7 +124,7 @@ public class Scheduler {
             }
         }
         for (String factionName : factionsToDisband) {
-            Utilities.getInstance().sendAllPlayersInFactionMessage(Utilities.getInstance().getFaction(factionName, PersistentData.getInstance().getFactions()), ChatColor.RED + "Your faction has been disbanded due to its cumulative power reaching zero.");
+            Utilities.getInstance().sendAllPlayersInFactionMessage(PersistentData.getInstance().getFaction(factionName), ChatColor.RED + "Your faction has been disbanded due to its cumulative power reaching zero.");
             removeFaction(factionName);
             System.out.println(factionName + " has been disbanded due to its cumulative power reaching zero.");
         }
@@ -132,7 +132,7 @@ public class Scheduler {
 
     private void removeFaction(String name) {
 
-        Faction factionToRemove = Utilities.getInstance().getFaction(name, PersistentData.getInstance().getFactions());
+        Faction factionToRemove = PersistentData.getInstance().getFaction(name);
 
         if (factionToRemove != null) {
             // remove claimed land objects associated with this faction

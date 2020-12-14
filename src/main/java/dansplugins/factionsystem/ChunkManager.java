@@ -169,7 +169,7 @@ public class ChunkManager {
             ClaimedChunk chunk = isChunkClaimed(playerCoords[0], playerCoords[1], player.getLocation().getWorld().getName());
             if (chunk != null)
             {
-                removeChunk(chunk, player, Utilities.getInstance().getFaction(chunk.getHolder(), PersistentData.getInstance().getFactions()));
+                removeChunk(chunk, player, PersistentData.getInstance().getFaction(chunk.getHolder()));
                 player.sendMessage(ChatColor.GREEN + "Land unclaimed using admin bypass!");
                 return;
             }
