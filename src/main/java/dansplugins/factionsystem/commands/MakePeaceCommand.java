@@ -14,7 +14,7 @@ public class MakePeaceCommand {
             Player player = (Player) sender;
 
             if (sender.hasPermission("mf.makepeace") || sender.hasPermission("mf.default")) {
-                if (Utilities.getInstance().isInFaction(player.getUniqueId(), PersistentData.getInstance().getFactions())) {
+                if (PersistentData.getInstance().isInFaction(player.getUniqueId())) {
                     Faction playersFaction = PersistentData.getInstance().getPlayersFaction(player.getUniqueId());
 
                     if (playersFaction.isOwner(player.getUniqueId()) || playersFaction.isOfficer(player.getUniqueId())) {

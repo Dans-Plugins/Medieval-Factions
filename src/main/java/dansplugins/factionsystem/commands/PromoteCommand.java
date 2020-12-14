@@ -18,7 +18,7 @@ public class PromoteCommand {
             Player player = (Player) sender;
 
             if (sender.hasPermission("mf.promote") || sender.hasPermission("mf.default")) {
-                if (Utilities.getInstance().isInFaction(player.getUniqueId(), PersistentData.getInstance().getFactions())) {
+                if (PersistentData.getInstance().isInFaction(player.getUniqueId())) {
                     if (args.length > 1) {
                         for (Faction faction : PersistentData.getInstance().getFactions()) {
                             UUID playerUUID = Utilities.getInstance().findUUIDBasedOnPlayerName(args[1]);

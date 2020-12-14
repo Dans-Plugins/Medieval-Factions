@@ -14,7 +14,7 @@ public class ChatCommand {
             Player player = (Player) sender;
 
             if (player.hasPermission("mf.chat") || player.hasPermission("mf.default")) {
-                if (Utilities.getInstance().isInFaction(player.getUniqueId(), PersistentData.getInstance().getFactions())) {
+                if (PersistentData.getInstance().isInFaction(player.getUniqueId())) {
                     if (!EphemeralData.getInstance().getPlayersInFactionChat().contains(player.getUniqueId())) {
                         EphemeralData.getInstance().getPlayersInFactionChat().add(player.getUniqueId());
                         player.sendMessage(ChatColor.GREEN + "You are now speaking in faction chat!");

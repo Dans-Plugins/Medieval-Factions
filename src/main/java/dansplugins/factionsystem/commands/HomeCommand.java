@@ -21,7 +21,7 @@ public class HomeCommand {
             Player player = (Player) sender;
 
             if (sender.hasPermission("mf.home") || sender.hasPermission("mf.default")) {
-                if (Utilities.getInstance().isInFaction(player.getUniqueId(), PersistentData.getInstance().getFactions())) {
+                if (PersistentData.getInstance().isInFaction(player.getUniqueId())) {
                     Faction playersFaction = PersistentData.getInstance().getPlayersFaction(player.getUniqueId());
                     if (playersFaction.getFactionHome() != null) {
 

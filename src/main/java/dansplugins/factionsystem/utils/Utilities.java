@@ -30,31 +30,6 @@ public class Utilities {
         }
         return instance;
     }
-    
-    public boolean isGateBlock(Block targetBlock, ArrayList<Faction> factions)
-    {
-    	for (Faction faction : factions)
-    	{
-    		for (Gate gate : faction.getGates())
-    		{
-    			if (gate.hasBlock(targetBlock))
-    			{
-    				return true;
-    			}
-    		}
-    	}
-    	return false;
-    }
-   
-    public boolean isInFaction(UUID playerUUID, ArrayList<Faction> factions) {
-        // membership check
-        for (Faction faction : factions) {
-            if (faction.isMember(playerUUID)) {
-                return true;
-            }
-        }
-        return false;
-    }
 
     public void sendFactionInfo(Player player, Faction faction, int power) {
         player.sendMessage(ChatColor.BOLD + "" + ChatColor.AQUA + faction.getName() + " Faction Info" + "\n----------\n");

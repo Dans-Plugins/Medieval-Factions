@@ -28,7 +28,7 @@ public class RenameCommand {
                         }
                     }
 
-                    if (Utilities.getInstance().isInFaction(player.getUniqueId(), PersistentData.getInstance().getFactions())) {
+                    if (PersistentData.getInstance().isInFaction(player.getUniqueId())) {
                         Faction playersFaction = PersistentData.getInstance().getPlayersFaction(player.getUniqueId());
                         if (playersFaction.isOwner(player.getUniqueId())) {
 

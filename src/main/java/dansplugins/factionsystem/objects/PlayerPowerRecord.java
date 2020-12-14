@@ -42,7 +42,7 @@ public class PlayerPowerRecord {
     }
 
     private boolean isPlayerAFactionOwner(UUID player, ArrayList<Faction> factions){
-        if (Utilities.getInstance().isInFaction(player, factions)){
+        if (PersistentData.getInstance().isInFaction(player)){
             Faction faction = PersistentData.getInstance().getPlayersFaction(player);
             return faction.getOwner().equals(player);
         } else {
@@ -51,7 +51,7 @@ public class PlayerPowerRecord {
     }
 
     public boolean isPlayerAFactionOfficer(UUID player, ArrayList<Faction> factions) {
-        if (Utilities.getInstance().isInFaction(player, factions)){
+        if (PersistentData.getInstance().isInFaction(player)){
             Faction faction = PersistentData.getInstance().getPlayersFaction(player);
             return faction.isOfficer(player);
         } else {

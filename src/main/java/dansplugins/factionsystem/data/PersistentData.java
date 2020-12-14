@@ -107,14 +107,39 @@ public class PersistentData {
 
     // checkers --
 
+    public boolean isInFaction(UUID playerUUID) {
+        // membership check
+        for (Faction faction : getFactions()) {
+            if (faction.isMember(playerUUID)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
     public boolean isBlockLocked(Block block) {
         return isBlockLocked(block.getX(), block.getY(), block.getZ(), block.getWorld().getName());
     }
 
     private boolean isBlockLocked(int x, int y, int z, String world) {
-        for (LockedBlock block : PersistentData.getInstance().getLockedBlocks()) {
+        for (LockedBlock block : getLockedBlocks()) {
             if (block.getX() == x && block.getY() == y && block.getZ() == z && block.getWorld().equalsIgnoreCase(world)) {
                 return true;
+            }
+        }
+        return false;
+    }
+
+    public boolean isGateBlock(Block targetBlock)
+    {
+        for (Faction faction : getFactions())
+        {
+            for (Gate gate : faction.getGates())
+            {
+                if (gate.hasBlock(targetBlock))
+                {
+                    return true;
+                }
             }
         }
         return false;

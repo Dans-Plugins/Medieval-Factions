@@ -185,7 +185,7 @@ public class ForceCommand {
                     if (player.getName().equalsIgnoreCase(playerName)) {
 
                         if (faction != null) {
-                            if (!(Utilities.getInstance().isInFaction(player.getUniqueId(), PersistentData.getInstance().getFactions()))) {
+                            if (!(PersistentData.getInstance().isInFaction(player.getUniqueId()))) {
                                 faction.addMember(player.getUniqueId(), PersistentData.getInstance().getPlayersPowerRecord(player.getUniqueId()).getPowerLevel());
                                 try {
                                     Utilities.getInstance().sendAllPlayersInFactionMessage(faction, ChatColor.GREEN + player.getName() + " has joined " + faction.getName());

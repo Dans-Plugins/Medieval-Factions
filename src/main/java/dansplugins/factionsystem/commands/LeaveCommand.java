@@ -18,7 +18,7 @@ public class LeaveCommand {
             Player player = (Player) sender;
 
             if (sender.hasPermission("mf.leave") || sender.hasPermission("mf.default")) {
-                if (Utilities.getInstance().isInFaction(player.getUniqueId(), PersistentData.getInstance().getFactions())) {
+                if (PersistentData.getInstance().isInFaction(player.getUniqueId())) {
                     for (int i = 0; i < PersistentData.getInstance().getFactions().size(); i++) {
                         if (PersistentData.getInstance().getFactions().get(i).isMember(player.getUniqueId())) {
                             if (PersistentData.getInstance().getFactions().get(i).isOwner(player.getUniqueId())) {

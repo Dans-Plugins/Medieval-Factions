@@ -95,7 +95,7 @@ public class GateCommand {
 					{
 						if (player.getTargetBlock(null, 16) != null)
 						{
-							if (Utilities.getInstance().isGateBlock(player.getTargetBlock(null, 16), PersistentData.getInstance().getFactions()))
+							if (PersistentData.getInstance().isGateBlock(player.getTargetBlock(null, 16)))
 							{
 								Gate gate = getGate(player.getTargetBlock(null, 16), PersistentData.getInstance().getFactions());
 								Faction faction = getGateFaction(gate, PersistentData.getInstance().getFactions());
@@ -135,7 +135,7 @@ public class GateCommand {
 					{						
 						if (player.getTargetBlock(null, 16) != null)
 						{
-							if (Utilities.getInstance().isGateBlock(player.getTargetBlock(null, 16), PersistentData.getInstance().getFactions()))
+							if (PersistentData.getInstance().isGateBlock(player.getTargetBlock(null, 16)))
 							{
 								Gate gate = getGate(player.getTargetBlock(null, 16), PersistentData.getInstance().getFactions());
 								if (args.length > 2)

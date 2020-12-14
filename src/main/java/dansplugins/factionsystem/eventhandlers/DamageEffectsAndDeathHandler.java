@@ -149,7 +149,7 @@ public class DamageEffectsAndDeathHandler implements Listener {
     }
 
     private boolean arePlayersInAFaction(Player player1, Player player2) {
-        return Utilities.getInstance().isInFaction(player1.getUniqueId(), PersistentData.getInstance().getFactions()) && Utilities.getInstance().isInFaction(player2.getUniqueId(), PersistentData.getInstance().getFactions());
+        return PersistentData.getInstance().isInFaction(player1.getUniqueId()) && PersistentData.getInstance().isInFaction(player2.getUniqueId());
     }
 
     @EventHandler()
@@ -245,7 +245,7 @@ public class DamageEffectsAndDeathHandler implements Listener {
         }
 
         // if player is in faction
-        if (Utilities.getInstance().isInFaction(player.getUniqueId(), PersistentData.getInstance().getFactions())) {
+        if (PersistentData.getInstance().isInFaction(player.getUniqueId())) {
 
             // if player is in land claimed by their faction
             double[] playerCoords = new double[2];

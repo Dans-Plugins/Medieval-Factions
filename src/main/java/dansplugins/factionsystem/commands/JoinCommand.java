@@ -24,7 +24,7 @@ public class JoinCommand {
                             if (faction.isInvited(player.getUniqueId())) {
 
                                 // join if player isn't in a faction already
-                                if (!(Utilities.getInstance().isInFaction(player.getUniqueId(), PersistentData.getInstance().getFactions()))) {
+                                if (!(PersistentData.getInstance().isInFaction(player.getUniqueId()))) {
                                     faction.addMember(player.getUniqueId(), PersistentData.getInstance().getPlayersPowerRecord(player.getUniqueId()).getPowerLevel());
                                     faction.uninvite(player.getUniqueId());
                                     try {

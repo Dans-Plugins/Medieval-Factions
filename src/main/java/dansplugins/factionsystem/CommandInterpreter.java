@@ -149,7 +149,7 @@ public class CommandInterpreter {
                             Player player = (Player) sender;
 
                             // if not at demesne limit
-                            if (Utilities.getInstance().isInFaction(player.getUniqueId(), PersistentData.getInstance().getFactions())) {
+                            if (PersistentData.getInstance().isInFaction(player.getUniqueId())) {
                                 Faction playersFaction = PersistentData.getInstance().getPlayersFaction(player.getUniqueId());
                                 if (ChunkManager.getInstance().getChunksClaimedByFaction(playersFaction.getName(), PersistentData.getInstance().getClaimedChunks()) < playersFaction.getCumulativePowerLevel()) {
                                     ChunkManager.getInstance().addChunkAtPlayerLocation(player);
@@ -178,7 +178,7 @@ public class CommandInterpreter {
                     if (sender.hasPermission("mf.unclaim") || sender.hasPermission("mf.default")) {
                         if (sender instanceof Player) {
                             Player player = (Player) sender;
-                            if (Utilities.getInstance().isInFaction(player.getUniqueId(), PersistentData.getInstance().getFactions())) {
+                            if (PersistentData.getInstance().isInFaction(player.getUniqueId())) {
                                 ChunkManager.getInstance().removeChunkAtPlayerLocation(player);
                                 return true;
                             }
@@ -288,7 +288,7 @@ public class CommandInterpreter {
                         if (sender instanceof Player) {
                             Player player = (Player) sender;
 
-                            if (Utilities.getInstance().isInFaction(player.getUniqueId(), PersistentData.getInstance().getFactions())) {
+                            if (PersistentData.getInstance().isInFaction(player.getUniqueId())) {
                                 boolean owner = false;
                                 for (Faction faction : PersistentData.getInstance().getFactions()) {
                                     if (faction.isOwner(player.getUniqueId())) {

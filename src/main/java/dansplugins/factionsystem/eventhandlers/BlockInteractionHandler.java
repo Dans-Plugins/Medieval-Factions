@@ -44,7 +44,7 @@ public class BlockInteractionHandler implements Listener {
         if (chunk != null) {
 
             // player not in a faction
-            if (!Utilities.getInstance().isInFaction(event.getPlayer().getUniqueId(), PersistentData.getInstance().getFactions())) {
+            if (!PersistentData.getInstance().isInFaction(event.getPlayer().getUniqueId())) {
                 event.setCancelled(true);
             }
 
@@ -111,7 +111,7 @@ public class BlockInteractionHandler implements Listener {
         if (chunk != null) {
 
             // player not in a faction
-            if (!Utilities.getInstance().isInFaction(event.getPlayer().getUniqueId(), PersistentData.getInstance().getFactions()) && !EphemeralData.getInstance().getAdminsBypassingProtections().contains(event.getPlayer().getUniqueId())) {
+            if (!PersistentData.getInstance().isInFaction(event.getPlayer().getUniqueId()) && !EphemeralData.getInstance().getAdminsBypassingProtections().contains(event.getPlayer().getUniqueId())) {
                 event.setCancelled(true);
             }
 
@@ -788,7 +788,7 @@ public class BlockInteractionHandler implements Listener {
 
     private void handleClaimedChunk(PlayerInteractEvent event, ClaimedChunk chunk) {
         // player not in a faction and isn't overriding
-        if (!Utilities.getInstance().isInFaction(event.getPlayer().getUniqueId(), PersistentData.getInstance().getFactions()) && !EphemeralData.getInstance().getAdminsBypassingProtections().contains(event.getPlayer().getUniqueId())) {
+        if (!PersistentData.getInstance().isInFaction(event.getPlayer().getUniqueId()) && !EphemeralData.getInstance().getAdminsBypassingProtections().contains(event.getPlayer().getUniqueId())) {
             event.setCancelled(true);
         }
 
