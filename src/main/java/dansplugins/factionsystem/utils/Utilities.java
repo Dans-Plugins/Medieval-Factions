@@ -74,35 +74,6 @@ public class Utilities {
         }
     }
 
-    public void removeAllLocks(String factionName, ArrayList<LockedBlock> lockedBlocks) {
-        Iterator<LockedBlock> itr = lockedBlocks.iterator();
-
-        while (itr.hasNext()) {
-            LockedBlock currentBlock = itr.next();
-            if (currentBlock.getFactionName().equalsIgnoreCase(factionName)) {
-
-                String identifier = currentBlock.getX() + "_" + currentBlock.getY() + "_" + currentBlock.getZ();
-
-                try {
-
-                    // delete file associated with chunk
-                    System.out.println("Attempting to delete file plugins/MedievalFactions/lockedblocks/" + identifier + ".txt");
-                    File fileToDelete = new File("plugins/Medievalfactions/lockedblocks/" + identifier + ".txt");
-                    if (fileToDelete.delete()) {
-                        System.out.println("Success. File deleted.");
-                    } else {
-                        System.out.println("There was a problem deleting the file.");
-                    }
-
-                    itr.remove();
-                }
-                catch(Exception e) {
-                    System.out.println("An error has occurred during lock removal.");
-                }
-            }
-        }
-    }
-
     public String findPlayerNameBasedOnUUID(UUID playerUUID) {
         // Check online
         for (Player player : getOnlinePlayers()){
@@ -121,7 +92,7 @@ public class Utilities {
         return "";
     }
 
-    public  UUID findUUIDBasedOnPlayerName(String playerName){
+    public UUID findUUIDBasedOnPlayerName(String playerName){
         // Check online
         for (Player player : getOnlinePlayers()){
             if (player.getName().equals(playerName)){
