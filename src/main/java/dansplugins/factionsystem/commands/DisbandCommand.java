@@ -72,7 +72,7 @@ public class DisbandCommand {
         return false;
     }
 
-    public void removeFaction(int i) {
+    private void removeFaction(int i) {
 
         // remove claimed land objects associated with this faction
         ChunkManager.getInstance().removeAllClaimedChunks(PersistentData.getInstance().getFactions().get(i).getName(), PersistentData.getInstance().getClaimedChunks());
