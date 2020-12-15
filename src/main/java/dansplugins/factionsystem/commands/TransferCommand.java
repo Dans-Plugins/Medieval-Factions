@@ -1,8 +1,8 @@
 package dansplugins.factionsystem.commands;
 
+import dansplugins.factionsystem.UUIDChecker;
 import dansplugins.factionsystem.data.PersistentData;
 import dansplugins.factionsystem.objects.Faction;
-import dansplugins.factionsystem.utils.Utilities;
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
@@ -23,7 +23,7 @@ public class TransferCommand {
                     if (faction.isOwner(player.getUniqueId())) {
                         owner = true;
                         if (args.length > 1) {
-                            UUID playerUUID = Utilities.getInstance().findUUIDBasedOnPlayerName(args[1]);
+                            UUID playerUUID = UUIDChecker.getInstance().findUUIDBasedOnPlayerName(args[1]);
                             if (faction.isMember(playerUUID)) {
 
                                 if (playerUUID.equals(player.getUniqueId())) {

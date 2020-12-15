@@ -2,7 +2,7 @@ package dansplugins.factionsystem.commands;
 
 import dansplugins.factionsystem.data.PersistentData;
 import dansplugins.factionsystem.objects.Faction;
-import dansplugins.factionsystem.utils.Utilities;
+import dansplugins.factionsystem.utils.StringBuilder;
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
@@ -18,14 +18,14 @@ public class LawsCommand {
             Faction faction = null;
 
             if (args.length == 1) {
-                faction = Utilities.getInstance().getPlayersFaction(player.getUniqueId(), PersistentData.getInstance().getFactions());
+                faction = PersistentData.getInstance().getPlayersFaction(player.getUniqueId());
             }
             else {
-                String target = Utilities.getInstance().createStringFromFirstArgOnwards(args);
+                String target = StringBuilder.getInstance().createStringFromFirstArgOnwards(args);
                 boolean exists = false;
                 for (Faction f : PersistentData.getInstance().getFactions()) {
                     if (f.getName().equalsIgnoreCase(target)) {
-                        faction = Utilities.getInstance().getFaction(target, PersistentData.getInstance().getFactions());
+                        faction = PersistentData.getInstance().getFaction(target);
                         exists = true;
                     }
                 }

@@ -4,7 +4,6 @@ import dansplugins.factionsystem.data.EphemeralData;
 import dansplugins.factionsystem.data.PersistentData;
 import dansplugins.factionsystem.objects.Faction;
 import dansplugins.factionsystem.objects.Gate;
-import dansplugins.factionsystem.utils.Utilities;
 import org.bukkit.ChatColor;
 import org.bukkit.block.Block;
 import org.bukkit.command.CommandSender;
@@ -43,7 +42,7 @@ public class GateCommand {
 						}
 						else
 						{
-							Faction faction = Utilities.getInstance().getPlayersFaction(player.getUniqueId(), PersistentData.getInstance().getFactions());
+							Faction faction = PersistentData.getInstance().getPlayersFaction(player.getUniqueId());
 							if (faction != null)
 							{
 								if (faction.isOfficer(player.getUniqueId()) || faction.isOwner(player.getUniqueId()))
@@ -68,7 +67,7 @@ public class GateCommand {
 					}
 					else if (args[1].equalsIgnoreCase("list"))
 					{
-						Faction faction = Utilities.getInstance().getPlayersFaction(player.getUniqueId(), PersistentData.getInstance().getFactions());
+						Faction faction = PersistentData.getInstance().getPlayersFaction(player.getUniqueId());
 						if (faction != null)
 						{
 							if (faction.getGates().size() > 0)
@@ -95,7 +94,7 @@ public class GateCommand {
 					{
 						if (player.getTargetBlock(null, 16) != null)
 						{
-							if (Utilities.getInstance().isGateBlock(player.getTargetBlock(null, 16), PersistentData.getInstance().getFactions()))
+							if (PersistentData.getInstance().isGateBlock(player.getTargetBlock(null, 16)))
 							{
 								Gate gate = getGate(player.getTargetBlock(null, 16), PersistentData.getInstance().getFactions());
 								Faction faction = getGateFaction(gate, PersistentData.getInstance().getFactions());
@@ -135,7 +134,7 @@ public class GateCommand {
 					{						
 						if (player.getTargetBlock(null, 16) != null)
 						{
-							if (Utilities.getInstance().isGateBlock(player.getTargetBlock(null, 16), PersistentData.getInstance().getFactions()))
+							if (PersistentData.getInstance().isGateBlock(player.getTargetBlock(null, 16)))
 							{
 								Gate gate = getGate(player.getTargetBlock(null, 16), PersistentData.getInstance().getFactions());
 								if (args.length > 2)

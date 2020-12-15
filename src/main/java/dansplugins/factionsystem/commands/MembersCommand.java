@@ -1,8 +1,9 @@
 package dansplugins.factionsystem.commands;
 
+import dansplugins.factionsystem.UUIDChecker;
 import dansplugins.factionsystem.data.PersistentData;
 import dansplugins.factionsystem.objects.Faction;
-import dansplugins.factionsystem.utils.Utilities;
+import dansplugins.factionsystem.utils.StringBuilder;
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
@@ -28,7 +29,7 @@ public class MembersCommand {
                 }
                 else {
                     // creating name from arguments 1 to the last one
-                    String name = Utilities.getInstance().createStringFromFirstArgOnwards(args);
+                    String name = StringBuilder.getInstance().createStringFromFirstArgOnwards(args);
 
                     for (Faction faction : PersistentData.getInstance().getFactions()) {
                         if (faction.getName().equalsIgnoreCase(name)) {
@@ -51,11 +52,11 @@ public class MembersCommand {
         for (UUID member : members) {
             // Is Owner
             if (member.equals(faction.getOwner())){
-                player.sendMessage(ChatColor.AQUA + Utilities.getInstance().findPlayerNameBasedOnUUID(member) + "**\n");
+                player.sendMessage(ChatColor.AQUA + UUIDChecker.getInstance().findPlayerNameBasedOnUUID(member) + "**\n");
             } else if (faction.isOfficer(member)) {
-                player.sendMessage(ChatColor.AQUA + Utilities.getInstance().findPlayerNameBasedOnUUID(member) + "*\n");
+                player.sendMessage(ChatColor.AQUA + UUIDChecker.getInstance().findPlayerNameBasedOnUUID(member) + "*\n");
             } else {
-                player.sendMessage(ChatColor.AQUA + Utilities.getInstance().findPlayerNameBasedOnUUID(member) + "\n");
+                player.sendMessage(ChatColor.AQUA + UUIDChecker.getInstance().findPlayerNameBasedOnUUID(member) + "\n");
             }
         }
         player.sendMessage(ChatColor.AQUA + "----------\n");

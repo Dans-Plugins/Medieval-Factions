@@ -1,8 +1,9 @@
 package dansplugins.factionsystem.commands;
 
+import dansplugins.factionsystem.Messenger;
 import dansplugins.factionsystem.data.PersistentData;
 import dansplugins.factionsystem.objects.Faction;
-import dansplugins.factionsystem.utils.Utilities;
+import dansplugins.factionsystem.utils.StringBuilder;
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
@@ -25,7 +26,7 @@ public class DeclareWarCommand {
                         if (args.length > 1) {
 
                             // get name of faction
-                            String factionName = Utilities.getInstance().createStringFromFirstArgOnwards(args);
+                            String factionName = StringBuilder.getInstance().createStringFromFirstArgOnwards(args);
 
                             // check if faction exists
                             for (int i = 0; i < PersistentData.getInstance().getFactions().size(); i++) {
@@ -70,7 +71,7 @@ public class DeclareWarCommand {
 
                                                 for (int j = 0; j < PersistentData.getInstance().getFactions().size(); j++) {
                                                     if (PersistentData.getInstance().getFactions().get(j).getName().equalsIgnoreCase(factionName)) {
-                                                        Utilities.getInstance().sendAllPlayersOnServerMessage(ChatColor.RED + faction.getName() + " has declared war against " + factionName + "!");
+                                                        Messenger.getInstance().sendAllPlayersOnServerMessage(ChatColor.RED + faction.getName() + " has declared war against " + factionName + "!");
                                                     }
                                                 }
 
@@ -110,20 +111,20 @@ public class DeclareWarCommand {
     }
 
     private void invokeAlliances(String victimFactionName, String declaringFactionName, ArrayList<Faction> factions) {
-        Faction victimFaction = Utilities.getInstance().getFaction(victimFactionName, factions);
-        Faction declaringFaction = Utilities.getInstance().getFaction(declaringFactionName, factions);
+        Faction victimFaction = PersistentData.getInstance().getFaction(victimFactionName);
+        Faction declaringFaction = PersistentData.getInstance().getFaction(declaringFactionName);
 
         if (victimFaction != null && declaringFaction != null)  {
             for (String alliedFaction : victimFaction.getAllies()) {
-                if (!(Utilities.getInstance().getFaction(alliedFaction, factions).isEnemy(declaringFactionName)) && !(declaringFaction.isEnemy(alliedFaction))) {
+                if (!(PersistentData.getInstance().getFaction(alliedFaction).isEnemy(declaringFactionName)) && !(declaringFaction.isEnemy(alliedFaction))) {
                     // add enemies
-                    Utilities.getInstance().getFaction(alliedFaction, factions).addEnemy(declaringFactionName);
+                    PersistentData.getInstance().getFaction(alliedFaction).addEnemy(declaringFactionName);
                     declaringFaction.addEnemy(alliedFaction);
 
                     // inform parties
-                    Utilities.getInstance().sendAllPlayersInFactionMessage(victimFaction, ChatColor.GREEN + "Your ally " + alliedFaction + " has joined you in war!");
-                    Utilities.getInstance().sendAllPlayersInFactionMessage(Utilities.getInstance().getFaction(alliedFaction, factions), ChatColor.RED + "Your ally " + victimFactionName + " has called you into war with " + declaringFactionName + "!");
-                    Utilities.getInstance().sendAllPlayersInFactionMessage(declaringFaction, ChatColor.RED  + alliedFaction + " has joined the war on your enemy's side!");
+                    Messenger.getInstance().sendAllPlayersInFactionMessage(victimFaction, ChatColor.GREEN + "Your ally " + alliedFaction + " has joined you in war!");
+                    Messenger.getInstance().sendAllPlayersInFactionMessage(PersistentData.getInstance().getFaction(alliedFaction), ChatColor.RED + "Your ally " + victimFactionName + " has called you into war with " + declaringFactionName + "!");
+                    Messenger.getInstance().sendAllPlayersInFactionMessage(declaringFaction, ChatColor.RED  + alliedFaction + " has joined the war on your enemy's side!");
 
                 }
             }

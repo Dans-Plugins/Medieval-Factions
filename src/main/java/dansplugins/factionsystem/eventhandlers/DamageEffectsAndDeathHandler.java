@@ -8,7 +8,6 @@ import dansplugins.factionsystem.objects.ClaimedChunk;
 import dansplugins.factionsystem.objects.Duel;
 import dansplugins.factionsystem.objects.PlayerPowerRecord;
 import dansplugins.factionsystem.utils.Pair;
-import dansplugins.factionsystem.utils.Utilities;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.*;
 import org.bukkit.event.EventHandler;
@@ -38,7 +37,7 @@ public class DamageEffectsAndDeathHandler implements Listener {
             Player attacker = (Player) event.getDamager();
             Player victim = (Player) event.getEntity();
         	// if these players are actively duelling then we don't want to handle friendly fire.
-            Duel duel = Utilities.getInstance().getDuel(attacker, victim);
+            Duel duel = EphemeralData.getInstance().getDuel(attacker, victim);
             if (duel == null)
             {
             	handleIfFriendlyFire(event, attacker, victim);	
@@ -67,7 +66,7 @@ public class DamageEffectsAndDeathHandler implements Listener {
                 Player victim = (Player) event.getEntity();
 
             	// if these players are actively duelling then we don't want to handle friendly fire.
-                Duel duel = Utilities.getInstance().getDuel(attacker, victim);
+                Duel duel = EphemeralData.getInstance().getDuel(attacker, victim);
                 if (duel == null)
                 {
                 	handleIfFriendlyFire(event, attacker, victim);	
@@ -149,7 +148,7 @@ public class DamageEffectsAndDeathHandler implements Listener {
     }
 
     private boolean arePlayersInAFaction(Player player1, Player player2) {
-        return Utilities.getInstance().isInFaction(player1.getUniqueId(), PersistentData.getInstance().getFactions()) && Utilities.getInstance().isInFaction(player2.getUniqueId(), PersistentData.getInstance().getFactions());
+        return PersistentData.getInstance().isInFaction(player1.getUniqueId()) && PersistentData.getInstance().isInFaction(player2.getUniqueId());
     }
 
     @EventHandler()
@@ -226,7 +225,7 @@ public class DamageEffectsAndDeathHandler implements Listener {
         for (PlayerPowerRecord record : PersistentData.getInstance().getPlayerPowerRecords()) {
             if (record.getPlayerUUID().equals(player.getUniqueId())) {
                 record.decreasePowerByTenPercent();
-                if (Utilities.getInstance().getPlayersPowerRecord(player.getUniqueId(), PersistentData.getInstance().getPlayerPowerRecords()).getPowerLevel() > 0) {
+                if (PersistentData.getInstance().getPlayersPowerRecord(player.getUniqueId()).getPowerLevel() > 0) {
                     player.sendMessage(ChatColor.RED + "Your power level has decreased!");
                 }
             }
@@ -236,7 +235,7 @@ public class DamageEffectsAndDeathHandler implements Listener {
         if (player.getKiller() != null) {
             Player killer = player.getKiller();
 
-            PlayerPowerRecord record = Utilities.getInstance().getPlayersPowerRecord(killer.getUniqueId(), PersistentData.getInstance().getPlayerPowerRecords());
+            PlayerPowerRecord record = PersistentData.getInstance().getPlayersPowerRecord(killer.getUniqueId());
             if (record != null) {
                 if (record.increasePowerByTenPercent()){
                     killer.sendMessage(ChatColor.GREEN + "Your power level has increased!");
@@ -245,7 +244,7 @@ public class DamageEffectsAndDeathHandler implements Listener {
         }
 
         // if player is in faction
-        if (Utilities.getInstance().isInFaction(player.getUniqueId(), PersistentData.getInstance().getFactions())) {
+        if (PersistentData.getInstance().isInFaction(player.getUniqueId())) {
 
             // if player is in land claimed by their faction
             double[] playerCoords = new double[2];
@@ -258,7 +257,7 @@ public class DamageEffectsAndDeathHandler implements Listener {
                 ClaimedChunk chunk = ChunkManager.getInstance().getClaimedChunk(player.getLocation().getChunk().getX(), player.getLocation().getChunk().getZ(),
                         player.getLocation().getWorld().getName(), PersistentData.getInstance().getClaimedChunks());
                 // if holder is player's faction
-                if (chunk.getHolder().equalsIgnoreCase(Utilities.getInstance().getPlayersFaction(player.getUniqueId(), PersistentData.getInstance().getFactions()).getName()) && Utilities.getInstance().getPlayersFaction(player.getUniqueId(), PersistentData.getInstance().getFactions()).getAutoClaimStatus() == false) {
+                if (chunk.getHolder().equalsIgnoreCase(PersistentData.getInstance().getPlayersFaction(player.getUniqueId()).getName()) && PersistentData.getInstance().getPlayersFaction(player.getUniqueId()).getAutoClaimStatus() == false) {
 
                     // if not killed by another player
                     if (!(player.getKiller() instanceof Player)) {

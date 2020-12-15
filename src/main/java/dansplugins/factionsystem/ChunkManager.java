@@ -3,7 +3,6 @@ package dansplugins.factionsystem;
 import dansplugins.factionsystem.data.EphemeralData;
 import dansplugins.factionsystem.data.PersistentData;
 import dansplugins.factionsystem.objects.*;
-import dansplugins.factionsystem.utils.Utilities;
 import org.bukkit.ChatColor;
 import org.bukkit.Chunk;
 import org.bukkit.Location;
@@ -46,7 +45,7 @@ public class ChunkManager {
                     if (playerCoords[0] == chunk.getCoordinates()[0] && playerCoords[1] == chunk.getCoordinates()[1]) {
 
                         // if holder is player's faction
-                        if (chunk.getHolder().equalsIgnoreCase(faction.getName()) && !Utilities.getInstance().getPlayersFaction(player.getUniqueId(), PersistentData.getInstance().getFactions()).getAutoClaimStatus()) {
+                        if (chunk.getHolder().equalsIgnoreCase(faction.getName()) && !PersistentData.getInstance().getPlayersFaction(player.getUniqueId()).getAutoClaimStatus()) {
                             player.sendMessage(ChatColor.RED + "This land is already claimed by your faction!");
                             return;
                         }
@@ -87,7 +86,7 @@ public class ChunkManager {
                                             PersistentData.getInstance().getClaimedChunks().add(newChunk);
                                             player.sendMessage(ChatColor.GREEN + "Land conquered from " + targetFaction.getName() + "! Demesne Size: " + getChunksClaimedByFaction(faction.getName(), PersistentData.getInstance().getClaimedChunks()) + "/" + faction.getCumulativePowerLevel());
 
-                                            Utilities.getInstance().sendAllPlayersInFactionMessage(targetFaction, ChatColor.RED + Utilities.getInstance().getPlayersFaction(player.getUniqueId(), PersistentData.getInstance().getFactions()).getName() + " has conquered land from your faction!");
+                                            Messenger.getInstance().sendAllPlayersInFactionMessage(targetFaction, ChatColor.RED + PersistentData.getInstance().getPlayersFaction(player.getUniqueId()).getName() + " has conquered land from your faction!");
 
                                             return;
                                         }
@@ -103,7 +102,7 @@ public class ChunkManager {
                                 }
                             }
 
-                            if (!Utilities.getInstance().getPlayersFaction(player.getUniqueId(), PersistentData.getInstance().getFactions()).getAutoClaimStatus()) {
+                            if (!PersistentData.getInstance().getPlayersFaction(player.getUniqueId()).getAutoClaimStatus()) {
                                 player.sendMessage(ChatColor.RED + "This land is already claimed by " + chunk.getHolder());
                             }
 
@@ -138,7 +137,7 @@ public class ChunkManager {
     private boolean everyPlayerInFactionExperiencingPowerDecay(Faction faction) {
         int numExperiencingPowerDecay = 0;
         for (UUID uuid : faction.getMemberArrayList()) {
-            PlayerActivityRecord record = Utilities.getInstance().getPlayerActivityRecord(uuid, PersistentData.getInstance().getPlayerActivityRecords());
+            PlayerActivityRecord record = PersistentData.getInstance().getPlayerActivityRecord(uuid);
             if (record != null) {
                 Player player = getServer().getPlayer(record.getPlayerUUID());
                 boolean isOnline = false;
@@ -169,7 +168,7 @@ public class ChunkManager {
             ClaimedChunk chunk = isChunkClaimed(playerCoords[0], playerCoords[1], player.getLocation().getWorld().getName());
             if (chunk != null)
             {
-                removeChunk(chunk, player, Utilities.getInstance().getFaction(chunk.getHolder(), PersistentData.getInstance().getFactions()));
+                removeChunk(chunk, player, PersistentData.getInstance().getFaction(chunk.getHolder()));
                 player.sendMessage(ChatColor.GREEN + "Land unclaimed using admin bypass!");
                 return;
             }
@@ -204,13 +203,13 @@ public class ChunkManager {
         String identifier = (int)chunk.getChunk().getX() + "_" + (int)chunk.getChunk().getZ();
 
         // if faction home is located on this chunk
-        Location factionHome = Utilities.getInstance().getPlayersFaction(player.getUniqueId(), PersistentData.getInstance().getFactions()).getFactionHome();
+        Location factionHome = PersistentData.getInstance().getPlayersFaction(player.getUniqueId()).getFactionHome();
         if (factionHome != null) {
             if (factionHome.getChunk().getX() == chunk.getChunk().getX() && factionHome.getChunk().getZ() == chunk.getChunk().getZ()
                     && chunk.getWorld().equalsIgnoreCase(player.getLocation().getWorld().getName())) {
                 // remove faction home
                 faction.setFactionHome(null);
-                Utilities.getInstance().sendAllPlayersInFactionMessage(faction, ChatColor.RED + "Your faction home has been removed!");
+                Messenger.getInstance().sendAllPlayersInFactionMessage(faction, ChatColor.RED + "Your faction home has been removed!");
 
             }
         }
@@ -384,7 +383,7 @@ public class ChunkManager {
     }
 
     public void informPlayerIfTheirLandIsInDanger(Player player, ArrayList<Faction> factions, ArrayList<ClaimedChunk> claimedChunks) {
-        Faction faction = Utilities.getInstance().getPlayersFaction(player.getUniqueId(), factions);
+        Faction faction = PersistentData.getInstance().getPlayersFaction(player.getUniqueId());
         if (faction != null) {
             if (isFactionExceedingTheirDemesneLimit(faction, claimedChunks)) {
                 player.sendMessage(ChatColor.RED + "Your faction has more claimed chunks than power! Your land can be conquered!");

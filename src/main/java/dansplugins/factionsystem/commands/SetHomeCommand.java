@@ -4,7 +4,6 @@ import dansplugins.factionsystem.ChunkManager;
 import dansplugins.factionsystem.data.PersistentData;
 import dansplugins.factionsystem.objects.ClaimedChunk;
 import dansplugins.factionsystem.objects.Faction;
-import dansplugins.factionsystem.utils.Utilities;
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
@@ -16,8 +15,8 @@ public class SetHomeCommand {
             Player player = (Player) sender;
 
             if (sender.hasPermission("mf.sethome") || sender.hasPermission("mf.default")) {
-                if (Utilities.getInstance().isInFaction(player.getUniqueId(), PersistentData.getInstance().getFactions())) {
-                    Faction playersFaction = Utilities.getInstance().getPlayersFaction(player.getUniqueId(), PersistentData.getInstance().getFactions());
+                if (PersistentData.getInstance().isInFaction(player.getUniqueId())) {
+                    Faction playersFaction = PersistentData.getInstance().getPlayersFaction(player.getUniqueId());
                     if (playersFaction.isOwner(player.getUniqueId()) || playersFaction.isOfficer(player.getUniqueId())) {
 
                         if (ChunkManager.getInstance().isClaimed(player.getLocation().getChunk(), PersistentData.getInstance().getClaimedChunks())) {

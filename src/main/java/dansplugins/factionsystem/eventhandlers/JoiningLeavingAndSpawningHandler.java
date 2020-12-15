@@ -6,7 +6,6 @@ import dansplugins.factionsystem.data.EphemeralData;
 import dansplugins.factionsystem.data.PersistentData;
 import dansplugins.factionsystem.objects.PlayerActivityRecord;
 import dansplugins.factionsystem.objects.PlayerPowerRecord;
-import dansplugins.factionsystem.utils.Utilities;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Monster;
 import org.bukkit.event.EventHandler;
@@ -33,10 +32,10 @@ public class JoiningLeavingAndSpawningHandler implements Listener {
         }
         else
         {
-        	PlayerActivityRecord record = Utilities.getInstance().getPlayerActivityRecord(event.getPlayer().getUniqueId(), PersistentData.getInstance().getPlayerActivityRecords());
+        	PlayerActivityRecord record = PersistentData.getInstance().getPlayerActivityRecord(event.getPlayer().getUniqueId());
         	if (record != null)
         	{
-        		PlayerPowerRecord power = Utilities.getInstance().getPlayersPowerRecord(event.getPlayer().getUniqueId(), PersistentData.getInstance().getPlayerPowerRecords());
+        		PlayerPowerRecord power = PersistentData.getInstance().getPlayersPowerRecord(event.getPlayer().getUniqueId());
         		record.incrementLogins();
 
         		int newPower = power.getPowerLevel();
@@ -103,7 +102,7 @@ public class JoiningLeavingAndSpawningHandler implements Listener {
 			EphemeralData.getInstance().getPlayersRevokingAccess().remove(event.getPlayer().getUniqueId());
 		}
 
-		PlayerActivityRecord record = Utilities.getInstance().getPlayerActivityRecord(event.getPlayer().getUniqueId(), PersistentData.getInstance().getPlayerActivityRecords());
+		PlayerActivityRecord record = PersistentData.getInstance().getPlayerActivityRecord(event.getPlayer().getUniqueId());
 		if (record != null)
 		{
 			record.setLastLogout(ZonedDateTime.now());

@@ -3,7 +3,6 @@ package dansplugins.factionsystem;
 import dansplugins.factionsystem.bstats.Metrics;
 import dansplugins.factionsystem.data.PersistentData;
 import dansplugins.factionsystem.objects.PlayerActivityRecord;
-import dansplugins.factionsystem.utils.Utilities;
 import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.command.Command;
@@ -17,7 +16,7 @@ public class MedievalFactions extends JavaPlugin {
 
     private static MedievalFactions instance;
 
-    private String version = "v3.6.0.3-beta-9";
+    private String version = "v3.6.0.3-beta-10";
 
     public static MedievalFactions getInstance() {
         return instance;
@@ -99,7 +98,7 @@ public class MedievalFactions extends JavaPlugin {
     // this method is to ensure that when updating to a version with power decay, even players who never log in again will experience power decay
     private void createActivityRecordForEveryOfflinePlayer() { // TODO: ensure that this is working
         for (OfflinePlayer player : Bukkit.getOfflinePlayers()) {
-            PlayerActivityRecord record = Utilities.getInstance().getPlayerActivityRecord(player.getUniqueId(), PersistentData.getInstance().getPlayerActivityRecords());
+            PlayerActivityRecord record = PersistentData.getInstance().getPlayerActivityRecord(player.getUniqueId());
             if (record == null) {
                 PlayerActivityRecord newRecord = new PlayerActivityRecord(player.getUniqueId(), 1);
                 newRecord.setLastLogout(ZonedDateTime.now());

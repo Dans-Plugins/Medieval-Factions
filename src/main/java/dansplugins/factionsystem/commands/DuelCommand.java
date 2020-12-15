@@ -2,7 +2,6 @@ package dansplugins.factionsystem.commands;
 
 import dansplugins.factionsystem.data.EphemeralData;
 import dansplugins.factionsystem.objects.Duel;
-import dansplugins.factionsystem.utils.Utilities;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
@@ -71,7 +70,7 @@ public class DuelCommand {
 						if (args.length > 2)
 						{
 		                	Player challenger = Bukkit.getServer().getPlayer(args[2]);
-		                	Duel duel = Utilities.getInstance().getDuel(challenger, player);
+		                	Duel duel = EphemeralData.getInstance().getDuel(challenger, player);
 		                	if (duel != null)
 		                	{
 		                		if (duel.getStatus().equals(Duel.DuelState.DUELLING))

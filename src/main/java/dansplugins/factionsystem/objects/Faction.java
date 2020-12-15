@@ -4,8 +4,8 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.reflect.TypeToken;
 import dansplugins.factionsystem.MedievalFactions;
+import dansplugins.factionsystem.UUIDChecker;
 import dansplugins.factionsystem.data.PersistentData;
-import dansplugins.factionsystem.utils.Utilities;
 import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.WorldCreator;
@@ -163,7 +163,7 @@ public class Faction {
         for (UUID playerUUID : members){
             try
             {
-            	powerLevel += Utilities.getInstance().getPlayersPowerRecord(playerUUID, PersistentData.getInstance().getPlayerPowerRecords()).getPowerLevel();
+            	powerLevel += PersistentData.getInstance().getPlayersPowerRecord(playerUUID).getPowerLevel();
             }
             catch (Exception e)
             {
@@ -409,7 +409,7 @@ public class Faction {
             }
             if (loadReader.hasNextLine()) {
                 String playerName = loadReader.nextLine();
-                setOwner(Utilities.getInstance().findUUIDBasedOnPlayerName(playerName));
+                setOwner(UUIDChecker.getInstance().findUUIDBasedOnPlayerName(playerName));
             }
             if (loadReader.hasNextLine()) {
                 setDescription(loadReader.nextLine());
@@ -426,7 +426,7 @@ public class Faction {
                 if (temp.equalsIgnoreCase("-")) {
                     break;
                 }
-                members.add(Utilities.getInstance().findUUIDBasedOnPlayerName(temp));
+                members.add(UUIDChecker.getInstance().findUUIDBasedOnPlayerName(temp));
             }
 
             while (loadReader.hasNextLine()) {
@@ -456,7 +456,7 @@ public class Faction {
                     break;
                 }
 
-                officers.add(Utilities.getInstance().findUUIDBasedOnPlayerName(playerName));
+                officers.add(UUIDChecker.getInstance().findUUIDBasedOnPlayerName(playerName));
             }
 
             String worldname;

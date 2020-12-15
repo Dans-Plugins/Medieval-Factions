@@ -1,8 +1,8 @@
 package dansplugins.factionsystem.commands;
 
+import dansplugins.factionsystem.UUIDChecker;
 import dansplugins.factionsystem.data.PersistentData;
 import dansplugins.factionsystem.objects.PlayerPowerRecord;
-import dansplugins.factionsystem.utils.Utilities;
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
@@ -18,10 +18,10 @@ public class PowerCommand {
             {
             	if (args.length > 1)
             	{
-            		UUID playerUUID = Utilities.getInstance().findUUIDBasedOnPlayerName(args[1]);
+            		UUID playerUUID = UUIDChecker.getInstance().findUUIDBasedOnPlayerName(args[1]);
             		if (playerUUID != null)
             		{
-	            		PlayerPowerRecord record = Utilities.getInstance().getPlayersPowerRecord(playerUUID, PersistentData.getInstance().getPlayerPowerRecords());
+	            		PlayerPowerRecord record = PersistentData.getInstance().getPlayersPowerRecord(playerUUID);
 	                    player.sendMessage(ChatColor.AQUA + args[1] + "'s current power level is " + record.getPowerLevel() + "/" + record.maxPower() + ".");
 	                    return true;
             		}
@@ -33,7 +33,7 @@ public class PowerCommand {
             	}
             	else
             	{
-                    PlayerPowerRecord record = Utilities.getInstance().getPlayersPowerRecord(player.getUniqueId(), PersistentData.getInstance().getPlayerPowerRecords());
+                    PlayerPowerRecord record = PersistentData.getInstance().getPlayersPowerRecord(player.getUniqueId());
                     player.sendMessage(ChatColor.AQUA + "Your current power level is " + record.getPowerLevel() + "/" + record.maxPower() + ".");
                     return true;
             	}

@@ -1,7 +1,7 @@
 package dansplugins.factionsystem.commands;
 
+import dansplugins.factionsystem.UUIDChecker;
 import dansplugins.factionsystem.data.EphemeralData;
-import dansplugins.factionsystem.utils.Utilities;
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
@@ -30,7 +30,7 @@ public class RevokeAccessCommand {
             }
 
             if (!EphemeralData.getInstance().getPlayersRevokingAccess().containsKey(player.getUniqueId())) {
-                EphemeralData.getInstance().getPlayersRevokingAccess().put(player.getUniqueId(), Utilities.getInstance().findUUIDBasedOnPlayerName(args[1]));
+                EphemeralData.getInstance().getPlayersRevokingAccess().put(player.getUniqueId(), UUIDChecker.getInstance().findUUIDBasedOnPlayerName(args[1]));
                 player.sendMessage(ChatColor.GREEN + "Right click a locked block to revoke this player's access to it! Type '/mf revokeaccess cancel' to cancel!");
             }
             else {

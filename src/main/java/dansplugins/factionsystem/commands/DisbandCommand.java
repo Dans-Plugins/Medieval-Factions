@@ -4,7 +4,7 @@ import dansplugins.factionsystem.ChunkManager;
 import dansplugins.factionsystem.data.EphemeralData;
 import dansplugins.factionsystem.data.PersistentData;
 import dansplugins.factionsystem.objects.Faction;
-import dansplugins.factionsystem.utils.Utilities;
+import dansplugins.factionsystem.utils.StringBuilder;
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
@@ -19,7 +19,7 @@ public class DisbandCommand {
                 if (args.length > 1) {
                     if (player.hasPermission("mf.disband.others") || player.hasPermission("mf.admin")) {
 
-                        String factionName = Utilities.getInstance().createStringFromFirstArgOnwards(args);
+                        String factionName = StringBuilder.getInstance().createStringFromFirstArgOnwards(args);
 
                         for (int i = 0; i < PersistentData.getInstance().getFactions().size(); i++) {
 
@@ -78,7 +78,7 @@ public class DisbandCommand {
         ChunkManager.getInstance().removeAllClaimedChunks(PersistentData.getInstance().getFactions().get(i).getName(), PersistentData.getInstance().getClaimedChunks());
 
         // remove locks associated with this faction
-        Utilities.getInstance().removeAllLocks(PersistentData.getInstance().getFactions().get(i).getName(), PersistentData.getInstance().getLockedBlocks());
+        PersistentData.getInstance().removeAllLocks(PersistentData.getInstance().getFactions().get(i).getName());
 
         // remove records of alliances/wars associated with this faction
         for (Faction faction : PersistentData.getInstance().getFactions()) {

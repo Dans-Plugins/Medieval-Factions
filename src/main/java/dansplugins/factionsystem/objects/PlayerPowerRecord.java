@@ -3,8 +3,8 @@ package dansplugins.factionsystem.objects;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import dansplugins.factionsystem.MedievalFactions;
+import dansplugins.factionsystem.UUIDChecker;
 import dansplugins.factionsystem.data.PersistentData;
-import dansplugins.factionsystem.utils.Utilities;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -42,8 +42,8 @@ public class PlayerPowerRecord {
     }
 
     private boolean isPlayerAFactionOwner(UUID player, ArrayList<Faction> factions){
-        if (Utilities.getInstance().isInFaction(player, factions)){
-            Faction faction = Utilities.getInstance().getPlayersFaction(player, factions);
+        if (PersistentData.getInstance().isInFaction(player)){
+            Faction faction = PersistentData.getInstance().getPlayersFaction(player);
             return faction.getOwner().equals(player);
         } else {
             return false;
@@ -51,8 +51,8 @@ public class PlayerPowerRecord {
     }
 
     public boolean isPlayerAFactionOfficer(UUID player, ArrayList<Faction> factions) {
-        if (Utilities.getInstance().isInFaction(player, factions)){
-            Faction faction = Utilities.getInstance().getPlayersFaction(player, factions);
+        if (PersistentData.getInstance().isInFaction(player)){
+            Faction faction = PersistentData.getInstance().getPlayersFaction(player);
             return faction.isOfficer(player);
         } else {
             return false;
@@ -123,7 +123,7 @@ public class PlayerPowerRecord {
 
             // actual loading
             if (loadReader.hasNextLine()) {
-                playerUUID = Utilities.getInstance().findUUIDBasedOnPlayerName(loadReader.nextLine());
+                playerUUID = UUIDChecker.getInstance().findUUIDBasedOnPlayerName(loadReader.nextLine());
             }
             if (loadReader.hasNextLine()) {
                 powerLevel = Integer.parseInt(loadReader.nextLine());

@@ -1,11 +1,13 @@
 package dansplugins.factionsystem.commands;
 
 import dansplugins.factionsystem.MedievalFactions;
+import dansplugins.factionsystem.Messenger;
 import dansplugins.factionsystem.StorageManager;
+import dansplugins.factionsystem.UUIDChecker;
 import dansplugins.factionsystem.data.PersistentData;
 import dansplugins.factionsystem.objects.Faction;
 import dansplugins.factionsystem.objects.PlayerPowerRecord;
-import dansplugins.factionsystem.utils.Utilities;
+import dansplugins.factionsystem.utils.StringBuilder;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.OfflinePlayer;
@@ -98,8 +100,8 @@ public class ForceCommand {
                 String factionName1 = singleQuoteArgs.get(0);
                 String factionName2 = singleQuoteArgs.get(1);
 
-                Faction faction1 = Utilities.getInstance().getFaction(factionName1, PersistentData.getInstance().getFactions());
-                Faction faction2 = Utilities.getInstance().getFaction(factionName2, PersistentData.getInstance().getFactions());
+                Faction faction1 = PersistentData.getInstance().getFaction(factionName1);
+                Faction faction2 = PersistentData.getInstance().getFaction(factionName2);
 
                 // force peace
                 if (faction1 != null && faction2 != null) {
@@ -111,7 +113,7 @@ public class ForceCommand {
                     }
 
                     // announce peace to all players on server.
-                    Utilities.getInstance().sendAllPlayersOnServerMessage(ChatColor.GREEN + faction1.getName() + " is now at peace with " + faction2.getName() + "!");
+                    Messenger.getInstance().sendAllPlayersOnServerMessage(ChatColor.GREEN + faction1.getName() + " is now at peace with " + faction2.getName() + "!");
                     return true;
                 }
                 else {
@@ -179,16 +181,16 @@ public class ForceCommand {
                 String playerName = singleQuoteArgs.get(0);
                 String factionName = singleQuoteArgs.get(1);
 
-                Faction faction = Utilities.getInstance().getFaction(factionName, PersistentData.getInstance().getFactions());
+                Faction faction = PersistentData.getInstance().getFaction(factionName);
 
                 for (OfflinePlayer player : Bukkit.getOfflinePlayers()) {
                     if (player.getName().equalsIgnoreCase(playerName)) {
 
                         if (faction != null) {
-                            if (!(Utilities.getInstance().isInFaction(player.getUniqueId(), PersistentData.getInstance().getFactions()))) {
-                                faction.addMember(player.getUniqueId(), Utilities.getInstance().getPlayersPowerRecord(player.getUniqueId(), PersistentData.getInstance().getPlayerPowerRecords()).getPowerLevel());
+                            if (!(PersistentData.getInstance().isInFaction(player.getUniqueId()))) {
+                                faction.addMember(player.getUniqueId(), PersistentData.getInstance().getPlayersPowerRecord(player.getUniqueId()).getPowerLevel());
                                 try {
-                                    Utilities.getInstance().sendAllPlayersInFactionMessage(faction, ChatColor.GREEN + player.getName() + " has joined " + faction.getName());
+                                    Messenger.getInstance().sendAllPlayersInFactionMessage(faction, ChatColor.GREEN + player.getName() + " has joined " + faction.getName());
                                 } catch (Exception ignored) {
 
                                 }
@@ -236,7 +238,7 @@ public class ForceCommand {
                             }
 
                             if (faction.isMember(player.getUniqueId())) {
-                                faction.removeMember(player.getUniqueId(), Utilities.getInstance().getPlayersPowerRecord(player.getUniqueId(), PersistentData.getInstance().getPlayerPowerRecords()).getPowerLevel());
+                                faction.removeMember(player.getUniqueId(), PersistentData.getInstance().getPlayersPowerRecord(player.getUniqueId()).getPowerLevel());
 
                                 if (player.isOnline()) {
                                     Bukkit.getPlayer(player.getUniqueId()).sendMessage(ChatColor.AQUA + "You were forcibly kicked from the faction " + faction.getName() + "!");
@@ -287,7 +289,7 @@ public class ForceCommand {
                     return false;
                 }
 
-                PlayerPowerRecord record = Utilities.getInstance().getPlayersPowerRecord(Utilities.getInstance().findUUIDBasedOnPlayerName(player), PersistentData.getInstance().getPlayerPowerRecords());
+                PlayerPowerRecord record = PersistentData.getInstance().getPlayersPowerRecord(UUIDChecker.getInstance().findUUIDBasedOnPlayerName(player));
 
                 record.setPowerLevel(desiredPower);
                 sender.sendMessage(ChatColor.GREEN + "The power level of '" + player + "' has been set to " + desiredPower);
@@ -306,7 +308,7 @@ public class ForceCommand {
     private ArrayList<String> getArgumentsInsideSingleQuotes(String[] args) {
         ArrayList<String> toReturn = new ArrayList<>();
 
-        String argumentString = Utilities.getInstance().createStringFromFirstArgOnwards(args);
+        String argumentString = StringBuilder.getInstance().createStringFromFirstArgOnwards(args);
 
         int index = 0;
         while (true) {

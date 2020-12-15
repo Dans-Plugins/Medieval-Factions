@@ -1,9 +1,10 @@
 package dansplugins.factionsystem.commands;
 
 import dansplugins.factionsystem.ChunkManager;
+import dansplugins.factionsystem.Messenger;
 import dansplugins.factionsystem.data.PersistentData;
 import dansplugins.factionsystem.objects.Faction;
-import dansplugins.factionsystem.utils.Utilities;
+import dansplugins.factionsystem.utils.StringBuilder;
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
@@ -18,7 +19,7 @@ public class InfoCommand {
                 if (args.length == 1) {
                     for (Faction faction : PersistentData.getInstance().getFactions()) {
                         if (faction.isMember(player.getUniqueId())) {
-                            Utilities.getInstance().sendFactionInfo(player, faction, ChunkManager.getInstance().getChunksClaimedByFaction(faction.getName(), PersistentData.getInstance().getClaimedChunks()));
+                            Messenger.getInstance().sendFactionInfo(player, faction, ChunkManager.getInstance().getChunksClaimedByFaction(faction.getName(), PersistentData.getInstance().getClaimedChunks()));
                             return;
                         }
                     }
@@ -26,13 +27,13 @@ public class InfoCommand {
                 }
                 else {
                     // creating name from arguments 1 to the last one
-                    String name = Utilities.getInstance().createStringFromFirstArgOnwards(args);
+                    String name = StringBuilder.getInstance().createStringFromFirstArgOnwards(args);
 
                     boolean exists = false;
                     for (Faction faction : PersistentData.getInstance().getFactions()) {
                         if (faction.getName().equalsIgnoreCase(name)) {
                             exists = true;
-                            Utilities.getInstance().sendFactionInfo(player, faction, ChunkManager.getInstance().getChunksClaimedByFaction(faction.getName(), PersistentData.getInstance().getClaimedChunks()));
+                            Messenger.getInstance().sendFactionInfo(player, faction, ChunkManager.getInstance().getChunksClaimedByFaction(faction.getName(), PersistentData.getInstance().getClaimedChunks()));
                         }
                     }
                     if (!exists) {

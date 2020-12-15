@@ -2,7 +2,6 @@ package dansplugins.factionsystem.commands;
 
 import dansplugins.factionsystem.data.EphemeralData;
 import dansplugins.factionsystem.data.PersistentData;
-import dansplugins.factionsystem.utils.Utilities;
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
@@ -14,7 +13,7 @@ public class ChatCommand {
             Player player = (Player) sender;
 
             if (player.hasPermission("mf.chat") || player.hasPermission("mf.default")) {
-                if (Utilities.getInstance().isInFaction(player.getUniqueId(), PersistentData.getInstance().getFactions())) {
+                if (PersistentData.getInstance().isInFaction(player.getUniqueId())) {
                     if (!EphemeralData.getInstance().getPlayersInFactionChat().contains(player.getUniqueId())) {
                         EphemeralData.getInstance().getPlayersInFactionChat().add(player.getUniqueId());
                         player.sendMessage(ChatColor.GREEN + "You are now speaking in faction chat!");

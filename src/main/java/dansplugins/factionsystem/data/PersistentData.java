@@ -1,12 +1,15 @@
 package dansplugins.factionsystem.data;
 
 import dansplugins.factionsystem.objects.*;
+import org.bukkit.block.Block;
 
+import java.io.File;
 import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.UUID;
 
 public class PersistentData {
 
-    // instance
     private static PersistentData instance;
 
     public ArrayList<Faction> factions = new ArrayList<>();
@@ -26,6 +29,8 @@ public class PersistentData {
         return instance;
     }
 
+    // arraylist getters ---
+
     public ArrayList<Faction> getFactions() {
         return factions;
     }
@@ -44,5 +49,131 @@ public class PersistentData {
 
     public ArrayList<LockedBlock> getLockedBlocks() {
         return lockedBlocks;
+    }
+
+    // specific getters ---
+
+    public Faction getFaction(String name) {
+        for (Faction faction : getFactions()) {
+            if (faction.getName().equalsIgnoreCase(name)) {
+                return faction;
+            }
+        }
+        return null;
+    }
+
+    public Faction getPlayersFaction(UUID playerUUID) {
+        // membership check
+        for (Faction faction : getFactions()) {
+            if (faction.isMember(playerUUID)) {
+                return faction;
+            }
+        }
+        return null;
+    }
+
+    public PlayerPowerRecord getPlayersPowerRecord(UUID playerUUID) {
+        for (PlayerPowerRecord record : getPlayerPowerRecords()) {
+            if (record.getPlayerUUID().equals(playerUUID)) {
+                return record;
+            }
+        }
+        return null;
+    }
+
+    public PlayerActivityRecord getPlayerActivityRecord(UUID uuid)
+    {
+        for (PlayerActivityRecord record : getPlayerActivityRecords())
+        {
+            if (record.getPlayerUUID().equals(uuid))
+            {
+                return record;
+            }
+        }
+        return null;
+    }
+
+    public LockedBlock getLockedBlock(Block block) {
+        return getLockedBlock(block.getX(), block.getY(), block.getZ(), block.getWorld().getName());
+    }
+
+    private LockedBlock getLockedBlock(int x, int y, int z, String world) {
+        for (LockedBlock block : getLockedBlocks()) {
+            if (block.getX() == x && block.getY() == y && block.getZ() == z && block.getWorld().equalsIgnoreCase(world)) {
+                return block;
+            }
+        }
+        return null;
+    }
+
+    // checkers --
+
+    public boolean isInFaction(UUID playerUUID) {
+        // membership check
+        for (Faction faction : getFactions()) {
+            if (faction.isMember(playerUUID)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    public boolean isBlockLocked(Block block) {
+        return isBlockLocked(block.getX(), block.getY(), block.getZ(), block.getWorld().getName());
+    }
+
+    private boolean isBlockLocked(int x, int y, int z, String world) {
+        for (LockedBlock block : getLockedBlocks()) {
+            if (block.getX() == x && block.getY() == y && block.getZ() == z && block.getWorld().equalsIgnoreCase(world)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    public boolean isGateBlock(Block targetBlock)
+    {
+        for (Faction faction : getFactions())
+        {
+            for (Gate gate : faction.getGates())
+            {
+                if (gate.hasBlock(targetBlock))
+                {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+
+    // actors/mutators
+
+    public void removeAllLocks(String factionName) {
+        Iterator<LockedBlock> itr = getLockedBlocks().iterator();
+
+        while (itr.hasNext()) {
+            LockedBlock currentBlock = itr.next();
+            if (currentBlock.getFactionName().equalsIgnoreCase(factionName)) {
+
+                String identifier = currentBlock.getX() + "_" + currentBlock.getY() + "_" + currentBlock.getZ();
+
+                try {
+
+                    // delete file associated with chunk
+                    System.out.println("Attempting to delete file plugins/MedievalFactions/lockedblocks/" + identifier + ".txt");
+                    File fileToDelete = new File("plugins/Medievalfactions/lockedblocks/" + identifier + ".txt");
+                    if (fileToDelete.delete()) {
+                        System.out.println("Success. File deleted.");
+                    } else {
+                        System.out.println("There was a problem deleting the file.");
+                    }
+
+                    itr.remove();
+                }
+                catch(Exception e) {
+                    System.out.println("An error has occurred during lock removal.");
+                }
+            }
+        }
     }
 }

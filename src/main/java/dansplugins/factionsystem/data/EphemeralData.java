@@ -46,6 +46,8 @@ public class EphemeralData {
         return instance;
     }
 
+    // arraylist getters ---
+
     public HashMap<UUID, Gate> getCreatingGatePlayers() {
         return creatingGatePlayers;
     }
@@ -86,5 +88,18 @@ public class EphemeralData {
         return duelingPlayers;
     }
 
+    // specific getters ---
+
+    public Duel getDuel(Player player, Player target)
+    {
+        for (Duel duel : getDuelingPlayers())
+        {
+            if (duel.hasPlayer(player) && duel.hasPlayer(target))
+            {
+                return duel;
+            }
+        }
+        return null;
+    }
 
 }

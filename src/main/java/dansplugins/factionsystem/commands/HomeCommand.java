@@ -5,7 +5,6 @@ import dansplugins.factionsystem.MedievalFactions;
 import dansplugins.factionsystem.data.PersistentData;
 import dansplugins.factionsystem.objects.ClaimedChunk;
 import dansplugins.factionsystem.objects.Faction;
-import dansplugins.factionsystem.utils.Utilities;
 import org.bukkit.ChatColor;
 import org.bukkit.Chunk;
 import org.bukkit.Location;
@@ -21,8 +20,8 @@ public class HomeCommand {
             Player player = (Player) sender;
 
             if (sender.hasPermission("mf.home") || sender.hasPermission("mf.default")) {
-                if (Utilities.getInstance().isInFaction(player.getUniqueId(), PersistentData.getInstance().getFactions())) {
-                    Faction playersFaction = Utilities.getInstance().getPlayersFaction(player.getUniqueId(), PersistentData.getInstance().getFactions());
+                if (PersistentData.getInstance().isInFaction(player.getUniqueId())) {
+                    Faction playersFaction = PersistentData.getInstance().getPlayersFaction(player.getUniqueId());
                     if (playersFaction.getFactionHome() != null) {
 
                         // Check that factionHome is in it's own factions land and not claimed by someone else.
