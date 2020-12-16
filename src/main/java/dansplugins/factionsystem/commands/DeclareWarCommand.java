@@ -1,5 +1,6 @@
 package dansplugins.factionsystem.commands;
 
+import dansplugins.factionsystem.MedievalFactions;
 import dansplugins.factionsystem.Messenger;
 import dansplugins.factionsystem.data.PersistentData;
 import dansplugins.factionsystem.objects.Faction;
@@ -7,6 +8,7 @@ import dansplugins.factionsystem.utils.StringBuilder;
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
+import org.bukkit.persistence.PersistentDataType;
 
 import java.util.ArrayList;
 
@@ -48,8 +50,13 @@ public class DeclareWarCommand {
 
                                                 // if lieges aren't the same
                                                 if (!PersistentData.getInstance().getFactions().get(i).getLiege().equalsIgnoreCase(faction.getLiege())) {
-                                                    player.sendMessage(ChatColor.RED + "You can't declare war on this faction as they are a vassal! You must declare war on their liege " + PersistentData.getInstance().getFactions().get(i).getLiege() + " instead!");
-                                                    return;
+
+                                                    // if not less than half of max cumulative power level without vassal contribution
+                                                    if (!(PersistentData.getInstance().getFactions().get(i).calculateCumulativePowerLevelWithoutVassalContribution() < (PersistentData.getInstance().getFactions().get(i).getMaximumCumulativePowerLevel() / 2))) {
+                                                        player.sendMessage(ChatColor.RED + "You can't declare war on this faction as they are a vassal! You must declare war on their liege " + PersistentData.getInstance().getFactions().get(i).getLiege() + " instead!");
+                                                        return;
+                                                    }
+
                                                 }
 
                                             }

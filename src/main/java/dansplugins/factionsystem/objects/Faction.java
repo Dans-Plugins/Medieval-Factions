@@ -171,7 +171,7 @@ public class Faction {
         }
     }
 
-    private int calculateCumulativePowerLevelWithoutVassalContribution() {
+    public int calculateCumulativePowerLevelWithoutVassalContribution() {
 
         int powerLevel = 0;
 
@@ -203,7 +203,7 @@ public class Faction {
     }
 
     // get max power without vassal contribution
-    private int getMaximumCumulativePowerLevel() {
+    public int getMaximumCumulativePowerLevel() {
         int maxPower = 0;
 
         for (UUID playerUUID : members){
