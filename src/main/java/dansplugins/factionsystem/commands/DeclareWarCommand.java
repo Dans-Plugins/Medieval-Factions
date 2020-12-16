@@ -51,9 +51,11 @@ public class DeclareWarCommand {
                                                 // if lieges aren't the same
                                                 if (!PersistentData.getInstance().getFactions().get(i).getLiege().equalsIgnoreCase(faction.getLiege())) {
 
+                                                    Faction liegeFaction = PersistentData.getInstance().getFaction(PersistentData.getInstance().getFactions().get(i).getLiege());
+
                                                     // if not less than half of max cumulative power level without vassal contribution
-                                                    if (!(PersistentData.getInstance().getFactions().get(i).calculateCumulativePowerLevelWithoutVassalContribution() < (PersistentData.getInstance().getFactions().get(i).getMaximumCumulativePowerLevel() / 2))) {
-                                                        player.sendMessage(ChatColor.RED + "You can't declare war on this faction as they are a vassal unless their liege, " + PersistentData.getInstance().getFactions().get(i).getLiege() + " is weakened!");
+                                                    if (!(liegeFaction.calculateCumulativePowerLevelWithoutVassalContribution() < (liegeFaction.getMaximumCumulativePowerLevel() / 2))) {
+                                                        player.sendMessage(ChatColor.RED + "You can't declare war on this faction as they are a vassal unless their liege, " + liegeFaction.getName() + " is weakened!");
                                                         return;
                                                     }
 
