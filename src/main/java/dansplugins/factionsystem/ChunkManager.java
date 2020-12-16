@@ -118,7 +118,7 @@ public class ChunkManager {
                 return;
             }
         }
-        player.sendMessage(ChatColor.RED + "You must be an officer or owner of a faction to use claim land!");
+        player.sendMessage(ChatColor.RED + "You must be an officer or owner of a faction to claim land!");
     }
 
     private ClaimedChunk isChunkClaimed(double x, double y, String world)
