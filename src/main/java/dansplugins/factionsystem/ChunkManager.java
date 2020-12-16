@@ -355,20 +355,7 @@ public class ChunkManager {
         while (itr.hasNext()) {
             ClaimedChunk currentChunk = itr.next();
             if (currentChunk.getHolder().equalsIgnoreCase(factionName)) {
-
-                String identifier = (int) currentChunk.getChunk().getX() + "_" + (int) currentChunk.getChunk().getZ();
-
                 try {
-
-                    // delete file associated with chunk
-                    System.out.println("Attempting to delete file plugins plugins/MedievalFactions/claimedchunks/" + identifier + ".txt");
-                    File fileToDelete = new File("plugins/MedievalFactions/claimedchunks/" + identifier + ".txt");
-                    if (fileToDelete.delete()) {
-                        System.out.println("Success. File deleted.");
-                    } else {
-                        System.out.println("There was a problem deleting the file.");
-                    }
-
                     itr.remove();
                 }
                 catch(Exception e) {

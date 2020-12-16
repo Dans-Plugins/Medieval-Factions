@@ -154,20 +154,7 @@ public class PersistentData {
         while (itr.hasNext()) {
             LockedBlock currentBlock = itr.next();
             if (currentBlock.getFactionName().equalsIgnoreCase(factionName)) {
-
-                String identifier = currentBlock.getX() + "_" + currentBlock.getY() + "_" + currentBlock.getZ();
-
                 try {
-
-                    // delete file associated with chunk
-                    System.out.println("Attempting to delete file plugins/MedievalFactions/lockedblocks/" + identifier + ".txt");
-                    File fileToDelete = new File("plugins/Medievalfactions/lockedblocks/" + identifier + ".txt");
-                    if (fileToDelete.delete()) {
-                        System.out.println("Success. File deleted.");
-                    } else {
-                        System.out.println("There was a problem deleting the file.");
-                    }
-
                     itr.remove();
                 }
                 catch(Exception e) {
