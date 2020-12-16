@@ -53,7 +53,7 @@ public class DeclareWarCommand {
 
                                                     // if not less than half of max cumulative power level without vassal contribution
                                                     if (!(PersistentData.getInstance().getFactions().get(i).calculateCumulativePowerLevelWithoutVassalContribution() < (PersistentData.getInstance().getFactions().get(i).getMaximumCumulativePowerLevel() / 2))) {
-                                                        player.sendMessage(ChatColor.RED + "You can't declare war on this faction as they are a vassal! You must declare war on their liege " + PersistentData.getInstance().getFactions().get(i).getLiege() + " instead!");
+                                                        player.sendMessage(ChatColor.RED + "You can't declare war on this faction as they are a vassal unless their liege, " + PersistentData.getInstance().getFactions().get(i).getLiege() + " is weakened!");
                                                         return;
                                                     }
 
