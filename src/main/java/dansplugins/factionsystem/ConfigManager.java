@@ -124,7 +124,10 @@ public class ConfigManager {
             MedievalFactions.getInstance().getConfig().addDefault("zeroPowerFactionsGetDisbanded", false);
         }
 
-
+        if (!MedievalFactions.getInstance().getConfig().isBoolean("vassalContributionPercentageMultiplier")) {
+            System.out.println("vassalContributionPercentageMultiplier not set! Setting to default!");
+            MedievalFactions.getInstance().getConfig().addDefault("vassalContributionPercentageMultiplier", 0.10);
+        }
 
         deleteOldConfigOptionsIfPresent();
 
@@ -182,7 +185,8 @@ public class ConfigManager {
                 player.sendMessage(ChatColor.GREEN + "Boolean set!");
             }
             else if (option.equalsIgnoreCase("factionOwnerMultiplier")
-                    || option.equalsIgnoreCase("factionOfficerMultiplier")){
+                    || option.equalsIgnoreCase("factionOfficerMultiplier")
+                    || option.equalsIgnoreCase("vassalContributionPercentageMultiplier")){
                 MedievalFactions.getInstance().getConfig().set(option, Double.parseDouble(value));
                 player.sendMessage(ChatColor.GREEN + "Double set!");
             }
@@ -222,6 +226,7 @@ public class ConfigManager {
         MedievalFactions.getInstance().getConfig().addDefault("factionMaxGateArea", 64);
         MedievalFactions.getInstance().getConfig().addDefault("surroundedChunksProtected", true);
         MedievalFactions.getInstance().getConfig().addDefault("zeroPowerFactionsGetDisbanded", false);
+        MedievalFactions.getInstance().getConfig().addDefault("vassalContributionPercentageMultiplier", 0.10);
         MedievalFactions.getInstance().getConfig().options().copyDefaults(true);
         MedievalFactions.getInstance().saveConfig();
     }
@@ -247,7 +252,8 @@ public class ConfigManager {
 		        + ", factionMaxNumberGates: " + MedievalFactions.getInstance().getConfig().getInt("factionMaxNumberGates")
 		        + ", factionMaxGateArea: " + MedievalFactions.getInstance().getConfig().getInt("factionMaxGateArea")
                 + ", surroundedChunksProtected: " + MedievalFactions.getInstance().getConfig().getBoolean("surroundedChunksProtected")
-                + ", zeroPowerFactionsGetDisbanded: " + MedievalFactions.getInstance().getConfig().getBoolean("zeroPowerFactionsGetDisbanded"));
+                + ", zeroPowerFactionsGetDisbanded: " + MedievalFactions.getInstance().getConfig().getBoolean("zeroPowerFactionsGetDisbanded")
+                + ", vassalContributionPercentageMultiplier: " + MedievalFactions.getInstance().getConfig().getDouble("vassalContributionPercentageMultiplier"));
     }
 
 }

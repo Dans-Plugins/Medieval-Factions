@@ -192,7 +192,7 @@ public class Faction {
     private int calculateCumulativePowerLevelWithVassalContribution() {
 
         int vassalContribution = 0;
-        double percentage = 0.10;
+        double percentage = MedievalFactions.getInstance().getConfig().getDouble("vassalContributionPercentageMultiplier");
 
         for (String factionName : vassals) {
             Faction vassalFaction = PersistentData.getInstance().getFaction(factionName);
