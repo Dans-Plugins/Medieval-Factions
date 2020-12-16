@@ -126,7 +126,7 @@ public class ConfigManager {
 
         if (!MedievalFactions.getInstance().getConfig().isBoolean("vassalContributionPercentageMultiplier")) {
             System.out.println("vassalContributionPercentageMultiplier not set! Setting to default!");
-            MedievalFactions.getInstance().getConfig().addDefault("vassalContributionPercentageMultiplier", 0.10);
+            MedievalFactions.getInstance().getConfig().addDefault("vassalContributionPercentageMultiplier", 0.25);
         }
 
         deleteOldConfigOptionsIfPresent();
@@ -226,7 +226,7 @@ public class ConfigManager {
         MedievalFactions.getInstance().getConfig().addDefault("factionMaxGateArea", 64);
         MedievalFactions.getInstance().getConfig().addDefault("surroundedChunksProtected", true);
         MedievalFactions.getInstance().getConfig().addDefault("zeroPowerFactionsGetDisbanded", false);
-        MedievalFactions.getInstance().getConfig().addDefault("vassalContributionPercentageMultiplier", 0.10);
+        MedievalFactions.getInstance().getConfig().addDefault("vassalContributionPercentageMultiplier", 0.25);
         MedievalFactions.getInstance().getConfig().options().copyDefaults(true);
         MedievalFactions.getInstance().saveConfig();
     }
