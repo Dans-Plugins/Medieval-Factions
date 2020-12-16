@@ -3,6 +3,7 @@ package dansplugins.factionsystem.objects;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.reflect.TypeToken;
+import dansplugins.factionsystem.ChunkManager;
 import dansplugins.factionsystem.MedievalFactions;
 import dansplugins.factionsystem.UUIDChecker;
 import dansplugins.factionsystem.data.PersistentData;
@@ -32,7 +33,7 @@ public class Faction {
     private String description = "defaultDescription";
     private String liege = "none";
     private UUID owner = UUID.randomUUID();
-    private int cumulativePowerLevel = 0; // I'm not sure this variable is needed anymore... -Dan 11/27/2020
+    private int cumulativePowerLevel = 0; // I'm not sure this variable is needed anymore... -Dan 11/27/2020 // TODO: remove?
     private Location factionHome = null;
     private ArrayList<Gate> gates = new ArrayList<>();
 
@@ -159,18 +160,65 @@ public class Faction {
     }
 
     public int getCumulativePowerLevel() {
+        int withoutVassalContribution = calculateCumulativePowerLevelWithoutVassalContribution();
+        int withVassalContribution = calculateCumulativePowerLevelWithVassalContribution();
+
+        if (vassals.size() == 0 || (withoutVassalContribution < (getMaximumCumulativePowerLevel() / 2))) {
+            return withoutVassalContribution;
+        }
+        else {
+            return withVassalContribution;
+        }
+    }
+
+    public int calculateCumulativePowerLevelWithoutVassalContribution() {
+
         int powerLevel = 0;
+
         for (UUID playerUUID : members){
             try
             {
-            	powerLevel += PersistentData.getInstance().getPlayersPowerRecord(playerUUID).getPowerLevel();
+                powerLevel += PersistentData.getInstance().getPlayersPowerRecord(playerUUID).getPowerLevel();
             }
             catch (Exception e)
             {
-            	System.out.println("ERROR: Player's Power Record for uuid " + playerUUID + " not found. Could not get cumulative power level.");
+                System.out.println("ERROR: Player's Power Record for uuid " + playerUUID + " not found. Could not get cumulative power level.");
             }
         }
+
         return powerLevel;
+    }
+
+    private int calculateCumulativePowerLevelWithVassalContribution() {
+
+        int vassalContribution = 0;
+        double percentage = MedievalFactions.getInstance().getConfig().getDouble("vassalContributionPercentageMultiplier");
+
+        for (String factionName : vassals) {
+            Faction vassalFaction = PersistentData.getInstance().getFaction(factionName);
+            if (vassalFaction != null) {
+                vassalContribution += vassalFaction.getCumulativePowerLevel() * percentage;
+            }
+        }
+
+        return calculateCumulativePowerLevelWithoutVassalContribution() + vassalContribution;
+    }
+
+    // get max power without vassal contribution
+    public int getMaximumCumulativePowerLevel() {
+        int maxPower = 0;
+
+        for (UUID playerUUID : members){
+            try
+            {
+                maxPower += PersistentData.getInstance().getPlayersPowerRecord(playerUUID).maxPower();
+            }
+            catch (Exception e)
+            {
+                System.out.println("ERROR: Player's Power Record for uuid " + playerUUID + " not found. Could not get cumulative power level.");
+            }
+        }
+        return maxPower;
     }
 
     public int calculateMaxOfficers(){
