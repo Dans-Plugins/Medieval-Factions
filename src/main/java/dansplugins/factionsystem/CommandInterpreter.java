@@ -4,7 +4,7 @@ import dansplugins.factionsystem.commands.*;
 import dansplugins.factionsystem.data.PersistentData;
 import dansplugins.factionsystem.objects.Faction;
 import dansplugins.factionsystem.objects.PlayerPowerRecord;
-import dansplugins.factionsystem.utils.StringBuilder;
+import dansplugins.factionsystem.utils.ArgumentParser;
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
@@ -205,7 +205,7 @@ public class CommandInterpreter {
                         if (args.length > 1) {
                             if (player.hasPermission("mf.unclaimall.others") || player.hasPermission("mf.admin")) {
 
-                                String factionName = StringBuilder.getInstance().createStringFromFirstArgOnwards(args);
+                                String factionName = ArgumentParser.getInstance().createStringFromFirstArgOnwards(args);
 
                                 Faction faction = PersistentData.getInstance().getFaction(factionName);
 
@@ -498,11 +498,18 @@ public class CommandInterpreter {
                 	command.handleGate(sender, args);
                 	return true;
                 }
-                
+
+                // duel command
                 if (args[0].equalsIgnoreCase("duel") || args[0].equalsIgnoreCase("dl")) {
                 	DuelCommand command = new DuelCommand();
                 	command.handleDuel(sender, args);
                 	return true;
+                }
+
+                // invoke command
+                if (args[0].equalsIgnoreCase("invoke")) {
+                    InvokeCommand command = new InvokeCommand();
+                    return command.invokeAlliance(sender, args);
                 }
                 
                 // admin commands ----------------------------------------------------------------------------------

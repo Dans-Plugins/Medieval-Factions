@@ -3,7 +3,7 @@ package dansplugins.factionsystem.commands;
 import dansplugins.factionsystem.MedievalFactions;
 import dansplugins.factionsystem.data.PersistentData;
 import dansplugins.factionsystem.objects.Faction;
-import dansplugins.factionsystem.utils.StringBuilder;
+import dansplugins.factionsystem.utils.ArgumentParser;
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
@@ -28,7 +28,7 @@ public class CreateCommand {
                 if (args.length > 1) {
 
                     // creating name from arguments 1 to the last one
-                    String name = StringBuilder.getInstance().createStringFromFirstArgOnwards(args);
+                    String name = ArgumentParser.getInstance().createStringFromFirstArgOnwards(args);
 
                     // faction existence check
                     boolean factionExists = false;

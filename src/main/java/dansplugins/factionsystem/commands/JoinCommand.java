@@ -3,7 +3,7 @@ package dansplugins.factionsystem.commands;
 import dansplugins.factionsystem.Messenger;
 import dansplugins.factionsystem.data.PersistentData;
 import dansplugins.factionsystem.objects.Faction;
-import dansplugins.factionsystem.utils.StringBuilder;
+import dansplugins.factionsystem.utils.ArgumentParser;
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
@@ -18,7 +18,7 @@ public class JoinCommand {
                 if (args.length > 1) {
 
                     // creating name from arguments 1 to the last one
-                    String factionName = StringBuilder.getInstance().createStringFromFirstArgOnwards(args);
+                    String factionName = ArgumentParser.getInstance().createStringFromFirstArgOnwards(args);
 
                     for (Faction faction : PersistentData.getInstance().getFactions()) {
                         if (faction.getName().equalsIgnoreCase(factionName)) {

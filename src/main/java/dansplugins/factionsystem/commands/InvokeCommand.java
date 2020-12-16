@@ -1,0 +1,85 @@
+package dansplugins.factionsystem.commands;
+
+import dansplugins.factionsystem.Messenger;
+import dansplugins.factionsystem.data.PersistentData;
+import dansplugins.factionsystem.objects.Faction;
+import dansplugins.factionsystem.utils.ArgumentParser;
+import org.bukkit.ChatColor;
+import org.bukkit.command.CommandSender;
+import org.bukkit.entity.Player;
+
+import java.util.ArrayList;
+
+public class InvokeCommand {
+
+    public boolean invokeAlliance(CommandSender sender, String[] args) {
+
+        Player player = (Player) sender;
+
+        if (player.hasPermission("mf.invoke") || player.hasPermission("mf.default")) {
+
+            Faction playersFaction = PersistentData.getInstance().getPlayersFaction(player.getUniqueId());
+
+            // faction permission check
+            if (!playersFaction.isOwner(player.getUniqueId())) {
+                player.sendMessage(ChatColor.RED + "You must be the owner of your faction to invoke an alliance.");
+                return false;
+            }
+
+            // args check
+            if (args.length < 3) {
+                player.sendMessage(ChatColor.RED + "Usage: /mf invoke '(allied faction name)' '(warring faction)'");
+                return false;
+            }
+
+            ArrayList<String> singleQuoteArgs = ArgumentParser.getInstance().getArgumentsInsideSingleQuotes(args);
+
+            if (singleQuoteArgs.size() != 2) {
+                player.sendMessage(ChatColor.RED + "Allied faction and warring faction must be designated inside single quotes!");
+                return false;
+            }
+
+            String nameOfAllyToInvoke = singleQuoteArgs.get(0);
+            String nameOfWarringFaction = singleQuoteArgs.get(1);
+
+            // if not allied with this faction
+            if (!playersFaction.isAlly(nameOfAllyToInvoke)) {
+                player.sendMessage(ChatColor.RED + "" + nameOfAllyToInvoke + " isn't an ally of yours!");
+                return false;
+            }
+
+            Faction allyToInvoke = PersistentData.getInstance().getFaction(nameOfAllyToInvoke);
+
+            if (allyToInvoke == null) {
+                player.sendMessage(ChatColor.RED + "" + nameOfAllyToInvoke);
+                return false;
+            }
+
+            Faction warringFaction = PersistentData.getInstance().getFaction(nameOfWarringFaction);
+
+            // if not at war with this faction
+            if (!playersFaction.isEnemy(nameOfWarringFaction)) {
+                player.sendMessage(ChatColor.RED + "You aren't at war with " + nameOfWarringFaction);
+                return false;
+            }
+
+            // if warring faction doesn't exist
+            if (warringFaction == null) {
+                player.sendMessage(ChatColor.RED + "" + nameOfWarringFaction + " doesn't exist!");
+                return false;
+            }
+
+            allyToInvoke.addEnemy(nameOfWarringFaction);
+            warringFaction.addEnemy(nameOfAllyToInvoke);
+
+            Messenger.getInstance().sendAllPlayersInFactionMessage(allyToInvoke, playersFaction.getName() + " has called your faction into their war with " + warringFaction.getName());
+            Messenger.getInstance().sendAllPlayersInFactionMessage(warringFaction, playersFaction.getName() + " has called " + allyToInvoke.getName() + " into their war with your faction!");
+            return true;
+
+        } else {
+            player.sendMessage(ChatColor.RED + "Sorry! You need the following permission to use this command: 'mf.invoke'");
+            return false;
+        }
+    }
+
+}

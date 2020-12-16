@@ -4,7 +4,7 @@ import dansplugins.factionsystem.ChunkManager;
 import dansplugins.factionsystem.data.EphemeralData;
 import dansplugins.factionsystem.data.PersistentData;
 import dansplugins.factionsystem.objects.Faction;
-import dansplugins.factionsystem.utils.StringBuilder;
+import dansplugins.factionsystem.utils.ArgumentParser;
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
@@ -19,7 +19,7 @@ public class DisbandCommand {
                 if (args.length > 1) {
                     if (player.hasPermission("mf.disband.others") || player.hasPermission("mf.admin")) {
 
-                        String factionName = StringBuilder.getInstance().createStringFromFirstArgOnwards(args);
+                        String factionName = ArgumentParser.getInstance().createStringFromFirstArgOnwards(args);
 
                         for (int i = 0; i < PersistentData.getInstance().getFactions().size(); i++) {
 

@@ -3,7 +3,7 @@ package dansplugins.factionsystem.commands;
 import dansplugins.factionsystem.Messenger;
 import dansplugins.factionsystem.data.PersistentData;
 import dansplugins.factionsystem.objects.Faction;
-import dansplugins.factionsystem.utils.StringBuilder;
+import dansplugins.factionsystem.utils.ArgumentParser;
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
@@ -19,7 +19,7 @@ public class VassalizeCommand {
 
                 if (args.length > 1) {
 
-                    String targetFactionName = StringBuilder.getInstance().createStringFromFirstArgOnwards(args);
+                    String targetFactionName = ArgumentParser.getInstance().createStringFromFirstArgOnwards(args);
 
                     Faction playersFaction = PersistentData.getInstance().getPlayersFaction(player.getUniqueId());
                     Faction targetFaction = PersistentData.getInstance().getFaction(targetFactionName);
