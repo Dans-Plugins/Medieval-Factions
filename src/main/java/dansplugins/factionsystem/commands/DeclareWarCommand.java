@@ -1,6 +1,5 @@
 package dansplugins.factionsystem.commands;
 
-import dansplugins.factionsystem.MedievalFactions;
 import dansplugins.factionsystem.Messenger;
 import dansplugins.factionsystem.data.PersistentData;
 import dansplugins.factionsystem.objects.Faction;
@@ -8,9 +7,6 @@ import dansplugins.factionsystem.utils.StringBuilder;
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
-import org.bukkit.persistence.PersistentDataType;
-
-import java.util.ArrayList;
 
 public class DeclareWarCommand {
 
