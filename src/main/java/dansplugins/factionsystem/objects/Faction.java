@@ -196,7 +196,9 @@ public class Faction {
 
         for (String factionName : vassals) {
             Faction vassalFaction = PersistentData.getInstance().getFaction(factionName);
-            vassalContribution += vassalFaction.getCumulativePowerLevel() * percentage;
+            if (vassalFaction != null) {
+                vassalContribution += vassalFaction.getCumulativePowerLevel() * percentage;
+            }
         }
 
         return calculateCumulativePowerLevelWithoutVassalContribution() + vassalContribution;
