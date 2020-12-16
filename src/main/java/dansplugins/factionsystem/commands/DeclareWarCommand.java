@@ -16,102 +16,88 @@ public class DeclareWarCommand {
 
     public void declareWar(CommandSender sender, String[] args) {
         if (sender instanceof Player) {
-            Player player = (Player) sender;
+            Player declaringPlayer = (Player) sender;
 
             if (sender.hasPermission("mf.declarewar") || sender.hasPermission("mf.default")) {
-                boolean owner = false;
-                for (Faction faction : PersistentData.getInstance().getFactions()) {
-                    // if player is the owner or officer
-                    if (faction.isOwner(player.getUniqueId()) || faction.isOfficer(player.getUniqueId())) {
-                        owner = true;
-                        // if there's more than one argument
-                        if (args.length > 1) {
 
-                            // get name of faction
-                            String factionName = StringBuilder.getInstance().createStringFromFirstArgOnwards(args);
+                Faction declaringPlayersFaction = PersistentData.getInstance().getPlayersFaction(declaringPlayer.getUniqueId());
 
-                            // check if faction exists
-                            for (int i = 0; i < PersistentData.getInstance().getFactions().size(); i++) {
-                                if (PersistentData.getInstance().getFactions().get(i).getName().equalsIgnoreCase(factionName)) {
+                // faction permission check
+                if (!(declaringPlayersFaction.isOwner(declaringPlayer.getUniqueId()) || declaringPlayersFaction.isOfficer(declaringPlayer.getUniqueId()))) {
+                    declaringPlayer.sendMessage(ChatColor.RED + "You have to own a faction or be an officer of a faction to use this command.");
+                    return;
+                }
 
-                                    if (!(faction.getName().equalsIgnoreCase(factionName))) {
+                // argument check
+                if (args.length < 2) {
+                    declaringPlayer.sendMessage(ChatColor.RED + "Usage: /mf declarewar (faction-name)");
+                    return;
+                }
 
-                                        // check that enemy is not already on list
-                                        if (!(faction.isEnemy(factionName))) {
+                // get name of potential enemy faction and get faction reference
+                String potentialEnemyFactionName = StringBuilder.getInstance().createStringFromFirstArgOnwards(args);
+                Faction potentialEnemyFaction = PersistentData.getInstance().getFaction(potentialEnemyFactionName);
 
-                                            // if trying to declare war on a vassal
-                                            if (PersistentData.getInstance().getFactions().get(i).hasLiege()) {
+                // faction existence check
+                if (potentialEnemyFaction == null) {
+                    declaringPlayer.sendMessage(ChatColor.RED + "That faction wasn't found!");
+                    return;
+                }
 
-                                                // if faction is vassal of declarer
-                                                if (faction.isVassal(factionName)) {
-                                                    player.sendMessage(ChatColor.RED + "You can't declare war on your own vassal!");
-                                                    return;
-                                                }
+                // already enemy check
+                if (potentialEnemyFaction.isEnemy(declaringPlayersFaction.getName())) {
+                    declaringPlayer.sendMessage(ChatColor.RED + "Your faction is already at war with " + potentialEnemyFactionName);
+                    return;
+                }
 
-                                                // if lieges aren't the same
-                                                if (!PersistentData.getInstance().getFactions().get(i).getLiege().equalsIgnoreCase(faction.getLiege())) {
+                // vassal check
+                if (potentialEnemyFaction.hasLiege()) {
 
-                                                    Faction liegeFaction = PersistentData.getInstance().getFaction(PersistentData.getInstance().getFactions().get(i).getLiege());
-
-                                                    // if not less than half of max cumulative power level without vassal contribution
-                                                    if (!(liegeFaction.calculateCumulativePowerLevelWithoutVassalContribution() < (liegeFaction.getMaximumCumulativePowerLevel() / 2))) {
-                                                        player.sendMessage(ChatColor.RED + "You can't declare war on this faction as they are a vassal unless their liege, " + liegeFaction.getName() + " is weakened!");
-                                                        return;
-                                                    }
-
-                                                }
-
-                                            }
-
-                                            // disallow if trying to declare war on liege
-                                            if (faction.isLiege(factionName)) {
-                                                player.sendMessage(ChatColor.RED + "You can't declare war on your liege! Try '/mf declareindependence' instead!");
-                                                return;
-                                            }
-
-                                            // check to make sure we're not allied with this faction
-                                            if (!faction.isAlly(factionName)) {
-
-                                                // add enemy to declarer's faction's enemyList and the enemyLists of its allies
-                                                faction.addEnemy(factionName);
-
-                                                // add declarer's faction to new enemy's enemyList
-                                                PersistentData.getInstance().getFactions().get(i).addEnemy(faction.getName());
-
-                                                for (int j = 0; j < PersistentData.getInstance().getFactions().size(); j++) {
-                                                    if (PersistentData.getInstance().getFactions().get(j).getName().equalsIgnoreCase(factionName)) {
-                                                        Messenger.getInstance().sendAllPlayersOnServerMessage(ChatColor.RED + faction.getName() + " has declared war against " + factionName + "!");
-                                                    }
-                                                }
-
-                                                // invoke alliances
-                                                invokeAlliances(PersistentData.getInstance().getFactions().get(i).getName(), faction.getName(), PersistentData.getInstance().getFactions());
-                                            }
-                                            else {
-                                                player.sendMessage(ChatColor.RED + "You can't declare war on your ally!");
-                                            }
-
-                                        }
-                                        else {
-                                            player.sendMessage(ChatColor.RED + "Your faction is already at war with " + factionName);
-                                        }
-
-                                    }
-                                    else {
-                                        player.sendMessage(ChatColor.RED + "You can't declare war on your own faction.");
-                                    }
-                                }
-                            }
-
-                        }
-                        else {
-                            player.sendMessage(ChatColor.RED + "Usage: /mf declarewar (faction-name)");
-                        }
+                    // if potential enemy faction is vassal of declarer
+                    if (declaringPlayersFaction.isVassal(potentialEnemyFactionName)) {
+                        declaringPlayer.sendMessage(ChatColor.RED + "You can't declare war on your own vassal!");
+                        return;
                     }
+
+                    // if lieges aren't the same
+                    if (!declaringPlayersFaction.getLiege().equalsIgnoreCase(potentialEnemyFaction.getLiege())) {
+
+                        // get liege faction of potential enemy faction
+                        Faction liegeOfPotentialEnemy = PersistentData.getInstance().getFaction(potentialEnemyFaction.getLiege());
+
+                        // if not less than half of max cumulative power level without vassal contribution
+                        if (!(liegeOfPotentialEnemy.calculateCumulativePowerLevelWithoutVassalContribution() < (liegeOfPotentialEnemy.getMaximumCumulativePowerLevel() / 2))) {
+                            declaringPlayer.sendMessage(ChatColor.RED + "You can't declare war on this faction as they are a vassal unless their liege, " + liegeOfPotentialEnemy.getName() + " is weakened!");
+                            return;
+                        }
+
+                    }
+                    else {
+                        // vassals of the same liege can declare war on each other
+                    }
+
+                } // end of vassal check
+
+                // disallow if trying to declare war on liege
+                if (declaringPlayersFaction.isLiege(potentialEnemyFactionName)) {
+                    declaringPlayer.sendMessage(ChatColor.RED + "You can't declare war on your liege! Try '/mf declareindependence' instead!");
+                    return;
                 }
-                if (!owner) {
-                    player.sendMessage(ChatColor.RED + "You have to own a faction or be an officer of a faction to use this command.");
+
+                // check to make sure we're not allied with this faction
+                if (declaringPlayersFaction.isAlly(potentialEnemyFactionName)) {
+                    declaringPlayer.sendMessage(ChatColor.RED + "You can't declare war on your ally!");
+                    return;
                 }
+
+                // add enemy to declarer's faction's enemyList and the enemyLists of its allies
+                declaringPlayersFaction.addEnemy(potentialEnemyFactionName);
+
+                // add declarer's faction to new enemy's enemyList
+                potentialEnemyFaction.addEnemy(declaringPlayersFaction.getName());
+
+                Messenger.getInstance().sendAllPlayersOnServerMessage(ChatColor.RED + declaringPlayersFaction.getName() + " has declared war against " + potentialEnemyFactionName + "!");
+
             }
             else {
                 sender.sendMessage(ChatColor.RED + "Sorry! You need the following permission to use this command: 'mf.declarewar'");
@@ -119,25 +105,4 @@ public class DeclareWarCommand {
         }
     }
 
-    private void invokeAlliances(String victimFactionName, String declaringFactionName, ArrayList<Faction> factions) {
-        Faction victimFaction = PersistentData.getInstance().getFaction(victimFactionName);
-        Faction declaringFaction = PersistentData.getInstance().getFaction(declaringFactionName);
-
-        if (victimFaction != null && declaringFaction != null)  {
-            for (String alliedFaction : victimFaction.getAllies()) {
-                if (!(PersistentData.getInstance().getFaction(alliedFaction).isEnemy(declaringFactionName)) && !(declaringFaction.isEnemy(alliedFaction))) {
-                    // add enemies
-                    PersistentData.getInstance().getFaction(alliedFaction).addEnemy(declaringFactionName);
-                    declaringFaction.addEnemy(alliedFaction);
-
-                    // inform parties
-                    Messenger.getInstance().sendAllPlayersInFactionMessage(victimFaction, ChatColor.GREEN + "Your ally " + alliedFaction + " has joined you in war!");
-                    Messenger.getInstance().sendAllPlayersInFactionMessage(PersistentData.getInstance().getFaction(alliedFaction), ChatColor.RED + "Your ally " + victimFactionName + " has called you into war with " + declaringFactionName + "!");
-                    Messenger.getInstance().sendAllPlayersInFactionMessage(declaringFaction, ChatColor.RED  + alliedFaction + " has joined the war on your enemy's side!");
-
-                }
-            }
-        }
-
-    }
 }
