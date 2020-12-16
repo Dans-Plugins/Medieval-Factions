@@ -159,18 +159,43 @@ public class Faction {
     }
 
     public int getCumulativePowerLevel() {
+        if (vassals.size() == 0) {
+            return calculateCumulativePowerLevelWithoutVassalContribution();
+        }
+        else {
+            return calculateCumulativePowerLevelWithVassalContribution();
+        }
+    }
+
+    private int calculateCumulativePowerLevelWithoutVassalContribution() {
+
         int powerLevel = 0;
+
         for (UUID playerUUID : members){
             try
             {
-            	powerLevel += PersistentData.getInstance().getPlayersPowerRecord(playerUUID).getPowerLevel();
+                powerLevel += PersistentData.getInstance().getPlayersPowerRecord(playerUUID).getPowerLevel();
             }
             catch (Exception e)
             {
-            	System.out.println("ERROR: Player's Power Record for uuid " + playerUUID + " not found. Could not get cumulative power level.");
+                System.out.println("ERROR: Player's Power Record for uuid " + playerUUID + " not found. Could not get cumulative power level.");
             }
         }
+
         return powerLevel;
+    }
+
+    private int calculateCumulativePowerLevelWithVassalContribution() {
+
+        int vassalContribution = 0;
+        double percentage = 0.10;
+
+        for (String factionName : vassals) {
+            Faction vassalFaction = PersistentData.getInstance().getFaction(factionName);
+            vassalContribution += vassalFaction.getCumulativePowerLevel() * percentage;
+        }
+
+        return calculateCumulativePowerLevelWithoutVassalContribution() + vassalContribution;
     }
 
     public int calculateMaxOfficers(){
