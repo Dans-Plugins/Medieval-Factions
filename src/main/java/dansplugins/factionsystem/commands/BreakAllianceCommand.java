@@ -3,7 +3,7 @@ package dansplugins.factionsystem.commands;
 import dansplugins.factionsystem.Messenger;
 import dansplugins.factionsystem.data.PersistentData;
 import dansplugins.factionsystem.objects.Faction;
-import dansplugins.factionsystem.utils.StringBuilder;
+import dansplugins.factionsystem.utils.ArgumentParser;
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
@@ -24,7 +24,7 @@ public class BreakAllianceCommand {
                         if (args.length > 1) {
 
                             // get name of faction
-                            String factionName = StringBuilder.getInstance().createStringFromFirstArgOnwards(args);
+                            String factionName = ArgumentParser.getInstance().createStringFromFirstArgOnwards(args);
 
                             // check if faction exists
                             for (int i = 0; i < PersistentData.getInstance().getFactions().size(); i++) {

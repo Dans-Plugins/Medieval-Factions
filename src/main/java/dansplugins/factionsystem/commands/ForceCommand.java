@@ -7,7 +7,7 @@ import dansplugins.factionsystem.UUIDChecker;
 import dansplugins.factionsystem.data.PersistentData;
 import dansplugins.factionsystem.objects.Faction;
 import dansplugins.factionsystem.objects.PlayerPowerRecord;
-import dansplugins.factionsystem.utils.StringBuilder;
+import dansplugins.factionsystem.utils.ArgumentParser;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.OfflinePlayer;
@@ -90,7 +90,7 @@ public class ForceCommand {
             if (args.length >= 4) {
 
                 // get arguments designated by single quotes
-                ArrayList<String> singleQuoteArgs = getArgumentsInsideSingleQuotes(args);
+                ArrayList<String> singleQuoteArgs = ArgumentParser.getInstance().getArgumentsInsideSingleQuotes(args);
 
                 if (singleQuoteArgs.size() < 2) {
                     sender.sendMessage(ChatColor.RED + "No factions designated. Must be designated inside single quotes!");
@@ -171,7 +171,7 @@ public class ForceCommand {
             if (args.length >= 4) {
 
                 // get arguments designated by single quotes
-                ArrayList<String> singleQuoteArgs = getArgumentsInsideSingleQuotes(args);
+                ArrayList<String> singleQuoteArgs = ArgumentParser.getInstance().getArgumentsInsideSingleQuotes(args);
 
                 if (singleQuoteArgs.size() < 2) {
                     sender.sendMessage(ChatColor.RED + "Not enough arguments designated. Must be designated inside single quotes!");
@@ -272,7 +272,7 @@ public class ForceCommand {
             if (args.length >= 4) {
 
                 // get arguments designated by single quotes
-                ArrayList<String> singleQuoteArgs = getArgumentsInsideSingleQuotes(args);
+                ArrayList<String> singleQuoteArgs = ArgumentParser.getInstance().getArgumentsInsideSingleQuotes(args);
 
                 if (singleQuoteArgs.size() < 2) {
                     sender.sendMessage(ChatColor.RED + "Player and desired power must be designated inside single quotes!");
@@ -303,45 +303,6 @@ public class ForceCommand {
             sender.sendMessage(ChatColor.RED + "Sorry! You need the following permission to use this command: 'mf.force.power'");
             return false;
         }
-    }
-
-    private ArrayList<String> getArgumentsInsideSingleQuotes(String[] args) {
-        ArrayList<String> toReturn = new ArrayList<>();
-
-        String argumentString = StringBuilder.getInstance().createStringFromFirstArgOnwards(args);
-
-        int index = 0;
-        while (true) {
-            int start = findIndexOfFirstSingleQuote(index, argumentString);
-            if (start == -1) {
-                break;
-            }
-            int end = findIndexOfFirstSingleQuote(start + 1, argumentString);
-
-            if (end == -1) {
-                break;
-            }
-
-            toReturn.add(argumentString.substring(start + 1, end));
-//            System.out.println("DEBUG: argument '" + toReturn.get(toReturn.size() - 1) + "' found!");
-            index = end + 1;
-        }
-
-        return toReturn;
-    }
-
-    private int findIndexOfFirstSingleQuote(int startingIndex, String argumentString) {
-
-        for (int i = startingIndex; i < argumentString.length(); i++) {
-
-            if (argumentString.charAt(i) == '\'') {
-//                System.out.println("DEBUG: first index of a single quote character in '" + argumentString + "' is " + i);
-                return i;
-            }
-
-        }
-
-        return -1;
     }
 
 }

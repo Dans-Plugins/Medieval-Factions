@@ -8,7 +8,6 @@ import org.bukkit.Chunk;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
 
-import java.io.File;
 import java.time.ZonedDateTime;
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -119,6 +118,7 @@ public class ChunkManager {
                 return;
             }
         }
+        player.sendMessage(ChatColor.RED + "You must be an officer or owner of a faction to claim land!");
     }
 
     private ClaimedChunk isChunkClaimed(double x, double y, String world)

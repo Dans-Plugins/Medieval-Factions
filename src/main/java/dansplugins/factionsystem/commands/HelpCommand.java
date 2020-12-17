@@ -19,11 +19,12 @@ public class HelpCommand {
                 }
                 if (args[1].equalsIgnoreCase("2")) {
                     sender.sendMessage(ChatColor.BOLD + "" + ChatColor.AQUA + "\n == Medieval Factions Commands Page 2/6 == " + "\n");
-                    sender.sendMessage(ChatColor.AQUA + "/mf kick - Kick a player from your faction. " + "\n");
+                    sender.sendMessage(ChatColor.AQUA + "/mf kick - Kick a player from your faction." + "\n");
                     sender.sendMessage(ChatColor.AQUA + "/mf transfer - Transfer ownership of your faction to another player.\n");
                     sender.sendMessage(ChatColor.AQUA + "/mf disband - Disband your faction (must be owner)." + "\n");
                     sender.sendMessage(ChatColor.AQUA + "/mf declarewar - Declare war against another faction." + "\n");
                     sender.sendMessage(ChatColor.AQUA + "/mf makepeace - Send peace offer to another faction." + "\n");
+                    sender.sendMessage(ChatColor.AQUA + "/mf invoke (ally) (enemy) - Call an allied faction into a war." + "\n");
                     sender.sendMessage(ChatColor.AQUA + "/mf claim - Claim land for your faction." + "\n");
                     sender.sendMessage(ChatColor.AQUA + "/mf unclaim - Unclaim land for your faction." + "\n");
                     sender.sendMessage(ChatColor.AQUA + "/mf unclaimall - Unclaim all land for your faction." + "\n");
@@ -94,10 +95,10 @@ public class HelpCommand {
         sender.sendMessage(ChatColor.AQUA + "/mf list - List all factions on the server." + "\n");
         sender.sendMessage(ChatColor.AQUA + "/mf info - See your faction or another faction's information." + "\n");
         sender.sendMessage(ChatColor.AQUA + "/mf members - List the members of your faction or another faction." + "\n");
-        sender.sendMessage(ChatColor.AQUA + "/mf join - Join a faction if you've been invited." + "\n");
+        sender.sendMessage(ChatColor.AQUA + "/mf join (faction) - Join a faction if you've been invited." + "\n");
         sender.sendMessage(ChatColor.AQUA + "/mf leave - Leave your current faction." + "\n");
-        sender.sendMessage(ChatColor.AQUA + "/mf create - Create a new faction." + "\n");
-        sender.sendMessage(ChatColor.AQUA + "/mf invite - Invite a player to your faction." + "\n");
-        sender.sendMessage(ChatColor.AQUA + "/mf desc - Set your faction description." + "\n");
+        sender.sendMessage(ChatColor.AQUA + "/mf create (name) - Create a new faction." + "\n");
+        sender.sendMessage(ChatColor.AQUA + "/mf invite (player) - Invite a player to your faction." + "\n");
+        sender.sendMessage(ChatColor.AQUA + "/mf desc (desc) - Set your faction description." + "\n");
     }
 }

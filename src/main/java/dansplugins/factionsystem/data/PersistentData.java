@@ -3,7 +3,6 @@ package dansplugins.factionsystem.data;
 import dansplugins.factionsystem.objects.*;
 import org.bukkit.block.Block;
 
-import java.io.File;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.UUID;
