@@ -34,6 +34,12 @@ public class DeclareWarCommand {
                 String potentialEnemyFactionName = ArgumentParser.getInstance().createStringFromFirstArgOnwards(args);
                 Faction potentialEnemyFaction = PersistentData.getInstance().getFaction(potentialEnemyFactionName);
 
+                // disallow declaring war on your own faction
+                if (potentialEnemyFactionName.equalsIgnoreCase(declaringPlayersFaction.getName())) {
+                    declaringPlayer.sendMessage(ChatColor.RED + "You can't declare war on yourself!");
+                    return;
+                }
+
                 // faction existence check
                 if (potentialEnemyFaction == null) {
                     declaringPlayer.sendMessage(ChatColor.RED + "That faction wasn't found!");
