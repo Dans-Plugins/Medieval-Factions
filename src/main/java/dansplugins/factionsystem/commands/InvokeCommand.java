@@ -72,8 +72,9 @@ public class InvokeCommand {
             allyToInvoke.addEnemy(nameOfWarringFaction);
             warringFaction.addEnemy(nameOfAllyToInvoke);
 
-            Messenger.getInstance().sendAllPlayersInFactionMessage(allyToInvoke, playersFaction.getName() + " has called your faction into their war with " + warringFaction.getName());
-            Messenger.getInstance().sendAllPlayersInFactionMessage(warringFaction, playersFaction.getName() + " has called " + allyToInvoke.getName() + " into their war with your faction!");
+            Messenger.getInstance().sendAllPlayersInFactionMessage(allyToInvoke, ChatColor.RED + "" + playersFaction.getName() + " has called your faction into their war with " + warringFaction.getName());
+            Messenger.getInstance().sendAllPlayersInFactionMessage(warringFaction, ChatColor.RED + "" + playersFaction.getName() + " has called " + allyToInvoke.getName() + " into their war with your faction!");
+            Messenger.getInstance().sendAllPlayersInFactionMessage(playersFaction, ChatColor.GREEN + "Your faction has called " + allyToInvoke.getName() + " into your war with " + warringFaction.getName());
             return true;
 
         } else {
