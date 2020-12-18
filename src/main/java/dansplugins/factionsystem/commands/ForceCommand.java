@@ -314,11 +314,19 @@ public class ForceCommand {
         if (sender.hasPermission("mf.force.renounce") || sender.hasPermission("mf.force.*") || sender.hasPermission("mf.admin")) {
 
             if (args.length < 2) {
-                sender.sendMessage(ChatColor.RED + "Usage: /mf force renounce (faction)");
+                sender.sendMessage(ChatColor.RED + "Usage: /mf force renounce 'faction'");
                 return false;
             }
 
-            String factionName = ArgumentParser.getInstance().createStringFromFirstArgOnwards(args);
+            ArrayList<String> singleQuoteArgs = ArgumentParser.getInstance().getArgumentsInsideSingleQuotes(args);
+
+            // single quote args length check
+            if (singleQuoteArgs.size() != 1) {
+                sender.sendMessage(ChatColor.RED + "Faction must be designated inside single quotes!");
+                return false;
+            }
+
+            String factionName = singleQuoteArgs.get(0);
             System.out.println("DEBUG: FACTION NAME IS " + factionName);
 
             int numReferences = 0;
