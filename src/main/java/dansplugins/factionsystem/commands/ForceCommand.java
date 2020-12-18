@@ -349,8 +349,16 @@ public class ForceCommand {
 
             }
 
-            sender.sendMessage(ChatColor.GREEN + "Success! " + numReferences + " references removed!");
-            return true;
+            if (numReferences != 0) {
+                sender.sendMessage(ChatColor.GREEN + "Success! " + numReferences + " references removed!");
+                return true;
+            }
+            else {
+                sender.sendMessage(ChatColor.GREEN + "There were no vassal or liege references associated with " + factionName);
+                return false;
+            }
+
+
         }
         else {
             sender.sendMessage(ChatColor.RED + "Sorry! You need the following permission to use this command: 'mf.force.renounce'");
