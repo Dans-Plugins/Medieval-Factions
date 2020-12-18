@@ -350,7 +350,7 @@ public class ForceCommand {
                     numReferences++;
                 }
                 System.out.println("DEBUG: CHECKING VASSALS OF " + factionName);
-                System.out.println("VASSALS FOUND: " + faction.getNumVassals());
+                System.out.println("DEBUG: VASSALS FOUND: " + faction.getNumVassals());
                 if (faction.getNumVassals() != 0) {
                     numReferences = numReferences + faction.getNumVassals();
                     faction.clearVassals();
