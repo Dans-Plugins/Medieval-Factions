@@ -714,4 +714,12 @@ public class Faction {
         }
         list.remove(toRemove);
     }
+
+    public void clearVassals() {
+        vassals.clear();
+    }
+
+    public int getNumVassals() {
+        return vassals.size();
+    }
 }
