@@ -327,21 +327,15 @@ public class ForceCommand {
             }
 
             String factionName = singleQuoteArgs.get(0);
-            System.out.println("DEBUG: FACTION NAME IS " + factionName);
 
             int numReferences = 0;
 
-            System.out.println("DEBUG: FOUND " + PersistentData.getInstance().getFactions().size() + " FACTIONS");
-
             for (Faction f : PersistentData.getInstance().getFactions()) {
-                System.out.println("DEBUG: REMOVING LIEGE AND VASSAL REFERENCES ASSOCIATED WITH " + factionName + " for " + f.getName());
                 // remove liege and vassal references associated with this faction
-                System.out.println("DEBUG: LIEGE OF " + f.getName() + " IS " + f.getLiege());
                 if (f.isLiege(factionName)) {
                     f.setLiege("none");
                     numReferences++;
                 }
-                System.out.println("DEBUG: " + f.getName() + " has " + f.getNumVassals() + " vassals");
                 if (f.isVassal(factionName)) {
                     f.removeVassal(factionName);
                     numReferences++;
@@ -351,22 +345,15 @@ public class ForceCommand {
             Faction faction = PersistentData.getInstance().getFaction(factionName);
 
             if (faction != null) {
-                System.out.println("DEBUG: CHECKING LIEGE OF " + factionName);
-                System.out.println("DEBUG: LIEGE IS " + faction.getLiege());
                 if (!faction.getLiege().equalsIgnoreCase("none")) {
                     faction.setLiege("none");
                     numReferences++;
                 }
-                System.out.println("DEBUG: CHECKING VASSALS OF " + factionName);
-                System.out.println("DEBUG: VASSALS FOUND: " + faction.getNumVassals());
                 if (faction.getNumVassals() != 0) {
                     numReferences = numReferences + faction.getNumVassals();
                     faction.clearVassals();
                 }
 
-            }
-            else {
-                System.out.println("DEBUG: FACTION IS NULL");
             }
 
             if (numReferences != 0) {
