@@ -319,6 +319,7 @@ public class ForceCommand {
             }
 
             String factionName = ArgumentParser.getInstance().createStringFromFirstArgOnwards(args);
+            System.out.println("DEBUG: FACTION NAME IS " + factionName);
 
             int numReferences = 0;
 
@@ -338,10 +339,14 @@ public class ForceCommand {
             Faction faction = PersistentData.getInstance().getFaction(factionName);
 
             if (faction != null) {
+                System.out.println("DEBUG: CHECKING LIEGE OF " + factionName);
+                System.out.println("DEBUG: LIEGE IS " + faction.getLiege());
                 if (faction.getLiege().equalsIgnoreCase("none")) {
                     faction.setLiege("none");
                     numReferences++;
                 }
+                System.out.println("DEBUG: CHECKING VASSALS OF " + factionName);
+                System.out.println("VASSALS FOUND: " + faction.getNumVassals());
                 if (faction.getNumVassals() != 0) {
                     numReferences = numReferences + faction.getNumVassals();
                     faction.clearVassals();
