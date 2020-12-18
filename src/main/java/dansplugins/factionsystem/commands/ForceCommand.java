@@ -353,7 +353,7 @@ public class ForceCommand {
             if (faction != null) {
                 System.out.println("DEBUG: CHECKING LIEGE OF " + factionName);
                 System.out.println("DEBUG: LIEGE IS " + faction.getLiege());
-                if (faction.getLiege().equalsIgnoreCase("none")) {
+                if (!faction.getLiege().equalsIgnoreCase("none")) {
                     faction.setLiege("none");
                     numReferences++;
                 }
