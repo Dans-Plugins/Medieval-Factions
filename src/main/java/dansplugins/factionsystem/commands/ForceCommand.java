@@ -45,6 +45,9 @@ public class ForceCommand {
             if (args[1].equalsIgnoreCase("power")) {
                 return forcePower(sender, args);
             }
+            if (args[1].equalsIgnoreCase("renounce")) {
+                return renounceVassalAndLiegeRelationships(sender, args);
+            }
         }
         // show usages
         sender.sendMessage(ChatColor.RED + "Sub-commands:");
@@ -55,6 +58,7 @@ public class ForceCommand {
         sender.sendMessage(ChatColor.RED + "/mf force join 'player' 'faction2'");
         sender.sendMessage(ChatColor.RED + "/mf force kick (player)");
         sender.sendMessage(ChatColor.RED + "/mf force power 'player' 'number'");
+        sender.sendMessage(ChatColor.RED + "/mf force renounce (faction)");
         return false;
     }
 
@@ -303,6 +307,71 @@ public class ForceCommand {
             sender.sendMessage(ChatColor.RED + "Sorry! You need the following permission to use this command: 'mf.force.power'");
             return false;
         }
+    }
+
+    private boolean renounceVassalAndLiegeRelationships(CommandSender sender, String[] args) {
+
+        if (sender.hasPermission("mf.force.renounce") || sender.hasPermission("mf.force.*") || sender.hasPermission("mf.admin")) {
+
+            if (args.length < 2) {
+                sender.sendMessage(ChatColor.RED + "Usage: /mf force renounce 'faction'");
+                return false;
+            }
+
+            ArrayList<String> singleQuoteArgs = ArgumentParser.getInstance().getArgumentsInsideSingleQuotes(args);
+
+            // single quote args length check
+            if (singleQuoteArgs.size() != 1) {
+                sender.sendMessage(ChatColor.RED + "Faction must be designated inside single quotes!");
+                return false;
+            }
+
+            String factionName = singleQuoteArgs.get(0);
+
+            int numReferences = 0;
+
+            for (Faction f : PersistentData.getInstance().getFactions()) {
+                // remove liege and vassal references associated with this faction
+                if (f.isLiege(factionName)) {
+                    f.setLiege("none");
+                    numReferences++;
+                }
+                if (f.isVassal(factionName)) {
+                    f.removeVassal(factionName);
+                    numReferences++;
+                }
+            }
+
+            Faction faction = PersistentData.getInstance().getFaction(factionName);
+
+            if (faction != null) {
+                if (!faction.getLiege().equalsIgnoreCase("none")) {
+                    faction.setLiege("none");
+                    numReferences++;
+                }
+                if (faction.getNumVassals() != 0) {
+                    numReferences = numReferences + faction.getNumVassals();
+                    faction.clearVassals();
+                }
+
+            }
+
+            if (numReferences != 0) {
+                sender.sendMessage(ChatColor.GREEN + "Success! " + numReferences + " references removed!");
+                return true;
+            }
+            else {
+                sender.sendMessage(ChatColor.GREEN + "There were no vassal or liege references associated with " + factionName);
+                return false;
+            }
+
+
+        }
+        else {
+            sender.sendMessage(ChatColor.RED + "Sorry! You need the following permission to use this command: 'mf.force.renounce'");
+            return false;
+        }
+
     }
 
 }

@@ -30,7 +30,7 @@ public class LeaveCommand {
                                         PersistentData.getInstance().getFactions().get(i).removeOfficer(player.getUniqueId());
                                     }
 
-                                    // remove records of alliances/wars associated with this faction
+                                    // remove records of alliances/wars/vassals/lieges associated with this faction
                                     for (Faction faction : PersistentData.getInstance().getFactions()) {
                                         if (faction.isAlly(PersistentData.getInstance().getFactions().get(i).getName())) {
                                             faction.removeAlly(PersistentData.getInstance().getFactions().get(i).getName());
@@ -48,20 +48,6 @@ public class LeaveCommand {
                                     }
 
                                     EphemeralData.getInstance().getPlayersInFactionChat().remove(player.getUniqueId());
-
-                                    // delete file associated with faction
-                                    System.out.println("Attempting to delete file plugins/MedievalFactions/" + PersistentData.getInstance().getFactions().get(i).getName() + ".txt");
-                                    try {
-                                        File fileToDelete = new File("plugins/MedievalFactions/" + PersistentData.getInstance().getFactions().get(i).getName() + ".txt");
-                                        if (fileToDelete.delete()) {
-                                            System.out.println("Success. File deleted.");
-                                        }
-                                        else {
-                                            System.out.println("There was a problem deleting the file.");
-                                        }
-                                    } catch(Exception e) {
-                                        System.out.println("An error has occurred during file deletion.");
-                                    }
 
                                     // remove claimed land objects associated with this faction
                                     ChunkManager.getInstance().removeAllClaimedChunks(PersistentData.getInstance().getFactions().get(i).getName(), PersistentData.getInstance().getClaimedChunks());

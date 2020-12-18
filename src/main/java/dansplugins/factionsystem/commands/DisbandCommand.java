@@ -74,20 +74,34 @@ public class DisbandCommand {
 
     private void removeFaction(int i) {
 
+        String nameOfFactionToRemove = PersistentData.getInstance().getFactions().get(i).getName();
+
         // remove claimed land objects associated with this faction
-        ChunkManager.getInstance().removeAllClaimedChunks(PersistentData.getInstance().getFactions().get(i).getName(), PersistentData.getInstance().getClaimedChunks());
+        ChunkManager.getInstance().removeAllClaimedChunks(nameOfFactionToRemove, PersistentData.getInstance().getClaimedChunks());
 
         // remove locks associated with this faction
         PersistentData.getInstance().removeAllLocks(PersistentData.getInstance().getFactions().get(i).getName());
 
-        // remove records of alliances/wars associated with this faction
+
         for (Faction faction : PersistentData.getInstance().getFactions()) {
-            if (faction.isAlly(PersistentData.getInstance().getFactions().get(i).getName())) {
-                faction.removeAlly(PersistentData.getInstance().getFactions().get(i).getName());
+
+            // remove records of alliances/wars associated with this faction
+            if (faction.isAlly(nameOfFactionToRemove)) {
+                faction.removeAlly(nameOfFactionToRemove);
             }
-            if (faction.isEnemy(PersistentData.getInstance().getFactions().get(i).getName())) {
-                faction.removeEnemy(PersistentData.getInstance().getFactions().get(i).getName());
+            if (faction.isEnemy(nameOfFactionToRemove)) {
+                faction.removeEnemy(nameOfFactionToRemove);
             }
+
+            // remove liege and vassal references associated with this faction
+            if (faction.isLiege(nameOfFactionToRemove)) {
+                faction.setLiege("none");
+            }
+
+            if (faction.isVassal(nameOfFactionToRemove)) {
+                faction.removeVassal(nameOfFactionToRemove);
+            }
+
         }
 
         PersistentData.getInstance().getFactions().remove(i);
