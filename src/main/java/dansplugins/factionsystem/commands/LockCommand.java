@@ -14,7 +14,7 @@ public class LockCommand { ;
             Player player = (Player) sender;
 
             // check if has permission
-            if (player.hasPermission("mf.lock") || player.hasPermission("mf.default")) {
+            if (player.hasPermission("mf.lock")) {
 
                 // check if argument exists
                 if (args.length > 1) {

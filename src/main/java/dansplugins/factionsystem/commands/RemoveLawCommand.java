@@ -10,7 +10,7 @@ public class RemoveLawCommand {
 
     public void removeLaw(CommandSender sender, String[] args) {
         // player & perm check
-        if (sender instanceof Player && ( ((Player) sender).hasPermission("mf.removelaw") || ((Player) sender).hasPermission("mf.default")) ) {
+        if (sender instanceof Player && ( ((Player) sender).hasPermission("mf.removelaw")) ) {
 
             Player player = (Player) sender;
 

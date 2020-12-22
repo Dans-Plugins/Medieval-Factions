@@ -19,7 +19,7 @@ public class GateCommand {
 		{
 			Player player = (Player) sender;
 			
-			if (player.hasPermission("mf.gate") || player.hasPermission("mf.default"))
+			if (player.hasPermission("mf.gate"))
 			{
 				if (args.length > 1)
 				{

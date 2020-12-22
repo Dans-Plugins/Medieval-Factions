@@ -14,7 +14,7 @@ public class DeclareWarCommand {
         if (sender instanceof Player) {
             Player declaringPlayer = (Player) sender;
 
-            if (sender.hasPermission("mf.declarewar") || sender.hasPermission("mf.default")) {
+            if (sender.hasPermission("mf.declarewar")) {
 
                 Faction declaringPlayersFaction = PersistentData.getInstance().getPlayersFaction(declaringPlayer.getUniqueId());
 

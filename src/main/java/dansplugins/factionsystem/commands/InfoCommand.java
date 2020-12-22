@@ -15,7 +15,7 @@ public class InfoCommand {
         if (sender instanceof Player) {
            Player player = (Player) sender;
 
-            if (sender.hasPermission("mf.info") || sender.hasPermission("mf.default")) {
+            if (sender.hasPermission("mf.info")) {
                 if (args.length == 1) {
                     for (Faction faction : PersistentData.getInstance().getFactions()) {
                         if (faction.isMember(player.getUniqueId())) {

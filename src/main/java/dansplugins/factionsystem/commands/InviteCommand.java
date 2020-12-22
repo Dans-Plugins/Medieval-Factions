@@ -19,7 +19,7 @@ public class InviteCommand {
         if (sender instanceof Player) {
             Player player = (Player) sender;
 
-            if (sender.hasPermission("mf.invite") || sender.hasPermission("mf.default")) {
+            if (sender.hasPermission("mf.invite")) {
                 if (PersistentData.getInstance().isInFaction(player.getUniqueId())) {
                     for (Faction faction : PersistentData.getInstance().getFactions()) {
                         if (faction.isOwner(player.getUniqueId()) || faction.isOfficer(player.getUniqueId())) {

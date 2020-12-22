@@ -14,7 +14,7 @@ public class DuelCommand {
 		{
 			Player player = (Player) sender;
 			
-			if (player.hasPermission("mf.duel") || player.hasPermission("mf.default"))
+			if (player.hasPermission("mf.duel"))
 			{
 				if (args.length > 1)
 				{

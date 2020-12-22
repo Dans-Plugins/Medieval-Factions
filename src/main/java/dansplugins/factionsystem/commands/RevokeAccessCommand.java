@@ -11,7 +11,7 @@ public class RevokeAccessCommand {
     public void revokeAccess(CommandSender sender, String[] args) {
 
         // player & perm check
-        if (sender instanceof Player && ( ((Player) sender).hasPermission("mf.revokeaccess") || ((Player) sender).hasPermission("mf.default")) ) {
+        if (sender instanceof Player && ( ((Player) sender).hasPermission("mf.revokeaccess")) ) {
 
             Player player = (Player) sender;
 

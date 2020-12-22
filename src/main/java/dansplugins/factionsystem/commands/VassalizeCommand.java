@@ -15,7 +15,7 @@ public class VassalizeCommand {
         if (sender instanceof Player) {
             Player player = (Player) sender;
 
-            if (player.hasPermission("mf.vassalize") || player.hasPermission("mf.default")) {
+            if (player.hasPermission("mf.vassalize")) {
 
                 if (args.length > 1) {
 

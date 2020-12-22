@@ -16,7 +16,7 @@ public class WhoCommand {
         if (sender instanceof Player) {
             Player player = (Player) sender;
 
-            if (sender.hasPermission("mf.who") || sender.hasPermission("mf.default")) {
+            if (sender.hasPermission("mf.who")) {
                 if (args.length > 1) {
                     String name = ArgumentParser.getInstance().createStringFromFirstArgOnwards(args);
                     Faction faction = PersistentData.getInstance().getPlayersFaction(UUIDChecker.getInstance().findUUIDBasedOnPlayerName(name));

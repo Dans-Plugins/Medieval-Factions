@@ -12,7 +12,7 @@ public class ChatCommand {
         if (sender instanceof Player) {
             Player player = (Player) sender;
 
-            if (player.hasPermission("mf.chat") || player.hasPermission("mf.default")) {
+            if (player.hasPermission("mf.chat")) {
                 if (PersistentData.getInstance().isInFaction(player.getUniqueId())) {
                     if (!EphemeralData.getInstance().getPlayersInFactionChat().contains(player.getUniqueId())) {
                         EphemeralData.getInstance().getPlayersInFactionChat().add(player.getUniqueId());

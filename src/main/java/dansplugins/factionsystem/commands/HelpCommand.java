@@ -8,7 +8,7 @@ public class HelpCommand {
     // Each page of the help command should have a title and nine commands. This is for ease of use.
     public boolean sendHelpMessage(CommandSender sender, String[] args) {
 
-        if (sender.hasPermission("mf.help") || sender.hasPermission("mf.default")) {
+        if (sender.hasPermission("mf.help")) {
             if (args.length == 1 || args.length == 0) {
                 sendPageOne(sender);
             }

@@ -1,5 +1,5 @@
 name: MedievalFactions
-version: 3.6.1
+version: 3.6.2
 author: KingdomProgrammers
 main: dansplugins.factionsystem.MedievalFactions
 api-version: 1.13
@@ -9,3 +9,109 @@ commands:
   f:
   medievalfactions:
   factions:
+
+permissions:
+  mf.claim:
+    default: true
+  mf.unclaim:
+    default: true
+  mf.unclaimall:
+    default: true
+  mf.checkclaim:
+    default: true
+  mf.autoclaim:
+    default: true
+  mf.version:
+    default: true
+  mf.addlaw:
+    default: true
+  mf.ally:
+    default: true
+  mf.breakalliance:
+    default: true
+  mf.chat:
+    default: true
+  mf.checkaccess:
+    default: true
+  mf.create:
+    default: true
+  mf.declareindependence:
+    default: true
+  mf.declarewar:
+    default: true
+  mf.demote:
+    default: true
+  mf.desc:
+    default: true
+  mf.disband:
+    default: true
+  mf.duel:
+    default: true
+  mf.editlaw:
+    default: true
+  mf.gate:
+    default: true
+  mf.grantindependence:
+    default: true
+  mf.help:
+    default: true
+  mf.home:
+    default: true
+  mf.info:
+    default: true
+  mf.invite:
+    default: true
+  mf.invoke:
+    default: true
+  mf.join:
+    default: true
+  mf.kick:
+    default: true
+  mf.laws:
+    default: true
+  mf.leave:
+    default: true
+  mf.list:
+    default: true
+  mf.lock:
+    default: true
+  mf.makepeace:
+    default: true
+  mf.members:
+    default: true
+  mf.power:
+    default: true
+  mf.promote:
+    default: true
+  mf.removelaw:
+    default: true
+  mf.rename:
+    default: true
+  mf.revokeaccess:
+    default: true
+  mf.sethome:
+    default: true
+  mf.swearfealty:
+    default: true
+  mf.transfer:
+    default: true
+  mf.unlock:
+    default: true
+  mf.vassalize:
+    default: true
+  mf.who:
+    default: true
+  mf.bypass:
+  mf.config:
+  mf.unclaim.others:
+  mf.disband.others:
+  mf.resetpowerlevels:
+  mf.force.*:
+  mf.force.save:
+  mf.force.load:
+  mf.force.peace:
+  mf.force.demote:
+  mf.force.join:
+  mf.force.kick:
+  mf.force.power:
+  mf.force.renounce:

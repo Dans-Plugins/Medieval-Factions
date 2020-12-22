@@ -17,7 +17,7 @@ public class DemoteCommand {
         if (sender instanceof Player) {
             Player player = (Player) sender;
 
-            if (sender.hasPermission("mf.demote") || sender.hasPermission("mf.default")) {
+            if (sender.hasPermission("mf.demote")) {
                 if (PersistentData.getInstance().isInFaction(player.getUniqueId())) {
                     if (args.length > 1) {
                         for (Faction faction : PersistentData.getInstance().getFactions()) {

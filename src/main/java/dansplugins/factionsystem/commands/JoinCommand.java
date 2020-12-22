@@ -14,7 +14,7 @@ public class JoinCommand {
         if (sender instanceof Player) {
             Player player = (Player) sender;
 
-            if (sender.hasPermission("mf.join") || sender.hasPermission("mf.default")) {
+            if (sender.hasPermission("mf.join")) {
                 if (args.length > 1) {
 
                     // creating name from arguments 1 to the last one

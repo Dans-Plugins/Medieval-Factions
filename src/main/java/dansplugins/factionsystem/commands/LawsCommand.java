@@ -11,7 +11,7 @@ public class LawsCommand {
 
     public void showLawsToPlayer(CommandSender sender, String[] args) {
         // player & perm check
-        if (sender instanceof Player && ( ((Player) sender).hasPermission("mf.laws") || ((Player) sender).hasPermission("mf.default")) ) {
+        if (sender instanceof Player && ( ((Player) sender).hasPermission("mf.laws")) ) {
 
             Player player = (Player) sender;
 
