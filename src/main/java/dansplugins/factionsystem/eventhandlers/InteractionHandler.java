@@ -11,6 +11,7 @@ import dansplugins.factionsystem.objects.Gate;
 import dansplugins.factionsystem.objects.LockedBlock;
 import org.bukkit.*;
 import org.bukkit.block.Block;
+import org.bukkit.block.BlockFace;
 import org.bukkit.block.Chest;
 import org.bukkit.block.DoubleChest;
 import org.bukkit.block.data.BlockData;
@@ -73,6 +74,13 @@ public class InteractionHandler implements Listener {
                         }
 
                     	removeLock(event.getBlock(), PersistentData.getInstance().getLockedBlocks());
+
+                        // if block was a door
+                        if (isDoor(event.getBlock())) {
+                            // remove locks above and below the original block as well
+                            removeLock(event.getBlock().getRelative(BlockFace.UP));
+                            removeLock(event.getBlock().getRelative(BlockFace.DOWN));
+                        }
 
                     }
                     
