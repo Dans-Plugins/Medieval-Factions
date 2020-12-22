@@ -6,9 +6,13 @@ import dansplugins.factionsystem.data.EphemeralData;
 import dansplugins.factionsystem.data.PersistentData;
 import dansplugins.factionsystem.objects.ClaimedChunk;
 import dansplugins.factionsystem.objects.Duel;
+import dansplugins.factionsystem.objects.Faction;
 import dansplugins.factionsystem.objects.PlayerPowerRecord;
 import dansplugins.factionsystem.utils.Pair;
 import org.bukkit.ChatColor;
+import org.bukkit.Chunk;
+import org.bukkit.Location;
+import org.bukkit.World;
 import org.bukkit.entity.*;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -26,7 +30,6 @@ public class DamageEffectsAndDeathHandler implements Listener {
 
     @EventHandler()
     public void handle(EntityDamageByEntityEvent event) {
-    	
    	
         // this method disallows PVP between members of the same faction and between factions who are not at war
         // PVP is allowed between factionless players, players who belong to a faction and the factionless, and players whose factions are at war.
@@ -85,6 +88,43 @@ public class DamageEffectsAndDeathHandler implements Listener {
                 {
                 	handleIfFriendlyFire(event, attacker, victim);
                 }
+            }
+        }
+
+        if (event.getEntity() instanceof ArmorStand) {
+            ArmorStand armorStand = (ArmorStand) event.getEntity();
+
+            if (!(event.getDamager() instanceof Player)) {
+                return;
+            }
+
+            Player player = (Player) event.getDamager();
+
+            // get chunk that armor stand is in
+            World world = armorStand.getWorld();
+            Location location = armorStand.getLocation();
+            Chunk chunk = location.getChunk();
+            ClaimedChunk claimedChunk = ChunkManager.getInstance().getClaimedChunk(chunk.getX(), chunk.getZ(), world.getName(), PersistentData.getInstance().getClaimedChunks());
+
+            // if chunk is not claimed, return
+            if (claimedChunk == null) {
+                return;
+            }
+
+            String holderFactionName = claimedChunk.getHolder();
+
+            Faction playersFaction = PersistentData.getInstance().getPlayersFaction(player.getUniqueId());
+
+            if (playersFaction == null) {
+                return;
+            }
+
+            String playersFactionName = playersFaction.getName();
+
+            // if holder is not the same as player's faction
+            if (!holderFactionName.equalsIgnoreCase(playersFactionName)) {
+                System.out.println("DEBUG: Cancelled!");
+                event.setCancelled(true);
             }
         }
     }

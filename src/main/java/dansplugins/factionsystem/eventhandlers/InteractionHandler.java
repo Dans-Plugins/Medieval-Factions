@@ -9,18 +9,21 @@ import dansplugins.factionsystem.objects.ClaimedChunk;
 import dansplugins.factionsystem.objects.Faction;
 import dansplugins.factionsystem.objects.Gate;
 import dansplugins.factionsystem.objects.LockedBlock;
-import org.bukkit.ChatColor;
-import org.bukkit.Material;
+import org.bukkit.*;
 import org.bukkit.block.Block;
 import org.bukkit.block.Chest;
 import org.bukkit.block.DoubleChest;
 import org.bukkit.block.data.BlockData;
 import org.bukkit.block.data.Powerable;
+import org.bukkit.entity.ArmorStand;
+import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.event.block.BlockPlaceEvent;
+import org.bukkit.event.player.PlayerInteractAtEntityEvent;
+import org.bukkit.event.player.PlayerInteractEntityEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.inventory.InventoryHolder;
 
@@ -372,7 +375,7 @@ public class InteractionHandler implements Listener {
                     }
                 }
 
-                if (player.hasPermission("mf.gate") || player.hasPermission("mf.default"))
+                if (player.hasPermission("mf.gate"))
                 {
                     // TODO: Check if a gate already exists here, and if it does, print out some info
                     // of that existing gate instead of trying to create a new one.
@@ -1041,6 +1044,44 @@ public class InteractionHandler implements Listener {
 
     private boolean isChest(Block block) {
         return block.getType() == Material.CHEST;
+    }
+
+    @EventHandler()
+    public void handle(PlayerInteractAtEntityEvent event) {
+        Player player = event.getPlayer();
+        Entity clickedEntity = event.getRightClicked();
+
+        if (clickedEntity instanceof ArmorStand) {
+            ArmorStand armorStand = (ArmorStand) clickedEntity;
+            System.out.println("DEBUG: " + player.getName() + " just interacted with an armor stand!");
+
+            // get chunk that armor stand is in
+            World world = armorStand.getWorld();
+            Location location = armorStand.getLocation();
+            Chunk chunk = location.getChunk();
+            ClaimedChunk claimedChunk = ChunkManager.getInstance().getClaimedChunk(chunk.getX(), chunk.getZ(), world.getName(), PersistentData.getInstance().getClaimedChunks());
+
+            // if chunk is not claimed, return
+            if (claimedChunk == null) {
+                return;
+            }
+
+            String holderFactionName = claimedChunk.getHolder();
+
+            Faction playersFaction = PersistentData.getInstance().getPlayersFaction(player.getUniqueId());
+
+            if (playersFaction == null) {
+                return;
+            }
+
+            String playersFactionName = playersFaction.getName();
+
+            // if holder is not the same as player's faction
+            if (!holderFactionName.equalsIgnoreCase(playersFactionName)) {
+                System.out.println("DEBUG: Cancelled!");
+                event.setCancelled(true);
+            }
+        }
     }
 
 }
