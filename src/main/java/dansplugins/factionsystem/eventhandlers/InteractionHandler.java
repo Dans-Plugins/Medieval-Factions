@@ -25,7 +25,6 @@ import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.event.block.BlockPlaceEvent;
 import org.bukkit.event.hanging.HangingBreakByEntityEvent;
 import org.bukkit.event.player.PlayerInteractAtEntityEvent;
-import org.bukkit.event.player.PlayerInteractEntityEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.inventory.InventoryHolder;
 
@@ -153,6 +152,34 @@ public class InteractionHandler implements Listener {
                             player.sendMessage(ChatColor.RED + "You can't place chests next to locked chests you don't own.");
                             return;
                         }
+
+                        int seconds = 2;
+                        MedievalFactions.getInstance().getServer().getScheduler().runTaskLater(MedievalFactions.getInstance(), new Runnable() {
+                            @Override
+                            public void run() {
+                                Block block = player.getWorld().getBlockAt(event.getBlock().getLocation());
+
+                                InventoryHolder holder = ((Chest) block.getState()).getInventory().getHolder();
+                                if (holder instanceof DoubleChest) {
+                                    // make sure both sides are locked
+                                    DoubleChest doubleChest = (DoubleChest) holder;
+                                    Block leftChest = ((Chest) doubleChest.getLeftSide()).getBlock();
+                                    Block rightChest = ((Chest) doubleChest.getRightSide()).getBlock();
+
+                                    if (PersistentData.getInstance().isBlockLocked(leftChest)) {
+                                        // lock right chest
+                                        LockedBlock right = new LockedBlock(player.getUniqueId(), PersistentData.getInstance().getPlayersFaction(player.getUniqueId()).getName(), rightChest.getX(), rightChest.getY(), rightChest.getZ(), rightChest.getWorld().getName());
+                                        PersistentData.getInstance().getLockedBlocks().add(right);
+                                    }
+                                    else {
+                                        // lock left chest
+                                        LockedBlock left = new LockedBlock(player.getUniqueId(), PersistentData.getInstance().getPlayersFaction(player.getUniqueId()).getName(), leftChest.getX(), leftChest.getY(), leftChest.getZ(), leftChest.getWorld().getName());
+                                        PersistentData.getInstance().getLockedBlocks().add(left);
+                                    }
+
+                                }
+                            }
+                        }, seconds * 20);
                     }
 
                     // if hopper
