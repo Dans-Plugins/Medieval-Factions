@@ -23,6 +23,7 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.event.block.BlockPlaceEvent;
+import org.bukkit.event.hanging.HangingBreakByEntityEvent;
 import org.bukkit.event.player.PlayerInteractAtEntityEvent;
 import org.bukkit.event.player.PlayerInteractEntityEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
@@ -1087,6 +1088,44 @@ public class InteractionHandler implements Listener {
             if (!holderFactionName.equalsIgnoreCase(playersFactionName)) {
                 event.setCancelled(true);
             }
+        }
+    }
+
+    @EventHandler()
+    public void handle(HangingBreakByEntityEvent event) {
+
+        if (!(event.getRemover() instanceof Player)) {
+            return;
+        }
+
+        Player player = (Player) event.getRemover();
+
+        Entity entity = event.getEntity();
+
+        // get chunk that entity is in
+        World world = entity.getWorld();
+        Location location = entity.getLocation();
+        Chunk chunk = location.getChunk();
+        ClaimedChunk claimedChunk = ChunkManager.getInstance().getClaimedChunk(chunk.getX(), chunk.getZ(), world.getName(), PersistentData.getInstance().getClaimedChunks());
+
+        // if chunk is not claimed, return
+        if (claimedChunk == null) {
+            return;
+        }
+
+        String holderFactionName = claimedChunk.getHolder();
+
+        Faction playersFaction = PersistentData.getInstance().getPlayersFaction(player.getUniqueId());
+
+        if (playersFaction == null) {
+            return;
+        }
+
+        String playersFactionName = playersFaction.getName();
+
+        // if holder is not the same as player's faction
+        if (!holderFactionName.equalsIgnoreCase(playersFactionName)) {
+            event.setCancelled(true);
         }
     }
 
