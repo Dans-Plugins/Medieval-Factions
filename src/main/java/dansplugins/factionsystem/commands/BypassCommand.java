@@ -25,7 +25,7 @@ public class BypassCommand {
 
             }
             else {
-                player.sendMessage(ChatColor.RED + "Sorry! In order to use this command, you need the following permission: 'mf.bypass");
+                player.sendMessage(ChatColor.RED + "Sorry! In order to use this command, you need the following permission: 'mf.bypass'");
             }
         }
 

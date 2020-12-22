@@ -102,16 +102,30 @@ permissions:
   mf.who:
     default: true
   mf.bypass:
+    default: op
   mf.config:
+    default: op
   mf.unclaim.others:
+    default: op
   mf.disband.others:
+    default: op
   mf.resetpowerlevels:
+    default: op
   mf.force.*:
+    default: op
   mf.force.save:
+    default: op
   mf.force.load:
+    default: op
   mf.force.peace:
+    default: op
   mf.force.demote:
+    default: op
   mf.force.join:
+    default: op
   mf.force.kick:
+    default: op
   mf.force.power:
+    default: op
   mf.force.renounce:
+    default: op
