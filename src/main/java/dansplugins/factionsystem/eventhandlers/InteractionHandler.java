@@ -172,9 +172,11 @@ public class InteractionHandler implements Listener {
                                         PersistentData.getInstance().getLockedBlocks().add(right);
                                     }
                                     else {
-                                        // lock left chest
-                                        LockedBlock left = new LockedBlock(player.getUniqueId(), PersistentData.getInstance().getPlayersFaction(player.getUniqueId()).getName(), leftChest.getX(), leftChest.getY(), leftChest.getZ(), leftChest.getWorld().getName());
-                                        PersistentData.getInstance().getLockedBlocks().add(left);
+                                        if (PersistentData.getInstance().isBlockLocked(rightChest)) {
+                                            // lock left chest
+                                            LockedBlock left = new LockedBlock(player.getUniqueId(), PersistentData.getInstance().getPlayersFaction(player.getUniqueId()).getName(), leftChest.getX(), leftChest.getY(), leftChest.getZ(), leftChest.getWorld().getName());
+                                            PersistentData.getInstance().getLockedBlocks().add(left);
+                                        }
                                     }
 
                                 }
