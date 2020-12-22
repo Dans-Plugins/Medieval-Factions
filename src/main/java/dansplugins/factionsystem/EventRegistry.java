@@ -24,7 +24,7 @@ public class EventRegistry {
         PluginManager manager = mainInstance.getServer().getPluginManager();
 
         // blocks and interaction
-        manager.registerEvents(new BlockInteractionHandler(), mainInstance);
+        manager.registerEvents(new InteractionHandler(), mainInstance);
 
         // joining, leaving and spawning
         manager.registerEvents(new JoiningLeavingAndSpawningHandler(), mainInstance);
