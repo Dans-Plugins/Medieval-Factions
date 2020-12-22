@@ -78,8 +78,14 @@ public class InteractionHandler implements Listener {
                         // if block was a door
                         if (isDoor(event.getBlock())) {
                             // remove locks above and below the original block as well
-                            removeLock(event.getBlock().getRelative(BlockFace.UP));
-                            removeLock(event.getBlock().getRelative(BlockFace.DOWN));
+                            Block relativeUp = event.getBlock().getRelative(BlockFace.UP);
+                            Block relativeDown = event.getBlock().getRelative(BlockFace.DOWN);
+                            if (isDoor(relativeUp)) {
+                                    removeLock(relativeUp);
+                            }
+                            if (isDoor(relativeDown)) {
+                                removeLock(relativeDown);
+                            }
                         }
 
                     }
