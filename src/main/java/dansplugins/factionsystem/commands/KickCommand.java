@@ -18,7 +18,7 @@ public class KickCommand {
         if (sender instanceof Player) {
             Player player = (Player) sender;
 
-            if (sender.hasPermission("mf.kick") || sender.hasPermission("mf.default")) {
+            if (sender.hasPermission("mf.kick")) {
                 if (args.length > 1) {
                     boolean owner = false;
                     for (Faction faction : PersistentData.getInstance().getFactions()) {

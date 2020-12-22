@@ -15,7 +15,7 @@ public class DisbandCommand {
         if (sender instanceof Player) {
             Player player = (Player) sender;
 
-            if (sender.hasPermission("mf.disband") || sender.hasPermission("mf.default")) {
+            if (sender.hasPermission("mf.disband")) {
                 if (args.length > 1) {
                     if (player.hasPermission("mf.disband.others") || player.hasPermission("mf.admin")) {
 

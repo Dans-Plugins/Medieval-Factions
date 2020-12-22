@@ -14,7 +14,7 @@ public class DeclareIndependenceCommand {
         if (sender instanceof Player) {
             Player player = (Player) sender;
 
-            if (player.hasPermission("mf.declareIndependence") || player.hasPermission("mf.default")) {
+            if (player.hasPermission("mf.declareindependence")) {
 
                 Faction playersFaction = PersistentData.getInstance().getPlayersFaction(player.getUniqueId());
 

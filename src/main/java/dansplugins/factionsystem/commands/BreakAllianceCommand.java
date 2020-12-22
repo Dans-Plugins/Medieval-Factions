@@ -14,7 +14,7 @@ public class BreakAllianceCommand {
         if (sender instanceof Player) {
             Player player = (Player) sender;
 
-            if (sender.hasPermission("mf.breakalliance") || sender.hasPermission("mf.default")) {
+            if (sender.hasPermission("mf.breakalliance")) {
                 boolean owner = false;
                 for (Faction faction : PersistentData.getInstance().getFactions()) {
                     // if player is the owner or officer

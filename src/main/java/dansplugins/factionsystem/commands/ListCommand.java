@@ -12,7 +12,7 @@ public class ListCommand {
 
     public boolean listFactions(CommandSender sender) {
 
-        if (sender.hasPermission("mf.list") || sender.hasPermission("mf.default")) {
+        if (sender.hasPermission("mf.list")) {
             // if there aren't any factions
             if (PersistentData.getInstance().getFactions().size() == 0) {
                 sender.sendMessage(ChatColor.AQUA + "There are currently no factions.");

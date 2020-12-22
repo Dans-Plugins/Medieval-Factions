@@ -15,7 +15,7 @@ public class RenameCommand {
     public void renameFaction(CommandSender sender, String[] args) {
         if (sender instanceof Player) {
             Player player = (Player) sender;
-            if (player.hasPermission("mf.rename") || player.hasPermission("mf.default")) {
+            if (player.hasPermission("mf.rename")) {
                 if (args.length > 1) {
                     String oldName = PersistentData.getInstance().getPlayersFaction(player.getUniqueId()).getName();
                     String newName = ArgumentParser.getInstance().createStringFromFirstArgOnwards(args);

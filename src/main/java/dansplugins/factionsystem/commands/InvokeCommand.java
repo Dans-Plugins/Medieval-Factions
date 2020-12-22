@@ -16,7 +16,7 @@ public class InvokeCommand {
 
         Player player = (Player) sender;
 
-        if (player.hasPermission("mf.invoke") || player.hasPermission("mf.default")) {
+        if (player.hasPermission("mf.invoke")) {
 
             Faction playersFaction = PersistentData.getInstance().getPlayersFaction(player.getUniqueId());
 

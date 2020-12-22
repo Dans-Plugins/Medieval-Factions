@@ -12,7 +12,7 @@ public class DescCommand {
         if (sender instanceof Player) {
             Player player = (Player) sender;
 
-            if (sender.hasPermission("mf.desc") || sender.hasPermission("mf.default")) {
+            if (sender.hasPermission("mf.desc")) {
                 boolean owner = false;
                 for (Faction faction : PersistentData.getInstance().getFactions()) {
                     if (faction.isOwner(player.getUniqueId())) {

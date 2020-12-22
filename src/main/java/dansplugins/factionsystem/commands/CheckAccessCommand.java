@@ -9,7 +9,7 @@ public class CheckAccessCommand {
 
     public void checkAccess(CommandSender sender, String[] args) {
         // if sender is player and if player has permission
-        if (sender instanceof Player && (((Player) sender).hasPermission("mf.checkaccess") || ((Player) sender).hasPermission("mf.default"))) {
+        if (sender instanceof Player && (((Player) sender).hasPermission("mf.checkaccess"))) {
 
             Player player = (Player) sender;
 

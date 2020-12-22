@@ -10,7 +10,7 @@ public class EditLawCommand {
 
     public void editLaw(CommandSender sender, String[] args) {
         // player & perm check
-        if (sender instanceof Player && ( ((Player) sender).hasPermission("mf.editlaw") || ((Player) sender).hasPermission("mf.default")) ) {
+        if (sender instanceof Player && ( ((Player) sender).hasPermission("mf.editlaw")) ) {
 
             Player player = (Player) sender;
 

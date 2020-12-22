@@ -15,7 +15,7 @@ public class GrantIndependenceCommand {
         if (sender instanceof Player) {
             Player player = (Player) sender;
 
-            if (player.hasPermission("mf.grantindependence") || player.hasPermission("mf.default")) {
+            if (player.hasPermission("mf.grantindependence")) {
 
                 if (args.length > 1) {
 

@@ -17,7 +17,7 @@ public class MembersCommand {
         if (sender instanceof Player) {
             Player player = (Player) sender;
 
-            if (sender.hasPermission("mf.members") || sender.hasPermission("mf.default")) {
+            if (sender.hasPermission("mf.members")) {
                 if (args.length == 1) {
                     for (Faction faction : PersistentData.getInstance().getFactions()) {
                         if (faction.isMember(player.getUniqueId())) {

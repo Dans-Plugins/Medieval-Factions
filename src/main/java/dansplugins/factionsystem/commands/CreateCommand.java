@@ -15,7 +15,7 @@ public class CreateCommand {
         if (sender instanceof Player) {
             Player player = (Player) sender;
 
-            if (sender.hasPermission("mf.create")|| sender.hasPermission("mf.default")) {
+            if (sender.hasPermission("mf.create")) {
                 // player membership check
                 for (Faction faction : PersistentData.getInstance().getFactions()) {
                     if (faction.isMember(player.getUniqueId())) {

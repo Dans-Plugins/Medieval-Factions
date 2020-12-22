@@ -14,7 +14,7 @@ public class AllyCommand {
         if (sender instanceof Player) {
             Player player = (Player) sender;
 
-            if (sender.hasPermission("mf.ally") || sender.hasPermission("mf.default")) {
+            if (sender.hasPermission("mf.ally")) {
                 if (PersistentData.getInstance().isInFaction(player.getUniqueId())) {
                     Faction playersFaction = PersistentData.getInstance().getPlayersFaction(player.getUniqueId());
 

@@ -14,7 +14,7 @@ public class UnlockCommand {
             Player player = (Player) sender;
 
             // check if has permission
-            if (player.hasPermission("mf.unlock") || player.hasPermission("mf.default")) {
+            if (player.hasPermission("mf.unlock")) {
 
                 // check if argument exists
                 if (args.length > 1) {

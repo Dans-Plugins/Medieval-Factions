@@ -15,7 +15,7 @@ public class SwearFealtyCommand {
         if (sender instanceof Player) {
             Player player = (Player) sender;
 
-            if (player.hasPermission("mf.swearfealty") || player.hasPermission("mf.default")) {
+            if (player.hasPermission("mf.swearfealty")) {
 
                 if (args.length > 1) {
 

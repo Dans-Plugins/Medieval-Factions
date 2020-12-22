@@ -14,7 +14,7 @@ public class PowerCommand {
     public boolean powerCheck(CommandSender sender, String[] args) {
         if (sender instanceof Player) {
             Player player = (Player) sender;
-            if (player.hasPermission("mf.power") || sender.hasPermission("mf.default"))
+            if (player.hasPermission("mf.power"))
             {
             	if (args.length > 1)
             	{
