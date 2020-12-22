@@ -123,7 +123,6 @@ public class DamageEffectsAndDeathHandler implements Listener {
 
             // if holder is not the same as player's faction
             if (!holderFactionName.equalsIgnoreCase(playersFactionName)) {
-                System.out.println("DEBUG: Cancelled!");
                 event.setCancelled(true);
             }
         }

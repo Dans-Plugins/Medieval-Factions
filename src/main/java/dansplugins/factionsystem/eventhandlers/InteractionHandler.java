@@ -1053,7 +1053,6 @@ public class InteractionHandler implements Listener {
 
         if (clickedEntity instanceof ArmorStand) {
             ArmorStand armorStand = (ArmorStand) clickedEntity;
-            System.out.println("DEBUG: " + player.getName() + " just interacted with an armor stand!");
 
             // get chunk that armor stand is in
             World world = armorStand.getWorld();
@@ -1078,7 +1077,6 @@ public class InteractionHandler implements Listener {
 
             // if holder is not the same as player's faction
             if (!holderFactionName.equalsIgnoreCase(playersFactionName)) {
-                System.out.println("DEBUG: Cancelled!");
                 event.setCancelled(true);
             }
         }
