@@ -30,7 +30,7 @@ import java.util.UUID;
 import static org.bukkit.Bukkit.getLogger;
 import static org.bukkit.Material.LADDER;
 
-public class BlockInteractionHandler implements Listener {
+public class InteractionHandler implements Listener {
 
     @EventHandler()
     public void handle(BlockBreakEvent event) {
