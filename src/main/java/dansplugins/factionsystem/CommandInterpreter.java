@@ -144,7 +144,7 @@ public class CommandInterpreter {
                 // TODO: move into command class
                 // claim command
                 if (args[0].equalsIgnoreCase("claim")) {
-                    if (sender.hasPermission("mf.claim") || sender.hasPermission("mf.default")) {
+                    if (sender.hasPermission("mf.claim")) {
                         if (sender instanceof Player) {
                             Player player = (Player) sender;
 
@@ -175,7 +175,7 @@ public class CommandInterpreter {
                 // TODO: move into command class
                 // unclaim command
                 if (args[0].equalsIgnoreCase("unclaim")) {
-                    if (sender.hasPermission("mf.unclaim") || sender.hasPermission("mf.default")) {
+                    if (sender.hasPermission("mf.unclaim")) {
                         if (sender instanceof Player) {
                             Player player = (Player) sender;
                             if (PersistentData.getInstance().isInFaction(player.getUniqueId())) {
@@ -231,7 +231,7 @@ public class CommandInterpreter {
                             }
                         }
 
-                        if (sender.hasPermission("mf.unclaimall") || sender.hasPermission("mf.default")) {
+                        if (sender.hasPermission("mf.unclaimall")) {
 
                             for (Faction faction : PersistentData.getInstance().getFactions()) {
                                 if (faction.isOwner(player.getUniqueId())) {
@@ -261,7 +261,7 @@ public class CommandInterpreter {
                 // TODO: move into command class
                 // checkclaim command
                 if (args[0].equalsIgnoreCase("checkclaim")|| args[0].equalsIgnoreCase("cc")) {
-                    if (sender.hasPermission("mf.unclaimall") || sender.hasPermission("mf.default")) {
+                    if (sender.hasPermission("mf.checkclaim")) {
                         if (sender instanceof Player) {
                             Player player = (Player) sender;
                             String result = ChunkManager.getInstance().checkOwnershipAtPlayerLocation(player);
@@ -284,7 +284,7 @@ public class CommandInterpreter {
                 // TODO: move into command class
                 // autoclaim command
                 if (args[0].equalsIgnoreCase("autoclaim")|| args[0].equalsIgnoreCase("ac")) {
-                    if (sender.hasPermission("mf.autoclaim") || sender.hasPermission("mf.default")) {
+                    if (sender.hasPermission("mf.autoclaim")) {
                         if (sender instanceof Player) {
                             Player player = (Player) sender;
 
@@ -355,12 +355,12 @@ public class CommandInterpreter {
                 // TODO: move into command class
                 // getVersion() command
                 if (args[0].equalsIgnoreCase("getVersion()")) {
-                    if (sender.hasPermission("mf.getVersion()") || sender.hasPermission("mf.default")) {
+                    if (sender.hasPermission("mf.version")) {
                         sender.sendMessage(ChatColor.AQUA + "Medieval-Factions-" + MedievalFactions.getInstance().getVersion());
                         return true;
                     }
                     else {
-                        sender.sendMessage(ChatColor.RED + "Sorry! You need the following permission to use this command: 'mf.getVersion()'");
+                        sender.sendMessage(ChatColor.RED + "Sorry! You need the following permission to use this command: 'mf.version'");
                         return false;
                     }
 

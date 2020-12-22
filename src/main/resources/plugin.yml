@@ -9,3 +9,19 @@ commands:
   f:
   medievalfactions:
   factions:
+
+permissions:
+  mf.claim:
+    default: true
+  mf.unclaim:
+    default: true
+  mf.unclaimall:
+    default: true
+  mf.checkclaim:
+    default: true
+  mf.autoclaim:
+    default: true
+  mf.version:
+    default: true
+  mf.unclaim.others:
+  mf.resetpowerlevels:
