@@ -85,6 +85,7 @@ public class InteractionHandler implements Listener {
                             if (isDoor(relativeDown)) {
                                 removeLock(relativeDown);
                             }
+                            return;
                         }
 
                     }
