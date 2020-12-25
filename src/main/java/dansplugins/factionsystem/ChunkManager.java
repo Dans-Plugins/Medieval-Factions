@@ -2,6 +2,7 @@ package dansplugins.factionsystem;
 
 import dansplugins.factionsystem.data.EphemeralData;
 import dansplugins.factionsystem.data.PersistentData;
+import dansplugins.factionsystem.objects.ClaimedChunk;
 import dansplugins.factionsystem.objects.*;
 import org.bukkit.ChatColor;
 import org.bukkit.Chunk;
@@ -9,18 +10,170 @@ import org.bukkit.Location;
 import org.bukkit.entity.Player;
 
 import java.time.ZonedDateTime;
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.UUID;
+import java.util.*;
 
 import static org.bukkit.Bukkit.getServer;
+
+import org.bukkit.plugin.Plugin;
+import org.bukkit.plugin.PluginManager;
+import org.dynmap.DynmapCommonAPI;
+import org.dynmap.markers.AreaMarker;
+import org.dynmap.markers.MarkerAPI;
+import org.dynmap.markers.MarkerSet;
+import org.dynmap.markers.PlayerSet;
 
 public class ChunkManager {
 
     private static ChunkManager instance;
 
-    private ChunkManager() {
+    private Plugin dynmap;
+    private DynmapCommonAPI dynmapAPI;
+    private MarkerAPI markerAPI;
+    private Map<String, AreaMarker> areaMarkers = new HashMap<String, AreaMarker>();
 
+    public Map<String, AreaMarker> getDynmapAreaMarkers() {
+        return areaMarkers;
+    }
+
+    public void clearDynmapAreaMarkers() {
+        areaMarkers.clear();
+    }
+
+    public void updateDynmapAreaMarkers(String worldName) {
+        System.out.println("Updating Dynmap Area Markers");
+        clearDynmapAreaMarkers();
+        ArrayList<int[]> linelist = new ArrayList<int[]>();
+        int csize = 16;
+        ArrayList<ClaimedChunk> claimedChunks = PersistentData.getInstance().claimedChunks;
+        for (ClaimedChunk chunk : claimedChunks) {
+            if (chunk.getWorld().equalsIgnoreCase(worldName)) {
+                int cx = chunk.getChunk().getX() * csize;
+                int cz = chunk.getChunk().getZ() * csize;
+                linelist.add(new int[]{cx, cz}); // Add top left point
+                linelist.add(new int[]{cx + csize, cz}); // Add top right point
+                linelist.add(new int[]{cx + csize, cz + csize}); // Add bottom right point
+                linelist.add(new int[]{cx, cz + csize}); // Add bottom left point
+            }
+        }
+        dynmapSetAreaMarkerLines(worldName, linelist);
+    }
+
+    /***
+     * Update Chunk marker on dynmap.
+     */
+    public void dynmapSetAreaMarkerLines(String worldName, ArrayList<int[]> lines) {
+        try
+        {
+            AreaMarker m;
+            Map<String, AreaMarker> markers = getDynmapAreaMarkers();
+//            if (markers.containsKey(polyid)) {
+//                m = markers.get(polyid);
+//                // TODO: update if exists already
+//            }
+//            else
+//            {
+            MarkerSet set = getMarkerAPI().getMarkerSet(getDynmapPluginSetId());
+            double[] x = new double[lines.size()];
+            double[] z = new double[lines.size()];
+            for (int i=0; i < lines.size(); i++) {
+                int[] line = lines.get(i);
+                x[i] = line[0];
+                z[i] = line[1];
+            }
+            String polyid = getDynmapChunkPolyId(worldName, 0, 0);
+            set.createAreaMarker(polyid, worldName + " Claims", false, worldName, x, z, false);
+        } catch (Exception e) {
+            System.out.println("Error: " + e.getMessage());
+        }
+    }
+
+    /***
+     * Dynmap marker set id (prefix used for other ids/layer ids)
+     * @return
+     */
+    public String getDynmapPluginSetId() { return "mf.faction"; }
+
+    /***
+     * @return Dynmap set Id for faction.
+     */
+    public String getDynmapFactionSetId(String holder) {
+        return getDynmapPluginSetId() + "." + holder;
+    }
+
+    /***
+     * @return Dynmap layer Id for faction.
+     */
+    public String getDynmapPluginLayer() {
+        return getDynmapPluginSetId() + "_layer";
+    }
+
+    /***
+     * @return Dynmap polygon Id corresponding to these chunk
+     * coordinates.
+     */
+    public String getDynmapChunkPolyId(String worldName, int x, int z) {
+        // return getDynmapFactionSetId() + "_" + String.format("%d-%d", chunk.getX(), chunk.getZ());
+        return getDynmapPluginSetId() + "_" + String.format("%d-%d", x, z);
+    }
+
+    /***
+     *
+     * Refreshes the Dynmap Player List for the nation that owns the current chunk.
+     */
+    public void dynmapUpdateNationPlayerLists(String holder) {
+        try {
+            String setid = getDynmapFactionSetId(holder);
+            MarkerAPI markerapi = getMarkerAPI();
+            Set<String> plids = new HashSet<String>();
+            Faction f = PersistentData.getInstance().getFaction(holder);
+            if (f != null) {
+                for (PlayerPowerRecord powerRecord : PersistentData.getInstance().getPlayerPowerRecords()) {
+                    Faction pf = PersistentData.getInstance().getPlayersFaction(powerRecord.getPlayerUUID());
+                    if (pf != null && pf.getName().equalsIgnoreCase(holder)) {
+                        plids.add(UUIDChecker.getInstance().findPlayerNameBasedOnUUID(powerRecord.getPlayerUUID()));
+                    }
+                }
+            }
+            PlayerSet set = markerapi.getPlayerSet(setid);  /* See if set exists */
+            if (set == null) {
+                markerapi.createPlayerSet(setid, true, plids, false);
+            }
+            else {
+                set.setPlayers(plids);
+            }
+        } catch (Exception e) {
+
+        }
+    }
+
+    private ChunkManager() {
+        PluginManager pm = getServer().getPluginManager();
+        /* Get dynmap */
+        dynmap = pm.getPlugin("dynmap");
+        if(dynmap == null) {
+            System.out.println("Cannot find dynmap!");
+        }
+        else {
+            try {
+                dynmapAPI = (DynmapCommonAPI) dynmap; /* Get API */
+
+                markerAPI = dynmapAPI.getMarkerAPI();
+                MarkerSet set = markerAPI.getMarkerSet(getDynmapPluginSetId());
+                if (set == null) {
+                    set = markerAPI.createMarkerSet(getDynmapPluginSetId(), getDynmapPluginLayer(), null, false);
+                    if (set == null) {
+                        System.out.println("Error creating marker set!");
+                        return;
+                    }
+                } else {
+                    set.setMarkerSetLabel(getDynmapPluginLayer());
+                }
+                System.out.println("Dynmap integration successful!");
+            }
+            catch (Exception e) {
+                System.out.println("Error integrating with dynmap: " + e.getMessage());
+            }
+        }
     }
 
     public static ChunkManager getInstance() {
@@ -28,6 +181,10 @@ public class ChunkManager {
             instance = new ChunkManager();
         }
         return instance;
+    }
+
+    public MarkerAPI getMarkerAPI() {
+        return markerAPI;
     }
 
     public void addChunkAtPlayerLocation(Player player) {
@@ -377,4 +534,5 @@ public class ChunkManager {
             }
         }
     }
+
 }

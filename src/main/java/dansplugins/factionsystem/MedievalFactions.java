@@ -59,6 +59,8 @@ public class MedievalFactions extends JavaPlugin {
         int pluginId = 8929;
         Metrics metrics = new Metrics(this, pluginId);
 
+        ChunkManager.getInstance().updateDynmapAreaMarkers("world");
+
         System.out.println("Medieval Factions plugin enabled.");
     }
 
