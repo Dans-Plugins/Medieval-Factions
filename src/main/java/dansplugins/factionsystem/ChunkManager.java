@@ -7,55 +7,298 @@ import dansplugins.factionsystem.objects.*;
 import org.bukkit.ChatColor;
 import org.bukkit.Chunk;
 import org.bukkit.Location;
+import org.bukkit.World;
 import org.bukkit.entity.Player;
 
 import java.time.ZonedDateTime;
 import java.util.*;
 
+import static java.awt.SystemColor.info;
 import static org.bukkit.Bukkit.getServer;
 
 import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.PluginManager;
 import org.dynmap.DynmapCommonAPI;
-import org.dynmap.markers.AreaMarker;
-import org.dynmap.markers.MarkerAPI;
-import org.dynmap.markers.MarkerSet;
-import org.dynmap.markers.PlayerSet;
+import org.dynmap.markers.*;
 
 public class ChunkManager {
 
     private static ChunkManager instance;
 
+    // Dynmap integration related members
+    private Map<String, AreaMarker> resareas = new HashMap<String, AreaMarker>();
+    private Map<String, Marker> resmark = new HashMap<String, Marker>();
+    enum direction { XPLUS, ZPLUS, XMINUS, ZMINUS };
     private Plugin dynmap;
     private DynmapCommonAPI dynmapAPI;
     private MarkerAPI markerAPI;
-    private Map<String, AreaMarker> areaMarkers = new HashMap<String, AreaMarker>();
+    MarkerSet set;
 
-    public Map<String, AreaMarker> getDynmapAreaMarkers() {
-        return areaMarkers;
-    }
+    // private Map<String, AreaMarker> areaMarkers = new HashMap<String, AreaMarker>();
 
-    public void clearDynmapAreaMarkers() {
-        areaMarkers.clear();
-    }
+//    public Map<String, AreaMarker> getDynmapAreaMarkers() {
+//        return areaMarkers;
+//    }
+//
+//    public void clearDynmapAreaMarkers() {
+//        areaMarkers.clear();
+//    }
 
-    public void updateDynmapAreaMarkers(String worldName) {
-        System.out.println("Updating Dynmap Area Markers");
-        clearDynmapAreaMarkers();
-        ArrayList<int[]> linelist = new ArrayList<int[]>();
-        int csize = 16;
-        ArrayList<ClaimedChunk> claimedChunks = PersistentData.getInstance().claimedChunks;
-        for (ClaimedChunk chunk : claimedChunks) {
-            if (chunk.getWorld().equalsIgnoreCase(worldName)) {
-                int cx = chunk.getChunk().getX() * csize;
-                int cz = chunk.getChunk().getZ() * csize;
-                linelist.add(new int[]{cx, cz}); // Add top left point
-                linelist.add(new int[]{cx + csize, cz}); // Add top right point
-                linelist.add(new int[]{cx + csize, cz + csize}); // Add bottom right point
-                linelist.add(new int[]{cx, cz + csize}); // Add bottom left point
+//    public void updateDynmapAreaMarkers(String worldName) {
+//        System.out.println("Updating Dynmap Area Markers");
+//        //clearDynmapAreaMarkers();
+//        ArrayList<int[]> linelist = new ArrayList<int[]>();
+//        int csize = 16;
+//        ArrayList<ClaimedChunk> claimedChunks = PersistentData.getInstance().claimedChunks;
+//        for (ClaimedChunk chunk : claimedChunks) {
+//            if (chunk.getWorld().equalsIgnoreCase(worldName)) {
+//                int cx = chunk.getChunk().getX() * csize;
+//                int cz = chunk.getChunk().getZ() * csize;
+//                linelist.add(new int[]{cx, cz}); // Add top left point
+//                linelist.add(new int[]{cx + csize, cz}); // Add top right point
+//                linelist.add(new int[]{cx + csize, cz + csize}); // Add bottom right point
+//                linelist.add(new int[]{cx, cz + csize}); // Add bottom left point
+//            }
+//        }
+//        dynmapSetAreaMarkerLines(worldName, linelist);
+//    }
+
+
+    /**
+     * Find all contiguous blocks, set in target and clear in source
+     */
+    private int floodFillTarget(ChunkFlags src, ChunkFlags dest, int x, int y) {
+        int cnt = 0;
+        ArrayDeque<int[]> stack = new ArrayDeque<int[]>();
+        stack.push(new int[] { x, y });
+
+        while(stack.isEmpty() == false) {
+            int[] nxt = stack.pop();
+            x = nxt[0];
+            y = nxt[1];
+            if(src.getFlag(x, y)) { /* Set in src */
+                src.setFlag(x, y, false);   /* Clear source */
+                dest.setFlag(x, y, true);   /* Set in destination */
+                cnt++;
+                if(src.getFlag(x+1, y))
+                    stack.push(new int[] { x+1, y });
+                if(src.getFlag(x-1, y))
+                    stack.push(new int[] { x-1, y });
+                if(src.getFlag(x, y+1))
+                    stack.push(new int[] { x, y+1 });
+                if(src.getFlag(x, y-1))
+                    stack.push(new int[] { x, y-1 });
             }
         }
-        dynmapSetAreaMarkerLines(worldName, linelist);
+        return cnt;
+    }
+
+    /* Update Faction information */
+    public void dynmapUpdateFactions() {
+        Map<String,AreaMarker> newmap = new HashMap<String,AreaMarker>(); /* Build new map */
+        Map<String,Marker> newmark = new HashMap<String,Marker>(); /* Build new map */
+
+        /* Loop through factions */
+        for(Faction f : PersistentData.getInstance().getFactions()) {
+            dynmapUpdateFaction(f, newmap, newmark);
+        }
+        /* Now, review old map - anything left is gone */
+        for(AreaMarker oldm : resareas.values()) {
+            oldm.deleteMarker();
+        }
+        for(Marker oldm : resmark.values()) {
+            oldm.deleteMarker();
+        }
+        /* And replace with new map */
+        resareas = newmap;
+        resmark = newmark;
+
+    }
+
+    private void dynmapUpdateFaction(Faction faction, Map<String, AreaMarker> newmap, Map<String, Marker> newmark) {
+        String name = faction.getName();
+        double[] x = null;
+        double[] z = null;
+        int poly_index = 0; /* Index of polygon for given town */
+
+        /* Handle areas */
+        List<ClaimedChunk> blocks = faction.getClaimedChunks();
+        if(blocks.isEmpty())
+            return;
+        /* Build popup */
+        String desc = "Info window.";
+        System.out.println("Updating faction " + faction.getName() + " claims on dynmap.");
+        HashMap<String, ChunkFlags> blkmaps = new HashMap<String, ChunkFlags>();
+        LinkedList<ClaimedChunk> nodevals = new LinkedList<ClaimedChunk>();
+        String curworld = null;
+        ChunkFlags curblks = null;
+
+        /* Loop through blocks: set flags on blockmaps for worlds */
+        for(ClaimedChunk b : blocks) {
+            if(!b.getWorld().equalsIgnoreCase(curworld)) { /* Not same world */
+                String wname = b.getWorld();
+                curworld = b.getWorld();
+                curblks = blkmaps.get(wname);
+                if (curblks == null) {
+                    curblks = new ChunkFlags();
+                    blkmaps.put(wname, curblks);
+                }
+            }
+            curblks.setFlag(b.getChunk().getX(), b.getChunk().getZ(), true);
+            nodevals.addLast(b);
+        }
+        System.out.println(String.format("nodeevals = %d", nodevals.size()));
+        /* Loop through until we don't find more areas */
+        while(nodevals != null) {
+            LinkedList<ClaimedChunk> ournodes = null;
+            LinkedList<ClaimedChunk> newlist = null;
+            ChunkFlags ourblks = null;
+            int minx = Integer.MAX_VALUE;
+            int minz = Integer.MAX_VALUE;
+            for(ClaimedChunk node : nodevals) {
+                int nodex = node.getChunk().getX();
+                int nodez = node.getChunk().getZ();
+                if(ourblks == null) {   /* If not started, switch to world for this block first */
+                    if(!node.getWorld().equalsIgnoreCase(curworld)) {
+                        curworld = node.getWorld();
+                        curblks = blkmaps.get(curworld);
+                    }
+                }
+                /* If we need to start shape, and this block is not part of one yet */
+                if((ourblks == null) && curblks.getFlag(nodex, nodez)) {
+                    ourblks = new ChunkFlags();  /* Create map for shape */
+                    ournodes = new LinkedList<ClaimedChunk>();
+                    floodFillTarget(curblks, ourblks, nodex, nodez);   /* Copy shape */
+                    ournodes.add(node); /* Add it to our node list */
+                    minx = nodex; minz = nodez;
+                }
+                /* If shape found, and we're in it, add to our node list */
+                else if((ourblks != null) && (node.getWorld().equalsIgnoreCase(curworld)) &&
+                        (ourblks.getFlag(nodex, nodez))) {
+                    ournodes.add(node);
+                    if(nodex < minx) {
+                        minx = nodex; minz = nodez;
+                    }
+                    else if((nodex == minx) && (nodez < minz)) {
+                        minz = nodez;
+                    }
+                }
+                else {  /* Else, keep it in the list for the next polygon */
+                    if(newlist == null) newlist = new LinkedList<ClaimedChunk>();
+                    newlist.add(node);
+                }
+            }
+            nodevals = newlist; /* Replace list (null if no more to process) */
+            if(ourblks != null) {
+                /* Trace outline of blocks - start from minx, minz going to x+ */
+                int init_x = minx;
+                int init_z = minz;
+                int cur_x = minx;
+                int cur_z = minz;
+                direction dir = direction.XPLUS;
+                ArrayList<int[]> linelist = new ArrayList<int[]>();
+                linelist.add(new int[] { init_x, init_z } ); // Add start point
+                while((cur_x != init_x) || (cur_z != init_z) || (dir != direction.ZMINUS)) {
+                    switch(dir) {
+                        case XPLUS: /* Segment in X+ direction */
+                            if(!ourblks.getFlag(cur_x+1, cur_z)) { /* Right turn? */
+                                linelist.add(new int[] { cur_x+1, cur_z }); /* Finish line */
+                                dir = direction.ZPLUS;  /* Change direction */
+                            }
+                            else if(!ourblks.getFlag(cur_x+1, cur_z-1)) {  /* Straight? */
+                                cur_x++;
+                            }
+                            else {  /* Left turn */
+                                linelist.add(new int[] { cur_x+1, cur_z }); /* Finish line */
+                                dir = direction.ZMINUS;
+                                cur_x++; cur_z--;
+                            }
+                            break;
+                        case ZPLUS: /* Segment in Z+ direction */
+                            if(!ourblks.getFlag(cur_x, cur_z+1)) { /* Right turn? */
+                                linelist.add(new int[] { cur_x+1, cur_z+1 }); /* Finish line */
+                                dir = direction.XMINUS;  /* Change direction */
+                            }
+                            else if(!ourblks.getFlag(cur_x+1, cur_z+1)) {  /* Straight? */
+                                cur_z++;
+                            }
+                            else {  /* Left turn */
+                                linelist.add(new int[] { cur_x+1, cur_z+1 }); /* Finish line */
+                                dir = direction.XPLUS;
+                                cur_x++; cur_z++;
+                            }
+                            break;
+                        case XMINUS: /* Segment in X- direction */
+                            if(!ourblks.getFlag(cur_x-1, cur_z)) { /* Right turn? */
+                                linelist.add(new int[] { cur_x, cur_z+1 }); /* Finish line */
+                                dir = direction.ZMINUS;  /* Change direction */
+                            }
+                            else if(!ourblks.getFlag(cur_x-1, cur_z+1)) {  /* Straight? */
+                                cur_x--;
+                            }
+                            else {  /* Left turn */
+                                linelist.add(new int[] { cur_x, cur_z+1 }); /* Finish line */
+                                dir = direction.ZPLUS;
+                                cur_x--; cur_z++;
+                            }
+                            break;
+                        case ZMINUS: /* Segment in Z- direction */
+                            if(!ourblks.getFlag(cur_x, cur_z-1)) { /* Right turn? */
+                                linelist.add(new int[] { cur_x, cur_z }); /* Finish line */
+                                dir = direction.XPLUS;  /* Change direction */
+                            }
+                            else if(!ourblks.getFlag(cur_x-1, cur_z-1)) {  /* Straight? */
+                                cur_z--;
+                            }
+                            else {  /* Left turn */
+                                linelist.add(new int[] { cur_x, cur_z }); /* Finish line */
+                                dir = direction.XMINUS;
+                                cur_x--; cur_z--;
+                            }
+                            break;
+                    }
+                }
+                /* Build information for specific area */
+                String polyid = faction.getName() + "__" + poly_index;
+                int csize = 16;
+                int sz = linelist.size();
+                x = new double[sz];
+                z = new double[sz];
+                for(int i = 0; i < sz; i++) {
+                    int[] line = linelist.get(i);
+                    x[i] = (double)line[0] * (double)csize;
+                    z[i] = (double)line[1] * (double)csize;
+                }
+                /* Find existing one */
+                AreaMarker m = resareas.remove(polyid); /* Existing area? */
+                if(m == null) {
+                    m = set.createAreaMarker(polyid, name, false, curworld, x, z, false);
+                    if(m == null) {
+                        System.out.println("error adding area marker " + polyid);
+                        return;
+                    }
+                    System.out.println("Added area marker " + polyid + " successfully." + String.format(" (%d line segments found)", sz));
+                }
+                else {
+                    m.setCornerLocations(x, z); /* Replace corner locations */
+                    m.setLabel(name);   /* Update label */
+                    System.out.println("Updated area marker " + polyid + " successfully." + String.format(" (%d line segments found)", sz));
+                }
+                m.setDescription(desc); /* Set popup */
+
+                /* Set line and fill properties */
+//                String nation = NATION_NONE;
+//                try {
+//                    if(town.getNation() != null)
+//                        nation = town.getNation().getName();
+//                } catch (Exception ex) {}
+//                addStyle(town.getName(), nation, m, btype);
+
+                /* Add to map */
+                newmap.put(polyid, m);
+                poly_index++;
+            }
+        }
     }
 
     /***
@@ -65,7 +308,7 @@ public class ChunkManager {
         try
         {
             AreaMarker m;
-            Map<String, AreaMarker> markers = getDynmapAreaMarkers();
+            //Map<String, AreaMarker> markers = getDynmapAreaMarkers();
 //            if (markers.containsKey(polyid)) {
 //                m = markers.get(polyid);
 //                // TODO: update if exists already
@@ -158,7 +401,7 @@ public class ChunkManager {
                 dynmapAPI = (DynmapCommonAPI) dynmap; /* Get API */
 
                 markerAPI = dynmapAPI.getMarkerAPI();
-                MarkerSet set = markerAPI.getMarkerSet(getDynmapPluginSetId());
+                set = markerAPI.getMarkerSet(getDynmapPluginSetId());
                 if (set == null) {
                     set = markerAPI.createMarkerSet(getDynmapPluginSetId(), getDynmapPluginLayer(), null, false);
                     if (set == null) {
