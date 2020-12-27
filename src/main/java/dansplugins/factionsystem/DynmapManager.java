@@ -88,9 +88,8 @@ public class DynmapManager {
                         System.out.println("Error creating marker set!");
                         return;
                     }
-                } else {
-                    set.setMarkerSetLabel(getDynmapPluginLayer());
                 }
+                set.setMarkerSetLabel("Claims");
                 System.out.println("Dynmap integration successful!");
             }
             catch (Exception e) {
@@ -155,7 +154,7 @@ public class DynmapManager {
     }
 
     private String buildNationPopupText(Faction f) {
-        String message = "<h4>" + f.getName() + "</h4><br/>" +
+        String message = "<h4>" + f.getName() + "</h4>" +
                 "Owner: " + UUIDChecker.getInstance().findPlayerNameBasedOnUUID(f.getOwner()) + "<br/>" +
                 "Description: " + UUIDChecker.getInstance().findPlayerNameBasedOnUUID(f.getOwner()) + "<br/>" +
                 "Population: " + UUIDChecker.getInstance().findPlayerNameBasedOnUUID(f.getOwner()) + "<br/>";
