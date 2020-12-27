@@ -136,6 +136,7 @@ public class Scheduler {
         if (factionToRemove != null) {
             // remove claimed land objects associated with this faction
             ChunkManager.getInstance().removeAllClaimedChunks(factionToRemove.getName(), PersistentData.getInstance().getClaimedChunks());
+            DynmapManager.updateClaims();
 
             // remove locks associated with this faction
             PersistentData.getInstance().removeAllLocks(factionToRemove.getName());

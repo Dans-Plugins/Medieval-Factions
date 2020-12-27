@@ -321,6 +321,19 @@ public class Faction {
         return members;
     }
 
+    public String getMemberListSeparatedByCommas() {
+        ArrayList<UUID> uuids = getMemberList();
+        String players = "";
+        for(UUID uuid : uuids) {
+            String playerName = UUIDChecker.getInstance().findPlayerNameBasedOnUUID(uuid);
+            players += playerName + ", ";
+        }
+        if (players.length() > 0) {
+            return players.substring(0, players.length() - 2);
+        }
+        return "";
+    }
+
     public int getPopulation() {
         return members.size();
     }
