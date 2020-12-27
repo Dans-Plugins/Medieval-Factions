@@ -153,7 +153,7 @@ public class CommandInterpreter {
                                 Faction playersFaction = PersistentData.getInstance().getPlayersFaction(player.getUniqueId());
                                 if (ChunkManager.getInstance().getChunksClaimedByFaction(playersFaction.getName(), PersistentData.getInstance().getClaimedChunks()) < playersFaction.getCumulativePowerLevel()) {
                                     ChunkManager.getInstance().addChunkAtPlayerLocation(player);
-                                    ChunkManager.getInstance().dynmapUpdateFactions();
+                                    DynmapManager.updateClaims();
                                     return true;
                                 }
                                 else {
@@ -181,7 +181,7 @@ public class CommandInterpreter {
                             Player player = (Player) sender;
                             if (PersistentData.getInstance().isInFaction(player.getUniqueId())) {
                                 ChunkManager.getInstance().removeChunkAtPlayerLocation(player);
-                                ChunkManager.getInstance().dynmapUpdateFactions();
+                                DynmapManager.updateClaims();
                                 return true;
                             }
                             else {
