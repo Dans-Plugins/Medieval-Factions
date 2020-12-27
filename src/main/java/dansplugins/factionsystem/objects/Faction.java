@@ -291,6 +291,16 @@ public class Faction {
         return allies;
     }
 
+    public List<ClaimedChunk> getClaimedChunks() {
+        List<ClaimedChunk> output = new ArrayList<>();
+        for (ClaimedChunk chunk : PersistentData.getInstance().getClaimedChunks()) {
+            if (chunk.getHolder().equalsIgnoreCase(getName())) {
+                output.add(chunk);
+            }
+        }
+        return output;
+    }
+
     public void invite(UUID playerName) {
         Player player = getServer().getPlayer(playerName);
         if (player != null) {
