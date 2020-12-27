@@ -21,8 +21,10 @@ import static org.bukkit.Bukkit.getServer;
 
 public class DynmapManager {
 
-    public static DynmapManager instance = null;
+    private static DynmapManager instance = null;
     public static boolean dynmapInitialized = false;
+
+    public boolean updateClaimsAreaMarkers = false;
 
     public static boolean hasDynmap() {
         if (!dynmapInitialized) {
@@ -45,18 +47,29 @@ public class DynmapManager {
     }
 
     /***
-     * Use this method to update claims, it's safed against dynmap not being found
-     * or loaded successfully.
+     * Scheduled task that checks to see if there are changes to the claims that need
+     * to be rendered on dynmap.
+     * @param interval Number of ticks before the scheduled task executes again.
+     */
+    public static void scheduleClaimsUpdate(long interval) {
+        new BukkitRunnable() {
+            @Override
+            public void run() {
+                if (DynmapManager.getInstance().updateClaimsAreaMarkers) {
+                    DynmapManager.getInstance().dynmapUpdateFactions();
+                    DynmapManager.getInstance().updateClaimsAreaMarkers = false;
+                }
+            }
+        }.runTaskTimer(MedievalFactions.getInstance(), 40, interval);
+    }
+
+    /***
+     * Tell the scheduled task that we have made changes and it should update the
+     * area markers.
      */
     public static void updateClaims() {
         if (DynmapManager.hasDynmap()) {
-            new BukkitRunnable() {
-                @Override
-                public void run() {
-                    DynmapManager.getInstance().dynmapUpdateFactions();
-                }
-
-            }.runTaskLater(MedievalFactions.getInstance(), 20);
+            DynmapManager.getInstance().updateClaimsAreaMarkers = true;
         }
     }
 
@@ -98,7 +111,7 @@ public class DynmapManager {
         }
     }
 
-    public MarkerAPI getMarkerAPI() {
+    private MarkerAPI getMarkerAPI() {
         return markerAPI;
     }
 
@@ -156,8 +169,8 @@ public class DynmapManager {
     private String buildNationPopupText(Faction f) {
         String message = "<h4>" + f.getName() + "</h4>" +
                 "Owner: " + UUIDChecker.getInstance().findPlayerNameBasedOnUUID(f.getOwner()) + "<br/>" +
-                "Description: " + UUIDChecker.getInstance().findPlayerNameBasedOnUUID(f.getOwner()) + "<br/>" +
-                "Population: " + UUIDChecker.getInstance().findPlayerNameBasedOnUUID(f.getOwner()) + "<br/>";
+                "Description: " + f.getDescription() + "<br/>" +
+                "<div style='display: inline;' title='" + f.getMemberListSeparatedByCommas() + "'>Population: " + f.getMemberList().size() + "</div><br/>";
 
         if (f.hasLiege()) {
             message += "Liege: " + f.getLiege() + "<br/>";

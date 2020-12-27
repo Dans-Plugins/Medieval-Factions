@@ -16,7 +16,7 @@ public class MedievalFactions extends JavaPlugin {
 
     private static MedievalFactions instance;
 
-    private String version = "v3.7-beta";
+    private String version = "v3.7-beta-2";
 
     public static MedievalFactions getInstance() {
         return instance;
@@ -59,7 +59,10 @@ public class MedievalFactions extends JavaPlugin {
         int pluginId = 8929;
         Metrics metrics = new Metrics(this, pluginId);
 
-        DynmapManager.updateClaims();
+        if (DynmapManager.hasDynmap()) {
+            DynmapManager.scheduleClaimsUpdate(600); // Check once every 30 seconds for updates.
+            DynmapManager.updateClaims();
+        }
 
         System.out.println("Medieval Factions plugin enabled.");
     }

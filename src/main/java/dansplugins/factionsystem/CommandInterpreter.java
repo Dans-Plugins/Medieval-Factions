@@ -218,6 +218,7 @@ public class CommandInterpreter {
 
                                     // remove claimed chunks
                                     ChunkManager.getInstance().removeAllClaimedChunks(faction.getName(), PersistentData.getInstance().getClaimedChunks());
+                                    DynmapManager.updateClaims();
                                     player.sendMessage(ChatColor.GREEN + "All land unclaimed from " + factionName + "!");
 
                                     // remove locks associated with this faction
@@ -243,6 +244,7 @@ public class CommandInterpreter {
 
                                     // remove claimed chunks
                                     ChunkManager.getInstance().removeAllClaimedChunks(faction.getName(), PersistentData.getInstance().getClaimedChunks());
+                                    DynmapManager.updateClaims();
                                     player.sendMessage(ChatColor.GREEN + "All land unclaimed.");
 
                                     // remove locks associated with this faction
