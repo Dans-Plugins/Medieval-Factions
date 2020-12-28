@@ -846,6 +846,12 @@ public class InteractionHandler implements Listener {
                 // if player's faction is not the same as the holder of the chunk and player isn't overriding
                 if (!(faction.getName().equalsIgnoreCase(chunk.getHolder())) && !EphemeralData.getInstance().getAdminsBypassingProtections().contains(event.getPlayer().getUniqueId())) {
 
+                    Block block = event.getClickedBlock();
+                    if (MedievalFactions.getInstance().getConfig().getBoolean("nonMembersCanInteractWithDoors") && block != null && isDoor(block)) {
+                        // allow non-faction members to interact with doors
+                        return;
+                    }
+
                     // if enemy territory
                     if (faction.isEnemy(chunk.getHolder())) {
                         // if not interacting with chest

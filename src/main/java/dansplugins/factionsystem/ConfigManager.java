@@ -124,9 +124,14 @@ public class ConfigManager {
             MedievalFactions.getInstance().getConfig().addDefault("zeroPowerFactionsGetDisbanded", false);
         }
 
-        if (!MedievalFactions.getInstance().getConfig().isBoolean("vassalContributionPercentageMultiplier")) {
+        if (!MedievalFactions.getInstance().getConfig().isDouble("vassalContributionPercentageMultiplier")) {
             System.out.println("vassalContributionPercentageMultiplier not set! Setting to default!");
             MedievalFactions.getInstance().getConfig().addDefault("vassalContributionPercentageMultiplier", 0.25);
+        }
+
+        if (!MedievalFactions.getInstance().getConfig().isBoolean("nonMembersCanInteractWithDoors")) {
+            System.out.println("nonMembersCanInteractWithDoors not set! Setting to default!");
+            MedievalFactions.getInstance().getConfig().addDefault("nonMembersCanInteractWithDoors", false);
         }
 
         deleteOldConfigOptionsIfPresent();
@@ -180,7 +185,8 @@ public class ConfigManager {
                     || option.equalsIgnoreCase("warsRequiredForPVP")
                     || option.equalsIgnoreCase("powerDecreases")
                     || option.equalsIgnoreCase("surroundedChunksProtected")
-                    || option.equalsIgnoreCase("zeroPowerFactionsGetDisbanded")) {
+                    || option.equalsIgnoreCase("zeroPowerFactionsGetDisbanded")
+                    || option.equalsIgnoreCase("nonMembersCanInteractWithDoors")) {
                 MedievalFactions.getInstance().getConfig().set(option, Boolean.parseBoolean(value));
                 player.sendMessage(ChatColor.GREEN + "Boolean set!");
             }
@@ -227,6 +233,7 @@ public class ConfigManager {
         MedievalFactions.getInstance().getConfig().addDefault("surroundedChunksProtected", true);
         MedievalFactions.getInstance().getConfig().addDefault("zeroPowerFactionsGetDisbanded", false);
         MedievalFactions.getInstance().getConfig().addDefault("vassalContributionPercentageMultiplier", 0.25);
+        MedievalFactions.getInstance().getConfig().addDefault("nonMembersCanInteractWithDoors", false);
         MedievalFactions.getInstance().getConfig().options().copyDefaults(true);
         MedievalFactions.getInstance().saveConfig();
     }
@@ -253,7 +260,8 @@ public class ConfigManager {
 		        + ", factionMaxGateArea: " + MedievalFactions.getInstance().getConfig().getInt("factionMaxGateArea")
                 + ", surroundedChunksProtected: " + MedievalFactions.getInstance().getConfig().getBoolean("surroundedChunksProtected")
                 + ", zeroPowerFactionsGetDisbanded: " + MedievalFactions.getInstance().getConfig().getBoolean("zeroPowerFactionsGetDisbanded")
-                + ", vassalContributionPercentageMultiplier: " + MedievalFactions.getInstance().getConfig().getDouble("vassalContributionPercentageMultiplier"));
+                + ", vassalContributionPercentageMultiplier: " + MedievalFactions.getInstance().getConfig().getDouble("vassalContributionPercentageMultiplier")
+                + ", nonMembersCanInteractWithDoors: " + MedievalFactions.getInstance().getConfig().getBoolean("nonMembersCanInteractWithDoors"));
     }
 
 }
