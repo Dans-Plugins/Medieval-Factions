@@ -74,6 +74,8 @@ public class ChunkManager {
 
         }
 
+        System.out.println("DEBUG: attempting to radius claim " + chunkList.size() + " chunks.");
+
         // claim selected chunks
         for (Chunk chunk : chunkList) {
             claimChunkAtLocation(claimant, getChunkCoords(chunk), chunk.getWorld(), claimantsFaction);
