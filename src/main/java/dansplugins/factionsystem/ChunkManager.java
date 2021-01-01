@@ -36,8 +36,8 @@ public class ChunkManager {
 
     public void radiusClaimAtLocation(int depth, Player claimant, Location location, Faction claimantsFaction) {
 
-        if (depth < 0 || depth > 2) {
-            claimant.sendMessage(ChatColor.RED + "Depth must be between 0 and 2");
+        if (depth < 0 || depth > 3) {
+            claimant.sendMessage(ChatColor.RED + "Depth must be between 0 and 3");
             return;
         }
 
