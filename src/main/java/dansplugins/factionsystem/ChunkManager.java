@@ -36,8 +36,10 @@ public class ChunkManager {
 
     public void radiusClaimAtLocation(int depth, Player claimant, Location location, Faction claimantsFaction) {
 
-        if (depth < 0 || depth > 3) {
-            claimant.sendMessage(ChatColor.RED + "Depth must be between 0 and 3");
+        int maxClaimRadius = MedievalFactions.getInstance().getConfig().getInt("maxClaimRadius");
+
+        if (depth < 0 || depth > maxClaimRadius) {
+            claimant.sendMessage(ChatColor.RED + "Radius must be between 0 and " + maxClaimRadius);
             return;
         }
 
@@ -77,8 +79,6 @@ public class ChunkManager {
             chunksToAdd.clear();
 
         }
-
-        System.out.println("DEBUG: attempting to radius claim " + chunkList.size() + " chunks.");
 
         // claim selected chunks
         for (Chunk chunk : chunkList) {

@@ -45,7 +45,7 @@ public class ClaimCommand {
             try {
                 depth = Integer.parseInt(args[1]);
             } catch(Exception e) {
-                player.sendMessage(ChatColor.RED + "Usage: /mf claim (depth number)");
+                player.sendMessage(ChatColor.RED + "Usage: /mf claim (radius)");
             }
 
             ChunkManager.getInstance().radiusClaimAtLocation(depth, player, player.getLocation(), playersFaction);

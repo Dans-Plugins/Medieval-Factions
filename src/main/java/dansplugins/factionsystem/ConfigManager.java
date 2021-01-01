@@ -139,6 +139,11 @@ public class ConfigManager {
             MedievalFactions.getInstance().getConfig().addDefault("playersChatWithPrefixes", true);
         }
 
+        if (!MedievalFactions.getInstance().getConfig().isInt("maxClaimRadius")) {
+            System.out.println("maxClaimRadius not set! Setting to default!");
+            MedievalFactions.getInstance().getConfig().addDefault("maxClaimRadius", 3);
+        }
+
         deleteOldConfigOptionsIfPresent();
 
         MedievalFactions.getInstance().getConfig().options().copyDefaults(true);
@@ -180,7 +185,8 @@ public class ConfigManager {
                     || option.equalsIgnoreCase("powerDecreaseAmount")
                     || option.equalsIgnoreCase("factionMaxNameLength")
 	                || option.equalsIgnoreCase("factionMaxNumberGates")
-	                || option.equalsIgnoreCase("factionMaxGateArea"))
+	                || option.equalsIgnoreCase("factionMaxGateArea")
+                    || option.equalsIgnoreCase("maxClaimRadius"))
             {
                 MedievalFactions.getInstance().getConfig().set(option, Integer.parseInt(value));
                 player.sendMessage(ChatColor.GREEN + "Integer set!");
@@ -241,6 +247,7 @@ public class ConfigManager {
         MedievalFactions.getInstance().getConfig().addDefault("vassalContributionPercentageMultiplier", 0.25);
         MedievalFactions.getInstance().getConfig().addDefault("nonMembersCanInteractWithDoors", false);
         MedievalFactions.getInstance().getConfig().addDefault("playersChatWithPrefixes", true);
+        MedievalFactions.getInstance().getConfig().addDefault("maxClaimRadius", 3);
         MedievalFactions.getInstance().getConfig().options().copyDefaults(true);
         MedievalFactions.getInstance().saveConfig();
     }
@@ -269,7 +276,8 @@ public class ConfigManager {
                 + ", zeroPowerFactionsGetDisbanded: " + MedievalFactions.getInstance().getConfig().getBoolean("zeroPowerFactionsGetDisbanded")
                 + ", vassalContributionPercentageMultiplier: " + MedievalFactions.getInstance().getConfig().getDouble("vassalContributionPercentageMultiplier")
                 + ", nonMembersCanInteractWithDoors: " + MedievalFactions.getInstance().getConfig().getBoolean("nonMembersCanInteractWithDoors")
-                + ", playersChatWithPrefixes: " + MedievalFactions.getInstance().getConfig().getBoolean("playersChatWithPrefixes"));
+                + ", playersChatWithPrefixes: " + MedievalFactions.getInstance().getConfig().getBoolean("playersChatWithPrefixes")
+                + ", maxClaimRadius: " + MedievalFactions.getInstance().getConfig().getInt("maxClaimRadius"));
     }
 
 }
