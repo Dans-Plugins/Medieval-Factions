@@ -141,36 +141,10 @@ public class CommandInterpreter {
                     return true;
                 }
 
-                // TODO: move into command class
                 // claim command
                 if (args[0].equalsIgnoreCase("claim")) {
-                    if (sender.hasPermission("mf.claim")) {
-                        if (sender instanceof Player) {
-                            Player player = (Player) sender;
-
-                            // if not at demesne limit
-                            if (PersistentData.getInstance().isInFaction(player.getUniqueId())) {
-                                Faction playersFaction = PersistentData.getInstance().getPlayersFaction(player.getUniqueId());
-                                if (ChunkManager.getInstance().getChunksClaimedByFaction(playersFaction.getName(), PersistentData.getInstance().getClaimedChunks()) < playersFaction.getCumulativePowerLevel()) {
-                                    ChunkManager.getInstance().addChunkAtPlayerLocation(player);
-                                    DynmapManager.updateClaims();
-                                    return true;
-                                }
-                                else {
-                                    player.sendMessage(ChatColor.RED + "You have reached your demesne limit! Invite more players to increase this.");
-                                    return false;
-                                }
-                            }
-                            else {
-                                player.sendMessage(ChatColor.RED + "You must be in a faction to use this command.");
-                                return false;
-                            }
-                        }
-                    }
-                    else {
-                        sender.sendMessage(ChatColor.RED + "Sorry! You need the following permission to use this command: 'mf.claim'");
-                        return false;
-                    }
+                    ClaimCommand command = new ClaimCommand();
+                    command.claim(sender);
                 }
 
                 // TODO: move into command class
