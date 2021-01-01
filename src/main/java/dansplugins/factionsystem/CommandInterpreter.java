@@ -144,7 +144,7 @@ public class CommandInterpreter {
                 // claim command
                 if (args[0].equalsIgnoreCase("claim")) {
                     ClaimCommand command = new ClaimCommand();
-                    command.claim(sender);
+                    command.claim(sender, args);
                 }
 
                 // TODO: move into command class

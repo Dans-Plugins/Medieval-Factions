@@ -10,7 +10,7 @@ import org.bukkit.entity.Player;
 
 public class ClaimCommand {
 
-    public boolean claim(CommandSender sender) {
+    public boolean claim(CommandSender sender, String[] args) {
 
         if (!(sender instanceof Player)) {
             sender.sendMessage("Only players can use this command!");
@@ -43,7 +43,20 @@ public class ClaimCommand {
             return false;
         }
 
-        ChunkManager.getInstance().claimChunkAtLocation(player, player.getLocation(), playersFaction);
+        if (args.length == 1) {
+            ChunkManager.getInstance().claimChunkAtLocation(player, player.getLocation(), playersFaction);
+        }
+        else {
+            int depth = -1;
+            try {
+                depth = Integer.parseInt(args[1]);
+            } catch(Exception e) {
+                player.sendMessage(ChatColor.RED + "Usage: /mf claim (depth number)");
+            }
+
+            ChunkManager.getInstance().radiusClaimAtLocation(depth, player, player.getLocation(), playersFaction);
+        }
+
         DynmapManager.updateClaims();
         return true;
     }
