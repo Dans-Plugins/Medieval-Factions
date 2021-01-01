@@ -31,7 +31,11 @@ public class ClaimCommand {
             return false;
         }
 
-        // TODO: add officer/owner check
+        // if not officer or owner
+        if (!(playersFaction.isOwner(player.getUniqueId()) || playersFaction.isOfficer(player.getUniqueId()))) {
+            player.sendMessage(ChatColor.RED + "You must be the owner or an officer of your faction in order to use this command.");
+            return false;
+        }
 
         // if at demesne limit
         if (!(ChunkManager.getInstance().getChunksClaimedByFaction(playersFaction.getName(), PersistentData.getInstance().getClaimedChunks()) < playersFaction.getCumulativePowerLevel())) {
@@ -39,7 +43,7 @@ public class ClaimCommand {
             return false;
         }
 
-        ChunkManager.getInstance().addChunkAtPlayerLocation(player);
+        ChunkManager.getInstance().claimChunkAtPlayerLocation(player, playersFaction);
         DynmapManager.updateClaims();
         return true;
     }

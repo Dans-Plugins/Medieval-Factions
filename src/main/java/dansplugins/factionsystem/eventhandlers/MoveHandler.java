@@ -6,6 +6,7 @@ import dansplugins.factionsystem.MedievalFactions;
 import dansplugins.factionsystem.data.PersistentData;
 import dansplugins.factionsystem.objects.Faction;
 import org.bukkit.ChatColor;
+import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerMoveEvent;
@@ -25,26 +26,25 @@ public class MoveHandler implements Listener {
         if (event.getFrom().getChunk() != Objects.requireNonNull(event.getTo()).getChunk()) {
 
             // auto claim check
-            for (Faction faction : PersistentData.getInstance().getFactions()) {
-                if (faction.isOwner(event.getPlayer().getUniqueId())) {
+            Player player =  event.getPlayer();
+            Faction faction = PersistentData.getInstance().getPlayersFaction(player.getUniqueId());
+            if (faction != null && faction.isOwner(player.getUniqueId())) {
+                if (faction.getAutoClaimStatus()) {
 
-                    if (faction.getAutoClaimStatus()) {
-
-                        // if not at demesne limit
-                        Faction playersFaction = PersistentData.getInstance().getPlayersFaction(event.getPlayer().getUniqueId());
-                        if (ChunkManager.getInstance().getChunksClaimedByFaction(playersFaction.getName(), PersistentData.getInstance().getClaimedChunks()) < playersFaction.getCumulativePowerLevel()) {
-                            getServer().getScheduler().runTaskLater(MedievalFactions.getInstance(), new Runnable() {
-                                @Override
-                                public void run() {
-                                    // add new chunk to claimed chunks
-                                    ChunkManager.getInstance().addChunkAtPlayerLocation(event.getPlayer());
-                                    DynmapManager.updateClaims();
-                                }
-                            }, 1); // delayed by 1 tick (1/20th of a second) because otherwise players will claim the chunk they just left
-                        }
-                        else {
-                            event.getPlayer().sendMessage(ChatColor.RED + "You have reached your demesne limit! Invite more players to increase this.");
-                        }
+                    // if not at demesne limit
+                    Faction playersFaction = PersistentData.getInstance().getPlayersFaction(event.getPlayer().getUniqueId());
+                    if (ChunkManager.getInstance().getChunksClaimedByFaction(playersFaction.getName(), PersistentData.getInstance().getClaimedChunks()) < playersFaction.getCumulativePowerLevel()) {
+                        getServer().getScheduler().runTaskLater(MedievalFactions.getInstance(), new Runnable() {
+                            @Override
+                            public void run() {
+                                // add new chunk to claimed chunks
+                                ChunkManager.getInstance().claimChunkAtPlayerLocation(event.getPlayer(), faction);
+                                DynmapManager.updateClaims();
+                            }
+                        }, 1); // delayed by 1 tick (1/20th of a second) because otherwise players will claim the chunk they just left
+                    }
+                    else {
+                        event.getPlayer().sendMessage(ChatColor.RED + "You have reached your demesne limit! Invite more players to increase this.");
                     }
                 }
             }
