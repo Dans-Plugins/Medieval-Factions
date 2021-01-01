@@ -43,7 +43,7 @@ public class ClaimCommand {
             return false;
         }
 
-        ChunkManager.getInstance().claimChunkAtPlayerLocation(player, playersFaction);
+        ChunkManager.getInstance().claimChunkAtLocation(player, player.getLocation(), playersFaction);
         DynmapManager.updateClaims();
         return true;
     }

@@ -34,12 +34,12 @@ public class ChunkManager {
         return instance;
     }
 
-    public void claimChunkAtPlayerLocation(Player player, Faction playersFaction) {
+    public void claimChunkAtLocation(Player player, Location location, Faction playersFaction) {
 
-        double[] playerCoords = getPlayerChunkCoords(player);
+        double[] chunkCoords = getChunkCoords(location);
 
         // check if land is already claimed
-        ClaimedChunk chunk = isChunkClaimed(playerCoords[0], playerCoords[1], player.getLocation().getWorld().getName());
+        ClaimedChunk chunk = isChunkClaimed(chunkCoords[0], chunkCoords[1], location.getWorld().getName());
         if (chunk != null) {
             // chunk already claimed
             Faction targetFaction = PersistentData.getInstance().getFaction(chunk.getHolder());
@@ -87,30 +87,30 @@ public class ChunkManager {
 
             PersistentData.getInstance().getClaimedChunks().remove(chunk);
 
-            addClaimedChunk(player.getLocation(), playersFaction);
+            addClaimedChunk(player.getLocation().getChunk(), playersFaction, player.getWorld());
             player.sendMessage(ChatColor.GREEN + "Land conquered from " + targetFaction.getName() + "! Demesne Size: " + getChunksClaimedByFaction(playersFaction.getName(), PersistentData.getInstance().getClaimedChunks()) + "/" + playersFaction.getCumulativePowerLevel());
 
             Messenger.getInstance().sendAllPlayersInFactionMessage(targetFaction, ChatColor.RED + playersFaction.getName() + " has conquered land from your faction!");
         }
         else {
             // chunk not already claimed
-            addClaimedChunk(player.getLocation(), playersFaction);
+            addClaimedChunk(player.getLocation().getChunk(), playersFaction, player.getWorld());
             player.sendMessage(ChatColor.GREEN + "Land claimed! Demesne Size: " + getChunksClaimedByFaction(playersFaction.getName(), PersistentData.getInstance().getClaimedChunks()) + "/" + playersFaction.getCumulativePowerLevel());
         }
     }
 
-    private void addClaimedChunk(Location location, Faction faction) {
-        ClaimedChunk newChunk = new ClaimedChunk(location.getChunk());
+    private void addClaimedChunk(Chunk chunk, Faction faction, World world) {
+        ClaimedChunk newChunk = new ClaimedChunk(chunk);
         newChunk.setHolder(faction.getName());
-        newChunk.setWorld(location.getWorld().getName());
+        newChunk.setWorld(world.getName());
         PersistentData.getInstance().getClaimedChunks().add(newChunk);
     }
 
-    private double[] getPlayerChunkCoords(Player player) {
-        double[] playerCoords = new double[2];
-        playerCoords[0] = player.getLocation().getChunk().getX();
-        playerCoords[1] = player.getLocation().getChunk().getZ();
-        return playerCoords;
+    private double[] getChunkCoords(Location location) {
+        double[] chunkCoords = new double[2];
+        chunkCoords[0] = location.getChunk().getX();
+        chunkCoords[1] = location.getChunk().getZ();
+        return chunkCoords;
     }
 
     private ClaimedChunk isChunkClaimed(double x, double y, String world)

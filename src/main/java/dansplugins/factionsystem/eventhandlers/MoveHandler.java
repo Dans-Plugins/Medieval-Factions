@@ -38,7 +38,7 @@ public class MoveHandler implements Listener {
                             @Override
                             public void run() {
                                 // add new chunk to claimed chunks
-                                ChunkManager.getInstance().claimChunkAtPlayerLocation(event.getPlayer(), faction);
+                                ChunkManager.getInstance().claimChunkAtLocation(player, player.getLocation(), faction);
                                 DynmapManager.updateClaims();
                             }
                         }, 1); // delayed by 1 tick (1/20th of a second) because otherwise players will claim the chunk they just left
