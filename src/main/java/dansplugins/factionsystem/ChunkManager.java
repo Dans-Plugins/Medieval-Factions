@@ -34,95 +34,183 @@ public class ChunkManager {
         return instance;
     }
 
-    public void addChunkAtPlayerLocation(Player player) {
-        double[] playerCoords = new double[2];
-        playerCoords[0] = player.getLocation().getChunk().getX();
-        playerCoords[1] = player.getLocation().getChunk().getZ();
-        for (Faction faction : PersistentData.getInstance().getFactions()) {
-            if (faction.isOwner(player.getUniqueId()) || faction.isOfficer(player.getUniqueId())) {
+    public void radiusClaimAtLocation(int depth, Player claimant, Location location, Faction claimantsFaction) {
 
-                // check if land is already claimed
-                ClaimedChunk chunk = isChunkClaimed(playerCoords[0], playerCoords[1], player.getLocation().getWorld().getName());
-                if (chunk != null)
-                {
-                    if (playerCoords[0] == chunk.getCoordinates()[0] && playerCoords[1] == chunk.getCoordinates()[1]) {
+        int maxClaimRadius = MedievalFactions.getInstance().getConfig().getInt("maxClaimRadius");
 
-                        // if holder is player's faction
-                        if (chunk.getHolder().equalsIgnoreCase(faction.getName()) && !PersistentData.getInstance().getPlayersFaction(player.getUniqueId()).getAutoClaimStatus()) {
-                            player.sendMessage(ChatColor.RED + "This land is already claimed by your faction!");
-                            return;
-                        }
-                        else {
+        if (depth < 0 || depth > maxClaimRadius) {
+            claimant.sendMessage(ChatColor.RED + "Radius must be between 0 and " + maxClaimRadius);
+            return;
+        }
 
-                            // check if faction has more land than their demesne limit
-                            for (Faction targetFaction : PersistentData.getInstance().getFactions()) {
-                                if (chunk.getHolder().equalsIgnoreCase(targetFaction.getName())) {
-                                    if (targetFaction.getCumulativePowerLevel() < getChunksClaimedByFaction(targetFaction.getName(), PersistentData.getInstance().getClaimedChunks())) {
+        if (depth == 0) {
+            claimChunkAtLocation(claimant, location, claimantsFaction);
+            return;
+        }
 
-                                        // is at war with target faction
-                                        if (faction.isEnemy(targetFaction.getName()) || everyPlayerInFactionExperiencingPowerDecay(targetFaction)) {
+        Chunk initial = location.getChunk();
 
-                                            if (MedievalFactions.getInstance().getConfig().getBoolean("surroundedChunksProtected")) {
-                                                if (isClaimedChunkSurroundedByChunksClaimedBySameFaction(chunk)) {
-                                                    player.sendMessage(ChatColor.RED + "Target faction has claimed the chunks to the north, east, south and west of this chunk! It cannot be conquered!");
-                                                    return;
-                                                }
-                                            }
+        ArrayList<Chunk> chunkList = new ArrayList<>();
+        chunkList.add(initial);
 
-                                            // CONQUERABLE
+        ArrayList<Chunk> chunksToAdd = new ArrayList<>();
 
-                                            // remove locks on this chunk
-                                            Iterator<LockedBlock> itr = PersistentData.getInstance().getLockedBlocks().iterator();
-                                            while (itr.hasNext()) {
-                                                LockedBlock block = itr.next();
-                                                if (chunk.getChunk().getWorld().getBlockAt(block.getX(), block.getY(), block.getZ()).getChunk().getX() == chunk.getChunk().getX() &&
-                                                        chunk.getChunk().getWorld().getBlockAt(block.getX(), block.getY(), block.getZ()).getChunk().getZ() == chunk.getChunk().getZ()) {
-                                                    itr.remove();
-                                                }
-                                            }
+        for (int i = 0; i < depth; i++) {
 
-                                            PersistentData.getInstance().getClaimedChunks().remove(chunk);
-
-                                            ClaimedChunk newChunk = new ClaimedChunk(player.getLocation().getChunk());
-                                            newChunk.setHolder(faction.getName());
-                                            newChunk.setWorld(player.getLocation().getWorld().getName());
-                                            PersistentData.getInstance().getClaimedChunks().add(newChunk);
-                                            player.sendMessage(ChatColor.GREEN + "Land conquered from " + targetFaction.getName() + "! Demesne Size: " + getChunksClaimedByFaction(faction.getName(), PersistentData.getInstance().getClaimedChunks()) + "/" + faction.getCumulativePowerLevel());
-
-                                            Messenger.getInstance().sendAllPlayersInFactionMessage(targetFaction, ChatColor.RED + PersistentData.getInstance().getPlayersFaction(player.getUniqueId()).getName() + " has conquered land from your faction!");
-
-                                            return;
-                                        }
-                                        else {
-                                            if (MedievalFactions.getInstance().getConfig().getBoolean("powerDecreases")) {
-                                                player.sendMessage(ChatColor.RED + "In order for you to conquer land, this faction must be at war with you or every member must be experiencing power decay.");
-                                            } else {
-                                                player.sendMessage(ChatColor.RED + "Your factions have to be at war in order for you to conquer land.");
-                                            }
-                                            return;
-                                        }
-                                    }
-                                }
-                            }
-
-                            if (!PersistentData.getInstance().getPlayersFaction(player.getUniqueId()).getAutoClaimStatus()) {
-                                player.sendMessage(ChatColor.RED + "This land is already claimed by " + chunk.getHolder());
-                            }
-
-                            return;
-                        }
+            // go through every chunk in chunkList
+            for (Chunk chunk : chunkList) {
+                ArrayList<Chunk> surrounding = getEightSurrounding(chunk);
+                // record surrounding chunk if it hasn't been seen before
+                for (Chunk surroundingChunk : surrounding) {
+                    if (!chunksToAdd.contains(surroundingChunk)) {
+                        chunksToAdd.add(surroundingChunk);
                     }
                 }
+            }
 
-                ClaimedChunk newChunk = new ClaimedChunk(player.getLocation().getChunk());
-                newChunk.setHolder(faction.getName());
-                newChunk.setWorld(player.getLocation().getWorld().getName());
-                PersistentData.getInstance().getClaimedChunks().add(newChunk);
-                player.sendMessage(ChatColor.GREEN + "Land claimed! Demesne Size: " + getChunksClaimedByFaction(faction.getName(), PersistentData.getInstance().getClaimedChunks()) + "/" + faction.getCumulativePowerLevel());
+            // go through every chunk to add
+            for (Chunk chunk : chunksToAdd) {
+                // add it if chunk list doesn't have it yet
+                if (!chunkList.contains(chunk)) {
+                    chunkList.add(chunk);
+                }
+            }
+
+            chunksToAdd.clear();
+
+        }
+
+        // claim selected chunks
+        for (Chunk chunk : chunkList) {
+            claimChunkAtLocation(claimant, getChunkCoords(chunk), chunk.getWorld(), claimantsFaction);
+        }
+
+    }
+
+    private ArrayList<Chunk> getEightSurrounding(Chunk chunk) {
+        ArrayList<Chunk> surrounding = new ArrayList<>();
+
+        World world = chunk.getWorld();
+
+        int xpos = chunk.getX();
+        int zpos = chunk.getZ();
+
+        Chunk topLeft = world.getChunkAt(xpos - 1, zpos - 1);
+        Chunk topTop = world.getChunkAt(xpos, zpos - 1);
+        Chunk topRight = world.getChunkAt(xpos + 1, zpos - 1);
+        Chunk middleRight = world.getChunkAt(xpos + 1, zpos);
+        Chunk bottomRight = world.getChunkAt(xpos + 1, zpos + 1);
+        Chunk bottomMiddle = world.getChunkAt(xpos, zpos + 1);
+        Chunk bottomLeft = world.getChunkAt(xpos - 1, zpos + 1);
+        Chunk middleLeft = world.getChunkAt(xpos - 1, zpos);
+
+        surrounding.add(topLeft);
+        surrounding.add(topTop);
+        surrounding.add(topRight);
+        surrounding.add(middleRight);
+        surrounding.add(bottomRight);
+        surrounding.add(bottomMiddle);
+        surrounding.add(bottomLeft);
+        surrounding.add(middleLeft);
+
+        return surrounding;
+    }
+
+    public void claimChunkAtLocation(Player claimant, Location location, Faction claimantsFaction) {
+        double[] chunkCoords = getChunkCoords(location);
+        claimChunkAtLocation(claimant, chunkCoords, location.getWorld(), claimantsFaction);
+    }
+
+    private void claimChunkAtLocation(Player claimant, double[] chunkCoords, World world, Faction claimantsFaction) {
+
+        // if at demesne limit
+        if (!(getChunksClaimedByFaction(claimantsFaction.getName(), PersistentData.getInstance().getClaimedChunks()) < claimantsFaction.getCumulativePowerLevel())) {
+            claimant.sendMessage(ChatColor.RED + "You have reached your demesne limit! Invite more players to increase this.");
+            return;
+        }
+
+        // check if land is already claimed
+        ClaimedChunk chunk = isChunkClaimed(chunkCoords[0], chunkCoords[1], world.getName());
+        if (chunk != null) {
+            // chunk already claimed
+            Faction targetFaction = PersistentData.getInstance().getFaction(chunk.getHolder());
+
+            // if holder is player's faction
+            if (targetFaction.getName().equalsIgnoreCase(claimantsFaction.getName()) && !claimantsFaction.getAutoClaimStatus()) {
+                claimant.sendMessage(ChatColor.RED + "This land is already claimed by your faction!");
                 return;
             }
+
+            // if not at war with target faction and inactive claiming isn't possible
+            if (!claimantsFaction.isEnemy(targetFaction.getName()) && !everyPlayerInFactionExperiencingPowerDecay(targetFaction)) {
+                claimant.sendMessage(ChatColor.RED + "Must be at war with target faction or target faction must be inactive!");
+                return;
+            }
+
+            // surrounded chunk protection check
+            if (MedievalFactions.getInstance().getConfig().getBoolean("surroundedChunksProtected")) {
+                if (isClaimedChunkSurroundedByChunksClaimedBySameFaction(chunk)) {
+                    claimant.sendMessage(ChatColor.RED + "Target faction has claimed the chunks to the north, east, south and west of this chunk! It cannot be conquered!");
+                    return;
+                }
+            }
+
+            int targetFactionsCumulativePowerLevel = targetFaction.getCumulativePowerLevel();
+            int chunksClaimedByTargetFaction = getChunksClaimedByFaction(targetFaction.getName(), PersistentData.getInstance().getClaimedChunks());
+
+            // if target faction does not have more land than their demesne limit
+            if (!(targetFactionsCumulativePowerLevel < chunksClaimedByTargetFaction)) {
+                claimant.sendMessage(ChatColor.RED + "Target faction does not have more land than their demsene limit!");
+                return;
+            }
+
+            // CONQUERABLE
+
+            // remove locks on this chunk
+            Iterator<LockedBlock> itr = PersistentData.getInstance().getLockedBlocks().iterator();
+            while (itr.hasNext()) {
+                LockedBlock block = itr.next();
+                if (chunk.getChunk().getWorld().getBlockAt(block.getX(), block.getY(), block.getZ()).getChunk().getX() == chunk.getChunk().getX() &&
+                        chunk.getChunk().getWorld().getBlockAt(block.getX(), block.getY(), block.getZ()).getChunk().getZ() == chunk.getChunk().getZ()) {
+                    itr.remove();
+                }
+            }
+
+            PersistentData.getInstance().getClaimedChunks().remove(chunk);
+
+            Chunk toClaim = world.getChunkAt((int) chunkCoords[0], (int) chunkCoords[1]);
+            addClaimedChunk(toClaim, claimantsFaction, claimant.getWorld());
+            claimant.sendMessage(ChatColor.GREEN + "Land conquered from " + targetFaction.getName() + "! Demesne Size: " + getChunksClaimedByFaction(claimantsFaction.getName(), PersistentData.getInstance().getClaimedChunks()) + "/" + claimantsFaction.getCumulativePowerLevel());
+
+            Messenger.getInstance().sendAllPlayersInFactionMessage(targetFaction, ChatColor.RED + claimantsFaction.getName() + " has conquered land from your faction!");
         }
-        player.sendMessage(ChatColor.RED + "You must be an officer or owner of a faction to claim land!");
+        else {
+            // chunk not already claimed
+            Chunk toClaim = world.getChunkAt((int) chunkCoords[0], (int) chunkCoords[1]);
+            addClaimedChunk(toClaim, claimantsFaction, claimant.getWorld());
+            claimant.sendMessage(ChatColor.GREEN + "Land claimed! Demesne Size: " + getChunksClaimedByFaction(claimantsFaction.getName(), PersistentData.getInstance().getClaimedChunks()) + "/" + claimantsFaction.getCumulativePowerLevel());
+        }
+    }
+
+    private void addClaimedChunk(Chunk chunk, Faction faction, World world) {
+        ClaimedChunk newChunk = new ClaimedChunk(chunk);
+        newChunk.setHolder(faction.getName());
+        newChunk.setWorld(world.getName());
+        PersistentData.getInstance().getClaimedChunks().add(newChunk);
+    }
+
+    private double[] getChunkCoords(Location location) {
+        double[] chunkCoords = new double[2];
+        chunkCoords[0] = location.getChunk().getX();
+        chunkCoords[1] = location.getChunk().getZ();
+        return chunkCoords;
+    }
+
+    private double[] getChunkCoords(Chunk chunk) {
+        double[] chunkCoords = new double[2];
+        chunkCoords[0] = chunk.getX();
+        chunkCoords[1] = chunk.getZ();
+        return chunkCoords;
     }
 
     private ClaimedChunk isChunkClaimed(double x, double y, String world)
