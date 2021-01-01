@@ -168,14 +168,16 @@ public class ChunkManager {
 
             PersistentData.getInstance().getClaimedChunks().remove(chunk);
 
-            addClaimedChunk(claimant.getLocation().getChunk(), claimantsFaction, claimant.getWorld());
+            Chunk toClaim = world.getChunkAt((int) chunkCoords[0], (int) chunkCoords[1]);
+            addClaimedChunk(toClaim, claimantsFaction, claimant.getWorld());
             claimant.sendMessage(ChatColor.GREEN + "Land conquered from " + targetFaction.getName() + "! Demesne Size: " + getChunksClaimedByFaction(claimantsFaction.getName(), PersistentData.getInstance().getClaimedChunks()) + "/" + claimantsFaction.getCumulativePowerLevel());
 
             Messenger.getInstance().sendAllPlayersInFactionMessage(targetFaction, ChatColor.RED + claimantsFaction.getName() + " has conquered land from your faction!");
         }
         else {
             // chunk not already claimed
-            addClaimedChunk(claimant.getLocation().getChunk(), claimantsFaction, claimant.getWorld());
+            Chunk toClaim = world.getChunkAt((int) chunkCoords[0], (int) chunkCoords[1]);
+            addClaimedChunk(toClaim, claimantsFaction, claimant.getWorld());
             claimant.sendMessage(ChatColor.GREEN + "Land claimed! Demesne Size: " + getChunksClaimedByFaction(claimantsFaction.getName(), PersistentData.getInstance().getClaimedChunks()) + "/" + claimantsFaction.getCumulativePowerLevel());
         }
     }
