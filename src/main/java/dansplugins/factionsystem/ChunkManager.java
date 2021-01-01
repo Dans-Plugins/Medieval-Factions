@@ -51,7 +51,6 @@ public class ChunkManager {
         ArrayList<Chunk> chunkList = new ArrayList<>();
         chunkList.add(initial);
 
-
         ArrayList<Chunk> chunksToAdd = new ArrayList<>();
 
         for (int i = 0; i < depth; i++) {
@@ -73,6 +72,11 @@ public class ChunkManager {
 
             chunksToAdd.clear();
 
+        }
+
+        // claim selected chunks
+        for (Chunk chunk : chunkList) {
+            claimChunkAtLocation(claimant, getChunkCoords(chunk), chunk.getWorld(), claimantsFaction);
         }
 
     }
@@ -107,11 +111,14 @@ public class ChunkManager {
     }
 
     public void claimChunkAtLocation(Player claimant, Location location, Faction claimantsFaction) {
-
         double[] chunkCoords = getChunkCoords(location);
+        claimChunkAtLocation(claimant, chunkCoords, location.getWorld(), claimantsFaction);
+    }
+
+    private void claimChunkAtLocation(Player claimant, double[] chunkCoords, World world, Faction claimantsFaction) {
 
         // check if land is already claimed
-        ClaimedChunk chunk = isChunkClaimed(chunkCoords[0], chunkCoords[1], location.getWorld().getName());
+        ClaimedChunk chunk = isChunkClaimed(chunkCoords[0], chunkCoords[1], world.getName());
         if (chunk != null) {
             // chunk already claimed
             Faction targetFaction = PersistentData.getInstance().getFaction(chunk.getHolder());
@@ -182,6 +189,13 @@ public class ChunkManager {
         double[] chunkCoords = new double[2];
         chunkCoords[0] = location.getChunk().getX();
         chunkCoords[1] = location.getChunk().getZ();
+        return chunkCoords;
+    }
+
+    private double[] getChunkCoords(Chunk chunk) {
+        double[] chunkCoords = new double[2];
+        chunkCoords[0] = chunk.getX();
+        chunkCoords[1] = chunk.getZ();
         return chunkCoords;
     }
 
