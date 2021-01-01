@@ -55,16 +55,20 @@ public class ChunkManager {
 
         for (int i = 0; i < depth; i++) {
 
+            // go through every chunk in chunkList
             for (Chunk chunk : chunkList) {
                 ArrayList<Chunk> surrounding = getEightSurrounding(chunk);
+                // record surrounding chunk if it hasn't been seen before
                 for (Chunk surroundingChunk : surrounding) {
-                    if (!chunksToAdd.contains(chunk)) {
+                    if (!chunksToAdd.contains(surroundingChunk)) {
                         chunksToAdd.add(surroundingChunk);
                     }
                 }
             }
 
+            // go through every chunk to add
             for (Chunk chunk : chunksToAdd) {
+                // add it if chunk list doesn't have it yet
                 if (!chunkList.contains(chunk)) {
                     chunkList.add(chunk);
                 }
@@ -118,6 +122,12 @@ public class ChunkManager {
     }
 
     private void claimChunkAtLocation(Player claimant, double[] chunkCoords, World world, Faction claimantsFaction) {
+
+        // if at demesne limit
+        if (!(getChunksClaimedByFaction(claimantsFaction.getName(), PersistentData.getInstance().getClaimedChunks()) < claimantsFaction.getCumulativePowerLevel())) {
+            claimant.sendMessage(ChatColor.RED + "You have reached your demesne limit! Invite more players to increase this.");
+            return;
+        }
 
         // check if land is already claimed
         ClaimedChunk chunk = isChunkClaimed(chunkCoords[0], chunkCoords[1], world.getName());

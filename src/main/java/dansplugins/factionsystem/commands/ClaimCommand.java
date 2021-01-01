@@ -37,12 +37,6 @@ public class ClaimCommand {
             return false;
         }
 
-        // if at demesne limit
-        if (!(ChunkManager.getInstance().getChunksClaimedByFaction(playersFaction.getName(), PersistentData.getInstance().getClaimedChunks()) < playersFaction.getCumulativePowerLevel())) {
-            player.sendMessage(ChatColor.RED + "You have reached your demesne limit! Invite more players to increase this.");
-            return false;
-        }
-
         if (args.length == 1) {
             ChunkManager.getInstance().claimChunkAtLocation(player, player.getLocation(), playersFaction);
         }
