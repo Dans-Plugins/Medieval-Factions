@@ -21,7 +21,7 @@ public class ChatHandler implements Listener {
             if (MedievalFactions.getInstance().getConfig().getBoolean("playersChatWithPrefixes")) {
                 // add prefix
                 String prefix = playersFaction.getName();
-                event.setFormat("[" + prefix + "] %s: %s");
+                event.setFormat("[" + prefix + "] <%s> %s");
             }
 
             // check for faction chat
