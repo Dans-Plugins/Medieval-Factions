@@ -1,6 +1,11 @@
 package dansplugins.factionsystem;
 
+import org.json.simple.JSONObject;
+import org.json.simple.parser.JSONParser;
+
+import java.io.FileReader;
 import java.util.HashMap;
+import java.util.Set;
 
 public class LocaleManager {
 
@@ -32,7 +37,22 @@ public class LocaleManager {
     }
 
     private void loadFromJSON() {
-        // TODO
+        JSONParser parser = new JSONParser();
+        try {
+            String path = "./plugins/MedievalFactions/en-us.json";
+            FileReader reader = new FileReader(path);
+            JSONObject obj = (JSONObject) parser.parse(reader);
+
+            Set<String> keys = obj.keySet();
+
+            for (String key : keys) {
+                strings.put(key, (String) obj.get(key));
+            }
+
+        } catch (Exception e) {
+            System.out.println("Error loading from JSON!");
+            e.printStackTrace();
+        }
     }
 
     private void saveToJSON() {
