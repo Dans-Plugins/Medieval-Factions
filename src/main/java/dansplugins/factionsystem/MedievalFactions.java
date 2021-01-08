@@ -24,9 +24,11 @@ public class MedievalFactions extends JavaPlugin {
 
     @Override
     public void onEnable() {
-        System.out.println("Medieval Factions plugin enabling....");
-
         instance = this;
+
+        LocaleManager.getInstance().loadStrings();
+
+        System.out.println("Medieval Factions plugin enabling....");
 
         ensureSmoothTransitionBetweenVersions();
 
