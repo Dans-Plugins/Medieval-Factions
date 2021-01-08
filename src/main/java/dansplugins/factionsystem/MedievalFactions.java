@@ -27,6 +27,7 @@ public class MedievalFactions extends JavaPlugin {
         instance = this;
 
         LocaleManager.getInstance().loadStrings();
+        System.out.println("[DEBUG] Trying to get string associated with key 'AlertDemotion': " + LocaleManager.getInstance().getText("AlertDemotion"));
 
         System.out.println("Medieval Factions plugin enabling....");
 
