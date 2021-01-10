@@ -1,9 +1,13 @@
 package dansplugins.factionsystem;
 
+import org.bukkit.plugin.java.JavaPlugin;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 
+import java.io.File;
 import java.io.FileReader;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.util.HashMap;
 import java.util.Set;
 
@@ -39,8 +43,9 @@ public class LocaleManager {
     private void loadFromJSON() {
         JSONParser parser = new JSONParser();
         try {
-            String path = "./plugins/MedievalFactions/en-us.json";
-            FileReader reader = new FileReader(path);
+            String path = "en-us.json";
+            InputStream stream = MedievalFactions.getInstance().getResource(path);
+            InputStreamReader reader = new InputStreamReader(stream);
             JSONObject obj = (JSONObject) parser.parse(reader);
 
             Set<String> keys = obj.keySet();
