@@ -208,8 +208,8 @@ HelpForceRenounce	/mf force renounce (faction)
 HelpForceSave	/mf force save
 HelpGateCancel	/mf gate cancel
 HelpGateCreate	/mf gate create (<optional>name)
-HelpGateGrantaccess	/mf grantaccess - Grant someone access to a locked block.
-HelpGateGrantIndependence	/mf grantindependence - Grant a vassal vaction independence.
+HelpGrantAccess	/mf grantaccess - Grant someone access to a locked block.
+HelpGrantIndependence	/mf grantindependence - Grant a vassal vaction independence.
 HelpGateList	/mf gate list
 HelpGateName	/mf gate name (<optional>name)
 HelpGateRemove	/mf gate remove
