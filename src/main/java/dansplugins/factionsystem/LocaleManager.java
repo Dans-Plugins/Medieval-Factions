@@ -158,7 +158,7 @@ public class LocaleManager {
             File folder = new File(languageFolderPath);
 
             if (!folder.exists()) {
-                folder.createNewFile();
+                folder.mkdir();
             }
 
             File file = new File(localizationFilePath);
