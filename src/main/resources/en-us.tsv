@@ -9,6 +9,7 @@ AlertAlreadyGrantingAccess	You are already granting access to someone! Type /mf 
 AlertAlreadyInFaction	You're already in a faction, sorry!
 AlertAlreadyRequestedAlliance	You've already requested an alliance with this faction!
 AlertAlreadyRequestedPeace	You've already requested peace with this faction!
+AlertAttemptedAlliance   has attempted to ally with
 AlertBeenInvited	You've been invited to %s! Type /mf join to join.
 AlertChallenged	You have challenged to a duel!
 AlertChallengedToDuel	%s has challenged %s to a duel!
@@ -34,7 +35,6 @@ AlertMustBeOfficerOrOwnerToUseCommand	You must be a faction officer or owner to 
 AlertMustBeOwnerOrOfficer	You have to own a faction or be an officer of a faction to use this command.
 AlertMustBeOwnerOrOfficerToCreateGate	You must be a faction owner or officer to create a gate.
 AlertMustBeOwnerOrOfficerToUseCommand	You need to be the owner of a faction or an officer of a faction to use this command.
-AlertMustBeOwnerOrOfficerToUseCommand	You need to be the owner of your faction or an officer of your faction to use this command.
 AlertMustBeOwnerToInvokeAlliance	You must be the owner of your faction to invoke an alliance.
 AlertMustBeOwnerToUseCommand	You need to be the owner of a faction to use this command.
 AlertMustKickAllPlayers	You need to kick all players before you can disband your faction.
@@ -61,7 +61,7 @@ AlreadyEnteredCheckAccess	You have already entered this command! Type '/mf check
 AlreadyEnteredRevokeAccess	You have already entered this command! Type '/mf revokeaccess cancel' to cancel!
 AlreadyInFaction	Sorry, you're already in a faction. Leave if you want to create a different one.
 AttemptedAlliance	Attempted to ally with
-AttempteDPeace	Attempted to make peace with
+AttemptedPeace	Attempted to make peace with
 AttemptingToLoadChunks	Attempting to load claimed chunks...
 AttemptingToLoadFactionsData	Attempting to load Factions data...
 AttemptingToLoadFactionsData	Attempting to load factions...
@@ -77,7 +77,7 @@ Cancelled	Cancelled!
 CancelledGatePlacement	Error linking to lever. Cancelled gate placement.
 CancelledGatePlacement1	Error placing point 1. Cancelled gate placement.
 CancelledGatePlacement2	Error placing point 2. Cancelled gate placement.
-CannotAllyWithSelf	You can't ally with your own faction?
+CannotAllyWithSelf	You can't ally with your own faction!
 CannotAttackFactionMember	You can't attack another player if you are part of the same faction.
 CannotAttackNonWarringPlayer	You can't attack another player if your factions aren't at war.
 CannotBreakAllianceWithSelf	You can't declare break an alliance with your own faction.
@@ -162,7 +162,6 @@ FactionNameChanged	Faction name changed!
 FactionNameNotRecognized	That faction name isn't recognized!
 FactionNotEnemy	That faction is not your enemy!
 FactionNotFound	That faction wasn't found!
-FactioNotFound	That faction wasn't found!
 FactionsSuccessfullyLoaded	Factions successfully loaded.
 FactionsTitle	== Factions
 FactionSuccessfullyDisbanded	Faction successfully disbanded.
