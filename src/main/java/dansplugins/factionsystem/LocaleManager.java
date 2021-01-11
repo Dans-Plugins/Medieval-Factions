@@ -69,8 +69,10 @@ public class LocaleManager {
             while (reader.hasNextLine()) {
                 String line = reader.nextLine();
                 Pair<String, String> pair = getPairFromLine(line);
-                strings.put(pair.getLeft(), pair.getRight());
-                keys.add(pair.getLeft());
+                if (pair != null && !strings.containsKey(pair.getLeft())) {
+                    strings.put(pair.getLeft(), pair.getRight());
+                    keys.add(pair.getLeft());
+                }
             }
 
             reader.close();
