@@ -1,5 +1,6 @@
 package dansplugins.factionsystem.commands;
 
+import dansplugins.factionsystem.LocaleManager;
 import dansplugins.factionsystem.data.EphemeralData;
 import dansplugins.factionsystem.data.PersistentData;
 import dansplugins.factionsystem.objects.Faction;
@@ -28,7 +29,7 @@ public class GateCommand {
 						if (EphemeralData.getInstance().getCreatingGatePlayers().containsKey(player.getUniqueId()))
 						{
 							EphemeralData.getInstance().getCreatingGatePlayers().remove(player.getUniqueId());
-							player.sendMessage(ChatColor.RED + "Creating gate cancelled!");
+							player.sendMessage(ChatColor.RED + LocaleManager.getInstance().getText("CreatingGateCancelled"));
 							return;
 						}
 					}
@@ -37,7 +38,7 @@ public class GateCommand {
 						if (EphemeralData.getInstance().getCreatingGatePlayers().containsKey(player.getUniqueId()))
 						{
 							EphemeralData.getInstance().getCreatingGatePlayers().remove(player.getUniqueId());
-							player.sendMessage(ChatColor.RED + "You are already creating a gate!");
+							player.sendMessage(ChatColor.RED + LocaleManager.getInstance().getText("AlertAlreadyCreatingGate"));
 							return;
 						}
 						else
@@ -54,12 +55,12 @@ public class GateCommand {
 				        			}
 									startCreatingGate(player, gateName);
 									//TODO: Config setting for magic gate tool.
-									player.sendMessage(ChatColor.AQUA + "Creating gate '" + gateName + "'.\nClick on a block with a Golden Hoe to select the first point.");
+									player.sendMessage(ChatColor.AQUA + LocaleManager.getInstance().getText("CreatingGateClickWithHoe"));
 									return;
 								}
 								else
 								{
-									player.sendMessage(ChatColor.RED + "You must be a faction officer or owner to use this command.");
+									player.sendMessage(ChatColor.RED + LocaleManager.getInstance().getText("AlertMustBeOwnerOrOfficerToUseCommand"));
 									return;
 								}
 							}

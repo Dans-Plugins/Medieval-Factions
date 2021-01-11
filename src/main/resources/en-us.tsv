@@ -120,7 +120,7 @@ CommandsPage4	== Medieval Factions Commands Page 4/6 ==
 CommandsPage5	== Medieval Factions Commands Page 5/6 ==
 CommandsPage6	== Medieval Factions Commands Page 6/6 ==
 CreatingGateCancelled	Creating gate cancelled!
-CreatingGateClickWithHoe	Creating gate %s.\nClick on a block with a Golden Hoe to select the first point.
+CreatingGateClickWithHoe	Creating gate. Click on a block with a Golden Hoe to select the first point.
 CuboidDisallowed1	Error placing point 1: You cannot place a cuboid.
 CuboidDisallowed2	Error placing point 2: You cannot place a cuboid.
 CurrentlyNoFactions	There are currently no factions.
