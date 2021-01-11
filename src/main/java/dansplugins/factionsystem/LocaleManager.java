@@ -104,10 +104,10 @@ public class LocaleManager {
     private void handleVersionMismatch() {
         System.out.println("Version mismatch! Ensuring all localization keys are found!");
 
-        // get resource as input stream
-        InputStream inputStream = MedievalFactions.getInstance().getResource(localizationFileName);
+        // get en-us resource as input stream
+        InputStream inputStream = MedievalFactions.getInstance().getResource(languageFolderPath + "en-us.tsv");
 
-        loadFromInputStream(inputStream);
+        loadFromInputStream(inputStream); // load in any missing keys
 
     }
 
