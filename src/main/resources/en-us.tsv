@@ -168,6 +168,7 @@ FactionSuccessfullyLoaded	Faction successfully loaded.
 FileLoadError	An error occurred loading the file
 FollowingPlayersHaveAccess	The following players have access to this block:
 GateCreated	Gate successfully created.
+HasDeclaredIndependence  has declared independence from
 HelpAddLaw	/mf addlaw - Add a law to your faction.
 HelpAlly	/mf ally - Attempt to ally with a faction.
 HelpAutoclaim	/mf autoclaim - Toggle auto claim, making land claiming easier.

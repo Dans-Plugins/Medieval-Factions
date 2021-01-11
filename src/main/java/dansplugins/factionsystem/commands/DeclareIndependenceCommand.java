@@ -1,5 +1,6 @@
 package dansplugins.factionsystem.commands;
 
+import dansplugins.factionsystem.LocaleManager;
 import dansplugins.factionsystem.Messenger;
 import dansplugins.factionsystem.data.PersistentData;
 import dansplugins.factionsystem.objects.Faction;
@@ -37,25 +38,25 @@ public class DeclareIndependenceCommand {
                                 // add declarer's faction to new enemy's enemyList
                                 targetFaction.addEnemy(playersFaction.getName());
 
-                                Messenger.getInstance().sendAllPlayersOnServerMessage(ChatColor.RED + playersFaction.getName() + " has declared independence from " + targetFaction.getName() + "!");
+                                Messenger.getInstance().sendAllPlayersOnServerMessage(ChatColor.RED + playersFaction.getName() + LocaleManager.getInstance().getText("HasDeclaredIndependence") + targetFaction.getName() + "!");
                            }
                             else {
                                 // tell player they must be owner
-                                player.sendMessage(ChatColor.RED + "Sorry, you must be the owner of a faction to use this command!");
+                                player.sendMessage(ChatColor.RED + LocaleManager.getInstance().getText("MustBeOwner"));
                             }
 
                         }
                         else {
-                            player.sendMessage(ChatColor.RED + "You aren't a vassal of a faction!");
+                            player.sendMessage(ChatColor.RED + LocaleManager.getInstance().getText("NotAVassalOfAFaction"));
                         }
                     }
                     else {
-                        player.sendMessage(ChatColor.RED + "Sorry! You must be in a faction to use this command!");
+                        player.sendMessage(ChatColor.RED + LocaleManager.getInstance().getText("AlertMustBeInFactionToUseCommand"));
                     }
 
             }
             else {
-                player.sendMessage(ChatColor.RED + "Sorry! In order to use this command, you must have the following permission: 'mf.declareindependence'");
+                player.sendMessage(ChatColor.RED + LocaleManager.getInstance().getText("PermissionDeclareIndependence"));
             }
         }
 
