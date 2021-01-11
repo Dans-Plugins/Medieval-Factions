@@ -32,6 +32,10 @@ public class LocaleManager {
         return instance;
     }
 
+    public String getText(String key) {
+        return strings.get(key);
+    }
+
     public void loadStrings() {
         if (isFilePresent("./plugins/MedievalFactions/en-us.tsv")) {
             loadFromPluginFolder();
@@ -47,11 +51,16 @@ public class LocaleManager {
     }
 
     private void loadFromPluginFolder() {
-        // TODO
-    }
+        File file = new File("./plugins/MedievalFactions/en-us.tsv");
+        try {
+            InputStream inputStream = new FileInputStream(file);
+            loadFromInputStream(inputStream);
 
-    public String getText(String key) {
-        return strings.get(key);
+        } catch (Exception e) {
+            System.out.println("Something went wrong loading from the plugin folder.");
+            e.printStackTrace();
+        }
+
     }
 
     private void loadFromResource() {
@@ -62,14 +71,7 @@ public class LocaleManager {
             // get resource as input stream
             InputStream inputStream = MedievalFactions.getInstance().getResource(fileName);
 
-            InputStreamReader reader = new InputStreamReader(inputStream);
-
-            BufferedReader br = new BufferedReader(reader);
-            br.lines().forEach(line -> {
-                Pair<String, String> pair = getPairFromLine(line);
-                strings.put(pair.getLeft(), pair.getRight());
-                keys.add(pair.getLeft());
-            });
+            loadFromInputStream(inputStream);
 
             saveToPluginFolder();
 
@@ -77,6 +79,17 @@ public class LocaleManager {
             System.out.println("Error loading from JSON!");
             e.printStackTrace();
         }
+    }
+
+    private void loadFromInputStream(InputStream inputStream) {
+        InputStreamReader reader = new InputStreamReader(inputStream);
+
+        BufferedReader br = new BufferedReader(reader);
+        br.lines().forEach(line -> {
+            Pair<String, String> pair = getPairFromLine(line);
+            strings.put(pair.getLeft(), pair.getRight());
+            keys.add(pair.getLeft());
+        });
     }
 
     private Pair<String, String> getPairFromLine(String line) {
