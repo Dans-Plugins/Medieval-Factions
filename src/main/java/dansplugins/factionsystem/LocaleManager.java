@@ -14,10 +14,10 @@ public class LocaleManager {
     private ArrayList<String> keys = new ArrayList<>();
     private HashMap<String, String> strings = new HashMap<>();
 
-    private String pluginFolderPath = "./plugins/MedievalFactions/";
-    private String languageFolderPath = pluginFolderPath + "languages/";
-    private String localizationFileName = MedievalFactions.getInstance().getConfig().getString("languageid") + ".tsv";
-    private String localizationFilePath = languageFolderPath + localizationFileName;
+    private final String pluginFolderPath = "./plugins/MedievalFactions/";
+    private final String languageFolderPath = pluginFolderPath + "languages/";
+    private final String localizationFileName = MedievalFactions.getInstance().getConfig().getString("languageid") + ".tsv";
+    private final String localizationFilePath = languageFolderPath + localizationFileName;
 
     private LocaleManager() {
 
