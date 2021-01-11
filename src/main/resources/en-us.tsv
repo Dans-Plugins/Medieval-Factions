@@ -111,7 +111,7 @@ CanOnlyLockBlocksInClaimedTerritory	You can only lock blocks on land claimed by 
 CanOnlyLockInFactionTerritory	You can only lock things in your faction's territory!
 CanOnlyLockSpecificBlocks	You can only lock chests, doors, barrels, trapdoors, furnaces, anvils or gates.
 ClaimedChunksLoaded	Claimed chunks loaded.
-ClaimedCHunksSuccessfullyLoaded	Claimed chunks successfully loaded.
+ClaimedChunksSuccessfullyLoaded	Claimed chunks successfully loaded.
 ClickOnTriggerLever	Click on the trigger lever...
 ClickToPlaceSecondCorner	Click to place the second corner...
 CommandCancelled	Command cancelled!
@@ -159,17 +159,12 @@ FactionHomeNotSetYet	The faction home isn't set yet.
 FactionHomeSet	Faction home set!
 FactionInfo	Faction Info
 FactionIsNotVassal	That faction isn't a vassal of yours!
-FactionMaxGateAreaNotSet	factionMaxGateArea not set! Setting to default!
-FactionMaxNameLengthNotSet	factionMaxNameLength not set! Setting to default!
-FactionMaxNumberGatesNotSet	factionMaxNumberGates not set! Setting to default!
 FactionMustBeDesignatedInsideSingleQuotes	Faction must be designated inside single quotes!
 FactionNameChanged	Faction name changed!
 FactionNameNotRecognized	That faction name isn't recognized!
 FactionNotEnemy	That faction is not your enemy!
 FactionNotFound	That faction wasn't found!
-FactionOfficerMultiplierNotSet	factionOfficerMultiplier is not set! Setting to default
 FactioNotFound	That faction wasn't found!
-FactionOwnerMultiplierNotSet	factionOwnerMultiplier not set! Setting to default
 FactionsSuccessfullyLoaded	Factions successfully loaded.
 FactionsTitle	== Factions
 FactionSuccessfullyDisbanded	Faction successfully disbanded.
@@ -245,9 +240,7 @@ HelpVersion	/mf version - Check plugin version.
 HelpWho	/mf who - View the faction info a specific player.
 HomeClaimedByAnotherFaction	Home was claimed by another faction, and has been lost.
 HomeIsInUnclaimedChunk	Home is in an unclaimed chunk, and is unavailable
-HourlyPowerIncreaseAmountNotSet	Hourly power increase amount not set! Setting to default!
 HourlySaveAlert	Medieval Factions is saving. This will happen every hour.
-InitialPowerLevelNotSet	Initial power level not set! Setting to default!
 IntegerSet	Integer set!
 InvitationExpired	Your invitation to has expired!.
 InvitationSent	Invitation sent!
@@ -277,17 +270,10 @@ LockingCancelled	Locking cancelled!
 LockRemovalError	An error has occurred during lock removal.
 MaterialsMismatch1	Error placing point 1: Materials mismatch.
 MaterialsMismatch2	Error placing point 2: Materials mismatch.
-MaxPowerLevelNotSet	Max power level not set! Setting to default!
 MedievalFactions	== Medieval Factions
 MedievalFactionsStringRight	Medieval-Factions-%s
 MembersOf	%d Members of
-MinutesBeforeInitialPowerIncreaseNotSet	minutesBeforeInitialPowerIncrease not set! Setting to default!
-MinutesBeforePowerDecreaseNotSet	minutesBeforePowerDecrease is not set! Setting to default
-MinutesBetweenPowerDecreasesNotSet	minutesBetweenPowerDecreases is not set! Setting to default
-MinutesBetweenPowerIncreasesNotSet	minutesBetweenPowerIncreases not set! Setting to default!
 MissingFactionGatesJSONCollection	Could not load gates because the collection 'factionGates' did not exist in the factions JSON file. Are you upgrading from a previous version? Setting default.
-MissingVersionEntry	Config.yml doesn't have version entry!
-MobsSpawnInFactionTerritoryNotSet	Mobs spawn in faction territory not set! Setting to default!
 MovementDetectedTeleportCancelled	Movement Detected. Teleport cancelled.
 MustBeInFaction	Sorry! You must be in a faction to use this command!
 MustBeOwner	Sorry, you must be the owner of a faction to use this command!
@@ -305,13 +291,11 @@ NotAtWarWith	You aren't at war with
 NotAVassalOfAFaction	You aren't a vassal of a faction!
 NotEnoughArgumentsDesignatedSingleQuotesRequired	Not enough arguments designated. Must be designated inside single quotes!
 NotSetVassalContributionPercentageMultiplier	vassalContributionPercentageMultiplier not set! Setting to default!
-NotSetZeroPowerFactionsGetDisbanded	zeroPowerFactionsGetDisbanded not set! Setting to default!
 NotTheOwnerOfThisBlock	You are not the owner of this block!
 NotTheOwnerOfThisFaction	You are not the owner of this faction!
 NoVassalOrLiegeReferences	There were no vassal or liege references associated with
 NowBypassingProtections	You are now bypassing protections provided by Medieval Factions.
 NowSpeakingInFactionChat	You are now speaking in faction chat!
-OfficerPerMemberCountNotSet	officerPerMemberCount is not set! Setting to default
 OnlyUseLeversInClaimedTerritory	Error: Can only use levers in claimed territory.
 Owner	Owner:
 OwnershipTransferred	Ownership of has been transferred to you.
@@ -393,7 +377,6 @@ PluginSaving	Medieval Factions plugin is saving...
 Point1PlacementSuccessful	Creating Gate 1/4: Point 1 placed successfully.
 Point2PlacedSuccessfully	Creating Gate 2/4: Point 2 placed successfully.
 Population	Population:
-PowerDecreaseAmountNotSet	powerDecreaseAmount not set! Setting to default!
 PowerDecreasesNotSet	powerDecreases is not set! Setting to default
 PowerHasDecayed	Your power has decayed by since you last logged out. Your power is now
 PowerLevel	Power Level:
@@ -460,7 +443,6 @@ UsageWho	Usage: /mf who (player-name)
 ValidSubCommandsShowSet	Valid sub-commands: show, set
 VassalsAlert	Vassals:
 VersionAlert	Version:
-VersionMismatch	[ALERT] Version mismatch! Adding missing defaults and setting version!
 VersionNotSet	Version not set! Setting version to
 VersionSetButMismatched	Version set but mismatched! Setting version to
 WarningPlayerAlreadyStartedCreatingGate	WARNING: Player has already started creating the gate. startCreatingGate() call ignored.
