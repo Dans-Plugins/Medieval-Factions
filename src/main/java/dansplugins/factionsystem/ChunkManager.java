@@ -2,7 +2,6 @@ package dansplugins.factionsystem;
 
 import dansplugins.factionsystem.data.EphemeralData;
 import dansplugins.factionsystem.data.PersistentData;
-import dansplugins.factionsystem.objects.ClaimedChunk;
 import dansplugins.factionsystem.objects.*;
 import org.bukkit.ChatColor;
 import org.bukkit.Chunk;
@@ -11,13 +10,11 @@ import org.bukkit.World;
 import org.bukkit.entity.Player;
 
 import java.time.ZonedDateTime;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.UUID;
 
-import static java.awt.SystemColor.info;
 import static org.bukkit.Bukkit.getServer;
-
-import org.bukkit.plugin.Plugin;
-import org.bukkit.plugin.PluginManager;
 
 public class ChunkManager {
 

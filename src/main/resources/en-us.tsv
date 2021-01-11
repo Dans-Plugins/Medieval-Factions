@@ -1,9 +1,9 @@
 AcceptedChallengeDuelHasBegun	You have accepted %s's challenge, the duel has begun!
 AlertAlreadyAtWarWith	Your faction is already at war with
 AlertAlreadyCreatingGate	You are already creating a gate!
-AlertAlreadyDueling	You are already duelling
-AlertAlreadyDueling	You are already duelling!
-AlertAlreadyDuelingSomeone	You are already duelling someone!
+AlertAlreadyDueling	You are already dueling!
+AlertAlreadyDuelingSomeone	You are already dueling someone!
+AlertAlreadyDuelingPlayer   You are already dueling that player!
 AlertAlreadyGrantingAccess	You are already granting access to someone! Type /mf grantaccess cancel to cancel this.
 AlertAlreadyInFaction	You're already in a faction, sorry!
 AlertAlreadyRequestedAlliance	You've already requested an alliance with this faction!
@@ -11,9 +11,9 @@ AlertAlreadyRequestedPeace	You've already requested peace with this faction!
 AlertAttemptedAlliance   has attempted to ally with
 AlertBeenInvited	You've been invited to %s! Type /mf join to join.
 AlertAllianceHasBeenBroken   has broken their alliance your faction!
-AlertChallenged	You have challenged to a duel!
+AlertDuelChallengeReceived   has received your duel challenge!
 AlertChallengedToDuel	%s has challenged %s to a duel!
-AlertChallengedToDuelPlusHowTo	has challenged you to a duel! Type /mf duel accept to begin.
+AlertChallengedToDuelPlusHowTo	 has challenged you to a duel! Type /mf duel accept to begin.
 AlertChallengeWasAccepted	%s has accepted your challenge, the duel has begun!
 AlertChangedGateName	Changed gate name to '%s'.
 AlertCurrentPowerLevel	Your current power level is
@@ -42,7 +42,7 @@ AlertNonOwnership	You don't own this!
 AlertNoPendingChallenges	You have no pending challenges to cancel.
 AlertNotAllied	Your faction is not allied with
 AlertNotBeenChallenged	You have not been challenged to a duel by anyone.
-AlertNotBeenChallengedBy	You have not been challenged to a duel by %s
+AlertNotBeenChallengedByPlayer	You have not been challenged to a duel by that player.
 AlertNotInFaction	You're not in a faction!
 AlertNotInvitedToFaction	You're not invited to this faction!
 AlertNotOfferedVassalizationBy	You haven't been offered vassalization by this faction!
@@ -55,7 +55,7 @@ AllianceBrokenWith	Alliance has been broken with
 AlliedWith	Allied With:
 AllLandUnclaimed	All land unclaimed.
 AllLandUnclaimedFrom	All land unclaimed from
-AlreadyDueling	%s is already duelling someone!
+PlayerAlreadyDueling	That player is already dueling someone!
 AlreadyEnteredCheckAccess	You have already entered this command! Type '/mf checkaccess cancel' to cancel!
 AlreadyEnteredRevokeAccess	You have already entered this command! Type '/mf revokeaccess cancel' to cancel!
 AlreadyInFaction	Sorry, you're already in a faction. Leave if you want to create a different one.
@@ -116,7 +116,6 @@ CommandsPage3	== Medieval Factions Commands Page 3/6 ==
 CommandsPage4	== Medieval Factions Commands Page 4/6 ==
 CommandsPage5	== Medieval Factions Commands Page 5/6 ==
 CommandsPage6	== Medieval Factions Commands Page 6/6 ==
-CouldNotFindPlayer	Could not find any player named %s
 CreatingGateCancelled	Creating gate cancelled!
 CreatingGateClickWithHoe	Creating gate %s.\nClick on a block with a Golden Hoe to select the first point.
 CuboidDisallowed1	Error placing point 1: You cannot place a cuboid.

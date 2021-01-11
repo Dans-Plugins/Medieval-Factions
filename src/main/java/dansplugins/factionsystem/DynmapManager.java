@@ -5,18 +5,14 @@ import dansplugins.factionsystem.objects.ChunkFlags;
 import dansplugins.factionsystem.objects.ClaimedChunk;
 import dansplugins.factionsystem.objects.Faction;
 import dansplugins.factionsystem.objects.PlayerPowerRecord;
-import org.bukkit.Bukkit;
-import org.bukkit.ChatColor;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.PluginManager;
 import org.bukkit.scheduler.BukkitRunnable;
-import org.bukkit.scheduler.BukkitScheduler;
 import org.dynmap.DynmapCommonAPI;
 import org.dynmap.markers.*;
 
 import java.util.*;
 
-import static org.bukkit.Bukkit.getAllowEnd;
 import static org.bukkit.Bukkit.getServer;
 
 public class DynmapManager {
