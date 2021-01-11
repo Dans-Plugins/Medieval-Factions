@@ -1,5 +1,5 @@
 AcceptedChallengeDuelHasBegun	You have accepted %s's challenge, the duel has begun!
-AlertAlreadyAtWarWith	Your faction is already at war with %s
+AlertAlreadyAtWarWith	Your faction is already at war with
 AlertAlreadyCreatingGate	You are already creating a gate!
 AlertAlreadyDueling	You are already duelling
 AlertAlreadyDueling	You are already duelling!
@@ -85,6 +85,7 @@ CannotDeclareWarOnAlly	You can't declare war on your ally!
 CannotDeclareWarOnLiege	You can't declare war on your liege! Try '/mf declareindependence' instead!
 CannotDeclareWarOnVassal	You can't declare war on your own vassal!
 CannotDeclareWarOnYourself	You can't declare war on yourself!
+CannotDeclareWarIfLiegeNotWeakened  "You can't declare war on this faction as they are a vassal unless their liege is weakened!"
 CannotDuelSelf	You cannot duel yourself!
 CannotFindDynmap	Cannot find dynmap!
 CannotForciblyKickOwner	Cannot forcibly kick an owner from their faction! Try disbanding the faction!
@@ -169,6 +170,7 @@ FileLoadError	An error occurred loading the file
 FollowingPlayersHaveAccess	The following players have access to this block:
 GateCreated	Gate successfully created.
 HasDeclaredIndependence  has declared independence from
+HasDeclaredWarAgainst    has declared war against
 HelpAddLaw	/mf addlaw - Add a law to your faction.
 HelpAlly	/mf ally - Attempt to ally with a faction.
 HelpAutoclaim	/mf autoclaim - Toggle auto claim, making land claiming easier.
