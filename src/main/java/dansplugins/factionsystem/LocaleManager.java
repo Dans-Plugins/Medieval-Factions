@@ -91,18 +91,7 @@ public class LocaleManager {
         // get resource as input stream
         InputStream inputStream = MedievalFactions.getInstance().getResource(fileName);
 
-        InputStreamReader reader = new InputStreamReader(inputStream);
-
-        BufferedReader br = new BufferedReader(reader);
-        br.lines().forEach(line -> {
-            Pair<String, String> pair = getPairFromLine(line);
-
-            if (!strings.containsKey(pair.getLeft())) {
-                strings.put(pair.getLeft(), pair.getRight());
-                keys.add(pair.getLeft());
-            }
-
-        });
+        loadFromInputStream(inputStream);
 
     }
 
@@ -125,12 +114,13 @@ public class LocaleManager {
 
     private void loadFromInputStream(InputStream inputStream) {
         InputStreamReader reader = new InputStreamReader(inputStream);
-
         BufferedReader br = new BufferedReader(reader);
         br.lines().forEach(line -> {
             Pair<String, String> pair = getPairFromLine(line);
-            strings.put(pair.getLeft(), pair.getRight());
-            keys.add(pair.getLeft());
+            if (pair != null && !strings.containsKey(pair.getLeft())) { // if pair found and if key not already loaded
+                strings.put(pair.getLeft(), pair.getRight());
+                keys.add(pair.getLeft());
+            }
         });
     }
 
@@ -139,10 +129,16 @@ public class LocaleManager {
         String value = "";
 
         int tabIndex = getIndexOfTab(line);
-        key = line.substring(0, tabIndex);
-        value = line.substring(tabIndex + 1);
 
-        return new Pair<>(key, value);
+        if (tabIndex != -1) {
+            key = line.substring(0, tabIndex);
+            value = line.substring(tabIndex + 1);
+            return new Pair<>(key, value);
+        }
+        else {
+            return null;
+        }
+
     }
 
     private int getIndexOfTab(String line) {
