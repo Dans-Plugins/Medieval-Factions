@@ -4,12 +4,15 @@ import dansplugins.factionsystem.utils.Pair;
 
 import java.io.*;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Scanner;
 
 public class LocaleManager {
 
     private static LocaleManager instance;
+
+    private ArrayList<String> supportedLanguageIDs = new ArrayList<>(Arrays.asList("en-us"));
 
     private ArrayList<String> keys = new ArrayList<>();
     private HashMap<String, String> strings = new HashMap<>();
@@ -48,6 +51,10 @@ public class LocaleManager {
             System.out.println("Loading from resource!");
         }
         System.out.println(keys.size() + " keys were loaded!");
+    }
+
+    public boolean isLanguageIDSupported(String ID) {
+        return supportedLanguageIDs.contains(ID);
     }
 
     private boolean isFilePresent(String path) {
