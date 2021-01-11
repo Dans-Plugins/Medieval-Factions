@@ -31,6 +31,10 @@ public class LocaleManager {
     }
 
     public String getText(String key) {
+        if (!keys.contains(key)) {
+            System.out.println("ERROR -> Key not found: " + key);
+            return "[key not found]";
+        }
         return strings.get(key);
     }
 
