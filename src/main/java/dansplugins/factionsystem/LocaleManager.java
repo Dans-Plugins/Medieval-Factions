@@ -1,6 +1,7 @@
 package dansplugins.factionsystem;
 
 import org.bukkit.plugin.java.JavaPlugin;
+import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 
@@ -43,37 +44,27 @@ public class LocaleManager {
     private void loadFromJSON() {
         JSONParser parser = new JSONParser();
         try {
-            String path = "en-us.json";
-            File file = new File("./plugins/MedievalFactions/" + path);
-            InputStream inputStream = MedievalFactions.getInstance().getResource(path);
-            copyInputStreamToFile(inputStream, file);
-            FileReader reader = new FileReader(file);
-            JSONObject obj = (JSONObject) parser.parse(reader);
+            // prepare file object
+            String fileName = "en-us.json";
+            File file = new File("./plugins/MedievalFactions/" + fileName);
 
-            Set<String> keys = obj.keySet();
+            // get resource as input stream
+            InputStream inputStream = MedievalFactions.getInstance().getResource(fileName);
 
-            for (String key : keys) {
-                strings.put(key, (String) obj.get(key));
-            }
+            // TODO: turn input stream into JSON object
+
+            // get keys from json object
+//            Set<String> keys = obj.keySet();
+
+            // for each key
+//            for (String key : keys) {
+//                strings.put(key, (String) obj.get(key)); // place key
+//            }
 
         } catch (Exception e) {
             System.out.println("Error loading from JSON!");
             e.printStackTrace();
         }
-    }
-
-    // source: https://mkyong.com/java/how-to-convert-inputstream-to-file-in-java/
-    private void copyInputStreamToFile(InputStream inputStream, File file) throws IOException {
-
-        // append = false
-        try (FileOutputStream outputStream = new FileOutputStream(file, false)) {
-            int read;
-            byte[] bytes = new byte[DEFAULT_BUFFER_SIZE];
-            while ((read = inputStream.read(bytes)) != -1) {
-                outputStream.write(bytes, 0, read);
-            }
-        }
-
     }
 
     private void saveToJSON() {
