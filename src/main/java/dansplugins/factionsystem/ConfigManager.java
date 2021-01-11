@@ -144,6 +144,11 @@ public class ConfigManager {
             MedievalFactions.getInstance().getConfig().addDefault("maxClaimRadius", 3);
         }
 
+        if (!MedievalFactions.getInstance().getConfig().isString("languageid")) {
+            System.out.println("languageid not set! Setting to default!");
+            MedievalFactions.getInstance().getConfig().addDefault("languageid", "en-us");
+        }
+
         deleteOldConfigOptionsIfPresent();
 
         MedievalFactions.getInstance().getConfig().options().copyDefaults(true);
@@ -248,12 +253,14 @@ public class ConfigManager {
         MedievalFactions.getInstance().getConfig().addDefault("nonMembersCanInteractWithDoors", false);
         MedievalFactions.getInstance().getConfig().addDefault("playersChatWithPrefixes", true);
         MedievalFactions.getInstance().getConfig().addDefault("maxClaimRadius", 3);
+        MedievalFactions.getInstance().getConfig().addDefault("languageid", "en-us");
         MedievalFactions.getInstance().getConfig().options().copyDefaults(true);
         MedievalFactions.getInstance().saveConfig();
     }
 
     public void sendPlayerConfigList(Player player) {
         player.sendMessage(ChatColor.AQUA + "version: " + MedievalFactions.getInstance().getConfig().getString("version")
+                + ", languageid: " + MedievalFactions.getInstance().getConfig().getString("languageid")
                 + ", initialMaxPowerLevel: " + MedievalFactions.getInstance().getConfig().getInt("initialMaxPowerLevel")
                 + ", initialPowerLevel: " +  MedievalFactions.getInstance().getConfig().getInt("initialPowerLevel")
                 + ", powerIncreaseAmount: " + MedievalFactions.getInstance().getConfig().getInt("powerIncreaseAmount")

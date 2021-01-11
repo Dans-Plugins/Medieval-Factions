@@ -14,6 +14,10 @@ public class LocaleManager {
     private ArrayList<String> keys = new ArrayList<>();
     private HashMap<String, String> strings = new HashMap<>();
 
+    private String pluginFolderPath = "./plugins/MedievalFactions/";
+    private String localizationFileName = MedievalFactions.getInstance().getConfig().getString("languageid") + ".tsv";
+    private String localizationFilePath = pluginFolderPath + localizationFileName;
+
     private LocaleManager() {
 
     }
@@ -30,7 +34,7 @@ public class LocaleManager {
     }
 
     public void loadStrings() {
-        if (isFilePresent("./plugins/MedievalFactions/en-us.tsv")) {
+        if (isFilePresent(localizationFilePath)) {
             loadFromPluginFolder();
             System.out.println("Loading from plugin folder!");
         }
@@ -47,7 +51,7 @@ public class LocaleManager {
     }
 
     private void loadFromPluginFolder() {
-        File file = new File("./plugins/MedievalFactions/en-us.tsv");
+        File file = new File(localizationFilePath);
         try {
             loadFromFile(file);
 
@@ -88,10 +92,8 @@ public class LocaleManager {
     private void handleVersionMismatch() {
         System.out.println("Version mismatch! Ensuring all localization keys are found!");
 
-        String fileName = "en-us.tsv";
-
         // get resource as input stream
-        InputStream inputStream = MedievalFactions.getInstance().getResource(fileName);
+        InputStream inputStream = MedievalFactions.getInstance().getResource(localizationFileName);
 
         loadFromInputStream(inputStream);
 
@@ -99,17 +101,15 @@ public class LocaleManager {
 
     private void loadFromResource() {
         try {
-            String fileName = "en-us.tsv";
-
             // get resource as input stream
-            InputStream inputStream = MedievalFactions.getInstance().getResource(fileName);
+            InputStream inputStream = MedievalFactions.getInstance().getResource(localizationFileName);
 
             loadFromInputStream(inputStream);
 
             saveToPluginFolder();
 
         } catch (Exception e) {
-            System.out.println("Error loading from JSON!");
+            System.out.println("Error loading from resource!");
             e.printStackTrace();
         }
     }
