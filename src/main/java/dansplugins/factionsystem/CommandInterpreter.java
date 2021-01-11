@@ -35,6 +35,8 @@ public class CommandInterpreter {
                 sender.sendMessage(ChatColor.AQUA + " == Medieval Factions " + MedievalFactions.getInstance().getVersion() + " == ");
                 sender.sendMessage(ChatColor.AQUA + "Developers: DanTheTechMan, Pasarus, Caibinus");
                 sender.sendMessage(ChatColor.AQUA + "Wiki: https://github.com/DansPlugins/Medieval-Factions/wiki");
+                sender.sendMessage(ChatColor.AQUA + "Current Language ID: " + MedievalFactions.getInstance().getConfig().getString("languageid"));
+                sender.sendMessage(ChatColor.AQUA + "Supported Language IDs: en-us");
                 return true;
             }
 
