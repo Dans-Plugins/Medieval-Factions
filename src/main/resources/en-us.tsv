@@ -290,6 +290,7 @@ NotTheOwnerOfThisFaction	You are not the owner of this faction!
 NoVassalOrLiegeReferences	There were no vassal or liege references associated with
 NowBypassingProtections	You are now bypassing protections provided by Medieval Factions.
 NowSpeakingInFactionChat	You are now speaking in faction chat!
+OnlyPlayersCanUseCommand    Only players can use this command!
 OnlyUseLeversInClaimedTerritory	Error: Can only use levers in claimed territory.
 Owner	Owner:
 OwnershipTransferred	Ownership of has been transferred to you.
@@ -407,6 +408,7 @@ TriggerBlockNotLever	Trigger block was not a lever. Cancelled gate placement.
 UsageAddLaw	Usage: /mf addlaw (new law)
 UsageAlly	Usage: /mf ally (faction-name)
 UsageBreakAlliance	Usage: /mf breakalliance (faction-name)
+UsageClaimRadius    Usage: /mf claim (radius)
 UsageConfigSet	Usage: /mf config set (option) (value)
 UsageCreate	Usage: /mf create [faction-name]
 UsageDeclareWar	Usage: /mf declarewar (faction-name)
