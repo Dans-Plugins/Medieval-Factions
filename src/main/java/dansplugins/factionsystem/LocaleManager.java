@@ -31,9 +31,11 @@ public class LocaleManager {
     public void loadStrings() {
         if (isFilePresent("./plugins/MedievalFactions/en-us.tsv")) {
             loadFromPluginFolder();
+            System.out.println("Loading from plugin folder!");
         }
         else {
             loadFromResource();
+            System.out.println("Loading from resource!");
         }
     }
 
@@ -112,7 +114,7 @@ public class LocaleManager {
             FileWriter writer = new FileWriter(file);
 
             for (String key : keys) {
-                writer.write(key + "\t" + strings.get(key));
+                writer.write(key + "\t" + strings.get(key) + "\n");
             }
 
         } catch (Exception e) {
