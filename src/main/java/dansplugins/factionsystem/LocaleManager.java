@@ -1,22 +1,14 @@
 package dansplugins.factionsystem;
 
 import dansplugins.factionsystem.utils.Pair;
-import org.bukkit.plugin.java.JavaPlugin;
-import org.json.simple.JSONArray;
-import org.json.simple.JSONObject;
-import org.json.simple.parser.JSONParser;
 
 import java.io.*;
-import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Set;
 
 public class LocaleManager {
 
     private static LocaleManager instance;
-
-    public static final int DEFAULT_BUFFER_SIZE = 8192;
 
     private ArrayList<String> keys = new ArrayList<>();
     private HashMap<String, String> strings = new HashMap<>();
