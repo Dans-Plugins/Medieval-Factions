@@ -196,7 +196,6 @@ HelpDisband	/mf disband - Disband your faction (must be owner).
 HelpDuelAccept	/mf duel accept (<optional>player)
 HelpDuelCancel	/mf duel cancel
 HelpDuelChallenge	/mf duel challenge (player) (<optional>time limit in seconds)
-HelpDuelChallenge	/mf duel challenge (player)
 HelpEditLaw	/mf editlaw - Edit an already existing law in your faction.
 HelpForce	/mf force - Force the plugin to perform certain actions.
 HelpForceDemote	/mf force demote (player)
@@ -214,7 +213,7 @@ HelpGateGrantIndependence	/mf grantindependence - Grant a vassal vaction indepen
 HelpGateList	/mf gate list
 HelpGateName	/mf gate name (<optional>name)
 HelpGateRemove	/mf gate remove
-HelpHelp	/mf help - Show lists of useful commands.
+HelpHelp	/mf help # - Show lists of useful commands.
 HelpHome	/mf home - Teleport to your faction home.
 HelpInfo	/mf info - See your faction or another faction's information.
 HelpInvite	/mf invite (player) - Invite a player to your faction.
