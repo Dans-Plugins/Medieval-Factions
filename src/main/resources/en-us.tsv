@@ -28,9 +28,6 @@ AlertLeftFactionAndItGotDeleted	You left your faction. It was deleted since no o
 AlertMoreClaimedChunksThanPower	Your faction has more claimed chunks than power! Your land can be conquered!
 AlertMustBeAtWarToConquer	Your factions have to be at war in order for you to conquer land.
 AlertMustBeInFactionToUseCommand	You must be in a faction to use this command!
-AlertMustBeInFactionToUseCommand	You must be in a faction to use this command.
-AlertMustBeInFactionToUseCommand	You need to be in a faction to use this command!
-AlertMustBeInFactionToUseCommand	You need to be in a faction to use this command.
 AlertMustBeMemberToCreateGate	You must be a member of this faction to create a gate.
 AlertMustBeOfficerOrOwnerToClaimLand	You must be an officer or owner of a faction to claim land!
 AlertMustBeOfficerOrOwnerToUseCommand	You must be a faction officer or owner to use this command.
@@ -39,10 +36,7 @@ AlertMustBeOwnerOrOfficerToCreateGate	You must be a faction owner or officer to 
 AlertMustBeOwnerOrOfficerToUseCommand	You need to be the owner of a faction or an officer of a faction to use this command.
 AlertMustBeOwnerOrOfficerToUseCommand	You need to be the owner of your faction or an officer of your faction to use this command.
 AlertMustBeOwnerToInvokeAlliance	You must be the owner of your faction to invoke an alliance.
-AlertMustBeOwnerToUseCommand	You must be the owner of your faction to use this command!
-AlertMustBeOwnerToUseCommand	You must be the owner to use this command.
 AlertMustBeOwnerToUseCommand	You need to be the owner of a faction to use this command.
-AlertMustBeOwnerToUseCommand	You need to be the owner of your faction to use this command!
 AlertMustKickAllPlayers	You need to kick all players before you can disband your faction.
 AlertNoGatesDefined	Your faction has no gates defined.
 AlertNoLaws	Your faction doesn't have any laws.
