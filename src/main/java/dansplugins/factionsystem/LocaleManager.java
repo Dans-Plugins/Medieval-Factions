@@ -15,8 +15,9 @@ public class LocaleManager {
     private HashMap<String, String> strings = new HashMap<>();
 
     private String pluginFolderPath = "./plugins/MedievalFactions/";
+    private String languageFolderPath = pluginFolderPath + "languages/";
     private String localizationFileName = MedievalFactions.getInstance().getConfig().getString("languageid") + ".tsv";
-    private String localizationFilePath = pluginFolderPath + "languages/" + localizationFileName;
+    private String localizationFilePath = languageFolderPath + localizationFileName;
 
     private LocaleManager() {
 
@@ -153,8 +154,15 @@ public class LocaleManager {
     }
 
     private void saveToPluginFolder() {
-        File file = new File(localizationFilePath);
         try {
+            File folder = new File(languageFolderPath);
+
+            if (!folder.exists()) {
+                folder.createNewFile();
+            }
+
+            File file = new File(localizationFilePath);
+
             file.createNewFile();
 
             FileWriter writer = new FileWriter(file);
