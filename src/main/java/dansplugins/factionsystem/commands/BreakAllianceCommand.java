@@ -1,5 +1,6 @@
 package dansplugins.factionsystem.commands;
 
+import dansplugins.factionsystem.LocaleManager;
 import dansplugins.factionsystem.Messenger;
 import dansplugins.factionsystem.data.PersistentData;
 import dansplugins.factionsystem.objects.Faction;
@@ -36,39 +37,39 @@ public class BreakAllianceCommand {
                                         if ((faction.isAlly(factionName))) {
                                             // remove alliance
                                             faction.removeAlly(factionName);
-                                            player.sendMessage(ChatColor.GREEN + "Alliance has been broken with " + factionName + "!");
+                                            player.sendMessage(ChatColor.GREEN + LocaleManager.getInstance().getText("AllianceBrokenWith") + factionName + "!");
 
                                             // add declarer's faction to new enemy's enemyList
                                             PersistentData.getInstance().getFactions().get(i).removeAlly(faction.getName());
                                             for (int j = 0; j < PersistentData.getInstance().getFactions().size(); j++) {
                                                 if (PersistentData.getInstance().getFactions().get(j).getName().equalsIgnoreCase(factionName)) {
-                                                    Messenger.getInstance().sendAllPlayersInFactionMessage(PersistentData.getInstance().getFactions().get(j), ChatColor.RED + faction.getName() + " has broken their alliance your faction!");
+                                                    Messenger.getInstance().sendAllPlayersInFactionMessage(PersistentData.getInstance().getFactions().get(j), ChatColor.RED + faction.getName() + LocaleManager.getInstance().getText("AlertAllianceHasBeenBroken"));
                                                 }
                                             }
                                         }
                                         else {
-                                            player.sendMessage(ChatColor.RED + "Your faction is not allied with " + factionName);
+                                            player.sendMessage(ChatColor.RED + LocaleManager.getInstance().getText("AlertNotAllied") + factionName);
                                         }
 
                                     }
                                     else {
-                                        player.sendMessage(ChatColor.RED + "You can't declare break an alliance with your own faction.");
+                                        player.sendMessage(ChatColor.RED + LocaleManager.getInstance().getText("CannotBreakAllianceWithSelf"));
                                     }
                                 }
                             }
 
                         }
                         else {
-                            player.sendMessage(ChatColor.RED + "Usage: /mf breakalliance (faction-name)");
+                            player.sendMessage(ChatColor.RED + LocaleManager.getInstance().getText("UsageBreakAlliance"));
                         }
                     }
                 }
                 if (!owner) {
-                    player.sendMessage(ChatColor.RED + "You have to own a faction or be an officer of a faction to use this command.");
+                    player.sendMessage(ChatColor.RED + LocaleManager.getInstance().getText("AlertMustBeOwnerOrOfficerToUseCommand"));
                 }
             }
             else {
-                sender.sendMessage(ChatColor.RED + "Sorry! You need the following permission to use this command: 'mf.breakalliance'");
+                sender.sendMessage(ChatColor.RED + LocaleManager.getInstance().getText("PermissionBreakAlliance"));
             }
         }
     }

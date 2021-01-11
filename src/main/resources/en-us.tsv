@@ -1,5 +1,4 @@
 AcceptedChallengeDuelHasBegun	You have accepted %s's challenge, the duel has begun!
-AlertAlreadyAlliedWith	Your faction is not allied with
 AlertAlreadyAtWarWith	Your faction is already at war with %s
 AlertAlreadyCreatingGate	You are already creating a gate!
 AlertAlreadyDueling	You are already duelling
@@ -11,6 +10,7 @@ AlertAlreadyRequestedAlliance	You've already requested an alliance with this fac
 AlertAlreadyRequestedPeace	You've already requested peace with this faction!
 AlertAttemptedAlliance   has attempted to ally with
 AlertBeenInvited	You've been invited to %s! Type /mf join to join.
+AlertAllianceHasBeenBroken   has broken their alliance your faction!
 AlertChallenged	You have challenged to a duel!
 AlertChallengedToDuel	%s has challenged %s to a duel!
 AlertChallengedToDuelPlusHowTo	has challenged you to a duel! Type /mf duel accept to begin.
@@ -31,8 +31,6 @@ AlertMustBeAtWarToConquer	Your factions have to be at war in order for you to co
 AlertMustBeInFactionToUseCommand	You must be in a faction to use this command!
 AlertMustBeMemberToCreateGate	You must be a member of this faction to create a gate.
 AlertMustBeOfficerOrOwnerToClaimLand	You must be an officer or owner of a faction to claim land!
-AlertMustBeOfficerOrOwnerToUseCommand	You must be a faction officer or owner to use this command.
-AlertMustBeOwnerOrOfficer	You have to own a faction or be an officer of a faction to use this command.
 AlertMustBeOwnerOrOfficerToCreateGate	You must be a faction owner or officer to create a gate.
 AlertMustBeOwnerOrOfficerToUseCommand	You need to be the owner of a faction or an officer of a faction to use this command.
 AlertMustBeOwnerToInvokeAlliance	You must be the owner of your faction to invoke an alliance.
@@ -42,6 +40,7 @@ AlertNoGatesDefined	Your faction has no gates defined.
 AlertNoLaws	Your faction doesn't have any laws.
 AlertNonOwnership	You don't own this!
 AlertNoPendingChallenges	You have no pending challenges to cancel.
+AlertNotAllied	Your faction is not allied with
 AlertNotBeenChallenged	You have not been challenged to a duel by anyone.
 AlertNotBeenChallengedBy	You have not been challenged to a duel by %s
 AlertNotInFaction	You're not in a faction!
@@ -80,7 +79,7 @@ CancelledGatePlacement2	Error placing point 2. Cancelled gate placement.
 CannotAllyWithSelf	You can't ally with your own faction!
 CannotAttackFactionMember	You can't attack another player if you are part of the same faction.
 CannotAttackNonWarringPlayer	You can't attack another player if your factions aren't at war.
-CannotBreakAllianceWithSelf	You can't declare break an alliance with your own faction.
+CannotBreakAllianceWithSelf	You can't break an alliance with your own faction.
 CannotCancelActiveDuel	Cannot cancel an active duel.
 CannotDeclareWarOnAlly	You can't declare war on your ally!
 CannotDeclareWarOnLiege	You can't declare war on your liege! Try '/mf declareindependence' instead!
