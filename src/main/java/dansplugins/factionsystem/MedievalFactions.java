@@ -26,11 +26,6 @@ public class MedievalFactions extends JavaPlugin {
     public void onEnable() {
         instance = this;
 
-        LocaleManager.getInstance().loadStrings();
-        System.out.println("[DEBUG] Trying to get string associated with key 'AlertDemotion': " + LocaleManager.getInstance().getText("AlertDemotion"));
-
-        System.out.println("Medieval Factions plugin enabling....");
-
         ensureSmoothTransitionBetweenVersions();
 
         // config creation/loading
@@ -40,11 +35,13 @@ public class MedievalFactions extends JavaPlugin {
         else {
             // pre load compatibility checks
             if (isVersionMismatched()) {
-                System.out.println("[ALERT] Version mismatch! Adding missing defaults and setting version!");
                 ConfigManager.getInstance().handleVersionMismatch();
             }
             reloadConfig();
         }
+
+        LocaleManager.getInstance().loadStrings();
+        System.out.println("[DEBUG] Trying to get string associated with key 'AlertDemotion': " + LocaleManager.getInstance().getText("AlertDemotion"));
 
         Scheduler.getInstance().schedulePowerIncrease();
         Scheduler.getInstance().schedulePowerDecrease();
@@ -66,15 +63,11 @@ public class MedievalFactions extends JavaPlugin {
             DynmapManager.scheduleClaimsUpdate(600); // Check once every 30 seconds for updates.
             DynmapManager.updateClaims();
         }
-
-        System.out.println("Medieval Factions plugin enabled.");
     }
 
     @Override
     public void onDisable() {
-        System.out.println("Medieval Factions plugin disabling....");
         StorageManager.getInstance().save();
-        System.out.println("Medieval Factions plugin disabled.");
     }
 
     public boolean onCommand(CommandSender sender, Command cmd, String label, String[] args) {
@@ -102,7 +95,6 @@ public class MedievalFactions extends JavaPlugin {
 
         // this piece of code is to fix config values not matching when updating to v3.3 (after v3.3 there is version mismatch handling)
         if (!MedievalFactions.getInstance().getConfig().isSet("version")) {
-            System.out.println("Config.yml doesn't have version entry!");
             ConfigManager.getInstance().handleVersionMismatch();
         }
     }
