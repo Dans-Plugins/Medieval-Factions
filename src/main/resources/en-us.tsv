@@ -312,7 +312,7 @@ PermissionDeclareWar	Sorry! You need the following permission to use this comman
 PermissionDemote	Sorry! You need the following permission to use this command: 'mf.demote'
 PermissionDesc	Sorry! You need the following permission to use this command: 'mf.desc'
 PermissionDisbandOthers	Sorry! In order to use this command you need the following permission: 'mf.disband.others'
-PermissionDisbandOthers	Sorry! You need the following permission to use this command: 'mf.disband'
+PermissionDisband	Sorry! You need the following permission to use this command: 'mf.disband'
 PermissionEditLaw	Sorry! In order to use this command, you need the following permission: 'mf.editlaw'
 PermissionForceDemote	Sorry! You need the following permission to use this command: 'mf.force.demote'
 PermissionForceJoin	Sorry! You need the following permission to use this command: 'mf.force.join'
@@ -398,7 +398,7 @@ SchedulingPowerIncrease	Scheduling power increase...
 SingleQuotesAlliedWarring	Allied faction and warring faction must be designated inside single quotes!
 StringSet	String set!
 SubCommands	Sub-commands:
-SuccesfulDisbandment	has been successfully disbanded.
+SuccessfulDisbandment	 has been successfully disbanded.
 SuccessFactionMemberRemoval	Success! If the player was in a faction, they are no longer a member.
 SuccessForceJoin	Success! Player was forced to join faction.
 SuccessOfficerRemoval	Success! If player was considered an officer in any faction, they are no longer.
