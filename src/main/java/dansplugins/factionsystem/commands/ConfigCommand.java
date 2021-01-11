@@ -1,6 +1,7 @@
 package dansplugins.factionsystem.commands;
 
 import dansplugins.factionsystem.ConfigManager;
+import dansplugins.factionsystem.LocaleManager;
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
@@ -35,21 +36,21 @@ public class ConfigCommand {
                             return;
                         }
                         else {
-                            player.sendMessage(ChatColor.RED + "Usage: /mf config set (option) (value)");
+                            player.sendMessage(ChatColor.RED + LocaleManager.getInstance().getText("UsageConfigSet"));
                             return;
                         }
 
                     }
 
-                    player.sendMessage(ChatColor.RED + "Valid sub-commands: show, set");
+                    player.sendMessage(ChatColor.RED + LocaleManager.getInstance().getText("ValidSubCommandsShowSet"));
 
                 }
                 else {
-                    player.sendMessage(ChatColor.RED + "Valid sub-commands: show, set");
+                    player.sendMessage(ChatColor.RED + LocaleManager.getInstance().getText("ValidSubCommandsShowSet"));
                 }
             }
             else {
-                player.sendMessage(ChatColor.RED + "Sorry! In order to use this command, you need the following permission: 'mf.config'");
+                player.sendMessage(ChatColor.RED + LocaleManager.getInstance().getText("PermissionConfig"));
             }
         }
 
