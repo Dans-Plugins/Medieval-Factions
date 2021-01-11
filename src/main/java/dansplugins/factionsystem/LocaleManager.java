@@ -38,6 +38,7 @@ public class LocaleManager {
             loadFromResource();
             System.out.println("Loading from resource!");
         }
+        System.out.println(keys.size() + " keys were loaded!");
     }
 
     private boolean isFilePresent(String path) {
