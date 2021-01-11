@@ -44,7 +44,7 @@ public class LocaleManager {
         return file.exists();
     }
 
-    private void loadFromPluginFolder() {
+    private void loadFromPluginFolder() { // TODO: fix this method
         File file = new File("./plugins/MedievalFactions/en-us.tsv");
         try {
             InputStream inputStream = new FileInputStream(file);
