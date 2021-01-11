@@ -1,5 +1,6 @@
 package dansplugins.factionsystem.commands;
 
+import dansplugins.factionsystem.LocaleManager;
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
 
@@ -18,20 +19,20 @@ public class HelpCommand {
                     sendPageOne(sender);
                 }
                 if (args[1].equalsIgnoreCase("2")) {
-                    sender.sendMessage(ChatColor.BOLD + "" + ChatColor.AQUA + "\n == Medieval Factions Commands Page 2/6 == " + "\n");
-                    sender.sendMessage(ChatColor.AQUA + "/mf kick - Kick a player from your faction." + "\n");
-                    sender.sendMessage(ChatColor.AQUA + "/mf transfer - Transfer ownership of your faction to another player.\n");
-                    sender.sendMessage(ChatColor.AQUA + "/mf disband - Disband your faction (must be owner)." + "\n");
-                    sender.sendMessage(ChatColor.AQUA + "/mf declarewar - Declare war against another faction." + "\n");
-                    sender.sendMessage(ChatColor.AQUA + "/mf makepeace - Send peace offer to another faction." + "\n");
-                    sender.sendMessage(ChatColor.AQUA + "/mf invoke (ally) (enemy) - Call an allied faction into a war." + "\n");
-                    sender.sendMessage(ChatColor.AQUA + "/mf claim - Claim land for your faction." + "\n");
-                    sender.sendMessage(ChatColor.AQUA + "/mf unclaim - Unclaim land for your faction." + "\n");
-                    sender.sendMessage(ChatColor.AQUA + "/mf unclaimall - Unclaim all land for your faction." + "\n");
-                    sender.sendMessage(ChatColor.AQUA + "/mf checkclaim - Check if land is claimed." + "\n");
+                    sender.sendMessage(ChatColor.BOLD + "" + ChatColor.AQUA + LocaleManager.getInstance().getText("CommandsPage2"));
+                    sender.sendMessage(ChatColor.AQUA + LocaleManager.getInstance().getText("HelpKick"));
+                    sender.sendMessage(ChatColor.AQUA + LocaleManager.getInstance().getText("HelpTransfer"));
+                    sender.sendMessage(ChatColor.AQUA + LocaleManager.getInstance().getText("HelpDisband"));
+                    sender.sendMessage(ChatColor.AQUA + LocaleManager.getInstance().getText("HelpDeclareWar"));
+                    sender.sendMessage(ChatColor.AQUA + LocaleManager.getInstance().getText("HelpMakePeace"));
+                    sender.sendMessage(ChatColor.AQUA + LocaleManager.getInstance().getText("HelpInvoke"));
+                    sender.sendMessage(ChatColor.AQUA + LocaleManager.getInstance().getText("HelpClaim"));
+                    sender.sendMessage(ChatColor.AQUA + LocaleManager.getInstance().getText("HelpUnclaim"));
+                    sender.sendMessage(ChatColor.AQUA + LocaleManager.getInstance().getText("HelpUnclaimall"));
+                    sender.sendMessage(ChatColor.AQUA + LocaleManager.getInstance().getText("HelpCheckClaim"));
                 }
                 if (args[1].equalsIgnoreCase("3")) {
-                    sender.sendMessage(ChatColor.BOLD + "" + ChatColor.AQUA + "\n == Medieval Factions Commands Page 3/6 == " + "\n");
+                    sender.sendMessage(ChatColor.BOLD + "" + ChatColor.AQUA + LocaleManager.getInstance().getText("CommandsPage3"));
                     sender.sendMessage(ChatColor.AQUA + "/mf autoclaim - Toggle auto claim, making land claiming easier." + "\n");
                     sender.sendMessage(ChatColor.AQUA + "/mf promote - Promote a player to officer status." + "\n");
                     sender.sendMessage(ChatColor.AQUA + "/mf demote - Demote an officer to member status." + "\n");
@@ -43,7 +44,7 @@ public class HelpCommand {
                     sender.sendMessage(ChatColor.AQUA + "/mf breakalliance - Break an alliance with a faction." + "\n");
                 }
                 if (args[1].equalsIgnoreCase("4")) {
-                    sender.sendMessage(ChatColor.BOLD + "" + ChatColor.AQUA + "\n == Medieval Factions Commands Page 4/6 == " + "\n");
+                    sender.sendMessage(ChatColor.BOLD + "" + ChatColor.AQUA + LocaleManager.getInstance().getText("CommandsPage4"));
                     sender.sendMessage(ChatColor.AQUA + "/mf rename - Rename your faction" + "\n");
                     sender.sendMessage(ChatColor.AQUA + "/mf lock - Lock a chest or door." + "\n");
                     sender.sendMessage(ChatColor.AQUA + "/mf unlock Unlock a chest or door." + "\n");
@@ -55,7 +56,7 @@ public class HelpCommand {
                     sender.sendMessage(ChatColor.AQUA + "/mf removelaw - Remove a law from your faction.");
                 }
                 if (args[1].equalsIgnoreCase("5")) {
-                    sender.sendMessage(ChatColor.BOLD + "" + ChatColor.AQUA + "\n == Medieval Factions Commands Page 5/6 == " + "\n");
+                    sender.sendMessage(ChatColor.BOLD + "" + ChatColor.AQUA + LocaleManager.getInstance().getText("CommandsPage5"));
                     sender.sendMessage(ChatColor.AQUA + "/mf editlaw - Edit an already existing law in your faction.");
                     sender.sendMessage(ChatColor.AQUA + "/mf chat - Toggle faction chat.");
                     sender.sendMessage(ChatColor.AQUA + "/mf vassalize - Offer to vassalize a faction.");
@@ -69,7 +70,7 @@ public class HelpCommand {
                     sender.sendMessage(ChatColor.AQUA + "/mf gate cancel");
                 }
                 if (args[1].equalsIgnoreCase("6")) {
-                    sender.sendMessage(ChatColor.BOLD + "" + ChatColor.AQUA + "\n == Medieval Factions Commands Page 6/6 == " + "\n");
+                    sender.sendMessage(ChatColor.BOLD + "" + ChatColor.AQUA + LocaleManager.getInstance().getText("CommandsPage6"));
                     sender.sendMessage(ChatColor.AQUA + "/mf duel challenge (player) (<optional>time limit in seconds)");
                     sender.sendMessage(ChatColor.AQUA + "/mf duel accept (<optional>player)");
                     sender.sendMessage(ChatColor.AQUA + "/mf duel cancel");
@@ -83,14 +84,14 @@ public class HelpCommand {
             }
         }
         else {
-            sender.sendMessage(ChatColor.RED + "Sorry! You need the following permission to use this command: 'mf.help'");
+            sender.sendMessage(ChatColor.RED +LocaleManager.getInstance().getText("PermissionHelp"));
             return false;
         }
         return true;
     }
 
     static void sendPageOne(CommandSender sender) {
-        sender.sendMessage(ChatColor.BOLD + "" + ChatColor.AQUA + "\n == Medieval Factions Commands Page 1/6 == " + "\n");
+        sender.sendMessage(ChatColor.BOLD + "" + ChatColor.AQUA + LocaleManager.getInstance().getText("CommandsPage1"));
         sender.sendMessage(ChatColor.AQUA + "/mf help # - Show lists of useful commands." + "\n");
         sender.sendMessage(ChatColor.AQUA + "/mf list - List all factions on the server." + "\n");
         sender.sendMessage(ChatColor.AQUA + "/mf info - See your faction or another faction's information." + "\n");

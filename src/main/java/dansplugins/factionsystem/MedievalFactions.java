@@ -41,7 +41,6 @@ public class MedievalFactions extends JavaPlugin {
         }
 
         LocaleManager.getInstance().loadStrings();
-        System.out.println("[DEBUG] Trying to get string associated with key 'AlertDemotion': " + LocaleManager.getInstance().getText("AlertDemotion"));
 
         Scheduler.getInstance().schedulePowerIncrease();
         Scheduler.getInstance().schedulePowerDecrease();

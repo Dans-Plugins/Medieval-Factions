@@ -116,8 +116,12 @@ ClickOnTriggerLever	Click on the trigger lever...
 ClickToPlaceSecondCorner	Click to place the second corner...
 CommandCancelled	Command cancelled!
 CommandNotRecognized	Medieval Factions doesn't recognize that command!
-CommandsPage	== Medieval Factions Commands Page %d/%d ==
+CommandsPage1	== Medieval Factions Commands Page 1/6 ==
+CommandsPage2	== Medieval Factions Commands Page 2/6 ==
 CommandsPage3	== Medieval Factions Commands Page 3/6 ==
+CommandsPage4	== Medieval Factions Commands Page 4/6 ==
+CommandsPage5	== Medieval Factions Commands Page 5/6 ==
+CommandsPage6	== Medieval Factions Commands Page 6/6 ==
 CouldNotFindPlayer	Could not find any player named %s
 CreatingGateCancelled	Creating gate cancelled!
 CreatingGateClickWithHoe	Creating gate %s.\nClick on a block with a Golden Hoe to select the first point.
@@ -178,8 +182,8 @@ HelpAutoclaim	/mf autoclaim - Toggle auto claim, making land claiming easier.
 HelpBreakAlliance	/mf breakalliance - Break an alliance with a faction.
 HelpBypass	/mf bypass - Bypass protections.
 HelpChat	/mf chat - Toggle faction chat.
-HelpCheckaccess	/mf checkaccess - Check who has access to a locked block.
-HelpCheckclaim	/mf checkclaim - Check if land is claimed.
+HelpCheckAccess	/mf checkaccess - Check who has access to a locked block.
+HelpCheckClaim	/mf checkclaim - Check if land is claimed.
 HelpClaim	/mf claim - Claim land for your faction.
 HelpConfigSet	/mf config set (option) (value) - Set a config value.
 HelpConfigShow	/mf config show - Show config values.
@@ -244,7 +248,6 @@ HourlySaveAlert	Medieval Factions is saving. This will happen every hour.
 IntegerSet	Integer set!
 InvitationExpired	Your invitation to has expired!.
 InvitationSent	Invitation sent!
-LaddersPlaceableInEnemyFactonTerritoryNotSet	Ladders placeable in enemy faction territory not set! Setting to default!
 LandAlreadyClaimedBy	This land is already claimed by
 LandAlreadyClaimedByYourFaction	This land is already claimed by your faction!
 LandClaimedBy	This land is claimed by
