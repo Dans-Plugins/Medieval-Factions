@@ -278,7 +278,7 @@ NameAlreadyTaken	That name is already taken!
 NoBlockDetectedToCheckForGate	No block detected to check for gate.
 NoFactionsDesignatedSingleQuotesRequired	No factions designated. Must be designated inside single quotes!
 NoLongerBypassingProtections	You are no longer bypassing protections provided by Medieval Factions.
-NoLongerInFactionCHat	You are no longer in faction chat!
+NoLongerInFactionChat	You are no longer in faction chat!
 NotAMemberOfAnyFaction	You are not a member of any faction.)
 NotAnAlly	%s isn't an ally of yours!
 NotAtWarWith	You aren't at war with
