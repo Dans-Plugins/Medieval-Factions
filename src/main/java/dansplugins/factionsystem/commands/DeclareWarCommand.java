@@ -49,7 +49,7 @@ public class DeclareWarCommand {
 
                 // already enemy check
                 if (potentialEnemyFaction.isEnemy(declaringPlayersFaction.getName())) {
-                    declaringPlayer.sendMessage(ChatColor.RED + LocaleManager.getInstance().getText("AlertAlreadyAtWarWith") + potentialEnemyFactionName);
+                    declaringPlayer.sendMessage(ChatColor.RED + String.format(LocaleManager.getInstance().getText("AlertAlreadyAtWarWith"), potentialEnemyFactionName));
                     return;
                 }
 
@@ -99,7 +99,7 @@ public class DeclareWarCommand {
                 // add declarer's faction to new enemy's enemyList
                 potentialEnemyFaction.addEnemy(declaringPlayersFaction.getName());
 
-                Messenger.getInstance().sendAllPlayersOnServerMessage(ChatColor.RED + declaringPlayersFaction.getName() + LocaleManager.getInstance().getText("HasDeclaredWarAgainst") + potentialEnemyFactionName + "!");
+                Messenger.getInstance().sendAllPlayersOnServerMessage(ChatColor.RED + "" + String.format(LocaleManager.getInstance().getText("HasDeclaredWarAgainst"), declaringPlayersFaction.getName(), potentialEnemyFactionName));
 
             }
             else {

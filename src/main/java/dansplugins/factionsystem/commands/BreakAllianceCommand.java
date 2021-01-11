@@ -37,13 +37,13 @@ public class BreakAllianceCommand {
                                         if ((faction.isAlly(factionName))) {
                                             // remove alliance
                                             faction.removeAlly(factionName);
-                                            player.sendMessage(ChatColor.GREEN + LocaleManager.getInstance().getText("AllianceBrokenWith") + factionName + "!");
+                                            player.sendMessage(ChatColor.GREEN + String.format(LocaleManager.getInstance().getText("AllianceBrokenWith"), factionName));
 
                                             // add declarer's faction to new enemy's enemyList
                                             PersistentData.getInstance().getFactions().get(i).removeAlly(faction.getName());
                                             for (int j = 0; j < PersistentData.getInstance().getFactions().size(); j++) {
                                                 if (PersistentData.getInstance().getFactions().get(j).getName().equalsIgnoreCase(factionName)) {
-                                                    Messenger.getInstance().sendAllPlayersInFactionMessage(PersistentData.getInstance().getFactions().get(j), ChatColor.RED + faction.getName() + LocaleManager.getInstance().getText("AlertAllianceHasBeenBroken"));
+                                                    Messenger.getInstance().sendAllPlayersInFactionMessage(PersistentData.getInstance().getFactions().get(j), ChatColor.RED + "" + String.format(LocaleManager.getInstance().getText("AlertAllianceHasBeenBroken"), faction.getName()));
                                                 }
                                             }
                                         }

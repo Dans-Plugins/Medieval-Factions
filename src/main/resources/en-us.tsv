@@ -1,5 +1,5 @@
 AcceptedChallengeDuelHasBegun	You have accepted %s's challenge, the duel has begun!
-AlertAlreadyAtWarWith	Your faction is already at war with
+AlertAlreadyAtWarWith	Your faction is already at war with %s!
 AlertAlreadyCreatingGate	You are already creating a gate!
 AlertAlreadyDueling	You are already dueling!
 AlertAlreadyDuelingSomeone	You are already dueling someone!
@@ -8,9 +8,9 @@ AlertAlreadyGrantingAccess	You are already granting access to someone! Type /mf 
 AlertAlreadyInFaction	You're already in a faction, sorry!
 AlertAlreadyRequestedAlliance	You've already requested an alliance with this faction!
 AlertAlreadyRequestedPeace	You've already requested peace with this faction!
-AlertAttemptedAlliance   has attempted to ally with
+AlertAttemptedAlliance  %s has attempted to ally with %s!
 AlertBeenInvited	You've been invited to %s! Type /mf join to join.
-AlertAllianceHasBeenBroken   has broken their alliance your faction!
+AlertAllianceHasBeenBroken  %s has broken their alliance your faction!
 AlertDuelChallengeReceived   has received your duel challenge!
 AlertChallengedToDuel	%s has challenged %s to a duel!
 AlertChallengedToDuelPlusHowTo	 has challenged you to a duel! Type /mf duel accept to begin.
@@ -48,13 +48,13 @@ AlertNotBeenChallengedByPlayer	You have not been challenged to a duel by that pl
 AlertNotInFaction	You're not in a faction!
 AlertNotInvitedToFaction	You're not invited to this faction!
 AlertNotOfferedVassalizationBy	You haven't been offered vassalization by this faction!
-AlertNowAlliedWith	Your faction is now allied with
+AlertNowAlliedWith	Your faction is now allied with %s!
 AlertNowAtPeaceWith  is now at peace with
 AlertPowerLevelDecreased	Your power level has decreased!
 AlertReachedDemesne	You have reached your demesne limit! Invite more players to increase this.
 AlertUnlocked	Unlocked!
 AlertUnlockingCancelled	Unlocking cancelled!
-AllianceBrokenWith	Alliance has been broken with
+AllianceBrokenWith	Alliance has been broken with %s!
 AlliedWith	Allied With:
 AllLandUnclaimed	All land unclaimed.
 AllLandUnclaimedFrom	All land unclaimed from
@@ -62,7 +62,7 @@ PlayerAlreadyDueling	That player is already dueling someone!
 AlreadyEnteredCheckAccess	You have already entered this command! Type '/mf checkaccess cancel' to cancel!
 AlreadyEnteredRevokeAccess	You have already entered this command! Type '/mf revokeaccess cancel' to cancel!
 AlreadyInFaction	Sorry, you're already in a faction. Leave if you want to create a different one.
-AttemptedAlliance	Attempted to ally with
+AttemptedAlliance	Attempted to ally with %s
 AttemptedPeace	Attempted to make peace with
 AttemptingToLoadChunks	Attempting to load claimed chunks...
 AttemptingToLoadFactionsData	Attempting to load Factions data...
@@ -171,8 +171,8 @@ FactionSuccessfullyLoaded	Faction successfully loaded.
 FileLoadError	An error occurred loading the file
 FollowingPlayersHaveAccess	The following players have access to this block:
 GateCreated	Gate successfully created.
-HasDeclaredIndependence  has declared independence from
-HasDeclaredWarAgainst    has declared war against
+HasDeclaredIndependence %s has declared independence from %s!
+HasDeclaredWarAgainst   %s has declared war against %s!
 HelpAddLaw	/mf addlaw - Add a law to your faction.
 HelpAlly	/mf ally - Attempt to ally with a faction.
 HelpAutoclaim	/mf autoclaim - Toggle auto claim, making land claiming easier.
@@ -401,7 +401,7 @@ SchedulingPowerIncrease	Scheduling power increase...
 SingleQuotesAlliedWarring	Allied faction and warring faction must be designated inside single quotes!
 StringSet	String set!
 SubCommands	Sub-commands:
-SuccessfulDisbandment	 has been successfully disbanded.
+SuccessfulDisbandment	%s has been successfully disbanded.
 SuccessFactionMemberRemoval	Success! If the player was in a faction, they are no longer a member.
 SuccessForceJoin	Success! Player was forced to join faction.
 SuccessOfficerRemoval	Success! If player was considered an officer in any faction, they are no longer.

@@ -28,7 +28,7 @@ public class DisbandCommand {
                             if (PersistentData.getInstance().getFactions().get(i).getName().equalsIgnoreCase(factionName)) {
 
                                 removeFaction(i);
-                                player.sendMessage(ChatColor.GREEN + factionName + LocaleManager.getInstance().getText("SuccessfulDisbandment"));
+                                player.sendMessage(ChatColor.GREEN + "" + String.format(LocaleManager.getInstance().getText("SuccessfulDisbandment"), factionName));
                                 return true;
 
                             }

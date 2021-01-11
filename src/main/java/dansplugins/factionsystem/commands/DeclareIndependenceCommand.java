@@ -38,7 +38,7 @@ public class DeclareIndependenceCommand {
                                 // add declarer's faction to new enemy's enemyList
                                 targetFaction.addEnemy(playersFaction.getName());
 
-                                Messenger.getInstance().sendAllPlayersOnServerMessage(ChatColor.RED + playersFaction.getName() + LocaleManager.getInstance().getText("HasDeclaredIndependence") + targetFaction.getName() + "!");
+                                Messenger.getInstance().sendAllPlayersOnServerMessage(ChatColor.RED + "" + String.format(LocaleManager.getInstance().getText("HasDeclaredIndependence"), playersFaction.getName(), targetFaction.getName()));
                            }
                             else {
                                 // tell player they must be owner

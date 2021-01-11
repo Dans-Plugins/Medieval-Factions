@@ -40,16 +40,16 @@ public class AllyCommand {
                                             if (!playersFaction.isEnemy(targetFactionName)) {
 
                                                 playersFaction.requestAlly(targetFactionName);
-                                                player.sendMessage(ChatColor.GREEN + LocaleManager.getInstance().getText("AttemptedAlliance") + targetFactionName);
+                                                player.sendMessage(ChatColor.GREEN + String.format(LocaleManager.getInstance().getText("AttemptedAlliance"), targetFactionName));
 
-                                                Messenger.getInstance().sendAllPlayersInFactionMessage(targetFaction,ChatColor.GREEN + "" + playersFaction.getName() + LocaleManager.getInstance().getText("AlertAttemptedAlliance") + targetFactionName + "!");
+                                                Messenger.getInstance().sendAllPlayersInFactionMessage(targetFaction,ChatColor.GREEN + "" + String.format(LocaleManager.getInstance().getText("AlertAttemptedAlliance"), playersFaction.getName(), targetFactionName));
 
                                                 if (playersFaction.isRequestedAlly(targetFactionName) && targetFaction.isRequestedAlly(playersFaction.getName())) {
                                                     // ally factions
                                                     playersFaction.addAlly(targetFactionName);
                                                     PersistentData.getInstance().getFaction(targetFactionName).addAlly(playersFaction.getName());
                                                     player.sendMessage(ChatColor.GREEN + LocaleManager.getInstance().getText("AlertNowAlliedWith") + targetFactionName + "!");
-                                                    Messenger.getInstance().sendAllPlayersInFactionMessage(targetFaction, ChatColor.GREEN + LocaleManager.getInstance().getText("AlertNowAlliedWith") + playersFaction.getName() + "!");
+                                                    Messenger.getInstance().sendAllPlayersInFactionMessage(targetFaction, ChatColor.GREEN + String.format(LocaleManager.getInstance().getText("AlertNowAlliedWith"), playersFaction.getName()));
                                                 }
                                             }
                                             else {
