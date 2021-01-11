@@ -1,5 +1,6 @@
 package dansplugins.factionsystem.commands;
 
+import dansplugins.factionsystem.LocaleManager;
 import dansplugins.factionsystem.MedievalFactions;
 import dansplugins.factionsystem.data.PersistentData;
 import dansplugins.factionsystem.objects.Faction;
@@ -19,7 +20,7 @@ public class CreateCommand {
                 // player membership check
                 for (Faction faction : PersistentData.getInstance().getFactions()) {
                     if (faction.isMember(player.getUniqueId())) {
-                        player.sendMessage(ChatColor.RED + "Sorry, you're already in a faction. Leave if you want to create a different one.");
+                        player.sendMessage(ChatColor.RED + LocaleManager.getInstance().getText("AlreadyInFaction"));
                         return false;
                     }
                 }
@@ -44,25 +45,23 @@ public class CreateCommand {
                         // actual faction creation
                         Faction temp = new Faction(name, player.getUniqueId(), MedievalFactions.getInstance().getConfig().getInt("initialMaxPowerLevel"));
                         PersistentData.getInstance().getFactions().add(temp);
-                        // TODO: Make thread safe
                         PersistentData.getInstance().getFactions().get(PersistentData.getInstance().getFactions().size() - 1).addMember(player.getUniqueId(), PersistentData.getInstance().getPlayersPowerRecord(player.getUniqueId()).getPowerLevel());
-                        System.out.println("Faction " + name + " created.");
-                        player.sendMessage(ChatColor.AQUA + "Faction " + name + " created.");
+                        player.sendMessage(ChatColor.AQUA + LocaleManager.getInstance().getText("FactionCreated"));
                         return true;
                     }
                     else {
-                        player.sendMessage(ChatColor.RED + "Sorry! That faction already exists.");
+                        player.sendMessage(ChatColor.RED + LocaleManager.getInstance().getText("FactionAlreadyExists"));
                         return false;
                     }
                 } else {
 
                     // wrong usage
-                    sender.sendMessage(ChatColor.RED + "Usage: /mf create [faction-name]");
+                    sender.sendMessage(ChatColor.RED + LocaleManager.getInstance().getText("UsageCreate"));
                     return false;
                 }
             }
             else {
-                sender.sendMessage(ChatColor.RED + "Sorry! You need the following permission to use this command: 'mf.create'");
+                sender.sendMessage(ChatColor.RED + LocaleManager.getInstance().getText("PermissionCreate"));
                 return false;
             }
         }
