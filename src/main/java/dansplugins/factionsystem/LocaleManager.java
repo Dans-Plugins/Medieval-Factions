@@ -5,6 +5,7 @@ import dansplugins.factionsystem.utils.Pair;
 import java.io.*;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Scanner;
 
 public class LocaleManager {
 
@@ -44,11 +45,14 @@ public class LocaleManager {
         return file.exists();
     }
 
-    private void loadFromPluginFolder() { // TODO: fix this method
+    private void loadFromPluginFolder() {
         File file = new File("./plugins/MedievalFactions/en-us.tsv");
         try {
-            InputStream inputStream = new FileInputStream(file);
-            loadFromInputStream(inputStream);
+            loadFromFile(file);
+
+            if (MedievalFactions.getInstance().isVersionMismatched()) {
+                handleVersionMismatch();
+            }
 
         } catch (Exception e) {
             System.out.println("Something went wrong loading from the plugin folder.");
@@ -57,9 +61,52 @@ public class LocaleManager {
 
     }
 
+    private void loadFromFile(File file) {
+        try {
+            Scanner reader = new Scanner(file);
+
+            while (reader.hasNextLine()) {
+                String line = reader.nextLine();
+                Pair<String, String> pair = getPairFromLine(line);
+                strings.put(pair.getLeft(), pair.getRight());
+                keys.add(pair.getLeft());
+            }
+
+            reader.close();
+
+        } catch (Exception e) {
+            System.out.println("Something went wrong loading from file!");
+            e.printStackTrace();
+        }
+
+    }
+
+    // this should be called after loading from plugin folder
+    private void handleVersionMismatch() {
+        System.out.println("Version mismatch! Ensuring all localization keys are found!");
+
+        String fileName = "en-us.tsv";
+
+        // get resource as input stream
+        InputStream inputStream = MedievalFactions.getInstance().getResource(fileName);
+
+        InputStreamReader reader = new InputStreamReader(inputStream);
+
+        BufferedReader br = new BufferedReader(reader);
+        br.lines().forEach(line -> {
+            Pair<String, String> pair = getPairFromLine(line);
+
+            if (!strings.containsKey(pair.getLeft())) {
+                strings.put(pair.getLeft(), pair.getRight());
+                keys.add(pair.getLeft());
+            }
+
+        });
+
+    }
+
     private void loadFromResource() {
         try {
-            // prepare file object
             String fileName = "en-us.tsv";
 
             // get resource as input stream

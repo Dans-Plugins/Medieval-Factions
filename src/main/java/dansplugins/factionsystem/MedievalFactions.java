@@ -39,7 +39,7 @@ public class MedievalFactions extends JavaPlugin {
         }
         else {
             // pre load compatibility checks
-            if (!getConfig().getString("version").equalsIgnoreCase(getVersion())) {
+            if (isVersionMismatched()) {
                 System.out.println("[ALERT] Version mismatch! Adding missing defaults and setting version!");
                 ConfigManager.getInstance().handleVersionMismatch();
             }
@@ -55,7 +55,7 @@ public class MedievalFactions extends JavaPlugin {
         StorageManager.getInstance().load();
 
         // post load compatibility checks
-        if (!getConfig().getString("version").equalsIgnoreCase(getVersion())) {
+        if (isVersionMismatched()) {
             createActivityRecordForEveryOfflinePlayer(); // make sure every player experiences power decay in case we updated from pre-v3.5
         }
 
@@ -83,6 +83,10 @@ public class MedievalFactions extends JavaPlugin {
 
     public String getVersion() {
         return version;
+    }
+
+    public boolean isVersionMismatched() {
+        return !getConfig().getString("version").equalsIgnoreCase(getVersion());
     }
 
     private void ensureSmoothTransitionBetweenVersions() {
