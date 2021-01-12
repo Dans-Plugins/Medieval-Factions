@@ -2,6 +2,7 @@ package dansplugins.factionsystem.eventhandlers;
 
 import dansplugins.factionsystem.ChunkManager;
 import dansplugins.factionsystem.DynmapManager;
+import dansplugins.factionsystem.LocaleManager;
 import dansplugins.factionsystem.MedievalFactions;
 import dansplugins.factionsystem.data.PersistentData;
 import dansplugins.factionsystem.objects.Faction;
@@ -44,7 +45,7 @@ public class MoveHandler implements Listener {
                         }, 1); // delayed by 1 tick (1/20th of a second) because otherwise players will claim the chunk they just left
                     }
                     else {
-                        event.getPlayer().sendMessage(ChatColor.RED + "You have reached your demesne limit! Invite more players to increase this.");
+                        event.getPlayer().sendMessage(ChatColor.RED + LocaleManager.getInstance().getText("AlertReachedDemesne"));
                     }
                 }
             }
@@ -58,7 +59,7 @@ public class MoveHandler implements Listener {
 
             // if new chunk is unclaimed and old chunk was not
             if (!ChunkManager.getInstance().isClaimed(event.getTo().getChunk(), PersistentData.getInstance().getClaimedChunks()) && ChunkManager.getInstance().isClaimed(event.getFrom().getChunk(), PersistentData.getInstance().getClaimedChunks())) {
-                event.getPlayer().sendTitle("Wilderness", null, 10, 70, 20);
+                event.getPlayer().sendTitle(LocaleManager.getInstance().getText("Wilderness"), null, 10, 70, 20);
                 return;
             }
 
