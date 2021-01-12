@@ -26,7 +26,7 @@ AlertForcedToJoinFaction	You were forced to join a faction!
 AlertGate	That is the '%s' gate.
 AlertGrantedIndependence    %s has granted your faction independence!
 AlertJoinedFaction	You joined the faction!
-AlertKicked	You have been kicked from your faction by
+AlertKicked	You have been kicked from your faction by %s.
 AlertCalledToWar1   %s has called your faction into their war with %s!
 AlertCalledToWar2   %s has called %s into their war with your faction!
 AlertCalledToWar3   Your faction has called %s into your war with %s!
@@ -80,6 +80,7 @@ BlockAlreadyLocked	This block is already locked!
 BlockIsNotLocked	That block isn't locked!
 BlockIsPartOfGateMustRemoveGate	This block is part of gate %s. You must remove the gate first.
 BooleanSet	Boolean set!
+HasBeenKickedFrom   %s has been kicked from %s
 Cancelled	Cancelled!
 CancelledGatePlacement	Error linking to lever. Cancelled gate placement.
 CancelledGatePlacement1	Error placing point 1. Cancelled gate placement.

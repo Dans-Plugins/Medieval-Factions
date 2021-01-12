@@ -1,5 +1,6 @@
 package dansplugins.factionsystem.commands;
 
+import dansplugins.factionsystem.LocaleManager;
 import dansplugins.factionsystem.Messenger;
 import dansplugins.factionsystem.UUIDChecker;
 import dansplugins.factionsystem.data.EphemeralData;
@@ -37,26 +38,26 @@ public class KickCommand {
 
                                         faction.removeMember(playerUUID, PersistentData.getInstance().getPlayersPowerRecord(player.getUniqueId()).getPowerLevel());
                                         try {
-                                            Messenger.getInstance().sendAllPlayersInFactionMessage(faction, ChatColor.RED + args[1] + " has been kicked from " + faction.getName());
+                                            Messenger.getInstance().sendAllPlayersInFactionMessage(faction, ChatColor.RED + String.format(LocaleManager.getInstance().getText("HasBeenKickedFrom"),  args[1], faction.getName()));
                                         } catch (Exception ignored) {
 
                                         }
                                         try {
                                             Player target = Bukkit.getServer().getPlayer(args[1]);
-                                            target.sendMessage(ChatColor.RED + "You have been kicked from your faction by " + player.getName() + ".");
+                                            target.sendMessage(ChatColor.RED + String.format(LocaleManager.getInstance().getText("AlertKicked"), player.getName()));
                                         } catch (Exception ignored) {
 
                                         }
                                         return true;
                                     }
                                     else {
-                                        player.sendMessage(ChatColor.RED + "You can't kick the owner.");
+                                        player.sendMessage(ChatColor.RED + LocaleManager.getInstance().getText("CannotKickOwner"));
                                         return false;
                                     }
 
                                 }
                                 else {
-                                    player.sendMessage(ChatColor.RED + "You can't kick yourself.");
+                                    player.sendMessage(ChatColor.RED + LocaleManager.getInstance().getText("CannotKickSelf"));
                                     return false;
                                 }
 
@@ -65,17 +66,17 @@ public class KickCommand {
                     }
 
                     if (!owner) {
-                        player.sendMessage(ChatColor.RED + "You need to be the owner of a faction to use this command.");
+                        player.sendMessage(ChatColor.RED + LocaleManager.getInstance().getText("MustBeOwner"));
                         return false;
                     }
 
                 } else {
-                    player.sendMessage(ChatColor.RED + "Usage: /mf kick (player-name)");
+                    player.sendMessage(ChatColor.RED + LocaleManager.getInstance().getText("UsageKick"));
                     return false;
                 }
             }
             else {
-                sender.sendMessage(ChatColor.RED + "Sorry! You need the following permission to use this command: 'mf.kick'");
+                sender.sendMessage(ChatColor.RED + LocaleManager.getInstance().getText("PermissionKick"));
                 return false;
             }
         }
