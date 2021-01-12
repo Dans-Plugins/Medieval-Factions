@@ -1,6 +1,7 @@
 package dansplugins.factionsystem.eventhandlers;
 
 import dansplugins.factionsystem.ChunkManager;
+import dansplugins.factionsystem.LocaleManager;
 import dansplugins.factionsystem.MedievalFactions;
 import dansplugins.factionsystem.UUIDChecker;
 import dansplugins.factionsystem.data.EphemeralData;
@@ -69,7 +70,7 @@ public class InteractionHandler implements Listener {
                         if (!PersistentData.getInstance().getLockedBlock(event.getBlock()).getOwner().equals(player.getUniqueId())
                                 && !EphemeralData.getInstance().getAdminsBypassingProtections().contains(event.getPlayer().getUniqueId())) {
                             event.setCancelled(true);
-                            player.sendMessage(ChatColor.RED + "You don't own this!");
+                            player.sendMessage(ChatColor.RED + LocaleManager.getInstance().getText("AlertNonOwnership"));
                             return;
                         }
 
@@ -97,7 +98,7 @@ public class InteractionHandler implements Listener {
                     	if (gate.hasBlock(event.getBlock()))
                     	{
                     		event.setCancelled(true);
-                            player.sendMessage(ChatColor.RED + "This block is part of gate '" + gate.getName() + "'. You must remove the gate first.");
+                            player.sendMessage(ChatColor.RED + String.format(LocaleManager.getInstance().getText("BlockIsPartOfGateMustRemoveGate"), gate.getName()));
                             return;
                     	}
                     }
@@ -155,7 +156,7 @@ public class InteractionHandler implements Listener {
                         // if next to non-owned locked chest
                         if (isNextToNonOwnedLockedChest(event.getPlayer(), event.getBlock()) && !EphemeralData.getInstance().getAdminsBypassingProtections().contains(event.getPlayer().getUniqueId())) {
                             event.setCancelled(true);
-                            player.sendMessage(ChatColor.RED + "You can't place chests next to locked chests you don't own.");
+                            player.sendMessage(ChatColor.RED + LocaleManager.getInstance().getText("CannotPlaceChestsNextToUnownedLockedChests"));
                             return;
                         }
 
@@ -195,7 +196,7 @@ public class InteractionHandler implements Listener {
                         // if next to or under/above non-owned locked chest
                         if (isNextToNonOwnedLockedChest(event.getPlayer(), event.getBlock()) || isUnderOrAboveNonOwnedLockedChest(event.getPlayer(), event.getBlock()) && !EphemeralData.getInstance().getAdminsBypassingProtections().contains(event.getPlayer().getUniqueId())) {
                             event.setCancelled(true);
-                            player.sendMessage(ChatColor.RED + "You can't place hoppers next to, under or above locked chests you don't own.");
+                            player.sendMessage(ChatColor.RED + LocaleManager.getInstance().getText("CannotPlaceHoppersNextToUnownedLockedChests"));
                             return;
                         }
                     }
@@ -288,7 +289,7 @@ public class InteractionHandler implements Listener {
                 // if player doesn't have access and isn't overriding
                 if (!lockedBlock.hasAccess(player.getUniqueId()) && !EphemeralData.getInstance().getAdminsBypassingProtections().contains(player.getUniqueId())) {
                     event.setCancelled(true);
-                    player.sendMessage(ChatColor.RED + "Locked by " + UUIDChecker.getInstance().findPlayerNameBasedOnUUID(lockedBlock.getOwner()));
+                    player.sendMessage(ChatColor.RED + String.format(LocaleManager.getInstance().getText("LockedBy"), UUIDChecker.getInstance().findPlayerNameBasedOnUUID(lockedBlock.getOwner())));
                     return;
                 }
 
@@ -322,7 +323,7 @@ public class InteractionHandler implements Listener {
                         EphemeralData.getInstance().getPlayersCheckingAccess().contains(player.getUniqueId()) ||
                         EphemeralData.getInstance().getPlayersRevokingAccess().containsKey(player.getUniqueId())) {
 
-                    player.sendMessage(ChatColor.RED + "That block isn't locked!");
+                    player.sendMessage(ChatColor.RED + LocaleManager.getInstance().getText("BlockIsNotLocked"));
                 }
             }
 
@@ -351,7 +352,7 @@ public class InteractionHandler implements Listener {
                                 else
                                 {
                                     event.setCancelled(true);
-                                    player.sendMessage(ChatColor.RED + "This gate is " + g.getStatus() + ", please wait.");
+                                    player.sendMessage(ChatColor.RED + String.format(LocaleManager.getInstance().getText("PleaseWaitGate"), g.getStatus()));
                                     return;
                                 }
                             }
@@ -364,7 +365,7 @@ public class InteractionHandler implements Listener {
                                 else
                                 {
                                     event.setCancelled(true);
-                                    player.sendMessage(ChatColor.RED + "This gate is " + g.getStatus() + ", please wait.");
+                                    player.sendMessage(ChatColor.RED + String.format(LocaleManager.getInstance().getText("PleaseWaitGate"), g.getStatus()));
                                     return;
                                 }
                             }
@@ -394,7 +395,7 @@ public class InteractionHandler implements Listener {
             {
                 if (!ChunkManager.getInstance().isClaimed(clickedBlock.getChunk(), PersistentData.getInstance().getClaimedChunks()))
                 {
-                    player.sendMessage(ChatColor.RED + "You can only create gates in claimed territory.");
+                    player.sendMessage(ChatColor.RED + LocaleManager.getInstance().getText("CanOnlyCreateGatesInClaimedTerritory"));
                     return;
                 }
                 else
@@ -404,7 +405,7 @@ public class InteractionHandler implements Listener {
                     {
                         if (!PersistentData.getInstance().getFaction(claimedChunk.getHolder()).isMember(player.getUniqueId()))
                         {
-                            player.sendMessage(ChatColor.RED + "You must be a member of this faction to create a gate.");
+                            player.sendMessage(ChatColor.RED + LocaleManager.getInstance().getText("AlertMustBeMemberToCreateGate"));
                             return;
                         }
                         else
@@ -412,7 +413,7 @@ public class InteractionHandler implements Listener {
                             if (!PersistentData.getInstance().getFaction(claimedChunk.getHolder()).isOwner(player.getUniqueId())
                                     && !PersistentData.getInstance().getFaction(claimedChunk.getHolder()).isOfficer(player.getUniqueId()))
                             {
-                                player.sendMessage(ChatColor.RED + "You must be a faction owner or officer to create a gate.");
+                                player.sendMessage(ChatColor.RED + LocaleManager.getInstance().getText("AlertMustBeOwnerOrOfficerToCreateGate"));
                                 return;
                             }
                         }
@@ -428,31 +429,31 @@ public class InteractionHandler implements Listener {
                         Gate.ErrorCodeAddCoord e = EphemeralData.getInstance().getCreatingGatePlayers().get(event.getPlayer().getUniqueId()).addCoord(clickedBlock);
                         if (e.equals(Gate.ErrorCodeAddCoord.None))
                         {
-                            event.getPlayer().sendMessage(ChatColor.GREEN + "Creating Gate 1/4: Point 1 placed successfully.");
-                            event.getPlayer().sendMessage(ChatColor.YELLOW + "Click to place the second corner...");
+                            event.getPlayer().sendMessage(ChatColor.GREEN + LocaleManager.getInstance().getText("Point1PlacementSuccessful"));
+                            event.getPlayer().sendMessage(ChatColor.YELLOW + LocaleManager.getInstance().getText("ClickToPlaceSecondCorner"));
                             return;
                         }
                         else if (e.equals(Gate.ErrorCodeAddCoord.MaterialMismatch))
                         {
-                            event.getPlayer().sendMessage(ChatColor.RED + "Error placing point 1: Materials mismatch.");
+                            event.getPlayer().sendMessage(ChatColor.RED + LocaleManager.getInstance().getText("MaterialsMismatch1"));
                             EphemeralData.getInstance().getCreatingGatePlayers().remove(event.getPlayer().getUniqueId());
                             return;
                         }
                         else if (e.equals(Gate.ErrorCodeAddCoord.WorldMismatch))
                         {
-                            event.getPlayer().sendMessage(ChatColor.RED + "Error placing point 1: Worlds mismatch.");
+                            event.getPlayer().sendMessage(ChatColor.RED + LocaleManager.getInstance().getText("WorldsMismatch1"));
                             EphemeralData.getInstance().getCreatingGatePlayers().remove(event.getPlayer().getUniqueId());
                             return;
                         }
                         else if (e.equals(Gate.ErrorCodeAddCoord.NoCuboids))
                         {
-                            event.getPlayer().sendMessage(ChatColor.RED + "Error placing point 1: You cannot place a cuboid.");
+                            event.getPlayer().sendMessage(ChatColor.RED + LocaleManager.getInstance().getText("CuboidDisallowed1"));
                             EphemeralData.getInstance().getCreatingGatePlayers().remove(event.getPlayer().getUniqueId());
                             return;
                         }
                         else
                         {
-                            event.getPlayer().sendMessage(ChatColor.RED + "Error placing point 1. Cancelled gate placement.");
+                            event.getPlayer().sendMessage(ChatColor.RED + LocaleManager.getInstance().getText("CancelledGatePlacement1"));
                             EphemeralData.getInstance().getCreatingGatePlayers().remove(event.getPlayer().getUniqueId());
                             return;
                         }
@@ -466,37 +467,37 @@ public class InteractionHandler implements Listener {
                             Gate.ErrorCodeAddCoord e = EphemeralData.getInstance().getCreatingGatePlayers().get(event.getPlayer().getUniqueId()).addCoord(clickedBlock);
                             if (e.equals(Gate.ErrorCodeAddCoord.None))
                             {
-                                event.getPlayer().sendMessage(ChatColor.GREEN + "Creating Gate 2/4: Point 2 placed successfully.");
-                                event.getPlayer().sendMessage(ChatColor.YELLOW + "Click on the trigger lever...");
+                                event.getPlayer().sendMessage(ChatColor.GREEN + LocaleManager.getInstance().getText("Point2PlacedSuccessfully"));
+                                event.getPlayer().sendMessage(ChatColor.YELLOW + LocaleManager.getInstance().getText("ClickOnTriggerLever"));
                                 return;
                             }
                             else if (e.equals(Gate.ErrorCodeAddCoord.MaterialMismatch))
                             {
-                                event.getPlayer().sendMessage(ChatColor.RED + "Error placing point 2: Materials mismatch.");
+                                event.getPlayer().sendMessage(ChatColor.RED + LocaleManager.getInstance().getText("MaterialsMismatch2"));
                                 EphemeralData.getInstance().getCreatingGatePlayers().remove(event.getPlayer().getUniqueId());
                                 return;
                             }
                             else if (e.equals(Gate.ErrorCodeAddCoord.WorldMismatch))
                             {
-                                event.getPlayer().sendMessage(ChatColor.RED + "Error placing point 2: Worlds mismatch.");
+                                event.getPlayer().sendMessage(ChatColor.RED + LocaleManager.getInstance().getText("WorldsMismatch2"));
                                 EphemeralData.getInstance().getCreatingGatePlayers().remove(event.getPlayer().getUniqueId());
                                 return;
                             }
                             else if (e.equals(Gate.ErrorCodeAddCoord.NoCuboids))
                             {
-                                event.getPlayer().sendMessage(ChatColor.RED + "Error placing point 2: You cannot place a cuboid.");
+                                event.getPlayer().sendMessage(ChatColor.RED + LocaleManager.getInstance().getText("CuboidDisallowed2"));
                                 EphemeralData.getInstance().getCreatingGatePlayers().remove(event.getPlayer().getUniqueId());
                                 return;
                             }
                             else if (e.equals(Gate.ErrorCodeAddCoord.LessThanThreeHigh))
                             {
-                                event.getPlayer().sendMessage(ChatColor.RED + "Error placing point 2: Gate must be 3 blocks or taller.");
+                                event.getPlayer().sendMessage(ChatColor.RED + LocaleManager.getInstance().getText("ThreeBlockRequirement"));
                                 EphemeralData.getInstance().getCreatingGatePlayers().remove(event.getPlayer().getUniqueId());
                                 return;
                             }
                             else
                             {
-                                event.getPlayer().sendMessage(ChatColor.RED + "Error placing point 2. Cancelled gate placement.");
+                                event.getPlayer().sendMessage(ChatColor.RED + LocaleManager.getInstance().getText("CancelledGatePlacement2"));
                                 EphemeralData.getInstance().getCreatingGatePlayers().remove(event.getPlayer().getUniqueId());
                                 return;
                             }
@@ -518,27 +519,27 @@ public class InteractionHandler implements Listener {
                                     Faction faction = PersistentData.getInstance().getFaction(claim.getHolder());
                                     faction.addGate(EphemeralData.getInstance().getCreatingGatePlayers().get(event.getPlayer().getUniqueId()));
                                     EphemeralData.getInstance().getCreatingGatePlayers().remove(event.getPlayer().getUniqueId());
-                                    event.getPlayer().sendMessage(ChatColor.GREEN + "Creating Gate 4/4: Lever successfully linked.");
-                                    event.getPlayer().sendMessage(ChatColor.GREEN + "Gate successfully created.");
+                                    event.getPlayer().sendMessage(ChatColor.GREEN + LocaleManager.getInstance().getText("LeverSuccessfullyLinked"));
+                                    event.getPlayer().sendMessage(ChatColor.GREEN + LocaleManager.getInstance().getText("GateCreated"));
                                     return;
                                 }
                                 else
                                 {
-                                    event.getPlayer().sendMessage(ChatColor.RED + "Error linking to lever. Cancelled gate placement.");
+                                    event.getPlayer().sendMessage(ChatColor.RED + LocaleManager.getInstance().getText("CancelledGatePlacementErrorLinking"));
                                     EphemeralData.getInstance().getCreatingGatePlayers().remove(event.getPlayer().getUniqueId());
                                     return;
                                 }
                             }
                             else
                             {
-                                event.getPlayer().sendMessage(ChatColor.RED + "Error: Can only use levers in claimed territory.");
+                                event.getPlayer().sendMessage(ChatColor.RED + LocaleManager.getInstance().getText("OnlyUseLeversInClaimedTerritory"));
                                 EphemeralData.getInstance().getCreatingGatePlayers().remove(event.getPlayer().getUniqueId());
                                 return;
                             }
                         }
                         else
                         {
-                            event.getPlayer().sendMessage(ChatColor.RED + "Trigger block was not a lever. Cancelled gate placement.");
+                            event.getPlayer().sendMessage(ChatColor.RED + LocaleManager.getInstance().getText("TriggerBlockNotLever"));
                             EphemeralData.getInstance().getCreatingGatePlayers().remove(event.getPlayer().getUniqueId());
                             return;
                         }
@@ -546,7 +547,7 @@ public class InteractionHandler implements Listener {
                 }
                 else
                 {
-                    player.sendMessage(ChatColor.RED + "Sorry! In order to create a gate you need the following permission: 'mf.gate'");
+                    player.sendMessage(ChatColor.RED + LocaleManager.getInstance().getText("PermissionGate"));
                 }
             }
 
@@ -561,14 +562,14 @@ public class InteractionHandler implements Listener {
 
             // if claimed by other faction
             if (!chunk.getHolder().equalsIgnoreCase(PersistentData.getInstance().getPlayersFaction(player.getUniqueId()).getName())) {
-                player.sendMessage(ChatColor.RED + "You can only lock things in your faction's territory!");
+                player.sendMessage(ChatColor.RED + LocaleManager.getInstance().getText("CanOnlyLockInFactionTerritory"));
                 event.setCancelled(true);
                 return;
             }
 
             // if already locked
             if (PersistentData.getInstance().isBlockLocked(clickedBlock)) {
-                player.sendMessage(ChatColor.RED + "This block is already locked!");
+                player.sendMessage(ChatColor.RED + LocaleManager.getInstance().getText("BlockAlreadyLocked"));
                 event.setCancelled(true);
                 return;
             }
@@ -591,7 +592,7 @@ public class InteractionHandler implements Listener {
                         LockedBlock right = new LockedBlock(player.getUniqueId(), PersistentData.getInstance().getPlayersFaction(player.getUniqueId()).getName(), rightChest.getX(), rightChest.getY(), rightChest.getZ(), rightChest.getWorld().getName());
                         PersistentData.getInstance().getLockedBlocks().add(right);
 
-                        player.sendMessage(ChatColor.GREEN + "Locked!");
+                        player.sendMessage(ChatColor.GREEN + LocaleManager.getInstance().getText("Locked"));
                         EphemeralData.getInstance().getLockingPlayers().remove(player.getUniqueId());
                     }
                     else {
@@ -599,7 +600,7 @@ public class InteractionHandler implements Listener {
                         LockedBlock single = new LockedBlock(player.getUniqueId(), PersistentData.getInstance().getPlayersFaction(player.getUniqueId()).getName(), clickedBlock.getX(), clickedBlock.getY(), clickedBlock.getZ(), clickedBlock.getWorld().getName());
                         PersistentData.getInstance().getLockedBlocks().add(single);
 
-                        player.sendMessage(ChatColor.GREEN + "Locked!");
+                        player.sendMessage(ChatColor.GREEN + LocaleManager.getInstance().getText("Locked"));
                         EphemeralData.getInstance().getLockingPlayers().remove(player.getUniqueId());
                     }
                 }
@@ -620,7 +621,7 @@ public class InteractionHandler implements Listener {
                         PersistentData.getInstance().getLockedBlocks().add(newLockedBlock2);
                     }
 
-                    player.sendMessage(ChatColor.GREEN + "Locked!");
+                    player.sendMessage(ChatColor.GREEN + LocaleManager.getInstance().getText("Locked"));
                     EphemeralData.getInstance().getLockingPlayers().remove(player.getUniqueId());
                 }
 
@@ -629,7 +630,7 @@ public class InteractionHandler implements Listener {
                     LockedBlock block = new LockedBlock(player.getUniqueId(), PersistentData.getInstance().getPlayersFaction(player.getUniqueId()).getName(),
                             clickedBlock.getX(), clickedBlock.getY(), clickedBlock.getZ(), clickedBlock.getWorld().getName());
                     PersistentData.getInstance().getLockedBlocks().add(block);
-                    player.sendMessage(ChatColor.GREEN + "Locked!");
+                    player.sendMessage(ChatColor.GREEN + LocaleManager.getInstance().getText("Locked"));
                     EphemeralData.getInstance().getLockingPlayers().remove(player.getUniqueId());
                 }
 
@@ -637,13 +638,13 @@ public class InteractionHandler implements Listener {
                 return;
             }
             else {
-                player.sendMessage(ChatColor.RED + "You can only lock chests, doors, barrels, trapdoors, furnaces, anvils or gates.");
+                player.sendMessage(ChatColor.RED + LocaleManager.getInstance().getText("CanOnlyLockSpecificBlocks"));
                 return;
             }
 
         }
         else {
-            player.sendMessage(ChatColor.RED + "You can only lock blocks on land claimed by your faction!");
+            player.sendMessage(ChatColor.RED + LocaleManager.getInstance().getText("CanOnlyLockBlocksInClaimedTerritory"));
             event.setCancelled(true);
             return;
         }
@@ -809,7 +810,7 @@ public class InteractionHandler implements Listener {
                 if (isGate(clickedBlock) || isBarrel(clickedBlock) || isTrapdoor(clickedBlock) || isFurnace(clickedBlock)) {
                     removeLock(clickedBlock);
 
-                    player.sendMessage(ChatColor.GREEN + "Unlocked!");
+                    player.sendMessage(ChatColor.GREEN + LocaleManager.getInstance().getText("AlertUnlocked"));
                     EphemeralData.getInstance().getUnlockingPlayers().remove(player.getUniqueId());
                 }
 
@@ -818,7 +819,7 @@ public class InteractionHandler implements Listener {
             }
         }
         else {
-            player.sendMessage(ChatColor.RED + "That block isn't locked!");
+            player.sendMessage(ChatColor.RED + LocaleManager.getInstance().getText("BlockIsNotLocked"));
             event.setCancelled(true);
             return;
         }
@@ -973,7 +974,7 @@ public class InteractionHandler implements Listener {
 
         // if not owner
         if (PersistentData.getInstance().getLockedBlock(clickedBlock).getOwner() != player.getUniqueId()) {
-            player.sendMessage(ChatColor.RED + "You are not the owner of this block!");
+            player.sendMessage(ChatColor.RED + LocaleManager.getInstance().getText("NotTheOwnerOfThisBlock"));
             return;
         }
 
@@ -989,13 +990,13 @@ public class InteractionHandler implements Listener {
                 PersistentData.getInstance().getLockedBlock(leftChest).addToAccessList(EphemeralData.getInstance().getPlayersGrantingAccess().get(player.getUniqueId()));
                 PersistentData.getInstance().getLockedBlock(rightChest).addToAccessList(EphemeralData.getInstance().getPlayersGrantingAccess().get(player.getUniqueId()));
 
-                player.sendMessage(ChatColor.GREEN + "Access granted to " + UUIDChecker.getInstance().findPlayerNameBasedOnUUID(EphemeralData.getInstance().getPlayersGrantingAccess().get(player.getUniqueId())));
+                player.sendMessage(ChatColor.GREEN + String.format(LocaleManager.getInstance().getText("AlertAccessGrantedTo"), UUIDChecker.getInstance().findPlayerNameBasedOnUUID(EphemeralData.getInstance().getPlayersGrantingAccess().get(player.getUniqueId()))));
                 EphemeralData.getInstance().getPlayersGrantingAccess().remove(player.getUniqueId());
             }
             else { // if single chest
                 // grant access to single chest
                 PersistentData.getInstance().getLockedBlock(clickedBlock).addToAccessList(EphemeralData.getInstance().getPlayersGrantingAccess().get(player.getUniqueId()));
-                player.sendMessage(ChatColor.GREEN + "Access granted to " + UUIDChecker.getInstance().findPlayerNameBasedOnUUID(EphemeralData.getInstance().getPlayersGrantingAccess().get(player.getUniqueId())));
+                player.sendMessage(ChatColor.GREEN + String.format(LocaleManager.getInstance().getText("AlertAccessGrantedTo"), UUIDChecker.getInstance().findPlayerNameBasedOnUUID(EphemeralData.getInstance().getPlayersGrantingAccess().get(player.getUniqueId()))));
                 EphemeralData.getInstance().getPlayersGrantingAccess().remove(player.getUniqueId());
             }
 
@@ -1014,7 +1015,7 @@ public class InteractionHandler implements Listener {
                 PersistentData.getInstance().getLockedBlock(clickedBlock).addToAccessList(EphemeralData.getInstance().getPlayersGrantingAccess().get(player.getUniqueId()));
             }
 
-            player.sendMessage(ChatColor.GREEN + "Access granted to " + UUIDChecker.getInstance().findPlayerNameBasedOnUUID(EphemeralData.getInstance().getPlayersGrantingAccess().get(player.getUniqueId())));
+            player.sendMessage(ChatColor.GREEN + String.format(LocaleManager.getInstance().getText("AlertAccessGrantedTo"), UUIDChecker.getInstance().findPlayerNameBasedOnUUID(EphemeralData.getInstance().getPlayersGrantingAccess().get(player.getUniqueId()))));
             EphemeralData.getInstance().getPlayersGrantingAccess().remove(player.getUniqueId());
         }
 
@@ -1022,7 +1023,7 @@ public class InteractionHandler implements Listener {
         if (isGate(clickedBlock) || isBarrel(clickedBlock) || isTrapdoor(clickedBlock) || isFurnace(clickedBlock)) {
             PersistentData.getInstance().getLockedBlock(clickedBlock).addToAccessList(EphemeralData.getInstance().getPlayersGrantingAccess().get(player.getUniqueId()));
 
-            player.sendMessage(ChatColor.GREEN + "Access granted to " + UUIDChecker.getInstance().findPlayerNameBasedOnUUID(EphemeralData.getInstance().getPlayersGrantingAccess().get(player.getUniqueId())));
+            player.sendMessage(ChatColor.GREEN + String.format(LocaleManager.getInstance().getText("AlertAccessGrantedTo"), UUIDChecker.getInstance().findPlayerNameBasedOnUUID(EphemeralData.getInstance().getPlayersGrantingAccess().get(player.getUniqueId()))));
             EphemeralData.getInstance().getPlayersGrantingAccess().remove(player.getUniqueId());
         }
 
@@ -1030,7 +1031,7 @@ public class InteractionHandler implements Listener {
     }
 
     private void handleCheckingAccess(PlayerInteractEvent event, LockedBlock lockedBlock, Player player) {
-        player.sendMessage(ChatColor.AQUA + "The following players have access to this block:");
+        player.sendMessage(ChatColor.AQUA + LocaleManager.getInstance().getText("FollowingPlayersHaveAccess"));
         for (UUID playerUUID : lockedBlock.getAccessList()) {
             player.sendMessage(ChatColor.AQUA + " - " + UUIDChecker.getInstance().findPlayerNameBasedOnUUID(playerUUID));
         }
@@ -1042,7 +1043,7 @@ public class InteractionHandler implements Listener {
 
         // if not owner
         if (PersistentData.getInstance().getLockedBlock(clickedBlock).getOwner() != player.getUniqueId()) {
-            player.sendMessage(ChatColor.RED + "You are not the owner of this block!");
+            player.sendMessage(ChatColor.RED + LocaleManager.getInstance().getText("NotTheOwnerOfThisBlock"));
             return;
         }
 
@@ -1058,13 +1059,13 @@ public class InteractionHandler implements Listener {
                 PersistentData.getInstance().getLockedBlock(leftChest).removeFromAccessList(EphemeralData.getInstance().getPlayersRevokingAccess().get(player.getUniqueId()));
                 PersistentData.getInstance().getLockedBlock(rightChest).removeFromAccessList(EphemeralData.getInstance().getPlayersRevokingAccess().get(player.getUniqueId()));
 
-                player.sendMessage(ChatColor.GREEN + "Access revoked for " + UUIDChecker.getInstance().findPlayerNameBasedOnUUID(EphemeralData.getInstance().getPlayersRevokingAccess().get(player.getUniqueId())));
+                player.sendMessage(ChatColor.GREEN + String.format(LocaleManager.getInstance().getText("AlertAccessRevokedFor"), UUIDChecker.getInstance().findPlayerNameBasedOnUUID(EphemeralData.getInstance().getPlayersRevokingAccess().get(player.getUniqueId()))));
                 EphemeralData.getInstance().getPlayersRevokingAccess().remove(player.getUniqueId());
             }
             else { // if single chest
                 // revoke access to single chest
                 PersistentData.getInstance().getLockedBlock(clickedBlock).removeFromAccessList(EphemeralData.getInstance().getPlayersRevokingAccess().get(player.getUniqueId()));
-                player.sendMessage(ChatColor.GREEN + "Access revoked for " + UUIDChecker.getInstance().findPlayerNameBasedOnUUID(EphemeralData.getInstance().getPlayersRevokingAccess().get(player.getUniqueId())));
+                player.sendMessage(ChatColor.GREEN + String.format(LocaleManager.getInstance().getText("AlertAccessRevokedFor"), UUIDChecker.getInstance().findPlayerNameBasedOnUUID(EphemeralData.getInstance().getPlayersRevokingAccess().get(player.getUniqueId()))));
                 EphemeralData.getInstance().getPlayersRevokingAccess().remove(player.getUniqueId());
             }
 
@@ -1083,7 +1084,7 @@ public class InteractionHandler implements Listener {
                 PersistentData.getInstance().getLockedBlock(clickedBlock).removeFromAccessList(EphemeralData.getInstance().getPlayersRevokingAccess().get(player.getUniqueId()));
             }
 
-            player.sendMessage(ChatColor.GREEN + "Access revoked for " + UUIDChecker.getInstance().findPlayerNameBasedOnUUID(EphemeralData.getInstance().getPlayersRevokingAccess().get(player.getUniqueId())));
+            player.sendMessage(ChatColor.GREEN + String.format(LocaleManager.getInstance().getText("AlertAccessRevokedFor"), UUIDChecker.getInstance().findPlayerNameBasedOnUUID(EphemeralData.getInstance().getPlayersRevokingAccess().get(player.getUniqueId()))));
             EphemeralData.getInstance().getPlayersRevokingAccess().remove(player.getUniqueId());
         }
 
@@ -1091,7 +1092,7 @@ public class InteractionHandler implements Listener {
         if (isGate(clickedBlock) || isBarrel(clickedBlock) || isTrapdoor(clickedBlock) || isFurnace(clickedBlock)) {
             PersistentData.getInstance().getLockedBlock(clickedBlock).removeFromAccessList(EphemeralData.getInstance().getPlayersRevokingAccess().get(player.getUniqueId()));
 
-            player.sendMessage(ChatColor.GREEN + "Access revoked for " + UUIDChecker.getInstance().findPlayerNameBasedOnUUID(EphemeralData.getInstance().getPlayersRevokingAccess().get(player.getUniqueId())));
+            player.sendMessage(ChatColor.GREEN + String.format(LocaleManager.getInstance().getText("AlertAccessRevokedFor"), UUIDChecker.getInstance().findPlayerNameBasedOnUUID(EphemeralData.getInstance().getPlayersRevokingAccess().get(player.getUniqueId()))));
             EphemeralData.getInstance().getPlayersRevokingAccess().remove(player.getUniqueId());
         }
 
