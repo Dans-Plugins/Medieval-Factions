@@ -340,7 +340,7 @@ public class DynmapManager {
                 if(m == null) {
                     m = set.createAreaMarker(polyid, name, false, curworld, x, z, false);
                     if(m == null) {
-                        System.out.println("error adding area marker " + polyid);
+                        System.out.println(String.format(LocaleManager.getInstance().getText("ErrorAddingAreaMarker"), polyid));
                         return;
                     }
                 }

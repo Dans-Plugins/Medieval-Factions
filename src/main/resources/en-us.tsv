@@ -147,7 +147,7 @@ DuelChallengeCancelled	Duel challenge cancelled.
 DuelEndedInTie	%s and %s's duel has ended in a tie.
 DynmapIntegrationSuccessful	Dynmap integration successful!
 ERROR	ERROR:
-ErrorAddingAreaMarker	error adding area marker
+ErrorAddingAreaMarker	Error adding area marker %s
 ErrorChunkRemoval	An error has occurred during claimed chunk removal.
 ErrorCouldNotFindGatesFaction	Error: Could not find faction for gate '%s'.
 ErrorCouldNotLoadFactionGate	ERROR: Could not load faction gate.\n
