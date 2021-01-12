@@ -1,5 +1,6 @@
 package dansplugins.factionsystem.commands;
 
+import dansplugins.factionsystem.LocaleManager;
 import dansplugins.factionsystem.MedievalFactions;
 import dansplugins.factionsystem.UUIDChecker;
 import dansplugins.factionsystem.data.PersistentData;
@@ -30,11 +31,11 @@ public class InviteCommand {
                                     faction.invite(playerUUID);
                                     try {
                                         Player target = Bukkit.getServer().getPlayer(args[1]);
-                                        target.sendMessage(ChatColor.GREEN + "You've been invited to " + faction.getName() + "! Type /mf join " + faction.getName() + " to join.");
+                                        target.sendMessage(ChatColor.GREEN + String.format(LocaleManager.getInstance().getText("AlertBeenInvited"), faction.getName(), faction.getName()));
                                     } catch (Exception ignored) {
 
                                     }
-                                    player.sendMessage(ChatColor.GREEN + "Invitation sent!");
+                                    player.sendMessage(ChatColor.GREEN + LocaleManager.getInstance().getText("InvitationSent"));
 
                                     int seconds = 60 * 60 * 24;
 
@@ -45,7 +46,7 @@ public class InviteCommand {
                                             faction.uninvite(playerUUID);
                                             try {
                                                 Player target = Bukkit.getServer().getPlayer(args[1]);
-                                                target.sendMessage(ChatColor.RED + "Your invitation to " + faction.getName() + " has expired!.");
+                                                target.sendMessage(ChatColor.RED + String.format(LocaleManager.getInstance().getText("InvitationExpired"), faction.getName()));
                                             } catch (Exception ignored) {
                                                 // player offline
                                             }
@@ -55,25 +56,25 @@ public class InviteCommand {
                                     return true;
                                 }
                                 else {
-                                    player.sendMessage(ChatColor.RED + "That player is already in a faction, sorry!");
+                                    player.sendMessage(ChatColor.RED + LocaleManager.getInstance().getText("PlayerAlreadyInFaction"));
                                     return false;
                                 }
 
 
                             }
                             else {
-                                player.sendMessage(ChatColor.RED + "Usage: /mf invite (player-name)");
+                                player.sendMessage(ChatColor.RED + LocaleManager.getInstance().getText("UsageInvite"));
                                 return false;
                             }
                         }
                     }
                 }
                 else {
-                    player.sendMessage(ChatColor.RED + "You need to be in a faction to use this command.");
+                    player.sendMessage(ChatColor.RED + LocaleManager.getInstance().getText("MustBeInFaction"));
                 }
             }
             else {
-                sender.sendMessage(ChatColor.RED + "Sorry! You need the following permission to use this command: 'mf.invite'");
+                sender.sendMessage(ChatColor.RED + LocaleManager.getInstance().getText("PermissionInvite"));
                 return false;
             }
         }

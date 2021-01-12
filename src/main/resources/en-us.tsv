@@ -9,7 +9,7 @@ AlertAlreadyInFaction	You're already in a faction, sorry!
 AlertAlreadyRequestedAlliance	You've already requested an alliance with this faction!
 AlertAlreadyRequestedPeace	You've already requested peace with this faction!
 AlertAttemptedAlliance  %s has attempted to ally with %s!
-AlertBeenInvited	You've been invited to %s! Type /mf join to join.
+AlertBeenInvited	You've been invited to %s! Type /mf join %s to join.
 AlertAllianceHasBeenBroken  %s has broken their alliance your faction!
 AlertChallengeIssued   You have challenged %s to a duel!
 AlertChallengedToDuel	%s has challenged %s to a duel!
@@ -244,7 +244,7 @@ HomeClaimedByAnotherFaction	Home was claimed by another faction, and has been lo
 HomeIsInUnclaimedChunk	Home is in an unclaimed chunk, and is unavailable
 HourlySaveAlert	Medieval Factions is saving. This will happen every hour.
 IntegerSet	Integer set!
-InvitationExpired	Your invitation to has expired!.
+InvitationExpired	Your invitation to %s has expired!.
 InvitationSent	Invitation sent!
 LandAlreadyClaimedBy	This land is already claimed by
 LandAlreadyClaimedByYourFaction	This land is already claimed by your faction!
