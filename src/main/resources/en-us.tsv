@@ -27,6 +27,9 @@ AlertGate	That is the '%s' gate.
 AlertGrantedIndependence    %s has granted your faction independence!
 AlertJoinedFaction	You joined the faction!
 AlertKicked	You have been kicked from your faction by
+AlertCalledToWar1   %s has called your faction into their war with %s!
+AlertCalledToWar2   %s has called %s into their war with your faction!
+AlertCalledToWar3   Your faction has called %s into your war with %s!
 AlertLeftFaction	You left your faction.
 AlertLeftFactionAndItGotDeleted	You left your faction. It was deleted since no one else was a member.
 AlertMoreClaimedChunksThanPower	Your faction has more claimed chunks than power! Your land can be conquered!
@@ -288,7 +291,7 @@ NoLongerBypassingProtections	You are no longer bypassing protections provided by
 NoLongerInFactionChat	You are no longer in faction chat!
 NotAMemberOfAnyFaction	You are not a member of any faction.
 NotAnAlly	%s isn't an ally of yours!
-NotAtWarWith	You aren't at war with
+NotAtWarWith	You aren't at war with %s
 NotAVassalOfAFaction	You aren't a vassal of a faction!
 NotEnoughArgumentsDesignatedSingleQuotesRequired	Not enough arguments designated. Must be designated inside single quotes!
 NotSetVassalContributionPercentageMultiplier	vassalContributionPercentageMultiplier not set! Setting to default!

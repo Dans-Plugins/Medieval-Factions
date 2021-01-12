@@ -1,5 +1,6 @@
 package dansplugins.factionsystem.commands;
 
+import dansplugins.factionsystem.LocaleManager;
 import dansplugins.factionsystem.Messenger;
 import dansplugins.factionsystem.data.PersistentData;
 import dansplugins.factionsystem.objects.Faction;
@@ -22,20 +23,20 @@ public class InvokeCommand {
 
             // faction permission check
             if (!playersFaction.isOwner(player.getUniqueId())) {
-                player.sendMessage(ChatColor.RED + "You must be the owner of your faction to invoke an alliance.");
+                player.sendMessage(ChatColor.RED + LocaleManager.getInstance().getText("AlertMustBeOwnerToInvokeAlliance"));
                 return false;
             }
 
             // args check
             if (args.length < 3) {
-                player.sendMessage(ChatColor.RED + "Usage: /mf invoke '(allied faction name)' '(warring faction)'");
+                player.sendMessage(ChatColor.RED + LocaleManager.getInstance().getText("UsageInvoke"));
                 return false;
             }
 
             ArrayList<String> singleQuoteArgs = ArgumentParser.getInstance().getArgumentsInsideSingleQuotes(args);
 
             if (singleQuoteArgs.size() != 2) {
-                player.sendMessage(ChatColor.RED + "Allied faction and warring faction must be designated inside single quotes!");
+                player.sendMessage(ChatColor.RED + LocaleManager.getInstance().getText("SingleQuotesAlliedWarring"));
                 return false;
             }
 
@@ -44,14 +45,14 @@ public class InvokeCommand {
 
             // if not allied with this faction
             if (!playersFaction.isAlly(nameOfAllyToInvoke)) {
-                player.sendMessage(ChatColor.RED + "" + nameOfAllyToInvoke + " isn't an ally of yours!");
+                player.sendMessage(ChatColor.RED + String.format(LocaleManager.getInstance().getText("NotAnAlly"), nameOfAllyToInvoke));
                 return false;
             }
 
             Faction allyToInvoke = PersistentData.getInstance().getFaction(nameOfAllyToInvoke);
 
             if (allyToInvoke == null) {
-                player.sendMessage(ChatColor.RED + "" + nameOfAllyToInvoke);
+                player.sendMessage(ChatColor.RED + LocaleManager.getInstance().getText("FactionNotFound"));
                 return false;
             }
 
@@ -59,26 +60,26 @@ public class InvokeCommand {
 
             // if not at war with this faction
             if (!playersFaction.isEnemy(nameOfWarringFaction)) {
-                player.sendMessage(ChatColor.RED + "You aren't at war with " + nameOfWarringFaction);
+                player.sendMessage(ChatColor.RED + String.format(LocaleManager.getInstance().getText("NotAtWarWith"), nameOfWarringFaction));
                 return false;
             }
 
             // if warring faction doesn't exist
             if (warringFaction == null) {
-                player.sendMessage(ChatColor.RED + "" + nameOfWarringFaction + " doesn't exist!");
+                player.sendMessage(ChatColor.RED + LocaleManager.getInstance().getText("FactionNotFound"));
                 return false;
             }
 
             allyToInvoke.addEnemy(nameOfWarringFaction);
             warringFaction.addEnemy(nameOfAllyToInvoke);
 
-            Messenger.getInstance().sendAllPlayersInFactionMessage(allyToInvoke, ChatColor.RED + "" + playersFaction.getName() + " has called your faction into their war with " + warringFaction.getName());
-            Messenger.getInstance().sendAllPlayersInFactionMessage(warringFaction, ChatColor.RED + "" + playersFaction.getName() + " has called " + allyToInvoke.getName() + " into their war with your faction!");
-            Messenger.getInstance().sendAllPlayersInFactionMessage(playersFaction, ChatColor.GREEN + "Your faction has called " + allyToInvoke.getName() + " into your war with " + warringFaction.getName());
+            Messenger.getInstance().sendAllPlayersInFactionMessage(allyToInvoke, ChatColor.RED + String.format(LocaleManager.getInstance().getText("AlertCalledToWar1"), playersFaction.getName(), warringFaction.getName()));
+            Messenger.getInstance().sendAllPlayersInFactionMessage(warringFaction, ChatColor.RED + String.format(LocaleManager.getInstance().getText("AlertCalledToWar2"), playersFaction.getName(), allyToInvoke.getName()));
+            Messenger.getInstance().sendAllPlayersInFactionMessage(playersFaction, ChatColor.GREEN + String.format(LocaleManager.getInstance().getText("AlertCalledToWar3"), allyToInvoke.getName(), warringFaction.getName()));
             return true;
 
         } else {
-            player.sendMessage(ChatColor.RED + "Sorry! You need the following permission to use this command: 'mf.invoke'");
+            player.sendMessage(ChatColor.RED + LocaleManager.getInstance().getText("PermissionInvoke"));
             return false;
         }
     }
