@@ -307,8 +307,8 @@ NowSpeakingInFactionChat	You are now speaking in faction chat!
 OnlyPlayersCanUseCommand    Only players can use this command!
 OnlyUseLeversInClaimedTerritory	Error: Can only use levers in claimed territory.
 Owner	Owner:
-OwnershipTransferred	Ownership of has been transferred to you.
-OwnerShipTransferredTo	Ownership transferred to
+OwnershipTransferred	Ownership of %s has been transferred to you.
+OwnerShipTransferredTo	Ownership transferred to %s
 PermissionAddLaw	Sorry! In order to use this command, you need the following permission: 'mf.addlaw'
 PermissionAlly	Sorry! You need the following permission to use this command: 'mf.ally'
 PermissionAutoclaim	Sorry! You need the following permission to use this command: 'mf.autoclaim'
