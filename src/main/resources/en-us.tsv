@@ -391,7 +391,7 @@ PromotedToOfficer	You have been promoted to officer status in your faction!
 RemovedGate	Removed gate '%s'.
 ResettingIndividualPowerRecords	Resetting individual power records.
 RightClickCheckAccess	Right click a locked block to check who has access to it! Type '/mf checkaccess cancel' to cancel!
-RightClickGrantAccess	Right click a chest or door to grant access. Type /mf grantaccess cancel to cancel this.
+RightClickGrantAccess	Right click a chest or door to grant %s access. Type /mf grantaccess cancel to cancel this.
 RightClickLock	Right click a chest or door to lock it! (Type /mf lock cancel to cancel)
 RightClickRevokeAccess	Right click a locked block to revoke this player's access to it! Type '/mf revokeaccess cancel' to cancel!
 RightClickUnlock	Right click a chest or door to unlock it! (Type /mf unlock cancel to cancel)
