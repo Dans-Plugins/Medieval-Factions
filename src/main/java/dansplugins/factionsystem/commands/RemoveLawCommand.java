@@ -1,5 +1,6 @@
 package dansplugins.factionsystem.commands;
 
+import dansplugins.factionsystem.LocaleManager;
 import dansplugins.factionsystem.data.PersistentData;
 import dansplugins.factionsystem.objects.Faction;
 import org.bukkit.ChatColor;
@@ -22,22 +23,22 @@ public class RemoveLawCommand {
                         int lawToRemove = Integer.parseInt(args[1]) - 1;
 
                         if (playersFaction.removeLaw(lawToRemove)) {
-                            player.sendMessage(ChatColor.GREEN + "Law " + (lawToRemove + 1) + " removed!");
+                            player.sendMessage(ChatColor.GREEN + LocaleManager.getInstance().getText("LawRemoved"));
                         }
                     }
                     else {
-                        player.sendMessage(ChatColor.RED + "Usage: /mf removelaw (number)");
+                        player.sendMessage(ChatColor.RED + LocaleManager.getInstance().getText("UsageRemoveLaw"));
                     }
 
                 }
 
             }
             else {
-                player.sendMessage(ChatColor.RED + "You need to be in a faction to use this command!");
+                player.sendMessage(ChatColor.RED + LocaleManager.getInstance().getText("AlertMustBeInFactionToUseCommand"));
             }
         }
         else {
-            sender.sendMessage(ChatColor.RED + "Sorry! In order to use this command, you need the following permission: 'mf.removelaw'");
+            sender.sendMessage(ChatColor.RED + LocaleManager.getInstance().getText("PermissionRemoveLaw"));
         }
 
     }
