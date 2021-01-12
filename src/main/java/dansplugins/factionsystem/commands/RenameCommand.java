@@ -1,5 +1,6 @@
 package dansplugins.factionsystem.commands;
 
+import dansplugins.factionsystem.LocaleManager;
 import dansplugins.factionsystem.StorageManager;
 import dansplugins.factionsystem.data.PersistentData;
 import dansplugins.factionsystem.objects.ClaimedChunk;
@@ -23,7 +24,7 @@ public class RenameCommand {
                     // existence check
                     for (Faction faction : PersistentData.getInstance().getFactions()) {
                         if (faction.getName().equalsIgnoreCase(newName)) {
-                            player.sendMessage(ChatColor.RED + "That name is already taken!");
+                            player.sendMessage(ChatColor.RED + LocaleManager.getInstance().getText("NameAlreadyTaken"));
                             return;
                         }
                     }
@@ -34,7 +35,7 @@ public class RenameCommand {
 
                             // change name
                             playersFaction.setName(newName);
-                            player.sendMessage(ChatColor.GREEN + "Faction name changed!");
+                            player.sendMessage(ChatColor.GREEN + LocaleManager.getInstance().getText("FactionNameChanged"));
 
                             // rename alliance, enemy, liege and vassal records
                             for (Faction faction : PersistentData.getInstance().getFactions()) {
@@ -74,16 +75,16 @@ public class RenameCommand {
 
                         }
                         else {
-                            player.sendMessage(ChatColor.RED + "You are not the owner of this faction!");
+                            player.sendMessage(ChatColor.RED + LocaleManager.getInstance().getText("NotTheOwnerOfThisFaction"));
                         }
                     }
                 }
                 else {
-                    player.sendMessage(ChatColor.RED + "Usage: /mf rename (newName)");
+                    player.sendMessage(ChatColor.RED + LocaleManager.getInstance().getText("UsageRename"));
                 }
             }
             else {
-                player.sendMessage(ChatColor.RED + "Sorry! You need to have the permission 'mf.rename' to use this command.");
+                player.sendMessage(ChatColor.RED + LocaleManager.getInstance().getText("PermissionRename"));
             }
         }
     }
