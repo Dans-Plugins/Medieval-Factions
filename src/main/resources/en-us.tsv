@@ -54,7 +54,7 @@ AlertNotInFaction	You're not in a faction!
 AlertNotInvitedToFaction	You're not invited to this faction!
 AlertNotOfferedVassalizationBy	You haven't been offered vassalization by this faction!
 AlertNowAlliedWith	Your faction is now allied with %s!
-AlertNowAtPeaceWith  is now at peace with
+AlertNowAtPeaceWith %s is now at peace with %s!
 AlertPowerLevelDecreased	Your power level has decreased!
 AlertReachedDemesne	You have reached your demesne limit! Invite more players to increase this.
 AlertUnlocked	Unlocked!
@@ -68,7 +68,7 @@ AlreadyEnteredCheckAccess	You have already entered this command! Type '/mf check
 AlreadyEnteredRevokeAccess	You have already entered this command! Type '/mf revokeaccess cancel' to cancel!
 AlreadyInFaction	Sorry, you're already in a faction. Leave if you want to create a different one.
 AttemptedAlliance	Attempted to ally with %s
-AttemptedPeace	Attempted to make peace with
+AttemptedPeace	Attempted to make peace with %s
 AttemptingToLoadChunks	Attempting to load claimed chunks...
 AttemptingToLoadFactionsData	Attempting to load Factions data...
 AttemptingToLoadFactionsData	Attempting to load factions...
@@ -81,6 +81,7 @@ BlockIsNotLocked	That block isn't locked!
 BlockIsPartOfGateMustRemoveGate	This block is part of gate %s. You must remove the gate first.
 BooleanSet	Boolean set!
 HasBeenKickedFrom   %s has been kicked from %s
+HasAttemptedToMakePeaceWith %s has attempted to make peace with %s!
 Cancelled	Cancelled!
 CancelledGatePlacement	Error linking to lever. Cancelled gate placement.
 CancelledGatePlacement1	Error placing point 1. Cancelled gate placement.

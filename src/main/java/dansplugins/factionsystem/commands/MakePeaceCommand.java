@@ -1,5 +1,6 @@
 package dansplugins.factionsystem.commands;
 
+import dansplugins.factionsystem.LocaleManager;
 import dansplugins.factionsystem.Messenger;
 import dansplugins.factionsystem.data.PersistentData;
 import dansplugins.factionsystem.objects.Faction;
@@ -36,9 +37,9 @@ public class MakePeaceCommand {
                                         if (playersFaction.isEnemy(targetFactionName)) {
 
                                             playersFaction.requestTruce(targetFactionName);
-                                            player.sendMessage(ChatColor.GREEN + "Attempted to make peace with " + targetFactionName);
+                                            player.sendMessage(ChatColor.GREEN + String.format(LocaleManager.getInstance().getText("AttemptedPeace"), targetFactionName));
 
-                                            Messenger.getInstance().sendAllPlayersInFactionMessage(targetFaction,ChatColor.GREEN + "" + playersFaction.getName() + " has attempted to make peace with " + targetFactionName + "!");
+                                            Messenger.getInstance().sendAllPlayersInFactionMessage(targetFaction,ChatColor.GREEN + String.format(LocaleManager.getInstance().getText("HasAttemptedToMakePeaceWith"), playersFaction.getName(), targetFactionName));
 
                                             if (playersFaction.isTruceRequested(targetFactionName) && targetFaction.isTruceRequested(playersFaction.getName())) {
                                                 // remove requests in case war breaks out again and they need to make peace aagain
@@ -48,43 +49,43 @@ public class MakePeaceCommand {
                                                 // make peace between factions
                                                 playersFaction.removeEnemy(targetFactionName);
                                                 PersistentData.getInstance().getFaction(targetFactionName).removeEnemy(playersFaction.getName());
-                                                Messenger.getInstance().sendAllPlayersOnServerMessage(ChatColor.GREEN + playersFaction.getName() + " is now at peace with " + targetFactionName + "!");
+                                                Messenger.getInstance().sendAllPlayersOnServerMessage(ChatColor.GREEN + String.format(LocaleManager.getInstance().getText("AlertNowAtPeaceWith"), playersFaction.getName(), targetFactionName));
                                             }
                                         }
                                         else {
-                                            player.sendMessage(ChatColor.RED + "That faction is not your enemy!");
+                                            player.sendMessage(ChatColor.RED + LocaleManager.getInstance().getText("FactionNotEnemy"));
                                         }
 
                                     }
                                     else {
-                                        player.sendMessage(ChatColor.RED + "You've already requested peace with this faction!");
+                                        player.sendMessage(ChatColor.RED + LocaleManager.getInstance().getText("AlertAlreadyRequestedPeace"));
                                     }
 
                                 }
                                 else {
-                                    player.sendMessage(ChatColor.RED + "That faction wasn't found!");
+                                    player.sendMessage(ChatColor.RED + LocaleManager.getInstance().getText("FactionNotFound"));
                                 }
                             }
                             else {
-                                player.sendMessage(ChatColor.RED + "You can't make peace with your own faction!");
+                                player.sendMessage(ChatColor.RED + LocaleManager.getInstance().getText("CannotMakePeaceWithSelf"));
                             }
 
                         }
                         else {
-                            player.sendMessage(ChatColor.RED + "Usage: /mf makepeace (faction-name)");
+                            player.sendMessage(ChatColor.RED + LocaleManager.getInstance().getText("UsageMakePeace"));
                         }
 
                     }
                     else {
-                        player.sendMessage(ChatColor.RED + "You need to be the owner of a faction or an officer of a faction to use this command.");
+                        player.sendMessage(ChatColor.RED + LocaleManager.getInstance().getText("AlertMustBeOwnerOrOfficerToUseCommand"));
                     }
                 }
                 else {
-                    player.sendMessage(ChatColor.RED + "You need to be in a faction to use this command.");
+                    player.sendMessage(ChatColor.RED + LocaleManager.getInstance().getText("MustBeInFaction"));
                 }
             }
             else {
-                sender.sendMessage(ChatColor.RED + "Sorry! You need the following permission to use this command: 'mf.makepeace'");
+                sender.sendMessage(ChatColor.RED + LocaleManager.getInstance().getText("PermissionMakePeace"));
             }
         }
     }
