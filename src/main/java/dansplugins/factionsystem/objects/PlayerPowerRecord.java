@@ -116,26 +116,6 @@ public class PlayerPowerRecord {
         powerLevel = gson.fromJson(data.get("powerLevel"), Integer.TYPE);
     }
 
-    public void legacyLoad(String filename) {
-        try {
-            File loadFile = new File("./plugins/MedievalFactions/player-power-records/" + filename);
-            Scanner loadReader = new Scanner(loadFile);
-
-            // actual loading
-            if (loadReader.hasNextLine()) {
-                playerUUID = UUIDChecker.getInstance().findUUIDBasedOnPlayerName(loadReader.nextLine());
-            }
-            if (loadReader.hasNextLine()) {
-                powerLevel = Integer.parseInt(loadReader.nextLine());
-            }
-
-            loadReader.close();
-
-        } catch (FileNotFoundException e) {
-            System.out.println("An error occurred loading the file " + filename + ".");
-        }
-    }
-
     /**
      * @return True if powerlevel changed else false
      */

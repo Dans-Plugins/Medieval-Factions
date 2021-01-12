@@ -3,10 +3,7 @@ package dansplugins.factionsystem;
 import dansplugins.factionsystem.utils.Pair;
 
 import java.io.*;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.Scanner;
+import java.util.*;
 
 public class LocaleManager {
 
@@ -109,6 +106,8 @@ public class LocaleManager {
 
         loadFromInputStream(inputStream); // load in any missing keys
 
+        saveToPluginFolder();
+
     }
 
     private void loadFromResource() {
@@ -165,6 +164,9 @@ public class LocaleManager {
     }
 
     private void saveToPluginFolder() {
+
+        sortKeys();
+
         try {
             File folder = new File(languageFolderPath);
 
@@ -186,6 +188,10 @@ public class LocaleManager {
             System.out.println("There was a problem saving the strings.");
             e.printStackTrace();
         }
+    }
+
+    private void sortKeys() {
+        Collections.sort(keys);
     }
 
 }

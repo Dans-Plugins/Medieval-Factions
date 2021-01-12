@@ -16,7 +16,7 @@ public class MedievalFactions extends JavaPlugin {
 
     private static MedievalFactions instance;
 
-    private String version = "v3.7-beta-7";
+    private String version = "v4.0-alpha-1";
 
     public static MedievalFactions getInstance() {
         return instance;
@@ -25,8 +25,6 @@ public class MedievalFactions extends JavaPlugin {
     @Override
     public void onEnable() {
         instance = this;
-
-        ensureSmoothTransitionBetweenVersions();
 
         // config creation/loading
         if (!(new File("./plugins/MedievalFactions/config.yml").exists())) {
@@ -79,23 +77,6 @@ public class MedievalFactions extends JavaPlugin {
 
     public boolean isVersionMismatched() {
         return !getConfig().getString("version").equalsIgnoreCase(getVersion());
-    }
-
-    private void ensureSmoothTransitionBetweenVersions() {
-        // this piece of code is to ensure that saves don't become broken when updating to v3.2 from a previous version
-        File saveFolder = new File("./plugins/medievalfactions/");
-        if (saveFolder.exists()) { // TODO: fix this so that it doesn't run every time
-//            System.out.println("[ALERT] Old save folder name (pre v3.2) detected. Updating for compatibility.");
-
-            // rename directory
-            File newSaveFolder = new File("./plugins/MedievalFactions/");
-            saveFolder.renameTo(newSaveFolder);
-        }
-
-        // this piece of code is to fix config values not matching when updating to v3.3 (after v3.3 there is version mismatch handling)
-        if (!MedievalFactions.getInstance().getConfig().isSet("version")) {
-            ConfigManager.getInstance().handleVersionMismatch();
-        }
     }
 
     // this method is to ensure that when updating to a version with power decay, even players who never log in again will experience power decay
