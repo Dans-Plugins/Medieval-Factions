@@ -75,11 +75,6 @@ AlreadyEnteredRevokeAccess	You have already entered this command! Type '/mf revo
 AlreadyInFaction	Sorry, you're already in a faction. Leave if you want to create a different one.
 AttemptedAlliance	Attempted to ally with %s
 AttemptedPeace	Attempted to make peace with %s
-AttemptingToLoadChunks	Attempting to load claimed chunks...
-AttemptingToLoadFactionsData	Attempting to load Factions data...
-AttemptingToLoadFactionsData	Attempting to load factions...
-AttemptingToLoadLockedBLocks	Attempting to load locked blocks...
-AttemptingToLoadPowerRecords	Attempting to load player power record filenames...
 AtWarWith	At War With:
 AutoclaimToggled	Autoclaim toggled.
 BlockAlreadyLocked	This block is already locked!
@@ -156,12 +151,13 @@ ErrorAddingAreaMarker	error adding area marker
 ErrorChunkRemoval	An error has occurred during claimed chunk removal.
 ErrorCouldNotFindGatesFaction	Error: Could not find faction for gate '%s'.
 ErrorCouldNotLoadFactionGate	ERROR: Could not load faction gate.\n
-ErrorCreatingMarketSet	Error creating marker set!
+ErrorCreatingMarkerSet	Error creating marker set!
 ErrorIntegratingWithDynmap	Error integrating with dynmap:
 ErrorPlayerPowerRecordForUUIDNotFound	ERROR: Player's Power Record for uuid not found. Could not get cumulative power level.
 FactionAlreadyAlly	That faction is already your ally!
 FactionAlreadyExists	Sorry! That faction already exists.
 FactionCreated	Faction created.
+KeysLoaded  Keys loaded:
 FactionCurrentlyEnemyMustMakePeace	That faction is currently your enemy! Make peace before trying to ally with them.
 FactionDataLoadedSuccessfuly	Faction data loaded successfully
 FactionDoesNotExist	Sorry! That faction doesn't exist!
@@ -455,7 +451,7 @@ UsageRevokeAccess	Usage: /mf revokeaccess (player-name)
 UsageSwearFealty	Usage: /mf swearfealty (faction-name)
 UsageTransfer	Usage: /mf transfer (player-name)
 UsageVassalize	Usage: /mf vassalize (faction-name)
-	Usage: /mf who (player-name)
+UsageWho    Usage: /mf who (player-name)
 ValidSubUsageWhoCommandsShowSet	Valid sub-commands: show, set
 VassalsAlert	Vassals:
 VersionAlert	Version:

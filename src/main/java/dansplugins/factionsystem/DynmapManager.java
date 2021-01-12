@@ -83,7 +83,7 @@ public class DynmapManager {
         /* Get dynmap */
         dynmap = pm.getPlugin("dynmap");
         if(dynmap == null) {
-            System.out.println("Cannot find dynmap!");
+            System.out.println(LocaleManager.getInstance().getText("CannotFindDynmap"));
         }
         else {
             try {
@@ -94,15 +94,15 @@ public class DynmapManager {
                 if (set == null) {
                     set = markerAPI.createMarkerSet(getDynmapPluginSetId(), getDynmapPluginLayer(), null, false);
                     if (set == null) {
-                        System.out.println("Error creating marker set!");
+                        System.out.println(LocaleManager.getInstance().getText("ErrorCreatingMarkerSet"));
                         return;
                     }
                 }
                 set.setMarkerSetLabel("Claims");
-                System.out.println("Dynmap integration successful!");
+                System.out.println(LocaleManager.getInstance().getText("DynmapIntegrationSuccessful"));
             }
             catch (Exception e) {
-                System.out.println("Error integrating with dynmap: " + e.getMessage());
+                System.out.println(LocaleManager.getInstance().getText("ErrorIntegratingWithDynmap") + e.getMessage());
             }
         }
     }

@@ -110,13 +110,11 @@ public class StorageManager {
     }
 
     public void load() {
-        System.out.println("Attempting to load Factions data...");
         loadFactions();
         loadClaimedChunks();
         loadPlayerPowerRecords();
         loadPlayerActivityRecords();
-        loadLockedBlocks();
-        System.out.println("Faction data loaded successfully");
+        loadLockedBlocks();;
     }
 
     private void loadFactions() {

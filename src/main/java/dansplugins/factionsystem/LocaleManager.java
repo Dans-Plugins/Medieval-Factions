@@ -41,13 +41,13 @@ public class LocaleManager {
     public void loadStrings() {
         if (isFilePresent(localizationFilePath)) {
             loadFromPluginFolder();
-            System.out.println("Loading from plugin folder!");
+            System.out.println("DEBUG: Loading from plugin folder!");
         }
         else {
             loadFromResource();
-            System.out.println("Loading from resource!");
+            System.out.println("DEBUG: Loading from resource!");
         }
-        System.out.println(keys.size() + " keys were loaded!");
+        System.out.println(getText("KeysLoaded") + keys.size());
     }
 
     public boolean isLanguageIDSupported(String ID) {
@@ -69,7 +69,7 @@ public class LocaleManager {
             }
 
         } catch (Exception e) {
-            System.out.println("Something went wrong loading from the plugin folder.");
+            System.out.println("DEBUG: Something went wrong loading from the plugin folder.");
             e.printStackTrace();
         }
 
@@ -91,7 +91,7 @@ public class LocaleManager {
             reader.close();
 
         } catch (Exception e) {
-            System.out.println("Something went wrong loading from file!");
+            System.out.println("DEBUG: Something went wrong loading from file!");
             e.printStackTrace();
         }
 
@@ -99,15 +99,12 @@ public class LocaleManager {
 
     // this should be called after loading from plugin folder
     private void handleVersionMismatch() {
-        System.out.println("Version mismatch! Ensuring all localization keys are found!");
-
         // get en-us resource as input stream
         InputStream inputStream = MedievalFactions.getInstance().getResource(languageFolderPath + "en-us.tsv");
 
         loadFromInputStream(inputStream); // load in any missing keys
 
         saveToPluginFolder();
-
     }
 
     private void loadFromResource() {
@@ -120,7 +117,7 @@ public class LocaleManager {
             saveToPluginFolder();
 
         } catch (Exception e) {
-            System.out.println("Error loading from resource!");
+            System.out.println("DEBUG: Error loading from resource!");
             e.printStackTrace();
         }
     }
@@ -185,7 +182,7 @@ public class LocaleManager {
             }
 
         } catch (Exception e) {
-            System.out.println("There was a problem saving the strings.");
+            System.out.println("DEBUG: There was a problem saving the strings.");
             e.printStackTrace();
         }
     }

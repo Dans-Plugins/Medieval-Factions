@@ -3,6 +3,7 @@ package dansplugins.factionsystem.objects;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.reflect.TypeToken;
+import dansplugins.factionsystem.LocaleManager;
 import dansplugins.factionsystem.MedievalFactions;
 import dansplugins.factionsystem.UUIDChecker;
 import dansplugins.factionsystem.data.PersistentData;
@@ -181,7 +182,7 @@ public class Faction {
             }
             catch (Exception e)
             {
-                System.out.println("ERROR: Player's Power Record for uuid " + playerUUID + " not found. Could not get cumulative power level.");
+                System.out.println(LocaleManager.getInstance().getText("ErrorPlayerPowerRecordForUUIDNotFound"));
             }
         }
 
@@ -214,7 +215,7 @@ public class Faction {
             }
             catch (Exception e)
             {
-                System.out.println("ERROR: Player's Power Record for uuid " + playerUUID + " not found. Could not get cumulative power level.");
+                System.out.println(LocaleManager.getInstance().getText("ErrorPlayerPowerRecordForUUIDNotFound"));
             }
         }
         return maxPower;
@@ -453,7 +454,7 @@ public class Faction {
         }
         else
         {
-        	System.out.println("Could not load gates because the collection 'factionGates' did not exist in the factions JSON file. Are you upgrading from a previous version? Setting default.");
+        	System.out.println(LocaleManager.getInstance().getText("MissingFactionGatesJSONCollection"));
         }
     }
 
