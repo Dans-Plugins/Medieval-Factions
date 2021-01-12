@@ -2,21 +2,15 @@ package dansplugins.factionsystem.objects;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
-import dansplugins.factionsystem.ChunkManager;
-import dansplugins.factionsystem.MedievalFactions;
-import dansplugins.factionsystem.UUIDChecker;
-import dansplugins.factionsystem.data.PersistentData;
 import org.bukkit.Chunk;
 import org.bukkit.World;
 import org.bukkit.WorldCreator;
-import org.dynmap.DynmapAPI;
-import org.dynmap.markers.MarkerAPI;
-import org.dynmap.markers.MarkerSet;
-import org.dynmap.markers.PlayerSet;
 
 import java.io.File;
 import java.io.FileNotFoundException;
-import java.util.*;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Scanner;
 
 import static org.bukkit.Bukkit.getServer;
 
@@ -91,62 +85,6 @@ public class ClaimedChunk {
         if (chunkWorld != null) {
             chunk = chunkWorld.getChunkAt(gson.fromJson(data.get("X"), Integer.TYPE),
                                             gson.fromJson(data.get("Z"), Integer.TYPE));
-        }
-    }
-
-    public void legacyLoad(String filename) {
-        try {
-            File loadFile = new File("./plugins/MedievalFactions/claimedchunks/" + filename);
-            Scanner loadReader = new Scanner(loadFile);
-
-            int x = 0;
-            int z = 0;
-
-            // actual loading
-            if (loadReader.hasNextLine()) {
-                x = Integer.parseInt(loadReader.nextLine());
-            }
-            if (loadReader.hasNextLine()) {
-                z = Integer.parseInt(loadReader.nextLine());
-            }
-
-            if (loadReader.hasNextLine()) {
-                world = loadReader.nextLine();
-            }
-
-            try {
-//                System.out.println("Attempting to get chunk...");
-
-                World chunksworld;
-
-                chunksworld = getServer().createWorld(new WorldCreator(world));
-
-                if (chunksworld != null) {
-                    chunk = chunksworld.getChunkAt(x, z);
-
-                    if (chunk == null) {
-//                        System.out.println("Chunk is null!");
-                    }
-                }
-                else  {
-//                    System.out.println("World is null!");
-                }
-//                System.out.println("Chunk acquired.");
-            } catch(Exception e) {
-//                System.out.println("Failed.");
-            }
-
-
-            if (loadReader.hasNextLine()) {
-                setHolder(loadReader.nextLine());
-            }
-
-            loadReader.close();
-
-//            System.out.println("Claimed chunk " + x + "" + z + " successfully loaded.");
-
-        } catch (FileNotFoundException e) {
-            System.out.println("An error occurred loading the file " + filename + ".");
         }
     }
 

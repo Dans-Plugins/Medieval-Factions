@@ -1,5 +1,6 @@
 package dansplugins.factionsystem.commands;
 
+import dansplugins.factionsystem.LocaleManager;
 import dansplugins.factionsystem.Messenger;
 import dansplugins.factionsystem.data.PersistentData;
 import dansplugins.factionsystem.objects.Faction;
@@ -39,56 +40,56 @@ public class AllyCommand {
                                             if (!playersFaction.isEnemy(targetFactionName)) {
 
                                                 playersFaction.requestAlly(targetFactionName);
-                                                player.sendMessage(ChatColor.GREEN + "Attempted to ally with " + targetFactionName);
+                                                player.sendMessage(ChatColor.GREEN + String.format(LocaleManager.getInstance().getText("AttemptedAlliance"), targetFactionName));
 
-                                                Messenger.getInstance().sendAllPlayersInFactionMessage(targetFaction,ChatColor.GREEN + "" + playersFaction.getName() + " has attempted to ally with " + targetFactionName + "!");
+                                                Messenger.getInstance().sendAllPlayersInFactionMessage(targetFaction,ChatColor.GREEN + "" + String.format(LocaleManager.getInstance().getText("AlertAttemptedAlliance"), playersFaction.getName(), targetFactionName));
 
                                                 if (playersFaction.isRequestedAlly(targetFactionName) && targetFaction.isRequestedAlly(playersFaction.getName())) {
                                                     // ally factions
                                                     playersFaction.addAlly(targetFactionName);
                                                     PersistentData.getInstance().getFaction(targetFactionName).addAlly(playersFaction.getName());
-                                                    player.sendMessage(ChatColor.GREEN + "Your faction is now allied with " + targetFactionName + "!");
-                                                    Messenger.getInstance().sendAllPlayersInFactionMessage(targetFaction, ChatColor.GREEN + "Your faction is now allied with " + playersFaction.getName() + "!");
+                                                    player.sendMessage(ChatColor.GREEN + LocaleManager.getInstance().getText("AlertNowAlliedWith") + targetFactionName + "!");
+                                                    Messenger.getInstance().sendAllPlayersInFactionMessage(targetFaction, ChatColor.GREEN + String.format(LocaleManager.getInstance().getText("AlertNowAlliedWith"), playersFaction.getName()));
                                                 }
                                             }
                                             else {
-                                                player.sendMessage(ChatColor.RED + "That faction is currently your enemy! Make peace before trying to ally with them.");
+                                                player.sendMessage(ChatColor.RED + LocaleManager.getInstance().getText("FactionCurrentlyEnemyMustMakePeace"));
                                             }
 
                                         }
                                         else {
-                                            player.sendMessage(ChatColor.RED + "You've already requested an alliance with this faction!");
+                                            player.sendMessage(ChatColor.RED + LocaleManager.getInstance().getText("AlertAlreadyRequestedAlliance"));
                                         }
 
                                     }
                                     else {
-                                        player.sendMessage(ChatColor.RED + "That faction is already your ally!");
+                                        player.sendMessage(ChatColor.RED + LocaleManager.getInstance().getText("FactionAlreadyAlly"));
                                     }
                                 }
                                 else {
-                                    player.sendMessage(ChatColor.RED + "That faction wasn't found!");
+                                    player.sendMessage(ChatColor.RED + LocaleManager.getInstance().getText("FactionNotFound"));
                                 }
                             }
                             else {
-                                player.sendMessage(ChatColor.RED + "You can't ally with your own faction?");
+                                player.sendMessage(ChatColor.RED + LocaleManager.getInstance().getText("CannotAllyWithSelf"));
                             }
 
                         }
                         else {
-                            player.sendMessage(ChatColor.RED + "Usage: /mf ally (faction-name)");
+                            player.sendMessage(ChatColor.RED + LocaleManager.getInstance().getText("UsageAlly"));
                         }
 
                     }
                     else {
-                        player.sendMessage(ChatColor.RED + "You need to be the owner of a faction or an officer of a faction to use this command.");
+                        player.sendMessage(ChatColor.RED + LocaleManager.getInstance().getText("AlertMustBeOwnerOrOfficerToUseCommand"));
                     }
                 }
                 else {
-                    player.sendMessage(ChatColor.RED + "You need to be in a faction to use this command.");
+                    player.sendMessage(ChatColor.RED + LocaleManager.getInstance().getText("MustBeInFaction"));
                 }
             }
             else {
-                sender.sendMessage(ChatColor.RED + "Sorry! You need the following permission to use this command: 'mf.ally'");
+                sender.sendMessage(ChatColor.RED + LocaleManager.getInstance().getText("PermissionAlly"));
             }
         }
     }

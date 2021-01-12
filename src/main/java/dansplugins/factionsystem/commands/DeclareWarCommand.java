@@ -1,5 +1,6 @@
 package dansplugins.factionsystem.commands;
 
+import dansplugins.factionsystem.LocaleManager;
 import dansplugins.factionsystem.Messenger;
 import dansplugins.factionsystem.data.PersistentData;
 import dansplugins.factionsystem.objects.Faction;
@@ -20,13 +21,13 @@ public class DeclareWarCommand {
 
                 // faction permission check
                 if (!(declaringPlayersFaction.isOwner(declaringPlayer.getUniqueId()) || declaringPlayersFaction.isOfficer(declaringPlayer.getUniqueId()))) {
-                    declaringPlayer.sendMessage(ChatColor.RED + "You have to own a faction or be an officer of a faction to use this command.");
+                    declaringPlayer.sendMessage(ChatColor.RED + LocaleManager.getInstance().getText("MustOwnFactionOrBeOfficer"));
                     return;
                 }
 
                 // argument check
                 if (args.length < 2) {
-                    declaringPlayer.sendMessage(ChatColor.RED + "Usage: /mf declarewar (faction-name)");
+                    declaringPlayer.sendMessage(ChatColor.RED + LocaleManager.getInstance().getText("UsageDeclareWar"));
                     return;
                 }
 
@@ -36,19 +37,19 @@ public class DeclareWarCommand {
 
                 // disallow declaring war on your own faction
                 if (potentialEnemyFactionName.equalsIgnoreCase(declaringPlayersFaction.getName())) {
-                    declaringPlayer.sendMessage(ChatColor.RED + "You can't declare war on yourself!");
+                    declaringPlayer.sendMessage(ChatColor.RED + LocaleManager.getInstance().getText("CannotDeclareWarOnYourself"));
                     return;
                 }
 
                 // faction existence check
                 if (potentialEnemyFaction == null) {
-                    declaringPlayer.sendMessage(ChatColor.RED + "That faction wasn't found!");
+                    declaringPlayer.sendMessage(ChatColor.RED + LocaleManager.getInstance().getText("FactionNotFound"));
                     return;
                 }
 
                 // already enemy check
                 if (potentialEnemyFaction.isEnemy(declaringPlayersFaction.getName())) {
-                    declaringPlayer.sendMessage(ChatColor.RED + "Your faction is already at war with " + potentialEnemyFactionName);
+                    declaringPlayer.sendMessage(ChatColor.RED + String.format(LocaleManager.getInstance().getText("AlertAlreadyAtWarWith"), potentialEnemyFactionName));
                     return;
                 }
 
@@ -57,7 +58,7 @@ public class DeclareWarCommand {
 
                     // if potential enemy faction is vassal of declarer
                     if (declaringPlayersFaction.isVassal(potentialEnemyFactionName)) {
-                        declaringPlayer.sendMessage(ChatColor.RED + "You can't declare war on your own vassal!");
+                        declaringPlayer.sendMessage(ChatColor.RED + LocaleManager.getInstance().getText("CannotDeclareWarOnVassal"));
                         return;
                     }
 
@@ -69,7 +70,7 @@ public class DeclareWarCommand {
 
                         // if not less than half of max cumulative power level without vassal contribution
                         if (!(liegeOfPotentialEnemy.calculateCumulativePowerLevelWithoutVassalContribution() < (liegeOfPotentialEnemy.getMaximumCumulativePowerLevel() / 2))) {
-                            declaringPlayer.sendMessage(ChatColor.RED + "You can't declare war on this faction as they are a vassal unless their liege, " + liegeOfPotentialEnemy.getName() + " is weakened!");
+                            declaringPlayer.sendMessage(ChatColor.RED + LocaleManager.getInstance().getText("CannotDeclareWarIfLiegeNotWeakened"));
                             return;
                         }
 
@@ -82,13 +83,13 @@ public class DeclareWarCommand {
 
                 // disallow if trying to declare war on liege
                 if (declaringPlayersFaction.isLiege(potentialEnemyFactionName)) {
-                    declaringPlayer.sendMessage(ChatColor.RED + "You can't declare war on your liege! Try '/mf declareindependence' instead!");
+                    declaringPlayer.sendMessage(ChatColor.RED + LocaleManager.getInstance().getText("CannotDeclareWarOnLiege"));
                     return;
                 }
 
                 // check to make sure we're not allied with this faction
                 if (declaringPlayersFaction.isAlly(potentialEnemyFactionName)) {
-                    declaringPlayer.sendMessage(ChatColor.RED + "You can't declare war on your ally!");
+                    declaringPlayer.sendMessage(ChatColor.RED + LocaleManager.getInstance().getText("CannotDeclareWarOnAlly"));
                     return;
                 }
 
@@ -98,11 +99,11 @@ public class DeclareWarCommand {
                 // add declarer's faction to new enemy's enemyList
                 potentialEnemyFaction.addEnemy(declaringPlayersFaction.getName());
 
-                Messenger.getInstance().sendAllPlayersOnServerMessage(ChatColor.RED + declaringPlayersFaction.getName() + " has declared war against " + potentialEnemyFactionName + "!");
+                Messenger.getInstance().sendAllPlayersOnServerMessage(ChatColor.RED + "" + String.format(LocaleManager.getInstance().getText("HasDeclaredWarAgainst"), declaringPlayersFaction.getName(), potentialEnemyFactionName));
 
             }
             else {
-                sender.sendMessage(ChatColor.RED + "Sorry! You need the following permission to use this command: 'mf.declarewar'");
+                sender.sendMessage(ChatColor.RED + LocaleManager.getInstance().getText("PermissionDeclareWar"));
             }
         }
     }

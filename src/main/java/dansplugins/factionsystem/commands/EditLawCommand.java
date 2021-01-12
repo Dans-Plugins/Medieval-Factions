@@ -1,5 +1,6 @@
 package dansplugins.factionsystem.commands;
 
+import dansplugins.factionsystem.LocaleManager;
 import dansplugins.factionsystem.data.PersistentData;
 import dansplugins.factionsystem.objects.Faction;
 import org.bukkit.ChatColor;
@@ -26,22 +27,22 @@ public class EditLawCommand {
                         }
 
                         if (playersFaction.editLaw(lawToEdit, newLaw)) {
-                            player.sendMessage(ChatColor.GREEN + "Law " + (lawToEdit + 1) + " edited!");
+                            player.sendMessage(ChatColor.GREEN + LocaleManager.getInstance().getText("LawEdited"));
                         }
                     }
                     else {
-                        player.sendMessage(ChatColor.RED + "Usage: /mf editlaw (number) (edited law)");
+                        player.sendMessage(ChatColor.RED + LocaleManager.getInstance().getText("UsageEditLaw"));
                     }
 
                 }
 
             }
             else {
-                player.sendMessage(ChatColor.RED + "You need to be in a faction to use this command!");
+                player.sendMessage(ChatColor.RED + LocaleManager.getInstance().getText("AlertMustBeInFactionToUseCommand"));
             }
         }
         else {
-            sender.sendMessage(ChatColor.RED + "Sorry! In order to use this command, you need the following permission: 'mf.editlaw'");
+            sender.sendMessage(ChatColor.RED + LocaleManager.getInstance().getText("PermissionEditLaw"));
         }
     }
 

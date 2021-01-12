@@ -2,6 +2,7 @@ package dansplugins.factionsystem.commands;
 
 import dansplugins.factionsystem.ChunkManager;
 import dansplugins.factionsystem.DynmapManager;
+import dansplugins.factionsystem.LocaleManager;
 import dansplugins.factionsystem.data.PersistentData;
 import dansplugins.factionsystem.objects.Faction;
 import org.bukkit.ChatColor;
@@ -13,27 +14,27 @@ public class ClaimCommand {
     public boolean claim(CommandSender sender, String[] args) {
 
         if (!(sender instanceof Player)) {
-            sender.sendMessage("Only players can use this command!");
+            sender.sendMessage(LocaleManager.getInstance().getText("OnlyPlayersCanUseCommand"));
             return false;
         }
 
         Player player = (Player) sender;
 
         if (!player.hasPermission("mf.claim")) {
-            player.sendMessage(ChatColor.RED + "Sorry! You need the following permission to use this command: 'mf.claim'");
+            player.sendMessage(ChatColor.RED + LocaleManager.getInstance().getText("PermissionClaim"));
             return false;
         }
 
         Faction playersFaction = PersistentData.getInstance().getPlayersFaction(player.getUniqueId());
 
         if (playersFaction == null) {
-            player.sendMessage(ChatColor.RED + "You must be in a faction to use this command.");
+            player.sendMessage(ChatColor.RED + LocaleManager.getInstance().getText("AlertMustBeInFactionToUseCommand"));
             return false;
         }
 
         // if not officer or owner
         if (!(playersFaction.isOwner(player.getUniqueId()) || playersFaction.isOfficer(player.getUniqueId()))) {
-            player.sendMessage(ChatColor.RED + "You must be the owner or an officer of your faction in order to use this command.");
+            player.sendMessage(ChatColor.RED + LocaleManager.getInstance().getText("AlertMustBeOwnerOrOfficerToUseCommand"));
             return false;
         }
 
@@ -45,7 +46,7 @@ public class ClaimCommand {
             try {
                 depth = Integer.parseInt(args[1]);
             } catch(Exception e) {
-                player.sendMessage(ChatColor.RED + "Usage: /mf claim (radius)");
+                player.sendMessage(ChatColor.RED + LocaleManager.getInstance().getText("UsageClaimRadius"));
             }
 
             ChunkManager.getInstance().radiusClaimAtLocation(depth, player, player.getLocation(), playersFaction);

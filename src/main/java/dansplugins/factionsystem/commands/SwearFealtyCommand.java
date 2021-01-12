@@ -1,5 +1,6 @@
 package dansplugins.factionsystem.commands;
 
+import dansplugins.factionsystem.LocaleManager;
 import dansplugins.factionsystem.Messenger;
 import dansplugins.factionsystem.data.PersistentData;
 import dansplugins.factionsystem.objects.Faction;
@@ -38,43 +39,42 @@ public class SwearFealtyCommand {
                                     targetFaction.removeAttemptedVassalization(playersFaction.getName());
 
                                     // inform target faction that they have a new vassal
-                                    Messenger.getInstance().sendAllPlayersInFactionMessage(targetFaction, ChatColor.GREEN + "Your faction has a new vassal: " + playersFaction.getName());
+                                    Messenger.getInstance().sendAllPlayersInFactionMessage(targetFaction, ChatColor.GREEN + String.format(LocaleManager.getInstance().getText("AlertFactionHasNewVassal"), playersFaction.getName()));
 
                                     // set liege
                                     playersFaction.setLiege(targetFactionName);
 
                                     // inform players faction that they have a new liege
-                                    Messenger.getInstance().sendAllPlayersInFactionMessage(playersFaction, ChatColor.GREEN + "Your faction has been vassalized and has a new liege: " + targetFactionName);
+                                    Messenger.getInstance().sendAllPlayersInFactionMessage(playersFaction, ChatColor.GREEN + String.format(LocaleManager.getInstance().getText("AlertFactionHasBeenVassalized"), targetFactionName));
                                 }
                                 else {
                                     // tell player they must be owner
-                                    player.sendMessage(ChatColor.RED + "Sorry, you must be the owner of a faction to use this command!");
+                                    player.sendMessage(ChatColor.RED + LocaleManager.getInstance().getText("AlertMustBeOwnerToUseCommand"));
                                 }
 
                             }
                             else {
                                 // tell player they haven't offered vassalization to their faction
-                                player.sendMessage(ChatColor.RED + "You haven't been offered vassalization by this faction!");
+                                player.sendMessage(ChatColor.RED + LocaleManager.getInstance().getText("AlertNotOfferedVassalizationBy"));
                             }
                         }
                         else {
-                            player.sendMessage(ChatColor.RED + "Sorry! You must be in a faction to use this command!");
+                            player.sendMessage(ChatColor.RED + LocaleManager.getInstance().getText("MustBeInFaction"));
                         }
                     }
                     else {
                         // faction doesn't exist, send message
-                        player.sendMessage(ChatColor.RED + "Sorry! That faction doesn't exist!");
+                        player.sendMessage(ChatColor.RED + LocaleManager.getInstance().getText("FactionNotFound"));
                     }
 
                 }
                 else {
-                    player.sendMessage(ChatColor.RED + "Usage: /mf swearfealty (faction-name)");
+                    player.sendMessage(ChatColor.RED + LocaleManager.getInstance().getText("UsageSwearFealty"));
                 }
 
             }
             else {
-                // send perm message
-                player.sendMessage(ChatColor.RED + "Sorry! In order to use this command, you need the following permission: 'mf.swearfealty'");
+                player.sendMessage(ChatColor.RED + LocaleManager.getInstance().getText("PermissionSwearFealty"));
             }
         }
 

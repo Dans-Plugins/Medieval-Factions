@@ -1,6 +1,7 @@
 package dansplugins.factionsystem.commands;
 
 import dansplugins.factionsystem.ChunkManager;
+import dansplugins.factionsystem.LocaleManager;
 import dansplugins.factionsystem.Messenger;
 import dansplugins.factionsystem.data.PersistentData;
 import dansplugins.factionsystem.objects.Faction;
@@ -23,7 +24,7 @@ public class InfoCommand {
                             return;
                         }
                     }
-                    player.sendMessage(ChatColor.RED + "You're not in a faction!");
+                    player.sendMessage(ChatColor.RED + LocaleManager.getInstance().getText("AlertNotInFaction"));
                 }
                 else {
                     // creating name from arguments 1 to the last one
@@ -37,12 +38,12 @@ public class InfoCommand {
                         }
                     }
                     if (!exists) {
-                        player.sendMessage(ChatColor.RED + "That faction wasn't found!");
+                        player.sendMessage(ChatColor.RED + LocaleManager.getInstance().getText("FactionNotFound"));
                     }
                 }
             }
             else {
-                sender.sendMessage(ChatColor.RED + "Sorry! You need the following permission to use this command: 'mf.info'");
+                sender.sendMessage(ChatColor.RED + LocaleManager.getInstance().getText("PermissionInfo"));
             }
         }
 

@@ -1,5 +1,6 @@
 package dansplugins.factionsystem.commands;
 
+import dansplugins.factionsystem.LocaleManager;
 import dansplugins.factionsystem.data.EphemeralData;
 import dansplugins.factionsystem.data.PersistentData;
 import org.bukkit.ChatColor;
@@ -16,20 +17,20 @@ public class ChatCommand {
                 if (PersistentData.getInstance().isInFaction(player.getUniqueId())) {
                     if (!EphemeralData.getInstance().getPlayersInFactionChat().contains(player.getUniqueId())) {
                         EphemeralData.getInstance().getPlayersInFactionChat().add(player.getUniqueId());
-                        player.sendMessage(ChatColor.GREEN + "You are now speaking in faction chat!");
+                        player.sendMessage(ChatColor.GREEN + LocaleManager.getInstance().getText("NowSpeakingInFactionChat"));
                     }
                     else {
                         EphemeralData.getInstance().getPlayersInFactionChat().remove(player.getUniqueId());
-                        player.sendMessage(ChatColor.GREEN + "You are no longer in faction chat!");
+                        player.sendMessage(ChatColor.GREEN + LocaleManager.getInstance().getText("NoLongerInFactionChat"));
                     }
                 }
                 else {
-                    player.sendMessage(ChatColor.RED + "You must be in a faction to use this command!");
+                    player.sendMessage(ChatColor.RED + LocaleManager.getInstance().getText("AlertMustBeInFactionToUseCommand"));
                 }
 
             }
             else {
-                player.sendMessage(ChatColor.RED + "Sorry! In order to use this command, you need the following permission: 'mf.chat'");
+                player.sendMessage(ChatColor.RED + LocaleManager.getInstance().getText("PermissionChat"));
             }
         }
     }

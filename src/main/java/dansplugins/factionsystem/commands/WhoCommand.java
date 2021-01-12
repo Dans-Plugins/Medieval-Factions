@@ -1,6 +1,7 @@
 package dansplugins.factionsystem.commands;
 
 import dansplugins.factionsystem.ChunkManager;
+import dansplugins.factionsystem.LocaleManager;
 import dansplugins.factionsystem.Messenger;
 import dansplugins.factionsystem.UUIDChecker;
 import dansplugins.factionsystem.data.PersistentData;
@@ -24,16 +25,16 @@ public class WhoCommand {
                         Messenger.getInstance().sendFactionInfo(player, faction, ChunkManager.getInstance().getChunksClaimedByFaction(faction.getName(), PersistentData.getInstance().getClaimedChunks()));
                     }
                     else {
-                        player.sendMessage(ChatColor.RED + "That player isn't in a faction.");
+                        player.sendMessage(ChatColor.RED + LocaleManager.getInstance().getText("PlayerIsNotInAFaction"));
                     }
 
                 }
                 else {
-                    player.sendMessage(ChatColor.RED + "Usage: /mf who (player-name)");
+                    player.sendMessage(ChatColor.RED + LocaleManager.getInstance().getText("UsageWho"));
                 }
             }
             else {
-                sender.sendMessage(ChatColor.RED + "Sorry! You need the following permission to use this command: 'mf.who'");
+                sender.sendMessage(ChatColor.RED + LocaleManager.getInstance().getText("PermissionWho"));
             }
         }
     }

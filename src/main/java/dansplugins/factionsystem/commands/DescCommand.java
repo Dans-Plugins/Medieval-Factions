@@ -1,5 +1,6 @@
 package dansplugins.factionsystem.commands;
 
+import dansplugins.factionsystem.LocaleManager;
 import dansplugins.factionsystem.data.PersistentData;
 import dansplugins.factionsystem.objects.Faction;
 import org.bukkit.ChatColor;
@@ -29,22 +30,22 @@ public class DescCommand {
                             }
 
                             faction.setDescription(newDesc);
-                            player.sendMessage(ChatColor.AQUA + "Description set!");
+                            player.sendMessage(ChatColor.AQUA + LocaleManager.getInstance().getText("DescriptionSet"));
                             return true;
                         }
                         else {
-                            player.sendMessage(ChatColor.RED + "Usage: /mf desc (description)");
+                            player.sendMessage(ChatColor.RED + LocaleManager.getInstance().getText("UsageDesc"));
                             return false;
                         }
                     }
                 }
                 if (!owner) {
-                    player.sendMessage(ChatColor.RED + "You need to be the owner of a faction to use this command.");
+                    player.sendMessage(ChatColor.RED + LocaleManager.getInstance().getText("AlertMustBeOwnerToUseCommand"));
                     return false;
                 }
             }
             else {
-                sender.sendMessage(ChatColor.RED + "Sorry! You need the following permission to use this command: 'mf.desc'");
+                sender.sendMessage(ChatColor.RED + LocaleManager.getInstance().getText("PermissionDesc"));
                 return false;
             }
         }

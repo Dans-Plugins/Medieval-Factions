@@ -124,45 +124,4 @@ public class LockedBlock {
         
     }
 
-    public void legacyLoad(String filename) {
-        try {
-            File loadFile = new File("./plugins/MedievalFactions/lockedblocks/" + filename);
-            Scanner loadReader = new Scanner(loadFile);
-
-
-            // actual loading
-            if (loadReader.hasNextLine()) {
-                x = Integer.parseInt(loadReader.nextLine());
-            }
-            if (loadReader.hasNextLine()) {
-                y = Integer.parseInt(loadReader.nextLine());
-            }
-            if (loadReader.hasNextLine()) {
-                z = Integer.parseInt(loadReader.nextLine());
-            }
-
-            // owner
-            if (loadReader.hasNextLine()) {
-                owner = UUIDChecker.getInstance().findUUIDBasedOnPlayerName(loadReader.nextLine());
-            }
-
-            // faction name
-            if (loadReader.hasNextLine()) {
-                factionName = loadReader.nextLine();
-            }
-
-            // access list
-            while (loadReader.hasNextLine()) {
-                accessList.add(UUIDChecker.getInstance().findUUIDBasedOnPlayerName(loadReader.nextLine()));
-            }
-
-            loadReader.close();
-
-            System.out.println("Locked block " + x + "_" + y + "_" + z + " successfully loaded.");
-
-        } catch (FileNotFoundException e) {
-            System.out.println("An error occurred loading the file " + filename + ".");
-        }
-    }
-
 }

@@ -3,6 +3,7 @@ package dansplugins.factionsystem.objects;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.reflect.TypeToken;
+import dansplugins.factionsystem.LocaleManager;
 import dansplugins.factionsystem.MedievalFactions;
 import dansplugins.factionsystem.UUIDChecker;
 import dansplugins.factionsystem.data.PersistentData;
@@ -181,7 +182,7 @@ public class Faction {
             }
             catch (Exception e)
             {
-                System.out.println("ERROR: Player's Power Record for uuid " + playerUUID + " not found. Could not get cumulative power level.");
+                System.out.println(LocaleManager.getInstance().getText("ErrorPlayerPowerRecordForUUIDNotFound"));
             }
         }
 
@@ -214,7 +215,7 @@ public class Faction {
             }
             catch (Exception e)
             {
-                System.out.println("ERROR: Player's Power Record for uuid " + playerUUID + " not found. Could not get cumulative power level.");
+                System.out.println(LocaleManager.getInstance().getText("ErrorPlayerPowerRecordForUUIDNotFound"));
             }
         }
         return maxPower;
@@ -453,7 +454,7 @@ public class Faction {
         }
         else
         {
-        	System.out.println("Could not load gates because the collection 'factionGates' did not exist in the factions JSON file. Are you upgrading from a previous version? Setting default.");
+        	System.out.println(LocaleManager.getInstance().getText("MissingFactionGatesJSONCollection"));
         }
     }
 
@@ -466,143 +467,6 @@ public class Faction {
             return new Location(world, x, y, z);
         }
         return null;
-    }
-
-    public boolean legacyLoad(String filename) {
-        try {
-            File loadFile = new File("./plugins/MedievalFactions/" + filename);
-            Scanner loadReader = new Scanner(loadFile);
-
-            // actual loading
-            if (loadReader.hasNextLine()) {
-                setName(loadReader.nextLine());
-            }
-            if (loadReader.hasNextLine()) {
-                String playerName = loadReader.nextLine();
-                setOwner(UUIDChecker.getInstance().findUUIDBasedOnPlayerName(playerName));
-            }
-            if (loadReader.hasNextLine()) {
-                setDescription(loadReader.nextLine());
-            }
-
-            if (loadReader.hasNextLine()) {
-                // Read legacy line and move along across Cumulative Power Record.
-                loadReader.nextLine();
-            }
-
-            while (loadReader.hasNextLine()) {
-                String temp = loadReader.nextLine();
-
-                if (temp.equalsIgnoreCase("-")) {
-                    break;
-                }
-                members.add(UUIDChecker.getInstance().findUUIDBasedOnPlayerName(temp));
-            }
-
-            while (loadReader.hasNextLine()) {
-                String temp = loadReader.nextLine();
-
-                if (temp.equalsIgnoreCase("-")) {
-                    break;
-                }
-
-                enemyFactions.add(temp);
-            }
-
-            while (loadReader.hasNextLine()) {
-                String temp = loadReader.nextLine();
-
-                if (temp.equalsIgnoreCase("-")) {
-                    break;
-                }
-
-                allyFactions.add(temp);
-            }
-
-            while (loadReader.hasNextLine()) {
-                String playerName = loadReader.nextLine();
-
-                if (playerName.equalsIgnoreCase("-")) {
-                    break;
-                }
-
-                officers.add(UUIDChecker.getInstance().findUUIDBasedOnPlayerName(playerName));
-            }
-
-            String worldname;
-            worldname = loadReader.nextLine();
-            if (!worldname.equalsIgnoreCase("null")) {
-
-                World world = null;
-                double x = 0;
-                double y = 0;
-                double z = 0;
-
-                try {
-//                    System.out.println("Attempting to load faction home location for " + name + "...");
-
-                    // load faction home details
-                    world = getServer().createWorld(new WorldCreator(worldname));
-//                    System.out.println("World successfully acquired.");
-
-                    if (loadReader.hasNextLine()) {
-//                    System.out.println("Parsing double...");
-                        x = Double.parseDouble(loadReader.nextLine());
-//                    System.out.println("X position successfully acquired.");
-                    }
-                    else {
-//                        System.out.println("X position not found in file!");
-                    }
-                    if (loadReader.hasNextLine()) {//
-//                        System.out.println("Parsing double...");
-                        y = Double.parseDouble(loadReader.nextLine());
-//                    System.out.println("Y position successfully acquired.");
-                    }
-                    else {
-//                        System.out.println("Y position not found in file!");
-                    }
-                    if (loadReader.hasNextLine()) {
-//                        System.out.println("Parsing double...");
-                        z = Double.parseDouble(loadReader.nextLine());
-//                    System.out.println("Z position successfully acquired.");
-                    }
-                    else {
-//                        System.out.println("Z position not found in file!");
-                    }
-
-                    // set location
-                    if (world != null && x != 0 && y != 0 && z != 0) {
-                        factionHome = new Location(world, x, y, z);
-//                        System.out.println("Faction home successfully set to " + x + ", " + y + ", " + z + ".");
-                    }
-                    else {
-//                        System.out.println("One of the variables the faction home location depends on wasn't loaded!");
-                    }
-
-                }
-                catch(Exception e) {
-                    System.out.println("An error occurred loading the faction home position.");
-                }
-            }
-
-            while (loadReader.hasNextLine()) {
-                String temp = loadReader.nextLine();
-
-                if (temp.equalsIgnoreCase("-")) {
-                    break;
-                }
-
-                laws.add(temp);
-            }
-
-            loadReader.close();
-            System.out.println("Faction " + name + " successfully loaded.");
-            return true;
-
-        } catch (FileNotFoundException e) {
-            System.out.println("An error occurred loading the file " + filename + ".");
-            return false;
-        }
     }
 
     @Override

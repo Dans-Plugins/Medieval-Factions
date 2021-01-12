@@ -16,7 +16,7 @@ public class MedievalFactions extends JavaPlugin {
 
     private static MedievalFactions instance;
 
-    private String version = "v3.7-beta-6";
+    private String version = "v4.0-alpha-1";
 
     public static MedievalFactions getInstance() {
         return instance;
@@ -24,11 +24,7 @@ public class MedievalFactions extends JavaPlugin {
 
     @Override
     public void onEnable() {
-        System.out.println("Medieval Factions plugin enabling....");
-
         instance = this;
-
-        ensureSmoothTransitionBetweenVersions();
 
         // config creation/loading
         if (!(new File("./plugins/MedievalFactions/config.yml").exists())) {
@@ -36,12 +32,13 @@ public class MedievalFactions extends JavaPlugin {
         }
         else {
             // pre load compatibility checks
-            if (!getConfig().getString("version").equalsIgnoreCase(getVersion())) {
-                System.out.println("[ALERT] Version mismatch! Adding missing defaults and setting version!");
+            if (isVersionMismatched()) {
                 ConfigManager.getInstance().handleVersionMismatch();
             }
             reloadConfig();
         }
+
+        LocaleManager.getInstance().loadStrings();
 
         Scheduler.getInstance().schedulePowerIncrease();
         Scheduler.getInstance().schedulePowerDecrease();
@@ -52,7 +49,7 @@ public class MedievalFactions extends JavaPlugin {
         StorageManager.getInstance().load();
 
         // post load compatibility checks
-        if (!getConfig().getString("version").equalsIgnoreCase(getVersion())) {
+        if (isVersionMismatched()) {
             createActivityRecordForEveryOfflinePlayer(); // make sure every player experiences power decay in case we updated from pre-v3.5
         }
 
@@ -63,15 +60,11 @@ public class MedievalFactions extends JavaPlugin {
             DynmapManager.scheduleClaimsUpdate(600); // Check once every 30 seconds for updates.
             DynmapManager.updateClaims();
         }
-
-        System.out.println("Medieval Factions plugin enabled.");
     }
 
     @Override
     public void onDisable() {
-        System.out.println("Medieval Factions plugin disabling....");
         StorageManager.getInstance().save();
-        System.out.println("Medieval Factions plugin disabled.");
     }
 
     public boolean onCommand(CommandSender sender, Command cmd, String label, String[] args) {
@@ -82,22 +75,8 @@ public class MedievalFactions extends JavaPlugin {
         return version;
     }
 
-    private void ensureSmoothTransitionBetweenVersions() {
-        // this piece of code is to ensure that saves don't become broken when updating to v3.2 from a previous version
-        File saveFolder = new File("./plugins/medievalfactions/");
-        if (saveFolder.exists()) { // TODO: fix this so that it doesn't run every time
-//            System.out.println("[ALERT] Old save folder name (pre v3.2) detected. Updating for compatibility.");
-
-            // rename directory
-            File newSaveFolder = new File("./plugins/MedievalFactions/");
-            saveFolder.renameTo(newSaveFolder);
-        }
-
-        // this piece of code is to fix config values not matching when updating to v3.3 (after v3.3 there is version mismatch handling)
-        if (!MedievalFactions.getInstance().getConfig().isSet("version")) {
-            System.out.println("Config.yml doesn't have version entry!");
-            ConfigManager.getInstance().handleVersionMismatch();
-        }
+    public boolean isVersionMismatched() {
+        return !getConfig().getString("version").equalsIgnoreCase(getVersion());
     }
 
     // this method is to ensure that when updating to a version with power decay, even players who never log in again will experience power decay

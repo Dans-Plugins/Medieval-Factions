@@ -2,6 +2,7 @@ package dansplugins.factionsystem.commands;
 
 import dansplugins.factionsystem.ChunkManager;
 import dansplugins.factionsystem.DynmapManager;
+import dansplugins.factionsystem.LocaleManager;
 import dansplugins.factionsystem.Messenger;
 import dansplugins.factionsystem.data.EphemeralData;
 import dansplugins.factionsystem.data.PersistentData;
@@ -9,8 +10,6 @@ import dansplugins.factionsystem.objects.Faction;
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
-
-import java.io.File;
 
 public class LeaveCommand {
 
@@ -56,12 +55,12 @@ public class LeaveCommand {
 
                                     PersistentData.getInstance().getFactions().get(i).removeMember(player.getUniqueId(), PersistentData.getInstance().getPlayersPowerRecord(player.getUniqueId()).getPowerLevel());
                                     PersistentData.getInstance().getFactions().remove(i);
-                                    player.sendMessage(ChatColor.AQUA + "You left your faction. It was deleted since no one else was a member.");
+                                    player.sendMessage(ChatColor.AQUA + LocaleManager.getInstance().getText("AlertLeftFactionAndItGotDeleted"));
 
                                     return true;
                                 }
                                 else {
-                                    player.sendMessage(ChatColor.RED + "Sorry! You must transfer ownership or kick everyone in your faction to leave.");
+                                    player.sendMessage(ChatColor.RED + LocaleManager.getInstance().getText("MustTransferOwnership"));
                                     return false;
                                 }
                             }
@@ -77,7 +76,7 @@ public class LeaveCommand {
                                 }
 
                                 PersistentData.getInstance().getFactions().get(i).removeMember(player.getUniqueId(), PersistentData.getInstance().getPlayersPowerRecord(player.getUniqueId()).getPowerLevel());
-                                player.sendMessage(ChatColor.AQUA + "You left your faction.");
+                                player.sendMessage(ChatColor.AQUA + LocaleManager.getInstance().getText("AlertLeftFaction"));
                                 try {
                                     Messenger.getInstance().sendAllPlayersInFactionMessage(PersistentData.getInstance().getFactions().get(i), ChatColor.GREEN + player.getName() + " has left " + PersistentData.getInstance().getFactions().get(i).getName());
                                 } catch (Exception ignored) {
@@ -89,11 +88,11 @@ public class LeaveCommand {
                     }
                 }
                 else {
-                    player.sendMessage(ChatColor.RED + "You need to be in a faction to use this command.");
+                    player.sendMessage(ChatColor.RED + LocaleManager.getInstance().getText("MustBeInFaction"));
                 }
             }
             else {
-                sender.sendMessage(ChatColor.RED + "Sorry! You need the following permission to use this command: 'mf.leave'");
+                sender.sendMessage(ChatColor.RED + LocaleManager.getInstance().getText("PermissionLeave"));
                 return false;
             }
         }

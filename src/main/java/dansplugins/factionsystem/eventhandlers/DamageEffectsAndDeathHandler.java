@@ -1,6 +1,7 @@
 package dansplugins.factionsystem.eventhandlers;
 
 import dansplugins.factionsystem.ChunkManager;
+import dansplugins.factionsystem.LocaleManager;
 import dansplugins.factionsystem.MedievalFactions;
 import dansplugins.factionsystem.data.EphemeralData;
 import dansplugins.factionsystem.data.PersistentData;
@@ -135,14 +136,14 @@ public class DamageEffectsAndDeathHandler implements Listener {
         }
         else if (arePlayersInSameFaction(attacker, victim)) {
             event.setCancelled(true);
-            attacker.sendMessage(ChatColor.RED + "You can't attack another player if you are part of the same faction.");
+            attacker.sendMessage(ChatColor.RED + LocaleManager.getInstance().getText("CannotAttackFactionMember"));
         }
 
         // if attacker's faction and victim's faction are not at war
         else if (arePlayersFactionsNotEnemies(attacker, victim)) {
             if (MedievalFactions.getInstance().getConfig().getBoolean("warsRequiredForPVP")) {
                 event.setCancelled(true);
-                attacker.sendMessage(ChatColor.RED + "You can't attack another player if your factions aren't at war.");
+                attacker.sendMessage(ChatColor.RED + LocaleManager.getInstance().getText("CannotAttackNonWarringPlayer"));
             }
         }
     }
@@ -265,7 +266,7 @@ public class DamageEffectsAndDeathHandler implements Listener {
             if (record.getPlayerUUID().equals(player.getUniqueId())) {
                 record.decreasePowerByTenPercent();
                 if (PersistentData.getInstance().getPlayersPowerRecord(player.getUniqueId()).getPowerLevel() > 0) {
-                    player.sendMessage(ChatColor.RED + "Your power level has decreased!");
+                    player.sendMessage(ChatColor.RED + LocaleManager.getInstance().getText("AlertPowerLevelDecreased"));
                 }
             }
         }
@@ -277,7 +278,7 @@ public class DamageEffectsAndDeathHandler implements Listener {
             PlayerPowerRecord record = PersistentData.getInstance().getPlayersPowerRecord(killer.getUniqueId());
             if (record != null) {
                 if (record.increasePowerByTenPercent()){
-                    killer.sendMessage(ChatColor.GREEN + "Your power level has increased!");
+                    killer.sendMessage(ChatColor.GREEN + LocaleManager.getInstance().getText("PowerLevelHasIncreased"));
                 }
             }
         }

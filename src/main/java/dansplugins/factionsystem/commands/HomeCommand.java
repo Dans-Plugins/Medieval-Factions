@@ -1,6 +1,7 @@
 package dansplugins.factionsystem.commands;
 
 import dansplugins.factionsystem.ChunkManager;
+import dansplugins.factionsystem.LocaleManager;
 import dansplugins.factionsystem.MedievalFactions;
 import dansplugins.factionsystem.data.PersistentData;
 import dansplugins.factionsystem.objects.ClaimedChunk;
@@ -31,17 +32,17 @@ public class HomeCommand {
                             ClaimedChunk claimedHomeChunk = ChunkManager.getInstance().getClaimedChunk(homeChunk.getX(), homeChunk.getZ(), homeChunk.getWorld().getName(), PersistentData.getInstance().getClaimedChunks());
                             if (claimedHomeChunk.getHolder() != null && !playersFaction.getName().equals(claimedHomeChunk.getHolder())) {
                                 // Area is claimed by someone else and cannot be home. Cancel teleport and return;
-                                player.sendMessage(ChatColor.RED + "Home was claimed by another faction, and has been lost.");
+                                player.sendMessage(ChatColor.RED + LocaleManager.getInstance().getText("HomeClaimedByAnotherFaction"));
                                 return;
                             }
                         } else {
                             // Area isn't claimed cannot be home. Cancel teleport and return;
-                            player.sendMessage(ChatColor.RED + "Home is in an unclaimed chunk, and is unavailable");
+                            player.sendMessage(ChatColor.RED + LocaleManager.getInstance().getText("HomeIsInUnclaimedChunk"));
                             return;
                         }
 
 
-                        player.sendMessage(ChatColor.GREEN + "Teleporting in 3 seconds...");
+                        player.sendMessage(ChatColor.GREEN + LocaleManager.getInstance().getText("TeleportingAlert"));
                         int seconds = 3;
 
                         Location initialLocation = player.getLocation();
@@ -58,7 +59,7 @@ public class HomeCommand {
 
                                 }
                                 else {
-                                    player.sendMessage(ChatColor.RED + "Movement Detected. Teleport cancelled.");
+                                    player.sendMessage(ChatColor.RED + LocaleManager.getInstance().getText("MovementDetectedTeleportCancelled"));
                                 }
 
                             }
@@ -66,15 +67,15 @@ public class HomeCommand {
 
                     }
                     else {
-                        player.sendMessage(ChatColor.RED + "The faction home isn't set yet.");
+                        player.sendMessage(ChatColor.RED + LocaleManager.getInstance().getText("FactionHomeNotSetYet"));
                     }
                 }
                 else {
-                    player.sendMessage(ChatColor.RED + "You need to be in a faction to use this command.");
+                    player.sendMessage(ChatColor.RED + LocaleManager.getInstance().getText("MustBeInFaction"));
                 }
             }
             else {
-                sender.sendMessage(ChatColor.RED + "Sorry! You need the following permission to use this command: 'mf.home'");
+                sender.sendMessage(ChatColor.RED + LocaleManager.getInstance().getText("PermissionHome"));
             }
         }
     }

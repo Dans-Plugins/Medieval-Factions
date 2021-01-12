@@ -1,5 +1,6 @@
 package dansplugins.factionsystem.commands;
 
+import dansplugins.factionsystem.LocaleManager;
 import dansplugins.factionsystem.data.EphemeralData;
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
@@ -16,16 +17,16 @@ public class BypassCommand {
 
                 if (!EphemeralData.getInstance().getAdminsBypassingProtections().contains(player.getUniqueId())) {
                     EphemeralData.getInstance().getAdminsBypassingProtections().add(player.getUniqueId());
-                    player.sendMessage(ChatColor.GREEN + "You are now bypassing protections provided by Medieval Factions.");
+                    player.sendMessage(ChatColor.GREEN + LocaleManager.getInstance().getText("NowBypassingProtections"));
                 }
                 else {
                     EphemeralData.getInstance().getAdminsBypassingProtections().remove(player.getUniqueId());
-                    player.sendMessage(ChatColor.GREEN + "You are no longer bypassing protections provided by Medieval Factions.");
+                    player.sendMessage(ChatColor.GREEN + LocaleManager.getInstance().getText("NoLongerBypassingProtections"));
                 }
 
             }
             else {
-                player.sendMessage(ChatColor.RED + "Sorry! In order to use this command, you need the following permission: 'mf.bypass'");
+                player.sendMessage(ChatColor.RED + LocaleManager.getInstance().getText("PermissionBypass"));
             }
         }
 

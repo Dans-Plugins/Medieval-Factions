@@ -1,5 +1,6 @@
 package dansplugins.factionsystem.commands;
 
+import dansplugins.factionsystem.LocaleManager;
 import dansplugins.factionsystem.UUIDChecker;
 import dansplugins.factionsystem.data.PersistentData;
 import dansplugins.factionsystem.objects.Faction;
@@ -27,7 +28,7 @@ public class TransferCommand {
                             if (faction.isMember(playerUUID)) {
 
                                 if (playerUUID.equals(player.getUniqueId())) {
-                                    player.sendMessage(ChatColor.RED + "You can't transfer ownership of your faction to yourself!");
+                                    player.sendMessage(ChatColor.RED + LocaleManager.getInstance().getText("CannotTransferToSelf"));
                                     return false;
                                 }
 
@@ -37,11 +38,11 @@ public class TransferCommand {
 
                                 // set owner
                                 faction.setOwner(playerUUID);
-                                player.sendMessage(ChatColor.AQUA + "Ownership transferred to " + args[1]);
+                                player.sendMessage(ChatColor.AQUA + String.format(LocaleManager.getInstance().getText("OwnerShipTransferredTo"), args[1]));
 
                                 try {
                                     Player target = getServer().getPlayer(args[1]);
-                                    target.sendMessage(ChatColor.GREEN + "Ownership of " + faction.getName() + " has been transferred to you.");
+                                    target.sendMessage(ChatColor.GREEN + String.format(LocaleManager.getInstance().getText("OwnershipTransferred"), faction.getName()));
                                 }
                                 catch(Exception ignored) {
 
@@ -51,23 +52,23 @@ public class TransferCommand {
                                 return true;
                             }
                             else {
-                                player.sendMessage(ChatColor.RED + "That player isn't in your faction!");
+                                player.sendMessage(ChatColor.RED + LocaleManager.getInstance().getText("PlayerIsNotInYourFaction"));
                                 return false;
                             }
                         }
                         else {
-                            player.sendMessage(ChatColor.RED + "Usage: /mf transfer (player-name)");
+                            player.sendMessage(ChatColor.RED + LocaleManager.getInstance().getText("UsageTransfer"));
                             return false;
                         }
                     }
                 }
                 if (!owner) {
-                    player.sendMessage(ChatColor.RED + "You need to be the owner of a faction to use this command.");
+                    player.sendMessage(ChatColor.RED + LocaleManager.getInstance().getText("AlertMustBeOwnerToUseCommand"));
                     return false;
                 }
             }
             else {
-                sender.sendMessage(ChatColor.RED + "Sorry! You need the following permission to use this command: 'mf.transfer'");
+                sender.sendMessage(ChatColor.RED + LocaleManager.getInstance().getText("PermissionTransfer"));
                 return false;
             }
         }

@@ -1,9 +1,6 @@
 package dansplugins.factionsystem.commands;
 
-import dansplugins.factionsystem.MedievalFactions;
-import dansplugins.factionsystem.Messenger;
-import dansplugins.factionsystem.StorageManager;
-import dansplugins.factionsystem.UUIDChecker;
+import dansplugins.factionsystem.*;
 import dansplugins.factionsystem.data.PersistentData;
 import dansplugins.factionsystem.objects.Faction;
 import dansplugins.factionsystem.objects.PlayerPowerRecord;
@@ -50,39 +47,39 @@ public class ForceCommand {
             }
         }
         // show usages
-        sender.sendMessage(ChatColor.RED + "Sub-commands:");
-        sender.sendMessage(ChatColor.RED + "/mf force save");
-        sender.sendMessage(ChatColor.RED + "/mf force load");
-        sender.sendMessage(ChatColor.RED + "/mf force peace 'faction1' 'faction2'");
-        sender.sendMessage(ChatColor.RED + "/mf force demote (player)");
-        sender.sendMessage(ChatColor.RED + "/mf force join 'player' 'faction2'");
-        sender.sendMessage(ChatColor.RED + "/mf force kick (player)");
-        sender.sendMessage(ChatColor.RED + "/mf force power 'player' 'number'");
-        sender.sendMessage(ChatColor.RED + "/mf force renounce (faction)");
+        sender.sendMessage(ChatColor.RED + LocaleManager.getInstance().getText("SubCommands"));
+        sender.sendMessage(ChatColor.RED + LocaleManager.getInstance().getText("HelpForceSave"));
+        sender.sendMessage(ChatColor.RED + LocaleManager.getInstance().getText("HelpForceLoad"));
+        sender.sendMessage(ChatColor.RED + LocaleManager.getInstance().getText("HelpForcePeace"));
+        sender.sendMessage(ChatColor.RED + LocaleManager.getInstance().getText("HelpForceDemote"));
+        sender.sendMessage(ChatColor.RED + LocaleManager.getInstance().getText("HelpForceJoin"));
+        sender.sendMessage(ChatColor.RED + LocaleManager.getInstance().getText("HelpForceKick"));
+        sender.sendMessage(ChatColor.RED + LocaleManager.getInstance().getText("HelpForcePower"));
+        sender.sendMessage(ChatColor.RED + LocaleManager.getInstance().getText("HelpForceRenounce"));
         return false;
     }
 
     private boolean forceSave(CommandSender sender) {
         if (sender.hasPermission("mf.force.save") || sender.hasPermission("mf.force.*") || sender.hasPermission("mf.admin")) {
-            sender.sendMessage(ChatColor.GREEN + "Medieval Factions plugin is saving...");
+            sender.sendMessage(ChatColor.GREEN + LocaleManager.getInstance().getText("AlertForcedSave"));
             StorageManager.getInstance().save();
             return true;
         }
         else {
-            sender.sendMessage(ChatColor.RED + "Sorry! You need the following permission to use this command: 'mf.force.save'");
+            sender.sendMessage(ChatColor.RED + LocaleManager.getInstance().getText("PermissionForceSave"));
             return false;
         }
     }
 
     private boolean forceLoad(CommandSender sender) {
         if (sender.hasPermission("mf.force.load") || sender.hasPermission("mf.force.*")|| sender.hasPermission("mf.admin")) {
-            sender.sendMessage(ChatColor.GREEN + "Medieval Factions plugin is loading...");
+            sender.sendMessage(ChatColor.GREEN + LocaleManager.getInstance().getText("AlertForcedLoad"));
             StorageManager.getInstance().load();
             MedievalFactions.getInstance().reloadConfig();
             return true;
         }
         else {
-            sender.sendMessage(ChatColor.RED + "Sorry! You need the following permission to use this command: 'mf.force.load'");
+            sender.sendMessage(ChatColor.RED + LocaleManager.getInstance().getText("PermissionForceLoad"));
             return false;
         }
     }
@@ -97,7 +94,7 @@ public class ForceCommand {
                 ArrayList<String> singleQuoteArgs = ArgumentParser.getInstance().getArgumentsInsideSingleQuotes(args);
 
                 if (singleQuoteArgs.size() < 2) {
-                    sender.sendMessage(ChatColor.RED + "No factions designated. Must be designated inside single quotes!");
+                    sender.sendMessage(ChatColor.RED + LocaleManager.getInstance().getText("NoFactionsDesignatedSingleQuotesRequired"));
                     return false;
                 }
 
@@ -117,21 +114,21 @@ public class ForceCommand {
                     }
 
                     // announce peace to all players on server.
-                    Messenger.getInstance().sendAllPlayersOnServerMessage(ChatColor.GREEN + faction1.getName() + " is now at peace with " + faction2.getName() + "!");
+                    Messenger.getInstance().sendAllPlayersOnServerMessage(ChatColor.GREEN + faction1.getName() + LocaleManager.getInstance().getText("AlertNowAtPeaceWith") + faction2.getName() + "!");
                     return true;
                 }
                 else {
-                    sender.sendMessage(ChatColor.RED + "One of the factions designated wasn't found!");
+                    sender.sendMessage(ChatColor.RED + LocaleManager.getInstance().getText("DesignatedFactionNotFound"));
                     return false;
                 }
             }
 
             // send usage
-            sender.sendMessage(ChatColor.RED + "Usage: /mf force peace 'faction-1' 'faction-2'");
+            sender.sendMessage(ChatColor.RED + LocaleManager.getInstance().getText("UsageForcePeace"));
             return false;
         }
         else {
-            sender.sendMessage(ChatColor.RED + "Sorry! You need the following permission to use this command: 'mf.force.peace'");
+            sender.sendMessage(ChatColor.RED + LocaleManager.getInstance().getText("PermissionForcePeace"));
             return false;
         }
 
@@ -148,23 +145,23 @@ public class ForceCommand {
                                 faction.removeOfficer(player.getUniqueId());
 
                                 if (player.isOnline()) {
-                                    Bukkit.getPlayer(player.getUniqueId()).sendMessage(ChatColor.AQUA + "You were forcibly demoted from officer status in the faction " + faction.getName() + "!");
+                                    Bukkit.getPlayer(player.getUniqueId()).sendMessage(ChatColor.AQUA + LocaleManager.getInstance().getText("AlertForcedDemotion"));
                                 }
                             }
                         }
                     }
                 }
 
-                sender.sendMessage(ChatColor.GREEN + "Success! If player was considered an officer in any faction, they are no longer.");
+                sender.sendMessage(ChatColor.GREEN + LocaleManager.getInstance().getText("SuccessOfficerRemoval"));
                 return true;
             }
             else {
-                sender.sendMessage(ChatColor.RED + "Usage: /mf force demote (player)");
+                sender.sendMessage(ChatColor.RED + LocaleManager.getInstance().getText("UsageForceDemote"));
                 return false;
             }
         }
         else {
-            sender.sendMessage(ChatColor.RED + "Sorry! You need the following permission to use this command: 'mf.force.demote'");
+            sender.sendMessage(ChatColor.RED + LocaleManager.getInstance().getText("PermissionForceDemote"));
             return false;
         }
     }
@@ -178,7 +175,7 @@ public class ForceCommand {
                 ArrayList<String> singleQuoteArgs = ArgumentParser.getInstance().getArgumentsInsideSingleQuotes(args);
 
                 if (singleQuoteArgs.size() < 2) {
-                    sender.sendMessage(ChatColor.RED + "Not enough arguments designated. Must be designated inside single quotes!");
+                    sender.sendMessage(ChatColor.RED + LocaleManager.getInstance().getText("NotEnoughArgumentsDesignatedSingleQuotesRequired"));
                     return false;
                 }
 
@@ -194,37 +191,37 @@ public class ForceCommand {
                             if (!(PersistentData.getInstance().isInFaction(player.getUniqueId()))) {
                                 faction.addMember(player.getUniqueId(), PersistentData.getInstance().getPlayersPowerRecord(player.getUniqueId()).getPowerLevel());
                                 try {
-                                    Messenger.getInstance().sendAllPlayersInFactionMessage(faction, ChatColor.GREEN + player.getName() + " has joined " + faction.getName());
+                                    Messenger.getInstance().sendAllPlayersInFactionMessage(faction, ChatColor.GREEN + player.getName() + LocaleManager.getInstance().getText("HasJoined") + faction.getName());
                                 } catch (Exception ignored) {
 
                                 }
                                 if (player.isOnline()) {
-                                    Bukkit.getPlayer(player.getUniqueId()).sendMessage(ChatColor.AQUA + "You were forced to join the faction " + faction.getName() + "!");
+                                    Bukkit.getPlayer(player.getUniqueId()).sendMessage(ChatColor.AQUA + LocaleManager.getInstance().getText("AlertForcedToJoinFaction"));
                                 }
-                                sender.sendMessage(ChatColor.GREEN + "Success! Player was forced to join faction.");
+                                sender.sendMessage(ChatColor.GREEN + LocaleManager.getInstance().getText("SuccessForceJoin"));
                                 return true;
                             }
                             else {
-                                sender.sendMessage(ChatColor.RED + "That player is already in a faction, sorry!");
+                                sender.sendMessage(ChatColor.RED + LocaleManager.getInstance().getText("PlayerAlreadyInFaction"));
                                 return false;
                             }
                         }
                         else {
-                            sender.sendMessage(ChatColor.RED + "That faction wasn't found!");
+                            sender.sendMessage(ChatColor.RED + LocaleManager.getInstance().getText("FactionNotFound"));
                             return false;
                         }
                     }
                 }
-                sender.sendMessage(ChatColor.RED + "Player not found!");
+                sender.sendMessage(ChatColor.RED + LocaleManager.getInstance().getText("PlayerNotFound"));
                 return false;
             }
 
             // send usage
-            sender.sendMessage(ChatColor.RED + "Usage: /mf force join 'player' 'faction'");
+            sender.sendMessage(ChatColor.RED + LocaleManager.getInstance().getText("UsageForceJoin"));
             return false;
         }
         else {
-            sender.sendMessage(ChatColor.RED + "Sorry! You need the following permission to use this command: 'mf.force.join'");
+            sender.sendMessage(ChatColor.RED + LocaleManager.getInstance().getText("PermissionForceJoin"));
             return false;
         }
     }
@@ -237,7 +234,7 @@ public class ForceCommand {
                     if (player.getName().equalsIgnoreCase(playerName)) {
                         for (Faction faction : PersistentData.getInstance().getFactions()) {
                             if (faction.isOwner(player.getUniqueId())) {
-                                sender.sendMessage(ChatColor.RED + "Cannot forcibly kick an owner from their faction! Try disbanding the faction!");
+                                sender.sendMessage(ChatColor.RED + LocaleManager.getInstance().getText("CannotForciblyKickOwner"));
                                 return false;
                             }
 
@@ -245,7 +242,7 @@ public class ForceCommand {
                                 faction.removeMember(player.getUniqueId(), PersistentData.getInstance().getPlayersPowerRecord(player.getUniqueId()).getPowerLevel());
 
                                 if (player.isOnline()) {
-                                    Bukkit.getPlayer(player.getUniqueId()).sendMessage(ChatColor.AQUA + "You were forcibly kicked from the faction " + faction.getName() + "!");
+                                    Bukkit.getPlayer(player.getUniqueId()).sendMessage(ChatColor.AQUA + LocaleManager.getInstance().getText("AlertForcedKick"));
                                 }
 
                                 if (faction.isOfficer(player.getUniqueId())) {
@@ -256,16 +253,16 @@ public class ForceCommand {
                     }
                 }
 
-                sender.sendMessage(ChatColor.GREEN + "Success! If the player was in a faction, they are no longer a member.");
+                sender.sendMessage(ChatColor.GREEN + LocaleManager.getInstance().getText("SuccessFactionMemberRemoval"));
                 return true;
             }
             else {
-                sender.sendMessage(ChatColor.RED + "Usage: /mf force kick (player)");
+                sender.sendMessage(ChatColor.RED + LocaleManager.getInstance().getText("UsageForceKick"));
                 return false;
             }
         }
         else {
-            sender.sendMessage(ChatColor.RED + "Sorry! You need the following permission to use this command: 'mf.force.kick'");
+            sender.sendMessage(ChatColor.RED + LocaleManager.getInstance().getText("PermissionForceKick"));
             return false;
         }
     }
@@ -279,7 +276,7 @@ public class ForceCommand {
                 ArrayList<String> singleQuoteArgs = ArgumentParser.getInstance().getArgumentsInsideSingleQuotes(args);
 
                 if (singleQuoteArgs.size() < 2) {
-                    sender.sendMessage(ChatColor.RED + "Player and desired power must be designated inside single quotes!");
+                    sender.sendMessage(ChatColor.RED + LocaleManager.getInstance().getText("PlayerAndDesiredPowerSingleQuotesRequirement"));
                     return false;
                 }
 
@@ -289,22 +286,22 @@ public class ForceCommand {
                 try {
                     desiredPower = Integer.parseInt(singleQuoteArgs.get(1));
                 } catch (Exception e) {
-                    sender.sendMessage(ChatColor.RED + "Desired power must be a number!");
+                    sender.sendMessage(ChatColor.RED + LocaleManager.getInstance().getText("DesiredPowerMustBeANumber"));
                     return false;
                 }
 
                 PlayerPowerRecord record = PersistentData.getInstance().getPlayersPowerRecord(UUIDChecker.getInstance().findUUIDBasedOnPlayerName(player));
 
                 record.setPowerLevel(desiredPower);
-                sender.sendMessage(ChatColor.GREEN + "The power level of '" + player + "' has been set to " + desiredPower);
+                sender.sendMessage(ChatColor.GREEN + LocaleManager.getInstance().getText("PowerLevelHasBeenSetTo") + desiredPower);
                 return true;
             }
 
             // send usage
-            sender.sendMessage(ChatColor.RED + "Usage: /mf force power 'player' 'number'");
+            sender.sendMessage(ChatColor.RED + LocaleManager.getInstance().getText("UsageForcePower"));
             return false;
         } else {
-            sender.sendMessage(ChatColor.RED + "Sorry! You need the following permission to use this command: 'mf.force.power'");
+            sender.sendMessage(ChatColor.RED + LocaleManager.getInstance().getText("PermissionForcePower"));
             return false;
         }
     }
@@ -314,7 +311,7 @@ public class ForceCommand {
         if (sender.hasPermission("mf.force.renounce") || sender.hasPermission("mf.force.*") || sender.hasPermission("mf.admin")) {
 
             if (args.length < 2) {
-                sender.sendMessage(ChatColor.RED + "Usage: /mf force renounce 'faction'");
+                sender.sendMessage(ChatColor.RED + LocaleManager.getInstance().getText("UsageForceRenounce"));
                 return false;
             }
 
@@ -322,7 +319,7 @@ public class ForceCommand {
 
             // single quote args length check
             if (singleQuoteArgs.size() != 1) {
-                sender.sendMessage(ChatColor.RED + "Faction must be designated inside single quotes!");
+                sender.sendMessage(ChatColor.RED + LocaleManager.getInstance().getText("FactionMustBeDesignatedInsideSingleQuotes"));
                 return false;
             }
 
@@ -357,18 +354,18 @@ public class ForceCommand {
             }
 
             if (numReferences != 0) {
-                sender.sendMessage(ChatColor.GREEN + "Success! " + numReferences + " references removed!");
+                sender.sendMessage(ChatColor.GREEN + "" + numReferences + LocaleManager.getInstance().getText("SuccessReferencesRemoved"));
                 return true;
             }
             else {
-                sender.sendMessage(ChatColor.GREEN + "There were no vassal or liege references associated with " + factionName);
+                sender.sendMessage(ChatColor.GREEN + LocaleManager.getInstance().getText("NoVassalOrLiegeReferences"));
                 return false;
             }
 
 
         }
         else {
-            sender.sendMessage(ChatColor.RED + "Sorry! You need the following permission to use this command: 'mf.force.renounce'");
+            sender.sendMessage(ChatColor.RED + LocaleManager.getInstance().getText("PermissionForceRenounce"));
             return false;
         }
 

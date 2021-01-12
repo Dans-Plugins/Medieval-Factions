@@ -1,6 +1,7 @@
 package dansplugins.factionsystem.eventhandlers;
 
 import dansplugins.factionsystem.ChunkManager;
+import dansplugins.factionsystem.LocaleManager;
 import dansplugins.factionsystem.MedievalFactions;
 import dansplugins.factionsystem.data.EphemeralData;
 import dansplugins.factionsystem.data.PersistentData;
@@ -46,12 +47,12 @@ public class JoiningLeavingAndSpawningHandler implements Listener {
         		{
         			if (record.getMinutesSinceLastLogout() > 1)
         			{
-        				event.getPlayer().sendMessage(ChatColor.GREEN + "Welcome back " + event.getPlayer().getName() + "! You last logged out " + record.getTimeSinceLastLogout() + " ago.");
+        				event.getPlayer().sendMessage(ChatColor.GREEN + String.format(LocaleManager.getInstance().getText("WelcomeBackLastLogout"), event.getPlayer().getName(), record.getTimeSinceLastLogout()));
         			}
         		}
         		if (record.getPowerLost() > 0)
         		{
-        			event.getPlayer().sendMessage(ChatColor.RED + "Your power has decayed by " + record.getPowerLost() + " since you last logged out. Your power is now " + newPower + ".");
+        			event.getPlayer().sendMessage(ChatColor.RED + String.format("Your power has decayed by %d since you last logged out. Your power is now %d.", record.getPowerLost(), newPower));
         		}
         		record.setPowerLost(0);
         	}
