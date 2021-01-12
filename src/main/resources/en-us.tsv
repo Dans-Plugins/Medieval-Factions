@@ -16,7 +16,7 @@ AlertChallengedToDuel	%s has challenged %s to a duel!
 AlertChallengedToDuelPlusHowTo	 %s has challenged you to a duel! Type /mf duel accept to begin.
 AlertChallengeWasAccepted	%s has accepted your challenge, the duel has begun!
 AlertChangedGateName	Changed gate name to '%s'.
-AlertCurrentPowerLevel	Your current power level is
+AlertCurrentPowerLevel	Your current power level is %d/%d.
 AlertDemotion	You have been demoted to member status in your faction.
 AlertForcedSave Medieval Factions has been forced to save.
 AlertForcedLoad Medieval Factions has been forced to load.
@@ -131,7 +131,7 @@ CreatingGateClickWithHoe	Creating gate. Click on a block with a Golden Hoe to se
 CuboidDisallowed1	Error placing point 1: You cannot place a cuboid.
 CuboidDisallowed2	Error placing point 2: You cannot place a cuboid.
 CurrentlyNoFactions	There are currently no factions.
-CurrentPowerLevel	s current power level is
+CurrentPowerLevel	%s's current power level is %d/%d.
 Defeated	%s has defeated %s in a duel!
 DemesneSize	Demesne Size:
 Description	Description:

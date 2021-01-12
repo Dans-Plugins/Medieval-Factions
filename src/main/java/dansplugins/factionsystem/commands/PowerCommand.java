@@ -1,5 +1,6 @@
 package dansplugins.factionsystem.commands;
 
+import dansplugins.factionsystem.LocaleManager;
 import dansplugins.factionsystem.UUIDChecker;
 import dansplugins.factionsystem.data.PersistentData;
 import dansplugins.factionsystem.objects.PlayerPowerRecord;
@@ -22,24 +23,24 @@ public class PowerCommand {
             		if (playerUUID != null)
             		{
 	            		PlayerPowerRecord record = PersistentData.getInstance().getPlayersPowerRecord(playerUUID);
-	                    player.sendMessage(ChatColor.AQUA + args[1] + "'s current power level is " + record.getPowerLevel() + "/" + record.maxPower() + ".");
+	                    player.sendMessage(ChatColor.AQUA + String.format(LocaleManager.getInstance().getText("CurrentPowerLevel"), args[1], record.getPowerLevel(),record.maxPower()));
 	                    return true;
             		}
             		else
             		{
-            			sender.sendMessage(ChatColor.RED + "Sorry! Player by the name of '" + args[1] + "' could not be found.");
+            			sender.sendMessage(ChatColor.RED + String.format(LocaleManager.getInstance().getText("PlayerByNameNotFound"), args[1]));
             			return false;
             		}
             	}
             	else
             	{
                     PlayerPowerRecord record = PersistentData.getInstance().getPlayersPowerRecord(player.getUniqueId());
-                    player.sendMessage(ChatColor.AQUA + "Your current power level is " + record.getPowerLevel() + "/" + record.maxPower() + ".");
+                    player.sendMessage(ChatColor.AQUA + String.format(LocaleManager.getInstance().getText("AlertCurrentPowerLevel"), record.getPowerLevel(), record.maxPower()));
                     return true;
             	}
             }
             else {
-                sender.sendMessage(ChatColor.RED + "Sorry! You need the following permission to use this command: 'mf.power'");
+                sender.sendMessage(ChatColor.RED + LocaleManager.getInstance().getText("PermissionPower"));
             }
         }
         return false;
