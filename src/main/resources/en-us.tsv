@@ -66,7 +66,7 @@ AlertReachedDemesne	You have reached your demesne limit! Invite more players to 
 AlertUnlocked	Unlocked!
 AlertUnlockingCancelled	Unlocking cancelled!
 AllianceBrokenWith	Alliance has been broken with %s!
-AlliedWith	Allied With:
+AlliedWith	Allied With: %s
 AllLandUnclaimed	All land unclaimed.
 AllLandUnclaimedFrom	All land unclaimed from %s!
 PlayerAlreadyDueling	%s is already duelling someone!
@@ -75,7 +75,7 @@ AlreadyEnteredRevokeAccess	You have already entered this command! Type '/mf revo
 AlreadyInFaction	Sorry, you're already in a faction. Leave if you want to create a different one.
 AttemptedAlliance	Attempted to ally with %s
 AttemptedPeace	Attempted to make peace with %s
-AtWarWith	At War With:
+AtWarWith	At War With: %s
 AutoclaimToggled	Autoclaim toggled.
 BlockAlreadyLocked	This block is already locked!
 BlockIsNotLocked	That block isn't locked!
@@ -134,8 +134,8 @@ CuboidDisallowed2	Error placing point 2: You cannot place a cuboid.
 CurrentlyNoFactions	There are currently no factions.
 CurrentPowerLevel	%s's current power level is %d/%d.
 Defeated	%s has defeated %s in a duel!
-DemesneSize	Demesne Size:
-Description	Description:
+DemesneSize	Demesne Size: %d/%d
+Description	Description: %s
 DescriptionSet	Description set!
 DesignatedFactionNotFound	One of the factions designated wasn't found!
 DesiredPowerMustBeANumber	Desired power must be a number!
@@ -166,7 +166,7 @@ FactionGates	Faction Gates
 FactionHomeLoadError	An error occurred loading the faction home position.
 FactionHomeNotSetYet	The faction home isn't set yet.
 FactionHomeSet	Faction home set!
-FactionInfo	Faction Info
+FactionInfo	%s Faction Info
 FactionIsNotVassal	That faction isn't a vassal of yours!
 FactionMustBeDesignatedInsideSingleQuotes	Faction must be designated inside single quotes!
 FactionNameChanged	Faction name changed!
@@ -266,7 +266,7 @@ LawEdited	Law edited!
 LawRemoved	Law removed!
 LawsTitle	 == Laws of %s ==
 LeverSuccessfullyLinked	Creating Gate 4/4: Lever successfully linked.
-Liege	Liege:
+Liege	Liege: %s
 ListLegend	P: power, M: members, L: land
 LoadingClaimedChunks	Loading claimed chunks...
 LoadingLockedBLocks	Loading locked blocks...
@@ -287,7 +287,7 @@ MustBeInFaction	Sorry, you must be in a faction to use this command.
 MustBeOwner	Sorry, you must be the owner of a faction to use this command.
 MustOwnFactionOrBeOfficer	You have to own a faction or be an officer of a faction to use this command.
 MustTransferOwnership	Sorry! You must transfer ownership or kick everyone in your faction to leave.
-Name	Name:
+Name	Name: %s
 NameAlreadyTaken	That name is already taken!
 NoBlockDetectedToCheckForGate	No block detected to check for gate.
 NoFactionsDesignatedSingleQuotesRequired	No factions designated. Must be designated inside single quotes!
@@ -306,7 +306,7 @@ NowBypassingProtections	You are now bypassing protections provided by Medieval F
 NowSpeakingInFactionChat	You are now speaking in faction chat!
 OnlyPlayersCanUseCommand	Only players can use this command!
 OnlyUseLeversInClaimedTerritory	Error: Can only use levers in claimed territory.
-Owner	Owner:
+Owner	Owner: %s
 OwnershipTransferred	Ownership of %s has been transferred to you.
 OwnerShipTransferredTo	Ownership transferred to %s
 PermissionAddLaw	Sorry! In order to use this command, you need the following permission: 'mf.addlaw'
@@ -386,10 +386,10 @@ PluginLoading	Medieval Factions plugin is loading...
 PluginSaving	Medieval Factions plugin is saving...
 Point1PlacementSuccessful	Creating Gate 1/4: Point 1 placed successfully.
 Point2PlacedSuccessfully	Creating Gate 2/4: Point 2 placed successfully.
-Population	Population:
+Population	Population: %d
 PowerDecreasesNotSet	powerDecreases is not set! Setting to default
 PowerHasDecayed	Your power has decayed by %d since you last logged out. Your power is now %d.
-PowerLevel	Power Level:
+PowerLevel	Power Level: %s
 PowerLevelHasBeenSetTo	The power level of that player has been set to
 HasJoined	%s has joined %s
 PowerLevelHasIncreased	Your power level has increased!
@@ -453,7 +453,7 @@ UsageTransfer	Usage: /mf transfer (player-name)
 UsageVassalize	Usage: /mf vassalize (faction-name)
 UsageWho	Usage: /mf who (player-name)
 ValidSubUsageWhoCommandsShowSet	Valid sub-commands: show, set
-VassalsAlert	Vassals:
+Vassals	Vassals: %s
 VersionAlert	Version:
 VersionNotSet	Version not set! Setting version to
 VersionSetButMismatched	Version set but mismatched! Setting version to

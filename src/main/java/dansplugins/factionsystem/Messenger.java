@@ -26,21 +26,21 @@ public class Messenger {
     }
 
     public void sendFactionInfo(Player player, Faction faction, int power) {
-        player.sendMessage(ChatColor.BOLD + "" + ChatColor.AQUA + faction.getName() + " Faction Info" + "\n----------\n");
-        player.sendMessage(ChatColor.AQUA + "Name: " + faction.getName() + "\n");
-        player.sendMessage(ChatColor.AQUA + "Owner: " + UUIDChecker.getInstance().findPlayerNameBasedOnUUID(faction.getOwner()) + "\n");
-        player.sendMessage(ChatColor.AQUA + "Description: " + faction.getDescription() + "\n");
-        player.sendMessage(ChatColor.AQUA + "Population: " + faction.getMemberList().size() + "\n");
+        player.sendMessage(ChatColor.BOLD + "" + ChatColor.AQUA + faction.getName() + String.format(LocaleManager.getInstance().getText("FactionInfo"), faction.getName()) + "\n----------\n");
+        player.sendMessage(ChatColor.AQUA + String.format(LocaleManager.getInstance().getText("Name"), faction.getName()) + "\n");
+        player.sendMessage(ChatColor.AQUA + String.format(LocaleManager.getInstance().getText("Owner"), UUIDChecker.getInstance().findPlayerNameBasedOnUUID(faction.getOwner())) + "\n");
+        player.sendMessage(ChatColor.AQUA + String.format(LocaleManager.getInstance().getText("Description"), faction.getDescription()) + "\n");
+        player.sendMessage(ChatColor.AQUA + String.format(LocaleManager.getInstance().getText("Population"), faction.getMemberList().size()) + "\n");
         if (faction.hasLiege()) {
-            player.sendMessage(ChatColor.AQUA + "Liege: " + faction.getLiege() + "\n");
+            player.sendMessage(ChatColor.AQUA + String.format(LocaleManager.getInstance().getText("Liege"), faction.getLiege()) + "\n");
         }
         if (faction.isLiege()) {
-            player.sendMessage(ChatColor.AQUA + "Vassals: " + faction.getVassalsSeparatedByCommas() + "\n");
+            player.sendMessage(ChatColor.AQUA + String.format(LocaleManager.getInstance().getText("Vassals"), faction.getVassalsSeparatedByCommas()) + "\n");
         }
-        player.sendMessage(ChatColor.AQUA + "Allied With: " + faction.getAlliesSeparatedByCommas() + "\n");
-        player.sendMessage(ChatColor.AQUA + "At War With: " + faction.getEnemiesSeparatedByCommas() + "\n");
-        player.sendMessage(ChatColor.AQUA + "Power Level: " + faction.getCumulativePowerLevel() + "\n");
-        player.sendMessage(ChatColor.AQUA + "Demesne Size: " + power + "/" + faction.getCumulativePowerLevel() + "\n");
+        player.sendMessage(ChatColor.AQUA + String.format(LocaleManager.getInstance().getText("AlliedWith"), faction.getAlliesSeparatedByCommas()) + "\n");
+        player.sendMessage(ChatColor.AQUA + String.format(LocaleManager.getInstance().getText("AtWarWith"), faction.getEnemiesSeparatedByCommas()) + "\n");
+        player.sendMessage(ChatColor.AQUA + String.format(LocaleManager.getInstance().getText("PowerLevel"), faction.getCumulativePowerLevel()) + "\n");
+        player.sendMessage(ChatColor.AQUA + String.format(LocaleManager.getInstance().getText("DemesneSize"), power, faction.getCumulativePowerLevel()) + "\n");
         player.sendMessage(ChatColor.AQUA + "----------\n");
     }
 
