@@ -1,6 +1,7 @@
 package dansplugins.factionsystem.commands;
 
 import dansplugins.factionsystem.ChunkManager;
+import dansplugins.factionsystem.LocaleManager;
 import dansplugins.factionsystem.data.PersistentData;
 import dansplugins.factionsystem.objects.ClaimedChunk;
 import dansplugins.factionsystem.objects.Faction;
@@ -23,27 +24,27 @@ public class SetHomeCommand {
                             ClaimedChunk chunk = ChunkManager.getInstance().getClaimedChunk(player.getLocation().getChunk().getX(), player.getLocation().getChunk().getZ(), player.getWorld().getName(), PersistentData.getInstance().getClaimedChunks());
                             if (chunk.getHolder().equalsIgnoreCase(playersFaction.getName())) {
                                 playersFaction.setFactionHome(player.getLocation());
-                                player.sendMessage(ChatColor.GREEN + "Faction home set!");
+                                player.sendMessage(ChatColor.GREEN + LocaleManager.getInstance().getText("FactionHomeSet"));
                             }
                             else {
-                                player.sendMessage(ChatColor.RED + "You can't set your faction home on land your faction hasn't claimed!");
+                                player.sendMessage(ChatColor.RED + LocaleManager.getInstance().getText("CannotSetFactionHomeInWilderness"));
                             }
                         }
                         else {
-                            player.sendMessage(ChatColor.RED + "This land isn't claimed!");
+                            player.sendMessage(ChatColor.RED + LocaleManager.getInstance().getText("LandIsNotClaimed"));
                         }
 
                     }
                     else {
-                        player.sendMessage(ChatColor.RED + "You need to be the owner of your faction or an officer of your faction to use this command.");
+                        player.sendMessage(ChatColor.RED + LocaleManager.getInstance().getText("AlertMustBeOwnerOrOfficerToUseCommand"));
                     }
                 }
                 else {
-                    player.sendMessage(ChatColor.RED + "You need to be in a faction to use this command.");
+                    player.sendMessage(ChatColor.RED + LocaleManager.getInstance().getText("MustBeInFaction"));
                 }
             }
             else {
-                sender.sendMessage(ChatColor.RED + "Sorry! You need the following permission to use this command: 'mf.sethome'");
+                sender.sendMessage(ChatColor.RED + LocaleManager.getInstance().getText("PermissionSetHome"));
             }
         }
     }
