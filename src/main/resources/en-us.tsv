@@ -300,7 +300,6 @@ NotAnAlly	%s isn't an ally of yours!
 NotAtWarWith	You aren't at war with %s
 NotAVassalOfAFaction	You aren't a vassal of a faction!
 NotEnoughArgumentsDesignatedSingleQuotesRequired	Not enough arguments designated. Must be designated inside single quotes!
-NotSetVassalContributionPercentageMultiplier	vassalContributionPercentageMultiplier not set! Setting to default!
 NotTheOwnerOfThisBlock	You are not the owner of this block!
 NotTheOwnerOfThisFaction	You are not the owner of this faction!
 NoVassalOrLiegeReferences	There were no vassal or liege references associated with that faction.
@@ -389,7 +388,6 @@ PluginSaving	Medieval Factions plugin is saving...
 Point1PlacementSuccessful	Creating Gate 1/4: Point 1 placed successfully.
 Point2PlacedSuccessfully	Creating Gate 2/4: Point 2 placed successfully.
 Population	Population: %d
-PowerDecreasesNotSet	powerDecreases is not set! Setting to default
 PowerHasDecayed	Your power has decayed by %d since you last logged out. Your power is now %d.
 PowerLevel	Power Level: %s
 PowerLevelHasBeenSetTo	The power level of that player has been set to
@@ -418,7 +416,6 @@ SuccessFactionMemberRemoval	Success! If the player was in a faction, they are no
 SuccessForceJoin	Success! Player was forced to join faction.
 SuccessOfficerRemoval	Success! If player was considered an officer in any faction, they are no longer.
 SuccessReferencesRemoved	 references have been successfully removed!
-SurroundedChunksProtectedNotSet	surroundedChunksProtected not set! Setting to default!
 TargetBlockNotPartOfGate	Target block is not part of a gate.
 TeleportingAlert	Teleporting in 3 seconds...
 ThreeBlockRequirement	Error placing point 2: Gate must be 3 blocks or taller.
@@ -458,7 +455,6 @@ ValidSubUsageWhoCommandsShowSet	Valid sub-commands: show, set
 Vassals	Vassals: %s
 VersionAlert	Version:
 WarningPlayerAlreadyStartedCreatingGate	WARNING: Player has already started creating the gate. startCreatingGate() call ignored.
-WarsRequiredForPVPNotSet	warsRequiredForPVP not set! Setting to default!
 WasntFound	'%s' wasn't found.
 WelcomeBackLastLogout	Welcome back %s! You last logged out %s ago.
 WikiLink	Wiki: https://github.com/DansPlugins/Medieval-Factions/wiki
