@@ -457,8 +457,6 @@ UsageWho	Usage: /mf who (player-name)
 ValidSubUsageWhoCommandsShowSet	Valid sub-commands: show, set
 Vassals	Vassals: %s
 VersionAlert	Version:
-VersionNotSet	Version not set! Setting version to
-VersionSetButMismatched	Version set but mismatched! Setting version to
 WarningPlayerAlreadyStartedCreatingGate	WARNING: Player has already started creating the gate. startCreatingGate() call ignored.
 WarsRequiredForPVPNotSet	warsRequiredForPVP not set! Setting to default!
 WasntFound	'%s' wasn't found.
