@@ -1,5 +1,6 @@
 package dansplugins.factionsystem.commands;
 
+import dansplugins.factionsystem.LocaleManager;
 import dansplugins.factionsystem.Messenger;
 import dansplugins.factionsystem.data.PersistentData;
 import dansplugins.factionsystem.objects.Faction;
@@ -32,19 +33,19 @@ public class VassalizeCommand {
 
                                 // make sure player isn't trying to vassalize their own faction
                                 if (playersFaction.getName().equalsIgnoreCase(targetFaction.getName())) {
-                                    player.sendMessage(ChatColor.RED + "You can't vassalize your own faction!");
+                                    player.sendMessage(ChatColor.RED + LocaleManager.getInstance().getText("CannotVassalizeSelf"));
                                     return;
                                 }
 
                                 // make sure player isn't trying to vassalize their liege
                                 if (targetFaction.getName().equalsIgnoreCase(playersFaction.getLiege())) {
-                                    player.sendMessage(ChatColor.RED + "You can't vassalize your liege!");
+                                    player.sendMessage(ChatColor.RED + LocaleManager.getInstance().getText("CannotVassalizeLiege"));
                                     return;
                                 }
 
                                 // make sure player isn't trying to vassalize a vassal
                                 if (targetFaction.hasLiege()) {
-                                    player.sendMessage(ChatColor.RED + "You can't vassalize a faction who already has a liege!");
+                                    player.sendMessage(ChatColor.RED + LocaleManager.getInstance().getText("CannotVassalizeVassal"));
                                     return;
                                 }
 
@@ -52,34 +53,34 @@ public class VassalizeCommand {
                                 playersFaction.addAttemptedVassalization(targetFactionName);
 
                                 // inform all players in that faction that they are trying to be vassalized
-                                Messenger.getInstance().sendAllPlayersInFactionMessage(targetFaction, ChatColor.GREEN + "" + playersFaction.getName() + " has attempted to vassalize your faction! If you are the owner, type '/mf swearfealty " + playersFaction.getName() + "' to accept.");
+                                Messenger.getInstance().sendAllPlayersInFactionMessage(targetFaction, ChatColor.GREEN + "" + String.format(LocaleManager.getInstance().getText("AlertAttemptedVassalization"), playersFaction.getName(), playersFaction.getName()));
 
                                 // inform all players in players faction that a vassalization offer was sent
-                                Messenger.getInstance().sendAllPlayersInFactionMessage(playersFaction, ChatColor.GREEN + "Your faction has attempted to vassalize " + targetFactionName + "!");
+                                Messenger.getInstance().sendAllPlayersInFactionMessage(playersFaction, ChatColor.GREEN + String.format(LocaleManager.getInstance().getText("AlertFactionAttemptedToVassalize"), targetFactionName));
 
                             }
                             else {
-                                player.sendMessage(ChatColor.RED + "You must be the owner of your faction to use this command!");
+                                player.sendMessage(ChatColor.RED + LocaleManager.getInstance().getText("AlertMustBeOwnerToUseCommand"));
                             }
                         }
                         else {
-                            player.sendMessage(ChatColor.RED + "You must be in a faction to use this command!");
+                            player.sendMessage(ChatColor.RED + LocaleManager.getInstance().getText("MustBeInFaction"));
                         }
                     }
                     else {
                         // faction doesn't exist, send message
-                        player.sendMessage(ChatColor.RED + "Sorry! That faction doesn't exist!");
+                        player.sendMessage(ChatColor.RED + LocaleManager.getInstance().getText("FactionNotFound"));
                     }
 
                 }
                 else {
-                    player.sendMessage(ChatColor.RED + "Usage: /mf vassalize (faction-name)");
+                    player.sendMessage(ChatColor.RED + LocaleManager.getInstance().getText("UsageVassalize"));
                 }
 
             }
             else {
                 // send perm message
-                player.sendMessage(ChatColor.RED + "Sorry! In order to use this command, you need the following permission: 'mf.vassalize'");
+                player.sendMessage(ChatColor.RED + LocaleManager.getInstance().getText("PermissionVassalize"));
             }
         }
 

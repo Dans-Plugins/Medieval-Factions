@@ -9,6 +9,7 @@ AlertAlreadyInFaction	You're already in a faction, sorry!
 AlertAlreadyRequestedAlliance	You've already requested an alliance with this faction!
 AlertAlreadyRequestedPeace	You've already requested peace with this faction!
 AlertAttemptedAlliance  %s has attempted to ally with %s!
+AlertAttemptedVassalization %s has attempted to vassalize your faction! If you are the owner, type '/mf swearfealty %s' to accept.
 AlertBeenInvited	You've been invited to %s! Type /mf join %s to join.
 AlertAllianceHasBeenBroken  %s has broken their alliance your faction!
 AlertChallengeIssued   You have challenged %s to a duel!
@@ -20,6 +21,7 @@ AlertCurrentPowerLevel	Your current power level is %d/%d.
 AlertDemotion	You have been demoted to member status in your faction.
 AlertForcedSave Medieval Factions has been forced to save.
 AlertFactionHasNewVassal    Your faction has a new vassal: %s
+AlertFactionAttemptedToVassalize    Your faction has attempted to vassalize %s!
 AlertForcedLoad Medieval Factions has been forced to load.
 AlertFactionHasBeenVassalized   Your faction has been vassalized and has a new liege: %s
 AlertForcedDemotion	You were forcibly demoted from officer status in your faction!
