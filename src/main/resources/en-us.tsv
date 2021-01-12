@@ -171,7 +171,7 @@ FactionNameNotRecognized	That faction name isn't recognized!
 FactionNotEnemy	That faction is not your enemy!
 FactionNotFound	That faction wasn't found!
 FactionsSuccessfullyLoaded	Factions successfully loaded.
-FactionsTitle	== Factions
+FactionsTitle    == Factions ==
 FactionSuccessfullyDisbanded	Faction successfully disbanded.
 FactionSuccessfullyLoaded	Faction successfully loaded.
 FileLoadError	An error occurred loading the file
@@ -342,7 +342,7 @@ PermissionJoin	Sorry! You need the following permission to use this command: 'mf
 PermissionKick	Sorry! You need the following permission to use this command: 'mf.kick'
 PermissionLaws	Sorry! In order to use this command, you need the following permission: 'mf.laws'
 PermissionLeave	Sorry! You need the following permission to use this command: 'mf.leave'
-PermissionList	Sorry! You need the following permission to use this command: 'mf.list'
+PermissionList  Sorry! You need the following permission to use this command: 'mf.list'
 PermissionLock	Sorry! In order to use this command you need the following permission: 'mf.lock'
 PermissionMakePeace	Sorry! You need the following permission to use this command: 'mf.makepeace'
 PermissionMembers	Sorry! You need the following permission to use this command: 'mf.members'
