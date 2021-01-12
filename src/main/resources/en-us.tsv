@@ -453,8 +453,8 @@ UsageRevokeAccess	Usage: /mf revokeaccess (player-name)
 UsageSwearFealty	Usage: /mf swearfealty (faction-name)
 UsageTransfer	Usage: /mf transfer (player-name)
 UsageVassalize	Usage: /mf vassalize (faction-name)
-UsageWho	Usage: /mf who (player-name)
-ValidSubCommandsShowSet	Valid sub-commands: show, set
+	Usage: /mf who (player-name)
+ValidSubUsageWhoCommandsShowSet	Valid sub-commands: show, set
 VassalsAlert	Vassals:
 VersionAlert	Version:
 VersionNotSet	Version not set! Setting version to
