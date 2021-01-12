@@ -1,5 +1,6 @@
 package dansplugins.factionsystem.commands;
 
+import dansplugins.factionsystem.LocaleManager;
 import dansplugins.factionsystem.UUIDChecker;
 import dansplugins.factionsystem.data.PersistentData;
 import dansplugins.factionsystem.objects.Faction;
@@ -25,7 +26,7 @@ public class MembersCommand {
                             return;
                         }
                     }
-                    player.sendMessage(ChatColor.RED + "You're not in a faction!");
+                    player.sendMessage(ChatColor.RED + LocaleManager.getInstance().getText("AlertNotInFaction"));
                 }
                 else {
                     // creating name from arguments 1 to the last one
@@ -37,18 +38,19 @@ public class MembersCommand {
                             return;
                         }
                     }
-                    player.sendMessage(ChatColor.RED + "That faction name isn't recognized!");
+                    player.sendMessage(ChatColor.RED + LocaleManager.getInstance().getText("FactionNameNotRecognized"));
                 }
             }
             else {
-                sender.sendMessage(ChatColor.RED + "Sorry! You need the following permission to use this command: 'mf.members'");
+                sender.sendMessage(ChatColor.RED + LocaleManager.getInstance().getText("PermissionMembers"));
             }
         }
     }
 
     private void sendFactionMembers(Player player, Faction faction) {
         ArrayList<UUID> members = faction.getMemberList();
-        player.sendMessage(ChatColor.BOLD + "" + ChatColor.AQUA + "Members of " + faction.getName() + "\n----------\n");
+        player.sendMessage(ChatColor.BOLD + "" + ChatColor.AQUA + String.format(LocaleManager.getInstance().getText("MembersOf"), faction.getName()));
+        player.sendMessage("\n----------\n");
         for (UUID member : members) {
             // Is Owner
             if (member.equals(faction.getOwner())){

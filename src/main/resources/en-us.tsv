@@ -278,7 +278,7 @@ MaterialsMismatch1	Error placing point 1: Materials mismatch.
 MaterialsMismatch2	Error placing point 2: Materials mismatch.
 MedievalFactions	== Medieval Factions
 MedievalFactionsStringRight	Medieval-Factions-%s
-MembersOf	%d Members of
+MembersOf   Members of %s
 MissingFactionGatesJSONCollection	Could not load gates because the collection 'factionGates' did not exist in the factions JSON file. Are you upgrading from a previous version? Setting default.
 MovementDetectedTeleportCancelled	Movement Detected. Teleport cancelled.
 MustBeInFaction	Sorry! You must be in a faction to use this command!
