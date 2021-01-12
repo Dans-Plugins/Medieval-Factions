@@ -3,7 +3,7 @@ AlertAlreadyAtWarWith	Your faction is already at war with %s!
 AlertAlreadyCreatingGate	You are already creating a gate!
 AlertAlreadyDueling	You are already dueling!
 AlertAlreadyDuelingSomeone	You are already dueling someone!
-AlertAlreadyDuelingPlayer   You are already dueling that player!
+AlertAlreadyDuelingPlayer   You are already dueling %s!
 AlertAlreadyGrantingAccess	You are already granting access to someone! Type /mf grantaccess cancel to cancel this.
 AlertAlreadyInFaction	You're already in a faction, sorry!
 AlertAlreadyRequestedAlliance	You've already requested an alliance with this faction!
@@ -11,9 +11,9 @@ AlertAlreadyRequestedPeace	You've already requested peace with this faction!
 AlertAttemptedAlliance  %s has attempted to ally with %s!
 AlertBeenInvited	You've been invited to %s! Type /mf join to join.
 AlertAllianceHasBeenBroken  %s has broken their alliance your faction!
-AlertDuelChallengeReceived   has received your duel challenge!
+AlertChallengeIssued   You have challenged %s to a duel!
 AlertChallengedToDuel	%s has challenged %s to a duel!
-AlertChallengedToDuelPlusHowTo	 has challenged you to a duel! Type /mf duel accept to begin.
+AlertChallengedToDuelPlusHowTo	 %s has challenged you to a duel! Type /mf duel accept to begin.
 AlertChallengeWasAccepted	%s has accepted your challenge, the duel has begun!
 AlertChangedGateName	Changed gate name to '%s'.
 AlertCurrentPowerLevel	Your current power level is
@@ -44,7 +44,7 @@ AlertNonOwnership	You don't own this!
 AlertNoPendingChallenges	You have no pending challenges to cancel.
 AlertNotAllied	Your faction is not allied with
 AlertNotBeenChallenged	You have not been challenged to a duel by anyone.
-AlertNotBeenChallengedByPlayer	You have not been challenged to a duel by that player.
+AlertNotBeenChallengedByPlayer	You have not been challenged to a duel by '%s'.
 AlertNotInFaction	You're not in a faction!
 AlertNotInvitedToFaction	You're not invited to this faction!
 AlertNotOfferedVassalizationBy	You haven't been offered vassalization by this faction!
@@ -58,7 +58,7 @@ AllianceBrokenWith	Alliance has been broken with %s!
 AlliedWith	Allied With:
 AllLandUnclaimed	All land unclaimed.
 AllLandUnclaimedFrom	All land unclaimed from
-PlayerAlreadyDueling	That player is already dueling someone!
+PlayerAlreadyDueling    %s is already duelling someone!
 AlreadyEnteredCheckAccess	You have already entered this command! Type '/mf checkaccess cancel' to cancel!
 AlreadyEnteredRevokeAccess	You have already entered this command! Type '/mf revokeaccess cancel' to cancel!
 AlreadyInFaction	Sorry, you're already in a faction. Leave if you want to create a different one.
@@ -141,7 +141,7 @@ DynmapIntegrationSuccessful	Dynmap integration successful!
 ERROR	ERROR:
 ErrorAddingAreaMarker	error adding area marker
 ErrorChunkRemoval	An error has occurred during claimed chunk removal.
-ErrorCouldNotFindGateFunction	Error: Could not find gate faction.
+ErrorCouldNotFindGatesFaction	Error: Could not find faction for gate '%s'.
 ErrorCouldNotLoadFactionGate	ERROR: Could not load faction gate.\n
 ErrorCreatingMarketSet	Error creating marker set!
 ErrorIntegratingWithDynmap	Error integrating with dynmap:
@@ -284,7 +284,7 @@ NoBlockDetectedToCheckForGate	No block detected to check for gate.
 NoFactionsDesignatedSingleQuotesRequired	No factions designated. Must be designated inside single quotes!
 NoLongerBypassingProtections	You are no longer bypassing protections provided by Medieval Factions.
 NoLongerInFactionChat	You are no longer in faction chat!
-NotAMemberOfAnyFaction	You are not a member of any faction.)
+NotAMemberOfAnyFaction	You are not a member of any faction.
 NotAnAlly	%s isn't an ally of yours!
 NotAtWarWith	You aren't at war with
 NotAVassalOfAFaction	You aren't a vassal of a faction!

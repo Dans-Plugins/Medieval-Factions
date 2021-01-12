@@ -81,13 +81,13 @@ public class GateCommand {
 							}
 							else
 							{
-								player.sendMessage(ChatColor.RED + "Your faction has no gates defined.");
+								player.sendMessage(ChatColor.RED + LocaleManager.getInstance().getText("AlertNoGatesDefined"));
 								return;
 							}
 						}
 						else
 						{
-							player.sendMessage(ChatColor.RED + String.format("You are not a member of any faction."));
+							player.sendMessage(ChatColor.RED + LocaleManager.getInstance().getText("NotAMemberOfAnyFaction"));
 							return;
 						}
 					}
@@ -104,30 +104,30 @@ public class GateCommand {
 									if (faction.isOfficer(player.getUniqueId()) || faction.isOwner(player.getUniqueId()))
 									{
 										faction.removeGate(gate);
-										player.sendMessage(ChatColor.AQUA + String.format("Removed gate '%s'.", gate.getName()));
+										player.sendMessage(ChatColor.AQUA + String.format(LocaleManager.getInstance().getText("RemovedGate"), gate.getName()));
 										return;
 									}
 									else
 									{
-										player.sendMessage(ChatColor.RED + "You must be a faction officer or owner to use this command.");
+									player.sendMessage(ChatColor.RED + LocaleManager.getInstance().getText("AlertMustBeOwnerOrOfficerToUseCommand"));
 										return;
 									}
 								}
 								else
 								{
-									player.sendMessage(ChatColor.RED + String.format("Error: Could not find gate faction.", gate.getName()));
+									player.sendMessage(ChatColor.RED + String.format(LocaleManager.getInstance().getText("ErrorCouldNotFindGatesFaction"), gate.getName()));
 									return;
 								}
 							}
 							else
 							{
-								player.sendMessage(ChatColor.RED + "Target block is not part of a gate.");
+								player.sendMessage(ChatColor.RED + LocaleManager.getInstance().getText("TargetBlockNotPartOfGate"));
 								return;
 							}
 						}
 						else
 						{
-							player.sendMessage(ChatColor.RED + "No block detected to check for gate.");
+							player.sendMessage(ChatColor.RED + LocaleManager.getInstance().getText("NoBlockDetectedToCheckForGate"));
 							return;
 						}
 					}
@@ -147,53 +147,53 @@ public class GateCommand {
 										{
 											String name = createStringFromArgIndexOnwards(2, args);
 											gate.setName(name);
-											player.sendMessage(ChatColor.AQUA + String.format("Changed gate name to '%s'.", gate.getName()));
+											player.sendMessage(ChatColor.AQUA + String.format(LocaleManager.getInstance().getText("AlertChangedGateName"), gate.getName()));
 											return;
 										}
 										else
 										{
-											player.sendMessage(ChatColor.RED + "You must be a faction officer or owner to use this command.");
+											player.sendMessage(ChatColor.RED + LocaleManager.getInstance().getText("AlertMustBeOwnerOrOfficerToCreateGate"));
 											return;
 										}
 									}
 									else
 									{
-										player.sendMessage(ChatColor.RED + "Error: Could not find gate's faction.");
+										player.sendMessage(ChatColor.RED + String.format(LocaleManager.getInstance().getText("ErrorCouldNotFindGatesFaction"), gate.getName()));
 										return;
 									}
 								}
 								else
 								{
-									player.sendMessage(ChatColor.AQUA + String.format("That is the '%s' gate.", gate.getName()));
+									player.sendMessage(ChatColor.AQUA + String.format(LocaleManager.getInstance().getText("AlertGate"), gate.getName()));
 									return;
 								}
 							}
 							else
 							{
-								player.sendMessage(ChatColor.RED + "Target block is not part of a gate.");
+								player.sendMessage(ChatColor.RED + LocaleManager.getInstance().getText("TargetBlockNotPartOfGate"));
 								return;
 							}
 						}
 						else
 						{
-							player.sendMessage(ChatColor.RED + "No block detected to check for gate.");
+							player.sendMessage(ChatColor.RED + LocaleManager.getInstance().getText("NoBlockDetectedToCheckForGate"));
 							return;
 						}
 					}						
 				}
 				else
 				{
-			        sender.sendMessage(ChatColor.RED + "Sub-commands:");
-			        sender.sendMessage(ChatColor.AQUA + "/mf gate create (<optional>name)");
-			        sender.sendMessage(ChatColor.RED + "/mf gate name (<optional>name)");
-			        sender.sendMessage(ChatColor.RED + "/mf gate list");
-			        sender.sendMessage(ChatColor.RED + "/mf gate remove");
-			        sender.sendMessage(ChatColor.RED + "/mf gate cancel");
+			        sender.sendMessage(ChatColor.RED + LocaleManager.getInstance().getText("SubCommands"));
+			        sender.sendMessage(ChatColor.AQUA + LocaleManager.getInstance().getText("HelpGateCreate"));
+			        sender.sendMessage(ChatColor.RED + LocaleManager.getInstance().getText("HelpGateName"));
+			        sender.sendMessage(ChatColor.RED + LocaleManager.getInstance().getText("HelpGateList"));
+			        sender.sendMessage(ChatColor.RED + LocaleManager.getInstance().getText("HelpGateRemove"));
+			        sender.sendMessage(ChatColor.RED + LocaleManager.getInstance().getText("HelpGateCancel"));
 			        return;
 				}
 			}
             else {
-                player.sendMessage(ChatColor.RED + "Sorry! In order to use this command you need the following permission: 'mf.gate'");
+                player.sendMessage(ChatColor.RED + LocaleManager.getInstance().getText("PermissionGate"));
             }
 
 		}
@@ -209,7 +209,7 @@ public class GateCommand {
 		}
 		else
 		{
-			System.out.println("WARNING: Player has already started creating the gate. startCreatingGate() call ignored.");
+			System.out.println(LocaleManager.getInstance().getText("WarningPlayerAlreadyStartedCreatingGate"));
 		}
 	}
 
