@@ -19,7 +19,9 @@ AlertChangedGateName	Changed gate name to '%s'.
 AlertCurrentPowerLevel	Your current power level is %d/%d.
 AlertDemotion	You have been demoted to member status in your faction.
 AlertForcedSave Medieval Factions has been forced to save.
+AlertFactionHasNewVassal    Your faction has a new vassal: %s
 AlertForcedLoad Medieval Factions has been forced to load.
+AlertFactionHasBeenVassalized   Your faction has been vassalized and has a new liege: %s
 AlertForcedDemotion	You were forcibly demoted from officer status in your faction!
 AlertForcedKick	You were forcibly kicked from your faction!
 AlertForcedToJoinFaction	You were forced to join a faction!
