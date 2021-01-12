@@ -63,12 +63,12 @@ AlertNowAlliedWith	Your faction is now allied with %s!
 AlertNowAtPeaceWith	%s is now at peace with %s!
 AlertPowerLevelDecreased	Your power level has decreased!
 AlertReachedDemesne	You have reached your demesne limit! Invite more players to increase this.
-AlertUnlocked	Unlocked!f
+AlertUnlocked	Unlocked!
 AlertUnlockingCancelled	Unlocking cancelled!
 AllianceBrokenWith	Alliance has been broken with %s!
 AlliedWith	Allied With:
 AllLandUnclaimed	All land unclaimed.
-AllLandUnclaimedFrom	All land unclaimed from
+AllLandUnclaimedFrom	All land unclaimed from %s!
 PlayerAlreadyDueling	%s is already duelling someone!
 AlreadyEnteredCheckAccess	You have already entered this command! Type '/mf checkaccess cancel' to cancel!
 AlreadyEnteredRevokeAccess	You have already entered this command! Type '/mf revokeaccess cancel' to cancel!
@@ -139,7 +139,7 @@ Description	Description:
 DescriptionSet	Description set!
 DesignatedFactionNotFound	One of the factions designated wasn't found!
 DesiredPowerMustBeANumber	Desired power must be a number!
-DeveloperList	Developers: DanTheTechMan, Pasarus, Caibinus
+DeveloperList	Developers:
 DisbandmentDueToZeroPower	has been disbanded due to its cumulative power reaching zero.
 DoesntExist	%s doesn't exist!
 DoubleSet	Double set!
@@ -255,7 +255,7 @@ InvitationExpired	Your invitation to %s has expired!.
 InvitationSent	Invitation sent!
 LandAlreadyClaimedBy	This land is already claimed by
 LandAlreadyClaimedByYourFaction	This land is already claimed by your faction!
-LandClaimedBy	This land is claimed by
+LandClaimedBy	This land is claimed by %s.
 LandClaimedUsingAdminBypass	Land unclaimed using admin bypass!
 LandIsNotClaimed	This land isn't claimed!
 LandIsUnclaimed	This land is unclaimed.
@@ -278,13 +278,13 @@ LockingCancelled	Locking cancelled!
 LockRemovalError	An error has occurred during lock removal.
 MaterialsMismatch1	Error placing point 1: Materials mismatch.
 MaterialsMismatch2	Error placing point 2: Materials mismatch.
-MedievalFactions	== Medieval Factions
+MedievalFactionsTitle	 == Medieval Factions %s ==
 MedievalFactionsStringRight	Medieval-Factions-%s
 MembersOf	Members of %s
 MissingFactionGatesJSONCollection	Could not load gates because the collection 'factionGates' did not exist in the factions JSON file. Are you upgrading from a previous version? Setting default.
 MovementDetectedTeleportCancelled	Movement Detected. Teleport cancelled.
-MustBeInFaction	Sorry! You must be in a faction to use this command!
-MustBeOwner	Sorry, you must be the owner of a faction to use this command!
+MustBeInFaction	Sorry, you must be in a faction to use this command.
+MustBeOwner	Sorry, you must be the owner of a faction to use this command.
 MustOwnFactionOrBeOfficer	You have to own a faction or be an officer of a faction to use this command.
 MustTransferOwnership	Sorry! You must transfer ownership or kick everyone in your faction to leave.
 Name	Name:
@@ -358,8 +358,8 @@ PermissionSetHome	Sorry! You need the following permission to use this command: 
 PermissionSwearFealty	Sorry! In order to use this command, you need the following permission: 'mf.swearfealty'
 PermissionTransfer	Sorry! You need the following permission to use this command: 'mf.transfer'
 PermissionUnclaimallOthers	Sorry! In order to use this command you need the following permission: 'mf.unclaimall.others'
-PermissionUnclaimallOthers	Sorry! You need the following permission to use this command: 'mf.unclaim'
-PermissionUnclaimallOthers	Sorry! You need the following permission to use this command: 'mf.unclaimall'
+PermissionUnclaim	Sorry! You need the following permission to use this command: 'mf.unclaim'
+PermissionUnclaimall	Sorry! You need the following permission to use this command: 'mf.unclaimall'
 PermissionUnlock	Sorry! In order to use this command you need the following permission: 'mf.unlock'
 PermissionVassalize	Sorry! In order to use this command, you need the following permission: 'mf.vassalize'
 PermissionVersion	Sorry! You need the following permission to use this command: 'mf.version'
@@ -388,7 +388,7 @@ Point1PlacementSuccessful	Creating Gate 1/4: Point 1 placed successfully.
 Point2PlacedSuccessfully	Creating Gate 2/4: Point 2 placed successfully.
 Population	Population:
 PowerDecreasesNotSet	powerDecreases is not set! Setting to default
-PowerHasDecayed	Your power has decayed by since you last logged out. Your power is now
+PowerHasDecayed	Your power has decayed by %d since you last logged out. Your power is now %d.
 PowerLevel	Power Level:
 PowerLevelHasBeenSetTo	The power level of that player has been set to
 HasJoined	%s has joined %s
@@ -465,3 +465,14 @@ WikiLink	Wiki: https://github.com/DansPlugins/Medieval-Factions/wiki
 WorldsMismatch1	Error placing point 1: Worlds mismatch.
 WorldsMismatch2	Error placing point 2: Worlds mismatch.
 Wilderness	Wilderness
+RadiusRequirement	Radius must be between 0 and %d.
+MustBeAtWarOrFactionMustBeInactive	Must be at war with target faction or target faction must be inactive!
+SurroundedChunkProtected	Target faction has claimed the chunks to the north, east, south and west of this chunk! It cannot be conquered!
+TargetFactionNotOverClaiming	Target faction does not have more land than their demesne limit!
+AlertLandConqueredFromAnotherFaction	Land conquered from %s! Demesne Size: %d/%d
+AlertLandConqueredFromYourFaction	%s has conquered land from your faction!
+AlertLandClaimed	Land claimed! Demesne Size: %d/%d
+AlertFactionHomeRemoved	Your faction home has been removed!
+ErrorClaimedChunkRemoval	An error has occurred during claimed chunk removal.
+CurrentLanguageID	Current Language ID: %s
+SupportedLanguageIDList	"Supported Language IDs: %s

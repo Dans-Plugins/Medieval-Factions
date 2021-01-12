@@ -52,7 +52,7 @@ public class JoiningLeavingAndSpawningHandler implements Listener {
         		}
         		if (record.getPowerLost() > 0)
         		{
-        			event.getPlayer().sendMessage(ChatColor.RED + String.format("Your power has decayed by %d since you last logged out. Your power is now %d.", record.getPowerLost(), newPower));
+        			event.getPlayer().sendMessage(ChatColor.RED + String.format(LocaleManager.getInstance().getText("PowerHasDecayed"), record.getPowerLost(), newPower));
         		}
         		record.setPowerLost(0);
         	}

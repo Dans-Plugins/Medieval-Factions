@@ -32,11 +32,11 @@ public class CommandInterpreter {
             // no arguments check
             if (args.length == 0) {
                 // send plugin information
-                sender.sendMessage(ChatColor.AQUA + " == Medieval Factions " + MedievalFactions.getInstance().getVersion() + " == ");
-                sender.sendMessage(ChatColor.AQUA + "Developers: DanTheTechMan, Pasarus, Caibinus");
-                sender.sendMessage(ChatColor.AQUA + "Wiki: https://github.com/DansPlugins/Medieval-Factions/wiki");
-                sender.sendMessage(ChatColor.AQUA + "Current Language ID: " + MedievalFactions.getInstance().getConfig().getString("languageid"));
-                sender.sendMessage(ChatColor.AQUA + "Supported Language IDs: en-us");
+                sender.sendMessage(ChatColor.AQUA + String.format(LocaleManager.getInstance().getText("MedievalFactionsTitle"), MedievalFactions.getInstance().getVersion()));
+                sender.sendMessage(ChatColor.AQUA + LocaleManager.getInstance().getText("DeveloperList") + " " + "DanTheTechMan, Pasarus, Caibinus");
+                sender.sendMessage(ChatColor.AQUA + LocaleManager.getInstance().getText("WikiLink"));
+                sender.sendMessage(ChatColor.AQUA + String.format(LocaleManager.getInstance().getText("CurrentLanguageID"), MedievalFactions.getInstance().getConfig().getString("languageid")));
+                sender.sendMessage(ChatColor.AQUA + String.format(LocaleManager.getInstance().getText("SupportedLanguageIDList"), LocaleManager.getInstance().getSupportedLanguageIDsSeparatedByCommas()));
                 return true;
             }
 
@@ -161,14 +161,14 @@ public class CommandInterpreter {
                                 return true;
                             }
                             else {
-                                player.sendMessage(ChatColor.RED + "You need to be in a faction to use this command.");
+                                player.sendMessage(ChatColor.RED + LocaleManager.getInstance().getText("MustBeInFaction"));
                                 return false;
                             }
 
                         }
                     }
                     else {
-                        sender.sendMessage(ChatColor.RED + "Sorry! You need the following permission to use this command: 'mf.unclaim'");
+                        sender.sendMessage(ChatColor.RED + LocaleManager.getInstance().getText("PermissionUnclaim"));
                         return false;
                     }
                 }
@@ -190,22 +190,22 @@ public class CommandInterpreter {
                                 if (faction != null) {
                                     // remove faction home
                                     faction.setFactionHome(null);
-                                    Messenger.getInstance().sendAllPlayersInFactionMessage(faction, ChatColor.RED + "Your faction home has been removed!");
+                                    Messenger.getInstance().sendAllPlayersInFactionMessage(faction, ChatColor.RED + LocaleManager.getInstance().getText("AlertFactionHomeRemoved"));
 
                                     // remove claimed chunks
                                     ChunkManager.getInstance().removeAllClaimedChunks(faction.getName(), PersistentData.getInstance().getClaimedChunks());
                                     DynmapManager.updateClaims();
-                                    player.sendMessage(ChatColor.GREEN + "All land unclaimed from " + factionName + "!");
+                                    player.sendMessage(ChatColor.GREEN + String.format(LocaleManager.getInstance().getText("AllLandUnclaimedFrom"), factionName));
 
                                     // remove locks associated with this faction
                                     PersistentData.getInstance().removeAllLocks(faction.getName());
                                     return true;
                                 } else {
-                                    player.sendMessage(ChatColor.RED + "That faction wasn't found!");
+                                    player.sendMessage(ChatColor.RED + LocaleManager.getInstance().getText("FactionNotFound"));
                                     return false;
                                 }
                             } else {
-                                player.sendMessage(ChatColor.RED + "Sorry! In order to use this command you need the following permission: 'mf.unclaimall.others'");
+                                player.sendMessage(ChatColor.RED + LocaleManager.getInstance().getText("PermissionUnclaimallOthers"));
                                 return false;
                             }
                         }
@@ -216,7 +216,7 @@ public class CommandInterpreter {
                                 if (faction.isOwner(player.getUniqueId())) {
                                     // remove faction home
                                     faction.setFactionHome(null);
-                                    Messenger.getInstance().sendAllPlayersInFactionMessage(faction, ChatColor.RED + "Your faction home has been removed!");
+                                    Messenger.getInstance().sendAllPlayersInFactionMessage(faction, ChatColor.RED + LocaleManager.getInstance().getText("AlertFactionHomeRemoved"));
 
                                     // remove claimed chunks
                                     ChunkManager.getInstance().removeAllClaimedChunks(faction.getName(), PersistentData.getInstance().getClaimedChunks());
@@ -228,11 +228,11 @@ public class CommandInterpreter {
                                     return true;
                                 }
                             }
-                            player.sendMessage(ChatColor.RED + "You're not in a faction!");
+                            player.sendMessage(ChatColor.RED + LocaleManager.getInstance().getText("AlertNotInFaction"));
                             return false;
                         }
                         else {
-                            sender.sendMessage(ChatColor.RED + "Sorry! You need the following permission to use this command: 'mf.unclaimall'");
+                            sender.sendMessage(ChatColor.RED + LocaleManager.getInstance().getText("PermissionUnclaimall"));
                             return false;
                         }
                     }
@@ -246,17 +246,17 @@ public class CommandInterpreter {
                             Player player = (Player) sender;
                             String result = ChunkManager.getInstance().checkOwnershipAtPlayerLocation(player);
                             if (result.equalsIgnoreCase("unclaimed")) {
-                                player.sendMessage(ChatColor.GREEN + "This land is unclaimed.");
+                                player.sendMessage(ChatColor.GREEN + LocaleManager.getInstance().getText("LandIsUnclaimed"));
                                 return true;
                             }
                             else {
-                                player.sendMessage(ChatColor.RED + "This land is claimed by " + result + ".");
+                                player.sendMessage(ChatColor.RED + String.format(LocaleManager.getInstance().getText("LandClaimedBy"), result));
                                 return false;
                             }
                         }
                     }
                     else {
-                        sender.sendMessage(ChatColor.RED + "Sorry! You need the following permission to use this command: 'mf.unclaimall'");
+                        sender.sendMessage(ChatColor.RED + LocaleManager.getInstance().getText("PermissionUnclaimall"));
                         return false;
                     }
                 }
@@ -274,25 +274,25 @@ public class CommandInterpreter {
                                     if (faction.isOwner(player.getUniqueId())) {
                                         owner = true;
                                         faction.toggleAutoClaim();
-                                        player.sendMessage(ChatColor.AQUA + "Autoclaim toggled.");
+                                        player.sendMessage(ChatColor.AQUA + LocaleManager.getInstance().getText("AutoclaimToggled"));
                                         return true;
                                     }
 
                                 }
                                 if (!owner) {
-                                    player.sendMessage(ChatColor.RED + "You must be the owner to use this command.");
+                                    player.sendMessage(ChatColor.RED + LocaleManager.getInstance().getText("MustBeOwner"));
                                     return false;
                                 }
                             }
                             else {
-                                player.sendMessage(ChatColor.RED + "You need to be in a faction to use this command.");
+                                player.sendMessage(ChatColor.RED + LocaleManager.getInstance().getText("AlertMustBeInFactionToUseCommand"));
                                 return false;
                             }
 
                         }
                     }
                     else {
-                        sender.sendMessage(ChatColor.RED + "Sorry! You need the following permission to use this command: 'mf.autoclaim'");
+                        sender.sendMessage(ChatColor.RED + LocaleManager.getInstance().getText("PermissionAutoclaim"));
                         return false;
                     }
                 }
@@ -508,7 +508,7 @@ public class CommandInterpreter {
                         return true;
                     }
                     else {
-                        sender.sendMessage(ChatColor.RED + "Sorry! You need the following permission to use this command: 'mf.resetpowerlevels'");
+                        sender.sendMessage(ChatColor.RED + LocaleManager.getInstance().getText("PermissionResetPowerLevels"));
                         return false;
                     }
                 }
@@ -528,14 +528,14 @@ public class CommandInterpreter {
                 }
 
             }
-            sender.sendMessage(ChatColor.RED + "Medieval Factions doesn't recognize that command!");
+            sender.sendMessage(ChatColor.RED + LocaleManager.getInstance().getText("CommandNotRecognized"));
         }
         return false;
     }
 
     private void resetPowerRecords() {
         // reset individual records
-        System.out.println("Resetting individual power records.");
+        System.out.println(LocaleManager.getInstance().getText("ResettingIndividualPowerRecords"));
         for (PlayerPowerRecord record : PersistentData.getInstance().getPlayerPowerRecords()) {
             record.setPowerLevel(MedievalFactions.getInstance().getConfig().getInt("initialPowerLevel"));
         }

@@ -54,6 +54,19 @@ public class LocaleManager {
         return supportedLanguageIDs.contains(ID);
     }
 
+    public String getSupportedLanguageIDsSeparatedByCommas() {
+
+        String IDs = "";
+        for (int i = 0; i < supportedLanguageIDs.size(); i++) {
+            IDs = IDs + supportedLanguageIDs.get(i);
+            if (i != supportedLanguageIDs.size() - 1) {
+                IDs = IDs + ", ";
+            }
+        }
+        return IDs;
+
+    }
+
     private boolean isFilePresent(String path) {
         File file = new File(path);
         return file.exists();
@@ -192,5 +205,4 @@ public class LocaleManager {
     private void sortKeys() {
         Collections.sort(keys);
     }
-
 }

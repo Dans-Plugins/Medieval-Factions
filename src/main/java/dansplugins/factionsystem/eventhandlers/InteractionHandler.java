@@ -671,7 +671,7 @@ public class InteractionHandler implements Listener {
                 case "WARPED_TRAPDOOR":
                     return Material.OAK_TRAPDOOR;
                 default:
-                    getLogger().info("ERROR: Could not locate a compatable material matching '" + materialName + "'.");
+                    getLogger().info("ERROR: Could not locate a compatible material matching '" + materialName + "'.");
                     return null;
             }
         }
@@ -778,13 +778,13 @@ public class InteractionHandler implements Listener {
                         removeLock(leftChest);
                         removeLock(rightChest);
 
-                        player.sendMessage(ChatColor.GREEN + "Unlocked!");
+                        player.sendMessage(ChatColor.GREEN + LocaleManager.getInstance().getText("AlertUnlocked"));
                         EphemeralData.getInstance().getUnlockingPlayers().remove(player.getUniqueId());
                     }
                     else {
                         // unlock single chest
                         removeLock(clickedBlock);
-                        player.sendMessage(ChatColor.GREEN + "Unlocked!");
+                        player.sendMessage(ChatColor.GREEN + LocaleManager.getInstance().getText("AlertUnlocked"));
                         EphemeralData.getInstance().getUnlockingPlayers().remove(player.getUniqueId());
                     }
                 }
@@ -802,7 +802,7 @@ public class InteractionHandler implements Listener {
                         removeLock(clickedBlock.getWorld().getBlockAt(clickedBlock.getX(), clickedBlock.getY() - 1, clickedBlock.getZ()));
                     }
 
-                    player.sendMessage(ChatColor.GREEN + "Unlocked!");
+                    player.sendMessage(ChatColor.GREEN + LocaleManager.getInstance().getText("AlertUnlocked"));
                     EphemeralData.getInstance().getUnlockingPlayers().remove(player.getUniqueId());
                 }
 
