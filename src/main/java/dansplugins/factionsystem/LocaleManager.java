@@ -181,6 +181,8 @@ public class LocaleManager {
                 writer.write(key + "\t" + strings.get(key) + "\n");
             }
 
+            writer.close();
+
         } catch (Exception e) {
             System.out.println("DEBUG: There was a problem saving the strings.");
             e.printStackTrace();
