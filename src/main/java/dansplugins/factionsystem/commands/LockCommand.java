@@ -1,5 +1,6 @@
 package dansplugins.factionsystem.commands;
 
+import dansplugins.factionsystem.LocaleManager;
 import dansplugins.factionsystem.data.EphemeralData;
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
@@ -23,7 +24,7 @@ public class LockCommand { ;
                     if (args[1].equalsIgnoreCase("cancel")) {
                         if (EphemeralData.getInstance().getLockingPlayers().contains(player.getUniqueId())) {
                             EphemeralData.getInstance().getLockingPlayers().remove(player.getUniqueId());
-                            player.sendMessage(ChatColor.RED + "Locking cancelled!");
+                            player.sendMessage(ChatColor.RED + LocaleManager.getInstance().getText("LockingCancelled"));
                             return;
                         }
                     }
@@ -37,14 +38,14 @@ public class LockCommand { ;
                     EphemeralData.getInstance().getUnlockingPlayers().remove(player.getUniqueId());
 
                     // inform them they need to right click the block that they want to lock or type /mf lock cancel to cancel it
-                    player.sendMessage(ChatColor.GREEN + "Right click a chest or door to lock it! (Type /mf lock cancel to cancel)");
+                    player.sendMessage(ChatColor.GREEN + LocaleManager.getInstance().getText("RightClickLock"));
                 }
 
 
 
             }
             else {
-                player.sendMessage(ChatColor.RED + "Sorry! In order to use this command you need the following permission: 'mf.lock'");
+                player.sendMessage(ChatColor.RED + LocaleManager.getInstance().getText("PermissionLock"));
             }
 
         }
