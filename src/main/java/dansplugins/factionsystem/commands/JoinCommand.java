@@ -1,5 +1,6 @@
 package dansplugins.factionsystem.commands;
 
+import dansplugins.factionsystem.LocaleManager;
 import dansplugins.factionsystem.Messenger;
 import dansplugins.factionsystem.data.PersistentData;
 import dansplugins.factionsystem.objects.Faction;
@@ -29,31 +30,31 @@ public class JoinCommand {
                                     faction.addMember(player.getUniqueId(), PersistentData.getInstance().getPlayersPowerRecord(player.getUniqueId()).getPowerLevel());
                                     faction.uninvite(player.getUniqueId());
                                     try {
-                                        Messenger.getInstance().sendAllPlayersInFactionMessage(faction, ChatColor.GREEN + player.getName() + " has joined " + faction.getName());
+                                        Messenger.getInstance().sendAllPlayersInFactionMessage(faction, ChatColor.GREEN + String.format(LocaleManager.getInstance().getText("HasJoined"), player.getName(), faction.getName()));
                                     } catch (Exception ignored) {
 
                                     }
-                                    player.sendMessage(ChatColor.GREEN + "You joined the faction!");
+                                    player.sendMessage(ChatColor.GREEN + LocaleManager.getInstance().getText("AlertJoinedFaction"));
                                     return true;
                                 }
                                 else {
-                                    player.sendMessage(ChatColor.RED + "You're already in a faction, sorry!");
+                                    player.sendMessage(ChatColor.RED + LocaleManager.getInstance().getText("AlertAlreadyInFaction"));
                                     return false;
                                 }
 
                             } else {
-                                player.sendMessage(ChatColor.RED + "You're not invited to this faction!");
+                                player.sendMessage(ChatColor.RED + LocaleManager.getInstance().getText("AlertNotInvitedToFaction"));
                                 return false;
                             }
                         }
                     }
                 } else {
-                    player.sendMessage(ChatColor.RED + "Usage: /mf join (faction-name)");
+                    player.sendMessage(ChatColor.RED + LocaleManager.getInstance().getText("UsageJoin"));
                     return false;
                 }
             }
             else {
-                sender.sendMessage(ChatColor.RED + "Sorry! You need the following permission to use this command: 'mf.join'");
+                sender.sendMessage(ChatColor.RED + LocaleManager.getInstance().getText("PermissionJoin"));
                 return false;
             }
         }

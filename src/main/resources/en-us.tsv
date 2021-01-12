@@ -384,9 +384,9 @@ Point2PlacedSuccessfully	Creating Gate 2/4: Point 2 placed successfully.
 Population	Population:
 PowerDecreasesNotSet	powerDecreases is not set! Setting to default
 PowerHasDecayed	Your power has decayed by since you last logged out. Your power is now
-PowerLevel	Power Level:
+PowerLevel  Power Level:
 PowerLevelHasBeenSetTo	The power level of that player has been set to
-HasJoined    has joined
+HasJoined   %s has joined %s
 PowerLevelHasIncreased	Your power level has increased!
 PowerLevelResetting	Power level resetting...
 ProblemLoadingClaimedChunks	There was a problem loading the claimed chunks!
