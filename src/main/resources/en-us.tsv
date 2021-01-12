@@ -122,12 +122,12 @@ ClickOnTriggerLever	Click on the trigger lever...
 ClickToPlaceSecondCorner	Click to place the second corner...
 CommandCancelled	Command cancelled!
 CommandNotRecognized	Medieval Factions doesn't recognize that command!
-CommandsPage1	== Medieval Factions Commands Page 1/6 ==
-CommandsPage2	== Medieval Factions Commands Page 2/6 ==
-CommandsPage3	== Medieval Factions Commands Page 3/6 ==
-CommandsPage4	== Medieval Factions Commands Page 4/6 ==
-CommandsPage5	== Medieval Factions Commands Page 5/6 ==
-CommandsPage6	== Medieval Factions Commands Page 6/6 ==
+CommandsPage1	== Medieval Factions Commands Page 1/%d ==
+CommandsPage2	== Medieval Factions Commands Page 2/%d ==
+CommandsPage3	== Medieval Factions Commands Page 3/%d ==
+CommandsPage4	== Medieval Factions Commands Page 4/%d ==
+CommandsPage5	== Medieval Factions Commands Page 5/%d ==
+CommandsPage6	== Medieval Factions Commands Page 6/%d ==
 CreatingGateCancelled	Creating gate cancelled!
 CreatingGateClickWithHoe	Creating gate. Click on a block with a Golden Hoe to select the first point.
 CuboidDisallowed1	Error placing point 1: You cannot place a cuboid.

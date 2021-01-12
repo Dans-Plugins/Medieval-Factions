@@ -6,6 +6,8 @@ import org.bukkit.command.CommandSender;
 
 public class HelpCommand {
 
+    int lastPage = 6;
+
     // Each page of the help command should have a title and nine commands. This is for ease of use.
     public boolean sendHelpMessage(CommandSender sender, String[] args) {
 
@@ -19,7 +21,7 @@ public class HelpCommand {
                     sendPageOne(sender);
                 }
                 if (args[1].equalsIgnoreCase("2")) {
-                    sender.sendMessage(ChatColor.BOLD + "" + ChatColor.AQUA + LocaleManager.getInstance().getText("CommandsPage2"));
+                    sender.sendMessage(ChatColor.BOLD + "" + ChatColor.AQUA + String.format(LocaleManager.getInstance().getText("CommandsPage2"), lastPage));
                     sender.sendMessage(ChatColor.AQUA + LocaleManager.getInstance().getText("HelpKick"));
                     sender.sendMessage(ChatColor.AQUA + LocaleManager.getInstance().getText("HelpTransfer"));
                     sender.sendMessage(ChatColor.AQUA + LocaleManager.getInstance().getText("HelpDisband"));
@@ -32,7 +34,7 @@ public class HelpCommand {
                     sender.sendMessage(ChatColor.AQUA + LocaleManager.getInstance().getText("HelpCheckClaim"));
                 }
                 if (args[1].equalsIgnoreCase("3")) {
-                    sender.sendMessage(ChatColor.BOLD + "" + ChatColor.AQUA + LocaleManager.getInstance().getText("CommandsPage3"));
+                    sender.sendMessage(ChatColor.BOLD + "" + ChatColor.AQUA + String.format(LocaleManager.getInstance().getText("CommandsPage3"), lastPage));
                     sender.sendMessage(ChatColor.AQUA + LocaleManager.getInstance().getText("HelpAutoclaim"));
                     sender.sendMessage(ChatColor.AQUA + LocaleManager.getInstance().getText("HelpPromote"));
                     sender.sendMessage(ChatColor.AQUA + LocaleManager.getInstance().getText("HelpDemote"));
@@ -44,7 +46,7 @@ public class HelpCommand {
                     sender.sendMessage(ChatColor.AQUA + LocaleManager.getInstance().getText("HelpBreakAlliance"));
                 }
                 if (args[1].equalsIgnoreCase("4")) {
-                    sender.sendMessage(ChatColor.BOLD + "" + ChatColor.AQUA + LocaleManager.getInstance().getText("CommandsPage4"));
+                    sender.sendMessage(ChatColor.BOLD + "" + ChatColor.AQUA + String.format(LocaleManager.getInstance().getText("CommandsPage4"), lastPage));
                     sender.sendMessage(ChatColor.AQUA + LocaleManager.getInstance().getText("HelpRename"));
                     sender.sendMessage(ChatColor.AQUA + LocaleManager.getInstance().getText("HelpLock"));
                     sender.sendMessage(ChatColor.AQUA + LocaleManager.getInstance().getText("HelpUnlock"));
@@ -56,7 +58,7 @@ public class HelpCommand {
                     sender.sendMessage(ChatColor.AQUA + LocaleManager.getInstance().getText("HelpRemoveLaw"));
                 }
                 if (args[1].equalsIgnoreCase("5")) {
-                    sender.sendMessage(ChatColor.BOLD + "" + ChatColor.AQUA + LocaleManager.getInstance().getText("CommandsPage5"));
+                    sender.sendMessage(ChatColor.BOLD + "" + ChatColor.AQUA + String.format(LocaleManager.getInstance().getText("CommandsPage5"), lastPage));
                     sender.sendMessage(ChatColor.AQUA + LocaleManager.getInstance().getText("HelpEditLaw"));
                     sender.sendMessage(ChatColor.AQUA + LocaleManager.getInstance().getText("HelpChat"));
                     sender.sendMessage(ChatColor.AQUA + LocaleManager.getInstance().getText("HelpVassalize"));
@@ -70,7 +72,7 @@ public class HelpCommand {
                     sender.sendMessage(ChatColor.AQUA + LocaleManager.getInstance().getText("HelpGateCancel"));
                 }
                 if (args[1].equalsIgnoreCase("6")) {
-                    sender.sendMessage(ChatColor.BOLD + "" + ChatColor.AQUA + LocaleManager.getInstance().getText("CommandsPage6"));
+                    sender.sendMessage(ChatColor.BOLD + "" + ChatColor.AQUA + String.format(LocaleManager.getInstance().getText("CommandsPage6"), lastPage));
                     sender.sendMessage(ChatColor.AQUA + LocaleManager.getInstance().getText("HelpDuelChallenge"));
                     sender.sendMessage(ChatColor.AQUA + LocaleManager.getInstance().getText("HelpDuelAccept"));
                     sender.sendMessage(ChatColor.AQUA + LocaleManager.getInstance().getText("HelpDuelCancel"));
@@ -90,8 +92,8 @@ public class HelpCommand {
         return true;
     }
 
-    static void sendPageOne(CommandSender sender) {
-        sender.sendMessage(ChatColor.BOLD + "" + ChatColor.AQUA + LocaleManager.getInstance().getText("CommandsPage1"));
+    private void sendPageOne(CommandSender sender) {
+        sender.sendMessage(ChatColor.BOLD + "" + ChatColor.AQUA + String.format(LocaleManager.getInstance().getText("CommandsPage1"), lastPage));
         sender.sendMessage(ChatColor.AQUA + LocaleManager.getInstance().getText("HelpHelp"));
         sender.sendMessage(ChatColor.AQUA + LocaleManager.getInstance().getText("HelpList"));
         sender.sendMessage(ChatColor.AQUA + LocaleManager.getInstance().getText("HelpInfo"));
