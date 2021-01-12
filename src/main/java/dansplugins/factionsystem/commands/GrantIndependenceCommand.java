@@ -1,5 +1,6 @@
 package dansplugins.factionsystem.commands;
 
+import dansplugins.factionsystem.LocaleManager;
 import dansplugins.factionsystem.Messenger;
 import dansplugins.factionsystem.data.PersistentData;
 import dansplugins.factionsystem.objects.Faction;
@@ -35,38 +36,37 @@ public class GrantIndependenceCommand {
                                     playersFaction.removeVassal(targetFaction.getName());
 
                                     // inform all players in that faction that they are now independent
-                                    Messenger.getInstance().sendAllPlayersInFactionMessage(targetFaction, ChatColor.GREEN + "" + targetFactionName + " has granted your faction independence!");
+                                    Messenger.getInstance().sendAllPlayersInFactionMessage(targetFaction, ChatColor.GREEN + "" + String.format(LocaleManager.getInstance().getText("AlertGrantedIndependence"), targetFactionName));
 
                                     // inform all players in players faction that a vassal was granted independence
-                                    Messenger.getInstance().sendAllPlayersInFactionMessage(playersFaction, ChatColor.GREEN + "" + targetFactionName + " is no longer a vassal faction!");
+                                    Messenger.getInstance().sendAllPlayersInFactionMessage(playersFaction, ChatColor.GREEN + String.format(LocaleManager.getInstance().getText("AlertNoLongerVassalFaction"), targetFactionName));
                                 }
                                 else {
-                                    player.sendMessage(ChatColor.RED + "That faction isn't a vassal of yours!");
+                                    player.sendMessage(ChatColor.RED + LocaleManager.getInstance().getText("FactionIsNotVassal"));
                                 }
 
                             }
                             else {
-                                player.sendMessage(ChatColor.RED + "You must be the owner of your faction to use this command!");
+                                player.sendMessage(ChatColor.RED + LocaleManager.getInstance().getText("MustBeOwner"));
                             }
                         }
                         else {
-                            player.sendMessage(ChatColor.RED + "You must be in a faction to use this command!");
+                            player.sendMessage(ChatColor.RED + LocaleManager.getInstance().getText("AlertMustBeInFactionToUseCommand"));
                         }
                     }
                     else {
-                        // faction doesn't exist, send message
-                        player.sendMessage(ChatColor.RED + "Sorry! That faction doesn't exist!");
+                        player.sendMessage(ChatColor.RED + LocaleManager.getInstance().getText("FactionNotFound"));
                     }
 
                 }
                 else {
-                    player.sendMessage(ChatColor.RED + "Usage: /mf grantindependence (faction-name)");
+                    player.sendMessage(ChatColor.RED + LocaleManager.getInstance().getText("UsageGrantIndependence"));
                 }
 
             }
             else {
                 // send perm message
-                player.sendMessage(ChatColor.RED + "Sorry! In order to use this command, you need the following permission: 'mf.grantindependence'");
+                player.sendMessage(ChatColor.RED + LocaleManager.getInstance().getText("PermissionGrantIndependence"));
             }
         }
 

@@ -24,6 +24,7 @@ AlertForcedDemotion	You were forcibly demoted from officer status in your factio
 AlertForcedKick	You were forcibly kicked from your faction!
 AlertForcedToJoinFaction	You were forced to join a faction!
 AlertGate	That is the '%s' gate.
+AlertGrantedIndependence    %s has granted your faction independence!
 AlertJoinedFaction	You joined the faction!
 AlertKicked	You have been kicked from your faction by
 AlertLeftFaction	You left your faction.
@@ -41,6 +42,7 @@ AlertMustKickAllPlayers	You need to kick all players before you can disband your
 AlertNoGatesDefined	Your faction has no gates defined.
 AlertNoLaws	Your faction doesn't have any laws.
 AlertNonOwnership	You don't own this!
+AlertNoLongerVassalFaction  %s is no longer a vassal faction!
 AlertNoPendingChallenges	You have no pending challenges to cancel.
 AlertNotAllied	Your faction is not allied with
 AlertNotBeenChallenged	You have not been challenged to a duel by anyone.
