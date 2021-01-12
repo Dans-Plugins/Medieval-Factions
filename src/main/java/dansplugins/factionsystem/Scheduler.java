@@ -28,32 +28,32 @@ public class Scheduler {
     }
 
     public void scheduleAutosave() {
-        System.out.println("Scheduling hourly auto save...");
+        System.out.println(LocaleManager.getInstance().getText("SchedulingHourlyAutoSave"));
         int delay = 60 * 60; // 1 hour
         int secondsUntilRepeat = 60 * 60; // 1 hour
         Bukkit.getScheduler().scheduleSyncRepeatingTask(MedievalFactions.getInstance(), new Runnable() {
             @Override
             public void run() {
-                System.out.println("Medieval Factions is saving. This will happen every hour.");
+                System.out.println(LocaleManager.getInstance().getText("HourlySaveAlert"));
                 StorageManager.getInstance().save();
             }
         }, delay * 20, secondsUntilRepeat * 20);
     }
 
     public void schedulePowerIncrease() {
-        System.out.println("Scheduling power increase...");
+        System.out.println(LocaleManager.getInstance().getText("SchedulingPowerIncrease"));
         int delay = MedievalFactions.getInstance().getConfig().getInt("minutesBeforeInitialPowerIncrease") * 60; // 30 minutes
         int secondsUntilRepeat = MedievalFactions.getInstance().getConfig().getInt("minutesBetweenPowerIncreases") * 60; // 1 hour
         Bukkit.getScheduler().scheduleSyncRepeatingTask(MedievalFactions.getInstance(), new Runnable() {
             @Override
             public void run() {
-                System.out.println("Medieval Factions is increasing the power of every player by " + MedievalFactions.getInstance().getConfig().getInt("powerIncreaseAmount") + ". This will happen every " + MedievalFactions.getInstance().getConfig().getInt("minutesBetweenPowerIncreases") + " minutes.");
+                System.out.println(String.format(LocaleManager.getInstance().getText("AlertIncreasingThePowerOfEveryPlayer"), MedievalFactions.getInstance().getConfig().getInt("powerIncreaseAmount"), MedievalFactions.getInstance().getConfig().getInt("minutesBetweenPowerIncreases")));
                 for (PlayerPowerRecord powerRecord : PersistentData.getInstance().getPlayerPowerRecords()) {
                     try {
                         if (powerRecord.getPowerLevel() < powerRecord.maxPower()) {
                             if (getServer().getPlayer(powerRecord.getPlayerUUID()).isOnline()) {
                                 powerRecord.increasePower();
-                                getServer().getPlayer(powerRecord.getPlayerUUID()).sendMessage(ChatColor.GREEN + "You feel stronger. Your power has increased by " + MedievalFactions.getInstance().getConfig().getInt("powerIncreaseAmount") + ".");
+                                getServer().getPlayer(powerRecord.getPlayerUUID()).sendMessage(ChatColor.GREEN + String.format(LocaleManager.getInstance().getText("AlertPowerLevelIncreasedBy"), MedievalFactions.getInstance().getConfig().getInt("powerIncreaseAmount")));
                             }
                         }
                     } catch (Exception ignored) {
@@ -65,13 +65,13 @@ public class Scheduler {
     }
 
     public void schedulePowerDecrease() {
-        System.out.println("Scheduling power decrease...");
+        System.out.println(LocaleManager.getInstance().getText("SchedulingPowerDecrease"));
         int delay = MedievalFactions.getInstance().getConfig().getInt("minutesBetweenPowerDecreases") * 60;
         int secondsUntilRepeat = MedievalFactions.getInstance().getConfig().getInt("minutesBetweenPowerDecreases") * 60;
         Bukkit.getScheduler().scheduleSyncRepeatingTask(MedievalFactions.getInstance(), new Runnable () {
             @Override
             public void run() {
-                System.out.println("Medieval Factions is decreasing the power of every player by " + MedievalFactions.getInstance().getConfig().getInt("powerDecreaseAmount") + " if they haven't been online in over " + MedievalFactions.getInstance().getConfig().getInt("minutesBeforePowerDecrease") + " minutes. This will happen every " + MedievalFactions.getInstance().getConfig().getInt("minutesBetweenPowerDecreases") + " minutes.");
+                System.out.println(String.format(LocaleManager.getInstance().getText("AlertDecreasingThePowerOfInactivePlayers"), MedievalFactions.getInstance().getConfig().getInt("powerDecreaseAmount"), MedievalFactions.getInstance().getConfig().getInt("minutesBeforePowerDecrease"), MedievalFactions.getInstance().getConfig().getInt("minutesBetweenPowerDecreases")));
 
                 for (PlayerActivityRecord record : PersistentData.getInstance().getPlayerActivityRecords())
                 {
@@ -106,7 +106,7 @@ public class Scheduler {
         Faction faction = PersistentData.getInstance().getPlayersFaction(player.getUniqueId());
         if (faction != null) {
             if (isFactionExceedingTheirDemesneLimit(faction)) {
-                player.sendMessage(ChatColor.RED + "Your faction has more claimed chunks than power! Your land can be conquered!");
+                player.sendMessage(ChatColor.RED + LocaleManager.getInstance().getText("AlertMoreClaimedChunksThanPower"));
             }
         }
     }
@@ -123,9 +123,9 @@ public class Scheduler {
             }
         }
         for (String factionName : factionsToDisband) {
-            Messenger.getInstance().sendAllPlayersInFactionMessage(PersistentData.getInstance().getFaction(factionName), ChatColor.RED + "Your faction has been disbanded due to its cumulative power reaching zero.");
+            Messenger.getInstance().sendAllPlayersInFactionMessage(PersistentData.getInstance().getFaction(factionName), ChatColor.RED + LocaleManager.getInstance().getText("AlertDisbandmentDueToZeroPower"));
             removeFaction(factionName);
-            System.out.println(factionName + " has been disbanded due to its cumulative power reaching zero.");
+            System.out.println(String.format(LocaleManager.getInstance().getText("DisbandmentDueToZeroPower"), factionName));
         }
     }
 

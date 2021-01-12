@@ -62,6 +62,7 @@ AlertNotOfferedVassalizationBy	You haven't been offered vassalization by this fa
 AlertNowAlliedWith	Your faction is now allied with %s!
 AlertNowAtPeaceWith	%s is now at peace with %s!
 AlertPowerLevelDecreased	Your power level has decreased!
+AlertPowerLevelIncreasedBy	You feel stronger. Your power has increased by %d.
 AlertReachedDemesne	You have reached your demesne limit! Invite more players to increase this.
 AlertUnlocked	Unlocked!
 AlertUnlockingCancelled	Unlocking cancelled!
@@ -140,7 +141,8 @@ DescriptionSet	Description set!
 DesignatedFactionNotFound	One of the factions designated wasn't found!
 DesiredPowerMustBeANumber	Desired power must be a number!
 DeveloperList	Developers:
-DisbandmentDueToZeroPower	has been disbanded due to its cumulative power reaching zero.
+DisbandmentDueToZeroPower	%s has been disbanded due to its cumulative power reaching zero.
+AlertDisbandmentDueToZeroPower	Your faction has been disbanded due to its cumulative power reaching zero.
 DoesntExist	%s doesn't exist!
 DoubleSet	Double set!
 DuelChallengeCancelled	Duel challenge cancelled.
@@ -476,3 +478,5 @@ AlertFactionHomeRemoved	Your faction home has been removed!
 ErrorClaimedChunkRemoval	An error has occurred during claimed chunk removal.
 CurrentLanguageID	Current Language ID: %s
 SupportedLanguageIDList	"Supported Language IDs: %s
+AlertIncreasingThePowerOfEveryPlayer	Medieval Factions is increasing the power of every player by %d. This will happen every %d minutes.
+AlertDecreasingThePowerOfInactivePlayers	Medieval Factions is decreasing the power of every player by %d if they haven't been online in over %d minutes. This will happen every %d minutes.
