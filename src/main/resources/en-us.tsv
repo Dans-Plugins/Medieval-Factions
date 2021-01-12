@@ -376,6 +376,7 @@ PlayerPowerRecordsLoaded	Player power records loaded.
 PlayerPromoted	Player promoted!
 PleaseWaitGate	This gate is %s, please wait.
 PluginDisabled	Medieval Factions plugin disabled.
+PlayerCantBePromotedBecauseOfLimit  Player can't be promoted because you have reached your limit! Limit: %d
 PluginDisabling	Medieval Factions plugin disabling....
 PluginEnabled	Medieval Factions plugin enabled.
 PluginEnabling	Medieval Factions plugin enabling....
