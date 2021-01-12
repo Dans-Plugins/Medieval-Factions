@@ -261,7 +261,7 @@ LandUnclaimed	Land unclaimed.
 LawAdded	Law added!
 LawEdited	Law edited!
 LawRemoved	Law removed!
-LawsTitle	\n == Laws of
+LawsTitle	 == Laws of %s ==
 LeverSuccessfullyLinked	Creating Gate 4/4: Lever successfully linked.
 Liege	Liege:
 ListLegend	P: power, M: members, L: land
