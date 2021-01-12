@@ -459,7 +459,7 @@ VersionNotSet	Version not set! Setting version to
 VersionSetButMismatched	Version set but mismatched! Setting version to
 WarningPlayerAlreadyStartedCreatingGate	WARNING: Player has already started creating the gate. startCreatingGate() call ignored.
 WarsRequiredForPVPNotSet	warsRequiredForPVP not set! Setting to default!
-WasntFound	%s wasn't found.
+WasntFound	'%s' wasn't found.
 WelcomeBackLastLogout	Welcome back %s! You last logged out %s ago.
 WikiLink	Wiki: https://github.com/DansPlugins/Medieval-Factions/wiki
 WorldsMismatch1	Error placing point 1: Worlds mismatch.

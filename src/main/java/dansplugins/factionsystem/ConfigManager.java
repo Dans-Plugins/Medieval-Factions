@@ -149,7 +149,7 @@ public class ConfigManager {
         if (MedievalFactions.getInstance().getConfig().isSet(option)) {
 
             if (option.equalsIgnoreCase("version")) {
-                player.sendMessage(ChatColor.RED + "Can't set version!");
+                player.sendMessage(ChatColor.RED + LocaleManager.getInstance().getText("CannotSetVersion"));
                 return;
             }
             else if (option.equalsIgnoreCase("initialMaxPowerLevel") || option.equalsIgnoreCase("initialPowerLevel")
@@ -167,7 +167,7 @@ public class ConfigManager {
                     || option.equalsIgnoreCase("maxClaimRadius"))
             {
                 MedievalFactions.getInstance().getConfig().set(option, Integer.parseInt(value));
-                player.sendMessage(ChatColor.GREEN + "Integer set!");
+                player.sendMessage(ChatColor.GREEN + LocaleManager.getInstance().getText("IntegerSet"));
             }
             else if (option.equalsIgnoreCase("mobsSpawnInFactionTerritory")
                     || option.equalsIgnoreCase("laddersPlaceableInEnemyFactionTerritory")
@@ -178,24 +178,24 @@ public class ConfigManager {
                     || option.equalsIgnoreCase("nonMembersCanInteractWithDoors")
                     || option.equalsIgnoreCase("playersChatWithPrefixes")) {
                 MedievalFactions.getInstance().getConfig().set(option, Boolean.parseBoolean(value));
-                player.sendMessage(ChatColor.GREEN + "Boolean set!");
+                player.sendMessage(ChatColor.GREEN + LocaleManager.getInstance().getText("BooleanSet"));
             }
             else if (option.equalsIgnoreCase("factionOwnerMultiplier")
                     || option.equalsIgnoreCase("factionOfficerMultiplier")
                     || option.equalsIgnoreCase("vassalContributionPercentageMultiplier")){
                 MedievalFactions.getInstance().getConfig().set(option, Double.parseDouble(value));
-                player.sendMessage(ChatColor.GREEN + "Double set!");
+                player.sendMessage(ChatColor.GREEN + LocaleManager.getInstance().getText("DoubleSet"));
             }
             else {
                 MedievalFactions.getInstance().getConfig().set(option, value);
-                player.sendMessage(ChatColor.GREEN + "String set!");
+                player.sendMessage(ChatColor.GREEN + LocaleManager.getInstance().getText("StringSet"));
             }
 
             // save
             MedievalFactions.getInstance().saveConfig();
         }
         else {
-            player.sendMessage(ChatColor.RED + "'" + option + "' wasn't found.");
+            player.sendMessage(ChatColor.RED + String.format(LocaleManager.getInstance().getText("WasntFound"), option));
         }
 
     }
