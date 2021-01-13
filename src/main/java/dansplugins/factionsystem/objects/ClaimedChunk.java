@@ -6,11 +6,8 @@ import org.bukkit.Chunk;
 import org.bukkit.World;
 import org.bukkit.WorldCreator;
 
-import java.io.File;
-import java.io.FileNotFoundException;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Scanner;
 
 import static org.bukkit.Bukkit.getServer;
 

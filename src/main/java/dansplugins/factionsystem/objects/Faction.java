@@ -13,8 +13,6 @@ import org.bukkit.WorldCreator;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
 
-import java.io.File;
-import java.io.FileNotFoundException;
 import java.lang.reflect.Type;
 import java.util.*;
 

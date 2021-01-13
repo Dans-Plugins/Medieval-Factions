@@ -3,12 +3,12 @@ package dansplugins.factionsystem.objects;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.reflect.TypeToken;
-import dansplugins.factionsystem.UUIDChecker;
 import org.bukkit.Bukkit;
 
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.UUID;
 
 public class LockedBlock {
 
