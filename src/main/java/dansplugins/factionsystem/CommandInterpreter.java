@@ -331,18 +331,10 @@ public class CommandInterpreter {
                     return true;
                 }
 
-                // TODO: move into command class
                 // getVersion() command
                 if (args[0].equalsIgnoreCase("version")) {
-                    if (sender.hasPermission("mf.version")) {
-                        sender.sendMessage(ChatColor.AQUA + "Medieval-Factions-" + MedievalFactions.getInstance().getVersion());
-                        return true;
-                    }
-                    else {
-                        sender.sendMessage(ChatColor.RED + String.format(LocaleManager.getInstance().getText("PermissionNeeded"), "mf.version"));
-                        return false;
-                    }
-
+                    VersionCommand command = new VersionCommand();
+                    return command.showVersion(sender);
                 }
 
                 // who command
