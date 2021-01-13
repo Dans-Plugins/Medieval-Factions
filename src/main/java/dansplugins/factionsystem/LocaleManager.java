@@ -14,13 +14,15 @@ public class LocaleManager {
     private ArrayList<String> keys = new ArrayList<>();
     private HashMap<String, String> strings = new HashMap<>();
 
+    private HashMap<String, ArrayList<String>> alteredKeys = new HashMap<>();
+
     private final String pluginFolderPath = "./plugins/MedievalFactions/";
     private final String languageFolderPath = pluginFolderPath + "languages/";
     private final String localizationFileName = MedievalFactions.getInstance().getConfig().getString("languageid") + ".tsv";
     private final String localizationFilePath = languageFolderPath + localizationFileName;
 
     private LocaleManager() {
-
+        initializeAlteredKeys();
     }
 
     public static LocaleManager getInstance() {
@@ -113,17 +115,44 @@ public class LocaleManager {
     // this should be called after loading from plugin folder
     private void handleVersionMismatch() {
         // get en-us resource as input stream
-        InputStream inputStream = MedievalFactions.getInstance().getResource(languageFolderPath + "en-us.tsv");
+        InputStream inputStream = getResourceAsInputStream("en-us.tsv");
 
         loadFromInputStream(inputStream); // load in any missing keys
 
+        updateAlteredKeysForThisVersion();
+
         saveToPluginFolder();
+    }
+
+    private void updateAlteredKeysForThisVersion() {
+        ArrayList<String> keysToUpdate = alteredKeys.get(MedievalFactions.getInstance().getVersion());
+
+        for (String key : keysToUpdate) {
+            updateKey(key);
+        }
+    }
+
+    private void updateKey(String keyToUpdate) {
+        InputStream inputStream = getResourceAsInputStream("en-us.tsv");
+        InputStreamReader reader = new InputStreamReader(inputStream);
+        BufferedReader br = new BufferedReader(reader);
+        br.lines().forEach(line -> {
+            Pair<String, String> pair = getPairFromLine(line);
+            if (pair != null && pair.getLeft().equalsIgnoreCase(keyToUpdate)) { // if pair found and if key matches what we're looking for
+                strings.remove(keyToUpdate);
+                strings.put(pair.getLeft(), pair.getRight());
+            }
+        });
+    }
+
+    private InputStream getResourceAsInputStream(String fileName) {
+        return MedievalFactions.getInstance().getResource(languageFolderPath + fileName);
     }
 
     private void loadFromResource() {
         try {
             // get resource as input stream
-            InputStream inputStream = MedievalFactions.getInstance().getResource(localizationFileName);
+            InputStream inputStream = getResourceAsInputStream(localizationFileName);
 
             loadFromInputStream(inputStream);
 
@@ -204,5 +233,12 @@ public class LocaleManager {
 
     private void sortKeys() {
         Collections.sort(keys);
+    }
+
+    private void initializeAlteredKeys() {
+        // altered keys in version #
+        // ArrayList<String> changedInVersionv401 = new ArrayList<>();
+        // changedInVersionv401.add("FactionNotFound");
+        // alteredKeys.put("v4.0.1", changedInVersionv401);
     }
 }
