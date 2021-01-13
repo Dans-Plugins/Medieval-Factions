@@ -334,7 +334,7 @@ public class CommandInterpreter {
 
                 // TODO: move into command class
                 // getVersion() command
-                if (args[0].equalsIgnoreCase("getVersion()")) {
+                if (args[0].equalsIgnoreCase("version")) {
                     if (sender.hasPermission("mf.version")) {
                         sender.sendMessage(ChatColor.AQUA + "Medieval-Factions-" + MedievalFactions.getInstance().getVersion());
                         return true;
