@@ -42,7 +42,7 @@ public class EditLawCommand {
             }
         }
         else {
-            sender.sendMessage(ChatColor.RED + LocaleManager.getInstance().getText("PermissionEditLaw"));
+            sender.sendMessage(ChatColor.RED + String.format(LocaleManager.getInstance().getText("PermissionNeeded"), "mf.editlaw"));
         }
     }
 

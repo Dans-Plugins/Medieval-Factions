@@ -45,7 +45,7 @@ public class UnlockCommand {
 
             }
             else {
-                player.sendMessage(ChatColor.RED + LocaleManager.getInstance().getText("PermissionUnlock"));
+                sender.sendMessage(ChatColor.RED + String.format(LocaleManager.getInstance().getText("PermissionNeeded"), "mf.unlock"));
             }
 
         }

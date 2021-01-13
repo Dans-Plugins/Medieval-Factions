@@ -50,7 +50,7 @@ public class ConfigCommand {
                 }
             }
             else {
-                player.sendMessage(ChatColor.RED + LocaleManager.getInstance().getText("PermissionConfig"));
+                sender.sendMessage(ChatColor.RED + String.format(LocaleManager.getInstance().getText("PermissionNeeded"), "mf.config"));
             }
         }
 

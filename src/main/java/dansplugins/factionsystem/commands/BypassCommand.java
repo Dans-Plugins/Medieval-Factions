@@ -26,7 +26,7 @@ public class BypassCommand {
 
             }
             else {
-                player.sendMessage(ChatColor.RED + LocaleManager.getInstance().getText("PermissionBypass"));
+                sender.sendMessage(ChatColor.RED + String.format(LocaleManager.getInstance().getText("PermissionNeeded"), "mf.bypass"));
             }
         }
 

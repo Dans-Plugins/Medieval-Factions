@@ -74,7 +74,7 @@ public class SwearFealtyCommand {
 
             }
             else {
-                player.sendMessage(ChatColor.RED + LocaleManager.getInstance().getText("PermissionSwearFealty"));
+                sender.sendMessage(ChatColor.RED + String.format(LocaleManager.getInstance().getText("PermissionNeeded"), "mf.swearfealty"));
             }
         }
 

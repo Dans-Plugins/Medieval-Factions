@@ -66,7 +66,7 @@ public class GrantIndependenceCommand {
             }
             else {
                 // send perm message
-                player.sendMessage(ChatColor.RED + LocaleManager.getInstance().getText("PermissionGrantIndependence"));
+                sender.sendMessage(ChatColor.RED + String.format(LocaleManager.getInstance().getText("PermissionNeeded"), "mf.grantindependence"));
             }
         }
 

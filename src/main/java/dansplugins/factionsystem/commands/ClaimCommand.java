@@ -21,7 +21,7 @@ public class ClaimCommand {
         Player player = (Player) sender;
 
         if (!player.hasPermission("mf.claim")) {
-            player.sendMessage(ChatColor.RED + LocaleManager.getInstance().getText("PermissionClaim"));
+            sender.sendMessage(ChatColor.RED + String.format(LocaleManager.getInstance().getText("PermissionNeeded"), "mf.claim"));
             return false;
         }
 
