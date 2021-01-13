@@ -416,7 +416,7 @@ AlertLandClaimed	Land claimed! Demesne Size: %d/%d
 AlertFactionHomeRemoved	Your faction home has been removed!
 ErrorClaimedChunkRemoval	An error has occurred during claimed chunk removal.
 CurrentLanguageID	Current Language ID: %s
-SupportedLanguageIDList	"Supported Language IDs: %s
+SupportedLanguageIDList	Supported Language IDs: %s
 AlertIncreasingThePowerOfEveryPlayer	Medieval Factions is increasing the power of every player by %d. This will happen every %d minutes.
 AlertDecreasingThePowerOfInactivePlayers	Medieval Factions is decreasing the power of every player by %d if they haven't been online in over %d minutes. This will happen every %d minutes.
 PermissionNeeded	Sorry! In order to use this command, you need the following permission: ''%s'
