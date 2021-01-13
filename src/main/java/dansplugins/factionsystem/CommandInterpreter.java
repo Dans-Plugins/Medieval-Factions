@@ -3,7 +3,6 @@ package dansplugins.factionsystem;
 import dansplugins.factionsystem.commands.*;
 import dansplugins.factionsystem.data.PersistentData;
 import dansplugins.factionsystem.objects.Faction;
-import dansplugins.factionsystem.objects.PlayerPowerRecord;
 import dansplugins.factionsystem.utils.ArgumentParser;
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
@@ -502,15 +501,8 @@ public class CommandInterpreter {
 
                 // reset power levels command
                 if (args[0].equalsIgnoreCase("resetpowerlevels")|| args[0].equalsIgnoreCase("rpl")) {
-                    if (sender.hasPermission("mf.resetpowerlevels") || sender.hasPermission("mf.admin")) {
-                        sender.sendMessage(ChatColor.GREEN + "Power level resetting...");
-                        resetPowerRecords();
-                        return true;
-                    }
-                    else {
-                        sender.sendMessage(ChatColor.RED + String.format(LocaleManager.getInstance().getText("PermissionNeeded"), "mf.resetpowerlevels"));
-                        return false;
-                    }
+                    ResetPowerLevelsCommand command = new ResetPowerLevelsCommand();
+                    return command.resetPowerLevels(sender);
                 }
 
                 // bypass command
@@ -531,14 +523,6 @@ public class CommandInterpreter {
             sender.sendMessage(ChatColor.RED + LocaleManager.getInstance().getText("CommandNotRecognized"));
         }
         return false;
-    }
-
-    private void resetPowerRecords() {
-        // reset individual records
-        System.out.println(LocaleManager.getInstance().getText("ResettingIndividualPowerRecords"));
-        for (PlayerPowerRecord record : PersistentData.getInstance().getPlayerPowerRecords()) {
-            record.setPowerLevel(MedievalFactions.getInstance().getConfig().getInt("initialPowerLevel"));
-        }
     }
 
 }
