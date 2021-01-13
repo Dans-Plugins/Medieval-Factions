@@ -237,27 +237,10 @@ public class CommandInterpreter {
                     }
                 }
 
-                // TODO: move into command class
                 // checkclaim command
                 if (args[0].equalsIgnoreCase("checkclaim")|| args[0].equalsIgnoreCase("cc")) {
-                    if (sender.hasPermission("mf.checkclaim")) {
-                        if (sender instanceof Player) {
-                            Player player = (Player) sender;
-                            String result = ChunkManager.getInstance().checkOwnershipAtPlayerLocation(player);
-                            if (result.equalsIgnoreCase("unclaimed")) {
-                                player.sendMessage(ChatColor.GREEN + LocaleManager.getInstance().getText("LandIsUnclaimed"));
-                                return true;
-                            }
-                            else {
-                                player.sendMessage(ChatColor.RED + String.format(LocaleManager.getInstance().getText("LandClaimedBy"), result));
-                                return false;
-                            }
-                        }
-                    }
-                    else {
-                        sender.sendMessage(ChatColor.RED + String.format(LocaleManager.getInstance().getText("PermissionNeeded"), "mf.checkclaim"));
-                        return false;
-                    }
+                    CheckClaimCommand command = new CheckClaimCommand();
+                    command.showClaim(sender);
                 }
 
                 // autoclaim command
