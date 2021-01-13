@@ -2,8 +2,6 @@ package dansplugins.factionsystem;
 
 import dansplugins.factionsystem.commands.*;
 import dansplugins.factionsystem.data.PersistentData;
-import dansplugins.factionsystem.objects.Faction;
-import dansplugins.factionsystem.utils.ArgumentParser;
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
@@ -172,75 +170,16 @@ public class CommandInterpreter {
                     }
                 }
 
-                // TODO: move into command class
                 // unclaimall command
                 if (args[0].equalsIgnoreCase("unclaimall") || args[0].equalsIgnoreCase("ua")) {
-                    if (sender instanceof Player) {
-
-                        Player player = (Player) sender;
-
-                        if (args.length > 1) {
-                            if (player.hasPermission("mf.unclaimall.others") || player.hasPermission("mf.admin")) {
-
-                                String factionName = ArgumentParser.getInstance().createStringFromFirstArgOnwards(args);
-
-                                Faction faction = PersistentData.getInstance().getFaction(factionName);
-
-                                if (faction != null) {
-                                    // remove faction home
-                                    faction.setFactionHome(null);
-                                    Messenger.getInstance().sendAllPlayersInFactionMessage(faction, ChatColor.RED + LocaleManager.getInstance().getText("AlertFactionHomeRemoved"));
-
-                                    // remove claimed chunks
-                                    ChunkManager.getInstance().removeAllClaimedChunks(faction.getName(), PersistentData.getInstance().getClaimedChunks());
-                                    DynmapManager.updateClaims();
-                                    player.sendMessage(ChatColor.GREEN + String.format(LocaleManager.getInstance().getText("AllLandUnclaimedFrom"), factionName));
-
-                                    // remove locks associated with this faction
-                                    PersistentData.getInstance().removeAllLocks(faction.getName());
-                                    return true;
-                                } else {
-                                    player.sendMessage(ChatColor.RED + LocaleManager.getInstance().getText("FactionNotFound"));
-                                    return false;
-                                }
-                            } else {
-                                sender.sendMessage(ChatColor.RED + String.format(LocaleManager.getInstance().getText("PermissionNeeded"), "mf.unclaimall.others"));
-                                return false;
-                            }
-                        }
-
-                        if (sender.hasPermission("mf.unclaimall")) {
-
-                            for (Faction faction : PersistentData.getInstance().getFactions()) {
-                                if (faction.isOwner(player.getUniqueId())) {
-                                    // remove faction home
-                                    faction.setFactionHome(null);
-                                    Messenger.getInstance().sendAllPlayersInFactionMessage(faction, ChatColor.RED + LocaleManager.getInstance().getText("AlertFactionHomeRemoved"));
-
-                                    // remove claimed chunks
-                                    ChunkManager.getInstance().removeAllClaimedChunks(faction.getName(), PersistentData.getInstance().getClaimedChunks());
-                                    DynmapManager.updateClaims();
-                                    player.sendMessage(ChatColor.GREEN + "All land unclaimed.");
-
-                                    // remove locks associated with this faction
-                                    PersistentData.getInstance().removeAllLocks(faction.getName());
-                                    return true;
-                                }
-                            }
-                            player.sendMessage(ChatColor.RED + LocaleManager.getInstance().getText("AlertNotInFaction"));
-                            return false;
-                        }
-                        else {
-                            sender.sendMessage(ChatColor.RED + String.format(LocaleManager.getInstance().getText("PermissionNeeded"), "mf.unclaimall"));
-                            return false;
-                        }
-                    }
+                    UnclaimallCommand command = new UnclaimallCommand();
+                    return command.unclaimAllLand(sender, args);
                 }
 
                 // checkclaim command
                 if (args[0].equalsIgnoreCase("checkclaim")|| args[0].equalsIgnoreCase("cc")) {
                     CheckClaimCommand command = new CheckClaimCommand();
-                    command.showClaim(sender);
+                    return command.showClaim(sender);
                 }
 
                 // autoclaim command
