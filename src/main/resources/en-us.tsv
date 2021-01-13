@@ -159,7 +159,7 @@ ErrorPlayerPowerRecordForUUIDNotFound	ERROR: Player's Power Record for uuid not 
 FactionAlreadyAlly	That faction is already your ally!
 FactionAlreadyExists	Sorry! That faction already exists.
 FactionCreated	Faction created.
-KeysLoaded	Keys loaded:
+KeysLoaded	Keys loaded: %d
 FactionCurrentlyEnemyMustMakePeace	That faction is currently your enemy! Make peace before trying to ally with them.
 FactionDataLoadedSuccessfuly	Faction data loaded successfully
 FactionDoesNotExist	Sorry! That faction doesn't exist!

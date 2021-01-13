@@ -34,8 +34,7 @@ public class LocaleManager {
 
     public String getText(String key) {
         if (!keys.contains(key)) {
-            System.out.println("ERROR -> Key not found: " + key);
-            return "[key not found]";
+            return String.format("[key '%s' not found]", key);
         }
         return strings.get(key);
     }
@@ -49,7 +48,7 @@ public class LocaleManager {
             loadFromResource();
             System.out.println("DEBUG: Loading from resource!");
         }
-        System.out.println(getText("KeysLoaded") + keys.size());
+        System.out.println(String.format(getText("KeysLoaded"), keys.size()));
     }
 
     public boolean isLanguageIDSupported(String ID) {
@@ -146,7 +145,7 @@ public class LocaleManager {
     }
 
     private InputStream getResourceAsInputStream(String fileName) {
-        return MedievalFactions.getInstance().getResource(languageFolderPath + fileName);
+        return MedievalFactions.getInstance().getResource(fileName);
     }
 
     private void loadFromResource() {
