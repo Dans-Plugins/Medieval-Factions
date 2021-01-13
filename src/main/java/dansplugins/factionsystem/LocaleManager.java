@@ -116,7 +116,7 @@ public class LocaleManager {
         // get en-us resource as input stream
         InputStream inputStream = getResourceAsInputStream("en-us.tsv");
 
-        loadFromInputStream(inputStream); // load in any missing keys
+        loadMissingKeysFromInputStream(inputStream); // load in any missing keys
 
         updateAlteredKeysForThisVersion();
 
@@ -153,7 +153,7 @@ public class LocaleManager {
             // get resource as input stream
             InputStream inputStream = getResourceAsInputStream(localizationFileName);
 
-            loadFromInputStream(inputStream);
+            loadMissingKeysFromInputStream(inputStream);
 
             saveToPluginFolder();
 
@@ -163,7 +163,7 @@ public class LocaleManager {
         }
     }
 
-    private void loadFromInputStream(InputStream inputStream) {
+    private void loadMissingKeysFromInputStream(InputStream inputStream) {
         InputStreamReader reader = new InputStreamReader(inputStream);
         BufferedReader br = new BufferedReader(reader);
         br.lines().forEach(line -> {

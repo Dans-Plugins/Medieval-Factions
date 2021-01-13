@@ -4,6 +4,7 @@ authors: [DanTheTechMan, Pasarus, Caibinus]
 main: dansplugins.factionsystem.MedievalFactions
 api-version: 1.13
 softdepend: [dynmap]
+description: An open source plugin for simulating sovereign states.
 
 commands:
   mf:
