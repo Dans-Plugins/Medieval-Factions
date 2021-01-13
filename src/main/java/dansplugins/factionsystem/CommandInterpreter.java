@@ -1,10 +1,8 @@
 package dansplugins.factionsystem;
 
 import dansplugins.factionsystem.commands.*;
-import dansplugins.factionsystem.data.PersistentData;
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
-import org.bukkit.entity.Player;
 
 public class CommandInterpreter {
 
@@ -146,28 +144,10 @@ public class CommandInterpreter {
                     return command.claim(sender, args);
                 }
 
-                // TODO: move into command class
                 // unclaim command
                 if (args[0].equalsIgnoreCase("unclaim")) {
-                    if (sender.hasPermission("mf.unclaim")) {
-                        if (sender instanceof Player) {
-                            Player player = (Player) sender;
-                            if (PersistentData.getInstance().isInFaction(player.getUniqueId())) {
-                                ChunkManager.getInstance().removeChunkAtPlayerLocation(player);
-                                DynmapManager.updateClaims();
-                                return true;
-                            }
-                            else {
-                                player.sendMessage(ChatColor.RED + LocaleManager.getInstance().getText("MustBeInFaction"));
-                                return false;
-                            }
-
-                        }
-                    }
-                    else {
-                        sender.sendMessage(ChatColor.RED + String.format(LocaleManager.getInstance().getText("PermissionNeeded"), "mf.unclaim"));
-                        return false;
-                    }
+                    UnclaimCommand command = new UnclaimCommand();
+                    return command.unclaim(sender);
                 }
 
                 // unclaimall command
