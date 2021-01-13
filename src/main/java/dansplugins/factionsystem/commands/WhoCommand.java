@@ -34,7 +34,7 @@ public class WhoCommand {
                 }
             }
             else {
-                sender.sendMessage(ChatColor.RED + LocaleManager.getInstance().getText("PermissionWho"));
+                sender.sendMessage(ChatColor.RED + String.format(LocaleManager.getInstance().getText("PermissionNeeded"), "mf.who"));
             }
         }
     }

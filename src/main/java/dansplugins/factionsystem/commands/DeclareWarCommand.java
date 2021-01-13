@@ -103,7 +103,7 @@ public class DeclareWarCommand {
 
             }
             else {
-                sender.sendMessage(ChatColor.RED + LocaleManager.getInstance().getText("PermissionDeclareWar"));
+                sender.sendMessage(ChatColor.RED + String.format(LocaleManager.getInstance().getText("PermissionNeeded"), "mf.declarewar"));
             }
         }
     }

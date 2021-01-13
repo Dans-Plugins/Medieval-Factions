@@ -168,7 +168,7 @@ public class CommandInterpreter {
                         }
                     }
                     else {
-                        sender.sendMessage(ChatColor.RED + LocaleManager.getInstance().getText("PermissionUnclaim"));
+                        sender.sendMessage(ChatColor.RED + String.format(LocaleManager.getInstance().getText("PermissionNeeded"), "mf.unclaim"));
                         return false;
                     }
                 }
@@ -205,7 +205,7 @@ public class CommandInterpreter {
                                     return false;
                                 }
                             } else {
-                                player.sendMessage(ChatColor.RED + LocaleManager.getInstance().getText("PermissionUnclaimallOthers"));
+                                sender.sendMessage(ChatColor.RED + String.format(LocaleManager.getInstance().getText("PermissionNeeded"), "mf.unclaimall.others"));
                                 return false;
                             }
                         }
@@ -232,7 +232,7 @@ public class CommandInterpreter {
                             return false;
                         }
                         else {
-                            sender.sendMessage(ChatColor.RED + LocaleManager.getInstance().getText("PermissionUnclaimall"));
+                            sender.sendMessage(ChatColor.RED + String.format(LocaleManager.getInstance().getText("PermissionNeeded"), "mf.unclaimall"));
                             return false;
                         }
                     }
@@ -256,7 +256,7 @@ public class CommandInterpreter {
                         }
                     }
                     else {
-                        sender.sendMessage(ChatColor.RED + LocaleManager.getInstance().getText("PermissionUnclaimall"));
+                        sender.sendMessage(ChatColor.RED + String.format(LocaleManager.getInstance().getText("PermissionNeeded"), "mf.checkclaim"));
                         return false;
                     }
                 }
@@ -292,7 +292,7 @@ public class CommandInterpreter {
                         }
                     }
                     else {
-                        sender.sendMessage(ChatColor.RED + LocaleManager.getInstance().getText("PermissionAutoclaim"));
+                        sender.sendMessage(ChatColor.RED + String.format(LocaleManager.getInstance().getText("PermissionNeeded"), "mf.autoclaim"));
                         return false;
                     }
                 }
@@ -340,7 +340,7 @@ public class CommandInterpreter {
                         return true;
                     }
                     else {
-                        sender.sendMessage(ChatColor.RED + "Sorry! You need the following permission to use this command: 'mf.version'");
+                        sender.sendMessage(ChatColor.RED + String.format(LocaleManager.getInstance().getText("PermissionNeeded"), "mf.version"));
                         return false;
                     }
 
@@ -508,7 +508,7 @@ public class CommandInterpreter {
                         return true;
                     }
                     else {
-                        sender.sendMessage(ChatColor.RED + LocaleManager.getInstance().getText("PermissionResetPowerLevels"));
+                        sender.sendMessage(ChatColor.RED + String.format(LocaleManager.getInstance().getText("PermissionNeeded"), "mf.resetpowerlevels"));
                         return false;
                     }
                 }

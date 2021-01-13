@@ -63,7 +63,7 @@ public class PromoteCommand {
                 }
             }
             else {
-                sender.sendMessage(ChatColor.RED + LocaleManager.getInstance().getText("PermissionPromote"));
+                sender.sendMessage(ChatColor.RED + String.format(LocaleManager.getInstance().getText("PermissionNeeded"), "mf.promote"));
             }
         }
     }

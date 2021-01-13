@@ -74,7 +74,7 @@ public class InviteCommand {
                 }
             }
             else {
-                sender.sendMessage(ChatColor.RED + LocaleManager.getInstance().getText("PermissionInvite"));
+                sender.sendMessage(ChatColor.RED + String.format(LocaleManager.getInstance().getText("PermissionNeeded"), "mf.invite"));
                 return false;
             }
         }

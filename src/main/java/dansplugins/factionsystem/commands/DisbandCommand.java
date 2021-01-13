@@ -38,7 +38,7 @@ public class DisbandCommand {
                         return false;
                     }
                     else {
-                        player.sendMessage(ChatColor.RED + LocaleManager.getInstance().getText("PermissionDisbandOthers"));
+                        sender.sendMessage(ChatColor.RED + String.format(LocaleManager.getInstance().getText("PermissionNeeded"), "mf.disband.others"));
                         return false;
                     }
 
@@ -67,7 +67,7 @@ public class DisbandCommand {
                 }
             }
             else {
-                sender.sendMessage(ChatColor.RED + LocaleManager.getInstance().getText("PermissionDisband"));
+                sender.sendMessage(ChatColor.RED + String.format(LocaleManager.getInstance().getText("PermissionNeeded"), "mf.disband"));
                 return false;
             }
         }

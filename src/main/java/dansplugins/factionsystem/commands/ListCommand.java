@@ -26,7 +26,7 @@ public class ListCommand {
             return true;
         }
         else {
-            sender.sendMessage(ChatColor.RED + LocaleManager.getInstance().getText("PermissionList"));
+            sender.sendMessage(ChatColor.RED + String.format(LocaleManager.getInstance().getText("PermissionNeeded"), "mf.list"));
             return false;
         }
     }

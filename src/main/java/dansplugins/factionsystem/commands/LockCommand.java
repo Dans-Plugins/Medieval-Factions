@@ -45,7 +45,7 @@ public class LockCommand { ;
 
             }
             else {
-                player.sendMessage(ChatColor.RED + LocaleManager.getInstance().getText("PermissionLock"));
+                sender.sendMessage(ChatColor.RED + String.format(LocaleManager.getInstance().getText("PermissionNeeded"), "mf.lock"));
             }
 
         }

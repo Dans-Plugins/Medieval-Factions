@@ -86,7 +86,7 @@ public class HelpCommand {
             }
         }
         else {
-            sender.sendMessage(ChatColor.RED +LocaleManager.getInstance().getText("PermissionHelp"));
+            sender.sendMessage(ChatColor.RED + String.format(LocaleManager.getInstance().getText("PermissionNeeded"), "mf.help"));
             return false;
         }
         return true;

@@ -56,7 +56,7 @@ public class DeclareIndependenceCommand {
 
             }
             else {
-                player.sendMessage(ChatColor.RED + LocaleManager.getInstance().getText("PermissionDeclareIndependence"));
+                sender.sendMessage(ChatColor.RED + String.format(LocaleManager.getInstance().getText("PermissionNeeded"), "mf.declareindependence"));
             }
         }
 

@@ -80,7 +80,7 @@ public class VassalizeCommand {
             }
             else {
                 // send perm message
-                player.sendMessage(ChatColor.RED + LocaleManager.getInstance().getText("PermissionVassalize"));
+                sender.sendMessage(ChatColor.RED + String.format(LocaleManager.getInstance().getText("PermissionNeeded"), "mf.vassalize"));
             }
         }
 

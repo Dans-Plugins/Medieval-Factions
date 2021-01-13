@@ -66,7 +66,7 @@ public class ForceCommand {
             return true;
         }
         else {
-            sender.sendMessage(ChatColor.RED + LocaleManager.getInstance().getText("PermissionForceSave"));
+            sender.sendMessage(ChatColor.RED + String.format(LocaleManager.getInstance().getText("PermissionNeeded"), "mf.force.save"));
             return false;
         }
     }
@@ -79,7 +79,7 @@ public class ForceCommand {
             return true;
         }
         else {
-            sender.sendMessage(ChatColor.RED + LocaleManager.getInstance().getText("PermissionForceLoad"));
+            sender.sendMessage(ChatColor.RED + String.format(LocaleManager.getInstance().getText("PermissionNeeded"), "mf.force.load"));
             return false;
         }
     }
@@ -128,7 +128,7 @@ public class ForceCommand {
             return false;
         }
         else {
-            sender.sendMessage(ChatColor.RED + LocaleManager.getInstance().getText("PermissionForcePeace"));
+            sender.sendMessage(ChatColor.RED + String.format(LocaleManager.getInstance().getText("PermissionNeeded"), "mf.force.peace"));
             return false;
         }
 
@@ -161,7 +161,7 @@ public class ForceCommand {
             }
         }
         else {
-            sender.sendMessage(ChatColor.RED + LocaleManager.getInstance().getText("PermissionForceDemote"));
+            sender.sendMessage(ChatColor.RED + String.format(LocaleManager.getInstance().getText("PermissionNeeded"), "mf.force.demote"));
             return false;
         }
     }
@@ -221,7 +221,7 @@ public class ForceCommand {
             return false;
         }
         else {
-            sender.sendMessage(ChatColor.RED + LocaleManager.getInstance().getText("PermissionForceJoin"));
+            sender.sendMessage(ChatColor.RED + String.format(LocaleManager.getInstance().getText("PermissionNeeded"), "mf.force.join"));
             return false;
         }
     }
@@ -262,7 +262,7 @@ public class ForceCommand {
             }
         }
         else {
-            sender.sendMessage(ChatColor.RED + LocaleManager.getInstance().getText("PermissionForceKick"));
+            sender.sendMessage(ChatColor.RED + String.format(LocaleManager.getInstance().getText("PermissionNeeded"), "mf.force.kick"));
             return false;
         }
     }
@@ -301,7 +301,7 @@ public class ForceCommand {
             sender.sendMessage(ChatColor.RED + LocaleManager.getInstance().getText("UsageForcePower"));
             return false;
         } else {
-            sender.sendMessage(ChatColor.RED + LocaleManager.getInstance().getText("PermissionForcePower"));
+            sender.sendMessage(ChatColor.RED + String.format(LocaleManager.getInstance().getText("PermissionNeeded"), "mf.force.power"));
             return false;
         }
     }
@@ -365,7 +365,7 @@ public class ForceCommand {
 
         }
         else {
-            sender.sendMessage(ChatColor.RED + LocaleManager.getInstance().getText("PermissionForceRenounce"));
+            sender.sendMessage(ChatColor.RED + String.format(LocaleManager.getInstance().getText("PermissionNeeded"), "mf.force.renounce"));
             return false;
         }
 

@@ -193,7 +193,7 @@ public class GateCommand {
 				}
 			}
             else {
-                player.sendMessage(ChatColor.RED + LocaleManager.getInstance().getText("PermissionGate"));
+				sender.sendMessage(ChatColor.RED + String.format(LocaleManager.getInstance().getText("PermissionNeeded"), "mf.gate"));
             }
 
 		}

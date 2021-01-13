@@ -69,7 +69,7 @@ public class BreakAllianceCommand {
                 }
             }
             else {
-                sender.sendMessage(ChatColor.RED + LocaleManager.getInstance().getText("PermissionBreakAlliance"));
+                sender.sendMessage(ChatColor.RED + String.format(LocaleManager.getInstance().getText("PermissionNeeded"), "mf.breakalliance"));
             }
         }
     }

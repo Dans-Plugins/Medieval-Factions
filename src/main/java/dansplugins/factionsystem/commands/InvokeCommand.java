@@ -79,7 +79,7 @@ public class InvokeCommand {
             return true;
 
         } else {
-            player.sendMessage(ChatColor.RED + LocaleManager.getInstance().getText("PermissionInvoke"));
+            sender.sendMessage(ChatColor.RED + String.format(LocaleManager.getInstance().getText("PermissionNeeded"), "mf.invoke"));
             return false;
         }
     }

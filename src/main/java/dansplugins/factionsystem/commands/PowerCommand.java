@@ -40,7 +40,7 @@ public class PowerCommand {
             	}
             }
             else {
-                sender.sendMessage(ChatColor.RED + LocaleManager.getInstance().getText("PermissionPower"));
+				sender.sendMessage(ChatColor.RED + String.format(LocaleManager.getInstance().getText("PermissionNeeded"), "mf.power"));
             }
         }
         return false;

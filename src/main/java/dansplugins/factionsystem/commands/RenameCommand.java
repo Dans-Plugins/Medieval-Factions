@@ -84,7 +84,7 @@ public class RenameCommand {
                 }
             }
             else {
-                player.sendMessage(ChatColor.RED + LocaleManager.getInstance().getText("PermissionRename"));
+                sender.sendMessage(ChatColor.RED + String.format(LocaleManager.getInstance().getText("PermissionNeeded"), "mf.rename"));
             }
         }
     }

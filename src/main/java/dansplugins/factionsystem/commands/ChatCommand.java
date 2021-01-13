@@ -30,7 +30,7 @@ public class ChatCommand {
 
             }
             else {
-                player.sendMessage(ChatColor.RED + LocaleManager.getInstance().getText("PermissionChat"));
+                sender.sendMessage(ChatColor.RED + String.format(LocaleManager.getInstance().getText("PermissionNeeded"), "mf.chat"));
             }
         }
     }
