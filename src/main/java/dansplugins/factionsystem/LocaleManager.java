@@ -236,9 +236,8 @@ public class LocaleManager {
     }
 
     private void initializeAlteredKeys() {
-        // altered keys in version #
-        // ArrayList<String> changedInVersionv401 = new ArrayList<>();
-        // changedInVersionv401.add("FactionNotFound");
-        // alteredKeys.put("v4.0.1", changedInVersionv401);
+        // ArrayList<String> changedInVersion# = new ArrayList<>();
+        // changedInVersion#.add("examplekey");
+        // alteredKeys.put("#", changedInVersion#);
     }
 }
