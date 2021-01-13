@@ -1,6 +1,6 @@
 name: MedievalFactions
 version: 4.0-alpha-2
-author: KingdomProgrammers
+authors: [DanTheTechMan, Pasarus, Caibinus]
 main: dansplugins.factionsystem.MedievalFactions
 api-version: 1.13
 softdepend: [dynmap]
