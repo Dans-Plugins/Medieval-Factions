@@ -1,9 +1,10 @@
 name: MedievalFactions
 version: 4.0-alpha-2
-author: KingdomProgrammers
+authors: [DanTheTechMan, Pasarus, Caibinus]
 main: dansplugins.factionsystem.MedievalFactions
 api-version: 1.13
-depend: [dynmap]
+softdepend: [dynmap]
+description: An open source plugin for simulating sovereign states.
 
 commands:
   mf:
