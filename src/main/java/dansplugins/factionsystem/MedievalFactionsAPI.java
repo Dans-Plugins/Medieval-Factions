@@ -6,7 +6,7 @@ import dansplugins.factionsystem.utils.ArgumentParser;
 
 public class MedievalFactionsAPI {
 
-    public MedievalFactions getMedievalFactions() {
+    public MedievalFactions getPlugin() {
         return MedievalFactions.getInstance();
     }
 
