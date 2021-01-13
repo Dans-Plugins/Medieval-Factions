@@ -3,7 +3,7 @@ version: 4.0-alpha-2
 author: KingdomProgrammers
 main: dansplugins.factionsystem.MedievalFactions
 api-version: 1.13
-depend: [dynmap]
+softdepend: [dynmap]
 
 commands:
   mf:
