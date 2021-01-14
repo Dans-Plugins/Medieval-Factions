@@ -18,13 +18,13 @@ public class ConfigCommand {
             if (player.hasPermission("mf.config") || player.hasPermission("mf.admin")) {
                 if (args.length > 1) {
 
-                    if (args[1].equalsIgnoreCase("show")) {
+                    if (args[1].equalsIgnoreCase("show") || args[1].equalsIgnoreCase(LocaleManager.getInstance().getText("CmdConfigShow"))) {
                         // no further arguments needed, list config
                         ConfigManager.getInstance().sendPlayerConfigList(player);
                         return;
                     }
 
-                    if (args[1].equalsIgnoreCase("set")) {
+                    if (args[1].equalsIgnoreCase("set") || args[1].equalsIgnoreCase(LocaleManager.getInstance().getText("CmdConfigSet"))) {
 
                         // two more arguments needed
                         if (args.length > 3) {

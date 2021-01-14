@@ -24,7 +24,7 @@ public class GateCommand {
 			{
 				if (args.length > 1)
 				{
-					if (args[1].equalsIgnoreCase("cancel"))
+					if (args[1].equalsIgnoreCase(LocaleManager.getInstance().getText("CmdGateCancel")))
 					{
 						if (EphemeralData.getInstance().getCreatingGatePlayers().containsKey(player.getUniqueId()))
 						{
@@ -33,7 +33,7 @@ public class GateCommand {
 							return;
 						}
 					}
-					if (args[1].equalsIgnoreCase("create"))
+					if (args[1].equalsIgnoreCase(LocaleManager.getInstance().getText("CmdGateCreate")))
 					{
 						if (EphemeralData.getInstance().getCreatingGatePlayers().containsKey(player.getUniqueId()))
 						{
@@ -66,7 +66,7 @@ public class GateCommand {
 							}
 						}
 					}
-					else if (args[1].equalsIgnoreCase("list"))
+					else if (args[1].equalsIgnoreCase(LocaleManager.getInstance().getText("CmdGateList")))
 					{
 						Faction faction = PersistentData.getInstance().getPlayersFaction(player.getUniqueId());
 						if (faction != null)
@@ -91,7 +91,7 @@ public class GateCommand {
 							return;
 						}
 					}
-					else if (args[1].equalsIgnoreCase("remove"))
+					else if (args[1].equalsIgnoreCase(LocaleManager.getInstance().getText("CmdGateRemove")))
 					{
 						if (player.getTargetBlock(null, 16) != null)
 						{
