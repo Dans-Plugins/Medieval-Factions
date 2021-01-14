@@ -41,183 +41,183 @@ public class CommandInterpreter {
                 // default commands ----------------------------------------------------------------------------------
 
                 // help command
-                if (args[0].equalsIgnoreCase("help")) {
+                if (args[0].equalsIgnoreCase(LocaleManager.getInstance().getText("CmdHelp"))) {
                     HelpCommand command = new HelpCommand();
                     command.sendHelpMessage(sender, args);
                     return true;
                 }
 
                 // create command
-                if (args[0].equalsIgnoreCase("create") ) {
+                if (args[0].equalsIgnoreCase(LocaleManager.getInstance().getText("CmdCreate"))) {
                     CreateCommand command = new CreateCommand();
                     command.createFaction(sender, args);
                     return true;
                 }
 
                 // list command
-                if  (args[0].equalsIgnoreCase("list")) {
+                if  (args[0].equalsIgnoreCase(LocaleManager.getInstance().getText("CmdList"))) {
                     ListCommand command = new ListCommand();
                     command.listFactions(sender);
                     return true;
                 }
 
                 // disband command
-                if (args[0].equalsIgnoreCase("disband")) {
+                if (args[0].equalsIgnoreCase(LocaleManager.getInstance().getText("CmdDisband"))) {
                     DisbandCommand command = new DisbandCommand();
                     command.deleteFaction(sender, args);
                     return true;
                 }
 
                 // members command
-                if (args[0].equalsIgnoreCase("members")) {
+                if (args[0].equalsIgnoreCase(LocaleManager.getInstance().getText("CmdMembers"))) {
                     MembersCommand command = new MembersCommand();
                     command.showMembers(sender, args);
                     return true;
                 }
 
                 // info command
-                if (args[0].equalsIgnoreCase("info")) {
+                if (args[0].equalsIgnoreCase(LocaleManager.getInstance().getText("CmdInfo"))) {
                     InfoCommand command = new InfoCommand();
                     command.showInfo(sender, args);
                     return true;
                 }
 
                 // desc command
-                if (args[0].equalsIgnoreCase("desc")) {
+                if (args[0].equalsIgnoreCase(LocaleManager.getInstance().getText("CmdDesc"))) {
                     DescCommand command = new DescCommand();
                     command.setDescription(sender, args);
                     return true;
                 }
 
                 // invite command
-                if (args[0].equalsIgnoreCase("invite")) {
+                if (args[0].equalsIgnoreCase(LocaleManager.getInstance().getText("CmdInvite"))) {
                     InviteCommand command = new InviteCommand();
                     command.invitePlayer(sender, args);
                     return true;
                 }
 
                 // join command
-                if (args[0].equalsIgnoreCase("join")) {
+                if (args[0].equalsIgnoreCase(LocaleManager.getInstance().getText("CmdJoin"))) {
                     JoinCommand command = new JoinCommand();
                     command.joinFaction(sender, args);
                     return true;
                 }
 
                 // kick command
-                if (args[0].equalsIgnoreCase("kick")) {
+                if (args[0].equalsIgnoreCase(LocaleManager.getInstance().getText("CmdKick"))) {
                     KickCommand command = new KickCommand();
                     command.kickPlayer(sender, args);
                     return true;
                 }
 
                 // leave commmand
-                if (args[0].equalsIgnoreCase("leave")) {
+                if (args[0].equalsIgnoreCase(LocaleManager.getInstance().getText("CmdLeave"))) {
                     LeaveCommand command = new LeaveCommand();
                     command.leaveFaction(sender);
                     return true;
                 }
 
                 // transfer command
-                if (args[0].equalsIgnoreCase("transfer")) {
+                if (args[0].equalsIgnoreCase(LocaleManager.getInstance().getText("CmdTransfer"))) {
                     TransferCommand command = new TransferCommand();
                     command.transferOwnership(sender, args);
                     return true;
                 }
 
                 // declare war command
-                if (args[0].equalsIgnoreCase("declarewar") || args[0].equalsIgnoreCase("dw")) {
+                if (args[0].equalsIgnoreCase(LocaleManager.getInstance().getText("CmdDeclareWar")) || args[0].equalsIgnoreCase("dw")) {
                     DeclareWarCommand command = new DeclareWarCommand();
                     command.declareWar(sender, args);
                     return true;
                 }
 
                 // make peace command
-                if (args[0].equalsIgnoreCase("makepeace") || args[0].equalsIgnoreCase("mp")) {
+                if (args[0].equalsIgnoreCase(LocaleManager.getInstance().getText("CmdMakePeace")) || args[0].equalsIgnoreCase("mp")) {
                     MakePeaceCommand command = new MakePeaceCommand();
                     command.makePeace(sender, args);
                     return true;
                 }
 
                 // claim command
-                if (args[0].equalsIgnoreCase("claim")) {
+                if (args[0].equalsIgnoreCase(LocaleManager.getInstance().getText("CmdClaim"))) {
                     ClaimCommand command = new ClaimCommand();
                     return command.claim(sender, args);
                 }
 
                 // unclaim command
-                if (args[0].equalsIgnoreCase("unclaim")) {
+                if (args[0].equalsIgnoreCase(LocaleManager.getInstance().getText("CmdUnclaim"))) {
                     UnclaimCommand command = new UnclaimCommand();
                     return command.unclaim(sender);
                 }
 
                 // unclaimall command
-                if (args[0].equalsIgnoreCase("unclaimall") || args[0].equalsIgnoreCase("ua")) {
+                if (args[0].equalsIgnoreCase(LocaleManager.getInstance().getText("CmdUnclaimall")) || args[0].equalsIgnoreCase("ua")) {
                     UnclaimallCommand command = new UnclaimallCommand();
                     return command.unclaimAllLand(sender, args);
                 }
 
                 // checkclaim command
-                if (args[0].equalsIgnoreCase("checkclaim")|| args[0].equalsIgnoreCase("cc")) {
+                if (args[0].equalsIgnoreCase(LocaleManager.getInstance().getText("CmdCheckClaim"))|| args[0].equalsIgnoreCase("cc")) {
                     CheckClaimCommand command = new CheckClaimCommand();
                     return command.showClaim(sender);
                 }
 
                 // autoclaim command
-                if (args[0].equalsIgnoreCase("autoclaim")|| args[0].equalsIgnoreCase("ac")) {
+                if (args[0].equalsIgnoreCase(LocaleManager.getInstance().getText("CmdAutoClaim"))|| args[0].equalsIgnoreCase("ac")) {
                     AutoClaimCommand command = new AutoClaimCommand();
                     return command.toggleAutoClaim(sender);
                 }
 
                 // promote command
-                if (args[0].equalsIgnoreCase("promote")) {
+                if (args[0].equalsIgnoreCase(LocaleManager.getInstance().getText("CmdPromote"))) {
                     PromoteCommand command = new PromoteCommand();
                     command.promotePlayer(sender, args);
                     return true;
                 }
 
                 // demote command
-                if (args[0].equalsIgnoreCase("demote")) {
+                if (args[0].equalsIgnoreCase(LocaleManager.getInstance().getText("CmdDemote"))) {
                     DemoteCommand command = new DemoteCommand();
                     command.demotePlayer(sender, args);
                     return true;
                 }
 
                 // power command
-                if  (args[0].equalsIgnoreCase("power")) {
+                if  (args[0].equalsIgnoreCase(LocaleManager.getInstance().getText("CmdPower"))) {
                     PowerCommand command = new PowerCommand();
                     command.powerCheck(sender, args);
                     return true;
                 }
 
                 // sethome command
-                if (args[0].equalsIgnoreCase("sethome")|| args[0].equalsIgnoreCase("sh")) {
+                if (args[0].equalsIgnoreCase(LocaleManager.getInstance().getText("CmdSetHome"))|| args[0].equalsIgnoreCase("sh")) {
                     SetHomeCommand command = new SetHomeCommand();
                     command.setHome(sender);
                     return true;
                 }
 
                 // home command
-                if (args[0].equalsIgnoreCase("home")) {
+                if (args[0].equalsIgnoreCase(LocaleManager.getInstance().getText("CmdHome"))) {
                     HomeCommand command = new HomeCommand();
                     command.teleportPlayer(sender);
                     return true;
                 }
 
-                // getVersion() command
-                if (args[0].equalsIgnoreCase("version")) {
+                // version command
+                if (args[0].equalsIgnoreCase(LocaleManager.getInstance().getText("CmdVersion"))) {
                     VersionCommand command = new VersionCommand();
                     return command.showVersion(sender);
                 }
 
                 // who command
-                if (args[0].equalsIgnoreCase("who")) {
+                if (args[0].equalsIgnoreCase(LocaleManager.getInstance().getText("CmdWho"))) {
                     WhoCommand command = new WhoCommand();
                     command.sendInformation(sender, args);
                     return true;
                 }
 
                 // ally command
-                if (args[0].equalsIgnoreCase("ally")) {
+                if (args[0].equalsIgnoreCase(LocaleManager.getInstance().getText("CmdAlly"))) {
                     AllyCommand command = new AllyCommand();
                     command.requestAlliance(sender, args);
                     return true;
