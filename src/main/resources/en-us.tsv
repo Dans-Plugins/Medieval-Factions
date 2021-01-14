@@ -487,3 +487,7 @@ CmdBypass	bypass
 CmdConfig	config
 CmdConfigShow	show
 CmdConfigSet	set
+CmdPrefix	prefix
+UsagePrefix	Usage: /prefix (new prefix)
+PrefixSet	Prefix set!
+PrefixTaken	This prefix has already been taken!
