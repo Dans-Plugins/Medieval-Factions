@@ -14,7 +14,7 @@ public class LocaleManager {
     private ArrayList<String> keys = new ArrayList<>();
     private HashMap<String, String> strings = new HashMap<>();
 
-    private HashMap<String, ArrayList<String>> alteredKeys = new HashMap<>();
+//    private HashMap<String, ArrayList<String>> alteredKeys = new HashMap<>();
 
     private String languageFolderPath;
     private String localizationFileName;
@@ -22,7 +22,7 @@ public class LocaleManager {
 
     private LocaleManager() {
         initializePaths();
-        initializeAlteredKeys();
+//        initializeAlteredKeys();
     }
 
     private void initializePaths() {
@@ -133,7 +133,7 @@ public class LocaleManager {
 
         loadMissingKeysFromInputStream(inputStream); // load in any missing keys
 
-        updateAlteredKeysForAllVersions();
+//        updateAlteredKeysForAllVersions();
 
         saveToPluginFolder();
     }
@@ -228,6 +228,8 @@ public class LocaleManager {
         Collections.sort(keys);
     }
 
+/*
+
     // this will need to be altered each update
     private void initializeAlteredKeys() {
         // ArrayList<String> changedInVersion = new ArrayList<>();
@@ -273,4 +275,7 @@ public class LocaleManager {
             }
         });
     }
+
+*/
+
 }
