@@ -491,3 +491,7 @@ CmdPrefix	prefix
 UsagePrefix	Usage: /prefix (new prefix)
 PrefixSet	Prefix set!
 PrefixTaken	This prefix has already been taken!
+CmdForceTransfer	transfer
+UsageForceTransfer	Usage: /mf force transfer 'factionName' 'player'
+AlertPlayerAlreadyOwnsFaction	That player already owns a faction!
+FactionAndPlayerSingleQuotesRequirement	Faction and player must be designated inside single quotes!
