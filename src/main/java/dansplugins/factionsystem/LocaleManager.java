@@ -16,13 +16,20 @@ public class LocaleManager {
 
     private HashMap<String, ArrayList<String>> alteredKeys = new HashMap<>();
 
-    private final String pluginFolderPath = "./plugins/MedievalFactions/";
-    private final String languageFolderPath = pluginFolderPath + "languages/";
-    private final String localizationFileName = MedievalFactions.getInstance().getConfig().getString("languageid") + ".tsv";
-    private final String localizationFilePath = languageFolderPath + localizationFileName;
+    private String languageFolderPath;
+    private String localizationFileName;
+    private String localizationFilePath;
 
     private LocaleManager() {
+        initializePaths();
         initializeAlteredKeys();
+    }
+
+    private void initializePaths() {
+        String pluginFolderPath = "./plugins/MedievalFactions/";
+        languageFolderPath = pluginFolderPath + "languages/";
+        localizationFileName = MedievalFactions.getInstance().getConfig().getString("languageid") + ".tsv";
+        localizationFilePath = languageFolderPath + localizationFileName;
     }
 
     public static LocaleManager getInstance() {
@@ -40,6 +47,7 @@ public class LocaleManager {
     }
 
     public void loadStrings() {
+
         if (isFilePresent(localizationFilePath)) {
             loadFromPluginFolder();
             System.out.println("DEBUG: Loading from plugin folder!");
@@ -49,6 +57,13 @@ public class LocaleManager {
             System.out.println("DEBUG: Loading from resource!");
         }
         System.out.println(String.format(getText("KeysLoaded"), keys.size()));
+    }
+
+    public void reloadStrings() {
+        initializePaths();
+        keys.clear();
+        strings.clear();
+        loadStrings();
     }
 
     public boolean isLanguageIDSupported(String ID) {
@@ -118,30 +133,9 @@ public class LocaleManager {
 
         loadMissingKeysFromInputStream(inputStream); // load in any missing keys
 
-        updateAlteredKeysForThisVersion();
+        updateAlteredKeysForAllVersions();
 
         saveToPluginFolder();
-    }
-
-    private void updateAlteredKeysForThisVersion() {
-        ArrayList<String> keysToUpdate = alteredKeys.get(MedievalFactions.getInstance().getVersion());
-
-        for (String key : keysToUpdate) {
-            updateKey(key);
-        }
-    }
-
-    private void updateKey(String keyToUpdate) {
-        InputStream inputStream = getResourceAsInputStream("en-us.tsv");
-        InputStreamReader reader = new InputStreamReader(inputStream);
-        BufferedReader br = new BufferedReader(reader);
-        br.lines().forEach(line -> {
-            Pair<String, String> pair = getPairFromLine(line);
-            if (pair != null && pair.getLeft().equalsIgnoreCase(keyToUpdate)) { // if pair found and if key matches what we're looking for
-                strings.remove(keyToUpdate);
-                strings.put(pair.getLeft(), pair.getRight());
-            }
-        });
     }
 
     private InputStream getResourceAsInputStream(String fileName) {
@@ -234,9 +228,49 @@ public class LocaleManager {
         Collections.sort(keys);
     }
 
+    // this will need to be altered each update
     private void initializeAlteredKeys() {
-        // ArrayList<String> changedInVersion# = new ArrayList<>();
+        // ArrayList<String> changedInVersion = new ArrayList<>();
         // changedInVersion#.add("examplekey");
         // alteredKeys.put("#", changedInVersion#);
+
+        ArrayList<String> changedInVersion = new ArrayList<>();
+        changedInVersion.add("CommandsPage1");
+        alteredKeys.put("v4.0-alpha-2", changedInVersion);
+    }
+
+    // this will need to be altered each update
+    private void updateAlteredKeysForAllVersions() {
+
+        // update altered keys in version v4.1
+        // updateAlteredkeysForVersion("v4.1");
+
+        // update altered keys in version v4.2
+        // updateAlteredKeysForVersion("v4.2");
+
+        updateAlteredKeysForVersion("v4.0-alpha-2"); // test
+
+    }
+
+    private void updateAlteredKeysForVersion(String version) {
+        ArrayList<String> keysToUpdate = alteredKeys.get(version);
+
+        for (String key : keysToUpdate) {
+            updateKey(key);
+            System.out.println("DEBUG: Updated key " + key + " for version " + version);
+        }
+    }
+
+    private void updateKey(String keyToUpdate) {
+        InputStream inputStream = getResourceAsInputStream("en-us.tsv");
+        InputStreamReader reader = new InputStreamReader(inputStream);
+        BufferedReader br = new BufferedReader(reader);
+        br.lines().forEach(line -> {
+            Pair<String, String> pair = getPairFromLine(line);
+            if (pair != null && pair.getLeft().equalsIgnoreCase(keyToUpdate)) { // if pair found and if key matches what we're looking for
+                strings.remove(keyToUpdate);
+                strings.put(pair.getLeft(), pair.getRight());
+            }
+        });
     }
 }

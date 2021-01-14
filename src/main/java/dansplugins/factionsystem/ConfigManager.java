@@ -189,6 +189,10 @@ public class ConfigManager {
             else {
                 MedievalFactions.getInstance().getConfig().set(option, value);
                 player.sendMessage(ChatColor.GREEN + LocaleManager.getInstance().getText("StringSet"));
+
+                if (option.equalsIgnoreCase("languageid")) {
+                    LocaleManager.getInstance().reloadStrings();
+                }
             }
 
             // save
