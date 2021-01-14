@@ -224,133 +224,133 @@ public class CommandInterpreter {
                 }
 
                 // breakalliance command
-                if (args[0].equalsIgnoreCase("breakalliance")|| args[0].equalsIgnoreCase("ba")) {
+                if (args[0].equalsIgnoreCase(LocaleManager.getInstance().getText("CmdBreakAlliance"))|| args[0].equalsIgnoreCase("ba")) {
                     BreakAllianceCommand command = new BreakAllianceCommand();
                     command.breakAlliance(sender, args);
                     return true;
                 }
 
                 // rename command
-                if (args[0].equalsIgnoreCase("rename")) {
+                if (args[0].equalsIgnoreCase(LocaleManager.getInstance().getText("CmdRename"))) {
                     RenameCommand command = new RenameCommand();
                     command.renameFaction(sender, args);
                     return true;
                 }
 
                 // lock command
-                if (args[0].equalsIgnoreCase("lock")) {
+                if (args[0].equalsIgnoreCase(LocaleManager.getInstance().getText("CmdLock"))) {
                     LockCommand command = new LockCommand();
                     command.lockBlock(sender, args);
                     return true;
                 }
 
                 // unlock command
-                if (args[0].equalsIgnoreCase("unlock")) {
+                if (args[0].equalsIgnoreCase(LocaleManager.getInstance().getText("CmdUnlock"))) {
                     UnlockCommand command = new UnlockCommand();
                     command.unlockBlock(sender, args);
                     return true;
                 }
 
                 // grantaccess command
-                if (args[0].equalsIgnoreCase("grantaccess")|| args[0].equalsIgnoreCase("ga")) {
+                if (args[0].equalsIgnoreCase(LocaleManager.getInstance().getText("CmdGrantAccess")) || args[0].equalsIgnoreCase("ga")) {
                     GrantAccessCommand command = new GrantAccessCommand();
                     command.grantAccess(sender, args);
                     return true;
                 }
 
                 // checkaccess command
-                if (args[0].equalsIgnoreCase("checkaccess")|| args[0].equalsIgnoreCase("ca")) {
+                if (args[0].equalsIgnoreCase(LocaleManager.getInstance().getText("CmdCheckAccess"))|| args[0].equalsIgnoreCase("ca")) {
                     CheckAccessCommand command = new CheckAccessCommand();
                     command.checkAccess(sender, args);
                     return true;
                 }
 
                 // revokeaccess command
-                if (args[0].equalsIgnoreCase("revokeaccess")|| args[0].equalsIgnoreCase("ra")) {
+                if (args[0].equalsIgnoreCase(LocaleManager.getInstance().getText("CmdRevokeAccess"))|| args[0].equalsIgnoreCase("ra")) {
                     RevokeAccessCommand command = new RevokeAccessCommand();
                     command.revokeAccess(sender, args);
                     return true;
                 }
 
                 // laws command
-                if (args[0].equalsIgnoreCase("laws")) {
+                if (args[0].equalsIgnoreCase(LocaleManager.getInstance().getText("CmdLaws"))) {
                     LawsCommand command = new LawsCommand();
                     command.showLawsToPlayer(sender, args);
                     return true;
                 }
 
                 // addlaw command
-                if (args[0].equalsIgnoreCase("addlaw")|| args[0].equalsIgnoreCase("al")) {
+                if (args[0].equalsIgnoreCase(LocaleManager.getInstance().getText("CmdAddLaw"))|| args[0].equalsIgnoreCase("al")) {
                     AddLawCommand command = new AddLawCommand();
                     command.addLaw(sender, args);
                     return true;
                 }
 
                 // removelaw command
-                if (args[0].equalsIgnoreCase("removelaw")|| args[0].equalsIgnoreCase("rl")) {
+                if (args[0].equalsIgnoreCase(LocaleManager.getInstance().getText("CmdRemoveLaw"))|| args[0].equalsIgnoreCase("rl")) {
                     RemoveLawCommand command = new RemoveLawCommand();
                     command.removeLaw(sender, args);
                     return true;
                 }
 
                 // editlaw command
-                if (args[0].equalsIgnoreCase("editlaw") || args[0].equalsIgnoreCase("el")) {
+                if (args[0].equalsIgnoreCase(LocaleManager.getInstance().getText("CmdEditLaw")) || args[0].equalsIgnoreCase("el")) {
                     EditLawCommand command = new EditLawCommand();
                     command.editLaw(sender, args);
                     return true;
                 }
 
                 // chat command
-                if (args[0].equalsIgnoreCase("chat")) {
+                if (args[0].equalsIgnoreCase(LocaleManager.getInstance().getText("CmdChat"))) {
                     ChatCommand command = new ChatCommand();
                     command.toggleFactionChat(sender);
                     return true;
                 }
 
                 // vassalize command
-                if (args[0].equalsIgnoreCase("vassalize")) {
+                if (args[0].equalsIgnoreCase(LocaleManager.getInstance().getText("CmdVassalize"))) {
                     VassalizeCommand command = new VassalizeCommand();
                     command.sendVassalizationOffer(sender, args);
                     return true;
                 }
 
                 // swearfealty command
-                if (args[0].equalsIgnoreCase("swearfealty") || args[0].equalsIgnoreCase("sf")) {
+                if (args[0].equalsIgnoreCase(LocaleManager.getInstance().getText("CmdSwearFealty")) || args[0].equalsIgnoreCase("sf")) {
                     SwearFealtyCommand command = new SwearFealtyCommand();
                     command.swearFealty(sender, args);
                     return true;
                 }
 
                 // declare independence command
-                if (args[0].equalsIgnoreCase("declareindependence") || args[0].equalsIgnoreCase("di")) {
+                if (args[0].equalsIgnoreCase(LocaleManager.getInstance().getText("CmdDeclareIndependence")) || args[0].equalsIgnoreCase("di")) {
                     DeclareIndependenceCommand command = new DeclareIndependenceCommand();
                     command.declareIndependence(sender);
                     return true;
                 }
 
                 // grant independence command
-                if (args[0].equalsIgnoreCase("grantindependence") || args[0].equalsIgnoreCase("gi")) {
+                if (args[0].equalsIgnoreCase(LocaleManager.getInstance().getText("CmdGrantIndependence")) || args[0].equalsIgnoreCase("gi")) {
                     GrantIndependenceCommand command = new GrantIndependenceCommand();
                     command.grantIndependence(sender, args);
                     return true;
                 }
 
                 // gate management commands
-                if (args[0].equalsIgnoreCase("gate") || args[0].equalsIgnoreCase("gt")) {
+                if (args[0].equalsIgnoreCase(LocaleManager.getInstance().getText("CmdGate")) || args[0].equalsIgnoreCase("gt")) {
                 	GateCommand command = new GateCommand();
                 	command.handleGate(sender, args);
                 	return true;
                 }
 
                 // duel command
-                if (args[0].equalsIgnoreCase("duel") || args[0].equalsIgnoreCase("dl")) {
+                if (args[0].equalsIgnoreCase(LocaleManager.getInstance().getText("CmdDuel")) || args[0].equalsIgnoreCase("dl")) {
                 	DuelCommand command = new DuelCommand();
                 	command.handleDuel(sender, args);
                 	return true;
                 }
 
                 // invoke command
-                if (args[0].equalsIgnoreCase("invoke")) {
+                if (args[0].equalsIgnoreCase(LocaleManager.getInstance().getText("CmdInvoke"))) {
                     InvokeCommand command = new InvokeCommand();
                     return command.invokeAlliance(sender, args);
                 }
@@ -358,26 +358,26 @@ public class CommandInterpreter {
                 // admin commands ----------------------------------------------------------------------------------
 
                 // force command
-                if (args[0].equalsIgnoreCase("force")) {
+                if (args[0].equalsIgnoreCase(LocaleManager.getInstance().getText("CmdForce"))) {
                     ForceCommand command = new ForceCommand();
                     return command.force(sender, args);
                 }
 
                 // reset power levels command
-                if (args[0].equalsIgnoreCase("resetpowerlevels")|| args[0].equalsIgnoreCase("rpl")) {
+                if (args[0].equalsIgnoreCase(LocaleManager.getInstance().getText("CmdResetPowerLevels"))|| args[0].equalsIgnoreCase("rpl")) {
                     ResetPowerLevelsCommand command = new ResetPowerLevelsCommand();
                     return command.resetPowerLevels(sender);
                 }
 
                 // bypass command
-                if (args[0].equalsIgnoreCase("bypass")) {
+                if (args[0].equalsIgnoreCase(LocaleManager.getInstance().getText("CmdBypass"))) {
                     BypassCommand command = new BypassCommand();
                     command.toggleBypass(sender);
                     return true;
                 }
 
                 // config command
-                if (args[0].equalsIgnoreCase("config")) {
+                if (args[0].equalsIgnoreCase(LocaleManager.getInstance().getText("CmdConfig"))) {
                     ConfigCommand command = new ConfigCommand();
                     command.handleConfigAccess(sender, args);
                     return true;
