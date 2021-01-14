@@ -377,7 +377,7 @@ public class CommandInterpreter {
                 }
 
                 // config command
-                if (args[0].equalsIgnoreCase(LocaleManager.getInstance().getText("CmdConfig"))) {
+                if (args[0].equalsIgnoreCase("config") || args[0].equalsIgnoreCase(LocaleManager.getInstance().getText("CmdConfig"))) {
                     ConfigCommand command = new ConfigCommand();
                     command.handleConfigAccess(sender, args);
                     return true;

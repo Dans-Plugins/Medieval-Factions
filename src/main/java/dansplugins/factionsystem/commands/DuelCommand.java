@@ -19,7 +19,7 @@ public class DuelCommand {
 			{
 				if (args.length > 1)
 				{
-					if (args[1].equalsIgnoreCase("challenge"))
+					if (args[1].equalsIgnoreCase(LocaleManager.getInstance().getText("CmdDuelChallenge")))
 					{
 						if (args.length > 2)
 						{
@@ -60,7 +60,7 @@ public class DuelCommand {
 							}
 						}
 					}
-					else if (args[1].equalsIgnoreCase("accept"))
+					else if (args[1].equalsIgnoreCase(LocaleManager.getInstance().getText("CmdDuelAccept")))
 					{
 						if (isDuelling(player))
 						{
@@ -122,7 +122,7 @@ public class DuelCommand {
 							}
 						}
 					}
-					else if (args[1].equalsIgnoreCase("cancel"))
+					else if (args[1].equalsIgnoreCase(LocaleManager.getInstance().getText("CmdDuelCancel")))
 					{
 						if (isDuelling(player))
 						{
