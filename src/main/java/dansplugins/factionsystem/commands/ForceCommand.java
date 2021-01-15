@@ -9,8 +9,12 @@ import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.command.CommandSender;
+import org.bukkit.entity.Player;
 
 import java.util.ArrayList;
+import java.util.UUID;
+
+import static org.bukkit.Bukkit.getServer;
 
 public class ForceCommand {
 
@@ -45,6 +49,9 @@ public class ForceCommand {
             if (args[1].equalsIgnoreCase(LocaleManager.getInstance().getText("CmdForceRenounce"))) {
                 return renounceVassalAndLiegeRelationships(sender, args);
             }
+            if (args[1].equalsIgnoreCase(LocaleManager.getInstance().getText("CmdForceTransfer"))) {
+                return forceTransfer(sender, args);
+            }
         }
         // show usages
         sender.sendMessage(ChatColor.RED + LocaleManager.getInstance().getText("SubCommands"));
@@ -56,6 +63,7 @@ public class ForceCommand {
         sender.sendMessage(ChatColor.RED + LocaleManager.getInstance().getText("HelpForceKick"));
         sender.sendMessage(ChatColor.RED + LocaleManager.getInstance().getText("HelpForcePower"));
         sender.sendMessage(ChatColor.RED + LocaleManager.getInstance().getText("HelpForceRenounce"));
+        sender.sendMessage(ChatColor.RED + LocaleManager.getInstance().getText("HelpForceTransfer"));
         return false;
     }
 
@@ -293,7 +301,7 @@ public class ForceCommand {
                 PlayerPowerRecord record = PersistentData.getInstance().getPlayersPowerRecord(UUIDChecker.getInstance().findUUIDBasedOnPlayerName(player));
 
                 record.setPowerLevel(desiredPower);
-                sender.sendMessage(ChatColor.GREEN + LocaleManager.getInstance().getText("PowerLevelHasBeenSetTo") + desiredPower);
+                sender.sendMessage(ChatColor.GREEN + String.format(LocaleManager.getInstance().getText("PowerLevelHasBeenSetTo"), desiredPower));
                 return true;
             }
 
@@ -366,6 +374,75 @@ public class ForceCommand {
         }
         else {
             sender.sendMessage(ChatColor.RED + String.format(LocaleManager.getInstance().getText("PermissionNeeded"), "mf.force.renounce"));
+            return false;
+        }
+
+    }
+
+    public boolean forceTransfer(CommandSender sender, String[] args) {
+
+        if (sender.hasPermission("mf.force.transfer") || sender.hasPermission("mf.force.*") || sender.hasPermission("mf.admin")) {
+
+            if (args.length >= 4) {
+
+                // get arguments designated by single quotes
+                ArrayList<String> singleQuoteArgs = ArgumentParser.getInstance().getArgumentsInsideSingleQuotes(args);
+
+                if (singleQuoteArgs.size() < 2) {
+                    sender.sendMessage(ChatColor.RED + LocaleManager.getInstance().getText("FactionAndPlayerSingleQuotesRequirement"));
+                    return false;
+                }
+
+                String factionName = singleQuoteArgs.get(0);
+                String playerName = singleQuoteArgs.get(1);
+
+                Faction faction = PersistentData.getInstance().getFaction(factionName);
+
+                if (faction == null) {
+                    sender.sendMessage(ChatColor.RED + LocaleManager.getInstance().getText("FactionNotFound"));
+                    return false;
+                }
+
+                UUID uuid = UUIDChecker.getInstance().findUUIDBasedOnPlayerName(playerName);
+
+                if (uuid == null) {
+                    sender.sendMessage(ChatColor.RED + LocaleManager.getInstance().getText("PlayerNotFound"));
+                    return false;
+                }
+
+                if (faction.isOwner(uuid)) {
+                    sender.sendMessage(ChatColor.RED + LocaleManager.getInstance().getText("AlertPlayerAlreadyOwner"));
+                    return false;
+                }
+
+                if (!faction.isMember(uuid)) {
+                    sender.sendMessage(ChatColor.RED + LocaleManager.getInstance().getText("AlertPlayerNotInFaction"));
+                    return false;
+                }
+
+                if (faction.isOfficer(uuid)) {
+                    faction.removeOfficer(uuid);
+                }
+
+                faction.setOwner(uuid);
+
+                try {
+                    Player target = getServer().getPlayer(playerName);
+                    target.sendMessage(ChatColor.GREEN + String.format(LocaleManager.getInstance().getText("OwnershipTransferred"), faction.getName()));
+                }
+                catch(Exception ignored) {
+
+                }
+
+                sender.sendMessage(ChatColor.GREEN + String.format(LocaleManager.getInstance().getText("OwnerShipTransferredTo"), playerName));
+                return true;
+            }
+
+            // send usage
+            sender.sendMessage(ChatColor.RED + LocaleManager.getInstance().getText("UsageForceTransfer"));
+            return false;
+        } else {
+            sender.sendMessage(ChatColor.RED + String.format(LocaleManager.getInstance().getText("PermissionNeeded"), "mf.force.transfer"));
             return false;
         }
 

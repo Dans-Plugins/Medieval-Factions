@@ -1,0 +1,500 @@
+AcceptedChallengeDuelHasBegun	Has aceptado el desafío de %s, ¡comienza el duelo!
+AlertAccessGrantedTo	Acceso otorgado a %s
+AlertAccessRevokedFor	Acceso quitado a %s
+AlertAllianceHasBeenBroken	%s ha roto su alianza a tu facción!
+AlertAlreadyAtWarWith	Tu facción ya está en conflicto con %s!
+AlertAlreadyCreatingGate	Ya estás creando un portón!
+AlertAlreadyDueling	Ya estás en un duelo!
+AlertAlreadyDuelingPlayer	Ya estás en duelo con %s!
+AlertAlreadyDuelingSomeone	Ya estás en duelo con alguien!
+AlertAlreadyGrantingAccess	Ya estás otorgando acceso a alguien! Escribe '/mf grantaccess cancel' para cancelar esto.
+AlertAlreadyInFaction	Perdona, ya estás en una facción!
+AlertAlreadyRequestedAlliance	Ya has pedido alianza con esta facción!
+AlertAlreadyRequestedPeace	Ya has pedido paz con esta facción!
+AlertAttemptedAlliance	%s ha intentado aliarse con %s
+AlertAttemptedVassalization	%s ha intentado avasallar tu facción! Si eres el propietario, escribe '/mf swearfealty %s' para aceptar.
+AlertBeenInvited	Has sido invitado a %s! Escribe '/mf join %s' para unirte.
+AlertCalledToWar1	%s ha llamado a tu facción a su conflicto contra %s!
+AlertCalledToWar2	%s ha llamado a %s a su conflicto contra tu facción!
+AlertCalledToWar3	Tu facción ha llamado a %s a tu conflicto contra %s!
+AlertChallengedToDuel	%s ha desafíado a %s a un duelo!
+AlertChallengedToDuelPlusHowTo	%s te ha desafíado a un duelo! Escribe '/mf duel accept' para comenzar.
+AlertChallengeIssued	Has desafíado a %s a un duelo!
+AlertChallengeWasAccepted	%s ha aceptado tu desafío, comienza el duelo!
+AlertChangedGateName	Cambiado el nombre del portón a '%s'.
+AlertCurrentPowerLevel	Tu poder actual es %d/%d.
+AlertDecreasingThePowerOfInactivePlayers	Medieval Factions está disminuyendo el poder de cada jugador en %d si no se han conectado por más de %d minutos. Esto pasará cada %d minutos.
+AlertDemotion	Has sido degradado al rango de miembro en tu facción.
+AlertDisbandmentDueToZeroPower	Tu facción se ha disuelto al caer su poder total a cero.
+AlertFactionAttemptedToVassalize	Tu facción ha intentado avasallar a %s!
+AlertFactionHasBeenVassalized	Tu facción ha sido avasallada y tiene un nuevo señorío: %s.
+AlertFactionHasNewVassal	Tu facción tiene un nuevo vasallo: %s.
+AlertFactionHomeRemoved	Tu hogar de facción ha sido eliminado!
+AlertForcedDemotion	Has sido forzadamente degradado de tu rango de oficial en tu facción!
+AlertForcedKick	Has sido forzadamente expulsado de tu facción!
+AlertForcedLoad	Medieval Factions ha sido forzado a cargar.
+AlertForcedSave	Medieval Factions ha sido forzado a guardarse.
+AlertForcedToJoinFaction	Has sido forzado a unirte a una facción!
+AlertGate	Este es el portón de '%s'.
+AlertGrantedIndependence	%s ha otorgado independencia a tu facción!
+AlertIncreasingThePowerOfEveryPlayer	Medieval Factions está aumentando el poder de cada jugador en %d. Esto pasará cada %d minutos.
+AlertJoinedFaction	Te has unido a la facción!
+AlertKicked	Has sido expulsado de tu facción por %s.
+AlertLandClaimed	Tierra reclamada! Tamaño del Dominio: %d/%d
+AlertLandConqueredFromAnotherFaction	Tierra conquistada de %s! Tamaño del Dominio: %d/%d
+AlertLandConqueredFromYourFaction	%s ha conquistado tierra de tu facción!
+AlertLeftFaction	Has abandonado tu facción.
+AlertLeftFactionAndItGotDeleted	Has abandonado tu facción. Ha sido disuelta ya que no quedaban miembros.
+AlertMoreClaimedChunksThanPower	Tu facción tiene más tierras que poder! Tus tierras pueden ser conquistadas!
+AlertMustBeAtWarToConquer	Ambas facciones tienen que estar en conflicto para poder conquistar sus tierras.
+AlertMustBeInFactionToUseCommand	Tienes que estar en una facción para usar este comando!
+AlertMustBeMemberToCreateGate	Tienes que ser miembro de esta facción para crear un portón.
+AlertMustBeOfficerOrOwnerToClaimLand	Tienes que ser oficial o propietario de una facción para reclamar tierra!
+AlertMustBeOwnerOrOfficerToCreateGate	Tienes que ser oficial o propietario de una facción para crear un portón.
+AlertMustBeOwnerOrOfficerToUseCommand	Tienes que ser oficial o propietario de una facción para usar este comando.
+AlertMustBeOwnerToInvokeAlliance	Tienes que ser el propietario de tu facción para llamar a una alianza.
+AlertMustBeOwnerToUseCommand	Tienes que ser el propietario de una facción para usar este comando.
+AlertMustKickAllPlayers	Tienes que expulsar a todos los miembros antes de disolver tu facción.
+AlertNoGatesDefined	Tu facción no tiene portones.
+AlertNoLaws	Tu facción no tiene leyes.
+AlertNoLongerVassalFaction	%s ya no es una facción avasallada!
+AlertNonOwnership	No posees esto!
+AlertNoPendingChallenges	No tienes desafíos pendientes para cancelar.
+AlertNotAllied	Tu facción no está aliada con
+AlertNotBeenChallenged	No has sido desafíado a un duelo por nadie.
+AlertNotBeenChallengedByPlayer	No has sido desafíado a un duelo por '%s'-
+AlertNotInFaction	No estás en una facción!
+AlertNotInvitedToFaction	No has sido invitado a esta facción!
+AlertNotOfferedVassalizationBy	No se te ha ofrecido vasallaje por esta facción!
+AlertNowAlliedWith	Tu facción ahora está aliada con %s!
+AlertNowAtPeaceWith	%s ahora está en paz con %s!
+AlertPlayerAlreadyOwner	
+AlertPlayerNotInFaction	Este jugador no está en esta facción!
+AlertPowerLevelDecreased	Tu poder ha disminuido!
+AlertPowerLevelIncreasedBy	Te sientes más fuerte. Tu poder ha aumentado en %d.
+AlertReachedDemesne	Has alcanzado el límite de tu dominio! Invita a más jugadores a tu facción para aumentar el límite.
+AlertUnlocked	Desbloqueado!
+AlertUnlockingCancelled	Desbloqueo cancelado!
+AllianceBrokenWith	Alianza rota con %s!
+AlliedWith	Aliado con: %s
+AllLandUnclaimed	Todas las tierras han sido renunciadas.
+AllLandUnclaimedFrom	Todas las tierras de %s han sido renunciadas.
+AlreadyEnteredCheckAccess	Ya has usado este comando! Escribe '/mf checkaccess cancel' para cancelar.
+AlreadyEnteredRevokeAccess	Ya has usado este comando! Escribe '/mf revokeaccess cancel' para cancelar.
+AlreadyInFaction	Perdona, ya estás en una facción. Abandónala si quieres crear una distinta.
+AttemptedAlliance	Intentada alianza con %s
+AttemptedPeace	Intentada paz con %s
+AtWarWith	En Conflicto con: %s
+AutoclaimToggled	Reclamación automática de tierra habilitada.
+BlockAlreadyLocked	Este bloque ya está asegurado!
+BlockIsNotLocked	Este bloque no está asegurado!
+BlockIsPartOfGateMustRemoveGate	Este bloque es parte del portón '%s'. Debes eliminar este portón primero.
+BooleanSet	Boolean establecido!
+Cancelled	Cancelado!
+CancelledGatePlacement1	Error estableciendo punto 1. Colocación de portón cancelada.
+CancelledGatePlacement2	Error estableciendo punto 2. Colocación de portón cancelada.
+CancelledGatePlacementErrorLinking	Error estableciendo una palanca. Colocación de portón cancelada.
+CannotAllyWithSelf	No puedes aliarte con tu propia facción!
+CannotAttackFactionMember	No puedes atacar a otro jugador si sois parte de la misma facción.
+CannotAttackNonWarringPlayer	No puedes atacar a otro jugador si vuestras facciones no están en conflicto.
+CannotBreakAllianceWithSelf	No puedes romper alianza con tu propia facción.
+CannotCancelActiveDuel	No puedes cancelar un duelo en progreso.
+CannotDeclareWarIfLiegeNotWeakened	No puedes declarar conflicto contra esta facción ya que son vasallos, a no ser que su señorío se debilite!
+CannotDeclareWarOnAlly	No puedes declarar conflicto contra tus aliados!
+CannotDeclareWarOnLiege	No puedes declarar guerra contra tu señorío! Intenta '/mf declareindependence' en su lugar.
+CannotDeclareWarOnVassal	No puedes declarar conflicto contra tus vasallos!
+CannotDeclareWarOnYourself	No puedes declarar conflicto contra tí mismo!
+CannotDuelSelf	No puedes tener un duelo contra tí mismo!
+CannotFindDynmap	No se puede encontrar DynMap!
+CannotForciblyKickOwner	No se puede expulsar a un propietario de su facción forzadamente! Intenta disolver la facción!
+CannotKickOwner	No puedes expulsar al propietario.
+CannotKickSelf	No puedes expulsarte a tí mismo.
+CannotMakePeaceWithSelf	No puedes hacer paces con tu propia facción.
+CannotPlaceChestsNextToUnownedLockedChests	No puedes colocar cofres al lado de cofres asegurados que no son tuyos.
+CannotPlaceHoppersNextToUnownedLockedChests	No puedes colocar hoppers al lado, sobre, o bajo cofres asegurados que no son tuyos.
+CannotSetFactionHomeInWilderness	No puedes establecer tu hogar de facción en tierra que tu facción no ha reclamado!
+CannotSetVersion	No se puede establecer la versión!
+CannotTransferToSelf	No puedes transferirte la propiedad de tu facción a tí mismo!
+CannotVassalizeLiege	No puedes avasallar a tu señorío!
+CannotVassalizeSelf	No puedes avasallar a tu propia facción!
+CannotVassalizeVassal	No puedes avasallar una facción que ya tiene un señorío!
+CanOnlyCreateGatesInClaimedTerritory	Solo puedes crear portones en territorio reclamado.
+CanOnlyLockBlocksInClaimedTerritory	Solo puedes asegurar bloques en territorio reclamado por tu facción!
+CanOnlyLockInFactionTerritory	Solo puedes asegurar cosas en territorio de tu facción!
+CanOnlyLockSpecificBlocks	Solo puedes asegurar cofres, puertas, barriles, trampillas, hornos, yunques y puertas de vallas.
+ClaimedChunksLoaded	Tierras reclamadas cargadas.
+ClaimedChunksSuccessfullyLoaded	Tierras reclamadas cargadas con éxito.
+ClickOnTriggerLever	Haz click en la palanca vinculada...
+ClickToPlaceSecondCorner	Haz click para colocar la segunda esquina...
+CmdAddLaw	añadirley
+CmdAlly	aliar
+CmdAutoClaim	autoreclamar
+CmdBreakAlliance	romperalianza
+CmdBypass	bypass
+CmdChat	chat
+CmdCheckAccess	veracceso
+CmdCheckClaim	verreclamacion
+CmdClaim	reclamar
+CmdConfig	config
+CmdConfigSet	establecer
+CmdConfigShow	ver
+CmdCreate	crear
+CmdDeclareIndependence	declararindependencia
+CmdDeclareWar	declararconflicto
+CmdDemote	degradar
+CmdDesc	desc
+CmdDisband	disolver
+CmdDuel	duelo
+CmdDuelAccept	aceptar
+CmdDuelCancel	cancelar
+CmdDuelChallenge	desafiar
+CmdEditLaw	editarley
+CmdForce	forzar
+CmdForceDemote	degradar
+CmdForceJoin	unirse
+CmdForceKick	expulsar
+CmdForceLoad	cargar
+CmdForcePeace	paz
+CmdForcePower	poder
+CmdForceRenounce	abdicar
+CmdForceSave	guardar
+CmdForceTransfer	transferir
+CmdGate	porton
+CmdGateCancel	cancelar
+CmdGateCreate	crear
+CmdGateList	lista
+CmdGateName	nombre
+CmdGateRemove	quitar
+CmdGrantAccess	daracceso
+CmdGrantIndependence	otorgarindependencia
+CmdHelp	ayuda
+CmdHome	hogar
+CmdInfo	info
+CmdInvite	invitar
+CmdInvoke	invocar
+CmdJoin	unirse
+CmdKick	expulsar
+CmdLaws	leyes
+CmdLeave	abandonar
+CmdList	lista
+CmdLock	asegurar
+CmdMakePeace	hacerpaces
+CmdMembers	miembros
+CmdPower	poder
+CmdPrefix	prefijo
+CmdPromote	ascender
+CmdRemoveLaw	quitarley
+CmdRename	renombrar
+CmdResetPowerLevels	reiniciarpoder
+CmdRevokeAccess	quitaracceso
+CmdSetHome	establecerhogar
+CmdSwearFealty	jurarlealtad
+CmdTransfer	transferir
+CmdUnclaim	renunciar
+CmdUnclaimall	renunciartodo
+CmdUnlock	desasegurar
+CmdVassalize	avasallar
+CmdVersion	version
+CmdWho	quien
+CommandCancelled	Comando cancelado!
+CommandNotRecognized	Medieval Factions no reconoce este comando!
+CommandsPage1	== Medieval Factions, Página de Comandos 1/%d ==
+CommandsPage2	== Medieval Factions, Página de Comandos 2/%d ==
+CommandsPage3	== Medieval Factions, Página de Comandos 3/%d ==
+CommandsPage4	== Medieval Factions, Página de Comandos 4/%d ==
+CommandsPage5	== Medieval Factions, Página de Comandos 5/%d ==
+CommandsPage6	== Medieval Factions, Página de Comandos 6/%d ==
+CreatingGateCancelled	Creación de portón cancelada!
+CreatingGateClickWithHoe	Creando portón. Haz click en un bloque con una Azada de Oro para seleccionar la primera esquina.
+CuboidDisallowed1	Error estableciendo el punto 1: No puedes colocar un cuboide.
+CuboidDisallowed2	Error estableciendo el punto 2: No puedes colocar un cuboide.
+CurrentLanguageID	El ID de Lenguaje actual es: %s
+CurrentlyNoFactions	Actualmente no hay facciones.
+CurrentPowerLevel	El poder actual de %s es %d/%d.
+Defeated	%s ha derrotado a %s en un duelo!
+DemesneSize	Tamaño del Dominio: %d/%d
+Description	Descripción: %s
+DescriptionSet	Descripción establecida!
+DesignatedFactionNotFound	Una de las facciones escritas no fue encontrada!
+DesiredPowerMustBeANumber	El poder deseado debe ser un número!
+DeveloperList	Desarrolladores:
+DisbandmentDueToZeroPower	%s se ha disuelto al caer su poder a cero.
+DoesntExist	%s no existe!
+DoubleSet	Doble establecido!
+DuelChallengeCancelled	Desafío de duelo cancelado!
+DuelEndedInTie	El duelo entre %s y %s acabó en empate.
+DynmapIntegrationSuccessful	Integración con Dynmap exitosa!
+ERROR	ERROR:
+ErrorAddingAreaMarker	Error añadiendo marcador de área %s
+ErrorChunkRemoval	Un error ha ocurrido durante la eliminación de tierras reclamadas.
+ErrorClaimedChunkRemoval	Un error ha ocurrido durante la eliminación de tierras reclamadas.
+ErrorCouldNotFindGatesFaction	Error: No se pudo encontrar la facción del portón '%s'.
+ErrorCouldNotLoadFactionGate	Error: No se pudo cargar el portón de facción. \n
+ErrorCreatingMarkerSet	Error creando grupo de marcadores!
+ErrorIntegratingWithDynmap	Error en la integración con Dynmap.
+ErrorPlayerPowerRecordForUUIDNotFound	ERROR: No se encontraron Registros de Poder de Jugador para el UUID. No se pudo obtener el poder total.
+FactionAlreadyAlly	Esta facción ya es tu aliada!
+FactionAlreadyExists	Perdona! Esta facción ya existe.
+FactionAndPlayerSingleQuotesRequirement	Facción y jugador deben ser designados entre comillas simples!
+FactionCreated	Facción creada.
+FactionCurrentlyEnemyMustMakePeace	Esta facción es actualmente tu enemiga! Haz paces antes de intentar aliarte con ella.
+FactionDataLoadedSuccessfuly	Datos de facción cargados correctamente.
+FactionDoesNotExist	Perdona! Esta facción no existe!
+FactionDoesNotHaveLaws	Esta facción no tiene leyes.
+FactionGates	Portones de Facción.
+FactionHomeLoadError	Un error ha ocurrido cargando la posición del hogar de facción.
+FactionHomeNotSetYet	El hogar de facción no se ha establecido aún.
+FactionHomeSet	Hogar de facción establecido!
+FactionInfo	Información de Facción de %s
+FactionIsNotVassal	Esta facción no es tu vasallo!
+FactionMustBeDesignatedInsideSingleQuotes	Las facciones deben designarse entre comillas simples!
+FactionNameChanged	Nombre de facción cambiado!
+FactionNameNotRecognized	No se reconoce el nombre de facción!
+FactionNotEnemy	Esta facción no es tu enemiga!
+FactionNotFound	No se encontró la facción!
+FactionsSuccessfullyLoaded	Facciones cargadas exitosamente.
+FactionsTitle	== Facciones ==
+FactionSuccessfullyDisbanded	Facción disuelta exitosamente.
+FactionSuccessfullyLoaded	Facción cargada exitosamente.
+FileLoadError	Un error ha ocurrido cargando el archivo.
+FollowingPlayersHaveAccess	Los siguientes jugadores tienen acceso a este bloque:
+GateCreated	Portón creado exitosamente.
+HasAttemptedToMakePeaceWith	%s ha intentado hacer paces con %s!
+HasBeenKickedFrom	%s ha sido expulsado de %s
+HasDeclaredIndependence	%s ha declarado su independencia de %s!
+HasDeclaredWarAgainst	%s ha declarado conflicto contra %s!
+HasJoined	%s se ha unido a %s
+HelpAddLaw	/mf añadirley - Añade una ley a tu facción
+HelpAlly	/mf aliar - Intenta aliarte con una facción.
+HelpAutoclaim	/mf autoreclamar - Activa reclamación de tierra automática, reclamando la tierra por la que pases.
+HelpBreakAlliance	/mf romperalianza - Rompe alianza con una facción.
+HelpBypass	/mf bypass - Ignora protecciones.
+HelpChat	/mf chat - Activa el chat de facción.
+HelpCheckAccess	/mf veracceso - Revisa quién tiene acceso a un bloque asegurado.
+HelpCheckClaim	/mf verreclamacion - Revisa si una tierra está reclamada.
+HelpClaim	/mf reclamar - Reclama tierra para tu facción.
+HelpConfigSet	/mf config establecer (option) (value) - Establece un valor de configuración
+HelpConfigShow	/mf config ver - Muestra valores de configuración.
+HelpCreate	/mf crear (nombre) - Crea una nueva facción.
+HelpDeclareIndependence	/mf declararindependencia - Declara independencia de tu señorío.
+HelpDeclareWar	/mf declararconflicto - Declara conflicto contra otra facción.
+HelpDemote	/mf degradar - Degrada un oficial a miembro.
+HelpDesc	/mf desc (desc) - Establece la descripción de tu facción.
+HelpDisband	/mf disolver - Disuelve tu facción (tienes que ser propietario)
+HelpDuelAccept	/mf duelo aceptar (<opcional>jugador)
+HelpDuelCancel	/mf duelo cancelar
+HelpDuelChallenge	/mf duelo desafiar (jugador) (<opcional>límite de tiempo en segundos)
+HelpEditLaw	/mf editarley - Edita una ley que ya existe en tu facción.
+HelpForce	/mf forzar - Fuerza al plugin a realizar ciertas acciones.
+HelpForceDemote	/mf forzar degradar (jugador)
+HelpForceJoin	/mf forzar unirse 'jugador' 'facción2'
+HelpForceKick	/mf forzar expulsar (jugador)
+HelpForceLoad	/mf forzar cargar
+HelpForcePeace	/mf forzar paz 'facción1' 'facción2'
+HelpForcePower	/mf forzar poder 'jugador' 'número'
+HelpForceRenounce	/mf forzar abdicar (facción)
+HelpForceSave	/mf forzar guardar
+HelpForceTransfer	/mf forzar transferir 'facción' 'jugador'
+HelpGateCancel	/mf porton cancelar
+HelpGateCreate	/mf porton crear (<opcional>nombre)
+HelpGateList	/mf porton lista
+HelpGateName	/mf porton nombre (<opcional>nombre)
+HelpGateRemove	/mf porton quitar
+HelpGrantAccess	/mf daracceso - Otorga a alguien acceso a un bloque asegurado.
+HelpGrantIndependence	/mf otorgarindependencia - Otorga a una faccion avasallada su independencia.
+HelpHelp	/mf ayuda # - Muestra lista de comandos útiles.
+HelpHome	/mf hogar - Telepórtate a tu hogar de facción.
+HelpInfo	/mf info (facción) - Revisa la información de tu facción o cualquier otra.
+HelpInvite	/mf invitar (jugador) - Invita a un jugador a tu facción.
+HelpInvoke	/mf invocar (aliado) (enemigo) - Llama a una facción aliada a tu conflicto.
+HelpJoin	/mf unirse (facción) - Únete a una facción a la que te han invitado.
+HelpKick	/mf expulsar - Expulsa a un jugador de tu facción.
+HelpLaws	/mf leyes - Revisa las leyes de tu facción.
+HelpLeave	/mf abandonar - Abandona tu facción.
+HelpList	/mf lista - Lista de todas las facciones del servidor.
+HelpLock	/mf asegurar - Asegura un cofre o puerta.
+HelpMakePeace	/mf hacerpaces - Intenta hacer las paces con una facción.
+HelpMembers	/mf miembros - Lista de miembros de tu facción o cualquier otra.
+HelpPower	/mf poder - Revisa tu poder
+HelpPrefix	/mf prefijo (prefijo): establece el prefijo de tu facción
+HelpPromote	/mf ascender - Asciende a un jugador a oficial en tu facción.
+HelpRemoveLaw	/mf quitarley - Elimina una ley de tu facción.
+HelpRename	/mf renombrar - Renombra tu facción.
+HelpResetPowerLevels	/mf reiniciarpoder - Reinicia los registros de poder de jugador y el poder total de una facción.
+HelpRevokeAccess	/mf quitaracceso - Revoca el acceso de alguien a un bloque asegurado.
+HelpSetHome	/mf establecerhogar - Establece tu hogar de facción.
+HelpSwearFealty	/mf jurarlealtad - Jura lealtad a una facción como vasallo.
+HelpTransfer	/mf transferir - Transfiere propiedad de una facción a otro jugador.\n
+HelpUnclaim	/mf renunciar - Renuncia a tierras de tu facción.
+HelpUnclaimall	/mf renunciartodo - Renuncia a todas las tierras de tu facción.
+HelpUnlock	/mf desasegurar - Quita el seguro de un cofre o puerta.
+HelpVassalize	/mf avasallar - Ofrece avasallar a una facción como su señorío.
+HelpVersion	/mf version - Revisa la versión del plugin.
+HelpWho	/mf quien - Revisa la facción de un jugador.
+HomeClaimedByAnotherFaction	El hogar fue reclamado por otra facción y se perdió.
+HomeIsInUnclaimedChunk	El hogar es una tierra sin reclamar y no está disponible.
+HourlySaveAlert	Medieval Factions está guardando. Esto pasará cada hora.
+IntegerSet	Variable Entera (Integer) establecida!
+InvitationExpired	Tu invitación para %s ha caducado.
+InvitationSent	Invitación enviada!
+KeysLoaded	Claves cargadas: %d
+LandAlreadyClaimedBy	Esta tierra ya ha sido reclamada por
+LandAlreadyClaimedByYourFaction	Esta tierra ya ha sido reclamada por tu facción!
+LandClaimedBy	Esta tierra está reclamada por %s
+LandClaimedUsingAdminBypass	Tierra renunciada por medios de administrador!
+LandIsNotClaimed	Esta tierra no está reclamada!
+LandIsUnclaimed	Esta tierra está sin reclamar.
+LandNotCurrentlyClaimed	Esta tierra no está actualmente reclamada!
+LandUnclaimed	Tierra renunciada.
+LawAdded	Ley añadida!
+LawEdited	Ley editada!
+LawRemoved	Ley eliminada!
+LawsTitle	== Leyes de %s ==
+LeverSuccessfullyLinked	Creando Portón 4/4: Palanca vinculada con éxto.
+Liege	Señorío: %s
+ListLegend	P: Poder, M: Miembros, L: Tierras
+LoadingClaimedChunks	Cargando tierras reclamdas...
+LoadingLockedBLocks	Cargando bloques asegurados...
+LoadingPlayerPowerRecords	Cargando Registros de Poder de Jugador...
+Locked	Asegurado!
+LockedBlockSuccessfullyLoaded	Bloque asegurado cargado con éxito.
+LockedBy	Asegurado por %s
+LockingCancelled	Aseguramiento cancelado!
+LockRemovalError	Un error ha ocurrido durante la eliminación del seguro.
+MaterialsMismatch1	Error colocando el punto 1: Los materiales no coinciden.
+MaterialsMismatch2	Error colocando el punto 2: Los materiales no coinciden.
+MedievalFactionsStringRight	Medieval-Factions-%s
+MedievalFactionsTitle	== Medival Factions %s ==
+MembersOf	Miembros de %s
+MissingFactionGatesJSONCollection	No se pudieron cargar por portones porque la colección 'factionGates' no existía en el archivo JSON de las facciones. Estás actualizando de una versión anterior? Usando configuración por defecto.
+MovementDetectedTeleportCancelled	Movimiento detectado. Teleportación cancelada.
+MustBeAtWarOrFactionMustBeInactive	Tienes que estar en conflicto con la facción objetivo, o esta tiene que estar inactiva!
+MustBeInFaction	Perdona, tienes que estar en una facción para usar este comando.
+MustBeOwner	Perdona, tienes que ser el propietario de una facción para usar este comando.
+MustOwnFactionOrBeOfficer	Tienes que ser oficial o propietario de una facción para usar este comando.
+MustTransferOwnership	Perdona! Tienes que transferir propiedad o expulsar a todos de tu facción para abandonarla.
+Name	Nombre: %s
+NameAlreadyTaken	Este nombre ya está en uso!
+NoBlockDetectedToCheckForGate	No se ha detecado bloque para buscar portón.
+NoFactionsDesignatedSingleQuotesRequired	No se han designado facciones. Deben estar designadas entre comillas simples!
+NoLongerBypassingProtections	Ya no estás ignorando las protecciones otorgadas por Medieval Factions.
+NoLongerInFactionChat	Ya no estás hablando en Chat de Facción!
+NotAMemberOfAnyFaction	No eres miembro de ninguna facción.
+NotAnAlly	%s no es tu aliado!
+NotAtWarWith	No estás en conflicto con %s
+NotAVassalOfAFaction	No eres vasallo de ninguna facción!
+NotEnoughArgumentsDesignatedSingleQuotesRequired	Insuficientes argumentos designados. Deben designarse entre comillas simples.
+NotTheOwnerOfThisBlock	No eres propietario de este bloque!
+NotTheOwnerOfThisFaction	No eres propietario de esta facción!
+NoVassalOrLiegeReferences	No hay referencias de vasallo o señorío asociadas a esta facción.
+NowBypassingProtections	Estás ignorando las protecciones otorgadas por Medieval Facctions.
+NowSpeakingInFactionChat	Estás hablando en Chat de Facción!
+OnlyPlayersCanUseCommand	Solo los jugadores pueden usar este comando!
+OnlyUseLeversInClaimedTerritory	Error: solo se pueden usar palancas en tierras reclamadas.
+Owner	Propietario: %s
+OwnershipTransferred	La propiedad de %s te ha sido transferida.
+OwnerShipTransferredTo	Propiedad transferida a %s
+PermissionNeeded	Perdona! Para usar este comando necesitas el siguiente permiso: "%s"
+PlayerAlreadyDueling	%s ya está en un duelo contra alguien!
+PlayerAlreadyInFaction	Perdona! Este jugador ya está en una facción.
+PlayerAlreadyOfficer	Este jugador ya es un oficial!
+PlayerAndDesiredPowerSingleQuotesRequirement	El jugador y el poder deseado deben designarse entre comillas simples.
+PlayerByNameNotFound	Perdona! No se pudo encontrar ningún jugador usando el nombre %s.
+PlayerCantBePromotedBecauseOfLimit	El jugador no se pudo ascender porque ya alcanzaste tu límite. Límite: %d
+PlayerDemoted	Jugador degradado!
+PlayerIsNotInAFaction	Este jugador no está en una facción.
+PlayerIsNotInYourFaction	Este jugador no está en tu facción.
+PlayerIsNotMemberOfFaction	Este jugador no es miembro de tu facción!
+PlayerIsNotOfficerOfFaction	Este jugador no es un oficial en tu facción!
+PlayerNotFound	Jugador no encontrado!
+PlayerPowerRecordsLoaded	Registros de Poder de Jugador cargados
+PlayerPromoted	Jugador ascendido!
+PleaseWaitGate	El portón es %s, por favor espere.
+PluginDisabled	Plugin Medieval Factions desactivado.
+PluginDisabling	Plugin Medieval Factions desactivándose...
+PluginEnabled	Plugin Medieval Factions activado.
+PluginEnabling	Plugin Medieval Factions activándose...
+PluginLoading	Plugin Medieval Factions cargando...
+PluginSaving	Plugin Medieval Factions guardando...
+Point1PlacementSuccessful	Creando Portón 1/4: Punto 1 puesto con éxito.
+Point2PlacedSuccessfully	Creando Portón 2/4: Punto 2 puesto con éxito.
+Population	Población: %d
+PowerHasDecayed	Tu poder ha decaído en %d desde la última vez que te desconectaste. Tu poder ahora es %d.
+PowerLevel	Poder: %s
+PowerLevelHasBeenSetTo	El poder de este jugador ha sido establecido en %d
+PowerLevelHasIncreased	Tu poder ha aumentado!
+PowerLevelResetting	Poder reiniciándose...
+PrefixSet	Prefijo establecido!
+PrefixTaken	Este prefijo ya está en uso!
+ProblemLoadingClaimedChunks	Error cargando tierras reclamadas!
+ProblemLoadingFactions	Error cargando facciones!
+ProblemLoadingPowerRecords	Error cargando Registros de Poder de Jugador!
+PromotedToOfficer	Has sido ascendido a oficial en tu facción!
+RadiusRequirement	El radio debe estar entre 0 y %d
+RemovedGate	Eliminado portón '%s'.
+ResettingIndividualPowerRecords	Reiniciando registros de poder individual.
+RightClickCheckAccess	Haz click derecho en un bloque asegurado para ver quién tiene acceso! Escribe '/mf checkaccess cancel' para cancelar!
+RightClickGrantAccess	Haz click derecho en un cofre o puerta para dar acceso a %s. Escribe '/mf grantaccess cancel' para cancelar.
+RightClickLock	Haz click derecho en un cofre o puerta para asegurarlo! Escribe '/mf lock cancel' para cancelar.
+RightClickRevokeAccess	Haz click derecho en un bloque asegurado para anular el acceso de este jugador! Escribe '/mf revokeaccess cancel' para cancelar.
+RightClickUnlock	Haz click derecho en un cofre o puerta para quitar su seguro! Escribe '/mf unlock cancel' para cancelar.
+SchedulingHourlyAutoSave	Programando guardado automático a cada hora...
+SchedulingPowerDecrease	Programando disminución de poder...
+SchedulingPowerIncrease	Programando aumento de poder...
+SingleQuotesAlliedWarring	La facción aliada y la facción en conflicto deben designarse entre comillas simples!
+StringSet	String designada!
+SubCommands	Sub-Comandos:
+SuccessFactionMemberRemoval	Éxito! Si el jugador estaba en una facción, ya no es miembro.
+SuccessForceJoin	Éxito! El jugador fue forzado a unirse a una facción.
+SuccessfulDisbandment	%s ha sido disuelto con éxito.
+SuccessOfficerRemoval	Éxito! Si el jugador era un oficial de alguna facción, ya no es el caso.
+SuccessReferencesRemoved	Las referencias se eliminaron con éxito!
+SupportedLanguageIDList	IDs de Lenguaje soportados: %s
+SurroundedChunkProtected	La facción objetivo ha reclamado las tierras al Norte, Este, Sur y Oeste de esta! No se puede reclamar!
+TargetBlockNotPartOfGate	El bloque objetivo no es parte de un portón.
+TargetFactionNotOverClaiming	La facción objetivo no tiene más tierra que su límite de dominio!
+TeleportingAlert	Teleportando en 3 segundos...
+ThreeBlockRequirement	Error colocando el punto 2: El portón debe ser 3 o más bloques de alto.
+TriggerBlockNotLever	El bloque accionador no era una palanca. Cancelada la colocación de portón.
+UsageAddLaw	Uso: /mf añadirley (nueva ley)
+UsageAlly	Uso: /mf aliar (facción)
+UsageBreakAlliance	Uso: /mf romperalianza (facción)
+UsageClaimRadius	Uso: /mf reclamar (radio)
+UsageConfigSet	Uso: /mf config establecer (opción) (value)
+UsageCreate	Uso: /mf crear [facción]
+UsageDeclareWar	Uso: /mf declararconflicto (facción)
+UsageDemote	Uso: /mf degradar (jugador)
+UsageDesc	Uso: /mf desc (descripción)
+UsageEditLaw	Uso: /mf editarley (número) (ley editada)
+UsageForceDemote	Uso: /mf forzar degradar (jugador)
+UsageForceJoin	Uso: /mf forzar unirse 'jugador' 'facción'
+UsageForceKick	Uso: /mf forzar expulsar (jugador)
+UsageForcePeace	Uso: /mf forzar paz 'facción-1' 'facción-2'
+UsageForcePower	Uso: /mf forzar poder 'jugador' 'número'
+UsageForceRenounce	Uso: /mf forzar abdicar 'facción'
+UsageForceTransfer	Uso: /mf forzar transferir 'nombreFacción' 'jugador'
+UsageGrantAccess	Uso: /mf daracceso (jugador)
+UsageGrantIndependence	Uso: /mf otorgarindependencia (facción)
+UsageInvite	Uso: /mf invitar (jugador)
+UsageInvoke	Uso: /mf invocar '(facción aliada)' '(facción en conflicto)'
+UsageJoin	Uso: /mf unirse (facción)
+UsageKick	Uso: /mf expulsar (jugador)
+UsageMakePeace	Uso: /mf hacerpaces (facción)
+UsagePrefix	Uso /mf prefijo (nuevo prefijo)
+UsagePromote	Uso: /mf ascender (jugador)
+UsageRemoveLaw	Uso: /mf quitarley (número)
+UsageRename	Uso: /mf renombrar (nuevo nombre)
+UsageRevokeAccess	Uso: /mf quitaracceso (jugador)
+UsageSwearFealty	Uso: /mf jurarlealtad (facción)
+UsageTransfer	Uso: /mf transferir (jugador)
+UsageVassalize	Uso: /mf avasallar (facción)
+UsageWho	Uso: /mf quien (jugador)
+ValidSubUsageWhoCommandsShowSet	Sub-Comandos válidos: show, set
+Vassals	Vasallos: %s
+WarningPlayerAlreadyStartedCreatingGate	ALERTA: El jugador ya ha empezado a crear el portón. Llamada a startCreatingGate() ignorada.
+WasntFound	No se encontró '%s'.
+WelcomeBackLastLogout	Bienvenido de vuelta, %s! Te desconectaste hace %s.
+WikiLink	Wiki: https://github.com/DansPlugins/Medieval-Factions/wiki
+Wilderness	Naturaleza
+WorldsMismatch1	Error colocando el punto 1: Los mundos no coinciden.
+WorldsMismatch2	Error colocando el punto 2: Los mundos no coinciden.

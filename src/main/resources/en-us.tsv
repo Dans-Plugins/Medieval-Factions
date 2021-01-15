@@ -17,10 +17,10 @@ AlertBeenInvited	You've been invited to %s! Type /mf join %s to join.
 AlertCalledToWar1	%s has called your faction into their war with %s!
 AlertCalledToWar2	%s has called %s into their war with your faction!
 AlertCalledToWar3	Your faction has called %s into your war with %s!
+AlertChallengedToDuel	%s has challenged %s to a duel!
+AlertChallengedToDuelPlusHowTo	%s has challenged you to a duel! Type /mf duel accept to begin.
 AlertChallengeIssued	You have challenged %s to a duel!
 AlertChallengeWasAccepted	%s has accepted your challenge, the duel has begun!
-AlertChallengedToDuel	%s has challenged %s to a duel!
-AlertChallengedToDuelPlusHowTo	 %s has challenged you to a duel! Type /mf duel accept to begin.
 AlertChangedGateName	Changed gate name to '%s'.
 AlertCurrentPowerLevel	Your current power level is %d/%d.
 AlertDecreasingThePowerOfInactivePlayers	Medieval Factions is decreasing the power of every player by %d if they haven't been online in over %d minutes. This will happen every %d minutes.
@@ -58,8 +58,8 @@ AlertMustKickAllPlayers	You need to kick all players before you can disband your
 AlertNoGatesDefined	Your faction has no gates defined.
 AlertNoLaws	Your faction doesn't have any laws.
 AlertNoLongerVassalFaction	%s is no longer a vassal faction!
-AlertNoPendingChallenges	You have no pending challenges to cancel.
 AlertNonOwnership	You don't own this!
+AlertNoPendingChallenges	You have no pending challenges to cancel.
 AlertNotAllied	Your faction is not allied with
 AlertNotBeenChallenged	You have not been challenged to a duel by anyone.
 AlertNotBeenChallengedByPlayer	You have not been challenged to a duel by '%s'.
@@ -68,30 +68,28 @@ AlertNotInvitedToFaction	You're not invited to this faction!
 AlertNotOfferedVassalizationBy	You haven't been offered vassalization by this faction!
 AlertNowAlliedWith	Your faction is now allied with %s!
 AlertNowAtPeaceWith	%s is now at peace with %s!
+AlertPlayerAlreadyOwner	That player is already the owner of that faction!
+AlertPlayerNotInFaction	That player is not in that faction!
 AlertPowerLevelDecreased	Your power level has decreased!
 AlertPowerLevelIncreasedBy	You feel stronger. Your power has increased by %d.
 AlertReachedDemesne	You have reached your demesne limit! Invite more players to increase this.
 AlertUnlocked	Unlocked!
 AlertUnlockingCancelled	Unlocking cancelled!
-AllLandUnclaimed	All land unclaimed.
-AllLandUnclaimedFrom	All land unclaimed from %s!
 AllianceBrokenWith	Alliance has been broken with %s!
 AlliedWith	Allied With: %s
+AllLandUnclaimed	All land unclaimed.
+AllLandUnclaimedFrom	All land unclaimed from %s!
 AlreadyEnteredCheckAccess	You have already entered this command! Type '/mf checkaccess cancel' to cancel!
 AlreadyEnteredRevokeAccess	You have already entered this command! Type '/mf revokeaccess cancel' to cancel!
 AlreadyInFaction	Sorry, you're already in a faction. Leave if you want to create a different one.
-AtWarWith	At War With: %s
 AttemptedAlliance	Attempted to ally with %s
 AttemptedPeace	Attempted to make peace with %s
+AtWarWith	At War With: %s
 AutoclaimToggled	Autoclaim toggled.
 BlockAlreadyLocked	This block is already locked!
 BlockIsNotLocked	That block isn't locked!
 BlockIsPartOfGateMustRemoveGate	This block is part of gate '%s'. You must remove the gate first.
 BooleanSet	Boolean set!
-CanOnlyCreateGatesInClaimedTerritory	You can only create gates in claimed territory.
-CanOnlyLockBlocksInClaimedTerritory	You can only lock blocks on land claimed by your faction!
-CanOnlyLockInFactionTerritory	You can only lock things in your faction's territory!
-CanOnlyLockSpecificBlocks	You can only lock chests, doors, barrels, trapdoors, furnaces, anvils or gates.
 Cancelled	Cancelled!
 CancelledGatePlacement1	Error placing point 1. Cancelled gate placement.
 CancelledGatePlacement2	Error placing point 2. Cancelled gate placement.
@@ -101,7 +99,7 @@ CannotAttackFactionMember	You can't attack another player if you are part of the
 CannotAttackNonWarringPlayer	You can't attack another player if your factions aren't at war.
 CannotBreakAllianceWithSelf	You can't break an alliance with your own faction.
 CannotCancelActiveDuel	Cannot cancel an active duel.
-CannotDeclareWarIfLiegeNotWeakened	"You can't declare war on this faction as they are a vassal unless their liege is weakened!"
+CannotDeclareWarIfLiegeNotWeakened	You can't declare war on this faction as they are a vassal unless their liege is weakened!
 CannotDeclareWarOnAlly	You can't declare war on your ally!
 CannotDeclareWarOnLiege	You can't declare war on your liege! Try '/mf declareindependence' instead!
 CannotDeclareWarOnVassal	You can't declare war on your own vassal!
@@ -120,13 +118,87 @@ CannotTransferToSelf	You can't transfer ownership of your faction to yourself!
 CannotVassalizeLiege	You can't vassalize your liege!
 CannotVassalizeSelf	You can't vassalize your own faction!
 CannotVassalizeVassal	You can't vassalize a faction who already has a liege!
+CanOnlyCreateGatesInClaimedTerritory	You can only create gates in claimed territory.
+CanOnlyLockBlocksInClaimedTerritory	You can only lock blocks on land claimed by your faction!
+CanOnlyLockInFactionTerritory	You can only lock things in your faction's territory!
+CanOnlyLockSpecificBlocks	You can only lock chests, doors, barrels, trapdoors, furnaces, anvils or gates.
 ClaimedChunksLoaded	Claimed chunks loaded.
 ClaimedChunksSuccessfullyLoaded	Claimed chunks successfully loaded.
 ClickOnTriggerLever	Click on the trigger lever...
 ClickToPlaceSecondCorner	Click to place the second corner...
+CmdAddLaw	addlaw
+CmdAlly	ally
+CmdAutoClaim	autoclaim
+CmdBreakAlliance	breakalliance
+CmdBypass	bypass
+CmdChat	chat
+CmdCheckAccess	checkaccess
+CmdCheckClaim	checkclaim
+CmdClaim	claim
+CmdConfig	config
+CmdConfigSet	set
+CmdConfigShow	show
+CmdCreate	create
+CmdDeclareIndependence	declareindependence
+CmdDeclareWar	declarewar
+CmdDemote	demote
+CmdDesc	desc
+CmdDisband	disband
+CmdDuel	duel
+CmdDuelAccept	accept
+CmdDuelCancel	cancel
+CmdDuelChallenge	challenge
+CmdEditLaw	editlaw
+CmdForce	force
+CmdForceDemote	demote
+CmdForceJoin	join
+CmdForceKick	kick
+CmdForceLoad	load
+CmdForcePeace	peace
+CmdForcePower	power
+CmdForceRenounce	renounce
+CmdForceSave	save
+CmdForceTransfer	transfer
+CmdGate	gate
+CmdGateCancel	cancel
+CmdGateCreate	create
+CmdGateList	list
+CmdGateName	name
+CmdGateRemove	remove
+CmdGrantAccess	grantaccess
+CmdGrantIndependence	grantindependence
+CmdHelp	help
+CmdHome	home
+CmdInfo	info
+CmdInvite	invite
+CmdInvoke	invoke
+CmdJoin	join
+CmdKick	kick
+CmdLaws	laws
+CmdLeave	leave
+CmdList	list
+CmdLock	lock
+CmdMakePeace	makepeace
+CmdMembers	members
+CmdPower	power
+CmdPrefix	prefix
+CmdPromote	promote
+CmdRemoveLaw	removelaw
+CmdRename	rename
+CmdResetPowerLevels	resetpowerlevels
+CmdRevokeAccess	revokeaccess
+CmdSetHome	sethome
+CmdSwearFealty	swearfealty
+CmdTransfer	transfer
+CmdUnclaim	unclaim
+CmdUnclaimall	unclaimall
+CmdUnlock	unlock
+CmdVassalize	vassalize
+CmdVersion	version
+CmdWho	who
 CommandCancelled	Command cancelled!
 CommandNotRecognized	Medieval Factions doesn't recognize that command!
-CommandsPage1	THIS HAS BEEN CHANGED SO KEYS CAN BE ALTERED ACCORDING TO VERSION OFFICIALLY
+CommandsPage1	== Medieval Factions Commands Page 1/%d ==
 CommandsPage2	== Medieval Factions Commands Page 2/%d ==
 CommandsPage3	== Medieval Factions Commands Page 3/%d ==
 CommandsPage4	== Medieval Factions Commands Page 4/%d ==
@@ -137,8 +209,8 @@ CreatingGateClickWithHoe	Creating gate. Click on a block with a Golden Hoe to se
 CuboidDisallowed1	Error placing point 1: You cannot place a cuboid.
 CuboidDisallowed2	Error placing point 2: You cannot place a cuboid.
 CurrentLanguageID	Current Language ID: %s
-CurrentPowerLevel	%s's current power level is %d/%d.
 CurrentlyNoFactions	There are currently no factions.
+CurrentPowerLevel	%s's current power level is %d/%d.
 Defeated	%s has defeated %s in a duel!
 DemesneSize	Demesne Size: %d/%d
 Description	Description: %s
@@ -163,6 +235,7 @@ ErrorIntegratingWithDynmap	Error integrating with dynmap:
 ErrorPlayerPowerRecordForUUIDNotFound	ERROR: Player's Power Record for uuid not found. Could not get cumulative power level.
 FactionAlreadyAlly	That faction is already your ally!
 FactionAlreadyExists	Sorry! That faction already exists.
+FactionAndPlayerSingleQuotesRequirement	Faction and player must be designated inside single quotes!
 FactionCreated	Faction created.
 FactionCurrentlyEnemyMustMakePeace	That faction is currently your enemy! Make peace before trying to ally with them.
 FactionDataLoadedSuccessfuly	Faction data loaded successfully
@@ -179,10 +252,10 @@ FactionNameChanged	Faction name changed!
 FactionNameNotRecognized	That faction name isn't recognized!
 FactionNotEnemy	That faction is not your enemy!
 FactionNotFound	That faction wasn't found!
-FactionSuccessfullyDisbanded	Faction successfully disbanded.
-FactionSuccessfullyLoaded	Faction successfully loaded.
 FactionsSuccessfullyLoaded	Factions successfully loaded.
 FactionsTitle	== Factions ==
+FactionSuccessfullyDisbanded	Faction successfully disbanded.
+FactionSuccessfullyLoaded	Faction successfully loaded.
 FileLoadError	An error occurred loading the file
 FollowingPlayersHaveAccess	The following players have access to this block:
 GateCreated	Gate successfully created.
@@ -221,6 +294,7 @@ HelpForcePeace	/mf force peace 'faction1' 'faction2'
 HelpForcePower	/mf force power 'player' 'number'
 HelpForceRenounce	/mf force renounce (faction)
 HelpForceSave	/mf force save
+HelpForceTransfer	/mf force transfer 'faction' 'player'
 HelpGateCancel	/mf gate cancel
 HelpGateCreate	/mf gate create (<optional>name)
 HelpGateList	/mf gate list
@@ -242,6 +316,7 @@ HelpLock	/mf lock - Lock a chest or door.
 HelpMakePeace	/mf makepeace - Send peace offer to another faction.
 HelpMembers	/mf members - List the members of your faction or another faction.
 HelpPower	/mf power - Check your power level.
+HelpPrefix	/mf prefix (prefix) - Set your faction's prefix
 HelpPromote	/mf promote - Promote a player to officer status.
 HelpRemoveLaw	/mf removelaw - Remove a law from your faction.
 HelpRename	/mf rename - Rename your faction
@@ -274,22 +349,22 @@ LandUnclaimed	Land unclaimed.
 LawAdded	Law added!
 LawEdited	Law edited!
 LawRemoved	Law removed!
-LawsTitle	 == Laws of %s ==
+LawsTitle	== Laws of %s ==
 LeverSuccessfullyLinked	Creating Gate 4/4: Lever successfully linked.
 Liege	Liege: %s
 ListLegend	P: power, M: members, L: land
 LoadingClaimedChunks	Loading claimed chunks...
 LoadingLockedBLocks	Loading locked blocks...
 LoadingPlayerPowerRecords	Loading player power records...
-LockRemovalError	An error has occurred during lock removal.
 Locked	Locked!
 LockedBlockSuccessfullyLoaded	Locked block successfully loaded.
 LockedBy	Locked by %s
 LockingCancelled	Locking cancelled!
+LockRemovalError	An error has occurred during lock removal.
 MaterialsMismatch1	Error placing point 1: Materials mismatch.
 MaterialsMismatch2	Error placing point 2: Materials mismatch.
 MedievalFactionsStringRight	Medieval-Factions-%s
-MedievalFactionsTitle	 == Medieval Factions %s ==
+MedievalFactionsTitle	== Medieval Factions %s ==
 MembersOf	Members of %s
 MissingFactionGatesJSONCollection	Could not load gates because the collection 'factionGates' did not exist in the factions JSON file. Are you upgrading from a previous version? Setting default.
 MovementDetectedTeleportCancelled	Movement Detected. Teleport cancelled.
@@ -304,21 +379,21 @@ NoBlockDetectedToCheckForGate	No block detected to check for gate.
 NoFactionsDesignatedSingleQuotesRequired	No factions designated. Must be designated inside single quotes!
 NoLongerBypassingProtections	You are no longer bypassing protections provided by Medieval Factions.
 NoLongerInFactionChat	You are no longer in faction chat!
-NoVassalOrLiegeReferences	There were no vassal or liege references associated with that faction.
 NotAMemberOfAnyFaction	You are not a member of any faction.
-NotAVassalOfAFaction	You aren't a vassal of a faction!
 NotAnAlly	%s isn't an ally of yours!
 NotAtWarWith	You aren't at war with %s
+NotAVassalOfAFaction	You aren't a vassal of a faction!
 NotEnoughArgumentsDesignatedSingleQuotesRequired	Not enough arguments designated. Must be designated inside single quotes!
 NotTheOwnerOfThisBlock	You are not the owner of this block!
 NotTheOwnerOfThisFaction	You are not the owner of this faction!
+NoVassalOrLiegeReferences	There were no vassal or liege references associated with that faction.
 NowBypassingProtections	You are now bypassing protections provided by Medieval Factions.
 NowSpeakingInFactionChat	You are now speaking in faction chat!
 OnlyPlayersCanUseCommand	Only players can use this command!
 OnlyUseLeversInClaimedTerritory	Error: Can only use levers in claimed territory.
 Owner	Owner: %s
-OwnerShipTransferredTo	Ownership transferred to %s
 OwnershipTransferred	Ownership of %s has been transferred to you.
+OwnerShipTransferredTo	Ownership transferred to %s
 PermissionNeeded	Sorry! In order to use this command, you need the following permission: ''%s'
 PlayerAlreadyDueling	%s is already duelling someone!
 PlayerAlreadyInFaction	That player is already in a faction, sorry!
@@ -346,9 +421,11 @@ Point2PlacedSuccessfully	Creating Gate 2/4: Point 2 placed successfully.
 Population	Population: %d
 PowerHasDecayed	Your power has decayed by %d since you last logged out. Your power is now %d.
 PowerLevel	Power Level: %s
-PowerLevelHasBeenSetTo	The power level of that player has been set to
+PowerLevelHasBeenSetTo	The power level of that player has been set to %d
 PowerLevelHasIncreased	Your power level has increased!
 PowerLevelResetting	Power level resetting...
+PrefixSet	Prefix set!
+PrefixTaken	This prefix has already been taken!
 ProblemLoadingClaimedChunks	There was a problem loading the claimed chunks!
 ProblemLoadingFactions	There was a problem loading the factions!
 ProblemLoadingPowerRecords	There was a problem loading the player power records!
@@ -369,9 +446,9 @@ StringSet	String set!
 SubCommands	Sub-commands:
 SuccessFactionMemberRemoval	Success! If the player was in a faction, they are no longer a member.
 SuccessForceJoin	Success! Player was forced to join faction.
-SuccessOfficerRemoval	Success! If player was considered an officer in any faction, they are no longer.
-SuccessReferencesRemoved	 references have been successfully removed!
 SuccessfulDisbandment	%s has been successfully disbanded.
+SuccessOfficerRemoval	Success! If player was considered an officer in any faction, they are no longer.
+SuccessReferencesRemoved	references have been successfully removed!
 SupportedLanguageIDList	Supported Language IDs: %s
 SurroundedChunkProtected	Target faction has claimed the chunks to the north, east, south and west of this chunk! It cannot be conquered!
 TargetBlockNotPartOfGate	Target block is not part of a gate.
@@ -395,13 +472,15 @@ UsageForceKick	Usage: /mf force kick (player)
 UsageForcePeace	Usage: /mf force peace 'faction-1' 'faction-2'
 UsageForcePower	Usage: /mf force power 'player' 'number'
 UsageForceRenounce	Usage: /mf force renounce 'faction'
-UsageGrantAccess	Usage: /grantaccess (player-name)
+UsageForceTransfer	Usage: /mf force transfer 'factionName' 'player'
+UsageGrantAccess	Usage: /mf grantaccess (player-name)
 UsageGrantIndependence	Usage: /mf grantindependence (faction-name)
 UsageInvite	Usage: /mf invite (player-name)
 UsageInvoke	Usage: /mf invoke '(allied faction name)' '(warring faction)'
 UsageJoin	Usage: /mf join (faction-name)
 UsageKick	Usage: /mf kick (player-name)
 UsageMakePeace	Usage: /mf makepeace (faction-name)
+UsagePrefix	Usage: /mf prefix (new prefix)
 UsagePromote	Usage: /mf promote (player-name)
 UsageRemoveLaw	Usage: /mf removelaw (number)
 UsageRename	Usage: /mf rename (newName)
@@ -419,79 +498,3 @@ WikiLink	Wiki: https://github.com/DansPlugins/Medieval-Factions/wiki
 Wilderness	Wilderness
 WorldsMismatch1	Error placing point 1: Worlds mismatch.
 WorldsMismatch2	Error placing point 2: Worlds mismatch.
-CmdHelp	help
-CmdCreate	create
-CmdList	list
-CmdDisband	disband
-CmdMembers	members
-CmdInfo	info
-CmdDesc	desc
-CmdInvite	invite
-CmdJoin	join
-CmdKick	kick
-CmdLeave	leave
-CmdTransfer	transfer
-CmdDeclareWar	declarewar
-CmdMakePeace	makepeace
-CmdClaim	claim
-CmdUnclaim	unclaim
-CmdUnclaimall	unclaimall
-CmdCheckClaim	checkclaim
-CmdAutoClaim	autoclaim
-CmdPromote	promote
-CmdDemote	demote
-CmdPower	power
-CmdSetHome	sethome
-CmdHome	home
-CmdVersion	version
-CmdWho	who
-CmdAlly	ally
-CmdBreakAlliance	breakalliance
-CmdRename	rename
-CmdLock	lock
-CmdUnlock	unlock
-CmdGrantAccess	grantaccess
-CmdCheckAccess	checkaccess
-CmdRevokeAccess	revokeaccess
-CmdLaws	laws
-CmdAddLaw	addlaw
-CmdRemoveLaw	removelaw
-CmdEditLaw	editlaw
-CmdChat	chat
-CmdVassalize	vassalize
-CmdSwearFealty	swearfealty
-CmdDeclareIndependence	declareindependence
-CmdGrantIndependence	grantindependence
-CmdGate	gate
-CmdGateCancel	cancel
-CmdGateCreate	create
-CmdGateList	list
-CmdGateRemove	remove
-CmdGateName	name
-CmdDuel	duel
-CmdDuelChallenge	challenge
-CmdDuelAccept	accept
-CmdDuelCancel	cancel
-CmdInvoke	invoke
-CmdForce	force
-CmdForceSave	save
-CmdForceLoad	load
-CmdForcePeace	peace
-CmdForceDemote	demote
-CmdForceJoin	join
-CmdForceKick	kick
-CmdForcePower	power
-CmdForceRenounce	renounce
-CmdResetPowerLevels	resetpowerlevels
-CmdBypass	bypass
-CmdConfig	config
-CmdConfigShow	show
-CmdConfigSet	set
-CmdPrefix	prefix
-UsagePrefix	Usage: /prefix (new prefix)
-PrefixSet	Prefix set!
-PrefixTaken	This prefix has already been taken!
-CmdForceTransfer	transfer
-UsageForceTransfer	Usage: /mf force transfer 'factionName' 'player'
-AlertPlayerAlreadyOwnsFaction	That player already owns a faction!
-FactionAndPlayerSingleQuotesRequirement	Faction and player must be designated inside single quotes!
