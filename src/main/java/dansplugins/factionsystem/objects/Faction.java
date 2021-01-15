@@ -398,6 +398,7 @@ public class Faction {
         saveMap.put("cumulativePowerLevel", gson.toJson(cumulativePowerLevel));
         saveMap.put("location", gson.toJson(saveLocation(gson)));
         saveMap.put("liege", gson.toJson(liege));
+        saveMap.put("prefix", gson.toJson(prefix));
 
         ArrayList<String> gateList = new ArrayList<String>(); 
         for (Gate gate : gates)
@@ -441,6 +442,7 @@ public class Faction {
         factionHome = loadLocation(gson.fromJson(data.get("location"), mapType), gson);
         liege = gson.fromJson(data.getOrDefault("liege", "none"), String.class);
         vassals = gson.fromJson(data.getOrDefault("vassals", "[]"), arrayListTypeString);
+        prefix = gson.fromJson(data.getOrDefault("prefix", getName()), String.class);
         
 //        System.out.println("Loading Faction Gates...");
         ArrayList<String> gateList = new ArrayList<String>();
