@@ -496,3 +496,4 @@ UsageForceTransfer	Usage: /mf force transfer 'factionName' 'player'
 FactionAndPlayerSingleQuotesRequirement	Faction and player must be designated inside single quotes!
 AlertPlayerNotInFaction	That player is not in that faction!
 AlertPlayerAlreadyOwner	That player is already the owner of that faction!
+HelpForceTransfer	/mf force transfer 'faction' 'player'

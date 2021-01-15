@@ -63,6 +63,7 @@ public class ForceCommand {
         sender.sendMessage(ChatColor.RED + LocaleManager.getInstance().getText("HelpForceKick"));
         sender.sendMessage(ChatColor.RED + LocaleManager.getInstance().getText("HelpForcePower"));
         sender.sendMessage(ChatColor.RED + LocaleManager.getInstance().getText("HelpForceRenounce"));
+        sender.sendMessage(ChatColor.RED + LocaleManager.getInstance().getText("HelpForceTransfer"));
         return false;
     }
 
