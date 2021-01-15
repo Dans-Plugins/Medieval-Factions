@@ -354,6 +354,12 @@ public class CommandInterpreter {
                     InvokeCommand command = new InvokeCommand();
                     return command.invokeAlliance(sender, args);
                 }
+
+                // prefix command
+                if (args[0].equalsIgnoreCase(LocaleManager.getInstance().getText("CmdPrefix"))) {
+                    PrefixCommand command = new PrefixCommand();
+                    return command.changePrefix(sender, args);
+                }
                 
                 // admin commands ----------------------------------------------------------------------------------
 

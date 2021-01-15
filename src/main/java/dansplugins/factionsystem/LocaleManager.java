@@ -9,12 +9,10 @@ public class LocaleManager {
 
     private static LocaleManager instance;
 
-    private ArrayList<String> supportedLanguageIDs = new ArrayList<>(Arrays.asList("en-us", "es"));
+    private ArrayList<String> supportedLanguageIDs = new ArrayList<>(Arrays.asList("en-us (English)", "es (Spanish)"));
 
     private ArrayList<String> keys = new ArrayList<>();
     private HashMap<String, String> strings = new HashMap<>();
-
-//    private HashMap<String, ArrayList<String>> alteredKeys = new HashMap<>();
 
     private String languageFolderPath;
     private String localizationFileName;
@@ -22,7 +20,6 @@ public class LocaleManager {
 
     private LocaleManager() {
         initializePaths();
-//        initializeAlteredKeys();
     }
 
     private void initializePaths() {
@@ -133,8 +130,6 @@ public class LocaleManager {
 
         loadMissingKeysFromInputStream(inputStream); // load in any missing keys
 
-//        updateAlteredKeysForAllVersions();
-
         saveToPluginFolder();
     }
 
@@ -227,55 +222,5 @@ public class LocaleManager {
     private void sortKeys() {
         Collections.sort(keys);
     }
-
-/*
-
-    // this will need to be altered each update
-    private void initializeAlteredKeys() {
-        // ArrayList<String> changedInVersion = new ArrayList<>();
-        // changedInVersion#.add("examplekey");
-        // alteredKeys.put("#", changedInVersion#);
-
-        ArrayList<String> changedInVersion = new ArrayList<>();
-        changedInVersion.add("CommandsPage1");
-        alteredKeys.put("v4.0-alpha-2", changedInVersion);
-    }
-
-    // this will need to be altered each update
-    private void updateAlteredKeysForAllVersions() {
-
-        // update altered keys in version v4.1
-        // updateAlteredkeysForVersion("v4.1");
-
-        // update altered keys in version v4.2
-        // updateAlteredKeysForVersion("v4.2");
-
-        updateAlteredKeysForVersion("v4.0-alpha-2"); // test
-
-    }
-
-    private void updateAlteredKeysForVersion(String version) {
-        ArrayList<String> keysToUpdate = alteredKeys.get(version);
-
-        for (String key : keysToUpdate) {
-            updateKey(key);
-            System.out.println("DEBUG: Updated key " + key + " for version " + version);
-        }
-    }
-
-    private void updateKey(String keyToUpdate) {
-        InputStream inputStream = getResourceAsInputStream("en-us.tsv");
-        InputStreamReader reader = new InputStreamReader(inputStream);
-        BufferedReader br = new BufferedReader(reader);
-        br.lines().forEach(line -> {
-            Pair<String, String> pair = getPairFromLine(line);
-            if (pair != null && pair.getLeft().equalsIgnoreCase(keyToUpdate)) { // if pair found and if key matches what we're looking for
-                strings.remove(keyToUpdate);
-                strings.put(pair.getLeft(), pair.getRight());
-            }
-        });
-    }
-
-*/
 
 }

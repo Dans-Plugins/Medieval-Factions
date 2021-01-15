@@ -76,6 +76,7 @@ public class HelpCommand {
                     sender.sendMessage(ChatColor.AQUA + LocaleManager.getInstance().getText("HelpDuelChallenge"));
                     sender.sendMessage(ChatColor.AQUA + LocaleManager.getInstance().getText("HelpDuelAccept"));
                     sender.sendMessage(ChatColor.AQUA + LocaleManager.getInstance().getText("HelpDuelCancel"));
+                    sender.sendMessage(ChatColor.AQUA + LocaleManager.getInstance().getText("HelpPrefix"));
                     sender.sendMessage(ChatColor.AQUA + LocaleManager.getInstance().getText("HelpBypass"));
                     sender.sendMessage(ChatColor.AQUA + LocaleManager.getInstance().getText("HelpConfigShow"));
                     sender.sendMessage(ChatColor.AQUA + LocaleManager.getInstance().getText("HelpConfigSet"));
