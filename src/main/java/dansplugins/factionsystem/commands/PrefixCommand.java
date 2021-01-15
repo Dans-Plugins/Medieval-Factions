@@ -42,11 +42,25 @@ public class PrefixCommand {
 
         String newPrefix = ArgumentParser.getInstance().createStringFromFirstArgOnwards(args);
 
+        if (isPrefixTaken(newPrefix)) {
+            player.sendMessage(ChatColor.RED + LocaleManager.getInstance().getText("PrefixTaken"));
+            return false;
+        }
+
         faction.setPrefix(newPrefix);
 
         player.sendMessage(ChatColor.GREEN + LocaleManager.getInstance().getText("PrefixSet"));
 
         return true;
+    }
+
+    private boolean isPrefixTaken(String prefix) {
+        for (Faction faction : PersistentData.getInstance().getFactions()) {
+            if (faction.getPrefix().equalsIgnoreCase(prefix)) {
+                return true;
+            }
+        }
+        return false;
     }
 
 }
