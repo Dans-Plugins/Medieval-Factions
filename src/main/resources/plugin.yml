@@ -103,6 +103,8 @@ permissions:
     default: true
   mf.who:
     default: true
+  mf.prefix:
+    default: true
   mf.bypass:
     default: op
   mf.config:
@@ -130,4 +132,6 @@ permissions:
   mf.force.power:
     default: op
   mf.force.renounce:
+    default: op
+  mf.force.transfer:
     default: op
