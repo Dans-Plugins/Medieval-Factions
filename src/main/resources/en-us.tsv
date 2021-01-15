@@ -346,7 +346,7 @@ Point2PlacedSuccessfully	Creating Gate 2/4: Point 2 placed successfully.
 Population	Population: %d
 PowerHasDecayed	Your power has decayed by %d since you last logged out. Your power is now %d.
 PowerLevel	Power Level: %s
-PowerLevelHasBeenSetTo	The power level of that player has been set to
+PowerLevelHasBeenSetTo	The power level of that player has been set to %d
 PowerLevelHasIncreased	Your power level has increased!
 PowerLevelResetting	Power level resetting...
 ProblemLoadingClaimedChunks	There was a problem loading the claimed chunks!
@@ -493,5 +493,6 @@ PrefixSet	Prefix set!
 PrefixTaken	This prefix has already been taken!
 CmdForceTransfer	transfer
 UsageForceTransfer	Usage: /mf force transfer 'factionName' 'player'
-AlertPlayerAlreadyOwnsFaction	That player already owns a faction!
 FactionAndPlayerSingleQuotesRequirement	Faction and player must be designated inside single quotes!
+AlertPlayerNotInFaction	That player is not in that faction!
+AlertPlayerAlreadyOwner	That player is already the owner of that faction!
