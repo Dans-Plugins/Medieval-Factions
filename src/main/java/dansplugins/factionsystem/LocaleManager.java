@@ -125,6 +125,8 @@ public class LocaleManager {
 
     // this should be called after loading from plugin folder
     private void handleVersionMismatch() {
+        System.out.println("DEBUG: LocaleManager is handling a version mismatch.");
+
         // get en-us resource as input stream
         InputStream inputStream = getResourceAsInputStream("en-us.tsv");
 
@@ -160,6 +162,7 @@ public class LocaleManager {
             if (pair != null && !strings.containsKey(pair.getLeft())) { // if pair found and if key not already loaded
                 strings.put(pair.getLeft(), pair.getRight());
                 keys.add(pair.getLeft());
+                System.out.println(String.format("DEBUG: Loaded missing key %s from resources!", pair.getLeft()));
             }
         });
     }
