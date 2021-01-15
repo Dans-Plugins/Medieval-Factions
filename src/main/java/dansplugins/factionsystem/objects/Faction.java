@@ -34,6 +34,7 @@ public class Faction {
     private int cumulativePowerLevel = 0; // I'm not sure this variable is needed anymore... -Dan 11/27/2020 // TODO: remove?
     private Location factionHome = null;
     private ArrayList<Gate> gates = new ArrayList<>();
+    private String prefix;
 
     // temporary
     int maxPower = 0;
@@ -49,12 +50,14 @@ public class Faction {
         setName(initialName);
         setOwner(creator);
         maxPower = max;
+        prefix = initialName;
     }
 
     // server constructor
     public Faction(String initialName, int max) {
         setName(initialName);
         maxPower = max;
+        prefix = initialName;
     }
 
     public ArrayList<Gate> getGates()
@@ -606,5 +609,13 @@ public class Faction {
 
     public int getNumVassals() {
         return vassals.size();
+    }
+
+    public String getPrefix() {
+        return prefix;
+    }
+
+    public void setPrefix(String newPrefix) {
+        prefix = newPrefix;
     }
 }
