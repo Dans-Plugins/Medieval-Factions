@@ -47,11 +47,11 @@ public class LocaleManager {
 
         if (isFilePresent(localizationFilePath)) {
             loadFromPluginFolder();
-            System.out.println("DEBUG: Loading from plugin folder!");
+            System.out.println("DEBUG: Loaded from plugin folder!");
         }
         else {
             loadFromResource();
-            System.out.println("DEBUG: Loading from resource!");
+            System.out.println("DEBUG: Loaded from resource!");
         }
         System.out.println(String.format(getText("KeysLoaded"), keys.size()));
     }
