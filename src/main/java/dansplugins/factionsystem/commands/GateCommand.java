@@ -24,7 +24,7 @@ public class GateCommand {
 			{
 				if (args.length > 1)
 				{
-					if (args[1].equalsIgnoreCase(LocaleManager.getInstance().getText("CmdGateCancel")))
+					if (args[1].equalsIgnoreCase("cancel") || args[1].equalsIgnoreCase(LocaleManager.getInstance().getText("CmdGateCancel")))
 					{
 						if (EphemeralData.getInstance().getCreatingGatePlayers().containsKey(player.getUniqueId()))
 						{
@@ -33,7 +33,7 @@ public class GateCommand {
 							return;
 						}
 					}
-					if (args[1].equalsIgnoreCase(LocaleManager.getInstance().getText("CmdGateCreate")))
+					if (args[1].equalsIgnoreCase("create") || args[1].equalsIgnoreCase(LocaleManager.getInstance().getText("CmdGateCreate")))
 					{
 						if (EphemeralData.getInstance().getCreatingGatePlayers().containsKey(player.getUniqueId()))
 						{
@@ -66,7 +66,7 @@ public class GateCommand {
 							}
 						}
 					}
-					else if (args[1].equalsIgnoreCase(LocaleManager.getInstance().getText("CmdGateList")))
+					else if (args[1].equalsIgnoreCase("list") || args[1].equalsIgnoreCase(LocaleManager.getInstance().getText("CmdGateList")))
 					{
 						Faction faction = PersistentData.getInstance().getPlayersFaction(player.getUniqueId());
 						if (faction != null)
@@ -91,7 +91,7 @@ public class GateCommand {
 							return;
 						}
 					}
-					else if (args[1].equalsIgnoreCase(LocaleManager.getInstance().getText("CmdGateRemove")))
+					else if (args[1].equalsIgnoreCase("remove") || args[1].equalsIgnoreCase(LocaleManager.getInstance().getText("CmdGateRemove")))
 					{
 						if (player.getTargetBlock(null, 16) != null)
 						{
@@ -131,7 +131,7 @@ public class GateCommand {
 							return;
 						}
 					}
-					else if (args[1].equalsIgnoreCase("name"))
+					else if (args[1].equalsIgnoreCase("name") || args[1].equalsIgnoreCase(LocaleManager.getInstance().getText("CmdGateName")))
 					{						
 						if (player.getTargetBlock(null, 16) != null)
 						{
@@ -184,7 +184,7 @@ public class GateCommand {
 				else
 				{
 			        sender.sendMessage(ChatColor.RED + LocaleManager.getInstance().getText("SubCommands"));
-			        sender.sendMessage(ChatColor.AQUA + LocaleManager.getInstance().getText("HelpGateCreate"));
+			        sender.sendMessage(ChatColor.RED + LocaleManager.getInstance().getText("HelpGateCreate"));
 			        sender.sendMessage(ChatColor.RED + LocaleManager.getInstance().getText("HelpGateName"));
 			        sender.sendMessage(ChatColor.RED + LocaleManager.getInstance().getText("HelpGateList"));
 			        sender.sendMessage(ChatColor.RED + LocaleManager.getInstance().getText("HelpGateRemove"));
