@@ -20,36 +20,36 @@ public class ForceCommand {
 
     public boolean force(CommandSender sender, String[] args) {
         if (args.length > 1) {
-            if (args[1].equalsIgnoreCase(LocaleManager.getInstance().getText("CmdForceSave"))) {
+            if (args[1].equalsIgnoreCase("save") || args[1].equalsIgnoreCase(LocaleManager.getInstance().getText("CmdForceSave"))) {
                 return forceSave(sender);
             }
 
-            if (args[1].equalsIgnoreCase(LocaleManager.getInstance().getText("CmdForceLoad"))) {
+            if (args[1].equalsIgnoreCase("load") || args[1].equalsIgnoreCase(LocaleManager.getInstance().getText("CmdForceLoad"))) {
                 return forceLoad(sender);
             }
 
-            if (args[1].equalsIgnoreCase(LocaleManager.getInstance().getText("CmdForcePeace"))) {
+            if (args[1].equalsIgnoreCase("peace") || args[1].equalsIgnoreCase(LocaleManager.getInstance().getText("CmdForcePeace"))) {
                 return forcePeace(sender, args);
             }
             
-            if (args[1].equalsIgnoreCase(LocaleManager.getInstance().getText("CmdForceDemote"))) {
+            if (args[1].equalsIgnoreCase("demote") || args[1].equalsIgnoreCase(LocaleManager.getInstance().getText("CmdForceDemote"))) {
                 return forceDemote(sender, args);
             }
 
-            if (args[1].equalsIgnoreCase(LocaleManager.getInstance().getText("CmdForceJoin"))) {
+            if (args[1].equalsIgnoreCase("join") || args[1].equalsIgnoreCase(LocaleManager.getInstance().getText("CmdForceJoin"))) {
                 return forceJoin(sender, args);
             }
 
-            if (args[1].equalsIgnoreCase(LocaleManager.getInstance().getText("CmdForceKick"))) {
+            if (args[1].equalsIgnoreCase("kick") || args[1].equalsIgnoreCase(LocaleManager.getInstance().getText("CmdForceKick"))) {
                 return forceKick(sender, args);
             }
-            if (args[1].equalsIgnoreCase(LocaleManager.getInstance().getText("CmdForcePower"))) {
+            if (args[1].equalsIgnoreCase("power") || args[1].equalsIgnoreCase(LocaleManager.getInstance().getText("CmdForcePower"))) {
                 return forcePower(sender, args);
             }
-            if (args[1].equalsIgnoreCase(LocaleManager.getInstance().getText("CmdForceRenounce"))) {
+            if (args[1].equalsIgnoreCase("renounce") || args[1].equalsIgnoreCase(LocaleManager.getInstance().getText("CmdForceRenounce"))) {
                 return renounceVassalAndLiegeRelationships(sender, args);
             }
-            if (args[1].equalsIgnoreCase(LocaleManager.getInstance().getText("CmdForceTransfer"))) {
+            if (args[1].equalsIgnoreCase("transfer") || args[1].equalsIgnoreCase(LocaleManager.getInstance().getText("CmdForceTransfer"))) {
                 return forceTransfer(sender, args);
             }
         }
