@@ -9,7 +9,7 @@ public class LocaleManager {
 
     private static LocaleManager instance;
 
-    private ArrayList<String> supportedLanguageIDs = new ArrayList<>(Arrays.asList("en-us (English)", "es (Spanish)"));
+    private ArrayList<String> supportedLanguageIDs = new ArrayList<>(Arrays.asList("en-us", "es", "ru"));
 
     private ArrayList<String> keys = new ArrayList<>();
     private HashMap<String, String> strings = new HashMap<>();
