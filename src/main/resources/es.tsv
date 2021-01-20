@@ -394,7 +394,7 @@ OnlyUseLeversInClaimedTerritory	Error: solo se pueden usar palancas en tierras r
 Owner	Propietario: %s
 OwnershipTransferred	La propiedad de %s te ha sido transferida.
 OwnerShipTransferredTo	Propiedad transferida a %s
-PermissionNeeded	Perdona! Para usar este comando necesitas el siguiente permiso: "%s"
+PermissionNeeded	Perdona! Para usar este comando necesitas el siguiente permiso: '%s'
 PlayerAlreadyDueling	%s ya está en un duelo contra alguien!
 PlayerAlreadyInFaction	Perdona! Este jugador ya está en una facción.
 PlayerAlreadyOfficer	Este jugador ya es un oficial!
