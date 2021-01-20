@@ -1,5 +1,5 @@
 # What is this?
-An open source minecraft plugin licensed under GPL3 for players to use to organize politically. Allows them to create/manage factions, declare/end wars, and claim/unclaim land. It also supports promoting/demoting players to and from officer positions as well as a power level system to decide land limits. Finally, it supports faction homes, alliances, locks and more.
+An open source minecraft spigot plugin for simulating sovereign states. Features include Warfare, Territory, Power Mechanics, Faction Homes, Alliances, Locks, Vassal Mechanics, Laws, Gates, Duels, Dynmap Integration, Localization and more.
 
 # Notes
 - Project building works with Java 8. It may work with other versions but I know that it works with Java 8.
