@@ -228,7 +228,7 @@ public class DamageEffectsAndDeathHandler implements Listener {
         }
     }
 
-    private List<PotionType> BAD_POTION_TYPES;
+    private List<PotionType> BAD_POTION_TYPES = new ArrayList<>();
 
     private void initializeBadPotionTypes() {
         BAD_POTION_TYPES.add(PotionType.INSTANT_DAMAGE);
