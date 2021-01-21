@@ -10,10 +10,7 @@ import dansplugins.factionsystem.objects.Duel;
 import dansplugins.factionsystem.objects.Faction;
 import dansplugins.factionsystem.objects.PlayerPowerRecord;
 import dansplugins.factionsystem.utils.Pair;
-import org.bukkit.ChatColor;
-import org.bukkit.Chunk;
-import org.bukkit.Location;
-import org.bukkit.World;
+import org.bukkit.*;
 import org.bukkit.entity.*;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -28,6 +25,10 @@ import java.util.Arrays;
 import java.util.List;
 
 public class DamageEffectsAndDeathHandler implements Listener {
+
+    public DamageEffectsAndDeathHandler() {
+        initializeBadPotionTypes();
+    }
 
     @EventHandler()
     public void handle(EntityDamageByEntityEvent event) {
@@ -227,13 +228,18 @@ public class DamageEffectsAndDeathHandler implements Listener {
         }
     }
 
-    private List<PotionType> BAD_POTION_TYPES = Arrays.asList(
-            PotionType.INSTANT_DAMAGE,
-            PotionType.POISON,
-            PotionType.SLOWNESS,
-            PotionType.WEAKNESS,
-            PotionType.TURTLE_MASTER
-    );
+    private List<PotionType> BAD_POTION_TYPES;
+
+    private void initializeBadPotionTypes() {
+        BAD_POTION_TYPES.add(PotionType.INSTANT_DAMAGE);
+        BAD_POTION_TYPES.add(PotionType.POISON);
+        BAD_POTION_TYPES.add(PotionType.SLOWNESS);
+        BAD_POTION_TYPES.add(PotionType.WEAKNESS);
+
+        if (!Bukkit.getVersion().contains("1.12.2")) {
+            BAD_POTION_TYPES.add(PotionType.TURTLE_MASTER);
+        }
+    }
 
     private boolean potionTypeBad(PotionType type){
         return BAD_POTION_TYPES.contains(type);
