@@ -88,10 +88,12 @@ public class LocaleManager {
     private void loadFromPluginFolder() {
         File file = new File(localizationFilePath);
         try {
+            // update local language files
             if (MedievalFactions.getInstance().isVersionMismatched()) {
                 updateSupportedLocalLanguageFiles();
             }
 
+            // load from local language file
             loadFromFile(file);
 
             // update local language file if it is unsupported
