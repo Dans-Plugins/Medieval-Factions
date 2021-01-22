@@ -88,10 +88,9 @@ public class LocaleManager {
     private void loadFromPluginFolder() {
         File file = new File(localizationFilePath);
         try {
+
             // update local language files
-            if (MedievalFactions.getInstance().isVersionMismatched()) {
-                updateSupportedLocalLanguageFiles();
-            }
+            updateSupportedLocalLanguageFiles();
 
             // load from local language file
             loadFromFile(file);
@@ -135,7 +134,7 @@ public class LocaleManager {
 
     // this should be called after loading from plugin folder
     private void updateSupportedLocalLanguageFiles() {
-        System.out.println("DEBUG: LocaleManager is handling a version mismatch.");
+        System.out.println("DEBUG: LocaleManager is updating supported local language files.");
 
         InputStream inputStream;
 
