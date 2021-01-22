@@ -91,7 +91,15 @@ public class LocaleManager {
             loadFromFile(file);
 
             if (MedievalFactions.getInstance().isVersionMismatched()) {
-                handleVersionMismatch();
+                updateSupportedLocalLanguageFiles();
+            }
+
+            // update local language file if it is unsupported
+            if (!isLanguageIDSupported(MedievalFactions.getInstance().getConfig().getString("languageid"))) {
+                // get en-us resource as input stream
+                InputStream inputStream = getResourceAsInputStream("en-us.tsv");
+                loadMissingKeysFromInputStream(inputStream); // load in any missing keys
+                saveToPluginFolder();
             }
 
         } catch (Exception e) {
@@ -124,15 +132,19 @@ public class LocaleManager {
     }
 
     // this should be called after loading from plugin folder
-    private void handleVersionMismatch() {
+    private void updateSupportedLocalLanguageFiles() {
         System.out.println("DEBUG: LocaleManager is handling a version mismatch.");
 
-        // get en-us resource as input stream
-        InputStream inputStream = getResourceAsInputStream("en-us.tsv");
+        InputStream inputStream;
 
-        loadMissingKeysFromInputStream(inputStream); // load in any missing keys
-
-        saveToPluginFolder();
+        // update all supported local language files
+        for (String ID : supportedLanguageIDs) {
+            inputStream = getResourceAsInputStream(ID + ".tsv");
+            loadMissingKeysFromInputStream(inputStream);
+            saveToPluginFolder();
+            keys.clear();
+            strings.clear();
+        }
     }
 
     private InputStream getResourceAsInputStream(String fileName) {
