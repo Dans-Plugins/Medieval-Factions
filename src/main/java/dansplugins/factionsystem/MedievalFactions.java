@@ -57,8 +57,8 @@ public class MedievalFactions extends JavaPlugin {
         Metrics metrics = new Metrics(this, pluginId);
 
         if (DynmapManager.hasDynmap()) {
-            DynmapManager.scheduleClaimsUpdate(600); // Check once every 30 seconds for updates.
-            DynmapManager.updateClaims();
+            DynmapManager.getInstance().scheduleClaimsUpdate(600); // Check once every 30 seconds for updates.
+            DynmapManager.getInstance().updateClaims();
         }
     }
 

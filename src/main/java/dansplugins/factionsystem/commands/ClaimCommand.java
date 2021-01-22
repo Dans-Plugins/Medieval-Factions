@@ -52,7 +52,7 @@ public class ClaimCommand {
             ChunkManager.getInstance().radiusClaimAtLocation(depth, player, player.getLocation(), playersFaction);
         }
 
-        DynmapManager.updateClaims();
+        DynmapManager.getInstance().updateClaims();
         return true;
     }
 

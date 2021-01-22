@@ -80,7 +80,7 @@ public class DisbandCommand {
 
         // remove claimed land objects associated with this faction
         ChunkManager.getInstance().removeAllClaimedChunks(nameOfFactionToRemove, PersistentData.getInstance().getClaimedChunks());
-        DynmapManager.updateClaims();
+        DynmapManager.getInstance().updateClaims();
 
         // remove locks associated with this faction
         PersistentData.getInstance().removeAllLocks(PersistentData.getInstance().getFactions().get(i).getName());
