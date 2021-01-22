@@ -26,8 +26,6 @@ public class MedievalFactions extends JavaPlugin {
     public void onEnable() {
         instance = this;
 
-        LocaleManager.getInstance().loadStrings();
-
         // config creation/loading
         if (!(new File("./plugins/MedievalFactions/config.yml").exists())) {
             ConfigManager.getInstance().saveConfigDefaults();
@@ -39,6 +37,8 @@ public class MedievalFactions extends JavaPlugin {
             }
             reloadConfig();
         }
+
+        LocaleManager.getInstance().loadStrings();
 
         Scheduler.getInstance().schedulePowerIncrease();
         Scheduler.getInstance().schedulePowerDecrease();
