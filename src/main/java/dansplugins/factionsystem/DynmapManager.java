@@ -47,10 +47,13 @@ public class DynmapManager {
      * to be rendered on dynmap.
      * @param interval Number of ticks before the scheduled task executes again.
      */
-    public static void scheduleClaimsUpdate(long interval) {
+    public void scheduleClaimsUpdate(long interval) {
         new BukkitRunnable() {
             @Override
             public void run() {
+                if (!isDynmapPresent()) {
+                    return;
+                }
                 if (DynmapManager.getInstance().updateClaimsAreaMarkers) {
                     DynmapManager.getInstance().dynmapUpdateFactions();
                     DynmapManager.getInstance().updateClaimsAreaMarkers = false;
@@ -63,7 +66,11 @@ public class DynmapManager {
      * Tell the scheduled task that we have made changes and it should update the
      * area markers.
      */
-    public static void updateClaims() {
+    public void updateClaims() {
+        if (!isDynmapPresent()) {
+            return;
+        }
+
         if (DynmapManager.hasDynmap()) {
             DynmapManager.getInstance().updateClaimsAreaMarkers = true;
         }
@@ -80,9 +87,11 @@ public class DynmapManager {
 
     public DynmapManager() {
         PluginManager pm = getServer().getPluginManager();
+
         /* Get dynmap */
         dynmap = pm.getPlugin("dynmap");
-        if(dynmap == null) {
+
+        if(!isDynmapPresent()) {
             System.out.println(LocaleManager.getInstance().getText("CannotFindDynmap"));
         }
         else {
@@ -105,6 +114,10 @@ public class DynmapManager {
                 System.out.println(LocaleManager.getInstance().getText("ErrorIntegratingWithDynmap") + e.getMessage());
             }
         }
+    }
+
+    private boolean isDynmapPresent() {
+        return (dynmap != null);
     }
 
     private MarkerAPI getMarkerAPI() {

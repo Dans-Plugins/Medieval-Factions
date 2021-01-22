@@ -16,7 +16,7 @@ public class UnclaimCommand {
                 Player player = (Player) sender;
                 if (PersistentData.getInstance().isInFaction(player.getUniqueId())) {
                     ChunkManager.getInstance().removeChunkAtPlayerLocation(player);
-                    DynmapManager.updateClaims();
+                    DynmapManager.getInstance().updateClaims();
                     return true;
                 }
                 else {
