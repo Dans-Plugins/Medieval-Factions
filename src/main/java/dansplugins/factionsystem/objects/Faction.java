@@ -442,7 +442,7 @@ public class Faction {
         factionHome = loadLocation(gson.fromJson(data.get("location"), mapType), gson);
         liege = gson.fromJson(data.getOrDefault("liege", "none"), String.class);
         vassals = gson.fromJson(data.getOrDefault("vassals", "[]"), arrayListTypeString);
-        prefix = gson.fromJson(data.getOrDefault("prefix", getName()), String.class);
+        prefix = loadDataOrDefault(gson, data, "prefix", getName());
         
 //        System.out.println("Loading Faction Gates...");
         ArrayList<String> gateList = new ArrayList<String>();
@@ -458,6 +458,14 @@ public class Faction {
         else
         {
         	System.out.println(LocaleManager.getInstance().getText("MissingFactionGatesJSONCollection"));
+        }
+    }
+
+    private String loadDataOrDefault(Gson gson, Map<String, String> data, String key, String def) {
+        try {
+            return gson.fromJson(data.getOrDefault(key, def), String.class);
+        } catch(Exception e) {
+            return def;
         }
     }
 

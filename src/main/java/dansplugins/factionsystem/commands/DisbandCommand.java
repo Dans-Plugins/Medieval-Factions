@@ -51,7 +51,7 @@ public class DisbandCommand {
                         if (PersistentData.getInstance().getFactions().get(i).getPopulation() == 1) {
                             EphemeralData.getInstance().getPlayersInFactionChat().remove(player.getUniqueId());
                             removeFaction(i);
-                            player.sendMessage(ChatColor.GREEN + LocaleManager.getInstance().getText("SuccessfulDisbandment"));
+                            player.sendMessage(ChatColor.GREEN + LocaleManager.getInstance().getText("FactionSuccessfullyDisbanded"));
                             return true;
                         }
                         else {
