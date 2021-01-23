@@ -34,7 +34,7 @@ public class Faction {
     private int cumulativePowerLevel = 0; // I'm not sure this variable is needed anymore... -Dan 11/27/2020 // TODO: remove?
     private Location factionHome = null;
     private ArrayList<Gate> gates = new ArrayList<>();
-    private String prefix;
+    private String prefix = "none";
 
     // temporary
     int maxPower = 0;
@@ -424,7 +424,7 @@ public class Faction {
     }
 
     private void load(Map<String, String> data) {
-        Gson gson = new GsonBuilder().setPrettyPrinting().create();;
+        Gson gson = new GsonBuilder().setPrettyPrinting().create();
 
         Type arrayListTypeString = new TypeToken<ArrayList<String>>(){}.getType();
         Type arrayListTypeUUID = new TypeToken<ArrayList<UUID>>(){}.getType();
