@@ -89,19 +89,14 @@ public class LocaleManager {
         File file = new File(localizationFilePath);
         try {
 
-            // update local language files
-            updateSupportedLocalLanguageFiles();
-
             // load from local language file
             loadFromFile(file);
 
-            // update local language file if it is unsupported
-            if (!isLanguageIDSupported(MedievalFactions.getInstance().getConfig().getString("languageid"))) {
-                // get en-us resource as input stream
-                InputStream inputStream = getResourceAsInputStream("en-us.tsv");
-                loadMissingKeysFromInputStream(inputStream); // load in any missing keys
-                saveToPluginFolder();
-            }
+            // update local language files
+            updateCurrentLocalLanguageFile();
+
+            // save
+            saveToPluginFolder();
 
         } catch (Exception e) {
             System.out.println("DEBUG: Something went wrong loading from the plugin folder.");
@@ -133,18 +128,18 @@ public class LocaleManager {
     }
 
     // this should be called after loading from plugin folder
-    private void updateSupportedLocalLanguageFiles() {
+    private void updateCurrentLocalLanguageFile() {
         System.out.println("DEBUG: LocaleManager is updating supported local language files.");
-
-        InputStream inputStream;
-
-        // update all supported local language files
-        for (String ID : supportedLanguageIDs) {
+        String ID = MedievalFactions.getInstance().getConfig().getString("languageid");
+        if (isLanguageIDSupported(ID)) {
+            InputStream inputStream;
             inputStream = getResourceAsInputStream(ID + ".tsv");
             loadMissingKeysFromInputStream(inputStream);
-            saveToPluginFolder();
-            keys.clear();
-            strings.clear();
+        }
+        else {
+            InputStream inputStream;
+            inputStream = getResourceAsInputStream("en-us.tsv");
+            loadMissingKeysFromInputStream(inputStream);
         }
     }
 
