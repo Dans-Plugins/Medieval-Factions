@@ -26,7 +26,7 @@ public class Messenger {
     }
 
     public void sendFactionInfo(Player player, Faction faction, int power) {
-        player.sendMessage(ChatColor.BOLD + "" + ChatColor.AQUA + faction.getName() + String.format(LocaleManager.getInstance().getText("FactionInfo"), faction.getName()) + "\n----------\n");
+        player.sendMessage(ChatColor.BOLD + "" + ChatColor.AQUA + String.format(LocaleManager.getInstance().getText("FactionInfo"), faction.getName()) + "\n----------\n");
         player.sendMessage(ChatColor.AQUA + String.format(LocaleManager.getInstance().getText("Name"), faction.getName()) + "\n");
         player.sendMessage(ChatColor.AQUA + String.format(LocaleManager.getInstance().getText("Owner"), UUIDChecker.getInstance().findPlayerNameBasedOnUUID(faction.getOwner())) + "\n");
         player.sendMessage(ChatColor.AQUA + String.format(LocaleManager.getInstance().getText("Description"), faction.getDescription()) + "\n");
