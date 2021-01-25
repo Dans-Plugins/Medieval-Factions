@@ -48,10 +48,7 @@ public class MedievalFactions extends JavaPlugin {
 
         StorageManager.getInstance().load();
 
-        // post load compatibility checks
-        if (isVersionMismatched()) {
-            createActivityRecordForEveryOfflinePlayer(); // make sure every player experiences power decay in case we updated from pre-v3.5
-        }
+        createActivityRecordForEveryOfflinePlayer(); // make sure every player experiences power decay in case we updated from pre-v3.5
 
         int pluginId = 8929;
         Metrics metrics = new Metrics(this, pluginId);
