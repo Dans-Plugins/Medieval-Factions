@@ -1,5 +1,15 @@
-# What is this?
+# Description
 An open source minecraft spigot plugin for simulating sovereign states. Features include Warfare, Territory, Power Mechanics, Faction Homes, Alliances, Locks, Vassal Mechanics, Laws, Gates, Duels, Dynmap Integration, Localization and more.
+
+# FAQ
+## What is this?
+Medieval Factions is a system of mechanics that allows for the simulation of sovereign nations. Players can create nations, claim territory, engage in warfare or politics, write laws or hold dueling tournaments, and generally are able to attempt to recreate society somewhat.
+
+## How do I make factions claim more land?
+A faction is able to claim as much land as their cumulative power level allows. The cumulative power level is made up of the sum of the power levels of the members of the faction. This will allow you and your other members to gain more power through killing/scheduled increases which will increase your cumulative power level which is tied to how much land your faction can claim.
+
+## How do I change a config setting?
+Type /mf config show to view the config. Type /mf config set (option) (value) to change a config setting. After this, you may have to restart the server. This must be done in-game with these commands, or else the changes won't save upon a restart.
 
 # Notes
 - Project building works with Java 8. It may work with other versions but I know that it works with Java 8.
