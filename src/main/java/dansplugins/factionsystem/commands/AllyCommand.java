@@ -11,64 +11,64 @@ import org.bukkit.entity.Player;
 
 public class AllyCommand {
 
-    public void requestAlliance(CommandSender sender, String[] args) {
+    public boolean requestAlliance(CommandSender sender, String[] args) {
 
         if (!(sender instanceof Player)) {
             sender.sendMessage(LocaleManager.getInstance().getText("OnlyPlayersCanUseCommand"));
-            return;
+            return false;
         }
 
         Player player = (Player) sender;
 
         if (!player.hasPermission("mf.ally")) {
             player.sendMessage(ChatColor.RED + String.format(LocaleManager.getInstance().getText("PermissionNeeded"), "mf.ally"));
-            return;
+            return false;
         }
 
         if (args.length < 2) {
             player.sendMessage(ChatColor.RED + LocaleManager.getInstance().getText("UsageAlly"));
-            return;
+            return false;
         }
 
         Faction playersFaction = PersistentData.getInstance().getPlayersFaction(player.getUniqueId());
 
         if (playersFaction == null) {
             player.sendMessage(ChatColor.RED + LocaleManager.getInstance().getText("AlertMustBeInFactionToUseCommand"));
-            return;
+            return false;
         }
 
         if (!(playersFaction.isOwner(player.getUniqueId()) || playersFaction.isOfficer(player.getUniqueId()))) {
             player.sendMessage(ChatColor.RED + LocaleManager.getInstance().getText("AlertMustBeOwnerOrOfficerToUseCommand"));
-            return;
+            return false;
         }
 
         String targetFactionName = ArgumentParser.getInstance().createStringFromFirstArgOnwards(args);
 
         if (playersFaction.getName().equalsIgnoreCase(targetFactionName)) {
             player.sendMessage(ChatColor.RED + LocaleManager.getInstance().getText("CannotAllyWithSelf"));
-            return;
+            return false;
         }
 
         Faction targetFaction = PersistentData.getInstance().getFaction(targetFactionName);
 
         if (targetFaction == null) {
             player.sendMessage(ChatColor.RED + LocaleManager.getInstance().getText("FactionNotFound"));
-            return;
+            return false;
         }
 
         if (playersFaction.isAlly(targetFactionName)) {
             player.sendMessage(ChatColor.RED + LocaleManager.getInstance().getText("FactionAlreadyAlly"));
-            return;
+            return false;
         }
 
         if (playersFaction.isRequestedAlly(targetFactionName)) {
             player.sendMessage(ChatColor.RED + LocaleManager.getInstance().getText("AlertAlreadyRequestedAlliance"));
-            return;
+            return false;
         }
 
         if (playersFaction.isEnemy(targetFactionName)) {
             player.sendMessage(ChatColor.RED + LocaleManager.getInstance().getText("AlertAlreadyRequestedAlliance"));
-            return;
+            return false;
         }
 
         playersFaction.requestAlly(targetFactionName);
@@ -84,5 +84,6 @@ public class AllyCommand {
             Messenger.getInstance().sendAllPlayersInFactionMessage(targetFaction, ChatColor.GREEN + String.format(LocaleManager.getInstance().getText("AlertNowAlliedWith"), playersFaction.getName()));
         }
 
+        return true;
     }
 }
