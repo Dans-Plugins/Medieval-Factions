@@ -924,6 +924,7 @@ public class InteractionHandler implements Listener {
                 case OAK_BUTTON:
                 case SPRUCE_BUTTON:
                 case STONE_BUTTON:
+                case LECTERN:
                     return false;
             }
         }
