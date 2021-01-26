@@ -11,66 +11,62 @@ import org.bukkit.entity.Player;
 
 public class BreakAllianceCommand {
 
-    public void breakAlliance(CommandSender sender, String[] args) {
-        if (sender instanceof Player) {
-            Player player = (Player) sender;
+    public boolean breakAlliance(CommandSender sender, String[] args) {
 
-            if (sender.hasPermission("mf.breakalliance")) {
-                boolean owner = false;
-                for (Faction faction : PersistentData.getInstance().getFactions()) {
-                    // if player is the owner or officer
-                    if (faction.isOwner(player.getUniqueId()) || faction.isOfficer(player.getUniqueId())) {
-                        owner = true;
-                        // if there's more than one argument
-                        if (args.length > 1) {
-
-                            // get name of faction
-                            String factionName = ArgumentParser.getInstance().createStringFromFirstArgOnwards(args);
-
-                            // check if faction exists
-                            for (int i = 0; i < PersistentData.getInstance().getFactions().size(); i++) {
-                                if (PersistentData.getInstance().getFactions().get(i).getName().equalsIgnoreCase(factionName)) {
-
-                                    if (!(faction.getName().equalsIgnoreCase(factionName))) {
-
-                                        // check that enemy is not already on list
-                                        if ((faction.isAlly(factionName))) {
-                                            // remove alliance
-                                            faction.removeAlly(factionName);
-                                            player.sendMessage(ChatColor.GREEN + String.format(LocaleManager.getInstance().getText("AllianceBrokenWith"), factionName));
-
-                                            // add declarer's faction to new enemy's enemyList
-                                            PersistentData.getInstance().getFactions().get(i).removeAlly(faction.getName());
-                                            for (int j = 0; j < PersistentData.getInstance().getFactions().size(); j++) {
-                                                if (PersistentData.getInstance().getFactions().get(j).getName().equalsIgnoreCase(factionName)) {
-                                                    Messenger.getInstance().sendAllPlayersInFactionMessage(PersistentData.getInstance().getFactions().get(j), ChatColor.RED + "" + String.format(LocaleManager.getInstance().getText("AlertAllianceHasBeenBroken"), faction.getName()));
-                                                }
-                                            }
-                                        }
-                                        else {
-                                            player.sendMessage(ChatColor.RED + LocaleManager.getInstance().getText("AlertNotAllied") + factionName);
-                                        }
-
-                                    }
-                                    else {
-                                        player.sendMessage(ChatColor.RED + LocaleManager.getInstance().getText("CannotBreakAllianceWithSelf"));
-                                    }
-                                }
-                            }
-
-                        }
-                        else {
-                            player.sendMessage(ChatColor.RED + LocaleManager.getInstance().getText("UsageBreakAlliance"));
-                        }
-                    }
-                }
-                if (!owner) {
-                    player.sendMessage(ChatColor.RED + LocaleManager.getInstance().getText("AlertMustBeOwnerOrOfficerToUseCommand"));
-                }
-            }
-            else {
-                sender.sendMessage(ChatColor.RED + String.format(LocaleManager.getInstance().getText("PermissionNeeded"), "mf.breakalliance"));
-            }
+        if (!(sender instanceof Player)) {
+            sender.sendMessage(LocaleManager.getInstance().getText("OnlyPlayersCanUseCommand"));
+            return false;
         }
+
+        Player player = (Player) sender;
+
+        if (player.hasPermission("mf.breakalliance")) {
+            sender.sendMessage(ChatColor.RED + String.format(LocaleManager.getInstance().getText("PermissionNeeded"), "mf.breakalliance"));
+            return false;
+        }
+
+        if (args.length < 2) {
+            player.sendMessage(ChatColor.RED + LocaleManager.getInstance().getText("UsageBreakAlliance"));
+            return false;
+        }
+
+        Faction playersFaction = PersistentData.getInstance().getPlayersFaction(player.getUniqueId());
+
+        if (playersFaction == null) {
+            player.sendMessage(ChatColor.RED + LocaleManager.getInstance().getText("AlertMustBeInFactionToUseCommand"));
+            return false;
+        }
+
+        if (!playersFaction.isOwner(player.getUniqueId())) {
+            player.sendMessage(ChatColor.RED + LocaleManager.getInstance().getText("AlertMustBeOwnerToUseCommand"));
+            return false;
+        }
+
+        String targetFactionName = ArgumentParser.getInstance().createStringFromFirstArgOnwards(args);
+
+        if (playersFaction.getName().equalsIgnoreCase(targetFactionName)) {
+            player.sendMessage(ChatColor.RED + LocaleManager.getInstance().getText("CannotBreakAllianceWithSelf"));
+            return false;
+        }
+
+        Faction targetFaction = PersistentData.getInstance().getFaction(targetFactionName);
+
+        if (targetFaction == null) {
+            player.sendMessage(ChatColor.RED + LocaleManager.getInstance().getText("FactionNotFound"));
+            return false;
+        }
+
+        if (!playersFaction.isAlly(targetFactionName)) {
+            player.sendMessage(ChatColor.RED + LocaleManager.getInstance().getText("AlertNotAllied") + targetFaction.getName());
+            return false;
+        }
+
+        playersFaction.removeAlly(targetFactionName);
+        Messenger.getInstance().sendAllPlayersInFactionMessage(playersFaction, ChatColor.RED + "" + String.format(LocaleManager.getInstance().getText("AllianceBrokenWith"), targetFaction.getName()));
+
+        targetFaction.removeAlly(playersFaction.getName());
+        Messenger.getInstance().sendAllPlayersInFactionMessage(targetFaction, ChatColor.RED + "" + String.format(LocaleManager.getInstance().getText("AlertAllianceHasBeenBroken"), playersFaction.getName()));
+
+        return true;
     }
 }

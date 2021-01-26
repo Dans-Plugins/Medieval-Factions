@@ -18,6 +18,11 @@ public class AutoClaimCommand {
 
         Player player = (Player) sender;
 
+        if (!player.hasPermission("mf.autoclaim")) {
+            player.sendMessage(ChatColor.RED + String.format(LocaleManager.getInstance().getText("PermissionNeeded"), "mf.autoclaim"));
+            return false;
+        }
+
         Faction playersFaction = PersistentData.getInstance().getPlayersFaction(player.getUniqueId());
 
         if (playersFaction == null) {
