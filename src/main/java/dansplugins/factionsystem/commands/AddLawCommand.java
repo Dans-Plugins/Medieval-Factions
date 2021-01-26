@@ -44,6 +44,7 @@ public class AddLawCommand {
         String newLaw = ArgumentParser.getInstance().createStringFromFirstArgOnwards(args);
         playersFaction.addLaw(newLaw);
         player.sendMessage(ChatColor.GREEN + LocaleManager.getInstance().getText("LawAdded"));
+
         return true;
     }
 }
