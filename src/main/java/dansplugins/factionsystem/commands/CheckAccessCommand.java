@@ -42,7 +42,6 @@ public class CheckAccessCommand {
         }
 
         return true;
-
     }
 
 }

@@ -41,7 +41,6 @@ public class ChatCommand {
         }
 
         return true;
-
     }
 
 }
