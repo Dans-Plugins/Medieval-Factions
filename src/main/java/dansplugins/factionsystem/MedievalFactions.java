@@ -82,7 +82,7 @@ public class MedievalFactions extends JavaPlugin {
     }
 
     // this method is to ensure that when updating to a version with power decay, even players who never log in again will experience power decay
-    private void createActivityRecordForEveryOfflinePlayer() { // TODO: ensure that this is working
+    private void createActivityRecordForEveryOfflinePlayer() {
         for (OfflinePlayer player : Bukkit.getOfflinePlayers()) {
             PlayerActivityRecord record = PersistentData.getInstance().getPlayerActivityRecord(player.getUniqueId());
             if (record == null) {
