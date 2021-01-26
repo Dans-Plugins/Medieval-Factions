@@ -52,6 +52,7 @@ public class ConfigCommand {
         }
 
         player.sendMessage(ChatColor.RED + LocaleManager.getInstance().getText("ValidSubCommandsShowSet"));
+
         return false;
     }
 

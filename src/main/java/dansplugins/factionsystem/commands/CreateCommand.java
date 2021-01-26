@@ -12,59 +12,43 @@ import org.bukkit.entity.Player;
 public class CreateCommand {
 
     public boolean createFaction(CommandSender sender, String[] args) {
-        // player check
-        if (sender instanceof Player) {
-            Player player = (Player) sender;
 
-            if (sender.hasPermission("mf.create")) {
-                // player membership check
-                for (Faction faction : PersistentData.getInstance().getFactions()) {
-                    if (faction.isMember(player.getUniqueId())) {
-                        player.sendMessage(ChatColor.RED + LocaleManager.getInstance().getText("AlreadyInFaction"));
-                        return false;
-                    }
-                }
-
-                // argument check
-                if (args.length > 1) {
-
-                    // creating name from arguments 1 to the last one
-                    String name = ArgumentParser.getInstance().createStringFromFirstArgOnwards(args);
-
-                    // faction existence check
-                    boolean factionExists = false;
-                    for (Faction faction : PersistentData.getInstance().getFactions()) {
-                        if (faction.getName().equalsIgnoreCase(name)) {
-                            factionExists = true;
-                            break;
-                        }
-                    }
-
-                    if (!factionExists) {
-
-                        // actual faction creation
-                        Faction temp = new Faction(name, player.getUniqueId(), MedievalFactions.getInstance().getConfig().getInt("initialMaxPowerLevel"));
-                        PersistentData.getInstance().getFactions().add(temp);
-                        PersistentData.getInstance().getFactions().get(PersistentData.getInstance().getFactions().size() - 1).addMember(player.getUniqueId(), PersistentData.getInstance().getPlayersPowerRecord(player.getUniqueId()).getPowerLevel());
-                        player.sendMessage(ChatColor.AQUA + LocaleManager.getInstance().getText("FactionCreated"));
-                        return true;
-                    }
-                    else {
-                        player.sendMessage(ChatColor.RED + LocaleManager.getInstance().getText("FactionAlreadyExists"));
-                        return false;
-                    }
-                } else {
-
-                    // wrong usage
-                    sender.sendMessage(ChatColor.RED + LocaleManager.getInstance().getText("UsageCreate"));
-                    return false;
-                }
-            }
-            else {
-                sender.sendMessage(ChatColor.RED + String.format(LocaleManager.getInstance().getText("PermissionNeeded"), "mf.create"));
-                return false;
-            }
+        if (!(sender instanceof Player)) {
+            sender.sendMessage(LocaleManager.getInstance().getText("OnlyPlayersCanUseCommand"));
+            return false;
         }
-        return false;
+
+        Player player = (Player) sender;
+
+        if (!player.hasPermission("mf.create")) {
+            sender.sendMessage(ChatColor.RED + String.format(LocaleManager.getInstance().getText("PermissionNeeded"), "mf.create"));
+            return false;
+        }
+
+        Faction playersFaction = PersistentData.getInstance().getPlayersFaction(player.getUniqueId());
+
+        if (playersFaction != null) {
+            player.sendMessage(ChatColor.RED + LocaleManager.getInstance().getText("AlreadyInFaction"));
+            return false;
+        }
+
+        if (args.length < 2) {
+            player.sendMessage(ChatColor.RED + LocaleManager.getInstance().getText("UsageCreate"));
+            return false;
+        }
+
+        String name = ArgumentParser.getInstance().createStringFromFirstArgOnwards(args);
+
+        if (PersistentData.getInstance().getFaction(name) != null) {
+            player.sendMessage(ChatColor.RED + LocaleManager.getInstance().getText("FactionAlreadyExists"));
+            return false;
+        }
+
+        Faction temp = new Faction(name, player.getUniqueId(), MedievalFactions.getInstance().getConfig().getInt("initialMaxPowerLevel"));
+        PersistentData.getInstance().getFactions().add(temp);
+        PersistentData.getInstance().getFactions().get(PersistentData.getInstance().getFactions().size() - 1).addMember(player.getUniqueId(), PersistentData.getInstance().getPlayersPowerRecord(player.getUniqueId()).getPowerLevel());
+        player.sendMessage(ChatColor.AQUA + LocaleManager.getInstance().getText("FactionCreated"));
+
+        return true;
     }
 }
