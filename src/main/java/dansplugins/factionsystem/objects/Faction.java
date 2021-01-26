@@ -628,4 +628,8 @@ public class Faction {
     public void setPrefix(String newPrefix) {
         prefix = newPrefix;
     }
+
+    public ArrayList<String> getVassals() {
+        return vassals;
+    }
 }
