@@ -44,9 +44,9 @@ public class MedievalFactions extends JavaPlugin {
         Scheduler.getInstance().schedulePowerDecrease();
         Scheduler.getInstance().scheduleAutosave();
 
-        EventRegistry.getInstance().registerEvents();
-
         StorageManager.getInstance().load();
+
+        EventRegistry.getInstance().registerEvents();
 
         createActivityRecordForEveryOfflinePlayer(); // make sure every player experiences power decay in case we updated from pre-v3.5
 
