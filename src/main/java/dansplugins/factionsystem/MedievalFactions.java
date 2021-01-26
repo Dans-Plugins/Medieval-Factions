@@ -26,7 +26,7 @@ public class MedievalFactions extends JavaPlugin {
     public void onEnable() {
         instance = this;
 
-        // config creation/loading
+        // create/load config
         if (!(new File("./plugins/MedievalFactions/config.yml").exists())) {
             ConfigManager.getInstance().saveConfigDefaults();
         }
@@ -38,21 +38,26 @@ public class MedievalFactions extends JavaPlugin {
             reloadConfig();
         }
 
+        // load strings and save files
         LocaleManager.getInstance().loadStrings();
-
         StorageManager.getInstance().load();
 
+        // schedule recurring tasks
         Scheduler.getInstance().schedulePowerIncrease();
         Scheduler.getInstance().schedulePowerDecrease();
         Scheduler.getInstance().scheduleAutosave();
 
+        // register events
         EventRegistry.getInstance().registerEvents();
 
-        createActivityRecordForEveryOfflinePlayer(); // make sure every player experiences power decay in case we updated from pre-v3.5
+        // make sure every player experiences power decay in case we updated from pre-v3.5
+        createActivityRecordForEveryOfflinePlayer();
 
+        // bStats
         int pluginId = 8929;
         Metrics metrics = new Metrics(this, pluginId);
 
+        // Dynmap
         if (DynmapManager.hasDynmap()) {
             DynmapManager.getInstance().scheduleClaimsUpdate(600); // Check once every 30 seconds for updates.
             DynmapManager.getInstance().updateClaims();
