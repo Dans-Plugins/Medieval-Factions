@@ -8,31 +8,40 @@ import org.bukkit.entity.Player;
 
 public class CheckAccessCommand {
 
-    public void checkAccess(CommandSender sender, String[] args) {
-        // if sender is player and if player has permission
-        if (sender instanceof Player && (((Player) sender).hasPermission("mf.checkaccess"))) {
+    public boolean checkAccess(CommandSender sender, String[] args) {
 
-            Player player = (Player) sender;
+        if (!(sender instanceof Player)) {
+            sender.sendMessage(LocaleManager.getInstance().getText("OnlyPlayersCanUseCommand"));
+            return false;
+        }
 
-            if (args.length > 1) {
-                if (args[1].equalsIgnoreCase("cancel")) {
-                    player.sendMessage(ChatColor.RED + LocaleManager.getInstance().getText("Cancelled"));
-                    if (EphemeralData.getInstance().getPlayersCheckingAccess().contains(player.getUniqueId())) {
-                        EphemeralData.getInstance().getPlayersCheckingAccess().remove(player.getUniqueId());
-                        return;
-                    }
-                }
-            }
+        Player player = (Player) sender;
 
-            if (!EphemeralData.getInstance().getPlayersCheckingAccess().contains(player.getUniqueId())) {
-                EphemeralData.getInstance().getPlayersCheckingAccess().add(player.getUniqueId());
-                player.sendMessage(ChatColor.GREEN + LocaleManager.getInstance().getText("RightClickCheckAccess"));
+        if (!player.hasPermission("mf.checkaccess")) {
+            sender.sendMessage(ChatColor.RED + String.format(LocaleManager.getInstance().getText("PermissionNeeded"), "mf.checkaccess"));
+            return false;
+        }
+
+        if (args.length > 1 && args[1].equalsIgnoreCase("cancel")) {
+            if (EphemeralData.getInstance().getPlayersCheckingAccess().contains(player.getUniqueId())) {
+                EphemeralData.getInstance().getPlayersCheckingAccess().remove(player.getUniqueId());
+                player.sendMessage(ChatColor.RED + LocaleManager.getInstance().getText("Cancelled"));
+                return true;
             }
             else {
-                player.sendMessage(ChatColor.RED + LocaleManager.getInstance().getText("AlreadyEnteredCheckAccess"));
+                return false;
             }
-
         }
+
+        if (!EphemeralData.getInstance().getPlayersCheckingAccess().contains(player.getUniqueId())) {
+            EphemeralData.getInstance().getPlayersCheckingAccess().add(player.getUniqueId());
+            player.sendMessage(ChatColor.GREEN + LocaleManager.getInstance().getText("RightClickCheckAccess"));
+        }
+        else {
+            player.sendMessage(ChatColor.RED + LocaleManager.getInstance().getText("AlreadyEnteredCheckAccess"));
+        }
+
+        return true;
     }
 
 }

@@ -8,27 +8,30 @@ import org.bukkit.entity.Player;
 
 public class BypassCommand {
 
-    public void toggleBypass(CommandSender sender) {
+    public boolean toggleBypass(CommandSender sender) {
 
-        if (sender instanceof Player) {
-            Player player = (Player) sender;
-
-            if (player.hasPermission("mf.bypass") || player.hasPermission("mf.admin")) {
-
-                if (!EphemeralData.getInstance().getAdminsBypassingProtections().contains(player.getUniqueId())) {
-                    EphemeralData.getInstance().getAdminsBypassingProtections().add(player.getUniqueId());
-                    player.sendMessage(ChatColor.GREEN + LocaleManager.getInstance().getText("NowBypassingProtections"));
-                }
-                else {
-                    EphemeralData.getInstance().getAdminsBypassingProtections().remove(player.getUniqueId());
-                    player.sendMessage(ChatColor.GREEN + LocaleManager.getInstance().getText("NoLongerBypassingProtections"));
-                }
-
-            }
-            else {
-                sender.sendMessage(ChatColor.RED + String.format(LocaleManager.getInstance().getText("PermissionNeeded"), "mf.bypass"));
-            }
+        if (!(sender instanceof Player)) {
+            sender.sendMessage(LocaleManager.getInstance().getText("OnlyPlayersCanUseCommand"));
+            return false;
         }
+
+        Player player = (Player) sender;
+
+        if (!(player.hasPermission("mf.bypass") || player.hasPermission("mf.admin"))) {
+            sender.sendMessage(ChatColor.RED + String.format(LocaleManager.getInstance().getText("PermissionNeeded"), "mf.bypass"));
+            return false;
+        }
+
+        if (!EphemeralData.getInstance().getAdminsBypassingProtections().contains(player.getUniqueId())) {
+            EphemeralData.getInstance().getAdminsBypassingProtections().add(player.getUniqueId());
+            player.sendMessage(ChatColor.GREEN + LocaleManager.getInstance().getText("NowBypassingProtections"));
+        }
+        else {
+            EphemeralData.getInstance().getAdminsBypassingProtections().remove(player.getUniqueId());
+            player.sendMessage(ChatColor.GREEN + LocaleManager.getInstance().getText("NoLongerBypassingProtections"));
+        }
+
+        return true;
 
     }
 }

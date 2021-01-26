@@ -10,40 +10,41 @@ import org.bukkit.entity.Player;
 
 public class AddLawCommand {
 
-    public void addLaw(CommandSender sender, String[] args) {
-        // player & perm check
-        if (sender instanceof Player && ( ((Player) sender).hasPermission("mf.addlaw")) ) {
+    public boolean addLaw(CommandSender sender, String[] args) {
 
-            Player player = (Player) sender;
-
-            if (PersistentData.getInstance().isInFaction(player.getUniqueId())) {
-                Faction playersFaction = PersistentData.getInstance().getPlayersFaction(player.getUniqueId());
-
-                if (playersFaction.isOwner(player.getUniqueId())) {
-                    if (args.length > 1) {
-                        String newLaw = ArgumentParser.getInstance().createStringFromFirstArgOnwards(args);
-
-                        playersFaction.addLaw(newLaw);
-
-                        player.sendMessage(ChatColor.GREEN + LocaleManager.getInstance().getText("LawAdded"));
-                    }
-                    else {
-                        player.sendMessage(ChatColor.RED + LocaleManager.getInstance().getText("UsageAddLaw"));
-                    }
-
-                }
-                else {
-                    player.sendMessage(ChatColor.RED + LocaleManager.getInstance().getText("AlertMustBeOwnerToUseCommand"));
-                }
-
-            }
-            else {
-                player.sendMessage(ChatColor.RED + LocaleManager.getInstance().getText("AlertMustBeInFactionToUseCommand"));
-            }
+        if (!(sender instanceof Player)) {
+            sender.sendMessage(LocaleManager.getInstance().getText("OnlyPlayersCanUseCommand"));
+            return false;
         }
-        else {
+
+        Player player = (Player) sender;
+
+        if (player.hasPermission("mf.addlaw")) {
             sender.sendMessage(ChatColor.RED + String.format(LocaleManager.getInstance().getText("PermissionNeeded"), "mf.addlaw"));
+            return false;
         }
 
+        if (args.length < 2) {
+            player.sendMessage(ChatColor.RED + LocaleManager.getInstance().getText("UsageAddLaw"));
+            return false;
+        }
+
+        Faction playersFaction = PersistentData.getInstance().getPlayersFaction(player.getUniqueId());
+
+        if (playersFaction == null) {
+            player.sendMessage(ChatColor.RED + LocaleManager.getInstance().getText("AlertMustBeInFactionToUseCommand"));
+            return false;
+        }
+
+        if (!playersFaction.isOwner(player.getUniqueId())) {
+            player.sendMessage(ChatColor.RED + LocaleManager.getInstance().getText("AlertMustBeOwnerToUseCommand"));
+            return false;
+        }
+
+        String newLaw = ArgumentParser.getInstance().createStringFromFirstArgOnwards(args);
+        playersFaction.addLaw(newLaw);
+        player.sendMessage(ChatColor.GREEN + LocaleManager.getInstance().getText("LawAdded"));
+
+        return true;
     }
 }
