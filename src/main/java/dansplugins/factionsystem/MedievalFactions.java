@@ -40,11 +40,11 @@ public class MedievalFactions extends JavaPlugin {
 
         LocaleManager.getInstance().loadStrings();
 
+        StorageManager.getInstance().load();
+
         Scheduler.getInstance().schedulePowerIncrease();
         Scheduler.getInstance().schedulePowerDecrease();
         Scheduler.getInstance().scheduleAutosave();
-
-        StorageManager.getInstance().load();
 
         EventRegistry.getInstance().registerEvents();
 
