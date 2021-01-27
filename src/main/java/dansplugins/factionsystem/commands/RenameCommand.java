@@ -13,79 +13,84 @@ import org.bukkit.entity.Player;
 
 public class RenameCommand {
 
-    public void renameFaction(CommandSender sender, String[] args) {
-        if (sender instanceof Player) {
-            Player player = (Player) sender;
-            if (player.hasPermission("mf.rename")) {
-                if (args.length > 1) {
-                    String oldName = PersistentData.getInstance().getPlayersFaction(player.getUniqueId()).getName();
-                    String newName = ArgumentParser.getInstance().createStringFromFirstArgOnwards(args);
+    public boolean renameFaction(CommandSender sender, String[] args) {
 
-                    // existence check
-                    for (Faction faction : PersistentData.getInstance().getFactions()) {
-                        if (faction.getName().equalsIgnoreCase(newName)) {
-                            player.sendMessage(ChatColor.RED + LocaleManager.getInstance().getText("NameAlreadyTaken"));
-                            return;
-                        }
-                    }
+        if (!(sender instanceof Player)) {
+            sender.sendMessage(LocaleManager.getInstance().getText("OnlyPlayersCanUseCommand"));
+            return false;
+        }
 
-                    if (PersistentData.getInstance().isInFaction(player.getUniqueId())) {
-                        Faction playersFaction = PersistentData.getInstance().getPlayersFaction(player.getUniqueId());
-                        if (playersFaction.isOwner(player.getUniqueId())) {
+        Player player = (Player) sender;
 
-                            // change name
-                            playersFaction.setName(newName);
-                            player.sendMessage(ChatColor.GREEN + LocaleManager.getInstance().getText("FactionNameChanged"));
+        if (!player.hasPermission("mf.rename")) {
+            sender.sendMessage(ChatColor.RED + String.format(LocaleManager.getInstance().getText("PermissionNeeded"), "mf.rename"));
+            return false;
+        }
 
-                            // rename alliance, enemy, liege and vassal records
-                            for (Faction faction : PersistentData.getInstance().getFactions()) {
-                                if (faction.isAlly(oldName)) {
-                                    faction.removeAlly(oldName);
-                                    faction.addAlly(newName);
-                                }
-                                if (faction.isEnemy(oldName)) {
-                                    faction.removeEnemy(oldName);
-                                    faction.addEnemy(newName);
-                                }
-                                if (faction.isLiege(oldName)) {
-                                    faction.setLiege(newName);
-                                }
-                                if (faction.isVassal(oldName)) {
-                                    faction.removeVassal(oldName);
-                                    faction.addVassal(newName);
-                                }
-                            }
+        if (args.length < 2) {
+            player.sendMessage(ChatColor.RED + LocaleManager.getInstance().getText("UsageRename"));
+            return false;
+        }
 
-                            // rename claimed chunk records
-                            for (ClaimedChunk claimedChunk : PersistentData.getInstance().getClaimedChunks()) {
-                                if (claimedChunk.getHolder().equalsIgnoreCase(oldName)) {
-                                    claimedChunk.setHolder(newName);
-                                }
-                            }
+        Faction playersFaction = PersistentData.getInstance().getPlayersFaction(player.getUniqueId());
 
-                            // rename locked block records
-                            for (LockedBlock lockedBlock : PersistentData.getInstance().getLockedBlocks()) {
-                                if (lockedBlock.getFactionName().equalsIgnoreCase(oldName)) {
-                                    lockedBlock.setFaction(newName);
-                                }
-                            }
+        if (playersFaction == null) {
+            player.sendMessage(ChatColor.RED + LocaleManager.getInstance().getText("AlertMustBeInFactionToUseCommand"));
+            return false;
+        }
 
-                            // Save again to overwrite current data
-                            StorageManager.getInstance().save();
+        String oldName = playersFaction.getName();
+        String newName = ArgumentParser.getInstance().createStringFromFirstArgOnwards(args);
 
-                        }
-                        else {
-                            player.sendMessage(ChatColor.RED + LocaleManager.getInstance().getText("NotTheOwnerOfThisFaction"));
-                        }
-                    }
-                }
-                else {
-                    player.sendMessage(ChatColor.RED + LocaleManager.getInstance().getText("UsageRename"));
-                }
+        if (!playersFaction.isOwner(player.getUniqueId())) {
+            player.sendMessage(ChatColor.RED + LocaleManager.getInstance().getText("NotTheOwnerOfThisFaction"));
+            return false;
+        }
+
+        // change name
+        playersFaction.setName(newName);
+        player.sendMessage(ChatColor.GREEN + LocaleManager.getInstance().getText("FactionNameChanged"));
+
+        // rename alliance, enemy, liege and vassal records
+        for (Faction faction : PersistentData.getInstance().getFactions()) {
+            if (faction.isAlly(oldName)) {
+                faction.removeAlly(oldName);
+                faction.addAlly(newName);
             }
-            else {
-                sender.sendMessage(ChatColor.RED + String.format(LocaleManager.getInstance().getText("PermissionNeeded"), "mf.rename"));
+            if (faction.isEnemy(oldName)) {
+                faction.removeEnemy(oldName);
+                faction.addEnemy(newName);
+            }
+            if (faction.isLiege(oldName)) {
+                faction.setLiege(newName);
+            }
+            if (faction.isVassal(oldName)) {
+                faction.removeVassal(oldName);
+                faction.addVassal(newName);
             }
         }
+
+        // rename claimed chunk records
+        for (ClaimedChunk claimedChunk : PersistentData.getInstance().getClaimedChunks()) {
+            if (claimedChunk.getHolder().equalsIgnoreCase(oldName)) {
+                claimedChunk.setHolder(newName);
+            }
+        }
+
+        // rename locked block records
+        for (LockedBlock lockedBlock : PersistentData.getInstance().getLockedBlocks()) {
+            if (lockedBlock.getFactionName().equalsIgnoreCase(oldName)) {
+                lockedBlock.setFaction(newName);
+            }
+        }
+
+        // if prefix previously unset
+        if (playersFaction.getPrefix().equalsIgnoreCase(oldName)) {
+            playersFaction.setPrefix(newName);
+        }
+
+        // Save again to overwrite current data
+        StorageManager.getInstance().save();
+        return true;
     }
 }
