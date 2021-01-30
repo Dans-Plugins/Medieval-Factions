@@ -60,7 +60,7 @@ AlertNoLaws	У Вашей фракции нет законов.
 AlertNoLongerVassalFaction	%s больше не является вассальной фракцией!
 AlertNonOwnership	Вам это не принадлежит!
 AlertNoPendingChallenges	У Вас нет незавершенных задач, которые можно отменить.
-AlertNotAllied	Ваша фракция не состоит в союзе с 
+AlertNotAllied	Ваша фракция не состоит в союзе с %s.
 AlertNotBeenChallenged	Вас никто не вызывал на дуэль.
 AlertNotBeenChallengedByPlayer	%s не вызывал Вас на дуэль.
 AlertNotInFaction	Вы не состоите во фракции!
@@ -217,7 +217,7 @@ Description	Описание: %s
 DescriptionSet	Описание установлено!
 DesignatedFactionNotFound	Одна из указанных фракций не найдена!
 DesiredPowerMustBeANumber	Заданная мощь должна быть числом!
-DeveloperList	Разработчики:
+DeveloperList	Разработчики: %s
 DisbandmentDueToZeroPower	%s была расформирована из-за того, что её совокупная мощь достигла нуля.
 DoesntExist	%s не существует!
 DoubleSet	Двойной установлен!

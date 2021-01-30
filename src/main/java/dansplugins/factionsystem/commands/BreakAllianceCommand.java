@@ -48,7 +48,7 @@ public class BreakAllianceCommand {
                                             }
                                         }
                                         else {
-                                            player.sendMessage(ChatColor.RED + LocaleManager.getInstance().getText("AlertNotAllied") + factionName);
+                                            player.sendMessage(ChatColor.RED + String.format(LocaleManager.getInstance().getText("AlertNotAllied"), factionName));
                                         }
 
                                     }

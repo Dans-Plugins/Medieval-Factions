@@ -60,7 +60,7 @@ AlertNoLaws	Tu facción no tiene leyes.
 AlertNoLongerVassalFaction	¡%s ya no es una facción avasallada!
 AlertNonOwnership	¡Esto no te pertenece!
 AlertNoPendingChallenges	No tienes desafíos pendientes para cancelar.
-AlertNotAllied	Tu facción no está aliada con 
+AlertNotAllied	Tu facción no está aliada con %s.
 AlertNotBeenChallenged	No has sido desafíado a un duelo por nadie.
 AlertNotBeenChallengedByPlayer	No has sido desafíado a un duelo por '%s'-
 AlertNotInFaction	¡No estás en una facción!
@@ -217,7 +217,7 @@ Description	Descripción: %s
 DescriptionSet	¡Descripción establecida!
 DesignatedFactionNotFound	¡Una de las facciones escritas no fue encontrada!
 DesiredPowerMustBeANumber	¡El poder deseado debe ser un número!
-DeveloperList	Desarrolladores:
+DeveloperList	Desarrolladores: %s
 DisbandmentDueToZeroPower	%s se ha disuelto al caer su poder a cero.
 DoesntExist	¡%s no existe!
 DoubleSet	¡Doble establecido!

@@ -28,7 +28,7 @@ public class CommandInterpreter {
             if (args.length == 0) {
                 // send plugin information
                 sender.sendMessage(ChatColor.AQUA + String.format(LocaleManager.getInstance().getText("MedievalFactionsTitle"), MedievalFactions.getInstance().getVersion()));
-                sender.sendMessage(ChatColor.AQUA + LocaleManager.getInstance().getText("DeveloperList") + " " + "DanTheTechMan, Pasarus, Caibinus");
+                sender.sendMessage(ChatColor.AQUA + String.format(LocaleManager.getInstance().getText("DeveloperList"), "DanTheTechMan, Pasarus, Caibinus"));
                 sender.sendMessage(ChatColor.AQUA + LocaleManager.getInstance().getText("WikiLink"));
                 sender.sendMessage(ChatColor.AQUA + String.format(LocaleManager.getInstance().getText("CurrentLanguageID"), MedievalFactions.getInstance().getConfig().getString("languageid")));
                 sender.sendMessage(ChatColor.AQUA + String.format(LocaleManager.getInstance().getText("SupportedLanguageIDList"), LocaleManager.getInstance().getSupportedLanguageIDsSeparatedByCommas()));

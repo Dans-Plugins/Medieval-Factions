@@ -60,7 +60,7 @@ AlertNoLaws	Your faction doesn't have any laws.
 AlertNoLongerVassalFaction	%s is no longer a vassal faction!
 AlertNonOwnership	You don't own this!
 AlertNoPendingChallenges	You have no pending challenges to cancel.
-AlertNotAllied	Your faction is not allied with
+AlertNotAllied	Your faction is not allied with %s.
 AlertNotBeenChallenged	You have not been challenged to a duel by anyone.
 AlertNotBeenChallengedByPlayer	You have not been challenged to a duel by '%s'.
 AlertNotInFaction	You're not in a faction!
@@ -217,7 +217,7 @@ Description	Description: %s
 DescriptionSet	Description set!
 DesignatedFactionNotFound	One of the factions designated wasn't found!
 DesiredPowerMustBeANumber	Desired power must be a number!
-DeveloperList	Developers:
+DeveloperList	Developers: %s
 DisbandmentDueToZeroPower	%s has been disbanded due to its cumulative power reaching zero.
 DoesntExist	%s doesn't exist!
 DoubleSet	Double set!
