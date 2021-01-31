@@ -59,10 +59,24 @@ public class InteractionHandler implements Listener {
 
                     // if player's faction is not the same as the holder of the chunk and player isn't bypassing
                     if (!(faction.getName().equalsIgnoreCase(chunk.getHolder())) && !EphemeralData.getInstance().getAdminsBypassingProtections().contains(player.getUniqueId())) {
-                        // TODO: allow access to vassalage tree
-                        // TODO: allow access to allies
-                        event.setCancelled(true);
-                        return;
+                        boolean access = false;
+
+                        if (MedievalFactions.getInstance().getConfig().getBoolean("allowAllyInteraction")) {
+                            if (PersistentData.getInstance().isPlayerInAlliedFaction(player, faction)) {
+                                access = true;
+                            }
+                        }
+
+                        if (MedievalFactions.getInstance().getConfig().getBoolean("AllowVassalageTreeInteraction")) {
+                            if (PersistentData.getInstance().isPlayerInFactionInVassalageTree(player, faction)) {
+                                access = true;
+                            }
+                        }
+
+                        if (!access) {
+                            event.setCancelled(true);
+                            return;
+                        }
                     }
 
                     // if block is locked
@@ -132,8 +146,6 @@ public class InteractionHandler implements Listener {
 
             // player not in a faction
             if (!PersistentData.getInstance().isInFaction(event.getPlayer().getUniqueId()) && !EphemeralData.getInstance().getAdminsBypassingProtections().contains(event.getPlayer().getUniqueId())) {
-                // TODO: allow access to vassalage tree
-                // TODO: allow access to allies
                 event.setCancelled(true);
             }
 
@@ -151,8 +163,24 @@ public class InteractionHandler implements Listener {
                             }
                         }
 
-                        event.setCancelled(true);
-                        return;
+                        boolean access = false;
+
+                        if (MedievalFactions.getInstance().getConfig().getBoolean("allowAllyInteraction")) {
+                            if (PersistentData.getInstance().isPlayerInAlliedFaction(player, faction)) {
+                                access = true;
+                            }
+                        }
+
+                        if (MedievalFactions.getInstance().getConfig().getBoolean("AllowVassalageTreeInteraction")) {
+                            if (PersistentData.getInstance().isPlayerInFactionInVassalageTree(player, faction)) {
+                                access = true;
+                            }
+                        }
+
+                        if (!access) {
+                            event.setCancelled(true);
+                            return;
+                        }
                     }
 
                     // if chest
@@ -864,9 +892,6 @@ public class InteractionHandler implements Listener {
                         return;
                     }
 
-                    // TODO: allow access to vassalage tree
-                    // TODO: allow access to allies
-
                     // if enemy territory
                     if (faction.isEnemy(chunk.getHolder())) {
                         // if not interacting with chest
@@ -888,8 +913,24 @@ public class InteractionHandler implements Listener {
                         }
                     }
 
-                    event.setCancelled(true);
-                    return;
+                    boolean access = false;
+
+                    if (MedievalFactions.getInstance().getConfig().getBoolean("allowAllyInteraction")) {
+                        if (PersistentData.getInstance().isPlayerInAlliedFaction(event.getPlayer(), faction)) {
+                            access = true;
+                        }
+                    }
+
+                    if (MedievalFactions.getInstance().getConfig().getBoolean("allowVassalageTreeInteraction")) {
+                        if (PersistentData.getInstance().isPlayerInFactionInVassalageTree(event.getPlayer(), faction)) {
+                            access = true;
+                        }
+                    }
+
+                    if (!access) {
+                        event.setCancelled(true);
+                        return;
+                    }
                 }
             }
         }
