@@ -39,7 +39,7 @@ public class GrantIndependenceCommand {
                                     Messenger.getInstance().sendAllPlayersInFactionMessage(targetFaction, ChatColor.GREEN + "" + String.format(LocaleManager.getInstance().getText("AlertGrantedIndependence"), targetFaction.getName()));
 
                                     // inform all players in players faction that a vassal was granted independence
-                                    Messenger.getInstance().sendAllPlayersInFactionMessage(playersFaction, ChatColor.GREEN + String.format(LocaleManager.getInstance().getText("AlertNoLongerVassalFaction"), targetFaction.getName()));
+                                    Messenger.getInstance().sendAllPlayersInFactionMessage(playersFaction, ChatColor.GREEN + String.format(LocaleManager.getInstance().getText("AlertNoLongerVassalFaction"), playersFaction.getName()));
                                 }
                                 else {
                                     player.sendMessage(ChatColor.RED + LocaleManager.getInstance().getText("FactionIsNotVassal"));
