@@ -154,6 +154,7 @@ public class PersistentData {
             }
             foundFactions.addAll(toAdd);
         }
+        System.out.println(String.format("DEBUG: Found %d factions in vassalage tree of %s", foundFactions.size(), initialFaction.getName()));
         return foundFactions;
     }
 

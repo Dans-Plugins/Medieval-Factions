@@ -10,6 +10,8 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.AsyncPlayerChatEvent;
 
+import java.util.ArrayList;
+
 public class ChatHandler implements Listener {
 
     @EventHandler()
@@ -26,11 +28,16 @@ public class ChatHandler implements Listener {
 
             // check for faction chat
             if (EphemeralData.getInstance().getPlayersInFactionChat().contains(event.getPlayer().getUniqueId())) {
-
                 String message = event.getMessage();
                 Messenger.getInstance().sendAllPlayersInFactionMessage(playersFaction, ChatColor.WHITE + "" + event.getPlayer().getName() + ": " + ChatColor.GOLD + message);
-                event.setCancelled(true);
 
+                ArrayList<Faction> factionsInVassalageTree = PersistentData.getInstance().getFactionsInVassalageTree(playersFaction);
+
+                for (Faction faction : factionsInVassalageTree) {
+                    Messenger.getInstance().sendAllPlayersInFactionMessage(faction, ChatColor.WHITE + "" + event.getPlayer().getName() + ": " + ChatColor.GOLD + message);
+                }
+
+                event.setCancelled(true);
             }
 
         }
