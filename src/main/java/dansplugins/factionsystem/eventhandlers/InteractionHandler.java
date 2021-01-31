@@ -59,6 +59,7 @@ public class InteractionHandler implements Listener {
 
                     // if player's faction is not the same as the holder of the chunk and player isn't bypassing
                     if (!(faction.getName().equalsIgnoreCase(chunk.getHolder())) && !EphemeralData.getInstance().getAdminsBypassingProtections().contains(player.getUniqueId())) {
+                        // TODO: allow access to vassalage tree
                         event.setCancelled(true);
                         return;
                     }
@@ -130,6 +131,7 @@ public class InteractionHandler implements Listener {
 
             // player not in a faction
             if (!PersistentData.getInstance().isInFaction(event.getPlayer().getUniqueId()) && !EphemeralData.getInstance().getAdminsBypassingProtections().contains(event.getPlayer().getUniqueId())) {
+                // TODO: allow access to vassalage tree
                 event.setCancelled(true);
             }
 
@@ -859,6 +861,8 @@ public class InteractionHandler implements Listener {
                         // allow non-faction members to interact with doors
                         return;
                     }
+
+                    // TODO: allow access to vassalage tree
 
                     // if enemy territory
                     if (faction.isEnemy(chunk.getHolder())) {
