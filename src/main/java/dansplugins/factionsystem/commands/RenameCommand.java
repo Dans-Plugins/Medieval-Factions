@@ -47,6 +47,11 @@ public class RenameCommand {
             return false;
         }
 
+        if (PersistentData.getInstance().getFaction(newName) != null) {
+            player.sendMessage(ChatColor.RED + LocaleManager.getInstance().getText("FactionAlreadyExists"));
+            return false;
+        }
+
         // change name
         playersFaction.setName(newName);
         player.sendMessage(ChatColor.GREEN + LocaleManager.getInstance().getText("FactionNameChanged"));
