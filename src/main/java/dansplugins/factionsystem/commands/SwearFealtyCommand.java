@@ -42,7 +42,7 @@ public class SwearFealtyCommand {
                                     Messenger.getInstance().sendAllPlayersInFactionMessage(targetFaction, ChatColor.GREEN + String.format(LocaleManager.getInstance().getText("AlertFactionHasNewVassal"), playersFaction.getName()));
 
                                     // set liege
-                                    playersFaction.setLiege(targetFactionName);
+                                    playersFaction.setLiege(targetFaction.getName());
 
                                     // inform players faction that they have a new liege
                                     Messenger.getInstance().sendAllPlayersInFactionMessage(playersFaction, ChatColor.GREEN + String.format(LocaleManager.getInstance().getText("AlertFactionHasBeenVassalized"), targetFactionName));

@@ -105,6 +105,71 @@ public class PersistentData {
         return null;
     }
 
+    public ArrayList<Faction> getFactionsInVassalageTree(Faction initialFaction) {
+        // create list
+        ArrayList<Faction> foundFactions = new ArrayList<>();
+
+        foundFactions.add(initialFaction);
+
+        boolean newFactionsFound = true;
+
+        int numFactionsFound = -1;
+
+        // while new factions found
+        while (newFactionsFound) {
+            ArrayList<Faction> toAdd = new ArrayList<>();
+            for (Faction current : foundFactions) {
+
+                // record number of factions
+                numFactionsFound = foundFactions.size();
+
+                // get liege
+                Faction liege = PersistentData.getInstance().getFaction(current.getLiege());
+                if (liege != null) {
+                    if (!containsFactionByName(toAdd, liege) && !containsFactionByName(foundFactions, liege)) {
+                        toAdd.add(liege);
+                        numFactionsFound++;
+                    }
+
+                    // get vassals of liege
+                    for (String vassalName : liege.getVassals()) {
+                        Faction vassal = PersistentData.getInstance().getFaction(vassalName);
+                        if (!containsFactionByName(toAdd, vassal) && !containsFactionByName(foundFactions, vassal)) {
+                            toAdd.add(vassal);
+                            numFactionsFound++;
+                        }
+                    }
+                }
+
+                // get vassals of current
+                for (String vassalName : current.getVassals()) {
+                    Faction vassal = PersistentData.getInstance().getFaction(vassalName);
+                    if (!containsFactionByName(toAdd, vassal) && !containsFactionByName(foundFactions, vassal)) {
+                        toAdd.add(vassal);
+                        numFactionsFound++;
+                    }
+                }
+                // if number of factions not different then break loop
+                if (numFactionsFound == foundFactions.size()) {
+                    newFactionsFound = false;
+                }
+            }
+            foundFactions.addAll(toAdd);
+            toAdd.clear();
+        }
+        System.out.println(String.format("DEBUG: Found %d factions in vassalage tree of %s", foundFactions.size(), initialFaction.getName()));
+        return foundFactions;
+    }
+
+    private boolean containsFactionByName(ArrayList<Faction> list, Faction faction) {
+        for (Faction f : list) {
+            if (f.getName().equalsIgnoreCase(faction.getName())) {
+                return true;
+            }
+        }
+        return false;
+    }
+
     // checkers --
 
     public boolean isInFaction(UUID playerUUID) {
