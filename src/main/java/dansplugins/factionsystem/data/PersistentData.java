@@ -105,6 +105,58 @@ public class PersistentData {
         return null;
     }
 
+    public ArrayList<Faction> getFactionsInVassalageTree(Faction initialFaction) {
+        // create list
+        ArrayList<Faction> foundFactions = new ArrayList<>();
+
+        foundFactions.add(initialFaction);
+
+        boolean newFactionsFound = true;
+
+        int numFactionsFound = -1;
+
+        // while new factions found
+        while (newFactionsFound) {
+            ArrayList<Faction> toAdd = new ArrayList<>();
+            for (Faction current : foundFactions) {
+
+                // record number of factions
+                numFactionsFound = foundFactions.size();
+
+                // get liege
+                Faction liege = PersistentData.getInstance().getFaction(current.getLiege());
+                if (!toAdd.contains(liege)) {
+                    toAdd.add(liege);
+                    numFactionsFound++;
+                }
+
+                // get vassals of liege
+                for (String vassalName : liege.getVassals()) {
+                    Faction vassal = PersistentData.getInstance().getFaction(vassalName);
+                    if (!toAdd.contains(vassal)) {
+                        toAdd.add(vassal);
+                        numFactionsFound++;
+                    }
+                }
+
+                // get vassals of current
+                for (String vassalName : current.getVassals()) {
+                    Faction vassal = PersistentData.getInstance().getFaction(vassalName);
+                    if (!toAdd.contains(vassal)) {
+                        toAdd.add(vassal);
+                        numFactionsFound++;
+                    }
+                }
+                // if number of factions not different then break loop
+                if (numFactionsFound == foundFactions.size()) {
+                    newFactionsFound = false;
+                }
+            }
+            foundFactions.addAll(toAdd);
+        }
+        return foundFactions;
+    }
+
     // checkers --
 
     public boolean isInFaction(UUID playerUUID) {
