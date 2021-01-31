@@ -59,24 +59,10 @@ public class InteractionHandler implements Listener {
 
                     // if player's faction is not the same as the holder of the chunk and player isn't bypassing
                     if (!(faction.getName().equalsIgnoreCase(chunk.getHolder())) && !EphemeralData.getInstance().getAdminsBypassingProtections().contains(player.getUniqueId())) {
-                        boolean access = false;
-
-                        if (MedievalFactions.getInstance().getConfig().getBoolean("allowAllyInteraction")) {
-                            if (PersistentData.getInstance().isPlayerInAlliedFaction(player, faction)) {
-                                access = true;
-                            }
-                        }
-
-                        if (MedievalFactions.getInstance().getConfig().getBoolean("allowVassalageTreeInteraction")) {
-                            if (PersistentData.getInstance().isPlayerInFactionInVassalageTree(player, faction)) {
-                                access = true;
-                            }
-                        }
-
-                        if (!access) {
-                            event.setCancelled(true);
-                            return;
-                        }
+                        // TODO: allow access to vassalage tree
+                        // TODO: allow access to allies
+                        event.setCancelled(true);
+                        return;
                     }
 
                     // if block is locked
@@ -90,7 +76,7 @@ public class InteractionHandler implements Listener {
                             return;
                         }
 
-                    	removeLock(event.getBlock(), PersistentData.getInstance().getLockedBlocks());
+                        removeLock(event.getBlock(), PersistentData.getInstance().getLockedBlocks());
                         // if block was a door
                         if (isDoor(event.getBlock())) {
                             // remove locks above and below the original block as well
@@ -106,17 +92,17 @@ public class InteractionHandler implements Listener {
                         }
 
                     }
-                    
+
                     // if block is in a gate
                     for (Gate gate : faction.getGates())
                     {
 //                    	System.out.println("Gate " + gate.getName() + "?");
-                    	if (gate.hasBlock(event.getBlock()))
-                    	{
-                    		event.setCancelled(true);
+                        if (gate.hasBlock(event.getBlock()))
+                        {
+                            event.setCancelled(true);
                             player.sendMessage(ChatColor.RED + String.format(LocaleManager.getInstance().getText("BlockIsPartOfGateMustRemoveGate"), gate.getName()));
                             return;
-                    	}
+                        }
                     }
                 }
             }
@@ -146,6 +132,8 @@ public class InteractionHandler implements Listener {
 
             // player not in a faction
             if (!PersistentData.getInstance().isInFaction(event.getPlayer().getUniqueId()) && !EphemeralData.getInstance().getAdminsBypassingProtections().contains(event.getPlayer().getUniqueId())) {
+                // TODO: allow access to vassalage tree
+                // TODO: allow access to allies
                 event.setCancelled(true);
             }
 
@@ -163,24 +151,8 @@ public class InteractionHandler implements Listener {
                             }
                         }
 
-                        boolean access = false;
-
-                        if (MedievalFactions.getInstance().getConfig().getBoolean("allowAllyInteraction")) {
-                            if (PersistentData.getInstance().isPlayerInAlliedFaction(player, faction)) {
-                                access = true;
-                            }
-                        }
-
-                        if (MedievalFactions.getInstance().getConfig().getBoolean("allowVassalageTreeInteraction")) {
-                            if (PersistentData.getInstance().isPlayerInFactionInVassalageTree(player, faction)) {
-                                access = true;
-                            }
-                        }
-
-                        if (!access) {
-                            event.setCancelled(true);
-                            return;
-                        }
+                        event.setCancelled(true);
+                        return;
                     }
 
                     // if chest
@@ -892,6 +864,9 @@ public class InteractionHandler implements Listener {
                         return;
                     }
 
+                    // TODO: allow access to vassalage tree
+                    // TODO: allow access to allies
+
                     // if enemy territory
                     if (faction.isEnemy(chunk.getHolder())) {
                         // if not interacting with chest
@@ -913,24 +888,8 @@ public class InteractionHandler implements Listener {
                         }
                     }
 
-                    boolean access = false;
-
-                    if (MedievalFactions.getInstance().getConfig().getBoolean("allowAllyInteraction")) {
-                        if (PersistentData.getInstance().isPlayerInAlliedFaction(event.getPlayer(), faction)) {
-                            access = true;
-                        }
-                    }
-
-                    if (MedievalFactions.getInstance().getConfig().getBoolean("allowVassalageTreeInteraction")) {
-                        if (PersistentData.getInstance().isPlayerInFactionInVassalageTree(event.getPlayer(), faction)) {
-                            access = true;
-                        }
-                    }
-
-                    if (!access) {
-                        event.setCancelled(true);
-                        return;
-                    }
+                    event.setCancelled(true);
+                    return;
                 }
             }
         }
