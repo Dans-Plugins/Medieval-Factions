@@ -67,7 +67,7 @@ public class InteractionHandler implements Listener {
                             }
                         }
 
-                        if (MedievalFactions.getInstance().getConfig().getBoolean("AllowVassalageTreeInteraction")) {
+                        if (MedievalFactions.getInstance().getConfig().getBoolean("allowVassalageTreeInteraction")) {
                             if (PersistentData.getInstance().isPlayerInFactionInVassalageTree(player, faction)) {
                                 access = true;
                             }
@@ -171,7 +171,7 @@ public class InteractionHandler implements Listener {
                             }
                         }
 
-                        if (MedievalFactions.getInstance().getConfig().getBoolean("AllowVassalageTreeInteraction")) {
+                        if (MedievalFactions.getInstance().getConfig().getBoolean("allowVassalageTreeInteraction")) {
                             if (PersistentData.getInstance().isPlayerInFactionInVassalageTree(player, faction)) {
                                 access = true;
                             }
