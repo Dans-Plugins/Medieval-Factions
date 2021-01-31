@@ -144,7 +144,7 @@ public class PersistentData {
                 // get vassals of current
                 for (String vassalName : current.getVassals()) {
                     Faction vassal = PersistentData.getInstance().getFaction(vassalName);
-                    if (!containsFactionByName(toAdd, vassal) && !containsFactionByName(foundFactions, liege)) {
+                    if (!containsFactionByName(toAdd, vassal) && !containsFactionByName(foundFactions, vassal)) {
                         toAdd.add(vassal);
                         numFactionsFound++;
                     }
