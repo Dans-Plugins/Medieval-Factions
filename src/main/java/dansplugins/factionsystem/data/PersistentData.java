@@ -125,17 +125,19 @@ public class PersistentData {
 
                 // get liege
                 Faction liege = PersistentData.getInstance().getFaction(current.getLiege());
-                if (!toAdd.contains(liege)) {
-                    toAdd.add(liege);
-                    numFactionsFound++;
-                }
-
-                // get vassals of liege
-                for (String vassalName : liege.getVassals()) {
-                    Faction vassal = PersistentData.getInstance().getFaction(vassalName);
-                    if (!toAdd.contains(vassal)) {
-                        toAdd.add(vassal);
+                if (liege != null) {
+                    if (!toAdd.contains(liege)) {
+                        toAdd.add(liege);
                         numFactionsFound++;
+                    }
+
+                    // get vassals of liege
+                    for (String vassalName : liege.getVassals()) {
+                        Faction vassal = PersistentData.getInstance().getFaction(vassalName);
+                        if (!toAdd.contains(vassal)) {
+                            toAdd.add(vassal);
+                            numFactionsFound++;
+                        }
                     }
                 }
 
