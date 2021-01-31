@@ -152,6 +152,7 @@ public class PersistentData {
                 // if number of factions not different then break loop
                 if (numFactionsFound == foundFactions.size()) {
                     newFactionsFound = false;
+                    break;
                 }
             }
             foundFactions.addAll(toAdd);
