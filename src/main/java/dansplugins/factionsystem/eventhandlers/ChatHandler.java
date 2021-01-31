@@ -29,11 +29,16 @@ public class ChatHandler implements Listener {
             // check for faction chat
             if (EphemeralData.getInstance().getPlayersInFactionChat().contains(event.getPlayer().getUniqueId())) {
                 String message = event.getMessage();
-                ArrayList<Faction> factionsInVassalageTree = PersistentData.getInstance().getFactionsInVassalageTree(playersFaction);
-
-                for (Faction faction : factionsInVassalageTree) {
-                    Messenger.getInstance().sendAllPlayersInFactionMessage(faction, ChatColor.WHITE + "" + event.getPlayer().getName() + ": " + ChatColor.GOLD + message);
+                if (MedievalFactions.getInstance().getConfig().getBoolean("chatSharedInVassalageTrees")) {
+                    ArrayList<Faction> factionsInVassalageTree = PersistentData.getInstance().getFactionsInVassalageTree(playersFaction);
+                    for (Faction faction : factionsInVassalageTree) {
+                        Messenger.getInstance().sendAllPlayersInFactionMessage(faction, ChatColor.WHITE + "" + event.getPlayer().getName() + ": " + ChatColor.GOLD + message);
+                    }
                 }
+                else {
+                    Messenger.getInstance().sendAllPlayersInFactionMessage(playersFaction, ChatColor.WHITE + "" + event.getPlayer().getName() + ": " + ChatColor.GOLD + message);
+                }
+
 
                 event.setCancelled(true);
             }

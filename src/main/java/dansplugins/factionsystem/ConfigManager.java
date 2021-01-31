@@ -122,6 +122,10 @@ public class ConfigManager {
             MedievalFactions.getInstance().getConfig().addDefault("languageid", "en-us");
         }
 
+        if (!MedievalFactions.getInstance().getConfig().isBoolean("chatSharedInVassalageTrees")) {
+            MedievalFactions.getInstance().getConfig().addDefault("chatSharedInVassalageTrees", "en-us");
+        }
+
         deleteOldConfigOptionsIfPresent();
 
         MedievalFactions.getInstance().getConfig().options().copyDefaults(true);
@@ -176,7 +180,8 @@ public class ConfigManager {
                     || option.equalsIgnoreCase("surroundedChunksProtected")
                     || option.equalsIgnoreCase("zeroPowerFactionsGetDisbanded")
                     || option.equalsIgnoreCase("nonMembersCanInteractWithDoors")
-                    || option.equalsIgnoreCase("playersChatWithPrefixes")) {
+                    || option.equalsIgnoreCase("playersChatWithPrefixes")
+                    || option.equalsIgnoreCase("chatSharedInVassalageTrees")) {
                 MedievalFactions.getInstance().getConfig().set(option, Boolean.parseBoolean(value));
                 player.sendMessage(ChatColor.GREEN + LocaleManager.getInstance().getText("BooleanSet"));
             }
@@ -231,6 +236,7 @@ public class ConfigManager {
         MedievalFactions.getInstance().getConfig().addDefault("playersChatWithPrefixes", true);
         MedievalFactions.getInstance().getConfig().addDefault("maxClaimRadius", 3);
         MedievalFactions.getInstance().getConfig().addDefault("languageid", "en-us");
+        MedievalFactions.getInstance().getConfig().addDefault("chatSharedInVassalageTrees", true);
         MedievalFactions.getInstance().getConfig().options().copyDefaults(true);
         MedievalFactions.getInstance().saveConfig();
     }
@@ -261,7 +267,8 @@ public class ConfigManager {
                 + ", vassalContributionPercentageMultiplier: " + MedievalFactions.getInstance().getConfig().getDouble("vassalContributionPercentageMultiplier")
                 + ", nonMembersCanInteractWithDoors: " + MedievalFactions.getInstance().getConfig().getBoolean("nonMembersCanInteractWithDoors")
                 + ", playersChatWithPrefixes: " + MedievalFactions.getInstance().getConfig().getBoolean("playersChatWithPrefixes")
-                + ", maxClaimRadius: " + MedievalFactions.getInstance().getConfig().getInt("maxClaimRadius"));
+                + ", maxClaimRadius: " + MedievalFactions.getInstance().getConfig().getInt("maxClaimRadius")
+                + ", chatSharedInVassalageTrees: " + MedievalFactions.getInstance().getConfig().getBoolean("chatSharedInVassalageTrees"));
     }
 
 }
