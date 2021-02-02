@@ -61,9 +61,6 @@ public class InteractionHandler implements Listener {
                     if (!(faction.getName().equalsIgnoreCase(chunk.getHolder())) && !EphemeralData.getInstance().getAdminsBypassingProtections().contains(player.getUniqueId())) {
                         boolean inVassalageTree = PersistentData.getInstance().isPlayerInFactionInVassalageTree(player, PersistentData.getInstance().getFaction(chunk.getHolder()));
                         boolean isAlly = faction.isAlly(chunk.getHolder());
-                        System.out.println("In Vassalage Tree? " + inVassalageTree);
-                        System.out.println("Ally? " + isAlly);
-
                         boolean allyInteractionAllowed = MedievalFactions.getInstance().getConfig().getBoolean("allowAllyInteraction");
                         boolean vassalageTreeInteractionAllowed = MedievalFactions.getInstance().getConfig().getBoolean("allowVassalageTreeInteraction");
 
@@ -79,12 +76,8 @@ public class InteractionHandler implements Listener {
 
 
                         if (!allowed) {
-                            System.out.println("Cancelling block break event!");
                             event.setCancelled(true);
                             return;
-                        }
-                        else {
-                            System.out.println("allowed!");
                         }
                     }
 
@@ -166,9 +159,6 @@ public class InteractionHandler implements Listener {
 
                         boolean inVassalageTree = PersistentData.getInstance().isPlayerInFactionInVassalageTree(player, PersistentData.getInstance().getFaction(chunk.getHolder()));
                         boolean isAlly = faction.isAlly(chunk.getHolder());
-                        System.out.println("In Vassalage Tree? " + inVassalageTree);
-                        System.out.println("Ally? " + isAlly);
-
                         boolean allyInteractionAllowed = MedievalFactions.getInstance().getConfig().getBoolean("allowAllyInteraction");
                         boolean vassalageTreeInteractionAllowed = MedievalFactions.getInstance().getConfig().getBoolean("allowVassalageTreeInteraction");
 
@@ -182,14 +172,9 @@ public class InteractionHandler implements Listener {
                             allowed = true;
                         }
 
-
                         if (!allowed) {
-                            System.out.println("Cancelling block break event!");
                             event.setCancelled(true);
                             return;
-                        }
-                        else {
-                            System.out.println("allowed!");
                         }
 
                     }
@@ -1008,9 +993,6 @@ public class InteractionHandler implements Listener {
                     }
                     boolean inVassalageTree = PersistentData.getInstance().isPlayerInFactionInVassalageTree(event.getPlayer(), PersistentData.getInstance().getFaction(chunk.getHolder()));
                     boolean isAlly = faction.isAlly(chunk.getHolder());
-                    System.out.println("In Vassalage Tree? " + inVassalageTree);
-                    System.out.println("Ally? " + isAlly);
-
                     boolean allyInteractionAllowed = MedievalFactions.getInstance().getConfig().getBoolean("allowAllyInteraction");
                     boolean vassalageTreeInteractionAllowed = MedievalFactions.getInstance().getConfig().getBoolean("allowVassalageTreeInteraction");
 
@@ -1025,12 +1007,8 @@ public class InteractionHandler implements Listener {
                     }
 
                     if (!allowed) {
-                        System.out.println("Cancelling block break event!");
                         event.setCancelled(true);
                         return;
-                    }
-                    else {
-                        System.out.println("allowed!");
                     }
                 }
             }
