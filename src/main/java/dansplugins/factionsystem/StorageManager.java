@@ -46,7 +46,9 @@ public class StorageManager {
         savePlayerPowerRecords();
         savePlayerActivityRecords();
         saveLockedBlocks();
-        MedievalFactions.getInstance().saveConfig();
+        if (ConfigManager.getInstance().hasBeenAltered()) {
+            MedievalFactions.getInstance().saveConfig();
+        }
     }
 
     private void saveFactions() {
