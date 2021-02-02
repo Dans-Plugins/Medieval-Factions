@@ -26,6 +26,8 @@ public class Messenger {
     }
 
     public void sendFactionInfo(Player player, Faction faction, int power) {
+        int vassalContribution = faction.calculateCumulativePowerLevelWithVassalContribution() - faction.calculateCumulativePowerLevelWithoutVassalContribution();
+
         player.sendMessage(ChatColor.BOLD + "" + ChatColor.AQUA + String.format(LocaleManager.getInstance().getText("FactionInfo"), faction.getName()) + "\n----------\n");
         player.sendMessage(ChatColor.AQUA + String.format(LocaleManager.getInstance().getText("Name"), faction.getName()) + "\n");
         player.sendMessage(ChatColor.AQUA + String.format(LocaleManager.getInstance().getText("Owner"), UUIDChecker.getInstance().findPlayerNameBasedOnUUID(faction.getOwner())) + "\n");
@@ -39,10 +41,10 @@ public class Messenger {
         }
         player.sendMessage(ChatColor.AQUA + String.format(LocaleManager.getInstance().getText("AlliedWith"), faction.getAlliesSeparatedByCommas()) + "\n");
         player.sendMessage(ChatColor.AQUA + String.format(LocaleManager.getInstance().getText("AtWarWith"), faction.getEnemiesSeparatedByCommas()) + "\n");
-        player.sendMessage(ChatColor.AQUA + String.format(LocaleManager.getInstance().getText("PowerLevel"), faction.getCumulativePowerLevel()) + "\n");
+        player.sendMessage(ChatColor.AQUA + String.format(LocaleManager.getInstance().getText("PowerLevel"), faction.getCumulativePowerLevel()) + "/" + faction.getMaximumCumulativePowerLevel() + "\n");
         player.sendMessage(ChatColor.AQUA + String.format(LocaleManager.getInstance().getText("DemesneSize"), power, faction.getCumulativePowerLevel()) + "\n");
         if (faction.isLiege()) {
-            player.sendMessage(ChatColor.AQUA + String.format(LocaleManager.getInstance().getText("VassalContribution"), faction.calculateCumulativePowerLevelWithoutVassalContribution()) + "\n");
+            player.sendMessage(ChatColor.AQUA + String.format(LocaleManager.getInstance().getText("VassalContribution"), vassalContribution) + "\n");
         }
         player.sendMessage(ChatColor.AQUA + "----------\n");
     }
