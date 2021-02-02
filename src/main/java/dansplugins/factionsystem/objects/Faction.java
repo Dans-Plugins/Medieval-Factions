@@ -632,4 +632,8 @@ public class Faction {
     public ArrayList<String> getVassals() {
         return vassals;
     }
+
+    public boolean isWeakened() {
+        return calculateCumulativePowerLevelWithoutVassalContribution() < (getMaximumCumulativePowerLevel() / 2);
+    }
 }
