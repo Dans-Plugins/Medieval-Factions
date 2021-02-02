@@ -59,15 +59,26 @@ public class InteractionHandler implements Listener {
 
                     // if player's faction is not the same as the holder of the chunk and player isn't bypassing
                     if (!(faction.getName().equalsIgnoreCase(chunk.getHolder())) && !EphemeralData.getInstance().getAdminsBypassingProtections().contains(player.getUniqueId())) {
-                        // TODO: allow access to vassalage tree
-                        // TODO: allow access to allies
-
                         boolean inVassalageTree = PersistentData.getInstance().isPlayerInFactionInVassalageTree(player, PersistentData.getInstance().getFaction(chunk.getHolder()));
                         boolean isAlly = faction.isAlly(chunk.getHolder());
                         System.out.println("In Vassalage Tree? " + inVassalageTree);
                         System.out.println("Ally? " + isAlly);
 
-                        if (!isAlly && !inVassalageTree) {
+                        boolean allyInteractionAllowed = MedievalFactions.getInstance().getConfig().getBoolean("allowAllyInteraction");
+                        boolean vassalageTreeInteractionAllowed = MedievalFactions.getInstance().getConfig().getBoolean("allowVassalageTreeInteraction");
+
+                        boolean allowed = false;
+
+                        if (allyInteractionAllowed && isAlly) {
+                            allowed = true;
+                        }
+
+                        if (vassalageTreeInteractionAllowed && inVassalageTree) {
+                            allowed = true;
+                        }
+
+
+                        if (!allowed) {
                             System.out.println("Cancelling block break event!");
                             event.setCancelled(true);
                             return;
@@ -153,16 +164,27 @@ public class InteractionHandler implements Listener {
                             }
                         }
 
-                        // TODO: allow access to vassalage tree
-                        // TODO: allow access to allies
-
                         boolean inVassalageTree = PersistentData.getInstance().isPlayerInFactionInVassalageTree(player, PersistentData.getInstance().getFaction(chunk.getHolder()));
                         boolean isAlly = faction.isAlly(chunk.getHolder());
                         System.out.println("In Vassalage Tree? " + inVassalageTree);
                         System.out.println("Ally? " + isAlly);
 
-                        if (!isAlly && !inVassalageTree) {
-                            System.out.println("Cancelling block place event!");
+                        boolean allyInteractionAllowed = MedievalFactions.getInstance().getConfig().getBoolean("allowAllyInteraction");
+                        boolean vassalageTreeInteractionAllowed = MedievalFactions.getInstance().getConfig().getBoolean("allowVassalageTreeInteraction");
+
+                        boolean allowed = false;
+
+                        if (allyInteractionAllowed && isAlly) {
+                            allowed = true;
+                        }
+
+                        if (vassalageTreeInteractionAllowed && inVassalageTree) {
+                            allowed = true;
+                        }
+
+
+                        if (!allowed) {
+                            System.out.println("Cancelling block break event!");
                             event.setCancelled(true);
                             return;
                         }
@@ -984,17 +1006,26 @@ public class InteractionHandler implements Listener {
                             }
                         }
                     }
-
-                    // TODO: allow access to vassalage tree
-                    // TODO: allow access to allies
-
                     boolean inVassalageTree = PersistentData.getInstance().isPlayerInFactionInVassalageTree(event.getPlayer(), PersistentData.getInstance().getFaction(chunk.getHolder()));
                     boolean isAlly = faction.isAlly(chunk.getHolder());
                     System.out.println("In Vassalage Tree? " + inVassalageTree);
                     System.out.println("Ally? " + isAlly);
 
-                    if (!isAlly && !inVassalageTree) {
-                        System.out.println("Cancelling player interact event!");
+                    boolean allyInteractionAllowed = MedievalFactions.getInstance().getConfig().getBoolean("allowAllyInteraction");
+                    boolean vassalageTreeInteractionAllowed = MedievalFactions.getInstance().getConfig().getBoolean("allowVassalageTreeInteraction");
+
+                    boolean allowed = false;
+
+                    if (allyInteractionAllowed && isAlly) {
+                        allowed = true;
+                    }
+
+                    if (vassalageTreeInteractionAllowed && inVassalageTree) {
+                        allowed = true;
+                    }
+
+                    if (!allowed) {
+                        System.out.println("Cancelling block break event!");
                         event.setCancelled(true);
                         return;
                     }
