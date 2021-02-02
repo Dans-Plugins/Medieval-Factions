@@ -1,4 +1,4 @@
-package dansplugins.factionsystem;
+package dansplugins.factionsystem.utils;
 
 import org.bukkit.ChatColor;
 

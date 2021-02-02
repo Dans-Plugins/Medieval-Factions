@@ -3,6 +3,7 @@ package dansplugins.factionsystem;
 import dansplugins.factionsystem.data.EphemeralData;
 import dansplugins.factionsystem.data.PersistentData;
 import dansplugins.factionsystem.utils.ArgumentParser;
+import dansplugins.factionsystem.utils.UUIDChecker;
 
 public class MedievalFactionsAPI {
 

@@ -5,6 +5,7 @@ import dansplugins.factionsystem.objects.ChunkFlags;
 import dansplugins.factionsystem.objects.ClaimedChunk;
 import dansplugins.factionsystem.objects.Faction;
 import dansplugins.factionsystem.objects.PlayerPowerRecord;
+import dansplugins.factionsystem.utils.UUIDChecker;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.PluginManager;
 import org.bukkit.scheduler.BukkitRunnable;
