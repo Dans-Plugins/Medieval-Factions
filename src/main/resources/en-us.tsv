@@ -498,3 +498,5 @@ WikiLink	Wiki: https://github.com/DansPlugins/Medieval-Factions/wiki
 Wilderness	Wilderness
 WorldsMismatch1	Error placing point 1: Worlds mismatch.
 WorldsMismatch2	Error placing point 2: Worlds mismatch.
+AlertFactionIsWeakened	Your faction has less than half of its max power! It will no longer receive bonus power from vassals and your vassals are now vulnerable.
+VassalContribution	Bonus Power From Vassals: %d
