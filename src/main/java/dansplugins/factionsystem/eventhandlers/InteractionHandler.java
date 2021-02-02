@@ -67,7 +67,7 @@ public class InteractionHandler implements Listener {
                         System.out.println("In Vassalage Tree? " + inVassalageTree);
                         System.out.println("Ally? " + isAlly);
 
-                        if (!isAlly) {
+                        if (!isAlly && !inVassalageTree) {
                             System.out.println("Cancelling block break event!");
                             event.setCancelled(true);
                             return;
@@ -161,7 +161,7 @@ public class InteractionHandler implements Listener {
                         System.out.println("In Vassalage Tree? " + inVassalageTree);
                         System.out.println("Ally? " + isAlly);
 
-                        if (!isAlly) {
+                        if (!isAlly && !inVassalageTree) {
                             System.out.println("Cancelling block place event!");
                             event.setCancelled(true);
                             return;
@@ -993,7 +993,7 @@ public class InteractionHandler implements Listener {
                     System.out.println("In Vassalage Tree? " + inVassalageTree);
                     System.out.println("Ally? " + isAlly);
 
-                    if (!isAlly) {
+                    if (!isAlly && !inVassalageTree) {
                         System.out.println("Cancelling player interact event!");
                         event.setCancelled(true);
                         return;
