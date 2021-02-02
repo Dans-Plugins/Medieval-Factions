@@ -1,10 +1,10 @@
 package dansplugins.factionsystem.commands;
 
 import dansplugins.factionsystem.LocaleManager;
-import dansplugins.factionsystem.UUIDChecker;
 import dansplugins.factionsystem.data.PersistentData;
 import dansplugins.factionsystem.objects.Faction;
 import dansplugins.factionsystem.utils.ArgumentParser;
+import dansplugins.factionsystem.utils.UUIDChecker;
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
