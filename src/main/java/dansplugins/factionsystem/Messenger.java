@@ -41,6 +41,9 @@ public class Messenger {
         player.sendMessage(ChatColor.AQUA + String.format(LocaleManager.getInstance().getText("AtWarWith"), faction.getEnemiesSeparatedByCommas()) + "\n");
         player.sendMessage(ChatColor.AQUA + String.format(LocaleManager.getInstance().getText("PowerLevel"), faction.getCumulativePowerLevel()) + "\n");
         player.sendMessage(ChatColor.AQUA + String.format(LocaleManager.getInstance().getText("DemesneSize"), power, faction.getCumulativePowerLevel()) + "\n");
+        if (faction.isLiege()) {
+            player.sendMessage(ChatColor.AQUA + String.format(LocaleManager.getInstance().getText("VassalContribution"), faction.calculateCumulativePowerLevelWithoutVassalContribution()) + "\n");
+        }
         player.sendMessage(ChatColor.AQUA + "----------\n");
     }
 
