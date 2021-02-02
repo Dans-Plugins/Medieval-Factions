@@ -190,7 +190,7 @@ public class Faction {
         return powerLevel;
     }
 
-    private int calculateCumulativePowerLevelWithVassalContribution() {
+    public int calculateCumulativePowerLevelWithVassalContribution() {
 
         int vassalContribution = 0;
         double percentage = MedievalFactions.getInstance().getConfig().getDouble("vassalContributionPercentageMultiplier");
