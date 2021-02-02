@@ -247,8 +247,8 @@ public class ConfigManager {
         MedievalFactions.getInstance().getConfig().addDefault("maxClaimRadius", 3);
         MedievalFactions.getInstance().getConfig().addDefault("languageid", "en-us");
         MedievalFactions.getInstance().getConfig().addDefault("chatSharedInVassalageTrees", true);
-        MedievalFactions.getInstance().getConfig().addDefault("allowAllyInteraction", true);
-        MedievalFactions.getInstance().getConfig().addDefault("allowVassalageTreeInteraction", true);
+        MedievalFactions.getInstance().getConfig().addDefault("allowAllyInteraction", false);
+        MedievalFactions.getInstance().getConfig().addDefault("allowVassalageTreeInteraction", false);
         MedievalFactions.getInstance().getConfig().options().copyDefaults(true);
         MedievalFactions.getInstance().saveConfig();
     }
