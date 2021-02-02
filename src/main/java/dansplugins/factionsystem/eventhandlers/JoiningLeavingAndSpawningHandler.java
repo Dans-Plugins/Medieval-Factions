@@ -5,10 +5,12 @@ import dansplugins.factionsystem.LocaleManager;
 import dansplugins.factionsystem.MedievalFactions;
 import dansplugins.factionsystem.data.EphemeralData;
 import dansplugins.factionsystem.data.PersistentData;
+import dansplugins.factionsystem.objects.Faction;
 import dansplugins.factionsystem.objects.PlayerActivityRecord;
 import dansplugins.factionsystem.objects.PlayerPowerRecord;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Monster;
+import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.EntitySpawnEvent;
@@ -59,7 +61,23 @@ public class JoiningLeavingAndSpawningHandler implements Listener {
         }
 
         ChunkManager.getInstance().informPlayerIfTheirLandIsInDanger(event.getPlayer(), PersistentData.getInstance().getFactions(), PersistentData.getInstance().getClaimedChunks());
+
+        informPlayerIfTheirFactionIsWeakened(event.getPlayer());
     }
+
+    private void informPlayerIfTheirFactionIsWeakened(Player player) {
+		Faction playersFaction = PersistentData.getInstance().getPlayersFaction(player.getUniqueId());
+
+		if (playersFaction == null) {
+			return;
+		}
+
+		if (playersFaction.isLiege()) {
+			if (playersFaction.isWeakened()) {
+				player.sendMessage(ChatColor.RED + LocaleManager.getInstance().getText("AlertFactionIsWeakened"));
+			}
+		}
+	}
 
 	private boolean hasPowerRecord(UUID playerUUID) {
 		for (PlayerPowerRecord record : PersistentData.getInstance().getPlayerPowerRecords()){
