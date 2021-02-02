@@ -2,6 +2,7 @@ package dansplugins.factionsystem.data;
 
 import dansplugins.factionsystem.objects.*;
 import org.bukkit.block.Block;
+import org.bukkit.entity.Player;
 
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -157,7 +158,7 @@ public class PersistentData {
             foundFactions.addAll(toAdd);
             toAdd.clear();
         }
-        System.out.println(String.format("DEBUG: Found %d factions in vassalage tree of %s", foundFactions.size(), initialFaction.getName()));
+//        System.out.println(String.format("DEBUG: Found %d factions in vassalage tree of %s", foundFactions.size(), initialFaction.getName()));
         return foundFactions;
     }
 
@@ -205,6 +206,27 @@ public class PersistentData {
                 {
                     return true;
                 }
+            }
+        }
+        return false;
+    }
+
+    public boolean isPlayerInFactionInVassalageTree(Player player, Faction faction) {
+        ArrayList<Faction> factionsToCheck = getFactionsInVassalageTree(faction);
+        for (Faction f : factionsToCheck) {
+            if (f.isMember(player.getUniqueId())) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    public boolean isPlayerInAlliedFaction(Player player, Faction faction) {
+        ArrayList<String> factionNames = faction.getAllies();
+        for (String name : factionNames) {
+            Faction f = getFaction(name);
+            if (f.isMember(player.getUniqueId())) {
+                return true;
             }
         }
         return false;

@@ -20,7 +20,7 @@ public class BreakAllianceCommand {
 
         Player player = (Player) sender;
 
-        if (player.hasPermission("mf.breakalliance")) {
+        if (!player.hasPermission("mf.breakalliance")) {
             sender.sendMessage(ChatColor.RED + String.format(LocaleManager.getInstance().getText("PermissionNeeded"), "mf.breakalliance"));
             return false;
         }

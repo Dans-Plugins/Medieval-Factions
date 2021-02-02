@@ -123,7 +123,15 @@ public class ConfigManager {
         }
 
         if (!MedievalFactions.getInstance().getConfig().isBoolean("chatSharedInVassalageTrees")) {
-            MedievalFactions.getInstance().getConfig().addDefault("chatSharedInVassalageTrees", "en-us");
+            MedievalFactions.getInstance().getConfig().addDefault("chatSharedInVassalageTrees", true);
+        }
+
+        if (!MedievalFactions.getInstance().getConfig().isBoolean("allowAllyInteraction")) {
+            MedievalFactions.getInstance().getConfig().addDefault("allowAllyInteraction", false);
+        }
+
+        if (!MedievalFactions.getInstance().getConfig().isBoolean("allowVassalageTreeInteraction")) {
+            MedievalFactions.getInstance().getConfig().addDefault("allowVassalageTreeInteraction", false);
         }
 
         deleteOldConfigOptionsIfPresent();
@@ -181,7 +189,9 @@ public class ConfigManager {
                     || option.equalsIgnoreCase("zeroPowerFactionsGetDisbanded")
                     || option.equalsIgnoreCase("nonMembersCanInteractWithDoors")
                     || option.equalsIgnoreCase("playersChatWithPrefixes")
-                    || option.equalsIgnoreCase("chatSharedInVassalageTrees")) {
+                    || option.equalsIgnoreCase("chatSharedInVassalageTrees")
+                    || option.equalsIgnoreCase("allowAllyInteraction")
+                    || option.equalsIgnoreCase("allowVassalageTreeInteraction")) {
                 MedievalFactions.getInstance().getConfig().set(option, Boolean.parseBoolean(value));
                 player.sendMessage(ChatColor.GREEN + LocaleManager.getInstance().getText("BooleanSet"));
             }
@@ -237,6 +247,8 @@ public class ConfigManager {
         MedievalFactions.getInstance().getConfig().addDefault("maxClaimRadius", 3);
         MedievalFactions.getInstance().getConfig().addDefault("languageid", "en-us");
         MedievalFactions.getInstance().getConfig().addDefault("chatSharedInVassalageTrees", true);
+        MedievalFactions.getInstance().getConfig().addDefault("allowAllyInteraction", false);
+        MedievalFactions.getInstance().getConfig().addDefault("allowVassalageTreeInteraction", false);
         MedievalFactions.getInstance().getConfig().options().copyDefaults(true);
         MedievalFactions.getInstance().saveConfig();
     }
@@ -268,7 +280,9 @@ public class ConfigManager {
                 + ", nonMembersCanInteractWithDoors: " + MedievalFactions.getInstance().getConfig().getBoolean("nonMembersCanInteractWithDoors")
                 + ", playersChatWithPrefixes: " + MedievalFactions.getInstance().getConfig().getBoolean("playersChatWithPrefixes")
                 + ", maxClaimRadius: " + MedievalFactions.getInstance().getConfig().getInt("maxClaimRadius")
-                + ", chatSharedInVassalageTrees: " + MedievalFactions.getInstance().getConfig().getBoolean("chatSharedInVassalageTrees"));
+                + ", chatSharedInVassalageTrees: " + MedievalFactions.getInstance().getConfig().getBoolean("chatSharedInVassalageTrees")
+                + ", allowAllyInteraction: " + MedievalFactions.getInstance().getConfig().getBoolean("allowAllyInteraction")
+                + ", allowVassalageTreeInteraction: " + MedievalFactions.getInstance().getConfig().getBoolean("allowVassalageTreeInteraction"));
     }
 
 }

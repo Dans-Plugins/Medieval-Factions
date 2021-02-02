@@ -80,7 +80,7 @@ public class AllyCommand {
             // ally factions
             playersFaction.addAlly(targetFactionName);
             PersistentData.getInstance().getFaction(targetFactionName).addAlly(playersFaction.getName());
-            player.sendMessage(ChatColor.GREEN + LocaleManager.getInstance().getText("AlertNowAlliedWith") + targetFactionName + "!");
+            player.sendMessage(ChatColor.GREEN + String.format(LocaleManager.getInstance().getText("AlertNowAlliedWith"), targetFactionName));
             Messenger.getInstance().sendAllPlayersInFactionMessage(targetFaction, ChatColor.GREEN + String.format(LocaleManager.getInstance().getText("AlertNowAlliedWith"), playersFaction.getName()));
         }
 

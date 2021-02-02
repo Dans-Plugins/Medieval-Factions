@@ -59,10 +59,26 @@ public class InteractionHandler implements Listener {
 
                     // if player's faction is not the same as the holder of the chunk and player isn't bypassing
                     if (!(faction.getName().equalsIgnoreCase(chunk.getHolder())) && !EphemeralData.getInstance().getAdminsBypassingProtections().contains(player.getUniqueId())) {
-                        // TODO: allow access to vassalage tree
-                        // TODO: allow access to allies
-                        event.setCancelled(true);
-                        return;
+                        boolean inVassalageTree = PersistentData.getInstance().isPlayerInFactionInVassalageTree(player, PersistentData.getInstance().getFaction(chunk.getHolder()));
+                        boolean isAlly = faction.isAlly(chunk.getHolder());
+                        boolean allyInteractionAllowed = MedievalFactions.getInstance().getConfig().getBoolean("allowAllyInteraction");
+                        boolean vassalageTreeInteractionAllowed = MedievalFactions.getInstance().getConfig().getBoolean("allowVassalageTreeInteraction");
+
+                        boolean allowed = false;
+
+                        if (allyInteractionAllowed && isAlly) {
+                            allowed = true;
+                        }
+
+                        if (vassalageTreeInteractionAllowed && inVassalageTree) {
+                            allowed = true;
+                        }
+
+
+                        if (!allowed) {
+                            event.setCancelled(true);
+                            return;
+                        }
                     }
 
                     // if block is locked
@@ -76,7 +92,7 @@ public class InteractionHandler implements Listener {
                             return;
                         }
 
-                    	removeLock(event.getBlock(), PersistentData.getInstance().getLockedBlocks());
+                        removeLock(event.getBlock(), PersistentData.getInstance().getLockedBlocks());
                         // if block was a door
                         if (isDoor(event.getBlock())) {
                             // remove locks above and below the original block as well
@@ -92,28 +108,19 @@ public class InteractionHandler implements Listener {
                         }
 
                     }
-                    
+
                     // if block is in a gate
                     for (Gate gate : faction.getGates())
                     {
 //                    	System.out.println("Gate " + gate.getName() + "?");
-                    	if (gate.hasBlock(event.getBlock()))
-                    	{
-                    		event.setCancelled(true);
+                        if (gate.hasBlock(event.getBlock()))
+                        {
+                            event.setCancelled(true);
                             player.sendMessage(ChatColor.RED + String.format(LocaleManager.getInstance().getText("BlockIsPartOfGateMustRemoveGate"), gate.getName()));
                             return;
-                    	}
+                        }
                     }
                 }
-            }
-        }
-    }
-
-    private void removeLock(Block block, ArrayList<LockedBlock> lockedBlocks) {
-        for (LockedBlock b : lockedBlocks) {
-            if (b.getX() == block.getX() && b.getY() == block.getY() && b.getZ() == block.getZ() && block.getWorld().getName().equalsIgnoreCase(b.getWorld())) {
-                lockedBlocks.remove(b);
-                return;
             }
         }
     }
@@ -132,9 +139,8 @@ public class InteractionHandler implements Listener {
 
             // player not in a faction
             if (!PersistentData.getInstance().isInFaction(event.getPlayer().getUniqueId()) && !EphemeralData.getInstance().getAdminsBypassingProtections().contains(event.getPlayer().getUniqueId())) {
-                // TODO: allow access to vassalage tree
-                // TODO: allow access to allies
                 event.setCancelled(true);
+                return;
             }
 
             // if player is in faction
@@ -151,8 +157,26 @@ public class InteractionHandler implements Listener {
                             }
                         }
 
-                        event.setCancelled(true);
-                        return;
+                        boolean inVassalageTree = PersistentData.getInstance().isPlayerInFactionInVassalageTree(player, PersistentData.getInstance().getFaction(chunk.getHolder()));
+                        boolean isAlly = faction.isAlly(chunk.getHolder());
+                        boolean allyInteractionAllowed = MedievalFactions.getInstance().getConfig().getBoolean("allowAllyInteraction");
+                        boolean vassalageTreeInteractionAllowed = MedievalFactions.getInstance().getConfig().getBoolean("allowVassalageTreeInteraction");
+
+                        boolean allowed = false;
+
+                        if (allyInteractionAllowed && isAlly) {
+                            allowed = true;
+                        }
+
+                        if (vassalageTreeInteractionAllowed && inVassalageTree) {
+                            allowed = true;
+                        }
+
+                        if (!allowed) {
+                            event.setCancelled(true);
+                            return;
+                        }
+
                     }
 
                     // if chest
@@ -207,61 +231,6 @@ public class InteractionHandler implements Listener {
                 }
             }
         }
-    }
-
-    private boolean isNextToNonOwnedLockedChest(Player player, Block block) {
-
-        // define blocks
-        Block neighbor1 = block.getWorld().getBlockAt(block.getX() + 1, block.getY(), block.getZ());
-        Block neighbor2 = block.getWorld().getBlockAt(block.getX() - 1, block.getY(), block.getZ());
-        Block neighbor3 = block.getWorld().getBlockAt(block.getX(), block.getY(), block.getZ() + 1);
-        Block neighbor4 = block.getWorld().getBlockAt(block.getX(), block.getY(), block.getZ() - 1);
-
-        if (isChest(neighbor1)) {
-            if (PersistentData.getInstance().isBlockLocked(neighbor1) && PersistentData.getInstance().getLockedBlock(neighbor1).getOwner() != player.getUniqueId()) {
-                return true;
-            }
-        }
-
-        if (isChest(neighbor2)) {
-            if (PersistentData.getInstance().isBlockLocked(neighbor2) && PersistentData.getInstance().getLockedBlock(neighbor2).getOwner() != player.getUniqueId()) {
-                return true;
-            }
-        }
-
-        if (isChest(neighbor3)) {
-            if (PersistentData.getInstance().isBlockLocked(neighbor3) && PersistentData.getInstance().getLockedBlock(neighbor3).getOwner() != player.getUniqueId()) {
-                return true;
-            }
-        }
-
-        if (isChest(neighbor4)) {
-            if (PersistentData.getInstance().isBlockLocked(neighbor4) && PersistentData.getInstance().getLockedBlock(neighbor4).getOwner() != player.getUniqueId()) {
-                return true;
-            }
-        }
-
-        return false;
-    }
-
-    private boolean isUnderOrAboveNonOwnedLockedChest(Player player, Block block) {
-        // define blocks
-        Block neighbor1 = block.getWorld().getBlockAt(block.getX(), block.getY() + 1, block.getZ());
-        Block neighbor2 = block.getWorld().getBlockAt(block.getX(), block.getY() - 1, block.getZ());
-
-        if (isChest(neighbor1)) {
-            if (PersistentData.getInstance().isBlockLocked(neighbor1) && PersistentData.getInstance().getLockedBlock(neighbor1).getOwner() != player.getUniqueId()) {
-                return true;
-            }
-        }
-
-        if (isChest(neighbor2)) {
-            if (PersistentData.getInstance().isBlockLocked(neighbor2) && PersistentData.getInstance().getLockedBlock(neighbor2).getOwner() != player.getUniqueId()) {
-                return true;
-            }
-        }
-
-        return false;
     }
 
     @EventHandler()
@@ -556,6 +525,144 @@ public class InteractionHandler implements Listener {
             }
 
         }
+    }
+
+    @EventHandler()
+    public void handle(PlayerInteractAtEntityEvent event) {
+        Player player = event.getPlayer();
+        Entity clickedEntity = event.getRightClicked();
+
+        if (clickedEntity instanceof ArmorStand) {
+            ArmorStand armorStand = (ArmorStand) clickedEntity;
+
+            // get chunk that armor stand is in
+            World world = armorStand.getWorld();
+            Location location = armorStand.getLocation();
+            Chunk chunk = location.getChunk();
+            ClaimedChunk claimedChunk = ChunkManager.getInstance().getClaimedChunk(chunk.getX(), chunk.getZ(), world.getName(), PersistentData.getInstance().getClaimedChunks());
+
+            // if chunk is not claimed, return
+            if (claimedChunk == null) {
+                return;
+            }
+
+            String holderFactionName = claimedChunk.getHolder();
+
+            Faction playersFaction = PersistentData.getInstance().getPlayersFaction(player.getUniqueId());
+
+            if (playersFaction == null) {
+                return;
+            }
+
+            String playersFactionName = playersFaction.getName();
+
+            // if holder is not the same as player's faction
+            if (!holderFactionName.equalsIgnoreCase(playersFactionName)) {
+                event.setCancelled(true);
+            }
+        }
+    }
+
+    @EventHandler()
+    public void handle(HangingBreakByEntityEvent event) {
+
+        if (!(event.getRemover() instanceof Player)) {
+            return;
+        }
+
+        Player player = (Player) event.getRemover();
+
+        Entity entity = event.getEntity();
+
+        // get chunk that entity is in
+        World world = entity.getWorld();
+        Location location = entity.getLocation();
+        Chunk chunk = location.getChunk();
+        ClaimedChunk claimedChunk = ChunkManager.getInstance().getClaimedChunk(chunk.getX(), chunk.getZ(), world.getName(), PersistentData.getInstance().getClaimedChunks());
+
+        // if chunk is not claimed, return
+        if (claimedChunk == null) {
+            return;
+        }
+
+        String holderFactionName = claimedChunk.getHolder();
+
+        Faction playersFaction = PersistentData.getInstance().getPlayersFaction(player.getUniqueId());
+
+        if (playersFaction == null) {
+            return;
+        }
+
+        String playersFactionName = playersFaction.getName();
+
+        // if holder is not the same as player's faction
+        if (!holderFactionName.equalsIgnoreCase(playersFactionName)) {
+            event.setCancelled(true);
+        }
+    }
+
+    private void removeLock(Block block, ArrayList<LockedBlock> lockedBlocks) {
+        for (LockedBlock b : lockedBlocks) {
+            if (b.getX() == block.getX() && b.getY() == block.getY() && b.getZ() == block.getZ() && block.getWorld().getName().equalsIgnoreCase(b.getWorld())) {
+                lockedBlocks.remove(b);
+                return;
+            }
+        }
+    }
+
+    private boolean isNextToNonOwnedLockedChest(Player player, Block block) {
+
+        // define blocks
+        Block neighbor1 = block.getWorld().getBlockAt(block.getX() + 1, block.getY(), block.getZ());
+        Block neighbor2 = block.getWorld().getBlockAt(block.getX() - 1, block.getY(), block.getZ());
+        Block neighbor3 = block.getWorld().getBlockAt(block.getX(), block.getY(), block.getZ() + 1);
+        Block neighbor4 = block.getWorld().getBlockAt(block.getX(), block.getY(), block.getZ() - 1);
+
+        if (isChest(neighbor1)) {
+            if (PersistentData.getInstance().isBlockLocked(neighbor1) && PersistentData.getInstance().getLockedBlock(neighbor1).getOwner() != player.getUniqueId()) {
+                return true;
+            }
+        }
+
+        if (isChest(neighbor2)) {
+            if (PersistentData.getInstance().isBlockLocked(neighbor2) && PersistentData.getInstance().getLockedBlock(neighbor2).getOwner() != player.getUniqueId()) {
+                return true;
+            }
+        }
+
+        if (isChest(neighbor3)) {
+            if (PersistentData.getInstance().isBlockLocked(neighbor3) && PersistentData.getInstance().getLockedBlock(neighbor3).getOwner() != player.getUniqueId()) {
+                return true;
+            }
+        }
+
+        if (isChest(neighbor4)) {
+            if (PersistentData.getInstance().isBlockLocked(neighbor4) && PersistentData.getInstance().getLockedBlock(neighbor4).getOwner() != player.getUniqueId()) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    private boolean isUnderOrAboveNonOwnedLockedChest(Player player, Block block) {
+        // define blocks
+        Block neighbor1 = block.getWorld().getBlockAt(block.getX(), block.getY() + 1, block.getZ());
+        Block neighbor2 = block.getWorld().getBlockAt(block.getX(), block.getY() - 1, block.getZ());
+
+        if (isChest(neighbor1)) {
+            if (PersistentData.getInstance().isBlockLocked(neighbor1) && PersistentData.getInstance().getLockedBlock(neighbor1).getOwner() != player.getUniqueId()) {
+                return true;
+            }
+        }
+
+        if (isChest(neighbor2)) {
+            if (PersistentData.getInstance().isBlockLocked(neighbor2) && PersistentData.getInstance().getLockedBlock(neighbor2).getOwner() != player.getUniqueId()) {
+                return true;
+            }
+        }
+
+        return false;
     }
 
     private void handleLockingBlock(PlayerInteractEvent event, Player player, Block clickedBlock) {
@@ -864,9 +971,6 @@ public class InteractionHandler implements Listener {
                         return;
                     }
 
-                    // TODO: allow access to vassalage tree
-                    // TODO: allow access to allies
-
                     // if enemy territory
                     if (faction.isEnemy(chunk.getHolder())) {
                         // if not interacting with chest
@@ -887,9 +991,25 @@ public class InteractionHandler implements Listener {
                             }
                         }
                     }
+                    boolean inVassalageTree = PersistentData.getInstance().isPlayerInFactionInVassalageTree(event.getPlayer(), PersistentData.getInstance().getFaction(chunk.getHolder()));
+                    boolean isAlly = faction.isAlly(chunk.getHolder());
+                    boolean allyInteractionAllowed = MedievalFactions.getInstance().getConfig().getBoolean("allowAllyInteraction");
+                    boolean vassalageTreeInteractionAllowed = MedievalFactions.getInstance().getConfig().getBoolean("allowVassalageTreeInteraction");
 
-                    event.setCancelled(true);
-                    return;
+                    boolean allowed = false;
+
+                    if (allyInteractionAllowed && isAlly) {
+                        allowed = true;
+                    }
+
+                    if (vassalageTreeInteractionAllowed && inVassalageTree) {
+                        allowed = true;
+                    }
+
+                    if (!allowed) {
+                        event.setCancelled(true);
+                        return;
+                    }
                 }
             }
         }
@@ -938,7 +1058,7 @@ public class InteractionHandler implements Listener {
         return true;
     }
 
-    public boolean materialAllowed(Material material) {
+    private boolean materialAllowed(Material material) {
         switch(material) {
             case BREAD:
             case POTATO:
@@ -1110,80 +1230,6 @@ public class InteractionHandler implements Listener {
 
     private boolean isChest(Block block) {
         return block.getType() == Material.CHEST;
-    }
-
-    @EventHandler()
-    public void handle(PlayerInteractAtEntityEvent event) {
-        Player player = event.getPlayer();
-        Entity clickedEntity = event.getRightClicked();
-
-        if (clickedEntity instanceof ArmorStand) {
-            ArmorStand armorStand = (ArmorStand) clickedEntity;
-
-            // get chunk that armor stand is in
-            World world = armorStand.getWorld();
-            Location location = armorStand.getLocation();
-            Chunk chunk = location.getChunk();
-            ClaimedChunk claimedChunk = ChunkManager.getInstance().getClaimedChunk(chunk.getX(), chunk.getZ(), world.getName(), PersistentData.getInstance().getClaimedChunks());
-
-            // if chunk is not claimed, return
-            if (claimedChunk == null) {
-                return;
-            }
-
-            String holderFactionName = claimedChunk.getHolder();
-
-            Faction playersFaction = PersistentData.getInstance().getPlayersFaction(player.getUniqueId());
-
-            if (playersFaction == null) {
-                return;
-            }
-
-            String playersFactionName = playersFaction.getName();
-
-            // if holder is not the same as player's faction
-            if (!holderFactionName.equalsIgnoreCase(playersFactionName)) {
-                event.setCancelled(true);
-            }
-        }
-    }
-
-    @EventHandler()
-    public void handle(HangingBreakByEntityEvent event) {
-
-        if (!(event.getRemover() instanceof Player)) {
-            return;
-        }
-
-        Player player = (Player) event.getRemover();
-
-        Entity entity = event.getEntity();
-
-        // get chunk that entity is in
-        World world = entity.getWorld();
-        Location location = entity.getLocation();
-        Chunk chunk = location.getChunk();
-        ClaimedChunk claimedChunk = ChunkManager.getInstance().getClaimedChunk(chunk.getX(), chunk.getZ(), world.getName(), PersistentData.getInstance().getClaimedChunks());
-
-        // if chunk is not claimed, return
-        if (claimedChunk == null) {
-            return;
-        }
-
-        String holderFactionName = claimedChunk.getHolder();
-
-        Faction playersFaction = PersistentData.getInstance().getPlayersFaction(player.getUniqueId());
-
-        if (playersFaction == null) {
-            return;
-        }
-
-        String playersFactionName = playersFaction.getName();
-
-        // if holder is not the same as player's faction
-        if (!holderFactionName.equalsIgnoreCase(playersFactionName)) {
-            event.setCancelled(true);
-        }
     }
 
 }
