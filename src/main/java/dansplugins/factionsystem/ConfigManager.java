@@ -6,6 +6,7 @@ import org.bukkit.entity.Player;
 public class ConfigManager {
 
     private static ConfigManager instance;
+    private boolean altered = false;
 
     private ConfigManager() {
 
@@ -160,7 +161,7 @@ public class ConfigManager {
 
     }
 
-    public static void setConfigOption(String option, String value, Player player) {
+    public void setConfigOption(String option, String value, Player player) {
 
         if (MedievalFactions.getInstance().getConfig().isSet(option)) {
 
@@ -216,6 +217,7 @@ public class ConfigManager {
 
             // save
             MedievalFactions.getInstance().saveConfig();
+            altered = true;
         }
         else {
             player.sendMessage(ChatColor.RED + String.format(LocaleManager.getInstance().getText("WasntFound"), option));
@@ -289,6 +291,10 @@ public class ConfigManager {
                 + ", allowAllyInteraction: " + MedievalFactions.getInstance().getConfig().getBoolean("allowAllyInteraction")
                 + ", allowVassalageTreeInteraction: " + MedievalFactions.getInstance().getConfig().getBoolean("allowVassalageTreeInteraction")
                 + ", factionChatColor: " + MedievalFactions.getInstance().getConfig().getString("factionChatColor"));
+    }
+
+    public boolean hasBeenAltered() {
+        return altered;
     }
 
 }

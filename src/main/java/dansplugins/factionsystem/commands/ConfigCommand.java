@@ -41,7 +41,7 @@ public class ConfigCommand {
                 String option = args[2];
                 String value = args[3];
 
-                ConfigManager.setConfigOption(option, value, player);
+                ConfigManager.getInstance().setConfigOption(option, value, player);
                 return true;
             }
             else {
