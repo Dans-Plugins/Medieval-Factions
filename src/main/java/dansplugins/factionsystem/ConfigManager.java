@@ -127,11 +127,11 @@ public class ConfigManager {
         }
 
         if (!MedievalFactions.getInstance().getConfig().isBoolean("allowAllyInteraction")) {
-            MedievalFactions.getInstance().getConfig().addDefault("allowAllyInteraction", true);
+            MedievalFactions.getInstance().getConfig().addDefault("allowAllyInteraction", false);
         }
 
         if (!MedievalFactions.getInstance().getConfig().isBoolean("allowVassalageTreeInteraction")) {
-            MedievalFactions.getInstance().getConfig().addDefault("allowVassalageTreeInteraction", true);
+            MedievalFactions.getInstance().getConfig().addDefault("allowVassalageTreeInteraction", false);
         }
 
         deleteOldConfigOptionsIfPresent();
