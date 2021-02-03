@@ -45,7 +45,12 @@ public class Messenger {
         player.sendMessage(ChatColor.AQUA + String.format(LocaleManager.getInstance().getText("PowerLevel"), faction.getCumulativePowerLevel()) + "/" + faction.getMaximumCumulativePowerLevel() + "\n");
         player.sendMessage(ChatColor.AQUA + String.format(LocaleManager.getInstance().getText("DemesneSize"), power, faction.getCumulativePowerLevel()) + "\n");
         if (faction.isLiege()) {
-            player.sendMessage(ChatColor.AQUA + String.format(LocaleManager.getInstance().getText("VassalContribution"), vassalContribution) + "\n");
+            if (!faction.isWeakened()) {
+                player.sendMessage(ChatColor.AQUA + String.format(LocaleManager.getInstance().getText("VassalContribution"), vassalContribution) + "\n");
+            }
+            else {
+                player.sendMessage(ChatColor.AQUA + String.format(LocaleManager.getInstance().getText("VassalContribution"), 0) + "\n");
+            }
         }
         player.sendMessage(ChatColor.AQUA + "----------\n");
     }
