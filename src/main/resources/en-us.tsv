@@ -30,6 +30,7 @@ AlertFactionAttemptedToVassalize	Your faction has attempted to vassalize %s!
 AlertFactionHasBeenVassalized	Your faction has been vassalized and has a new liege: %s
 AlertFactionHasNewVassal	Your faction has a new vassal: %s
 AlertFactionHomeRemoved	Your faction home has been removed!
+AlertFactionIsWeakened	Your faction has less than half of its max power! It will no longer receive bonus power from vassals and your vassals are now vulnerable.
 AlertForcedDemotion	You were forcibly demoted from officer status in your faction!
 AlertForcedKick	You were forcibly kicked from your faction!
 AlertForcedLoad	Medieval Factions has been forced to load.
@@ -335,7 +336,7 @@ HomeClaimedByAnotherFaction	Home was claimed by another faction, and has been lo
 HomeIsInUnclaimedChunk	Home is in an unclaimed chunk, and is unavailable
 HourlySaveAlert	Medieval Factions is saving. This will happen every hour.
 IntegerSet	Integer set!
-InvitationExpired	Your invitation to %s has expired!.
+InvitationExpired	Your invitation to %s has expired!
 InvitationSent	Invitation sent!
 KeysLoaded	Keys loaded: %d
 LandAlreadyClaimedBy	This land is already claimed by
@@ -490,6 +491,7 @@ UsageTransfer	Usage: /mf transfer (player-name)
 UsageVassalize	Usage: /mf vassalize (faction-name)
 UsageWho	Usage: /mf who (player-name)
 ValidSubUsageWhoCommandsShowSet	Valid sub-commands: show, set
+VassalContribution	Bonus Power From Vassals: %d
 Vassals	Vassals: %s
 WarningPlayerAlreadyStartedCreatingGate	WARNING: Player has already started creating the gate. startCreatingGate() call ignored.
 WasntFound	'%s' wasn't found.
@@ -498,5 +500,3 @@ WikiLink	Wiki: https://github.com/DansPlugins/Medieval-Factions/wiki
 Wilderness	Wilderness
 WorldsMismatch1	Error placing point 1: Worlds mismatch.
 WorldsMismatch2	Error placing point 2: Worlds mismatch.
-AlertFactionIsWeakened	Your faction has less than half of its max power! It will no longer receive bonus power from vassals and your vassals are now vulnerable.
-VassalContribution	Bonus Power From Vassals: %d

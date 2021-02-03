@@ -30,6 +30,7 @@ AlertFactionAttemptedToVassalize	Ваша фракция попыталась в
 AlertFactionHasBeenVassalized	Ваша фракция была вассализирована, и у нее теперь новый сюзерен: %s
 AlertFactionHasNewVassal	У вашей фракции появился новый вассал: %s
 AlertFactionHomeRemoved	Дом вашей фракции был удален!
+AlertFactionIsWeakened	У вашей фракции меньше половины максимальной силы! Он больше не будет получать дополнительную силу от вассалов, и ваши вассалы теперь уязвимы.
 AlertForcedDemotion	Вы были уволены со звания офицера в вашей фракции!
 AlertForcedKick	Вас выгнали из фракции!
 AlertForcedLoad	Medieval Factions был загружен.
@@ -490,6 +491,7 @@ UsageTransfer	Использование: /mf transfer (имя игрока)
 UsageVassalize	Использование: /mf vassalize (фракция)
 UsageWho	Использование: /mf who (имя игрока)
 ValidSubUsageWhoCommandsShowSet	Допустимые подкоманды: show, set
+VassalContribution	Дополнительная сила от вассалов:% d
 Vassals	Вассалы: %s
 WarningPlayerAlreadyStartedCreatingGate	ВНИМАНИЕ: Игрок уже начал создавать ворота. Вызов startCreatingGate() игнорируется.
 WasntFound	'%s' не найдено.
