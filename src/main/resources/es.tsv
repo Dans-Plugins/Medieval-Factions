@@ -30,6 +30,7 @@ AlertFactionAttemptedToVassalize	¡Tu facción ha intentado avasallar a %s!
 AlertFactionHasBeenVassalized	Tu facción ha sido avasallada y tiene un nuevo señorío: %s.
 AlertFactionHasNewVassal	Tu facción tiene un nuevo vasallo: %s.
 AlertFactionHomeRemoved	¡Tu hogar de facción ha sido eliminado!
+AlertFactionIsWeakened	¡Tu facción tiene menos de la mitad de su poder máximo! Ya no recibirá poder adicional de los vasallos y tus vasallos ahora son vulnerables.
 AlertForcedDemotion	¡Has sido forzadamente degradado de tu rango de oficial en tu facción!
 AlertForcedKick	¡Has sido forzadamente expulsado de tu facción!
 AlertForcedLoad	Medieval Factions ha sido forzado a cargar.
@@ -490,6 +491,7 @@ UsageTransfer	Uso: /mf transferir (jugador)
 UsageVassalize	Uso: /mf avasallar (facción)
 UsageWho	Uso: /mf quien (jugador)
 ValidSubUsageWhoCommandsShowSet	Sub-Comandos válidos: ver, establecer
+VassalContribution	Poder adicional de vasallos: %d
 Vassals	Vasallos: %s
 WarningPlayerAlreadyStartedCreatingGate	ALERTA: El jugador ya ha empezado a crear el portón. Llamada a startCreatingGate() ignorada.
 WasntFound	No se encontró '%s'.
