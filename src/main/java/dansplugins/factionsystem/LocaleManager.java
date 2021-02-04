@@ -170,7 +170,7 @@ public class LocaleManager {
             if (pair != null && !strings.containsKey(pair.getLeft())) { // if pair found and if key not already loaded
                 strings.put(pair.getLeft(), pair.getRight());
                 keys.add(pair.getLeft());
-                System.out.println(String.format("DEBUG: Loaded missing key %s from resources!", pair.getLeft()));
+//                System.out.println(String.format("DEBUG: Loaded missing key %s from resources!", pair.getLeft()));
             }
         });
     }
