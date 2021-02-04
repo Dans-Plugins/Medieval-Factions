@@ -19,7 +19,7 @@ public class AddLawCommand {
 
         Player player = (Player) sender;
 
-        if (player.hasPermission("mf.addlaw")) {
+        if (!player.hasPermission("mf.addlaw")) {
             sender.sendMessage(ChatColor.RED + String.format(LocaleManager.getInstance().getText("PermissionNeeded"), "mf.addlaw"));
             return false;
         }
