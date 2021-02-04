@@ -11,6 +11,15 @@ A faction is able to claim as much land as their cumulative power level allows. 
 ## How do I change a config setting?
 Type /mf config show to view the config. Type /mf config set (option) (value) to change a config setting. After this, you may have to restart the server. This must be done in-game with these commands, or else the changes won't save upon a restart.
 
+## How do I change the language of the plugin?
+To change what language the plugin is using, modify the "languageid" config option to one of the supported languages found in the plugin information outputted when you type /mf with no arguments.
+
+## How do I use a translation file that isn't supported?
+To use your own translation for the plugin, rename the en-us.tsv file in the "languages" folder of the "MedievalFactions" folder. Open the file and translate the values for each key accordingly. Then, modify the "languageid" to be your file name without ".tsv". Your translated key values should immediately be used by the plugin.
+
+## Locks aren't working on 1.12.2! What do I do?
+This is a known issue, and you can check its progress here.
+
 # Notes
 - Project building works with Java 8. It may work with other versions but I know that it works with Java 8.
 - This project uses the IntelliJ plugin Minecraft Development and Maven to compile its code.
