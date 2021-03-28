@@ -104,7 +104,7 @@ public class ConfigManager {
         }
 
         if (!MedievalFactions.getInstance().getConfig().isDouble("vassalContributionPercentageMultiplier")) {
-            MedievalFactions.getInstance().getConfig().addDefault("vassalContributionPercentageMultiplier", 0.25);
+            MedievalFactions.getInstance().getConfig().addDefault("vassalContributionPercentageMultiplier", 0.75);
         }
 
         if (!MedievalFactions.getInstance().getConfig().isBoolean("nonMembersCanInteractWithDoors")) {
