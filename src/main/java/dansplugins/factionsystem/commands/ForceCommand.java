@@ -203,7 +203,7 @@ public class ForceCommand {
                             if (!(PersistentData.getInstance().isInFaction(player.getUniqueId()))) {
                                 faction.addMember(player.getUniqueId(), PersistentData.getInstance().getPlayersPowerRecord(player.getUniqueId()).getPowerLevel());
                                 try {
-                                    Messenger.getInstance().sendAllPlayersInFactionMessage(faction, ChatColor.GREEN + player.getName() + LocaleManager.getInstance().getText("HasJoined") + faction.getName());
+                                    Messenger.getInstance().sendAllPlayersInFactionMessage(faction, ChatColor.GREEN + String.format(LocaleManager.getInstance().getText("HasJoined"), player.getName(), faction.getName()));
                                 } catch (Exception ignored) {
 
                                 }
