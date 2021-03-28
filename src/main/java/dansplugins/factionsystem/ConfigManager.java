@@ -104,7 +104,7 @@ public class ConfigManager {
         }
 
         if (!MedievalFactions.getInstance().getConfig().isDouble("vassalContributionPercentageMultiplier")) {
-            MedievalFactions.getInstance().getConfig().addDefault("vassalContributionPercentageMultiplier", 0.25);
+            MedievalFactions.getInstance().getConfig().addDefault("vassalContributionPercentageMultiplier", 0.75);
         }
 
         if (!MedievalFactions.getInstance().getConfig().isBoolean("nonMembersCanInteractWithDoors")) {
@@ -247,7 +247,7 @@ public class ConfigManager {
         MedievalFactions.getInstance().getConfig().addDefault("factionMaxGateArea", 64);
         MedievalFactions.getInstance().getConfig().addDefault("surroundedChunksProtected", true);
         MedievalFactions.getInstance().getConfig().addDefault("zeroPowerFactionsGetDisbanded", false);
-        MedievalFactions.getInstance().getConfig().addDefault("vassalContributionPercentageMultiplier", 0.25);
+        MedievalFactions.getInstance().getConfig().addDefault("vassalContributionPercentageMultiplier", 0.75);
         MedievalFactions.getInstance().getConfig().addDefault("nonMembersCanInteractWithDoors", false);
         MedievalFactions.getInstance().getConfig().addDefault("playersChatWithPrefixes", true);
         MedievalFactions.getInstance().getConfig().addDefault("maxClaimRadius", 3);
