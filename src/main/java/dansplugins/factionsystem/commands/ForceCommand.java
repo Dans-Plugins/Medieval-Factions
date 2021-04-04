@@ -495,7 +495,7 @@ public class ForceCommand {
             }
         }
 
-        sender.sendMessage(ChatColor.GREEN + LocaleManager.getInstance().getText("Success")); // TODO: create translation key
+        sender.sendMessage(ChatColor.GREEN + LocaleManager.getInstance().getText("Done")); // TODO: create translation key
         return true;
     }
 
