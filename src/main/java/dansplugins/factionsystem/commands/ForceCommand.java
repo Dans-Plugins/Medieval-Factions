@@ -463,7 +463,7 @@ public class ForceCommand {
 
         if (args.length < 4) {
             // send usage
-            sender.sendMessage(ChatColor.RED + LocaleManager.getInstance().getText("UsageForceRemoveVassal")); // TODO: create translation key
+            sender.sendMessage(ChatColor.RED + LocaleManager.getInstance().getText("UsageForceRemoveVassal"));
             return false;
         }
 
@@ -495,7 +495,7 @@ public class ForceCommand {
             }
         }
 
-        sender.sendMessage(ChatColor.GREEN + LocaleManager.getInstance().getText("Done")); // TODO: create translation key
+        sender.sendMessage(ChatColor.GREEN + LocaleManager.getInstance().getText("Done"));
         return true;
     }
 
