@@ -56,6 +56,9 @@ public class ForceCommand {
             if (args[1].equalsIgnoreCase("transfer") || args[1].equalsIgnoreCase(LocaleManager.getInstance().getText("CmdForceTransfer"))) {
                 return forceTransfer(sender, args);
             }
+            if (args[1].equalsIgnoreCase("removevassal") || args[1].equalsIgnoreCase(LocaleManager.getInstance().getText("CmdForceRemoveVassal"))) {
+                return forceRemoveVassal(sender, args);
+            }
         }
         // show usages
         sender.sendMessage(ChatColor.RED + LocaleManager.getInstance().getText("SubCommands"));
@@ -68,6 +71,7 @@ public class ForceCommand {
         sender.sendMessage(ChatColor.RED + LocaleManager.getInstance().getText("HelpForcePower"));
         sender.sendMessage(ChatColor.RED + LocaleManager.getInstance().getText("HelpForceRenounce"));
         sender.sendMessage(ChatColor.RED + LocaleManager.getInstance().getText("HelpForceTransfer"));
+        sender.sendMessage(ChatColor.RED + LocaleManager.getInstance().getText("HelpForceRemoveVassal"));
         return false;
     }
 
@@ -366,7 +370,7 @@ public class ForceCommand {
             }
 
             if (numReferences != 0) {
-                sender.sendMessage(ChatColor.GREEN + "" + numReferences + LocaleManager.getInstance().getText("SuccessReferencesRemoved"));
+                sender.sendMessage(ChatColor.GREEN + "" + numReferences + LocaleManager.getInstance().getText("SuccessReferencesRemoved")); // TODO: use String.format() here
                 return true;
             }
             else {
@@ -450,6 +454,50 @@ public class ForceCommand {
             return false;
         }
 
+    }
+
+    public boolean forceRemoveVassal(CommandSender sender, String[] args) {
+        if (!sender.hasPermission("mf.force.removevassal") && !sender.hasPermission("mf.force.*") && !sender.hasPermission("mf.admin")) {
+            sender.sendMessage(ChatColor.RED + String.format(LocaleManager.getInstance().getText("PermissionNeeded"), "mf.force.removevassal"));
+            return false;
+        }
+
+        if (args.length < 4) {
+            // send usage
+            sender.sendMessage(ChatColor.RED + LocaleManager.getInstance().getText("UsageForceRemoveVassal"));
+            return false;
+        }
+
+        // get arguments designated by single quotes
+        ArrayList<String> singleQuoteArgs = ArgumentParser.getInstance().getArgumentsInsideSingleQuotes(args);
+
+        if (singleQuoteArgs.size() < 2) {
+            sender.sendMessage(ChatColor.RED + LocaleManager.getInstance().getText("FactionAndVassalSingleQuotesRequirement"));
+            return false;
+        }
+
+        String liegeName = singleQuoteArgs.get(0);
+        String vassalName = singleQuoteArgs.get(1);
+
+        Faction liege = PersistentData.getInstance().getFaction(liegeName);
+        Faction vassal = PersistentData.getInstance().getFaction(vassalName);
+
+        // remove vassal from liege
+        if (liege != null) {
+            if (liege.isVassal(vassalName)) {
+                liege.removeVassal(vassalName);
+            }
+        }
+
+        // set liege to "none" for vassal (if faction exists)
+        if (vassal != null) {
+            if (vassal.isLiege(liegeName)) {
+                vassal.setLiege("none");
+            }
+        }
+
+        sender.sendMessage(ChatColor.GREEN + LocaleManager.getInstance().getText("Done"));
+        return true;
     }
 
 }

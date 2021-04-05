@@ -141,13 +141,23 @@ public class Scheduler {
             // remove locks associated with this faction
             PersistentData.getInstance().removeAllLocks(factionToRemove.getName());
 
-            // remove records of alliances/wars associated with this faction
+
             for (Faction faction : PersistentData.getInstance().getFactions()) {
+                // remove records of alliances/wars associated with this faction
                 if (faction.isAlly(factionToRemove.getName())) {
                     faction.removeAlly(factionToRemove.getName());
                 }
                 if (faction.isEnemy(factionToRemove.getName())) {
                     faction.removeEnemy(factionToRemove.getName());
+                }
+
+                // remove liege and vassal references associated with this faction
+                if (faction.isLiege(factionToRemove.getName())) {
+                    faction.setLiege("none");
+                }
+
+                if (faction.isVassal(factionToRemove.getName())) {
+                    faction.removeVassal(factionToRemove.getName());
                 }
             }
 
