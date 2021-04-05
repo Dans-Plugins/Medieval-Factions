@@ -457,7 +457,7 @@ public class ForceCommand {
     }
 
     public boolean forceRemoveVassal(CommandSender sender, String[] args) {
-        if (!sender.hasPermission("mf.force.removevassal") || sender.hasPermission("mf.force.*") || sender.hasPermission("mf.admin")) {
+        if (!sender.hasPermission("mf.force.removevassal") && !sender.hasPermission("mf.force.*") && !sender.hasPermission("mf.admin")) {
             sender.sendMessage(ChatColor.RED + String.format(LocaleManager.getInstance().getText("PermissionNeeded"), "mf.force.removevassal"));
             return false;
         }
