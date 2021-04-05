@@ -500,5 +500,7 @@ WikiLink	Wiki: https://github.com/DansPlugins/Medieval-Factions/wiki
 Wilderness	Wilderness
 WorldsMismatch1	Error placing point 1: Worlds mismatch.
 WorldsMismatch2	Error placing point 2: Worlds mismatch.
-UsageForceRemoveVassal	/mf force removevassal 'faction-1' 'faction-2'
+UsageForceRemoveVassal	Usage: /mf force removevassal 'faction' 'vassal'
 Done	Done!
+HelpForceRemoveVassal	/mf force removevassal 'faction' 'vassal'
+FactionAndVassalSingleQuotesRequirement	Faction and vassal to remove must be designated inside single quotes!

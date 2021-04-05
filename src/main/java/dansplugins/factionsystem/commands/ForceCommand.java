@@ -71,6 +71,7 @@ public class ForceCommand {
         sender.sendMessage(ChatColor.RED + LocaleManager.getInstance().getText("HelpForcePower"));
         sender.sendMessage(ChatColor.RED + LocaleManager.getInstance().getText("HelpForceRenounce"));
         sender.sendMessage(ChatColor.RED + LocaleManager.getInstance().getText("HelpForceTransfer"));
+        sender.sendMessage(ChatColor.RED + LocaleManager.getInstance().getText("HelpForceRemoveVassal"));
         return false;
     }
 
@@ -471,7 +472,7 @@ public class ForceCommand {
         ArrayList<String> singleQuoteArgs = ArgumentParser.getInstance().getArgumentsInsideSingleQuotes(args);
 
         if (singleQuoteArgs.size() < 2) {
-            sender.sendMessage(ChatColor.RED + LocaleManager.getInstance().getText("NoFactionsDesignatedSingleQuotesRequired"));
+            sender.sendMessage(ChatColor.RED + LocaleManager.getInstance().getText("FactionAndVassalSingleQuotesRequirement"));
             return false;
         }
 
