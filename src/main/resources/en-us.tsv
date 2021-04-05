@@ -395,7 +395,7 @@ OnlyUseLeversInClaimedTerritory	Error: Can only use levers in claimed territory.
 Owner	Owner: %s
 OwnershipTransferred	Ownership of %s has been transferred to you.
 OwnerShipTransferredTo	Ownership transferred to %s
-PermissionNeeded	Sorry! In order to use this command, you need the following permission: ''%s'
+PermissionNeeded	Sorry! In order to use this command, you need the following permission: '%s'
 PlayerAlreadyDueling	%s is already duelling someone!
 PlayerAlreadyInFaction	That player is already in a faction, sorry!
 PlayerAlreadyOfficer	Player is already an officer!
