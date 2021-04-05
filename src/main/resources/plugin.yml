@@ -135,3 +135,5 @@ permissions:
     default: op
   mf.force.transfer:
     default: op
+  mf.force.removevassal:
+    default: op
