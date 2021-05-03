@@ -2,11 +2,10 @@ package dansplugins.factionsystem;
 
 import dansplugins.factionsystem.data.EphemeralData;
 import dansplugins.factionsystem.data.PersistentData;
+import dansplugins.factionsystem.events.FactionClaimEvent;
+import dansplugins.factionsystem.events.FactionUnclaimEvent;
 import dansplugins.factionsystem.objects.*;
-import org.bukkit.ChatColor;
-import org.bukkit.Chunk;
-import org.bukkit.Location;
-import org.bukkit.World;
+import org.bukkit.*;
 import org.bukkit.entity.Player;
 
 import java.time.ZonedDateTime;
@@ -173,19 +172,28 @@ public class ChunkManager {
                 }
             }
 
-            PersistentData.getInstance().getClaimedChunks().remove(chunk);
+            FactionClaimEvent claimEvent = new FactionClaimEvent(claimantsFaction, claimant, chunk.getChunk());
+            Bukkit.getPluginManager().callEvent(claimEvent);
+            if (!claimEvent.isCancelled()) {
+                PersistentData.getInstance().getClaimedChunks().remove(chunk);
 
-            Chunk toClaim = world.getChunkAt((int) chunkCoords[0], (int) chunkCoords[1]);
-            addClaimedChunk(toClaim, claimantsFaction, claimant.getWorld());
-            claimant.sendMessage(ChatColor.GREEN + String.format(LocaleManager.getInstance().getText("AlertLandConqueredFromAnotherFaction"), targetFaction.getName(), getChunksClaimedByFaction(claimantsFaction.getName(), PersistentData.getInstance().getClaimedChunks()), claimantsFaction.getCumulativePowerLevel()));
+                Chunk toClaim = world.getChunkAt((int) chunkCoords[0], (int) chunkCoords[1]);
+                addClaimedChunk(toClaim, claimantsFaction, claimant.getWorld());
+                claimant.sendMessage(ChatColor.GREEN + String.format(LocaleManager.getInstance().getText("AlertLandConqueredFromAnotherFaction"), targetFaction.getName(), getChunksClaimedByFaction(claimantsFaction.getName(), PersistentData.getInstance().getClaimedChunks()), claimantsFaction.getCumulativePowerLevel()));
 
-            Messenger.getInstance().sendAllPlayersInFactionMessage(targetFaction, ChatColor.RED + String.format(LocaleManager.getInstance().getText("AlertLandConqueredFromYourFaction"), claimantsFaction.getName()));
+                Messenger.getInstance().sendAllPlayersInFactionMessage(targetFaction, ChatColor.RED + String.format(LocaleManager.getInstance().getText("AlertLandConqueredFromYourFaction"), claimantsFaction.getName()));
+            }
         }
         else {
-            // chunk not already claimed
+
             Chunk toClaim = world.getChunkAt((int) chunkCoords[0], (int) chunkCoords[1]);
-            addClaimedChunk(toClaim, claimantsFaction, claimant.getWorld());
-            claimant.sendMessage(ChatColor.GREEN + String.format(LocaleManager.getInstance().getText("AlertLandClaimed"), getChunksClaimedByFaction(claimantsFaction.getName(), PersistentData.getInstance().getClaimedChunks()), claimantsFaction.getCumulativePowerLevel()));
+            FactionClaimEvent claimEvent = new FactionClaimEvent(claimantsFaction, claimant, toClaim);
+            Bukkit.getPluginManager().callEvent(claimEvent);
+            if (!claimEvent.isCancelled()) {
+                // chunk not already claimed
+                addClaimedChunk(toClaim, claimantsFaction, claimant.getWorld());
+                claimant.sendMessage(ChatColor.GREEN + String.format(LocaleManager.getInstance().getText("AlertLandClaimed"), getChunksClaimedByFaction(claimantsFaction.getName(), PersistentData.getInstance().getClaimedChunks()), claimantsFaction.getCumulativePowerLevel()));
+            }
         }
     }
 
@@ -289,7 +297,14 @@ public class ChunkManager {
     }
 
     private void removeChunk(ClaimedChunk chunk, Player player, Faction faction) {
-        String identifier = (int)chunk.getChunk().getX() + "_" + (int)chunk.getChunk().getZ();
+        // String identifier = (int)chunk.getChunk().getX() + "_" + (int)chunk.getChunk().getZ();
+
+        FactionUnclaimEvent unclaimEvent = new FactionUnclaimEvent(faction, player, chunk.getChunk());
+        Bukkit.getPluginManager().callEvent(unclaimEvent);
+        if (unclaimEvent.isCancelled()) {
+            // TODO Add a message here (maybe).
+            return;
+        }
 
         // if faction home is located on this chunk
         Location factionHome = PersistentData.getInstance().getPlayersFaction(player.getUniqueId()).getFactionHome();

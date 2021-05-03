@@ -5,9 +5,12 @@ import dansplugins.factionsystem.DynmapManager;
 import dansplugins.factionsystem.LocaleManager;
 import dansplugins.factionsystem.data.EphemeralData;
 import dansplugins.factionsystem.data.PersistentData;
+import dansplugins.factionsystem.events.FactionDisbandEvent;
 import dansplugins.factionsystem.objects.Faction;
 import dansplugins.factionsystem.utils.ArgumentParser;
+import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
+import org.bukkit.OfflinePlayer;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
@@ -27,7 +30,7 @@ public class DisbandCommand {
 
                             if (PersistentData.getInstance().getFactions().get(i).getName().equalsIgnoreCase(factionName)) {
 
-                                removeFaction(i);
+                                removeFaction(i, player);
                                 player.sendMessage(ChatColor.GREEN + "" + String.format(LocaleManager.getInstance().getText("SuccessfulDisbandment"), factionName));
                                 return true;
 
@@ -47,10 +50,9 @@ public class DisbandCommand {
                 boolean owner = false;
                 for (int i = 0; i < PersistentData.getInstance().getFactions().size(); i++) {
                     if (PersistentData.getInstance().getFactions().get(i).isOwner(player.getUniqueId())) {
-                        owner = true;
                         if (PersistentData.getInstance().getFactions().get(i).getPopulation() == 1) {
                             EphemeralData.getInstance().getPlayersInFactionChat().remove(player.getUniqueId());
-                            removeFaction(i);
+                            removeFaction(i, player);
                             player.sendMessage(ChatColor.GREEN + LocaleManager.getInstance().getText("FactionSuccessfullyDisbanded"));
                             return true;
                         }
@@ -74,9 +76,19 @@ public class DisbandCommand {
         return false;
     }
 
-    private void removeFaction(int i) {
+    private void removeFaction(int i, OfflinePlayer disbandingPlayer) {
 
-        String nameOfFactionToRemove = PersistentData.getInstance().getFactions().get(i).getName();
+        Faction disbandingThisFaction = PersistentData.getInstance().getFactions().get(i);
+        String nameOfFactionToRemove = disbandingThisFaction.getName();
+        FactionDisbandEvent event = new FactionDisbandEvent(
+                disbandingThisFaction,
+                disbandingPlayer
+        );
+        Bukkit.getPluginManager().callEvent(event);
+        if (event.isCancelled()) {
+            // TODO Add a message (maybe).
+            return;
+        }
 
         // remove claimed land objects associated with this faction
         ChunkManager.getInstance().removeAllClaimedChunks(nameOfFactionToRemove, PersistentData.getInstance().getClaimedChunks());

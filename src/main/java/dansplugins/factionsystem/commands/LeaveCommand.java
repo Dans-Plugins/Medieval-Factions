@@ -6,7 +6,9 @@ import dansplugins.factionsystem.LocaleManager;
 import dansplugins.factionsystem.Messenger;
 import dansplugins.factionsystem.data.EphemeralData;
 import dansplugins.factionsystem.data.PersistentData;
+import dansplugins.factionsystem.events.FactionLeaveEvent;
 import dansplugins.factionsystem.objects.Faction;
+import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
@@ -25,6 +27,15 @@ public class LeaveCommand {
                                 // is faction empty?
                                 if (PersistentData.getInstance().getFactions().get(i).getPopulation() == 1) {
                                     // able to leave
+                                    FactionLeaveEvent event = new FactionLeaveEvent(
+                                            PersistentData.getInstance().getFactions().get(i),
+                                            player
+                                    );
+                                    Bukkit.getPluginManager().callEvent(event);
+                                    if (event.isCancelled()) {
+                                        // TODO Add a message (maybe).
+                                        continue; // Added because of loop mechanism.
+                                    }
 
                                     if (PersistentData.getInstance().getFactions().get(i).isOfficer(player.getUniqueId())) {
                                         PersistentData.getInstance().getFactions().get(i).removeOfficer(player.getUniqueId());

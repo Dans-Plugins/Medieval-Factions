@@ -3,8 +3,10 @@ package dansplugins.factionsystem.commands;
 import dansplugins.factionsystem.LocaleManager;
 import dansplugins.factionsystem.Messenger;
 import dansplugins.factionsystem.data.PersistentData;
+import dansplugins.factionsystem.events.FactionJoinEvent;
 import dansplugins.factionsystem.objects.Faction;
 import dansplugins.factionsystem.utils.ArgumentParser;
+import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
@@ -27,6 +29,12 @@ public class JoinCommand {
 
                                 // join if player isn't in a faction already
                                 if (!(PersistentData.getInstance().isInFaction(player.getUniqueId()))) {
+                                    FactionJoinEvent event = new FactionJoinEvent(faction, player);
+                                    Bukkit.getPluginManager().callEvent(event);
+                                    if (event.isCancelled()) {
+                                        // TODO Add a message (maybe)
+                                        continue; // Added because idk why this is in a loop.
+                                    }
                                     faction.addMember(player.getUniqueId(), PersistentData.getInstance().getPlayersPowerRecord(player.getUniqueId()).getPowerLevel());
                                     faction.uninvite(player.getUniqueId());
                                     try {
