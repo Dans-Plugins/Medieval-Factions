@@ -3,8 +3,10 @@ package dansplugins.factionsystem.commands;
 import dansplugins.factionsystem.LocaleManager;
 import dansplugins.factionsystem.MedievalFactions;
 import dansplugins.factionsystem.data.PersistentData;
+import dansplugins.factionsystem.events.FactionCreateEvent;
 import dansplugins.factionsystem.objects.Faction;
 import dansplugins.factionsystem.utils.ArgumentParser;
+import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
@@ -45,10 +47,13 @@ public class CreateCommand {
         }
 
         Faction temp = new Faction(name, player.getUniqueId(), MedievalFactions.getInstance().getConfig().getInt("initialMaxPowerLevel"));
-        PersistentData.getInstance().getFactions().add(temp);
-        PersistentData.getInstance().getFactions().get(PersistentData.getInstance().getFactions().size() - 1).addMember(player.getUniqueId(), PersistentData.getInstance().getPlayersPowerRecord(player.getUniqueId()).getPowerLevel());
-        player.sendMessage(ChatColor.AQUA + LocaleManager.getInstance().getText("FactionCreated"));
-
+        temp.addMember(player.getUniqueId(), PersistentData.getInstance().getPlayersPowerRecord(player.getUniqueId()).getPowerLevel());
+        FactionCreateEvent createEvent = new FactionCreateEvent(temp, player);
+        Bukkit.getPluginManager().callEvent(createEvent);
+        if (!createEvent.isCancelled()) {
+            PersistentData.getInstance().getFactions().add(temp);
+            player.sendMessage(ChatColor.AQUA + LocaleManager.getInstance().getText("FactionCreated"));
+        }
         return true;
     }
 }

@@ -4,6 +4,7 @@ import dansplugins.factionsystem.LocaleManager;
 import dansplugins.factionsystem.Messenger;
 import dansplugins.factionsystem.data.EphemeralData;
 import dansplugins.factionsystem.data.PersistentData;
+import dansplugins.factionsystem.events.FactionKickEvent;
 import dansplugins.factionsystem.objects.Faction;
 import dansplugins.factionsystem.utils.UUIDChecker;
 import org.bukkit.Bukkit;
@@ -29,6 +30,17 @@ public class KickCommand {
                             if (faction.isMember(playerUUID)) {
                                 if (!(args[1].equalsIgnoreCase(player.getName()))) {
                                     if (!(playerUUID.equals(faction.getOwner()))) {
+
+                                        FactionKickEvent event = new FactionKickEvent(
+                                                faction,
+                                                Bukkit.getPlayer(playerUUID),
+                                                player
+                                        );
+                                        Bukkit.getPluginManager().callEvent(event);
+                                        if (event.isCancelled()) {
+                                            // TODO Add a message (maybe).
+                                            continue; // Loop mechanism.
+                                        }
 
                                         if (faction.isOfficer(playerUUID)) {
                                             faction.removeOfficer(playerUUID);
