@@ -12,15 +12,13 @@ public class PersistentData {
 
     private static PersistentData instance;
 
-    public ArrayList<Faction> factions = new ArrayList<>();
-    public ArrayList<ClaimedChunk> claimedChunks = new ArrayList<>();
-    public ArrayList<PlayerPowerRecord> playerPowerRecords = new ArrayList<>();
-    public ArrayList<PlayerActivityRecord> playerActivityRecords = new ArrayList<>();
-    public ArrayList<LockedBlock> lockedBlocks = new ArrayList<>();
+    public final ArrayList<Faction> factions = new ArrayList<>();
+    public final ArrayList<ClaimedChunk> claimedChunks = new ArrayList<>();
+    public final ArrayList<PlayerPowerRecord> playerPowerRecords = new ArrayList<>();
+    public final ArrayList<PlayerActivityRecord> playerActivityRecords = new ArrayList<>();
+    public final ArrayList<LockedBlock> lockedBlocks = new ArrayList<>();
 
-    private PersistentData() {
-
-    }
+    private PersistentData() {}
 
     public static PersistentData getInstance() {
         if (instance == null) {
