@@ -1,5 +1,8 @@
 package dansplugins.factionsystem.commands.abs;
 
+import dansplugins.factionsystem.ChunkManager;
+import dansplugins.factionsystem.ConfigManager;
+import dansplugins.factionsystem.DynmapManager;
 import dansplugins.factionsystem.LocaleManager;
 import dansplugins.factionsystem.data.EphemeralData;
 import dansplugins.factionsystem.data.PersistentData;
@@ -28,6 +31,9 @@ public abstract class SubCommand implements ColorTranslator {
     private final PersistentData data;
     protected final ArgumentParser parser;
     protected final EphemeralData ephemeral;
+    protected final ChunkManager chunks;
+    protected final DynmapManager dynmap;
+    protected final ConfigManager config;
 
     // Command Data
     private final String[] names;
@@ -57,6 +63,9 @@ public abstract class SubCommand implements ColorTranslator {
         this.data = PersistentData.getInstance();
         this.parser = ArgumentParser.getInstance();
         this.ephemeral = EphemeralData.getInstance();
+        this.chunks = ChunkManager.getInstance();
+        this.dynmap = DynmapManager.getInstance();
+        this.config = ConfigManager.getInstance();
 
         // Load Command Names.
         this.names = new String[names.length];
@@ -80,6 +89,15 @@ public abstract class SubCommand implements ColorTranslator {
      */
     public SubCommand(String[] names, boolean playerCommand, boolean requiresFaction) {
         this(names, playerCommand, requiresFaction, false, false);
+    }
+
+    /**
+     * Constructor to initialise a command without faction checks.
+     * @param names of the command.
+     * @param playerCommand if the command is exclusive to players.
+     */
+    public SubCommand(String[] names, boolean playerCommand) {
+        this(names, playerCommand, false);
     }
 
     /**
@@ -240,6 +258,33 @@ public abstract class SubCommand implements ColorTranslator {
                 .map(OfflinePlayer::getPlayer)
                 .filter(Objects::nonNull)
                 .forEach(player -> player.sendMessage(message));
+    }
+
+    /**
+     * Method to get an Integer from a String.
+     * @param line to convert into an Integer.
+     * @param orElse if the conversion fails.
+     * @return {@link Integer} numeric.
+     */
+    protected int getIntSafe(String line, int orElse) {
+        try {
+            return Integer.parseInt(line);
+        } catch (Exception ex) {
+            return orElse;
+        }
+    }
+
+    /**
+     * Method to test if something matches any goal string.
+     * @param what to test
+     * @param goals to compare with
+     * @param matchCase for the comparison (or not)
+     * @return {@code true} if something in goals matches what.
+     */
+    protected boolean safeEquals(boolean matchCase, String what, String... goals) {
+        return Arrays.stream(goals).anyMatch(goal ->
+                matchCase && goal.equals(what) || !matchCase && goal.equalsIgnoreCase(what)
+        );
     }
 
     @Override
