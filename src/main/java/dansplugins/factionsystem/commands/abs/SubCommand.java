@@ -1,9 +1,6 @@
 package dansplugins.factionsystem.commands.abs;
 
-import dansplugins.factionsystem.ChunkManager;
-import dansplugins.factionsystem.ConfigManager;
-import dansplugins.factionsystem.DynmapManager;
-import dansplugins.factionsystem.LocaleManager;
+import dansplugins.factionsystem.*;
 import dansplugins.factionsystem.data.EphemeralData;
 import dansplugins.factionsystem.data.PersistentData;
 import dansplugins.factionsystem.objects.Faction;
@@ -11,6 +8,7 @@ import dansplugins.factionsystem.utils.ArgumentParser;
 import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.command.CommandSender;
+import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.Player;
 
 import java.util.Arrays;
@@ -27,13 +25,13 @@ public abstract class SubCommand implements ColorTranslator {
     public static final String LOCALE_PREFIX = "Locale_";
 
     // Data classes
-    private final LocaleManager manager;
-    private final PersistentData data;
+    protected final LocaleManager locale;
+    protected final PersistentData data;
     protected final ArgumentParser parser;
     protected final EphemeralData ephemeral;
     protected final ChunkManager chunks;
     protected final DynmapManager dynmap;
-    protected final ConfigManager config;
+    protected final ConfigManager configManager;
 
     // Command Data
     private final String[] names;
@@ -59,19 +57,19 @@ public abstract class SubCommand implements ColorTranslator {
                       boolean requiresOfficer,
                       boolean requiresOwner) {
         // Local variables standing for instances of constantly used instances.
-        this.manager = LocaleManager.getInstance();
+        this.locale = LocaleManager.getInstance();
         this.data = PersistentData.getInstance();
         this.parser = ArgumentParser.getInstance();
         this.ephemeral = EphemeralData.getInstance();
         this.chunks = ChunkManager.getInstance();
         this.dynmap = DynmapManager.getInstance();
-        this.config = ConfigManager.getInstance();
+        this.configManager = ConfigManager.getInstance();
 
         // Load Command Names.
         this.names = new String[names.length];
         for (int i = 0; i < this.names.length; i++) {
             String name = names[i];
-            if (name.contains(LOCALE_PREFIX)) name = manager.getText(name.replace(LOCALE_PREFIX, ""));
+            if (name.contains(LOCALE_PREFIX)) name = locale.getText(name.replace(LOCALE_PREFIX, ""));
             this.names[i] = name;
         }
 
@@ -192,7 +190,7 @@ public abstract class SubCommand implements ColorTranslator {
      * @return String message
      */
     protected String getText(String key) {
-        return manager.getText(key);
+        return locale.getText(key);
     }
 
     /**
@@ -261,6 +259,14 @@ public abstract class SubCommand implements ColorTranslator {
     }
 
     /**
+     * Method to send the entire Server a message.
+     * @param message to send to the players.
+     */
+    protected void messageServer(String message) {
+        Bukkit.getOnlinePlayers().forEach(player -> player.sendMessage(message));
+    }
+
+    /**
      * Method to get an Integer from a String.
      * @param line to convert into an Integer.
      * @param orElse if the conversion fails.
@@ -285,6 +291,14 @@ public abstract class SubCommand implements ColorTranslator {
         return Arrays.stream(goals).anyMatch(goal ->
                 matchCase && goal.equals(what) || !matchCase && goal.equalsIgnoreCase(what)
         );
+    }
+
+    /**
+     * Method to obtain the Config.yml for Medieval Factions.
+     * @return {@link FileConfiguration}
+     */
+    protected FileConfiguration getConfig() {
+        return MedievalFactions.getInstance().getConfig();
     }
 
     @Override
