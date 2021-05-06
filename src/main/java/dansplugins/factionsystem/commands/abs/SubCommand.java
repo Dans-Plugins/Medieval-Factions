@@ -1,6 +1,7 @@
 package dansplugins.factionsystem.commands.abs;
 
 import dansplugins.factionsystem.LocaleManager;
+import dansplugins.factionsystem.data.EphemeralData;
 import dansplugins.factionsystem.data.PersistentData;
 import dansplugins.factionsystem.objects.Faction;
 import dansplugins.factionsystem.utils.ArgumentParser;
@@ -19,29 +20,109 @@ import java.util.UUID;
  */
 public abstract class SubCommand implements ColorTranslator {
 
-    private final String[] names;
+    // Constants
+    public static final String LOCALE_PREFIX = "Locale_";
+
+    // Data classes
     private final LocaleManager manager;
     private final PersistentData data;
     protected final ArgumentParser parser;
+    protected final EphemeralData ephemeral;
+
+    // Command Data
+    private final String[] names;
+    private final boolean playerCommand;
+    private final boolean requiresFaction;
+    private final boolean requiresOfficer;
+    private final boolean requiresOwner;
+
+    // Player data
+    protected Faction faction = null;
 
     /**
      * Constructor to initialise a Command.
      * @param names of the command, for example, "Fly, FFly, Flight".
+     * @param playerCommand if the command is exclusive to players.
+     * @param requiresFaction if the command requires a Faction to perform.
+     * @param requiresOfficer if the command requires officer or higher.
+     * @param requiresOwner if the command is reserved for Owners.
      */
-    public SubCommand(String[] names) {
+    public SubCommand(String[] names,
+                      boolean playerCommand,
+                      boolean requiresFaction,
+                      boolean requiresOfficer,
+                      boolean requiresOwner) {
         // Local variables standing for instances of constantly used instances.
         this.manager = LocaleManager.getInstance();
         this.data = PersistentData.getInstance();
         this.parser = ArgumentParser.getInstance();
+        this.ephemeral = EphemeralData.getInstance();
 
         // Load Command Names.
         this.names = new String[names.length];
         for (int i = 0; i < this.names.length; i++) {
             String name = names[i];
-            if (name.contains("Locale_")) name = manager.getText(name.replace("Locale_", ""));
+            if (name.contains(LOCALE_PREFIX)) name = manager.getText(name.replace(LOCALE_PREFIX, ""));
             this.names[i] = name;
         }
+
+        this.playerCommand = playerCommand;
+        this.requiresFaction = requiresFaction;
+        this.requiresOfficer = requiresOfficer;
+        this.requiresOwner = requiresOwner;
     }
+
+    /**
+     * Method to be called by the command interpreter <em>only</em>.
+     * <p>
+     *     This method uses the in-class variables to call a different method based on the parameters specified.
+     *     <br>For example, if {@link SubCommand#playerCommand} is {@code true},
+     *     <br>{@link SubCommand#execute(Player, String[], String)} is executed,
+     *     <br>not {@link SubCommand#execute(CommandSender, String[], String)}.
+     * </p>
+     * @param sender who sent the command.
+     * @param args of the command.
+     * @param key of the sub-command.
+     */
+    public void performCommand(CommandSender sender, String[] args, String key) {
+        if (playerCommand) {
+            if (!(sender instanceof Player)) { // Require a player for a player-only command.
+                sender.sendMessage(translate(getText("OnlyPlayersCanUseCommand")));
+                return;
+            }
+            Player player = (Player) sender;
+            if (requiresFaction) { // Find and check the status of a Faction.
+                this.faction = getPlayerFaction(player);
+                if (faction == null) {
+                    player.sendMessage(translate("&c" + getText("AlertMustBeInFactionToUseCommand")));
+                    return;
+                }
+                if (requiresOfficer) { // If the command requires an Officer or higher, check for it.
+                    if (!(faction.isOwner(player.getUniqueId()) || faction.isOfficer(player.getUniqueId()))) {
+                        player.sendMessage(translate("&c" + getText("AlertMustBeOwnerOrOfficerToUseCommand")));
+                        return;
+                    }
+                }
+                if (requiresOwner) { // If the command requires an owner only, check for it.
+                    if (!faction.isOwner(player.getUniqueId())) {
+                        player.sendMessage(translate("&c" + getText("AlertMustBeOwnerToUseCommand")));
+                        return;
+                    }
+                }
+            }
+            execute(player, args, key); // 100% a player so you can safely use it
+            return;
+        }
+        execute(sender, args, key); // Sender can still be a player if this is executed.
+    }
+
+    /**
+     * Method to execute the command for a player.
+     * @param player who sent the command.
+     * @param args of the command.
+     * @param key of the sub-command (e.g. Ally).
+     */
+    public abstract void execute(Player player, String[] args, String key);
 
     /**
      * Method to execute the command.
@@ -62,12 +143,19 @@ public abstract class SubCommand implements ColorTranslator {
     }
 
     /**
-     * Method to determine if a CommandSender is a Player.
-     * @param sender to test.
-     * @return {@code true} if they are.
+     * Method to check if a sender has a permission.
+     * <p>
+     *     If the sender doesn't have the permission, they are messaged the formatted no Permission message.
+     * </p>
+     * @param sender to check.
+     * @param permission to test for.
+     * @return {@code true} if they do.
      */
-    protected boolean isPlayer(CommandSender sender) {
-        return sender instanceof Player;
+    public boolean checkPermissions(CommandSender sender, String... permission) {
+        boolean has = false;
+        for (String perm : permission) if (has = sender.hasPermission(perm)) break;
+        if (!has) sender.sendMessage(translate("&c" + getText("PermissionNeeded", permission[0])));
+        return has;
     }
 
     /**

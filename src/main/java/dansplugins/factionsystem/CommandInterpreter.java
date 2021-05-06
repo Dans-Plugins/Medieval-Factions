@@ -5,6 +5,7 @@ import dansplugins.factionsystem.commands.abs.SubCommand;
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
 
+import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -14,8 +15,10 @@ public class CommandInterpreter {
     private final Set<SubCommand> subCommands = new HashSet<>();
 
     private CommandInterpreter() {
-        subCommands.add(new AddLawCommand());
-        subCommands.add(new AllyCommand());
+        subCommands.addAll(Arrays.asList(
+                new AddLawCommand(), new AllyCommand(), new AutoClaimCommand(), new BreakAllianceCommand(),
+                new BypassCommand(), new ChatCommand()
+        ));
     }
 
     public static CommandInterpreter getInstance() {
@@ -42,7 +45,7 @@ public class CommandInterpreter {
             }
 
             // argument check
-            if (args.length > 0) {
+            else {
 
                 // default commands ----------------------------------------------------------------------------------
 
@@ -223,11 +226,11 @@ public class CommandInterpreter {
                 }
 
                 // ally command
-                /*if (args[0].equalsIgnoreCase("ally") || args[0].equalsIgnoreCase(LocaleManager.getInstance().getText("CmdAlly"))) {
+                if (args[0].equalsIgnoreCase("ally") || args[0].equalsIgnoreCase(LocaleManager.getInstance().getText("CmdAlly"))) {
                     AllyCommand command = new AllyCommand();
                     command.requestAlliance(sender, args);
                     return true;
-                }*/
+                }
 
                 // breakalliance command
                 if (args[0].equalsIgnoreCase("breakalliance") || args[0].equalsIgnoreCase(LocaleManager.getInstance().getText("CmdBreakAlliance"))|| args[0].equalsIgnoreCase("ba")) {
@@ -286,11 +289,11 @@ public class CommandInterpreter {
                 }
 
                 // addlaw command
-                /*if (args[0].equalsIgnoreCase("addlaw") || args[0].equalsIgnoreCase(LocaleManager.getInstance().getText("CmdAddLaw"))|| args[0].equalsIgnoreCase("al")) {
+                if (args[0].equalsIgnoreCase("addlaw") || args[0].equalsIgnoreCase(LocaleManager.getInstance().getText("CmdAddLaw"))|| args[0].equalsIgnoreCase("al")) {
                     AddLawCommand command = new AddLawCommand();
                     command.addLaw(sender, args);
                     return true;
-                }*/
+                }
 
                 // removelaw command
                 if (args[0].equalsIgnoreCase("removelaw") || args[0].equalsIgnoreCase(LocaleManager.getInstance().getText("CmdRemoveLaw"))|| args[0].equalsIgnoreCase("rl")) {
@@ -366,7 +369,7 @@ public class CommandInterpreter {
                     PrefixCommand command = new PrefixCommand();
                     return command.changePrefix(sender, args);
                 }
-                
+
                 // admin commands ----------------------------------------------------------------------------------
 
                 // force command
@@ -404,7 +407,7 @@ public class CommandInterpreter {
                     String[] arguments = new String[args.length - 1]; // Take first argument out of Array.
                     System.arraycopy(args, 1, arguments, 0, arguments.length);
 
-                    subCommand.execute(sender, arguments, args[0]); // Execute!
+                    subCommand.performCommand(sender, arguments, args[0]); // Execute!
                     return true; // Return true as the command was found and run.
                 }
             }
