@@ -1,6 +1,7 @@
 package dansplugins.factionsystem;
 
 import org.bukkit.ChatColor;
+import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
 public class ConfigManager {
@@ -161,12 +162,12 @@ public class ConfigManager {
 
     }
 
-    public void setConfigOption(String option, String value, Player player) {
+    public void setConfigOption(String option, String value, CommandSender sender) {
 
         if (MedievalFactions.getInstance().getConfig().isSet(option)) {
 
             if (option.equalsIgnoreCase("version")) {
-                player.sendMessage(ChatColor.RED + LocaleManager.getInstance().getText("CannotSetVersion"));
+                sender.sendMessage(ChatColor.RED + LocaleManager.getInstance().getText("CannotSetVersion"));
                 return;
             }
             else if (option.equalsIgnoreCase("initialMaxPowerLevel") || option.equalsIgnoreCase("initialPowerLevel")
@@ -184,7 +185,7 @@ public class ConfigManager {
                     || option.equalsIgnoreCase("maxClaimRadius"))
             {
                 MedievalFactions.getInstance().getConfig().set(option, Integer.parseInt(value));
-                player.sendMessage(ChatColor.GREEN + LocaleManager.getInstance().getText("IntegerSet"));
+                sender.sendMessage(ChatColor.GREEN + LocaleManager.getInstance().getText("IntegerSet"));
             }
             else if (option.equalsIgnoreCase("mobsSpawnInFactionTerritory")
                     || option.equalsIgnoreCase("laddersPlaceableInEnemyFactionTerritory")
@@ -198,17 +199,17 @@ public class ConfigManager {
                     || option.equalsIgnoreCase("allowAllyInteraction")
                     || option.equalsIgnoreCase("allowVassalageTreeInteraction")) {
                 MedievalFactions.getInstance().getConfig().set(option, Boolean.parseBoolean(value));
-                player.sendMessage(ChatColor.GREEN + LocaleManager.getInstance().getText("BooleanSet"));
+                sender.sendMessage(ChatColor.GREEN + LocaleManager.getInstance().getText("BooleanSet"));
             }
             else if (option.equalsIgnoreCase("factionOwnerMultiplier")
                     || option.equalsIgnoreCase("factionOfficerMultiplier")
                     || option.equalsIgnoreCase("vassalContributionPercentageMultiplier")){
                 MedievalFactions.getInstance().getConfig().set(option, Double.parseDouble(value));
-                player.sendMessage(ChatColor.GREEN + LocaleManager.getInstance().getText("DoubleSet"));
+                sender.sendMessage(ChatColor.GREEN + LocaleManager.getInstance().getText("DoubleSet"));
             }
             else {
                 MedievalFactions.getInstance().getConfig().set(option, value);
-                player.sendMessage(ChatColor.GREEN + LocaleManager.getInstance().getText("StringSet"));
+                sender.sendMessage(ChatColor.GREEN + LocaleManager.getInstance().getText("StringSet"));
 
                 if (option.equalsIgnoreCase("languageid")) {
                     LocaleManager.getInstance().reloadStrings();
@@ -220,7 +221,7 @@ public class ConfigManager {
             altered = true;
         }
         else {
-            player.sendMessage(ChatColor.RED + String.format(LocaleManager.getInstance().getText("WasntFound"), option));
+            sender.sendMessage(ChatColor.RED + String.format(LocaleManager.getInstance().getText("WasntFound"), option));
         }
 
     }
@@ -260,8 +261,8 @@ public class ConfigManager {
         MedievalFactions.getInstance().saveConfig();
     }
 
-    public void sendPlayerConfigList(Player player) {
-        player.sendMessage(ChatColor.AQUA + "version: " + MedievalFactions.getInstance().getConfig().getString("version")
+    public void sendConfigList(CommandSender sender) {
+        sender.sendMessage(ChatColor.AQUA + "version: " + MedievalFactions.getInstance().getConfig().getString("version")
                 + ", languageid: " + MedievalFactions.getInstance().getConfig().getString("languageid")
                 + ", initialMaxPowerLevel: " + MedievalFactions.getInstance().getConfig().getInt("initialMaxPowerLevel")
                 + ", initialPowerLevel: " +  MedievalFactions.getInstance().getConfig().getInt("initialPowerLevel")
