@@ -43,10 +43,10 @@ public class ConfigCommand extends SubCommand {
         }
         final boolean show = safeEquals(false, args[0], "get", "show", getText("CmdConfigShow"));
         final boolean set = safeEquals(false, args[0], "set", getText("CmdConfigSet"));
-        if (show) config.sendConfigList(sender);
+        if (show) configManager.sendConfigList(sender);
         else if (set) {
             if (args.length == 1) sender.sendMessage(translate("&c" + getText("UsageConfigSet")));
-            else config.setConfigOption(args[1], args[2], sender);
+            else configManager.setConfigOption(args[1], args[2], sender);
         } else sender.sendMessage(translate("&c" + getText("ValidSubCommandsShowSet")));
     }
 
