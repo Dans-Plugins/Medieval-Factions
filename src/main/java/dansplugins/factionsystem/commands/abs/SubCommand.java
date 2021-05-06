@@ -73,6 +73,16 @@ public abstract class SubCommand implements ColorTranslator {
     }
 
     /**
+     * Constructor to initialise a command without owner/faction checks.
+     * @param names of the command.
+     * @param playerCommand if the command is exclusive to players.
+     * @param requiresFaction if the command requires a Faction to do.
+     */
+    public SubCommand(String[] names, boolean playerCommand, boolean requiresFaction) {
+        this(names, playerCommand, requiresFaction, false, false);
+    }
+
+    /**
      * Method to be called by the command interpreter <em>only</em>.
      * <p>
      *     This method uses the in-class variables to call a different method based on the parameters specified.

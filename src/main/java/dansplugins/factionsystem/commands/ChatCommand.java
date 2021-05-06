@@ -14,7 +14,7 @@ public class ChatCommand extends SubCommand {
     public ChatCommand() {
         super(new String[] {
               "chat", LOCALE_PREFIX + "CmdChat"
-        }, true, true, false, false);
+        }, true, true);
     }
 
     /**
