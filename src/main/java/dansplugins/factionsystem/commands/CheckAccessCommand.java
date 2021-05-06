@@ -11,8 +11,8 @@ public class CheckAccessCommand extends SubCommand {
 
     public CheckAccessCommand() {
         super(new String[] {
-            ""
-        }, true, false);
+            "ca", "checkaccess", LOCALE_PREFIX + "CmdCheckAccess"
+        }, true);
     }
 
     /**

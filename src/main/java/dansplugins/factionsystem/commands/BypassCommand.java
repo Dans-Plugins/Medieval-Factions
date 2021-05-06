@@ -15,7 +15,7 @@ public class BypassCommand extends SubCommand {
     public BypassCommand() {
         super(new String[] {
                 "bypass", "Locale_CmdBypass"
-        }, true, false);
+        }, true);
     }
 
     /**
