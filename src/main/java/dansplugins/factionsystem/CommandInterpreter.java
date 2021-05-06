@@ -17,7 +17,8 @@ public class CommandInterpreter {
     private CommandInterpreter() {
         subCommands.addAll(Arrays.asList(
                 new AddLawCommand(), new AllyCommand(), new AutoClaimCommand(), new BreakAllianceCommand(),
-                new BypassCommand(), new ChatCommand()
+                new BypassCommand(), new ChatCommand(), new CheckAccessCommand(), new CheckClaimCommand(),
+                new ClaimCommand(), new ConfigCommand()
         ));
     }
 
