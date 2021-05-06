@@ -16,8 +16,28 @@ public class AddLawCommand extends SubCommand {
      */
     public AddLawCommand() {
         super(new String[] {
-                "ADD_LAW", "Locale_CMDAddLaw", "AL"
-        });
+                "ADD_LAW", LOCALE_PREFIX + "CMDAddLaw", "AL"
+        }, true, true, false, true);
+    }
+
+    /**
+     * Method to execute the command.
+     *
+     * @param player who sent the command.
+     * @param args   of the command.
+     * @param key    of the command.
+     */
+    @Override
+    public void execute(Player player, String[] args, String key) {
+        final String permission = "mf.addlaw";
+        if (!(checkPermissions(player, permission))) return;
+        if (args.length == 0) { // Check if they have provided any strings beyond "Add Law".
+            player.sendMessage(translate("&c" + getText("UsageAddLaw")));
+            return;
+        }
+        // Add the law and send a success message.
+        faction.addLaw(String.join(" ", args));
+        player.sendMessage(translate("&a" + getText("LawAdded")));
     }
 
     /**
@@ -29,32 +49,7 @@ public class AddLawCommand extends SubCommand {
      */
     @Override
     public void execute(CommandSender sender, String[] args, String key) {
-        if (!isPlayer(sender)) { // Is the CommandSender a player?
-            sender.sendMessage(translate(getText("OnlyPlayersCanUseCommand")));
-            return;
-        }
-        final Player player = (Player) sender; // Cast to a Player.
-        final String permission = "mf.addlaw";
-        if (!player.hasPermission(permission)) { // Does the player have permission to add a law?
-            player.sendMessage(translate("&c" + getText("PermissionNeeded", permission)));
-            return;
-        }
-        if (args.length == 0) { // Check if they have provided any strings beyond "Add Law".
-            player.sendMessage(translate("&c" + getText("UsageAddLaw")));
-            return;
-        }
-        final Faction playersFaction = getPlayerFaction(player); // Obtain the Player's Faction.
-        if (playersFaction == null) { // If the Faction is null, they're not in a Faction.
-            player.sendMessage(translate("&c" + getText("AlertMustBeInFactionToUseCommand")));
-            return;
-        }
-        if (!playersFaction.isOwner(player.getUniqueId())) { // They need to be the Owner to do this.
-            player.sendMessage(translate("&c" + getText("AlertMustBeOwnerToUseCommand")));
-            return;
-        }
-        // Add the law and send a success message.
-        playersFaction.addLaw(String.join(" ", args));
-        player.sendMessage(translate("&a" + getText("LawAdded")));
+
     }
 
     @Deprecated
