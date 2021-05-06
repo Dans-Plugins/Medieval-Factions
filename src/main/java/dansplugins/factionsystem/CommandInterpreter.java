@@ -18,14 +18,13 @@ public class CommandInterpreter {
         subCommands.addAll(Arrays.asList(
                 new AddLawCommand(), new AllyCommand(), new AutoClaimCommand(), new BreakAllianceCommand(),
                 new BypassCommand(), new ChatCommand(), new CheckAccessCommand(), new CheckClaimCommand(),
-                new ClaimCommand(), new ConfigCommand()
+                new ClaimCommand(), new ConfigCommand(), new CreateCommand(), new DeclareIndependenceCommand(),
+                new DeclareWarCommand()
         ));
     }
 
     public static CommandInterpreter getInstance() {
-        if (instance == null) {
-            instance = new CommandInterpreter();
-        }
+        if (instance == null) instance = new CommandInterpreter();
         return instance;
     }
 
