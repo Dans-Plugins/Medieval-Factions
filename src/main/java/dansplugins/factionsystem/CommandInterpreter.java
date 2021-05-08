@@ -19,7 +19,8 @@ public class CommandInterpreter {
                 new AddLawCommand(), new AllyCommand(), new AutoClaimCommand(), new BreakAllianceCommand(),
                 new BypassCommand(), new ChatCommand(), new CheckAccessCommand(), new CheckClaimCommand(),
                 new ClaimCommand(), new ConfigCommand(), new CreateCommand(), new DeclareIndependenceCommand(),
-                new DeclareWarCommand()
+                new DeclareWarCommand(), new DemoteCommand(), new DescCommand(), new DisbandCommand(),
+                new DuelCommand()
         ));
     }
 

@@ -216,7 +216,7 @@ public abstract class SubCommand implements ColorTranslator {
     @SuppressWarnings("deprecation")
     protected Faction getPlayerFaction(Object object) {
         if (object instanceof OfflinePlayer) {
-            return data.getPlayersFaction(((OfflinePlayer)object).getUniqueId());
+            return data.getPlayersFaction(((OfflinePlayer) object).getUniqueId());
         } else if (object instanceof UUID) {
             return data.getPlayersFaction((UUID) object);
         } else if (object instanceof String) {
