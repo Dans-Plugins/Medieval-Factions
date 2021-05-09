@@ -20,7 +20,8 @@ public class CommandInterpreter {
                 new BypassCommand(), new ChatCommand(), new CheckAccessCommand(), new CheckClaimCommand(),
                 new ClaimCommand(), new ConfigCommand(), new CreateCommand(), new DeclareIndependenceCommand(),
                 new DeclareWarCommand(), new DemoteCommand(), new DescCommand(), new DisbandCommand(),
-                new DuelCommand()
+                new DuelCommand(), new EditLawCommand(), new ForceCommand(), new GateCommand(),
+                new GrantAccessCommand(), new GrantIndependenceCommand(), new HelpCommand(), new HomeCommand()
         ));
     }
 
