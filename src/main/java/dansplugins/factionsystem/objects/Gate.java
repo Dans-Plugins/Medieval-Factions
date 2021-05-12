@@ -19,6 +19,10 @@ public class Gate {
 		setName(name);
 	}
 
+	public Gate() {
+		// Default Constructor
+	}
+
 	private class GateJson {
 		public String name;
 		public String factionName;
