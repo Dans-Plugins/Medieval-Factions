@@ -14,6 +14,8 @@ public class CommandInterpreter {
     private static CommandInterpreter instance;
     private final Set<SubCommand> subCommands = new HashSet<>();
 
+    private static final boolean USE_NEW_API = true;
+
     private CommandInterpreter() {
         subCommands.addAll(Arrays.asList(
                 new AddLawCommand(), new AllyCommand(), new AutoClaimCommand(), new BreakAllianceCommand(),
@@ -53,7 +55,7 @@ public class CommandInterpreter {
             }
 
             // argument check
-            else {
+            else if (!USE_NEW_API) {
 
                 // default commands ----------------------------------------------------------------------------------
 
@@ -406,19 +408,19 @@ public class CommandInterpreter {
                     return true;
                 }
 
-            }
-
-            // Loop through SubCommands.
-            for (SubCommand subCommand : subCommands) {
-                if (subCommand.isCommand(args[0])) { // If it matches, execute.
-                    String[] arguments = new String[args.length - 1]; // Take first argument out of Array.
-                    System.arraycopy(args, 1, arguments, 0, arguments.length);
-                    subCommand.performCommand(sender, arguments, args[0]); // Execute!
-                    return true; // Return true as the command was found and run.
+            } else {
+                // Loop through SubCommands.
+                for (SubCommand subCommand : subCommands) {
+                    if (subCommand.isCommand(args[0])) { // If it matches, execute.
+                        String[] arguments = new String[args.length - 1]; // Take first argument out of Array.
+                        System.arraycopy(args, 1, arguments, 0, arguments.length);
+                        subCommand.performCommand(sender, arguments, args[0]); // Execute!
+                        return true; // Return true as the command was found and run.
+                    }
                 }
-            }
 
-            sender.sendMessage(ChatColor.RED + LocaleManager.getInstance().getText("CommandNotRecognized"));
+                sender.sendMessage(ChatColor.RED + LocaleManager.getInstance().getText("CommandNotRecognized"));
+            }
         }
         return false;
     }
