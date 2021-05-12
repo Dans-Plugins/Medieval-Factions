@@ -1,19 +1,94 @@
 package dansplugins.factionsystem.commands;
 
 import dansplugins.factionsystem.LocaleManager;
+import dansplugins.factionsystem.commands.abs.SubCommand;
 import dansplugins.factionsystem.data.PersistentData;
 import dansplugins.factionsystem.objects.Faction;
 import dansplugins.factionsystem.utils.ArgumentParser;
 import dansplugins.factionsystem.utils.UUIDChecker;
+import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
+import org.bukkit.OfflinePlayer;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
 import java.util.ArrayList;
+import java.util.List;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
-public class MembersCommand {
+public class MembersCommand extends SubCommand {
 
+    public MembersCommand() {
+        super(new String[] {
+                "members", LOCALE_PREFIX + "CmdMembers"
+        }, false);
+    }
+
+    /**
+     * Method to execute the command for a player.
+     *
+     * @param player who sent the command.
+     * @param args   of the command.
+     * @param key    of the sub-command (e.g. Ally).
+     */
+    @Override
+    public void execute(Player player, String[] args, String key) {
+
+    }
+
+    /**
+     * Method to execute the command.
+     *
+     * @param sender who sent the command.
+     * @param args   of the command.
+     * @param key    of the command.
+     */
+    @Override
+    public void execute(CommandSender sender, String[] args, String key) {
+        final String permission = "mf.members";
+        if (!(checkPermissions(sender, permission))) return;
+        final Faction faction;
+        if (args.length == 0) {
+            if (!(sender instanceof Player)) {
+                sender.sendMessage(translate(getText("OnlyPlayersCanUseCommand")));
+                return;
+            }
+            faction = getPlayerFaction(sender);
+            if (faction == null) {
+                sender.sendMessage(translate("&c" + getText("AlertMustBeInFactionToUseCommand")));
+                return;
+            }
+        } else {
+            faction = getFaction(String.join(" ", args));
+            if (faction == null) {
+                sender.sendMessage(translate("&c" + getText("FactionNameNotRecognized")));
+                return;
+            }
+        }
+        // send Faction Members
+        sender.sendMessage(translate("&b&l" + getText("MembersOf", faction.getName())));
+        sender.sendMessage(translate("\n&b----------\n"));
+        sender.sendMessage(translate(faction.getMemberList().stream()
+                .map(Bukkit::getOfflinePlayer)
+                .map(player -> {
+                    String rank = "";
+                    String color = "&a";
+                    if (faction.isOfficer(player.getUniqueId())) {
+                        rank = "*";
+                        color = "&b";
+                    }
+                    if (faction.isOwner(player.getUniqueId())) {
+                        rank = "**";
+                        color = "&c";
+                    }
+                    return color + player.getName() + rank;
+                }).collect(Collectors.joining("&f, "))
+        ));
+        sender.sendMessage(translate("\n&b----------\n"));
+    }
+
+    @Deprecated
     public void showMembers(CommandSender sender, String[] args) {
         if (sender instanceof Player) {
             Player player = (Player) sender;
@@ -47,6 +122,7 @@ public class MembersCommand {
         }
     }
 
+    @Deprecated
     private void sendFactionMembers(Player player, Faction faction) {
         ArrayList<UUID> members = faction.getMemberList();
         player.sendMessage(ChatColor.BOLD + "" + ChatColor.AQUA + String.format(LocaleManager.getInstance().getText("MembersOf"), faction.getName()));

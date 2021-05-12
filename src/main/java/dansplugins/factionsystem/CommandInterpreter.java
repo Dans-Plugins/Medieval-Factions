@@ -21,7 +21,11 @@ public class CommandInterpreter {
                 new ClaimCommand(), new ConfigCommand(), new CreateCommand(), new DeclareIndependenceCommand(),
                 new DeclareWarCommand(), new DemoteCommand(), new DescCommand(), new DisbandCommand(),
                 new DuelCommand(), new EditLawCommand(), new ForceCommand(), new GateCommand(),
-                new GrantAccessCommand(), new GrantIndependenceCommand(), new HelpCommand(), new HomeCommand()
+                new GrantAccessCommand(), new GrantIndependenceCommand(), new HelpCommand(), new HomeCommand(),
+                new InfoCommand(), new InviteCommand(), new InvokeCommand(), new JoinCommand(), new KickCommand(),
+                new LawsCommand(), new LeaveCommand(), new ListCommand(), new LockCommand(), new MakePeaceCommand(),
+                new MembersCommand(), new PowerCommand(), new PrefixCommand(), new PromoteCommand(),
+                new RemoveLawCommand()
         ));
     }
 
@@ -405,10 +409,8 @@ public class CommandInterpreter {
             // Loop through SubCommands.
             for (SubCommand subCommand : subCommands) {
                 if (subCommand.isCommand(args[0])) { // If it matches, execute.
-
                     String[] arguments = new String[args.length - 1]; // Take first argument out of Array.
                     System.arraycopy(args, 1, arguments, 0, arguments.length);
-
                     subCommand.performCommand(sender, arguments, args[0]); // Execute!
                     return true; // Return true as the command was found and run.
                 }
