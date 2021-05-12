@@ -17,8 +17,6 @@ import org.bukkit.entity.Player;
 import java.lang.reflect.Method;
 import java.util.*;
 
-import static org.bukkit.Bukkit.getServer;
-
 public class ForceCommand extends SubCommand {
 
     private final String[] commands = new String[]{
