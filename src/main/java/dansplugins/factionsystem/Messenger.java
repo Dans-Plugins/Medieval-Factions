@@ -4,6 +4,7 @@ import dansplugins.factionsystem.objects.Faction;
 import dansplugins.factionsystem.utils.UUIDChecker;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
+import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
 import java.util.ArrayList;
@@ -26,33 +27,33 @@ public class Messenger {
         return instance;
     }
 
-    public void sendFactionInfo(Player player, Faction faction, int power) {
+    public void sendFactionInfo(CommandSender sender, Faction faction, int power) {
         int vassalContribution = faction.calculateCumulativePowerLevelWithVassalContribution() - faction.calculateCumulativePowerLevelWithoutVassalContribution();
 
-        player.sendMessage(ChatColor.BOLD + "" + ChatColor.AQUA + String.format(LocaleManager.getInstance().getText("FactionInfo"), faction.getName()) + "\n----------\n");
-        player.sendMessage(ChatColor.AQUA + String.format(LocaleManager.getInstance().getText("Name"), faction.getName()) + "\n");
-        player.sendMessage(ChatColor.AQUA + String.format(LocaleManager.getInstance().getText("Owner"), UUIDChecker.getInstance().findPlayerNameBasedOnUUID(faction.getOwner())) + "\n");
-        player.sendMessage(ChatColor.AQUA + String.format(LocaleManager.getInstance().getText("Description"), faction.getDescription()) + "\n");
-        player.sendMessage(ChatColor.AQUA + String.format(LocaleManager.getInstance().getText("Population"), faction.getMemberList().size()) + "\n");
+        sender.sendMessage(ChatColor.BOLD + "" + ChatColor.AQUA + String.format(LocaleManager.getInstance().getText("FactionInfo"), faction.getName()) + "\n----------\n");
+        sender.sendMessage(ChatColor.AQUA + String.format(LocaleManager.getInstance().getText("Name"), faction.getName()) + "\n");
+        sender.sendMessage(ChatColor.AQUA + String.format(LocaleManager.getInstance().getText("Owner"), UUIDChecker.getInstance().findPlayerNameBasedOnUUID(faction.getOwner())) + "\n");
+        sender.sendMessage(ChatColor.AQUA + String.format(LocaleManager.getInstance().getText("Description"), faction.getDescription()) + "\n");
+        sender.sendMessage(ChatColor.AQUA + String.format(LocaleManager.getInstance().getText("Population"), faction.getMemberList().size()) + "\n");
         if (faction.hasLiege()) {
-            player.sendMessage(ChatColor.AQUA + String.format(LocaleManager.getInstance().getText("Liege"), faction.getLiege()) + "\n");
+            sender.sendMessage(ChatColor.AQUA + String.format(LocaleManager.getInstance().getText("Liege"), faction.getLiege()) + "\n");
         }
         if (faction.isLiege()) {
-            player.sendMessage(ChatColor.AQUA + String.format(LocaleManager.getInstance().getText("Vassals"), faction.getVassalsSeparatedByCommas()) + "\n");
+            sender.sendMessage(ChatColor.AQUA + String.format(LocaleManager.getInstance().getText("Vassals"), faction.getVassalsSeparatedByCommas()) + "\n");
         }
-        player.sendMessage(ChatColor.AQUA + String.format(LocaleManager.getInstance().getText("AlliedWith"), faction.getAlliesSeparatedByCommas()) + "\n");
-        player.sendMessage(ChatColor.AQUA + String.format(LocaleManager.getInstance().getText("AtWarWith"), faction.getEnemiesSeparatedByCommas()) + "\n");
-        player.sendMessage(ChatColor.AQUA + String.format(LocaleManager.getInstance().getText("PowerLevel"), faction.getCumulativePowerLevel()) + "/" + faction.getMaximumCumulativePowerLevel() + "\n");
-        player.sendMessage(ChatColor.AQUA + String.format(LocaleManager.getInstance().getText("DemesneSize"), power, faction.getCumulativePowerLevel()) + "\n");
+        sender.sendMessage(ChatColor.AQUA + String.format(LocaleManager.getInstance().getText("AlliedWith"), faction.getAlliesSeparatedByCommas()) + "\n");
+        sender.sendMessage(ChatColor.AQUA + String.format(LocaleManager.getInstance().getText("AtWarWith"), faction.getEnemiesSeparatedByCommas()) + "\n");
+        sender.sendMessage(ChatColor.AQUA + String.format(LocaleManager.getInstance().getText("PowerLevel"), faction.getCumulativePowerLevel()) + "/" + faction.getMaximumCumulativePowerLevel() + "\n");
+        sender.sendMessage(ChatColor.AQUA + String.format(LocaleManager.getInstance().getText("DemesneSize"), power, faction.getCumulativePowerLevel()) + "\n");
         if (faction.isLiege()) {
             if (!faction.isWeakened()) {
-                player.sendMessage(ChatColor.AQUA + String.format(LocaleManager.getInstance().getText("VassalContribution"), vassalContribution) + "\n");
+                sender.sendMessage(ChatColor.AQUA + String.format(LocaleManager.getInstance().getText("VassalContribution"), vassalContribution) + "\n");
             }
             else {
-                player.sendMessage(ChatColor.AQUA + String.format(LocaleManager.getInstance().getText("VassalContribution"), 0) + "\n");
+                sender.sendMessage(ChatColor.AQUA + String.format(LocaleManager.getInstance().getText("VassalContribution"), 0) + "\n");
             }
         }
-        player.sendMessage(ChatColor.AQUA + "----------\n");
+        sender.sendMessage(ChatColor.AQUA + "----------\n");
     }
 
     public void sendAllPlayersInFactionMessage(Faction faction, String message) {
