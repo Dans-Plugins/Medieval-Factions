@@ -51,6 +51,7 @@ public class RemoveLawCommand extends SubCommand {
 
     }
 
+    @Deprecated
     public void removeLaw(CommandSender sender, String[] args) {
         // player & perm check
         if (sender instanceof Player && (((Player) sender).hasPermission("mf.removelaw"))) {

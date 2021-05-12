@@ -54,6 +54,7 @@ public class SetHomeCommand extends SubCommand {
 
     }
 
+    @Deprecated
     public void setHome(CommandSender sender) {
         if (sender instanceof Player) {
             Player player = (Player) sender;

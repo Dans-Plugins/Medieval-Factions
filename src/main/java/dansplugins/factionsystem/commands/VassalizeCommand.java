@@ -82,6 +82,7 @@ public class VassalizeCommand extends SubCommand {
 
     }
 
+    @Deprecated
     public boolean sendVassalizationOffer(CommandSender sender, String[] args) {
 
         if (!(sender instanceof Player)) {

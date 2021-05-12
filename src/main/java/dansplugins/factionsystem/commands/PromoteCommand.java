@@ -79,6 +79,7 @@ public class PromoteCommand extends SubCommand {
 
     }
 
+    @Deprecated
     public void promotePlayer(CommandSender sender, String[] args) {
         if (sender instanceof Player) {
             Player player = (Player) sender;
