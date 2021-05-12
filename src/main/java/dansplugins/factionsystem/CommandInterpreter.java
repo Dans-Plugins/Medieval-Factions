@@ -29,7 +29,8 @@ public class CommandInterpreter {
                 new MembersCommand(), new PowerCommand(), new PrefixCommand(), new PromoteCommand(),
                 new RemoveLawCommand(), new RenameCommand(), new ResetPowerLevelsCommand(), new RevokeAccessCommand(),
                 new SetHomeCommand(), new SwearFealtyCommand(), new TransferCommand(), new UnclaimallCommand(),
-                new UnclaimCommand(), new UnlockCommand(), new VassalizeCommand(), new WhoCommand()
+                new UnclaimCommand(), new UnlockCommand(), new VassalizeCommand(), new VersionCommand(),
+                new WhoCommand()
         ));
     }
 
