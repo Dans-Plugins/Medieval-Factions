@@ -52,9 +52,9 @@ public class LawsCommand extends SubCommand {
                 return;
             }
         }
-        player.sendMessage(translate("&b" + getText("LawsTitle", faction.getName())));
-        IntStream.range(0, faction.getNumLaws())
-                .mapToObj(i -> translate("&b" + (i + 1) + ". " + faction.getLaws().get(i)))
+        player.sendMessage(translate("&b" + getText("LawsTitle", target.getName())));
+        IntStream.range(0, target.getNumLaws())
+                .mapToObj(i -> translate("&b" + (i + 1) + ". " + target.getLaws().get(i)))
                 .forEach(player::sendMessage);
     }
 
