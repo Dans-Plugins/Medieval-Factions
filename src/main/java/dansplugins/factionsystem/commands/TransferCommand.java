@@ -43,10 +43,13 @@ public class TransferCommand extends SubCommand {
             player.sendMessage(translate("&c" + getText("PlayerNotFound")));
             return;
         }
-        final OfflinePlayer target = Bukkit.getOfflinePlayer(targetUUID);
+        OfflinePlayer target = Bukkit.getOfflinePlayer(targetUUID);
         if (!target.hasPlayedBefore()) {
-            player.sendMessage(translate("&c" + getText("PlayerNotFound")));
-            return;
+            target = Bukkit.getPlayer(args[0]);
+            if (target == null) {
+                player.sendMessage(translate("&c" + getText("PlayerNotFound")));
+                return;
+            }
         }
         if (!faction.isMember(targetUUID)) {
             player.sendMessage(translate("&c" + getText("PlayerIsNotInYourFaction")));
