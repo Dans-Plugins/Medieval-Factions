@@ -15,6 +15,7 @@ import java.time.ZonedDateTime;
 public class MedievalFactions extends JavaPlugin {
 
     private static MedievalFactions instance;
+    private static MedievalFactionsAPI API;
 
     private String version = "v4.1-beta-2";
 
@@ -25,6 +26,7 @@ public class MedievalFactions extends JavaPlugin {
     @Override
     public void onEnable() {
         instance = this;
+        API = new MedievalFactionsAPI();
 
         // create/load config
         if (!(new File("./plugins/MedievalFactions/config.yml").exists())) {
@@ -79,6 +81,10 @@ public class MedievalFactions extends JavaPlugin {
 
     public boolean isVersionMismatched() {
         return !getConfig().getString("version").equalsIgnoreCase(getVersion());
+    }
+
+    public MedievalFactionsAPI getAPI() {
+        return API;
     }
 
     // this method is to ensure that when updating to a version with power decay, even players who never log in again will experience power decay
