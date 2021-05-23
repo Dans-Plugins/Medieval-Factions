@@ -5,7 +5,11 @@ import dansplugins.factionsystem.data.PersistentData;
 import dansplugins.factionsystem.utils.ArgumentParser;
 import dansplugins.factionsystem.utils.UUIDChecker;
 
+import java.util.UUID;
+
 public class MedievalFactionsAPI {
+
+    // instance getters
 
     public MedievalFactions getPlugin() {
         return MedievalFactions.getInstance();
@@ -57,6 +61,12 @@ public class MedievalFactionsAPI {
 
     public ArgumentParser getArgumentParser() {
         return ArgumentParser.getInstance();
+    }
+
+    // specific methods
+
+    public void forcePlayerToLeaveFactionChat(UUID uuid) {
+        getEphemeralData().getPlayersInFactionChat().remove(uuid);
     }
 
 }
