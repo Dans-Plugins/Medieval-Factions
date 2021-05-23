@@ -16,7 +16,7 @@ public class AddLawCommand extends SubCommand {
      */
     public AddLawCommand() {
         super(new String[] {
-                "ADD_LAW", LOCALE_PREFIX + "CMDAddLaw", "AL"
+               LOCALE_PREFIX + "CMDAddLaw", "AL", "addlaw"
         }, true, true, false, true);
     }
 
