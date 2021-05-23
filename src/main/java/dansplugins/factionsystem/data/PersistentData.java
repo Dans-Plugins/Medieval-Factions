@@ -12,11 +12,11 @@ public class PersistentData {
 
     private static PersistentData instance;
 
-    public final ArrayList<Faction> factions = new ArrayList<>();
-    public final ArrayList<ClaimedChunk> claimedChunks = new ArrayList<>();
-    public final ArrayList<PlayerPowerRecord> playerPowerRecords = new ArrayList<>();
-    public final ArrayList<PlayerActivityRecord> playerActivityRecords = new ArrayList<>();
-    public final ArrayList<LockedBlock> lockedBlocks = new ArrayList<>();
+    public ArrayList<Faction> factions = new ArrayList<>();
+    public ArrayList<ClaimedChunk> claimedChunks = new ArrayList<>();
+    public ArrayList<PlayerPowerRecord> playerPowerRecords = new ArrayList<>();
+    public ArrayList<PlayerActivityRecord> playerActivityRecords = new ArrayList<>();
+    public ArrayList<LockedBlock> lockedBlocks = new ArrayList<>();
 
     private PersistentData() {}
 
