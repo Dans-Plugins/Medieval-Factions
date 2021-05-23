@@ -32,8 +32,8 @@ public class AllyCommand extends SubCommand {
     public void execute(Player player, String[] args, String key) {
         final String permission = "mf.ally";
         if (!checkPermissions(player, permission)) return;
-        if (args.length == 0) { // Check if they have provided any strings beyond "Add Law".
-            player.sendMessage(translate("&c" + getText("UsageAddLaw")));
+        if (args.length == 0) {
+            player.sendMessage(translate("&c" + getText("UsageAlly")));
             return;
         }
         // Retrieve the Faction from the given arguments.
