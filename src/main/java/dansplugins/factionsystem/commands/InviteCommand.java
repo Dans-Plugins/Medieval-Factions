@@ -44,10 +44,13 @@ public class InviteCommand extends SubCommand {
             player.sendMessage(translate("&c" + getText("PlayerNotFound")));
             return;
         }
-        final OfflinePlayer target = Bukkit.getOfflinePlayer(playerUUID);
+        OfflinePlayer target = Bukkit.getOfflinePlayer(playerUUID);
         if (!target.hasPlayedBefore()) {
-            player.sendMessage(translate("&c" + getText("PlayerNotFound")));
-            return;
+            target = Bukkit.getPlayer(args[0]);
+            if (target == null) {
+                player.sendMessage(translate("&c" + getText("PlayerNotFound")));
+                return;
+            }
         }
         if (data.isInFaction(playerUUID)) {
             player.sendMessage(translate("&c" + getText("PlayerAlreadyInFaction")));
@@ -63,12 +66,13 @@ public class InviteCommand extends SubCommand {
 
         final long seconds = 1728000L;
         // make invitation expire in 24 hours, if server restarts it also expires since invites aren't saved
+        final OfflinePlayer tmp = target;
         getServer().getScheduler().runTaskLater(MedievalFactions.getInstance(), new Runnable() {
             @Override
             public void run() {
                 faction.uninvite(playerUUID);
-                if (target.isOnline() && target.getPlayer() != null) {
-                    target.getPlayer().sendMessage(translate(
+                if (tmp.isOnline() && tmp.getPlayer() != null) {
+                    tmp.getPlayer().sendMessage(translate(
                             "&c" + getText("InvitationExpired", faction.getName())
                     ));
                 }
