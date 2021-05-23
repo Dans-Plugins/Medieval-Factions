@@ -6,6 +6,7 @@ import dansplugins.factionsystem.commands.abs.SubCommand;
 import dansplugins.factionsystem.data.PersistentData;
 import dansplugins.factionsystem.events.FactionJoinEvent;
 import dansplugins.factionsystem.objects.Faction;
+import dansplugins.factionsystem.objects.PlayerPowerRecord;
 import dansplugins.factionsystem.utils.ArgumentParser;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
@@ -44,15 +45,19 @@ public class JoinCommand extends SubCommand {
             player.sendMessage(translate("&c" + getText("FactionNotFound")));
             return;
         }
+        if (!target.isInvited(player.getUniqueId())) {
+            // TODO Locale Message
+            return;
+        }
         FactionJoinEvent joinEvent = new FactionJoinEvent(faction, player);
         Bukkit.getPluginManager().callEvent(joinEvent);
         if (joinEvent.isCancelled()) {
             // TODO Locale Message
             return;
         }
-        faction.addMember(player.getUniqueId(), data.getPlayersPowerRecord(player.getUniqueId()).getPowerLevel());
-        faction.uninvite(player.getUniqueId());
-        messageFaction(faction, translate("&a" + getText("HasJoined", player.getName(), faction.getName())));
+        target.addMember(player.getUniqueId(), data.getPlayersPowerRecord(player.getUniqueId()).getPowerLevel());
+        target.uninvite(player.getUniqueId());
+        messageFaction(target, translate("&a" + getText("HasJoined", player.getName(), target.getName())));
         player.sendMessage(translate("&a" + getText("AlertJoinedFaction")));
     }
 
