@@ -53,7 +53,7 @@ public class DemoteCommand extends SubCommand {
             return;
         }
         faction.removeOfficer(demotee.getUniqueId());
-        if (demotee.isOnline()) ((Player) demotee).sendMessage(translate("&c" + getText("AlertDemoted")));
+        if (demotee.isOnline()) ((Player) demotee).sendMessage(translate("&c" + getText("AlertDemotion")));
         player.sendMessage(translate("&a" + getText("PlayerDemoted")));
     }
 
