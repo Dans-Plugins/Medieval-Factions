@@ -56,7 +56,7 @@ public class InfoCommand extends SubCommand {
             sender.sendMessage(translate("&c" + getText("FactionNotFound")));
             return;
         }
-        Messenger.getInstance().sendFactionInfo(sender, faction, faction.getClaimedChunks().size());
+        Messenger.getInstance().sendFactionInfo(sender, target, target.getClaimedChunks().size());
     }
 
     @Deprecated
