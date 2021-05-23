@@ -164,8 +164,7 @@ public abstract class SubCommand implements ColorTranslator {
      * @return {@code true} if it is.
      */
     public boolean isCommand(String name) {
-        return Arrays.stream(names)
-                .anyMatch(s -> s.equalsIgnoreCase(name) || getClass().getSimpleName().equalsIgnoreCase(name));
+        return Arrays.stream(names).anyMatch(s -> s.equalsIgnoreCase(name));
     }
 
     /**
