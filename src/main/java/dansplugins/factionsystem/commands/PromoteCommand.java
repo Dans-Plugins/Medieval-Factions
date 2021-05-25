@@ -59,6 +59,10 @@ public class PromoteCommand extends SubCommand {
             player.sendMessage(translate("&c" + getText("PlayerAlreadyOfficer")));
             return;
         }
+        if (targetUUID == player.getUniqueId()) {
+            // TODO Locale Message
+            return;
+        }
         if(faction.addOfficer(targetUUID)){
             player.sendMessage(translate("&a" + getText("PlayerPromoted")));
             if (target.isOnline() && target.getPlayer() != null) {
