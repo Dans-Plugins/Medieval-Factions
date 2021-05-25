@@ -51,7 +51,7 @@ public class MakePeaceCommand extends SubCommand {
             return;
         }
         faction.requestTruce(target.getName());
-        player.sendMessage(translate("&c" + getText("AttemptedPeace", target.getName())));
+        player.sendMessage(translate("&a" + getText("AttemptedPeace", target.getName())));
         messageFaction(target,
                 translate("&a" + getText("HasAttemptedToMakePeaceWith", faction.getName(), target.getName())));
         if (faction.isTruceRequested(target.getName()) && target.isTruceRequested(faction.getName())) {
