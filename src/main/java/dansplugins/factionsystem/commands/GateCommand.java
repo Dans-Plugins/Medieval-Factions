@@ -33,12 +33,12 @@ public class GateCommand extends SubCommand {
 	public void execute(Player player, String[] args, String key) {
 		if (!(checkPermissions(player, "mf.gate"))) return;
 		if (args.length == 0) {
-			player.sendMessage(translate("&c" + getText("SubCommands")));
-			player.sendMessage(translate("&c" + getText("HelpGateCreate")));
-			player.sendMessage(translate("&c" + getText("HelpGateName")));
-			player.sendMessage(translate("&c" + getText("HelpGateList")));
-			player.sendMessage(translate("&c" + getText("HelpGateRemove")));
-			player.sendMessage(translate("&c" + getText("HelpGateCancel")));
+			player.sendMessage(translate("&b" + getText("SubCommands")));
+			player.sendMessage(translate("&b" + getText("HelpGateCreate")));
+			player.sendMessage(translate("&b" + getText("HelpGateName")));
+			player.sendMessage(translate("&b" + getText("HelpGateList")));
+			player.sendMessage(translate("&b" + getText("HelpGateRemove")));
+			player.sendMessage(translate("&b" + getText("HelpGateCancel")));
 			return;
 		}
 		if (safeEquals(false, args[0], "cancel", getText("CmdGateCancel"))) {
