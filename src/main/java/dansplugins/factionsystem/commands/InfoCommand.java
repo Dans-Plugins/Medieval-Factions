@@ -49,12 +49,16 @@ public class InfoCommand extends SubCommand {
                 return;
             }
             target = getPlayerFaction(sender);
+            if (target == null) {
+                sender.sendMessage(translate("&c" + getText("AlertMustBeInFactionToUseCommand")));
+                return;
+            }
         } else {
             target = getFaction(String.join(" ", args));
-        }
-        if (target == null) {
-            sender.sendMessage(translate("&c" + getText("FactionNotFound")));
-            return;
+            if (target == null) {
+                sender.sendMessage(translate("&c" + getText("FactionNotFound")));
+                return;
+            }
         }
         Messenger.getInstance().sendFactionInfo(sender, target, target.getClaimedChunks().size());
     }
