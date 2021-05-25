@@ -48,6 +48,10 @@ public class DemoteCommand extends SubCommand {
             player.sendMessage(translate("&c" + getText("PlayerByNameNotFound", args[0])));
             return;
         }
+        if (demotee.getUniqueId() == player.getUniqueId()) {
+            // TODO Locale Message;
+            return;
+        }
         if (!this.faction.isOfficer(demotee.getUniqueId())) {
             player.sendMessage(translate("&c" + getText("PlayerIsNotOfficerOfFaction")));
             return;
