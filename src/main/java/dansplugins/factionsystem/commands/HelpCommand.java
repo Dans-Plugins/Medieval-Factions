@@ -50,9 +50,9 @@ public class HelpCommand extends SubCommand {
     @Override
     public void execute(CommandSender sender, String[] args, String key) {
         if (!(checkPermissions(sender, "mf.help"))) return;
-        int page = (args.length <= 0 ? 0 : getIntSafe(args[0], 0));
+        int page = (args.length <= 0 ? 1 : getIntSafe(args[0], 1));
         if (page > LAST_PAGE) page = LAST_PAGE; // Upper Limit over LAST_PAGE
-        if (page < 0) page = 0; // Lower Limit to 0
+        if (page <= 0) page = 1; // Lower Limit to 0
         sender.sendMessage(translate("&b&l" + getText("CommandsPage" + page, LAST_PAGE)));
         helpPages.get(page).forEach(line -> sender.sendMessage(translate("&b" + getText("Help" + line))));
     }
