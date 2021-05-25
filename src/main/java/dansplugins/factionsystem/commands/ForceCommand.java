@@ -59,8 +59,8 @@ public class ForceCommand extends SubCommand {
             for (Map.Entry<List<String>, String> entry : subMap.entrySet()) {
                 if (safeEquals(false, args[0], (String[]) entry.getKey().toArray())) {
                     try {
-                        Method method = getClass().getMethod(entry.getValue(), CommandSender.class, String[].class);
-                        method.invoke(sender, (Object[]) args);
+                        Method method = getClass().getDeclaredMethod(entry.getValue(), CommandSender.class, String[].class);
+                        method.invoke(this, sender, args);
                     } catch (ReflectiveOperationException ex) {
                         System.out.println("DEBUG: Failed to resolve method from '" + args[0] + "'!");
                     }
@@ -69,7 +69,7 @@ public class ForceCommand extends SubCommand {
             }
         }
         sender.sendMessage(translate("&c" + getText("SubCommands")));
-        Arrays.stream(commands).forEach(str -> sender.sendMessage(translate("&c" + getText("HelpForce" + str))));
+        Arrays.stream(commands).forEach(str -> sender.sendMessage(translate("&b" + getText("HelpForce" + str))));
     }
 
     private void forceSave(CommandSender sender, String[] args) {
