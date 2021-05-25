@@ -28,12 +28,8 @@ public class AutoClaimCommand extends SubCommand {
      */
     @Override
     public void execute(Player player, String[] args, String key) {
-        final String permission = "mf.addlaw";
+        final String permission = "mf.autoclaim";
         if (!checkPermissions(player, permission)) return;
-        if (args.length == 0) { // Check if they have provided any strings beyond "Add Law".
-            player.sendMessage(translate("&c" + getText("UsageAddLaw")));
-            return;
-        }
         faction.toggleAutoClaim();
         player.sendMessage(translate("&b" + getText("AutoclaimToggled")));
     }
