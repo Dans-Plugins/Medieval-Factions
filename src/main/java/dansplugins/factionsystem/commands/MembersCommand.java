@@ -67,7 +67,7 @@ public class MembersCommand extends SubCommand {
         // send Faction Members
         sender.sendMessage(translate("&b&l" + getText("MembersOf", faction.getName())));
         sender.sendMessage(translate("\n&b----------\n"));
-        sender.sendMessage(translate(faction.getMemberList().stream()
+        faction.getMemberList().stream()
                 .map(Bukkit::getOfflinePlayer)
                 .map(player -> {
                     String rank = "";
@@ -80,10 +80,9 @@ public class MembersCommand extends SubCommand {
                         rank = "**";
                         color = "&c";
                     }
-                    return color + player.getName() + rank;
-                }).collect(Collectors.joining("&f, "))
-        ));
-        sender.sendMessage(translate("\n&b----------\n"));
+                    return translate("&f" + player.getName() + color + rank);
+                }).forEach(sender::sendMessage);
+        sender.sendMessage(translate("&b----------\n"));
     }
 
     @Deprecated
