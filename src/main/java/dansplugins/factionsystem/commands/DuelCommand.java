@@ -126,10 +126,10 @@ public class DuelCommand extends SubCommand {
     }
 
     private void sendHelp(CommandSender sender) {
-        sender.sendMessage(translate("&c" + getText("SubCommands")));
-        sender.sendMessage(translate("&c" + getText("HelpDuelChallenge")));
-        sender.sendMessage(translate("&c" + getText("HelpDuelAccept")));
-        sender.sendMessage(translate("&c" + getText("HelpDuelCancel")));
+        sender.sendMessage(translate("&b" + getText("SubCommands")));
+        sender.sendMessage(translate("&b" + getText("HelpDuelChallenge")));
+        sender.sendMessage(translate("&b" + getText("HelpDuelAccept")));
+        sender.sendMessage(translate("&b" + getText("HelpDuelCancel")));
     }
 
 	private Duel getDuel(Player player) {
