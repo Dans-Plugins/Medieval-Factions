@@ -58,8 +58,8 @@ public class ListCommand extends SubCommand {
         for (SortableFaction sortableFaction : sortedFactionList) {
             final Faction temp = sortableFaction.getFaction();
             sender.sendMessage(ChatColor.AQUA + String.format("%-25s %10s %10s %10s", temp.getName(), "P: " +
-                    temp.getCumulativePowerLevel(), "M: " + faction.getPopulation(), "L: " +
-                    chunks.getChunksClaimedByFaction(faction.getName(), data.getClaimedChunks())));
+                    temp.getCumulativePowerLevel(), "M: " + temp.getPopulation(), "L: " +
+                    chunks.getChunksClaimedByFaction(temp.getName(), data.getClaimedChunks())));
         }
     }
 
