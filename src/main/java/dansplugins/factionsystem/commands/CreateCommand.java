@@ -47,7 +47,7 @@ public class CreateCommand extends SubCommand {
         Bukkit.getPluginManager().callEvent(createEvent);
         if (!createEvent.isCancelled()) {
             data.getFactions().add(this.faction);
-            player.sendMessage(translate("&b" + getText("FactionCreated")));
+            player.sendMessage(translate("&a" + getText("FactionCreated")));
         }
     }
 
