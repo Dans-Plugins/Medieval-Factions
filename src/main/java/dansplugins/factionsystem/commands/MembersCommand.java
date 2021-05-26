@@ -1,19 +1,10 @@
 package dansplugins.factionsystem.commands;
 
-import dansplugins.factionsystem.LocaleManager;
 import dansplugins.factionsystem.commands.abs.SubCommand;
-import dansplugins.factionsystem.data.PersistentData;
 import dansplugins.factionsystem.objects.Faction;
-import dansplugins.factionsystem.utils.ArgumentParser;
-import dansplugins.factionsystem.utils.UUIDChecker;
 import org.bukkit.Bukkit;
-import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
-
-import java.util.ArrayList;
-import java.util.UUID;
-import java.util.stream.Collectors;
 
 public class MembersCommand extends SubCommand {
 
@@ -83,58 +74,6 @@ public class MembersCommand extends SubCommand {
                     return translate("&f" + player.getName() + color + rank);
                 }).forEach(sender::sendMessage);
         sender.sendMessage(translate("&b----------\n"));
-    }
-
-    @Deprecated
-    public void showMembers(CommandSender sender, String[] args) {
-        if (sender instanceof Player) {
-            Player player = (Player) sender;
-
-            if (sender.hasPermission("mf.members")) {
-                if (args.length == 1) {
-                    for (Faction faction : PersistentData.getInstance().getFactions()) {
-                        if (faction.isMember(player.getUniqueId())) {
-                            sendFactionMembers(player, faction);
-                            return;
-                        }
-                    }
-                    player.sendMessage(ChatColor.RED + LocaleManager.getInstance().getText("AlertNotInFaction"));
-                }
-                else {
-                    // creating name from arguments 1 to the last one
-                    String name = ArgumentParser.getInstance().createStringFromFirstArgOnwards(args);
-
-                    for (Faction faction : PersistentData.getInstance().getFactions()) {
-                        if (faction.getName().equalsIgnoreCase(name)) {
-                            sendFactionMembers(player, faction);
-                            return;
-                        }
-                    }
-                    player.sendMessage(ChatColor.RED + LocaleManager.getInstance().getText("FactionNameNotRecognized"));
-                }
-            }
-            else {
-                sender.sendMessage(ChatColor.RED + String.format(LocaleManager.getInstance().getText("PermissionNeeded"), "mf.members"));
-            }
-        }
-    }
-
-    @Deprecated
-    private void sendFactionMembers(Player player, Faction faction) {
-        ArrayList<UUID> members = faction.getMemberList();
-        player.sendMessage(ChatColor.BOLD + "" + ChatColor.AQUA + String.format(LocaleManager.getInstance().getText("MembersOf"), faction.getName()));
-        player.sendMessage("\n----------\n");
-        for (UUID member : members) {
-            // Is Owner
-            if (member.equals(faction.getOwner())){
-                player.sendMessage(ChatColor.AQUA + UUIDChecker.getInstance().findPlayerNameBasedOnUUID(member) + "**\n");
-            } else if (faction.isOfficer(member)) {
-                player.sendMessage(ChatColor.AQUA + UUIDChecker.getInstance().findPlayerNameBasedOnUUID(member) + "*\n");
-            } else {
-                player.sendMessage(ChatColor.AQUA + UUIDChecker.getInstance().findPlayerNameBasedOnUUID(member) + "\n");
-            }
-        }
-        player.sendMessage(ChatColor.AQUA + "----------\n");
     }
 
 }

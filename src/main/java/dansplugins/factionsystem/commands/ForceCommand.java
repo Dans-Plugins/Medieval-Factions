@@ -9,7 +9,6 @@ import dansplugins.factionsystem.objects.Faction;
 import dansplugins.factionsystem.objects.PlayerPowerRecord;
 import dansplugins.factionsystem.utils.UUIDChecker;
 import org.bukkit.Bukkit;
-import org.bukkit.ChatColor;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
@@ -336,71 +335,6 @@ public class ForceCommand extends SubCommand {
             if (vassal.isLiege(liege.getName())) vassal.setLiege("none");
         }
         sender.sendMessage(translate("&a" + getText("Done")));
-    }
-
-    @Deprecated
-    public boolean force(CommandSender sender, String[] args) {
-        if (args.length > 1) {
-            if (args[1].equalsIgnoreCase("save") || args[1].equalsIgnoreCase(LocaleManager.getInstance().getText("CmdForceSave"))) {
-                /*return*/
-                forceSave(sender, args);
-            }
-
-            if (args[1].equalsIgnoreCase("load") || args[1].equalsIgnoreCase(LocaleManager.getInstance().getText("CmdForceLoad"))) {
-                /*return*/
-                forceLoad(sender, args);
-            }
-
-            if (args[1].equalsIgnoreCase("peace") || args[1].equalsIgnoreCase(LocaleManager.getInstance().getText("CmdForcePeace"))) {
-                /*return*/
-                forcePeace(sender, args);
-            }
-
-            if (args[1].equalsIgnoreCase("demote") || args[1].equalsIgnoreCase(LocaleManager.getInstance().getText("CmdForceDemote"))) {
-                /*return*/
-                forceDemote(sender, args);
-            }
-
-            if (args[1].equalsIgnoreCase("join") || args[1].equalsIgnoreCase(LocaleManager.getInstance().getText("CmdForceJoin"))) {
-                /*return*/
-                forceJoin(sender, args);
-            }
-
-            if (args[1].equalsIgnoreCase("kick") || args[1].equalsIgnoreCase(LocaleManager.getInstance().getText("CmdForceKick"))) {
-                /*return*/
-                forceKick(sender, args);
-            }
-            if (args[1].equalsIgnoreCase("power") || args[1].equalsIgnoreCase(LocaleManager.getInstance().getText("CmdForcePower"))) {
-                /*return*/
-                forcePower(sender, args);
-            }
-            if (args[1].equalsIgnoreCase("renounce") || args[1].equalsIgnoreCase(LocaleManager.getInstance().getText("CmdForceRenounce"))) {
-                /*return*/
-                forceRenounce(sender, args);
-            }
-            if (args[1].equalsIgnoreCase("transfer") || args[1].equalsIgnoreCase(LocaleManager.getInstance().getText("CmdForceTransfer"))) {
-                /*return*/
-                forceTransfer(sender, args);
-            }
-            if (args[1].equalsIgnoreCase("removevassal") || args[1].equalsIgnoreCase(LocaleManager.getInstance().getText("CmdForceRemoveVassal"))) {
-                /*return*/
-                forceRemoveVassal(sender, args);
-            }
-            return true;
-        }
-        // show usages
-        sender.sendMessage(ChatColor.RED + LocaleManager.getInstance().getText("SubCommands"));
-        sender.sendMessage(ChatColor.RED + LocaleManager.getInstance().getText("HelpForceSave"));
-        sender.sendMessage(ChatColor.RED + LocaleManager.getInstance().getText("HelpForceLoad"));
-        sender.sendMessage(ChatColor.RED + LocaleManager.getInstance().getText("HelpForcePeace"));
-        sender.sendMessage(ChatColor.RED + LocaleManager.getInstance().getText("HelpForceDemote"));
-        sender.sendMessage(ChatColor.RED + LocaleManager.getInstance().getText("HelpForceJoin"));
-        sender.sendMessage(ChatColor.RED + LocaleManager.getInstance().getText("HelpForceKick"));
-        sender.sendMessage(ChatColor.RED + LocaleManager.getInstance().getText("HelpForcePower"));
-        sender.sendMessage(ChatColor.RED + LocaleManager.getInstance().getText("HelpForceRenounce"));
-        sender.sendMessage(ChatColor.RED + LocaleManager.getInstance().getText("HelpForceTransfer"));
-        sender.sendMessage(ChatColor.RED + LocaleManager.getInstance().getText("HelpForceRemoveVassal"));
-        return false;
     }
 
 }
