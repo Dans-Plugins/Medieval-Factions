@@ -87,7 +87,7 @@ public class ForceCommand extends SubCommand {
 
     private void forcePeace(CommandSender sender, String[] args) {
         if (!(checkPermissions(sender, "mf.force.peace", "mf.force.*", "mf.admin"))) return;
-        if (!(args.length >= 4)) {
+        if (!(args.length >= 3)) {
             sender.sendMessage(translate("&c" + getText("UsageForcePeace")));
             return;
         }
@@ -107,13 +107,13 @@ public class ForceCommand extends SubCommand {
         if (latter.isEnemy(former.getName())) latter.removeEnemy(former.getName()); // Remove
         // announce peace to all players on server.
         messageServer(translate(
-                "&a" + former.getName() + getText("AlertNowAtPeaceWith", latter.getName() + "!")
+                "&a" + getText("AlertNowAtPeaceWith", former.getName(), latter.getName())
         ));
     }
 
     private void forceDemote(CommandSender sender, String[] args) {
         if (!(checkPermissions(sender, "mf.force.demote", "mf.force.*", "mf.admin"))) return;
-        if (!(args.length > 2)) {
+        if (!(args.length > 1)) {
             sender.sendMessage(translate("&c" + getText("UsageForceDemote")));
             return;
         }
@@ -141,7 +141,7 @@ public class ForceCommand extends SubCommand {
 
     private void forceJoin(CommandSender sender, String[] args) {
         if (!(checkPermissions(sender, "mf.force.join", "mf.force.*", "mf.admin"))) return;
-        if (!(args.length >= 4)) {
+        if (!(args.length >= 3)) {
             sender.sendMessage(translate("&c" + getText("UsageForceJoin")));
             return;
         }
@@ -180,7 +180,7 @@ public class ForceCommand extends SubCommand {
 
     private void forceKick(CommandSender sender, String[] args) {
         if (!(checkPermissions(sender, "mf.force.kick", "mf.force.*", "mf.admin"))) return;
-        if (!(args.length > 2)) {
+        if (!(args.length > 1)) {
             sender.sendMessage(translate("&c" + getText("UsageForceKick")));
             return;
         }
@@ -213,7 +213,7 @@ public class ForceCommand extends SubCommand {
 
     private void forcePower(CommandSender sender, String[] args) {
         if (!(checkPermissions(sender, "mf.force.power", "mf.force.*", "mf.admin"))) return;
-        if (!(args.length >= 4)) {
+        if (!(args.length >= 3)) {
             sender.sendMessage(translate("&c" + getText("UsageForcePower")));
             return;
         }
@@ -273,7 +273,7 @@ public class ForceCommand extends SubCommand {
 
     private void forceTransfer(CommandSender sender, String[] args) {
         if (!(checkPermissions(sender, "mf.force.transfer", "mf.force.*", "mf.admin"))) return;
-        if (!(args.length >= 4)) {
+        if (!(args.length >= 3)) {
             sender.sendMessage(translate("&c" + getText("UsageForceTransfer")));
             return;
         }
@@ -317,7 +317,7 @@ public class ForceCommand extends SubCommand {
 
     private void forceRemoveVassal(CommandSender sender, String[] args) {
         if (!(checkPermissions(sender, "mf.force.removevassal", "mf.force.*", "mf.admin"))) return;
-        if (args.length < 4) {
+        if (args.length < 3) {
             sender.sendMessage(translate("&c" + getText("UsageForceRemoveVassal")));
             return;
         }
