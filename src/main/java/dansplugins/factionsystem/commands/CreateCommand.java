@@ -36,6 +36,10 @@ public class CreateCommand extends SubCommand {
             return;
         }
         final String factionName = String.join(" ", args);
+        if (data.getFaction(factionName) != null) {
+            player.sendMessage(translate("&c" + getText("FactionAlreadyExists")));
+            return;
+        }
         this.faction = new Faction(factionName, player.getUniqueId(), getConfig().getInt("initialMaxPowerLevel"));
         this.faction.addMember(player.getUniqueId(), data.getPlayersPowerRecord(player.getUniqueId()).getPowerLevel());
         FactionCreateEvent createEvent = new FactionCreateEvent(this.faction, player);
