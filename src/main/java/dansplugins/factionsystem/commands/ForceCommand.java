@@ -2,502 +2,339 @@ package dansplugins.factionsystem.commands;
 
 import dansplugins.factionsystem.LocaleManager;
 import dansplugins.factionsystem.MedievalFactions;
-import dansplugins.factionsystem.Messenger;
 import dansplugins.factionsystem.StorageManager;
+import dansplugins.factionsystem.commands.abs.SubCommand;
 import dansplugins.factionsystem.data.PersistentData;
 import dansplugins.factionsystem.objects.Faction;
 import dansplugins.factionsystem.objects.PlayerPowerRecord;
-import dansplugins.factionsystem.utils.ArgumentParser;
 import dansplugins.factionsystem.utils.UUIDChecker;
 import org.bukkit.Bukkit;
-import org.bukkit.ChatColor;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
-import java.util.ArrayList;
-import java.util.UUID;
+import java.lang.reflect.Method;
+import java.util.*;
 
-import static org.bukkit.Bukkit.getServer;
+public class ForceCommand extends SubCommand {
 
-public class ForceCommand {
+    private final String[] commands = new String[]{
+            "Save", "Load", "Peace", "Demote", "Join", "Kick", "Power", "Renounce", "Transfer", "RemoveVassal"
+    };
+    private final HashMap<List<String>, String> subMap = new HashMap<>();
 
-    public boolean force(CommandSender sender, String[] args) {
-        if (args.length > 1) {
-            if (args[1].equalsIgnoreCase("save") || args[1].equalsIgnoreCase(LocaleManager.getInstance().getText("CmdForceSave"))) {
-                return forceSave(sender);
-            }
-
-            if (args[1].equalsIgnoreCase("load") || args[1].equalsIgnoreCase(LocaleManager.getInstance().getText("CmdForceLoad"))) {
-                return forceLoad(sender);
-            }
-
-            if (args[1].equalsIgnoreCase("peace") || args[1].equalsIgnoreCase(LocaleManager.getInstance().getText("CmdForcePeace"))) {
-                return forcePeace(sender, args);
-            }
-            
-            if (args[1].equalsIgnoreCase("demote") || args[1].equalsIgnoreCase(LocaleManager.getInstance().getText("CmdForceDemote"))) {
-                return forceDemote(sender, args);
-            }
-
-            if (args[1].equalsIgnoreCase("join") || args[1].equalsIgnoreCase(LocaleManager.getInstance().getText("CmdForceJoin"))) {
-                return forceJoin(sender, args);
-            }
-
-            if (args[1].equalsIgnoreCase("kick") || args[1].equalsIgnoreCase(LocaleManager.getInstance().getText("CmdForceKick"))) {
-                return forceKick(sender, args);
-            }
-            if (args[1].equalsIgnoreCase("power") || args[1].equalsIgnoreCase(LocaleManager.getInstance().getText("CmdForcePower"))) {
-                return forcePower(sender, args);
-            }
-            if (args[1].equalsIgnoreCase("renounce") || args[1].equalsIgnoreCase(LocaleManager.getInstance().getText("CmdForceRenounce"))) {
-                return renounceVassalAndLiegeRelationships(sender, args);
-            }
-            if (args[1].equalsIgnoreCase("transfer") || args[1].equalsIgnoreCase(LocaleManager.getInstance().getText("CmdForceTransfer"))) {
-                return forceTransfer(sender, args);
-            }
-            if (args[1].equalsIgnoreCase("removevassal") || args[1].equalsIgnoreCase(LocaleManager.getInstance().getText("CmdForceRemoveVassal"))) {
-                return forceRemoveVassal(sender, args);
-            }
-        }
-        // show usages
-        sender.sendMessage(ChatColor.RED + LocaleManager.getInstance().getText("SubCommands"));
-        sender.sendMessage(ChatColor.RED + LocaleManager.getInstance().getText("HelpForceSave"));
-        sender.sendMessage(ChatColor.RED + LocaleManager.getInstance().getText("HelpForceLoad"));
-        sender.sendMessage(ChatColor.RED + LocaleManager.getInstance().getText("HelpForcePeace"));
-        sender.sendMessage(ChatColor.RED + LocaleManager.getInstance().getText("HelpForceDemote"));
-        sender.sendMessage(ChatColor.RED + LocaleManager.getInstance().getText("HelpForceJoin"));
-        sender.sendMessage(ChatColor.RED + LocaleManager.getInstance().getText("HelpForceKick"));
-        sender.sendMessage(ChatColor.RED + LocaleManager.getInstance().getText("HelpForcePower"));
-        sender.sendMessage(ChatColor.RED + LocaleManager.getInstance().getText("HelpForceRenounce"));
-        sender.sendMessage(ChatColor.RED + LocaleManager.getInstance().getText("HelpForceTransfer"));
-        sender.sendMessage(ChatColor.RED + LocaleManager.getInstance().getText("HelpForceRemoveVassal"));
-        return false;
+    public ForceCommand() {
+        super(new String[]{
+                "Force", LOCALE_PREFIX + "CmdForce"
+        }, false);
+        // Register sub-commands.
+        Arrays.stream(commands).forEach(command ->
+                subMap.put(Arrays.asList(command, getText("CmdForce" + command)), "force" + command)
+        );
     }
 
-    private boolean forceSave(CommandSender sender) {
-        if (sender.hasPermission("mf.force.save") || sender.hasPermission("mf.force.*") || sender.hasPermission("mf.admin")) {
-            sender.sendMessage(ChatColor.GREEN + LocaleManager.getInstance().getText("AlertForcedSave"));
-            StorageManager.getInstance().save();
-            return true;
-        }
-        else {
-            sender.sendMessage(ChatColor.RED + String.format(LocaleManager.getInstance().getText("PermissionNeeded"), "mf.force.save"));
-            return false;
-        }
+    /**
+     * Method to execute the command for a player.
+     *
+     * @param player who sent the command.
+     * @param args   of the command.
+     * @param key    of the sub-command (e.g. Ally).
+     */
+    @Override
+    public void execute(Player player, String[] args, String key) {
+
     }
 
-    private boolean forceLoad(CommandSender sender) {
-        if (sender.hasPermission("mf.force.load") || sender.hasPermission("mf.force.*")|| sender.hasPermission("mf.admin")) {
-            sender.sendMessage(ChatColor.GREEN + LocaleManager.getInstance().getText("AlertForcedLoad"));
-            StorageManager.getInstance().load();
-            MedievalFactions.getInstance().reloadConfig();
-            return true;
-        }
-        else {
-            sender.sendMessage(ChatColor.RED + String.format(LocaleManager.getInstance().getText("PermissionNeeded"), "mf.force.load"));
-            return false;
-        }
-    }
-
-    private boolean forcePeace(CommandSender sender, String[] args) {
-
-        if (sender.hasPermission("mf.force.peace") || sender.hasPermission("mf.force.*")|| sender.hasPermission("mf.admin")) {
-
-            if (args.length >= 4) {
-
-                // get arguments designated by single quotes
-                ArrayList<String> singleQuoteArgs = ArgumentParser.getInstance().getArgumentsInsideSingleQuotes(args);
-
-                if (singleQuoteArgs.size() < 2) {
-                    sender.sendMessage(ChatColor.RED + LocaleManager.getInstance().getText("NoFactionsDesignatedSingleQuotesRequired"));
-                    return false;
-                }
-
-                String factionName1 = singleQuoteArgs.get(0);
-                String factionName2 = singleQuoteArgs.get(1);
-
-                Faction faction1 = PersistentData.getInstance().getFaction(factionName1);
-                Faction faction2 = PersistentData.getInstance().getFaction(factionName2);
-
-                // force peace
-                if (faction1 != null && faction2 != null) {
-                    if (faction1.isEnemy(faction2.getName())) {
-                        faction1.removeEnemy(faction2.getName());
+    /**
+     * Method to execute the command.
+     *
+     * @param sender who sent the command.
+     * @param args   of the command.
+     * @param key    of the command.
+     */
+    @Override
+    public void execute(CommandSender sender, String[] args, String key) {
+        if (!(args.length <= 0)) {
+            for (Map.Entry<List<String>, String> entry : subMap.entrySet()) {
+                if (safeEquals(false, args[0], (String[]) entry.getKey().toArray())) {
+                    try {
+                        Method method = getClass().getDeclaredMethod(entry.getValue(), CommandSender.class, String[].class);
+                        method.invoke(this, sender, args);
+                    } catch (ReflectiveOperationException ex) {
+                        System.out.println("DEBUG: Failed to resolve method from '" + args[0] + "'!");
                     }
-                    if (faction2.isEnemy(faction1.getName())) {
-                        faction2.removeEnemy(faction1.getName());
-                    }
-
-                    // announce peace to all players on server.
-                    Messenger.getInstance().sendAllPlayersOnServerMessage(ChatColor.GREEN + faction1.getName() + LocaleManager.getInstance().getText("AlertNowAtPeaceWith") + faction2.getName() + "!");
-                    return true;
-                }
-                else {
-                    sender.sendMessage(ChatColor.RED + LocaleManager.getInstance().getText("DesignatedFactionNotFound"));
-                    return false;
+                    return;
                 }
             }
-
-            // send usage
-            sender.sendMessage(ChatColor.RED + LocaleManager.getInstance().getText("UsageForcePeace"));
-            return false;
         }
-        else {
-            sender.sendMessage(ChatColor.RED + String.format(LocaleManager.getInstance().getText("PermissionNeeded"), "mf.force.peace"));
-            return false;
-        }
-
+        sender.sendMessage(translate("&c" + getText("SubCommands")));
+        Arrays.stream(commands).forEach(str -> sender.sendMessage(translate("&b" + getText("HelpForce" + str))));
     }
 
-    private boolean forceDemote(CommandSender sender, String[] args) { // 1 argument
-        if (sender.hasPermission("mf.force.demote") || sender.hasPermission("mf.force.*")|| sender.hasPermission("mf.admin")) {
-            if (args.length > 2) {
-                String playerName = args[2];
-                for (OfflinePlayer player : Bukkit.getOfflinePlayers()) {
-                    if (player.getName().equalsIgnoreCase(playerName)) {
-                        for (Faction faction : PersistentData.getInstance().getFactions()) {
-                            if (faction.isOfficer(player.getUniqueId())) {
-                                faction.removeOfficer(player.getUniqueId());
-
-                                if (player.isOnline()) {
-                                    Bukkit.getPlayer(player.getUniqueId()).sendMessage(ChatColor.AQUA + LocaleManager.getInstance().getText("AlertForcedDemotion"));
-                                }
-                            }
-                        }
-                    }
-                }
-
-                sender.sendMessage(ChatColor.GREEN + LocaleManager.getInstance().getText("SuccessOfficerRemoval"));
-                return true;
-            }
-            else {
-                sender.sendMessage(ChatColor.RED + LocaleManager.getInstance().getText("UsageForceDemote"));
-                return false;
-            }
-        }
-        else {
-            sender.sendMessage(ChatColor.RED + String.format(LocaleManager.getInstance().getText("PermissionNeeded"), "mf.force.demote"));
-            return false;
-        }
+    private void forceSave(CommandSender sender, String[] args) {
+        if (!(checkPermissions(sender, "mf.force.save", "mf.force.*", "mf.admin"))) return;
+        sender.sendMessage(translate("&a" + getText("AlertForcedSave")));
+        StorageManager.getInstance().save();
     }
 
-    private boolean forceJoin(CommandSender sender, String[] args) { // 2 arguments
-        if (sender.hasPermission("mf.force.join") || sender.hasPermission("mf.force.*")|| sender.hasPermission("mf.admin")) {
-
-            if (args.length >= 4) {
-
-                // get arguments designated by single quotes
-                ArrayList<String> singleQuoteArgs = ArgumentParser.getInstance().getArgumentsInsideSingleQuotes(args);
-
-                if (singleQuoteArgs.size() < 2) {
-                    sender.sendMessage(ChatColor.RED + LocaleManager.getInstance().getText("NotEnoughArgumentsDesignatedSingleQuotesRequired"));
-                    return false;
-                }
-
-                String playerName = singleQuoteArgs.get(0);
-                String factionName = singleQuoteArgs.get(1);
-
-                Faction faction = PersistentData.getInstance().getFaction(factionName);
-
-                for (OfflinePlayer player : Bukkit.getOfflinePlayers()) {
-                    if (player.getName().equalsIgnoreCase(playerName)) {
-
-                        if (faction != null) {
-                            if (!(PersistentData.getInstance().isInFaction(player.getUniqueId()))) {
-                                faction.addMember(player.getUniqueId(), PersistentData.getInstance().getPlayersPowerRecord(player.getUniqueId()).getPowerLevel());
-                                try {
-                                    Messenger.getInstance().sendAllPlayersInFactionMessage(faction, ChatColor.GREEN + String.format(LocaleManager.getInstance().getText("HasJoined"), player.getName(), faction.getName()));
-                                } catch (Exception ignored) {
-
-                                }
-                                if (player.isOnline()) {
-                                    Bukkit.getPlayer(player.getUniqueId()).sendMessage(ChatColor.AQUA + LocaleManager.getInstance().getText("AlertForcedToJoinFaction"));
-                                }
-                                sender.sendMessage(ChatColor.GREEN + LocaleManager.getInstance().getText("SuccessForceJoin"));
-                                return true;
-                            }
-                            else {
-                                sender.sendMessage(ChatColor.RED + LocaleManager.getInstance().getText("PlayerAlreadyInFaction"));
-                                return false;
-                            }
-                        }
-                        else {
-                            sender.sendMessage(ChatColor.RED + LocaleManager.getInstance().getText("FactionNotFound"));
-                            return false;
-                        }
-                    }
-                }
-                sender.sendMessage(ChatColor.RED + LocaleManager.getInstance().getText("PlayerNotFound"));
-                return false;
-            }
-
-            // send usage
-            sender.sendMessage(ChatColor.RED + LocaleManager.getInstance().getText("UsageForceJoin"));
-            return false;
-        }
-        else {
-            sender.sendMessage(ChatColor.RED + String.format(LocaleManager.getInstance().getText("PermissionNeeded"), "mf.force.join"));
-            return false;
-        }
+    private void forceLoad(CommandSender sender, String[] args) {
+        if (!(checkPermissions(sender, "mf.force.load", "mf.force.*", "mf.admin"))) return;
+        sender.sendMessage(translate("&a" + LocaleManager.getInstance().getText("AlertForcedLoad")));
+        StorageManager.getInstance().load();
+        MedievalFactions.getInstance().reloadConfig();
     }
 
-    private boolean forceKick(CommandSender sender, String[] args) { // 1 argument
-        if (sender.hasPermission("mf.force.kick") || sender.hasPermission("mf.force.*")|| sender.hasPermission("mf.admin")) {
-            if (args.length > 2) {
-                String playerName = args[2];
-                for (OfflinePlayer player : Bukkit.getOfflinePlayers()) {
-                    if (player.getName().equalsIgnoreCase(playerName)) {
-                        for (Faction faction : PersistentData.getInstance().getFactions()) {
-                            if (faction.isOwner(player.getUniqueId())) {
-                                sender.sendMessage(ChatColor.RED + LocaleManager.getInstance().getText("CannotForciblyKickOwner"));
-                                return false;
-                            }
-
-                            if (faction.isMember(player.getUniqueId())) {
-                                faction.removeMember(player.getUniqueId(), PersistentData.getInstance().getPlayersPowerRecord(player.getUniqueId()).getPowerLevel());
-
-                                if (player.isOnline()) {
-                                    Bukkit.getPlayer(player.getUniqueId()).sendMessage(ChatColor.AQUA + LocaleManager.getInstance().getText("AlertForcedKick"));
-                                }
-
-                                if (faction.isOfficer(player.getUniqueId())) {
-                                    faction.removeOfficer(player.getUniqueId());
-                                }
-                            }
-                        }
-                    }
-                }
-
-                sender.sendMessage(ChatColor.GREEN + LocaleManager.getInstance().getText("SuccessFactionMemberRemoval"));
-                return true;
-            }
-            else {
-                sender.sendMessage(ChatColor.RED + LocaleManager.getInstance().getText("UsageForceKick"));
-                return false;
-            }
+    private void forcePeace(CommandSender sender, String[] args) {
+        if (!(checkPermissions(sender, "mf.force.peace", "mf.force.*", "mf.admin"))) return;
+        if (!(args.length >= 3)) {
+            sender.sendMessage(translate("&c" + getText("UsageForcePeace")));
+            return;
         }
-        else {
-            sender.sendMessage(ChatColor.RED + String.format(LocaleManager.getInstance().getText("PermissionNeeded"), "mf.force.kick"));
-            return false;
-        }
-    }
-
-    public boolean forcePower(CommandSender sender, String[] args) {
-        if (sender.hasPermission("mf.force.power") || sender.hasPermission("mf.force.*") || sender.hasPermission("mf.admin")) {
-
-            if (args.length >= 4) {
-
-                // get arguments designated by single quotes
-                ArrayList<String> singleQuoteArgs = ArgumentParser.getInstance().getArgumentsInsideSingleQuotes(args);
-
-                if (singleQuoteArgs.size() < 2) {
-                    sender.sendMessage(ChatColor.RED + LocaleManager.getInstance().getText("PlayerAndDesiredPowerSingleQuotesRequirement"));
-                    return false;
-                }
-
-                String player = singleQuoteArgs.get(0);
-                int desiredPower = -1;
-
-                try {
-                    desiredPower = Integer.parseInt(singleQuoteArgs.get(1));
-                } catch (Exception e) {
-                    sender.sendMessage(ChatColor.RED + LocaleManager.getInstance().getText("DesiredPowerMustBeANumber"));
-                    return false;
-                }
-
-                PlayerPowerRecord record = PersistentData.getInstance().getPlayersPowerRecord(UUIDChecker.getInstance().findUUIDBasedOnPlayerName(player));
-
-                record.setPowerLevel(desiredPower);
-                sender.sendMessage(ChatColor.GREEN + String.format(LocaleManager.getInstance().getText("PowerLevelHasBeenSetTo"), desiredPower));
-                return true;
-            }
-
-            // send usage
-            sender.sendMessage(ChatColor.RED + LocaleManager.getInstance().getText("UsageForcePower"));
-            return false;
-        } else {
-            sender.sendMessage(ChatColor.RED + String.format(LocaleManager.getInstance().getText("PermissionNeeded"), "mf.force.power"));
-            return false;
-        }
-    }
-
-    private boolean renounceVassalAndLiegeRelationships(CommandSender sender, String[] args) {
-
-        if (sender.hasPermission("mf.force.renounce") || sender.hasPermission("mf.force.*") || sender.hasPermission("mf.admin")) {
-
-            if (args.length < 2) {
-                sender.sendMessage(ChatColor.RED + LocaleManager.getInstance().getText("UsageForceRenounce"));
-                return false;
-            }
-
-            ArrayList<String> singleQuoteArgs = ArgumentParser.getInstance().getArgumentsInsideSingleQuotes(args);
-
-            // single quote args length check
-            if (singleQuoteArgs.size() != 1) {
-                sender.sendMessage(ChatColor.RED + LocaleManager.getInstance().getText("FactionMustBeDesignatedInsideSingleQuotes"));
-                return false;
-            }
-
-            String factionName = singleQuoteArgs.get(0);
-
-            int numReferences = 0;
-
-            for (Faction f : PersistentData.getInstance().getFactions()) {
-                // remove liege and vassal references associated with this faction
-                if (f.isLiege(factionName)) {
-                    f.setLiege("none");
-                    numReferences++;
-                }
-                if (f.isVassal(factionName)) {
-                    f.removeVassal(factionName);
-                    numReferences++;
-                }
-            }
-
-            Faction faction = PersistentData.getInstance().getFaction(factionName);
-
-            if (faction != null) {
-                if (!faction.getLiege().equalsIgnoreCase("none")) {
-                    faction.setLiege("none");
-                    numReferences++;
-                }
-                if (faction.getNumVassals() != 0) {
-                    numReferences = numReferences + faction.getNumVassals();
-                    faction.clearVassals();
-                }
-
-            }
-
-            if (numReferences != 0) {
-                sender.sendMessage(ChatColor.GREEN + "" + numReferences + LocaleManager.getInstance().getText("SuccessReferencesRemoved")); // TODO: use String.format() here
-                return true;
-            }
-            else {
-                sender.sendMessage(ChatColor.GREEN + LocaleManager.getInstance().getText("NoVassalOrLiegeReferences"));
-                return false;
-            }
-
-
-        }
-        else {
-            sender.sendMessage(ChatColor.RED + String.format(LocaleManager.getInstance().getText("PermissionNeeded"), "mf.force.renounce"));
-            return false;
-        }
-
-    }
-
-    public boolean forceTransfer(CommandSender sender, String[] args) {
-
-        if (sender.hasPermission("mf.force.transfer") || sender.hasPermission("mf.force.*") || sender.hasPermission("mf.admin")) {
-
-            if (args.length >= 4) {
-
-                // get arguments designated by single quotes
-                ArrayList<String> singleQuoteArgs = ArgumentParser.getInstance().getArgumentsInsideSingleQuotes(args);
-
-                if (singleQuoteArgs.size() < 2) {
-                    sender.sendMessage(ChatColor.RED + LocaleManager.getInstance().getText("FactionAndPlayerSingleQuotesRequirement"));
-                    return false;
-                }
-
-                String factionName = singleQuoteArgs.get(0);
-                String playerName = singleQuoteArgs.get(1);
-
-                Faction faction = PersistentData.getInstance().getFaction(factionName);
-
-                if (faction == null) {
-                    sender.sendMessage(ChatColor.RED + LocaleManager.getInstance().getText("FactionNotFound"));
-                    return false;
-                }
-
-                UUID uuid = UUIDChecker.getInstance().findUUIDBasedOnPlayerName(playerName);
-
-                if (uuid == null) {
-                    sender.sendMessage(ChatColor.RED + LocaleManager.getInstance().getText("PlayerNotFound"));
-                    return false;
-                }
-
-                if (faction.isOwner(uuid)) {
-                    sender.sendMessage(ChatColor.RED + LocaleManager.getInstance().getText("AlertPlayerAlreadyOwner"));
-                    return false;
-                }
-
-                if (!faction.isMember(uuid)) {
-                    sender.sendMessage(ChatColor.RED + LocaleManager.getInstance().getText("AlertPlayerNotInFaction"));
-                    return false;
-                }
-
-                if (faction.isOfficer(uuid)) {
-                    faction.removeOfficer(uuid);
-                }
-
-                faction.setOwner(uuid);
-
-                try {
-                    Player target = getServer().getPlayer(playerName);
-                    target.sendMessage(ChatColor.GREEN + String.format(LocaleManager.getInstance().getText("OwnershipTransferred"), faction.getName()));
-                }
-                catch(Exception ignored) {
-
-                }
-
-                sender.sendMessage(ChatColor.GREEN + String.format(LocaleManager.getInstance().getText("OwnerShipTransferredTo"), playerName));
-                return true;
-            }
-
-            // send usage
-            sender.sendMessage(ChatColor.RED + LocaleManager.getInstance().getText("UsageForceTransfer"));
-            return false;
-        } else {
-            sender.sendMessage(ChatColor.RED + String.format(LocaleManager.getInstance().getText("PermissionNeeded"), "mf.force.transfer"));
-            return false;
-        }
-
-    }
-
-    public boolean forceRemoveVassal(CommandSender sender, String[] args) {
-        if (!sender.hasPermission("mf.force.removevassal") && !sender.hasPermission("mf.force.*") && !sender.hasPermission("mf.admin")) {
-            sender.sendMessage(ChatColor.RED + String.format(LocaleManager.getInstance().getText("PermissionNeeded"), "mf.force.removevassal"));
-            return false;
-        }
-
-        if (args.length < 4) {
-            // send usage
-            sender.sendMessage(ChatColor.RED + LocaleManager.getInstance().getText("UsageForceRemoveVassal"));
-            return false;
-        }
-
         // get arguments designated by single quotes
-        ArrayList<String> singleQuoteArgs = ArgumentParser.getInstance().getArgumentsInsideSingleQuotes(args);
-
+        final ArrayList<String> singleQuoteArgs = parser.getArgumentsInsideSingleQuotes(args);
         if (singleQuoteArgs.size() < 2) {
-            sender.sendMessage(ChatColor.RED + LocaleManager.getInstance().getText("FactionAndVassalSingleQuotesRequirement"));
-            return false;
+            sender.sendMessage(translate("&c" + getText("NoFactionsDesignatedSingleQuotesRequired")));
+            return;
+        }
+        final Faction former = PersistentData.getInstance().getFaction(singleQuoteArgs.get(0));
+        final Faction latter = PersistentData.getInstance().getFaction(singleQuoteArgs.get(1));
+        if (former == null || latter == null) {
+            sender.sendMessage(translate("&c" + getText("DesignatedFactionNotFound")));
+            return;
+        }
+        if (former.isEnemy(latter.getName())) former.removeEnemy(latter.getName()); // Remove
+        if (latter.isEnemy(former.getName())) latter.removeEnemy(former.getName()); // Remove
+        // announce peace to all players on server.
+        messageServer(translate(
+                "&a" + getText("AlertNowAtPeaceWith", former.getName(), latter.getName())
+        ));
+    }
+
+    private void forceDemote(CommandSender sender, String[] args) {
+        if (!(checkPermissions(sender, "mf.force.demote", "mf.force.*", "mf.admin"))) return;
+        if (!(args.length > 1)) {
+            sender.sendMessage(translate("&c" + getText("UsageForceDemote")));
+            return;
+        }
+        final UUID playerUUID = UUIDChecker.getInstance().findUUIDBasedOnPlayerName(args[1]);
+        if (playerUUID == null) {
+            sender.sendMessage(translate("&c" + getText("PlayerNotFound")));
+            return;
+        }
+        final OfflinePlayer player = Bukkit.getOfflinePlayer(playerUUID);
+        if (!player.hasPlayedBefore()) {
+            sender.sendMessage(translate("&c" + getText("PlayerNotFound")));
+            return;
+        }
+        final Faction faction = getPlayerFaction(player);
+        if (!faction.isOfficer(player.getUniqueId())) {
+            sender.sendMessage(translate("&c" + getText("PlayerIsNotOfficerOfFaction")));
+            return;
+        }
+        faction.removeOfficer(player.getUniqueId()); // Remove Officer.
+        if (player.isOnline() && player.getPlayer() != null) {
+            player.getPlayer().sendMessage(translate("&b" + getText("AlertForcedDemotion")));
+        }
+        sender.sendMessage(translate("&a" + getText("SuccessOfficerRemoval")));
+    }
+
+    private void forceJoin(CommandSender sender, String[] args) {
+        if (!(checkPermissions(sender, "mf.force.join", "mf.force.*", "mf.admin"))) return;
+        if (!(args.length >= 3)) {
+            sender.sendMessage(translate("&c" + getText("UsageForceJoin")));
+            return;
+        }
+        // get arguments designated by single quotes
+        final ArrayList<String> singleQuoteArgs = parser.getArgumentsInsideSingleQuotes(args);
+        if (singleQuoteArgs.size() < 2) {
+            sender.sendMessage(translate("&c" + getText("NotEnoughArgumentsDesignatedSingleQuotesRequired")));
+            return;
+        }
+        final Faction faction = getFaction(singleQuoteArgs.get(1));
+        if (faction == null) {
+            sender.sendMessage(translate("&c" + getText("FactionNotFound")));
+            return;
+        }
+        final UUID playerUUID = UUIDChecker.getInstance().findUUIDBasedOnPlayerName(singleQuoteArgs.get(0));
+        if (playerUUID == null) {
+            sender.sendMessage(translate("&c" + getText("PlayerNotFound")));
+            return;
+        }
+        final OfflinePlayer player = Bukkit.getOfflinePlayer(playerUUID);
+        if (!player.hasPlayedBefore()) {
+            sender.sendMessage(translate("&c" + getText("PlayerNotFound")));
+            return;
+        }
+        if (data.isInFaction(playerUUID)) {
+            sender.sendMessage(translate("&c" + getText("PlayerAlreadyInFaction")));
+            return;
+        }
+        faction.addMember(playerUUID, data.getPlayersPowerRecord(player.getUniqueId()).getPowerLevel());
+        messageFaction(faction, translate("&a" + getText("HasJoined", player.getName(), faction.getName())));
+        if (player.isOnline() && player.getPlayer() != null) {
+            player.getPlayer().sendMessage(translate("&b" + getText("AlertForcedToJoinFaction")));
+        }
+        sender.sendMessage(translate("&a" + getText("SuccessForceJoin")));
+    }
+
+    private void forceKick(CommandSender sender, String[] args) {
+        if (!(checkPermissions(sender, "mf.force.kick", "mf.force.*", "mf.admin"))) return;
+        if (!(args.length > 1)) {
+            sender.sendMessage(translate("&c" + getText("UsageForceKick")));
+            return;
+        }
+        final UUID playerUUID = UUIDChecker.getInstance().findUUIDBasedOnPlayerName(args[0]);
+        if (playerUUID == null) {
+            sender.sendMessage(translate("&c" + getText("PlayerNotFound")));
+            return;
+        }
+        final OfflinePlayer player = Bukkit.getOfflinePlayer(playerUUID);
+        if (!player.hasPlayedBefore()) {
+            sender.sendMessage(translate("&c" + getText("PlayerNotFound")));
+            return;
+        }
+        final Faction faction = getPlayerFaction(player);
+        if (faction == null) {
+            sender.sendMessage(translate("&c" + getText("FactionNotFound")));
+            return;
+        }
+        if (faction.isOwner(playerUUID)) {
+            sender.sendMessage(translate("&c" + getText("CannotForciblyKickOwner")));
+            return;
+        }
+        faction.removeMember(playerUUID, data.getPlayersPowerRecord(playerUUID).getPowerLevel());
+        if (player.isOnline() && player.getPlayer() != null) {
+            player.getPlayer().sendMessage(translate("&b" + getText("AlertForcedKick")));
+        }
+        if (faction.isOfficer(playerUUID)) faction.removeOfficer(playerUUID); // Remove Officer (if they are one).
+        sender.sendMessage(translate("&a" + getText("SuccessFactionMemberRemoval")));
+    }
+
+    private void forcePower(CommandSender sender, String[] args) {
+        if (!(checkPermissions(sender, "mf.force.power", "mf.force.*", "mf.admin"))) return;
+        if (!(args.length >= 3)) {
+            sender.sendMessage(translate("&c" + getText("UsageForcePower")));
+            return;
+        }
+        // get arguments designated by single quotes
+        final ArrayList<String> singleQuoteArgs = parser.getArgumentsInsideSingleQuotes(args);
+        if (singleQuoteArgs.size() < 2) {
+            sender.sendMessage(translate("&c" + getText("PlayerAndDesiredPowerSingleQuotesRequirement")));
+            return;
+        }
+        final UUID playerUUID = UUIDChecker.getInstance().findUUIDBasedOnPlayerName(singleQuoteArgs.get(0));
+        final int desiredPower = getIntSafe(singleQuoteArgs.get(1), Integer.MIN_VALUE);
+        if (desiredPower == Integer.MIN_VALUE) {
+            sender.sendMessage(translate("&c" + getText("DesiredPowerMustBeANumber")));
+            return;
+        }
+        final PlayerPowerRecord record = data.getPlayersPowerRecord(playerUUID);
+        record.setPowerLevel(desiredPower); // Set power :)
+        sender.sendMessage(translate("&a" + getText("PowerLevelHasBeenSetTo", desiredPower)));
+    }
+
+    private void forceRenounce(CommandSender sender, String[] args) {
+        if (!(checkPermissions(sender, "mf.force.renounce", "mf.force.*", "mf.admin"))) return;
+        if (args.length < 2) {
+            sender.sendMessage(translate("&c" + getText("UsageForceRenounce")));
+            return;
+        }
+        final ArrayList<String> singleQuoteArgs = parser.getArgumentsInsideSingleQuotes(args);
+        // single quote args length check
+        if (singleQuoteArgs.size() != 1) {
+            sender.sendMessage(translate("&c" + getText("FactionMustBeDesignatedInsideSingleQuotes")));
+            return;
+        }
+        final String factionName = singleQuoteArgs.get(0);
+        final Faction faction = getFaction(factionName);
+        if (faction == null) {
+            sender.sendMessage(translate("&c" + getText("FactionNotFound")));
+            return;
         }
 
-        String liegeName = singleQuoteArgs.get(0);
-        String vassalName = singleQuoteArgs.get(1);
+        long changes = data.getFactions().stream()
+                .filter(f -> f.isLiege(factionName) || f.isVassal(factionName))
+                .count(); // Count changes
 
-        Faction liege = PersistentData.getInstance().getFaction(liegeName);
-        Faction vassal = PersistentData.getInstance().getFaction(vassalName);
-
-        // remove vassal from liege
-        if (liege != null) {
-            if (liege.isVassal(vassalName)) {
-                liege.removeVassal(vassalName);
-            }
+        data.getFactions().stream().filter(f -> f.isLiege(factionName)).forEach(f -> f.setLiege("none"));
+        data.getFactions().stream().filter(f -> f.isVassal(factionName)).forEach(Faction::clearVassals);
+        if (!faction.getLiege().equalsIgnoreCase("none")) {
+            faction.setLiege("none");
+            changes++;
         }
-
-        // set liege to "none" for vassal (if faction exists)
-        if (vassal != null) {
-            if (vassal.isLiege(liegeName)) {
-                vassal.setLiege("none");
-            }
+        if (faction.getNumVassals() != 0) {
+            changes = changes + faction.getNumVassals();
+            faction.clearVassals();
         }
+        if (changes == 0) sender.sendMessage(translate("&a" + getText("NoVassalOrLiegeReferences")));
+        else sender.sendMessage(translate("&a" + getText("SuccessReferencesRemoved")));
+    }
 
-        sender.sendMessage(ChatColor.GREEN + LocaleManager.getInstance().getText("Done"));
-        return true;
+    private void forceTransfer(CommandSender sender, String[] args) {
+        if (!(checkPermissions(sender, "mf.force.transfer", "mf.force.*", "mf.admin"))) return;
+        if (!(args.length >= 3)) {
+            sender.sendMessage(translate("&c" + getText("UsageForceTransfer")));
+            return;
+        }
+        // get arguments designated by single quotes
+        final ArrayList<String> singleQuoteArgs = parser.getArgumentsInsideSingleQuotes(args);
+        if (singleQuoteArgs.size() < 2) {
+            sender.sendMessage(translate("&c" + getText("FactionAndPlayerSingleQuotesRequirement")));
+            return;
+        }
+        final Faction faction = PersistentData.getInstance().getFaction(singleQuoteArgs.get(0));
+        if (faction == null) {
+            sender.sendMessage(translate("&c" + getText("FactionNotFound")));
+            return;
+        }
+        final UUID playerUUID = UUIDChecker.getInstance().findUUIDBasedOnPlayerName(singleQuoteArgs.get(1));
+        if (playerUUID == null) {
+            sender.sendMessage(translate("&c" + getText("PlayerNotFound")));
+            return;
+        }
+        final OfflinePlayer player = Bukkit.getOfflinePlayer(playerUUID);
+        if (!player.hasPlayedBefore()) {
+            sender.sendMessage(translate("&c" + getText("PlayerNotFound")));
+            return;
+        }
+        if (faction.isOwner(playerUUID)) {
+            sender.sendMessage(translate("&c" + getText("AlertPlayerAlreadyOwner")));
+            return;
+        }
+        if (!faction.isMember(playerUUID)) {
+            sender.sendMessage(translate("&c" + getText("AlertPlayerNotInFaction")));
+            return;
+        }
+        if (faction.isOfficer(playerUUID)) faction.removeOfficer(playerUUID); // Remove Officer.
+        faction.setOwner(playerUUID);
+
+        if (player.isOnline() && player.getPlayer() != null) {
+            player.getPlayer().sendMessage(translate("&a" + getText("OwnershipTransferred", faction.getName())));
+        }
+        sender.sendMessage(translate("&a" + getText("OwnerShipTransferredTo", player.getName())));
+    }
+
+    private void forceRemoveVassal(CommandSender sender, String[] args) {
+        if (!(checkPermissions(sender, "mf.force.removevassal", "mf.force.*", "mf.admin"))) return;
+        if (args.length < 3) {
+            sender.sendMessage(translate("&c" + getText("UsageForceRemoveVassal")));
+            return;
+        }
+        // get arguments designated by single quotes
+        final ArrayList<String> singleQuoteArgs = parser.getArgumentsInsideSingleQuotes(args);
+        if (singleQuoteArgs.size() < 2) {
+            sender.sendMessage(translate("&c" + getText("FactionAndVassalSingleQuotesRequirement")));
+            return;
+        }
+        final Faction liege = getFaction(singleQuoteArgs.get(0));
+        final Faction vassal = getFaction(singleQuoteArgs.get(1));
+        if (liege != null && vassal != null) {
+            // remove vassal from liege
+            if (liege.isVassal(vassal.getName())) liege.removeVassal(vassal.getName());
+            // set liege to "none" for vassal (if faction exists)
+            if (vassal.isLiege(liege.getName())) vassal.setLiege("none");
+        }
+        sender.sendMessage(translate("&a" + getText("Done")));
     }
 
 }

@@ -18,9 +18,7 @@ public class PersistentData {
     public ArrayList<PlayerActivityRecord> playerActivityRecords = new ArrayList<>();
     public ArrayList<LockedBlock> lockedBlocks = new ArrayList<>();
 
-    private PersistentData() {
-
-    }
+    private PersistentData() {}
 
     public static PersistentData getInstance() {
         if (instance == null) {

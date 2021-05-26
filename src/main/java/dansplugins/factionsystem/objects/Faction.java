@@ -636,4 +636,28 @@ public class Faction {
     public boolean isWeakened() {
         return calculateCumulativePowerLevelWithoutVassalContribution() < (getMaximumCumulativePowerLevel() / 2);
     }
+
+    /**
+     * Method to automatically handle all data changes when a Faction changes their name.
+     * @param oldName of the Faction (dependent).
+     * @param newName of the Faction (dependent).
+     */
+    public void updateData(String oldName, String newName) {
+        if (isAlly(oldName)) {
+            removeAlly(oldName);
+            addAlly(newName);
+        }
+        if (isEnemy(oldName)) {
+            removeEnemy(oldName);
+            addEnemy(newName);
+        }
+        if (isLiege(oldName)) {
+            setLiege(newName);
+        }
+        if (isVassal(oldName)) {
+            removeVassal(oldName);
+            addVassal(newName);
+        }
+    }
+
 }

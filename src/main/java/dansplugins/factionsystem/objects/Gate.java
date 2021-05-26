@@ -14,7 +14,15 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class Gate {
-	
+
+	public Gate(String name) {
+		setName(name);
+	}
+
+	public Gate() {
+		// Default Constructor
+	}
+
 	private class GateJson {
 		public String name;
 		public String factionName;
@@ -29,7 +37,7 @@ public class Gate {
 
 	private String name = "gateName";
 	private String factionName = "";
-	private boolean open = false;	
+	private boolean open = false;
 	private boolean vertical = true;
 	private GateCoord coord1 = null;
 	private GateCoord coord2 = null;
@@ -37,7 +45,7 @@ public class Gate {
 	private Material material = Material.IRON_BARS;
 	private World _world = null;
 	private String world = "";
-	
+
 	public World getWorld()
 	{
 		if (_world != null)
@@ -52,14 +60,14 @@ public class Gate {
 		world = worldName;
 		_world = null;
 	}
-	
+
 	private Sound soundEffect = Sound.BLOCK_ANVIL_HIT;
-	
+
 	private enum GateStatus { READY, OPENING, CLOSING };
 	private GateStatus gateStatus = GateStatus.READY;
-	
+
 	public enum ErrorCodeAddCoord { None, WorldMismatch, MaterialMismatch, NoCuboids, Oversized, LessThanThreeHigh }
-	
+
     public Map<String, String> save() {
         Gson gson = new GsonBuilder().setPrettyPrinting().create();;
         Map<String, String> saveMap = new HashMap<>();
@@ -76,11 +84,11 @@ public class Gate {
 
         return saveMap;
     }
-    
+
 
     public static Gate load(String jsonData) {
 //    	System.out.println("Gate Load");
-    	
+
         Gson gson = new GsonBuilder().setPrettyPrinting().create();;
 
         Gate newGate = new Gate();
@@ -88,7 +96,7 @@ public class Gate {
         try
         {
 	        GateJson data = gson.fromJson(jsonData, GateJson.class);
-	        
+
 	        newGate.world = data.world;
 	        newGate.coord1 = new GateCoord();
 	        newGate.coord1 = GateCoord.fromString(data.coord1);
@@ -104,10 +112,10 @@ public class Gate {
         {
         	System.out.println("ERROR: Could not load faction gate.\n");
         }
-        
+
         return newGate;
     }
-	
+
 	public boolean isIntersecting(Gate gate)
 	{
 		boolean xoverlap = coord2.getX() > gate.coord1.getX() && coord1.getX() < coord2.getX();
@@ -115,7 +123,7 @@ public class Gate {
 		boolean zoverlap = coord2.getZ() > gate.coord1.getZ() && coord1.getZ() < coord2.getZ();
 		return xoverlap && yoverlap && zoverlap;
 	}
-	
+
 	public int getTopLeftX()
 	{
 		if (coord1 != null && coord2 != null)
@@ -124,7 +132,7 @@ public class Gate {
 		}
 		return 0;
 	}
-	
+
 	public int getTopLeftY()
 	{
 		if (coord1 != null && coord2 != null)
@@ -133,7 +141,7 @@ public class Gate {
 		}
 		return 0;
 	}
-	
+
 	public int getTopLeftZ()
 	{
 		if (coord1 != null && coord2 != null)
@@ -142,7 +150,7 @@ public class Gate {
 		}
 		return 0;
 	}
-	
+
 	public int getBottomRightX()
 	{
 		if (coord1 != null && coord2 != null)
@@ -151,7 +159,7 @@ public class Gate {
 		}
 		return 0;
 	}
-	
+
 	public int getBottomRightY()
 	{
 		if (coord1 != null && coord2 != null)
@@ -160,7 +168,7 @@ public class Gate {
 		}
 		return 0;
 	}
-	
+
 	public int getBottomRightZ()
 	{
 		if (coord1 != null && coord2 != null)
@@ -169,7 +177,7 @@ public class Gate {
 		}
 		return 0;
 	}
-	
+
 	public int getTopLeftChunkX()
 	{
 		if (coord1 != null && coord2 != null)
@@ -178,7 +186,7 @@ public class Gate {
 		}
 		return 0;
 	}
-	
+
 	public int getTopLeftChunkZ()
 	{
 		if (coord1 != null && coord2 != null)
@@ -187,7 +195,7 @@ public class Gate {
 		}
 		return 0;
 	}
-	
+
 	public int getBottomRightChunkX()
 	{
 		if (coord1 != null && coord2 != null)
@@ -205,7 +213,7 @@ public class Gate {
 		}
 		return 0;
 	}
-	
+
 	public String getName()
 	{
 		return name;
@@ -214,42 +222,42 @@ public class Gate {
 	{
 		name = value;
 	}
-	
+
 	public boolean isOpen()
 	{
 		return open ? true : false;
 	}
-	
+
 	public boolean isReady()
 	{
-		return gateStatus.equals(GateStatus.READY); 
+		return gateStatus.equals(GateStatus.READY);
 	}
-	
+
 	public boolean isClosed()
 	{
 		return open ? false : true;
 	}
-	
+
 	public String getStatus()
 	{
 		return gateStatus.toString().substring(0,1).toUpperCase() + gateStatus.toString().substring(1).toLowerCase();
 	}
-	
+
 	public GateCoord getTrigger()
 	{
 		return trigger;
 	}
-	
+
 	public GateCoord getCoord1()
 	{
 		return coord1;
 	}
-	
+
 	public GateCoord getCoord2()
 	{
 		return coord2;
 	}
-	
+
 	public boolean isParallelToZ()
 	{
 		if (coord1 != null && coord2 != null)
@@ -286,7 +294,7 @@ public class Gate {
 			return false;
 		}
 	}
-	
+
 	public ArrayList<Block> GateBlocks()
 	{
 		ArrayList<Block> blocks = new ArrayList<Block>();
@@ -302,7 +310,7 @@ public class Gate {
 		}
 		return blocks;
 	}
-	
+
 	public boolean gateBlocksMatch(Material mat)
 	{
 		int topY = coord1.getY();
@@ -312,7 +320,7 @@ public class Gate {
 			topY = coord2.getY();
 			bottomY = coord1.getY();
 		}
-		
+
 		int leftX = coord1.getX();
 		int rightX = coord2.getX();
 		if (coord2.getX() < coord1.getX())
@@ -328,7 +336,7 @@ public class Gate {
 			leftZ = coord2.getZ();
 			rightZ = coord1.getZ();
 		}
-		
+
 		if (isParallelToZ())
 		{
 			rightX++;
@@ -337,7 +345,7 @@ public class Gate {
 		{
 			rightZ++;
 		}
-		
+
 		for (int y = topY; y > bottomY; y--)
 		{
 			for (int z = leftZ; z < rightZ; z++)
@@ -353,14 +361,14 @@ public class Gate {
 		}
 		return true;
 	}
-	
+
 	public ErrorCodeAddCoord addCoord(Block clickedBlock)
 	{
 		if (coord1 == null)
 		{
 			setWorld(clickedBlock.getWorld().getName());
 			coord1 = new GateCoord(clickedBlock);
-			material = clickedBlock.getType(); 
+			material = clickedBlock.getType();
 		}
 		else if (coord2 == null)
 		{
@@ -371,7 +379,7 @@ public class Gate {
 			if (!clickedBlock.getType().equals(material))
 			{
 				return ErrorCodeAddCoord.MaterialMismatch;
-			}		
+			}
 			// GetDim methods use coord2 object.
 			coord2 = new GateCoord(clickedBlock);
 			if (getDimX() > 1 && getDimY() > 1 && getDimZ() > 1)
@@ -398,7 +406,7 @@ public class Gate {
 			{
 				vertical = false;
 			}
-			
+
 			int area = 0;
 			if (vertical)
 			{
@@ -440,7 +448,7 @@ public class Gate {
 		}
 		return ErrorCodeAddCoord.None;
 	}
-	
+
 	public int getDimX()
 	{
 		return getDimX(coord1, coord2);
@@ -453,7 +461,7 @@ public class Gate {
 	{
 		return getDimZ(coord1, coord2);
 	}
-	
+
 	public int getDimX(GateCoord first, GateCoord second)
 	{
 		GateCoord tmp;
@@ -487,7 +495,7 @@ public class Gate {
 		}
 		return second.getZ() - first.getZ();
 	}
-	
+
 	public void openGate()
 	{
 		if (open || !gateStatus.equals(GateStatus.READY))
@@ -507,7 +515,7 @@ public class Gate {
 					_bottomY = coord1.getY();
 				}
 				final int bottomY = _bottomY;
-				
+
 				int _leftX = coord1.getX();
 				int _rightX = coord2.getX();
 				if (coord2.getX() < coord1.getX())
@@ -515,10 +523,10 @@ public class Gate {
 					_leftX = coord2.getX();
 					_rightX = coord1.getX();
 				}
-	
+
 				final int leftX = _leftX;
 				final int rightX = _rightX;
-				
+
 				int c = 0;
 				for (int y = bottomY; y <= topY; y++)
 				{
@@ -563,10 +571,10 @@ public class Gate {
 					_leftZ = coord2.getZ();
 					_rightZ = coord1.getZ();
 				}
-	
+
 				final int leftZ = _leftZ;
 				final int rightZ = _rightZ;
-				
+
 				int c = 0;
 				for (int y = bottomY; y <= topY; y++)
 				{
@@ -595,20 +603,20 @@ public class Gate {
 				}, (topY - bottomY + 2) * 10);
 
 			}
-			
+
 		}
 		else
 		{
 			// TODO: Bridge code iterates over x/z
 		}
 	}
-	
+
 	public void closeGate()
 	{
 
 		if (!open || !gateStatus.equals(GateStatus.READY))
 			return;
-		
+
 		open = false;
 		gateStatus = GateStatus.CLOSING;
 		// For vertical we only need to iterate over x/y
@@ -631,10 +639,10 @@ public class Gate {
 					_leftX = coord2.getX();
 					_rightX = coord1.getX();
 				}
-	
+
 				final int leftX = _leftX;
 				final int rightX = _rightX;
-				
+
 				int c = 0;
 				for (int y = topY; y >= bottomY; y--)
 				{
@@ -674,7 +682,7 @@ public class Gate {
 				final int bottomY = _bottomY;
 				int _leftZ = coord1.getZ();
 				int _rightZ = coord2.getZ();
-	
+
 				if (coord2.getZ() < coord1.getZ())
 				{
 					_leftZ = coord2.getZ();
@@ -682,7 +690,7 @@ public class Gate {
 				}
 				final int leftZ = _leftZ;
 				final int rightZ = _rightZ;
-				
+
 				int c = 0;
 				for (int y = topY; y >= bottomY; y--)
 				{
@@ -717,13 +725,13 @@ public class Gate {
 			// TODO: Bridge code iterates over x/z
 		}
 	}
-	
+
 	public void fillGate()
 	{
 
 		if (!open)
 			return;
-		
+
 		open = false;
 		// For vertical we only need to iterate over x/y
 		if (vertical)
@@ -737,7 +745,7 @@ public class Gate {
 					topY = coord2.getY();
 					bottomY = coord1.getY();
 				}
-				
+
 				int _leftX = coord1.getX();
 				int _rightX = coord2.getX();
 				if (coord2.getX() < coord1.getX())
@@ -745,10 +753,10 @@ public class Gate {
 					_leftX = coord2.getX();
 					_rightX = coord1.getX();
 				}
-	
+
 				final int leftX = _leftX;
 				final int rightX = _rightX;
-				
+
 				for (int y = topY; y >= bottomY; y--)
 				{
 					Block b = null;
@@ -770,10 +778,10 @@ public class Gate {
 					topY = coord2.getY();
 					bottomY = coord1.getY();
 				}
-				
+
 				int _leftZ = coord1.getZ();
 				int _rightZ = coord2.getZ();
-	
+
 				if (coord2.getZ() < coord1.getZ())
 				{
 					_leftZ = coord2.getZ();
@@ -781,7 +789,7 @@ public class Gate {
 				}
 				final int leftZ = _leftZ;
 				final int rightZ = _rightZ;
-				
+
 				for (int y = topY; y >= bottomY; y--)
 				{
 					Block b = null;
@@ -792,7 +800,7 @@ public class Gate {
     				};
 					if (b != null)
 						getWorld().playSound(b.getLocation(), soundEffect, 0.1f, 0.1f);
-				}		
+				}
 			}
 		}
 		else
@@ -800,10 +808,10 @@ public class Gate {
 			// TODO: Bridge code iterates over x/z
 		}
 	}
-	
+
 	public boolean hasBlock(Block targetBlock)
 	{
-		
+
 		int topY = coord1.getY();
 		int bottomY = coord2.getY();
 		if (coord2.getY() > coord1.getY())
@@ -811,7 +819,7 @@ public class Gate {
 			topY = coord2.getY();
 			bottomY = coord1.getY();
 		}
-		
+
 		int _leftZ = coord1.getZ();
 		int _rightZ = coord2.getZ();
 
@@ -822,7 +830,7 @@ public class Gate {
 		}
 		int leftZ = _leftZ;
 		int rightZ = _rightZ;
-		
+
 		int _leftX = coord1.getX();
 		int _rightX = coord2.getX();
 		if (coord2.getX() < coord1.getX())
@@ -841,20 +849,20 @@ public class Gate {
 		{
 			return true;
 		}
-		
+
 		if (trigger.equals(targetBlock))
 		{
 			return true;
 		}
-		
+
 		return false;
 	}
-	
+
 	public String coordsToString()
 	{
 		if (coord1 == null || coord2 == null || trigger == null)
 			return "";
-		
+
 		return String.format("(%d, %d, %d to %d, %d, %d) Trigger (%d, %d, %d)", coord1.getX(), coord1.getY(), coord1.getZ(), coord2.getX(), coord2.getY(), coord2.getZ(),
 				trigger.getX(), trigger.getY(), trigger.getZ());
 	}

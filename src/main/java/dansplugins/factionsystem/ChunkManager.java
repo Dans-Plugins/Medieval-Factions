@@ -377,6 +377,10 @@ public class ChunkManager {
         return counter;
     }
 
+    public ClaimedChunk getClaimedChunk(Chunk chunk, ArrayList<ClaimedChunk> claimedChunks) {
+        return getClaimedChunk(chunk.getX(), chunk.getZ(), chunk.getWorld().getName(), claimedChunks);
+    }
+
     public ClaimedChunk getClaimedChunk(int x, int z, String world, ArrayList<ClaimedChunk> claimedChunks) {
         for (ClaimedChunk claimedChunk : claimedChunks) {
             if (claimedChunk.getCoordinates()[0] == x && claimedChunk.getCoordinates()[1] == z && claimedChunk.getWorld().equalsIgnoreCase(world)) {
