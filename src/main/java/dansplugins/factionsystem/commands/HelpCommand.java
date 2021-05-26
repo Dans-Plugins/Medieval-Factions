@@ -25,7 +25,7 @@ public class HelpCommand extends SubCommand {
         helpPages.put(3, Arrays.asList("Autoclaim", "Promote", "Demote", "Power", "SetHome", "Home", "Who", "Ally", "BreakAlliance"));
         helpPages.put(4, Arrays.asList("Rename", "Lock", "Unlock", "GrantAccess", "CheckAccess", "RevokeAccess", "Laws", "AddLaw", "RemoveLaw"));
         helpPages.put(5, Arrays.asList("EditLaw", "Chat", "Vassalize", "SwearFealty", "DeclareIndependence", "GrantIndependence", "GateCreate", "GateName", "GateList", "GateRemove", "GateCancel"));
-        helpPages.put(6, Arrays.asList("DuelChallenge", "DuelAccept", "DuelCancel", "Prefix", "Bypass", "ConfigShow", "ConfigSet", "Force", "Version", "PowerLevels"));
+        helpPages.put(6, Arrays.asList("DuelChallenge", "DuelAccept", "DuelCancel", "Prefix", "Bypass", "ConfigShow", "ConfigSet", "Force", "Version", "ResetPowerLevels"));
     }
 
     /**
