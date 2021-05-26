@@ -31,7 +31,7 @@ public class ArgumentParser {
     public ArrayList<String> getArgumentsInsideSingleQuotes(String[] args) {
         ArrayList<String> toReturn = new ArrayList<>();
 
-        String argumentString = ArgumentParser.getInstance().createStringFromFirstArgOnwards(args);
+        String argumentString = String.join(" ", args);
 
         int index = 0;
         while (true) {

@@ -32,7 +32,7 @@ public class InvokeCommand extends SubCommand {
         final String permission = "mf.invoke";
         if (!(checkPermissions(player, permission))) return;
         if (args.length < 2) {
-            player.sendMessage("&c" + getText("UsageInvoke"));
+            player.sendMessage(translate("&c" + getText("UsageInvoke")));
             return;
         }
         final ArrayList<String> singleQuoteArgs = parser.getArgumentsInsideSingleQuotes(args);
