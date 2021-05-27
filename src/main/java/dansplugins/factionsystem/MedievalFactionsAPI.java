@@ -3,6 +3,7 @@ package dansplugins.factionsystem;
 import dansplugins.factionsystem.data.EphemeralData;
 import dansplugins.factionsystem.data.PersistentData;
 import dansplugins.factionsystem.utils.ArgumentParser;
+import dansplugins.factionsystem.utils.BlockChecker;
 import dansplugins.factionsystem.utils.UUIDChecker;
 
 import java.util.UUID;
@@ -62,6 +63,8 @@ public class MedievalFactionsAPI {
     public ArgumentParser getArgumentParser() {
         return ArgumentParser.getInstance();
     }
+
+    public BlockChecker getBlockChecker() { return BlockChecker.getInstance(); }
 
     // specific methods
 
