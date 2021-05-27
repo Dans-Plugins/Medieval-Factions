@@ -5,8 +5,11 @@ import dansplugins.factionsystem.data.PersistentData;
 import dansplugins.factionsystem.events.FactionClaimEvent;
 import dansplugins.factionsystem.events.FactionUnclaimEvent;
 import dansplugins.factionsystem.objects.*;
+import dansplugins.factionsystem.utils.BlockChecker;
 import org.bukkit.*;
+import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
+import org.bukkit.event.player.PlayerInteractEvent;
 
 import java.time.ZonedDateTime;
 import java.util.ArrayList;
@@ -14,6 +17,7 @@ import java.util.Iterator;
 import java.util.UUID;
 
 import static org.bukkit.Bukkit.getServer;
+import static org.bukkit.Material.LADDER;
 
 public class ChunkManager {
 
@@ -484,6 +488,159 @@ public class ChunkManager {
                 player.sendMessage(ChatColor.RED + LocaleManager.getInstance().getText("AlertMoreClaimedChunksThanPower"));
             }
         }
+    }
+
+    public void handleClaimedChunkInteraction(PlayerInteractEvent event, ClaimedChunk chunk) {
+        // player not in a faction and isn't overriding
+        if (!PersistentData.getInstance().isInFaction(event.getPlayer().getUniqueId()) && !EphemeralData.getInstance().getAdminsBypassingProtections().contains(event.getPlayer().getUniqueId())) {
+
+            Block block = event.getClickedBlock();
+            if (MedievalFactions.getInstance().getConfig().getBoolean("nonMembersCanInteractWithDoors") && block != null && BlockChecker.getInstance().isDoor(block)) {
+                // allow non-faction members to interact with doors
+                return;
+            }
+
+            event.setCancelled(true);
+        }
+
+        // if player is in faction
+        for (Faction faction : PersistentData.getInstance().getFactions()) {
+            if (faction.isMember(event.getPlayer().getUniqueId())) {
+
+                // if player's faction is not the same as the holder of the chunk and player isn't overriding
+                if (!(faction.getName().equalsIgnoreCase(chunk.getHolder())) && !EphemeralData.getInstance().getAdminsBypassingProtections().contains(event.getPlayer().getUniqueId())) {
+
+                    Block block = event.getClickedBlock();
+                    if (MedievalFactions.getInstance().getConfig().getBoolean("nonMembersCanInteractWithDoors") && block != null && BlockChecker.getInstance().isDoor(block)) {
+                        // allow non-faction members to interact with doors
+                        return;
+                    }
+
+                    // if enemy territory
+                    if (faction.isEnemy(chunk.getHolder())) {
+                        // if not interacting with chest
+                        if (isBlockInteractable(event)) {
+                            // allow placing ladders
+                            if (MedievalFactions.getInstance().getConfig().getBoolean("laddersPlaceableInEnemyFactionTerritory")) {
+                                if (event.getMaterial() == LADDER) {
+                                    return;
+                                }
+                            }
+                            // allow eating
+                            if (materialAllowed(event.getMaterial())) {
+                                return;
+                            }
+                            // allow blocking
+                            if (event.getPlayer().getInventory().getItemInOffHand().getType() == Material.SHIELD) {
+                                return;
+                            }
+                        }
+                    }
+                    boolean inVassalageTree = PersistentData.getInstance().isPlayerInFactionInVassalageTree(event.getPlayer(), PersistentData.getInstance().getFaction(chunk.getHolder()));
+                    boolean isAlly = faction.isAlly(chunk.getHolder());
+                    boolean allyInteractionAllowed = MedievalFactions.getInstance().getConfig().getBoolean("allowAllyInteraction");
+                    boolean vassalageTreeInteractionAllowed = MedievalFactions.getInstance().getConfig().getBoolean("allowVassalageTreeInteraction");
+
+                    boolean allowed = false;
+
+                    if (allyInteractionAllowed && isAlly) {
+                        allowed = true;
+                    }
+
+                    if (vassalageTreeInteractionAllowed && inVassalageTree) {
+                        allowed = true;
+                    }
+
+                    if (!allowed) {
+                        event.setCancelled(true);
+                        return;
+                    }
+                }
+            }
+        }
+    }
+
+    private boolean isBlockInteractable(PlayerInteractEvent event) {
+        if (event.getClickedBlock() != null) {
+            // CHEST
+            if (BlockChecker.getInstance().isChest(event.getClickedBlock())) {
+                return false;
+            }
+            switch(event.getClickedBlock().getType()) {
+                case ACACIA_DOOR:
+                case BIRCH_DOOR:
+                case DARK_OAK_DOOR:
+                case IRON_DOOR:
+                case JUNGLE_DOOR:
+                case OAK_DOOR:
+                case SPRUCE_DOOR:
+                case ACACIA_TRAPDOOR:
+                case BIRCH_TRAPDOOR:
+                case DARK_OAK_TRAPDOOR:
+                case IRON_TRAPDOOR:
+                case JUNGLE_TRAPDOOR:
+                case OAK_TRAPDOOR:
+                case SPRUCE_TRAPDOOR:
+                case ACACIA_FENCE_GATE:
+                case BIRCH_FENCE_GATE:
+                case DARK_OAK_FENCE_GATE:
+                case JUNGLE_FENCE_GATE:
+                case OAK_FENCE_GATE:
+                case SPRUCE_FENCE_GATE:
+                case BARREL:
+                case LEVER:
+                case ACACIA_BUTTON:
+                case BIRCH_BUTTON:
+                case DARK_OAK_BUTTON:
+                case JUNGLE_BUTTON:
+                case OAK_BUTTON:
+                case SPRUCE_BUTTON:
+                case STONE_BUTTON:
+                case LECTERN:
+                    return false;
+            }
+        }
+        return true;
+    }
+
+    private boolean materialAllowed(Material material) {
+        switch(material) {
+            case BREAD:
+            case POTATO:
+            case CARROT:
+            case BEETROOT:
+            case BEEF:
+            case PORKCHOP:
+            case CHICKEN:
+            case COD:
+            case SALMON:
+            case MUTTON:
+            case RABBIT:
+            case TROPICAL_FISH:
+            case PUFFERFISH:
+            case MUSHROOM_STEW:
+            case RABBIT_STEW:
+            case BEETROOT_SOUP:
+            case COOKED_BEEF:
+            case COOKED_PORKCHOP:
+            case COOKED_CHICKEN:
+            case COOKED_SALMON:
+            case COOKED_MUTTON:
+            case COOKED_COD:
+            case MELON:
+            case PUMPKIN:
+            case MELON_SLICE:
+            case CAKE:
+            case PUMPKIN_PIE:
+            case APPLE:
+            case COOKIE:
+            case POISONOUS_POTATO:
+            case CHORUS_FRUIT:
+            case DRIED_KELP:
+            case BAKED_POTATO:
+                return true;
+        }
+        return false;
     }
 
 }

@@ -64,7 +64,17 @@ public class MedievalFactionsAPI {
         return ArgumentParser.getInstance();
     }
 
-    public BlockChecker getBlockChecker() { return BlockChecker.getInstance(); }
+    public BlockChecker getBlockChecker() {
+        return BlockChecker.getInstance();
+    }
+
+    public LockManager getLockManager() {
+        return LockManager.getInstance();
+    }
+
+    public GateManager getGateManager() {
+        return GateManager.getInstance();
+    }
 
     // specific methods
 
