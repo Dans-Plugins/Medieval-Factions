@@ -564,6 +564,33 @@ public class InteractionHandler implements Listener {
         }
         else if (clickedEntity instanceof ItemFrame) {
             System.out.println("DEBUG: Player is interacting with an Item Frame!");
+            ItemFrame itemFrame = (ItemFrame) clickedEntity;
+
+            // get chunk that armor stand is in
+            World world = itemFrame.getWorld();
+            Location location = itemFrame.getLocation();
+            Chunk chunk = location.getChunk();
+            ClaimedChunk claimedChunk = ChunkManager.getInstance().getClaimedChunk(chunk.getX(), chunk.getZ(), world.getName(), PersistentData.getInstance().getClaimedChunks());
+
+            // if chunk is not claimed, return
+            if (claimedChunk == null) {
+                return;
+            }
+
+            String holderFactionName = claimedChunk.getHolder();
+
+            Faction playersFaction = PersistentData.getInstance().getPlayersFaction(player.getUniqueId());
+
+            if (playersFaction == null) {
+                return;
+            }
+
+            String playersFactionName = playersFaction.getName();
+
+            // if holder is not the same as player's faction
+            if (!holderFactionName.equalsIgnoreCase(playersFactionName)) {
+                event.setCancelled(true);
+            }
         }
     }
 
