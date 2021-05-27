@@ -19,6 +19,7 @@ import org.bukkit.block.data.BlockData;
 import org.bukkit.block.data.Powerable;
 import org.bukkit.entity.ArmorStand;
 import org.bukkit.entity.Entity;
+import org.bukkit.entity.ItemFrame;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -560,6 +561,9 @@ public class InteractionHandler implements Listener {
             if (!holderFactionName.equalsIgnoreCase(playersFactionName)) {
                 event.setCancelled(true);
             }
+        }
+        else if (clickedEntity instanceof ItemFrame) {
+            System.out.println("DEBUG: Player is interacting with an Item Frame!");
         }
     }
 
