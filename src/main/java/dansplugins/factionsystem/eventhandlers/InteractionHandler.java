@@ -40,6 +40,8 @@ public class InteractionHandler implements Listener {
 
     private final boolean debug = false;
 
+    // EVENT HANDLER METHODS ------------------------------------------------------
+
     @EventHandler()
     public void handle(BlockBreakEvent event) {
         // get player
@@ -400,6 +402,10 @@ public class InteractionHandler implements Listener {
             event.setCancelled(true);
         }
     }
+
+    // END OF EVENT HANDLER METHODS ------------------------------------------------------
+
+    // HELPER METHODS ------------------------------------------------------
 
     private void handlePotentialGateInteraction(Block clickedBlock, Player player, PlayerInteractEvent event) {
         if (ChunkManager.getInstance().isClaimed(clickedBlock.getChunk(), PersistentData.getInstance().getClaimedChunks())) {
@@ -1101,5 +1107,7 @@ public class InteractionHandler implements Listener {
                 EphemeralData.getInstance().getPlayersCheckingAccess().contains(player.getUniqueId()) ||
                 EphemeralData.getInstance().getPlayersRevokingAccess().containsKey(player.getUniqueId());
     }
+
+    // END OF HELPER METHODS ------------------------------------------------------
 
 }
