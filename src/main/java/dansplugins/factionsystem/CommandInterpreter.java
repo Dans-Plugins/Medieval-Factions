@@ -2,6 +2,7 @@ package dansplugins.factionsystem;
 
 import dansplugins.factionsystem.commands.*;
 import dansplugins.factionsystem.commands.abs.SubCommand;
+import dansplugins.factionsystem.managers.LocaleManager;
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
 

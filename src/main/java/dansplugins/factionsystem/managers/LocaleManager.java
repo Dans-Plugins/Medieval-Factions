@@ -1,5 +1,6 @@
-package dansplugins.factionsystem;
+package dansplugins.factionsystem.managers;
 
+import dansplugins.factionsystem.MedievalFactions;
 import dansplugins.factionsystem.utils.Pair;
 
 import java.io.*;

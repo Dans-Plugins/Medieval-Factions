@@ -1,6 +1,6 @@
 package dansplugins.factionsystem.commands;
 
-import dansplugins.factionsystem.ChunkManager;
+import dansplugins.factionsystem.managers.ChunkManager;
 import dansplugins.factionsystem.DynmapIntegrator;
 import dansplugins.factionsystem.commands.abs.SubCommand;
 import dansplugins.factionsystem.data.PersistentData;

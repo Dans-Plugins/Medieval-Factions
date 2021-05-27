@@ -1,6 +1,8 @@
 package dansplugins.factionsystem;
 
 import dansplugins.factionsystem.data.PersistentData;
+import dansplugins.factionsystem.managers.ChunkManager;
+import dansplugins.factionsystem.managers.LocaleManager;
 import dansplugins.factionsystem.objects.ChunkFlags;
 import dansplugins.factionsystem.objects.ClaimedChunk;
 import dansplugins.factionsystem.objects.Faction;

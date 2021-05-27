@@ -1,4 +1,4 @@
-package dansplugins.factionsystem;
+package dansplugins.factionsystem.managers;
 
 import dansplugins.factionsystem.data.EphemeralData;
 import dansplugins.factionsystem.data.PersistentData;

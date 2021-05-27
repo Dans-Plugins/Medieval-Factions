@@ -1,6 +1,6 @@
 package dansplugins.factionsystem.commands;
 
-import dansplugins.factionsystem.StorageManager;
+import dansplugins.factionsystem.managers.StorageManager;
 import dansplugins.factionsystem.commands.abs.SubCommand;
 import dansplugins.factionsystem.events.FactionRenameEvent;
 import org.bukkit.Bukkit;
