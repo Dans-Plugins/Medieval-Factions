@@ -20,7 +20,7 @@ public class MedievalFactions extends JavaPlugin {
     private static MedievalFactions instance;
     private static MedievalFactionsAPI API;
 
-    private String version = "v4.1-beta-2";
+    private String version = "v4.1-beta-2-testing-interaction-handler-changes";
 
     public static MedievalFactions getInstance() {
         return instance;
