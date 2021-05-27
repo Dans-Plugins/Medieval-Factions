@@ -138,74 +138,71 @@ public class InteractionHandler implements Listener {
         
         // player is in faction
         // player is not bypassing
-        
-        if (isPlayerInFaction) {
-            Faction faction = PersistentData.getInstance().getPlayersFaction(player.getUniqueId());
-            
-            boolean isLandClaimedByPlayersFaction = faction.getName().equalsIgnoreCase(chunk.getHolder());
-            if (!isLandClaimedByPlayersFaction) {
 
-                boolean laddersArePlaceableInEnemyTerritory = MedievalFactions.getInstance().getConfig().getBoolean("laddersPlaceableInEnemyFactionTerritory");
-                boolean playerIsTryingToPlaceLadderInEnemyTerritory = event.getBlockPlaced().getType() == LADDER && faction.isEnemy(chunk.getHolder());
-                if (laddersArePlaceableInEnemyTerritory && playerIsTryingToPlaceLadderInEnemyTerritory) {
-                    // allow interaction
-                    return;
-                }
+        Faction faction = PersistentData.getInstance().getPlayersFaction(player.getUniqueId());
 
-                if (!isInteractionAllowed(player, chunk, faction)) {
-                    event.setCancelled(true);
-                    return;
-                }
+        boolean isLandClaimedByPlayersFaction = faction.getName().equalsIgnoreCase(chunk.getHolder());
+        if (!isLandClaimedByPlayersFaction) {
+            boolean laddersArePlaceableInEnemyTerritory = MedievalFactions.getInstance().getConfig().getBoolean("laddersPlaceableInEnemyFactionTerritory");
+            boolean playerIsTryingToPlaceLadderInEnemyTerritory = event.getBlockPlaced().getType() == LADDER && faction.isEnemy(chunk.getHolder());
+            if (laddersArePlaceableInEnemyTerritory && playerIsTryingToPlaceLadderInEnemyTerritory) {
+                // allow interaction
+                return;
             }
-            
-            if (BlockChecker.getInstance().isChest(event.getBlock())) {
-                boolean isNextToNonOwnedLockedChest = isNextToNonOwnedLockedChest(event.getPlayer(), event.getBlock());
-                if (isNextToNonOwnedLockedChest) {
-                    player.sendMessage(ChatColor.RED + LocaleManager.getInstance().getText("CannotPlaceChestsNextToUnownedLockedChests"));
-                    event.setCancelled(true);
-                    return;
-                }
 
-                int seconds = 2;
-                MedievalFactions.getInstance().getServer().getScheduler().runTaskLater(MedievalFactions.getInstance(), new Runnable() {
-                    @Override
-                    public void run() {
-                        Block block = player.getWorld().getBlockAt(event.getBlock().getLocation());
+            if (!isInteractionAllowed(player, chunk, faction)) {
+                event.setCancelled(true);
+                return;
+            }
+        }
 
-                        InventoryHolder holder = ((Chest) block.getState()).getInventory().getHolder();
-                        if (holder instanceof DoubleChest) {
-                            // make sure both sides are locked
-                            DoubleChest doubleChest = (DoubleChest) holder;
-                            Block leftChest = ((Chest) doubleChest.getLeftSide()).getBlock();
-                            Block rightChest = ((Chest) doubleChest.getRightSide()).getBlock();
+        if (BlockChecker.getInstance().isChest(event.getBlock())) {
+            boolean isNextToNonOwnedLockedChest = isNextToNonOwnedLockedChest(event.getPlayer(), event.getBlock());
+            if (isNextToNonOwnedLockedChest) {
+                player.sendMessage(ChatColor.RED + LocaleManager.getInstance().getText("CannotPlaceChestsNextToUnownedLockedChests"));
+                event.setCancelled(true);
+                return;
+            }
 
-                            if (PersistentData.getInstance().isBlockLocked(leftChest)) {
-                                // lock right chest
-                                LockedBlock right = new LockedBlock(player.getUniqueId(), PersistentData.getInstance().getPlayersFaction(player.getUniqueId()).getName(), rightChest.getX(), rightChest.getY(), rightChest.getZ(), rightChest.getWorld().getName());
-                                PersistentData.getInstance().getLockedBlocks().add(right);
-                            }
-                            else {
-                                if (PersistentData.getInstance().isBlockLocked(rightChest)) {
-                                    // lock left chest
-                                    LockedBlock left = new LockedBlock(player.getUniqueId(), PersistentData.getInstance().getPlayersFaction(player.getUniqueId()).getName(), leftChest.getX(), leftChest.getY(), leftChest.getZ(), leftChest.getWorld().getName());
-                                    PersistentData.getInstance().getLockedBlocks().add(left);
-                                }
-                            }
+            int seconds = 2;
+            MedievalFactions.getInstance().getServer().getScheduler().runTaskLater(MedievalFactions.getInstance(), new Runnable() {
+                @Override
+                public void run() {
+                    Block block = player.getWorld().getBlockAt(event.getBlock().getLocation());
 
+                    InventoryHolder holder = ((Chest) block.getState()).getInventory().getHolder();
+                    if (holder instanceof DoubleChest) {
+                        // make sure both sides are locked
+                        DoubleChest doubleChest = (DoubleChest) holder;
+                        Block leftChest = ((Chest) doubleChest.getLeftSide()).getBlock();
+                        Block rightChest = ((Chest) doubleChest.getRightSide()).getBlock();
+
+                        if (PersistentData.getInstance().isBlockLocked(leftChest)) {
+                            // lock right chest
+                            LockedBlock right = new LockedBlock(player.getUniqueId(), PersistentData.getInstance().getPlayersFaction(player.getUniqueId()).getName(), rightChest.getX(), rightChest.getY(), rightChest.getZ(), rightChest.getWorld().getName());
+                            PersistentData.getInstance().getLockedBlocks().add(right);
                         }
-                    }
-                }, seconds * 20);
-            }
+                        else {
+                            if (PersistentData.getInstance().isBlockLocked(rightChest)) {
+                                // lock left chest
+                                LockedBlock left = new LockedBlock(player.getUniqueId(), PersistentData.getInstance().getPlayersFaction(player.getUniqueId()).getName(), leftChest.getX(), leftChest.getY(), leftChest.getZ(), leftChest.getWorld().getName());
+                                PersistentData.getInstance().getLockedBlocks().add(left);
+                            }
+                        }
 
-            // if hopper
-            if (event.getBlock().getType() == Material.HOPPER) {
-                boolean isNextToNonOwnedLockedChest = isNextToNonOwnedLockedChest(event.getPlayer(), event.getBlock());
-                boolean isUnderOrAboveNonOwnedLockedChest = isUnderOrAboveNonOwnedLockedChest(event.getPlayer(), event.getBlock());
-                if (isNextToNonOwnedLockedChest || isUnderOrAboveNonOwnedLockedChest) {
-                    event.setCancelled(true);
-                    player.sendMessage(ChatColor.RED + LocaleManager.getInstance().getText("CannotPlaceHoppersNextToUnownedLockedChests"));
-                    return;
+                    }
                 }
+            }, seconds * 20);
+        }
+
+        // if hopper
+        if (event.getBlock().getType() == Material.HOPPER) {
+            boolean isNextToNonOwnedLockedChest = isNextToNonOwnedLockedChest(event.getPlayer(), event.getBlock());
+            boolean isUnderOrAboveNonOwnedLockedChest = isUnderOrAboveNonOwnedLockedChest(event.getPlayer(), event.getBlock());
+            if (isNextToNonOwnedLockedChest || isUnderOrAboveNonOwnedLockedChest) {
+                event.setCancelled(true);
+                player.sendMessage(ChatColor.RED + LocaleManager.getInstance().getText("CannotPlaceHoppersNextToUnownedLockedChests"));
+                return;
             }
         }
     }
