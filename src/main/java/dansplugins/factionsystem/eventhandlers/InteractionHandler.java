@@ -38,6 +38,8 @@ import static org.bukkit.Material.LADDER;
 
 public class InteractionHandler implements Listener {
 
+    private boolean debug = false;
+
     @EventHandler()
     public void handle(BlockBreakEvent event) {
         // get player
@@ -243,7 +245,9 @@ public class InteractionHandler implements Listener {
         if (clickedBlock != null) {
 
             if (clickedBlock instanceof ItemFrame) {
-                System.out.println("DEBUG: ItemFrame interaction captured in PlayerInteractEvent!");
+                if (debug) {
+                    System.out.println("DEBUG: ItemFrame interaction captured in PlayerInteractEvent!");
+                }
             }
 
             // if player is attempting to lock a block
@@ -541,14 +545,16 @@ public class InteractionHandler implements Listener {
         Location location = null;
 
         if (clickedEntity instanceof ArmorStand) {
-            ArmorStand armorStand = (ArmorStand) clickedEntity;
+            ArmorStand armorStand = (ArmorStand) clickedEntity;a
 
             // get chunk that armor stand is in
             world = armorStand.getWorld();
             location = armorStand.getLocation();
         }
         else if (clickedEntity instanceof ItemFrame) {
-            System.out.println("DEBUG: ItemFrame interaction captured in PlayerInteractAtEntityEvent!");
+            if (debug) {
+                System.out.println("DEBUG: ItemFrame interaction captured in PlayerInteractAtEntityEvent!");
+            }
             ItemFrame itemFrame = (ItemFrame) clickedEntity;
 
             // get chunk that armor stand is in
