@@ -38,7 +38,7 @@ import static org.bukkit.Material.LADDER;
 
 public class InteractionHandler implements Listener {
 
-    private boolean debug = false;
+    private final boolean debug = false;
 
     @EventHandler()
     public void handle(BlockBreakEvent event) {
