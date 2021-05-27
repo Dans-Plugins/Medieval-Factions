@@ -415,7 +415,7 @@ public class ChunkManager {
         return origin.getWorld().getChunkAt(xpos, zpos);
     }
 
-    private ClaimedChunk getClaimedChunk(Chunk chunk) {
+    public ClaimedChunk getClaimedChunk(Chunk chunk) {
         return getClaimedChunk(chunk.getX(), chunk.getZ(), chunk.getWorld().getName(), PersistentData.getInstance().getClaimedChunks());
     }
 
