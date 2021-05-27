@@ -545,7 +545,7 @@ public class InteractionHandler implements Listener {
         Location location = null;
 
         if (clickedEntity instanceof ArmorStand) {
-            ArmorStand armorStand = (ArmorStand) clickedEntity;a
+            ArmorStand armorStand = (ArmorStand) clickedEntity;
 
             // get chunk that armor stand is in
             world = armorStand.getWorld();
