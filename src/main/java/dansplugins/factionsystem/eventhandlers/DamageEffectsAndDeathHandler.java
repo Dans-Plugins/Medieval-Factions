@@ -128,6 +128,9 @@ public class DamageEffectsAndDeathHandler implements Listener {
                 event.setCancelled(true);
             }
         }
+        else if (event.getEntity() instanceof ItemFrame) {
+            System.out.println("DEBUG: ItemFrame interaction captured in EntityDamageByEntityEvent!");
+        }
     }
 
     private void handleIfFriendlyFire(EntityDamageByEntityEvent event, Player attacker, Player victim) {
