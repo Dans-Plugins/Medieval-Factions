@@ -42,7 +42,7 @@ public class DemoteCommand extends SubCommand {
             return;
         }
         if (demotee.getUniqueId() == player.getUniqueId()) {
-            // TODO Locale Message;
+            player.sendMessage(translate("&c" + getText("CannotDemoteSelf")));
             return;
         }
         if (!this.faction.isOfficer(demotee.getUniqueId())) {

@@ -54,7 +54,7 @@ public class PromoteCommand extends SubCommand {
             return;
         }
         if (targetUUID == player.getUniqueId()) {
-            // TODO Locale Message
+            player.sendMessage(translate("&c" + getText("CannotPromoteSelf")));
             return;
         }
         if(faction.addOfficer(targetUUID)){
