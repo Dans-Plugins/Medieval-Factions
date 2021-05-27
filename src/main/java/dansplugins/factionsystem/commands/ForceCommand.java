@@ -67,7 +67,7 @@ public class ForceCommand extends SubCommand {
                 }
             }
         }
-        sender.sendMessage(translate("&c" + getText("SubCommands")));
+        sender.sendMessage(translate("&b" + getText("SubCommands")));
         Arrays.stream(commands).forEach(str -> sender.sendMessage(translate("&b" + getText("HelpForce" + str))));
     }
 

@@ -60,7 +60,7 @@ public class PromoteCommand extends SubCommand {
         if(faction.addOfficer(targetUUID)){
             player.sendMessage(translate("&a" + getText("PlayerPromoted")));
             if (target.isOnline() && target.getPlayer() != null) {
-                target.getPlayer().sendMessage(translate("&c" + getText("PromotedToOfficer")));
+                target.getPlayer().sendMessage(translate("&a" + getText("PromotedToOfficer")));
             }
         } else {
             player.sendMessage(translate("&c" +
