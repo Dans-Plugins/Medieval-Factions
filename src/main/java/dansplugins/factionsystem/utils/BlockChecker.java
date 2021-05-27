@@ -40,8 +40,7 @@ public class BlockChecker {
         return false;
     }
 
-    public boolean isTrapdoor(Block block)
-    {
+    public boolean isTrapdoor(Block block) {
         if (block.getType() == Material.IRON_TRAPDOOR ||
                 block.getType() == Material.OAK_TRAPDOOR ||
                 block.getType() == Material.SPRUCE_TRAPDOOR ||
@@ -50,36 +49,30 @@ public class BlockChecker {
                 block.getType() == Material.ACACIA_TRAPDOOR ||
                 block.getType() == Material.DARK_OAK_TRAPDOOR ||
                 block.getType() == compatMaterial("CRIMSON_TRAPDOOR") ||
-                block.getType() == compatMaterial("WARPED_TRAPDOOR"))
-        {
+                block.getType() == compatMaterial("WARPED_TRAPDOOR")) {
             return true;
         }
         return false;
     }
 
-    public boolean isFurnace(Block block)
-    {
+    public boolean isFurnace(Block block) {
         if (block.getType() == Material.FURNACE ||
-                block.getType() == Material.BLAST_FURNACE)
-        {
+                block.getType() == Material.BLAST_FURNACE) {
             return true;
         }
         return false;
     }
 
-    public boolean isAnvil(Block block)
-    {
+    public boolean isAnvil(Block block) {
         if (block.getType() == Material.ANVIL ||
                 block.getType() == Material.CHIPPED_ANVIL ||
-                block.getType() == Material.DAMAGED_ANVIL)
-        {
+                block.getType() == Material.DAMAGED_ANVIL) {
             return true;
         }
         return false;
     }
 
-    public boolean isGate(Block block)
-    {
+    public boolean isGate(Block block) {
         if (block.getType() == Material.OAK_FENCE_GATE ||
                 block.getType() == Material.SPRUCE_FENCE_GATE ||
                 block.getType() == Material.BIRCH_FENCE_GATE ||
@@ -87,17 +80,14 @@ public class BlockChecker {
                 block.getType() == Material.ACACIA_FENCE_GATE ||
                 block.getType() == Material.DARK_OAK_FENCE_GATE ||
                 block.getType() == compatMaterial("CRIMSON_FENCE_GATE") ||
-                block.getType() == compatMaterial("WARPED_FENCE_GATE"))
-        {
+                block.getType() == compatMaterial("WARPED_FENCE_GATE")) {
             return true;
         }
         return false;
     }
 
-    public boolean isBarrel(Block block)
-    {
-        if (block.getType() == Material.BARREL)
-        {
+    public boolean isBarrel(Block block) {
+        if (block.getType() == Material.BARREL) {
             return true;
         }
         return false;
