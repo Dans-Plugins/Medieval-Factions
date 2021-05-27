@@ -93,6 +93,11 @@ public class DamageEffectsAndDeathHandler implements Listener {
             }
         }
 
+        Player player = (Player) event.getDamager();
+
+        World world = null;
+        Location location = null;
+
         if (event.getEntity() instanceof ArmorStand) {
             ArmorStand armorStand = (ArmorStand) event.getEntity();
 
@@ -100,33 +105,9 @@ public class DamageEffectsAndDeathHandler implements Listener {
                 return;
             }
 
-            Player player = (Player) event.getDamager();
-
             // get chunk that armor stand is in
-            World world = armorStand.getWorld();
-            Location location = armorStand.getLocation();
-            Chunk chunk = location.getChunk();
-            ClaimedChunk claimedChunk = ChunkManager.getInstance().getClaimedChunk(chunk.getX(), chunk.getZ(), world.getName(), PersistentData.getInstance().getClaimedChunks());
-
-            // if chunk is not claimed, return
-            if (claimedChunk == null) {
-                return;
-            }
-
-            String holderFactionName = claimedChunk.getHolder();
-
-            Faction playersFaction = PersistentData.getInstance().getPlayersFaction(player.getUniqueId());
-
-            if (playersFaction == null) {
-                return;
-            }
-
-            String playersFactionName = playersFaction.getName();
-
-            // if holder is not the same as player's faction
-            if (!holderFactionName.equalsIgnoreCase(playersFactionName)) {
-                event.setCancelled(true);
-            }
+            world = armorStand.getWorld();
+            location = armorStand.getLocation();
         }
         else if (event.getEntity() instanceof ItemFrame) {
             System.out.println("DEBUG: ItemFrame interaction captured in EntityDamageByEntityEvent!");
@@ -136,11 +117,12 @@ public class DamageEffectsAndDeathHandler implements Listener {
                 return;
             }
 
-            Player player = (Player) event.getDamager();
-
             // get chunk that armor stand is in
-            World world = itemFrame.getWorld();
-            Location location = itemFrame.getLocation();
+            world = itemFrame.getWorld();
+            location = itemFrame.getLocation();
+        }
+
+        if (location != null && world != null) {
             Chunk chunk = location.getChunk();
             ClaimedChunk claimedChunk = ChunkManager.getInstance().getClaimedChunk(chunk.getX(), chunk.getZ(), world.getName(), PersistentData.getInstance().getClaimedChunks());
 

@@ -537,12 +537,26 @@ public class InteractionHandler implements Listener {
         Player player = event.getPlayer();
         Entity clickedEntity = event.getRightClicked();
 
+        World world = null;
+        Location location = null;
+
         if (clickedEntity instanceof ArmorStand) {
             ArmorStand armorStand = (ArmorStand) clickedEntity;
 
             // get chunk that armor stand is in
-            World world = armorStand.getWorld();
-            Location location = armorStand.getLocation();
+            world = armorStand.getWorld();
+            location = armorStand.getLocation();
+        }
+        else if (clickedEntity instanceof ItemFrame) {
+            System.out.println("DEBUG: ItemFrame interaction captured in PlayerInteractAtEntityEvent!");
+            ItemFrame itemFrame = (ItemFrame) clickedEntity;
+
+            // get chunk that armor stand is in
+            world = itemFrame.getWorld();
+            location = itemFrame.getLocation();
+        }
+
+        if (location != null && world != null) {
             Chunk chunk = location.getChunk();
             ClaimedChunk claimedChunk = ChunkManager.getInstance().getClaimedChunk(chunk.getX(), chunk.getZ(), world.getName(), PersistentData.getInstance().getClaimedChunks());
 
@@ -565,9 +579,6 @@ public class InteractionHandler implements Listener {
             if (!holderFactionName.equalsIgnoreCase(playersFactionName)) {
                 event.setCancelled(true);
             }
-        }
-        else if (clickedEntity instanceof ItemFrame) {
-            System.out.println("DEBUG: ItemFrame interaction captured in PlayerInteractAtEntityEvent!");
         }
     }
 
