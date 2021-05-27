@@ -490,7 +490,7 @@ UsageSwearFealty	Uso: /mf jurarlealtad (facción)
 UsageTransfer	Uso: /mf transferir (jugador)
 UsageVassalize	Uso: /mf avasallar (facción)
 UsageWho	Uso: /mf quien (jugador)
-ValidSubUsageWhoCommandsShowSet	Sub-Comandos válidos: ver, establecer
+ValidSubCommandsShowSet	Sub-Comandos válidos: ver, establecer
 VassalContribution	Poder adicional de vasallos: %d
 Vassals	Vasallos: %s
 WarningPlayerAlreadyStartedCreatingGate	ALERTA: El jugador ya ha empezado a crear el portón. Llamada a startCreatingGate() ignorada.

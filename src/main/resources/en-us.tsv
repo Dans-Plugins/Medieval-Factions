@@ -490,7 +490,7 @@ UsageSwearFealty	Usage: /mf swearfealty (faction-name)
 UsageTransfer	Usage: /mf transfer (player-name)
 UsageVassalize	Usage: /mf vassalize (faction-name)
 UsageWho	Usage: /mf who (player-name)
-ValidSubUsageWhoCommandsShowSet	Valid sub-commands: show, set
+ValidSubCommandsShowSet	Valid sub-commands: show, set
 VassalContribution	Bonus Power From Vassals: %d
 Vassals	Vassals: %s
 WarningPlayerAlreadyStartedCreatingGate	WARNING: Player has already started creating the gate. startCreatingGate() call ignored.

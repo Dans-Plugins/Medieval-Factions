@@ -490,7 +490,7 @@ UsageSwearFealty	 Использование: /mf swearfealty (фракция)
 UsageTransfer	Использование: /mf transfer (имя игрока)
 UsageVassalize	Использование: /mf vassalize (фракция)
 UsageWho	Использование: /mf who (имя игрока)
-ValidSubUsageWhoCommandsShowSet	Допустимые подкоманды: show, set
+ValidSubCommandsShowSet	Допустимые подкоманды: show, set
 VassalContribution	Дополнительная сила от вассалов:% d
 Vassals	Вассалы: %s
 WarningPlayerAlreadyStartedCreatingGate	ВНИМАНИЕ: Игрок уже начал создавать ворота. Вызов startCreatingGate() игнорируется.
