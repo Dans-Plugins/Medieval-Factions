@@ -16,9 +16,9 @@ import java.util.*;
 
 import static org.bukkit.Bukkit.getServer;
 
-public class DynmapManager {
+public class DynmapIntegrator {
 
-    private static DynmapManager instance = null;
+    private static DynmapIntegrator instance = null;
     public static boolean dynmapInitialized = false;
 
     public boolean updateClaimsAreaMarkers = false;
@@ -35,9 +35,9 @@ public class DynmapManager {
         return true;
     }
 
-    public static DynmapManager getInstance() {
+    public static DynmapIntegrator getInstance() {
         if (instance == null) {
-            instance = new DynmapManager();
+            instance = new DynmapIntegrator();
         }
         dynmapInitialized = true;
         return instance;
@@ -55,9 +55,9 @@ public class DynmapManager {
                 if (!isDynmapPresent()) {
                     return;
                 }
-                if (DynmapManager.getInstance().updateClaimsAreaMarkers) {
-                    DynmapManager.getInstance().dynmapUpdateFactions();
-                    DynmapManager.getInstance().updateClaimsAreaMarkers = false;
+                if (DynmapIntegrator.getInstance().updateClaimsAreaMarkers) {
+                    DynmapIntegrator.getInstance().dynmapUpdateFactions();
+                    DynmapIntegrator.getInstance().updateClaimsAreaMarkers = false;
                 }
             }
         }.runTaskTimer(MedievalFactions.getInstance(), 40, interval);
@@ -72,8 +72,8 @@ public class DynmapManager {
             return;
         }
 
-        if (DynmapManager.hasDynmap()) {
-            DynmapManager.getInstance().updateClaimsAreaMarkers = true;
+        if (DynmapIntegrator.hasDynmap()) {
+            DynmapIntegrator.getInstance().updateClaimsAreaMarkers = true;
         }
     }
 
@@ -86,7 +86,7 @@ public class DynmapManager {
     private MarkerAPI markerAPI;
     MarkerSet set;
 
-    public DynmapManager() {
+    public DynmapIntegrator() {
         PluginManager pm = getServer().getPluginManager();
 
         /* Get dynmap */

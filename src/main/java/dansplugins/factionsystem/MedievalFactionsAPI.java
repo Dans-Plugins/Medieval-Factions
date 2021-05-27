@@ -28,8 +28,8 @@ public class MedievalFactionsAPI {
         return ConfigManager.getInstance();
     }
 
-    public DynmapManager getDynmapManager() {
-        return DynmapManager.getInstance();
+    public DynmapIntegrator getDynmapManager() {
+        return DynmapIntegrator.getInstance();
     }
 
     public LocaleManager getLocaleManager() {

@@ -1,7 +1,7 @@
 package dansplugins.factionsystem.eventhandlers;
 
 import dansplugins.factionsystem.ChunkManager;
-import dansplugins.factionsystem.DynmapManager;
+import dansplugins.factionsystem.DynmapIntegrator;
 import dansplugins.factionsystem.LocaleManager;
 import dansplugins.factionsystem.MedievalFactions;
 import dansplugins.factionsystem.data.PersistentData;
@@ -40,7 +40,7 @@ public class MoveHandler implements Listener {
                             public void run() {
                                 // add new chunk to claimed chunks
                                 ChunkManager.getInstance().claimChunkAtLocation(player, player.getLocation(), faction);
-                                DynmapManager.getInstance().updateClaims();
+                                DynmapIntegrator.getInstance().updateClaims();
                             }
                         }, 1); // delayed by 1 tick (1/20th of a second) because otherwise players will claim the chunk they just left
                     }
