@@ -93,6 +93,11 @@ public class DamageEffectsAndDeathHandler implements Listener {
             }
         }
 
+        Player player = (Player) event.getDamager();
+
+        World world = null;
+        Location location = null;
+
         if (event.getEntity() instanceof ArmorStand) {
             ArmorStand armorStand = (ArmorStand) event.getEntity();
 
@@ -100,11 +105,24 @@ public class DamageEffectsAndDeathHandler implements Listener {
                 return;
             }
 
-            Player player = (Player) event.getDamager();
+            // get chunk that armor stand is in
+            world = armorStand.getWorld();
+            location = armorStand.getLocation();
+        }
+        else if (event.getEntity() instanceof ItemFrame) {
+            System.out.println("DEBUG: ItemFrame interaction captured in EntityDamageByEntityEvent!");
+            ItemFrame itemFrame = (ItemFrame) event.getEntity();
+
+            if (!(event.getDamager() instanceof Player)) {
+                return;
+            }
 
             // get chunk that armor stand is in
-            World world = armorStand.getWorld();
-            Location location = armorStand.getLocation();
+            world = itemFrame.getWorld();
+            location = itemFrame.getLocation();
+        }
+
+        if (location != null && world != null) {
             Chunk chunk = location.getChunk();
             ClaimedChunk claimedChunk = ChunkManager.getInstance().getClaimedChunk(chunk.getX(), chunk.getZ(), world.getName(), PersistentData.getInstance().getClaimedChunks());
 

@@ -19,6 +19,7 @@ import org.bukkit.block.data.BlockData;
 import org.bukkit.block.data.Powerable;
 import org.bukkit.entity.ArmorStand;
 import org.bukkit.entity.Entity;
+import org.bukkit.entity.ItemFrame;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -36,6 +37,8 @@ import static org.bukkit.Bukkit.getLogger;
 import static org.bukkit.Material.LADDER;
 
 public class InteractionHandler implements Listener {
+
+    private boolean debug = false;
 
     @EventHandler()
     public void handle(BlockBreakEvent event) {
@@ -240,6 +243,12 @@ public class InteractionHandler implements Listener {
         // get chunk
         Block clickedBlock = event.getClickedBlock();
         if (clickedBlock != null) {
+
+            if (clickedBlock instanceof ItemFrame) {
+                if (debug) {
+                    System.out.println("DEBUG: ItemFrame interaction captured in PlayerInteractEvent!");
+                }
+            }
 
             // if player is attempting to lock a block
             if (EphemeralData.getInstance().getLockingPlayers().contains(player.getUniqueId())) {
@@ -532,12 +541,28 @@ public class InteractionHandler implements Listener {
         Player player = event.getPlayer();
         Entity clickedEntity = event.getRightClicked();
 
+        World world = null;
+        Location location = null;
+
         if (clickedEntity instanceof ArmorStand) {
-            ArmorStand armorStand = (ArmorStand) clickedEntity;
+            ArmorStand armorStand = (ArmorStand) clickedEntity;a
 
             // get chunk that armor stand is in
-            World world = armorStand.getWorld();
-            Location location = armorStand.getLocation();
+            world = armorStand.getWorld();
+            location = armorStand.getLocation();
+        }
+        else if (clickedEntity instanceof ItemFrame) {
+            if (debug) {
+                System.out.println("DEBUG: ItemFrame interaction captured in PlayerInteractAtEntityEvent!");
+            }
+            ItemFrame itemFrame = (ItemFrame) clickedEntity;
+
+            // get chunk that armor stand is in
+            world = itemFrame.getWorld();
+            location = itemFrame.getLocation();
+        }
+
+        if (location != null && world != null) {
             Chunk chunk = location.getChunk();
             ClaimedChunk claimedChunk = ChunkManager.getInstance().getClaimedChunk(chunk.getX(), chunk.getZ(), world.getName(), PersistentData.getInstance().getClaimedChunks());
 
