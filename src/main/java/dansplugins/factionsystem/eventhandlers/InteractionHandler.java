@@ -337,7 +337,7 @@ public class InteractionHandler implements Listener {
 
         if (location != null && world != null) {
             Chunk chunk = location.getChunk();
-            ClaimedChunk claimedChunk = ChunkManager.getInstance().getClaimedChunk(chunk.getX(), chunk.getZ(), world.getName(), PersistentData.getInstance().getClaimedChunks());
+            ClaimedChunk claimedChunk = ChunkManager.getInstance().getClaimedChunk(chunk);
 
             if (shouldEventBeCancelled(claimedChunk, player)) {
                 event.setCancelled(true);
@@ -409,17 +409,21 @@ public class InteractionHandler implements Listener {
             return false;
         }
 
-        Faction playersFaction = PersistentData.getInstance().getPlayersFaction(player.getUniqueId());
-
         boolean isPlayerBypassing = EphemeralData.getInstance().getAdminsBypassingProtections().contains(player.getUniqueId());
 
-        if (playersFaction == null && !isPlayerBypassing) {
+        if (isPlayerBypassing) {
+            return false;
+        }
+
+        Faction playersFaction = PersistentData.getInstance().getPlayersFaction(player.getUniqueId());
+
+        if (playersFaction == null) {
             return true;
         }
 
         boolean isLandClaimedByPlayersFaction = playersFaction.getName().equalsIgnoreCase(claimedChunk.getHolder());
         if (!isLandClaimedByPlayersFaction) {
-            if (!isOutsiderInteractionAllowed(player, claimedChunk, playersFaction) && !isPlayerBypassing) {
+            if (!isOutsiderInteractionAllowed(player, claimedChunk, playersFaction)) {
                 return true;
             }
         }
