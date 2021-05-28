@@ -132,10 +132,15 @@ public class InteractionHandler implements Listener {
             return;
         }
 
-        // if player not in a faction and isn't bypassing then cancel event and return
-        boolean isPlayerInFaction = PersistentData.getInstance().isInFaction(player.getUniqueId());
         boolean isPlayerBypassing = EphemeralData.getInstance().getAdminsBypassingProtections().contains(player.getUniqueId());
-        if (!isPlayerInFaction && !isPlayerBypassing) {
+
+        if (isPlayerBypassing) {
+            return;
+        }
+
+        // if player not in a faction then cancel event and return
+        boolean isPlayerInFaction = PersistentData.getInstance().isInFaction(player.getUniqueId());
+        if (!isPlayerInFaction) {
             event.setCancelled(true);
             return;
         }
