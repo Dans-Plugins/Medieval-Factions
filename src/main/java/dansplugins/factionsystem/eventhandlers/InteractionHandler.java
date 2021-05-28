@@ -55,7 +55,7 @@ public class InteractionHandler implements Listener {
         boolean isPlayerBypassing = EphemeralData.getInstance().getAdminsBypassingProtections().contains(event.getPlayer().getUniqueId());
         
         Faction faction = PersistentData.getInstance().getPlayersFaction(event.getPlayer().getUniqueId());
-        if (faction == null) {
+        if (faction == null && !isPlayerBypassing) {
             // player not in a faction
             event.setCancelled(true);
             return;
@@ -63,9 +63,9 @@ public class InteractionHandler implements Listener {
         else {
             // player is in faction
             boolean isLandClaimedByPlayersFaction = faction.getName().equalsIgnoreCase(chunk.getHolder());
-            if (!isLandClaimedByPlayersFaction && !isPlayerBypassing) {
+            if (!isLandClaimedByPlayersFaction) {
                 // player's faction is not the same as the holder of the chunk and player isn't bypassing
-                if (!isInteractionAllowed(player, chunk, faction)) {
+                if (!isInteractionAllowed(player, chunk, faction) && !isPlayerBypassing) {
                     event.setCancelled(true);
                     return;
                 }
@@ -147,7 +147,7 @@ public class InteractionHandler implements Listener {
                 return;
             }
 
-            if (!isInteractionAllowed(player, chunk, faction)) {
+            if (!isInteractionAllowed(player, chunk, faction) && !isPlayerBypassing) {
                 event.setCancelled(true);
                 return;
             }
