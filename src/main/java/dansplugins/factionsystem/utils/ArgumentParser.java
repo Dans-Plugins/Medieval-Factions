@@ -17,17 +17,6 @@ public class ArgumentParser {
         return instance;
     }
 
-    public String createStringFromFirstArgOnwards(String[] args) {
-        java.lang.StringBuilder name = new java.lang.StringBuilder();
-        for (int i = 1; i < args.length; i++) {
-            name.append(args[i]);
-            if (!(i == args.length - 1)) {
-                name.append(" ");
-            }
-        }
-        return name.toString();
-    }
-
     public ArrayList<String> getArgumentsInsideSingleQuotes(String[] args) {
         ArrayList<String> toReturn = new ArrayList<>();
 
