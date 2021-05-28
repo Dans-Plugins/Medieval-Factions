@@ -26,6 +26,7 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.event.block.BlockPlaceEvent;
+import org.bukkit.event.entity.EntityPlaceEvent;
 import org.bukkit.event.hanging.HangingBreakByEntityEvent;
 import org.bukkit.event.player.PlayerBucketEmptyEvent;
 import org.bukkit.event.player.PlayerBucketFillEvent;
@@ -55,9 +56,13 @@ public class InteractionHandler implements Listener {
         }
 
         boolean isPlayerBypassing = EphemeralData.getInstance().getAdminsBypassingProtections().contains(event.getPlayer().getUniqueId());
-        
+
+        if (isPlayerBypassing) {
+            return;
+        }
+
         Faction faction = PersistentData.getInstance().getPlayersFaction(event.getPlayer().getUniqueId());
-        if (faction == null && !isPlayerBypassing) {
+        if (faction == null) {
             // player not in a faction
             event.setCancelled(true);
             return;
@@ -67,7 +72,7 @@ public class InteractionHandler implements Listener {
             boolean isLandClaimedByPlayersFaction = faction.getName().equalsIgnoreCase(chunk.getHolder());
             if (!isLandClaimedByPlayersFaction) {
                 // player's faction is not the same as the holder of the chunk and player isn't bypassing
-                if (!isOutsiderInteractionAllowed(player, chunk, faction) && !isPlayerBypassing) {
+                if (!isOutsiderInteractionAllowed(player, chunk, faction)) {
                     event.setCancelled(true);
                     return;
                 }
@@ -81,7 +86,7 @@ public class InteractionHandler implements Listener {
         else {
             // block is locked
             boolean isOwner = PersistentData.getInstance().getLockedBlock(event.getBlock()).getOwner().equals(player.getUniqueId());
-            if (!isOwner && !isPlayerBypassing) {
+            if (!isOwner) {
                 // player is not the owner and isn't bypassing
                 event.setCancelled(true);
                 player.sendMessage(ChatColor.RED + LocaleManager.getInstance().getText("AlertNonOwnership"));
@@ -386,6 +391,21 @@ public class InteractionHandler implements Listener {
         Player player = event.getPlayer();
 
         Block clickedBlock = event.getBlockClicked();
+
+        ClaimedChunk claimedChunk = ChunkManager.getInstance().getClaimedChunk(clickedBlock.getChunk());
+
+        if (shouldEventBeCancelled(claimedChunk, player)) {
+            event.setCancelled(true);
+        }
+    }
+
+    @EventHandler()
+    public void handle(EntityPlaceEvent event) {
+        if (debug) { System.out.println("DEBUG: A player is attempting to place an entity!"); }
+
+        Player player = event.getPlayer();
+
+        Block clickedBlock = event.getBlock();
 
         ClaimedChunk claimedChunk = ChunkManager.getInstance().getClaimedChunk(clickedBlock.getChunk());
 
