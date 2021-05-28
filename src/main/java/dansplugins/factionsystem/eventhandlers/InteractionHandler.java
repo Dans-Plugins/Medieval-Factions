@@ -45,7 +45,7 @@ public class InteractionHandler implements Listener {
         Player player = event.getPlayer();
 
         // get chunk
-        ClaimedChunk claimedChunk = ChunkManager.getInstance().getClaimedChunk(event.getBlock().getLocation().getChunk().getX(), event.getBlock().getLocation().getChunk().getZ(), event.getBlock().getWorld().getName(), PersistentData.getInstance().getClaimedChunks());
+        ClaimedChunk claimedChunk = ChunkManager.getInstance().getClaimedChunk(event.getBlock().getLocation().getChunk());
 
         if (shouldEventBeCancelled(claimedChunk, player)) {
             event.setCancelled(true);
@@ -246,7 +246,7 @@ public class InteractionHandler implements Listener {
         // access to (or in future, a 'public' locked block), so if they're not in the faction whose territory the block exists in we want that
         // check to be handled before the interaction is rejected for not being a faction member.
         // if chunk is claimed
-        ClaimedChunk chunk = ChunkManager.getInstance().getClaimedChunk(event.getClickedBlock().getLocation().getChunk().getX(), event.getClickedBlock().getLocation().getChunk().getZ(), event.getClickedBlock().getWorld().getName(), PersistentData.getInstance().getClaimedChunks());
+        ClaimedChunk chunk = ChunkManager.getInstance().getClaimedChunk(event.getClickedBlock().getLocation().getChunk());
         if (chunk != null) {
             ChunkManager.getInstance().handleClaimedChunkInteraction(event, chunk);
         }
@@ -276,6 +276,7 @@ public class InteractionHandler implements Listener {
             ArmorStand armorStand = (ArmorStand) clickedEntity;
 
             // get chunk that armor stand is in
+            world = armorStand.getWorld();
             location = armorStand.getLocation();
         }
         else if (clickedEntity instanceof ItemFrame) {
@@ -285,6 +286,7 @@ public class InteractionHandler implements Listener {
             ItemFrame itemFrame = (ItemFrame) clickedEntity;
 
             // get chunk that armor stand is in
+            world = itemFrame.getWorld();
             location = itemFrame.getLocation();
         }
 

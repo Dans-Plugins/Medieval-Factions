@@ -36,6 +36,19 @@ public class ChunkManager {
         return instance;
     }
 
+    public ClaimedChunk getClaimedChunk(Chunk chunk) {
+        return getClaimedChunk(chunk.getX(), chunk.getZ(), chunk.getWorld().getName());
+    }
+
+    private ClaimedChunk getClaimedChunk(int x, int z, String world) {
+        for (ClaimedChunk claimedChunk : PersistentData.getInstance().getClaimedChunks()) {
+            if (claimedChunk.getCoordinates()[0] == x && claimedChunk.getCoordinates()[1] == z && claimedChunk.getWorld().equalsIgnoreCase(world)) {
+                return claimedChunk;
+            }
+        }
+        return null;
+    }
+
     public void radiusClaimAtLocation(int depth, Player claimant, Location location, Faction claimantsFaction) {
 
         int maxClaimRadius = MedievalFactions.getInstance().getConfig().getInt("maxClaimRadius");
@@ -383,19 +396,6 @@ public class ChunkManager {
         return counter;
     }
 
-    public ClaimedChunk getClaimedChunk(Chunk chunk, ArrayList<ClaimedChunk> claimedChunks) {
-        return getClaimedChunk(chunk.getX(), chunk.getZ(), chunk.getWorld().getName(), claimedChunks);
-    }
-
-    public ClaimedChunk getClaimedChunk(int x, int z, String world, ArrayList<ClaimedChunk> claimedChunks) {
-        for (ClaimedChunk claimedChunk : claimedChunks) {
-            if (claimedChunk.getCoordinates()[0] == x && claimedChunk.getCoordinates()[1] == z && claimedChunk.getWorld().equalsIgnoreCase(world)) {
-                return claimedChunk;
-            }
-        }
-        return null;
-    }
-
     private Chunk getChunkByDirection(Chunk origin, String direction) {
 
         int xpos = -1;
@@ -419,10 +419,6 @@ public class ChunkManager {
         }
 
         return origin.getWorld().getChunkAt(xpos, zpos);
-    }
-
-    public ClaimedChunk getClaimedChunk(Chunk chunk) {
-        return getClaimedChunk(chunk.getX(), chunk.getZ(), chunk.getWorld().getName(), PersistentData.getInstance().getClaimedChunks());
     }
 
     // this will return true if the chunks to the North, East, South and West of the target are claimed by the same faction as the target

@@ -28,7 +28,7 @@ public class SetHomeCommand extends SubCommand {
             player.sendMessage(translate("&c" + getText("LandIsNotClaimed")));
             return;
         }
-        ClaimedChunk chunk = chunks.getClaimedChunk(player.getLocation().getChunk(), data.getClaimedChunks());
+        ClaimedChunk chunk = chunks.getClaimedChunk(player.getLocation().getChunk());
         if (chunk == null || !chunk.getHolder().equalsIgnoreCase(faction.getName())) {
             player.sendMessage(translate("&c" + getText("CannotSetFactionHomeInWilderness")));
             return;
