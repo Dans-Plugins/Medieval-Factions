@@ -1,8 +1,8 @@
 package dansplugins.factionsystem.commands;
 
-import dansplugins.factionsystem.managers.StorageManager;
 import dansplugins.factionsystem.commands.abs.SubCommand;
 import dansplugins.factionsystem.events.FactionRenameEvent;
+import dansplugins.factionsystem.managers.StorageManager;
 import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
