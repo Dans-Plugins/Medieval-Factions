@@ -51,9 +51,12 @@ public class AllyCommand extends SubCommand {
             return;
         }
         faction.requestAlly(otherFaction.getName()); // Send the request.
-        player.sendMessage(translate("&a" + getText("AttemptedAlliance", otherFaction.getName())));
         messageFaction(
                 faction,
+                translate("&a" + getText("AlertAttemptedAlliance", faction.getName(), otherFaction.getName()))
+        );
+        messageFaction(
+                otherFaction,
                 translate("&a" + getText("AlertAttemptedAlliance", faction.getName(), otherFaction.getName()))
         );
         // Is the playersFaction and the target Faction requesting to Ally each other?
