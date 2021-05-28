@@ -32,7 +32,7 @@ public class CheckAccessCommand extends SubCommand {
             if (contains) player.sendMessage(translate("&c" + getText("AlreadyEnteredCheckAccess")));
             else {
                 ephemeral.getPlayersCheckingAccess().add(player.getUniqueId());
-                player.sendMessage(translate("&c" + getText("RightClickCheckAccess")));
+                player.sendMessage(translate("&a" + getText("RightClickCheckAccess")));
             }
         }
     }
