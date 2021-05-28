@@ -1,6 +1,6 @@
 package dansplugins.factionsystem.commands;
 
-import dansplugins.factionsystem.LocaleManager;
+import dansplugins.factionsystem.managers.LocaleManager;
 import dansplugins.factionsystem.MedievalFactions;
 import dansplugins.factionsystem.commands.abs.SubCommand;
 import dansplugins.factionsystem.utils.UUIDChecker;

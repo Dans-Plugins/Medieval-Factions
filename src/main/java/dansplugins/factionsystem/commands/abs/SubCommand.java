@@ -3,6 +3,9 @@ package dansplugins.factionsystem.commands.abs;
 import dansplugins.factionsystem.*;
 import dansplugins.factionsystem.data.EphemeralData;
 import dansplugins.factionsystem.data.PersistentData;
+import dansplugins.factionsystem.managers.ChunkManager;
+import dansplugins.factionsystem.managers.ConfigManager;
+import dansplugins.factionsystem.managers.LocaleManager;
 import dansplugins.factionsystem.objects.Faction;
 import dansplugins.factionsystem.utils.ArgumentParser;
 import org.bukkit.Bukkit;
@@ -30,7 +33,7 @@ public abstract class SubCommand implements ColorTranslator {
     protected final ArgumentParser parser;
     protected final EphemeralData ephemeral;
     protected final ChunkManager chunks;
-    protected final DynmapManager dynmap;
+    protected final DynmapIntegrator dynmap;
     protected final ConfigManager configManager;
 
     // Command Data
@@ -62,7 +65,7 @@ public abstract class SubCommand implements ColorTranslator {
         this.parser = ArgumentParser.getInstance();
         this.ephemeral = EphemeralData.getInstance();
         this.chunks = ChunkManager.getInstance();
-        this.dynmap = DynmapManager.getInstance();
+        this.dynmap = DynmapIntegrator.getInstance();
         this.configManager = ConfigManager.getInstance();
 
         // Load Command Names.

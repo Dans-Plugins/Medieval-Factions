@@ -2,7 +2,9 @@ package dansplugins.factionsystem;
 
 import dansplugins.factionsystem.data.EphemeralData;
 import dansplugins.factionsystem.data.PersistentData;
+import dansplugins.factionsystem.managers.*;
 import dansplugins.factionsystem.utils.ArgumentParser;
+import dansplugins.factionsystem.utils.BlockChecker;
 import dansplugins.factionsystem.utils.UUIDChecker;
 
 import java.util.UUID;
@@ -27,8 +29,8 @@ public class MedievalFactionsAPI {
         return ConfigManager.getInstance();
     }
 
-    public DynmapManager getDynmapManager() {
-        return DynmapManager.getInstance();
+    public DynmapIntegrator getDynmapManager() {
+        return DynmapIntegrator.getInstance();
     }
 
     public LocaleManager getLocaleManager() {
@@ -61,6 +63,18 @@ public class MedievalFactionsAPI {
 
     public ArgumentParser getArgumentParser() {
         return ArgumentParser.getInstance();
+    }
+
+    public BlockChecker getBlockChecker() {
+        return BlockChecker.getInstance();
+    }
+
+    public LockManager getLockManager() {
+        return LockManager.getInstance();
+    }
+
+    public GateManager getGateManager() {
+        return GateManager.getInstance();
     }
 
     // specific methods

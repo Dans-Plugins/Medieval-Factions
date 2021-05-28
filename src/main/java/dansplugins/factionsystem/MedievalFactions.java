@@ -2,6 +2,9 @@ package dansplugins.factionsystem;
 
 import dansplugins.factionsystem.bstats.Metrics;
 import dansplugins.factionsystem.data.PersistentData;
+import dansplugins.factionsystem.managers.ConfigManager;
+import dansplugins.factionsystem.managers.LocaleManager;
+import dansplugins.factionsystem.managers.StorageManager;
 import dansplugins.factionsystem.objects.PlayerActivityRecord;
 import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
@@ -17,7 +20,7 @@ public class MedievalFactions extends JavaPlugin {
     private static MedievalFactions instance;
     private static MedievalFactionsAPI API;
 
-    private String version = "v4.1-beta-2";
+    private String version = "v4.1-beta-2-testing-interaction-handler-changes";
 
     public static MedievalFactions getInstance() {
         return instance;
@@ -60,9 +63,9 @@ public class MedievalFactions extends JavaPlugin {
         Metrics metrics = new Metrics(this, pluginId);
 
         // Dynmap
-        if (DynmapManager.hasDynmap()) {
-            DynmapManager.getInstance().scheduleClaimsUpdate(600); // Check once every 30 seconds for updates.
-            DynmapManager.getInstance().updateClaims();
+        if (DynmapIntegrator.hasDynmap()) {
+            DynmapIntegrator.getInstance().scheduleClaimsUpdate(600); // Check once every 30 seconds for updates.
+            DynmapIntegrator.getInstance().updateClaims();
         }
     }
 

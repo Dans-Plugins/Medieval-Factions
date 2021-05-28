@@ -1,6 +1,9 @@
 package dansplugins.factionsystem;
 
 import dansplugins.factionsystem.data.PersistentData;
+import dansplugins.factionsystem.managers.ChunkManager;
+import dansplugins.factionsystem.managers.LocaleManager;
+import dansplugins.factionsystem.managers.StorageManager;
 import dansplugins.factionsystem.objects.Faction;
 import dansplugins.factionsystem.objects.PlayerActivityRecord;
 import dansplugins.factionsystem.objects.PlayerPowerRecord;
@@ -136,7 +139,7 @@ public class Scheduler {
         if (factionToRemove != null) {
             // remove claimed land objects associated with this faction
             ChunkManager.getInstance().removeAllClaimedChunks(factionToRemove.getName(), PersistentData.getInstance().getClaimedChunks());
-            DynmapManager.getInstance().updateClaims();
+            DynmapIntegrator.getInstance().updateClaims();
 
             // remove locks associated with this faction
             PersistentData.getInstance().removeAllLocks(factionToRemove.getName());

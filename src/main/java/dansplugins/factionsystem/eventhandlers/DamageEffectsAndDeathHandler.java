@@ -1,7 +1,7 @@
 package dansplugins.factionsystem.eventhandlers;
 
-import dansplugins.factionsystem.ChunkManager;
-import dansplugins.factionsystem.LocaleManager;
+import dansplugins.factionsystem.managers.ChunkManager;
+import dansplugins.factionsystem.managers.LocaleManager;
 import dansplugins.factionsystem.MedievalFactions;
 import dansplugins.factionsystem.data.EphemeralData;
 import dansplugins.factionsystem.data.PersistentData;
