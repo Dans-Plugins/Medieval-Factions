@@ -1,9 +1,12 @@
 package dansplugins.factionsystem.data;
 
 import dansplugins.factionsystem.objects.*;
+import org.bukkit.Bukkit;
+import org.bukkit.OfflinePlayer;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
 
+import java.time.ZonedDateTime;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.UUID;
@@ -244,6 +247,17 @@ public class PersistentData {
                 catch(Exception e) {
                     System.out.println("An error has occurred during lock removal.");
                 }
+            }
+        }
+    }
+
+    public void createActivityRecordForEveryOfflinePlayer() { // this method is to ensure that when updating to a version with power decay, even players who never log in again will experience power decay
+        for (OfflinePlayer player : Bukkit.getOfflinePlayers()) {
+            PlayerActivityRecord record = PersistentData.getInstance().getPlayerActivityRecord(player.getUniqueId());
+            if (record == null) {
+                PlayerActivityRecord newRecord = new PlayerActivityRecord(player.getUniqueId(), 1);
+                newRecord.setLastLogout(ZonedDateTime.now());
+                PersistentData.getInstance().getPlayerActivityRecords().add(newRecord);
             }
         }
     }
