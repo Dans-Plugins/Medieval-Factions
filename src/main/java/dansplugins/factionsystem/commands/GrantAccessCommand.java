@@ -41,6 +41,10 @@ public class GrantAccessCommand extends SubCommand {
             player.sendMessage(translate("&c" + getText("PlayerNotFound")));
             return;
         }
+        if (targetUUID == player.getUniqueId()) {
+            player.sendMessage(translate("&c" + getText("CannotGrantAccessToSelf")));
+            return;
+        }
         ephemeral.getPlayersGrantingAccess().put(player.getUniqueId(), targetUUID);
         player.sendMessage(translate("&a" + getText("RightClickGrantAccess", args[0])));
     }

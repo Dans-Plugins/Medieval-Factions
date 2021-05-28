@@ -504,5 +504,7 @@ UsageForceRemoveVassal	Usage: /mf force removevassal 'faction' 'vassal'
 Done	Done!
 HelpForceRemoveVassal	/mf force removevassal 'faction' 'vassal'
 FactionAndVassalSingleQuotesRequirement	Faction and vassal to remove must be designated inside single quotes!
-CannotDemoteSelf	You cannot demote yourself!
-CannotPromoteSelf	You cannot promote yourself!
+CannotDemoteSelf	You cannot demote yourself.
+CannotPromoteSelf	You cannot promote yourself.
+CannotRevokeAccessFromSelf	You cannot revoke access from yourself.
+CannotGrantAccessToSelf	You cannot grant access to yourself.

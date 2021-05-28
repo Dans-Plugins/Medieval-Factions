@@ -5,6 +5,8 @@ import dansplugins.factionsystem.utils.UUIDChecker;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
+import java.util.UUID;
+
 public class RevokeAccessCommand extends SubCommand {
 
     public RevokeAccessCommand() {
@@ -37,8 +39,17 @@ public class RevokeAccessCommand extends SubCommand {
             player.sendMessage(translate("&c" + getText("AlreadyEnteredRevokeAccess")));
             return;
         }
+        final UUID targetUUID = UUIDChecker.getInstance().findUUIDBasedOnPlayerName(args[0]);
+        if (targetUUID == null) {
+            player.sendMessage(translate("&c" + getText("PlayerNotFound")));
+            return;
+        }
+        if (targetUUID == player.getUniqueId()) {
+            player.sendMessage(translate("&c" + getText("CannotRevokeAccessFromSelf")));
+            return;
+        }
         ephemeral.getPlayersRevokingAccess().put(
-                player.getUniqueId(), UUIDChecker.getInstance().findUUIDBasedOnPlayerName(args[0])
+                player.getUniqueId(), targetUUID
         );
         player.sendMessage(translate("&a" + getText("RightClickRevokeAccess")));
     }
