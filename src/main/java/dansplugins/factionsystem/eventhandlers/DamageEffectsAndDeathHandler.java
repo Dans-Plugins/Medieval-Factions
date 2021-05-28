@@ -106,7 +106,6 @@ public class DamageEffectsAndDeathHandler implements Listener {
             }
 
             // get chunk that armor stand is in
-            world = armorStand.getWorld();
             location = armorStand.getLocation();
         }
         else if (event.getEntity() instanceof ItemFrame) {
@@ -118,13 +117,12 @@ public class DamageEffectsAndDeathHandler implements Listener {
             }
 
             // get chunk that armor stand is in
-            world = itemFrame.getWorld();
             location = itemFrame.getLocation();
         }
 
-        if (location != null && world != null) {
+        if (location != null) {
             Chunk chunk = location.getChunk();
-            ClaimedChunk claimedChunk = ChunkManager.getInstance().getClaimedChunk(chunk.getX(), chunk.getZ(), world.getName(), PersistentData.getInstance().getClaimedChunks());
+            ClaimedChunk claimedChunk = ChunkManager.getInstance().getClaimedChunk(chunk);
 
             // if chunk is not claimed, return
             if (claimedChunk == null) {
@@ -319,8 +317,7 @@ public class DamageEffectsAndDeathHandler implements Listener {
             // check if land is claimed
             if (ChunkManager.getInstance().isClaimed(player.getLocation().getChunk(), PersistentData.getInstance().getClaimedChunks()))
             {
-                ClaimedChunk chunk = ChunkManager.getInstance().getClaimedChunk(player.getLocation().getChunk().getX(), player.getLocation().getChunk().getZ(),
-                        player.getLocation().getWorld().getName(), PersistentData.getInstance().getClaimedChunks());
+                ClaimedChunk chunk = ChunkManager.getInstance().getClaimedChunk(player.getLocation().getChunk());
                 // if holder is player's faction
                 if (chunk.getHolder().equalsIgnoreCase(PersistentData.getInstance().getPlayersFaction(player.getUniqueId()).getName()) && PersistentData.getInstance().getPlayersFaction(player.getUniqueId()).getAutoClaimStatus() == false) {
 

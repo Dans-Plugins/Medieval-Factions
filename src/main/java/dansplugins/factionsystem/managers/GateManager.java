@@ -29,8 +29,7 @@ public class GateManager {
 
     public void handlePotentialGateInteraction(Block clickedBlock, Player player, PlayerInteractEvent event) {
         if (ChunkManager.getInstance().isClaimed(clickedBlock.getChunk(), PersistentData.getInstance().getClaimedChunks())) {
-            ClaimedChunk claim = ChunkManager.getInstance().getClaimedChunk(clickedBlock.getChunk().getX(), clickedBlock.getChunk().getZ(),
-                    clickedBlock.getChunk().getWorld().getName(), PersistentData.getInstance().getClaimedChunks());
+            ClaimedChunk claim = ChunkManager.getInstance().getClaimedChunk(clickedBlock.getChunk());
             Faction faction = PersistentData.getInstance().getFaction(claim.getHolder());
 
             if (faction.hasGateTrigger(clickedBlock)) {
@@ -69,7 +68,7 @@ public class GateManager {
             return;
         }
         else {
-            ClaimedChunk claimedChunk = ChunkManager.getInstance().getClaimedChunk(clickedBlock.getChunk().getX(), clickedBlock.getChunk().getZ(), clickedBlock.getWorld().getName(), PersistentData.getInstance().getClaimedChunks());
+            ClaimedChunk claimedChunk = ChunkManager.getInstance().getClaimedChunk(clickedBlock.getChunk());
             if (claimedChunk != null) {
                 if (!PersistentData.getInstance().getFaction(claimedChunk.getHolder()).isMember(player.getUniqueId())) {
                     player.sendMessage(ChatColor.RED + LocaleManager.getInstance().getText("AlertMustBeMemberToCreateGate"));
@@ -160,8 +159,7 @@ public class GateManager {
                     if (ChunkManager.getInstance().isClaimed(clickedBlock.getChunk(), PersistentData.getInstance().getClaimedChunks())) {
                         Gate.ErrorCodeAddCoord e = EphemeralData.getInstance().getCreatingGatePlayers().get(event.getPlayer().getUniqueId()).addCoord(clickedBlock);
                         if (e.equals(Gate.ErrorCodeAddCoord.None)) {
-                            ClaimedChunk claim = ChunkManager.getInstance().getClaimedChunk(clickedBlock.getChunk().getX(), clickedBlock.getChunk().getZ(),
-                                    clickedBlock.getChunk().getWorld().getName(), PersistentData.getInstance().getClaimedChunks());
+                            ClaimedChunk claim = ChunkManager.getInstance().getClaimedChunk(clickedBlock.getChunk());
                             Faction faction = PersistentData.getInstance().getFaction(claim.getHolder());
                             faction.addGate(EphemeralData.getInstance().getCreatingGatePlayers().get(event.getPlayer().getUniqueId()));
                             EphemeralData.getInstance().getCreatingGatePlayers().remove(event.getPlayer().getUniqueId());

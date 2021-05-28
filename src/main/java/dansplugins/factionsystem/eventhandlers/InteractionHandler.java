@@ -48,7 +48,7 @@ public class InteractionHandler implements Listener {
         Player player = event.getPlayer();
 
         // get chunk
-        ClaimedChunk chunk = ChunkManager.getInstance().getClaimedChunk(event.getBlock().getLocation().getChunk().getX(), event.getBlock().getLocation().getChunk().getZ(), event.getBlock().getWorld().getName(), PersistentData.getInstance().getClaimedChunks());
+        ClaimedChunk chunk = ChunkManager.getInstance().getClaimedChunk(event.getBlock().getLocation().getChunk());
 
         // if chunk is not claimed then return
         if (chunk == null) {
@@ -301,7 +301,7 @@ public class InteractionHandler implements Listener {
         // access to (or in future, a 'public' locked block), so if they're not in the faction whose territory the block exists in we want that
         // check to be handled before the interaction is rejected for not being a faction member.
         // if chunk is claimed
-        ClaimedChunk chunk = ChunkManager.getInstance().getClaimedChunk(event.getClickedBlock().getLocation().getChunk().getX(), event.getClickedBlock().getLocation().getChunk().getZ(), event.getClickedBlock().getWorld().getName(), PersistentData.getInstance().getClaimedChunks());
+        ClaimedChunk chunk = ChunkManager.getInstance().getClaimedChunk(event.getClickedBlock().getLocation().getChunk());
         if (chunk != null) {
             ChunkManager.getInstance().handleClaimedChunkInteraction(event, chunk);
         }

@@ -36,7 +36,7 @@ public class HomeCommand extends SubCommand {
             player.sendMessage(translate("&c" + getText("HomeIsInUnclaimedChunk")));
             return;
         }
-        ClaimedChunk chunk = chunks.getClaimedChunk(home_chunk, data.getClaimedChunks());
+        ClaimedChunk chunk = chunks.getClaimedChunk(home_chunk);
         if (chunk == null || chunk.getHolder() == null) {
             player.sendMessage(translate("&c" + getText("HomeIsInUnclaimedChunk")));
             return;
