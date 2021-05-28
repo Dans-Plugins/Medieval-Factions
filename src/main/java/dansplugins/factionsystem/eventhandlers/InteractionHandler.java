@@ -125,44 +125,15 @@ public class InteractionHandler implements Listener {
         Player player = event.getPlayer();
 
         // get chunk
-        ClaimedChunk chunk = ChunkManager.getInstance().getClaimedChunk(event.getBlock().getLocation().getChunk());
+        ClaimedChunk claimedChunk = ChunkManager.getInstance().getClaimedChunk(event.getBlock().getLocation().getChunk());
 
-        // if chunk is not claimed then return
-        if (chunk == null) {
+        if (isPlayerAttemptingToPlaceLadderInEnemyTerritoryAndIsThisAllowed(event.getBlockPlaced(), player, claimedChunk)) {
             return;
         }
 
-        boolean isPlayerBypassing = EphemeralData.getInstance().getAdminsBypassingProtections().contains(player.getUniqueId());
-
-        if (isPlayerBypassing) {
-            return;
-        }
-
-        // if player not in a faction then cancel event and return
-        boolean isPlayerInFaction = PersistentData.getInstance().isInFaction(player.getUniqueId());
-        if (!isPlayerInFaction) {
+        if (shouldEventBeCancelled(claimedChunk, player)) {
             event.setCancelled(true);
             return;
-        }
-        
-        // player is in faction
-        // player is not bypassing
-
-        Faction faction = PersistentData.getInstance().getPlayersFaction(player.getUniqueId());
-
-        boolean isLandClaimedByPlayersFaction = faction.getName().equalsIgnoreCase(chunk.getHolder());
-        if (!isLandClaimedByPlayersFaction) {
-            boolean laddersArePlaceableInEnemyTerritory = MedievalFactions.getInstance().getConfig().getBoolean("laddersPlaceableInEnemyFactionTerritory");
-            boolean playerIsTryingToPlaceLadderInEnemyTerritory = event.getBlockPlaced().getType() == LADDER && faction.isEnemy(chunk.getHolder());
-            if (laddersArePlaceableInEnemyTerritory && playerIsTryingToPlaceLadderInEnemyTerritory) {
-                // allow interaction
-                return;
-            }
-
-            if (!isOutsiderInteractionAllowed(player, chunk, faction) && !isPlayerBypassing) {
-                event.setCancelled(true);
-                return;
-            }
         }
 
         if (BlockChecker.getInstance().isChest(event.getBlock())) {
@@ -473,6 +444,24 @@ public class InteractionHandler implements Listener {
         }
 
         return allowed;
+    }
+
+    private boolean isPlayerAttemptingToPlaceLadderInEnemyTerritoryAndIsThisAllowed(Block blockPlaced, Player player, ClaimedChunk claimedChunk) {
+        Faction playersFaction = PersistentData.getInstance().getPlayersFaction(player.getUniqueId());
+
+        if (playersFaction == null) {
+            // player is not in a faction, so they couldn't be trying to place anything in enemy territory
+            return false;
+        }
+
+        if (claimedChunk == null) {
+            // chunk is not claimed, so they couldn't be trying to place anything in enemy territory
+            return false;
+        }
+
+        boolean laddersArePlaceableInEnemyTerritory = MedievalFactions.getInstance().getConfig().getBoolean("laddersPlaceableInEnemyFactionTerritory");
+        boolean playerIsTryingToPlaceLadderInEnemyTerritory = blockPlaced.getType() == LADDER && playersFaction.isEnemy(claimedChunk.getHolder());
+        return laddersArePlaceableInEnemyTerritory && playerIsTryingToPlaceLadderInEnemyTerritory;
     }
 
     // END OF HELPER METHODS ------------------------------------------------------
