@@ -401,12 +401,14 @@ public class InteractionHandler implements Listener {
 
     @EventHandler()
     public void handle(PlayerBucketFillEvent event) {
-        // TODO: implement
+        if (debug) { System.out.println("DEBUG: A player is attempting to fill a bucket!"); }
+
     }
 
     @EventHandler()
     public void handle(PlayerBucketEmptyEvent event) {
-        // TODO: implement
+        if (debug) { System.out.println("DEBUG: A player is attempting to empty a bucket!"); }
+
     }
 
     // END OF EVENT HANDLER METHODS ------------------------------------------------------
