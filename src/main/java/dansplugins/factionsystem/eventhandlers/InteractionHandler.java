@@ -28,10 +28,7 @@ import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.event.block.BlockPlaceEvent;
 import org.bukkit.event.entity.EntityPlaceEvent;
 import org.bukkit.event.hanging.HangingBreakByEntityEvent;
-import org.bukkit.event.player.PlayerBucketEmptyEvent;
-import org.bukkit.event.player.PlayerBucketFillEvent;
-import org.bukkit.event.player.PlayerInteractAtEntityEvent;
-import org.bukkit.event.player.PlayerInteractEvent;
+import org.bukkit.event.player.*;
 import org.bukkit.inventory.InventoryHolder;
 
 import static org.bukkit.Material.LADDER;
@@ -331,7 +328,6 @@ public class InteractionHandler implements Listener {
             ArmorStand armorStand = (ArmorStand) clickedEntity;
 
             // get chunk that armor stand is in
-            world = armorStand.getWorld();
             location = armorStand.getLocation();
         }
         else if (clickedEntity instanceof ItemFrame) {
@@ -341,11 +337,10 @@ public class InteractionHandler implements Listener {
             ItemFrame itemFrame = (ItemFrame) clickedEntity;
 
             // get chunk that armor stand is in
-            world = itemFrame.getWorld();
             location = itemFrame.getLocation();
         }
 
-        if (location != null && world != null) {
+        if (location != null) {
             Chunk chunk = location.getChunk();
             ClaimedChunk claimedChunk = ChunkManager.getInstance().getClaimedChunk(chunk);
 
@@ -416,6 +411,28 @@ public class InteractionHandler implements Listener {
 
         if (shouldEventBeCancelled(claimedChunk, player)) {
             event.setCancelled(true);
+        }
+    }
+
+    @EventHandler()
+    public void handle(PlayerInteractEntityEvent event) {
+        Player player = event.getPlayer();
+        Entity clickedEntity = event.getRightClicked();
+
+        if (clickedEntity instanceof ItemFrame) {
+            if (debug) {
+                System.out.println("DEBUG: ItemFrame interaction captured in PlayerInteractEntityEvent!");
+            }
+            ItemFrame itemFrame = (ItemFrame) clickedEntity;
+
+            // get chunk that armor stand is in
+            Location location = itemFrame.getLocation();
+            Chunk chunk = location.getChunk();
+            ClaimedChunk claimedChunk = ChunkManager.getInstance().getClaimedChunk(chunk);
+
+            if (shouldEventBeCancelled(claimedChunk, player)) {
+                event.setCancelled(true);
+            }
         }
     }
 
