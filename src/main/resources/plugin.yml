@@ -1,5 +1,5 @@
 name: MedievalFactions
-version: 4.1-beta-2-testing-interaction-handler-changes
+version: 4.1-beta-2-testing-buckets
 authors: [DanTheTechMan, Pasarus, Caibinus, Callum]
 main: dansplugins.factionsystem.MedievalFactions
 api-version: 1.13
