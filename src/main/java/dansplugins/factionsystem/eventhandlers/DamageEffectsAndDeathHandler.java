@@ -136,6 +136,7 @@ public class DamageEffectsAndDeathHandler implements Listener {
             Faction playersFaction = PersistentData.getInstance().getPlayersFaction(player.getUniqueId());
 
             if (playersFaction == null) {
+                event.setCancelled(true);
                 return;
             }
 
