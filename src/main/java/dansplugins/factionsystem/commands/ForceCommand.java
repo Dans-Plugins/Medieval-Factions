@@ -1,10 +1,10 @@
 package dansplugins.factionsystem.commands;
 
-import dansplugins.factionsystem.managers.LocaleManager;
 import dansplugins.factionsystem.MedievalFactions;
-import dansplugins.factionsystem.managers.StorageManager;
 import dansplugins.factionsystem.commands.abs.SubCommand;
 import dansplugins.factionsystem.data.PersistentData;
+import dansplugins.factionsystem.managers.LocaleManager;
+import dansplugins.factionsystem.managers.StorageManager;
 import dansplugins.factionsystem.objects.Faction;
 import dansplugins.factionsystem.objects.PlayerPowerRecord;
 import dansplugins.factionsystem.utils.UUIDChecker;
