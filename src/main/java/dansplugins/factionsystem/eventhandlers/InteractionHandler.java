@@ -27,6 +27,8 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.event.block.BlockPlaceEvent;
 import org.bukkit.event.hanging.HangingBreakByEntityEvent;
+import org.bukkit.event.player.PlayerBucketEmptyEvent;
+import org.bukkit.event.player.PlayerBucketFillEvent;
 import org.bukkit.event.player.PlayerInteractAtEntityEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.inventory.InventoryHolder;
@@ -395,6 +397,16 @@ public class InteractionHandler implements Listener {
         if (!holderFactionName.equalsIgnoreCase(playersFactionName)) {
             event.setCancelled(true);
         }
+    }
+
+    @EventHandler()
+    public void handle(PlayerBucketFillEvent event) {
+
+    }
+
+    @EventHandler()
+    public void handle(PlayerBucketEmptyEvent event) {
+
     }
 
     // END OF EVENT HANDLER METHODS ------------------------------------------------------
