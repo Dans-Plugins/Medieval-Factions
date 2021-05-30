@@ -14,4 +14,11 @@ public class FactionFlags {
         flags.put("TestFlag", true);
     }
 
+    public boolean getFlag(String flag) {
+        if (!flags.containsKey(flag)) {
+            return false;
+        }
+        return flags.get(flag);
+    }
+
 }
