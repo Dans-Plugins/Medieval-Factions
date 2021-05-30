@@ -270,14 +270,12 @@ public class InteractionHandler implements Listener {
         Player player = event.getPlayer();
         Entity clickedEntity = event.getRightClicked();
 
-        World world = null;
         Location location = null;
 
         if (clickedEntity instanceof ArmorStand) {
             ArmorStand armorStand = (ArmorStand) clickedEntity;
 
             // get chunk that armor stand is in
-            world = armorStand.getWorld();
             location = armorStand.getLocation();
         }
         else if (clickedEntity instanceof ItemFrame) {
@@ -287,7 +285,6 @@ public class InteractionHandler implements Listener {
             ItemFrame itemFrame = (ItemFrame) clickedEntity;
 
             // get chunk that armor stand is in
-            world = itemFrame.getWorld();
             location = itemFrame.getLocation();
         }
 
