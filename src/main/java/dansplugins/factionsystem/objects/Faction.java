@@ -670,4 +670,8 @@ public class Faction {
         }
     }
 
+    public FactionFlags getFlags() {
+        return flags;
+    }
+
 }
