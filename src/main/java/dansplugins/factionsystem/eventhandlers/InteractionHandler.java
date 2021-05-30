@@ -53,7 +53,7 @@ public class InteractionHandler implements Listener {
         }
         
         // if block is not locked then return
-        if (PersistentData.getInstance().isBlockLocked(event.getBlock())) {
+        if (!PersistentData.getInstance().isBlockLocked(event.getBlock())) {
             return;
         }
         else {
