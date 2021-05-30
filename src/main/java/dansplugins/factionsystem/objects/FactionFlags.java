@@ -15,10 +15,20 @@ public class FactionFlags {
     }
 
     public boolean getFlag(String flag) {
-        if (!flags.containsKey(flag)) {
+        if (!isFlag(flag)) {
             return false;
         }
         return flags.get(flag);
+    }
+
+    public void setFlag(String flag, boolean value) {
+        // this should never cause an issue as we will sanitize user input
+        flags.replace(flag, value);
+    }
+
+    public boolean isFlag(String flag) {
+        // this method will likely need to be used to sanitize user input
+        return flags.containsKey(flag);
     }
 
 }
