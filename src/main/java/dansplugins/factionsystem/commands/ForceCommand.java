@@ -18,6 +18,8 @@ import java.util.*;
 
 public class ForceCommand extends SubCommand {
 
+    private final boolean debug = true;
+
     private final String[] commands = new String[]{
             "Save", "Load", "Peace", "Demote", "Join", "Kick", "Power", "Renounce", "Transfer", "RemoveVassal"
     };
@@ -183,6 +185,7 @@ public class ForceCommand extends SubCommand {
             sender.sendMessage(translate("&c" + getText("UsageForceKick")));
             return;
         }
+        if (debug) { System.out.println(String.format("Looking for player UUID based on player name: '%s'", args[0])); }
         final UUID playerUUID = UUIDChecker.getInstance().findUUIDBasedOnPlayerName(args[0]);
         if (playerUUID == null) {
             sender.sendMessage(translate("&c" + getText("PlayerNotFound")));
