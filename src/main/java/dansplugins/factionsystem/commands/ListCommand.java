@@ -80,7 +80,18 @@ public class ListCommand extends SubCommand {
 
         @Override
         public int compareTo(SortableFaction o) {
-            return Integer.compare(getPower(), o.getPower()); // Current > Greater (higher first)
+            int comparison = Integer.compare(getPower(), o.getPower()); // Current > Greater (higher first)
+
+            // return the opposite of the result of the comparison so that factions will be sorted from highest to lowest power
+            if (comparison > 0) {
+                return -1;
+            }
+            else if (comparison < 0) {
+                return 1;
+            }
+            else {
+                return 0;
+            }
         }
 
     }
