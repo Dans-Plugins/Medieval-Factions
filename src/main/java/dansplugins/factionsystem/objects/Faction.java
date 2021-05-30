@@ -52,6 +52,7 @@ public class Faction {
         setOwner(creator);
         maxPower = max;
         prefix = initialName;
+        flags.initializeFlags();
     }
 
     // server constructor
