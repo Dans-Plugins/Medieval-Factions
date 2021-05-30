@@ -52,7 +52,7 @@ public class MoveHandler implements Listener {
 
             // if new chunk is claimed and old chunk was not
             if (ChunkManager.getInstance().isClaimed(event.getTo().getChunk(), PersistentData.getInstance().getClaimedChunks()) && !ChunkManager.getInstance().isClaimed(event.getFrom().getChunk(), PersistentData.getInstance().getClaimedChunks())) {
-                String title = ChunkManager.getInstance().getClaimedChunk(event.getTo().getChunk().getX(), event.getTo().getChunk().getZ(), event.getTo().getChunk().getWorld().getName(), PersistentData.getInstance().getClaimedChunks()).getHolder();
+                String title = ChunkManager.getInstance().getClaimedChunk(event.getTo().getChunk()).getHolder();
                 event.getPlayer().sendTitle(title, null, 10, 70, 20);
                 return;
             }
@@ -66,8 +66,8 @@ public class MoveHandler implements Listener {
             // if new chunk is claimed and old chunk was also claimed
             if (ChunkManager.getInstance().isClaimed(event.getTo().getChunk(), PersistentData.getInstance().getClaimedChunks()) && ChunkManager.getInstance().isClaimed(event.getFrom().getChunk(), PersistentData.getInstance().getClaimedChunks())) {
                 // if chunk holders are not equal
-                if (!(ChunkManager.getInstance().getClaimedChunk(event.getFrom().getChunk().getX(), event.getFrom().getChunk().getZ(), event.getFrom().getWorld().getName(), PersistentData.getInstance().getClaimedChunks()).getHolder().equalsIgnoreCase(ChunkManager.getInstance().getClaimedChunk(event.getTo().getChunk().getX(), event.getTo().getChunk().getZ(), event.getTo().getChunk().getWorld().getName(), PersistentData.getInstance().getClaimedChunks()).getHolder()))) {
-                    String title = ChunkManager.getInstance().getClaimedChunk(event.getTo().getChunk().getX(), event.getTo().getChunk().getZ(), event.getTo().getChunk().getWorld().getName(), PersistentData.getInstance().getClaimedChunks()).getHolder();
+                if (!(ChunkManager.getInstance().getClaimedChunk(event.getFrom().getChunk()).getHolder().equalsIgnoreCase(ChunkManager.getInstance().getClaimedChunk(event.getTo().getChunk()).getHolder()))) {
+                    String title = ChunkManager.getInstance().getClaimedChunk(event.getTo().getChunk()).getHolder();
                     event.getPlayer().sendTitle(title, null, 10, 70, 20);
                 }
             }
