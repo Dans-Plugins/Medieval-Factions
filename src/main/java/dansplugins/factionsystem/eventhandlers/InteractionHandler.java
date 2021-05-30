@@ -35,7 +35,7 @@ import static org.bukkit.Material.LADDER;
 
 public class InteractionHandler implements Listener {
 
-    private final boolean debug = true;
+    private final boolean debug = false;
 
     // EVENT HANDLER METHODS ------------------------------------------------------
 
