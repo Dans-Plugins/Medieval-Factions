@@ -14,12 +14,4 @@ public class FactionFlags {
         flags.put("TestFlag", true);
     }
 
-    public void save() {
-        // TODO: implement
-    }
-
-    public void load() {
-        // TODO: implement
-    }
-
 }

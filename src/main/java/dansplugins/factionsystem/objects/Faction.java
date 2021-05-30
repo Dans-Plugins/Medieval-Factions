@@ -400,7 +400,6 @@ public class Faction {
         saveMap.put("location", gson.toJson(saveLocation(gson)));
         saveMap.put("liege", gson.toJson(liege));
         saveMap.put("prefix", gson.toJson(prefix));
-        // TODO: save FactionFlags object
 
         ArrayList<String> gateList = new ArrayList<String>(); 
         for (Gate gate : gates)
@@ -408,7 +407,10 @@ public class Faction {
         	Map <String, String> map = gate.save();
         	gateList.add(gson.toJson(map));
         }
-        saveMap.put("factionGates", gson.toJson(gateList));        
+        saveMap.put("factionGates", gson.toJson(gateList));
+
+        // TODO: save FactionFlags object
+
         return saveMap;
     }
 
@@ -445,7 +447,6 @@ public class Faction {
         liege = gson.fromJson(data.getOrDefault("liege", "none"), String.class);
         vassals = gson.fromJson(data.getOrDefault("vassals", "[]"), arrayListTypeString);
         prefix = loadDataOrDefault(gson, data, "prefix", getName());
-        // TODO: load FactionFlags object
         
 //        System.out.println("Loading Faction Gates...");
         ArrayList<String> gateList = new ArrayList<String>();
@@ -462,6 +463,8 @@ public class Faction {
         {
         	System.out.println(LocaleManager.getInstance().getText("MissingFactionGatesJSONCollection"));
         }
+
+        // TODO: load FactionFlags object
 
         if (flags.getNumFlags() == 0) {
             flags.initializeFlags();
