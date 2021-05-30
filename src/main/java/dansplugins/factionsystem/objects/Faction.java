@@ -35,6 +35,7 @@ public class Faction {
     private Location factionHome = null;
     private ArrayList<Gate> gates = new ArrayList<>();
     private String prefix = "none";
+    private FactionFlags flags = new FactionFlags();
 
     // temporary
     int maxPower = 0;
