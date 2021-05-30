@@ -49,6 +49,7 @@ public class InteractionHandler implements Listener {
 
         if (shouldEventBeCancelled(claimedChunk, player)) {
             event.setCancelled(true);
+            return;
         }
         
         // if block is not locked then return
