@@ -534,6 +534,8 @@ public class ChunkManager {
                             }
                         }
                     }
+                    // =======================
+                    // TODO: replace this code with a call to the isOutsiderInteractionAllowed() method
                     boolean inVassalageTree = PersistentData.getInstance().isPlayerInFactionInVassalageTree(event.getPlayer(), PersistentData.getInstance().getFaction(chunk.getHolder()));
                     boolean isAlly = faction.isAlly(chunk.getHolder());
                     boolean allyInteractionAllowed = MedievalFactions.getInstance().getConfig().getBoolean("allowAllyInteraction");
@@ -553,6 +555,7 @@ public class ChunkManager {
                         event.setCancelled(true);
                         return;
                     }
+                    // =======================
                 }
             }
         }
