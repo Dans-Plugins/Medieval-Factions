@@ -45,35 +45,10 @@ public class InteractionHandler implements Listener {
         Player player = event.getPlayer();
 
         // get chunk
-        ClaimedChunk chunk = ChunkManager.getInstance().getClaimedChunk(event.getBlock().getLocation().getChunk().getX(), event.getBlock().getLocation().getChunk().getZ(), event.getBlock().getWorld().getName(), PersistentData.getInstance().getClaimedChunks());
+        ClaimedChunk claimedChunk = ChunkManager.getInstance().getClaimedChunk(event.getBlock().getLocation().getChunk().getX(), event.getBlock().getLocation().getChunk().getZ(), event.getBlock().getWorld().getName(), PersistentData.getInstance().getClaimedChunks());
 
-        // if chunk is not claimed then return
-        if (chunk == null) {
-            return;
-        }
-
-        boolean isPlayerBypassing = EphemeralData.getInstance().getAdminsBypassingProtections().contains(event.getPlayer().getUniqueId());
-
-        if (isPlayerBypassing) {
-            return;
-        }
-
-        Faction faction = PersistentData.getInstance().getPlayersFaction(event.getPlayer().getUniqueId());
-        if (faction == null) {
-            // player not in a faction
+        if (shouldEventBeCancelled(claimedChunk, player)) {
             event.setCancelled(true);
-            return;
-        }
-        else {
-            // player is in faction
-            boolean isLandClaimedByPlayersFaction = faction.getName().equalsIgnoreCase(chunk.getHolder());
-            if (!isLandClaimedByPlayersFaction) {
-                // player's faction is not the same as the holder of the chunk and player isn't bypassing
-                if (!isOutsiderInteractionAllowed(player, chunk, faction)) {
-                    event.setCancelled(true);
-                    return;
-                }
-            }
         }
         
         // if block is not locked then return
@@ -105,6 +80,8 @@ public class InteractionHandler implements Listener {
                 return;
             }
         }
+
+        Faction faction = PersistentData.getInstance().getPlayersFaction(event.getPlayer().getUniqueId());
 
         // if block is in a gate
         for (Gate gate : faction.getGates()) {
@@ -156,7 +133,7 @@ public class InteractionHandler implements Listener {
                 return;
             }
 
-            if (!isOutsiderInteractionAllowed(player, chunk, faction) && !isPlayerBypassing) {
+            if (!isOutsiderInteractionAllowed(player, chunk, faction)) {
                 event.setCancelled(true);
                 return;
             }
@@ -448,29 +425,31 @@ public class InteractionHandler implements Listener {
 
     private boolean shouldEventBeCancelled(ClaimedChunk claimedChunk, Player player) {
         if (claimedChunk == null) {
+            // chunk is not claimed
             return false;
         }
 
         boolean isPlayerBypassing = EphemeralData.getInstance().getAdminsBypassingProtections().contains(player.getUniqueId());
-
         if (isPlayerBypassing) {
+            // player is bypassing
             return false;
         }
 
         Faction playersFaction = PersistentData.getInstance().getPlayersFaction(player.getUniqueId());
-
         if (playersFaction == null) {
+            // player is not in a faction
             return true;
         }
 
         boolean isLandClaimedByPlayersFaction = playersFaction.getName().equalsIgnoreCase(claimedChunk.getHolder());
-        if (!isLandClaimedByPlayersFaction) {
-            if (!isOutsiderInteractionAllowed(player, claimedChunk, playersFaction)) {
-                return true;
-            }
+        if (!isLandClaimedByPlayersFaction && !isOutsiderInteractionAllowed(player, claimedChunk, playersFaction)) {
+            // land is not claimed by players faction and outsider interaction is disallowed
+            return true;
         }
-
-        return false;
+        else {
+            // land is claimed by players faction or outsider interaction is allowed
+            return false;
+        }
     }
 
     private boolean isOutsiderInteractionAllowed(Player player, ClaimedChunk chunk, Faction faction) {
