@@ -35,6 +35,7 @@ public class Faction {
     private Location factionHome = null;
     private ArrayList<Gate> gates = new ArrayList<>();
     private String prefix = "none";
+    private FactionFlags flags = new FactionFlags();
 
     // temporary
     int maxPower = 0;
@@ -406,7 +407,10 @@ public class Faction {
         	Map <String, String> map = gate.save();
         	gateList.add(gson.toJson(map));
         }
-        saveMap.put("factionGates", gson.toJson(gateList));        
+        saveMap.put("factionGates", gson.toJson(gateList));
+
+        // TODO: save FactionFlags object
+
         return saveMap;
     }
 
@@ -458,6 +462,12 @@ public class Faction {
         else
         {
         	System.out.println(LocaleManager.getInstance().getText("MissingFactionGatesJSONCollection"));
+        }
+
+        // TODO: load FactionFlags object
+
+        if (flags.getNumFlags() == 0) {
+            flags.initializeFlags();
         }
     }
 
@@ -658,6 +668,10 @@ public class Faction {
             removeVassal(oldName);
             addVassal(newName);
         }
+    }
+
+    public FactionFlags getFlags() {
+        return flags;
     }
 
 }
