@@ -18,7 +18,7 @@ import java.util.*;
 
 public class ForceCommand extends SubCommand {
 
-    private final boolean debug = true;
+    private final boolean debug = false;
 
     private final String[] commands = new String[]{
             "Save", "Load", "Peace", "Demote", "Join", "Kick", "Power", "Renounce", "Transfer", "RemoveVassal"
