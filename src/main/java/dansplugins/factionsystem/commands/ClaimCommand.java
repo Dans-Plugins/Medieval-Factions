@@ -32,9 +32,16 @@ public class ClaimCommand extends SubCommand {
         }
         if (args.length != 0) {
             int depth = getIntSafe(args[0], -1);
-            if (depth <= 0) player.sendMessage(translate("&c" + getText("UsageClaimRadius")));
-            else chunks.radiusClaimAtLocation(depth, player, player.getLocation(), faction);
-        } else chunks.claimChunkAtLocation(player, player.getLocation(), faction);
+            if (depth <= 0) {
+                player.sendMessage(translate("&c" + getText("UsageClaimRadius")));
+            }
+            else {
+                chunks.radiusClaimAtLocation(depth, player, player.getLocation(), faction);
+            }
+        }
+        else {
+            chunks.claimChunkAtLocation(player, player.getLocation(), faction);
+        }
         dynmap.updateClaims();
     }
 
