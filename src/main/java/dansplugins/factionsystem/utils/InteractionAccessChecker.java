@@ -57,9 +57,11 @@ public class InteractionAccessChecker {
     }
 
     public boolean isOutsiderInteractionAllowed(Player player, ClaimedChunk chunk, Faction playersFaction) {
-        boolean inVassalageTree = PersistentData.getInstance().isPlayerInFactionInVassalageTree(player, PersistentData.getInstance().getFaction(chunk.getHolder()));
+        final Faction chunkHolder = PersistentData.getInstance().getFaction(chunk.getHolder());
+
+        boolean inVassalageTree = PersistentData.getInstance().isPlayerInFactionInVassalageTree(player, chunkHolder);
         boolean isAlly = playersFaction.isAlly(chunk.getHolder());
-        boolean allyInteractionAllowed = playersFaction.getFlags().getFlag("alliesCanInteractWithLand");
+        boolean allyInteractionAllowed = chunkHolder.getFlags().getFlag("alliesCanInteractWithLand");
         boolean vassalageTreeInteractionAllowed = MedievalFactions.getInstance().getConfig().getBoolean("allowVassalageTreeInteraction");
 
         if (debug) {
