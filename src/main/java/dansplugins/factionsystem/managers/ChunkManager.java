@@ -8,6 +8,7 @@ import dansplugins.factionsystem.events.FactionClaimEvent;
 import dansplugins.factionsystem.events.FactionUnclaimEvent;
 import dansplugins.factionsystem.objects.*;
 import dansplugins.factionsystem.utils.BlockChecker;
+import dansplugins.factionsystem.utils.InteractionAccessChecker;
 import org.bukkit.*;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
@@ -527,28 +528,10 @@ public class ChunkManager {
                             }
                         }
                     }
-                    // =======================
-                    // TODO: replace this code with a call to the isOutsiderInteractionAllowed() method
-                    boolean inVassalageTree = PersistentData.getInstance().isPlayerInFactionInVassalageTree(event.getPlayer(), PersistentData.getInstance().getFaction(chunk.getHolder()));
-                    boolean isAlly = faction.isAlly(chunk.getHolder());
-                    boolean allyInteractionAllowed = MedievalFactions.getInstance().getConfig().getBoolean("allowAllyInteraction");
-                    boolean vassalageTreeInteractionAllowed = MedievalFactions.getInstance().getConfig().getBoolean("allowVassalageTreeInteraction");
-
-                    boolean allowed = false;
-
-                    if (allyInteractionAllowed && isAlly) {
-                        allowed = true;
-                    }
-
-                    if (vassalageTreeInteractionAllowed && inVassalageTree) {
-                        allowed = true;
-                    }
-
-                    if (!allowed) {
+                    if (!InteractionAccessChecker.getInstance().isOutsiderInteractionAllowed(event.getPlayer(), chunk, faction)) {
                         event.setCancelled(true);
                         return;
                     }
-                    // =======================
                 }
             }
         }
