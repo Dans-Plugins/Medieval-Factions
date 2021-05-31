@@ -16,7 +16,7 @@ public class MedievalFactions extends JavaPlugin {
     private static MedievalFactions instance;
     private static MedievalFactionsAPI API;
 
-    private final String version = "v4.1-beta-3";
+    private final String version = "v4.1-alpha-3";
 
     public static MedievalFactions getInstance() {
         return instance;
