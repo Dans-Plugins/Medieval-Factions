@@ -18,12 +18,15 @@ public class HelpCommand extends SubCommand {
         super(new String[] {
                 "help", LOCALE_PREFIX + "CmdHelp"
         }, false);
+
+        // there should be 9 commands per page
         helpPages.put(1, Arrays.asList("Help", "List", "Info", "Members", "Join", "Leave", "Create", "Invite", "Desc"));
-        helpPages.put(2, Arrays.asList("Kick", "Transfer", "Disband", "DeclareWar", "MakePeace", "Invoke", "Claim", "Unclaim", "Unclaimall", "CheckClaim"));
-        helpPages.put(3, Arrays.asList("Autoclaim", "Promote", "Demote", "Power", "SetHome", "Home", "Who", "Ally", "BreakAlliance"));
-        helpPages.put(4, Arrays.asList("Rename", "Lock", "Unlock", "GrantAccess", "CheckAccess", "RevokeAccess", "Laws", "AddLaw", "RemoveLaw"));
-        helpPages.put(5, Arrays.asList("EditLaw", "Chat", "Vassalize", "SwearFealty", "DeclareIndependence", "GrantIndependence", "GateCreate", "GateName", "GateList", "GateRemove", "GateCancel"));
-        helpPages.put(6, Arrays.asList("DuelChallenge", "DuelAccept", "DuelCancel", "Prefix", "Bypass", "ConfigShow", "ConfigSet", "Force", "Version", "ResetPowerLevels"));
+        helpPages.put(2, Arrays.asList("FlagsShow", "FlagsSet", "Kick", "Transfer", "Disband", "DeclareWar", "MakePeace", "Invoke", "Claim"));
+        helpPages.put(3, Arrays.asList("Unclaim", "Unclaimall", "CheckClaim", "Autoclaim", "Promote", "Demote", "Power", "SetHome", "Home"));
+        helpPages.put(4, Arrays.asList("Who", "Ally", "BreakAlliance", "Rename", "Lock", "Unlock", "GrantAccess", "CheckAccess", "RevokeAccess"));
+        helpPages.put(5, Arrays.asList("Laws", "AddLaw", "RemoveLaw", "EditLaw", "Chat", "Vassalize", "SwearFealty", "DeclareIndependence", "GrantIndependence"));
+        helpPages.put(6, Arrays.asList("GateCreate", "GateName", "GateList", "GateRemove", "GateCancel", "DuelChallenge", "DuelAccept", "DuelCancel", "Prefix"));
+        helpPages.put(7, Arrays.asList("Bypass", "ConfigShow", "ConfigSet", "Force", "Version", "ResetPowerLevels"));
     }
 
     /**
