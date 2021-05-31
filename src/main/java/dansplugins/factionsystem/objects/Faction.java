@@ -52,7 +52,7 @@ public class Faction {
         setOwner(creator);
         maxPower = max;
         prefix = initialName;
-        flags.initializeFlags();
+        flags.initializeFlagValues();
     }
 
     // server constructor
@@ -410,7 +410,6 @@ public class Faction {
         }
         saveMap.put("factionGates", gson.toJson(gateList));
 
-        saveMap.put("flagNames", gson.toJson(flags.getFlagNames()));
         saveMap.put("flagValues", gson.toJson(flags.getFlagValues()));
 
         return saveMap;
@@ -467,11 +466,10 @@ public class Faction {
         	System.out.println(LocaleManager.getInstance().getText("MissingFactionGatesJSONCollection"));
         }
 
-        flags.setFlagNames(gson.fromJson(data.getOrDefault("flagNames", "[]"), arrayListTypeString));
         flags.setFlagValues(gson.fromJson(data.getOrDefault("flagValues", "[]"), mapType2));
 
         if (flags.getNumFlags() == 0) {
-            flags.initializeFlags();
+            flags.initializeFlagValues();
         }
     }
 

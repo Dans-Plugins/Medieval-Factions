@@ -1,6 +1,7 @@
 package dansplugins.factionsystem.commands;
 
 import dansplugins.factionsystem.commands.abs.SubCommand;
+import dansplugins.factionsystem.objects.Faction;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
@@ -9,7 +10,7 @@ public class ClaimCommand extends SubCommand {
     public ClaimCommand() {
         super(new String[] {
                 "Claim", LOCALE_PREFIX + "CmdClaim"
-        }, true, true, true, false);
+        }, true, true);
     }
 
     /**
@@ -21,6 +22,14 @@ public class ClaimCommand extends SubCommand {
      */
     @Override
     public void execute(Player player, String[] args, String key) {
+        Faction playersFaction = getPlayerFaction(player.getUniqueId());
+        if (playersFaction.getFlags().getFlag("officerRankRequiredToClaimLand")) {
+            // officer or owner rank required
+            if (!playersFaction.isOfficer(player.getUniqueId()) && !playersFaction.isOwner(player.getUniqueId())) {
+                player.sendMessage(translate("&c" + getText("AlertMustBeOfficerOrOwnerToClaimLand")));
+                return;
+            }
+        }
         if (args.length != 0) {
             int depth = getIntSafe(args[0], -1);
             if (depth <= 0) player.sendMessage(translate("&c" + getText("UsageClaimRadius")));

@@ -14,19 +14,20 @@ public class FactionFlags {
     private ArrayList<String> flagNames = new ArrayList<>();
     private HashMap<String, Boolean> flagValues = new HashMap<>();
 
+    public FactionFlags() {
+        initializeFlagNames();
+    }
+
     public int getNumFlags() {
         return flagValues.size();
     }
 
-    public void initializeFlags() {
-        flagNames.add("TestFlag");
-        flagValues.put("TestFlag", true);
+    private void initializeFlagNames() { // this is called internally
+        flagNames.add("officerRankRequiredToClaimLand");
+    }
 
-        flagNames.add("TestFlag2");
-        flagValues.put("TestFlag2", true);
-
-        flagNames.add("TestFlag3");
-        flagValues.put("TestFlag3", true);
+    public void initializeFlagValues() { // this is called externally in Faction.java
+        flagValues.put("officerRankRequiredToClaimLand", true);
     }
 
     public void sendFlagList(Player player) {
@@ -69,7 +70,7 @@ public class FactionFlags {
 
     private boolean isFlag(String flag) {
         // this method will likely need to be used to sanitize user input
-        return flagValues.containsKey(flag);
+        return flagNames.contains(flag);
     }
 
     private String getFlagsSeparatedByCommas() {
