@@ -17,21 +17,21 @@ public class FactionFlags {
     }
 
     private void initializeFlagNames() { // this is called internally
-        flagNames.add("officerRankRequiredToManageLand");
-        flagNames.add("officerRankRequiredToInviteOthers");
+        flagNames.add("mustBeOfficerToManageLand");
+        flagNames.add("mustBeOfficerToInviteOthers");
     }
 
     public void initializeFlagValues() { // this is called externally in Faction.java
-        flagValues.put("officerRankRequiredToManageLand", true);
-        flagValues.put("officerRankRequiredToInviteOthers", true);
+        flagValues.put("mustBeOfficerToManageLand", true);
+        flagValues.put("mustBeOfficerToInviteOthers", true);
     }
 
     public void loadMissingFlagsIfNecessary() {
-        if (!flagValues.containsKey("officerRankRequiredToManageLand")) {
-            flagValues.put("officerRankRequiredToManageLand", true);
+        if (!flagValues.containsKey("mustBeOfficerToManageLand")) {
+            flagValues.put("mustBeOfficerToManageLand", true);
         }
-        if (!flagValues.containsKey("officerRankRequiredToInviteOthers")) {
-            flagValues.put("officerRankRequiredToInviteOthers", true);
+        if (!flagValues.containsKey("mustBeOfficerToInviteOthers")) {
+            flagValues.put("mustBeOfficerToInviteOthers", true);
         }
     }
 
