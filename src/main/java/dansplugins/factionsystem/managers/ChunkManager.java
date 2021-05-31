@@ -482,7 +482,7 @@ public class ChunkManager {
         }
     }
 
-    public void handleClaimedChunkInteraction(PlayerInteractEvent event, ClaimedChunk chunk) {
+    public void handleClaimedChunkInteraction(PlayerInteractEvent event, ClaimedChunk claimedChunk) {
         // player not in a faction and isn't overriding
         if (!PersistentData.getInstance().isInFaction(event.getPlayer().getUniqueId()) && !EphemeralData.getInstance().getAdminsBypassingProtections().contains(event.getPlayer().getUniqueId())) {
 
@@ -495,44 +495,46 @@ public class ChunkManager {
             event.setCancelled(true);
         }
 
-        // if player is in faction
-        for (Faction faction : PersistentData.getInstance().getFactions()) {
-            if (faction.isMember(event.getPlayer().getUniqueId())) {
+        // TODO: simplify this code with a call to the shouldEventBeCancelled() method in InteractionAccessChecker.java
+        
+        final Faction playersFaction = PersistentData.getInstance().getPlayersFaction(event.getPlayer().getUniqueId());
+        if (playersFaction == null) {
+            return;
+        }
 
-                // if player's faction is not the same as the holder of the chunk and player isn't overriding
-                if (!(faction.getName().equalsIgnoreCase(chunk.getHolder())) && !EphemeralData.getInstance().getAdminsBypassingProtections().contains(event.getPlayer().getUniqueId())) {
+        // if player's faction is not the same as the holder of the chunk and player isn't overriding
+        if (!(playersFaction.getName().equalsIgnoreCase(claimedChunk.getHolder())) && !EphemeralData.getInstance().getAdminsBypassingProtections().contains(event.getPlayer().getUniqueId())) {
 
-                    Block block = event.getClickedBlock();
-                    if (MedievalFactions.getInstance().getConfig().getBoolean("nonMembersCanInteractWithDoors") && block != null && BlockChecker.getInstance().isDoor(block)) {
-                        // allow non-faction members to interact with doors
-                        return;
-                    }
+            Block block = event.getClickedBlock();
+            if (MedievalFactions.getInstance().getConfig().getBoolean("nonMembersCanInteractWithDoors") && block != null && BlockChecker.getInstance().isDoor(block)) {
+                // allow non-faction members to interact with doors
+                return;
+            }
 
-                    // if enemy territory
-                    if (faction.isEnemy(chunk.getHolder())) {
-                        // if not interacting with chest
-                        if (isBlockInteractable(event)) {
-                            // allow placing ladders
-                            if (MedievalFactions.getInstance().getConfig().getBoolean("laddersPlaceableInEnemyFactionTerritory")) {
-                                if (event.getMaterial() == LADDER) {
-                                    return;
-                                }
-                            }
-                            // allow eating
-                            if (materialAllowed(event.getMaterial())) {
-                                return;
-                            }
-                            // allow blocking
-                            if (event.getPlayer().getInventory().getItemInOffHand().getType() == Material.SHIELD) {
-                                return;
-                            }
+            // if enemy territory
+            if (playersFaction.isEnemy(claimedChunk.getHolder())) {
+                // if not interacting with chest
+                if (isBlockInteractable(event)) {
+                    // allow placing ladders
+                    if (MedievalFactions.getInstance().getConfig().getBoolean("laddersPlaceableInEnemyFactionTerritory")) {
+                        if (event.getMaterial() == LADDER) {
+                            return;
                         }
                     }
-                    if (!InteractionAccessChecker.getInstance().isOutsiderInteractionAllowed(event.getPlayer(), chunk, faction)) {
-                        event.setCancelled(true);
+                    // allow eating
+                    if (materialAllowed(event.getMaterial())) {
+                        return;
+                    }
+                    // allow blocking
+                    if (event.getPlayer().getInventory().getItemInOffHand().getType() == Material.SHIELD) {
                         return;
                     }
                 }
+            }
+            
+            if (!InteractionAccessChecker.getInstance().isOutsiderInteractionAllowed(event.getPlayer(), claimedChunk, playersFaction)) {
+                event.setCancelled(true);
+                return;
             }
         }
     }
