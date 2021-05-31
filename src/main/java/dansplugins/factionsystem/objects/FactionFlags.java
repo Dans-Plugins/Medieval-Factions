@@ -10,6 +10,8 @@ import java.util.HashMap;
 
 public class FactionFlags {
 
+    private final boolean debug = true;
+
     private ArrayList<String> flagNames = new ArrayList<>();
     private HashMap<String, Boolean> flagValues = new HashMap<>();
 
@@ -60,8 +62,10 @@ public class FactionFlags {
 
     public boolean getFlag(String flag) {
         if (!isFlag(flag)) {
+            if (debug) { System.out.println(String.format("[DEBUG] Flag '%s' was not found!", flag)); }
             return false;
         }
+        if (debug) { System.out.println(String.format("[DEBUG] Flag '%s' was found! Value: '%s'", flag, flagValues.get(flag))); }
         return flagValues.get(flag);
     }
 

@@ -35,7 +35,7 @@ import static org.bukkit.Material.LADDER;
 
 public class InteractionHandler implements Listener {
 
-    private final boolean debug = false;
+    private final boolean debug = true;
 
     // EVENT HANDLER METHODS ------------------------------------------------------
 
@@ -428,6 +428,11 @@ public class InteractionHandler implements Listener {
         boolean isAlly = faction.isAlly(chunk.getHolder());
         boolean allyInteractionAllowed = faction.getFlags().getFlag("alliesCanInteractWithLand");
         boolean vassalageTreeInteractionAllowed = MedievalFactions.getInstance().getConfig().getBoolean("allowVassalageTreeInteraction");
+
+        if (debug) {
+            System.out.println("[DEBUG] allyInteractionAllowed: " + allyInteractionAllowed);
+            System.out.println("[DEBUG] vassalageTreeInteractionAllowed: " + vassalageTreeInteractionAllowed);
+        }
 
         boolean allowed = false;
 
