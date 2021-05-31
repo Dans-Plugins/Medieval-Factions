@@ -10,7 +10,7 @@ public class FlagsCommand extends SubCommand {
     public FlagsCommand() {
         super(new String[]{
                 "flags", LOCALE_PREFIX + "CmdFlags"
-        }, false);
+        }, true, true, false, true);
     }
 
     /**
@@ -22,32 +22,29 @@ public class FlagsCommand extends SubCommand {
      */
     @Override
     public void execute(Player player, String[] args, String key) {
-        if (!(checkPermissions(player, "mf.flags", "mf.admin"))) { // TODO: add permission to plugin.yml
+        final String permission = "mf.flags";
+        if (!(checkPermissions(player, permission))) {
             return;
         }
 
         if (args.length == 0) {
-            player.sendMessage(translate("&c" + getText("FlagsValidSubCommandsShowSet"))); // TODO: add string key/value pair
+            player.sendMessage(translate("&c" + getText("ValidSubCommandsShowSet")));
             return;
         }
 
         final Faction playersFaction = getPlayerFaction(player);
-        if (playersFaction == null) {
-            player.sendMessage(translate("&c" + getText("AlertMustBeInFactionToUseCommand")));
-            return;
-        }
 
-        final boolean show = safeEquals(false, args[0], "get", "show", getText("CmdFlagsShow")); // TODO: add string key/value pair
-        final boolean set = safeEquals(false, args[0], "set", getText("CmdFlagsSet")); // TODO: add string key/value pair
+        final boolean show = safeEquals(false, args[0], "get", "show", getText("CmdFlagsShow"));
+        final boolean set = safeEquals(false, args[0], "set", getText("CmdFlagsSet"));
         if (show) {
-            // TODO: send list of flags
+            playersFaction.getFlags().sendFlagList(player);
         }
         else if (set) {
             if (args.length == 1) {
-                player.sendMessage(translate("&c" + getText("UsageFlagsSet"))); // TODO: add string key/value pair
+                player.sendMessage(translate("&c" + getText("UsageFlagsSet")));
             }
             else {
-                // TODO: set flag
+                playersFaction.getFlags().setFlag(args[1], args[2], player);
             }
         }
         else {
