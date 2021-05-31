@@ -426,7 +426,7 @@ public class InteractionHandler implements Listener {
     private boolean isOutsiderInteractionAllowed(Player player, ClaimedChunk chunk, Faction faction) {
         boolean inVassalageTree = PersistentData.getInstance().isPlayerInFactionInVassalageTree(player, PersistentData.getInstance().getFaction(chunk.getHolder()));
         boolean isAlly = faction.isAlly(chunk.getHolder());
-        boolean allyInteractionAllowed = MedievalFactions.getInstance().getConfig().getBoolean("allowAllyInteraction");
+        boolean allyInteractionAllowed = faction.getFlags().getFlag("alliesCanInteractWithLand");
         boolean vassalageTreeInteractionAllowed = MedievalFactions.getInstance().getConfig().getBoolean("allowVassalageTreeInteraction");
 
         boolean allowed = false;

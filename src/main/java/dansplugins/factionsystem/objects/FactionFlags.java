@@ -1,5 +1,6 @@
 package dansplugins.factionsystem.objects;
 
+import dansplugins.factionsystem.MedievalFactions;
 import dansplugins.factionsystem.managers.LocaleManager;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
@@ -19,19 +20,26 @@ public class FactionFlags {
     private void initializeFlagNames() { // this is called internally
         flagNames.add("mustBeOfficerToManageLand");
         flagNames.add("mustBeOfficerToInviteOthers");
+        flagNames.add("alliesCanInteractWithLand");
     }
 
-    public void initializeFlagValues() { // this is called externally in Faction.java
+    public void initializeFlagValues() {
+        // this is called externally in Faction.java when a faction is created in-game
         flagValues.put("mustBeOfficerToManageLand", true);
         flagValues.put("mustBeOfficerToInviteOthers", true);
+        flagValues.put("alliesCanInteractWithLand", MedievalFactions.getInstance().getConfig().getBoolean("allowAllyInteraction"));
     }
 
     public void loadMissingFlagsIfNecessary() {
+        // this is called externally in Faction.java when a faction is loaded from save files
         if (!flagValues.containsKey("mustBeOfficerToManageLand")) {
             flagValues.put("mustBeOfficerToManageLand", true);
         }
         if (!flagValues.containsKey("mustBeOfficerToInviteOthers")) {
             flagValues.put("mustBeOfficerToInviteOthers", true);
+        }
+        if (!flagValues.containsKey("alliesCanInteractWithLand")) {
+            flagValues.put("alliesCanInteractWithLand", MedievalFactions.getInstance().getConfig().getBoolean("allowAllyInteraction"));
         }
     }
 
