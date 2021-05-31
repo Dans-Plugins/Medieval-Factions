@@ -30,6 +30,12 @@ public class FactionFlags {
         flagValues.put("officerRankRequiredToClaimLand", true);
     }
 
+    public void loadMissingFlagsIfNecessary() {
+        if (!flagValues.containsKey("officerRankRequiredToClaimLand")) {
+            flagValues.put("officerRankRequiredToClaimLand", true);
+        }
+    }
+
     public void sendFlagList(Player player) {
         player.sendMessage(ChatColor.AQUA + "" + getFlagsSeparatedByCommas());
     }

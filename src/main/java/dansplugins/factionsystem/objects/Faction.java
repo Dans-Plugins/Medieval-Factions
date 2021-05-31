@@ -468,9 +468,7 @@ public class Faction {
 
         flags.setFlagValues(gson.fromJson(data.getOrDefault("flagValues", "[]"), mapType2));
 
-        if (flags.getNumFlags() == 0) {
-            flags.initializeFlagValues();
-        }
+        flags.loadMissingFlagsIfNecessary();
     }
 
     private String loadDataOrDefault(Gson gson, Map<String, String> data, String key, String def) {
