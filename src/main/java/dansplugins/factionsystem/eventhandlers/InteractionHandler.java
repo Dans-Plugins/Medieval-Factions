@@ -12,6 +12,7 @@ import dansplugins.factionsystem.objects.Faction;
 import dansplugins.factionsystem.objects.Gate;
 import dansplugins.factionsystem.objects.LockedBlock;
 import dansplugins.factionsystem.utils.BlockChecker;
+import dansplugins.factionsystem.utils.InteractionAccessChecker;
 import dansplugins.factionsystem.utils.UUIDChecker;
 import org.bukkit.*;
 import org.bukkit.block.Block;
@@ -35,7 +36,7 @@ import static org.bukkit.Material.LADDER;
 
 public class InteractionHandler implements Listener {
 
-    private final boolean debug = false;
+    private final boolean debug = true;
 
     // EVENT HANDLER METHODS ------------------------------------------------------
 
@@ -47,7 +48,7 @@ public class InteractionHandler implements Listener {
         // get chunk
         ClaimedChunk claimedChunk = ChunkManager.getInstance().getClaimedChunk(event.getBlock().getLocation().getChunk());
 
-        if (shouldEventBeCancelled(claimedChunk, player)) {
+        if (InteractionAccessChecker.getInstance().shouldEventBeCancelled(claimedChunk, player)) {
             event.setCancelled(true);
             return;
         }
@@ -102,11 +103,11 @@ public class InteractionHandler implements Listener {
         // get chunk
         ClaimedChunk claimedChunk = ChunkManager.getInstance().getClaimedChunk(event.getBlock().getLocation().getChunk());
 
-        if (isPlayerAttemptingToPlaceLadderInEnemyTerritoryAndIsThisAllowed(event.getBlockPlaced(), player, claimedChunk)) {
+        if (InteractionAccessChecker.getInstance().isPlayerAttemptingToPlaceLadderInEnemyTerritoryAndIsThisAllowed(event.getBlockPlaced(), player, claimedChunk)) {
             return;
         }
 
-        if (shouldEventBeCancelled(claimedChunk, player)) {
+        if (InteractionAccessChecker.getInstance().shouldEventBeCancelled(claimedChunk, player)) {
             event.setCancelled(true);
             return;
         }
@@ -292,7 +293,7 @@ public class InteractionHandler implements Listener {
             Chunk chunk = location.getChunk();
             ClaimedChunk claimedChunk = ChunkManager.getInstance().getClaimedChunk(chunk);
 
-            if (shouldEventBeCancelled(claimedChunk, player)) {
+            if (InteractionAccessChecker.getInstance().shouldEventBeCancelled(claimedChunk, player)) {
                 event.setCancelled(true);
             }
         }
@@ -312,7 +313,7 @@ public class InteractionHandler implements Listener {
         // get chunk that entity is in
         ClaimedChunk claimedChunk = ChunkManager.getInstance().getClaimedChunk(entity.getLocation().getChunk());
 
-        if (shouldEventBeCancelled(claimedChunk, player)) {
+        if (InteractionAccessChecker.getInstance().shouldEventBeCancelled(claimedChunk, player)) {
             event.setCancelled(true);
         }
     }
@@ -327,7 +328,7 @@ public class InteractionHandler implements Listener {
 
         ClaimedChunk claimedChunk = ChunkManager.getInstance().getClaimedChunk(clickedBlock.getChunk());
 
-        if (shouldEventBeCancelled(claimedChunk, player)) {
+        if (InteractionAccessChecker.getInstance().shouldEventBeCancelled(claimedChunk, player)) {
             event.setCancelled(true);
         }
     }
@@ -342,7 +343,7 @@ public class InteractionHandler implements Listener {
 
         ClaimedChunk claimedChunk = ChunkManager.getInstance().getClaimedChunk(clickedBlock.getChunk());
 
-        if (shouldEventBeCancelled(claimedChunk, player)) {
+        if (InteractionAccessChecker.getInstance().shouldEventBeCancelled(claimedChunk, player)) {
             event.setCancelled(true);
         }
     }
@@ -357,7 +358,7 @@ public class InteractionHandler implements Listener {
 
         ClaimedChunk claimedChunk = ChunkManager.getInstance().getClaimedChunk(clickedBlock.getChunk());
 
-        if (shouldEventBeCancelled(claimedChunk, player)) {
+        if (InteractionAccessChecker.getInstance().shouldEventBeCancelled(claimedChunk, player)) {
             event.setCancelled(true);
         }
     }
@@ -378,7 +379,7 @@ public class InteractionHandler implements Listener {
             Chunk chunk = location.getChunk();
             ClaimedChunk claimedChunk = ChunkManager.getInstance().getClaimedChunk(chunk);
 
-            if (shouldEventBeCancelled(claimedChunk, player)) {
+            if (InteractionAccessChecker.getInstance().shouldEventBeCancelled(claimedChunk, player)) {
                 event.setCancelled(true);
             }
         }
@@ -392,72 +393,6 @@ public class InteractionHandler implements Listener {
         return EphemeralData.getInstance().getPlayersGrantingAccess().containsKey(player.getUniqueId()) ||
                 EphemeralData.getInstance().getPlayersCheckingAccess().contains(player.getUniqueId()) ||
                 EphemeralData.getInstance().getPlayersRevokingAccess().containsKey(player.getUniqueId());
-    }
-
-    private boolean shouldEventBeCancelled(ClaimedChunk claimedChunk, Player player) {
-        if (claimedChunk == null) {
-            // chunk is not claimed
-            return false;
-        }
-
-        boolean isPlayerBypassing = EphemeralData.getInstance().getAdminsBypassingProtections().contains(player.getUniqueId());
-        if (isPlayerBypassing) {
-            // player is bypassing
-            return false;
-        }
-
-        Faction playersFaction = PersistentData.getInstance().getPlayersFaction(player.getUniqueId());
-        if (playersFaction == null) {
-            // player is not in a faction
-            return true;
-        }
-
-        boolean isLandClaimedByPlayersFaction = playersFaction.getName().equalsIgnoreCase(claimedChunk.getHolder());
-        if (!isLandClaimedByPlayersFaction && !isOutsiderInteractionAllowed(player, claimedChunk, playersFaction)) {
-            // land is not claimed by players faction and outsider interaction is disallowed
-            return true;
-        }
-        else {
-            // land is claimed by players faction or outsider interaction is allowed
-            return false;
-        }
-    }
-
-    private boolean isOutsiderInteractionAllowed(Player player, ClaimedChunk chunk, Faction faction) {
-        boolean inVassalageTree = PersistentData.getInstance().isPlayerInFactionInVassalageTree(player, PersistentData.getInstance().getFaction(chunk.getHolder()));
-        boolean isAlly = faction.isAlly(chunk.getHolder());
-        boolean allyInteractionAllowed = MedievalFactions.getInstance().getConfig().getBoolean("allowAllyInteraction");
-        boolean vassalageTreeInteractionAllowed = MedievalFactions.getInstance().getConfig().getBoolean("allowVassalageTreeInteraction");
-
-        boolean allowed = false;
-
-        if (allyInteractionAllowed && isAlly) {
-            allowed = true;
-        }
-
-        if (vassalageTreeInteractionAllowed && inVassalageTree) {
-            allowed = true;
-        }
-
-        return allowed;
-    }
-
-    private boolean isPlayerAttemptingToPlaceLadderInEnemyTerritoryAndIsThisAllowed(Block blockPlaced, Player player, ClaimedChunk claimedChunk) {
-        Faction playersFaction = PersistentData.getInstance().getPlayersFaction(player.getUniqueId());
-
-        if (playersFaction == null) {
-            // player is not in a faction, so they couldn't be trying to place anything in enemy territory
-            return false;
-        }
-
-        if (claimedChunk == null) {
-            // chunk is not claimed, so they couldn't be trying to place anything in enemy territory
-            return false;
-        }
-
-        boolean laddersArePlaceableInEnemyTerritory = MedievalFactions.getInstance().getConfig().getBoolean("laddersPlaceableInEnemyFactionTerritory");
-        boolean playerIsTryingToPlaceLadderInEnemyTerritory = blockPlaced.getType() == LADDER && playersFaction.isEnemy(claimedChunk.getHolder());
-        return laddersArePlaceableInEnemyTerritory && playerIsTryingToPlaceLadderInEnemyTerritory;
     }
 
     // END OF HELPER METHODS ------------------------------------------------------

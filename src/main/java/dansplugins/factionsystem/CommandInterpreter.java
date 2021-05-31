@@ -21,7 +21,7 @@ public class CommandInterpreter {
                 new BypassCommand(), new ChatCommand(), new CheckAccessCommand(), new CheckClaimCommand(),
                 new ClaimCommand(), new ConfigCommand(), new CreateCommand(), new DeclareIndependenceCommand(),
                 new DeclareWarCommand(), new DemoteCommand(), new DescCommand(), new DisbandCommand(),
-                new DuelCommand(), new EditLawCommand(), new ForceCommand(), new GateCommand(),
+                new DuelCommand(), new EditLawCommand(), new FlagsCommand(), new ForceCommand(), new GateCommand(),
                 new GrantAccessCommand(), new GrantIndependenceCommand(), new HelpCommand(), new HomeCommand(),
                 new InfoCommand(), new InviteCommand(), new InvokeCommand(), new JoinCommand(), new KickCommand(),
                 new LawsCommand(), new LeaveCommand(), new ListCommand(), new LockCommand(), new MakePeaceCommand(),

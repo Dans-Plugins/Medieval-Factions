@@ -8,6 +8,7 @@ import dansplugins.factionsystem.events.FactionClaimEvent;
 import dansplugins.factionsystem.events.FactionUnclaimEvent;
 import dansplugins.factionsystem.objects.*;
 import dansplugins.factionsystem.utils.BlockChecker;
+import dansplugins.factionsystem.utils.InteractionAccessChecker;
 import org.bukkit.*;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
@@ -275,15 +276,14 @@ public class ChunkManager {
         return (numExperiencingPowerDecay == faction.getMemberArrayList().size());
     }
 
-    public void removeChunkAtPlayerLocation(Player player) {
+    public void removeChunkAtPlayerLocation(Player player, Faction playersFaction) {
         double[] playerCoords = new double[2];
         playerCoords[0] = player.getLocation().getChunk().getX();
         playerCoords[1] = player.getLocation().getChunk().getZ();
 
         if (EphemeralData.getInstance().getAdminsBypassingProtections().contains(player.getUniqueId())) {
             ClaimedChunk chunk = isChunkClaimed(playerCoords[0], playerCoords[1], player.getLocation().getWorld().getName());
-            if (chunk != null)
-            {
+            if (chunk != null) {
                 removeChunk(chunk, player, PersistentData.getInstance().getFaction(chunk.getHolder()));
                 player.sendMessage(ChatColor.GREEN + LocaleManager.getInstance().getText("LandClaimedUsingAdminBypass"));
                 return;
@@ -292,25 +292,19 @@ public class ChunkManager {
             return;
         }
 
-        for (Faction faction : PersistentData.getInstance().getFactions()) {
-            if (faction.isOwner(player.getUniqueId()) || faction.isOfficer(player.getUniqueId())) {
-                // check if land is claimed by player's faction
-                ClaimedChunk chunk = isChunkClaimed(playerCoords[0], playerCoords[1], player.getLocation().getWorld().getName());
-                if (chunk != null)
-                {
-                    // if holder is player's faction
-                    if (chunk.getHolder().equalsIgnoreCase(faction.getName())) {
-                        removeChunk(chunk, player, faction);
-                        player.sendMessage(ChatColor.GREEN + LocaleManager.getInstance().getText("LandUnclaimed"));
-
-                        return;
-                    }
-                    else {
-                        player.sendMessage(ChatColor.RED + String.format(LocaleManager.getInstance().getText("LandClaimedBy"), chunk.getHolder()));
-                        return;
-                    }
-                }
-
+        // check if land is claimed by player's faction
+        ClaimedChunk chunk = isChunkClaimed(playerCoords[0], playerCoords[1], player.getLocation().getWorld().getName());
+        if (chunk != null)
+        {
+            // if holder is player's faction
+            if (chunk.getHolder().equalsIgnoreCase(playersFaction.getName())) {
+                removeChunk(chunk, player, playersFaction);
+                player.sendMessage(ChatColor.GREEN + LocaleManager.getInstance().getText("LandUnclaimed"));
+                return;
+            }
+            else {
+                player.sendMessage(ChatColor.RED + String.format(LocaleManager.getInstance().getText("LandClaimedBy"), chunk.getHolder()));
+                return;
             }
         }
     }
@@ -488,7 +482,7 @@ public class ChunkManager {
         }
     }
 
-    public void handleClaimedChunkInteraction(PlayerInteractEvent event, ClaimedChunk chunk) {
+    public void handleClaimedChunkInteraction(PlayerInteractEvent event, ClaimedChunk claimedChunk) {
         // player not in a faction and isn't overriding
         if (!PersistentData.getInstance().isInFaction(event.getPlayer().getUniqueId()) && !EphemeralData.getInstance().getAdminsBypassingProtections().contains(event.getPlayer().getUniqueId())) {
 
@@ -501,62 +495,46 @@ public class ChunkManager {
             event.setCancelled(true);
         }
 
-        // if player is in faction
-        for (Faction faction : PersistentData.getInstance().getFactions()) {
-            if (faction.isMember(event.getPlayer().getUniqueId())) {
+        // TODO: simplify this code with a call to the shouldEventBeCancelled() method in InteractionAccessChecker.java
+        
+        final Faction playersFaction = PersistentData.getInstance().getPlayersFaction(event.getPlayer().getUniqueId());
+        if (playersFaction == null) {
+            return;
+        }
 
-                // if player's faction is not the same as the holder of the chunk and player isn't overriding
-                if (!(faction.getName().equalsIgnoreCase(chunk.getHolder())) && !EphemeralData.getInstance().getAdminsBypassingProtections().contains(event.getPlayer().getUniqueId())) {
+        // if player's faction is not the same as the holder of the chunk and player isn't overriding
+        if (!(playersFaction.getName().equalsIgnoreCase(claimedChunk.getHolder())) && !EphemeralData.getInstance().getAdminsBypassingProtections().contains(event.getPlayer().getUniqueId())) {
 
-                    Block block = event.getClickedBlock();
-                    if (MedievalFactions.getInstance().getConfig().getBoolean("nonMembersCanInteractWithDoors") && block != null && BlockChecker.getInstance().isDoor(block)) {
-                        // allow non-faction members to interact with doors
-                        return;
-                    }
+            Block block = event.getClickedBlock();
+            if (MedievalFactions.getInstance().getConfig().getBoolean("nonMembersCanInteractWithDoors") && block != null && BlockChecker.getInstance().isDoor(block)) {
+                // allow non-faction members to interact with doors
+                return;
+            }
 
-                    // if enemy territory
-                    if (faction.isEnemy(chunk.getHolder())) {
-                        // if not interacting with chest
-                        if (isBlockInteractable(event)) {
-                            // allow placing ladders
-                            if (MedievalFactions.getInstance().getConfig().getBoolean("laddersPlaceableInEnemyFactionTerritory")) {
-                                if (event.getMaterial() == LADDER) {
-                                    return;
-                                }
-                            }
-                            // allow eating
-                            if (materialAllowed(event.getMaterial())) {
-                                return;
-                            }
-                            // allow blocking
-                            if (event.getPlayer().getInventory().getItemInOffHand().getType() == Material.SHIELD) {
-                                return;
-                            }
+            // if enemy territory
+            if (playersFaction.isEnemy(claimedChunk.getHolder())) {
+                // if not interacting with chest
+                if (isBlockInteractable(event)) {
+                    // allow placing ladders
+                    if (MedievalFactions.getInstance().getConfig().getBoolean("laddersPlaceableInEnemyFactionTerritory")) {
+                        if (event.getMaterial() == LADDER) {
+                            return;
                         }
                     }
-                    // =======================
-                    // TODO: replace this code with a call to the isOutsiderInteractionAllowed() method
-                    boolean inVassalageTree = PersistentData.getInstance().isPlayerInFactionInVassalageTree(event.getPlayer(), PersistentData.getInstance().getFaction(chunk.getHolder()));
-                    boolean isAlly = faction.isAlly(chunk.getHolder());
-                    boolean allyInteractionAllowed = MedievalFactions.getInstance().getConfig().getBoolean("allowAllyInteraction");
-                    boolean vassalageTreeInteractionAllowed = MedievalFactions.getInstance().getConfig().getBoolean("allowVassalageTreeInteraction");
-
-                    boolean allowed = false;
-
-                    if (allyInteractionAllowed && isAlly) {
-                        allowed = true;
-                    }
-
-                    if (vassalageTreeInteractionAllowed && inVassalageTree) {
-                        allowed = true;
-                    }
-
-                    if (!allowed) {
-                        event.setCancelled(true);
+                    // allow eating
+                    if (materialAllowed(event.getMaterial())) {
                         return;
                     }
-                    // =======================
+                    // allow blocking
+                    if (event.getPlayer().getInventory().getItemInOffHand().getType() == Material.SHIELD) {
+                        return;
+                    }
                 }
+            }
+            
+            if (!InteractionAccessChecker.getInstance().isOutsiderInteractionAllowed(event.getPlayer(), claimedChunk, playersFaction)) {
+                event.setCancelled(true);
+                return;
             }
         }
     }

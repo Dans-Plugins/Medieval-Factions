@@ -5,6 +5,7 @@ import dansplugins.factionsystem.data.PersistentData;
 import dansplugins.factionsystem.managers.*;
 import dansplugins.factionsystem.utils.ArgumentParser;
 import dansplugins.factionsystem.utils.BlockChecker;
+import dansplugins.factionsystem.utils.InteractionAccessChecker;
 import dansplugins.factionsystem.utils.UUIDChecker;
 
 import java.util.UUID;
@@ -75,6 +76,10 @@ public class MedievalFactionsAPI {
 
     public GateManager getGateManager() {
         return GateManager.getInstance();
+    }
+
+    public InteractionAccessChecker getInteractionAccessChecker() {
+        return InteractionAccessChecker.getInstance();
     }
 
     // specific methods

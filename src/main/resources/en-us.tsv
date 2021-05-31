@@ -508,3 +508,9 @@ CannotDemoteSelf	You cannot demote yourself.
 CannotPromoteSelf	You cannot promote yourself.
 CannotRevokeAccessFromSelf	You cannot revoke access from yourself.
 CannotGrantAccessToSelf	You cannot grant access to yourself.
+CmdFlags	flags
+CmdFlagsSet	set
+CmdFlagsShow	show
+UsageFlagsSet	Usage: /mf flags set (option) (value)
+HelpFlagsSet	/mf flags set (option) (value) - Set a faction flag.
+HelpFlagsShow	/mf flags show - Show faction flags.

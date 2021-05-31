@@ -19,7 +19,7 @@ public class InviteCommand extends SubCommand {
     public InviteCommand() {
         super(new String[]{
                 "invite", LOCALE_PREFIX + "CmdInvite"
-        }, true, true, true, false);
+        }, true, true);
     }
 
     /**
@@ -36,6 +36,13 @@ public class InviteCommand extends SubCommand {
         if (args.length <= 0) {
             player.sendMessage(translate("&c" + getText("UsageInvite")));
             return;
+        }
+        if (faction.getFlags().getFlag("mustBeOfficerToInviteOthers")) {
+            // officer or owner rank required
+            if (!faction.isOfficer(player.getUniqueId()) && !faction.isOwner(player.getUniqueId())) {
+                player.sendMessage(translate("&c" + getText("AlertMustBeOwnerOrOfficerToUseCommand")));
+                return;
+            }
         }
         final UUID playerUUID = UUIDChecker.getInstance().findUUIDBasedOnPlayerName(args[0]);
         if (playerUUID == null) {
