@@ -26,15 +26,14 @@ public class UnclaimCommand extends SubCommand {
         final String permission = "mf.unclaim";
         if (!(checkPermissions(player, permission))) return;
         final boolean isPlayerBypassing = EphemeralData.getInstance().getAdminsBypassingProtections().contains(player.getUniqueId());
-        final Faction playersFaction = getPlayerFaction(player.getUniqueId());
-        if (playersFaction.getFlags().getFlag("mustBeOfficerToManageLand")) {
+        if (faction.getFlags().getFlag("mustBeOfficerToManageLand")) {
             // officer or owner rank required
-            if (!playersFaction.isOfficer(player.getUniqueId()) && !playersFaction.isOwner(player.getUniqueId()) && !isPlayerBypassing) {
+            if (!faction.isOfficer(player.getUniqueId()) && !faction.isOwner(player.getUniqueId()) && !isPlayerBypassing) {
                 player.sendMessage(translate("&c" + getText("AlertMustBeOfficerOrOwnerToClaimLand")));
                 return;
             }
         }
-        chunks.removeChunkAtPlayerLocation(player, playersFaction);
+        chunks.removeChunkAtPlayerLocation(player, faction);
         dynmap.updateClaims();
         // TODO: 12/05/2021 Locale Message.
     }
