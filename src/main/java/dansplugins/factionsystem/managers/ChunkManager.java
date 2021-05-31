@@ -275,15 +275,14 @@ public class ChunkManager {
         return (numExperiencingPowerDecay == faction.getMemberArrayList().size());
     }
 
-    public void removeChunkAtPlayerLocation(Player player) {
+    public void removeChunkAtPlayerLocation(Player player, Faction playersFaction) {
         double[] playerCoords = new double[2];
         playerCoords[0] = player.getLocation().getChunk().getX();
         playerCoords[1] = player.getLocation().getChunk().getZ();
 
         if (EphemeralData.getInstance().getAdminsBypassingProtections().contains(player.getUniqueId())) {
             ClaimedChunk chunk = isChunkClaimed(playerCoords[0], playerCoords[1], player.getLocation().getWorld().getName());
-            if (chunk != null)
-            {
+            if (chunk != null) {
                 removeChunk(chunk, player, PersistentData.getInstance().getFaction(chunk.getHolder()));
                 player.sendMessage(ChatColor.GREEN + LocaleManager.getInstance().getText("LandClaimedUsingAdminBypass"));
                 return;
@@ -292,25 +291,19 @@ public class ChunkManager {
             return;
         }
 
-        for (Faction faction : PersistentData.getInstance().getFactions()) {
-            if (faction.isOwner(player.getUniqueId()) || faction.isOfficer(player.getUniqueId())) {
-                // check if land is claimed by player's faction
-                ClaimedChunk chunk = isChunkClaimed(playerCoords[0], playerCoords[1], player.getLocation().getWorld().getName());
-                if (chunk != null)
-                {
-                    // if holder is player's faction
-                    if (chunk.getHolder().equalsIgnoreCase(faction.getName())) {
-                        removeChunk(chunk, player, faction);
-                        player.sendMessage(ChatColor.GREEN + LocaleManager.getInstance().getText("LandUnclaimed"));
-
-                        return;
-                    }
-                    else {
-                        player.sendMessage(ChatColor.RED + String.format(LocaleManager.getInstance().getText("LandClaimedBy"), chunk.getHolder()));
-                        return;
-                    }
-                }
-
+        // check if land is claimed by player's faction
+        ClaimedChunk chunk = isChunkClaimed(playerCoords[0], playerCoords[1], player.getLocation().getWorld().getName());
+        if (chunk != null)
+        {
+            // if holder is player's faction
+            if (chunk.getHolder().equalsIgnoreCase(playersFaction.getName())) {
+                removeChunk(chunk, player, playersFaction);
+                player.sendMessage(ChatColor.GREEN + LocaleManager.getInstance().getText("LandUnclaimed"));
+                return;
+            }
+            else {
+                player.sendMessage(ChatColor.RED + String.format(LocaleManager.getInstance().getText("LandClaimedBy"), chunk.getHolder()));
+                return;
             }
         }
     }

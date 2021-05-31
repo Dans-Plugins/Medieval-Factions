@@ -1,9 +1,7 @@
 package dansplugins.factionsystem.objects;
 
-import dansplugins.factionsystem.MedievalFactions;
 import dansplugins.factionsystem.managers.LocaleManager;
 import org.bukkit.ChatColor;
-import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
 import java.util.ArrayList;
@@ -18,21 +16,22 @@ public class FactionFlags {
         initializeFlagNames();
     }
 
-    public int getNumFlags() {
-        return flagValues.size();
-    }
-
     private void initializeFlagNames() { // this is called internally
-        flagNames.add("officerRankRequiredToClaimLand");
+        flagNames.add("officerRankRequiredToManageLand");
+        flagNames.add("officerRankRequiredToInviteOthers");
     }
 
     public void initializeFlagValues() { // this is called externally in Faction.java
-        flagValues.put("officerRankRequiredToClaimLand", true);
+        flagValues.put("officerRankRequiredToManageLand", true);
+        flagValues.put("officerRankRequiredToInviteOthers", true);
     }
 
     public void loadMissingFlagsIfNecessary() {
-        if (!flagValues.containsKey("officerRankRequiredToClaimLand")) {
-            flagValues.put("officerRankRequiredToClaimLand", true);
+        if (!flagValues.containsKey("officerRankRequiredToManageLand")) {
+            flagValues.put("officerRankRequiredToManageLand", true);
+        }
+        if (!flagValues.containsKey("officerRankRequiredToInviteOthers")) {
+            flagValues.put("officerRankRequiredToInviteOthers", true);
         }
     }
 
@@ -58,16 +57,8 @@ public class FactionFlags {
         return flagValues.get(flag);
     }
 
-    public ArrayList<String> getFlagNames() {
-        return flagNames;
-    }
-
     public HashMap<String, Boolean> getFlagValues() {
         return flagValues;
-    }
-
-    public void setFlagNames(ArrayList<String> names) {
-        flagNames = names;
     }
 
     public void setFlagValues(HashMap<String, Boolean> values) {
@@ -77,6 +68,10 @@ public class FactionFlags {
     private boolean isFlag(String flag) {
         // this method will likely need to be used to sanitize user input
         return flagNames.contains(flag);
+    }
+
+    public int getNumFlags() {
+        return flagValues.size();
     }
 
     private String getFlagsSeparatedByCommas() {
