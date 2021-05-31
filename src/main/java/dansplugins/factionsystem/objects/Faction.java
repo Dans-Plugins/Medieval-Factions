@@ -410,7 +410,8 @@ public class Faction {
         }
         saveMap.put("factionGates", gson.toJson(gateList));
 
-        // TODO: save FactionFlags object
+        saveMap.put("flagNames", gson.toJson(flags.getFlagNames()));
+        saveMap.put("flagValues", gson.toJson(flags.getFlagValues()));
 
         return saveMap;
     }
@@ -434,6 +435,7 @@ public class Faction {
         Type arrayListTypeString = new TypeToken<ArrayList<String>>(){}.getType();
         Type arrayListTypeUUID = new TypeToken<ArrayList<UUID>>(){}.getType();
         Type mapType = new TypeToken<HashMap<String, String>>(){}.getType();
+        Type mapType2 = new TypeToken<HashMap<String, Boolean>>(){}.getType();
 
         members = gson.fromJson(data.get("members"), arrayListTypeUUID);
         enemyFactions = gson.fromJson(data.get("enemyFactions"), arrayListTypeString);
@@ -465,7 +467,8 @@ public class Faction {
         	System.out.println(LocaleManager.getInstance().getText("MissingFactionGatesJSONCollection"));
         }
 
-        // TODO: load FactionFlags object
+        flags.setFlagNames(gson.fromJson(data.getOrDefault("flagNames", "[]"), arrayListTypeString));
+        flags.setFlagValues(gson.fromJson(data.getOrDefault("flagValues", "[]"), mapType2));
 
         if (flags.getNumFlags() == 0) {
             flags.initializeFlags();

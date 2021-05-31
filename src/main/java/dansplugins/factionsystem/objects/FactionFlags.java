@@ -25,8 +25,8 @@ public class FactionFlags {
         flagNames.add("TestFlag2");
         flagValues.put("TestFlag2", true);
 
-        flagNames.add("TestFlag2");
-        flagValues.put("TestFlag2", true);
+        flagNames.add("TestFlag3");
+        flagValues.put("TestFlag3", true);
     }
 
     public void sendFlagList(Player player) {
@@ -49,6 +49,22 @@ public class FactionFlags {
             return false;
         }
         return flagValues.get(flag);
+    }
+
+    public ArrayList<String> getFlagNames() {
+        return flagNames;
+    }
+
+    public HashMap<String, Boolean> getFlagValues() {
+        return flagValues;
+    }
+
+    public void setFlagNames(ArrayList<String> names) {
+        flagNames = names;
+    }
+
+    public void setFlagValues(HashMap<String, Boolean> values) {
+        flagValues = values;
     }
 
     private boolean isFlag(String flag) {
