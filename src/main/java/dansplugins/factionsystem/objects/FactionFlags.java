@@ -23,6 +23,7 @@ public class FactionFlags {
         flagNames.add("mustBeOfficerToManageLand");
         flagNames.add("mustBeOfficerToInviteOthers");
         flagNames.add("alliesCanInteractWithLand");
+        flagNames.add("vassalageTreeCanInteractWithLand");
     }
 
     public void initializeFlagValues() {
@@ -30,6 +31,7 @@ public class FactionFlags {
         flagValues.put("mustBeOfficerToManageLand", true);
         flagValues.put("mustBeOfficerToInviteOthers", true);
         flagValues.put("alliesCanInteractWithLand", MedievalFactions.getInstance().getConfig().getBoolean("allowAllyInteraction"));
+        flagValues.put("vassalageTreeCanInteractWithLand", MedievalFactions.getInstance().getConfig().getBoolean("allowVassalageTreeInteraction"));
     }
 
     public void loadMissingFlagsIfNecessary() {
@@ -42,6 +44,9 @@ public class FactionFlags {
         }
         if (!flagValues.containsKey("alliesCanInteractWithLand")) {
             flagValues.put("alliesCanInteractWithLand", MedievalFactions.getInstance().getConfig().getBoolean("allowAllyInteraction"));
+        }
+        if (!flagValues.containsKey("vassalageTreeCanInteractWithLand")) {
+            flagValues.put("vassalageTreeCanInteractWithLand", MedievalFactions.getInstance().getConfig().getBoolean("allowVassalageTreeInteraction"));
         }
     }
 
