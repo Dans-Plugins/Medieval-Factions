@@ -23,6 +23,7 @@ public class MoveHandler implements Listener {
         // Full disclosure, I feel like this method might be extremely laggy, especially if a player is travelling.
         // May have to optimise this, or just not have this mechanic.
         // - Dan
+
         // if player enters a new chunk
         if (event.getFrom().getChunk() != Objects.requireNonNull(event.getTo()).getChunk()) {
 
@@ -53,13 +54,14 @@ public class MoveHandler implements Listener {
             // if new chunk is claimed and old chunk was not
             if (ChunkManager.getInstance().isClaimed(event.getTo().getChunk(), PersistentData.getInstance().getClaimedChunks()) && !ChunkManager.getInstance().isClaimed(event.getFrom().getChunk(), PersistentData.getInstance().getClaimedChunks())) {
                 String title = ChunkManager.getInstance().getClaimedChunk(event.getTo().getChunk()).getHolder();
-                event.getPlayer().sendTitle(title, null, 10, 70, 20);
+                sendPlayerLandInfo(event.getPlayer(), title);
                 return;
             }
 
             // if new chunk is unclaimed and old chunk was not
             if (!ChunkManager.getInstance().isClaimed(event.getTo().getChunk(), PersistentData.getInstance().getClaimedChunks()) && ChunkManager.getInstance().isClaimed(event.getFrom().getChunk(), PersistentData.getInstance().getClaimedChunks())) {
-                event.getPlayer().sendTitle(LocaleManager.getInstance().getText("Wilderness"), null, 10, 70, 20);
+                String title = LocaleManager.getInstance().getText("Wilderness");
+                sendPlayerLandInfo(event.getPlayer(), title);
                 return;
             }
 
@@ -68,10 +70,23 @@ public class MoveHandler implements Listener {
                 // if chunk holders are not equal
                 if (!(ChunkManager.getInstance().getClaimedChunk(event.getFrom().getChunk()).getHolder().equalsIgnoreCase(ChunkManager.getInstance().getClaimedChunk(event.getTo().getChunk()).getHolder()))) {
                     String title = ChunkManager.getInstance().getClaimedChunk(event.getTo().getChunk()).getHolder();
-                    event.getPlayer().sendTitle(title, null, 10, 70, 20);
+                    sendPlayerLandInfo(event.getPlayer(), title);
                 }
             }
 
+        }
+    }
+
+    public void sendPlayerLandInfo(Player player, String information) {
+        if (MedievalFactions.getInstance().getConfig().getBoolean("territoryAlertPopUp")) {
+            String subtitle = null;
+            int fadeIn = 10;
+            int stay = 70;
+            int fadeOut = 20;
+            player.sendTitle(ChatColor.AQUA + information, subtitle, fadeIn, stay, fadeOut);
+        }
+        else {
+            player.sendMessage(ChatColor.AQUA + information);
         }
     }
 
