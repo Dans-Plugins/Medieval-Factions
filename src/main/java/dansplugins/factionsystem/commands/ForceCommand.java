@@ -3,6 +3,7 @@ package dansplugins.factionsystem.commands;
 import dansplugins.factionsystem.MedievalFactions;
 import dansplugins.factionsystem.commands.abs.SubCommand;
 import dansplugins.factionsystem.data.PersistentData;
+import dansplugins.factionsystem.events.FactionRenameEvent;
 import dansplugins.factionsystem.managers.LocaleManager;
 import dansplugins.factionsystem.managers.StorageManager;
 import dansplugins.factionsystem.objects.Faction;
@@ -355,10 +356,46 @@ public class ForceCommand extends SubCommand {
             return;
         }
         Faction faction = getFaction(singleQuoteArgs.get(0));
-        if (faction != null) {
-            // rename faction
-            faction.updateData(faction.getName(), singleQuoteArgs.get(1));
+        if (faction == null) {
+            sender.sendMessage(translate("&c" + getText("FactionNotFound")));
+            return;
         }
+        final String newName = singleQuoteArgs.get(1);
+        final String oldName = faction.getName();
+        // rename faction
+        if (getFaction(newName) != null) {
+            sender.sendMessage(translate("&c" + getText("FactionAlreadyExists")));
+            return;
+        }
+        final FactionRenameEvent renameEvent = new FactionRenameEvent(faction, oldName, newName);
+        Bukkit.getPluginManager().callEvent(renameEvent);
+        if (renameEvent.isCancelled()) {
+            // TODO Locale Message.
+            return;
+        }
+
+        // change name
+        faction.setName(newName);
+        sender.sendMessage(translate("&a" + getText("FactionNameChanged")));
+
+        // Change Ally/Enemy/Vassal/Leige references
+        data.getFactions().forEach(fac -> fac.updateData(oldName, newName));
+
+        // Change Claims
+        data.getClaimedChunks().stream().filter(cc -> cc.getHolder().equalsIgnoreCase(oldName))
+                .forEach(cc -> cc.setHolder(newName));
+
+        // Locked Blocks
+        data.getLockedBlocks().stream().filter(lb -> lb.getFactionName().equalsIgnoreCase(oldName))
+                .forEach(lb -> lb.setFaction(newName));
+
+        // Prefix (if it was unset)
+        if (faction.getPrefix().equalsIgnoreCase(oldName)) faction.setPrefix(newName);
+
+        // Save again to overwrite current data
+        StorageManager.getInstance().save();
+
+        // inform player
         sender.sendMessage(translate("&a" + getText("Done")));
     }
 
