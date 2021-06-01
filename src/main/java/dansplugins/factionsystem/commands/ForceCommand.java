@@ -340,4 +340,8 @@ public class ForceCommand extends SubCommand {
         sender.sendMessage(translate("&a" + getText("Done")));
     }
 
+    private void forceRename(CommandSender sender, String[] args) {
+        // TODO: implement
+    }
+
 }
