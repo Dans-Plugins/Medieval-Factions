@@ -21,7 +21,7 @@ public class ForceCommand extends SubCommand {
     private final boolean debug = false;
 
     private final String[] commands = new String[]{
-            "Save", "Load", "Peace", "Demote", "Join", "Kick", "Power", "Renounce", "Transfer", "RemoveVassal"
+            "Save", "Load", "Peace", "Demote", "Join", "Kick", "Power", "Renounce", "Transfer", "RemoveVassal", "Rename"
     };
     private final HashMap<List<String>, String> subMap = new HashMap<>();
 
