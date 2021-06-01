@@ -139,3 +139,5 @@ permissions:
     default: op
   mf.force.removevassal:
     default: op
+  mf.force.rename:
+    default: op

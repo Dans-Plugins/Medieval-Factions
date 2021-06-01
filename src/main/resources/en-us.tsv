@@ -517,3 +517,4 @@ HelpFlagsShow	/mf flags show - Show faction flags.
 CmdForceRename	rename
 HelpForceRename	/mf force rename 'faction' 'new name'
 UsageForceRename	Usage: /mf force rename 'faction' 'new name'
+ArgumentsSingleQuotesRequirement	Arguments must be designated inside single quotes.

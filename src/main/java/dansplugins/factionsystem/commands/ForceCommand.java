@@ -341,7 +341,25 @@ public class ForceCommand extends SubCommand {
     }
 
     private void forceRename(CommandSender sender, String[] args) {
-        // TODO: implement
+        if (!(checkPermissions(sender, "mf.force.rename", "mf.force.*", "mf.admin"))) {
+            return;
+        }
+        if (args.length < 3) {
+            sender.sendMessage(translate("&c" + getText("UsageForceRename")));
+            return;
+        }
+        // get arguments designated by single quotes
+        final ArrayList<String> singleQuoteArgs = parser.getArgumentsInsideSingleQuotes(args);
+        if (singleQuoteArgs.size() < 2) {
+            sender.sendMessage(translate("&c" + getText("ArgumentsSingleQuotesRequirement")));
+            return;
+        }
+        Faction faction = getFaction(singleQuoteArgs.get(0));
+        if (faction != null) {
+            // rename faction
+            faction.updateData(faction.getName(), singleQuoteArgs.get(1));
+        }
+        sender.sendMessage(translate("&a" + getText("Done")));
     }
 
 }
