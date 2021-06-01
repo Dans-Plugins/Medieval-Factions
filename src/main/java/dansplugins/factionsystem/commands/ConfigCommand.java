@@ -33,18 +33,29 @@ public class ConfigCommand extends SubCommand {
      */
     @Override
     public void execute(CommandSender sender, String[] args, String key) {
-        if (!(checkPermissions(sender, "mf.config", "mf.admin"))) return;
+        if (!(checkPermissions(sender, "mf.config", "mf.admin"))) {
+            return;
+        }
         if (args.length == 0) {
             sender.sendMessage(translate("&c" + getText("ValidSubCommandsShowSet")));
             return;
         }
         final boolean show = safeEquals(false, args[0], "get", "show", getText("CmdConfigShow"));
         final boolean set = safeEquals(false, args[0], "set", getText("CmdConfigSet"));
-        if (show) configManager.sendConfigList(sender);
+        if (show) {
+            configManager.sendConfigList(sender);
+        }
         else if (set) {
-            if (args.length == 1) sender.sendMessage(translate("&c" + getText("UsageConfigSet")));
-            else configManager.setConfigOption(args[1], args[2], sender);
-        } else sender.sendMessage(translate("&c" + getText("ValidSubCommandsShowSet")));
+            if (args.length < 3) {
+                sender.sendMessage(translate("&c" + getText("UsageConfigSet")));
+            }
+            else {
+                configManager.setConfigOption(args[1], args[2], sender);
+            }
+        }
+        else {
+            sender.sendMessage(translate("&c" + getText("ValidSubCommandsShowSet")));
+        }
     }
 
 }

@@ -40,7 +40,7 @@ public class FlagsCommand extends SubCommand {
             playersFaction.getFlags().sendFlagList(player);
         }
         else if (set) {
-            if (args.length == 1) {
+            if (args.length < 3) {
                 player.sendMessage(translate("&c" + getText("UsageFlagsSet")));
             }
             else {
