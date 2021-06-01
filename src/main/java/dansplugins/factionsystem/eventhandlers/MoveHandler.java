@@ -6,6 +6,7 @@ import dansplugins.factionsystem.data.PersistentData;
 import dansplugins.factionsystem.managers.ChunkManager;
 import dansplugins.factionsystem.managers.LocaleManager;
 import dansplugins.factionsystem.objects.Faction;
+import dansplugins.factionsystem.utils.ColorChecker;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -54,14 +55,14 @@ public class MoveHandler implements Listener {
             // if new chunk is claimed and old chunk was not
             if (ChunkManager.getInstance().isClaimed(event.getTo().getChunk(), PersistentData.getInstance().getClaimedChunks()) && !ChunkManager.getInstance().isClaimed(event.getFrom().getChunk(), PersistentData.getInstance().getClaimedChunks())) {
                 String title = ChunkManager.getInstance().getClaimedChunk(event.getTo().getChunk()).getHolder();
-                sendPlayerLandInfo(event.getPlayer(), title);
+                sendPlayerTerritoryAlert(event.getPlayer(), title);
                 return;
             }
 
             // if new chunk is unclaimed and old chunk was not
             if (!ChunkManager.getInstance().isClaimed(event.getTo().getChunk(), PersistentData.getInstance().getClaimedChunks()) && ChunkManager.getInstance().isClaimed(event.getFrom().getChunk(), PersistentData.getInstance().getClaimedChunks())) {
                 String title = LocaleManager.getInstance().getText("Wilderness");
-                sendPlayerLandInfo(event.getPlayer(), title);
+                sendPlayerTerritoryAlert(event.getPlayer(), title);
                 return;
             }
 
@@ -70,23 +71,28 @@ public class MoveHandler implements Listener {
                 // if chunk holders are not equal
                 if (!(ChunkManager.getInstance().getClaimedChunk(event.getFrom().getChunk()).getHolder().equalsIgnoreCase(ChunkManager.getInstance().getClaimedChunk(event.getTo().getChunk()).getHolder()))) {
                     String title = ChunkManager.getInstance().getClaimedChunk(event.getTo().getChunk()).getHolder();
-                    sendPlayerLandInfo(event.getPlayer(), title);
+                    sendPlayerTerritoryAlert(event.getPlayer(), title);
                 }
             }
 
         }
     }
 
-    public void sendPlayerLandInfo(Player player, String information) {
+    public void sendPlayerTerritoryAlert(Player player, String information) {
+        // get color
+        String territoryAlertColorString = MedievalFactions.getInstance().getConfig().getString("territoryAlertColor");
+        ChatColor territoryAlertColor = ColorChecker.getInstance().getColorByName(territoryAlertColorString);
+
+        // send alert
         if (MedievalFactions.getInstance().getConfig().getBoolean("territoryAlertPopUp")) {
             String subtitle = null;
             int fadeIn = 10;
             int stay = 70;
             int fadeOut = 20;
-            player.sendTitle(ChatColor.AQUA + information, subtitle, fadeIn, stay, fadeOut);
+            player.sendTitle(territoryAlertColor + information, subtitle, fadeIn, stay, fadeOut);
         }
         else {
-            player.sendMessage(ChatColor.AQUA + information);
+            player.sendMessage(territoryAlertColor + information);
         }
     }
 
