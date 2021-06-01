@@ -378,7 +378,7 @@ public class ForceCommand extends SubCommand {
         faction.setName(newName);
         sender.sendMessage(translate("&a" + getText("FactionNameChanged")));
 
-        // Change Ally/Enemy/Vassal/Leige references
+        // Change Ally/Enemy/Vassal/Liege references
         data.getFactions().forEach(fac -> fac.updateData(oldName, newName));
 
         // Change Claims
@@ -394,9 +394,6 @@ public class ForceCommand extends SubCommand {
 
         // Save again to overwrite current data
         StorageManager.getInstance().save();
-
-        // inform player
-        sender.sendMessage(translate("&a" + getText("Done")));
     }
 
 }
