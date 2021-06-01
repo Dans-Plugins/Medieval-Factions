@@ -514,3 +514,7 @@ CmdFlagsShow	show
 UsageFlagsSet	Usage: /mf flags set (option) (value)
 HelpFlagsSet	/mf flags set (option) (value) - Set a faction flag.
 HelpFlagsShow	/mf flags show - Show faction flags.
+CmdForceRename	rename
+HelpForceRename	/mf force rename 'faction' 'new name'
+UsageForceRename	Usage: /mf force rename 'faction' 'new name'
+ArgumentsSingleQuotesRequirement	Arguments must be designated inside single quotes.

@@ -47,7 +47,7 @@ public class RenameCommand extends SubCommand {
         faction.setName(newName);
         player.sendMessage(translate("&a" + getText("FactionNameChanged")));
 
-        // Change Ally/Enemy/Vassal/Leige references
+        // Change Ally/Enemy/Vassal/Liege references
         data.getFactions().forEach(fac -> fac.updateData(oldName, newName));
 
         // Change Claims
