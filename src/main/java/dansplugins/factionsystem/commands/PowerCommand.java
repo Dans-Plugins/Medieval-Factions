@@ -52,7 +52,7 @@ public class PowerCommand extends SubCommand {
 		}
 		final UUID target = UUIDChecker.getInstance().findUUIDBasedOnPlayerName(args[0]);
 		if (target == null) {
-			sender.sendMessage(translate("&c" + getText("PlayerByNameNotFound")));
+			sender.sendMessage(translate("&c" + getText("PlayerNotFound")));
 			return;
 		}
 		record = data.getPlayersPowerRecord(target);
