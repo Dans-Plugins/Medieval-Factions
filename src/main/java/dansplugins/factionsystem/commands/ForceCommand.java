@@ -140,7 +140,7 @@ public class ForceCommand extends SubCommand {
         sender.sendMessage(translate("&a" + getText("SuccessOfficerRemoval")));
     }
 
-    private void forceJoin(CommandSender sender, String[] args) {
+    private void forceJoin(CommandSender sender, String[] args) {  // TODO: provide support for FactionJoinEvent here
         if (!(checkPermissions(sender, "mf.force.join", "mf.force.*", "mf.admin"))) return;
         if (!(args.length >= 3)) {
             sender.sendMessage(translate("&c" + getText("UsageForceJoin")));
@@ -179,7 +179,7 @@ public class ForceCommand extends SubCommand {
         sender.sendMessage(translate("&a" + getText("SuccessForceJoin")));
     }
 
-    private void forceKick(CommandSender sender, String[] args) {
+    private void forceKick(CommandSender sender, String[] args) { // TODO: provide support for FactionKickEvent here
         if (!(checkPermissions(sender, "mf.force.kick", "mf.force.*", "mf.admin"))) return;
         if (!(args.length > 1)) {
             sender.sendMessage(translate("&c" + getText("UsageForceKick")));
