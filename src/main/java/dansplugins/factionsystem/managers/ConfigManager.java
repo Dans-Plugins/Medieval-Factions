@@ -140,6 +140,13 @@ public class ConfigManager {
             MedievalFactions.getInstance().getConfig().addDefault("factionChatColor", "gold");
         }
 
+        if (!MedievalFactions.getInstance().getConfig().isString("territoryAlertPopUp")) {
+            MedievalFactions.getInstance().getConfig().addDefault("territoryAlertPopUp", true);
+        }
+        if (!MedievalFactions.getInstance().getConfig().isString("territoryAlertColor")) {
+            MedievalFactions.getInstance().getConfig().addDefault("territoryAlertColor", "aqua");
+        }
+
         deleteOldConfigOptionsIfPresent();
 
         MedievalFactions.getInstance().getConfig().options().copyDefaults(true);
@@ -197,7 +204,8 @@ public class ConfigManager {
                     || option.equalsIgnoreCase("playersChatWithPrefixes")
                     || option.equalsIgnoreCase("chatSharedInVassalageTrees")
                     || option.equalsIgnoreCase("allowAllyInteraction")
-                    || option.equalsIgnoreCase("allowVassalageTreeInteraction")) {
+                    || option.equalsIgnoreCase("allowVassalageTreeInteraction")
+                    || option.equalsIgnoreCase("territoryAlertPopUp")) {
                 MedievalFactions.getInstance().getConfig().set(option, Boolean.parseBoolean(value));
                 sender.sendMessage(ChatColor.GREEN + LocaleManager.getInstance().getText("BooleanSet"));
             }
@@ -257,6 +265,8 @@ public class ConfigManager {
         MedievalFactions.getInstance().getConfig().addDefault("allowAllyInteraction", false);
         MedievalFactions.getInstance().getConfig().addDefault("allowVassalageTreeInteraction", false);
         MedievalFactions.getInstance().getConfig().addDefault("factionChatColor", "gold");
+        MedievalFactions.getInstance().getConfig().addDefault("territoryAlertPopUp", true);
+        MedievalFactions.getInstance().getConfig().addDefault("territoryAlertColor", "aqua");
         MedievalFactions.getInstance().getConfig().options().copyDefaults(true);
         MedievalFactions.getInstance().saveConfig();
     }
@@ -291,7 +301,9 @@ public class ConfigManager {
                 + ", chatSharedInVassalageTrees: " + MedievalFactions.getInstance().getConfig().getBoolean("chatSharedInVassalageTrees")
                 + ", allowAllyInteraction: " + MedievalFactions.getInstance().getConfig().getBoolean("allowAllyInteraction")
                 + ", allowVassalageTreeInteraction: " + MedievalFactions.getInstance().getConfig().getBoolean("allowVassalageTreeInteraction")
-                + ", factionChatColor: " + MedievalFactions.getInstance().getConfig().getString("factionChatColor"));
+                + ", factionChatColor: " + MedievalFactions.getInstance().getConfig().getString("factionChatColor")
+                + ", territoryAlertPopUp: " + MedievalFactions.getInstance().getConfig().getBoolean("territoryAlertPopUp")
+                + ", territoryAlertColor: " + MedievalFactions.getInstance().getConfig().getString("territoryAlertColor"));
     }
 
     public boolean hasBeenAltered() {
