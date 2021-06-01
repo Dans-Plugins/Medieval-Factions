@@ -5,12 +5,14 @@ import dansplugins.factionsystem.MedievalFactions;
 import dansplugins.factionsystem.data.PersistentData;
 import dansplugins.factionsystem.managers.ChunkManager;
 import dansplugins.factionsystem.managers.LocaleManager;
+import dansplugins.factionsystem.objects.ClaimedChunk;
 import dansplugins.factionsystem.objects.Faction;
 import dansplugins.factionsystem.utils.ColorChecker;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
+import org.bukkit.event.block.BlockFromToEvent;
 import org.bukkit.event.player.PlayerMoveEvent;
 
 import java.util.Objects;
@@ -76,6 +78,30 @@ public class MoveHandler implements Listener {
             }
 
         }
+    }
+
+    @EventHandler()
+    public void handle(BlockFromToEvent event) {
+        // this event handler method will deal with liquid moving from one block to another
+
+        ClaimedChunk fromChunk = ChunkManager.getInstance().getClaimedChunk(event.getBlock().getChunk());
+        ClaimedChunk toChunk = ChunkManager.getInstance().getClaimedChunk(event.getToBlock().getChunk());
+
+        // if moving from unclaimed land into claimed land
+        if (fromChunk == null && toChunk != null) {
+            event.setCancelled(true);
+            return;
+        }
+
+        // if moving from claimed land into claimed land
+        if (fromChunk != null && toChunk != null) {
+            // if the holders of the chunks are different
+            if (!fromChunk.getHolder().equalsIgnoreCase(toChunk.getHolder())) {
+                event.setCancelled(true);
+                return;
+            }
+        }
+
     }
 
     public void sendPlayerTerritoryAlert(Player player, String information) {
