@@ -443,7 +443,7 @@ public class ForceCommand extends SubCommand {
             return;
         }
 
-        if (args.length != 0 && args[1].equalsIgnoreCase("cancel")) {
+        if (args.length > 1 && args[1].equalsIgnoreCase("cancel")) {
             ephemeral.getUnlockingPlayers().remove(player.getUniqueId());
             ephemeral.getForcefullyUnlockingPlayers().remove(player.getUniqueId());
             player.sendMessage(translate("&c" + getText("AlertUnlockingCancelled")));
