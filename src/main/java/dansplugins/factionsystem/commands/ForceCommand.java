@@ -396,7 +396,7 @@ public class ForceCommand extends SubCommand {
         StorageManager.getInstance().save();
     }
 
-    public void forceBonusPower(CommandSender sender, String[] args) {
+    private void forceBonusPower(CommandSender sender, String[] args) {
         if (!(checkPermissions(sender, "mf.force.bonuspower", "mf.force.*", "mf.admin"))) {
             return;
         }
@@ -432,7 +432,7 @@ public class ForceCommand extends SubCommand {
         sender.sendMessage(translate("&a" + getText("Done")));
     }
 
-    public void forceUnlock(CommandSender sender, String[] args) {
+    private void forceUnlock(CommandSender sender, String[] args) {
         if (!(sender instanceof Player)) {
             return;
         }
