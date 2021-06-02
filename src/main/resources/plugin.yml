@@ -141,3 +141,5 @@ permissions:
     default: op
   mf.force.rename:
     default: op
+  mf.force.bonuspower:
+    default: op

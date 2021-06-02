@@ -54,6 +54,9 @@ public class Messenger {
                 sender.sendMessage(ChatColor.AQUA + String.format(LocaleManager.getInstance().getText("VassalContribution"), 0) + "\n");
             }
         }
+        if (faction.getBonusPower() != 0) {
+            sender.sendMessage(ChatColor.AQUA + String.format(LocaleManager.getInstance().getText("BonusPower"), faction.getBonusPower()));
+        }
         sender.sendMessage(ChatColor.AQUA + "----------\n");
     }
 
