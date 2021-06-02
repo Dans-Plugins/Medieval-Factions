@@ -36,6 +36,7 @@ public class Faction {
     private ArrayList<Gate> gates = new ArrayList<>();
     private String prefix = "none";
     private FactionFlags flags = new FactionFlags();
+    private int bonusPower = 0;
 
     // temporary
     int maxPower = 0;
@@ -44,7 +45,6 @@ public class Faction {
     private ArrayList<String> attemptedAlliances = new ArrayList<>();
     private ArrayList<String> attemptedVassalizations = new ArrayList<>();
     private boolean autoclaim = false;
-
 
     // player constructor
     public Faction(String initialName, UUID creator, int max) {
@@ -167,10 +167,10 @@ public class Faction {
         int withVassalContribution = calculateCumulativePowerLevelWithVassalContribution();
 
         if (vassals.size() == 0 || (withoutVassalContribution < (getMaximumCumulativePowerLevel() / 2))) {
-            return withoutVassalContribution;
+            return withoutVassalContribution + bonusPower;
         }
         else {
-            return withVassalContribution;
+            return withVassalContribution + bonusPower;
         }
     }
 
@@ -401,6 +401,7 @@ public class Faction {
         saveMap.put("location", gson.toJson(saveLocation(gson)));
         saveMap.put("liege", gson.toJson(liege));
         saveMap.put("prefix", gson.toJson(prefix));
+        saveMap.put("bonusPower", gson.toJson(bonusPower));
 
         ArrayList<String> gateList = new ArrayList<String>(); 
         for (Gate gate : gates)
@@ -449,6 +450,7 @@ public class Faction {
         liege = gson.fromJson(data.getOrDefault("liege", "none"), String.class);
         vassals = gson.fromJson(data.getOrDefault("vassals", "[]"), arrayListTypeString);
         prefix = loadDataOrDefault(gson, data, "prefix", getName());
+        bonusPower = gson.fromJson(data.getOrDefault("bonusPower", "0"), Integer.TYPE);
         
 //        System.out.println("Loading Faction Gates...");
         ArrayList<String> gateList = new ArrayList<String>();
@@ -672,6 +674,14 @@ public class Faction {
 
     public FactionFlags getFlags() {
         return flags;
+    }
+
+    public int getBonusPower() {
+        return bonusPower;
+    }
+
+    public void setBonusPower(int i) {
+        bonusPower = i;
     }
 
 }

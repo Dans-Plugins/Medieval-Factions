@@ -518,3 +518,7 @@ CmdForceRename	rename
 HelpForceRename	/mf force rename 'faction' 'new name'
 UsageForceRename	Usage: /mf force rename 'faction' 'new name'
 ArgumentsSingleQuotesRequirement	Arguments must be designated inside single quotes.
+BonusPower	Bonus Power Granted With Admin Control: %d
+CmdForceBonusPower	bonuspower
+HelpForceBonusPower	/mf force bonuspower 'faction' 'number'
+UsageForceBonusPower	Usage: /mf force bonuspower 'faction' 'number'

@@ -22,7 +22,7 @@ public class ForceCommand extends SubCommand {
     private final boolean debug = false;
 
     private final String[] commands = new String[]{
-            "Save", "Load", "Peace", "Demote", "Join", "Kick", "Power", "Renounce", "Transfer", "RemoveVassal", "Rename"
+            "Save", "Load", "Peace", "Demote", "Join", "Kick", "Power", "Renounce", "Transfer", "RemoveVassal", "Rename", "BonusPower"
     };
     private final HashMap<List<String>, String> subMap = new HashMap<>();
 
@@ -394,6 +394,42 @@ public class ForceCommand extends SubCommand {
 
         // Save again to overwrite current data
         StorageManager.getInstance().save();
+    }
+
+    public void forceBonusPower(CommandSender sender, String[] args) {
+        if (!(checkPermissions(sender, "mf.force.bonuspower", "mf.force.*", "mf.admin"))) {
+            return;
+        }
+        if (args.length < 3) {
+            sender.sendMessage(translate("&c" + getText("UsageForceBonusPower")));
+            return;
+        }
+        // get arguments designated by single quotes
+        final ArrayList<String> singleQuoteArgs = parser.getArgumentsInsideSingleQuotes(args);
+        if (singleQuoteArgs.size() < 2) {
+            sender.sendMessage(translate("&c" + getText("ArgumentsSingleQuotesRequirement")));
+            return;
+        }
+
+        // get faction
+        Faction faction = getFaction(singleQuoteArgs.get(0));
+        if (faction == null) {
+            sender.sendMessage(translate("&c" + getText("FactionNotFound")));
+            return;
+        }
+
+        // get bonus power
+        final int bonusPower = getIntSafe(singleQuoteArgs.get(1), Integer.MIN_VALUE);
+        if (bonusPower == Integer.MIN_VALUE) {
+            sender.sendMessage(translate("&c" + getText("DesiredPowerMustBeANumber")));
+            return;
+        }
+
+        // set bonus power
+        faction.setBonusPower(bonusPower);
+
+        // inform sender
+        sender.sendMessage(translate("&a" + getText("Done")));
     }
 
 }
