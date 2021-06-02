@@ -48,16 +48,15 @@ public class JoiningLeavingAndSpawningHandler implements Listener {
 						// TODO Locale Message
 						return;
 					}
-					faction.addMember(player.getUniqueId(), PersistentData.getInstance().getPlayersPowerRecord(player.getUniqueId()).getPowerLevel());
-					faction.uninvite(player.getUniqueId());
 					Messenger.getInstance().sendAllPlayersInFactionMessage(faction, String.format(ChatColor.GREEN + "" + LocaleManager.getInstance().getText("HasJoined"), player.getName(), faction.getName()));
+					faction.addMember(player.getUniqueId(), PersistentData.getInstance().getPlayersPowerRecord(player.getUniqueId()).getPowerLevel());
 					player.sendMessage(ChatColor.GREEN + "" + LocaleManager.getInstance().getText("AssignedToRandomFaction"));
 
-					if (debug) { System.out.println(player.getName() + " has been randomly assigned to " + faction.getName() + "!"); }
+					if (debug) { System.out.println("[DEBUG] " + player.getName() + " has been randomly assigned to " + faction.getName() + "!"); }
 				}
 				else {
 					// there are no factions to assign this player to
-					if (debug) { System.out.println("Attempted to assign " + player.getName() + " to a random faction, but no factions are existent."); }
+					if (debug) { System.out.println("[DEBUG] Attempted to assign " + player.getName() + " to a random faction, but no factions are existent."); }
 				}
 			}
         }
