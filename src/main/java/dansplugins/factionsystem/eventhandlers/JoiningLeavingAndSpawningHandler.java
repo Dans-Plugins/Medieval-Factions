@@ -1,13 +1,16 @@
 package dansplugins.factionsystem.eventhandlers;
 
 import dansplugins.factionsystem.MedievalFactions;
+import dansplugins.factionsystem.Messenger;
 import dansplugins.factionsystem.data.EphemeralData;
 import dansplugins.factionsystem.data.PersistentData;
+import dansplugins.factionsystem.events.FactionJoinEvent;
 import dansplugins.factionsystem.managers.ChunkManager;
 import dansplugins.factionsystem.managers.LocaleManager;
 import dansplugins.factionsystem.objects.Faction;
 import dansplugins.factionsystem.objects.PlayerActivityRecord;
 import dansplugins.factionsystem.objects.PlayerPowerRecord;
+import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Monster;
 import org.bukkit.entity.Player;
@@ -22,47 +25,70 @@ import java.util.UUID;
 
 public class JoiningLeavingAndSpawningHandler implements Listener {
 
+	boolean debug = true;
+
 	@EventHandler()
     public void handle(PlayerJoinEvent event) {
+		Player player = event.getPlayer();
+
         if (!hasPowerRecord(event.getPlayer().getUniqueId())) {
-            PlayerPowerRecord newRecord = new PlayerPowerRecord(event.getPlayer().getUniqueId(),
-                    MedievalFactions.getInstance().getConfig().getInt("initialPowerLevel"));
+
+        	// assign power record
+            PlayerPowerRecord newRecord = new PlayerPowerRecord(player.getUniqueId(), MedievalFactions.getInstance().getConfig().getInt("initialPowerLevel"));
             PersistentData.getInstance().getPlayerPowerRecords().add(newRecord);
+
+            // since player has not logged in before, this is where we will handle random assignment
+			if (MedievalFactions.getInstance().getConfig().getBoolean("randomFactionAssignment")) {
+
+				Faction faction = PersistentData.getInstance().getRandomFaction();
+				if (faction != null) {
+					FactionJoinEvent joinEvent = new FactionJoinEvent(faction, player);
+					Bukkit.getPluginManager().callEvent(joinEvent);
+					if (joinEvent.isCancelled()) {
+						// TODO Locale Message
+						return;
+					}
+					Messenger.getInstance().sendAllPlayersInFactionMessage(faction, String.format(ChatColor.GREEN + "" + LocaleManager.getInstance().getText("HasJoined"), player.getName(), faction.getName()));
+					faction.addMember(player.getUniqueId(), PersistentData.getInstance().getPlayersPowerRecord(player.getUniqueId()).getPowerLevel());
+					player.sendMessage(ChatColor.GREEN + "" + LocaleManager.getInstance().getText("AssignedToRandomFaction"));
+
+					if (debug) { System.out.println("[DEBUG] " + player.getName() + " has been randomly assigned to " + faction.getName() + "!"); }
+				}
+				else {
+					// there are no factions to assign this player to
+					if (debug) { System.out.println("[DEBUG] Attempted to assign " + player.getName() + " to a random faction, but no factions are existent."); }
+				}
+			}
         }
-        if (!hasActivityRecord(event.getPlayer().getUniqueId())) {
-        	PlayerActivityRecord newRecord = new PlayerActivityRecord(event.getPlayer().getUniqueId(), 1);
+        if (!hasActivityRecord(player.getUniqueId())) {
+        	PlayerActivityRecord newRecord = new PlayerActivityRecord(player.getUniqueId(), 1);
         	PersistentData.getInstance().getPlayerActivityRecords().add(newRecord);
         }
-        else
-        {
-        	PlayerActivityRecord record = PersistentData.getInstance().getPlayerActivityRecord(event.getPlayer().getUniqueId());
-        	if (record != null)
-        	{
-        		PlayerPowerRecord power = PersistentData.getInstance().getPlayersPowerRecord(event.getPlayer().getUniqueId());
+        else {
+        	PlayerActivityRecord record = PersistentData.getInstance().getPlayerActivityRecord(player.getUniqueId());
+        	if (record != null) {
+        		PlayerPowerRecord power = PersistentData.getInstance().getPlayersPowerRecord(player.getUniqueId());
         		record.incrementLogins();
 
         		int newPower = power.getPowerLevel();
         		if (newPower < 0)
         			newPower = 0;
         		
-        		if (record.getLastLogout() != null)
-        		{
-        			if (record.getMinutesSinceLastLogout() > 1)
-        			{
-        				event.getPlayer().sendMessage(ChatColor.GREEN + String.format(LocaleManager.getInstance().getText("WelcomeBackLastLogout"), event.getPlayer().getName(), record.getTimeSinceLastLogout()));
+        		if (record.getLastLogout() != null) {
+        			if (record.getMinutesSinceLastLogout() > 1) {
+						player.sendMessage(ChatColor.GREEN + String.format(LocaleManager.getInstance().getText("WelcomeBackLastLogout"), event.getPlayer().getName(), record.getTimeSinceLastLogout()));
         			}
         		}
-        		if (record.getPowerLost() > 0)
-        		{
-        			event.getPlayer().sendMessage(ChatColor.RED + String.format(LocaleManager.getInstance().getText("PowerHasDecayed"), record.getPowerLost(), newPower));
+        		if (record.getPowerLost() > 0) {
+					player.sendMessage(ChatColor.RED + String.format(LocaleManager.getInstance().getText("PowerHasDecayed"), record.getPowerLost(), newPower));
         		}
         		record.setPowerLost(0);
         	}
         }
 
-        ChunkManager.getInstance().informPlayerIfTheirLandIsInDanger(event.getPlayer(), PersistentData.getInstance().getFactions(), PersistentData.getInstance().getClaimedChunks());
+        ChunkManager.getInstance().informPlayerIfTheirLandIsInDanger(player, PersistentData.getInstance().getFactions(), PersistentData.getInstance().getClaimedChunks());
 
-        informPlayerIfTheirFactionIsWeakened(event.getPlayer());
+        informPlayerIfTheirFactionIsWeakened(player);
     }
 
     private void informPlayerIfTheirFactionIsWeakened(Player player) {

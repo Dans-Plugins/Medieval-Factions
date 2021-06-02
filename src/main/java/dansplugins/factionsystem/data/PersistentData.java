@@ -9,6 +9,7 @@ import org.bukkit.entity.Player;
 import java.time.ZonedDateTime;
 import java.util.ArrayList;
 import java.util.Iterator;
+import java.util.Random;
 import java.util.UUID;
 
 public class PersistentData {
@@ -260,5 +261,11 @@ public class PersistentData {
                 PersistentData.getInstance().getPlayerActivityRecords().add(newRecord);
             }
         }
+    }
+
+    public Faction getRandomFaction() {
+        Random generator = new Random();
+        int randomIndex = generator.nextInt(factions.size());
+        return factions.get(randomIndex);
     }
 }
