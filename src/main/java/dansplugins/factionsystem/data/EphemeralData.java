@@ -19,6 +19,7 @@ public class EphemeralData {
 
     private ArrayList<UUID> lockingPlayers = new ArrayList<>();
     private ArrayList<UUID> unlockingPlayers = new ArrayList<>();
+    private ArrayList<UUID> forcefullyUnlockingPlayers = new ArrayList<>();
 
     // Left user granting access, right user receiving access;
     private HashMap<UUID, UUID> playersGrantingAccess = new HashMap<>();
@@ -86,6 +87,10 @@ public class EphemeralData {
 
     public ArrayList<Duel> getDuelingPlayers() {
         return duelingPlayers;
+    }
+
+    public ArrayList<UUID> getForcefullyUnlockingPlayers() {
+        return forcefullyUnlockingPlayers;
     }
 
     // specific getters ---

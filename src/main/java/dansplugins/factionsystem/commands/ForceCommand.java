@@ -22,7 +22,7 @@ public class ForceCommand extends SubCommand {
     private final boolean debug = false;
 
     private final String[] commands = new String[]{
-            "Save", "Load", "Peace", "Demote", "Join", "Kick", "Power", "Renounce", "Transfer", "RemoveVassal", "Rename", "BonusPower"
+            "Save", "Load", "Peace", "Demote", "Join", "Kick", "Power", "Renounce", "Transfer", "RemoveVassal", "Rename", "BonusPower", "Unlock"
     };
     private final HashMap<List<String>, String> subMap = new HashMap<>();
 
@@ -430,6 +430,41 @@ public class ForceCommand extends SubCommand {
 
         // inform sender
         sender.sendMessage(translate("&a" + getText("Done")));
+    }
+
+    public void forceUnlock(CommandSender sender, String[] args) {
+        if (!(sender instanceof Player)) {
+            return;
+        }
+
+        Player player = (Player) sender;
+
+        if (!(checkPermissions(player, "mf.force.unlock", "mf.force.*", "mf.admin"))) {
+            return;
+        }
+
+        if (args.length != 0 && args[0].equalsIgnoreCase("cancel")) {
+            ephemeral.getUnlockingPlayers().remove(player.getUniqueId());
+            player.sendMessage(translate("&c" + getText("AlertUnlockingCancelled")));
+            return;
+        }
+        if (!ephemeral.getUnlockingPlayers().contains(player.getUniqueId())) {
+            // add player to playersAboutToLockSomething list
+            ephemeral.getUnlockingPlayers().add(player.getUniqueId());
+        }
+
+        if (!ephemeral.getForcefullyUnlockingPlayers().contains(player.getUniqueId())) {
+            // add player to playersAboutToLockSomething list
+            ephemeral.getForcefullyUnlockingPlayers().add(player.getUniqueId());
+        }
+
+        ephemeral.getLockingPlayers().remove(player.getUniqueId()); // Remove from locking
+
+        // inform them they need to right click the block that they want to lock or type /mf lock cancel to cancel it
+        player.sendMessage(translate("&a" + getText("RightClickUnlock")));
+
+        // inform sender
+        player.sendMessage(translate("&a" + getText("Done")));
     }
 
 }

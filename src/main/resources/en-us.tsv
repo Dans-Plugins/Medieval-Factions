@@ -523,3 +523,5 @@ CmdForceBonusPower	bonuspower
 HelpForceBonusPower	/mf force bonuspower 'faction' 'number'
 UsageForceBonusPower	Usage: /mf force bonuspower 'faction' 'number'
 AssignedToRandomFaction	You have been assigned to a random faction.
+CmdForceUnlock	unlock
+HelpForceUnlock	/mf force unlock
