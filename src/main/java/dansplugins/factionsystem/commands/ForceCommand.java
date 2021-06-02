@@ -22,7 +22,7 @@ public class ForceCommand extends SubCommand {
     private final boolean debug = false;
 
     private final String[] commands = new String[]{
-            "Save", "Load", "Peace", "Demote", "Join", "Kick", "Power", "Renounce", "Transfer", "RemoveVassal", "Rename", "BonusPower"
+            "Save", "Load", "Peace", "Demote", "Join", "Kick", "Power", "Renounce", "Transfer", "RemoveVassal", "Rename", "BonusPower", "Unlock"
     };
     private final HashMap<List<String>, String> subMap = new HashMap<>();
 
@@ -396,7 +396,7 @@ public class ForceCommand extends SubCommand {
         StorageManager.getInstance().save();
     }
 
-    public void forceBonusPower(CommandSender sender, String[] args) {
+    private void forceBonusPower(CommandSender sender, String[] args) {
         if (!(checkPermissions(sender, "mf.force.bonuspower", "mf.force.*", "mf.admin"))) {
             return;
         }
@@ -430,6 +430,39 @@ public class ForceCommand extends SubCommand {
 
         // inform sender
         sender.sendMessage(translate("&a" + getText("Done")));
+    }
+
+    private void forceUnlock(CommandSender sender, String[] args) {
+        if (!(sender instanceof Player)) {
+            return;
+        }
+
+        Player player = (Player) sender;
+
+        if (!(checkPermissions(player, "mf.force.unlock", "mf.force.*", "mf.admin"))) {
+            return;
+        }
+
+        if (args.length > 1 && args[1].equalsIgnoreCase("cancel")) {
+            ephemeral.getUnlockingPlayers().remove(player.getUniqueId());
+            ephemeral.getForcefullyUnlockingPlayers().remove(player.getUniqueId());
+            player.sendMessage(translate("&c" + getText("AlertUnlockingCancelled")));
+            return;
+        }
+        if (!ephemeral.getUnlockingPlayers().contains(player.getUniqueId())) {
+            // add player to playersAboutToLockSomething list
+            ephemeral.getUnlockingPlayers().add(player.getUniqueId());
+        }
+
+        if (!ephemeral.getForcefullyUnlockingPlayers().contains(player.getUniqueId())) {
+            // add player to playersAboutToLockSomething list
+            ephemeral.getForcefullyUnlockingPlayers().add(player.getUniqueId());
+        }
+
+        ephemeral.getLockingPlayers().remove(player.getUniqueId()); // Remove from locking
+
+        // inform them they need to right click the block that they want to lock or type /mf lock cancel to cancel it
+        player.sendMessage(translate("&a" + getText("RightClickForceUnlock")));
     }
 
 }

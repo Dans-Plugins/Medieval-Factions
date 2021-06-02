@@ -23,6 +23,7 @@ public class UnlockCommand extends SubCommand {
         if (!(checkPermissions(player, permission))) return;
         if (args.length != 0 && args[0].equalsIgnoreCase("cancel")) {
             ephemeral.getUnlockingPlayers().remove(player.getUniqueId());
+            ephemeral.getForcefullyUnlockingPlayers().remove(player.getUniqueId()); // just in case the player tries to cancel a forceful unlock without using the force command
             player.sendMessage(translate("&c" + getText("AlertUnlockingCancelled")));
             return;
         }

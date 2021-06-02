@@ -124,7 +124,8 @@ public class LockManager {
     public void handleUnlockingBlock(PlayerInteractEvent event, Player player, Block clickedBlock) {
         // if locked
         if (PersistentData.getInstance().isBlockLocked(clickedBlock)) {
-            if (PersistentData.getInstance().getLockedBlock(clickedBlock).getOwner().equals(player.getUniqueId())) {
+            if (PersistentData.getInstance().getLockedBlock(clickedBlock).getOwner().equals(player.getUniqueId())
+                || EphemeralData.getInstance().getForcefullyUnlockingPlayers().contains(player.getUniqueId())) {
 
                 if (BlockChecker.getInstance().isChest(clickedBlock)) {
                     InventoryHolder holder = ((Chest) clickedBlock.getState()).getInventory().getHolder();
@@ -173,6 +174,9 @@ public class LockManager {
                     player.sendMessage(ChatColor.GREEN + LocaleManager.getInstance().getText("AlertUnlocked"));
                     EphemeralData.getInstance().getUnlockingPlayers().remove(player.getUniqueId());
                 }
+
+                // remove player from forcefully unlocking players list if they are in it
+                EphemeralData.getInstance().getForcefullyUnlockingPlayers().remove(player.getUniqueId());
 
                 event.setCancelled(true);
                 return;
