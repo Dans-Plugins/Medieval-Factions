@@ -462,9 +462,6 @@ public class ForceCommand extends SubCommand {
 
         // inform them they need to right click the block that they want to lock or type /mf lock cancel to cancel it
         player.sendMessage(translate("&a" + getText("RightClickUnlock")));
-
-        // inform sender
-        player.sendMessage(translate("&a" + getText("Done")));
     }
 
 }
