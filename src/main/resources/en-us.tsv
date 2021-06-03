@@ -526,3 +526,5 @@ AssignedToRandomFaction	You have been assigned to a random faction.
 CmdForceUnlock	unlock
 HelpForceUnlock	/mf force unlock
 RightClickForceUnlock	Right click a chest or door to forcefully unlock it! (Type /mf force unlock cancel to cancel)
+CmdForceCreate	create
+HelpForceCreate	/mf force create (factionName);
