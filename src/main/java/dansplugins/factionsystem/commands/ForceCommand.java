@@ -4,6 +4,7 @@ import dansplugins.factionsystem.MedievalFactions;
 import dansplugins.factionsystem.commands.abs.SubCommand;
 import dansplugins.factionsystem.data.PersistentData;
 import dansplugins.factionsystem.events.FactionCreateEvent;
+import dansplugins.factionsystem.events.FactionJoinEvent;
 import dansplugins.factionsystem.events.FactionRenameEvent;
 import dansplugins.factionsystem.managers.LocaleManager;
 import dansplugins.factionsystem.managers.StorageManager;
@@ -142,7 +143,7 @@ public class ForceCommand extends SubCommand {
         sender.sendMessage(translate("&a" + getText("SuccessOfficerRemoval")));
     }
 
-    private void forceJoin(CommandSender sender, String[] args) {  // TODO: provide support for FactionJoinEvent here
+    private void forceJoin(CommandSender sender, String[] args) {
         if (!(checkPermissions(sender, "mf.force.join", "mf.force.*", "mf.admin"))) return;
         if (!(args.length >= 3)) {
             sender.sendMessage(translate("&c" + getText("UsageForceJoin")));
@@ -171,6 +172,12 @@ public class ForceCommand extends SubCommand {
         }
         if (data.isInFaction(playerUUID)) {
             sender.sendMessage(translate("&c" + getText("PlayerAlreadyInFaction")));
+            return;
+        }
+        FactionJoinEvent joinEvent = new FactionJoinEvent(faction, player);
+        Bukkit.getPluginManager().callEvent(joinEvent);
+        if (joinEvent.isCancelled()) {
+            // TODO Locale Message
             return;
         }
         messageFaction(faction, translate("&a" + getText("HasJoined", player.getName(), faction.getName())));
