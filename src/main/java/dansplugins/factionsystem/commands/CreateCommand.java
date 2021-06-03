@@ -40,7 +40,7 @@ public class CreateCommand extends SubCommand {
             player.sendMessage(translate("&c" + getText("FactionAlreadyExists")));
             return;
         }
-        this.faction = new Faction(factionName);
+        this.faction = new Faction(factionName, player.getUniqueId());
         this.faction.addMember(player.getUniqueId());
         FactionCreateEvent createEvent = new FactionCreateEvent(this.faction, player);
         Bukkit.getPluginManager().callEvent(createEvent);
