@@ -31,7 +31,6 @@ public class Faction {
     private String description = "defaultDescription";
     private String liege = "none";
     private UUID owner = UUID.randomUUID();
-    private int cumulativePowerLevel = 0; // I'm not sure this variable is needed anymore... -Dan 11/27/2020 // TODO: remove?
     private Location factionHome = null;
     private ArrayList<Gate> gates = new ArrayList<>();
     private String prefix = "none";
@@ -39,7 +38,6 @@ public class Faction {
     private int bonusPower = 0;
 
     // temporary
-    int maxPower = 0;
     private ArrayList<UUID> invited = new ArrayList<>();
     private ArrayList<String> attemptedTruces = new ArrayList<>();
     private ArrayList<String> attemptedAlliances = new ArrayList<>();
@@ -47,23 +45,20 @@ public class Faction {
     private boolean autoclaim = false;
 
     // player constructor
-    public Faction(String initialName, UUID creator, int max) {
+    public Faction(String initialName, UUID creator) {
         setName(initialName);
         setOwner(creator);
-        maxPower = max;
         prefix = initialName;
         flags.initializeFlagValues();
     }
 
     // server constructor
-    public Faction(String initialName, int max) {
+    public Faction(String initialName) {
         setName(initialName);
-        maxPower = max;
         prefix = initialName;
     }
 
-    public ArrayList<Gate> getGates()
-    {
+    public ArrayList<Gate> getGates() {
     	return gates;
     }    
     
@@ -370,14 +365,12 @@ public class Faction {
         return description;
     }
 
-    public void addMember(UUID UUID, int power) {
+    public void addMember(UUID UUID) {
         members.add(UUID);
-        cumulativePowerLevel = cumulativePowerLevel + power;
     }
 
-    public void removeMember(UUID UUID, int power) {
+    public void removeMember(UUID UUID) {
         members.remove(UUID);
-        cumulativePowerLevel = cumulativePowerLevel - power;
     }
 
     public boolean isMember(UUID uuid) {
@@ -397,7 +390,6 @@ public class Faction {
         saveMap.put("vassals", gson.toJson(vassals));
         saveMap.put("description", gson.toJson(description));
         saveMap.put("owner", gson.toJson(owner));
-        saveMap.put("cumulativePowerLevel", gson.toJson(cumulativePowerLevel));
         saveMap.put("location", gson.toJson(saveLocation(gson)));
         saveMap.put("liege", gson.toJson(liege));
         saveMap.put("prefix", gson.toJson(prefix));
@@ -445,7 +437,6 @@ public class Faction {
         name = gson.fromJson(data.get("name"), String.class);
         description = gson.fromJson(data.get("description"), String.class);
         owner = UUID.fromString(gson.fromJson(data.get("owner"), String.class));
-        cumulativePowerLevel = gson.fromJson(data.get("cumulativePowerLevel"), Integer.TYPE);
         factionHome = loadLocation(gson.fromJson(data.get("location"), mapType), gson);
         liege = gson.fromJson(data.getOrDefault("liege", "none"), String.class);
         vassals = gson.fromJson(data.getOrDefault("vassals", "[]"), arrayListTypeString);
@@ -503,7 +494,7 @@ public class Faction {
                 ", name='" + name + '\'' +
                 ", description='" + description + '\'' +
                 ", owner=" + owner +
-                ", cumulativePowerLevel=" + cumulativePowerLevel +
+                ", cumulativePowerLevel=" + getCumulativePowerLevel() +
                 ", liege=" + liege +
                 '}';
     }

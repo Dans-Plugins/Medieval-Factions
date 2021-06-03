@@ -172,7 +172,7 @@ public class ForceCommand extends SubCommand {
             sender.sendMessage(translate("&c" + getText("PlayerAlreadyInFaction")));
             return;
         }
-        faction.addMember(playerUUID, data.getPlayersPowerRecord(player.getUniqueId()).getPowerLevel());
+        faction.addMember(playerUUID);
         messageFaction(faction, translate("&a" + getText("HasJoined", player.getName(), faction.getName())));
         if (player.isOnline() && player.getPlayer() != null) {
             player.getPlayer().sendMessage(translate("&b" + getText("AlertForcedToJoinFaction")));
@@ -206,7 +206,7 @@ public class ForceCommand extends SubCommand {
             sender.sendMessage(translate("&c" + getText("CannotForciblyKickOwner")));
             return;
         }
-        faction.removeMember(playerUUID, data.getPlayersPowerRecord(playerUUID).getPowerLevel());
+        faction.removeMember(playerUUID);
         if (player.isOnline() && player.getPlayer() != null) {
             player.getPlayer().sendMessage(translate("&b" + getText("AlertForcedKick")));
         }

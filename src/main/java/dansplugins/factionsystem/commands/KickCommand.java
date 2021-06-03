@@ -62,7 +62,7 @@ public class KickCommand extends SubCommand {
         }
         if (faction.isOfficer(targetUUID)) faction.removeOfficer(targetUUID); // Remove Officer (if one)
         ephemeral.getPlayersInFactionChat().remove(targetUUID);
-        faction.removeMember(targetUUID, data.getPlayersPowerRecord(target.getUniqueId()).getPowerLevel());
+        faction.removeMember(targetUUID);
         messageFaction(faction, translate("&c" + getText("HasBeenKickedFrom", target.getName(), faction.getName())));
         if (target.isOnline() && target.getPlayer() != null) {
             target.getPlayer().sendMessage(translate("&c" + getText("AlertKicked", player.getName())));
