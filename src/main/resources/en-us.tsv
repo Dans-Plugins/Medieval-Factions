@@ -527,5 +527,5 @@ CmdForceUnlock	unlock
 HelpForceUnlock	/mf force unlock
 RightClickForceUnlock	Right click a chest or door to forcefully unlock it! (Type /mf force unlock cancel to cancel)
 CmdForceCreate	create
-HelpForceCreate	/mf force create (factionName)
-UsageForceCreate	Usage: /mf force create (factionName)
+HelpForceCreate	/mf force create 'factionName'
+UsageForceCreate	Usage: /mf force create 'factionName'
