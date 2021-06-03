@@ -5,6 +5,7 @@ import dansplugins.factionsystem.commands.abs.SubCommand;
 import dansplugins.factionsystem.data.PersistentData;
 import dansplugins.factionsystem.events.FactionCreateEvent;
 import dansplugins.factionsystem.events.FactionJoinEvent;
+import dansplugins.factionsystem.events.FactionKickEvent;
 import dansplugins.factionsystem.events.FactionRenameEvent;
 import dansplugins.factionsystem.managers.LocaleManager;
 import dansplugins.factionsystem.managers.StorageManager;
@@ -188,37 +189,47 @@ public class ForceCommand extends SubCommand {
         sender.sendMessage(translate("&a" + getText("SuccessForceJoin")));
     }
 
-    private void forceKick(CommandSender sender, String[] args) { // TODO: provide support for FactionKickEvent here
+    private void forceKick(CommandSender sender, String[] args) {
         if (!(checkPermissions(sender, "mf.force.kick", "mf.force.*", "mf.admin"))) return;
         if (!(args.length > 1)) {
             sender.sendMessage(translate("&c" + getText("UsageForceKick")));
             return;
         }
         if (debug) { System.out.println(String.format("Looking for player UUID based on player name: '%s'", args[1])); }
-        final UUID playerUUID = UUIDChecker.getInstance().findUUIDBasedOnPlayerName(args[1]);
-        if (playerUUID == null) {
+        final UUID targetUUID = UUIDChecker.getInstance().findUUIDBasedOnPlayerName(args[1]);
+        if (targetUUID == null) {
             sender.sendMessage(translate("&c" + getText("PlayerNotFound")));
             return;
         }
-        final OfflinePlayer player = Bukkit.getOfflinePlayer(playerUUID);
-        if (!player.hasPlayedBefore()) {
+        final OfflinePlayer target = Bukkit.getOfflinePlayer(targetUUID);
+        if (!target.hasPlayedBefore()) {
             sender.sendMessage(translate("&c" + getText("PlayerNotFound")));
             return;
         }
-        final Faction faction = getPlayerFaction(player);
+        final Faction faction = getPlayerFaction(target);
         if (faction == null) {
             sender.sendMessage(translate("&c" + getText("FactionNotFound")));
             return;
         }
-        if (faction.isOwner(playerUUID)) {
+        if (faction.isOwner(targetUUID)) {
             sender.sendMessage(translate("&c" + getText("CannotForciblyKickOwner")));
             return;
         }
-        faction.removeMember(playerUUID);
-        if (player.isOnline() && player.getPlayer() != null) {
-            player.getPlayer().sendMessage(translate("&b" + getText("AlertForcedKick")));
+        FactionKickEvent kickEvent = new FactionKickEvent(faction, target, null); // no kicker so null is used
+        Bukkit.getPluginManager().callEvent(kickEvent);
+        if (kickEvent.isCancelled()) {
+            // TODO Locale Message
+            return;
         }
-        if (faction.isOfficer(playerUUID)) faction.removeOfficer(playerUUID); // Remove Officer (if they are one).
+        if (faction.isOfficer(targetUUID)) {
+            faction.removeOfficer(targetUUID); // Remove Officer (if one)
+        }
+        ephemeral.getPlayersInFactionChat().remove(targetUUID);
+        faction.removeMember(targetUUID);
+        messageFaction(faction, translate("&c" + getText("HasBeenKickedFrom", target.getName(), faction.getName())));
+        if (target.isOnline() && target.getPlayer() != null) {
+            target.getPlayer().sendMessage(translate("&c" + getText("AlertKicked", target.getName())));
+        }
         sender.sendMessage(translate("&a" + getText("SuccessFactionMemberRemoval")));
     }
 
