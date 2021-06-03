@@ -478,7 +478,7 @@ public class ForceCommand extends SubCommand {
         }
 
         if (args.length < 2) {
-            // TODO: send usage message
+            sender.sendMessage(translate("&c" + getText("UsageForceCreate")));
             return;
         }
 
