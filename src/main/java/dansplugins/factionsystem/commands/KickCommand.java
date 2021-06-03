@@ -60,7 +60,9 @@ public class KickCommand extends SubCommand {
             // TODO Locale Message
             return;
         }
-        if (faction.isOfficer(targetUUID)) faction.removeOfficer(targetUUID); // Remove Officer (if one)
+        if (faction.isOfficer(targetUUID)) {
+            faction.removeOfficer(targetUUID); // Remove Officer (if one)
+        }
         ephemeral.getPlayersInFactionChat().remove(targetUUID);
         faction.removeMember(targetUUID);
         messageFaction(faction, translate("&c" + getText("HasBeenKickedFrom", target.getName(), faction.getName())));
