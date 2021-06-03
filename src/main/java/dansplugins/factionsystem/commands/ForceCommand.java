@@ -3,6 +3,7 @@ package dansplugins.factionsystem.commands;
 import dansplugins.factionsystem.MedievalFactions;
 import dansplugins.factionsystem.commands.abs.SubCommand;
 import dansplugins.factionsystem.data.PersistentData;
+import dansplugins.factionsystem.events.FactionCreateEvent;
 import dansplugins.factionsystem.events.FactionRenameEvent;
 import dansplugins.factionsystem.managers.LocaleManager;
 import dansplugins.factionsystem.managers.StorageManager;
@@ -22,7 +23,7 @@ public class ForceCommand extends SubCommand {
     private final boolean debug = false;
 
     private final String[] commands = new String[]{
-            "Save", "Load", "Peace", "Demote", "Join", "Kick", "Power", "Renounce", "Transfer", "RemoveVassal", "Rename", "BonusPower", "Unlock"
+            "Save", "Load", "Peace", "Demote", "Join", "Kick", "Power", "Renounce", "Transfer", "RemoveVassal", "Rename", "BonusPower", "Unlock", "Create"
     };
     private final HashMap<List<String>, String> subMap = new HashMap<>();
 
@@ -172,8 +173,8 @@ public class ForceCommand extends SubCommand {
             sender.sendMessage(translate("&c" + getText("PlayerAlreadyInFaction")));
             return;
         }
-        faction.addMember(playerUUID);
         messageFaction(faction, translate("&a" + getText("HasJoined", player.getName(), faction.getName())));
+        faction.addMember(playerUUID);
         if (player.isOnline() && player.getPlayer() != null) {
             player.getPlayer().sendMessage(translate("&b" + getText("AlertForcedToJoinFaction")));
         }
@@ -463,6 +464,45 @@ public class ForceCommand extends SubCommand {
 
         // inform them they need to right click the block that they want to lock or type /mf lock cancel to cancel it
         player.sendMessage(translate("&a" + getText("RightClickForceUnlock")));
+    }
+
+    public void forceCreate(CommandSender sender, String[] args) {
+        if (!(sender instanceof Player)) {
+            return;
+        }
+
+        Player player = (Player) sender;
+
+        if (!(checkPermissions(player, "mf.force.create", "mf.force.*", "mf.admin"))) {
+            return;
+        }
+
+        if (args.length < 2) {
+            sender.sendMessage(translate("&c" + getText("UsageForceCreate")));
+            return;
+        }
+
+        // get arguments designated by single quotes
+        final ArrayList<String> singleQuoteArgs = parser.getArgumentsInsideSingleQuotes(args);
+        if (singleQuoteArgs.size() < 1) {
+            sender.sendMessage(translate("&c" + getText("ArgumentsSingleQuotesRequirement")));
+            return;
+        }
+
+        String newFactionName = singleQuoteArgs.get(0);
+
+        if (getFaction(newFactionName) != null) {
+            player.sendMessage(translate("&c" + getText("FactionAlreadyExists")));
+            return;
+        }
+
+        this.faction = new Faction(newFactionName);
+        FactionCreateEvent createEvent = new FactionCreateEvent(this.faction, player);
+        Bukkit.getPluginManager().callEvent(createEvent);
+        if (!createEvent.isCancelled()) {
+            data.getFactions().add(this.faction);
+            player.sendMessage(translate("&a" + getText("FactionCreated")));
+        }
     }
 
 }

@@ -145,3 +145,5 @@ permissions:
     default: op
   mf.force.unlock:
     default: op
+  mf.force.create:
+    default: op

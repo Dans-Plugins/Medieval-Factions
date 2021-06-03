@@ -20,29 +20,43 @@ import static org.bukkit.Bukkit.getServer;
 
 public class Faction {
 
-    // saved
+    // persistent data -------------------------------------------------------
+
+    // lists
     private ArrayList<UUID> members = new ArrayList<>();
-    private ArrayList<String> enemyFactions = new ArrayList<>();
     private ArrayList<UUID> officers = new ArrayList<>();
+    private ArrayList<String> enemyFactions = new ArrayList<>();
     private ArrayList<String> allyFactions = new ArrayList<>();
     private ArrayList<String> laws = new ArrayList<>();
     private ArrayList<String> vassals = new ArrayList<>();
+    private ArrayList<Gate> gates = new ArrayList<>();
+
+    // strings
     private String name = "defaultName";
     private String description = "defaultDescription";
     private String liege = "none";
+    private String prefix = "none";
+
+    // other
     private UUID owner = UUID.randomUUID();
     private Location factionHome = null;
-    private ArrayList<Gate> gates = new ArrayList<>();
-    private String prefix = "none";
     private FactionFlags flags = new FactionFlags();
     private int bonusPower = 0;
 
-    // temporary
+    // end of persistent data -------------------------------------------------------
+
+    // ephemeral data -------------------------------------------------------
+
+    // lists
     private ArrayList<UUID> invited = new ArrayList<>();
     private ArrayList<String> attemptedTruces = new ArrayList<>();
     private ArrayList<String> attemptedAlliances = new ArrayList<>();
     private ArrayList<String> attemptedVassalizations = new ArrayList<>();
+
+    // other
     private boolean autoclaim = false;
+
+    // end of ephemeral data -------------------------------------------------------
 
     // player constructor
     public Faction(String initialName, UUID creator) {
@@ -56,6 +70,7 @@ public class Faction {
     public Faction(String initialName) {
         setName(initialName);
         prefix = initialName;
+        flags.initializeFlagValues(); // need to ensure that this doesn't mess up changes to flags being persistent
     }
 
     public ArrayList<Gate> getGates() {
