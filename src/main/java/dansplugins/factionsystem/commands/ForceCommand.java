@@ -173,8 +173,8 @@ public class ForceCommand extends SubCommand {
             sender.sendMessage(translate("&c" + getText("PlayerAlreadyInFaction")));
             return;
         }
-        faction.addMember(playerUUID);
         messageFaction(faction, translate("&a" + getText("HasJoined", player.getName(), faction.getName())));
+        faction.addMember(playerUUID);
         if (player.isOnline() && player.getPlayer() != null) {
             player.getPlayer().sendMessage(translate("&b" + getText("AlertForcedToJoinFaction")));
         }
