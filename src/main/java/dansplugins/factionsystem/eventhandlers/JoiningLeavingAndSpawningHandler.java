@@ -49,7 +49,7 @@ public class JoiningLeavingAndSpawningHandler implements Listener {
 						return;
 					}
 					Messenger.getInstance().sendAllPlayersInFactionMessage(faction, String.format(ChatColor.GREEN + "" + LocaleManager.getInstance().getText("HasJoined"), player.getName(), faction.getName()));
-					faction.addMember(player.getUniqueId(), PersistentData.getInstance().getPlayersPowerRecord(player.getUniqueId()).getPowerLevel());
+					faction.addMember(player.getUniqueId());
 					player.sendMessage(ChatColor.GREEN + "" + LocaleManager.getInstance().getText("AssignedToRandomFaction"));
 
 					if (debug) { System.out.println("[DEBUG] " + player.getName() + " has been randomly assigned to " + faction.getName() + "!"); }

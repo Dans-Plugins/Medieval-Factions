@@ -50,7 +50,7 @@ public class JoinCommand extends SubCommand {
             return;
         }
         messageFaction(target, translate("&a" + getText("HasJoined", player.getName(), target.getName())));
-        target.addMember(player.getUniqueId(), data.getPlayersPowerRecord(player.getUniqueId()).getPowerLevel());
+        target.addMember(player.getUniqueId());
         target.uninvite(player.getUniqueId());
         player.sendMessage(translate("&a" + getText("AlertJoinedFaction")));
     }
