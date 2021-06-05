@@ -27,6 +27,7 @@ public class FactionFlags {
         flagNames.add("mustBeOfficerToInviteOthers");
         flagNames.add("alliesCanInteractWithLand");
         flagNames.add("vassalageTreeCanInteractWithLand");
+        flagNames.add("neutral");
     }
 
     public void initializeFlagValues() {
@@ -35,6 +36,7 @@ public class FactionFlags {
         booleanValues.put("mustBeOfficerToInviteOthers", true);
         booleanValues.put("alliesCanInteractWithLand", MedievalFactions.getInstance().getConfig().getBoolean("allowAllyInteraction"));
         booleanValues.put("vassalageTreeCanInteractWithLand", MedievalFactions.getInstance().getConfig().getBoolean("allowVassalageTreeInteraction"));
+        booleanValues.put("neutral", false);
     }
 
     public void loadMissingFlagsIfNecessary() {
@@ -51,6 +53,9 @@ public class FactionFlags {
         if (!booleanValues.containsKey("vassalageTreeCanInteractWithLand")) {
             booleanValues.put("vassalageTreeCanInteractWithLand", MedievalFactions.getInstance().getConfig().getBoolean("allowVassalageTreeInteraction"));
         }
+        if (!booleanValues.containsKey("neutral")) {
+            booleanValues.put("neutral", false);
+        }
     }
 
     public void sendFlagList(Player player) {
@@ -59,6 +64,10 @@ public class FactionFlags {
 
 
     public void setFlag(String flag, String value, Player player) {
+        if (!MedievalFactions.getInstance().getConfig().getBoolean("allowNeutralDesignations")) {
+            player.sendMessage(ChatColor.RED + "Neutral designations are currently disabled."); // TODO: turn into Locale message
+        }
+
         if (isFlag(flag)) {
             if (integerValues.containsKey(flag)) {
                 integerValues.replace(flag, Integer.parseInt(value));
@@ -148,6 +157,11 @@ public class FactionFlags {
     private String getFlagsSeparatedByCommas() {
         String toReturn = "";
         for (String flagName : flagNames) {
+
+            if (flagName.equals("neutral") && !MedievalFactions.getInstance().getConfig().getBoolean("allowNeutralDesignations")) {
+                continue;
+            }
+
             if (!toReturn.equals("")) {
                 toReturn += ", ";
             }
