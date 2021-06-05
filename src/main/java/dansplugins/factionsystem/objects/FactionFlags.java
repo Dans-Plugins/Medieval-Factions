@@ -10,6 +10,13 @@ import java.util.HashMap;
 
 public class FactionFlags {
 
+    /*
+        In order to add a new faction flag to this class, the following methods need to be altered:
+        - initializeFlagNames()
+        - initializeFlagValues()
+        - loadMissingFlagsIfNecessary()
+    */
+
     private final boolean debug = true;
 
     private ArrayList<String> flagNames = new ArrayList<>();
