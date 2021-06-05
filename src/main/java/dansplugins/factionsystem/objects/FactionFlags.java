@@ -64,7 +64,7 @@ public class FactionFlags {
 
 
     public void setFlag(String flag, String value, Player player) {
-        if (flag.equals("neutral") && !MedievalFactions.getInstance().getConfig().getBoolean("allowNeutralDesignations")) {
+        if (flag.equals("neutral") && !MedievalFactions.getInstance().getConfig().getBoolean("allowFactionsToBeNeutral")) {
             player.sendMessage(ChatColor.RED + "Neutral designations are currently disabled."); // TODO: turn into Locale message
             return;
         }
@@ -159,7 +159,7 @@ public class FactionFlags {
         String toReturn = "";
         for (String flagName : flagNames) {
 
-            if (flagName.equals("neutral") && !MedievalFactions.getInstance().getConfig().getBoolean("allowNeutralDesignations")) {
+            if (flagName.equals("neutral") && !MedievalFactions.getInstance().getConfig().getBoolean("allowFactionsToBeNeutral")) {
                 continue;
             }
 
