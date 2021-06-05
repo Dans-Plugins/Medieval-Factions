@@ -65,7 +65,7 @@ public class FactionFlags {
 
     public void setFlag(String flag, String value, Player player) {
         if (flag.equals("neutral") && !MedievalFactions.getInstance().getConfig().getBoolean("allowNeutrality")) {
-            player.sendMessage(ChatColor.RED + "" + LocaleManager.getInstance().getText("neutralityDisabled"));
+            player.sendMessage(ChatColor.RED + "" + LocaleManager.getInstance().getText("NeutralityDisabled"));
             return;
         }
 
