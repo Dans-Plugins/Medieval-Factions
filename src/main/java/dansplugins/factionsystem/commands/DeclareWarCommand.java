@@ -1,5 +1,6 @@
 package dansplugins.factionsystem.commands;
 
+import dansplugins.factionsystem.MedievalFactions;
 import dansplugins.factionsystem.commands.abs.SubCommand;
 import dansplugins.factionsystem.objects.Faction;
 import org.bukkit.command.CommandSender;
@@ -61,6 +62,12 @@ public class DeclareWarCommand extends SubCommand {
         if (faction.isAlly(opponent.getName())) {
             player.sendMessage(translate("&c" + getText("CannotDeclareWarOnAlly")));
             return;
+        }
+        if (MedievalFactions.getInstance().getConfig().getBoolean("allowNeutrality") && !((boolean) opponent.getFlags().getFlag("neutral"))) {
+            player.sendMessage(translate("&c" + getText("CannotDeclareWarOnNeutralFaction"))); // TODO: add locale message
+        }
+        if (MedievalFactions.getInstance().getConfig().getBoolean("allowNeutrality") && !((boolean) faction.getFlags().getFlag("neutral"))) {
+            player.sendMessage(translate("&c" + getText("CannotDeclareWarIfNeutralFaction"))); // TODO: add locale message
         }
         // Make enemies.
         faction.addEnemy(opponent.getName());

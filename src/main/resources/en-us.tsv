@@ -529,3 +529,6 @@ RightClickForceUnlock	Right click a chest or door to forcefully unlock it! (Type
 CmdForceCreate	create
 HelpForceCreate	/mf force create 'factionName'
 UsageForceCreate	Usage: /mf force create 'factionName'
+neutralityDisabled	Neutrality is currently disabled.
+CannotDeclareWarOnNeutralFaction	You cannot declare war on a neutral faction.
+CannotDeclareWarIfNeutralFaction	Neutral factions cannot declare war.
