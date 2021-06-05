@@ -227,6 +227,7 @@ DuelEndedInTie	%s and %s's duel has ended in a tie.
 DynmapIntegrationSuccessful	Dynmap integration successful!
 ERROR	ERROR:
 ErrorAddingAreaMarker	Error adding area marker %s
+ErrorSettingAreaMarkerColor Error setting area marker color to '%s'.
 ErrorChunkRemoval	An error has occurred during claimed chunk removal.
 ErrorClaimedChunkRemoval	An error has occurred during claimed chunk removal.
 ErrorCouldNotFindGatesFaction	Error: Could not find faction for gate '%s'.

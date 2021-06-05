@@ -364,6 +364,15 @@ public class DynmapIntegrator {
                     m.setCornerLocations(x, z); /* Replace corner locations */
                     m.setLabel(name);   /* Update label */
                 }
+                String fillColor = faction.getFlags().getFlag("dynmapTerritoryColor").toString();
+                try
+                {
+                    int colrCode = Integer.decode(fillColor);
+                    m.setLineStyle(1, 1.0, colrCode);
+                    m.setFillStyle(0.3, colrCode);
+                } catch (Exception e) {
+                    System.out.println(String.format(LocaleManager.getInstance().getText("ErrorSettingAreaMarkerColor"), fillColor));
+                }
                 m.setDescription(buildNationPopupText(faction)); /* Set popup */
 
                 /* Set line and fill properties */
