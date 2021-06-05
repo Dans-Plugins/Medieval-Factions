@@ -1,5 +1,6 @@
 package dansplugins.factionsystem.commands;
 
+import dansplugins.factionsystem.MedievalFactions;
 import dansplugins.factionsystem.commands.abs.SubCommand;
 import dansplugins.factionsystem.objects.Faction;
 import org.bukkit.command.CommandSender;
@@ -36,9 +37,11 @@ public class DeclareIndependenceCommand extends SubCommand {
         // break vassal agreement.
         liege.removeVassal(this.faction.getName());
         this.faction.setLiege("none");
-        // Make enemies.
-        this.faction.addEnemy(liege.getName());
-        liege.addEnemy(this.faction.getName());
+        if (!MedievalFactions.getInstance().getConfig().getBoolean("allowNeutrality") || (!((boolean) faction.getFlags().getFlag("neutral")) && !((boolean) liege.getFlags().getFlag("neutral")))) {
+            // Make enemies if (1) neutrality is disabled or (2) declaring faction is not neutral and liege is not neutral
+            this.faction.addEnemy(liege.getName());
+            liege.addEnemy(this.faction.getName());
+        }
         messageServer(translate("&c" + getText("HasDeclaredIndependence", faction.getName(), liege.getName())));
     }
 

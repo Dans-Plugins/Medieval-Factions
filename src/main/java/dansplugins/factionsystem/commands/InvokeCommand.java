@@ -1,5 +1,6 @@
 package dansplugins.factionsystem.commands;
 
+import dansplugins.factionsystem.MedievalFactions;
 import dansplugins.factionsystem.commands.abs.SubCommand;
 import dansplugins.factionsystem.objects.Faction;
 import org.bukkit.ChatColor;
@@ -48,6 +49,10 @@ public class InvokeCommand extends SubCommand {
         }
         if (!this.faction.isEnemy(warringFaction.getName())) {
             player.sendMessage(translate("&c" + getText("NotAtWarWith", warringFaction.getName())));
+            return;
+        }
+        if (MedievalFactions.getInstance().getConfig().getBoolean("allowNeutrality") && ((boolean) allyTo.getFlags().getFlag("neutral"))) {
+            player.sendMessage(translate("&c" + getText("CannotBringNeutralFactionIntoWar")));
             return;
         }
         allyTo.addEnemy(warringFaction.getName());
