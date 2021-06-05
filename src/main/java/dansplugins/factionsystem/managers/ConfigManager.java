@@ -51,105 +51,83 @@ public class ConfigManager {
         if (!MedievalFactions.getInstance().getConfig().isInt("minutesBetweenPowerIncreases")) {
             MedievalFactions.getInstance().getConfig().addDefault("minutesBetweenPowerIncreases", 60);
         }
-
         if (!MedievalFactions.getInstance().getConfig().isBoolean("warsRequiredForPVP")) {
             MedievalFactions.getInstance().getConfig().addDefault("warsRequiredForPVP", true);
         }
-
         if (!MedievalFactions.getInstance().getConfig().isDouble("factionOwnerMultiplier")) {
             MedievalFactions.getInstance().getConfig().addDefault("factionOwnerMultiplier", 2.0);
         }
-
         if (!MedievalFactions.getInstance().getConfig().isDouble("officerPerMemberCount")){
             MedievalFactions.getInstance().getConfig().addDefault("officerPerMemberCount", 5);
         }
-
         if (!MedievalFactions.getInstance().getConfig().isDouble("factionOfficerMultiplier")){
             MedievalFactions.getInstance().getConfig().addDefault("factionOfficerMultiplier", 1.5);
         }
-
         if (!MedievalFactions.getInstance().getConfig().isBoolean("powerDecreases")) {
         	MedievalFactions.getInstance().getConfig().addDefault("powerDecreases", true);
         }
-
         if (!MedievalFactions.getInstance().getConfig().isInt("minutesBetweenPowerDecreases")) {
         	MedievalFactions.getInstance().getConfig().addDefault("minutesBetweenPowerDecreases", 1440);
         }
-
         if (!MedievalFactions.getInstance().getConfig().isInt("minutesBeforePowerDecrease")) {
         	MedievalFactions.getInstance().getConfig().addDefault("minutesBeforePowerDecrease", 20160);
         }
-
         if (!MedievalFactions.getInstance().getConfig().isInt("powerDecreaseAmount")) {
             MedievalFactions.getInstance().getConfig().addDefault("powerDecreaseAmount", 1);
         }
-
         if (!MedievalFactions.getInstance().getConfig().isInt("factionMaxNameLength")) {
             MedievalFactions.getInstance().getConfig().addDefault("factionMaxNameLength", 20);
         }
-
         if (!MedievalFactions.getInstance().getConfig().isInt("factionMaxNumberGates")) {
             MedievalFactions.getInstance().getConfig().addDefault("factionMaxNumberGates", 5);
         }
-
         if (!MedievalFactions.getInstance().getConfig().isInt("factionMaxGateArea")) {
             MedievalFactions.getInstance().getConfig().addDefault("factionMaxGateArea", 64);
         }
-
         if (!MedievalFactions.getInstance().getConfig().isBoolean("surroundedChunksProtected")) {
             MedievalFactions.getInstance().getConfig().addDefault("surroundedChunksProtected", true);
         }
-
         if (!MedievalFactions.getInstance().getConfig().isBoolean("zeroPowerFactionsGetDisbanded")) {
             MedievalFactions.getInstance().getConfig().addDefault("zeroPowerFactionsGetDisbanded", false);
         }
-
         if (!MedievalFactions.getInstance().getConfig().isDouble("vassalContributionPercentageMultiplier")) {
             MedievalFactions.getInstance().getConfig().addDefault("vassalContributionPercentageMultiplier", 0.75);
         }
-
         if (!MedievalFactions.getInstance().getConfig().isBoolean("nonMembersCanInteractWithDoors")) {
             MedievalFactions.getInstance().getConfig().addDefault("nonMembersCanInteractWithDoors", false);
         }
-
         if (!MedievalFactions.getInstance().getConfig().isBoolean("playersChatWithPrefixes")) {
             MedievalFactions.getInstance().getConfig().addDefault("playersChatWithPrefixes", true);
         }
-
         if (!MedievalFactions.getInstance().getConfig().isInt("maxClaimRadius")) {
             MedievalFactions.getInstance().getConfig().addDefault("maxClaimRadius", 3);
         }
-
         if (!MedievalFactions.getInstance().getConfig().isString("languageid")) {
             MedievalFactions.getInstance().getConfig().addDefault("languageid", "en-us");
         }
-
         if (!MedievalFactions.getInstance().getConfig().isBoolean("chatSharedInVassalageTrees")) {
             MedievalFactions.getInstance().getConfig().addDefault("chatSharedInVassalageTrees", true);
         }
-
         if (!MedievalFactions.getInstance().getConfig().isBoolean("allowAllyInteraction")) {
             MedievalFactions.getInstance().getConfig().addDefault("allowAllyInteraction", false);
         }
-
         if (!MedievalFactions.getInstance().getConfig().isBoolean("allowVassalageTreeInteraction")) {
             MedievalFactions.getInstance().getConfig().addDefault("allowVassalageTreeInteraction", false);
         }
-
         if (!MedievalFactions.getInstance().getConfig().isString("factionChatColor")) {
             MedievalFactions.getInstance().getConfig().addDefault("factionChatColor", "gold");
         }
-
         if (!MedievalFactions.getInstance().getConfig().isBoolean("territoryAlertPopUp")) {
             MedievalFactions.getInstance().getConfig().addDefault("territoryAlertPopUp", true);
         }
-
         if (!MedievalFactions.getInstance().getConfig().isString("territoryAlertColor")) {
             MedievalFactions.getInstance().getConfig().addDefault("territoryAlertColor", "aqua");
         }
-
-        if (!MedievalFactions.getInstance().getConfig().isString("randomFactionAssignment")) {
+        if (!MedievalFactions.getInstance().getConfig().isBoolean("randomFactionAssignment")) {
             MedievalFactions.getInstance().getConfig().addDefault("randomFactionAssignment", false);
+        }
+        if (!MedievalFactions.getInstance().getConfig().isBoolean("allowNeutralDesignations")) {
+            MedievalFactions.getInstance().getConfig().addDefault("allowNeutralDesignations", false);
         }
 
         deleteOldConfigOptionsIfPresent();
@@ -211,7 +189,8 @@ public class ConfigManager {
                     || option.equalsIgnoreCase("allowAllyInteraction")
                     || option.equalsIgnoreCase("allowVassalageTreeInteraction")
                     || option.equalsIgnoreCase("territoryAlertPopUp")
-                    || option.equalsIgnoreCase("randomFactionAssignment")) {
+                    || option.equalsIgnoreCase("randomFactionAssignment")
+                    || option.equalsIgnoreCase("allowNeutralDesignations")) {
                 MedievalFactions.getInstance().getConfig().set(option, Boolean.parseBoolean(value));
                 sender.sendMessage(ChatColor.GREEN + LocaleManager.getInstance().getText("BooleanSet"));
             }
@@ -274,6 +253,7 @@ public class ConfigManager {
         MedievalFactions.getInstance().getConfig().addDefault("territoryAlertPopUp", true);
         MedievalFactions.getInstance().getConfig().addDefault("territoryAlertColor", "aqua");
         MedievalFactions.getInstance().getConfig().addDefault("randomFactionAssignment", false);
+        MedievalFactions.getInstance().getConfig().addDefault("allowNeutralDesignations", false);
         MedievalFactions.getInstance().getConfig().options().copyDefaults(true);
         MedievalFactions.getInstance().saveConfig();
     }
@@ -311,7 +291,8 @@ public class ConfigManager {
                 + ", factionChatColor: " + MedievalFactions.getInstance().getConfig().getString("factionChatColor")
                 + ", territoryAlertPopUp: " + MedievalFactions.getInstance().getConfig().getBoolean("territoryAlertPopUp")
                 + ", territoryAlertColor: " + MedievalFactions.getInstance().getConfig().getString("territoryAlertColor")
-                + ", randomFactionAssignment: " + MedievalFactions.getInstance().getConfig().getBoolean("randomFactionAssignment"));
+                + ", randomFactionAssignment: " + MedievalFactions.getInstance().getConfig().getBoolean("randomFactionAssignment")
+                + ", allowNeutralDesignations: " + MedievalFactions.getInstance().getConfig().getBoolean("allowNeutralDesignations"));
     }
 
     public boolean hasBeenAltered() {
