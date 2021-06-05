@@ -151,7 +151,18 @@ public class FactionFlags {
             if (!toReturn.equals("")) {
                 toReturn += ", ";
             }
-            toReturn += String.format("%s: %s", flagName, booleanValues.get(flagName));
+            if (integerValues.containsKey(flagName)) {
+                toReturn += String.format("%s: %s", flagName, integerValues.get(flagName));
+            }
+            else if (booleanValues.containsKey(flagName)) {
+                toReturn += String.format("%s: %s", flagName, booleanValues.get(flagName));
+            }
+            else if (doubleValues.containsKey(flagName)) {
+                toReturn += String.format("%s: %s", flagName, doubleValues.get(flagName));
+            }
+            else if (stringValues.containsKey(flagName)) {
+                toReturn += String.format("%s: %s", flagName, stringValues.get(flagName));
+            }
         }
         return toReturn;
     }
