@@ -51,7 +51,7 @@ public class InvokeCommand extends SubCommand {
             player.sendMessage(translate("&c" + getText("NotAtWarWith", warringFaction.getName())));
             return;
         }
-        if (MedievalFactions.getInstance().getConfig().getBoolean("allowNeutrality") && !((boolean) allyTo.getFlags().getFlag("neutral"))) {
+        if (MedievalFactions.getInstance().getConfig().getBoolean("allowNeutrality") && ((boolean) allyTo.getFlags().getFlag("neutral"))) {
             player.sendMessage(translate("&c" + getText("CannotBringNeutralFactionIntoWar")));
             return;
         }
