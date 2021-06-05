@@ -418,7 +418,10 @@ public class Faction {
         }
         saveMap.put("factionGates", gson.toJson(gateList));
 
-        saveMap.put("flagValues", gson.toJson(flags.getFlagValues()));
+        saveMap.put("integerFlagValues", gson.toJson(flags.getIntegerValues()));
+        saveMap.put("booleanFlagValues", gson.toJson(flags.getBooleanValues()));
+        saveMap.put("doubleFlagValues", gson.toJson(flags.getDoubleValues()));
+        saveMap.put("stringFlagValues", gson.toJson(flags.getStringValues()));
 
         return saveMap;
     }
@@ -441,8 +444,10 @@ public class Faction {
 
         Type arrayListTypeString = new TypeToken<ArrayList<String>>(){}.getType();
         Type arrayListTypeUUID = new TypeToken<ArrayList<UUID>>(){}.getType();
-        Type mapType = new TypeToken<HashMap<String, String>>(){}.getType();
-        Type mapType2 = new TypeToken<HashMap<String, Boolean>>(){}.getType();
+        Type stringToIntegerMapType = new TypeToken<HashMap<String, Integer>>(){}.getType();
+        Type stringToBooleanMapType = new TypeToken<HashMap<String, Boolean>>(){}.getType();
+        Type stringToDoubleMapType = new TypeToken<HashMap<String, Double>>(){}.getType();
+        Type stringToStringMapType = new TypeToken<HashMap<String, String>>(){}.getType();
 
         members = gson.fromJson(data.get("members"), arrayListTypeUUID);
         enemyFactions = gson.fromJson(data.get("enemyFactions"), arrayListTypeString);
@@ -452,7 +457,7 @@ public class Faction {
         name = gson.fromJson(data.get("name"), String.class);
         description = gson.fromJson(data.get("description"), String.class);
         owner = UUID.fromString(gson.fromJson(data.get("owner"), String.class));
-        factionHome = loadLocation(gson.fromJson(data.get("location"), mapType), gson);
+        factionHome = loadLocation(gson.fromJson(data.get("location"), stringToStringMapType), gson);
         liege = gson.fromJson(data.getOrDefault("liege", "none"), String.class);
         vassals = gson.fromJson(data.getOrDefault("vassals", "[]"), arrayListTypeString);
         prefix = loadDataOrDefault(gson, data, "prefix", getName());
@@ -474,7 +479,10 @@ public class Faction {
         	System.out.println(LocaleManager.getInstance().getText("MissingFactionGatesJSONCollection"));
         }
 
-        flags.setFlagValues(gson.fromJson(data.getOrDefault("flagValues", "[]"), mapType2));
+        flags.setIntegerValues(gson.fromJson(data.getOrDefault("integerFlagValues", "[]"), stringToIntegerMapType));
+        flags.setBooleanValues(gson.fromJson(data.getOrDefault("booleanFlagValues", "[]"), stringToBooleanMapType));
+        flags.setDoubleValues(gson.fromJson(data.getOrDefault("doubleFlagValues", "[]"), stringToDoubleMapType));
+        flags.setStringValues(gson.fromJson(data.getOrDefault("stringFlagValues", "[]"), stringToStringMapType));
 
         flags.loadMissingFlagsIfNecessary();
     }

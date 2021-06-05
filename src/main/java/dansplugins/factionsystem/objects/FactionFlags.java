@@ -13,7 +13,10 @@ public class FactionFlags {
     private final boolean debug = true;
 
     private ArrayList<String> flagNames = new ArrayList<>();
-    private HashMap<String, Boolean> flagValues = new HashMap<>();
+    private HashMap<String, Integer> integerValues = new HashMap<>();
+    private HashMap<String, Boolean> booleanValues = new HashMap<>();
+    private HashMap<String, Double> doubleValues = new HashMap<>();
+    private HashMap<String, String> stringValues = new HashMap<>();
 
     public FactionFlags() {
         initializeFlagNames();
@@ -28,25 +31,25 @@ public class FactionFlags {
 
     public void initializeFlagValues() {
         // this is called externally in Faction.java when a faction is created in-game
-        flagValues.put("mustBeOfficerToManageLand", true);
-        flagValues.put("mustBeOfficerToInviteOthers", true);
-        flagValues.put("alliesCanInteractWithLand", MedievalFactions.getInstance().getConfig().getBoolean("allowAllyInteraction"));
-        flagValues.put("vassalageTreeCanInteractWithLand", MedievalFactions.getInstance().getConfig().getBoolean("allowVassalageTreeInteraction"));
+        booleanValues.put("mustBeOfficerToManageLand", true);
+        booleanValues.put("mustBeOfficerToInviteOthers", true);
+        booleanValues.put("alliesCanInteractWithLand", MedievalFactions.getInstance().getConfig().getBoolean("allowAllyInteraction"));
+        booleanValues.put("vassalageTreeCanInteractWithLand", MedievalFactions.getInstance().getConfig().getBoolean("allowVassalageTreeInteraction"));
     }
 
     public void loadMissingFlagsIfNecessary() {
         // this is called externally in Faction.java when a faction is loaded from save files
-        if (!flagValues.containsKey("mustBeOfficerToManageLand")) {
-            flagValues.put("mustBeOfficerToManageLand", true);
+        if (!booleanValues.containsKey("mustBeOfficerToManageLand")) {
+            booleanValues.put("mustBeOfficerToManageLand", true);
         }
-        if (!flagValues.containsKey("mustBeOfficerToInviteOthers")) {
-            flagValues.put("mustBeOfficerToInviteOthers", true);
+        if (!booleanValues.containsKey("mustBeOfficerToInviteOthers")) {
+            booleanValues.put("mustBeOfficerToInviteOthers", true);
         }
-        if (!flagValues.containsKey("alliesCanInteractWithLand")) {
-            flagValues.put("alliesCanInteractWithLand", MedievalFactions.getInstance().getConfig().getBoolean("allowAllyInteraction"));
+        if (!booleanValues.containsKey("alliesCanInteractWithLand")) {
+            booleanValues.put("alliesCanInteractWithLand", MedievalFactions.getInstance().getConfig().getBoolean("allowAllyInteraction"));
         }
-        if (!flagValues.containsKey("vassalageTreeCanInteractWithLand")) {
-            flagValues.put("vassalageTreeCanInteractWithLand", MedievalFactions.getInstance().getConfig().getBoolean("allowVassalageTreeInteraction"));
+        if (!booleanValues.containsKey("vassalageTreeCanInteractWithLand")) {
+            booleanValues.put("vassalageTreeCanInteractWithLand", MedievalFactions.getInstance().getConfig().getBoolean("allowVassalageTreeInteraction"));
         }
     }
 
@@ -57,29 +60,80 @@ public class FactionFlags {
 
     public void setFlag(String flag, String value, Player player) {
         if (isFlag(flag)) {
-            flagValues.replace(flag, Boolean.parseBoolean(value));
-            player.sendMessage(ChatColor.GREEN + LocaleManager.getInstance().getText("BooleanSet"));
+            if (integerValues.containsKey(flag)) {
+                integerValues.replace(flag, Integer.parseInt(value));
+                player.sendMessage(ChatColor.GREEN + LocaleManager.getInstance().getText("IntegerSet"));
+            }
+            else if (booleanValues.containsKey(flag)) {
+                booleanValues.replace(flag, Boolean.parseBoolean(value));
+                player.sendMessage(ChatColor.GREEN + LocaleManager.getInstance().getText("BooleanSet"));
+            }
+            else if (doubleValues.containsKey(flag)) {
+                doubleValues.replace(flag, Double.parseDouble(value));
+                player.sendMessage(ChatColor.GREEN + LocaleManager.getInstance().getText("DoubleSet"));
+            }
+            else if (stringValues.containsKey(flag)) {
+                stringValues.replace(flag, value);
+                player.sendMessage(ChatColor.GREEN + LocaleManager.getInstance().getText("StringSet"));
+            }
         }
         else {
             player.sendMessage(ChatColor.RED + String.format(LocaleManager.getInstance().getText("WasntFound"), flag));
         }
     }
 
-    public boolean getFlag(String flag) {
+    public Object getFlag(String flag) {
         if (!isFlag(flag)) {
             if (debug) { System.out.println(String.format("[DEBUG] Flag '%s' was not found!", flag)); }
             return false;
         }
-        if (debug) { System.out.println(String.format("[DEBUG] Flag '%s' was found! Value: '%s'", flag, flagValues.get(flag))); }
-        return flagValues.get(flag);
+        if (debug) { System.out.println(String.format("[DEBUG] Flag '%s' was found! Value: '%s'", flag, booleanValues.get(flag))); }
+
+        if (integerValues.containsKey(flag)) {
+            return integerValues.get(flag);
+        }
+        else if (booleanValues.containsKey(flag)) {
+            return booleanValues.get(flag);
+        }
+        else if (doubleValues.containsKey(flag)) {
+            return doubleValues.get(flag);
+        }
+        else if (stringValues.containsKey(flag)) {
+            return stringValues.get(flag);
+        }
+        return null;
     }
 
-    public HashMap<String, Boolean> getFlagValues() {
-        return flagValues;
+    public HashMap<String, Integer> getIntegerValues() {
+        return integerValues;
     }
 
-    public void setFlagValues(HashMap<String, Boolean> values) {
-        flagValues = values;
+    public void setIntegerValues(HashMap<String, Integer> values) {
+        integerValues = values;
+    }
+
+    public HashMap<String, Boolean> getBooleanValues() {
+        return booleanValues;
+    }
+
+    public void setBooleanValues(HashMap<String, Boolean> values) {
+        booleanValues = values;
+    }
+
+    public HashMap<String, Double> getDoubleValues() {
+        return doubleValues;
+    }
+
+    public void setDoubleValues(HashMap<String, Double> values) {
+        doubleValues = values;
+    }
+
+    public HashMap<String, String> getStringValues() {
+        return stringValues;
+    }
+
+    public void setStringValues(HashMap<String, String> values) {
+        stringValues = values;
     }
 
     private boolean isFlag(String flag) {
@@ -88,7 +142,7 @@ public class FactionFlags {
     }
 
     public int getNumFlags() {
-        return flagValues.size();
+        return booleanValues.size();
     }
 
     private String getFlagsSeparatedByCommas() {
@@ -97,7 +151,18 @@ public class FactionFlags {
             if (!toReturn.equals("")) {
                 toReturn += ", ";
             }
-            toReturn += String.format("%s: %s", flagName, flagValues.get(flagName));
+            if (integerValues.containsKey(flagName)) {
+                toReturn += String.format("%s: %s", flagName, integerValues.get(flagName));
+            }
+            else if (booleanValues.containsKey(flagName)) {
+                toReturn += String.format("%s: %s", flagName, booleanValues.get(flagName));
+            }
+            else if (doubleValues.containsKey(flagName)) {
+                toReturn += String.format("%s: %s", flagName, doubleValues.get(flagName));
+            }
+            else if (stringValues.containsKey(flagName)) {
+                toReturn += String.format("%s: %s", flagName, stringValues.get(flagName));
+            }
         }
         return toReturn;
     }

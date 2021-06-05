@@ -26,7 +26,7 @@ public class UnclaimCommand extends SubCommand {
         final String permission = "mf.unclaim";
         if (!(checkPermissions(player, permission))) return;
         final boolean isPlayerBypassing = EphemeralData.getInstance().getAdminsBypassingProtections().contains(player.getUniqueId());
-        if (faction.getFlags().getFlag("mustBeOfficerToManageLand")) {
+        if ((boolean) faction.getFlags().getFlag("mustBeOfficerToManageLand")) {
             // officer or owner rank required
             if (!faction.isOfficer(player.getUniqueId()) && !faction.isOwner(player.getUniqueId()) && !isPlayerBypassing) {
                 player.sendMessage(translate("&c" + getText("AlertMustBeOfficerOrOwnerToClaimLand")));
