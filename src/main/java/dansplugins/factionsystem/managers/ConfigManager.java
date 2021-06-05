@@ -292,7 +292,7 @@ public class ConfigManager {
                 + ", territoryAlertPopUp: " + MedievalFactions.getInstance().getConfig().getBoolean("territoryAlertPopUp")
                 + ", territoryAlertColor: " + MedievalFactions.getInstance().getConfig().getString("territoryAlertColor")
                 + ", randomFactionAssignment: " + MedievalFactions.getInstance().getConfig().getBoolean("randomFactionAssignment")
-                + ", allowNeutralFactions: " + MedievalFactions.getInstance().getConfig().getBoolean("allowFactionsToBeNeutral"));
+                + ", allowFactionsToBeNeutral: " + MedievalFactions.getInstance().getConfig().getBoolean("allowFactionsToBeNeutral"));
     }
 
     public boolean hasBeenAltered() {
