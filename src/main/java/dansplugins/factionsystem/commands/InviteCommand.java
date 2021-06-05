@@ -37,7 +37,7 @@ public class InviteCommand extends SubCommand {
             player.sendMessage(translate("&c" + getText("UsageInvite")));
             return;
         }
-        if (faction.getFlags().getFlag("mustBeOfficerToInviteOthers")) {
+        if ((boolean) faction.getFlags().getFlag("mustBeOfficerToInviteOthers")) {
             // officer or owner rank required
             if (!faction.isOfficer(player.getUniqueId()) && !faction.isOwner(player.getUniqueId())) {
                 player.sendMessage(translate("&c" + getText("AlertMustBeOwnerOrOfficerToUseCommand")));
