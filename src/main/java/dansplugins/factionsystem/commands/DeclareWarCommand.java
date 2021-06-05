@@ -64,10 +64,10 @@ public class DeclareWarCommand extends SubCommand {
             return;
         }
         if (MedievalFactions.getInstance().getConfig().getBoolean("allowNeutrality") && !((boolean) opponent.getFlags().getFlag("neutral"))) {
-            player.sendMessage(translate("&c" + getText("CannotDeclareWarOnNeutralFaction"))); // TODO: add locale message
+            player.sendMessage(translate("&c" + getText("CannotDeclareWarOnNeutralFaction")));
         }
         if (MedievalFactions.getInstance().getConfig().getBoolean("allowNeutrality") && !((boolean) faction.getFlags().getFlag("neutral"))) {
-            player.sendMessage(translate("&c" + getText("CannotDeclareWarIfNeutralFaction"))); // TODO: add locale message
+            player.sendMessage(translate("&c" + getText("CannotDeclareWarIfNeutralFaction")));
         }
         // Make enemies.
         faction.addEnemy(opponent.getName());
