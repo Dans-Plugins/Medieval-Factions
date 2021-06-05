@@ -10,6 +10,13 @@ import java.util.HashMap;
 
 public class FactionFlags {
 
+    /*
+        In order to add a new faction flag to this class, the following methods need to be altered:
+        - initializeFlagNames()
+        - initializeFlagValues()
+        - loadMissingFlagsIfNecessary()
+    */
+
     private final boolean debug = true;
 
     private ArrayList<String> flagNames = new ArrayList<>();
@@ -28,6 +35,7 @@ public class FactionFlags {
         flagNames.add("alliesCanInteractWithLand");
         flagNames.add("vassalageTreeCanInteractWithLand");
         flagNames.add("neutral");
+        flagNames.add("dynmapTerritoryColor");
     }
 
     public void initializeFlagValues() {
@@ -37,6 +45,7 @@ public class FactionFlags {
         booleanValues.put("alliesCanInteractWithLand", MedievalFactions.getInstance().getConfig().getBoolean("allowAllyInteraction"));
         booleanValues.put("vassalageTreeCanInteractWithLand", MedievalFactions.getInstance().getConfig().getBoolean("allowVassalageTreeInteraction"));
         booleanValues.put("neutral", false);
+        stringValues.put("dynmapTerritoryColor", "#ff0000");
     }
 
     public void loadMissingFlagsIfNecessary() {
@@ -55,6 +64,9 @@ public class FactionFlags {
         }
         if (!booleanValues.containsKey("neutral")) {
             booleanValues.put("neutral", false);
+        }
+        if (!stringValues.containsKey("dynmapTerritoryColor")) {
+            stringValues.put("dynmapTerritoryColor", "#ff0000");
         }
     }
 
