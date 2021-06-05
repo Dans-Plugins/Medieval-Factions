@@ -186,7 +186,11 @@ public class Duel {
 	{
 		_challenger.setHealth(challengerHealth);
 		_challenged.setHealth(challengedHealth);
-		
+
+		// Remove player damaging effects like fire or poison before ending the duel.
+		_challenged.getActivePotionEffects().clear();
+		_challenger.getActivePotionEffects().clear();
+
 		if (!tied)
 		{
 			// Announce winner to nearby players.
