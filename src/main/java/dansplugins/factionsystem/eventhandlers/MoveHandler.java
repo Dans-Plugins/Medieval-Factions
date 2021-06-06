@@ -110,8 +110,16 @@ public class MoveHandler implements Listener {
 
     public void sendPlayerTerritoryAlert(Player player, String information, Faction holder) {
         // get color
-        String territoryAlertColorString = (String) holder.getFlags().getFlag("territoryAlertColor");
-        ChatColor territoryAlertColor = ColorChecker.getInstance().getColorByName(territoryAlertColorString);
+        ChatColor territoryAlertColor;
+        if (holder != null) {
+            String territoryAlertColorString = (String) holder.getFlags().getFlag("territoryAlertColor");
+            territoryAlertColor = ColorChecker.getInstance().getColorByName(territoryAlertColorString);
+        }
+        else {
+            String territoryAlertColorString = MedievalFactions.getInstance().getConfig().getString("territoryAlertColor");
+            territoryAlertColor = ColorChecker.getInstance().getColorByName(territoryAlertColorString);
+        }
+
 
         // send alert
         if (MedievalFactions.getInstance().getConfig().getBoolean("territoryAlertPopUp")) {
