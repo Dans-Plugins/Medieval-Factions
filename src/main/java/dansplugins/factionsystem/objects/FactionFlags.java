@@ -119,18 +119,21 @@ public class FactionFlags {
             if (debug) { System.out.println(String.format("[DEBUG] Flag '%s' was not found!", flag)); }
             return false;
         }
-        if (debug) { System.out.println(String.format("[DEBUG] Flag '%s' was found! Value: '%s'", flag, booleanValues.get(flag))); }
 
         if (integerValues.containsKey(flag)) {
+            if (debug) { System.out.println(String.format("[DEBUG] Flag '%s' was found! Value: '%s'", flag, integerValues.get(flag))); }
             return integerValues.get(flag);
         }
         else if (booleanValues.containsKey(flag)) {
+            if (debug) { System.out.println(String.format("[DEBUG] Flag '%s' was found! Value: '%s'", flag, booleanValues.get(flag))); }
             return booleanValues.get(flag);
         }
         else if (doubleValues.containsKey(flag)) {
+            if (debug) { System.out.println(String.format("[DEBUG] Flag '%s' was found! Value: '%s'", flag, doubleValues.get(flag))); }
             return doubleValues.get(flag);
         }
         else if (stringValues.containsKey(flag)) {
+            if (debug) { System.out.println(String.format("[DEBUG] Flag '%s' was found! Value: '%s'", flag, stringValues.get(flag))); }
             return stringValues.get(flag);
         }
         return null;
