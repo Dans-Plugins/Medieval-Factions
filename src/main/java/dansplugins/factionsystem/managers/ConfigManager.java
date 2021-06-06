@@ -121,7 +121,7 @@ public class ConfigManager {
             MedievalFactions.getInstance().getConfig().addDefault("territoryAlertPopUp", true);
         }
         if (!MedievalFactions.getInstance().getConfig().isString("territoryAlertColor")) {
-            MedievalFactions.getInstance().getConfig().addDefault("territoryAlertColor", "aqua");
+            MedievalFactions.getInstance().getConfig().addDefault("territoryAlertColor", "white");
         }
         if (!MedievalFactions.getInstance().getConfig().isBoolean("randomFactionAssignment")) {
             MedievalFactions.getInstance().getConfig().addDefault("randomFactionAssignment", false);
@@ -251,7 +251,7 @@ public class ConfigManager {
         MedievalFactions.getInstance().getConfig().addDefault("allowVassalageTreeInteraction", false);
         MedievalFactions.getInstance().getConfig().addDefault("factionChatColor", "gold");
         MedievalFactions.getInstance().getConfig().addDefault("territoryAlertPopUp", true);
-        MedievalFactions.getInstance().getConfig().addDefault("territoryAlertColor", "aqua");
+        MedievalFactions.getInstance().getConfig().addDefault("territoryAlertColor", "white");
         MedievalFactions.getInstance().getConfig().addDefault("randomFactionAssignment", false);
         MedievalFactions.getInstance().getConfig().addDefault("allowNeutrality", false);
         MedievalFactions.getInstance().getConfig().options().copyDefaults(true);
