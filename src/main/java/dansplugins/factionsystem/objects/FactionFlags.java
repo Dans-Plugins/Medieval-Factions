@@ -37,6 +37,7 @@ public class FactionFlags {
         flagNames.add("vassalageTreeCanInteractWithLand");
         flagNames.add("neutral");
         flagNames.add("dynmapTerritoryColor");
+        flagNames.add("territoryAlertColor");
     }
 
     public void initializeFlagValues() {
@@ -47,6 +48,7 @@ public class FactionFlags {
         booleanValues.put("vassalageTreeCanInteractWithLand", MedievalFactions.getInstance().getConfig().getBoolean("allowVassalageTreeInteraction"));
         booleanValues.put("neutral", false);
         stringValues.put("dynmapTerritoryColor", "#ff0000");
+        stringValues.put("territoryAlertColor", MedievalFactions.getInstance().getConfig().getString("territoryAlertColor"));
     }
 
     public void loadMissingFlagsIfNecessary() {
@@ -68,6 +70,9 @@ public class FactionFlags {
         }
         if (!stringValues.containsKey("dynmapTerritoryColor")) {
             stringValues.put("dynmapTerritoryColor", "#ff0000");
+        }
+        if (!stringValues.containsKey("territoryAlertColor")) {
+            stringValues.put("territoryAlertColor", MedievalFactions.getInstance().getConfig().getString("territoryAlertColor"));
         }
     }
 
