@@ -1,5 +1,6 @@
 package dansplugins.factionsystem.objects;
 
+import dansplugins.factionsystem.DynmapIntegrator;
 import dansplugins.factionsystem.MedievalFactions;
 import dansplugins.factionsystem.managers.LocaleManager;
 import org.bukkit.ChatColor;
@@ -97,6 +98,10 @@ public class FactionFlags {
             else if (stringValues.containsKey(flag)) {
                 stringValues.replace(flag, value);
                 player.sendMessage(ChatColor.GREEN + LocaleManager.getInstance().getText("StringSet"));
+            }
+
+            if (flag.equals("dynmapTerritoryColor")) {
+                DynmapIntegrator.getInstance().updateClaims(); // update dynmap to reflect color change
             }
         }
         else {
