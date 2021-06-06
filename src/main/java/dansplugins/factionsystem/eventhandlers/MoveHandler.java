@@ -56,15 +56,17 @@ public class MoveHandler implements Listener {
 
             // if new chunk is claimed and old chunk was not
             if (ChunkManager.getInstance().isClaimed(event.getTo().getChunk(), PersistentData.getInstance().getClaimedChunks()) && !ChunkManager.getInstance().isClaimed(event.getFrom().getChunk(), PersistentData.getInstance().getClaimedChunks())) {
-                String title = ChunkManager.getInstance().getClaimedChunk(event.getTo().getChunk()).getHolder();
-                sendPlayerTerritoryAlert(event.getPlayer(), title);
+                String factionName = ChunkManager.getInstance().getClaimedChunk(event.getTo().getChunk()).getHolder();
+                Faction holder = PersistentData.getInstance().getFaction(factionName);
+                String title = factionName;
+                sendPlayerTerritoryAlert(event.getPlayer(), title, holder);
                 return;
             }
 
             // if new chunk is unclaimed and old chunk was not
             if (!ChunkManager.getInstance().isClaimed(event.getTo().getChunk(), PersistentData.getInstance().getClaimedChunks()) && ChunkManager.getInstance().isClaimed(event.getFrom().getChunk(), PersistentData.getInstance().getClaimedChunks())) {
                 String title = LocaleManager.getInstance().getText("Wilderness");
-                sendPlayerTerritoryAlert(event.getPlayer(), title);
+                sendPlayerTerritoryAlert(event.getPlayer(), title, null);
                 return;
             }
 
@@ -72,8 +74,10 @@ public class MoveHandler implements Listener {
             if (ChunkManager.getInstance().isClaimed(event.getTo().getChunk(), PersistentData.getInstance().getClaimedChunks()) && ChunkManager.getInstance().isClaimed(event.getFrom().getChunk(), PersistentData.getInstance().getClaimedChunks())) {
                 // if chunk holders are not equal
                 if (!(ChunkManager.getInstance().getClaimedChunk(event.getFrom().getChunk()).getHolder().equalsIgnoreCase(ChunkManager.getInstance().getClaimedChunk(event.getTo().getChunk()).getHolder()))) {
-                    String title = ChunkManager.getInstance().getClaimedChunk(event.getTo().getChunk()).getHolder();
-                    sendPlayerTerritoryAlert(event.getPlayer(), title);
+                    String factionName = ChunkManager.getInstance().getClaimedChunk(event.getTo().getChunk()).getHolder();
+                    Faction holder = PersistentData.getInstance().getFaction(factionName);
+                    String title = factionName;
+                    sendPlayerTerritoryAlert(event.getPlayer(), title, holder);
                 }
             }
 
@@ -104,10 +108,18 @@ public class MoveHandler implements Listener {
 
     }
 
-    public void sendPlayerTerritoryAlert(Player player, String information) {
+    public void sendPlayerTerritoryAlert(Player player, String information, Faction holder) {
         // get color
-        String territoryAlertColorString = MedievalFactions.getInstance().getConfig().getString("territoryAlertColor");
-        ChatColor territoryAlertColor = ColorChecker.getInstance().getColorByName(territoryAlertColorString);
+        ChatColor territoryAlertColor;
+        if (holder != null) {
+            String territoryAlertColorString = (String) holder.getFlags().getFlag("territoryAlertColor");
+            territoryAlertColor = ColorChecker.getInstance().getColorByName(territoryAlertColorString);
+        }
+        else {
+            String territoryAlertColorString = MedievalFactions.getInstance().getConfig().getString("territoryAlertColor");
+            territoryAlertColor = ColorChecker.getInstance().getColorByName(territoryAlertColorString);
+        }
+
 
         // send alert
         if (MedievalFactions.getInstance().getConfig().getBoolean("territoryAlertPopUp")) {
