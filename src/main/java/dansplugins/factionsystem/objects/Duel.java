@@ -131,8 +131,8 @@ public class Duel {
 	public void acceptDuel()
 	{
 		// Participants that the challenged was accepted and that it's game-on.
-		getChallenger().sendMessage(String.format(ChatColor.AQUA + "%s has accepted your challenge, the duel has begun!", winner, loser));
-		getChallenged().sendMessage(String.format(ChatColor.AQUA + "You have accepted %s's challenge, the duel has begun!", winner, loser));
+		getChallenger().sendMessage(String.format(ChatColor.AQUA + "%s has accepted your challenge, the duel has begun!", _challenged.getName()));
+		getChallenged().sendMessage(String.format(ChatColor.AQUA + "You have accepted %s's challenge, the duel has begun!", _challenger.getName()));
 		
 		challengerHealth = _challenger.getHealth(); 
 		challengedHealth = _challenged.getHealth();
