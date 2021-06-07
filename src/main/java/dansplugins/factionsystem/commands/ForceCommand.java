@@ -228,7 +228,7 @@ public class ForceCommand extends SubCommand {
         faction.removeMember(targetUUID);
         messageFaction(faction, translate("&c" + getText("HasBeenKickedFrom", target.getName(), faction.getName())));
         if (target.isOnline() && target.getPlayer() != null) {
-            target.getPlayer().sendMessage(translate("&c" + getText("AlertKicked", target.getName())));
+            target.getPlayer().sendMessage(translate("&c" + getText("AlertKicked", "an admin")));
         }
         sender.sendMessage(translate("&a" + getText("SuccessFactionMemberRemoval")));
     }
