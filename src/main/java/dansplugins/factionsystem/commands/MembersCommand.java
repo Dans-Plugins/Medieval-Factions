@@ -56,7 +56,7 @@ public class MembersCommand extends SubCommand {
             }
         }
         // send Faction Members
-        sender.sendMessage(translate("&b&l" + getText("MembersOf", faction.getName())));
+        sender.sendMessage(translate("&b----------\n" + getText("MembersOf", faction.getName())));
         sender.sendMessage(translate("&b----------\n"));
         faction.getMemberList().stream()
                 .map(Bukkit::getOfflinePlayer)
