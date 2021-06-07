@@ -68,6 +68,9 @@ public class AllyCommand extends SubCommand {
             messageFaction(faction, translate("&a" + getText("AlertNowAlliedWith", otherFaction.getName())));
             // Message target Faction!
             messageFaction(otherFaction, translate("&a" + getText("AlertNowAlliedWith", faction.getName())));
+            // remove alliance requests
+            faction.removeAllianceRequest(otherFaction.getName());
+            otherFaction.removeAllianceRequest(faction.getName());
         }
     }
 

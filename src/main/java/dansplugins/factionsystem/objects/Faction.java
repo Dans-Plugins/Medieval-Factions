@@ -146,6 +146,10 @@ public class Faction {
         return containsIgnoreCase(attemptedAlliances, factionName);
     }
 
+    public void removeAllianceRequest(String factionName) {
+        attemptedAlliances.remove(factionName);
+    }
+
     public void addAlly(String factionName) {
         if (!containsIgnoreCase(allyFactions, factionName)) {
             allyFactions.add(factionName);
