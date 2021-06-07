@@ -55,9 +55,53 @@ public class PersistentData {
 
     // specific getters ---
 
+    /**
+     * Method to get a Faction by its name.
+     * <p>
+     *     This method utilises {@link #getFaction(String, boolean, boolean)} to obtain the Faction with the given name.
+     * </p>
+     *
+     * @param name of the Faction desired (Can be {@code null}).
+     * @return {@link Faction} or {@code null}.
+     * @see #getFaction(String, boolean, boolean)
+     */
     public Faction getFaction(String name) {
+        return getFaction(name, false, false);
+    }
+
+    /**
+     * Method to get a Faction by its prefix.
+     * <p>
+     *     This method utilises {@link #getFaction(String, boolean, boolean)} to obtain the Faction with the given prefix.
+     * </p>
+     *
+     * @param prefix of the Faction desired (Can be {@code null}).
+     * @return {@link Faction} or {@code null}.
+     * @see #getFaction(String, boolean, boolean)
+     */
+    public Faction getFactionByPrefix(String prefix) {
+        return getFaction(prefix, true, true);
+    }
+
+    /**
+     * Method to obtain a Faction from the given string.
+     * <p>
+     *     This method can check Faction name and/or Faction prefix depending on the parameters specified.
+     *     <br>If you wish to only check prefix, provide the string and make sure both booleans are {@code true}.
+     *     <br>If you wish to only check name, provide the string and make sure both booleans are {@code false}.
+     *     <br>If you wish to check everything, provide the string and make sure the first boolean is {@code true} only.
+     * </p>
+     * @param text which you'd like to obtain the Faction from.
+     * @param checkPrefix a toggle for checking prefix.
+     * @param onlyCheckPrefix a toggle for only checking prefix.
+     * @return {@link Faction} or {@code null}.
+     * @see #getFaction(String)
+     * @see #getFactionByPrefix(String)
+     */
+    public Faction getFaction(String text, boolean checkPrefix, boolean onlyCheckPrefix) {
         for (Faction faction : getFactions()) {
-            if (faction.getName().equalsIgnoreCase(name)) {
+            if ((!onlyCheckPrefix && faction.getName().equalsIgnoreCase(text)) ||
+                    (faction.getPrefix().equalsIgnoreCase(text) && checkPrefix)) {
                 return faction;
             }
         }
