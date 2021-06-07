@@ -96,7 +96,11 @@ public class MapCommand extends SubCommand {
                     if (hasFaction && printedHolder.equals(faction.getName())) {
                         line = "&a+&7 = " + printedHolder;
                     } else {
-                        line = colourMap.get(printedHolder) + map_keys[index] + "&7 = " + printedHolder;
+                        if (hasFaction) {
+                            line = colourMap.get(printedHolder) + map_keys[index] + "&7 = " + printedHolder;
+                        } else {
+                            line = "&c" + map_keys[index] + "&7 = " + printedHolder;
+                        }
                     }
                 } catch (IndexOutOfBoundsException ex) {
                     line = "&7§ = " + printedHolder;
