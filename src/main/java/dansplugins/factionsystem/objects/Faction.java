@@ -287,6 +287,10 @@ public class Faction {
         return containsIgnoreCase(enemyFactions, factionName);
     }
 
+    public ArrayList<String> getEnemyFactions() {
+        return enemyFactions;
+    }
+
     public String getEnemiesSeparatedByCommas() {
         String enemies = "";
         for (int i = 0; i < enemyFactions.size(); i++) {
@@ -588,6 +592,10 @@ public class Faction {
     		}
     	}
 		return gateList;
+    }
+
+    public int getTotalGates() {
+        return gates.size();
     }
 
     public String getLiege() {
