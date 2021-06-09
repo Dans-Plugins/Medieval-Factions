@@ -3,7 +3,7 @@ version: 4.1
 authors: [DanTheTechMan, Pasarus, Caibinus, Callum]
 main: dansplugins.factionsystem.MedievalFactions
 api-version: 1.13
-softdepend: [dynmap]
+softdepend: [dynmap, PlaceholderAPI]
 description: An open source plugin for simulating sovereign states.
 
 commands:
