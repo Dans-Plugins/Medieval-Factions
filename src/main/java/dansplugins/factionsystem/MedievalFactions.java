@@ -5,6 +5,8 @@ import dansplugins.factionsystem.data.PersistentData;
 import dansplugins.factionsystem.managers.ConfigManager;
 import dansplugins.factionsystem.managers.LocaleManager;
 import dansplugins.factionsystem.managers.StorageManager;
+import dansplugins.factionsystem.placeholders.PlaceholderAPI;
+import org.bukkit.Bukkit;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.plugin.java.JavaPlugin;
@@ -63,6 +65,11 @@ public class MedievalFactions extends JavaPlugin {
             DynmapIntegrator.getInstance().scheduleClaimsUpdate(600); // Check once every 30 seconds for updates.
             DynmapIntegrator.getInstance().updateClaims();
         }
+
+        if (Bukkit.getPluginManager().getPlugin("PlaceholderAPI") != null) {
+            new PlaceholderAPI().register();
+        }
+
     }
 
     @Override
