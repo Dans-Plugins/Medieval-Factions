@@ -10,12 +10,14 @@ import java.time.format.DateTimeFormatter;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
+import java.util.concurrent.TimeUnit;
 
 public class PlayerActivityRecord {
     private UUID playerUUID = null;
     private int logins = 0;
     private int powerLost = 0;
     private ZonedDateTime lastLogout = ZonedDateTime.now();
+    private ZonedDateTime session = ZonedDateTime.now();
     
     public PlayerActivityRecord(UUID uuid, int logins)
     {
@@ -57,7 +59,7 @@ public class PlayerActivityRecord {
 
     public void incrementLogins() {
         logins++;
-//        System.out.println("Incrementing logins for uuid " + getPlayerUUID().toString() + ": logins=" + Integer.toString(logins));
+        this.session = ZonedDateTime.now();
     }
 
     public int getLogins() {
@@ -79,6 +81,45 @@ public class PlayerActivityRecord {
     		return minutes;
     	}
     	return 0;
+    }
+
+    /**
+     * Method to obtain the current session length in dd:hh:mm:ss
+     * <p>
+     *     If days are not found, hh:mm:ss are returned.
+     * </p>
+     *
+     * @author Callum
+     * @return formatted String dd:hh:mm:ss
+     */
+    public String getActiveSessionLength() {
+        if (lastLogout != null) {
+            final ZonedDateTime now = ZonedDateTime.now();
+            final Duration duration = Duration.between(lastLogout, now);
+            long totalSeconds = duration.getSeconds();
+            final long days = TimeUnit.SECONDS.toDays(totalSeconds);
+            totalSeconds -= TimeUnit.DAYS.toSeconds(days); // Remove Days from Total.
+            final long hours = TimeUnit.SECONDS.toHours(totalSeconds);
+            totalSeconds -= TimeUnit.HOURS.toSeconds(hours); // Remove Hours from Total.
+            final long minutes = TimeUnit.SECONDS.toMinutes(totalSeconds);
+            totalSeconds -= TimeUnit.MINUTES.toSeconds(minutes); // Remove Minutes from Total.
+            final long seconds = totalSeconds; // Last one is just the remainder.
+            final String d = pad(days), h = pad(hours), m = pad(minutes), s = pad(seconds);
+            return (d.equalsIgnoreCase("00") ? "" : d + ":") + h + ":" + m + ":" + s;
+        }
+        return "00:00:00";
+    }
+
+    /**
+     * Method to pad a value with a zero to its left.
+     *
+     * @author Callum
+     * @param value to pad
+     * @return 00 or 0(0-9) or 10-(very big numbers)
+     */
+    private String pad(Number value) {
+        String tmp = String.valueOf(value);
+        return tmp.length() == 0 ? ("00") : (tmp.length() == 1 ? ("0" + value) : (tmp));
     }
 
     public String getTimeSinceLastLogout() {
