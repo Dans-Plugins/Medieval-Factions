@@ -183,9 +183,8 @@ public class DynmapIntegrator {
         /* Loop through realms and build area markers coloured in the same colour
             as each faction's liege's colour. */
         for(Faction f : PersistentData.getInstance().getFactions()) {
-            String liegeName = f.getLiege();
+            String liegeName = f.getTopLiege();
             Faction liege = PersistentData.getInstance().getFaction(liegeName);
-            // TODO: Trace the liege lords up to the parent (where getFaction(liegeName) returns null).
             String liegeColor;
             // If there's no liege, then f is the liege.
             if (liege != null) {
