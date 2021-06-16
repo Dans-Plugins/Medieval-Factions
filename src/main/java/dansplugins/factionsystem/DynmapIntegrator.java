@@ -185,6 +185,7 @@ public class DynmapIntegrator {
         for(Faction f : PersistentData.getInstance().getFactions()) {
             String liegeName = f.getLiege();
             Faction liege = PersistentData.getInstance().getFaction(liegeName);
+            // TODO: Trace the liege lords up to the parent (where getFaction(liegeName) returns null).
             String liegeColor;
             // If there's no liege, then f is the liege.
             if (liege != null) {
@@ -192,9 +193,9 @@ public class DynmapIntegrator {
             }
             else {
                 liegeColor = f.getFlags().getFlag("dynmapTerritoryColor").toString();
-                liegeName = f.getName();
+                liegeName = f.getName() + "__parent";
             }
-            dynmapUpdateFaction(f, realms, newmap, "realm", liegeName, liegeName, liegeColor, newmap, newmark);
+            dynmapUpdateFaction(f, realms, newmap, "realm", liegeName + "__" + getClass().getName(), liegeName, liegeColor, newmap, newmark);
         }
 
         /* Now, review old map - anything left is gone */
@@ -205,8 +206,8 @@ public class DynmapIntegrator {
             oldm.deleteMarker();
         }
         /* And replace with new map */
-        realmsareas = newmap;
-        realmsmark = newmark;
+        realmsareas.putAll(newmap);
+        realmsmark.putAll(newmark);
     }
 
     /* Update Faction information */
@@ -229,8 +230,8 @@ public class DynmapIntegrator {
             oldm.deleteMarker();
         }
         /* And replace with new map */
-        resareas = newmap;
-        resmark = newmark;
+        resareas.putAll(newmap);
+        resmark.putAll(newmark);
     }
 
     private String buildNationPopupText(Faction f) {
@@ -408,8 +409,6 @@ public class DynmapIntegrator {
                 /* Find existing one */
                 AreaMarker m = areaMarkers.remove(polyid); /* Existing area? */
                 if(m == null) {
-                    System.out.println(name);
-                    System.out.println(polyid);
                     m = markerSet.createAreaMarker(polyid, name, false, curworld, x, z, false);
                     if(m == null) {
                         System.out.println(String.format(LocaleManager.getInstance().getText("ErrorAddingAreaMarker"), polyid));
@@ -424,8 +423,13 @@ public class DynmapIntegrator {
                 try
                 {
                     int colrCode = Integer.decode(fillColor);
-                    m.setLineStyle(1, 1.0, colrCode);
-                    m.setFillStyle(0.3, colrCode);
+                    if (type.equalsIgnoreCase("realm")) {
+                        m.setLineStyle(4, 1.0, colrCode);
+                        m.setFillStyle(0.0, colrCode);
+                    } else {
+                        m.setLineStyle(1, 1.0, colrCode);
+                        m.setFillStyle(0.3, colrCode);
+                    }
                 } catch (Exception e) {
                     System.out.println(String.format(LocaleManager.getInstance().getText("ErrorSettingAreaMarkerColor"), fillColor));
                 }
