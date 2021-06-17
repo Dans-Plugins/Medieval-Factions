@@ -194,7 +194,7 @@ public class DynmapIntegrator {
                 liegeColor = f.getFlags().getFlag("dynmapTerritoryColor").toString();
                 liegeName = f.getName() + "__parent";
             }
-            dynmapUpdateFaction(f, realms, newmap, "realm", liegeName + "__" + getClass().getName(), liegeName, liegeColor, newmap, newmark);
+            dynmapUpdateFaction(f, realms, newmap, "realm", liegeName + "__" + getClass().getName(), buildNationPopupText(liege), liegeColor, newmap, newmark);
         }
 
         /* Now, review old map - anything left is gone */
