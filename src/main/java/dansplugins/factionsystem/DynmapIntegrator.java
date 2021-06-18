@@ -186,15 +186,18 @@ public class DynmapIntegrator {
             String liegeName = f.getTopLiege();
             Faction liege = PersistentData.getInstance().getFaction(liegeName);
             String liegeColor;
+            String popupText = "";
             // If there's no liege, then f is the liege.
             if (liege != null) {
                 liegeColor = liege.getFlags().getFlag("dynmapTerritoryColor").toString();
+                popupText = buildNationPopupText(liege);
             }
             else {
                 liegeColor = f.getFlags().getFlag("dynmapTerritoryColor").toString();
                 liegeName = f.getName() + "__parent";
+                popupText = buildNationPopupText(f);
             }
-            dynmapUpdateFaction(f, realms, newmap, "realm", liegeName + "__" + getClass().getName(), buildNationPopupText(liege), liegeColor, newmap, newmark);
+            dynmapUpdateFaction(f, realms, newmap, "realm", liegeName + "__" + getClass().getName(), popupText, liegeColor, newmap, newmark);
         }
 
         /* Now, review old map - anything left is gone */
