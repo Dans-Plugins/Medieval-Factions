@@ -58,6 +58,11 @@ public class DynmapIntegrator {
                     return;
                 }
                 if (DynmapIntegrator.getInstance().updateClaimsAreaMarkers) {
+                    if (realms != null) {
+                        realms.deleteMarkerSet();
+                        claims.deleteMarkerSet();
+                    }
+                    initializeMarkerSets();
                     DynmapIntegrator.getInstance().dynmapUpdateFactions();
                     DynmapIntegrator.getInstance().dynmapUpdateRealms();
                     DynmapIntegrator.getInstance().updateClaimsAreaMarkers = false;
@@ -109,19 +114,22 @@ public class DynmapIntegrator {
         else {
             try {
                 dynmapAPI = (DynmapCommonAPI) dynmap; /* Get API */
-
                 markerAPI = dynmapAPI.getMarkerAPI();
-                claims = markerAPI.getMarkerSet(getDynmapPluginSetId("claims"));
-                claims = initializeMarkerSet(claims, "Claims");
-
-                realms = markerAPI.getMarkerSet(getDynmapPluginSetId("realms"));
-                realms = initializeMarkerSet(realms, "Realms");
+                initializeMarkerSets();
                 System.out.println(LocaleManager.getInstance().getText("DynmapIntegrationSuccessful"));
             }
             catch (Exception e) {
                 System.out.println(LocaleManager.getInstance().getText("ErrorIntegratingWithDynmap") + e.getMessage());
             }
         }
+    }
+
+    private void initializeMarkerSets() {
+        claims = markerAPI.getMarkerSet(getDynmapPluginSetId("claims"));
+        claims = initializeMarkerSet(claims, "Claims");
+
+        realms = markerAPI.getMarkerSet(getDynmapPluginSetId("realms"));
+        realms = initializeMarkerSet(realms, "Realms");
     }
 
     private MarkerSet initializeMarkerSet(MarkerSet set, String markerLabel) {
