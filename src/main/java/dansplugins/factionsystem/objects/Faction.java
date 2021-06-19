@@ -602,6 +602,19 @@ public class Faction {
         return liege;
     }
 
+    public String getTopLiege() {
+        Faction topLiege = PersistentData.getInstance().getFaction(liege);
+        String liegeName = liege;
+        while (topLiege != null) {
+            topLiege = PersistentData.getInstance().getFaction(topLiege.getLiege());
+            if (topLiege != null)
+            {
+                liegeName = topLiege.getName();
+            }
+        }
+        return liegeName;
+    }
+
     public boolean isLiege() {
         return vassals.size() != 0;
     }
