@@ -11,7 +11,7 @@ import java.util.List;
 public class HelpCommand extends SubCommand {
 
     // Last page of help menus.
-    private static final int LAST_PAGE = 6;
+    private static final int LAST_PAGE = 7;
     private final HashMap<Integer, List<String>> helpPages = new HashMap<>();
 
     public HelpCommand() {
