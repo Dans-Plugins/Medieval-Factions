@@ -4,6 +4,7 @@ import dansplugins.factionsystem.MedievalFactions;
 import dansplugins.factionsystem.utils.Pair;
 
 import java.io.*;
+import java.nio.charset.StandardCharsets;
 import java.util.*;
 
 public class LocaleManager {
@@ -150,11 +151,8 @@ public class LocaleManager {
         try {
             // get resource as input stream
             InputStream inputStream = getResourceAsInputStream(localizationFileName);
-
             loadMissingKeysFromInputStream(inputStream);
-
             saveToPluginFolder();
-
         } catch (Exception e) {
             System.out.println("DEBUG: Error loading from resource!");
             e.printStackTrace();
@@ -162,7 +160,7 @@ public class LocaleManager {
     }
 
     private void loadMissingKeysFromInputStream(InputStream inputStream) {
-        InputStreamReader reader = new InputStreamReader(inputStream);
+        InputStreamReader reader = new InputStreamReader(inputStream, StandardCharsets.UTF_8);
         BufferedReader br = new BufferedReader(reader);
         br.lines().forEach(line -> {
             Pair<String, String> pair = getPairFromLine(line);
@@ -206,23 +204,27 @@ public class LocaleManager {
 
         try {
             File folder = new File(languageFolderPath);
-
             if (!folder.exists()) {
-                folder.mkdir();
+                if (!folder.mkdir()) {
+                    System.out.println("DEBUG: Failed to create directory.");
+                    return;
+                }
             }
-
             File file = new File(localizationFilePath);
-
-            file.createNewFile();
-
-            FileWriter writer = new FileWriter(file);
-
-            for (String key : keys) {
-                writer.write(key + "\t" + strings.get(key) + "\n");
+            if (!file.exists()) {
+                if (!file.createNewFile()) {
+                    System.out.println("DEBUG: Failed to create file.");
+                    return;
+                }
             }
-
-            writer.close();
-
+            try (BufferedWriter output = new BufferedWriter(new OutputStreamWriter(
+                    new FileOutputStream(file), StandardCharsets.UTF_8))) {
+                for (String key : keys) {
+                    output.write(key + "\t" + strings.get(key) + "\n");
+                }
+            } catch (Exception ex) {
+                System.out.println("DEBUG: Failed to write to file.");
+            }
         } catch (Exception e) {
             System.out.println("DEBUG: There was a problem saving the strings.");
             e.printStackTrace();
