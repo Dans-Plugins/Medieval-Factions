@@ -27,7 +27,7 @@ public class ChatHandler implements Listener {
                 // add prefix
                 String prefixColor = (String) playersFaction.getFlags().getFlag("prefixColor");
                 String prefix = playersFaction.getPrefix();
-                event.setFormat(ColorChecker.getInstance().getColorByName(prefixColor) + "" + prefix + "" + ChatColor.WHITE + "" + "] <%s> %s");
+                event.setFormat(ColorChecker.getInstance().getColorByName(prefixColor) + "" + "[" + prefix + "]" + "" + ChatColor.WHITE + "" + " <%s> %s");
             }
 
             // check for faction chat
