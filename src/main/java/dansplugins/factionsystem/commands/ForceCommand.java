@@ -62,14 +62,18 @@ public class ForceCommand extends SubCommand {
     public void execute(CommandSender sender, String[] args, String key) {
         if (!(args.length <= 0)) {
             for (Map.Entry<List<String>, String> entry : subMap.entrySet()) {
-                if (safeEquals(false, args[0], (String[]) entry.getKey().toArray())) {
-                    try {
-                        Method method = getClass().getDeclaredMethod(entry.getValue(), CommandSender.class, String[].class);
-                        method.invoke(this, sender, args);
-                    } catch (ReflectiveOperationException ex) {
-                        System.out.println("DEBUG: Failed to resolve method from '" + args[0] + "'!");
+                try {
+                    if (safeEquals(false, args[0], entry.getKey().toArray(new String[0]))) {
+                        try {
+                            Method method = getClass().getDeclaredMethod(entry.getValue(), CommandSender.class, String[].class);
+                            method.invoke(this, sender, args);
+                        } catch (ReflectiveOperationException ex) {
+                            System.out.println("DEBUG: Failed to resolve method from '" + args[0] + "'!");
+                        }
+                        return;
                     }
-                    return;
+                } catch (Exception e) {
+                    System.out.println("DEBUG: Failed to use safeEquals to determine the command chosen.");
                 }
             }
         }
