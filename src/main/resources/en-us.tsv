@@ -536,3 +536,4 @@ WorldsMismatch1	Error placing point 1: Worlds mismatch.
 WorldsMismatch2	Error placing point 2: Worlds mismatch.
 HelpMap	/mf map - Display a map of the claims near your surroundings.
 CommandsPage7	== Medieval Factions Commands Page 7/%d ==
+PrefixesDisabled	Prefixes are currently disabled.
