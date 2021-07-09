@@ -38,6 +38,7 @@ public class FactionFlags {
         flagNames.add("neutral");
         flagNames.add("dynmapTerritoryColor");
         flagNames.add("territoryAlertColor");
+        flagNames.add("prefixColor");
     }
 
     public void initializeFlagValues() {
@@ -49,6 +50,7 @@ public class FactionFlags {
         booleanValues.put("neutral", false);
         stringValues.put("dynmapTerritoryColor", "#ff0000");
         stringValues.put("territoryAlertColor", MedievalFactions.getInstance().getConfig().getString("territoryAlertColor"));
+        stringValues.put("prefixColor", "white");
     }
 
     public void loadMissingFlagsIfNecessary() {
@@ -74,6 +76,9 @@ public class FactionFlags {
         if (!stringValues.containsKey("territoryAlertColor")) {
             stringValues.put("territoryAlertColor", MedievalFactions.getInstance().getConfig().getString("territoryAlertColor"));
         }
+        if (!stringValues.containsKey("prefixColor")) {
+            stringValues.put("prefixColor", "white");
+        }
     }
 
     public void sendFlagList(Player player) {
@@ -84,6 +89,11 @@ public class FactionFlags {
     public void setFlag(String flag, String value, Player player) {
         if (flag.equals("neutral") && !MedievalFactions.getInstance().getConfig().getBoolean("allowNeutrality")) {
             player.sendMessage(ChatColor.RED + "" + LocaleManager.getInstance().getText("NeutralityDisabled"));
+            return;
+        }
+
+        if (flag.equals("prefixColor") && !MedievalFactions.getInstance().getConfig().getBoolean("playersChatWithPrefixes")) {
+            player.sendMessage(ChatColor.RED + "" + LocaleManager.getInstance().getText("PrefixesDisabled"));
             return;
         }
 
@@ -185,6 +195,10 @@ public class FactionFlags {
         for (String flagName : flagNames) {
 
             if (flagName.equals("neutral") && !MedievalFactions.getInstance().getConfig().getBoolean("allowNeutrality")) {
+                continue;
+            }
+
+            if (flagName.equals("prefixColor") && !MedievalFactions.getInstance().getConfig().getBoolean("playersChatWithPrefixes")) {
                 continue;
             }
 
