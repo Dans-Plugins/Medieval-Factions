@@ -61,6 +61,16 @@ public class MakePeaceCommand extends SubCommand {
             // Notify
             messageServer(translate("&a" + getText("AlertNowAtPeaceWith", faction.getName(), target.getName())));
         }
+
+        // if faction was a liege, then make peace with all of their vassals as well
+        if (target.isLiege()) {
+            for (String vassalName : target.getVassals()) {
+                faction.removeEnemy(vassalName);
+
+                Faction vassal = getFaction(vassalName);
+                vassal.removeEnemy(faction.getName());
+            }
+        }
     }
 
     /**
