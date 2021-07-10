@@ -38,7 +38,7 @@ public class ChatHandler implements Listener {
                     ArrayList<Faction> factionsInVassalageTree = PersistentData.getInstance().getFactionsInVassalageTree(playersFaction);
                     for (Faction faction : factionsInVassalageTree) {
                         if (MedievalFactions.getInstance().getConfig().getBoolean("showPrefixesInFactionChat")) {
-                            Messenger.getInstance().sendAllPlayersInFactionMessage(faction, ColorChecker.getInstance().getColorByName(prefixColor) + "" + "[" + prefix + "]" + "" + ChatColor.WHITE + "" + event.getPlayer().getName() + ": " + ColorChecker.getInstance().getColorByName(factionChatColor) + message);
+                            Messenger.getInstance().sendAllPlayersInFactionMessage(faction, ColorChecker.getInstance().getColorByName(prefixColor) + "" + "[" + prefix + "] " + "" + ChatColor.WHITE + "" + event.getPlayer().getName() + ": " + ColorChecker.getInstance().getColorByName(factionChatColor) + message);
                         }
                         else {
                             Messenger.getInstance().sendAllPlayersInFactionMessage(faction, ChatColor.WHITE + "" + event.getPlayer().getName() + ": " + ColorChecker.getInstance().getColorByName(factionChatColor) + message);
@@ -47,7 +47,7 @@ public class ChatHandler implements Listener {
                 }
                 else {
                     if (MedievalFactions.getInstance().getConfig().getBoolean("showPrefixesInFactionChat")) {
-                        Messenger.getInstance().sendAllPlayersInFactionMessage(playersFaction, ColorChecker.getInstance().getColorByName(prefixColor) + "" + "[" + prefix + "]" + "" + ChatColor.WHITE + "" + event.getPlayer().getName() + ": " + ColorChecker.getInstance().getColorByName(factionChatColor) + message);
+                        Messenger.getInstance().sendAllPlayersInFactionMessage(playersFaction, ColorChecker.getInstance().getColorByName(prefixColor) + "" + "[" + prefix + "] " + "" + ChatColor.WHITE + "" + event.getPlayer().getName() + ": " + ColorChecker.getInstance().getColorByName(factionChatColor) + message);
                     }
                     else {
                         Messenger.getInstance().sendAllPlayersInFactionMessage(playersFaction, ChatColor.WHITE + "" + event.getPlayer().getName() + ": " + ColorChecker.getInstance().getColorByName(factionChatColor) + message);
