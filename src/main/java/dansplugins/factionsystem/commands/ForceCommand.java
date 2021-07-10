@@ -25,7 +25,7 @@ public class ForceCommand extends SubCommand {
     private final boolean debug = false;
 
     private final String[] commands = new String[]{
-            "Save", "Load", "Peace", "Demote", "Join", "Kick", "Power", "Renounce", "Transfer", "RemoveVassal", "Rename", "BonusPower", "Unlock", "Create"
+            "Save", "Load", "Peace", "Demote", "Join", "Kick", "Power", "Renounce", "Transfer", "RemoveVassal", "Rename", "BonusPower", "Unlock", "Create", "Claim"
     };
     private final HashMap<List<String>, String> subMap = new HashMap<>();
 
@@ -530,7 +530,7 @@ public class ForceCommand extends SubCommand {
         }
     }
 
-    public void forceClaim(CommandSender sender, String[] args) {
+    public void forceClaim(CommandSender sender, String[] args) { // TODO: add CmdForceClaim locale message
         if (!(sender instanceof Player)) {
             return;
         }
