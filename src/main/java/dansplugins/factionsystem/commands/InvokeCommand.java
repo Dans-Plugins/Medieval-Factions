@@ -37,35 +37,35 @@ public class InvokeCommand extends SubCommand {
             player.sendMessage(ChatColor.RED + getText("SingleQuotesAlliedWarring"));
             return;
         }
-        final Faction allyTo = getFaction(singleQuoteArgs.get(0));
+        final Faction invokee = getFaction(singleQuoteArgs.get(0));
         final Faction warringFaction = getFaction(singleQuoteArgs.get(1));
-        if (allyTo == null || warringFaction == null) {
+        if (invokee == null || warringFaction == null) {
             player.sendMessage(translate("&c" + getText("FactionNotFound")));
             return;
         }
-        if (!this.faction.isAlly(allyTo.getName())) {
-            player.sendMessage(translate("&c" + getText("NotAnAlly", allyTo.getName())));
+        if (!this.faction.isAlly(invokee.getName()) && !this.faction.isVassal(invokee.getName())) {
+            player.sendMessage(translate("&c" + getText("NotAnAllyOrVassal", invokee.getName())));
             return;
         }
         if (!this.faction.isEnemy(warringFaction.getName())) {
             player.sendMessage(translate("&c" + getText("NotAtWarWith", warringFaction.getName())));
             return;
         }
-        if (MedievalFactions.getInstance().getConfig().getBoolean("allowNeutrality") && ((boolean) allyTo.getFlags().getFlag("neutral"))) {
+        if (MedievalFactions.getInstance().getConfig().getBoolean("allowNeutrality") && ((boolean) invokee.getFlags().getFlag("neutral"))) {
             player.sendMessage(translate("&c" + getText("CannotBringNeutralFactionIntoWar")));
             return;
         }
-        allyTo.addEnemy(warringFaction.getName());
-        warringFaction.addEnemy(allyTo.getName());
+        invokee.addEnemy(warringFaction.getName());
+        warringFaction.addEnemy(invokee.getName());
 
-        messageFaction(allyTo, // Message ally faction
+        messageFaction(invokee, // Message ally faction
                 translate("&c" + getText("AlertCalledToWar1", faction.getName(), warringFaction.getName())));
 
         messageFaction(warringFaction, // Message warring faction
-                translate("&c" + getText("AlertCalledToWar2", faction.getName(), allyTo.getName())));
+                translate("&c" + getText("AlertCalledToWar2", faction.getName(), invokee.getName())));
 
         messageFaction(this.faction, // Message player faction
-                translate("&a" + getText("AlertCalledToWar3", allyTo.getName(), warringFaction.getName())));
+                translate("&a" + getText("AlertCalledToWar3", invokee.getName(), warringFaction.getName())));
     }
 
     /**
