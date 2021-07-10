@@ -43,7 +43,29 @@ public class ConfigCommand extends SubCommand {
         final boolean show = safeEquals(false, args[0], "get", "show", getText("CmdConfigShow"));
         final boolean set = safeEquals(false, args[0], "set", getText("CmdConfigSet"));
         if (show) {
-            configManager.sendConfigList(sender);
+            if (args.length < 2) {
+                sender.sendMessage("Usage: /mf config show ( 1 | 2 )"); // TODO: abstract out into locale message
+                return;
+            }
+
+            int page = getIntSafe(args[1], -1);
+
+            if (page == -1) {
+                // TODO: use integer required locale message here
+                return;
+            }
+
+            switch(page) {
+                case 1:
+                    configManager.sendPageOneOfConfigList(sender);
+                    break;
+                case 2:
+                    configManager.sendPageTwoOfConfigList(sender);
+                    break;
+                default:
+                    sender.sendMessage("Usage: /mf config show ( 1 | 2 )"); // TODO: abstract out into locale message
+                    return;
+            }
         }
         else if (set) {
             if (args.length < 3) {
