@@ -531,7 +531,7 @@ public class ForceCommand extends SubCommand {
         }
     }
 
-    public void forceClaim(CommandSender sender, String[] args) { // TODO: add CmdForceClaim locale message
+    public void forceClaim(CommandSender sender, String[] args) {
         if (!(sender instanceof Player)) {
             return;
         }
@@ -543,7 +543,7 @@ public class ForceCommand extends SubCommand {
         }
 
         if (args.length < 2) {
-            sender.sendMessage(translate("&c" + getText("UsageForceClaim"))); // TODO: add locale message
+            sender.sendMessage(translate("&c" + getText("UsageForceClaim")));
             return;
         }
 
@@ -559,7 +559,7 @@ public class ForceCommand extends SubCommand {
         Faction faction = PersistentData.getInstance().getFaction(factionName);
 
         if (faction == null) {
-            // TODO: send player faction not found locale message
+            sender.sendMessage(translate("&c" + getText("FactionNotFound")));
             return;
         }
 
