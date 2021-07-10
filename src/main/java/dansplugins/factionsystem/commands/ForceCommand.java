@@ -60,19 +60,26 @@ public class ForceCommand extends SubCommand {
      */
     @Override
     public void execute(CommandSender sender, String[] args, String key) {
-        if (!(args.length <= 0)) {
-            for (Map.Entry<List<String>, String> entry : subMap.entrySet()) {
-                if (safeEquals(false, args[0], (String[]) entry.getKey().toArray())) {
-                    try {
-                        Method method = getClass().getDeclaredMethod(entry.getValue(), CommandSender.class, String[].class);
-                        method.invoke(this, sender, args);
-                    } catch (ReflectiveOperationException ex) {
-                        System.out.println("DEBUG: Failed to resolve method from '" + args[0] + "'!");
+        if (!(args.length <= 0)) { // If the Argument has Arguments in the 'args' list.
+            for (Map.Entry<List<String>, String> entry : subMap.entrySet()) { // Loop through the SubCommands.
+                // Map.Entry<List<String>, String> example => ([Save, CMDForceSave (translation key)], forceSave)
+                try {
+                    if (safeEquals(false, args[0], entry.getKey().toArray(new String[0]))) { // Do any of the Keys for the SubCommand match the Given Argument at index '0'.
+                        try {
+                            Method method = getClass().getDeclaredMethod(entry.getValue(), CommandSender.class, String[].class); // Get the Declared method for that SubCommand.
+                            method.invoke(this, sender, args);  // Use reflection to invoke the command.
+                                                                // Due to the nature of the force-command, it is safe to use reflection here.
+                        } catch (ReflectiveOperationException ex) {
+                            System.out.println("DEBUG: Failed to resolve method from '" + args[0] + "'!");
+                        }
+                        return;
                     }
-                    return;
+                } catch (Exception e) {
+                    System.out.println("DEBUG: Failed to use safeEquals to determine the command chosen.");
                 }
             }
         }
+        // Print out these messages if the command either isn't found or if an error occurs or if the arguments ('args') list is empty.
         sender.sendMessage(translate("&b" + getText("SubCommands")));
         Arrays.stream(commands).forEach(str -> sender.sendMessage(translate("&b" + getText("HelpForce" + str))));
     }
