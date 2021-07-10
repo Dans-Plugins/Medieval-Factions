@@ -541,3 +541,4 @@ UsageConfigShow	Usage: /mf config show ( 1 | 2 )
 ArgumentMustBeNumber	Argument must be a number.
 ConfigListPageOne	===== Config List Page 1/2 =====
 ConfigListPageTwo	===== Config List Page 2/2 =====
+NotAnAllyOrVassal	%s isn't an ally or vassal of yours.

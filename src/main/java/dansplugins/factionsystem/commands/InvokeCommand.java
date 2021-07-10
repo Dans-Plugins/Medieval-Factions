@@ -43,8 +43,8 @@ public class InvokeCommand extends SubCommand {
             player.sendMessage(translate("&c" + getText("FactionNotFound")));
             return;
         }
-        if (!this.faction.isAlly(allyTo.getName())) {
-            player.sendMessage(translate("&c" + getText("NotAnAlly", allyTo.getName())));
+        if (!this.faction.isAlly(allyTo.getName()) && !this.faction.isVassal(allyTo.getName())) {
+            player.sendMessage(translate("&c" + getText("NotAnAllyOrVassal", allyTo.getName())));
             return;
         }
         if (!this.faction.isEnemy(warringFaction.getName())) {
