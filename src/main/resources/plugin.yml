@@ -147,3 +147,5 @@ permissions:
     default: op
   mf.force.create:
     default: op
+  mf.force.claim:
+    default: op

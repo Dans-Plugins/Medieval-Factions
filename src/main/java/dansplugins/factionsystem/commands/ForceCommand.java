@@ -7,6 +7,7 @@ import dansplugins.factionsystem.events.FactionCreateEvent;
 import dansplugins.factionsystem.events.FactionJoinEvent;
 import dansplugins.factionsystem.events.FactionKickEvent;
 import dansplugins.factionsystem.events.FactionRenameEvent;
+import dansplugins.factionsystem.managers.ChunkManager;
 import dansplugins.factionsystem.managers.LocaleManager;
 import dansplugins.factionsystem.managers.StorageManager;
 import dansplugins.factionsystem.objects.Faction;
@@ -537,7 +538,7 @@ public class ForceCommand extends SubCommand {
 
         Player player = (Player) sender;
 
-        if (!(checkPermissions(player, "mf.force.claim", "mf.force.*", "mf.admin"))) { // TODO: add permission to plugin.yml
+        if (!(checkPermissions(player, "mf.force.claim", "mf.force.*", "mf.admin"))) {
             return;
         }
 
@@ -555,7 +556,15 @@ public class ForceCommand extends SubCommand {
 
         String factionName = singleQuoteArgs.get(0);
 
-        // TODO: claim land at player location for designated faction
+        Faction faction = PersistentData.getInstance().getFaction(factionName);
+
+        if (faction == null) {
+            // TODO: send player faction not found locale message
+            return;
+        }
+
+        // claim land at player location for designated faction
+        ChunkManager.getInstance().claimChunkAtLocation(player, player.getLocation(), faction);
     }
 
 }
