@@ -18,7 +18,7 @@ public class FactionFlags {
         - loadMissingFlagsIfNecessary()
     */
 
-    private final boolean debug = true;
+    private final boolean debug = false;
 
     private ArrayList<String> flagNames = new ArrayList<>();
     private HashMap<String, Integer> integerValues = new HashMap<>();

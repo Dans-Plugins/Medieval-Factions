@@ -23,10 +23,11 @@ public class ChatHandler implements Listener {
 
         if (playersFaction != null) {
 
+            String prefixColor = (String) playersFaction.getFlags().getFlag("prefixColor");
+            String prefix = playersFaction.getPrefix();
+
             if (MedievalFactions.getInstance().getConfig().getBoolean("playersChatWithPrefixes")) {
                 // add prefix
-                String prefixColor = (String) playersFaction.getFlags().getFlag("prefixColor");
-                String prefix = playersFaction.getPrefix();
                 event.setFormat(ColorChecker.getInstance().getColorByName(prefixColor) + "" + "[" + prefix + "]" + "" + ChatColor.WHITE + "" + " <%s> %s");
             }
 
@@ -36,13 +37,22 @@ public class ChatHandler implements Listener {
                 if (MedievalFactions.getInstance().getConfig().getBoolean("chatSharedInVassalageTrees")) {
                     ArrayList<Faction> factionsInVassalageTree = PersistentData.getInstance().getFactionsInVassalageTree(playersFaction);
                     for (Faction faction : factionsInVassalageTree) {
-                        Messenger.getInstance().sendAllPlayersInFactionMessage(faction, ChatColor.WHITE + "" + event.getPlayer().getName() + ": " + ColorChecker.getInstance().getColorByName(factionChatColor) + message);
+                        if (MedievalFactions.getInstance().getConfig().getBoolean("showPrefixesInFactionChat")) {
+                            Messenger.getInstance().sendAllPlayersInFactionMessage(faction, ColorChecker.getInstance().getColorByName(prefixColor) + "" + "[" + prefix + "] " + "" + ChatColor.WHITE + "" + event.getPlayer().getName() + ": " + ColorChecker.getInstance().getColorByName(factionChatColor) + message);
+                        }
+                        else {
+                            Messenger.getInstance().sendAllPlayersInFactionMessage(faction, ChatColor.WHITE + "" + event.getPlayer().getName() + ": " + ColorChecker.getInstance().getColorByName(factionChatColor) + message);
+                        }
                     }
                 }
                 else {
-                    Messenger.getInstance().sendAllPlayersInFactionMessage(playersFaction, ChatColor.WHITE + "" + event.getPlayer().getName() + ": " + ColorChecker.getInstance().getColorByName(factionChatColor) + message);
+                    if (MedievalFactions.getInstance().getConfig().getBoolean("showPrefixesInFactionChat")) {
+                        Messenger.getInstance().sendAllPlayersInFactionMessage(playersFaction, ColorChecker.getInstance().getColorByName(prefixColor) + "" + "[" + prefix + "] " + "" + ChatColor.WHITE + "" + event.getPlayer().getName() + ": " + ColorChecker.getInstance().getColorByName(factionChatColor) + message);
+                    }
+                    else {
+                        Messenger.getInstance().sendAllPlayersInFactionMessage(playersFaction, ChatColor.WHITE + "" + event.getPlayer().getName() + ": " + ColorChecker.getInstance().getColorByName(factionChatColor) + message);
+                    }
                 }
-
 
                 event.setCancelled(true);
             }
