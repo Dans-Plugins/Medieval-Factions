@@ -530,4 +530,32 @@ public class ForceCommand extends SubCommand {
         }
     }
 
+    public void forceClaim(CommandSender sender, String[] args) {
+        if (!(sender instanceof Player)) {
+            return;
+        }
+
+        Player player = (Player) sender;
+
+        if (!(checkPermissions(player, "mf.force.claim", "mf.force.*", "mf.admin"))) { // TODO: add permission to plugin.yml
+            return;
+        }
+
+        if (args.length < 2) {
+            sender.sendMessage(translate("&c" + getText("UsageForceClaim"))); // TODO: add locale message
+            return;
+        }
+
+        // get arguments designated by single quotes
+        final ArrayList<String> singleQuoteArgs = parser.getArgumentsInsideSingleQuotes(args);
+        if (singleQuoteArgs.size() < 1) {
+            sender.sendMessage(translate("&c" + getText("ArgumentsSingleQuotesRequirement")));
+            return;
+        }
+
+        String factionName = singleQuoteArgs.get(0);
+
+        // TODO: claim land at player location for designated faction
+    }
+
 }
