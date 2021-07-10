@@ -129,6 +129,9 @@ public class ConfigManager {
         if (!MedievalFactions.getInstance().getConfig().isBoolean("allowNeutrality")) {
             MedievalFactions.getInstance().getConfig().addDefault("allowNeutrality", false);
         }
+        if (!MedievalFactions.getInstance().getConfig().isBoolean("showPrefixesInFactionChat")) {
+            MedievalFactions.getInstance().getConfig().addDefault("showPrefixesInFactionChat", false);
+        }
 
         deleteOldConfigOptionsIfPresent();
 
@@ -190,7 +193,8 @@ public class ConfigManager {
                     || option.equalsIgnoreCase("allowVassalageTreeInteraction")
                     || option.equalsIgnoreCase("territoryAlertPopUp")
                     || option.equalsIgnoreCase("randomFactionAssignment")
-                    || option.equalsIgnoreCase("allowNeutrality")) {
+                    || option.equalsIgnoreCase("allowNeutrality")
+                    || option.equalsIgnoreCase("showPrefixesInFactionChat")) {
                 MedievalFactions.getInstance().getConfig().set(option, Boolean.parseBoolean(value));
                 sender.sendMessage(ChatColor.GREEN + LocaleManager.getInstance().getText("BooleanSet"));
             }
@@ -254,6 +258,7 @@ public class ConfigManager {
         MedievalFactions.getInstance().getConfig().addDefault("territoryAlertColor", "white");
         MedievalFactions.getInstance().getConfig().addDefault("randomFactionAssignment", false);
         MedievalFactions.getInstance().getConfig().addDefault("allowNeutrality", false);
+        MedievalFactions.getInstance().getConfig().addDefault("showPrefixesInFactionChat", false);
         MedievalFactions.getInstance().getConfig().options().copyDefaults(true);
         MedievalFactions.getInstance().saveConfig();
     }
@@ -292,7 +297,8 @@ public class ConfigManager {
                 + ", territoryAlertPopUp: " + MedievalFactions.getInstance().getConfig().getBoolean("territoryAlertPopUp")
                 + ", territoryAlertColor: " + MedievalFactions.getInstance().getConfig().getString("territoryAlertColor")
                 + ", randomFactionAssignment: " + MedievalFactions.getInstance().getConfig().getBoolean("randomFactionAssignment")
-                + ", allowNeutrality: " + MedievalFactions.getInstance().getConfig().getBoolean("allowNeutrality"));
+                + ", allowNeutrality: " + MedievalFactions.getInstance().getConfig().getBoolean("allowNeutrality")
+                + ", showPrefixesInFactionChat: " + MedievalFactions.getInstance().getConfig().getBoolean("showPrefixesInFactionChat"));
     }
 
     public boolean hasBeenAltered() {
