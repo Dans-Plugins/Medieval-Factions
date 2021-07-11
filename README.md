@@ -64,3 +64,4 @@ This is a known issue, and you can check its progress here.
 - 3.6 'Gates, Duels, bStats, Force Command & Several Tweaks' update
 - 4.0 'Dynmap Integration, Localization, Radius Claiming, Prefixes' update
 - 4.1 'Faction Flags, Command System Revamp, More Config Options, More Commands & Many Fixes' update
+- 4.2 'Placeholders, Map Command, Realms Layer, More Configuration & More' update
