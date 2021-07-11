@@ -7,6 +7,7 @@ import dansplugins.factionsystem.events.FactionCreateEvent;
 import dansplugins.factionsystem.events.FactionJoinEvent;
 import dansplugins.factionsystem.events.FactionKickEvent;
 import dansplugins.factionsystem.events.FactionRenameEvent;
+import dansplugins.factionsystem.managers.ChunkManager;
 import dansplugins.factionsystem.managers.LocaleManager;
 import dansplugins.factionsystem.managers.StorageManager;
 import dansplugins.factionsystem.objects.Faction;
@@ -25,7 +26,7 @@ public class ForceCommand extends SubCommand {
     private final boolean debug = false;
 
     private final String[] commands = new String[]{
-            "Save", "Load", "Peace", "Demote", "Join", "Kick", "Power", "Renounce", "Transfer", "RemoveVassal", "Rename", "BonusPower", "Unlock", "Create"
+            "Save", "Load", "Peace", "Demote", "Join", "Kick", "Power", "Renounce", "Transfer", "RemoveVassal", "Rename", "BonusPower", "Unlock", "Create", "Claim"
     };
     private final HashMap<List<String>, String> subMap = new HashMap<>();
 
@@ -528,6 +529,45 @@ public class ForceCommand extends SubCommand {
             data.getFactions().add(this.faction);
             player.sendMessage(translate("&a" + getText("FactionCreated")));
         }
+    }
+
+    public void forceClaim(CommandSender sender, String[] args) {
+        if (!(sender instanceof Player)) {
+            return;
+        }
+
+        Player player = (Player) sender;
+
+        if (!(checkPermissions(player, "mf.force.claim", "mf.force.*", "mf.admin"))) {
+            return;
+        }
+
+        if (args.length < 2) {
+            sender.sendMessage(translate("&c" + getText("UsageForceClaim")));
+            return;
+        }
+
+        // get arguments designated by single quotes
+        final ArrayList<String> singleQuoteArgs = parser.getArgumentsInsideSingleQuotes(args);
+        if (singleQuoteArgs.size() < 1) {
+            sender.sendMessage(translate("&c" + getText("ArgumentsSingleQuotesRequirement")));
+            return;
+        }
+
+        String factionName = singleQuoteArgs.get(0);
+
+        Faction faction = PersistentData.getInstance().getFaction(factionName);
+
+        if (faction == null) {
+            sender.sendMessage(translate("&c" + getText("FactionNotFound")));
+            return;
+        }
+
+        // claim land at player location for designated faction
+        ChunkManager.getInstance().forceClaimAtPlayerLocation(player, faction);
+
+        // inform sender
+        sender.sendMessage(translate("&a" + getText("Done")));
     }
 
 }

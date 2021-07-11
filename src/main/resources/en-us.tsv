@@ -542,3 +542,6 @@ ArgumentMustBeNumber	Argument must be a number.
 ConfigListPageOne	===== Config List Page 1/2 =====
 ConfigListPageTwo	===== Config List Page 2/2 =====
 NotAnAllyOrVassal	%s isn't an ally or vassal of yours.
+CmdForceClaim	claim
+UsageForceClaim	Usage: /mf force claim 'faction name'
+HelpForceClaim	/mf force claim 'faction name'
