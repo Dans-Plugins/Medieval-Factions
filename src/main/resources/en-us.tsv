@@ -83,6 +83,7 @@ AllLandUnclaimedFrom	All land unclaimed from %s.
 AlreadyEnteredCheckAccess	You have already entered this command. Type '/mf checkaccess cancel' to cancel.
 AlreadyEnteredRevokeAccess	You have already entered this command. Type '/mf revokeaccess cancel' to cancel.
 AlreadyInFaction	Sorry, you're already in a faction. Leave if you want to create a different one.
+ArgumentMustBeNumber	Argument must be a number.
 ArgumentsSingleQuotesRequirement	Arguments must be designated inside single quotes.
 AssignedToRandomFaction	You have been assigned to a random faction.
 AttemptedAlliance	Attempted to ally with %s
@@ -165,6 +166,7 @@ CmdFlagsSet	set
 CmdFlagsShow	show
 CmdForce	force
 CmdForceBonusPower	bonuspower
+CmdForceClaim	claim
 CmdForceCreate	create
 CmdForceDemote	demote
 CmdForceJoin	join
@@ -222,6 +224,9 @@ CommandsPage3	== Medieval Factions Commands Page 3/%d ==
 CommandsPage4	== Medieval Factions Commands Page 4/%d ==
 CommandsPage5	== Medieval Factions Commands Page 5/%d ==
 CommandsPage6	== Medieval Factions Commands Page 6/%d ==
+CommandsPage7	== Medieval Factions Commands Page 7/%d ==
+ConfigListPageOne	===== Config List Page 1/2 =====
+ConfigListPageTwo	===== Config List Page 2/2 =====
 CreatingGateCancelled	Creating gate cancelled.
 CreatingGateClickWithHoe	Creating gate. Click on a block with a Golden Hoe to select the first point.
 CuboidDisallowed1	Error placing point 1: You cannot place a cuboid.
@@ -310,6 +315,7 @@ HelpFlagsSet	/mf flags set (option) (value) - Set a faction flag.
 HelpFlagsShow	/mf flags show - Show faction flags.
 HelpForce	/mf force - Force the plugin to perform certain actions.
 HelpForceBonusPower	/mf force bonuspower 'faction' 'number'
+HelpForceClaim	/mf force claim 'faction name'
 HelpForceCreate	/mf force create 'factionName'
 HelpForceDemote	/mf force demote (player)
 HelpForceJoin	/mf force join 'player' 'faction2'
@@ -342,6 +348,7 @@ HelpLeave	/mf leave - Leave your current faction.
 HelpList	/mf list - List all factions on the server.
 HelpLock	/mf lock - Lock a chest or door.
 HelpMakePeace	/mf makepeace - Send peace offer to another faction.
+HelpMap	/mf map - Display a map of the claims near your surroundings.
 HelpMembers	/mf members - List the members of your faction or another faction.
 HelpPower	/mf power - Check your power level.
 HelpPrefix	/mf prefix (prefix) - Set your faction's prefix
@@ -410,6 +417,7 @@ NoLongerBypassingProtections	You are no longer bypassing protections provided by
 NoLongerInFactionChat	You are no longer in faction chat.
 NotAMemberOfAnyFaction	You are not a member of any faction.
 NotAnAlly	%s isn't an ally of yours.
+NotAnAllyOrVassal	%s isn't an ally or vassal of yours.
 NotAtWarWith	You aren't at war with %s
 NotAVassalOfAFaction	You aren't a vassal of a faction.
 NotEnoughArgumentsDesignatedSingleQuotesRequired	Not enough arguments designated. Must be designated inside single quotes.
@@ -453,6 +461,7 @@ PowerLevel	Power Level: %s
 PowerLevelHasBeenSetTo	The power level of that player has been set to %d
 PowerLevelHasIncreased	Your power level has increased.
 PowerLevelResetting	Power level resetting...
+PrefixesDisabled	Prefixes are currently disabled.
 PrefixSet	Prefix set.
 PrefixTaken	This prefix has already been taken.
 ProblemLoadingClaimedChunks	There was a problem loading the claimed chunks.
@@ -491,6 +500,7 @@ UsageAlly	Usage: /mf ally (faction-name)
 UsageBreakAlliance	Usage: /mf breakalliance (faction-name)
 UsageClaimRadius	Usage: /mf claim (radius)
 UsageConfigSet	Usage: /mf config set (option) (value)
+UsageConfigShow	Usage: /mf config show ( 1 | 2 )
 UsageCreate	Usage: /mf create [faction-name]
 UsageDeclareWar	Usage: /mf declarewar (faction-name)
 UsageDemote	Usage: /mf demote (player-name)
@@ -498,6 +508,7 @@ UsageDesc	Usage: /mf desc (description)
 UsageEditLaw	Usage: /mf editlaw (number) (edited law)
 UsageFlagsSet	Usage: /mf flags set (option) (value)
 UsageForceBonusPower	Usage: /mf force bonuspower 'faction' 'number'
+UsageForceClaim	Usage: /mf force claim 'faction name'
 UsageForceCreate	Usage: /mf force create 'factionName'
 UsageForceDemote	Usage: /mf force demote (player)
 UsageForceJoin	Usage: /mf force join 'player' 'faction'
@@ -534,14 +545,3 @@ WikiLink	Wiki: https://github.com/DansPlugins/Medieval-Factions/wiki
 Wilderness	Wilderness
 WorldsMismatch1	Error placing point 1: Worlds mismatch.
 WorldsMismatch2	Error placing point 2: Worlds mismatch.
-HelpMap	/mf map - Display a map of the claims near your surroundings.
-CommandsPage7	== Medieval Factions Commands Page 7/%d ==
-PrefixesDisabled	Prefixes are currently disabled.
-UsageConfigShow	Usage: /mf config show ( 1 | 2 )
-ArgumentMustBeNumber	Argument must be a number.
-ConfigListPageOne	===== Config List Page 1/2 =====
-ConfigListPageTwo	===== Config List Page 2/2 =====
-NotAnAllyOrVassal	%s isn't an ally or vassal of yours.
-CmdForceClaim	claim
-UsageForceClaim	Usage: /mf force claim 'faction name'
-HelpForceClaim	/mf force claim 'faction name'

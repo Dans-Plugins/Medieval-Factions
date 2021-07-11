@@ -83,6 +83,7 @@ AllLandUnclaimedFrom	Todas las tierras de %s han sido renunciadas.
 AlreadyEnteredCheckAccess	Ya has usado este comando. Escribe '/mf veracceso cancelar' para cancelar.
 AlreadyEnteredRevokeAccess	Ya has usado este comando. Escribe '/mf quitaracceso cancelar' para cancelar.
 AlreadyInFaction	Perdona, ya estás en una facción. Abandónala si quieres crear una distinta.
+ArgumentMustBeNumber	El argumento debe ser un número.
 ArgumentsSingleQuotesRequirement	Los argumentos deben designarse entre comillas simples. 
 AssignedToRandomFaction	Te han asignado a una facción aleatoria. 
 AttemptedAlliance	Alianza intentada con %s
@@ -165,6 +166,7 @@ CmdFlagsSet	colocar
 CmdFlagsShow	show
 CmdForce	forzar
 CmdForceBonusPower	extrapoder
+CmdForceClaim	afirmar
 CmdForceCreate	crear
 CmdForceDemote	degradar
 CmdForceJoin	unirse
@@ -222,6 +224,9 @@ CommandsPage3	== Medieval Factions, Página de Comandos 3/%d ==
 CommandsPage4	== Medieval Factions, Página de Comandos 4/%d ==
 CommandsPage5	== Medieval Factions, Página de Comandos 5/%d ==
 CommandsPage6	== Medieval Factions, Página de Comandos 6/%d ==
+CommandsPage7	== Comandos de Facciones Medievales Página 7 /% d ==
+ConfigListPageOne	===== Página de lista de configuración 1/2 =====
+ConfigListPageTwo	===== Página de lista de configuración 2/2 =====
 CreatingGateCancelled	Creación de portón cancelada.
 CreatingGateClickWithHoe	Creando portón. Haz click en un bloque con una Azada de Oro para seleccionar la primera esquina.
 CuboidDisallowed1	Error estableciendo el punto 1: No puedes colocar un cuboide.
@@ -310,6 +315,7 @@ HelpFlagsSet	/mf banderas colocar (opción) (valor): establece una bandera de fa
 HelpFlagsShow	/mf banderas show - Muestra banderas de facción.
 HelpForce	/mf forzar - Fuerza al plugin a realizar ciertas acciones.
 HelpForceBonusPower	/mf forzar extrapoder 'facción' 'número'
+HelpForceClaim	/mf force reclamo 'nombre de facción'
 HelpForceCreate	/mf forzar crear 'facción'
 HelpForceDemote	/mf forzar degradar (jugador)
 HelpForceJoin	/mf forzar unirse 'jugador' 'facción2'
@@ -342,6 +348,7 @@ HelpLeave	/mf abandonar - Abandona tu facción.
 HelpList	/mf lista - Lista de todas las facciones del servidor.
 HelpLock	/mf asegurar - Asegura un cofre o puerta.
 HelpMakePeace	/mf hacerpaces - Intenta hacer las paces con una facción.
+HelpMap	/mf map: muestra un mapa de las reclamaciones cercanas a sus alrededores.
 HelpMembers	/mf miembros - Lista de miembros de tu facción o cualquier otra.
 HelpPower	/mf poder - Revisa tu poder
 HelpPrefix	/mf prefijo (prefijo): establece el prefijo de tu facción
@@ -410,6 +417,7 @@ NoLongerBypassingProtections	Ya no estás ignorando las protecciones otorgadas p
 NoLongerInFactionChat	Ya no estás hablando en Chat de Facción.
 NotAMemberOfAnyFaction	No eres miembro de ninguna facción.
 NotAnAlly	%s no es tu aliado.
+NotAnAllyOrVassal	%s no es un aliado o vasallo tuyo.
 NotAtWarWith	No estás en conflicto con %s
 NotAVassalOfAFaction	No eres vasallo de ninguna facción.
 NotEnoughArgumentsDesignatedSingleQuotesRequired	Insuficientes argumentos designados. Deben designarse entre comillas simples.
@@ -453,6 +461,7 @@ PowerLevel	Poder: %s
 PowerLevelHasBeenSetTo	El poder de este jugador ha sido establecido en %d
 PowerLevelHasIncreased	Tu poder ha aumentado.
 PowerLevelResetting	Poder reiniciándose...
+PrefixesDisabled	Los prefijos están actualmente deshabilitados.
 PrefixSet	Prefijo establecido.
 PrefixTaken	Este prefijo ya está en uso.
 ProblemLoadingClaimedChunks	Error cargando tierras reclamadas.
@@ -491,6 +500,7 @@ UsageAlly	Uso: /mf aliar (facción)
 UsageBreakAlliance	Uso: /mf romperalianza (facción)
 UsageClaimRadius	Uso: /mf reclamar (radio)
 UsageConfigSet	Uso: /mf config establecer (opción) (value)
+UsageConfigShow	Uso: /mf config show (1 | 2)
 UsageCreate	Uso: /mf crear [facción]
 UsageDeclareWar	Uso: /mf declararconflicto (facción)
 UsageDemote	Uso: /mf degradar (jugador)
@@ -498,6 +508,7 @@ UsageDesc	Uso: /mf desc (descripción)
 UsageEditLaw	Uso: /mf editarley (número) (ley editada)
 UsageFlagsSet	Uso: /mf banderas colocar (opción) (valor) 
 UsageForceBonusPower	Uso: /mf forzar extrapoder 'facción' 'número'
+UsageForceClaim	Uso: /mf force reclamo 'nombre de facción'
 UsageForceCreate	Uso: /mf forzar crear 'facción'
 UsageForceDemote	Uso: /mf forzar degradar (jugador)
 UsageForceJoin	Uso: /mf forzar unirse 'jugador' 'facción'
