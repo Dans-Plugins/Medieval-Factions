@@ -52,6 +52,17 @@ public class InteractionHandler implements Listener {
             event.setCancelled(true);
             return;
         }
+
+        // if block is in a gate
+        for (Faction faction : PersistentData.getInstance().getFactions()) {
+            for (Gate gate : faction.getGates()) {
+                if (gate.hasBlock(event.getBlock())) {
+                    event.setCancelled(true);
+                    player.sendMessage(ChatColor.RED + String.format(LocaleManager.getInstance().getText("BlockIsPartOfGateMustRemoveGate"), gate.getName()));
+                    return;
+                }
+            }
+        }
         
         // if block is not locked then return
         if (!PersistentData.getInstance().isBlockLocked(event.getBlock())) {
@@ -79,17 +90,6 @@ public class InteractionHandler implements Listener {
                 if (BlockChecker.getInstance().isDoor(relativeDown)) {
                     LockManager.getInstance().removeLock(relativeDown);
                 }
-                return;
-            }
-        }
-
-        Faction faction = PersistentData.getInstance().getPlayersFaction(event.getPlayer().getUniqueId());
-
-        // if block is in a gate
-        for (Gate gate : faction.getGates()) {
-            if (gate.hasBlock(event.getBlock())) {
-                event.setCancelled(true);
-                player.sendMessage(ChatColor.RED + String.format(LocaleManager.getInstance().getText("BlockIsPartOfGateMustRemoveGate"), gate.getName()));
                 return;
             }
         }
