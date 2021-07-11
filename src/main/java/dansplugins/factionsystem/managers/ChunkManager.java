@@ -320,7 +320,7 @@ public class ChunkManager {
         }
 
         // if faction home is located on this chunk
-        Location factionHome = PersistentData.getInstance().getPlayersFaction(player.getUniqueId()).getFactionHome();
+        Location factionHome = faction.getFactionHome();
         if (factionHome != null) {
             if (factionHome.getChunk().getX() == chunk.getChunk().getX() && factionHome.getChunk().getZ() == chunk.getChunk().getZ()
                     && chunk.getWorld().equalsIgnoreCase(player.getLocation().getWorld().getName())) {
@@ -620,6 +620,18 @@ public class ChunkManager {
                 return true;
         }
         return false;
+    }
+
+    public void forceClaimAtPlayerLocation(Player player, Faction faction) {
+        Location location = player.getLocation();
+
+        ClaimedChunk claimedChunk = getClaimedChunk(location.getChunk());
+
+        if (claimedChunk != null) {
+            removeChunk(claimedChunk, player, faction);
+        }
+
+        addClaimedChunk(location.getChunk(), faction, location.getWorld());
     }
 
 }
