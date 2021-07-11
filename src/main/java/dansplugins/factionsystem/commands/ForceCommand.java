@@ -564,7 +564,7 @@ public class ForceCommand extends SubCommand {
         }
 
         // claim land at player location for designated faction
-        ChunkManager.getInstance().claimChunkAtLocation(player, player.getLocation(), faction);
+        ChunkManager.getInstance().forceClaimAtPlayerLocation(player, faction);
     }
 
 }
