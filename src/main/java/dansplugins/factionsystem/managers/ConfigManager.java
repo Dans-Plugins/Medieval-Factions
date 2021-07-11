@@ -288,7 +288,7 @@ public class ConfigManager {
     }
 
     public void sendPageTwoOfConfigList(CommandSender sender) {
-        sender.sendMessage(ChatColor.AQUA + LocaleManager.getInstance().getText("ConfigListPageOne"));
+        sender.sendMessage(ChatColor.AQUA + LocaleManager.getInstance().getText("ConfigListPageTwo"));
         sender.sendMessage(ChatColor.AQUA + "surroundedChunksProtected: " + MedievalFactions.getInstance().getConfig().getBoolean("surroundedChunksProtected")
                 + ", zeroPowerFactionsGetDisbanded: " + MedievalFactions.getInstance().getConfig().getBoolean("zeroPowerFactionsGetDisbanded")
                 + ", vassalContributionPercentageMultiplier: " + MedievalFactions.getInstance().getConfig().getDouble("vassalContributionPercentageMultiplier")
