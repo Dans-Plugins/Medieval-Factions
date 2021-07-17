@@ -5,11 +5,15 @@ import dansplugins.factionsystem.Messenger;
 import dansplugins.factionsystem.data.EphemeralData;
 import dansplugins.factionsystem.data.PersistentData;
 import dansplugins.factionsystem.events.FactionJoinEvent;
+import dansplugins.factionsystem.managers.ActionBarManager;
 import dansplugins.factionsystem.managers.ChunkManager;
 import dansplugins.factionsystem.managers.LocaleManager;
 import dansplugins.factionsystem.objects.Faction;
 import dansplugins.factionsystem.objects.PlayerActivityRecord;
 import dansplugins.factionsystem.objects.PlayerPowerRecord;
+import dansplugins.factionsystem.utils.ColorChecker;
+import net.md_5.bungee.api.ChatMessageType;
+import net.md_5.bungee.api.chat.TextComponent;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Monster;
@@ -86,10 +90,37 @@ public class JoiningLeavingAndSpawningHandler implements Listener {
         	}
         }
 
+        setPlayerActionBarTerritoryInfo(event.getPlayer());
+
         ChunkManager.getInstance().informPlayerIfTheirLandIsInDanger(player, PersistentData.getInstance().getFactions(), PersistentData.getInstance().getClaimedChunks());
 
         informPlayerIfTheirFactionIsWeakened(player);
     }
+
+    private void setPlayerActionBarTerritoryInfo(Player player) {
+		if(MedievalFactions.getInstance().getConfig().getBoolean("territoryIndicatorActionbar")) {
+			// TODO: This is massive code duplication
+			// if chunk is claimed
+			if (ChunkManager.getInstance().isClaimed(player.getLocation().getChunk(), PersistentData.getInstance().getClaimedChunks())) {
+				String factionName = ChunkManager.getInstance().getClaimedChunk(player.getLocation().getChunk()).getHolder();
+				Faction holder = PersistentData.getInstance().getFaction(factionName);
+				String title = factionName;
+				String territoryAlertColorString = (String) holder.getFlags().getFlag("territoryAlertColor");
+				ChatColor territoryAlertColor = ColorChecker.getInstance().getColorByName(territoryAlertColorString);
+				ActionBarManager.getInstance(MedievalFactions.getInstance()).showPersistentActionBarMessage(player, new TextComponent(territoryAlertColor + title));
+				return;
+			}
+
+			// if chunk is unclaimed
+			if (!ChunkManager.getInstance().isClaimed(player.getLocation().getChunk(), PersistentData.getInstance().getClaimedChunks())) {
+				String title = LocaleManager.getInstance().getText("Wilderness");
+				String territoryAlertColorString = MedievalFactions.getInstance().getConfig().getString("territoryAlertColor");
+				ChatColor territoryAlertColor = ColorChecker.getInstance().getColorByName(territoryAlertColorString);
+				player.spigot().sendMessage(ChatMessageType.ACTION_BAR, new TextComponent(territoryAlertColor + title));
+				return;
+			}
+		}
+	}
 
     private void informPlayerIfTheirFactionIsWeakened(Player player) {
 		Faction playersFaction = PersistentData.getInstance().getPlayersFaction(player.getUniqueId());
@@ -152,6 +183,8 @@ public class JoiningLeavingAndSpawningHandler implements Listener {
 		{
 			record.setLastLogout(ZonedDateTime.now());
 		}
+
+		ActionBarManager.getInstance(MedievalFactions.getInstance()).clearPlayerActionBar(event.getPlayer());
 	}
 
 	@EventHandler()

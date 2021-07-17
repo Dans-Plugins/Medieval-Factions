@@ -3,11 +3,14 @@ package dansplugins.factionsystem.eventhandlers;
 import dansplugins.factionsystem.DynmapIntegrator;
 import dansplugins.factionsystem.MedievalFactions;
 import dansplugins.factionsystem.data.PersistentData;
+import dansplugins.factionsystem.managers.ActionBarManager;
 import dansplugins.factionsystem.managers.ChunkManager;
 import dansplugins.factionsystem.managers.LocaleManager;
 import dansplugins.factionsystem.objects.ClaimedChunk;
 import dansplugins.factionsystem.objects.Faction;
 import dansplugins.factionsystem.utils.ColorChecker;
+import net.md_5.bungee.api.ChatMessageType;
+import net.md_5.bungee.api.chat.TextComponent;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -120,6 +123,18 @@ public class MoveHandler implements Listener {
             territoryAlertColor = ColorChecker.getInstance().getColorByName(territoryAlertColorString);
         }
 
+
+        // set actionbar
+        if(MedievalFactions.getInstance().getConfig().getBoolean("territoryIndicatorActionbar")) {
+            ActionBarManager actionBar = ActionBarManager.getInstance(MedievalFactions.getInstance());
+
+            if(holder == null) {
+                actionBar.clearPlayerActionBar(player);
+                player.spigot().sendMessage(ChatMessageType.ACTION_BAR, new TextComponent(territoryAlertColor + information));
+            } else {
+                actionBar.showPersistentActionBarMessage(player, new TextComponent(territoryAlertColor + information));
+            }
+        }
 
         // send alert
         if (MedievalFactions.getInstance().getConfig().getBoolean("territoryAlertPopUp")) {
