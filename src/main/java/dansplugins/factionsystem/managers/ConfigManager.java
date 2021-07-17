@@ -195,6 +195,7 @@ public class ConfigManager {
                     || option.equalsIgnoreCase("allowAllyInteraction")
                     || option.equalsIgnoreCase("allowVassalageTreeInteraction")
                     || option.equalsIgnoreCase("territoryAlertPopUp")
+                    || option.equalsIgnoreCase("territoryIndicatorActionbar")
                     || option.equalsIgnoreCase("randomFactionAssignment")
                     || option.equalsIgnoreCase("allowNeutrality")
                     || option.equalsIgnoreCase("showPrefixesInFactionChat")) {
@@ -259,6 +260,7 @@ public class ConfigManager {
         MedievalFactions.getInstance().getConfig().addDefault("factionChatColor", "gold");
         MedievalFactions.getInstance().getConfig().addDefault("territoryAlertPopUp", true);
         MedievalFactions.getInstance().getConfig().addDefault("territoryAlertColor", "white");
+        MedievalFactions.getInstance().getConfig().addDefault("territoryIndicatorActionbar", true);
         MedievalFactions.getInstance().getConfig().addDefault("randomFactionAssignment", false);
         MedievalFactions.getInstance().getConfig().addDefault("allowNeutrality", false);
         MedievalFactions.getInstance().getConfig().addDefault("showPrefixesInFactionChat", false);
@@ -304,6 +306,7 @@ public class ConfigManager {
                 + ", factionChatColor: " + MedievalFactions.getInstance().getConfig().getString("factionChatColor")
                 + ", territoryAlertPopUp: " + MedievalFactions.getInstance().getConfig().getBoolean("territoryAlertPopUp")
                 + ", territoryAlertColor: " + MedievalFactions.getInstance().getConfig().getString("territoryAlertColor")
+                + ", territoryIndicatorActionbar: " + MedievalFactions.getInstance().getConfig().getBoolean("territoryIndicatorActionbar")
                 + ", randomFactionAssignment: " + MedievalFactions.getInstance().getConfig().getBoolean("randomFactionAssignment")
                 + ", allowNeutrality: " + MedievalFactions.getInstance().getConfig().getBoolean("allowNeutrality")
                 + ", showPrefixesInFactionChat: " + MedievalFactions.getInstance().getConfig().getBoolean("showPrefixesInFactionChat"));
