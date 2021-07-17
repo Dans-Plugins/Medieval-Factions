@@ -12,6 +12,7 @@ import dansplugins.factionsystem.objects.Faction;
 import dansplugins.factionsystem.objects.PlayerActivityRecord;
 import dansplugins.factionsystem.objects.PlayerPowerRecord;
 import dansplugins.factionsystem.utils.ColorChecker;
+import dansplugins.factionsystem.utils.TerritoryOwnerNotifier;
 import net.md_5.bungee.api.ChatMessageType;
 import net.md_5.bungee.api.chat.TextComponent;
 import org.bukkit.Bukkit;
@@ -99,26 +100,16 @@ public class JoiningLeavingAndSpawningHandler implements Listener {
 
     private void setPlayerActionBarTerritoryInfo(Player player) {
 		if(MedievalFactions.getInstance().getConfig().getBoolean("territoryIndicatorActionbar")) {
-			// TODO: This is massive code duplication
 			// if chunk is claimed
 			if (ChunkManager.getInstance().isClaimed(player.getLocation().getChunk(), PersistentData.getInstance().getClaimedChunks())) {
 				String factionName = ChunkManager.getInstance().getClaimedChunk(player.getLocation().getChunk()).getHolder();
 				Faction holder = PersistentData.getInstance().getFaction(factionName);
-				String title = factionName;
-				String territoryAlertColorString = (String) holder.getFlags().getFlag("territoryAlertColor");
-				ChatColor territoryAlertColor = ColorChecker.getInstance().getColorByName(territoryAlertColorString);
-				ActionBarManager.getInstance(MedievalFactions.getInstance()).showPersistentActionBarMessage(player, new TextComponent(territoryAlertColor + title));
+				TerritoryOwnerNotifier.getInstance().sendPlayerTerritoryAlert(player, holder);
 				return;
 			}
 
-			// if chunk is unclaimed
-			if (!ChunkManager.getInstance().isClaimed(player.getLocation().getChunk(), PersistentData.getInstance().getClaimedChunks())) {
-				String title = LocaleManager.getInstance().getText("Wilderness");
-				String territoryAlertColorString = MedievalFactions.getInstance().getConfig().getString("territoryAlertColor");
-				ChatColor territoryAlertColor = ColorChecker.getInstance().getColorByName(territoryAlertColorString);
-				player.spigot().sendMessage(ChatMessageType.ACTION_BAR, new TextComponent(territoryAlertColor + title));
-				return;
-			}
+			// Otherwise the chunk ist unclaimed
+			TerritoryOwnerNotifier.getInstance().sendPlayerTerritoryAlert(player, null);
 		}
 	}
 

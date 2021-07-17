@@ -9,6 +9,7 @@ import dansplugins.factionsystem.managers.LocaleManager;
 import dansplugins.factionsystem.objects.ClaimedChunk;
 import dansplugins.factionsystem.objects.Faction;
 import dansplugins.factionsystem.utils.ColorChecker;
+import dansplugins.factionsystem.utils.TerritoryOwnerNotifier;
 import net.md_5.bungee.api.ChatMessageType;
 import net.md_5.bungee.api.chat.TextComponent;
 import org.bukkit.ChatColor;
@@ -61,15 +62,13 @@ public class MoveHandler implements Listener {
             if (ChunkManager.getInstance().isClaimed(event.getTo().getChunk(), PersistentData.getInstance().getClaimedChunks()) && !ChunkManager.getInstance().isClaimed(event.getFrom().getChunk(), PersistentData.getInstance().getClaimedChunks())) {
                 String factionName = ChunkManager.getInstance().getClaimedChunk(event.getTo().getChunk()).getHolder();
                 Faction holder = PersistentData.getInstance().getFaction(factionName);
-                String title = factionName;
-                sendPlayerTerritoryAlert(event.getPlayer(), title, holder);
+                TerritoryOwnerNotifier.getInstance().sendPlayerTerritoryAlert(player, holder);
                 return;
             }
 
             // if new chunk is unclaimed and old chunk was not
             if (!ChunkManager.getInstance().isClaimed(event.getTo().getChunk(), PersistentData.getInstance().getClaimedChunks()) && ChunkManager.getInstance().isClaimed(event.getFrom().getChunk(), PersistentData.getInstance().getClaimedChunks())) {
-                String title = LocaleManager.getInstance().getText("Wilderness");
-                sendPlayerTerritoryAlert(event.getPlayer(), title, null);
+                TerritoryOwnerNotifier.getInstance().sendPlayerTerritoryAlert(player, null);
                 return;
             }
 
@@ -79,8 +78,7 @@ public class MoveHandler implements Listener {
                 if (!(ChunkManager.getInstance().getClaimedChunk(event.getFrom().getChunk()).getHolder().equalsIgnoreCase(ChunkManager.getInstance().getClaimedChunk(event.getTo().getChunk()).getHolder()))) {
                     String factionName = ChunkManager.getInstance().getClaimedChunk(event.getTo().getChunk()).getHolder();
                     Faction holder = PersistentData.getInstance().getFaction(factionName);
-                    String title = factionName;
-                    sendPlayerTerritoryAlert(event.getPlayer(), title, holder);
+                    TerritoryOwnerNotifier.getInstance().sendPlayerTerritoryAlert(player, holder);
                 }
             }
 
@@ -109,44 +107,6 @@ public class MoveHandler implements Listener {
             }
         }
 
-    }
-
-    public void sendPlayerTerritoryAlert(Player player, String information, Faction holder) {
-        // get color
-        ChatColor territoryAlertColor;
-        if (holder != null) {
-            String territoryAlertColorString = (String) holder.getFlags().getFlag("territoryAlertColor");
-            territoryAlertColor = ColorChecker.getInstance().getColorByName(territoryAlertColorString);
-        }
-        else {
-            String territoryAlertColorString = MedievalFactions.getInstance().getConfig().getString("territoryAlertColor");
-            territoryAlertColor = ColorChecker.getInstance().getColorByName(territoryAlertColorString);
-        }
-
-
-        // set actionbar
-        if(MedievalFactions.getInstance().getConfig().getBoolean("territoryIndicatorActionbar")) {
-            ActionBarManager actionBar = ActionBarManager.getInstance(MedievalFactions.getInstance());
-
-            if(holder == null) {
-                actionBar.clearPlayerActionBar(player);
-                player.spigot().sendMessage(ChatMessageType.ACTION_BAR, new TextComponent(territoryAlertColor + information));
-            } else {
-                actionBar.showPersistentActionBarMessage(player, new TextComponent(territoryAlertColor + information));
-            }
-        }
-
-        // send alert
-        if (MedievalFactions.getInstance().getConfig().getBoolean("territoryAlertPopUp")) {
-            String subtitle = null;
-            int fadeIn = 10;
-            int stay = 70;
-            int fadeOut = 20;
-            player.sendTitle(territoryAlertColor + information, subtitle, fadeIn, stay, fadeOut);
-        }
-        else {
-            player.sendMessage(territoryAlertColor + information);
-        }
     }
 
 }
