@@ -14,7 +14,10 @@ import dansplugins.factionsystem.objects.LockedBlock;
 import dansplugins.factionsystem.utils.BlockChecker;
 import dansplugins.factionsystem.utils.InteractionAccessChecker;
 import dansplugins.factionsystem.utils.UUIDChecker;
-import org.bukkit.*;
+import org.bukkit.ChatColor;
+import org.bukkit.Chunk;
+import org.bukkit.Location;
+import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
 import org.bukkit.block.Chest;
@@ -31,8 +34,6 @@ import org.bukkit.event.entity.EntityPlaceEvent;
 import org.bukkit.event.hanging.HangingBreakByEntityEvent;
 import org.bukkit.event.player.*;
 import org.bukkit.inventory.InventoryHolder;
-
-import static org.bukkit.Material.LADDER;
 
 public class InteractionHandler implements Listener {
 
