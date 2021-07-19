@@ -15,6 +15,8 @@ import java.util.ArrayList;
 
 public class ChatHandler implements Listener {
 
+    private boolean debug = false;
+
     @EventHandler()
     public void handle(AsyncPlayerChatEvent event) {
         String factionChatColor = MedievalFactions.getInstance().getConfig().getString("factionChatColor");

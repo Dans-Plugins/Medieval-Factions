@@ -25,6 +25,8 @@ import static org.bukkit.Bukkit.getServer;
 
 public class MoveHandler implements Listener {
 
+    private boolean debug = false;
+
     @EventHandler()
     public void handle(PlayerMoveEvent event) {
         // Full disclosure, I feel like this method might be extremely laggy, especially if a player is travelling.

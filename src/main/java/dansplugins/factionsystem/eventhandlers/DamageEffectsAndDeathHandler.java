@@ -26,6 +26,8 @@ import java.util.List;
 
 public class DamageEffectsAndDeathHandler implements Listener {
 
+    private boolean debug = false;
+
     public DamageEffectsAndDeathHandler() {
         initializeBadPotionTypes();
     }
@@ -35,7 +37,7 @@ public class DamageEffectsAndDeathHandler implements Listener {
    	
         // this method disallows PVP between members of the same faction and between factions who are not at war
         // PVP is allowed between factionless players, players who belong to a faction and the factionless, and players whose factions are at war.
-        // System.out.println("EntityDamageByIntity" + event.toString());
+        if (debug) { System.out.println("EntityDamageByIntity" + event.toString()); }
 
         // if this was between two players melee
         if (event.getDamager() instanceof Player && event.getEntity() instanceof Player) {
@@ -109,7 +111,7 @@ public class DamageEffectsAndDeathHandler implements Listener {
                 location = armorStand.getLocation();
             }
             else if (event.getEntity() instanceof ItemFrame) {
-                System.out.println("DEBUG: ItemFrame interaction captured in EntityDamageByEntityEvent!");
+                if (debug) { System.out.println("DEBUG: ItemFrame interaction captured in EntityDamageByEntityEvent!"); }
                 ItemFrame itemFrame = (ItemFrame) event.getEntity();
 
                 if (!(event.getDamager() instanceof Player)) {

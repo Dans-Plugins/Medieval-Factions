@@ -30,7 +30,7 @@ import java.util.UUID;
 
 public class JoiningLeavingAndSpawningHandler implements Listener {
 
-	boolean debug = true;
+	boolean debug = false;
 
 	@EventHandler()
     public void handle(PlayerJoinEvent event) {
