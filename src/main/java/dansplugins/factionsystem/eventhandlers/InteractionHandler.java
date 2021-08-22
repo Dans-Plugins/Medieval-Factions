@@ -37,7 +37,7 @@ import org.bukkit.inventory.InventoryHolder;
 
 public class InteractionHandler implements Listener {
 
-    private final boolean debug = false;
+    private final boolean debug = MedievalFactions.getInstance().isDebugEnabled();
 
     // EVENT HANDLER METHODS ------------------------------------------------------
 

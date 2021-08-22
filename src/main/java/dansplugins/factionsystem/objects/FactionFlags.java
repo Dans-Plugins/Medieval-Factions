@@ -18,7 +18,7 @@ public class FactionFlags {
         - loadMissingFlagsIfNecessary()
     */
 
-    private final boolean debug = false;
+    private final boolean debug = MedievalFactions.getInstance().isDebugEnabled();
 
     private ArrayList<String> flagNames = new ArrayList<>();
     private HashMap<String, Integer> integerValues = new HashMap<>();

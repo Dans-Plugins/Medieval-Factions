@@ -15,7 +15,7 @@ import java.util.ArrayList;
 
 public class ChatHandler implements Listener {
 
-    private boolean debug = false;
+    private boolean debug = MedievalFactions.getInstance().isDebugEnabled();
 
     @EventHandler()
     public void handle(AsyncPlayerChatEvent event) {

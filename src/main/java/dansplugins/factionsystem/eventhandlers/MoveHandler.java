@@ -21,7 +21,7 @@ import static org.bukkit.Bukkit.getServer;
 
 public class MoveHandler implements Listener {
 
-    private boolean debug = false;
+    private boolean debug = MedievalFactions.getInstance().isDebugEnabled();
 
     @EventHandler()
     public void handle(PlayerMoveEvent event) {
