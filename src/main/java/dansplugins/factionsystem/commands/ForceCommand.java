@@ -23,7 +23,7 @@ import java.util.*;
 
 public class ForceCommand extends SubCommand {
 
-    private final boolean debug = false;
+    private final boolean debug = MedievalFactions.getInstance().isDebugEnabled();
 
     private final String[] commands = new String[]{
             "Save", "Load", "Peace", "Demote", "Join", "Kick", "Power", "Renounce", "Transfer", "RemoveVassal", "Rename", "BonusPower", "Unlock", "Create", "Claim"

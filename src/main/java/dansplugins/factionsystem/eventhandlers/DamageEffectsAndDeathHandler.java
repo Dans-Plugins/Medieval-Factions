@@ -29,7 +29,7 @@ import java.util.List;
 
 public class DamageEffectsAndDeathHandler implements Listener {
 
-    private boolean debug = false;
+    private boolean debug = MedievalFactions.getInstance().isDebugEnabled();
 
     public DamageEffectsAndDeathHandler() {
         initializeBadPotionTypes();

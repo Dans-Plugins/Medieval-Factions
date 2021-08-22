@@ -12,7 +12,7 @@ import static org.bukkit.Material.LADDER;
 
 public class InteractionAccessChecker {
 
-    final private boolean debug = true;
+    final private boolean debug = MedievalFactions.getInstance().isDebugEnabled();
 
     private static InteractionAccessChecker instance;
 

@@ -27,7 +27,7 @@ import java.util.UUID;
 
 public class JoiningLeavingAndSpawningHandler implements Listener {
 
-	boolean debug = false;
+	boolean debug = MedievalFactions.getInstance().isDebugEnabled();
 
 	@EventHandler()
     public void handle(PlayerJoinEvent event) {

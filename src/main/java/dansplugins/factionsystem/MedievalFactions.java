@@ -24,6 +24,8 @@ public class MedievalFactions extends JavaPlugin {
         return instance;
     }
 
+    private boolean debugFlag = false;
+
     @Override
     public void onEnable() {
         instance = this;
@@ -91,6 +93,10 @@ public class MedievalFactions extends JavaPlugin {
 
     public MedievalFactionsAPI getAPI() {
         return API;
+    }
+
+    public boolean isDebugEnabled() {
+        return debugFlag;
     }
 
 }
