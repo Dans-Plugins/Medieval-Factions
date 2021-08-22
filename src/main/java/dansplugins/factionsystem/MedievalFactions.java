@@ -24,7 +24,7 @@ public class MedievalFactions extends JavaPlugin {
         return instance;
     }
 
-    private boolean debugFlag = false;
+    private boolean debugFlag;
 
     @Override
     public void onEnable() {
@@ -42,6 +42,8 @@ public class MedievalFactions extends JavaPlugin {
             }
             reloadConfig();
         }
+
+        debugFlag = getConfig().getBoolean("debugMode");
 
         // load strings and save files
         LocaleManager.getInstance().loadStrings();

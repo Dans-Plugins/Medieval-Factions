@@ -135,6 +135,9 @@ public class ConfigManager {
         if (!MedievalFactions.getInstance().getConfig().isBoolean("showPrefixesInFactionChat")) {
             MedievalFactions.getInstance().getConfig().addDefault("showPrefixesInFactionChat", false);
         }
+        if (!MedievalFactions.getInstance().getConfig().isBoolean("debugMode")) {
+            MedievalFactions.getInstance().getConfig().addDefault("debugMode", false);
+        }
 
         deleteOldConfigOptionsIfPresent();
 
@@ -198,7 +201,8 @@ public class ConfigManager {
                     || option.equalsIgnoreCase("territoryIndicatorActionbar")
                     || option.equalsIgnoreCase("randomFactionAssignment")
                     || option.equalsIgnoreCase("allowNeutrality")
-                    || option.equalsIgnoreCase("showPrefixesInFactionChat")) {
+                    || option.equalsIgnoreCase("showPrefixesInFactionChat")
+                    || option.equalsIgnoreCase("debugMode")) {
                 MedievalFactions.getInstance().getConfig().set(option, Boolean.parseBoolean(value));
                 sender.sendMessage(ChatColor.GREEN + LocaleManager.getInstance().getText("BooleanSet"));
             }
@@ -264,6 +268,7 @@ public class ConfigManager {
         MedievalFactions.getInstance().getConfig().addDefault("randomFactionAssignment", false);
         MedievalFactions.getInstance().getConfig().addDefault("allowNeutrality", false);
         MedievalFactions.getInstance().getConfig().addDefault("showPrefixesInFactionChat", false);
+        MedievalFactions.getInstance().getConfig().addDefault("debugMode", false);
         MedievalFactions.getInstance().getConfig().options().copyDefaults(true);
         MedievalFactions.getInstance().saveConfig();
     }
@@ -272,6 +277,7 @@ public class ConfigManager {
         sender.sendMessage(ChatColor.AQUA + LocaleManager.getInstance().getText("ConfigListPageOne"));
         sender.sendMessage(ChatColor.AQUA + "version: " + MedievalFactions.getInstance().getConfig().getString("version")
                 + ", languageid: " + MedievalFactions.getInstance().getConfig().getString("languageid")
+                + ", debugMode: " + MedievalFactions.getInstance().getConfig().getBoolean("debugMode")
                 + ", initialMaxPowerLevel: " + MedievalFactions.getInstance().getConfig().getInt("initialMaxPowerLevel")
                 + ", initialPowerLevel: " +  MedievalFactions.getInstance().getConfig().getInt("initialPowerLevel")
                 + ", powerIncreaseAmount: " + MedievalFactions.getInstance().getConfig().getInt("powerIncreaseAmount")
@@ -288,13 +294,13 @@ public class ConfigManager {
                 + ", minutesBeforePowerDecrease: " + MedievalFactions.getInstance().getConfig().getInt("minutesBeforePowerDecrease")
                 + ", powerDecreaseAmount: " + MedievalFactions.getInstance().getConfig().getInt("powerDecreaseAmount")
                 + ", factionMaxNameLength: " + MedievalFactions.getInstance().getConfig().getInt("factionMaxNameLength")
-		        + ", factionMaxNumberGates: " + MedievalFactions.getInstance().getConfig().getInt("factionMaxNumberGates")
-		        + ", factionMaxGateArea: " + MedievalFactions.getInstance().getConfig().getInt("factionMaxGateArea"));
+		        + ", factionMaxNumberGates: " + MedievalFactions.getInstance().getConfig().getInt("factionMaxNumberGates"));
     }
 
     public void sendPageTwoOfConfigList(CommandSender sender) {
         sender.sendMessage(ChatColor.AQUA + LocaleManager.getInstance().getText("ConfigListPageTwo"));
-        sender.sendMessage(ChatColor.AQUA + "surroundedChunksProtected: " + MedievalFactions.getInstance().getConfig().getBoolean("surroundedChunksProtected")
+        sender.sendMessage(ChatColor.AQUA+ "factionMaxGateArea: " + MedievalFactions.getInstance().getConfig().getInt("factionMaxGateArea")
+                + ", surroundedChunksProtected: " + MedievalFactions.getInstance().getConfig().getBoolean("surroundedChunksProtected")
                 + ", zeroPowerFactionsGetDisbanded: " + MedievalFactions.getInstance().getConfig().getBoolean("zeroPowerFactionsGetDisbanded")
                 + ", vassalContributionPercentageMultiplier: " + MedievalFactions.getInstance().getConfig().getDouble("vassalContributionPercentageMultiplier")
                 + ", nonMembersCanInteractWithDoors: " + MedievalFactions.getInstance().getConfig().getBoolean("nonMembersCanInteractWithDoors")
