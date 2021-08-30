@@ -7,6 +7,7 @@
 - [FAQ](https://github.com/dmccoystephenson/Medieval-Factions/wiki/FAQ)
 - [Major Version Changes](https://github.com/dmccoystephenson/Medieval-Factions/wiki/Major-Version-Changes)
 - [List of Placeholders](https://github.com/dmccoystephenson/Medieval-Factions/wiki/Placeholders)
+- [Releases](https://github.com/dmccoystephenson/Medieval-Factions/releases)
 
 ## Project Planning
 - [Notes for Developers](https://github.com/dmccoystephenson/Medieval-Factions/wiki/Developer-Notes)
