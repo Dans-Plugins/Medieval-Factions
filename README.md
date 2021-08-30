@@ -1,7 +1,7 @@
-# Wild Pets
+# Medieval Factions
 
 ## Description
-Wild Pets is an open source minecraft plugin that allows players to tame any entity in the game so long as their configuration is enabled.
+This is a minecraft plugin for players to use to organize politically. It allows them to create/manage factions, declare/end wars, and claim/unclaim land. It also supports promoting/demoting players to and from officer positions as well as a power level system to decide land limits. Finally, it supports faction homes, alliances and locks.
 
 ## Installation
 (coming soon)
