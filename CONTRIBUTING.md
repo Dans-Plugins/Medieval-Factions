@@ -1,6 +1,6 @@
 # Contributing To The Project
 ## Thank You
-Thank you so much for being willing to contribute to this project! It wouldn't be where it is today without the help of others.
+Thank you so much for being willing to contribute to this project! It wouldn't be where it is today without the help of others. Please feel free to fork the repository and contact me on my [support discord server](https://discord.gg/xXtuAQ2).
 
 ## Some Things To Know
 - We use ZenHub to manage repository issues.
