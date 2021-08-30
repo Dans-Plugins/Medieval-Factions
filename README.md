@@ -21,10 +21,11 @@ Wild Pets is an open source minecraft plugin that allows players to tame any ent
 - [Planned Improvements](https://github.com/dmccoystephenson/Medieval-Factions/issues?q=is%3Aopen+is%3Aissue+label%3Aimprovement)
 
 ## Contributing
-- [Notes for Developers (coming soon)](https://github.com/dmccoystephenson/Medieval-Factions/wiki/Developer-Notes)
+- [Contributing.md](https://github.com/dmccoystephenson/Medieval-Factions/blob/master/CONTRIBUTING.md)
+- [Notes for Developers](https://github.com/dmccoystephenson/Medieval-Factions/wiki/Developer-Notes)
 
 ## Authors and acknowledgement
-(coming soon)
+You can find the support discord server [here](https://discord.gg/xXtuAQ2).
 
 ## License
 GPL3
