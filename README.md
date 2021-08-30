@@ -15,7 +15,7 @@
 - [Planned Improvements](https://github.com/DansPlugins/Medieval-Factions/issues?q=is%3Aopen+is%3Aissue+label%3Aimprovement)
 
 ## Experiencing a bug?
-Please fill out a bug report [here](https://github.com/dmccoystephenson/Wild-Pets/issues?q=is%3Aissue+is%3Aopen+label%3Abug).
+Please fill out a bug report [here](https://github.com/dmccoystephenson/Medieval-Factions/issues?q=is%3Aissue+is%3Aopen+label%3Abug).
 
 ## bStats
 You can view the bStats page for the plugin [here](https://bstats.org/plugin/bukkit/Medieval%20Factions/8929).
