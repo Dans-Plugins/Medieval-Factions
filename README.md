@@ -27,6 +27,9 @@ Please fill out a bug report [here](https://github.com/dmccoystephenson/Medieval
 - [Contributing.md](https://github.com/dmccoystephenson/Medieval-Factions/blob/master/CONTRIBUTING.md)
 - [Notes for Developers](https://github.com/dmccoystephenson/Medieval-Factions/wiki/Developer-Notes)
 
+### Looking to create an add-on plugin?
+I recommend using [FactionsBridge](https://www.spigotmc.org/resources/factionsbridge.89716/) by [Retrix_Solutions](https://www.spigotmc.org/resources/authors/retrix_solutions.491191/). It would make your add-on plugin usable across a number of factions implementations.
+
 ## Authors and acknowledgement
 (coming soon)
 
