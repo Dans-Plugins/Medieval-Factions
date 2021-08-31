@@ -31,7 +31,14 @@ Please fill out a bug report [here](https://github.com/dmccoystephenson/Medieval
 I recommend using [FactionsBridge](https://www.spigotmc.org/resources/factionsbridge.89716/) by [Retrix_Solutions](https://www.spigotmc.org/resources/authors/retrix_solutions.491191/). It would make your add-on plugin usable across a number of factions implementations.
 
 ## Authors and acknowledgement
-(coming soon)
+Name | Main Contributions
+------------ | -------------
+DanTheTechMan | Creator
+Pasarus | Overhauled the Storage Manager
+Caibinus | Implemented Duels, Gates and Dynmap Integration
+Callum | Overhauled the Command Interpreter and Commands
+Richardhyy | Fixed some encoding issues
+Mitras2 | Implemented ActionBar territory alerts
 
 ## License
 GPL3
