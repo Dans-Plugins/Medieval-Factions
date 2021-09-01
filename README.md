@@ -15,7 +15,7 @@ This is a minecraft plugin for players to use to organize politically. It allows
 - [List of Commands](https://github.com/dmccoystephenson/Medieval-Factions/wiki/Commands)
 - [FAQ](https://github.com/dmccoystephenson/Medieval-Factions/wiki/FAQ)
 - [Faction Flags](https://github.com/dmccoystephenson/Medieval-Factions/wiki/Faction-Flags)
-- [Config Options (coming soon)](https://github.com/dmccoystephenson/Medieval-Factions/wiki/Config-Options)
+- [Config Options](https://github.com/dmccoystephenson/Medieval-Factions/wiki/Config-Options)
 - [List of Placeholders](https://github.com/dmccoystephenson/Medieval-Factions/wiki/Placeholders)
 
 ## Support
