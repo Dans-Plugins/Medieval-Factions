@@ -38,9 +38,9 @@ I recommend using [FactionsBridge](https://www.spigotmc.org/resources/factionsbr
 Name | Main Contributions
 ------------ | -------------
 DanTheTechMan | Creator
-Pasarus | Overhauled the Storage Manager
+Pasarus | Overhauled the Storage Manager to use UUIDs and JSON
 Caibinus | Implemented Duels, Gates and Dynmap Integration
-Callum | Overhauled the Command Interpreter and Commands
+Callum | Overhauled the Command System and implemented PlaceholderAPI integration
 Richardhyy | Fixed some encoding issues
 Mitras2 | Implemented ActionBar territory alerts
 
