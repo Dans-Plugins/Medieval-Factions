@@ -1,7 +1,7 @@
 # Medieval Factions
 
 ## Description
-This is a minecraft plugin for players to use to organize politically. It allows them to create/manage factions, declare/end wars, and claim/unclaim land. It also supports promoting/demoting players to and from officer positions as well as a power level system to decide land limits. Finally, it supports faction homes, alliances and locks.
+Medieval Factions is a system of mechanics that allows for the simulation of sovereign nations in Minecraft. Players can create nations, claim territory, engage in warfare or politics, write laws or hold dueling tournaments, and generally are able to attempt to recreate society somewhat.
 
 ## Installation
 1) You can download the plugin from [this page](https://www.spigotmc.org/resources/medieval-factions-sovereign-nation-simulator.79941/updates).
