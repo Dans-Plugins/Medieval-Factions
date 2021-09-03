@@ -77,7 +77,7 @@ public class Faction {
     	return gates;
     }    
     
-    // Must recieve json data
+    // Must receive json data
     public Faction(Map<String, String> data) {
         this.load(data);
     }
