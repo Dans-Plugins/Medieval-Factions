@@ -5,7 +5,7 @@ import org.bukkit.Chunk;
 import org.bukkit.entity.Player;
 
 /**
- * @author C A L L U M#4160
+ * @author DanTheTechMan#3438
  */
 public class FactionWarStartEvent extends FactionClaimEvent {
 
