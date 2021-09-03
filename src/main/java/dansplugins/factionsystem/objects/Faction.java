@@ -343,6 +343,10 @@ public class Faction {
         return members;
     }
 
+    public ArrayList<UUID> getOfficerList() {
+        return officers;
+    }
+
     public String getMemberListSeparatedByCommas() {
         ArrayList<UUID> uuids = getMemberList();
         String players = "";

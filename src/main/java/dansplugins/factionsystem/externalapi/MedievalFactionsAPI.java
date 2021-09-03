@@ -6,12 +6,12 @@ import org.bukkit.entity.Player;
 public class MedievalFactionsAPI implements IMedievalFactionsAPI {
 
     @Override
-    public FactionInfo getFaction(String factionName) {
-        return new FactionInfo(PersistentData.getInstance().getFaction(factionName));
+    public MF_Faction getFaction(String factionName) {
+        return new MF_Faction(PersistentData.getInstance().getFaction(factionName));
     }
 
     @Override
-    public FactionInfo getFaction(Player player) {
-        return new FactionInfo(PersistentData.getInstance().getPlayersFaction(player.getUniqueId()));
+    public MF_Faction getFaction(Player player) {
+        return new MF_Faction(PersistentData.getInstance().getPlayersFaction(player.getUniqueId()));
     }
 }

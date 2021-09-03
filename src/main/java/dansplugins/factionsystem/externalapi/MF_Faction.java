@@ -1,0 +1,35 @@
+package dansplugins.factionsystem.externalapi;
+
+import dansplugins.factionsystem.objects.Faction;
+import org.bukkit.entity.Player;
+
+import java.util.UUID;
+
+
+public class MF_Faction implements IMF_Faction {
+    Faction faction;
+
+    public MF_Faction(Faction f) {
+        faction = f;
+    }
+
+    @Override
+    public String getName() {
+        return faction.getName();
+    }
+
+    @Override
+    public UUID getOwner() {
+        return faction.getOwner();
+    }
+
+    @Override
+    public boolean isMember(Player player) {
+        return faction.isMember(player.getUniqueId());
+    }
+
+    @Override
+    public boolean isOfficer(Player player) {
+        return faction.isOfficer(player.getUniqueId());
+    }
+}
