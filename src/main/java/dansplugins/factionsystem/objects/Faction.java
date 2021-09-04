@@ -77,7 +77,7 @@ public class Faction {
     	return gates;
     }    
     
-    // Must recieve json data
+    // Must receive json data
     public Faction(Map<String, String> data) {
         this.load(data);
     }
@@ -341,6 +341,10 @@ public class Faction {
 
     public ArrayList<UUID> getMemberList() {
         return members;
+    }
+
+    public ArrayList<UUID> getOfficerList() {
+        return officers;
     }
 
     public String getMemberListSeparatedByCommas() {

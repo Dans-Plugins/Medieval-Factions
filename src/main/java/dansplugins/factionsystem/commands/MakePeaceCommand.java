@@ -1,7 +1,10 @@
 package dansplugins.factionsystem.commands;
 
 import dansplugins.factionsystem.commands.abs.SubCommand;
+import dansplugins.factionsystem.events.FactionWarEndEvent;
+import dansplugins.factionsystem.events.FactionWarStartEvent;
 import dansplugins.factionsystem.objects.Faction;
+import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
@@ -50,16 +53,20 @@ public class MakePeaceCommand extends SubCommand {
         messageFaction(target,
                 translate("&a" + getText("HasAttemptedToMakePeaceWith", faction.getName(), target.getName())));
         if (faction.isTruceRequested(target.getName()) && target.isTruceRequested(faction.getName())) {
-            // remove requests in case war breaks out again and they need to make peace aagain
-            faction.removeRequestedTruce(target.getName());
-            target.removeRequestedTruce(faction.getName());
+            FactionWarEndEvent warEndEvent = new FactionWarEndEvent(this.faction, target);
+            Bukkit.getPluginManager().callEvent(warEndEvent);
+            if (!warEndEvent.isCancelled()) {
+                // remove requests in case war breaks out again and they need to make peace again
+                faction.removeRequestedTruce(target.getName());
+                target.removeRequestedTruce(faction.getName());
 
-            // make peace between factions
-            faction.removeEnemy(target.getName());
-            target.removeEnemy(faction.getName());
+                // make peace between factions
+                faction.removeEnemy(target.getName());
+                target.removeEnemy(faction.getName());
 
-            // Notify
-            messageServer(translate("&a" + getText("AlertNowAtPeaceWith", faction.getName(), target.getName())));
+                // Notify
+                messageServer(translate("&a" + getText("AlertNowAtPeaceWith", faction.getName(), target.getName())));
+            }
         }
 
         // if faction was a liege, then make peace with all of their vassals as well
