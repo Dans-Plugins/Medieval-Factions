@@ -17,7 +17,7 @@ public class FactionWarStartEvent extends FactionEvent implements Cancellable {
     private String playerName;
 
     /**
-     * Constructor to initialise a FactionCreateEvent.
+     * Constructor to initialise a FactionWarStartEvent.
      * <p>
      *     This event is called when a faction declares war on another faction.
      * </p>

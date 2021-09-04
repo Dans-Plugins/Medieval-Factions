@@ -16,9 +16,9 @@ public class FactionWarEndEvent extends FactionEvent implements Cancellable {
     private String factionTwoName;
 
     /**
-     * Constructor to initialise a FactionCreateEvent.
+     * Constructor to initialise a FactionWarEndEvent.
      * <p>
-     *     This event is called when a faction declares war on another faction.
+     *     This event is called when a war ends due to a peace agreement.
      * </p>
      * @param faction1 - First faction involved.
      * @param faction2 - Second faction involved.
