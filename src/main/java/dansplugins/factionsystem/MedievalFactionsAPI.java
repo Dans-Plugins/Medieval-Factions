@@ -13,6 +13,7 @@ import java.util.UUID;
 /*
     This class gives developers access to the internal API for Medieval Factions.
 */
+@Deprecated
 public class MedievalFactionsAPI {
 
     // instance getters
@@ -83,12 +84,6 @@ public class MedievalFactionsAPI {
 
     public InteractionAccessChecker getInteractionAccessChecker() {
         return InteractionAccessChecker.getInstance();
-    }
-
-    // specific methods
-
-    public void forcePlayerToLeaveFactionChat(UUID uuid) {
-        getEphemeralData().getPlayersInFactionChat().remove(uuid);
     }
 
 }
