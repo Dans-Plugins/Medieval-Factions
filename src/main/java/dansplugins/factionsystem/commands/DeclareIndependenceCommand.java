@@ -2,7 +2,9 @@ package dansplugins.factionsystem.commands;
 
 import dansplugins.factionsystem.MedievalFactions;
 import dansplugins.factionsystem.commands.abs.SubCommand;
+import dansplugins.factionsystem.events.FactionWarStartEvent;
 import dansplugins.factionsystem.objects.Faction;
+import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
@@ -39,8 +41,13 @@ public class DeclareIndependenceCommand extends SubCommand {
         this.faction.setLiege("none");
         if (!MedievalFactions.getInstance().getConfig().getBoolean("allowNeutrality") || (!((boolean) faction.getFlags().getFlag("neutral")) && !((boolean) liege.getFlags().getFlag("neutral")))) {
             // Make enemies if (1) neutrality is disabled or (2) declaring faction is not neutral and liege is not neutral
-            this.faction.addEnemy(liege.getName());
-            liege.addEnemy(this.faction.getName());
+            FactionWarStartEvent warStartEvent = new FactionWarStartEvent(this.faction, liege, player);
+            Bukkit.getPluginManager().callEvent(warStartEvent);
+            if (!warStartEvent.isCancelled()) {
+                this.faction.addEnemy(liege.getName());
+                liege.addEnemy(this.faction.getName());
+            }
+
         }
         messageServer(translate("&c" + getText("HasDeclaredIndependence", faction.getName(), liege.getName())));
     }

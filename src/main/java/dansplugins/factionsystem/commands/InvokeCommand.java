@@ -2,7 +2,9 @@ package dansplugins.factionsystem.commands;
 
 import dansplugins.factionsystem.MedievalFactions;
 import dansplugins.factionsystem.commands.abs.SubCommand;
+import dansplugins.factionsystem.events.FactionWarStartEvent;
 import dansplugins.factionsystem.objects.Faction;
+import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
@@ -55,17 +57,21 @@ public class InvokeCommand extends SubCommand {
             player.sendMessage(translate("&c" + getText("CannotBringNeutralFactionIntoWar")));
             return;
         }
-        invokee.addEnemy(warringFaction.getName());
-        warringFaction.addEnemy(invokee.getName());
+        FactionWarStartEvent warStartEvent = new FactionWarStartEvent(invokee, warringFaction, player);
+        Bukkit.getPluginManager().callEvent(warStartEvent);
+        if (!warStartEvent.isCancelled()) {
+            invokee.addEnemy(warringFaction.getName());
+            warringFaction.addEnemy(invokee.getName());
 
-        messageFaction(invokee, // Message ally faction
-                translate("&c" + getText("AlertCalledToWar1", faction.getName(), warringFaction.getName())));
+            messageFaction(invokee, // Message ally faction
+                    translate("&c" + getText("AlertCalledToWar1", faction.getName(), warringFaction.getName())));
 
-        messageFaction(warringFaction, // Message warring faction
-                translate("&c" + getText("AlertCalledToWar2", faction.getName(), invokee.getName())));
+            messageFaction(warringFaction, // Message warring faction
+                    translate("&c" + getText("AlertCalledToWar2", faction.getName(), invokee.getName())));
 
-        messageFaction(this.faction, // Message player faction
-                translate("&a" + getText("AlertCalledToWar3", invokee.getName(), warringFaction.getName())));
+            messageFaction(this.faction, // Message player faction
+                    translate("&a" + getText("AlertCalledToWar3", invokee.getName(), warringFaction.getName())));
+        }
     }
 
     /**

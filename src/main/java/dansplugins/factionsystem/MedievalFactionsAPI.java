@@ -10,6 +10,9 @@ import dansplugins.factionsystem.utils.UUIDChecker;
 
 import java.util.UUID;
 
+/*
+    This class gives developers access to the internal API for Medieval Factions.
+*/
 public class MedievalFactionsAPI {
 
     // instance getters

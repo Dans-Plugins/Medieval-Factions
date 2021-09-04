@@ -2,7 +2,10 @@ package dansplugins.factionsystem.commands;
 
 import dansplugins.factionsystem.MedievalFactions;
 import dansplugins.factionsystem.commands.abs.SubCommand;
+import dansplugins.factionsystem.events.FactionCreateEvent;
+import dansplugins.factionsystem.events.FactionWarStartEvent;
 import dansplugins.factionsystem.objects.Faction;
+import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
@@ -71,10 +74,14 @@ public class DeclareWarCommand extends SubCommand {
             player.sendMessage(translate("&c" + getText("CannotDeclareWarIfNeutralFaction")));
             return;
         }
-        // Make enemies.
-        faction.addEnemy(opponent.getName());
-        opponent.addEnemy(faction.getName());
-        messageServer(translate("&c" + getText("HasDeclaredWarAgainst", faction.getName(), opponent.getName())));
+        FactionWarStartEvent warStartEvent = new FactionWarStartEvent(this.faction, opponent, player);
+        Bukkit.getPluginManager().callEvent(warStartEvent);
+        if (!warStartEvent.isCancelled()) {
+            // Make enemies.
+            faction.addEnemy(opponent.getName());
+            opponent.addEnemy(faction.getName());
+            messageServer(translate("&c" + getText("HasDeclaredWarAgainst", faction.getName(), opponent.getName())));
+        }
     }
 
     /**

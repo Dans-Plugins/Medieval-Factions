@@ -3,6 +3,9 @@ package dansplugins.factionsystem.externalapi;
 import dansplugins.factionsystem.data.PersistentData;
 import org.bukkit.entity.Player;
 
+/*
+    This class gives developers access to the external API for Medieval Factions.
+*/
 public class MedievalFactionsAPI implements IMedievalFactionsAPI {
 
     @Override

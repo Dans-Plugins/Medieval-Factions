@@ -3,10 +3,7 @@ package dansplugins.factionsystem.commands;
 import dansplugins.factionsystem.MedievalFactions;
 import dansplugins.factionsystem.commands.abs.SubCommand;
 import dansplugins.factionsystem.data.PersistentData;
-import dansplugins.factionsystem.events.FactionCreateEvent;
-import dansplugins.factionsystem.events.FactionJoinEvent;
-import dansplugins.factionsystem.events.FactionKickEvent;
-import dansplugins.factionsystem.events.FactionRenameEvent;
+import dansplugins.factionsystem.events.*;
 import dansplugins.factionsystem.managers.ChunkManager;
 import dansplugins.factionsystem.managers.LocaleManager;
 import dansplugins.factionsystem.managers.StorageManager;
@@ -116,12 +113,16 @@ public class ForceCommand extends SubCommand {
             sender.sendMessage(translate("&c" + getText("DesignatedFactionNotFound")));
             return;
         }
-        if (former.isEnemy(latter.getName())) former.removeEnemy(latter.getName()); // Remove
-        if (latter.isEnemy(former.getName())) latter.removeEnemy(former.getName()); // Remove
-        // announce peace to all players on server.
-        messageServer(translate(
-                "&a" + getText("AlertNowAtPeaceWith", former.getName(), latter.getName())
-        ));
+        FactionWarEndEvent warEndEvent = new FactionWarEndEvent(former, latter);
+        Bukkit.getPluginManager().callEvent(warEndEvent);
+        if (!warEndEvent.isCancelled()) {
+            if (former.isEnemy(latter.getName())) former.removeEnemy(latter.getName()); // remove enemy
+            if (latter.isEnemy(former.getName())) latter.removeEnemy(former.getName()); // remove enemy
+            // announce peace to all players on server.
+            messageServer(translate(
+                    "&a" + getText("AlertNowAtPeaceWith", former.getName(), latter.getName())
+            ));
+        }
     }
 
     private void forceDemote(CommandSender sender, String[] args) {
