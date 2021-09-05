@@ -34,7 +34,7 @@ public class ChatHandler implements Listener {
             }
 
             // check for faction chat
-            if (EphemeralData.getInstance().getPlayersInFactionChat().contains(event.getPlayer().getUniqueId())) {
+            if (EphemeralData.getInstance().isPlayerInFactionChat(event.getPlayer())) {
                 String message = event.getMessage();
                 if (MedievalFactions.getInstance().getConfig().getBoolean("chatSharedInVassalageTrees")) {
                     ArrayList<Faction> factionsInVassalageTree = PersistentData.getInstance().getFactionsInVassalageTree(playersFaction);

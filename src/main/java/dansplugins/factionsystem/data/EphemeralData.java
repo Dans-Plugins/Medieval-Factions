@@ -107,4 +107,8 @@ public class EphemeralData {
         return null;
     }
 
+    public boolean isPlayerInFactionChat(Player player) {
+        return getPlayersInFactionChat().contains(player.getUniqueId());
+    }
+
 }

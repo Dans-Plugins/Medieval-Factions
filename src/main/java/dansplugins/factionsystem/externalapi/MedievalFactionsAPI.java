@@ -32,6 +32,11 @@ public class MedievalFactionsAPI implements IMedievalFactionsAPI {
         return new MF_Faction(faction);
     }
 
+    @Override
+    public boolean isPlayerInFactionChat(Player player) {
+        return EphemeralData.getInstance().isPlayerInFactionChat(player);
+    }
+
     // mutators
 
     @Override
