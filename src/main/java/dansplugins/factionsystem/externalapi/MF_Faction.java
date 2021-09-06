@@ -19,6 +19,11 @@ public class MF_Faction implements IMF_Faction {
     }
 
     @Override
+    public String getPrefix() {
+        return faction.getPrefix();
+    }
+
+    @Override
     public UUID getOwner() {
         return faction.getOwner();
     }
@@ -31,5 +36,10 @@ public class MF_Faction implements IMF_Faction {
     @Override
     public boolean isOfficer(Player player) {
         return faction.isOfficer(player.getUniqueId());
+    }
+
+    @Override
+    public Object getFlag(String flag) {
+        return faction.getFlags().getFlag(flag);
     }
 }
