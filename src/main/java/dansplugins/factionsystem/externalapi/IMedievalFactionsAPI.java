@@ -11,6 +11,7 @@ public interface IMedievalFactionsAPI {
     MF_Faction getFaction(String factionName);
     MF_Faction getFaction(Player player);
     boolean isPlayerInFactionChat(Player player);
+    boolean isPrefixesFeatureEnabled();
     boolean isChunkClaimed(Chunk chunk);
 
     // mutators

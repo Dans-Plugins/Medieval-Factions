@@ -48,7 +48,7 @@ Name | Main Contributions
 DanTheTechMan | Creator
 Pasarus | Overhauled the Storage Manager to use UUIDs and JSON
 Caibinus | Implemented Duels, Gates and Dynmap Integration
-Callum | Overhauled the Command System and implemented PlaceholderAPI integration
+Callum | Created event classes, overhauled the Command System and implemented PlaceholderAPI integration
 Richardhyy | Fixed some encoding issues
 Mitras2 | Implemented ActionBar territory alerts
 
