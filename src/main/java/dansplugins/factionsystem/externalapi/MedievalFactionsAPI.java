@@ -37,6 +37,15 @@ public class MedievalFactionsAPI implements IMedievalFactionsAPI {
     }
 
     @Override
+    public MF_Faction getFaction(UUID playerUUID) {
+        Faction faction = PersistentData.getInstance().getPlayersFaction(playerUUID);
+        if (faction == null) {
+            return null;
+        }
+        return new MF_Faction(faction);
+    }
+
+    @Override
     public boolean isPlayerInFactionChat(Player player) {
         return EphemeralData.getInstance().isPlayerInFactionChat(player);
     }
