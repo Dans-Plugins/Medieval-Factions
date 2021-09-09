@@ -2,7 +2,9 @@ package dansplugins.factionsystem.externalapi;
 
 import dansplugins.factionsystem.data.EphemeralData;
 import dansplugins.factionsystem.data.PersistentData;
+import dansplugins.factionsystem.managers.ChunkManager;
 import dansplugins.factionsystem.objects.Faction;
+import org.bukkit.Chunk;
 import org.bukkit.entity.Player;
 
 import java.util.UUID;
@@ -35,6 +37,11 @@ public class MedievalFactionsAPI implements IMedievalFactionsAPI {
     @Override
     public boolean isPlayerInFactionChat(Player player) {
         return EphemeralData.getInstance().isPlayerInFactionChat(player);
+    }
+
+    @Override
+    public boolean isChunkClaimed(Chunk chunk) {
+        return (ChunkManager.getInstance().getClaimedChunk(chunk) != null);
     }
 
     // mutators
