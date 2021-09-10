@@ -14,6 +14,8 @@ public interface IMedievalFactionsAPI {
     boolean isPlayerInFactionChat(Player player);
     boolean isPrefixesFeatureEnabled();
     boolean isChunkClaimed(Chunk chunk);
+    int getPower(Player player);
+    int getPower(UUID playerUUID);
 
     // mutators
     void forcePlayerToLeaveFactionChat(UUID uuid);

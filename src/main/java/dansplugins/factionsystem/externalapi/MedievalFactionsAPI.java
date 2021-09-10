@@ -60,6 +60,16 @@ public class MedievalFactionsAPI implements IMedievalFactionsAPI {
         return (ChunkManager.getInstance().getClaimedChunk(chunk) != null);
     }
 
+    @Override
+    public int getPower(Player player) {
+        return PersistentData.getInstance().getPlayersPowerRecord(player.getUniqueId()).getPowerLevel();
+    }
+
+    @Override
+    public int getPower(UUID playerUUID) {
+        return PersistentData.getInstance().getPlayersPowerRecord(playerUUID).getPowerLevel();
+    }
+
     // mutators
 
     @Override
