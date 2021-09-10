@@ -302,7 +302,6 @@ public class InteractionHandler implements Listener {
 
     @EventHandler()
     public void handle(HangingBreakByEntityEvent event) {
-
         if (!(event.getRemover() instanceof Player)) {
             return;
         }
