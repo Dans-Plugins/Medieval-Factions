@@ -1,10 +1,12 @@
 package dansplugins.factionsystem.commands;
 
+import dansplugins.factionsystem.MedievalFactions;
 import dansplugins.factionsystem.commands.abs.SubCommand;
 import dansplugins.factionsystem.events.FactionRenameEvent;
 import dansplugins.factionsystem.managers.StorageManager;
 import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
+import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.Player;
 
 public class RenameCommand extends SubCommand {
@@ -30,7 +32,14 @@ public class RenameCommand extends SubCommand {
             player.sendMessage(translate("&c" + getText("UsageRename")));
             return;
         }
-        final String newName = String.join(" ", args);
+        final String newName = String.join(" ", args).trim();
+        final FileConfiguration config = MedievalFactions.getInstance().getConfig();
+        if (newName.length() > config.getInt("factionMaxNameLength")) {
+            // TODO Add a new Locale Message.
+            // TODO remove the following line.
+            player.sendMessage("Faction name too long.");
+            return;
+        }
         final String oldName = faction.getName();
         if (getFaction(newName) != null) {
             player.sendMessage(translate("&c" + getText("FactionAlreadyExists")));
