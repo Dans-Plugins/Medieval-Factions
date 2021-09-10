@@ -37,6 +37,15 @@ public class MedievalFactionsAPI implements IMedievalFactionsAPI {
     }
 
     @Override
+    public MF_Faction getFaction(UUID playerUUID) {
+        Faction faction = PersistentData.getInstance().getPlayersFaction(playerUUID);
+        if (faction == null) {
+            return null;
+        }
+        return new MF_Faction(faction);
+    }
+
+    @Override
     public boolean isPlayerInFactionChat(Player player) {
         return EphemeralData.getInstance().isPlayerInFactionChat(player);
     }
@@ -49,6 +58,16 @@ public class MedievalFactionsAPI implements IMedievalFactionsAPI {
     @Override
     public boolean isChunkClaimed(Chunk chunk) {
         return (ChunkManager.getInstance().getClaimedChunk(chunk) != null);
+    }
+
+    @Override
+    public int getPower(Player player) {
+        return PersistentData.getInstance().getPlayersPowerRecord(player.getUniqueId()).getPowerLevel();
+    }
+
+    @Override
+    public int getPower(UUID playerUUID) {
+        return PersistentData.getInstance().getPlayersPowerRecord(playerUUID).getPowerLevel();
     }
 
     // mutators
