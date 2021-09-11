@@ -3,6 +3,7 @@ package dansplugins.factionsystem.utils;
 import dansplugins.factionsystem.data.PersistentData;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
+import org.bukkit.block.Chest;
 import org.bukkit.entity.Player;
 
 import static org.bukkit.Bukkit.getLogger;
@@ -22,7 +23,7 @@ public class BlockChecker {
     }
 
     public boolean isChest(Block block) {
-        return block.getType() == Material.CHEST;
+        return block.getType() == Material.CHEST && block.getState() instanceof Chest;
     }
 
     public boolean isDoor(Block block) {

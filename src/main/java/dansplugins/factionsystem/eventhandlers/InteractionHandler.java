@@ -127,6 +127,11 @@ public class InteractionHandler implements Listener {
                 public void run() {
                     Block block = player.getWorld().getBlockAt(event.getBlock().getLocation());
 
+                    if (!BlockChecker.getInstance().isChest(block)) {
+                        // There has been 2 seconds since we last confirmed this was a chest, double-checking isn't ever bad :)
+                        return;
+                    }
+
                     InventoryHolder holder = ((Chest) block.getState()).getInventory().getHolder();
                     if (holder instanceof DoubleChest) {
                         // make sure both sides are locked
