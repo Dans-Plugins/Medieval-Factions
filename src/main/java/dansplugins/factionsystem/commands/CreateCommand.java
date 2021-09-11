@@ -1,10 +1,12 @@
 package dansplugins.factionsystem.commands;
 
+import dansplugins.factionsystem.MedievalFactions;
 import dansplugins.factionsystem.commands.abs.SubCommand;
 import dansplugins.factionsystem.events.FactionCreateEvent;
 import dansplugins.factionsystem.objects.Faction;
 import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
+import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.Player;
 
 public class CreateCommand extends SubCommand {
@@ -35,7 +37,14 @@ public class CreateCommand extends SubCommand {
             player.sendMessage(translate("&c" + getText("UsageCreate")));
             return;
         }
-        final String factionName = String.join(" ", args);
+        final String factionName = String.join(" ", args).trim();
+        final FileConfiguration config = MedievalFactions.getInstance().getConfig();
+        if (factionName.length() > config.getInt("factionMaxNameLength")) {
+            // TODO Add a new Locale Message.
+            // TODO remove the following line.
+            player.sendMessage("Faction name too long.");
+            return;
+        }
         if (data.getFaction(factionName) != null) {
             player.sendMessage(translate("&c" + getText("FactionAlreadyExists")));
             return;
