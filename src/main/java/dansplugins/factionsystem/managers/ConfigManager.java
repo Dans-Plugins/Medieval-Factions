@@ -138,6 +138,9 @@ public class ConfigManager {
         if (!MedievalFactions.getInstance().getConfig().isBoolean("debugMode")) {
             MedievalFactions.getInstance().getConfig().addDefault("debugMode", false);
         }
+        if (!MedievalFactions.getInstance().getConfig().isBoolean("factionProtectionsEnabled")) {
+            MedievalFactions.getInstance().getConfig().addDefault("factionProtectionsEnabled", true);
+        }
 
         deleteOldConfigOptionsIfPresent();
 
@@ -202,7 +205,8 @@ public class ConfigManager {
                     || option.equalsIgnoreCase("randomFactionAssignment")
                     || option.equalsIgnoreCase("allowNeutrality")
                     || option.equalsIgnoreCase("showPrefixesInFactionChat")
-                    || option.equalsIgnoreCase("debugMode")) {
+                    || option.equalsIgnoreCase("debugMode")
+                    || option.equalsIgnoreCase("factionProtectionsEnabled")) {
                 MedievalFactions.getInstance().getConfig().set(option, Boolean.parseBoolean(value));
                 sender.sendMessage(ChatColor.GREEN + LocaleManager.getInstance().getText("BooleanSet"));
             }
@@ -269,6 +273,7 @@ public class ConfigManager {
         MedievalFactions.getInstance().getConfig().addDefault("allowNeutrality", false);
         MedievalFactions.getInstance().getConfig().addDefault("showPrefixesInFactionChat", false);
         MedievalFactions.getInstance().getConfig().addDefault("debugMode", false);
+        MedievalFactions.getInstance().getConfig().addDefault("factionProtectionsEnabled", true);
         MedievalFactions.getInstance().getConfig().options().copyDefaults(true);
         MedievalFactions.getInstance().saveConfig();
     }
@@ -315,7 +320,8 @@ public class ConfigManager {
                 + ", territoryIndicatorActionbar: " + MedievalFactions.getInstance().getConfig().getBoolean("territoryIndicatorActionbar")
                 + ", randomFactionAssignment: " + MedievalFactions.getInstance().getConfig().getBoolean("randomFactionAssignment")
                 + ", allowNeutrality: " + MedievalFactions.getInstance().getConfig().getBoolean("allowNeutrality")
-                + ", showPrefixesInFactionChat: " + MedievalFactions.getInstance().getConfig().getBoolean("showPrefixesInFactionChat"));
+                + ", showPrefixesInFactionChat: " + MedievalFactions.getInstance().getConfig().getBoolean("showPrefixesInFactionChat")
+                + ", factionProtectionsEnabled: " + MedievalFactions.getInstance().getConfig().getBoolean("factionProtectionsEnabled"));
     }
 
     public boolean hasBeenAltered() {
