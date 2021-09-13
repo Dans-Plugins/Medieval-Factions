@@ -157,12 +157,14 @@ public class DamageEffectsAndDeathHandler implements Listener {
             return;
         }
         else if (arePlayersInSameFaction(attacker, victim)) {
-            event.setCancelled(true);
-            attacker.sendMessage(ChatColor.RED + LocaleManager.getInstance().getText("CannotAttackFactionMember"));
+            Faction faction = PersistentData.getInstance().getPlayersFaction(attacker.getUniqueId());
+            boolean friendlyFireAllowed = (boolean) faction.getFlags().getFlag("allowfriendlyFire");
+            if (!friendlyFireAllowed) {
+                event.setCancelled(true);
+                attacker.sendMessage(ChatColor.RED + LocaleManager.getInstance().getText("CannotAttackFactionMember"));
+            }
         }
-
-        // if attacker's faction and victim's faction are not at war
-        else if (arePlayersFactionsNotEnemies(attacker, victim)) {
+        else if (arePlayersFactionsNotEnemies(attacker, victim)) { // if attacker's faction and victim's faction are not at war
             if (MedievalFactions.getInstance().getConfig().getBoolean("warsRequiredForPVP")) {
                 event.setCancelled(true);
                 attacker.sendMessage(ChatColor.RED + LocaleManager.getInstance().getText("CannotAttackNonWarringPlayer"));

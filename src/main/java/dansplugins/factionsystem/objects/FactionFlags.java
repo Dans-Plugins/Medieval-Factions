@@ -37,6 +37,7 @@ public class FactionFlags {
         flagNames.add("dynmapTerritoryColor");
         flagNames.add("territoryAlertColor");
         flagNames.add("prefixColor");
+        flagNames.add("allowFriendlyFire");
     }
 
     public void initializeFlagValues() {
@@ -49,6 +50,7 @@ public class FactionFlags {
         stringValues.put("dynmapTerritoryColor", "#ff0000");
         stringValues.put("territoryAlertColor", MedievalFactions.getInstance().getConfig().getString("territoryAlertColor"));
         stringValues.put("prefixColor", "white");
+        booleanValues.put("allowFriendlyFire", false);
     }
 
     public void loadMissingFlagsIfNecessary() {
@@ -76,6 +78,9 @@ public class FactionFlags {
         }
         if (!stringValues.containsKey("prefixColor")) {
             stringValues.put("prefixColor", "white");
+        }
+        if (!booleanValues.containsKey("allowFriendlyFire")) {
+            booleanValues.put("allowFriendlyFire", false);
         }
     }
 
