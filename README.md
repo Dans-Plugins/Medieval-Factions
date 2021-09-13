@@ -60,7 +60,7 @@ Neh | Spanish
 Johhny | Spanish
 1barab1 | Russian
 2kManfridi | Russian
-Kaonami | Brazilian Portuguese
+Kaonami | Portugese Brazilian
 
 ## License
 GPL3
