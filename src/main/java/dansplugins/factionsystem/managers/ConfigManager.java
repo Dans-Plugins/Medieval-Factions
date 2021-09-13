@@ -1,8 +1,10 @@
 package dansplugins.factionsystem.managers;
 
 import dansplugins.factionsystem.MedievalFactions;
+import dansplugins.fiefs.Fiefs;
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
+import org.bukkit.configuration.file.FileConfiguration;
 
 public class ConfigManager {
 
@@ -326,6 +328,26 @@ public class ConfigManager {
 
     public boolean hasBeenAltered() {
         return altered;
+    }
+
+    public FileConfiguration getConfig() {
+        return Fiefs.getInstance().getConfig();
+    }
+
+    public int getInt(String option) {
+        return getConfig().getInt(option);
+    }
+
+    public boolean getBoolean(String option) {
+        return getConfig().getBoolean(option);
+    }
+
+    public double getDouble(String option) {
+        return getConfig().getDouble(option);
+    }
+
+    public String getString(String option) {
+        return getConfig().getString(option);
     }
 
 }
