@@ -1,0 +1,548 @@
+AcceptedChallengeDuelHasBegun	Du hast die Herausforderung von %s angenommen, das Duell hat begonnen.
+AlertAccessGrantedTo	 Zugriff auf %s gewährt
+AlertAccessRevokedFor	Zugriff für %s widerrufen
+AlertAllianceHasBeenBroken	%s hat deine Allianz deiner Fraktion gebrochen.
+AlertAlreadyAtWarWith	Deine Fraktion befindet sich bereits im Krieg mit%s.
+AlertAlreadyCreatingGate	Du erstellst bereits ein Gate.
+AlertAlreadyDueling	Du bist bereits in einem Duell
+AlertAlreadyDuelingPlayer	Du duellerist dich bereits mit %s
+AlertAlreadyDuelingSomeone	Du duellierst dich schon mit jemandem.
+AlertAlreadyGrantingAccess	Du gewährst bereits jemandem Zugriff. Gebe / mf grantaccess cancel ein, um dies abzubrechen.
+AlertAlreadyInFaction	Du bist schon in einer Fraktion, sorry.
+AlertAlreadyRequestedAlliance	Du hast bereits ein Bündnisangebot an diese Faction gesendet.
+AlertAlreadyRequestedPeace	Du hast bereits ein Friedensangebot an diese Faction gesendet.
+AlertAttemptedAlliance	%s hat versucht sich mit %s zu verbünden
+AlertAttemptedVassalization	%s hat versucht, deine Fraktion zu vassalisieren. Wenn du der Eigentümer bist, gebe '/mf swearfealty %s' ein, um zu akzeptieren.
+AlertBeenInvited	 Du wurdest zu %s eingeladen. Gebe /mf join %s ein, um beizutreten.
+AlertCalledToWar1	%s hat deine Fraktion in ihren Krieg mit %s gerufen.
+AlertCalledToWar2	%s hat %s in den Krieg mit deiner Faction gerufen.
+AlertCalledToWar3	 Deine Fraktion hat %s in deinen Krieg mit %s gerufen.
+AlertChallengedToDuel	 %s hat %s zu einem Duell herausgefordert.
+AlertChallengedToDuelPlusHowTo	%s hat dich zu einem Duell herausgefordert. Typ /mf duell akzeptieren, um zu beginnen. 
+AlertChallengeIssued	 Du hast %s zu einem Duell herausgefordert.
+AlertChallengeWasAccepted	%s hat deine Herausforderung angenommen, das Duell hat begonnen.
+AlertChangedGateName	Der Gate-Name wurde in '% s' geändert.
+AlertCurrentPowerLevel	Deine aktuelles Power Level ist% d /% d.
+AlertDecreasingThePowerOfInactivePlayers	Medieval Factions verringert die Power jedes Spielers um %d, wenn sie seit mehr als%d Minuten nicht mehr online waren. Dies geschieht alle %d Minuten.
+AlertDemotion	 Du wurdest in deiner Fraktion zum Mitgliedsstatus herabgestuft.
+AlertDisbandmentDueToZeroPower	 Deine Fraktion wurde aufgelöst, weil deine kumulative Power Null erreicht hat.
+AlertFactionAttemptedToVassalize	 Deine Fraktion hat versucht, %s zu vassalisieren.
+AlertFactionHasBeenVassalized	Deine Fraktion wurde vassalisiert und hat einen neuen Lehnsherrn: %s
+AlertFactionHasNewVassal	Deine Fraktion hat einen neuen Vasallen: %s
+AlertFactionHomeRemoved	Dein Factionhome wurde entfernt.
+AlertFactionIsWeakened	Deine Faction hat weniger als die Häflte der Max-Power. Sie wird keinen Bonus Power von ihren, jetzt unabhängigen, Vasallen mehr bekommen.
+AlertForcedDemotion	 Du wurdest in deiner Fraktion gewaltsam vom Offiziersstatus herabgestuft.
+AlertForcedKick	 Du wurdest gewaltsam aus deiner Fraktion geworfen.
+AlertForcedLoad	 Medieval Factions wurde zum Laden gezwungen.
+AlertForcedSave	Medieval Factions wurde gezwungen zu speichern.
+AlertForcedToJoinFaction	Du wurdest gezwungen, einer Fraktion beizutreten.
+AlertGate	Das ist das '%s' Tor.
+AlertGrantedIndependence	 %s hat deiner Fraktion Unabhängigkeit gewährt.
+AlertIncreasingThePowerOfEveryPlayer	 Medieval Factions erhöht die Power jedes Spielers um %d. Dies geschieht alle %d Minuten.
+AlertJoinedFaction	Du bist der Fraktion beigetreten.
+AlertKicked	Du wurdest von %s aus deiner Fraktion geworfen.
+AlertLandClaimed	
+AlertLandConqueredFromAnotherFaction	Land erobert von %s. Größe deiner Faction: %d%d
+AlertLandConqueredFromYourFaction	 %s hat Land von deiner Fraktion erobert.
+AlertLeftFaction	Du hast deine Fraktion verlassen.
+AlertLeftFactionAndItGotDeleted	Du hast deine Faction verlassen. Sie wurde gelöscht, da sie nun keine Mitglieder mehr hat
+AlertMoreClaimedChunksThanPower	 Deine Fraktion hat mehr geclaimte Chunks als Power. Dein Land kann erobert werden.
+AlertMustBeAtWarToConquer	Beide Fraktionen müssen sich im Krieg befinden, damit du Land erobern kannst.
+AlertMustBeInFactionToUseCommand	Du musst in einer Faction sein um diesen Command zu benutzen
+AlertMustBeMemberToCreateGate	Du musst Member der Faction sein um ein Gate zu erstellen
+AlertMustBeOfficerOrOwnerToClaimLand	Du musst entweder Vizeanführer- oder Anführer sein um Land zu claimen
+AlertMustBeOwnerOrOfficerToCreateGate	Du musst Faction Owner oder Vizeanführer sein um ein Gate zu erstellen
+AlertMustBeOwnerOrOfficerToUseCommand	Du musst Anführer oder Vizeanführer einer Faction sein um diesen Command zu benutzen
+AlertMustBeOwnerToInvokeAlliance	Du musst Anführer einer Faction sein um eine Allianz zu beschließen!
+AlertMustBeOwnerToUseCommand	Du musst Anführer einer Faction sein um diesen Command zu nutzen
+AlertMustKickAllPlayers	Du musst alle Spieler aus der Faction kicken, bevor du sie löschen kannst!
+AlertNoGatesDefined	Deine Faction hat keine eigenen Gates.
+AlertNoLaws	Deine Faction hat keine eigenen Regeln
+AlertNoLongerVassalFaction	%s ist nicht mehr Vasall deiner Faction
+AlertNonOwnership	Das gehört dir nicht!
+AlertNoPendingChallenges	Du hast keine anstehenden Herausforderungen, die du abbrechen kannst
+AlertNotAllied	Deine Faction ist in keinem Bündnis mit %s
+AlertNotBeenChallenged	Du hast keine ausstehenden Duellherausforderungen mehr
+AlertNotBeenChallengedByPlayer	Du wurdest nicht zu einem Duell mit %s herausgefordert
+AlertNotInFaction	Du bist in keiner Faction!
+AlertNotInvitedToFaction	Du bist nicht in diese Faction eingeladen worden.
+AlertNotOfferedVassalizationBy	Du hast kein Angebot um Vasall dieser Faction zu werden
+AlertNowAlliedWith	Dein Faction hat jetzt ein Bündnis mit %s
+AlertNowAtPeaceWith	%s steht nun wieder im Frieden mit %s.
+AlertPlayerAlreadyOwner	Dieser Spieler ist bereits der Anführer dieser Faction!
+AlertPlayerNotInFaction	Dieser Spieler ist nicht in dieser Faction
+AlertPowerLevelDecreased	Dein Powerlevel ist gesunken
+AlertPowerLevelIncreasedBy	Du fühlst dich wieder stärker. Dein Powerlevel ist auf %d gestiegen.
+AlertReachedDemesne	Du hast das Limit der Menge von Land erreicht. Lade mehr Spieler ein um dieses Limit anzuheben.
+AlertUnlocked	Entsperrt.
+AlertUnlockingCancelled	Entsperrung abgebrochen.
+AllianceBrokenWith	Die Allianz mit %s wurde gebrochen
+AlliedWith	Verbündet mit: %s
+AllLandUnclaimed	All dein Land wurde unclaimed
+AllLandUnclaimedFrom	Alles Land von %s wurde unclaimed
+AlreadyEnteredCheckAccess	Du hast diesen Command bereits durchgeführt. Tippe "/mf checkaccess cancel' um ihn abzubrechen
+AlreadyEnteredRevokeAccess	Du hast diesen Command bereits durchgeführt. Tippe /mf revokeacces cancel um ihn zurückzuziehen
+AlreadyInFaction	Sorry, du bist bereits in einer Faction. Verlasse sie um eine neue zu erstellen
+ArgumentMustBeNumber	Das Argument muss eine Zahl sein.
+ArgumentsSingleQuotesRequirement	Argumente müssen in einfachen Anführungszeichen angegeben werden.
+AssignedToRandomFaction	Du wurdest einer zufälligen Faction zugeordnet
+AttemptedAlliance	Bündnisangebot an %s gesendet
+AttemptedPeace	Friedensangebot an %s gesendet
+AtWarWith	Im Krieg mit. %s
+AutoclaimToggled	Autoclaim aktiviert.
+BlockAlreadyLocked	Dieser Block ist bereits gesichert
+BlockIsNotLocked	Dieser Block ist noch nicht gesichert
+BlockIsPartOfGateMustRemoveGate	Dieser Block ist Teil von Gate '%s'. Du musst zuerst das Gate removen!
+BonusPower	Bonus Power von Admins: %d
+BooleanSet	Boolean gesetzt
+Cancelled	Abgebrochen
+CancelledGatePlacement1	Error beim Platzieren von Point 1. Gate Placement wurde abgebrochen
+CancelledGatePlacement2	Error beim Platzieren von Point 2. Gate Placement abgebrochen
+CancelledGatePlacementErrorLinking	Fehler beim Verbinden mit Hebel. Gate Placement wurde gecancelled.
+CannotAllyWithSelf	Du kannst dich nicht mit deiner eigenen Faction verbünden.
+CannotAttackFactionMember	Du kannst niemanden aus deiner eigenen Faction angreifen.
+CannotAttackNonWarringPlayer	Du kannst keinen Spieler aus einer anderen Faction angreifen, wenn eure Factions nicht gegenseitig im Krieg stehen
+CannotBreakAllianceWithSelf	Du kannst keine Allianz mit deiner eigenen Faction brechen
+CannotBringNeutralFactionIntoWar	Du kannst keine neutralen Factions in den Krieg bringen
+CannotCancelActiveDuel	Du kannst kein aktives Duell abbrechen
+CannotDeclareWarIfLiegeNotWeakened	Sie können dieser Fraktion keinen Krieg erklären, da sie Vasallen sind, es sei denn, ihr Lehnsherr ist geschwächt.
+CannotDeclareWarIfNeutralFaction	Neutrale Factions können keinen Krieg erklären.
+CannotDeclareWarOnAlly	Du kannst keinem deiner Verbündeten den Krieg erklären
+CannotDeclareWarOnLiege	Du kannst keinen Krieg an deinen Lehnsherren erklären. Benutze stattdessen /mf declareindepence
+CannotDeclareWarOnNeutralFaction	Du kannst keinen Krieg an eine neutrale Faction erklären
+CannotDeclareWarOnVassal	Du kannst keinen Krieg an deinen eigenen Vasallen erklären
+CannotDeclareWarOnYourself	Du kannst dir nicht selbst den Krieg erklären
+CannotDemoteSelf	Du kannst dich nicht selbst degradieren
+CannotDuelSelf	Du kannst dich nicht mit dir selbst duellieren
+CannotFindDynmap	Dynmap wurde nicht gefunden
+CannotForciblyKickOwner	Du kannst nicht gewaltsam den Anführer aus seiner eigenen Faction kicken. Versuche die Faction zu löschen.
+CannotGrantAccessToSelf	Du kannst dir nicht selbst Zugriff gewähren
+CannotKickOwner	Du kannst nicht den Anführer kicken.
+CannotKickSelf	Du kannst dich nicht selbst kicken.
+CannotMakePeaceWithSelf	Du kannst nicht mit deiner eigenen Faction Frieden schließen.
+CannotPlaceChestsNextToUnownedLockedChests	Du kannst keine Truhe neben einer fremden, gelockten Truhe platzieren.
+CannotPlaceHoppersNextToUnownedLockedChests	Du kannst keine Trichter neben, unter oder über einer gelockten Kiste platzieren, die dir nicht gehört.
+CannotPromoteSelf	Du kannst dich nicht selbst befördern.
+CannotRevokeAccessFromSelf	Du kannst deinen eigenen Zugang nicht entfernen
+CannotSetFactionHomeInWilderness	Du kannst dein Faction-Home auf kein Land setzen, das nicht deiner Faction gehört
+CannotSetVersion	Version kann nicht eingestellt werden.
+CannotTransferToSelf	Du kannst die Ownerschaft deiner Faction nicht an dich selbst übergeben.
+CannotVassalizeLiege	Du kannst deinen eigenen Lehnsherren nicht vasallisieren.
+CannotVassalizeSelf	Du kannst deine eigene Faction nicht vassalieren.
+CannotVassalizeVassal	Du kannst eine Faction nicht vassalisieren, wenn sie bereits einen Lehnsherren hat
+CanOnlyCreateGatesInClaimedTerritory	Du kannst Gates nur auf, zu deiner Faction gehörendem, Territorium erstellen.
+CanOnlyLockBlocksInClaimedTerritory	Du kannst Blöcke nur auf Land deiner Faction locken.
+CanOnlyLockInFactionTerritory	Du kannst nur Dinge auf dem Land deiner eigenen Faction locken.
+CanOnlyLockSpecificBlocks	Du kannst nur Truhen, Türen, Fässer, Falltüren, Öfen, Ambosse und Gates locken.
+ClaimedChunksLoaded	Geclaimte chunks geladen.
+ClaimedChunksSuccessfullyLoaded	Geclaimte chunks wurden erfolgreich geladen.
+ClickOnTriggerLever	Klicke auf den Hebel
+ClickToPlaceSecondCorner	Klicke, um die zweite Ecke zu platzieren
+CmdAddLaw	addlaw
+CmdAlly	ally
+CmdAutoClaim	autoclaim
+CmdBreakAlliance	breakalliance
+CmdBypass	bypass
+CmdChat	chat
+CmdCheckAccess	checkacess
+CmdCheckClaim	checklaim
+CmdClaim	claim
+CmdConfig	config
+CmdConfigSet	set
+CmdConfigShow	show
+CmdCreate	create
+CmdDeclareIndependence	declearindependence
+CmdDeclareWar	declearwar
+CmdDemote	demote
+CmdDesc	desc
+CmdDisband	disband
+CmdDuel	duel
+CmdDuelAccept	accept
+CmdDuelCancel	cancel
+CmdDuelChallenge	challenge
+CmdEditLaw	editlaw
+CmdFlags	flags
+CmdFlagsSet	set
+CmdFlagsShow	show
+CmdForce	force
+CmdForceBonusPower	bonuspower
+CmdForceClaim	claim
+CmdForceCreate	create
+CmdForceDemote	demote
+CmdForceJoin	join
+CmdForceKick	kick
+CmdForceLoad	load
+CmdForcePeace	peace
+CmdForcePower	power
+CmdForceRename	rename
+CmdForceRenounce	renounce
+CmdForceSave	save
+CmdForceTransfer	transfer
+CmdForceUnlock	unlock
+CmdGate	gate
+CmdGateCancel	cancel
+CmdGateCreate	create
+CmdGateList	list
+CmdGateName	name
+CmdGateRemove	remove
+CmdGrantAccess	grantaccess
+CmdGrantIndependence	grantindependence
+CmdHelp	help
+CmdHome	home
+CmdInfo	info
+CmdInvite	invite
+CmdInvoke	invoke
+CmdJoin	join
+CmdKick	kick
+CmdLaws	laws
+CmdLeave	leave
+CmdList	list
+CmdLock	lock
+CmdMakePeace	makepeace
+CmdMembers	members
+CmdPower	powers
+CmdPrefix	prefix
+CmdPromote	promote
+CmdRemoveLaw	removelaw
+CmdRename	rename
+CmdResetPowerLevels	resetpowerlevels
+CmdRevokeAccess	revokeaccess
+CmdSetHome	sethome
+CmdSwearFealty	swearfealty
+CmdTransfer	transfer
+CmdUnclaim	unclaim
+CmdUnclaimall	unclaimall
+CmdUnlock	unlock
+CmdVassalize	vassalize
+CmdVersion	version
+CmdWho	who
+CommandCancelled	Command abgebrochen.
+CommandNotRecognized	Medieval Faction erkennt diesen Command nicht an.
+CommandsPage1	== Medieval Factions Seite 1/%d ==
+CommandsPage2	== Medieval Factions Seite 2/%d ==
+CommandsPage3	== Medieval Factions Seite 3/%d ==
+CommandsPage4	== Medieval Factions Seite 4/%d ==
+CommandsPage5	== Medieval Factions Seite 5/%d ==
+CommandsPage6	== Medieval Factions Seite 6/%d ==
+CommandsPage7	== Medieval Factions Seite 7/%d ==
+ConfigListPageOne	===== Konfigurationsliste Seite 1/2 =====
+ConfigListPageTwo	===== Konfigurationsliste Seite 2/2 =====
+CreatingGateCancelled	Gate erstellen abgebrochen.
+CreatingGateClickWithHoe	Creating Gate. Klicke mit einer Goldhacke auf einen Block um den ersten Punkt auszuwählen
+CuboidDisallowed1	Fehler beim Platzieren von Punkt 1: Du kannst keinen Quader platzieren.
+CuboidDisallowed2	Fehler beim Platzieren von Punkt 2: Sie können keinen Quader platzieren.
+CurrentLanguageID	Current Language ID: %s
+CurrentlyNoFactions	Es gibt gerade keine Factions.
+CurrentPowerLevel	%s' derzeitiger Power Level ist %d/%d.
+Defeated	%s hat %s in einem Duell besiegt.
+DemesneSize	Herrschaftsgröße: %d/%d
+Description	Descrption
+DescriptionSet	Description gesetzt.
+DesignatedFactionNotFound	Eine der benannten Factions wurde nicht gefunden.
+DesiredPowerMustBeANumber	Gewünschter Power muss eine Zahl sein.
+DeveloperList	Entwickler: %s
+DisbandmentDueToZeroPower	%s wurde gelöscht, da der Powerlevel final 0 erreicht hat.
+DoesntExist	%s existiert nicht.
+Done	Done.
+DoubleSet	Double gesetzt.
+DuelChallengeCancelled	Duell Challenge abgebrochen.
+DuelEndedInTie	Das Duell von %s und %s ist in einem Unentschieden geendet.
+DynmapIntegrationSuccessful	Dynmap intergration wurde erfolgreich ausgeführt
+ERROR	ERROR
+ErrorAddingAreaMarker	Error beim setzen der Marker Area %s
+ErrorChunkRemoval	Ein Fehler ist während des Entfernens der geclaimten Chunks aufgetreten.
+ErrorClaimedChunkRemoval	Ein Fehler ist während des Entfernens der geclaimten Chunks aufgetreten.
+ErrorCouldNotFindGatesFaction	Error: Konnte Faction für gate '%s' nicht finden.
+ErrorCouldNotLoadFactionGate	Error: Konnte Faction Gate \n nicht laden.
+ErrorCreatingMarkerSet	Fehler beim Erstellen der Markierung.
+ErrorIntegratingWithDynmap	Fehler bei der Integration mit dynmap:
+ErrorPlayerPowerRecordForUUIDNotFound	ERROR: Die Poweraufzeichnung des Spielers für die uuid wurde nicht gefunden. Das kumulative Power Level konnte nicht abgerufen werden.
+ErrorSettingAreaMarkerColor	Fehler beim Setzen der Bereichsmarkierungsfarbe auf '%s'.
+FactionAlreadyAlly	Diese Fraktion ist bereits dein Verbündeter.
+FactionAlreadyExists	Sorry. Diese Faction existiert bereits.
+FactionAndPlayerSingleQuotesRequirement	Fraktion und Spieler müssen in einfachen Anführungszeichen angegeben werden.
+FactionAndVassalSingleQuotesRequirement	Fraktion und Vasall, die entfernt werden sollen, müssen in einfachen Anführungszeichen angegeben werden.
+FactionCreated	Faction erstellt.
+FactionCurrentlyEnemyMustMakePeace	Diese Faction ist im Moment dein Feind. Schließe zuerst Frieden, bevor du dich mit ihnen verbündest.
+FactionDataLoadedSuccessfuly	Faction Data wurde erfolgreich geladen.
+FactionDoesNotExist	Sorry, diese Faction existiert nicht
+FactionDoesNotHaveLaws	Diese Faction hat keine eigenen Gesetze.
+FactionGates	Faction Gates.
+FactionHomeLoadError	Ein Fehler ist beim Laden der Koordinaten des Faction-Homes aufgetreten.
+FactionHomeNotSetYet	Das Faction-Home wurde noch nicht gesetzt.
+FactionHomeSet	Faction Home gesetzt.
+FactionInfo	
+FactionIsNotVassal	Diese Faction ist kein Vasall von dir.
+FactionMustBeDesignatedInsideSingleQuotes	Fraktion muss in einfachen Anführungszeichen angegeben werden.
+FactionNameChanged	Faction Name wurde geändert
+FactionNameNotRecognized	Dieser Factionnname ist nicht erkannt.
+FactionNameTooLong	Dieser Name ist zu lang.
+FactionNotEnemy	Diese Faction ist nicht dein Enemy.
+FactionNotFound	Diese Faction wurde nicht gefunden.
+FactionsSuccessfullyLoaded	Factions wurden erfolgreich geladen
+FactionsTitle	== Fraktionen ==
+FactionSuccessfullyDisbanded	Fraktion erfolgreich aufgelöst.
+FactionSuccessfullyLoaded	Fraktion erfolgreich geladen.
+FileLoadError	Ein Fehler ist beim Laden des Files aufgetreten.
+FollowingPlayersHaveAccess	Auf diesen Block haben folgende Spieler Zugriff:
+GateCreated	Tor erfolgreich erstellt.
+HasAttemptedToMakePeaceWith	%s hat versucht, mit %s Frieden zu schließen.
+HasBeenKickedFrom	%s wurde aus Faction %s gekickt
+HasDeclaredIndependence	%s hat den Vasallenvertrag mit %s aufgekündigt!
+HasDeclaredWarAgainst	%s hat %s den Krieg erklärt.
+HasJoined	%s ist der Faction %s beigetreten
+HelpAddLaw	/mf addlaw - Addet ein Gesetz zu deiner Faction.
+HelpAlly	/mf ally - Sendet ein Bündnisangebot an eine fremde Faction.
+HelpAutoclaim	/mf autoclaim - Aktiviert Autoclaim - macht Landclaiming leichter.
+HelpBreakAlliance	/mf breakalliance - Bricht eine Allianz mit einer Faction.
+HelpBypass	
+HelpChat	/mf chat - Aktiviert den Faction Chat
+HelpCheckAccess	/mf checkaccess - Checkt wer Zugriff auf einen gelockten Block hat.
+HelpCheckClaim	/mf checkclaim - Checkt ob das Land geclaimt ist.
+HelpClaim	/mf claim - Claimt Land für deine Faction
+HelpConfigSet	/mf config set (option) (value) - Setzt einen Config Wert.
+HelpConfigShow	/mf config show - Zeigt die Werte in der Config an.
+HelpCreate	/mf create <Name> - Erstellt eine neue Faction.
+HelpDeclareIndependence	/mf declareindepence - Erklärt die Unabhängikeit zu deinem Lehnsherren.
+HelpDeclareWar	/mf declarewar - Erklärt einer anderen Faction den Krieg.
+HelpDemote	/mf demote - Degradiert einen Officer zum Member.
+HelpDesc	/mf desc <desc> - Setzt die Description deiner Faction.
+HelpDisband	/mf disband - Löscht deine Faction (Du musst Anführer sein um diese Aktion durchzuführen)
+HelpDuelAccept	/mf duel accept (<optional>Spieler)
+HelpDuelCancel	/mf duel cancel
+HelpDuelChallenge	/mf duel challenge (Spieler) (<optional>Zeitlimit in Sekunden)
+HelpEditLaw	/mf editlaw - Bearbeitet ein bereits existierendes Gesetz in deiner Faction.
+HelpFlagsSet	/mf flags set (Option) (Wert) - Setzt ein Fraktionsflag.
+HelpFlagsShow	/mf flags show - Zeigt die Faction Flags
+HelpForce	/mf force - Zwingt das Plugin eine bestimmte Aktion auszuführen
+HelpForceBonusPower	/mf force bonuspower 'Fraktion' 'Zahl'
+HelpForceClaim	/mf force claim 'Fraktionsname'
+HelpForceCreate	/mf force create 'Fraktionsname'
+HelpForceDemote	/mf force demote (Spieler)
+HelpForceJoin	/mf force join 'Spieler' 'Fraktion'
+HelpForceKick	/mf force kick (Spieler)
+HelpForceLoad	/mf force load
+HelpForcePeace	/mf force peace 'fraktion1' 'fraktion2'
+HelpForcePower	/mf force power 'Spieler' 'Nummer'
+HelpForceRemoveVassal	/mf force removevassal 'Fraktion' 'Vasall'
+HelpForceRename	/mf force rename 'Fraktion' 'neuer Name'
+HelpForceRenounce	/mf force renounce (Spieler)
+HelpForceSave	/mf force save
+HelpForceTransfer	/mf force transfer 'Fraktion' 'Spieler'
+HelpForceUnlock	/mf force unlock
+HelpGateCancel	/mf gate cancel
+HelpGateCreate	/mf gate create (<optional>name)
+HelpGateList	/mf gate list
+HelpGateName	/mf gate name (<optional>name)
+HelpGateRemove	/mf gate remove
+HelpGrantAccess	/mf grantaccess - Gewähren Sie jemandem Zugriff auf einen gesperrten Block.
+HelpGrantIndependence	/mf grantacess - Gewährt jemandem Zugriff auf einen gelockten Block.
+HelpHelp	/mf grantindependence - Gewährt einer Vasall Faction Unabhängigkeit.
+HelpHome	/mf home - Teleportiert dich zu deinem Factiomhome.
+HelpInfo	/mf info - Zeigt die Information deiner oder einer fremden Faction an.
+HelpInvite	/mf invite <Player> - Invitet einen Spieler in deine Faction.
+HelpInvoke	/mf invoke ally enemy - Ruft eine verbündete Faction in den Krieg
+HelpJoin	/mf join - Joint einer Faction (Einladung benötigt)
+HelpKick	/mf kick - Kickt einen Spieler aus deiner Faction.
+HelpLaws	/mf laws - Zeigt die Gesetze deiner Faction an.
+HelpLeave	/Mf leave - Verlässt deine derzeitige Faction.
+HelpList	/mf list - Listet alle Factions auf dem Server.
+HelpLock	/mf lock - Verschließt eine Truhe oder eine Tür.
+HelpMakePeace	/mf makepeace - Sendet ein Friedensangebot an eine andere Faction.
+HelpMap	/mf map - Zeigt eine Map mit den Chunks nahe deiner Location
+HelpMembers	/mf members - Listet die Member deiner oder einer anderen Faction.
+HelpPower	/mf power - Checkt deinen Powerlevel
+HelpPrefix	/mf prefix <Prefix> - Setzt den Präfix deiner Faction.
+HelpPromote	/mf promote - Berfördert einen Player zum Officer.
+HelpRemoveLaw	/mf removelaw - Entfernt ein Gesetz aus deiner Faction.
+HelpRename	/mf rename - Benennt deine Fction um.
+HelpResetPowerLevels	/mf resetpowerlevels - Setzt den Factionpowerreword und die summierten Factionpowerlevel zurück.
+HelpRevokeAccess	/mf revokeaccess - Zieht den Zugriff eines bestimmten Spielers auf einen gelockten Block zurück
+HelpSetHome	/mv sethome - Setzt das home deiner Faction
+HelpSwearFealty	/mf swearfealty - Setzt deine Faction in Vasallenschaft zi ener anderen
+HelpTransfer	/mf transfer - Übergibt deine Faction an einen anderen Spieler.
+HelpUnclaim	/mf unclaim - Unclaimt Land deiner Faction.
+HelpUnclaimall	/mf unclaimall - Unclaimt all das Land deiner Faction.
+HelpUnlock	/mf unlock - Unlocket eine Truhe oder eine Tür.
+HelpVassalize	/mf vassalize - Sendet ein Vassalisierungsangebot an eine Faction.
+HelpVersion	/mf version - Checkt die Plugin Version.
+HelpWho	/mf who - Zeigt die Faction eines bestimmten Spielers an.
+HomeClaimedByAnotherFaction	Home wurde von einer anderen Faction geclaimt und ist somit nicht mehr nutzbar.
+HomeIsInUnclaimedChunk	Das Home befindet sich auf einem ungeclaimten Chunk und ist deshalb nicht verfügbar.
+HourlySaveAlert	Medieval Faction speichert gerade. Das passiert jede Stunde.
+IntegerSet	Integer gesetzt.
+InvitationExpired	Die Einladung von Faction %s ist abgelaufen.
+InvitationSent	Die Einladung wurde gesendet.
+KeysLoaded	Key geladen: %d
+LandAlreadyClaimedBy	Dieses Land ist bereits geclaimt durch
+LandAlreadyClaimedByYourFaction	Dieses Land ist bereits durch deine Faction geclaimt.
+LandClaimedBy	Dieses Land ist durch %s geclaimt.
+LandClaimedUsingAdminBypass	Land wurde durch den Adminmodus unclaimed.
+LandIsNotClaimed	Dieses Land ist nicht geclaimt.
+LandIsUnclaimed	Dieses Land ist frei.
+LandNotCurrentlyClaimed	Dieses Land ist im Moment nicht geclaimt.
+LandUnclaimed	Land unclaimed.
+LawAdded	Gesetz hinzugefügt.
+LawEdited	Gesetz bearbeitet.
+LawRemoved	Gesetz gelöscht.
+LawsTitle	Gesetze von %s
+LeverSuccessfullyLinked	Erstellen von Gate 4/4: Hebel erfolgreich verbunden.
+Liege	Liege: %s
+ListLegend	P: Macht, M: Mitglieder, L: Land
+LoadingClaimedChunks	Beanspruchte Blöcke werden geladen...
+LoadingLockedBLocks	Gesperrte Blöcke werden geladen...
+LoadingPlayerPowerRecords	Spielerleistungsaufzeichnungen werden geladen...
+Locked	Gesperrt.
+LockedBlockSuccessfullyLoaded	Gesperrter Block erfolgreich geladen.
+LockedBy	Gesperrt von %s
+LockingCancelled	Sperren abgebrochen.
+LockRemovalError	Beim Entfernen der Sperre ist ein Fehler aufgetreten.
+MaterialsMismatch1	Fehler beim Platzieren von Punkt 1: Nicht übereinstimmende Materialien.
+MaterialsMismatch2	Fehler beim Platzieren von Punkt 2: Nicht übereinstimmende Materialien.
+MedievalFactionsStringRight	Medieval-Factions-%s
+MedievalFactionsTitle	== Medieval Factions %s ==
+MembersOf	Mitglieder von %s
+MissingFactionGatesJSONCollection	Gates konnten nicht geladen werden, da die Sammlung 'factionGates' nicht in der Fraktions-JSON-Datei vorhanden war. Führen Sie ein Upgrade von einer früheren Version durch? Standardeinstellung.
+MovementDetectedTeleportCancelled	Bewegung erfasst. Teleport wurde abgebrochen.
+MustBeAtWarOrFactionMustBeInactive	Muss sich mit der Zielfraktion im Krieg befinden oder die Zielfraktion muss inaktiv sein.
+MustBeInFaction	Sorry. Du musst in einer Faction sein um diesen Command zu benutzen.
+MustBeOwner	Sorry. Du musst der Anführer einer Faction sein um diesen Command zu benutzen.
+MustOwnFactionOrBeOfficer	Du musst entweder Anführer oder Officer einer Faction sein um diesen Command zu benutzen.
+MustTransferOwnership	Sorry. Du musst die Faction entweder abgeben oder jeden aus der Faction kicken um sie zu verlassen.
+Name	Name: %s
+NameAlreadyTaken	Dieser Name wird berets verwendet.
+NeutralityDisabled	Neutralität ist derzeit deaktiviert.
+NoBlockDetectedToCheckForGate	Es wurde kein Block erkannt, um nach dem Gate zu suchen.
+NoFactionsDesignatedSingleQuotesRequired	Keine Fraktionen benannt. Muss in einfachen Anführungszeichen angegeben werden.
+NoLongerBypassingProtections	Sie umgehen nicht mehr den Schutz von Medieval Factions.
+NoLongerInFactionChat	Du hast den Faction Chat verlassen.
+NotAMemberOfAnyFaction	Du hast keine Faction.
+NotAnAlly	%s ist kein Verbündeter von dir.
+NotAnAllyOrVassal	%s ist kein Vasall von dir.
+NotAtWarWith	Du bist nicht im Krieg mit %s.
+NotAVassalOfAFaction	Du bist nicht Vasall einer Faction.
+NotEnoughArgumentsDesignatedSingleQuotesRequired	Nicht genügend Argumente angegeben. Muss in einfachen Anführungszeichen angegeben werden.
+NotTheOwnerOfThisBlock	Du bist nicht Besitzer dieses Blocks
+NotTheOwnerOfThisFaction	Du bist nicht der Anführer dieser Faction.
+NoVassalOrLiegeReferences	Es gab keine Verweise auf Vasallen oder Lehnsherren, die mit dieser Fraktion verbunden waren.
+NowBypassingProtections	Du umgehst gerade Protections von Medieval Factions
+NowSpeakingInFactionChat	Du schreibst jetzt im Faction Chat
+OnlyPlayersCanUseCommand	Du musst ein Spieler sein um diesen Command zu exekutieren.
+OnlyUseLeversInClaimedTerritory	Fehler: Kann nur Hebel im beanspruchten Gebiet verwenden.
+Owner	Besitzer: %s
+OwnershipTransferred	Du wurdest zum Anführer der Faction %s ernannt.
+OwnerShipTransferredTo	Eigentum an %s übertragen
+PermissionNeeded	Sorry. Um diesen Command zu benutzen benötigst du die folgende Permission: %s
+PlayerAlreadyDueling	%s duelliert sich bereits mit jemand anderem.
+PlayerAlreadyInFaction	Dieser Spieler ist bereits in einer Faction, sorry.
+PlayerAlreadyOfficer	Dieser Spieler ist bereits ein Officer.
+PlayerAndDesiredPowerSingleQuotesRequirement	Spieler und gewünschte Kraft müssen in einfachen Anführungszeichen angegeben werden.
+PlayerByNameNotFound	Sorry. Der Spieler mit dem Namen %s wurde nicht gefunden.
+PlayerCantBePromotedBecauseOfLimit	Spieler kann nicht befördert werden, da du das Limit erreicht hast. Limit: %d
+PlayerDemoted	Spieler degradiert.
+PlayerIsNotInAFaction	Dieser Spieler ist kein Mitglied einer Faction.
+PlayerIsNotInYourFaction	Dieser Spieler ist nicht Mitglied deiner Faction.
+PlayerIsNotMemberOfFaction	Dieser Spieler ist kein Member deiner Faction.
+PlayerIsNotOfficerOfFaction	Dieser Spieler ist nicht Officier deiner Faction.
+PlayerNotFound	Spieler nicht gefunden.
+PlayerPowerRecordsLoaded	Spielerleistungsaufzeichnungen geladen.
+PlayerPromoted	Spieler wurde befördert.
+PleaseWaitGate	Dieses Tor ist %s, bitte warten.
+PluginDisabled	Medieval Factions plugin deaktiviert.
+PluginDisabling	Medieval Factions plugin deaktivieren ....
+PluginEnabled	Medieval Factions plugin aktiviert.
+PluginEnabling	Medieval Factions plugin aktivieren ....
+PluginLoading	Medieval Factions plugin wird geladen...
+PluginSaving	Medieval Factions plugin speichert...
+Point1PlacementSuccessful	Tor 1/4 erstellen: Punkt 1 erfolgreich platziert.'
+Point2PlacedSuccessfully	Gate 2/4 erstellen: Punkt 2 erfolgreich platziert.
+Population	Bevölkerung: %d
+PowerHasDecayed	Ihre Leistung ist seit Ihrer letzten Abmeldung um %d gesunken. Deine Macht ist jetzt %d.
+PowerLevel	Leistungsstufe: %s
+PowerLevelHasBeenSetTo	Die Leistungsstufe dieses Spielers wurde auf %d . eingestellt
+PowerLevelHasIncreased	Dein Powerlevel hat sich erhöht.
+PowerLevelResetting	Zurücksetzen der Leistungsstufe...
+PrefixesDisabled	Präfixes sind gerade disabled.
+PrefixSet	Präfix gesetzt.
+PrefixTaken	Dieser Präfix befindet sich bereits in Nutzung.
+ProblemLoadingClaimedChunks	Ein Problem ist beim Laden der geclaimten Chunks aufgetreten.
+ProblemLoadingFactions	Ein Problem ist beim Laden der Factions aufgetreten.
+ProblemLoadingPowerRecords	Ein Problem ist beim Laden der Spielerpowerrekorde entstanden.
+PromotedToOfficer	Du wurdest zum Officer deiner Faction befördert.
+RadiusRequirement	Der Radius muss zwischen 0 und %d liegen.
+RemovedGate	Tor '%s' entfernt.
+ResettingIndividualPowerRecords	Zurücksetzen einzelner Leistungsdatensätze.
+RightClickCheckAccess	Rechtsklicke einen gelockten Block um herauszufinden, wem er gehört. Tippe '/mf checkaccess cancel' um diese Aktion abzubrechen.
+RightClickForceUnlock	Rechtsklicke eine Truhe oder eine Tür um sie allmächtig zu unlocken (Tippe /mf force unlock cancel um abzubrechen)
+RightClickGrantAccess	Klicken Sie mit der rechten Maustaste auf eine Truhe oder Tür, um %s Zugriff zu gewähren. Geben Sie /mf grantaccess cancel ein, um dies abzubrechen.
+RightClickLock	Rechtsklicke eine Tür oder eine Truhe um sie zu locken (Tippe /Mf lock cancel um to cancel)
+RightClickRevokeAccess	Rechtsklicke einen gelockten Block um den Zugriff eines Spielers zu entfernen (Tippe /Mf revokeaccess cancel um die Aktion abzubrechen)
+RightClickUnlock	Rechtsklicke eine Truhe oder eine Tür um sie zu unlocken (Tippe /mf unlock cancel um abzubrechen)
+SchedulingHourlyAutoSave	Stündliches automatisches Speichern planen...
+SchedulingPowerDecrease	Leistungsabnahme planen...
+SchedulingPowerIncrease	Leistungserhöhung planen...
+SingleQuotesAlliedWarring	Alliierte Fraktion und kriegerische Fraktion müssen in einfachen Anführungszeichen angegeben werden.
+StringSet	Zeichenfolge eingestellt.
+SubCommands	Unterbefehle:
+SuccessFactionMemberRemoval	Erfolg. Falls der Spieler in einer Faction war ist er kein Member mehr.
+SuccessForceJoin	Erfolg. Der Spieler wurde der Faction zugefügt.
+SuccessfulDisbandment	%s wurde erfolgreich gelöscht.
+SuccessOfficerRemoval	Falls der Spieler Officer in einer Faction war, wurde er erfolgreich degradiert.
+SuccessReferencesRemoved	referenzen wurden erfolgreich entfernt.
+SupportedLanguageIDList	Unterstützte Sprachen IDs: %s
+SurroundedChunkProtected	Die Zielfraktion hat die Brocken im Norden, Osten, Süden und Westen dieses Brockens beansprucht. Es kann nicht erobert werden.
+TargetBlockNotPartOfGate	Der Zielblock ist nicht Teil eines Gates.
+TargetFactionNotOverClaiming	Die Zielfraktion hat nicht mehr Land als ihre Herrschaftsgrenze.
+TeleportingAlert	Teleportieren in 3 Sekunden...
+ThreeBlockRequirement	Fehler beim Platzieren von Punkt 2: Tor muss 3 Blöcke oder höher sein.
+TriggerBlockNotLever	Triggerblock war kein Hebel. Gate-Platzierung storniert.
+UsageAddLaw	Verwendung: /mf addlaw (neues Gesetz)
+UsageAlly	Verwendung: /mf ally (Fraktionsname)
+UsageBreakAlliance	Verwendung: /mf breakalliance (Fraktionsname)
+UsageClaimRadius	Usage: /mf claim (radius)
+UsageConfigSet	Verwendung: /mf config set (Option) (Wert)
+UsageConfigShow	Verwendung: /mf config show ( 1 | 2 )
+UsageCreate	Verwendung: /mf create [fraktionsname]
+UsageDeclareWar	Verwendung: /mf declarewar (Fraktionsname)
+UsageDemote	Verwendung: /mf demote (Spielername)
+UsageDesc	Verwendung: /mf desc (Beschreibung)
+UsageEditLaw	Verwendung: /mf editlaw (Nummer) (bearbeitetes Gesetz)
+UsageFlagsSet	Verwendung: /mf Flags set (Option) (Wert)
+UsageForceBonusPower	Verwendung: /mf force bonuspower 'faction' 'number'
+UsageForceClaim	Verwendung: /mf force claim 'Fraktionsname'
+UsageForceCreate	Verwendung: /mf force create 'factionName'
+UsageForceDemote	Verwendung: /mf force demote (Spieler)
+UsageForceJoin	Verwendung: /mf force join 'player' 'faction'
+UsageForceKick	Verwendung: /mf force kick (Spieler)
+UsageForcePeace	Verwendung: /mf force peace 'faction-1' 'faction-2'
+UsageForcePower	Verwendung: /mf force power 'player' 'number'
+UsageForceRemoveVassal	/mf force removevassal 'faction-1' 'faction-2'
+UsageForceRename	Verwendung: /mf force rename 'faction' 'neuer Name'
+UsageForceRenounce	Verwendung: /mf force renounce 'faction'
+UsageForceTransfer	Verwendung: /mf force transfer 'factionName' 'player'
+UsageGrantAccess	Verwendung: /mf grantaccess (Spielername)
+UsageGrantIndependence	Verwendung: /mf grantindependence (Fraktionsname)
+UsageInvite	Verwendung: /mf invite (Spielername)
+UsageInvoke	Verwendung: /mf invoke '(Name der verbündeten Fraktion)' '(kriegsführende Fraktion)'
+UsageJoin	Verwendung: /mf join (fraktionsname)
+UsageKick	Verwendung: /mf kick (Spielername)
+UsageMakePeace	Verwendung: /mf makepeace (Fraktionsname)
+UsagePrefix	Verwendung: /mf prefix (neues Präfix)
+UsagePromote	Verwendung: /mf promote (Spielername)
+UsageRemoveLaw	Verwendung: /mf removelaw (Nummer)
+UsageRename	Verwendung: /mf rename (neuer Name)
+UsageRevokeAccess	Verwendung: /mf revokeaccess (Spielername)
+UsageSwearFealty	Verwendung: /mf swearfealty (Fraktionsname)
+UsageTransfer	Verwendung: /mf transfer (Spielername)
+UsageVassalize	Verwendung: /mf vassalize (Fraktionsname)
+UsageWho	Verwendung: /mf who (Spielername)
+ValidSubCommandsShowSet	Gültige Unterbefehle: show, set
+VassalContribution	Bonuskraft von Vasallen: %d
+Vassals	Vasallen: %s
+WarningPlayerAlreadyStartedCreatingGate	WARNUNG: Der Spieler hat bereits damit begonnen, das Tor zu erstellen. startCreatingGate()-Aufruf ignoriert.
+WasntFound	%s wurde nicht gefunden
+WelcomeBackLastLogout	Willkommen zurück %s. Du hast dich zuletzt vor %s ausgeloggt.
+WikiLink	Wiki: https://github.com/dmccoystephenson/Medieval-Factions/wiki
+Wilderness	Wildnis
+WorldsMismatch1	Fehler beim Platzieren von Punkt 1: Welten-Mismatch.
+WorldsMismatch2	Fehler beim Platzieren von Punkt 2: Welten-Mismatch.
