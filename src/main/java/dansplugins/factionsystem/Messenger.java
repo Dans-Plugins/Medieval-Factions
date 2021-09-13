@@ -50,7 +50,7 @@ public class Messenger {
                 for (FI_Fief fief : fiefs) {
                     fiefsSeparatedByCommas += fief.getName();
                 }
-                sender.sendMessage(ChatColor.AQUA + String.format("Fiefs: " + fiefsSeparatedByCommas));
+                sender.sendMessage(ChatColor.AQUA + String.format("Fiefs: %s", fiefsSeparatedByCommas));
             }
         }
         sender.sendMessage(ChatColor.AQUA + String.format(LocaleManager.getInstance().getText("AlliedWith"), faction.getAlliesSeparatedByCommas()) + "\n");
