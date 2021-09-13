@@ -91,5 +91,12 @@
             <version>2.2</version>
             <scope>provided</scope>
         </dependency>
+        <dependency>
+            <groupId>dansplugins</groupId>
+            <artifactId>Fiefs</artifactId>
+            <version>v0.8-alpha-1</version>
+            <scope>system</scope>
+            <systemPath>${project.basedir}/Fiefs-v0.8-alpha-1.jar</systemPath>
+        </dependency>
     </dependencies>
 </project>
