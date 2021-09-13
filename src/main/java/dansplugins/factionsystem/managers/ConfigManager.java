@@ -143,6 +143,9 @@ public class ConfigManager {
         if (!getConfig().isBoolean("factionProtectionsEnabled")) {
             getConfig().addDefault("factionProtectionsEnabled", true);
         }
+        if (!getConfig().isBoolean("limitLand")) {
+            getConfig().addDefault("limitLand", true);
+        }
 
         deleteOldConfigOptionsIfPresent();
 
@@ -208,7 +211,8 @@ public class ConfigManager {
                     || option.equalsIgnoreCase("allowNeutrality")
                     || option.equalsIgnoreCase("showPrefixesInFactionChat")
                     || option.equalsIgnoreCase("debugMode")
-                    || option.equalsIgnoreCase("factionProtectionsEnabled")) {
+                    || option.equalsIgnoreCase("factionProtectionsEnabled")
+                    || option.equalsIgnoreCase("limitLand")) {
                 getConfig().set(option, Boolean.parseBoolean(value));
                 sender.sendMessage(ChatColor.GREEN + LocaleManager.getInstance().getText("BooleanSet"));
             }
@@ -276,6 +280,7 @@ public class ConfigManager {
         getConfig().addDefault("showPrefixesInFactionChat", false);
         getConfig().addDefault("debugMode", false);
         getConfig().addDefault("factionProtectionsEnabled", true);
+        getConfig().addDefault("limitLand", true);
         getConfig().options().copyDefaults(true);
         MedievalFactions.getInstance().saveConfig();
     }
@@ -323,7 +328,8 @@ public class ConfigManager {
                 + ", randomFactionAssignment: " + getConfig().getBoolean("randomFactionAssignment")
                 + ", allowNeutrality: " + getConfig().getBoolean("allowNeutrality")
                 + ", showPrefixesInFactionChat: " + getConfig().getBoolean("showPrefixesInFactionChat")
-                + ", factionProtectionsEnabled: " + getConfig().getBoolean("factionProtectionsEnabled"));
+                + ", factionProtectionsEnabled: " + getConfig().getBoolean("factionProtectionsEnabled")
+                + ", limitLand: " + getConfig().getBoolean("limitLand"));
     }
 
     public boolean hasBeenAltered() {
