@@ -19,6 +19,11 @@ public class MedievalFactionsAPI implements IMedievalFactionsAPI {
     // accessors
 
     @Override
+    public String getVersion() {
+        return MedievalFactions.getInstance().getVersion();
+    }
+
+    @Override
     public MF_Faction getFaction(String factionName) {
         Faction faction = PersistentData.getInstance().getFaction(factionName);
         if (faction == null) {
