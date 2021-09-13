@@ -64,6 +64,7 @@ Johhny | Spanish
 1barab1 | Russian
 2kManfridi | Russian
 Kaonami | Portugese Brazilian
+graffity_X | German
 
 ## License
 GPL3
