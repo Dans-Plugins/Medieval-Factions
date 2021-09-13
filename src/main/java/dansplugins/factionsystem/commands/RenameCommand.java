@@ -35,9 +35,7 @@ public class RenameCommand extends SubCommand {
         final String newName = String.join(" ", args).trim();
         final FileConfiguration config = MedievalFactions.getInstance().getConfig();
         if (newName.length() > config.getInt("factionMaxNameLength")) {
-            // TODO Add a new Locale Message.
-            // TODO remove the following line.
-            player.sendMessage("Faction name too long.");
+            player.sendMessage(translate("&c" + getText("FactionNameTooLong")));
             return;
         }
         final String oldName = faction.getName();

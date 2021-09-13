@@ -40,9 +40,7 @@ public class CreateCommand extends SubCommand {
         final String factionName = String.join(" ", args).trim();
         final FileConfiguration config = MedievalFactions.getInstance().getConfig();
         if (factionName.length() > config.getInt("factionMaxNameLength")) {
-            // TODO Add a new Locale Message.
-            // TODO remove the following line.
-            player.sendMessage("Faction name too long.");
+            player.sendMessage(translate("&c" + getText("FactionNameTooLong")));
             return;
         }
         if (data.getFaction(factionName) != null) {

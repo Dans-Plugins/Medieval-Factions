@@ -545,3 +545,4 @@ WikiLink	Wiki: https://github.com/DansPlugins/Medieval-Factions/wiki
 Wilderness	Wilderness
 WorldsMismatch1	Error placing point 1: Worlds mismatch.
 WorldsMismatch2	Error placing point 2: Worlds mismatch.
+FactionNameTooLong	That name is too long.
