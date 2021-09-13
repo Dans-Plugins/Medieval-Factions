@@ -20,8 +20,6 @@ import static org.bukkit.Bukkit.getServer;
 
 public class DynmapIntegrator {
 
-    private boolean debug = MedievalFactions.getInstance().isDebugEnabled();
-
     private static DynmapIntegrator instance = null;
     public static boolean dynmapInitialized = false;
 
@@ -111,17 +109,17 @@ public class DynmapIntegrator {
         dynmap = pm.getPlugin("dynmap");
 
         if(!isDynmapPresent()) {
-            if (debug) { System.out.println(LocaleManager.getInstance().getText("CannotFindDynmap")); }
+            if (MedievalFactions.getInstance().isDebugEnabled()) { System.out.println(LocaleManager.getInstance().getText("CannotFindDynmap")); }
         }
         else {
             try {
                 dynmapAPI = (DynmapCommonAPI) dynmap; /* Get API */
                 markerAPI = dynmapAPI.getMarkerAPI();
                 initializeMarkerSets();
-                if (debug) { System.out.println(LocaleManager.getInstance().getText("DynmapIntegrationSuccessful")); }
+                if (MedievalFactions.getInstance().isDebugEnabled()) { System.out.println(LocaleManager.getInstance().getText("DynmapIntegrationSuccessful")); }
             }
             catch (Exception e) {
-                if (debug) { System.out.println(LocaleManager.getInstance().getText("ErrorIntegratingWithDynmap") + e.getMessage()); }
+                if (MedievalFactions.getInstance().isDebugEnabled()) { System.out.println(LocaleManager.getInstance().getText("ErrorIntegratingWithDynmap") + e.getMessage()); }
             }
         }
     }
@@ -138,7 +136,7 @@ public class DynmapIntegrator {
         if (set == null) {
             set = markerAPI.createMarkerSet(getDynmapPluginSetId(markerLabel), getDynmapPluginLayer(), null, false);
             if (set == null) {
-                if (debug) { System.out.println(LocaleManager.getInstance().getText("ErrorCreatingMarkerSet") + ": markerLabel = " + markerLabel); }
+                if (MedievalFactions.getInstance().isDebugEnabled()) { System.out.println(LocaleManager.getInstance().getText("ErrorCreatingMarkerSet") + ": markerLabel = " + markerLabel); }
                 return set;
             }
         }

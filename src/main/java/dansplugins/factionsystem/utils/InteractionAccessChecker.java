@@ -12,8 +12,6 @@ import static org.bukkit.Material.LADDER;
 
 public class InteractionAccessChecker {
 
-    final private boolean debug = MedievalFactions.getInstance().isDebugEnabled();
-
     private static InteractionAccessChecker instance;
 
     private InteractionAccessChecker() {
@@ -64,7 +62,7 @@ public class InteractionAccessChecker {
         boolean allyInteractionAllowed = (boolean) chunkHolder.getFlags().getFlag("alliesCanInteractWithLand");
         boolean vassalageTreeInteractionAllowed = (boolean) chunkHolder.getFlags().getFlag("vassalageTreeCanInteractWithLand");
 
-        if (debug) {
+        if (MedievalFactions.getInstance().isDebugEnabled()) {
             System.out.println("[DEBUG] allyInteractionAllowed: " + allyInteractionAllowed);
             System.out.println("[DEBUG] vassalageTreeInteractionAllowed: " + vassalageTreeInteractionAllowed);
         }

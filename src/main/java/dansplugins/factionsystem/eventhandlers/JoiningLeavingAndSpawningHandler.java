@@ -27,8 +27,6 @@ import java.util.UUID;
 
 public class JoiningLeavingAndSpawningHandler implements Listener {
 
-	boolean debug = MedievalFactions.getInstance().isDebugEnabled();
-
 	@EventHandler()
     public void handle(PlayerJoinEvent event) {
 		Player player = event.getPlayer();
@@ -54,11 +52,11 @@ public class JoiningLeavingAndSpawningHandler implements Listener {
 					faction.addMember(player.getUniqueId());
 					player.sendMessage(ChatColor.GREEN + "" + LocaleManager.getInstance().getText("AssignedToRandomFaction"));
 
-					if (debug) { System.out.println("[DEBUG] " + player.getName() + " has been randomly assigned to " + faction.getName() + "!"); }
+					if (MedievalFactions.getInstance().isDebugEnabled()) { System.out.println("[DEBUG] " + player.getName() + " has been randomly assigned to " + faction.getName() + "!"); }
 				}
 				else {
 					// there are no factions to assign this player to
-					if (debug) { System.out.println("[DEBUG] Attempted to assign " + player.getName() + " to a random faction, but no factions are existent."); }
+					if (MedievalFactions.getInstance().isDebugEnabled()) { System.out.println("[DEBUG] Attempted to assign " + player.getName() + " to a random faction, but no factions are existent."); }
 				}
 			}
         }

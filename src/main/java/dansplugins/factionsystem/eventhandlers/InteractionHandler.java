@@ -37,8 +37,6 @@ import org.bukkit.inventory.InventoryHolder;
 
 public class InteractionHandler implements Listener {
 
-    private final boolean debug = MedievalFactions.getInstance().isDebugEnabled();
-
     // EVENT HANDLER METHODS ------------------------------------------------------
 
     @EventHandler()
@@ -179,7 +177,7 @@ public class InteractionHandler implements Listener {
         }
 
         if (clickedBlock instanceof ItemFrame) {
-            if (debug) { System.out.println("DEBUG: ItemFrame interaction captured in PlayerInteractEvent!"); }
+            if (MedievalFactions.getInstance().isDebugEnabled()) { System.out.println("DEBUG: ItemFrame interaction captured in PlayerInteractEvent!"); }
         }
 
         // ---------------------------------------------------------------------------------------------------------------
@@ -286,7 +284,7 @@ public class InteractionHandler implements Listener {
             location = armorStand.getLocation();
         }
         else if (clickedEntity instanceof ItemFrame) {
-            if (debug) {
+            if (MedievalFactions.getInstance().isDebugEnabled()) {
                 System.out.println("DEBUG: ItemFrame interaction captured in PlayerInteractAtEntityEvent!");
             }
             ItemFrame itemFrame = (ItemFrame) clickedEntity;
@@ -325,7 +323,7 @@ public class InteractionHandler implements Listener {
 
     @EventHandler()
     public void handle(PlayerBucketFillEvent event) {
-        if (debug) { System.out.println("DEBUG: A player is attempting to fill a bucket!"); }
+        if (MedievalFactions.getInstance().isDebugEnabled()) { System.out.println("DEBUG: A player is attempting to fill a bucket!"); }
 
         Player player = event.getPlayer();
 
@@ -340,7 +338,7 @@ public class InteractionHandler implements Listener {
 
     @EventHandler()
     public void handle(PlayerBucketEmptyEvent event) {
-        if (debug) { System.out.println("DEBUG: A player is attempting to empty a bucket!"); }
+        if (MedievalFactions.getInstance().isDebugEnabled()) { System.out.println("DEBUG: A player is attempting to empty a bucket!"); }
 
         Player player = event.getPlayer();
 
@@ -355,7 +353,7 @@ public class InteractionHandler implements Listener {
 
     @EventHandler()
     public void handle(EntityPlaceEvent event) {
-        if (debug) { System.out.println("DEBUG: A player is attempting to place an entity!"); }
+        if (MedievalFactions.getInstance().isDebugEnabled()) { System.out.println("DEBUG: A player is attempting to place an entity!"); }
 
         Player player = event.getPlayer();
 
@@ -374,7 +372,7 @@ public class InteractionHandler implements Listener {
         Entity clickedEntity = event.getRightClicked();
 
         if (clickedEntity instanceof ItemFrame) {
-            if (debug) {
+            if (MedievalFactions.getInstance().isDebugEnabled()) {
                 System.out.println("DEBUG: ItemFrame interaction captured in PlayerInteractEntityEvent!");
             }
             ItemFrame itemFrame = (ItemFrame) clickedEntity;
