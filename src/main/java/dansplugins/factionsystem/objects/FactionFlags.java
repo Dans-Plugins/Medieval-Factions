@@ -2,6 +2,7 @@ package dansplugins.factionsystem.objects;
 
 import dansplugins.factionsystem.DynmapIntegrator;
 import dansplugins.factionsystem.MedievalFactions;
+import dansplugins.factionsystem.managers.ConfigManager;
 import dansplugins.factionsystem.managers.LocaleManager;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
@@ -95,7 +96,12 @@ public class FactionFlags {
             return;
         }
 
-        if (flag.equals("prefixColor") && !MedievalFactions.getInstance().getConfig().getBoolean("playersChatWithPrefixes")) {
+        if (!ConfigManager.getInstance().getBoolean("factionsCanSetPrefixColors")) {
+            // TODO: add message
+            return;
+        }
+
+        if (flag.equals("prefixColor") && (!MedievalFactions.getInstance().getConfig().getBoolean("playersChatWithPrefixes"))) {
             player.sendMessage(ChatColor.RED + "" + LocaleManager.getInstance().getText("PrefixesDisabled"));
             return;
         }
@@ -201,7 +207,7 @@ public class FactionFlags {
                 continue;
             }
 
-            if (flagName.equals("prefixColor") && !MedievalFactions.getInstance().getConfig().getBoolean("playersChatWithPrefixes")) {
+            if (flagName.equals("prefixColor") && (!MedievalFactions.getInstance().getConfig().getBoolean("playersChatWithPrefixes") || !ConfigManager.getInstance().getBoolean("factionsCanSetPrefixColors"))) {
                 continue;
             }
 
