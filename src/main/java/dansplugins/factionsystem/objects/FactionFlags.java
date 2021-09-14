@@ -1,6 +1,7 @@
 package dansplugins.factionsystem.objects;
 
 import dansplugins.factionsystem.DynmapIntegrator;
+import dansplugins.factionsystem.FiefsIntegrator;
 import dansplugins.factionsystem.MedievalFactions;
 import dansplugins.factionsystem.managers.ConfigManager;
 import dansplugins.factionsystem.managers.LocaleManager;
@@ -39,6 +40,7 @@ public class FactionFlags {
         flagNames.add("territoryAlertColor");
         flagNames.add("prefixColor");
         flagNames.add("allowFriendlyFire");
+        flagNames.add("fiefsEnabled");
     }
 
     public void initializeFlagValues() {
@@ -52,6 +54,7 @@ public class FactionFlags {
         stringValues.put("territoryAlertColor", MedievalFactions.getInstance().getConfig().getString("territoryAlertColor"));
         stringValues.put("prefixColor", "white");
         booleanValues.put("allowFriendlyFire", false);
+        booleanValues.put("fiefsEnabled", true);
     }
 
     public void loadMissingFlagsIfNecessary() {
@@ -83,6 +86,9 @@ public class FactionFlags {
         if (!booleanValues.containsKey("allowFriendlyFire")) {
             booleanValues.put("allowFriendlyFire", false);
         }
+        if (!booleanValues.containsKey("fiefsEnabled")) {
+            booleanValues.put("fiefsEnabled", true);
+        }
     }
 
     public void sendFlagList(Player player) {
@@ -103,6 +109,11 @@ public class FactionFlags {
 
         if (flag.equals("prefixColor") && (!MedievalFactions.getInstance().getConfig().getBoolean("playersChatWithPrefixes"))) {
             player.sendMessage(ChatColor.RED + "" + LocaleManager.getInstance().getText("PrefixesDisabled"));
+            return;
+        }
+
+        if (flag.equals("fiefsEnabled") && !FiefsIntegrator.getInstance().isFiefsPresent()) {
+            // TODO: add message
             return;
         }
 
@@ -208,6 +219,10 @@ public class FactionFlags {
             }
 
             if (flagName.equals("prefixColor") && (!MedievalFactions.getInstance().getConfig().getBoolean("playersChatWithPrefixes") || !ConfigManager.getInstance().getBoolean("factionsCanSetPrefixColors"))) {
+                continue;
+            }
+
+            if (flagName.equals("fiefsEnabled") && !FiefsIntegrator.getInstance().isFiefsPresent()) {
                 continue;
             }
 
