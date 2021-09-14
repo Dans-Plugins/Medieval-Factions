@@ -63,7 +63,7 @@ Neh | Spanish
 Johhny | Spanish
 1barab1 | Russian
 2kManfridi | Russian
-Kaonami | Portugese Brazilian
+[Kaonami](https://github.com/Daniels7k) | Portuguese Brazilian
 [graffity_X](https://www.spigotmc.org/members/kicker765.946561/) | German
 
 ## License
