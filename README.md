@@ -64,7 +64,7 @@ Johhny | Spanish
 1barab1 | Russian
 2kManfridi | Russian
 Kaonami | Portugese Brazilian
-graffity_X | German
+[graffity_X](https://www.spigotmc.org/members/kicker765.946561/) | German
 
 ## License
 GPL3
