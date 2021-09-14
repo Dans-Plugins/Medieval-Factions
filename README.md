@@ -61,7 +61,7 @@ Name | Language(s)
 ------------ | -------------
 Khanter | Spanish
 Neh | Spanish
-Johhny | Spanish
+Johnny | Spanish
 1barab1 | Russian
 2kManfridi | Russian
 [Kaonami](https://github.com/Daniels7k) | Portuguese Brazilian
