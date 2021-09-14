@@ -96,7 +96,7 @@
             <artifactId>Fiefs</artifactId>
             <version>v0.8-alpha-1</version>
             <scope>system</scope>
-            <systemPath>${project.basedir}/Fiefs-v0.8-alpha-1.jar</systemPath>
+            <systemPath>${project.basedir}/src/main/resources/Fiefs-v0.8-alpha-1.jar</systemPath>
         </dependency>
     </dependencies>
 </project>
