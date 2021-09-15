@@ -16,12 +16,12 @@ import java.util.UUID;
 */
 public class MedievalFactionsAPI implements IMedievalFactionsAPI {
 
-    private final double APIVersion = 0.5;
+    private final String APIVersion = "0.0.5";
 
     // accessors
 
     @Override
-    public double getAPIVersion() {
+    public String getAPIVersion() {
         return APIVersion;
     }
 
