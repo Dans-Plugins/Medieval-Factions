@@ -54,16 +54,17 @@ Caibinus | Implemented Duels, Gates and Dynmap Integration
 Callum | Created event classes, overhauled the Command System and implemented PlaceholderAPI integration
 Richardhyy | Fixed some encoding issues
 Mitras2 | Implemented ActionBar territory alerts
+[Kaonami](https://github.com/Daniels7k) | Fixed a typo in the README
 
 ### Translators
 Name | Language(s)
 ------------ | -------------
 Khanter | Spanish
 Neh | Spanish
-Johhny | Spanish
+Johnny | Spanish
 1barab1 | Russian
 2kManfridi | Russian
-Kaonami | Portugese Brazilian
+[Kaonami](https://github.com/Daniels7k) | Portuguese Brazilian
 [graffity_X](https://www.spigotmc.org/members/kicker765.946561/) | German
 
 ## License
