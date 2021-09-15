@@ -20,4 +20,6 @@ public interface IMedievalFactionsAPI {
 
     // mutators
     void forcePlayerToLeaveFactionChat(UUID uuid);
+    void increasePower(Player player, int amount);
+    void decreasePower(Player player, int amount);
 }
