@@ -3,7 +3,6 @@ package dansplugins.factionsystem.externalapi;
 import dansplugins.factionsystem.MedievalFactions;
 import dansplugins.factionsystem.data.EphemeralData;
 import dansplugins.factionsystem.data.PersistentData;
-import dansplugins.factionsystem.managers.ConfigManager;
 import dansplugins.factionsystem.managers.ChunkManager;
 import dansplugins.factionsystem.objects.Faction;
 import dansplugins.factionsystem.objects.PlayerPowerRecord;
@@ -17,7 +16,14 @@ import java.util.UUID;
 */
 public class MedievalFactionsAPI implements IMedievalFactionsAPI {
 
+    private final double APIVersion = 0.5;
+
     // accessors
+
+    @Override
+    public double getAPIVersion() {
+        return APIVersion;
+    }
 
     @Override
     public String getVersion() {
@@ -97,7 +103,7 @@ public class MedievalFactionsAPI implements IMedievalFactionsAPI {
         int originalPower = powerRecord.getPowerLevel();
         int newPower = originalPower - amount;
         if (newPower >= 0) {
-            powerRecord.setPowerLevel(originalPower + amount);
+            powerRecord.setPowerLevel(originalPower - amount);
         }
         else {
             powerRecord.setPowerLevel(0);
