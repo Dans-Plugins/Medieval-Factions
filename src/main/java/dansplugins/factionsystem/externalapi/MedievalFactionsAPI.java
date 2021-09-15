@@ -16,7 +16,7 @@ import java.util.UUID;
 */
 public class MedievalFactionsAPI implements IMedievalFactionsAPI {
 
-    private final String APIVersion = "0.0.5";
+    private final String APIVersion = "0.0.5"; // every time the external API is altered, this should be incremented
 
     // accessors
 
