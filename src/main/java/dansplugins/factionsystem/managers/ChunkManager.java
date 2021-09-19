@@ -318,7 +318,7 @@ public class ChunkManager {
         FactionUnclaimEvent unclaimEvent = new FactionUnclaimEvent(faction, player, chunk.getChunk());
         Bukkit.getPluginManager().callEvent(unclaimEvent);
         if (unclaimEvent.isCancelled()) {
-            // TODO Add a message here (maybe).
+            // TODO: add locale message
             return;
         }
 

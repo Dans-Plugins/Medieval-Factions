@@ -187,7 +187,7 @@ public class ForceCommand extends SubCommand {
         FactionJoinEvent joinEvent = new FactionJoinEvent(faction, player);
         Bukkit.getPluginManager().callEvent(joinEvent);
         if (joinEvent.isCancelled()) {
-            // TODO Locale Message
+            // TODO: add locale message
             return;
         }
         messageFaction(faction, translate("&a" + getText("HasJoined", player.getName(), faction.getName())));
@@ -227,7 +227,7 @@ public class ForceCommand extends SubCommand {
         FactionKickEvent kickEvent = new FactionKickEvent(faction, target, null); // no kicker so null is used
         Bukkit.getPluginManager().callEvent(kickEvent);
         if (kickEvent.isCancelled()) {
-            // TODO Locale Message
+            // TODO: add locale message
             return;
         }
         if (faction.isOfficer(targetUUID)) {
@@ -398,7 +398,7 @@ public class ForceCommand extends SubCommand {
         final FactionRenameEvent renameEvent = new FactionRenameEvent(faction, oldName, newName);
         Bukkit.getPluginManager().callEvent(renameEvent);
         if (renameEvent.isCancelled()) {
-            // TODO Locale Message.
+            // TODO: add locale message
             return;
         }
 
@@ -577,7 +577,7 @@ public class ForceCommand extends SubCommand {
         }
 
         if (!(sender instanceof Player)) {
-            // TODO: add message
+            // TODO: add locale message
             return;
         }
 

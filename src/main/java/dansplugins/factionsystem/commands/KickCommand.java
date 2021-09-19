@@ -57,7 +57,7 @@ public class KickCommand extends SubCommand {
         FactionKickEvent kickEvent = new FactionKickEvent(faction, target, player);
         Bukkit.getPluginManager().callEvent(kickEvent);
         if (kickEvent.isCancelled()) {
-            // TODO Locale Message
+            // TODO: add locale message
             return;
         }
         if (faction.isOfficer(targetUUID)) {

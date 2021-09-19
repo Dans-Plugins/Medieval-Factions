@@ -104,7 +104,7 @@ public class FactionFlags {
         }
 
         if (!ConfigManager.getInstance().getBoolean("factionsCanSetPrefixColors")) {
-            // TODO: add message
+            // TODO: add locale message
             return;
         }
 
@@ -114,7 +114,7 @@ public class FactionFlags {
         }
 
         if (flag.equals("fiefsEnabled") && !FiefsIntegrator.getInstance().isFiefsPresent()) {
-            // TODO: add message
+            // TODO: add locale message
             return;
         }
 

@@ -82,7 +82,7 @@ public class DisbandCommand extends SubCommand {
         );
         Bukkit.getPluginManager().callEvent(event);
         if (event.isCancelled()) {
-            // TODO Add a message (maybe).
+            // TODO: add locale message
             return;
         }
 

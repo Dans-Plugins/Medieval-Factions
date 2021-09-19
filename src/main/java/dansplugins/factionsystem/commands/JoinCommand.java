@@ -40,13 +40,13 @@ public class JoinCommand extends SubCommand {
             return;
         }
         if (!target.isInvited(player.getUniqueId())) {
-            // TODO Locale Message
+            // TODO: add locale message
             return;
         }
         FactionJoinEvent joinEvent = new FactionJoinEvent(faction, player);
         Bukkit.getPluginManager().callEvent(joinEvent);
         if (joinEvent.isCancelled()) {
-            // TODO Locale Message
+            // TODO: add locale message
             return;
         }
         messageFaction(target, translate("&a" + getText("HasJoined", player.getName(), target.getName())));
