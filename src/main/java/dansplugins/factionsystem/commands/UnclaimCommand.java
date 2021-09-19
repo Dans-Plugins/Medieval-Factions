@@ -34,7 +34,7 @@ public class UnclaimCommand extends SubCommand {
         }
         chunks.removeChunkAtPlayerLocation(player, faction);
         dynmap.updateClaims();
-        // TODO: add message
+        // TODO: add locale message
     }
 
     /**
