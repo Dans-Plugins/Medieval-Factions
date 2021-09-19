@@ -5,6 +5,7 @@ import dansplugins.factionsystem.FiefsIntegrator;
 import dansplugins.factionsystem.MedievalFactions;
 import dansplugins.factionsystem.managers.ConfigManager;
 import dansplugins.factionsystem.managers.LocaleManager;
+import dansplugins.factionsystem.utils.Logger;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 
@@ -146,24 +147,24 @@ public class FactionFlags {
 
     public Object getFlag(String flag) {
         if (!isFlag(flag)) {
-            if (MedievalFactions.getInstance().isDebugEnabled()) { System.out.println(String.format("[DEBUG] Flag '%s' was not found!", flag)); }
+            Logger.getInstance().log(String.format("[DEBUG] Flag '%s' was not found!", flag));
             return false;
         }
 
         if (integerValues.containsKey(flag)) {
-            if (MedievalFactions.getInstance().isDebugEnabled()) { System.out.println(String.format("[DEBUG] Flag '%s' was found! Value: '%s'", flag, integerValues.get(flag))); }
+            Logger.getInstance().log(String.format("[DEBUG] Flag '%s' was found! Value: '%s'", flag, integerValues.get(flag)));
             return integerValues.get(flag);
         }
         else if (booleanValues.containsKey(flag)) {
-            if (MedievalFactions.getInstance().isDebugEnabled()) { System.out.println(String.format("[DEBUG] Flag '%s' was found! Value: '%s'", flag, booleanValues.get(flag))); }
+            Logger.getInstance().log(String.format("[DEBUG] Flag '%s' was found! Value: '%s'", flag, booleanValues.get(flag)));
             return booleanValues.get(flag);
         }
         else if (doubleValues.containsKey(flag)) {
-            if (MedievalFactions.getInstance().isDebugEnabled()) { System.out.println(String.format("[DEBUG] Flag '%s' was found! Value: '%s'", flag, doubleValues.get(flag))); }
+            Logger.getInstance().log(String.format("[DEBUG] Flag '%s' was found! Value: '%s'", flag, doubleValues.get(flag)));
             return doubleValues.get(flag);
         }
         else if (stringValues.containsKey(flag)) {
-            if (MedievalFactions.getInstance().isDebugEnabled()) { System.out.println(String.format("[DEBUG] Flag '%s' was found! Value: '%s'", flag, stringValues.get(flag))); }
+            Logger.getInstance().log(String.format("[DEBUG] Flag '%s' was found! Value: '%s'", flag, stringValues.get(flag)));
             return stringValues.get(flag);
         }
         return null;

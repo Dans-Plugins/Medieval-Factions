@@ -73,10 +73,8 @@ public class InteractionAccessChecker {
         boolean allyInteractionAllowed = (boolean) chunkHolder.getFlags().getFlag("alliesCanInteractWithLand");
         boolean vassalageTreeInteractionAllowed = (boolean) chunkHolder.getFlags().getFlag("vassalageTreeCanInteractWithLand");
 
-        if (MedievalFactions.getInstance().isDebugEnabled()) {
-            System.out.println("[DEBUG] allyInteractionAllowed: " + allyInteractionAllowed);
-            System.out.println("[DEBUG] vassalageTreeInteractionAllowed: " + vassalageTreeInteractionAllowed);
-        }
+        Logger.getInstance().log("allyInteractionAllowed: " + allyInteractionAllowed);
+        Logger.getInstance().log("vassalageTreeInteractionAllowed: " + vassalageTreeInteractionAllowed);
 
         boolean allowed = false;
 

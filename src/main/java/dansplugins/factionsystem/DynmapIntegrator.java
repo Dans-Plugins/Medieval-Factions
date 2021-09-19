@@ -7,6 +7,7 @@ import dansplugins.factionsystem.objects.ChunkFlags;
 import dansplugins.factionsystem.objects.ClaimedChunk;
 import dansplugins.factionsystem.objects.Faction;
 import dansplugins.factionsystem.objects.PlayerPowerRecord;
+import dansplugins.factionsystem.utils.Logger;
 import dansplugins.factionsystem.utils.UUIDChecker;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.PluginManager;
@@ -109,17 +110,17 @@ public class DynmapIntegrator {
         dynmap = pm.getPlugin("dynmap");
 
         if(!isDynmapPresent()) {
-            if (MedievalFactions.getInstance().isDebugEnabled()) { System.out.println(LocaleManager.getInstance().getText("CannotFindDynmap")); }
+            Logger.getInstance().log(LocaleManager.getInstance().getText("CannotFindDynmap"));
         }
         else {
             try {
                 dynmapAPI = (DynmapCommonAPI) dynmap; /* Get API */
                 markerAPI = dynmapAPI.getMarkerAPI();
                 initializeMarkerSets();
-                if (MedievalFactions.getInstance().isDebugEnabled()) { System.out.println(LocaleManager.getInstance().getText("DynmapIntegrationSuccessful")); }
+                Logger.getInstance().log(LocaleManager.getInstance().getText("DynmapIntegrationSuccessful"));
             }
             catch (Exception e) {
-                if (MedievalFactions.getInstance().isDebugEnabled()) { System.out.println(LocaleManager.getInstance().getText("ErrorIntegratingWithDynmap") + e.getMessage()); }
+                Logger.getInstance().log(LocaleManager.getInstance().getText("ErrorIntegratingWithDynmap") + e.getMessage());
             }
         }
     }
@@ -136,7 +137,7 @@ public class DynmapIntegrator {
         if (set == null) {
             set = markerAPI.createMarkerSet(getDynmapPluginSetId(markerLabel), getDynmapPluginLayer(), null, false);
             if (set == null) {
-                if (MedievalFactions.getInstance().isDebugEnabled()) { System.out.println(LocaleManager.getInstance().getText("ErrorCreatingMarkerSet") + ": markerLabel = " + markerLabel); }
+                Logger.getInstance().log(LocaleManager.getInstance().getText("ErrorCreatingMarkerSet") + ": markerLabel = " + markerLabel);
                 return set;
             }
         }

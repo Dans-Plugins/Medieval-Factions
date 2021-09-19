@@ -9,6 +9,7 @@ import dansplugins.factionsystem.objects.ClaimedChunk;
 import dansplugins.factionsystem.objects.Duel;
 import dansplugins.factionsystem.objects.Faction;
 import dansplugins.factionsystem.objects.PlayerPowerRecord;
+import dansplugins.factionsystem.utils.Logger;
 import dansplugins.factionsystem.utils.Pair;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
@@ -38,7 +39,7 @@ public class DamageEffectsAndDeathHandler implements Listener {
    	
         // this method disallows PVP between members of the same faction and between factions who are not at war
         // PVP is allowed between factionless players, players who belong to a faction and the factionless, and players whose factions are at war.
-        if (MedievalFactions.getInstance().isDebugEnabled()) { System.out.println("EntityDamageByIntity" + event.toString()); }
+        Logger.getInstance().log("EntityDamageByIntity" + event.toString());
 
         // if this was between two players melee
         if (event.getDamager() instanceof Player && event.getEntity() instanceof Player) {
@@ -112,7 +113,7 @@ public class DamageEffectsAndDeathHandler implements Listener {
                 location = armorStand.getLocation();
             }
             else if (event.getEntity() instanceof ItemFrame) {
-                if (MedievalFactions.getInstance().isDebugEnabled()) { System.out.println("DEBUG: ItemFrame interaction captured in EntityDamageByEntityEvent!"); }
+                Logger.getInstance().log("ItemFrame interaction captured in EntityDamageByEntityEvent!");
                 ItemFrame itemFrame = (ItemFrame) event.getEntity();
 
                 if (!(event.getDamager() instanceof Player)) {
