@@ -11,6 +11,7 @@ import dansplugins.factionsystem.managers.LocaleManager;
 import dansplugins.factionsystem.objects.Faction;
 import dansplugins.factionsystem.objects.PlayerActivityRecord;
 import dansplugins.factionsystem.objects.PlayerPowerRecord;
+import dansplugins.factionsystem.utils.Logger;
 import dansplugins.factionsystem.utils.TerritoryOwnerNotifier;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
@@ -52,11 +53,11 @@ public class JoiningLeavingAndSpawningHandler implements Listener {
 					faction.addMember(player.getUniqueId());
 					player.sendMessage(ChatColor.GREEN + "" + LocaleManager.getInstance().getText("AssignedToRandomFaction"));
 
-					if (MedievalFactions.getInstance().isDebugEnabled()) { System.out.println("[DEBUG] " + player.getName() + " has been randomly assigned to " + faction.getName() + "!"); }
+					Logger.getInstance().log(player.getName() + " has been randomly assigned to " + faction.getName() + "!");
 				}
 				else {
 					// there are no factions to assign this player to
-					if (MedievalFactions.getInstance().isDebugEnabled()) { System.out.println("[DEBUG] Attempted to assign " + player.getName() + " to a random faction, but no factions are existent."); }
+					Logger.getInstance().log("Attempted to assign " + player.getName() + " to a random faction, but no factions are existent.");
 				}
 			}
         }

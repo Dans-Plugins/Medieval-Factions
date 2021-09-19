@@ -7,6 +7,7 @@ import dansplugins.factionsystem.managers.StorageManager;
 import dansplugins.factionsystem.objects.Faction;
 import dansplugins.factionsystem.objects.PlayerActivityRecord;
 import dansplugins.factionsystem.objects.PlayerPowerRecord;
+import dansplugins.factionsystem.utils.Logger;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
@@ -31,7 +32,7 @@ public class Scheduler {
     }
 
     public void scheduleAutosave() {
-        if (MedievalFactions.getInstance().isDebugEnabled()) { System.out.println(LocaleManager.getInstance().getText("SchedulingHourlyAutoSave")); }
+        Logger.getInstance().log(LocaleManager.getInstance().getText("SchedulingHourlyAutoSave"));
         int delay = 60 * 60; // 1 hour
         int secondsUntilRepeat = 60 * 60; // 1 hour
         Bukkit.getScheduler().scheduleSyncRepeatingTask(MedievalFactions.getInstance(), new Runnable() {
@@ -44,7 +45,7 @@ public class Scheduler {
     }
 
     public void schedulePowerIncrease() {
-        if (MedievalFactions.getInstance().isDebugEnabled()) { System.out.println(LocaleManager.getInstance().getText("SchedulingPowerIncrease")); }
+        Logger.getInstance().log(LocaleManager.getInstance().getText("SchedulingPowerIncrease"));
         int delay = MedievalFactions.getInstance().getConfig().getInt("minutesBeforeInitialPowerIncrease") * 60; // 30 minutes
         int secondsUntilRepeat = MedievalFactions.getInstance().getConfig().getInt("minutesBetweenPowerIncreases") * 60; // 1 hour
         Bukkit.getScheduler().scheduleSyncRepeatingTask(MedievalFactions.getInstance(), new Runnable() {
@@ -68,7 +69,7 @@ public class Scheduler {
     }
 
     public void schedulePowerDecrease() {
-        if (MedievalFactions.getInstance().isDebugEnabled()) { System.out.println(LocaleManager.getInstance().getText("SchedulingPowerDecrease")); }
+        Logger.getInstance().log(LocaleManager.getInstance().getText("SchedulingPowerDecrease"));
         int delay = MedievalFactions.getInstance().getConfig().getInt("minutesBetweenPowerDecreases") * 60;
         int secondsUntilRepeat = MedievalFactions.getInstance().getConfig().getInt("minutesBetweenPowerDecreases") * 60;
         Bukkit.getScheduler().scheduleSyncRepeatingTask(MedievalFactions.getInstance(), new Runnable () {
