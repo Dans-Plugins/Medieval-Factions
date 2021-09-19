@@ -13,6 +13,10 @@ Medieval Factions is a system of mechanics that allows for the simulation of sov
 ### Dynmap Integration
 Dynmap has been integrated with this plugin. In order to be able to view claimed land on a dynamic map, download and install the plugin [here](https://www.spigotmc.org/resources/dynmap.274/).
 
+### Add-on Plugins
+1) [Fiefs](https://github.com/dmccoystephenson/Fiefs)
+2) [Currencies](https://github.com/dmccoystephenson/Currencies)
+
 ### Server Software
 This plugin was developed using the Spigot API. Users may run into trouble using it with other available server softwares like Paper.
 
