@@ -46,7 +46,7 @@ public class RenameCommand extends SubCommand {
         final FactionRenameEvent renameEvent = new FactionRenameEvent(faction, oldName, newName);
         Bukkit.getPluginManager().callEvent(renameEvent);
         if (renameEvent.isCancelled()) {
-            // TODO Locale Message.
+            // TODO: add locale message
             return;
         }
 
