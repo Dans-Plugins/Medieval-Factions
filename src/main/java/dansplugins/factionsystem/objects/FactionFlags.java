@@ -6,6 +6,7 @@ import dansplugins.factionsystem.managers.LocaleManager;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 
+import java.awt.*;
 import java.util.ArrayList;
 import java.util.HashMap;
 
@@ -111,6 +112,39 @@ public class FactionFlags {
                 player.sendMessage(ChatColor.GREEN + LocaleManager.getInstance().getText("DoubleSet"));
             }
             else if (stringValues.containsKey(flag)) {
+
+                if (flag.equalsIgnoreCase("dynmapTerritoryColor")) {
+                    String hex = value;
+                    /*
+
+                                            Hex Color Regex
+
+                            This regex matches #FFF or #FFFFFF respectively.
+                            Support values range from a-f/A-F & 0-9, giving
+                                        full access to hex color.
+
+                     */
+                    if (!hex.matches("^#([A-Fa-f0-9]{6}|[A-Fa-f0-9]{3})$")) {
+                        final DefaultColor defaultColor = DefaultColor.of(hex);
+                        if (defaultColor == DefaultColor.NOT_FOUND) {
+                            player.sendMessage("Please provide a valid hexadecimal color.");
+                            // TODO Replace this with a new Locale message.
+                            return;
+                        } else hex = defaultColor.getColor();
+                    }
+                    stringValues.replace(flag, hex);
+                    final Color awtColour = Color.decode(hex); // Convert to AWT Color.
+                    player.sendMessage(
+                                String.format("You have given the color R: %d, G: %d, B: %d",
+                                        awtColour.getRed(),
+                                        awtColour.getGreen(),
+                                        awtColour.getBlue()
+                                )
+                    );
+                    // TODO Replace this with a new Locale message.
+                    return;
+                }
+
                 stringValues.replace(flag, value);
                 player.sendMessage(ChatColor.GREEN + LocaleManager.getInstance().getText("StringSet"));
             }
@@ -122,6 +156,70 @@ public class FactionFlags {
         else {
             player.sendMessage(ChatColor.RED + String.format(LocaleManager.getInstance().getText("WasntFound"), flag));
         }
+    }
+
+    private enum DefaultColor {
+
+        // https://htmlcolors.com/color-names
+        BLACK("#000000"), // Black
+        DARK_BLUE("#151B8D"), // Denim Dark Blue
+        DARK_GREEN("#254117"), // Dark Forest Green
+        DARK_AQUA("#348781"), // Medium Aquamarine
+        DARK_RED("#990012"), // Red Wine
+        DARK_PURPLE("#461B7E"), // Purple Monster
+        DARK_GRAY("#736F6E"), // Gray
+        GOLD("#FDD017"), // Bright Gold
+        GRAY("#B6B6B4"), // Gray Cloud
+        BLUE("#1569C7"), // Blue Eyes
+        GREEN("#41A317"), // Lime Green
+        AQUA("#00FFFF"), // Cyan or Aqua
+        RED("#FF0000"), // Red
+        PURPLE("#FF00FF"), // Magenta
+        YELLOW("#FFFF00"), // Yellow
+        WHITE("#FFFFFF"), // White
+
+        NOT_FOUND("null"); // Default.
+
+        private final String color;
+
+        DefaultColor(String color) {
+            this.color = color;
+        }
+
+        public String getColor() {
+            return color;
+        }
+
+        public boolean equals(String in) {
+            return  name().equalsIgnoreCase(in) ||
+                    name().equalsIgnoreCase(in.replaceAll(" ", "_")) ||
+                    getColor().equalsIgnoreCase(in) ||
+                    getColor().equalsIgnoreCase(in.replaceAll(" ", "_"));
+        }
+
+        @Override
+        public String toString() {
+            return getColor();
+        }
+
+        public static DefaultColor of(String in) {
+            for (DefaultColor out : DefaultColor.values()) {
+                if (out.equals(in)) {
+                    return out;
+                }
+            }
+            return DefaultColor.NOT_FOUND;
+        }
+
+        public static void main(String[] args) {
+            // Input                                                  Output
+            System.out.println(DefaultColor.AQUA);                 // #00FFFF
+            System.out.println(DefaultColor.of("white"));          // #FFFFFF
+            System.out.println(DefaultColor.of("red"));            // #FF0000
+            System.out.println(DefaultColor.of("daRk BluE"));      // #151B8D
+            System.out.println(DefaultColor.of("NOTHING MATE"));   // null
+        }
+
     }
 
     public Object getFlag(String flag) {
