@@ -41,7 +41,7 @@ AlertGrantedIndependence	 %s hat deiner Fraktion Unabhängigkeit gewährt.
 AlertIncreasingThePowerOfEveryPlayer	 Medieval Factions erhöht die Power jedes Spielers um %d. Dies geschieht alle %d Minuten.
 AlertJoinedFaction	Du bist der Fraktion beigetreten.
 AlertKicked	Du wurdest von %s aus deiner Fraktion geworfen.
-AlertLandClaimed	
+AlertLandClaimed	Land beansprucht. Herrschaftsgröße: %d/%d
 AlertLandConqueredFromAnotherFaction	Land erobert von %s. Größe deiner Faction: %d%d
 AlertLandConqueredFromYourFaction	 %s hat Land von deiner Fraktion erobert.
 AlertLeftFaction	Du hast deine Fraktion verlassen.
@@ -169,6 +169,7 @@ CmdForceBonusPower	bonuspower
 CmdForceClaim	claim
 CmdForceCreate	create
 CmdForceDemote	demote
+CmdForceFlag	flag
 CmdForceJoin	join
 CmdForceKick	kick
 CmdForceLoad	load
@@ -271,7 +272,7 @@ FactionGates	Faction Gates.
 FactionHomeLoadError	Ein Fehler ist beim Laden der Koordinaten des Faction-Homes aufgetreten.
 FactionHomeNotSetYet	Das Faction-Home wurde noch nicht gesetzt.
 FactionHomeSet	Faction Home gesetzt.
-FactionInfo	
+FactionInfo	%s Fraktionsinfo
 FactionIsNotVassal	Diese Faction ist kein Vasall von dir.
 FactionMustBeDesignatedInsideSingleQuotes	Fraktion muss in einfachen Anführungszeichen angegeben werden.
 FactionNameChanged	Faction Name wurde geändert
@@ -295,7 +296,7 @@ HelpAddLaw	/mf addlaw - Addet ein Gesetz zu deiner Faction.
 HelpAlly	/mf ally - Sendet ein Bündnisangebot an eine fremde Faction.
 HelpAutoclaim	/mf autoclaim - Aktiviert Autoclaim - macht Landclaiming leichter.
 HelpBreakAlliance	/mf breakalliance - Bricht eine Allianz mit einer Faction.
-HelpBypass	
+HelpBypass	/mf bypass – umgehungsschutz.
 HelpChat	/mf chat - Aktiviert den Faction Chat
 HelpCheckAccess	/mf checkaccess - Checkt wer Zugriff auf einen gelockten Block hat.
 HelpCheckClaim	/mf checkclaim - Checkt ob das Land geclaimt ist.
@@ -319,6 +320,7 @@ HelpForceBonusPower	/mf force bonuspower 'Fraktion' 'Zahl'
 HelpForceClaim	/mf force claim 'Fraktionsname'
 HelpForceCreate	/mf force create 'Fraktionsname'
 HelpForceDemote	/mf force demote (Spieler)
+HelpForceFlag	/mf force flag 'fraktion' 'option' 'wert'
 HelpForceJoin	/mf force join 'Spieler' 'Fraktion'
 HelpForceKick	/mf force kick (Spieler)
 HelpForceLoad	/mf force load
@@ -512,6 +514,7 @@ UsageForceBonusPower	Verwendung: /mf force bonuspower 'faction' 'number'
 UsageForceClaim	Verwendung: /mf force claim 'Fraktionsname'
 UsageForceCreate	Verwendung: /mf force create 'factionName'
 UsageForceDemote	Verwendung: /mf force demote (Spieler)
+UsageForceFlag	Verwendung: /mf force flag 'fraktion' 'option' 'wert'
 UsageForceJoin	Verwendung: /mf force join 'player' 'faction'
 UsageForceKick	Verwendung: /mf force kick (Spieler)
 UsageForcePeace	Verwendung: /mf force peace 'faction-1' 'faction-2'
