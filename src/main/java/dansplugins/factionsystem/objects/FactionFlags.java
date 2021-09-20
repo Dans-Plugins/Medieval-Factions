@@ -1,5 +1,6 @@
 package dansplugins.factionsystem.objects;
 
+import dansplugins.factionsystem.CurrenciesIntegrator;
 import dansplugins.factionsystem.DynmapIntegrator;
 import dansplugins.factionsystem.FiefsIntegrator;
 import dansplugins.factionsystem.MedievalFactions;
@@ -42,6 +43,7 @@ public class FactionFlags {
         flagNames.add("prefixColor");
         flagNames.add("allowFriendlyFire");
         flagNames.add("fiefsEnabled");
+        flagNames.add("officersCanMintCurrency");
     }
 
     public void initializeFlagValues() {
@@ -56,6 +58,7 @@ public class FactionFlags {
         stringValues.put("prefixColor", "white");
         booleanValues.put("allowFriendlyFire", false);
         booleanValues.put("fiefsEnabled", true);
+        booleanValues.put("officersCanMintCurrency", false);
     }
 
     public void loadMissingFlagsIfNecessary() {
@@ -90,6 +93,9 @@ public class FactionFlags {
         if (!booleanValues.containsKey("fiefsEnabled")) {
             booleanValues.put("fiefsEnabled", true);
         }
+        if (!booleanValues.containsKey("officersCanMintCurrency")) {
+            booleanValues.put("officersCanMintCurrency", false);
+        }
     }
 
     public void sendFlagList(Player player) {
@@ -114,6 +120,11 @@ public class FactionFlags {
         }
 
         if (flag.equals("fiefsEnabled") && !FiefsIntegrator.getInstance().isFiefsPresent()) {
+            // TODO: add locale message
+            return;
+        }
+
+        if (flag.equals("officersCanMintCurrency") && !CurrenciesIntegrator.getInstance().isCurrenciesPresent()) {
             // TODO: add locale message
             return;
         }
@@ -224,6 +235,10 @@ public class FactionFlags {
             }
 
             if (flagName.equals("fiefsEnabled") && !FiefsIntegrator.getInstance().isFiefsPresent()) {
+                continue;
+            }
+
+            if (flagName.equals("officersCanMintCurrency") && !CurrenciesIntegrator.getInstance().isCurrenciesPresent()) {
                 continue;
             }
 
