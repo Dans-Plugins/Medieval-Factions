@@ -17,10 +17,10 @@ AlertBeenInvited	Você foi convidado para %s. Escreva /mf join %s para entrar.
 AlertCalledToWar1	%s chamou sua facção para a guerra com %s.
 AlertCalledToWar2	%s chamou %s para entrar em guerra com sua facção.
 AlertCalledToWar3	Sua facção foi chamada por %s em sua guerra com %s.
-AlertChallengeIssued	Você foi desafiado por %s para um duelo.
-AlertChallengeWasAccepted	%s aceitou o seu desafio, o duelo começou.
 AlertChallengedToDuel	%s desafiou %s para um duelo.
 AlertChallengedToDuelPlusHowTo	%s desafiou você para um duelo. escreva /mf duel accept para começar.
+AlertChallengeIssued	Você foi desafiado por %s para um duelo.
+AlertChallengeWasAccepted	%s aceitou o seu desafio, o duelo começou.
 AlertChangedGateName	Nome do portão definido como '%s'.
 AlertCurrentPowerLevel	Seu poder atual é %d/%d.
 AlertDecreasingThePowerOfInactivePlayers	Medieval Factions está diminuindo o poder de cada jogador em %d se eles não estiveram online em %d minutos. Isso vai acontecer a cada %d minutos.
@@ -59,8 +59,8 @@ AlertMustKickAllPlayers	Você precisa expulsar todos os membros antes de excluir
 AlertNoGatesDefined	Sua facção não tem portões definidos.
 AlertNoLaws	Sua facção não tem nenhuma lei.
 AlertNoLongerVassalFaction	%s Não é mais um vassalo da facção.
-AlertNoPendingChallenges	Você não tem duelos pendentes para cancelar.
 AlertNonOwnership	Isso não te pertence.
+AlertNoPendingChallenges	Você não tem duelos pendentes para cancelar.
 AlertNotAllied	Sua facção não é aliada com %s.
 AlertNotBeenChallenged	Você não foi desafiado a um duelo por ninguém.
 AlertNotBeenChallengedByPlayer	Você não foi desafiado a um duelo por '%s'.
@@ -76,34 +76,30 @@ AlertPowerLevelIncreasedBy	Você se sente forte. Seu poder foi aumentado em %d.
 AlertReachedDemesne	Você atingiu seu limite de propriedade. Convide mais jogadores para aumentar isso.
 AlertUnlocked	Desbloqueado.
 AlertUnlockingCancelled	Desbloqueamento cancelado.
-AllLandUnclaimed	Todas as terras foram abandonadas.
-AllLandUnclaimedFrom	Todas as terras foram abandonadas por %s.
 AllianceBrokenWith	Aliança quebrada com %s.
 AlliedWith	Aliado com: %s
+AllLandUnclaimed	Todas as terras foram abandonadas.
+AllLandUnclaimedFrom	Todas as terras foram abandonadas por %s.
 AlreadyEnteredCheckAccess	Você já entrou neste comando. Escreva '/mf checkaccess cancel' para cancelar.
 AlreadyEnteredRevokeAccess	Você já entrou neste comando. Escreva '/mf revokeaccess cancel' para cancelar.
 AlreadyInFaction	Desculpe, você já esta em uma facção. Saia dela se você deseja criar outra.
 ArgumentMustBeNumber	O argumento precisa ser um número.
 ArgumentsSingleQuotesRequirement	Os argumentos devem ser designados entre aspas simples.
 AssignedToRandomFaction	Você foi atribuído a uma facção aleatória.
-AtWarWith	Em guerra com: %s
 AttemptedAlliance	Tentativa de se aliar com %s
 AttemptedPeace	Tentativa de paz com %s
+AtWarWith	Em guerra com: %s
 AutoclaimToggled	Autoclaim alternado.
 BlockAlreadyLocked	Este bloco já esta bloqueado.
 BlockIsNotLocked	Este bloco não esta bloqueado.
 BlockIsPartOfGateMustRemoveGate	Este bloco é parte do portão '%s'. Você precisa remover o portão antes.
 BonusPower	Bonus de de poder por administradores: %d
 BooleanSet	Boleano definido.
-CanOnlyCreateGatesInClaimedTerritory	Você só pode criar portões em terras reinvindicadas.
-CanOnlyLockBlocksInClaimedTerritory	Você só pode bloquear blocos em uma terra reinvindicada por sua facção.
-CanOnlyLockInFactionTerritory	You can only lock things in your faction's territory.
-CanOnlyLockSpecificBlocks	Você só pode bloquear baus, portas, barris, alçapões, fornalhas, bigornas ou portões.
 Cancelled	Cancelado.
 CancelledGatePlacement1	Erro definindo ponto 1. Definição de portão cancelada.
 CancelledGatePlacement2	Erro definindo ponto 2. Definição de portão cancelada.
 CancelledGatePlacementErrorLinking	Erro ao linkar com uma alavanca. Definição de portão cancelada.
-CannotAllyWithSelf Você não pode aliar-se a sua propria facção.
+CannotAllyWithSelf	Você não pode aliar-se a sua propria facção.
 CannotAttackFactionMember	Você não pode atacar outro jogador que seja parte da sua facção.
 CannotAttackNonWarringPlayer	Você não pode atacar outro jogador se suas facções não estiverem em guerra.
 CannotBreakAllianceWithSelf	Você não pode quebrar uma aliança com sua propria facção.
@@ -120,7 +116,7 @@ CannotDemoteSelf	Você não pode se rebaixar.
 CannotDuelSelf	Você não pode duelar contra si mesmo.
 CannotFindDynmap	Não pude encontrar o dynmap.
 CannotForciblyKickOwner	Você não pode expulsar à força um dono de sua facção. Tente dissolver a facção.
-CannotGrantAccessToSelf Você não pode conceder acesso a si mesmo.
+CannotGrantAccessToSelf	Você não pode conceder acesso a si mesmo.
 CannotKickOwner	Você não pode expulsar um dono.
 CannotKickSelf	Você não pode expulsar a si mesmo.
 CannotMakePeaceWithSelf	Você não pode criar uma paz em sua propria facção.
@@ -134,6 +130,10 @@ CannotTransferToSelf	Você não pode transferir o cargo de dono para si mesmo.
 CannotVassalizeLiege	Você não pode vassalizar seu soberano.
 CannotVassalizeSelf	Você não pode vassalizar sua própria facção.
 CannotVassalizeVassal	Você não pode vassalizar uma facção que já tem um soberano.
+CanOnlyCreateGatesInClaimedTerritory	Você só pode criar portões em terras reinvindicadas.
+CanOnlyLockBlocksInClaimedTerritory	Você só pode bloquear blocos em uma terra reinvindicada por sua facção.
+CanOnlyLockInFactionTerritory	You can only lock things in your faction's territory.
+CanOnlyLockSpecificBlocks	Você só pode bloquear baus, portas, barris, alçapões, fornalhas, bigornas ou portões.
 ClaimedChunksLoaded	Terras reinvindicadas carregadas.
 ClaimedChunksSuccessfullyLoaded	Terras reinvindicadas carregadas com sucesso.
 ClickOnTriggerLever	Clique na alavanca...
@@ -141,17 +141,17 @@ ClickToPlaceSecondCorner	Clique para colocar o segundo canto...
 CmdAddLaw	Adicionar leis.
 CmdAlly	Aliados
 CmdAutoClaim	Auto reinvindicar
-CmdBreakAlliance	Quebrar Aliança 
+CmdBreakAlliance	Quebrar Aliança
 CmdBypass	bypass
 CmdChat	chat
-CmdCheckAccess	Checar acesso   
+CmdCheckAccess	Checar acesso
 CmdCheckClaim	Checar reinvindicação
-CmdClaim	Reinvindicar        
+CmdClaim	Reinvindicar
 CmdConfig	Configurar
 CmdConfigSet	Definir
 CmdConfigShow	Mostrar
 CmdCreate	Criar
-CmdDeclareIndependence	Declarar independência   
+CmdDeclareIndependence	Declarar independência
 CmdDeclareWar	Decralarar guerra
 CmdDemote	Rebaixar
 CmdDesc	Descrição
@@ -169,6 +169,7 @@ CmdForceBonusPower	Bonus de poder
 CmdForceClaim	Reinvindicar
 CmdForceCreate	Criar
 CmdForceDemote	Deletar
+CmdForceFlag	flag
 CmdForceJoin	Entrar
 CmdForceKick	Expulsar
 CmdForceLoad	Carregar
@@ -219,7 +220,7 @@ CmdWho	Quem
 CommandCancelled	Comando cancelado.
 CommandNotRecognized	Medieval Factions não reconhece este comando.
 CommandsPage1	== Medieval Factions Pagínas de comando  1/%d ==
-CommandsPage2	== Medieval Factions Pagínas de comando  2/%d ==
+CommandsPage2	= Medieval Factions Pagínas de comando  2/%d ==
 CommandsPage3	== Medieval Factions Pagínas de comando  3/%d ==
 CommandsPage4	== Medieval Factions Pagínas de comando  4/%d ==
 CommandsPage5	== Medieval Factions Pagínas de comando  5/%d ==
@@ -232,8 +233,8 @@ CreatingGateClickWithHoe	Criando portão. Clique em um bloco com uma enxada de o
 CuboidDisallowed1	Erro ao colocar o ponto 1: você não pode colocar um bloco.
 CuboidDisallowed2	Erro ao colocar o ponto 2: você não pode colocar um bloco.
 CurrentLanguageID	Linguagem atual ID: %s
-CurrentPowerLevel	%s's nível de poder atual é %d/%d.
 CurrentlyNoFactions	Atualmente não há facções.
+CurrentPowerLevel	%s's nível de poder atual é %d/%d.
 Defeated	%s foi derrotado por %s em um duelo.
 DemesneSize	Tamanho: %d/%d
 Description	Descrição: %s
@@ -263,10 +264,6 @@ FactionAlreadyExists	Desculpe. Esta facção já existe.
 FactionAndPlayerSingleQuotesRequirement	Facção e jogador devem ser designados entre aspas simples.
 FactionAndVassalSingleQuotesRequirement	Facção e vassalo a serem removidos devem ser designados entre aspas simples.
 FactionCreated	Facção criada.
-
-
-
-
 FactionCurrentlyEnemyMustMakePeace	Essa facção é atualmente sua inimiga. Faça as pazes antes de tentar se aliar a eles.
 FactionDataLoadedSuccessfuly	Dados de facção carregados com sucesso
 FactionDoesNotExist	Desculpe. Esta facção não existe.
@@ -280,12 +277,13 @@ FactionIsNotVassal	Esta facção não é sua vassala.
 FactionMustBeDesignatedInsideSingleQuotes	A facção deve ser designada entre aspas simples.
 FactionNameChanged	Nome da facção definido.
 FactionNameNotRecognized	O nome dessa facção não é reconhecido.
+FactionNameTooLong	Esse nome é muito longo.
 FactionNotEnemy	Esta facção não é sua inimiga.
 FactionNotFound	Esta facção não foi encontrada
-FactionSuccessfullyDisbanded	Facção deletada com sucesso.
-FactionSuccessfullyLoaded	Facção carregada com sucesso.
 FactionsSuccessfullyLoaded	Facção carregada com sucesso.
 FactionsTitle	== Factions ==
+FactionSuccessfullyDisbanded	Facção deletada com sucesso.
+FactionSuccessfullyLoaded	Facção carregada com sucesso.
 FileLoadError	Um erro ocorreu carregando este arquivo.
 FollowingPlayersHaveAccess	Os membros a seguir tem acesso a este bloco:
 GateCreated	Portão criado com sucesso.
@@ -322,6 +320,7 @@ HelpForceBonusPower	/mf force bonuspower 'faction' 'number'
 HelpForceClaim	/mf force claim 'faction name' Força uma facção a reinvindar uma terra.
 HelpForceCreate	/mf force create 'factionName' Força a criação de uma facção.
 HelpForceDemote	/mf force demote (player) Força um jogador a ser rebaixado.
+HelpForceFlag	/mf force 'facção' 'opção' 'valor'
 HelpForceJoin	/mf force join 'player' 'faction2' Força um jogador a entrar em uma facção.
 HelpForceKick	/mf force kick (player) Força a expulsão de um jogador.
 HelpForceLoad	/mf force load Força o carregamento.
@@ -395,11 +394,11 @@ ListLegend	P: Poder, M: Membros, L: Terra
 LoadingClaimedChunks	Carregando chunks das terras...
 LoadingLockedBLocks	Carregando blocos bloqueados...
 LoadingPlayerPowerRecords	Carregando registros de poder...
-LockRemovalError	Um erro ocorreu durante a remoção do bloqueio.
 Locked	Bloqueado.
 LockedBlockSuccessfullyLoaded	Bloco Bloqueado carregado com sucesso.
 LockedBy	Bloqueado por %s
 LockingCancelled	Bloqueamento cancelado.
+LockRemovalError	Um erro ocorreu durante a remoção do bloqueio.
 MaterialsMismatch1	Erro ao colocar ponto 1: Materiais incompatíveis.
 MaterialsMismatch2	Erro ao colocar ponto 2: Materiais incompatíveis.
 MedievalFactionsStringRight	Medieval-Factions-%s
@@ -419,22 +418,22 @@ NoBlockDetectedToCheckForGate	Nenhum bloco detectado para verificar o portão.
 NoFactionsDesignatedSingleQuotesRequired	Nenhuma facção designada. Deve ser indicado entre aspas simples.
 NoLongerBypassingProtections	Você não está mais contornando as bypassings fornecidas pelas facções medievais.
 NoLongerInFactionChat	Você não esta mais no chat da facção
-NoVassalOrLiegeReferences	Não há referências de vassalos ou vassalos associados a essa facção.
-NotAMemberOfAnyFaction  Você não é membro de nenhuma facção.
-NotAVassalOfAFaction	Você não é vassalo de uma facção.
+NotAMemberOfAnyFaction	Você não é membro de nenhuma facção.
 NotAnAlly	%s Não é seu aliado.
 NotAnAllyOrVassal	%s Não é seu aliado ou seu vassalo.
 NotAtWarWith	Você não esta em guerra com %s
+NotAVassalOfAFaction	Você não é vassalo de uma facção.
 NotEnoughArgumentsDesignatedSingleQuotesRequired	Argumentos insuficientes designados. Deve ser designado entre aspas simples.
 NotTheOwnerOfThisBlock	Você não é dono deste bloco.
 NotTheOwnerOfThisFaction	Você não é dono desta facção.
-NowBypassingProtections	Agora você tem as proteções	 bypassing dadas por Medieval Factions.
+NoVassalOrLiegeReferences	Não há referências de vassalos ou vassalos associados a essa facção.
+NowBypassingProtections	Agora você tem as proteções bypassing dadas por Medieval Factions.
 NowSpeakingInFactionChat	Agora você esta falando no chat da facção.
 OnlyPlayersCanUseCommand	Somente jogadores podem usar esse comando.
 OnlyUseLeversInClaimedTerritory	Error: Você só pode usar alavancas em terras reinvindicadas.
 Owner	Dono: %s
-OwnerShipTransferredTo	Cargo de dono transferido para %s
 OwnershipTransferred	O dono de %s transferiou o cardo de dono para você.
+OwnerShipTransferredTo	Cargo de dono transferido para %s
 PermissionNeeded	Desculpa. Para usar este comando, você precisa da seguinte permissão: ''%s'
 PlayerAlreadyDueling	%s Já esta duelando com alguém.
 PlayerAlreadyInFaction	Este jogador já esta em uma facção.
@@ -463,11 +462,11 @@ Population	População: %d
 PowerHasDecayed	Seu poder decaiu por %d desde a última vez que você saiu. Seu poder agora é %d.
 PowerLevel	Nível de poder: %s
 PowerLevelHasBeenSetTo	O nivel de poder deste jogador foi definido para %d
-PowerLevelHasIncreased  Seu nível de poder aumentou.
+PowerLevelHasIncreased	Seu nível de poder aumentou.
 PowerLevelResetting	Resetando nivel de poder...
+PrefixesDisabled	Prefixos estão desativados.
 PrefixSet	Prefixo definido.
 PrefixTaken	Este prefixo já esta sendo usado.
-PrefixesDisabled	Prefixos estão desativados.
 ProblemLoadingClaimedChunks	Ocorreu um problema ao carregar as chunks reinvindicadas.
 ProblemLoadingFactions	Ocorreu um problema carregando as facções.
 ProblemLoadingPowerRecords	Ocorreu um problema ao carregar os registros dos jogares.
@@ -489,9 +488,9 @@ StringSet	String definida.
 SubCommands	Sub-comandos:
 SuccessFactionMemberRemoval	Sucesso. Se o jogador estava em uma facção, ele não é mais um membro.
 SuccessForceJoin	Sucesso o jogador foi forçado a entra em uma facção.
+SuccessfulDisbandment	%s foi abandonada com sucesso.
 SuccessOfficerRemoval	Sucesso se o jogador era considerado oficial em alguma facção, ele não é mais.
 SuccessReferencesRemoved	As referências foram removidas com sucesso.
-SuccessfulDisbandment	%s foi abandonada com sucesso.
 SupportedLanguageIDList	Línguas suportadas idlist: %s
 SurroundedChunkProtected	A facção alvo tentou reivindicar as terras ao norte, leste, sul e oeste desta terra. Elas não podem ser conquistadas.
 TargetBlockNotPartOfGate	O bloco alvo não faz parte de um portão.
@@ -515,6 +514,7 @@ UsageForceBonusPower	Usage: /mf force bonuspower 'facção' 'número'
 UsageForceClaim	Usage: /mf force claim 'nome da facção'
 UsageForceCreate	Usage: /mf force create 'nome da facção'
 UsageForceDemote	Usage: /mf force demote (jogador)
+UsageForceFlag	Usage: /mf force 'facção' 'opção' 'valor'
 UsageForceJoin	Usage: /mf force join 'jogador' 'facção'
 UsageForceKick	Usage: /mf force kick (jogador)
 UsageForcePeace	Usage: /mf force peace 'facção-1' 'facção-2'
@@ -543,7 +543,7 @@ ValidSubCommandsShowSet	Sub-comandos validos: show, set
 VassalContribution	Bonus de poder do vassalo: %d
 Vassals	Vassals: %s
 WarningPlayerAlreadyStartedCreatingGate	Perigo: O jogador já esta criando um portão. startCreatingGate() chamada ignorada.
-WasntFound	'%s' não foi encontrada.
+WasntFound	%s' não foi encontrada.
 WelcomeBackLastLogout	Bem-vindo de volta %s. seu ultimo login foi a %s atrás.
 WikiLink	Wiki: https://github.com/DansPlugins/Medieval-Factions/wiki
 Wilderness	Wilderness

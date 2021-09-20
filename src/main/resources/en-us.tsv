@@ -169,6 +169,7 @@ CmdForceBonusPower	bonuspower
 CmdForceClaim	claim
 CmdForceCreate	create
 CmdForceDemote	demote
+CmdForceFlag	flag
 CmdForceJoin	join
 CmdForceKick	kick
 CmdForceLoad	load
@@ -276,6 +277,7 @@ FactionIsNotVassal	That faction isn't a vassal of yours.
 FactionMustBeDesignatedInsideSingleQuotes	Faction must be designated inside single quotes.
 FactionNameChanged	Faction name changed.
 FactionNameNotRecognized	That faction name isn't recognized.
+FactionNameTooLong	That name is too long.
 FactionNotEnemy	That faction is not your enemy.
 FactionNotFound	That faction wasn't found.
 FactionsSuccessfullyLoaded	Factions successfully loaded.
@@ -318,7 +320,8 @@ HelpForceBonusPower	/mf force bonuspower 'faction' 'number'
 HelpForceClaim	/mf force claim 'faction name'
 HelpForceCreate	/mf force create 'factionName'
 HelpForceDemote	/mf force demote (player)
-HelpForceJoin	/mf force join 'player' 'faction2'
+HelpForceFlag	/mf force flag 'faction' 'option' 'value'
+HelpForceJoin	/mf force join 'player' 'faction'
 HelpForceKick	/mf force kick (player)
 HelpForceLoad	/mf force load
 HelpForcePeace	/mf force peace 'faction1' 'faction2'
@@ -511,6 +514,7 @@ UsageForceBonusPower	Usage: /mf force bonuspower 'faction' 'number'
 UsageForceClaim	Usage: /mf force claim 'faction name'
 UsageForceCreate	Usage: /mf force create 'factionName'
 UsageForceDemote	Usage: /mf force demote (player)
+UsageForceFlag	Usage: /mf force flag 'faction' 'option' 'value'
 UsageForceJoin	Usage: /mf force join 'player' 'faction'
 UsageForceKick	Usage: /mf force kick (player)
 UsageForcePeace	Usage: /mf force peace 'faction-1' 'faction-2'
@@ -541,11 +545,7 @@ Vassals	Vassals: %s
 WarningPlayerAlreadyStartedCreatingGate	WARNING: Player has already started creating the gate. startCreatingGate() call ignored.
 WasntFound	'%s' wasn't found.
 WelcomeBackLastLogout	Welcome back %s. You last logged out %s ago.
-WikiLink	Wiki: https://github.com/DansPlugins/Medieval-Factions/wiki
+WikiLink	Wiki: https://github.com/dmccoystephenson/Medieval-Factions/wiki
 Wilderness	Wilderness
 WorldsMismatch1	Error placing point 1: Worlds mismatch.
 WorldsMismatch2	Error placing point 2: Worlds mismatch.
-FactionNameTooLong	That name is too long.
-CmdForceFlag	flag
-UsageForceFlag	Usage: /mf force flag 'faction' 'option' 'value'
-HelpForceFlag	/mf force flag 'faction' 'option' 'value'

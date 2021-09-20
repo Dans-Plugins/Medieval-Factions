@@ -32,7 +32,7 @@ AlertFactionHasNewVassal	Tu facción tiene un nuevo vasallo: %s.
 AlertFactionHomeRemoved	Tu hogar de facción ha sido eliminado.
 AlertFactionIsWeakened	Tu facción tiene menos de la mitad de su poder máximo. Ya no recibirá poder adicional de los vasallos y tus vasallos ahora son vulnerables.
 AlertForcedDemotion	Has sido forzadamente degradado de tu rango de oficial en tu facción.
-AlertForcedKick	Has sido forzadamente expulsado de tu facción.
+AlertForcedKick	Has sido expulsado de tu facción.
 AlertForcedLoad	Medieval Factions ha sido forzado a cargar.
 AlertForcedSave	Medieval Factions ha sido forzado a guardar.
 AlertForcedToJoinFaction	Has sido forzado a unirte a una facción.
@@ -169,6 +169,7 @@ CmdForceBonusPower	extrapoder
 CmdForceClaim	afirmar
 CmdForceCreate	crear
 CmdForceDemote	degradar
+CmdForceFlag	flag
 CmdForceJoin	unirse
 CmdForceKick	expulsar
 CmdForceLoad	cargar
@@ -276,6 +277,7 @@ FactionIsNotVassal	Esta facción no es tu vasallo.
 FactionMustBeDesignatedInsideSingleQuotes	Las facciones deben designarse entre comillas simples.
 FactionNameChanged	Nombre de facción cambiado.
 FactionNameNotRecognized	No se reconoce el nombre de facción.
+FactionNameTooLong	Ese nombre es demasiado largo.
 FactionNotEnemy	Esta facción no es tu enemiga.
 FactionNotFound	No se encontró la facción.
 FactionsSuccessfullyLoaded	Facciones cargadas exitosamente.
@@ -318,6 +320,7 @@ HelpForceBonusPower	/mf forzar extrapoder 'facción' 'número'
 HelpForceClaim	/mf force reclamo 'nombre de facción'
 HelpForceCreate	/mf forzar crear 'facción'
 HelpForceDemote	/mf forzar degradar (jugador)
+HelpForceFlag	/mf force flag 'facción' 'opción' 'valor'
 HelpForceJoin	/mf forzar unirse 'jugador' 'facción2'
 HelpForceKick	/mf forzar expulsar (jugador)
 HelpForceLoad	/mf forzar cargar
@@ -511,6 +514,7 @@ UsageForceBonusPower	Uso: /mf forzar extrapoder 'facción' 'número'
 UsageForceClaim	Uso: /mf force reclamo 'nombre de facción'
 UsageForceCreate	Uso: /mf forzar crear 'facción'
 UsageForceDemote	Uso: /mf forzar degradar (jugador)
+UsageForceFlag	Uso: /mf force flag 'facción' 'opción' 'valor'
 UsageForceJoin	Uso: /mf forzar unirse 'jugador' 'facción'
 UsageForceKick	Uso: /mf forzar expulsar (jugador)
 UsageForcePeace	Uso: /mf forzar paz 'facción-1' 'facción-2'
@@ -541,7 +545,7 @@ Vassals	Vasallos: %s
 WarningPlayerAlreadyStartedCreatingGate	ALERTA: El jugador ya ha empezado a crear el portón. Llamada a startCreatingGate() ignorada.
 WasntFound	No se encontró '%s'.
 WelcomeBackLastLogout	Bienvenido de vuelta, %s. Te desconectaste hace %s.
-WikiLink	Wiki: https://github.com/DansPlugins/Medieval-Factions/wiki
+WikiLink	Wiki: https://github.com/dmccoystephenson/Medieval-Factions/wiki
 Wilderness	Naturaleza
 WorldsMismatch1	Error colocando el punto 1: Los mundos no coinciden.
 WorldsMismatch2	Error colocando el punto 2: Los mundos no coinciden.
