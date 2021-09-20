@@ -3,6 +3,9 @@
 ## Description
 Medieval Factions is a system of mechanics that allows for the simulation of sovereign nations in Minecraft. Players can create nations, claim territory, engage in warfare or politics, write laws or hold dueling tournaments, and generally are able to attempt to recreate society somewhat.
 
+## Server Software
+This plugin was developed using the Spigot API. Users may run into trouble using it with other available server softwares like Paper.
+
 ## Installation
 1) You can download the plugin from [this page](https://www.spigotmc.org/resources/medieval-factions-sovereign-nation-simulator.79941/updates).
 
@@ -16,9 +19,6 @@ Dynmap has been integrated with this plugin. In order to be able to view claimed
 ### Add-on Plugins
 1) [Fiefs](https://github.com/dmccoystephenson/Fiefs)
 2) [Currencies](https://github.com/dmccoystephenson/Currencies)
-
-### Server Software
-This plugin was developed using the Spigot API. Users may run into trouble using it with other available server softwares like Paper.
 
 ## Usage
 - [User Guide](https://github.com/dmccoystephenson/Medieval-Factions/wiki/Guide)
