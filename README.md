@@ -53,7 +53,7 @@ Alternatively, you can use the External API, the documentation for which can be 
 Name | Main Contributions
 ------------ | -------------
 DanTheTechMan | Creator
-Pasarus | Overhauled the Storage Manager to use UUIDs and JSON
+Pasarus | Overhauled the Storage Manager to use UUIDs and JSON and made other improvements to the plugin
 Caibinus | Implemented Duels, Gates and Dynmap Integration
 Callum | Created event classes, overhauled the Command System, implemented PlaceholderAPI integration and made many other improvements to the plugin
 Richardhyy | Fixed some encoding issues
