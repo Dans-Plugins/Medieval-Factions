@@ -71,6 +71,7 @@ lilhamoood | Spanish
 2kManfridi | Russian
 [Kaonami](https://github.com/Daniels7k) | Portuguese Brazilian
 [graffity_X](https://www.spigotmc.org/members/kicker765.946561/) | German
+JustGllenn | Dutch
 TDL | Dutch
 
 ## License
