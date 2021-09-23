@@ -42,11 +42,11 @@ public class FlagsCommand extends SubCommand {
             if (args.length < 3) {
                 player.sendMessage(translate("&c" + getText("UsageFlagsSet")));
             } else {
-                final StringBuilder builder = new StringBuilder();
-                for (int i = 2; i < args.length; i++) {
-                    builder.append(args[i]).append(" ");
-                }
-                playersFaction.getFlags().setFlag(args[1], builder.toString(), player);
+
+                final StringBuilder builder = new StringBuilder(); // Send the flag_argument as one String
+                for (int i = 2; i < args.length; i++) builder.append(args[i]).append(" ");
+                playersFaction.getFlags().setFlag(args[1], builder.toString().trim(), player);
+
             }
         } else {
             player.sendMessage(translate("&c" + getText("FlagsValidSubCommandsShowSet")));
