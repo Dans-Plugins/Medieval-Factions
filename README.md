@@ -76,7 +76,7 @@ TDL | Dutch
 
 I created this plugin because I wanted to use the original Factions plugin for an upcoming server of mine, and it wasn't updated for the version of minecraft I was going to be using. I decided to take inspiration from the concept of factions - groups of players that can claim land - and create my own factions plugin.
 
-The first release version, v1.7, released on SpigotMC in June 2020 looked much different than the plugin does today.
+The first release version, [v1.7](https://github.com/dmccoystephenson/Medieval-Factions/releases/tag/v1.7), released on SpigotMC in June 2020 looked much different than the plugin does today.
 
 I am extremely grateful to those that have donated their time improving the project, one way or another. The plugin wouldn't be where it is today without the contributions of others.
 
