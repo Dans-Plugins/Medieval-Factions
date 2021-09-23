@@ -1,15 +1,17 @@
 package dansplugins.factionsystem.objects;
 
+import dansplugins.factionsystem.MedievalFactions;
 import dansplugins.factionsystem.integrators.CurrenciesIntegrator;
 import dansplugins.factionsystem.integrators.DynmapIntegrator;
 import dansplugins.factionsystem.integrators.FiefsIntegrator;
-import dansplugins.factionsystem.MedievalFactions;
 import dansplugins.factionsystem.managers.ConfigManager;
 import dansplugins.factionsystem.managers.LocaleManager;
+import dansplugins.factionsystem.utils.ColorConversion;
 import dansplugins.factionsystem.utils.Logger;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 
+import java.awt.*;
 import java.util.ArrayList;
 import java.util.HashMap;
 
@@ -133,16 +135,46 @@ public class FactionFlags {
             if (integerValues.containsKey(flag)) {
                 integerValues.replace(flag, Integer.parseInt(value));
                 player.sendMessage(ChatColor.GREEN + LocaleManager.getInstance().getText("IntegerSet"));
-            }
-            else if (booleanValues.containsKey(flag)) {
+            } else if (booleanValues.containsKey(flag)) {
                 booleanValues.replace(flag, Boolean.parseBoolean(value));
                 player.sendMessage(ChatColor.GREEN + LocaleManager.getInstance().getText("BooleanSet"));
-            }
-            else if (doubleValues.containsKey(flag)) {
+            } else if (doubleValues.containsKey(flag)) {
                 doubleValues.replace(flag, Double.parseDouble(value));
                 player.sendMessage(ChatColor.GREEN + LocaleManager.getInstance().getText("DoubleSet"));
-            }
-            else if (stringValues.containsKey(flag)) {
+            } else if (stringValues.containsKey(flag)) {
+
+                if (flag.equalsIgnoreCase("dynmapTerritoryColor")) {
+                    String hex = value;
+                    /*
+
+                                            Hex Color Regex
+
+                            This regex matches #FFF or #FFFFFF respectively.
+                            Support values range from a-f/A-F & 0-9, giving
+                                        full access to hex color.
+
+                     */
+                    if (!hex.matches("^#([A-Fa-f0-9]{6}|[A-Fa-f0-9]{3})$")) {
+                        final String output = ColorConversion.attemptDecode(hex, false);
+                        if (output == null) {
+                            player.sendMessage("Please provide a valid hexadecimal color.");
+                            // TODO Replace this with a new Locale message.
+                            return;
+                        } else hex = output;
+                    }
+                    stringValues.replace(flag, hex);
+                    final Color awtColour = Color.decode(hex); // Convert to AWT Color.
+                    player.sendMessage(
+                            String.format("You have given the color R: %d, G: %d, B: %d",
+                                    awtColour.getRed(),
+                                    awtColour.getGreen(),
+                                    awtColour.getBlue()
+                            )
+                    );
+                    // TODO Replace this with a new Locale message.
+                    return;
+                }
+
                 stringValues.replace(flag, value);
                 player.sendMessage(ChatColor.GREEN + LocaleManager.getInstance().getText("StringSet"));
             }
@@ -150,8 +182,7 @@ public class FactionFlags {
             if (flag.equals("dynmapTerritoryColor")) {
                 DynmapIntegrator.getInstance().updateClaims(); // update dynmap to reflect color change
             }
-        }
-        else {
+        } else {
             player.sendMessage(ChatColor.RED + String.format(LocaleManager.getInstance().getText("WasntFound"), flag));
         }
     }
@@ -165,16 +196,13 @@ public class FactionFlags {
         if (integerValues.containsKey(flag)) {
             Logger.getInstance().log(String.format("[DEBUG] Flag '%s' was found! Value: '%s'", flag, integerValues.get(flag)));
             return integerValues.get(flag);
-        }
-        else if (booleanValues.containsKey(flag)) {
+        } else if (booleanValues.containsKey(flag)) {
             Logger.getInstance().log(String.format("[DEBUG] Flag '%s' was found! Value: '%s'", flag, booleanValues.get(flag)));
             return booleanValues.get(flag);
-        }
-        else if (doubleValues.containsKey(flag)) {
+        } else if (doubleValues.containsKey(flag)) {
             Logger.getInstance().log(String.format("[DEBUG] Flag '%s' was found! Value: '%s'", flag, doubleValues.get(flag)));
             return doubleValues.get(flag);
-        }
-        else if (stringValues.containsKey(flag)) {
+        } else if (stringValues.containsKey(flag)) {
             Logger.getInstance().log(String.format("[DEBUG] Flag '%s' was found! Value: '%s'", flag, stringValues.get(flag)));
             return stringValues.get(flag);
         }
@@ -247,14 +275,11 @@ public class FactionFlags {
             }
             if (integerValues.containsKey(flagName)) {
                 toReturn += String.format("%s: %s", flagName, integerValues.get(flagName));
-            }
-            else if (booleanValues.containsKey(flagName)) {
+            } else if (booleanValues.containsKey(flagName)) {
                 toReturn += String.format("%s: %s", flagName, booleanValues.get(flagName));
-            }
-            else if (doubleValues.containsKey(flagName)) {
+            } else if (doubleValues.containsKey(flagName)) {
                 toReturn += String.format("%s: %s", flagName, doubleValues.get(flagName));
-            }
-            else if (stringValues.containsKey(flagName)) {
+            } else if (stringValues.containsKey(flagName)) {
                 toReturn += String.format("%s: %s", flagName, stringValues.get(flagName));
             }
         }
