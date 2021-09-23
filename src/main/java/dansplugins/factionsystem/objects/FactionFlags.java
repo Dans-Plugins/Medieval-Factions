@@ -1,8 +1,8 @@
 package dansplugins.factionsystem.objects;
 
-import dansplugins.factionsystem.CurrenciesIntegrator;
-import dansplugins.factionsystem.DynmapIntegrator;
-import dansplugins.factionsystem.FiefsIntegrator;
+import dansplugins.factionsystem.integrators.CurrenciesIntegrator;
+import dansplugins.factionsystem.integrators.DynmapIntegrator;
+import dansplugins.factionsystem.integrators.FiefsIntegrator;
 import dansplugins.factionsystem.MedievalFactions;
 import dansplugins.factionsystem.managers.ConfigManager;
 import dansplugins.factionsystem.managers.LocaleManager;

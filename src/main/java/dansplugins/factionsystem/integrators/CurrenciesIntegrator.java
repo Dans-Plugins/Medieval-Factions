@@ -1,4 +1,4 @@
-package dansplugins.factionsystem;
+package dansplugins.factionsystem.integrators;
 
 import org.bukkit.Bukkit;
 

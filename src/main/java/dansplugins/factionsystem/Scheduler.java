@@ -1,6 +1,7 @@
 package dansplugins.factionsystem;
 
 import dansplugins.factionsystem.data.PersistentData;
+import dansplugins.factionsystem.integrators.DynmapIntegrator;
 import dansplugins.factionsystem.managers.ChunkManager;
 import dansplugins.factionsystem.managers.LocaleManager;
 import dansplugins.factionsystem.managers.StorageManager;

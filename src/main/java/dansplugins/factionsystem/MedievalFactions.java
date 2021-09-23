@@ -3,6 +3,7 @@ package dansplugins.factionsystem;
 import dansplugins.factionsystem.bstats.Metrics;
 import dansplugins.factionsystem.data.PersistentData;
 import dansplugins.factionsystem.externalapi.MedievalFactionsAPI;
+import dansplugins.factionsystem.integrators.DynmapIntegrator;
 import dansplugins.factionsystem.managers.ConfigManager;
 import dansplugins.factionsystem.managers.LocaleManager;
 import dansplugins.factionsystem.managers.StorageManager;

@@ -1,5 +1,6 @@
-package dansplugins.factionsystem;
+package dansplugins.factionsystem.integrators;
 
+import dansplugins.factionsystem.MedievalFactions;
 import dansplugins.factionsystem.data.PersistentData;
 import dansplugins.factionsystem.managers.ChunkManager;
 import dansplugins.factionsystem.managers.LocaleManager;

@@ -2,13 +2,12 @@ package dansplugins.factionsystem;
 
 import dansplugins.factionsystem.data.EphemeralData;
 import dansplugins.factionsystem.data.PersistentData;
+import dansplugins.factionsystem.integrators.DynmapIntegrator;
 import dansplugins.factionsystem.managers.*;
 import dansplugins.factionsystem.utils.ArgumentParser;
 import dansplugins.factionsystem.utils.BlockChecker;
 import dansplugins.factionsystem.utils.InteractionAccessChecker;
 import dansplugins.factionsystem.utils.UUIDChecker;
-
-import java.util.UUID;
 
 /*
     This class gives developers access to the internal API for Medieval Factions.

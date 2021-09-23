@@ -1,5 +1,6 @@
 package dansplugins.factionsystem;
 
+import dansplugins.factionsystem.integrators.FiefsIntegrator;
 import dansplugins.factionsystem.managers.LocaleManager;
 import dansplugins.factionsystem.objects.Faction;
 import dansplugins.factionsystem.utils.UUIDChecker;

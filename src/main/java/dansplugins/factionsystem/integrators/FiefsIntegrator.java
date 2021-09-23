@@ -1,5 +1,6 @@
-package dansplugins.factionsystem;
+package dansplugins.factionsystem.integrators;
 
+import dansplugins.factionsystem.MedievalFactions;
 import dansplugins.fiefs.externalapi.FiefsAPI;
 import org.bukkit.Bukkit;
 
