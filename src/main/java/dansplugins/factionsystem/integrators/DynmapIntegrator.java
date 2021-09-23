@@ -1,5 +1,6 @@
-package dansplugins.factionsystem;
+package dansplugins.factionsystem.integrators;
 
+import dansplugins.factionsystem.MedievalFactions;
 import dansplugins.factionsystem.data.PersistentData;
 import dansplugins.factionsystem.managers.ChunkManager;
 import dansplugins.factionsystem.managers.LocaleManager;
@@ -7,6 +8,7 @@ import dansplugins.factionsystem.objects.ChunkFlags;
 import dansplugins.factionsystem.objects.ClaimedChunk;
 import dansplugins.factionsystem.objects.Faction;
 import dansplugins.factionsystem.objects.PlayerPowerRecord;
+import dansplugins.factionsystem.utils.Logger;
 import dansplugins.factionsystem.utils.UUIDChecker;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.PluginManager;
@@ -19,8 +21,6 @@ import java.util.*;
 import static org.bukkit.Bukkit.getServer;
 
 public class DynmapIntegrator {
-
-    private boolean debug = MedievalFactions.getInstance().isDebugEnabled();
 
     private static DynmapIntegrator instance = null;
     public static boolean dynmapInitialized = false;
@@ -111,17 +111,17 @@ public class DynmapIntegrator {
         dynmap = pm.getPlugin("dynmap");
 
         if(!isDynmapPresent()) {
-            if (debug) { System.out.println(LocaleManager.getInstance().getText("CannotFindDynmap")); }
+            Logger.getInstance().log(LocaleManager.getInstance().getText("CannotFindDynmap"));
         }
         else {
             try {
                 dynmapAPI = (DynmapCommonAPI) dynmap; /* Get API */
                 markerAPI = dynmapAPI.getMarkerAPI();
                 initializeMarkerSets();
-                if (debug) { System.out.println(LocaleManager.getInstance().getText("DynmapIntegrationSuccessful")); }
+                Logger.getInstance().log(LocaleManager.getInstance().getText("DynmapIntegrationSuccessful"));
             }
             catch (Exception e) {
-                if (debug) { System.out.println(LocaleManager.getInstance().getText("ErrorIntegratingWithDynmap") + e.getMessage()); }
+                Logger.getInstance().log(LocaleManager.getInstance().getText("ErrorIntegratingWithDynmap") + e.getMessage());
             }
         }
     }
@@ -138,7 +138,7 @@ public class DynmapIntegrator {
         if (set == null) {
             set = markerAPI.createMarkerSet(getDynmapPluginSetId(markerLabel), getDynmapPluginLayer(), null, false);
             if (set == null) {
-                if (debug) { System.out.println(LocaleManager.getInstance().getText("ErrorCreatingMarkerSet") + ": markerLabel = " + markerLabel); }
+                Logger.getInstance().log(LocaleManager.getInstance().getText("ErrorCreatingMarkerSet") + ": markerLabel = " + markerLabel);
                 return set;
             }
         }

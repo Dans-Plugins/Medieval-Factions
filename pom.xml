@@ -6,7 +6,7 @@
 
     <groupId>KingdomProgrammers</groupId>
     <artifactId>Medieval-Factions</artifactId>
-    <version>v4.2.2-alpha-4</version>
+    <version>v4.4-alpha-1</version>
     <packaging>jar</packaging>
 
     <name>Medieval Factions</name>
@@ -90,6 +90,13 @@
             <artifactId>dynmap-api</artifactId>
             <version>2.2</version>
             <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>dansplugins</groupId>
+            <artifactId>Fiefs</artifactId>
+            <version>v0.8-alpha-1</version>
+            <scope>system</scope>
+            <systemPath>${project.basedir}/src/main/resources/Fiefs-v0.8-alpha-1.jar</systemPath>
         </dependency>
     </dependencies>
 </project>

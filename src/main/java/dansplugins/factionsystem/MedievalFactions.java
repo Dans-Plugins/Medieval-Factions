@@ -2,6 +2,8 @@ package dansplugins.factionsystem;
 
 import dansplugins.factionsystem.bstats.Metrics;
 import dansplugins.factionsystem.data.PersistentData;
+import dansplugins.factionsystem.externalapi.MedievalFactionsAPI;
+import dansplugins.factionsystem.integrators.DynmapIntegrator;
 import dansplugins.factionsystem.managers.ConfigManager;
 import dansplugins.factionsystem.managers.LocaleManager;
 import dansplugins.factionsystem.managers.StorageManager;
@@ -16,9 +18,8 @@ import java.io.File;
 public class MedievalFactions extends JavaPlugin {
 
     private static MedievalFactions instance;
-    private static MedievalFactionsAPI API;
 
-    private final String version = "v4.2.2-alpha-4";
+    private final String version = "v4.4-alpha-1";
 
     public static MedievalFactions getInstance() {
         return instance;
@@ -27,7 +28,6 @@ public class MedievalFactions extends JavaPlugin {
     @Override
     public void onEnable() {
         instance = this;
-        API = new MedievalFactionsAPI();
 
         // create/load config
         if (!(new File("./plugins/MedievalFactions/config.yml").exists())) {
@@ -90,7 +90,11 @@ public class MedievalFactions extends JavaPlugin {
     }
 
     public MedievalFactionsAPI getAPI() {
-        return API;
+        return new MedievalFactionsAPI();
+    }
+
+    public SingletonShelf getInternalAPI() {
+        return new SingletonShelf();
     }
 
     public boolean isDebugEnabled() {

@@ -31,7 +31,7 @@ public class LeaveCommand extends SubCommand {
         FactionLeaveEvent leaveEvent = new FactionLeaveEvent(faction, player);
         Bukkit.getPluginManager().callEvent(leaveEvent);
         if (leaveEvent.isCancelled()) {
-            // TODO Locale Message
+            // TODO: add locale message
             return;
         }
 
@@ -39,8 +39,7 @@ public class LeaveCommand extends SubCommand {
         ephemeral.getPlayersInFactionChat().remove(player.getUniqueId()); // Remove from Faction Chat.
         faction.removeMember(player.getUniqueId());
         player.sendMessage(translate("&b" + getText("AlertLeftFaction")));
-        messageFaction(faction, translate("&a" + player.getName() + " has left " + faction.getName()));
-        // TODO Edit this message.
+        messageFaction(faction, translate("&a" + player.getName() + " has left " + faction.getName())); // TODO: add locale message
 
     }
 

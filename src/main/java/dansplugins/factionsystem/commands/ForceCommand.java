@@ -23,7 +23,7 @@ public class ForceCommand extends SubCommand {
     private final boolean debug = MedievalFactions.getInstance().isDebugEnabled();
 
     private final String[] commands = new String[]{
-            "Save", "Load", "Peace", "Demote", "Join", "Kick", "Power", "Renounce", "Transfer", "RemoveVassal", "Rename", "BonusPower", "Unlock", "Create", "Claim"
+            "Save", "Load", "Peace", "Demote", "Join", "Kick", "Power", "Renounce", "Transfer", "RemoveVassal", "Rename", "BonusPower", "Unlock", "Create", "Claim", "Flag"
     };
     private final HashMap<List<String>, String> subMap = new HashMap<>();
 
@@ -187,7 +187,7 @@ public class ForceCommand extends SubCommand {
         FactionJoinEvent joinEvent = new FactionJoinEvent(faction, player);
         Bukkit.getPluginManager().callEvent(joinEvent);
         if (joinEvent.isCancelled()) {
-            // TODO Locale Message
+            // TODO: add locale message
             return;
         }
         messageFaction(faction, translate("&a" + getText("HasJoined", player.getName(), faction.getName())));
@@ -227,7 +227,7 @@ public class ForceCommand extends SubCommand {
         FactionKickEvent kickEvent = new FactionKickEvent(faction, target, null); // no kicker so null is used
         Bukkit.getPluginManager().callEvent(kickEvent);
         if (kickEvent.isCancelled()) {
-            // TODO Locale Message
+            // TODO: add locale message
             return;
         }
         if (faction.isOfficer(targetUUID)) {
@@ -398,7 +398,7 @@ public class ForceCommand extends SubCommand {
         final FactionRenameEvent renameEvent = new FactionRenameEvent(faction, oldName, newName);
         Bukkit.getPluginManager().callEvent(renameEvent);
         if (renameEvent.isCancelled()) {
-            // TODO Locale Message.
+            // TODO: add locale message
             return;
         }
 
@@ -569,6 +569,39 @@ public class ForceCommand extends SubCommand {
 
         // inform sender
         sender.sendMessage(translate("&a" + getText("Done")));
+    }
+
+    private void forceFlag(CommandSender sender, String[] args) {
+        if (!(checkPermissions(sender, "mf.force.rename", "mf.force.*", "mf.admin"))) {
+            return;
+        }
+
+        if (!(sender instanceof Player)) {
+            // TODO: add locale message
+            return;
+        }
+
+        Player player = (Player) sender;
+
+        if (args.length < 4) {
+            player.sendMessage(translate("&c" + getText("UsageForceFlag")));
+            return;
+        }
+        // get arguments designated by single quotes
+        final ArrayList<String> singleQuoteArgs = parser.getArgumentsInsideSingleQuotes(args);
+        if (singleQuoteArgs.size() < 3) {
+            player.sendMessage(translate("&c" + getText("ArgumentsSingleQuotesRequirement")));
+            return;
+        }
+        Faction faction = getFaction(singleQuoteArgs.get(0));
+        if (faction == null) {
+            player.sendMessage(translate("&c" + getText("FactionNotFound")));
+            return;
+        }
+        final String option = singleQuoteArgs.get(1);
+        final String value = singleQuoteArgs.get(2);
+
+        faction.getFlags().setFlag(option, value, player);
     }
 
 }

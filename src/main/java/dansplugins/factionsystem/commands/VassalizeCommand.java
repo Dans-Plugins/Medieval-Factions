@@ -51,7 +51,7 @@ public class VassalizeCommand extends SubCommand {
         // make sure this vassalization won't result in a vassalization loop
         final int loopCheck = willVassalizationResultInLoop(faction, target);
         if (loopCheck == 1 || loopCheck == 2) {
-            System.out.println("DEBUG: vassalization was cancelled due to potential loop"); // TODO: replace with message
+            System.out.println("DEBUG: vassalization was cancelled due to potential loop"); // TODO: add locale message
             return;
         }
         // add faction to attemptedVassalizations

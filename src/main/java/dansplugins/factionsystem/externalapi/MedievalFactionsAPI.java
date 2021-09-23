@@ -3,9 +3,9 @@ package dansplugins.factionsystem.externalapi;
 import dansplugins.factionsystem.MedievalFactions;
 import dansplugins.factionsystem.data.EphemeralData;
 import dansplugins.factionsystem.data.PersistentData;
-import dansplugins.factionsystem.managers.ConfigManager;
 import dansplugins.factionsystem.managers.ChunkManager;
 import dansplugins.factionsystem.objects.Faction;
+import dansplugins.factionsystem.objects.PlayerPowerRecord;
 import org.bukkit.Chunk;
 import org.bukkit.entity.Player;
 
@@ -16,7 +16,19 @@ import java.util.UUID;
 */
 public class MedievalFactionsAPI implements IMedievalFactionsAPI {
 
+    private final String APIVersion = "v1.0.0"; // every time the external API is altered, this should be incremented
+
     // accessors
+
+    @Override
+    public String getAPIVersion() {
+        return APIVersion;
+    }
+
+    @Override
+    public String getVersion() {
+        return MedievalFactions.getInstance().getVersion();
+    }
 
     @Override
     public MF_Faction getFaction(String factionName) {
@@ -75,5 +87,26 @@ public class MedievalFactionsAPI implements IMedievalFactionsAPI {
     @Override
     public void forcePlayerToLeaveFactionChat(UUID uuid) {
         EphemeralData.getInstance().getPlayersInFactionChat().remove(uuid);
+    }
+
+    @Override
+    public void increasePower(Player player, int amount) {
+        PlayerPowerRecord powerRecord = PersistentData.getInstance().getPlayersPowerRecord(player.getUniqueId());
+        int originalPower = powerRecord.getPowerLevel();
+        int newPower = originalPower + amount;
+        powerRecord.setPowerLevel(newPower);
+    }
+
+    @Override
+    public void decreasePower(Player player, int amount) {
+        PlayerPowerRecord powerRecord = PersistentData.getInstance().getPlayersPowerRecord(player.getUniqueId());
+        int originalPower = powerRecord.getPowerLevel();
+        int newPower = originalPower - amount;
+        if (newPower >= 0) {
+            powerRecord.setPowerLevel(originalPower - amount);
+        }
+        else {
+            powerRecord.setPowerLevel(0);
+        }
     }
 }

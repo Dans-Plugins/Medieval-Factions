@@ -1,7 +1,8 @@
 package dansplugins.factionsystem.placeholders;
 
 import dansplugins.factionsystem.MedievalFactions;
-import dansplugins.factionsystem.MedievalFactionsAPI;
+import dansplugins.factionsystem.data.PersistentData;
+import dansplugins.factionsystem.managers.ChunkManager;
 import dansplugins.factionsystem.objects.ClaimedChunk;
 import dansplugins.factionsystem.objects.Faction;
 import dansplugins.factionsystem.objects.PlayerPowerRecord;
@@ -46,9 +47,8 @@ public class PlaceholderAPI extends PlaceholderExpansion {
         id = id.toLowerCase(); // I'm unsure if PlaceholderAPI enforces case, but lets just do it to make sure.
         if (player == null) return null; // We only want to handle Player-Placeholders here.
 
-        final MedievalFactionsAPI api = MedievalFactions.getInstance().getAPI();
-        final boolean hasFaction = api.getPersistentData().isInFaction(player.getUniqueId());
-        final Faction faction = api.getPersistentData().getPlayersFaction(player.getUniqueId());
+        final boolean hasFaction = PersistentData.getInstance().isInFaction(player.getUniqueId());
+        final Faction faction = PersistentData.getInstance().getPlayersFaction(player.getUniqueId());
 
         // Prerequisites.
         if (id.startsWith("faction_") && !hasFaction && !id.equalsIgnoreCase("faction_at_location")) {
@@ -124,15 +124,15 @@ public class PlaceholderAPI extends PlaceholderExpansion {
         }
         if (id.equalsIgnoreCase("faction_player_power")) {
             // The player-specific power which counts toward their Faction's power.
-            return String.valueOf(api.getPersistentData().getPlayersPowerRecord(player.getUniqueId()).getPowerLevel());
+            return String.valueOf(PersistentData.getInstance().getPlayersPowerRecord(player.getUniqueId()).getPowerLevel());
         }
         if (id.equalsIgnoreCase("faction_player_max_power")) {
             // The player-specific max_power which is their total contribute-able power toward their Faction's power.
-            return String.valueOf(api.getPersistentData().getPlayersPowerRecord(player.getUniqueId()).maxPower());
+            return String.valueOf(PersistentData.getInstance().getPlayersPowerRecord(player.getUniqueId()).maxPower());
         }
         if (id.equalsIgnoreCase("faction_player_power_full")) {
             // The formatted version of the 'power' and 'max_power' placeholders, 10/10 for example.
-            final PlayerPowerRecord playersPowerRecord = api.getPersistentData().getPlayersPowerRecord(player.getUniqueId());
+            final PlayerPowerRecord playersPowerRecord = PersistentData.getInstance().getPlayersPowerRecord(player.getUniqueId());
             return playersPowerRecord.getPowerLevel() + "/" + playersPowerRecord.maxPower();
         }
 
@@ -157,15 +157,15 @@ public class PlaceholderAPI extends PlaceholderExpansion {
         }
         if (id.equalsIgnoreCase("player_total_logins")) {
             // The total amount of times a Player has logged in.
-            return String.valueOf(api.getPersistentData().getPlayerActivityRecord(player.getUniqueId()).getLogins());
+            return String.valueOf(PersistentData.getInstance().getPlayerActivityRecord(player.getUniqueId()).getLogins());
         }
         if (id.equalsIgnoreCase("player_session_length")) {
             // The total time since their current login. (Days:Hours:Minutes:Seconds) or (Hours:Minutes:Seconds).
-            return api.getPersistentData().getPlayerActivityRecord(player.getUniqueId()).getActiveSessionLength();
+            return PersistentData.getInstance().getPlayerActivityRecord(player.getUniqueId()).getActiveSessionLength();
         }
         if (id.equalsIgnoreCase("faction_at_location")) {
             // The Faction at the Player's current location. (Wilderness if nothing).
-            ClaimedChunk claim = api.getChunkManager().getClaimedChunk(player.getLocation().getChunk());
+            ClaimedChunk claim = ChunkManager.getInstance().getClaimedChunk(player.getLocation().getChunk());
             if (claim == null) return "Wilderness";
             else return claim.getHolder();
         }

@@ -8,6 +8,8 @@ import java.util.UUID;
 public interface IMedievalFactionsAPI {
 
     // accessors
+    String getAPIVersion();
+    String getVersion();
     MF_Faction getFaction(String factionName);
     MF_Faction getFaction(Player player);
     MF_Faction getFaction(UUID playerUUID);
@@ -19,4 +21,6 @@ public interface IMedievalFactionsAPI {
 
     // mutators
     void forcePlayerToLeaveFactionChat(UUID uuid);
+    void increasePower(Player player, int amount);
+    void decreasePower(Player player, int amount);
 }

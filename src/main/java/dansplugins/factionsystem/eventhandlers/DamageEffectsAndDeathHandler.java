@@ -9,6 +9,7 @@ import dansplugins.factionsystem.objects.ClaimedChunk;
 import dansplugins.factionsystem.objects.Duel;
 import dansplugins.factionsystem.objects.Faction;
 import dansplugins.factionsystem.objects.PlayerPowerRecord;
+import dansplugins.factionsystem.utils.Logger;
 import dansplugins.factionsystem.utils.Pair;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
@@ -29,8 +30,6 @@ import java.util.List;
 
 public class DamageEffectsAndDeathHandler implements Listener {
 
-    private boolean debug = MedievalFactions.getInstance().isDebugEnabled();
-
     public DamageEffectsAndDeathHandler() {
         initializeBadPotionTypes();
     }
@@ -40,7 +39,7 @@ public class DamageEffectsAndDeathHandler implements Listener {
    	
         // this method disallows PVP between members of the same faction and between factions who are not at war
         // PVP is allowed between factionless players, players who belong to a faction and the factionless, and players whose factions are at war.
-        if (debug) { System.out.println("EntityDamageByIntity" + event.toString()); }
+        Logger.getInstance().log("EntityDamageByIntity" + event.toString());
 
         // if this was between two players melee
         if (event.getDamager() instanceof Player && event.getEntity() instanceof Player) {
@@ -114,7 +113,7 @@ public class DamageEffectsAndDeathHandler implements Listener {
                 location = armorStand.getLocation();
             }
             else if (event.getEntity() instanceof ItemFrame) {
-                if (debug) { System.out.println("DEBUG: ItemFrame interaction captured in EntityDamageByEntityEvent!"); }
+                Logger.getInstance().log("ItemFrame interaction captured in EntityDamageByEntityEvent!");
                 ItemFrame itemFrame = (ItemFrame) event.getEntity();
 
                 if (!(event.getDamager() instanceof Player)) {
@@ -159,12 +158,14 @@ public class DamageEffectsAndDeathHandler implements Listener {
             return;
         }
         else if (arePlayersInSameFaction(attacker, victim)) {
-            event.setCancelled(true);
-            attacker.sendMessage(ChatColor.RED + LocaleManager.getInstance().getText("CannotAttackFactionMember"));
+            Faction faction = PersistentData.getInstance().getPlayersFaction(attacker.getUniqueId());
+            boolean friendlyFireAllowed = (boolean) faction.getFlags().getFlag("allowfriendlyFire");
+            if (!friendlyFireAllowed) {
+                event.setCancelled(true);
+                attacker.sendMessage(ChatColor.RED + LocaleManager.getInstance().getText("CannotAttackFactionMember"));
+            }
         }
-
-        // if attacker's faction and victim's faction are not at war
-        else if (arePlayersFactionsNotEnemies(attacker, victim)) {
+        else if (arePlayersFactionsNotEnemies(attacker, victim)) { // if attacker's faction and victim's faction are not at war
             if (MedievalFactions.getInstance().getConfig().getBoolean("warsRequiredForPVP")) {
                 event.setCancelled(true);
                 attacker.sendMessage(ChatColor.RED + LocaleManager.getInstance().getText("CannotAttackNonWarringPlayer"));

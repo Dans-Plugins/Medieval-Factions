@@ -1,6 +1,6 @@
 package dansplugins.factionsystem.eventhandlers;
 
-import dansplugins.factionsystem.DynmapIntegrator;
+import dansplugins.factionsystem.integrators.DynmapIntegrator;
 import dansplugins.factionsystem.MedievalFactions;
 import dansplugins.factionsystem.data.PersistentData;
 import dansplugins.factionsystem.managers.ChunkManager;
@@ -20,8 +20,6 @@ import java.util.Objects;
 import static org.bukkit.Bukkit.getServer;
 
 public class MoveHandler implements Listener {
-
-    private boolean debug = MedievalFactions.getInstance().isDebugEnabled();
 
     @EventHandler()
     public void handle(PlayerMoveEvent event) {

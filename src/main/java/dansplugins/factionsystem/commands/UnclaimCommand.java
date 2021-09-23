@@ -34,7 +34,7 @@ public class UnclaimCommand extends SubCommand {
         }
         chunks.removeChunkAtPlayerLocation(player, faction);
         dynmap.updateClaims();
-        // TODO: 12/05/2021 Locale Message.
+        // TODO: add locale message
     }
 
     /**

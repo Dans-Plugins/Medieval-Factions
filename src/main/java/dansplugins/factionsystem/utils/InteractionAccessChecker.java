@@ -3,6 +3,7 @@ package dansplugins.factionsystem.utils;
 import dansplugins.factionsystem.MedievalFactions;
 import dansplugins.factionsystem.data.EphemeralData;
 import dansplugins.factionsystem.data.PersistentData;
+import dansplugins.factionsystem.managers.ConfigManager;
 import dansplugins.factionsystem.objects.ClaimedChunk;
 import dansplugins.factionsystem.objects.Faction;
 import org.bukkit.block.Block;
@@ -11,8 +12,6 @@ import org.bukkit.entity.Player;
 import static org.bukkit.Material.LADDER;
 
 public class InteractionAccessChecker {
-
-    final private boolean debug = MedievalFactions.getInstance().isDebugEnabled();
 
     private static InteractionAccessChecker instance;
 
@@ -28,6 +27,11 @@ public class InteractionAccessChecker {
     }
 
     public boolean shouldEventBeCancelled(ClaimedChunk claimedChunk, Player player) {
+
+        if (!MedievalFactions.getInstance().getConfig().getBoolean("factionProtectionsEnabled")) {
+            return false;
+        }
+
         if (claimedChunk == null) {
             // chunk is not claimed
             return false;
@@ -57,6 +61,11 @@ public class InteractionAccessChecker {
     }
 
     public boolean isOutsiderInteractionAllowed(Player player, ClaimedChunk chunk, Faction playersFaction) {
+
+        if (!MedievalFactions.getInstance().getConfig().getBoolean("factionProtectionsEnabled")) {
+            return true;
+        }
+
         final Faction chunkHolder = PersistentData.getInstance().getFaction(chunk.getHolder());
 
         boolean inVassalageTree = PersistentData.getInstance().isPlayerInFactionInVassalageTree(player, chunkHolder);
@@ -64,10 +73,8 @@ public class InteractionAccessChecker {
         boolean allyInteractionAllowed = (boolean) chunkHolder.getFlags().getFlag("alliesCanInteractWithLand");
         boolean vassalageTreeInteractionAllowed = (boolean) chunkHolder.getFlags().getFlag("vassalageTreeCanInteractWithLand");
 
-        if (debug) {
-            System.out.println("[DEBUG] allyInteractionAllowed: " + allyInteractionAllowed);
-            System.out.println("[DEBUG] vassalageTreeInteractionAllowed: " + vassalageTreeInteractionAllowed);
-        }
+        Logger.getInstance().log("allyInteractionAllowed: " + allyInteractionAllowed);
+        Logger.getInstance().log("vassalageTreeInteractionAllowed: " + vassalageTreeInteractionAllowed);
 
         boolean allowed = false;
 

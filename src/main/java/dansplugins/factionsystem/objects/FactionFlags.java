@@ -1,8 +1,12 @@
 package dansplugins.factionsystem.objects;
 
-import dansplugins.factionsystem.DynmapIntegrator;
+import dansplugins.factionsystem.integrators.CurrenciesIntegrator;
+import dansplugins.factionsystem.integrators.DynmapIntegrator;
+import dansplugins.factionsystem.integrators.FiefsIntegrator;
 import dansplugins.factionsystem.MedievalFactions;
+import dansplugins.factionsystem.managers.ConfigManager;
 import dansplugins.factionsystem.managers.LocaleManager;
+import dansplugins.factionsystem.utils.Logger;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 
@@ -18,8 +22,6 @@ public class FactionFlags {
         - initializeFlagValues()
         - loadMissingFlagsIfNecessary()
     */
-
-    private final boolean debug = MedievalFactions.getInstance().isDebugEnabled();
 
     private ArrayList<String> flagNames = new ArrayList<>();
     private HashMap<String, Integer> integerValues = new HashMap<>();
@@ -40,6 +42,9 @@ public class FactionFlags {
         flagNames.add("dynmapTerritoryColor");
         flagNames.add("territoryAlertColor");
         flagNames.add("prefixColor");
+        flagNames.add("allowFriendlyFire");
+        flagNames.add("fiefsEnabled");
+        flagNames.add("officersCanMintCurrency");
     }
 
     public void initializeFlagValues() {
@@ -52,6 +57,9 @@ public class FactionFlags {
         stringValues.put("dynmapTerritoryColor", "#ff0000");
         stringValues.put("territoryAlertColor", MedievalFactions.getInstance().getConfig().getString("territoryAlertColor"));
         stringValues.put("prefixColor", "white");
+        booleanValues.put("allowFriendlyFire", false);
+        booleanValues.put("fiefsEnabled", true);
+        booleanValues.put("officersCanMintCurrency", false);
     }
 
     public void loadMissingFlagsIfNecessary() {
@@ -80,6 +88,15 @@ public class FactionFlags {
         if (!stringValues.containsKey("prefixColor")) {
             stringValues.put("prefixColor", "white");
         }
+        if (!booleanValues.containsKey("allowFriendlyFire")) {
+            booleanValues.put("allowFriendlyFire", false);
+        }
+        if (!booleanValues.containsKey("fiefsEnabled")) {
+            booleanValues.put("fiefsEnabled", true);
+        }
+        if (!booleanValues.containsKey("officersCanMintCurrency")) {
+            booleanValues.put("officersCanMintCurrency", false);
+        }
     }
 
     public void sendFlagList(Player player) {
@@ -93,8 +110,23 @@ public class FactionFlags {
             return;
         }
 
-        if (flag.equals("prefixColor") && !MedievalFactions.getInstance().getConfig().getBoolean("playersChatWithPrefixes")) {
+        if (!ConfigManager.getInstance().getBoolean("factionsCanSetPrefixColors")) {
+            // TODO: add locale message
+            return;
+        }
+
+        if (flag.equals("prefixColor") && (!MedievalFactions.getInstance().getConfig().getBoolean("playersChatWithPrefixes"))) {
             player.sendMessage(ChatColor.RED + "" + LocaleManager.getInstance().getText("PrefixesDisabled"));
+            return;
+        }
+
+        if (flag.equals("fiefsEnabled") && !FiefsIntegrator.getInstance().isFiefsPresent()) {
+            // TODO: add locale message
+            return;
+        }
+
+        if (flag.equals("officersCanMintCurrency") && !CurrenciesIntegrator.getInstance().isCurrenciesPresent()) {
+            // TODO: add locale message
             return;
         }
 
@@ -224,24 +256,24 @@ public class FactionFlags {
 
     public Object getFlag(String flag) {
         if (!isFlag(flag)) {
-            if (debug) { System.out.println(String.format("[DEBUG] Flag '%s' was not found!", flag)); }
+            Logger.getInstance().log(String.format("[DEBUG] Flag '%s' was not found!", flag));
             return false;
         }
 
         if (integerValues.containsKey(flag)) {
-            if (debug) { System.out.println(String.format("[DEBUG] Flag '%s' was found! Value: '%s'", flag, integerValues.get(flag))); }
+            Logger.getInstance().log(String.format("[DEBUG] Flag '%s' was found! Value: '%s'", flag, integerValues.get(flag)));
             return integerValues.get(flag);
         }
         else if (booleanValues.containsKey(flag)) {
-            if (debug) { System.out.println(String.format("[DEBUG] Flag '%s' was found! Value: '%s'", flag, booleanValues.get(flag))); }
+            Logger.getInstance().log(String.format("[DEBUG] Flag '%s' was found! Value: '%s'", flag, booleanValues.get(flag)));
             return booleanValues.get(flag);
         }
         else if (doubleValues.containsKey(flag)) {
-            if (debug) { System.out.println(String.format("[DEBUG] Flag '%s' was found! Value: '%s'", flag, doubleValues.get(flag))); }
+            Logger.getInstance().log(String.format("[DEBUG] Flag '%s' was found! Value: '%s'", flag, doubleValues.get(flag)));
             return doubleValues.get(flag);
         }
         else if (stringValues.containsKey(flag)) {
-            if (debug) { System.out.println(String.format("[DEBUG] Flag '%s' was found! Value: '%s'", flag, stringValues.get(flag))); }
+            Logger.getInstance().log(String.format("[DEBUG] Flag '%s' was found! Value: '%s'", flag, stringValues.get(flag)));
             return stringValues.get(flag);
         }
         return null;
@@ -296,7 +328,15 @@ public class FactionFlags {
                 continue;
             }
 
-            if (flagName.equals("prefixColor") && !MedievalFactions.getInstance().getConfig().getBoolean("playersChatWithPrefixes")) {
+            if (flagName.equals("prefixColor") && (!MedievalFactions.getInstance().getConfig().getBoolean("playersChatWithPrefixes") || !ConfigManager.getInstance().getBoolean("factionsCanSetPrefixColors"))) {
+                continue;
+            }
+
+            if (flagName.equals("fiefsEnabled") && !FiefsIntegrator.getInstance().isFiefsPresent()) {
+                continue;
+            }
+
+            if (flagName.equals("officersCanMintCurrency") && !CurrenciesIntegrator.getInstance().isCurrenciesPresent()) {
                 continue;
             }
 

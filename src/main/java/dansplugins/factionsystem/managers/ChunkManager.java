@@ -139,10 +139,13 @@ public class ChunkManager {
 
     private void claimChunkAtLocation(Player claimant, double[] chunkCoords, World world, Faction claimantsFaction) {
 
-        // if at demesne limit
-        if (!(getChunksClaimedByFaction(claimantsFaction.getName(), PersistentData.getInstance().getClaimedChunks()) < claimantsFaction.getCumulativePowerLevel())) {
-            claimant.sendMessage(ChatColor.RED + LocaleManager.getInstance().getText("AlertReachedDemesne"));
-            return;
+        // if demesne limit enabled
+        if (ConfigManager.getInstance().getBoolean("limitLand")) {
+            // if at demesne limit
+            if (!(getChunksClaimedByFaction(claimantsFaction.getName(), PersistentData.getInstance().getClaimedChunks()) < claimantsFaction.getCumulativePowerLevel())) {
+                claimant.sendMessage(ChatColor.RED + LocaleManager.getInstance().getText("AlertReachedDemesne"));
+                return;
+            }
         }
 
         // check if land is already claimed
@@ -315,7 +318,7 @@ public class ChunkManager {
         FactionUnclaimEvent unclaimEvent = new FactionUnclaimEvent(faction, player, chunk.getChunk());
         Bukkit.getPluginManager().callEvent(unclaimEvent);
         if (unclaimEvent.isCancelled()) {
-            // TODO Add a message here (maybe).
+            // TODO: add locale message
             return;
         }
 

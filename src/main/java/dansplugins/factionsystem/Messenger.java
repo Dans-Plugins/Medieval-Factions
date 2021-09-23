@@ -1,8 +1,10 @@
 package dansplugins.factionsystem;
 
+import dansplugins.factionsystem.integrators.FiefsIntegrator;
 import dansplugins.factionsystem.managers.LocaleManager;
 import dansplugins.factionsystem.objects.Faction;
 import dansplugins.factionsystem.utils.UUIDChecker;
+import dansplugins.fiefs.externalapi.FI_Fief;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
@@ -41,6 +43,16 @@ public class Messenger {
         }
         if (faction.isLiege()) {
             sender.sendMessage(ChatColor.AQUA + String.format(LocaleManager.getInstance().getText("Vassals"), faction.getVassalsSeparatedByCommas()) + "\n");
+        }
+        if (FiefsIntegrator.getInstance().isFiefsPresent()) {
+            ArrayList<FI_Fief> fiefs = FiefsIntegrator.getInstance().getAPI().getFiefsOfFaction(faction.getName());
+            if (fiefs.size() != 0) {
+                String fiefsSeparatedByCommas = "";
+                for (FI_Fief fief : fiefs) {
+                    fiefsSeparatedByCommas += fief.getName();
+                }
+                sender.sendMessage(ChatColor.AQUA + String.format("Fiefs: %s", fiefsSeparatedByCommas));
+            }
         }
         sender.sendMessage(ChatColor.AQUA + String.format(LocaleManager.getInstance().getText("AlliedWith"), faction.getAlliesSeparatedByCommas()) + "\n");
         sender.sendMessage(ChatColor.AQUA + String.format(LocaleManager.getInstance().getText("AtWarWith"), faction.getEnemiesSeparatedByCommas()) + "\n");

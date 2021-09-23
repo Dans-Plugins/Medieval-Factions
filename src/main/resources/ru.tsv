@@ -169,6 +169,7 @@ CmdForceBonusPower	bonuspower
 CmdForceClaim	claim
 CmdForceCreate	create
 CmdForceDemote	demote
+CmdForceFlag	flag
 CmdForceJoin	join
 CmdForceKick	kick
 CmdForceLoad	load
@@ -276,6 +277,7 @@ FactionIsNotVassal	Эта фракция не является вашим вас
 FactionMustBeDesignatedInsideSingleQuotes	Фракцию необходимо обозначать в одинарных кавычках.
 FactionNameChanged	Название фракции изменено.
 FactionNameNotRecognized	Это название фракции не было распознано.
+FactionNameTooLong	Это имя слишком длинное.
 FactionNotEnemy	Эта фракция Вам не враг.
 FactionNotFound	Эта фракция не найдена.
 FactionsSuccessfullyLoaded	Фракции успешно загружены.
@@ -318,6 +320,7 @@ HelpForceBonusPower	/mf force bonuspower 'фракция' число'
 HelpForceClaim	/mf force claim 'название фракции'
 HelpForceCreate	/mf force create 'фракция'
 HelpForceDemote	/mf force demote (игрок)
+HelpForceFlag	/mf force flag 'фракция' 'опция' 'значение'
 HelpForceJoin	/mf force join 'игрок' фракция 2 '
 HelpForceKick	/mf force kick (игрок)
 HelpForceLoad	/mf force load
@@ -387,7 +390,7 @@ LawRemoved	Закон удален.
 LawsTitle	== Законы %s ==
 LeverSuccessfullyLinked	Создание ворот 4/4: Рычаг успешно соединён.
 Liege	Сюзерен: %s
-ListLegend	С: сила, У: участники, З: земли
+ListLegend	P: сила, M: участники, L: земли
 LoadingClaimedChunks	Загрузка захваченных земель...
 LoadingLockedBLocks	Загрузка заблокированных блоков...
 LoadingPlayerPowerRecords	Загрузка записей о мощи игроков...
@@ -511,6 +514,7 @@ UsageForceBonusPower	Использование: /mf force bonuspower 'фрак�
 UsageForceClaim	Использование: /mf force claim 'название фракции'
 UsageForceCreate	Применение : /mf force create 'фракция'
 UsageForceDemote	Использование: /mf force demote (игрок)
+UsageForceFlag	Использование: /mf force flag 'faction' 'option' 'value'
 UsageForceJoin	Использование: /mf force join 'player' 'faction'
 UsageForceKick	Использование: /mf force kick (игрок)
 UsageForcePeace	Использование: /mf force peace 'фракция-1' 'фракция-2
@@ -541,7 +545,7 @@ Vassals	Вассалы: %s
 WarningPlayerAlreadyStartedCreatingGate	ВНИМАНИЕ: Игрок уже начал создавать ворота. Вызов startCreatingGate() игнорируется.
 WasntFound	'%s' не найдено.
 WelcomeBackLastLogout	С возвращением, %s. Последний раз Вы были в сети %s назад.
-WikiLink	Вики: https://github.com/DansPlugins/Medieval-Factions/wiki
+WikiLink	Вики: https://github.com/dmccoystephenson/Medieval-Factions/wiki
 Wilderness	Дикие земли
 WorldsMismatch1	Ошибка размещения точки 1: Несоответствие миров.
 WorldsMismatch2	Ошибка размещения точки 2: Несоответствие миров.
