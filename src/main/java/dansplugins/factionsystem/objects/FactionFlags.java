@@ -21,7 +21,7 @@ public class FactionFlags {
 
     private final boolean debug = MedievalFactions.getInstance().isDebugEnabled();
 
-    private ArrayList<String> flagNames = new ArrayList<>();
+    private final ArrayList<String> flagNames = new ArrayList<>();
     private HashMap<String, Integer> integerValues = new HashMap<>();
     private HashMap<String, Boolean> booleanValues = new HashMap<>();
     private HashMap<String, Double> doubleValues = new HashMap<>();
