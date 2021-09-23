@@ -74,7 +74,7 @@ lilhamoood | Spanish
 JustGllenn | Dutch
 TDL | Dutch
 
-I created this plugin because I wanted to use the original Factions plugin for an upcoming server of mine, and it wasn't updated for the version of minecraft I was going to be using. I decided to take inspiration from the concept of factions - groups of players that can claim land - and create my own factions plugin. The first version released on SpigotMC, v1.7, looked much different than the plugin does today.
+I created this plugin because I wanted to use the original Factions plugin for an upcoming server of mine, and it wasn't updated for the version of minecraft I was going to be using. I decided to take inspiration from the concept of factions - groups of players that can claim land - and create my own factions plugin. The first version, v1.7, released on SpigotMC in June 2020 looked much different than the plugin does today.
 
 ## License
 GPL3
