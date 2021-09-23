@@ -51,56 +51,25 @@ public class ChunkManager {
     }
 
     public void radiusClaimAtLocation(int depth, Player claimant, Location location, Faction claimantsFaction) {
-
         int maxClaimRadius = MedievalFactions.getInstance().getConfig().getInt("maxClaimRadius");
-
         if (depth < 0 || depth > maxClaimRadius) {
             claimant.sendMessage(ChatColor.RED + String.format(LocaleManager.getInstance().getText("RadiusRequirement"), maxClaimRadius));
             return;
         }
-
         if (depth == 0) {
             claimChunkAtLocation(claimant, location, claimantsFaction);
             return;
         }
-
-        Chunk initial = location.getChunk();
-
-        ArrayList<Chunk> chunkList = new ArrayList<>();
-        chunkList.add(initial);
-
-        ArrayList<Chunk> chunksToAdd = new ArrayList<>();
-
-        for (int i = 0; i < depth; i++) {
-
-            // go through every chunk in chunkList
-            for (Chunk chunk : chunkList) {
-                ArrayList<Chunk> surrounding = getEightSurrounding(chunk);
-                // record surrounding chunk if it hasn't been seen before
-                for (Chunk surroundingChunk : surrounding) {
-                    if (!chunksToAdd.contains(surroundingChunk)) {
-                        chunksToAdd.add(surroundingChunk);
-                    }
-                }
+        final Chunk initial = location.getChunk();
+        final Set<Chunk> chunkSet = new HashSet<>(); // Avoid duplicates without checking for it yourself.
+        for (int x = initial.getX() - depth; x <= initial.getX() + depth; x++) {
+            for (int z = initial.getZ() - depth; z <= initial.getZ() + depth; z++) {
+               chunkSet.add(initial.getWorld().getChunkAt(x, z));
             }
-
-            // go through every chunk to add
-            for (Chunk chunk : chunksToAdd) {
-                // add it if chunk list doesn't have it yet
-                if (!chunkList.contains(chunk)) {
-                    chunkList.add(chunk);
-                }
-            }
-
-            chunksToAdd.clear();
-
         }
-
-        // claim selected chunks
-        for (Chunk chunk : chunkList) {
-            claimChunkAtLocation(claimant, getChunkCoords(chunk), chunk.getWorld(), claimantsFaction);
-        }
-
+        chunkSet.forEach(chunk -> claimChunkAtLocation(
+                claimant, getChunkCoords(chunk), chunk.getWorld(), claimantsFaction
+        ));
     }
 
     private ArrayList<Chunk> getEightSurrounding(Chunk chunk) {
