@@ -1,7 +1,7 @@
-(Portugese Brazilian translation)
-(note: this file still needs to be translated)
-
 # Medieval Factions
+
+## Portugese Brazilian translation
+This file still needs to be translated.
 
 ## Description
 Medieval Factions is a system of mechanics that allows for the simulation of sovereign nations in Minecraft. Players can create nations, claim territory, engage in warfare or politics, write laws or hold dueling tournaments, and generally are able to attempt to recreate society somewhat.
