@@ -1,6 +1,6 @@
 # Medieval Factions
 
-## Portugese Brazilian translation
+## Portugese Brazilian Translation
 This file still needs to be translated.
 
 ## Description
