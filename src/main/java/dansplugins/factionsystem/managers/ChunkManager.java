@@ -15,9 +15,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.player.PlayerInteractEvent;
 
 import java.time.ZonedDateTime;
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.UUID;
+import java.util.*;
 
 import static org.bukkit.Bukkit.getServer;
 import static org.bukkit.Material.LADDER;
@@ -50,6 +48,30 @@ public class ChunkManager {
         return null;
     }
 
+    private Set<Chunk> obtainChunks(Chunk initial, int radius) {
+        final Set<Chunk> chunkSet = new HashSet<>(); // Avoid duplicates without checking for it yourself.
+        for (int x = initial.getX() - radius; x <= initial.getX() + radius; x++) {
+            for (int z = initial.getZ() - radius; z <= initial.getZ() + radius; z++) {
+                chunkSet.add(initial.getWorld().getChunkAt(x, z));
+            }
+        }
+        return chunkSet;
+    }
+
+    public void radiusUnclaimAtLocation(int radius, Player player, Faction faction) {
+        final int maxChunksUnclaimable = 999;
+        if (radius<=0||radius> maxChunksUnclaimable) {
+            final LocaleManager instance = LocaleManager.getInstance();
+            player.sendMessage(ChatColor.RED + String.format(instance.getText("RadiusRequirement"), maxChunksUnclaimable));
+            return;
+        }
+        final Set<Chunk> chunkSet = obtainChunks(player.getLocation().getChunk(), radius);
+        chunkSet.stream()
+                .map(c -> isChunkClaimed(c.getX(), c.getZ(), c.getWorld().getName()))
+                .filter(Objects::nonNull)
+                .forEach(chunk -> removeChunk(chunk, player, faction));
+    }
+
     public void radiusClaimAtLocation(int depth, Player claimant, Location location, Faction claimantsFaction) {
         int maxClaimRadius = MedievalFactions.getInstance().getConfig().getInt("maxClaimRadius");
         if (depth < 0 || depth > maxClaimRadius) {
@@ -61,12 +83,7 @@ public class ChunkManager {
             return;
         }
         final Chunk initial = location.getChunk();
-        final Set<Chunk> chunkSet = new HashSet<>(); // Avoid duplicates without checking for it yourself.
-        for (int x = initial.getX() - depth; x <= initial.getX() + depth; x++) {
-            for (int z = initial.getZ() - depth; z <= initial.getZ() + depth; z++) {
-               chunkSet.add(initial.getWorld().getChunkAt(x, z));
-            }
-        }
+        final Set<Chunk> chunkSet = obtainChunks(initial, depth);
         chunkSet.forEach(chunk -> claimChunkAtLocation(
                 claimant, getChunkCoords(chunk), chunk.getWorld(), claimantsFaction
         ));
@@ -386,8 +403,8 @@ public class ChunkManager {
 
         return origin.getWorld().getChunkAt(xpos, zpos);
     }
-
     // this will return true if the chunks to the North, East, South and West of the target are claimed by the same faction as the target
+
     private boolean isClaimedChunkSurroundedByChunksClaimedBySameFaction(ClaimedChunk target) {
         ClaimedChunk northernClaimedChunk = getClaimedChunk(getChunkByDirection(target.getChunk(), "north"));
         ClaimedChunk easternClaimedChunk = getClaimedChunk(getChunkByDirection(target.getChunk(), "east"));
@@ -468,7 +485,7 @@ public class ChunkManager {
         }
 
         // TODO: simplify this code with a call to the shouldEventBeCancelled() method in InteractionAccessChecker.java
-        
+
         final Faction playersFaction = PersistentData.getInstance().getPlayersFaction(event.getPlayer().getUniqueId());
         if (playersFaction == null) {
             return;
@@ -503,7 +520,7 @@ public class ChunkManager {
                     }
                 }
             }
-            
+
             if (!InteractionAccessChecker.getInstance().isOutsiderInteractionAllowed(event.getPlayer(), claimedChunk, playersFaction)) {
                 event.setCancelled(true);
                 return;
@@ -605,5 +622,4 @@ public class ChunkManager {
 
         addClaimedChunk(location.getChunk(), faction, location.getWorld());
     }
-
 }
