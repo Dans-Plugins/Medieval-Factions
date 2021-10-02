@@ -362,7 +362,7 @@ HelpResetPowerLevels	/mf resetpowerlevels - Reset player power records and facti
 HelpRevokeAccess	/mf revokeaccess - Revoke someone's access to a locked block.
 HelpSetHome	/mf sethome - Set your faction home.
 HelpSwearFealty	/mf swearfealty - Swear fealty to a faction.
-HelpTransfer	/mf transfer - Transfer ownership of your faction to another player.\n
+HelpTransfer	/mf transfer - Transfer ownership of your faction to another player.
 HelpUnclaim	/mf unclaim - Unclaim land for your faction.
 HelpUnclaimall	/mf unclaimall - Unclaim all land for your faction.
 HelpUnlock	/mf unlock Unlock a chest or door.

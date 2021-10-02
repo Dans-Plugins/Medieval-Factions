@@ -93,6 +93,7 @@ public class MedievalFactions extends JavaPlugin {
         return new MedievalFactionsAPI();
     }
 
+    @Deprecated
     public SingletonShelf getInternalAPI() {
         return new SingletonShelf();
     }
