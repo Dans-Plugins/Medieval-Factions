@@ -1,93 +1,90 @@
 # Medieval Factions
 
-## Portugese Brazilian Translation
-This file still needs to be translated.
+## Descrição
+Medieval Factions  é um sistema de mecânicas que permite a simulação de nações soberanas no Minecraft. Os jogadores podem criar nações, reinvindicar territórios, se envolver em guerras ou políticas, definir leis ou criar torneios de duelos, e geralmente são capazes de tentar recriar algum tipo de sociedade.
 
-## Description
-Medieval Factions is a system of mechanics that allows for the simulation of sovereign nations in Minecraft. Players can create nations, claim territory, engage in warfare or politics, write laws or hold dueling tournaments, and generally are able to attempt to recreate society somewhat.
+## Software de servidor
+Este plugin esta sendo desenvolvido utilizando a API Do Spigot. Os usuários talvez tenham problemas utilizando este plugin se utilizarem outros softwares disponiveis, como o Paper.
 
-## Server Software
-This plugin was developed using the Spigot API. Users may run into trouble using it with other available server softwares like Paper.
+## Instalação
+1) Você pode baixar o Plugin [nesta página](https://www.spigotmc.org/resources/medieval-factions-sovereign-nation-simulator.79941/updates).
 
-## Installation
-1) You can download the plugin from [this page](https://www.spigotmc.org/resources/medieval-factions-sovereign-nation-simulator.79941/updates).
+2) Depois de baixado, coloque o arquivo jar na pasta de plugins, que está nos arquivos do seu servidor.
 
-2) Once downloaded, place the jar in the plugins folder of your server files.
+3) Reinicie o seu servidor.
 
-3) Restart your server.
+### Integração ao Dynmap 
+Dynmap esta integrado a este plugin. Para poder visualizar o terreno reivindicado em um mapa dinâmico, baixe e instale este plugin [aqui](https://www.spigotmc.org/resources/dynmap.274/).
 
-### Dynmap Integration
-Dynmap has been integrated with this plugin. In order to be able to view claimed land on a dynamic map, download and install the plugin [here](https://www.spigotmc.org/resources/dynmap.274/).
-
-### Expansions
+### Expansões
 1) [Fiefs](https://github.com/dmccoystephenson/Fiefs)
 2) [Currencies](https://github.com/dmccoystephenson/Currencies)
 
-## Usage
-- [User Guide](https://github.com/dmccoystephenson/Medieval-Factions/wiki/Guide)
-- [List of Commands](https://github.com/dmccoystephenson/Medieval-Factions/wiki/Commands)
+## Usos
+- [Guia de Usuário](https://github.com/dmccoystephenson/Medieval-Factions/wiki/Guide)
+- [Lista de Comandos](https://github.com/dmccoystephenson/Medieval-Factions/wiki/Commands)
 - [FAQ](https://github.com/dmccoystephenson/Medieval-Factions/wiki/FAQ)
-- [Config Options](https://github.com/dmccoystephenson/Medieval-Factions/wiki/Config-Options)
+- [Opções de Configuração](https://github.com/dmccoystephenson/Medieval-Factions/wiki/Config-Options)
 - [Faction Flags](https://github.com/dmccoystephenson/Medieval-Factions/wiki/Faction-Flags)
-- [List of Placeholders](https://github.com/dmccoystephenson/Medieval-Factions/wiki/Placeholders)
+- [Lista de Placeholders](https://github.com/dmccoystephenson/Medieval-Factions/wiki/Placeholders)
 
-## Support
-You can find the support discord server [here](https://discord.gg/xXtuAQ2).
+## Suporte
+Você pode encontrar suporte no nosso discord [aqui](https://discord.gg/xXtuAQ2).
 
-### Experiencing a bug?
-Please fill out a bug report [here](https://github.com/dmccoystephenson/Medieval-Factions/issues?q=is%3Aissue+is%3Aopen+label%3Abug).
+### Descobriu um bug?
+Por favor, preencha um relatório de bug [aqui](https://github.com/dmccoystephenson/Medieval-Factions/issues?q=is%3Aissue+is%3Aopen+label%3Abug).
 
 ## Roadmap
-- [Known Bugs](https://github.com/dmccoystephenson/Medieval-Factions/issues?q=is%3Aopen+is%3Aissue+label%3Abug)
-- [Planned Features](https://github.com/dmccoystephenson/Medieval-Factions/issues?q=is%3Aopen+is%3Aissue+label%3AEpic)
-- [Planned Improvements](https://github.com/dmccoystephenson/Medieval-Factions/issues?q=is%3Aopen+is%3Aissue+label%3Aimprovement)
+- [Bugs Conhecidos](https://github.com/dmccoystephenson/Medieval-Factions/issues?q=is%3Aopen+is%3Aissue+label%3Abug)
+- [Futuras Novidades](https://github.com/dmccoystephenson/Medieval-Factions/issues?q=is%3Aopen+is%3Aissue+label%3AEpic)
+- [Futuras Melhorias](https://github.com/dmccoystephenson/Medieval-Factions/issues?q=is%3Aopen+is%3Aissue+label%3Aimprovement)
 
-## Contributing
+## Contribuindo
 - [Contributing.md](https://github.com/dmccoystephenson/Medieval-Factions/blob/master/CONTRIBUTING.md)
-- [Notes for Developers](https://github.com/dmccoystephenson/Medieval-Factions/wiki/Developer-Notes)
+- [Notas dos Desenvolvedores](https://github.com/dmccoystephenson/Medieval-Factions/wiki/Developer-Notes)
 
-### Looking to create an add-on plugin?
-I recommend using [FactionsBridge](https://www.spigotmc.org/resources/factionsbridge.89716/) by [Retrix_Solutions](https://www.spigotmc.org/resources/authors/retrix_solutions.491191/). It would make your add-on plugin usable across a number of factions implementations.
+### Pensando em criar um add-on para nosso plugin?
+Eu recomendo usar [FactionsBridge](https://www.spigotmc.org/resources/factionsbridge.89716/) feito por [Retrix_Solutions](https://www.spigotmc.org/resources/authors/retrix_solutions.491191/). Isso tornaria seu add-on utilizável em várias implementações do Medieval Factions.
 
-Alternatively, you can use the External API, the documentation for which can be found [here](https://github.com/dmccoystephenson/Medieval-Factions/wiki/External-API-Documentation).
+Outra alternativa seria, você utilizar nossa External API, a documentação pode ser encontrada [aqui](https://github.com/dmccoystephenson/Medieval-Factions/wiki/External-API-Documentation).
 
-## Authors and acknowledgement
-### Developers
-Name | Main Contributions
+## Autores e Reconhecimentos
+### Desenvolvedores
+Nome | Principais Colaborações
 ------------ | -------------
-DanTheTechMan | Creator
-Pasarus | Overhauled the Storage Manager to use UUIDs and JSON and made other improvements to the plugin
-Caibinus | Implemented Duels, Gates and Dynmap Integration
-[Callum](https://www.spigotmc.org/resources/authors/retrix_solutions.491191/) | Created event classes, overhauled the Command System, implemented PlaceholderAPI integration and made many other improvements to the plugin
-Richardhyy | Fixed some encoding issues
-Mitras2 | Implemented ActionBar territory alerts
-[Kaonami](https://github.com/Daniels7k) | Fixed a typo in the README
+DanTheTechMan | Criador
+Pasarus | Revisão do gerenciador de armazenamento para uso UUIDs e JSON e também fez outras melhorias no plugin.
+Caibinus | Implementou os duelos, portões e a integração do Dynmap.
+[Callum](https://www.spigotmc.org/resources/authors/retrix_solutions.491191/) | Criou os eventos de classes, revisou o sistema de comandos, implementou a PlaceholderAPI integration e fez várias outras melhorias no plugin.
+Richardhyy | Corrigido alguns problemas de codificação.
+Mitras2 | Implementou a ActionBar de alerta de territórios.
+[Kaonami](https://github.com/Daniels7k) |Tradução para o Português Brasileiro e correção de erros de digitação no readme.
 
-### Translators
-Name | Language(s)
+### Tradutores
+Nomes | Lígua(s)
 ------------ | -------------
-Khanter | Spanish
-Neh | Spanish
-Johnny | Spanish
-lilhamoood | Spanish
-1barab1 | Russian
-2kManfridi | Russian
-[Kaonami](https://github.com/Daniels7k) | Portuguese Brazilian
-[graffity_X](https://www.spigotmc.org/members/kicker765.946561/) | German
-JustGllenn | Dutch
-TDL | Dutch
+Khanter | Espanhol
+Neh | Espanhol
+Johnny | Espanhol
+lilhamoood | Espanhol
+1barab1 | Russo
+2kManfridi | Russo
+[Kaonami](https://github.com/Daniels7k) | Português Brasileiro
+[graffity_X](https://www.spigotmc.org/members/kicker765.946561/) | Alemão
+JustGllenn | Holandês
+TDL | Holandês
 
-I created this plugin because I wanted to use the original [Factions](https://www.spigotmc.org/resources/factions.1900/) plugin for an upcoming server of mine, but it wasn't updated for the version of minecraft I was going to be using. I decided to take inspiration from the concept of factions - groups of players that can claim land - and create my own factions plugin.
+Eu criei este plugin porque eu queria usar o plugin original [Factions](https://www.spigotmc.org/resources/factions.1900/) para um servidor meu, mas que não foi atualizado para a versão do Minecraft que eu estava usando. Eu decidi pegar de inspiração os conceitos de factions - grupos de jogadores que podem conquistar uma terra e criar minha própria atualização do plugin Factions.
 
-The first release version, [v1.7](https://github.com/dmccoystephenson/Medieval-Factions/releases/tag/v1.7), was released on SpigotMC in June 2020 and looked much different than the plugin does today.
+A primeira versão divulgada, [v1.7](https://github.com/dmccoystephenson/Medieval-Factions/releases/tag/v1.7), foi lançada no SpigotMC em junho de 2020 e é muito diferente da versão atual do plugin. 
 
-I am extremely grateful to those that have donated their time improving the project, one way or another. The plugin wouldn't be where it is today without the contributions of others.
+Eu sou extremamente grato aqueles que deram o seu tempo parar melhorar este projeto, de um jeitou ou de outro. O plugin não estaria aqui hoje sem as contribuições de outros.
 
-## License
+## Licença
 GPL3
 
-## Project Status
-This project is in active development.
+## Status do Projeto
+Este projeto esta atualmente em desenvolvimento.
 
 ### bStats
-You can view the bStats page for the plugin [here](https://bstats.org/plugin/bukkit/Medieval%20Factions/8929).
+Você pode ver o Bstats deste plugin [aqui](https://bstats.org/plugin/bukkit/Medieval%20Factions/8929).
