@@ -149,6 +149,9 @@ public class ConfigManager {
         if (!getConfig().isBoolean("factionsCanSetPrefixColors")) {
             getConfig().addDefault("factionsCanSetPrefixColors", true);
         }
+        if (!getConfig().isBoolean("playersLosePowerOnDeath")) {
+            getConfig().addDefault("playersLosePowerOnDeath", true);
+        }
 
         deleteOldConfigOptionsIfPresent();
 
@@ -216,7 +219,8 @@ public class ConfigManager {
                     || option.equalsIgnoreCase("debugMode")
                     || option.equalsIgnoreCase("factionProtectionsEnabled")
                     || option.equalsIgnoreCase("limitLand")
-                    || option.equalsIgnoreCase("factionsCanSetPrefixColors")) {
+                    || option.equalsIgnoreCase("factionsCanSetPrefixColors")
+                    || option.equalsIgnoreCase("playersLosePowerOnDeath")) {
                 getConfig().set(option, Boolean.parseBoolean(value));
                 sender.sendMessage(ChatColor.GREEN + LocaleManager.getInstance().getText("BooleanSet"));
             }
@@ -286,6 +290,7 @@ public class ConfigManager {
         getConfig().addDefault("factionProtectionsEnabled", true);
         getConfig().addDefault("limitLand", true);
         getConfig().addDefault("factionsCanSetPrefixColors", true);
+        getConfig().addDefault("playersLosePowerOnDeath", true);
         getConfig().options().copyDefaults(true);
         MedievalFactions.getInstance().saveConfig();
     }
@@ -335,7 +340,8 @@ public class ConfigManager {
                 + ", showPrefixesInFactionChat: " + getConfig().getBoolean("showPrefixesInFactionChat")
                 + ", factionProtectionsEnabled: " + getConfig().getBoolean("factionProtectionsEnabled")
                 + ", limitLand: " + getConfig().getBoolean("limitLand")
-                + ", factionsCanSetPrefixColors: " + getConfig().getBoolean("factionsCanSetPrefixColors"));
+                + ", factionsCanSetPrefixColors: " + getConfig().getBoolean("factionsCanSetPrefixColors")
+                + ", playersLosePowerOnDeath: " + getConfig().getBoolean("playersLosePowerOnDeath"));
     }
 
     public boolean hasBeenAltered() {
