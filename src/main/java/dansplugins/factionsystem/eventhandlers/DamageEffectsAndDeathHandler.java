@@ -4,6 +4,7 @@ import dansplugins.factionsystem.MedievalFactions;
 import dansplugins.factionsystem.data.EphemeralData;
 import dansplugins.factionsystem.data.PersistentData;
 import dansplugins.factionsystem.managers.ChunkManager;
+import dansplugins.factionsystem.managers.ConfigManager;
 import dansplugins.factionsystem.managers.LocaleManager;
 import dansplugins.factionsystem.objects.ClaimedChunk;
 import dansplugins.factionsystem.objects.Duel;
@@ -291,12 +292,14 @@ public class DamageEffectsAndDeathHandler implements Listener {
         event.getEntity();
         Player player = event.getEntity();
 
-        // decrease dying player's power
-        for (PlayerPowerRecord record : PersistentData.getInstance().getPlayerPowerRecords()) {
-            if (record.getPlayerUUID().equals(player.getUniqueId())) {
-                record.decreasePowerByTenPercent();
-                if (PersistentData.getInstance().getPlayersPowerRecord(player.getUniqueId()).getPowerLevel() > 0) {
-                    player.sendMessage(ChatColor.RED + LocaleManager.getInstance().getText("AlertPowerLevelDecreased"));
+        if (ConfigManager.getInstance().getBoolean("playersLosePowerOnDeath")) {
+            // decrease dying player's power
+            for (PlayerPowerRecord record : PersistentData.getInstance().getPlayerPowerRecords()) {
+                if (record.getPlayerUUID().equals(player.getUniqueId())) {
+                    record.decreasePowerByTenPercent();
+                    if (PersistentData.getInstance().getPlayersPowerRecord(player.getUniqueId()).getPowerLevel() > 0) {
+                        player.sendMessage(ChatColor.RED + LocaleManager.getInstance().getText("AlertPowerLevelDecreased"));
+                    }
                 }
             }
         }
