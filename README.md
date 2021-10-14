@@ -3,6 +3,8 @@
 ## Description
 Medieval Factions is a system of mechanics that allows for the simulation of sovereign nations in Minecraft. Players can create nations, claim territory, engage in warfare or politics, write laws or hold dueling tournaments, and generally are able to attempt to recreate society somewhat.
 
+A list of features can be found [here](https://github.com/dmccoystephenson/Medieval-Factions/wiki/Features).
+
 ## Server Software
 This plugin was developed using the Spigot API. Users may run into trouble using it with other available server softwares like Paper.
 
