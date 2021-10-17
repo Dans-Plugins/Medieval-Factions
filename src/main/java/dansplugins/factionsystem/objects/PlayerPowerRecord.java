@@ -10,7 +10,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
 
-public class PlayerPowerRecord {
+public class PlayerPowerRecord implements dansplugins.factionsystem.objects.specification.IPlayerPowerRecord {
 
     // saved
     private UUID playerUUID = UUID.randomUUID();
@@ -29,6 +29,7 @@ public class PlayerPowerRecord {
 
     }
 
+    @Override
     public int maxPower() {
         if (isPlayerAFactionOwner(playerUUID, PersistentData.getInstance().getFactions())){
             return (int) (MedievalFactions.getInstance().getConfig().getDouble("initialMaxPowerLevel") * MedievalFactions.getInstance().getConfig().getDouble("factionOwnerMultiplier", 2.0));
@@ -50,7 +51,7 @@ public class PlayerPowerRecord {
         }
     }
 
-    public boolean isPlayerAFactionOfficer(UUID player, ArrayList<Faction> factions) {
+    private boolean isPlayerAFactionOfficer(UUID player, ArrayList<Faction> factions) {
         if (PersistentData.getInstance().isInFaction(player)){
             Faction faction = PersistentData.getInstance().getPlayersFaction(player);
             return faction.isOfficer(player);
@@ -59,14 +60,17 @@ public class PlayerPowerRecord {
         }
     }
 
-    public void setPlayerName(UUID UUID) {
+    @Override
+    public void setPlayerUUID(UUID UUID) {
         playerUUID = UUID;
     }
 
+    @Override
     public UUID getPlayerUUID() {
         return playerUUID;
     }
 
+    @Override
     public boolean increasePower() {
         if (powerLevel < maxPower()) {
         	powerLevel += MedievalFactions.getInstance().getConfig().getInt("powerIncreaseAmount");
@@ -80,6 +84,7 @@ public class PlayerPowerRecord {
         }
     }
 
+    @Override
     public boolean decreasePower() {
         if (powerLevel > 0) {
             powerLevel -= MedievalFactions.getInstance().getConfig().getInt("powerDecreaseAmount");
@@ -92,10 +97,12 @@ public class PlayerPowerRecord {
         }
     }
 
+    @Override
     public int getPowerLevel() {
         return powerLevel;
     }
 
+    @Override
     public void setPowerLevel(int newPower) {
         powerLevel = newPower;
     }
@@ -119,6 +126,7 @@ public class PlayerPowerRecord {
     /**
      * @return True if powerlevel changed else false
      */
+    @Override
     public boolean increasePowerByTenPercent() {
 //        System.out.println("Original Power:" + powerLevel);
         int originalLevel = powerLevel;
@@ -137,6 +145,7 @@ public class PlayerPowerRecord {
         return powerLevel != originalLevel;
     }
 
+    @Override
     public void decreasePowerByTenPercent() {
         int newLevel = (int) (powerLevel * 0.90);
         if (powerLevel > 0){
