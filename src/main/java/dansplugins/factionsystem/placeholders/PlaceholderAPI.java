@@ -4,7 +4,7 @@ import dansplugins.factionsystem.MedievalFactions;
 import dansplugins.factionsystem.data.PersistentData;
 import dansplugins.factionsystem.managers.ChunkManager;
 import dansplugins.factionsystem.objects.ClaimedChunk;
-import dansplugins.factionsystem.objects.IFaction;
+import dansplugins.factionsystem.objects.Faction;
 import dansplugins.factionsystem.objects.PlayerPowerRecord;
 import me.clip.placeholderapi.expansion.PlaceholderExpansion;
 import org.bukkit.Bukkit;
@@ -48,7 +48,7 @@ public class PlaceholderAPI extends PlaceholderExpansion {
         if (player == null) return null; // We only want to handle Player-Placeholders here.
 
         final boolean hasFaction = PersistentData.getInstance().isInFaction(player.getUniqueId());
-        final IFaction faction = PersistentData.getInstance().getPlayersFaction(player.getUniqueId());
+        final Faction faction = PersistentData.getInstance().getPlayersFaction(player.getUniqueId());
 
         // Prerequisites.
         if (id.startsWith("faction_") && !hasFaction && !id.equalsIgnoreCase("faction_at_location")) {

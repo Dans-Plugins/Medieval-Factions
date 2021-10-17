@@ -8,7 +8,7 @@ import dansplugins.factionsystem.managers.GateManager;
 import dansplugins.factionsystem.managers.LocaleManager;
 import dansplugins.factionsystem.managers.LockManager;
 import dansplugins.factionsystem.objects.ClaimedChunk;
-import dansplugins.factionsystem.objects.IFaction;
+import dansplugins.factionsystem.objects.Faction;
 import dansplugins.factionsystem.objects.Gate;
 import dansplugins.factionsystem.objects.LockedBlock;
 import dansplugins.factionsystem.utils.BlockChecker;
@@ -53,7 +53,7 @@ public class InteractionHandler implements Listener {
         }
 
         // if block is in a gate
-        for (IFaction faction : PersistentData.getInstance().getFactions()) {
+        for (Faction faction : PersistentData.getInstance().getFactions()) {
             for (Gate gate : faction.getGates()) {
                 if (gate.hasBlock(event.getBlock())) {
                     event.setCancelled(true);

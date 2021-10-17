@@ -8,7 +8,7 @@ import dansplugins.factionsystem.events.FactionJoinEvent;
 import dansplugins.factionsystem.managers.ActionBarManager;
 import dansplugins.factionsystem.managers.ChunkManager;
 import dansplugins.factionsystem.managers.LocaleManager;
-import dansplugins.factionsystem.objects.IFaction;
+import dansplugins.factionsystem.objects.Faction;
 import dansplugins.factionsystem.objects.PlayerActivityRecord;
 import dansplugins.factionsystem.objects.PlayerPowerRecord;
 import dansplugins.factionsystem.utils.Logger;
@@ -41,7 +41,7 @@ public class JoiningLeavingAndSpawningHandler implements Listener {
             // since player has not logged in before, this is where we will handle random assignment
 			if (MedievalFactions.getInstance().getConfig().getBoolean("randomFactionAssignment")) {
 
-				IFaction faction = PersistentData.getInstance().getRandomFaction();
+				Faction faction = PersistentData.getInstance().getRandomFaction();
 				if (faction != null) {
 					FactionJoinEvent joinEvent = new FactionJoinEvent(faction, player);
 					Bukkit.getPluginManager().callEvent(joinEvent);
@@ -99,7 +99,7 @@ public class JoiningLeavingAndSpawningHandler implements Listener {
 			// if chunk is claimed
 			if (ChunkManager.getInstance().isClaimed(player.getLocation().getChunk(), PersistentData.getInstance().getClaimedChunks())) {
 				String factionName = ChunkManager.getInstance().getClaimedChunk(player.getLocation().getChunk()).getHolder();
-				IFaction holder = PersistentData.getInstance().getFaction(factionName);
+				Faction holder = PersistentData.getInstance().getFaction(factionName);
 				TerritoryOwnerNotifier.getInstance().sendPlayerTerritoryAlert(player, holder);
 				return;
 			}
@@ -110,7 +110,7 @@ public class JoiningLeavingAndSpawningHandler implements Listener {
 	}
 
     private void informPlayerIfTheirFactionIsWeakened(Player player) {
-		IFaction playersFaction = PersistentData.getInstance().getPlayersFaction(player.getUniqueId());
+		Faction playersFaction = PersistentData.getInstance().getPlayersFaction(player.getUniqueId());
 
 		if (playersFaction == null) {
 			return;

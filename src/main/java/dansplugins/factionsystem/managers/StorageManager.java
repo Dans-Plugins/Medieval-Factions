@@ -55,7 +55,7 @@ public class StorageManager {
 
     private void saveFactions() {
         List<Map<String, String>> factions = new ArrayList<>();
-        for (IFaction faction : PersistentData.getInstance().getFactions()){
+        for (Faction faction : PersistentData.getInstance().getFactions()){
             factions.add(faction.save());
         }
 
@@ -130,7 +130,7 @@ public class StorageManager {
         ArrayList<HashMap<String, String>> data = loadDataFromFilename(FILE_PATH + FACTIONS_FILE_NAME);
 
         for (Map<String, String> factionData : data){
-            IFaction newFaction = new IFaction(factionData);
+            Faction newFaction = new Faction(factionData);
             PersistentData.getInstance().getFactions().add(newFaction);
         }
     }

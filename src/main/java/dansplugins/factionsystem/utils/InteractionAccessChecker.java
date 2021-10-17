@@ -4,7 +4,7 @@ import dansplugins.factionsystem.MedievalFactions;
 import dansplugins.factionsystem.data.EphemeralData;
 import dansplugins.factionsystem.data.PersistentData;
 import dansplugins.factionsystem.objects.ClaimedChunk;
-import dansplugins.factionsystem.objects.IFaction;
+import dansplugins.factionsystem.objects.Faction;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
 
@@ -42,7 +42,7 @@ public class InteractionAccessChecker {
             return false;
         }
 
-        IFaction playersFaction = PersistentData.getInstance().getPlayersFaction(player.getUniqueId());
+        Faction playersFaction = PersistentData.getInstance().getPlayersFaction(player.getUniqueId());
         if (playersFaction == null) {
             // player is not in a faction
             return true;
@@ -59,13 +59,13 @@ public class InteractionAccessChecker {
         }
     }
 
-    public boolean isOutsiderInteractionAllowed(Player player, ClaimedChunk chunk, IFaction playersFaction) {
+    public boolean isOutsiderInteractionAllowed(Player player, ClaimedChunk chunk, Faction playersFaction) {
 
         if (!MedievalFactions.getInstance().getConfig().getBoolean("factionProtectionsEnabled")) {
             return true;
         }
 
-        final IFaction chunkHolder = PersistentData.getInstance().getFaction(chunk.getHolder());
+        final Faction chunkHolder = PersistentData.getInstance().getFaction(chunk.getHolder());
 
         boolean inVassalageTree = PersistentData.getInstance().isPlayerInFactionInVassalageTree(player, chunkHolder);
         boolean isAlly = playersFaction.isAlly(chunk.getHolder());
@@ -89,7 +89,7 @@ public class InteractionAccessChecker {
     }
 
     public boolean isPlayerAttemptingToPlaceLadderInEnemyTerritoryAndIsThisAllowed(Block blockPlaced, Player player, ClaimedChunk claimedChunk) {
-        IFaction playersFaction = PersistentData.getInstance().getPlayersFaction(player.getUniqueId());
+        Faction playersFaction = PersistentData.getInstance().getPlayersFaction(player.getUniqueId());
 
         if (playersFaction == null) {
             // player is not in a faction, so they couldn't be trying to place anything in enemy territory

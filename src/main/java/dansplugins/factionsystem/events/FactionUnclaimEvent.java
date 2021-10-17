@@ -1,6 +1,6 @@
 package dansplugins.factionsystem.events;
 
-import dansplugins.factionsystem.objects.IFaction;
+import dansplugins.factionsystem.objects.Faction;
 import org.bukkit.Chunk;
 import org.bukkit.entity.Player;
 
@@ -16,7 +16,7 @@ public class FactionUnclaimEvent extends FactionClaimEvent {
      * @param player  who unclaimed for the Faction.
      * @param chunk   to be unclaimed.
      */
-    public FactionUnclaimEvent(IFaction faction, Player player, Chunk chunk) {
+    public FactionUnclaimEvent(Faction faction, Player player, Chunk chunk) {
         super(faction, player, chunk);
     }
 

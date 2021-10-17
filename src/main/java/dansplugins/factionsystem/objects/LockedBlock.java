@@ -10,7 +10,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
 
-public class LockedBlock {
+public class LockedBlock implements dansplugins.factionsystem.objects.specification.ILockedBlock {
 
     private int x = 0;
     private int y = 0;
@@ -38,32 +38,61 @@ public class LockedBlock {
         this.load(lockedBlockData);
     }
 
+    @Override
     public String getWorld() {
     	return world;
     }
-    
+
+    @Override
     public void setWorld(String name) {
     	world = name;
     }
-    
+
+    @Override
     public int getX() {
         return x;
     }
 
+    @Override
     public int getY() {
         return y;
     }
 
+    @Override
     public int getZ() {
         return z;
     }
 
+    @Override
     public void setOwner(UUID s) {
         owner = s;
     }
 
+    @Override
     public UUID getOwner() {
         return owner;
+    }
+
+    @Override
+    public void addToAccessList(UUID playerName) {
+        if (!accessList.contains(playerName)) {
+            accessList.add(playerName);
+        }
+    }
+
+    @Override
+    public void removeFromAccessList(UUID playerName) {
+        accessList.remove(playerName);
+    }
+
+    @Override
+    public boolean hasAccess(UUID playerName) {
+        return accessList.contains(playerName);
+    }
+
+    @Override
+    public ArrayList<UUID> getAccessList() {
+        return accessList;
     }
 
     public void setFaction(String s) {
@@ -72,24 +101,6 @@ public class LockedBlock {
 
     public String getFactionName() {
         return factionName;
-    }
-
-    public void addToAccessList(UUID playerName) {
-        if (!accessList.contains(playerName)) {
-            accessList.add(playerName);
-        }
-    }
-
-    public void removeFromAccessList(UUID playerName) {
-        accessList.remove(playerName);
-    }
-
-    public boolean hasAccess(UUID playerName) {
-        return accessList.contains(playerName);
-    }
-
-    public ArrayList<UUID> getAccessList() {
-        return accessList;
     }
 
     public Map<String, String> save() {

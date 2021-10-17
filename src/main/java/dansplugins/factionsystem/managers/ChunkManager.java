@@ -58,7 +58,7 @@ public class ChunkManager {
         return chunkSet;
     }
 
-    public void radiusUnclaimAtLocation(int radius, Player player, IFaction faction) {
+    public void radiusUnclaimAtLocation(int radius, Player player, Faction faction) {
         final int maxChunksUnclaimable = 999;
         if (radius<=0||radius> maxChunksUnclaimable) {
             final LocaleManager instance = LocaleManager.getInstance();
@@ -72,7 +72,7 @@ public class ChunkManager {
                 .forEach(chunk -> removeChunk(chunk, player, faction));
     }
 
-    public void radiusClaimAtLocation(int depth, Player claimant, Location location, IFaction claimantsFaction) {
+    public void radiusClaimAtLocation(int depth, Player claimant, Location location, Faction claimantsFaction) {
         int maxClaimRadius = MedievalFactions.getInstance().getConfig().getInt("maxClaimRadius");
         if (depth < 0 || depth > maxClaimRadius) {
             claimant.sendMessage(ChatColor.RED + String.format(LocaleManager.getInstance().getText("RadiusRequirement"), maxClaimRadius));
@@ -118,12 +118,12 @@ public class ChunkManager {
         return surrounding;
     }
 
-    public void claimChunkAtLocation(Player claimant, Location location, IFaction claimantsFaction) {
+    public void claimChunkAtLocation(Player claimant, Location location, Faction claimantsFaction) {
         double[] chunkCoords = getChunkCoords(location);
         claimChunkAtLocation(claimant, chunkCoords, location.getWorld(), claimantsFaction);
     }
 
-    private void claimChunkAtLocation(Player claimant, double[] chunkCoords, World world, IFaction claimantsFaction) {
+    private void claimChunkAtLocation(Player claimant, double[] chunkCoords, World world, Faction claimantsFaction) {
 
         // if demesne limit enabled
         if (ConfigManager.getInstance().getBoolean("limitLand")) {
@@ -138,7 +138,7 @@ public class ChunkManager {
         ClaimedChunk chunk = isChunkClaimed(chunkCoords[0], chunkCoords[1], world.getName());
         if (chunk != null) {
             // chunk already claimed
-            IFaction targetFaction = PersistentData.getInstance().getFaction(chunk.getHolder());
+            Faction targetFaction = PersistentData.getInstance().getFaction(chunk.getHolder());
 
             // if holder is player's faction
             if (targetFaction.getName().equalsIgnoreCase(claimantsFaction.getName()) && !claimantsFaction.getAutoClaimStatus()) {
@@ -206,7 +206,7 @@ public class ChunkManager {
         }
     }
 
-    private void addClaimedChunk(Chunk chunk, IFaction faction, World world) {
+    private void addClaimedChunk(Chunk chunk, Faction faction, World world) {
         ClaimedChunk newChunk = new ClaimedChunk(chunk);
         newChunk.setHolder(faction.getName());
         newChunk.setWorld(world.getName());
@@ -240,7 +240,7 @@ public class ChunkManager {
         return null;
     }
 
-    private boolean everyPlayerInFactionExperiencingPowerDecay(IFaction faction) {
+    private boolean everyPlayerInFactionExperiencingPowerDecay(Faction faction) {
         int numExperiencingPowerDecay = 0;
         for (UUID uuid : faction.getMemberArrayList()) {
             PlayerActivityRecord record = PersistentData.getInstance().getPlayerActivityRecord(uuid);
@@ -265,7 +265,7 @@ public class ChunkManager {
         return (numExperiencingPowerDecay == faction.getMemberArrayList().size());
     }
 
-    public void removeChunkAtPlayerLocation(Player player, IFaction playersFaction) {
+    public void removeChunkAtPlayerLocation(Player player, Faction playersFaction) {
         double[] playerCoords = new double[2];
         playerCoords[0] = player.getLocation().getChunk().getX();
         playerCoords[1] = player.getLocation().getChunk().getZ();
@@ -298,7 +298,7 @@ public class ChunkManager {
         }
     }
 
-    private void removeChunk(ClaimedChunk chunk, Player player, IFaction faction) {
+    private void removeChunk(ClaimedChunk chunk, Player player, Faction faction) {
         // String identifier = (int)chunk.getChunk().getX() + "_" + (int)chunk.getChunk().getZ();
 
         FactionUnclaimEvent unclaimEvent = new FactionUnclaimEvent(faction, player, chunk.getChunk());
@@ -458,12 +458,12 @@ public class ChunkManager {
         }
     }
 
-    public boolean isFactionExceedingTheirDemesneLimit(IFaction faction, ArrayList<ClaimedChunk> claimedChunks) {
+    public boolean isFactionExceedingTheirDemesneLimit(Faction faction, ArrayList<ClaimedChunk> claimedChunks) {
         return (getChunksClaimedByFaction(faction.getName(), claimedChunks) > faction.getCumulativePowerLevel());
     }
 
-    public void informPlayerIfTheirLandIsInDanger(Player player, ArrayList<IFaction> factions, ArrayList<ClaimedChunk> claimedChunks) {
-        IFaction faction = PersistentData.getInstance().getPlayersFaction(player.getUniqueId());
+    public void informPlayerIfTheirLandIsInDanger(Player player, ArrayList<Faction> factions, ArrayList<ClaimedChunk> claimedChunks) {
+        Faction faction = PersistentData.getInstance().getPlayersFaction(player.getUniqueId());
         if (faction != null) {
             if (isFactionExceedingTheirDemesneLimit(faction, claimedChunks)) {
                 player.sendMessage(ChatColor.RED + LocaleManager.getInstance().getText("AlertMoreClaimedChunksThanPower"));
@@ -486,7 +486,7 @@ public class ChunkManager {
 
         // TODO: simplify this code with a call to the shouldEventBeCancelled() method in InteractionAccessChecker.java
 
-        final IFaction playersFaction = PersistentData.getInstance().getPlayersFaction(event.getPlayer().getUniqueId());
+        final Faction playersFaction = PersistentData.getInstance().getPlayersFaction(event.getPlayer().getUniqueId());
         if (playersFaction == null) {
             return;
         }
@@ -611,7 +611,7 @@ public class ChunkManager {
         return false;
     }
 
-    public void forceClaimAtPlayerLocation(Player player, IFaction faction) {
+    public void forceClaimAtPlayerLocation(Player player, Faction faction) {
         Location location = player.getLocation();
 
         ClaimedChunk claimedChunk = getClaimedChunk(location.getChunk());

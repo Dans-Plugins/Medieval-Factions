@@ -1,7 +1,7 @@
 package dansplugins.factionsystem.events;
 
 import dansplugins.factionsystem.events.abs.FactionEvent;
-import dansplugins.factionsystem.objects.IFaction;
+import dansplugins.factionsystem.objects.Faction;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.event.Cancellable;
 
@@ -21,7 +21,7 @@ public class FactionJoinEvent extends FactionEvent implements Cancellable {
      * @param faction which was joined.
      * @param player who joined.
      */
-    public FactionJoinEvent(IFaction faction, OfflinePlayer player) {
+    public FactionJoinEvent(Faction faction, OfflinePlayer player) {
         super(faction, player);
     }
 

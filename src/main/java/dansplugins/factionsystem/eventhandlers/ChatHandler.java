@@ -4,7 +4,7 @@ import dansplugins.factionsystem.MedievalFactions;
 import dansplugins.factionsystem.Messenger;
 import dansplugins.factionsystem.data.EphemeralData;
 import dansplugins.factionsystem.data.PersistentData;
-import dansplugins.factionsystem.objects.IFaction;
+import dansplugins.factionsystem.objects.Faction;
 import dansplugins.factionsystem.utils.ColorChecker;
 import org.bukkit.ChatColor;
 import org.bukkit.event.EventHandler;
@@ -19,7 +19,7 @@ public class ChatHandler implements Listener {
     public void handle(AsyncPlayerChatEvent event) {
         String factionChatColor = MedievalFactions.getInstance().getConfig().getString("factionChatColor");
 
-        IFaction playersFaction = PersistentData.getInstance().getPlayersFaction(event.getPlayer().getUniqueId());
+        Faction playersFaction = PersistentData.getInstance().getPlayersFaction(event.getPlayer().getUniqueId());
 
         if (playersFaction != null) {
 
@@ -35,8 +35,8 @@ public class ChatHandler implements Listener {
             if (EphemeralData.getInstance().isPlayerInFactionChat(event.getPlayer())) {
                 String message = event.getMessage();
                 if (MedievalFactions.getInstance().getConfig().getBoolean("chatSharedInVassalageTrees")) {
-                    ArrayList<IFaction> factionsInVassalageTree = PersistentData.getInstance().getFactionsInVassalageTree(playersFaction);
-                    for (IFaction faction : factionsInVassalageTree) {
+                    ArrayList<Faction> factionsInVassalageTree = PersistentData.getInstance().getFactionsInVassalageTree(playersFaction);
+                    for (Faction faction : factionsInVassalageTree) {
                         if (MedievalFactions.getInstance().getConfig().getBoolean("showPrefixesInFactionChat")) {
                             Messenger.getInstance().sendAllPlayersInFactionMessage(faction, ColorChecker.getInstance().getColorByName(prefixColor) + "" + "[" + prefix + "] " + "" + ChatColor.WHITE + "" + event.getPlayer().getName() + ": " + ColorChecker.getInstance().getColorByName(factionChatColor) + message);
                         }

@@ -41,18 +41,18 @@ public class PlayerPowerRecord {
         return MedievalFactions.getInstance().getConfig().getInt("initialMaxPowerLevel");
     }
 
-    private boolean isPlayerAFactionOwner(UUID player, ArrayList<IFaction> factions){
+    private boolean isPlayerAFactionOwner(UUID player, ArrayList<Faction> factions){
         if (PersistentData.getInstance().isInFaction(player)){
-            IFaction faction = PersistentData.getInstance().getPlayersFaction(player);
+            Faction faction = PersistentData.getInstance().getPlayersFaction(player);
             return faction.getOwner().equals(player);
         } else {
             return false;
         }
     }
 
-    public boolean isPlayerAFactionOfficer(UUID player, ArrayList<IFaction> factions) {
+    public boolean isPlayerAFactionOfficer(UUID player, ArrayList<Faction> factions) {
         if (PersistentData.getInstance().isInFaction(player)){
-            IFaction faction = PersistentData.getInstance().getPlayersFaction(player);
+            Faction faction = PersistentData.getInstance().getPlayersFaction(player);
             return faction.isOfficer(player);
         } else {
             return false;

@@ -1,7 +1,7 @@
 package dansplugins.factionsystem.commands;
 
 import dansplugins.factionsystem.commands.abs.SubCommand;
-import dansplugins.factionsystem.objects.IFaction;
+import dansplugins.factionsystem.objects.Faction;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
@@ -26,7 +26,7 @@ public class LawsCommand extends SubCommand {
     public void execute(Player player, String[] args, String key) {
         final String permission = "mf.laws";
         if (!(checkPermissions(player, permission))) return;
-        final IFaction target;
+        final Faction target;
         if (args.length == 0) {
             target = getPlayerFaction(player);
             if (target == null) {

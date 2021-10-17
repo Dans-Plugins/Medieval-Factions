@@ -3,7 +3,7 @@ package dansplugins.factionsystem.managers;
 import dansplugins.factionsystem.data.EphemeralData;
 import dansplugins.factionsystem.data.PersistentData;
 import dansplugins.factionsystem.objects.ClaimedChunk;
-import dansplugins.factionsystem.objects.IFaction;
+import dansplugins.factionsystem.objects.Faction;
 import dansplugins.factionsystem.objects.Gate;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
@@ -30,7 +30,7 @@ public class GateManager {
     public void handlePotentialGateInteraction(Block clickedBlock, Player player, PlayerInteractEvent event) {
         if (ChunkManager.getInstance().isClaimed(clickedBlock.getChunk(), PersistentData.getInstance().getClaimedChunks())) {
             ClaimedChunk claim = ChunkManager.getInstance().getClaimedChunk(clickedBlock.getChunk());
-            IFaction faction = PersistentData.getInstance().getFaction(claim.getHolder());
+            Faction faction = PersistentData.getInstance().getFaction(claim.getHolder());
 
             if (faction.hasGateTrigger(clickedBlock)) {
                 for (Gate g : faction.getGatesForTrigger(clickedBlock)) {
@@ -160,7 +160,7 @@ public class GateManager {
                         Gate.ErrorCodeAddCoord e = EphemeralData.getInstance().getCreatingGatePlayers().get(event.getPlayer().getUniqueId()).addCoord(clickedBlock);
                         if (e.equals(Gate.ErrorCodeAddCoord.None)) {
                             ClaimedChunk claim = ChunkManager.getInstance().getClaimedChunk(clickedBlock.getChunk());
-                            IFaction faction = PersistentData.getInstance().getFaction(claim.getHolder());
+                            Faction faction = PersistentData.getInstance().getFaction(claim.getHolder());
                             faction.addGate(EphemeralData.getInstance().getCreatingGatePlayers().get(event.getPlayer().getUniqueId()));
                             EphemeralData.getInstance().getCreatingGatePlayers().remove(event.getPlayer().getUniqueId());
                             event.getPlayer().sendMessage(ChatColor.GREEN + LocaleManager.getInstance().getText("LeverSuccessfullyLinked"));

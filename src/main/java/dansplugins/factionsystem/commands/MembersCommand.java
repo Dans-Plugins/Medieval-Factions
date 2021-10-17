@@ -1,7 +1,7 @@
 package dansplugins.factionsystem.commands;
 
 import dansplugins.factionsystem.commands.abs.SubCommand;
-import dansplugins.factionsystem.objects.IFaction;
+import dansplugins.factionsystem.objects.Faction;
 import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
@@ -37,7 +37,7 @@ public class MembersCommand extends SubCommand {
     public void execute(CommandSender sender, String[] args, String key) {
         final String permission = "mf.members";
         if (!(checkPermissions(sender, permission))) return;
-        final IFaction faction;
+        final Faction faction;
         if (args.length == 0) {
             if (!(sender instanceof Player)) {
                 sender.sendMessage(translate(getText("OnlyPlayersCanUseCommand")));

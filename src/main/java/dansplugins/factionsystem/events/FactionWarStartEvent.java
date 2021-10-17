@@ -1,7 +1,7 @@
 package dansplugins.factionsystem.events;
 
 import dansplugins.factionsystem.events.abs.FactionEvent;
-import dansplugins.factionsystem.objects.IFaction;
+import dansplugins.factionsystem.objects.Faction;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Cancellable;
 
@@ -25,7 +25,7 @@ public class FactionWarStartEvent extends FactionEvent implements Cancellable {
      * @param defender - Faction getting declared war on.
      * @param declarer - Player responsible.
      */
-    public FactionWarStartEvent(IFaction attacker, IFaction defender, Player declarer) {
+    public FactionWarStartEvent(Faction attacker, Faction defender, Player declarer) {
         super(attacker, declarer);
         attackerName = attacker.getName();
         defenderName = defender.getName();

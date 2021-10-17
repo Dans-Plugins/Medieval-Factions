@@ -5,7 +5,7 @@ import dansplugins.factionsystem.integrators.DynmapIntegrator;
 import dansplugins.factionsystem.managers.ChunkManager;
 import dansplugins.factionsystem.managers.LocaleManager;
 import dansplugins.factionsystem.managers.StorageManager;
-import dansplugins.factionsystem.objects.IFaction;
+import dansplugins.factionsystem.objects.Faction;
 import dansplugins.factionsystem.objects.PlayerActivityRecord;
 import dansplugins.factionsystem.objects.PlayerPowerRecord;
 import dansplugins.factionsystem.utils.Logger;
@@ -108,7 +108,7 @@ public class Scheduler {
     }
 
     private void informPlayerIfTheirLandIsInDanger(Player player) {
-        IFaction faction = PersistentData.getInstance().getPlayersFaction(player.getUniqueId());
+        Faction faction = PersistentData.getInstance().getPlayersFaction(player.getUniqueId());
         if (faction != null) {
             if (isFactionExceedingTheirDemesneLimit(faction)) {
                 player.sendMessage(ChatColor.RED + LocaleManager.getInstance().getText("AlertMoreClaimedChunksThanPower"));
@@ -116,13 +116,13 @@ public class Scheduler {
         }
     }
 
-    private boolean isFactionExceedingTheirDemesneLimit(IFaction faction) {
+    private boolean isFactionExceedingTheirDemesneLimit(Faction faction) {
         return (ChunkManager.getInstance().getChunksClaimedByFaction(faction.getName(), PersistentData.getInstance().getClaimedChunks()) > faction.getCumulativePowerLevel());
     }
 
     private void disbandAllZeroPowerFactions() {
         ArrayList<String> factionsToDisband = new ArrayList<>();
-        for (IFaction faction : PersistentData.getInstance().getFactions()) {
+        for (Faction faction : PersistentData.getInstance().getFactions()) {
             if (faction.getCumulativePowerLevel() == 0) {
                 factionsToDisband.add(faction.getName());
             }
@@ -136,7 +136,7 @@ public class Scheduler {
 
     private void removeFaction(String name) {
 
-        IFaction factionToRemove = PersistentData.getInstance().getFaction(name);
+        Faction factionToRemove = PersistentData.getInstance().getFaction(name);
 
         if (factionToRemove != null) {
             // remove claimed land objects associated with this faction
@@ -147,7 +147,7 @@ public class Scheduler {
             PersistentData.getInstance().removeAllLocks(factionToRemove.getName());
 
 
-            for (IFaction faction : PersistentData.getInstance().getFactions()) {
+            for (Faction faction : PersistentData.getInstance().getFactions()) {
                 // remove records of alliances/wars associated with this faction
                 if (faction.isAlly(factionToRemove.getName())) {
                     faction.removeAlly(factionToRemove.getName());

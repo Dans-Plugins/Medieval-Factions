@@ -18,7 +18,7 @@ import java.util.*;
 
 import static org.bukkit.Bukkit.getServer;
 
-public class IFaction implements dansplugins.factionsystem.objects.specification.IFaction {
+public class Faction implements dansplugins.factionsystem.objects.specification.IFaction {
 
     // persistent data -------------------------------------------------------
 
@@ -59,7 +59,7 @@ public class IFaction implements dansplugins.factionsystem.objects.specification
     // end of ephemeral data -------------------------------------------------------
 
     // player constructor
-    public IFaction(String initialName, UUID creator) {
+    public Faction(String initialName, UUID creator) {
         setName(initialName);
         setOwner(creator);
         prefix = initialName;
@@ -67,7 +67,7 @@ public class IFaction implements dansplugins.factionsystem.objects.specification
     }
 
     // server constructor
-    public IFaction(String initialName) {
+    public Faction(String initialName) {
         setName(initialName);
         prefix = initialName;
         flags.initializeFlagValues(); // need to ensure that this doesn't mess up changes to flags being persistent
@@ -79,7 +79,7 @@ public class IFaction implements dansplugins.factionsystem.objects.specification
     }    
     
     // Must receive json data
-    public IFaction(Map<String, String> data) {
+    public Faction(Map<String, String> data) {
         this.load(data);
     }
 
@@ -235,7 +235,7 @@ public class IFaction implements dansplugins.factionsystem.objects.specification
         double percentage = MedievalFactions.getInstance().getConfig().getDouble("vassalContributionPercentageMultiplier");
 
         for (String factionName : vassals) {
-            IFaction vassalFaction = PersistentData.getInstance().getFaction(factionName);
+            Faction vassalFaction = PersistentData.getInstance().getFaction(factionName);
             if (vassalFaction != null) {
                 vassalContribution += vassalFaction.getCumulativePowerLevel() * percentage;
             }
@@ -675,7 +675,7 @@ public class IFaction implements dansplugins.factionsystem.objects.specification
 
     @Override
     public String getTopLiege() {
-        IFaction topLiege = PersistentData.getInstance().getFaction(liege);
+        Faction topLiege = PersistentData.getInstance().getFaction(liege);
         String liegeName = liege;
         while (topLiege != null) {
             topLiege = PersistentData.getInstance().getFaction(topLiege.getLiege());

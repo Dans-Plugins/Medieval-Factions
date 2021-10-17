@@ -2,7 +2,7 @@ package dansplugins.factionsystem;
 
 import dansplugins.factionsystem.integrators.FiefsIntegrator;
 import dansplugins.factionsystem.managers.LocaleManager;
-import dansplugins.factionsystem.objects.IFaction;
+import dansplugins.factionsystem.objects.Faction;
 import dansplugins.factionsystem.utils.UUIDChecker;
 import dansplugins.fiefs.externalapi.FI_Fief;
 import org.bukkit.Bukkit;
@@ -30,7 +30,7 @@ public class Messenger {
         return instance;
     }
 
-    public void sendFactionInfo(CommandSender sender, IFaction faction, int power) {
+    public void sendFactionInfo(CommandSender sender, Faction faction, int power) {
         int vassalContribution = faction.calculateCumulativePowerLevelWithVassalContribution() - faction.calculateCumulativePowerLevelWithoutVassalContribution();
 
         sender.sendMessage(ChatColor.BOLD + "" + ChatColor.AQUA + String.format(LocaleManager.getInstance().getText("FactionInfo"), faction.getName()) + "\n----------\n");
@@ -72,7 +72,7 @@ public class Messenger {
         sender.sendMessage(ChatColor.AQUA + "----------\n");
     }
 
-    public void sendAllPlayersInFactionMessage(IFaction faction, String message) {
+    public void sendAllPlayersInFactionMessage(Faction faction, String message) {
         ArrayList<UUID> members = faction.getMemberArrayList();
         for (UUID member : members) {
             try {

@@ -6,7 +6,7 @@ import dansplugins.factionsystem.data.PersistentData;
 import dansplugins.factionsystem.managers.ChunkManager;
 import dansplugins.factionsystem.managers.LocaleManager;
 import dansplugins.factionsystem.objects.ClaimedChunk;
-import dansplugins.factionsystem.objects.IFaction;
+import dansplugins.factionsystem.objects.Faction;
 import dansplugins.factionsystem.utils.TerritoryOwnerNotifier;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
@@ -32,12 +32,12 @@ public class MoveHandler implements Listener {
 
             // auto claim check
             Player player =  event.getPlayer();
-            IFaction faction = PersistentData.getInstance().getPlayersFaction(player.getUniqueId());
+            Faction faction = PersistentData.getInstance().getPlayersFaction(player.getUniqueId());
             if (faction != null && faction.isOwner(player.getUniqueId())) {
                 if (faction.getAutoClaimStatus()) {
 
                     // if not at demesne limit
-                    IFaction playersFaction = PersistentData.getInstance().getPlayersFaction(event.getPlayer().getUniqueId());
+                    Faction playersFaction = PersistentData.getInstance().getPlayersFaction(event.getPlayer().getUniqueId());
                     if (ChunkManager.getInstance().getChunksClaimedByFaction(playersFaction.getName(), PersistentData.getInstance().getClaimedChunks()) < playersFaction.getCumulativePowerLevel()) {
                         getServer().getScheduler().runTaskLater(MedievalFactions.getInstance(), new Runnable() {
                             @Override
@@ -57,7 +57,7 @@ public class MoveHandler implements Listener {
             // if new chunk is claimed and old chunk was not
             if (ChunkManager.getInstance().isClaimed(event.getTo().getChunk(), PersistentData.getInstance().getClaimedChunks()) && !ChunkManager.getInstance().isClaimed(event.getFrom().getChunk(), PersistentData.getInstance().getClaimedChunks())) {
                 String factionName = ChunkManager.getInstance().getClaimedChunk(event.getTo().getChunk()).getHolder();
-                IFaction holder = PersistentData.getInstance().getFaction(factionName);
+                Faction holder = PersistentData.getInstance().getFaction(factionName);
                 TerritoryOwnerNotifier.getInstance().sendPlayerTerritoryAlert(player, holder);
                 return;
             }
@@ -73,7 +73,7 @@ public class MoveHandler implements Listener {
                 // if chunk holders are not equal
                 if (!(ChunkManager.getInstance().getClaimedChunk(event.getFrom().getChunk()).getHolder().equalsIgnoreCase(ChunkManager.getInstance().getClaimedChunk(event.getTo().getChunk()).getHolder()))) {
                     String factionName = ChunkManager.getInstance().getClaimedChunk(event.getTo().getChunk()).getHolder();
-                    IFaction holder = PersistentData.getInstance().getFaction(factionName);
+                    Faction holder = PersistentData.getInstance().getFaction(factionName);
                     TerritoryOwnerNotifier.getInstance().sendPlayerTerritoryAlert(player, holder);
                 }
             }

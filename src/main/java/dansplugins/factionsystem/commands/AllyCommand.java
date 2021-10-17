@@ -1,7 +1,7 @@
 package dansplugins.factionsystem.commands;
 
 import dansplugins.factionsystem.commands.abs.SubCommand;
-import dansplugins.factionsystem.objects.IFaction;
+import dansplugins.factionsystem.objects.Faction;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
@@ -32,7 +32,7 @@ public class AllyCommand extends SubCommand {
             return;
         }
         // Retrieve the Faction from the given arguments.
-        final IFaction otherFaction = getFaction(String.join(" ", args));
+        final Faction otherFaction = getFaction(String.join(" ", args));
         if (otherFaction == null) { // The faction needs to exist to ally
             player.sendMessage(translate("&c" + getText("FactionNotFound")));
             return;

@@ -1,7 +1,7 @@
 package dansplugins.factionsystem.events;
 
 import dansplugins.factionsystem.events.abs.FactionEvent;
-import dansplugins.factionsystem.objects.IFaction;
+import dansplugins.factionsystem.objects.Faction;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.event.Cancellable;
 
@@ -21,7 +21,7 @@ public class FactionDisbandEvent extends FactionEvent implements Cancellable {
      * @param faction disbanded
      * @param player who disbanded the Faction.
      */
-    public FactionDisbandEvent(IFaction faction, OfflinePlayer player) {
+    public FactionDisbandEvent(Faction faction, OfflinePlayer player) {
         super(faction, player);
     }
 

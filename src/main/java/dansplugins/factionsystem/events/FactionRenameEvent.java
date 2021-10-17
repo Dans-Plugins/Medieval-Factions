@@ -1,7 +1,7 @@
 package dansplugins.factionsystem.events;
 
 import dansplugins.factionsystem.events.abs.FactionEvent;
-import dansplugins.factionsystem.objects.IFaction;
+import dansplugins.factionsystem.objects.Faction;
 import org.bukkit.event.Cancellable;
 
 /**
@@ -22,7 +22,7 @@ public class FactionRenameEvent extends FactionEvent implements Cancellable {
      * @param currentName of the Faction.
      * @param proposedName or new name of the Faction.
      */
-    public FactionRenameEvent(IFaction faction, String currentName, String proposedName) {
+    public FactionRenameEvent(Faction faction, String currentName, String proposedName) {
         super(faction);
         this.current = currentName;
         this.proposed = proposedName;

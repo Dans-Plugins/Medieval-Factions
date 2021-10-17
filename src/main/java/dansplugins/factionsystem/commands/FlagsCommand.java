@@ -1,7 +1,7 @@
 package dansplugins.factionsystem.commands;
 
 import dansplugins.factionsystem.commands.abs.SubCommand;
-import dansplugins.factionsystem.objects.IFaction;
+import dansplugins.factionsystem.objects.Faction;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
@@ -32,7 +32,7 @@ public class FlagsCommand extends SubCommand {
             return;
         }
 
-        final IFaction playersFaction = getPlayerFaction(player);
+        final Faction playersFaction = getPlayerFaction(player);
 
         final boolean show = safeEquals(false, args[0], "get", "show", getText("CmdFlagsShow"));
         final boolean set = safeEquals(false, args[0], "set", getText("CmdFlagsSet"));

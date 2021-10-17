@@ -16,7 +16,7 @@ public class PersistentData {
 
     private static PersistentData instance;
 
-    public ArrayList<IFaction> factions = new ArrayList<>();
+    public ArrayList<Faction> factions = new ArrayList<>();
     public ArrayList<ClaimedChunk> claimedChunks = new ArrayList<>();
     public ArrayList<PlayerPowerRecord> playerPowerRecords = new ArrayList<>();
     public ArrayList<PlayerActivityRecord> playerActivityRecords = new ArrayList<>();
@@ -33,7 +33,7 @@ public class PersistentData {
 
     // arraylist getters ---
 
-    public ArrayList<IFaction> getFactions() {
+    public ArrayList<Faction> getFactions() {
         return factions;
     }
 
@@ -62,10 +62,10 @@ public class PersistentData {
      * </p>
      *
      * @param name of the Faction desired (Can be {@code null}).
-     * @return {@link IFaction} or {@code null}.
+     * @return {@link Faction} or {@code null}.
      * @see #getFaction(String, boolean, boolean)
      */
-    public IFaction getFaction(String name) {
+    public Faction getFaction(String name) {
         return getFaction(name, false, false);
     }
 
@@ -76,10 +76,10 @@ public class PersistentData {
      * </p>
      *
      * @param prefix of the Faction desired (Can be {@code null}).
-     * @return {@link IFaction} or {@code null}.
+     * @return {@link Faction} or {@code null}.
      * @see #getFaction(String, boolean, boolean)
      */
-    public IFaction getFactionByPrefix(String prefix) {
+    public Faction getFactionByPrefix(String prefix) {
         return getFaction(prefix, true, true);
     }
 
@@ -94,12 +94,12 @@ public class PersistentData {
      * @param text which you'd like to obtain the Faction from.
      * @param checkPrefix a toggle for checking prefix.
      * @param onlyCheckPrefix a toggle for only checking prefix.
-     * @return {@link IFaction} or {@code null}.
+     * @return {@link Faction} or {@code null}.
      * @see #getFaction(String)
      * @see #getFactionByPrefix(String)
      */
-    public IFaction getFaction(String text, boolean checkPrefix, boolean onlyCheckPrefix) {
-        for (IFaction faction : getFactions()) {
+    public Faction getFaction(String text, boolean checkPrefix, boolean onlyCheckPrefix) {
+        for (Faction faction : getFactions()) {
             if ((!onlyCheckPrefix && faction.getName().equalsIgnoreCase(text)) ||
                     (faction.getPrefix().equalsIgnoreCase(text) && checkPrefix)) {
                 return faction;
@@ -108,9 +108,9 @@ public class PersistentData {
         return null;
     }
 
-    public IFaction getPlayersFaction(UUID playerUUID) {
+    public Faction getPlayersFaction(UUID playerUUID) {
         // membership check
-        for (IFaction faction : getFactions()) {
+        for (Faction faction : getFactions()) {
             if (faction.isMember(playerUUID)) {
                 return faction;
             }
@@ -152,9 +152,9 @@ public class PersistentData {
         return null;
     }
 
-    public ArrayList<IFaction> getFactionsInVassalageTree(IFaction initialFaction) {
+    public ArrayList<Faction> getFactionsInVassalageTree(Faction initialFaction) {
         // create list
-        ArrayList<IFaction> foundFactions = new ArrayList<>();
+        ArrayList<Faction> foundFactions = new ArrayList<>();
 
         foundFactions.add(initialFaction);
 
@@ -164,14 +164,14 @@ public class PersistentData {
 
         // while new factions found
         while (newFactionsFound) {
-            ArrayList<IFaction> toAdd = new ArrayList<>();
-            for (IFaction current : foundFactions) {
+            ArrayList<Faction> toAdd = new ArrayList<>();
+            for (Faction current : foundFactions) {
 
                 // record number of factions
                 numFactionsFound = foundFactions.size();
 
                 // get liege
-                IFaction liege = PersistentData.getInstance().getFaction(current.getLiege());
+                Faction liege = PersistentData.getInstance().getFaction(current.getLiege());
                 if (liege != null) {
                     if (!containsFactionByName(toAdd, liege) && !containsFactionByName(foundFactions, liege)) {
                         toAdd.add(liege);
@@ -180,7 +180,7 @@ public class PersistentData {
 
                     // get vassals of liege
                     for (String vassalName : liege.getVassals()) {
-                        IFaction vassal = PersistentData.getInstance().getFaction(vassalName);
+                        Faction vassal = PersistentData.getInstance().getFaction(vassalName);
                         if (!containsFactionByName(toAdd, vassal) && !containsFactionByName(foundFactions, vassal)) {
                             toAdd.add(vassal);
                             numFactionsFound++;
@@ -190,7 +190,7 @@ public class PersistentData {
 
                 // get vassals of current
                 for (String vassalName : current.getVassals()) {
-                    IFaction vassal = PersistentData.getInstance().getFaction(vassalName);
+                    Faction vassal = PersistentData.getInstance().getFaction(vassalName);
                     if (!containsFactionByName(toAdd, vassal) && !containsFactionByName(foundFactions, vassal)) {
                         toAdd.add(vassal);
                         numFactionsFound++;
@@ -208,8 +208,8 @@ public class PersistentData {
         return foundFactions;
     }
 
-    private boolean containsFactionByName(ArrayList<IFaction> list, IFaction faction) {
-        for (IFaction f : list) {
+    private boolean containsFactionByName(ArrayList<Faction> list, Faction faction) {
+        for (Faction f : list) {
             if (f.getName().equalsIgnoreCase(faction.getName())) {
                 return true;
             }
@@ -221,7 +221,7 @@ public class PersistentData {
 
     public boolean isInFaction(UUID playerUUID) {
         // membership check
-        for (IFaction faction : getFactions()) {
+        for (Faction faction : getFactions()) {
             if (faction.isMember(playerUUID)) {
                 return true;
             }
@@ -244,7 +244,7 @@ public class PersistentData {
 
     public boolean isGateBlock(Block targetBlock)
     {
-        for (IFaction faction : getFactions())
+        for (Faction faction : getFactions())
         {
             for (Gate gate : faction.getGates())
             {
@@ -257,9 +257,9 @@ public class PersistentData {
         return false;
     }
 
-    public boolean isPlayerInFactionInVassalageTree(Player player, IFaction faction) {
-        ArrayList<IFaction> factionsToCheck = getFactionsInVassalageTree(faction);
-        for (IFaction f : factionsToCheck) {
+    public boolean isPlayerInFactionInVassalageTree(Player player, Faction faction) {
+        ArrayList<Faction> factionsToCheck = getFactionsInVassalageTree(faction);
+        for (Faction f : factionsToCheck) {
             if (f.isMember(player.getUniqueId())) {
                 return true;
             }
@@ -267,10 +267,10 @@ public class PersistentData {
         return false;
     }
 
-    public boolean isPlayerInAlliedFaction(Player player, IFaction faction) {
+    public boolean isPlayerInAlliedFaction(Player player, Faction faction) {
         ArrayList<String> factionNames = faction.getAllies();
         for (String name : factionNames) {
-            IFaction f = getFaction(name);
+            Faction f = getFaction(name);
             if (f.isMember(player.getUniqueId())) {
                 return true;
             }
@@ -307,7 +307,7 @@ public class PersistentData {
         }
     }
 
-    public IFaction getRandomFaction() {
+    public Faction getRandomFaction() {
         Random generator = new Random();
         int randomIndex = generator.nextInt(factions.size());
         return factions.get(randomIndex);

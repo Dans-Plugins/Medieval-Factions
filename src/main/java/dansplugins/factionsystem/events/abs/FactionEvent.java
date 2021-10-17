@@ -1,6 +1,6 @@
 package dansplugins.factionsystem.events.abs;
 
-import dansplugins.factionsystem.objects.IFaction;
+import dansplugins.factionsystem.objects.Faction;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.event.Event;
 import org.bukkit.event.HandlerList;
@@ -14,14 +14,14 @@ public abstract class FactionEvent extends Event {
     private static final HandlerList handlers = new HandlerList();
 
     // Variables.
-    private final IFaction faction;
+    private final Faction faction;
     private OfflinePlayer offlinePlayer = null;
 
     /**
      * Constructor for a FactionEvent with a reference to a Faction.
      * @param faction related to the event.
      */
-    public FactionEvent(IFaction faction) {
+    public FactionEvent(Faction faction) {
         this.faction = faction;
     }
 
@@ -30,13 +30,13 @@ public abstract class FactionEvent extends Event {
      * @param faction related to the event.
      * @param player related to the event.
      */
-    public FactionEvent(IFaction faction, OfflinePlayer player) {
+    public FactionEvent(Faction faction, OfflinePlayer player) {
         this.faction = faction;
         this.offlinePlayer = player;
     }
 
     // Getters.
-    public IFaction getFaction() {
+    public Faction getFaction() {
         return faction;
     }
 

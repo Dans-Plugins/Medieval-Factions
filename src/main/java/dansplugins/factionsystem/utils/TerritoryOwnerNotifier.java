@@ -3,7 +3,7 @@ package dansplugins.factionsystem.utils;
 import dansplugins.factionsystem.MedievalFactions;
 import dansplugins.factionsystem.managers.ActionBarManager;
 import dansplugins.factionsystem.managers.LocaleManager;
-import dansplugins.factionsystem.objects.IFaction;
+import dansplugins.factionsystem.objects.Faction;
 import net.md_5.bungee.api.ChatMessageType;
 import net.md_5.bungee.api.chat.TextComponent;
 import org.bukkit.ChatColor;
@@ -21,7 +21,7 @@ public class TerritoryOwnerNotifier {
         return instance;
     }
 
-    public void sendPlayerTerritoryAlert(Player player, IFaction holder) {
+    public void sendPlayerTerritoryAlert(Player player, Faction holder) {
         // get color
         ChatColor territoryAlertColor;
         if (holder != null) {

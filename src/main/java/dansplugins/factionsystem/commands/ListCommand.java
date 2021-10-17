@@ -2,7 +2,7 @@ package dansplugins.factionsystem.commands;
 
 import dansplugins.factionsystem.commands.abs.SubCommand;
 import dansplugins.factionsystem.managers.LocaleManager;
-import dansplugins.factionsystem.objects.IFaction;
+import dansplugins.factionsystem.objects.Faction;
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
@@ -53,7 +53,7 @@ public class ListCommand extends SubCommand {
         sender.sendMessage(ChatColor.AQUA + LocaleManager.getInstance().getText("ListLegend"));
         sender.sendMessage(ChatColor.AQUA + "-----");
         for (SortableFaction sortableFaction : sortedFactionList) {
-            final IFaction temp = sortableFaction.getFaction();
+            final Faction temp = sortableFaction.getFaction();
             sender.sendMessage(ChatColor.AQUA + String.format("%-25s %10s %10s %10s", temp.getName(), "P: " +
                     temp.getCumulativePowerLevel(), "M: " + temp.getPopulation(), "L: " +
                     chunks.getChunksClaimedByFaction(temp.getName(), data.getClaimedChunks())));
@@ -62,15 +62,15 @@ public class ListCommand extends SubCommand {
 
     private static class SortableFaction implements Comparable<SortableFaction> {
 
-        private final IFaction faction;
+        private final Faction faction;
         private final int power;
 
-        public SortableFaction(IFaction faction, int cumulativePower) {
+        public SortableFaction(Faction faction, int cumulativePower) {
             this.faction = faction;
             this.power = cumulativePower;
         }
 
-        public IFaction getFaction() {
+        public Faction getFaction() {
             return faction;
         }
 
