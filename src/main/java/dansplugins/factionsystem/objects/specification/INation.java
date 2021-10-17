@@ -3,6 +3,8 @@ package dansplugins.factionsystem.objects.specification;
 import dansplugins.factionsystem.objects.ClaimedChunk;
 import dansplugins.factionsystem.objects.FactionFlags;
 import dansplugins.factionsystem.objects.Gate;
+import dansplugins.factionsystem.objects.specification.generic.Diplomatic;
+import dansplugins.factionsystem.objects.specification.generic.Feudal;
 import dansplugins.factionsystem.objects.specification.generic.Group;
 import org.bukkit.Location;
 import org.bukkit.block.Block;
@@ -10,23 +12,9 @@ import org.bukkit.block.Block;
 import java.util.ArrayList;
 import java.util.List;
 
-public interface INation extends Group {
+public interface INation extends Group, Feudal, Diplomatic {
 
 // persistent lists -----------------
-
-    // enemies
-    void addEnemy(String factionName);
-    void removeEnemy(String factionName);
-    boolean isEnemy(String factionName);
-    ArrayList<String> getEnemyFactions();
-    String getEnemiesSeparatedByCommas();
-
-    // allies
-    void addAlly(String factionName);
-    void removeAlly(String factionName);
-    boolean isAlly(String factionName);
-    ArrayList<String> getAllies();
-    String getAlliesSeparatedByCommas();
 
     // laws
     void addLaw(String newLaw);
@@ -35,17 +23,6 @@ public interface INation extends Group {
     boolean editLaw(int i, String newString);
     int getNumLaws();
     ArrayList<String> getLaws();
-
-    // vassalage
-    boolean isVassal(String faction);
-    boolean isLiege();
-    boolean hasLiege();
-    boolean isLiege(String faction);
-    void addVassal(String factionName);
-    void removeVassal(String faction);
-    void clearVassals();
-    int getNumVassals();
-    ArrayList<String> getVassals();
 
     // gates
     void addGate(Gate gate);
@@ -56,9 +33,6 @@ public interface INation extends Group {
     int getTotalGates();
 
 // persistent strings  -----------------
-
-    void setLiege(String newLiege);
-    String getLiege();
 
     String getPrefix();
     void setPrefix(String newPrefix);
@@ -73,20 +47,7 @@ public interface INation extends Group {
     int getBonusPower();
     void setBonusPower(int i);
 
-// ephemeral lists -----------------
 
-    void requestTruce(String factionName);
-    boolean isTruceRequested(String factionName);
-    void removeRequestedTruce(String factionName);
-
-    void requestAlly(String factionName);
-    boolean isRequestedAlly(String factionName);
-    void removeAllianceRequest(String factionName);
-
-    String getVassalsSeparatedByCommas();
-    void addAttemptedVassalization(String factionName);
-    boolean hasBeenOfferedVassalization(String factionName);
-    void removeAttemptedVassalization(String factionName);
 
 // other ephemeral types
 
