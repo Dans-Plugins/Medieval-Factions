@@ -15,15 +15,6 @@ public interface IFaction extends IGroup {
 
 // persistent lists -----------------
 
-    // members
-    void addMember(UUID UUID);
-    void removeMember(UUID UUID);
-    boolean isMember(UUID uuid);
-    ArrayList<UUID> getMemberList();
-    ArrayList<UUID> getMemberArrayList();
-    String getMemberListSeparatedByCommas();
-    int getPopulation();
-
     // officers
     boolean addOfficer(UUID newOfficer);
     boolean removeOfficer(UUID officerToRemove);
