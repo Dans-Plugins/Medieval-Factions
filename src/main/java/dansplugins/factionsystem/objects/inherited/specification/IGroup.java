@@ -1,9 +1,9 @@
-package dansplugins.factionsystem.objects.specification.generic;
+package dansplugins.factionsystem.objects.inherited.specification;
 
 import java.util.ArrayList;
 import java.util.UUID;
 
-public interface Group {
+public interface IGroup {
     void setName(String newName);
     String getName();
     void setDescription(String newDesc);

@@ -1,4 +1,4 @@
-package dansplugins.factionsystem.objects;
+package dansplugins.factionsystem.objects.domain;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
@@ -10,7 +10,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
 
-public class LockedBlock implements dansplugins.factionsystem.objects.specification.ILockedBlock {
+public class LockedBlock implements dansplugins.factionsystem.objects.domain.specification.ILockedBlock {
 
     private int x = 0;
     private int y = 0;

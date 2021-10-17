@@ -1,8 +1,8 @@
 package dansplugins.factionsystem.commands;
 
 import dansplugins.factionsystem.commands.abs.SubCommand;
-import dansplugins.factionsystem.objects.Faction;
-import dansplugins.factionsystem.objects.Gate;
+import dansplugins.factionsystem.objects.domain.Faction;
+import dansplugins.factionsystem.objects.domain.Gate;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.command.CommandSender;

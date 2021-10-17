@@ -1,6 +1,6 @@
 package dansplugins.factionsystem.data;
 
-import dansplugins.factionsystem.objects.*;
+import dansplugins.factionsystem.objects.domain.*;
 import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.block.Block;

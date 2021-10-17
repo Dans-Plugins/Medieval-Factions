@@ -4,7 +4,7 @@ import dansplugins.factionsystem.MedievalFactions;
 import dansplugins.factionsystem.Messenger;
 import dansplugins.factionsystem.data.EphemeralData;
 import dansplugins.factionsystem.data.PersistentData;
-import dansplugins.factionsystem.objects.Faction;
+import dansplugins.factionsystem.objects.domain.Faction;
 import dansplugins.factionsystem.utils.ColorChecker;
 import org.bukkit.ChatColor;
 import org.bukkit.event.EventHandler;

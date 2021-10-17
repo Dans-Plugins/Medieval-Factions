@@ -1,4 +1,4 @@
-package dansplugins.factionsystem.objects.specification.generic;
+package dansplugins.factionsystem.objects.inherited.specification.modifiers;
 
 import java.util.ArrayList;
 

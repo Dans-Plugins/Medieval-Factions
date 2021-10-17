@@ -6,7 +6,7 @@ import dansplugins.factionsystem.data.EphemeralData;
 import dansplugins.factionsystem.data.PersistentData;
 import dansplugins.factionsystem.events.FactionClaimEvent;
 import dansplugins.factionsystem.events.FactionUnclaimEvent;
-import dansplugins.factionsystem.objects.*;
+import dansplugins.factionsystem.objects.domain.*;
 import dansplugins.factionsystem.utils.BlockChecker;
 import dansplugins.factionsystem.utils.InteractionAccessChecker;
 import org.bukkit.*;

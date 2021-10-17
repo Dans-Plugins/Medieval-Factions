@@ -1,7 +1,7 @@
 package dansplugins.factionsystem.commands;
 
 import dansplugins.factionsystem.commands.abs.SubCommand;
-import dansplugins.factionsystem.objects.PowerRecord;
+import dansplugins.factionsystem.objects.domain.PowerRecord;
 import dansplugins.factionsystem.utils.UUIDChecker;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;

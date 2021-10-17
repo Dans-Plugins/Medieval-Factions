@@ -1,19 +1,15 @@
-package dansplugins.factionsystem.objects.specification;
+package dansplugins.factionsystem.objects.domain.specification;
 
-import dansplugins.factionsystem.objects.ClaimedChunk;
-import dansplugins.factionsystem.objects.FactionFlags;
-import dansplugins.factionsystem.objects.Gate;
-import dansplugins.factionsystem.objects.specification.generic.Diplomatic;
-import dansplugins.factionsystem.objects.specification.generic.Feudal;
-import dansplugins.factionsystem.objects.specification.generic.Group;
-import dansplugins.factionsystem.objects.specification.generic.Nation;
+import dansplugins.factionsystem.objects.domain.ClaimedChunk;
+import dansplugins.factionsystem.objects.helper.FactionFlags;
+import dansplugins.factionsystem.objects.domain.Gate;
 import org.bukkit.Location;
 import org.bukkit.block.Block;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public interface IFaction extends Nation, Feudal {
+public interface IFaction {
 
     // gates
     void addGate(Gate gate);

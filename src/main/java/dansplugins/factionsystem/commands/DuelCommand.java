@@ -1,12 +1,12 @@
 package dansplugins.factionsystem.commands;
 
 import dansplugins.factionsystem.commands.abs.SubCommand;
-import dansplugins.factionsystem.objects.Duel;
+import dansplugins.factionsystem.objects.domain.Duel;
 import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
-import static dansplugins.factionsystem.objects.Duel.DuelState;
+import static dansplugins.factionsystem.objects.domain.Duel.DuelState;
 
 public class DuelCommand extends SubCommand {
 

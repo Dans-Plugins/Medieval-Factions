@@ -2,8 +2,8 @@ package dansplugins.factionsystem.managers;
 
 import dansplugins.factionsystem.data.EphemeralData;
 import dansplugins.factionsystem.data.PersistentData;
-import dansplugins.factionsystem.objects.ClaimedChunk;
-import dansplugins.factionsystem.objects.LockedBlock;
+import dansplugins.factionsystem.objects.domain.ClaimedChunk;
+import dansplugins.factionsystem.objects.domain.LockedBlock;
 import dansplugins.factionsystem.utils.BlockChecker;
 import dansplugins.factionsystem.utils.UUIDChecker;
 import org.bukkit.ChatColor;

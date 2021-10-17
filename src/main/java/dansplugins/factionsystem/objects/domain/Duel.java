@@ -1,7 +1,8 @@
-package dansplugins.factionsystem.objects;
+package dansplugins.factionsystem.objects.domain;
 
 import dansplugins.factionsystem.MedievalFactions;
 import dansplugins.factionsystem.data.EphemeralData;
+import dansplugins.factionsystem.objects.domain.specification.IDuel;
 import net.md_5.bungee.api.ChatColor;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
@@ -15,16 +16,17 @@ import org.bukkit.inventory.meta.SkullMeta;
 
 import java.util.ArrayList;
 
-public class Duel {
+public class Duel implements IDuel {
 
-	public enum DuelState { INVITED, DUELLING, WINNER, TIED }
 	private DuelState duelState = DuelState.INVITED;
-	
+
+	@Override
 	public DuelState getStatus()
 	{
 		return duelState;
 	}
-	
+
+	@Override
 	public void setStatus(DuelState state)
 	{
 		duelState = state;
@@ -42,35 +44,44 @@ public class Duel {
 	float nearbyPlayerRadius = 64;
 	double timeLimit = 120.0;
 	double timeDecrementAmount = 0;
-	
+
+	@Override
 	public boolean isChallenged(Player player)
 	{
 		return player.equals(_challenged);
 	}
+
+	@Override
 	public Player getChallenged()
 	{
 		return _challenged;
 	}
-	
+
+	@Override
 	public boolean isChallenger(Player player)
 	{
 		return player.equals(_challenger);
 	}
+
+	@Override
 	public Player getChallenger()
 	{
 		return _challenger;
 	}
-	
+
+	@Override
 	public double getChallengerHealth()
 	{
 		return challengerHealth;
 	}
-	
+
+	@Override
 	public double getChallengedHealth()
 	{
 		return challengedHealth;
 	}
-	
+
+	@Override
 	public boolean hasPlayer(Player player)
 	{
 		if (_challenged.equals(player) || _challenger.equals(player))
@@ -79,7 +90,8 @@ public class Duel {
 		}
 		return false;
 	}
-	
+	@Override
+
 	public void resetHealth()
 	{
 		if (_challenger != null)
@@ -91,7 +103,8 @@ public class Duel {
 			_challenged.setHealth(challengedHealth);
 		}
 	}
-	
+
+	@Override
 	public void setWinner(Player player)
 	{
 		duelState = DuelState.WINNER;
@@ -105,11 +118,14 @@ public class Duel {
 			loser = getChallenger();
 		}
 	}
+
+	@Override
 	public Player getWinner()
 	{
 		return winner;
 	}
 
+	@Override
 	public void setLoser(Player player)
 	{		
 		duelState = DuelState.WINNER;
@@ -123,11 +139,14 @@ public class Duel {
 			winner = getChallenger();
 		}
 	}
+
+	@Override
 	public Player getLoser()
 	{
 		return loser;
 	}
-	
+
+	@Override
 	public void acceptDuel()
 	{
 		// Participants that the challenged was accepted and that it's game-on.
@@ -181,7 +200,8 @@ public class Duel {
 		item.setItemMeta(skull);
 		return item;
 	}
-	
+
+	@Override
 	public void finishDuel(boolean tied)
 	{
 		_challenger.setHealth(challengerHealth);

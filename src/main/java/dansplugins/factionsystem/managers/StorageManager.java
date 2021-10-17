@@ -6,7 +6,7 @@ import com.google.gson.reflect.TypeToken;
 import com.google.gson.stream.JsonReader;
 import dansplugins.factionsystem.MedievalFactions;
 import dansplugins.factionsystem.data.PersistentData;
-import dansplugins.factionsystem.objects.*;
+import dansplugins.factionsystem.objects.domain.*;
 
 import java.io.*;
 import java.lang.reflect.Type;

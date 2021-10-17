@@ -1,4 +1,4 @@
-package dansplugins.factionsystem.objects;
+package dansplugins.factionsystem.objects.domain;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
@@ -6,7 +6,10 @@ import com.google.gson.reflect.TypeToken;
 import dansplugins.factionsystem.MedievalFactions;
 import dansplugins.factionsystem.data.PersistentData;
 import dansplugins.factionsystem.managers.LocaleManager;
-import dansplugins.factionsystem.objects.specification.IFaction;
+import dansplugins.factionsystem.objects.helper.FactionFlags;
+import dansplugins.factionsystem.objects.domain.specification.IFaction;
+import dansplugins.factionsystem.objects.inherited.Nation;
+import dansplugins.factionsystem.objects.inherited.specification.modifiers.Feudal;
 import dansplugins.factionsystem.utils.UUIDChecker;
 import org.bukkit.Location;
 import org.bukkit.World;
@@ -19,7 +22,7 @@ import java.util.*;
 
 import static org.bukkit.Bukkit.getServer;
 
-public class Faction implements IFaction {
+public class Faction extends Nation implements IFaction, Feudal {
 
     // persistent data -------------------------------------------------------
 

@@ -1,8 +1,9 @@
-package dansplugins.factionsystem.objects;
+package dansplugins.factionsystem.objects.helper;
 
 import java.util.HashMap;
 
-public class ChunkFlags {
+public class ChunkFlags implements dansplugins.factionsystem.objects.helper.specification.IChunkFlags {
+
     private HashMap<Long, long[]> chunkmap = new HashMap<Long, long[]>();
     private long last_key = Long.MAX_VALUE;
     private long[] last_row;
@@ -10,6 +11,7 @@ public class ChunkFlags {
     public ChunkFlags() {
     }
 
+    @Override
     public boolean getFlag(int x, int y) {
         long k = (((long)(x >> 6)) << 32) | (0xFFFFFFFFL & (long)(y >> 6));
         long[] row;
@@ -27,6 +29,7 @@ public class ChunkFlags {
             return (row[y & 0x3F] & (1L << (x & 0x3F))) != 0;
     }
 
+    @Override
     public void setFlag(int x, int y, boolean f) {
         long k = (((long)(x >> 6)) << 32) | (0xFFFFFFFFL & (long)(y >> 6));
         long[] row;
@@ -51,9 +54,12 @@ public class ChunkFlags {
                 row[y & 0x3F] &= ~(1L << (x & 0x3F));
         }
     }
+
+    @Override
     public void clear() {
         chunkmap.clear();
         last_row = null;
         last_key = Long.MAX_VALUE;
     }
+
 }

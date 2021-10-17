@@ -5,7 +5,7 @@ import dansplugins.factionsystem.commands.abs.SubCommand;
 import dansplugins.factionsystem.data.PersistentData;
 import dansplugins.factionsystem.events.FactionDisbandEvent;
 import dansplugins.factionsystem.managers.ChunkManager;
-import dansplugins.factionsystem.objects.Faction;
+import dansplugins.factionsystem.objects.domain.Faction;
 import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.command.CommandSender;
