@@ -3,6 +3,7 @@ package dansplugins.factionsystem.objects.specification;
 import dansplugins.factionsystem.objects.ClaimedChunk;
 import dansplugins.factionsystem.objects.FactionFlags;
 import dansplugins.factionsystem.objects.Gate;
+import dansplugins.factionsystem.objects.specification.generic.Group;
 import org.bukkit.Location;
 import org.bukkit.block.Block;
 

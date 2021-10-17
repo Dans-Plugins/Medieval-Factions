@@ -1,4 +1,4 @@
-package dansplugins.factionsystem.objects.specification;
+package dansplugins.factionsystem.objects.specification.generic;
 
 import java.util.ArrayList;
 import java.util.UUID;

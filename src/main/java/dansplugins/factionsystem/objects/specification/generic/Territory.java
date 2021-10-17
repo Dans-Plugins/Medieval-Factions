@@ -1,4 +1,4 @@
-package dansplugins.factionsystem.objects.specification;
+package dansplugins.factionsystem.objects.specification.generic;
 
 public interface Territory {
     void setHolder(String newHolder);
