@@ -5,7 +5,7 @@ import dansplugins.factionsystem.data.EphemeralData;
 import dansplugins.factionsystem.data.PersistentData;
 import dansplugins.factionsystem.managers.ChunkManager;
 import dansplugins.factionsystem.objects.Faction;
-import dansplugins.factionsystem.objects.PlayerPowerRecord;
+import dansplugins.factionsystem.objects.PowerRecord;
 import org.bukkit.Chunk;
 import org.bukkit.entity.Player;
 
@@ -91,7 +91,7 @@ public class MedievalFactionsAPI implements IMedievalFactionsAPI {
 
     @Override
     public void increasePower(Player player, int amount) {
-        PlayerPowerRecord powerRecord = PersistentData.getInstance().getPlayersPowerRecord(player.getUniqueId());
+        PowerRecord powerRecord = PersistentData.getInstance().getPlayersPowerRecord(player.getUniqueId());
         int originalPower = powerRecord.getPowerLevel();
         int newPower = originalPower + amount;
         powerRecord.setPowerLevel(newPower);
@@ -99,7 +99,7 @@ public class MedievalFactionsAPI implements IMedievalFactionsAPI {
 
     @Override
     public void decreasePower(Player player, int amount) {
-        PlayerPowerRecord powerRecord = PersistentData.getInstance().getPlayersPowerRecord(player.getUniqueId());
+        PowerRecord powerRecord = PersistentData.getInstance().getPlayersPowerRecord(player.getUniqueId());
         int originalPower = powerRecord.getPowerLevel();
         int newPower = originalPower - amount;
         if (newPower >= 0) {

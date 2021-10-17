@@ -9,8 +9,8 @@ import dansplugins.factionsystem.managers.ActionBarManager;
 import dansplugins.factionsystem.managers.ChunkManager;
 import dansplugins.factionsystem.managers.LocaleManager;
 import dansplugins.factionsystem.objects.Faction;
-import dansplugins.factionsystem.objects.PlayerActivityRecord;
-import dansplugins.factionsystem.objects.PlayerPowerRecord;
+import dansplugins.factionsystem.objects.ActivityRecord;
+import dansplugins.factionsystem.objects.PowerRecord;
 import dansplugins.factionsystem.utils.Logger;
 import dansplugins.factionsystem.utils.TerritoryOwnerNotifier;
 import org.bukkit.Bukkit;
@@ -35,7 +35,7 @@ public class JoiningLeavingAndSpawningHandler implements Listener {
         if (!hasPowerRecord(event.getPlayer().getUniqueId())) {
 
         	// assign power record
-            PlayerPowerRecord newRecord = new PlayerPowerRecord(player.getUniqueId(), MedievalFactions.getInstance().getConfig().getInt("initialPowerLevel"));
+            PowerRecord newRecord = new PowerRecord(player.getUniqueId(), MedievalFactions.getInstance().getConfig().getInt("initialPowerLevel"));
             PersistentData.getInstance().getPlayerPowerRecords().add(newRecord);
 
             // since player has not logged in before, this is where we will handle random assignment
@@ -62,13 +62,13 @@ public class JoiningLeavingAndSpawningHandler implements Listener {
 			}
         }
         if (!hasActivityRecord(player.getUniqueId())) {
-        	PlayerActivityRecord newRecord = new PlayerActivityRecord(player.getUniqueId(), 1);
+        	ActivityRecord newRecord = new ActivityRecord(player.getUniqueId(), 1);
         	PersistentData.getInstance().getPlayerActivityRecords().add(newRecord);
         }
         else {
-        	PlayerActivityRecord record = PersistentData.getInstance().getPlayerActivityRecord(player.getUniqueId());
+        	ActivityRecord record = PersistentData.getInstance().getPlayerActivityRecord(player.getUniqueId());
         	if (record != null) {
-        		PlayerPowerRecord power = PersistentData.getInstance().getPlayersPowerRecord(player.getUniqueId());
+        		PowerRecord power = PersistentData.getInstance().getPlayersPowerRecord(player.getUniqueId());
         		record.incrementLogins();
 
         		int newPower = power.getPowerLevel();
@@ -124,7 +124,7 @@ public class JoiningLeavingAndSpawningHandler implements Listener {
 	}
 
 	private boolean hasPowerRecord(UUID playerUUID) {
-		for (PlayerPowerRecord record : PersistentData.getInstance().getPlayerPowerRecords()){
+		for (PowerRecord record : PersistentData.getInstance().getPlayerPowerRecords()){
 			if (record.getPlayerUUID().equals(playerUUID)){
 				return true;
 			}
@@ -133,7 +133,7 @@ public class JoiningLeavingAndSpawningHandler implements Listener {
 	}
 
 	private boolean hasActivityRecord(UUID playerUUID) {
-		for (PlayerActivityRecord record : PersistentData.getInstance().getPlayerActivityRecords()){
+		for (ActivityRecord record : PersistentData.getInstance().getPlayerActivityRecords()){
 			if (record.getPlayerUUID().equals(playerUUID)){
 				return true;
 			}
@@ -165,7 +165,7 @@ public class JoiningLeavingAndSpawningHandler implements Listener {
 			EphemeralData.getInstance().getPlayersRevokingAccess().remove(event.getPlayer().getUniqueId());
 		}
 
-		PlayerActivityRecord record = PersistentData.getInstance().getPlayerActivityRecord(event.getPlayer().getUniqueId());
+		ActivityRecord record = PersistentData.getInstance().getPlayerActivityRecord(event.getPlayer().getUniqueId());
 		if (record != null)
 		{
 			record.setLastLogout(ZonedDateTime.now());

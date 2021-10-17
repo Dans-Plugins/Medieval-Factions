@@ -75,7 +75,7 @@ public class StorageManager {
 
     private void savePlayerPowerRecords() {
         List<Map<String, String>> playerPowerRecords = new ArrayList<>();
-        for (PlayerPowerRecord record : PersistentData.getInstance().getPlayerPowerRecords()){
+        for (PowerRecord record : PersistentData.getInstance().getPlayerPowerRecords()){
             playerPowerRecords.add(record.save());
         }
 
@@ -86,7 +86,7 @@ public class StorageManager {
     private void savePlayerActivityRecords()
     {
     	List<Map<String, String>> playerActivityRecords = new ArrayList<>();
-    	for (PlayerActivityRecord record : PersistentData.getInstance().getPlayerActivityRecords())
+    	for (ActivityRecord record : PersistentData.getInstance().getPlayerActivityRecords())
     	{
     		playerActivityRecords.add(record.save());
     		
@@ -152,7 +152,7 @@ public class StorageManager {
         ArrayList<HashMap<String, String>> data = loadDataFromFilename(FILE_PATH + PLAYERPOWER_FILE_NAME);
 
         for (Map<String, String> powerRecord : data){
-            PlayerPowerRecord player = new PlayerPowerRecord(powerRecord);
+            PowerRecord player = new PowerRecord(powerRecord);
             PersistentData.getInstance().getPlayerPowerRecords().add(player);
         }
     }
@@ -163,7 +163,7 @@ public class StorageManager {
         ArrayList<HashMap<String, String>> data = loadDataFromFilename(FILE_PATH + PLAYERACTIVITY_FILE_NAME);
 
         for (Map<String, String> powerRecord : data){
-        	PlayerActivityRecord player = new PlayerActivityRecord(powerRecord);
+        	ActivityRecord player = new ActivityRecord(powerRecord);
             PersistentData.getInstance().getPlayerActivityRecords().add(player);
         }
     }

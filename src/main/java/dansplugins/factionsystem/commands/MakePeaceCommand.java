@@ -2,7 +2,6 @@ package dansplugins.factionsystem.commands;
 
 import dansplugins.factionsystem.commands.abs.SubCommand;
 import dansplugins.factionsystem.events.FactionWarEndEvent;
-import dansplugins.factionsystem.events.FactionWarStartEvent;
 import dansplugins.factionsystem.objects.Faction;
 import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;

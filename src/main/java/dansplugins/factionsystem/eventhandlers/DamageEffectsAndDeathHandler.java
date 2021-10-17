@@ -9,7 +9,7 @@ import dansplugins.factionsystem.managers.LocaleManager;
 import dansplugins.factionsystem.objects.ClaimedChunk;
 import dansplugins.factionsystem.objects.Duel;
 import dansplugins.factionsystem.objects.Faction;
-import dansplugins.factionsystem.objects.PlayerPowerRecord;
+import dansplugins.factionsystem.objects.PowerRecord;
 import dansplugins.factionsystem.utils.Logger;
 import dansplugins.factionsystem.utils.Pair;
 import org.bukkit.Bukkit;
@@ -294,7 +294,7 @@ public class DamageEffectsAndDeathHandler implements Listener {
 
         if (ConfigManager.getInstance().getBoolean("playersLosePowerOnDeath")) {
             // decrease dying player's power
-            for (PlayerPowerRecord record : PersistentData.getInstance().getPlayerPowerRecords()) {
+            for (PowerRecord record : PersistentData.getInstance().getPlayerPowerRecords()) {
                 if (record.getPlayerUUID().equals(player.getUniqueId())) {
                     record.decreasePowerByTenPercent();
                     if (PersistentData.getInstance().getPlayersPowerRecord(player.getUniqueId()).getPowerLevel() > 0) {
@@ -308,7 +308,7 @@ public class DamageEffectsAndDeathHandler implements Listener {
         if (player.getKiller() != null) {
             Player killer = player.getKiller();
 
-            PlayerPowerRecord record = PersistentData.getInstance().getPlayersPowerRecord(killer.getUniqueId());
+            PowerRecord record = PersistentData.getInstance().getPlayersPowerRecord(killer.getUniqueId());
             if (record != null) {
                 if (record.increasePowerByTenPercent()){
                     killer.sendMessage(ChatColor.GREEN + LocaleManager.getInstance().getText("PowerLevelHasIncreased"));

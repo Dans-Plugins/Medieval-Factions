@@ -11,7 +11,7 @@ import java.util.Map;
 
 import static org.bukkit.Bukkit.getServer;
 
-public class ClaimedChunk {
+public class ClaimedChunk implements dansplugins.factionsystem.objects.specification.IClaimedChunk {
 
     private Chunk chunk;
     private String holder;
@@ -29,22 +29,27 @@ public class ClaimedChunk {
         this.load(data);
     }
 
+    @Override
     public void setChunk(Chunk newChunk) {
         chunk = newChunk;
     }
 
+    @Override
     public Chunk getChunk() {
         return chunk;
     }
 
+    @Override
     public void setHolder(String newHolder) {
         holder = newHolder;
     }
 
+    @Override
     public String getHolder() {
         return holder;
     }
 
+    @Override
     public double[] getCoordinates() {
         double[] coordinates = new double[2];
         coordinates[0] = chunk.getX();
@@ -52,10 +57,12 @@ public class ClaimedChunk {
         return coordinates;
     }
 
+    @Override
     public void setWorld(String worldName) {
         world = worldName;
     }
 
+    @Override
     public String getWorld() {
         return world;
     }

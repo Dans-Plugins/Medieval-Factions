@@ -243,7 +243,7 @@ public class ChunkManager {
     private boolean everyPlayerInFactionExperiencingPowerDecay(Faction faction) {
         int numExperiencingPowerDecay = 0;
         for (UUID uuid : faction.getMemberArrayList()) {
-            PlayerActivityRecord record = PersistentData.getInstance().getPlayerActivityRecord(uuid);
+            ActivityRecord record = PersistentData.getInstance().getPlayerActivityRecord(uuid);
             if (record != null) {
                 Player player = getServer().getPlayer(record.getPlayerUUID());
                 boolean isOnline = false;
@@ -257,7 +257,7 @@ public class ChunkManager {
                 }
             }
             else {
-                PlayerActivityRecord newRecord = new PlayerActivityRecord(uuid, 1);
+                ActivityRecord newRecord = new ActivityRecord(uuid, 1);
                 newRecord.setLastLogout(ZonedDateTime.now());
                 PersistentData.getInstance().getPlayerActivityRecords().add(newRecord);
             }

@@ -2,7 +2,6 @@ package dansplugins.factionsystem.commands;
 
 import dansplugins.factionsystem.MedievalFactions;
 import dansplugins.factionsystem.commands.abs.SubCommand;
-import dansplugins.factionsystem.events.FactionCreateEvent;
 import dansplugins.factionsystem.events.FactionWarStartEvent;
 import dansplugins.factionsystem.objects.Faction;
 import org.bukkit.Bukkit;

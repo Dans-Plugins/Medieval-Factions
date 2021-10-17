@@ -8,7 +8,7 @@ import dansplugins.factionsystem.managers.ChunkManager;
 import dansplugins.factionsystem.managers.LocaleManager;
 import dansplugins.factionsystem.managers.StorageManager;
 import dansplugins.factionsystem.objects.Faction;
-import dansplugins.factionsystem.objects.PlayerPowerRecord;
+import dansplugins.factionsystem.objects.PowerRecord;
 import dansplugins.factionsystem.utils.UUIDChecker;
 import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
@@ -260,7 +260,7 @@ public class ForceCommand extends SubCommand {
             sender.sendMessage(translate("&c" + getText("DesiredPowerMustBeANumber")));
             return;
         }
-        final PlayerPowerRecord record = data.getPlayersPowerRecord(playerUUID);
+        final PowerRecord record = data.getPlayersPowerRecord(playerUUID);
         record.setPowerLevel(desiredPower); // Set power :)
         sender.sendMessage(translate("&a" + getText("PowerLevelHasBeenSetTo", desiredPower)));
     }

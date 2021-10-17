@@ -18,8 +18,8 @@ public class PersistentData {
 
     public ArrayList<Faction> factions = new ArrayList<>();
     public ArrayList<ClaimedChunk> claimedChunks = new ArrayList<>();
-    public ArrayList<PlayerPowerRecord> playerPowerRecords = new ArrayList<>();
-    public ArrayList<PlayerActivityRecord> playerActivityRecords = new ArrayList<>();
+    public ArrayList<PowerRecord> powerRecords = new ArrayList<>();
+    public ArrayList<ActivityRecord> activityRecords = new ArrayList<>();
     public ArrayList<LockedBlock> lockedBlocks = new ArrayList<>();
 
     private PersistentData() {}
@@ -41,12 +41,12 @@ public class PersistentData {
         return claimedChunks;
     }
 
-    public ArrayList<PlayerPowerRecord> getPlayerPowerRecords() {
-        return playerPowerRecords;
+    public ArrayList<PowerRecord> getPlayerPowerRecords() {
+        return powerRecords;
     }
 
-    public ArrayList<PlayerActivityRecord> getPlayerActivityRecords() {
-        return playerActivityRecords;
+    public ArrayList<ActivityRecord> getPlayerActivityRecords() {
+        return activityRecords;
     }
 
     public ArrayList<LockedBlock> getLockedBlocks() {
@@ -118,8 +118,8 @@ public class PersistentData {
         return null;
     }
 
-    public PlayerPowerRecord getPlayersPowerRecord(UUID playerUUID) {
-        for (PlayerPowerRecord record : getPlayerPowerRecords()) {
+    public PowerRecord getPlayersPowerRecord(UUID playerUUID) {
+        for (PowerRecord record : getPlayerPowerRecords()) {
             if (record.getPlayerUUID().equals(playerUUID)) {
                 return record;
             }
@@ -127,9 +127,9 @@ public class PersistentData {
         return null;
     }
 
-    public PlayerActivityRecord getPlayerActivityRecord(UUID uuid)
+    public ActivityRecord getPlayerActivityRecord(UUID uuid)
     {
-        for (PlayerActivityRecord record : getPlayerActivityRecords())
+        for (ActivityRecord record : getPlayerActivityRecords())
         {
             if (record.getPlayerUUID().equals(uuid))
             {
@@ -298,9 +298,9 @@ public class PersistentData {
 
     public void createActivityRecordForEveryOfflinePlayer() { // this method is to ensure that when updating to a version with power decay, even players who never log in again will experience power decay
         for (OfflinePlayer player : Bukkit.getOfflinePlayers()) {
-            PlayerActivityRecord record = PersistentData.getInstance().getPlayerActivityRecord(player.getUniqueId());
+            ActivityRecord record = PersistentData.getInstance().getPlayerActivityRecord(player.getUniqueId());
             if (record == null) {
-                PlayerActivityRecord newRecord = new PlayerActivityRecord(player.getUniqueId(), 1);
+                ActivityRecord newRecord = new ActivityRecord(player.getUniqueId(), 1);
                 newRecord.setLastLogout(ZonedDateTime.now());
                 PersistentData.getInstance().getPlayerActivityRecords().add(newRecord);
             }
