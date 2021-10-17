@@ -6,11 +6,7 @@ import java.util.UUID;
 
 public class PlayerRecord implements IPlayerRecord {
 
-    private UUID playerUUID = UUID.randomUUID();
-
-    public PlayerRecord(UUID playerUUID) {
-        this.playerUUID = playerUUID;
-    }
+    protected UUID playerUUID = null;
 
     @Override
     public void setPlayerUUID(UUID UUID) {

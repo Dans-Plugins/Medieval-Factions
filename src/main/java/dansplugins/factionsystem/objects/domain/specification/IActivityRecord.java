@@ -4,7 +4,7 @@ import dansplugins.factionsystem.objects.inherited.specification.IPlayerRecord;
 
 import java.time.ZonedDateTime;
 
-public interface IActivityRecord extends IPlayerRecord {
+public interface IActivityRecord {
     void setPowerLost(int power);
     int getPowerLost();
     void incrementPowerLost();
