@@ -5,27 +5,27 @@ import java.util.ArrayList;
 public interface Diplomatic {
 
     // allies
-    void addAlly(String factionName);
-    void removeAlly(String factionName);
-    boolean isAlly(String factionName);
+    void addAlly(String name);
+    void removeAlly(String name);
+    boolean isAlly(String name);
     ArrayList<String> getAllies();
     String getAlliesSeparatedByCommas();
 
     // requests
-    void requestAlly(String factionName);
-    boolean isRequestedAlly(String factionName);
-    void removeAllianceRequest(String factionName);
+    void requestAlly(String name);
+    boolean isRequestedAlly(String name);
+    void removeAllianceRequest(String name);
 
     // enemies
-    void addEnemy(String factionName);
-    void removeEnemy(String factionName);
-    boolean isEnemy(String factionName);
+    void addEnemy(String name);
+    void removeEnemy(String name);
+    boolean isEnemy(String name);
     ArrayList<String> getEnemyFactions();
     String getEnemiesSeparatedByCommas();
 
     // truces
-    void requestTruce(String factionName);
-    boolean isTruceRequested(String factionName);
-    void removeRequestedTruce(String factionName);
+    void requestTruce(String name);
+    boolean isTruceRequested(String name);
+    void removeRequestedTruce(String name);
 
 }
