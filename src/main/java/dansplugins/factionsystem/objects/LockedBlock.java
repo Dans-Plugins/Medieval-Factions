@@ -95,10 +95,12 @@ public class LockedBlock implements dansplugins.factionsystem.objects.specificat
         return accessList;
     }
 
+    @Override
     public void setFaction(String s) {
         factionName = s;
     }
 
+    @Override
     public String getFactionName() {
         return factionName;
     }

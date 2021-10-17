@@ -15,4 +15,6 @@ public interface ILockedBlock {
     void removeFromAccessList(UUID playerName);
     boolean hasAccess(UUID playerName);
     ArrayList<UUID> getAccessList();
+    void setFaction(String s);
+    String getFactionName();
 }
