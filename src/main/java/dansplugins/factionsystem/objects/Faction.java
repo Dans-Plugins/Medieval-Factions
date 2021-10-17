@@ -18,7 +18,7 @@ import java.util.*;
 
 import static org.bukkit.Bukkit.getServer;
 
-public class Faction {
+public class Faction implements dansplugins.factionsystem.objects.specification.IFaction {
 
     // persistent data -------------------------------------------------------
 
@@ -73,6 +73,7 @@ public class Faction {
         flags.initializeFlagValues(); // need to ensure that this doesn't mess up changes to flags being persistent
     }
 
+    @Override
     public ArrayList<Gate> getGates() {
     	return gates;
     }    
@@ -82,14 +83,17 @@ public class Faction {
         this.load(data);
     }
 
+    @Override
     public int getNumOfficers() {
         return officers.size();
     }
 
+    @Override
     public void addLaw(String newLaw) {
         laws.add(newLaw);
     }
 
+    @Override
     public boolean removeLaw(String lawToRemove) {
         if (containsIgnoreCase(laws, lawToRemove)) {
             laws.remove(lawToRemove);
@@ -98,6 +102,7 @@ public class Faction {
         return false;
     }
 
+    @Override
     public boolean removeLaw(int i) {
         if (laws.size() > i) {
             laws.remove(i);
@@ -106,6 +111,7 @@ public class Faction {
         return false;
     }
 
+    @Override
     public boolean editLaw(int i, String newString) {
         if (laws.size() > i) {
             laws.set(i, newString);
@@ -114,68 +120,83 @@ public class Faction {
         return false;
     }
 
+    @Override
     public int getNumLaws() {
         return laws.size();
     }
 
+    @Override
     public ArrayList<String> getLaws() {
         return laws;
     }
 
+    @Override
     public void requestTruce(String factionName) {
         if (!containsIgnoreCase(attemptedTruces, factionName)) {
             attemptedTruces.add(factionName);
         }
     }
 
+    @Override
     public boolean isTruceRequested(String factionName) {
         return containsIgnoreCase(attemptedTruces, factionName);
     }
 
+    @Override
     public void removeRequestedTruce(String factionName) {
         removeIfContainsIgnoreCase(attemptedTruces, factionName);
     }
 
+    @Override
     public void requestAlly(String factionName) {
         if (!containsIgnoreCase(attemptedAlliances, factionName)) {
             attemptedAlliances.add(factionName);
         }
     }
 
+    @Override
     public boolean isRequestedAlly(String factionName) {
         return containsIgnoreCase(attemptedAlliances, factionName);
     }
 
+    @Override
     public void removeAllianceRequest(String factionName) {
         attemptedAlliances.remove(factionName);
     }
 
+    @Override
     public void addAlly(String factionName) {
         if (!containsIgnoreCase(allyFactions, factionName)) {
             allyFactions.add(factionName);
         }
     }
 
+    @Override
     public void removeAlly(String factionName) {
         removeIfContainsIgnoreCase(allyFactions, factionName);
     }
 
+    @Override
     public boolean isAlly(String factionName) {
         return containsIgnoreCase(allyFactions, factionName);
     }
 
+    @Override
     public ArrayList<String> getAllies() {
         return allyFactions;
     }
 
+    @Override
     public void setFactionHome(Location l) {
         factionHome = l;
     }
 
+    @Override
     public Location getFactionHome() {
         return factionHome;
     }
 
+    @Override
     public int getCumulativePowerLevel() {
         int withoutVassalContribution = calculateCumulativePowerLevelWithoutVassalContribution();
         int withVassalContribution = calculateCumulativePowerLevelWithVassalContribution();
@@ -188,6 +209,7 @@ public class Faction {
         }
     }
 
+    @Override
     public int calculateCumulativePowerLevelWithoutVassalContribution() {
 
         int powerLevel = 0;
@@ -206,6 +228,7 @@ public class Faction {
         return powerLevel;
     }
 
+    @Override
     public int calculateCumulativePowerLevelWithVassalContribution() {
 
         int vassalContribution = 0;
@@ -222,6 +245,7 @@ public class Faction {
     }
 
     // get max power without vassal contribution
+    @Override
     public int getMaximumCumulativePowerLevel() {
         int maxPower = 0;
 
@@ -238,12 +262,14 @@ public class Faction {
         return maxPower;
     }
 
+    @Override
     public int calculateMaxOfficers(){
         int officersPerXNumber = MedievalFactions.getInstance().getConfig().getInt("officerPerMemberCount");
         int officersFromConfig = members.size() / officersPerXNumber;
         return 1 + officersFromConfig;
     }
 
+    @Override
     public boolean addOfficer(UUID newOfficer) {
         if (officers.size() < calculateMaxOfficers() && !officers.contains(newOfficer)){
             officers.add(newOfficer);
@@ -253,44 +279,54 @@ public class Faction {
         }
     }
 
+    @Override
     public boolean removeOfficer(UUID officerToRemove) {
         return officers.remove(officerToRemove);
     }
 
+    @Override
     public boolean isOfficer(UUID uuid) {
         return officers.contains(uuid);
     }
 
+    @Override
     public ArrayList<UUID> getMemberArrayList() {
         return members;
     }
 
+    @Override
     public void toggleAutoClaim() {
         autoclaim = !autoclaim;
     }
 
+    @Override
     public boolean getAutoClaimStatus() {
         return autoclaim;
     }
 
+    @Override
     public void addEnemy(String factionName) {
         if (!containsIgnoreCase(enemyFactions, factionName)) {
             enemyFactions.add(factionName);
         }
     }
 
+    @Override
     public void removeEnemy(String factionName) {
         removeIfContainsIgnoreCase(enemyFactions, factionName);
     }
 
+    @Override
     public boolean isEnemy(String factionName) {
         return containsIgnoreCase(enemyFactions, factionName);
     }
 
+    @Override
     public ArrayList<String> getEnemyFactions() {
         return enemyFactions;
     }
 
+    @Override
     public String getEnemiesSeparatedByCommas() {
         String enemies = "";
         for (int i = 0; i < enemyFactions.size(); i++) {
@@ -302,6 +338,7 @@ public class Faction {
         return enemies;
     }
 
+    @Override
     public String getAlliesSeparatedByCommas() {
         String allies = "";
         for (int i = 0; i < allyFactions.size(); i++) {
@@ -313,6 +350,7 @@ public class Faction {
         return allies;
     }
 
+    @Override
     public List<ClaimedChunk> getClaimedChunks() {
         List<ClaimedChunk> output = new ArrayList<>();
         for (ClaimedChunk chunk : PersistentData.getInstance().getClaimedChunks()) {
@@ -323,6 +361,7 @@ public class Faction {
         return output;
     }
 
+    @Override
     public void invite(UUID playerName) {
         Player player = getServer().getPlayer(playerName);
         if (player != null) {
@@ -331,22 +370,27 @@ public class Faction {
         }
     }
 
+    @Override
     public void uninvite(UUID player) {
         invited.remove(player);
     }
 
+    @Override
     public boolean isInvited(UUID uuid) {
         return invited.contains(uuid);
     }
 
+    @Override
     public ArrayList<UUID> getMemberList() {
         return members;
     }
 
+    @Override
     public ArrayList<UUID> getOfficerList() {
         return officers;
     }
 
+    @Override
     public String getMemberListSeparatedByCommas() {
         ArrayList<UUID> uuids = getMemberList();
         String players = "";
@@ -360,46 +404,57 @@ public class Faction {
         return "";
     }
 
+    @Override
     public int getPopulation() {
         return members.size();
     }
 
+    @Override
     public void setOwner(UUID UUID) {
         owner = UUID;
     }
 
+    @Override
     public boolean isOwner(UUID UUID) {
         return owner.equals(UUID);
     }
 
+    @Override
     public UUID getOwner() {
         return owner;
     }
 
+    @Override
     public void setName(String newName) {
         name = newName;
     }
 
+    @Override
     public String getName() {
         return name;
     }
 
+    @Override
     public void setDescription(String newDesc) {
         description = newDesc;
     }
 
+    @Override
     public String getDescription() {
         return description;
     }
 
+    @Override
     public void addMember(UUID UUID) {
         members.add(UUID);
     }
 
+    @Override
     public void removeMember(UUID UUID) {
         members.remove(UUID);
     }
 
+    @Override
     public boolean isMember(UUID uuid) {
         return members.contains(uuid);
     }
@@ -534,43 +589,52 @@ public class Faction {
                 '}';
     }
 
+    @Override
     public boolean isVassal(String faction) {
         return(containsIgnoreCase(vassals, faction));
     }
 
+    @Override
     public boolean hasLiege() {
         return !liege.equalsIgnoreCase("none");
     }
 
+    @Override
     public boolean isLiege(String faction) {
         return liege.equalsIgnoreCase(faction);
     }
 
+    @Override
     public void addVassal(String factionName) {
         if (!containsIgnoreCase(vassals, factionName)) {
             vassals.add(factionName);
         }
     }
 
+    @Override
     public void removeVassal(String faction) {
         removeIfContainsIgnoreCase(vassals, faction);
     }
 
+    @Override
     public void setLiege(String newLiege) {
         liege = newLiege;
     }
 
+    @Override
     public void addGate(Gate gate)
     {
     	gates.add(gate);
     }
-    
+
+    @Override
     public void removeGate(Gate gate)
     {
     	gate.fillGate();
     	gates.remove(gate);
     }
 
+    @Override
     public boolean hasGateTrigger(Block block)
     {
     	for(Gate g : gates)
@@ -583,7 +647,8 @@ public class Faction {
     	}
 		return false;
     }
-    
+
+    @Override
     public ArrayList<Gate> getGatesForTrigger(Block block)
     {
     	ArrayList<Gate> gateList = new ArrayList<>();
@@ -598,14 +663,17 @@ public class Faction {
 		return gateList;
     }
 
+    @Override
     public int getTotalGates() {
         return gates.size();
     }
 
+    @Override
     public String getLiege() {
         return liege;
     }
 
+    @Override
     public String getTopLiege() {
         Faction topLiege = PersistentData.getInstance().getFaction(liege);
         String liegeName = liege;
@@ -619,10 +687,12 @@ public class Faction {
         return liegeName;
     }
 
+    @Override
     public boolean isLiege() {
         return vassals.size() != 0;
     }
 
+    @Override
     public String getVassalsSeparatedByCommas() {
         String toReturn = "";
         for (int i = 0; i < vassals.size(); i++) {
@@ -634,16 +704,19 @@ public class Faction {
         return toReturn;
     }
 
+    @Override
     public void addAttemptedVassalization(String factionName) {
         if (!containsIgnoreCase(attemptedVassalizations, factionName)) {
             attemptedVassalizations.add(factionName);
         }
     }
 
+    @Override
     public boolean hasBeenOfferedVassalization(String factionName) {
         return containsIgnoreCase(attemptedVassalizations, factionName);
     }
 
+    @Override
     public void removeAttemptedVassalization(String factionName) {
         removeIfContainsIgnoreCase(attemptedVassalizations, factionName);
     }
@@ -668,26 +741,32 @@ public class Faction {
         list.remove(toRemove);
     }
 
+    @Override
     public void clearVassals() {
         vassals.clear();
     }
 
+    @Override
     public int getNumVassals() {
         return vassals.size();
     }
 
+    @Override
     public String getPrefix() {
         return prefix;
     }
 
+    @Override
     public void setPrefix(String newPrefix) {
         prefix = newPrefix;
     }
 
+    @Override
     public ArrayList<String> getVassals() {
         return vassals;
     }
 
+    @Override
     public boolean isWeakened() {
         return calculateCumulativePowerLevelWithoutVassalContribution() < (getMaximumCumulativePowerLevel() / 2);
     }
@@ -697,6 +776,7 @@ public class Faction {
      * @param oldName of the Faction (dependent).
      * @param newName of the Faction (dependent).
      */
+    @Override
     public void updateData(String oldName, String newName) {
         if (isAlly(oldName)) {
             removeAlly(oldName);
@@ -715,14 +795,17 @@ public class Faction {
         }
     }
 
+    @Override
     public FactionFlags getFlags() {
         return flags;
     }
 
+    @Override
     public int getBonusPower() {
         return bonusPower;
     }
 
+    @Override
     public void setBonusPower(int i) {
         bonusPower = i;
     }
