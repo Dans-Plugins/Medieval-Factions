@@ -10,7 +10,7 @@ import org.bukkit.block.Block;
 import java.util.ArrayList;
 import java.util.List;
 
-public interface IFaction extends Group {
+public interface INation extends Group {
 
 // persistent lists -----------------
 

@@ -6,6 +6,7 @@ import com.google.gson.reflect.TypeToken;
 import dansplugins.factionsystem.MedievalFactions;
 import dansplugins.factionsystem.data.PersistentData;
 import dansplugins.factionsystem.managers.LocaleManager;
+import dansplugins.factionsystem.objects.specification.INation;
 import dansplugins.factionsystem.utils.UUIDChecker;
 import org.bukkit.Location;
 import org.bukkit.World;
@@ -18,7 +19,7 @@ import java.util.*;
 
 import static org.bukkit.Bukkit.getServer;
 
-public class Faction implements dansplugins.factionsystem.objects.specification.IFaction {
+public class Faction implements INation {
 
     // persistent data -------------------------------------------------------
 
