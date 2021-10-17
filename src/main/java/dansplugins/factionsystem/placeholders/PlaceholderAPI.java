@@ -5,7 +5,7 @@ import dansplugins.factionsystem.data.PersistentData;
 import dansplugins.factionsystem.managers.ChunkManager;
 import dansplugins.factionsystem.objects.ClaimedChunk;
 import dansplugins.factionsystem.objects.Faction;
-import dansplugins.factionsystem.objects.PlayerPowerRecord;
+import dansplugins.factionsystem.objects.PowerRecord;
 import me.clip.placeholderapi.expansion.PlaceholderExpansion;
 import org.bukkit.Bukkit;
 import org.bukkit.Chunk;
@@ -132,7 +132,7 @@ public class PlaceholderAPI extends PlaceholderExpansion {
         }
         if (id.equalsIgnoreCase("faction_player_power_full")) {
             // The formatted version of the 'power' and 'max_power' placeholders, 10/10 for example.
-            final PlayerPowerRecord playersPowerRecord = PersistentData.getInstance().getPlayersPowerRecord(player.getUniqueId());
+            final PowerRecord playersPowerRecord = PersistentData.getInstance().getPlayersPowerRecord(player.getUniqueId());
             return playersPowerRecord.getPowerLevel() + "/" + playersPowerRecord.maxPower();
         }
 

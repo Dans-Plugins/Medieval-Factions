@@ -1,7 +1,7 @@
 package dansplugins.factionsystem.commands;
 
 import dansplugins.factionsystem.commands.abs.SubCommand;
-import dansplugins.factionsystem.objects.PlayerPowerRecord;
+import dansplugins.factionsystem.objects.PowerRecord;
 import dansplugins.factionsystem.utils.UUIDChecker;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
@@ -39,7 +39,7 @@ public class PowerCommand extends SubCommand {
 	public void execute(CommandSender sender, String[] args, String key) {
 		final String permission = "mf.power";
 		if (!(checkPermissions(sender, permission))) return;
-		final PlayerPowerRecord record;
+		final PowerRecord record;
 		if (args.length == 0) {
 			if (!(sender instanceof Player)) {
 				sender.sendMessage(translate(getText("OnlyPlayersCanUseCommand")));

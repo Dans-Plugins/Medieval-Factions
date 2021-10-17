@@ -4,28 +4,29 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import dansplugins.factionsystem.MedievalFactions;
 import dansplugins.factionsystem.data.PersistentData;
+import dansplugins.factionsystem.objects.specification.IPowerRecord;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
 
-public class PlayerPowerRecord implements dansplugins.factionsystem.objects.specification.IPlayerPowerRecord {
+public class PowerRecord implements IPowerRecord {
 
     // saved
     private UUID playerUUID = UUID.randomUUID();
     private int powerLevel = 0;
 
-    public PlayerPowerRecord(UUID playerUUID, int initial) {
+    public PowerRecord(UUID playerUUID, int initial) {
         this.playerUUID = playerUUID;
         powerLevel = initial;
     }
 
-    public PlayerPowerRecord(Map<String, String> data) {
+    public PowerRecord(Map<String, String> data) {
         this.load(data);
     }
 
-    public PlayerPowerRecord() {
+    public PowerRecord() {
 
     }
 

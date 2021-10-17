@@ -7,7 +7,7 @@ import dansplugins.factionsystem.managers.LocaleManager;
 import dansplugins.factionsystem.objects.ChunkFlags;
 import dansplugins.factionsystem.objects.ClaimedChunk;
 import dansplugins.factionsystem.objects.Faction;
-import dansplugins.factionsystem.objects.PlayerPowerRecord;
+import dansplugins.factionsystem.objects.PowerRecord;
 import dansplugins.factionsystem.utils.Logger;
 import dansplugins.factionsystem.utils.UUIDChecker;
 import org.bukkit.plugin.Plugin;
@@ -502,7 +502,7 @@ public class DynmapIntegrator {
             Set<String> plids = new HashSet<String>();
             Faction f = PersistentData.getInstance().getFaction(holder);
             if (f != null) {
-                for (PlayerPowerRecord powerRecord : PersistentData.getInstance().getPlayerPowerRecords()) {
+                for (PowerRecord powerRecord : PersistentData.getInstance().getPlayerPowerRecords()) {
                     Faction pf = PersistentData.getInstance().getPlayersFaction(powerRecord.getPlayerUUID());
                     if (pf != null && pf.getName().equalsIgnoreCase(holder)) {
                         plids.add(UUIDChecker.getInstance().findPlayerNameBasedOnUUID(powerRecord.getPlayerUUID()));

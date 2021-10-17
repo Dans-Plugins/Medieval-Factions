@@ -6,8 +6,8 @@ import dansplugins.factionsystem.managers.ChunkManager;
 import dansplugins.factionsystem.managers.LocaleManager;
 import dansplugins.factionsystem.managers.StorageManager;
 import dansplugins.factionsystem.objects.Faction;
-import dansplugins.factionsystem.objects.PlayerActivityRecord;
-import dansplugins.factionsystem.objects.PlayerPowerRecord;
+import dansplugins.factionsystem.objects.ActivityRecord;
+import dansplugins.factionsystem.objects.PowerRecord;
 import dansplugins.factionsystem.utils.Logger;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
@@ -53,7 +53,7 @@ public class Scheduler {
             @Override
             public void run() {
                 System.out.println(String.format(LocaleManager.getInstance().getText("AlertIncreasingThePowerOfEveryPlayer"), MedievalFactions.getInstance().getConfig().getInt("powerIncreaseAmount"), MedievalFactions.getInstance().getConfig().getInt("minutesBetweenPowerIncreases")));
-                for (PlayerPowerRecord powerRecord : PersistentData.getInstance().getPlayerPowerRecords()) {
+                for (PowerRecord powerRecord : PersistentData.getInstance().getPlayerPowerRecords()) {
                     try {
                         if (powerRecord.getPowerLevel() < powerRecord.maxPower()) {
                             if (getServer().getPlayer(powerRecord.getPlayerUUID()).isOnline()) {
@@ -78,7 +78,7 @@ public class Scheduler {
             public void run() {
                 System.out.println(String.format(LocaleManager.getInstance().getText("AlertDecreasingThePowerOfInactivePlayers"), MedievalFactions.getInstance().getConfig().getInt("powerDecreaseAmount"), MedievalFactions.getInstance().getConfig().getInt("minutesBeforePowerDecrease"), MedievalFactions.getInstance().getConfig().getInt("minutesBetweenPowerDecreases")));
 
-                for (PlayerActivityRecord record : PersistentData.getInstance().getPlayerActivityRecords())
+                for (ActivityRecord record : PersistentData.getInstance().getPlayerActivityRecords())
                 {
                     Player player = getServer().getPlayer(record.getPlayerUUID());
                     boolean isOnline = false;
@@ -90,7 +90,7 @@ public class Scheduler {
                             && record.getMinutesSinceLastLogout() > MedievalFactions.getInstance().getConfig().getInt("minutesBeforePowerDecrease"))
                     {
                         record.incrementPowerLost();
-                        PlayerPowerRecord power = PersistentData.getInstance().getPlayersPowerRecord(record.getPlayerUUID());
+                        PowerRecord power = PersistentData.getInstance().getPlayersPowerRecord(record.getPlayerUUID());
                         power.decreasePower();
                     }
                 }

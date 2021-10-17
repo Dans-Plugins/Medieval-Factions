@@ -3,6 +3,7 @@ package dansplugins.factionsystem.objects;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import dansplugins.factionsystem.MedievalFactions;
+import dansplugins.factionsystem.objects.specification.IActivityRecord;
 
 import java.time.Duration;
 import java.time.ZonedDateTime;
@@ -12,64 +13,74 @@ import java.util.Map;
 import java.util.UUID;
 import java.util.concurrent.TimeUnit;
 
-public class PlayerActivityRecord {
+public class ActivityRecord implements IActivityRecord {
     private UUID playerUUID = null;
     private int logins = 0;
     private int powerLost = 0;
     private ZonedDateTime lastLogout = ZonedDateTime.now();
     private ZonedDateTime session = ZonedDateTime.now();
     
-    public PlayerActivityRecord(UUID uuid, int logins)
+    public ActivityRecord(UUID uuid, int logins)
     {
     	playerUUID = uuid;
     	this.logins = logins;
     	this.powerLost = 0;
     }
 
+    public ActivityRecord(Map<String, String> data) {
+        this.load(data);
+    }
+
+    @Override
     public void setPowerLost(int power)
     {
     	powerLost = power;
     }
-    
+
+    @Override
     public int getPowerLost()
     {
     	return powerLost;
     }
-    
+
+    @Override
     public void incrementPowerLost()
     {
     	powerLost += MedievalFactions.getInstance().getConfig().getInt("powerDecreaseAmount");
     }
-    
+
+    @Override
     public void setPlayerUUID(UUID uuid) {
         playerUUID = uuid;
     }
 
+    @Override
     public UUID getPlayerUUID() {
         return playerUUID;
     }
 
+    @Override
     public void setLastLogout(ZonedDateTime date) {
         lastLogout = date;
     }
 
+    @Override
     public ZonedDateTime getLastLogout() {
         return lastLogout;
     }
 
+    @Override
     public void incrementLogins() {
         logins++;
         this.session = ZonedDateTime.now();
     }
 
+    @Override
     public int getLogins() {
         return logins;
     }
-    
-    public PlayerActivityRecord(Map<String, String> data) {
-        this.load(data);
-    }
-    
+
+    @Override
     public int getMinutesSinceLastLogout()
     {
     	if (lastLogout != null)
@@ -92,6 +103,7 @@ public class PlayerActivityRecord {
      * @author Callum
      * @return formatted String dd:hh:mm:ss
      */
+    @Override
     public String getActiveSessionLength() {
         if (lastLogout != null) {
             final ZonedDateTime now = ZonedDateTime.now();
@@ -122,6 +134,7 @@ public class PlayerActivityRecord {
         return tmp.length() == 0 ? ("00") : (tmp.length() == 1 ? ("0" + value) : (tmp));
     }
 
+    @Override
     public String getTimeSinceLastLogout() {
         if (lastLogout != null) {
             ZonedDateTime now = ZonedDateTime.now();
