@@ -47,8 +47,6 @@ public interface INation extends Group, Feudal, Diplomatic {
     int getBonusPower();
     void setBonusPower(int i);
 
-
-
 // other ephemeral types
 
     void toggleAutoClaim();

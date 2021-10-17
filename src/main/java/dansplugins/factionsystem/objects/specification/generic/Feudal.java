@@ -15,6 +15,8 @@ public interface Feudal {
     boolean isLiege(String name);
 
     // vassalage
+    void addVassal(String name);
+    void removeVassal(String name);
     void clearVassals();
     int getNumVassals();
     ArrayList<String> getVassals();

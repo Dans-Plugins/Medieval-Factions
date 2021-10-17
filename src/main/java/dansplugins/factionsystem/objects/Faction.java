@@ -606,15 +606,15 @@ public class Faction implements INation {
     }
 
     @Override
-    public void addVassal(String factionName) {
-        if (!containsIgnoreCase(vassals, factionName)) {
-            vassals.add(factionName);
+    public void addVassal(String name) {
+        if (!containsIgnoreCase(vassals, name)) {
+            vassals.add(name);
         }
     }
 
     @Override
-    public void removeVassal(String faction) {
-        removeIfContainsIgnoreCase(vassals, faction);
+    public void removeVassal(String name) {
+        removeIfContainsIgnoreCase(vassals, name);
     }
 
     @Override
