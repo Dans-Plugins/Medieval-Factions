@@ -1,7 +1,7 @@
 package dansplugins.factionsystem.commands;
 
 import dansplugins.factionsystem.commands.abs.SubCommand;
-import dansplugins.factionsystem.objects.Faction;
+import dansplugins.factionsystem.objects.IFaction;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
@@ -28,7 +28,7 @@ public class VassalizeCommand extends SubCommand {
             player.sendMessage(translate("&c" + getText("UsageVassalize")));
             return;
         }
-        final Faction target = getFaction(String.join(" ", args));
+        final IFaction target = getFaction(String.join(" ", args));
         if (target == null) {
             player.sendMessage(translate("&c" + getText("FactionNotFound")));
             return;
@@ -77,9 +77,9 @@ public class VassalizeCommand extends SubCommand {
 
     }
 
-    private int willVassalizationResultInLoop(Faction vassalizer, Faction potentialVassal) {
+    private int willVassalizationResultInLoop(IFaction vassalizer, IFaction potentialVassal) {
         final int MAX_STEPS = 1000;
-        Faction current = vassalizer;
+        IFaction current = vassalizer;
         int steps = 0;
         while (current != null && steps < MAX_STEPS) { // Prevents infinite loop and NPE (getFaction can return null).
             String liegeName = current.getLiege();

@@ -2,9 +2,8 @@ package dansplugins.factionsystem.commands;
 
 import dansplugins.factionsystem.MedievalFactions;
 import dansplugins.factionsystem.commands.abs.SubCommand;
-import dansplugins.factionsystem.events.FactionCreateEvent;
 import dansplugins.factionsystem.events.FactionWarStartEvent;
-import dansplugins.factionsystem.objects.Faction;
+import dansplugins.factionsystem.objects.IFaction;
 import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
@@ -32,7 +31,7 @@ public class DeclareWarCommand extends SubCommand {
             player.sendMessage(translate("&c" + getText("UsageDeclareWar")));
             return;
         }
-        final Faction opponent = getFaction(String.join(" ", args));
+        final IFaction opponent = getFaction(String.join(" ", args));
         if (opponent == null) {
             player.sendMessage(translate("&c" + getText("FactionNotFound")));
             return;
@@ -51,7 +50,7 @@ public class DeclareWarCommand extends SubCommand {
                 return;
             }
             if (!faction.getLiege().equalsIgnoreCase(opponent.getLiege())) {
-                final Faction enemyLiege = getFaction(opponent.getLiege());
+                final IFaction enemyLiege = getFaction(opponent.getLiege());
                 if (enemyLiege.calculateCumulativePowerLevelWithoutVassalContribution() <
                         enemyLiege.getMaximumCumulativePowerLevel() / 2) {
                     player.sendMessage(translate("&c" + getText("CannotDeclareWarIfLiegeNotWeakened")));

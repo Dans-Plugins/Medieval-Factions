@@ -3,7 +3,7 @@ package dansplugins.factionsystem.commands;
 import dansplugins.factionsystem.commands.abs.FontMetrics;
 import dansplugins.factionsystem.commands.abs.SubCommand;
 import dansplugins.factionsystem.objects.ClaimedChunk;
-import dansplugins.factionsystem.objects.Faction;
+import dansplugins.factionsystem.objects.IFaction;
 import org.bukkit.Chunk;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
@@ -38,7 +38,7 @@ public class MapCommand extends SubCommand {
         final int topLeftZ = center.getZ() - (map_height / 2);
         final int bottomRightX = center.getX() + (map_width / 2);
         final int bottomRightZ = center.getZ() + (map_height / 2);
-        final Faction faction = data.getPlayersFaction(player.getUniqueId());
+        final IFaction faction = data.getPlayersFaction(player.getUniqueId());
         final boolean hasFaction = faction != null;
         final HashMap<String, Integer> printedHolders = new HashMap<>();
         final HashMap<String, String> colourMap = new HashMap<>();

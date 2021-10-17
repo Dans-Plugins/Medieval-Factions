@@ -2,8 +2,7 @@ package dansplugins.factionsystem.commands;
 
 import dansplugins.factionsystem.commands.abs.SubCommand;
 import dansplugins.factionsystem.events.FactionWarEndEvent;
-import dansplugins.factionsystem.events.FactionWarStartEvent;
-import dansplugins.factionsystem.objects.Faction;
+import dansplugins.factionsystem.objects.IFaction;
 import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
@@ -31,7 +30,7 @@ public class MakePeaceCommand extends SubCommand {
             player.sendMessage(translate("&c" + getText("UsageMakePeace")));
             return;
         }
-        final Faction target = getFaction(String.join(" ", args));
+        final IFaction target = getFaction(String.join(" ", args));
         if (target == null) {
             player.sendMessage(translate("&c" + getText("FactionNotFound")));
             return;
@@ -74,7 +73,7 @@ public class MakePeaceCommand extends SubCommand {
             for (String vassalName : target.getVassals()) {
                 faction.removeEnemy(vassalName);
 
-                Faction vassal = getFaction(vassalName);
+                IFaction vassal = getFaction(vassalName);
                 vassal.removeEnemy(faction.getName());
             }
         }

@@ -1,8 +1,7 @@
 package dansplugins.factionsystem.events;
 
 import dansplugins.factionsystem.events.abs.FactionEvent;
-import dansplugins.factionsystem.objects.Faction;
-import org.bukkit.entity.Player;
+import dansplugins.factionsystem.objects.IFaction;
 import org.bukkit.event.Cancellable;
 
 /**
@@ -23,7 +22,7 @@ public class FactionWarEndEvent extends FactionEvent implements Cancellable {
      * @param faction1 - First faction involved.
      * @param faction2 - Second faction involved.
      */
-    public FactionWarEndEvent(Faction faction1, Faction faction2) {
+    public FactionWarEndEvent(IFaction faction1, IFaction faction2) {
         super(faction1);
         factionOneName = faction1.getName();
         factionTwoName = faction2.getName();

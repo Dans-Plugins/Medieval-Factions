@@ -5,7 +5,7 @@ import dansplugins.factionsystem.commands.abs.SubCommand;
 import dansplugins.factionsystem.data.PersistentData;
 import dansplugins.factionsystem.events.FactionDisbandEvent;
 import dansplugins.factionsystem.managers.ChunkManager;
-import dansplugins.factionsystem.objects.Faction;
+import dansplugins.factionsystem.objects.IFaction;
 import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.command.CommandSender;
@@ -40,7 +40,7 @@ public class DisbandCommand extends SubCommand {
      */
     @Override
     public void execute(CommandSender sender, String[] args, String key) {
-        final Faction disband;
+        final IFaction disband;
         final boolean self;
         if (args.length == 0) {
             if (!checkPermissions(sender, "mf.disband")) return;
@@ -74,7 +74,7 @@ public class DisbandCommand extends SubCommand {
 
     private void removeFaction(int i, OfflinePlayer disbandingPlayer) {
 
-        Faction disbandingThisFaction = PersistentData.getInstance().getFactions().get(i);
+        IFaction disbandingThisFaction = PersistentData.getInstance().getFactions().get(i);
         String nameOfFactionToRemove = disbandingThisFaction.getName();
         FactionDisbandEvent event = new FactionDisbandEvent(
                 disbandingThisFaction,
@@ -94,7 +94,7 @@ public class DisbandCommand extends SubCommand {
         PersistentData.getInstance().removeAllLocks(PersistentData.getInstance().getFactions().get(i).getName());
 
 
-        for (Faction faction : PersistentData.getInstance().getFactions()) {
+        for (IFaction faction : PersistentData.getInstance().getFactions()) {
 
             // remove records of alliances/wars associated with this faction
             if (faction.isAlly(nameOfFactionToRemove)) {

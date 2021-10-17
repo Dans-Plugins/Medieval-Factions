@@ -1,15 +1,15 @@
 package dansplugins.factionsystem.externalapi;
 
-import dansplugins.factionsystem.objects.Faction;
+import dansplugins.factionsystem.objects.IFaction;
 import org.bukkit.entity.Player;
 
 import java.util.UUID;
 
 
 public class MF_Faction implements IMF_Faction {
-    Faction faction;
+    IFaction faction;
 
-    public MF_Faction(Faction f) {
+    public MF_Faction(IFaction f) {
         faction = f;
     }
 

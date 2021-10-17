@@ -4,7 +4,7 @@ import dansplugins.factionsystem.MedievalFactions;
 import dansplugins.factionsystem.data.EphemeralData;
 import dansplugins.factionsystem.data.PersistentData;
 import dansplugins.factionsystem.managers.ChunkManager;
-import dansplugins.factionsystem.objects.Faction;
+import dansplugins.factionsystem.objects.IFaction;
 import dansplugins.factionsystem.objects.PlayerPowerRecord;
 import org.bukkit.Chunk;
 import org.bukkit.entity.Player;
@@ -32,7 +32,7 @@ public class MedievalFactionsAPI implements IMedievalFactionsAPI {
 
     @Override
     public MF_Faction getFaction(String factionName) {
-        Faction faction = PersistentData.getInstance().getFaction(factionName);
+        IFaction faction = PersistentData.getInstance().getFaction(factionName);
         if (faction == null) {
             return null;
         }
@@ -41,7 +41,7 @@ public class MedievalFactionsAPI implements IMedievalFactionsAPI {
 
     @Override
     public MF_Faction getFaction(Player player) {
-        Faction faction = PersistentData.getInstance().getPlayersFaction(player.getUniqueId());
+        IFaction faction = PersistentData.getInstance().getPlayersFaction(player.getUniqueId());
         if (faction == null) {
             return null;
         }
@@ -50,7 +50,7 @@ public class MedievalFactionsAPI implements IMedievalFactionsAPI {
 
     @Override
     public MF_Faction getFaction(UUID playerUUID) {
-        Faction faction = PersistentData.getInstance().getPlayersFaction(playerUUID);
+        IFaction faction = PersistentData.getInstance().getPlayersFaction(playerUUID);
         if (faction == null) {
             return null;
         }

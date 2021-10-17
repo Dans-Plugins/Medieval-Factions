@@ -3,7 +3,7 @@ package dansplugins.factionsystem.commands;
 import dansplugins.factionsystem.MedievalFactions;
 import dansplugins.factionsystem.commands.abs.SubCommand;
 import dansplugins.factionsystem.events.FactionCreateEvent;
-import dansplugins.factionsystem.objects.Faction;
+import dansplugins.factionsystem.objects.IFaction;
 import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
 import org.bukkit.configuration.file.FileConfiguration;
@@ -47,7 +47,7 @@ public class CreateCommand extends SubCommand {
             player.sendMessage(translate("&c" + getText("FactionAlreadyExists")));
             return;
         }
-        this.faction = new Faction(factionName, player.getUniqueId());
+        this.faction = new IFaction(factionName, player.getUniqueId());
         this.faction.addMember(player.getUniqueId());
         FactionCreateEvent createEvent = new FactionCreateEvent(this.faction, player);
         Bukkit.getPluginManager().callEvent(createEvent);

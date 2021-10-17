@@ -7,7 +7,7 @@ import dansplugins.factionsystem.events.*;
 import dansplugins.factionsystem.managers.ChunkManager;
 import dansplugins.factionsystem.managers.LocaleManager;
 import dansplugins.factionsystem.managers.StorageManager;
-import dansplugins.factionsystem.objects.Faction;
+import dansplugins.factionsystem.objects.IFaction;
 import dansplugins.factionsystem.objects.PlayerPowerRecord;
 import dansplugins.factionsystem.utils.UUIDChecker;
 import org.bukkit.Bukkit;
@@ -107,8 +107,8 @@ public class ForceCommand extends SubCommand {
             sender.sendMessage(translate("&c" + getText("NoFactionsDesignatedSingleQuotesRequired")));
             return;
         }
-        final Faction former = PersistentData.getInstance().getFaction(singleQuoteArgs.get(0));
-        final Faction latter = PersistentData.getInstance().getFaction(singleQuoteArgs.get(1));
+        final IFaction former = PersistentData.getInstance().getFaction(singleQuoteArgs.get(0));
+        final IFaction latter = PersistentData.getInstance().getFaction(singleQuoteArgs.get(1));
         if (former == null || latter == null) {
             sender.sendMessage(translate("&c" + getText("DesignatedFactionNotFound")));
             return;
@@ -141,7 +141,7 @@ public class ForceCommand extends SubCommand {
             sender.sendMessage(translate("&c" + getText("PlayerNotFound")));
             return;
         }
-        final Faction faction = getPlayerFaction(player);
+        final IFaction faction = getPlayerFaction(player);
         if (!faction.isOfficer(player.getUniqueId())) {
             sender.sendMessage(translate("&c" + getText("PlayerIsNotOfficerOfFaction")));
             return;
@@ -165,7 +165,7 @@ public class ForceCommand extends SubCommand {
             sender.sendMessage(translate("&c" + getText("NotEnoughArgumentsDesignatedSingleQuotesRequired")));
             return;
         }
-        final Faction faction = getFaction(singleQuoteArgs.get(1));
+        final IFaction faction = getFaction(singleQuoteArgs.get(1));
         if (faction == null) {
             sender.sendMessage(translate("&c" + getText("FactionNotFound")));
             return;
@@ -215,7 +215,7 @@ public class ForceCommand extends SubCommand {
             sender.sendMessage(translate("&c" + getText("PlayerNotFound")));
             return;
         }
-        final Faction faction = getPlayerFaction(target);
+        final IFaction faction = getPlayerFaction(target);
         if (faction == null) {
             sender.sendMessage(translate("&c" + getText("FactionNotFound")));
             return;
@@ -278,7 +278,7 @@ public class ForceCommand extends SubCommand {
             return;
         }
         final String factionName = singleQuoteArgs.get(0);
-        final Faction faction = getFaction(factionName);
+        final IFaction faction = getFaction(factionName);
         if (faction == null) {
             sender.sendMessage(translate("&c" + getText("FactionNotFound")));
             return;
@@ -289,7 +289,7 @@ public class ForceCommand extends SubCommand {
                 .count(); // Count changes
 
         data.getFactions().stream().filter(f -> f.isLiege(factionName)).forEach(f -> f.setLiege("none"));
-        data.getFactions().stream().filter(f -> f.isVassal(factionName)).forEach(Faction::clearVassals);
+        data.getFactions().stream().filter(f -> f.isVassal(factionName)).forEach(IFaction::clearVassals);
         if (!faction.getLiege().equalsIgnoreCase("none")) {
             faction.setLiege("none");
             changes++;
@@ -314,7 +314,7 @@ public class ForceCommand extends SubCommand {
             sender.sendMessage(translate("&c" + getText("FactionAndPlayerSingleQuotesRequirement")));
             return;
         }
-        final Faction faction = PersistentData.getInstance().getFaction(singleQuoteArgs.get(0));
+        final IFaction faction = PersistentData.getInstance().getFaction(singleQuoteArgs.get(0));
         if (faction == null) {
             sender.sendMessage(translate("&c" + getText("FactionNotFound")));
             return;
@@ -358,8 +358,8 @@ public class ForceCommand extends SubCommand {
             sender.sendMessage(translate("&c" + getText("FactionAndVassalSingleQuotesRequirement")));
             return;
         }
-        final Faction liege = getFaction(singleQuoteArgs.get(0));
-        final Faction vassal = getFaction(singleQuoteArgs.get(1));
+        final IFaction liege = getFaction(singleQuoteArgs.get(0));
+        final IFaction vassal = getFaction(singleQuoteArgs.get(1));
         if (liege != null && vassal != null) {
             // remove vassal from liege
             if (liege.isVassal(vassal.getName())) liege.removeVassal(vassal.getName());
@@ -383,7 +383,7 @@ public class ForceCommand extends SubCommand {
             sender.sendMessage(translate("&c" + getText("ArgumentsSingleQuotesRequirement")));
             return;
         }
-        Faction faction = getFaction(singleQuoteArgs.get(0));
+        IFaction faction = getFaction(singleQuoteArgs.get(0));
         if (faction == null) {
             sender.sendMessage(translate("&c" + getText("FactionNotFound")));
             return;
@@ -440,7 +440,7 @@ public class ForceCommand extends SubCommand {
         }
 
         // get faction
-        Faction faction = getFaction(singleQuoteArgs.get(0));
+        IFaction faction = getFaction(singleQuoteArgs.get(0));
         if (faction == null) {
             sender.sendMessage(translate("&c" + getText("FactionNotFound")));
             return;
@@ -523,7 +523,7 @@ public class ForceCommand extends SubCommand {
             return;
         }
 
-        this.faction = new Faction(newFactionName);
+        this.faction = new IFaction(newFactionName);
         FactionCreateEvent createEvent = new FactionCreateEvent(this.faction, player);
         Bukkit.getPluginManager().callEvent(createEvent);
         if (!createEvent.isCancelled()) {
@@ -557,7 +557,7 @@ public class ForceCommand extends SubCommand {
 
         String factionName = singleQuoteArgs.get(0);
 
-        Faction faction = PersistentData.getInstance().getFaction(factionName);
+        IFaction faction = PersistentData.getInstance().getFaction(factionName);
 
         if (faction == null) {
             sender.sendMessage(translate("&c" + getText("FactionNotFound")));
@@ -593,7 +593,7 @@ public class ForceCommand extends SubCommand {
             player.sendMessage(translate("&c" + getText("ArgumentsSingleQuotesRequirement")));
             return;
         }
-        Faction faction = getFaction(singleQuoteArgs.get(0));
+        IFaction faction = getFaction(singleQuoteArgs.get(0));
         if (faction == null) {
             player.sendMessage(translate("&c" + getText("FactionNotFound")));
             return;

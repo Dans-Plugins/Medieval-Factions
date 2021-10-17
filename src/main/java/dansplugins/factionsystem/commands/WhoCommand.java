@@ -2,7 +2,7 @@ package dansplugins.factionsystem.commands;
 
 import dansplugins.factionsystem.Messenger;
 import dansplugins.factionsystem.commands.abs.SubCommand;
-import dansplugins.factionsystem.objects.Faction;
+import dansplugins.factionsystem.objects.IFaction;
 import dansplugins.factionsystem.utils.UUIDChecker;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
@@ -35,7 +35,7 @@ public class WhoCommand extends SubCommand {
             player.sendMessage(translate("&c" + getText("PlayerNotFound")));
             return;
         }
-        final Faction temp = getPlayerFaction(targetUUID);
+        final IFaction temp = getPlayerFaction(targetUUID);
         if (temp == null) {
             player.sendMessage(translate("&c" + getText("PlayerIsNotInAFaction")));
             return;

@@ -3,7 +3,7 @@ package dansplugins.factionsystem.commands;
 import dansplugins.factionsystem.MedievalFactions;
 import dansplugins.factionsystem.commands.abs.SubCommand;
 import dansplugins.factionsystem.events.FactionWarStartEvent;
-import dansplugins.factionsystem.objects.Faction;
+import dansplugins.factionsystem.objects.IFaction;
 import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
@@ -31,7 +31,7 @@ public class DeclareIndependenceCommand extends SubCommand {
             player.sendMessage(translate("&c" + getText("NotAVassalOfAFaction")));
             return;
         }
-        final Faction liege = getFaction(this.faction.getLiege());
+        final IFaction liege = getFaction(this.faction.getLiege());
         if (liege == null) {
             player.sendMessage(translate("&c" + getText("FactionNotFound")));
             return;

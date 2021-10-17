@@ -1,6 +1,6 @@
 package dansplugins.factionsystem.events;
 
-import dansplugins.factionsystem.objects.Faction;
+import dansplugins.factionsystem.objects.IFaction;
 import org.bukkit.OfflinePlayer;
 
 /**
@@ -21,7 +21,7 @@ public class FactionKickEvent extends FactionLeaveEvent {
      * @param player  who was kicked.
      * @param kicker who kicked the player.
      */
-    public FactionKickEvent(Faction faction, OfflinePlayer player, OfflinePlayer kicker) {
+    public FactionKickEvent(IFaction faction, OfflinePlayer player, OfflinePlayer kicker) {
         super(faction, player);
         this.kicker = kicker;
     }

@@ -1,7 +1,7 @@
 package dansplugins.factionsystem.events;
 
 import dansplugins.factionsystem.events.abs.FactionEvent;
-import dansplugins.factionsystem.objects.Faction;
+import dansplugins.factionsystem.objects.IFaction;
 import org.bukkit.Chunk;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Cancellable;
@@ -21,7 +21,7 @@ public class FactionClaimEvent extends FactionEvent implements Cancellable {
      * @param player who claimed for the Faction.
      * @param chunk to be claimed.
      */
-    public FactionClaimEvent(Faction faction, Player player, Chunk chunk) {
+    public FactionClaimEvent(IFaction faction, Player player, Chunk chunk) {
         super(faction, player);
         this.chunk = chunk;
     }

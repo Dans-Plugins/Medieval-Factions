@@ -1,7 +1,7 @@
 package dansplugins.factionsystem.commands;
 
 import dansplugins.factionsystem.commands.abs.SubCommand;
-import dansplugins.factionsystem.objects.Faction;
+import dansplugins.factionsystem.objects.IFaction;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
@@ -28,7 +28,7 @@ public class SwearFealtyCommand extends SubCommand {
             player.sendMessage(translate("&c" + getText("UsageSwearFealty")));
             return;
         }
-        final Faction target = getFaction(String.join(" ", args));
+        final IFaction target = getFaction(String.join(" ", args));
         if (target == null) {
             player.sendMessage(translate("&c" + getText("FactionNotFound")));
             return;

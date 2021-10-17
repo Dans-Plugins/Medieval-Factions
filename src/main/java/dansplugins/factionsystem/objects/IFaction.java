@@ -6,7 +6,6 @@ import com.google.gson.reflect.TypeToken;
 import dansplugins.factionsystem.MedievalFactions;
 import dansplugins.factionsystem.data.PersistentData;
 import dansplugins.factionsystem.managers.LocaleManager;
-import dansplugins.factionsystem.objects.specification.IFaction;
 import dansplugins.factionsystem.utils.UUIDChecker;
 import org.bukkit.Location;
 import org.bukkit.World;
@@ -19,7 +18,7 @@ import java.util.*;
 
 import static org.bukkit.Bukkit.getServer;
 
-public class Faction implements IFaction {
+public class IFaction implements dansplugins.factionsystem.objects.specification.IFaction {
 
     // persistent data -------------------------------------------------------
 
@@ -60,7 +59,7 @@ public class Faction implements IFaction {
     // end of ephemeral data -------------------------------------------------------
 
     // player constructor
-    public Faction(String initialName, UUID creator) {
+    public IFaction(String initialName, UUID creator) {
         setName(initialName);
         setOwner(creator);
         prefix = initialName;
@@ -68,7 +67,7 @@ public class Faction implements IFaction {
     }
 
     // server constructor
-    public Faction(String initialName) {
+    public IFaction(String initialName) {
         setName(initialName);
         prefix = initialName;
         flags.initializeFlagValues(); // need to ensure that this doesn't mess up changes to flags being persistent
@@ -80,7 +79,7 @@ public class Faction implements IFaction {
     }    
     
     // Must receive json data
-    public Faction(Map<String, String> data) {
+    public IFaction(Map<String, String> data) {
         this.load(data);
     }
 
@@ -236,7 +235,7 @@ public class Faction implements IFaction {
         double percentage = MedievalFactions.getInstance().getConfig().getDouble("vassalContributionPercentageMultiplier");
 
         for (String factionName : vassals) {
-            Faction vassalFaction = PersistentData.getInstance().getFaction(factionName);
+            IFaction vassalFaction = PersistentData.getInstance().getFaction(factionName);
             if (vassalFaction != null) {
                 vassalContribution += vassalFaction.getCumulativePowerLevel() * percentage;
             }
@@ -676,7 +675,7 @@ public class Faction implements IFaction {
 
     @Override
     public String getTopLiege() {
-        Faction topLiege = PersistentData.getInstance().getFaction(liege);
+        IFaction topLiege = PersistentData.getInstance().getFaction(liege);
         String liegeName = liege;
         while (topLiege != null) {
             topLiege = PersistentData.getInstance().getFaction(topLiege.getLiege());

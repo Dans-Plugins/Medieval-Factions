@@ -3,7 +3,7 @@ package dansplugins.factionsystem.commands;
 import dansplugins.factionsystem.MedievalFactions;
 import dansplugins.factionsystem.commands.abs.SubCommand;
 import dansplugins.factionsystem.events.FactionWarStartEvent;
-import dansplugins.factionsystem.objects.Faction;
+import dansplugins.factionsystem.objects.IFaction;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
@@ -39,8 +39,8 @@ public class InvokeCommand extends SubCommand {
             player.sendMessage(ChatColor.RED + getText("SingleQuotesAlliedWarring"));
             return;
         }
-        final Faction invokee = getFaction(singleQuoteArgs.get(0));
-        final Faction warringFaction = getFaction(singleQuoteArgs.get(1));
+        final IFaction invokee = getFaction(singleQuoteArgs.get(0));
+        final IFaction warringFaction = getFaction(singleQuoteArgs.get(1));
         if (invokee == null || warringFaction == null) {
             player.sendMessage(translate("&c" + getText("FactionNotFound")));
             return;

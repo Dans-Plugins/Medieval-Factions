@@ -7,7 +7,7 @@ import dansplugins.factionsystem.data.PersistentData;
 import dansplugins.factionsystem.managers.ChunkManager;
 import dansplugins.factionsystem.managers.ConfigManager;
 import dansplugins.factionsystem.managers.LocaleManager;
-import dansplugins.factionsystem.objects.Faction;
+import dansplugins.factionsystem.objects.IFaction;
 import dansplugins.factionsystem.utils.ArgumentParser;
 import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
@@ -45,7 +45,7 @@ public abstract class SubCommand implements ColorTranslator {
     private final boolean requiresOwner;
 
     // Player data
-    protected Faction faction = null;
+    protected IFaction faction = null;
 
     /**
      * Constructor to initialise a Command.
@@ -213,11 +213,11 @@ public abstract class SubCommand implements ColorTranslator {
      *     If the type isn't found, an exception is thrown.
      * </p>
      * @param object to obtain the Player faction from.
-     * @return {@link Faction}
+     * @return {@link IFaction}
      * @throws IllegalArgumentException when the object isn't compatible.
      */
     @SuppressWarnings("deprecation")
-    protected Faction getPlayerFaction(Object object) {
+    protected IFaction getPlayerFaction(Object object) {
         if (object instanceof OfflinePlayer) {
             return data.getPlayersFaction(((OfflinePlayer) object).getUniqueId());
         } else if (object instanceof UUID) {
@@ -241,9 +241,9 @@ public abstract class SubCommand implements ColorTranslator {
      *     This is a passthrough function.
      * </p>
      * @param name of the desired Faction.
-     * @return {@link Faction}
+     * @return {@link IFaction}
      */
-    protected Faction getFaction(String name) {
+    protected IFaction getFaction(String name) {
         return data.getFaction(name);
     }
 
@@ -252,7 +252,7 @@ public abstract class SubCommand implements ColorTranslator {
      * @param faction to send a message to.
      * @param message to send to the Faction.
      */
-    protected void messageFaction(Faction faction, String message) {
+    protected void messageFaction(IFaction faction, String message) {
         faction.getMemberList().stream()
                 .map(Bukkit::getOfflinePlayer)
                 .filter(OfflinePlayer::isOnline)

@@ -1,7 +1,7 @@
 package dansplugins.factionsystem.commands;
 
 import dansplugins.factionsystem.commands.abs.SubCommand;
-import dansplugins.factionsystem.objects.Faction;
+import dansplugins.factionsystem.objects.IFaction;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
@@ -25,7 +25,7 @@ public class PrefixCommand extends SubCommand {
         final String permission = "mf.prefix";
         if (!(checkPermissions(player, permission))) return;
         final String prefix = String.join(" ", args);
-        if (data.getFactions().stream().map(Faction::getPrefix)
+        if (data.getFactions().stream().map(IFaction::getPrefix)
                 .anyMatch(prfix -> prfix.equalsIgnoreCase(prefix))) {
             player.sendMessage(translate("&c" + getText("PrefixTaken")));
             return;

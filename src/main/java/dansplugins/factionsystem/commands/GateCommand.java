@@ -1,7 +1,7 @@
 package dansplugins.factionsystem.commands;
 
 import dansplugins.factionsystem.commands.abs.SubCommand;
-import dansplugins.factionsystem.objects.Faction;
+import dansplugins.factionsystem.objects.IFaction;
 import dansplugins.factionsystem.objects.Gate;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
@@ -95,7 +95,7 @@ public class GateCommand extends SubCommand {
 				player.sendMessage(translate("&c" + getText("TargetBlockNotPartOfGate")));
 				return;
 			}
-			final Faction gateFaction = getGateFaction(gate, data.getFactions());
+			final IFaction gateFaction = getGateFaction(gate, data.getFactions());
 			if (gateFaction == null) {
 				player.sendMessage(translate("&c" + getText("ErrorCouldNotFindGatesFaction", gate.getName())));
 				return;
@@ -133,12 +133,12 @@ public class GateCommand extends SubCommand {
 	    ephemeral.getCreatingGatePlayers().putIfAbsent(player.getUniqueId(), new Gate(name));
 	}
 
-	private Gate getGate(Block targetBlock, ArrayList<Faction> factions) {
+	private Gate getGate(Block targetBlock, ArrayList<IFaction> factions) {
 		return factions.stream().flatMap(faction -> faction.getGates().stream())
 				.filter(gate -> gate.hasBlock(targetBlock)).findFirst().orElse(null);
 	}
 
-	private Faction getGateFaction(Gate gate, ArrayList<Faction> factions) {
+	private IFaction getGateFaction(Gate gate, ArrayList<IFaction> factions) {
 		return factions.stream()
 				.filter(faction -> faction.getGates().contains(gate)).findFirst().orElse(null);
 	}

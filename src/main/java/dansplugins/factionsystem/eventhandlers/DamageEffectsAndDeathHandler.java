@@ -8,7 +8,7 @@ import dansplugins.factionsystem.managers.ConfigManager;
 import dansplugins.factionsystem.managers.LocaleManager;
 import dansplugins.factionsystem.objects.ClaimedChunk;
 import dansplugins.factionsystem.objects.Duel;
-import dansplugins.factionsystem.objects.Faction;
+import dansplugins.factionsystem.objects.IFaction;
 import dansplugins.factionsystem.objects.PlayerPowerRecord;
 import dansplugins.factionsystem.utils.Logger;
 import dansplugins.factionsystem.utils.Pair;
@@ -136,7 +136,7 @@ public class DamageEffectsAndDeathHandler implements Listener {
 
                 String holderFactionName = claimedChunk.getHolder();
 
-                Faction playersFaction = PersistentData.getInstance().getPlayersFaction(player.getUniqueId());
+                IFaction playersFaction = PersistentData.getInstance().getPlayersFaction(player.getUniqueId());
 
                 if (playersFaction == null) {
                     event.setCancelled(true);
@@ -159,7 +159,7 @@ public class DamageEffectsAndDeathHandler implements Listener {
             return;
         }
         else if (arePlayersInSameFaction(attacker, victim)) {
-            Faction faction = PersistentData.getInstance().getPlayersFaction(attacker.getUniqueId());
+            IFaction faction = PersistentData.getInstance().getPlayersFaction(attacker.getUniqueId());
             boolean friendlyFireAllowed = (boolean) faction.getFlags().getFlag("allowfriendlyFire");
             if (!friendlyFireAllowed) {
                 event.setCancelled(true);

@@ -1,7 +1,7 @@
 package dansplugins.factionsystem.commands;
 
 import dansplugins.factionsystem.commands.abs.SubCommand;
-import dansplugins.factionsystem.objects.Faction;
+import dansplugins.factionsystem.objects.IFaction;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
@@ -31,7 +31,7 @@ public class BreakAllianceCommand extends SubCommand {
             player.sendMessage(translate("&c" + getText("UsageBreakAlliance")));
             return;
         }
-        final Faction otherFaction = getFaction(String.join(" ", args));
+        final IFaction otherFaction = getFaction(String.join(" ", args));
         if (otherFaction == null) {
             player.sendMessage(translate("&c" + getText("FactionNotFound")));
             return;

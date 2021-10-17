@@ -6,7 +6,7 @@ import dansplugins.factionsystem.managers.ChunkManager;
 import dansplugins.factionsystem.managers.LocaleManager;
 import dansplugins.factionsystem.objects.ChunkFlags;
 import dansplugins.factionsystem.objects.ClaimedChunk;
-import dansplugins.factionsystem.objects.Faction;
+import dansplugins.factionsystem.objects.IFaction;
 import dansplugins.factionsystem.objects.PlayerPowerRecord;
 import dansplugins.factionsystem.utils.Logger;
 import dansplugins.factionsystem.utils.UUIDChecker;
@@ -192,9 +192,9 @@ public class DynmapIntegrator {
 
         /* Loop through realms and build area markers coloured in the same colour
             as each faction's liege's colour. */
-        for(Faction f : PersistentData.getInstance().getFactions()) {
+        for(IFaction f : PersistentData.getInstance().getFactions()) {
             String liegeName = f.getTopLiege();
-            Faction liege = PersistentData.getInstance().getFaction(liegeName);
+            IFaction liege = PersistentData.getInstance().getFaction(liegeName);
             String liegeColor;
             String popupText = "";
             // If there's no liege, then f is the liege.
@@ -230,7 +230,7 @@ public class DynmapIntegrator {
         Map<String,Marker> newmark = new HashMap<String,Marker>(); /* Build new map */
 
         /* Loop through factions and build coloured faction area markers. */
-        for(Faction f : PersistentData.getInstance().getFactions()) {
+        for(IFaction f : PersistentData.getInstance().getFactions()) {
             dynmapUpdateFaction(f, claims, newmap, "claims", f.getName(), buildNationPopupText(f), f.getFlags().getFlag("dynmapTerritoryColor").toString(), newmap, newmark);
         }
 
@@ -246,7 +246,7 @@ public class DynmapIntegrator {
         resmark.putAll(newmark);
     }
 
-    private String buildNationPopupText(Faction f) {
+    private String buildNationPopupText(IFaction f) {
         String message = "<h4>" + f.getName() + "</h4>" +
                 "Owner: " + UUIDChecker.getInstance().findPlayerNameBasedOnUUID(f.getOwner()) + "<br/>" +
                 "Description: " + f.getDescription() + "<br/>" +
@@ -267,7 +267,7 @@ public class DynmapIntegrator {
         return message;
     }
 
-    private void dynmapUpdateFaction(Faction faction, MarkerSet markerSet, Map<String, AreaMarker> areaMarkers, String type, String name, String popupDescription, String colorCode, Map<String, AreaMarker> newmap, Map<String, Marker> newmark) {
+    private void dynmapUpdateFaction(IFaction faction, MarkerSet markerSet, Map<String, AreaMarker> areaMarkers, String type, String name, String popupDescription, String colorCode, Map<String, AreaMarker> newmap, Map<String, Marker> newmark) {
         double[] x = null;
         double[] z = null;
         int poly_index = 0; /* Index of polygon for given town */
@@ -500,10 +500,10 @@ public class DynmapIntegrator {
             String setid = getDynmapFactionSetId(holder);
             MarkerAPI markerapi = getMarkerAPI();
             Set<String> plids = new HashSet<String>();
-            Faction f = PersistentData.getInstance().getFaction(holder);
+            IFaction f = PersistentData.getInstance().getFaction(holder);
             if (f != null) {
                 for (PlayerPowerRecord powerRecord : PersistentData.getInstance().getPlayerPowerRecords()) {
-                    Faction pf = PersistentData.getInstance().getPlayersFaction(powerRecord.getPlayerUUID());
+                    IFaction pf = PersistentData.getInstance().getPlayersFaction(powerRecord.getPlayerUUID());
                     if (pf != null && pf.getName().equalsIgnoreCase(holder)) {
                         plids.add(UUIDChecker.getInstance().findPlayerNameBasedOnUUID(powerRecord.getPlayerUUID()));
                     }

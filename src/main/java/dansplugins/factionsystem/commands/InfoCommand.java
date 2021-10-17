@@ -2,7 +2,7 @@ package dansplugins.factionsystem.commands;
 
 import dansplugins.factionsystem.Messenger;
 import dansplugins.factionsystem.commands.abs.SubCommand;
-import dansplugins.factionsystem.objects.Faction;
+import dansplugins.factionsystem.objects.IFaction;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
@@ -37,7 +37,7 @@ public class InfoCommand extends SubCommand {
     public void execute(CommandSender sender, String[] args, String key) {
         final String permission = "mf.info";
         if (!(checkPermissions(sender, permission))) return;
-        final Faction target;
+        final IFaction target;
         if (args.length == 0) {
             if (!(sender instanceof Player)) {
                 sender.sendMessage(translate(getText("OnlyPlayersCanUseCommand")));

@@ -3,7 +3,7 @@ package dansplugins.factionsystem.objects.specification;
 import java.util.ArrayList;
 import java.util.UUID;
 
-public interface IGroup {
+public interface Group {
     void setName(String newName);
     String getName();
     void setDescription(String newDesc);
