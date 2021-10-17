@@ -10,6 +10,7 @@ import dansplugins.factionsystem.objects.helper.FactionFlags;
 import dansplugins.factionsystem.objects.domain.specification.IFaction;
 import dansplugins.factionsystem.objects.inherited.Nation;
 import dansplugins.factionsystem.objects.inherited.specification.modifiers.Feudal;
+import dansplugins.factionsystem.objects.inherited.specification.modifiers.Savable;
 import dansplugins.factionsystem.utils.UUIDChecker;
 import org.bukkit.Location;
 import org.bukkit.World;
@@ -22,14 +23,11 @@ import java.util.*;
 
 import static org.bukkit.Bukkit.getServer;
 
-public class Faction extends Nation implements IFaction, Feudal {
+public class Faction extends Nation implements IFaction, Feudal, Savable {
 
     // persistent data -------------------------------------------------------
 
     // lists
-    private ArrayList<String> enemyFactions = new ArrayList<>();
-    private ArrayList<String> allyFactions = new ArrayList<>();
-    private ArrayList<String> laws = new ArrayList<>();
     private ArrayList<String> vassals = new ArrayList<>();
     private ArrayList<Gate> gates = new ArrayList<>();
 
@@ -47,8 +45,6 @@ public class Faction extends Nation implements IFaction, Feudal {
     // ephemeral data -------------------------------------------------------
 
     // lists
-    private ArrayList<String> attemptedTruces = new ArrayList<>();
-    private ArrayList<String> attemptedAlliances = new ArrayList<>();
     private ArrayList<String> attemptedVassalizations = new ArrayList<>();
 
     // other
@@ -79,104 +75,6 @@ public class Faction extends Nation implements IFaction, Feudal {
     // Must receive json data
     public Faction(Map<String, String> data) {
         this.load(data);
-    }
-
-    @Override
-    public void addLaw(String newLaw) {
-        laws.add(newLaw);
-    }
-
-    @Override
-    public boolean removeLaw(String lawToRemove) {
-        if (containsIgnoreCase(laws, lawToRemove)) {
-            laws.remove(lawToRemove);
-            return true;
-        }
-        return false;
-    }
-
-    @Override
-    public boolean removeLaw(int i) {
-        if (laws.size() > i) {
-            laws.remove(i);
-            return true;
-        }
-        return false;
-    }
-
-    @Override
-    public boolean editLaw(int i, String newString) {
-        if (laws.size() > i) {
-            laws.set(i, newString);
-            return true;
-        }
-        return false;
-    }
-
-    @Override
-    public int getNumLaws() {
-        return laws.size();
-    }
-
-    @Override
-    public ArrayList<String> getLaws() {
-        return laws;
-    }
-
-    @Override
-    public void requestTruce(String factionName) {
-        if (!containsIgnoreCase(attemptedTruces, factionName)) {
-            attemptedTruces.add(factionName);
-        }
-    }
-
-    @Override
-    public boolean isTruceRequested(String factionName) {
-        return containsIgnoreCase(attemptedTruces, factionName);
-    }
-
-    @Override
-    public void removeRequestedTruce(String factionName) {
-        removeIfContainsIgnoreCase(attemptedTruces, factionName);
-    }
-
-    @Override
-    public void requestAlly(String factionName) {
-        if (!containsIgnoreCase(attemptedAlliances, factionName)) {
-            attemptedAlliances.add(factionName);
-        }
-    }
-
-    @Override
-    public boolean isRequestedAlly(String factionName) {
-        return containsIgnoreCase(attemptedAlliances, factionName);
-    }
-
-    @Override
-    public void removeAllianceRequest(String factionName) {
-        attemptedAlliances.remove(factionName);
-    }
-
-    @Override
-    public void addAlly(String factionName) {
-        if (!containsIgnoreCase(allyFactions, factionName)) {
-            allyFactions.add(factionName);
-        }
-    }
-
-    @Override
-    public void removeAlly(String factionName) {
-        removeIfContainsIgnoreCase(allyFactions, factionName);
-    }
-
-    @Override
-    public boolean isAlly(String factionName) {
-        return containsIgnoreCase(allyFactions, factionName);
-    }
-
-    @Override
-    public ArrayList<String> getAllies() {
-        return allyFactions;
     }
 
     @Override
@@ -273,52 +171,6 @@ public class Faction extends Nation implements IFaction, Feudal {
     }
 
     @Override
-    public void addEnemy(String factionName) {
-        if (!containsIgnoreCase(enemyFactions, factionName)) {
-            enemyFactions.add(factionName);
-        }
-    }
-
-    @Override
-    public void removeEnemy(String factionName) {
-        removeIfContainsIgnoreCase(enemyFactions, factionName);
-    }
-
-    @Override
-    public boolean isEnemy(String factionName) {
-        return containsIgnoreCase(enemyFactions, factionName);
-    }
-
-    @Override
-    public ArrayList<String> getEnemyFactions() {
-        return enemyFactions;
-    }
-
-    @Override
-    public String getEnemiesSeparatedByCommas() {
-        String enemies = "";
-        for (int i = 0; i < enemyFactions.size(); i++) {
-            enemies = enemies + enemyFactions.get(i);
-            if (i != enemyFactions.size() - 1) {
-                enemies = enemies + ", ";
-            }
-        }
-        return enemies;
-    }
-
-    @Override
-    public String getAlliesSeparatedByCommas() {
-        String allies = "";
-        for (int i = 0; i < allyFactions.size(); i++) {
-            allies = allies + allyFactions.get(i);
-            if (i != allyFactions.size() - 1) {
-                allies = allies + ", ";
-            }
-        }
-        return allies;
-    }
-
-    @Override
     public List<ClaimedChunk> getClaimedChunks() {
         List<ClaimedChunk> output = new ArrayList<>();
         for (ClaimedChunk chunk : PersistentData.getInstance().getClaimedChunks()) {
@@ -337,101 +189,6 @@ public class Faction extends Nation implements IFaction, Feudal {
         } else {
             return false;
         }
-    }
-
-    public Map<String, String> save() {
-        Gson gson = new GsonBuilder().setPrettyPrinting().create();;
-        Map<String, String> saveMap = new HashMap<>();
-
-        saveMap.put("members", gson.toJson(members));
-        saveMap.put("enemyFactions", gson.toJson(enemyFactions));
-        saveMap.put("officers", gson.toJson(officers));
-        saveMap.put("allyFactions", gson.toJson(allyFactions));
-        saveMap.put("laws", gson.toJson(laws));
-        saveMap.put("name", gson.toJson(name));
-        saveMap.put("vassals", gson.toJson(vassals));
-        saveMap.put("description", gson.toJson(description));
-        saveMap.put("owner", gson.toJson(owner));
-        saveMap.put("location", gson.toJson(saveLocation(gson)));
-        saveMap.put("liege", gson.toJson(liege));
-        saveMap.put("prefix", gson.toJson(prefix));
-        saveMap.put("bonusPower", gson.toJson(bonusPower));
-
-        ArrayList<String> gateList = new ArrayList<String>(); 
-        for (Gate gate : gates)
-        {
-        	Map <String, String> map = gate.save();
-        	gateList.add(gson.toJson(map));
-        }
-        saveMap.put("factionGates", gson.toJson(gateList));
-
-        saveMap.put("integerFlagValues", gson.toJson(flags.getIntegerValues()));
-        saveMap.put("booleanFlagValues", gson.toJson(flags.getBooleanValues()));
-        saveMap.put("doubleFlagValues", gson.toJson(flags.getDoubleValues()));
-        saveMap.put("stringFlagValues", gson.toJson(flags.getStringValues()));
-
-        return saveMap;
-    }
-
-    private Map<String, String> saveLocation(Gson gson) {
-        Map<String, String> saveMap = new HashMap<>();
-
-        if (factionHome != null && factionHome.getWorld() != null){
-            saveMap.put("worldName", gson.toJson(factionHome.getWorld().getName()));
-            saveMap.put("x", gson.toJson(factionHome.getX()));
-            saveMap.put("y", gson.toJson(factionHome.getY()));
-            saveMap.put("z", gson.toJson(factionHome.getZ()));
-        }
-
-        return saveMap;
-    }
-
-    private void load(Map<String, String> data) {
-        Gson gson = new GsonBuilder().setPrettyPrinting().create();
-
-        Type arrayListTypeString = new TypeToken<ArrayList<String>>(){}.getType();
-        Type arrayListTypeUUID = new TypeToken<ArrayList<UUID>>(){}.getType();
-        Type stringToIntegerMapType = new TypeToken<HashMap<String, Integer>>(){}.getType();
-        Type stringToBooleanMapType = new TypeToken<HashMap<String, Boolean>>(){}.getType();
-        Type stringToDoubleMapType = new TypeToken<HashMap<String, Double>>(){}.getType();
-        Type stringToStringMapType = new TypeToken<HashMap<String, String>>(){}.getType();
-
-        members = gson.fromJson(data.get("members"), arrayListTypeUUID);
-        enemyFactions = gson.fromJson(data.get("enemyFactions"), arrayListTypeString);
-        officers = gson.fromJson(data.get("officers"), arrayListTypeUUID);
-        allyFactions = gson.fromJson(data.get("allyFactions"), arrayListTypeString);
-        laws = gson.fromJson(data.get("laws"), arrayListTypeString);
-        name = gson.fromJson(data.get("name"), String.class);
-        description = gson.fromJson(data.get("description"), String.class);
-        owner = UUID.fromString(gson.fromJson(data.get("owner"), String.class));
-        factionHome = loadLocation(gson.fromJson(data.get("location"), stringToStringMapType), gson);
-        liege = gson.fromJson(data.getOrDefault("liege", "none"), String.class);
-        vassals = gson.fromJson(data.getOrDefault("vassals", "[]"), arrayListTypeString);
-        prefix = loadDataOrDefault(gson, data, "prefix", getName());
-        bonusPower = gson.fromJson(data.getOrDefault("bonusPower", "0"), Integer.TYPE);
-        
-//        System.out.println("Loading Faction Gates...");
-        ArrayList<String> gateList = new ArrayList<String>();
-        gateList = gson.fromJson(data.get("factionGates"), arrayListTypeString);
-        if (gateList != null)
-        {
-	        for (String item : gateList)
-	        {
-	        	Gate g = Gate.load(item);
-	        	gates.add(g);
-	        }
-        }
-        else
-        {
-        	System.out.println(LocaleManager.getInstance().getText("MissingFactionGatesJSONCollection"));
-        }
-
-        flags.setIntegerValues(gson.fromJson(data.getOrDefault("integerFlagValues", "[]"), stringToIntegerMapType));
-        flags.setBooleanValues(gson.fromJson(data.getOrDefault("booleanFlagValues", "[]"), stringToBooleanMapType));
-        flags.setDoubleValues(gson.fromJson(data.getOrDefault("doubleFlagValues", "[]"), stringToDoubleMapType));
-        flags.setStringValues(gson.fromJson(data.getOrDefault("stringFlagValues", "[]"), stringToStringMapType));
-
-        flags.loadMissingFlagsIfNecessary();
     }
 
     private String loadDataOrDefault(Gson gson, Map<String, String> data, String key, String def) {
@@ -688,6 +445,103 @@ public class Faction extends Nation implements IFaction, Feudal {
     @Override
     public void setBonusPower(int i) {
         bonusPower = i;
+    }
+
+    @Override
+    public Map<String, String> save() {
+        Gson gson = new GsonBuilder().setPrettyPrinting().create();;
+        Map<String, String> saveMap = new HashMap<>();
+
+        saveMap.put("members", gson.toJson(members));
+        saveMap.put("enemyFactions", gson.toJson(enemyFactions));
+        saveMap.put("officers", gson.toJson(officers));
+        saveMap.put("allyFactions", gson.toJson(allyFactions));
+        saveMap.put("laws", gson.toJson(laws));
+        saveMap.put("name", gson.toJson(name));
+        saveMap.put("vassals", gson.toJson(vassals));
+        saveMap.put("description", gson.toJson(description));
+        saveMap.put("owner", gson.toJson(owner));
+        saveMap.put("location", gson.toJson(saveLocation(gson)));
+        saveMap.put("liege", gson.toJson(liege));
+        saveMap.put("prefix", gson.toJson(prefix));
+        saveMap.put("bonusPower", gson.toJson(bonusPower));
+
+        ArrayList<String> gateList = new ArrayList<String>();
+        for (Gate gate : gates)
+        {
+            Map <String, String> map = gate.save();
+            gateList.add(gson.toJson(map));
+        }
+        saveMap.put("factionGates", gson.toJson(gateList));
+
+        saveMap.put("integerFlagValues", gson.toJson(flags.getIntegerValues()));
+        saveMap.put("booleanFlagValues", gson.toJson(flags.getBooleanValues()));
+        saveMap.put("doubleFlagValues", gson.toJson(flags.getDoubleValues()));
+        saveMap.put("stringFlagValues", gson.toJson(flags.getStringValues()));
+
+        return saveMap;
+    }
+
+    private Map<String, String> saveLocation(Gson gson) {
+        Map<String, String> saveMap = new HashMap<>();
+
+        if (factionHome != null && factionHome.getWorld() != null){
+            saveMap.put("worldName", gson.toJson(factionHome.getWorld().getName()));
+            saveMap.put("x", gson.toJson(factionHome.getX()));
+            saveMap.put("y", gson.toJson(factionHome.getY()));
+            saveMap.put("z", gson.toJson(factionHome.getZ()));
+        }
+
+        return saveMap;
+    }
+
+    @Override
+    public void load(Map<String, String> data) {
+        Gson gson = new GsonBuilder().setPrettyPrinting().create();
+
+        Type arrayListTypeString = new TypeToken<ArrayList<String>>(){}.getType();
+        Type arrayListTypeUUID = new TypeToken<ArrayList<UUID>>(){}.getType();
+        Type stringToIntegerMapType = new TypeToken<HashMap<String, Integer>>(){}.getType();
+        Type stringToBooleanMapType = new TypeToken<HashMap<String, Boolean>>(){}.getType();
+        Type stringToDoubleMapType = new TypeToken<HashMap<String, Double>>(){}.getType();
+        Type stringToStringMapType = new TypeToken<HashMap<String, String>>(){}.getType();
+
+        members = gson.fromJson(data.get("members"), arrayListTypeUUID);
+        enemyFactions = gson.fromJson(data.get("enemyFactions"), arrayListTypeString);
+        officers = gson.fromJson(data.get("officers"), arrayListTypeUUID);
+        allyFactions = gson.fromJson(data.get("allyFactions"), arrayListTypeString);
+        laws = gson.fromJson(data.get("laws"), arrayListTypeString);
+        name = gson.fromJson(data.get("name"), String.class);
+        description = gson.fromJson(data.get("description"), String.class);
+        owner = UUID.fromString(gson.fromJson(data.get("owner"), String.class));
+        factionHome = loadLocation(gson.fromJson(data.get("location"), stringToStringMapType), gson);
+        liege = gson.fromJson(data.getOrDefault("liege", "none"), String.class);
+        vassals = gson.fromJson(data.getOrDefault("vassals", "[]"), arrayListTypeString);
+        prefix = loadDataOrDefault(gson, data, "prefix", getName());
+        bonusPower = gson.fromJson(data.getOrDefault("bonusPower", "0"), Integer.TYPE);
+
+//        System.out.println("Loading Faction Gates...");
+        ArrayList<String> gateList = new ArrayList<String>();
+        gateList = gson.fromJson(data.get("factionGates"), arrayListTypeString);
+        if (gateList != null)
+        {
+            for (String item : gateList)
+            {
+                Gate g = Gate.load(item);
+                gates.add(g);
+            }
+        }
+        else
+        {
+            System.out.println(LocaleManager.getInstance().getText("MissingFactionGatesJSONCollection"));
+        }
+
+        flags.setIntegerValues(gson.fromJson(data.getOrDefault("integerFlagValues", "[]"), stringToIntegerMapType));
+        flags.setBooleanValues(gson.fromJson(data.getOrDefault("booleanFlagValues", "[]"), stringToBooleanMapType));
+        flags.setDoubleValues(gson.fromJson(data.getOrDefault("doubleFlagValues", "[]"), stringToDoubleMapType));
+        flags.setStringValues(gson.fromJson(data.getOrDefault("stringFlagValues", "[]"), stringToStringMapType));
+
+        flags.loadMissingFlagsIfNecessary();
     }
 
 }
