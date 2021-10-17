@@ -1,7 +1,5 @@
 package dansplugins.factionsystem.objects.domain.specification;
 
-import dansplugins.factionsystem.objects.inherited.specification.IPlayerRecord;
-
 import java.time.ZonedDateTime;
 
 public interface IActivityRecord {

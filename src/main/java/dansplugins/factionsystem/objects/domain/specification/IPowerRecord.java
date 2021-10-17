@@ -1,7 +1,5 @@
 package dansplugins.factionsystem.objects.domain.specification;
 
-import dansplugins.factionsystem.objects.inherited.specification.IPlayerRecord;
-
 public interface IPowerRecord {
     int maxPower();
     boolean increasePower();

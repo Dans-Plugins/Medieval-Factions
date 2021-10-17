@@ -1,8 +1,8 @@
 package dansplugins.factionsystem.objects.domain.specification;
 
 import dansplugins.factionsystem.objects.domain.ClaimedChunk;
-import dansplugins.factionsystem.objects.helper.FactionFlags;
 import dansplugins.factionsystem.objects.domain.Gate;
+import dansplugins.factionsystem.objects.helper.FactionFlags;
 import org.bukkit.Location;
 import org.bukkit.block.Block;
 

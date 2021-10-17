@@ -1,9 +1,9 @@
 package dansplugins.factionsystem.commands.abs;
 
-import dansplugins.factionsystem.integrators.DynmapIntegrator;
 import dansplugins.factionsystem.MedievalFactions;
 import dansplugins.factionsystem.data.EphemeralData;
 import dansplugins.factionsystem.data.PersistentData;
+import dansplugins.factionsystem.integrators.DynmapIntegrator;
 import dansplugins.factionsystem.managers.ChunkManager;
 import dansplugins.factionsystem.managers.ConfigManager;
 import dansplugins.factionsystem.managers.LocaleManager;

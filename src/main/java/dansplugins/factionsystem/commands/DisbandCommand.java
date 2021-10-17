@@ -1,9 +1,9 @@
 package dansplugins.factionsystem.commands;
 
-import dansplugins.factionsystem.integrators.DynmapIntegrator;
 import dansplugins.factionsystem.commands.abs.SubCommand;
 import dansplugins.factionsystem.data.PersistentData;
 import dansplugins.factionsystem.events.FactionDisbandEvent;
+import dansplugins.factionsystem.integrators.DynmapIntegrator;
 import dansplugins.factionsystem.managers.ChunkManager;
 import dansplugins.factionsystem.objects.domain.Faction;
 import org.bukkit.Bukkit;

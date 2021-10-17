@@ -1,7 +1,5 @@
 package dansplugins.factionsystem.objects.domain.specification;
 
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
 import dansplugins.factionsystem.objects.domain.Gate;
 import dansplugins.factionsystem.objects.helper.GateCoord;
 import org.bukkit.Material;
@@ -9,7 +7,6 @@ import org.bukkit.World;
 import org.bukkit.block.Block;
 
 import java.util.ArrayList;
-import java.util.Map;
 
 public interface IGate {
     enum GateStatus { READY, OPENING, CLOSING }

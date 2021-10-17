@@ -6,17 +6,15 @@ import com.google.gson.reflect.TypeToken;
 import dansplugins.factionsystem.MedievalFactions;
 import dansplugins.factionsystem.data.PersistentData;
 import dansplugins.factionsystem.managers.LocaleManager;
-import dansplugins.factionsystem.objects.helper.FactionFlags;
 import dansplugins.factionsystem.objects.domain.specification.IFaction;
+import dansplugins.factionsystem.objects.helper.FactionFlags;
 import dansplugins.factionsystem.objects.inherited.Nation;
 import dansplugins.factionsystem.objects.inherited.specification.modifiers.Feudal;
 import dansplugins.factionsystem.objects.inherited.specification.modifiers.Savable;
-import dansplugins.factionsystem.utils.UUIDChecker;
 import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.WorldCreator;
 import org.bukkit.block.Block;
-import org.bukkit.entity.Player;
 
 import java.lang.reflect.Type;
 import java.util.*;
