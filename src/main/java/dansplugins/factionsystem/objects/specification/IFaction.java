@@ -15,13 +15,6 @@ public interface IFaction extends IGroup {
 
 // persistent lists -----------------
 
-    // officers
-    boolean addOfficer(UUID newOfficer);
-    boolean removeOfficer(UUID officerToRemove);
-    boolean isOfficer(UUID uuid);
-    int getNumOfficers();
-    ArrayList<UUID> getOfficerList();
-
     // enemies
     void addEnemy(String factionName);
     void removeEnemy(String factionName);

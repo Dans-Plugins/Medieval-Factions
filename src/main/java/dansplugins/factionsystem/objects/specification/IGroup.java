@@ -17,6 +17,11 @@ public interface IGroup {
     ArrayList<UUID> getMemberList();
     ArrayList<UUID> getMemberArrayList();
     String getMemberListSeparatedByCommas();
+    boolean addOfficer(UUID newOfficer);
+    boolean removeOfficer(UUID officerToRemove);
+    boolean isOfficer(UUID uuid);
+    int getNumOfficers();
+    ArrayList<UUID> getOfficerList();
     int getPopulation();
     void invite(UUID playerName);
     void uninvite(UUID player);
