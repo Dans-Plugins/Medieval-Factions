@@ -1,11 +1,9 @@
 package dansplugins.factionsystem.objects.specification;
 
-import java.util.UUID;
+import dansplugins.factionsystem.objects.specification.generic.PlayerRecord;
 
-public interface IPlayerPowerRecord {
+public interface IPlayerPowerRecord extends PlayerRecord {
     int maxPower();
-    void setPlayerUUID(UUID UUID);
-    UUID getPlayerUUID();
     boolean increasePower();
     boolean decreasePower();
     int getPowerLevel();
