@@ -16,7 +16,6 @@ import static org.bukkit.Bukkit.getServer;
 public class ClaimedChunk extends Territory implements IClaimedChunk {
 
     private Chunk chunk;
-    private String holder;
     private String world;
 
     public ClaimedChunk() {
@@ -41,17 +40,6 @@ public class ClaimedChunk extends Territory implements IClaimedChunk {
         return chunk;
     }
 
-    @Override
-    public void setHolder(String newHolder) {
-        holder = newHolder;
-    }
-
-    @Override
-    public String getHolder() {
-        return holder;
-    }
-
-    @Override
     public double[] getCoordinates() {
         double[] coordinates = new double[2];
         coordinates[0] = chunk.getX();
