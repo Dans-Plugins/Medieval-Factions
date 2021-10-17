@@ -1,20 +1,13 @@
 package dansplugins.factionsystem.objects.specification;
 
-import java.util.ArrayList;
-import java.util.UUID;
+import dansplugins.factionsystem.objects.specification.generic.Lockable;
 
-public interface ILockedBlock {
+public interface ILockedBlock extends Lockable {
     String getWorld();
     void setWorld(String name);
     int getX();
     int getY();
     int getZ();
-    void setOwner(UUID s);
-    UUID getOwner();
-    void addToAccessList(UUID playerName);
-    void removeFromAccessList(UUID playerName);
-    boolean hasAccess(UUID playerName);
-    ArrayList<UUID> getAccessList();
     void setFaction(String s);
     String getFactionName();
 }
