@@ -11,7 +11,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
-public interface IFaction {
+public interface IFaction extends IGroup {
 
 // persistent lists -----------------
 
@@ -74,12 +74,6 @@ public interface IFaction {
 
 // persistent strings  -----------------
 
-    void setName(String newName);
-    String getName();
-
-    void setDescription(String newDesc);
-    String getDescription();
-
     void setLiege(String newLiege);
     String getLiege();
 
@@ -87,10 +81,6 @@ public interface IFaction {
     void setPrefix(String newPrefix);
 
 // other persistent types  -----------------
-
-    void setOwner(UUID UUID);
-    boolean isOwner(UUID UUID);
-    UUID getOwner();
 
     void setFactionHome(Location l);
     Location getFactionHome();
@@ -101,10 +91,6 @@ public interface IFaction {
     void setBonusPower(int i);
 
 // ephemeral lists -----------------
-
-    void invite(UUID playerName);
-    void uninvite(UUID player);
-    boolean isInvited(UUID uuid);
 
     void requestTruce(String factionName);
     boolean isTruceRequested(String factionName);
