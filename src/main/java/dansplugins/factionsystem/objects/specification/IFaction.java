@@ -6,23 +6,14 @@ import dansplugins.factionsystem.objects.Gate;
 import dansplugins.factionsystem.objects.specification.generic.Diplomatic;
 import dansplugins.factionsystem.objects.specification.generic.Feudal;
 import dansplugins.factionsystem.objects.specification.generic.Group;
+import dansplugins.factionsystem.objects.specification.generic.Nation;
 import org.bukkit.Location;
 import org.bukkit.block.Block;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public interface INation extends Group, Feudal, Diplomatic {
-
-// persistent lists -----------------
-
-    // laws
-    void addLaw(String newLaw);
-    boolean removeLaw(String lawToRemove);
-    boolean removeLaw(int i);
-    boolean editLaw(int i, String newString);
-    int getNumLaws();
-    ArrayList<String> getLaws();
+public interface IFaction extends Nation, Feudal {
 
     // gates
     void addGate(Gate gate);
@@ -32,28 +23,22 @@ public interface INation extends Group, Feudal, Diplomatic {
     ArrayList<Gate> getGatesForTrigger(Block block);
     int getTotalGates();
 
-// persistent strings  -----------------
-
+    // persistent strings
     String getPrefix();
     void setPrefix(String newPrefix);
 
-// other persistent types  -----------------
-
+    // other persistent types
     void setFactionHome(Location l);
     Location getFactionHome();
-
     FactionFlags getFlags();
-
     int getBonusPower();
     void setBonusPower(int i);
 
-// other ephemeral types
-
+    // ephemeral types
     void toggleAutoClaim();
     boolean getAutoClaimStatus();
 
-// miscellaneous -----------------
-
+    // miscellaneous
     String getTopLiege();
     int calculateCumulativePowerLevelWithoutVassalContribution();
     int calculateCumulativePowerLevelWithVassalContribution();
