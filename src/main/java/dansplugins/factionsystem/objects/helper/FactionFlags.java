@@ -1,4 +1,4 @@
-package dansplugins.factionsystem.objects;
+package dansplugins.factionsystem.objects.helper;
 
 import dansplugins.factionsystem.MedievalFactions;
 import dansplugins.factionsystem.integrators.CurrenciesIntegrator;
@@ -15,7 +15,7 @@ import java.awt.*;
 import java.util.ArrayList;
 import java.util.HashMap;
 
-public class FactionFlags {
+public class FactionFlags implements dansplugins.factionsystem.objects.helper.specification.IFactionFlags {
 
     /*
         In order to add a new faction flag to this class, the following methods need to be altered:
@@ -48,6 +48,7 @@ public class FactionFlags {
         flagNames.add("officersCanMintCurrency");
     }
 
+    @Override
     public void initializeFlagValues() {
         // this is called externally in Faction.java when a faction is created in-game
         booleanValues.put("mustBeOfficerToManageLand", true);
@@ -63,6 +64,7 @@ public class FactionFlags {
         booleanValues.put("officersCanMintCurrency", false);
     }
 
+    @Override
     public void loadMissingFlagsIfNecessary() {
         // this is called externally in Faction.java when a faction is loaded from save files
         if (!booleanValues.containsKey("mustBeOfficerToManageLand")) {
@@ -100,11 +102,12 @@ public class FactionFlags {
         }
     }
 
+    @Override
     public void sendFlagList(Player player) {
         player.sendMessage(ChatColor.AQUA + "" + getFlagsSeparatedByCommas());
     }
 
-
+    @Override
     public void setFlag(String flag, String value, Player player) {
         if (flag.equals("neutral") && !MedievalFactions.getInstance().getConfig().getBoolean("allowNeutrality")) {
             player.sendMessage(ChatColor.RED + "" + LocaleManager.getInstance().getText("NeutralityDisabled"));
@@ -187,6 +190,7 @@ public class FactionFlags {
         }
     }
 
+    @Override
     public Object getFlag(String flag) {
         if (!isFlag(flag)) {
             Logger.getInstance().log(String.format("[DEBUG] Flag '%s' was not found!", flag));
@@ -209,34 +213,42 @@ public class FactionFlags {
         return null;
     }
 
+    @Override
     public HashMap<String, Integer> getIntegerValues() {
         return integerValues;
     }
 
+    @Override
     public void setIntegerValues(HashMap<String, Integer> values) {
         integerValues = values;
     }
 
+    @Override
     public HashMap<String, Boolean> getBooleanValues() {
         return booleanValues;
     }
 
+    @Override
     public void setBooleanValues(HashMap<String, Boolean> values) {
         booleanValues = values;
     }
 
+    @Override
     public HashMap<String, Double> getDoubleValues() {
         return doubleValues;
     }
 
+    @Override
     public void setDoubleValues(HashMap<String, Double> values) {
         doubleValues = values;
     }
 
+    @Override
     public HashMap<String, String> getStringValues() {
         return stringValues;
     }
 
+    @Override
     public void setStringValues(HashMap<String, String> values) {
         stringValues = values;
     }
@@ -246,6 +258,7 @@ public class FactionFlags {
         return flagNames.contains(flag);
     }
 
+    @Override
     public int getNumFlags() {
         return booleanValues.size();
     }

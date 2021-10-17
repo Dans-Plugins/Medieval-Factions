@@ -2,7 +2,7 @@ package dansplugins.factionsystem.commands;
 
 import dansplugins.factionsystem.Messenger;
 import dansplugins.factionsystem.commands.abs.SubCommand;
-import dansplugins.factionsystem.objects.Faction;
+import dansplugins.factionsystem.objects.domain.Faction;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 

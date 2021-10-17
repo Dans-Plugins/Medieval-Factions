@@ -1,6 +1,6 @@
-package dansplugins.factionsystem.objects.specification;
+package dansplugins.factionsystem.objects.domain.specification;
 
-import dansplugins.factionsystem.objects.specification.generic.Lockable;
+import dansplugins.factionsystem.objects.inherited.specification.modifiers.Lockable;
 
 public interface ILockedBlock extends Lockable {
     String getWorld();

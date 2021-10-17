@@ -1,8 +1,10 @@
-package dansplugins.factionsystem.objects;
+package dansplugins.factionsystem.objects.domain;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import dansplugins.factionsystem.MedievalFactions;
+import dansplugins.factionsystem.objects.domain.specification.IGate;
+import dansplugins.factionsystem.objects.helper.GateCoord;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.Sound;
@@ -13,7 +15,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
-public class Gate {
+public class Gate implements IGate {
 
 	public Gate(String name) {
 		setName(name);
@@ -46,6 +48,7 @@ public class Gate {
 	private World _world = null;
 	private String world = "";
 
+	@Override
 	public World getWorld()
 	{
 		if (_world != null)
@@ -55,6 +58,8 @@ public class Gate {
 		_world = MedievalFactions.getInstance().getServer().getWorld(world);
 		return _world;
 	}
+
+	@Override
 	public void setWorld(String worldName)
 	{
 		world = worldName;
@@ -63,12 +68,10 @@ public class Gate {
 
 	private Sound soundEffect = Sound.BLOCK_ANVIL_HIT;
 
-	private enum GateStatus { READY, OPENING, CLOSING };
+	;
 	private GateStatus gateStatus = GateStatus.READY;
 
-	public enum ErrorCodeAddCoord { None, WorldMismatch, MaterialMismatch, NoCuboids, Oversized, LessThanThreeHigh }
-
-    public Map<String, String> save() {
+	public Map<String, String> save() {
         Gson gson = new GsonBuilder().setPrettyPrinting().create();;
         Map<String, String> saveMap = new HashMap<>();
 
@@ -85,37 +88,38 @@ public class Gate {
         return saveMap;
     }
 
-
-    public static Gate load(String jsonData) {
+	static Gate load(String jsonData) {
 //    	System.out.println("Gate Load");
 
-        Gson gson = new GsonBuilder().setPrettyPrinting().create();;
+		Gson gson = new GsonBuilder().setPrettyPrinting().create();;
 
-        Gate newGate = new Gate();
+		Gate newGate = new Gate();
 
-        try
-        {
-	        GateJson data = gson.fromJson(jsonData, GateJson.class);
+		try
+		{
+			Gate.GateJson data = gson.fromJson(jsonData, Gate.GateJson.class);
 
-	        newGate.world = data.world;
-	        newGate.coord1 = new GateCoord();
-	        newGate.coord1 = GateCoord.fromString(data.coord1);
-	        newGate.coord2 = new GateCoord();
-	        newGate.coord2 = GateCoord.fromString(data.coord2);
-	        newGate.trigger = new GateCoord();
-	        newGate.trigger = GateCoord.fromString(data.triggerCoord);
-	        newGate.material = Material.getMaterial(data.material);
-	        newGate.open = Boolean.parseBoolean(data.open);
-	        newGate.vertical = Boolean.parseBoolean(data.vertical);
-        }
-        catch (Exception e)
-        {
-        	System.out.println("ERROR: Could not load faction gate.\n");
-        }
+			newGate.world = data.world;
+			newGate.coord1 = new GateCoord();
+			newGate.coord1 = GateCoord.fromString(data.coord1);
+			newGate.coord2 = new GateCoord();
+			newGate.coord2 = GateCoord.fromString(data.coord2);
+			newGate.trigger = new GateCoord();
+			newGate.trigger = GateCoord.fromString(data.triggerCoord);
+			newGate.material = Material.getMaterial(data.material);
+			newGate.open = Boolean.parseBoolean(data.open);
+			newGate.vertical = Boolean.parseBoolean(data.vertical);
+		}
+		catch (Exception e)
+		{
+			System.out.println("ERROR: Could not load faction gate.\n");
+		}
 
-        return newGate;
-    }
+		return newGate;
+	}
 
+
+	@Override
 	public boolean isIntersecting(Gate gate)
 	{
 		boolean xoverlap = coord2.getX() > gate.coord1.getX() && coord1.getX() < coord2.getX();
@@ -124,6 +128,7 @@ public class Gate {
 		return xoverlap && yoverlap && zoverlap;
 	}
 
+	@Override
 	public int getTopLeftX()
 	{
 		if (coord1 != null && coord2 != null)
@@ -133,6 +138,7 @@ public class Gate {
 		return 0;
 	}
 
+	@Override
 	public int getTopLeftY()
 	{
 		if (coord1 != null && coord2 != null)
@@ -142,6 +148,7 @@ public class Gate {
 		return 0;
 	}
 
+	@Override
 	public int getTopLeftZ()
 	{
 		if (coord1 != null && coord2 != null)
@@ -151,6 +158,7 @@ public class Gate {
 		return 0;
 	}
 
+	@Override
 	public int getBottomRightX()
 	{
 		if (coord1 != null && coord2 != null)
@@ -160,6 +168,7 @@ public class Gate {
 		return 0;
 	}
 
+	@Override
 	public int getBottomRightY()
 	{
 		if (coord1 != null && coord2 != null)
@@ -169,6 +178,7 @@ public class Gate {
 		return 0;
 	}
 
+	@Override
 	public int getBottomRightZ()
 	{
 		if (coord1 != null && coord2 != null)
@@ -178,6 +188,7 @@ public class Gate {
 		return 0;
 	}
 
+	@Override
 	public int getTopLeftChunkX()
 	{
 		if (coord1 != null && coord2 != null)
@@ -187,6 +198,7 @@ public class Gate {
 		return 0;
 	}
 
+	@Override
 	public int getTopLeftChunkZ()
 	{
 		if (coord1 != null && coord2 != null)
@@ -196,6 +208,7 @@ public class Gate {
 		return 0;
 	}
 
+	@Override
 	public int getBottomRightChunkX()
 	{
 		if (coord1 != null && coord2 != null)
@@ -205,6 +218,7 @@ public class Gate {
 		return 0;
 	}
 
+	@Override
 	public int getBottomRightChunkZ()
 	{
 		if (coord1 != null && coord2 != null)
@@ -214,50 +228,61 @@ public class Gate {
 		return 0;
 	}
 
+	@Override
 	public String getName()
 	{
 		return name;
 	}
+
+	@Override
 	public void setName(String value)
 	{
 		name = value;
 	}
 
+	@Override
 	public boolean isOpen()
 	{
 		return open ? true : false;
 	}
 
+	@Override
 	public boolean isReady()
 	{
 		return gateStatus.equals(GateStatus.READY);
 	}
 
+	@Override
 	public boolean isClosed()
 	{
 		return open ? false : true;
 	}
 
+	@Override
 	public String getStatus()
 	{
 		return gateStatus.toString().substring(0,1).toUpperCase() + gateStatus.toString().substring(1).toLowerCase();
 	}
 
+	@Override
 	public GateCoord getTrigger()
 	{
 		return trigger;
 	}
 
+	@Override
 	public GateCoord getCoord1()
 	{
 		return coord1;
 	}
 
+	@Override
 	public GateCoord getCoord2()
 	{
 		return coord2;
 	}
 
+	@Override
 	public boolean isParallelToZ()
 	{
 		if (coord1 != null && coord2 != null)
@@ -276,6 +301,8 @@ public class Gate {
 			return false;
 		}
 	}
+
+	@Override
 	public boolean isParallelToX()
 	{
 		if (coord1 != null && coord2 != null)
@@ -295,6 +322,7 @@ public class Gate {
 		}
 	}
 
+	@Override
 	public ArrayList<Block> GateBlocks()
 	{
 		ArrayList<Block> blocks = new ArrayList<Block>();
@@ -311,6 +339,7 @@ public class Gate {
 		return blocks;
 	}
 
+	@Override
 	public boolean gateBlocksMatch(Material mat)
 	{
 		int topY = coord1.getY();
@@ -362,6 +391,7 @@ public class Gate {
 		return true;
 	}
 
+	@Override
 	public ErrorCodeAddCoord addCoord(Block clickedBlock)
 	{
 		if (coord1 == null)
@@ -449,19 +479,25 @@ public class Gate {
 		return ErrorCodeAddCoord.None;
 	}
 
+	@Override
 	public int getDimX()
 	{
 		return getDimX(coord1, coord2);
 	}
+
+	@Override
 	public int getDimY()
 	{
 		return getDimY(coord1, coord2);
 	}
+
+	@Override
 	public int getDimZ()
 	{
 		return getDimZ(coord1, coord2);
 	}
 
+	@Override
 	public int getDimX(GateCoord first, GateCoord second)
 	{
 		GateCoord tmp;
@@ -473,6 +509,8 @@ public class Gate {
 		}
 		return second.getX() - first.getX();
 	}
+
+	@Override
 	public int getDimY(GateCoord first, GateCoord second)
 	{
 		GateCoord tmp;
@@ -484,6 +522,8 @@ public class Gate {
 		}
 		return second.getY() - first.getY();
 	}
+
+	@Override
 	public int getDimZ(GateCoord first, GateCoord second)
 	{
 		GateCoord tmp;
@@ -496,6 +536,7 @@ public class Gate {
 		return second.getZ() - first.getZ();
 	}
 
+	@Override
 	public void openGate()
 	{
 		if (open || !gateStatus.equals(GateStatus.READY))
@@ -611,6 +652,7 @@ public class Gate {
 		}
 	}
 
+	@Override
 	public void closeGate()
 	{
 
@@ -726,6 +768,7 @@ public class Gate {
 		}
 	}
 
+	@Override
 	public void fillGate()
 	{
 
@@ -809,6 +852,7 @@ public class Gate {
 		}
 	}
 
+	@Override
 	public boolean hasBlock(Block targetBlock)
 	{
 
@@ -858,6 +902,7 @@ public class Gate {
 		return false;
 	}
 
+	@Override
 	public String coordsToString()
 	{
 		if (coord1 == null || coord2 == null || trigger == null)

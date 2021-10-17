@@ -1,12 +1,12 @@
 package dansplugins.factionsystem.eventhandlers;
 
-import dansplugins.factionsystem.integrators.DynmapIntegrator;
 import dansplugins.factionsystem.MedievalFactions;
 import dansplugins.factionsystem.data.PersistentData;
+import dansplugins.factionsystem.integrators.DynmapIntegrator;
 import dansplugins.factionsystem.managers.ChunkManager;
 import dansplugins.factionsystem.managers.LocaleManager;
-import dansplugins.factionsystem.objects.ClaimedChunk;
-import dansplugins.factionsystem.objects.Faction;
+import dansplugins.factionsystem.objects.domain.ClaimedChunk;
+import dansplugins.factionsystem.objects.domain.Faction;
 import dansplugins.factionsystem.utils.TerritoryOwnerNotifier;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;

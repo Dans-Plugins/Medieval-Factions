@@ -1,10 +1,8 @@
-package dansplugins.factionsystem.objects.specification;
-
-import dansplugins.factionsystem.objects.specification.generic.PlayerRecord;
+package dansplugins.factionsystem.objects.domain.specification;
 
 import java.time.ZonedDateTime;
 
-public interface IActivityRecord extends PlayerRecord {
+public interface IActivityRecord {
     void setPowerLost(int power);
     int getPowerLost();
     void incrementPowerLost();

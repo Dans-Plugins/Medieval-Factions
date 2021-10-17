@@ -1,7 +1,9 @@
-package dansplugins.factionsystem.objects;
+package dansplugins.factionsystem.objects.domain;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import dansplugins.factionsystem.objects.domain.specification.IClaimedChunk;
+import dansplugins.factionsystem.objects.inherited.Territory;
 import org.bukkit.Chunk;
 import org.bukkit.World;
 import org.bukkit.WorldCreator;
@@ -11,10 +13,9 @@ import java.util.Map;
 
 import static org.bukkit.Bukkit.getServer;
 
-public class ClaimedChunk implements dansplugins.factionsystem.objects.specification.IClaimedChunk {
+public class ClaimedChunk extends Territory implements IClaimedChunk {
 
     private Chunk chunk;
-    private String holder;
     private String world;
 
     public ClaimedChunk() {
@@ -39,17 +40,6 @@ public class ClaimedChunk implements dansplugins.factionsystem.objects.specifica
         return chunk;
     }
 
-    @Override
-    public void setHolder(String newHolder) {
-        holder = newHolder;
-    }
-
-    @Override
-    public String getHolder() {
-        return holder;
-    }
-
-    @Override
     public double[] getCoordinates() {
         double[] coordinates = new double[2];
         coordinates[0] = chunk.getX();

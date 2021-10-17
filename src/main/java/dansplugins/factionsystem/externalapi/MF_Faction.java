@@ -1,6 +1,6 @@
 package dansplugins.factionsystem.externalapi;
 
-import dansplugins.factionsystem.objects.Faction;
+import dansplugins.factionsystem.objects.domain.Faction;
 import org.bukkit.entity.Player;
 
 import java.util.UUID;

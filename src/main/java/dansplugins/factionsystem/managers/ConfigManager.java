@@ -1,7 +1,6 @@
 package dansplugins.factionsystem.managers;
 
 import dansplugins.factionsystem.MedievalFactions;
-import dansplugins.fiefs.Fiefs;
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.configuration.file.FileConfiguration;

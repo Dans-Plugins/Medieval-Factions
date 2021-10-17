@@ -1,8 +1,6 @@
-package dansplugins.factionsystem.objects.specification;
+package dansplugins.factionsystem.objects.domain.specification;
 
-import dansplugins.factionsystem.objects.specification.generic.PlayerRecord;
-
-public interface IPowerRecord extends PlayerRecord {
+public interface IPowerRecord {
     int maxPower();
     boolean increasePower();
     boolean decreasePower();

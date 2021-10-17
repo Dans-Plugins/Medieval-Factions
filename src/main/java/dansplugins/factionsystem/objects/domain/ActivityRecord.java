@@ -1,9 +1,10 @@
-package dansplugins.factionsystem.objects;
+package dansplugins.factionsystem.objects.domain;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import dansplugins.factionsystem.MedievalFactions;
-import dansplugins.factionsystem.objects.specification.IActivityRecord;
+import dansplugins.factionsystem.objects.domain.specification.IActivityRecord;
+import dansplugins.factionsystem.objects.inherited.PlayerRecord;
 
 import java.time.Duration;
 import java.time.ZonedDateTime;
@@ -13,8 +14,7 @@ import java.util.Map;
 import java.util.UUID;
 import java.util.concurrent.TimeUnit;
 
-public class ActivityRecord implements IActivityRecord {
-    private UUID playerUUID = null;
+public class ActivityRecord extends PlayerRecord implements IActivityRecord {
     private int logins = 0;
     private int powerLost = 0;
     private ZonedDateTime lastLogout = ZonedDateTime.now();
@@ -47,16 +47,6 @@ public class ActivityRecord implements IActivityRecord {
     public void incrementPowerLost()
     {
     	powerLost += MedievalFactions.getInstance().getConfig().getInt("powerDecreaseAmount");
-    }
-
-    @Override
-    public void setPlayerUUID(UUID uuid) {
-        playerUUID = uuid;
-    }
-
-    @Override
-    public UUID getPlayerUUID() {
-        return playerUUID;
     }
 
     @Override

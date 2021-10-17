@@ -2,9 +2,9 @@ package dansplugins.factionsystem.managers;
 
 import dansplugins.factionsystem.data.EphemeralData;
 import dansplugins.factionsystem.data.PersistentData;
-import dansplugins.factionsystem.objects.ClaimedChunk;
-import dansplugins.factionsystem.objects.Faction;
-import dansplugins.factionsystem.objects.Gate;
+import dansplugins.factionsystem.objects.domain.ClaimedChunk;
+import dansplugins.factionsystem.objects.domain.Faction;
+import dansplugins.factionsystem.objects.domain.Gate;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.block.Block;

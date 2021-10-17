@@ -1,20 +1,20 @@
-package dansplugins.factionsystem.objects;
+package dansplugins.factionsystem.objects.domain;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import dansplugins.factionsystem.MedievalFactions;
 import dansplugins.factionsystem.data.PersistentData;
-import dansplugins.factionsystem.objects.specification.IPowerRecord;
+import dansplugins.factionsystem.objects.domain.specification.IPowerRecord;
+import dansplugins.factionsystem.objects.inherited.PlayerRecord;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
 
-public class PowerRecord implements IPowerRecord {
+public class PowerRecord extends PlayerRecord implements IPowerRecord {
 
     // saved
-    private UUID playerUUID = UUID.randomUUID();
     private int powerLevel = 0;
 
     public PowerRecord(UUID playerUUID, int initial) {
@@ -59,16 +59,6 @@ public class PowerRecord implements IPowerRecord {
         } else {
             return false;
         }
-    }
-
-    @Override
-    public void setPlayerUUID(UUID UUID) {
-        playerUUID = UUID;
-    }
-
-    @Override
-    public UUID getPlayerUUID() {
-        return playerUUID;
     }
 
     @Override

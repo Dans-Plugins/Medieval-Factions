@@ -1,13 +1,13 @@
 package dansplugins.factionsystem.commands.abs;
 
-import dansplugins.factionsystem.integrators.DynmapIntegrator;
 import dansplugins.factionsystem.MedievalFactions;
 import dansplugins.factionsystem.data.EphemeralData;
 import dansplugins.factionsystem.data.PersistentData;
+import dansplugins.factionsystem.integrators.DynmapIntegrator;
 import dansplugins.factionsystem.managers.ChunkManager;
 import dansplugins.factionsystem.managers.ConfigManager;
 import dansplugins.factionsystem.managers.LocaleManager;
-import dansplugins.factionsystem.objects.Faction;
+import dansplugins.factionsystem.objects.domain.Faction;
 import dansplugins.factionsystem.utils.ArgumentParser;
 import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;

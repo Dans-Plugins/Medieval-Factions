@@ -2,7 +2,7 @@ package dansplugins.factionsystem.commands;
 
 import dansplugins.factionsystem.MedievalFactions;
 import dansplugins.factionsystem.commands.abs.SubCommand;
-import dansplugins.factionsystem.objects.ClaimedChunk;
+import dansplugins.factionsystem.objects.domain.ClaimedChunk;
 import org.bukkit.Bukkit;
 import org.bukkit.Chunk;
 import org.bukkit.Location;

@@ -1,8 +1,10 @@
-package dansplugins.factionsystem.objects.specification.generic;
+package dansplugins.factionsystem.objects.inherited.specification;
+
+import dansplugins.factionsystem.objects.inherited.specification.modifiers.Diplomatic;
 
 import java.util.ArrayList;
 
-public interface Nation extends Group, Diplomatic {
+public interface INation extends Diplomatic {
 
     // laws
     void addLaw(String newLaw);
