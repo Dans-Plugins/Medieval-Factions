@@ -1,10 +1,10 @@
-package dansplugins.factionsystem.objects.inherited.specification;
+package dansplugins.factionsystem.objects.inherited.specification.modifiers;
 
 import dansplugins.factionsystem.objects.inherited.specification.modifiers.Diplomatic;
 
 import java.util.ArrayList;
 
-public interface INation extends Diplomatic {
+public interface Lawful {
 
     // laws
     void addLaw(String newLaw);

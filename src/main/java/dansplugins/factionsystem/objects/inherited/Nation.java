@@ -1,10 +1,11 @@
 package dansplugins.factionsystem.objects.inherited;
 
-import dansplugins.factionsystem.objects.inherited.specification.INation;
+import dansplugins.factionsystem.objects.inherited.specification.modifiers.Diplomatic;
+import dansplugins.factionsystem.objects.inherited.specification.modifiers.Lawful;
 
 import java.util.ArrayList;
 
-public class Nation extends Group implements INation {
+public class Nation extends Group implements Diplomatic, Lawful {
 
     protected ArrayList<String> allyFactions = new ArrayList<>();
     protected ArrayList<String> attemptedAlliances = new ArrayList<>();
