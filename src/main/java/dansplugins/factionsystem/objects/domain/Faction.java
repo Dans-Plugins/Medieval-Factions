@@ -23,32 +23,18 @@ import static org.bukkit.Bukkit.getServer;
 
 public class Faction extends Nation implements IFaction, Feudal, Savable {
 
-    // persistent data -------------------------------------------------------
-
-    // lists
+    // persistent data
     private ArrayList<String> vassals = new ArrayList<>();
     private ArrayList<Gate> gates = new ArrayList<>();
-
-    // strings
     private String liege = "none";
     private String prefix = "none";
-
-    // other
     private Location factionHome = null;
     private FactionFlags flags = new FactionFlags();
     private int bonusPower = 0;
 
-    // end of persistent data -------------------------------------------------------
-
-    // ephemeral data -------------------------------------------------------
-
-    // lists
+    // ephemeral data
     private ArrayList<String> attemptedVassalizations = new ArrayList<>();
-
-    // other
     private boolean autoclaim = false;
-
-    // end of ephemeral data -------------------------------------------------------
 
     // player constructor
     public Faction(String initialName, UUID creator) {
