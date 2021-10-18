@@ -54,12 +54,14 @@ public class Faction extends Nation implements IFaction, Feudal, Savable {
     @Override
     public ArrayList<Gate> getGates() {
     	return gates;
-    }    
-    
+    }
+
     // Must receive json data
     public Faction(Map<String, String> data) {
         this.load(data);
     }
+
+    // implementations for IFaction methods ------------------------------
 
     @Override
     public void setFactionHome(Location l) {
@@ -67,8 +69,89 @@ public class Faction extends Nation implements IFaction, Feudal, Savable {
     }
 
     @Override
+    public int getTotalGates() {
+        return gates.size();
+    }
+
+    @Override
+    public String getPrefix() {
+        return prefix;
+    }
+
+    @Override
+    public void setPrefix(String newPrefix) {
+        prefix = newPrefix;
+    }
+
+    @Override
     public Location getFactionHome() {
         return factionHome;
+    }
+
+    @Override
+    public FactionFlags getFlags() {
+        return flags;
+    }
+
+    @Override
+    public int getBonusPower() {
+        return bonusPower;
+    }
+
+    @Override
+    public void setBonusPower(int i) {
+        bonusPower = i;
+    }
+
+    @Override
+    public void toggleAutoClaim() {
+        autoclaim = !autoclaim;
+    }
+
+    @Override
+    public boolean getAutoClaimStatus() {
+        return autoclaim;
+    }
+
+    @Override
+    public String getTopLiege() {
+        Faction topLiege = PersistentData.getInstance().getFaction(liege);
+        String liegeName = liege;
+        while (topLiege != null) {
+            topLiege = PersistentData.getInstance().getFaction(topLiege.getLiege());
+            if (topLiege != null)
+            {
+                liegeName = topLiege.getName();
+            }
+        }
+        return liegeName;
+    }
+
+    @Override
+    public int calculateCumulativePowerLevelWithoutVassalContribution() {
+        int powerLevel = 0;
+        for (UUID playerUUID : members) {
+            try {
+                powerLevel += PersistentData.getInstance().getPlayersPowerRecord(playerUUID).getPowerLevel();
+            }
+            catch (Exception e) {
+                System.out.println(LocaleManager.getInstance().getText("ErrorPlayerPowerRecordForUUIDNotFound"));
+            }
+        }
+        return powerLevel;
+    }
+
+    @Override
+    public int calculateCumulativePowerLevelWithVassalContribution() {
+        int vassalContribution = 0;
+        double percentage = MedievalFactions.getInstance().getConfig().getDouble("vassalContributionPercentageMultiplier");
+        for (String factionName : vassals) {
+            Faction vassalFaction = PersistentData.getInstance().getFaction(factionName);
+            if (vassalFaction != null) {
+                vassalContribution += vassalFaction.getCumulativePowerLevel() * percentage;
+            }
+        }
+        return calculateCumulativePowerLevelWithoutVassalContribution() + vassalContribution;
     }
 
     @Override
@@ -85,43 +168,7 @@ public class Faction extends Nation implements IFaction, Feudal, Savable {
     }
 
     @Override
-    public int calculateCumulativePowerLevelWithoutVassalContribution() {
-
-        int powerLevel = 0;
-
-        for (UUID playerUUID : members){
-            try
-            {
-                powerLevel += PersistentData.getInstance().getPlayersPowerRecord(playerUUID).getPowerLevel();
-            }
-            catch (Exception e)
-            {
-                System.out.println(LocaleManager.getInstance().getText("ErrorPlayerPowerRecordForUUIDNotFound"));
-            }
-        }
-
-        return powerLevel;
-    }
-
-    @Override
-    public int calculateCumulativePowerLevelWithVassalContribution() {
-
-        int vassalContribution = 0;
-        double percentage = MedievalFactions.getInstance().getConfig().getDouble("vassalContributionPercentageMultiplier");
-
-        for (String factionName : vassals) {
-            Faction vassalFaction = PersistentData.getInstance().getFaction(factionName);
-            if (vassalFaction != null) {
-                vassalContribution += vassalFaction.getCumulativePowerLevel() * percentage;
-            }
-        }
-
-        return calculateCumulativePowerLevelWithoutVassalContribution() + vassalContribution;
-    }
-
-    // get max power without vassal contribution
-    @Override
-    public int getMaximumCumulativePowerLevel() {
+    public int getMaximumCumulativePowerLevel() {     // get max power without vassal contribution
         int maxPower = 0;
 
         for (UUID playerUUID : members){
@@ -145,16 +192,6 @@ public class Faction extends Nation implements IFaction, Feudal, Savable {
     }
 
     @Override
-    public void toggleAutoClaim() {
-        autoclaim = !autoclaim;
-    }
-
-    @Override
-    public boolean getAutoClaimStatus() {
-        return autoclaim;
-    }
-
-    @Override
     public List<ClaimedChunk> getClaimedChunks() {
         List<ClaimedChunk> output = new ArrayList<>();
         for (ClaimedChunk chunk : PersistentData.getInstance().getClaimedChunks()) {
@@ -166,58 +203,43 @@ public class Faction extends Nation implements IFaction, Feudal, Savable {
     }
 
     @Override
-    public boolean addOfficer(UUID newOfficer) {
-        if (officers.size() < calculateMaxOfficers() && !officers.contains(newOfficer)){
-            officers.add(newOfficer);
-            return true;
-        } else {
-            return false;
-        }
+    public boolean isWeakened() {
+        return calculateCumulativePowerLevelWithoutVassalContribution() < (getMaximumCumulativePowerLevel() / 2);
     }
 
-    private String loadDataOrDefault(Gson gson, Map<String, String> data, String key, String def) {
-        try {
-            return gson.fromJson(data.getOrDefault(key, def), String.class);
-        } catch(Exception e) {
-            return def;
-        }
-    }
-
-    private Location loadLocation(HashMap<String, String> data, Gson gson){
-        if (data.size() != 0){
-            World world = getServer().createWorld(new WorldCreator(gson.fromJson(data.get("worldName"), String.class)));
-            double x = gson.fromJson(data.get("x"), Double.TYPE);
-            double y = gson.fromJson(data.get("y"), Double.TYPE);
-            double z = gson.fromJson(data.get("z"), Double.TYPE);
-            return new Location(world, x, y, z);
-        }
-        return null;
-    }
-
+    /**
+     * Method to automatically handle all data changes when a Faction changes their name.
+     * @param oldName of the Faction (dependent).
+     * @param newName of the Faction (dependent).
+     */
     @Override
-    public String toString() {
-        return "Faction{" +
-                "members=" + members +
-                ", enemyFactions=" + enemyFactions +
-                ", officers=" + officers +
-                ", allyFactions=" + allyFactions +
-                ", laws=" + laws +
-                ", name='" + name + '\'' +
-                ", description='" + description + '\'' +
-                ", owner=" + owner +
-                ", cumulativePowerLevel=" + getCumulativePowerLevel() +
-                ", liege=" + liege +
-                '}';
+    public void updateData(String oldName, String newName) {
+        if (isAlly(oldName)) {
+            removeAlly(oldName);
+            addAlly(newName);
+        }
+        if (isEnemy(oldName)) {
+            removeEnemy(oldName);
+            addEnemy(newName);
+        }
+        if (isLiege(oldName)) {
+            setLiege(newName);
+        }
+        if (isVassal(oldName)) {
+            removeVassal(oldName);
+            addVassal(newName);
+        }
     }
+
+    // end of implementations for IFaction methods ------------------------------
+
+
+
+    // implementations for Feudal methods ------------------------------
 
     @Override
     public boolean isVassal(String faction) {
         return(containsIgnoreCase(vassals, faction));
-    }
-
-    @Override
-    public boolean hasLiege() {
-        return !liege.equalsIgnoreCase("none");
     }
 
     @Override
@@ -237,81 +259,41 @@ public class Faction extends Nation implements IFaction, Feudal, Savable {
         removeIfContainsIgnoreCase(vassals, name);
     }
 
-    @Override
-    public void setLiege(String newLiege) {
-        liege = newLiege;
-    }
+
+    // unsorted -----------------------
+
+
+
+
+
 
     @Override
-    public void addGate(Gate gate)
-    {
-    	gates.add(gate);
-    }
-
-    @Override
-    public void removeGate(Gate gate)
-    {
-    	gate.fillGate();
-    	gates.remove(gate);
-    }
-
-    @Override
-    public boolean hasGateTrigger(Block block)
-    {
-    	for(Gate g : gates)
-    	{
-    		if (g.getTrigger().getX() == block.getX() && g.getTrigger().getY() == block.getY() && g.getTrigger().getZ() == block.getZ() &&
-    				g.getTrigger().getWorld().equalsIgnoreCase(block.getWorld().getName()))
-    		{
-    			return true;
-    		}
-    	}
-		return false;
-    }
-
-    @Override
-    public ArrayList<Gate> getGatesForTrigger(Block block)
-    {
-    	ArrayList<Gate> gateList = new ArrayList<>();
-    	for(Gate g : gates)
-    	{
-    		if (g.getTrigger().getX() == block.getX() && g.getTrigger().getY() == block.getY() && g.getTrigger().getZ() == block.getZ() &&
-    				g.getTrigger().getWorld().equalsIgnoreCase(block.getWorld().getName()))
-    		{
-    			gateList.add(g);
-    		}
-    	}
-		return gateList;
-    }
-
-    @Override
-    public int getTotalGates() {
-        return gates.size();
-    }
-
-    @Override
-    public String getLiege() {
-        return liege;
-    }
-
-    @Override
-    public String getTopLiege() {
-        Faction topLiege = PersistentData.getInstance().getFaction(liege);
-        String liegeName = liege;
-        while (topLiege != null) {
-            topLiege = PersistentData.getInstance().getFaction(topLiege.getLiege());
-            if (topLiege != null)
-            {
-                liegeName = topLiege.getName();
-            }
+    public boolean addOfficer(UUID newOfficer) {
+        if (officers.size() < calculateMaxOfficers() && !officers.contains(newOfficer)){
+            officers.add(newOfficer);
+            return true;
+        } else {
+            return false;
         }
-        return liegeName;
     }
 
     @Override
-    public boolean isLiege() {
-        return vassals.size() != 0;
+    public String toString() {
+        return "Faction{" +
+                "members=" + members +
+                ", enemyFactions=" + enemyFactions +
+                ", officers=" + officers +
+                ", allyFactions=" + allyFactions +
+                ", laws=" + laws +
+                ", name='" + name + '\'' +
+                ", description='" + description + '\'' +
+                ", owner=" + owner +
+                ", cumulativePowerLevel=" + getCumulativePowerLevel() +
+                ", liege=" + liege +
+                '}';
     }
+
+
 
     @Override
     public String getVassalsSeparatedByCommas() {
@@ -373,62 +355,8 @@ public class Faction extends Nation implements IFaction, Feudal, Savable {
     }
 
     @Override
-    public String getPrefix() {
-        return prefix;
-    }
-
-    @Override
-    public void setPrefix(String newPrefix) {
-        prefix = newPrefix;
-    }
-
-    @Override
     public ArrayList<String> getVassals() {
         return vassals;
-    }
-
-    @Override
-    public boolean isWeakened() {
-        return calculateCumulativePowerLevelWithoutVassalContribution() < (getMaximumCumulativePowerLevel() / 2);
-    }
-
-    /**
-     * Method to automatically handle all data changes when a Faction changes their name.
-     * @param oldName of the Faction (dependent).
-     * @param newName of the Faction (dependent).
-     */
-    @Override
-    public void updateData(String oldName, String newName) {
-        if (isAlly(oldName)) {
-            removeAlly(oldName);
-            addAlly(newName);
-        }
-        if (isEnemy(oldName)) {
-            removeEnemy(oldName);
-            addEnemy(newName);
-        }
-        if (isLiege(oldName)) {
-            setLiege(newName);
-        }
-        if (isVassal(oldName)) {
-            removeVassal(oldName);
-            addVassal(newName);
-        }
-    }
-
-    @Override
-    public FactionFlags getFlags() {
-        return flags;
-    }
-
-    @Override
-    public int getBonusPower() {
-        return bonusPower;
-    }
-
-    @Override
-    public void setBonusPower(int i) {
-        bonusPower = i;
     }
 
     @Override
@@ -526,6 +454,25 @@ public class Faction extends Nation implements IFaction, Feudal, Savable {
         flags.setStringValues(gson.fromJson(data.getOrDefault("stringFlagValues", "[]"), stringToStringMapType));
 
         flags.loadMissingFlagsIfNecessary();
+    }
+
+    private String loadDataOrDefault(Gson gson, Map<String, String> data, String key, String def) {
+        try {
+            return gson.fromJson(data.getOrDefault(key, def), String.class);
+        } catch(Exception e) {
+            return def;
+        }
+    }
+
+    private Location loadLocation(HashMap<String, String> data, Gson gson){
+        if (data.size() != 0){
+            World world = getServer().createWorld(new WorldCreator(gson.fromJson(data.get("worldName"), String.class)));
+            double x = gson.fromJson(data.get("x"), Double.TYPE);
+            double y = gson.fromJson(data.get("y"), Double.TYPE);
+            double z = gson.fromJson(data.get("z"), Double.TYPE);
+            return new Location(world, x, y, z);
+        }
+        return null;
     }
 
 }
