@@ -97,7 +97,12 @@ public class MedievalFactions extends AbstractPonderPlugin {
     }
 
     public boolean isVersionMismatched() {
-        return !getConfig().getString("version").equalsIgnoreCase(getVersion());
+        String configVersion = getConfig().getString("version");
+        if (configVersion == null || this.getVersion() == null) {
+            return true;
+        } else {
+            return !configVersion.equalsIgnoreCase(this.getVersion());
+        }
     }
 
     public MedievalFactionsAPI getAPI() {
