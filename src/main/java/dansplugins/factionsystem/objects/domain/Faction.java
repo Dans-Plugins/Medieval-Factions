@@ -51,11 +51,6 @@ public class Faction extends Nation implements IFaction, Feudal, Savable {
         flags.initializeFlagValues(); // need to ensure that this doesn't mess up changes to flags being persistent
     }
 
-    @Override
-    public ArrayList<Gate> getGates() {
-    	return gates;
-    }
-
     // Must receive json data
     public Faction(Map<String, String> data) {
         this.load(data);
@@ -231,6 +226,33 @@ public class Faction extends Nation implements IFaction, Feudal, Savable {
         }
     }
 
+    @Override
+    public void addGate(Gate gate) {
+        // TODO: implement
+    }
+
+    @Override
+    public void removeGate(Gate gate) {
+        // TODO: implement
+    }
+
+    @Override
+    public ArrayList<Gate> getGates() {
+        return gates;
+    }
+
+    @Override
+    public boolean hasGateTrigger(Block block) {
+        // TODO: implement
+        return false;
+    }
+
+    @Override
+    public ArrayList<Gate> getGatesForTrigger(Block block) {
+        // TODO: implement
+        return null;
+    }
+
     // end of implementations for IFaction methods ------------------------------
 
 
@@ -240,6 +262,29 @@ public class Faction extends Nation implements IFaction, Feudal, Savable {
     @Override
     public boolean isVassal(String faction) {
         return(containsIgnoreCase(vassals, faction));
+    }
+
+    @Override
+    public boolean isLiege() {
+        // TODO: implement
+        return false;
+    }
+
+    @Override
+    public void setLiege(String newLiege) {
+        // TODO: implement
+    }
+
+    @Override
+    public String getLiege() {
+        // TODO: implement
+        return null;
+    }
+
+    @Override
+    public boolean hasLiege() {
+        // TODO: implement
+        return false;
     }
 
     @Override
@@ -261,11 +306,6 @@ public class Faction extends Nation implements IFaction, Feudal, Savable {
 
 
     // unsorted -----------------------
-
-
-
-
-
 
     @Override
     public boolean addOfficer(UUID newOfficer) {
