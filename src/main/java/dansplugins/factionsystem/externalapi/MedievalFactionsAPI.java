@@ -3,9 +3,9 @@ package dansplugins.factionsystem.externalapi;
 import dansplugins.factionsystem.MedievalFactions;
 import dansplugins.factionsystem.data.EphemeralData;
 import dansplugins.factionsystem.data.PersistentData;
-import dansplugins.factionsystem.services.LocalChunkService;
 import dansplugins.factionsystem.objects.domain.Faction;
 import dansplugins.factionsystem.objects.domain.PowerRecord;
+import dansplugins.factionsystem.services.LocalChunkService;
 import org.bukkit.Chunk;
 import org.bukkit.entity.Player;
 

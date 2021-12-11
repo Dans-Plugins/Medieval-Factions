@@ -1,8 +1,8 @@
 package dansplugins.factionsystem.commands;
 
 import dansplugins.factionsystem.commands.abs.SubCommand;
-import dansplugins.factionsystem.services.LocalLocaleService;
 import dansplugins.factionsystem.objects.domain.Faction;
+import dansplugins.factionsystem.services.LocalLocaleService;
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;

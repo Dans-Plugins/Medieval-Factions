@@ -1,8 +1,8 @@
 package dansplugins.factionsystem;
 
 import dansplugins.factionsystem.integrators.FiefsIntegrator;
-import dansplugins.factionsystem.services.LocalLocaleService;
 import dansplugins.factionsystem.objects.domain.Faction;
+import dansplugins.factionsystem.services.LocalLocaleService;
 import dansplugins.factionsystem.utils.UUIDChecker;
 import dansplugins.fiefs.externalapi.FI_Fief;
 import org.bukkit.Bukkit;

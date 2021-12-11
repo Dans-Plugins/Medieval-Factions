@@ -2,12 +2,12 @@ package dansplugins.factionsystem.integrators;
 
 import dansplugins.factionsystem.MedievalFactions;
 import dansplugins.factionsystem.data.PersistentData;
-import dansplugins.factionsystem.services.LocalChunkService;
-import dansplugins.factionsystem.services.LocalLocaleService;
 import dansplugins.factionsystem.objects.domain.ClaimedChunk;
 import dansplugins.factionsystem.objects.domain.Faction;
 import dansplugins.factionsystem.objects.domain.PowerRecord;
 import dansplugins.factionsystem.objects.helper.ChunkFlags;
+import dansplugins.factionsystem.services.LocalChunkService;
+import dansplugins.factionsystem.services.LocalLocaleService;
 import dansplugins.factionsystem.utils.Logger;
 import dansplugins.factionsystem.utils.UUIDChecker;
 import org.bukkit.plugin.Plugin;
