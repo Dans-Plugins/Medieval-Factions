@@ -146,8 +146,8 @@ public class ChunkManager {
                 return;
             }
 
-            // if not at war with target faction and inactive claiming isn't possible
-            if (!claimantsFaction.isEnemy(targetFaction.getName()) && !everyPlayerInFactionExperiencingPowerDecay(targetFaction)) {
+            // if not at war with target faction or inactive claiming isn't possible
+            if (!claimantsFaction.isEnemy(targetFaction.getName()) || !everyPlayerInFactionExperiencingPowerDecay(targetFaction)) {
                 claimant.sendMessage(ChatColor.RED + LocaleManager.getInstance().getText("MustBeAtWarOrFactionMustBeInactive"));
                 return;
             }

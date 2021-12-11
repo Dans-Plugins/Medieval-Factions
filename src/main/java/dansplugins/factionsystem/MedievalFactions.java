@@ -19,7 +19,7 @@ public class MedievalFactions extends JavaPlugin {
 
     private static MedievalFactions instance;
 
-    private final String version = "v4.4-beta-2";
+    private final String pluginVersion = "v" + getDescription().getVersion();
 
     public static MedievalFactions getInstance() {
         return instance;
@@ -82,7 +82,7 @@ public class MedievalFactions extends JavaPlugin {
     }
 
     public String getVersion() {
-        return version;
+        return pluginVersion;
     }
 
     public boolean isVersionMismatched() {
