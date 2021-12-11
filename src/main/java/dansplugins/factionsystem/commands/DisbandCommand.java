@@ -4,7 +4,7 @@ import dansplugins.factionsystem.commands.abs.SubCommand;
 import dansplugins.factionsystem.data.PersistentData;
 import dansplugins.factionsystem.events.FactionDisbandEvent;
 import dansplugins.factionsystem.integrators.DynmapIntegrator;
-import dansplugins.factionsystem.managers.ChunkManager;
+import dansplugins.factionsystem.services.LocalChunkService;
 import dansplugins.factionsystem.objects.domain.Faction;
 import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
@@ -87,7 +87,7 @@ public class DisbandCommand extends SubCommand {
         }
 
         // remove claimed land objects associated with this faction
-        ChunkManager.getInstance().removeAllClaimedChunks(nameOfFactionToRemove, PersistentData.getInstance().getClaimedChunks());
+        LocalChunkService.getInstance().removeAllClaimedChunks(nameOfFactionToRemove, PersistentData.getInstance().getClaimedChunks());
         DynmapIntegrator.getInstance().updateClaims();
 
         // remove locks associated with this faction

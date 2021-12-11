@@ -1,4 +1,4 @@
-package dansplugins.factionsystem.managers;
+package dansplugins.factionsystem.services;
 
 import net.md_5.bungee.api.ChatMessageType;
 import net.md_5.bungee.api.chat.TextComponent;
@@ -10,18 +10,18 @@ import java.util.HashMap;
 import java.util.Map;
 
 
-public class ActionBarManager {
-    private static ActionBarManager instance;
+public class LocalActionBarService {
+    private static LocalActionBarService instance;
     private final Map<Player, TextComponent> playerActionBarMessages = new HashMap<Player, TextComponent>();
 
-    private ActionBarManager(Plugin plugin) {
+    private LocalActionBarService(Plugin plugin) {
         Bukkit.getScheduler().scheduleSyncRepeatingTask(plugin,
                 this::sendPlayerActionBarMessages, 5, 20);
     }
 
-    public static ActionBarManager getInstance(Plugin plugin) {
+    public static LocalActionBarService getInstance(Plugin plugin) {
         if (instance == null) {
-            instance = new ActionBarManager(plugin);
+            instance = new LocalActionBarService(plugin);
         }
         return instance;
     }

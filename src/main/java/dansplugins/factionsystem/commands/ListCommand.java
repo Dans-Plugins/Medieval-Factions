@@ -1,7 +1,7 @@
 package dansplugins.factionsystem.commands;
 
 import dansplugins.factionsystem.commands.abs.SubCommand;
-import dansplugins.factionsystem.managers.LocaleManager;
+import dansplugins.factionsystem.services.LocalLocaleService;
 import dansplugins.factionsystem.objects.domain.Faction;
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
@@ -50,7 +50,7 @@ public class ListCommand extends SubCommand {
                 .map(fac -> new SortableFaction(fac, fac.getCumulativePowerLevel()))
                 .sorted() // Sort the Factions by Power.
                 .collect(Collectors.toList());
-        sender.sendMessage(ChatColor.AQUA + LocaleManager.getInstance().getText("ListLegend"));
+        sender.sendMessage(ChatColor.AQUA + LocalLocaleService.getInstance().getText("ListLegend"));
         sender.sendMessage(ChatColor.AQUA + "-----");
         for (SortableFaction sortableFaction : sortedFactionList) {
             final Faction temp = sortableFaction.getFaction();

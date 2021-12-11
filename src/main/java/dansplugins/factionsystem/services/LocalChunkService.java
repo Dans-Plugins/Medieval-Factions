@@ -1,4 +1,4 @@
-package dansplugins.factionsystem.managers;
+package dansplugins.factionsystem.services;
 
 import dansplugins.factionsystem.MedievalFactions;
 import dansplugins.factionsystem.Messenger;
@@ -20,17 +20,17 @@ import java.util.*;
 import static org.bukkit.Bukkit.getServer;
 import static org.bukkit.Material.LADDER;
 
-public class ChunkManager {
+public class LocalChunkService {
 
-    private static ChunkManager instance;
+    private static LocalChunkService instance;
 
-    private ChunkManager() {
+    private LocalChunkService() {
 
     }
 
-    public static ChunkManager getInstance() {
+    public static LocalChunkService getInstance() {
         if (instance == null) {
-            instance = new ChunkManager();
+            instance = new LocalChunkService();
         }
         return instance;
     }
@@ -61,7 +61,7 @@ public class ChunkManager {
     public void radiusUnclaimAtLocation(int radius, Player player, Faction faction) {
         final int maxChunksUnclaimable = 999;
         if (radius<=0||radius> maxChunksUnclaimable) {
-            final LocaleManager instance = LocaleManager.getInstance();
+            final LocalLocaleService instance = LocalLocaleService.getInstance();
             player.sendMessage(ChatColor.RED + String.format(instance.getText("RadiusRequirement"), maxChunksUnclaimable));
             return;
         }
@@ -75,7 +75,7 @@ public class ChunkManager {
     public void radiusClaimAtLocation(int depth, Player claimant, Location location, Faction claimantsFaction) {
         int maxClaimRadius = MedievalFactions.getInstance().getConfig().getInt("maxClaimRadius");
         if (depth < 0 || depth > maxClaimRadius) {
-            claimant.sendMessage(ChatColor.RED + String.format(LocaleManager.getInstance().getText("RadiusRequirement"), maxClaimRadius));
+            claimant.sendMessage(ChatColor.RED + String.format(LocalLocaleService.getInstance().getText("RadiusRequirement"), maxClaimRadius));
             return;
         }
         if (depth == 0) {
@@ -126,10 +126,10 @@ public class ChunkManager {
     private void claimChunkAtLocation(Player claimant, double[] chunkCoords, World world, Faction claimantsFaction) {
 
         // if demesne limit enabled
-        if (ConfigManager.getInstance().getBoolean("limitLand")) {
+        if (LocalConfigService.getInstance().getBoolean("limitLand")) {
             // if at demesne limit
             if (!(getChunksClaimedByFaction(claimantsFaction.getName(), PersistentData.getInstance().getClaimedChunks()) < claimantsFaction.getCumulativePowerLevel())) {
-                claimant.sendMessage(ChatColor.RED + LocaleManager.getInstance().getText("AlertReachedDemesne"));
+                claimant.sendMessage(ChatColor.RED + LocalLocaleService.getInstance().getText("AlertReachedDemesne"));
                 return;
             }
         }
@@ -142,20 +142,20 @@ public class ChunkManager {
 
             // if holder is player's faction
             if (targetFaction.getName().equalsIgnoreCase(claimantsFaction.getName()) && !claimantsFaction.getAutoClaimStatus()) {
-                claimant.sendMessage(ChatColor.RED + LocaleManager.getInstance().getText("LandAlreadyClaimedByYourFaction"));
+                claimant.sendMessage(ChatColor.RED + LocalLocaleService.getInstance().getText("LandAlreadyClaimedByYourFaction"));
                 return;
             }
 
             // if not at war with target faction or inactive claiming isn't possible
             if (!claimantsFaction.isEnemy(targetFaction.getName()) || !everyPlayerInFactionExperiencingPowerDecay(targetFaction)) {
-                claimant.sendMessage(ChatColor.RED + LocaleManager.getInstance().getText("MustBeAtWarOrFactionMustBeInactive"));
+                claimant.sendMessage(ChatColor.RED + LocalLocaleService.getInstance().getText("MustBeAtWarOrFactionMustBeInactive"));
                 return;
             }
 
             // surrounded chunk protection check
             if (MedievalFactions.getInstance().getConfig().getBoolean("surroundedChunksProtected")) {
                 if (isClaimedChunkSurroundedByChunksClaimedBySameFaction(chunk)) {
-                    claimant.sendMessage(ChatColor.RED + LocaleManager.getInstance().getText("SurroundedChunkProtected"));
+                    claimant.sendMessage(ChatColor.RED + LocalLocaleService.getInstance().getText("SurroundedChunkProtected"));
                     return;
                 }
             }
@@ -165,7 +165,7 @@ public class ChunkManager {
 
             // if target faction does not have more land than their demesne limit
             if (!(targetFactionsCumulativePowerLevel < chunksClaimedByTargetFaction)) {
-                claimant.sendMessage(ChatColor.RED + LocaleManager.getInstance().getText("TargetFactionNotOverClaiming"));
+                claimant.sendMessage(ChatColor.RED + LocalLocaleService.getInstance().getText("TargetFactionNotOverClaiming"));
                 return;
             }
 
@@ -188,9 +188,9 @@ public class ChunkManager {
 
                 Chunk toClaim = world.getChunkAt((int) chunkCoords[0], (int) chunkCoords[1]);
                 addClaimedChunk(toClaim, claimantsFaction, claimant.getWorld());
-                claimant.sendMessage(ChatColor.GREEN + String.format(LocaleManager.getInstance().getText("AlertLandConqueredFromAnotherFaction"), targetFaction.getName(), getChunksClaimedByFaction(claimantsFaction.getName(), PersistentData.getInstance().getClaimedChunks()), claimantsFaction.getCumulativePowerLevel()));
+                claimant.sendMessage(ChatColor.GREEN + String.format(LocalLocaleService.getInstance().getText("AlertLandConqueredFromAnotherFaction"), targetFaction.getName(), getChunksClaimedByFaction(claimantsFaction.getName(), PersistentData.getInstance().getClaimedChunks()), claimantsFaction.getCumulativePowerLevel()));
 
-                Messenger.getInstance().sendAllPlayersInFactionMessage(targetFaction, ChatColor.RED + String.format(LocaleManager.getInstance().getText("AlertLandConqueredFromYourFaction"), claimantsFaction.getName()));
+                Messenger.getInstance().sendAllPlayersInFactionMessage(targetFaction, ChatColor.RED + String.format(LocalLocaleService.getInstance().getText("AlertLandConqueredFromYourFaction"), claimantsFaction.getName()));
             }
         }
         else {
@@ -201,7 +201,7 @@ public class ChunkManager {
             if (!claimEvent.isCancelled()) {
                 // chunk not already claimed
                 addClaimedChunk(toClaim, claimantsFaction, claimant.getWorld());
-                claimant.sendMessage(ChatColor.GREEN + String.format(LocaleManager.getInstance().getText("AlertLandClaimed"), getChunksClaimedByFaction(claimantsFaction.getName(), PersistentData.getInstance().getClaimedChunks()), claimantsFaction.getCumulativePowerLevel()));
+                claimant.sendMessage(ChatColor.GREEN + String.format(LocalLocaleService.getInstance().getText("AlertLandClaimed"), getChunksClaimedByFaction(claimantsFaction.getName(), PersistentData.getInstance().getClaimedChunks()), claimantsFaction.getCumulativePowerLevel()));
             }
         }
     }
@@ -274,10 +274,10 @@ public class ChunkManager {
             ClaimedChunk chunk = isChunkClaimed(playerCoords[0], playerCoords[1], player.getLocation().getWorld().getName());
             if (chunk != null) {
                 removeChunk(chunk, player, PersistentData.getInstance().getFaction(chunk.getHolder()));
-                player.sendMessage(ChatColor.GREEN + LocaleManager.getInstance().getText("LandClaimedUsingAdminBypass"));
+                player.sendMessage(ChatColor.GREEN + LocalLocaleService.getInstance().getText("LandClaimedUsingAdminBypass"));
                 return;
             }
-            player.sendMessage(ChatColor.RED + LocaleManager.getInstance().getText("LandNotCurrentlyClaimed"));
+            player.sendMessage(ChatColor.RED + LocalLocaleService.getInstance().getText("LandNotCurrentlyClaimed"));
             return;
         }
 
@@ -288,11 +288,11 @@ public class ChunkManager {
             // if holder is player's faction
             if (chunk.getHolder().equalsIgnoreCase(playersFaction.getName())) {
                 removeChunk(chunk, player, playersFaction);
-                player.sendMessage(ChatColor.GREEN + LocaleManager.getInstance().getText("LandUnclaimed"));
+                player.sendMessage(ChatColor.GREEN + LocalLocaleService.getInstance().getText("LandUnclaimed"));
                 return;
             }
             else {
-                player.sendMessage(ChatColor.RED + String.format(LocaleManager.getInstance().getText("LandClaimedBy"), chunk.getHolder()));
+                player.sendMessage(ChatColor.RED + String.format(LocalLocaleService.getInstance().getText("LandClaimedBy"), chunk.getHolder()));
                 return;
             }
         }
@@ -315,7 +315,7 @@ public class ChunkManager {
                     && chunk.getWorld().equalsIgnoreCase(player.getLocation().getWorld().getName())) {
                 // remove faction home
                 faction.setFactionHome(null);
-                Messenger.getInstance().sendAllPlayersInFactionMessage(faction, ChatColor.RED + LocaleManager.getInstance().getText("AlertFactionHomeRemoved"));
+                Messenger.getInstance().sendAllPlayersInFactionMessage(faction, ChatColor.RED + LocalLocaleService.getInstance().getText("AlertFactionHomeRemoved"));
 
             }
         }
@@ -452,7 +452,7 @@ public class ChunkManager {
                     itr.remove();
                 }
                 catch(Exception e) {
-                    System.out.println(LocaleManager.getInstance().getText("ErrorClaimedChunkRemoval"));
+                    System.out.println(LocalLocaleService.getInstance().getText("ErrorClaimedChunkRemoval"));
                 }
             }
         }
@@ -466,7 +466,7 @@ public class ChunkManager {
         Faction faction = PersistentData.getInstance().getPlayersFaction(player.getUniqueId());
         if (faction != null) {
             if (isFactionExceedingTheirDemesneLimit(faction, claimedChunks)) {
-                player.sendMessage(ChatColor.RED + LocaleManager.getInstance().getText("AlertMoreClaimedChunksThanPower"));
+                player.sendMessage(ChatColor.RED + LocalLocaleService.getInstance().getText("AlertMoreClaimedChunksThanPower"));
             }
         }
     }

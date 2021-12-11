@@ -3,9 +3,9 @@ package dansplugins.factionsystem.eventhandlers;
 import dansplugins.factionsystem.MedievalFactions;
 import dansplugins.factionsystem.data.EphemeralData;
 import dansplugins.factionsystem.data.PersistentData;
-import dansplugins.factionsystem.managers.ChunkManager;
-import dansplugins.factionsystem.managers.ConfigManager;
-import dansplugins.factionsystem.managers.LocaleManager;
+import dansplugins.factionsystem.services.LocalChunkService;
+import dansplugins.factionsystem.services.LocalConfigService;
+import dansplugins.factionsystem.services.LocalLocaleService;
 import dansplugins.factionsystem.objects.domain.ClaimedChunk;
 import dansplugins.factionsystem.objects.domain.Duel;
 import dansplugins.factionsystem.objects.domain.Faction;
@@ -127,7 +127,7 @@ public class DamageEffectsAndDeathHandler implements Listener {
 
             if (location != null) {
                 Chunk chunk = location.getChunk();
-                ClaimedChunk claimedChunk = ChunkManager.getInstance().getClaimedChunk(chunk);
+                ClaimedChunk claimedChunk = LocalChunkService.getInstance().getClaimedChunk(chunk);
 
                 // if chunk is not claimed, return
                 if (claimedChunk == null) {
@@ -163,13 +163,13 @@ public class DamageEffectsAndDeathHandler implements Listener {
             boolean friendlyFireAllowed = (boolean) faction.getFlags().getFlag("allowfriendlyFire");
             if (!friendlyFireAllowed) {
                 event.setCancelled(true);
-                attacker.sendMessage(ChatColor.RED + LocaleManager.getInstance().getText("CannotAttackFactionMember"));
+                attacker.sendMessage(ChatColor.RED + LocalLocaleService.getInstance().getText("CannotAttackFactionMember"));
             }
         }
         else if (arePlayersFactionsNotEnemies(attacker, victim)) { // if attacker's faction and victim's faction are not at war
             if (MedievalFactions.getInstance().getConfig().getBoolean("warsRequiredForPVP")) {
                 event.setCancelled(true);
-                attacker.sendMessage(ChatColor.RED + LocaleManager.getInstance().getText("CannotAttackNonWarringPlayer"));
+                attacker.sendMessage(ChatColor.RED + LocalLocaleService.getInstance().getText("CannotAttackNonWarringPlayer"));
             }
         }
     }
@@ -292,13 +292,13 @@ public class DamageEffectsAndDeathHandler implements Listener {
         event.getEntity();
         Player player = event.getEntity();
 
-        if (ConfigManager.getInstance().getBoolean("playersLosePowerOnDeath")) {
+        if (LocalConfigService.getInstance().getBoolean("playersLosePowerOnDeath")) {
             // decrease dying player's power
             for (PowerRecord record : PersistentData.getInstance().getPlayerPowerRecords()) {
                 if (record.getPlayerUUID().equals(player.getUniqueId())) {
                     record.decreasePowerByTenPercent();
                     if (PersistentData.getInstance().getPlayersPowerRecord(player.getUniqueId()).getPowerLevel() > 0) {
-                        player.sendMessage(ChatColor.RED + LocaleManager.getInstance().getText("AlertPowerLevelDecreased"));
+                        player.sendMessage(ChatColor.RED + LocalLocaleService.getInstance().getText("AlertPowerLevelDecreased"));
                     }
                 }
             }
@@ -311,7 +311,7 @@ public class DamageEffectsAndDeathHandler implements Listener {
             PowerRecord record = PersistentData.getInstance().getPlayersPowerRecord(killer.getUniqueId());
             if (record != null) {
                 if (record.increasePowerByTenPercent()){
-                    killer.sendMessage(ChatColor.GREEN + LocaleManager.getInstance().getText("PowerLevelHasIncreased"));
+                    killer.sendMessage(ChatColor.GREEN + LocalLocaleService.getInstance().getText("PowerLevelHasIncreased"));
                 }
             }
         }
@@ -325,9 +325,9 @@ public class DamageEffectsAndDeathHandler implements Listener {
             playerCoords[1] = player.getLocation().getChunk().getZ();
 
             // check if land is claimed
-            if (ChunkManager.getInstance().isClaimed(player.getLocation().getChunk(), PersistentData.getInstance().getClaimedChunks()))
+            if (LocalChunkService.getInstance().isClaimed(player.getLocation().getChunk(), PersistentData.getInstance().getClaimedChunks()))
             {
-                ClaimedChunk chunk = ChunkManager.getInstance().getClaimedChunk(player.getLocation().getChunk());
+                ClaimedChunk chunk = LocalChunkService.getInstance().getClaimedChunk(player.getLocation().getChunk());
                 // if holder is player's faction
                 if (chunk.getHolder().equalsIgnoreCase(PersistentData.getInstance().getPlayersFaction(player.getUniqueId()).getName()) && PersistentData.getInstance().getPlayersFaction(player.getUniqueId()).getAutoClaimStatus() == false) {
 

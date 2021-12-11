@@ -1,22 +1,22 @@
-package dansplugins.factionsystem.managers;
+package dansplugins.factionsystem.services;
 
 import dansplugins.factionsystem.MedievalFactions;
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.configuration.file.FileConfiguration;
 
-public class ConfigManager {
+public class LocalConfigService {
 
-    private static ConfigManager instance;
+    private static LocalConfigService instance;
     private boolean altered = false;
 
-    private ConfigManager() {
+    private LocalConfigService() {
 
     }
 
-    public static ConfigManager getInstance() {
+    public static LocalConfigService getInstance() {
         if (instance == null) {
-            instance = new ConfigManager();
+            instance = new LocalConfigService();
         }
         return instance;
     }
@@ -179,7 +179,7 @@ public class ConfigManager {
         if (getConfig().isSet(option)) {
 
             if (option.equalsIgnoreCase("version")) {
-                sender.sendMessage(ChatColor.RED + LocaleManager.getInstance().getText("CannotSetVersion"));
+                sender.sendMessage(ChatColor.RED + LocalLocaleService.getInstance().getText("CannotSetVersion"));
                 return;
             }
             else if (option.equalsIgnoreCase("initialMaxPowerLevel") || option.equalsIgnoreCase("initialPowerLevel")
@@ -197,7 +197,7 @@ public class ConfigManager {
                     || option.equalsIgnoreCase("maxClaimRadius"))
             {
                 getConfig().set(option, Integer.parseInt(value));
-                sender.sendMessage(ChatColor.GREEN + LocaleManager.getInstance().getText("IntegerSet"));
+                sender.sendMessage(ChatColor.GREEN + LocalLocaleService.getInstance().getText("IntegerSet"));
             }
             else if (option.equalsIgnoreCase("mobsSpawnInFactionTerritory")
                     || option.equalsIgnoreCase("laddersPlaceableInEnemyFactionTerritory")
@@ -221,20 +221,20 @@ public class ConfigManager {
                     || option.equalsIgnoreCase("factionsCanSetPrefixColors")
                     || option.equalsIgnoreCase("playersLosePowerOnDeath")) {
                 getConfig().set(option, Boolean.parseBoolean(value));
-                sender.sendMessage(ChatColor.GREEN + LocaleManager.getInstance().getText("BooleanSet"));
+                sender.sendMessage(ChatColor.GREEN + LocalLocaleService.getInstance().getText("BooleanSet"));
             }
             else if (option.equalsIgnoreCase("factionOwnerMultiplier")
                     || option.equalsIgnoreCase("factionOfficerMultiplier")
                     || option.equalsIgnoreCase("vassalContributionPercentageMultiplier")){
                 getConfig().set(option, Double.parseDouble(value));
-                sender.sendMessage(ChatColor.GREEN + LocaleManager.getInstance().getText("DoubleSet"));
+                sender.sendMessage(ChatColor.GREEN + LocalLocaleService.getInstance().getText("DoubleSet"));
             }
             else {
                 getConfig().set(option, value);
-                sender.sendMessage(ChatColor.GREEN + LocaleManager.getInstance().getText("StringSet"));
+                sender.sendMessage(ChatColor.GREEN + LocalLocaleService.getInstance().getText("StringSet"));
 
                 if (option.equalsIgnoreCase("languageid")) {
-                    LocaleManager.getInstance().reloadStrings();
+                    LocalLocaleService.getInstance().reloadStrings();
                 }
             }
 
@@ -243,7 +243,7 @@ public class ConfigManager {
             altered = true;
         }
         else {
-            sender.sendMessage(ChatColor.RED + String.format(LocaleManager.getInstance().getText("WasntFound"), option));
+            sender.sendMessage(ChatColor.RED + String.format(LocalLocaleService.getInstance().getText("WasntFound"), option));
         }
 
     }
@@ -295,7 +295,7 @@ public class ConfigManager {
     }
 
     public void sendPageOneOfConfigList(CommandSender sender) {
-        sender.sendMessage(ChatColor.AQUA + LocaleManager.getInstance().getText("ConfigListPageOne"));
+        sender.sendMessage(ChatColor.AQUA + LocalLocaleService.getInstance().getText("ConfigListPageOne"));
         sender.sendMessage(ChatColor.AQUA + "version: " + getConfig().getString("version")
                 + ", languageid: " + getConfig().getString("languageid")
                 + ", debugMode: " + getConfig().getBoolean("debugMode")
@@ -319,7 +319,7 @@ public class ConfigManager {
     }
 
     public void sendPageTwoOfConfigList(CommandSender sender) {
-        sender.sendMessage(ChatColor.AQUA + LocaleManager.getInstance().getText("ConfigListPageTwo"));
+        sender.sendMessage(ChatColor.AQUA + LocalLocaleService.getInstance().getText("ConfigListPageTwo"));
         sender.sendMessage(ChatColor.AQUA+ "factionMaxGateArea: " + getConfig().getInt("factionMaxGateArea")
                 + ", surroundedChunksProtected: " + getConfig().getBoolean("surroundedChunksProtected")
                 + ", zeroPowerFactionsGetDisbanded: " + getConfig().getBoolean("zeroPowerFactionsGetDisbanded")

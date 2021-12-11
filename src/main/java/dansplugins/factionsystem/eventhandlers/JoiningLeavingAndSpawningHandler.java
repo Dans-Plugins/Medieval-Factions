@@ -5,9 +5,9 @@ import dansplugins.factionsystem.Messenger;
 import dansplugins.factionsystem.data.EphemeralData;
 import dansplugins.factionsystem.data.PersistentData;
 import dansplugins.factionsystem.events.FactionJoinEvent;
-import dansplugins.factionsystem.managers.ActionBarManager;
-import dansplugins.factionsystem.managers.ChunkManager;
-import dansplugins.factionsystem.managers.LocaleManager;
+import dansplugins.factionsystem.services.LocalActionBarService;
+import dansplugins.factionsystem.services.LocalChunkService;
+import dansplugins.factionsystem.services.LocalLocaleService;
 import dansplugins.factionsystem.objects.domain.ActivityRecord;
 import dansplugins.factionsystem.objects.domain.Faction;
 import dansplugins.factionsystem.objects.domain.PowerRecord;
@@ -49,9 +49,9 @@ public class JoiningLeavingAndSpawningHandler implements Listener {
 						// TODO Locale Message
 						return;
 					}
-					Messenger.getInstance().sendAllPlayersInFactionMessage(faction, String.format(ChatColor.GREEN + "" + LocaleManager.getInstance().getText("HasJoined"), player.getName(), faction.getName()));
+					Messenger.getInstance().sendAllPlayersInFactionMessage(faction, String.format(ChatColor.GREEN + "" + LocalLocaleService.getInstance().getText("HasJoined"), player.getName(), faction.getName()));
 					faction.addMember(player.getUniqueId());
-					player.sendMessage(ChatColor.GREEN + "" + LocaleManager.getInstance().getText("AssignedToRandomFaction"));
+					player.sendMessage(ChatColor.GREEN + "" + LocalLocaleService.getInstance().getText("AssignedToRandomFaction"));
 
 					Logger.getInstance().log(player.getName() + " has been randomly assigned to " + faction.getName() + "!");
 				}
@@ -77,11 +77,11 @@ public class JoiningLeavingAndSpawningHandler implements Listener {
         		
         		if (record.getLastLogout() != null) {
         			if (record.getMinutesSinceLastLogout() > 1) {
-						player.sendMessage(ChatColor.GREEN + String.format(LocaleManager.getInstance().getText("WelcomeBackLastLogout"), event.getPlayer().getName(), record.getTimeSinceLastLogout()));
+						player.sendMessage(ChatColor.GREEN + String.format(LocalLocaleService.getInstance().getText("WelcomeBackLastLogout"), event.getPlayer().getName(), record.getTimeSinceLastLogout()));
         			}
         		}
         		if (record.getPowerLost() > 0) {
-					player.sendMessage(ChatColor.RED + String.format(LocaleManager.getInstance().getText("PowerHasDecayed"), record.getPowerLost(), newPower));
+					player.sendMessage(ChatColor.RED + String.format(LocalLocaleService.getInstance().getText("PowerHasDecayed"), record.getPowerLost(), newPower));
         		}
         		record.setPowerLost(0);
         	}
@@ -89,7 +89,7 @@ public class JoiningLeavingAndSpawningHandler implements Listener {
 
         setPlayerActionBarTerritoryInfo(event.getPlayer());
 
-        ChunkManager.getInstance().informPlayerIfTheirLandIsInDanger(player, PersistentData.getInstance().getFactions(), PersistentData.getInstance().getClaimedChunks());
+        LocalChunkService.getInstance().informPlayerIfTheirLandIsInDanger(player, PersistentData.getInstance().getFactions(), PersistentData.getInstance().getClaimedChunks());
 
         informPlayerIfTheirFactionIsWeakened(player);
     }
@@ -97,8 +97,8 @@ public class JoiningLeavingAndSpawningHandler implements Listener {
     private void setPlayerActionBarTerritoryInfo(Player player) {
 		if(MedievalFactions.getInstance().getConfig().getBoolean("territoryIndicatorActionbar")) {
 			// if chunk is claimed
-			if (ChunkManager.getInstance().isClaimed(player.getLocation().getChunk(), PersistentData.getInstance().getClaimedChunks())) {
-				String factionName = ChunkManager.getInstance().getClaimedChunk(player.getLocation().getChunk()).getHolder();
+			if (LocalChunkService.getInstance().isClaimed(player.getLocation().getChunk(), PersistentData.getInstance().getClaimedChunks())) {
+				String factionName = LocalChunkService.getInstance().getClaimedChunk(player.getLocation().getChunk()).getHolder();
 				Faction holder = PersistentData.getInstance().getFaction(factionName);
 				TerritoryOwnerNotifier.getInstance().sendPlayerTerritoryAlert(player, holder);
 				return;
@@ -118,7 +118,7 @@ public class JoiningLeavingAndSpawningHandler implements Listener {
 
 		if (playersFaction.isLiege()) {
 			if (playersFaction.isWeakened()) {
-				player.sendMessage(ChatColor.RED + LocaleManager.getInstance().getText("AlertFactionIsWeakened"));
+				player.sendMessage(ChatColor.RED + LocalLocaleService.getInstance().getText("AlertFactionIsWeakened"));
 			}
 		}
 	}
@@ -171,7 +171,7 @@ public class JoiningLeavingAndSpawningHandler implements Listener {
 			record.setLastLogout(ZonedDateTime.now());
 		}
 
-		ActionBarManager.getInstance(MedievalFactions.getInstance()).clearPlayerActionBar(event.getPlayer());
+		LocalActionBarService.getInstance(MedievalFactions.getInstance()).clearPlayerActionBar(event.getPlayer());
 	}
 
 	@EventHandler()
@@ -184,7 +184,7 @@ public class JoiningLeavingAndSpawningHandler implements Listener {
 		z = event.getEntity().getLocation().getChunk().getZ();
 
 		// check if land is claimed
-		if (ChunkManager.getInstance().isClaimed(event.getLocation().getChunk(), PersistentData.getInstance().getClaimedChunks()))
+		if (LocalChunkService.getInstance().isClaimed(event.getLocation().getChunk(), PersistentData.getInstance().getClaimedChunks()))
 		{
 			if (event.getEntity() instanceof Monster && !MedievalFactions.getInstance().getConfig().getBoolean("mobsSpawnInFactionTerritory")) {
 				event.setCancelled(true);

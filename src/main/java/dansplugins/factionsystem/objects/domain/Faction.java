@@ -5,7 +5,7 @@ import com.google.gson.GsonBuilder;
 import com.google.gson.reflect.TypeToken;
 import dansplugins.factionsystem.MedievalFactions;
 import dansplugins.factionsystem.data.PersistentData;
-import dansplugins.factionsystem.managers.LocaleManager;
+import dansplugins.factionsystem.services.LocalLocaleService;
 import dansplugins.factionsystem.objects.domain.specification.IFaction;
 import dansplugins.factionsystem.objects.helper.FactionFlags;
 import dansplugins.factionsystem.objects.inherited.Nation;
@@ -130,7 +130,7 @@ public class Faction extends Nation implements IFaction, Feudal, Savable {
                 powerLevel += PersistentData.getInstance().getPlayersPowerRecord(playerUUID).getPowerLevel();
             }
             catch (Exception e) {
-                System.out.println(LocaleManager.getInstance().getText("ErrorPlayerPowerRecordForUUIDNotFound"));
+                System.out.println(LocalLocaleService.getInstance().getText("ErrorPlayerPowerRecordForUUIDNotFound"));
             }
         }
         return powerLevel;
@@ -173,7 +173,7 @@ public class Faction extends Nation implements IFaction, Feudal, Savable {
             }
             catch (Exception e)
             {
-                System.out.println(LocaleManager.getInstance().getText("ErrorPlayerPowerRecordForUUIDNotFound"));
+                System.out.println(LocalLocaleService.getInstance().getText("ErrorPlayerPowerRecordForUUIDNotFound"));
             }
         }
         return maxPower;
@@ -485,7 +485,7 @@ public class Faction extends Nation implements IFaction, Feudal, Savable {
         }
         else
         {
-            System.out.println(LocaleManager.getInstance().getText("MissingFactionGatesJSONCollection"));
+            System.out.println(LocalLocaleService.getInstance().getText("MissingFactionGatesJSONCollection"));
         }
 
         flags.setIntegerValues(gson.fromJson(data.getOrDefault("integerFlagValues", "[]"), stringToIntegerMapType));

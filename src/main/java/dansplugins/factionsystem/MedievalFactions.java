@@ -2,20 +2,28 @@ package dansplugins.factionsystem;
 
 import dansplugins.factionsystem.bstats.Metrics;
 import dansplugins.factionsystem.data.PersistentData;
+import dansplugins.factionsystem.eventhandlers.*;
 import dansplugins.factionsystem.externalapi.MedievalFactionsAPI;
 import dansplugins.factionsystem.integrators.DynmapIntegrator;
-import dansplugins.factionsystem.managers.ConfigManager;
-import dansplugins.factionsystem.managers.LocaleManager;
-import dansplugins.factionsystem.managers.StorageManager;
+import dansplugins.factionsystem.services.LocalConfigService;
+import dansplugins.factionsystem.services.LocalLocaleService;
+import dansplugins.factionsystem.services.LocalStorageService;
 import dansplugins.factionsystem.placeholders.PlaceholderAPI;
 import org.bukkit.Bukkit;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
-import org.bukkit.plugin.java.JavaPlugin;
+import org.bukkit.event.Listener;
+import preponderous.ponder.AbstractPonderPlugin;
+import preponderous.ponder.misc.PonderAPI_Integrator;
 
 import java.io.File;
+import java.util.ArrayList;
+import java.util.Arrays;
 
-public class MedievalFactions extends JavaPlugin {
+/**
+ * @author Daniel Stephenson
+ */
+public class MedievalFactions extends AbstractPonderPlugin {
 
     private static MedievalFactions instance;
 
@@ -29,29 +37,32 @@ public class MedievalFactions extends JavaPlugin {
     public void onEnable() {
         instance = this;
 
+        ponderAPI_integrator = new PonderAPI_Integrator(this);
+        toolbox = getPonderAPI().getToolbox();
+
         // create/load config
         if (!(new File("./plugins/MedievalFactions/config.yml").exists())) {
-            ConfigManager.getInstance().saveConfigDefaults();
+            LocalConfigService.getInstance().saveConfigDefaults();
         }
         else {
             // pre load compatibility checks
             if (isVersionMismatched()) {
-                ConfigManager.getInstance().handleVersionMismatch();
+                LocalConfigService.getInstance().handleVersionMismatch();
             }
             reloadConfig();
         }
 
         // load strings and save files
-        LocaleManager.getInstance().loadStrings();
-        StorageManager.getInstance().load();
+        LocalLocaleService.getInstance().loadStrings();
+        LocalStorageService.getInstance().load();
 
         // schedule recurring tasks
         Scheduler.getInstance().schedulePowerIncrease();
         Scheduler.getInstance().schedulePowerDecrease();
         Scheduler.getInstance().scheduleAutosave();
 
-        // register events
-        EventRegistry.getInstance().registerEvents();
+        // register event handlers
+        registerEventHandlers();
 
         // make sure every player experiences power decay in case we updated from pre-v3.5
         PersistentData.getInstance().createActivityRecordForEveryOfflinePlayer();
@@ -74,7 +85,7 @@ public class MedievalFactions extends JavaPlugin {
 
     @Override
     public void onDisable() {
-        StorageManager.getInstance().save();
+        LocalStorageService.getInstance().save();
     }
 
     public boolean onCommand(CommandSender sender, Command cmd, String label, String[] args) {
@@ -100,6 +111,17 @@ public class MedievalFactions extends JavaPlugin {
 
     public boolean isDebugEnabled() {
         return getConfig().getBoolean("debugMode");
+    }
+
+    private void registerEventHandlers() {
+        ArrayList<Listener> listeners = new ArrayList<>(Arrays.asList(
+                new ChatHandler(),
+                new DamageEffectsAndDeathHandler(),
+                new InteractionHandler(),
+                new JoiningLeavingAndSpawningHandler(),
+                new MoveHandler()
+        ));
+        getToolbox().getEventHandlerRegistry().registerEventHandlers(listeners, this);
     }
 
 }
