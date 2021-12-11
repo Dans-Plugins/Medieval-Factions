@@ -228,12 +228,12 @@ public class Faction extends Nation implements IFaction, Feudal, Savable {
 
     @Override
     public void addGate(Gate gate) {
-        // TODO: implement
+        gates.add(gate);
     }
 
     @Override
     public void removeGate(Gate gate) {
-        // TODO: implement
+        gates.remove(gate);
     }
 
     @Override
@@ -243,14 +243,29 @@ public class Faction extends Nation implements IFaction, Feudal, Savable {
 
     @Override
     public boolean hasGateTrigger(Block block) {
-        // TODO: implement
+        for(Gate g : gates)
+        {
+            if (g.getTrigger().getX() == block.getX() && g.getTrigger().getY() == block.getY() && g.getTrigger().getZ() == block.getZ() &&
+                    g.getTrigger().getWorld().equalsIgnoreCase(block.getWorld().getName()))
+            {
+                return true;
+            }
+        }
         return false;
     }
 
     @Override
     public ArrayList<Gate> getGatesForTrigger(Block block) {
-        // TODO: implement
-        return null;
+        ArrayList<Gate> gateList = new ArrayList<>();
+        for(Gate g : gates)
+        {
+            if (g.getTrigger().getX() == block.getX() && g.getTrigger().getY() == block.getY() && g.getTrigger().getZ() == block.getZ() &&
+                    g.getTrigger().getWorld().equalsIgnoreCase(block.getWorld().getName()))
+            {
+                gateList.add(g);
+            }
+        }
+        return gateList;
     }
 
     // end of implementations for IFaction methods ------------------------------
@@ -266,25 +281,22 @@ public class Faction extends Nation implements IFaction, Feudal, Savable {
 
     @Override
     public boolean isLiege() {
-        // TODO: implement
-        return false;
+        return vassals.size() > 0;
     }
 
     @Override
     public void setLiege(String newLiege) {
-        // TODO: implement
+        liege = newLiege;
     }
 
     @Override
     public String getLiege() {
-        // TODO: implement
-        return null;
+        return liege;
     }
 
     @Override
     public boolean hasLiege() {
-        // TODO: implement
-        return false;
+        return !liege.equalsIgnoreCase("none");
     }
 
     @Override
