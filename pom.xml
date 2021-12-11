@@ -99,9 +99,10 @@
             <systemPath>${project.basedir}/src/main/resources/Fiefs-v0.8-alpha-1.jar</systemPath>
         </dependency>
         <dependency>
-            <groupId>com.github.Preponderous-Software</groupId>
-            <artifactId>Ponder</artifactId>
+            <groupId>preponderous</groupId>
+            <artifactId>ponder</artifactId>
             <version>v0.8</version>
+            <scope>compile</scope>
         </dependency>
     </dependencies>
 </project>
