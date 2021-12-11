@@ -1,0 +1,1 @@
+mvn install:install-file -Dfile=<path> -DgroupId=preponderous -DartifactId=ponder -Dversion=<version> -Dpackaging=Jar

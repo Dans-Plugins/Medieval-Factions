@@ -2,9 +2,9 @@ package dansplugins.factionsystem;
 
 import dansplugins.factionsystem.data.PersistentData;
 import dansplugins.factionsystem.integrators.DynmapIntegrator;
-import dansplugins.factionsystem.managers.ChunkManager;
-import dansplugins.factionsystem.managers.LocaleManager;
-import dansplugins.factionsystem.managers.StorageManager;
+import dansplugins.factionsystem.services.LocalChunkService;
+import dansplugins.factionsystem.services.LocalLocaleService;
+import dansplugins.factionsystem.services.LocalStorageService;
 import dansplugins.factionsystem.objects.domain.ActivityRecord;
 import dansplugins.factionsystem.objects.domain.Faction;
 import dansplugins.factionsystem.objects.domain.PowerRecord;
@@ -33,32 +33,32 @@ public class Scheduler {
     }
 
     public void scheduleAutosave() {
-        Logger.getInstance().log(LocaleManager.getInstance().getText("SchedulingHourlyAutoSave"));
+        Logger.getInstance().log(LocalLocaleService.getInstance().getText("SchedulingHourlyAutoSave"));
         int delay = 60 * 60; // 1 hour
         int secondsUntilRepeat = 60 * 60; // 1 hour
         Bukkit.getScheduler().scheduleSyncRepeatingTask(MedievalFactions.getInstance(), new Runnable() {
             @Override
             public void run() {
-                System.out.println(LocaleManager.getInstance().getText("HourlySaveAlert"));
-                StorageManager.getInstance().save();
+                System.out.println(LocalLocaleService.getInstance().getText("HourlySaveAlert"));
+                LocalStorageService.getInstance().save();
             }
         }, delay * 20, secondsUntilRepeat * 20);
     }
 
     public void schedulePowerIncrease() {
-        Logger.getInstance().log(LocaleManager.getInstance().getText("SchedulingPowerIncrease"));
+        Logger.getInstance().log(LocalLocaleService.getInstance().getText("SchedulingPowerIncrease"));
         int delay = MedievalFactions.getInstance().getConfig().getInt("minutesBeforeInitialPowerIncrease") * 60; // 30 minutes
         int secondsUntilRepeat = MedievalFactions.getInstance().getConfig().getInt("minutesBetweenPowerIncreases") * 60; // 1 hour
         Bukkit.getScheduler().scheduleSyncRepeatingTask(MedievalFactions.getInstance(), new Runnable() {
             @Override
             public void run() {
-                System.out.println(String.format(LocaleManager.getInstance().getText("AlertIncreasingThePowerOfEveryPlayer"), MedievalFactions.getInstance().getConfig().getInt("powerIncreaseAmount"), MedievalFactions.getInstance().getConfig().getInt("minutesBetweenPowerIncreases")));
+                System.out.println(String.format(LocalLocaleService.getInstance().getText("AlertIncreasingThePowerOfEveryPlayer"), MedievalFactions.getInstance().getConfig().getInt("powerIncreaseAmount"), MedievalFactions.getInstance().getConfig().getInt("minutesBetweenPowerIncreases")));
                 for (PowerRecord powerRecord : PersistentData.getInstance().getPlayerPowerRecords()) {
                     try {
                         if (powerRecord.getPowerLevel() < powerRecord.maxPower()) {
                             if (getServer().getPlayer(powerRecord.getPlayerUUID()).isOnline()) {
                                 powerRecord.increasePower();
-                                getServer().getPlayer(powerRecord.getPlayerUUID()).sendMessage(ChatColor.GREEN + String.format(LocaleManager.getInstance().getText("AlertPowerLevelIncreasedBy"), MedievalFactions.getInstance().getConfig().getInt("powerIncreaseAmount")));
+                                getServer().getPlayer(powerRecord.getPlayerUUID()).sendMessage(ChatColor.GREEN + String.format(LocalLocaleService.getInstance().getText("AlertPowerLevelIncreasedBy"), MedievalFactions.getInstance().getConfig().getInt("powerIncreaseAmount")));
                             }
                         }
                     } catch (Exception ignored) {
@@ -70,13 +70,13 @@ public class Scheduler {
     }
 
     public void schedulePowerDecrease() {
-        Logger.getInstance().log(LocaleManager.getInstance().getText("SchedulingPowerDecrease"));
+        Logger.getInstance().log(LocalLocaleService.getInstance().getText("SchedulingPowerDecrease"));
         int delay = MedievalFactions.getInstance().getConfig().getInt("minutesBetweenPowerDecreases") * 60;
         int secondsUntilRepeat = MedievalFactions.getInstance().getConfig().getInt("minutesBetweenPowerDecreases") * 60;
         Bukkit.getScheduler().scheduleSyncRepeatingTask(MedievalFactions.getInstance(), new Runnable () {
             @Override
             public void run() {
-                System.out.println(String.format(LocaleManager.getInstance().getText("AlertDecreasingThePowerOfInactivePlayers"), MedievalFactions.getInstance().getConfig().getInt("powerDecreaseAmount"), MedievalFactions.getInstance().getConfig().getInt("minutesBeforePowerDecrease"), MedievalFactions.getInstance().getConfig().getInt("minutesBetweenPowerDecreases")));
+                System.out.println(String.format(LocalLocaleService.getInstance().getText("AlertDecreasingThePowerOfInactivePlayers"), MedievalFactions.getInstance().getConfig().getInt("powerDecreaseAmount"), MedievalFactions.getInstance().getConfig().getInt("minutesBeforePowerDecrease"), MedievalFactions.getInstance().getConfig().getInt("minutesBetweenPowerDecreases")));
 
                 for (ActivityRecord record : PersistentData.getInstance().getPlayerActivityRecords())
                 {
@@ -111,13 +111,13 @@ public class Scheduler {
         Faction faction = PersistentData.getInstance().getPlayersFaction(player.getUniqueId());
         if (faction != null) {
             if (isFactionExceedingTheirDemesneLimit(faction)) {
-                player.sendMessage(ChatColor.RED + LocaleManager.getInstance().getText("AlertMoreClaimedChunksThanPower"));
+                player.sendMessage(ChatColor.RED + LocalLocaleService.getInstance().getText("AlertMoreClaimedChunksThanPower"));
             }
         }
     }
 
     private boolean isFactionExceedingTheirDemesneLimit(Faction faction) {
-        return (ChunkManager.getInstance().getChunksClaimedByFaction(faction.getName(), PersistentData.getInstance().getClaimedChunks()) > faction.getCumulativePowerLevel());
+        return (LocalChunkService.getInstance().getChunksClaimedByFaction(faction.getName(), PersistentData.getInstance().getClaimedChunks()) > faction.getCumulativePowerLevel());
     }
 
     private void disbandAllZeroPowerFactions() {
@@ -128,9 +128,9 @@ public class Scheduler {
             }
         }
         for (String factionName : factionsToDisband) {
-            Messenger.getInstance().sendAllPlayersInFactionMessage(PersistentData.getInstance().getFaction(factionName), ChatColor.RED + LocaleManager.getInstance().getText("AlertDisbandmentDueToZeroPower"));
+            Messenger.getInstance().sendAllPlayersInFactionMessage(PersistentData.getInstance().getFaction(factionName), ChatColor.RED + LocalLocaleService.getInstance().getText("AlertDisbandmentDueToZeroPower"));
             removeFaction(factionName);
-            System.out.println(String.format(LocaleManager.getInstance().getText("DisbandmentDueToZeroPower"), factionName));
+            System.out.println(String.format(LocalLocaleService.getInstance().getText("DisbandmentDueToZeroPower"), factionName));
         }
     }
 
@@ -140,7 +140,7 @@ public class Scheduler {
 
         if (factionToRemove != null) {
             // remove claimed land objects associated with this faction
-            ChunkManager.getInstance().removeAllClaimedChunks(factionToRemove.getName(), PersistentData.getInstance().getClaimedChunks());
+            LocalChunkService.getInstance().removeAllClaimedChunks(factionToRemove.getName(), PersistentData.getInstance().getClaimedChunks());
             DynmapIntegrator.getInstance().updateClaims();
 
             // remove locks associated with this faction

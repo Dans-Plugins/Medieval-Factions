@@ -3,7 +3,7 @@ package dansplugins.factionsystem.commands;
 import dansplugins.factionsystem.MedievalFactions;
 import dansplugins.factionsystem.commands.abs.SubCommand;
 import dansplugins.factionsystem.events.FactionRenameEvent;
-import dansplugins.factionsystem.managers.StorageManager;
+import dansplugins.factionsystem.services.LocalStorageService;
 import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
 import org.bukkit.configuration.file.FileConfiguration;
@@ -69,7 +69,7 @@ public class RenameCommand extends SubCommand {
         if (faction.getPrefix().equalsIgnoreCase(oldName)) faction.setPrefix(newName);
 
         // Save again to overwrite current data
-        StorageManager.getInstance().save();
+        LocalStorageService.getInstance().save();
     }
 
     /**

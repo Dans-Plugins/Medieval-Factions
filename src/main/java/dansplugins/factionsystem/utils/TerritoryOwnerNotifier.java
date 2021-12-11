@@ -1,8 +1,8 @@
 package dansplugins.factionsystem.utils;
 
 import dansplugins.factionsystem.MedievalFactions;
-import dansplugins.factionsystem.managers.ActionBarManager;
-import dansplugins.factionsystem.managers.LocaleManager;
+import dansplugins.factionsystem.services.LocalActionBarService;
+import dansplugins.factionsystem.services.LocalLocaleService;
 import dansplugins.factionsystem.objects.domain.Faction;
 import net.md_5.bungee.api.ChatMessageType;
 import net.md_5.bungee.api.chat.TextComponent;
@@ -36,13 +36,13 @@ public class TerritoryOwnerNotifier {
         if(holder != null) {
             title = holder.getName();
         } else {
-            title = LocaleManager.getInstance().getText("Wilderness");
+            title = LocalLocaleService.getInstance().getText("Wilderness");
         }
 
 
         // set actionbar
         if(MedievalFactions.getInstance().getConfig().getBoolean("territoryIndicatorActionbar")) {
-            ActionBarManager actionBar = ActionBarManager.getInstance(MedievalFactions.getInstance());
+            LocalActionBarService actionBar = LocalActionBarService.getInstance(MedievalFactions.getInstance());
 
             if(holder == null) {
                 actionBar.clearPlayerActionBar(player);

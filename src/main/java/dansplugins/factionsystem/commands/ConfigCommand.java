@@ -57,10 +57,10 @@ public class ConfigCommand extends SubCommand {
 
             switch(page) {
                 case 1:
-                    configManager.sendPageOneOfConfigList(sender);
+                    localConfigService.sendPageOneOfConfigList(sender);
                     break;
                 case 2:
-                    configManager.sendPageTwoOfConfigList(sender);
+                    localConfigService.sendPageTwoOfConfigList(sender);
                     break;
                 default:
                     sender.sendMessage(translate("&c" + getText("UsageConfigShow")));
@@ -72,7 +72,7 @@ public class ConfigCommand extends SubCommand {
                 sender.sendMessage(translate("&c" + getText("UsageConfigSet")));
             }
             else {
-                configManager.setConfigOption(args[1], args[2], sender);
+                localConfigService.setConfigOption(args[1], args[2], sender);
             }
         }
         else {

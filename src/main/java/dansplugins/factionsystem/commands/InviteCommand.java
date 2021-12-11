@@ -2,7 +2,7 @@ package dansplugins.factionsystem.commands;
 
 import dansplugins.factionsystem.MedievalFactions;
 import dansplugins.factionsystem.commands.abs.SubCommand;
-import dansplugins.factionsystem.managers.LocaleManager;
+import dansplugins.factionsystem.services.LocalLocaleService;
 import dansplugins.factionsystem.utils.UUIDChecker;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
@@ -62,7 +62,7 @@ public class InviteCommand extends SubCommand {
             return;
         }
         faction.invite(playerUUID);
-        player.sendMessage(ChatColor.GREEN + LocaleManager.getInstance().getText("InvitationSent"));
+        player.sendMessage(ChatColor.GREEN + LocalLocaleService.getInstance().getText("InvitationSent"));
         if (target.isOnline() && target.getPlayer() != null) {
             target.getPlayer().sendMessage(translate(
                     "&a" + getText("AlertBeenInvited", faction.getName(), faction.getName())

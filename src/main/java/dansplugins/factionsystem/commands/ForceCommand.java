@@ -4,9 +4,9 @@ import dansplugins.factionsystem.MedievalFactions;
 import dansplugins.factionsystem.commands.abs.SubCommand;
 import dansplugins.factionsystem.data.PersistentData;
 import dansplugins.factionsystem.events.*;
-import dansplugins.factionsystem.managers.ChunkManager;
-import dansplugins.factionsystem.managers.LocaleManager;
-import dansplugins.factionsystem.managers.StorageManager;
+import dansplugins.factionsystem.services.LocalChunkService;
+import dansplugins.factionsystem.services.LocalLocaleService;
+import dansplugins.factionsystem.services.LocalStorageService;
 import dansplugins.factionsystem.objects.domain.Faction;
 import dansplugins.factionsystem.objects.domain.PowerRecord;
 import dansplugins.factionsystem.utils.UUIDChecker;
@@ -85,13 +85,13 @@ public class ForceCommand extends SubCommand {
     private void forceSave(CommandSender sender, String[] args) {
         if (!(checkPermissions(sender, "mf.force.save", "mf.force.*", "mf.admin"))) return;
         sender.sendMessage(translate("&a" + getText("AlertForcedSave")));
-        StorageManager.getInstance().save();
+        LocalStorageService.getInstance().save();
     }
 
     private void forceLoad(CommandSender sender, String[] args) {
         if (!(checkPermissions(sender, "mf.force.load", "mf.force.*", "mf.admin"))) return;
-        sender.sendMessage(translate("&a" + LocaleManager.getInstance().getText("AlertForcedLoad")));
-        StorageManager.getInstance().load();
+        sender.sendMessage(translate("&a" + LocalLocaleService.getInstance().getText("AlertForcedLoad")));
+        LocalStorageService.getInstance().load();
         MedievalFactions.getInstance().reloadConfig();
     }
 
@@ -421,7 +421,7 @@ public class ForceCommand extends SubCommand {
         if (faction.getPrefix().equalsIgnoreCase(oldName)) faction.setPrefix(newName);
 
         // Save again to overwrite current data
-        StorageManager.getInstance().save();
+        LocalStorageService.getInstance().save();
     }
 
     private void forceBonusPower(CommandSender sender, String[] args) {
@@ -565,7 +565,7 @@ public class ForceCommand extends SubCommand {
         }
 
         // claim land at player location for designated faction
-        ChunkManager.getInstance().forceClaimAtPlayerLocation(player, faction);
+        LocalChunkService.getInstance().forceClaimAtPlayerLocation(player, faction);
 
         // inform sender
         sender.sendMessage(translate("&a" + getText("Done")));

@@ -4,8 +4,8 @@ import dansplugins.factionsystem.MedievalFactions;
 import dansplugins.factionsystem.integrators.CurrenciesIntegrator;
 import dansplugins.factionsystem.integrators.DynmapIntegrator;
 import dansplugins.factionsystem.integrators.FiefsIntegrator;
-import dansplugins.factionsystem.managers.ConfigManager;
-import dansplugins.factionsystem.managers.LocaleManager;
+import dansplugins.factionsystem.services.LocalConfigService;
+import dansplugins.factionsystem.services.LocalLocaleService;
 import dansplugins.factionsystem.utils.ColorConversion;
 import dansplugins.factionsystem.utils.Logger;
 import org.bukkit.ChatColor;
@@ -110,17 +110,17 @@ public class FactionFlags implements dansplugins.factionsystem.objects.helper.sp
     @Override
     public void setFlag(String flag, String value, Player player) {
         if (flag.equals("neutral") && !MedievalFactions.getInstance().getConfig().getBoolean("allowNeutrality")) {
-            player.sendMessage(ChatColor.RED + "" + LocaleManager.getInstance().getText("NeutralityDisabled"));
+            player.sendMessage(ChatColor.RED + "" + LocalLocaleService.getInstance().getText("NeutralityDisabled"));
             return;
         }
 
-        if (!ConfigManager.getInstance().getBoolean("factionsCanSetPrefixColors")) {
+        if (!LocalConfigService.getInstance().getBoolean("factionsCanSetPrefixColors")) {
             // TODO: add locale message
             return;
         }
 
         if (flag.equals("prefixColor") && (!MedievalFactions.getInstance().getConfig().getBoolean("playersChatWithPrefixes"))) {
-            player.sendMessage(ChatColor.RED + "" + LocaleManager.getInstance().getText("PrefixesDisabled"));
+            player.sendMessage(ChatColor.RED + "" + LocalLocaleService.getInstance().getText("PrefixesDisabled"));
             return;
         }
 
@@ -137,13 +137,13 @@ public class FactionFlags implements dansplugins.factionsystem.objects.helper.sp
         if (isFlag(flag)) {
             if (integerValues.containsKey(flag)) {
                 integerValues.replace(flag, Integer.parseInt(value));
-                player.sendMessage(ChatColor.GREEN + LocaleManager.getInstance().getText("IntegerSet"));
+                player.sendMessage(ChatColor.GREEN + LocalLocaleService.getInstance().getText("IntegerSet"));
             } else if (booleanValues.containsKey(flag)) {
                 booleanValues.replace(flag, Boolean.parseBoolean(value));
-                player.sendMessage(ChatColor.GREEN + LocaleManager.getInstance().getText("BooleanSet"));
+                player.sendMessage(ChatColor.GREEN + LocalLocaleService.getInstance().getText("BooleanSet"));
             } else if (doubleValues.containsKey(flag)) {
                 doubleValues.replace(flag, Double.parseDouble(value));
-                player.sendMessage(ChatColor.GREEN + LocaleManager.getInstance().getText("DoubleSet"));
+                player.sendMessage(ChatColor.GREEN + LocalLocaleService.getInstance().getText("DoubleSet"));
             } else if (stringValues.containsKey(flag)) {
 
                 if (flag.equalsIgnoreCase("dynmapTerritoryColor")) {
@@ -179,14 +179,14 @@ public class FactionFlags implements dansplugins.factionsystem.objects.helper.sp
                 }
 
                 stringValues.replace(flag, value);
-                player.sendMessage(ChatColor.GREEN + LocaleManager.getInstance().getText("StringSet"));
+                player.sendMessage(ChatColor.GREEN + LocalLocaleService.getInstance().getText("StringSet"));
             }
 
             if (flag.equals("dynmapTerritoryColor")) {
                 DynmapIntegrator.getInstance().updateClaims(); // update dynmap to reflect color change
             }
         } else {
-            player.sendMessage(ChatColor.RED + String.format(LocaleManager.getInstance().getText("WasntFound"), flag));
+            player.sendMessage(ChatColor.RED + String.format(LocalLocaleService.getInstance().getText("WasntFound"), flag));
         }
     }
 
@@ -271,7 +271,7 @@ public class FactionFlags implements dansplugins.factionsystem.objects.helper.sp
                 continue;
             }
 
-            if (flagName.equals("prefixColor") && (!MedievalFactions.getInstance().getConfig().getBoolean("playersChatWithPrefixes") || !ConfigManager.getInstance().getBoolean("factionsCanSetPrefixColors"))) {
+            if (flagName.equals("prefixColor") && (!MedievalFactions.getInstance().getConfig().getBoolean("playersChatWithPrefixes") || !LocalConfigService.getInstance().getBoolean("factionsCanSetPrefixColors"))) {
                 continue;
             }
 

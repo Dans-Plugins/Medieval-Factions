@@ -1,4 +1,4 @@
-package dansplugins.factionsystem.managers;
+package dansplugins.factionsystem.services;
 
 import dansplugins.factionsystem.MedievalFactions;
 import dansplugins.factionsystem.utils.Pair;
@@ -8,11 +8,11 @@ import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.util.*;
 
-public class LocaleManager {
+public class LocalLocaleService {
 
     private boolean debug = MedievalFactions.getInstance().isDebugEnabled();
 
-    private static LocaleManager instance;
+    private static LocalLocaleService instance;
 
     private ArrayList<String> supportedLanguageIDs = new ArrayList<>(Arrays.asList("en-us", "es", "ru", "pt-br", "de"));
 
@@ -23,7 +23,7 @@ public class LocaleManager {
     private String localizationFileName;
     private String localizationFilePath;
 
-    private LocaleManager() {
+    private LocalLocaleService() {
         initializePaths();
     }
 
@@ -34,9 +34,9 @@ public class LocaleManager {
         localizationFilePath = languageFolderPath + localizationFileName;
     }
 
-    public static LocaleManager getInstance() {
+    public static LocalLocaleService getInstance() {
         if (instance == null) {
-            instance = new LocaleManager();
+            instance = new LocalLocaleService();
         }
         return instance;
     }

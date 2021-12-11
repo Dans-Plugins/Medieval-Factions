@@ -3,7 +3,7 @@ package dansplugins.factionsystem;
 import dansplugins.factionsystem.data.EphemeralData;
 import dansplugins.factionsystem.data.PersistentData;
 import dansplugins.factionsystem.integrators.DynmapIntegrator;
-import dansplugins.factionsystem.managers.*;
+import dansplugins.factionsystem.services.*;
 import dansplugins.factionsystem.utils.ArgumentParser;
 import dansplugins.factionsystem.utils.BlockChecker;
 import dansplugins.factionsystem.utils.InteractionAccessChecker;
@@ -21,24 +21,24 @@ public class SingletonShelf {
         return MedievalFactions.getInstance();
     }
 
-    public ChunkManager getChunkManager() {
-        return ChunkManager.getInstance();
+    public LocalChunkService getChunkManager() {
+        return LocalChunkService.getInstance();
     }
 
     public CommandInterpreter getCommandInterpreter() {
         return CommandInterpreter.getInstance();
     }
 
-    public ConfigManager getConfigManager() {
-        return ConfigManager.getInstance();
+    public LocalConfigService getConfigManager() {
+        return LocalConfigService.getInstance();
     }
 
     public DynmapIntegrator getDynmapManager() {
         return DynmapIntegrator.getInstance();
     }
 
-    public LocaleManager getLocaleManager() {
-        return LocaleManager.getInstance();
+    public LocalLocaleService getLocaleManager() {
+        return LocalLocaleService.getInstance();
     }
 
     public Messenger getMessenger() {
@@ -49,8 +49,8 @@ public class SingletonShelf {
         return Scheduler.getInstance();
     }
 
-    public StorageManager getStorageManager() {
-        return StorageManager.getInstance();
+    public LocalStorageService getStorageManager() {
+        return LocalStorageService.getInstance();
     }
 
     public UUIDChecker getUUIDChecker() {
@@ -73,12 +73,12 @@ public class SingletonShelf {
         return BlockChecker.getInstance();
     }
 
-    public LockManager getLockManager() {
-        return LockManager.getInstance();
+    public LocalLockService getLockManager() {
+        return LocalLockService.getInstance();
     }
 
-    public GateManager getGateManager() {
-        return GateManager.getInstance();
+    public LocalGateService getGateManager() {
+        return LocalGateService.getInstance();
     }
 
     public InteractionAccessChecker getInteractionAccessChecker() {

@@ -3,10 +3,10 @@ package dansplugins.factionsystem.eventhandlers;
 import dansplugins.factionsystem.MedievalFactions;
 import dansplugins.factionsystem.data.EphemeralData;
 import dansplugins.factionsystem.data.PersistentData;
-import dansplugins.factionsystem.managers.ChunkManager;
-import dansplugins.factionsystem.managers.GateManager;
-import dansplugins.factionsystem.managers.LocaleManager;
-import dansplugins.factionsystem.managers.LockManager;
+import dansplugins.factionsystem.services.LocalChunkService;
+import dansplugins.factionsystem.services.LocalGateService;
+import dansplugins.factionsystem.services.LocalLocaleService;
+import dansplugins.factionsystem.services.LocalLockService;
 import dansplugins.factionsystem.objects.domain.ClaimedChunk;
 import dansplugins.factionsystem.objects.domain.Faction;
 import dansplugins.factionsystem.objects.domain.Gate;
@@ -45,7 +45,7 @@ public class InteractionHandler implements Listener {
         Player player = event.getPlayer();
 
         // get chunk
-        ClaimedChunk claimedChunk = ChunkManager.getInstance().getClaimedChunk(event.getBlock().getLocation().getChunk());
+        ClaimedChunk claimedChunk = LocalChunkService.getInstance().getClaimedChunk(event.getBlock().getLocation().getChunk());
 
         if (InteractionAccessChecker.getInstance().shouldEventBeCancelled(claimedChunk, player)) {
             event.setCancelled(true);
@@ -57,7 +57,7 @@ public class InteractionHandler implements Listener {
             for (Gate gate : faction.getGates()) {
                 if (gate.hasBlock(event.getBlock())) {
                     event.setCancelled(true);
-                    player.sendMessage(ChatColor.RED + String.format(LocaleManager.getInstance().getText("BlockIsPartOfGateMustRemoveGate"), gate.getName()));
+                    player.sendMessage(ChatColor.RED + String.format(LocalLocaleService.getInstance().getText("BlockIsPartOfGateMustRemoveGate"), gate.getName()));
                     return;
                 }
             }
@@ -73,21 +73,21 @@ public class InteractionHandler implements Listener {
             if (!isOwner) {
                 // player is not the owner and isn't bypassing
                 event.setCancelled(true);
-                player.sendMessage(ChatColor.RED + LocaleManager.getInstance().getText("AlertNonOwnership"));
+                player.sendMessage(ChatColor.RED + LocalLocaleService.getInstance().getText("AlertNonOwnership"));
                 return;
             }
 
-            LockManager.getInstance().removeLock(event.getBlock());
+            LocalLockService.getInstance().removeLock(event.getBlock());
             // if block was a door
             if (BlockChecker.getInstance().isDoor(event.getBlock())) {
                 // remove locks above and below the original block as well
                 Block relativeUp = event.getBlock().getRelative(BlockFace.UP);
                 Block relativeDown = event.getBlock().getRelative(BlockFace.DOWN);
                 if (BlockChecker.getInstance().isDoor(relativeUp)) {
-                    LockManager.getInstance().removeLock(relativeUp);
+                    LocalLockService.getInstance().removeLock(relativeUp);
                 }
                 if (BlockChecker.getInstance().isDoor(relativeDown)) {
-                    LockManager.getInstance().removeLock(relativeDown);
+                    LocalLockService.getInstance().removeLock(relativeDown);
                 }
                 return;
             }
@@ -100,7 +100,7 @@ public class InteractionHandler implements Listener {
         Player player = event.getPlayer();
 
         // get chunk
-        ClaimedChunk claimedChunk = ChunkManager.getInstance().getClaimedChunk(event.getBlock().getLocation().getChunk());
+        ClaimedChunk claimedChunk = LocalChunkService.getInstance().getClaimedChunk(event.getBlock().getLocation().getChunk());
 
         if (InteractionAccessChecker.getInstance().isPlayerAttemptingToPlaceLadderInEnemyTerritoryAndIsThisAllowed(event.getBlockPlaced(), player, claimedChunk)) {
             return;
@@ -114,7 +114,7 @@ public class InteractionHandler implements Listener {
         if (BlockChecker.getInstance().isChest(event.getBlock())) {
             boolean isNextToNonOwnedLockedChest = BlockChecker.getInstance().isNextToNonOwnedLockedChest(event.getPlayer(), event.getBlock());
             if (isNextToNonOwnedLockedChest) {
-                player.sendMessage(ChatColor.RED + LocaleManager.getInstance().getText("CannotPlaceChestsNextToUnownedLockedChests"));
+                player.sendMessage(ChatColor.RED + LocalLocaleService.getInstance().getText("CannotPlaceChestsNextToUnownedLockedChests"));
                 event.setCancelled(true);
                 return;
             }
@@ -161,7 +161,7 @@ public class InteractionHandler implements Listener {
             boolean isUnderOrAboveNonOwnedLockedChest = BlockChecker.getInstance().isUnderOrAboveNonOwnedLockedChest(event.getPlayer(), event.getBlock());
             if (isNextToNonOwnedLockedChest || isUnderOrAboveNonOwnedLockedChest) {
                 event.setCancelled(true);
-                player.sendMessage(ChatColor.RED + LocaleManager.getInstance().getText("CannotPlaceHoppersNextToUnownedLockedChests"));
+                player.sendMessage(ChatColor.RED + LocalLocaleService.getInstance().getText("CannotPlaceHoppersNextToUnownedLockedChests"));
                 return;
             }
         }
@@ -184,14 +184,14 @@ public class InteractionHandler implements Listener {
 
         // if player is attempting to lock a block
         if (EphemeralData.getInstance().getLockingPlayers().contains(player.getUniqueId())) {
-            LockManager.getInstance().handleLockingBlock(event, player, clickedBlock);
+            LocalLockService.getInstance().handleLockingBlock(event, player, clickedBlock);
         }
 
         // ---------------------------------------------------------------------------------------------------------------
 
         // if player is trying to unlock a block
         if (EphemeralData.getInstance().getUnlockingPlayers().contains(player.getUniqueId())) {
-            LockManager.getInstance().handleUnlockingBlock(event, player, clickedBlock);
+            LocalLockService.getInstance().handleUnlockingBlock(event, player, clickedBlock);
         }
 
         // ---------------------------------------------------------------------------------------------------------------
@@ -203,24 +203,24 @@ public class InteractionHandler implements Listener {
             if (!playerHasAccess && !isPlayerBypassing) {
                 // player doesn't have access and isn't overriding
                 String owner = UUIDChecker.getInstance().findPlayerNameBasedOnUUID(lockedBlock.getOwner());
-                player.sendMessage(ChatColor.RED + String.format(LocaleManager.getInstance().getText("LockedBy"), owner));
+                player.sendMessage(ChatColor.RED + String.format(LocalLocaleService.getInstance().getText("LockedBy"), owner));
                 event.setCancelled(true);
                 return;
             }
             
             if (EphemeralData.getInstance().getPlayersGrantingAccess().containsKey(player.getUniqueId())) {
                 // player is trying to grant access
-                LockManager.getInstance().handleGrantingAccess(event, clickedBlock, player);
+                LocalLockService.getInstance().handleGrantingAccess(event, clickedBlock, player);
             }
             
             if (EphemeralData.getInstance().getPlayersCheckingAccess().contains(player.getUniqueId())) {
                 // player is trying to check access
-                LockManager.getInstance().handleCheckingAccess(event, lockedBlock, player);
+                LocalLockService.getInstance().handleCheckingAccess(event, lockedBlock, player);
             }
             
             if (EphemeralData.getInstance().getPlayersRevokingAccess().containsKey(player.getUniqueId())) {
                 // player is trying to revoke access
-                LockManager.getInstance().handleRevokingAccess(event, clickedBlock, player);
+                LocalLockService.getInstance().handleRevokingAccess(event, clickedBlock, player);
             }
 
             if (playerHasAccess) {
@@ -235,7 +235,7 @@ public class InteractionHandler implements Listener {
         }
         else {
             if (isPlayerUsingAnAccessCommand(player)) {
-                player.sendMessage(ChatColor.RED + LocaleManager.getInstance().getText("BlockIsNotLocked"));
+                player.sendMessage(ChatColor.RED + LocalLocaleService.getInstance().getText("BlockIsNotLocked"));
             }
         }
 
@@ -243,7 +243,7 @@ public class InteractionHandler implements Listener {
         // territory then open/close the gate.
         boolean playerClickedLever = clickedBlock.getType().equals(Material.LEVER);
         if (playerClickedLever) {
-            GateManager.getInstance().handlePotentialGateInteraction(clickedBlock, player, event);
+            LocalGateService.getInstance().handlePotentialGateInteraction(clickedBlock, player, event);
         }
 
         // ---------------------------------------------------------------------------------------------------------------
@@ -252,9 +252,9 @@ public class InteractionHandler implements Listener {
         // access to (or in future, a 'public' locked block), so if they're not in the faction whose territory the block exists in we want that
         // check to be handled before the interaction is rejected for not being a faction member.
         // if chunk is claimed
-        ClaimedChunk chunk = ChunkManager.getInstance().getClaimedChunk(event.getClickedBlock().getLocation().getChunk());
+        ClaimedChunk chunk = LocalChunkService.getInstance().getClaimedChunk(event.getClickedBlock().getLocation().getChunk());
         if (chunk != null) {
-            ChunkManager.getInstance().handleClaimedChunkInteraction(event, chunk);
+            LocalChunkService.getInstance().handleClaimedChunkInteraction(event, chunk);
         }
 
         // ---------------------------------------------------------------------------------------------------------------
@@ -264,7 +264,7 @@ public class InteractionHandler implements Listener {
         boolean playerCreatingGate = EphemeralData.getInstance().getCreatingGatePlayers().containsKey(event.getPlayer().getUniqueId());
         boolean playerHoldingGoldenHoe = player.getInventory().getItemInMainHand().getType().equals(Material.GOLDEN_HOE);
         if (playerCreatingGate && playerHoldingGoldenHoe) {
-            GateManager.getInstance().handleCreatingGate(clickedBlock, player, event);
+            LocalGateService.getInstance().handleCreatingGate(clickedBlock, player, event);
         }
 
         // ---------------------------------------------------------------------------------------------------------------
@@ -295,7 +295,7 @@ public class InteractionHandler implements Listener {
 
         if (location != null) {
             Chunk chunk = location.getChunk();
-            ClaimedChunk claimedChunk = ChunkManager.getInstance().getClaimedChunk(chunk);
+            ClaimedChunk claimedChunk = LocalChunkService.getInstance().getClaimedChunk(chunk);
 
             if (InteractionAccessChecker.getInstance().shouldEventBeCancelled(claimedChunk, player)) {
                 event.setCancelled(true);
@@ -314,7 +314,7 @@ public class InteractionHandler implements Listener {
         Entity entity = event.getEntity();
 
         // get chunk that entity is in
-        ClaimedChunk claimedChunk = ChunkManager.getInstance().getClaimedChunk(entity.getLocation().getChunk());
+        ClaimedChunk claimedChunk = LocalChunkService.getInstance().getClaimedChunk(entity.getLocation().getChunk());
 
         if (InteractionAccessChecker.getInstance().shouldEventBeCancelled(claimedChunk, player)) {
             event.setCancelled(true);
@@ -329,7 +329,7 @@ public class InteractionHandler implements Listener {
 
         Block clickedBlock = event.getBlockClicked();
 
-        ClaimedChunk claimedChunk = ChunkManager.getInstance().getClaimedChunk(clickedBlock.getChunk());
+        ClaimedChunk claimedChunk = LocalChunkService.getInstance().getClaimedChunk(clickedBlock.getChunk());
 
         if (InteractionAccessChecker.getInstance().shouldEventBeCancelled(claimedChunk, player)) {
             event.setCancelled(true);
@@ -344,7 +344,7 @@ public class InteractionHandler implements Listener {
 
         Block clickedBlock = event.getBlockClicked();
 
-        ClaimedChunk claimedChunk = ChunkManager.getInstance().getClaimedChunk(clickedBlock.getChunk());
+        ClaimedChunk claimedChunk = LocalChunkService.getInstance().getClaimedChunk(clickedBlock.getChunk());
 
         if (InteractionAccessChecker.getInstance().shouldEventBeCancelled(claimedChunk, player)) {
             event.setCancelled(true);
@@ -359,7 +359,7 @@ public class InteractionHandler implements Listener {
 
         Block clickedBlock = event.getBlock();
 
-        ClaimedChunk claimedChunk = ChunkManager.getInstance().getClaimedChunk(clickedBlock.getChunk());
+        ClaimedChunk claimedChunk = LocalChunkService.getInstance().getClaimedChunk(clickedBlock.getChunk());
 
         if (InteractionAccessChecker.getInstance().shouldEventBeCancelled(claimedChunk, player)) {
             event.setCancelled(true);
@@ -380,7 +380,7 @@ public class InteractionHandler implements Listener {
             // get chunk that armor stand is in
             Location location = itemFrame.getLocation();
             Chunk chunk = location.getChunk();
-            ClaimedChunk claimedChunk = ChunkManager.getInstance().getClaimedChunk(chunk);
+            ClaimedChunk claimedChunk = LocalChunkService.getInstance().getClaimedChunk(chunk);
 
             if (InteractionAccessChecker.getInstance().shouldEventBeCancelled(claimedChunk, player)) {
                 event.setCancelled(true);

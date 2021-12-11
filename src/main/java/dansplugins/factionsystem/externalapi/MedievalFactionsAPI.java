@@ -3,7 +3,7 @@ package dansplugins.factionsystem.externalapi;
 import dansplugins.factionsystem.MedievalFactions;
 import dansplugins.factionsystem.data.EphemeralData;
 import dansplugins.factionsystem.data.PersistentData;
-import dansplugins.factionsystem.managers.ChunkManager;
+import dansplugins.factionsystem.services.LocalChunkService;
 import dansplugins.factionsystem.objects.domain.Faction;
 import dansplugins.factionsystem.objects.domain.PowerRecord;
 import org.bukkit.Chunk;
@@ -69,7 +69,7 @@ public class MedievalFactionsAPI implements IMedievalFactionsAPI {
 
     @Override
     public boolean isChunkClaimed(Chunk chunk) {
-        return (ChunkManager.getInstance().getClaimedChunk(chunk) != null);
+        return (LocalChunkService.getInstance().getClaimedChunk(chunk) != null);
     }
 
     @Override

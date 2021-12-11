@@ -2,8 +2,8 @@ package dansplugins.factionsystem.integrators;
 
 import dansplugins.factionsystem.MedievalFactions;
 import dansplugins.factionsystem.data.PersistentData;
-import dansplugins.factionsystem.managers.ChunkManager;
-import dansplugins.factionsystem.managers.LocaleManager;
+import dansplugins.factionsystem.services.LocalChunkService;
+import dansplugins.factionsystem.services.LocalLocaleService;
 import dansplugins.factionsystem.objects.domain.ClaimedChunk;
 import dansplugins.factionsystem.objects.domain.Faction;
 import dansplugins.factionsystem.objects.domain.PowerRecord;
@@ -111,17 +111,17 @@ public class DynmapIntegrator {
         dynmap = pm.getPlugin("dynmap");
 
         if(!isDynmapPresent()) {
-            Logger.getInstance().log(LocaleManager.getInstance().getText("CannotFindDynmap"));
+            Logger.getInstance().log(LocalLocaleService.getInstance().getText("CannotFindDynmap"));
         }
         else {
             try {
                 dynmapAPI = (DynmapCommonAPI) dynmap; /* Get API */
                 markerAPI = dynmapAPI.getMarkerAPI();
                 initializeMarkerSets();
-                Logger.getInstance().log(LocaleManager.getInstance().getText("DynmapIntegrationSuccessful"));
+                Logger.getInstance().log(LocalLocaleService.getInstance().getText("DynmapIntegrationSuccessful"));
             }
             catch (Exception e) {
-                Logger.getInstance().log(LocaleManager.getInstance().getText("ErrorIntegratingWithDynmap") + e.getMessage());
+                Logger.getInstance().log(LocalLocaleService.getInstance().getText("ErrorIntegratingWithDynmap") + e.getMessage());
             }
         }
     }
@@ -138,7 +138,7 @@ public class DynmapIntegrator {
         if (set == null) {
             set = markerAPI.createMarkerSet(getDynmapPluginSetId(markerLabel), getDynmapPluginLayer(), null, false);
             if (set == null) {
-                Logger.getInstance().log(LocaleManager.getInstance().getText("ErrorCreatingMarkerSet") + ": markerLabel = " + markerLabel);
+                Logger.getInstance().log(LocalLocaleService.getInstance().getText("ErrorCreatingMarkerSet") + ": markerLabel = " + markerLabel);
                 return set;
             }
         }
@@ -262,7 +262,7 @@ public class DynmapIntegrator {
                 "At War With: " + f.getEnemiesSeparatedByCommas() + "<br/>" +
                 "Power Level: " + f.getCumulativePowerLevel() + "<br/>" +
                 "Demesne Size: " + String.format("%d/%d",
-                                ChunkManager.getInstance().getChunksClaimedByFaction(f.getName(), PersistentData.getInstance().getClaimedChunks()),
+                                LocalChunkService.getInstance().getChunksClaimedByFaction(f.getName(), PersistentData.getInstance().getClaimedChunks()),
                                                                     f.getCumulativePowerLevel());
         return message;
     }
@@ -423,7 +423,7 @@ public class DynmapIntegrator {
                 if(m == null) {
                     m = markerSet.createAreaMarker(polyid, name, false, curworld, x, z, false);
                     if(m == null) {
-                        System.out.println(String.format(LocaleManager.getInstance().getText("ErrorAddingAreaMarker"), polyid));
+                        System.out.println(String.format(LocalLocaleService.getInstance().getText("ErrorAddingAreaMarker"), polyid));
                         return;
                     }
                 }
@@ -443,7 +443,7 @@ public class DynmapIntegrator {
                         m.setFillStyle(0.3, colrCode);
                     }
                 } catch (Exception e) {
-                    System.out.println(String.format(LocaleManager.getInstance().getText("ErrorSettingAreaMarkerColor"), fillColor));
+                    System.out.println(String.format(LocalLocaleService.getInstance().getText("ErrorSettingAreaMarkerColor"), fillColor));
                 }
                 m.setDescription(popupDescription); /* Set popup */
 

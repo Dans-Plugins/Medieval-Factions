@@ -2,7 +2,7 @@ package dansplugins.factionsystem.placeholders;
 
 import dansplugins.factionsystem.MedievalFactions;
 import dansplugins.factionsystem.data.PersistentData;
-import dansplugins.factionsystem.managers.ChunkManager;
+import dansplugins.factionsystem.services.LocalChunkService;
 import dansplugins.factionsystem.objects.domain.ClaimedChunk;
 import dansplugins.factionsystem.objects.domain.Faction;
 import dansplugins.factionsystem.objects.domain.PowerRecord;
@@ -165,7 +165,7 @@ public class PlaceholderAPI extends PlaceholderExpansion {
         }
         if (id.equalsIgnoreCase("faction_at_location")) {
             // The Faction at the Player's current location. (Wilderness if nothing).
-            ClaimedChunk claim = ChunkManager.getInstance().getClaimedChunk(player.getLocation().getChunk());
+            ClaimedChunk claim = LocalChunkService.getInstance().getClaimedChunk(player.getLocation().getChunk());
             if (claim == null) return "Wilderness";
             else return claim.getHolder();
         }

@@ -4,9 +4,9 @@ import dansplugins.factionsystem.MedievalFactions;
 import dansplugins.factionsystem.data.EphemeralData;
 import dansplugins.factionsystem.data.PersistentData;
 import dansplugins.factionsystem.integrators.DynmapIntegrator;
-import dansplugins.factionsystem.managers.ChunkManager;
-import dansplugins.factionsystem.managers.ConfigManager;
-import dansplugins.factionsystem.managers.LocaleManager;
+import dansplugins.factionsystem.services.LocalChunkService;
+import dansplugins.factionsystem.services.LocalConfigService;
+import dansplugins.factionsystem.services.LocalLocaleService;
 import dansplugins.factionsystem.objects.domain.Faction;
 import dansplugins.factionsystem.utils.ArgumentParser;
 import org.bukkit.Bukkit;
@@ -29,13 +29,13 @@ public abstract class SubCommand implements ColorTranslator {
     public static final String LOCALE_PREFIX = "Locale_";
 
     // Data classes
-    protected final LocaleManager locale;
+    protected final LocalLocaleService locale;
     protected final PersistentData data;
     protected final ArgumentParser parser;
     protected final EphemeralData ephemeral;
-    protected final ChunkManager chunks;
+    protected final LocalChunkService chunks;
     protected final DynmapIntegrator dynmap;
-    protected final ConfigManager configManager;
+    protected final LocalConfigService localConfigService;
 
     // Command Data
     private final String[] names;
@@ -61,13 +61,13 @@ public abstract class SubCommand implements ColorTranslator {
                       boolean requiresOfficer,
                       boolean requiresOwner) {
         // Local variables standing for instances of constantly used instances.
-        this.locale = LocaleManager.getInstance();
+        this.locale = LocalLocaleService.getInstance();
         this.data = PersistentData.getInstance();
         this.parser = ArgumentParser.getInstance();
         this.ephemeral = EphemeralData.getInstance();
-        this.chunks = ChunkManager.getInstance();
+        this.chunks = LocalChunkService.getInstance();
         this.dynmap = DynmapIntegrator.getInstance();
-        this.configManager = ConfigManager.getInstance();
+        this.localConfigService = LocalConfigService.getInstance();
 
         // Load Command Names.
         this.names = new String[names.length];
