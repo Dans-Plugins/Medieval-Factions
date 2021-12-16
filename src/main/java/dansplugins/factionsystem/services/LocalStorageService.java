@@ -29,7 +29,7 @@ public class LocalStorageService {
 
     private final static Type LIST_MAP_TYPE = new TypeToken<ArrayList<HashMap<String, String>>>(){}.getType();
 
-    private Gson gson = new GsonBuilder().setPrettyPrinting().create();;
+    private Gson gson = new GsonBuilder().setPrettyPrinting().create();
 
     private LocalStorageService() {
 
@@ -121,7 +121,7 @@ public class LocalStorageService {
         loadClaimedChunks();
         loadPlayerPowerRecords();
         loadPlayerActivityRecords();
-        loadLockedBlocks();;
+        loadLockedBlocks();
     }
 
     private void loadFactions() {
@@ -181,7 +181,7 @@ public class LocalStorageService {
 
     private ArrayList<HashMap<String, String>> loadDataFromFilename(String filename) {
         try{
-            Gson gson = new GsonBuilder().setPrettyPrinting().create();;
+            Gson gson = new GsonBuilder().setPrettyPrinting().create();
             JsonReader reader = new JsonReader(new InputStreamReader(new FileInputStream(filename), StandardCharsets.UTF_8));
             return gson.fromJson(reader, LIST_MAP_TYPE);
         } catch (FileNotFoundException e) {
