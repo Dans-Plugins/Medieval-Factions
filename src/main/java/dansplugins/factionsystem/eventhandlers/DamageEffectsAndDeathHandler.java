@@ -154,8 +154,9 @@ public class DamageEffectsAndDeathHandler implements Listener {
     }
 
     private void handleIfFriendlyFire(EntityDamageByEntityEvent event, Player attacker, Player victim) {
-        if (!arePlayersInAFaction(attacker, victim)){
+        if (!arePlayersInAFaction(attacker, victim) || attacker.getUniqueId().equals(victim.getUniqueId())){
             // Factionless can fight anyone.
+            // Don't block self damage.
             return;
         }
         else if (arePlayersInSameFaction(attacker, victim)) {
