@@ -61,6 +61,7 @@ Caibinus | Implemented Duels, Gates and Dynmap Integration
 Richardhyy | Fixed some encoding issues
 Mitras2 | Implemented ActionBar territory alerts
 [Kaonami](https://github.com/Daniels7k) | Fixed a typo in the README
+GoodLucky777 | Fixed a bug and a few typos in the code
 
 ### Translators
 Name | Language(s)
