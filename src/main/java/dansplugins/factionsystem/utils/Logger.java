@@ -2,6 +2,8 @@ package dansplugins.factionsystem.utils;
 
 import dansplugins.factionsystem.MedievalFactions;
 
+import java.util.logging.Level;
+
 public class Logger {
 
     private static Logger instance;
@@ -19,7 +21,7 @@ public class Logger {
 
     public void log(String message) {
         if (MedievalFactions.getInstance().isDebugEnabled()) {
-            System.out.println("[Medieval Factions] " + message);
+            MedievalFactions.getInstance().getLogger().log(Level.INFO, "[Medieval Factions] " + message);
         }
     }
 
