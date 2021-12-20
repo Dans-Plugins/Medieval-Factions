@@ -1,5 +1,6 @@
-package dansplugins.factionsystem;
+package dansplugins.factionsystem.utils;
 
+import dansplugins.factionsystem.MedievalFactions;
 import dansplugins.factionsystem.integrators.FiefsIntegrator;
 import dansplugins.factionsystem.objects.domain.Faction;
 import dansplugins.factionsystem.services.LocalLocaleService;

@@ -1,8 +1,8 @@
-package dansplugins.factionsystem;
+package dansplugins.factionsystem.services;
 
+import dansplugins.factionsystem.MedievalFactions;
 import dansplugins.factionsystem.commands.*;
 import dansplugins.factionsystem.commands.abs.SubCommand;
-import dansplugins.factionsystem.services.LocalLocaleService;
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
 
@@ -10,12 +10,12 @@ import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Set;
 
-public class CommandInterpreter {
+public class LocalCommandService {
 
-    private static CommandInterpreter instance;
+    private static LocalCommandService instance;
     private final Set<SubCommand> subCommands = new HashSet<>();
 
-    private CommandInterpreter() {
+    private LocalCommandService() {
         subCommands.addAll(Arrays.asList(
                 new AddLawCommand(), new AllyCommand(), new AutoClaimCommand(), new BreakAllianceCommand(),
                 new BypassCommand(), new ChatCommand(), new CheckAccessCommand(), new CheckClaimCommand(),
@@ -33,8 +33,8 @@ public class CommandInterpreter {
         ));
     }
 
-    public static CommandInterpreter getInstance() {
-        if (instance == null) instance = new CommandInterpreter();
+    public static LocalCommandService getInstance() {
+        if (instance == null) instance = new LocalCommandService();
         return instance;
     }
 

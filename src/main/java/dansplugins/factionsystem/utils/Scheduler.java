@@ -1,5 +1,6 @@
-package dansplugins.factionsystem;
+package dansplugins.factionsystem.utils;
 
+import dansplugins.factionsystem.MedievalFactions;
 import dansplugins.factionsystem.data.PersistentData;
 import dansplugins.factionsystem.integrators.DynmapIntegrator;
 import dansplugins.factionsystem.objects.domain.ActivityRecord;
@@ -8,7 +9,6 @@ import dansplugins.factionsystem.objects.domain.PowerRecord;
 import dansplugins.factionsystem.services.LocalChunkService;
 import dansplugins.factionsystem.services.LocalLocaleService;
 import dansplugins.factionsystem.services.LocalStorageService;
-import dansplugins.factionsystem.utils.Logger;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
