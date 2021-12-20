@@ -109,11 +109,6 @@ public class MedievalFactions extends AbstractPonderPlugin {
         return new MedievalFactionsAPI();
     }
 
-    @Deprecated
-    public SingletonShelf getInternalAPI() {
-        return new SingletonShelf();
-    }
-
     public boolean isDebugEnabled() {
         return getConfig().getBoolean("debugMode");
     }
