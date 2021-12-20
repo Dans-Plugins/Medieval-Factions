@@ -26,9 +26,7 @@ import java.util.Arrays;
  * @author Daniel Stephenson
  */
 public class MedievalFactions extends AbstractPonderPlugin {
-
     private static MedievalFactions instance;
-
     private final String pluginVersion = "v" + getDescription().getVersion();
 
     public static MedievalFactions getInstance() {
@@ -38,51 +36,16 @@ public class MedievalFactions extends AbstractPonderPlugin {
     @Override
     public void onEnable() {
         instance = this;
-
         ponderAPI_integrator = new PonderAPI_Integrator(this);
         toolbox = getPonderAPI().getToolbox();
-
-        // create/load config
-        if (!(new File("./plugins/MedievalFactions/config.yml").exists())) {
-            LocalConfigService.getInstance().saveConfigDefaults();
-        }
-        else {
-            // pre load compatibility checks
-            if (isVersionMismatched()) {
-                LocalConfigService.getInstance().handleVersionMismatch();
-            }
-            reloadConfig();
-        }
-
-        // load strings and save files
-        LocalLocaleService.getInstance().loadStrings();
-        LocalStorageService.getInstance().load();
-
-        // schedule recurring tasks
-        Scheduler.getInstance().schedulePowerIncrease();
-        Scheduler.getInstance().schedulePowerDecrease();
-        Scheduler.getInstance().scheduleAutosave();
-
-        // register event handlers
+        initializeConfig();
+        load();
+        scheduleRecurringTasks();
         registerEventHandlers();
+        handleIntegrations();
 
         // make sure every player experiences power decay in case we updated from pre-v3.5
         PersistentData.getInstance().createActivityRecordForEveryOfflinePlayer();
-
-        // bStats
-        int pluginId = 8929;
-        Metrics metrics = new Metrics(this, pluginId);
-
-        // Dynmap
-        if (DynmapIntegrator.hasDynmap()) {
-            DynmapIntegrator.getInstance().scheduleClaimsUpdate(600); // Check once every 30 seconds for updates.
-            DynmapIntegrator.getInstance().updateClaims();
-        }
-
-        if (Bukkit.getPluginManager().getPlugin("PlaceholderAPI") != null) {
-            new PlaceholderAPI().register();
-        }
-
     }
 
     @Override
@@ -115,6 +78,30 @@ public class MedievalFactions extends AbstractPonderPlugin {
         return getConfig().getBoolean("debugMode");
     }
 
+    private void initializeConfig() {
+        if (!(new File("./plugins/MedievalFactions/config.yml").exists())) {
+            LocalConfigService.getInstance().saveConfigDefaults();
+        }
+        else {
+            // pre load compatibility checks
+            if (isVersionMismatched()) {
+                LocalConfigService.getInstance().handleVersionMismatch();
+            }
+            reloadConfig();
+        }
+    }
+
+    private void load() {
+        LocalLocaleService.getInstance().loadStrings();
+        LocalStorageService.getInstance().load();
+    }
+
+    private void scheduleRecurringTasks() {
+        Scheduler.getInstance().schedulePowerIncrease();
+        Scheduler.getInstance().schedulePowerDecrease();
+        Scheduler.getInstance().scheduleAutosave();
+    }
+
     private void registerEventHandlers() {
         ArrayList<Listener> listeners = new ArrayList<>(Arrays.asList(
                 new ChatHandler(),
@@ -126,4 +113,20 @@ public class MedievalFactions extends AbstractPonderPlugin {
         getToolbox().getEventHandlerRegistry().registerEventHandlers(listeners, this);
     }
 
+    private void handleIntegrations() {
+        // bStats
+        int pluginId = 8929;
+        Metrics metrics = new Metrics(this, pluginId);
+
+        // dynmap
+        if (DynmapIntegrator.hasDynmap()) {
+            DynmapIntegrator.getInstance().scheduleClaimsUpdate(600); // Check once every 30 seconds for updates.
+            DynmapIntegrator.getInstance().updateClaims();
+        }
+
+        // placeholders
+        if (Bukkit.getPluginManager().getPlugin("PlaceholderAPI") != null) {
+            new PlaceholderAPI().register();
+        }
+    }
 }
