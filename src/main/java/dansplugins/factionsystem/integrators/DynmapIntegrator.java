@@ -9,7 +9,6 @@ import dansplugins.factionsystem.objects.helper.ChunkFlags;
 import dansplugins.factionsystem.services.LocalChunkService;
 import dansplugins.factionsystem.services.LocalLocaleService;
 import dansplugins.factionsystem.utils.Logger;
-import dansplugins.factionsystem.utils.UUIDChecker;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.PluginManager;
 import org.bukkit.scheduler.BukkitRunnable;
@@ -248,7 +247,7 @@ public class DynmapIntegrator {
 
     private String buildNationPopupText(Faction f) {
         String message = "<h4>" + f.getName() + "</h4>" +
-                "Owner: " + UUIDChecker.getInstance().findPlayerNameBasedOnUUID(f.getOwner()) + "<br/>" +
+                "Owner: " + MedievalFactions.getInstance().getToolbox().getUUIDChecker().findPlayerNameBasedOnUUID(f.getOwner()) + "<br/>" +
                 "Description: " + f.getDescription() + "<br/>" +
                 "<div style='display: inline;' title='" + f.getMemberListSeparatedByCommas() + "'>Population: " + f.getMemberList().size() + "</div><br/>";
 
@@ -505,7 +504,7 @@ public class DynmapIntegrator {
                 for (PowerRecord powerRecord : PersistentData.getInstance().getPlayerPowerRecords()) {
                     Faction pf = PersistentData.getInstance().getPlayersFaction(powerRecord.getPlayerUUID());
                     if (pf != null && pf.getName().equalsIgnoreCase(holder)) {
-                        plids.add(UUIDChecker.getInstance().findPlayerNameBasedOnUUID(powerRecord.getPlayerUUID()));
+                        plids.add(MedievalFactions.getInstance().getToolbox().getUUIDChecker().findPlayerNameBasedOnUUID(powerRecord.getPlayerUUID()));
                     }
                 }
             }

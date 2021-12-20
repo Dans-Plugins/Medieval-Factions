@@ -1,7 +1,7 @@
 package dansplugins.factionsystem.objects.inherited;
 
+import dansplugins.factionsystem.MedievalFactions;
 import dansplugins.factionsystem.objects.inherited.specification.IGroup;
-import dansplugins.factionsystem.utils.UUIDChecker;
 import org.bukkit.entity.Player;
 
 import java.util.ArrayList;
@@ -85,7 +85,7 @@ public class Group implements IGroup {
         ArrayList<UUID> uuids = getMemberList();
         String players = "";
         for(UUID uuid : uuids) {
-            String playerName = UUIDChecker.getInstance().findPlayerNameBasedOnUUID(uuid);
+            String playerName = MedievalFactions.getInstance().getToolbox().getUUIDChecker().findPlayerNameBasedOnUUID(uuid);
             players += playerName + ", ";
         }
         if (players.length() > 0) {

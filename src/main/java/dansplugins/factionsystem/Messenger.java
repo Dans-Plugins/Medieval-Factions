@@ -3,7 +3,6 @@ package dansplugins.factionsystem;
 import dansplugins.factionsystem.integrators.FiefsIntegrator;
 import dansplugins.factionsystem.objects.domain.Faction;
 import dansplugins.factionsystem.services.LocalLocaleService;
-import dansplugins.factionsystem.utils.UUIDChecker;
 import dansplugins.fiefs.externalapi.FI_Fief;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
@@ -35,7 +34,7 @@ public class Messenger {
 
         sender.sendMessage(ChatColor.BOLD + "" + ChatColor.AQUA + String.format(LocalLocaleService.getInstance().getText("FactionInfo"), faction.getName()) + "\n----------\n");
         sender.sendMessage(ChatColor.AQUA + String.format(LocalLocaleService.getInstance().getText("Name"), faction.getName()) + "\n");
-        sender.sendMessage(ChatColor.AQUA + String.format(LocalLocaleService.getInstance().getText("Owner"), UUIDChecker.getInstance().findPlayerNameBasedOnUUID(faction.getOwner())) + "\n");
+        sender.sendMessage(ChatColor.AQUA + String.format(LocalLocaleService.getInstance().getText("Owner"), MedievalFactions.getInstance().getToolbox().getUUIDChecker().findPlayerNameBasedOnUUID(faction.getOwner())) + "\n");
         sender.sendMessage(ChatColor.AQUA + String.format(LocalLocaleService.getInstance().getText("Description"), faction.getDescription()) + "\n");
         sender.sendMessage(ChatColor.AQUA + String.format(LocalLocaleService.getInstance().getText("Population"), faction.getMemberList().size()) + "\n");
         if (faction.hasLiege()) {

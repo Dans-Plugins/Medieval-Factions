@@ -1,7 +1,7 @@
 package dansplugins.factionsystem.commands;
 
+import dansplugins.factionsystem.MedievalFactions;
 import dansplugins.factionsystem.commands.abs.SubCommand;
-import dansplugins.factionsystem.utils.UUIDChecker;
 import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.command.CommandSender;
@@ -32,7 +32,7 @@ public class PromoteCommand extends SubCommand {
             player.sendMessage(translate("&c" + getText("UsagePromote")));
             return;
         }
-        final UUID targetUUID = UUIDChecker.getInstance().findUUIDBasedOnPlayerName(args[0]);
+        final UUID targetUUID = MedievalFactions.getInstance().getToolbox().getUUIDChecker().findUUIDBasedOnPlayerName(args[0]);
         if (targetUUID == null) {
             player.sendMessage(translate("&c" + getText("PlayerNotFound")));
             return;

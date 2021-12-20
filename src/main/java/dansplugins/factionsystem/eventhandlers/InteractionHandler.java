@@ -13,7 +13,6 @@ import dansplugins.factionsystem.services.LocalLocaleService;
 import dansplugins.factionsystem.services.LocalLockService;
 import dansplugins.factionsystem.utils.BlockChecker;
 import dansplugins.factionsystem.utils.InteractionAccessChecker;
-import dansplugins.factionsystem.utils.UUIDChecker;
 import org.bukkit.ChatColor;
 import org.bukkit.Chunk;
 import org.bukkit.Location;
@@ -202,7 +201,7 @@ public class InteractionHandler implements Listener {
             boolean isPlayerBypassing = EphemeralData.getInstance().getAdminsBypassingProtections().contains(player.getUniqueId());
             if (!playerHasAccess && !isPlayerBypassing) {
                 // player doesn't have access and isn't overriding
-                String owner = UUIDChecker.getInstance().findPlayerNameBasedOnUUID(lockedBlock.getOwner());
+                String owner = MedievalFactions.getInstance().getToolbox().getUUIDChecker().findPlayerNameBasedOnUUID(lockedBlock.getOwner());
                 player.sendMessage(ChatColor.RED + String.format(LocalLocaleService.getInstance().getText("LockedBy"), owner));
                 event.setCancelled(true);
                 return;

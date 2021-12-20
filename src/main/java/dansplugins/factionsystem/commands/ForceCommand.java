@@ -9,7 +9,6 @@ import dansplugins.factionsystem.objects.domain.PowerRecord;
 import dansplugins.factionsystem.services.LocalChunkService;
 import dansplugins.factionsystem.services.LocalLocaleService;
 import dansplugins.factionsystem.services.LocalStorageService;
-import dansplugins.factionsystem.utils.UUIDChecker;
 import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.command.CommandSender;
@@ -131,7 +130,7 @@ public class ForceCommand extends SubCommand {
             sender.sendMessage(translate("&c" + getText("UsageForceDemote")));
             return;
         }
-        final UUID playerUUID = UUIDChecker.getInstance().findUUIDBasedOnPlayerName(args[1]);
+        final UUID playerUUID = MedievalFactions.getInstance().getToolbox().getUUIDChecker().findUUIDBasedOnPlayerName(args[1]);
         if (playerUUID == null) {
             sender.sendMessage(translate("&c" + getText("PlayerNotFound")));
             return;
@@ -170,7 +169,7 @@ public class ForceCommand extends SubCommand {
             sender.sendMessage(translate("&c" + getText("FactionNotFound")));
             return;
         }
-        final UUID playerUUID = UUIDChecker.getInstance().findUUIDBasedOnPlayerName(singleQuoteArgs.get(0));
+        final UUID playerUUID = MedievalFactions.getInstance().getToolbox().getUUIDChecker().findUUIDBasedOnPlayerName(singleQuoteArgs.get(0));
         if (playerUUID == null) {
             sender.sendMessage(translate("&c" + getText("PlayerNotFound")));
             return;
@@ -205,7 +204,7 @@ public class ForceCommand extends SubCommand {
             return;
         }
         if (debug) { System.out.println(String.format("Looking for player UUID based on player name: '%s'", args[1])); }
-        final UUID targetUUID = UUIDChecker.getInstance().findUUIDBasedOnPlayerName(args[1]);
+        final UUID targetUUID = MedievalFactions.getInstance().getToolbox().getUUIDChecker().findUUIDBasedOnPlayerName(args[1]);
         if (targetUUID == null) {
             sender.sendMessage(translate("&c" + getText("PlayerNotFound")));
             return;
@@ -254,7 +253,7 @@ public class ForceCommand extends SubCommand {
             sender.sendMessage(translate("&c" + getText("PlayerAndDesiredPowerSingleQuotesRequirement")));
             return;
         }
-        final UUID playerUUID = UUIDChecker.getInstance().findUUIDBasedOnPlayerName(singleQuoteArgs.get(0));
+        final UUID playerUUID = MedievalFactions.getInstance().getToolbox().getUUIDChecker().findUUIDBasedOnPlayerName(singleQuoteArgs.get(0));
         final int desiredPower = getIntSafe(singleQuoteArgs.get(1), Integer.MIN_VALUE);
         if (desiredPower == Integer.MIN_VALUE) {
             sender.sendMessage(translate("&c" + getText("DesiredPowerMustBeANumber")));
@@ -319,7 +318,7 @@ public class ForceCommand extends SubCommand {
             sender.sendMessage(translate("&c" + getText("FactionNotFound")));
             return;
         }
-        final UUID playerUUID = UUIDChecker.getInstance().findUUIDBasedOnPlayerName(singleQuoteArgs.get(1));
+        final UUID playerUUID = MedievalFactions.getInstance().getToolbox().getUUIDChecker().findUUIDBasedOnPlayerName(singleQuoteArgs.get(1));
         if (playerUUID == null) {
             sender.sendMessage(translate("&c" + getText("PlayerNotFound")));
             return;
