@@ -266,10 +266,12 @@ public class LocalChunkService {
     }
 
     public void removeChunkAtPlayerLocation(Player player, Faction playersFaction) { // TODO: fix unclaim error here
+        // get player coordinates
         double[] playerCoords = new double[2];
         playerCoords[0] = player.getLocation().getChunk().getX();
         playerCoords[1] = player.getLocation().getChunk().getZ();
 
+        // handle admin bypass
         if (EphemeralData.getInstance().getAdminsBypassingProtections().contains(player.getUniqueId())) {
             ClaimedChunk chunk = isChunkClaimed(playerCoords[0], playerCoords[1], player.getLocation().getWorld().getName());
             if (chunk != null) {
@@ -281,21 +283,22 @@ public class LocalChunkService {
             return;
         }
 
-        // check if land is claimed by player's faction
         ClaimedChunk chunk = isChunkClaimed(playerCoords[0], playerCoords[1], player.getLocation().getWorld().getName());
-        if (chunk != null)
-        {
-            // if holder is player's faction
-            if (chunk.getHolder().equalsIgnoreCase(playersFaction.getName())) {
-                removeChunk(chunk, player, playersFaction);
-                player.sendMessage(ChatColor.GREEN + LocalLocaleService.getInstance().getText("LandUnclaimed"));
-                return;
-            }
-            else {
-                player.sendMessage(ChatColor.RED + String.format(LocalLocaleService.getInstance().getText("LandClaimedBy"), chunk.getHolder()));
-                return;
-            }
+
+        // ensure that chunk is claimed
+        if (chunk == null) {
+            return;
         }
+
+        // ensure that the chunk is claimed by the player's faction.
+        if (!chunk.getHolder().equalsIgnoreCase(playersFaction.getName())) {
+            player.sendMessage(ChatColor.RED + String.format(LocalLocaleService.getInstance().getText("LandClaimedBy"), chunk.getHolder()));
+            return;
+        }
+
+        // initiate removal
+        removeChunk(chunk, player, playersFaction);
+        player.sendMessage(ChatColor.GREEN + LocalLocaleService.getInstance().getText("LandUnclaimed"));
     }
 
     private void removeChunk(ClaimedChunk chunk, Player player, Faction faction) {
