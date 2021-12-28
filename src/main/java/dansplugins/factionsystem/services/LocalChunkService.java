@@ -265,7 +265,7 @@ public class LocalChunkService {
         return (numExperiencingPowerDecay == faction.getMemberArrayList().size());
     }
 
-    public void removeChunkAtPlayerLocation(Player player, Faction playersFaction) {
+    public void removeChunkAtPlayerLocation(Player player, Faction playersFaction) { // TODO: fix unclaim error here
         double[] playerCoords = new double[2];
         playerCoords[0] = player.getLocation().getChunk().getX();
         playerCoords[1] = player.getLocation().getChunk().getZ();
