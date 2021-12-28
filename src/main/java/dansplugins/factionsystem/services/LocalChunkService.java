@@ -509,7 +509,7 @@ public class LocalChunkService {
         return (numExperiencingPowerDecay == faction.getMemberArrayList().size());
     }
 
-    private void removeChunk(ClaimedChunk chunk, Player player, Faction faction) {
+    private void removeChunk(ClaimedChunk chunk, Player player, Faction faction) { // TODO: make sure the chunk being removed is actually claimed by the player's faction
         // String identifier = (int)chunk.getChunk().getX() + "_" + (int)chunk.getChunk().getZ();
 
         FactionUnclaimEvent unclaimEvent = new FactionUnclaimEvent(faction, player, chunk.getChunk());
