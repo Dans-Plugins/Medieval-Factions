@@ -28,10 +28,17 @@ public class LocalChunkService {
 
     private static LocalChunkService instance;
 
+    /**
+     * This constructor ensures that only this class can instantiate itself.
+     */
     private LocalChunkService() {
 
     }
 
+    /**
+     * This is the method that can be utilized to access the singleton instance of the Local Chunk Service.
+     * @return The singleton instance of the Local Chunk Service.
+     */
     public static LocalChunkService getInstance() {
         if (instance == null) {
             instance = new LocalChunkService();
@@ -48,6 +55,12 @@ public class LocalChunkService {
         return getClaimedChunk(chunk.getX(), chunk.getZ(), chunk.getWorld().getName());
     }
 
+    /**
+     * This method can be used to unclaim a radius of chunks around a player.
+     * @param radius The radius of chunks to unclaim.
+     * @param player The player unclaiming the chunks.
+     * @param faction The player's faction.
+     */
     public void radiusUnclaimAtLocation(int radius, Player player, Faction faction) {
         final int maxChunksUnclaimable = 999;
         if (radius<=0||radius> maxChunksUnclaimable) {
@@ -62,6 +75,13 @@ public class LocalChunkService {
                 .forEach(chunk -> removeChunk(chunk, player, faction));
     }
 
+    /**
+     * This method can be used to claim a radius of chunks around a player.
+     * @param depth The radius of chunks to claim.
+     * @param claimant The player claiming the chunks.
+     * @param location The central location of claiming.
+     * @param claimantsFaction The claimant's faction.
+     */
     public void radiusClaimAtLocation(int depth, Player claimant, Location location, Faction claimantsFaction) {
         int maxClaimRadius = MedievalFactions.getInstance().getConfig().getInt("maxClaimRadius");
         if (depth < 0 || depth > maxClaimRadius) {
@@ -79,12 +99,23 @@ public class LocalChunkService {
         ));
     }
 
+    /**
+     * Claims a singular chunk at a location.
+     * @param claimant The player claiming the chunk.
+     * @param location The location getting claimed.
+     * @param claimantsFaction The player's faction.
+     */
     public void claimChunkAtLocation(Player claimant, Location location, Faction claimantsFaction) {
         double[] chunkCoords = getChunkCoords(location);
         claimChunkAtLocation(claimant, chunkCoords, location.getWorld(), claimantsFaction);
     }
 
-    public void removeChunkAtPlayerLocation(Player player, Faction playersFaction) { // TODO: fix unclaim error here
+    /**
+     * Unclaims a chunk at a location.
+     * @param player The player unclaiming the chunk.
+     * @param playersFaction The player's faction.
+     */
+    public void removeChunkAtPlayerLocation(Player player, Faction playersFaction) { // TODO: fix unclaim error here?
         // get player coordinates
         double[] playerCoords = new double[2];
         playerCoords[0] = player.getLocation().getChunk().getX();
@@ -120,6 +151,11 @@ public class LocalChunkService {
         player.sendMessage(ChatColor.GREEN + LocalLocaleService.getInstance().getText("LandUnclaimed"));
     }
 
+    /**
+     * This can be used to check which faction has laid claim to a chunk.
+     * @param player The player whose location we will be checking.
+     * @return The name of the faction that has claimed the chunk. A value of "unclaimed" will be returned if the chunk is unclaimed.
+     */
     public String checkOwnershipAtPlayerLocation(Player player) {
         double[] playerCoords = new double[2];
         playerCoords[0] = player.getLocation().getChunk().getX();
@@ -129,9 +165,15 @@ public class LocalChunkService {
         {
             return chunk.getHolder();
         }
-        return "unclaimed";
+        return "unclaimed"; // TODO: return null instead
     }
 
+    /**
+     * Checks if a gate is in a chunk.
+     * @param gate The gate to check.
+     * @param chunk The claimed chunk to check.
+     * @return Whether the gate is in the claimed chunk.
+     */
     public boolean isGateInChunk(Gate gate, ClaimedChunk chunk)
     {
         if ((gate.getTopLeftChunkX() == chunk.getCoordinates()[0] || gate.getBottomRightChunkX() == chunk.getCoordinates()[0])
@@ -263,10 +305,10 @@ public class LocalChunkService {
 
     /**
      * This is a private method intended to be used by this class to retrieve a claimed chunk.
-     * @param x
-     * @param z
-     * @param world
-     * @return
+     * @param x The x coordinate of the chunk to retrieve.
+     * @param z The z coordinate of the chunk to retrieve.
+     * @param world The world that the chunk to retrieve is in.
+     * @return The claimed chunk at the given location. A value of null indicates that the chunk is not claimed.
      */
     private ClaimedChunk getClaimedChunk(int x, int z, String world) {
         for (ClaimedChunk claimedChunk : PersistentData.getInstance().getClaimedChunks()) {
