@@ -607,6 +607,12 @@ public class LocalChunkService {
         PersistentData.getInstance().getClaimedChunks().remove(chunkToRemove);
     }
 
+    /**
+     * This can be utilized to get a chunk locationally relative to another chunk.
+     * @param origin The chunk we are checking.
+     * @param direction The direction the chunk we want to grab is.
+     * @return
+     */
     private Chunk getChunkByDirection(Chunk origin, String direction) {
 
         int xpos = -1;
@@ -631,8 +637,12 @@ public class LocalChunkService {
 
         return origin.getWorld().getChunkAt(xpos, zpos);
     }
-    // this will return true if the chunks to the North, East, South and West of the target are claimed by the same faction as the target
 
+    /**
+     * Checks if the chunks to the North, East, South and West of the target are claimed by the same faction
+     * @param target The claimed chunk to check the neighbors of.
+     * @return Boolean indicating whether or not the claimed chunk is surrounded.
+     */
     private boolean isClaimedChunkSurroundedByChunksClaimedBySameFaction(ClaimedChunk target) {
         ClaimedChunk northernClaimedChunk = getClaimedChunk(getChunkByDirection(target.getChunk(), "north"));
         ClaimedChunk easternClaimedChunk = getClaimedChunk(getChunkByDirection(target.getChunk(), "east"));
@@ -659,6 +669,11 @@ public class LocalChunkService {
                 westernChunkClaimedBySameFaction);
     }
 
+    /**
+     * Checks whether a block is able to be interacted with when taking into account the claiming system.
+     * @param event The PlayerInteractEvent event.
+     * @return A boolean signifying whether the block is able to be interacted with.
+     */
     private boolean isBlockInteractable(PlayerInteractEvent event) {
         if (event.getClickedBlock() != null) {
             // CHEST
@@ -702,6 +717,11 @@ public class LocalChunkService {
         return true;
     }
 
+    /**
+     * This can be utilized to find out what materials are allowed to be used in a faction's territory regardless of member status.
+     * @param material The material to check.
+     * @return Whether the material can be used.
+     */
     private boolean materialAllowed(Material material) {
         switch(material) {
             case BREAD:
