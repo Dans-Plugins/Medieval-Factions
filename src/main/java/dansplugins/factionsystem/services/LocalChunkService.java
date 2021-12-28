@@ -184,7 +184,13 @@ public class LocalChunkService {
         return false;
     }
 
-    public int getChunksClaimedByFaction(String factionName, ArrayList<ClaimedChunk> claimedChunks) {
+    /**
+     * This can be used to retrieve the number of chunks claimed by a faction.
+     * @param factionName The name of the faction we are checking.
+     * @param claimedChunks A reference to the claimed chunks in the PersistentData class.
+     * @return An integer indicating how many chunks have been claimed by this faction.
+     */
+    public int getChunksClaimedByFaction(String factionName, ArrayList<ClaimedChunk> claimedChunks) { // TODO: replace passed claimedChunks with singleton reference
         int counter = 0;
         for (ClaimedChunk chunk : claimedChunks) {
             if (chunk.getHolder().equalsIgnoreCase(factionName)) {
@@ -194,8 +200,13 @@ public class LocalChunkService {
         return counter;
     }
 
-    public boolean isClaimed(Chunk chunk, ArrayList<ClaimedChunk> claimedChunks) {
-
+    /**
+     *  This can be used to check if a chunk is claimed.
+     * @param chunk The chunk we are checking.
+     * @param claimedChunks A reference to the claimed chunks in the PersistentData class.
+     * @return A boolean indicating if the chunk is claimed.
+     */
+    public boolean isClaimed(Chunk chunk, ArrayList<ClaimedChunk> claimedChunks) { // TODO: replace passed claimedChunks with singleton reference
         for (ClaimedChunk claimedChunk : claimedChunks) {
             if (claimedChunk.getCoordinates()[0] == chunk.getX() && claimedChunk.getCoordinates()[1] == chunk.getZ() && claimedChunk.getWorld().equalsIgnoreCase(chunk.getWorld().getName())) {
                 return true;
@@ -204,7 +215,12 @@ public class LocalChunkService {
         return false;
     }
 
-    public void removeAllClaimedChunks(String factionName, ArrayList<ClaimedChunk> claimedChunks) {
+    /**
+     * This can be used to unclaim every chunk that a faction owns.
+     * @param factionName The name of the faction we are removing all claimed chunks from.
+     * @param claimedChunks A reference to the claimed chunks in the PersistentData class.
+     */
+    public void removeAllClaimedChunks(String factionName, ArrayList<ClaimedChunk> claimedChunks) { // TODO: replace passed claimedChunks with singleton reference
 
         Iterator<ClaimedChunk> itr = claimedChunks.iterator();
 
@@ -221,11 +237,23 @@ public class LocalChunkService {
         }
     }
 
-    public boolean isFactionExceedingTheirDemesneLimit(Faction faction, ArrayList<ClaimedChunk> claimedChunks) {
+    /**
+     * This can be used to check if a faction has more claimed land than power.
+     * @param faction The faction we are checking.
+     * @param claimedChunks A reference to the claimed chunks in the PersistentData class.
+     * @return Whether the faction's claimed land exceeds their power.
+     */
+    public boolean isFactionExceedingTheirDemesneLimit(Faction faction, ArrayList<ClaimedChunk> claimedChunks) { // TODO: replace passed claimedChunks with singleton reference
         return (getChunksClaimedByFaction(faction.getName(), claimedChunks) > faction.getCumulativePowerLevel());
     }
 
-    public void informPlayerIfTheirLandIsInDanger(Player player, ArrayList<Faction> factions, ArrayList<ClaimedChunk> claimedChunks) {
+    /**
+     * If a player is exceeding their demesne limit, this method will inform them.
+     * @param player The player to inform.
+     * @param factions A reference to the factions in the PersistentData class.
+     * @param claimedChunks A reference to the claimed chunks in the PersistentData class.
+     */
+    public void informPlayerIfTheirLandIsInDanger(Player player, ArrayList<Faction> factions, ArrayList<ClaimedChunk> claimedChunks) { // TODO: replace passed claimedChunks with singleton reference and remove factions parameter
         Faction faction = PersistentData.getInstance().getPlayersFaction(player.getUniqueId());
         if (faction != null) {
             if (isFactionExceedingTheirDemesneLimit(faction, claimedChunks)) {
@@ -234,6 +262,11 @@ public class LocalChunkService {
         }
     }
 
+    /**
+     * This handles interaction within a claimed chunk for the PlayerInteractEvent event.
+     * @param event The PlayerInteractEvent event.
+     * @param claimedChunk The chunk that has been interacted with.
+     */
     public void handleClaimedChunkInteraction(PlayerInteractEvent event, ClaimedChunk claimedChunk) {
         // player not in a faction and isn't overriding
         if (!PersistentData.getInstance().isInFaction(event.getPlayer().getUniqueId()) && !EphemeralData.getInstance().getAdminsBypassingProtections().contains(event.getPlayer().getUniqueId())) {
@@ -291,6 +324,11 @@ public class LocalChunkService {
         }
     }
 
+    /**
+     * This can be used to forcefully claim a chunk at the players location, regardless of requirements.
+     * @param player The player whose location we are using.
+     * @param faction The faction we are claiming the chunk for.
+     */
     public void forceClaimAtPlayerLocation(Player player, Faction faction) {
         Location location = player.getLocation();
 
@@ -327,35 +365,6 @@ public class LocalChunkService {
             }
         }
         return chunkSet;
-    }
-
-    private ArrayList<Chunk> getEightSurrounding(Chunk chunk) {
-        ArrayList<Chunk> surrounding = new ArrayList<>();
-
-        World world = chunk.getWorld();
-
-        int xpos = chunk.getX();
-        int zpos = chunk.getZ();
-
-        Chunk topLeft = world.getChunkAt(xpos - 1, zpos - 1);
-        Chunk topTop = world.getChunkAt(xpos, zpos - 1);
-        Chunk topRight = world.getChunkAt(xpos + 1, zpos - 1);
-        Chunk middleRight = world.getChunkAt(xpos + 1, zpos);
-        Chunk bottomRight = world.getChunkAt(xpos + 1, zpos + 1);
-        Chunk bottomMiddle = world.getChunkAt(xpos, zpos + 1);
-        Chunk bottomLeft = world.getChunkAt(xpos - 1, zpos + 1);
-        Chunk middleLeft = world.getChunkAt(xpos - 1, zpos);
-
-        surrounding.add(topLeft);
-        surrounding.add(topTop);
-        surrounding.add(topRight);
-        surrounding.add(middleRight);
-        surrounding.add(bottomRight);
-        surrounding.add(bottomMiddle);
-        surrounding.add(bottomLeft);
-        surrounding.add(middleLeft);
-
-        return surrounding;
     }
 
     private void claimChunkAtLocation(Player claimant, double[] chunkCoords, World world, Faction claimantsFaction) {
