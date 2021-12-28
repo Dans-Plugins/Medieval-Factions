@@ -46,8 +46,13 @@ public class DeclareIndependenceCommand extends SubCommand {
             if (!warStartEvent.isCancelled()) {
                 this.faction.addEnemy(liege.getName());
                 liege.addEnemy(this.faction.getName());
-            }
 
+                // break alliance if allied
+                if (this.faction.isAlly(liege.getName())) {
+                    this.faction.removeAlly(liege.getName());
+                    liege.removeAlly(faction.getName());
+                }
+            }
         }
         messageServer(translate("&c" + getText("HasDeclaredIndependence", faction.getName(), liege.getName())));
     }
