@@ -56,26 +56,6 @@ public class LocalChunkService {
     }
 
     /**
-     * This method can be used to unclaim a radius of chunks around a player.
-     * @param radius The radius of chunks to unclaim.
-     * @param player The player unclaiming the chunks.
-     * @param faction The player's faction.
-     */
-    public void radiusUnclaimAtLocation(int radius, Player player, Faction faction) {
-        final int maxChunksUnclaimable = 999;
-        if (radius<=0||radius> maxChunksUnclaimable) {
-            final LocalLocaleService instance = LocalLocaleService.getInstance();
-            player.sendMessage(ChatColor.RED + String.format(instance.getText("RadiusRequirement"), maxChunksUnclaimable));
-            return;
-        }
-        final Set<Chunk> chunkSet = obtainChunks(player.getLocation().getChunk(), radius);
-        chunkSet.stream()
-                .map(c -> isChunkClaimed(c.getX(), c.getZ(), c.getWorld().getName()))
-                .filter(Objects::nonNull)
-                .forEach(chunk -> removeChunk(chunk, player, faction));
-    }
-
-    /**
      * This method can be used to claim a radius of chunks around a player.
      * @param depth The radius of chunks to claim.
      * @param claimant The player claiming the chunks.
@@ -84,19 +64,49 @@ public class LocalChunkService {
      */
     public void radiusClaimAtLocation(int depth, Player claimant, Location location, Faction claimantsFaction) {
         int maxClaimRadius = MedievalFactions.getInstance().getConfig().getInt("maxClaimRadius");
+
+        // check if depth is valid
         if (depth < 0 || depth > maxClaimRadius) {
             claimant.sendMessage(ChatColor.RED + String.format(LocalLocaleService.getInstance().getText("RadiusRequirement"), maxClaimRadius));
             return;
         }
+
+        // if depth is 0, we just need to claim the chunk the player is on
         if (depth == 0) {
             claimChunkAtLocation(claimant, location, claimantsFaction);
             return;
         }
+
+        // claim chunks
         final Chunk initial = location.getChunk();
         final Set<Chunk> chunkSet = obtainChunks(initial, depth);
         chunkSet.forEach(chunk -> claimChunkAtLocation(
                 claimant, getChunkCoords(chunk), chunk.getWorld(), claimantsFaction
         ));
+    }
+
+    /**
+     * This method can be used to unclaim a radius of chunks around a player.
+     * @param radius The radius of chunks to unclaim.
+     * @param player The player unclaiming the chunks.
+     * @param faction The player's faction.
+     */
+    public void radiusUnclaimAtLocation(int radius, Player player, Faction faction) {
+        final int maxChunksUnclaimable = 999;
+
+        // check if radius is valid
+        if (radius <= 0|| radius > maxChunksUnclaimable) {
+            final LocalLocaleService instance = LocalLocaleService.getInstance();
+            player.sendMessage(ChatColor.RED + String.format(instance.getText("RadiusRequirement"), maxChunksUnclaimable));
+            return;
+        }
+
+        // unclaim chunks
+        final Set<Chunk> chunkSet = obtainChunks(player.getLocation().getChunk(), radius);
+        chunkSet.stream()
+                .map(c -> isChunkClaimed(c.getX(), c.getZ(), c.getWorld().getName()))
+                .filter(Objects::nonNull)
+                .forEach(chunk -> removeChunk(chunk, player, faction));
     }
 
     /**
@@ -221,7 +231,6 @@ public class LocalChunkService {
      * @param claimedChunks A reference to the claimed chunks in the PersistentData class.
      */
     public void removeAllClaimedChunks(String factionName, ArrayList<ClaimedChunk> claimedChunks) { // TODO: replace passed claimedChunks with singleton reference
-
         Iterator<ClaimedChunk> itr = claimedChunks.iterator();
 
         while (itr.hasNext()) {
@@ -438,7 +447,6 @@ public class LocalChunkService {
             }
         }
         else {
-
             Chunk toClaim = world.getChunkAt((int) chunkCoords[0], (int) chunkCoords[1]);
             FactionClaimEvent claimEvent = new FactionClaimEvent(claimantsFaction, claimant, toClaim);
             Bukkit.getPluginManager().callEvent(claimEvent);
@@ -450,6 +458,12 @@ public class LocalChunkService {
         }
     }
 
+    /**
+     * Adds a claimed chunk to persistent data.
+     * @param chunk The chunk we will be creating a new claimed chunk with.
+     * @param faction The faction that will own the claimed chunk.
+     * @param world The world that the claimed chunk is located in.
+     */
     private void addClaimedChunk(Chunk chunk, Faction faction, World world) {
         ClaimedChunk newChunk = new ClaimedChunk(chunk);
         newChunk.setHolder(faction.getName());
@@ -457,13 +471,20 @@ public class LocalChunkService {
         PersistentData.getInstance().getClaimedChunks().add(newChunk);
     }
 
+    /**
+     * This can be used to retrieve the x and z coordinates of a chunk.
+     * @param location The location of the chunk.
+     * @return An array of doubles containing the x and z coordinates.
+     */
     private double[] getChunkCoords(Location location) {
-        double[] chunkCoords = new double[2];
-        chunkCoords[0] = location.getChunk().getX();
-        chunkCoords[1] = location.getChunk().getZ();
-        return chunkCoords;
+        return getChunkCoords(location.getChunk());
     }
 
+    /**
+     * This can be used to retrieve the x and z coordinates of a chunk.
+     * @param chunk The chunk to retrieve the coordinates of.
+     * @return An array of doubles containing the x and z coordinates.
+     */
     private double[] getChunkCoords(Chunk chunk) {
         double[] chunkCoords = new double[2];
         chunkCoords[0] = chunk.getX();
@@ -471,6 +492,13 @@ public class LocalChunkService {
         return chunkCoords;
     }
 
+    /**
+     * Checks if a chunk is claimed.
+     * @param x The x coordinate of the chunk.
+     * @param y The y coordinate of the chunk.
+     * @param world The world that the chunk is in.
+     * @return The claimed chunk if the chunk is claimed, and null if it is not.
+     */
     private ClaimedChunk isChunkClaimed(double x, double y, String world)
     {
         for (ClaimedChunk chunk : PersistentData.getInstance().getClaimedChunks())
@@ -484,6 +512,11 @@ public class LocalChunkService {
         return null;
     }
 
+    /**
+     * Checks if every player in a faction is experiencing power decay.
+     * @param faction The faction whose players to check.
+     * @return A boolean indicating whether every player in the faction is experiencing power decay.
+     */
     private boolean everyPlayerInFactionExperiencingPowerDecay(Faction faction) {
         int numExperiencingPowerDecay = 0;
         for (UUID uuid : faction.getMemberArrayList()) {
@@ -509,24 +542,40 @@ public class LocalChunkService {
         return (numExperiencingPowerDecay == faction.getMemberArrayList().size());
     }
 
-    private void removeChunk(ClaimedChunk chunk, Player player, Faction faction) { // TODO: make sure the chunk being removed is actually claimed by the player's faction
+    /**
+     * This can be utilized to remove a claimed chunk from persistent data.
+     * @param chunkToRemove The chunk to remove.
+     * @param unclaimingPlayer The player removing the chunk.
+     * @param holdingFaction The faction that the chunk is owned by.
+     */
+    private void removeChunk(ClaimedChunk chunkToRemove, Player unclaimingPlayer, Faction holdingFaction) { // TODO: make sure the chunk being removed is actually claimed by the player's faction
         // String identifier = (int)chunk.getChunk().getX() + "_" + (int)chunk.getChunk().getZ();
 
-        FactionUnclaimEvent unclaimEvent = new FactionUnclaimEvent(faction, player, chunk.getChunk());
+        // handle faction unclaim event calling and cancellation
+        FactionUnclaimEvent unclaimEvent = new FactionUnclaimEvent(holdingFaction, unclaimingPlayer, chunkToRemove.getChunk());
         Bukkit.getPluginManager().callEvent(unclaimEvent);
         if (unclaimEvent.isCancelled()) {
             // TODO: add locale message
             return;
         }
 
+        // get player's faction
+        Faction playersFaction = PersistentData.getInstance().getPlayersFaction(unclaimingPlayer.getUniqueId());
+
+        // ensure that the claimed chunk is owned by the player's faction
+        if (!chunkToRemove.getHolder().equals(playersFaction.getName())) {
+            // TODO: add locale message
+            return;
+        }
+
         // if faction home is located on this chunk
-        Location factionHome = faction.getFactionHome();
+        Location factionHome = holdingFaction.getFactionHome();
         if (factionHome != null) {
-            if (factionHome.getChunk().getX() == chunk.getChunk().getX() && factionHome.getChunk().getZ() == chunk.getChunk().getZ()
-                    && chunk.getWorld().equalsIgnoreCase(player.getLocation().getWorld().getName())) {
+            if (factionHome.getChunk().getX() == chunkToRemove.getChunk().getX() && factionHome.getChunk().getZ() == chunkToRemove.getChunk().getZ()
+                    && chunkToRemove.getWorld().equalsIgnoreCase(unclaimingPlayer.getLocation().getWorld().getName())) {
                 // remove faction home
-                faction.setFactionHome(null);
-                Messenger.getInstance().sendAllPlayersInFactionMessage(faction, ChatColor.RED + LocalLocaleService.getInstance().getText("AlertFactionHomeRemoved"));
+                holdingFaction.setFactionHome(null);
+                Messenger.getInstance().sendAllPlayersInFactionMessage(holdingFaction, ChatColor.RED + LocalLocaleService.getInstance().getText("AlertFactionHomeRemoved"));
 
             }
         }
@@ -535,27 +584,27 @@ public class LocalChunkService {
         Iterator<LockedBlock> itr = PersistentData.getInstance().getLockedBlocks().iterator();
         while (itr.hasNext()) {
             LockedBlock block = itr.next();
-            if (chunk.getChunk().getWorld().getBlockAt(block.getX(), block.getY(), block.getZ()).getChunk().getX() == chunk.getChunk().getX() &&
-                    chunk.getChunk().getWorld().getBlockAt(block.getX(), block.getY(), block.getZ()).getChunk().getZ() == chunk.getChunk().getZ() &&
-                    block.getWorld().equalsIgnoreCase(chunk.getWorld())) {
+            if (chunkToRemove.getChunk().getWorld().getBlockAt(block.getX(), block.getY(), block.getZ()).getChunk().getX() == chunkToRemove.getChunk().getX() &&
+                    chunkToRemove.getChunk().getWorld().getBlockAt(block.getX(), block.getY(), block.getZ()).getChunk().getZ() == chunkToRemove.getChunk().getZ() &&
+                    block.getWorld().equalsIgnoreCase(chunkToRemove.getWorld())) {
                 itr.remove();
             }
         }
 
         // remove any gates in this chunk
-        Iterator<Gate> gtr = faction.getGates().iterator();
+        Iterator<Gate> gtr = holdingFaction.getGates().iterator();
         while(gtr.hasNext())
         {
             Gate gate = gtr.next();
-            if (isGateInChunk(gate, chunk))
+            if (isGateInChunk(gate, chunkToRemove))
             {
 //        		System.out.println("Removing gate " + gate.getName());
-                faction.removeGate(gate);
+                holdingFaction.removeGate(gate);
                 gtr.remove();
             }
         }
 
-        PersistentData.getInstance().getClaimedChunks().remove(chunk);
+        PersistentData.getInstance().getClaimedChunks().remove(chunkToRemove);
     }
 
     private Chunk getChunkByDirection(Chunk origin, String direction) {
