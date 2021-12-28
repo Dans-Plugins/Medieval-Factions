@@ -1,7 +1,6 @@
 package dansplugins.factionsystem.eventhandlers;
 
 import dansplugins.factionsystem.MedievalFactions;
-import dansplugins.factionsystem.utils.Messenger;
 import dansplugins.factionsystem.data.EphemeralData;
 import dansplugins.factionsystem.data.PersistentData;
 import dansplugins.factionsystem.events.FactionJoinEvent;
@@ -12,6 +11,7 @@ import dansplugins.factionsystem.services.LocalActionBarService;
 import dansplugins.factionsystem.services.LocalChunkService;
 import dansplugins.factionsystem.services.LocalLocaleService;
 import dansplugins.factionsystem.utils.Logger;
+import dansplugins.factionsystem.utils.Messenger;
 import dansplugins.factionsystem.utils.TerritoryOwnerNotifier;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
