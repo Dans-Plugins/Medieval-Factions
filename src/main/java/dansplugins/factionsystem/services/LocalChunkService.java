@@ -25,7 +25,6 @@ import static org.bukkit.Material.LADDER;
  * @author Daniel Stephenson
  */
 public class LocalChunkService {
-
     private static LocalChunkService instance;
 
     /**
