@@ -7,5 +7,5 @@ public interface IPowerRecord {
     int getPowerLevel();
     void setPowerLevel(int newPower);
     boolean increasePowerByTenPercent();
-    void decreasePowerByTenPercent();
+    int decreasePowerByTenPercent();
 }

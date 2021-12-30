@@ -295,13 +295,10 @@ public class DamageEffectsAndDeathHandler implements Listener {
 
         if (LocalConfigService.getInstance().getBoolean("playersLosePowerOnDeath")) {
             // decrease dying player's power
-            for (PowerRecord record : PersistentData.getInstance().getPlayerPowerRecords()) {
-                if (record.getPlayerUUID().equals(player.getUniqueId())) {
-                    record.decreasePowerByTenPercent();
-                    if (PersistentData.getInstance().getPlayersPowerRecord(player.getUniqueId()).getPowerLevel() > 0) {
-                        player.sendMessage(ChatColor.RED + LocalLocaleService.getInstance().getText("AlertPowerLevelDecreased"));
-                    }
-                }
+            PowerRecord playersPowerRecord = PersistentData.getInstance().getPlayersPowerRecord(player.getUniqueId());
+            int powerLost = playersPowerRecord.decreasePowerByTenPercent();
+            if (powerLost != 0) {
+                player.sendMessage(ChatColor.RED + "You lost " + powerLost + " power."); // TODO: add locale message
             }
         }
 
