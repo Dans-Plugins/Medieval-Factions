@@ -45,7 +45,11 @@ public class AllyCommand extends SubCommand {
             player.sendMessage(translate("&c" + getText("FactionAlreadyAlly")));
             return;
         }
-        if (faction.isRequestedAlly(otherFaction.getName()) || faction.isEnemy(otherFaction.getName())) {
+        if (faction.isEnemy(otherFaction.getName())) {
+            // TODO: add locale message
+            return;
+        }
+        if (faction.isRequestedAlly(otherFaction.getName())) {
             // Already requested to ally, why you try spam? :O
             player.sendMessage(translate("&c" + getText("AlertAlreadyRequestedAlliance")));
             return;
