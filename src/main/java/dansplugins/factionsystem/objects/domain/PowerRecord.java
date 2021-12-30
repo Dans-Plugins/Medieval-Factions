@@ -137,12 +137,12 @@ public class PowerRecord extends PlayerRecord implements IPowerRecord {
     }
 
     @Override
-    public void decreasePowerByTenPercent() {
-        int newLevel = (int) (powerLevel * 0.90);
-        if (powerLevel > 0){
-            powerLevel = newLevel;
-        } else {
+    public int decreasePowerByTenPercent() {
+        int powerDecreaseAmount = (int) (powerLevel * 0.10);
+        powerLevel =- powerDecreaseAmount;
+        if (powerLevel < 0) {
             powerLevel = 0;
         }
+        return powerDecreaseAmount;
     }
 }
