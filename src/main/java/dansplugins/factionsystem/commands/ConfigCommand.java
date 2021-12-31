@@ -1,6 +1,7 @@
 package dansplugins.factionsystem.commands;
 
 import dansplugins.factionsystem.commands.abs.SubCommand;
+import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
@@ -38,12 +39,13 @@ public class ConfigCommand extends SubCommand {
         }
 
         if (args.length == 0) {
-            sender.sendMessage(translate("&c" + getText("ValidSubCommandsShowSet")));
+            sender.sendMessage(ChatColor.RED + "Valid subcommands: show, set, reload"); // TODO: add locale message
             return;
         }
 
         final boolean show = safeEquals(false, args[0], "get", "show", getText("CmdConfigShow"));
         final boolean set = safeEquals(false, args[0], "set", getText("CmdConfigSet"));
+        final boolean reload = safeEquals(false, args[0], "reload", "CmdConfigReload"); // TODO: add locale message
 
         if (show) {
             if (args.length < 2) {
@@ -77,6 +79,9 @@ public class ConfigCommand extends SubCommand {
             else {
                 localConfigService.setConfigOption(args[1], args[2], sender);
             }
+        }
+        else if (reload) {
+            // TODO: reload the config
         }
         else {
             sender.sendMessage(translate("&c" + getText("ValidSubCommandsShowSet")));
