@@ -26,29 +26,37 @@ public class DeclareWarCommand extends SubCommand {
     @Override
     public void execute(Player player, String[] args, String key) {
         final String permission = "mf.declarewar";
-        if (!(checkPermissions(player, permission))) return;
+        if (!(checkPermissions(player, permission))) {
+            return;
+        }
+
         if (args.length == 0) {
             player.sendMessage(translate("&c" + getText("UsageDeclareWar")));
             return;
         }
+
         final Faction opponent = getFaction(String.join(" ", args));
         if (opponent == null) {
             player.sendMessage(translate("&c" + getText("FactionNotFound")));
             return;
         }
+
         if (opponent == faction) {
             player.sendMessage(translate("&c" + getText("CannotDeclareWarOnYourself")));
             return;
         }
+
         if (faction.isEnemy(opponent.getName())) {
             player.sendMessage(translate("&c" + getText("AlertAlreadyAtWarWith", opponent.getName())));
             return;
         }
+
         if (faction.hasLiege() && opponent.hasLiege()) {
             if (faction.isVassal(opponent.getName())) {
                 player.sendMessage(translate("&c" + getText("CannotDeclareWarOnVassal")));
                 return;
             }
+
             if (!faction.getLiege().equalsIgnoreCase(opponent.getLiege())) {
                 final Faction enemyLiege = getFaction(opponent.getLiege());
                 if (enemyLiege.calculateCumulativePowerLevelWithoutVassalContribution() <
@@ -57,22 +65,27 @@ public class DeclareWarCommand extends SubCommand {
                 }
             }
         }
+
         if (faction.isLiege(opponent.getName())) {
             player.sendMessage(translate("&c" + getText("CannotDeclareWarOnLiege")));
             return;
         }
+
         if (faction.isAlly(opponent.getName())) {
             player.sendMessage(translate("&c" + getText("CannotDeclareWarOnAlly")));
             return;
         }
+
         if (MedievalFactions.getInstance().getConfig().getBoolean("allowNeutrality") && ((boolean) opponent.getFlags().getFlag("neutral"))) {
             player.sendMessage(translate("&c" + getText("CannotDeclareWarOnNeutralFaction")));
             return;
         }
+
         if (MedievalFactions.getInstance().getConfig().getBoolean("allowNeutrality") && ((boolean) faction.getFlags().getFlag("neutral"))) {
             player.sendMessage(translate("&c" + getText("CannotDeclareWarIfNeutralFaction")));
             return;
         }
+
         FactionWarStartEvent warStartEvent = new FactionWarStartEvent(this.faction, opponent, player);
         Bukkit.getPluginManager().callEvent(warStartEvent);
         if (!warStartEvent.isCancelled()) {

@@ -26,24 +26,31 @@ public class BreakAllianceCommand extends SubCommand {
     @Override
     public void execute(Player player, String[] args, String key) {
         final String permission = "mf.breakalliance";
-        if (!(checkPermissions(player, permission))) return;
+        if (!(checkPermissions(player, permission))) {
+            return;
+        }
+
         if (args.length == 0) {
             player.sendMessage(translate("&c" + getText("UsageBreakAlliance")));
             return;
         }
+
         final Faction otherFaction = getFaction(String.join(" ", args));
         if (otherFaction == null) {
             player.sendMessage(translate("&c" + getText("FactionNotFound")));
             return;
         }
+
         if (otherFaction == faction) {
             player.sendMessage(translate("&c" + getText("CannotBreakAllianceWithSelf")));
             return;
         }
+
         if (!faction.isAlly(otherFaction.getName())) {
             player.sendMessage(translate("&c" + getText("AlertNotAllied", otherFaction.getName())));
             return;
         }
+
         faction.removeAlly(otherFaction.getName());
         otherFaction.removeAlly(faction.getName());
         messageFaction(faction, translate("&c" + getText("AllianceBrokenWith", otherFaction.getName())));

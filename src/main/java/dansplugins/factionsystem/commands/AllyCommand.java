@@ -26,52 +26,72 @@ public class AllyCommand extends SubCommand {
     @Override
     public void execute(Player player, String[] args, String key) {
         final String permission = "mf.ally";
-        if (!checkPermissions(player, permission)) return;
+
+        if (!checkPermissions(player, permission)) {
+            return;
+        }
+
         if (args.length == 0) {
             player.sendMessage(translate("&c" + getText("UsageAlly")));
             return;
         }
-        // Retrieve the Faction from the given arguments.
+
+        // retrieve the Faction from the given arguments
         final Faction otherFaction = getFaction(String.join(" ", args));
-        if (otherFaction == null) { // The faction needs to exist to ally
+
+        // the faction needs to exist to ally
+        if (otherFaction == null) {
             player.sendMessage(translate("&c" + getText("FactionNotFound")));
             return;
         }
-        if (otherFaction == faction) { // The faction can't be itself
+
+        // the faction can't be itself
+        if (otherFaction == faction) {
             player.sendMessage(translate("&c" + getText("CannotAllyWithSelf")));
             return;
         }
-        if (faction.isAlly(otherFaction.getName())) { // No need to allow them to ally if they're already allies.
+
+        // no need to allow them to ally if they're already allies
+        if (faction.isAlly(otherFaction.getName())) {
             player.sendMessage(translate("&c" + getText("FactionAlreadyAlly")));
             return;
         }
+
         if (faction.isEnemy(otherFaction.getName())) {
             // TODO: add locale message
             return;
         }
+
         if (faction.isRequestedAlly(otherFaction.getName())) {
-            // Already requested to ally, why you try spam? :O
             player.sendMessage(translate("&c" + getText("AlertAlreadyRequestedAlliance")));
             return;
         }
-        faction.requestAlly(otherFaction.getName()); // Send the request.
+
+        // send the request
+        faction.requestAlly(otherFaction.getName());
+
         messageFaction(
                 faction,
                 translate("&a" + getText("AlertAttemptedAlliance", faction.getName(), otherFaction.getName()))
         );
+
         messageFaction(
                 otherFaction,
                 translate("&a" + getText("AlertAttemptedAlliance", faction.getName(), otherFaction.getName()))
         );
-        // Is the playersFaction and the target Faction requesting to Ally each other?
+
+        // check if both factions are have requested an alliance
         if (faction.isRequestedAlly(otherFaction.getName()) && otherFaction.isRequestedAlly(faction.getName())) {
-            // Then ally them!
+            // ally them
             faction.addAlly(otherFaction.getName());
             otherFaction.addAlly(faction.getName());
-            // Message player's Faction!
+
+            // message player's faction
             messageFaction(faction, translate("&a" + getText("AlertNowAlliedWith", otherFaction.getName())));
-            // Message target Faction!
+
+            // message target faction
             messageFaction(otherFaction, translate("&a" + getText("AlertNowAlliedWith", faction.getName())));
+
             // remove alliance requests
             faction.removeAllianceRequest(otherFaction.getName());
             otherFaction.removeAllianceRequest(faction.getName());

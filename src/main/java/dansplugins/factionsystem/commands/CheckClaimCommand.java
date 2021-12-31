@@ -20,10 +20,18 @@ public class CheckClaimCommand extends SubCommand {
     @Override
     public void execute(Player player, String[] args, String key) {
         final String permission = "mf.checkclaim";
-        if (!(checkPermissions(player, permission))) return;
+        if (!(checkPermissions(player, permission))) {
+            return;
+        }
+
         final String result = chunks.checkOwnershipAtPlayerLocation(player);
-        if (result.equals("unclaimed")) player.sendMessage(translate("&a" + getText("LandIsUnclaimed")));
-        else player.sendMessage(translate("&c" + getText("LandClaimedBy", result)));
+
+        if (result.equals("unclaimed")) {
+            player.sendMessage(translate("&a" + getText("LandIsUnclaimed")));
+        }
+        else {
+            player.sendMessage(translate("&c" + getText("LandClaimedBy", result)));
+        }
     }
 
     /**
