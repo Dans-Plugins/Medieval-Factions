@@ -26,31 +26,43 @@ public class DemoteCommand extends SubCommand {
     @Override
     public void execute(Player player, String[] args, String key) {
         final String permission = "mf.demote";
-        if (!(checkPermissions(player, permission))) return;
+        if (!(checkPermissions(player, permission))) {
+            return;
+        }
+
         if (args.length == 0) {
             player.sendMessage(translate("&c" + getText("UsageDemote")));
             return;
         }
+
         OfflinePlayer demotee = null;
         for (UUID uuid : this.faction.getMemberList()) {
             final OfflinePlayer offlinePlayer = Bukkit.getOfflinePlayer(uuid);
             if (offlinePlayer.getName() == null) continue;
             if (offlinePlayer.getName().equalsIgnoreCase(args[0])) demotee = offlinePlayer;
         }
+
         if (demotee == null) {
             player.sendMessage(translate("&c" + getText("PlayerByNameNotFound", args[0])));
             return;
         }
+
         if (demotee.getUniqueId() == player.getUniqueId()) {
             player.sendMessage(translate("&c" + getText("CannotDemoteSelf")));
             return;
         }
+
         if (!this.faction.isOfficer(demotee.getUniqueId())) {
             player.sendMessage(translate("&c" + getText("PlayerIsNotOfficerOfFaction")));
             return;
         }
+
         faction.removeOfficer(demotee.getUniqueId());
-        if (demotee.isOnline()) ((Player) demotee).sendMessage(translate("&c" + getText("AlertDemotion")));
+
+        if (demotee.isOnline()) {
+            ((Player) demotee).sendMessage(translate("&c" + getText("AlertDemotion")));
+        }
+
         player.sendMessage(translate("&a" + getText("PlayerDemoted")));
     }
 

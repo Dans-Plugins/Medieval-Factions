@@ -28,8 +28,10 @@ public class ClaimCommand extends SubCommand {
                 return;
             }
         }
+
         if (args.length != 0) {
             int depth = getIntSafe(args[0], -1);
+
             if (depth <= 0) {
                 player.sendMessage(translate("&c" + getText("UsageClaimRadius")));
             }

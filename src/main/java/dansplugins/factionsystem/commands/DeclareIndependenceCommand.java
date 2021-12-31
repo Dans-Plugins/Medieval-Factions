@@ -26,23 +26,30 @@ public class DeclareIndependenceCommand extends SubCommand {
     @Override
     public void execute(Player player, String[] args, String key) {
         final String permission = "mf.declareindependence";
-        if (!(checkPermissions(player, permission))) return;
+        if (!(checkPermissions(player, permission))) {
+            return;
+        }
+
         if (!(this.faction.hasLiege()) || this.faction.getLiege() == null) {
             player.sendMessage(translate("&c" + getText("NotAVassalOfAFaction")));
             return;
         }
+
         final Faction liege = getFaction(this.faction.getLiege());
         if (liege == null) {
             player.sendMessage(translate("&c" + getText("FactionNotFound")));
             return;
         }
+
         // break vassal agreement.
         liege.removeVassal(this.faction.getName());
         this.faction.setLiege("none");
+
         if (!MedievalFactions.getInstance().getConfig().getBoolean("allowNeutrality") || (!((boolean) faction.getFlags().getFlag("neutral")) && !((boolean) liege.getFlags().getFlag("neutral")))) {
-            // Make enemies if (1) neutrality is disabled or (2) declaring faction is not neutral and liege is not neutral
+            // make enemies if (1) neutrality is disabled or (2) declaring faction is not neutral and liege is not neutral
             FactionWarStartEvent warStartEvent = new FactionWarStartEvent(this.faction, liege, player);
             Bukkit.getPluginManager().callEvent(warStartEvent);
+
             if (!warStartEvent.isCancelled()) {
                 this.faction.addEnemy(liege.getName());
                 liege.addEnemy(this.faction.getName());

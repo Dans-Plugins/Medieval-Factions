@@ -27,28 +27,39 @@ public class CreateCommand extends SubCommand {
     @Override
     public void execute(Player player, String[] args, String key) {
         final String permission = "mf.create";
-        if (!(checkPermissions(player, permission))) return;
+        if (!(checkPermissions(player, permission))) {
+            return;
+        }
+
         this.faction = getPlayerFaction(player);
         if (this.faction != null) {
             player.sendMessage(translate("&c" + getText("AlreadyInFaction")));
             return;
         }
+
         if (args.length == 0) {
             player.sendMessage(translate("&c" + getText("UsageCreate")));
             return;
         }
+
         final String factionName = String.join(" ", args).trim();
+
         final FileConfiguration config = MedievalFactions.getInstance().getConfig();
+
         if (factionName.length() > config.getInt("factionMaxNameLength")) {
             player.sendMessage(translate("&c" + getText("FactionNameTooLong")));
             return;
         }
+
         if (data.getFaction(factionName) != null) {
             player.sendMessage(translate("&c" + getText("FactionAlreadyExists")));
             return;
         }
+
         this.faction = new Faction(factionName, player.getUniqueId());
+
         this.faction.addMember(player.getUniqueId());
+
         FactionCreateEvent createEvent = new FactionCreateEvent(this.faction, player);
         Bukkit.getPluginManager().callEvent(createEvent);
         if (!createEvent.isCancelled()) {

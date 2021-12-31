@@ -22,14 +22,23 @@ public class CheckAccessCommand extends SubCommand {
     @Override
     public void execute(Player player, String[] args, String key) {
         final String permission = "mf.checkaccess";
-        if (!(checkPermissions(player, permission))) return;
+        if (!(checkPermissions(player, permission))) {
+            return;
+        }
+
         boolean cancel = false, contains = ephemeral.getPlayersCheckingAccess().contains(player.getUniqueId());
-        if (args.length >= 1) cancel = args[0].equalsIgnoreCase("cancel");
+
+        if (args.length >= 1) {
+            cancel = args[0].equalsIgnoreCase("cancel");
+        }
+
         if (cancel && contains) {
             ephemeral.getPlayersCheckingAccess().remove(player.getUniqueId());
             player.sendMessage(translate("&c" + getText("Cancelled")));
         } else {
-            if (contains) player.sendMessage(translate("&c" + getText("AlreadyEnteredCheckAccess")));
+            if (contains) {
+                player.sendMessage(translate("&c" + getText("AlreadyEnteredCheckAccess")));
+            }
             else {
                 ephemeral.getPlayersCheckingAccess().add(player.getUniqueId());
                 player.sendMessage(translate("&a" + getText("RightClickCheckAccess")));

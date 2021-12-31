@@ -25,12 +25,17 @@ public class AddLawCommand extends SubCommand {
     @Override
     public void execute(Player player, String[] args, String key) {
         final String permission = "mf.addlaw";
-        if (!(checkPermissions(player, permission))) return;
-        if (args.length == 0) { // Check if they have provided any strings beyond "Add Law".
+        if (!(checkPermissions(player, permission))) {
+            return;
+        }
+
+        // check if they have provided any strings beyond "addlaw"
+        if (args.length == 0) {
             player.sendMessage(translate("&c" + getText("UsageAddLaw")));
             return;
         }
-        // Add the law and send a success message.
+
+        // add the law and send a success message.
         faction.addLaw(String.join(" ", args));
         player.sendMessage(translate("&a" + getText("LawAdded")));
     }

@@ -26,10 +26,18 @@ public class ChatCommand extends SubCommand {
             player.sendMessage(translate("&c" + getText("PermissionNeeded", permission)));
             return;
         }
+
         final boolean contains = ephemeral.getPlayersInFactionChat().contains(player.getUniqueId());
+
         final String path = (contains ? "NoLonger" : "NowSpeaking") + "InFactionChat";
-        if (contains) ephemeral.getPlayersInFactionChat().remove(player.getUniqueId());
-        else ephemeral.getPlayersInFactionChat().add(player.getUniqueId());
+
+        if (contains) {
+            ephemeral.getPlayersInFactionChat().remove(player.getUniqueId());
+        }
+        else {
+            ephemeral.getPlayersInFactionChat().add(player.getUniqueId());
+        }
+
         player.sendMessage(translate("&a" + getText(path)));
     }
 

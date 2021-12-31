@@ -24,11 +24,21 @@ public class BypassCommand extends SubCommand {
      */
     @Override
     public void execute(Player player, String[] args, String key) {
-        if (!checkPermissions(player, "mf.bypass", "mf.admin")) return;
+        if (!checkPermissions(player, "mf.bypass", "mf.admin")) {
+            return;
+        }
+
         final boolean contains = ephemeral.getAdminsBypassingProtections().contains(player.getUniqueId());
+
         final String path = (contains ? "NoLonger" : "Now") + "BypassingProtections";
-        if (contains) ephemeral.getAdminsBypassingProtections().remove(player.getUniqueId());
-        else ephemeral.getAdminsBypassingProtections().add(player.getUniqueId());
+
+        if (contains) {
+            ephemeral.getAdminsBypassingProtections().remove(player.getUniqueId());
+        }
+        else {
+            ephemeral.getAdminsBypassingProtections().add(player.getUniqueId());
+        }
+
         player.sendMessage(translate("&a" + getText(path)));
     }
 
