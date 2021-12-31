@@ -398,9 +398,9 @@ public class LocalChunkService {
                 return;
             }
 
-            // if not at war with target faction or inactive claiming isn't possible
-            if (!claimantsFaction.isEnemy(targetFaction.getName()) || !everyPlayerInFactionExperiencingPowerDecay(targetFaction)) {
-                claimant.sendMessage(ChatColor.RED + LocalLocaleService.getInstance().getText("MustBeAtWarOrFactionMustBeInactive"));
+            // if not at war with target faction
+            if (!claimantsFaction.isEnemy(targetFaction.getName())) {
+                claimant.sendMessage(ChatColor.RED + "You must be at war with a faction to conquer land from them."); // TODO: add locale message
                 return;
             }
 
@@ -509,36 +509,6 @@ public class LocalChunkService {
         }
 
         return null;
-    }
-
-    /**
-     * Checks if every player in a faction is experiencing power decay.
-     * @param faction The faction whose players to check.
-     * @return A boolean indicating whether every player in the faction is experiencing power decay.
-     */
-    private boolean everyPlayerInFactionExperiencingPowerDecay(Faction faction) {
-        int numExperiencingPowerDecay = 0;
-        for (UUID uuid : faction.getMemberArrayList()) {
-            ActivityRecord record = PersistentData.getInstance().getPlayerActivityRecord(uuid);
-            if (record != null) {
-                Player player = getServer().getPlayer(record.getPlayerUUID());
-                boolean isOnline = false;
-                if (player != null)
-                {
-                    isOnline = player.isOnline();
-                }
-                if (!isOnline && MedievalFactions.getInstance().getConfig().getBoolean("powerDecreases")
-                        && record.getMinutesSinceLastLogout() > MedievalFactions.getInstance().getConfig().getInt("minutesBeforePowerDecrease")) {
-                    numExperiencingPowerDecay++;
-                }
-            }
-            else {
-                ActivityRecord newRecord = new ActivityRecord(uuid, 1);
-                newRecord.setLastLogout(ZonedDateTime.now());
-                PersistentData.getInstance().getPlayerActivityRecords().add(newRecord);
-            }
-        }
-        return (numExperiencingPowerDecay == faction.getMemberArrayList().size());
     }
 
     /**
