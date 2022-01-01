@@ -9,4 +9,6 @@ public interface IWar extends Savable {
     String getDefender();
     String getReason();
     LocalDateTime getDate();
+    boolean isActive();
+    void setActive(boolean active);
 }
