@@ -1,6 +1,8 @@
 package dansplugins.factionsystem.commands;
 
+import dansplugins.factionsystem.MedievalFactions;
 import dansplugins.factionsystem.commands.abs.SubCommand;
+import dansplugins.factionsystem.services.LocalConfigService;
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
@@ -81,7 +83,8 @@ public class ConfigCommand extends SubCommand {
             }
         }
         else if (reload) {
-            // TODO: reload the config
+            MedievalFactions.getInstance().reloadConfig();
+            sender.sendMessage(ChatColor.GREEN + "Config reloaded.");
         }
         else {
             sender.sendMessage(translate("&c" + getText("ValidSubCommandsShowSet")));
