@@ -2,6 +2,7 @@ package dansplugins.factionsystem.commands;
 
 import dansplugins.factionsystem.commands.abs.SubCommand;
 import dansplugins.factionsystem.objects.domain.Faction;
+import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
@@ -58,7 +59,7 @@ public class AllyCommand extends SubCommand {
         }
 
         if (faction.isEnemy(otherFaction.getName())) {
-            // TODO: add locale message
+            player.sendMessage(ChatColor.RED + "That faction is currently at war with your faction.");
             return;
         }
 
