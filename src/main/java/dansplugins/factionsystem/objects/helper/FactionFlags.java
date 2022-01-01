@@ -15,15 +15,16 @@ import java.awt.*;
 import java.util.ArrayList;
 import java.util.HashMap;
 
+/**
+ * @author Daniel Stephenson
+ *
+ * In order to add a new faction flag to this class, the following methods need to be altered:
+ *     - initializeFlagNames()
+ *     - initializeFlagValues()
+ *     - loadMissingFlagsIfNecessary()
+ *
+ */
 public class FactionFlags implements dansplugins.factionsystem.objects.helper.specification.IFactionFlags {
-
-    /*
-        In order to add a new faction flag to this class, the following methods need to be altered:
-        - initializeFlagNames()
-        - initializeFlagValues()
-        - loadMissingFlagsIfNecessary()
-    */
-
     private ArrayList<String> flagNames = new ArrayList<>();
     private HashMap<String, Integer> integerValues = new HashMap<>();
     private HashMap<String, Boolean> booleanValues = new HashMap<>();
@@ -46,6 +47,7 @@ public class FactionFlags implements dansplugins.factionsystem.objects.helper.sp
         flagNames.add("allowFriendlyFire");
         flagNames.add("fiefsEnabled");
         flagNames.add("officersCanMintCurrency");
+        flagNames.add("nonMembersCanInteractWithLecterns");
     }
 
     @Override
@@ -62,6 +64,7 @@ public class FactionFlags implements dansplugins.factionsystem.objects.helper.sp
         booleanValues.put("allowFriendlyFire", false);
         booleanValues.put("fiefsEnabled", true);
         booleanValues.put("officersCanMintCurrency", false);
+        booleanValues.put("nonMembersCanInteractWithLecterns", false);
     }
 
     @Override
@@ -99,6 +102,9 @@ public class FactionFlags implements dansplugins.factionsystem.objects.helper.sp
         }
         if (!booleanValues.containsKey("officersCanMintCurrency")) {
             booleanValues.put("officersCanMintCurrency", false);
+        }
+        if (!booleanValues.containsKey("nonMembersCanInteractWithLecterns")) {
+            booleanValues.put("nonMembersCanInteractWithLecterns", false);
         }
     }
 
@@ -298,5 +304,4 @@ public class FactionFlags implements dansplugins.factionsystem.objects.helper.sp
         }
         return toReturn;
     }
-
 }
