@@ -23,6 +23,10 @@ public class War implements IWar {
         active = true;
     }
 
+    public War(Map<String, String> data) {
+        this.load(data);
+    }
+
     @Override
     public String getAttacker() {
         return attacker;
@@ -73,7 +77,7 @@ public class War implements IWar {
         attacker = gson.fromJson(data.get("attacker"), String.class);
         defender = gson.fromJson(data.get("defender"), String.class);
         reason = gson.fromJson(data.get("reason"), String.class);
-        date = gson.fromJson(data.get("date"), LocalDateTime.class);
+        date = gson.fromJson(data.get("date"), LocalDateTime.class); // TODO: review this and make sure it works
         active = Boolean.parseBoolean(gson.fromJson(data.get("active"), String.class));
     }
 }
