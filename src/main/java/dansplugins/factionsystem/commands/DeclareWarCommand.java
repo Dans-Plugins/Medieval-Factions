@@ -3,6 +3,7 @@ package dansplugins.factionsystem.commands;
 import dansplugins.factionsystem.MedievalFactions;
 import dansplugins.factionsystem.commands.abs.SubCommand;
 import dansplugins.factionsystem.events.FactionWarStartEvent;
+import dansplugins.factionsystem.factories.WarFactory;
 import dansplugins.factionsystem.objects.domain.Faction;
 import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
@@ -86,12 +87,15 @@ public class DeclareWarCommand extends SubCommand {
             return;
         }
 
+        String reason = "testreason"; // TODO: get reason from arguments
+
         FactionWarStartEvent warStartEvent = new FactionWarStartEvent(this.faction, opponent, player);
         Bukkit.getPluginManager().callEvent(warStartEvent);
         if (!warStartEvent.isCancelled()) {
             // Make enemies.
             faction.addEnemy(opponent.getName());
             opponent.addEnemy(faction.getName());
+            WarFactory.getInstance().createWar(faction, opponent, reason);
             messageServer(translate("&c" + getText("HasDeclaredWarAgainst", faction.getName(), opponent.getName())));
         }
     }

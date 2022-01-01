@@ -199,7 +199,7 @@ public class LocalStorageService {
 
         for (Map<String, String> warData : data) {
             War war = new War(warData);
-            PersistentData.getInstance().getWars().add(war);
+            PersistentData.getInstance().addWar(war);
         }
     }
 

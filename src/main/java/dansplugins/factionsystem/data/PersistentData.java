@@ -311,4 +311,8 @@ public class PersistentData {
         int randomIndex = generator.nextInt(factions.size());
         return factions.get(randomIndex);
     }
+
+    public boolean addWar(War war) {
+        return wars.add(war);
+    }
 }
