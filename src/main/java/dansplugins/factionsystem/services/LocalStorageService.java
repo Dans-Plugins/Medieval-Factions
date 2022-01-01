@@ -26,6 +26,7 @@ public class LocalStorageService {
     private final static String PLAYERPOWER_FILE_NAME = "playerpowerrecords.json";
     private final static String PLAYERACTIVITY_FILE_NAME = "playeractivityrecords.json";
     private final static String LOCKED_BLOCKS_FILE_NAME = "lockedblocks.json";
+    private final static String WARS_FILE_NAME = "wars.json";
 
     private final static Type LIST_MAP_TYPE = new TypeToken<ArrayList<HashMap<String, String>>>(){}.getType();
 
@@ -48,9 +49,19 @@ public class LocalStorageService {
         savePlayerPowerRecords();
         savePlayerActivityRecords();
         saveLockedBlocks();
+        saveWars();
         if (LocalConfigService.getInstance().hasBeenAltered()) {
             MedievalFactions.getInstance().saveConfig();
         }
+    }
+
+    public void load() {
+        loadFactions();
+        loadClaimedChunks();
+        loadPlayerPowerRecords();
+        loadPlayerActivityRecords();
+        loadLockedBlocks();
+        loadWars();
     }
 
     private void saveFactions() {
@@ -97,12 +108,22 @@ public class LocalStorageService {
 
     private void saveLockedBlocks() {
         List<Map<String, String>> lockedBlocks = new ArrayList<>();
-        for (LockedBlock block : PersistentData.getInstance().getLockedBlocks()){
+        for (LockedBlock block : PersistentData.getInstance().getLockedBlocks()) {
             lockedBlocks.add(block.save());
         }
 
         File file = new File(FILE_PATH + LOCKED_BLOCKS_FILE_NAME);
         writeOutFiles(file, lockedBlocks);
+    }
+
+    private void saveWars() {
+        List<Map<String, String>> wars = new ArrayList<>();
+        for (War war : PersistentData.getInstance().getWars()) {
+            wars.add(war.save());
+        }
+
+        File file = new File(FILE_PATH + WARS_FILE_NAME);
+        writeOutFiles(file, wars);
     }
 
     private void writeOutFiles(File file, List<Map<String, String>> saveData) {
@@ -114,14 +135,6 @@ public class LocalStorageService {
         } catch(IOException e) {
             System.out.println("ERROR: " + e.toString());
         }
-    }
-
-    public void load() {
-        loadFactions();
-        loadClaimedChunks();
-        loadPlayerPowerRecords();
-        loadPlayerActivityRecords();
-        loadLockedBlocks();
     }
 
     private void loadFactions() {
@@ -176,6 +189,17 @@ public class LocalStorageService {
         for (Map<String, String> lockedBlockData : data){
             LockedBlock lockedBlock = new LockedBlock(lockedBlockData);
             PersistentData.getInstance().getLockedBlocks().add(lockedBlock);
+        }
+    }
+
+    private void loadWars() {
+        PersistentData.getInstance().getWars().clear();
+
+        ArrayList<HashMap<String, String>> data = loadDataFromFilename(FILE_PATH + WARS_FILE_NAME);
+
+        for (Map<String, String> warData : data) {
+            War war = new War(warData);
+            PersistentData.getInstance().addWar(war);
         }
     }
 

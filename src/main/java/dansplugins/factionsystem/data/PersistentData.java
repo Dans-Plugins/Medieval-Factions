@@ -7,10 +7,7 @@ import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
 
 import java.time.ZonedDateTime;
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.Random;
-import java.util.UUID;
+import java.util.*;
 
 public class PersistentData {
 
@@ -21,6 +18,7 @@ public class PersistentData {
     public ArrayList<PowerRecord> powerRecords = new ArrayList<>();
     public ArrayList<ActivityRecord> activityRecords = new ArrayList<>();
     public ArrayList<LockedBlock> lockedBlocks = new ArrayList<>();
+    public HashSet<War> wars = new HashSet<>();
 
     private PersistentData() {}
 
@@ -51,6 +49,10 @@ public class PersistentData {
 
     public ArrayList<LockedBlock> getLockedBlocks() {
         return lockedBlocks;
+    }
+
+    public HashSet<War> getWars() {
+        return wars;
     }
 
     // specific getters ---
@@ -127,12 +129,9 @@ public class PersistentData {
         return null;
     }
 
-    public ActivityRecord getPlayerActivityRecord(UUID uuid)
-    {
-        for (ActivityRecord record : getPlayerActivityRecords())
-        {
-            if (record.getPlayerUUID().equals(uuid))
-            {
+    public ActivityRecord getPlayerActivityRecord(UUID uuid) {
+        for (ActivityRecord record : getPlayerActivityRecords()) {
+            if (record.getPlayerUUID().equals(uuid)) {
                 return record;
             }
         }
@@ -311,5 +310,9 @@ public class PersistentData {
         Random generator = new Random();
         int randomIndex = generator.nextInt(factions.size());
         return factions.get(randomIndex);
+    }
+
+    public boolean addWar(War war) {
+        return wars.add(war);
     }
 }
