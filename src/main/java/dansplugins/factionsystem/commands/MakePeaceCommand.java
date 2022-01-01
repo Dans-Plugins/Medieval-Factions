@@ -63,6 +63,8 @@ public class MakePeaceCommand extends SubCommand {
                 faction.removeEnemy(target.getName());
                 target.removeEnemy(faction.getName());
 
+                // TODO: set active flag in war to false
+
                 // Notify
                 messageServer(translate("&a" + getText("AlertNowAtPeaceWith", faction.getName(), target.getName())));
             }
