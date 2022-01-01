@@ -2,19 +2,18 @@ package dansplugins.factionsystem.objects.domain;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
-import dansplugins.factionsystem.objects.domain.specification.IClaimedChunk;
 import dansplugins.factionsystem.objects.inherited.Territory;
 import org.bukkit.Chunk;
 import org.bukkit.World;
 import org.bukkit.WorldCreator;
+import preponderous.ponder.modifiers.Savable;
 
 import java.util.HashMap;
 import java.util.Map;
 
 import static org.bukkit.Bukkit.getServer;
 
-public class ClaimedChunk extends Territory implements IClaimedChunk {
-
+public class ClaimedChunk extends Territory implements Savable {
     private Chunk chunk;
     private String world;
 
@@ -30,12 +29,10 @@ public class ClaimedChunk extends Territory implements IClaimedChunk {
         this.load(data);
     }
 
-    @Override
     public void setChunk(Chunk newChunk) {
         chunk = newChunk;
     }
 
-    @Override
     public Chunk getChunk() {
         return chunk;
     }
@@ -47,16 +44,15 @@ public class ClaimedChunk extends Territory implements IClaimedChunk {
         return coordinates;
     }
 
-    @Override
     public void setWorld(String worldName) {
         world = worldName;
     }
 
-    @Override
     public String getWorld() {
         return world;
     }
 
+    @Override
     public Map<String, String> save() {
             Gson gson = new GsonBuilder().setPrettyPrinting().create();;
 
@@ -69,7 +65,8 @@ public class ClaimedChunk extends Territory implements IClaimedChunk {
             return saveMap;
     }
 
-    private void load(Map<String, String> data) {
+    @Override
+    public void load(Map<String, String> data) {
         Gson gson = new GsonBuilder().setPrettyPrinting().create();
 
         world = gson.fromJson(data.get("world"), String.class);

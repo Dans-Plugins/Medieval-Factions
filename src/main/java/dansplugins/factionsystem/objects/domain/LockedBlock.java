@@ -4,14 +4,15 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.reflect.TypeToken;
 import org.bukkit.Bukkit;
+import preponderous.ponder.modifiers.Lockable;
+import preponderous.ponder.modifiers.Savable;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
 
-public class LockedBlock implements dansplugins.factionsystem.objects.domain.specification.ILockedBlock {
-
+public class LockedBlock implements Lockable, Savable {
     private int x = 0;
     private int y = 0;
     private int z = 0;
@@ -38,73 +39,61 @@ public class LockedBlock implements dansplugins.factionsystem.objects.domain.spe
         this.load(lockedBlockData);
     }
 
-    @Override
     public String getWorld() {
     	return world;
     }
 
-    @Override
     public void setWorld(String name) {
     	world = name;
     }
 
-    @Override
     public int getX() {
         return x;
     }
 
-    @Override
     public int getY() {
         return y;
     }
 
-    @Override
     public int getZ() {
         return z;
     }
 
-    @Override
     public void setOwner(UUID s) {
         owner = s;
     }
 
-    @Override
     public UUID getOwner() {
         return owner;
     }
 
-    @Override
     public void addToAccessList(UUID playerName) {
         if (!accessList.contains(playerName)) {
             accessList.add(playerName);
         }
     }
 
-    @Override
     public void removeFromAccessList(UUID playerName) {
         accessList.remove(playerName);
     }
 
-    @Override
     public boolean hasAccess(UUID playerName) {
         return accessList.contains(playerName);
     }
 
-    @Override
     public ArrayList<UUID> getAccessList() {
         return accessList;
     }
 
-    @Override
     public void setFaction(String s) {
         factionName = s;
     }
 
-    @Override
     public String getFactionName() {
         return factionName;
     }
 
+    @Override
     public Map<String, String> save() {
         Gson gson = new GsonBuilder().setPrettyPrinting().create();;
 
@@ -120,7 +109,8 @@ public class LockedBlock implements dansplugins.factionsystem.objects.domain.spe
         return saveMap;
     }
 
-    private void load(Map<String, String> data) {
+    @Override
+    public void load(Map<String, String> data) {
         Gson gson = new GsonBuilder().setPrettyPrinting().create();;
 
         x = gson.fromJson(data.get("X"), Integer.TYPE);

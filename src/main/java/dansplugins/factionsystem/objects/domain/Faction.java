@@ -5,7 +5,6 @@ import com.google.gson.GsonBuilder;
 import com.google.gson.reflect.TypeToken;
 import dansplugins.factionsystem.MedievalFactions;
 import dansplugins.factionsystem.data.PersistentData;
-import dansplugins.factionsystem.objects.domain.specification.IFaction;
 import dansplugins.factionsystem.objects.helper.FactionFlags;
 import dansplugins.factionsystem.objects.inherited.Nation;
 import dansplugins.factionsystem.objects.inherited.specification.modifiers.Feudal;
@@ -21,7 +20,7 @@ import java.util.*;
 
 import static org.bukkit.Bukkit.getServer;
 
-public class Faction extends Nation implements IFaction, Feudal, Savable {
+public class Faction extends Nation implements Feudal, Savable {
 
     // persistent data
     private ArrayList<String> vassals = new ArrayList<>();
@@ -58,57 +57,46 @@ public class Faction extends Nation implements IFaction, Feudal, Savable {
 
     // implementations for IFaction methods ------------------------------
 
-    @Override
     public void setFactionHome(Location l) {
         factionHome = l;
     }
 
-    @Override
     public int getTotalGates() {
         return gates.size();
     }
 
-    @Override
     public String getPrefix() {
         return prefix;
     }
 
-    @Override
     public void setPrefix(String newPrefix) {
         prefix = newPrefix;
     }
 
-    @Override
     public Location getFactionHome() {
         return factionHome;
     }
 
-    @Override
     public FactionFlags getFlags() {
         return flags;
     }
 
-    @Override
     public int getBonusPower() {
         return bonusPower;
     }
 
-    @Override
     public void setBonusPower(int i) {
         bonusPower = i;
     }
 
-    @Override
     public void toggleAutoClaim() {
         autoclaim = !autoclaim;
     }
 
-    @Override
     public boolean getAutoClaimStatus() {
         return autoclaim;
     }
 
-    @Override
     public String getTopLiege() {
         Faction topLiege = PersistentData.getInstance().getFaction(liege);
         String liegeName = liege;
@@ -122,7 +110,6 @@ public class Faction extends Nation implements IFaction, Feudal, Savable {
         return liegeName;
     }
 
-    @Override
     public int calculateCumulativePowerLevelWithoutVassalContribution() {
         int powerLevel = 0;
         for (UUID playerUUID : members) {
@@ -136,7 +123,6 @@ public class Faction extends Nation implements IFaction, Feudal, Savable {
         return powerLevel;
     }
 
-    @Override
     public int calculateCumulativePowerLevelWithVassalContribution() {
         int vassalContribution = 0;
         double percentage = MedievalFactions.getInstance().getConfig().getDouble("vassalContributionPercentageMultiplier");
@@ -149,7 +135,6 @@ public class Faction extends Nation implements IFaction, Feudal, Savable {
         return calculateCumulativePowerLevelWithoutVassalContribution() + vassalContribution;
     }
 
-    @Override
     public int getCumulativePowerLevel() {
         int withoutVassalContribution = calculateCumulativePowerLevelWithoutVassalContribution();
         int withVassalContribution = calculateCumulativePowerLevelWithVassalContribution();
@@ -162,7 +147,6 @@ public class Faction extends Nation implements IFaction, Feudal, Savable {
         }
     }
 
-    @Override
     public int getMaximumCumulativePowerLevel() {     // get max power without vassal contribution
         int maxPower = 0;
 
@@ -179,14 +163,12 @@ public class Faction extends Nation implements IFaction, Feudal, Savable {
         return maxPower;
     }
 
-    @Override
     public int calculateMaxOfficers(){
         int officersPerXNumber = MedievalFactions.getInstance().getConfig().getInt("officerPerMemberCount");
         int officersFromConfig = members.size() / officersPerXNumber;
         return 1 + officersFromConfig;
     }
 
-    @Override
     public List<ClaimedChunk> getClaimedChunks() {
         List<ClaimedChunk> output = new ArrayList<>();
         for (ClaimedChunk chunk : PersistentData.getInstance().getClaimedChunks()) {
@@ -197,7 +179,6 @@ public class Faction extends Nation implements IFaction, Feudal, Savable {
         return output;
     }
 
-    @Override
     public boolean isWeakened() {
         return calculateCumulativePowerLevelWithoutVassalContribution() < (getMaximumCumulativePowerLevel() / 2);
     }
@@ -207,7 +188,6 @@ public class Faction extends Nation implements IFaction, Feudal, Savable {
      * @param oldName of the Faction (dependent).
      * @param newName of the Faction (dependent).
      */
-    @Override
     public void updateData(String oldName, String newName) {
         if (isAlly(oldName)) {
             removeAlly(oldName);
@@ -226,22 +206,18 @@ public class Faction extends Nation implements IFaction, Feudal, Savable {
         }
     }
 
-    @Override
     public void addGate(Gate gate) {
         gates.add(gate);
     }
 
-    @Override
     public void removeGate(Gate gate) {
         gates.remove(gate);
     }
 
-    @Override
     public ArrayList<Gate> getGates() {
         return gates;
     }
 
-    @Override
     public boolean hasGateTrigger(Block block) {
         for(Gate g : gates)
         {
@@ -254,7 +230,6 @@ public class Faction extends Nation implements IFaction, Feudal, Savable {
         return false;
     }
 
-    @Override
     public ArrayList<Gate> getGatesForTrigger(Block block) {
         ArrayList<Gate> gateList = new ArrayList<>();
         for(Gate g : gates)
@@ -274,44 +249,36 @@ public class Faction extends Nation implements IFaction, Feudal, Savable {
 
     // implementations for Feudal methods ------------------------------
 
-    @Override
     public boolean isVassal(String faction) {
         return(containsIgnoreCase(vassals, faction));
     }
 
-    @Override
     public boolean isLiege() {
         return vassals.size() > 0;
     }
 
-    @Override
     public void setLiege(String newLiege) {
         liege = newLiege;
     }
 
-    @Override
     public String getLiege() {
         return liege;
     }
 
-    @Override
     public boolean hasLiege() {
         return !liege.equalsIgnoreCase("none");
     }
 
-    @Override
     public boolean isLiege(String faction) {
         return liege.equalsIgnoreCase(faction);
     }
 
-    @Override
     public void addVassal(String name) {
         if (!containsIgnoreCase(vassals, name)) {
             vassals.add(name);
         }
     }
 
-    @Override
     public void removeVassal(String name) {
         removeIfContainsIgnoreCase(vassals, name);
     }
@@ -319,7 +286,6 @@ public class Faction extends Nation implements IFaction, Feudal, Savable {
 
     // unsorted -----------------------
 
-    @Override
     public boolean addOfficer(UUID newOfficer) {
         if (officers.size() < calculateMaxOfficers() && !officers.contains(newOfficer)){
             officers.add(newOfficer);
@@ -329,7 +295,6 @@ public class Faction extends Nation implements IFaction, Feudal, Savable {
         }
     }
 
-    @Override
     public String toString() {
         return "Faction{" +
                 "members=" + members +
@@ -347,7 +312,6 @@ public class Faction extends Nation implements IFaction, Feudal, Savable {
 
 
 
-    @Override
     public String getVassalsSeparatedByCommas() {
         String toReturn = "";
         for (int i = 0; i < vassals.size(); i++) {
@@ -359,19 +323,16 @@ public class Faction extends Nation implements IFaction, Feudal, Savable {
         return toReturn;
     }
 
-    @Override
     public void addAttemptedVassalization(String factionName) {
         if (!containsIgnoreCase(attemptedVassalizations, factionName)) {
             attemptedVassalizations.add(factionName);
         }
     }
 
-    @Override
     public boolean hasBeenOfferedVassalization(String factionName) {
         return containsIgnoreCase(attemptedVassalizations, factionName);
     }
 
-    @Override
     public void removeAttemptedVassalization(String factionName) {
         removeIfContainsIgnoreCase(attemptedVassalizations, factionName);
     }
@@ -396,17 +357,14 @@ public class Faction extends Nation implements IFaction, Feudal, Savable {
         list.remove(toRemove);
     }
 
-    @Override
     public void clearVassals() {
         vassals.clear();
     }
 
-    @Override
     public int getNumVassals() {
         return vassals.size();
     }
 
-    @Override
     public ArrayList<String> getVassals() {
         return vassals;
     }
@@ -526,5 +484,4 @@ public class Faction extends Nation implements IFaction, Feudal, Savable {
         }
         return null;
     }
-
 }
