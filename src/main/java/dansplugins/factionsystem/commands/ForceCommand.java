@@ -97,17 +97,17 @@ public class ForceCommand extends SubCommand {
     private void forcePeace(CommandSender sender, String[] args) {
         if (!(checkPermissions(sender, "mf.force.peace", "mf.force.*", "mf.admin"))) return;
         if (!(args.length >= 3)) {
-            sender.sendMessage(translate("&c" + getText("UsageForcePeace")));
+            sender.sendMessage(translate("&c" + "Usage: /mf force peace \"faction1\" \"faction2\"")); // TODO: add locale message
             return;
         }
         // get arguments designated by single quotes
-        final ArrayList<String> singleQuoteArgs = parser.getArgumentsInsideSingleQuotes(args);
-        if (singleQuoteArgs.size() < 2) {
-            sender.sendMessage(translate("&c" + getText("NoFactionsDesignatedSingleQuotesRequired")));
+        final ArrayList<String> doubleQuoteArgs = MedievalFactions.getInstance().getToolbox().getArgumentParser().getArgumentsInsideDoubleQuotes(args);
+        if (doubleQuoteArgs.size() < 2) {
+            sender.sendMessage(translate("&c" + "Arguments must be designated in between double quotes.")); // TODO: add locale message
             return;
         }
-        final Faction former = PersistentData.getInstance().getFaction(singleQuoteArgs.get(0));
-        final Faction latter = PersistentData.getInstance().getFaction(singleQuoteArgs.get(1));
+        final Faction former = PersistentData.getInstance().getFaction(doubleQuoteArgs.get(0));
+        final Faction latter = PersistentData.getInstance().getFaction(doubleQuoteArgs.get(1));
         if (former == null || latter == null) {
             sender.sendMessage(translate("&c" + getText("DesignatedFactionNotFound")));
             return;
@@ -155,21 +155,21 @@ public class ForceCommand extends SubCommand {
     private void forceJoin(CommandSender sender, String[] args) {
         if (!(checkPermissions(sender, "mf.force.join", "mf.force.*", "mf.admin"))) return;
         if (!(args.length >= 3)) {
-            sender.sendMessage(translate("&c" + getText("UsageForceJoin")));
+            sender.sendMessage(translate("&c" + "Usage: /mf force join \"player\" \"faction\"")); // TODO: make translatable
             return;
         }
-        // get arguments designated by single quotes
-        final ArrayList<String> singleQuoteArgs = parser.getArgumentsInsideSingleQuotes(args);
-        if (singleQuoteArgs.size() < 2) {
-            sender.sendMessage(translate("&c" + getText("NotEnoughArgumentsDesignatedSingleQuotesRequired")));
+
+        final ArrayList<String> doubleQuoteArgs = MedievalFactions.getInstance().getToolbox().getArgumentParser().getArgumentsInsideDoubleQuotes(args);
+        if (doubleQuoteArgs.size() < 2) {
+            sender.sendMessage(translate("&c" + "Arguments must be designated in between double quotes.")); // TODO: make translatable
             return;
         }
-        final Faction faction = getFaction(singleQuoteArgs.get(1));
+        final Faction faction = getFaction(doubleQuoteArgs.get(1));
         if (faction == null) {
             sender.sendMessage(translate("&c" + getText("FactionNotFound")));
             return;
         }
-        final UUID playerUUID = MedievalFactions.getInstance().getToolbox().getUUIDChecker().findUUIDBasedOnPlayerName(singleQuoteArgs.get(0));
+        final UUID playerUUID = MedievalFactions.getInstance().getToolbox().getUUIDChecker().findUUIDBasedOnPlayerName(doubleQuoteArgs.get(0));
         if (playerUUID == null) {
             sender.sendMessage(translate("&c" + getText("PlayerNotFound")));
             return;
@@ -244,17 +244,17 @@ public class ForceCommand extends SubCommand {
     private void forcePower(CommandSender sender, String[] args) {
         if (!(checkPermissions(sender, "mf.force.power", "mf.force.*", "mf.admin"))) return;
         if (!(args.length >= 3)) {
-            sender.sendMessage(translate("&c" + getText("UsageForcePower")));
+            sender.sendMessage(translate("&c" + "Usage: /mf force power \"player\" \"number\"")); // TODO: make translatable
             return;
         }
-        // get arguments designated by single quotes
-        final ArrayList<String> singleQuoteArgs = parser.getArgumentsInsideSingleQuotes(args);
-        if (singleQuoteArgs.size() < 2) {
-            sender.sendMessage(translate("&c" + getText("PlayerAndDesiredPowerSingleQuotesRequirement")));
+
+        final ArrayList<String> doubleQuoteArgs = MedievalFactions.getInstance().getToolbox().getArgumentParser().getArgumentsInsideDoubleQuotes(args);
+        if (doubleQuoteArgs.size() < 2) {
+            sender.sendMessage(translate("&c" + "Arguments must be designated in between double quotes.")); // TODO: make translatable
             return;
         }
-        final UUID playerUUID = MedievalFactions.getInstance().getToolbox().getUUIDChecker().findUUIDBasedOnPlayerName(singleQuoteArgs.get(0));
-        final int desiredPower = getIntSafe(singleQuoteArgs.get(1), Integer.MIN_VALUE);
+        final UUID playerUUID = MedievalFactions.getInstance().getToolbox().getUUIDChecker().findUUIDBasedOnPlayerName(doubleQuoteArgs.get(0));
+        final int desiredPower = getIntSafe(doubleQuoteArgs.get(1), Integer.MIN_VALUE);
         if (desiredPower == Integer.MIN_VALUE) {
             sender.sendMessage(translate("&c" + getText("DesiredPowerMustBeANumber")));
             return;
@@ -267,16 +267,16 @@ public class ForceCommand extends SubCommand {
     private void forceRenounce(CommandSender sender, String[] args) {
         if (!(checkPermissions(sender, "mf.force.renounce", "mf.force.*", "mf.admin"))) return;
         if (args.length < 2) {
-            sender.sendMessage(translate("&c" + getText("UsageForceRenounce")));
+            sender.sendMessage(translate("&c" + "Usage: /mf force renounce \"faction\""));
             return;
         }
-        final ArrayList<String> singleQuoteArgs = parser.getArgumentsInsideSingleQuotes(args);
-        // single quote args length check
-        if (singleQuoteArgs.size() != 1) {
-            sender.sendMessage(translate("&c" + getText("FactionMustBeDesignatedInsideSingleQuotes")));
+        final ArrayList<String> doubleQuoteArgs = MedievalFactions.getInstance().getToolbox().getArgumentParser().getArgumentsInsideDoubleQuotes(args);
+
+        if (doubleQuoteArgs.size() == 0) {
+            sender.sendMessage(translate("&c" + "Arguments must be designated in between double quotes."));
             return;
         }
-        final String factionName = singleQuoteArgs.get(0);
+        final String factionName = doubleQuoteArgs.get(0);
         final Faction faction = getFaction(factionName);
         if (faction == null) {
             sender.sendMessage(translate("&c" + getText("FactionNotFound")));
@@ -304,21 +304,21 @@ public class ForceCommand extends SubCommand {
     private void forceTransfer(CommandSender sender, String[] args) {
         if (!(checkPermissions(sender, "mf.force.transfer", "mf.force.*", "mf.admin"))) return;
         if (!(args.length >= 3)) {
-            sender.sendMessage(translate("&c" + getText("UsageForceTransfer")));
+            sender.sendMessage(translate("&c" + "Usage: /mf force transfer \"faction\" \"player\""));
             return;
         }
-        // get arguments designated by single quotes
-        final ArrayList<String> singleQuoteArgs = parser.getArgumentsInsideSingleQuotes(args);
-        if (singleQuoteArgs.size() < 2) {
-            sender.sendMessage(translate("&c" + getText("FactionAndPlayerSingleQuotesRequirement")));
+
+        final ArrayList<String> doubleQuoteArgs = MedievalFactions.getInstance().getToolbox().getArgumentParser().getArgumentsInsideDoubleQuotes(args);
+        if (doubleQuoteArgs.size() < 2) {
+            sender.sendMessage(translate("&c" + "Arguments must be designated in between double quotes."));
             return;
         }
-        final Faction faction = PersistentData.getInstance().getFaction(singleQuoteArgs.get(0));
+        final Faction faction = PersistentData.getInstance().getFaction(doubleQuoteArgs.get(0));
         if (faction == null) {
             sender.sendMessage(translate("&c" + getText("FactionNotFound")));
             return;
         }
-        final UUID playerUUID = MedievalFactions.getInstance().getToolbox().getUUIDChecker().findUUIDBasedOnPlayerName(singleQuoteArgs.get(1));
+        final UUID playerUUID = MedievalFactions.getInstance().getToolbox().getUUIDChecker().findUUIDBasedOnPlayerName(doubleQuoteArgs.get(1));
         if (playerUUID == null) {
             sender.sendMessage(translate("&c" + getText("PlayerNotFound")));
             return;
@@ -348,17 +348,17 @@ public class ForceCommand extends SubCommand {
     private void forceRemoveVassal(CommandSender sender, String[] args) {
         if (!(checkPermissions(sender, "mf.force.removevassal", "mf.force.*", "mf.admin"))) return;
         if (args.length < 3) {
-            sender.sendMessage(translate("&c" + getText("UsageForceRemoveVassal")));
+            sender.sendMessage(translate("&c" + "Usage: /mf force removevassal \"liege\" \"vassal\""));
             return;
         }
-        // get arguments designated by single quotes
-        final ArrayList<String> singleQuoteArgs = parser.getArgumentsInsideSingleQuotes(args);
-        if (singleQuoteArgs.size() < 2) {
-            sender.sendMessage(translate("&c" + getText("FactionAndVassalSingleQuotesRequirement")));
+
+        final ArrayList<String> doubleQuoteArgs = MedievalFactions.getInstance().getToolbox().getArgumentParser().getArgumentsInsideDoubleQuotes(args);
+        if (doubleQuoteArgs.size() < 2) {
+            sender.sendMessage(translate("&c" + "Arguments must be designated in between double quotes."));
             return;
         }
-        final Faction liege = getFaction(singleQuoteArgs.get(0));
-        final Faction vassal = getFaction(singleQuoteArgs.get(1));
+        final Faction liege = getFaction(doubleQuoteArgs.get(0));
+        final Faction vassal = getFaction(doubleQuoteArgs.get(1));
         if (liege != null && vassal != null) {
             // remove vassal from liege
             if (liege.isVassal(vassal.getName())) liege.removeVassal(vassal.getName());
@@ -373,21 +373,21 @@ public class ForceCommand extends SubCommand {
             return;
         }
         if (args.length < 3) {
-            sender.sendMessage(translate("&c" + getText("UsageForceRename")));
+            sender.sendMessage(translate("&c" + "Usage: /mf force rename \"faction\" \"new name\""));
             return;
         }
-        // get arguments designated by single quotes
-        final ArrayList<String> singleQuoteArgs = parser.getArgumentsInsideSingleQuotes(args);
-        if (singleQuoteArgs.size() < 2) {
-            sender.sendMessage(translate("&c" + getText("ArgumentsSingleQuotesRequirement")));
+
+        final ArrayList<String> doubleQuoteArgs = MedievalFactions.getInstance().getToolbox().getArgumentParser().getArgumentsInsideDoubleQuotes(args);
+        if (doubleQuoteArgs.size() < 2) {
+            sender.sendMessage(translate("&c" + "Arguments must be designated in between double quotes."));
             return;
         }
-        Faction faction = getFaction(singleQuoteArgs.get(0));
+        Faction faction = getFaction(doubleQuoteArgs.get(0));
         if (faction == null) {
             sender.sendMessage(translate("&c" + getText("FactionNotFound")));
             return;
         }
-        final String newName = singleQuoteArgs.get(1);
+        final String newName = doubleQuoteArgs.get(1);
         final String oldName = faction.getName();
         // rename faction
         if (getFaction(newName) != null) {
@@ -428,13 +428,13 @@ public class ForceCommand extends SubCommand {
             return;
         }
         if (args.length < 3) {
-            sender.sendMessage(translate("&c" + getText("UsageForceBonusPower")));
+            sender.sendMessage(translate("&c" + "Usage: /mf force bonuspower \"faction\" \"number\""));
             return;
         }
-        // get arguments designated by single quotes
-        final ArrayList<String> singleQuoteArgs = parser.getArgumentsInsideSingleQuotes(args);
+
+        final ArrayList<String> singleQuoteArgs = MedievalFactions.getInstance().getToolbox().getArgumentParser().getArgumentsInsideDoubleQuotes(args);
         if (singleQuoteArgs.size() < 2) {
-            sender.sendMessage(translate("&c" + getText("ArgumentsSingleQuotesRequirement")));
+            sender.sendMessage(translate("&c" + "Arguments must be designated in between double quotes."));
             return;
         }
 
@@ -504,18 +504,17 @@ public class ForceCommand extends SubCommand {
         }
 
         if (args.length < 2) {
-            sender.sendMessage(translate("&c" + getText("UsageForceCreate")));
+            sender.sendMessage(translate("&c" + "Usage: /mf force create \"faction name\""));
             return;
         }
 
-        // get arguments designated by single quotes
-        final ArrayList<String> singleQuoteArgs = parser.getArgumentsInsideSingleQuotes(args);
-        if (singleQuoteArgs.size() < 1) {
-            sender.sendMessage(translate("&c" + getText("ArgumentsSingleQuotesRequirement")));
+        final ArrayList<String> doubleQuoteArgs = MedievalFactions.getInstance().getToolbox().getArgumentParser().getArgumentsInsideDoubleQuotes(args);
+        if (doubleQuoteArgs.size() < 1) {
+            sender.sendMessage(translate("&c" + "Arguments must be designated in between double quotes."));
             return;
         }
 
-        String newFactionName = singleQuoteArgs.get(0);
+        String newFactionName = doubleQuoteArgs.get(0);
 
         if (getFaction(newFactionName) != null) {
             player.sendMessage(translate("&c" + getText("FactionAlreadyExists")));
@@ -543,18 +542,17 @@ public class ForceCommand extends SubCommand {
         }
 
         if (args.length < 2) {
-            sender.sendMessage(translate("&c" + getText("UsageForceClaim")));
+            sender.sendMessage(translate("&c" + "Usage: /mf force claim \"faction\""));
             return;
         }
 
-        // get arguments designated by single quotes
-        final ArrayList<String> singleQuoteArgs = parser.getArgumentsInsideSingleQuotes(args);
-        if (singleQuoteArgs.size() < 1) {
-            sender.sendMessage(translate("&c" + getText("ArgumentsSingleQuotesRequirement")));
+        final ArrayList<String> argumentsInsideDoubleQuotes = MedievalFactions.getInstance().getToolbox().getArgumentParser().getArgumentsInsideDoubleQuotes(args);
+        if (argumentsInsideDoubleQuotes.size() < 1) {
+            sender.sendMessage(translate("&c" + "Arguments must be designated in between double quotes."));
             return;
         }
 
-        String factionName = singleQuoteArgs.get(0);
+        String factionName = argumentsInsideDoubleQuotes.get(0);
 
         Faction faction = PersistentData.getInstance().getFaction(factionName);
 
@@ -583,22 +581,22 @@ public class ForceCommand extends SubCommand {
         Player player = (Player) sender;
 
         if (args.length < 4) {
-            player.sendMessage(translate("&c" + getText("UsageForceFlag")));
+            player.sendMessage(translate("&c" + "Usage: /mf force flag \"faction\" \"flag\" \"value\""));
             return;
         }
-        // get arguments designated by single quotes
-        final ArrayList<String> singleQuoteArgs = parser.getArgumentsInsideSingleQuotes(args);
-        if (singleQuoteArgs.size() < 3) {
-            player.sendMessage(translate("&c" + getText("ArgumentsSingleQuotesRequirement")));
+
+        final ArrayList<String> argumentsInsideDoubleQuotes = MedievalFactions.getInstance().getToolbox().getArgumentParser().getArgumentsInsideDoubleQuotes(args);
+        if (argumentsInsideDoubleQuotes.size() < 3) {
+            player.sendMessage(translate("&c" + "Arguments must be designated in between double quotes."));
             return;
         }
-        Faction faction = getFaction(singleQuoteArgs.get(0));
+        Faction faction = getFaction(argumentsInsideDoubleQuotes.get(0));
         if (faction == null) {
             player.sendMessage(translate("&c" + getText("FactionNotFound")));
             return;
         }
-        final String option = singleQuoteArgs.get(1);
-        final String value = singleQuoteArgs.get(2);
+        final String option = argumentsInsideDoubleQuotes.get(1);
+        final String value = argumentsInsideDoubleQuotes.get(2);
 
         faction.getFlags().setFlag(option, value, player);
     }

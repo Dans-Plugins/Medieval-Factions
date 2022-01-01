@@ -31,16 +31,16 @@ public class InvokeCommand extends SubCommand {
         final String permission = "mf.invoke";
         if (!(checkPermissions(player, permission))) return;
         if (args.length < 2) {
-            player.sendMessage(translate("&c" + getText("UsageInvoke")));
+            player.sendMessage(translate("&c" + "Usage: /mf invoke \"ally\" \"enemy\""));
             return;
         }
-        final ArrayList<String> singleQuoteArgs = parser.getArgumentsInsideSingleQuotes(args);
-        if (singleQuoteArgs.size() != 2) {
-            player.sendMessage(ChatColor.RED + getText("SingleQuotesAlliedWarring"));
+        final ArrayList<String> argumentsInsideDoubleQuotes = MedievalFactions.getInstance().getToolbox().getArgumentParser().getArgumentsInsideDoubleQuotes(args);
+        if (argumentsInsideDoubleQuotes.size() < 2) {
+            player.sendMessage(ChatColor.RED + "Arguments must be designated in between double quotes.");
             return;
         }
-        final Faction invokee = getFaction(singleQuoteArgs.get(0));
-        final Faction warringFaction = getFaction(singleQuoteArgs.get(1));
+        final Faction invokee = getFaction(argumentsInsideDoubleQuotes.get(0));
+        final Faction warringFaction = getFaction(argumentsInsideDoubleQuotes.get(1));
         if (invokee == null || warringFaction == null) {
             player.sendMessage(translate("&c" + getText("FactionNotFound")));
             return;
