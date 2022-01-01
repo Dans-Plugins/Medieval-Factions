@@ -5,7 +5,10 @@ import dansplugins.factionsystem.data.EphemeralData;
 import dansplugins.factionsystem.data.PersistentData;
 import dansplugins.factionsystem.events.FactionClaimEvent;
 import dansplugins.factionsystem.events.FactionUnclaimEvent;
-import dansplugins.factionsystem.objects.domain.*;
+import dansplugins.factionsystem.objects.domain.ClaimedChunk;
+import dansplugins.factionsystem.objects.domain.Faction;
+import dansplugins.factionsystem.objects.domain.Gate;
+import dansplugins.factionsystem.objects.domain.LockedBlock;
 import dansplugins.factionsystem.utils.BlockChecker;
 import dansplugins.factionsystem.utils.InteractionAccessChecker;
 import dansplugins.factionsystem.utils.Messenger;
@@ -14,10 +17,8 @@ import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
 import org.bukkit.event.player.PlayerInteractEvent;
 
-import java.time.ZonedDateTime;
 import java.util.*;
 
-import static org.bukkit.Bukkit.getServer;
 import static org.bukkit.Material.LADDER;
 
 /**
