@@ -31,7 +31,6 @@ public abstract class SubCommand implements ColorTranslator {
     // Data classes
     protected final LocalLocaleService locale;
     protected final PersistentData data;
-    protected final ArgumentParser parser;
     protected final EphemeralData ephemeral;
     protected final LocalChunkService chunks;
     protected final DynmapIntegrator dynmap;
@@ -63,7 +62,6 @@ public abstract class SubCommand implements ColorTranslator {
         // Local variables standing for instances of constantly used instances.
         this.locale = LocalLocaleService.getInstance();
         this.data = PersistentData.getInstance();
-        this.parser = ArgumentParser.getInstance();
         this.ephemeral = EphemeralData.getInstance();
         this.chunks = LocalChunkService.getInstance();
         this.dynmap = DynmapIntegrator.getInstance();
