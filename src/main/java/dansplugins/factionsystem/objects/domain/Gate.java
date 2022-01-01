@@ -3,7 +3,6 @@ package dansplugins.factionsystem.objects.domain;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import dansplugins.factionsystem.MedievalFactions;
-import dansplugins.factionsystem.objects.domain.specification.IGate;
 import dansplugins.factionsystem.objects.helper.GateCoord;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
@@ -15,7 +14,9 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
-public class Gate implements IGate {
+public class Gate {
+	enum GateStatus { READY, OPENING, CLOSING }
+	enum ErrorCodeAddCoord { None, WorldMismatch, MaterialMismatch, NoCuboids, Oversized, LessThanThreeHigh }
 
 	public Gate(String name) {
 		setName(name);
@@ -48,7 +49,6 @@ public class Gate implements IGate {
 	private World _world = null;
 	private String world = "";
 
-	@Override
 	public World getWorld()
 	{
 		if (_world != null)
@@ -59,7 +59,6 @@ public class Gate implements IGate {
 		return _world;
 	}
 
-	@Override
 	public void setWorld(String worldName)
 	{
 		world = worldName;
@@ -118,8 +117,6 @@ public class Gate implements IGate {
 		return newGate;
 	}
 
-
-	@Override
 	public boolean isIntersecting(Gate gate)
 	{
 		boolean xoverlap = coord2.getX() > gate.coord1.getX() && coord1.getX() < coord2.getX();
@@ -128,7 +125,6 @@ public class Gate implements IGate {
 		return xoverlap && yoverlap && zoverlap;
 	}
 
-	@Override
 	public int getTopLeftX()
 	{
 		if (coord1 != null && coord2 != null)
@@ -138,7 +134,6 @@ public class Gate implements IGate {
 		return 0;
 	}
 
-	@Override
 	public int getTopLeftY()
 	{
 		if (coord1 != null && coord2 != null)
@@ -148,7 +143,6 @@ public class Gate implements IGate {
 		return 0;
 	}
 
-	@Override
 	public int getTopLeftZ()
 	{
 		if (coord1 != null && coord2 != null)
@@ -158,7 +152,6 @@ public class Gate implements IGate {
 		return 0;
 	}
 
-	@Override
 	public int getBottomRightX()
 	{
 		if (coord1 != null && coord2 != null)
@@ -168,7 +161,6 @@ public class Gate implements IGate {
 		return 0;
 	}
 
-	@Override
 	public int getBottomRightY()
 	{
 		if (coord1 != null && coord2 != null)
@@ -178,7 +170,6 @@ public class Gate implements IGate {
 		return 0;
 	}
 
-	@Override
 	public int getBottomRightZ()
 	{
 		if (coord1 != null && coord2 != null)
@@ -188,7 +179,6 @@ public class Gate implements IGate {
 		return 0;
 	}
 
-	@Override
 	public int getTopLeftChunkX()
 	{
 		if (coord1 != null && coord2 != null)
@@ -198,7 +188,6 @@ public class Gate implements IGate {
 		return 0;
 	}
 
-	@Override
 	public int getTopLeftChunkZ()
 	{
 		if (coord1 != null && coord2 != null)
@@ -208,7 +197,6 @@ public class Gate implements IGate {
 		return 0;
 	}
 
-	@Override
 	public int getBottomRightChunkX()
 	{
 		if (coord1 != null && coord2 != null)
@@ -218,7 +206,6 @@ public class Gate implements IGate {
 		return 0;
 	}
 
-	@Override
 	public int getBottomRightChunkZ()
 	{
 		if (coord1 != null && coord2 != null)
@@ -228,61 +215,51 @@ public class Gate implements IGate {
 		return 0;
 	}
 
-	@Override
 	public String getName()
 	{
 		return name;
 	}
 
-	@Override
 	public void setName(String value)
 	{
 		name = value;
 	}
 
-	@Override
 	public boolean isOpen()
 	{
 		return open ? true : false;
 	}
 
-	@Override
 	public boolean isReady()
 	{
 		return gateStatus.equals(GateStatus.READY);
 	}
 
-	@Override
 	public boolean isClosed()
 	{
 		return open ? false : true;
 	}
 
-	@Override
 	public String getStatus()
 	{
 		return gateStatus.toString().substring(0,1).toUpperCase() + gateStatus.toString().substring(1).toLowerCase();
 	}
 
-	@Override
 	public GateCoord getTrigger()
 	{
 		return trigger;
 	}
 
-	@Override
 	public GateCoord getCoord1()
 	{
 		return coord1;
 	}
 
-	@Override
 	public GateCoord getCoord2()
 	{
 		return coord2;
 	}
 
-	@Override
 	public boolean isParallelToZ()
 	{
 		if (coord1 != null && coord2 != null)
@@ -302,7 +279,6 @@ public class Gate implements IGate {
 		}
 	}
 
-	@Override
 	public boolean isParallelToX()
 	{
 		if (coord1 != null && coord2 != null)
@@ -322,7 +298,6 @@ public class Gate implements IGate {
 		}
 	}
 
-	@Override
 	public ArrayList<Block> GateBlocks()
 	{
 		ArrayList<Block> blocks = new ArrayList<Block>();
@@ -339,7 +314,6 @@ public class Gate implements IGate {
 		return blocks;
 	}
 
-	@Override
 	public boolean gateBlocksMatch(Material mat)
 	{
 		int topY = coord1.getY();
@@ -391,7 +365,6 @@ public class Gate implements IGate {
 		return true;
 	}
 
-	@Override
 	public ErrorCodeAddCoord addCoord(Block clickedBlock)
 	{
 		if (coord1 == null)
@@ -479,25 +452,21 @@ public class Gate implements IGate {
 		return ErrorCodeAddCoord.None;
 	}
 
-	@Override
 	public int getDimX()
 	{
 		return getDimX(coord1, coord2);
 	}
 
-	@Override
 	public int getDimY()
 	{
 		return getDimY(coord1, coord2);
 	}
 
-	@Override
 	public int getDimZ()
 	{
 		return getDimZ(coord1, coord2);
 	}
 
-	@Override
 	public int getDimX(GateCoord first, GateCoord second)
 	{
 		GateCoord tmp;
@@ -510,7 +479,6 @@ public class Gate implements IGate {
 		return second.getX() - first.getX();
 	}
 
-	@Override
 	public int getDimY(GateCoord first, GateCoord second)
 	{
 		GateCoord tmp;
@@ -523,7 +491,6 @@ public class Gate implements IGate {
 		return second.getY() - first.getY();
 	}
 
-	@Override
 	public int getDimZ(GateCoord first, GateCoord second)
 	{
 		GateCoord tmp;
@@ -536,7 +503,6 @@ public class Gate implements IGate {
 		return second.getZ() - first.getZ();
 	}
 
-	@Override
 	public void openGate()
 	{
 		if (open || !gateStatus.equals(GateStatus.READY))
@@ -652,7 +618,6 @@ public class Gate implements IGate {
 		}
 	}
 
-	@Override
 	public void closeGate()
 	{
 
@@ -768,7 +733,6 @@ public class Gate implements IGate {
 		}
 	}
 
-	@Override
 	public void fillGate()
 	{
 
@@ -852,7 +816,6 @@ public class Gate implements IGate {
 		}
 	}
 
-	@Override
 	public boolean hasBlock(Block targetBlock)
 	{
 
@@ -902,7 +865,6 @@ public class Gate implements IGate {
 		return false;
 	}
 
-	@Override
 	public String coordsToString()
 	{
 		if (coord1 == null || coord2 == null || trigger == null)

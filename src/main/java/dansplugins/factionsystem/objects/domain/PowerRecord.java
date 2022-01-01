@@ -4,15 +4,15 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import dansplugins.factionsystem.MedievalFactions;
 import dansplugins.factionsystem.data.PersistentData;
-import dansplugins.factionsystem.objects.domain.specification.IPowerRecord;
 import dansplugins.factionsystem.objects.inherited.PlayerRecord;
+import preponderous.ponder.modifiers.Savable;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
 
-public class PowerRecord extends PlayerRecord implements IPowerRecord {
+public class PowerRecord extends PlayerRecord implements Savable {
 
     // saved
     private int powerLevel = 0;
@@ -30,7 +30,6 @@ public class PowerRecord extends PlayerRecord implements IPowerRecord {
 
     }
 
-    @Override
     public int maxPower() {
         if (isPlayerAFactionOwner(playerUUID, PersistentData.getInstance().getFactions())){
             return (int) (MedievalFactions.getInstance().getConfig().getDouble("initialMaxPowerLevel") * MedievalFactions.getInstance().getConfig().getDouble("factionOwnerMultiplier", 2.0));
@@ -61,7 +60,6 @@ public class PowerRecord extends PlayerRecord implements IPowerRecord {
         }
     }
 
-    @Override
     public boolean increasePower() {
         if (powerLevel < maxPower()) {
         	powerLevel += MedievalFactions.getInstance().getConfig().getInt("powerIncreaseAmount");
@@ -75,7 +73,6 @@ public class PowerRecord extends PlayerRecord implements IPowerRecord {
         }
     }
 
-    @Override
     public boolean decreasePower() {
         if (powerLevel > 0) {
             powerLevel -= MedievalFactions.getInstance().getConfig().getInt("powerDecreaseAmount");
@@ -88,36 +85,17 @@ public class PowerRecord extends PlayerRecord implements IPowerRecord {
         }
     }
 
-    @Override
     public int getPowerLevel() {
         return powerLevel;
     }
 
-    @Override
     public void setPowerLevel(int newPower) {
         powerLevel = newPower;
-    }
-
-    public Map<String, String> save() {
-        Gson gson = new GsonBuilder().setPrettyPrinting().create();
-
-        Map<String, String> saveMap = new HashMap<>();
-        saveMap.put("playerUUID", gson.toJson(playerUUID.toString()));
-        saveMap.put("powerLevel", gson.toJson(powerLevel));
-
-        return saveMap;
-    }
-
-    private void load(Map<String, String> data) {
-        Gson gson = new GsonBuilder().setPrettyPrinting().create();
-        playerUUID = UUID.fromString(gson.fromJson(data.get("playerUUID"), String.class));
-        powerLevel = gson.fromJson(data.get("powerLevel"), Integer.TYPE);
     }
 
     /**
      * @return True if powerlevel changed else false
      */
-    @Override
     public boolean increasePowerByTenPercent() {
 //        System.out.println("Original Power:" + powerLevel);
         int originalLevel = powerLevel;
@@ -136,7 +114,6 @@ public class PowerRecord extends PlayerRecord implements IPowerRecord {
         return powerLevel != originalLevel;
     }
 
-    @Override
     public int decreasePowerByTenPercent() {
         int powerDecreaseAmount = (int) (powerLevel * 0.10);
         powerLevel =- powerDecreaseAmount;
@@ -144,5 +121,23 @@ public class PowerRecord extends PlayerRecord implements IPowerRecord {
             powerLevel = 0;
         }
         return powerDecreaseAmount;
+    }
+
+    @Override
+    public Map<String, String> save() {
+        Gson gson = new GsonBuilder().setPrettyPrinting().create();
+
+        Map<String, String> saveMap = new HashMap<>();
+        saveMap.put("playerUUID", gson.toJson(playerUUID.toString()));
+        saveMap.put("powerLevel", gson.toJson(powerLevel));
+
+        return saveMap;
+    }
+
+    @Override
+    public void load(Map<String, String> data) {
+        Gson gson = new GsonBuilder().setPrettyPrinting().create();
+        playerUUID = UUID.fromString(gson.fromJson(data.get("playerUUID"), String.class));
+        powerLevel = gson.fromJson(data.get("powerLevel"), Integer.TYPE);
     }
 }

@@ -2,13 +2,13 @@ package dansplugins.factionsystem.objects.domain;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
-import dansplugins.factionsystem.objects.domain.specification.IWar;
+import preponderous.ponder.modifiers.Savable;
 
 import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.Map;
 
-public class War implements IWar {
+public class War implements Savable {
     private String attacker;
     private String defender;
     private String reason;
@@ -27,32 +27,26 @@ public class War implements IWar {
         this.load(data);
     }
 
-    @Override
     public String getAttacker() {
         return attacker;
     }
 
-    @Override
     public String getDefender() {
         return defender;
     }
 
-    @Override
     public String getReason() {
         return reason;
     }
 
-    @Override
     public LocalDateTime getDate() {
         return date;
     }
 
-    @Override
     public boolean isActive() {
         return active;
     }
 
-    @Override
     public void setActive(boolean active) {
         this.active = active;
     }
