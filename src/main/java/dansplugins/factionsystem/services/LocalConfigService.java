@@ -5,8 +5,10 @@ import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.configuration.file.FileConfiguration;
 
+/**
+ * @author Daniel Stephenson
+ */
 public class LocalConfigService {
-
     private static LocalConfigService instance;
     private boolean altered = false;
 
@@ -151,6 +153,9 @@ public class LocalConfigService {
         if (!getConfig().isBoolean("playersLosePowerOnDeath")) {
             getConfig().addDefault("playersLosePowerOnDeath", true);
         }
+        if (!getConfig().isBoolean("bonusPowerEnabled")) {
+            getConfig().addDefault("bonusPowerEnabled", true);
+        }
 
         deleteOldConfigOptionsIfPresent();
 
@@ -219,7 +224,8 @@ public class LocalConfigService {
                     || option.equalsIgnoreCase("factionProtectionsEnabled")
                     || option.equalsIgnoreCase("limitLand")
                     || option.equalsIgnoreCase("factionsCanSetPrefixColors")
-                    || option.equalsIgnoreCase("playersLosePowerOnDeath")) {
+                    || option.equalsIgnoreCase("playersLosePowerOnDeath")
+                    || option.equalsIgnoreCase("bonusPowerEnabled")) {
                 getConfig().set(option, Boolean.parseBoolean(value));
                 sender.sendMessage(ChatColor.GREEN + LocalLocaleService.getInstance().getText("BooleanSet"));
             }
@@ -290,6 +296,7 @@ public class LocalConfigService {
         getConfig().addDefault("limitLand", true);
         getConfig().addDefault("factionsCanSetPrefixColors", true);
         getConfig().addDefault("playersLosePowerOnDeath", true);
+        getConfig().addDefault("bonusPowerEnabled", true);
         getConfig().options().copyDefaults(true);
         MedievalFactions.getInstance().saveConfig();
     }
@@ -340,7 +347,8 @@ public class LocalConfigService {
                 + ", factionProtectionsEnabled: " + getConfig().getBoolean("factionProtectionsEnabled")
                 + ", limitLand: " + getConfig().getBoolean("limitLand")
                 + ", factionsCanSetPrefixColors: " + getConfig().getBoolean("factionsCanSetPrefixColors")
-                + ", playersLosePowerOnDeath: " + getConfig().getBoolean("playersLosePowerOnDeath"));
+                + ", playersLosePowerOnDeath: " + getConfig().getBoolean("playersLosePowerOnDeath")
+                + ", bonusPowerEnabled: " + getConfig().getBoolean("bonusPowerEnabled"));
     }
 
     public boolean hasBeenAltered() {
@@ -366,5 +374,4 @@ public class LocalConfigService {
     public String getString(String option) {
         return getConfig().getString(option);
     }
-
 }
