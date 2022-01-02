@@ -148,6 +148,10 @@ public class Duel {
 				other.sendMessage(String.format(ChatColor.AQUA + "%s has challenged %s to a duel!", _challenger.getName(), _challenged.getName()));
 			}
 		}
+
+		if (bar == null) {
+			return;
+		}
 		
 		bar = MedievalFactions.getInstance().getServer().createBossBar(String.format(ChatColor.AQUA + "%s vs %s", _challenger.getName(), _challenged.getName())
 				, BarColor.WHITE, BarStyle.SEGMENTED_20);
@@ -221,6 +225,9 @@ public class Duel {
     				other.sendMessage(String.format(ChatColor.YELLOW + "%s and %s's duel has ended in a tie.", _challenger.getName(), _challenged.getName()));
     			}
     		}
+		}
+		if (bar == null) {
+			return;
 		}
 		bar.removeAll();
 		MedievalFactions.getInstance().getServer().getScheduler().cancelTask(repeatingTaskId);
