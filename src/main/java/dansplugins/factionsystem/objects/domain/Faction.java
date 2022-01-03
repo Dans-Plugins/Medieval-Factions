@@ -9,6 +9,7 @@ import dansplugins.factionsystem.objects.helper.FactionFlags;
 import dansplugins.factionsystem.objects.inherited.Nation;
 import dansplugins.factionsystem.objects.inherited.specification.modifiers.Feudal;
 import dansplugins.factionsystem.objects.inherited.specification.modifiers.Savable;
+import dansplugins.factionsystem.services.LocalConfigService;
 import dansplugins.factionsystem.services.LocalLocaleService;
 import org.bukkit.Location;
 import org.bukkit.World;
@@ -86,6 +87,9 @@ public class Faction extends Nation implements Feudal, Savable {
     }
 
     public void setBonusPower(int i) {
+        if (!LocalConfigService.getInstance().getBoolean("bonusPowerEnabled")) {
+            return;
+        }
         bonusPower = i;
     }
 
@@ -464,6 +468,10 @@ public class Faction extends Nation implements Feudal, Savable {
         flags.setStringValues(gson.fromJson(data.getOrDefault("stringFlagValues", "[]"), stringToStringMapType));
 
         flags.loadMissingFlagsIfNecessary();
+
+        if (!LocalConfigService.getInstance().getBoolean("bonusPowerEnabled")) {
+            bonusPower = 0;
+        }
     }
 
     private String loadDataOrDefault(Gson gson, Map<String, String> data, String key, String def) {
