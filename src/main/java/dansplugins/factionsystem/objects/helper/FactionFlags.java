@@ -46,6 +46,7 @@ public class FactionFlags implements dansplugins.factionsystem.objects.helper.sp
         flagNames.add("allowFriendlyFire");
         flagNames.add("fiefsEnabled");
         flagNames.add("officersCanMintCurrency");
+        flagNames.add("acceptBonusPower");
     }
 
     @Override
@@ -62,6 +63,7 @@ public class FactionFlags implements dansplugins.factionsystem.objects.helper.sp
         booleanValues.put("allowFriendlyFire", false);
         booleanValues.put("fiefsEnabled", true);
         booleanValues.put("officersCanMintCurrency", false);
+        booleanValues.put("acceptBonusPower", true);
     }
 
     @Override
@@ -99,6 +101,9 @@ public class FactionFlags implements dansplugins.factionsystem.objects.helper.sp
         }
         if (!booleanValues.containsKey("officersCanMintCurrency")) {
             booleanValues.put("officersCanMintCurrency", false);
+        }
+        if (!booleanValues.containsKey("acceptBonusPower")) {
+            booleanValues.put("acceptBonusPower", true);
         }
     }
 
