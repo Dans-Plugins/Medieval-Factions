@@ -87,7 +87,7 @@ public class Faction extends Nation implements Feudal, Savable {
     }
 
     public void setBonusPower(int i) {
-        if (!LocalConfigService.getInstance().getBoolean("bonusPowerEnabled")) {
+        if (!LocalConfigService.getInstance().getBoolean("bonusPowerEnabled") || !((boolean) getFlags().getFlag("acceptBonusPower"))) {
             return;
         }
         bonusPower = i;
@@ -457,8 +457,7 @@ public class Faction extends Nation implements Feudal, Savable {
                 gates.add(g);
             }
         }
-        else
-        {
+        else {
             System.out.println(LocalLocaleService.getInstance().getText("MissingFactionGatesJSONCollection"));
         }
 
@@ -469,7 +468,7 @@ public class Faction extends Nation implements Feudal, Savable {
 
         flags.loadMissingFlagsIfNecessary();
 
-        if (!LocalConfigService.getInstance().getBoolean("bonusPowerEnabled")) {
+        if (!LocalConfigService.getInstance().getBoolean("bonusPowerEnabled") || !((boolean) getFlags().getFlag("acceptBonusPower"))) {
             bonusPower = 0;
         }
     }
