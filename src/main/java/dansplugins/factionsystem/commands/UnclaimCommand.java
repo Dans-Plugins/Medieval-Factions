@@ -28,7 +28,7 @@ public class UnclaimCommand extends SubCommand {
         if ((boolean) faction.getFlags().getFlag("mustBeOfficerToManageLand")) {
             // officer or owner rank required
             if (!faction.isOfficer(player.getUniqueId()) && !faction.isOwner(player.getUniqueId()) && !isPlayerBypassing) {
-                player.sendMessage(translate("&c" + getText("AlertMustBeOfficerOrOwnerToClaimLand")));
+                player.sendMessage(translate("&c" + "You're not able to claim land at this time."));
                 return;
             }
         }
