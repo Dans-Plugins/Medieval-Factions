@@ -15,8 +15,8 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class Gate {
-	enum GateStatus { READY, OPENING, CLOSING }
-	enum ErrorCodeAddCoord { None, WorldMismatch, MaterialMismatch, NoCuboids, Oversized, LessThanThreeHigh }
+	public enum GateStatus { READY, OPENING, CLOSING }
+	public enum ErrorCodeAddCoord { None, WorldMismatch, MaterialMismatch, NoCuboids, Oversized, LessThanThreeHigh }
 
 	public Gate(String name) {
 		setName(name);
