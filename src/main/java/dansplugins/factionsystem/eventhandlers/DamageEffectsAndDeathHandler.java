@@ -313,35 +313,6 @@ public class DamageEffectsAndDeathHandler implements Listener {
                 }
             }
         }
-
-        // if player is in faction
-        if (PersistentData.getInstance().isInFaction(player.getUniqueId())) {
-
-            // if player is in land claimed by their faction
-            double[] playerCoords = new double[2];
-            playerCoords[0] = player.getLocation().getChunk().getX();
-            playerCoords[1] = player.getLocation().getChunk().getZ();
-
-            // check if land is claimed
-            if (LocalChunkService.getInstance().isClaimed(player.getLocation().getChunk(), PersistentData.getInstance().getClaimedChunks()))
-            {
-                ClaimedChunk chunk = LocalChunkService.getInstance().getClaimedChunk(player.getLocation().getChunk());
-                // if holder is player's faction
-                if (chunk.getHolder().equalsIgnoreCase(PersistentData.getInstance().getPlayersFaction(player.getUniqueId()).getName()) && PersistentData.getInstance().getPlayersFaction(player.getUniqueId()).getAutoClaimStatus() == false) {
-
-                    // if not killed by another player
-                    if (!(player.getKiller() instanceof Player)) {
-
-                        // player keeps items
-                        // event.setKeepInventory(true); // TODO: fix this duplicating items
-
-                    }
-
-                }
-            }
-
-        }
-
     }
 
     @EventHandler()
@@ -395,5 +366,4 @@ public class DamageEffectsAndDeathHandler implements Listener {
     private boolean potionEffectBad(PotionEffectType effect) {
         return BAD_POTION_EFFECTS.contains(effect);
     }
-
 }
