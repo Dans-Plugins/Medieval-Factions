@@ -62,6 +62,7 @@ Richardhyy | Fixed some encoding issues
 Mitras2 | Implemented ActionBar territory alerts
 [Kaonami](https://github.com/Daniels7k) | Fixed a typo in the README
 GoodLucky777 | Fixed a bug and a few typos in the code
+Elafir | Made it possible to control gates with redstone
 
 ### Translators
 Name | Language(s)
