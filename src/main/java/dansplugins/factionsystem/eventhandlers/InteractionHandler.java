@@ -29,6 +29,7 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.event.block.BlockPlaceEvent;
+import org.bukkit.event.block.BlockRedstoneEvent;
 import org.bukkit.event.entity.EntityPlaceEvent;
 import org.bukkit.event.hanging.HangingBreakByEntityEvent;
 import org.bukkit.event.player.*;
@@ -385,6 +386,12 @@ public class InteractionHandler implements Listener {
                 event.setCancelled(true);
             }
         }
+    }
+
+    @EventHandler()
+    public void handle(BlockRedstoneEvent event) {
+        Block block = event.getBlock();
+        LocalGateService.getInstance().handlePotentialGateInteraction(block, event);
     }
 
     // END OF EVENT HANDLER METHODS ------------------------------------------------------

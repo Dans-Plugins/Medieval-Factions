@@ -8,10 +8,15 @@ import dansplugins.factionsystem.objects.domain.Gate;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
+import org.bukkit.block.data.AnaloguePowerable;
 import org.bukkit.block.data.BlockData;
 import org.bukkit.block.data.Powerable;
 import org.bukkit.entity.Player;
 import org.bukkit.event.player.PlayerInteractEvent;
+import org.bukkit.event.block.BlockRedstoneEvent;
+import org.graalvm.compiler.lir.alloc.lsra.LinearScan;
+
+import javax.lang.model.type.UnionType;
 
 public class LocalGateService {
     private static LocalGateService instance;
@@ -42,7 +47,9 @@ public class LocalGateService {
                         }
                         else {
                             event.setCancelled(true);
-                            player.sendMessage(ChatColor.RED + String.format(LocalLocaleService.getInstance().getText("PleaseWaitGate"), g.getStatus()));
+                            if (player != null) {
+                                player.sendMessage(ChatColor.RED + String.format(LocalLocaleService.getInstance().getText("PleaseWaitGate"), g.getStatus()));
+                            }
                             return;
                         }
                     }
@@ -52,7 +59,40 @@ public class LocalGateService {
                         }
                         else {
                             event.setCancelled(true);
-                            player.sendMessage(ChatColor.RED + String.format(LocalLocaleService.getInstance().getText("PleaseWaitGate"), g.getStatus()));
+                            if (player != null) {
+                                player.sendMessage(ChatColor.RED + String.format(LocalLocaleService.getInstance().getText("PleaseWaitGate"), g.getStatus()));
+                            }
+                            return;
+                        }
+                    }
+                }
+                return;
+            }
+        }
+    }
+
+    public void handlePotentialGateInteraction(Block block, BlockRedstoneEvent event) {
+        if (LocalChunkService.getInstance().isClaimed(block.getChunk(), PersistentData.getInstance().getClaimedChunks())) {
+            ClaimedChunk claim = LocalChunkService.getInstance().getClaimedChunk(block.getChunk());
+            Faction faction = PersistentData.getInstance().getFaction(claim.getHolder());
+
+            if (faction.hasGateTrigger(block)) {
+                for (Gate g : faction.getGatesForTrigger(block)) {
+                    BlockData blockData = block.getBlockData();
+                    Powerable powerable = (Powerable) blockData;
+                    if (powerable.isPowered()) {
+                        if (faction.getGatesForTrigger(block).get(0).isReady()) {
+                            g.openGate();
+                        }
+                        else {
+                            return;
+                        }
+                    }
+                    else {
+                        if (faction.getGatesForTrigger(block).get(0).isReady()) {
+                            g.closeGate();
+                        }
+                        else {
                             return;
                         }
                     }
@@ -122,7 +162,7 @@ public class LocalGateService {
                     Gate.ErrorCodeAddCoord e = EphemeralData.getInstance().getCreatingGatePlayers().get(event.getPlayer().getUniqueId()).addCoord(clickedBlock);
                     if (e.equals(Gate.ErrorCodeAddCoord.None)) {
                         event.getPlayer().sendMessage(ChatColor.GREEN + LocalLocaleService.getInstance().getText("Point2PlacedSuccessfully"));
-                        event.getPlayer().sendMessage(ChatColor.YELLOW + LocalLocaleService.getInstance().getText("ClickOnTriggerLever"));
+                        event.getPlayer().sendMessage(ChatColor.YELLOW + "Click on the trigger block...");
                         return;
                     }
                     else if (e.equals(Gate.ErrorCodeAddCoord.MaterialMismatch)) {
@@ -155,7 +195,7 @@ public class LocalGateService {
             else if (EphemeralData.getInstance().getCreatingGatePlayers().get(event.getPlayer().getUniqueId()).getCoord2() != null
                     && EphemeralData.getInstance().getCreatingGatePlayers().get(event.getPlayer().getUniqueId()).getTrigger() == null
                     && !EphemeralData.getInstance().getCreatingGatePlayers().get(event.getPlayer().getUniqueId()).getCoord2().equals(clickedBlock)) {
-                if (clickedBlock.getType().equals(Material.LEVER)) {
+                if (clickedBlock.getBlockData() instanceof Powerable) {
                     if (LocalChunkService.getInstance().isClaimed(clickedBlock.getChunk(), PersistentData.getInstance().getClaimedChunks())) {
                         Gate.ErrorCodeAddCoord e = EphemeralData.getInstance().getCreatingGatePlayers().get(event.getPlayer().getUniqueId()).addCoord(clickedBlock);
                         if (e.equals(Gate.ErrorCodeAddCoord.None)) {
@@ -163,7 +203,7 @@ public class LocalGateService {
                             Faction faction = PersistentData.getInstance().getFaction(claim.getHolder());
                             faction.addGate(EphemeralData.getInstance().getCreatingGatePlayers().get(event.getPlayer().getUniqueId()));
                             EphemeralData.getInstance().getCreatingGatePlayers().remove(event.getPlayer().getUniqueId());
-                            event.getPlayer().sendMessage(ChatColor.GREEN + LocalLocaleService.getInstance().getText("LeverSuccessfullyLinked"));
+                            event.getPlayer().sendMessage(ChatColor.GREEN + "Creating Gate 4/4: Trigger successfully linked.");
                             event.getPlayer().sendMessage(ChatColor.GREEN + LocalLocaleService.getInstance().getText("GateCreated"));
                             return;
                         }
@@ -174,13 +214,13 @@ public class LocalGateService {
                         }
                     }
                     else {
-                        event.getPlayer().sendMessage(ChatColor.RED + LocalLocaleService.getInstance().getText("OnlyUseLeversInClaimedTerritory"));
+                        event.getPlayer().sendMessage(ChatColor.RED + "Error: Can only use triggers in claimed territory.");
                         EphemeralData.getInstance().getCreatingGatePlayers().remove(event.getPlayer().getUniqueId());
                         return;
                     }
                 }
                 else {
-                    event.getPlayer().sendMessage(ChatColor.RED + LocalLocaleService.getInstance().getText("TriggerBlockNotLever"));
+                    event.getPlayer().sendMessage(ChatColor.RED + "Trigger block was not powerable. Cancelled gate placement.");
                     EphemeralData.getInstance().getCreatingGatePlayers().remove(event.getPlayer().getUniqueId());
                     return;
                 }
