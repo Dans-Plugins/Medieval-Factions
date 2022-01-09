@@ -11,6 +11,10 @@ import org.bukkit.OfflinePlayer;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
+/**
+ * @author Daniel McCoy Stephenson
+ * @author Callum Johnson
+ */
 public class DisbandCommand extends SubCommand {
 
     public DisbandCommand() {
@@ -112,10 +116,7 @@ public class DisbandCommand extends SubCommand {
             if (faction.isVassal(nameOfFactionToRemove)) {
                 faction.removeVassal(nameOfFactionToRemove);
             }
-
         }
-
         PersistentData.getInstance().getFactions().remove(i);
     }
-
 }

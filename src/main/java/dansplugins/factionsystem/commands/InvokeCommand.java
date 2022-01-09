@@ -8,9 +8,14 @@ import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
+import preponderous.ponder.misc.ArgumentParser;
 
 import java.util.ArrayList;
 
+/**
+ * @author Daniel McCoy Stephenson
+ * @author Callum Johnson
+ */
 public class InvokeCommand extends SubCommand {
 
     public InvokeCommand() {
@@ -34,7 +39,8 @@ public class InvokeCommand extends SubCommand {
             player.sendMessage(translate("&c" + "Usage: /mf invoke \"ally\" \"enemy\""));
             return;
         }
-        final ArrayList<String> argumentsInsideDoubleQuotes = MedievalFactions.getInstance().getToolbox().getArgumentParser().getArgumentsInsideDoubleQuotes(args);
+        ArgumentParser argumentParser = new ArgumentParser();
+        final ArrayList<String> argumentsInsideDoubleQuotes = argumentParser.getArgumentsInsideDoubleQuotes(args);
         if (argumentsInsideDoubleQuotes.size() < 2) {
             player.sendMessage(ChatColor.RED + "Arguments must be designated in between double quotes.");
             return;
@@ -85,5 +91,4 @@ public class InvokeCommand extends SubCommand {
     public void execute(CommandSender sender, String[] args, String key) {
 
     }
-
 }

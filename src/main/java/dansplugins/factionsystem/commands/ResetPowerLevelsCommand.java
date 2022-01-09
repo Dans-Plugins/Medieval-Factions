@@ -4,6 +4,10 @@ import dansplugins.factionsystem.commands.abs.SubCommand;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
+/**
+ * @author Daniel McCoy Stephenson
+ * @author Callum Johnson
+ */
 public class ResetPowerLevelsCommand extends SubCommand {
 
     public ResetPowerLevelsCommand() {
@@ -39,5 +43,4 @@ public class ResetPowerLevelsCommand extends SubCommand {
         System.out.println(getText("ResettingIndividualPowerRecords"));
         data.getPlayerPowerRecords().forEach(record -> record.setPowerLevel(initialPowerLevel));
     }
-
 }

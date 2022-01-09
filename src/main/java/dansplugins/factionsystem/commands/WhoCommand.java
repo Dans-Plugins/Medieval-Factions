@@ -4,11 +4,16 @@ import dansplugins.factionsystem.MedievalFactions;
 import dansplugins.factionsystem.commands.abs.SubCommand;
 import dansplugins.factionsystem.objects.domain.Faction;
 import dansplugins.factionsystem.utils.Messenger;
+import dansplugins.fiefs.utils.UUIDChecker;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
 import java.util.UUID;
 
+/**
+ * @author Daniel McCoy Stephenson
+ * @author Callum Johnson
+ */
 public class WhoCommand extends SubCommand {
 
     public WhoCommand() {
@@ -30,7 +35,8 @@ public class WhoCommand extends SubCommand {
             player.sendMessage(translate("&c" + getText("UsageWho")));
             return;
         }
-        final UUID targetUUID = MedievalFactions.getInstance().getToolbox().getUUIDChecker().findUUIDBasedOnPlayerName(args[0]);
+        UUIDChecker uuidChecker = new UUIDChecker();
+        final UUID targetUUID = uuidChecker.findUUIDBasedOnPlayerName(args[0]);
         if (targetUUID == null) {
             player.sendMessage(translate("&c" + getText("PlayerNotFound")));
             return;
@@ -55,5 +61,4 @@ public class WhoCommand extends SubCommand {
     public void execute(CommandSender sender, String[] args, String key) {
 
     }
-
 }

@@ -4,6 +4,10 @@ import dansplugins.factionsystem.commands.abs.SubCommand;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
+/**
+ * @author Daniel McCoy Stephenson
+ * @author Callum Johnson
+ */
 public class CheckAccessCommand extends SubCommand {
 
     public CheckAccessCommand() {
@@ -57,5 +61,4 @@ public class CheckAccessCommand extends SubCommand {
     public void execute(CommandSender sender, String[] args, String key) {
 
     }
-
 }

@@ -5,6 +5,10 @@ import dansplugins.factionsystem.data.EphemeralData;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
+/**
+ * @author Daniel McCoy Stephenson
+ * @author Callum Johnson
+ */
 public class UnclaimCommand extends SubCommand {
 
     public UnclaimCommand() {
@@ -61,5 +65,4 @@ public class UnclaimCommand extends SubCommand {
     public void execute(CommandSender sender, String[] args, String key) {
 
     }
-
 }

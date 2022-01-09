@@ -5,6 +5,10 @@ import dansplugins.factionsystem.commands.abs.SubCommand;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
+/**
+ * @author Daniel McCoy Stephenson
+ * @author Callum Johnson
+ */
 public class VersionCommand extends SubCommand {
 
     public VersionCommand() {
@@ -38,5 +42,4 @@ public class VersionCommand extends SubCommand {
         if (!(checkPermissions(sender, permission))) return;
         sender.sendMessage(translate("&bMedieval-Factions-" + MedievalFactions.getInstance().getVersion()));
     }
-
 }

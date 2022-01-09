@@ -9,9 +9,14 @@ import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
+import preponderous.ponder.misc.ArgumentParser;
 
 import java.util.ArrayList;
 
+/**
+ * @author Daniel McCoy Stephenson
+ * @author Callum Johnson
+ */
 public class DeclareWarCommand extends SubCommand {
 
     public DeclareWarCommand() {
@@ -39,7 +44,8 @@ public class DeclareWarCommand extends SubCommand {
             return;
         }
 
-        ArrayList<String> doubleQuoteArgs = MedievalFactions.getInstance().getToolbox().getArgumentParser().getArgumentsInsideDoubleQuotes(args);
+        ArgumentParser argumentParser = new ArgumentParser();
+        ArrayList<String> doubleQuoteArgs = argumentParser.getArgumentsInsideDoubleQuotes(args);
 
         if (doubleQuoteArgs.size() < 2) {
             player.sendMessage(ChatColor.RED + "Arguments must be specified within double quotes.");
@@ -122,5 +128,4 @@ public class DeclareWarCommand extends SubCommand {
     public void execute(CommandSender sender, String[] args, String key) {
 
     }
-
 }

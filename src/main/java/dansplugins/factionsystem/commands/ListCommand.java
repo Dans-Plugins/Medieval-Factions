@@ -10,6 +10,10 @@ import org.bukkit.entity.Player;
 import java.util.List;
 import java.util.stream.Collectors;
 
+/**
+ * @author Daniel McCoy Stephenson
+ * @author Callum Johnson
+ */
 public class ListCommand extends SubCommand {
 
     public ListCommand() {
@@ -95,5 +99,4 @@ public class ListCommand extends SubCommand {
         }
 
     }
-
 }

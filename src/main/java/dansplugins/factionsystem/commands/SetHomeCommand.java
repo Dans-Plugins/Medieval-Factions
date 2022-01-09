@@ -5,6 +5,10 @@ import dansplugins.factionsystem.objects.domain.ClaimedChunk;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
+/**
+ * @author Daniel McCoy Stephenson
+ * @author Callum Johnson
+ */
 public class SetHomeCommand extends SubCommand {
 
     public SetHomeCommand() {
@@ -48,5 +52,4 @@ public class SetHomeCommand extends SubCommand {
     public void execute(CommandSender sender, String[] args, String key) {
 
     }
-
 }

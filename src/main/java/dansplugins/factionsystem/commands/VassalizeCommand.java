@@ -5,6 +5,10 @@ import dansplugins.factionsystem.objects.domain.Faction;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
+/**
+ * @author Daniel McCoy Stephenson
+ * @author Callum Johnson
+ */
 public class VassalizeCommand extends SubCommand {
 
     public VassalizeCommand() {
@@ -90,5 +94,4 @@ public class VassalizeCommand extends SubCommand {
         }
         return 2; // We don't know :/
     }
-
 }

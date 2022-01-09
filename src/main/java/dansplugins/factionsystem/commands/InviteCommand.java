@@ -3,6 +3,7 @@ package dansplugins.factionsystem.commands;
 import dansplugins.factionsystem.MedievalFactions;
 import dansplugins.factionsystem.commands.abs.SubCommand;
 import dansplugins.factionsystem.services.LocalLocaleService;
+import dansplugins.fiefs.utils.UUIDChecker;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.OfflinePlayer;
@@ -13,6 +14,10 @@ import java.util.UUID;
 
 import static org.bukkit.Bukkit.getServer;
 
+/**
+ * @author Daniel McCoy Stephenson
+ * @author Callum Johnson
+ */
 public class InviteCommand extends SubCommand {
 
     public InviteCommand() {
@@ -43,7 +48,8 @@ public class InviteCommand extends SubCommand {
                 return;
             }
         }
-        final UUID playerUUID = MedievalFactions.getInstance().getToolbox().getUUIDChecker().findUUIDBasedOnPlayerName(args[0]);
+        UUIDChecker uuidChecker = new UUIDChecker();
+        final UUID playerUUID = uuidChecker.findUUIDBasedOnPlayerName(args[0]);
         if (playerUUID == null) {
             player.sendMessage(translate("&c" + getText("PlayerNotFound")));
             return;
@@ -95,5 +101,4 @@ public class InviteCommand extends SubCommand {
     public void execute(CommandSender sender, String[] args, String key) {
 
     }
-
 }

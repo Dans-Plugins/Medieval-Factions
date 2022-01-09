@@ -5,6 +5,10 @@ import dansplugins.factionsystem.objects.domain.Faction;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
+/**
+ * @author Daniel McCoy Stephenson
+ * @author Callum Johnson
+ */
 public class UnclaimallCommand extends SubCommand {
 
     public UnclaimallCommand() {
@@ -71,5 +75,4 @@ public class UnclaimallCommand extends SubCommand {
         // remove locks associated with this faction
         data.removeAllLocks(faction.getName());
     }
-
 }
