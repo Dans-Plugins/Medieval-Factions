@@ -15,17 +15,19 @@ import org.bukkit.Bukkit;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.event.Listener;
-import preponderous.ponder.AbstractPonderPlugin;
-import preponderous.ponder.misc.PonderAPI_Integrator;
+import preponderous.ponder.minecraft.abs.PonderPlugin;
+import preponderous.ponder.minecraft.spigot.misc.PonderAPI_Integrator;
+import preponderous.ponder.minecraft.spigot.tools.EventHandlerRegistry;
 
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Arrays;
 
 /**
- * @author Daniel Stephenson
+ * @author Daniel McCoy Stephenson
+ * @since May 30th, 2020
  */
-public class MedievalFactions extends AbstractPonderPlugin {
+public class MedievalFactions extends PonderPlugin {
     private static MedievalFactions instance;
     private final String pluginVersion = "v" + getDescription().getVersion();
 
@@ -44,7 +46,6 @@ public class MedievalFactions extends AbstractPonderPlugin {
     public void onEnable() {
         instance = this;
         ponderAPI_integrator = new PonderAPI_Integrator(this);
-        toolbox = getPonderAPI().getToolbox();
         initializeConfig();
         load();
         scheduleRecurringTasks();
@@ -157,7 +158,8 @@ public class MedievalFactions extends AbstractPonderPlugin {
                 new JoiningLeavingAndSpawningHandler(),
                 new MoveHandler()
         ));
-        getToolbox().getEventHandlerRegistry().registerEventHandlers(listeners, this);
+        EventHandlerRegistry eventHandlerRegistry = new EventHandlerRegistry(getPonderAPI());
+        eventHandlerRegistry.registerEventHandlers(listeners, this);
     }
 
     /**

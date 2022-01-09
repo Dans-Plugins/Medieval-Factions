@@ -10,9 +10,10 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.UUID;
 
+/**
+ * @author Daniel McCoy Stephenson
+ */
 public class EphemeralData {
-
-    // instance
     private static EphemeralData instance;
 
     private HashMap<UUID, Gate> creatingGatePlayers = new HashMap<>();
@@ -110,5 +111,4 @@ public class EphemeralData {
     public boolean isPlayerInFactionChat(Player player) {
         return getPlayersInFactionChat().contains(player.getUniqueId());
     }
-
 }

@@ -29,6 +29,9 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+/**
+ * @author Daniel McCoy Stephenson
+ */
 public class DamageEffectsAndDeathHandler implements Listener {
 
     public DamageEffectsAndDeathHandler() {

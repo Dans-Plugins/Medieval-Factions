@@ -17,6 +17,9 @@ import java.util.ArrayList;
 
 import static org.bukkit.Bukkit.getServer;
 
+/**
+ * @author Daniel McCoy Stephenson
+ */
 public class Scheduler {
 
     private static Scheduler instance;

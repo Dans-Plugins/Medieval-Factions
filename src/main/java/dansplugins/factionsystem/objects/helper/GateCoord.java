@@ -2,6 +2,9 @@ package dansplugins.factionsystem.objects.helper;
 
 import org.bukkit.block.Block;
 
+/**
+ * @author Daniel McCoy Stephenson
+ */
 public class GateCoord implements dansplugins.factionsystem.objects.helper.specification.IGateCoord {
 	
 	private int x;

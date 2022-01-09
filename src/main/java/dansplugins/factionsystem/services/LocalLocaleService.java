@@ -8,6 +8,9 @@ import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.util.*;
 
+/**
+ * @author Daniel McCoy Stephenson
+ */
 public class LocalLocaleService {
 
     private boolean debug = MedievalFactions.getInstance().isDebugEnabled();

@@ -15,15 +15,14 @@ import java.awt.*;
 import java.util.ArrayList;
 import java.util.HashMap;
 
+/**
+ * @author Daniel McCoy Stephenson
+ *         In order to add a new faction flag to this class, the following methods need to be altered:
+ *         - initializeFlagNames()
+ *         - initializeFlagValues()
+ *         - loadMissingFlagsIfNecessary()
+ */
 public class FactionFlags implements dansplugins.factionsystem.objects.helper.specification.IFactionFlags {
-
-    /*
-        In order to add a new faction flag to this class, the following methods need to be altered:
-        - initializeFlagNames()
-        - initializeFlagValues()
-        - loadMissingFlagsIfNecessary()
-    */
-
     private ArrayList<String> flagNames = new ArrayList<>();
     private HashMap<String, Integer> integerValues = new HashMap<>();
     private HashMap<String, Boolean> booleanValues = new HashMap<>();
@@ -303,5 +302,4 @@ public class FactionFlags implements dansplugins.factionsystem.objects.helper.sp
         }
         return toReturn;
     }
-
 }

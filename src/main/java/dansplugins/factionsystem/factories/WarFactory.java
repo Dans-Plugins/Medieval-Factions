@@ -4,6 +4,9 @@ import dansplugins.factionsystem.data.PersistentData;
 import dansplugins.factionsystem.objects.domain.Faction;
 import dansplugins.factionsystem.objects.domain.War;
 
+/**
+ * @author Daniel McCoy Stephenson
+ */
 public class WarFactory {
     private static WarFactory instance;
 

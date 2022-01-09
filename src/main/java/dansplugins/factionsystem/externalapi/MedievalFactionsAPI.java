@@ -11,9 +11,10 @@ import org.bukkit.entity.Player;
 
 import java.util.UUID;
 
-/*
-    This class gives developers access to the external API for Medieval Factions.
-*/
+/**
+ * @author Daniel McCoy Stephenson
+ * @brief This class gives developers access to the external API for Medieval Factions.
+ */
 public class MedievalFactionsAPI implements IMedievalFactionsAPI {
 
     private final String APIVersion = "v1.0.0"; // every time the external API is altered, this should be incremented

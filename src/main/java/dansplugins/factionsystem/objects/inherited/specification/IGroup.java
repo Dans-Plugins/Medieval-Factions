@@ -3,6 +3,9 @@ package dansplugins.factionsystem.objects.inherited.specification;
 import java.util.ArrayList;
 import java.util.UUID;
 
+/**
+ * @author Daniel McCoy Stephenson
+ */
 public interface IGroup {
     void setName(String newName);
     String getName();

@@ -1,16 +1,18 @@
 package dansplugins.factionsystem.objects.inherited;
 
-import dansplugins.factionsystem.MedievalFactions;
 import dansplugins.factionsystem.objects.inherited.specification.IGroup;
 import org.bukkit.entity.Player;
+import preponderous.ponder.minecraft.spigot.tools.UUIDChecker;
 
 import java.util.ArrayList;
 import java.util.UUID;
 
 import static org.bukkit.Bukkit.getServer;
 
+/**
+ * @author Daniel McCoy Stephenson
+ */
 public class Group implements IGroup {
-
     protected String name = "defaultName";
     protected String description = "defaultDescription";
     protected UUID owner = UUID.randomUUID();
@@ -85,7 +87,8 @@ public class Group implements IGroup {
         ArrayList<UUID> uuids = getMemberList();
         String players = "";
         for(UUID uuid : uuids) {
-            String playerName = MedievalFactions.getInstance().getToolbox().getUUIDChecker().findPlayerNameBasedOnUUID(uuid);
+            UUIDChecker uuidChecker = new UUIDChecker();
+            String playerName = uuidChecker.findPlayerNameBasedOnUUID(uuid);
             players += playerName + ", ";
         }
         if (players.length() > 0) {
@@ -146,5 +149,4 @@ public class Group implements IGroup {
     public boolean isInvited(UUID uuid) {
         return invited.contains(uuid);
     }
-
 }

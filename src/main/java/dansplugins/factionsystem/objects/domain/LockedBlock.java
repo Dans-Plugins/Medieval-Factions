@@ -4,14 +4,18 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.reflect.TypeToken;
 import org.bukkit.Bukkit;
-import preponderous.ponder.modifiers.Lockable;
-import preponderous.ponder.modifiers.Savable;
+import preponderous.ponder.minecraft.spigot.modifiers.Lockable;
+import preponderous.ponder.misc.Savable;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
 
+
+/**
+ * @author Daniel McCoy Stephenson
+ */
 public class LockedBlock implements Lockable, Savable {
     private int x = 0;
     private int y = 0;
@@ -124,7 +128,5 @@ public class LockedBlock implements Lockable, Savable {
         	world = Bukkit.getServer().getWorlds().get(0).getName();
         }
         accessList = gson.fromJson(data.get("accessList"), new TypeToken<ArrayList<UUID>>(){}.getType());
-        
     }
-
 }

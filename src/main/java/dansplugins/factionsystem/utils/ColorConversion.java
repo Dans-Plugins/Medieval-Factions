@@ -146,5 +146,4 @@ public class ColorConversion {
         System.out.println(attemptDecode("orange", true)); // #ffc800 (AWT Color)
         System.out.println(attemptDecode("gray", true)); // #B6B6B4 (Default Color)
     }
-
 }

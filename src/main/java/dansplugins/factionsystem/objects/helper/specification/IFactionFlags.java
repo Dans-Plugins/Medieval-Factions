@@ -4,6 +4,9 @@ import org.bukkit.entity.Player;
 
 import java.util.HashMap;
 
+/**
+ * @author Daniel McCoy Stephenson
+ */
 public interface IFactionFlags {
     void initializeFlagValues();
     void loadMissingFlagsIfNecessary();

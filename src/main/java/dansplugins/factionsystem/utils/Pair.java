@@ -1,7 +1,10 @@
 package dansplugins.factionsystem.utils;
 
-
-// Found from this answer on https://stackoverflow.com/a/521235 From user Paul Brinkly and edited by Dave Jarvis
+/**
+ * @author Paul Brinkly
+ * @author Dave Jarvis
+ * @source https://stackoverflow.com/a/521235
+ */
 public class Pair<L,R> {
 
     private final L left;

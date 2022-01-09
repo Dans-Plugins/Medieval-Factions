@@ -9,14 +9,17 @@ import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
+import preponderous.ponder.minecraft.spigot.tools.UUIDChecker;
 
 import java.util.ArrayList;
 import java.util.UUID;
 
 import static org.bukkit.Bukkit.getServer;
 
+/**
+ * @author Daniel McCoy Stephenson
+ */
 public class Messenger {
-
     private static Messenger instance;
 
     private Messenger() {
@@ -31,11 +34,12 @@ public class Messenger {
     }
 
     public void sendFactionInfo(CommandSender sender, Faction faction, int power) {
+        UUIDChecker uuidChecker = new UUIDChecker();
         int vassalContribution = faction.calculateCumulativePowerLevelWithVassalContribution() - faction.calculateCumulativePowerLevelWithoutVassalContribution();
 
         sender.sendMessage(ChatColor.BOLD + "" + ChatColor.AQUA + String.format(LocalLocaleService.getInstance().getText("FactionInfo"), faction.getName()) + "\n----------\n");
         sender.sendMessage(ChatColor.AQUA + String.format(LocalLocaleService.getInstance().getText("Name"), faction.getName()) + "\n");
-        sender.sendMessage(ChatColor.AQUA + String.format(LocalLocaleService.getInstance().getText("Owner"), MedievalFactions.getInstance().getToolbox().getUUIDChecker().findPlayerNameBasedOnUUID(faction.getOwner())) + "\n");
+        sender.sendMessage(ChatColor.AQUA + String.format(LocalLocaleService.getInstance().getText("Owner"), uuidChecker.findPlayerNameBasedOnUUID(faction.getOwner())) + "\n");
         sender.sendMessage(ChatColor.AQUA + String.format(LocalLocaleService.getInstance().getText("Description"), faction.getDescription()) + "\n");
         sender.sendMessage(ChatColor.AQUA + String.format(LocalLocaleService.getInstance().getText("Population"), faction.getMemberList().size()) + "\n");
         if (faction.hasLiege()) {
@@ -96,5 +100,4 @@ public class Messenger {
         }
 
     }
-
 }

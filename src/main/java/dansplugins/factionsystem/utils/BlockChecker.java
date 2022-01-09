@@ -8,6 +8,10 @@ import org.bukkit.entity.Player;
 
 import static org.bukkit.Bukkit.getLogger;
 
+/**
+ * @author Daniel McCoy Stephenson
+ * @author Caibinus
+ */
 public class BlockChecker {
     private static BlockChecker instance;
 

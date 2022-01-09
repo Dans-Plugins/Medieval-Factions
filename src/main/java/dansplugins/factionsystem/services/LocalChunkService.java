@@ -23,7 +23,7 @@ import static org.bukkit.Material.LADDER;
 
 /**
  * This class provides a local service to Medieval Factions in the management of claimed chunks.
- * @author Daniel Stephenson
+ * @author Daniel McCoy Stephenson
  */
 public class LocalChunkService {
     private static LocalChunkService instance;

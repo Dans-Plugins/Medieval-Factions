@@ -5,16 +5,17 @@ import com.google.gson.GsonBuilder;
 import dansplugins.factionsystem.MedievalFactions;
 import dansplugins.factionsystem.data.PersistentData;
 import dansplugins.factionsystem.objects.inherited.PlayerRecord;
-import preponderous.ponder.modifiers.Savable;
+import preponderous.ponder.misc.Savable;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
 
+/**
+ * @author Daniel McCoy Stephenson
+ */
 public class PowerRecord extends PlayerRecord implements Savable {
-
-    // saved
     private int powerLevel = 0;
 
     public PowerRecord(UUID playerUUID, int initial) {

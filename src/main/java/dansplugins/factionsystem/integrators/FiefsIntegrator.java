@@ -4,8 +4,10 @@ import dansplugins.factionsystem.MedievalFactions;
 import dansplugins.fiefs.externalapi.FiefsAPI;
 import org.bukkit.Bukkit;
 
+/**
+ * @author Daniel McCoy Stephenson
+ */
 public class FiefsIntegrator {
-
     private static FiefsIntegrator instance;
 
     private FiefsAPI fi_api = null;
@@ -34,5 +36,4 @@ public class FiefsIntegrator {
     public FiefsAPI getAPI() {
         return fi_api;
     }
-
 }
