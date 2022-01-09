@@ -8,6 +8,10 @@ import org.bukkit.entity.Player;
 
 import java.util.UUID;
 
+/**
+ * @author Daniel McCoy Stephenson
+ * @author Callum Johnson
+ */
 public class DemoteCommand extends SubCommand {
 
     public DemoteCommand() {
@@ -77,5 +81,4 @@ public class DemoteCommand extends SubCommand {
     public void execute(CommandSender sender, String[] args, String key) {
 
     }
-
 }

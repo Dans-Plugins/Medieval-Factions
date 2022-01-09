@@ -7,6 +7,10 @@ import org.bukkit.entity.Player;
 
 import java.util.stream.IntStream;
 
+/**
+ * @author Daniel McCoy Stephenson
+ * @author Callum Johnson
+ */
 public class LawsCommand extends SubCommand {
 
     public LawsCommand() {
@@ -65,5 +69,4 @@ public class LawsCommand extends SubCommand {
     public void execute(CommandSender sender, String[] args, String key) {
 
     }
-
 }

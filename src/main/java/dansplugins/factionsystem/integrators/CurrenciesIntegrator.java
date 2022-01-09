@@ -2,8 +2,10 @@ package dansplugins.factionsystem.integrators;
 
 import org.bukkit.Bukkit;
 
+/**
+ * @author Daniel McCoy Stephenson
+ */
 public class CurrenciesIntegrator {
-
     private static CurrenciesIntegrator instance;
 
     private CurrenciesIntegrator() {
@@ -20,5 +22,4 @@ public class CurrenciesIntegrator {
     public boolean isCurrenciesPresent() {
         return (Bukkit.getServer().getPluginManager().getPlugin("Currencies") != null);
     }
-
 }

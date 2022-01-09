@@ -13,6 +13,9 @@ import org.bukkit.event.player.AsyncPlayerChatEvent;
 
 import java.util.ArrayList;
 
+/**
+ * @author Daniel McCoy Stephenson
+ */
 public class ChatHandler implements Listener {
 
     @EventHandler()

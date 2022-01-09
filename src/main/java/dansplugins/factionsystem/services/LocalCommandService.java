@@ -10,6 +10,9 @@ import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Set;
 
+/**
+ * @author Daniel McCoy Stephenson
+ */
 public class LocalCommandService {
 
     private static LocalCommandService instance;

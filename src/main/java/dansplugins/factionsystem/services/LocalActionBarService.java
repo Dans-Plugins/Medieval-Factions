@@ -9,7 +9,6 @@ import org.bukkit.plugin.Plugin;
 import java.util.HashMap;
 import java.util.Map;
 
-
 public class LocalActionBarService {
     private static LocalActionBarService instance;
     private final Map<Player, TextComponent> playerActionBarMessages = new HashMap<Player, TextComponent>();

@@ -10,8 +10,10 @@ import org.bukkit.entity.Player;
 
 import static org.bukkit.Material.LADDER;
 
+/**
+ * @author Daniel McCoy Stephenson
+ */
 public class InteractionAccessChecker {
-
     private static InteractionAccessChecker instance;
 
     private InteractionAccessChecker() {
@@ -105,5 +107,4 @@ public class InteractionAccessChecker {
         boolean playerIsTryingToPlaceLadderInEnemyTerritory = blockPlaced.getType() == LADDER && playersFaction.isEnemy(claimedChunk.getHolder());
         return laddersArePlaceableInEnemyTerritory && playerIsTryingToPlaceLadderInEnemyTerritory;
     }
-
 }

@@ -2,6 +2,9 @@ package dansplugins.factionsystem.objects.inherited.specification.modifiers;
 
 import java.util.ArrayList;
 
+/**
+ * @author Daniel McCoy Stephenson
+ */
 public interface Diplomatic {
 
     // allies

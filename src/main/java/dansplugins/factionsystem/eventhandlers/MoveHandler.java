@@ -19,6 +19,9 @@ import java.util.Objects;
 
 import static org.bukkit.Bukkit.getServer;
 
+/**
+ * @author Daniel McCoy Stephenson
+ */
 public class MoveHandler implements Listener {
 
     @EventHandler()

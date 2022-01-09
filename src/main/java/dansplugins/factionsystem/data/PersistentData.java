@@ -9,8 +9,10 @@ import org.bukkit.entity.Player;
 import java.time.ZonedDateTime;
 import java.util.*;
 
+/**
+ * @author Daniel McCoy Stephenson
+ */
 public class PersistentData {
-
     private static PersistentData instance;
 
     public ArrayList<Faction> factions = new ArrayList<>();

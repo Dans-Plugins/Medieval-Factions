@@ -9,14 +9,20 @@ import dansplugins.factionsystem.objects.domain.PowerRecord;
 import dansplugins.factionsystem.services.LocalChunkService;
 import dansplugins.factionsystem.services.LocalLocaleService;
 import dansplugins.factionsystem.services.LocalStorageService;
+import dansplugins.fiefs.utils.UUIDChecker;
 import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
+import preponderous.ponder.misc.ArgumentParser;
 
 import java.lang.reflect.Method;
 import java.util.*;
 
+/**
+ * @author Daniel McCoy Stephenson
+ * @author Callum Johnson
+ */
 public class ForceCommand extends SubCommand {
 
     private final boolean debug = MedievalFactions.getInstance().isDebugEnabled();
@@ -25,6 +31,9 @@ public class ForceCommand extends SubCommand {
             "Save", "Load", "Peace", "Demote", "Join", "Kick", "Power", "Renounce", "Transfer", "RemoveVassal", "Rename", "BonusPower", "Unlock", "Create", "Claim", "Flag"
     };
     private final HashMap<List<String>, String> subMap = new HashMap<>();
+    
+    private ArgumentParser argumentParser = new ArgumentParser();
+    private UUIDChecker uuidChecker = new UUIDChecker();
 
     public ForceCommand() {
         super(new String[]{
@@ -101,7 +110,7 @@ public class ForceCommand extends SubCommand {
             return;
         }
         // get arguments designated by single quotes
-        final ArrayList<String> doubleQuoteArgs = MedievalFactions.getInstance().getToolbox().getArgumentParser().getArgumentsInsideDoubleQuotes(args);
+        final ArrayList<String> doubleQuoteArgs = argumentParser.getArgumentsInsideDoubleQuotes(args);
         if (doubleQuoteArgs.size() < 2) {
             sender.sendMessage(translate("&c" + "Arguments must be designated in between double quotes.")); // TODO: add locale message
             return;
@@ -130,7 +139,7 @@ public class ForceCommand extends SubCommand {
             sender.sendMessage(translate("&c" + getText("UsageForceDemote")));
             return;
         }
-        final UUID playerUUID = MedievalFactions.getInstance().getToolbox().getUUIDChecker().findUUIDBasedOnPlayerName(args[1]);
+        final UUID playerUUID = uuidChecker.findUUIDBasedOnPlayerName(args[1]);
         if (playerUUID == null) {
             sender.sendMessage(translate("&c" + getText("PlayerNotFound")));
             return;
@@ -159,7 +168,7 @@ public class ForceCommand extends SubCommand {
             return;
         }
 
-        final ArrayList<String> doubleQuoteArgs = MedievalFactions.getInstance().getToolbox().getArgumentParser().getArgumentsInsideDoubleQuotes(args);
+        final ArrayList<String> doubleQuoteArgs = argumentParser.getArgumentsInsideDoubleQuotes(args);
         if (doubleQuoteArgs.size() < 2) {
             sender.sendMessage(translate("&c" + "Arguments must be designated in between double quotes.")); // TODO: make translatable
             return;
@@ -169,7 +178,7 @@ public class ForceCommand extends SubCommand {
             sender.sendMessage(translate("&c" + getText("FactionNotFound")));
             return;
         }
-        final UUID playerUUID = MedievalFactions.getInstance().getToolbox().getUUIDChecker().findUUIDBasedOnPlayerName(doubleQuoteArgs.get(0));
+        final UUID playerUUID = uuidChecker.findUUIDBasedOnPlayerName(doubleQuoteArgs.get(0));
         if (playerUUID == null) {
             sender.sendMessage(translate("&c" + getText("PlayerNotFound")));
             return;
@@ -204,7 +213,7 @@ public class ForceCommand extends SubCommand {
             return;
         }
         if (debug) { System.out.println(String.format("Looking for player UUID based on player name: '%s'", args[1])); }
-        final UUID targetUUID = MedievalFactions.getInstance().getToolbox().getUUIDChecker().findUUIDBasedOnPlayerName(args[1]);
+        final UUID targetUUID = uuidChecker.findUUIDBasedOnPlayerName(args[1]);
         if (targetUUID == null) {
             sender.sendMessage(translate("&c" + getText("PlayerNotFound")));
             return;
@@ -248,12 +257,12 @@ public class ForceCommand extends SubCommand {
             return;
         }
 
-        final ArrayList<String> doubleQuoteArgs = MedievalFactions.getInstance().getToolbox().getArgumentParser().getArgumentsInsideDoubleQuotes(args);
+        final ArrayList<String> doubleQuoteArgs = argumentParser.getArgumentsInsideDoubleQuotes(args);
         if (doubleQuoteArgs.size() < 2) {
             sender.sendMessage(translate("&c" + "Arguments must be designated in between double quotes.")); // TODO: make translatable
             return;
         }
-        final UUID playerUUID = MedievalFactions.getInstance().getToolbox().getUUIDChecker().findUUIDBasedOnPlayerName(doubleQuoteArgs.get(0));
+        final UUID playerUUID = uuidChecker.findUUIDBasedOnPlayerName(doubleQuoteArgs.get(0));
         final int desiredPower = getIntSafe(doubleQuoteArgs.get(1), Integer.MIN_VALUE);
         if (desiredPower == Integer.MIN_VALUE) {
             sender.sendMessage(translate("&c" + getText("DesiredPowerMustBeANumber")));
@@ -270,7 +279,7 @@ public class ForceCommand extends SubCommand {
             sender.sendMessage(translate("&c" + "Usage: /mf force renounce \"faction\""));
             return;
         }
-        final ArrayList<String> doubleQuoteArgs = MedievalFactions.getInstance().getToolbox().getArgumentParser().getArgumentsInsideDoubleQuotes(args);
+        final ArrayList<String> doubleQuoteArgs = argumentParser.getArgumentsInsideDoubleQuotes(args);
 
         if (doubleQuoteArgs.size() == 0) {
             sender.sendMessage(translate("&c" + "Arguments must be designated in between double quotes."));
@@ -308,7 +317,7 @@ public class ForceCommand extends SubCommand {
             return;
         }
 
-        final ArrayList<String> doubleQuoteArgs = MedievalFactions.getInstance().getToolbox().getArgumentParser().getArgumentsInsideDoubleQuotes(args);
+        final ArrayList<String> doubleQuoteArgs = argumentParser.getArgumentsInsideDoubleQuotes(args);
         if (doubleQuoteArgs.size() < 2) {
             sender.sendMessage(translate("&c" + "Arguments must be designated in between double quotes."));
             return;
@@ -318,7 +327,7 @@ public class ForceCommand extends SubCommand {
             sender.sendMessage(translate("&c" + getText("FactionNotFound")));
             return;
         }
-        final UUID playerUUID = MedievalFactions.getInstance().getToolbox().getUUIDChecker().findUUIDBasedOnPlayerName(doubleQuoteArgs.get(1));
+        final UUID playerUUID = uuidChecker.findUUIDBasedOnPlayerName(doubleQuoteArgs.get(1));
         if (playerUUID == null) {
             sender.sendMessage(translate("&c" + getText("PlayerNotFound")));
             return;
@@ -352,7 +361,7 @@ public class ForceCommand extends SubCommand {
             return;
         }
 
-        final ArrayList<String> doubleQuoteArgs = MedievalFactions.getInstance().getToolbox().getArgumentParser().getArgumentsInsideDoubleQuotes(args);
+        final ArrayList<String> doubleQuoteArgs = argumentParser.getArgumentsInsideDoubleQuotes(args);
         if (doubleQuoteArgs.size() < 2) {
             sender.sendMessage(translate("&c" + "Arguments must be designated in between double quotes."));
             return;
@@ -377,7 +386,7 @@ public class ForceCommand extends SubCommand {
             return;
         }
 
-        final ArrayList<String> doubleQuoteArgs = MedievalFactions.getInstance().getToolbox().getArgumentParser().getArgumentsInsideDoubleQuotes(args);
+        final ArrayList<String> doubleQuoteArgs = argumentParser.getArgumentsInsideDoubleQuotes(args);
         if (doubleQuoteArgs.size() < 2) {
             sender.sendMessage(translate("&c" + "Arguments must be designated in between double quotes."));
             return;
@@ -432,7 +441,7 @@ public class ForceCommand extends SubCommand {
             return;
         }
 
-        final ArrayList<String> singleQuoteArgs = MedievalFactions.getInstance().getToolbox().getArgumentParser().getArgumentsInsideDoubleQuotes(args);
+        final ArrayList<String> singleQuoteArgs = argumentParser.getArgumentsInsideDoubleQuotes(args);
         if (singleQuoteArgs.size() < 2) {
             sender.sendMessage(translate("&c" + "Arguments must be designated in between double quotes."));
             return;
@@ -508,7 +517,7 @@ public class ForceCommand extends SubCommand {
             return;
         }
 
-        final ArrayList<String> doubleQuoteArgs = MedievalFactions.getInstance().getToolbox().getArgumentParser().getArgumentsInsideDoubleQuotes(args);
+        final ArrayList<String> doubleQuoteArgs = argumentParser.getArgumentsInsideDoubleQuotes(args);
         if (doubleQuoteArgs.size() < 1) {
             sender.sendMessage(translate("&c" + "Arguments must be designated in between double quotes."));
             return;
@@ -546,7 +555,7 @@ public class ForceCommand extends SubCommand {
             return;
         }
 
-        final ArrayList<String> argumentsInsideDoubleQuotes = MedievalFactions.getInstance().getToolbox().getArgumentParser().getArgumentsInsideDoubleQuotes(args);
+        final ArrayList<String> argumentsInsideDoubleQuotes = argumentParser.getArgumentsInsideDoubleQuotes(args);
         if (argumentsInsideDoubleQuotes.size() < 1) {
             sender.sendMessage(translate("&c" + "Arguments must be designated in between double quotes."));
             return;
@@ -585,7 +594,7 @@ public class ForceCommand extends SubCommand {
             return;
         }
 
-        final ArrayList<String> argumentsInsideDoubleQuotes = MedievalFactions.getInstance().getToolbox().getArgumentParser().getArgumentsInsideDoubleQuotes(args);
+        final ArrayList<String> argumentsInsideDoubleQuotes = argumentParser.getArgumentsInsideDoubleQuotes(args);
         if (argumentsInsideDoubleQuotes.size() < 3) {
             player.sendMessage(translate("&c" + "Arguments must be designated in between double quotes."));
             return;
@@ -600,5 +609,4 @@ public class ForceCommand extends SubCommand {
 
         faction.getFlags().setFlag(option, value, player);
     }
-
 }

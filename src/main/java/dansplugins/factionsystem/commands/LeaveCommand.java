@@ -6,6 +6,10 @@ import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
+/**
+ * @author Daniel McCoy Stephenson
+ * @author Callum Johnson
+ */
 public class LeaveCommand extends SubCommand {
 
     public LeaveCommand() {
@@ -54,5 +58,4 @@ public class LeaveCommand extends SubCommand {
     public void execute(CommandSender sender, String[] args, String key) {
 
     }
-
 }

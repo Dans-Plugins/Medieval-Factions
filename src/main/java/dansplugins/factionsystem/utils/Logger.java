@@ -4,8 +4,10 @@ import dansplugins.factionsystem.MedievalFactions;
 
 import java.util.logging.Level;
 
+/**
+ * @author Daniel McCoy Stephenson
+ */
 public class Logger {
-
     private static Logger instance;
 
     private Logger() {
@@ -24,5 +26,4 @@ public class Logger {
             MedievalFactions.getInstance().getLogger().log(Level.INFO, "[Medieval Factions] " + message);
         }
     }
-
 }

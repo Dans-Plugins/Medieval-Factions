@@ -6,6 +6,10 @@ import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
+/**
+ * @author Daniel McCoy Stephenson
+ * @author Callum Johnson
+ */
 public class MembersCommand extends SubCommand {
 
     public MembersCommand() {
@@ -75,5 +79,4 @@ public class MembersCommand extends SubCommand {
                 }).forEach(sender::sendMessage);
         sender.sendMessage(translate("&b----------\n"));
     }
-
 }

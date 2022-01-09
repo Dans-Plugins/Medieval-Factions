@@ -2,9 +2,11 @@ package dansplugins.factionsystem.objects.helper;
 
 import java.util.HashMap;
 
+/**
+ * @author Daniel McCoy Stephenson
+ */
 public class ChunkFlags implements dansplugins.factionsystem.objects.helper.specification.IChunkFlags {
-
-    private HashMap<Long, long[]> chunkmap = new HashMap<Long, long[]>();
+    private HashMap<Long, long[]> chunkmap = new HashMap<>();
     private long last_key = Long.MAX_VALUE;
     private long[] last_row;
 
@@ -61,5 +63,4 @@ public class ChunkFlags implements dansplugins.factionsystem.objects.helper.spec
         last_row = null;
         last_key = Long.MAX_VALUE;
     }
-
 }

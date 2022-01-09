@@ -10,6 +10,10 @@ import org.bukkit.entity.Player;
 
 import java.util.ArrayList;
 
+/**
+ * @author Daniel McCoy Stephenson
+ * @author Callum Johnson
+ */
 public class GateCommand extends SubCommand {
 
 	public GateCommand() {
@@ -142,5 +146,4 @@ public class GateCommand extends SubCommand {
 		return factions.stream()
 				.filter(faction -> faction.getGates().contains(gate)).findFirst().orElse(null);
 	}
-
 }

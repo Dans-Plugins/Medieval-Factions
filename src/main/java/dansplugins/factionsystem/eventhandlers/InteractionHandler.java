@@ -34,7 +34,11 @@ import org.bukkit.event.entity.EntityPlaceEvent;
 import org.bukkit.event.hanging.HangingBreakByEntityEvent;
 import org.bukkit.event.player.*;
 import org.bukkit.inventory.InventoryHolder;
+import preponderous.ponder.minecraft.spigot.tools.UUIDChecker;
 
+/**
+ * @author Daniel McCoy Stephenson
+ */
 public class InteractionHandler implements Listener {
 
     // EVENT HANDLER METHODS ------------------------------------------------------
@@ -202,7 +206,8 @@ public class InteractionHandler implements Listener {
             boolean isPlayerBypassing = EphemeralData.getInstance().getAdminsBypassingProtections().contains(player.getUniqueId());
             if (!playerHasAccess && !isPlayerBypassing) {
                 // player doesn't have access and isn't overriding
-                String owner = MedievalFactions.getInstance().getToolbox().getUUIDChecker().findPlayerNameBasedOnUUID(lockedBlock.getOwner());
+                UUIDChecker uuidChecker = new UUIDChecker();
+                String owner = uuidChecker.findPlayerNameBasedOnUUID(lockedBlock.getOwner());
                 player.sendMessage(ChatColor.RED + String.format(LocalLocaleService.getInstance().getText("LockedBy"), owner));
                 event.setCancelled(true);
                 return;

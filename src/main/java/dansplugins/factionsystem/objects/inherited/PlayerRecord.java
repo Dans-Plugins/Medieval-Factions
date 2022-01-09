@@ -4,8 +4,10 @@ import dansplugins.factionsystem.objects.inherited.specification.IPlayerRecord;
 
 import java.util.UUID;
 
+/**
+ * @author Daniel McCoy Stephenson
+ */
 public class PlayerRecord implements IPlayerRecord {
-
     protected UUID playerUUID = null;
 
     @Override
@@ -17,5 +19,4 @@ public class PlayerRecord implements IPlayerRecord {
     public UUID getPlayerUUID() {
         return playerUUID;
     }
-
 }

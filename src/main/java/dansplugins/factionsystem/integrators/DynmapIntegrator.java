@@ -9,6 +9,7 @@ import dansplugins.factionsystem.objects.helper.ChunkFlags;
 import dansplugins.factionsystem.services.LocalChunkService;
 import dansplugins.factionsystem.services.LocalLocaleService;
 import dansplugins.factionsystem.utils.Logger;
+import dansplugins.fiefs.utils.UUIDChecker;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.PluginManager;
 import org.bukkit.scheduler.BukkitRunnable;
@@ -19,8 +20,10 @@ import java.util.*;
 
 import static org.bukkit.Bukkit.getServer;
 
+/**
+ * @author Caibinus
+ */
 public class DynmapIntegrator {
-
     private static DynmapIntegrator instance = null;
     public static boolean dynmapInitialized = false;
 
@@ -246,8 +249,9 @@ public class DynmapIntegrator {
     }
 
     private String buildNationPopupText(Faction f) {
+        UUIDChecker uuidChecker = new UUIDChecker();
         String message = "<h4>" + f.getName() + "</h4>" +
-                "Owner: " + MedievalFactions.getInstance().getToolbox().getUUIDChecker().findPlayerNameBasedOnUUID(f.getOwner()) + "<br/>" +
+                "Owner: " + uuidChecker.findPlayerNameBasedOnUUID(f.getOwner()) + "<br/>" +
                 "Description: " + f.getDescription() + "<br/>" +
                 "<div style='display: inline;' title='" + f.getMemberListSeparatedByCommas() + "'>Population: " + f.getMemberList().size() + "</div><br/>";
 
@@ -504,7 +508,8 @@ public class DynmapIntegrator {
                 for (PowerRecord powerRecord : PersistentData.getInstance().getPlayerPowerRecords()) {
                     Faction pf = PersistentData.getInstance().getPlayersFaction(powerRecord.getPlayerUUID());
                     if (pf != null && pf.getName().equalsIgnoreCase(holder)) {
-                        plids.add(MedievalFactions.getInstance().getToolbox().getUUIDChecker().findPlayerNameBasedOnUUID(powerRecord.getPlayerUUID()));
+                        UUIDChecker uuidChecker = new UUIDChecker();
+                        plids.add(uuidChecker.findPlayerNameBasedOnUUID(powerRecord.getPlayerUUID()));
                     }
                 }
             }
@@ -519,5 +524,4 @@ public class DynmapIntegrator {
 
         }
     }
-
 }

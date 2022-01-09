@@ -5,7 +5,9 @@ import org.bukkit.entity.Player;
 
 import java.util.UUID;
 
-
+/**
+ * @author Daniel McCoy Stephenson
+ */
 public class MF_Faction implements IMF_Faction {
     Faction faction;
 

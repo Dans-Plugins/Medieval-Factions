@@ -8,6 +8,10 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 
+/**
+ * @author Daniel McCoy Stephenson
+ * @author Callum Johnson
+ */
 public class HelpCommand extends SubCommand {
 
     // Last page of help menus.
@@ -57,5 +61,4 @@ public class HelpCommand extends SubCommand {
         sender.sendMessage(translate("&b&l" + getText("CommandsPage" + page, LAST_PAGE)));
         helpPages.get(page).forEach(line -> sender.sendMessage(translate("&b" + getText("Help" + line))));
     }
-
 }

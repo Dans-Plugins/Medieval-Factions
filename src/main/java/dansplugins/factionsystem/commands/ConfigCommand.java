@@ -6,6 +6,10 @@ import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
+/**
+ * @author Daniel McCoy Stephenson
+ * @author Callum Johnson
+ */
 public class ConfigCommand extends SubCommand {
 
     public ConfigCommand() {
@@ -89,5 +93,4 @@ public class ConfigCommand extends SubCommand {
             sender.sendMessage(translate("&c" + getText("ValidSubCommandsShowSet")));
         }
     }
-
 }

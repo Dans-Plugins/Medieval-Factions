@@ -6,18 +6,18 @@ import dansplugins.factionsystem.objects.domain.ClaimedChunk;
 import dansplugins.factionsystem.objects.domain.Faction;
 import dansplugins.factionsystem.objects.domain.Gate;
 import org.bukkit.ChatColor;
-import org.bukkit.Material;
 import org.bukkit.block.Block;
-import org.bukkit.block.data.AnaloguePowerable;
 import org.bukkit.block.data.BlockData;
 import org.bukkit.block.data.Powerable;
 import org.bukkit.entity.Player;
-import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.block.BlockRedstoneEvent;
-import org.graalvm.compiler.lir.alloc.lsra.LinearScan;
+import org.bukkit.event.player.PlayerInteractEvent;
 
-import javax.lang.model.type.UnionType;
 
+/**
+ * @author Caibinus
+ * @author Daniel McCoy Stephenson
+ */
 public class LocalGateService {
     private static LocalGateService instance;
 

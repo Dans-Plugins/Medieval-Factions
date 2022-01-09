@@ -5,6 +5,10 @@ import org.bukkit.entity.Player;
 
 import java.util.UUID;
 
+
+/**
+ * @author Daniel McCoy Stephenson
+ */
 public interface IMedievalFactionsAPI {
 
     // accessors

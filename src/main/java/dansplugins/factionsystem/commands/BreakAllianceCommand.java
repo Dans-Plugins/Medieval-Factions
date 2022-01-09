@@ -5,6 +5,10 @@ import dansplugins.factionsystem.objects.domain.Faction;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
+/**
+ * @author Daniel McCoy Stephenson
+ * @author Callum Johnson
+ */
 public class BreakAllianceCommand extends SubCommand {
 
     /**
@@ -68,5 +72,4 @@ public class BreakAllianceCommand extends SubCommand {
     public void execute(CommandSender sender, String[] args, String key) {
 
     }
-
 }

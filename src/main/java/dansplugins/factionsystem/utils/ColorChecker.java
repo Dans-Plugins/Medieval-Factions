@@ -2,6 +2,10 @@ package dansplugins.factionsystem.utils;
 
 import org.bukkit.ChatColor;
 
+/**
+ * @author Daniel McCoy Stephenson
+ * @author Callum
+ */
 public class ColorChecker {
 
     private static ColorChecker instance;
@@ -25,5 +29,4 @@ public class ColorChecker {
         }
         return ChatColor.WHITE;
     }
-
 }

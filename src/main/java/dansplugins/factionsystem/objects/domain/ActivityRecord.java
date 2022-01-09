@@ -4,7 +4,7 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import dansplugins.factionsystem.MedievalFactions;
 import dansplugins.factionsystem.objects.inherited.PlayerRecord;
-import preponderous.ponder.modifiers.Savable;
+import preponderous.ponder.misc.Savable;
 
 import java.time.Duration;
 import java.time.ZonedDateTime;
@@ -14,6 +14,9 @@ import java.util.Map;
 import java.util.UUID;
 import java.util.concurrent.TimeUnit;
 
+/**
+ * @author Daniel McCoy Stephenson
+ */
 public class ActivityRecord extends PlayerRecord implements Savable {
     private int logins = 0;
     private int powerLost = 0;

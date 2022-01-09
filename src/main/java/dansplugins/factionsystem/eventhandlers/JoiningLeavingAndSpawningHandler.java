@@ -26,6 +26,9 @@ import org.bukkit.event.player.PlayerQuitEvent;
 import java.time.ZonedDateTime;
 import java.util.UUID;
 
+/**
+ * @author Daniel McCoy Stephenson
+ */
 public class JoiningLeavingAndSpawningHandler implements Listener {
 
 	@EventHandler()

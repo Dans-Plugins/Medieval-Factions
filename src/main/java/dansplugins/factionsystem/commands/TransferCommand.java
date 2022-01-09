@@ -2,6 +2,7 @@ package dansplugins.factionsystem.commands;
 
 import dansplugins.factionsystem.MedievalFactions;
 import dansplugins.factionsystem.commands.abs.SubCommand;
+import dansplugins.fiefs.utils.UUIDChecker;
 import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.command.CommandSender;
@@ -9,6 +10,10 @@ import org.bukkit.entity.Player;
 
 import java.util.UUID;
 
+/**
+ * @author Daniel McCoy Stephenson
+ * @author Callum Johnson
+ */
 public class TransferCommand extends SubCommand {
 
     public TransferCommand() {
@@ -30,7 +35,8 @@ public class TransferCommand extends SubCommand {
             player.sendMessage(translate("&c" + getText("UsageTransfer")));
             return;
         }
-        final UUID targetUUID = MedievalFactions.getInstance().getToolbox().getUUIDChecker().findUUIDBasedOnPlayerName(args[0]);
+        UUIDChecker uuidChecker = new UUIDChecker();
+        final UUID targetUUID = uuidChecker.findUUIDBasedOnPlayerName(args[0]);
         if (targetUUID == null) {
             player.sendMessage(translate("&c" + getText("PlayerNotFound")));
             return;
@@ -73,5 +79,4 @@ public class TransferCommand extends SubCommand {
     public void execute(CommandSender sender, String[] args, String key) {
 
     }
-
 }

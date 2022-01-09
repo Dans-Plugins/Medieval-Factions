@@ -6,6 +6,10 @@ import dansplugins.factionsystem.utils.Messenger;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
+/**
+ * @author Daniel McCoy Stephenson
+ * @author Callum Johnson
+ */
 public class InfoCommand extends SubCommand {
 
     public InfoCommand() {
@@ -57,5 +61,4 @@ public class InfoCommand extends SubCommand {
         }
         Messenger.getInstance().sendFactionInfo(sender, target, target.getClaimedChunks().size());
     }
-
 }

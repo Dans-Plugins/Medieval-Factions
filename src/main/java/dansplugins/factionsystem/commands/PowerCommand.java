@@ -3,11 +3,16 @@ package dansplugins.factionsystem.commands;
 import dansplugins.factionsystem.MedievalFactions;
 import dansplugins.factionsystem.commands.abs.SubCommand;
 import dansplugins.factionsystem.objects.domain.PowerRecord;
+import dansplugins.fiefs.utils.UUIDChecker;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
 import java.util.UUID;
 
+/**
+ * @author Daniel McCoy Stephenson
+ * @author Callum Johnson
+ */
 public class PowerCommand extends SubCommand {
 
 	public PowerCommand() {
@@ -50,7 +55,8 @@ public class PowerCommand extends SubCommand {
 					getText("AlertCurrentPowerLevel", record.getPowerLevel(), record.maxPower())));
 			return;
 		}
-		final UUID target = MedievalFactions.getInstance().getToolbox().getUUIDChecker().findUUIDBasedOnPlayerName(args[0]);
+		UUIDChecker uuidChecker = new UUIDChecker();
+		final UUID target = uuidChecker.findUUIDBasedOnPlayerName(args[0]);
 		if (target == null) {
 			sender.sendMessage(translate("&c" + getText("PlayerNotFound")));
 			return;
@@ -59,5 +65,4 @@ public class PowerCommand extends SubCommand {
 		sender.sendMessage(translate("&b" +
 				getText("CurrentPowerLevel", args[0], record.getPowerLevel(),record.maxPower())));
 	}
-
 }

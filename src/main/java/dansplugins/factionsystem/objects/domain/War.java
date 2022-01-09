@@ -2,12 +2,15 @@ package dansplugins.factionsystem.objects.domain;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
-import preponderous.ponder.modifiers.Savable;
+import preponderous.ponder.misc.Savable;
 
 import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.Map;
 
+/**
+ * @author Daniel McCoy Stephenson
+ */
 public class War implements Savable {
     private String attacker;
     private String defender;

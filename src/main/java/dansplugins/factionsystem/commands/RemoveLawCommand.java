@@ -4,7 +4,10 @@ import dansplugins.factionsystem.commands.abs.SubCommand;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
-public class RemoveLawCommand extends SubCommand {
+/**
+ * @author Daniel McCoy Stephenson
+ * @author Callum Johnson
+ */public class RemoveLawCommand extends SubCommand {
 
     public RemoveLawCommand() {
         super(new String[] {
@@ -46,5 +49,4 @@ public class RemoveLawCommand extends SubCommand {
     public void execute(CommandSender sender, String[] args, String key) {
 
     }
-
 }

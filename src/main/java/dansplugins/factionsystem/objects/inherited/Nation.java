@@ -5,8 +5,10 @@ import dansplugins.factionsystem.objects.inherited.specification.modifiers.Lawfu
 
 import java.util.ArrayList;
 
+/**
+ * @author Daniel McCoy Stephenson
+ */
 public class Nation extends Group implements Diplomatic, Lawful {
-
     protected ArrayList<String> allyFactions = new ArrayList<>();
     protected ArrayList<String> attemptedAlliances = new ArrayList<>();
     protected ArrayList<String> enemyFactions = new ArrayList<>();
@@ -179,5 +181,4 @@ public class Nation extends Group implements Diplomatic, Lawful {
         }
         list.remove(toRemove);
     }
-
 }

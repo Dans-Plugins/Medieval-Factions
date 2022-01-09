@@ -6,13 +6,16 @@ import dansplugins.factionsystem.objects.inherited.Territory;
 import org.bukkit.Chunk;
 import org.bukkit.World;
 import org.bukkit.WorldCreator;
-import preponderous.ponder.modifiers.Savable;
+import preponderous.ponder.misc.Savable;
 
 import java.util.HashMap;
 import java.util.Map;
 
 import static org.bukkit.Bukkit.getServer;
 
+/**
+ * @author Daniel McCoy Stephenson
+ */
 public class ClaimedChunk extends Territory implements Savable {
     private Chunk chunk;
     private String world;
@@ -78,5 +81,4 @@ public class ClaimedChunk extends Territory implements Savable {
                                             gson.fromJson(data.get("Z"), Integer.TYPE));
         }
     }
-
 }

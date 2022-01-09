@@ -5,8 +5,9 @@ import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.configuration.file.FileConfiguration;
 
+
 /**
- * @author Daniel Stephenson
+ * @author Daniel McCoy Stephenson
  */
 public class LocalConfigService {
     private static LocalConfigService instance;

@@ -15,6 +15,9 @@ import org.bukkit.inventory.meta.SkullMeta;
 
 import java.util.ArrayList;
 
+/**
+ * @author Daniel McCoy Stephenson
+ */
 public class Duel {
 	public enum DuelState {INVITED, DUELLING, WINNER, TIED}
 
