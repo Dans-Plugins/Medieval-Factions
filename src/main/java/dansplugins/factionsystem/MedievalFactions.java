@@ -153,7 +153,7 @@ public class MedievalFactions extends PonderPlugin {
     private void registerEventHandlers() {
         ArrayList<Listener> listeners = new ArrayList<>(Arrays.asList(
                 new ChatHandler(),
-                new DamageEffectsAndDeathHandler(),
+                new DamageHandler(),
                 new InteractionHandler(),
                 new JoiningLeavingAndSpawningHandler(),
                 new MoveHandler()

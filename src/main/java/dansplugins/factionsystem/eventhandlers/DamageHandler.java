@@ -32,78 +32,32 @@ import java.util.List;
 /**
  * @author Daniel McCoy Stephenson
  */
-public class DamageEffectsAndDeathHandler implements Listener {
+public class DamageHandler implements Listener {
 
-    public DamageEffectsAndDeathHandler() {
+    public DamageHandler() {
         initializeBadPotionTypes();
     }
 
+    /**
+     * This method disallows PVP between members of the same faction and between factions who are not at war
+     * PVP is allowed between factionless players, players who belong to a faction and the factionless, and players whose factions are at war.
+     */
     @EventHandler()
     public void handle(EntityDamageByEntityEvent event) {
-   	
-        // this method disallows PVP between members of the same faction and between factions who are not at war
-        // PVP is allowed between factionless players, players who belong to a faction and the factionless, and players whose factions are at war.
-        Logger.getInstance().log("EntityDamageByIntity" + event.toString());
+        Player victim = getVictim(event);
+        Player attacker = getAttacker(event);
 
-        // if this was between two players melee
-        if (event.getDamager() instanceof Player && event.getEntity() instanceof Player) {
-            Player attacker = (Player) event.getDamager();
-            Player victim = (Player) event.getEntity();
-        	// if these players are actively duelling then we don't want to handle friendly fire.
-            Duel duel = EphemeralData.getInstance().getDuel(attacker, victim);
-            if (duel == null)
-            {
-            	handleIfFriendlyFire(event, attacker, victim);	
+        if (attacker != null) {
+            if (arePlayersDueling(attacker, victim)) {
+                endDuelIfNecessary(attacker, victim, event);
             }
-            else if (duel.getStatus().equals(Duel.DuelState.DUELLING))
-            {
-            	if (victim.getHealth() - event.getFinalDamage() <= 0)
-            	{
-        			duel.setLoser(victim);
-            		duel.finishDuel(false);
-            		EphemeralData.getInstance().getDuelingPlayers().remove(this);
-            		event.setCancelled(true);
-            	}
-            }
-            else
-            {
-            	handleIfFriendlyFire(event, attacker, victim);
-            }
-        }
-        else if (event.getDamager() instanceof Projectile && event.getEntity() instanceof Player) {
-            Projectile arrow = (Projectile) event.getDamager();
-            ProjectileSource source = arrow.getShooter();
-
-            if (source instanceof Player){
-                Player attacker = (Player) source;
-                Player victim = (Player) event.getEntity();
-
-            	// if these players are actively duelling then we don't want to handle friendly fire.
-                Duel duel = EphemeralData.getInstance().getDuel(attacker, victim);
-                if (duel == null)
-                {
-                	handleIfFriendlyFire(event, attacker, victim);	
-                }
-                else if (duel.getStatus().equals(Duel.DuelState.DUELLING))
-                {
-                	if (victim.getHealth() - event.getFinalDamage() <= 0)
-                	{
-            			duel.setLoser(victim);
-                		duel.finishDuel(false);
-                		EphemeralData.getInstance().getDuelingPlayers().remove(this);
-                		event.setCancelled(true);
-                	}
-                }
-                else
-                {
-                	handleIfFriendlyFire(event, attacker, victim);
-                }
+            else {
+                handleIfFriendlyFire(event, attacker, victim);
             }
         }
 
         if (event.getDamager() instanceof Player) {
             Player player = (Player) event.getDamager();
-
             Location location = null;
 
             if (event.getEntity() instanceof ArmorStand) {
@@ -113,7 +67,6 @@ public class DamageEffectsAndDeathHandler implements Listener {
                     return;
                 }
 
-                // get chunk that armor stand is in
                 location = armorStand.getLocation();
             }
             else if (event.getEntity() instanceof ItemFrame) {
@@ -154,6 +107,63 @@ public class DamageEffectsAndDeathHandler implements Listener {
                 }
             }
         }
+    }
+
+    private Player getVictim(EntityDamageByEntityEvent event) {
+        return (Player) event.getEntity();
+    }
+
+    private Player getAttacker(EntityDamageByEntityEvent event) {
+        if (wasDamageWasBetweenPlayers(event)) {
+            return (Player) event.getDamager();
+        }
+        else if (wasPlayerWasDamagedByAProjectile(event) && wasProjectileShotByPlayer(event)) {
+            return (Player) getProjectileSource(event);
+        }
+        else {
+            return null;
+        }
+    }
+
+    private ProjectileSource getProjectileSource(EntityDamageByEntityEvent event) {
+        Projectile projectile = (Projectile) event.getDamager();
+        return projectile.getShooter();
+    }
+
+    private boolean wasProjectileShotByPlayer(EntityDamageByEntityEvent event) {
+        ProjectileSource projectileSource = getProjectileSource(event);
+        return projectileSource instanceof Player;
+    }
+
+    private void endDuelIfNecessary(Player attacker, Player victim, EntityDamageEvent event) {
+        Duel duel = EphemeralData.getInstance().getDuel(attacker, victim);
+        if (isDuelActive(duel) && isVictimDead(victim.getHealth(), event.getFinalDamage())) {
+            duel.setLoser(victim);
+            duel.finishDuel(false);
+            EphemeralData.getInstance().getDuelingPlayers().remove(this);
+            event.setCancelled(true);
+        }
+    }
+
+    private boolean isVictimDead(double victimHealth, double finalDamage) {
+        return victimHealth - finalDamage <= 0;
+    }
+
+    private boolean isDuelActive(Duel duel) {
+        return duel.getStatus().equals(Duel.DuelState.DUELLING);
+    }
+
+    private boolean arePlayersDueling(Player attacker, Player victim) {
+        Duel duel = EphemeralData.getInstance().getDuel(attacker, victim);
+        return duel != null;
+    }
+
+    private boolean wasPlayerWasDamagedByAProjectile(EntityDamageByEntityEvent event) {
+        return event.getDamager() instanceof Projectile && event.getEntity() instanceof Player;
+    }
+
+    private boolean wasDamageWasBetweenPlayers(EntityDamageByEntityEvent event) {
+        return event.getDamager() instanceof Player && event.getEntity() instanceof Player;
     }
 
     private void handleIfFriendlyFire(EntityDamageByEntityEvent event, Player attacker, Player victim) {
@@ -207,14 +217,7 @@ public class DamageEffectsAndDeathHandler implements Listener {
         Pair<Integer, Integer> factionIndices = getFactionIndices(player1, player2);
         int attackersFactionIndex = factionIndices.getLeft();
         int victimsFactionIndex = factionIndices.getRight();
-
-        // if attacker and victim are both in a faction
-        if (arePlayersInAFaction(player1, player2)){
-            // if attacker and victim are part of the same faction
-            return attackersFactionIndex == victimsFactionIndex;
-        } else {
-            return false;
-        }
+        return arePlayersInAFaction(player1, player2) && attackersFactionIndex == victimsFactionIndex;
     }
 
     private boolean arePlayersInAFaction(Player player1, Player player2) {

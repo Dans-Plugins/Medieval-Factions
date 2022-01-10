@@ -1,6 +1,5 @@
 package dansplugins.factionsystem.commands;
 
-import dansplugins.factionsystem.MedievalFactions;
 import dansplugins.factionsystem.commands.abs.SubCommand;
 import dansplugins.factionsystem.objects.domain.PowerRecord;
 import dansplugins.fiefs.utils.UUIDChecker;
