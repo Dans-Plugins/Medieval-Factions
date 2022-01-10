@@ -43,9 +43,8 @@ public class DamageHandler implements Listener {
      */
     @EventHandler()
     public void handle(EntityDamageByEntityEvent event) {
-        Player attacker = getAttacker(event);
+        Player attacker = getPlayerInStoredCloudPair(event);
         Player victim = getVictim(event);
-
         handlePlayerVersusPlayer(attacker, victim, event);
         handleEntityDamage(attacker, event);
     }
@@ -53,37 +52,40 @@ public class DamageHandler implements Listener {
     @EventHandler()
     public void handle(AreaEffectCloudApplyEvent event) {
         AreaEffectCloud cloud = event.getEntity();
+        if (!potionTypeBad(cloud.getBasePotionData().getType())) {
+            return;
+        }
+        Player attacker = getPlayerInStoredCloudPair(cloud);
+        List<Player> alliedVictims = getAlliedVictims(event, attacker);
+        event.getAffectedEntities().removeAll(alliedVictims);
+    }
 
-        if (potionTypeBad(cloud.getBasePotionData().getType())){
-            // Search to see if cloud is in the stored list in MedievalFactions.getInstance()
-            for (Pair<Player, AreaEffectCloud> storedCloudPair : EphemeralData.getInstance().getActiveAOEClouds()){
-                if (storedCloudPair.getRight() == cloud){
-                    //Check player is not allied with effected entities if any allied remove entity from list.
-                    Player attacker = storedCloudPair.getLeft();
+    private Player getPlayerInStoredCloudPair(AreaEffectCloud cloud) {
+        Pair<Player, AreaEffectCloud> storedCloudPair = getCloudPairStoredInEphemeralData(cloud);
+        if (storedCloudPair == null) {
+            return null;
+        }
+        return storedCloudPair.getLeft();
+    }
 
-                    List<Player> alliedVictims = new ArrayList<>();
-                    for (Entity potentialVictimEntity : event.getAffectedEntities()){
-                        if (potentialVictimEntity instanceof Player){
-                            Player potentialVictim = (Player) potentialVictimEntity;
+    private List<Player> getAlliedVictims(AreaEffectCloudApplyEvent event, Player attacker) {
+        List<Player> alliedVictims = new ArrayList<>();
+        for (Entity potentialVictimEntity : event.getAffectedEntities()) {
+            if (!(potentialVictimEntity instanceof Player)) {
+                continue;
+            }
 
-                            if (attacker == potentialVictim){
-                                continue;
-                            }
+            Player potentialVictim = (Player) potentialVictimEntity;
 
-                            // If both are in a faction and not at war.
-                            if (arePlayersInAFaction(attacker, potentialVictim) &&
-                                    (arePlayersFactionsNotEnemies(attacker, potentialVictim) ||
-                                            arePlayersInSameFaction(attacker, potentialVictim))) {
-                                alliedVictims.add(potentialVictim);
-                            }
-                        }
-                    }
+            if (attacker == potentialVictim){
+                continue;
+            }
 
-                    // Remove attacker's allies from the list
-                    event.getAffectedEntities().removeAll(alliedVictims);
-                }
+            if (bothAreInFactionAndNotAtWar(attacker, potentialVictim)) {
+                alliedVictims.add(potentialVictim);
             }
         }
+        return alliedVictims;
     }
 
     @EventHandler()
@@ -164,6 +166,20 @@ public class DamageHandler implements Listener {
         }
     }
 
+    private boolean bothAreInFactionAndNotAtWar(Player attacker, Player potentialVictim) {
+        return arePlayersInAFaction(attacker, potentialVictim)
+                && (arePlayersFactionsNotEnemies(attacker, potentialVictim) || arePlayersInSameFaction(attacker, potentialVictim));
+    }
+
+    private Pair<Player, AreaEffectCloud> getCloudPairStoredInEphemeralData(AreaEffectCloud cloud) {
+        for (Pair<Player, AreaEffectCloud> storedCloudPair : EphemeralData.getInstance().getActiveAOEClouds()) {
+            if (storedCloudPair.getRight() == cloud) {
+                return storedCloudPair;
+            }
+        }
+        return null;
+    }
+
     private void handlePlayerVersusPlayer(Player attacker, Player victim, EntityDamageByEntityEvent event) {
         if (victim == null) {
             return;
@@ -231,7 +247,7 @@ public class DamageHandler implements Listener {
         }
     }
 
-    private Player getAttacker(EntityDamageByEntityEvent event) {
+    private Player getPlayerInStoredCloudPair(EntityDamageByEntityEvent event) {
         if (wasDamageWasBetweenPlayers(event)) {
             return (Player) event.getDamager();
         }
