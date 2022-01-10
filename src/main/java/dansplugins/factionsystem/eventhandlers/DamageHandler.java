@@ -60,6 +60,91 @@ public class DamageHandler implements Listener {
         event.getAffectedEntities().removeAll(alliedVictims);
     }
 
+    @EventHandler()
+    public void handle(LingeringPotionSplashEvent event) {
+        Player thrower = (Player) event.getEntity().getShooter();
+        AreaEffectCloud cloud = event.getAreaEffectCloud();
+        Pair<Player, AreaEffectCloud> storedCloud  = new Pair<>(thrower, cloud);
+        EphemeralData.getInstance().getActiveAOEClouds().add(storedCloud);
+        addScheduledTaskToRemoveCloudFromEphemeralData(cloud, storedCloud);
+    }
+
+    @EventHandler()
+    public void handle(PlayerDeathEvent event) {
+        event.getEntity();
+        Player player = event.getEntity();
+        if (LocalConfigService.getInstance().getBoolean("playersLosePowerOnDeath")) {
+            decreaseDyingPlayersPower(player);
+        }
+        if (!wasPlayersCauseOfDeathAnotherPlayerKillingThem(player)) {
+            return;
+        }
+        Player killer = player.getKiller();
+        if (killer == null) {
+            return;
+        }
+        PowerRecord record = PersistentData.getInstance().getPlayersPowerRecord(killer.getUniqueId());
+        if (record == null) {
+            return;
+        }
+        if (record.increasePowerByTenPercent()) {
+            killer.sendMessage(ChatColor.GREEN + LocalLocaleService.getInstance().getText("PowerLevelHasIncreased"));
+        }
+    }
+
+    @EventHandler()
+    public void handle(PotionSplashEvent event) {
+        ThrownPotion potion = event.getPotion();
+        if (!wasShooterAPlayer(potion)) {
+            return;
+        }
+        Player attacker = (Player) potion.getShooter();
+
+        for(PotionEffect effect : potion.getEffects()) {
+            if (!potionEffectBad(effect.getType())) {
+                continue;
+            }
+            removePotionIntensityIfAnyVictimIsAnAlliedPlayer(event, attacker);
+        }
+    }
+
+    private void removePotionIntensityIfAnyVictimIsAnAlliedPlayer(PotionSplashEvent event, Player attacker) {
+        for (LivingEntity victimEntity : event.getAffectedEntities()) {
+            if (!(victimEntity instanceof Player)) {
+                continue;
+            }
+            Player victim = (Player) victimEntity;
+            if (attacker == victim) {
+                continue;
+            }
+            if (arePlayersInFactionAndNotAtWar(attacker, victim)) {
+                event.setIntensity(victimEntity, 0);
+            }
+        }
+    }
+
+    private boolean arePlayersInFactionAndNotAtWar(Player attacker, Player victim) {
+        return arePlayersInAFaction(attacker, victim) &&
+                (arePlayersFactionsNotEnemies(attacker, victim) ||
+                        arePlayersInSameFaction(attacker, victim));
+    }
+
+    private boolean wasShooterAPlayer(ThrownPotion potion) {
+        return potion.getShooter() instanceof Player;
+    }
+
+    private boolean wasPlayersCauseOfDeathAnotherPlayerKillingThem(Player player) {
+        return player.getKiller() != null;
+    }
+
+    private void decreaseDyingPlayersPower(Player player) {
+        PowerRecord playersPowerRecord = PersistentData.getInstance().getPlayersPowerRecord(player.getUniqueId());
+        int powerLost = playersPowerRecord.decreasePowerByTenPercent();
+        if (powerLost != 0) {
+            player.sendMessage(ChatColor.RED + "You lost " + powerLost + " power."); // TODO: add locale message
+        }
+    }
+
     private Player getPlayerInStoredCloudPair(AreaEffectCloud cloud) {
         Pair<Player, AreaEffectCloud> storedCloudPair = getCloudPairStoredInEphemeralData(cloud);
         if (storedCloudPair == null) {
@@ -88,82 +173,13 @@ public class DamageHandler implements Listener {
         return alliedVictims;
     }
 
-    @EventHandler()
-    public void handle(LingeringPotionSplashEvent event) {
-        Player thrower = (Player) event.getEntity().getShooter();
-        AreaEffectCloud cloud = event.getAreaEffectCloud();
-
-        Pair<Player, AreaEffectCloud> storedCloud  = new Pair<>(thrower, cloud);
-        EphemeralData.getInstance().getActiveAOEClouds().add(storedCloud);
-
-        // Add scheduled task to remove the cloud from the activeClouds list
+    private void addScheduledTaskToRemoveCloudFromEphemeralData(AreaEffectCloud cloud, Pair<Player, AreaEffectCloud> storedCloudPair) {
         long delay = cloud.getDuration();
         MedievalFactions.getInstance().getServer().getScheduler().scheduleSyncDelayedTask(MedievalFactions.getInstance(), new Runnable() {
             public void run(){
-                EphemeralData.getInstance().getActiveAOEClouds().remove(storedCloud);
+                EphemeralData.getInstance().getActiveAOEClouds().remove(storedCloudPair);
             }
         }, delay);
-    }
-
-    @EventHandler()
-    public void handle(PlayerDeathEvent event) {
-        event.getEntity();
-        Player player = event.getEntity();
-
-        if (LocalConfigService.getInstance().getBoolean("playersLosePowerOnDeath")) {
-            // decrease dying player's power
-            PowerRecord playersPowerRecord = PersistentData.getInstance().getPlayersPowerRecord(player.getUniqueId());
-            int powerLost = playersPowerRecord.decreasePowerByTenPercent();
-            if (powerLost != 0) {
-                player.sendMessage(ChatColor.RED + "You lost " + powerLost + " power."); // TODO: add locale message
-            }
-        }
-
-        // if player's cause of death was another player killing them
-        if (player.getKiller() != null) {
-            Player killer = player.getKiller();
-
-            PowerRecord record = PersistentData.getInstance().getPlayersPowerRecord(killer.getUniqueId());
-            if (record != null) {
-                if (record.increasePowerByTenPercent()){
-                    killer.sendMessage(ChatColor.GREEN + LocalLocaleService.getInstance().getText("PowerLevelHasIncreased"));
-                }
-            }
-        }
-    }
-
-    @EventHandler()
-    public void handle(PotionSplashEvent event) {
-        ThrownPotion potion = event.getPotion();
-
-        // If shooter was not player ignore.
-        if (!(potion.getShooter() instanceof Player)) return;
-        Player attacker = (Player) potion.getShooter();
-
-        for(PotionEffect effect : potion.getEffects()) {
-            // Is potion effect bad?
-            if (potionEffectBad(effect.getType())) {
-
-                // If any victim is a allied player remove potion intensity
-                for (LivingEntity victimEntity : event.getAffectedEntities()) {
-                    if (victimEntity instanceof Player){
-                        Player victim = (Player) victimEntity;
-
-                        // People can still hurt themselves, let's encourage skill!
-                        if (attacker == victim){
-                            continue;
-                        }
-
-                        // If players are in faction and not at war
-                        if (arePlayersInAFaction(attacker, victim) &&
-                                (arePlayersFactionsNotEnemies(attacker, victim) ||
-                                        arePlayersInSameFaction(attacker, victim))) {
-                            event.setIntensity(victimEntity, 0);
-                        }
-                    }
-                }
-            }
-        }
     }
 
     private boolean bothAreInFactionAndNotAtWar(Player attacker, Player potentialVictim) {
