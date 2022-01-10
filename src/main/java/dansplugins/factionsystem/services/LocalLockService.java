@@ -1,6 +1,5 @@
 package dansplugins.factionsystem.services;
 
-import dansplugins.factionsystem.MedievalFactions;
 import dansplugins.factionsystem.data.EphemeralData;
 import dansplugins.factionsystem.data.PersistentData;
 import dansplugins.factionsystem.objects.domain.ClaimedChunk;

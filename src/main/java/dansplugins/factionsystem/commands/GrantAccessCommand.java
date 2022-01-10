@@ -1,6 +1,5 @@
 package dansplugins.factionsystem.commands;
 
-import dansplugins.factionsystem.MedievalFactions;
 import dansplugins.factionsystem.commands.abs.SubCommand;
 import dansplugins.fiefs.utils.UUIDChecker;
 import org.bukkit.command.CommandSender;
