@@ -40,6 +40,7 @@ public class DamageHandler implements Listener {
     /**
      * This method disallows PVP between members of the same faction and between factions who are not at war
      * PVP is allowed between factionless players, players who belong to a faction and the factionless, and players whose factions are at war.
+     * It also handles damage to entities by players.
      */
     @EventHandler()
     public void handle(EntityDamageByEntityEvent event) {
