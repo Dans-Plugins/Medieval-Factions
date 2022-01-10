@@ -1,0 +1,1 @@
+mvn install:install-file -Dfile=<path> -DgroupId=dansplugins -DartifactId=fiefs -Dversion=<version> -Dpackaging=Jar

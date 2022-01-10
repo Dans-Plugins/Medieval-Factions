@@ -95,8 +95,7 @@
             <groupId>dansplugins</groupId>
             <artifactId>Fiefs</artifactId>
             <version>v0.8-alpha-1</version>
-            <scope>system</scope>
-            <systemPath>${project.basedir}/src/main/resources/Fiefs-v0.8-alpha-1.jar</systemPath>
+            <scope>compile</scope>
         </dependency>
         <dependency>
             <groupId>preponderous</groupId>

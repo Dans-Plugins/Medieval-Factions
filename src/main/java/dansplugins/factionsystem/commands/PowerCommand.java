@@ -2,9 +2,9 @@ package dansplugins.factionsystem.commands;
 
 import dansplugins.factionsystem.commands.abs.SubCommand;
 import dansplugins.factionsystem.objects.domain.PowerRecord;
-import dansplugins.fiefs.utils.UUIDChecker;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
+import preponderous.ponder.minecraft.spigot.tools.UUIDChecker;
 
 import java.util.UUID;
 
