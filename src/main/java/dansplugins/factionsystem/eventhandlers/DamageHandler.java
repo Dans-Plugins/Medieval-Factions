@@ -50,35 +50,6 @@ public class DamageHandler implements Listener {
         handleEntityDamage(attacker, event);
     }
 
-    private void handlePlayerVersusPlayer(Player attacker, Player victim, EntityDamageByEntityEvent event) {
-        if (victim == null) {
-            return;
-        }
-
-        if (arePlayersDueling(attacker, victim)) {
-            endDuelIfNecessary(attacker, victim, event);
-        }
-        else {
-            handleIfFriendlyFire(event, attacker, victim);
-        }
-    }
-
-    private void handleEntityDamage(Player attacker, EntityDamageByEntityEvent event) {
-        if (attacker == null) {
-            return;
-        }
-
-        Faction playersFaction = PersistentData.getInstance().getPlayersFaction(attacker.getUniqueId());
-        if (playersFaction == null) {
-            event.setCancelled(true);
-            return;
-        }
-
-        if (isEntityProtected(event.getEntity())) {
-            cancelDamageIfNecessary(event, playersFaction);
-        }
-    }
-
     @EventHandler()
     public void handle(AreaEffectCloudApplyEvent event) {
         AreaEffectCloud cloud = event.getEntity();
@@ -190,6 +161,35 @@ public class DamageHandler implements Listener {
                     }
                 }
             }
+        }
+    }
+
+    private void handlePlayerVersusPlayer(Player attacker, Player victim, EntityDamageByEntityEvent event) {
+        if (victim == null) {
+            return;
+        }
+
+        if (arePlayersDueling(attacker, victim)) {
+            endDuelIfNecessary(attacker, victim, event);
+        }
+        else {
+            handleIfFriendlyFire(event, attacker, victim);
+        }
+    }
+
+    private void handleEntityDamage(Player attacker, EntityDamageByEntityEvent event) {
+        if (attacker == null) {
+            return;
+        }
+
+        Faction playersFaction = PersistentData.getInstance().getPlayersFaction(attacker.getUniqueId());
+        if (playersFaction == null) {
+            event.setCancelled(true);
+            return;
+        }
+
+        if (isEntityProtected(event.getEntity())) {
+            cancelDamageIfNecessary(event, playersFaction);
         }
     }
 
