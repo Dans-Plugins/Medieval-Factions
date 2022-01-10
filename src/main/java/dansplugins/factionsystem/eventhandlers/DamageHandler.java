@@ -18,7 +18,6 @@ import org.bukkit.Location;
 import org.bukkit.entity.*;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
-import org.bukkit.event.block.BlockShearEntityEvent;
 import org.bukkit.event.entity.*;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
@@ -45,6 +44,26 @@ public class DamageHandler implements Listener {
     @EventHandler()
     public void handle(EntityDamageByEntityEvent event) {
         Player attacker = getAttacker(event);
+        Player victim = getVictim(event);
+
+        handlePlayerVersusPlayer(attacker, victim, event);
+        handleEntityDamage(attacker, event);
+    }
+
+    private void handlePlayerVersusPlayer(Player attacker, Player victim, EntityDamageByEntityEvent event) {
+        if (victim == null) {
+            return;
+        }
+
+        if (arePlayersDueling(attacker, victim)) {
+            endDuelIfNecessary(attacker, victim, event);
+        }
+        else {
+            handleIfFriendlyFire(event, attacker, victim);
+        }
+    }
+
+    private void handleEntityDamage(Player attacker, EntityDamageByEntityEvent event) {
         if (attacker == null) {
             return;
         }
@@ -57,18 +76,6 @@ public class DamageHandler implements Listener {
 
         if (isEntityProtected(event.getEntity())) {
             cancelDamageIfNecessary(event, playersFaction);
-        }
-
-        Player victim = getVictim(event);
-        if (victim == null) {
-            return;
-        }
-
-        if (arePlayersDueling(attacker, victim)) {
-            endDuelIfNecessary(attacker, victim, event);
-        }
-        else {
-            handleIfFriendlyFire(event, attacker, victim);
         }
     }
 
