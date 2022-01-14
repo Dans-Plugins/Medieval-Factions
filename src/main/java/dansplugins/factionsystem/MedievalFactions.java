@@ -4,7 +4,6 @@
  */
 package dansplugins.factionsystem;
 
-import dansplugins.factionsystem.bstats.Metrics;
 import dansplugins.factionsystem.data.PersistentData;
 import dansplugins.factionsystem.eventhandlers.*;
 import dansplugins.factionsystem.externalapi.MedievalFactionsAPI;
@@ -15,6 +14,8 @@ import dansplugins.factionsystem.services.LocalConfigService;
 import dansplugins.factionsystem.services.LocalLocaleService;
 import dansplugins.factionsystem.services.LocalStorageService;
 import dansplugins.factionsystem.utils.Scheduler;
+import dansplugins.factionsystem.bstats.Metrics;
+
 import org.bukkit.Bukkit;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
@@ -170,17 +171,25 @@ public class MedievalFactions extends PonderPlugin {
      * Takes care of integrations for other plugins and tools.
      */
     private void handleIntegrations() {
+        handlebStatsIntegration();
+        handleDynmapIntegration();
+        handlePlaceholdersIntegration();
+    }
+
+    private void handlebStatsIntegration() {
         // bStats
         int pluginId = 8929;
         Metrics metrics = new Metrics(this, pluginId);
+    }
 
-        // dynmap
+    private void handleDynmapIntegration() {
         if (DynmapIntegrator.hasDynmap()) {
             DynmapIntegrator.getInstance().scheduleClaimsUpdate(600); // Check once every 30 seconds for updates.
             DynmapIntegrator.getInstance().updateClaims();
         }
+    }
 
-        // placeholders
+    private void handlePlaceholdersIntegration() {
         if (Bukkit.getPluginManager().getPlugin("PlaceholderAPI") != null) {
             new PlaceholderAPI().register();
         }

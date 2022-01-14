@@ -32,7 +32,7 @@ public class Metrics {
 
     static {
         // You can use the property to disable the check in your test environment
-        if (System.getProperty("bstats.relocatecheck") == null || !System.getProperty("bstats.relocatecheck").equals("false")) {
+        if (System.getProperty("dansplugins.factionsystem.bstats.relocatecheck") == null || !System.getProperty("dansplugins.factionsystem.bstats.relocatecheck").equals("false")) {
             // Maven's Relocate is clever and changes strings, too. So we have to use this little "trick" ... :D
             final String defaultPackage = new String(
                     new byte[]{'o', 'r', 'g', '.', 'b', 's', 't', 'a', 't', 's', '.', 'b', 'u', 'k', 'k', 'i', 't'});
@@ -281,7 +281,7 @@ public class Metrics {
                         Object plugin = provider.getService().getMethod("getPluginData").invoke(provider.getProvider());
                         if (plugin instanceof JsonObject) {
                             pluginData.add((JsonObject) plugin);
-                        } else { // old bstats version compatibility
+                        } else { // old dansplugins.factionsystem.bstats version compatibility
                             try {
                                 Class<?> jsonObjectJsonSimple = Class.forName("org.json.simple.JSONObject");
                                 if (plugin.getClass().isAssignableFrom(jsonObjectJsonSimple)) {
