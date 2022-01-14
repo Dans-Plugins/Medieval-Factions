@@ -194,7 +194,7 @@ public class MedievalFactions extends PonderPlugin {
 
     private void handlebStatsIntegration() {
         int pluginId = 8929;
-        Metrics metrics = new Metrics(this, pluginId);
+        new Metrics(this, pluginId);
     }
 
     private void handleDynmapIntegration() {
