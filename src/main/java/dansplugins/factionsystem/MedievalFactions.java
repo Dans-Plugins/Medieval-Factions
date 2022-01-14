@@ -4,6 +4,7 @@
  */
 package dansplugins.factionsystem;
 
+import dansplugins.factionsystem.bstats.Metrics;
 import dansplugins.factionsystem.data.PersistentData;
 import dansplugins.factionsystem.eventhandlers.*;
 import dansplugins.factionsystem.externalapi.MedievalFactionsAPI;
@@ -14,16 +15,12 @@ import dansplugins.factionsystem.services.LocalConfigService;
 import dansplugins.factionsystem.services.LocalLocaleService;
 import dansplugins.factionsystem.services.LocalStorageService;
 import dansplugins.factionsystem.utils.Scheduler;
-import dansplugins.factionsystem.bstats.Metrics;
-
 import org.bukkit.Bukkit;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.event.Listener;
-import preponderous.ponder.Ponder;
 import preponderous.ponder.minecraft.abs.PonderPlugin;
 import preponderous.ponder.minecraft.spigot.PonderMC;
-import preponderous.ponder.minecraft.spigot.misc.PonderAPI_Integrator;
 import preponderous.ponder.minecraft.spigot.tools.EventHandlerRegistry;
 
 import java.io.File;
