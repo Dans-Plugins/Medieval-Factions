@@ -6,9 +6,9 @@ package dansplugins.factionsystem.data;
 
 import dansplugins.factionsystem.objects.domain.Duel;
 import dansplugins.factionsystem.objects.domain.Gate;
-import dansplugins.factionsystem.utils.Pair;
 import org.bukkit.entity.AreaEffectCloud;
 import org.bukkit.entity.Player;
+import preponderous.ponder.misc.Pair;
 
 import java.util.ArrayList;
 import java.util.HashMap;

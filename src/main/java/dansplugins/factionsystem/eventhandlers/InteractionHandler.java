@@ -45,14 +45,9 @@ import preponderous.ponder.minecraft.spigot.tools.UUIDChecker;
  */
 public class InteractionHandler implements Listener {
 
-    // EVENT HANDLER METHODS ------------------------------------------------------
-
     @EventHandler()
     public void handle(BlockBreakEvent event) {
-        // get player
         Player player = event.getPlayer();
-
-        // get chunk
         ClaimedChunk claimedChunk = LocalChunkService.getInstance().getClaimedChunk(event.getBlock().getLocation().getChunk());
 
         if (InteractionAccessChecker.getInstance().shouldEventBeCancelled(claimedChunk, player)) {
@@ -97,17 +92,14 @@ public class InteractionHandler implements Listener {
                 if (BlockChecker.getInstance().isDoor(relativeDown)) {
                     LocalLockService.getInstance().removeLock(relativeDown);
                 }
-                return;
             }
         }
     }
 
     @EventHandler()
     public void handle(BlockPlaceEvent event) {
-        // get player
         Player player = event.getPlayer();
 
-        // get chunk
         ClaimedChunk claimedChunk = LocalChunkService.getInstance().getClaimedChunk(event.getBlock().getLocation().getChunk());
 
         if (InteractionAccessChecker.getInstance().isPlayerAttemptingToPlaceLadderInEnemyTerritoryAndIsThisAllowed(event.getBlockPlaced(), player, claimedChunk)) {
@@ -403,16 +395,9 @@ public class InteractionHandler implements Listener {
         LocalGateService.getInstance().handlePotentialGateInteraction(block, event);
     }
 
-    // END OF EVENT HANDLER METHODS ------------------------------------------------------
-
-    // HELPER METHODS ------------------------------------------------------
-
     private boolean isPlayerUsingAnAccessCommand(Player player) {
         return EphemeralData.getInstance().getPlayersGrantingAccess().containsKey(player.getUniqueId()) ||
                 EphemeralData.getInstance().getPlayersCheckingAccess().contains(player.getUniqueId()) ||
                 EphemeralData.getInstance().getPlayersRevokingAccess().containsKey(player.getUniqueId());
     }
-
-    // END OF HELPER METHODS ------------------------------------------------------
-
 }

@@ -5,7 +5,7 @@
 package dansplugins.factionsystem.services;
 
 import dansplugins.factionsystem.MedievalFactions;
-import dansplugins.factionsystem.utils.Pair;
+import preponderous.ponder.misc.Pair;
 
 import java.io.*;
 import java.nio.charset.StandardCharsets;

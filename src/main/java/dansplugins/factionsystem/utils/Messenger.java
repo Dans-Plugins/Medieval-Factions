@@ -38,19 +38,41 @@ public class Messenger {
 
     public void sendFactionInfo(CommandSender sender, Faction faction, int power) {
         UUIDChecker uuidChecker = new UUIDChecker();
-        int vassalContribution = faction.calculateCumulativePowerLevelWithVassalContribution() - faction.calculateCumulativePowerLevelWithoutVassalContribution();
-
         sender.sendMessage(ChatColor.BOLD + "" + ChatColor.AQUA + String.format(LocalLocaleService.getInstance().getText("FactionInfo"), faction.getName()) + "\n----------\n");
         sender.sendMessage(ChatColor.AQUA + String.format(LocalLocaleService.getInstance().getText("Name"), faction.getName()) + "\n");
         sender.sendMessage(ChatColor.AQUA + String.format(LocalLocaleService.getInstance().getText("Owner"), uuidChecker.findPlayerNameBasedOnUUID(faction.getOwner())) + "\n");
         sender.sendMessage(ChatColor.AQUA + String.format(LocalLocaleService.getInstance().getText("Description"), faction.getDescription()) + "\n");
         sender.sendMessage(ChatColor.AQUA + String.format(LocalLocaleService.getInstance().getText("Population"), faction.getMemberList().size()) + "\n");
-        if (faction.hasLiege()) {
-            sender.sendMessage(ChatColor.AQUA + String.format(LocalLocaleService.getInstance().getText("Liege"), faction.getLiege()) + "\n");
+        sendLiegeInfoIfVassal(faction, sender);
+        sendFiefsInfo(faction, sender);
+        sender.sendMessage(ChatColor.AQUA + String.format(LocalLocaleService.getInstance().getText("AlliedWith"), faction.getAlliesSeparatedByCommas()) + "\n");
+        sender.sendMessage(ChatColor.AQUA + String.format(LocalLocaleService.getInstance().getText("AtWarWith"), faction.getEnemiesSeparatedByCommas()) + "\n");
+        sender.sendMessage(ChatColor.AQUA + String.format(LocalLocaleService.getInstance().getText("PowerLevel"), faction.getCumulativePowerLevel()) + "/" + faction.getMaximumCumulativePowerLevel() + "\n");
+        sender.sendMessage(ChatColor.AQUA + String.format(LocalLocaleService.getInstance().getText("DemesneSize"), power, faction.getCumulativePowerLevel()) + "\n");
+        sendLiegeInfoIfLiege(faction, sender);
+        sendBonusPowerInfo(faction, sender);
+        sender.sendMessage(ChatColor.AQUA + "----------\n");
+    }
+
+    private void sendBonusPowerInfo(Faction faction, CommandSender sender) {
+        if (faction.getBonusPower() != 0) {
+            sender.sendMessage(ChatColor.AQUA + String.format(LocalLocaleService.getInstance().getText("BonusPower"), faction.getBonusPower()));
         }
+    }
+
+    private void sendLiegeInfoIfLiege(Faction faction, CommandSender sender) {
+        int vassalContribution = faction.calculateCumulativePowerLevelWithVassalContribution() - faction.calculateCumulativePowerLevelWithoutVassalContribution();
         if (faction.isLiege()) {
-            sender.sendMessage(ChatColor.AQUA + String.format(LocalLocaleService.getInstance().getText("Vassals"), faction.getVassalsSeparatedByCommas()) + "\n");
+            if (!faction.isWeakened()) {
+                sender.sendMessage(ChatColor.AQUA + String.format(LocalLocaleService.getInstance().getText("VassalContribution"), vassalContribution) + "\n");
+            }
+            else {
+                sender.sendMessage(ChatColor.AQUA + String.format(LocalLocaleService.getInstance().getText("VassalContribution"), 0) + "\n");
+            }
         }
+    }
+
+    private void sendFiefsInfo(Faction faction, CommandSender sender) {
         if (FiefsIntegrator.getInstance().isFiefsPresent()) {
             ArrayList<FI_Fief> fiefs = FiefsIntegrator.getInstance().getAPI().getFiefsOfFaction(faction.getName());
             if (fiefs.size() != 0) {
@@ -61,22 +83,15 @@ public class Messenger {
                 sender.sendMessage(ChatColor.AQUA + String.format("Fiefs: %s", fiefsSeparatedByCommas));
             }
         }
-        sender.sendMessage(ChatColor.AQUA + String.format(LocalLocaleService.getInstance().getText("AlliedWith"), faction.getAlliesSeparatedByCommas()) + "\n");
-        sender.sendMessage(ChatColor.AQUA + String.format(LocalLocaleService.getInstance().getText("AtWarWith"), faction.getEnemiesSeparatedByCommas()) + "\n");
-        sender.sendMessage(ChatColor.AQUA + String.format(LocalLocaleService.getInstance().getText("PowerLevel"), faction.getCumulativePowerLevel()) + "/" + faction.getMaximumCumulativePowerLevel() + "\n");
-        sender.sendMessage(ChatColor.AQUA + String.format(LocalLocaleService.getInstance().getText("DemesneSize"), power, faction.getCumulativePowerLevel()) + "\n");
+    }
+
+    private void sendLiegeInfoIfVassal(Faction faction, CommandSender sender) {
+        if (faction.hasLiege()) {
+            sender.sendMessage(ChatColor.AQUA + String.format(LocalLocaleService.getInstance().getText("Liege"), faction.getLiege()) + "\n");
+        }
         if (faction.isLiege()) {
-            if (!faction.isWeakened()) {
-                sender.sendMessage(ChatColor.AQUA + String.format(LocalLocaleService.getInstance().getText("VassalContribution"), vassalContribution) + "\n");
-            }
-            else {
-                sender.sendMessage(ChatColor.AQUA + String.format(LocalLocaleService.getInstance().getText("VassalContribution"), 0) + "\n");
-            }
+            sender.sendMessage(ChatColor.AQUA + String.format(LocalLocaleService.getInstance().getText("Vassals"), faction.getVassalsSeparatedByCommas()) + "\n");
         }
-        if (faction.getBonusPower() != 0) {
-            sender.sendMessage(ChatColor.AQUA + String.format(LocalLocaleService.getInstance().getText("BonusPower"), faction.getBonusPower()));
-        }
-        sender.sendMessage(ChatColor.AQUA + "----------\n");
     }
 
     public void sendAllPlayersInFactionMessage(Faction faction, String message) {
@@ -101,6 +116,5 @@ public class Messenger {
         catch(Exception ignored) {
 
         }
-
     }
 }
