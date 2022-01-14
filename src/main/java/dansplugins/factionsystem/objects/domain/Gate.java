@@ -1,3 +1,7 @@
+/*
+  Copyright (c) 2022 Daniel McCoy Stephenson
+  GPL3 License
+ */
 package dansplugins.factionsystem.objects.domain;
 
 import com.google.gson.Gson;
@@ -14,9 +18,9 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
-
 /**
  * @author Caibinus
+ * @author Daniel McCoy Stephenson
  */
 public class Gate {
 	public enum GateStatus { READY, OPENING, CLOSING }
@@ -30,7 +34,7 @@ public class Gate {
 		// Default Constructor
 	}
 
-	private class GateJson {
+	private static class GateJson {
 		public String name;
 		public String factionName;
 		public String open;
@@ -43,7 +47,6 @@ public class Gate {
 	}
 
 	private String name = "gateName";
-	private String factionName = "";
 	private boolean open = false;
 	private boolean vertical = true;
 	private GateCoord coord1 = null;
@@ -69,9 +72,8 @@ public class Gate {
 		_world = null;
 	}
 
-	private Sound soundEffect = Sound.BLOCK_ANVIL_HIT;
+	private final Sound soundEffect = Sound.BLOCK_ANVIL_HIT;
 
-	;
 	private GateStatus gateStatus = GateStatus.READY;
 
 	public Map<String, String> save() {
@@ -79,7 +81,8 @@ public class Gate {
         Map<String, String> saveMap = new HashMap<>();
 
         saveMap.put("name", name);
-        saveMap.put("factionName", factionName);
+		String factionName = "";
+		saveMap.put("factionName", factionName);
         saveMap.put("open", String.valueOf(open));
         saveMap.put("vertical", String.valueOf(vertical));
         saveMap.put("material", material.name());
@@ -92,10 +95,7 @@ public class Gate {
     }
 
 	static Gate load(String jsonData) {
-//    	System.out.println("Gate Load");
-
 		Gson gson = new GsonBuilder().setPrettyPrinting().create();;
-
 		Gate newGate = new Gate();
 
 		try
@@ -113,107 +113,85 @@ public class Gate {
 			newGate.open = Boolean.parseBoolean(data.open);
 			newGate.vertical = Boolean.parseBoolean(data.vertical);
 		}
-		catch (Exception e)
-		{
+		catch (Exception e) {
 			System.out.println("ERROR: Could not load faction gate.\n");
 		}
 
 		return newGate;
 	}
 
-	public boolean isIntersecting(Gate gate)
-	{
+	public boolean isIntersecting(Gate gate) {
 		boolean xoverlap = coord2.getX() > gate.coord1.getX() && coord1.getX() < coord2.getX();
 		boolean yoverlap = coord2.getY() > gate.coord1.getY() && coord1.getY() < gate.coord1.getY();
 		boolean zoverlap = coord2.getZ() > gate.coord1.getZ() && coord1.getZ() < coord2.getZ();
 		return xoverlap && yoverlap && zoverlap;
 	}
 
-	public int getTopLeftX()
-	{
-		if (coord1 != null && coord2 != null)
-		{
+	public int getTopLeftX() {
+		if (coord1 != null && coord2 != null) {
 			return coord1.getX() < coord2.getX() ? coord1.getX() : coord2.getX();
 		}
 		return 0;
 	}
 
-	public int getTopLeftY()
-	{
-		if (coord1 != null && coord2 != null)
-		{
+	public int getTopLeftY() {
+		if (coord1 != null && coord2 != null) {
 			return coord1.getY() > coord2.getY() ? coord1.getY() : coord2.getY();
 		}
 		return 0;
 	}
 
-	public int getTopLeftZ()
-	{
-		if (coord1 != null && coord2 != null)
-		{
+	public int getTopLeftZ() {
+		if (coord1 != null && coord2 != null) {
 			return coord1.getZ() < coord2.getZ() ? coord1.getZ() : coord2.getZ();
 		}
 		return 0;
 	}
 
-	public int getBottomRightX()
-	{
-		if (coord1 != null && coord2 != null)
-		{
+	public int getBottomRightX() {
+		if (coord1 != null && coord2 != null) {
 			return coord1.getX() < coord2.getX() ? coord2.getX() : coord1.getX();
 		}
 		return 0;
 	}
 
-	public int getBottomRightY()
-	{
-		if (coord1 != null && coord2 != null)
-		{
+	public int getBottomRightY() {
+		if (coord1 != null && coord2 != null) {
 			return coord1.getY() < coord2.getY() ? coord1.getY() : coord2.getY();
 		}
 		return 0;
 	}
 
-	public int getBottomRightZ()
-	{
-		if (coord1 != null && coord2 != null)
-		{
+	public int getBottomRightZ() {
+		if (coord1 != null && coord2 != null) {
 			return coord1.getZ() < coord2.getZ() ? coord2.getZ() : coord1.getZ();
 		}
 		return 0;
 	}
 
-	public int getTopLeftChunkX()
-	{
-		if (coord1 != null && coord2 != null)
-		{
+	public int getTopLeftChunkX() {
+		if (coord1 != null && coord2 != null) {
 			return coord1.getX() < coord2.getX() ? coord1.getX() / 16: coord2.getX() / 16;
 		}
 		return 0;
 	}
 
-	public int getTopLeftChunkZ()
-	{
-		if (coord1 != null && coord2 != null)
-		{
+	public int getTopLeftChunkZ() {
+		if (coord1 != null && coord2 != null) {
 			return coord1.getZ() < coord2.getZ() ? coord1.getZ() / 16 : coord2.getZ() / 16;
 		}
 		return 0;
 	}
 
-	public int getBottomRightChunkX()
-	{
-		if (coord1 != null && coord2 != null)
-		{
+	public int getBottomRightChunkX() {
+		if (coord1 != null && coord2 != null) {
 			return coord1.getX() < coord2.getX() ? coord2.getX() / 16: coord1.getX() / 16;
 		}
 		return 0;
 	}
 
-	public int getBottomRightChunkZ()
-	{
-		if (coord1 != null && coord2 != null)
-		{
+	public int getBottomRightChunkZ() {
+		if (coord1 != null && coord2 != null) {
 			return coord1.getZ() < coord2.getZ() ? coord2.getZ() / 16 : coord1.getZ() / 16;
 		}
 		return 0;
@@ -264,53 +242,39 @@ public class Gate {
 		return coord2;
 	}
 
-	public boolean isParallelToZ()
-	{
-		if (coord1 != null && coord2 != null)
-		{
-			if (coord1.getZ() != coord2.getZ())
-			{
+	public boolean isParallelToZ() {
+		if (coord1 != null && coord2 != null) {
+			if (coord1.getZ() != coord2.getZ()) {
 				return true;
 			}
-			else
-			{
+			else {
 				return false;
 			}
 		}
-		else
-		{
+		else {
 			return false;
 		}
 	}
 
-	public boolean isParallelToX()
-	{
-		if (coord1 != null && coord2 != null)
-		{
-			if (coord1.getX() != coord2.getX())
-			{
+	public boolean isParallelToX() {
+		if (coord1 != null && coord2 != null) {
+			if (coord1.getX() != coord2.getX()) {
 				return true;
 			}
-			else
-			{
+			else {
 				return false;
 			}
 		}
-		else
-		{
+		else {
 			return false;
 		}
 	}
 
-	public ArrayList<Block> GateBlocks()
-	{
+	public ArrayList<Block> GateBlocks() {
 		ArrayList<Block> blocks = new ArrayList<Block>();
-		for (int y = coord1.getY(); y < coord2.getY(); y++)
-		{
-			for (int z = coord1.getZ(); z < coord2.getZ(); z++)
-			{
-				for (int x = coord1.getX(); x < coord2.getX(); x++)
-				{
+		for (int y = coord1.getY(); y < coord2.getY(); y++) {
+			for (int z = coord1.getZ(); z < coord2.getZ(); z++) {
+				for (int x = coord1.getX(); x < coord2.getX(); x++) {
 					blocks.add(getWorld().getBlockAt(x, y, z));
 				}
 			}
@@ -318,49 +282,39 @@ public class Gate {
 		return blocks;
 	}
 
-	public boolean gateBlocksMatch(Material mat)
-	{
+	public boolean gateBlocksMatch(Material mat) {
 		int topY = coord1.getY();
 		int bottomY = coord2.getY();
-		if (coord2.getY() > coord1.getY())
-		{
+		if (coord2.getY() > coord1.getY()) {
 			topY = coord2.getY();
 			bottomY = coord1.getY();
 		}
 
 		int leftX = coord1.getX();
 		int rightX = coord2.getX();
-		if (coord2.getX() < coord1.getX())
-		{
+		if (coord2.getX() < coord1.getX()) {
 			leftX = coord2.getX();
 			rightX = coord1.getX();
 		}
 
 		int leftZ = coord1.getZ();
 		int rightZ = coord2.getZ();
-		if (coord2.getZ() < coord1.getZ())
-		{
+		if (coord2.getZ() < coord1.getZ()) {
 			leftZ = coord2.getZ();
 			rightZ = coord1.getZ();
 		}
 
-		if (isParallelToZ())
-		{
+		if (isParallelToZ()) {
 			rightX++;
 		}
-		else if (isParallelToX())
-		{
+		else if (isParallelToX()) {
 			rightZ++;
 		}
 
-		for (int y = topY; y > bottomY; y--)
-		{
-			for (int z = leftZ; z < rightZ; z++)
-			{
-				for (int x = leftX; x < rightX; x++)
-				{
-					if (!getWorld().getBlockAt(x, y, z).getType().equals(mat))
-					{
+		for (int y = topY; y > bottomY; y--) {
+			for (int z = leftZ; z < rightZ; z++) {
+				for (int x = leftX; x < rightX; x++) {
+					if (!getWorld().getBlockAt(x, y, z).getType().equals(mat)) {
 						return false;
 					}
 				}
@@ -369,113 +323,89 @@ public class Gate {
 		return true;
 	}
 
-	public ErrorCodeAddCoord addCoord(Block clickedBlock)
-	{
-		if (coord1 == null)
-		{
+	public ErrorCodeAddCoord addCoord(Block clickedBlock) {
+		if (coord1 == null) {
 			setWorld(clickedBlock.getWorld().getName());
 			coord1 = new GateCoord(clickedBlock);
 			material = clickedBlock.getType();
 		}
-		else if (coord2 == null)
-		{
-			if (!coord1.getWorld().equalsIgnoreCase(clickedBlock.getWorld().getName()))
-			{
+		else if (coord2 == null) {
+			if (!coord1.getWorld().equalsIgnoreCase(clickedBlock.getWorld().getName())) {
 				return ErrorCodeAddCoord.WorldMismatch;
 			}
-			if (!clickedBlock.getType().equals(material))
-			{
+			if (!clickedBlock.getType().equals(material)) {
 				return ErrorCodeAddCoord.MaterialMismatch;
 			}
 			// GetDim methods use coord2 object.
 			coord2 = new GateCoord(clickedBlock);
-			if (getDimX() > 1 && getDimY() > 1 && getDimZ() > 1)
-			{
+			if (getDimX() > 1 && getDimY() > 1 && getDimZ() > 1) {
 				// No cuboids.
 				coord2 = null;
 				return ErrorCodeAddCoord.NoCuboids;
 			}
-			if (getDimY() <= 2)
-			{
+			if (getDimY() <= 2) {
 				coord2 = null;
 				return ErrorCodeAddCoord.LessThanThreeHigh;
 			}
 
-			if (isParallelToX() && getDimY() > 1)
-			{
+			if (isParallelToX() && getDimY() > 1) {
 				vertical = true;
 			}
-			else if (isParallelToZ() && getDimY() > 1)
-			{
+			else if (isParallelToZ() && getDimY() > 1) {
 				vertical = true;
 			}
-			else
-			{
+			else {
 				vertical = false;
 			}
 
 			int area = 0;
-			if (vertical)
-			{
-				if (isParallelToX())
-				{
+			if (vertical) {
+				if (isParallelToX()) {
 					area = getDimX() * getDimY();
 				}
-				else if (isParallelToZ())
-				{
+				else if (isParallelToZ()) {
 					area = getDimZ() * getDimY();
 				}
 			}
-			else if (!vertical)
-			{
-				if (isParallelToX())
-				{
+			else if (!vertical) {
+				if (isParallelToX()) {
 					area = getDimX() * getDimY();
 				}
-				else if (isParallelToZ())
-				{
+				else if (isParallelToZ()) {
 					area = getDimZ() * getDimY();
 				}
 			}
-			if (area > MedievalFactions.getInstance().getConfig().getInt("factionMaxGateArea"))
-			{
+			if (area > MedievalFactions.getInstance().getConfig().getInt("factionMaxGateArea")) {
 				// Gate size exceeds config limit.
 				coord2 = null;
 				return ErrorCodeAddCoord.Oversized;
 			}
-			if (!gateBlocksMatch(material))
-			{
+			if (!gateBlocksMatch(material)) {
 				coord2 = null;
 				return ErrorCodeAddCoord.MaterialMismatch;
 			}
 		}
-		else
-		{
+		else {
 			trigger = new GateCoord(clickedBlock);
 		}
 		return ErrorCodeAddCoord.None;
 	}
 
-	public int getDimX()
-	{
+	public int getDimX() {
 		return getDimX(coord1, coord2);
 	}
 
-	public int getDimY()
-	{
+	public int getDimY() {
 		return getDimY(coord1, coord2);
 	}
 
-	public int getDimZ()
-	{
+	public int getDimZ() {
 		return getDimZ(coord1, coord2);
 	}
 
-	public int getDimX(GateCoord first, GateCoord second)
-	{
+	public int getDimX(GateCoord first, GateCoord second) {
 		GateCoord tmp;
-		if (first.getX() > second.getX())
-		{
+		if (first.getX() > second.getX()) {
 			tmp = second;
 			second = first;
 			first = tmp;
@@ -483,11 +413,9 @@ public class Gate {
 		return second.getX() - first.getX();
 	}
 
-	public int getDimY(GateCoord first, GateCoord second)
-	{
+	public int getDimY(GateCoord first, GateCoord second) {
 		GateCoord tmp;
-		if (first.getY() > second.getY())
-		{
+		if (first.getY() > second.getY()) {
 			tmp = second;
 			second = first;
 			first = tmp;
@@ -495,11 +423,9 @@ public class Gate {
 		return second.getY() - first.getY();
 	}
 
-	public int getDimZ(GateCoord first, GateCoord second)
-	{
+	public int getDimZ(GateCoord first, GateCoord second) {
 		GateCoord tmp;
-		if (first.getZ() > second.getZ())
-		{
+		if (first.getZ() > second.getZ()) {
 			tmp = second;
 			second = first;
 			first = tmp;
@@ -507,21 +433,17 @@ public class Gate {
 		return second.getZ() - first.getZ();
 	}
 
-	public void openGate()
-	{
+	public void openGate() {
 		if (open || !gateStatus.equals(GateStatus.READY))
 			return;
 		open = true;
 		gateStatus = GateStatus.OPENING;
 		// For vertical we only need to iterate over x/y
-		if (vertical)
-		{
-			if (isParallelToX())
-			{
+		if (vertical) {
+			if (isParallelToX()) {
 				int topY = coord1.getY();
 				int _bottomY = coord2.getY();
-				if (coord2.getY() > coord1.getY())
-				{
+				if (coord2.getY() > coord1.getY()) {
 					topY = coord2.getY();
 					_bottomY = coord1.getY();
 				}
@@ -529,8 +451,7 @@ public class Gate {
 
 				int _leftX = coord1.getX();
 				int _rightX = coord2.getX();
-				if (coord2.getX() < coord1.getX())
-				{
+				if (coord2.getX() < coord1.getX()) {
 					_leftX = coord2.getX();
 					_rightX = coord1.getX();
 				}
@@ -539,8 +460,7 @@ public class Gate {
 				final int rightX = _rightX;
 
 				int c = 0;
-				for (int y = bottomY; y <= topY; y++)
-				{
+				for (int y = bottomY; y <= topY; y++) {
 					c++;
 					final int blockY = y;
 					Bukkit.getScheduler().runTaskLater(MedievalFactions.getInstance(), new Runnable() {
@@ -565,20 +485,17 @@ public class Gate {
                     }
 				}, (topY - bottomY + 2) * 10);
 			}
-			else if (isParallelToZ())
-			{
+			else if (isParallelToZ()) {
 				int topY = coord1.getY();
 				int _bottomY = coord2.getY();
-				if (coord2.getY() > coord1.getY())
-				{
+				if (coord2.getY() > coord1.getY()) {
 					topY = coord2.getY();
 					_bottomY = coord1.getY();
 				}
 				final int bottomY = _bottomY;
 				int _leftZ = coord1.getZ();
 				int _rightZ = coord2.getZ();
-				if (coord2.getZ() < coord1.getZ())
-				{
+				if (coord2.getZ() < coord1.getZ()) {
 					_leftZ = coord2.getZ();
 					_rightZ = coord1.getZ();
 				}
@@ -587,8 +504,7 @@ public class Gate {
 				final int rightZ = _rightZ;
 
 				int c = 0;
-				for (int y = bottomY; y <= topY; y++)
-				{
+				for (int y = bottomY; y <= topY; y++) {
 					c++;
 					final int blockY = y;
 					Bukkit.getScheduler().runTaskLater(MedievalFactions.getInstance(), new Runnable() {
@@ -611,42 +527,35 @@ public class Gate {
     					gateStatus = GateStatus.READY;
     					open = true;
                     }
-				}, (topY - bottomY + 2) * 10);
-
+				}, (topY - bottomY + 2) * 10L);
 			}
-
 		}
-		else
-		{
+		else {
 			// TODO: Bridge code iterates over x/z
 		}
 	}
 
-	public void closeGate()
-	{
+	public void closeGate() {
 
-		if (!open || !gateStatus.equals(GateStatus.READY))
+		if (!open || !gateStatus.equals(GateStatus.READY)) {
 			return;
+		}
 
 		open = false;
 		gateStatus = GateStatus.CLOSING;
 		// For vertical we only need to iterate over x/y
-		if (vertical)
-		{
-			if (isParallelToX())
-			{
+		if (vertical) {
+			if (isParallelToX()) {
 				int topY = coord1.getY();
 				int _bottomY = coord2.getY();
-				if (coord2.getY() > coord1.getY())
-				{
+				if (coord2.getY() > coord1.getY()) {
 					topY = coord2.getY();
 					_bottomY = coord1.getY();
 				}
 				final int bottomY = _bottomY;
 				int _leftX = coord1.getX();
 				int _rightX = coord2.getX();
-				if (coord2.getX() < coord1.getX())
-				{
+				if (coord2.getX() < coord1.getX()) {
 					_leftX = coord2.getX();
 					_rightX = coord1.getX();
 				}
@@ -655,8 +564,7 @@ public class Gate {
 				final int rightX = _rightX;
 
 				int c = 0;
-				for (int y = topY; y >= bottomY; y--)
-				{
+				for (int y = topY; y >= bottomY; y--) {
 					c++;
 					final int blockY = y;
 					Bukkit.getScheduler().runTaskLater(MedievalFactions.getInstance(), new Runnable() {
@@ -681,12 +589,10 @@ public class Gate {
                     }
 				}, (topY - bottomY + 2) * 10);
 			}
-			else if (isParallelToZ())
-			{
+			else if (isParallelToZ()) {
 				int topY = coord1.getY();
 				int _bottomY = coord2.getY();
-				if (coord2.getY() > coord1.getY())
-				{
+				if (coord2.getY() > coord1.getY()) {
 					topY = coord2.getY();
 					_bottomY = coord1.getY();
 				}
@@ -694,8 +600,7 @@ public class Gate {
 				int _leftZ = coord1.getZ();
 				int _rightZ = coord2.getZ();
 
-				if (coord2.getZ() < coord1.getZ())
-				{
+				if (coord2.getZ() < coord1.getZ()) {
 					_leftZ = coord2.getZ();
 					_rightZ = coord1.getZ();
 				}
@@ -703,8 +608,7 @@ public class Gate {
 				final int rightZ = _rightZ;
 
 				int c = 0;
-				for (int y = topY; y >= bottomY; y--)
-				{
+				for (int y = topY; y >= bottomY; y--) {
 					c++;
 					final int blockY = y;
 					Bukkit.getScheduler().runTaskLater(MedievalFactions.getInstance(), new Runnable() {
@@ -731,36 +635,30 @@ public class Gate {
 				}, (topY - bottomY + 2) * 10);
 			}
 		}
-		else
-		{
+		else {
 			// TODO: Bridge code iterates over x/z
 		}
 	}
 
-	public void fillGate()
-	{
-
-		if (!open)
+	public void fillGate() {
+		if (!open) {
 			return;
+		}
 
 		open = false;
 		// For vertical we only need to iterate over x/y
-		if (vertical)
-		{
-			if (isParallelToX())
-			{
+		if (vertical) {
+			if (isParallelToX()) {
 				int topY = coord1.getY();
 				int bottomY = coord2.getY();
-				if (coord2.getY() > coord1.getY())
-				{
+				if (coord2.getY() > coord1.getY()) {
 					topY = coord2.getY();
 					bottomY = coord1.getY();
 				}
 
 				int _leftX = coord1.getX();
 				int _rightX = coord2.getX();
-				if (coord2.getX() < coord1.getX())
-				{
+				if (coord2.getX() < coord1.getX()) {
 					_leftX = coord2.getX();
 					_rightX = coord1.getX();
 				}
@@ -768,24 +666,20 @@ public class Gate {
 				final int leftX = _leftX;
 				final int rightX = _rightX;
 
-				for (int y = topY; y >= bottomY; y--)
-				{
+				for (int y = topY; y >= bottomY; y--) {
 					Block b = null;
-    				for (int x = leftX; x <= rightX; x++)
-    				{
+    				for (int x = leftX; x <= rightX; x++) {
     					b = getWorld().getBlockAt(x, y, coord1.getZ());
     					b.setType(material);
-    				};
+    				}
 					if (b != null)
 						getWorld().playSound(b.getLocation(), soundEffect, 0.1f, 0.1f);
 				}
 			}
-			else if (isParallelToZ())
-			{
+			else if (isParallelToZ()) {
 				int topY = coord1.getY();
 				int bottomY = coord2.getY();
-				if (coord2.getY() > coord1.getY())
-				{
+				if (coord2.getY() > coord1.getY()) {
 					topY = coord2.getY();
 					bottomY = coord1.getY();
 				}
@@ -793,40 +687,35 @@ public class Gate {
 				int _leftZ = coord1.getZ();
 				int _rightZ = coord2.getZ();
 
-				if (coord2.getZ() < coord1.getZ())
-				{
+				if (coord2.getZ() < coord1.getZ()) {
 					_leftZ = coord2.getZ();
 					_rightZ = coord1.getZ();
 				}
 				final int leftZ = _leftZ;
 				final int rightZ = _rightZ;
 
-				for (int y = topY; y >= bottomY; y--)
-				{
+				for (int y = topY; y >= bottomY; y--) {
 					Block b = null;
-    				for (int z = leftZ; z <= rightZ; z++)
-    				{
+    				for (int z = leftZ; z <= rightZ; z++) {
     					b = getWorld().getBlockAt(coord1.getX(), y, z);
     					b.setType(material);
-    				};
-					if (b != null)
+    				}
+					if (b != null) {
 						getWorld().playSound(b.getLocation(), soundEffect, 0.1f, 0.1f);
+					}
 				}
 			}
 		}
-		else
-		{
+		else {
 			// TODO: Bridge code iterates over x/z
 		}
 	}
 
-	public boolean hasBlock(Block targetBlock)
-	{
+	public boolean hasBlock(Block targetBlock) {
 
 		int topY = coord1.getY();
 		int bottomY = coord2.getY();
-		if (coord2.getY() > coord1.getY())
-		{
+		if (coord2.getY() > coord1.getY()) {
 			topY = coord2.getY();
 			bottomY = coord1.getY();
 		}
@@ -834,8 +723,7 @@ public class Gate {
 		int _leftZ = coord1.getZ();
 		int _rightZ = coord2.getZ();
 
-		if (coord2.getZ() < coord1.getZ())
-		{
+		if (coord2.getZ() < coord1.getZ()) {
 			_leftZ = coord2.getZ();
 			_rightZ = coord1.getZ();
 		}
@@ -844,8 +732,7 @@ public class Gate {
 
 		int _leftX = coord1.getX();
 		int _rightX = coord2.getX();
-		if (coord2.getX() < coord1.getX())
-		{
+		if (coord2.getX() < coord1.getX()) {
 			_leftX = coord2.getX();
 			_rightX = coord1.getX();
 		}
@@ -856,23 +743,21 @@ public class Gate {
 		if (targetBlock.getX() >= leftX && targetBlock.getX() <= rightX
 				&& targetBlock.getY() >= bottomY && targetBlock.getY() <= topY
 				&& targetBlock.getZ() >= leftZ && targetBlock.getZ() <= rightZ
-				&& targetBlock.getWorld().getName().equalsIgnoreCase(coord1.getWorld()))
-		{
+				&& targetBlock.getWorld().getName().equalsIgnoreCase(coord1.getWorld())) {
 			return true;
 		}
 
-		if (trigger.equals(targetBlock))
-		{
+		if (trigger.equals(targetBlock)) {
 			return true;
 		}
 
 		return false;
 	}
 
-	public String coordsToString()
-	{
-		if (coord1 == null || coord2 == null || trigger == null)
+	public String coordsToString() {
+		if (coord1 == null || coord2 == null || trigger == null) {
 			return "";
+		}
 
 		return String.format("(%d, %d, %d to %d, %d, %d) Trigger (%d, %d, %d)", coord1.getX(), coord1.getY(), coord1.getZ(), coord2.getX(), coord2.getY(), coord2.getZ(),
 				trigger.getX(), trigger.getY(), trigger.getZ());
