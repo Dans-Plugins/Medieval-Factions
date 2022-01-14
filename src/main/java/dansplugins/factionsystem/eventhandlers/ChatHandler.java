@@ -32,13 +32,10 @@ public class ChatHandler implements Listener {
         if (playersFaction == null) {
             return;
         }
-
         initializeValues(playersFaction, event);
-
         if (MedievalFactions.getInstance().getConfig().getBoolean("playersChatWithPrefixes")) {
             addPrefix(event, prefixColor, prefix);
         }
-
         if (EphemeralData.getInstance().isPlayerInFactionChat(event.getPlayer())) {
             sendMessage(playersFaction, prefixColor, prefix, event, factionChatColor, message);
             event.setCancelled(true);

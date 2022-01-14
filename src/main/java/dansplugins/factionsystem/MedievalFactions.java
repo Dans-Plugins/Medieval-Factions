@@ -15,12 +15,10 @@ import dansplugins.factionsystem.services.LocalConfigService;
 import dansplugins.factionsystem.services.LocalLocaleService;
 import dansplugins.factionsystem.services.LocalStorageService;
 import dansplugins.factionsystem.utils.Scheduler;
-
 import org.bukkit.Bukkit;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.event.Listener;
-
 import preponderous.ponder.minecraft.abs.PonderPlugin;
 import preponderous.ponder.minecraft.spigot.PonderMC;
 import preponderous.ponder.minecraft.spigot.tools.EventHandlerRegistry;
@@ -176,8 +174,10 @@ public class MedievalFactions extends PonderPlugin {
                 new ChatHandler(),
                 new DamageHandler(),
                 new InteractionHandler(),
-                new JoiningLeavingAndSpawningHandler(),
-                new MoveHandler()
+                new JoinHandler(),
+                new MoveHandler(),
+                new QuitHandler(),
+                new SpawnHandler()
         ));
     }
 
