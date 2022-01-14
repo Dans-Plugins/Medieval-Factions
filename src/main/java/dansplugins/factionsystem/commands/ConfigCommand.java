@@ -52,9 +52,9 @@ public class ConfigCommand extends SubCommand {
             return;
         }
 
-        final boolean show = safeEquals(false, args[0], "get", "show", getText("CmdConfigShow"));
-        final boolean set = safeEquals(false, args[0], "set", getText("CmdConfigSet"));
-        final boolean reload = safeEquals(false, args[0], "reload", "CmdConfigReload"); // TODO: add locale message
+        final boolean show = safeEquals(args[0], "get", "show", getText("CmdConfigShow"));
+        final boolean set = safeEquals(args[0], "set", getText("CmdConfigSet"));
+        final boolean reload = safeEquals(args[0], "reload", "CmdConfigReload"); // TODO: add locale message
 
         if (show) {
             if (args.length < 2) {

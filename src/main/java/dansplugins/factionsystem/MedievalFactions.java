@@ -4,6 +4,7 @@
  */
 package dansplugins.factionsystem;
 
+import dansplugins.factionsystem.bstats.Metrics;
 import dansplugins.factionsystem.data.PersistentData;
 import dansplugins.factionsystem.eventhandlers.*;
 import dansplugins.factionsystem.externalapi.MedievalFactionsAPI;
@@ -14,16 +15,12 @@ import dansplugins.factionsystem.services.LocalConfigService;
 import dansplugins.factionsystem.services.LocalLocaleService;
 import dansplugins.factionsystem.services.LocalStorageService;
 import dansplugins.factionsystem.utils.Scheduler;
-import dansplugins.factionsystem.bstats.Metrics;
-
 import org.bukkit.Bukkit;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.event.Listener;
-import preponderous.ponder.Ponder;
 import preponderous.ponder.minecraft.abs.PonderPlugin;
 import preponderous.ponder.minecraft.spigot.PonderMC;
-import preponderous.ponder.minecraft.spigot.misc.PonderAPI_Integrator;
 import preponderous.ponder.minecraft.spigot.tools.EventHandlerRegistry;
 
 import java.io.File;
@@ -176,9 +173,13 @@ public class MedievalFactions extends PonderPlugin {
         return new ArrayList<>(Arrays.asList(
                 new ChatHandler(),
                 new DamageHandler(),
+                new DeathHandler(),
+                new EffectHandler(),
                 new InteractionHandler(),
-                new JoiningLeavingAndSpawningHandler(),
-                new MoveHandler()
+                new JoinHandler(),
+                new MoveHandler(),
+                new QuitHandler(),
+                new SpawnHandler()
         ));
     }
 
@@ -193,7 +194,7 @@ public class MedievalFactions extends PonderPlugin {
 
     private void handlebStatsIntegration() {
         int pluginId = 8929;
-        Metrics metrics = new Metrics(this, pluginId);
+        new Metrics(this, pluginId);
     }
 
     private void handleDynmapIntegration() {

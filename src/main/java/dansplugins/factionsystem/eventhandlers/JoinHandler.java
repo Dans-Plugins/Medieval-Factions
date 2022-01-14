@@ -5,13 +5,11 @@
 package dansplugins.factionsystem.eventhandlers;
 
 import dansplugins.factionsystem.MedievalFactions;
-import dansplugins.factionsystem.data.EphemeralData;
 import dansplugins.factionsystem.data.PersistentData;
 import dansplugins.factionsystem.events.FactionJoinEvent;
 import dansplugins.factionsystem.objects.domain.ActivityRecord;
 import dansplugins.factionsystem.objects.domain.Faction;
 import dansplugins.factionsystem.objects.domain.PowerRecord;
-import dansplugins.factionsystem.services.LocalActionBarService;
 import dansplugins.factionsystem.services.LocalChunkService;
 import dansplugins.factionsystem.services.LocalLocaleService;
 import dansplugins.factionsystem.utils.Logger;
@@ -19,21 +17,17 @@ import dansplugins.factionsystem.utils.Messenger;
 import dansplugins.factionsystem.utils.TerritoryOwnerNotifier;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
-import org.bukkit.entity.Monster;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
-import org.bukkit.event.entity.EntitySpawnEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
-import org.bukkit.event.player.PlayerQuitEvent;
 
-import java.time.ZonedDateTime;
 import java.util.UUID;
 
 /**
  * @author Daniel McCoy Stephenson
  */
-public class JoiningLeavingAndSpawningHandler implements Listener {
+public class JoinHandler implements Listener {
 
 	@EventHandler()
     public void handle(PlayerJoinEvent event) {
@@ -164,32 +158,5 @@ public class JoiningLeavingAndSpawningHandler implements Listener {
 			}
 		}
 		return false;
-	}
-
-	@EventHandler()
-	public void handle(PlayerQuitEvent event) {
-		EphemeralData.getInstance().getLockingPlayers().remove(event.getPlayer().getUniqueId());
-		EphemeralData.getInstance().getUnlockingPlayers().remove(event.getPlayer().getUniqueId());
-		EphemeralData.getInstance().getPlayersGrantingAccess().remove(event.getPlayer().getUniqueId());
-		EphemeralData.getInstance().getPlayersCheckingAccess().remove(event.getPlayer().getUniqueId());
-		EphemeralData.getInstance().getPlayersRevokingAccess().remove(event.getPlayer().getUniqueId());
-
-		ActivityRecord record = PersistentData.getInstance().getPlayerActivityRecord(event.getPlayer().getUniqueId());
-		if (record != null) {
-			record.setLastLogout(ZonedDateTime.now());
-		}
-
-		LocalActionBarService.getInstance(MedievalFactions.getInstance()).clearPlayerActionBar(event.getPlayer());
-	}
-
-	@EventHandler()
-	public void handle(EntitySpawnEvent event) {
-		if (isLandClaimed(event) && event.getEntity() instanceof Monster && !MedievalFactions.getInstance().getConfig().getBoolean("mobsSpawnInFactionTerritory")) {
-			event.setCancelled(true);
-		}
-	}
-
-	private boolean isLandClaimed(EntitySpawnEvent event) {
-		return LocalChunkService.getInstance().isClaimed(event.getLocation().getChunk(), PersistentData.getInstance().getClaimedChunks());
 	}
 }
