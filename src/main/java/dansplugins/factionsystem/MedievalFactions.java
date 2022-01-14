@@ -20,7 +20,9 @@ import org.bukkit.Bukkit;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.event.Listener;
+import preponderous.ponder.Ponder;
 import preponderous.ponder.minecraft.abs.PonderPlugin;
+import preponderous.ponder.minecraft.spigot.PonderMC;
 import preponderous.ponder.minecraft.spigot.misc.PonderAPI_Integrator;
 import preponderous.ponder.minecraft.spigot.tools.EventHandlerRegistry;
 
@@ -34,6 +36,7 @@ import java.util.Arrays;
  */
 public class MedievalFactions extends PonderPlugin {
     private static MedievalFactions instance;
+    private final PonderMC ponder = new PonderMC(this);
     private final String pluginVersion = "v" + getDescription().getVersion();
 
     /**
@@ -50,15 +53,12 @@ public class MedievalFactions extends PonderPlugin {
     @Override
     public void onEnable() {
         instance = this;
-        ponderAPI_integrator = new PonderAPI_Integrator(this);
         initializeConfig();
         load();
         scheduleRecurringTasks();
         registerEventHandlers();
         handleIntegrations();
-
-        // make sure every player experiences power decay in case we updated from pre-v3.5
-        PersistentData.getInstance().createActivityRecordForEveryOfflinePlayer();
+        makeSureEveryPlayerExperiencesPowerDecay();
     }
 
     /**
@@ -119,20 +119,31 @@ public class MedievalFactions extends PonderPlugin {
         return getConfig().getBoolean("debugMode");
     }
 
+    private void makeSureEveryPlayerExperiencesPowerDecay() {
+        PersistentData.getInstance().createActivityRecordForEveryOfflinePlayer();
+    }
+
     /**
      * Creates or loads the config, depending on the situation.
      */
     private void initializeConfig() {
-        if (!(new File("./plugins/MedievalFactions/config.yml").exists())) {
-            LocalConfigService.getInstance().saveConfigDefaults();
+        if (configFileExists()) {
+            performCompatibilityChecks();
         }
         else {
-            // pre load compatibility checks
-            if (isVersionMismatched()) {
-                LocalConfigService.getInstance().handleVersionMismatch();
-            }
-            reloadConfig();
+            LocalConfigService.getInstance().saveConfigDefaults();
         }
+    }
+
+    private void performCompatibilityChecks() {
+        if (isVersionMismatched()) {
+            LocalConfigService.getInstance().handleVersionMismatch();
+        }
+        reloadConfig();
+    }
+
+    private boolean configFileExists() {
+        return new File("./plugins/MedievalFactions/config.yml").exists();
     }
 
     /**
@@ -156,15 +167,19 @@ public class MedievalFactions extends PonderPlugin {
      * Registers the event handlers of the plugin using Ponder.
      */
     private void registerEventHandlers() {
-        ArrayList<Listener> listeners = new ArrayList<>(Arrays.asList(
+        ArrayList<Listener> listeners = initializeListeners();
+        EventHandlerRegistry eventHandlerRegistry = new EventHandlerRegistry(getPonderAPI());
+        eventHandlerRegistry.registerEventHandlers(listeners, this);
+    }
+
+    private ArrayList<Listener> initializeListeners() {
+        return new ArrayList<>(Arrays.asList(
                 new ChatHandler(),
                 new DamageHandler(),
                 new InteractionHandler(),
                 new JoiningLeavingAndSpawningHandler(),
                 new MoveHandler()
         ));
-        EventHandlerRegistry eventHandlerRegistry = new EventHandlerRegistry(getPonderAPI());
-        eventHandlerRegistry.registerEventHandlers(listeners, this);
     }
 
     /**
@@ -177,7 +192,6 @@ public class MedievalFactions extends PonderPlugin {
     }
 
     private void handlebStatsIntegration() {
-        // bStats
         int pluginId = 8929;
         Metrics metrics = new Metrics(this, pluginId);
     }
@@ -193,5 +207,9 @@ public class MedievalFactions extends PonderPlugin {
         if (Bukkit.getPluginManager().getPlugin("PlaceholderAPI") != null) {
             new PlaceholderAPI().register();
         }
+    }
+
+    private PonderMC getPonder() {
+        return ponder;
     }
 }
