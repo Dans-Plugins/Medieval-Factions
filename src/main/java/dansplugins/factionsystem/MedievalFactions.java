@@ -173,6 +173,8 @@ public class MedievalFactions extends PonderPlugin {
         return new ArrayList<>(Arrays.asList(
                 new ChatHandler(),
                 new DamageHandler(),
+                new DeathHandler(),
+                new EffectHandler(),
                 new InteractionHandler(),
                 new JoinHandler(),
                 new MoveHandler(),
