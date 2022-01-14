@@ -25,28 +25,22 @@ import java.util.UUID;
 /**
  * @author Callum Johnson
  * @since 05/05/2021 - 12:18
+ *
+ * @author Daniel McCoy Stephenson
  */
 public abstract class SubCommand implements ColorTranslator {
-
-    // Constants
     public static final String LOCALE_PREFIX = "Locale_";
-
-    // Data classes
-    protected final LocalLocaleService locale;
-    protected final PersistentData data;
-    protected final EphemeralData ephemeral;
-    protected final LocalChunkService chunks;
-    protected final DynmapIntegrator dynmap;
-    protected final LocalConfigService localConfigService;
-
-    // Command Data
-    private final String[] names;
+    protected LocalLocaleService locale;
+    protected PersistentData data;
+    protected EphemeralData ephemeral;
+    protected LocalChunkService chunks;
+    protected DynmapIntegrator dynmap;
+    protected LocalConfigService localConfigService;
+    private String[] names;
     private final boolean playerCommand;
     private final boolean requiresFaction;
     private final boolean requiresOfficer;
     private final boolean requiresOwner;
-
-    // Player data
     protected Faction faction = null;
 
     /**
@@ -57,31 +51,31 @@ public abstract class SubCommand implements ColorTranslator {
      * @param requiresOfficer if the command requires officer or higher.
      * @param requiresOwner if the command is reserved for Owners.
      */
-    public SubCommand(String[] names,
-                      boolean playerCommand,
-                      boolean requiresFaction,
-                      boolean requiresOfficer,
-                      boolean requiresOwner) {
-        // Local variables standing for instances of constantly used instances.
-        this.locale = LocalLocaleService.getInstance();
-        this.data = PersistentData.getInstance();
-        this.ephemeral = EphemeralData.getInstance();
-        this.chunks = LocalChunkService.getInstance();
-        this.dynmap = DynmapIntegrator.getInstance();
-        this.localConfigService = LocalConfigService.getInstance();
+    public SubCommand(String[] names, boolean playerCommand, boolean requiresFaction, boolean requiresOfficer, boolean requiresOwner) {
+        initializeLocalVariablesStandingFOrInstancesOfConstantlyUsedInstances();
+        loadCommandNames(names);
+        this.playerCommand = playerCommand;
+        this.requiresFaction = requiresFaction;
+        this.requiresOfficer = requiresOfficer;
+        this.requiresOwner = requiresOwner;
+    }
 
-        // Load Command Names.
+    protected void loadCommandNames(String[] names) {
         this.names = new String[names.length];
         for (int i = 0; i < this.names.length; i++) {
             String name = names[i];
             if (name.contains(LOCALE_PREFIX)) name = locale.getText(name.replace(LOCALE_PREFIX, ""));
             this.names[i] = name;
         }
+    }
 
-        this.playerCommand = playerCommand;
-        this.requiresFaction = requiresFaction;
-        this.requiresOfficer = requiresOfficer;
-        this.requiresOwner = requiresOwner;
+    protected void initializeLocalVariablesStandingFOrInstancesOfConstantlyUsedInstances() {
+        this.locale = LocalLocaleService.getInstance();
+        this.data = PersistentData.getInstance();
+        this.ephemeral = EphemeralData.getInstance();
+        this.chunks = LocalChunkService.getInstance();
+        this.dynmap = DynmapIntegrator.getInstance();
+        this.localConfigService = LocalConfigService.getInstance();
     }
 
     /**
@@ -134,11 +128,9 @@ public abstract class SubCommand implements ColorTranslator {
                         return;
                     }
                 }
-                if (requiresOwner) { // If the command requires an owner only, check for it.
-                    if (!faction.isOwner(player.getUniqueId())) {
-                        player.sendMessage(translate("&c" + getText("AlertMustBeOwnerToUseCommand")));
-                        return;
-                    }
+                if (requiresOwner && !faction.isOwner(player.getUniqueId())) { // If the command requires an owner only, check for it.
+                    player.sendMessage(translate("&c" + getText("AlertMustBeOwnerToUseCommand")));
+                    return;
                 }
             }
             execute(player, args, key); // 100% a player so you can safely use it
@@ -183,8 +175,14 @@ public abstract class SubCommand implements ColorTranslator {
      */
     public boolean checkPermissions(CommandSender sender, String... permission) {
         boolean has = false;
-        for (String perm : permission) if (has = sender.hasPermission(perm)) break;
-        if (!has) sender.sendMessage(translate("&c" + getText("PermissionNeeded", permission[0])));
+        for (String perm : permission) {
+            if (has = sender.hasPermission(perm)) {
+                break;
+            }
+        }
+        if (!has) {
+            sender.sendMessage(translate("&c" + getText("PermissionNeeded", permission[0])));
+        }
         return has;
     }
 
@@ -221,12 +219,14 @@ public abstract class SubCommand implements ColorTranslator {
     protected Faction getPlayerFaction(Object object) {
         if (object instanceof OfflinePlayer) {
             return data.getPlayersFaction(((OfflinePlayer) object).getUniqueId());
-        } else if (object instanceof UUID) {
+        }
+        else if (object instanceof UUID) {
             return data.getPlayersFaction((UUID) object);
-        } else if (object instanceof String) {
+        }
+        else if (object instanceof String) {
             try {
                 return data.getPlayersFaction(UUID.fromString((String) object));
-            } catch (Exception ex) {
+            } catch (Exception e) {
                 OfflinePlayer player = Bukkit.getOfflinePlayer((String) object);
                 if (player.hasPlayedBefore()) {
                     return data.getPlayersFaction(player.getUniqueId());
@@ -288,12 +288,11 @@ public abstract class SubCommand implements ColorTranslator {
      * Method to test if something matches any goal string.
      * @param what to test
      * @param goals to compare with
-     * @param matchCase for the comparison (or not)
      * @return {@code true} if something in goals matches what.
      */
-    protected boolean safeEquals(boolean matchCase, String what, String... goals) {
+    protected boolean safeEquals(String what, String... goals) {
         return Arrays.stream(goals).anyMatch(goal ->
-                matchCase && goal.equals(what) || !matchCase && goal.equalsIgnoreCase(what)
+                goal.equalsIgnoreCase(what)
         );
     }
 
@@ -307,9 +306,7 @@ public abstract class SubCommand implements ColorTranslator {
 
     @Override
     public String toString() {
-        return getClass().getSimpleName() + "{"
-                    + "names=" + Arrays.toString(names)
-                + '}';
+        return getClass().getSimpleName() + "{" + "names=" + Arrays.toString(names) + '}';
     }
 
 }

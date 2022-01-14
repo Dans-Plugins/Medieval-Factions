@@ -42,8 +42,8 @@ public class FlagsCommand extends SubCommand {
 
         final Faction playersFaction = getPlayerFaction(player);
 
-        final boolean show = safeEquals(false, args[0], "get", "show", getText("CmdFlagsShow"));
-        final boolean set = safeEquals(false, args[0], "set", getText("CmdFlagsSet"));
+        final boolean show = safeEquals(args[0], "get", "show", getText("CmdFlagsShow"));
+        final boolean set = safeEquals(args[0], "set", getText("CmdFlagsSet"));
         if (show) {
             playersFaction.getFlags().sendFlagList(player);
         } else if (set) {

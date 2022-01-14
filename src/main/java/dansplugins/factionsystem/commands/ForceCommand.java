@@ -74,7 +74,7 @@ public class ForceCommand extends SubCommand {
             for (Map.Entry<List<String>, String> entry : subMap.entrySet()) { // Loop through the SubCommands.
                 // Map.Entry<List<String>, String> example => ([Save, CMDForceSave (translation key)], forceSave)
                 try {
-                    if (safeEquals(false, args[0], entry.getKey().toArray(new String[0]))) { // Do any of the Keys for the SubCommand match the Given Argument at index '0'.
+                    if (safeEquals(args[0], entry.getKey().toArray(new String[0]))) { // Do any of the Keys for the SubCommand match the Given Argument at index '0'.
                         try {
                             Method method = getClass().getDeclaredMethod(entry.getValue(), CommandSender.class, String[].class); // Get the Declared method for that SubCommand.
                             method.invoke(this, sender, args);  // Use reflection to invoke the command.

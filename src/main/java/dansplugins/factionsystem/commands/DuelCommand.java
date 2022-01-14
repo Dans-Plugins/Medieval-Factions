@@ -37,7 +37,7 @@ public class DuelCommand extends SubCommand {
             sendHelp(player);
             return;
         }
-        if (safeEquals(false, args[0], getText("CmdDuelChallenge"), "challenge")) {
+        if (safeEquals(args[0], getText("CmdDuelChallenge"), "challenge")) {
             if (!(args.length >= 2)) {
                 sendHelp(player);
                 return;
@@ -63,7 +63,7 @@ public class DuelCommand extends SubCommand {
             if (args.length == 3) timeLimit = getIntSafe(args[2], 120);
             inviteDuel(player, target, timeLimit);
             player.sendMessage(translate("&b" + getText("AlertChallengeIssued", target.getName())));
-        } else if (safeEquals(false, args[0], getText("CmdDuelAccept"), "accept")) {
+        } else if (safeEquals(args[0], getText("CmdDuelAccept"), "accept")) {
             if (isDuelling(player)) {
                 player.sendMessage(translate("&c" + getText("AlertAlreadyDuelingSomeone")));
                 return;
@@ -97,7 +97,7 @@ public class DuelCommand extends SubCommand {
                 return;
             }
             duel.acceptDuel();
-        } else if (safeEquals(false, args[0], getText("CmdDuelCancel"), "cancel")) {
+        } else if (safeEquals(args[0], getText("CmdDuelCancel"), "cancel")) {
             if (!isDuelling(player)) {
                 player.sendMessage(translate("&c" + getText("AlertNoPendingChallenges")));
                 return;

@@ -45,14 +45,14 @@ public class GateCommand extends SubCommand {
 			player.sendMessage(translate("&b" + getText("HelpGateCancel")));
 			return;
 		}
-		if (safeEquals(false, args[0], "cancel", getText("CmdGateCancel"))) {
+		if (safeEquals(args[0], "cancel", getText("CmdGateCancel"))) {
 			// Cancel Logic
 			if (ephemeral.getCreatingGatePlayers().remove(player.getUniqueId()) != null) {
 				player.sendMessage(translate("&c" + getText("CreatingGateCancelled")));
 				return;
 			}
 		}
-		if (safeEquals(false, args[0], "create", getText("CmdGateCreate"))) {
+		if (safeEquals(args[0], "create", getText("CmdGateCreate"))) {
 			// Create Logic
 			if (ephemeral.getCreatingGatePlayers().containsKey(player.getUniqueId())) {
 				player.sendMessage(translate("&c" + getText("AlertAlreadyCreatingGate")));
@@ -74,7 +74,7 @@ public class GateCommand extends SubCommand {
 			player.sendMessage(translate("&b" + getText("CreatingGateClickWithHoe")));
 			return;
 		}
-		if (safeEquals(false, args[0], "list", getText("CmdGateList"))) {
+		if (safeEquals(args[0], "list", getText("CmdGateList"))) {
 			// List logic
 			if (faction.getGates().size() > 0) {
 				player.sendMessage(translate("&bFaction Gates"));
@@ -86,8 +86,8 @@ public class GateCommand extends SubCommand {
 			}
 			return;
 		}
-		final boolean remove = safeEquals(false, args[0], "remove", getText("CmdGateRemove"));
-		final boolean rename = safeEquals(false, args[0], "name", getText("CmdGateName"));
+		final boolean remove = safeEquals(args[0], "remove", getText("CmdGateRemove"));
+		final boolean rename = safeEquals(args[0], "name", getText("CmdGateName"));
 		if (rename || remove) {
 			final Block targettedBlock = player.getTargetBlock(null, 16);
 			if (targettedBlock.getType().equals(Material.AIR)) {
