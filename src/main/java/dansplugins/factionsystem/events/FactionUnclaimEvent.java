@@ -1,3 +1,7 @@
+/*
+  Copyright (c) 2022 Daniel McCoy Stephenson
+  GPL3 License
+ */
 package dansplugins.factionsystem.events;
 
 import dansplugins.factionsystem.objects.domain.Faction;

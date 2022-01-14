@@ -1,3 +1,7 @@
+/*
+  Copyright (c) 2022 Daniel McCoy Stephenson
+  GPL3 License
+ */
 package dansplugins.factionsystem.utils;
 
 import dansplugins.factionsystem.MedievalFactions;
@@ -20,42 +24,53 @@ public class TerritoryOwnerNotifier {
     }
 
     public static TerritoryOwnerNotifier getInstance() {
-        if (instance == null) instance = new TerritoryOwnerNotifier();
+        if (instance == null) {
+            instance = new TerritoryOwnerNotifier();
+        }
         return instance;
     }
 
     public void sendPlayerTerritoryAlert(Player player, Faction holder) {
-        // get color
-        ChatColor territoryAlertColor;
+        ChatColor territoryAlertColor = getColor(holder);
+        String title = getTitle(holder);
+        setActionBar(holder, player, territoryAlertColor, title);
+        sendAlert(player, territoryAlertColor, title);
+    }
+
+    private String getTitle(Faction holder) {
         if (holder != null) {
-            String territoryAlertColorString = (String) holder.getFlags().getFlag("territoryAlertColor");
-            territoryAlertColor = ColorChecker.getInstance().getColorByName(territoryAlertColorString);
-        } else {
-            String territoryAlertColorString = MedievalFactions.getInstance().getConfig().getString("territoryAlertColor");
-            territoryAlertColor = ColorChecker.getInstance().getColorByName(territoryAlertColorString);
+            return holder.getName();
         }
-
-        String title;
-        if(holder != null) {
-            title = holder.getName();
-        } else {
-            title = LocalLocaleService.getInstance().getText("Wilderness");
+        else {
+            return LocalLocaleService.getInstance().getText("Wilderness");
         }
+    }
 
+    private ChatColor getColor(Faction holder) {
+        String territoryAlertColorString;
+        if (holder != null) {
+            territoryAlertColorString = (String) holder.getFlags().getFlag("territoryAlertColor");
+        } else {
+            territoryAlertColorString = MedievalFactions.getInstance().getConfig().getString("territoryAlertColor");
+        }
+        return ColorChecker.getInstance().getColorByName(territoryAlertColorString);
+    }
 
-        // set actionbar
-        if(MedievalFactions.getInstance().getConfig().getBoolean("territoryIndicatorActionbar")) {
+    private void setActionBar(Faction holder, Player player, ChatColor territoryAlertColor, String title) {
+        if (MedievalFactions.getInstance().getConfig().getBoolean("territoryIndicatorActionbar")) {
             LocalActionBarService actionBar = LocalActionBarService.getInstance(MedievalFactions.getInstance());
 
-            if(holder == null) {
+            if (holder == null) {
                 actionBar.clearPlayerActionBar(player);
                 player.spigot().sendMessage(ChatMessageType.ACTION_BAR, new TextComponent(territoryAlertColor + title));
-            } else {
+            }
+            else {
                 actionBar.showPersistentActionBarMessage(player, new TextComponent(territoryAlertColor + title));
             }
         }
+    }
 
-        // send alert
+    private void sendAlert(Player player, ChatColor territoryAlertColor, String title) {
         if (MedievalFactions.getInstance().getConfig().getBoolean("territoryAlertPopUp")) {
             int fadeIn = 10;
             int stay = 70;
@@ -66,5 +81,4 @@ public class TerritoryOwnerNotifier {
             player.sendMessage(territoryAlertColor + title);
         }
     }
-
 }

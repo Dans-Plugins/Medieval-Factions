@@ -1,3 +1,7 @@
+/*
+  Copyright (c) 2022 Daniel McCoy Stephenson
+  GPL3 License
+ */
 package dansplugins.factionsystem.data;
 
 import dansplugins.factionsystem.objects.domain.*;
@@ -31,8 +35,6 @@ public class PersistentData {
         return instance;
     }
 
-    // arraylist getters ---
-
     public ArrayList<Faction> getFactions() {
         return factions;
     }
@@ -56,8 +58,6 @@ public class PersistentData {
     public HashSet<War> getWars() {
         return wars;
     }
-
-    // specific getters ---
 
     /**
      * Method to get a Faction by its name.
@@ -205,7 +205,6 @@ public class PersistentData {
             foundFactions.addAll(toAdd);
             toAdd.clear();
         }
-//        System.out.println(String.format("DEBUG: Found %d factions in vassalage tree of %s", foundFactions.size(), initialFaction.getName()));
         return foundFactions;
     }
 
@@ -218,10 +217,7 @@ public class PersistentData {
         return false;
     }
 
-    // checkers --
-
     public boolean isInFaction(UUID playerUUID) {
-        // membership check
         for (Faction faction : getFactions()) {
             if (faction.isMember(playerUUID)) {
                 return true;
@@ -243,14 +239,10 @@ public class PersistentData {
         return false;
     }
 
-    public boolean isGateBlock(Block targetBlock)
-    {
-        for (Faction faction : getFactions())
-        {
-            for (Gate gate : faction.getGates())
-            {
-                if (gate.hasBlock(targetBlock))
-                {
+    public boolean isGateBlock(Block targetBlock) {
+        for (Faction faction : getFactions()) {
+            for (Gate gate : faction.getGates()) {
+                if (gate.hasBlock(targetBlock)) {
                     return true;
                 }
             }
@@ -278,8 +270,6 @@ public class PersistentData {
         }
         return false;
     }
-
-    // actors/mutators
 
     public void removeAllLocks(String factionName) {
         Iterator<LockedBlock> itr = getLockedBlocks().iterator();

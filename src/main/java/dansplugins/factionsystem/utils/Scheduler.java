@@ -1,3 +1,7 @@
+/*
+  Copyright (c) 2022 Daniel McCoy Stephenson
+  GPL3 License
+ */
 package dansplugins.factionsystem.utils;
 
 import dansplugins.factionsystem.MedievalFactions;
@@ -21,7 +25,6 @@ import static org.bukkit.Bukkit.getServer;
  * @author Daniel McCoy Stephenson
  */
 public class Scheduler {
-
     private static Scheduler instance;
 
     private Scheduler() {
@@ -55,18 +58,20 @@ public class Scheduler {
         Bukkit.getScheduler().scheduleSyncRepeatingTask(MedievalFactions.getInstance(), new Runnable() {
             @Override
             public void run() {
-                System.out.println(String.format(LocalLocaleService.getInstance().getText("AlertIncreasingThePowerOfEveryPlayer"), MedievalFactions.getInstance().getConfig().getInt("powerIncreaseAmount"), MedievalFactions.getInstance().getConfig().getInt("minutesBetweenPowerIncreases")));
+                System.out.printf((LocalLocaleService.getInstance().getText("AlertIncreasingThePowerOfEveryPlayer")) + "%n", MedievalFactions.getInstance().getConfig().getInt("powerIncreaseAmount"), MedievalFactions.getInstance().getConfig().getInt("minutesBetweenPowerIncreases"));
                 for (PowerRecord powerRecord : PersistentData.getInstance().getPlayerPowerRecords()) {
                     try {
-                        if (powerRecord.getPowerLevel() < powerRecord.maxPower()) {
-                            if (getServer().getPlayer(powerRecord.getPlayerUUID()).isOnline()) {
-                                powerRecord.increasePower();
-                                getServer().getPlayer(powerRecord.getPlayerUUID()).sendMessage(ChatColor.GREEN + String.format(LocalLocaleService.getInstance().getText("AlertPowerLevelIncreasedBy"), MedievalFactions.getInstance().getConfig().getInt("powerIncreaseAmount")));
-                            }
-                        }
+                        initiatePowerIncrease(powerRecord);
                     } catch (Exception ignored) {
-                        // player offline
+
                     }
+                }
+            }
+
+            private void initiatePowerIncrease(PowerRecord powerRecord) {
+                if (powerRecord.getPowerLevel() < powerRecord.maxPower() && getServer().getPlayer(powerRecord.getPlayerUUID()).isOnline()) {
+                    powerRecord.increasePower();
+                    getServer().getPlayer(powerRecord.getPlayerUUID()).sendMessage(ChatColor.GREEN + String.format(LocalLocaleService.getInstance().getText("AlertPowerLevelIncreasedBy"), MedievalFactions.getInstance().getConfig().getInt("powerIncreaseAmount")));
                 }
             }
         }, delay * 20, secondsUntilRepeat * 20);

@@ -1,3 +1,7 @@
+/*
+  Copyright (c) 2022 Daniel McCoy Stephenson
+  GPL3 License
+ */
 package dansplugins.factionsystem.eventhandlers;
 
 import dansplugins.factionsystem.MedievalFactions;
@@ -23,9 +27,7 @@ public class ChatHandler implements Listener {
         String factionChatColor = MedievalFactions.getInstance().getConfig().getString("factionChatColor");
 
         Faction playersFaction = PersistentData.getInstance().getPlayersFaction(event.getPlayer().getUniqueId());
-
         if (playersFaction != null) {
-
             String prefixColor = (String) playersFaction.getFlags().getFlag("prefixColor");
             String prefix = playersFaction.getPrefix();
 
@@ -56,11 +58,8 @@ public class ChatHandler implements Listener {
                         Messenger.getInstance().sendAllPlayersInFactionMessage(playersFaction, ChatColor.WHITE + "" + event.getPlayer().getName() + ": " + ColorChecker.getInstance().getColorByName(factionChatColor) + message);
                     }
                 }
-
                 event.setCancelled(true);
             }
-
         }
     }
-
 }

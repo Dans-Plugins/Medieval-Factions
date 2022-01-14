@@ -1,3 +1,7 @@
+/*
+  Copyright (c) 2022 Daniel McCoy Stephenson
+  GPL3 License
+ */
 package dansplugins.factionsystem.eventhandlers;
 
 import dansplugins.factionsystem.MedievalFactions;
@@ -10,7 +14,6 @@ import dansplugins.factionsystem.objects.domain.PowerRecord;
 import dansplugins.factionsystem.services.LocalChunkService;
 import dansplugins.factionsystem.services.LocalConfigService;
 import dansplugins.factionsystem.services.LocalLocaleService;
-import dansplugins.factionsystem.utils.Pair;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Chunk;
@@ -23,6 +26,7 @@ import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
 import org.bukkit.potion.PotionType;
 import org.bukkit.projectiles.ProjectileSource;
+import preponderous.ponder.misc.Pair;
 
 import java.util.ArrayList;
 import java.util.Arrays;
