@@ -61,7 +61,7 @@ public class ClaimedChunk extends Territory implements Savable {
 
     @Override
     public Map<String, String> save() {
-            Gson gson = new GsonBuilder().setPrettyPrinting().create();;
+            Gson gson = new GsonBuilder().setPrettyPrinting().create();
 
             Map<String, String> saveMap = new HashMap<>();
             saveMap.put("X", gson.toJson(chunk.getX()));
@@ -81,8 +81,7 @@ public class ClaimedChunk extends Territory implements Savable {
 
         World chunkWorld = getServer().createWorld(new WorldCreator(world));
         if (chunkWorld != null) {
-            chunk = chunkWorld.getChunkAt(gson.fromJson(data.get("X"), Integer.TYPE),
-                                            gson.fromJson(data.get("Z"), Integer.TYPE));
+            chunk = chunkWorld.getChunkAt(gson.fromJson(data.get("X"), Integer.TYPE), gson.fromJson(data.get("Z"), Integer.TYPE));
         }
     }
 }

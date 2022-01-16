@@ -17,8 +17,6 @@ import java.util.List;
  * @author Callum Johnson
  */
 public class HelpCommand extends SubCommand {
-
-    // Last page of help menus.
     private static final int LAST_PAGE = 7;
     private final HashMap<Integer, List<String>> helpPages = new HashMap<>();
 
@@ -58,10 +56,16 @@ public class HelpCommand extends SubCommand {
      */
     @Override
     public void execute(CommandSender sender, String[] args, String key) {
-        if (!(checkPermissions(sender, "mf.help"))) return;
+        if (!(checkPermissions(sender, "mf.help"))) {
+            return;
+        }
         int page = (args.length <= 0 ? 1 : getIntSafe(args[0], 1));
-        if (page > LAST_PAGE) page = LAST_PAGE; // Upper Limit over LAST_PAGE
-        if (page <= 0) page = 1; // Lower Limit to 0
+        if (page > LAST_PAGE) {
+            page = LAST_PAGE; // Upper Limit over LAST_PAGE
+        }
+        if (page <= 0) {
+            page = 1; // Lower Limit to 0
+        }
         sender.sendMessage(translate("&b&l" + getText("CommandsPage" + page, LAST_PAGE)));
         helpPages.get(page).forEach(line -> sender.sendMessage(translate("&b" + getText("Help" + line))));
     }

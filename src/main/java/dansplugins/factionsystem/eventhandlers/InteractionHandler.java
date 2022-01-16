@@ -40,6 +40,8 @@ import org.bukkit.event.player.*;
 import org.bukkit.inventory.InventoryHolder;
 import preponderous.ponder.minecraft.spigot.tools.UUIDChecker;
 
+import java.util.Objects;
+
 /**
  * @author Daniel McCoy Stephenson
  */
@@ -65,12 +67,8 @@ public class InteractionHandler implements Listener {
                 }
             }
         }
-        
-        // if block is not locked then return
-        if (!PersistentData.getInstance().isBlockLocked(event.getBlock())) {
-            return;
-        }
-        else {
+
+        if (PersistentData.getInstance().isBlockLocked(event.getBlock())) {
             // block is locked
             boolean isOwner = PersistentData.getInstance().getLockedBlock(event.getBlock()).getOwner().equals(player.getUniqueId());
             if (!isOwner) {
@@ -120,37 +118,34 @@ public class InteractionHandler implements Listener {
             }
 
             int seconds = 2;
-            MedievalFactions.getInstance().getServer().getScheduler().runTaskLater(MedievalFactions.getInstance(), new Runnable() {
-                @Override
-                public void run() {
-                    Block block = player.getWorld().getBlockAt(event.getBlock().getLocation());
+            MedievalFactions.getInstance().getServer().getScheduler().runTaskLater(MedievalFactions.getInstance(), () -> {
+                Block block = player.getWorld().getBlockAt(event.getBlock().getLocation());
 
-                    if (!BlockChecker.getInstance().isChest(block)) {
-                        // There has been 2 seconds since we last confirmed this was a chest, double-checking isn't ever bad :)
-                        return;
+                if (!BlockChecker.getInstance().isChest(block)) {
+                    // There has been 2 seconds since we last confirmed this was a chest, double-checking isn't ever bad :)
+                    return;
+                }
+
+                InventoryHolder holder = ((Chest) block.getState()).getInventory().getHolder();
+                if (holder instanceof DoubleChest) {
+                    // make sure both sides are locked
+                    DoubleChest doubleChest = (DoubleChest) holder;
+                    Block leftChest = ((Chest) Objects.requireNonNull(doubleChest.getLeftSide())).getBlock();
+                    Block rightChest = ((Chest) Objects.requireNonNull(doubleChest.getRightSide())).getBlock();
+
+                    if (PersistentData.getInstance().isBlockLocked(leftChest)) {
+                        // lock right chest
+                        LockedBlock right = new LockedBlock(player.getUniqueId(), PersistentData.getInstance().getPlayersFaction(player.getUniqueId()).getName(), rightChest.getX(), rightChest.getY(), rightChest.getZ(), rightChest.getWorld().getName());
+                        PersistentData.getInstance().getLockedBlocks().add(right);
+                    }
+                    else {
+                        if (PersistentData.getInstance().isBlockLocked(rightChest)) {
+                            // lock left chest
+                            LockedBlock left = new LockedBlock(player.getUniqueId(), PersistentData.getInstance().getPlayersFaction(player.getUniqueId()).getName(), leftChest.getX(), leftChest.getY(), leftChest.getZ(), leftChest.getWorld().getName());
+                            PersistentData.getInstance().getLockedBlocks().add(left);
+                        }
                     }
 
-                    InventoryHolder holder = ((Chest) block.getState()).getInventory().getHolder();
-                    if (holder instanceof DoubleChest) {
-                        // make sure both sides are locked
-                        DoubleChest doubleChest = (DoubleChest) holder;
-                        Block leftChest = ((Chest) doubleChest.getLeftSide()).getBlock();
-                        Block rightChest = ((Chest) doubleChest.getRightSide()).getBlock();
-
-                        if (PersistentData.getInstance().isBlockLocked(leftChest)) {
-                            // lock right chest
-                            LockedBlock right = new LockedBlock(player.getUniqueId(), PersistentData.getInstance().getPlayersFaction(player.getUniqueId()).getName(), rightChest.getX(), rightChest.getY(), rightChest.getZ(), rightChest.getWorld().getName());
-                            PersistentData.getInstance().getLockedBlocks().add(right);
-                        }
-                        else {
-                            if (PersistentData.getInstance().isBlockLocked(rightChest)) {
-                                // lock left chest
-                                LockedBlock left = new LockedBlock(player.getUniqueId(), PersistentData.getInstance().getPlayersFaction(player.getUniqueId()).getName(), leftChest.getX(), leftChest.getY(), leftChest.getZ(), leftChest.getWorld().getName());
-                                PersistentData.getInstance().getLockedBlocks().add(left);
-                            }
-                        }
-
-                    }
                 }
             }, seconds * 20);
         }
@@ -162,7 +157,6 @@ public class InteractionHandler implements Listener {
             if (isNextToNonOwnedLockedChest || isUnderOrAboveNonOwnedLockedChest) {
                 event.setCancelled(true);
                 player.sendMessage(ChatColor.RED + LocalLocaleService.getInstance().getText("CannotPlaceHoppersNextToUnownedLockedChests"));
-                return;
             }
         }
     }

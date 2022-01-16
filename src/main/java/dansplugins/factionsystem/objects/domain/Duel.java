@@ -24,8 +24,27 @@ import java.util.ArrayList;
  */
 public class Duel {
 	public enum DuelState {INVITED, DUELLING, WINNER, TIED}
+	private DuelState duelState;
+	private BossBar bar = null;
+	Player _challenged = null;
+	double challengedHealth = 0;
+	Player _challenger = null;
+	double challengerHealth = 0;
+	Player winner = null;
+	Player loser = null;
+	int repeatingTaskId = 0;
+	float nearbyPlayerRadius = 64;
+	double timeLimit = 120.0;
+	double timeDecrementAmount = 0;
 
-	private DuelState duelState = DuelState.INVITED;
+	public Duel(Player challenger, Player challenged, int limit) {
+		_challenger = challenger;
+		challengerHealth = challenger.getHealth();
+		_challenged = challenged;
+		challengedHealth = challenged.getHealth();
+		timeLimit = limit;
+		duelState = DuelState.INVITED;
+	}
 
 	public DuelState getStatus()
 	{
@@ -36,19 +55,6 @@ public class Duel {
 	{
 		duelState = state;
 	}
-	
-	private BossBar bar = null;
-	Player _challenged = null;
-	double challengedHealth = 0;
-	Player _challenger = null;
-	double challengerHealth = 0;
-	Player winner = null;
-	Player loser = null;
-	int repeatingTaskId = 0;
-	
-	float nearbyPlayerRadius = 64;
-	double timeLimit = 120.0;
-	double timeDecrementAmount = 0;
 
 	public boolean isChallenged(Player player) {
 		return player.equals(_challenged);
@@ -169,6 +175,9 @@ public class Duel {
 	private ItemStack getHead(Player player) {
 		ItemStack item = new ItemStack(Material.PLAYER_HEAD, 1);
 		SkullMeta skull = (SkullMeta) item.getItemMeta();
+		if (skull == null) {
+			return null;
+		}
 		skull.setDisplayName(player.getName() + "'s head.");
 		OfflinePlayer offlinePlayer = (OfflinePlayer) getLoser();
 		skull.setOwningPlayer(offlinePlayer);
@@ -216,14 +225,5 @@ public class Duel {
 		bar.removeAll();
 		MedievalFactions.getInstance().getServer().getScheduler().cancelTask(repeatingTaskId);
     	EphemeralData.getInstance().getDuelingPlayers().remove(this);
-	}
-	
-	public Duel(Player challenger, Player challenged, int limit) {
-		_challenger = challenger;
-		challengerHealth = challenger.getHealth(); 
-		_challenged = challenged;
-		challengedHealth = challenged.getHealth();
-		timeLimit = limit;
-		duelState = DuelState.INVITED;
 	}
 }

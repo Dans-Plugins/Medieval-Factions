@@ -23,7 +23,7 @@ public class StatsCommand extends SubCommand {
 
     @Override
     public void execute(Player player, String[] args, String key) {
-        execute(player, args, key);
+        execute((CommandSender) player, args, key);
     }
 
     @Override

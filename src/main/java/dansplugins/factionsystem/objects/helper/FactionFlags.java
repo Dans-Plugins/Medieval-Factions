@@ -26,8 +26,8 @@ import java.util.HashMap;
  *         - initializeFlagValues()
  *         - loadMissingFlagsIfNecessary()
  */
-public class FactionFlags implements dansplugins.factionsystem.objects.helper.specification.IFactionFlags {
-    private ArrayList<String> flagNames = new ArrayList<>();
+public class FactionFlags {
+    private final ArrayList<String> flagNames = new ArrayList<>();
     private HashMap<String, Integer> integerValues = new HashMap<>();
     private HashMap<String, Boolean> booleanValues = new HashMap<>();
     private HashMap<String, Double> doubleValues = new HashMap<>();
@@ -272,7 +272,7 @@ public class FactionFlags implements dansplugins.factionsystem.objects.helper.sp
     }
 
     private String getFlagsSeparatedByCommas() {
-        String toReturn = "";
+        StringBuilder toReturn = new StringBuilder();
         for (String flagName : flagNames) {
 
             if (flagName.equals("neutral") && !MedievalFactions.getInstance().getConfig().getBoolean("allowNeutrality")) {
@@ -291,19 +291,19 @@ public class FactionFlags implements dansplugins.factionsystem.objects.helper.sp
                 continue;
             }
 
-            if (!toReturn.equals("")) {
-                toReturn += ", ";
+            if (!toReturn.toString().equals("")) {
+                toReturn.append(", ");
             }
             if (integerValues.containsKey(flagName)) {
-                toReturn += String.format("%s: %s", flagName, integerValues.get(flagName));
+                toReturn.append(String.format("%s: %s", flagName, integerValues.get(flagName)));
             } else if (booleanValues.containsKey(flagName)) {
-                toReturn += String.format("%s: %s", flagName, booleanValues.get(flagName));
+                toReturn.append(String.format("%s: %s", flagName, booleanValues.get(flagName)));
             } else if (doubleValues.containsKey(flagName)) {
-                toReturn += String.format("%s: %s", flagName, doubleValues.get(flagName));
+                toReturn.append(String.format("%s: %s", flagName, doubleValues.get(flagName)));
             } else if (stringValues.containsKey(flagName)) {
-                toReturn += String.format("%s: %s", flagName, stringValues.get(flagName));
+                toReturn.append(String.format("%s: %s", flagName, stringValues.get(flagName)));
             }
         }
-        return toReturn;
+        return toReturn.toString();
     }
 }

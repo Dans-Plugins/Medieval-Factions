@@ -96,11 +96,7 @@ public class EffectHandler implements Listener {
 
     private void addScheduledTaskToRemoveCloudFromEphemeralData(AreaEffectCloud cloud, Pair<Player, AreaEffectCloud> storedCloudPair) {
         long delay = cloud.getDuration();
-        MedievalFactions.getInstance().getServer().getScheduler().scheduleSyncDelayedTask(MedievalFactions.getInstance(), new Runnable() {
-            public void run(){
-                EphemeralData.getInstance().getActiveAOEClouds().remove(storedCloudPair);
-            }
-        }, delay);
+        MedievalFactions.getInstance().getServer().getScheduler().scheduleSyncDelayedTask(MedievalFactions.getInstance(), () -> EphemeralData.getInstance().getActiveAOEClouds().remove(storedCloudPair), delay);
     }
 
     private void removePotionIntensityIfAnyVictimIsAnAlliedPlayer(PotionSplashEvent event, Player attacker) {

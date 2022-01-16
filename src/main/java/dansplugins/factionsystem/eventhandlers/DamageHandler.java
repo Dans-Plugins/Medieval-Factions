@@ -22,7 +22,6 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.projectiles.ProjectileSource;
-import preponderous.ponder.misc.Pair;
 
 /**
  * @author Daniel McCoy Stephenson
@@ -132,7 +131,7 @@ public class DamageHandler implements Listener {
         if (isDuelActive(duel) && isVictimDead(victim.getHealth(), event.getFinalDamage())) {
             duel.setLoser(victim);
             duel.finishDuel(false);
-            EphemeralData.getInstance().getDuelingPlayers().remove(this);
+            EphemeralData.getInstance().getDuelingPlayers().remove(duel);
             event.setCancelled(true);
         }
     }

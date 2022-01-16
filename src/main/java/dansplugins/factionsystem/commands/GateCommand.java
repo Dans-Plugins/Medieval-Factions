@@ -89,16 +89,16 @@ public class GateCommand extends SubCommand {
 		final boolean remove = safeEquals(args[0], "remove", getText("CmdGateRemove"));
 		final boolean rename = safeEquals(args[0], "name", getText("CmdGateName"));
 		if (rename || remove) {
-			final Block targettedBlock = player.getTargetBlock(null, 16);
-			if (targettedBlock.getType().equals(Material.AIR)) {
+			final Block targetBlock = player.getTargetBlock(null, 16);
+			if (targetBlock.getType().equals(Material.AIR)) {
 				player.sendMessage(translate("&c" + getText("NoBlockDetectedToCheckForGate")));
 				return;
 			}
-			if (!data.isGateBlock(targettedBlock)) {
+			if (!data.isGateBlock(targetBlock)) {
 				player.sendMessage(translate("&c" + getText("TargetBlockNotPartOfGate")));
 				return;
 			}
-			final Gate gate = getGate(targettedBlock, data.getFactions());
+			final Gate gate = getGate(targetBlock, data.getFactions());
 			if (gate == null) {
 				player.sendMessage(translate("&c" + getText("TargetBlockNotPartOfGate")));
 				return;

@@ -36,7 +36,7 @@ public class MoveHandler implements Listener {
             initiateAutoclaimCheck(player);
 
             if (newChunkIsClaimedAndOldChunkWasNot(event)) {
-                String factionName = LocalChunkService.getInstance().getClaimedChunk(event.getTo().getChunk()).getHolder();
+                String factionName = LocalChunkService.getInstance().getClaimedChunk(Objects.requireNonNull(event.getTo()).getChunk()).getHolder();
                 Faction holder = PersistentData.getInstance().getFaction(factionName);
                 TerritoryOwnerNotifier.getInstance().sendPlayerTerritoryAlert(player, holder);
                 return;
@@ -48,7 +48,7 @@ public class MoveHandler implements Listener {
             }
 
             if (newChunkIsClaimedAndOldChunkWasAlsoClaimed(event) && chunkHoldersAreNotEqual(event)) {
-                String factionName = LocalChunkService.getInstance().getClaimedChunk(event.getTo().getChunk()).getHolder();
+                String factionName = LocalChunkService.getInstance().getClaimedChunk(Objects.requireNonNull(event.getTo()).getChunk()).getHolder();
                 Faction holder = PersistentData.getInstance().getFaction(factionName);
                 TerritoryOwnerNotifier.getInstance().sendPlayerTerritoryAlert(player, holder);
             }
@@ -97,30 +97,27 @@ public class MoveHandler implements Listener {
     }
 
     private void scheduleClaiming(Player player, Faction faction) {
-        getServer().getScheduler().runTaskLater(MedievalFactions.getInstance(), new Runnable() {
-            @Override
-            public void run() {
-                // add new chunk to claimed chunks
-                LocalChunkService.getInstance().claimChunkAtLocation(player, player.getLocation(), faction);
-                DynmapIntegrator.getInstance().updateClaims();
-            }
+        getServer().getScheduler().runTaskLater(MedievalFactions.getInstance(), () -> {
+            // add new chunk to claimed chunks
+            LocalChunkService.getInstance().claimChunkAtLocation(player, player.getLocation(), faction);
+            DynmapIntegrator.getInstance().updateClaims();
         }, 1); // delayed by 1 tick (1/20th of a second) because otherwise players will claim the chunk they just left
     }
 
     private boolean newChunkIsClaimedAndOldChunkWasNot(PlayerMoveEvent event) {
-        return LocalChunkService.getInstance().isClaimed(event.getTo().getChunk(), PersistentData.getInstance().getClaimedChunks()) && !LocalChunkService.getInstance().isClaimed(event.getFrom().getChunk(), PersistentData.getInstance().getClaimedChunks());
+        return LocalChunkService.getInstance().isClaimed(Objects.requireNonNull(event.getTo()).getChunk(), PersistentData.getInstance().getClaimedChunks()) && !LocalChunkService.getInstance().isClaimed(event.getFrom().getChunk(), PersistentData.getInstance().getClaimedChunks());
     }
 
     private boolean newChunkIsUnclaimedAndOldChunkWasNot(PlayerMoveEvent event) {
-        return !LocalChunkService.getInstance().isClaimed(event.getTo().getChunk(), PersistentData.getInstance().getClaimedChunks()) && LocalChunkService.getInstance().isClaimed(event.getFrom().getChunk(), PersistentData.getInstance().getClaimedChunks());
+        return !LocalChunkService.getInstance().isClaimed(Objects.requireNonNull(event.getTo()).getChunk(), PersistentData.getInstance().getClaimedChunks()) && LocalChunkService.getInstance().isClaimed(event.getFrom().getChunk(), PersistentData.getInstance().getClaimedChunks());
     }
 
     private boolean newChunkIsClaimedAndOldChunkWasAlsoClaimed(PlayerMoveEvent event) {
-        return LocalChunkService.getInstance().isClaimed(event.getTo().getChunk(), PersistentData.getInstance().getClaimedChunks()) && LocalChunkService.getInstance().isClaimed(event.getFrom().getChunk(), PersistentData.getInstance().getClaimedChunks());
+        return LocalChunkService.getInstance().isClaimed(Objects.requireNonNull(event.getTo()).getChunk(), PersistentData.getInstance().getClaimedChunks()) && LocalChunkService.getInstance().isClaimed(event.getFrom().getChunk(), PersistentData.getInstance().getClaimedChunks());
     }
 
     private boolean chunkHoldersAreNotEqual(PlayerMoveEvent event) {
-        return !(LocalChunkService.getInstance().getClaimedChunk(event.getFrom().getChunk()).getHolder().equalsIgnoreCase(LocalChunkService.getInstance().getClaimedChunk(event.getTo().getChunk()).getHolder()));
+        return !(LocalChunkService.getInstance().getClaimedChunk(event.getFrom().getChunk()).getHolder().equalsIgnoreCase(LocalChunkService.getInstance().getClaimedChunk(Objects.requireNonNull(event.getTo()).getChunk()).getHolder()));
     }
 
     private boolean playerMovedFromUnclaimedLandIntoClaimedLand(ClaimedChunk fromChunk, ClaimedChunk toChunk) {

@@ -103,7 +103,7 @@ public class LockedBlock implements Lockable, Savable {
 
     @Override
     public Map<String, String> save() {
-        Gson gson = new GsonBuilder().setPrettyPrinting().create();;
+        Gson gson = new GsonBuilder().setPrettyPrinting().create();
 
         Map<String, String> saveMap = new HashMap<>();
         saveMap.put("X", gson.toJson(x));
@@ -119,7 +119,7 @@ public class LockedBlock implements Lockable, Savable {
 
     @Override
     public void load(Map<String, String> data) {
-        Gson gson = new GsonBuilder().setPrettyPrinting().create();;
+        Gson gson = new GsonBuilder().setPrettyPrinting().create();
 
         x = gson.fromJson(data.get("X"), Integer.TYPE);
         y = gson.fromJson(data.get("Y"), Integer.TYPE);

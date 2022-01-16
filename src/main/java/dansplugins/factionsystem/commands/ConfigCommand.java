@@ -78,7 +78,6 @@ public class ConfigCommand extends SubCommand {
                     break;
                 default:
                     sender.sendMessage(translate("&c" + getText("UsageConfigShow")));
-                    return;
             }
         }
         else if (set) {

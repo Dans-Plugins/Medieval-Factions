@@ -128,7 +128,7 @@ public class PlaceholderAPI extends PlaceholderExpansion {
         }
         if (id.equalsIgnoreCase("faction_player_power")) {
             // The player-specific power which counts toward their Faction's power.
-            return String.valueOf(PersistentData.getInstance().getPlayersPowerRecord(player.getUniqueId()).getPowerLevel());
+            return String.valueOf(PersistentData.getInstance().getPlayersPowerRecord(player.getUniqueId()).getPower());
         }
         if (id.equalsIgnoreCase("faction_player_max_power")) {
             // The player-specific max_power which is their total contribute-able power toward their Faction's power.
@@ -137,7 +137,7 @@ public class PlaceholderAPI extends PlaceholderExpansion {
         if (id.equalsIgnoreCase("faction_player_power_full")) {
             // The formatted version of the 'power' and 'max_power' placeholders, 10/10 for example.
             final PowerRecord playersPowerRecord = PersistentData.getInstance().getPlayersPowerRecord(player.getUniqueId());
-            return playersPowerRecord.getPowerLevel() + "/" + playersPowerRecord.maxPower();
+            return playersPowerRecord.getPower() + "/" + playersPowerRecord.maxPower();
         }
 
         // Player-Specific.

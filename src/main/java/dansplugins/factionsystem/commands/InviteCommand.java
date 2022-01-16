@@ -81,15 +81,12 @@ public class InviteCommand extends SubCommand {
         final long seconds = 1728000L;
         // make invitation expire in 24 hours, if server restarts it also expires since invites aren't saved
         final OfflinePlayer tmp = target;
-        getServer().getScheduler().runTaskLater(MedievalFactions.getInstance(), new Runnable() {
-            @Override
-            public void run() {
-                faction.uninvite(playerUUID);
-                if (tmp.isOnline() && tmp.getPlayer() != null) {
-                    tmp.getPlayer().sendMessage(translate(
-                            "&c" + getText("InvitationExpired", faction.getName())
-                    ));
-                }
+        getServer().getScheduler().runTaskLater(MedievalFactions.getInstance(), () -> {
+            faction.uninvite(playerUUID);
+            if (tmp.isOnline() && tmp.getPlayer() != null) {
+                tmp.getPlayer().sendMessage(translate(
+                        "&c" + getText("InvitationExpired", faction.getName())
+                ));
             }
         }, seconds);
     }

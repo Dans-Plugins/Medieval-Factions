@@ -8,6 +8,7 @@ import dansplugins.factionsystem.objects.domain.Faction;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.event.Event;
 import org.bukkit.event.HandlerList;
+import org.jetbrains.annotations.NotNull;
 
 /**
  * @author C A L L U M#4160
@@ -49,7 +50,7 @@ public abstract class FactionEvent extends Event {
     }
 
     // Bukkit Event API requirements.
-    public HandlerList getHandlers() {
+    public @NotNull HandlerList getHandlers() {
         return FactionEvent.handlers;
     }
 

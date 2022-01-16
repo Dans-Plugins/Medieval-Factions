@@ -19,23 +19,17 @@ import java.util.UUID;
  * @author Daniel McCoy Stephenson
  * @brief This class gives developers access to the external API for Medieval Factions.
  */
-public class MedievalFactionsAPI implements IMedievalFactionsAPI {
-
+public class MedievalFactionsAPI {
     private final String APIVersion = "v1.0.0"; // every time the external API is altered, this should be incremented
 
-    // accessors
-
-    @Override
     public String getAPIVersion() {
         return APIVersion;
     }
 
-    @Override
     public String getVersion() {
         return MedievalFactions.getInstance().getVersion();
     }
 
-    @Override
     public MF_Faction getFaction(String factionName) {
         Faction faction = PersistentData.getInstance().getFaction(factionName);
         if (faction == null) {
@@ -44,7 +38,6 @@ public class MedievalFactionsAPI implements IMedievalFactionsAPI {
         return new MF_Faction(faction);
     }
 
-    @Override
     public MF_Faction getFaction(Player player) {
         Faction faction = PersistentData.getInstance().getPlayersFaction(player.getUniqueId());
         if (faction == null) {
@@ -53,7 +46,6 @@ public class MedievalFactionsAPI implements IMedievalFactionsAPI {
         return new MF_Faction(faction);
     }
 
-    @Override
     public MF_Faction getFaction(UUID playerUUID) {
         Faction faction = PersistentData.getInstance().getPlayersFaction(playerUUID);
         if (faction == null) {
@@ -62,56 +54,46 @@ public class MedievalFactionsAPI implements IMedievalFactionsAPI {
         return new MF_Faction(faction);
     }
 
-    @Override
     public boolean isPlayerInFactionChat(Player player) {
         return EphemeralData.getInstance().isPlayerInFactionChat(player);
     }
-  
-    @Override
+
     public boolean isPrefixesFeatureEnabled() {
         return MedievalFactions.getInstance().getConfig().getBoolean("playersChatWithPrefixes");
     }
 
-    @Override
     public boolean isChunkClaimed(Chunk chunk) {
         return (LocalChunkService.getInstance().getClaimedChunk(chunk) != null);
     }
 
-    @Override
-    public int getPower(Player player) {
-        return PersistentData.getInstance().getPlayersPowerRecord(player.getUniqueId()).getPowerLevel();
+    public double getPower(Player player) {
+        return PersistentData.getInstance().getPlayersPowerRecord(player.getUniqueId()).getPower();
     }
 
-    @Override
-    public int getPower(UUID playerUUID) {
-        return PersistentData.getInstance().getPlayersPowerRecord(playerUUID).getPowerLevel();
+    public double getPower(UUID playerUUID) {
+        return PersistentData.getInstance().getPlayersPowerRecord(playerUUID).getPower();
     }
 
-    // mutators
-
-    @Override
     public void forcePlayerToLeaveFactionChat(UUID uuid) {
         EphemeralData.getInstance().getPlayersInFactionChat().remove(uuid);
     }
 
-    @Override
     public void increasePower(Player player, int amount) {
         PowerRecord powerRecord = PersistentData.getInstance().getPlayersPowerRecord(player.getUniqueId());
-        int originalPower = powerRecord.getPowerLevel();
-        int newPower = originalPower + amount;
-        powerRecord.setPowerLevel(newPower);
+        double originalPower = powerRecord.getPower();
+        double newPower = originalPower + amount;
+        powerRecord.setPower(newPower);
     }
 
-    @Override
     public void decreasePower(Player player, int amount) {
         PowerRecord powerRecord = PersistentData.getInstance().getPlayersPowerRecord(player.getUniqueId());
-        int originalPower = powerRecord.getPowerLevel();
-        int newPower = originalPower - amount;
+        double originalPower = powerRecord.getPower();
+        double newPower = originalPower - amount;
         if (newPower >= 0) {
-            powerRecord.setPowerLevel(originalPower - amount);
+            powerRecord.setPower(originalPower - amount);
         }
         else {
-            powerRecord.setPowerLevel(0);
+            powerRecord.setPower(0);
         }
     }
 }
