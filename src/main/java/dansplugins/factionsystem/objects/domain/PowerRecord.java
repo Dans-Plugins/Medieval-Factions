@@ -105,8 +105,8 @@ public class PowerRecord extends PlayerRecord implements Savable {
         return powerLevel != originalLevel;
     }
 
-    public int decreasePowerByTenPercent() {
-        int powerDecreaseAmount = (int) (powerLevel * 0.10);
+    public double decreasePowerByTenPercent() {
+        double powerDecreaseAmount = powerLevel * 0.10;
         powerLevel =- powerDecreaseAmount;
         if (powerLevel < 0) {
             powerLevel = 0;
