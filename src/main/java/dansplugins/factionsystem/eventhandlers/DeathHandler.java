@@ -41,7 +41,7 @@ public class DeathHandler implements Listener {
 
     private void decreaseDyingPlayersPower(Player player) {
         PowerRecord playersPowerRecord = PersistentData.getInstance().getPlayersPowerRecord(player.getUniqueId());
-        int powerLost = playersPowerRecord.decreasePowerByTenPercent();
+        double powerLost = playersPowerRecord.decreasePowerByTenPercent();
         if (powerLost != 0) {
             player.sendMessage(ChatColor.RED + "You lost " + powerLost + " power."); // TODO: add locale message
         }
