@@ -116,6 +116,11 @@ public class MedievalFactions extends PonderPlugin {
         return getConfig().getBoolean("debugMode");
     }
 
+    @Override
+    public PonderMC getPonderAPI() {
+        return ponder;
+    }
+
     private void makeSureEveryPlayerExperiencesPowerDecay() {
         PersistentData.getInstance().createActivityRecordForEveryOfflinePlayer();
     }
