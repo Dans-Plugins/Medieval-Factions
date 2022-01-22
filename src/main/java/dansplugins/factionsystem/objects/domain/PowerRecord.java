@@ -129,6 +129,16 @@ public class PowerRecord extends PlayerRecord implements Savable {
     public void load(Map<String, String> data) {
         Gson gson = new GsonBuilder().setPrettyPrinting().create();
         playerUUID = UUID.fromString(gson.fromJson(data.get("playerUUID"), String.class));
-        powerLevel = gson.fromJson(data.get("powerLevel"), Integer.TYPE);
+        attemptToLoadPowerLevel(gson, data);
+
+    }
+
+    private void attemptToLoadPowerLevel(Gson gson, Map<String, String> data) {
+        try {
+            powerLevel = gson.fromJson(data.get("powerLevel"), Double.TYPE);
+        }
+        catch(Exception e) {
+            powerLevel = gson.fromJson(data.get("powerLevel"), Integer.TYPE);
+        }
     }
 }
