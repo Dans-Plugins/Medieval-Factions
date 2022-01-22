@@ -16,9 +16,9 @@ public class FactionWarStartEvent extends FactionEvent implements Cancellable {
 
     // Variables.
     private boolean cancelled = false;
-    private String attackerName;
-    private String defenderName;
-    private String playerName;
+    private final String attackerName;
+    private final String defenderName;
+    private final String playerName;
 
     /**
      * Constructor to initialise a FactionWarStartEvent.

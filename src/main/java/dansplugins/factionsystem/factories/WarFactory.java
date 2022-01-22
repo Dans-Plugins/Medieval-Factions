@@ -25,11 +25,11 @@ public class WarFactory {
         return instance;
     }
 
-    public boolean createWar(Faction attacker, Faction defender, String reason) {
+    public void createWar(Faction attacker, Faction defender, String reason) {
         War war = new War(attacker, defender, reason);
 
         // TODO: inform factions of war here instead of in the declare war command
 
-        return PersistentData.getInstance().addWar(war);
+        PersistentData.getInstance().addWar(war);
     }
 }

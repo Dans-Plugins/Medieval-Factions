@@ -35,12 +35,7 @@ public class DynmapIntegrator {
 
     public static boolean hasDynmap() {
         if (!dynmapInitialized) {
-            if (getInstance() == null) {
-                return false;
-            }
-            else {
-                return true;
-            }
+            return getInstance() != null;
         }
         return true;
     }
@@ -96,16 +91,16 @@ public class DynmapIntegrator {
     // Dynmap integration related members
 
     // Claims/factions markers
-    private Map<String, AreaMarker> resareas = new HashMap<String, AreaMarker>();
-    private Map<String, Marker> resmark = new HashMap<String, Marker>();
+    private final Map<String, AreaMarker> resareas = new HashMap<>();
+    private final Map<String, Marker> resmark = new HashMap<>();
 
     // Realms markers
-    private Map<String, AreaMarker> realmsareas = new HashMap<String, AreaMarker>();
-    private Map<String, Marker> realmsmark = new HashMap<String, Marker>();
+    private final Map<String, AreaMarker> realmsareas = new HashMap<>();
+    private final Map<String, Marker> realmsmark = new HashMap<>();
 
-    enum direction { XPLUS, ZPLUS, XMINUS, ZMINUS };
-    private Plugin dynmap;
-    private DynmapCommonAPI dynmapAPI;
+    enum direction { XPLUS, ZPLUS, XMINUS, ZMINUS }
+
+    private final Plugin dynmap;
     private MarkerAPI markerAPI;
     MarkerSet claims;
     MarkerSet realms;
@@ -113,7 +108,6 @@ public class DynmapIntegrator {
     public DynmapIntegrator() {
         PluginManager pm = getServer().getPluginManager();
 
-        /* Get dynmap */
         dynmap = pm.getPlugin("dynmap");
 
         if(!isDynmapPresent()) {
@@ -121,7 +115,7 @@ public class DynmapIntegrator {
         }
         else {
             try {
-                dynmapAPI = (DynmapCommonAPI) dynmap; /* Get API */
+                DynmapCommonAPI dynmapAPI = (DynmapCommonAPI) dynmap; /* Get API */
                 markerAPI = dynmapAPI.getMarkerAPI();
                 initializeMarkerSets();
                 Logger.getInstance().log(LocalLocaleService.getInstance().getText("DynmapIntegrationSuccessful"));
@@ -163,19 +157,17 @@ public class DynmapIntegrator {
     /**
      * Find all contiguous blocks, set in target and clear in source
      */
-    private int floodFillTarget(ChunkFlags src, ChunkFlags dest, int x, int y) {
-        int cnt = 0;
-        ArrayDeque<int[]> stack = new ArrayDeque<int[]>();
+    private void floodFillTarget(ChunkFlags src, ChunkFlags dest, int x, int y) {
+        ArrayDeque<int[]> stack = new ArrayDeque<>();
         stack.push(new int[] { x, y });
 
-        while(stack.isEmpty() == false) {
+        while(!stack.isEmpty()) {
             int[] nxt = stack.pop();
             x = nxt[0];
             y = nxt[1];
             if(src.getFlag(x, y)) { /* Set in src */
                 src.setFlag(x, y, false);   /* Clear source */
                 dest.setFlag(x, y, true);   /* Set in destination */
-                cnt++;
                 if(src.getFlag(x+1, y))
                     stack.push(new int[] { x+1, y });
                 if(src.getFlag(x-1, y))
@@ -186,15 +178,14 @@ public class DynmapIntegrator {
                     stack.push(new int[] { x, y-1 });
             }
         }
-        return cnt;
     }
 
     /* Update Realm information */
     private void dynmapUpdateRealms() {
         // Realms Layer
 
-        Map<String,AreaMarker> newmap = new HashMap<String,AreaMarker>(); /* Build new map */
-        Map<String,Marker> newmark = new HashMap<String,Marker>(); /* Build new map */
+        Map<String,AreaMarker> newmap = new HashMap<>(); /* Build new map */
+        Map<String,Marker> newmark = new HashMap<>(); /* Build new map */
 
         /* Loop through realms and build area markers coloured in the same colour
             as each faction's liege's colour. */
@@ -232,24 +223,24 @@ public class DynmapIntegrator {
     private void dynmapUpdateFactions() {
         // Claims Layer
 
-        Map<String,AreaMarker> newmap = new HashMap<String,AreaMarker>(); /* Build new map */
-        Map<String,Marker> newmark = new HashMap<String,Marker>(); /* Build new map */
+        Map<String,AreaMarker> newMap = new HashMap<>();
+        Map<String,Marker> newMarker = new HashMap<>();
 
         /* Loop through factions and build coloured faction area markers. */
         for(Faction f : PersistentData.getInstance().getFactions()) {
-            dynmapUpdateFaction(f, claims, newmap, "claims", f.getName(), buildNationPopupText(f), f.getFlags().getFlag("dynmapTerritoryColor").toString(), newmap, newmark);
+            dynmapUpdateFaction(f, claims, newMap, "claims", f.getName(), buildNationPopupText(f), f.getFlags().getFlag("dynmapTerritoryColor").toString(), newMap, newMarker);
         }
 
         /* Now, review old map - anything left is gone */
-        for(AreaMarker oldm : resareas.values()) {
-            oldm.deleteMarker();
+        for(AreaMarker oldMap : resareas.values()) {
+            oldMap.deleteMarker();
         }
-        for(Marker oldm : resmark.values()) {
-            oldm.deleteMarker();
+        for(Marker oldMarker : resmark.values()) {
+            oldMarker.deleteMarker();
         }
         /* And replace with new map */
-        resareas.putAll(newmap);
-        resmark.putAll(newmark);
+        resareas.putAll(newMap);
+        resmark.putAll(newMarker);
     }
 
     private String buildNationPopupText(Faction f) {

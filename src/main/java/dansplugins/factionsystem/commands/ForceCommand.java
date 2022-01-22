@@ -36,8 +36,8 @@ public class ForceCommand extends SubCommand {
     };
     private final HashMap<List<String>, String> subMap = new HashMap<>();
     
-    private ArgumentParser argumentParser = new ArgumentParser();
-    private UUIDChecker uuidChecker = new UUIDChecker();
+    private final ArgumentParser argumentParser = new ArgumentParser();
+    private final UUIDChecker uuidChecker = new UUIDChecker();
 
     public ForceCommand() {
         super(new String[]{
@@ -79,12 +79,14 @@ public class ForceCommand extends SubCommand {
                             Method method = getClass().getDeclaredMethod(entry.getValue(), CommandSender.class, String[].class); // Get the Declared method for that SubCommand.
                             method.invoke(this, sender, args);  // Use reflection to invoke the command.
                                                                 // Due to the nature of the force-command, it is safe to use reflection here.
-                        } catch (ReflectiveOperationException ex) {
+                        }
+                        catch (ReflectiveOperationException ex) {
                             System.out.println("DEBUG: Failed to resolve method from '" + args[0] + "'!");
                         }
                         return;
                     }
-                } catch (Exception e) {
+                }
+                catch (Exception e) {
                     System.out.println("DEBUG: Failed to use safeEquals to determine the command chosen.");
                 }
             }
@@ -94,26 +96,32 @@ public class ForceCommand extends SubCommand {
         Arrays.stream(commands).forEach(str -> sender.sendMessage(translate("&b" + getText("HelpForce" + str))));
     }
 
-    private void forceSave(CommandSender sender, String[] args) {
-        if (!(checkPermissions(sender, "mf.force.save", "mf.force.*", "mf.admin"))) return;
+    private void forceSave(CommandSender sender) {
+        if (!(checkPermissions(sender, "mf.force.save", "mf.force.*", "mf.admin"))) {
+            return;
+        }
         sender.sendMessage(translate("&a" + getText("AlertForcedSave")));
         LocalStorageService.getInstance().save();
     }
 
-    private void forceLoad(CommandSender sender, String[] args) {
-        if (!(checkPermissions(sender, "mf.force.load", "mf.force.*", "mf.admin"))) return;
+    private void forceLoad(CommandSender sender) {
+        if (!(checkPermissions(sender, "mf.force.load", "mf.force.*", "mf.admin"))) {
+            return;
+        }
         sender.sendMessage(translate("&a" + LocalLocaleService.getInstance().getText("AlertForcedLoad")));
         LocalStorageService.getInstance().load();
         MedievalFactions.getInstance().reloadConfig();
     }
 
     private void forcePeace(CommandSender sender, String[] args) {
-        if (!(checkPermissions(sender, "mf.force.peace", "mf.force.*", "mf.admin"))) return;
+        if (!(checkPermissions(sender, "mf.force.peace", "mf.force.*", "mf.admin"))) {
+            return;
+        }
         if (!(args.length >= 3)) {
             sender.sendMessage(translate("&c" + "Usage: /mf force peace \"faction1\" \"faction2\"")); // TODO: add locale message
             return;
         }
-        // get arguments designated by single quotes
+
         final ArrayList<String> doubleQuoteArgs = argumentParser.getArgumentsInsideDoubleQuotes(args);
         if (doubleQuoteArgs.size() < 2) {
             sender.sendMessage(translate("&c" + "Arguments must be designated in between double quotes.")); // TODO: add locale message
@@ -128,8 +136,9 @@ public class ForceCommand extends SubCommand {
         FactionWarEndEvent warEndEvent = new FactionWarEndEvent(former, latter);
         Bukkit.getPluginManager().callEvent(warEndEvent);
         if (!warEndEvent.isCancelled()) {
-            if (former.isEnemy(latter.getName())) former.removeEnemy(latter.getName()); // remove enemy
-            if (latter.isEnemy(former.getName())) latter.removeEnemy(former.getName()); // remove enemy
+            if (former.isEnemy(latter.getName())) former.removeEnemy(latter.getName());
+            if (latter.isEnemy(former.getName())) latter.removeEnemy(former.getName());
+
             // announce peace to all players on server.
             messageServer(translate(
                     "&a" + getText("AlertNowAtPeaceWith", former.getName(), latter.getName())
@@ -216,7 +225,7 @@ public class ForceCommand extends SubCommand {
             sender.sendMessage(translate("&c" + getText("UsageForceKick")));
             return;
         }
-        if (debug) { System.out.println(String.format("Looking for player UUID based on player name: '%s'", args[1])); }
+        if (debug) { System.out.printf("Looking for player UUID based on player name: '%s'%n", args[1]); }
         final UUID targetUUID = uuidChecker.findUUIDBasedOnPlayerName(args[1]);
         if (targetUUID == null) {
             sender.sendMessage(translate("&c" + getText("PlayerNotFound")));
@@ -273,7 +282,7 @@ public class ForceCommand extends SubCommand {
             return;
         }
         final PowerRecord record = data.getPlayersPowerRecord(playerUUID);
-        record.setPowerLevel(desiredPower); // Set power :)
+        record.setPower(desiredPower); // Set power :)
         sender.sendMessage(translate("&a" + getText("PowerLevelHasBeenSetTo", desiredPower)));
     }
 

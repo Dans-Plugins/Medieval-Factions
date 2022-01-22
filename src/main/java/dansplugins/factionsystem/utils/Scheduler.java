@@ -69,7 +69,7 @@ public class Scheduler {
             }
 
             private void initiatePowerIncrease(PowerRecord powerRecord) {
-                if (powerRecord.getPowerLevel() < powerRecord.maxPower() && getServer().getPlayer(powerRecord.getPlayerUUID()).isOnline()) {
+                if (powerRecord.getPower() < powerRecord.maxPower() && getServer().getPlayer(powerRecord.getPlayerUUID()).isOnline()) {
                     powerRecord.increasePower();
                     getServer().getPlayer(powerRecord.getPlayerUUID()).sendMessage(ChatColor.GREEN + String.format(LocalLocaleService.getInstance().getText("AlertPowerLevelIncreasedBy"), MedievalFactions.getInstance().getConfig().getInt("powerIncreaseAmount")));
                 }

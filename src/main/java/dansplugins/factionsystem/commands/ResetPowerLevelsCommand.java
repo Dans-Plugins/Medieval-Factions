@@ -45,6 +45,6 @@ public class ResetPowerLevelsCommand extends SubCommand {
         sender.sendMessage(translate("&aPower Levels Resetting..."));
         final int initialPowerLevel = getConfig().getInt("initialPowerLevel");
         System.out.println(getText("ResettingIndividualPowerRecords"));
-        data.getPlayerPowerRecords().forEach(record -> record.setPowerLevel(initialPowerLevel));
+        data.getPlayerPowerRecords().forEach(record -> record.setPower(initialPowerLevel));
     }
 }

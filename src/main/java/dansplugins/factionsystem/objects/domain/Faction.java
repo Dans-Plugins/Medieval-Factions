@@ -29,21 +29,16 @@ import static org.bukkit.Bukkit.getServer;
  * @author Daniel McCoy Stephenson
  */
 public class Faction extends Nation implements Feudal, Savable {
-
-    // persistent data
     private ArrayList<String> vassals = new ArrayList<>();
-    private ArrayList<Gate> gates = new ArrayList<>();
+    private final ArrayList<Gate> gates = new ArrayList<>();
     private String liege = "none";
     private String prefix = "none";
     private Location factionHome = null;
-    private FactionFlags flags = new FactionFlags();
+    private final FactionFlags flags = new FactionFlags();
     private int bonusPower = 0;
-
-    // ephemeral data
-    private ArrayList<String> attemptedVassalizations = new ArrayList<>();
+    private final ArrayList<String> attemptedVassalizations = new ArrayList<>();
     private boolean autoclaim = false;
 
-    // player constructor
     public Faction(String initialName, UUID creator) {
         setName(initialName);
         setOwner(creator);
@@ -51,19 +46,15 @@ public class Faction extends Nation implements Feudal, Savable {
         flags.initializeFlagValues();
     }
 
-    // server constructor
     public Faction(String initialName) {
         setName(initialName);
         prefix = initialName;
-        flags.initializeFlagValues(); // need to ensure that this doesn't mess up changes to flags being persistent
+        flags.initializeFlagValues(); // TODO: ensure that this doesn't mess up changes to flags being persistent
     }
 
-    // Must receive json data
     public Faction(Map<String, String> data) {
         this.load(data);
     }
-
-    // implementations for IFaction methods ------------------------------
 
     public void setFactionHome(Location l) {
         factionHome = l;
@@ -125,7 +116,7 @@ public class Faction extends Nation implements Feudal, Savable {
         int powerLevel = 0;
         for (UUID playerUUID : members) {
             try {
-                powerLevel += PersistentData.getInstance().getPlayersPowerRecord(playerUUID).getPowerLevel();
+                powerLevel += PersistentData.getInstance().getPlayersPowerRecord(playerUUID).getPower();
             }
             catch (Exception e) {
                 System.out.println(LocalLocaleService.getInstance().getText("ErrorPlayerPowerRecordForUUIDNotFound"));
@@ -254,12 +245,6 @@ public class Faction extends Nation implements Feudal, Savable {
         return gateList;
     }
 
-    // end of implementations for IFaction methods ------------------------------
-
-
-
-    // implementations for Feudal methods ------------------------------
-
     public boolean isVassal(String faction) {
         return(containsIgnoreCase(vassals, faction));
     }
@@ -294,9 +279,6 @@ public class Faction extends Nation implements Feudal, Savable {
         removeIfContainsIgnoreCase(vassals, name);
     }
 
-
-    // unsorted -----------------------
-
     public boolean addOfficer(UUID newOfficer) {
         if (officers.size() < calculateMaxOfficers() && !officers.contains(newOfficer)){
             officers.add(newOfficer);
@@ -324,14 +306,14 @@ public class Faction extends Nation implements Feudal, Savable {
 
 
     public String getVassalsSeparatedByCommas() {
-        String toReturn = "";
+        StringBuilder toReturn = new StringBuilder();
         for (int i = 0; i < vassals.size(); i++) {
-            toReturn = toReturn + vassals.get(i);
+            toReturn.append(vassals.get(i));
             if (i != vassals.size() - 1) {
-                toReturn = toReturn + ", ";
+                toReturn.append(", ");
             }
         }
-        return toReturn;
+        return toReturn.toString();
     }
 
     public void addAttemptedVassalization(String factionName) {
@@ -382,7 +364,7 @@ public class Faction extends Nation implements Feudal, Savable {
 
     @Override
     public Map<String, String> save() {
-        Gson gson = new GsonBuilder().setPrettyPrinting().create();;
+        Gson gson = new GsonBuilder().setPrettyPrinting().create();
         Map<String, String> saveMap = new HashMap<>();
 
         saveMap.put("members", gson.toJson(members));
@@ -399,7 +381,7 @@ public class Faction extends Nation implements Feudal, Savable {
         saveMap.put("prefix", gson.toJson(prefix));
         saveMap.put("bonusPower", gson.toJson(bonusPower));
 
-        ArrayList<String> gateList = new ArrayList<String>();
+        ArrayList<String> gateList = new ArrayList<>();
         for (Gate gate : gates)
         {
             Map <String, String> map = gate.save();
@@ -450,16 +432,12 @@ public class Faction extends Nation implements Feudal, Savable {
         factionHome = loadLocation(gson.fromJson(data.get("location"), stringToStringMapType), gson);
         liege = gson.fromJson(data.getOrDefault("liege", "none"), String.class);
         vassals = gson.fromJson(data.getOrDefault("vassals", "[]"), arrayListTypeString);
-        prefix = loadDataOrDefault(gson, data, "prefix", getName());
+        prefix = loadPrefixOrDefault(gson, data, getName());
         bonusPower = gson.fromJson(data.getOrDefault("bonusPower", "0"), Integer.TYPE);
 
-//        System.out.println("Loading Faction Gates...");
-        ArrayList<String> gateList = new ArrayList<String>();
-        gateList = gson.fromJson(data.get("factionGates"), arrayListTypeString);
-        if (gateList != null)
-        {
-            for (String item : gateList)
-            {
+        ArrayList<String> gateList = gson.fromJson(data.get("factionGates"), arrayListTypeString);
+        if (gateList != null) {
+            for (String item : gateList) {
                 Gate g = Gate.load(item);
                 gates.add(g);
             }
@@ -480,9 +458,9 @@ public class Faction extends Nation implements Feudal, Savable {
         }
     }
 
-    private String loadDataOrDefault(Gson gson, Map<String, String> data, String key, String def) {
+    private String loadPrefixOrDefault(Gson gson, Map<String, String> data, String def) {
         try {
-            return gson.fromJson(data.getOrDefault(key, def), String.class);
+            return gson.fromJson(data.getOrDefault("prefix", def), String.class);
         } catch(Exception e) {
             return def;
         }

@@ -47,7 +47,7 @@ public class JoinHandler implements Listener {
     }
 
 	private void handlePowerDecay(ActivityRecord activityRecord, Player player, PlayerJoinEvent event) {
-		int newPower = getNewPower(player);
+		double newPower = getNewPower(player);
 
 		if (activityRecord.getLastLogout() != null && activityRecord.getMinutesSinceLastLogout() > 1) {
 			player.sendMessage(ChatColor.GREEN + String.format(LocalLocaleService.getInstance().getText("WelcomeBackLastLogout"), event.getPlayer().getName(), activityRecord.getTimeSinceLastLogout()));}
@@ -59,10 +59,10 @@ public class JoinHandler implements Listener {
 		activityRecord.setPowerLost(0);
 	}
 
-	private int getNewPower(Player player) {
+	private double getNewPower(Player player) {
 		PowerRecord powerRecord = PersistentData.getInstance().getPlayersPowerRecord(player.getUniqueId());
 
-		int newPower = powerRecord.getPowerLevel();
+		double newPower = powerRecord.getPower();
 		if (newPower < 0) {
 			return 0;
 		}

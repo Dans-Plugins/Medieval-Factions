@@ -20,26 +20,26 @@ import java.util.UUID;
 public class EphemeralData {
     private static EphemeralData instance;
 
-    private HashMap<UUID, Gate> creatingGatePlayers = new HashMap<>();
+    private final HashMap<UUID, Gate> creatingGatePlayers = new HashMap<>();
 
-    private ArrayList<UUID> lockingPlayers = new ArrayList<>();
-    private ArrayList<UUID> unlockingPlayers = new ArrayList<>();
-    private ArrayList<UUID> forcefullyUnlockingPlayers = new ArrayList<>();
-
-    // Left user granting access, right user receiving access;
-    private HashMap<UUID, UUID> playersGrantingAccess = new HashMap<>();
-    private ArrayList<UUID> playersCheckingAccess = new ArrayList<>();
+    private final ArrayList<UUID> lockingPlayers = new ArrayList<>();
+    private final ArrayList<UUID> unlockingPlayers = new ArrayList<>();
+    private final ArrayList<UUID> forcefullyUnlockingPlayers = new ArrayList<>();
 
     // Left user granting access, right user receiving access;
-    private HashMap<UUID, UUID> playersRevokingAccess = new HashMap<>();
-    private ArrayList<UUID> playersInFactionChat = new ArrayList<>();
-    private ArrayList<UUID> adminsBypassingProtections = new ArrayList<>();
+    private final HashMap<UUID, UUID> playersGrantingAccess = new HashMap<>();
+    private final ArrayList<UUID> playersCheckingAccess = new ArrayList<>();
+
+    // Left user granting access, right user receiving access;
+    private final HashMap<UUID, UUID> playersRevokingAccess = new HashMap<>();
+    private final ArrayList<UUID> playersInFactionChat = new ArrayList<>();
+    private final ArrayList<UUID> adminsBypassingProtections = new ArrayList<>();
 
     // List of players who made the cloud and the cloud itself in a pair
-    private ArrayList<Pair<Player, AreaEffectCloud>> activeAOEClouds = new ArrayList<>();
+    private final ArrayList<Pair<Player, AreaEffectCloud>> activeAOEClouds = new ArrayList<>();
 
     // duels
-    private ArrayList<Duel> duelingPlayers = new ArrayList<>();
+    private final ArrayList<Duel> duelingPlayers = new ArrayList<>();
 
     private EphemeralData() {
 

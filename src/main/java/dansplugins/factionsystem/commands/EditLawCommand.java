@@ -38,8 +38,8 @@ public class EditLawCommand extends SubCommand {
         }
         String[] arguments = new String[args.length - 1];
         System.arraycopy(args, 1, arguments, 0, arguments.length);
-        final String edittedLaw = String.join(" ", arguments);
-        if (faction.editLaw(lawToEdit, edittedLaw)) {
+        final String editedLaw = String.join(" ", arguments);
+        if (faction.editLaw(lawToEdit, editedLaw)) {
             player.sendMessage(translate("&a" + getText("LawEdited")));
         }
     }

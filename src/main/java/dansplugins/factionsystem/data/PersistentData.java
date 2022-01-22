@@ -161,7 +161,7 @@ public class PersistentData {
 
         boolean newFactionsFound = true;
 
-        int numFactionsFound = -1;
+        int numFactionsFound;
 
         // while new factions found
         while (newFactionsFound) {

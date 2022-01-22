@@ -26,12 +26,12 @@ public class Gate {
 	public enum GateStatus { READY, OPENING, CLOSING }
 	public enum ErrorCodeAddCoord { None, WorldMismatch, MaterialMismatch, NoCuboids, Oversized, LessThanThreeHigh }
 
-	public Gate(String name) {
-		setName(name);
+	public Gate() {
+
 	}
 
-	public Gate() {
-		// Default Constructor
+	public Gate(String name) {
+		setName(name);
 	}
 
 	private static class GateJson {
@@ -77,7 +77,6 @@ public class Gate {
 	private GateStatus gateStatus = GateStatus.READY;
 
 	public Map<String, String> save() {
-        Gson gson = new GsonBuilder().setPrettyPrinting().create();;
         Map<String, String> saveMap = new HashMap<>();
 
         saveMap.put("name", name);
@@ -95,7 +94,7 @@ public class Gate {
     }
 
 	static Gate load(String jsonData) {
-		Gson gson = new GsonBuilder().setPrettyPrinting().create();;
+		Gson gson = new GsonBuilder().setPrettyPrinting().create();
 		Gate newGate = new Gate();
 
 		try
@@ -351,11 +350,8 @@ public class Gate {
 			if (isParallelToX() && getDimY() > 1) {
 				vertical = true;
 			}
-			else if (isParallelToZ() && getDimY() > 1) {
-				vertical = true;
-			}
 			else {
-				vertical = false;
+				vertical = isParallelToZ() && getDimY() > 1;
 			}
 
 			int area = 0;
@@ -367,7 +363,7 @@ public class Gate {
 					area = getDimZ() * getDimY();
 				}
 			}
-			else if (!vertical) {
+			else {
 				if (isParallelToX()) {
 					area = getDimX() * getDimY();
 				}
@@ -434,10 +430,12 @@ public class Gate {
 	}
 
 	public void openGate() {
-		if (open || !gateStatus.equals(GateStatus.READY))
+		if (open || !gateStatus.equals(GateStatus.READY)) {
 			return;
+		}
 		open = true;
 		gateStatus = GateStatus.OPENING;
+
 		// For vertical we only need to iterate over x/y
 		if (vertical) {
 			if (isParallelToX()) {
@@ -474,7 +472,7 @@ public class Gate {
 	        					getWorld().playSound(b.getLocation(), soundEffect, 0.1f, 0.1f);
 	        				}
 	                    }
-	                }, c * 10);
+	                }, c * 10L);
 				}
 				Bukkit.getScheduler().runTaskLater(MedievalFactions.getInstance(), new Runnable() {
 					Block b;
@@ -483,7 +481,7 @@ public class Gate {
     					gateStatus = GateStatus.READY;
     					open = true;
                     }
-				}, (topY - bottomY + 2) * 10);
+				}, (topY - bottomY + 2) * 10L);
 			}
 			else if (isParallelToZ()) {
 				int topY = coord1.getY();
@@ -518,7 +516,7 @@ public class Gate {
 	        					getWorld().playSound(b.getLocation(), soundEffect, 0.1f, 0.1f);
 	        				}
 	                    }
-	                }, c * 10);
+	                }, c * 10L);
 				}
 				Bukkit.getScheduler().runTaskLater(MedievalFactions.getInstance(), new Runnable() {
 					Block b;
@@ -530,19 +528,16 @@ public class Gate {
 				}, (topY - bottomY + 2) * 10L);
 			}
 		}
-		else {
-			// TODO: Bridge code iterates over x/z
-		}
 	}
 
 	public void closeGate() {
-
 		if (!open || !gateStatus.equals(GateStatus.READY)) {
 			return;
 		}
 
 		open = false;
 		gateStatus = GateStatus.CLOSING;
+
 		// For vertical we only need to iterate over x/y
 		if (vertical) {
 			if (isParallelToX()) {
@@ -578,7 +573,7 @@ public class Gate {
 	        					getWorld().playSound(b.getLocation(), soundEffect, 0.1f, 0.1f);
 	        				}
 	                    }
-	                }, c * 10);
+	                }, c * 10L);
 				}
 				Bukkit.getScheduler().runTaskLater(MedievalFactions.getInstance(), new Runnable() {
 					Block b;
@@ -587,7 +582,7 @@ public class Gate {
     					gateStatus = GateStatus.READY;
     					open = false;
                     }
-				}, (topY - bottomY + 2) * 10);
+				}, (topY - bottomY + 2) * 10L);
 			}
 			else if (isParallelToZ()) {
 				int topY = coord1.getY();
@@ -623,7 +618,7 @@ public class Gate {
 	        					getWorld().playSound(b.getLocation(), soundEffect, 0.1f, 0.1f);
 	        				}
 	                    }
-	                }, c * 10);
+	                }, c * 10L);
 				}
 				Bukkit.getScheduler().runTaskLater(MedievalFactions.getInstance(), new Runnable() {
 					Block b;
@@ -632,11 +627,8 @@ public class Gate {
     					gateStatus = GateStatus.READY;
     					open = false;
                     }
-				}, (topY - bottomY + 2) * 10);
+				}, (topY - bottomY + 2) * 10L);
 			}
-		}
-		else {
-			// TODO: Bridge code iterates over x/z
 		}
 	}
 
@@ -706,13 +698,9 @@ public class Gate {
 				}
 			}
 		}
-		else {
-			// TODO: Bridge code iterates over x/z
-		}
 	}
 
 	public boolean hasBlock(Block targetBlock) {
-
 		int topY = coord1.getY();
 		int bottomY = coord2.getY();
 		if (coord2.getY() > coord1.getY()) {
@@ -747,11 +735,7 @@ public class Gate {
 			return true;
 		}
 
-		if (trigger.equals(targetBlock)) {
-			return true;
-		}
-
-		return false;
+		return trigger.equals(targetBlock);
 	}
 
 	public String coordsToString() {

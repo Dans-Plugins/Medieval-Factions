@@ -32,13 +32,13 @@ public class PrefixCommand extends SubCommand {
     public void execute(Player player, String[] args, String key) {
         final String permission = "mf.prefix";
         if (!(checkPermissions(player, permission))) return;
-        final String prefix = String.join(" ", args);
+        final String newPrefix = String.join(" ", args);
         if (data.getFactions().stream().map(Faction::getPrefix)
-                .anyMatch(prfix -> prfix.equalsIgnoreCase(prefix))) {
+                .anyMatch(prefix -> prefix.equalsIgnoreCase(newPrefix))) {
             player.sendMessage(translate("&c" + getText("PrefixTaken")));
             return;
         }
-        faction.setPrefix(prefix);
+        faction.setPrefix(newPrefix);
         player.sendMessage(translate("&a" + getText("PrefixSet")));
     }
 

@@ -43,32 +43,32 @@ public class DemoteCommand extends SubCommand {
             return;
         }
 
-        OfflinePlayer demotee = null;
+        OfflinePlayer playerToBeDemoted = null;
         for (UUID uuid : this.faction.getMemberList()) {
             final OfflinePlayer offlinePlayer = Bukkit.getOfflinePlayer(uuid);
             if (offlinePlayer.getName() == null) continue;
-            if (offlinePlayer.getName().equalsIgnoreCase(args[0])) demotee = offlinePlayer;
+            if (offlinePlayer.getName().equalsIgnoreCase(args[0])) playerToBeDemoted = offlinePlayer;
         }
 
-        if (demotee == null) {
+        if (playerToBeDemoted == null) {
             player.sendMessage(translate("&c" + getText("PlayerByNameNotFound", args[0])));
             return;
         }
 
-        if (demotee.getUniqueId() == player.getUniqueId()) {
+        if (playerToBeDemoted.getUniqueId() == player.getUniqueId()) {
             player.sendMessage(translate("&c" + getText("CannotDemoteSelf")));
             return;
         }
 
-        if (!this.faction.isOfficer(demotee.getUniqueId())) {
+        if (!this.faction.isOfficer(playerToBeDemoted.getUniqueId())) {
             player.sendMessage(translate("&c" + getText("PlayerIsNotOfficerOfFaction")));
             return;
         }
 
-        faction.removeOfficer(demotee.getUniqueId());
+        faction.removeOfficer(playerToBeDemoted.getUniqueId());
 
-        if (demotee.isOnline()) {
-            ((Player) demotee).sendMessage(translate("&c" + getText("AlertDemotion")));
+        if (playerToBeDemoted.isOnline()) {
+            ((Player) playerToBeDemoted).sendMessage(translate("&c" + getText("AlertDemotion")));
         }
 
         player.sendMessage(translate("&a" + getText("PlayerDemoted")));

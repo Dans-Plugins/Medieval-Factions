@@ -55,7 +55,7 @@ public class PowerCommand extends SubCommand {
 			}
 			record = data.getPlayersPowerRecord(((Player) sender).getUniqueId());
 			sender.sendMessage(translate("&b" +
-					getText("AlertCurrentPowerLevel", record.getPowerLevel(), record.maxPower())));
+					getText("AlertCurrentPowerLevel", record.getPower(), record.maxPower())));
 			return;
 		}
 		UUIDChecker uuidChecker = new UUIDChecker();
@@ -66,6 +66,6 @@ public class PowerCommand extends SubCommand {
 		}
 		record = data.getPlayersPowerRecord(target);
 		sender.sendMessage(translate("&b" +
-				getText("CurrentPowerLevel", args[0], record.getPowerLevel(),record.maxPower())));
+				getText("CurrentPowerLevel", args[0], record.getPower(),record.maxPower())));
 	}
 }
