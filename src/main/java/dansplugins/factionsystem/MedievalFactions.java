@@ -214,8 +214,4 @@ public class MedievalFactions extends PonderPlugin {
             new PlaceholderAPI().register();
         }
     }
-
-    private PonderMC getPonder() {
-        return ponder;
-    }
 }
