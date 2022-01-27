@@ -9,6 +9,7 @@ import com.google.gson.GsonBuilder;
 import dansplugins.factionsystem.MedievalFactions;
 import dansplugins.factionsystem.data.PersistentData;
 import dansplugins.factionsystem.objects.inherited.PlayerRecord;
+import dansplugins.factionsystem.services.LocalConfigService;
 import preponderous.ponder.misc.Savable;
 
 import java.util.HashMap;
@@ -90,28 +91,15 @@ public class PowerRecord extends PlayerRecord implements Savable {
         powerLevel = newPower;
     }
 
-    public boolean increasePowerByTenPercent() {
-        double originalLevel = powerLevel;
-        double newLevel = powerLevel * 1.10;
-
-        if (originalLevel == newLevel){
-            newLevel++;
-        }
-
-        powerLevel = Math.min(newLevel, maxPower());
-        if (powerLevel == 0){
-            powerLevel = 1;
-        }
-        return powerLevel != originalLevel;
+    public void grantPowerDueToKill() {
+        double powerGained = LocalConfigService.getInstance().getDouble("powerGainedOnKill");
+        powerLevel = Math.min(powerLevel + powerGained, maxPower());
     }
 
-    public double decreasePowerByTenPercent() {
-        double powerDecreaseAmount = powerLevel * 0.10;
-        powerLevel =- powerDecreaseAmount;
-        if (powerLevel < 0) {
-            powerLevel = 0;
-        }
-        return powerDecreaseAmount;
+    public double revokePowerDueToDeath() {
+        double powerLost = LocalConfigService.getInstance().getDouble("powerLostOnDeath");
+        powerLevel = Math.max(powerLevel - powerLost, 0);
+        return powerLost;
     }
 
     @Override

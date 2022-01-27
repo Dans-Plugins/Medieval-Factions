@@ -30,9 +30,8 @@ public class DeathHandler implements Listener {
         if (record == null) {
             return;
         }
-        if (record.increasePowerByTenPercent()) {
-            killer.sendMessage(ChatColor.GREEN + LocalLocaleService.getInstance().getText("PowerLevelHasIncreased"));
-        }
+        record.grantPowerDueToKill();
+        killer.sendMessage(ChatColor.GREEN + LocalLocaleService.getInstance().getText("PowerLevelHasIncreased"));
     }
 
     private boolean wasPlayersCauseOfDeathAnotherPlayerKillingThem(Player player) {
@@ -41,7 +40,7 @@ public class DeathHandler implements Listener {
 
     private void decreaseDyingPlayersPower(Player player) {
         PowerRecord playersPowerRecord = PersistentData.getInstance().getPlayersPowerRecord(player.getUniqueId());
-        double powerLost = playersPowerRecord.decreasePowerByTenPercent();
+        double powerLost = playersPowerRecord.revokePowerDueToDeath();
         if (powerLost != 0) {
             player.sendMessage(ChatColor.RED + "You lost " + powerLost + " power."); // TODO: add locale message
         }
