@@ -160,6 +160,12 @@ public class LocalConfigService {
         if (!getConfig().isBoolean("bonusPowerEnabled")) {
             getConfig().addDefault("bonusPowerEnabled", true);
         }
+        if (!getConfig().isDouble("powerLostOnDeath")) {
+            getConfig().addDefault("powerLostOnDeath", 1.0);
+        }
+        if (!getConfig().isDouble("powerGainedOnKill")) {
+            getConfig().addDefault("powerGainedOnKill", 1.0);
+        }
 
         deleteOldConfigOptionsIfPresent();
 
@@ -235,7 +241,9 @@ public class LocalConfigService {
             }
             else if (option.equalsIgnoreCase("factionOwnerMultiplier")
                     || option.equalsIgnoreCase("factionOfficerMultiplier")
-                    || option.equalsIgnoreCase("vassalContributionPercentageMultiplier")){
+                    || option.equalsIgnoreCase("vassalContributionPercentageMultiplier")
+                    || option.equalsIgnoreCase("powerLostOnDeath")
+                    || option.equalsIgnoreCase("powerGainedOnKill")) {
                 getConfig().set(option, Double.parseDouble(value));
                 sender.sendMessage(ChatColor.GREEN + LocalLocaleService.getInstance().getText("DoubleSet"));
             }
@@ -301,58 +309,62 @@ public class LocalConfigService {
         getConfig().addDefault("factionsCanSetPrefixColors", true);
         getConfig().addDefault("playersLosePowerOnDeath", true);
         getConfig().addDefault("bonusPowerEnabled", true);
+        getConfig().addDefault("powerLostOnDeath", 1.0);
+        getConfig().addDefault("powerGainedOnKill", 1.0);
         getConfig().options().copyDefaults(true);
         MedievalFactions.getInstance().saveConfig();
     }
 
     public void sendPageOneOfConfigList(CommandSender sender) {
         sender.sendMessage(ChatColor.AQUA + LocalLocaleService.getInstance().getText("ConfigListPageOne"));
-        sender.sendMessage(ChatColor.AQUA + "version: " + getConfig().getString("version")
-                + ", languageid: " + getConfig().getString("languageid")
-                + ", debugMode: " + getConfig().getBoolean("debugMode")
-                + ", initialMaxPowerLevel: " + getConfig().getInt("initialMaxPowerLevel")
-                + ", initialPowerLevel: " +  getConfig().getInt("initialPowerLevel")
-                + ", powerIncreaseAmount: " + getConfig().getInt("powerIncreaseAmount")
-                + ", mobsSpawnInFactionTerritory: " + getConfig().getBoolean("mobsSpawnInFactionTerritory")
-                + ", laddersPlaceableInEnemyFactionTerritory: " + getConfig().getBoolean("laddersPlaceableInEnemyFactionTerritory")
-                + ", minutesBeforeInitialPowerIncrease: " + getConfig().getInt("minutesBeforeInitialPowerIncrease")
-                + ", minutesBetweenPowerIncreases: " + getConfig().getInt("minutesBetweenPowerIncreases")
-                + ", warsRequiredForPVP: " + getConfig().getBoolean("warsRequiredForPVP")
-                + ", factionOwnerMultiplier: " + getConfig().getDouble("factionOwnerMultiplier")
-                + ", officerPerMemberCount: " + getConfig().getInt("officerPerMemberCount")
-                + ", factionOfficerMultiplier: " + getConfig().getDouble("factionOfficerMultiplier")
-                + ", powerDecreases: " + getConfig().getBoolean("powerDecreases")
-                + ", minutesBetweenPowerDecreases: " + getConfig().getInt("minutesBetweenPowerDecreases")
-                + ", minutesBeforePowerDecrease: " + getConfig().getInt("minutesBeforePowerDecrease")
-                + ", powerDecreaseAmount: " + getConfig().getInt("powerDecreaseAmount")
-                + ", factionMaxNameLength: " + getConfig().getInt("factionMaxNameLength")
-		        + ", factionMaxNumberGates: " + getConfig().getInt("factionMaxNumberGates"));
+        sender.sendMessage(ChatColor.AQUA + "version: " + getString("version")
+                + ", languageid: " + getString("languageid")
+                + ", debugMode: " + getBoolean("debugMode")
+                + ", initialMaxPowerLevel: " + getInt("initialMaxPowerLevel")
+                + ", initialPowerLevel: " +  getInt("initialPowerLevel")
+                + ", powerIncreaseAmount: " + getInt("powerIncreaseAmount")
+                + ", mobsSpawnInFactionTerritory: " + getBoolean("mobsSpawnInFactionTerritory")
+                + ", laddersPlaceableInEnemyFactionTerritory: " + getBoolean("laddersPlaceableInEnemyFactionTerritory")
+                + ", minutesBeforeInitialPowerIncrease: " + getInt("minutesBeforeInitialPowerIncrease")
+                + ", minutesBetweenPowerIncreases: " + getInt("minutesBetweenPowerIncreases")
+                + ", warsRequiredForPVP: " + getBoolean("warsRequiredForPVP")
+                + ", factionOwnerMultiplier: " + getDouble("factionOwnerMultiplier")
+                + ", officerPerMemberCount: " + getInt("officerPerMemberCount")
+                + ", factionOfficerMultiplier: " + getDouble("factionOfficerMultiplier")
+                + ", powerDecreases: " + getBoolean("powerDecreases")
+                + ", minutesBetweenPowerDecreases: " + getInt("minutesBetweenPowerDecreases")
+                + ", minutesBeforePowerDecrease: " + getInt("minutesBeforePowerDecrease")
+                + ", powerDecreaseAmount: " + getInt("powerDecreaseAmount")
+                + ", factionMaxNameLength: " + getInt("factionMaxNameLength")
+		        + ", factionMaxNumberGates: " + getInt("factionMaxNumberGates"));
     }
 
     public void sendPageTwoOfConfigList(CommandSender sender) {
         sender.sendMessage(ChatColor.AQUA + LocalLocaleService.getInstance().getText("ConfigListPageTwo"));
-        sender.sendMessage(ChatColor.AQUA+ "factionMaxGateArea: " + getConfig().getInt("factionMaxGateArea")
-                + ", surroundedChunksProtected: " + getConfig().getBoolean("surroundedChunksProtected")
-                + ", zeroPowerFactionsGetDisbanded: " + getConfig().getBoolean("zeroPowerFactionsGetDisbanded")
-                + ", vassalContributionPercentageMultiplier: " + getConfig().getDouble("vassalContributionPercentageMultiplier")
-                + ", nonMembersCanInteractWithDoors: " + getConfig().getBoolean("nonMembersCanInteractWithDoors")
-                + ", playersChatWithPrefixes: " + getConfig().getBoolean("playersChatWithPrefixes")
-                + ", maxClaimRadius: " + getConfig().getInt("maxClaimRadius")
-                + ", chatSharedInVassalageTrees: " + getConfig().getBoolean("chatSharedInVassalageTrees")
-                + ", allowAllyInteraction: " + getConfig().getBoolean("allowAllyInteraction")
-                + ", allowVassalageTreeInteraction: " + getConfig().getBoolean("allowVassalageTreeInteraction")
-                + ", factionChatColor: " + getConfig().getString("factionChatColor")
-                + ", territoryAlertPopUp: " + getConfig().getBoolean("territoryAlertPopUp")
-                + ", territoryAlertColor: " + getConfig().getString("territoryAlertColor")
-                + ", territoryIndicatorActionbar: " + getConfig().getBoolean("territoryIndicatorActionbar")
-                + ", randomFactionAssignment: " + getConfig().getBoolean("randomFactionAssignment")
-                + ", allowNeutrality: " + getConfig().getBoolean("allowNeutrality")
-                + ", showPrefixesInFactionChat: " + getConfig().getBoolean("showPrefixesInFactionChat")
-                + ", factionProtectionsEnabled: " + getConfig().getBoolean("factionProtectionsEnabled")
-                + ", limitLand: " + getConfig().getBoolean("limitLand")
-                + ", factionsCanSetPrefixColors: " + getConfig().getBoolean("factionsCanSetPrefixColors")
-                + ", playersLosePowerOnDeath: " + getConfig().getBoolean("playersLosePowerOnDeath")
-                + ", bonusPowerEnabled: " + getConfig().getBoolean("bonusPowerEnabled"));
+        sender.sendMessage(ChatColor.AQUA+ "factionMaxGateArea: " + getInt("factionMaxGateArea")
+                + ", surroundedChunksProtected: " + getBoolean("surroundedChunksProtected")
+                + ", zeroPowerFactionsGetDisbanded: " + getBoolean("zeroPowerFactionsGetDisbanded")
+                + ", vassalContributionPercentageMultiplier: " + getDouble("vassalContributionPercentageMultiplier")
+                + ", nonMembersCanInteractWithDoors: " + getBoolean("nonMembersCanInteractWithDoors")
+                + ", playersChatWithPrefixes: " + getBoolean("playersChatWithPrefixes")
+                + ", maxClaimRadius: " + getInt("maxClaimRadius")
+                + ", chatSharedInVassalageTrees: " + getBoolean("chatSharedInVassalageTrees")
+                + ", allowAllyInteraction: " + getBoolean("allowAllyInteraction")
+                + ", allowVassalageTreeInteraction: " + getBoolean("allowVassalageTreeInteraction")
+                + ", factionChatColor: " + getString("factionChatColor")
+                + ", territoryAlertPopUp: " + getBoolean("territoryAlertPopUp")
+                + ", territoryAlertColor: " + getString("territoryAlertColor")
+                + ", territoryIndicatorActionbar: " + getBoolean("territoryIndicatorActionbar")
+                + ", randomFactionAssignment: " + getBoolean("randomFactionAssignment")
+                + ", allowNeutrality: " + getBoolean("allowNeutrality")
+                + ", showPrefixesInFactionChat: " + getBoolean("showPrefixesInFactionChat")
+                + ", factionProtectionsEnabled: " + getBoolean("factionProtectionsEnabled")
+                + ", limitLand: " + getBoolean("limitLand")
+                + ", factionsCanSetPrefixColors: " + getBoolean("factionsCanSetPrefixColors")
+                + ", playersLosePowerOnDeath: " + getBoolean("playersLosePowerOnDeath")
+                + ", bonusPowerEnabled: " + getBoolean("bonusPowerEnabled")
+                + ", powerLostOnDeath: " + getDouble("powerLostOnDeath")
+                + ", powerGainedOnKill: " + getDouble("powerGainedOnKill"));
     }
 
     public boolean hasBeenAltered() {
