@@ -6,6 +6,7 @@ package dansplugins.factionsystem.commands;
 
 import dansplugins.factionsystem.commands.abs.SubCommand;
 import dansplugins.factionsystem.events.FactionLeaveEvent;
+import dansplugins.factionsystem.utils.Logger;
 import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
@@ -39,7 +40,7 @@ public class LeaveCommand extends SubCommand {
         FactionLeaveEvent leaveEvent = new FactionLeaveEvent(faction, player);
         Bukkit.getPluginManager().callEvent(leaveEvent);
         if (leaveEvent.isCancelled()) {
-            // TODO: add locale message
+            Logger.getInstance().log("Leave event was cancelled.");
             return;
         }
 
@@ -47,7 +48,7 @@ public class LeaveCommand extends SubCommand {
         ephemeral.getPlayersInFactionChat().remove(player.getUniqueId()); // Remove from Faction Chat.
         faction.removeMember(player.getUniqueId());
         player.sendMessage(translate("&b" + getText("AlertLeftFaction")));
-        messageFaction(faction, translate("&a" + player.getName() + " has left " + faction.getName())); // TODO: add locale message
+        messageFaction(faction, translate("&a" + player.getName() + " has left " + faction.getName()));
 
     }
 

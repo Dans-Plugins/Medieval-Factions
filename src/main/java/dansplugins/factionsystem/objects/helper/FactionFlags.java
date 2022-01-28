@@ -119,7 +119,7 @@ public class FactionFlags {
         }
 
         if (!LocalConfigService.getInstance().getBoolean("factionsCanSetPrefixColors")) {
-            // TODO: add locale message
+            player.sendMessage("Players can't set prefix colors.");
             return;
         }
 
@@ -129,7 +129,7 @@ public class FactionFlags {
         }
 
         if (flag.equals("fiefsEnabled") && !FiefsIntegrator.getInstance().isFiefsPresent()) {
-            // TODO: add locale message
+            player.sendMessage("Fiefs either isn't enabled or present.");
             return;
         }
 

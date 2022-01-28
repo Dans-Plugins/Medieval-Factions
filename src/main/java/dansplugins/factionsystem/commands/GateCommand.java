@@ -5,14 +5,13 @@
 package dansplugins.factionsystem.commands;
 
 import dansplugins.factionsystem.commands.abs.SubCommand;
+import dansplugins.factionsystem.data.PersistentData;
 import dansplugins.factionsystem.objects.domain.Faction;
 import dansplugins.factionsystem.objects.domain.Gate;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
-
-import java.util.ArrayList;
 
 /**
  * @author Daniel McCoy Stephenson
@@ -98,12 +97,12 @@ public class GateCommand extends SubCommand {
 				player.sendMessage(translate("&c" + getText("TargetBlockNotPartOfGate")));
 				return;
 			}
-			final Gate gate = getGate(targetBlock, data.getFactions());
+			final Gate gate = PersistentData.getInstance().getGate(targetBlock);
 			if (gate == null) {
 				player.sendMessage(translate("&c" + getText("TargetBlockNotPartOfGate")));
 				return;
 			}
-			final Faction gateFaction = getGateFaction(gate, data.getFactions());
+			final Faction gateFaction = PersistentData.getInstance().getGateFaction(gate);
 			if (gateFaction == null) {
 				player.sendMessage(translate("&c" + getText("ErrorCouldNotFindGatesFaction", gate.getName())));
 				return;
@@ -139,15 +138,5 @@ public class GateCommand extends SubCommand {
 
 	private void startCreatingGate(Player player, String name) {
 	    ephemeral.getCreatingGatePlayers().putIfAbsent(player.getUniqueId(), new Gate(name));
-	}
-
-	private Gate getGate(Block targetBlock, ArrayList<Faction> factions) {
-		return factions.stream().flatMap(faction -> faction.getGates().stream())
-				.filter(gate -> gate.hasBlock(targetBlock)).findFirst().orElse(null);
-	}
-
-	private Faction getGateFaction(Gate gate, ArrayList<Faction> factions) {
-		return factions.stream()
-				.filter(faction -> faction.getGates().contains(gate)).findFirst().orElse(null);
 	}
 }

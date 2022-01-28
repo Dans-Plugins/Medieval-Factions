@@ -6,6 +6,7 @@ package dansplugins.factionsystem.commands;
 
 import dansplugins.factionsystem.commands.abs.SubCommand;
 import dansplugins.factionsystem.objects.domain.Faction;
+import dansplugins.factionsystem.utils.Logger;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
@@ -59,7 +60,7 @@ public class VassalizeCommand extends SubCommand {
         // make sure this vassalization won't result in a vassalization loop
         final int loopCheck = willVassalizationResultInLoop(faction, target);
         if (loopCheck == 1 || loopCheck == 2) {
-            System.out.println("DEBUG: vassalization was cancelled due to potential loop"); // TODO: add locale message
+            Logger.getInstance().log("Vassalization was cancelled due to potential loop");
             return;
         }
         // add faction to attemptedVassalizations

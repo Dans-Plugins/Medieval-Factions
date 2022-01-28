@@ -42,7 +42,7 @@ public class DeathHandler implements Listener {
         PowerRecord playersPowerRecord = PersistentData.getInstance().getPlayersPowerRecord(player.getUniqueId());
         double powerLost = playersPowerRecord.revokePowerDueToDeath();
         if (powerLost != 0) {
-            player.sendMessage(ChatColor.RED + "You lost " + powerLost + " power."); // TODO: add locale message
+            player.sendMessage(ChatColor.RED + "You lost " + powerLost + " power.");
         }
     }
 }

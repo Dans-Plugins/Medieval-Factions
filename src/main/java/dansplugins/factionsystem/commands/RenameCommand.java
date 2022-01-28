@@ -6,8 +6,9 @@ package dansplugins.factionsystem.commands;
 
 import dansplugins.factionsystem.MedievalFactions;
 import dansplugins.factionsystem.commands.abs.SubCommand;
+import dansplugins.factionsystem.data.PersistentData;
 import dansplugins.factionsystem.events.FactionRenameEvent;
-import dansplugins.factionsystem.services.LocalStorageService;
+import dansplugins.factionsystem.utils.Logger;
 import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
 import org.bukkit.configuration.file.FileConfiguration;
@@ -54,7 +55,7 @@ public class RenameCommand extends SubCommand {
         final FactionRenameEvent renameEvent = new FactionRenameEvent(faction, oldName, newName);
         Bukkit.getPluginManager().callEvent(renameEvent);
         if (renameEvent.isCancelled()) {
-            // TODO: add locale message
+            Logger.getInstance().log("Rename event was cancelled.");
             return;
         }
 
@@ -62,22 +63,13 @@ public class RenameCommand extends SubCommand {
         faction.setName(newName);
         player.sendMessage(translate("&a" + getText("FactionNameChanged")));
 
-        // Change Ally/Enemy/Vassal/Liege references
-        data.getFactions().forEach(fac -> fac.updateData(oldName, newName));
-
-        // Change Claims
-        data.getClaimedChunks().stream().filter(cc -> cc.getHolder().equalsIgnoreCase(oldName))
-                .forEach(cc -> cc.setHolder(newName));
-
-        // Locked Blocks
-        data.getLockedBlocks().stream().filter(lb -> lb.getFactionName().equalsIgnoreCase(oldName))
-                .forEach(lb -> lb.setFaction(newName));
+        PersistentData.getInstance().updateFactionReferencesDueToNameChange(oldName, newName);
 
         // Prefix (if it was unset)
         if (faction.getPrefix().equalsIgnoreCase(oldName)) faction.setPrefix(newName);
 
         // Save again to overwrite current data
-        LocalStorageService.getInstance().save();
+        PersistentData.getInstance().getLocalStorageService().save();
     }
 
     /**

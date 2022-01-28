@@ -56,7 +56,7 @@ public class MapCommand extends SubCommand {
             final StringBuilder line = new StringBuilder();
             for (int x = topLeftX; x <= bottomRightX; x++) {
                 Chunk tmp = center.getWorld().getChunkAt(x, z);
-                if (chunks.isClaimed(tmp, data.claimedChunks)) {
+                if (chunks.isClaimed(tmp)) {
                     ClaimedChunk chunk = chunks.getClaimedChunk(tmp);
                     printedHolders.put(chunk.getHolder(), printedHolders.getOrDefault(chunk.getHolder(), 0) + 1);
                     int index = getIndex(chunk.getHolder(), printedHolders);

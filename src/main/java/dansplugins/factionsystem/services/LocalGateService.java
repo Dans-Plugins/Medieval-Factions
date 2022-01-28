@@ -36,8 +36,8 @@ public class LocalGateService {
     }
 
     public void handlePotentialGateInteraction(Block clickedBlock, Player player, PlayerInteractEvent event) {
-        if (LocalChunkService.getInstance().isClaimed(clickedBlock.getChunk(), PersistentData.getInstance().getClaimedChunks())) {
-            ClaimedChunk claim = LocalChunkService.getInstance().getClaimedChunk(clickedBlock.getChunk());
+        if (PersistentData.getInstance().getChunkDataAccessor().isClaimed(clickedBlock.getChunk())) {
+            ClaimedChunk claim = PersistentData.getInstance().getChunkDataAccessor().getClaimedChunk(clickedBlock.getChunk());
             Faction faction = PersistentData.getInstance().getFaction(claim.getHolder());
 
             if (faction.hasGateTrigger(clickedBlock)) {
@@ -75,8 +75,8 @@ public class LocalGateService {
     }
 
     public void handlePotentialGateInteraction(Block block, BlockRedstoneEvent event) {
-        if (LocalChunkService.getInstance().isClaimed(block.getChunk(), PersistentData.getInstance().getClaimedChunks())) {
-            ClaimedChunk claim = LocalChunkService.getInstance().getClaimedChunk(block.getChunk());
+        if (PersistentData.getInstance().getChunkDataAccessor().isClaimed(block.getChunk())) {
+            ClaimedChunk claim = PersistentData.getInstance().getChunkDataAccessor().getClaimedChunk(block.getChunk());
             Faction faction = PersistentData.getInstance().getFaction(claim.getHolder());
 
             if (faction.hasGateTrigger(block)) {
@@ -106,12 +106,12 @@ public class LocalGateService {
     }
 
     public void handleCreatingGate(Block clickedBlock, Player player, PlayerInteractEvent event) {
-        if (!LocalChunkService.getInstance().isClaimed(clickedBlock.getChunk(), PersistentData.getInstance().getClaimedChunks())) {
+        if (!PersistentData.getInstance().getChunkDataAccessor().isClaimed(clickedBlock.getChunk())) {
             player.sendMessage(ChatColor.RED + LocalLocaleService.getInstance().getText("CanOnlyCreateGatesInClaimedTerritory"));
             return;
         }
         else {
-            ClaimedChunk claimedChunk = LocalChunkService.getInstance().getClaimedChunk(clickedBlock.getChunk());
+            ClaimedChunk claimedChunk = PersistentData.getInstance().getChunkDataAccessor().getClaimedChunk(clickedBlock.getChunk());
             if (claimedChunk != null) {
                 if (!PersistentData.getInstance().getFaction(claimedChunk.getHolder()).isMember(player.getUniqueId())) {
                     player.sendMessage(ChatColor.RED + LocalLocaleService.getInstance().getText("AlertMustBeMemberToCreateGate"));
@@ -199,10 +199,10 @@ public class LocalGateService {
                     && EphemeralData.getInstance().getCreatingGatePlayers().get(event.getPlayer().getUniqueId()).getTrigger() == null
                     && !EphemeralData.getInstance().getCreatingGatePlayers().get(event.getPlayer().getUniqueId()).getCoord2().equals(clickedBlock)) {
                 if (clickedBlock.getBlockData() instanceof Powerable) {
-                    if (LocalChunkService.getInstance().isClaimed(clickedBlock.getChunk(), PersistentData.getInstance().getClaimedChunks())) {
+                    if (PersistentData.getInstance().getChunkDataAccessor().isClaimed(clickedBlock.getChunk())) {
                         Gate.ErrorCodeAddCoord e = EphemeralData.getInstance().getCreatingGatePlayers().get(event.getPlayer().getUniqueId()).addCoord(clickedBlock);
                         if (e.equals(Gate.ErrorCodeAddCoord.None)) {
-                            ClaimedChunk claim = LocalChunkService.getInstance().getClaimedChunk(clickedBlock.getChunk());
+                            ClaimedChunk claim = PersistentData.getInstance().getChunkDataAccessor().getClaimedChunk(clickedBlock.getChunk());
                             Faction faction = PersistentData.getInstance().getFaction(claim.getHolder());
                             faction.addGate(EphemeralData.getInstance().getCreatingGatePlayers().get(event.getPlayer().getUniqueId()));
                             EphemeralData.getInstance().getCreatingGatePlayers().remove(event.getPlayer().getUniqueId());

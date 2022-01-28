@@ -9,7 +9,6 @@ import dansplugins.factionsystem.data.EphemeralData;
 import dansplugins.factionsystem.data.PersistentData;
 import dansplugins.factionsystem.objects.domain.Faction;
 import dansplugins.factionsystem.objects.domain.PowerRecord;
-import dansplugins.factionsystem.services.LocalChunkService;
 import org.bukkit.Chunk;
 import org.bukkit.entity.Player;
 
@@ -63,7 +62,7 @@ public class MedievalFactionsAPI {
     }
 
     public boolean isChunkClaimed(Chunk chunk) {
-        return (LocalChunkService.getInstance().getClaimedChunk(chunk) != null);
+        return (PersistentData.getInstance().getChunkDataAccessor().getClaimedChunk(chunk) != null);
     }
 
     public double getPower(Player player) {

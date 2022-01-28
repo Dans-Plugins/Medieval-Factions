@@ -9,7 +9,6 @@ import dansplugins.factionsystem.data.EphemeralData;
 import dansplugins.factionsystem.data.PersistentData;
 import dansplugins.factionsystem.integrators.DynmapIntegrator;
 import dansplugins.factionsystem.objects.domain.Faction;
-import dansplugins.factionsystem.services.LocalChunkService;
 import dansplugins.factionsystem.services.LocalConfigService;
 import dansplugins.factionsystem.services.LocalLocaleService;
 import org.bukkit.Bukkit;
@@ -33,7 +32,7 @@ public abstract class SubCommand implements ColorTranslator {
     protected LocalLocaleService locale;
     protected PersistentData data;
     protected EphemeralData ephemeral;
-    protected LocalChunkService chunks;
+    protected PersistentData.ChunkDataAccessor chunks;
     protected DynmapIntegrator dynmap;
     protected LocalConfigService localConfigService;
     private String[] names;
@@ -73,7 +72,7 @@ public abstract class SubCommand implements ColorTranslator {
         this.locale = LocalLocaleService.getInstance();
         this.data = PersistentData.getInstance();
         this.ephemeral = EphemeralData.getInstance();
-        this.chunks = LocalChunkService.getInstance();
+        this.chunks = PersistentData.getInstance().getChunkDataAccessor();
         this.dynmap = DynmapIntegrator.getInstance();
         this.localConfigService = LocalConfigService.getInstance();
     }

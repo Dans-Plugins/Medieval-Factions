@@ -11,7 +11,6 @@ import dansplugins.factionsystem.eventhandlers.helper.RelationChecker;
 import dansplugins.factionsystem.objects.domain.ClaimedChunk;
 import dansplugins.factionsystem.objects.domain.Duel;
 import dansplugins.factionsystem.objects.domain.Faction;
-import dansplugins.factionsystem.services.LocalChunkService;
 import dansplugins.factionsystem.services.LocalLocaleService;
 import org.bukkit.ChatColor;
 import org.bukkit.Chunk;
@@ -87,7 +86,7 @@ public class DamageHandler implements Listener {
 
     private ClaimedChunk getClaimedChunkAtLocation(Location location) {
         Chunk chunk = location.getChunk();
-        return LocalChunkService.getInstance().getClaimedChunk(chunk);
+        return PersistentData.getInstance().getChunkDataAccessor().getClaimedChunk(chunk);
     }
 
     private boolean isEntityProtected(Entity entity) {

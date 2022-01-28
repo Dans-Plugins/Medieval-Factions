@@ -9,7 +9,7 @@ import dansplugins.factionsystem.data.PersistentData;
 import dansplugins.factionsystem.events.FactionDisbandEvent;
 import dansplugins.factionsystem.integrators.DynmapIntegrator;
 import dansplugins.factionsystem.objects.domain.Faction;
-import dansplugins.factionsystem.services.LocalChunkService;
+import dansplugins.factionsystem.utils.Logger;
 import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.command.CommandSender;
@@ -71,7 +71,7 @@ public class DisbandCommand extends SubCommand {
             sender.sendMessage(translate("&c" + getText("FactionNotFound")));
             return;
         }
-        final int factionIndex = data.getFactions().indexOf(disband);
+        final int factionIndex = data.getFactionIndexOf(disband);
         if (self) {
             sender.sendMessage(translate("&a" + getText("FactionSuccessfullyDisbanded")));
             ephemeral.getPlayersInFactionChat().remove(((Player) sender).getUniqueId());
@@ -82,7 +82,7 @@ public class DisbandCommand extends SubCommand {
 
     private void removeFaction(int i, OfflinePlayer disbandingPlayer) {
 
-        Faction disbandingThisFaction = PersistentData.getInstance().getFactions().get(i);
+        Faction disbandingThisFaction = PersistentData.getInstance().getFactionByIndex(i);
         String nameOfFactionToRemove = disbandingThisFaction.getName();
         FactionDisbandEvent event = new FactionDisbandEvent(
                 disbandingThisFaction,
@@ -90,37 +90,19 @@ public class DisbandCommand extends SubCommand {
         );
         Bukkit.getPluginManager().callEvent(event);
         if (event.isCancelled()) {
-            // TODO: add locale message
+            Logger.getInstance().log("Disband event was cancelled.");
             return;
         }
 
         // remove claimed land objects associated with this faction
-        LocalChunkService.getInstance().removeAllClaimedChunks(nameOfFactionToRemove, PersistentData.getInstance().getClaimedChunks());
+        PersistentData.getInstance().getChunkDataAccessor().removeAllClaimedChunks(nameOfFactionToRemove);
         DynmapIntegrator.getInstance().updateClaims();
 
         // remove locks associated with this faction
-        PersistentData.getInstance().removeAllLocks(PersistentData.getInstance().getFactions().get(i).getName());
+        PersistentData.getInstance().removeAllLocks(PersistentData.getInstance().getFactionByIndex(i).getName());
 
+        PersistentData.getInstance().removePoliticalTiesToFaction(nameOfFactionToRemove);
 
-        for (Faction faction : PersistentData.getInstance().getFactions()) {
-
-            // remove records of alliances/wars associated with this faction
-            if (faction.isAlly(nameOfFactionToRemove)) {
-                faction.removeAlly(nameOfFactionToRemove);
-            }
-            if (faction.isEnemy(nameOfFactionToRemove)) {
-                faction.removeEnemy(nameOfFactionToRemove);
-            }
-
-            // remove liege and vassal references associated with this faction
-            if (faction.isLiege(nameOfFactionToRemove)) {
-                faction.setLiege("none");
-            }
-
-            if (faction.isVassal(nameOfFactionToRemove)) {
-                faction.removeVassal(nameOfFactionToRemove);
-            }
-        }
-        PersistentData.getInstance().getFactions().remove(i);
+        PersistentData.getInstance().removeFactionByIndex(i);
     }
 }

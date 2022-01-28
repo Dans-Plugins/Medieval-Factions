@@ -9,7 +9,6 @@ import dansplugins.factionsystem.data.PersistentData;
 import dansplugins.factionsystem.objects.domain.ClaimedChunk;
 import dansplugins.factionsystem.objects.domain.Faction;
 import dansplugins.factionsystem.objects.domain.PowerRecord;
-import dansplugins.factionsystem.services.LocalChunkService;
 import me.clip.placeholderapi.expansion.PlaceholderExpansion;
 import org.bukkit.Bukkit;
 import org.bukkit.Chunk;
@@ -169,7 +168,7 @@ public class PlaceholderAPI extends PlaceholderExpansion {
         }
         if (id.equalsIgnoreCase("faction_at_location")) {
             // The Faction at the Player's current location. (Wilderness if nothing).
-            ClaimedChunk claim = LocalChunkService.getInstance().getClaimedChunk(player.getLocation().getChunk());
+            ClaimedChunk claim = PersistentData.getInstance().getChunkDataAccessor().getClaimedChunk(player.getLocation().getChunk());
             if (claim == null) return "Wilderness";
             else return claim.getHolder();
         }

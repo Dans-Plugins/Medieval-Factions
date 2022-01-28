@@ -43,7 +43,6 @@ public class UnclaimCommand extends SubCommand {
         if (args.length == 0) {
             chunks.removeChunkAtPlayerLocation(player, faction);
             dynmap.updateClaims();
-            // TODO: add locale message
             player.sendMessage("Unclaimed your current claim.");
             return;
         }
@@ -52,7 +51,6 @@ public class UnclaimCommand extends SubCommand {
         if (radius <= 0) {
             radius = 1;
             player.sendMessage("Your radius wasn't properly recognised, defaulting to 1.");
-            // TODO: add locale message.
         }
         chunks.radiusUnclaimAtLocation(radius, player, faction);
         player.sendMessage("Unclaimed radius of " + radius + " claims around you!");

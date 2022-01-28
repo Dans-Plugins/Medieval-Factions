@@ -18,6 +18,7 @@ import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.inventory.InventoryHolder;
 import preponderous.ponder.minecraft.spigot.tools.UUIDChecker;
 
+import java.util.Objects;
 import java.util.UUID;
 
 /**
@@ -39,7 +40,7 @@ public class LocalLockService {
 
     public void handleLockingBlock(PlayerInteractEvent event, Player player, Block clickedBlock) {
         // if chunk is claimed
-        ClaimedChunk chunk = LocalChunkService.getInstance().getClaimedChunk(event.getClickedBlock().getLocation().getChunk());
+        ClaimedChunk chunk = PersistentData.getInstance().getChunkDataAccessor().getClaimedChunk(Objects.requireNonNull(event.getClickedBlock()).getLocation().getChunk());
         if (chunk != null) {
 
             // if claimed by other faction
@@ -69,7 +70,7 @@ public class LocalLockService {
                         Block rightChest = ((Chest) doubleChest.getRightSide()).getBlock();
 
                         LockedBlock left = new LockedBlock(player.getUniqueId(), PersistentData.getInstance().getPlayersFaction(player.getUniqueId()).getName(), leftChest.getX(), leftChest.getY(), leftChest.getZ(), leftChest.getWorld().getName());
-                        PersistentData.getInstance().getLockedBlocks().add(left);
+                        PersistentData.getInstance().addLockedBlock(left);
 
                         lock1x1Block(player, rightChest);
                     }
@@ -83,16 +84,16 @@ public class LocalLockService {
                 if (BlockChecker.getInstance().isDoor(clickedBlock)) {
                     // lock initial block
                     LockedBlock initial = new LockedBlock(player.getUniqueId(), PersistentData.getInstance().getPlayersFaction(player.getUniqueId()).getName(), clickedBlock.getX(), clickedBlock.getY(), clickedBlock.getZ(), clickedBlock.getWorld().getName());
-                    PersistentData.getInstance().getLockedBlocks().add(initial);
+                    PersistentData.getInstance().addLockedBlock(initial);
                     // check block above
                     if (BlockChecker.getInstance().isDoor(clickedBlock.getWorld().getBlockAt(clickedBlock.getX(), clickedBlock.getY() + 1, clickedBlock.getZ()))) {
                         LockedBlock newLockedBlock2 = new LockedBlock(player.getUniqueId(), PersistentData.getInstance().getPlayersFaction(player.getUniqueId()).getName(), clickedBlock.getX(), clickedBlock.getY() + 1, clickedBlock.getZ(), clickedBlock.getWorld().getName());
-                        PersistentData.getInstance().getLockedBlocks().add(newLockedBlock2);
+                        PersistentData.getInstance().addLockedBlock(newLockedBlock2);
                     }
                     // check block below
                     if (BlockChecker.getInstance().isDoor(clickedBlock.getWorld().getBlockAt(clickedBlock.getX(), clickedBlock.getY() - 1, clickedBlock.getZ()))) {
                         LockedBlock newLockedBlock2 = new LockedBlock(player.getUniqueId(), PersistentData.getInstance().getPlayersFaction(player.getUniqueId()).getName(), clickedBlock.getX(), clickedBlock.getY() - 1, clickedBlock.getZ(), clickedBlock.getWorld().getName());
-                        PersistentData.getInstance().getLockedBlocks().add(newLockedBlock2);
+                        PersistentData.getInstance().addLockedBlock(newLockedBlock2);
                     }
 
                     player.sendMessage(ChatColor.GREEN + LocalLocaleService.getInstance().getText("Locked"));
@@ -123,7 +124,7 @@ public class LocalLockService {
     private void lock1x1Block(Player player, Block clickedBlock) {
         LockedBlock block = new LockedBlock(player.getUniqueId(), PersistentData.getInstance().getPlayersFaction(player.getUniqueId()).getName(),
                 clickedBlock.getX(), clickedBlock.getY(), clickedBlock.getZ(), clickedBlock.getWorld().getName());
-        PersistentData.getInstance().getLockedBlocks().add(block);
+        PersistentData.getInstance().addLockedBlock(block);
         player.sendMessage(ChatColor.GREEN + LocalLocaleService.getInstance().getText("Locked"));
         EphemeralData.getInstance().getLockingPlayers().remove(player.getUniqueId());
     }
@@ -143,15 +144,15 @@ public class LocalLockService {
                         Block rightChest = ((Chest) doubleChest.getRightSide()).getBlock();
 
                         // unlock leftChest and rightChest
-                        removeLock(leftChest);
-                        removeLock(rightChest);
+                        PersistentData.getInstance().removeLockedBlock(leftChest);
+                        PersistentData.getInstance().removeLockedBlock(rightChest);
 
                         player.sendMessage(ChatColor.GREEN + LocalLocaleService.getInstance().getText("AlertUnlocked"));
                         EphemeralData.getInstance().getUnlockingPlayers().remove(player.getUniqueId());
                     }
                     else {
                         // unlock single chest
-                        removeLock(clickedBlock);
+                        PersistentData.getInstance().removeLockedBlock(clickedBlock);
                         player.sendMessage(ChatColor.GREEN + LocalLocaleService.getInstance().getText("AlertUnlocked"));
                         EphemeralData.getInstance().getUnlockingPlayers().remove(player.getUniqueId());
                     }
@@ -160,14 +161,14 @@ public class LocalLockService {
                 // door multi-unlock
                 if (BlockChecker.getInstance().isDoor(clickedBlock)) {
                     // unlock initial block
-                    removeLock(clickedBlock);
+                    PersistentData.getInstance().removeLockedBlock(clickedBlock);
                     // check block above
                     if (BlockChecker.getInstance().isDoor(clickedBlock.getWorld().getBlockAt(clickedBlock.getX(), clickedBlock.getY() + 1, clickedBlock.getZ()))) {
-                        removeLock(clickedBlock.getWorld().getBlockAt(clickedBlock.getX(), clickedBlock.getY() + 1, clickedBlock.getZ()));
+                        PersistentData.getInstance().removeLockedBlock(clickedBlock.getWorld().getBlockAt(clickedBlock.getX(), clickedBlock.getY() + 1, clickedBlock.getZ()));
                     }
                     // check block below
                     if (BlockChecker.getInstance().isDoor(clickedBlock.getWorld().getBlockAt(clickedBlock.getX(), clickedBlock.getY() - 1, clickedBlock.getZ()))) {
-                        removeLock(clickedBlock.getWorld().getBlockAt(clickedBlock.getX(), clickedBlock.getY() - 1, clickedBlock.getZ()));
+                        PersistentData.getInstance().removeLockedBlock(clickedBlock.getWorld().getBlockAt(clickedBlock.getX(), clickedBlock.getY() - 1, clickedBlock.getZ()));
                     }
 
                     player.sendMessage(ChatColor.GREEN + LocalLocaleService.getInstance().getText("AlertUnlocked"));
@@ -176,7 +177,7 @@ public class LocalLockService {
 
                 // single block size lock logic.
                 if (BlockChecker.getInstance().isGate(clickedBlock) || BlockChecker.getInstance().isBarrel(clickedBlock) || BlockChecker.getInstance().isTrapdoor(clickedBlock) || BlockChecker.getInstance().isFurnace(clickedBlock)) {
-                    removeLock(clickedBlock);
+                    PersistentData.getInstance().removeLockedBlock(clickedBlock);
 
                     player.sendMessage(ChatColor.GREEN + LocalLocaleService.getInstance().getText("AlertUnlocked"));
                     EphemeralData.getInstance().getUnlockingPlayers().remove(player.getUniqueId());
@@ -193,15 +194,6 @@ public class LocalLockService {
             player.sendMessage(ChatColor.RED + LocalLocaleService.getInstance().getText("BlockIsNotLocked"));
             event.setCancelled(true);
             return;
-        }
-    }
-
-    public void removeLock(Block block) {
-        for (LockedBlock b : PersistentData.getInstance().getLockedBlocks()) {
-            if (b.getX() == block.getX() && b.getY() == block.getY() && b.getZ() == block.getZ() && block.getWorld().getName().equalsIgnoreCase(b.getWorld())) {
-                PersistentData.getInstance().getLockedBlocks().remove(b);
-                return;
-            }
         }
     }
 

@@ -40,7 +40,7 @@ public class HomeCommand extends SubCommand {
             return;
         }
         final Chunk home_chunk;
-        if (!chunks.isClaimed(home_chunk = faction.getFactionHome().getChunk(), data.getClaimedChunks())) {
+        if (!chunks.isClaimed(home_chunk = faction.getFactionHome().getChunk())) {
             player.sendMessage(translate("&c" + getText("HomeIsInUnclaimedChunk")));
             return;
         }
