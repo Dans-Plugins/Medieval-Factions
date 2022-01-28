@@ -369,7 +369,7 @@ public class PersistentData {
             String liegeName = faction.getTopLiege();
             Faction liege = PersistentData.getInstance().getFaction(liegeName);
             String liegeColor;
-            String popupText = "";
+            String popupText;
             // If there's no liege, then f is the liege.
             if (liege != null) {
                 liegeColor = liege.getFlags().getFlag("dynmapTerritoryColor").toString();
@@ -511,9 +511,9 @@ public class PersistentData {
     }
 
     private void initiatePowerIncrease(PowerRecord powerRecord) {
-        if (powerRecord.getPower() < powerRecord.maxPower() && getServer().getPlayer(powerRecord.getPlayerUUID()).isOnline()) {
+        if (powerRecord.getPower() < powerRecord.maxPower() && Objects.requireNonNull(getServer().getPlayer(powerRecord.getPlayerUUID())).isOnline()) {
             powerRecord.increasePower();
-            getServer().getPlayer(powerRecord.getPlayerUUID()).sendMessage(ChatColor.GREEN + String.format(LocalLocaleService.getInstance().getText("AlertPowerLevelIncreasedBy"), MedievalFactions.getInstance().getConfig().getInt("powerIncreaseAmount")));
+            Objects.requireNonNull(getServer().getPlayer(powerRecord.getPlayerUUID())).sendMessage(ChatColor.GREEN + String.format(LocalLocaleService.getInstance().getText("AlertPowerLevelIncreasedBy"), MedievalFactions.getInstance().getConfig().getInt("powerIncreaseAmount")));
         }
     }
 
@@ -731,7 +731,7 @@ public class PersistentData {
     
             // handle admin bypass
             if (EphemeralData.getInstance().getAdminsBypassingProtections().contains(player.getUniqueId())) {
-                ClaimedChunk chunk = isChunkClaimed(playerCoords[0], playerCoords[1], player.getLocation().getWorld().getName());
+                ClaimedChunk chunk = isChunkClaimed(playerCoords[0], playerCoords[1], Objects.requireNonNull(player.getLocation().getWorld()).getName());
                 if (chunk != null) {
                     removeChunk(chunk, player, PersistentData.getInstance().getFaction(chunk.getHolder()));
                     player.sendMessage(ChatColor.GREEN + LocalLocaleService.getInstance().getText("LandClaimedUsingAdminBypass"));
@@ -741,7 +741,7 @@ public class PersistentData {
                 return;
             }
     
-            ClaimedChunk chunk = isChunkClaimed(playerCoords[0], playerCoords[1], player.getLocation().getWorld().getName());
+            ClaimedChunk chunk = isChunkClaimed(playerCoords[0], playerCoords[1], Objects.requireNonNull(player.getLocation().getWorld()).getName());
     
             // ensure that chunk is claimed
             if (chunk == null) {
@@ -916,7 +916,6 @@ public class PersistentData {
     
                 if (!InteractionAccessChecker.getInstance().isOutsiderInteractionAllowed(event.getPlayer(), claimedChunk, playersFaction)) {
                     event.setCancelled(true);
-                    return;
                 }
             }
         }
@@ -1157,27 +1156,27 @@ public class PersistentData {
          */
         private Chunk getChunkByDirection(Chunk origin, String direction) {
     
-            int xpos = -1;
-            int zpos = -1;
+            int x = -1;
+            int z = -1;
     
             if (direction.equalsIgnoreCase("north")) {
-                xpos = origin.getX();
-                zpos = origin.getZ() + 1;
+                x = origin.getX();
+                z = origin.getZ() + 1;
             }
             if (direction.equalsIgnoreCase("east")) {
-                xpos = origin.getX() + 1;
-                zpos = origin.getZ();
+                x = origin.getX() + 1;
+                z = origin.getZ();
             }
             if (direction.equalsIgnoreCase("south")) {
-                xpos = origin.getX();
-                zpos = origin.getZ() - 1;
+                x = origin.getX();
+                z = origin.getZ() - 1;
             }
             if (direction.equalsIgnoreCase("west")) {
-                xpos = origin.getX() - 1;
-                zpos = origin.getZ();
+                x = origin.getX() - 1;
+                z = origin.getZ();
             }
     
-            return origin.getWorld().getChunkAt(xpos, zpos);
+            return origin.getWorld().getChunkAt(x, z);
         }
     
         /**
@@ -1277,9 +1276,6 @@ public class PersistentData {
      * @author Pasarus
      */
     public class LocalStorageService {
-
-        private LocalStorageService instance;
-
         private final static String FILE_PATH = "./plugins/MedievalFactions/";
         private final static String FACTIONS_FILE_NAME = "factions.json";
         private final static String CHUNKS_FILE_NAME = "claimedchunks.json";
@@ -1290,7 +1286,7 @@ public class PersistentData {
 
         private final static Type LIST_MAP_TYPE = new TypeToken<ArrayList<HashMap<String, String>>>(){}.getType();
 
-        private Gson gson = new GsonBuilder().setPrettyPrinting().create();
+        private final Gson gson = new GsonBuilder().setPrettyPrinting().create();
 
         public void save() {
             saveFactions();
