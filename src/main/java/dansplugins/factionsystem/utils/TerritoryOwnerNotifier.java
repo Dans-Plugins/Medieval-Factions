@@ -12,6 +12,7 @@ import net.md_5.bungee.api.ChatMessageType;
 import net.md_5.bungee.api.chat.TextComponent;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
+import preponderous.ponder.minecraft.spigot.tools.ColorChecker;
 
 /**
  * @author Daniel McCoy Stephenson
@@ -53,7 +54,8 @@ public class TerritoryOwnerNotifier {
         } else {
             territoryAlertColorString = MedievalFactions.getInstance().getConfig().getString("territoryAlertColor");
         }
-        return ColorChecker.getInstance().getColorByName(territoryAlertColorString);
+        ColorChecker colorChecker = new ColorChecker();
+        return colorChecker.getColorByName(territoryAlertColorString);
     }
 
     private void setActionBar(Faction holder, Player player, ChatColor territoryAlertColor, String title) {

@@ -8,12 +8,12 @@ import dansplugins.factionsystem.MedievalFactions;
 import dansplugins.factionsystem.data.EphemeralData;
 import dansplugins.factionsystem.data.PersistentData;
 import dansplugins.factionsystem.objects.domain.Faction;
-import dansplugins.factionsystem.utils.ColorChecker;
-import dansplugins.factionsystem.utils.Messenger;
+import dansplugins.factionsystem.utils.extended.Messenger;
 import org.bukkit.ChatColor;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.AsyncPlayerChatEvent;
+import preponderous.ponder.minecraft.spigot.tools.ColorChecker;
 
 import java.util.ArrayList;
 
@@ -59,27 +59,30 @@ public class ChatHandler implements Listener {
     }
 
     private void addPrefix(AsyncPlayerChatEvent event, String prefixColor, String prefix) {
-        event.setFormat(ColorChecker.getInstance().getColorByName(prefixColor) + "" + "[" + prefix + "] " + ChatColor.WHITE + " %s: %s");
+        ColorChecker colorChecker = new ColorChecker();
+        event.setFormat(colorChecker.getColorByName(prefixColor) + "" + "[" + prefix + "] " + ChatColor.WHITE + " %s: %s");
     }
 
     private void sendMessageToVassalageTree(Faction playersFaction, String prefixColor, String prefix, AsyncPlayerChatEvent event, String factionChatColor, String message) {
         ArrayList<Faction> factionsInVassalageTree = PersistentData.getInstance().getFactionsInVassalageTree(playersFaction);
+        ColorChecker colorChecker = new ColorChecker();
         for (Faction faction : factionsInVassalageTree) {
             if (MedievalFactions.getInstance().getConfig().getBoolean("showPrefixesInFactionChat")) {
-                Messenger.getInstance().sendAllPlayersInFactionMessage(faction, ColorChecker.getInstance().getColorByName(prefixColor) + "" + "[" + prefix + "] " + "" + ChatColor.WHITE + "" + event.getPlayer().getName() + ": " + ColorChecker.getInstance().getColorByName(factionChatColor) + message);
+                Messenger.getInstance().sendAllPlayersInFactionMessage(faction, colorChecker.getColorByName(prefixColor) + "" + "[" + prefix + "] " + "" + ChatColor.WHITE + "" + event.getPlayer().getName() + ": " + colorChecker.getColorByName(factionChatColor) + message);
             }
             else {
-                Messenger.getInstance().sendAllPlayersInFactionMessage(faction, ChatColor.WHITE + "" + event.getPlayer().getName() + ": " + ColorChecker.getInstance().getColorByName(factionChatColor) + message);
+                Messenger.getInstance().sendAllPlayersInFactionMessage(faction, ChatColor.WHITE + "" + event.getPlayer().getName() + ": " + colorChecker.getColorByName(factionChatColor) + message);
             }
         }
     }
 
     private void sendMessageToFaction(Faction playersFaction, String prefix, String prefixColor, AsyncPlayerChatEvent event, String factionChatColor, String message) {
+        ColorChecker colorChecker = new ColorChecker();
         if (MedievalFactions.getInstance().getConfig().getBoolean("showPrefixesInFactionChat")) {
-            Messenger.getInstance().sendAllPlayersInFactionMessage(playersFaction, ColorChecker.getInstance().getColorByName(prefixColor) + "" + "[" + prefix + "] " + "" + ChatColor.WHITE + "" + event.getPlayer().getName() + ": " + ColorChecker.getInstance().getColorByName(factionChatColor) + message);
+            Messenger.getInstance().sendAllPlayersInFactionMessage(playersFaction, colorChecker.getColorByName(prefixColor) + "" + "[" + prefix + "] " + "" + ChatColor.WHITE + "" + event.getPlayer().getName() + ": " + colorChecker.getColorByName(factionChatColor) + message);
         }
         else {
-            Messenger.getInstance().sendAllPlayersInFactionMessage(playersFaction, ChatColor.WHITE + "" + event.getPlayer().getName() + ": " + ColorChecker.getInstance().getColorByName(factionChatColor) + message);
+            Messenger.getInstance().sendAllPlayersInFactionMessage(playersFaction, ChatColor.WHITE + "" + event.getPlayer().getName() + ": " + colorChecker.getColorByName(factionChatColor) + message);
         }
     }
 }
