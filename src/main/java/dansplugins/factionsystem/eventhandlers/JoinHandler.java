@@ -10,7 +10,6 @@ import dansplugins.factionsystem.events.FactionJoinEvent;
 import dansplugins.factionsystem.objects.domain.ActivityRecord;
 import dansplugins.factionsystem.objects.domain.Faction;
 import dansplugins.factionsystem.objects.domain.PowerRecord;
-import dansplugins.factionsystem.services.LocalChunkService;
 import dansplugins.factionsystem.services.LocalLocaleService;
 import dansplugins.factionsystem.utils.Logger;
 import dansplugins.factionsystem.utils.Messenger;
@@ -21,8 +20,6 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerJoinEvent;
-
-import java.util.UUID;
 
 /**
  * @author Daniel McCoy Stephenson
@@ -42,7 +39,7 @@ public class JoinHandler implements Listener {
 			handleRandomFactionAssignmentIfNecessary(player);
         }
         setPlayerActionBarTerritoryInfo(event.getPlayer());
-        LocalChunkService.getInstance().informPlayerIfTheirLandIsInDanger(player, PersistentData.getInstance().getFactions(), PersistentData.getInstance().getClaimedChunks());
+        PersistentData.getInstance().getChunkDataAccessor().informPlayerIfTheirLandIsInDanger(player);
 		informPlayerIfTheirFactionIsWeakened(player);
     }
 
@@ -81,17 +78,17 @@ public class JoinHandler implements Listener {
 	}
 
 	private boolean dataExistsForPlayer(Player player) {
-		return hasPowerRecord(player.getUniqueId()) && hasActivityRecord(player.getUniqueId());
+		return PersistentData.getInstance().hasPowerRecord(player.getUniqueId()) && PersistentData.getInstance().hasActivityRecord(player.getUniqueId());
 	}
 
 	private void createActivityRecordForPlayer(Player player) {
 		ActivityRecord newRecord = new ActivityRecord(player.getUniqueId(), 1);
-		PersistentData.getInstance().getPlayerActivityRecords().add(newRecord);
+		PersistentData.getInstance().addActivityRecord(newRecord);
 	}
 
 	private void createPowerRecordForPlayer(Player player) {
 		PowerRecord newRecord = new PowerRecord(player.getUniqueId(), MedievalFactions.getInstance().getConfig().getInt("initialPowerLevel"));
-		PersistentData.getInstance().getPlayerPowerRecords().add(newRecord);
+		PersistentData.getInstance().addPowerRecord(newRecord);
 	}
 
 	private void assignPlayerToRandomFaction(Player player) {
@@ -100,7 +97,7 @@ public class JoinHandler implements Listener {
 			FactionJoinEvent joinEvent = new FactionJoinEvent(faction, player);
 			Bukkit.getPluginManager().callEvent(joinEvent);
 			if (joinEvent.isCancelled()) {
-				// TODO Locale Message
+				Logger.getInstance().log("Join event was cancelled.");
 				return;
 			}
 			Messenger.getInstance().sendAllPlayersInFactionMessage(faction, String.format(ChatColor.GREEN + "" + LocalLocaleService.getInstance().getText("HasJoined"), player.getName(), faction.getName()));
@@ -117,7 +114,7 @@ public class JoinHandler implements Listener {
 	private void setPlayerActionBarTerritoryInfo(Player player) {
 		if (MedievalFactions.getInstance().getConfig().getBoolean("territoryIndicatorActionbar")) {
 			if (chunkIsClaimed(player)) {
-				String factionName = LocalChunkService.getInstance().getClaimedChunk(player.getLocation().getChunk()).getHolder();
+				String factionName = PersistentData.getInstance().getChunkDataAccessor().getClaimedChunk(player.getLocation().getChunk()).getHolder();
 				Faction holder = PersistentData.getInstance().getFaction(factionName);
 				TerritoryOwnerNotifier.getInstance().sendPlayerTerritoryAlert(player, holder);
 				return;
@@ -128,7 +125,7 @@ public class JoinHandler implements Listener {
 	}
 
 	private boolean chunkIsClaimed(Player player) {
-		return LocalChunkService.getInstance().isClaimed(player.getLocation().getChunk(), PersistentData.getInstance().getClaimedChunks());
+		return PersistentData.getInstance().getChunkDataAccessor().isClaimed(player.getLocation().getChunk());
 	}
 
 	private void informPlayerIfTheirFactionIsWeakened(Player player) {
@@ -140,23 +137,5 @@ public class JoinHandler implements Listener {
 		if (playersFaction.isLiege() && playersFaction.isWeakened()) {
 			player.sendMessage(ChatColor.RED + LocalLocaleService.getInstance().getText("AlertFactionIsWeakened"));
 		}
-	}
-
-	private boolean hasPowerRecord(UUID playerUUID) {
-		for (PowerRecord record : PersistentData.getInstance().getPlayerPowerRecords()){
-			if (record.getPlayerUUID().equals(playerUUID)){
-				return true;
-			}
-		}
-		return false;
-	}
-
-	private boolean hasActivityRecord(UUID playerUUID) {
-		for (ActivityRecord record : PersistentData.getInstance().getPlayerActivityRecords()) {
-			if (record.getPlayerUUID().equals(playerUUID)) {
-				return true;
-			}
-		}
-		return false;
 	}
 }

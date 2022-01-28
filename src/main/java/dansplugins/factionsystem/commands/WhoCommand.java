@@ -50,7 +50,7 @@ public class WhoCommand extends SubCommand {
             return;
         }
         Messenger.getInstance().sendFactionInfo(player, temp,
-                chunks.getChunksClaimedByFaction(temp.getName(), data.getClaimedChunks()));
+                chunks.getChunksClaimedByFaction(temp.getName()));
     }
 
     /**

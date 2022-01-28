@@ -72,7 +72,7 @@ public class UnclaimallCommand extends SubCommand {
         messageFaction(faction, translate("&c" + getText("AlertFactionHomeRemoved")));
 
         // remove claimed chunks
-        chunks.removeAllClaimedChunks(faction.getName(), data.getClaimedChunks());
+        chunks.removeAllClaimedChunks(faction.getName());
         dynmap.updateClaims();
         sender.sendMessage(translate("&a" + getText("AllLandUnclaimedFrom", faction.getName())));
 

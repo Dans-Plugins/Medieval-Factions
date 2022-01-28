@@ -48,13 +48,13 @@ public class ConfigCommand extends SubCommand {
         }
 
         if (args.length == 0) {
-            sender.sendMessage(ChatColor.RED + "Valid subcommands: show, set, reload"); // TODO: add locale message
+            sender.sendMessage(ChatColor.RED + "Valid subcommands: show, set, reload");
             return;
         }
 
         final boolean show = safeEquals(args[0], "get", "show", getText("CmdConfigShow"));
         final boolean set = safeEquals(args[0], "set", getText("CmdConfigSet"));
-        final boolean reload = safeEquals(args[0], "reload", "CmdConfigReload"); // TODO: add locale message
+        final boolean reload = safeEquals(args[0], "reload", "CmdConfigReload");
 
         if (show) {
             if (args.length < 2) {

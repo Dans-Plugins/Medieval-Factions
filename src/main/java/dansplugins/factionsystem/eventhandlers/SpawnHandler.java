@@ -2,7 +2,6 @@ package dansplugins.factionsystem.eventhandlers;
 
 import dansplugins.factionsystem.MedievalFactions;
 import dansplugins.factionsystem.data.PersistentData;
-import dansplugins.factionsystem.services.LocalChunkService;
 import org.bukkit.entity.Monster;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -18,6 +17,6 @@ public class SpawnHandler implements Listener {
     }
 
     private boolean isLandClaimed(EntitySpawnEvent event) {
-        return LocalChunkService.getInstance().isClaimed(event.getLocation().getChunk(), PersistentData.getInstance().getClaimedChunks());
+        return PersistentData.getInstance().getChunkDataAccessor().isClaimed(event.getLocation().getChunk());
     }
 }

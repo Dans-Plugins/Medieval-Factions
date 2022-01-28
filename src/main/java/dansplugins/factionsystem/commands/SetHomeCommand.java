@@ -32,7 +32,7 @@ public class SetHomeCommand extends SubCommand {
     public void execute(Player player, String[] args, String key) {
         final String permission = "mf.sethome";
         if (!(checkPermissions(player, permission))) return;
-        if (!chunks.isClaimed(player.getLocation().getChunk(), data.getClaimedChunks())) {
+        if (!chunks.isClaimed(player.getLocation().getChunk())) {
             player.sendMessage(translate("&c" + getText("LandIsNotClaimed")));
             return;
         }

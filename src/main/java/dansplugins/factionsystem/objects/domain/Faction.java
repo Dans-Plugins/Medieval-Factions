@@ -49,7 +49,7 @@ public class Faction extends Nation implements Feudal, Savable {
     public Faction(String initialName) {
         setName(initialName);
         prefix = initialName;
-        flags.initializeFlagValues(); // TODO: ensure that this doesn't mess up changes to flags being persistent
+        flags.initializeFlagValues();
     }
 
     public Faction(Map<String, String> data) {
@@ -172,13 +172,7 @@ public class Faction extends Nation implements Feudal, Savable {
     }
 
     public List<ClaimedChunk> getClaimedChunks() {
-        List<ClaimedChunk> output = new ArrayList<>();
-        for (ClaimedChunk chunk : PersistentData.getInstance().getClaimedChunks()) {
-            if (chunk.getHolder().equalsIgnoreCase(getName())) {
-                output.add(chunk);
-            }
-        }
-        return output;
+        return PersistentData.getInstance().getChunksClaimedByFaction(getName());
     }
 
     public boolean isWeakened() {

@@ -55,7 +55,7 @@ public class ClaimedChunk extends Territory implements Savable {
         world = worldName;
     }
 
-    public String getWorld() {
+    public String getWorldName() {
         return world;
     }
 

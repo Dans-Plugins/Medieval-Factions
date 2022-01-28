@@ -6,20 +6,11 @@ package dansplugins.factionsystem.utils;
 
 import dansplugins.factionsystem.MedievalFactions;
 import dansplugins.factionsystem.data.PersistentData;
-import dansplugins.factionsystem.integrators.DynmapIntegrator;
-import dansplugins.factionsystem.objects.domain.ActivityRecord;
 import dansplugins.factionsystem.objects.domain.Faction;
-import dansplugins.factionsystem.objects.domain.PowerRecord;
-import dansplugins.factionsystem.services.LocalChunkService;
 import dansplugins.factionsystem.services.LocalLocaleService;
-import dansplugins.factionsystem.services.LocalStorageService;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
-
-import java.util.ArrayList;
-
-import static org.bukkit.Bukkit.getServer;
 
 /**
  * @author Daniel McCoy Stephenson
@@ -46,7 +37,7 @@ public class Scheduler {
             @Override
             public void run() {
                 System.out.println(LocalLocaleService.getInstance().getText("HourlySaveAlert"));
-                LocalStorageService.getInstance().save();
+                PersistentData.getInstance().getLocalStorageService().save();
             }
         }, delay * 20, secondsUntilRepeat * 20);
     }
@@ -59,22 +50,9 @@ public class Scheduler {
             @Override
             public void run() {
                 System.out.printf((LocalLocaleService.getInstance().getText("AlertIncreasingThePowerOfEveryPlayer")) + "%n", MedievalFactions.getInstance().getConfig().getInt("powerIncreaseAmount"), MedievalFactions.getInstance().getConfig().getInt("minutesBetweenPowerIncreases"));
-                for (PowerRecord powerRecord : PersistentData.getInstance().getPlayerPowerRecords()) {
-                    try {
-                        initiatePowerIncrease(powerRecord);
-                    } catch (Exception ignored) {
-
-                    }
-                }
+                PersistentData.getInstance().initiatePowerIncreaseForAllPlayers();
             }
-
-            private void initiatePowerIncrease(PowerRecord powerRecord) {
-                if (powerRecord.getPower() < powerRecord.maxPower() && getServer().getPlayer(powerRecord.getPlayerUUID()).isOnline()) {
-                    powerRecord.increasePower();
-                    getServer().getPlayer(powerRecord.getPlayerUUID()).sendMessage(ChatColor.GREEN + String.format(LocalLocaleService.getInstance().getText("AlertPowerLevelIncreasedBy"), MedievalFactions.getInstance().getConfig().getInt("powerIncreaseAmount")));
-                }
-            }
-        }, delay * 20, secondsUntilRepeat * 20);
+        }, delay * 20L, secondsUntilRepeat * 20L);
     }
 
     public void schedulePowerDecrease() {
@@ -84,27 +62,12 @@ public class Scheduler {
         Bukkit.getScheduler().scheduleSyncRepeatingTask(MedievalFactions.getInstance(), new Runnable () {
             @Override
             public void run() {
-                System.out.println(String.format(LocalLocaleService.getInstance().getText("AlertDecreasingThePowerOfInactivePlayers"), MedievalFactions.getInstance().getConfig().getInt("powerDecreaseAmount"), MedievalFactions.getInstance().getConfig().getInt("minutesBeforePowerDecrease"), MedievalFactions.getInstance().getConfig().getInt("minutesBetweenPowerDecreases")));
+                System.out.printf((LocalLocaleService.getInstance().getText("AlertDecreasingThePowerOfInactivePlayers")) + "%n", MedievalFactions.getInstance().getConfig().getInt("powerDecreaseAmount"), MedievalFactions.getInstance().getConfig().getInt("minutesBeforePowerDecrease"), MedievalFactions.getInstance().getConfig().getInt("minutesBetweenPowerDecreases"));
 
-                for (ActivityRecord record : PersistentData.getInstance().getPlayerActivityRecords())
-                {
-                    Player player = getServer().getPlayer(record.getPlayerUUID());
-                    boolean isOnline = false;
-                    if (player != null)
-                    {
-                        isOnline = player.isOnline();
-                    }
-                    if (!isOnline && MedievalFactions.getInstance().getConfig().getBoolean("powerDecreases")
-                            && record.getMinutesSinceLastLogout() > MedievalFactions.getInstance().getConfig().getInt("minutesBeforePowerDecrease"))
-                    {
-                        record.incrementPowerLost();
-                        PowerRecord power = PersistentData.getInstance().getPlayersPowerRecord(record.getPlayerUUID());
-                        power.decreasePower();
-                    }
-                }
+                PersistentData.getInstance().decreasePowerForInactivePlayers();
 
                 if (MedievalFactions.getInstance().getConfig().getBoolean("zeroPowerFactionsGetDisbanded")) {
-                    disbandAllZeroPowerFactions();
+                    PersistentData.getInstance().disbandAllZeroPowerFactions();
                 }
 
                 for (Player player : MedievalFactions.getInstance().getServer().getOnlinePlayers())
@@ -125,65 +88,8 @@ public class Scheduler {
     }
 
     private boolean isFactionExceedingTheirDemesneLimit(Faction faction) {
-        return (LocalChunkService.getInstance().getChunksClaimedByFaction(faction.getName(), PersistentData.getInstance().getClaimedChunks()) > faction.getCumulativePowerLevel());
+        return (PersistentData.getInstance().getChunkDataAccessor().getChunksClaimedByFaction(faction.getName()) > faction.getCumulativePowerLevel());
     }
 
-    private void disbandAllZeroPowerFactions() {
-        ArrayList<String> factionsToDisband = new ArrayList<>();
-        for (Faction faction : PersistentData.getInstance().getFactions()) {
-            if (faction.getCumulativePowerLevel() == 0) {
-                factionsToDisband.add(faction.getName());
-            }
-        }
-        for (String factionName : factionsToDisband) {
-            Messenger.getInstance().sendAllPlayersInFactionMessage(PersistentData.getInstance().getFaction(factionName), ChatColor.RED + LocalLocaleService.getInstance().getText("AlertDisbandmentDueToZeroPower"));
-            removeFaction(factionName);
-            System.out.println(String.format(LocalLocaleService.getInstance().getText("DisbandmentDueToZeroPower"), factionName));
-        }
-    }
-
-    private void removeFaction(String name) {
-
-        Faction factionToRemove = PersistentData.getInstance().getFaction(name);
-
-        if (factionToRemove != null) {
-            // remove claimed land objects associated with this faction
-            LocalChunkService.getInstance().removeAllClaimedChunks(factionToRemove.getName(), PersistentData.getInstance().getClaimedChunks());
-            DynmapIntegrator.getInstance().updateClaims();
-
-            // remove locks associated with this faction
-            PersistentData.getInstance().removeAllLocks(factionToRemove.getName());
-
-
-            for (Faction faction : PersistentData.getInstance().getFactions()) {
-                // remove records of alliances/wars associated with this faction
-                if (faction.isAlly(factionToRemove.getName())) {
-                    faction.removeAlly(factionToRemove.getName());
-                }
-                if (faction.isEnemy(factionToRemove.getName())) {
-                    faction.removeEnemy(factionToRemove.getName());
-                }
-
-                // remove liege and vassal references associated with this faction
-                if (faction.isLiege(factionToRemove.getName())) {
-                    faction.setLiege("none");
-                }
-
-                if (faction.isVassal(factionToRemove.getName())) {
-                    faction.removeVassal(factionToRemove.getName());
-                }
-            }
-
-            int index = -1;
-            for (int i = 0; i < PersistentData.getInstance().getFactions().size(); i++) {
-                if (PersistentData.getInstance().getFactions().get(i).getName().equalsIgnoreCase(name)) {
-                    index = i;
-                }
-            }
-            if (index != -1) {
-                PersistentData.getInstance().getFactions().remove(index);
-            }
-        }
-    }
 
 }

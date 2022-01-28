@@ -10,9 +10,8 @@ import dansplugins.factionsystem.data.PersistentData;
 import dansplugins.factionsystem.events.*;
 import dansplugins.factionsystem.objects.domain.Faction;
 import dansplugins.factionsystem.objects.domain.PowerRecord;
-import dansplugins.factionsystem.services.LocalChunkService;
 import dansplugins.factionsystem.services.LocalLocaleService;
-import dansplugins.factionsystem.services.LocalStorageService;
+import dansplugins.factionsystem.utils.Logger;
 import dansplugins.fiefs.utils.UUIDChecker;
 import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
@@ -101,7 +100,7 @@ public class ForceCommand extends SubCommand {
             return;
         }
         sender.sendMessage(translate("&a" + getText("AlertForcedSave")));
-        LocalStorageService.getInstance().save();
+        PersistentData.getInstance().getLocalStorageService().save();
     }
 
     private void forceLoad(CommandSender sender) {
@@ -109,7 +108,7 @@ public class ForceCommand extends SubCommand {
             return;
         }
         sender.sendMessage(translate("&a" + LocalLocaleService.getInstance().getText("AlertForcedLoad")));
-        LocalStorageService.getInstance().load();
+        PersistentData.getInstance().getLocalStorageService().load();
         MedievalFactions.getInstance().reloadConfig();
     }
 
@@ -118,13 +117,13 @@ public class ForceCommand extends SubCommand {
             return;
         }
         if (!(args.length >= 3)) {
-            sender.sendMessage(translate("&c" + "Usage: /mf force peace \"faction1\" \"faction2\"")); // TODO: add locale message
+            sender.sendMessage(translate("&c" + "Usage: /mf force peace \"faction1\" \"faction2\""));
             return;
         }
 
         final ArrayList<String> doubleQuoteArgs = argumentParser.getArgumentsInsideDoubleQuotes(args);
         if (doubleQuoteArgs.size() < 2) {
-            sender.sendMessage(translate("&c" + "Arguments must be designated in between double quotes.")); // TODO: add locale message
+            sender.sendMessage(translate("&c" + "Arguments must be designated in between double quotes."));
             return;
         }
         final Faction former = PersistentData.getInstance().getFaction(doubleQuoteArgs.get(0));
@@ -177,13 +176,13 @@ public class ForceCommand extends SubCommand {
     private void forceJoin(CommandSender sender, String[] args) {
         if (!(checkPermissions(sender, "mf.force.join", "mf.force.*", "mf.admin"))) return;
         if (!(args.length >= 3)) {
-            sender.sendMessage(translate("&c" + "Usage: /mf force join \"player\" \"faction\"")); // TODO: make translatable
+            sender.sendMessage(translate("&c" + "Usage: /mf force join \"player\" \"faction\""));
             return;
         }
 
         final ArrayList<String> doubleQuoteArgs = argumentParser.getArgumentsInsideDoubleQuotes(args);
         if (doubleQuoteArgs.size() < 2) {
-            sender.sendMessage(translate("&c" + "Arguments must be designated in between double quotes.")); // TODO: make translatable
+            sender.sendMessage(translate("&c" + "Arguments must be designated in between double quotes."));
             return;
         }
         final Faction faction = getFaction(doubleQuoteArgs.get(1));
@@ -208,7 +207,7 @@ public class ForceCommand extends SubCommand {
         FactionJoinEvent joinEvent = new FactionJoinEvent(faction, player);
         Bukkit.getPluginManager().callEvent(joinEvent);
         if (joinEvent.isCancelled()) {
-            // TODO: add locale message
+            Logger.getInstance().log("Join event was cancelled.");
             return;
         }
         messageFaction(faction, translate("&a" + getText("HasJoined", player.getName(), faction.getName())));
@@ -248,7 +247,7 @@ public class ForceCommand extends SubCommand {
         FactionKickEvent kickEvent = new FactionKickEvent(faction, target, null); // no kicker so null is used
         Bukkit.getPluginManager().callEvent(kickEvent);
         if (kickEvent.isCancelled()) {
-            // TODO: add locale message
+            Logger.getInstance().log("Kick event was cancelled.");
             return;
         }
         if (faction.isOfficer(targetUUID)) {
@@ -266,13 +265,13 @@ public class ForceCommand extends SubCommand {
     private void forcePower(CommandSender sender, String[] args) {
         if (!(checkPermissions(sender, "mf.force.power", "mf.force.*", "mf.admin"))) return;
         if (!(args.length >= 3)) {
-            sender.sendMessage(translate("&c" + "Usage: /mf force power \"player\" \"number\"")); // TODO: make translatable
+            sender.sendMessage(translate("&c" + "Usage: /mf force power \"player\" \"number\""));
             return;
         }
 
         final ArrayList<String> doubleQuoteArgs = argumentParser.getArgumentsInsideDoubleQuotes(args);
         if (doubleQuoteArgs.size() < 2) {
-            sender.sendMessage(translate("&c" + "Arguments must be designated in between double quotes.")); // TODO: make translatable
+            sender.sendMessage(translate("&c" + "Arguments must be designated in between double quotes."));
             return;
         }
         final UUID playerUUID = uuidChecker.findUUIDBasedOnPlayerName(doubleQuoteArgs.get(0));
@@ -305,12 +304,8 @@ public class ForceCommand extends SubCommand {
             return;
         }
 
-        long changes = data.getFactions().stream()
-                .filter(f -> f.isLiege(factionName) || f.isVassal(factionName))
-                .count(); // Count changes
+        long changes = PersistentData.getInstance().removeLiegeAndVassalReferencesToFaction(factionName);
 
-        data.getFactions().stream().filter(f -> f.isLiege(factionName)).forEach(f -> f.setLiege("none"));
-        data.getFactions().stream().filter(f -> f.isVassal(factionName)).forEach(Faction::clearVassals);
         if (!faction.getLiege().equalsIgnoreCase("none")) {
             faction.setLiege("none");
             changes++;
@@ -419,7 +414,7 @@ public class ForceCommand extends SubCommand {
         final FactionRenameEvent renameEvent = new FactionRenameEvent(faction, oldName, newName);
         Bukkit.getPluginManager().callEvent(renameEvent);
         if (renameEvent.isCancelled()) {
-            // TODO: add locale message
+            Logger.getInstance().log("Rename event was cancelled.");
             return;
         }
 
@@ -427,22 +422,13 @@ public class ForceCommand extends SubCommand {
         faction.setName(newName);
         sender.sendMessage(translate("&a" + getText("FactionNameChanged")));
 
-        // Change Ally/Enemy/Vassal/Liege references
-        data.getFactions().forEach(fac -> fac.updateData(oldName, newName));
-
-        // Change Claims
-        data.getClaimedChunks().stream().filter(cc -> cc.getHolder().equalsIgnoreCase(oldName))
-                .forEach(cc -> cc.setHolder(newName));
-
-        // Locked Blocks
-        data.getLockedBlocks().stream().filter(lb -> lb.getFactionName().equalsIgnoreCase(oldName))
-                .forEach(lb -> lb.setFaction(newName));
+        PersistentData.getInstance().updateFactionReferencesDueToNameChange(oldName, newName);
 
         // Prefix (if it was unset)
         if (faction.getPrefix().equalsIgnoreCase(oldName)) faction.setPrefix(newName);
 
         // Save again to overwrite current data
-        LocalStorageService.getInstance().save();
+        PersistentData.getInstance().getLocalStorageService().save();
     }
 
     private void forceBonusPower(CommandSender sender, String[] args) {
@@ -547,17 +533,15 @@ public class ForceCommand extends SubCommand {
         FactionCreateEvent createEvent = new FactionCreateEvent(this.faction, player);
         Bukkit.getPluginManager().callEvent(createEvent);
         if (!createEvent.isCancelled()) {
-            data.getFactions().add(this.faction);
+            data.addFaction(this.faction);
             player.sendMessage(translate("&a" + getText("FactionCreated")));
         }
     }
 
     public void forceClaim(CommandSender sender, String[] args) {
-        if (!(sender instanceof Player)) {
+        if (!(sender instanceof Player player)) {
             return;
         }
-
-        Player player = (Player) sender;
 
         if (!(checkPermissions(player, "mf.force.claim", "mf.force.*", "mf.admin"))) {
             return;
@@ -583,20 +567,17 @@ public class ForceCommand extends SubCommand {
             return;
         }
 
-        // claim land at player location for designated faction
-        LocalChunkService.getInstance().forceClaimAtPlayerLocation(player, faction);
-
-        // inform sender
+        PersistentData.getInstance().getChunkDataAccessor().forceClaimAtPlayerLocation(player, faction);
         sender.sendMessage(translate("&a" + getText("Done")));
     }
 
     private void forceFlag(CommandSender sender, String[] args) {
-        if (!(checkPermissions(sender, "mf.force.rename", "mf.force.*", "mf.admin"))) {
+        if (!(checkPermissions(sender, "mf.force.flag", "mf.force.*", "mf.admin"))) {
             return;
         }
 
         if (!(sender instanceof Player)) {
-            // TODO: add locale message
+            sender.sendMessage("You must be a player ");
             return;
         }
 

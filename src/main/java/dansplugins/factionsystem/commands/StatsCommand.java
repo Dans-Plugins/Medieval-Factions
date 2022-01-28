@@ -17,7 +17,7 @@ import org.bukkit.entity.Player;
 public class StatsCommand extends SubCommand {
     public StatsCommand() {
         super(new String[] {
-                "stats", LOCALE_PREFIX + "CmdStats" // TODO: add locale message
+                "stats", LOCALE_PREFIX + "CmdStats"
         }, false, false, false, false);
     }
 
@@ -29,6 +29,6 @@ public class StatsCommand extends SubCommand {
     @Override
     public void execute(CommandSender sender, String[] args, String key) {
         sender.sendMessage(ChatColor.AQUA + "=== Medieval Factions Stats ===");
-        sender.sendMessage(ChatColor.AQUA + "Number of factions: " + PersistentData.getInstance().getFactions().size());
+        sender.sendMessage(ChatColor.AQUA + "Number of factions: " + PersistentData.getInstance().getNumFactions());
     }
 }

@@ -6,6 +6,7 @@ package dansplugins.factionsystem.commands;
 
 import dansplugins.factionsystem.commands.abs.SubCommand;
 import dansplugins.factionsystem.events.FactionKickEvent;
+import dansplugins.factionsystem.utils.Logger;
 import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.command.CommandSender;
@@ -66,7 +67,7 @@ public class KickCommand extends SubCommand {
         FactionKickEvent kickEvent = new FactionKickEvent(faction, target, player);
         Bukkit.getPluginManager().callEvent(kickEvent);
         if (kickEvent.isCancelled()) {
-            // TODO: add locale message
+            Logger.getInstance().log("Kick event was cancelled.");
             return;
         }
         if (faction.isOfficer(targetUUID)) {

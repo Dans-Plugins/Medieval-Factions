@@ -34,19 +34,19 @@ public class RelationChecker {
         int attackersFactionIndex = factionIndices.getLeft();
         int victimsFactionIndex = factionIndices.getRight();
 
-        return !(PersistentData.getInstance().getFactions().get(attackersFactionIndex).isEnemy(PersistentData.getInstance().getFactions().get(victimsFactionIndex).getName())) &&
-                !(PersistentData.getInstance().getFactions().get(victimsFactionIndex).isEnemy(PersistentData.getInstance().getFactions().get(attackersFactionIndex).getName()));
+        return !(PersistentData.getInstance().getFactionByIndex(attackersFactionIndex).isEnemy(PersistentData.getInstance().getFactionByIndex(victimsFactionIndex).getName())) &&
+                !(PersistentData.getInstance().getFactionByIndex(victimsFactionIndex).isEnemy(PersistentData.getInstance().getFactionByIndex(attackersFactionIndex).getName()));
     }
 
     private Pair<Integer, Integer> getFactionIndices(Player player1, Player player2){
         int attackersFactionIndex = 0;
         int victimsFactionIndex = 0;
 
-        for (int i = 0; i < PersistentData.getInstance().getFactions().size(); i++) {
-            if (PersistentData.getInstance().getFactions().get(i).isMember(player1.getUniqueId())) {
+        for (int i = 0; i < PersistentData.getInstance().getNumFactions(); i++) {
+            if (PersistentData.getInstance().getFactionByIndex(i).isMember(player1.getUniqueId())) {
                 attackersFactionIndex = i;
             }
-            if (PersistentData.getInstance().getFactions().get(i).isMember(player2.getUniqueId())) {
+            if (PersistentData.getInstance().getFactionByIndex(i).isMember(player2.getUniqueId())) {
                 victimsFactionIndex = i;
             }
         }

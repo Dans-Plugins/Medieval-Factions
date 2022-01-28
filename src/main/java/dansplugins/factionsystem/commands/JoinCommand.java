@@ -7,6 +7,7 @@ package dansplugins.factionsystem.commands;
 import dansplugins.factionsystem.commands.abs.SubCommand;
 import dansplugins.factionsystem.events.FactionJoinEvent;
 import dansplugins.factionsystem.objects.domain.Faction;
+import dansplugins.factionsystem.utils.Logger;
 import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
@@ -48,13 +49,13 @@ public class JoinCommand extends SubCommand {
             return;
         }
         if (!target.isInvited(player.getUniqueId())) {
-            // TODO: add locale message
+            player.sendMessage("You are not invited to this faction.");
             return;
         }
         FactionJoinEvent joinEvent = new FactionJoinEvent(faction, player);
         Bukkit.getPluginManager().callEvent(joinEvent);
         if (joinEvent.isCancelled()) {
-            // TODO: add locale message
+            Logger.getInstance().log("Join event was cancelled.");
             return;
         }
         messageFaction(target, translate("&a" + getText("HasJoined", player.getName(), target.getName())));

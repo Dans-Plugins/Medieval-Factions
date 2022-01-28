@@ -5,6 +5,7 @@
 package dansplugins.factionsystem.commands;
 
 import dansplugins.factionsystem.commands.abs.SubCommand;
+import dansplugins.factionsystem.data.PersistentData;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
@@ -43,8 +44,7 @@ public class ResetPowerLevelsCommand extends SubCommand {
     public void execute(CommandSender sender, String[] args, String key) {
         if (!(checkPermissions(sender, "mf.resetpowerlevels", "mf.admin"))) return;
         sender.sendMessage(translate("&aPower Levels Resetting..."));
-        final int initialPowerLevel = getConfig().getInt("initialPowerLevel");
         System.out.println(getText("ResettingIndividualPowerRecords"));
-        data.getPlayerPowerRecords().forEach(record -> record.setPower(initialPowerLevel));
+        PersistentData.getInstance().resetPowerLevels();
     }
 }

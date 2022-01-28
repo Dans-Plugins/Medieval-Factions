@@ -13,7 +13,6 @@ import dansplugins.factionsystem.placeholders.PlaceholderAPI;
 import dansplugins.factionsystem.services.LocalCommandService;
 import dansplugins.factionsystem.services.LocalConfigService;
 import dansplugins.factionsystem.services.LocalLocaleService;
-import dansplugins.factionsystem.services.LocalStorageService;
 import dansplugins.factionsystem.utils.Scheduler;
 import org.bukkit.Bukkit;
 import org.bukkit.command.Command;
@@ -63,7 +62,7 @@ public class MedievalFactions extends PonderPlugin {
      */
     @Override
     public void onDisable() {
-        LocalStorageService.getInstance().save();
+        PersistentData.getInstance().getLocalStorageService().save();
     }
 
     /**
@@ -153,7 +152,7 @@ public class MedievalFactions extends PonderPlugin {
      */
     private void load() {
         LocalLocaleService.getInstance().loadStrings();
-        LocalStorageService.getInstance().load();
+        PersistentData.getInstance().getLocalStorageService().load();
     }
 
     /**
