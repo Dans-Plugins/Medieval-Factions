@@ -191,7 +191,9 @@ public abstract class SubCommand implements ColorTranslator {
      * @return String message
      */
     protected String getText(String key) {
-        return locale.getText(key);
+        String text = locale.getText(key);
+        text = text.replace("%d", "%s");
+        return text;
     }
 
     /**
