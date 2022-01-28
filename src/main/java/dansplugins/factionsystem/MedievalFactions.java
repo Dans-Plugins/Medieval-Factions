@@ -13,11 +13,12 @@ import dansplugins.factionsystem.placeholders.PlaceholderAPI;
 import dansplugins.factionsystem.services.LocalCommandService;
 import dansplugins.factionsystem.services.LocalConfigService;
 import dansplugins.factionsystem.services.LocalLocaleService;
-import dansplugins.factionsystem.utils.Scheduler;
+import dansplugins.factionsystem.utils.extended.Scheduler;
 import org.bukkit.Bukkit;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.event.Listener;
+import org.jetbrains.annotations.NotNull;
 import preponderous.ponder.minecraft.abs.PonderPlugin;
 import preponderous.ponder.minecraft.spigot.PonderMC;
 import preponderous.ponder.minecraft.spigot.tools.EventHandlerRegistry;
@@ -74,7 +75,7 @@ public class MedievalFactions extends PonderPlugin {
      * @return A boolean indicating whether the execution of the command was successful.
      */
     @Override
-    public boolean onCommand(CommandSender sender, Command cmd, String label, String[] args) {
+    public boolean onCommand(@NotNull CommandSender sender, @NotNull Command cmd, @NotNull String label, String[] args) {
         return LocalCommandService.getInstance().interpretCommand(sender, label, args);
     }
 

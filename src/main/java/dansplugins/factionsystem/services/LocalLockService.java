@@ -8,7 +8,7 @@ import dansplugins.factionsystem.data.EphemeralData;
 import dansplugins.factionsystem.data.PersistentData;
 import dansplugins.factionsystem.objects.domain.ClaimedChunk;
 import dansplugins.factionsystem.objects.domain.LockedBlock;
-import dansplugins.factionsystem.utils.BlockChecker;
+import dansplugins.factionsystem.utils.extended.BlockChecker;
 import org.bukkit.ChatColor;
 import org.bukkit.block.Block;
 import org.bukkit.block.Chest;

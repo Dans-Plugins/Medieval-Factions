@@ -12,7 +12,7 @@ import dansplugins.factionsystem.objects.domain.LockedBlock;
 import dansplugins.factionsystem.services.LocalGateService;
 import dansplugins.factionsystem.services.LocalLocaleService;
 import dansplugins.factionsystem.services.LocalLockService;
-import dansplugins.factionsystem.utils.BlockChecker;
+import dansplugins.factionsystem.utils.extended.BlockChecker;
 import dansplugins.factionsystem.utils.InteractionAccessChecker;
 import org.bukkit.ChatColor;
 import org.bukkit.Chunk;

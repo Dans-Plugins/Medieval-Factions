@@ -12,7 +12,7 @@ import dansplugins.factionsystem.objects.domain.Faction;
 import dansplugins.factionsystem.objects.domain.PowerRecord;
 import dansplugins.factionsystem.services.LocalLocaleService;
 import dansplugins.factionsystem.utils.Logger;
-import dansplugins.factionsystem.utils.Messenger;
+import dansplugins.factionsystem.utils.extended.Messenger;
 import dansplugins.factionsystem.utils.TerritoryOwnerNotifier;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;

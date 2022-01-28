@@ -2,12 +2,13 @@
   Copyright (c) 2022 Daniel McCoy Stephenson
   GPL3 License
  */
-package dansplugins.factionsystem.utils;
+package dansplugins.factionsystem.utils.extended;
 
 import dansplugins.factionsystem.MedievalFactions;
 import dansplugins.factionsystem.data.PersistentData;
 import dansplugins.factionsystem.objects.domain.Faction;
 import dansplugins.factionsystem.services.LocalLocaleService;
+import dansplugins.factionsystem.utils.Logger;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
@@ -75,7 +76,7 @@ public class Scheduler {
                     informPlayerIfTheirLandIsInDanger(player);
                 }
             }
-        }, delay * 20, secondsUntilRepeat * 20);
+        }, delay * 20L, secondsUntilRepeat * 20L);
     }
 
     private void informPlayerIfTheirLandIsInDanger(Player player) {
