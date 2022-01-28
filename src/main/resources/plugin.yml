@@ -1,10 +1,10 @@
 name: MedievalFactions
 version: '${project.version}'
-authors: [DanTheTechMan, Pasarus, Caibinus, Callum, Richardhyy, Mitras2, Kaonami]
+authors: [DanTheTechMan, Pasarus, Caibinus, Callum, Richardhyy, Mitras2, Kaonami, GoodLucky777, Elafir]
 main: dansplugins.factionsystem.MedievalFactions
 api-version: 1.13
 softdepend: [dynmap, PlaceholderAPI, Fiefs]
-description: An open source plugin for simulating sovereign states.
+description: This Minecraft plugin allows players to organize themselves into feudal, diplomatic, lawful groups akin to nations.
 
 commands:
   mf:
