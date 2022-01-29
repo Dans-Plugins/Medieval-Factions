@@ -16,9 +16,9 @@ import dansplugins.factionsystem.objects.domain.*;
 import dansplugins.factionsystem.objects.helper.ChunkFlags;
 import dansplugins.factionsystem.services.LocalConfigService;
 import dansplugins.factionsystem.services.LocalLocaleService;
-import dansplugins.factionsystem.utils.extended.BlockChecker;
 import dansplugins.factionsystem.utils.InteractionAccessChecker;
 import dansplugins.factionsystem.utils.Logger;
+import dansplugins.factionsystem.utils.extended.BlockChecker;
 import dansplugins.factionsystem.utils.extended.Messenger;
 import dansplugins.fiefs.utils.UUIDChecker;
 import org.bukkit.*;
@@ -364,65 +364,8 @@ public class PersistentData {
         return output;
     }
 
-    public void loopThroughRealmsAndBuildAreaMarkersColoredInTheSameColor(MarkerSet realms, Map<String, AreaMarker> newMap) {
-        for (Faction faction : factions) {
-            String liegeName = faction.getTopLiege();
-            Faction liege = PersistentData.getInstance().getFaction(liegeName);
-            String liegeColor;
-            String popupText;
-            // If there's no liege, then f is the liege.
-            if (liege != null) {
-                liegeColor = liege.getFlags().getFlag("dynmapTerritoryColor").toString();
-                popupText = DynmapIntegrator.getInstance().buildNationPopupText(liege);
-            }
-            else {
-                liegeColor = faction.getFlags().getFlag("dynmapTerritoryColor").toString();
-                liegeName = faction.getName() + "__parent";
-                popupText = DynmapIntegrator.getInstance().buildNationPopupText(faction);
-            }
-            DynmapIntegrator.getInstance().updateDynmapForFaction(realms, newMap, "realm", liegeName + "__" + getClass().getName(), popupText, liegeColor, newMap);
-        }
-    }
-
     public int getNumClaimedChunks() {
         return claimedChunks.size();
-    }
-
-    public void loopThroughChunksAndSetFlagsForWorlds(String currentWorldName, ChunkFlags currentChunkFlags, HashMap<String, ChunkFlags> chunkFlagMaps, LinkedList<ClaimedChunk> nodeValues) {
-        for(ClaimedChunk b : claimedChunks) {
-            if(!b.getWorldName().equalsIgnoreCase(currentWorldName)) { /* Not same world */
-                String worldName = b.getWorldName();
-                currentWorldName = b.getWorldName();
-                currentChunkFlags = chunkFlagMaps.get(worldName);
-                if (currentChunkFlags == null) {
-                    currentChunkFlags = new ChunkFlags();
-                    chunkFlagMaps.put(worldName, currentChunkFlags);
-                }
-            }
-            currentChunkFlags.setFlag(b.getChunk().getX(), b.getChunk().getZ(), true);
-            nodeValues.addLast(b);
-        }
-    }
-
-    public void loopThroughFactionsAndBuildColoredFactionAreaMarkers(MarkerSet claims, Map<String, AreaMarker> newMap) {
-        for(Faction f : factions) {
-            DynmapIntegrator.getInstance().updateDynmapForFaction(claims, newMap, "claims", f.getName(), DynmapIntegrator.getInstance().buildNationPopupText(f), f.getFlags().getFlag("dynmapTerritoryColor").toString(), newMap);
-        }
-    }
-
-    public Set<String> getPlayerNamesViaPowerRecordsOfMembersOfAFaction(String holder) {
-        Set<String> playerNames = new HashSet<>();
-        Faction faction = PersistentData.getInstance().getFaction(holder);
-        if (faction != null) {
-            for (PowerRecord powerRecord : powerRecords) {
-                Faction playersFaction = PersistentData.getInstance().getPlayersFaction(powerRecord.getPlayerUUID());
-                if (playersFaction != null && playersFaction.getName().equalsIgnoreCase(holder)) {
-                    UUIDChecker uuidChecker = new UUIDChecker();
-                    playerNames.add(uuidChecker.findPlayerNameBasedOnUUID(powerRecord.getPlayerUUID()));
-                }
-            }
-        }
-        return playerNames;
     }
 
     public void addActivityRecord(ActivityRecord newRecord) {
@@ -601,6 +544,14 @@ public class PersistentData {
 
     public boolean isPrefixTaken(String newPrefix) {
         return factions.stream().map(Faction::getPrefix).anyMatch(prefix -> prefix.equalsIgnoreCase(newPrefix));
+    }
+
+    public ArrayList<Faction> getFactions() {
+        return factions;
+    }
+
+    public ArrayList<PowerRecord> getPlayerPowerRecords() {
+        return powerRecords;
     }
 
     public static class SortableFaction implements Comparable<SortableFaction> {
