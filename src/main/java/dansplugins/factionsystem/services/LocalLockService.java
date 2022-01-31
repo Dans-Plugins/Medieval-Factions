@@ -106,18 +106,14 @@ public class LocalLockService {
                 }
 
                 event.setCancelled(true);
-                return;
             }
             else {
                 player.sendMessage(ChatColor.RED + LocalLocaleService.getInstance().getText("CanOnlyLockSpecificBlocks"));
-                return;
             }
-
         }
         else {
             player.sendMessage(ChatColor.RED + LocalLocaleService.getInstance().getText("CanOnlyLockBlocksInClaimedTerritory"));
             event.setCancelled(true);
-            return;
         }
     }
 

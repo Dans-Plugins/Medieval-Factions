@@ -158,38 +158,25 @@ public class InteractionHandler implements Listener {
     @EventHandler()
     public void handle(PlayerInteractEvent event) {
         Player player = event.getPlayer();
+
         Block clickedBlock = event.getClickedBlock();
         if (clickedBlock == null) {
-            // player has clicked air
             return;
         }
 
-        if (clickedBlock instanceof ItemFrame) {
-            if (MedievalFactions.getInstance().isDebugEnabled()) { System.out.println("DEBUG: ItemFrame interaction captured in PlayerInteractEvent!"); }
-        }
-
-        // ---------------------------------------------------------------------------------------------------------------
-
-        // if player is attempting to lock a block
-        if (EphemeralData.getInstance().getLockingPlayers().contains(player.getUniqueId())) {
+        if (playerIsAttemptingToLockABlock(player)) {
             LocalLockService.getInstance().handleLockingBlock(event, player, clickedBlock);
         }
 
-        // ---------------------------------------------------------------------------------------------------------------
-
-        // if player is trying to unlock a block
-        if (EphemeralData.getInstance().getUnlockingPlayers().contains(player.getUniqueId())) {
+        if (playerIsAttemptingToUnlockABlock(player)) {
             LocalLockService.getInstance().handleUnlockingBlock(event, player, clickedBlock);
         }
-
-        // ---------------------------------------------------------------------------------------------------------------
         
         LockedBlock lockedBlock = PersistentData.getInstance().getLockedBlock(clickedBlock);
         if (lockedBlock != null) {
             boolean playerHasAccess = lockedBlock.hasAccess(player.getUniqueId());
             boolean isPlayerBypassing = EphemeralData.getInstance().getAdminsBypassingProtections().contains(player.getUniqueId());
             if (!playerHasAccess && !isPlayerBypassing) {
-                // player doesn't have access and isn't overriding
                 UUIDChecker uuidChecker = new UUIDChecker();
                 String owner = uuidChecker.findPlayerNameBasedOnUUID(lockedBlock.getOwner());
                 player.sendMessage(ChatColor.RED + String.format(LocalLocaleService.getInstance().getText("LockedBy"), owner));
@@ -197,18 +184,15 @@ public class InteractionHandler implements Listener {
                 return;
             }
             
-            if (EphemeralData.getInstance().getPlayersGrantingAccess().containsKey(player.getUniqueId())) {
-                // player is trying to grant access
+            if (playerIsAttemptingToGrantAccess(player)) {
                 LocalLockService.getInstance().handleGrantingAccess(event, clickedBlock, player);
             }
             
-            if (EphemeralData.getInstance().getPlayersCheckingAccess().contains(player.getUniqueId())) {
-                // player is trying to check access
+            if (playerIsAttemptingToCheckAccess(player)) {
                 LocalLockService.getInstance().handleCheckingAccess(event, lockedBlock, player);
             }
             
-            if (EphemeralData.getInstance().getPlayersRevokingAccess().containsKey(player.getUniqueId())) {
-                // player is trying to revoke access
+            if (playerIsAttemptingToRevokeAccess(player)) {
                 LocalLockService.getInstance().handleRevokingAccess(event, clickedBlock, player);
             }
 
@@ -228,35 +212,51 @@ public class InteractionHandler implements Listener {
             }
         }
 
-        // Check if it's a lever, and if it is and it's connected to a gate in the faction
-        // territory then open/close the gate.
+        // Check if it's a lever, and if it is and it's connected to a gate in the faction territory then open/close the gate.
         boolean playerClickedLever = clickedBlock.getType().equals(Material.LEVER);
         if (playerClickedLever) {
             LocalGateService.getInstance().handlePotentialGateInteraction(clickedBlock, player, event);
         }
 
-        // ---------------------------------------------------------------------------------------------------------------
-
         // pgarner Sep 2, 2020: Moved this to after test to see if the block is locked because it could be a block they have been granted
         // access to (or in future, a 'public' locked block), so if they're not in the faction whose territory the block exists in we want that
         // check to be handled before the interaction is rejected for not being a faction member.
-        // if chunk is claimed
         ClaimedChunk chunk = PersistentData.getInstance().getChunkDataAccessor().getClaimedChunk(event.getClickedBlock().getLocation().getChunk());
         if (chunk != null) {
             PersistentData.getInstance().getChunkDataAccessor().handleClaimedChunkInteraction(event, chunk);
         }
 
-        // ---------------------------------------------------------------------------------------------------------------
-
-        // get tool in player's hand, if it's the gate tool
-        // then we want to let them create the gate.
-        boolean playerCreatingGate = EphemeralData.getInstance().getCreatingGatePlayers().containsKey(event.getPlayer().getUniqueId());
-        boolean playerHoldingGoldenHoe = player.getInventory().getItemInMainHand().getType().equals(Material.GOLDEN_HOE);
-        if (playerCreatingGate && playerHoldingGoldenHoe) {
+        if (playerCreatingGate(player) && playerHoldingGoldenHoe(player)) {
             LocalGateService.getInstance().handleCreatingGate(clickedBlock, player, event);
         }
+    }
 
-        // ---------------------------------------------------------------------------------------------------------------
+    private boolean playerIsAttemptingToRevokeAccess(Player player) {
+        return EphemeralData.getInstance().getPlayersRevokingAccess().containsKey(player.getUniqueId());
+    }
+
+    private boolean playerHoldingGoldenHoe(Player player) {
+        return player.getInventory().getItemInMainHand().getType().equals(Material.GOLDEN_HOE);
+    }
+
+    private boolean playerCreatingGate(Player player) {
+        return EphemeralData.getInstance().getCreatingGatePlayers().containsKey(player.getUniqueId());
+    }
+
+    private boolean playerIsAttemptingToCheckAccess(Player player) {
+        return EphemeralData.getInstance().getPlayersCheckingAccess().contains(player.getUniqueId());
+    }
+
+    private boolean playerIsAttemptingToGrantAccess(Player player) {
+        return EphemeralData.getInstance().getPlayersGrantingAccess().containsKey(player.getUniqueId());
+    }
+
+    private boolean playerIsAttemptingToUnlockABlock(Player player) {
+        return EphemeralData.getInstance().getUnlockingPlayers().contains(player.getUniqueId());
+    }
+
+    private boolean playerIsAttemptingToLockABlock(Player player) {
+        return EphemeralData.getInstance().getLockingPlayers().contains(player.getUniqueId());
     }
 
     @EventHandler()
