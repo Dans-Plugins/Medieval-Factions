@@ -5,6 +5,7 @@
 package dansplugins.factionsystem.commands;
 
 import dansplugins.factionsystem.commands.abs.SubCommand;
+import dansplugins.factionsystem.data.PersistentData;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
@@ -28,6 +29,7 @@ public class UnlockCommand extends SubCommand {
     @Override
     public void execute(Player player, String[] args, String key) {
         final String permission = "mf.unlock";
+        if (!(playerNotInFaction(player))) return;
         if (!(checkPermissions(player, permission))) return;
         if (args.length != 0 && args[0].equalsIgnoreCase("cancel")) {
             ephemeral.getUnlockingPlayers().remove(player.getUniqueId());
@@ -55,5 +57,9 @@ public class UnlockCommand extends SubCommand {
     @Override
     public void execute(CommandSender sender, String[] args, String key) {
 
+    }
+
+    private boolean playerNotInFaction(Player player) {
+        return PersistentData.getInstance().getPlayersFaction(player.getUniqueId()) == null;
     }
 }
