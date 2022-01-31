@@ -157,7 +157,11 @@ public class DamageHandler implements Listener {
     }
 
     private void handleIfFriendlyFire(EntityDamageByEntityEvent event, Player attacker, Player victim) {
-        if (playerNotInFaction(attacker) || playerNotInFaction(victim)) {
+        if (RelationChecker.getInstance().playerNotInFaction(attacker) || RelationChecker.getInstance().playerNotInFaction(victim)) {
+            return;
+        }
+        //i do not know if we also need to check for the inverse victim in faction attack not in faction
+        if (RelationChecker.getInstance().playerInFaction(attacker) || RelationChecker.getInstance().playerNotInFaction(victim)){
             return;
         }
         if (RelationChecker.getInstance().arePlayersInSameFaction(attacker, victim)) {
@@ -176,7 +180,4 @@ public class DamageHandler implements Listener {
         }
     }
 
-    private boolean playerNotInFaction(Player player) {
-        return PersistentData.getInstance().getPlayersFaction(player.getUniqueId()) == null;
-    }
 }
