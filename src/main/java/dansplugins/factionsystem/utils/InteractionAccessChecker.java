@@ -32,41 +32,39 @@ public class InteractionAccessChecker {
     }
 
     public boolean shouldEventBeCancelled(ClaimedChunk claimedChunk, Player player) {
-
-        if (!MedievalFactions.getInstance().getConfig().getBoolean("factionProtectionsEnabled")) {
+        if (factionsProtectionsNotEnabled()) {
             return false;
         }
 
         if (claimedChunk == null) {
-            // chunk is not claimed
             return false;
         }
 
-        boolean isPlayerBypassing = EphemeralData.getInstance().getAdminsBypassingProtections().contains(player.getUniqueId());
-        if (isPlayerBypassing) {
-            // player is bypassing
+        if (isPlayerBypassing(player)) {
             return false;
         }
 
         Faction playersFaction = PersistentData.getInstance().getPlayersFaction(player.getUniqueId());
         if (playersFaction == null) {
-            // player is not in a faction
             return true;
         }
 
-        boolean isLandClaimedByPlayersFaction = playersFaction.getName().equalsIgnoreCase(claimedChunk.getHolder());
-        if (!isLandClaimedByPlayersFaction && !isOutsiderInteractionAllowed(player, claimedChunk, playersFaction)) {
-            // land is not claimed by players faction and outsider interaction is disallowed
-            return true;
-        }
-        else {
-            // land is claimed by players faction or outsider interaction is allowed
-            return false;
-        }
+        return !isLandClaimedByPlayersFaction(playersFaction, claimedChunk) && !isOutsiderInteractionAllowed(player, claimedChunk, playersFaction);
+    }
+
+    private boolean isLandClaimedByPlayersFaction(Faction faction, ClaimedChunk claimedChunk) {
+        return faction.getName().equalsIgnoreCase(claimedChunk.getHolder());
+    }
+
+    private boolean factionsProtectionsNotEnabled() {
+        return !MedievalFactions.getInstance().getConfig().getBoolean("factionProtectionsEnabled");
+    }
+
+    private boolean isPlayerBypassing(Player player) {
+        return EphemeralData.getInstance().getAdminsBypassingProtections().contains(player.getUniqueId());
     }
 
     public boolean isOutsiderInteractionAllowed(Player player, ClaimedChunk chunk, Faction playersFaction) {
-
         if (!MedievalFactions.getInstance().getConfig().getBoolean("factionProtectionsEnabled")) {
             return true;
         }
@@ -81,11 +79,7 @@ public class InteractionAccessChecker {
         Logger.getInstance().log("allyInteractionAllowed: " + allyInteractionAllowed);
         Logger.getInstance().log("vassalageTreeInteractionAllowed: " + vassalageTreeInteractionAllowed);
 
-        boolean allowed = false;
-
-        if (allyInteractionAllowed && isAlly) {
-            allowed = true;
-        }
+        boolean allowed = allyInteractionAllowed && isAlly;
 
         if (vassalageTreeInteractionAllowed && inVassalageTree) {
             allowed = true;
@@ -98,12 +92,10 @@ public class InteractionAccessChecker {
         Faction playersFaction = PersistentData.getInstance().getPlayersFaction(player.getUniqueId());
 
         if (playersFaction == null) {
-            // player is not in a faction, so they couldn't be trying to place anything in enemy territory
             return false;
         }
 
         if (claimedChunk == null) {
-            // chunk is not claimed, so they couldn't be trying to place anything in enemy territory
             return false;
         }
 
