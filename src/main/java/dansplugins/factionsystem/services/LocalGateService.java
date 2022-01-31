@@ -36,40 +36,50 @@ public class LocalGateService {
     }
 
     public void handlePotentialGateInteraction(Block clickedBlock, Player player, PlayerInteractEvent event) {
-        if (PersistentData.getInstance().getChunkDataAccessor().isClaimed(clickedBlock.getChunk())) {
-            ClaimedChunk claim = PersistentData.getInstance().getChunkDataAccessor().getClaimedChunk(clickedBlock.getChunk());
-            Faction faction = PersistentData.getInstance().getFaction(claim.getHolder());
+        if (!PersistentData.getInstance().getChunkDataAccessor().isClaimed(clickedBlock.getChunk())) {
+            return;
+        }
 
-            if (faction.hasGateTrigger(clickedBlock)) {
-                for (Gate g : faction.getGatesForTrigger(clickedBlock)) {
-                    BlockData blockData = clickedBlock.getBlockData();
-                    Powerable powerable = (Powerable) blockData;
-                    if (powerable.isPowered()) {
-                        if (faction.getGatesForTrigger(clickedBlock).get(0).isReady()) {
-                            g.openGate();
-                        }
-                        else {
-                            event.setCancelled(true);
-                            if (player != null) {
-                                player.sendMessage(ChatColor.RED + String.format(LocalLocaleService.getInstance().getText("PleaseWaitGate"), g.getStatus()));
-                            }
-                            return;
-                        }
-                    }
-                    else {
-                        if (faction.getGatesForTrigger(clickedBlock).get(0).isReady()) {
-                            g.closeGate();
-                        }
-                        else {
-                            event.setCancelled(true);
-                            if (player != null) {
-                                player.sendMessage(ChatColor.RED + String.format(LocalLocaleService.getInstance().getText("PleaseWaitGate"), g.getStatus()));
-                            }
-                            return;
-                        }
-                    }
+        ClaimedChunk claim = PersistentData.getInstance().getChunkDataAccessor().getClaimedChunk(clickedBlock.getChunk());
+        Faction faction = PersistentData.getInstance().getFaction(claim.getHolder());
+        Faction playersFaction = PersistentData.getInstance().getPlayersFaction(player.getUniqueId());
+
+        if (!faction.getName().equals(playersFaction.getName())) {
+            return;
+        }
+
+        if (!faction.hasGateTrigger(clickedBlock)) {
+            return;
+        }
+
+        for (Gate g : faction.getGatesForTrigger(clickedBlock)) {
+            BlockData blockData = clickedBlock.getBlockData();
+            Powerable powerable = (Powerable) blockData;
+            if (powerable.isPowered()) {
+                if (faction.getGatesForTrigger(clickedBlock).get(0).isReady()) {
+                    g.openGate();
                 }
-                return;
+                else {
+                    event.setCancelled(true);
+                    if (player == null) {
+                        return;
+                    }
+                    player.sendMessage(ChatColor.RED + String.format(LocalLocaleService.getInstance().getText("PleaseWaitGate"), g.getStatus()));
+                    return;
+                }
+            }
+            else {
+                if (faction.getGatesForTrigger(clickedBlock).get(0).isReady()) {
+                    g.closeGate();
+                }
+                else {
+                    event.setCancelled(true);
+                    if (player == null) {
+                        return;
+                    }
+                    player.sendMessage(ChatColor.RED + String.format(LocalLocaleService.getInstance().getText("PleaseWaitGate"), g.getStatus()));
+                    return;
+                }
             }
         }
     }
