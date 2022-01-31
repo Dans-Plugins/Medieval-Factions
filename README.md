@@ -64,6 +64,7 @@ Mitras2 | Implemented ActionBar territory alerts
 GoodLucky777 | Fixed a bug and a few typos in the code
 Elafir | Made it possible to control gates with redstone
 [Deej](https://github.com/Mr-Deej) | Added checks to several commands
+VoChiDanh | Refactored parts the PersistentData class in an attempt to resolve java compatibility issues
 
 ### Translators
 Name | Language(s)
