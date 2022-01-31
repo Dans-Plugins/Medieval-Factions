@@ -22,6 +22,14 @@ public class RelationChecker {
         return PersistentData.getInstance().isInFaction(player1.getUniqueId()) && PersistentData.getInstance().isInFaction(player2.getUniqueId());
     }
 
+    public boolean playerNotInFaction(Player player) {
+        return PersistentData.getInstance().getPlayersFaction(player.getUniqueId()) == null;
+    }
+
+    public boolean playerInFaction(Player player) {
+        return PersistentData.getInstance().isInFaction(player.getUniqueId());
+    }
+
     public boolean arePlayersInSameFaction(Player player1, Player player2) {
         Pair<Integer, Integer> factionIndices = getFactionIndices(player1, player2);
         int attackersFactionIndex = factionIndices.getLeft();
