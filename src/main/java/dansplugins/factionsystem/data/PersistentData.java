@@ -72,7 +72,7 @@ public class PersistentData {
     /**
      * Method to get a Faction by its name.
      * <p>
-     *     This method utilises {@link #getFaction(String, boolean, boolean)} to obtain the Faction with the given name.
+     * This method utilises {@link #getFaction(String, boolean, boolean)} to obtain the Faction with the given name.
      * </p>
      *
      * @param name of the Faction desired (Can be {@code null}).
@@ -86,7 +86,7 @@ public class PersistentData {
     /**
      * Method to get a Faction by its prefix.
      * <p>
-     *     This method utilises {@link #getFaction(String, boolean, boolean)} to obtain the Faction with the given prefix.
+     * This method utilises {@link #getFaction(String, boolean, boolean)} to obtain the Faction with the given prefix.
      * </p>
      *
      * @param prefix of the Faction desired (Can be {@code null}).
@@ -100,13 +100,14 @@ public class PersistentData {
     /**
      * Method to obtain a Faction from the given string.
      * <p>
-     *     This method can check Faction name and/or Faction prefix depending on the parameters specified.
-     *     <br>If you wish to only check prefix, provide the string and make sure both booleans are {@code true}.
-     *     <br>If you wish to only check name, provide the string and make sure both booleans are {@code false}.
-     *     <br>If you wish to check everything, provide the string and make sure the first boolean is {@code true} only.
+     * This method can check Faction name and/or Faction prefix depending on the parameters specified.
+     * <br>If you wish to only check prefix, provide the string and make sure both booleans are {@code true}.
+     * <br>If you wish to only check name, provide the string and make sure both booleans are {@code false}.
+     * <br>If you wish to check everything, provide the string and make sure the first boolean is {@code true} only.
      * </p>
-     * @param text which you'd like to obtain the Faction from.
-     * @param checkPrefix a toggle for checking prefix.
+     *
+     * @param text            which you'd like to obtain the Faction from.
+     * @param checkPrefix     a toggle for checking prefix.
      * @param onlyCheckPrefix a toggle for only checking prefix.
      * @return {@link Faction} or {@code null}.
      * @see #getFaction(String)
@@ -283,8 +284,7 @@ public class PersistentData {
             if (currentBlock.getFactionName().equalsIgnoreCase(factionName)) {
                 try {
                     itr.remove();
-                }
-                catch(Exception e) {
+                } catch (Exception e) {
                     System.out.println("An error has occurred during lock removal.");
                 }
             }
@@ -373,8 +373,8 @@ public class PersistentData {
     }
 
     public boolean hasPowerRecord(UUID playerUUID) {
-        for (PowerRecord record : powerRecords){
-            if (record.getPlayerUUID().equals(playerUUID)){
+        for (PowerRecord record : powerRecords) {
+            if (record.getPlayerUUID().equals(playerUUID)) {
                 return true;
             }
         }
@@ -579,49 +579,53 @@ public class PersistentData {
 
     /**
      * This class assists in the management of claimed chunks.
+     *
      * @author Daniel McCoy Stephenson
      */
     public class ChunkDataAccessor {
-    
+
         /**
          * This is the method that can be utilized to access the singleton instance of the Local Chunk Service.
+         *
          * @return The singleton instance of the Local Chunk Service.
          */
         public ChunkDataAccessor getInstance() {
             return chunkDataAccessor;
         }
-    
+
         /**
          * This public method can be used to retrieve a claimed chunk. A returned value of null means the chunk is not claimed.
+         *
          * @param chunk The chunk to grab.
          * @return The associated claimed chunk.
          */
         public ClaimedChunk getClaimedChunk(Chunk chunk) {
             return getClaimedChunk(chunk.getX(), chunk.getZ(), chunk.getWorld().getName());
         }
-    
+
         /**
          * This method can be used to claim a radius of chunks around a player.
-         * @param depth The radius of chunks to claim.
-         * @param claimant The player claiming the chunks.
-         * @param location The central location of claiming.
+         *
+         * @param depth            The radius of chunks to claim.
+         * @param claimant         The player claiming the chunks.
+         * @param location         The central location of claiming.
          * @param claimantsFaction The claimant's faction.
          */
         public void radiusClaimAtLocation(int depth, Player claimant, Location location, Faction claimantsFaction) {
             int maxClaimRadius = MedievalFactions.getInstance().getConfig().getInt("maxClaimRadius");
-    
+
             // check if depth is valid
             if (depth < 0 || depth > maxClaimRadius) {
                 claimant.sendMessage(ChatColor.RED + String.format(LocalLocaleService.getInstance().getText("RadiusRequirement"), maxClaimRadius));
                 return;
             }
-    
+
             // if depth is 0, we just need to claim the chunk the player is on
             if (depth == 0) {
                 claimChunkAtLocation(claimant, location, claimantsFaction);
                 return;
             }
-    
+
             // claim chunks
             final Chunk initial = location.getChunk();
             final Set<Chunk> chunkSet = obtainChunks(initial, depth);
@@ -629,23 +633,24 @@ public class PersistentData {
                     claimant, getChunkCoords(chunk), chunk.getWorld(), claimantsFaction
             ));
         }
-    
+
         /**
          * This method can be used to unclaim a radius of chunks around a player.
-         * @param radius The radius of chunks to unclaim.
-         * @param player The player unclaiming the chunks.
+         *
+         * @param radius  The radius of chunks to unclaim.
+         * @param player  The player unclaiming the chunks.
          * @param faction The player's faction.
          */
         public void radiusUnclaimAtLocation(int radius, Player player, Faction faction) {
             final int maxChunksUnclaimable = 999;
-    
+
             // check if radius is valid
-            if (radius <= 0|| radius > maxChunksUnclaimable) {
+            if (radius <= 0 || radius > maxChunksUnclaimable) {
                 final LocalLocaleService instance = LocalLocaleService.getInstance();
                 player.sendMessage(ChatColor.RED + String.format(instance.getText("RadiusRequirement"), maxChunksUnclaimable));
                 return;
             }
-    
+
             // unclaim chunks
             final Set<Chunk> chunkSet = obtainChunks(player.getLocation().getChunk(), radius);
             chunkSet.stream()
@@ -653,21 +658,23 @@ public class PersistentData {
                     .filter(Objects::nonNull)
                     .forEach(chunk -> removeChunk(chunk, player, faction));
         }
-    
+
         /**
          * Claims a singular chunk at a location.
-         * @param claimant The player claiming the chunk.
-         * @param location The location getting claimed.
+         *
+         * @param claimant         The player claiming the chunk.
+         * @param location         The location getting claimed.
          * @param claimantsFaction The player's faction.
          */
         public void claimChunkAtLocation(Player claimant, Location location, Faction claimantsFaction) {
             double[] chunkCoords = getChunkCoords(location);
             claimChunkAtLocation(claimant, chunkCoords, location.getWorld(), claimantsFaction);
         }
-    
+
         /**
          * Unclaims a chunk at a location.
-         * @param player The player unclaiming the chunk.
+         *
+         * @param player         The player unclaiming the chunk.
          * @param playersFaction The player's faction.
          */
         public void removeChunkAtPlayerLocation(Player player, Faction playersFaction) {
@@ -675,7 +682,7 @@ public class PersistentData {
             double[] playerCoords = new double[2];
             playerCoords[0] = player.getLocation().getChunk().getX();
             playerCoords[1] = player.getLocation().getChunk().getZ();
-    
+
             // handle admin bypass
             if (EphemeralData.getInstance().getAdminsBypassingProtections().contains(player.getUniqueId())) {
                 ClaimedChunk chunk = isChunkClaimed(playerCoords[0], playerCoords[1], Objects.requireNonNull(player.getLocation().getWorld()).getName());
@@ -687,27 +694,28 @@ public class PersistentData {
                 player.sendMessage(ChatColor.RED + LocalLocaleService.getInstance().getText("LandNotCurrentlyClaimed"));
                 return;
             }
-    
+
             ClaimedChunk chunk = isChunkClaimed(playerCoords[0], playerCoords[1], Objects.requireNonNull(player.getLocation().getWorld()).getName());
-    
+
             // ensure that chunk is claimed
             if (chunk == null) {
                 return;
             }
-    
+
             // ensure that the chunk is claimed by the player's faction.
             if (!chunk.getHolder().equalsIgnoreCase(playersFaction.getName())) {
                 player.sendMessage(ChatColor.RED + String.format(LocalLocaleService.getInstance().getText("LandClaimedBy"), chunk.getHolder()));
                 return;
             }
-    
+
             // initiate removal
             removeChunk(chunk, player, playersFaction);
             player.sendMessage(ChatColor.GREEN + LocalLocaleService.getInstance().getText("LandUnclaimed"));
         }
-    
+
         /**
          * This can be used to check which faction has laid claim to a chunk.
+         *
          * @param player The player whose location we will be checking.
          * @return The name of the faction that has claimed the chunk. A value of "unclaimed" will be returned if the chunk is unclaimed.
          */
@@ -716,16 +724,16 @@ public class PersistentData {
             playerCoords[0] = player.getLocation().getChunk().getX();
             playerCoords[1] = player.getLocation().getChunk().getZ();
             ClaimedChunk chunk = isChunkClaimed(playerCoords[0], playerCoords[1], Objects.requireNonNull(player.getLocation().getWorld()).getName());
-            if (chunk != null)
-            {
+            if (chunk != null) {
                 return chunk.getHolder();
             }
             return "unclaimed";
         }
-    
+
         /**
          * Checks if a gate is in a chunk.
-         * @param gate The gate to check.
+         *
+         * @param gate  The gate to check.
          * @param chunk The claimed chunk to check.
          * @return Whether the gate is in the claimed chunk.
          */
@@ -733,9 +741,10 @@ public class PersistentData {
             return (gate.getTopLeftChunkX() == chunk.getCoordinates()[0] || gate.getBottomRightChunkX() == chunk.getCoordinates()[0])
                     && (gate.getTopLeftChunkZ() == chunk.getCoordinates()[1] || gate.getBottomRightChunkZ() == chunk.getCoordinates()[1]);
         }
-    
+
         /**
          * This can be used to retrieve the number of chunks claimed by a faction.
+         *
          * @param factionName The name of the faction we are checking.
          * @return An integer indicating how many chunks have been claimed by this faction.
          */
@@ -748,9 +757,10 @@ public class PersistentData {
             }
             return counter;
         }
-    
+
         /**
-         *  This can be used to check if a chunk is claimed.
+         * This can be used to check if a chunk is claimed.
+         *
          * @param chunk The chunk we are checking.
          * @return A boolean indicating if the chunk is claimed.
          */
@@ -762,39 +772,40 @@ public class PersistentData {
             }
             return false;
         }
-    
+
         /**
          * This can be used to unclaim every chunk that a faction owns.
-         * @param factionName The name of the faction we are removing all claimed chunks from.
          *
+         * @param factionName The name of the faction we are removing all claimed chunks from.
          */
         public void removeAllClaimedChunks(String factionName) {
             Iterator<ClaimedChunk> itr = claimedChunks.iterator();
-    
+
             while (itr.hasNext()) {
                 ClaimedChunk currentChunk = itr.next();
                 if (currentChunk.getHolder().equalsIgnoreCase(factionName)) {
                     try {
                         itr.remove();
-                    }
-                    catch(Exception e) {
+                    } catch (Exception e) {
                         System.out.println(LocalLocaleService.getInstance().getText("ErrorClaimedChunkRemoval"));
                     }
                 }
             }
         }
-    
+
         /**
          * This can be used to check if a faction has more claimed land than power.
+         *
          * @param faction The faction we are checking.
          * @return Whether the faction's claimed land exceeds their power.
          */
         public boolean isFactionExceedingTheirDemesneLimit(Faction faction) {
             return (getChunksClaimedByFaction(faction.getName()) > faction.getCumulativePowerLevel());
         }
-    
+
         /**
          * If a player is exceeding their demesne limit, this method will inform them.
+         *
          * @param player The player to inform.
          */
         public void informPlayerIfTheirLandIsInDanger(Player player) {
@@ -805,41 +816,42 @@ public class PersistentData {
                 }
             }
         }
-    
+
         /**
          * This handles interaction within a claimed chunk for the PlayerInteractEvent event.
-         * @param event The PlayerInteractEvent event.
+         *
+         * @param event        The PlayerInteractEvent event.
          * @param claimedChunk The chunk that has been interacted with.
          */
         public void handleClaimedChunkInteraction(PlayerInteractEvent event, ClaimedChunk claimedChunk) {
             // player not in a faction and isn't overriding
             if (!PersistentData.getInstance().isInFaction(event.getPlayer().getUniqueId()) && !EphemeralData.getInstance().getAdminsBypassingProtections().contains(event.getPlayer().getUniqueId())) {
-    
+
                 Block block = event.getClickedBlock();
                 if (MedievalFactions.getInstance().getConfig().getBoolean("nonMembersCanInteractWithDoors") && block != null && BlockChecker.getInstance().isDoor(block)) {
                     // allow non-faction members to interact with doors
                     return;
                 }
-    
+
                 event.setCancelled(true);
             }
-    
+
             // TODO: simplify this code with a call to the shouldEventBeCancelled() method in InteractionAccessChecker.java
-    
+
             final Faction playersFaction = PersistentData.getInstance().getPlayersFaction(event.getPlayer().getUniqueId());
             if (playersFaction == null) {
                 return;
             }
-    
+
             // if player's faction is not the same as the holder of the chunk and player isn't overriding
             if (!(playersFaction.getName().equalsIgnoreCase(claimedChunk.getHolder())) && !EphemeralData.getInstance().getAdminsBypassingProtections().contains(event.getPlayer().getUniqueId())) {
-    
+
                 Block block = event.getClickedBlock();
                 if (MedievalFactions.getInstance().getConfig().getBoolean("nonMembersCanInteractWithDoors") && block != null && BlockChecker.getInstance().isDoor(block)) {
                     // allow non-faction members to interact with doors
                     return;
                 }
-    
+
                 // if enemy territory
                 if (playersFaction.isEnemy(claimedChunk.getHolder())) {
                     // if not interacting with chest
@@ -860,34 +872,36 @@ public class PersistentData {
                         }
                     }
                 }
-    
+
                 if (!InteractionAccessChecker.getInstance().isOutsiderInteractionAllowed(event.getPlayer(), claimedChunk, playersFaction)) {
                     event.setCancelled(true);
                 }
             }
         }
-    
+
         /**
          * This can be used to forcefully claim a chunk at the players location, regardless of requirements.
-         * @param player The player whose location we are using.
+         *
+         * @param player  The player whose location we are using.
          * @param faction The faction we are claiming the chunk for.
          */
         public void forceClaimAtPlayerLocation(Player player, Faction faction) {
             Location location = player.getLocation();
-    
+
             ClaimedChunk claimedChunk = getClaimedChunk(location.getChunk());
-    
+
             if (claimedChunk != null) {
                 removeChunk(claimedChunk, player, faction);
             }
-    
+
             addClaimedChunk(location.getChunk(), faction, Objects.requireNonNull(location.getWorld()));
         }
-    
+
         /**
          * This is a private method intended to be used by this class to retrieve a claimed chunk.
-         * @param x The x coordinate of the chunk to retrieve.
-         * @param z The z coordinate of the chunk to retrieve.
+         *
+         * @param x     The x coordinate of the chunk to retrieve.
+         * @param z     The z coordinate of the chunk to retrieve.
          * @param world The world that the chunk to retrieve is in.
          * @return The claimed chunk at the given location. A value of null indicates that the chunk is not claimed.
          */
@@ -899,7 +913,7 @@ public class PersistentData {
             }
             return null;
         }
-    
+
         private Set<Chunk> obtainChunks(Chunk initial, int radius) {
             final Set<Chunk> chunkSet = new HashSet<>(); // Avoid duplicates without checking for it yourself.
             for (int x = initial.getX() - radius; x <= initial.getX() + radius; x++) {
@@ -909,9 +923,9 @@ public class PersistentData {
             }
             return chunkSet;
         }
-    
+
         private void claimChunkAtLocation(Player claimant, double[] chunkCoords, World world, Faction claimantsFaction) {
-    
+
             // if demesne limit enabled
             if (LocalConfigService.getInstance().getBoolean("limitLand")) {
                 // if at demesne limit
@@ -920,25 +934,25 @@ public class PersistentData {
                     return;
                 }
             }
-    
+
             // check if land is already claimed
             ClaimedChunk chunk = isChunkClaimed(chunkCoords[0], chunkCoords[1], world.getName());
             if (chunk != null) {
                 // chunk already claimed
                 Faction targetFaction = PersistentData.getInstance().getFaction(chunk.getHolder());
-    
+
                 // if holder is player's faction
                 if (targetFaction.getName().equalsIgnoreCase(claimantsFaction.getName()) && !claimantsFaction.getAutoClaimStatus()) {
                     claimant.sendMessage(ChatColor.RED + LocalLocaleService.getInstance().getText("LandAlreadyClaimedByYourFaction"));
                     return;
                 }
-    
+
                 // if not at war with target faction
                 if (!claimantsFaction.isEnemy(targetFaction.getName())) {
                     claimant.sendMessage(ChatColor.RED + "You must be at war with a faction to conquer land from them.");
                     return;
                 }
-    
+
                 // surrounded chunk protection check
                 if (MedievalFactions.getInstance().getConfig().getBoolean("surroundedChunksProtected")) {
                     if (isClaimedChunkSurroundedByChunksClaimedBySameFaction(chunk)) {
@@ -946,35 +960,34 @@ public class PersistentData {
                         return;
                     }
                 }
-    
+
                 int targetFactionsCumulativePowerLevel = targetFaction.getCumulativePowerLevel();
                 int chunksClaimedByTargetFaction = getChunksClaimedByFaction(targetFaction.getName());
-    
+
                 // if target faction does not have more land than their demesne limit
                 if (!(targetFactionsCumulativePowerLevel < chunksClaimedByTargetFaction)) {
                     claimant.sendMessage(ChatColor.RED + LocalLocaleService.getInstance().getText("TargetFactionNotOverClaiming"));
                     return;
                 }
-    
+
                 // CONQUERABLE
 
                 // remove locks on this chunk
                 lockedBlocks.removeIf(block -> chunk.getChunk().getWorld().getBlockAt(block.getX(), block.getY(), block.getZ()).getChunk().getX() == chunk.getChunk().getX() &&
                         chunk.getChunk().getWorld().getBlockAt(block.getX(), block.getY(), block.getZ()).getChunk().getZ() == chunk.getChunk().getZ());
-    
+
                 FactionClaimEvent claimEvent = new FactionClaimEvent(claimantsFaction, claimant, chunk.getChunk());
                 Bukkit.getPluginManager().callEvent(claimEvent);
                 if (!claimEvent.isCancelled()) {
                     claimedChunks.remove(chunk);
-    
+
                     Chunk toClaim = world.getChunkAt((int) chunkCoords[0], (int) chunkCoords[1]);
                     addClaimedChunk(toClaim, claimantsFaction, claimant.getWorld());
                     claimant.sendMessage(ChatColor.GREEN + String.format(LocalLocaleService.getInstance().getText("AlertLandConqueredFromAnotherFaction"), targetFaction.getName(), getChunksClaimedByFaction(claimantsFaction.getName()), claimantsFaction.getCumulativePowerLevel()));
-    
+
                     Messenger.getInstance().sendAllPlayersInFactionMessage(targetFaction, ChatColor.RED + String.format(LocalLocaleService.getInstance().getText("AlertLandConqueredFromYourFaction"), claimantsFaction.getName()));
                 }
-            }
-            else {
+            } else {
                 Chunk toClaim = world.getChunkAt((int) chunkCoords[0], (int) chunkCoords[1]);
                 FactionClaimEvent claimEvent = new FactionClaimEvent(claimantsFaction, claimant, toClaim);
                 Bukkit.getPluginManager().callEvent(claimEvent);
@@ -985,12 +998,13 @@ public class PersistentData {
                 }
             }
         }
-    
+
         /**
          * Adds a claimed chunk to persistent data.
-         * @param chunk The chunk we will be creating a new claimed chunk with.
+         *
+         * @param chunk   The chunk we will be creating a new claimed chunk with.
          * @param faction The faction that will own the claimed chunk.
-         * @param world The world that the claimed chunk is located in.
+         * @param world   The world that the claimed chunk is located in.
          */
         private void addClaimedChunk(Chunk chunk, Faction faction, World world) {
             ClaimedChunk newChunk = new ClaimedChunk(chunk);
@@ -998,18 +1012,20 @@ public class PersistentData {
             newChunk.setWorld(world.getName());
             claimedChunks.add(newChunk);
         }
-    
+
         /**
          * This can be used to retrieve the x and z coordinates of a chunk.
+         *
          * @param location The location of the chunk.
          * @return An array of doubles containing the x and z coordinates.
          */
         private double[] getChunkCoords(Location location) {
             return getChunkCoords(location.getChunk());
         }
-    
+
         /**
          * This can be used to retrieve the x and z coordinates of a chunk.
+         *
          * @param chunk The chunk to retrieve the coordinates of.
          * @return An array of doubles containing the x and z coordinates.
          */
@@ -1019,36 +1035,35 @@ public class PersistentData {
             chunkCoords[1] = chunk.getZ();
             return chunkCoords;
         }
-    
+
         /**
          * Checks if a chunk is claimed.
-         * @param x The x coordinate of the chunk.
-         * @param y The y coordinate of the chunk.
+         *
+         * @param x     The x coordinate of the chunk.
+         * @param y     The y coordinate of the chunk.
          * @param world The world that the chunk is in.
          * @return The claimed chunk if the chunk is claimed, and null if it is not.
          */
-        private ClaimedChunk isChunkClaimed(double x, double y, String world)
-        {
-            for (ClaimedChunk chunk : claimedChunks)
-            {
-                if (x == chunk.getCoordinates()[0] && y == chunk.getCoordinates()[1] && world.equalsIgnoreCase(chunk.getWorldName()))
-                {
+        private ClaimedChunk isChunkClaimed(double x, double y, String world) {
+            for (ClaimedChunk chunk : claimedChunks) {
+                if (x == chunk.getCoordinates()[0] && y == chunk.getCoordinates()[1] && world.equalsIgnoreCase(chunk.getWorldName())) {
                     return chunk;
                 }
             }
-    
+
             return null;
         }
-    
+
         /**
          * This can be utilized to remove a claimed chunk from persistent data.
-         * @param chunkToRemove The chunk to remove.
+         *
+         * @param chunkToRemove    The chunk to remove.
          * @param unclaimingPlayer The player removing the chunk.
-         * @param holdingFaction The faction that the chunk is owned by.
+         * @param holdingFaction   The faction that the chunk is owned by.
          */
         private void removeChunk(ClaimedChunk chunkToRemove, Player unclaimingPlayer, Faction holdingFaction) {
             // String identifier = (int)chunk.getChunk().getX() + "_" + (int)chunk.getChunk().getZ();
-    
+
             // handle faction unclaim event calling and cancellation
             FactionUnclaimEvent unclaimEvent = new FactionUnclaimEvent(holdingFaction, unclaimingPlayer, chunkToRemove.getChunk());
             Bukkit.getPluginManager().callEvent(unclaimEvent);
@@ -1056,16 +1071,16 @@ public class PersistentData {
                 Logger.getInstance().log("Unclaim event was cancelled.");
                 return;
             }
-    
+
             // get player's faction
             Faction playersFaction = PersistentData.getInstance().getPlayersFaction(unclaimingPlayer.getUniqueId());
-    
+
             // ensure that the claimed chunk is owned by the player's faction
             if (!chunkToRemove.getHolder().equals(playersFaction.getName())) {
                 // TODO: add locale message
                 return;
             }
-    
+
             // if faction home is located on this chunk
             Location factionHome = holdingFaction.getFactionHome();
             if (factionHome != null) {
@@ -1074,38 +1089,39 @@ public class PersistentData {
                     // remove faction home
                     holdingFaction.setFactionHome(null);
                     Messenger.getInstance().sendAllPlayersInFactionMessage(holdingFaction, ChatColor.RED + LocalLocaleService.getInstance().getText("AlertFactionHomeRemoved"));
-    
+
                 }
             }
-    
+
             // remove locks on this chunk
             lockedBlocks.removeIf(block -> chunkToRemove.getChunk().getWorld().getBlockAt(block.getX(), block.getY(), block.getZ()).getChunk().getX() == chunkToRemove.getChunk().getX() &&
                     chunkToRemove.getChunk().getWorld().getBlockAt(block.getX(), block.getY(), block.getZ()).getChunk().getZ() == chunkToRemove.getChunk().getZ() &&
                     block.getWorld().equalsIgnoreCase(chunkToRemove.getWorldName()));
-    
+
             // remove any gates in this chunk
             Iterator<Gate> gtr = holdingFaction.getGates().iterator();
-            while(gtr.hasNext()) {
+            while (gtr.hasNext()) {
                 Gate gate = gtr.next();
                 if (isGateInChunk(gate, chunkToRemove)) {
                     holdingFaction.removeGate(gate);
                     gtr.remove();
                 }
             }
-    
+
             claimedChunks.remove(chunkToRemove);
         }
-    
+
         /**
          * This can be utilized to get a chunk locationally relative to another chunk.
-         * @param origin The chunk we are checking.
+         *
+         * @param origin    The chunk we are checking.
          * @param direction The direction the chunk we want to grab is.
          */
         private Chunk getChunkByDirection(Chunk origin, String direction) {
-    
+
             int x = -1;
             int z = -1;
-    
+
             if (direction.equalsIgnoreCase("north")) {
                 x = origin.getX();
                 z = origin.getZ() + 1;
@@ -1122,12 +1138,13 @@ public class PersistentData {
                 x = origin.getX() - 1;
                 z = origin.getZ();
             }
-    
+
             return origin.getWorld().getChunkAt(x, z);
         }
-    
+
         /**
          * Checks if the chunks to the North, East, South and West of the target are claimed by the same faction
+         *
          * @param target The claimed chunk to check the neighbors of.
          * @return Boolean indicating whether or not the claimed chunk is surrounded.
          */
@@ -1136,29 +1153,30 @@ public class PersistentData {
             ClaimedChunk easternClaimedChunk = getClaimedChunk(getChunkByDirection(target.getChunk(), "east"));
             ClaimedChunk southernClaimedChunk = getClaimedChunk(getChunkByDirection(target.getChunk(), "south"));
             ClaimedChunk westernClaimedChunk = getClaimedChunk(getChunkByDirection(target.getChunk(), "west"));
-    
+
             if (northernClaimedChunk == null ||
                     easternClaimedChunk == null ||
                     southernClaimedChunk == null ||
                     westernClaimedChunk == null) {
-    
+
                 return false;
-    
+
             }
-    
+
             boolean northernChunkClaimedBySameFaction = target.getHolder().equalsIgnoreCase(northernClaimedChunk.getHolder());
             boolean easternChunkClaimedBySameFaction = target.getHolder().equalsIgnoreCase(easternClaimedChunk.getHolder());
             boolean southernChunkClaimedBySameFaction = target.getHolder().equalsIgnoreCase(southernClaimedChunk.getHolder());
             boolean westernChunkClaimedBySameFaction = target.getHolder().equalsIgnoreCase(westernClaimedChunk.getHolder());
-    
+
             return (northernChunkClaimedBySameFaction &&
                     easternChunkClaimedBySameFaction &&
                     southernChunkClaimedBySameFaction &&
                     westernChunkClaimedBySameFaction);
         }
-    
+
         /**
          * Checks whether a block is able to be interacted with when taking into account the claiming system.
+         *
          * @param event The PlayerInteractEvent event.
          * @return A boolean signifying whether the block is able to be interacted with.
          */
@@ -1168,7 +1186,7 @@ public class PersistentData {
                 if (BlockChecker.getInstance().isChest(event.getClickedBlock())) {
                     return false;
                 }
-                switch(event.getClickedBlock().getType()) {
+                switch (event.getClickedBlock().getType()) {
                     case ACACIA_DOOR:
                     case BIRCH_DOOR:
                     case DARK_OAK_DOOR:
@@ -1204,17 +1222,50 @@ public class PersistentData {
             }
             return true;
         }
-    
+
         /**
          * This can be utilized to find out what materials are allowed to be used in a faction's territory regardless of member status.
+         *
          * @param material The material to check.
          * @return Whether the material can be used.
          */
         private boolean materialAllowed(Material material) {
-            return switch (material) {
-                case BREAD, POTATO, CARROT, BEETROOT, BEEF, PORKCHOP, CHICKEN, COD, SALMON, MUTTON, RABBIT, TROPICAL_FISH, PUFFERFISH, MUSHROOM_STEW, RABBIT_STEW, BEETROOT_SOUP, COOKED_BEEF, COOKED_PORKCHOP, COOKED_CHICKEN, COOKED_SALMON, COOKED_MUTTON, COOKED_COD, MELON, PUMPKIN, MELON_SLICE, CAKE, PUMPKIN_PIE, APPLE, COOKIE, POISONOUS_POTATO, CHORUS_FRUIT, DRIED_KELP, BAKED_POTATO -> true;
-                default -> false;
-            };
+            switch (material) {
+                case BREAD:
+                case POTATO:
+                case CARROT:
+                case BEETROOT:
+                case BEEF:
+                case PORKCHOP:
+                case CHICKEN:
+                case COD:
+                case SALMON:
+                case MUTTON:
+                case RABBIT:
+                case TROPICAL_FISH:
+                case PUFFERFISH:
+                case MUSHROOM_STEW:
+                case RABBIT_STEW:
+                case BEETROOT_SOUP:
+                case COOKED_BEEF:
+                case COOKED_PORKCHOP:
+                case COOKED_CHICKEN:
+                case COOKED_SALMON:
+                case COOKED_MUTTON:
+                case COOKED_COD:
+                case MELON:
+                case PUMPKIN:
+                case MELON_SLICE:
+                case CAKE:
+                case PUMPKIN_PIE:
+                case APPLE:
+                case COOKIE:
+                case POISONOUS_POTATO:
+                case CHORUS_FRUIT:
+                case DRIED_KELP:
+                case BAKED_POTATO:
+            }
+            return true;
         }
     }
 
@@ -1231,7 +1282,8 @@ public class PersistentData {
         private final static String LOCKED_BLOCKS_FILE_NAME = "lockedblocks.json";
 //        private final static String WARS_FILE_NAME = "wars.json";
 
-        private final static Type LIST_MAP_TYPE = new TypeToken<ArrayList<HashMap<String, String>>>(){}.getType();
+        private final Type LIST_MAP_TYPE = new TypeToken<ArrayList<HashMap<String, String>>>() {
+        }.getType();
 
         private final Gson gson = new GsonBuilder().setPrettyPrinting().create();
 
@@ -1258,7 +1310,7 @@ public class PersistentData {
 
         private void saveFactions() {
             List<Map<String, String>> factionsToSave = new ArrayList<>();
-            for (Faction faction : factions){
+            for (Faction faction : factions) {
                 factionsToSave.add(faction.save());
             }
 
@@ -1268,7 +1320,7 @@ public class PersistentData {
 
         private void saveClaimedChunks() {
             List<Map<String, String>> claimedChunksToSave = new ArrayList<>();
-            for (ClaimedChunk chunk : claimedChunks){
+            for (ClaimedChunk chunk : claimedChunks) {
                 claimedChunksToSave.add(chunk.save());
             }
 
@@ -1278,7 +1330,7 @@ public class PersistentData {
 
         private void savePlayerPowerRecords() {
             List<Map<String, String>> powerRecordsToSave = new ArrayList<>();
-            for (PowerRecord record : powerRecords){
+            for (PowerRecord record : powerRecords) {
                 powerRecordsToSave.add(record.save());
             }
 
@@ -1322,7 +1374,7 @@ public class PersistentData {
                 OutputStreamWriter outputStreamWriter = new OutputStreamWriter(new FileOutputStream(file), StandardCharsets.UTF_8);
                 outputStreamWriter.write(gson.toJson(saveData));
                 outputStreamWriter.close();
-            } catch(IOException e) {
+            } catch (IOException e) {
                 System.out.println("ERROR: " + e);
             }
         }
@@ -1332,7 +1384,7 @@ public class PersistentData {
 
             ArrayList<HashMap<String, String>> data = loadDataFromFilename(FILE_PATH + FACTIONS_FILE_NAME);
 
-            for (Map<String, String> factionData : data){
+            for (Map<String, String> factionData : data) {
                 Faction newFaction = new Faction(factionData);
                 factions.add(newFaction);
             }
@@ -1343,7 +1395,7 @@ public class PersistentData {
 
             ArrayList<HashMap<String, String>> data = loadDataFromFilename(FILE_PATH + CHUNKS_FILE_NAME);
 
-            for (Map<String, String> chunkData : data){
+            for (Map<String, String> chunkData : data) {
                 ClaimedChunk chunk = new ClaimedChunk(chunkData);
                 claimedChunks.add(chunk);
             }
@@ -1354,7 +1406,7 @@ public class PersistentData {
 
             ArrayList<HashMap<String, String>> data = loadDataFromFilename(FILE_PATH + PLAYERPOWER_FILE_NAME);
 
-            for (Map<String, String> powerRecord : data){
+            for (Map<String, String> powerRecord : data) {
                 PowerRecord player = new PowerRecord(powerRecord);
                 powerRecords.add(player);
             }
@@ -1365,7 +1417,7 @@ public class PersistentData {
 
             ArrayList<HashMap<String, String>> data = loadDataFromFilename(FILE_PATH + PLAYERACTIVITY_FILE_NAME);
 
-            for (Map<String, String> powerRecord : data){
+            for (Map<String, String> powerRecord : data) {
                 ActivityRecord player = new ActivityRecord(powerRecord);
                 activityRecords.add(player);
             }
@@ -1376,7 +1428,7 @@ public class PersistentData {
 
             ArrayList<HashMap<String, String>> data = loadDataFromFilename(FILE_PATH + LOCKED_BLOCKS_FILE_NAME);
 
-            for (Map<String, String> lockedBlockData : data){
+            for (Map<String, String> lockedBlockData : data) {
                 LockedBlock lockedBlock = new LockedBlock(lockedBlockData);
                 lockedBlocks.add(lockedBlock);
             }
@@ -1394,7 +1446,7 @@ public class PersistentData {
         }
 
         private ArrayList<HashMap<String, String>> loadDataFromFilename(String filename) {
-            try{
+            try {
                 Gson gson = new GsonBuilder().setPrettyPrinting().create();
                 JsonReader reader = new JsonReader(new InputStreamReader(new FileInputStream(filename), StandardCharsets.UTF_8));
                 return gson.fromJson(reader, LIST_MAP_TYPE);

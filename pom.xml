@@ -23,8 +23,8 @@
                 <artifactId>maven-compiler-plugin</artifactId>
                 <version>3.8.1</version>
                 <configuration>
-                    <source>16</source>
-                    <target>16</target>
+                    <source>${java.version}</source>
+                    <target>${java.version}</target>
                 </configuration>
             </plugin>
             <plugin>
@@ -95,13 +95,15 @@
             <groupId>dansplugins</groupId>
             <artifactId>Fiefs</artifactId>
             <version>v0.8-alpha-1</version>
-            <scope>compile</scope>
+            <scope>system</scope>
+            <systemPath>${project.basedir}/dependencies/Fiefs-v0.8-alpha-1.jar</systemPath>
         </dependency>
         <dependency>
             <groupId>preponderous</groupId>
             <artifactId>ponder</artifactId>
             <version>v0.13</version>
-            <scope>compile</scope>
+            <scope>system</scope>
+            <systemPath>${project.basedir}/dependencies/Ponder-v0.13.jar</systemPath>
         </dependency>
     </dependencies>
 </project>
