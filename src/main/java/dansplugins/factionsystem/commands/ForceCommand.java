@@ -539,11 +539,13 @@ public class ForceCommand extends SubCommand {
     }
 
     public void forceClaim(CommandSender sender, String[] args) {
-        if (!(sender instanceof Player player)) {
+        if (!(sender instanceof Player)) {
             return;
         }
 
-        if (!(checkPermissions(player, "mf.force.claim", "mf.force.*", "mf.admin"))) {
+        Player p = (Player)  sender;
+
+        if (!(p.hasPermission("mf.force.claim") || p.hasPermission("mf.force.*") || p.hasPermission("mf.admin"))){
             return;
         }
 
@@ -567,7 +569,7 @@ public class ForceCommand extends SubCommand {
             return;
         }
 
-        PersistentData.getInstance().getChunkDataAccessor().forceClaimAtPlayerLocation(player, faction);
+        PersistentData.getInstance().getChunkDataAccessor().forceClaimAtPlayerLocation(p, faction);
         sender.sendMessage(translate("&a" + getText("Done")));
     }
 
