@@ -157,6 +157,9 @@ public class DamageHandler implements Listener {
     }
 
     private void handleIfFriendlyFire(EntityDamageByEntityEvent event, Player attacker, Player victim) {
+        if (playerNotInFaction(attacker) || playerNotInFaction(victim)) {
+            return;
+        }
         if (RelationChecker.getInstance().arePlayersInSameFaction(attacker, victim)) {
             Faction faction = PersistentData.getInstance().getPlayersFaction(attacker.getUniqueId());
             boolean friendlyFireAllowed = (boolean) faction.getFlags().getFlag("allowfriendlyFire");
@@ -171,5 +174,9 @@ public class DamageHandler implements Listener {
                 attacker.sendMessage(ChatColor.RED + LocalLocaleService.getInstance().getText("CannotAttackNonWarringPlayer"));
             }
         }
+    }
+
+    private boolean playerNotInFaction(Player player) {
+        return PersistentData.getInstance().getPlayersFaction(player.getUniqueId()) == null;
     }
 }
