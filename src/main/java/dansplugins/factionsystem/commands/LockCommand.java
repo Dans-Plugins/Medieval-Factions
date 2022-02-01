@@ -32,8 +32,12 @@ public class LockCommand extends SubCommand {
     @Override
     public void execute(Player player, String[] args, String key) {
         final String permission = "mf.lock";
-        if (!(RelationChecker.getInstance().playerNotInFaction(player))) return;
-        if (!(checkPermissions(player, permission))) return;
+        if (RelationChecker.getInstance().playerNotInFaction(player)) {
+            return;
+        }
+        if (!checkPermissions(player, permission)) {
+            return;
+        }
         if (args.length >= 1 && safeEquals(args[0], "cancel")) {
             if (ephemeral.getLockingPlayers().remove(player.getUniqueId())) { // Remove them
                 player.sendMessage(translate("&c" + getText("LockingCancelled")));
