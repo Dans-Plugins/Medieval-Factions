@@ -265,17 +265,6 @@ public class PersistentData {
         return false;
     }
 
-    public boolean isPlayerInAlliedFaction(Player player, Faction faction) {
-        ArrayList<String> factionNames = faction.getAllies();
-        for (String name : factionNames) {
-            Faction f = getFaction(name);
-            if (f.isMember(player.getUniqueId())) {
-                return true;
-            }
-        }
-        return false;
-    }
-
     public void removeAllLocks(String factionName) {
         Iterator<LockedBlock> itr = lockedBlocks.iterator();
 
@@ -358,10 +347,6 @@ public class PersistentData {
             }
         }
         return output;
-    }
-
-    public int getNumClaimedChunks() {
-        return claimedChunks.size();
     }
 
     public void addActivityRecord(ActivityRecord newRecord) {

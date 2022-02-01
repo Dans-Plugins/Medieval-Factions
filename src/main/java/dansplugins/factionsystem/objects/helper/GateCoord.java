@@ -59,10 +59,7 @@ public class GateCoord {
 	}
 	
 	public GateCoord(Block block) {
-		x = block.getX();
-		y = block.getY();
-		z = block.getZ();
-		world = block.getWorld().getName();
+		this(block.getX(), block.getY(), block.getZ(), block.getWorld().getName());
 	}
 
 	public boolean equals(Block block) {
@@ -74,5 +71,4 @@ public class GateCoord {
 	{
 		return String.format("%d,%d,%d,%s", x, y, z, world);
 	}
-		
 }
