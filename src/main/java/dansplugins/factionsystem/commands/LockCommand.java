@@ -31,8 +31,12 @@ public class LockCommand extends SubCommand {
     @Override
     public void execute(Player player, String[] args, String key) {
         final String permission = "mf.lock";
-        if (!(playerNotInFaction(player))) return;
-        if (!(checkPermissions(player, permission))) return;
+        if (!playerInFaction(player)) {
+            return;
+        }
+        if (!(checkPermissions(player, permission))){
+            return;
+        }
         if (args.length >= 1 && safeEquals(args[0], "cancel")) {
             if (ephemeral.getLockingPlayers().remove(player.getUniqueId())) { // Remove them
                 player.sendMessage(translate("&c" + getText("LockingCancelled")));
@@ -56,7 +60,7 @@ public class LockCommand extends SubCommand {
 
     }
 
-    private boolean playerNotInFaction(Player player) {
-        return PersistentData.getInstance().getPlayersFaction(player.getUniqueId()) == null;
+    private boolean playerInFaction(Player player) {
+        return PersistentData.getInstance().getPlayersFaction(player.getUniqueId()) != null;
     }
 }

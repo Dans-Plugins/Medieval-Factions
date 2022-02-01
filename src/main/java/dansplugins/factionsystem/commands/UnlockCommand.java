@@ -29,8 +29,12 @@ public class UnlockCommand extends SubCommand {
     @Override
     public void execute(Player player, String[] args, String key) {
         final String permission = "mf.unlock";
-        if (!(playerNotInFaction(player))) return;
-        if (!(checkPermissions(player, permission))) return;
+        if (!playerInFaction(player)) {
+            return;
+        }
+        if (!checkPermissions(player, permission)) {
+            return;
+        }
         if (args.length != 0 && args[0].equalsIgnoreCase("cancel")) {
             ephemeral.getUnlockingPlayers().remove(player.getUniqueId());
             ephemeral.getForcefullyUnlockingPlayers().remove(player.getUniqueId()); // just in case the player tries to cancel a forceful unlock without using the force command
@@ -38,7 +42,6 @@ public class UnlockCommand extends SubCommand {
             return;
         }
         if (!ephemeral.getUnlockingPlayers().contains(player.getUniqueId())) {
-            // add player to playersAboutToLockSomething list
             ephemeral.getUnlockingPlayers().add(player.getUniqueId());
         }
         ephemeral.getLockingPlayers().remove(player.getUniqueId()); // Remove from locking
@@ -59,7 +62,7 @@ public class UnlockCommand extends SubCommand {
 
     }
 
-    private boolean playerNotInFaction(Player player) {
-        return PersistentData.getInstance().getPlayersFaction(player.getUniqueId()) == null;
+    private boolean playerInFaction(Player player) {
+        return PersistentData.getInstance().getPlayersFaction(player.getUniqueId()) != null;
     }
 }
