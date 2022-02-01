@@ -34,7 +34,7 @@ Dynmap has been integrated with this plugin. In order to be able to view claimed
 You can find the support discord server [here](https://discord.gg/xXtuAQ2).
 
 ### Experiencing a bug?
-Please fill out a bug report [here](https://github.com/dmccoystephenson/Medieval-Factions/issues?q=is%3Aissue+is%3Aopen+label%3Abug).
+Please fill out a bug report [here](https://github.com/dmccoystephenson/Medieval-Factions/issues/new/choose).
 
 ## Roadmap
 - [Known Bugs](https://github.com/dmccoystephenson/Medieval-Factions/issues?q=is%3Aopen+is%3Aissue+label%3Abug)
