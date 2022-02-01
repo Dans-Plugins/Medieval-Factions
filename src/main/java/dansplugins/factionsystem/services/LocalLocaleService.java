@@ -17,14 +17,14 @@ import java.util.*;
  */
 public class LocalLocaleService {
 
-    private boolean debug = MedievalFactions.getInstance().isDebugEnabled();
+    private final boolean debug = MedievalFactions.getInstance().isDebugEnabled();
 
     private static LocalLocaleService instance;
 
-    private ArrayList<String> supportedLanguageIDs = new ArrayList<>(Arrays.asList("en-us", "es", "ru", "pt-br", "de"));
+    private final ArrayList<String> supportedLanguageIDs = new ArrayList<>(Arrays.asList("en-us", "es", "ru", "pt-br", "de"));
 
-    private ArrayList<String> keys = new ArrayList<>();
-    private HashMap<String, String> strings = new HashMap<>();
+    private final ArrayList<String> keys = new ArrayList<>();
+    private final HashMap<String, String> strings = new HashMap<>();
 
     private String languageFolderPath;
     private String localizationFileName;
@@ -79,14 +79,14 @@ public class LocalLocaleService {
 
     public String getSupportedLanguageIDsSeparatedByCommas() {
 
-        String IDs = "";
+        StringBuilder IDs = new StringBuilder();
         for (int i = 0; i < supportedLanguageIDs.size(); i++) {
-            IDs = IDs + supportedLanguageIDs.get(i);
+            IDs.append(supportedLanguageIDs.get(i));
             if (i != supportedLanguageIDs.size() - 1) {
-                IDs = IDs + ", ";
+                IDs.append(", ");
             }
         }
-        return IDs;
+        return IDs.toString();
 
     }
 
@@ -98,14 +98,8 @@ public class LocalLocaleService {
     private void loadFromPluginFolder() {
         File file = new File(localizationFilePath);
         try {
-
-            // load from local language file
             loadFromFile(file);
-
-            // update local language files
             updateCurrentLocalLanguageFile();
-
-            // save
             saveToPluginFolder();
 
         } catch (Exception e) {
@@ -116,7 +110,6 @@ public class LocalLocaleService {
     }
 
     private void loadFromFile(File file) {
-//        System.out.println("DEBUG: Loading from " + file.toString());
         try {
             List<String> lines = Files.readAllLines(file.toPath());
 
@@ -181,7 +174,7 @@ public class LocalLocaleService {
     }
 
     private Pair<String, String> getPairFromLine(String line) {
-        String key = "";
+        String key;
         String value = "";
 
         int tabIndex = getIndexOfTab(line);

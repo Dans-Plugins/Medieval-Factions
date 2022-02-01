@@ -28,7 +28,6 @@ public class LocalConfigService {
     }
 
     public void handleVersionMismatch() {
-        // set version
         if (!getConfig().isString("version")) {
             getConfig().addDefault("version", MedievalFactions.getInstance().getVersion());
         }

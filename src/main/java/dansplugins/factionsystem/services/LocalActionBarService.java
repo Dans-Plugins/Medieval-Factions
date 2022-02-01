@@ -15,7 +15,7 @@ import java.util.Map;
 
 public class LocalActionBarService {
     private static LocalActionBarService instance;
-    private final Map<Player, TextComponent> playerActionBarMessages = new HashMap<Player, TextComponent>();
+    private final Map<Player, TextComponent> playerActionBarMessages = new HashMap<>();
 
     private LocalActionBarService(Plugin plugin) {
         Bukkit.getScheduler().scheduleSyncRepeatingTask(plugin,

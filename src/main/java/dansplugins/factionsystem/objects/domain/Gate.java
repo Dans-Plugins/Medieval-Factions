@@ -128,42 +128,42 @@ public class Gate {
 
 	public int getTopLeftX() {
 		if (coord1 != null && coord2 != null) {
-			return coord1.getX() < coord2.getX() ? coord1.getX() : coord2.getX();
+			return Math.min(coord1.getX(), coord2.getX());
 		}
 		return 0;
 	}
 
 	public int getTopLeftY() {
 		if (coord1 != null && coord2 != null) {
-			return coord1.getY() > coord2.getY() ? coord1.getY() : coord2.getY();
+			return Math.max(coord1.getY(), coord2.getY());
 		}
 		return 0;
 	}
 
 	public int getTopLeftZ() {
 		if (coord1 != null && coord2 != null) {
-			return coord1.getZ() < coord2.getZ() ? coord1.getZ() : coord2.getZ();
+			return Math.min(coord1.getZ(), coord2.getZ());
 		}
 		return 0;
 	}
 
 	public int getBottomRightX() {
 		if (coord1 != null && coord2 != null) {
-			return coord1.getX() < coord2.getX() ? coord2.getX() : coord1.getX();
+			return Math.max(coord1.getX(), coord2.getX());
 		}
 		return 0;
 	}
 
 	public int getBottomRightY() {
 		if (coord1 != null && coord2 != null) {
-			return coord1.getY() < coord2.getY() ? coord1.getY() : coord2.getY();
+			return Math.min(coord1.getY(), coord2.getY());
 		}
 		return 0;
 	}
 
 	public int getBottomRightZ() {
 		if (coord1 != null && coord2 != null) {
-			return coord1.getZ() < coord2.getZ() ? coord2.getZ() : coord1.getZ();
+			return Math.max(coord1.getZ(), coord2.getZ());
 		}
 		return 0;
 	}
@@ -208,7 +208,7 @@ public class Gate {
 
 	public boolean isOpen()
 	{
-		return open ? true : false;
+		return open;
 	}
 
 	public boolean isReady()
@@ -218,11 +218,10 @@ public class Gate {
 
 	public boolean isClosed()
 	{
-		return open ? false : true;
+		return !open;
 	}
 
-	public String getStatus()
-	{
+	public String getStatus() {
 		return gateStatus.toString().substring(0,1).toUpperCase() + gateStatus.toString().substring(1).toLowerCase();
 	}
 
@@ -243,12 +242,7 @@ public class Gate {
 
 	public boolean isParallelToZ() {
 		if (coord1 != null && coord2 != null) {
-			if (coord1.getZ() != coord2.getZ()) {
-				return true;
-			}
-			else {
-				return false;
-			}
+			return coord1.getZ() != coord2.getZ();
 		}
 		else {
 			return false;
@@ -257,20 +251,15 @@ public class Gate {
 
 	public boolean isParallelToX() {
 		if (coord1 != null && coord2 != null) {
-			if (coord1.getX() != coord2.getX()) {
-				return true;
-			}
-			else {
-				return false;
-			}
+			return coord1.getX() != coord2.getX();
 		}
 		else {
 			return false;
 		}
 	}
 
-	public ArrayList<Block> GateBlocks() {
-		ArrayList<Block> blocks = new ArrayList<Block>();
+	public ArrayList<Block> getGateBlocks() {
+		ArrayList<Block> blocks = new ArrayList<>();
 		for (int y = coord1.getY(); y < coord2.getY(); y++) {
 			for (int z = coord1.getZ(); z < coord2.getZ(); z++) {
 				for (int x = coord1.getX(); x < coord2.getX(); x++) {
@@ -355,21 +344,11 @@ public class Gate {
 			}
 
 			int area = 0;
-			if (vertical) {
-				if (isParallelToX()) {
-					area = getDimX() * getDimY();
-				}
-				else if (isParallelToZ()) {
-					area = getDimZ() * getDimY();
-				}
+			if (isParallelToX()) {
+				area = getDimX() * getDimY();
 			}
-			else {
-				if (isParallelToX()) {
-					area = getDimX() * getDimY();
-				}
-				else if (isParallelToZ()) {
-					area = getDimZ() * getDimY();
-				}
+			else if (isParallelToZ()) {
+				area = getDimZ() * getDimY();
 			}
 			if (area > MedievalFactions.getInstance().getConfig().getInt("factionMaxGateArea")) {
 				// Gate size exceeds config limit.
@@ -465,8 +444,7 @@ public class Gate {
 						Block b;
 	                    @Override
 	                    public void run() {
-	        				for (int x = leftX; x <= rightX; x++)
-	        				{
+	        				for (int x = leftX; x <= rightX; x++) {
 	        					b = getWorld().getBlockAt(x, blockY, coord1.getZ());
 	        					b.setType(Material.AIR);
 	        					getWorld().playSound(b.getLocation(), soundEffect, 0.1f, 0.1f);
@@ -475,8 +453,7 @@ public class Gate {
 	                }, c * 10L);
 				}
 				Bukkit.getScheduler().runTaskLater(MedievalFactions.getInstance(), new Runnable() {
-					Block b;
-                    @Override
+					@Override
                     public void run() {
     					gateStatus = GateStatus.READY;
     					open = true;
@@ -621,8 +598,7 @@ public class Gate {
 	                }, c * 10L);
 				}
 				Bukkit.getScheduler().runTaskLater(MedievalFactions.getInstance(), new Runnable() {
-					Block b;
-                    @Override
+					@Override
                     public void run() {
     					gateStatus = GateStatus.READY;
     					open = false;

@@ -18,24 +18,26 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.SkullMeta;
 
 import java.util.ArrayList;
+import java.util.Objects;
 
 /**
  * @author Daniel McCoy Stephenson
  */
 public class Duel {
-	public enum DuelState {INVITED, DUELLING, WINNER, TIED}
 	private DuelState duelState;
 	private BossBar bar = null;
-	Player _challenged = null;
-	double challengedHealth = 0;
-	Player _challenger = null;
-	double challengerHealth = 0;
-	Player winner = null;
-	Player loser = null;
-	int repeatingTaskId = 0;
-	float nearbyPlayerRadius = 64;
-	double timeLimit = 120.0;
-	double timeDecrementAmount = 0;
+	private final Player _challenged;
+	private double challengedHealth;
+	private final Player _challenger;
+	private double challengerHealth;
+	private Player winner = null;
+	private Player loser = null;
+	private int repeatingTaskId = 0;
+	private final float nearbyPlayerRadius = 64;
+	private final double timeLimit;
+	private double timeDecrementAmount = 0;
+
+	public enum DuelState {INVITED, DUELLING, WINNER}
 
 	public Duel(Player challenger, Player challenged, int limit) {
 		_challenger = challenger;
@@ -51,8 +53,7 @@ public class Duel {
 		return duelState;
 	}
 
-	public void setStatus(DuelState state)
-	{
+	public void setStatus(DuelState state) {
 		duelState = state;
 	}
 
@@ -81,10 +82,7 @@ public class Duel {
 	}
 
 	public boolean hasPlayer(Player player) {
-		if (_challenged.equals(player) || _challenger.equals(player)) {
-			return true;
-		}
-		return false;
+		return _challenged.equals(player) || _challenger.equals(player);
 	}
 
 	public void resetHealth() {
@@ -96,8 +94,7 @@ public class Duel {
 		}
 	}
 
-	public void setWinner(Player player)
-	{
+	public void setWinner(Player player) {
 		duelState = DuelState.WINNER;
 		winner = player;
 		if (isChallenger(player)) {
@@ -169,7 +166,7 @@ public class Duel {
     				bar.setProgress(progress);
     			}
     		}
-    	}, 1 * 20, 1 * 20);
+    	}, 20, 20);
 	}
 
 	private ItemStack getHead(Player player) {
@@ -179,10 +176,10 @@ public class Duel {
 			return null;
 		}
 		skull.setDisplayName(player.getName() + "'s head.");
-		OfflinePlayer offlinePlayer = (OfflinePlayer) getLoser();
+		OfflinePlayer offlinePlayer = getLoser();
 		skull.setOwningPlayer(offlinePlayer);
-		ArrayList<String> lore = new ArrayList<String>();
-		lore.add("Lost in a duel against " + getWinner().getPlayer().getName() + ".");
+		ArrayList<String> lore = new ArrayList<>();
+		lore.add("Lost in a duel against " + Objects.requireNonNull(getWinner().getPlayer()).getName() + ".");
 		skull.setLore(lore);
 		item.setItemMeta(skull);
 		return item;
@@ -208,7 +205,7 @@ public class Duel {
 				getWinner().getInventory().addItem(getHead(getLoser()));
 			}
 			else {
-				getWinner().getWorld().dropItemNaturally(getWinner().getLocation(), getHead(getLoser()));
+				getWinner().getWorld().dropItemNaturally(getWinner().getLocation(), Objects.requireNonNull(getHead(getLoser())));
 			}
 		}
 		else {

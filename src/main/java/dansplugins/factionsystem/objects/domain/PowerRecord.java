@@ -31,10 +31,6 @@ public class PowerRecord extends PlayerRecord implements Savable {
         this.load(data);
     }
 
-    public PowerRecord() {
-
-    }
-
     public int maxPower() {
         if (isPlayerAFactionOwner(playerUUID)){
             return (int) (MedievalFactions.getInstance().getConfig().getDouble("initialMaxPowerLevel") * MedievalFactions.getInstance().getConfig().getDouble("factionOwnerMultiplier", 2.0));

@@ -61,9 +61,6 @@ public class LocalGateService {
                 }
                 else {
                     event.setCancelled(true);
-                    if (player == null) {
-                        return;
-                    }
                     player.sendMessage(ChatColor.RED + String.format(LocalLocaleService.getInstance().getText("PleaseWaitGate"), g.getStatus()));
                     return;
                 }
@@ -74,9 +71,6 @@ public class LocalGateService {
                 }
                 else {
                     event.setCancelled(true);
-                    if (player == null) {
-                        return;
-                    }
                     player.sendMessage(ChatColor.RED + String.format(LocalLocaleService.getInstance().getText("PleaseWaitGate"), g.getStatus()));
                     return;
                 }
@@ -110,7 +104,6 @@ public class LocalGateService {
                         }
                     }
                 }
-                return;
             }
         }
     }
@@ -138,34 +131,28 @@ public class LocalGateService {
         }
 
         if (player.hasPermission("mf.gate")) {
-            // TODO: Check if a gate already exists here, and if it does, print out some info
-            // of that existing gate instead of trying to create a new one.
+            // TODO: Check if a gate already exists here, and if it does, print out some info of that existing gate instead of trying to create a new one.
             if (EphemeralData.getInstance().getCreatingGatePlayers().containsKey(event.getPlayer().getUniqueId()) && EphemeralData.getInstance().getCreatingGatePlayers().get(event.getPlayer().getUniqueId()).getCoord1() == null) {
                 Gate.ErrorCodeAddCoord e = EphemeralData.getInstance().getCreatingGatePlayers().get(event.getPlayer().getUniqueId()).addCoord(clickedBlock);
                 if (e.equals(Gate.ErrorCodeAddCoord.None)) {
                     event.getPlayer().sendMessage(ChatColor.GREEN + LocalLocaleService.getInstance().getText("Point1PlacementSuccessful"));
                     event.getPlayer().sendMessage(ChatColor.YELLOW + LocalLocaleService.getInstance().getText("ClickToPlaceSecondCorner"));
-                    return;
                 }
                 else if (e.equals(Gate.ErrorCodeAddCoord.MaterialMismatch)) {
                     event.getPlayer().sendMessage(ChatColor.RED + LocalLocaleService.getInstance().getText("MaterialsMismatch1"));
                     EphemeralData.getInstance().getCreatingGatePlayers().remove(event.getPlayer().getUniqueId());
-                    return;
                 }
                 else if (e.equals(Gate.ErrorCodeAddCoord.WorldMismatch)) {
                     event.getPlayer().sendMessage(ChatColor.RED + LocalLocaleService.getInstance().getText("WorldsMismatch1"));
                     EphemeralData.getInstance().getCreatingGatePlayers().remove(event.getPlayer().getUniqueId());
-                    return;
                 }
                 else if (e.equals(Gate.ErrorCodeAddCoord.NoCuboids)) {
                     event.getPlayer().sendMessage(ChatColor.RED + LocalLocaleService.getInstance().getText("CuboidDisallowed1"));
                     EphemeralData.getInstance().getCreatingGatePlayers().remove(event.getPlayer().getUniqueId());
-                    return;
                 }
                 else {
                     event.getPlayer().sendMessage(ChatColor.RED + LocalLocaleService.getInstance().getText("CancelledGatePlacement1"));
                     EphemeralData.getInstance().getCreatingGatePlayers().remove(event.getPlayer().getUniqueId());
-                    return;
                 }
             }
             else if (EphemeralData.getInstance().getCreatingGatePlayers().containsKey(event.getPlayer().getUniqueId()) && EphemeralData.getInstance().getCreatingGatePlayers().get(event.getPlayer().getUniqueId()).getCoord1() != null
@@ -176,32 +163,26 @@ public class LocalGateService {
                     if (e.equals(Gate.ErrorCodeAddCoord.None)) {
                         event.getPlayer().sendMessage(ChatColor.GREEN + LocalLocaleService.getInstance().getText("Point2PlacedSuccessfully"));
                         event.getPlayer().sendMessage(ChatColor.YELLOW + "Click on the trigger block...");
-                        return;
                     }
                     else if (e.equals(Gate.ErrorCodeAddCoord.MaterialMismatch)) {
                         event.getPlayer().sendMessage(ChatColor.RED + LocalLocaleService.getInstance().getText("MaterialsMismatch2"));
                         EphemeralData.getInstance().getCreatingGatePlayers().remove(event.getPlayer().getUniqueId());
-                        return;
                     }
                     else if (e.equals(Gate.ErrorCodeAddCoord.WorldMismatch)) {
                         event.getPlayer().sendMessage(ChatColor.RED + LocalLocaleService.getInstance().getText("WorldsMismatch2"));
                         EphemeralData.getInstance().getCreatingGatePlayers().remove(event.getPlayer().getUniqueId());
-                        return;
                     }
                     else if (e.equals(Gate.ErrorCodeAddCoord.NoCuboids)) {
                         event.getPlayer().sendMessage(ChatColor.RED + LocalLocaleService.getInstance().getText("CuboidDisallowed2"));
                         EphemeralData.getInstance().getCreatingGatePlayers().remove(event.getPlayer().getUniqueId());
-                        return;
                     }
                     else if (e.equals(Gate.ErrorCodeAddCoord.LessThanThreeHigh)) {
                         event.getPlayer().sendMessage(ChatColor.RED + LocalLocaleService.getInstance().getText("ThreeBlockRequirement"));
                         EphemeralData.getInstance().getCreatingGatePlayers().remove(event.getPlayer().getUniqueId());
-                        return;
                     }
                     else {
                         event.getPlayer().sendMessage(ChatColor.RED + LocalLocaleService.getInstance().getText("CancelledGatePlacement2"));
                         EphemeralData.getInstance().getCreatingGatePlayers().remove(event.getPlayer().getUniqueId());
-                        return;
                     }
                 }
             }
@@ -218,24 +199,20 @@ public class LocalGateService {
                             EphemeralData.getInstance().getCreatingGatePlayers().remove(event.getPlayer().getUniqueId());
                             event.getPlayer().sendMessage(ChatColor.GREEN + "Creating Gate 4/4: Trigger successfully linked.");
                             event.getPlayer().sendMessage(ChatColor.GREEN + LocalLocaleService.getInstance().getText("GateCreated"));
-                            return;
                         }
                         else {
                             event.getPlayer().sendMessage(ChatColor.RED + LocalLocaleService.getInstance().getText("CancelledGatePlacementErrorLinking"));
                             EphemeralData.getInstance().getCreatingGatePlayers().remove(event.getPlayer().getUniqueId());
-                            return;
                         }
                     }
                     else {
                         event.getPlayer().sendMessage(ChatColor.RED + "Error: Can only use triggers in claimed territory.");
                         EphemeralData.getInstance().getCreatingGatePlayers().remove(event.getPlayer().getUniqueId());
-                        return;
                     }
                 }
                 else {
                     event.getPlayer().sendMessage(ChatColor.RED + "Trigger block was not powerable. Cancelled gate placement.");
                     EphemeralData.getInstance().getCreatingGatePlayers().remove(event.getPlayer().getUniqueId());
-                    return;
                 }
             }
         }

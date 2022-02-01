@@ -39,20 +39,12 @@ public class LockedBlock implements Lockable, Savable {
         accessList.add(owner);
     }
 
-    public LockedBlock() {
-        // server constructor
-    }
-
     public LockedBlock(Map<String, String> lockedBlockData) {
         this.load(lockedBlockData);
     }
 
     public String getWorld() {
     	return world;
-    }
-
-    public void setWorld(String name) {
-    	world = name;
     }
 
     public int getX() {

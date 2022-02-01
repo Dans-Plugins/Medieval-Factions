@@ -66,13 +66,13 @@ public class ActivityRecord extends PlayerRecord implements Savable {
     }
 
     public int getMinutesSinceLastLogout() {
-    	if (lastLogout != null) {
-    		ZonedDateTime now = ZonedDateTime.now();
-    		Duration duration = Duration.between(lastLogout, now);
-    		double totalSeconds = duration.getSeconds();
-            return (int) totalSeconds / 60;
+    	if (lastLogout == null) {
+            return 0;
     	}
-    	return 0;
+        ZonedDateTime now = ZonedDateTime.now();
+        Duration duration = Duration.between(lastLogout, now);
+        double totalSeconds = duration.getSeconds();
+        return (int) totalSeconds / 60;
     }
 
     /**
