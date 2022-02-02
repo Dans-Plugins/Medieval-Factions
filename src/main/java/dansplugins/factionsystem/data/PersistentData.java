@@ -635,6 +635,37 @@ public class PersistentData {
         }
 
         /**
+         * This method can be used to claim a line of chunks around a player.
+         *
+         * @param length            The length of chunks to claim.
+         * @param claimant         The player claiming the chunks.
+         * @param location         The central location of claiming.
+         * @param claimantsFaction The claimant's faction.
+         */
+        public void lineClaimAtLocation(int length, Player claimant, Location location, Faction claimantsFaction) {
+            int maxClaimLength = MedievalFactions.getInstance().getConfig().getInt("maxClaimLength");
+
+            // check if depth is valid
+            if (length < 0 || length > maxClaimLength) {
+                claimant.sendMessage(ChatColor.RED + String.format(LocalLocaleService.getInstance().getText("RadiusRequirement"), maxClaimLength));
+                return;
+            }
+
+            // if depth is 0, we just need to claim the chunk the player is on
+            if (length == 0) {
+                claimChunkAtLocation(claimant, location, claimantsFaction);
+                return;
+            }
+
+            // claim chunks
+            final Chunk initial = location.getChunk();
+            final Set<Chunk> chunkSet = obtainChunks(initial, length);
+            chunkSet.forEach(chunk -> claimChunkAtLocation(
+                    claimant, getChunkCoords(chunk), chunk.getWorld(), claimantsFaction
+            ));
+        }
+
+        /**
          * This method can be used to unclaim a radius of chunks around a player.
          *
          * @param radius  The radius of chunks to unclaim.
