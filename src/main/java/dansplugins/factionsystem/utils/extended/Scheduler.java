@@ -37,7 +37,7 @@ public class Scheduler {
         Bukkit.getScheduler().scheduleSyncRepeatingTask(MedievalFactions.getInstance(), new Runnable() {
             @Override
             public void run() {
-                System.out.println(LocalLocaleService.getInstance().getText("HourlySaveAlert"));
+                Logger.getInstance().log(LocalLocaleService.getInstance().getText("HourlySaveAlert"));
                 PersistentData.getInstance().getLocalStorageService().save();
             }
         }, delay * 20, secondsUntilRepeat * 20);
@@ -50,7 +50,7 @@ public class Scheduler {
         Bukkit.getScheduler().scheduleSyncRepeatingTask(MedievalFactions.getInstance(), new Runnable() {
             @Override
             public void run() {
-                System.out.printf((LocalLocaleService.getInstance().getText("AlertIncreasingThePowerOfEveryPlayer")) + "%n", MedievalFactions.getInstance().getConfig().getInt("powerIncreaseAmount"), MedievalFactions.getInstance().getConfig().getInt("minutesBetweenPowerIncreases"));
+                Logger.getInstance().log(String.format((LocalLocaleService.getInstance().getText("AlertIncreasingThePowerOfEveryPlayer")) + "%n", MedievalFactions.getInstance().getConfig().getInt("powerIncreaseAmount"), MedievalFactions.getInstance().getConfig().getInt("minutesBetweenPowerIncreases")));
                 PersistentData.getInstance().initiatePowerIncreaseForAllPlayers();
             }
         }, delay * 20L, secondsUntilRepeat * 20L);
@@ -63,7 +63,7 @@ public class Scheduler {
         Bukkit.getScheduler().scheduleSyncRepeatingTask(MedievalFactions.getInstance(), new Runnable() {
             @Override
             public void run() {
-                System.out.printf((LocalLocaleService.getInstance().getText("AlertDecreasingThePowerOfInactivePlayers")) + "%n", MedievalFactions.getInstance().getConfig().getInt("powerDecreaseAmount"), MedievalFactions.getInstance().getConfig().getInt("minutesBeforePowerDecrease"), MedievalFactions.getInstance().getConfig().getInt("minutesBetweenPowerDecreases"));
+                Logger.getInstance().log(String.format((LocalLocaleService.getInstance().getText("AlertDecreasingThePowerOfInactivePlayers")) + "%n", MedievalFactions.getInstance().getConfig().getInt("powerDecreaseAmount"), MedievalFactions.getInstance().getConfig().getInt("minutesBeforePowerDecrease"), MedievalFactions.getInstance().getConfig().getInt("minutesBetweenPowerDecreases")));
 
                 PersistentData.getInstance().decreasePowerForInactivePlayers();
 
