@@ -35,7 +35,7 @@ import org.bukkit.event.entity.EntityPlaceEvent;
 import org.bukkit.event.hanging.HangingBreakByEntityEvent;
 import org.bukkit.event.player.*;
 import org.bukkit.inventory.InventoryHolder;
-import preponderous.ponder.minecraft.spigot.tools.UUIDChecker;
+import preponderous.ponder.minecraft.bukkit.tools.UUIDChecker;
 
 import java.util.Objects;
 

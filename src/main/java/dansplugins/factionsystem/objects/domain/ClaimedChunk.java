@@ -10,7 +10,7 @@ import dansplugins.factionsystem.objects.inherited.Territory;
 import org.bukkit.Chunk;
 import org.bukkit.World;
 import org.bukkit.WorldCreator;
-import preponderous.ponder.misc.Savable;
+import preponderous.ponder.misc.abs.Savable;
 
 import java.util.HashMap;
 import java.util.Map;

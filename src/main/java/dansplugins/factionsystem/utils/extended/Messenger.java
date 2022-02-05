@@ -11,7 +11,7 @@ import dansplugins.fiefs.externalapi.FI_Fief;
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
-import preponderous.ponder.minecraft.spigot.tools.UUIDChecker;
+import preponderous.ponder.minecraft.bukkit.tools.UUIDChecker;
 
 import java.util.ArrayList;
 import java.util.UUID;
@@ -21,7 +21,7 @@ import static org.bukkit.Bukkit.getServer;
 /**
  * @author Daniel McCoy Stephenson
  */
-public class Messenger extends preponderous.ponder.minecraft.spigot.tools.Messenger {
+public class Messenger extends preponderous.ponder.minecraft.bukkit.tools.Messenger {
     private static Messenger instance;
 
     private Messenger() {

@@ -13,7 +13,7 @@ import org.bukkit.ChatColor;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.AsyncPlayerChatEvent;
-import preponderous.ponder.minecraft.spigot.tools.ColorChecker;
+import preponderous.ponder.minecraft.bukkit.tools.ColorChecker;
 
 import java.util.ArrayList;
 

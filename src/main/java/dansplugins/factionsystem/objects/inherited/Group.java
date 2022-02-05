@@ -5,7 +5,7 @@
 package dansplugins.factionsystem.objects.inherited;
 
 import org.bukkit.entity.Player;
-import preponderous.ponder.minecraft.spigot.tools.UUIDChecker;
+import preponderous.ponder.minecraft.bukkit.tools.UUIDChecker;
 
 import java.util.ArrayList;
 import java.util.UUID;

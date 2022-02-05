@@ -12,7 +12,7 @@ import org.bukkit.entity.Player;
  * @author Daniel McCoy Stephenson
  * @author Caibinus
  */
-public class BlockChecker extends preponderous.ponder.minecraft.spigot.tools.BlockChecker {
+public class BlockChecker extends preponderous.ponder.minecraft.bukkit.tools.BlockChecker {
     private static BlockChecker instance;
 
     private BlockChecker() {

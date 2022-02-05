@@ -12,7 +12,7 @@ import net.md_5.bungee.api.ChatMessageType;
 import net.md_5.bungee.api.chat.TextComponent;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
-import preponderous.ponder.minecraft.spigot.tools.ColorChecker;
+import preponderous.ponder.minecraft.bukkit.tools.ColorChecker;
 
 /**
  * @author Daniel McCoy Stephenson

@@ -8,7 +8,7 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import dansplugins.factionsystem.MedievalFactions;
 import dansplugins.factionsystem.objects.inherited.PlayerRecord;
-import preponderous.ponder.misc.Savable;
+import preponderous.ponder.misc.abs.Savable;
 
 import java.time.Duration;
 import java.time.ZonedDateTime;
