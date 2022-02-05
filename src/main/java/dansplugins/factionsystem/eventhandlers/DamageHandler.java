@@ -41,7 +41,7 @@ public class DamageHandler implements Listener {
     }
 
     private void handlePlayerVersusPlayer(Player attacker, Player victim, EntityDamageByEntityEvent event) {
-        if (victim == null) {
+        if (attacker == null || victim == null) {
             return;
         }
 
