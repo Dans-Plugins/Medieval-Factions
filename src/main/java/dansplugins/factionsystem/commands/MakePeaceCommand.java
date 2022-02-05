@@ -17,8 +17,8 @@ import org.bukkit.entity.Player;
 public class MakePeaceCommand extends SubCommand {
 
     public MakePeaceCommand() {
-        super(new String[] {
-            "makepeace", "mp", LOCALE_PREFIX + "CmdMakePeace"
+        super(new String[]{
+                "makepeace", "mp", LOCALE_PREFIX + "CmdMakePeace"
         }, true, true, true, false);
     }
 

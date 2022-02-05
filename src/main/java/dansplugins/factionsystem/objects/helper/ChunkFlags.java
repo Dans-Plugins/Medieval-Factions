@@ -20,32 +20,29 @@ public class ChunkFlags {
 
 
     public boolean getFlag(int x, int y) {
-        long k = (((long)(x >> 6)) << 32) | (0xFFFFFFFFL & (long)(y >> 6));
+        long k = (((long) (x >> 6)) << 32) | (0xFFFFFFFFL & (long) (y >> 6));
         long[] row;
         if (k == last_key) {
             row = last_row;
-        }
-        else {
+        } else {
             row = chunkmap.get(k);
             last_key = k;
             last_row = row;
         }
         if (row == null) {
             return false;
-        }
-        else {
+        } else {
             return (row[y & 0x3F] & (1L << (x & 0x3F))) != 0;
         }
     }
 
 
     public void setFlag(int x, int y, boolean f) {
-        long k = (((long)(x >> 6)) << 32) | (0xFFFFFFFFL & (long)(y >> 6));
+        long k = (((long) (x >> 6)) << 32) | (0xFFFFFFFFL & (long) (y >> 6));
         long[] row;
         if (k == last_key) {
             row = last_row;
-        }
-        else {
+        } else {
             row = chunkmap.get(k);
             last_key = k;
             last_row = row;
@@ -57,8 +54,7 @@ public class ChunkFlags {
                 last_row = row;
             }
             row[y & 0x3F] |= (1L << (x & 0x3F));
-        }
-        else {
+        } else {
             if (row != null) {
                 row[y & 0x3F] &= ~(1L << (x & 0x3F));
             }

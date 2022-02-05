@@ -10,11 +10,11 @@ package dansplugins.factionsystem.objects.inherited;
 public class Territory {
     protected String holder;
 
-    public void setHolder(String newHolder) {
-        holder = newHolder;
-    }
-
     public String getHolder() {
         return holder;
+    }
+
+    public void setHolder(String newHolder) {
+        holder = newHolder;
     }
 }

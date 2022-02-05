@@ -90,8 +90,7 @@ public class MedievalFactionsAPI {
         double newPower = originalPower - amount;
         if (newPower >= 0) {
             powerRecord.setPower(originalPower - amount);
-        }
-        else {
+        } else {
             powerRecord.setPower(0);
         }
     }

@@ -17,8 +17,8 @@ public class AddLawCommand extends SubCommand {
      * Constructor to initialise a Command.
      */
     public AddLawCommand() {
-        super(new String[] {
-               LOCALE_PREFIX + "CMDAddLaw", "AL", "addlaw"
+        super(new String[]{
+                LOCALE_PREFIX + "CMDAddLaw", "AL", "addlaw"
         }, true, true, false, true);
     }
 

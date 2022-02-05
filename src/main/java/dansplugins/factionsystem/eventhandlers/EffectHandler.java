@@ -53,7 +53,7 @@ public class EffectHandler implements Listener {
     public void handle(LingeringPotionSplashEvent event) {
         Player thrower = (Player) event.getEntity().getShooter();
         AreaEffectCloud cloud = event.getAreaEffectCloud();
-        Pair<Player, AreaEffectCloud> storedCloud  = new Pair<>(thrower, cloud);
+        Pair<Player, AreaEffectCloud> storedCloud = new Pair<>(thrower, cloud);
         EphemeralData.getInstance().getActiveAOEClouds().add(storedCloud);
         addScheduledTaskToRemoveCloudFromEphemeralData(cloud, storedCloud);
     }
@@ -66,7 +66,7 @@ public class EffectHandler implements Listener {
         }
         Player attacker = (Player) potion.getShooter();
 
-        for(PotionEffect effect : potion.getEffects()) {
+        for (PotionEffect effect : potion.getEffects()) {
             if (!potionEffectBad(effect.getType())) {
                 continue;
             }
@@ -85,7 +85,7 @@ public class EffectHandler implements Listener {
         }
     }
 
-    private boolean potionTypeBad(PotionType type){
+    private boolean potionTypeBad(PotionType type) {
         return BAD_POTION_TYPES.contains(type);
     }
 
@@ -139,7 +139,7 @@ public class EffectHandler implements Listener {
 
             Player potentialVictim = (Player) potentialVictimEntity;
 
-            if (attacker == potentialVictim){
+            if (attacker == potentialVictim) {
                 continue;
             }
 

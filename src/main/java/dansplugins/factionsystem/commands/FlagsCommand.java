@@ -45,19 +45,16 @@ public class FlagsCommand extends SubCommand {
         final boolean set = safeEquals(args[0], "set", getText("CmdFlagsSet"));
         if (show) {
             playersFaction.getFlags().sendFlagList(player);
-        }
-        else if (set) {
+        } else if (set) {
             if (args.length < 3) {
                 player.sendMessage(translate("&c" + getText("UsageFlagsSet")));
-            }
-            else {
+            } else {
                 final StringBuilder builder = new StringBuilder(); // Send the flag_argument as one String
                 for (int i = 2; i < args.length; i++) builder.append(args[i]).append(" ");
                 playersFaction.getFlags().setFlag(args[1], builder.toString().trim(), player);
 
             }
-        }
-        else {
+        } else {
             player.sendMessage(translate("&c" + getText("FlagsValidSubCommandsShowSet")));
         }
     }

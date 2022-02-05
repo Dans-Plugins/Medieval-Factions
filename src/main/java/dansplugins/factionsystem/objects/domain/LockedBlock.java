@@ -44,7 +44,7 @@ public class LockedBlock implements Lockable<UUID>, Savable {
     }
 
     public String getWorld() {
-    	return world;
+        return world;
     }
 
     public int getX() {
@@ -60,13 +60,13 @@ public class LockedBlock implements Lockable<UUID>, Savable {
     }
 
     @Override
-    public void setOwner(UUID s) {
-        owner = s;
+    public UUID getOwner() {
+        return owner;
     }
 
     @Override
-    public UUID getOwner() {
-        return owner;
+    public void setOwner(UUID s) {
+        owner = s;
     }
 
     public void addToAccessList(UUID playerName) {
@@ -120,12 +120,12 @@ public class LockedBlock implements Lockable<UUID>, Savable {
         y = gson.fromJson(data.get("Y"), Integer.TYPE);
         z = gson.fromJson(data.get("Z"), Integer.TYPE);
         owner = UUID.fromString(gson.fromJson(data.get("owner"), String.class));
-        factionName =  gson.fromJson(data.get("factionName"), String.class);
+        factionName = gson.fromJson(data.get("factionName"), String.class);
         world = gson.fromJson(data.get("world"), String.class);
-        if (world == null)
-        {
-        	world = Bukkit.getServer().getWorlds().get(0).getName();
+        if (world == null) {
+            world = Bukkit.getServer().getWorlds().get(0).getName();
         }
-        accessList = gson.fromJson(data.get("accessList"), new TypeToken<ArrayList<UUID>>(){}.getType());
+        accessList = gson.fromJson(data.get("accessList"), new TypeToken<ArrayList<UUID>>() {
+        }.getType());
     }
 }

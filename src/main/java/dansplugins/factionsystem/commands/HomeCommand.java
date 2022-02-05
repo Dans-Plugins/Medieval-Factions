@@ -56,9 +56,9 @@ public class HomeCommand extends SubCommand {
         player.sendMessage(translate("&a" + getText("TeleportingAlert")));
         final Location initialLocation = player.getLocation();
         Bukkit.getScheduler().runTaskLater(MedievalFactions.getInstance(), () -> {
-            if (    initialLocation.getX() == player.getLocation().getX()   &&
-                    initialLocation.getY() == player.getLocation().getY()   &&
-                    initialLocation.getZ() == player.getLocation().getZ()   ) {
+            if (initialLocation.getX() == player.getLocation().getX() &&
+                    initialLocation.getY() == player.getLocation().getY() &&
+                    initialLocation.getZ() == player.getLocation().getZ()) {
                 // teleport the player
                 player.teleport(faction.getFactionHome());
             } else {

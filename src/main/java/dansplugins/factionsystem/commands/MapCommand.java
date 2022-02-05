@@ -66,35 +66,28 @@ public class MapCommand extends SubCommand {
                             colour = "&5"; // If the current position is the player-position, make it purple.
                             map_key = '+';
                             printedHolders.put(chunk.getHolder(), printedHolders.get(chunk.getHolder()) - 1);
-                        }
-                        else if (chunk.getHolder().equals(faction.getName())) {
+                        } else if (chunk.getHolder().equals(faction.getName())) {
                             colour = "&a"; // If the faction is the player-faction, make it green.
                             map_key = '+';
-                        }
-                        else if (faction.isEnemy(chunk.getHolder())) {
+                        } else if (faction.isEnemy(chunk.getHolder())) {
                             colour = "&c"; // If they are an enemy to the player-faction, make it red.
                             colourMap.put(chunk.getHolder(), "&c");
-                        }
-                        else if (faction.isAlly(chunk.getHolder())) {
+                        } else if (faction.isAlly(chunk.getHolder())) {
                             colour = "&b"; // If they are an ally to the player-faction, make it blue.
                             colourMap.put(chunk.getHolder(), "&b");
-                        }
-                        else {
+                        } else {
                             colour = "&f"; // Default to White.
                             colourMap.put(chunk.getHolder(), "&f");
                         }
                         line.append(colour);
-                    }
-                    else {
+                    } else {
                         line.append("&c"); // Always default to Enemy.
                     }
                     line.append(map_key);
-                }
-                else {
+                } else {
                     if (tmp.equals(center)) {
                         line.append("&5+"); // If the current position is the player-position, make it purple.
-                    }
-                    else {
+                    } else {
                         line.append("&7-"); // Gray for no Faction.
                     }
                 }
@@ -110,12 +103,10 @@ public class MapCommand extends SubCommand {
                 try {
                     if (hasFaction && printedHolder.equals(faction.getName())) {
                         line = "&a+&7 = " + printedHolder;
-                    }
-                    else {
+                    } else {
                         if (hasFaction) {
                             line = colourMap.get(printedHolder) + map_keys[index] + "&7 = " + printedHolder;
-                        }
-                        else {
+                        } else {
                             line = "&c" + map_keys[index] + "&7 = " + printedHolder;
                         }
                     }
@@ -133,7 +124,8 @@ public class MapCommand extends SubCommand {
 
     /**
      * Method to obtain the index of a key in a hashmap.
-     * @param holder or key.
+     *
+     * @param holder         or key.
      * @param printedHolders hashmap.
      * @return integer index or {@code -1}.
      */

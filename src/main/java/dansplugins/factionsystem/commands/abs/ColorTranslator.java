@@ -17,6 +17,7 @@ public interface ColorTranslator {
 
     /**
      * Method to translate color codes from & to MC Equivalents.
+     *
      * @param message to translate.
      * @return translated message.
      */
@@ -26,6 +27,7 @@ public interface ColorTranslator {
 
     /**
      * Method to translate color codes from & to MC Equivalents.
+     *
      * @param messages to translate.
      * @return translated messages.
      */

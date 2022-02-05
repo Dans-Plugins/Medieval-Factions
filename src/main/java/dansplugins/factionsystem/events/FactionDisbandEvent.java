@@ -20,10 +20,11 @@ public class FactionDisbandEvent extends FactionEvent implements Cancellable {
     /**
      * Constructor to initialise a FactionDisbandEvent.
      * <p>
-     *     This event is called when a player disbands a Faction.
+     * This event is called when a player disbands a Faction.
      * </p>
+     *
      * @param faction disbanded
-     * @param player who disbanded the Faction.
+     * @param player  who disbanded the Faction.
      */
     public FactionDisbandEvent(Faction faction, OfflinePlayer player) {
         super(faction, player);

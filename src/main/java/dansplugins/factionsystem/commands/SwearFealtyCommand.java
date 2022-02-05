@@ -15,7 +15,7 @@ import org.bukkit.entity.Player;
 public class SwearFealtyCommand extends SubCommand {
 
     public SwearFealtyCommand() {
-        super(new String[] {
+        super(new String[]{
                 "swearfealty", LOCALE_PREFIX + "CmdSwearFealty", "sf"
         }, true, true, false, true);
     }

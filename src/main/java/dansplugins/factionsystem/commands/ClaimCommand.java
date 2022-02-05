@@ -14,7 +14,7 @@ import org.bukkit.entity.Player;
 public class ClaimCommand extends SubCommand {
 
     public ClaimCommand() {
-        super(new String[] {
+        super(new String[]{
                 "Claim", LOCALE_PREFIX + "CmdClaim"
         }, true, true);
     }
@@ -41,12 +41,10 @@ public class ClaimCommand extends SubCommand {
 
             if (depth <= 0) {
                 player.sendMessage(translate("&c" + getText("UsageClaimRadius")));
-            }
-            else {
+            } else {
                 chunks.radiusClaimAtLocation(depth, player, player.getLocation(), faction);
             }
-        }
-        else {
+        } else {
             chunks.claimChunkAtLocation(player, player.getLocation(), faction);
         }
         dynmap.updateClaims();

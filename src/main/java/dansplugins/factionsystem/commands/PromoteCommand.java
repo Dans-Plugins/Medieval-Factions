@@ -19,7 +19,7 @@ import java.util.UUID;
 public class PromoteCommand extends SubCommand {
 
     public PromoteCommand() {
-        super(new String[] {
+        super(new String[]{
                 "promote", LOCALE_PREFIX + "CmdPromote"
         }, true, true, false, true);
     }
@@ -54,8 +54,8 @@ public class PromoteCommand extends SubCommand {
             }
         }
         if (!faction.isMember(targetUUID)) {
-             player.sendMessage(translate("&c" + getText("PlayerIsNotMemberOfFaction")));
-             return;
+            player.sendMessage(translate("&c" + getText("PlayerIsNotMemberOfFaction")));
+            return;
         }
         if (faction.isOfficer(targetUUID)) {
             player.sendMessage(translate("&c" + getText("PlayerAlreadyOfficer")));
@@ -65,7 +65,7 @@ public class PromoteCommand extends SubCommand {
             player.sendMessage(translate("&c" + getText("CannotPromoteSelf")));
             return;
         }
-        if(faction.addOfficer(targetUUID)){
+        if (faction.addOfficer(targetUUID)) {
             player.sendMessage(translate("&a" + getText("PlayerPromoted")));
             if (target.isOnline() && target.getPlayer() != null) {
                 target.getPlayer().sendMessage(translate("&a" + getText("PromotedToOfficer")));

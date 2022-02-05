@@ -12,10 +12,11 @@ import java.util.UUID;
 public class PlayerRecord {
     protected UUID playerUUID = null;
 
-    public void setPlayerUUID(UUID UUID) {
-        playerUUID = UUID;
-    }
     public UUID getPlayerUUID() {
         return playerUUID;
+    }
+
+    public void setPlayerUUID(UUID UUID) {
+        playerUUID = UUID;
     }
 }

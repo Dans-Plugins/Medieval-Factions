@@ -17,7 +17,7 @@ import java.util.UUID;
 public class RevokeAccessCommand extends SubCommand {
 
     public RevokeAccessCommand() {
-        super(new String[] {
+        super(new String[]{
                 "ra", "revokeaccess", LOCALE_PREFIX + "CmdRevokeAccess"
         }, true);
     }

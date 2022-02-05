@@ -136,19 +136,19 @@ public class DuelCommand extends SubCommand {
         sender.sendMessage(translate("&b" + getText("HelpDuelCancel")));
     }
 
-	private Duel getDuel(Player player) {
-		return ephemeral.getDuelingPlayers().stream()
-				.filter(duel -> duel.isChallenged(player) || duel.isChallenger(player))
-				.findFirst().orElse(null);
-	}
+    private Duel getDuel(Player player) {
+        return ephemeral.getDuelingPlayers().stream()
+                .filter(duel -> duel.isChallenged(player) || duel.isChallenger(player))
+                .findFirst().orElse(null);
+    }
 
-	private boolean isDuelling(Player player) {
-		return ephemeral.getDuelingPlayers().stream()
-				.anyMatch(duel -> duel.hasPlayer(player) && duel.getStatus().equals(DuelState.DUELLING));
-	}
+    private boolean isDuelling(Player player) {
+        return ephemeral.getDuelingPlayers().stream()
+                .anyMatch(duel -> duel.hasPlayer(player) && duel.getStatus().equals(DuelState.DUELLING));
+    }
 
-	private void inviteDuel(Player player, Player target, int limit) {
-		target.sendMessage(translate("&b" + getText("AlertChallengedToDuelPlusHowTo", player.getName())));
-		ephemeral.getDuelingPlayers().add(new Duel(player, target, limit));
-	}
+    private void inviteDuel(Player player, Player target, int limit) {
+        target.sendMessage(translate("&b" + getText("AlertChallengedToDuelPlusHowTo", player.getName())));
+        ephemeral.getDuelingPlayers().add(new Duel(player, target, limit));
+    }
 }

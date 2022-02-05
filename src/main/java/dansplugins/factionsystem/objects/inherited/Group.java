@@ -23,26 +23,22 @@ public class Group {
     protected ArrayList<UUID> members = new ArrayList<>();
     protected ArrayList<UUID> officers = new ArrayList<>();
 
-    private ArrayList<UUID> invited = new ArrayList<>();
-
-    public void setName(String newName) {
-        name = newName;
-    }
+    private final ArrayList<UUID> invited = new ArrayList<>();
 
     public String getName() {
         return name;
     }
 
-    public void setDescription(String newDesc) {
-        description = newDesc;
+    public void setName(String newName) {
+        name = newName;
     }
 
     public String getDescription() {
         return description;
     }
 
-    public void setOwner(UUID UUID) {
-        owner = UUID;
+    public void setDescription(String newDesc) {
+        description = newDesc;
     }
 
     public boolean isOwner(UUID UUID) {
@@ -51,6 +47,10 @@ public class Group {
 
     public UUID getOwner() {
         return owner;
+    }
+
+    public void setOwner(UUID UUID) {
+        owner = UUID;
     }
 
     public void addMember(UUID UUID) {
@@ -76,7 +76,7 @@ public class Group {
     public String getMemberListSeparatedByCommas() {
         ArrayList<UUID> uuids = getMemberList();
         String players = "";
-        for(UUID uuid : uuids) {
+        for (UUID uuid : uuids) {
             UUIDChecker uuidChecker = new UUIDChecker();
             String playerName = uuidChecker.findPlayerNameBasedOnUUID(uuid);
             players += playerName + ", ";

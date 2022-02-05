@@ -15,7 +15,7 @@ import org.bukkit.entity.Player;
 public class PrefixCommand extends SubCommand {
 
     public PrefixCommand() {
-        super(new String[] {
+        super(new String[]{
                 "prefix", LOCALE_PREFIX + "CmdPrefix"
         }, true, true, false, true);
     }

@@ -32,19 +32,19 @@ public class PowerRecord extends PlayerRecord implements Savable {
     }
 
     public int maxPower() {
-        if (isPlayerAFactionOwner(playerUUID)){
+        if (isPlayerAFactionOwner(playerUUID)) {
             return (int) (MedievalFactions.getInstance().getConfig().getDouble("initialMaxPowerLevel") * MedievalFactions.getInstance().getConfig().getDouble("factionOwnerMultiplier", 2.0));
         }
 
-        if (isPlayerAFactionOfficer(playerUUID)){
+        if (isPlayerAFactionOfficer(playerUUID)) {
             return (int) (MedievalFactions.getInstance().getConfig().getDouble("initialMaxPowerLevel") * MedievalFactions.getInstance().getConfig().getDouble("factionOfficerMultiplier", 1.5));
         }
 
         return MedievalFactions.getInstance().getConfig().getInt("initialMaxPowerLevel");
     }
 
-    private boolean isPlayerAFactionOwner(UUID player){
-        if (PersistentData.getInstance().isInFaction(player)){
+    private boolean isPlayerAFactionOwner(UUID player) {
+        if (PersistentData.getInstance().isInFaction(player)) {
             Faction faction = PersistentData.getInstance().getPlayersFaction(player);
             return faction.getOwner().equals(player);
         } else {
@@ -53,7 +53,7 @@ public class PowerRecord extends PlayerRecord implements Savable {
     }
 
     private boolean isPlayerAFactionOfficer(UUID player) {
-        if (PersistentData.getInstance().isInFaction(player)){
+        if (PersistentData.getInstance().isInFaction(player)) {
             Faction faction = PersistentData.getInstance().getPlayersFaction(player);
             return faction.isOfficer(player);
         } else {
@@ -63,8 +63,8 @@ public class PowerRecord extends PlayerRecord implements Savable {
 
     public void increasePower() {
         if (powerLevel < maxPower()) {
-        	powerLevel += MedievalFactions.getInstance().getConfig().getInt("powerIncreaseAmount");
-        	if (powerLevel > maxPower()) {
+            powerLevel += MedievalFactions.getInstance().getConfig().getInt("powerIncreaseAmount");
+            if (powerLevel > maxPower()) {
                 powerLevel = maxPower();
             }
         }
@@ -120,8 +120,7 @@ public class PowerRecord extends PlayerRecord implements Savable {
     private void attemptToLoadPowerLevel(Gson gson, Map<String, String> data) {
         try {
             powerLevel = gson.fromJson(data.get("powerLevel"), Double.TYPE);
-        }
-        catch(Exception e) {
+        } catch (Exception e) {
             powerLevel = gson.fromJson(data.get("powerLevel"), Integer.TYPE);
         }
     }

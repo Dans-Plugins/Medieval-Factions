@@ -17,7 +17,7 @@ public class AutoClaimCommand extends SubCommand {
      * Constructor to initialise a Command.
      */
     public AutoClaimCommand() {
-        super(new String[] {
+        super(new String[]{
                 "AC", "AUTOCLAIM", LOCALE_PREFIX + "CmdAutoClaim"
         }, true, true, false, true);
     }

@@ -15,7 +15,7 @@ import org.bukkit.entity.Player;
  */
 public class StatsCommand extends SubCommand {
     public StatsCommand() {
-        super(new String[] {
+        super(new String[]{
                 "stats", LOCALE_PREFIX + "CmdStats"
         }, false, false, false, false);
     }

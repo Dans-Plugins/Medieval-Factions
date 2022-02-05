@@ -20,10 +20,11 @@ public class FactionRenameEvent extends FactionEvent implements Cancellable {
     /**
      * Constructor to initialise a FactionRenameEvent.
      * <p>
-     *     This event is called when a Faction is renamed from 'x' to 'y'.
+     * This event is called when a Faction is renamed from 'x' to 'y'.
      * </p>
-     * @param faction being renamed.
-     * @param currentName of the Faction.
+     *
+     * @param faction      being renamed.
+     * @param currentName  of the Faction.
      * @param proposedName or new name of the Faction.
      */
     public FactionRenameEvent(Faction faction, String currentName, String proposedName) {
@@ -33,7 +34,7 @@ public class FactionRenameEvent extends FactionEvent implements Cancellable {
     }
 
     // Getters.
-    public String getCurrentName(){
+    public String getCurrentName() {
         return current;
     }
 

@@ -32,16 +32,16 @@ public class ClaimedChunk extends Territory implements Savable {
         setChunk(initialChunk);
     }
 
-    public ClaimedChunk(Map<String, String> data){
+    public ClaimedChunk(Map<String, String> data) {
         this.load(data);
-    }
-
-    public void setChunk(Chunk newChunk) {
-        chunk = newChunk;
     }
 
     public Chunk getChunk() {
         return chunk;
+    }
+
+    public void setChunk(Chunk newChunk) {
+        chunk = newChunk;
     }
 
     public double[] getCoordinates() {
@@ -61,15 +61,15 @@ public class ClaimedChunk extends Territory implements Savable {
 
     @Override
     public Map<String, String> save() {
-            Gson gson = new GsonBuilder().setPrettyPrinting().create();
+        Gson gson = new GsonBuilder().setPrettyPrinting().create();
 
-            Map<String, String> saveMap = new HashMap<>();
-            saveMap.put("X", gson.toJson(chunk.getX()));
-            saveMap.put("Z", gson.toJson(chunk.getZ()));
-            saveMap.put("world", gson.toJson(world));
-            saveMap.put("holder", gson.toJson(holder));
+        Map<String, String> saveMap = new HashMap<>();
+        saveMap.put("X", gson.toJson(chunk.getX()));
+        saveMap.put("Z", gson.toJson(chunk.getZ()));
+        saveMap.put("world", gson.toJson(world));
+        saveMap.put("holder", gson.toJson(holder));
 
-            return saveMap;
+        return saveMap;
     }
 
     @Override

@@ -16,7 +16,7 @@ import org.bukkit.entity.Player;
 public class VassalizeCommand extends SubCommand {
 
     public VassalizeCommand() {
-        super(new String[] {
+        super(new String[]{
                 "Vassalize", LOCALE_PREFIX + "CmdVassalize"
         }, true, true, false, true);
     }

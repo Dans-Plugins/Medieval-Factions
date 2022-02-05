@@ -46,7 +46,7 @@ public class RelationChecker {
                 !(PersistentData.getInstance().getFactionByIndex(victimsFactionIndex).isEnemy(PersistentData.getInstance().getFactionByIndex(attackersFactionIndex).getName()));
     }
 
-    private Pair<Integer, Integer> getFactionIndices(Player player1, Player player2){
+    private Pair<Integer, Integer> getFactionIndices(Player player1, Player player2) {
         int attackersFactionIndex = 0;
         int victimsFactionIndex = 0;
 

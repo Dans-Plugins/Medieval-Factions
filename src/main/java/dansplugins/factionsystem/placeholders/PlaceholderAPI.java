@@ -81,7 +81,7 @@ public class PlaceholderAPI extends PlaceholderExpansion {
         }
         if (id.equalsIgnoreCase("faction_power")) {
             // The power (cumulative-bonus_power) for the Faction that the Player is in.
-            return String.valueOf(faction.getCumulativePowerLevel()-faction.getBonusPower());
+            return String.valueOf(faction.getCumulativePowerLevel() - faction.getBonusPower());
         }
         if (id.equalsIgnoreCase("faction_ally_count")) {
             // The total amount of Allies the Faction has that the Player is in.

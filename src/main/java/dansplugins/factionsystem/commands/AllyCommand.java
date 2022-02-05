@@ -19,7 +19,7 @@ public class AllyCommand extends SubCommand {
      * Constructor to initialise a Command.
      */
     public AllyCommand() {
-        super(new String[] {
+        super(new String[]{
                 "ally", LOCALE_PREFIX + "CmdAlly"
         }, true, true, true, false);
     }

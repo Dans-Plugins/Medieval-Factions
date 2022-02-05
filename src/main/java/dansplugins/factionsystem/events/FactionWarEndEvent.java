@@ -13,16 +13,17 @@ import org.bukkit.event.Cancellable;
  */
 public class FactionWarEndEvent extends FactionEvent implements Cancellable {
 
-    // Variables.
-    private boolean cancelled = false;
     private final String factionOneName;
     private final String factionTwoName;
+    // Variables.
+    private boolean cancelled = false;
 
     /**
      * Constructor to initialise a FactionWarEndEvent.
      * <p>
-     *     This event is called when a war ends due to a peace agreement.
+     * This event is called when a war ends due to a peace agreement.
      * </p>
+     *
      * @param faction1 - First faction involved.
      * @param faction2 - Second faction involved.
      */

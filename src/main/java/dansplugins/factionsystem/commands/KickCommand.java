@@ -21,7 +21,7 @@ import java.util.UUID;
 public class KickCommand extends SubCommand {
 
     public KickCommand() {
-        super(new String[] {
+        super(new String[]{
                 "kick", LOCALE_PREFIX + "CmdKick"
         }, true, true, true, false);
     }

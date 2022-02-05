@@ -20,7 +20,7 @@ public class HelpCommand extends SubCommand {
     private final HashMap<Integer, List<String>> helpPages = new HashMap<>();
 
     public HelpCommand() {
-        super(new String[] {
+        super(new String[]{
                 "help", LOCALE_PREFIX + "CmdHelp"
         }, false);
 

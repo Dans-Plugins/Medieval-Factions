@@ -47,8 +47,7 @@ public class DamageHandler implements Listener {
 
         if (arePlayersDueling(attacker, victim)) {
             endDuelIfNecessary(attacker, victim, event);
-        }
-        else {
+        } else {
             handleIfFriendlyFire(event, attacker, victim);
         }
     }
@@ -97,8 +96,7 @@ public class DamageHandler implements Listener {
     private Player getVictim(EntityDamageByEntityEvent event) {
         if (event.getEntity() instanceof Player) {
             return (Player) event.getEntity();
-        }
-        else {
+        } else {
             return null;
         }
     }
@@ -106,11 +104,9 @@ public class DamageHandler implements Listener {
     private Player getPlayerInStoredCloudPair(EntityDamageByEntityEvent event) {
         if (wasDamageWasBetweenPlayers(event)) {
             return (Player) event.getDamager();
-        }
-        else if (wasPlayerWasDamagedByAProjectile(event) && wasProjectileShotByPlayer(event)) {
+        } else if (wasPlayerWasDamagedByAProjectile(event) && wasProjectileShotByPlayer(event)) {
             return (Player) getProjectileSource(event);
-        }
-        else {
+        } else {
             return null;
         }
     }
@@ -161,7 +157,7 @@ public class DamageHandler implements Listener {
             return;
         }
         //i do not know if we also need to check for the inverse victim in faction attack not in faction
-        if (RelationChecker.getInstance().playerInFaction(attacker) || RelationChecker.getInstance().playerNotInFaction(victim)){
+        if (RelationChecker.getInstance().playerInFaction(attacker) || RelationChecker.getInstance().playerNotInFaction(victim)) {
             return;
         }
         if (RelationChecker.getInstance().arePlayersInSameFaction(attacker, victim)) {
@@ -171,8 +167,7 @@ public class DamageHandler implements Listener {
                 event.setCancelled(true);
                 attacker.sendMessage(ChatColor.RED + LocalLocaleService.getInstance().getText("CannotAttackFactionMember"));
             }
-        }
-        else if (RelationChecker.getInstance().arePlayersFactionsNotEnemies(attacker, victim)) { // if attacker's faction and victim's faction are not at war
+        } else if (RelationChecker.getInstance().arePlayersFactionsNotEnemies(attacker, victim)) { // if attacker's faction and victim's faction are not at war
             if (MedievalFactions.getInstance().getConfig().getBoolean("warsRequiredForPVP")) {
                 event.setCancelled(true);
                 attacker.sendMessage(ChatColor.RED + LocalLocaleService.getInstance().getText("CannotAttackNonWarringPlayer"));

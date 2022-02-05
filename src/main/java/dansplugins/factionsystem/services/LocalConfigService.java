@@ -30,8 +30,7 @@ public class LocalConfigService {
     public void handleVersionMismatch() {
         if (!getConfig().isString("version")) {
             getConfig().addDefault("version", MedievalFactions.getInstance().getVersion());
-        }
-        else {
+        } else {
             getConfig().set("version", MedievalFactions.getInstance().getVersion());
         }
 
@@ -63,20 +62,20 @@ public class LocalConfigService {
         if (!getConfig().isDouble("factionOwnerMultiplier")) {
             getConfig().addDefault("factionOwnerMultiplier", 2.0);
         }
-        if (!getConfig().isDouble("officerPerMemberCount")){
+        if (!getConfig().isDouble("officerPerMemberCount")) {
             getConfig().addDefault("officerPerMemberCount", 5);
         }
-        if (!getConfig().isDouble("factionOfficerMultiplier")){
+        if (!getConfig().isDouble("factionOfficerMultiplier")) {
             getConfig().addDefault("factionOfficerMultiplier", 1.5);
         }
         if (!getConfig().isBoolean("powerDecreases")) {
-        	getConfig().addDefault("powerDecreases", true);
+            getConfig().addDefault("powerDecreases", true);
         }
         if (!getConfig().isInt("minutesBetweenPowerDecreases")) {
-        	getConfig().addDefault("minutesBetweenPowerDecreases", 1440);
+            getConfig().addDefault("minutesBetweenPowerDecreases", 1440);
         }
         if (!getConfig().isInt("minutesBeforePowerDecrease")) {
-        	getConfig().addDefault("minutesBeforePowerDecrease", 20160);
+            getConfig().addDefault("minutesBeforePowerDecrease", 20160);
         }
         if (!getConfig().isInt("powerDecreaseAmount")) {
             getConfig().addDefault("powerDecreaseAmount", 1);
@@ -195,8 +194,7 @@ public class LocalConfigService {
             if (option.equalsIgnoreCase("version")) {
                 sender.sendMessage(ChatColor.RED + LocalLocaleService.getInstance().getText("CannotSetVersion"));
                 return;
-            }
-            else if (option.equalsIgnoreCase("initialMaxPowerLevel") || option.equalsIgnoreCase("initialPowerLevel")
+            } else if (option.equalsIgnoreCase("initialMaxPowerLevel") || option.equalsIgnoreCase("initialPowerLevel")
                     || option.equalsIgnoreCase("powerIncreaseAmount")
                     || option.equalsIgnoreCase("minutesBeforeInitialPowerIncrease")
                     || option.equalsIgnoreCase("minutesBetweenPowerIncreases")
@@ -206,14 +204,12 @@ public class LocalConfigService {
                     || option.equalsIgnoreCase("minutesBeforePowerDecrease")
                     || option.equalsIgnoreCase("powerDecreaseAmount")
                     || option.equalsIgnoreCase("factionMaxNameLength")
-	                || option.equalsIgnoreCase("factionMaxNumberGates")
-	                || option.equalsIgnoreCase("factionMaxGateArea")
-                    || option.equalsIgnoreCase("maxClaimRadius"))
-            {
+                    || option.equalsIgnoreCase("factionMaxNumberGates")
+                    || option.equalsIgnoreCase("factionMaxGateArea")
+                    || option.equalsIgnoreCase("maxClaimRadius")) {
                 getConfig().set(option, Integer.parseInt(value));
                 sender.sendMessage(ChatColor.GREEN + LocalLocaleService.getInstance().getText("IntegerSet"));
-            }
-            else if (option.equalsIgnoreCase("mobsSpawnInFactionTerritory")
+            } else if (option.equalsIgnoreCase("mobsSpawnInFactionTerritory")
                     || option.equalsIgnoreCase("laddersPlaceableInEnemyFactionTerritory")
                     || option.equalsIgnoreCase("warsRequiredForPVP")
                     || option.equalsIgnoreCase("powerDecreases")
@@ -237,16 +233,14 @@ public class LocalConfigService {
                     || option.equalsIgnoreCase("bonusPowerEnabled")) {
                 getConfig().set(option, Boolean.parseBoolean(value));
                 sender.sendMessage(ChatColor.GREEN + LocalLocaleService.getInstance().getText("BooleanSet"));
-            }
-            else if (option.equalsIgnoreCase("factionOwnerMultiplier")
+            } else if (option.equalsIgnoreCase("factionOwnerMultiplier")
                     || option.equalsIgnoreCase("factionOfficerMultiplier")
                     || option.equalsIgnoreCase("vassalContributionPercentageMultiplier")
                     || option.equalsIgnoreCase("powerLostOnDeath")
                     || option.equalsIgnoreCase("powerGainedOnKill")) {
                 getConfig().set(option, Double.parseDouble(value));
                 sender.sendMessage(ChatColor.GREEN + LocalLocaleService.getInstance().getText("DoubleSet"));
-            }
-            else {
+            } else {
                 getConfig().set(option, value);
                 sender.sendMessage(ChatColor.GREEN + LocalLocaleService.getInstance().getText("StringSet"));
 
@@ -258,8 +252,7 @@ public class LocalConfigService {
             // save
             MedievalFactions.getInstance().saveConfig();
             altered = true;
-        }
-        else {
+        } else {
             sender.sendMessage(ChatColor.RED + String.format(LocalLocaleService.getInstance().getText("WasntFound"), option));
         }
 
@@ -320,7 +313,7 @@ public class LocalConfigService {
                 + ", languageid: " + getString("languageid")
                 + ", debugMode: " + getBoolean("debugMode")
                 + ", initialMaxPowerLevel: " + getInt("initialMaxPowerLevel")
-                + ", initialPowerLevel: " +  getInt("initialPowerLevel")
+                + ", initialPowerLevel: " + getInt("initialPowerLevel")
                 + ", powerIncreaseAmount: " + getInt("powerIncreaseAmount")
                 + ", mobsSpawnInFactionTerritory: " + getBoolean("mobsSpawnInFactionTerritory")
                 + ", laddersPlaceableInEnemyFactionTerritory: " + getBoolean("laddersPlaceableInEnemyFactionTerritory")
@@ -335,12 +328,12 @@ public class LocalConfigService {
                 + ", minutesBeforePowerDecrease: " + getInt("minutesBeforePowerDecrease")
                 + ", powerDecreaseAmount: " + getInt("powerDecreaseAmount")
                 + ", factionMaxNameLength: " + getInt("factionMaxNameLength")
-		        + ", factionMaxNumberGates: " + getInt("factionMaxNumberGates"));
+                + ", factionMaxNumberGates: " + getInt("factionMaxNumberGates"));
     }
 
     public void sendPageTwoOfConfigList(CommandSender sender) {
         sender.sendMessage(ChatColor.AQUA + LocalLocaleService.getInstance().getText("ConfigListPageTwo"));
-        sender.sendMessage(ChatColor.AQUA+ "factionMaxGateArea: " + getInt("factionMaxGateArea")
+        sender.sendMessage(ChatColor.AQUA + "factionMaxGateArea: " + getInt("factionMaxGateArea")
                 + ", surroundedChunksProtected: " + getBoolean("surroundedChunksProtected")
                 + ", zeroPowerFactionsGetDisbanded: " + getBoolean("zeroPowerFactionsGetDisbanded")
                 + ", vassalContributionPercentageMultiplier: " + getDouble("vassalContributionPercentageMultiplier")

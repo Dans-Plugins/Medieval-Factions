@@ -60,7 +60,7 @@ public class Scheduler {
         Logger.getInstance().log(LocalLocaleService.getInstance().getText("SchedulingPowerDecrease"));
         int delay = MedievalFactions.getInstance().getConfig().getInt("minutesBetweenPowerDecreases") * 60;
         int secondsUntilRepeat = MedievalFactions.getInstance().getConfig().getInt("minutesBetweenPowerDecreases") * 60;
-        Bukkit.getScheduler().scheduleSyncRepeatingTask(MedievalFactions.getInstance(), new Runnable () {
+        Bukkit.getScheduler().scheduleSyncRepeatingTask(MedievalFactions.getInstance(), new Runnable() {
             @Override
             public void run() {
                 System.out.printf((LocalLocaleService.getInstance().getText("AlertDecreasingThePowerOfInactivePlayers")) + "%n", MedievalFactions.getInstance().getConfig().getInt("powerDecreaseAmount"), MedievalFactions.getInstance().getConfig().getInt("minutesBeforePowerDecrease"), MedievalFactions.getInstance().getConfig().getInt("minutesBetweenPowerDecreases"));
@@ -71,8 +71,7 @@ public class Scheduler {
                     PersistentData.getInstance().disbandAllZeroPowerFactions();
                 }
 
-                for (Player player : MedievalFactions.getInstance().getServer().getOnlinePlayers())
-                {
+                for (Player player : MedievalFactions.getInstance().getServer().getOnlinePlayers()) {
                     informPlayerIfTheirLandIsInDanger(player);
                 }
             }

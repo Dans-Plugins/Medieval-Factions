@@ -18,7 +18,7 @@ public class BreakAllianceCommand extends SubCommand {
      * Constructor to initialise a Command.
      */
     public BreakAllianceCommand() {
-        super(new String[] {
+        super(new String[]{
                 "breakalliance", "ba", LOCALE_PREFIX + "CmdBreakAlliance"
         }, true, true, false, true);
     }

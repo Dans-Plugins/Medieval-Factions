@@ -17,7 +17,7 @@ import java.util.stream.IntStream;
 public class LawsCommand extends SubCommand {
 
     public LawsCommand() {
-        super(new String[] {
+        super(new String[]{
                 "laws", LOCALE_PREFIX + "CmdLaws"
         }, true);
     }

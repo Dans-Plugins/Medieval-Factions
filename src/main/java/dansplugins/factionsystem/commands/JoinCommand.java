@@ -18,7 +18,7 @@ import org.bukkit.entity.Player;
 public class JoinCommand extends SubCommand {
 
     public JoinCommand() {
-        super(new String[] {
+        super(new String[]{
                 "join", LOCALE_PREFIX + "CmdJoin"
         }, true);
     }

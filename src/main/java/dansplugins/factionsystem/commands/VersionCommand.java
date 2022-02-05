@@ -15,7 +15,7 @@ import org.bukkit.entity.Player;
 public class VersionCommand extends SubCommand {
 
     public VersionCommand() {
-        super(new String[] {
+        super(new String[]{
                 "version", LOCALE_PREFIX + "CmdVersion"
         }, false);
     }

@@ -64,8 +64,7 @@ public class Messenger extends preponderous.ponder.minecraft.bukkit.tools.Messen
         if (faction.isLiege()) {
             if (!faction.isWeakened()) {
                 sender.sendMessage(ChatColor.AQUA + String.format(LocalLocaleService.getInstance().getText("VassalContribution"), vassalContribution) + "\n");
-            }
-            else {
+            } else {
                 sender.sendMessage(ChatColor.AQUA + String.format(LocalLocaleService.getInstance().getText("VassalContribution"), 0) + "\n");
             }
         }
@@ -79,7 +78,7 @@ public class Messenger extends preponderous.ponder.minecraft.bukkit.tools.Messen
                 for (FI_Fief fief : fiefs) {
                     fiefsSeparatedByCommas.append(fief.getName());
                 }
-                sender.sendMessage(ChatColor.AQUA + String.format("Fiefs: %s", fiefsSeparatedByCommas.toString()));
+                sender.sendMessage(ChatColor.AQUA + String.format("Fiefs: %s", fiefsSeparatedByCommas));
             }
         }
     }
@@ -102,8 +101,7 @@ public class Messenger extends preponderous.ponder.minecraft.bukkit.tools.Messen
                     continue;
                 }
                 target.sendMessage(message);
-            }
-            catch(Exception ignored) {
+            } catch (Exception ignored) {
 
             }
         }

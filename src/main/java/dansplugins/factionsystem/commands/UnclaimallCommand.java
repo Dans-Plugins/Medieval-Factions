@@ -15,7 +15,7 @@ import org.bukkit.entity.Player;
 public class UnclaimallCommand extends SubCommand {
 
     public UnclaimallCommand() {
-        super(new String[] {
+        super(new String[]{
                 "unclaimall", "ua", LOCALE_PREFIX + "CmdUnclaimall"
         }, false);
     }

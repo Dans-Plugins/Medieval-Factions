@@ -20,7 +20,7 @@ import org.bukkit.entity.Player;
 public class RenameCommand extends SubCommand {
 
     public RenameCommand() {
-        super(new String[] {
+        super(new String[]{
                 "rename"
         }, true, true, false, true);
     }
