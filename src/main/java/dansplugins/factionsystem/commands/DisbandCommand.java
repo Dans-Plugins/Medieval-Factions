@@ -74,8 +74,7 @@ public class DisbandCommand extends SubCommand {
         if (self) {
             sender.sendMessage(translate("&a" + getText("FactionSuccessfullyDisbanded")));
             ephemeral.getPlayersInFactionChat().remove(((Player) sender).getUniqueId());
-        }
-        else sender.sendMessage(translate("&a" + getText("SuccessfulDisbandment", disband.getName())));
+        } else sender.sendMessage(translate("&a" + getText("SuccessfulDisbandment", disband.getName())));
         removeFaction(factionIndex, self ? ((OfflinePlayer) sender) : null);
     }
 

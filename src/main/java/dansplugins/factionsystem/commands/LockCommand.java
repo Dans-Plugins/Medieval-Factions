@@ -15,7 +15,7 @@ import org.bukkit.entity.Player;
 public class LockCommand extends SubCommand {
 
     public LockCommand() {
-        super(new String[] {
+        super(new String[]{
                 "lock", LOCALE_PREFIX + "CmdLock"
         }, true);
     }

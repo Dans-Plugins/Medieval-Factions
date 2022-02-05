@@ -73,8 +73,7 @@ public class LocalLockService {
                         PersistentData.getInstance().addLockedBlock(left);
 
                         lock1x1Block(player, rightChest);
-                    }
-                    else {
+                    } else {
                         // lock single chest
                         lock1x1Block(player, clickedBlock);
                     }
@@ -106,12 +105,10 @@ public class LocalLockService {
                 }
 
                 event.setCancelled(true);
-            }
-            else {
+            } else {
                 player.sendMessage(ChatColor.RED + LocalLocaleService.getInstance().getText("CanOnlyLockSpecificBlocks"));
             }
-        }
-        else {
+        } else {
             player.sendMessage(ChatColor.RED + LocalLocaleService.getInstance().getText("CanOnlyLockBlocksInClaimedTerritory"));
             event.setCancelled(true);
         }
@@ -129,7 +126,7 @@ public class LocalLockService {
         // if locked
         if (PersistentData.getInstance().isBlockLocked(clickedBlock)) {
             if (PersistentData.getInstance().getLockedBlock(clickedBlock).getOwner().equals(player.getUniqueId())
-                || EphemeralData.getInstance().getForcefullyUnlockingPlayers().contains(player.getUniqueId())) {
+                    || EphemeralData.getInstance().getForcefullyUnlockingPlayers().contains(player.getUniqueId())) {
 
                 if (BlockChecker.getInstance().isChest(clickedBlock)) {
                     InventoryHolder holder = ((Chest) clickedBlock.getState()).getInventory().getHolder();
@@ -145,8 +142,7 @@ public class LocalLockService {
 
                         player.sendMessage(ChatColor.GREEN + LocalLocaleService.getInstance().getText("AlertUnlocked"));
                         EphemeralData.getInstance().getUnlockingPlayers().remove(player.getUniqueId());
-                    }
-                    else {
+                    } else {
                         // unlock single chest
                         PersistentData.getInstance().removeLockedBlock(clickedBlock);
                         player.sendMessage(ChatColor.GREEN + LocalLocaleService.getInstance().getText("AlertUnlocked"));
@@ -185,8 +181,7 @@ public class LocalLockService {
                 event.setCancelled(true);
                 return;
             }
-        }
-        else {
+        } else {
             player.sendMessage(ChatColor.RED + LocalLocaleService.getInstance().getText("BlockIsNotLocked"));
             event.setCancelled(true);
             return;
@@ -216,8 +211,7 @@ public class LocalLockService {
 
                 player.sendMessage(ChatColor.GREEN + String.format(LocalLocaleService.getInstance().getText("AlertAccessGrantedTo"), uuidChecker.findPlayerNameBasedOnUUID(EphemeralData.getInstance().getPlayersGrantingAccess().get(player.getUniqueId()))));
                 EphemeralData.getInstance().getPlayersGrantingAccess().remove(player.getUniqueId());
-            }
-            else { // if single chest
+            } else { // if single chest
                 // grant access to single chest
                 PersistentData.getInstance().getLockedBlock(clickedBlock).addToAccessList(EphemeralData.getInstance().getPlayersGrantingAccess().get(player.getUniqueId()));
                 player.sendMessage(ChatColor.GREEN + String.format(LocalLocaleService.getInstance().getText("AlertAccessGrantedTo"), uuidChecker.findPlayerNameBasedOnUUID(EphemeralData.getInstance().getPlayersGrantingAccess().get(player.getUniqueId()))));
@@ -287,8 +281,7 @@ public class LocalLockService {
 
                 player.sendMessage(ChatColor.GREEN + String.format(LocalLocaleService.getInstance().getText("AlertAccessRevokedFor"), uuidChecker.findPlayerNameBasedOnUUID(EphemeralData.getInstance().getPlayersRevokingAccess().get(player.getUniqueId()))));
                 EphemeralData.getInstance().getPlayersRevokingAccess().remove(player.getUniqueId());
-            }
-            else { // if single chest
+            } else { // if single chest
                 // revoke access to single chest
                 PersistentData.getInstance().getLockedBlock(clickedBlock).removeFromAccessList(EphemeralData.getInstance().getPlayersRevokingAccess().get(player.getUniqueId()));
                 player.sendMessage(ChatColor.GREEN + String.format(LocalLocaleService.getInstance().getText("AlertAccessRevokedFor"), uuidChecker.findPlayerNameBasedOnUUID(EphemeralData.getInstance().getPlayersRevokingAccess().get(player.getUniqueId()))));

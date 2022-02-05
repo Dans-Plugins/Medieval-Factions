@@ -20,10 +20,11 @@ public class FactionJoinEvent extends FactionEvent implements Cancellable {
     /**
      * Constructor to initialise a FactionJoinEvent
      * <p>
-     *     This event is called when a Player joins a Faction.
+     * This event is called when a Player joins a Faction.
      * </p>
+     *
      * @param faction which was joined.
-     * @param player who joined.
+     * @param player  who joined.
      */
     public FactionJoinEvent(Faction faction, OfflinePlayer player) {
         super(faction, player);

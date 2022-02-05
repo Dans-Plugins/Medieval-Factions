@@ -15,7 +15,7 @@ import org.bukkit.entity.Player;
 public class SetHomeCommand extends SubCommand {
 
     public SetHomeCommand() {
-        super(new String[] {
+        super(new String[]{
                 "sethome", "sh", LOCALE_PREFIX + "CmdSetHome"
         }, true, true, true, false);
     }

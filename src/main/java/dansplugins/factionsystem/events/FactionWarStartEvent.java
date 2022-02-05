@@ -14,17 +14,18 @@ import org.bukkit.event.Cancellable;
  */
 public class FactionWarStartEvent extends FactionEvent implements Cancellable {
 
-    // Variables.
-    private boolean cancelled = false;
     private final String attackerName;
     private final String defenderName;
     private final String playerName;
+    // Variables.
+    private boolean cancelled = false;
 
     /**
      * Constructor to initialise a FactionWarStartEvent.
      * <p>
-     *     This event is called when a faction declares war on another faction.
+     * This event is called when a faction declares war on another faction.
      * </p>
+     *
      * @param attacker - Faction declaring war.
      * @param defender - Faction getting declared war on.
      * @param declarer - Player responsible.

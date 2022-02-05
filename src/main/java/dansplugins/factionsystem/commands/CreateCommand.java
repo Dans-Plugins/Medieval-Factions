@@ -19,7 +19,7 @@ import org.bukkit.entity.Player;
 public class CreateCommand extends SubCommand {
 
     public CreateCommand() {
-        super(new String[] {
+        super(new String[]{
                 LOCALE_PREFIX + "CmdCreate", "Create"
         }, true);
     }

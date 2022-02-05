@@ -25,36 +25,35 @@ public class ActivityRecord extends PlayerRecord implements Savable {
     private int logins = 0;
     private int powerLost = 0;
     private ZonedDateTime lastLogout = ZonedDateTime.now();
-    
+
     public ActivityRecord(UUID uuid, int logins) {
-    	playerUUID = uuid;
-    	this.logins = logins;
-    	this.powerLost = 0;
+        playerUUID = uuid;
+        this.logins = logins;
+        this.powerLost = 0;
     }
 
     public ActivityRecord(Map<String, String> data) {
         this.load(data);
     }
 
-    public void setPowerLost(int power) {
-    	powerLost = power;
+    public int getPowerLost() {
+        return powerLost;
     }
 
-    public int getPowerLost()
-    {
-    	return powerLost;
+    public void setPowerLost(int power) {
+        powerLost = power;
     }
 
     public void incrementPowerLost() {
-    	powerLost += MedievalFactions.getInstance().getConfig().getInt("powerDecreaseAmount");
-    }
-
-    public void setLastLogout(ZonedDateTime date) {
-        lastLogout = date;
+        powerLost += MedievalFactions.getInstance().getConfig().getInt("powerDecreaseAmount");
     }
 
     public ZonedDateTime getLastLogout() {
         return lastLogout;
+    }
+
+    public void setLastLogout(ZonedDateTime date) {
+        lastLogout = date;
     }
 
     public void incrementLogins() {
@@ -66,9 +65,9 @@ public class ActivityRecord extends PlayerRecord implements Savable {
     }
 
     public int getMinutesSinceLastLogout() {
-    	if (lastLogout == null) {
+        if (lastLogout == null) {
             return 0;
-    	}
+        }
         ZonedDateTime now = ZonedDateTime.now();
         Duration duration = Duration.between(lastLogout, now);
         double totalSeconds = duration.getSeconds();
@@ -78,11 +77,11 @@ public class ActivityRecord extends PlayerRecord implements Savable {
     /**
      * Method to obtain the current session length in dd:hh:mm:ss
      * <p>
-     *     If days are not found, hh:mm:ss are returned.
+     * If days are not found, hh:mm:ss are returned.
      * </p>
      *
-     * @author Callum
      * @return formatted String dd:hh:mm:ss
+     * @author Callum
      */
     public String getActiveSessionLength() {
         if (lastLogout == null) {
@@ -107,13 +106,12 @@ public class ActivityRecord extends PlayerRecord implements Savable {
             ZonedDateTime now = ZonedDateTime.now();
             Duration duration = Duration.between(lastLogout, now);
             double totalSeconds = duration.getSeconds();
-            int minutes = (int) totalSeconds/60;
+            int minutes = (int) totalSeconds / 60;
             int hours = minutes / 60;
             int days = hours / 24;
             int hoursSince = hours - (days * 24);
             return days + " days and " + hoursSince + " hours";
-        }
-        else {
+        } else {
             return null;
         }
     }
@@ -129,7 +127,7 @@ public class ActivityRecord extends PlayerRecord implements Savable {
         saveMap.put("powerLost", gson.toJson(powerLost));
 
         return saveMap;
-    }   
+    }
 
     @Override
     public void load(Map<String, String> data) {
@@ -143,9 +141,9 @@ public class ActivityRecord extends PlayerRecord implements Savable {
     /**
      * Method to pad a value with a zero to its left.
      *
-     * @author Callum
      * @param value to pad
      * @return 00 or 0(0-9) or 10-(very big numbers)
+     * @author Callum
      */
     private String pad(Number value) {
         String tmp = String.valueOf(value);

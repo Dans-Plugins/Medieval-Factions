@@ -35,8 +35,7 @@ public class CheckClaimCommand extends SubCommand {
 
         if (result.equals("unclaimed")) {
             player.sendMessage(translate("&a" + getText("LandIsUnclaimed")));
-        }
-        else {
+        } else {
             player.sendMessage(translate("&c" + getText("LandClaimedBy", result)));
         }
     }

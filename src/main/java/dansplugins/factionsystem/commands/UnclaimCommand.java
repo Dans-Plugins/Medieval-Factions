@@ -15,7 +15,7 @@ import org.bukkit.entity.Player;
 public class UnclaimCommand extends SubCommand {
 
     public UnclaimCommand() {
-        super(new String[] {
+        super(new String[]{
                 "unclaim", LOCALE_PREFIX + "CmdUnclaim"
         }, true, true);
     }

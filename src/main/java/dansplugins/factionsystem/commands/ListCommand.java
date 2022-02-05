@@ -20,7 +20,7 @@ import java.util.List;
 public class ListCommand extends SubCommand {
 
     public ListCommand() {
-        super(new String[] {
+        super(new String[]{
                 "list", LOCALE_PREFIX + "CmdList"
         }, false);
     }

@@ -16,7 +16,7 @@ import org.bukkit.entity.Player;
 public class InfoCommand extends SubCommand {
 
     public InfoCommand() {
-        super(new String[] {
+        super(new String[]{
                 "info", LOCALE_PREFIX + "CmdInfo"
         }, false);
     }

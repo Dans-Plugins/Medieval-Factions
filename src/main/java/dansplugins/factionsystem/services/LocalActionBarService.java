@@ -39,11 +39,11 @@ public class LocalActionBarService {
         this.sendPlayerActionBarMessage(player, new TextComponent(""));
     }
 
-    private void sendPlayerActionBarMessages () {
+    private void sendPlayerActionBarMessages() {
         playerActionBarMessages.forEach(this::sendPlayerActionBarMessage);
     }
 
-    private void sendPlayerActionBarMessage (Player player, TextComponent message) {
+    private void sendPlayerActionBarMessage(Player player, TextComponent message) {
         player.spigot().sendMessage(ChatMessageType.ACTION_BAR, message);
     }
 }

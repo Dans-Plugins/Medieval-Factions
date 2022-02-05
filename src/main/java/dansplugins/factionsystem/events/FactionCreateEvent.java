@@ -20,10 +20,11 @@ public class FactionCreateEvent extends FactionEvent implements Cancellable {
     /**
      * Constructor to initialise a FactionCreateEvent.
      * <p>
-     *     This event is called when a Player creates a Faction.
+     * This event is called when a Player creates a Faction.
      * </p>
+     *
      * @param faction being created.
-     * @param player who created it.
+     * @param player  who created it.
      */
     public FactionCreateEvent(Faction faction, Player player) {
         super(faction, player);

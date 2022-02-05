@@ -52,9 +52,7 @@ public class BlockChecker extends preponderous.ponder.minecraft.bukkit.tools.Blo
         }
 
         if (BlockChecker.getInstance().isChest(neighbor4)) {
-            if (PersistentData.getInstance().isBlockLocked(neighbor4) && PersistentData.getInstance().getLockedBlock(neighbor4).getOwner() != player.getUniqueId()) {
-                return true;
-            }
+            return PersistentData.getInstance().isBlockLocked(neighbor4) && PersistentData.getInstance().getLockedBlock(neighbor4).getOwner() != player.getUniqueId();
         }
 
         return false;
@@ -72,9 +70,7 @@ public class BlockChecker extends preponderous.ponder.minecraft.bukkit.tools.Blo
         }
 
         if (BlockChecker.getInstance().isChest(neighbor2)) {
-            if (PersistentData.getInstance().isBlockLocked(neighbor2) && PersistentData.getInstance().getLockedBlock(neighbor2).getOwner() != player.getUniqueId()) {
-                return true;
-            }
+            return PersistentData.getInstance().isBlockLocked(neighbor2) && PersistentData.getInstance().getLockedBlock(neighbor2).getOwner() != player.getUniqueId();
         }
 
         return false;

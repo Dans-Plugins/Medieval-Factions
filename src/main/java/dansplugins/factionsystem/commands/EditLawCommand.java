@@ -14,8 +14,8 @@ import org.bukkit.entity.Player;
 public class EditLawCommand extends SubCommand {
 
     public EditLawCommand() {
-        super(new String[] {
-            "EditLaw", "EL", LOCALE_PREFIX + "CmdEditLaw"
+        super(new String[]{
+                "EditLaw", "EL", LOCALE_PREFIX + "CmdEditLaw"
         }, true, true, false, true);
     }
 

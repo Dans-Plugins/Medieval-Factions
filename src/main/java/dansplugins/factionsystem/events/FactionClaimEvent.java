@@ -15,15 +15,16 @@ import org.bukkit.event.Cancellable;
  */
 public class FactionClaimEvent extends FactionEvent implements Cancellable {
 
+    private final Chunk chunk;
     // Variables.
     private boolean cancelled = false;
-    private final Chunk chunk;
 
     /**
      * Constructor to initialise a FactionClaimEvent.
+     *
      * @param faction related to the claim.
-     * @param player who claimed for the Faction.
-     * @param chunk to be claimed.
+     * @param player  who claimed for the Faction.
+     * @param chunk   to be claimed.
      */
     public FactionClaimEvent(Faction faction, Player player, Chunk chunk) {
         super(faction, player);

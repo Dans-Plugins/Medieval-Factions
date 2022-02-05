@@ -14,8 +14,8 @@ import org.bukkit.entity.Player;
 public class CheckAccessCommand extends SubCommand {
 
     public CheckAccessCommand() {
-        super(new String[] {
-            "ca", "checkaccess", LOCALE_PREFIX + "CmdCheckAccess"
+        super(new String[]{
+                "ca", "checkaccess", LOCALE_PREFIX + "CmdCheckAccess"
         }, true);
     }
 
@@ -45,8 +45,7 @@ public class CheckAccessCommand extends SubCommand {
         } else {
             if (contains) {
                 player.sendMessage(translate("&c" + getText("AlreadyEnteredCheckAccess")));
-            }
-            else {
+            } else {
                 ephemeral.getPlayersCheckingAccess().add(player.getUniqueId());
                 player.sendMessage(translate("&a" + getText("RightClickCheckAccess")));
             }

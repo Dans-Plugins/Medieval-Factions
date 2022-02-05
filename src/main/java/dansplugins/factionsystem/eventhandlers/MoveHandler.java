@@ -30,7 +30,7 @@ public class MoveHandler implements Listener {
     @EventHandler()
     public void handle(PlayerMoveEvent event) {
         if (playerEnteredANewChunk(event)) {
-            Player player =  event.getPlayer();
+            Player player = event.getPlayer();
 
             initiateAutoclaimCheck(player);
 
@@ -83,8 +83,7 @@ public class MoveHandler implements Listener {
             if (playersFaction.getAutoClaimStatus()) {
                 if (notAtDemesneLimit(playersFaction)) {
                     scheduleClaiming(player, playersFaction);
-                }
-                else {
+                } else {
                     player.sendMessage(ChatColor.RED + LocalLocaleService.getInstance().getText("AlertReachedDemesne"));
                 }
             }

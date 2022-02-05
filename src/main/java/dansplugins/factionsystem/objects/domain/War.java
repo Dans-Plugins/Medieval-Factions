@@ -60,7 +60,7 @@ public class War implements Savable {
 
     @Override
     public Map<String, String> save() {
-        Gson gson = new GsonBuilder().setPrettyPrinting().create();;
+        Gson gson = new GsonBuilder().setPrettyPrinting().create();
         Map<String, String> saveMap = new HashMap<>();
 
         saveMap.put("attacker", gson.toJson(attacker));

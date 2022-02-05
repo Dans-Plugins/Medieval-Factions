@@ -15,7 +15,7 @@ import org.bukkit.entity.Player;
 public class ResetPowerLevelsCommand extends SubCommand {
 
     public ResetPowerLevelsCommand() {
-        super(new String[] {
+        super(new String[]{
                 "resetpowerlevels", LOCALE_PREFIX + "CmdResetPowerLevels", "rpl"
         }, false);
     }

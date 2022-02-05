@@ -33,7 +33,7 @@ public class ForceCommand extends SubCommand {
             "Save", "Load", "Peace", "Demote", "Join", "Kick", "Power", "Renounce", "Transfer", "RemoveVassal", "Rename", "BonusPower", "Unlock", "Create", "Claim", "Flag"
     };
     private final HashMap<List<String>, String> subMap = new HashMap<>();
-    
+
     private final ArgumentParser argumentParser = new ArgumentParser();
     private final UUIDChecker uuidChecker = new UUIDChecker();
 
@@ -76,15 +76,13 @@ public class ForceCommand extends SubCommand {
                         try {
                             Method method = getClass().getDeclaredMethod(entry.getValue(), CommandSender.class, String[].class); // Get the Declared method for that SubCommand.
                             method.invoke(this, sender, args);  // Use reflection to invoke the command.
-                                                                // Due to the nature of the force-command, it is safe to use reflection here.
-                        }
-                        catch (ReflectiveOperationException ex) {
+                            // Due to the nature of the force-command, it is safe to use reflection here.
+                        } catch (ReflectiveOperationException ex) {
                             System.out.println("DEBUG: Failed to resolve method from '" + args[0] + "'!");
                         }
                         return;
                     }
-                }
-                catch (Exception e) {
+                } catch (Exception e) {
                     System.out.println("DEBUG: Failed to use safeEquals to determine the command chosen.");
                 }
             }
@@ -223,7 +221,9 @@ public class ForceCommand extends SubCommand {
             sender.sendMessage(translate("&c" + getText("UsageForceKick")));
             return;
         }
-        if (debug) { System.out.printf("Looking for player UUID based on player name: '%s'%n", args[1]); }
+        if (debug) {
+            System.out.printf("Looking for player UUID based on player name: '%s'%n", args[1]);
+        }
         final UUID targetUUID = uuidChecker.findUUIDBasedOnPlayerName(args[1]);
         if (targetUUID == null) {
             sender.sendMessage(translate("&c" + getText("PlayerNotFound")));
@@ -542,9 +542,9 @@ public class ForceCommand extends SubCommand {
             return;
         }
 
-        Player p = (Player)  sender;
+        Player p = (Player) sender;
 
-        if (!(p.hasPermission("mf.force.claim") || p.hasPermission("mf.force.*") || p.hasPermission("mf.admin"))){
+        if (!(p.hasPermission("mf.force.claim") || p.hasPermission("mf.force.*") || p.hasPermission("mf.admin"))) {
             return;
         }
 

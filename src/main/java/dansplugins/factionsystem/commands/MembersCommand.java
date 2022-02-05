@@ -16,7 +16,7 @@ import org.bukkit.entity.Player;
 public class MembersCommand extends SubCommand {
 
     public MembersCommand() {
-        super(new String[] {
+        super(new String[]{
                 "members", LOCALE_PREFIX + "CmdMembers"
         }, false);
     }

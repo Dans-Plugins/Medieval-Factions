@@ -51,19 +51,6 @@ public enum FontMetrics {
         this.length = length;
     }
 
-    public char getCharacter() {
-        return this.character;
-    }
-
-    public int getLength() {
-        return this.length;
-    }
-
-    public int getBoldLength() {
-        if (this == FontMetrics.SPACE) return this.getLength(); // Bold Space == Regular Space.
-        return this.length + 1;
-    }
-
     public static FontMetrics getMetric(char c) {
         return Arrays.stream(FontMetrics.values())
                 .filter(dFI -> dFI.getCharacter() == c)
@@ -108,6 +95,19 @@ public enum FontMetrics {
             length += FontMetrics.getMetric(character).getLength();
         }
         System.out.println("'" + test + "' is approximately " + length + " minecraft-pixels wide");
+    }
+
+    public char getCharacter() {
+        return this.character;
+    }
+
+    public int getLength() {
+        return this.length;
+    }
+
+    public int getBoldLength() {
+        if (this == FontMetrics.SPACE) return this.getLength(); // Bold Space == Regular Space.
+        return this.length + 1;
     }
 
 }

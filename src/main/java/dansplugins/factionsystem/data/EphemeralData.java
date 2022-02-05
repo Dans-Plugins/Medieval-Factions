@@ -100,12 +100,9 @@ public class EphemeralData {
 
     // specific getters ---
 
-    public Duel getDuel(Player player, Player target)
-    {
-        for (Duel duel : getDuelingPlayers())
-        {
-            if (duel.hasPlayer(player) && duel.hasPlayer(target))
-            {
+    public Duel getDuel(Player player, Player target) {
+        for (Duel duel : getDuelingPlayers()) {
+            if (duel.hasPlayer(player) && duel.hasPlayer(target)) {
                 return duel;
             }
         }

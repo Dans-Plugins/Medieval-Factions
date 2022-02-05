@@ -17,7 +17,7 @@ public class BypassCommand extends SubCommand {
      * Constructor to initialise a Command.
      */
     public BypassCommand() {
-        super(new String[] {
+        super(new String[]{
                 "bypass", "Locale_CmdBypass"
         }, true);
     }
@@ -41,8 +41,7 @@ public class BypassCommand extends SubCommand {
 
         if (contains) {
             ephemeral.getAdminsBypassingProtections().remove(player.getUniqueId());
-        }
-        else {
+        } else {
             ephemeral.getAdminsBypassingProtections().add(player.getUniqueId());
         }
 

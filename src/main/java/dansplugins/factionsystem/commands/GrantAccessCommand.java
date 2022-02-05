@@ -17,7 +17,7 @@ import java.util.UUID;
 public class GrantAccessCommand extends SubCommand {
 
     public GrantAccessCommand() {
-        super(new String[] {
+        super(new String[]{
                 "grantaccess", "ga", LOCALE_PREFIX + "CmdGrantAccess"
         }, true);
     }

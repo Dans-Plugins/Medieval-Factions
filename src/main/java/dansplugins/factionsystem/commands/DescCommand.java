@@ -14,7 +14,7 @@ import org.bukkit.entity.Player;
 public class DescCommand extends SubCommand {
 
     public DescCommand() {
-        super(new String[] {
+        super(new String[]{
                 "Desc", "Description", LOCALE_PREFIX + "CmdDesc"
         }, true, true, false, true);
     }
