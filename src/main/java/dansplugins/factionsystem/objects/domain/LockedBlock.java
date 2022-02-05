@@ -8,8 +8,8 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.reflect.TypeToken;
 import org.bukkit.Bukkit;
-import preponderous.ponder.minecraft.spigot.modifiers.Lockable;
-import preponderous.ponder.misc.Savable;
+import preponderous.ponder.misc.abs.Lockable;
+import preponderous.ponder.misc.abs.Savable;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -20,7 +20,7 @@ import java.util.UUID;
 /**
  * @author Daniel McCoy Stephenson
  */
-public class LockedBlock implements Lockable, Savable {
+public class LockedBlock implements Lockable<UUID>, Savable {
     private int x = 0;
     private int y = 0;
     private int z = 0;
@@ -59,10 +59,12 @@ public class LockedBlock implements Lockable, Savable {
         return z;
     }
 
+    @Override
     public void setOwner(UUID s) {
         owner = s;
     }
 
+    @Override
     public UUID getOwner() {
         return owner;
     }
@@ -81,6 +83,7 @@ public class LockedBlock implements Lockable, Savable {
         return accessList.contains(playerName);
     }
 
+    @Override
     public ArrayList<UUID> getAccessList() {
         return accessList;
     }

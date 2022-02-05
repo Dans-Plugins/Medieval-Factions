@@ -9,7 +9,7 @@ import dansplugins.factionsystem.objects.domain.Faction;
 import dansplugins.factionsystem.utils.extended.Messenger;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
-import preponderous.ponder.minecraft.spigot.tools.UUIDChecker;
+import preponderous.ponder.minecraft.bukkit.tools.UUIDChecker;
 
 import java.util.UUID;
 

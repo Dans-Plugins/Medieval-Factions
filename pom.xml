@@ -101,9 +101,9 @@
         <dependency>
             <groupId>preponderous</groupId>
             <artifactId>ponder</artifactId>
-            <version>v0.13</version>
+            <version>v0.15-alpha-2</version>
             <scope>system</scope>
-            <systemPath>${project.basedir}/dependencies/Ponder-v0.13.jar</systemPath>
+            <systemPath>${project.basedir}/dependencies/Ponder-v0.15-alpha-2.jar</systemPath>
         </dependency>
     </dependencies>
 </project>

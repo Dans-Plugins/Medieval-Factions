@@ -16,7 +16,7 @@ import org.bukkit.block.DoubleChest;
 import org.bukkit.entity.Player;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.inventory.InventoryHolder;
-import preponderous.ponder.minecraft.spigot.tools.UUIDChecker;
+import preponderous.ponder.minecraft.bukkit.tools.UUIDChecker;
 
 import java.util.Objects;
 import java.util.UUID;

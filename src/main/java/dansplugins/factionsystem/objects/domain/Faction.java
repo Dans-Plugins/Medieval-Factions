@@ -11,14 +11,14 @@ import dansplugins.factionsystem.MedievalFactions;
 import dansplugins.factionsystem.data.PersistentData;
 import dansplugins.factionsystem.objects.helper.FactionFlags;
 import dansplugins.factionsystem.objects.inherited.Nation;
+import dansplugins.factionsystem.objects.inherited.specification.Feudal;
 import dansplugins.factionsystem.services.LocalConfigService;
 import dansplugins.factionsystem.services.LocalLocaleService;
 import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.WorldCreator;
 import org.bukkit.block.Block;
-import preponderous.ponder.minecraft.spigot.modifiers.Feudal;
-import preponderous.ponder.misc.Savable;
+import preponderous.ponder.misc.abs.Savable;
 
 import java.lang.reflect.Type;
 import java.util.*;
