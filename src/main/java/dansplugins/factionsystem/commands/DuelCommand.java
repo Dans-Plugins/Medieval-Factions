@@ -13,7 +13,6 @@ import org.bukkit.entity.Player;
 import static dansplugins.factionsystem.objects.domain.Duel.DuelState;
 
 /**
- * @author Daniel McCoy Stephenson
  * @author Callum Johnson
  */
 public class DuelCommand extends SubCommand {

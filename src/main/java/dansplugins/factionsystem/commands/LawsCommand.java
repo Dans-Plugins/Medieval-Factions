@@ -12,7 +12,6 @@ import org.bukkit.entity.Player;
 import java.util.stream.IntStream;
 
 /**
- * @author Daniel McCoy Stephenson
  * @author Callum Johnson
  */
 public class LawsCommand extends SubCommand {

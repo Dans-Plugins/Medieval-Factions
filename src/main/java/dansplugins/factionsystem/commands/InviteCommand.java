@@ -19,7 +19,6 @@ import java.util.UUID;
 import static org.bukkit.Bukkit.getServer;
 
 /**
- * @author Daniel McCoy Stephenson
  * @author Callum Johnson
  */
 public class InviteCommand extends SubCommand {

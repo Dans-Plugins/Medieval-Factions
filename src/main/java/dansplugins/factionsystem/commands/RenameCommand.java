@@ -15,7 +15,6 @@ import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.Player;
 
 /**
- * @author Daniel McCoy Stephenson
  * @author Callum Johnson
  */
 public class RenameCommand extends SubCommand {

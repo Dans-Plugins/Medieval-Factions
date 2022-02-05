@@ -16,7 +16,6 @@ import preponderous.ponder.minecraft.bukkit.tools.UUIDChecker;
 import java.util.UUID;
 
 /**
- * @author Daniel McCoy Stephenson
  * @author Callum Johnson
  */
 public class KickCommand extends SubCommand {

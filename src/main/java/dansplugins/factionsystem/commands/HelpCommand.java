@@ -13,7 +13,6 @@ import java.util.HashMap;
 import java.util.List;
 
 /**
- * @author Daniel McCoy Stephenson
  * @author Callum Johnson
  */
 public class HelpCommand extends SubCommand {

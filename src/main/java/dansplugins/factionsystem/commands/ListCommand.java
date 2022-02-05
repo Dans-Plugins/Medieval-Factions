@@ -15,7 +15,6 @@ import org.bukkit.entity.Player;
 import java.util.List;
 
 /**
- * @author Daniel McCoy Stephenson
  * @author Callum Johnson
  */
 public class ListCommand extends SubCommand {
