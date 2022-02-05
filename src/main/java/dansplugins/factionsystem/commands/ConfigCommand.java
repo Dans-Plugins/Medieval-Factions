@@ -11,7 +11,6 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
 /**
- * @author Daniel McCoy Stephenson
  * @author Callum Johnson
  */
 public class ConfigCommand extends SubCommand {

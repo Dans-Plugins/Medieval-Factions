@@ -13,7 +13,6 @@ import org.bukkit.entity.Player;
 import java.util.UUID;
 
 /**
- * @author Daniel McCoy Stephenson
  * @author Callum Johnson
  */
 public class DemoteCommand extends SubCommand {

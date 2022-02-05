@@ -18,7 +18,6 @@ import preponderous.ponder.misc.ArgumentParser;
 import java.util.ArrayList;
 
 /**
- * @author Daniel McCoy Stephenson
  * @author Callum Johnson
  */
 public class DeclareWarCommand extends SubCommand {

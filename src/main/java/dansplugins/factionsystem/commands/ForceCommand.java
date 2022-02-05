@@ -23,7 +23,6 @@ import java.lang.reflect.Method;
 import java.util.*;
 
 /**
- * @author Daniel McCoy Stephenson
  * @author Callum Johnson
  */
 public class ForceCommand extends SubCommand {
