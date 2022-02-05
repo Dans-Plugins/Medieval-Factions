@@ -5,7 +5,6 @@
 package dansplugins.factionsystem.commands;
 
 import dansplugins.factionsystem.commands.abs.SubCommand;
-import dansplugins.factionsystem.data.PersistentData;
 import dansplugins.factionsystem.eventhandlers.helper.RelationChecker;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
