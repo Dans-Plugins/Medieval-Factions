@@ -50,15 +50,16 @@ public class RelationChecker {
         int attackersFactionIndex = 0;
         int victimsFactionIndex = 0;
 
-        for (int i = 0; i < PersistentData.getInstance().getNumFactions(); i++) {
-            if (PersistentData.getInstance().getFactionByIndex(i).isMember(player1.getUniqueId())) {
-                attackersFactionIndex = i;
-            }
-            if (PersistentData.getInstance().getFactionByIndex(i).isMember(player2.getUniqueId())) {
-                victimsFactionIndex = i;
+        if (player1 != null && player2 != null) {
+            for (int i = 0; i < PersistentData.getInstance().getNumFactions(); i++) {
+                if (PersistentData.getInstance().getFactionByIndex(i).isMember(player1.getUniqueId())) {
+                    attackersFactionIndex = i;
+                }
+                if (PersistentData.getInstance().getFactionByIndex(i).isMember(player2.getUniqueId())) {
+                    victimsFactionIndex = i;
+                }
             }
         }
-
         return new Pair<>(attackersFactionIndex, victimsFactionIndex);
     }
 }
