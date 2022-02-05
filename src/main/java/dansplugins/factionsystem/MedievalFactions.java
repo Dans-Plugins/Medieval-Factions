@@ -18,10 +18,9 @@ import org.bukkit.Bukkit;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.event.Listener;
-import org.bukkit.plugin.java.JavaPlugin;
 import org.jetbrains.annotations.NotNull;
-import preponderous.ponder.minecraft.abs.PonderPlugin;
 import preponderous.ponder.minecraft.bukkit.PonderMC;
+import preponderous.ponder.minecraft.bukkit.abs.PonderBukkitPlugin;
 import preponderous.ponder.minecraft.bukkit.tools.EventHandlerRegistry;
 
 import java.io.File;
@@ -32,7 +31,7 @@ import java.util.Arrays;
  * @author Daniel McCoy Stephenson
  * @since May 30th, 2020
  */
-public class MedievalFactions extends JavaPlugin implements PonderPlugin {
+public class MedievalFactions extends PonderBukkitPlugin {
     private static MedievalFactions instance;
     private final PonderMC ponder = new PonderMC(this);
     private final String pluginVersion = "v" + getDescription().getVersion();
