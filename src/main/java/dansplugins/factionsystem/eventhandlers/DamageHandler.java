@@ -12,6 +12,7 @@ import dansplugins.factionsystem.objects.domain.ClaimedChunk;
 import dansplugins.factionsystem.objects.domain.Duel;
 import dansplugins.factionsystem.objects.domain.Faction;
 import dansplugins.factionsystem.services.LocalLocaleService;
+import dansplugins.factionsystem.utils.Logger;
 import org.bukkit.ChatColor;
 import org.bukkit.Chunk;
 import org.bukkit.Location;
@@ -41,7 +42,7 @@ public class DamageHandler implements Listener {
     }
 
     private void handlePlayerVersusPlayer(Player attacker, Player victim, EntityDamageByEntityEvent event) {
-        if (attacker == null || victim == null) {
+        if (victim == null) {
             return;
         }
 
@@ -140,6 +141,9 @@ public class DamageHandler implements Listener {
     }
 
     private boolean arePlayersDueling(Player attacker, Player victim) {
+        if (attacker == null) {
+            return false;
+        }
         Duel duel = EphemeralData.getInstance().getDuel(attacker, victim);
         return duel != null;
     }
@@ -153,6 +157,10 @@ public class DamageHandler implements Listener {
     }
 
     private void handleIfFriendlyFire(EntityDamageByEntityEvent event, Player attacker, Player victim) {
+        if (attacker == null) {
+            Logger.getInstance().log("Attacker was null in handleIfFriendlyFire() method.");
+            return;
+        }
         if (RelationChecker.getInstance().playerNotInFaction(attacker) || RelationChecker.getInstance().playerNotInFaction(victim)) {
             return;
         }
