@@ -70,6 +70,10 @@
             <id>placeholderapi</id>
             <url>https://repo.extendedclip.com/content/repositories/placeholderapi/</url>
         </repository>
+        <repository>
+            <id>jitpack.io</id>
+            <url>https://jitpack.io</url>
+        </repository>
     </repositories>
 
     <dependencies>
@@ -92,14 +96,14 @@
             <scope>provided</scope>
         </dependency>
         <dependency>
-            <groupId>dansplugins</groupId>
+            <groupId>com.github.dmccoystephenson</groupId>
             <artifactId>Fiefs</artifactId>
-            <version>v0.8-alpha-1</version>
+            <version>v0.8</version>
             <scope>compile</scope>
         </dependency>
         <dependency>
-            <groupId>preponderous</groupId>
-            <artifactId>ponder</artifactId>
+            <groupId>com.github.Preponderous-Software</groupId>
+            <artifactId>Ponder</artifactId>
             <version>v0.15-alpha-2</version>
             <scope>compile</scope>
         </dependency>
