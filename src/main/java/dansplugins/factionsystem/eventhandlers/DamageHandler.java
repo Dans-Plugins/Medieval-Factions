@@ -35,21 +35,45 @@ public class DamageHandler implements Listener {
      */
     @EventHandler()
     public void handle(EntityDamageByEntityEvent event) {
-        Player attacker = getPlayerInStoredCloudPair(event);
+        Player attacker = getAttacker(event);
         Player victim = getVictim(event);
         handlePlayerVersusPlayer(attacker, victim, event);
         handleEntityDamage(attacker, event);
     }
 
+    /**
+     * Cases:
+     * 1) Players are dueling
+     * 2) Victim is not in a faction or attacker is not in a faction.
+     * 3) Players are in the same faction
+     * 4) Players are not in the same faction but are not enemies.
+     */
     private void handlePlayerVersusPlayer(Player attacker, Player victim, EntityDamageByEntityEvent event) {
         if (victim == null) {
             return;
         }
 
+        // case 1
         if (arePlayersDueling(attacker, victim)) {
             endDuelIfNecessary(attacker, victim, event);
-        } else {
-            handleIfFriendlyFire(event, attacker, victim);
+            return;
+        }
+
+        // case 2
+        if (RelationChecker.getInstance().playerNotInFaction(attacker) || RelationChecker.getInstance().playerNotInFaction(victim)) {
+            // allow since factionless don't have PVP restrictions
+            return;
+        }
+
+        // case 3
+        if (RelationChecker.getInstance().arePlayersInSameFaction(attacker, victim)){
+            handleFriendlyFire(event, attacker, victim);
+            return;
+        }
+
+        // case 4
+        if (RelationChecker.getInstance().arePlayersFactionsNotEnemies(attacker, victim)) {
+            handleNonEnemyFire(event, attacker, victim);
         }
     }
 
@@ -81,7 +105,7 @@ public class DamageHandler implements Listener {
     }
 
     private boolean isHolderPlayersFaction(ClaimedChunk claimedChunk, Faction playersFaction) {
-        return !claimedChunk.getHolder().equalsIgnoreCase(playersFaction.getName());
+        return claimedChunk.getHolder().equalsIgnoreCase(playersFaction.getName());
     }
 
     private ClaimedChunk getClaimedChunkAtLocation(Location location) {
@@ -102,12 +126,14 @@ public class DamageHandler implements Listener {
         }
     }
 
-    private Player getPlayerInStoredCloudPair(EntityDamageByEntityEvent event) {
+    private Player getAttacker(EntityDamageByEntityEvent event) {
         if (wasDamageWasBetweenPlayers(event)) {
             return (Player) event.getDamager();
-        } else if (wasPlayerWasDamagedByAProjectile(event) && wasProjectileShotByPlayer(event)) {
+        }
+        else if (wasPlayerWasDamagedByAProjectile(event) && wasProjectileShotByPlayer(event)) {
             return (Player) getProjectileSource(event);
-        } else {
+        }
+        else {
             return null;
         }
     }
@@ -156,31 +182,32 @@ public class DamageHandler implements Listener {
         return event.getDamager() instanceof Player && event.getEntity() instanceof Player;
     }
 
-    private void handleIfFriendlyFire(EntityDamageByEntityEvent event, Player attacker, Player victim) {
+    /**
+     * This method is intended to prevent friendly fire if it is not allowed in the faction.
+     */
+    private void handleFriendlyFire(EntityDamageByEntityEvent event, Player attacker, Player victim) {
         if (attacker == null) {
             Logger.getInstance().log("Attacker was null in handleIfFriendlyFire() method.");
             return;
         }
-        if (RelationChecker.getInstance().playerNotInFaction(attacker) || RelationChecker.getInstance().playerNotInFaction(victim)) {
-            return;
-        }
-        //i do not know if we also need to check for the inverse victim in faction attack not in faction
-        if (RelationChecker.getInstance().playerInFaction(attacker) || RelationChecker.getInstance().playerNotInFaction(victim)) {
-            return;
-        }
-        if (RelationChecker.getInstance().arePlayersInSameFaction(attacker, victim)) {
-            Faction faction = PersistentData.getInstance().getPlayersFaction(attacker.getUniqueId());
-            boolean friendlyFireAllowed = (boolean) faction.getFlags().getFlag("allowfriendlyFire");
-            if (!friendlyFireAllowed) {
-                event.setCancelled(true);
-                attacker.sendMessage(ChatColor.RED + LocalLocaleService.getInstance().getText("CannotAttackFactionMember"));
-            }
-        } else if (RelationChecker.getInstance().arePlayersFactionsNotEnemies(attacker, victim)) { // if attacker's faction and victim's faction are not at war
-            if (MedievalFactions.getInstance().getConfig().getBoolean("warsRequiredForPVP")) {
-                event.setCancelled(true);
-                attacker.sendMessage(ChatColor.RED + LocalLocaleService.getInstance().getText("CannotAttackNonWarringPlayer"));
-            }
+
+        Faction faction = PersistentData.getInstance().getPlayersFaction(attacker.getUniqueId());
+        boolean friendlyFireAllowed = (boolean) faction.getFlags().getFlag("allowfriendlyFire");
+        if (!friendlyFireAllowed) {
+            event.setCancelled(true);
+            attacker.sendMessage(ChatColor.RED + LocalLocaleService.getInstance().getText("CannotAttackFactionMember"));
         }
     }
 
+    private void handleNonEnemyFire(EntityDamageByEntityEvent event, Player attacker, Player victim) {
+        if (attacker == null) {
+            Logger.getInstance().log("Attacker was null in handleNonEnemyFire() method.");
+            return;
+        }
+
+        if (MedievalFactions.getInstance().getConfig().getBoolean("warsRequiredForPVP")) {
+            event.setCancelled(true);
+            attacker.sendMessage(ChatColor.RED + LocalLocaleService.getInstance().getText("CannotAttackNonWarringPlayer"));
+        }
+    }
 }
