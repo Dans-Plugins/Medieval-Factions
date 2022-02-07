@@ -37,6 +37,12 @@ public class DamageHandler implements Listener {
     public void handle(EntityDamageByEntityEvent event) {
         Player attacker = getAttacker(event);
         Player victim = getVictim(event);
+
+        if (attacker == null || victim == null) {
+            Logger.getInstance().log("Attacker/victim was null in the DamageHandler class.");
+            return;
+        }
+
         handlePlayerVersusPlayer(attacker, victim, event);
         handleEntityDamage(attacker, event);
     }
@@ -49,9 +55,6 @@ public class DamageHandler implements Listener {
      * 4) Players are not in the same faction but are not enemies.
      */
     private void handlePlayerVersusPlayer(Player attacker, Player victim, EntityDamageByEntityEvent event) {
-        if (victim == null) {
-            return;
-        }
 
         // case 1
         if (arePlayersDueling(attacker, victim)) {
