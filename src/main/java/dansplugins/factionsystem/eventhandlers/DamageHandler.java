@@ -39,7 +39,7 @@ public class DamageHandler implements Listener {
         Player victim = getVictim(event);
 
         if (attacker == null || victim == null) {
-            Logger.getInstance().log("Attacker/victim was null in the DamageHandler class.");
+            Logger.getInstance().log("Attacker and/or victim was null in the DamageHandler class.");
             return;
         }
 
@@ -81,10 +81,6 @@ public class DamageHandler implements Listener {
     }
 
     private void handleEntityDamage(Player attacker, EntityDamageByEntityEvent event) {
-        if (attacker == null) {
-            return;
-        }
-
         Faction playersFaction = PersistentData.getInstance().getPlayersFaction(attacker.getUniqueId());
         if (playersFaction == null) {
             event.setCancelled(true);
@@ -189,11 +185,6 @@ public class DamageHandler implements Listener {
      * This method is intended to prevent friendly fire if it is not allowed in the faction.
      */
     private void handleFriendlyFire(EntityDamageByEntityEvent event, Player attacker, Player victim) {
-        if (attacker == null) {
-            Logger.getInstance().log("Attacker was null in handleIfFriendlyFire() method.");
-            return;
-        }
-
         Faction faction = PersistentData.getInstance().getPlayersFaction(attacker.getUniqueId());
         boolean friendlyFireAllowed = (boolean) faction.getFlags().getFlag("allowfriendlyFire");
         if (!friendlyFireAllowed) {
@@ -203,11 +194,6 @@ public class DamageHandler implements Listener {
     }
 
     private void handleNonEnemyFire(EntityDamageByEntityEvent event, Player attacker, Player victim) {
-        if (attacker == null) {
-            Logger.getInstance().log("Attacker was null in handleNonEnemyFire() method.");
-            return;
-        }
-
         if (MedievalFactions.getInstance().getConfig().getBoolean("warsRequiredForPVP")) {
             event.setCancelled(true);
             attacker.sendMessage(ChatColor.RED + LocalLocaleService.getInstance().getText("CannotAttackNonWarringPlayer"));
