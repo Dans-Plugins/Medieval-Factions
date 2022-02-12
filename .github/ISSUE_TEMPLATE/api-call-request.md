@@ -2,7 +2,7 @@
 name: API Call Request
 about: Request an API call.
 title: ''
-labels: ''
+labels: API Call Request
 assignees: ''
 
 ---
