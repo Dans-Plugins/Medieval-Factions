@@ -186,7 +186,7 @@ public class DamageHandler implements Listener {
      */
     private void handleFriendlyFire(EntityDamageByEntityEvent event, Player attacker, Player victim) {
         Faction faction = PersistentData.getInstance().getPlayersFaction(attacker.getUniqueId());
-        boolean friendlyFireAllowed = (boolean) faction.getFlags().getFlag("allowfriendlyFire");
+        boolean friendlyFireAllowed = (boolean) faction.getFlags().getFlag("allowFriendlyFire");
         if (!friendlyFireAllowed) {
             event.setCancelled(true);
             attacker.sendMessage(ChatColor.RED + LocalLocaleService.getInstance().getText("CannotAttackFactionMember"));
