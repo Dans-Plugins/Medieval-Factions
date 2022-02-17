@@ -164,6 +164,9 @@ public class LocalConfigService {
         if (!getConfig().isDouble("powerGainedOnKill")) {
             getConfig().addDefault("powerGainedOnKill", 1.0);
         }
+        if (!getConfig().isInt("teleportDelay")) {
+            getConfig().addDefault("teleportDelay", 3);
+        }
 
         deleteOldConfigOptionsIfPresent();
 
@@ -230,7 +233,8 @@ public class LocalConfigService {
                     || option.equalsIgnoreCase("limitLand")
                     || option.equalsIgnoreCase("factionsCanSetPrefixColors")
                     || option.equalsIgnoreCase("playersLosePowerOnDeath")
-                    || option.equalsIgnoreCase("bonusPowerEnabled")) {
+                    || option.equalsIgnoreCase("bonusPowerEnabled")
+                    || option.equalsIgnoreCase("teleportDelay")) {
                 getConfig().set(option, Boolean.parseBoolean(value));
                 sender.sendMessage(ChatColor.GREEN + LocalLocaleService.getInstance().getText("BooleanSet"));
             } else if (option.equalsIgnoreCase("factionOwnerMultiplier")
@@ -303,6 +307,7 @@ public class LocalConfigService {
         getConfig().addDefault("bonusPowerEnabled", true);
         getConfig().addDefault("powerLostOnDeath", 1.0);
         getConfig().addDefault("powerGainedOnKill", 1.0);
+        getConfig().addDefault("teleportDelay", 3);
         getConfig().options().copyDefaults(true);
         MedievalFactions.getInstance().saveConfig();
     }
@@ -356,7 +361,8 @@ public class LocalConfigService {
                 + ", playersLosePowerOnDeath: " + getBoolean("playersLosePowerOnDeath")
                 + ", bonusPowerEnabled: " + getBoolean("bonusPowerEnabled")
                 + ", powerLostOnDeath: " + getDouble("powerLostOnDeath")
-                + ", powerGainedOnKill: " + getDouble("powerGainedOnKill"));
+                + ", powerGainedOnKill: " + getDouble("powerGainedOnKill")
+                + ", teleportDelay: " + getInt("teleportDelay"));
     }
 
     public boolean hasBeenAltered() {
