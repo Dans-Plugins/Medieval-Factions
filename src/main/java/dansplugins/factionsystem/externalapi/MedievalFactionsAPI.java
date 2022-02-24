@@ -12,6 +12,7 @@ import dansplugins.factionsystem.objects.domain.PowerRecord;
 import org.bukkit.Chunk;
 import org.bukkit.entity.Player;
 
+import java.util.ArrayList;
 import java.util.UUID;
 
 /**
@@ -20,6 +21,8 @@ import java.util.UUID;
  */
 public class MedievalFactionsAPI {
     private final String APIVersion = "v1.0.0"; // every time the external API is altered, this should be incremented
+    private ArrayList<String> allyFactions = new ArrayList<>();
+    private ArrayList<String> enemyFactions = new ArrayList<>();
 
     public String getAPIVersion() {
         return APIVersion;
@@ -93,5 +96,30 @@ public class MedievalFactionsAPI {
         } else {
             powerRecord.setPower(0);
         }
+    }
+
+    public boolean isAlly(String factionname) {
+        return containsIgnoreCase(allyFactions, factionname);
+    }
+
+    public ArrayList<String> getAllies() {
+        return allyFactions;
+    }
+
+    public boolean isEnemy(String factionName) {
+        return containsIgnoreCase(enemyFactions, factionName);
+    }
+
+    public ArrayList<String> getEnemies() {
+        return enemyFactions;
+    }
+
+    private boolean containsIgnoreCase(ArrayList<String> list, String str) {
+        for (String string : list) {
+            if (string.equalsIgnoreCase(str)) {
+                return true;
+            }
+        }
+        return false;
     }
 }
