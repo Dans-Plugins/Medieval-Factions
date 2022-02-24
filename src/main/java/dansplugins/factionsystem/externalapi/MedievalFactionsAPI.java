@@ -98,18 +98,31 @@ public class MedievalFactionsAPI {
         }
     }
 
+    /**
+     * Checks the faction's list of allies for the supplied faction name
+     * @return boolean
+     */
     public boolean isAlly(String factionname) {
         return containsIgnoreCase(allyFactions, factionname);
     }
 
+    /**
+     * @return list of allied factions
+     */
     public ArrayList<String> getAllies() {
         return allyFactions;
     }
 
+    /**
+     * @return boolean
+     */
     public boolean isEnemy(String factionName) {
         return containsIgnoreCase(enemyFactions, factionName);
     }
 
+    /**
+     * @return list of enemies for the faction
+     */
     public ArrayList<String> getEnemies() {
         return enemyFactions;
     }
