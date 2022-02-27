@@ -4,19 +4,20 @@
  */
 package dansplugins.factionsystem.placeholders;
 
-import dansplugins.factionsystem.MedievalFactions;
-import dansplugins.factionsystem.data.PersistentData;
-import dansplugins.factionsystem.objects.domain.ClaimedChunk;
-import dansplugins.factionsystem.objects.domain.Faction;
-import dansplugins.factionsystem.objects.domain.PowerRecord;
-import me.clip.placeholderapi.expansion.PlaceholderExpansion;
+import java.util.Objects;
+
 import org.bukkit.Bukkit;
 import org.bukkit.Chunk;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.Objects;
+import dansplugins.factionsystem.MedievalFactions;
+import dansplugins.factionsystem.data.PersistentData;
+import dansplugins.factionsystem.objects.domain.ClaimedChunk;
+import dansplugins.factionsystem.objects.domain.Faction;
+import dansplugins.factionsystem.objects.domain.PowerRecord;
+import me.clip.placeholderapi.expansion.PlaceholderExpansion;
 
 public class PlaceholderAPI extends PlaceholderExpansion {
 

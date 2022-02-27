@@ -1,10 +1,15 @@
 package dansplugins.factionsystem.eventhandlers;
 
-import dansplugins.factionsystem.MedievalFactions;
-import dansplugins.factionsystem.data.EphemeralData;
-import dansplugins.factionsystem.eventhandlers.helper.RelationChecker;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+
 import org.bukkit.Bukkit;
-import org.bukkit.entity.*;
+import org.bukkit.entity.AreaEffectCloud;
+import org.bukkit.entity.Entity;
+import org.bukkit.entity.LivingEntity;
+import org.bukkit.entity.Player;
+import org.bukkit.entity.ThrownPotion;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.AreaEffectCloudApplyEvent;
@@ -13,11 +18,11 @@ import org.bukkit.event.entity.PotionSplashEvent;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
 import org.bukkit.potion.PotionType;
-import preponderous.ponder.misc.Pair;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
+import dansplugins.factionsystem.MedievalFactions;
+import dansplugins.factionsystem.data.EphemeralData;
+import dansplugins.factionsystem.eventhandlers.helper.RelationChecker;
+import preponderous.ponder.misc.Pair;
 
 public class EffectHandler implements Listener {
     private final List<PotionEffectType> BAD_POTION_EFFECTS = Arrays.asList(

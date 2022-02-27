@@ -4,9 +4,10 @@
  */
 package dansplugins.factionsystem.utils.extended;
 
-import dansplugins.factionsystem.data.PersistentData;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
+
+import dansplugins.factionsystem.data.PersistentData;
 
 /**
  * @author Daniel McCoy Stephenson

@@ -1,11 +1,12 @@
 package dansplugins.factionsystem.eventhandlers;
 
-import dansplugins.factionsystem.MedievalFactions;
-import dansplugins.factionsystem.data.PersistentData;
 import org.bukkit.entity.Monster;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.EntitySpawnEvent;
+
+import dansplugins.factionsystem.MedievalFactions;
+import dansplugins.factionsystem.data.PersistentData;
 
 public class SpawnHandler implements Listener {
 

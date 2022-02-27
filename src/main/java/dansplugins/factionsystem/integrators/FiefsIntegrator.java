@@ -4,9 +4,10 @@
  */
 package dansplugins.factionsystem.integrators;
 
+import org.bukkit.Bukkit;
+
 import dansplugins.factionsystem.MedievalFactions;
 import dansplugins.fiefs.externalapi.FiefsAPI;
-import org.bukkit.Bukkit;
 
 /**
  * @author Daniel McCoy Stephenson

@@ -4,17 +4,18 @@
  */
 package dansplugins.factionsystem.objects.domain;
 
+import java.util.HashMap;
+import java.util.Map;
+import java.util.UUID;
+
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+
 import dansplugins.factionsystem.MedievalFactions;
 import dansplugins.factionsystem.data.PersistentData;
 import dansplugins.factionsystem.objects.inherited.PlayerRecord;
 import dansplugins.factionsystem.services.LocalConfigService;
 import preponderous.ponder.misc.abs.Savable;
-
-import java.util.HashMap;
-import java.util.Map;
-import java.util.UUID;
 
 /**
  * @author Daniel McCoy Stephenson

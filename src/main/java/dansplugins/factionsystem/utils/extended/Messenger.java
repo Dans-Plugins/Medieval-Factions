@@ -4,19 +4,20 @@
  */
 package dansplugins.factionsystem.utils.extended;
 
-import dansplugins.factionsystem.integrators.FiefsIntegrator;
-import dansplugins.factionsystem.objects.domain.Faction;
-import dansplugins.factionsystem.services.LocalLocaleService;
-import dansplugins.fiefs.externalapi.FI_Fief;
-import org.bukkit.ChatColor;
-import org.bukkit.command.CommandSender;
-import org.bukkit.entity.Player;
-import preponderous.ponder.minecraft.bukkit.tools.UUIDChecker;
+import static org.bukkit.Bukkit.getServer;
 
 import java.util.ArrayList;
 import java.util.UUID;
 
-import static org.bukkit.Bukkit.getServer;
+import org.bukkit.ChatColor;
+import org.bukkit.command.CommandSender;
+import org.bukkit.entity.Player;
+
+import dansplugins.factionsystem.integrators.FiefsIntegrator;
+import dansplugins.factionsystem.objects.domain.Faction;
+import dansplugins.factionsystem.services.LocalLocaleService;
+import dansplugins.fiefs.externalapi.FI_Fief;
+import preponderous.ponder.minecraft.bukkit.tools.UUIDChecker;
 
 /**
  * @author Daniel McCoy Stephenson

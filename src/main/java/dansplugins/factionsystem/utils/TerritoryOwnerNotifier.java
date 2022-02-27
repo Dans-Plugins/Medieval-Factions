@@ -4,14 +4,15 @@
  */
 package dansplugins.factionsystem.utils;
 
+import org.bukkit.ChatColor;
+import org.bukkit.entity.Player;
+
 import dansplugins.factionsystem.MedievalFactions;
 import dansplugins.factionsystem.objects.domain.Faction;
 import dansplugins.factionsystem.services.LocalActionBarService;
 import dansplugins.factionsystem.services.LocalLocaleService;
 import net.md_5.bungee.api.ChatMessageType;
 import net.md_5.bungee.api.chat.TextComponent;
-import org.bukkit.ChatColor;
-import org.bukkit.entity.Player;
 import preponderous.ponder.minecraft.bukkit.tools.ColorChecker;
 
 /**

@@ -4,23 +4,33 @@
  */
 package dansplugins.factionsystem.commands;
 
+import java.lang.reflect.Method;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.UUID;
+
+import org.bukkit.Bukkit;
+import org.bukkit.OfflinePlayer;
+import org.bukkit.command.CommandSender;
+import org.bukkit.entity.Player;
+
 import dansplugins.factionsystem.MedievalFactions;
 import dansplugins.factionsystem.commands.abs.SubCommand;
 import dansplugins.factionsystem.data.PersistentData;
-import dansplugins.factionsystem.events.*;
+import dansplugins.factionsystem.events.FactionCreateEvent;
+import dansplugins.factionsystem.events.FactionJoinEvent;
+import dansplugins.factionsystem.events.FactionKickEvent;
+import dansplugins.factionsystem.events.FactionRenameEvent;
+import dansplugins.factionsystem.events.FactionWarEndEvent;
 import dansplugins.factionsystem.objects.domain.Faction;
 import dansplugins.factionsystem.objects.domain.PowerRecord;
 import dansplugins.factionsystem.services.LocalLocaleService;
 import dansplugins.factionsystem.utils.Logger;
 import dansplugins.fiefs.utils.UUIDChecker;
-import org.bukkit.Bukkit;
-import org.bukkit.OfflinePlayer;
-import org.bukkit.command.CommandSender;
-import org.bukkit.entity.Player;
 import preponderous.ponder.misc.ArgumentParser;
-
-import java.lang.reflect.Method;
-import java.util.*;
 
 /**
  * @author Callum Johnson
@@ -92,6 +102,7 @@ public class ForceCommand extends SubCommand {
         Arrays.stream(commands).forEach(str -> sender.sendMessage(translate("&b" + getText("HelpForce" + str))));
     }
 
+    @SuppressWarnings("unused")
     private void forceSave(CommandSender sender) {
         if (!(checkPermissions(sender, "mf.force.save", "mf.force.*", "mf.admin"))) {
             return;
@@ -100,6 +111,7 @@ public class ForceCommand extends SubCommand {
         PersistentData.getInstance().getLocalStorageService().save();
     }
 
+    @SuppressWarnings("unused")
     private void forceLoad(CommandSender sender) {
         if (!(checkPermissions(sender, "mf.force.load", "mf.force.*", "mf.admin"))) {
             return;
@@ -109,6 +121,7 @@ public class ForceCommand extends SubCommand {
         MedievalFactions.getInstance().reloadConfig();
     }
 
+    @SuppressWarnings("unused")
     private void forcePeace(CommandSender sender, String[] args) {
         if (!(checkPermissions(sender, "mf.force.peace", "mf.force.*", "mf.admin"))) {
             return;
@@ -142,6 +155,7 @@ public class ForceCommand extends SubCommand {
         }
     }
 
+    @SuppressWarnings("unused")
     private void forceDemote(CommandSender sender, String[] args) {
         if (!(checkPermissions(sender, "mf.force.demote", "mf.force.*", "mf.admin"))) return;
         if (!(args.length > 1)) {
@@ -170,6 +184,7 @@ public class ForceCommand extends SubCommand {
         sender.sendMessage(translate("&a" + getText("SuccessOfficerRemoval")));
     }
 
+    @SuppressWarnings("unused")
     private void forceJoin(CommandSender sender, String[] args) {
         if (!(checkPermissions(sender, "mf.force.join", "mf.force.*", "mf.admin"))) return;
         if (!(args.length >= 3)) {
@@ -215,6 +230,7 @@ public class ForceCommand extends SubCommand {
         sender.sendMessage(translate("&a" + getText("SuccessForceJoin")));
     }
 
+    @SuppressWarnings("unused")
     private void forceKick(CommandSender sender, String[] args) {
         if (!(checkPermissions(sender, "mf.force.kick", "mf.force.*", "mf.admin"))) return;
         if (!(args.length > 1)) {
@@ -261,6 +277,7 @@ public class ForceCommand extends SubCommand {
         sender.sendMessage(translate("&a" + getText("SuccessFactionMemberRemoval")));
     }
 
+    @SuppressWarnings("unused")
     private void forcePower(CommandSender sender, String[] args) {
         if (!(checkPermissions(sender, "mf.force.power", "mf.force.*", "mf.admin"))) return;
         if (!(args.length >= 3)) {
@@ -284,6 +301,7 @@ public class ForceCommand extends SubCommand {
         sender.sendMessage(translate("&a" + getText("PowerLevelHasBeenSetTo", desiredPower)));
     }
 
+    @SuppressWarnings("unused")
     private void forceRenounce(CommandSender sender, String[] args) {
         if (!(checkPermissions(sender, "mf.force.renounce", "mf.force.*", "mf.admin"))) return;
         if (args.length < 2) {
@@ -317,6 +335,7 @@ public class ForceCommand extends SubCommand {
         else sender.sendMessage(translate("&a" + getText("SuccessReferencesRemoved")));
     }
 
+    @SuppressWarnings("unused")
     private void forceTransfer(CommandSender sender, String[] args) {
         if (!(checkPermissions(sender, "mf.force.transfer", "mf.force.*", "mf.admin"))) return;
         if (!(args.length >= 3)) {
@@ -361,6 +380,7 @@ public class ForceCommand extends SubCommand {
         sender.sendMessage(translate("&a" + getText("OwnerShipTransferredTo", player.getName())));
     }
 
+    @SuppressWarnings("unused")
     private void forceRemoveVassal(CommandSender sender, String[] args) {
         if (!(checkPermissions(sender, "mf.force.removevassal", "mf.force.*", "mf.admin"))) return;
         if (args.length < 3) {
@@ -384,6 +404,7 @@ public class ForceCommand extends SubCommand {
         sender.sendMessage(translate("&a" + getText("Done")));
     }
 
+    @SuppressWarnings("unused")
     private void forceRename(CommandSender sender, String[] args) {
         if (!(checkPermissions(sender, "mf.force.rename", "mf.force.*", "mf.admin"))) {
             return;
@@ -430,6 +451,7 @@ public class ForceCommand extends SubCommand {
         PersistentData.getInstance().getLocalStorageService().save();
     }
 
+    @SuppressWarnings("unused")
     private void forceBonusPower(CommandSender sender, String[] args) {
         if (!(checkPermissions(sender, "mf.force.bonuspower", "mf.force.*", "mf.admin"))) {
             return;
@@ -466,6 +488,7 @@ public class ForceCommand extends SubCommand {
         sender.sendMessage(translate("&a" + getText("Done")));
     }
 
+    @SuppressWarnings("unused")
     private void forceUnlock(CommandSender sender, String[] args) {
         if (!(sender instanceof Player)) {
             return;
@@ -499,6 +522,7 @@ public class ForceCommand extends SubCommand {
         player.sendMessage(translate("&a" + getText("RightClickForceUnlock")));
     }
 
+    @SuppressWarnings("unused")
     public void forceCreate(CommandSender sender, String[] args) {
         if (!(sender instanceof Player)) {
             return;
@@ -537,6 +561,7 @@ public class ForceCommand extends SubCommand {
         }
     }
 
+    @SuppressWarnings("unused")
     public void forceClaim(CommandSender sender, String[] args) {
         if (!(sender instanceof Player)) {
             return;
@@ -572,6 +597,7 @@ public class ForceCommand extends SubCommand {
         sender.sendMessage(translate("&a" + getText("Done")));
     }
 
+    @SuppressWarnings("unused")
     private void forceFlag(CommandSender sender, String[] args) {
         if (!(checkPermissions(sender, "mf.force.flag", "mf.force.*", "mf.admin"))) {
             return;

@@ -4,11 +4,9 @@
  */
 package dansplugins.factionsystem.services;
 
-import dansplugins.factionsystem.data.EphemeralData;
-import dansplugins.factionsystem.data.PersistentData;
-import dansplugins.factionsystem.objects.domain.ClaimedChunk;
-import dansplugins.factionsystem.objects.domain.LockedBlock;
-import dansplugins.factionsystem.utils.extended.BlockChecker;
+import java.util.Objects;
+import java.util.UUID;
+
 import org.bukkit.ChatColor;
 import org.bukkit.block.Block;
 import org.bukkit.block.Chest;
@@ -16,10 +14,13 @@ import org.bukkit.block.DoubleChest;
 import org.bukkit.entity.Player;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.inventory.InventoryHolder;
-import preponderous.ponder.minecraft.bukkit.tools.UUIDChecker;
 
-import java.util.Objects;
-import java.util.UUID;
+import dansplugins.factionsystem.data.EphemeralData;
+import dansplugins.factionsystem.data.PersistentData;
+import dansplugins.factionsystem.objects.domain.ClaimedChunk;
+import dansplugins.factionsystem.objects.domain.LockedBlock;
+import dansplugins.factionsystem.utils.extended.BlockChecker;
+import preponderous.ponder.minecraft.bukkit.tools.UUIDChecker;
 
 /**
  * @author Daniel McCoy Stephenson

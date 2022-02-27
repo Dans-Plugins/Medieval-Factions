@@ -4,10 +4,11 @@
  */
 package dansplugins.factionsystem.events;
 
-import dansplugins.factionsystem.events.abs.FactionEvent;
-import dansplugins.factionsystem.objects.domain.Faction;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Cancellable;
+
+import dansplugins.factionsystem.events.abs.FactionEvent;
+import dansplugins.factionsystem.objects.domain.Faction;
 
 /**
  * @author C A L L U M#4160

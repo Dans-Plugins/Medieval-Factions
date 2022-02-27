@@ -4,9 +4,9 @@
  */
 package dansplugins.factionsystem.commands.abs;
 
-import org.bukkit.ChatColor;
-
 import java.util.Arrays;
+
+import org.bukkit.ChatColor;
 
 /**
  * Credits to: https://www.spigotmc.org/threads/free-code-sending-perfectly-centered-chat-message.95872/

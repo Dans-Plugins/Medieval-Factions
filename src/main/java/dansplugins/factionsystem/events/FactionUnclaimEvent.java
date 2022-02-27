@@ -4,9 +4,10 @@
  */
 package dansplugins.factionsystem.events;
 
-import dansplugins.factionsystem.objects.domain.Faction;
 import org.bukkit.Chunk;
 import org.bukkit.entity.Player;
+
+import dansplugins.factionsystem.objects.domain.Faction;
 
 /**
  * @author C A L L U M#4160

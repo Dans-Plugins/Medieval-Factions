@@ -1,7 +1,8 @@
 package dansplugins.factionsystem.eventhandlers.helper;
 
-import dansplugins.factionsystem.data.PersistentData;
 import org.bukkit.entity.Player;
+
+import dansplugins.factionsystem.data.PersistentData;
 import preponderous.ponder.misc.Pair;
 
 public class RelationChecker {
