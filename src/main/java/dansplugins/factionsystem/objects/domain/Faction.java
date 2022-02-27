@@ -4,9 +4,24 @@
  */
 package dansplugins.factionsystem.objects.domain;
 
+import static org.bukkit.Bukkit.getServer;
+
+import java.lang.reflect.Type;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.UUID;
+
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.reflect.TypeToken;
+
+import org.bukkit.Location;
+import org.bukkit.World;
+import org.bukkit.WorldCreator;
+import org.bukkit.block.Block;
+
 import dansplugins.factionsystem.MedievalFactions;
 import dansplugins.factionsystem.data.PersistentData;
 import dansplugins.factionsystem.objects.helper.FactionFlags;
@@ -14,16 +29,7 @@ import dansplugins.factionsystem.objects.inherited.Nation;
 import dansplugins.factionsystem.objects.inherited.specification.Feudal;
 import dansplugins.factionsystem.services.LocalConfigService;
 import dansplugins.factionsystem.services.LocalLocaleService;
-import org.bukkit.Location;
-import org.bukkit.World;
-import org.bukkit.WorldCreator;
-import org.bukkit.block.Block;
 import preponderous.ponder.misc.abs.Savable;
-
-import java.lang.reflect.Type;
-import java.util.*;
-
-import static org.bukkit.Bukkit.getServer;
 
 /**
  * @author Daniel McCoy Stephenson

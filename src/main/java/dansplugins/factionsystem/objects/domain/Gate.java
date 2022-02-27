@@ -4,19 +4,21 @@
  */
 package dansplugins.factionsystem.objects.domain;
 
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
+
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
-import dansplugins.factionsystem.MedievalFactions;
-import dansplugins.factionsystem.objects.helper.GateCoord;
+
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.Sound;
 import org.bukkit.World;
 import org.bukkit.block.Block;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Map;
+import dansplugins.factionsystem.MedievalFactions;
+import dansplugins.factionsystem.objects.helper.GateCoord;
 
 /**
  * @author Caibinus
@@ -457,8 +459,6 @@ public class Gate {
                     }, c * 10L);
                 }
                 Bukkit.getScheduler().runTaskLater(MedievalFactions.getInstance(), new Runnable() {
-                    Block b;
-
                     @Override
                     public void run() {
                         gateStatus = GateStatus.READY;
@@ -515,8 +515,6 @@ public class Gate {
                     }, c * 10L);
                 }
                 Bukkit.getScheduler().runTaskLater(MedievalFactions.getInstance(), new Runnable() {
-                    Block b;
-
                     @Override
                     public void run() {
                         gateStatus = GateStatus.READY;
@@ -688,6 +686,7 @@ public class Gate {
 
     public enum ErrorCodeAddCoord {None, WorldMismatch, MaterialMismatch, NoCuboids, Oversized, LessThanThreeHigh}
 
+    @SuppressWarnings("unused")
     private static class GateJson {
         public String name;
         public String factionName;

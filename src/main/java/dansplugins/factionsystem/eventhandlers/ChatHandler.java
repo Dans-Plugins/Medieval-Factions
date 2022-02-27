@@ -4,18 +4,19 @@
  */
 package dansplugins.factionsystem.eventhandlers;
 
+import java.util.ArrayList;
+
+import org.bukkit.ChatColor;
+import org.bukkit.event.EventHandler;
+import org.bukkit.event.Listener;
+import org.bukkit.event.player.AsyncPlayerChatEvent;
+
 import dansplugins.factionsystem.MedievalFactions;
 import dansplugins.factionsystem.data.EphemeralData;
 import dansplugins.factionsystem.data.PersistentData;
 import dansplugins.factionsystem.objects.domain.Faction;
 import dansplugins.factionsystem.utils.extended.Messenger;
-import org.bukkit.ChatColor;
-import org.bukkit.event.EventHandler;
-import org.bukkit.event.Listener;
-import org.bukkit.event.player.AsyncPlayerChatEvent;
 import preponderous.ponder.minecraft.bukkit.tools.ColorChecker;
-
-import java.util.ArrayList;
 
 /**
  * @author Daniel McCoy Stephenson

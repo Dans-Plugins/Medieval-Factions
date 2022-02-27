@@ -4,16 +4,8 @@
  */
 package dansplugins.factionsystem.eventhandlers;
 
-import dansplugins.factionsystem.MedievalFactions;
-import dansplugins.factionsystem.data.EphemeralData;
-import dansplugins.factionsystem.data.PersistentData;
-import dansplugins.factionsystem.objects.domain.ClaimedChunk;
-import dansplugins.factionsystem.objects.domain.LockedBlock;
-import dansplugins.factionsystem.services.LocalGateService;
-import dansplugins.factionsystem.services.LocalLocaleService;
-import dansplugins.factionsystem.services.LocalLockService;
-import dansplugins.factionsystem.utils.InteractionAccessChecker;
-import dansplugins.factionsystem.utils.extended.BlockChecker;
+import java.util.Objects;
+
 import org.bukkit.ChatColor;
 import org.bukkit.Chunk;
 import org.bukkit.Location;
@@ -33,11 +25,24 @@ import org.bukkit.event.block.BlockPlaceEvent;
 import org.bukkit.event.block.BlockRedstoneEvent;
 import org.bukkit.event.entity.EntityPlaceEvent;
 import org.bukkit.event.hanging.HangingBreakByEntityEvent;
-import org.bukkit.event.player.*;
+import org.bukkit.event.player.PlayerBucketEmptyEvent;
+import org.bukkit.event.player.PlayerBucketFillEvent;
+import org.bukkit.event.player.PlayerInteractAtEntityEvent;
+import org.bukkit.event.player.PlayerInteractEntityEvent;
+import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.inventory.InventoryHolder;
-import preponderous.ponder.minecraft.bukkit.tools.UUIDChecker;
 
-import java.util.Objects;
+import dansplugins.factionsystem.MedievalFactions;
+import dansplugins.factionsystem.data.EphemeralData;
+import dansplugins.factionsystem.data.PersistentData;
+import dansplugins.factionsystem.objects.domain.ClaimedChunk;
+import dansplugins.factionsystem.objects.domain.LockedBlock;
+import dansplugins.factionsystem.services.LocalGateService;
+import dansplugins.factionsystem.services.LocalLocaleService;
+import dansplugins.factionsystem.services.LocalLockService;
+import dansplugins.factionsystem.utils.InteractionAccessChecker;
+import dansplugins.factionsystem.utils.extended.BlockChecker;
+import preponderous.ponder.minecraft.bukkit.tools.UUIDChecker;
 
 /**
  * @author Daniel McCoy Stephenson

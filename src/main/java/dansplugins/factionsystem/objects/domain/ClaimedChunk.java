@@ -4,18 +4,20 @@
  */
 package dansplugins.factionsystem.objects.domain;
 
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
-import dansplugins.factionsystem.objects.inherited.Territory;
-import org.bukkit.Chunk;
-import org.bukkit.World;
-import org.bukkit.WorldCreator;
-import preponderous.ponder.misc.abs.Savable;
+import static org.bukkit.Bukkit.getServer;
 
 import java.util.HashMap;
 import java.util.Map;
 
-import static org.bukkit.Bukkit.getServer;
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+
+import org.bukkit.Chunk;
+import org.bukkit.World;
+import org.bukkit.WorldCreator;
+
+import dansplugins.factionsystem.objects.inherited.Territory;
+import preponderous.ponder.misc.abs.Savable;
 
 /**
  * @author Daniel McCoy Stephenson

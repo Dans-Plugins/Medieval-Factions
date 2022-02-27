@@ -4,6 +4,13 @@
  */
 package dansplugins.factionsystem.objects.helper;
 
+import java.awt.Color;
+import java.util.ArrayList;
+import java.util.HashMap;
+
+import org.bukkit.ChatColor;
+import org.bukkit.entity.Player;
+
 import dansplugins.factionsystem.MedievalFactions;
 import dansplugins.factionsystem.integrators.CurrenciesIntegrator;
 import dansplugins.factionsystem.integrators.DynmapIntegrator;
@@ -12,12 +19,6 @@ import dansplugins.factionsystem.services.LocalConfigService;
 import dansplugins.factionsystem.services.LocalLocaleService;
 import dansplugins.factionsystem.utils.ColorConversion;
 import dansplugins.factionsystem.utils.Logger;
-import org.bukkit.ChatColor;
-import org.bukkit.entity.Player;
-
-import java.awt.*;
-import java.util.ArrayList;
-import java.util.HashMap;
 
 /**
  * @author Daniel McCoy Stephenson

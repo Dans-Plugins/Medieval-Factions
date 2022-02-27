@@ -4,10 +4,10 @@
  */
 package dansplugins.factionsystem.commands.abs;
 
-import org.bukkit.ChatColor;
-
 import java.util.List;
 import java.util.stream.Collectors;
+
+import org.bukkit.ChatColor;
 
 /**
  * @author Callum Johnson

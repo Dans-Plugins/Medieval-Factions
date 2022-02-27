@@ -4,12 +4,12 @@
  */
 package dansplugins.factionsystem.utils;
 
+import java.lang.reflect.Field;
+import java.lang.reflect.Method;
+
 import org.bukkit.Color;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-
-import java.lang.reflect.Field;
-import java.lang.reflect.Method;
 
 /**
  * @author Callum Johnson

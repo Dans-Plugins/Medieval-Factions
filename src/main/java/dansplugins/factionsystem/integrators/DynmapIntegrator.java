@@ -1,5 +1,26 @@
 package dansplugins.factionsystem.integrators;
 
+import static org.bukkit.Bukkit.getServer;
+
+import java.util.ArrayDeque;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+
+import org.bukkit.plugin.Plugin;
+import org.bukkit.plugin.PluginManager;
+import org.bukkit.scheduler.BukkitRunnable;
+import org.dynmap.DynmapCommonAPI;
+import org.dynmap.markers.AreaMarker;
+import org.dynmap.markers.Marker;
+import org.dynmap.markers.MarkerAPI;
+import org.dynmap.markers.MarkerSet;
+import org.dynmap.markers.PlayerSet;
+
 import dansplugins.factionsystem.MedievalFactions;
 import dansplugins.factionsystem.data.PersistentData;
 import dansplugins.factionsystem.objects.domain.ClaimedChunk;
@@ -9,15 +30,6 @@ import dansplugins.factionsystem.objects.helper.ChunkFlags;
 import dansplugins.factionsystem.services.LocalLocaleService;
 import dansplugins.factionsystem.utils.Logger;
 import dansplugins.fiefs.utils.UUIDChecker;
-import org.bukkit.plugin.Plugin;
-import org.bukkit.plugin.PluginManager;
-import org.bukkit.scheduler.BukkitRunnable;
-import org.dynmap.DynmapCommonAPI;
-import org.dynmap.markers.*;
-
-import java.util.*;
-
-import static org.bukkit.Bukkit.getServer;
 
 /**
  * @author Caibinus
@@ -265,8 +277,6 @@ public class DynmapIntegrator {
         List<ClaimedChunk> blocks = faction.getClaimedChunks();
         if (blocks.isEmpty())
             return;
-        /* Build popup */
-        String desc = "Info window.";
         HashMap<String, ChunkFlags> blkmaps = new HashMap<String, ChunkFlags>();
         LinkedList<ClaimedChunk> nodevals = new LinkedList<ClaimedChunk>();
         String curworld = null;
@@ -471,6 +481,8 @@ public class DynmapIntegrator {
      * @return Dynmap polygon Id corresponding to these chunk
      * coordinates.
      */
+    
+    @SuppressWarnings("unused")
     private String getDynmapChunkPolyId(String worldName, int x, int z) {
         // return getDynmapFactionSetId() + "_" + String.format("%d-%d", chunk.getX(), chunk.getZ());
         return getDynmapPluginSetId("poly") + "_" + String.format("%d-%d", x, z);
@@ -480,6 +492,8 @@ public class DynmapIntegrator {
      *
      * Refreshes the Dynmap Player List for the nation that owns the current chunk.
      */
+    
+    @SuppressWarnings("unused")
     private void dynmapUpdateNationPlayerLists(String holder) {
         try {
             String setid = getDynmapFactionSetId(holder);

@@ -4,9 +4,28 @@
  */
 package dansplugins.factionsystem;
 
+import java.io.File;
+import java.util.ArrayList;
+import java.util.Arrays;
+
+import org.bukkit.Bukkit;
+import org.bukkit.command.Command;
+import org.bukkit.command.CommandSender;
+import org.bukkit.event.Listener;
+import org.bukkit.plugin.java.JavaPlugin;
+import org.jetbrains.annotations.NotNull;
+
 import dansplugins.factionsystem.bstats.Metrics;
 import dansplugins.factionsystem.data.PersistentData;
-import dansplugins.factionsystem.eventhandlers.*;
+import dansplugins.factionsystem.eventhandlers.ChatHandler;
+import dansplugins.factionsystem.eventhandlers.DamageHandler;
+import dansplugins.factionsystem.eventhandlers.DeathHandler;
+import dansplugins.factionsystem.eventhandlers.EffectHandler;
+import dansplugins.factionsystem.eventhandlers.InteractionHandler;
+import dansplugins.factionsystem.eventhandlers.JoinHandler;
+import dansplugins.factionsystem.eventhandlers.MoveHandler;
+import dansplugins.factionsystem.eventhandlers.QuitHandler;
+import dansplugins.factionsystem.eventhandlers.SpawnHandler;
 import dansplugins.factionsystem.externalapi.MedievalFactionsAPI;
 import dansplugins.factionsystem.integrators.DynmapIntegrator;
 import dansplugins.factionsystem.placeholders.PlaceholderAPI;
@@ -14,17 +33,7 @@ import dansplugins.factionsystem.services.LocalCommandService;
 import dansplugins.factionsystem.services.LocalConfigService;
 import dansplugins.factionsystem.services.LocalLocaleService;
 import dansplugins.factionsystem.utils.extended.Scheduler;
-import org.bukkit.Bukkit;
-import org.bukkit.command.Command;
-import org.bukkit.command.CommandSender;
-import org.bukkit.event.Listener;
-import org.bukkit.plugin.java.JavaPlugin;
-import org.jetbrains.annotations.NotNull;
 import preponderous.ponder.minecraft.bukkit.tools.EventHandlerRegistry;
-
-import java.io.File;
-import java.util.ArrayList;
-import java.util.Arrays;
 
 /**
  * @author Daniel McCoy Stephenson

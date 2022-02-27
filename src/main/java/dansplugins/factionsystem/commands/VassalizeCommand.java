@@ -4,11 +4,12 @@
  */
 package dansplugins.factionsystem.commands;
 
+import org.bukkit.command.CommandSender;
+import org.bukkit.entity.Player;
+
 import dansplugins.factionsystem.commands.abs.SubCommand;
 import dansplugins.factionsystem.objects.domain.Faction;
 import dansplugins.factionsystem.utils.Logger;
-import org.bukkit.command.CommandSender;
-import org.bukkit.entity.Player;
 
 /**
  * @author Callum Johnson

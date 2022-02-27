@@ -4,16 +4,17 @@
  */
 package dansplugins.factionsystem.externalapi;
 
+import java.util.ArrayList;
+import java.util.UUID;
+
+import org.bukkit.Chunk;
+import org.bukkit.entity.Player;
+
 import dansplugins.factionsystem.MedievalFactions;
 import dansplugins.factionsystem.data.EphemeralData;
 import dansplugins.factionsystem.data.PersistentData;
 import dansplugins.factionsystem.objects.domain.Faction;
 import dansplugins.factionsystem.objects.domain.PowerRecord;
-import org.bukkit.Chunk;
-import org.bukkit.entity.Player;
-
-import java.util.ArrayList;
-import java.util.UUID;
 
 /**
  * @author Daniel McCoy Stephenson
