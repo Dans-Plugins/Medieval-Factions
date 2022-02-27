@@ -4,23 +4,23 @@
  */
 package dansplugins.factionsystem.commands;
 
-import dansplugins.factionsystem.commands.abs.SubCommand;
+import java.util.UUID;
+
 import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
-import preponderous.ponder.minecraft.spigot.tools.UUIDChecker;
 
-import java.util.UUID;
+import dansplugins.factionsystem.commands.abs.SubCommand;
+import preponderous.ponder.minecraft.bukkit.tools.UUIDChecker;
 
 /**
- * @author Daniel McCoy Stephenson
  * @author Callum Johnson
  */
 public class PromoteCommand extends SubCommand {
 
     public PromoteCommand() {
-        super(new String[] {
+        super(new String[]{
                 "promote", LOCALE_PREFIX + "CmdPromote"
         }, true, true, false, true);
     }
@@ -55,8 +55,8 @@ public class PromoteCommand extends SubCommand {
             }
         }
         if (!faction.isMember(targetUUID)) {
-             player.sendMessage(translate("&c" + getText("PlayerIsNotMemberOfFaction")));
-             return;
+            player.sendMessage(translate("&c" + getText("PlayerIsNotMemberOfFaction")));
+            return;
         }
         if (faction.isOfficer(targetUUID)) {
             player.sendMessage(translate("&c" + getText("PlayerAlreadyOfficer")));
@@ -66,7 +66,7 @@ public class PromoteCommand extends SubCommand {
             player.sendMessage(translate("&c" + getText("CannotPromoteSelf")));
             return;
         }
-        if(faction.addOfficer(targetUUID)){
+        if (faction.addOfficer(targetUUID)) {
             player.sendMessage(translate("&a" + getText("PlayerPromoted")));
             if (target.isOnline() && target.getPlayer() != null) {
                 target.getPlayer().sendMessage(translate("&a" + getText("PromotedToOfficer")));

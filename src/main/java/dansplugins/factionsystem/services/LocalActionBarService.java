@@ -4,18 +4,19 @@
  */
 package dansplugins.factionsystem.services;
 
-import net.md_5.bungee.api.ChatMessageType;
-import net.md_5.bungee.api.chat.TextComponent;
+import java.util.HashMap;
+import java.util.Map;
+
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.Plugin;
 
-import java.util.HashMap;
-import java.util.Map;
+import net.md_5.bungee.api.ChatMessageType;
+import net.md_5.bungee.api.chat.TextComponent;
 
 public class LocalActionBarService {
     private static LocalActionBarService instance;
-    private final Map<Player, TextComponent> playerActionBarMessages = new HashMap<Player, TextComponent>();
+    private final Map<Player, TextComponent> playerActionBarMessages = new HashMap<>();
 
     private LocalActionBarService(Plugin plugin) {
         Bukkit.getScheduler().scheduleSyncRepeatingTask(plugin,
@@ -39,11 +40,11 @@ public class LocalActionBarService {
         this.sendPlayerActionBarMessage(player, new TextComponent(""));
     }
 
-    private void sendPlayerActionBarMessages () {
+    private void sendPlayerActionBarMessages() {
         playerActionBarMessages.forEach(this::sendPlayerActionBarMessage);
     }
 
-    private void sendPlayerActionBarMessage (Player player, TextComponent message) {
+    private void sendPlayerActionBarMessage(Player player, TextComponent message) {
         player.spigot().sendMessage(ChatMessageType.ACTION_BAR, message);
     }
 }

@@ -4,11 +4,12 @@
  */
 package dansplugins.factionsystem.events.abs;
 
-import dansplugins.factionsystem.objects.domain.Faction;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.event.Event;
 import org.bukkit.event.HandlerList;
 import org.jetbrains.annotations.NotNull;
+
+import dansplugins.factionsystem.objects.domain.Faction;
 
 /**
  * @author C A L L U M#4160
@@ -24,6 +25,7 @@ public abstract class FactionEvent extends Event {
 
     /**
      * Constructor for a FactionEvent with a reference to a Faction.
+     *
      * @param faction related to the event.
      */
     public FactionEvent(Faction faction) {
@@ -32,12 +34,17 @@ public abstract class FactionEvent extends Event {
 
     /**
      * Constructor for a FactionEvent with a reference to both a Faction and player.
+     *
      * @param faction related to the event.
-     * @param player related to the event.
+     * @param player  related to the event.
      */
     public FactionEvent(Faction faction, OfflinePlayer player) {
         this.faction = faction;
         this.offlinePlayer = player;
+    }
+
+    public static HandlerList getHandlerList() {
+        return handlers;
     }
 
     // Getters.
@@ -52,10 +59,6 @@ public abstract class FactionEvent extends Event {
     // Bukkit Event API requirements.
     public @NotNull HandlerList getHandlers() {
         return FactionEvent.handlers;
-    }
-
-    public static HandlerList getHandlerList() {
-        return handlers;
     }
 
 }

@@ -5,9 +5,6 @@ Medieval Factions is a system of mechanics that allows for the simulation of sov
 
 A list of features can be found [here](https://github.com/dmccoystephenson/Medieval-Factions/wiki/Features).
 
-## Server Software
-This plugin was developed using the Spigot API. Users may run into trouble using it with other available server softwares like Paper.
-
 ## Installation
 1) You can download the plugin from [this page](https://www.spigotmc.org/resources/medieval-factions-sovereign-nation-simulator.79941/updates).
 
@@ -34,12 +31,9 @@ Dynmap has been integrated with this plugin. In order to be able to view claimed
 You can find the support discord server [here](https://discord.gg/xXtuAQ2).
 
 ### Experiencing a bug?
-Please fill out a bug report [here](https://github.com/dmccoystephenson/Medieval-Factions/issues?q=is%3Aissue+is%3Aopen+label%3Abug).
+Please fill out a bug report [here](https://github.com/dmccoystephenson/Medieval-Factions/issues/new/choose).
 
-## Roadmap
 - [Known Bugs](https://github.com/dmccoystephenson/Medieval-Factions/issues?q=is%3Aopen+is%3Aissue+label%3Abug)
-- [Planned Features](https://github.com/dmccoystephenson/Medieval-Factions/issues?q=is%3Aopen+is%3Aissue+label%3AEpic)
-- [Planned Improvements](https://github.com/dmccoystephenson/Medieval-Factions/issues?q=is%3Aopen+is%3Aissue+label%3Aimprovement)
 
 ## Contributing
 - [Contributing.md](https://github.com/dmccoystephenson/Medieval-Factions/blob/master/CONTRIBUTING.md)

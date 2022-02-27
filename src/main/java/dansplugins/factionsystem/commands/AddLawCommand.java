@@ -4,12 +4,12 @@
  */
 package dansplugins.factionsystem.commands;
 
-import dansplugins.factionsystem.commands.abs.SubCommand;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
+import dansplugins.factionsystem.commands.abs.SubCommand;
+
 /**
- * @author Daniel McCoy Stephenson
  * @author Callum Johnson
  */
 public class AddLawCommand extends SubCommand {
@@ -18,8 +18,8 @@ public class AddLawCommand extends SubCommand {
      * Constructor to initialise a Command.
      */
     public AddLawCommand() {
-        super(new String[] {
-               LOCALE_PREFIX + "CMDAddLaw", "AL", "addlaw"
+        super(new String[]{
+                LOCALE_PREFIX + "CMDAddLaw", "AL", "addlaw"
         }, true, true, false, true);
     }
 

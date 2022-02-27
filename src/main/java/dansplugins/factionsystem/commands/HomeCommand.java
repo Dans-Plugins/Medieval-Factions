@@ -4,17 +4,15 @@
  */
 package dansplugins.factionsystem.commands;
 
-import dansplugins.factionsystem.MedievalFactions;
-import dansplugins.factionsystem.commands.abs.SubCommand;
-import dansplugins.factionsystem.objects.domain.ClaimedChunk;
-import org.bukkit.Bukkit;
 import org.bukkit.Chunk;
-import org.bukkit.Location;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
+import dansplugins.factionsystem.commands.abs.SubCommand;
+import dansplugins.factionsystem.objects.domain.ClaimedChunk;
+import dansplugins.factionsystem.utils.extended.Scheduler;
+
 /**
- * @author Daniel McCoy Stephenson
  * @author Callum Johnson
  */
 public class HomeCommand extends SubCommand {
@@ -53,20 +51,8 @@ public class HomeCommand extends SubCommand {
             player.sendMessage(translate("&c" + getText("HomeClaimedByAnotherFaction")));
             return;
         }
-        final int teleport_delay = 3;
         player.sendMessage(translate("&a" + getText("TeleportingAlert")));
-        final Location initialLocation = player.getLocation();
-        Bukkit.getScheduler().runTaskLater(MedievalFactions.getInstance(), () -> {
-            if (    initialLocation.getX() == player.getLocation().getX()   &&
-                    initialLocation.getY() == player.getLocation().getY()   &&
-                    initialLocation.getZ() == player.getLocation().getZ()   ) {
-                // teleport the player
-                player.teleport(faction.getFactionHome());
-            } else {
-                player.sendMessage(translate("&c" + getText("MovementDetectedTeleportCancelled")));
-            }
-
-        }, teleport_delay * 20);
+        Scheduler.getInstance().scheduleTeleport(player, faction.getFactionHome());
     }
 
     /**

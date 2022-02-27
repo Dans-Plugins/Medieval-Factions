@@ -4,19 +4,19 @@
  */
 package dansplugins.factionsystem.commands;
 
-import dansplugins.factionsystem.MedievalFactions;
-import dansplugins.factionsystem.commands.abs.SubCommand;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
+import dansplugins.factionsystem.MedievalFactions;
+import dansplugins.factionsystem.commands.abs.SubCommand;
+
 /**
- * @author Daniel McCoy Stephenson
  * @author Callum Johnson
  */
 public class VersionCommand extends SubCommand {
 
     public VersionCommand() {
-        super(new String[] {
+        super(new String[]{
                 "version", LOCALE_PREFIX + "CmdVersion"
         }, false);
     }

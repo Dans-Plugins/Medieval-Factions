@@ -4,23 +4,25 @@
  */
 package dansplugins.factionsystem.objects.domain;
 
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
-import com.google.gson.reflect.TypeToken;
-import org.bukkit.Bukkit;
-import preponderous.ponder.minecraft.spigot.modifiers.Lockable;
-import preponderous.ponder.misc.Savable;
-
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
 
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+import com.google.gson.reflect.TypeToken;
+
+import org.bukkit.Bukkit;
+
+import preponderous.ponder.misc.abs.Lockable;
+import preponderous.ponder.misc.abs.Savable;
+
 
 /**
  * @author Daniel McCoy Stephenson
  */
-public class LockedBlock implements Lockable, Savable {
+public class LockedBlock implements Lockable<UUID>, Savable {
     private int x = 0;
     private int y = 0;
     private int z = 0;
@@ -39,20 +41,12 @@ public class LockedBlock implements Lockable, Savable {
         accessList.add(owner);
     }
 
-    public LockedBlock() {
-        // server constructor
-    }
-
     public LockedBlock(Map<String, String> lockedBlockData) {
         this.load(lockedBlockData);
     }
 
     public String getWorld() {
-    	return world;
-    }
-
-    public void setWorld(String name) {
-    	world = name;
+        return world;
     }
 
     public int getX() {
@@ -67,12 +61,14 @@ public class LockedBlock implements Lockable, Savable {
         return z;
     }
 
-    public void setOwner(UUID s) {
-        owner = s;
-    }
-
+    @Override
     public UUID getOwner() {
         return owner;
+    }
+
+    @Override
+    public void setOwner(UUID s) {
+        owner = s;
     }
 
     public void addToAccessList(UUID playerName) {
@@ -89,6 +85,7 @@ public class LockedBlock implements Lockable, Savable {
         return accessList.contains(playerName);
     }
 
+    @Override
     public ArrayList<UUID> getAccessList() {
         return accessList;
     }
@@ -125,12 +122,12 @@ public class LockedBlock implements Lockable, Savable {
         y = gson.fromJson(data.get("Y"), Integer.TYPE);
         z = gson.fromJson(data.get("Z"), Integer.TYPE);
         owner = UUID.fromString(gson.fromJson(data.get("owner"), String.class));
-        factionName =  gson.fromJson(data.get("factionName"), String.class);
+        factionName = gson.fromJson(data.get("factionName"), String.class);
         world = gson.fromJson(data.get("world"), String.class);
-        if (world == null)
-        {
-        	world = Bukkit.getServer().getWorlds().get(0).getName();
+        if (world == null) {
+            world = Bukkit.getServer().getWorlds().get(0).getName();
         }
-        accessList = gson.fromJson(data.get("accessList"), new TypeToken<ArrayList<UUID>>(){}.getType());
+        accessList = gson.fromJson(data.get("accessList"), new TypeToken<ArrayList<UUID>>() {
+        }.getType());
     }
 }

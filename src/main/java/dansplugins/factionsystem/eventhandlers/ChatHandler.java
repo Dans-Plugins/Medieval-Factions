@@ -4,18 +4,19 @@
  */
 package dansplugins.factionsystem.eventhandlers;
 
+import java.util.ArrayList;
+
+import org.bukkit.ChatColor;
+import org.bukkit.event.EventHandler;
+import org.bukkit.event.Listener;
+import org.bukkit.event.player.AsyncPlayerChatEvent;
+
 import dansplugins.factionsystem.MedievalFactions;
 import dansplugins.factionsystem.data.EphemeralData;
 import dansplugins.factionsystem.data.PersistentData;
 import dansplugins.factionsystem.objects.domain.Faction;
 import dansplugins.factionsystem.utils.extended.Messenger;
-import org.bukkit.ChatColor;
-import org.bukkit.event.EventHandler;
-import org.bukkit.event.Listener;
-import org.bukkit.event.player.AsyncPlayerChatEvent;
-import preponderous.ponder.minecraft.spigot.tools.ColorChecker;
-
-import java.util.ArrayList;
+import preponderous.ponder.minecraft.bukkit.tools.ColorChecker;
 
 /**
  * @author Daniel McCoy Stephenson
@@ -52,8 +53,7 @@ public class ChatHandler implements Listener {
     private void sendMessage(Faction playersFaction, String prefixColor, String prefix, AsyncPlayerChatEvent event, String factionChatColor, String message) {
         if (MedievalFactions.getInstance().getConfig().getBoolean("chatSharedInVassalageTrees")) {
             sendMessageToVassalageTree(playersFaction, prefixColor, prefix, event, factionChatColor, message);
-        }
-        else {
+        } else {
             sendMessageToFaction(playersFaction, prefix, prefixColor, event, factionChatColor, message);
         }
     }
@@ -69,8 +69,7 @@ public class ChatHandler implements Listener {
         for (Faction faction : factionsInVassalageTree) {
             if (MedievalFactions.getInstance().getConfig().getBoolean("showPrefixesInFactionChat")) {
                 Messenger.getInstance().sendAllPlayersInFactionMessage(faction, colorChecker.getColorByName(prefixColor) + "" + "[" + prefix + "] " + "" + ChatColor.WHITE + "" + event.getPlayer().getName() + ": " + colorChecker.getColorByName(factionChatColor) + message);
-            }
-            else {
+            } else {
                 Messenger.getInstance().sendAllPlayersInFactionMessage(faction, ChatColor.WHITE + "" + event.getPlayer().getName() + ": " + colorChecker.getColorByName(factionChatColor) + message);
             }
         }
@@ -80,8 +79,7 @@ public class ChatHandler implements Listener {
         ColorChecker colorChecker = new ColorChecker();
         if (MedievalFactions.getInstance().getConfig().getBoolean("showPrefixesInFactionChat")) {
             Messenger.getInstance().sendAllPlayersInFactionMessage(playersFaction, colorChecker.getColorByName(prefixColor) + "" + "[" + prefix + "] " + "" + ChatColor.WHITE + "" + event.getPlayer().getName() + ": " + colorChecker.getColorByName(factionChatColor) + message);
-        }
-        else {
+        } else {
             Messenger.getInstance().sendAllPlayersInFactionMessage(playersFaction, ChatColor.WHITE + "" + event.getPlayer().getName() + ": " + colorChecker.getColorByName(factionChatColor) + message);
         }
     }

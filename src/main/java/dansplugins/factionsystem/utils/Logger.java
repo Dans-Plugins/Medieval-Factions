@@ -4,9 +4,9 @@
  */
 package dansplugins.factionsystem.utils;
 
-import dansplugins.factionsystem.MedievalFactions;
-
 import java.util.logging.Level;
+
+import dansplugins.factionsystem.MedievalFactions;
 
 /**
  * @author Daniel McCoy Stephenson

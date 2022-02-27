@@ -4,20 +4,20 @@
  */
 package dansplugins.factionsystem.commands;
 
-import dansplugins.factionsystem.commands.abs.SubCommand;
-import dansplugins.factionsystem.objects.domain.Faction;
-import dansplugins.factionsystem.utils.Logger;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
+import dansplugins.factionsystem.commands.abs.SubCommand;
+import dansplugins.factionsystem.objects.domain.Faction;
+import dansplugins.factionsystem.utils.Logger;
+
 /**
- * @author Daniel McCoy Stephenson
  * @author Callum Johnson
  */
 public class VassalizeCommand extends SubCommand {
 
     public VassalizeCommand() {
-        super(new String[] {
+        super(new String[]{
                 "Vassalize", LOCALE_PREFIX + "CmdVassalize"
         }, true, true, false, true);
     }

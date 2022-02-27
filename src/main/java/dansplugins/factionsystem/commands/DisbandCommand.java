@@ -4,19 +4,19 @@
  */
 package dansplugins.factionsystem.commands;
 
+import org.bukkit.Bukkit;
+import org.bukkit.OfflinePlayer;
+import org.bukkit.command.CommandSender;
+import org.bukkit.entity.Player;
+
 import dansplugins.factionsystem.commands.abs.SubCommand;
 import dansplugins.factionsystem.data.PersistentData;
 import dansplugins.factionsystem.events.FactionDisbandEvent;
 import dansplugins.factionsystem.integrators.DynmapIntegrator;
 import dansplugins.factionsystem.objects.domain.Faction;
 import dansplugins.factionsystem.utils.Logger;
-import org.bukkit.Bukkit;
-import org.bukkit.OfflinePlayer;
-import org.bukkit.command.CommandSender;
-import org.bukkit.entity.Player;
 
 /**
- * @author Daniel McCoy Stephenson
  * @author Callum Johnson
  */
 public class DisbandCommand extends SubCommand {
@@ -75,8 +75,7 @@ public class DisbandCommand extends SubCommand {
         if (self) {
             sender.sendMessage(translate("&a" + getText("FactionSuccessfullyDisbanded")));
             ephemeral.getPlayersInFactionChat().remove(((Player) sender).getUniqueId());
-        }
-        else sender.sendMessage(translate("&a" + getText("SuccessfulDisbandment", disband.getName())));
+        } else sender.sendMessage(translate("&a" + getText("SuccessfulDisbandment", disband.getName())));
         removeFaction(factionIndex, self ? ((OfflinePlayer) sender) : null);
     }
 

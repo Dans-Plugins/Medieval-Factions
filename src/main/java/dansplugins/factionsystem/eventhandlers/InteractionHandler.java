@@ -4,16 +4,8 @@
  */
 package dansplugins.factionsystem.eventhandlers;
 
-import dansplugins.factionsystem.MedievalFactions;
-import dansplugins.factionsystem.data.EphemeralData;
-import dansplugins.factionsystem.data.PersistentData;
-import dansplugins.factionsystem.objects.domain.ClaimedChunk;
-import dansplugins.factionsystem.objects.domain.LockedBlock;
-import dansplugins.factionsystem.services.LocalGateService;
-import dansplugins.factionsystem.services.LocalLocaleService;
-import dansplugins.factionsystem.services.LocalLockService;
-import dansplugins.factionsystem.utils.InteractionAccessChecker;
-import dansplugins.factionsystem.utils.extended.BlockChecker;
+import java.util.Objects;
+
 import org.bukkit.ChatColor;
 import org.bukkit.Chunk;
 import org.bukkit.Location;
@@ -33,11 +25,24 @@ import org.bukkit.event.block.BlockPlaceEvent;
 import org.bukkit.event.block.BlockRedstoneEvent;
 import org.bukkit.event.entity.EntityPlaceEvent;
 import org.bukkit.event.hanging.HangingBreakByEntityEvent;
-import org.bukkit.event.player.*;
+import org.bukkit.event.player.PlayerBucketEmptyEvent;
+import org.bukkit.event.player.PlayerBucketFillEvent;
+import org.bukkit.event.player.PlayerInteractAtEntityEvent;
+import org.bukkit.event.player.PlayerInteractEntityEvent;
+import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.inventory.InventoryHolder;
-import preponderous.ponder.minecraft.spigot.tools.UUIDChecker;
 
-import java.util.Objects;
+import dansplugins.factionsystem.MedievalFactions;
+import dansplugins.factionsystem.data.EphemeralData;
+import dansplugins.factionsystem.data.PersistentData;
+import dansplugins.factionsystem.objects.domain.ClaimedChunk;
+import dansplugins.factionsystem.objects.domain.LockedBlock;
+import dansplugins.factionsystem.services.LocalGateService;
+import dansplugins.factionsystem.services.LocalLocaleService;
+import dansplugins.factionsystem.services.LocalLockService;
+import dansplugins.factionsystem.utils.InteractionAccessChecker;
+import dansplugins.factionsystem.utils.extended.BlockChecker;
+import preponderous.ponder.minecraft.bukkit.tools.UUIDChecker;
 
 /**
  * @author Daniel McCoy Stephenson
@@ -131,8 +136,7 @@ public class InteractionHandler implements Listener {
                         // lock right chest
                         LockedBlock right = new LockedBlock(player.getUniqueId(), PersistentData.getInstance().getPlayersFaction(player.getUniqueId()).getName(), rightChest.getX(), rightChest.getY(), rightChest.getZ(), rightChest.getWorld().getName());
                         PersistentData.getInstance().addLockedBlock(right);
-                    }
-                    else {
+                    } else {
                         if (PersistentData.getInstance().isBlockLocked(rightChest)) {
                             // lock left chest
                             LockedBlock left = new LockedBlock(player.getUniqueId(), PersistentData.getInstance().getPlayersFaction(player.getUniqueId()).getName(), leftChest.getX(), leftChest.getY(), leftChest.getZ(), leftChest.getWorld().getName());
@@ -171,7 +175,7 @@ public class InteractionHandler implements Listener {
         if (playerIsAttemptingToUnlockABlock(player)) {
             LocalLockService.getInstance().handleUnlockingBlock(event, player, clickedBlock);
         }
-        
+
         LockedBlock lockedBlock = PersistentData.getInstance().getLockedBlock(clickedBlock);
         if (lockedBlock != null) {
             boolean playerHasAccess = lockedBlock.hasAccess(player.getUniqueId());
@@ -183,15 +187,15 @@ public class InteractionHandler implements Listener {
                 event.setCancelled(true);
                 return;
             }
-            
+
             if (playerIsAttemptingToGrantAccess(player)) {
                 LocalLockService.getInstance().handleGrantingAccess(event, clickedBlock, player);
             }
-            
+
             if (playerIsAttemptingToCheckAccess(player)) {
                 LocalLockService.getInstance().handleCheckingAccess(event, lockedBlock, player);
             }
-            
+
             if (playerIsAttemptingToRevokeAccess(player)) {
                 LocalLockService.getInstance().handleRevokingAccess(event, clickedBlock, player);
             }
@@ -205,8 +209,7 @@ public class InteractionHandler implements Listener {
                 return;
             }
 
-        }
-        else {
+        } else {
             if (isPlayerUsingAnAccessCommand(player)) {
                 player.sendMessage(ChatColor.RED + LocalLocaleService.getInstance().getText("BlockIsNotLocked"));
             }
@@ -271,8 +274,7 @@ public class InteractionHandler implements Listener {
 
             // get chunk that armor stand is in
             location = armorStand.getLocation();
-        }
-        else if (clickedEntity instanceof ItemFrame) {
+        } else if (clickedEntity instanceof ItemFrame) {
             if (MedievalFactions.getInstance().isDebugEnabled()) {
                 System.out.println("DEBUG: ItemFrame interaction captured in PlayerInteractAtEntityEvent!");
             }
@@ -312,7 +314,9 @@ public class InteractionHandler implements Listener {
 
     @EventHandler()
     public void handle(PlayerBucketFillEvent event) {
-        if (MedievalFactions.getInstance().isDebugEnabled()) { System.out.println("DEBUG: A player is attempting to fill a bucket!"); }
+        if (MedievalFactions.getInstance().isDebugEnabled()) {
+            System.out.println("DEBUG: A player is attempting to fill a bucket!");
+        }
 
         Player player = event.getPlayer();
 
@@ -327,7 +331,9 @@ public class InteractionHandler implements Listener {
 
     @EventHandler()
     public void handle(PlayerBucketEmptyEvent event) {
-        if (MedievalFactions.getInstance().isDebugEnabled()) { System.out.println("DEBUG: A player is attempting to empty a bucket!"); }
+        if (MedievalFactions.getInstance().isDebugEnabled()) {
+            System.out.println("DEBUG: A player is attempting to empty a bucket!");
+        }
 
         Player player = event.getPlayer();
 
@@ -342,7 +348,9 @@ public class InteractionHandler implements Listener {
 
     @EventHandler()
     public void handle(EntityPlaceEvent event) {
-        if (MedievalFactions.getInstance().isDebugEnabled()) { System.out.println("DEBUG: A player is attempting to place an entity!"); }
+        if (MedievalFactions.getInstance().isDebugEnabled()) {
+            System.out.println("DEBUG: A player is attempting to place an entity!");
+        }
 
         Player player = event.getPlayer();
 

@@ -4,17 +4,17 @@
  */
 package dansplugins.factionsystem.commands;
 
+import java.util.UUID;
+
+import org.bukkit.command.CommandSender;
+import org.bukkit.entity.Player;
+
 import dansplugins.factionsystem.commands.abs.SubCommand;
 import dansplugins.factionsystem.objects.domain.Faction;
 import dansplugins.factionsystem.utils.extended.Messenger;
-import org.bukkit.command.CommandSender;
-import org.bukkit.entity.Player;
-import preponderous.ponder.minecraft.spigot.tools.UUIDChecker;
-
-import java.util.UUID;
+import preponderous.ponder.minecraft.bukkit.tools.UUIDChecker;
 
 /**
- * @author Daniel McCoy Stephenson
  * @author Callum Johnson
  */
 public class WhoCommand extends SubCommand {

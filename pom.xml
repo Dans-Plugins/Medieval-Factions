@@ -6,7 +6,7 @@
 
     <groupId>dansplugins</groupId>
     <artifactId>Medieval-Factions</artifactId>
-    <version>4.6-alpha-3</version>
+    <version>4.6.3</version>
     <packaging>jar</packaging>
 
     <name>Medieval Factions</name>
@@ -70,6 +70,10 @@
             <id>placeholderapi</id>
             <url>https://repo.extendedclip.com/content/repositories/placeholderapi/</url>
         </repository>
+        <repository>
+            <id>jitpack.io</id>
+            <url>https://jitpack.io</url>
+        </repository>
     </repositories>
 
     <dependencies>
@@ -92,18 +96,16 @@
             <scope>provided</scope>
         </dependency>
         <dependency>
-            <groupId>dansplugins</groupId>
+            <groupId>com.github.dmccoystephenson</groupId>
             <artifactId>Fiefs</artifactId>
-            <version>v0.8-alpha-1</version>
-            <scope>system</scope>
-            <systemPath>${project.basedir}/dependencies/Fiefs-v0.8-alpha-1.jar</systemPath>
+            <version>v0.8</version>
+            <scope>compile</scope>
         </dependency>
         <dependency>
-            <groupId>preponderous</groupId>
-            <artifactId>ponder</artifactId>
-            <version>v0.13</version>
-            <scope>system</scope>
-            <systemPath>${project.basedir}/dependencies/Ponder-v0.13.jar</systemPath>
+            <groupId>com.github.Preponderous-Software</groupId>
+            <artifactId>Ponder</artifactId>
+            <version>1.0</version>
+            <scope>compile</scope>
         </dependency>
     </dependencies>
 </project>

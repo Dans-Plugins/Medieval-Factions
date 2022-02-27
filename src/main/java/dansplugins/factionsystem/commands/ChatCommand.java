@@ -4,19 +4,19 @@
  */
 package dansplugins.factionsystem.commands;
 
-import dansplugins.factionsystem.commands.abs.SubCommand;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
+import dansplugins.factionsystem.commands.abs.SubCommand;
+
 /**
- * @author Daniel McCoy Stephenson
  * @author Callum Johnson
  */
 public class ChatCommand extends SubCommand {
 
     public ChatCommand() {
-        super(new String[] {
-              "chat", LOCALE_PREFIX + "CmdChat"
+        super(new String[]{
+                "chat", LOCALE_PREFIX + "CmdChat"
         }, true, true);
     }
 
@@ -41,8 +41,7 @@ public class ChatCommand extends SubCommand {
 
         if (contains) {
             ephemeral.getPlayersInFactionChat().remove(player.getUniqueId());
-        }
-        else {
+        } else {
             ephemeral.getPlayersInFactionChat().add(player.getUniqueId());
         }
 

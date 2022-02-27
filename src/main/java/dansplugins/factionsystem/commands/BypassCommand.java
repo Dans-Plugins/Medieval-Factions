@@ -4,12 +4,12 @@
  */
 package dansplugins.factionsystem.commands;
 
-import dansplugins.factionsystem.commands.abs.SubCommand;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
+import dansplugins.factionsystem.commands.abs.SubCommand;
+
 /**
- * @author Daniel McCoy Stephenson
  * @author Callum Johnson
  */
 public class BypassCommand extends SubCommand {
@@ -18,7 +18,7 @@ public class BypassCommand extends SubCommand {
      * Constructor to initialise a Command.
      */
     public BypassCommand() {
-        super(new String[] {
+        super(new String[]{
                 "bypass", "Locale_CmdBypass"
         }, true);
     }
@@ -42,8 +42,7 @@ public class BypassCommand extends SubCommand {
 
         if (contains) {
             ephemeral.getAdminsBypassingProtections().remove(player.getUniqueId());
-        }
-        else {
+        } else {
             ephemeral.getAdminsBypassingProtections().add(player.getUniqueId());
         }
 

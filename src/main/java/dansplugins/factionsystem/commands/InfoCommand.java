@@ -4,20 +4,20 @@
  */
 package dansplugins.factionsystem.commands;
 
-import dansplugins.factionsystem.commands.abs.SubCommand;
-import dansplugins.factionsystem.objects.domain.Faction;
-import dansplugins.factionsystem.utils.extended.Messenger;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
+import dansplugins.factionsystem.commands.abs.SubCommand;
+import dansplugins.factionsystem.objects.domain.Faction;
+import dansplugins.factionsystem.utils.extended.Messenger;
+
 /**
- * @author Daniel McCoy Stephenson
  * @author Callum Johnson
  */
 public class InfoCommand extends SubCommand {
 
     public InfoCommand() {
-        super(new String[] {
+        super(new String[]{
                 "info", LOCALE_PREFIX + "CmdInfo"
         }, false);
     }

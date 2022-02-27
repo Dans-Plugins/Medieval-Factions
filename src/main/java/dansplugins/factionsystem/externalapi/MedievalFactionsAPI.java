@@ -4,15 +4,17 @@
  */
 package dansplugins.factionsystem.externalapi;
 
+import java.util.ArrayList;
+import java.util.UUID;
+
+import org.bukkit.Chunk;
+import org.bukkit.entity.Player;
+
 import dansplugins.factionsystem.MedievalFactions;
 import dansplugins.factionsystem.data.EphemeralData;
 import dansplugins.factionsystem.data.PersistentData;
 import dansplugins.factionsystem.objects.domain.Faction;
 import dansplugins.factionsystem.objects.domain.PowerRecord;
-import org.bukkit.Chunk;
-import org.bukkit.entity.Player;
-
-import java.util.UUID;
 
 /**
  * @author Daniel McCoy Stephenson
@@ -20,6 +22,8 @@ import java.util.UUID;
  */
 public class MedievalFactionsAPI {
     private final String APIVersion = "v1.0.0"; // every time the external API is altered, this should be incremented
+    private ArrayList<String> allyFactions = new ArrayList<>();
+    private ArrayList<String> enemyFactions = new ArrayList<>();
 
     public String getAPIVersion() {
         return APIVersion;
@@ -90,9 +94,46 @@ public class MedievalFactionsAPI {
         double newPower = originalPower - amount;
         if (newPower >= 0) {
             powerRecord.setPower(originalPower - amount);
-        }
-        else {
+        } else {
             powerRecord.setPower(0);
         }
+    }
+
+    /**
+     * Checks the faction's list of allies for the supplied faction name
+     * @return boolean
+     */
+    public boolean isAlly(String factionname) {
+        return containsIgnoreCase(allyFactions, factionname);
+    }
+
+    /**
+     * @return list of allied factions
+     */
+    public ArrayList<String> getAllies() {
+        return allyFactions;
+    }
+
+    /**
+     * @return boolean
+     */
+    public boolean isEnemy(String factionName) {
+        return containsIgnoreCase(enemyFactions, factionName);
+    }
+
+    /**
+     * @return list of enemies for the faction
+     */
+    public ArrayList<String> getEnemies() {
+        return enemyFactions;
+    }
+
+    private boolean containsIgnoreCase(ArrayList<String> list, String str) {
+        for (String string : list) {
+            if (string.equalsIgnoreCase(str)) {
+                return true;
+            }
+        }
+        return false;
     }
 }

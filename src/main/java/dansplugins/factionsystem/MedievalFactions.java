@@ -4,9 +4,28 @@
  */
 package dansplugins.factionsystem;
 
+import java.io.File;
+import java.util.ArrayList;
+import java.util.Arrays;
+
+import org.bukkit.Bukkit;
+import org.bukkit.command.Command;
+import org.bukkit.command.CommandSender;
+import org.bukkit.event.Listener;
+import org.bukkit.plugin.java.JavaPlugin;
+import org.jetbrains.annotations.NotNull;
+
 import dansplugins.factionsystem.bstats.Metrics;
 import dansplugins.factionsystem.data.PersistentData;
-import dansplugins.factionsystem.eventhandlers.*;
+import dansplugins.factionsystem.eventhandlers.ChatHandler;
+import dansplugins.factionsystem.eventhandlers.DamageHandler;
+import dansplugins.factionsystem.eventhandlers.DeathHandler;
+import dansplugins.factionsystem.eventhandlers.EffectHandler;
+import dansplugins.factionsystem.eventhandlers.InteractionHandler;
+import dansplugins.factionsystem.eventhandlers.JoinHandler;
+import dansplugins.factionsystem.eventhandlers.MoveHandler;
+import dansplugins.factionsystem.eventhandlers.QuitHandler;
+import dansplugins.factionsystem.eventhandlers.SpawnHandler;
 import dansplugins.factionsystem.externalapi.MedievalFactionsAPI;
 import dansplugins.factionsystem.integrators.DynmapIntegrator;
 import dansplugins.factionsystem.placeholders.PlaceholderAPI;
@@ -14,30 +33,19 @@ import dansplugins.factionsystem.services.LocalCommandService;
 import dansplugins.factionsystem.services.LocalConfigService;
 import dansplugins.factionsystem.services.LocalLocaleService;
 import dansplugins.factionsystem.utils.extended.Scheduler;
-import org.bukkit.Bukkit;
-import org.bukkit.command.Command;
-import org.bukkit.command.CommandSender;
-import org.bukkit.event.Listener;
-import org.jetbrains.annotations.NotNull;
-import preponderous.ponder.minecraft.abs.PonderPlugin;
-import preponderous.ponder.minecraft.spigot.PonderMC;
-import preponderous.ponder.minecraft.spigot.tools.EventHandlerRegistry;
-
-import java.io.File;
-import java.util.ArrayList;
-import java.util.Arrays;
+import preponderous.ponder.minecraft.bukkit.tools.EventHandlerRegistry;
 
 /**
  * @author Daniel McCoy Stephenson
  * @since May 30th, 2020
  */
-public class MedievalFactions extends PonderPlugin {
+public class MedievalFactions extends JavaPlugin {
     private static MedievalFactions instance;
-    private final PonderMC ponder = new PonderMC(this);
     private final String pluginVersion = "v" + getDescription().getVersion();
 
     /**
      * This can be used to get the instance of the main class that is managed by itself.
+     *
      * @return The managed instance of the main class.
      */
     public static MedievalFactions getInstance() {
@@ -68,10 +76,11 @@ public class MedievalFactions extends PonderPlugin {
 
     /**
      * This method handles commands sent to the minecraft server and interprets them if the label matches one of the core commands.
+     *
      * @param sender The sender of the command.
-     * @param cmd The command that was sent. This is unused.
-     * @param label The core command that has been invoked.
-     * @param args Arguments of the core command. Often sub-commands.
+     * @param cmd    The command that was sent. This is unused.
+     * @param label  The core command that has been invoked.
+     * @param args   Arguments of the core command. Often sub-commands.
      * @return A boolean indicating whether the execution of the command was successful.
      */
     @Override
@@ -81,6 +90,7 @@ public class MedievalFactions extends PonderPlugin {
 
     /**
      * This can be used to get the version of the plugin.
+     *
      * @return A string containing the version preceded by 'v'
      */
     public String getVersion() {
@@ -89,6 +99,7 @@ public class MedievalFactions extends PonderPlugin {
 
     /**
      * Checks if the version is mismatched.
+     *
      * @return A boolean indicating if the version is mismatched.
      */
     public boolean isVersionMismatched() {
@@ -102,6 +113,7 @@ public class MedievalFactions extends PonderPlugin {
 
     /**
      * This can be utilized to access the external API of Medieval Factions.
+     *
      * @return A reference to the external API.
      */
     public MedievalFactionsAPI getAPI() {
@@ -110,15 +122,11 @@ public class MedievalFactions extends PonderPlugin {
 
     /**
      * Checks if debug is enabled.
+     *
      * @return Whether debug is enabled.
      */
     public boolean isDebugEnabled() {
         return getConfig().getBoolean("debugMode");
-    }
-
-    @Override
-    public PonderMC getPonderAPI() {
-        return ponder;
     }
 
     private void makeSureEveryPlayerExperiencesPowerDecay() {
@@ -131,8 +139,7 @@ public class MedievalFactions extends PonderPlugin {
     private void initializeConfig() {
         if (configFileExists()) {
             performCompatibilityChecks();
-        }
-        else {
+        } else {
             LocalConfigService.getInstance().saveConfigDefaults();
         }
     }
@@ -170,7 +177,7 @@ public class MedievalFactions extends PonderPlugin {
      */
     private void registerEventHandlers() {
         ArrayList<Listener> listeners = initializeListeners();
-        EventHandlerRegistry eventHandlerRegistry = new EventHandlerRegistry(getPonderAPI());
+        EventHandlerRegistry eventHandlerRegistry = new EventHandlerRegistry();
         eventHandlerRegistry.registerEventHandlers(listeners, this);
     }
 

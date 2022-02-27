@@ -4,22 +4,22 @@
  */
 package dansplugins.factionsystem.commands;
 
-import dansplugins.factionsystem.commands.abs.SubCommand;
-import dansplugins.factionsystem.events.FactionJoinEvent;
-import dansplugins.factionsystem.objects.domain.Faction;
-import dansplugins.factionsystem.utils.Logger;
 import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
+import dansplugins.factionsystem.commands.abs.SubCommand;
+import dansplugins.factionsystem.events.FactionJoinEvent;
+import dansplugins.factionsystem.objects.domain.Faction;
+import dansplugins.factionsystem.utils.Logger;
+
 /**
- * @author Daniel McCoy Stephenson
  * @author Callum Johnson
  */
 public class JoinCommand extends SubCommand {
 
     public JoinCommand() {
-        super(new String[] {
+        super(new String[]{
                 "join", LOCALE_PREFIX + "CmdJoin"
         }, true);
     }

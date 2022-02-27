@@ -4,13 +4,10 @@
  */
 package dansplugins.factionsystem.eventhandlers;
 
-import dansplugins.factionsystem.MedievalFactions;
-import dansplugins.factionsystem.data.PersistentData;
-import dansplugins.factionsystem.integrators.DynmapIntegrator;
-import dansplugins.factionsystem.objects.domain.ClaimedChunk;
-import dansplugins.factionsystem.objects.domain.Faction;
-import dansplugins.factionsystem.services.LocalLocaleService;
-import dansplugins.factionsystem.utils.TerritoryOwnerNotifier;
+import static org.bukkit.Bukkit.getServer;
+
+import java.util.Objects;
+
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -18,9 +15,13 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.block.BlockFromToEvent;
 import org.bukkit.event.player.PlayerMoveEvent;
 
-import java.util.Objects;
-
-import static org.bukkit.Bukkit.getServer;
+import dansplugins.factionsystem.MedievalFactions;
+import dansplugins.factionsystem.data.PersistentData;
+import dansplugins.factionsystem.integrators.DynmapIntegrator;
+import dansplugins.factionsystem.objects.domain.ClaimedChunk;
+import dansplugins.factionsystem.objects.domain.Faction;
+import dansplugins.factionsystem.services.LocalLocaleService;
+import dansplugins.factionsystem.utils.TerritoryOwnerNotifier;
 
 /**
  * @author Daniel McCoy Stephenson
@@ -30,7 +31,7 @@ public class MoveHandler implements Listener {
     @EventHandler()
     public void handle(PlayerMoveEvent event) {
         if (playerEnteredANewChunk(event)) {
-            Player player =  event.getPlayer();
+            Player player = event.getPlayer();
 
             initiateAutoclaimCheck(player);
 
@@ -83,8 +84,7 @@ public class MoveHandler implements Listener {
             if (playersFaction.getAutoClaimStatus()) {
                 if (notAtDemesneLimit(playersFaction)) {
                     scheduleClaiming(player, playersFaction);
-                }
-                else {
+                } else {
                     player.sendMessage(ChatColor.RED + LocalLocaleService.getInstance().getText("AlertReachedDemesne"));
                 }
             }

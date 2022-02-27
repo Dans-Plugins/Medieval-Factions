@@ -4,20 +4,20 @@
  */
 package dansplugins.factionsystem.commands;
 
-import dansplugins.factionsystem.commands.abs.SubCommand;
-import dansplugins.factionsystem.objects.domain.Faction;
 import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
+import dansplugins.factionsystem.commands.abs.SubCommand;
+import dansplugins.factionsystem.objects.domain.Faction;
+
 /**
- * @author Daniel McCoy Stephenson
  * @author Callum Johnson
  */
 public class MembersCommand extends SubCommand {
 
     public MembersCommand() {
-        super(new String[] {
+        super(new String[]{
                 "members", LOCALE_PREFIX + "CmdMembers"
         }, false);
     }

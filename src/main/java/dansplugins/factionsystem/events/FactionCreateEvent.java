@@ -4,10 +4,11 @@
  */
 package dansplugins.factionsystem.events;
 
-import dansplugins.factionsystem.events.abs.FactionEvent;
-import dansplugins.factionsystem.objects.domain.Faction;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Cancellable;
+
+import dansplugins.factionsystem.events.abs.FactionEvent;
+import dansplugins.factionsystem.objects.domain.Faction;
 
 /**
  * @author C A L L U M#4160
@@ -20,10 +21,11 @@ public class FactionCreateEvent extends FactionEvent implements Cancellable {
     /**
      * Constructor to initialise a FactionCreateEvent.
      * <p>
-     *     This event is called when a Player creates a Faction.
+     * This event is called when a Player creates a Faction.
      * </p>
+     *
      * @param faction being created.
-     * @param player who created it.
+     * @param player  who created it.
      */
     public FactionCreateEvent(Faction faction, Player player) {
         super(faction, player);

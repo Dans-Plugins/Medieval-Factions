@@ -4,21 +4,21 @@
  */
 package dansplugins.factionsystem.commands;
 
-import dansplugins.factionsystem.commands.abs.SubCommand;
-import org.bukkit.command.CommandSender;
-import org.bukkit.entity.Player;
-import preponderous.ponder.minecraft.spigot.tools.UUIDChecker;
-
 import java.util.UUID;
 
+import org.bukkit.command.CommandSender;
+import org.bukkit.entity.Player;
+
+import dansplugins.factionsystem.commands.abs.SubCommand;
+import preponderous.ponder.minecraft.bukkit.tools.UUIDChecker;
+
 /**
- * @author Daniel McCoy Stephenson
  * @author Callum Johnson
  */
 public class RevokeAccessCommand extends SubCommand {
 
     public RevokeAccessCommand() {
-        super(new String[] {
+        super(new String[]{
                 "ra", "revokeaccess", LOCALE_PREFIX + "CmdRevokeAccess"
         }, true);
     }

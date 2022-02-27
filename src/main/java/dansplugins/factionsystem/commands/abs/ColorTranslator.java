@@ -4,10 +4,10 @@
  */
 package dansplugins.factionsystem.commands.abs;
 
-import org.bukkit.ChatColor;
-
 import java.util.List;
 import java.util.stream.Collectors;
+
+import org.bukkit.ChatColor;
 
 /**
  * @author Callum Johnson
@@ -17,6 +17,7 @@ public interface ColorTranslator {
 
     /**
      * Method to translate color codes from & to MC Equivalents.
+     *
      * @param message to translate.
      * @return translated message.
      */
@@ -26,6 +27,7 @@ public interface ColorTranslator {
 
     /**
      * Method to translate color codes from & to MC Equivalents.
+     *
      * @param messages to translate.
      * @return translated messages.
      */

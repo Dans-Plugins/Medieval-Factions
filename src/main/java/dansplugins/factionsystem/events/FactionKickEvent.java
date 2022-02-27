@@ -4,8 +4,9 @@
  */
 package dansplugins.factionsystem.events;
 
-import dansplugins.factionsystem.objects.domain.Faction;
 import org.bukkit.OfflinePlayer;
+
+import dansplugins.factionsystem.objects.domain.Faction;
 
 /**
  * @author C A L L U M#4160
@@ -18,12 +19,12 @@ public class FactionKickEvent extends FactionLeaveEvent {
     /**
      * Constructor to initialise a FactionKickEvent.
      * <p>
-     *     This event is called when a Player is kicked from a Faction.
+     * This event is called when a Player is kicked from a Faction.
      * </p>
      *
      * @param faction which the player was kicked from.
      * @param player  who was kicked.
-     * @param kicker who kicked the player.
+     * @param kicker  who kicked the player.
      */
     public FactionKickEvent(Faction faction, OfflinePlayer player, OfflinePlayer kicker) {
         super(faction, player);

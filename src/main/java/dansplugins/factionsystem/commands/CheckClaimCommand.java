@@ -4,12 +4,12 @@
  */
 package dansplugins.factionsystem.commands;
 
-import dansplugins.factionsystem.commands.abs.SubCommand;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
+import dansplugins.factionsystem.commands.abs.SubCommand;
+
 /**
- * @author Daniel McCoy Stephenson
  * @author Callum Johnson
  */
 public class CheckClaimCommand extends SubCommand {
@@ -36,8 +36,7 @@ public class CheckClaimCommand extends SubCommand {
 
         if (result.equals("unclaimed")) {
             player.sendMessage(translate("&a" + getText("LandIsUnclaimed")));
-        }
-        else {
+        } else {
             player.sendMessage(translate("&c" + getText("LandClaimedBy", result)));
         }
     }

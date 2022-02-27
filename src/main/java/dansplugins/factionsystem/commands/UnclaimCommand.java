@@ -4,19 +4,19 @@
  */
 package dansplugins.factionsystem.commands;
 
-import dansplugins.factionsystem.commands.abs.SubCommand;
-import dansplugins.factionsystem.data.EphemeralData;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
+import dansplugins.factionsystem.commands.abs.SubCommand;
+import dansplugins.factionsystem.data.EphemeralData;
+
 /**
- * @author Daniel McCoy Stephenson
  * @author Callum Johnson
  */
 public class UnclaimCommand extends SubCommand {
 
     public UnclaimCommand() {
-        super(new String[] {
+        super(new String[]{
                 "unclaim", LOCALE_PREFIX + "CmdUnclaim"
         }, true, true);
     }

@@ -4,16 +4,16 @@
  */
 package dansplugins.factionsystem.commands;
 
-import dansplugins.factionsystem.commands.abs.SubCommand;
-import org.bukkit.command.CommandSender;
-import org.bukkit.entity.Player;
-
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 
+import org.bukkit.command.CommandSender;
+import org.bukkit.entity.Player;
+
+import dansplugins.factionsystem.commands.abs.SubCommand;
+
 /**
- * @author Daniel McCoy Stephenson
  * @author Callum Johnson
  */
 public class HelpCommand extends SubCommand {
@@ -21,7 +21,7 @@ public class HelpCommand extends SubCommand {
     private final HashMap<Integer, List<String>> helpPages = new HashMap<>();
 
     public HelpCommand() {
-        super(new String[] {
+        super(new String[]{
                 "help", LOCALE_PREFIX + "CmdHelp"
         }, false);
 

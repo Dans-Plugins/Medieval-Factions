@@ -4,12 +4,12 @@
  */
 package dansplugins.factionsystem.commands;
 
-import dansplugins.factionsystem.commands.abs.SubCommand;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
+import dansplugins.factionsystem.commands.abs.SubCommand;
+
 /**
- * @author Daniel McCoy Stephenson
  * @author Callum Johnson
  */
 public class AutoClaimCommand extends SubCommand {
@@ -18,7 +18,7 @@ public class AutoClaimCommand extends SubCommand {
      * Constructor to initialise a Command.
      */
     public AutoClaimCommand() {
-        super(new String[] {
+        super(new String[]{
                 "AC", "AUTOCLAIM", LOCALE_PREFIX + "CmdAutoClaim"
         }, true, true, false, true);
     }

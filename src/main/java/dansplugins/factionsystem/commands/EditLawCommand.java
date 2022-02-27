@@ -4,19 +4,19 @@
  */
 package dansplugins.factionsystem.commands;
 
-import dansplugins.factionsystem.commands.abs.SubCommand;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
+import dansplugins.factionsystem.commands.abs.SubCommand;
+
 /**
- * @author Daniel McCoy Stephenson
  * @author Callum Johnson
  */
 public class EditLawCommand extends SubCommand {
 
     public EditLawCommand() {
-        super(new String[] {
-            "EditLaw", "EL", LOCALE_PREFIX + "CmdEditLaw"
+        super(new String[]{
+                "EditLaw", "EL", LOCALE_PREFIX + "CmdEditLaw"
         }, true, true, false, true);
     }
 

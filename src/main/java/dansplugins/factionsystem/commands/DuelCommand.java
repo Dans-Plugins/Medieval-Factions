@@ -4,16 +4,15 @@
  */
 package dansplugins.factionsystem.commands;
 
-import dansplugins.factionsystem.commands.abs.SubCommand;
-import dansplugins.factionsystem.objects.domain.Duel;
 import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
-import static dansplugins.factionsystem.objects.domain.Duel.DuelState;
+import dansplugins.factionsystem.commands.abs.SubCommand;
+import dansplugins.factionsystem.objects.domain.Duel;
+import dansplugins.factionsystem.objects.domain.Duel.DuelState;
 
 /**
- * @author Daniel McCoy Stephenson
  * @author Callum Johnson
  */
 public class DuelCommand extends SubCommand {
@@ -137,19 +136,19 @@ public class DuelCommand extends SubCommand {
         sender.sendMessage(translate("&b" + getText("HelpDuelCancel")));
     }
 
-	private Duel getDuel(Player player) {
-		return ephemeral.getDuelingPlayers().stream()
-				.filter(duel -> duel.isChallenged(player) || duel.isChallenger(player))
-				.findFirst().orElse(null);
-	}
+    private Duel getDuel(Player player) {
+        return ephemeral.getDuelingPlayers().stream()
+                .filter(duel -> duel.isChallenged(player) || duel.isChallenger(player))
+                .findFirst().orElse(null);
+    }
 
-	private boolean isDuelling(Player player) {
-		return ephemeral.getDuelingPlayers().stream()
-				.anyMatch(duel -> duel.hasPlayer(player) && duel.getStatus().equals(DuelState.DUELLING));
-	}
+    private boolean isDuelling(Player player) {
+        return ephemeral.getDuelingPlayers().stream()
+                .anyMatch(duel -> duel.hasPlayer(player) && duel.getStatus().equals(DuelState.DUELLING));
+    }
 
-	private void inviteDuel(Player player, Player target, int limit) {
-		target.sendMessage(translate("&b" + getText("AlertChallengedToDuelPlusHowTo", player.getName())));
-		ephemeral.getDuelingPlayers().add(new Duel(player, target, limit));
-	}
+    private void inviteDuel(Player player, Player target, int limit) {
+        target.sendMessage(translate("&b" + getText("AlertChallengedToDuelPlusHowTo", player.getName())));
+        ephemeral.getDuelingPlayers().add(new Duel(player, target, limit));
+    }
 }

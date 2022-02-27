@@ -4,13 +4,14 @@
  */
 package dansplugins.factionsystem.objects.domain;
 
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
-import preponderous.ponder.misc.Savable;
-
 import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.Map;
+
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+
+import preponderous.ponder.misc.abs.Savable;
 
 /**
  * @author Daniel McCoy Stephenson
@@ -60,7 +61,7 @@ public class War implements Savable {
 
     @Override
     public Map<String, String> save() {
-        Gson gson = new GsonBuilder().setPrettyPrinting().create();;
+        Gson gson = new GsonBuilder().setPrettyPrinting().create();
         Map<String, String> saveMap = new HashMap<>();
 
         saveMap.put("attacker", gson.toJson(attacker));

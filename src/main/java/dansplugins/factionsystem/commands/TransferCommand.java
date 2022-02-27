@@ -4,17 +4,17 @@
  */
 package dansplugins.factionsystem.commands;
 
-import dansplugins.factionsystem.commands.abs.SubCommand;
+import java.util.UUID;
+
 import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
-import preponderous.ponder.minecraft.spigot.tools.UUIDChecker;
 
-import java.util.UUID;
+import dansplugins.factionsystem.commands.abs.SubCommand;
+import preponderous.ponder.minecraft.bukkit.tools.UUIDChecker;
 
 /**
- * @author Daniel McCoy Stephenson
  * @author Callum Johnson
  */
 public class TransferCommand extends SubCommand {

@@ -4,19 +4,19 @@
  */
 package dansplugins.factionsystem.commands;
 
-import dansplugins.factionsystem.commands.abs.SubCommand;
-import dansplugins.factionsystem.data.PersistentData;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
+import dansplugins.factionsystem.commands.abs.SubCommand;
+import dansplugins.factionsystem.data.PersistentData;
+
 /**
- * @author Daniel McCoy Stephenson
  * @author Callum Johnson
  */
 public class PrefixCommand extends SubCommand {
 
     public PrefixCommand() {
-        super(new String[] {
+        super(new String[]{
                 "prefix", LOCALE_PREFIX + "CmdPrefix"
         }, true, true, false, true);
     }

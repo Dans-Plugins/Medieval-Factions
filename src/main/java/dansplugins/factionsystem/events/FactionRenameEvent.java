@@ -4,9 +4,10 @@
  */
 package dansplugins.factionsystem.events;
 
+import org.bukkit.event.Cancellable;
+
 import dansplugins.factionsystem.events.abs.FactionEvent;
 import dansplugins.factionsystem.objects.domain.Faction;
-import org.bukkit.event.Cancellable;
 
 /**
  * @author C A L L U M#4160
@@ -20,10 +21,11 @@ public class FactionRenameEvent extends FactionEvent implements Cancellable {
     /**
      * Constructor to initialise a FactionRenameEvent.
      * <p>
-     *     This event is called when a Faction is renamed from 'x' to 'y'.
+     * This event is called when a Faction is renamed from 'x' to 'y'.
      * </p>
-     * @param faction being renamed.
-     * @param currentName of the Faction.
+     *
+     * @param faction      being renamed.
+     * @param currentName  of the Faction.
      * @param proposedName or new name of the Faction.
      */
     public FactionRenameEvent(Faction faction, String currentName, String proposedName) {
@@ -33,7 +35,7 @@ public class FactionRenameEvent extends FactionEvent implements Cancellable {
     }
 
     // Getters.
-    public String getCurrentName(){
+    public String getCurrentName() {
         return current;
     }
 

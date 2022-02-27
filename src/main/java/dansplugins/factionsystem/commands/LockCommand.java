@@ -4,20 +4,19 @@
  */
 package dansplugins.factionsystem.commands;
 
-import dansplugins.factionsystem.commands.abs.SubCommand;
-import dansplugins.factionsystem.data.PersistentData;
-import dansplugins.factionsystem.eventhandlers.helper.RelationChecker;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
+import dansplugins.factionsystem.commands.abs.SubCommand;
+import dansplugins.factionsystem.eventhandlers.helper.RelationChecker;
+
 /**
- * @author Daniel McCoy Stephenson
  * @author Callum Johnson
  */
 public class LockCommand extends SubCommand {
 
     public LockCommand() {
-        super(new String[] {
+        super(new String[]{
                 "lock", LOCALE_PREFIX + "CmdLock"
         }, true);
     }
@@ -32,8 +31,12 @@ public class LockCommand extends SubCommand {
     @Override
     public void execute(Player player, String[] args, String key) {
         final String permission = "mf.lock";
-        if (!(RelationChecker.getInstance().playerNotInFaction(player))) return;
-        if (!(checkPermissions(player, permission))) return;
+        if (RelationChecker.getInstance().playerNotInFaction(player)) {
+            return;
+        }
+        if (!checkPermissions(player, permission)) {
+            return;
+        }
         if (args.length >= 1 && safeEquals(args[0], "cancel")) {
             if (ephemeral.getLockingPlayers().remove(player.getUniqueId())) { // Remove them
                 player.sendMessage(translate("&c" + getText("LockingCancelled")));

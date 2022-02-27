@@ -4,16 +4,16 @@
  */
 package dansplugins.factionsystem.commands;
 
-import dansplugins.factionsystem.commands.abs.SubCommand;
+import java.util.UUID;
+
 import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
-import java.util.UUID;
+import dansplugins.factionsystem.commands.abs.SubCommand;
 
 /**
- * @author Daniel McCoy Stephenson
  * @author Callum Johnson
  */
 public class DemoteCommand extends SubCommand {

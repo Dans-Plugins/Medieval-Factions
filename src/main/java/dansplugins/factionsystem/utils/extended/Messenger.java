@@ -4,24 +4,25 @@
  */
 package dansplugins.factionsystem.utils.extended;
 
-import dansplugins.factionsystem.integrators.FiefsIntegrator;
-import dansplugins.factionsystem.objects.domain.Faction;
-import dansplugins.factionsystem.services.LocalLocaleService;
-import dansplugins.fiefs.externalapi.FI_Fief;
-import org.bukkit.ChatColor;
-import org.bukkit.command.CommandSender;
-import org.bukkit.entity.Player;
-import preponderous.ponder.minecraft.spigot.tools.UUIDChecker;
+import static org.bukkit.Bukkit.getServer;
 
 import java.util.ArrayList;
 import java.util.UUID;
 
-import static org.bukkit.Bukkit.getServer;
+import org.bukkit.ChatColor;
+import org.bukkit.command.CommandSender;
+import org.bukkit.entity.Player;
+
+import dansplugins.factionsystem.integrators.FiefsIntegrator;
+import dansplugins.factionsystem.objects.domain.Faction;
+import dansplugins.factionsystem.services.LocalLocaleService;
+import dansplugins.fiefs.externalapi.FI_Fief;
+import preponderous.ponder.minecraft.bukkit.tools.UUIDChecker;
 
 /**
  * @author Daniel McCoy Stephenson
  */
-public class Messenger extends preponderous.ponder.minecraft.spigot.tools.Messenger {
+public class Messenger extends preponderous.ponder.minecraft.bukkit.tools.Messenger {
     private static Messenger instance;
 
     private Messenger() {
@@ -64,8 +65,7 @@ public class Messenger extends preponderous.ponder.minecraft.spigot.tools.Messen
         if (faction.isLiege()) {
             if (!faction.isWeakened()) {
                 sender.sendMessage(ChatColor.AQUA + String.format(LocalLocaleService.getInstance().getText("VassalContribution"), vassalContribution) + "\n");
-            }
-            else {
+            } else {
                 sender.sendMessage(ChatColor.AQUA + String.format(LocalLocaleService.getInstance().getText("VassalContribution"), 0) + "\n");
             }
         }
@@ -79,7 +79,7 @@ public class Messenger extends preponderous.ponder.minecraft.spigot.tools.Messen
                 for (FI_Fief fief : fiefs) {
                     fiefsSeparatedByCommas.append(fief.getName());
                 }
-                sender.sendMessage(ChatColor.AQUA + String.format("Fiefs: %s", fiefsSeparatedByCommas.toString()));
+                sender.sendMessage(ChatColor.AQUA + String.format("Fiefs: %s", fiefsSeparatedByCommas));
             }
         }
     }
@@ -102,8 +102,7 @@ public class Messenger extends preponderous.ponder.minecraft.spigot.tools.Messen
                     continue;
                 }
                 target.sendMessage(message);
-            }
-            catch(Exception ignored) {
+            } catch (Exception ignored) {
 
             }
         }

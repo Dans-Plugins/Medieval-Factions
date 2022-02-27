@@ -4,18 +4,20 @@
  */
 package dansplugins.factionsystem.objects.domain;
 
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
-import dansplugins.factionsystem.objects.inherited.Territory;
-import org.bukkit.Chunk;
-import org.bukkit.World;
-import org.bukkit.WorldCreator;
-import preponderous.ponder.misc.Savable;
+import static org.bukkit.Bukkit.getServer;
 
 import java.util.HashMap;
 import java.util.Map;
 
-import static org.bukkit.Bukkit.getServer;
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+
+import org.bukkit.Chunk;
+import org.bukkit.World;
+import org.bukkit.WorldCreator;
+
+import dansplugins.factionsystem.objects.inherited.Territory;
+import preponderous.ponder.misc.abs.Savable;
 
 /**
  * @author Daniel McCoy Stephenson
@@ -32,16 +34,16 @@ public class ClaimedChunk extends Territory implements Savable {
         setChunk(initialChunk);
     }
 
-    public ClaimedChunk(Map<String, String> data){
+    public ClaimedChunk(Map<String, String> data) {
         this.load(data);
-    }
-
-    public void setChunk(Chunk newChunk) {
-        chunk = newChunk;
     }
 
     public Chunk getChunk() {
         return chunk;
+    }
+
+    public void setChunk(Chunk newChunk) {
+        chunk = newChunk;
     }
 
     public double[] getCoordinates() {
@@ -61,15 +63,15 @@ public class ClaimedChunk extends Territory implements Savable {
 
     @Override
     public Map<String, String> save() {
-            Gson gson = new GsonBuilder().setPrettyPrinting().create();
+        Gson gson = new GsonBuilder().setPrettyPrinting().create();
 
-            Map<String, String> saveMap = new HashMap<>();
-            saveMap.put("X", gson.toJson(chunk.getX()));
-            saveMap.put("Z", gson.toJson(chunk.getZ()));
-            saveMap.put("world", gson.toJson(world));
-            saveMap.put("holder", gson.toJson(holder));
+        Map<String, String> saveMap = new HashMap<>();
+        saveMap.put("X", gson.toJson(chunk.getX()));
+        saveMap.put("Z", gson.toJson(chunk.getZ()));
+        saveMap.put("world", gson.toJson(world));
+        saveMap.put("holder", gson.toJson(holder));
 
-            return saveMap;
+        return saveMap;
     }
 
     @Override

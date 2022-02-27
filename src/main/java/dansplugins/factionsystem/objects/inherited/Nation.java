@@ -4,10 +4,10 @@
  */
 package dansplugins.factionsystem.objects.inherited;
 
-import dansplugins.factionsystem.objects.inherited.specification.modifiers.Diplomatic;
-import dansplugins.factionsystem.objects.inherited.specification.modifiers.Lawful;
-
 import java.util.ArrayList;
+
+import dansplugins.factionsystem.objects.inherited.specification.Diplomatic;
+import dansplugins.factionsystem.objects.inherited.specification.Lawful;
 
 /**
  * @author Daniel McCoy Stephenson

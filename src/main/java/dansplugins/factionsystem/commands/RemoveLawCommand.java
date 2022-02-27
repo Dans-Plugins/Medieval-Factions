@@ -4,17 +4,18 @@
  */
 package dansplugins.factionsystem.commands;
 
-import dansplugins.factionsystem.commands.abs.SubCommand;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
+import dansplugins.factionsystem.commands.abs.SubCommand;
+
 /**
- * @author Daniel McCoy Stephenson
  * @author Callum Johnson
- */public class RemoveLawCommand extends SubCommand {
+ */
+public class RemoveLawCommand extends SubCommand {
 
     public RemoveLawCommand() {
-        super(new String[] {
+        super(new String[]{
                 "removelaw", LOCALE_PREFIX + "CmdRemoveLaw"
         }, true, true, false, true);
     }

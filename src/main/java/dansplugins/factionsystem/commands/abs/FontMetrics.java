@@ -4,9 +4,9 @@
  */
 package dansplugins.factionsystem.commands.abs;
 
-import org.bukkit.ChatColor;
-
 import java.util.Arrays;
+
+import org.bukkit.ChatColor;
 
 /**
  * Credits to: https://www.spigotmc.org/threads/free-code-sending-perfectly-centered-chat-message.95872/
@@ -49,19 +49,6 @@ public enum FontMetrics {
     FontMetrics(char character, int length) {
         this.character = character;
         this.length = length;
-    }
-
-    public char getCharacter() {
-        return this.character;
-    }
-
-    public int getLength() {
-        return this.length;
-    }
-
-    public int getBoldLength() {
-        if (this == FontMetrics.SPACE) return this.getLength(); // Bold Space == Regular Space.
-        return this.length + 1;
     }
 
     public static FontMetrics getMetric(char c) {
@@ -108,6 +95,19 @@ public enum FontMetrics {
             length += FontMetrics.getMetric(character).getLength();
         }
         System.out.println("'" + test + "' is approximately " + length + " minecraft-pixels wide");
+    }
+
+    public char getCharacter() {
+        return this.character;
+    }
+
+    public int getLength() {
+        return this.length;
+    }
+
+    public int getBoldLength() {
+        if (this == FontMetrics.SPACE) return this.getLength(); // Bold Space == Regular Space.
+        return this.length + 1;
     }
 
 }

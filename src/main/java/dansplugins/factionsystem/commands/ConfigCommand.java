@@ -4,14 +4,14 @@
  */
 package dansplugins.factionsystem.commands;
 
-import dansplugins.factionsystem.MedievalFactions;
-import dansplugins.factionsystem.commands.abs.SubCommand;
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
+import dansplugins.factionsystem.MedievalFactions;
+import dansplugins.factionsystem.commands.abs.SubCommand;
+
 /**
- * @author Daniel McCoy Stephenson
  * @author Callum Johnson
  */
 public class ConfigCommand extends SubCommand {
@@ -69,7 +69,7 @@ public class ConfigCommand extends SubCommand {
                 return;
             }
 
-            switch(page) {
+            switch (page) {
                 case 1:
                     localConfigService.sendPageOneOfConfigList(sender);
                     break;
@@ -79,20 +79,16 @@ public class ConfigCommand extends SubCommand {
                 default:
                     sender.sendMessage(translate("&c" + getText("UsageConfigShow")));
             }
-        }
-        else if (set) {
+        } else if (set) {
             if (args.length < 3) {
                 sender.sendMessage(translate("&c" + getText("UsageConfigSet")));
-            }
-            else {
+            } else {
                 localConfigService.setConfigOption(args[1], args[2], sender);
             }
-        }
-        else if (reload) {
+        } else if (reload) {
             MedievalFactions.getInstance().reloadConfig();
             sender.sendMessage(ChatColor.GREEN + "Config reloaded.");
-        }
-        else {
+        } else {
             sender.sendMessage(translate("&c" + getText("ValidSubCommandsShowSet")));
         }
     }

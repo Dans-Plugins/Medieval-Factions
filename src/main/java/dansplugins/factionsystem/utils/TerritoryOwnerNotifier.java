@@ -4,15 +4,16 @@
  */
 package dansplugins.factionsystem.utils;
 
+import org.bukkit.ChatColor;
+import org.bukkit.entity.Player;
+
 import dansplugins.factionsystem.MedievalFactions;
 import dansplugins.factionsystem.objects.domain.Faction;
 import dansplugins.factionsystem.services.LocalActionBarService;
 import dansplugins.factionsystem.services.LocalLocaleService;
 import net.md_5.bungee.api.ChatMessageType;
 import net.md_5.bungee.api.chat.TextComponent;
-import org.bukkit.ChatColor;
-import org.bukkit.entity.Player;
-import preponderous.ponder.minecraft.spigot.tools.ColorChecker;
+import preponderous.ponder.minecraft.bukkit.tools.ColorChecker;
 
 /**
  * @author Daniel McCoy Stephenson
@@ -41,8 +42,7 @@ public class TerritoryOwnerNotifier {
     private String getTitle(Faction holder) {
         if (holder != null) {
             return holder.getName();
-        }
-        else {
+        } else {
             return LocalLocaleService.getInstance().getText("Wilderness");
         }
     }
@@ -65,8 +65,7 @@ public class TerritoryOwnerNotifier {
             if (holder == null) {
                 actionBar.clearPlayerActionBar(player);
                 player.spigot().sendMessage(ChatMessageType.ACTION_BAR, new TextComponent(territoryAlertColor + title));
-            }
-            else {
+            } else {
                 actionBar.showPersistentActionBarMessage(player, new TextComponent(territoryAlertColor + title));
             }
         }
@@ -78,8 +77,7 @@ public class TerritoryOwnerNotifier {
             int stay = 70;
             int fadeOut = 20;
             player.sendTitle(territoryAlertColor + title, null, fadeIn, stay, fadeOut);
-        }
-        else {
+        } else {
             player.sendMessage(territoryAlertColor + title);
         }
     }
