@@ -121,11 +121,16 @@ public class Scheduler {
             try {
                 delay();
             } catch(Exception e) {
+                player.sendMessage(ChatColor.RED + "Something went wrong.");
                 Logger.getInstance().log("Something went wrong running a delayed teleport task.");
                 return;
             }
+
             if (playerHasNotMoved()) {
                 teleportPlayer();
+            }
+            else {
+                player.sendMessage(ChatColor.RED + "Teleport cancelled.");
             }
         }
 
