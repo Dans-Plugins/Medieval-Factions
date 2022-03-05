@@ -14,7 +14,7 @@ import dansplugins.factionsystem.objects.domain.Faction;
  * @author Daniel McCoy Stephenson
  */
 public class MF_Faction {
-    private Faction faction;
+    Faction faction;
 
     public MF_Faction(Faction f) {
         faction = f;
@@ -42,22 +42,5 @@ public class MF_Faction {
 
     public Object getFlag(String flag) {
         return faction.getFlags().getFlag(flag);
-    }
-
-    public boolean isAlly(String factionName) {
-        return faction.isAlly(factionName);
-    }
-
-    public boolean isEnemy(String factionName) {
-        return faction.isEnemy(factionName);
-    }
-
-    /**
-     * This should only be used when the external API is not sufficient. It should be noted that the underlying implementation is prone to change.
-     * @return The underlying implementation of the faction class.
-     */
-    @Deprecated
-    public Faction getUnderlyingImplementation() {
-        return faction;
     }
 }
