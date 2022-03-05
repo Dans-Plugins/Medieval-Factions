@@ -4,6 +4,8 @@
  */
 package dansplugins.factionsystem.utils.extended;
 
+import java.util.concurrent.TimeUnit;
+
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
@@ -96,19 +98,47 @@ public class Scheduler {
     }
 
     public void scheduleTeleport(Player player, Location destinationLocation) {
-        final Location initialLocation = player.getLocation();
         final int teleport_delay = LocalConfigService.getInstance().getInt("teleportDelay");
-        Bukkit.getScheduler().runTaskLater(MedievalFactions.getInstance(), () -> {
-            if (playerHasNotMoved(player, initialLocation)) {
-                PlayerTeleporter.getInstance().teleportPlayer(player, destinationLocation);
-            } else {
-                player.sendMessage(ChatColor.RED + "Teleport cancelled.");
-            }
-
-        }, teleport_delay * 20);
+        DelayedTeleportTask delayedTeleportTask = new DelayedTeleportTask(teleport_delay, player, destinationLocation);
+        delayedTeleportTask.start();
     }
 
-    private boolean playerHasNotMoved(Player player, Location initialLocation) {
-        return initialLocation.getX() == player.getLocation().getX() && initialLocation.getY() == player.getLocation().getY() && initialLocation.getZ() == player.getLocation().getZ();
+    private class DelayedTeleportTask extends Thread {
+        private int seconds;
+        private Player player;
+        private Location initialLocation;
+        private Location destinationLocation;
+
+        public DelayedTeleportTask(int seconds, Player player, Location destinationLocation) {
+            this.seconds = seconds;
+            this.player = player;
+            this.initialLocation = player.getLocation();
+            this.destinationLocation = destinationLocation;
+        }
+
+        @Override
+        public void run() {
+            try {
+                delay();
+            } catch(Exception e) {
+                Logger.getInstance().log("Something went wrong running a delayed teleport task.");
+                return;
+            }
+            if (playerHasNotMoved()) {
+                teleportPlayer();
+            }
+        }
+
+        private void delay() throws InterruptedException {
+            TimeUnit.SECONDS.sleep(seconds);
+        }
+
+        private boolean playerHasNotMoved() {
+            return initialLocation.getX() == player.getLocation().getX() && initialLocation.getY() == player.getLocation().getY() && initialLocation.getZ() == player.getLocation().getZ();
+        }
+
+        private void teleportPlayer() {
+            PlayerTeleporter.getInstance().teleportPlayer(player, destinationLocation);
+        }
     }
 }
