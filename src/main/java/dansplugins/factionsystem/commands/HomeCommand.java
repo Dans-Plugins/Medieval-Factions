@@ -51,7 +51,6 @@ public class HomeCommand extends SubCommand {
             player.sendMessage(translate("&c" + getText("HomeClaimedByAnotherFaction")));
             return;
         }
-        player.sendMessage(translate("&a" + getText("TeleportingAlert")));
         Scheduler.getInstance().scheduleTeleport(player, faction.getFactionHome());
     }
 
