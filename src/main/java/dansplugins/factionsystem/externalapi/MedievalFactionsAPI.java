@@ -22,8 +22,6 @@ import dansplugins.factionsystem.objects.domain.PowerRecord;
  */
 public class MedievalFactionsAPI {
     private final String APIVersion = "v1.0.0"; // every time the external API is altered, this should be incremented
-    private ArrayList<String> allyFactions = new ArrayList<>();
-    private ArrayList<String> enemyFactions = new ArrayList<>();
 
     public String getAPIVersion() {
         return APIVersion;
@@ -97,43 +95,5 @@ public class MedievalFactionsAPI {
         } else {
             powerRecord.setPower(0);
         }
-    }
-
-    /**
-     * Checks the faction's list of allies for the supplied faction name
-     * @return boolean
-     */
-    public boolean isAlly(String factionname) {
-        return containsIgnoreCase(allyFactions, factionname);
-    }
-
-    /**
-     * @return list of allied factions
-     */
-    public ArrayList<String> getAllies() {
-        return allyFactions;
-    }
-
-    /**
-     * @return boolean
-     */
-    public boolean isEnemy(String factionName) {
-        return containsIgnoreCase(enemyFactions, factionName);
-    }
-
-    /**
-     * @return list of enemies for the faction
-     */
-    public ArrayList<String> getEnemies() {
-        return enemyFactions;
-    }
-
-    private boolean containsIgnoreCase(ArrayList<String> list, String str) {
-        for (String string : list) {
-            if (string.equalsIgnoreCase(str)) {
-                return true;
-            }
-        }
-        return false;
     }
 }
