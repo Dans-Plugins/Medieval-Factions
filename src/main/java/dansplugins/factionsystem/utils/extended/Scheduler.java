@@ -101,7 +101,7 @@ public class Scheduler {
     public void scheduleTeleport(Player player, Location destinationLocation) {
         final int teleport_delay = LocalConfigService.getInstance().getInt("teleportDelay");
         DelayedTeleportTask delayedTeleportTask = new DelayedTeleportTask(teleport_delay, player, destinationLocation);
-        delayedTeleportTask.runTaskTimer(MedievalFactions.getInstance(), 0L, teleport_delay * 20);
+        delayedTeleportTask.runTaskLater(MedievalFactions.getInstance(), teleport_delay * 20);
     }
 
     private class DelayedTeleportTask extends BukkitRunnable {
