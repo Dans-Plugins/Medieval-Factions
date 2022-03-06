@@ -4,6 +4,7 @@
  */
 package dansplugins.factionsystem.utils.extended;
 
+import java.util.Random;
 import java.util.concurrent.TimeUnit;
 
 import org.bukkit.Bukkit;
@@ -101,7 +102,13 @@ public class Scheduler {
     public void scheduleTeleport(Player player, Location destinationLocation) {
         final int teleport_delay = LocalConfigService.getInstance().getInt("teleportDelay");
         DelayedTeleportTask delayedTeleportTask = new DelayedTeleportTask(teleport_delay, player, destinationLocation);
-        delayedTeleportTask.runTaskLater(MedievalFactions.getInstance(), teleport_delay * 20);
+        delayedTeleportTask.runTaskLater(MedievalFactions.getInstance(), teleport_delay * getRandomNumberBetween(15, 25));
+    }
+
+    private int getRandomNumberBetween(int num1, int num2) {
+        Random random = new Random();
+        int span = num2 - num1;
+        return random.nextInt(span) + num1;
     }
 
     private class DelayedTeleportTask extends BukkitRunnable {
