@@ -10,6 +10,7 @@ import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
+import org.bukkit.scheduler.BukkitRunnable;
 
 import dansplugins.factionsystem.MedievalFactions;
 import dansplugins.factionsystem.data.PersistentData;
@@ -100,10 +101,10 @@ public class Scheduler {
     public void scheduleTeleport(Player player, Location destinationLocation) {
         final int teleport_delay = LocalConfigService.getInstance().getInt("teleportDelay");
         DelayedTeleportTask delayedTeleportTask = new DelayedTeleportTask(teleport_delay, player, destinationLocation);
-        delayedTeleportTask.start();
+        delayedTeleportTask.runTaskTimer(MedievalFactions.getInstance(), 0L, teleport_delay * 20);
     }
 
-    private class DelayedTeleportTask extends Thread {
+    private class DelayedTeleportTask extends BukkitRunnable {
         private int seconds;
         private Player player;
         private Location initialLocation;
