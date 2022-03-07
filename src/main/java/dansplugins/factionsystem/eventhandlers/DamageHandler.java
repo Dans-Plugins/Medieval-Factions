@@ -25,7 +25,7 @@ import dansplugins.factionsystem.eventhandlers.helper.RelationChecker;
 import dansplugins.factionsystem.objects.domain.ClaimedChunk;
 import dansplugins.factionsystem.objects.domain.Duel;
 import dansplugins.factionsystem.objects.domain.Faction;
-import dansplugins.factionsystem.services.LocalLocaleService;
+import dansplugins.factionsystem.utils.Locale;
 import dansplugins.factionsystem.utils.Logger;
 
 /**
@@ -194,14 +194,14 @@ public class DamageHandler implements Listener {
         boolean friendlyFireAllowed = (boolean) faction.getFlags().getFlag("allowFriendlyFire");
         if (!friendlyFireAllowed) {
             event.setCancelled(true);
-            attacker.sendMessage(ChatColor.RED + LocalLocaleService.getInstance().getText("CannotAttackFactionMember"));
+            attacker.sendMessage(ChatColor.RED + Locale.get("CannotAttackFactionMember"));
         }
     }
 
     private void handleNonEnemyFire(EntityDamageByEntityEvent event, Player attacker, Player victim) {
         if (MedievalFactions.getInstance().getConfig().getBoolean("warsRequiredForPVP")) {
             event.setCancelled(true);
-            attacker.sendMessage(ChatColor.RED + LocalLocaleService.getInstance().getText("CannotAttackNonWarringPlayer"));
+            attacker.sendMessage(ChatColor.RED + Locale.get("CannotAttackNonWarringPlayer"));
         }
     }
 }

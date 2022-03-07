@@ -28,6 +28,7 @@ import dansplugins.factionsystem.objects.domain.Faction;
 import dansplugins.factionsystem.objects.domain.PowerRecord;
 import dansplugins.factionsystem.objects.helper.ChunkFlags;
 import dansplugins.factionsystem.services.LocalLocaleService;
+import dansplugins.factionsystem.utils.Locale;
 import dansplugins.factionsystem.utils.Logger;
 import dansplugins.fiefs.utils.UUIDChecker;
 
@@ -59,15 +60,15 @@ public class DynmapIntegrator {
         dynmap = pm.getPlugin("dynmap");
 
         if (!isDynmapPresent()) {
-            Logger.getInstance().log(LocalLocaleService.getInstance().getText("CannotFindDynmap"));
+            Logger.getInstance().log(Locale.get("CannotFindDynmap"));
         } else {
             try {
                 dynmapAPI = (DynmapCommonAPI) dynmap; /* Get API */
                 markerAPI = dynmapAPI.getMarkerAPI();
                 initializeMarkerSets();
-                Logger.getInstance().log(LocalLocaleService.getInstance().getText("DynmapIntegrationSuccessful"));
+                Logger.getInstance().log(Locale.get("DynmapIntegrationSuccessful"));
             } catch (Exception e) {
-                Logger.getInstance().log(LocalLocaleService.getInstance().getText("ErrorIntegratingWithDynmap") + e.getMessage());
+                Logger.getInstance().log(Locale.get("ErrorIntegratingWithDynmap") + e.getMessage());
             }
         }
     }
@@ -139,7 +140,7 @@ public class DynmapIntegrator {
         if (set == null) {
             set = markerAPI.createMarkerSet(getDynmapPluginSetId(markerLabel), getDynmapPluginLayer(), null, false);
             if (set == null) {
-                Logger.getInstance().log(LocalLocaleService.getInstance().getText("ErrorCreatingMarkerSet") + ": markerLabel = " + markerLabel);
+                Logger.getInstance().log(Locale.get("ErrorCreatingMarkerSet") + ": markerLabel = " + markerLabel);
                 return set;
             }
         }
@@ -418,7 +419,7 @@ public class DynmapIntegrator {
                 if (m == null) {
                     m = markerSet.createAreaMarker(polyid, name, false, curworld, x, z, false);
                     if (m == null) {
-                        System.out.println(String.format(LocalLocaleService.getInstance().getText("ErrorAddingAreaMarker"), polyid));
+                        System.out.println(String.format(Locale.get("ErrorAddingAreaMarker"), polyid));
                         return;
                     }
                 } else {
@@ -436,7 +437,7 @@ public class DynmapIntegrator {
                         m.setFillStyle(0.3, colrCode);
                     }
                 } catch (Exception e) {
-                    System.out.println(String.format(LocalLocaleService.getInstance().getText("ErrorSettingAreaMarkerColor"), fillColor));
+                    System.out.println(String.format(Locale.get("ErrorSettingAreaMarkerColor"), fillColor));
                 }
                 m.setDescription(popupDescription); /* Set popup */
 

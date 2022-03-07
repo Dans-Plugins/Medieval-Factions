@@ -43,7 +43,7 @@ public class TerritoryOwnerNotifier {
         if (holder != null) {
             return holder.getName();
         } else {
-            return LocalLocaleService.getInstance().getText("Wilderness");
+            return Locale.get("Wilderness");
         }
     }
 

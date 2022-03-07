@@ -9,6 +9,7 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.configuration.file.FileConfiguration;
 
 import dansplugins.factionsystem.MedievalFactions;
+import dansplugins.factionsystem.utils.Locale;
 
 /**
  * @author Daniel McCoy Stephenson
@@ -196,7 +197,7 @@ public class LocalConfigService {
         if (getConfig().isSet(option)) {
 
             if (option.equalsIgnoreCase("version")) {
-                sender.sendMessage(ChatColor.RED + LocalLocaleService.getInstance().getText("CannotSetVersion"));
+                sender.sendMessage(ChatColor.RED + Locale.get("CannotSetVersion"));
                 return;
             } else if (option.equalsIgnoreCase("initialMaxPowerLevel") || option.equalsIgnoreCase("initialPowerLevel")
                     || option.equalsIgnoreCase("powerIncreaseAmount")
@@ -212,7 +213,7 @@ public class LocalConfigService {
                     || option.equalsIgnoreCase("factionMaxGateArea")
                     || option.equalsIgnoreCase("maxClaimRadius")) {
                 getConfig().set(option, Integer.parseInt(value));
-                sender.sendMessage(ChatColor.GREEN + LocalLocaleService.getInstance().getText("IntegerSet"));
+                sender.sendMessage(ChatColor.GREEN + Locale.get("IntegerSet"));
             } else if (option.equalsIgnoreCase("mobsSpawnInFactionTerritory")
                     || option.equalsIgnoreCase("laddersPlaceableInEnemyFactionTerritory")
                     || option.equalsIgnoreCase("warsRequiredForPVP")
@@ -237,17 +238,17 @@ public class LocalConfigService {
                     || option.equalsIgnoreCase("bonusPowerEnabled")
                     || option.equalsIgnoreCase("teleportDelay")) {
                 getConfig().set(option, Boolean.parseBoolean(value));
-                sender.sendMessage(ChatColor.GREEN + LocalLocaleService.getInstance().getText("BooleanSet"));
+                sender.sendMessage(ChatColor.GREEN + Locale.get("BooleanSet"));
             } else if (option.equalsIgnoreCase("factionOwnerMultiplier")
                     || option.equalsIgnoreCase("factionOfficerMultiplier")
                     || option.equalsIgnoreCase("vassalContributionPercentageMultiplier")
                     || option.equalsIgnoreCase("powerLostOnDeath")
                     || option.equalsIgnoreCase("powerGainedOnKill")) {
                 getConfig().set(option, Double.parseDouble(value));
-                sender.sendMessage(ChatColor.GREEN + LocalLocaleService.getInstance().getText("DoubleSet"));
+                sender.sendMessage(ChatColor.GREEN + Locale.get("DoubleSet"));
             } else {
                 getConfig().set(option, value);
-                sender.sendMessage(ChatColor.GREEN + LocalLocaleService.getInstance().getText("StringSet"));
+                sender.sendMessage(ChatColor.GREEN + Locale.get("StringSet"));
 
                 if (option.equalsIgnoreCase("languageid")) {
                     LocalLocaleService.getInstance().reloadStrings();
@@ -258,7 +259,7 @@ public class LocalConfigService {
             MedievalFactions.getInstance().saveConfig();
             altered = true;
         } else {
-            sender.sendMessage(ChatColor.RED + String.format(LocalLocaleService.getInstance().getText("WasntFound"), option));
+            sender.sendMessage(ChatColor.RED + String.format(Locale.get("WasntFound"), option));
         }
 
     }
@@ -314,7 +315,7 @@ public class LocalConfigService {
     }
 
     public void sendPageOneOfConfigList(CommandSender sender) {
-        sender.sendMessage(ChatColor.AQUA + LocalLocaleService.getInstance().getText("ConfigListPageOne"));
+        sender.sendMessage(ChatColor.AQUA + Locale.get("ConfigListPageOne"));
         sender.sendMessage(ChatColor.AQUA + "version: " + getString("version")
                 + ", languageid: " + getString("languageid")
                 + ", debugMode: " + getBoolean("debugMode")
@@ -338,7 +339,7 @@ public class LocalConfigService {
     }
 
     public void sendPageTwoOfConfigList(CommandSender sender) {
-        sender.sendMessage(ChatColor.AQUA + LocalLocaleService.getInstance().getText("ConfigListPageTwo"));
+        sender.sendMessage(ChatColor.AQUA + Locale.get("ConfigListPageTwo"));
         sender.sendMessage(ChatColor.AQUA + "factionMaxGateArea: " + getInt("factionMaxGateArea")
                 + ", surroundedChunksProtected: " + getBoolean("surroundedChunksProtected")
                 + ", zeroPowerFactionsGetDisbanded: " + getBoolean("zeroPowerFactionsGetDisbanded")

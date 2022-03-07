@@ -13,7 +13,7 @@ import org.bukkit.entity.Player;
 import dansplugins.factionsystem.commands.abs.SubCommand;
 import dansplugins.factionsystem.data.PersistentData;
 import dansplugins.factionsystem.objects.domain.Faction;
-import dansplugins.factionsystem.services.LocalLocaleService;
+import dansplugins.factionsystem.utils.Locale;
 
 /**
  * @author Callum Johnson
@@ -55,7 +55,7 @@ public class ListCommand extends SubCommand {
         }
         sender.sendMessage(translate("&b&l" + getText("FactionsTitle")));
         List<PersistentData.SortableFaction> sortedFactionList = PersistentData.getInstance().getSortedListOfFactions();
-        sender.sendMessage(ChatColor.AQUA + LocalLocaleService.getInstance().getText("ListLegend"));
+        sender.sendMessage(ChatColor.AQUA + Locale.get("ListLegend"));
         sender.sendMessage(ChatColor.AQUA + "-----");
         for (PersistentData.SortableFaction sortableFaction : sortedFactionList) {
             final Faction temp = sortableFaction.getFaction();
