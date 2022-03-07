@@ -103,7 +103,7 @@ public class Scheduler {
         final int teleport_delay = LocalConfigService.getInstance().getInt("teleportDelay");
         player.sendMessage(ChatColor.AQUA + "Teleporting in " + teleport_delay + " seconds...");
         DelayedTeleportTask delayedTeleportTask = new DelayedTeleportTask(teleport_delay, player, destinationLocation);
-        delayedTeleportTask.runTaskLater(MedievalFactions.getInstance(), teleport_delay * getRandomNumberBetween(15, 25));
+        delayedTeleportTask.runTaskLater(MedievalFactions.getInstance(), (long) (teleport_delay * getRandomNumberBetween(15, 25)));
     }
 
     private int getRandomNumberBetween(int num1, int num2) {
