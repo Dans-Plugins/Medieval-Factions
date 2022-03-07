@@ -27,7 +27,6 @@ import dansplugins.factionsystem.objects.domain.ClaimedChunk;
 import dansplugins.factionsystem.objects.domain.Faction;
 import dansplugins.factionsystem.objects.domain.PowerRecord;
 import dansplugins.factionsystem.objects.helper.ChunkFlags;
-import dansplugins.factionsystem.services.LocalLocaleService;
 import dansplugins.factionsystem.utils.Locale;
 import dansplugins.factionsystem.utils.Logger;
 import dansplugins.fiefs.utils.UUIDChecker;

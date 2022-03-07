@@ -16,7 +16,6 @@ import dansplugins.factionsystem.integrators.CurrenciesIntegrator;
 import dansplugins.factionsystem.integrators.DynmapIntegrator;
 import dansplugins.factionsystem.integrators.FiefsIntegrator;
 import dansplugins.factionsystem.services.LocalConfigService;
-import dansplugins.factionsystem.services.LocalLocaleService;
 import dansplugins.factionsystem.utils.ColorConversion;
 import dansplugins.factionsystem.utils.Locale;
 import dansplugins.factionsystem.utils.Logger;

@@ -15,7 +15,6 @@ import org.bukkit.entity.Player;
 
 import dansplugins.factionsystem.integrators.FiefsIntegrator;
 import dansplugins.factionsystem.objects.domain.Faction;
-import dansplugins.factionsystem.services.LocalLocaleService;
 import dansplugins.factionsystem.utils.Locale;
 import dansplugins.fiefs.externalapi.FI_Fief;
 import preponderous.ponder.minecraft.bukkit.tools.UUIDChecker;

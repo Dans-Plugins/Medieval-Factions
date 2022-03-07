@@ -28,7 +28,6 @@ import dansplugins.factionsystem.objects.helper.FactionFlags;
 import dansplugins.factionsystem.objects.inherited.Nation;
 import dansplugins.factionsystem.objects.inherited.specification.Feudal;
 import dansplugins.factionsystem.services.LocalConfigService;
-import dansplugins.factionsystem.services.LocalLocaleService;
 import dansplugins.factionsystem.utils.Locale;
 import preponderous.ponder.misc.abs.Savable;
 
