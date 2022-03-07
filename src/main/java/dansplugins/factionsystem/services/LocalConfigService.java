@@ -211,7 +211,8 @@ public class LocalConfigService {
                     || option.equalsIgnoreCase("factionMaxNameLength")
                     || option.equalsIgnoreCase("factionMaxNumberGates")
                     || option.equalsIgnoreCase("factionMaxGateArea")
-                    || option.equalsIgnoreCase("maxClaimRadius")) {
+                    || option.equalsIgnoreCase("maxClaimRadius")
+                    || option.equalsIgnoreCase("teleportDelay")) {
                 getConfig().set(option, Integer.parseInt(value));
                 sender.sendMessage(ChatColor.GREEN + Locale.get("IntegerSet"));
             } else if (option.equalsIgnoreCase("mobsSpawnInFactionTerritory")
@@ -235,8 +236,7 @@ public class LocalConfigService {
                     || option.equalsIgnoreCase("limitLand")
                     || option.equalsIgnoreCase("factionsCanSetPrefixColors")
                     || option.equalsIgnoreCase("playersLosePowerOnDeath")
-                    || option.equalsIgnoreCase("bonusPowerEnabled")
-                    || option.equalsIgnoreCase("teleportDelay")) {
+                    || option.equalsIgnoreCase("bonusPowerEnabled")) {
                 getConfig().set(option, Boolean.parseBoolean(value));
                 sender.sendMessage(ChatColor.GREEN + Locale.get("BooleanSet"));
             } else if (option.equalsIgnoreCase("factionOwnerMultiplier")
