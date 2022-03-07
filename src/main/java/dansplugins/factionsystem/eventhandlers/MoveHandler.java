@@ -20,7 +20,7 @@ import dansplugins.factionsystem.data.PersistentData;
 import dansplugins.factionsystem.integrators.DynmapIntegrator;
 import dansplugins.factionsystem.objects.domain.ClaimedChunk;
 import dansplugins.factionsystem.objects.domain.Faction;
-import dansplugins.factionsystem.services.LocalLocaleService;
+import dansplugins.factionsystem.utils.Locale;
 import dansplugins.factionsystem.utils.TerritoryOwnerNotifier;
 
 /**
@@ -85,7 +85,7 @@ public class MoveHandler implements Listener {
                 if (notAtDemesneLimit(playersFaction)) {
                     scheduleClaiming(player, playersFaction);
                 } else {
-                    player.sendMessage(ChatColor.RED + LocalLocaleService.getInstance().getText("AlertReachedDemesne"));
+                    player.sendMessage(ChatColor.RED + Locale.get("AlertReachedDemesne"));
                 }
             }
         }

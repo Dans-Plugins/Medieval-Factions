@@ -16,7 +16,7 @@ import org.bukkit.entity.Player;
 
 import dansplugins.factionsystem.MedievalFactions;
 import dansplugins.factionsystem.commands.abs.SubCommand;
-import dansplugins.factionsystem.services.LocalLocaleService;
+import dansplugins.factionsystem.utils.Locale;
 import preponderous.ponder.minecraft.bukkit.tools.UUIDChecker;
 
 /**
@@ -71,7 +71,7 @@ public class InviteCommand extends SubCommand {
             return;
         }
         faction.invite(playerUUID);
-        player.sendMessage(ChatColor.GREEN + LocalLocaleService.getInstance().getText("InvitationSent"));
+        player.sendMessage(ChatColor.GREEN + Locale.get("InvitationSent"));
         if (target.isOnline() && target.getPlayer() != null) {
             target.getPlayer().sendMessage(translate(
                     "&a" + getText("AlertBeenInvited", faction.getName(), faction.getName())

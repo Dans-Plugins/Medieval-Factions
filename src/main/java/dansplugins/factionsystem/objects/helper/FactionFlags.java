@@ -16,8 +16,8 @@ import dansplugins.factionsystem.integrators.CurrenciesIntegrator;
 import dansplugins.factionsystem.integrators.DynmapIntegrator;
 import dansplugins.factionsystem.integrators.FiefsIntegrator;
 import dansplugins.factionsystem.services.LocalConfigService;
-import dansplugins.factionsystem.services.LocalLocaleService;
 import dansplugins.factionsystem.utils.ColorConversion;
+import dansplugins.factionsystem.utils.Locale;
 import dansplugins.factionsystem.utils.Logger;
 
 /**
@@ -115,7 +115,7 @@ public class FactionFlags {
 
     public void setFlag(String flag, String value, Player player) {
         if (flag.equals("neutral") && !MedievalFactions.getInstance().getConfig().getBoolean("allowNeutrality")) {
-            player.sendMessage(ChatColor.RED + "" + LocalLocaleService.getInstance().getText("NeutralityDisabled"));
+            player.sendMessage(ChatColor.RED + "" + Locale.get("NeutralityDisabled"));
             return;
         }
 
@@ -125,7 +125,7 @@ public class FactionFlags {
         }
 
         if (flag.equals("prefixColor") && (!MedievalFactions.getInstance().getConfig().getBoolean("playersChatWithPrefixes"))) {
-            player.sendMessage(ChatColor.RED + "" + LocalLocaleService.getInstance().getText("PrefixesDisabled"));
+            player.sendMessage(ChatColor.RED + "" + Locale.get("PrefixesDisabled"));
             return;
         }
 
@@ -142,13 +142,13 @@ public class FactionFlags {
         if (isFlag(flag)) {
             if (integerValues.containsKey(flag)) {
                 integerValues.replace(flag, Integer.parseInt(value));
-                player.sendMessage(ChatColor.GREEN + LocalLocaleService.getInstance().getText("IntegerSet"));
+                player.sendMessage(ChatColor.GREEN + Locale.get("IntegerSet"));
             } else if (booleanValues.containsKey(flag)) {
                 booleanValues.replace(flag, Boolean.parseBoolean(value));
-                player.sendMessage(ChatColor.GREEN + LocalLocaleService.getInstance().getText("BooleanSet"));
+                player.sendMessage(ChatColor.GREEN + Locale.get("BooleanSet"));
             } else if (doubleValues.containsKey(flag)) {
                 doubleValues.replace(flag, Double.parseDouble(value));
-                player.sendMessage(ChatColor.GREEN + LocalLocaleService.getInstance().getText("DoubleSet"));
+                player.sendMessage(ChatColor.GREEN + Locale.get("DoubleSet"));
             } else if (stringValues.containsKey(flag)) {
 
                 if (flag.equalsIgnoreCase("dynmapTerritoryColor")) {
@@ -184,14 +184,14 @@ public class FactionFlags {
                 }
 
                 stringValues.replace(flag, value);
-                player.sendMessage(ChatColor.GREEN + LocalLocaleService.getInstance().getText("StringSet"));
+                player.sendMessage(ChatColor.GREEN + Locale.get("StringSet"));
             }
 
             if (flag.equals("dynmapTerritoryColor")) {
                 DynmapIntegrator.getInstance().updateClaims(); // update dynmap to reflect color change
             }
         } else {
-            player.sendMessage(ChatColor.RED + String.format(LocalLocaleService.getInstance().getText("WasntFound"), flag));
+            player.sendMessage(ChatColor.RED + String.format(Locale.get("WasntFound"), flag));
         }
     }
 

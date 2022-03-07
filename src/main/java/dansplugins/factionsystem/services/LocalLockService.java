@@ -19,6 +19,7 @@ import dansplugins.factionsystem.data.EphemeralData;
 import dansplugins.factionsystem.data.PersistentData;
 import dansplugins.factionsystem.objects.domain.ClaimedChunk;
 import dansplugins.factionsystem.objects.domain.LockedBlock;
+import dansplugins.factionsystem.utils.Locale;
 import dansplugins.factionsystem.utils.extended.BlockChecker;
 import preponderous.ponder.minecraft.bukkit.tools.UUIDChecker;
 
@@ -46,14 +47,14 @@ public class LocalLockService {
 
             // if claimed by other faction
             if (!chunk.getHolder().equalsIgnoreCase(PersistentData.getInstance().getPlayersFaction(player.getUniqueId()).getName())) {
-                player.sendMessage(ChatColor.RED + LocalLocaleService.getInstance().getText("CanOnlyLockInFactionTerritory"));
+                player.sendMessage(ChatColor.RED + Locale.get("CanOnlyLockInFactionTerritory"));
                 event.setCancelled(true);
                 return;
             }
 
             // if already locked
             if (PersistentData.getInstance().isBlockLocked(clickedBlock)) {
-                player.sendMessage(ChatColor.RED + LocalLocaleService.getInstance().getText("BlockAlreadyLocked"));
+                player.sendMessage(ChatColor.RED + Locale.get("BlockAlreadyLocked"));
                 event.setCancelled(true);
                 return;
             }
@@ -96,7 +97,7 @@ public class LocalLockService {
                         PersistentData.getInstance().addLockedBlock(newLockedBlock2);
                     }
 
-                    player.sendMessage(ChatColor.GREEN + LocalLocaleService.getInstance().getText("Locked"));
+                    player.sendMessage(ChatColor.GREEN + Locale.get("Locked"));
                     EphemeralData.getInstance().getLockingPlayers().remove(player.getUniqueId());
                 }
 
@@ -107,10 +108,10 @@ public class LocalLockService {
 
                 event.setCancelled(true);
             } else {
-                player.sendMessage(ChatColor.RED + LocalLocaleService.getInstance().getText("CanOnlyLockSpecificBlocks"));
+                player.sendMessage(ChatColor.RED + Locale.get("CanOnlyLockSpecificBlocks"));
             }
         } else {
-            player.sendMessage(ChatColor.RED + LocalLocaleService.getInstance().getText("CanOnlyLockBlocksInClaimedTerritory"));
+            player.sendMessage(ChatColor.RED + Locale.get("CanOnlyLockBlocksInClaimedTerritory"));
             event.setCancelled(true);
         }
     }
@@ -119,7 +120,7 @@ public class LocalLockService {
         LockedBlock block = new LockedBlock(player.getUniqueId(), PersistentData.getInstance().getPlayersFaction(player.getUniqueId()).getName(),
                 clickedBlock.getX(), clickedBlock.getY(), clickedBlock.getZ(), clickedBlock.getWorld().getName());
         PersistentData.getInstance().addLockedBlock(block);
-        player.sendMessage(ChatColor.GREEN + LocalLocaleService.getInstance().getText("Locked"));
+        player.sendMessage(ChatColor.GREEN + Locale.get("Locked"));
         EphemeralData.getInstance().getLockingPlayers().remove(player.getUniqueId());
     }
 
@@ -141,12 +142,12 @@ public class LocalLockService {
                         PersistentData.getInstance().removeLockedBlock(leftChest);
                         PersistentData.getInstance().removeLockedBlock(rightChest);
 
-                        player.sendMessage(ChatColor.GREEN + LocalLocaleService.getInstance().getText("AlertUnlocked"));
+                        player.sendMessage(ChatColor.GREEN + Locale.get("AlertUnlocked"));
                         EphemeralData.getInstance().getUnlockingPlayers().remove(player.getUniqueId());
                     } else {
                         // unlock single chest
                         PersistentData.getInstance().removeLockedBlock(clickedBlock);
-                        player.sendMessage(ChatColor.GREEN + LocalLocaleService.getInstance().getText("AlertUnlocked"));
+                        player.sendMessage(ChatColor.GREEN + Locale.get("AlertUnlocked"));
                         EphemeralData.getInstance().getUnlockingPlayers().remove(player.getUniqueId());
                     }
                 }
@@ -164,7 +165,7 @@ public class LocalLockService {
                         PersistentData.getInstance().removeLockedBlock(clickedBlock.getWorld().getBlockAt(clickedBlock.getX(), clickedBlock.getY() - 1, clickedBlock.getZ()));
                     }
 
-                    player.sendMessage(ChatColor.GREEN + LocalLocaleService.getInstance().getText("AlertUnlocked"));
+                    player.sendMessage(ChatColor.GREEN + Locale.get("AlertUnlocked"));
                     EphemeralData.getInstance().getUnlockingPlayers().remove(player.getUniqueId());
                 }
 
@@ -172,7 +173,7 @@ public class LocalLockService {
                 if (BlockChecker.getInstance().isGate(clickedBlock) || BlockChecker.getInstance().isBarrel(clickedBlock) || BlockChecker.getInstance().isTrapdoor(clickedBlock) || BlockChecker.getInstance().isFurnace(clickedBlock)) {
                     PersistentData.getInstance().removeLockedBlock(clickedBlock);
 
-                    player.sendMessage(ChatColor.GREEN + LocalLocaleService.getInstance().getText("AlertUnlocked"));
+                    player.sendMessage(ChatColor.GREEN + Locale.get("AlertUnlocked"));
                     EphemeralData.getInstance().getUnlockingPlayers().remove(player.getUniqueId());
                 }
 
@@ -183,7 +184,7 @@ public class LocalLockService {
                 return;
             }
         } else {
-            player.sendMessage(ChatColor.RED + LocalLocaleService.getInstance().getText("BlockIsNotLocked"));
+            player.sendMessage(ChatColor.RED + Locale.get("BlockIsNotLocked"));
             event.setCancelled(true);
             return;
         }
@@ -194,7 +195,7 @@ public class LocalLockService {
 
         // if not owner
         if (PersistentData.getInstance().getLockedBlock(clickedBlock).getOwner() != player.getUniqueId()) {
-            player.sendMessage(ChatColor.RED + LocalLocaleService.getInstance().getText("NotTheOwnerOfThisBlock"));
+            player.sendMessage(ChatColor.RED + Locale.get("NotTheOwnerOfThisBlock"));
             return;
         }
 
@@ -210,12 +211,12 @@ public class LocalLockService {
                 PersistentData.getInstance().getLockedBlock(leftChest).addToAccessList(EphemeralData.getInstance().getPlayersGrantingAccess().get(player.getUniqueId()));
                 PersistentData.getInstance().getLockedBlock(rightChest).addToAccessList(EphemeralData.getInstance().getPlayersGrantingAccess().get(player.getUniqueId()));
 
-                player.sendMessage(ChatColor.GREEN + String.format(LocalLocaleService.getInstance().getText("AlertAccessGrantedTo"), uuidChecker.findPlayerNameBasedOnUUID(EphemeralData.getInstance().getPlayersGrantingAccess().get(player.getUniqueId()))));
+                player.sendMessage(ChatColor.GREEN + String.format(Locale.get("AlertAccessGrantedTo"), uuidChecker.findPlayerNameBasedOnUUID(EphemeralData.getInstance().getPlayersGrantingAccess().get(player.getUniqueId()))));
                 EphemeralData.getInstance().getPlayersGrantingAccess().remove(player.getUniqueId());
             } else { // if single chest
                 // grant access to single chest
                 PersistentData.getInstance().getLockedBlock(clickedBlock).addToAccessList(EphemeralData.getInstance().getPlayersGrantingAccess().get(player.getUniqueId()));
-                player.sendMessage(ChatColor.GREEN + String.format(LocalLocaleService.getInstance().getText("AlertAccessGrantedTo"), uuidChecker.findPlayerNameBasedOnUUID(EphemeralData.getInstance().getPlayersGrantingAccess().get(player.getUniqueId()))));
+                player.sendMessage(ChatColor.GREEN + String.format(Locale.get("AlertAccessGrantedTo"), uuidChecker.findPlayerNameBasedOnUUID(EphemeralData.getInstance().getPlayersGrantingAccess().get(player.getUniqueId()))));
                 EphemeralData.getInstance().getPlayersGrantingAccess().remove(player.getUniqueId());
             }
 
@@ -234,7 +235,7 @@ public class LocalLockService {
                 PersistentData.getInstance().getLockedBlock(clickedBlock).addToAccessList(EphemeralData.getInstance().getPlayersGrantingAccess().get(player.getUniqueId()));
             }
 
-            player.sendMessage(ChatColor.GREEN + String.format(LocalLocaleService.getInstance().getText("AlertAccessGrantedTo"), uuidChecker.findPlayerNameBasedOnUUID(EphemeralData.getInstance().getPlayersGrantingAccess().get(player.getUniqueId()))));
+            player.sendMessage(ChatColor.GREEN + String.format(Locale.get("AlertAccessGrantedTo"), uuidChecker.findPlayerNameBasedOnUUID(EphemeralData.getInstance().getPlayersGrantingAccess().get(player.getUniqueId()))));
             EphemeralData.getInstance().getPlayersGrantingAccess().remove(player.getUniqueId());
         }
 
@@ -242,7 +243,7 @@ public class LocalLockService {
         if (BlockChecker.getInstance().isGate(clickedBlock) || BlockChecker.getInstance().isBarrel(clickedBlock) || BlockChecker.getInstance().isTrapdoor(clickedBlock) || BlockChecker.getInstance().isFurnace(clickedBlock)) {
             PersistentData.getInstance().getLockedBlock(clickedBlock).addToAccessList(EphemeralData.getInstance().getPlayersGrantingAccess().get(player.getUniqueId()));
 
-            player.sendMessage(ChatColor.GREEN + String.format(LocalLocaleService.getInstance().getText("AlertAccessGrantedTo"), uuidChecker.findPlayerNameBasedOnUUID(EphemeralData.getInstance().getPlayersGrantingAccess().get(player.getUniqueId()))));
+            player.sendMessage(ChatColor.GREEN + String.format(Locale.get("AlertAccessGrantedTo"), uuidChecker.findPlayerNameBasedOnUUID(EphemeralData.getInstance().getPlayersGrantingAccess().get(player.getUniqueId()))));
             EphemeralData.getInstance().getPlayersGrantingAccess().remove(player.getUniqueId());
         }
 
@@ -251,7 +252,7 @@ public class LocalLockService {
 
     public void handleCheckingAccess(PlayerInteractEvent event, LockedBlock lockedBlock, Player player) {
         UUIDChecker uuidChecker = new UUIDChecker();
-        player.sendMessage(ChatColor.AQUA + LocalLocaleService.getInstance().getText("FollowingPlayersHaveAccess"));
+        player.sendMessage(ChatColor.AQUA + Locale.get("FollowingPlayersHaveAccess"));
         for (UUID playerUUID : lockedBlock.getAccessList()) {
             player.sendMessage(ChatColor.AQUA + " - " + uuidChecker.findPlayerNameBasedOnUUID(playerUUID));
         }
@@ -264,7 +265,7 @@ public class LocalLockService {
 
         // if not owner
         if (PersistentData.getInstance().getLockedBlock(clickedBlock).getOwner() != player.getUniqueId()) {
-            player.sendMessage(ChatColor.RED + LocalLocaleService.getInstance().getText("NotTheOwnerOfThisBlock"));
+            player.sendMessage(ChatColor.RED + Locale.get("NotTheOwnerOfThisBlock"));
             return;
         }
 
@@ -280,12 +281,12 @@ public class LocalLockService {
                 PersistentData.getInstance().getLockedBlock(leftChest).removeFromAccessList(EphemeralData.getInstance().getPlayersRevokingAccess().get(player.getUniqueId()));
                 PersistentData.getInstance().getLockedBlock(rightChest).removeFromAccessList(EphemeralData.getInstance().getPlayersRevokingAccess().get(player.getUniqueId()));
 
-                player.sendMessage(ChatColor.GREEN + String.format(LocalLocaleService.getInstance().getText("AlertAccessRevokedFor"), uuidChecker.findPlayerNameBasedOnUUID(EphemeralData.getInstance().getPlayersRevokingAccess().get(player.getUniqueId()))));
+                player.sendMessage(ChatColor.GREEN + String.format(Locale.get("AlertAccessRevokedFor"), uuidChecker.findPlayerNameBasedOnUUID(EphemeralData.getInstance().getPlayersRevokingAccess().get(player.getUniqueId()))));
                 EphemeralData.getInstance().getPlayersRevokingAccess().remove(player.getUniqueId());
             } else { // if single chest
                 // revoke access to single chest
                 PersistentData.getInstance().getLockedBlock(clickedBlock).removeFromAccessList(EphemeralData.getInstance().getPlayersRevokingAccess().get(player.getUniqueId()));
-                player.sendMessage(ChatColor.GREEN + String.format(LocalLocaleService.getInstance().getText("AlertAccessRevokedFor"), uuidChecker.findPlayerNameBasedOnUUID(EphemeralData.getInstance().getPlayersRevokingAccess().get(player.getUniqueId()))));
+                player.sendMessage(ChatColor.GREEN + String.format(Locale.get("AlertAccessRevokedFor"), uuidChecker.findPlayerNameBasedOnUUID(EphemeralData.getInstance().getPlayersRevokingAccess().get(player.getUniqueId()))));
                 EphemeralData.getInstance().getPlayersRevokingAccess().remove(player.getUniqueId());
             }
 
@@ -304,7 +305,7 @@ public class LocalLockService {
                 PersistentData.getInstance().getLockedBlock(clickedBlock).removeFromAccessList(EphemeralData.getInstance().getPlayersRevokingAccess().get(player.getUniqueId()));
             }
 
-            player.sendMessage(ChatColor.GREEN + String.format(LocalLocaleService.getInstance().getText("AlertAccessRevokedFor"), uuidChecker.findPlayerNameBasedOnUUID(EphemeralData.getInstance().getPlayersRevokingAccess().get(player.getUniqueId()))));
+            player.sendMessage(ChatColor.GREEN + String.format(Locale.get("AlertAccessRevokedFor"), uuidChecker.findPlayerNameBasedOnUUID(EphemeralData.getInstance().getPlayersRevokingAccess().get(player.getUniqueId()))));
             EphemeralData.getInstance().getPlayersRevokingAccess().remove(player.getUniqueId());
         }
 
@@ -312,7 +313,7 @@ public class LocalLockService {
         if (BlockChecker.getInstance().isGate(clickedBlock) || BlockChecker.getInstance().isBarrel(clickedBlock) || BlockChecker.getInstance().isTrapdoor(clickedBlock) || BlockChecker.getInstance().isFurnace(clickedBlock)) {
             PersistentData.getInstance().getLockedBlock(clickedBlock).removeFromAccessList(EphemeralData.getInstance().getPlayersRevokingAccess().get(player.getUniqueId()));
 
-            player.sendMessage(ChatColor.GREEN + String.format(LocalLocaleService.getInstance().getText("AlertAccessRevokedFor"), uuidChecker.findPlayerNameBasedOnUUID(EphemeralData.getInstance().getPlayersRevokingAccess().get(player.getUniqueId()))));
+            player.sendMessage(ChatColor.GREEN + String.format(Locale.get("AlertAccessRevokedFor"), uuidChecker.findPlayerNameBasedOnUUID(EphemeralData.getInstance().getPlayersRevokingAccess().get(player.getUniqueId()))));
             EphemeralData.getInstance().getPlayersRevokingAccess().remove(player.getUniqueId());
         }
 

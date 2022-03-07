@@ -4,7 +4,6 @@
  */
 package dansplugins.factionsystem.externalapi;
 
-import java.util.ArrayList;
 import java.util.UUID;
 
 import org.bukkit.Chunk;

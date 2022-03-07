@@ -27,7 +27,7 @@ import dansplugins.factionsystem.events.FactionRenameEvent;
 import dansplugins.factionsystem.events.FactionWarEndEvent;
 import dansplugins.factionsystem.objects.domain.Faction;
 import dansplugins.factionsystem.objects.domain.PowerRecord;
-import dansplugins.factionsystem.services.LocalLocaleService;
+import dansplugins.factionsystem.utils.Locale;
 import dansplugins.factionsystem.utils.Logger;
 import dansplugins.fiefs.utils.UUIDChecker;
 import preponderous.ponder.misc.ArgumentParser;
@@ -116,7 +116,7 @@ public class ForceCommand extends SubCommand {
         if (!(checkPermissions(sender, "mf.force.load", "mf.force.*", "mf.admin"))) {
             return;
         }
-        sender.sendMessage(translate("&a" + LocalLocaleService.getInstance().getText("AlertForcedLoad")));
+        sender.sendMessage(translate("&a" + Locale.get("AlertForcedLoad")));
         PersistentData.getInstance().getLocalStorageService().load();
         MedievalFactions.getInstance().reloadConfig();
     }

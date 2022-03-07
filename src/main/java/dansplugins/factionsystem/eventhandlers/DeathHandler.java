@@ -9,7 +9,7 @@ import org.bukkit.event.entity.PlayerDeathEvent;
 import dansplugins.factionsystem.data.PersistentData;
 import dansplugins.factionsystem.objects.domain.PowerRecord;
 import dansplugins.factionsystem.services.LocalConfigService;
-import dansplugins.factionsystem.services.LocalLocaleService;
+import dansplugins.factionsystem.utils.Locale;
 
 public class DeathHandler implements Listener {
 
@@ -32,7 +32,7 @@ public class DeathHandler implements Listener {
             return;
         }
         record.grantPowerDueToKill();
-        killer.sendMessage(ChatColor.GREEN + LocalLocaleService.getInstance().getText("PowerLevelHasIncreased"));
+        killer.sendMessage(ChatColor.GREEN + Locale.get("PowerLevelHasIncreased"));
     }
 
     private boolean wasPlayersCauseOfDeathAnotherPlayerKillingThem(Player player) {

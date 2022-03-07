@@ -59,6 +59,7 @@ import dansplugins.factionsystem.objects.domain.War;
 import dansplugins.factionsystem.services.LocalConfigService;
 import dansplugins.factionsystem.services.LocalLocaleService;
 import dansplugins.factionsystem.utils.InteractionAccessChecker;
+import dansplugins.factionsystem.utils.Locale;
 import dansplugins.factionsystem.utils.Logger;
 import dansplugins.factionsystem.utils.extended.BlockChecker;
 import dansplugins.factionsystem.utils.extended.Messenger;
@@ -436,7 +437,7 @@ public class PersistentData {
         for (Faction faction : factions) {
             for (Gate gate : faction.getGates()) {
                 if (gate.hasBlock(block)) {
-                    player.sendMessage(ChatColor.RED + String.format(LocalLocaleService.getInstance().getText("BlockIsPartOfGateMustRemoveGate"), gate.getName()));
+                    player.sendMessage(ChatColor.RED + String.format(Locale.get("BlockIsPartOfGateMustRemoveGate"), gate.getName()));
                     return true;
                 }
             }
@@ -466,7 +467,7 @@ public class PersistentData {
     private void initiatePowerIncrease(PowerRecord powerRecord) {
         if (powerRecord.getPower() < powerRecord.maxPower() && Objects.requireNonNull(getServer().getPlayer(powerRecord.getPlayerUUID())).isOnline()) {
             powerRecord.increasePower();
-            Objects.requireNonNull(getServer().getPlayer(powerRecord.getPlayerUUID())).sendMessage(ChatColor.GREEN + String.format(LocalLocaleService.getInstance().getText("AlertPowerLevelIncreasedBy"), MedievalFactions.getInstance().getConfig().getInt("powerIncreaseAmount")));
+            Objects.requireNonNull(getServer().getPlayer(powerRecord.getPlayerUUID())).sendMessage(ChatColor.GREEN + String.format(Locale.get("AlertPowerLevelIncreasedBy"), MedievalFactions.getInstance().getConfig().getInt("powerIncreaseAmount")));
         }
     }
 
@@ -479,9 +480,9 @@ public class PersistentData {
         }
 
         for (String factionName : factionsToDisband) {
-            Messenger.getInstance().sendAllPlayersInFactionMessage(PersistentData.getInstance().getFaction(factionName), ChatColor.RED + LocalLocaleService.getInstance().getText("AlertDisbandmentDueToZeroPower"));
+            Messenger.getInstance().sendAllPlayersInFactionMessage(PersistentData.getInstance().getFaction(factionName), ChatColor.RED + Locale.get("AlertDisbandmentDueToZeroPower"));
             removeFaction(factionName);
-            System.out.printf((LocalLocaleService.getInstance().getText("DisbandmentDueToZeroPower")) + "%n", factionName);
+            System.out.printf((Locale.get("DisbandmentDueToZeroPower")) + "%n", factionName);
         }
     }
 
@@ -630,7 +631,7 @@ public class PersistentData {
 
             // check if depth is valid
             if (depth < 0 || depth > maxClaimRadius) {
-                claimant.sendMessage(ChatColor.RED + String.format(LocalLocaleService.getInstance().getText("RadiusRequirement"), maxClaimRadius));
+                claimant.sendMessage(ChatColor.RED + String.format(Locale.get("RadiusRequirement"), maxClaimRadius));
                 return;
             }
 
@@ -702,10 +703,10 @@ public class PersistentData {
                 ClaimedChunk chunk = isChunkClaimed(playerCoords[0], playerCoords[1], Objects.requireNonNull(player.getLocation().getWorld()).getName());
                 if (chunk != null) {
                     removeChunk(chunk, player, PersistentData.getInstance().getFaction(chunk.getHolder()));
-                    player.sendMessage(ChatColor.GREEN + LocalLocaleService.getInstance().getText("LandClaimedUsingAdminBypass"));
+                    player.sendMessage(ChatColor.GREEN + Locale.get("LandClaimedUsingAdminBypass"));
                     return;
                 }
-                player.sendMessage(ChatColor.RED + LocalLocaleService.getInstance().getText("LandNotCurrentlyClaimed"));
+                player.sendMessage(ChatColor.RED + Locale.get("LandNotCurrentlyClaimed"));
                 return;
             }
 
@@ -718,13 +719,13 @@ public class PersistentData {
 
             // ensure that the chunk is claimed by the player's faction.
             if (!chunk.getHolder().equalsIgnoreCase(playersFaction.getName())) {
-                player.sendMessage(ChatColor.RED + String.format(LocalLocaleService.getInstance().getText("LandClaimedBy"), chunk.getHolder()));
+                player.sendMessage(ChatColor.RED + String.format(Locale.get("LandClaimedBy"), chunk.getHolder()));
                 return;
             }
 
             // initiate removal
             removeChunk(chunk, player, playersFaction);
-            player.sendMessage(ChatColor.GREEN + LocalLocaleService.getInstance().getText("LandUnclaimed"));
+            player.sendMessage(ChatColor.GREEN + Locale.get("LandUnclaimed"));
         }
 
         /**
@@ -801,7 +802,7 @@ public class PersistentData {
                     try {
                         itr.remove();
                     } catch (Exception e) {
-                        System.out.println(LocalLocaleService.getInstance().getText("ErrorClaimedChunkRemoval"));
+                        System.out.println(Locale.get("ErrorClaimedChunkRemoval"));
                     }
                 }
             }
@@ -826,7 +827,7 @@ public class PersistentData {
             Faction faction = PersistentData.getInstance().getPlayersFaction(player.getUniqueId());
             if (faction != null) {
                 if (isFactionExceedingTheirDemesneLimit(faction)) {
-                    player.sendMessage(ChatColor.RED + LocalLocaleService.getInstance().getText("AlertMoreClaimedChunksThanPower"));
+                    player.sendMessage(ChatColor.RED + Locale.get("AlertMoreClaimedChunksThanPower"));
                 }
             }
         }
@@ -944,7 +945,7 @@ public class PersistentData {
             if (LocalConfigService.getInstance().getBoolean("limitLand")) {
                 // if at demesne limit
                 if (!(getChunksClaimedByFaction(claimantsFaction.getName()) < claimantsFaction.getCumulativePowerLevel())) {
-                    claimant.sendMessage(ChatColor.RED + LocalLocaleService.getInstance().getText("AlertReachedDemesne"));
+                    claimant.sendMessage(ChatColor.RED + Locale.get("AlertReachedDemesne"));
                     return;
                 }
             }
@@ -957,7 +958,7 @@ public class PersistentData {
 
                 // if holder is player's faction
                 if (targetFaction.getName().equalsIgnoreCase(claimantsFaction.getName()) && !claimantsFaction.getAutoClaimStatus()) {
-                    claimant.sendMessage(ChatColor.RED + LocalLocaleService.getInstance().getText("LandAlreadyClaimedByYourFaction"));
+                    claimant.sendMessage(ChatColor.RED + Locale.get("LandAlreadyClaimedByYourFaction"));
                     return;
                 }
 
@@ -970,7 +971,7 @@ public class PersistentData {
                 // surrounded chunk protection check
                 if (MedievalFactions.getInstance().getConfig().getBoolean("surroundedChunksProtected")) {
                     if (isClaimedChunkSurroundedByChunksClaimedBySameFaction(chunk)) {
-                        claimant.sendMessage(ChatColor.RED + LocalLocaleService.getInstance().getText("SurroundedChunkProtected"));
+                        claimant.sendMessage(ChatColor.RED + Locale.get("SurroundedChunkProtected"));
                         return;
                     }
                 }
@@ -980,7 +981,7 @@ public class PersistentData {
 
                 // if target faction does not have more land than their demesne limit
                 if (!(targetFactionsCumulativePowerLevel < chunksClaimedByTargetFaction)) {
-                    claimant.sendMessage(ChatColor.RED + LocalLocaleService.getInstance().getText("TargetFactionNotOverClaiming"));
+                    claimant.sendMessage(ChatColor.RED + Locale.get("TargetFactionNotOverClaiming"));
                     return;
                 }
 
@@ -997,9 +998,9 @@ public class PersistentData {
 
                     Chunk toClaim = world.getChunkAt((int) chunkCoords[0], (int) chunkCoords[1]);
                     addClaimedChunk(toClaim, claimantsFaction, claimant.getWorld());
-                    claimant.sendMessage(ChatColor.GREEN + String.format(LocalLocaleService.getInstance().getText("AlertLandConqueredFromAnotherFaction"), targetFaction.getName(), getChunksClaimedByFaction(claimantsFaction.getName()), claimantsFaction.getCumulativePowerLevel()));
+                    claimant.sendMessage(ChatColor.GREEN + String.format(Locale.get("AlertLandConqueredFromAnotherFaction"), targetFaction.getName(), getChunksClaimedByFaction(claimantsFaction.getName()), claimantsFaction.getCumulativePowerLevel()));
 
-                    Messenger.getInstance().sendAllPlayersInFactionMessage(targetFaction, ChatColor.RED + String.format(LocalLocaleService.getInstance().getText("AlertLandConqueredFromYourFaction"), claimantsFaction.getName()));
+                    Messenger.getInstance().sendAllPlayersInFactionMessage(targetFaction, ChatColor.RED + String.format(Locale.get("AlertLandConqueredFromYourFaction"), claimantsFaction.getName()));
                 }
             } else {
                 Chunk toClaim = world.getChunkAt((int) chunkCoords[0], (int) chunkCoords[1]);
@@ -1008,7 +1009,7 @@ public class PersistentData {
                 if (!claimEvent.isCancelled()) {
                     // chunk not already claimed
                     addClaimedChunk(toClaim, claimantsFaction, claimant.getWorld());
-                    claimant.sendMessage(ChatColor.GREEN + String.format(LocalLocaleService.getInstance().getText("AlertLandClaimed"), getChunksClaimedByFaction(claimantsFaction.getName()), claimantsFaction.getCumulativePowerLevel()));
+                    claimant.sendMessage(ChatColor.GREEN + String.format(Locale.get("AlertLandClaimed"), getChunksClaimedByFaction(claimantsFaction.getName()), claimantsFaction.getCumulativePowerLevel()));
                 }
             }
         }
@@ -1102,7 +1103,7 @@ public class PersistentData {
                         && chunkToRemove.getWorldName().equalsIgnoreCase(Objects.requireNonNull(unclaimingPlayer.getLocation().getWorld()).getName())) {
                     // remove faction home
                     holdingFaction.setFactionHome(null);
-                    Messenger.getInstance().sendAllPlayersInFactionMessage(holdingFaction, ChatColor.RED + LocalLocaleService.getInstance().getText("AlertFactionHomeRemoved"));
+                    Messenger.getInstance().sendAllPlayersInFactionMessage(holdingFaction, ChatColor.RED + Locale.get("AlertFactionHomeRemoved"));
 
                 }
             }
@@ -1232,6 +1233,8 @@ public class PersistentData {
                     case STONE_BUTTON:
                     case LECTERN:
                         return false;
+					default:
+						break;
                 }
             }
             return true;
@@ -1278,6 +1281,8 @@ public class PersistentData {
                 case CHORUS_FRUIT:
                 case DRIED_KELP:
                 case BAKED_POTATO:
+				default:
+					break;
             }
             return true;
         }

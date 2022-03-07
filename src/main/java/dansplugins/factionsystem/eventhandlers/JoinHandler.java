@@ -17,7 +17,7 @@ import dansplugins.factionsystem.events.FactionJoinEvent;
 import dansplugins.factionsystem.objects.domain.ActivityRecord;
 import dansplugins.factionsystem.objects.domain.Faction;
 import dansplugins.factionsystem.objects.domain.PowerRecord;
-import dansplugins.factionsystem.services.LocalLocaleService;
+import dansplugins.factionsystem.utils.Locale;
 import dansplugins.factionsystem.utils.Logger;
 import dansplugins.factionsystem.utils.TerritoryOwnerNotifier;
 import dansplugins.factionsystem.utils.extended.Messenger;
@@ -47,11 +47,11 @@ public class JoinHandler implements Listener {
         double newPower = getNewPower(player);
 
         if (activityRecord.getLastLogout() != null && activityRecord.getMinutesSinceLastLogout() > 1) {
-            player.sendMessage(ChatColor.GREEN + String.format(LocalLocaleService.getInstance().getText("WelcomeBackLastLogout"), event.getPlayer().getName(), activityRecord.getTimeSinceLastLogout()));
+            player.sendMessage(ChatColor.GREEN + String.format(Locale.get("WelcomeBackLastLogout"), event.getPlayer().getName(), activityRecord.getTimeSinceLastLogout()));
         }
 
         if (activityRecord.getPowerLost() > 0) {
-            player.sendMessage(ChatColor.RED + String.format(LocalLocaleService.getInstance().getText("PowerHasDecayed"), activityRecord.getPowerLost(), newPower));
+            player.sendMessage(ChatColor.RED + String.format(Locale.get("PowerHasDecayed"), activityRecord.getPowerLost(), newPower));
         }
 
         activityRecord.setPowerLost(0);
@@ -101,9 +101,9 @@ public class JoinHandler implements Listener {
                 Logger.getInstance().log("Join event was cancelled.");
                 return;
             }
-            Messenger.getInstance().sendAllPlayersInFactionMessage(faction, String.format(ChatColor.GREEN + "" + LocalLocaleService.getInstance().getText("HasJoined"), player.getName(), faction.getName()));
+            Messenger.getInstance().sendAllPlayersInFactionMessage(faction, String.format(ChatColor.GREEN + "" + Locale.get("HasJoined"), player.getName(), faction.getName()));
             faction.addMember(player.getUniqueId());
-            player.sendMessage(ChatColor.GREEN + "" + LocalLocaleService.getInstance().getText("AssignedToRandomFaction"));
+            player.sendMessage(ChatColor.GREEN + "" + Locale.get("AssignedToRandomFaction"));
 
             Logger.getInstance().log(player.getName() + " has been randomly assigned to " + faction.getName() + "!");
         } else {
@@ -135,7 +135,7 @@ public class JoinHandler implements Listener {
         }
 
         if (playersFaction.isLiege() && playersFaction.isWeakened()) {
-            player.sendMessage(ChatColor.RED + LocalLocaleService.getInstance().getText("AlertFactionIsWeakened"));
+            player.sendMessage(ChatColor.RED + Locale.get("AlertFactionIsWeakened"));
         }
     }
 }

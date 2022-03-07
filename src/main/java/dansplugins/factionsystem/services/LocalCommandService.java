@@ -67,6 +67,7 @@ import dansplugins.factionsystem.commands.VassalizeCommand;
 import dansplugins.factionsystem.commands.VersionCommand;
 import dansplugins.factionsystem.commands.WhoCommand;
 import dansplugins.factionsystem.commands.abs.SubCommand;
+import dansplugins.factionsystem.utils.Locale;
 
 /**
  * @author Daniel McCoy Stephenson
@@ -106,11 +107,11 @@ public class LocalCommandService {
             // no arguments check
             if (args.length == 0) {
                 // send plugin information
-                sender.sendMessage(ChatColor.AQUA + String.format(LocalLocaleService.getInstance().getText("MedievalFactionsTitle"), MedievalFactions.getInstance().getVersion()));
-                sender.sendMessage(ChatColor.AQUA + String.format(LocalLocaleService.getInstance().getText("DeveloperList"), "DanTheTechMan, Pasarus, Caibinus, Callum, Richardhyy, Mitras2, Kaonami"));
-                sender.sendMessage(ChatColor.AQUA + LocalLocaleService.getInstance().getText("WikiLink"));
-                sender.sendMessage(ChatColor.AQUA + String.format(LocalLocaleService.getInstance().getText("CurrentLanguageID"), MedievalFactions.getInstance().getConfig().getString("languageid")));
-                sender.sendMessage(ChatColor.AQUA + String.format(LocalLocaleService.getInstance().getText("SupportedLanguageIDList"), LocalLocaleService.getInstance().getSupportedLanguageIDsSeparatedByCommas()));
+                sender.sendMessage(ChatColor.AQUA + String.format(Locale.get("MedievalFactionsTitle"), MedievalFactions.getInstance().getVersion()));
+                sender.sendMessage(ChatColor.AQUA + String.format(Locale.get("DeveloperList"), "DanTheTechMan, Pasarus, Caibinus, Callum, Richardhyy, Mitras2, Kaonami"));
+                sender.sendMessage(ChatColor.AQUA + Locale.get("WikiLink"));
+                sender.sendMessage(ChatColor.AQUA + String.format(Locale.get("CurrentLanguageID"), MedievalFactions.getInstance().getConfig().getString("languageid")));
+                sender.sendMessage(ChatColor.AQUA + String.format(Locale.get("SupportedLanguageIDList"), LocalLocaleService.getInstance().getSupportedLanguageIDsSeparatedByCommas()));
                 return true;
             }
 
@@ -124,7 +125,7 @@ public class LocalCommandService {
                 }
             }
 
-            sender.sendMessage(ChatColor.RED + LocalLocaleService.getInstance().getText("CommandNotRecognized"));
+            sender.sendMessage(ChatColor.RED + Locale.get("CommandNotRecognized"));
         }
         return false;
     }
