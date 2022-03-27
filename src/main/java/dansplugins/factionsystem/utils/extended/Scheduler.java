@@ -39,39 +39,39 @@ public class Scheduler {
     }
 
     public void scheduleAutosave() {
-        Logger.getInstance().log(Locale.get("SchedulingHourlyAutoSave"));
+        Logger.getInstance().debug(Locale.get("SchedulingHourlyAutoSave"));
         int delay = 60 * 60; // 1 hour
         int secondsUntilRepeat = 60 * 60; // 1 hour
         Bukkit.getScheduler().scheduleSyncRepeatingTask(MedievalFactions.getInstance(), new Runnable() {
             @Override
             public void run() {
-                Logger.getInstance().log(Locale.get("HourlySaveAlert"));
+                Logger.getInstance().debug(Locale.get("HourlySaveAlert"));
                 PersistentData.getInstance().getLocalStorageService().save();
             }
         }, delay * 20, secondsUntilRepeat * 20);
     }
 
     public void schedulePowerIncrease() {
-        Logger.getInstance().log(Locale.get("SchedulingPowerIncrease"));
+        Logger.getInstance().debug(Locale.get("SchedulingPowerIncrease"));
         int delay = MedievalFactions.getInstance().getConfig().getInt("minutesBeforeInitialPowerIncrease") * 60; // 30 minutes
         int secondsUntilRepeat = MedievalFactions.getInstance().getConfig().getInt("minutesBetweenPowerIncreases") * 60; // 1 hour
         Bukkit.getScheduler().scheduleSyncRepeatingTask(MedievalFactions.getInstance(), new Runnable() {
             @Override
             public void run() {
-                Logger.getInstance().log(String.format((Locale.get("AlertIncreasingThePowerOfEveryPlayer")) + "%n", MedievalFactions.getInstance().getConfig().getInt("powerIncreaseAmount"), MedievalFactions.getInstance().getConfig().getInt("minutesBetweenPowerIncreases")));
+                Logger.getInstance().debug(String.format((Locale.get("AlertIncreasingThePowerOfEveryPlayer")) + "%n", MedievalFactions.getInstance().getConfig().getInt("powerIncreaseAmount"), MedievalFactions.getInstance().getConfig().getInt("minutesBetweenPowerIncreases")));
                 PersistentData.getInstance().initiatePowerIncreaseForAllPlayers();
             }
         }, delay * 20L, secondsUntilRepeat * 20L);
     }
 
     public void schedulePowerDecrease() {
-        Logger.getInstance().log(Locale.get("SchedulingPowerDecrease"));
+        Logger.getInstance().debug(Locale.get("SchedulingPowerDecrease"));
         int delay = MedievalFactions.getInstance().getConfig().getInt("minutesBetweenPowerDecreases") * 60;
         int secondsUntilRepeat = MedievalFactions.getInstance().getConfig().getInt("minutesBetweenPowerDecreases") * 60;
         Bukkit.getScheduler().scheduleSyncRepeatingTask(MedievalFactions.getInstance(), new Runnable() {
             @Override
             public void run() {
-                Logger.getInstance().log(String.format((Locale.get("AlertDecreasingThePowerOfInactivePlayers")) + "%n", MedievalFactions.getInstance().getConfig().getInt("powerDecreaseAmount"), MedievalFactions.getInstance().getConfig().getInt("minutesBeforePowerDecrease"), MedievalFactions.getInstance().getConfig().getInt("minutesBetweenPowerDecreases")));
+                Logger.getInstance().debug(String.format((Locale.get("AlertDecreasingThePowerOfInactivePlayers")) + "%n", MedievalFactions.getInstance().getConfig().getInt("powerDecreaseAmount"), MedievalFactions.getInstance().getConfig().getInt("minutesBeforePowerDecrease"), MedievalFactions.getInstance().getConfig().getInt("minutesBetweenPowerDecreases")));
 
                 PersistentData.getInstance().decreasePowerForInactivePlayers();
 
@@ -131,7 +131,7 @@ public class Scheduler {
                 delay();
             } catch(Exception e) {
                 player.sendMessage(ChatColor.RED + "Something went wrong.");
-                Logger.getInstance().log("Something went wrong running a delayed teleport task.");
+                Logger.getInstance().debug("Something went wrong running a delayed teleport task.");
                 return;
             }
 

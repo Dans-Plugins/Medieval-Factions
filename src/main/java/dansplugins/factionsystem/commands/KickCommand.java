@@ -67,7 +67,7 @@ public class KickCommand extends SubCommand {
         FactionKickEvent kickEvent = new FactionKickEvent(faction, target, player);
         Bukkit.getPluginManager().callEvent(kickEvent);
         if (kickEvent.isCancelled()) {
-            Logger.getInstance().log("Kick event was cancelled.");
+            Logger.getInstance().debug("Kick event was cancelled.");
             return;
         }
         if (faction.isOfficer(targetUUID)) {

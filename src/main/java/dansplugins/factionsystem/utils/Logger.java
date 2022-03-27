@@ -25,9 +25,29 @@ public class Logger {
         return instance;
     }
 
-    public void log(String message) {
+    /**
+     * Log a debug message if the debug flag is enabled.
+     * @param message The message to log.
+     */
+    public void debug(String message) {
         if (MedievalFactions.getInstance().isDebugEnabled()) {
-            MedievalFactions.getInstance().getLogger().log(Level.INFO, "[Medieval Factions] " + message);
+            MedievalFactions.getInstance().getLogger().log(Level.INFO, "[Medieval Factions DEBUG] " + message);
         }
+    }
+
+    /**
+     * Log a message to the console.
+     * @param message The message to log.
+     */
+    public void print(String message) {
+        MedievalFactions.getInstance().getLogger().log(Level.INFO, "[Medieval Factions] " + message);
+    }
+
+    /**
+     * Log an error to the console.
+     * @param message The message to log.
+     */
+    public void error(String message) {
+        MedievalFactions.getInstance().getLogger().log(Level.SEVERE, "[Medieval Factions ERROR] " + message);
     }
 }
