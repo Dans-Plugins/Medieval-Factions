@@ -40,7 +40,7 @@ public class LeaveCommand extends SubCommand {
         FactionLeaveEvent leaveEvent = new FactionLeaveEvent(faction, player);
         Bukkit.getPluginManager().callEvent(leaveEvent);
         if (leaveEvent.isCancelled()) {
-            Logger.getInstance().log("Leave event was cancelled.");
+            Logger.getInstance().debug("Leave event was cancelled.");
             return;
         }
 

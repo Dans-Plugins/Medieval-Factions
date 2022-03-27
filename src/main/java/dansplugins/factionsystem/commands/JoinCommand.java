@@ -55,7 +55,7 @@ public class JoinCommand extends SubCommand {
         FactionJoinEvent joinEvent = new FactionJoinEvent(faction, player);
         Bukkit.getPluginManager().callEvent(joinEvent);
         if (joinEvent.isCancelled()) {
-            Logger.getInstance().log("Join event was cancelled.");
+            Logger.getInstance().debug("Join event was cancelled.");
             return;
         }
         messageFaction(target, translate("&a" + getText("HasJoined", player.getName(), target.getName())));

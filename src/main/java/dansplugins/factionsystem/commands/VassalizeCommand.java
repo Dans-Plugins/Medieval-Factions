@@ -60,7 +60,7 @@ public class VassalizeCommand extends SubCommand {
         // make sure this vassalization won't result in a vassalization loop
         final int loopCheck = willVassalizationResultInLoop(faction, target);
         if (loopCheck == 1 || loopCheck == 2) {
-            Logger.getInstance().log("Vassalization was cancelled due to potential loop");
+            Logger.getInstance().debug("Vassalization was cancelled due to potential loop");
             return;
         }
         // add faction to attemptedVassalizations

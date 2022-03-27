@@ -219,7 +219,7 @@ public class ForceCommand extends SubCommand {
         FactionJoinEvent joinEvent = new FactionJoinEvent(faction, player);
         Bukkit.getPluginManager().callEvent(joinEvent);
         if (joinEvent.isCancelled()) {
-            Logger.getInstance().log("Join event was cancelled.");
+            Logger.getInstance().debug("Join event was cancelled.");
             return;
         }
         messageFaction(faction, translate("&a" + getText("HasJoined", player.getName(), faction.getName())));
@@ -262,7 +262,7 @@ public class ForceCommand extends SubCommand {
         FactionKickEvent kickEvent = new FactionKickEvent(faction, target, null); // no kicker so null is used
         Bukkit.getPluginManager().callEvent(kickEvent);
         if (kickEvent.isCancelled()) {
-            Logger.getInstance().log("Kick event was cancelled.");
+            Logger.getInstance().debug("Kick event was cancelled.");
             return;
         }
         if (faction.isOfficer(targetUUID)) {
@@ -434,7 +434,7 @@ public class ForceCommand extends SubCommand {
         final FactionRenameEvent renameEvent = new FactionRenameEvent(faction, oldName, newName);
         Bukkit.getPluginManager().callEvent(renameEvent);
         if (renameEvent.isCancelled()) {
-            Logger.getInstance().log("Rename event was cancelled.");
+            Logger.getInstance().debug("Rename event was cancelled.");
             return;
         }
 

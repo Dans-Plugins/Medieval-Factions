@@ -98,16 +98,16 @@ public class JoinHandler implements Listener {
             FactionJoinEvent joinEvent = new FactionJoinEvent(faction, player);
             Bukkit.getPluginManager().callEvent(joinEvent);
             if (joinEvent.isCancelled()) {
-                Logger.getInstance().log("Join event was cancelled.");
+                Logger.getInstance().debug("Join event was cancelled.");
                 return;
             }
             Messenger.getInstance().sendAllPlayersInFactionMessage(faction, String.format(ChatColor.GREEN + "" + Locale.get("HasJoined"), player.getName(), faction.getName()));
             faction.addMember(player.getUniqueId());
             player.sendMessage(ChatColor.GREEN + "" + Locale.get("AssignedToRandomFaction"));
 
-            Logger.getInstance().log(player.getName() + " has been randomly assigned to " + faction.getName() + "!");
+            Logger.getInstance().debug(player.getName() + " has been randomly assigned to " + faction.getName() + "!");
         } else {
-            Logger.getInstance().log("Attempted to assign " + player.getName() + " to a random faction, but no factions are existent.");
+            Logger.getInstance().debug("Attempted to assign " + player.getName() + " to a random faction, but no factions are existent.");
         }
     }
 

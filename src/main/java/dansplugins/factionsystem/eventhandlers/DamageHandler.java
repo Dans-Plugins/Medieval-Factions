@@ -44,7 +44,7 @@ public class DamageHandler implements Listener {
         Player victim = getVictim(event);
 
         if (attacker == null || victim == null) {
-            Logger.getInstance().log("Attacker and/or victim was null in the DamageHandler class.");
+            Logger.getInstance().debug("Attacker and/or victim was null in the DamageHandler class.");
             return;
         }
 
@@ -60,32 +60,42 @@ public class DamageHandler implements Listener {
      * 4) Players are not in the same faction but are not enemies.
      */
     private void handlePlayerVersusPlayer(Player attacker, Player victim, EntityDamageByEntityEvent event) {
+        Logger.getInstance().debug("Handling damage between players.");
 
         // case 1
         if (arePlayersDueling(attacker, victim)) {
+            Logger.getInstance().debug("Players are dueling. Ending if necessary.");
             endDuelIfNecessary(attacker, victim, event);
             return;
         }
 
         // case 2
         if (RelationChecker.getInstance().playerNotInFaction(attacker) || RelationChecker.getInstance().playerNotInFaction(victim)) {
+            Logger.getInstance().debug("Attacker or victim is not in a faction. Returning.");
             // allow since factionless don't have PVP restrictions
             return;
         }
 
         // case 3
         if (RelationChecker.getInstance().arePlayersInSameFaction(attacker, victim)){
+            Logger.getInstance().debug("Players are in the same faction. Handling friendly fire.");
             handleFriendlyFire(event, attacker, victim);
             return;
         }
 
         // case 4
         if (RelationChecker.getInstance().arePlayersFactionsNotEnemies(attacker, victim)) {
+            Logger.getInstance().debug("Players factions are not enemies. Handling non-enemy fire.");
             handleNonEnemyFire(event, attacker, victim);
         }
     }
 
     private void handleEntityDamage(Player attacker, EntityDamageByEntityEvent event) {
+        Logger.getInstance().debug("Handling entity damage.");
+        if (event.getEntity() instanceof Player) {
+            Logger.getInstance().debug("Entity is an instance of a player. Returning.");
+            return;
+        }
         Faction playersFaction = PersistentData.getInstance().getPlayersFaction(attacker.getUniqueId());
         if (playersFaction == null) {
             event.setCancelled(true);

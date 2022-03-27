@@ -55,7 +55,7 @@ public class RenameCommand extends SubCommand {
         final FactionRenameEvent renameEvent = new FactionRenameEvent(faction, oldName, newName);
         Bukkit.getPluginManager().callEvent(renameEvent);
         if (renameEvent.isCancelled()) {
-            Logger.getInstance().log("Rename event was cancelled.");
+            Logger.getInstance().debug("Rename event was cancelled.");
             return;
         }
 

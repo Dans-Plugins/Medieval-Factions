@@ -59,15 +59,15 @@ public class DynmapIntegrator {
         dynmap = pm.getPlugin("dynmap");
 
         if (!isDynmapPresent()) {
-            Logger.getInstance().log(Locale.get("CannotFindDynmap"));
+            Logger.getInstance().debug(Locale.get("CannotFindDynmap"));
         } else {
             try {
                 dynmapAPI = (DynmapCommonAPI) dynmap; /* Get API */
                 markerAPI = dynmapAPI.getMarkerAPI();
                 initializeMarkerSets();
-                Logger.getInstance().log(Locale.get("DynmapIntegrationSuccessful"));
+                Logger.getInstance().debug(Locale.get("DynmapIntegrationSuccessful"));
             } catch (Exception e) {
-                Logger.getInstance().log(Locale.get("ErrorIntegratingWithDynmap") + e.getMessage());
+                Logger.getInstance().debug(Locale.get("ErrorIntegratingWithDynmap") + e.getMessage());
             }
         }
     }
@@ -139,7 +139,7 @@ public class DynmapIntegrator {
         if (set == null) {
             set = markerAPI.createMarkerSet(getDynmapPluginSetId(markerLabel), getDynmapPluginLayer(), null, false);
             if (set == null) {
-                Logger.getInstance().log(Locale.get("ErrorCreatingMarkerSet") + ": markerLabel = " + markerLabel);
+                Logger.getInstance().debug(Locale.get("ErrorCreatingMarkerSet") + ": markerLabel = " + markerLabel);
                 return set;
             }
         }

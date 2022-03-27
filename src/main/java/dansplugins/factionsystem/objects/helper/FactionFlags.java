@@ -197,21 +197,21 @@ public class FactionFlags {
 
     public Object getFlag(String flag) {
         if (!isFlag(flag)) {
-            Logger.getInstance().log(String.format("[DEBUG] Flag '%s' was not found!", flag));
+            Logger.getInstance().debug(String.format("[DEBUG] Flag '%s' was not found!", flag));
             return false;
         }
 
         if (integerValues.containsKey(flag)) {
-            Logger.getInstance().log(String.format("[DEBUG] Flag '%s' was found! Value: '%s'", flag, integerValues.get(flag)));
+            Logger.getInstance().debug(String.format("[DEBUG] Flag '%s' was found! Value: '%s'", flag, integerValues.get(flag)));
             return integerValues.get(flag);
         } else if (booleanValues.containsKey(flag)) {
-            Logger.getInstance().log(String.format("[DEBUG] Flag '%s' was found! Value: '%s'", flag, booleanValues.get(flag)));
+            Logger.getInstance().debug(String.format("[DEBUG] Flag '%s' was found! Value: '%s'", flag, booleanValues.get(flag)));
             return booleanValues.get(flag);
         } else if (doubleValues.containsKey(flag)) {
-            Logger.getInstance().log(String.format("[DEBUG] Flag '%s' was found! Value: '%s'", flag, doubleValues.get(flag)));
+            Logger.getInstance().debug(String.format("[DEBUG] Flag '%s' was found! Value: '%s'", flag, doubleValues.get(flag)));
             return doubleValues.get(flag);
         } else if (stringValues.containsKey(flag)) {
-            Logger.getInstance().log(String.format("[DEBUG] Flag '%s' was found! Value: '%s'", flag, stringValues.get(flag)));
+            Logger.getInstance().debug(String.format("[DEBUG] Flag '%s' was found! Value: '%s'", flag, stringValues.get(flag)));
             return stringValues.get(flag);
         }
         return null;

@@ -18,13 +18,13 @@ public class PlayerTeleporter {
     }
 
     public boolean teleportPlayer(Player player, Location location) {
-        Logger.getInstance().log("Attempting to teleport " + player.getName() + " to " + location.toString());
+        Logger.getInstance().debug("Attempting to teleport " + player.getName() + " to " + location.toString());
         boolean success = player.teleport(location);
         if (success) {
-            Logger.getInstance().log("Successfully teleported " + player.getName());
+            Logger.getInstance().debug("Successfully teleported " + player.getName());
         }
         else {
-            Logger.getInstance().log("Failed to teleport " + player.getName());
+            Logger.getInstance().debug("Failed to teleport " + player.getName());
         }
         return success;
     }

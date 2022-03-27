@@ -89,7 +89,7 @@ public class DisbandCommand extends SubCommand {
         );
         Bukkit.getPluginManager().callEvent(event);
         if (event.isCancelled()) {
-            Logger.getInstance().log("Disband event was cancelled.");
+            Logger.getInstance().debug("Disband event was cancelled.");
             return;
         }
 

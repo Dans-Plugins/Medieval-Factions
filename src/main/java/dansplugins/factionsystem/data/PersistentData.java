@@ -1083,7 +1083,7 @@ public class PersistentData {
             FactionUnclaimEvent unclaimEvent = new FactionUnclaimEvent(holdingFaction, unclaimingPlayer, chunkToRemove.getChunk());
             Bukkit.getPluginManager().callEvent(unclaimEvent);
             if (unclaimEvent.isCancelled()) {
-                Logger.getInstance().log("Unclaim event was cancelled.");
+                Logger.getInstance().debug("Unclaim event was cancelled.");
                 return;
             }
 
