@@ -44,7 +44,7 @@ public class DeclareWarCommand extends SubCommand {
         }
 
         if (args.length == 0) {
-            player.sendMessage(translate("&c" + "Usage: /mf declarewar \"faction\" \"reason\""));
+            player.sendMessage(translate("&c" + "Usage: /mf declarewar \"faction\""));
             return;
         }
 
@@ -52,12 +52,11 @@ public class DeclareWarCommand extends SubCommand {
         ArrayList<String> doubleQuoteArgs = argumentParser.getArgumentsInsideDoubleQuotes(args);
 
         if (doubleQuoteArgs.size() < 2) {
-            player.sendMessage(ChatColor.RED + "Arguments must be specified within double quotes.");
+            player.sendMessage(translate("&c" + "Usage: /mf declarewar \"faction\" (quotation marks are required)"));
             return;
         }
 
         String factionName = doubleQuoteArgs.get(0);
-        String reason = doubleQuoteArgs.get(1);
 
         final Faction opponent = getFaction(factionName);
         if (opponent == null) {
@@ -116,7 +115,7 @@ public class DeclareWarCommand extends SubCommand {
             // Make enemies.
             faction.addEnemy(opponent.getName());
             opponent.addEnemy(faction.getName());
-            WarFactory.getInstance().createWar(faction, opponent, reason);
+            WarFactory.getInstance().createWar(faction, opponent);
             messageServer(translate("&c" + getText("HasDeclaredWarAgainst", faction.getName(), opponent.getName())));
         }
     }
