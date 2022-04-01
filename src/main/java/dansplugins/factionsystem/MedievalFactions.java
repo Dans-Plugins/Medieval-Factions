@@ -12,7 +12,6 @@ import org.bukkit.Bukkit;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.event.Listener;
-import org.bukkit.plugin.java.JavaPlugin;
 import org.jetbrains.annotations.NotNull;
 
 import dansplugins.factionsystem.bstats.Metrics;
@@ -33,13 +32,14 @@ import dansplugins.factionsystem.services.LocalCommandService;
 import dansplugins.factionsystem.services.LocalConfigService;
 import dansplugins.factionsystem.services.LocalLocaleService;
 import dansplugins.factionsystem.utils.extended.Scheduler;
+import preponderous.ponder.minecraft.bukkit.abs.PonderBukkitPlugin;
 import preponderous.ponder.minecraft.bukkit.tools.EventHandlerRegistry;
 
 /**
  * @author Daniel McCoy Stephenson
  * @since May 30th, 2020
  */
-public class MedievalFactions extends JavaPlugin {
+public class MedievalFactions extends PonderBukkitPlugin {
     private static MedievalFactions instance;
     private final String pluginVersion = "v" + getDescription().getVersion();
 

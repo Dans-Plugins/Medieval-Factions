@@ -25,6 +25,10 @@ public class WarFactory {
         return instance;
     }
 
+    public void createWar(Faction attacker, Faction defender) {
+        createWar(attacker, defender, "testreason");
+    }
+
     public void createWar(Faction attacker, Faction defender, String reason) {
         War war = new War(attacker, defender, reason);
 
