@@ -24,7 +24,6 @@ import dansplugins.factionsystem.services.LocalLocaleService;
 
 /**
  * @author Callum Johnson
- * @author Daniel McCoy Stephenson
  * @since 05/05/2021 - 12:18
  */
 public abstract class SubCommand implements ColorTranslator {

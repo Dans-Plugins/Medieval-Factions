@@ -51,7 +51,7 @@ public class DeclareWarCommand extends SubCommand {
         ArgumentParser argumentParser = new ArgumentParser();
         ArrayList<String> doubleQuoteArgs = argumentParser.getArgumentsInsideDoubleQuotes(args);
 
-        if (doubleQuoteArgs.size() < 2) {
+        if (doubleQuoteArgs.size() == 0) {
             player.sendMessage(translate("&c" + "Usage: /mf declarewar \"faction\" (quotation marks are required)"));
             return;
         }
