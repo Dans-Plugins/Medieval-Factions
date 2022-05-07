@@ -59,7 +59,9 @@ public class DuelCommand extends SubCommand {
                 return;
             }
             int timeLimit = 120; // Time limit in seconds. TODO: Make config option.
-            if (args.length == 3) timeLimit = getIntSafe(args[2], 120);
+            if (args.length == 3) {
+                timeLimit = getIntSafe(args[2], 120);
+            }
             inviteDuel(player, target, timeLimit);
             player.sendMessage(translate("&b" + getText("AlertChallengeIssued", target.getName())));
         } else if (safeEquals(args[0], getText("CmdDuelAccept"), "accept")) {
