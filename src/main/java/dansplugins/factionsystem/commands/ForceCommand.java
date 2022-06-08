@@ -131,7 +131,7 @@ public class ForceCommand extends SubCommand {
             return;
         }
 
-        final ArrayList<String> doubleQuoteArgs = argumentParser.getArgumentsInsideDoubleQuotes(args);
+        final List<String> doubleQuoteArgs = argumentParser.getArgumentsInsideDoubleQuotes(args);
         if (doubleQuoteArgs.size() < 2) {
             sender.sendMessage(translate("&c" + "Arguments must be designated in between double quotes."));
             return;
@@ -192,7 +192,7 @@ public class ForceCommand extends SubCommand {
             return;
         }
 
-        final ArrayList<String> doubleQuoteArgs = argumentParser.getArgumentsInsideDoubleQuotes(args);
+        final List<String> doubleQuoteArgs = argumentParser.getArgumentsInsideDoubleQuotes(args);
         if (doubleQuoteArgs.size() < 2) {
             sender.sendMessage(translate("&c" + "Arguments must be designated in between double quotes."));
             return;
@@ -285,7 +285,7 @@ public class ForceCommand extends SubCommand {
             return;
         }
 
-        final ArrayList<String> doubleQuoteArgs = argumentParser.getArgumentsInsideDoubleQuotes(args);
+        final List<String> doubleQuoteArgs = argumentParser.getArgumentsInsideDoubleQuotes(args);
         if (doubleQuoteArgs.size() < 2) {
             sender.sendMessage(translate("&c" + "Arguments must be designated in between double quotes."));
             return;
@@ -308,7 +308,7 @@ public class ForceCommand extends SubCommand {
             sender.sendMessage(translate("&c" + "Usage: /mf force renounce \"faction\""));
             return;
         }
-        final ArrayList<String> doubleQuoteArgs = argumentParser.getArgumentsInsideDoubleQuotes(args);
+        final List<String> doubleQuoteArgs = argumentParser.getArgumentsInsideDoubleQuotes(args);
 
         if (doubleQuoteArgs.size() == 0) {
             sender.sendMessage(translate("&c" + "Arguments must be designated in between double quotes."));
@@ -343,7 +343,7 @@ public class ForceCommand extends SubCommand {
             return;
         }
 
-        final ArrayList<String> doubleQuoteArgs = argumentParser.getArgumentsInsideDoubleQuotes(args);
+        final List<String> doubleQuoteArgs = argumentParser.getArgumentsInsideDoubleQuotes(args);
         if (doubleQuoteArgs.size() < 2) {
             sender.sendMessage(translate("&c" + "Arguments must be designated in between double quotes."));
             return;
@@ -388,7 +388,7 @@ public class ForceCommand extends SubCommand {
             return;
         }
 
-        final ArrayList<String> doubleQuoteArgs = argumentParser.getArgumentsInsideDoubleQuotes(args);
+        final List<String> doubleQuoteArgs = argumentParser.getArgumentsInsideDoubleQuotes(args);
         if (doubleQuoteArgs.size() < 2) {
             sender.sendMessage(translate("&c" + "Arguments must be designated in between double quotes."));
             return;
@@ -414,7 +414,7 @@ public class ForceCommand extends SubCommand {
             return;
         }
 
-        final ArrayList<String> doubleQuoteArgs = argumentParser.getArgumentsInsideDoubleQuotes(args);
+        final List<String> doubleQuoteArgs = argumentParser.getArgumentsInsideDoubleQuotes(args);
         if (doubleQuoteArgs.size() < 2) {
             sender.sendMessage(translate("&c" + "Arguments must be designated in between double quotes."));
             return;
@@ -461,7 +461,7 @@ public class ForceCommand extends SubCommand {
             return;
         }
 
-        final ArrayList<String> singleQuoteArgs = argumentParser.getArgumentsInsideDoubleQuotes(args);
+        final List<String> singleQuoteArgs = argumentParser.getArgumentsInsideDoubleQuotes(args);
         if (singleQuoteArgs.size() < 2) {
             sender.sendMessage(translate("&c" + "Arguments must be designated in between double quotes."));
             return;
@@ -539,7 +539,7 @@ public class ForceCommand extends SubCommand {
             return;
         }
 
-        final ArrayList<String> doubleQuoteArgs = argumentParser.getArgumentsInsideDoubleQuotes(args);
+        final List<String> doubleQuoteArgs = argumentParser.getArgumentsInsideDoubleQuotes(args);
         if (doubleQuoteArgs.size() < 1) {
             sender.sendMessage(translate("&c" + "Arguments must be designated in between double quotes."));
             return;
@@ -578,7 +578,7 @@ public class ForceCommand extends SubCommand {
             return;
         }
 
-        final ArrayList<String> argumentsInsideDoubleQuotes = argumentParser.getArgumentsInsideDoubleQuotes(args);
+        final List<String> argumentsInsideDoubleQuotes = argumentParser.getArgumentsInsideDoubleQuotes(args);
         if (argumentsInsideDoubleQuotes.size() < 1) {
             sender.sendMessage(translate("&c" + "Arguments must be designated in between double quotes."));
             return;
@@ -615,7 +615,7 @@ public class ForceCommand extends SubCommand {
             return;
         }
 
-        final ArrayList<String> argumentsInsideDoubleQuotes = argumentParser.getArgumentsInsideDoubleQuotes(args);
+        final List<String> argumentsInsideDoubleQuotes = argumentParser.getArgumentsInsideDoubleQuotes(args);
         if (argumentsInsideDoubleQuotes.size() < 3) {
             player.sendMessage(translate("&c" + "Arguments must be designated in between double quotes."));
             return;

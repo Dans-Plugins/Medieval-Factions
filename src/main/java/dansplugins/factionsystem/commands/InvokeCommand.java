@@ -5,6 +5,7 @@
 package dansplugins.factionsystem.commands;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
@@ -44,7 +45,7 @@ public class InvokeCommand extends SubCommand {
             return;
         }
         ArgumentParser argumentParser = new ArgumentParser();
-        final ArrayList<String> argumentsInsideDoubleQuotes = argumentParser.getArgumentsInsideDoubleQuotes(args);
+        final List<String> argumentsInsideDoubleQuotes = argumentParser.getArgumentsInsideDoubleQuotes(args);
         if (argumentsInsideDoubleQuotes.size() < 2) {
             player.sendMessage(ChatColor.RED + "Arguments must be designated in between double quotes.");
             return;
