@@ -1,5 +1,5 @@
 // For format details, see https://aka.ms/devcontainer.json. For config options, see the README at:
-// https://github.com/microsoft/vscode-dev-containers/tree/v0.217.4/containers/java
+// https://github.com/microsoft/vscode-dev-containers/tree/v0.234.0/containers/java
 {
 	"name": "Java",
 	"build": {
@@ -8,10 +8,10 @@
 			// Update the VARIANT arg to pick a Java version: 11, 17
 			// Append -bullseye or -buster to pin to an OS version.
 			// Use the -bullseye variants on local arm64/Apple Silicon.
-			"VARIANT": "11-bullseye",
+			"VARIANT": "17",
 			// Options
-			"INSTALL_MAVEN": "true",
-			"INSTALL_GRADLE": "false",
+			"INSTALL_MAVEN": "false",
+			"INSTALL_GRADLE": "true",
 			"NODE_VERSION": "none"
 		}
 	},
