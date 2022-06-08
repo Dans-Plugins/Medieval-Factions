@@ -18,6 +18,7 @@ out/
 *.ctxt
 
 # Package Files #
+*.jar
 *.war
 *.nar
 *.ear
@@ -94,6 +95,7 @@ $RECYCLE.BIN/
 # Windows shortcuts
 *.lnk
 
+# Maven
 target/
 
 pom.xml.tag
@@ -108,6 +110,14 @@ buildNumber.properties
 .mvn/wrapper/maven-wrapper.jar
 .flattened-pom.xml
 
+# Gradle
+.gradle
+**/build/
+!src/**/build/
+gradle-app.setting
+!gradle-wrapper.jar
+!gradle-wrapper.properties
+.gradletasknamecache
+
 # Common working directory
 run/
-/.idea/

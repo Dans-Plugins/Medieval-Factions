@@ -8,13 +8,13 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.Arrays;
 
+import org.bstats.bukkit.Metrics;
 import org.bukkit.Bukkit;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.event.Listener;
 import org.jetbrains.annotations.NotNull;
 
-import dansplugins.factionsystem.bstats.Metrics;
 import dansplugins.factionsystem.data.PersistentData;
 import dansplugins.factionsystem.eventhandlers.ChatHandler;
 import dansplugins.factionsystem.eventhandlers.DamageHandler;
