@@ -102,7 +102,7 @@ public class Scheduler {
     public void scheduleTeleport(Player player, Location destinationLocation) {
         final int teleport_delay = LocalConfigService.getInstance().getInt("teleportDelay");
         player.sendMessage(ChatColor.AQUA + "Teleporting in " + teleport_delay + " seconds...");
-        DelayedTeleportTask delayedTeleportTask = new DelayedTeleportTask(teleport_delay, player, destinationLocation);
+        DelayedTeleportTask delayedTeleportTask = new DelayedTeleportTask(player, destinationLocation);
         delayedTeleportTask.runTaskLater(MedievalFactions.getInstance(), (long) (teleport_delay * getRandomNumberBetween(15, 25)));
     }
 
@@ -113,12 +113,11 @@ public class Scheduler {
     }
 
     private class DelayedTeleportTask extends BukkitRunnable {
-        private int seconds;
         private Player player;
         private Location initialLocation;
         private Location destinationLocation;
 
-        public DelayedTeleportTask(int seconds, Player player, Location destinationLocation) {
+        public DelayedTeleportTask(Player player, Location destinationLocation) {
             this.seconds = seconds;
             this.player = player;
             this.initialLocation = player.getLocation();
@@ -127,24 +126,12 @@ public class Scheduler {
 
         @Override
         public void run() {
-            try {
-                delay();
-            } catch(Exception e) {
-                player.sendMessage(ChatColor.RED + "Something went wrong.");
-                Logger.getInstance().debug("Something went wrong running a delayed teleport task.");
-                return;
-            }
-
             if (playerHasNotMoved()) {
                 teleportPlayer();
             }
             else {
                 player.sendMessage(ChatColor.RED + "Teleport cancelled.");
             }
-        }
-
-        private void delay() throws InterruptedException {
-            TimeUnit.SECONDS.sleep(seconds);
         }
 
         private boolean playerHasNotMoved() {
