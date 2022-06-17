@@ -118,7 +118,6 @@ public class Scheduler {
         private Location destinationLocation;
 
         public DelayedTeleportTask(Player player, Location destinationLocation) {
-            this.seconds = seconds;
             this.player = player;
             this.initialLocation = player.getLocation();
             this.destinationLocation = destinationLocation;
