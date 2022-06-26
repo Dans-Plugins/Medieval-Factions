@@ -71,10 +71,10 @@ public class ConfigCommand extends SubCommand {
 
             switch (page) {
                 case 1:
-                    localConfigService.sendPageOneOfConfigList(sender);
+                    configService.sendPageOneOfConfigList(sender);
                     break;
                 case 2:
-                    localConfigService.sendPageTwoOfConfigList(sender);
+                    configService.sendPageTwoOfConfigList(sender);
                     break;
                 default:
                     sender.sendMessage(translate("&c" + getText("UsageConfigShow")));
@@ -83,7 +83,7 @@ public class ConfigCommand extends SubCommand {
             if (args.length < 3) {
                 sender.sendMessage(translate("&c" + getText("UsageConfigSet")));
             } else {
-                localConfigService.setConfigOption(args[1], args[2], sender);
+                configService.setConfigOption(args[1], args[2], sender);
             }
         } else if (reload) {
             MedievalFactions.getInstance().reloadConfig();

@@ -14,26 +14,14 @@ import dansplugins.factionsystem.utils.Locale;
 /**
  * @author Daniel McCoy Stephenson
  */
-public class LocalConfigService {
-    private static LocalConfigService instance;
+public class ConfigService {
     private boolean altered = false;
-
-    private LocalConfigService() {
-
-    }
-
-    public static LocalConfigService getInstance() {
-        if (instance == null) {
-            instance = new LocalConfigService();
-        }
-        return instance;
-    }
 
     public void handleVersionMismatch() {
         if (!getConfig().isString("version")) {
-            getConfig().addDefault("version", MedievalFactions.getInstance().getVersion());
+            getConfig().addDefault("version", medievalFactions.getVersion());
         } else {
-            getConfig().set("version", MedievalFactions.getInstance().getVersion());
+            getConfig().set("version", medievalFactions.getVersion());
         }
 
         // add defaults if they don't exist
@@ -173,7 +161,7 @@ public class LocalConfigService {
         deleteOldConfigOptionsIfPresent();
 
         getConfig().options().copyDefaults(true);
-        MedievalFactions.getInstance().saveConfig();
+        medievalFactions.saveConfig();
     }
 
     private void deleteOldConfigOptionsIfPresent() {
@@ -197,7 +185,7 @@ public class LocalConfigService {
         if (getConfig().isSet(option)) {
 
             if (option.equalsIgnoreCase("version")) {
-                sender.sendMessage(ChatColor.RED + Locale.get("CannotSetVersion"));
+                sender.sendMessage(ChatColor.RED + locale.get("CannotSetVersion"));
                 return;
             } else if (option.equalsIgnoreCase("initialMaxPowerLevel") || option.equalsIgnoreCase("initialPowerLevel")
                     || option.equalsIgnoreCase("powerIncreaseAmount")
@@ -214,7 +202,7 @@ public class LocalConfigService {
                     || option.equalsIgnoreCase("maxClaimRadius")
                     || option.equalsIgnoreCase("teleportDelay")) {
                 getConfig().set(option, Integer.parseInt(value));
-                sender.sendMessage(ChatColor.GREEN + Locale.get("IntegerSet"));
+                sender.sendMessage(ChatColor.GREEN + locale.get("IntegerSet"));
             } else if (option.equalsIgnoreCase("mobsSpawnInFactionTerritory")
                     || option.equalsIgnoreCase("laddersPlaceableInEnemyFactionTerritory")
                     || option.equalsIgnoreCase("warsRequiredForPVP")
@@ -238,34 +226,34 @@ public class LocalConfigService {
                     || option.equalsIgnoreCase("playersLosePowerOnDeath")
                     || option.equalsIgnoreCase("bonusPowerEnabled")) {
                 getConfig().set(option, Boolean.parseBoolean(value));
-                sender.sendMessage(ChatColor.GREEN + Locale.get("BooleanSet"));
+                sender.sendMessage(ChatColor.GREEN + locale.get("BooleanSet"));
             } else if (option.equalsIgnoreCase("factionOwnerMultiplier")
                     || option.equalsIgnoreCase("factionOfficerMultiplier")
                     || option.equalsIgnoreCase("vassalContributionPercentageMultiplier")
                     || option.equalsIgnoreCase("powerLostOnDeath")
                     || option.equalsIgnoreCase("powerGainedOnKill")) {
                 getConfig().set(option, Double.parseDouble(value));
-                sender.sendMessage(ChatColor.GREEN + Locale.get("DoubleSet"));
+                sender.sendMessage(ChatColor.GREEN + locale.get("DoubleSet"));
             } else {
                 getConfig().set(option, value);
-                sender.sendMessage(ChatColor.GREEN + Locale.get("StringSet"));
+                sender.sendMessage(ChatColor.GREEN + locale.get("StringSet"));
 
                 if (option.equalsIgnoreCase("languageid")) {
-                    LocalLocaleService.getInstance().reloadStrings();
+                    locale.reloadStrings();
                 }
             }
 
             // save
-            MedievalFactions.getInstance().saveConfig();
+            medievalFactions.saveConfig();
             altered = true;
         } else {
-            sender.sendMessage(ChatColor.RED + String.format(Locale.get("WasntFound"), option));
+            sender.sendMessage(ChatColor.RED + String.format(locale.get("WasntFound"), option));
         }
 
     }
 
     public void saveConfigDefaults() {
-        getConfig().addDefault("version", MedievalFactions.getInstance().getVersion());
+        getConfig().addDefault("version", medievalFactions.getVersion());
         getConfig().addDefault("initialMaxPowerLevel", 20);
         getConfig().addDefault("initialPowerLevel", 5);
         getConfig().addDefault("powerIncreaseAmount", 2);
@@ -311,11 +299,11 @@ public class LocalConfigService {
         getConfig().addDefault("powerGainedOnKill", 1.0);
         getConfig().addDefault("teleportDelay", 3);
         getConfig().options().copyDefaults(true);
-        MedievalFactions.getInstance().saveConfig();
+        medievalFactions.saveConfig();
     }
 
     public void sendPageOneOfConfigList(CommandSender sender) {
-        sender.sendMessage(ChatColor.AQUA + Locale.get("ConfigListPageOne"));
+        sender.sendMessage(ChatColor.AQUA + locale.get("ConfigListPageOne"));
         sender.sendMessage(ChatColor.AQUA + "version: " + getString("version")
                 + ", languageid: " + getString("languageid")
                 + ", debugMode: " + getBoolean("debugMode")
@@ -339,7 +327,7 @@ public class LocalConfigService {
     }
 
     public void sendPageTwoOfConfigList(CommandSender sender) {
-        sender.sendMessage(ChatColor.AQUA + Locale.get("ConfigListPageTwo"));
+        sender.sendMessage(ChatColor.AQUA + locale.get("ConfigListPageTwo"));
         sender.sendMessage(ChatColor.AQUA + "factionMaxGateArea: " + getInt("factionMaxGateArea")
                 + ", surroundedChunksProtected: " + getBoolean("surroundedChunksProtected")
                 + ", zeroPowerFactionsGetDisbanded: " + getBoolean("zeroPowerFactionsGetDisbanded")
@@ -372,7 +360,7 @@ public class LocalConfigService {
     }
 
     public FileConfiguration getConfig() {
-        return MedievalFactions.getInstance().getConfig();
+        return configService;
     }
 
     public int getInt(String option) {

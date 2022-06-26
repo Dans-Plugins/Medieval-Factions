@@ -36,10 +36,10 @@ import dansplugins.fiefs.utils.UUIDChecker;
  */
 public class DynmapIntegrator {
     public static boolean dynmapInitialized = false;
-    private static DynmapIntegrator instance = null;
     public boolean updateClaimsAreaMarkers = false;
     MarkerSet claims;
     MarkerSet realms;
+    
     // Claims/factions markers
     private final Map<String, AreaMarker> resareas = new HashMap<String, AreaMarker>();
     private final Map<String, Marker> resmark = new HashMap<String, Marker>();
@@ -59,15 +59,15 @@ public class DynmapIntegrator {
         dynmap = pm.getPlugin("dynmap");
 
         if (!isDynmapPresent()) {
-            Logger.getInstance().debug(Locale.get("CannotFindDynmap"));
+            logger.debug(locale.get("CannotFindDynmap"));
         } else {
             try {
                 dynmapAPI = (DynmapCommonAPI) dynmap; /* Get API */
                 markerAPI = dynmapAPI.getMarkerAPI();
                 initializeMarkerSets();
-                Logger.getInstance().debug(Locale.get("DynmapIntegrationSuccessful"));
+                logger.debug(locale.get("DynmapIntegrationSuccessful"));
             } catch (Exception e) {
-                Logger.getInstance().debug(Locale.get("ErrorIntegratingWithDynmap") + e.getMessage());
+                logger.debug(locale.get("ErrorIntegratingWithDynmap") + e.getMessage());
             }
         }
     }
@@ -77,14 +77,6 @@ public class DynmapIntegrator {
             return getInstance() != null;
         }
         return true;
-    }
-
-    public static DynmapIntegrator getInstance() {
-        if (instance == null) {
-            instance = new DynmapIntegrator();
-        }
-        dynmapInitialized = true;
-        return instance;
     }
 
     /***
@@ -99,18 +91,18 @@ public class DynmapIntegrator {
                 if (!isDynmapPresent()) {
                     return;
                 }
-                if (DynmapIntegrator.getInstance().updateClaimsAreaMarkers) {
+                if (dynmapIntegrator.updateClaimsAreaMarkers) {
                     if (realms != null) {
                         realms.deleteMarkerSet();
                         claims.deleteMarkerSet();
                     }
                     initializeMarkerSets();
-                    DynmapIntegrator.getInstance().dynmapUpdateFactions();
-                    DynmapIntegrator.getInstance().dynmapUpdateRealms();
-                    DynmapIntegrator.getInstance().updateClaimsAreaMarkers = false;
+                    dynmapIntegrator.dynmapUpdateFactions();
+                    dynmapIntegrator.dynmapUpdateRealms();
+                    dynmapIntegrator.updateClaimsAreaMarkers = false;
                 }
             }
-        }.runTaskTimer(MedievalFactions.getInstance(), 40, interval);
+        }.runTaskTimer(medievalFactions, 40, interval);
     }
 
     /***
@@ -123,7 +115,7 @@ public class DynmapIntegrator {
         }
 
         if (DynmapIntegrator.hasDynmap()) {
-            DynmapIntegrator.getInstance().updateClaimsAreaMarkers = true;
+            dynmapIntegrator.updateClaimsAreaMarkers = true;
         }
     }
 
@@ -139,7 +131,7 @@ public class DynmapIntegrator {
         if (set == null) {
             set = markerAPI.createMarkerSet(getDynmapPluginSetId(markerLabel), getDynmapPluginLayer(), null, false);
             if (set == null) {
-                Logger.getInstance().debug(Locale.get("ErrorCreatingMarkerSet") + ": markerLabel = " + markerLabel);
+                logger.debug(locale.get("ErrorCreatingMarkerSet") + ": markerLabel = " + markerLabel);
                 return set;
             }
         }
@@ -193,9 +185,9 @@ public class DynmapIntegrator {
 
         /* Loop through realms and build area markers coloured in the same colour
             as each faction's liege's colour. */
-        for (Faction f : PersistentData.getInstance().getFactions()) {
+        for (Faction f : persistentData.getFactions()) {
             String liegeName = f.getTopLiege();
-            Faction liege = PersistentData.getInstance().getFaction(liegeName);
+            Faction liege = persistentData.getFaction(liegeName);
             String liegeColor;
             String popupText = "";
             // If there's no liege, then f is the liege.
@@ -230,7 +222,7 @@ public class DynmapIntegrator {
         Map<String, Marker> newmark = new HashMap<String, Marker>(); /* Build new map */
 
         /* Loop through factions and build coloured faction area markers. */
-        for (Faction f : PersistentData.getInstance().getFactions()) {
+        for (Faction f : persistentData.getFactions()) {
             dynmapUpdateFaction(f, claims, newmap, "claims", f.getName(), buildNationPopupText(f), f.getFlags().getFlag("dynmapTerritoryColor").toString(), newmap, newmark);
         }
 
@@ -263,7 +255,7 @@ public class DynmapIntegrator {
                 "At War With: " + f.getEnemiesSeparatedByCommas() + "<br/>" +
                 "Power Level: " + f.getCumulativePowerLevel() + "<br/>" +
                 "Demesne Size: " + String.format("%d/%d",
-                PersistentData.getInstance().getChunkDataAccessor().getChunksClaimedByFaction(f.getName()),
+                persistentData.getChunkDataAccessor().getChunksClaimedByFaction(f.getName()),
                 f.getCumulativePowerLevel());
         return message;
     }
@@ -418,7 +410,7 @@ public class DynmapIntegrator {
                 if (m == null) {
                     m = markerSet.createAreaMarker(polyid, name, false, curworld, x, z, false);
                     if (m == null) {
-                        System.out.println(String.format(Locale.get("ErrorAddingAreaMarker"), polyid));
+                        System.out.println(String.format(locale.get("ErrorAddingAreaMarker"), polyid));
                         return;
                     }
                 } else {
@@ -436,7 +428,7 @@ public class DynmapIntegrator {
                         m.setFillStyle(0.3, colrCode);
                     }
                 } catch (Exception e) {
-                    System.out.println(String.format(Locale.get("ErrorSettingAreaMarkerColor"), fillColor));
+                    System.out.println(String.format(locale.get("ErrorSettingAreaMarkerColor"), fillColor));
                 }
                 m.setDescription(popupDescription); /* Set popup */
 
@@ -499,10 +491,10 @@ public class DynmapIntegrator {
             String setid = getDynmapFactionSetId(holder);
             MarkerAPI markerapi = getMarkerAPI();
             Set<String> plids = new HashSet<String>();
-            Faction f = PersistentData.getInstance().getFaction(holder);
+            Faction f = persistentData.getFaction(holder);
             if (f != null) {
-                for (PowerRecord powerRecord : PersistentData.getInstance().getPlayerPowerRecords()) {
-                    Faction pf = PersistentData.getInstance().getPlayersFaction(powerRecord.getPlayerUUID());
+                for (PowerRecord powerRecord : persistentData.getPlayerPowerRecords()) {
+                    Faction pf = persistentData.getPlayersFaction(powerRecord.getPlayerUUID());
                     if (pf != null && pf.getName().equalsIgnoreCase(holder)) {
                         UUIDChecker uuidChecker = new UUIDChecker();
                         plids.add(uuidChecker.findPlayerNameBasedOnUUID(powerRecord.getPlayerUUID()));

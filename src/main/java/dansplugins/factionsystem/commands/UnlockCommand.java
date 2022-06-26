@@ -8,7 +8,7 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
 import dansplugins.factionsystem.commands.abs.SubCommand;
-import dansplugins.factionsystem.eventhandlers.helper.RelationChecker;
+import dansplugins.factionsystem.utils.RelationChecker;
 
 /**
  * @author Callum Johnson

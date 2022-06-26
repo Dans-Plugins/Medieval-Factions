@@ -28,7 +28,7 @@ dependencies {
 }
 
 group = 'dansplugins'
-version = '4.6.4.2'
+version = '4.7-ALPHA'
 description = 'Medieval Factions'
 java.sourceCompatibility = JavaVersion.VERSION_1_8
 

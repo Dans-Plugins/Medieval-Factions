@@ -12,18 +12,6 @@ import dansplugins.factionsystem.objects.domain.War;
  * @author Daniel McCoy Stephenson
  */
 public class WarFactory {
-    private static WarFactory instance;
-
-    private WarFactory() {
-
-    }
-
-    public static WarFactory getInstance() {
-        if (instance == null) {
-            instance = new WarFactory();
-        }
-        return instance;
-    }
 
     public void createWar(Faction attacker, Faction defender) {
         createWar(attacker, defender, "testreason");
@@ -34,6 +22,6 @@ public class WarFactory {
 
         // TODO: inform factions of war here instead of in the declare war command
 
-        PersistentData.getInstance().addWar(war);
+        persistentData.addWar(war);
     }
 }

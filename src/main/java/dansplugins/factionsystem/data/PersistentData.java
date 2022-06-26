@@ -34,6 +34,13 @@ import com.google.gson.GsonBuilder;
 import com.google.gson.reflect.TypeToken;
 import com.google.gson.stream.JsonReader;
 
+import dansplugins.factionsystem.MedievalFactions;
+import dansplugins.factionsystem.integrators.DynmapIntegrator;
+import dansplugins.factionsystem.services.ConfigService;
+import dansplugins.factionsystem.utils.InteractionAccessChecker;
+import dansplugins.factionsystem.utils.Logger;
+import dansplugins.factionsystem.utils.extended.BlockChecker;
+import dansplugins.factionsystem.utils.extended.Messenger;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Chunk;
@@ -45,10 +52,8 @@ import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
 import org.bukkit.event.player.PlayerInteractEvent;
 
-import dansplugins.factionsystem.MedievalFactions;
 import dansplugins.factionsystem.events.FactionClaimEvent;
 import dansplugins.factionsystem.events.FactionUnclaimEvent;
-import dansplugins.factionsystem.integrators.DynmapIntegrator;
 import dansplugins.factionsystem.objects.domain.ActivityRecord;
 import dansplugins.factionsystem.objects.domain.ClaimedChunk;
 import dansplugins.factionsystem.objects.domain.Faction;
@@ -56,19 +61,21 @@ import dansplugins.factionsystem.objects.domain.Gate;
 import dansplugins.factionsystem.objects.domain.LockedBlock;
 import dansplugins.factionsystem.objects.domain.PowerRecord;
 import dansplugins.factionsystem.objects.domain.War;
-import dansplugins.factionsystem.services.LocalConfigService;
-import dansplugins.factionsystem.services.LocalLocaleService;
-import dansplugins.factionsystem.utils.InteractionAccessChecker;
-import dansplugins.factionsystem.utils.Locale;
-import dansplugins.factionsystem.utils.Logger;
-import dansplugins.factionsystem.utils.extended.BlockChecker;
-import dansplugins.factionsystem.utils.extended.Messenger;
+import dansplugins.factionsystem.services.LocaleService;
 
 /**
  * @author Daniel McCoy Stephenson
  */
 public class PersistentData {
-    private static PersistentData instance;
+    private final LocaleService localeService;
+    private final ConfigService configService;
+    private final MedievalFactions medievalFactions;
+    private final Messenger messenger;
+    private final DynmapIntegrator dynmapIntegrator;
+    private final EphemeralData ephemeralData;
+    private final BlockChecker blockChecker;
+    private final InteractionAccessChecker interactionAccessChecker;
+    private final Logger logger;
 
     private final ArrayList<Faction> factions = new ArrayList<>();
     private final ArrayList<ClaimedChunk> claimedChunks = new ArrayList<>();
@@ -80,15 +87,16 @@ public class PersistentData {
     private final ChunkDataAccessor chunkDataAccessor = new ChunkDataAccessor();
     private final LocalStorageService localStorageService = new LocalStorageService();
 
-    private PersistentData() {
-
-    }
-
-    public static PersistentData getInstance() {
-        if (instance == null) {
-            instance = new PersistentData();
-        }
-        return instance;
+    public PersistentData(LocaleService localeService, ConfigService configService, MedievalFactions medievalFactions, Messenger messenger, DynmapIntegrator dynmapIntegrator, EphemeralData ephemeralData, BlockChecker blockChecker, InteractionAccessChecker interactionAccessChecker, Logger logger) {
+        this.localeService = localeService;
+        this.configService = configService;
+        this.medievalFactions = medievalFactions;
+        this.messenger = messenger;
+        this.dynmapIntegrator = dynmapIntegrator;
+        this.ephemeralData = ephemeralData;
+        this.blockChecker = blockChecker;
+        this.interactionAccessChecker = interactionAccessChecker;
+        this.logger = logger;
     }
 
     public ChunkDataAccessor getChunkDataAccessor() {
@@ -209,7 +217,7 @@ public class PersistentData {
                 // record number of factions
                 numFactionsFound = foundFactions.size();
 
-                Faction liege = PersistentData.getInstance().getFaction(current.getLiege());
+                Faction liege = getFaction(current.getLiege());
                 if (liege != null) {
                     if (!containsFactionByName(toAdd, liege) && !containsFactionByName(foundFactions, liege)) {
                         toAdd.add(liege);
@@ -217,7 +225,7 @@ public class PersistentData {
                     }
 
                     for (String vassalName : liege.getVassals()) {
-                        Faction vassal = PersistentData.getInstance().getFaction(vassalName);
+                        Faction vassal = getFaction(vassalName);
                         if (!containsFactionByName(toAdd, vassal) && !containsFactionByName(foundFactions, vassal)) {
                             toAdd.add(vassal);
                             numFactionsFound++;
@@ -226,7 +234,7 @@ public class PersistentData {
                 }
 
                 for (String vassalName : current.getVassals()) {
-                    Faction vassal = PersistentData.getInstance().getFaction(vassalName);
+                    Faction vassal = getFaction(vassalName);
                     if (!containsFactionByName(toAdd, vassal) && !containsFactionByName(foundFactions, vassal)) {
                         toAdd.add(vassal);
                         numFactionsFound++;
@@ -312,11 +320,11 @@ public class PersistentData {
 
     public void createActivityRecordForEveryOfflinePlayer() { // this method is to ensure that when updating to a version with power decay, even players who never log in again will experience power decay
         for (OfflinePlayer player : Bukkit.getOfflinePlayers()) {
-            ActivityRecord record = PersistentData.getInstance().getPlayerActivityRecord(player.getUniqueId());
+            ActivityRecord record = getPlayerActivityRecord(player.getUniqueId());
             if (record == null) {
-                ActivityRecord newRecord = new ActivityRecord(player.getUniqueId(), 1);
+                ActivityRecord newRecord = new ActivityRecord(player.getUniqueId(), configService, 1);
                 newRecord.setLastLogout(ZonedDateTime.now());
-                PersistentData.getInstance().activityRecords.add(newRecord);
+                activityRecords.add(newRecord);
             }
         }
     }
@@ -437,7 +445,7 @@ public class PersistentData {
         for (Faction faction : factions) {
             for (Gate gate : faction.getGates()) {
                 if (gate.hasBlock(block)) {
-                    player.sendMessage(ChatColor.RED + String.format(Locale.get("BlockIsPartOfGateMustRemoveGate"), gate.getName()));
+                    player.sendMessage(ChatColor.RED + String.format(localeService.get("BlockIsPartOfGateMustRemoveGate"), gate.getName()));
                     return true;
                 }
             }
@@ -450,7 +458,7 @@ public class PersistentData {
     }
 
     public void resetPowerLevels() {
-        final int initialPowerLevel = LocalConfigService.getInstance().getInt("initialPowerLevel");
+        final int initialPowerLevel = configService.getInt("initialPowerLevel");
         powerRecords.forEach(record -> record.setPower(initialPowerLevel));
     }
 
@@ -467,7 +475,7 @@ public class PersistentData {
     private void initiatePowerIncrease(PowerRecord powerRecord) {
         if (powerRecord.getPower() < powerRecord.maxPower() && Objects.requireNonNull(getServer().getPlayer(powerRecord.getPlayerUUID())).isOnline()) {
             powerRecord.increasePower();
-            Objects.requireNonNull(getServer().getPlayer(powerRecord.getPlayerUUID())).sendMessage(ChatColor.GREEN + String.format(Locale.get("AlertPowerLevelIncreasedBy"), MedievalFactions.getInstance().getConfig().getInt("powerIncreaseAmount")));
+            Objects.requireNonNull(getServer().getPlayer(powerRecord.getPlayerUUID())).sendMessage(ChatColor.GREEN + String.format(localeService.get("AlertPowerLevelIncreasedBy"), configService.getInt("powerIncreaseAmount")));
         }
     }
 
@@ -480,34 +488,34 @@ public class PersistentData {
         }
 
         for (String factionName : factionsToDisband) {
-            Messenger.getInstance().sendAllPlayersInFactionMessage(PersistentData.getInstance().getFaction(factionName), ChatColor.RED + Locale.get("AlertDisbandmentDueToZeroPower"));
+            messenger.sendAllPlayersInFactionMessage(getFaction(factionName), ChatColor.RED + localeService.get("AlertDisbandmentDueToZeroPower"));
             removeFaction(factionName);
-            System.out.printf((Locale.get("DisbandmentDueToZeroPower")) + "%n", factionName);
+            System.out.printf((localeService.get("DisbandmentDueToZeroPower")) + "%n", factionName);
         }
     }
 
     private void removeFaction(String name) {
 
-        Faction factionToRemove = PersistentData.getInstance().getFaction(name);
+        Faction factionToRemove = getFaction(name);
 
         if (factionToRemove != null) {
             // remove claimed land objects associated with this faction
-            PersistentData.getInstance().getChunkDataAccessor().removeAllClaimedChunks(factionToRemove.getName());
-            DynmapIntegrator.getInstance().updateClaims();
+            getChunkDataAccessor().removeAllClaimedChunks(factionToRemove.getName());
+            dynmapIntegrator.updateClaims();
 
             // remove locks associated with this faction
-            PersistentData.getInstance().removeAllLocks(factionToRemove.getName());
+            removeAllLocks(factionToRemove.getName());
 
-            PersistentData.getInstance().removePoliticalTiesToFaction(factionToRemove.getName());
+            removePoliticalTiesToFaction(factionToRemove.getName());
 
             int index = -1;
-            for (int i = 0; i < PersistentData.getInstance().getNumFactions(); i++) {
-                if (PersistentData.getInstance().getFactionByIndex(i).getName().equalsIgnoreCase(name)) {
+            for (int i = 0; i < getNumFactions(); i++) {
+                if (getFactionByIndex(i).getName().equalsIgnoreCase(name)) {
                     index = i;
                 }
             }
             if (index != -1) {
-                PersistentData.getInstance().removeFactionByIndex(index);
+                removeFactionByIndex(index);
             }
         }
     }
@@ -519,9 +527,9 @@ public class PersistentData {
             if (player != null) {
                 isOnline = player.isOnline();
             }
-            if (!isOnline && MedievalFactions.getInstance().getConfig().getBoolean("powerDecreases") && record.getMinutesSinceLastLogout() > MedievalFactions.getInstance().getConfig().getInt("minutesBeforePowerDecrease")) {
+            if (!isOnline && configService.getBoolean("powerDecreases") && record.getMinutesSinceLastLogout() > configService.getInt("minutesBeforePowerDecrease")) {
                 record.incrementPowerLost();
-                PowerRecord power = PersistentData.getInstance().getPlayersPowerRecord(record.getPlayerUUID());
+                PowerRecord power = getPlayersPowerRecord(record.getPlayerUUID());
                 power.decreasePower();
             }
         }
@@ -627,11 +635,11 @@ public class PersistentData {
          * @param claimantsFaction The claimant's faction.
          */
         public void radiusClaimAtLocation(int depth, Player claimant, Location location, Faction claimantsFaction) {
-            int maxClaimRadius = MedievalFactions.getInstance().getConfig().getInt("maxClaimRadius");
+            int maxClaimRadius = configService.getInt("maxClaimRadius");
 
             // check if depth is valid
             if (depth < 0 || depth > maxClaimRadius) {
-                claimant.sendMessage(ChatColor.RED + String.format(Locale.get("RadiusRequirement"), maxClaimRadius));
+                claimant.sendMessage(ChatColor.RED + String.format(localeService.get("RadiusRequirement"), maxClaimRadius));
                 return;
             }
 
@@ -661,8 +669,7 @@ public class PersistentData {
 
             // check if radius is valid
             if (radius <= 0 || radius > maxChunksUnclaimable) {
-                final LocalLocaleService instance = LocalLocaleService.getInstance();
-                player.sendMessage(ChatColor.RED + String.format(instance.getText("RadiusRequirement"), maxChunksUnclaimable));
+                player.sendMessage(ChatColor.RED + String.format(localeService.getText("RadiusRequirement"), maxChunksUnclaimable));
                 return;
             }
 
@@ -699,14 +706,14 @@ public class PersistentData {
             playerCoords[1] = player.getLocation().getChunk().getZ();
 
             // handle admin bypass
-            if (EphemeralData.getInstance().getAdminsBypassingProtections().contains(player.getUniqueId())) {
+            if (ephemeralData.getAdminsBypassingProtections().contains(player.getUniqueId())) {
                 ClaimedChunk chunk = isChunkClaimed(playerCoords[0], playerCoords[1], Objects.requireNonNull(player.getLocation().getWorld()).getName());
                 if (chunk != null) {
-                    removeChunk(chunk, player, PersistentData.getInstance().getFaction(chunk.getHolder()));
-                    player.sendMessage(ChatColor.GREEN + Locale.get("LandClaimedUsingAdminBypass"));
+                    removeChunk(chunk, player, getFaction(chunk.getHolder()));
+                    player.sendMessage(ChatColor.GREEN + localeService.get("LandClaimedUsingAdminBypass"));
                     return;
                 }
-                player.sendMessage(ChatColor.RED + Locale.get("LandNotCurrentlyClaimed"));
+                player.sendMessage(ChatColor.RED + localeService.get("LandNotCurrentlyClaimed"));
                 return;
             }
 
@@ -719,13 +726,13 @@ public class PersistentData {
 
             // ensure that the chunk is claimed by the player's faction.
             if (!chunk.getHolder().equalsIgnoreCase(playersFaction.getName())) {
-                player.sendMessage(ChatColor.RED + String.format(Locale.get("LandClaimedBy"), chunk.getHolder()));
+                player.sendMessage(ChatColor.RED + String.format(localeService.get("LandClaimedBy"), chunk.getHolder()));
                 return;
             }
 
             // initiate removal
             removeChunk(chunk, player, playersFaction);
-            player.sendMessage(ChatColor.GREEN + Locale.get("LandUnclaimed"));
+            player.sendMessage(ChatColor.GREEN + localeService.get("LandUnclaimed"));
         }
 
         /**
@@ -802,7 +809,7 @@ public class PersistentData {
                     try {
                         itr.remove();
                     } catch (Exception e) {
-                        System.out.println(Locale.get("ErrorClaimedChunkRemoval"));
+                        System.out.println(localeService.get("ErrorClaimedChunkRemoval"));
                     }
                 }
             }
@@ -824,10 +831,10 @@ public class PersistentData {
          * @param player The player to inform.
          */
         public void informPlayerIfTheirLandIsInDanger(Player player) {
-            Faction faction = PersistentData.getInstance().getPlayersFaction(player.getUniqueId());
+            Faction faction = getPlayersFaction(player.getUniqueId());
             if (faction != null) {
                 if (isFactionExceedingTheirDemesneLimit(faction)) {
-                    player.sendMessage(ChatColor.RED + Locale.get("AlertMoreClaimedChunksThanPower"));
+                    player.sendMessage(ChatColor.RED + localeService.get("AlertMoreClaimedChunksThanPower"));
                 }
             }
         }
@@ -840,10 +847,10 @@ public class PersistentData {
          */
         public void handleClaimedChunkInteraction(PlayerInteractEvent event, ClaimedChunk claimedChunk) {
             // player not in a faction and isn't overriding
-            if (!PersistentData.getInstance().isInFaction(event.getPlayer().getUniqueId()) && !EphemeralData.getInstance().getAdminsBypassingProtections().contains(event.getPlayer().getUniqueId())) {
+            if (!isInFaction(event.getPlayer().getUniqueId()) && !ephemeralData.getAdminsBypassingProtections().contains(event.getPlayer().getUniqueId())) {
 
                 Block block = event.getClickedBlock();
-                if (MedievalFactions.getInstance().getConfig().getBoolean("nonMembersCanInteractWithDoors") && block != null && BlockChecker.getInstance().isDoor(block)) {
+                if (configService.getBoolean("nonMembersCanInteractWithDoors") && block != null && blockChecker.isDoor(block)) {
                     // allow non-faction members to interact with doors
                     return;
                 }
@@ -853,16 +860,16 @@ public class PersistentData {
 
             // TODO: simplify this code with a call to the shouldEventBeCancelled() method in InteractionAccessChecker.java
 
-            final Faction playersFaction = PersistentData.getInstance().getPlayersFaction(event.getPlayer().getUniqueId());
+            final Faction playersFaction = getPlayersFaction(event.getPlayer().getUniqueId());
             if (playersFaction == null) {
                 return;
             }
 
             // if player's faction is not the same as the holder of the chunk and player isn't overriding
-            if (!(playersFaction.getName().equalsIgnoreCase(claimedChunk.getHolder())) && !EphemeralData.getInstance().getAdminsBypassingProtections().contains(event.getPlayer().getUniqueId())) {
+            if (!(playersFaction.getName().equalsIgnoreCase(claimedChunk.getHolder())) && !ephemeralData.getAdminsBypassingProtections().contains(event.getPlayer().getUniqueId())) {
 
                 Block block = event.getClickedBlock();
-                if (MedievalFactions.getInstance().getConfig().getBoolean("nonMembersCanInteractWithDoors") && block != null && BlockChecker.getInstance().isDoor(block)) {
+                if (configService.getBoolean("nonMembersCanInteractWithDoors") && block != null && blockChecker.isDoor(block)) {
                     // allow non-faction members to interact with doors
                     return;
                 }
@@ -872,7 +879,7 @@ public class PersistentData {
                     // if not interacting with chest
                     if (canBlockBeInteractedWith(event)) {
                         // allow placing ladders
-                        if (MedievalFactions.getInstance().getConfig().getBoolean("laddersPlaceableInEnemyFactionTerritory")) {
+                        if (configService.getBoolean("laddersPlaceableInEnemyFactionTerritory")) {
                             if (event.getMaterial() == LADDER) {
                                 return;
                             }
@@ -888,7 +895,7 @@ public class PersistentData {
                     }
                 }
 
-                if (!InteractionAccessChecker.getInstance().isOutsiderInteractionAllowed(event.getPlayer(), claimedChunk, playersFaction)) {
+                if (!interactionAccessChecker.isOutsiderInteractionAllowed(event.getPlayer(), claimedChunk, playersFaction)) {
                     event.setCancelled(true);
                 }
             }
@@ -942,10 +949,10 @@ public class PersistentData {
         private void claimChunkAtLocation(Player claimant, double[] chunkCoords, World world, Faction claimantsFaction) {
 
             // if demesne limit enabled
-            if (LocalConfigService.getInstance().getBoolean("limitLand")) {
+            if (configService.getBoolean("limitLand")) {
                 // if at demesne limit
                 if (!(getChunksClaimedByFaction(claimantsFaction.getName()) < claimantsFaction.getCumulativePowerLevel())) {
-                    claimant.sendMessage(ChatColor.RED + Locale.get("AlertReachedDemesne"));
+                    claimant.sendMessage(ChatColor.RED + localeService.get("AlertReachedDemesne"));
                     return;
                 }
             }
@@ -954,11 +961,11 @@ public class PersistentData {
             ClaimedChunk chunk = isChunkClaimed(chunkCoords[0], chunkCoords[1], world.getName());
             if (chunk != null) {
                 // chunk already claimed
-                Faction targetFaction = PersistentData.getInstance().getFaction(chunk.getHolder());
+                Faction targetFaction = getFaction(chunk.getHolder());
 
                 // if holder is player's faction
                 if (targetFaction.getName().equalsIgnoreCase(claimantsFaction.getName()) && !claimantsFaction.getAutoClaimStatus()) {
-                    claimant.sendMessage(ChatColor.RED + Locale.get("LandAlreadyClaimedByYourFaction"));
+                    claimant.sendMessage(ChatColor.RED + localeService.get("LandAlreadyClaimedByYourFaction"));
                     return;
                 }
 
@@ -969,9 +976,9 @@ public class PersistentData {
                 }
 
                 // surrounded chunk protection check
-                if (MedievalFactions.getInstance().getConfig().getBoolean("surroundedChunksProtected")) {
+                if (configService.getBoolean("surroundedChunksProtected")) {
                     if (isClaimedChunkSurroundedByChunksClaimedBySameFaction(chunk)) {
-                        claimant.sendMessage(ChatColor.RED + Locale.get("SurroundedChunkProtected"));
+                        claimant.sendMessage(ChatColor.RED + localeService.get("SurroundedChunkProtected"));
                         return;
                     }
                 }
@@ -981,7 +988,7 @@ public class PersistentData {
 
                 // if target faction does not have more land than their demesne limit
                 if (!(targetFactionsCumulativePowerLevel < chunksClaimedByTargetFaction)) {
-                    claimant.sendMessage(ChatColor.RED + Locale.get("TargetFactionNotOverClaiming"));
+                    claimant.sendMessage(ChatColor.RED + localeService.get("TargetFactionNotOverClaiming"));
                     return;
                 }
 
@@ -998,9 +1005,9 @@ public class PersistentData {
 
                     Chunk toClaim = world.getChunkAt((int) chunkCoords[0], (int) chunkCoords[1]);
                     addClaimedChunk(toClaim, claimantsFaction, claimant.getWorld());
-                    claimant.sendMessage(ChatColor.GREEN + String.format(Locale.get("AlertLandConqueredFromAnotherFaction"), targetFaction.getName(), getChunksClaimedByFaction(claimantsFaction.getName()), claimantsFaction.getCumulativePowerLevel()));
+                    claimant.sendMessage(ChatColor.GREEN + String.format(localeService.get("AlertLandConqueredFromAnotherFaction"), targetFaction.getName(), getChunksClaimedByFaction(claimantsFaction.getName()), claimantsFaction.getCumulativePowerLevel()));
 
-                    Messenger.getInstance().sendAllPlayersInFactionMessage(targetFaction, ChatColor.RED + String.format(Locale.get("AlertLandConqueredFromYourFaction"), claimantsFaction.getName()));
+                    messenger.sendAllPlayersInFactionMessage(targetFaction, ChatColor.RED + String.format(localeService.get("AlertLandConqueredFromYourFaction"), claimantsFaction.getName()));
                 }
             } else {
                 Chunk toClaim = world.getChunkAt((int) chunkCoords[0], (int) chunkCoords[1]);
@@ -1009,7 +1016,7 @@ public class PersistentData {
                 if (!claimEvent.isCancelled()) {
                     // chunk not already claimed
                     addClaimedChunk(toClaim, claimantsFaction, claimant.getWorld());
-                    claimant.sendMessage(ChatColor.GREEN + String.format(Locale.get("AlertLandClaimed"), getChunksClaimedByFaction(claimantsFaction.getName()), claimantsFaction.getCumulativePowerLevel()));
+                    claimant.sendMessage(ChatColor.GREEN + String.format(localeService.get("AlertLandClaimed"), getChunksClaimedByFaction(claimantsFaction.getName()), claimantsFaction.getCumulativePowerLevel()));
                 }
             }
         }
@@ -1083,12 +1090,12 @@ public class PersistentData {
             FactionUnclaimEvent unclaimEvent = new FactionUnclaimEvent(holdingFaction, unclaimingPlayer, chunkToRemove.getChunk());
             Bukkit.getPluginManager().callEvent(unclaimEvent);
             if (unclaimEvent.isCancelled()) {
-                Logger.getInstance().debug("Unclaim event was cancelled.");
+                logger.debug("Unclaim event was cancelled.");
                 return;
             }
 
             // get player's faction
-            Faction playersFaction = PersistentData.getInstance().getPlayersFaction(unclaimingPlayer.getUniqueId());
+            Faction playersFaction = getPlayersFaction(unclaimingPlayer.getUniqueId());
 
             // ensure that the claimed chunk is owned by the player's faction
             if (!chunkToRemove.getHolder().equals(playersFaction.getName())) {
@@ -1103,7 +1110,7 @@ public class PersistentData {
                         && chunkToRemove.getWorldName().equalsIgnoreCase(Objects.requireNonNull(unclaimingPlayer.getLocation().getWorld()).getName())) {
                     // remove faction home
                     holdingFaction.setFactionHome(null);
-                    Messenger.getInstance().sendAllPlayersInFactionMessage(holdingFaction, ChatColor.RED + Locale.get("AlertFactionHomeRemoved"));
+                    messenger.sendAllPlayersInFactionMessage(holdingFaction, ChatColor.RED + localeService.get("AlertFactionHomeRemoved"));
 
                 }
             }
@@ -1198,7 +1205,7 @@ public class PersistentData {
         private boolean canBlockBeInteractedWith(PlayerInteractEvent event) {
             if (event.getClickedBlock() != null) {
                 // CHEST
-                if (BlockChecker.getInstance().isChest(event.getClickedBlock())) {
+                if (blockChecker.isChest(event.getClickedBlock())) {
                     return false;
                 }
                 switch (event.getClickedBlock().getType()) {
@@ -1313,8 +1320,8 @@ public class PersistentData {
             savePlayerActivityRecords();
             saveLockedBlocks();
             saveWars();
-            if (LocalConfigService.getInstance().hasBeenAltered()) {
-                MedievalFactions.getInstance().saveConfig();
+            if (configService.hasBeenAltered()) {
+                medievalFactions.saveConfig();
             }
         }
 
@@ -1437,7 +1444,7 @@ public class PersistentData {
             ArrayList<HashMap<String, String>> data = loadDataFromFilename(FILE_PATH + PLAYERACTIVITY_FILE_NAME);
 
             for (Map<String, String> powerRecord : data) {
-                ActivityRecord player = new ActivityRecord(powerRecord);
+                ActivityRecord player = new ActivityRecord(powerRecord, configService);
                 activityRecords.add(player);
             }
         }
@@ -1460,7 +1467,7 @@ public class PersistentData {
 //
 //            for (Map<String, String> warData : data) {
 //                War war = new War(warData);
-//                PersistentData.getInstance().addWar(war);
+//                addWar(war);
 //            }
         }
 

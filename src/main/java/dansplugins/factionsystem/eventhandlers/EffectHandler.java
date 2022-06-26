@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+import dansplugins.factionsystem.MedievalFactions;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.AreaEffectCloud;
 import org.bukkit.entity.Entity;
@@ -19,12 +20,15 @@ import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
 import org.bukkit.potion.PotionType;
 
-import dansplugins.factionsystem.MedievalFactions;
 import dansplugins.factionsystem.data.EphemeralData;
-import dansplugins.factionsystem.eventhandlers.helper.RelationChecker;
+import dansplugins.factionsystem.utils.RelationChecker;
 import preponderous.ponder.misc.Pair;
 
 public class EffectHandler implements Listener {
+    private final EphemeralData ephemeralData;
+    private final MedievalFactions medievalFactions;
+    private final RelationChecker relationChecker;
+
     private final List<PotionEffectType> BAD_POTION_EFFECTS = Arrays.asList(
             PotionEffectType.BLINDNESS,
             PotionEffectType.CONFUSION,
@@ -39,7 +43,10 @@ public class EffectHandler implements Listener {
     );
     private final List<PotionType> BAD_POTION_TYPES = new ArrayList<>();
 
-    public EffectHandler() {
+    public EffectHandler(EphemeralData ephemeralData, MedievalFactions medievalFactions, RelationChecker relationChecker) {
+        this.ephemeralData = ephemeralData;
+        this.medievalFactions = medievalFactions;
+        this.relationChecker = relationChecker;
         initializeBadPotionTypes();
     }
 
@@ -59,7 +66,7 @@ public class EffectHandler implements Listener {
         Player thrower = (Player) event.getEntity().getShooter();
         AreaEffectCloud cloud = event.getAreaEffectCloud();
         Pair<Player, AreaEffectCloud> storedCloud = new Pair<>(thrower, cloud);
-        EphemeralData.getInstance().getActiveAOEClouds().add(storedCloud);
+        ephemeralData.getActiveAOEClouds().add(storedCloud);
         addScheduledTaskToRemoveCloudFromEphemeralData(cloud, storedCloud);
     }
 
@@ -101,7 +108,7 @@ public class EffectHandler implements Listener {
 
     private void addScheduledTaskToRemoveCloudFromEphemeralData(AreaEffectCloud cloud, Pair<Player, AreaEffectCloud> storedCloudPair) {
         long delay = cloud.getDuration();
-        MedievalFactions.getInstance().getServer().getScheduler().scheduleSyncDelayedTask(MedievalFactions.getInstance(), () -> EphemeralData.getInstance().getActiveAOEClouds().remove(storedCloudPair), delay);
+        medievalFactions.getServer().getScheduler().scheduleSyncDelayedTask(medievalFactions, () -> ephemeralData.getActiveAOEClouds().remove(storedCloudPair), delay);
     }
 
     private void removePotionIntensityIfAnyVictimIsAnAlliedPlayer(PotionSplashEvent event, Player attacker) {
@@ -120,7 +127,7 @@ public class EffectHandler implements Listener {
     }
 
     private boolean arePlayersInFactionAndNotAtWar(Player attacker, Player victim) {
-        return RelationChecker.getInstance().arePlayersInAFaction(attacker, victim) && (RelationChecker.getInstance().arePlayersFactionsNotEnemies(attacker, victim) || RelationChecker.getInstance().arePlayersInSameFaction(attacker, victim));
+        return relationChecker.arePlayersInAFaction(attacker, victim) && (relationChecker.arePlayersFactionsNotEnemies(attacker, victim) || relationChecker.arePlayersInSameFaction(attacker, victim));
     }
 
     private boolean wasShooterAPlayer(ThrownPotion potion) {
@@ -156,12 +163,12 @@ public class EffectHandler implements Listener {
     }
 
     private boolean bothAreInFactionAndNotAtWar(Player attacker, Player potentialVictim) {
-        return RelationChecker.getInstance().arePlayersInAFaction(attacker, potentialVictim)
-                && (RelationChecker.getInstance().arePlayersFactionsNotEnemies(attacker, potentialVictim) || RelationChecker.getInstance().arePlayersInSameFaction(attacker, potentialVictim));
+        return relationChecker.arePlayersInAFaction(attacker, potentialVictim)
+                && (relationChecker.arePlayersFactionsNotEnemies(attacker, potentialVictim) || relationChecker.arePlayersInSameFaction(attacker, potentialVictim));
     }
 
     private Pair<Player, AreaEffectCloud> getCloudPairStoredInEphemeralData(AreaEffectCloud cloud) {
-        for (Pair<Player, AreaEffectCloud> storedCloudPair : EphemeralData.getInstance().getActiveAOEClouds()) {
+        for (Pair<Player, AreaEffectCloud> storedCloudPair : ephemeralData.getActiveAOEClouds()) {
             if (storedCloudPair.getRight() == cloud) {
                 return storedCloudPair;
             }

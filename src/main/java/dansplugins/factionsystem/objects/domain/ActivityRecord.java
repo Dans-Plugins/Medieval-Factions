@@ -15,25 +15,29 @@ import java.util.concurrent.TimeUnit;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 
-import dansplugins.factionsystem.MedievalFactions;
 import dansplugins.factionsystem.objects.inherited.PlayerRecord;
+import dansplugins.factionsystem.services.ConfigService;
 import preponderous.ponder.misc.abs.Savable;
 
 /**
  * @author Daniel McCoy Stephenson
  */
 public class ActivityRecord extends PlayerRecord implements Savable {
+    private final ConfigService configService;
+
     private int logins = 0;
     private int powerLost = 0;
     private ZonedDateTime lastLogout = ZonedDateTime.now();
 
-    public ActivityRecord(UUID uuid, int logins) {
+    public ActivityRecord(UUID uuid, ConfigService configService, int logins) {
+        this.configService = configService;
         playerUUID = uuid;
         this.logins = logins;
         this.powerLost = 0;
     }
 
-    public ActivityRecord(Map<String, String> data) {
+    public ActivityRecord(Map<String, String> data, ConfigService configService) {
+        this.configService = configService;
         this.load(data);
     }
 
@@ -46,7 +50,7 @@ public class ActivityRecord extends PlayerRecord implements Savable {
     }
 
     public void incrementPowerLost() {
-        powerLost += MedievalFactions.getInstance().getConfig().getInt("powerDecreaseAmount");
+        powerLost += configService.getInt("powerDecreaseAmount");
     }
 
     public ZonedDateTime getLastLogout() {

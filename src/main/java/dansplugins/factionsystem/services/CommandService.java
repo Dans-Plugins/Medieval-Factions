@@ -8,10 +8,10 @@ import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Set;
 
+import dansplugins.factionsystem.MedievalFactions;
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
 
-import dansplugins.factionsystem.MedievalFactions;
 import dansplugins.factionsystem.commands.AddLawCommand;
 import dansplugins.factionsystem.commands.AllyCommand;
 import dansplugins.factionsystem.commands.AutoClaimCommand;
@@ -67,37 +67,77 @@ import dansplugins.factionsystem.commands.VassalizeCommand;
 import dansplugins.factionsystem.commands.VersionCommand;
 import dansplugins.factionsystem.commands.WhoCommand;
 import dansplugins.factionsystem.commands.abs.SubCommand;
-import dansplugins.factionsystem.utils.Locale;
 
 /**
  * @author Daniel McCoy Stephenson
  */
-public class LocalCommandService {
+public class CommandService {
+    private final LocaleService localeService;
+    private final MedievalFactions medievalFactions;
+    private final ConfigService configService;
 
-    private static LocalCommandService instance;
     private final Set<SubCommand> subCommands = new HashSet<>();
 
-    private LocalCommandService() {
+    public CommandService(LocaleService localeService, MedievalFactions medievalFactions, ConfigService configService) {
+        this.localeService = localeService;
+        this.medievalFactions = medievalFactions;
+        this.configService = configService;
         subCommands.addAll(Arrays.asList(
-                new AddLawCommand(), new AllyCommand(), new AutoClaimCommand(), new BreakAllianceCommand(),
-                new BypassCommand(), new ChatCommand(), new CheckAccessCommand(), new CheckClaimCommand(),
-                new ClaimCommand(), new ConfigCommand(), new CreateCommand(), new DeclareIndependenceCommand(),
-                new DeclareWarCommand(), new DemoteCommand(), new DescCommand(), new DisbandCommand(),
-                new DuelCommand(), new EditLawCommand(), new FlagsCommand(), new ForceCommand(), new GateCommand(),
-                new GrantAccessCommand(), new GrantIndependenceCommand(), new HelpCommand(), new HomeCommand(),
-                new InfoCommand(), new InviteCommand(), new InvokeCommand(), new JoinCommand(), new KickCommand(),
-                new LawsCommand(), new LeaveCommand(), new ListCommand(), new LockCommand(), new MakePeaceCommand(),
-                new MembersCommand(), new PowerCommand(), new PrefixCommand(), new PromoteCommand(),
-                new RemoveLawCommand(), new RenameCommand(), new ResetPowerLevelsCommand(), new RevokeAccessCommand(),
-                new SetHomeCommand(), new SwearFealtyCommand(), new TransferCommand(), new UnclaimallCommand(),
-                new UnclaimCommand(), new UnlockCommand(), new VassalizeCommand(), new VersionCommand(),
-                new WhoCommand(), new MapCommand(), new StatsCommand()
+                new AddLawCommand(),
+                new AllyCommand(),
+                new AutoClaimCommand(),
+                new BreakAllianceCommand(),
+                new BypassCommand(),
+                new ChatCommand(),
+                new CheckAccessCommand(),
+                new CheckClaimCommand(),
+                new ClaimCommand(),
+                new ConfigCommand(),
+                new CreateCommand(),
+                new DeclareIndependenceCommand(),
+                new DeclareWarCommand(),
+                new DemoteCommand(),
+                new DescCommand(),
+                new DisbandCommand(),
+                new DuelCommand(),
+                new EditLawCommand(),
+                new FlagsCommand(),
+                new ForceCommand(),
+                new GateCommand(),
+                new GrantAccessCommand(),
+                new GrantIndependenceCommand(),
+                new HelpCommand(),
+                new HomeCommand(),
+                new InfoCommand(),
+                new InviteCommand(),
+                new InvokeCommand(),
+                new JoinCommand(),
+                new KickCommand(),
+                new LawsCommand(),
+                new LeaveCommand(),
+                new ListCommand(),
+                new LockCommand(),
+                new MakePeaceCommand(),
+                new MembersCommand(),
+                new PowerCommand(),
+                new PrefixCommand(),
+                new PromoteCommand(),
+                new RemoveLawCommand(),
+                new RenameCommand(),
+                new ResetPowerLevelsCommand(),
+                new RevokeAccessCommand(),
+                new SetHomeCommand(),
+                new SwearFealtyCommand(),
+                new TransferCommand(),
+                new UnclaimallCommand(),
+                new UnclaimCommand(),
+                new UnlockCommand(),
+                new VassalizeCommand(),
+                new VersionCommand(),
+                new WhoCommand(),
+                new MapCommand(),
+                new StatsCommand()
         ));
-    }
-
-    public static LocalCommandService getInstance() {
-        if (instance == null) instance = new LocalCommandService();
-        return instance;
     }
 
     public boolean interpretCommand(CommandSender sender, String label, String[] args) {
@@ -107,11 +147,11 @@ public class LocalCommandService {
             // no arguments check
             if (args.length == 0) {
                 // send plugin information
-                sender.sendMessage(ChatColor.AQUA + String.format(Locale.get("MedievalFactionsTitle"), MedievalFactions.getInstance().getVersion()));
-                sender.sendMessage(ChatColor.AQUA + String.format(Locale.get("DeveloperList"), "DanTheTechMan, Pasarus, Caibinus, Callum, Richardhyy, Mitras2, Kaonami"));
-                sender.sendMessage(ChatColor.AQUA + Locale.get("WikiLink"));
-                sender.sendMessage(ChatColor.AQUA + String.format(Locale.get("CurrentLanguageID"), MedievalFactions.getInstance().getConfig().getString("languageid")));
-                sender.sendMessage(ChatColor.AQUA + String.format(Locale.get("SupportedLanguageIDList"), LocalLocaleService.getInstance().getSupportedLanguageIDsSeparatedByCommas()));
+                sender.sendMessage(ChatColor.AQUA + String.format(localeService.get("MedievalFactionsTitle"), medievalFactions.getVersion()));
+                sender.sendMessage(ChatColor.AQUA + String.format(localeService.get("DeveloperList"), "DanTheTechMan, Pasarus, Caibinus, Callum, Richardhyy, Mitras2, Kaonami"));
+                sender.sendMessage(ChatColor.AQUA + localeService.get("WikiLink"));
+                sender.sendMessage(ChatColor.AQUA + String.format(localeService.get("CurrentLanguageID"), configService.getString("languageid")));
+                sender.sendMessage(ChatColor.AQUA + String.format(localeService.get("SupportedLanguageIDList"), localeService.getSupportedLanguageIDsSeparatedByCommas()));
                 return true;
             }
 
@@ -125,7 +165,7 @@ public class LocalCommandService {
                 }
             }
 
-            sender.sendMessage(ChatColor.RED + Locale.get("CommandNotRecognized"));
+            sender.sendMessage(ChatColor.RED + localeService.get("CommandNotRecognized"));
         }
         return false;
     }

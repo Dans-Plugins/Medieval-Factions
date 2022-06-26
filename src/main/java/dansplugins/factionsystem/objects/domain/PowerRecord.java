@@ -11,10 +11,7 @@ import java.util.UUID;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 
-import dansplugins.factionsystem.MedievalFactions;
-import dansplugins.factionsystem.data.PersistentData;
 import dansplugins.factionsystem.objects.inherited.PlayerRecord;
-import dansplugins.factionsystem.services.LocalConfigService;
 import preponderous.ponder.misc.abs.Savable;
 
 /**
@@ -34,19 +31,19 @@ public class PowerRecord extends PlayerRecord implements Savable {
 
     public int maxPower() {
         if (isPlayerAFactionOwner(playerUUID)) {
-            return (int) (MedievalFactions.getInstance().getConfig().getDouble("initialMaxPowerLevel") * MedievalFactions.getInstance().getConfig().getDouble("factionOwnerMultiplier", 2.0));
+            return (int) (configService.getDouble("initialMaxPowerLevel") * configService.getDouble("factionOwnerMultiplier", 2.0));
         }
 
         if (isPlayerAFactionOfficer(playerUUID)) {
-            return (int) (MedievalFactions.getInstance().getConfig().getDouble("initialMaxPowerLevel") * MedievalFactions.getInstance().getConfig().getDouble("factionOfficerMultiplier", 1.5));
+            return (int) (configService.getDouble("initialMaxPowerLevel") * configService.getDouble("factionOfficerMultiplier", 1.5));
         }
 
-        return MedievalFactions.getInstance().getConfig().getInt("initialMaxPowerLevel");
+        return configService.getInt("initialMaxPowerLevel");
     }
 
     private boolean isPlayerAFactionOwner(UUID player) {
-        if (PersistentData.getInstance().isInFaction(player)) {
-            Faction faction = PersistentData.getInstance().getPlayersFaction(player);
+        if (persistentData.isInFaction(player)) {
+            Faction faction = persistentData.getPlayersFaction(player);
             return faction.getOwner().equals(player);
         } else {
             return false;
@@ -54,8 +51,8 @@ public class PowerRecord extends PlayerRecord implements Savable {
     }
 
     private boolean isPlayerAFactionOfficer(UUID player) {
-        if (PersistentData.getInstance().isInFaction(player)) {
-            Faction faction = PersistentData.getInstance().getPlayersFaction(player);
+        if (persistentData.isInFaction(player)) {
+            Faction faction = persistentData.getPlayersFaction(player);
             return faction.isOfficer(player);
         } else {
             return false;
@@ -64,7 +61,7 @@ public class PowerRecord extends PlayerRecord implements Savable {
 
     public void increasePower() {
         if (powerLevel < maxPower()) {
-            powerLevel += MedievalFactions.getInstance().getConfig().getInt("powerIncreaseAmount");
+            powerLevel += configService.getInt("powerIncreaseAmount");
             if (powerLevel > maxPower()) {
                 powerLevel = maxPower();
             }
@@ -73,7 +70,7 @@ public class PowerRecord extends PlayerRecord implements Savable {
 
     public void decreasePower() {
         if (powerLevel > 0) {
-            powerLevel -= MedievalFactions.getInstance().getConfig().getInt("powerDecreaseAmount");
+            powerLevel -= configService.getInt("powerDecreaseAmount");
             if (powerLevel < 0) {
                 powerLevel = 0;
             }
@@ -89,12 +86,12 @@ public class PowerRecord extends PlayerRecord implements Savable {
     }
 
     public void grantPowerDueToKill() {
-        double powerGained = LocalConfigService.getInstance().getDouble("powerGainedOnKill");
+        double powerGained = configService.getDouble("powerGainedOnKill");
         powerLevel = Math.min(powerLevel + powerGained, maxPower());
     }
 
     public double revokePowerDueToDeath() {
-        double powerLost = LocalConfigService.getInstance().getDouble("powerLostOnDeath");
+        double powerLost = configService.getDouble("powerLostOnDeath");
         powerLevel = Math.max(powerLevel - powerLost, 0);
         return powerLost;
     }

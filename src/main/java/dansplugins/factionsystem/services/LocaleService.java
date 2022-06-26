@@ -25,10 +25,10 @@ import preponderous.ponder.misc.Pair;
 /**
  * @author Daniel McCoy Stephenson
  */
-public class LocalLocaleService {
+public class LocaleService {
+    private final MedievalFactions medievalFactions;
+    private final ConfigService configService;
 
-    private static LocalLocaleService instance;
-    private final boolean debug = MedievalFactions.getInstance().isDebugEnabled();
     private final ArrayList<String> supportedLanguageIDs = new ArrayList<>(Arrays.asList("en-us", "es", "ru", "pt-br", "de"));
 
     private final ArrayList<String> keys = new ArrayList<>();
@@ -38,22 +38,21 @@ public class LocalLocaleService {
     private String localizationFileName;
     private String localizationFilePath;
 
-    private LocalLocaleService() {
+    public LocaleService(MedievalFactions medievalFactions, ConfigService configService) {
+        this.medievalFactions = medievalFactions;
+        this.configService = configService;
         initializePaths();
-    }
-
-    public static LocalLocaleService getInstance() {
-        if (instance == null) {
-            instance = new LocalLocaleService();
-        }
-        return instance;
     }
 
     private void initializePaths() {
         String pluginFolderPath = "./plugins/MedievalFactions/";
         languageFolderPath = pluginFolderPath + "languages/";
-        localizationFileName = MedievalFactions.getInstance().getConfig().getString("languageid") + ".tsv";
+        localizationFileName = configService.getString("languageid") + ".tsv";
         localizationFilePath = languageFolderPath + localizationFileName;
+    }
+
+    public String get(String key) {
+        return getText(key);
     }
 
     public String getText(String key) {
@@ -65,16 +64,16 @@ public class LocalLocaleService {
 
         if (isFilePresent(localizationFilePath)) {
             loadFromPluginFolder();
-            if (debug) {
-                System.out.println("DEBUG: Loaded from plugin folder!");
+            if (medievalFactions.isDebugEnabled()) {
+                System.out.println("medievalFactions.isDebugEnabled(): Loaded from plugin folder!");
             }
         } else {
             loadFromResource();
-            if (debug) {
-                System.out.println("DEBUG: Loaded from resource!");
+            if (medievalFactions.isDebugEnabled()) {
+                System.out.println("medievalFactions.isDebugEnabled(): Loaded from resource!");
             }
         }
-        if (debug) {
+        if (medievalFactions.isDebugEnabled()) {
             System.out.println(String.format(getText("KeysLoaded"), keys.size()));
         }
     }
@@ -116,8 +115,8 @@ public class LocalLocaleService {
             saveToPluginFolder();
 
         } catch (Exception e) {
-            if (debug) {
-                System.out.println("DEBUG: Something went wrong loading from the plugin folder.");
+            if (medievalFactions.isDebugEnabled()) {
+                System.out.println("medievalFactions.isDebugEnabled(): Something went wrong loading from the plugin folder.");
             }
             e.printStackTrace();
         }
@@ -137,8 +136,8 @@ public class LocalLocaleService {
             }
 
         } catch (Exception e) {
-            if (debug) {
-                System.out.println("DEBUG: Something went wrong loading from file!");
+            if (medievalFactions.isDebugEnabled()) {
+                System.out.println("medievalFactions.isDebugEnabled(): Something went wrong loading from file!");
             }
             e.printStackTrace();
         }
@@ -147,10 +146,10 @@ public class LocalLocaleService {
 
     // this should be called after loading from plugin folder
     private void updateCurrentLocalLanguageFile() {
-        if (debug) {
-            System.out.println("DEBUG: LocaleManager is updating supported local language files.");
+        if (medievalFactions.isDebugEnabled()) {
+            System.out.println("medievalFactions.isDebugEnabled(): LocaleManager is updating supported local language files.");
         }
-        String ID = MedievalFactions.getInstance().getConfig().getString("languageid");
+        String ID = configService.getString("languageid");
         if (isLanguageIDSupported(ID)) {
             InputStream inputStream;
             inputStream = getResourceAsInputStream(ID + ".tsv");
@@ -163,7 +162,7 @@ public class LocalLocaleService {
     }
 
     private InputStream getResourceAsInputStream(String fileName) {
-        return MedievalFactions.getInstance().getResource(fileName);
+        return medievalFactions.getResource(fileName);
     }
 
     private void loadFromResource() {
@@ -173,8 +172,8 @@ public class LocalLocaleService {
             loadMissingKeysFromInputStream(inputStream);
             saveToPluginFolder();
         } catch (Exception e) {
-            if (debug) {
-                System.out.println("DEBUG: Error loading from resource!");
+            if (medievalFactions.isDebugEnabled()) {
+                System.out.println("medievalFactions.isDebugEnabled(): Error loading from resource!");
             }
             e.printStackTrace();
         }
@@ -188,7 +187,7 @@ public class LocalLocaleService {
             if (pair != null && !strings.containsKey(pair.getLeft())) { // if pair found and if key not already loaded
                 strings.put(pair.getLeft(), pair.getRight());
                 keys.add(pair.getLeft());
-//                System.out.println(String.format("DEBUG: Loaded missing key %s from resources!", pair.getLeft()));
+//                System.out.println(String.format("medievalFactions.isDebugEnabled(): Loaded missing key %s from resources!", pair.getLeft()));
             }
         });
     }
@@ -226,8 +225,8 @@ public class LocalLocaleService {
             File folder = new File(languageFolderPath);
             if (!folder.exists()) {
                 if (!folder.mkdir()) {
-                    if (debug) {
-                        System.out.println("DEBUG: Failed to create directory.");
+                    if (medievalFactions.isDebugEnabled()) {
+                        System.out.println("medievalFactions.isDebugEnabled(): Failed to create directory.");
                     }
                     return;
                 }
@@ -235,8 +234,8 @@ public class LocalLocaleService {
             File file = new File(localizationFilePath);
             if (!file.exists()) {
                 if (!file.createNewFile()) {
-                    if (debug) {
-                        System.out.println("DEBUG: Failed to create file.");
+                    if (medievalFactions.isDebugEnabled()) {
+                        System.out.println("medievalFactions.isDebugEnabled(): Failed to create file.");
                     }
                     return;
                 }
@@ -247,13 +246,13 @@ public class LocalLocaleService {
                     output.write(key + "\t" + strings.get(key) + "\n");
                 }
             } catch (Exception ex) {
-                if (debug) {
-                    System.out.println("DEBUG: Failed to write to file.");
+                if (medievalFactions.isDebugEnabled()) {
+                    System.out.println("medievalFactions.isDebugEnabled(): Failed to write to file.");
                 }
             }
         } catch (Exception e) {
-            if (debug) {
-                System.out.println("DEBUG: There was a problem saving the strings.");
+            if (medievalFactions.isDebugEnabled()) {
+                System.out.println("medievalFactions.isDebugEnabled(): There was a problem saving the strings.");
             }
             e.printStackTrace();
         }

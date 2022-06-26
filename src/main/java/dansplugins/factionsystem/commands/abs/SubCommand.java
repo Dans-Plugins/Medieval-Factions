@@ -8,6 +8,7 @@ import java.util.Arrays;
 import java.util.Objects;
 import java.util.UUID;
 
+import dansplugins.factionsystem.services.LocaleService;
 import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.command.CommandSender;
@@ -19,8 +20,7 @@ import dansplugins.factionsystem.data.EphemeralData;
 import dansplugins.factionsystem.data.PersistentData;
 import dansplugins.factionsystem.integrators.DynmapIntegrator;
 import dansplugins.factionsystem.objects.domain.Faction;
-import dansplugins.factionsystem.services.LocalConfigService;
-import dansplugins.factionsystem.services.LocalLocaleService;
+import dansplugins.factionsystem.services.ConfigService;
 
 /**
  * @author Callum Johnson
@@ -32,12 +32,12 @@ public abstract class SubCommand implements ColorTranslator {
     private final boolean requiresFaction;
     private final boolean requiresOfficer;
     private final boolean requiresOwner;
-    protected LocalLocaleService locale;
+    protected LocaleService localeService;
     protected PersistentData data;
     protected EphemeralData ephemeral;
     protected PersistentData.ChunkDataAccessor chunks;
     protected DynmapIntegrator dynmap;
-    protected LocalConfigService localConfigService;
+    protected ConfigService configService;
     protected Faction faction = null;
     private String[] names;
 
@@ -84,18 +84,18 @@ public abstract class SubCommand implements ColorTranslator {
         this.names = new String[names.length];
         for (int i = 0; i < this.names.length; i++) {
             String name = names[i];
-            if (name.contains(LOCALE_PREFIX)) name = locale.getText(name.replace(LOCALE_PREFIX, ""));
+            if (name.contains(LOCALE_PREFIX)) name = localeService.getText(name.replace(LOCALE_PREFIX, ""));
             this.names[i] = name;
         }
     }
 
     protected void initializeLocalVariablesStandingFOrInstancesOfConstantlyUsedInstances() {
-        this.locale = LocalLocaleService.getInstance();
+        this.localeService = LocaleService.getInstance();
         this.data = PersistentData.getInstance();
         this.ephemeral = EphemeralData.getInstance();
         this.chunks = PersistentData.getInstance().getChunkDataAccessor();
         this.dynmap = DynmapIntegrator.getInstance();
-        this.localConfigService = LocalConfigService.getInstance();
+        this.configService = ConfigService.getInstance();
     }
 
     /**
@@ -199,7 +199,7 @@ public abstract class SubCommand implements ColorTranslator {
      * @return String message
      */
     protected String getText(String key) {
-        String text = locale.getText(key);
+        String text = localeService.getText(key);
         text = text.replace("%d", "%s");
         return text;
     }
