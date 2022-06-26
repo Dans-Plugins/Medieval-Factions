@@ -5,11 +5,11 @@
     <modelVersion>4.0.0</modelVersion>
 
     <groupId>dansplugins</groupId>
-    <artifactId>Medieval-Factions</artifactId>
+    <artifactId>Pure-Factions</artifactId>
     <version>4.6.4.2</version>
     <packaging>jar</packaging>
 
-    <name>Medieval Factions</name>
+    <name>Pure Factions</name>
 
     <properties>
         <java.version>1.8</java.version>
