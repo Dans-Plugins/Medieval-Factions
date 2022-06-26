@@ -16,14 +16,10 @@ AlertAttemptedVassalization	%s hat versucht, deine Fraktion zu vassalisieren. We
 AlertBeenInvited	 Du wurdest zu %s eingeladen. Gebe /mf join %s ein, um beizutreten.
 AlertCalledToWar1	%s hat deine Fraktion in ihren Krieg mit %s gerufen.
 AlertCalledToWar2	%s hat %s in den Krieg mit deiner Faction gerufen.
-AlertCalledToWar3	
- Deine Fraktion hat %s in deinen Krieg mit %s gerufen.
-AlertChallengedToDuel	
- %s hat %s zu einem Duell herausgefordert.
-AlertChallengedToDuelPlusHowTo	%s hat dich zu einem Duell herausgefordert. Typ /mf duell akzeptieren, um zu beginnen.
- 
-AlertChallengeIssued	
- Du hast %s zu einem Duell herausgefordert.
+AlertCalledToWar3	 Deine Fraktion hat %s in deinen Krieg mit %s gerufen.
+AlertChallengedToDuel	 %s hat %s zu einem Duell herausgefordert.
+AlertChallengedToDuelPlusHowTo	%s hat dich zu einem Duell herausgefordert. Typ /mf duell akzeptieren, um zu beginnen. 
+AlertChallengeIssued	 Du hast %s zu einem Duell herausgefordert.
 AlertChallengeWasAccepted	%s hat deine Herausforderung angenommen, das Duell hat begonnen.
 AlertChangedGateName	Der Gate-Name wurde in '% s' geändert.
 AlertCurrentPowerLevel	Deine aktuelles Power Level ist% d /% d.
@@ -35,17 +31,14 @@ AlertFactionHasBeenVassalized	Deine Fraktion wurde vassalisiert und hat einen ne
 AlertFactionHasNewVassal	Deine Fraktion hat einen neuen Vasallen: %s
 AlertFactionHomeRemoved	Dein Factionhome wurde entfernt.
 AlertFactionIsWeakened	Deine Faction hat weniger als die Häflte der Max-Power. Sie wird keinen Bonus Power von ihren, jetzt unabhängigen, Vasallen mehr bekommen.
-AlertForcedDemotion	
- Du wurdest in deiner Fraktion gewaltsam vom Offiziersstatus herabgestuft.
-AlertForcedKick	
- Du wurdest gewaltsam aus deiner Fraktion geworfen.
+AlertForcedDemotion	 Du wurdest in deiner Fraktion gewaltsam vom Offiziersstatus herabgestuft.
+AlertForcedKick	 Du wurdest gewaltsam aus deiner Fraktion geworfen.
 AlertForcedLoad	 Medieval Factions wurde zum Laden gezwungen.
 AlertForcedSave	Medieval Factions wurde gezwungen zu speichern.
 AlertForcedToJoinFaction	Du wurdest gezwungen, einer Fraktion beizutreten.
 AlertGate	Das ist das '%s' Tor.
 AlertGrantedIndependence	 %s hat deiner Fraktion Unabhängigkeit gewährt.
-AlertIncreasingThePowerOfEveryPlayer	
- Medieval Factions erhöht die Power jedes Spielers um %d. Dies geschieht alle %d Minuten.
+AlertIncreasingThePowerOfEveryPlayer	 Medieval Factions erhöht die Power jedes Spielers um %d. Dies geschieht alle %d Minuten.
 AlertJoinedFaction	Du bist der Fraktion beigetreten.
 AlertKicked	Du wurdest von %s aus deiner Fraktion geworfen.
 AlertLandClaimed	Land beansprucht. Herrschaftsgröße: %d/%d
@@ -269,8 +262,7 @@ ErrorSettingAreaMarkerColor	Fehler beim Setzen der Bereichsmarkierungsfarbe auf 
 FactionAlreadyAlly	Diese Fraktion ist bereits dein Verbündeter.
 FactionAlreadyExists	Sorry. Diese Faction existiert bereits.
 FactionAndPlayerSingleQuotesRequirement	Fraktion und Spieler müssen in einfachen Anführungszeichen angegeben werden.
-FactionAndVassalSingleQuotesRequirement	Fraktion und Vasall, die entfernt werden sollen, müssen in einfachen Anführungszeichen angegeben werden.
-
+FactionAndVassalSingleQuotesRequirement	Fraktion und Vasall, die entfernt werden sollen, müssen in einfachen Anführungszeichen angegeben werden.
 FactionCreated	Faction erstellt.
 FactionCurrentlyEnemyMustMakePeace	Diese Faction ist im Moment dein Feind. Schließe zuerst Frieden, bevor du dich mit ihnen verbündest.
 FactionDataLoadedSuccessfuly	Faction Data wurde erfolgreich geladen.

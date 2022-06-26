@@ -29,7 +29,7 @@ dependencies {
 
 group = 'dansplugins'
 version = '4.6.4.2'
-description = 'Pure Factions'
+description = 'Medieval Factions'
 java.sourceCompatibility = JavaVersion.VERSION_1_8
 
 import org.apache.tools.ant.filters.ReplaceTokens
