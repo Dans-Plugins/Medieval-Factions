@@ -50,23 +50,23 @@ public class MedievalFactions extends PonderBukkitPlugin {
     private final ActionBarService actionBarService = new ActionBarService(this);
     private final ConfigService configService = new ConfigService();
     private final LocaleService localeService = new LocaleService(this, configService);
-    private final CommandService commandService = new CommandService(localeService, this, configService);
     private final EphemeralData ephemeralData = new EphemeralData();
     private final Messenger messenger = new Messenger();
     private final DynmapIntegrator dynmapIntegrator = new DynmapIntegrator();
     private final BlockChecker blockChecker = new BlockChecker();
     private final Logger logger = new Logger();
+    private final WarFactory warFactory = new WarFactory();
     private final PersistentData persistentData = new PersistentData(localeService, configService, this, messenger, dynmapIntegrator, ephemeralData, blockChecker, interactionAccessChecker, logger);
+    private final RelationChecker relationChecker = new RelationChecker(persistentData);
+    private final PlayerTeleporter playerTeleporter = new PlayerTeleporter();
+    private final Scheduler scheduler = new Scheduler(logger, localeService, this, persistentData, configService, playerTeleporter);
+    private final CommandService commandService = new CommandService(localeService, this, configService, persistentData, ephemeralData, persistentData.getChunkDataAccessor(), dynmapIntegrator, warFactory, logger, scheduler, messenger, relationChecker);
     private final InteractionAccessChecker interactionAccessChecker = new InteractionAccessChecker(persistentData, configService, ephemeralData, logger);
     private final GateService gateService = new GateService(persistentData, localeService, ephemeralData);
     private final LockService lockService = new LockService();
-    private final PlayerTeleporter playerTeleporter = new PlayerTeleporter();
-    private final Scheduler scheduler = new Scheduler(logger, localeService, this, persistentData, configService, playerTeleporter);
     private final TerritoryOwnerNotifier territoryOwnerNotifier = new TerritoryOwnerNotifier(localeService, configService, actionBarService);
-    private final WarFactory warFactory = new WarFactory();
     private final CurrenciesIntegrator currenciesIntegrator = new CurrenciesIntegrator();
     private final FiefsIntegrator fiefsIntegrator = new FiefsIntegrator();
-    private final RelationChecker relationChecker = new RelationChecker(persistentData);
 
     /**
      * This runs when the server starts.

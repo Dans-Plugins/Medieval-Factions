@@ -59,15 +59,15 @@ public class DynmapIntegrator {
         dynmap = pm.getPlugin("dynmap");
 
         if (!isDynmapPresent()) {
-            logger.debug(locale.get("CannotFindDynmap"));
+            logger.debug(localeService.get("CannotFindDynmap"));
         } else {
             try {
                 dynmapAPI = (DynmapCommonAPI) dynmap; /* Get API */
                 markerAPI = dynmapAPI.getMarkerAPI();
                 initializeMarkerSets();
-                logger.debug(locale.get("DynmapIntegrationSuccessful"));
+                logger.debug(localeService.get("DynmapIntegrationSuccessful"));
             } catch (Exception e) {
-                logger.debug(locale.get("ErrorIntegratingWithDynmap") + e.getMessage());
+                logger.debug(localeService.get("ErrorIntegratingWithDynmap") + e.getMessage());
             }
         }
     }
@@ -131,7 +131,7 @@ public class DynmapIntegrator {
         if (set == null) {
             set = markerAPI.createMarkerSet(getDynmapPluginSetId(markerLabel), getDynmapPluginLayer(), null, false);
             if (set == null) {
-                logger.debug(locale.get("ErrorCreatingMarkerSet") + ": markerLabel = " + markerLabel);
+                logger.debug(localeService.get("ErrorCreatingMarkerSet") + ": markerLabel = " + markerLabel);
                 return set;
             }
         }
@@ -410,7 +410,7 @@ public class DynmapIntegrator {
                 if (m == null) {
                     m = markerSet.createAreaMarker(polyid, name, false, curworld, x, z, false);
                     if (m == null) {
-                        System.out.println(String.format(locale.get("ErrorAddingAreaMarker"), polyid));
+                        System.out.println(String.format(localeService.get("ErrorAddingAreaMarker"), polyid));
                         return;
                     }
                 } else {
@@ -428,7 +428,7 @@ public class DynmapIntegrator {
                         m.setFillStyle(0.3, colrCode);
                     }
                 } catch (Exception e) {
-                    System.out.println(String.format(locale.get("ErrorSettingAreaMarkerColor"), fillColor));
+                    System.out.println(String.format(localeService.get("ErrorSettingAreaMarkerColor"), fillColor));
                 }
                 m.setDescription(popupDescription); /* Set popup */
 

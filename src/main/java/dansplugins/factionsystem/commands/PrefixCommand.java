@@ -4,6 +4,10 @@
  */
 package dansplugins.factionsystem.commands;
 
+import dansplugins.factionsystem.data.EphemeralData;
+import dansplugins.factionsystem.integrators.DynmapIntegrator;
+import dansplugins.factionsystem.services.ConfigService;
+import dansplugins.factionsystem.services.LocaleService;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
@@ -15,10 +19,10 @@ import dansplugins.factionsystem.data.PersistentData;
  */
 public class PrefixCommand extends SubCommand {
 
-    public PrefixCommand() {
+    public PrefixCommand(LocaleService localeService, PersistentData persistentData, EphemeralData ephemeralData, PersistentData.ChunkDataAccessor chunkDataAccessor, DynmapIntegrator dynmapIntegrator, ConfigService configService) {
         super(new String[]{
                 "prefix", LOCALE_PREFIX + "CmdPrefix"
-        }, true, true, false, true);
+        }, true, true, false, true, localeService, persistentData, ephemeralData, chunkDataAccessor, dynmapIntegrator, configService);
     }
 
     /**
@@ -33,7 +37,7 @@ public class PrefixCommand extends SubCommand {
         final String permission = "mf.prefix";
         if (!(checkPermissions(player, permission))) return;
         final String newPrefix = String.join(" ", args);
-        if (PersistentData.getInstance().isPrefixTaken(newPrefix)) {
+        if (persistentData.isPrefixTaken(newPrefix)) {
             player.sendMessage(translate("&c" + getText("PrefixTaken")));
             return;
         }

@@ -26,17 +26,17 @@ public class Messenger extends preponderous.ponder.minecraft.bukkit.tools.Messen
 
     public void sendFactionInfo(CommandSender sender, Faction faction, int power) {
         UUIDChecker uuidChecker = new UUIDChecker();
-        sender.sendMessage(ChatColor.BOLD + "" + ChatColor.AQUA + String.format(locale.get("FactionInfo"), faction.getName()) + "\n----------\n");
-        sender.sendMessage(ChatColor.AQUA + String.format(locale.get("Name"), faction.getName()) + "\n");
-        sender.sendMessage(ChatColor.AQUA + String.format(locale.get("Owner"), uuidChecker.findPlayerNameBasedOnUUID(faction.getOwner())) + "\n");
-        sender.sendMessage(ChatColor.AQUA + String.format(locale.get("Description"), faction.getDescription()) + "\n");
-        sender.sendMessage(ChatColor.AQUA + String.format(locale.get("Population"), faction.getMemberList().size()) + "\n");
+        sender.sendMessage(ChatColor.BOLD + "" + ChatColor.AQUA + String.format(localeService.get("FactionInfo"), faction.getName()) + "\n----------\n");
+        sender.sendMessage(ChatColor.AQUA + String.format(localeService.get("Name"), faction.getName()) + "\n");
+        sender.sendMessage(ChatColor.AQUA + String.format(localeService.get("Owner"), uuidChecker.findPlayerNameBasedOnUUID(faction.getOwner())) + "\n");
+        sender.sendMessage(ChatColor.AQUA + String.format(localeService.get("Description"), faction.getDescription()) + "\n");
+        sender.sendMessage(ChatColor.AQUA + String.format(localeService.get("Population"), faction.getMemberList().size()) + "\n");
         sendLiegeInfoIfVassal(faction, sender);
         sendFiefsInfo(faction, sender);
-        sender.sendMessage(ChatColor.AQUA + String.format(locale.get("AlliedWith"), faction.getAlliesSeparatedByCommas()) + "\n");
-        sender.sendMessage(ChatColor.AQUA + String.format(locale.get("AtWarWith"), faction.getEnemiesSeparatedByCommas()) + "\n");
-        sender.sendMessage(ChatColor.AQUA + String.format(locale.get("PowerLevel"), faction.getCumulativePowerLevel()) + "/" + faction.getMaximumCumulativePowerLevel() + "\n");
-        sender.sendMessage(ChatColor.AQUA + String.format(locale.get("DemesneSize"), power, faction.getCumulativePowerLevel()) + "\n");
+        sender.sendMessage(ChatColor.AQUA + String.format(localeService.get("AlliedWith"), faction.getAlliesSeparatedByCommas()) + "\n");
+        sender.sendMessage(ChatColor.AQUA + String.format(localeService.get("AtWarWith"), faction.getEnemiesSeparatedByCommas()) + "\n");
+        sender.sendMessage(ChatColor.AQUA + String.format(localeService.get("PowerLevel"), faction.getCumulativePowerLevel()) + "/" + faction.getMaximumCumulativePowerLevel() + "\n");
+        sender.sendMessage(ChatColor.AQUA + String.format(localeService.get("DemesneSize"), power, faction.getCumulativePowerLevel()) + "\n");
         sendLiegeInfoIfLiege(faction, sender);
         sendBonusPowerInfo(faction, sender);
         sender.sendMessage(ChatColor.AQUA + "----------\n");
@@ -44,7 +44,7 @@ public class Messenger extends preponderous.ponder.minecraft.bukkit.tools.Messen
 
     private void sendBonusPowerInfo(Faction faction, CommandSender sender) {
         if (faction.getBonusPower() != 0) {
-            sender.sendMessage(ChatColor.AQUA + String.format(locale.get("BonusPower"), faction.getBonusPower()));
+            sender.sendMessage(ChatColor.AQUA + String.format(localeService.get("BonusPower"), faction.getBonusPower()));
         }
     }
 
@@ -52,9 +52,9 @@ public class Messenger extends preponderous.ponder.minecraft.bukkit.tools.Messen
         int vassalContribution = faction.calculateCumulativePowerLevelWithVassalContribution() - faction.calculateCumulativePowerLevelWithoutVassalContribution();
         if (faction.isLiege()) {
             if (!faction.isWeakened()) {
-                sender.sendMessage(ChatColor.AQUA + String.format(locale.get("VassalContribution"), vassalContribution) + "\n");
+                sender.sendMessage(ChatColor.AQUA + String.format(localeService.get("VassalContribution"), vassalContribution) + "\n");
             } else {
-                sender.sendMessage(ChatColor.AQUA + String.format(locale.get("VassalContribution"), 0) + "\n");
+                sender.sendMessage(ChatColor.AQUA + String.format(localeService.get("VassalContribution"), 0) + "\n");
             }
         }
     }
@@ -74,10 +74,10 @@ public class Messenger extends preponderous.ponder.minecraft.bukkit.tools.Messen
 
     private void sendLiegeInfoIfVassal(Faction faction, CommandSender sender) {
         if (faction.hasLiege()) {
-            sender.sendMessage(ChatColor.AQUA + String.format(locale.get("Liege"), faction.getLiege()) + "\n");
+            sender.sendMessage(ChatColor.AQUA + String.format(localeService.get("Liege"), faction.getLiege()) + "\n");
         }
         if (faction.isLiege()) {
-            sender.sendMessage(ChatColor.AQUA + String.format(locale.get("Vassals"), faction.getVassalsSeparatedByCommas()) + "\n");
+            sender.sendMessage(ChatColor.AQUA + String.format(localeService.get("Vassals"), faction.getVassalsSeparatedByCommas()) + "\n");
         }
     }
 

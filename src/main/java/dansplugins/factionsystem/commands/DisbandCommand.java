@@ -4,6 +4,9 @@
  */
 package dansplugins.factionsystem.commands;
 
+import dansplugins.factionsystem.data.EphemeralData;
+import dansplugins.factionsystem.services.ConfigService;
+import dansplugins.factionsystem.services.LocaleService;
 import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.command.CommandSender;
@@ -20,11 +23,13 @@ import dansplugins.factionsystem.utils.Logger;
  * @author Callum Johnson
  */
 public class DisbandCommand extends SubCommand {
+    private final Logger logger;
 
-    public DisbandCommand() {
+    public DisbandCommand(LocaleService localeService, PersistentData persistentData, EphemeralData ephemeralData, PersistentData.ChunkDataAccessor chunkDataAccessor, DynmapIntegrator dynmapIntegrator, ConfigService configService, Logger logger) {
         super(new String[]{
                 "disband", LOCALE_PREFIX + "CmdDisband"
-        }, false);
+        }, false, persistentData, localeService, ephemeralData, configService, chunkDataAccessor, dynmapIntegrator);
+        this.logger = logger;
     }
 
     /**
@@ -71,17 +76,17 @@ public class DisbandCommand extends SubCommand {
             sender.sendMessage(translate("&c" + getText("FactionNotFound")));
             return;
         }
-        final int factionIndex = data.getFactionIndexOf(disband);
+        final int factionIndex = persistentData.getFactionIndexOf(disband);
         if (self) {
             sender.sendMessage(translate("&a" + getText("FactionSuccessfullyDisbanded")));
-            ephemeral.getPlayersInFactionChat().remove(((Player) sender).getUniqueId());
+            ephemeralData.getPlayersInFactionChat().remove(((Player) sender).getUniqueId());
         } else sender.sendMessage(translate("&a" + getText("SuccessfulDisbandment", disband.getName())));
         removeFaction(factionIndex, self ? ((OfflinePlayer) sender) : null);
     }
 
     private void removeFaction(int i, OfflinePlayer disbandingPlayer) {
 
-        Faction disbandingThisFaction = PersistentData.getInstance().getFactionByIndex(i);
+        Faction disbandingThisFaction = persistentData.getFactionByIndex(i);
         String nameOfFactionToRemove = disbandingThisFaction.getName();
         FactionDisbandEvent event = new FactionDisbandEvent(
                 disbandingThisFaction,
@@ -89,19 +94,19 @@ public class DisbandCommand extends SubCommand {
         );
         Bukkit.getPluginManager().callEvent(event);
         if (event.isCancelled()) {
-            Logger.getInstance().debug("Disband event was cancelled.");
+            logger.debug("Disband event was cancelled.");
             return;
         }
 
         // remove claimed land objects associated with this faction
-        PersistentData.getInstance().getChunkDataAccessor().removeAllClaimedChunks(nameOfFactionToRemove);
-        DynmapIntegrator.getInstance().updateClaims();
+        persistentData.getChunkDataAccessor().removeAllClaimedChunks(nameOfFactionToRemove);
+        dynmapIntegrator.updateClaims();
 
         // remove locks associated with this faction
-        PersistentData.getInstance().removeAllLocks(PersistentData.getInstance().getFactionByIndex(i).getName());
+        persistentData.removeAllLocks(persistentData.getFactionByIndex(i).getName());
 
-        PersistentData.getInstance().removePoliticalTiesToFaction(nameOfFactionToRemove);
+        persistentData.removePoliticalTiesToFaction(nameOfFactionToRemove);
 
-        PersistentData.getInstance().removeFactionByIndex(i);
+        persistentData.removeFactionByIndex(i);
     }
 }

@@ -4,9 +4,13 @@
  */
 package dansplugins.factionsystem.commands;
 
-import java.util.ArrayList;
 import java.util.List;
 
+import dansplugins.factionsystem.data.EphemeralData;
+import dansplugins.factionsystem.data.PersistentData;
+import dansplugins.factionsystem.integrators.DynmapIntegrator;
+import dansplugins.factionsystem.services.ConfigService;
+import dansplugins.factionsystem.services.LocaleService;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
@@ -23,10 +27,10 @@ import preponderous.ponder.misc.ArgumentParser;
  */
 public class InvokeCommand extends SubCommand {
 
-    public InvokeCommand() {
+    public InvokeCommand(LocaleService localeService, PersistentData persistentData, EphemeralData ephemeralData, PersistentData.ChunkDataAccessor chunkDataAccessor, DynmapIntegrator dynmapIntegrator, ConfigService configService) {
         super(new String[]{
                 "invoke", LOCALE_PREFIX + "CmdInvoke"
-        }, true, true, false, true);
+        }, true, true, false, true, localeService, persistentData, ephemeralData, chunkDataAccessor, dynmapIntegrator, configService);
     }
 
     /**
@@ -64,7 +68,7 @@ public class InvokeCommand extends SubCommand {
             player.sendMessage(translate("&c" + getText("NotAtWarWith", warringFaction.getName())));
             return;
         }
-        if (MedievalFactions.getInstance().getConfig().getBoolean("allowNeutrality") && ((boolean) invokee.getFlags().getFlag("neutral"))) {
+        if (configService.getBoolean("allowNeutrality") && ((boolean) invokee.getFlags().getFlag("neutral"))) {
             player.sendMessage(translate("&c" + getText("CannotBringNeutralFactionIntoWar")));
             return;
         }

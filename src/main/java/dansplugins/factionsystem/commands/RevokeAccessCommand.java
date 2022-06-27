@@ -6,6 +6,11 @@ package dansplugins.factionsystem.commands;
 
 import java.util.UUID;
 
+import dansplugins.factionsystem.data.EphemeralData;
+import dansplugins.factionsystem.data.PersistentData;
+import dansplugins.factionsystem.integrators.DynmapIntegrator;
+import dansplugins.factionsystem.services.ConfigService;
+import dansplugins.factionsystem.services.LocaleService;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
@@ -17,10 +22,10 @@ import preponderous.ponder.minecraft.bukkit.tools.UUIDChecker;
  */
 public class RevokeAccessCommand extends SubCommand {
 
-    public RevokeAccessCommand() {
+    public RevokeAccessCommand(LocaleService localeService, PersistentData persistentData, EphemeralData ephemeralData, PersistentData.ChunkDataAccessor chunkDataAccessor, DynmapIntegrator dynmapIntegrator, ConfigService configService) {
         super(new String[]{
                 "ra", "revokeaccess", LOCALE_PREFIX + "CmdRevokeAccess"
-        }, true);
+        }, true, persistentData, localeService, ephemeralData, configService, chunkDataAccessor, dynmapIntegrator);
     }
 
     /**
@@ -39,11 +44,11 @@ public class RevokeAccessCommand extends SubCommand {
             return;
         }
         if (args[0].equalsIgnoreCase("cancel")) {
-            ephemeral.getPlayersRevokingAccess().remove(player.getUniqueId());
+            ephemeralData.getPlayersRevokingAccess().remove(player.getUniqueId());
             player.sendMessage(translate("&a" + getText("Cancelled")));
             return;
         }
-        if (ephemeral.getPlayersRevokingAccess().containsKey(player.getUniqueId())) {
+        if (ephemeralData.getPlayersRevokingAccess().containsKey(player.getUniqueId())) {
             player.sendMessage(translate("&c" + getText("AlreadyEnteredRevokeAccess")));
             return;
         }
@@ -57,7 +62,7 @@ public class RevokeAccessCommand extends SubCommand {
             player.sendMessage(translate("&c" + getText("CannotRevokeAccessFromSelf")));
             return;
         }
-        ephemeral.getPlayersRevokingAccess().put(
+        ephemeralData.getPlayersRevokingAccess().put(
                 player.getUniqueId(), targetUUID
         );
         player.sendMessage(translate("&a" + getText("RightClickRevokeAccess")));

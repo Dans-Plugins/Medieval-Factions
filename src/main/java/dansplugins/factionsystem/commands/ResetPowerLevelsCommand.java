@@ -4,6 +4,10 @@
  */
 package dansplugins.factionsystem.commands;
 
+import dansplugins.factionsystem.data.EphemeralData;
+import dansplugins.factionsystem.integrators.DynmapIntegrator;
+import dansplugins.factionsystem.services.ConfigService;
+import dansplugins.factionsystem.services.LocaleService;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
@@ -15,10 +19,10 @@ import dansplugins.factionsystem.data.PersistentData;
  */
 public class ResetPowerLevelsCommand extends SubCommand {
 
-    public ResetPowerLevelsCommand() {
+    public ResetPowerLevelsCommand(LocaleService localeService, PersistentData persistentData, EphemeralData ephemeralData, PersistentData.ChunkDataAccessor chunkDataAccessor, DynmapIntegrator dynmapIntegrator, ConfigService configService) {
         super(new String[]{
                 "resetpowerlevels", LOCALE_PREFIX + "CmdResetPowerLevels", "rpl"
-        }, false);
+        }, false, persistentData, localeService, ephemeralData, configService, chunkDataAccessor, dynmapIntegrator);
     }
 
     /**
@@ -45,6 +49,6 @@ public class ResetPowerLevelsCommand extends SubCommand {
         if (!(checkPermissions(sender, "mf.resetpowerlevels", "mf.admin"))) return;
         sender.sendMessage(translate("&aPower Levels Resetting..."));
         System.out.println(getText("ResettingIndividualPowerRecords"));
-        PersistentData.getInstance().resetPowerLevels();
+        persistentData.resetPowerLevels();
     }
 }

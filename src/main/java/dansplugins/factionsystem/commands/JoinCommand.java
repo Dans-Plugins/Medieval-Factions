@@ -4,6 +4,11 @@
  */
 package dansplugins.factionsystem.commands;
 
+import dansplugins.factionsystem.data.EphemeralData;
+import dansplugins.factionsystem.data.PersistentData;
+import dansplugins.factionsystem.integrators.DynmapIntegrator;
+import dansplugins.factionsystem.services.ConfigService;
+import dansplugins.factionsystem.services.LocaleService;
 import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
@@ -17,11 +22,13 @@ import dansplugins.factionsystem.utils.Logger;
  * @author Callum Johnson
  */
 public class JoinCommand extends SubCommand {
+    private final Logger logger;
 
-    public JoinCommand() {
+    public JoinCommand(LocaleService localeService, PersistentData persistentData, EphemeralData ephemeralData, PersistentData.ChunkDataAccessor chunkDataAccessor, DynmapIntegrator dynmapIntegrator, ConfigService configService, Logger logger) {
         super(new String[]{
                 "join", LOCALE_PREFIX + "CmdJoin"
-        }, true);
+        }, true, persistentData, localeService, ephemeralData, configService, chunkDataAccessor, dynmapIntegrator);
+        this.logger = logger;
     }
 
     /**
@@ -39,7 +46,7 @@ public class JoinCommand extends SubCommand {
             player.sendMessage(translate("&c" + getText("UsageJoin")));
             return;
         }
-        if (data.isInFaction(player.getUniqueId())) {
+        if (persistentData.isInFaction(player.getUniqueId())) {
             player.sendMessage(translate("&c" + getText("AlertAlreadyInFaction")));
             return;
         }
@@ -55,7 +62,7 @@ public class JoinCommand extends SubCommand {
         FactionJoinEvent joinEvent = new FactionJoinEvent(faction, player);
         Bukkit.getPluginManager().callEvent(joinEvent);
         if (joinEvent.isCancelled()) {
-            Logger.getInstance().debug("Join event was cancelled.");
+            logger.debug("Join event was cancelled.");
             return;
         }
         messageFaction(target, translate("&a" + getText("HasJoined", player.getName(), target.getName())));

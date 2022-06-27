@@ -4,6 +4,11 @@
  */
 package dansplugins.factionsystem.commands;
 
+import dansplugins.factionsystem.data.EphemeralData;
+import dansplugins.factionsystem.data.PersistentData;
+import dansplugins.factionsystem.integrators.DynmapIntegrator;
+import dansplugins.factionsystem.services.ConfigService;
+import dansplugins.factionsystem.services.LocaleService;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
@@ -14,11 +19,13 @@ import dansplugins.factionsystem.utils.RelationChecker;
  * @author Callum Johnson
  */
 public class LockCommand extends SubCommand {
+    private final RelationChecker relationChecker;
 
-    public LockCommand() {
+    public LockCommand(LocaleService localeService, PersistentData persistentData, EphemeralData ephemeralData, PersistentData.ChunkDataAccessor chunkDataAccessor, DynmapIntegrator dynmapIntegrator, ConfigService configService, RelationChecker relationChecker) {
         super(new String[]{
                 "lock", LOCALE_PREFIX + "CmdLock"
-        }, true);
+        }, true, persistentData, localeService, ephemeralData, configService, chunkDataAccessor, dynmapIntegrator);
+        this.relationChecker = relationChecker;
     }
 
     /**
@@ -31,20 +38,20 @@ public class LockCommand extends SubCommand {
     @Override
     public void execute(Player player, String[] args, String key) {
         final String permission = "mf.lock";
-        if (RelationChecker.getInstance().playerNotInFaction(player)) {
+        if (relationChecker.playerNotInFaction(player)) {
             return;
         }
         if (!checkPermissions(player, permission)) {
             return;
         }
         if (args.length >= 1 && safeEquals(args[0], "cancel")) {
-            if (ephemeral.getLockingPlayers().remove(player.getUniqueId())) { // Remove them
+            if (ephemeralData.getLockingPlayers().remove(player.getUniqueId())) { // Remove them
                 player.sendMessage(translate("&c" + getText("LockingCancelled")));
                 return;
             }
         }
-        ephemeral.getLockingPlayers().add(player.getUniqueId());
-        ephemeral.getUnlockingPlayers().remove(player.getUniqueId());
+        ephemeralData.getLockingPlayers().add(player.getUniqueId());
+        ephemeralData.getUnlockingPlayers().remove(player.getUniqueId());
         player.sendMessage(translate("&a" + getText("RightClickLock")));
     }
 

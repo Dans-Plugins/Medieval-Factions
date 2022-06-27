@@ -8,6 +8,11 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 
+import dansplugins.factionsystem.data.EphemeralData;
+import dansplugins.factionsystem.data.PersistentData;
+import dansplugins.factionsystem.integrators.DynmapIntegrator;
+import dansplugins.factionsystem.services.ConfigService;
+import dansplugins.factionsystem.services.LocaleService;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
@@ -20,10 +25,10 @@ public class HelpCommand extends SubCommand {
     private static final int LAST_PAGE = 7;
     private final HashMap<Integer, List<String>> helpPages = new HashMap<>();
 
-    public HelpCommand() {
+    public HelpCommand(LocaleService localeService, PersistentData persistentData, EphemeralData ephemeralData, PersistentData.ChunkDataAccessor chunkDataAccessor, DynmapIntegrator dynmapIntegrator, ConfigService configService) {
         super(new String[]{
                 "help", LOCALE_PREFIX + "CmdHelp"
-        }, false);
+        }, false, persistentData, localeService, ephemeralData, configService, chunkDataAccessor, dynmapIntegrator);
 
         // there should be 9 commands per page
         helpPages.put(1, Arrays.asList("Help", "List", "Info", "Members", "Join", "Leave", "Create", "Invite", "Desc"));

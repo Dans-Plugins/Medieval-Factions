@@ -4,6 +4,11 @@
  */
 package dansplugins.factionsystem.commands;
 
+import dansplugins.factionsystem.data.EphemeralData;
+import dansplugins.factionsystem.integrators.DynmapIntegrator;
+import dansplugins.factionsystem.services.ConfigService;
+import dansplugins.factionsystem.services.LocaleService;
+import dansplugins.factionsystem.utils.Logger;
 import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
 import org.bukkit.configuration.file.FileConfiguration;
@@ -13,17 +18,20 @@ import dansplugins.factionsystem.MedievalFactions;
 import dansplugins.factionsystem.commands.abs.SubCommand;
 import dansplugins.factionsystem.data.PersistentData;
 import dansplugins.factionsystem.events.FactionRenameEvent;
-import dansplugins.factionsystem.utils.Logger;
 
 /**
  * @author Callum Johnson
  */
 public class RenameCommand extends SubCommand {
+    private final MedievalFactions medievalFactions;
+    private final Logger logger;
 
-    public RenameCommand() {
+    public RenameCommand(LocaleService localeService, PersistentData persistentData, EphemeralData ephemeralData, PersistentData.ChunkDataAccessor chunkDataAccessor, DynmapIntegrator dynmapIntegrator, ConfigService configService, MedievalFactions medievalFactions, Logger logger) {
         super(new String[]{
                 "rename"
-        }, true, true, false, true);
+        }, true, true, false, true, localeService, persistentData, ephemeralData, chunkDataAccessor, dynmapIntegrator, configService);
+        this.medievalFactions = medievalFactions;
+        this.logger = logger;
     }
 
     /**
@@ -42,7 +50,7 @@ public class RenameCommand extends SubCommand {
             return;
         }
         final String newName = String.join(" ", args).trim();
-        final FileConfiguration config = MedievalFactions.getInstance().getConfig();
+        final FileConfiguration config = medievalFactions.getConfig();
         if (newName.length() > config.getInt("factionMaxNameLength")) {
             player.sendMessage(translate("&c" + getText("FactionNameTooLong")));
             return;
@@ -55,7 +63,7 @@ public class RenameCommand extends SubCommand {
         final FactionRenameEvent renameEvent = new FactionRenameEvent(faction, oldName, newName);
         Bukkit.getPluginManager().callEvent(renameEvent);
         if (renameEvent.isCancelled()) {
-            Logger.getInstance().debug("Rename event was cancelled.");
+            logger.debug("Rename event was cancelled.");
             return;
         }
 
@@ -63,13 +71,13 @@ public class RenameCommand extends SubCommand {
         faction.setName(newName);
         player.sendMessage(translate("&a" + getText("FactionNameChanged")));
 
-        PersistentData.getInstance().updateFactionReferencesDueToNameChange(oldName, newName);
+        persistentData.updateFactionReferencesDueToNameChange(oldName, newName);
 
         // Prefix (if it was unset)
         if (faction.getPrefix().equalsIgnoreCase(oldName)) faction.setPrefix(newName);
 
         // Save again to overwrite current data
-        PersistentData.getInstance().getLocalStorageService().save();
+        persistentData.getLocalStorageService().save();
     }
 
     /**

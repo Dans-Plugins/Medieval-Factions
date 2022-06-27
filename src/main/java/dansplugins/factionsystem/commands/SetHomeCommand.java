@@ -4,6 +4,11 @@
  */
 package dansplugins.factionsystem.commands;
 
+import dansplugins.factionsystem.data.EphemeralData;
+import dansplugins.factionsystem.data.PersistentData;
+import dansplugins.factionsystem.integrators.DynmapIntegrator;
+import dansplugins.factionsystem.services.ConfigService;
+import dansplugins.factionsystem.services.LocaleService;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
@@ -15,10 +20,10 @@ import dansplugins.factionsystem.objects.domain.ClaimedChunk;
  */
 public class SetHomeCommand extends SubCommand {
 
-    public SetHomeCommand() {
+    public SetHomeCommand(LocaleService localeService, PersistentData persistentData, EphemeralData ephemeralData, PersistentData.ChunkDataAccessor chunkDataAccessor, DynmapIntegrator dynmapIntegrator, ConfigService configService) {
         super(new String[]{
                 "sethome", "sh", LOCALE_PREFIX + "CmdSetHome"
-        }, true, true, true, false);
+        }, true, true, true, false, localeService, persistentData, ephemeralData, chunkDataAccessor, dynmapIntegrator, configService);
     }
 
     /**
@@ -32,11 +37,11 @@ public class SetHomeCommand extends SubCommand {
     public void execute(Player player, String[] args, String key) {
         final String permission = "mf.sethome";
         if (!(checkPermissions(player, permission))) return;
-        if (!chunks.isClaimed(player.getLocation().getChunk())) {
+        if (!chunkDataAccessor.isClaimed(player.getLocation().getChunk())) {
             player.sendMessage(translate("&c" + getText("LandIsNotClaimed")));
             return;
         }
-        ClaimedChunk chunk = chunks.getClaimedChunk(player.getLocation().getChunk());
+        ClaimedChunk chunk = chunkDataAccessor.getClaimedChunk(player.getLocation().getChunk());
         if (chunk == null || !chunk.getHolder().equalsIgnoreCase(faction.getName())) {
             player.sendMessage(translate("&c" + getText("CannotSetFactionHomeInWilderness")));
             return;

@@ -15,7 +15,6 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.Player;
 
-import dansplugins.factionsystem.MedievalFactions;
 import dansplugins.factionsystem.data.EphemeralData;
 import dansplugins.factionsystem.data.PersistentData;
 import dansplugins.factionsystem.integrators.DynmapIntegrator;
@@ -32,26 +31,36 @@ public abstract class SubCommand implements ColorTranslator {
     private final boolean requiresFaction;
     private final boolean requiresOfficer;
     private final boolean requiresOwner;
-    protected LocaleService localeService;
-    protected PersistentData data;
-    protected EphemeralData ephemeral;
-    protected PersistentData.ChunkDataAccessor chunks;
-    protected DynmapIntegrator dynmap;
-    protected ConfigService configService;
+    protected final LocaleService localeService;
+    protected final PersistentData persistentData;
+    protected final EphemeralData ephemeralData;
+    protected final PersistentData.ChunkDataAccessor chunkDataAccessor;
+    protected final DynmapIntegrator dynmapIntegrator;
+    protected final ConfigService configService;
     protected Faction faction = null;
     private String[] names;
 
     /**
      * Constructor to initialise a Command.
-     *
      * @param names           of the command, for example, "Fly, FFly, Flight".
      * @param playerCommand   if the command is exclusive to players.
      * @param requiresFaction if the command requires a Faction to perform.
      * @param requiresOfficer if the command requires officer or higher.
      * @param requiresOwner   if the command is reserved for Owners.
+     * @param localeService
+     * @param persistentData
+     * @param ephemeralData
+     * @param chunkDataAccessor
+     * @param dynmapIntegrator
+     * @param configService
      */
-    public SubCommand(String[] names, boolean playerCommand, boolean requiresFaction, boolean requiresOfficer, boolean requiresOwner) {
-        initializeLocalVariablesStandingFOrInstancesOfConstantlyUsedInstances();
+    public SubCommand(String[] names, boolean playerCommand, boolean requiresFaction, boolean requiresOfficer, boolean requiresOwner, LocaleService localeService, PersistentData persistentData, EphemeralData ephemeralData, PersistentData.ChunkDataAccessor chunkDataAccessor, DynmapIntegrator dynmapIntegrator, ConfigService configService) {
+        this.localeService = localeService;
+        this.persistentData = persistentData;
+        this.ephemeralData = ephemeralData;
+        this.chunkDataAccessor = chunkDataAccessor;
+        this.dynmapIntegrator = dynmapIntegrator;
+        this.configService = configService;
         loadCommandNames(names);
         this.playerCommand = playerCommand;
         this.requiresFaction = requiresFaction;
@@ -61,23 +70,33 @@ public abstract class SubCommand implements ColorTranslator {
 
     /**
      * Constructor to initialise a command without owner/faction checks.
-     *
      * @param names           of the command.
      * @param playerCommand   if the command is exclusive to players.
      * @param requiresFaction if the command requires a Faction to do.
+     * @param persistentData
+     * @param localeService
+     * @param ephemeralData
+     * @param configService
+     * @param chunkDataAccessor
+     * @param dynmapIntegrator
      */
-    public SubCommand(String[] names, boolean playerCommand, boolean requiresFaction) {
-        this(names, playerCommand, requiresFaction, false, false);
+    public SubCommand(String[] names, boolean playerCommand, boolean requiresFaction, PersistentData persistentData, LocaleService localeService, EphemeralData ephemeralData, ConfigService configService, PersistentData.ChunkDataAccessor chunkDataAccessor, DynmapIntegrator dynmapIntegrator) {
+        this(names, playerCommand, requiresFaction, false, false, localeService, persistentData, ephemeralData, chunkDataAccessor, dynmapIntegrator, configService);
     }
 
     /**
      * Constructor to initialise a command without faction checks.
-     *
      * @param names         of the command.
      * @param playerCommand if the command is exclusive to players.
+     * @param persistentData
+     * @param localeService
+     * @param ephemeralData
+     * @param configService
+     * @param chunkDataAccessor
+     * @param dynmapIntegrator
      */
-    public SubCommand(String[] names, boolean playerCommand) {
-        this(names, playerCommand, false);
+    public SubCommand(String[] names, boolean playerCommand, PersistentData persistentData, LocaleService localeService, EphemeralData ephemeralData, ConfigService configService, PersistentData.ChunkDataAccessor chunkDataAccessor, DynmapIntegrator dynmapIntegrator) {
+        this(names, playerCommand, false, persistentData, localeService, ephemeralData, configService, chunkDataAccessor, dynmapIntegrator);
     }
 
     protected void loadCommandNames(String[] names) {
@@ -87,15 +106,6 @@ public abstract class SubCommand implements ColorTranslator {
             if (name.contains(LOCALE_PREFIX)) name = localeService.getText(name.replace(LOCALE_PREFIX, ""));
             this.names[i] = name;
         }
-    }
-
-    protected void initializeLocalVariablesStandingFOrInstancesOfConstantlyUsedInstances() {
-        this.localeService = LocaleService.getInstance();
-        this.data = PersistentData.getInstance();
-        this.ephemeral = EphemeralData.getInstance();
-        this.chunks = PersistentData.getInstance().getChunkDataAccessor();
-        this.dynmap = DynmapIntegrator.getInstance();
-        this.configService = ConfigService.getInstance();
     }
 
     /**
@@ -229,16 +239,16 @@ public abstract class SubCommand implements ColorTranslator {
     @SuppressWarnings("deprecation")
     protected Faction getPlayerFaction(Object object) {
         if (object instanceof OfflinePlayer) {
-            return data.getPlayersFaction(((OfflinePlayer) object).getUniqueId());
+            return persistentData.getPlayersFaction(((OfflinePlayer) object).getUniqueId());
         } else if (object instanceof UUID) {
-            return data.getPlayersFaction((UUID) object);
+            return persistentData.getPlayersFaction((UUID) object);
         } else if (object instanceof String) {
             try {
-                return data.getPlayersFaction(UUID.fromString((String) object));
+                return persistentData.getPlayersFaction(UUID.fromString((String) object));
             } catch (Exception e) {
                 OfflinePlayer player = Bukkit.getOfflinePlayer((String) object);
                 if (player.hasPlayedBefore()) {
-                    return data.getPlayersFaction(player.getUniqueId());
+                    return persistentData.getPlayersFaction(player.getUniqueId());
                 }
             }
         }
@@ -255,7 +265,7 @@ public abstract class SubCommand implements ColorTranslator {
      * @return {@link Faction}
      */
     protected Faction getFaction(String name) {
-        return data.getFaction(name);
+        return persistentData.getFaction(name);
     }
 
     /**
@@ -316,7 +326,7 @@ public abstract class SubCommand implements ColorTranslator {
      * @return {@link FileConfiguration}
      */
     protected FileConfiguration getConfig() {
-        return MedievalFactions.getInstance().getConfig();
+        return configService.getConfig();
     }
 
     @Override

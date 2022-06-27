@@ -4,6 +4,11 @@
  */
 package dansplugins.factionsystem.commands;
 
+import dansplugins.factionsystem.data.EphemeralData;
+import dansplugins.factionsystem.data.PersistentData;
+import dansplugins.factionsystem.integrators.DynmapIntegrator;
+import dansplugins.factionsystem.services.ConfigService;
+import dansplugins.factionsystem.services.LocaleService;
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
@@ -15,11 +20,13 @@ import dansplugins.factionsystem.commands.abs.SubCommand;
  * @author Callum Johnson
  */
 public class ConfigCommand extends SubCommand {
+    private final MedievalFactions medievalFactions;
 
-    public ConfigCommand() {
+    public ConfigCommand(LocaleService localeService, PersistentData persistentData, EphemeralData ephemeralData, PersistentData.ChunkDataAccessor chunkDataAccessor, DynmapIntegrator dynmapIntegrator, ConfigService configService, MedievalFactions medievalFactions) {
         super(new String[]{
                 "config", LOCALE_PREFIX + "CmdConfig"
-        }, false);
+        }, false, persistentData, localeService, ephemeralData, configService, chunkDataAccessor, dynmapIntegrator);
+        this.medievalFactions = medievalFactions;
     }
 
     /**
@@ -86,7 +93,7 @@ public class ConfigCommand extends SubCommand {
                 configService.setConfigOption(args[1], args[2], sender);
             }
         } else if (reload) {
-            MedievalFactions.getInstance().reloadConfig();
+            medievalFactions.reloadConfig();
             sender.sendMessage(ChatColor.GREEN + "Config reloaded.");
         } else {
             sender.sendMessage(translate("&c" + getText("ValidSubCommandsShowSet")));

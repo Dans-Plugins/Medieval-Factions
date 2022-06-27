@@ -6,6 +6,11 @@ package dansplugins.factionsystem.commands;
 
 import java.util.UUID;
 
+import dansplugins.factionsystem.data.EphemeralData;
+import dansplugins.factionsystem.data.PersistentData;
+import dansplugins.factionsystem.integrators.DynmapIntegrator;
+import dansplugins.factionsystem.services.ConfigService;
+import dansplugins.factionsystem.services.LocaleService;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
@@ -18,10 +23,10 @@ import preponderous.ponder.minecraft.bukkit.tools.UUIDChecker;
  */
 public class PowerCommand extends SubCommand {
 
-    public PowerCommand() {
+    public PowerCommand(LocaleService localeService, PersistentData persistentData, EphemeralData ephemeralData, PersistentData.ChunkDataAccessor chunkDataAccessor, DynmapIntegrator dynmapIntegrator, ConfigService configService) {
         super(new String[]{
                 "power", LOCALE_PREFIX + "CmdPower"
-        }, false);
+        }, false, persistentData, localeService, ephemeralData, configService, chunkDataAccessor, dynmapIntegrator);
     }
 
     /**
@@ -53,7 +58,7 @@ public class PowerCommand extends SubCommand {
                 sender.sendMessage(translate(getText("OnlyPlayersCanUseCommand")));
                 return;
             }
-            record = data.getPlayersPowerRecord(((Player) sender).getUniqueId());
+            record = persistentData.getPlayersPowerRecord(((Player) sender).getUniqueId());
             sender.sendMessage(translate("&b" +
                     getText("AlertCurrentPowerLevel", record.getPower(), record.maxPower())));
             return;
@@ -64,7 +69,7 @@ public class PowerCommand extends SubCommand {
             sender.sendMessage(translate("&c" + getText("PlayerNotFound")));
             return;
         }
-        record = data.getPlayersPowerRecord(target);
+        record = persistentData.getPlayersPowerRecord(target);
         sender.sendMessage(translate("&b" +
                 getText("CurrentPowerLevel", args[0], record.getPower(), record.maxPower())));
     }

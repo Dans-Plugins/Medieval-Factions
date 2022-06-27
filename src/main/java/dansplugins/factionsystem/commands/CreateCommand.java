@@ -4,6 +4,11 @@
  */
 package dansplugins.factionsystem.commands;
 
+import dansplugins.factionsystem.data.EphemeralData;
+import dansplugins.factionsystem.data.PersistentData;
+import dansplugins.factionsystem.integrators.DynmapIntegrator;
+import dansplugins.factionsystem.services.ConfigService;
+import dansplugins.factionsystem.services.LocaleService;
 import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
 import org.bukkit.configuration.file.FileConfiguration;
@@ -19,10 +24,10 @@ import dansplugins.factionsystem.objects.domain.Faction;
  */
 public class CreateCommand extends SubCommand {
 
-    public CreateCommand() {
+    public CreateCommand(LocaleService localeService, PersistentData persistentData, EphemeralData ephemeralData, PersistentData.ChunkDataAccessor chunkDataAccessor, DynmapIntegrator dynmapIntegrator, ConfigService configService) {
         super(new String[]{
                 LOCALE_PREFIX + "CmdCreate", "Create"
-        }, true);
+        }, true, persistentData, localeService, ephemeralData, configService, chunkDataAccessor, dynmapIntegrator);
     }
 
     /**
@@ -52,14 +57,14 @@ public class CreateCommand extends SubCommand {
 
         final String factionName = String.join(" ", args).trim();
 
-        final FileConfiguration config = MedievalFactions.getInstance().getConfig();
+        final FileConfiguration config = configService.getConfig();
 
         if (factionName.length() > config.getInt("factionMaxNameLength")) {
             player.sendMessage(translate("&c" + getText("FactionNameTooLong")));
             return;
         }
 
-        if (data.getFaction(factionName) != null) {
+        if (persistentData.getFaction(factionName) != null) {
             player.sendMessage(translate("&c" + getText("FactionAlreadyExists")));
             return;
         }
@@ -71,7 +76,7 @@ public class CreateCommand extends SubCommand {
         FactionCreateEvent createEvent = new FactionCreateEvent(this.faction, player);
         Bukkit.getPluginManager().callEvent(createEvent);
         if (!createEvent.isCancelled()) {
-            data.addFaction(this.faction);
+            persistentData.addFaction(this.faction);
             player.sendMessage(translate("&a" + getText("FactionCreated")));
         }
     }

@@ -4,6 +4,11 @@
  */
 package dansplugins.factionsystem.commands;
 
+import dansplugins.factionsystem.data.EphemeralData;
+import dansplugins.factionsystem.data.PersistentData;
+import dansplugins.factionsystem.integrators.DynmapIntegrator;
+import dansplugins.factionsystem.services.ConfigService;
+import dansplugins.factionsystem.services.LocaleService;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
@@ -14,10 +19,10 @@ import dansplugins.factionsystem.commands.abs.SubCommand;
  */
 public class CheckAccessCommand extends SubCommand {
 
-    public CheckAccessCommand() {
+    public CheckAccessCommand(LocaleService localeService, PersistentData persistentData, EphemeralData ephemeralData, PersistentData.ChunkDataAccessor chunkDataAccessor, DynmapIntegrator dynmapIntegrator, ConfigService configService) {
         super(new String[]{
                 "ca", "checkaccess", LOCALE_PREFIX + "CmdCheckAccess"
-        }, true);
+        }, true, persistentData, localeService, ephemeralData, configService, chunkDataAccessor, dynmapIntegrator);
     }
 
     /**
@@ -34,20 +39,20 @@ public class CheckAccessCommand extends SubCommand {
             return;
         }
 
-        boolean cancel = false, contains = ephemeral.getPlayersCheckingAccess().contains(player.getUniqueId());
+        boolean cancel = false, contains = ephemeralData.getPlayersCheckingAccess().contains(player.getUniqueId());
 
         if (args.length >= 1) {
             cancel = args[0].equalsIgnoreCase("cancel");
         }
 
         if (cancel && contains) {
-            ephemeral.getPlayersCheckingAccess().remove(player.getUniqueId());
+            ephemeralData.getPlayersCheckingAccess().remove(player.getUniqueId());
             player.sendMessage(translate("&c" + getText("Cancelled")));
         } else {
             if (contains) {
                 player.sendMessage(translate("&c" + getText("AlreadyEnteredCheckAccess")));
             } else {
-                ephemeral.getPlayersCheckingAccess().add(player.getUniqueId());
+                ephemeralData.getPlayersCheckingAccess().add(player.getUniqueId());
                 player.sendMessage(translate("&a" + getText("RightClickCheckAccess")));
             }
         }

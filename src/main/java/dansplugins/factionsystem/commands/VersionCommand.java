@@ -4,6 +4,11 @@
  */
 package dansplugins.factionsystem.commands;
 
+import dansplugins.factionsystem.data.EphemeralData;
+import dansplugins.factionsystem.data.PersistentData;
+import dansplugins.factionsystem.integrators.DynmapIntegrator;
+import dansplugins.factionsystem.services.ConfigService;
+import dansplugins.factionsystem.services.LocaleService;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
@@ -14,11 +19,13 @@ import dansplugins.factionsystem.commands.abs.SubCommand;
  * @author Callum Johnson
  */
 public class VersionCommand extends SubCommand {
+    private final MedievalFactions medievalFactions;
 
-    public VersionCommand() {
+    public VersionCommand(LocaleService localeService, PersistentData persistentData, EphemeralData ephemeralData, PersistentData.ChunkDataAccessor chunkDataAccessor, DynmapIntegrator dynmapIntegrator, ConfigService configService, MedievalFactions medievalFactions) {
         super(new String[]{
                 "version", LOCALE_PREFIX + "CmdVersion"
-        }, false);
+        }, false, persistentData, localeService, ephemeralData, configService, chunkDataAccessor, dynmapIntegrator);
+        this.medievalFactions = medievalFactions;
     }
 
     /**
@@ -44,6 +51,6 @@ public class VersionCommand extends SubCommand {
     public void execute(CommandSender sender, String[] args, String key) {
         final String permission = "mf.version";
         if (!(checkPermissions(sender, permission))) return;
-        sender.sendMessage(translate("&bMedieval-Factions-" + MedievalFactions.getInstance().getVersion()));
+        sender.sendMessage(translate("&bMedieval-Factions-" + medievalFactions.getVersion()));
     }
 }

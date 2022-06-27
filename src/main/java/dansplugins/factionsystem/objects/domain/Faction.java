@@ -120,7 +120,7 @@ public class Faction extends Nation implements Feudal, Savable {
             try {
                 powerLevel += persistentData.getPlayersPowerRecord(playerUUID).getPower();
             } catch (Exception e) {
-                System.out.println(locale.get("ErrorPlayerPowerRecordForUUIDNotFound"));
+                System.out.println(localeService.get("ErrorPlayerPowerRecordForUUIDNotFound"));
             }
         }
         return powerLevel;
@@ -156,7 +156,7 @@ public class Faction extends Nation implements Feudal, Savable {
             try {
                 maxPower += persistentData.getPlayersPowerRecord(playerUUID).maxPower();
             } catch (Exception e) {
-                System.out.println(locale.get("ErrorPlayerPowerRecordForUUIDNotFound"));
+                System.out.println(localeService.get("ErrorPlayerPowerRecordForUUIDNotFound"));
             }
         }
         return maxPower;
@@ -434,7 +434,7 @@ public class Faction extends Nation implements Feudal, Savable {
                 gates.add(g);
             }
         } else {
-            System.out.println(locale.get("MissingFactionGatesJSONCollection"));
+            System.out.println(localeService.get("MissingFactionGatesJSONCollection"));
         }
 
         flags.setIntegerValues(gson.fromJson(data.getOrDefault("integerFlagValues", "[]"), stringToIntegerMapType));

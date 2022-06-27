@@ -4,6 +4,10 @@
  */
 package dansplugins.factionsystem.commands;
 
+import dansplugins.factionsystem.data.EphemeralData;
+import dansplugins.factionsystem.integrators.DynmapIntegrator;
+import dansplugins.factionsystem.services.ConfigService;
+import dansplugins.factionsystem.services.LocaleService;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.command.CommandSender;
@@ -19,10 +23,10 @@ import dansplugins.factionsystem.objects.domain.Gate;
  */
 public class GateCommand extends SubCommand {
 
-    public GateCommand() {
+    public GateCommand(LocaleService localeService, PersistentData persistentData, EphemeralData ephemeralData, PersistentData.ChunkDataAccessor chunkDataAccessor, DynmapIntegrator dynmapIntegrator, ConfigService configService) {
         super(new String[]{
                 "gate", "gt", LOCALE_PREFIX + "CmdGate"
-        }, true, true);
+        }, true, true, persistentData, localeService, ephemeralData, configService, chunkDataAccessor, dynmapIntegrator);
     }
 
     /**
@@ -46,14 +50,14 @@ public class GateCommand extends SubCommand {
         }
         if (safeEquals(args[0], "cancel", getText("CmdGateCancel"))) {
             // Cancel Logic
-            if (ephemeral.getCreatingGatePlayers().remove(player.getUniqueId()) != null) {
+            if (ephemeralData.getCreatingGatePlayers().remove(player.getUniqueId()) != null) {
                 player.sendMessage(translate("&c" + getText("CreatingGateCancelled")));
                 return;
             }
         }
         if (safeEquals(args[0], "create", getText("CmdGateCreate"))) {
             // Create Logic
-            if (ephemeral.getCreatingGatePlayers().containsKey(player.getUniqueId())) {
+            if (ephemeralData.getCreatingGatePlayers().containsKey(player.getUniqueId())) {
                 player.sendMessage(translate("&c" + getText("AlertAlreadyCreatingGate")));
                 return;
             }
@@ -93,16 +97,16 @@ public class GateCommand extends SubCommand {
                 player.sendMessage(translate("&c" + getText("NoBlockDetectedToCheckForGate")));
                 return;
             }
-            if (!data.isGateBlock(targetBlock)) {
+            if (!persistentData.isGateBlock(targetBlock)) {
                 player.sendMessage(translate("&c" + getText("TargetBlockNotPartOfGate")));
                 return;
             }
-            final Gate gate = PersistentData.getInstance().getGate(targetBlock);
+            final Gate gate = persistentData.getGate(targetBlock);
             if (gate == null) {
                 player.sendMessage(translate("&c" + getText("TargetBlockNotPartOfGate")));
                 return;
             }
-            final Faction gateFaction = PersistentData.getInstance().getGateFaction(gate);
+            final Faction gateFaction = persistentData.getGateFaction(gate);
             if (gateFaction == null) {
                 player.sendMessage(translate("&c" + getText("ErrorCouldNotFindGatesFaction", gate.getName())));
                 return;
@@ -137,6 +141,6 @@ public class GateCommand extends SubCommand {
     }
 
     private void startCreatingGate(Player player, String name) {
-        ephemeral.getCreatingGatePlayers().putIfAbsent(player.getUniqueId(), new Gate(name));
+        ephemeralData.getCreatingGatePlayers().putIfAbsent(player.getUniqueId(), new Gate(name));
     }
 }

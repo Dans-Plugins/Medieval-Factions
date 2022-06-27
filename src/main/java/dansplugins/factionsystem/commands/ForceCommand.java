@@ -5,13 +5,16 @@
 package dansplugins.factionsystem.commands;
 
 import java.lang.reflect.Method;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
+import dansplugins.factionsystem.data.EphemeralData;
+import dansplugins.factionsystem.integrators.DynmapIntegrator;
+import dansplugins.factionsystem.services.ConfigService;
+import dansplugins.factionsystem.services.LocaleService;
 import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.command.CommandSender;
@@ -27,7 +30,6 @@ import dansplugins.factionsystem.events.FactionRenameEvent;
 import dansplugins.factionsystem.events.FactionWarEndEvent;
 import dansplugins.factionsystem.objects.domain.Faction;
 import dansplugins.factionsystem.objects.domain.PowerRecord;
-import dansplugins.factionsystem.utils.Locale;
 import dansplugins.factionsystem.utils.Logger;
 import dansplugins.fiefs.utils.UUIDChecker;
 import preponderous.ponder.misc.ArgumentParser;
@@ -36,8 +38,8 @@ import preponderous.ponder.misc.ArgumentParser;
  * @author Callum Johnson
  */
 public class ForceCommand extends SubCommand {
-
-    private final boolean debug = MedievalFactions.getInstance().isDebugEnabled();
+    private final MedievalFactions medievalFactions;
+    private final Logger logger;
 
     private final String[] commands = new String[]{
             "Save", "Load", "Peace", "Demote", "Join", "Kick", "Power", "Renounce", "Transfer", "RemoveVassal", "Rename", "BonusPower", "Unlock", "Create", "Claim", "Flag"
@@ -47,10 +49,12 @@ public class ForceCommand extends SubCommand {
     private final ArgumentParser argumentParser = new ArgumentParser();
     private final UUIDChecker uuidChecker = new UUIDChecker();
 
-    public ForceCommand() {
+    public ForceCommand(LocaleService localeService, PersistentData persistentData, EphemeralData ephemeralData, PersistentData.ChunkDataAccessor chunkDataAccessor, DynmapIntegrator dynmapIntegrator, ConfigService configService, MedievalFactions medievalFactions, Logger logger) {
         super(new String[]{
                 "Force", LOCALE_PREFIX + "CmdForce"
-        }, false);
+        }, false, persistentData, localeService, ephemeralData, configService, chunkDataAccessor, dynmapIntegrator);
+        this.medievalFactions = medievalFactions;
+        this.logger = logger;
         // Register sub-commands.
         Arrays.stream(commands).forEach(command ->
                 subMap.put(Arrays.asList(command, getText("CmdForce" + command)), "force" + command)
@@ -108,7 +112,7 @@ public class ForceCommand extends SubCommand {
             return;
         }
         sender.sendMessage(translate("&a" + getText("AlertForcedSave")));
-        PersistentData.getInstance().getLocalStorageService().save();
+        persistentData.getLocalStorageService().save();
     }
 
     @SuppressWarnings("unused")
@@ -116,9 +120,9 @@ public class ForceCommand extends SubCommand {
         if (!(checkPermissions(sender, "mf.force.load", "mf.force.*", "mf.admin"))) {
             return;
         }
-        sender.sendMessage(translate("&a" + Locale.get("AlertForcedLoad")));
-        PersistentData.getInstance().getLocalStorageService().load();
-        MedievalFactions.getInstance().reloadConfig();
+        sender.sendMessage(translate("&a" + localeService.get("AlertForcedLoad")));
+        persistentData.getLocalStorageService().load();
+        medievalFactions.reloadConfig();
     }
 
     @SuppressWarnings("unused")
@@ -136,8 +140,8 @@ public class ForceCommand extends SubCommand {
             sender.sendMessage(translate("&c" + "Arguments must be designated in between double quotes."));
             return;
         }
-        final Faction former = PersistentData.getInstance().getFaction(doubleQuoteArgs.get(0));
-        final Faction latter = PersistentData.getInstance().getFaction(doubleQuoteArgs.get(1));
+        final Faction former = persistentData.getFaction(doubleQuoteArgs.get(0));
+        final Faction latter = persistentData.getFaction(doubleQuoteArgs.get(1));
         if (former == null || latter == null) {
             sender.sendMessage(translate("&c" + getText("DesignatedFactionNotFound")));
             return;
@@ -212,14 +216,14 @@ public class ForceCommand extends SubCommand {
             sender.sendMessage(translate("&c" + getText("PlayerNotFound")));
             return;
         }
-        if (data.isInFaction(playerUUID)) {
+        if (persistentData.isInFaction(playerUUID)) {
             sender.sendMessage(translate("&c" + getText("PlayerAlreadyInFaction")));
             return;
         }
         FactionJoinEvent joinEvent = new FactionJoinEvent(faction, player);
         Bukkit.getPluginManager().callEvent(joinEvent);
         if (joinEvent.isCancelled()) {
-            Logger.getInstance().debug("Join event was cancelled.");
+            logger.debug("Join event was cancelled.");
             return;
         }
         messageFaction(faction, translate("&a" + getText("HasJoined", player.getName(), faction.getName())));
@@ -237,7 +241,7 @@ public class ForceCommand extends SubCommand {
             sender.sendMessage(translate("&c" + getText("UsageForceKick")));
             return;
         }
-        if (debug) {
+        if (medievalFactions.isDebugEnabled()) {
             System.out.printf("Looking for player UUID based on player name: '%s'%n", args[1]);
         }
         final UUID targetUUID = uuidChecker.findUUIDBasedOnPlayerName(args[1]);
@@ -262,13 +266,13 @@ public class ForceCommand extends SubCommand {
         FactionKickEvent kickEvent = new FactionKickEvent(faction, target, null); // no kicker so null is used
         Bukkit.getPluginManager().callEvent(kickEvent);
         if (kickEvent.isCancelled()) {
-            Logger.getInstance().debug("Kick event was cancelled.");
+            logger.debug("Kick event was cancelled.");
             return;
         }
         if (faction.isOfficer(targetUUID)) {
             faction.removeOfficer(targetUUID); // Remove Officer (if one)
         }
-        ephemeral.getPlayersInFactionChat().remove(targetUUID);
+        ephemeralData.getPlayersInFactionChat().remove(targetUUID);
         faction.removeMember(targetUUID);
         messageFaction(faction, translate("&c" + getText("HasBeenKickedFrom", target.getName(), faction.getName())));
         if (target.isOnline() && target.getPlayer() != null) {
@@ -296,7 +300,7 @@ public class ForceCommand extends SubCommand {
             sender.sendMessage(translate("&c" + getText("DesiredPowerMustBeANumber")));
             return;
         }
-        final PowerRecord record = data.getPlayersPowerRecord(playerUUID);
+        final PowerRecord record = persistentData.getPlayersPowerRecord(playerUUID);
         record.setPower(desiredPower); // Set power :)
         sender.sendMessage(translate("&a" + getText("PowerLevelHasBeenSetTo", desiredPower)));
     }
@@ -321,7 +325,7 @@ public class ForceCommand extends SubCommand {
             return;
         }
 
-        long changes = PersistentData.getInstance().removeLiegeAndVassalReferencesToFaction(factionName);
+        long changes = persistentData.removeLiegeAndVassalReferencesToFaction(factionName);
 
         if (!faction.getLiege().equalsIgnoreCase("none")) {
             faction.setLiege("none");
@@ -348,7 +352,7 @@ public class ForceCommand extends SubCommand {
             sender.sendMessage(translate("&c" + "Arguments must be designated in between double quotes."));
             return;
         }
-        final Faction faction = PersistentData.getInstance().getFaction(doubleQuoteArgs.get(0));
+        final Faction faction = persistentData.getFaction(doubleQuoteArgs.get(0));
         if (faction == null) {
             sender.sendMessage(translate("&c" + getText("FactionNotFound")));
             return;
@@ -434,7 +438,7 @@ public class ForceCommand extends SubCommand {
         final FactionRenameEvent renameEvent = new FactionRenameEvent(faction, oldName, newName);
         Bukkit.getPluginManager().callEvent(renameEvent);
         if (renameEvent.isCancelled()) {
-            Logger.getInstance().debug("Rename event was cancelled.");
+            logger.debug("Rename event was cancelled.");
             return;
         }
 
@@ -442,13 +446,13 @@ public class ForceCommand extends SubCommand {
         faction.setName(newName);
         sender.sendMessage(translate("&a" + getText("FactionNameChanged")));
 
-        PersistentData.getInstance().updateFactionReferencesDueToNameChange(oldName, newName);
+        persistentData.updateFactionReferencesDueToNameChange(oldName, newName);
 
         // Prefix (if it was unset)
         if (faction.getPrefix().equalsIgnoreCase(oldName)) faction.setPrefix(newName);
 
         // Save again to overwrite current data
-        PersistentData.getInstance().getLocalStorageService().save();
+        persistentData.getLocalStorageService().save();
     }
 
     @SuppressWarnings("unused")
@@ -501,22 +505,22 @@ public class ForceCommand extends SubCommand {
         }
 
         if (args.length > 1 && args[1].equalsIgnoreCase("cancel")) {
-            ephemeral.getUnlockingPlayers().remove(player.getUniqueId());
-            ephemeral.getForcefullyUnlockingPlayers().remove(player.getUniqueId());
+            ephemeralData.getUnlockingPlayers().remove(player.getUniqueId());
+            ephemeralData.getForcefullyUnlockingPlayers().remove(player.getUniqueId());
             player.sendMessage(translate("&c" + getText("AlertUnlockingCancelled")));
             return;
         }
-        if (!ephemeral.getUnlockingPlayers().contains(player.getUniqueId())) {
+        if (!ephemeralData.getUnlockingPlayers().contains(player.getUniqueId())) {
             // add player to playersAboutToLockSomething list
-            ephemeral.getUnlockingPlayers().add(player.getUniqueId());
+            ephemeralData.getUnlockingPlayers().add(player.getUniqueId());
         }
 
-        if (!ephemeral.getForcefullyUnlockingPlayers().contains(player.getUniqueId())) {
+        if (!ephemeralData.getForcefullyUnlockingPlayers().contains(player.getUniqueId())) {
             // add player to playersAboutToLockSomething list
-            ephemeral.getForcefullyUnlockingPlayers().add(player.getUniqueId());
+            ephemeralData.getForcefullyUnlockingPlayers().add(player.getUniqueId());
         }
 
-        ephemeral.getLockingPlayers().remove(player.getUniqueId()); // Remove from locking
+        ephemeralData.getLockingPlayers().remove(player.getUniqueId()); // Remove from locking
 
         // inform them they need to right click the block that they want to lock or type /mf lock cancel to cancel it
         player.sendMessage(translate("&a" + getText("RightClickForceUnlock")));
@@ -556,7 +560,7 @@ public class ForceCommand extends SubCommand {
         FactionCreateEvent createEvent = new FactionCreateEvent(this.faction, player);
         Bukkit.getPluginManager().callEvent(createEvent);
         if (!createEvent.isCancelled()) {
-            data.addFaction(this.faction);
+            persistentData.addFaction(this.faction);
             player.sendMessage(translate("&a" + getText("FactionCreated")));
         }
     }
@@ -586,14 +590,14 @@ public class ForceCommand extends SubCommand {
 
         String factionName = argumentsInsideDoubleQuotes.get(0);
 
-        Faction faction = PersistentData.getInstance().getFaction(factionName);
+        Faction faction = persistentData.getFaction(factionName);
 
         if (faction == null) {
             sender.sendMessage(translate("&c" + getText("FactionNotFound")));
             return;
         }
 
-        PersistentData.getInstance().getChunkDataAccessor().forceClaimAtPlayerLocation(p, faction);
+        persistentData.getChunkDataAccessor().forceClaimAtPlayerLocation(p, faction);
         sender.sendMessage(translate("&a" + getText("Done")));
     }
 

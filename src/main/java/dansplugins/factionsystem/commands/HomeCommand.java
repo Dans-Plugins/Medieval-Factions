@@ -4,6 +4,11 @@
  */
 package dansplugins.factionsystem.commands;
 
+import dansplugins.factionsystem.data.EphemeralData;
+import dansplugins.factionsystem.data.PersistentData;
+import dansplugins.factionsystem.integrators.DynmapIntegrator;
+import dansplugins.factionsystem.services.ConfigService;
+import dansplugins.factionsystem.services.LocaleService;
 import org.bukkit.Chunk;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
@@ -16,11 +21,13 @@ import dansplugins.factionsystem.utils.extended.Scheduler;
  * @author Callum Johnson
  */
 public class HomeCommand extends SubCommand {
+    private final Scheduler scheduler;
 
-    public HomeCommand() {
+    public HomeCommand(LocaleService localeService, PersistentData persistentData, EphemeralData ephemeralData, PersistentData.ChunkDataAccessor chunkDataAccessor, DynmapIntegrator dynmapIntegrator, ConfigService configService, Scheduler scheduler) {
         super(new String[]{
                 "home", LOCALE_PREFIX + "CmdHome"
-        }, true, true);
+        }, true, true, persistentData, localeService, ephemeralData, configService, chunkDataAccessor, dynmapIntegrator);
+        this.scheduler = scheduler;
     }
 
     /**
@@ -38,11 +45,11 @@ public class HomeCommand extends SubCommand {
             return;
         }
         final Chunk home_chunk;
-        if (!chunks.isClaimed(home_chunk = faction.getFactionHome().getChunk())) {
+        if (!chunkDataAccessor.isClaimed(home_chunk = faction.getFactionHome().getChunk())) {
             player.sendMessage(translate("&c" + getText("HomeIsInUnclaimedChunk")));
             return;
         }
-        ClaimedChunk chunk = chunks.getClaimedChunk(home_chunk);
+        ClaimedChunk chunk = chunkDataAccessor.getClaimedChunk(home_chunk);
         if (chunk == null || chunk.getHolder() == null) {
             player.sendMessage(translate("&c" + getText("HomeIsInUnclaimedChunk")));
             return;
@@ -51,7 +58,7 @@ public class HomeCommand extends SubCommand {
             player.sendMessage(translate("&c" + getText("HomeClaimedByAnotherFaction")));
             return;
         }
-        Scheduler.getInstance().scheduleTeleport(player, faction.getFactionHome());
+        scheduler.scheduleTeleport(player, faction.getFactionHome());
     }
 
     /**

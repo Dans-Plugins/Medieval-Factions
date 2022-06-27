@@ -4,14 +4,17 @@
  */
 package dansplugins.factionsystem.commands;
 
-import java.util.ArrayList;
 import java.util.List;
 
+import dansplugins.factionsystem.data.EphemeralData;
+import dansplugins.factionsystem.data.PersistentData;
+import dansplugins.factionsystem.integrators.DynmapIntegrator;
+import dansplugins.factionsystem.services.ConfigService;
+import dansplugins.factionsystem.services.LocaleService;
 import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
-import dansplugins.factionsystem.MedievalFactions;
 import dansplugins.factionsystem.commands.abs.SubCommand;
 import dansplugins.factionsystem.events.FactionWarStartEvent;
 import dansplugins.factionsystem.factories.WarFactory;
@@ -22,11 +25,13 @@ import preponderous.ponder.misc.ArgumentParser;
  * @author Callum Johnson
  */
 public class DeclareWarCommand extends SubCommand {
+    private final WarFactory warFactory;
 
-    public DeclareWarCommand() {
+    public DeclareWarCommand(LocaleService localeService, PersistentData persistentData, EphemeralData ephemeralData, PersistentData.ChunkDataAccessor chunkDataAccessor, DynmapIntegrator dynmapIntegrator, ConfigService configService, WarFactory warFactory) {
         super(new String[]{
                 "declarewar", "dw", LOCALE_PREFIX + "CmdDeclareWar"
-        }, true, true, true, false);
+        }, true, true, true, false, localeService, persistentData, ephemeralData, chunkDataAccessor, dynmapIntegrator, configService);
+        this.warFactory = warFactory;
     }
 
     /**
@@ -99,12 +104,12 @@ public class DeclareWarCommand extends SubCommand {
             return;
         }
 
-        if (MedievalFactions.getInstance().getConfig().getBoolean("allowNeutrality") && ((boolean) opponent.getFlags().getFlag("neutral"))) {
+        if (configService.getBoolean("allowNeutrality") && ((boolean) opponent.getFlags().getFlag("neutral"))) {
             player.sendMessage(translate("&c" + getText("CannotDeclareWarOnNeutralFaction")));
             return;
         }
 
-        if (MedievalFactions.getInstance().getConfig().getBoolean("allowNeutrality") && ((boolean) faction.getFlags().getFlag("neutral"))) {
+        if (configService.getBoolean("allowNeutrality") && ((boolean) faction.getFlags().getFlag("neutral"))) {
             player.sendMessage(translate("&c" + getText("CannotDeclareWarIfNeutralFaction")));
             return;
         }
@@ -115,7 +120,7 @@ public class DeclareWarCommand extends SubCommand {
             // Make enemies.
             faction.addEnemy(opponent.getName());
             opponent.addEnemy(faction.getName());
-            WarFactory.getInstance().createWar(faction, opponent);
+            warFactory.createWar(faction, opponent);
             messageServer(translate("&c" + getText("HasDeclaredWarAgainst", faction.getName(), opponent.getName())));
         }
     }

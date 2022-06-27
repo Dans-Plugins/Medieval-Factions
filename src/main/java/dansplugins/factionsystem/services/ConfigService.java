@@ -185,7 +185,7 @@ public class ConfigService {
         if (getConfig().isSet(option)) {
 
             if (option.equalsIgnoreCase("version")) {
-                sender.sendMessage(ChatColor.RED + locale.get("CannotSetVersion"));
+                sender.sendMessage(ChatColor.RED + localeService.get("CannotSetVersion"));
                 return;
             } else if (option.equalsIgnoreCase("initialMaxPowerLevel") || option.equalsIgnoreCase("initialPowerLevel")
                     || option.equalsIgnoreCase("powerIncreaseAmount")
@@ -202,7 +202,7 @@ public class ConfigService {
                     || option.equalsIgnoreCase("maxClaimRadius")
                     || option.equalsIgnoreCase("teleportDelay")) {
                 getConfig().set(option, Integer.parseInt(value));
-                sender.sendMessage(ChatColor.GREEN + locale.get("IntegerSet"));
+                sender.sendMessage(ChatColor.GREEN + localeService.get("IntegerSet"));
             } else if (option.equalsIgnoreCase("mobsSpawnInFactionTerritory")
                     || option.equalsIgnoreCase("laddersPlaceableInEnemyFactionTerritory")
                     || option.equalsIgnoreCase("warsRequiredForPVP")
@@ -226,17 +226,17 @@ public class ConfigService {
                     || option.equalsIgnoreCase("playersLosePowerOnDeath")
                     || option.equalsIgnoreCase("bonusPowerEnabled")) {
                 getConfig().set(option, Boolean.parseBoolean(value));
-                sender.sendMessage(ChatColor.GREEN + locale.get("BooleanSet"));
+                sender.sendMessage(ChatColor.GREEN + localeService.get("BooleanSet"));
             } else if (option.equalsIgnoreCase("factionOwnerMultiplier")
                     || option.equalsIgnoreCase("factionOfficerMultiplier")
                     || option.equalsIgnoreCase("vassalContributionPercentageMultiplier")
                     || option.equalsIgnoreCase("powerLostOnDeath")
                     || option.equalsIgnoreCase("powerGainedOnKill")) {
                 getConfig().set(option, Double.parseDouble(value));
-                sender.sendMessage(ChatColor.GREEN + locale.get("DoubleSet"));
+                sender.sendMessage(ChatColor.GREEN + localeService.get("DoubleSet"));
             } else {
                 getConfig().set(option, value);
-                sender.sendMessage(ChatColor.GREEN + locale.get("StringSet"));
+                sender.sendMessage(ChatColor.GREEN + localeService.get("StringSet"));
 
                 if (option.equalsIgnoreCase("languageid")) {
                     locale.reloadStrings();
@@ -247,7 +247,7 @@ public class ConfigService {
             medievalFactions.saveConfig();
             altered = true;
         } else {
-            sender.sendMessage(ChatColor.RED + String.format(locale.get("WasntFound"), option));
+            sender.sendMessage(ChatColor.RED + String.format(localeService.get("WasntFound"), option));
         }
 
     }
@@ -303,7 +303,7 @@ public class ConfigService {
     }
 
     public void sendPageOneOfConfigList(CommandSender sender) {
-        sender.sendMessage(ChatColor.AQUA + locale.get("ConfigListPageOne"));
+        sender.sendMessage(ChatColor.AQUA + localeService.get("ConfigListPageOne"));
         sender.sendMessage(ChatColor.AQUA + "version: " + getString("version")
                 + ", languageid: " + getString("languageid")
                 + ", debugMode: " + getBoolean("debugMode")
@@ -327,7 +327,7 @@ public class ConfigService {
     }
 
     public void sendPageTwoOfConfigList(CommandSender sender) {
-        sender.sendMessage(ChatColor.AQUA + locale.get("ConfigListPageTwo"));
+        sender.sendMessage(ChatColor.AQUA + localeService.get("ConfigListPageTwo"));
         sender.sendMessage(ChatColor.AQUA + "factionMaxGateArea: " + getInt("factionMaxGateArea")
                 + ", surroundedChunksProtected: " + getBoolean("surroundedChunksProtected")
                 + ", zeroPowerFactionsGetDisbanded: " + getBoolean("zeroPowerFactionsGetDisbanded")

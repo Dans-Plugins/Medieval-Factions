@@ -4,6 +4,10 @@
  */
 package dansplugins.factionsystem.commands;
 
+import dansplugins.factionsystem.data.PersistentData;
+import dansplugins.factionsystem.integrators.DynmapIntegrator;
+import dansplugins.factionsystem.services.ConfigService;
+import dansplugins.factionsystem.services.LocaleService;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
@@ -15,10 +19,10 @@ import dansplugins.factionsystem.data.EphemeralData;
  */
 public class UnclaimCommand extends SubCommand {
 
-    public UnclaimCommand() {
+    public UnclaimCommand(LocaleService localeService, PersistentData persistentData, EphemeralData ephemeralData, PersistentData.ChunkDataAccessor chunkDataAccessor, DynmapIntegrator dynmapIntegrator, ConfigService configService) {
         super(new String[]{
                 "unclaim", LOCALE_PREFIX + "CmdUnclaim"
-        }, true, true);
+        }, true, true, persistentData, localeService, ephemeralData, configService, chunkDataAccessor, dynmapIntegrator);
     }
 
     /**
@@ -32,7 +36,7 @@ public class UnclaimCommand extends SubCommand {
     public void execute(Player player, String[] args, String key) {
         final String permission = "mf.unclaim";
         if (!(checkPermissions(player, permission))) return;
-        final boolean isPlayerBypassing = EphemeralData.getInstance().getAdminsBypassingProtections().contains(player.getUniqueId());
+        final boolean isPlayerBypassing = ephemeralData.getAdminsBypassingProtections().contains(player.getUniqueId());
         if ((boolean) faction.getFlags().getFlag("mustBeOfficerToManageLand")) {
             // officer or owner rank required
             if (!faction.isOfficer(player.getUniqueId()) && !faction.isOwner(player.getUniqueId()) && !isPlayerBypassing) {
@@ -41,8 +45,8 @@ public class UnclaimCommand extends SubCommand {
             }
         }
         if (args.length == 0) {
-            chunks.removeChunkAtPlayerLocation(player, faction);
-            dynmap.updateClaims();
+            chunkDataAccessor.removeChunkAtPlayerLocation(player, faction);
+            dynmapIntegrator.updateClaims();
             player.sendMessage("Unclaimed your current claim.");
             return;
         }
@@ -52,7 +56,7 @@ public class UnclaimCommand extends SubCommand {
             radius = 1;
             player.sendMessage("Your radius wasn't properly recognised, defaulting to 1.");
         }
-        chunks.radiusUnclaimAtLocation(radius, player, faction);
+        chunkDataAccessor.radiusUnclaimAtLocation(radius, player, faction);
         player.sendMessage("Unclaimed radius of " + radius + " claims around you!");
     }
 
