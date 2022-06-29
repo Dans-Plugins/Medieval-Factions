@@ -1,4 +1,4 @@
-package dansplugins.factionsystem.eventhandlers.helper;
+package dansplugins.factionsystem.utils;
 
 import org.bukkit.entity.Player;
 
@@ -6,29 +6,22 @@ import dansplugins.factionsystem.data.PersistentData;
 import preponderous.ponder.misc.Pair;
 
 public class RelationChecker {
-    private static RelationChecker instance;
+    private final PersistentData persistentData;
 
-    private RelationChecker() {
-
-    }
-
-    public static RelationChecker getInstance() {
-        if (instance == null) {
-            instance = new RelationChecker();
-        }
-        return instance;
+    public RelationChecker(PersistentData persistentData) {
+        this.persistentData = persistentData;
     }
 
     public boolean arePlayersInAFaction(Player player1, Player player2) {
-        return PersistentData.getInstance().isInFaction(player1.getUniqueId()) && PersistentData.getInstance().isInFaction(player2.getUniqueId());
+        return persistentData.isInFaction(player1.getUniqueId()) && persistentData.isInFaction(player2.getUniqueId());
     }
 
     public boolean playerNotInFaction(Player player) {
-        return PersistentData.getInstance().getPlayersFaction(player.getUniqueId()) == null;
+        return persistentData.getPlayersFaction(player.getUniqueId()) == null;
     }
 
     public boolean playerInFaction(Player player) {
-        return PersistentData.getInstance().isInFaction(player.getUniqueId());
+        return persistentData.isInFaction(player.getUniqueId());
     }
 
     public boolean arePlayersInSameFaction(Player player1, Player player2) {
@@ -43,8 +36,8 @@ public class RelationChecker {
         int attackersFactionIndex = factionIndices.getLeft();
         int victimsFactionIndex = factionIndices.getRight();
 
-        return !(PersistentData.getInstance().getFactionByIndex(attackersFactionIndex).isEnemy(PersistentData.getInstance().getFactionByIndex(victimsFactionIndex).getName())) &&
-                !(PersistentData.getInstance().getFactionByIndex(victimsFactionIndex).isEnemy(PersistentData.getInstance().getFactionByIndex(attackersFactionIndex).getName()));
+        return !(persistentData.getFactionByIndex(attackersFactionIndex).isEnemy(persistentData.getFactionByIndex(victimsFactionIndex).getName())) &&
+                !(persistentData.getFactionByIndex(victimsFactionIndex).isEnemy(persistentData.getFactionByIndex(attackersFactionIndex).getName()));
     }
 
     private Pair<Integer, Integer> getFactionIndices(Player player1, Player player2) {
@@ -52,11 +45,11 @@ public class RelationChecker {
         int victimsFactionIndex = 0;
 
         if (player1 != null && player2 != null) {
-            for (int i = 0; i < PersistentData.getInstance().getNumFactions(); i++) {
-                if (PersistentData.getInstance().getFactionByIndex(i).isMember(player1.getUniqueId())) {
+            for (int i = 0; i < persistentData.getNumFactions(); i++) {
+                if (persistentData.getFactionByIndex(i).isMember(player1.getUniqueId())) {
                     attackersFactionIndex = i;
                 }
-                if (PersistentData.getInstance().getFactionByIndex(i).isMember(player2.getUniqueId())) {
+                if (persistentData.getFactionByIndex(i).isMember(player2.getUniqueId())) {
                     victimsFactionIndex = i;
                 }
             }

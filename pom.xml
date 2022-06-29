@@ -6,7 +6,7 @@
 
     <groupId>dansplugins</groupId>
     <artifactId>Medieval-Factions</artifactId>
-    <version>4.6.4.2</version>
+    <version>4.7.0-SNAPSHOT</version>
     <packaging>jar</packaging>
 
     <name>Medieval Factions</name>

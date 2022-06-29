@@ -6,6 +6,11 @@ package dansplugins.factionsystem.commands;
 
 import java.util.UUID;
 
+import dansplugins.factionsystem.data.EphemeralData;
+import dansplugins.factionsystem.data.PersistentData;
+import dansplugins.factionsystem.integrators.DynmapIntegrator;
+import dansplugins.factionsystem.services.ConfigService;
+import dansplugins.factionsystem.services.LocaleService;
 import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.command.CommandSender;
@@ -20,11 +25,13 @@ import preponderous.ponder.minecraft.bukkit.tools.UUIDChecker;
  * @author Callum Johnson
  */
 public class KickCommand extends SubCommand {
+    private final Logger logger;
 
-    public KickCommand() {
+    public KickCommand(LocaleService localeService, PersistentData persistentData, EphemeralData ephemeralData, PersistentData.ChunkDataAccessor chunkDataAccessor, DynmapIntegrator dynmapIntegrator, ConfigService configService, Logger logger) {
         super(new String[]{
                 "kick", LOCALE_PREFIX + "CmdKick"
-        }, true, true, true, false);
+        }, true, true, true, false, localeService, persistentData, ephemeralData, chunkDataAccessor, dynmapIntegrator, configService);
+        this.logger = logger;
     }
 
     /**
@@ -67,13 +74,13 @@ public class KickCommand extends SubCommand {
         FactionKickEvent kickEvent = new FactionKickEvent(faction, target, player);
         Bukkit.getPluginManager().callEvent(kickEvent);
         if (kickEvent.isCancelled()) {
-            Logger.getInstance().debug("Kick event was cancelled.");
+            logger.debug("Kick event was cancelled.");
             return;
         }
         if (faction.isOfficer(targetUUID)) {
             faction.removeOfficer(targetUUID); // Remove Officer (if one)
         }
-        ephemeral.getPlayersInFactionChat().remove(targetUUID);
+        ephemeralData.getPlayersInFactionChat().remove(targetUUID);
         faction.removeMember(targetUUID);
         messageFaction(faction, translate("&c" + getText("HasBeenKickedFrom", target.getName(), faction.getName())));
         if (target.isOnline() && target.getPlayer() != null) {

@@ -8,6 +8,9 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.Arrays;
 
+import dansplugins.factionsystem.services.*;
+import dansplugins.factionsystem.utils.*;
+import dansplugins.factionsystem.utils.extended.Messenger;
 import org.bstats.bukkit.Metrics;
 import org.bukkit.Bukkit;
 import org.bukkit.command.Command;
@@ -15,6 +18,7 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.event.Listener;
 import org.jetbrains.annotations.NotNull;
 
+import dansplugins.factionsystem.data.EphemeralData;
 import dansplugins.factionsystem.data.PersistentData;
 import dansplugins.factionsystem.eventhandlers.ChatHandler;
 import dansplugins.factionsystem.eventhandlers.DamageHandler;
@@ -26,11 +30,12 @@ import dansplugins.factionsystem.eventhandlers.MoveHandler;
 import dansplugins.factionsystem.eventhandlers.QuitHandler;
 import dansplugins.factionsystem.eventhandlers.SpawnHandler;
 import dansplugins.factionsystem.externalapi.MedievalFactionsAPI;
+import dansplugins.factionsystem.factories.WarFactory;
+import dansplugins.factionsystem.integrators.CurrenciesIntegrator;
 import dansplugins.factionsystem.integrators.DynmapIntegrator;
+import dansplugins.factionsystem.integrators.FiefsIntegrator;
 import dansplugins.factionsystem.placeholders.PlaceholderAPI;
-import dansplugins.factionsystem.services.LocalCommandService;
-import dansplugins.factionsystem.services.LocalConfigService;
-import dansplugins.factionsystem.services.LocalLocaleService;
+import dansplugins.factionsystem.utils.extended.BlockChecker;
 import dansplugins.factionsystem.utils.extended.Scheduler;
 import preponderous.ponder.minecraft.bukkit.abs.PonderBukkitPlugin;
 import preponderous.ponder.minecraft.bukkit.tools.EventHandlerRegistry;
@@ -40,24 +45,33 @@ import preponderous.ponder.minecraft.bukkit.tools.EventHandlerRegistry;
  * @since May 30th, 2020
  */
 public class MedievalFactions extends PonderBukkitPlugin {
-    private static MedievalFactions instance;
     private final String pluginVersion = "v" + getDescription().getVersion();
 
-    /**
-     * This can be used to get the instance of the main class that is managed by itself.
-     *
-     * @return The managed instance of the main class.
-     */
-    public static MedievalFactions getInstance() {
-        return instance;
-    }
+    private final ActionBarService actionBarService = new ActionBarService(this);
+    private final ConfigService configService = new ConfigService();
+    private final LocaleService localeService = new LocaleService(this, configService);
+    private final EphemeralData ephemeralData = new EphemeralData();
+    private final Messenger messenger = new Messenger();
+    private final DynmapIntegrator dynmapIntegrator = new DynmapIntegrator();
+    private final BlockChecker blockChecker = new BlockChecker();
+    private final Logger logger = new Logger();
+    private final WarFactory warFactory = new WarFactory();
+    private final PersistentData persistentData = new PersistentData(localeService, configService, this, messenger, dynmapIntegrator, ephemeralData, blockChecker, logger);
+    private final RelationChecker relationChecker = new RelationChecker(persistentData);
+    private final PlayerTeleporter playerTeleporter = new PlayerTeleporter();
+    private final Scheduler scheduler = new Scheduler(logger, localeService, this, persistentData, configService, playerTeleporter);
+    private final CommandService commandService = new CommandService(localeService, this, configService, persistentData, ephemeralData, persistentData.getChunkDataAccessor(), dynmapIntegrator, warFactory, logger, scheduler, messenger, relationChecker);
+    private final GateService gateService = new GateService(persistentData, localeService, ephemeralData);
+    private final LockService lockService = new LockService();
+    private final TerritoryOwnerNotifier territoryOwnerNotifier = new TerritoryOwnerNotifier(localeService, configService, actionBarService);
+    private final CurrenciesIntegrator currenciesIntegrator = new CurrenciesIntegrator();
+    private final FiefsIntegrator fiefsIntegrator = new FiefsIntegrator();
 
     /**
      * This runs when the server starts.
      */
     @Override
     public void onEnable() {
-        instance = this;
         initializeConfig();
         load();
         scheduleRecurringTasks();
@@ -71,7 +85,7 @@ public class MedievalFactions extends PonderBukkitPlugin {
      */
     @Override
     public void onDisable() {
-        PersistentData.getInstance().getLocalStorageService().save();
+        persistentData.getLocalStorageService().save();
     }
 
     /**
@@ -85,7 +99,7 @@ public class MedievalFactions extends PonderBukkitPlugin {
      */
     @Override
     public boolean onCommand(@NotNull CommandSender sender, @NotNull Command cmd, @NotNull String label, String[] args) {
-        return LocalCommandService.getInstance().interpretCommand(sender, label, args);
+        return commandService.interpretCommand(sender, label, args);
     }
 
     /**
@@ -130,7 +144,7 @@ public class MedievalFactions extends PonderBukkitPlugin {
     }
 
     private void makeSureEveryPlayerExperiencesPowerDecay() {
-        PersistentData.getInstance().createActivityRecordForEveryOfflinePlayer();
+        persistentData.createActivityRecordForEveryOfflinePlayer();
     }
 
     /**
@@ -140,13 +154,13 @@ public class MedievalFactions extends PonderBukkitPlugin {
         if (configFileExists()) {
             performCompatibilityChecks();
         } else {
-            LocalConfigService.getInstance().saveConfigDefaults();
+            configService.saveConfigDefaults();
         }
     }
 
     private void performCompatibilityChecks() {
         if (isVersionMismatched()) {
-            LocalConfigService.getInstance().handleVersionMismatch();
+            configService.handleVersionMismatch();
         }
         reloadConfig();
     }
@@ -159,17 +173,17 @@ public class MedievalFactions extends PonderBukkitPlugin {
      * Loads stored data into Persistent Data.
      */
     private void load() {
-        LocalLocaleService.getInstance().loadStrings();
-        PersistentData.getInstance().getLocalStorageService().load();
+        localeService.loadStrings();
+        persistentData.getLocalStorageService().load();
     }
 
     /**
      * Calls the Scheduler to schedule tasks that have to repeatedly be executed.
      */
     private void scheduleRecurringTasks() {
-        Scheduler.getInstance().schedulePowerIncrease();
-        Scheduler.getInstance().schedulePowerDecrease();
-        Scheduler.getInstance().scheduleAutosave();
+        scheduler.schedulePowerIncrease();
+        scheduler.schedulePowerDecrease();
+        scheduler.scheduleAutosave();
     }
 
     /**
@@ -183,15 +197,15 @@ public class MedievalFactions extends PonderBukkitPlugin {
 
     private ArrayList<Listener> initializeListeners() {
         return new ArrayList<>(Arrays.asList(
-                new ChatHandler(),
-                new DamageHandler(),
-                new DeathHandler(),
-                new EffectHandler(),
-                new InteractionHandler(),
-                new JoinHandler(),
-                new MoveHandler(),
-                new QuitHandler(),
-                new SpawnHandler()
+                new ChatHandler(persistentData, configService, ephemeralData, messenger),
+                new DamageHandler(logger, persistentData, ephemeralData, localeService, configService, relationChecker),
+                new DeathHandler(configService, persistentData, localeService),
+                new EffectHandler(ephemeralData, this, relationChecker),
+                new InteractionHandler(persistentData, persistentData.getInteractionAccessChecker(), localeService, blockChecker, this, lockService, ephemeralData, gateService),
+                new JoinHandler(persistentData, localeService, configService, logger, messenger, territoryOwnerNotifier),
+                new MoveHandler(persistentData, territoryOwnerNotifier, localeService, this, dynmapIntegrator),
+                new QuitHandler(ephemeralData, persistentData, actionBarService),
+                new SpawnHandler(configService, persistentData)
         ));
     }
 
@@ -211,8 +225,8 @@ public class MedievalFactions extends PonderBukkitPlugin {
 
     private void handleDynmapIntegration() {
         if (DynmapIntegrator.hasDynmap()) {
-            DynmapIntegrator.getInstance().scheduleClaimsUpdate(600); // Check once every 30 seconds for updates.
-            DynmapIntegrator.getInstance().updateClaims();
+            dynmapIntegrator.scheduleClaimsUpdate(600); // Check once every 30 seconds for updates.
+            dynmapIntegrator.updateClaims();
         }
     }
 

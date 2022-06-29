@@ -4,6 +4,11 @@
  */
 package dansplugins.factionsystem.commands;
 
+import dansplugins.factionsystem.data.EphemeralData;
+import dansplugins.factionsystem.data.PersistentData;
+import dansplugins.factionsystem.integrators.DynmapIntegrator;
+import dansplugins.factionsystem.services.ConfigService;
+import dansplugins.factionsystem.services.LocaleService;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
@@ -14,8 +19,8 @@ import dansplugins.factionsystem.commands.abs.SubCommand;
  */
 public class CheckClaimCommand extends SubCommand {
 
-    public CheckClaimCommand() {
-        super(new String[]{"checkclaim", "cc", LOCALE_PREFIX + "CmdCheckClaim"}, true);
+    public CheckClaimCommand(LocaleService localeService, PersistentData persistentData, EphemeralData ephemeralData, PersistentData.ChunkDataAccessor chunkDataAccessor, DynmapIntegrator dynmapIntegrator, ConfigService configService) {
+        super(new String[]{"checkclaim", "cc", LOCALE_PREFIX + "CmdCheckClaim"}, true, persistentData, localeService, ephemeralData, configService, chunkDataAccessor, dynmapIntegrator);
     }
 
     /**
@@ -32,7 +37,7 @@ public class CheckClaimCommand extends SubCommand {
             return;
         }
 
-        final String result = chunks.checkOwnershipAtPlayerLocation(player);
+        final String result = chunkDataAccessor.checkOwnershipAtPlayerLocation(player);
 
         if (result.equals("unclaimed")) {
             player.sendMessage(translate("&a" + getText("LandIsUnclaimed")));

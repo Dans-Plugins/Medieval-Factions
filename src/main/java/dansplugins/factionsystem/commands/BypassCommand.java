@@ -4,6 +4,11 @@
  */
 package dansplugins.factionsystem.commands;
 
+import dansplugins.factionsystem.data.EphemeralData;
+import dansplugins.factionsystem.data.PersistentData;
+import dansplugins.factionsystem.integrators.DynmapIntegrator;
+import dansplugins.factionsystem.services.ConfigService;
+import dansplugins.factionsystem.services.LocaleService;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
@@ -17,10 +22,10 @@ public class BypassCommand extends SubCommand {
     /**
      * Constructor to initialise a Command.
      */
-    public BypassCommand() {
+    public BypassCommand(LocaleService localeService, PersistentData persistentData, EphemeralData ephemeralData, PersistentData.ChunkDataAccessor chunkDataAccessor, DynmapIntegrator dynmapIntegrator, ConfigService configService) {
         super(new String[]{
                 "bypass", "Locale_CmdBypass"
-        }, true);
+        }, true, persistentData, localeService, ephemeralData, configService, chunkDataAccessor, dynmapIntegrator);
     }
 
     /**
@@ -36,14 +41,14 @@ public class BypassCommand extends SubCommand {
             return;
         }
 
-        final boolean contains = ephemeral.getAdminsBypassingProtections().contains(player.getUniqueId());
+        final boolean contains = ephemeralData.getAdminsBypassingProtections().contains(player.getUniqueId());
 
         final String path = (contains ? "NoLonger" : "Now") + "BypassingProtections";
 
         if (contains) {
-            ephemeral.getAdminsBypassingProtections().remove(player.getUniqueId());
+            ephemeralData.getAdminsBypassingProtections().remove(player.getUniqueId());
         } else {
-            ephemeral.getAdminsBypassingProtections().add(player.getUniqueId());
+            ephemeralData.getAdminsBypassingProtections().add(player.getUniqueId());
         }
 
         player.sendMessage(translate("&a" + getText(path)));

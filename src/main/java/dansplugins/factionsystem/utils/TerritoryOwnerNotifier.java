@@ -4,12 +4,13 @@
  */
 package dansplugins.factionsystem.utils;
 
+import dansplugins.factionsystem.services.ConfigService;
+import dansplugins.factionsystem.services.LocaleService;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 
-import dansplugins.factionsystem.MedievalFactions;
 import dansplugins.factionsystem.objects.domain.Faction;
-import dansplugins.factionsystem.services.LocalActionBarService;
+import dansplugins.factionsystem.services.ActionBarService;
 import net.md_5.bungee.api.ChatMessageType;
 import net.md_5.bungee.api.chat.TextComponent;
 import preponderous.ponder.minecraft.bukkit.tools.ColorChecker;
@@ -18,17 +19,14 @@ import preponderous.ponder.minecraft.bukkit.tools.ColorChecker;
  * @author Daniel McCoy Stephenson
  */
 public class TerritoryOwnerNotifier {
-    private static TerritoryOwnerNotifier instance;
+    private final LocaleService localeService;
+    private final ConfigService configService;
+    private final ActionBarService actionBarService;
 
-    private TerritoryOwnerNotifier() {
-
-    }
-
-    public static TerritoryOwnerNotifier getInstance() {
-        if (instance == null) {
-            instance = new TerritoryOwnerNotifier();
-        }
-        return instance;
+    public TerritoryOwnerNotifier(LocaleService localeService, ConfigService configService, ActionBarService actionBarService) {
+        this.localeService = localeService;
+        this.configService = configService;
+        this.actionBarService = actionBarService;
     }
 
     public void sendPlayerTerritoryAlert(Player player, Faction holder) {
@@ -42,7 +40,7 @@ public class TerritoryOwnerNotifier {
         if (holder != null) {
             return holder.getName();
         } else {
-            return Locale.get("Wilderness");
+            return localeService.get("Wilderness");
         }
     }
 
@@ -51,27 +49,26 @@ public class TerritoryOwnerNotifier {
         if (holder != null) {
             territoryAlertColorString = (String) holder.getFlags().getFlag("territoryAlertColor");
         } else {
-            territoryAlertColorString = MedievalFactions.getInstance().getConfig().getString("territoryAlertColor");
+            territoryAlertColorString = configService.getString("territoryAlertColor");
         }
         ColorChecker colorChecker = new ColorChecker();
         return colorChecker.getColorByName(territoryAlertColorString);
     }
 
     private void setActionBar(Faction holder, Player player, ChatColor territoryAlertColor, String title) {
-        if (MedievalFactions.getInstance().getConfig().getBoolean("territoryIndicatorActionbar")) {
-            LocalActionBarService actionBar = LocalActionBarService.getInstance(MedievalFactions.getInstance());
+        if (configService.getBoolean("territoryIndicatorActionbar")) {
 
             if (holder == null) {
-                actionBar.clearPlayerActionBar(player);
+                actionBarService.clearPlayerActionBar(player);
                 player.spigot().sendMessage(ChatMessageType.ACTION_BAR, new TextComponent(territoryAlertColor + title));
             } else {
-                actionBar.showPersistentActionBarMessage(player, new TextComponent(territoryAlertColor + title));
+                actionBarService.showPersistentActionBarMessage(player, new TextComponent(territoryAlertColor + title));
             }
         }
     }
 
     private void sendAlert(Player player, ChatColor territoryAlertColor, String title) {
-        if (MedievalFactions.getInstance().getConfig().getBoolean("territoryAlertPopUp")) {
+        if (configService.getBoolean("territoryAlertPopUp")) {
             int fadeIn = 10;
             int stay = 70;
             int fadeOut = 20;

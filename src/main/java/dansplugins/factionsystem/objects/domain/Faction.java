@@ -22,12 +22,9 @@ import org.bukkit.World;
 import org.bukkit.WorldCreator;
 import org.bukkit.block.Block;
 
-import dansplugins.factionsystem.MedievalFactions;
-import dansplugins.factionsystem.data.PersistentData;
 import dansplugins.factionsystem.objects.helper.FactionFlags;
 import dansplugins.factionsystem.objects.inherited.Nation;
 import dansplugins.factionsystem.objects.inherited.specification.Feudal;
-import dansplugins.factionsystem.services.LocalConfigService;
 import dansplugins.factionsystem.utils.Locale;
 import preponderous.ponder.misc.abs.Savable;
 
@@ -36,7 +33,7 @@ import preponderous.ponder.misc.abs.Savable;
  */
 public class Faction extends Nation implements Feudal, Savable {
     private final ArrayList<Gate> gates = new ArrayList<>();
-    private final FactionFlags flags = new FactionFlags();
+    private final FactionFlags flags = new FactionFlags(configService, localeService, fiefsIntegrator, currenciesIntegrator, dynmapIntegrator, logger);
     private final ArrayList<String> attemptedVassalizations = new ArrayList<>();
     private ArrayList<String> vassals = new ArrayList<>();
     private String liege = "none";
@@ -91,7 +88,7 @@ public class Faction extends Nation implements Feudal, Savable {
     }
 
     public void setBonusPower(int i) {
-        if (!LocalConfigService.getInstance().getBoolean("bonusPowerEnabled") || !((boolean) getFlags().getFlag("acceptBonusPower"))) {
+        if (!configService.getBoolean("bonusPowerEnabled") || !((boolean) getFlags().getFlag("acceptBonusPower"))) {
             return;
         }
         bonusPower = i;
@@ -106,10 +103,10 @@ public class Faction extends Nation implements Feudal, Savable {
     }
 
     public String getTopLiege() {
-        Faction topLiege = PersistentData.getInstance().getFaction(liege);
+        Faction topLiege = persistentData.getFaction(liege);
         String liegeName = liege;
         while (topLiege != null) {
-            topLiege = PersistentData.getInstance().getFaction(topLiege.getLiege());
+            topLiege = persistentData.getFaction(topLiege.getLiege());
             if (topLiege != null) {
                 liegeName = topLiege.getName();
             }
@@ -121,9 +118,9 @@ public class Faction extends Nation implements Feudal, Savable {
         int powerLevel = 0;
         for (UUID playerUUID : members) {
             try {
-                powerLevel += PersistentData.getInstance().getPlayersPowerRecord(playerUUID).getPower();
+                powerLevel += persistentData.getPlayersPowerRecord(playerUUID).getPower();
             } catch (Exception e) {
-                System.out.println(Locale.get("ErrorPlayerPowerRecordForUUIDNotFound"));
+                System.out.println(localeService.get("ErrorPlayerPowerRecordForUUIDNotFound"));
             }
         }
         return powerLevel;
@@ -131,9 +128,9 @@ public class Faction extends Nation implements Feudal, Savable {
 
     public int calculateCumulativePowerLevelWithVassalContribution() {
         int vassalContribution = 0;
-        double percentage = MedievalFactions.getInstance().getConfig().getDouble("vassalContributionPercentageMultiplier");
+        double percentage = configService.getDouble("vassalContributionPercentageMultiplier");
         for (String factionName : vassals) {
-            Faction vassalFaction = PersistentData.getInstance().getFaction(factionName);
+            Faction vassalFaction = persistentData.getFaction(factionName);
             if (vassalFaction != null) {
                 vassalContribution += vassalFaction.getCumulativePowerLevel() * percentage;
             }
@@ -157,22 +154,22 @@ public class Faction extends Nation implements Feudal, Savable {
 
         for (UUID playerUUID : members) {
             try {
-                maxPower += PersistentData.getInstance().getPlayersPowerRecord(playerUUID).maxPower();
+                maxPower += persistentData.getPlayersPowerRecord(playerUUID).maxPower();
             } catch (Exception e) {
-                System.out.println(Locale.get("ErrorPlayerPowerRecordForUUIDNotFound"));
+                System.out.println(localeService.get("ErrorPlayerPowerRecordForUUIDNotFound"));
             }
         }
         return maxPower;
     }
 
     public int calculateMaxOfficers() {
-        int officersPerXNumber = MedievalFactions.getInstance().getConfig().getInt("officerPerMemberCount");
+        int officersPerXNumber = configService.getInt("officerPerMemberCount");
         int officersFromConfig = members.size() / officersPerXNumber;
         return 1 + officersFromConfig;
     }
 
     public List<ClaimedChunk> getClaimedChunks() {
-        return PersistentData.getInstance().getChunksClaimedByFaction(getName());
+        return persistentData.getChunksClaimedByFaction(getName());
     }
 
     public boolean isWeakened() {
@@ -437,7 +434,7 @@ public class Faction extends Nation implements Feudal, Savable {
                 gates.add(g);
             }
         } else {
-            System.out.println(Locale.get("MissingFactionGatesJSONCollection"));
+            System.out.println(localeService.get("MissingFactionGatesJSONCollection"));
         }
 
         flags.setIntegerValues(gson.fromJson(data.getOrDefault("integerFlagValues", "[]"), stringToIntegerMapType));
@@ -447,7 +444,7 @@ public class Faction extends Nation implements Feudal, Savable {
 
         flags.loadMissingFlagsIfNecessary();
 
-        if (!LocalConfigService.getInstance().getBoolean("bonusPowerEnabled") || !((boolean) getFlags().getFlag("acceptBonusPower"))) {
+        if (!configService.getBoolean("bonusPowerEnabled") || !((boolean) getFlags().getFlag("acceptBonusPower"))) {
             bonusPower = 0;
         }
     }

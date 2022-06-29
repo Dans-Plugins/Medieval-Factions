@@ -6,52 +6,64 @@ package dansplugins.factionsystem.eventhandlers;
 
 import java.util.ArrayList;
 
+import dansplugins.factionsystem.data.EphemeralData;
+import dansplugins.factionsystem.services.ConfigService;
+import dansplugins.factionsystem.utils.extended.Messenger;
 import org.bukkit.ChatColor;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.AsyncPlayerChatEvent;
 
-import dansplugins.factionsystem.MedievalFactions;
-import dansplugins.factionsystem.data.EphemeralData;
 import dansplugins.factionsystem.data.PersistentData;
 import dansplugins.factionsystem.objects.domain.Faction;
-import dansplugins.factionsystem.utils.extended.Messenger;
 import preponderous.ponder.minecraft.bukkit.tools.ColorChecker;
 
 /**
  * @author Daniel McCoy Stephenson
  */
 public class ChatHandler implements Listener {
+    private final PersistentData persistentData;
+    private final ConfigService configService;
+    private final EphemeralData ephemeralData;
+    private final Messenger messenger;
+
     private String factionChatColor;
     private String prefixColor;
     private String prefix;
     private String message;
 
+    public ChatHandler(PersistentData persistentData, ConfigService configService, EphemeralData ephemeralData, Messenger messenger) {
+        this.persistentData = persistentData;
+        this.configService = configService;
+        this.ephemeralData = ephemeralData;
+        this.messenger = messenger;
+    }
+
     @EventHandler()
     public void handle(AsyncPlayerChatEvent event) {
-        Faction playersFaction = PersistentData.getInstance().getPlayersFaction(event.getPlayer().getUniqueId());
+        Faction playersFaction = persistentData.getPlayersFaction(event.getPlayer().getUniqueId());
         if (playersFaction == null) {
             return;
         }
         initializeValues(playersFaction, event);
-        if (MedievalFactions.getInstance().getConfig().getBoolean("playersChatWithPrefixes")) {
+        if (configService.getBoolean("playersChatWithPrefixes")) {
             addPrefix(event, prefixColor, prefix);
         }
-        if (EphemeralData.getInstance().isPlayerInFactionChat(event.getPlayer())) {
+        if (ephemeralData.isPlayerInFactionChat(event.getPlayer())) {
             sendMessage(playersFaction, prefixColor, prefix, event, factionChatColor, message);
             event.setCancelled(true);
         }
     }
 
     private void initializeValues(Faction playersFaction, AsyncPlayerChatEvent event) {
-        factionChatColor = MedievalFactions.getInstance().getConfig().getString("factionChatColor");
+        factionChatColor = configService.getString("factionChatColor");
         prefixColor = (String) playersFaction.getFlags().getFlag("prefixColor");
         prefix = playersFaction.getPrefix();
         message = event.getMessage();
     }
 
     private void sendMessage(Faction playersFaction, String prefixColor, String prefix, AsyncPlayerChatEvent event, String factionChatColor, String message) {
-        if (MedievalFactions.getInstance().getConfig().getBoolean("chatSharedInVassalageTrees")) {
+        if (configService.getBoolean("chatSharedInVassalageTrees")) {
             sendMessageToVassalageTree(playersFaction, prefixColor, prefix, event, factionChatColor, message);
         } else {
             sendMessageToFaction(playersFaction, prefix, prefixColor, event, factionChatColor, message);
@@ -64,23 +76,23 @@ public class ChatHandler implements Listener {
     }
 
     private void sendMessageToVassalageTree(Faction playersFaction, String prefixColor, String prefix, AsyncPlayerChatEvent event, String factionChatColor, String message) {
-        ArrayList<Faction> factionsInVassalageTree = PersistentData.getInstance().getFactionsInVassalageTree(playersFaction);
+        ArrayList<Faction> factionsInVassalageTree = persistentData.getFactionsInVassalageTree(playersFaction);
         ColorChecker colorChecker = new ColorChecker();
         for (Faction faction : factionsInVassalageTree) {
-            if (MedievalFactions.getInstance().getConfig().getBoolean("showPrefixesInFactionChat")) {
-                Messenger.getInstance().sendAllPlayersInFactionMessage(faction, colorChecker.getColorByName(prefixColor) + "" + "[" + prefix + "] " + "" + ChatColor.WHITE + "" + event.getPlayer().getName() + ": " + colorChecker.getColorByName(factionChatColor) + message);
+            if (configService.getBoolean("showPrefixesInFactionChat")) {
+                messenger.sendAllPlayersInFactionMessage(faction, colorChecker.getColorByName(prefixColor) + "" + "[" + prefix + "] " + "" + ChatColor.WHITE + "" + event.getPlayer().getName() + ": " + colorChecker.getColorByName(factionChatColor) + message);
             } else {
-                Messenger.getInstance().sendAllPlayersInFactionMessage(faction, ChatColor.WHITE + "" + event.getPlayer().getName() + ": " + colorChecker.getColorByName(factionChatColor) + message);
+                messenger.sendAllPlayersInFactionMessage(faction, ChatColor.WHITE + "" + event.getPlayer().getName() + ": " + colorChecker.getColorByName(factionChatColor) + message);
             }
         }
     }
 
     private void sendMessageToFaction(Faction playersFaction, String prefix, String prefixColor, AsyncPlayerChatEvent event, String factionChatColor, String message) {
         ColorChecker colorChecker = new ColorChecker();
-        if (MedievalFactions.getInstance().getConfig().getBoolean("showPrefixesInFactionChat")) {
-            Messenger.getInstance().sendAllPlayersInFactionMessage(playersFaction, colorChecker.getColorByName(prefixColor) + "" + "[" + prefix + "] " + "" + ChatColor.WHITE + "" + event.getPlayer().getName() + ": " + colorChecker.getColorByName(factionChatColor) + message);
+        if (configService.getBoolean("showPrefixesInFactionChat")) {
+            messenger.sendAllPlayersInFactionMessage(playersFaction, colorChecker.getColorByName(prefixColor) + "" + "[" + prefix + "] " + "" + ChatColor.WHITE + "" + event.getPlayer().getName() + ": " + colorChecker.getColorByName(factionChatColor) + message);
         } else {
-            Messenger.getInstance().sendAllPlayersInFactionMessage(playersFaction, ChatColor.WHITE + "" + event.getPlayer().getName() + ": " + colorChecker.getColorByName(factionChatColor) + message);
+            messenger.sendAllPlayersInFactionMessage(playersFaction, ChatColor.WHITE + "" + event.getPlayer().getName() + ": " + colorChecker.getColorByName(factionChatColor) + message);
         }
     }
 }

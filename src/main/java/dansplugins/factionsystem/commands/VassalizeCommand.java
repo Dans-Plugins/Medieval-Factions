@@ -4,6 +4,11 @@
  */
 package dansplugins.factionsystem.commands;
 
+import dansplugins.factionsystem.data.EphemeralData;
+import dansplugins.factionsystem.data.PersistentData;
+import dansplugins.factionsystem.integrators.DynmapIntegrator;
+import dansplugins.factionsystem.services.ConfigService;
+import dansplugins.factionsystem.services.LocaleService;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
@@ -15,11 +20,13 @@ import dansplugins.factionsystem.utils.Logger;
  * @author Callum Johnson
  */
 public class VassalizeCommand extends SubCommand {
+    private final Logger logger;
 
-    public VassalizeCommand() {
+    public VassalizeCommand(LocaleService localeService, PersistentData persistentData, EphemeralData ephemeralData, PersistentData.ChunkDataAccessor chunkDataAccessor, DynmapIntegrator dynmapIntegrator, ConfigService configService, Logger logger) {
         super(new String[]{
                 "Vassalize", LOCALE_PREFIX + "CmdVassalize"
-        }, true, true, false, true);
+        }, true, true, false, true, localeService, persistentData, ephemeralData, chunkDataAccessor, dynmapIntegrator, configService);
+        this.logger = logger;
     }
 
     /**
@@ -60,7 +67,7 @@ public class VassalizeCommand extends SubCommand {
         // make sure this vassalization won't result in a vassalization loop
         final int loopCheck = willVassalizationResultInLoop(faction, target);
         if (loopCheck == 1 || loopCheck == 2) {
-            Logger.getInstance().debug("Vassalization was cancelled due to potential loop");
+            logger.debug("Vassalization was cancelled due to potential loop");
             return;
         }
         // add faction to attemptedVassalizations
@@ -94,7 +101,7 @@ public class VassalizeCommand extends SubCommand {
             String liegeName = current.getLiege();
             if (liegeName.equalsIgnoreCase("none")) return 0; // no loop will be formed
             if (liegeName.equalsIgnoreCase(potentialVassal.getName())) return 1; // loop will be formed
-            current = data.getFaction(liegeName);
+            current = persistentData.getFaction(liegeName);
             steps++;
         }
         return 2; // We don't know :/

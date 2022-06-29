@@ -6,6 +6,11 @@ package dansplugins.factionsystem.commands;
 
 import java.util.UUID;
 
+import dansplugins.factionsystem.data.EphemeralData;
+import dansplugins.factionsystem.data.PersistentData;
+import dansplugins.factionsystem.integrators.DynmapIntegrator;
+import dansplugins.factionsystem.services.ConfigService;
+import dansplugins.factionsystem.services.LocaleService;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
@@ -18,9 +23,11 @@ import preponderous.ponder.minecraft.bukkit.tools.UUIDChecker;
  * @author Callum Johnson
  */
 public class WhoCommand extends SubCommand {
+    private final Messenger messenger;
 
-    public WhoCommand() {
-        super(new String[]{"Who", LOCALE_PREFIX + "CmdWho"}, true);
+    public WhoCommand(LocaleService localeService, PersistentData persistentData, EphemeralData ephemeralData, PersistentData.ChunkDataAccessor chunkDataAccessor, DynmapIntegrator dynmapIntegrator, ConfigService configService, Messenger messenger) {
+        super(new String[]{"Who", LOCALE_PREFIX + "CmdWho"}, true, persistentData, localeService, ephemeralData, configService, chunkDataAccessor, dynmapIntegrator);
+        this.messenger = messenger;
     }
 
     /**
@@ -49,8 +56,8 @@ public class WhoCommand extends SubCommand {
             player.sendMessage(translate("&c" + getText("PlayerIsNotInAFaction")));
             return;
         }
-        Messenger.getInstance().sendFactionInfo(player, temp,
-                chunks.getChunksClaimedByFaction(temp.getName()));
+        messenger.sendFactionInfo(player, temp,
+                chunkDataAccessor.getChunksClaimedByFaction(temp.getName()));
     }
 
     /**

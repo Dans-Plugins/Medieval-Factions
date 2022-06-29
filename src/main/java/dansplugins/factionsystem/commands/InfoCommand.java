@@ -4,6 +4,11 @@
  */
 package dansplugins.factionsystem.commands;
 
+import dansplugins.factionsystem.data.EphemeralData;
+import dansplugins.factionsystem.data.PersistentData;
+import dansplugins.factionsystem.integrators.DynmapIntegrator;
+import dansplugins.factionsystem.services.ConfigService;
+import dansplugins.factionsystem.services.LocaleService;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
@@ -15,11 +20,13 @@ import dansplugins.factionsystem.utils.extended.Messenger;
  * @author Callum Johnson
  */
 public class InfoCommand extends SubCommand {
+    private final Messenger messenger;
 
-    public InfoCommand() {
+    public InfoCommand(LocaleService localeService, PersistentData persistentData, EphemeralData ephemeralData, PersistentData.ChunkDataAccessor chunkDataAccessor, DynmapIntegrator dynmapIntegrator, ConfigService configService, Messenger messenger) {
         super(new String[]{
                 "info", LOCALE_PREFIX + "CmdInfo"
-        }, false);
+        }, false, persistentData, localeService, ephemeralData, configService, chunkDataAccessor, dynmapIntegrator);
+        this.messenger = messenger;
     }
 
     /**
@@ -63,6 +70,6 @@ public class InfoCommand extends SubCommand {
                 return;
             }
         }
-        Messenger.getInstance().sendFactionInfo(sender, target, target.getClaimedChunks().size());
+        messenger.sendFactionInfo(sender, target, target.getClaimedChunks().size());
     }
 }

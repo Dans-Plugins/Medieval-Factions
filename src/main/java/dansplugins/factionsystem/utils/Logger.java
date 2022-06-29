@@ -12,26 +12,14 @@ import dansplugins.factionsystem.MedievalFactions;
  * @author Daniel McCoy Stephenson
  */
 public class Logger {
-    private static Logger instance;
-
-    private Logger() {
-
-    }
-
-    public static Logger getInstance() {
-        if (instance == null) {
-            instance = new Logger();
-        }
-        return instance;
-    }
 
     /**
      * Log a debug message if the debug flag is enabled.
      * @param message The message to log.
      */
     public void debug(String message) {
-        if (MedievalFactions.getInstance().isDebugEnabled()) {
-            MedievalFactions.getInstance().getLogger().log(Level.INFO, "[Medieval Factions DEBUG] " + message);
+        if (medievalFactions.isDebugEnabled()) {
+            medievalFactions.getLogger().log(Level.INFO, "[Medieval Factions DEBUG] " + message);
         }
     }
 
@@ -40,7 +28,7 @@ public class Logger {
      * @param message The message to log.
      */
     public void print(String message) {
-        MedievalFactions.getInstance().getLogger().log(Level.INFO, "[Medieval Factions] " + message);
+        medievalFactions.getLogger().log(Level.INFO, "[Medieval Factions] " + message);
     }
 
     /**
@@ -48,6 +36,6 @@ public class Logger {
      * @param message The message to log.
      */
     public void error(String message) {
-        MedievalFactions.getInstance().getLogger().log(Level.SEVERE, "[Medieval Factions ERROR] " + message);
+        medievalFactions.getLogger().log(Level.SEVERE, "[Medieval Factions ERROR] " + message);
     }
 }

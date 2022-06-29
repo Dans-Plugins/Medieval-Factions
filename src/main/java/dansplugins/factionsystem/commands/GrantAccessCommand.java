@@ -6,6 +6,11 @@ package dansplugins.factionsystem.commands;
 
 import java.util.UUID;
 
+import dansplugins.factionsystem.data.EphemeralData;
+import dansplugins.factionsystem.data.PersistentData;
+import dansplugins.factionsystem.integrators.DynmapIntegrator;
+import dansplugins.factionsystem.services.ConfigService;
+import dansplugins.factionsystem.services.LocaleService;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
@@ -17,10 +22,10 @@ import preponderous.ponder.minecraft.bukkit.tools.UUIDChecker;
  */
 public class GrantAccessCommand extends SubCommand {
 
-    public GrantAccessCommand() {
+    public GrantAccessCommand(LocaleService localeService, PersistentData persistentData, EphemeralData ephemeralData, PersistentData.ChunkDataAccessor chunkDataAccessor, DynmapIntegrator dynmapIntegrator, ConfigService configService) {
         super(new String[]{
                 "grantaccess", "ga", LOCALE_PREFIX + "CmdGrantAccess"
-        }, true);
+        }, true, persistentData, localeService, ephemeralData, configService, chunkDataAccessor, dynmapIntegrator);
     }
 
     /**
@@ -40,7 +45,7 @@ public class GrantAccessCommand extends SubCommand {
             player.sendMessage(translate("&c" + getText("CommandCancelled")));
             return;
         }
-        if (ephemeral.getPlayersGrantingAccess().containsKey(player.getUniqueId())) {
+        if (ephemeralData.getPlayersGrantingAccess().containsKey(player.getUniqueId())) {
             player.sendMessage(translate("&c" + getText("AlertAlreadyGrantingAccess")));
             return;
         }
@@ -54,7 +59,7 @@ public class GrantAccessCommand extends SubCommand {
             player.sendMessage(translate("&c" + getText("CannotGrantAccessToSelf")));
             return;
         }
-        ephemeral.getPlayersGrantingAccess().put(player.getUniqueId(), targetUUID);
+        ephemeralData.getPlayersGrantingAccess().put(player.getUniqueId(), targetUUID);
         player.sendMessage(translate("&a" + getText("RightClickGrantAccess", args[0])));
     }
 

@@ -14,20 +14,12 @@ import org.bukkit.plugin.Plugin;
 import net.md_5.bungee.api.ChatMessageType;
 import net.md_5.bungee.api.chat.TextComponent;
 
-public class LocalActionBarService {
-    private static LocalActionBarService instance;
+public class ActionBarService {
     private final Map<Player, TextComponent> playerActionBarMessages = new HashMap<>();
 
-    private LocalActionBarService(Plugin plugin) {
+    public ActionBarService(Plugin plugin) {
         Bukkit.getScheduler().scheduleSyncRepeatingTask(plugin,
                 this::sendPlayerActionBarMessages, 5, 20);
-    }
-
-    public static LocalActionBarService getInstance(Plugin plugin) {
-        if (instance == null) {
-            instance = new LocalActionBarService(plugin);
-        }
-        return instance;
     }
 
     public void showPersistentActionBarMessage(Player player, TextComponent message) {

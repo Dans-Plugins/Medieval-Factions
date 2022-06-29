@@ -4,6 +4,11 @@
  */
 package dansplugins.factionsystem.commands;
 
+import dansplugins.factionsystem.data.EphemeralData;
+import dansplugins.factionsystem.data.PersistentData;
+import dansplugins.factionsystem.integrators.DynmapIntegrator;
+import dansplugins.factionsystem.services.ConfigService;
+import dansplugins.factionsystem.services.LocaleService;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
@@ -14,10 +19,10 @@ import dansplugins.factionsystem.commands.abs.SubCommand;
  */
 public class ChatCommand extends SubCommand {
 
-    public ChatCommand() {
+    public ChatCommand(LocaleService localeService, PersistentData persistentData, EphemeralData ephemeralData, PersistentData.ChunkDataAccessor chunkDataAccessor, DynmapIntegrator dynmapIntegrator, ConfigService configService) {
         super(new String[]{
                 "chat", LOCALE_PREFIX + "CmdChat"
-        }, true, true);
+        }, true, true, persistentData, localeService, ephemeralData, configService, chunkDataAccessor, dynmapIntegrator);
     }
 
     /**
@@ -35,14 +40,14 @@ public class ChatCommand extends SubCommand {
             return;
         }
 
-        final boolean contains = ephemeral.getPlayersInFactionChat().contains(player.getUniqueId());
+        final boolean contains = ephemeralData.getPlayersInFactionChat().contains(player.getUniqueId());
 
         final String path = (contains ? "NoLonger" : "NowSpeaking") + "InFactionChat";
 
         if (contains) {
-            ephemeral.getPlayersInFactionChat().remove(player.getUniqueId());
+            ephemeralData.getPlayersInFactionChat().remove(player.getUniqueId());
         } else {
-            ephemeral.getPlayersInFactionChat().add(player.getUniqueId());
+            ephemeralData.getPlayersInFactionChat().add(player.getUniqueId());
         }
 
         player.sendMessage(translate("&a" + getText(path)));

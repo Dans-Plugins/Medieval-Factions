@@ -19,8 +19,6 @@ import preponderous.ponder.misc.Pair;
  * @author Daniel McCoy Stephenson
  */
 public class EphemeralData {
-    private static EphemeralData instance;
-
     private final HashMap<UUID, Gate> creatingGatePlayers = new HashMap<>();
 
     private final ArrayList<UUID> lockingPlayers = new ArrayList<>();
@@ -41,17 +39,6 @@ public class EphemeralData {
 
     // duels
     private final ArrayList<Duel> duelingPlayers = new ArrayList<>();
-
-    private EphemeralData() {
-
-    }
-
-    public static EphemeralData getInstance() {
-        if (instance == null) {
-            instance = new EphemeralData();
-        }
-        return instance;
-    }
 
     // arraylist getters ---
 

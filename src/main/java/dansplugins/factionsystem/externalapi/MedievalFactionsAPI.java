@@ -27,11 +27,11 @@ public class MedievalFactionsAPI {
     }
 
     public String getVersion() {
-        return MedievalFactions.getInstance().getVersion();
+        return medievalFactions.getVersion();
     }
 
     public MF_Faction getFaction(String factionName) {
-        Faction faction = PersistentData.getInstance().getFaction(factionName);
+        Faction faction = persistentData.getFaction(factionName);
         if (faction == null) {
             return null;
         }
@@ -39,7 +39,7 @@ public class MedievalFactionsAPI {
     }
 
     public MF_Faction getFaction(Player player) {
-        Faction faction = PersistentData.getInstance().getPlayersFaction(player.getUniqueId());
+        Faction faction = persistentData.getPlayersFaction(player.getUniqueId());
         if (faction == null) {
             return null;
         }
@@ -47,7 +47,7 @@ public class MedievalFactionsAPI {
     }
 
     public MF_Faction getFaction(UUID playerUUID) {
-        Faction faction = PersistentData.getInstance().getPlayersFaction(playerUUID);
+        Faction faction = persistentData.getPlayersFaction(playerUUID);
         if (faction == null) {
             return null;
         }
@@ -55,38 +55,38 @@ public class MedievalFactionsAPI {
     }
 
     public boolean isPlayerInFactionChat(Player player) {
-        return EphemeralData.getInstance().isPlayerInFactionChat(player);
+        return ephemeralData.isPlayerInFactionChat(player);
     }
 
     public boolean isPrefixesFeatureEnabled() {
-        return MedievalFactions.getInstance().getConfig().getBoolean("playersChatWithPrefixes");
+        return configService.getBoolean("playersChatWithPrefixes");
     }
 
     public boolean isChunkClaimed(Chunk chunk) {
-        return (PersistentData.getInstance().getChunkDataAccessor().getClaimedChunk(chunk) != null);
+        return (persistentData.getChunkDataAccessor().getClaimedChunk(chunk) != null);
     }
 
     public double getPower(Player player) {
-        return PersistentData.getInstance().getPlayersPowerRecord(player.getUniqueId()).getPower();
+        return persistentData.getPlayersPowerRecord(player.getUniqueId()).getPower();
     }
 
     public double getPower(UUID playerUUID) {
-        return PersistentData.getInstance().getPlayersPowerRecord(playerUUID).getPower();
+        return persistentData.getPlayersPowerRecord(playerUUID).getPower();
     }
 
     public void forcePlayerToLeaveFactionChat(UUID uuid) {
-        EphemeralData.getInstance().getPlayersInFactionChat().remove(uuid);
+        ephemeralData.getPlayersInFactionChat().remove(uuid);
     }
 
     public void increasePower(Player player, int amount) {
-        PowerRecord powerRecord = PersistentData.getInstance().getPlayersPowerRecord(player.getUniqueId());
+        PowerRecord powerRecord = persistentData.getPlayersPowerRecord(player.getUniqueId());
         double originalPower = powerRecord.getPower();
         double newPower = originalPower + amount;
         powerRecord.setPower(newPower);
     }
 
     public void decreasePower(Player player, int amount) {
-        PowerRecord powerRecord = PersistentData.getInstance().getPlayersPowerRecord(player.getUniqueId());
+        PowerRecord powerRecord = persistentData.getPlayersPowerRecord(player.getUniqueId());
         double originalPower = powerRecord.getPower();
         double newPower = originalPower - amount;
         if (newPower >= 0) {

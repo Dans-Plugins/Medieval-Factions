@@ -8,17 +8,16 @@ import java.awt.Color;
 import java.util.ArrayList;
 import java.util.HashMap;
 
-import org.bukkit.ChatColor;
-import org.bukkit.entity.Player;
-
-import dansplugins.factionsystem.MedievalFactions;
 import dansplugins.factionsystem.integrators.CurrenciesIntegrator;
 import dansplugins.factionsystem.integrators.DynmapIntegrator;
 import dansplugins.factionsystem.integrators.FiefsIntegrator;
-import dansplugins.factionsystem.services.LocalConfigService;
-import dansplugins.factionsystem.utils.ColorConversion;
-import dansplugins.factionsystem.utils.Locale;
+import dansplugins.factionsystem.services.ConfigService;
+import dansplugins.factionsystem.services.LocaleService;
 import dansplugins.factionsystem.utils.Logger;
+import org.bukkit.ChatColor;
+import org.bukkit.entity.Player;
+
+import dansplugins.factionsystem.utils.ColorConversion;
 
 /**
  * @author Daniel McCoy Stephenson
@@ -28,13 +27,26 @@ import dansplugins.factionsystem.utils.Logger;
  * - loadMissingFlagsIfNecessary()
  */
 public class FactionFlags {
+    private final ConfigService configService;
+    private final LocaleService localeService;
+    private final FiefsIntegrator fiefsIntegrator;
+    private final CurrenciesIntegrator currenciesIntegrator;
+    private final DynmapIntegrator dynmapIntegrator;
+    private final Logger logger;
+
     private final ArrayList<String> flagNames = new ArrayList<>();
     private HashMap<String, Integer> integerValues = new HashMap<>();
     private HashMap<String, Boolean> booleanValues = new HashMap<>();
     private HashMap<String, Double> doubleValues = new HashMap<>();
     private HashMap<String, String> stringValues = new HashMap<>();
 
-    public FactionFlags() {
+    public FactionFlags(ConfigService configService, LocaleService localeService, FiefsIntegrator fiefsIntegrator, CurrenciesIntegrator currenciesIntegrator, DynmapIntegrator dynmapIntegrator, Logger logger) {
+        this.configService = configService;
+        this.localeService = localeService;
+        this.fiefsIntegrator = fiefsIntegrator;
+        this.currenciesIntegrator = currenciesIntegrator;
+        this.dynmapIntegrator = dynmapIntegrator;
+        this.logger = logger;
         initializeFlagNames();
     }
 
@@ -57,11 +69,11 @@ public class FactionFlags {
         // this is called externally in Faction.java when a faction is created in-game
         booleanValues.put("mustBeOfficerToManageLand", true);
         booleanValues.put("mustBeOfficerToInviteOthers", true);
-        booleanValues.put("alliesCanInteractWithLand", MedievalFactions.getInstance().getConfig().getBoolean("allowAllyInteraction"));
-        booleanValues.put("vassalageTreeCanInteractWithLand", MedievalFactions.getInstance().getConfig().getBoolean("allowVassalageTreeInteraction"));
+        booleanValues.put("alliesCanInteractWithLand", configService.getBoolean("allowAllyInteraction"));
+        booleanValues.put("vassalageTreeCanInteractWithLand", configService.getBoolean("allowVassalageTreeInteraction"));
         booleanValues.put("neutral", false);
         stringValues.put("dynmapTerritoryColor", "#ff0000");
-        stringValues.put("territoryAlertColor", MedievalFactions.getInstance().getConfig().getString("territoryAlertColor"));
+        stringValues.put("territoryAlertColor", configService.getString("territoryAlertColor"));
         stringValues.put("prefixColor", "white");
         booleanValues.put("allowFriendlyFire", false);
         booleanValues.put("fiefsEnabled", true);
@@ -78,10 +90,10 @@ public class FactionFlags {
             booleanValues.put("mustBeOfficerToInviteOthers", true);
         }
         if (!booleanValues.containsKey("alliesCanInteractWithLand")) {
-            booleanValues.put("alliesCanInteractWithLand", MedievalFactions.getInstance().getConfig().getBoolean("allowAllyInteraction"));
+            booleanValues.put("alliesCanInteractWithLand", configService.getBoolean("allowAllyInteraction"));
         }
         if (!booleanValues.containsKey("vassalageTreeCanInteractWithLand")) {
-            booleanValues.put("vassalageTreeCanInteractWithLand", MedievalFactions.getInstance().getConfig().getBoolean("allowVassalageTreeInteraction"));
+            booleanValues.put("vassalageTreeCanInteractWithLand", configService.getBoolean("allowVassalageTreeInteraction"));
         }
         if (!booleanValues.containsKey("neutral")) {
             booleanValues.put("neutral", false);
@@ -90,7 +102,7 @@ public class FactionFlags {
             stringValues.put("dynmapTerritoryColor", "#ff0000");
         }
         if (!stringValues.containsKey("territoryAlertColor")) {
-            stringValues.put("territoryAlertColor", MedievalFactions.getInstance().getConfig().getString("territoryAlertColor"));
+            stringValues.put("territoryAlertColor", configService.getString("territoryAlertColor"));
         }
         if (!stringValues.containsKey("prefixColor")) {
             stringValues.put("prefixColor", "white");
@@ -114,27 +126,27 @@ public class FactionFlags {
     }
 
     public void setFlag(String flag, String value, Player player) {
-        if (flag.equals("neutral") && !MedievalFactions.getInstance().getConfig().getBoolean("allowNeutrality")) {
-            player.sendMessage(ChatColor.RED + "" + Locale.get("NeutralityDisabled"));
+        if (flag.equals("neutral") && !configService.getBoolean("allowNeutrality")) {
+            player.sendMessage(ChatColor.RED + "" + localeService.get("NeutralityDisabled"));
             return;
         }
 
-        if (!LocalConfigService.getInstance().getBoolean("factionsCanSetPrefixColors")) {
+        if (!configService.getBoolean("factionsCanSetPrefixColors")) {
             player.sendMessage("Players can't set prefix colors.");
             return;
         }
 
-        if (flag.equals("prefixColor") && (!MedievalFactions.getInstance().getConfig().getBoolean("playersChatWithPrefixes"))) {
-            player.sendMessage(ChatColor.RED + "" + Locale.get("PrefixesDisabled"));
+        if (flag.equals("prefixColor") && (!configService.getBoolean("playersChatWithPrefixes"))) {
+            player.sendMessage(ChatColor.RED + "" + localeService.get("PrefixesDisabled"));
             return;
         }
 
-        if (flag.equals("fiefsEnabled") && !FiefsIntegrator.getInstance().isFiefsPresent()) {
+        if (flag.equals("fiefsEnabled") && !fiefsIntegrator.isFiefsPresent()) {
             player.sendMessage("Fiefs either isn't enabled or present.");
             return;
         }
 
-        if (flag.equals("officersCanMintCurrency") && !CurrenciesIntegrator.getInstance().isCurrenciesPresent()) {
+        if (flag.equals("officersCanMintCurrency") && !currenciesIntegrator.isCurrenciesPresent()) {
             // TODO: add locale message
             return;
         }
@@ -142,13 +154,13 @@ public class FactionFlags {
         if (isFlag(flag)) {
             if (integerValues.containsKey(flag)) {
                 integerValues.replace(flag, Integer.parseInt(value));
-                player.sendMessage(ChatColor.GREEN + Locale.get("IntegerSet"));
+                player.sendMessage(ChatColor.GREEN + localeService.get("IntegerSet"));
             } else if (booleanValues.containsKey(flag)) {
                 booleanValues.replace(flag, Boolean.parseBoolean(value));
-                player.sendMessage(ChatColor.GREEN + Locale.get("BooleanSet"));
+                player.sendMessage(ChatColor.GREEN + localeService.get("BooleanSet"));
             } else if (doubleValues.containsKey(flag)) {
                 doubleValues.replace(flag, Double.parseDouble(value));
-                player.sendMessage(ChatColor.GREEN + Locale.get("DoubleSet"));
+                player.sendMessage(ChatColor.GREEN + localeService.get("DoubleSet"));
             } else if (stringValues.containsKey(flag)) {
 
                 if (flag.equalsIgnoreCase("dynmapTerritoryColor")) {
@@ -184,34 +196,34 @@ public class FactionFlags {
                 }
 
                 stringValues.replace(flag, value);
-                player.sendMessage(ChatColor.GREEN + Locale.get("StringSet"));
+                player.sendMessage(ChatColor.GREEN + localeService.get("StringSet"));
             }
 
             if (flag.equals("dynmapTerritoryColor")) {
-                DynmapIntegrator.getInstance().updateClaims(); // update dynmap to reflect color change
+                dynmapIntegrator.updateClaims(); // update dynmap to reflect color change
             }
         } else {
-            player.sendMessage(ChatColor.RED + String.format(Locale.get("WasntFound"), flag));
+            player.sendMessage(ChatColor.RED + String.format(localeService.get("WasntFound"), flag));
         }
     }
 
     public Object getFlag(String flag) {
         if (!isFlag(flag)) {
-            Logger.getInstance().debug(String.format("[DEBUG] Flag '%s' was not found!", flag));
+            logger.debug(String.format("[DEBUG] Flag '%s' was not found!", flag));
             return false;
         }
 
         if (integerValues.containsKey(flag)) {
-            Logger.getInstance().debug(String.format("[DEBUG] Flag '%s' was found! Value: '%s'", flag, integerValues.get(flag)));
+            logger.debug(String.format("[DEBUG] Flag '%s' was found! Value: '%s'", flag, integerValues.get(flag)));
             return integerValues.get(flag);
         } else if (booleanValues.containsKey(flag)) {
-            Logger.getInstance().debug(String.format("[DEBUG] Flag '%s' was found! Value: '%s'", flag, booleanValues.get(flag)));
+            logger.debug(String.format("[DEBUG] Flag '%s' was found! Value: '%s'", flag, booleanValues.get(flag)));
             return booleanValues.get(flag);
         } else if (doubleValues.containsKey(flag)) {
-            Logger.getInstance().debug(String.format("[DEBUG] Flag '%s' was found! Value: '%s'", flag, doubleValues.get(flag)));
+            logger.debug(String.format("[DEBUG] Flag '%s' was found! Value: '%s'", flag, doubleValues.get(flag)));
             return doubleValues.get(flag);
         } else if (stringValues.containsKey(flag)) {
-            Logger.getInstance().debug(String.format("[DEBUG] Flag '%s' was found! Value: '%s'", flag, stringValues.get(flag)));
+            logger.debug(String.format("[DEBUG] Flag '%s' was found! Value: '%s'", flag, stringValues.get(flag)));
             return stringValues.get(flag);
         }
         return null;
@@ -262,19 +274,19 @@ public class FactionFlags {
         StringBuilder toReturn = new StringBuilder();
         for (String flagName : flagNames) {
 
-            if (flagName.equals("neutral") && !MedievalFactions.getInstance().getConfig().getBoolean("allowNeutrality")) {
+            if (flagName.equals("neutral") && !configService.getBoolean("allowNeutrality")) {
                 continue;
             }
 
-            if (flagName.equals("prefixColor") && (!MedievalFactions.getInstance().getConfig().getBoolean("playersChatWithPrefixes") || !LocalConfigService.getInstance().getBoolean("factionsCanSetPrefixColors"))) {
+            if (flagName.equals("prefixColor") && (!configService.getBoolean("playersChatWithPrefixes") || !configService.getBoolean("factionsCanSetPrefixColors"))) {
                 continue;
             }
 
-            if (flagName.equals("fiefsEnabled") && !FiefsIntegrator.getInstance().isFiefsPresent()) {
+            if (flagName.equals("fiefsEnabled") && !fiefsIntegrator.isFiefsPresent()) {
                 continue;
             }
 
-            if (flagName.equals("officersCanMintCurrency") && !CurrenciesIntegrator.getInstance().isCurrenciesPresent()) {
+            if (flagName.equals("officersCanMintCurrency") && !currenciesIntegrator.isCurrenciesPresent()) {
                 continue;
             }
 

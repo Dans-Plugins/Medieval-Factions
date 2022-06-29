@@ -8,26 +8,31 @@ import static org.bukkit.Bukkit.getServer;
 
 import java.util.UUID;
 
+import dansplugins.factionsystem.MedievalFactions;
+import dansplugins.factionsystem.data.EphemeralData;
+import dansplugins.factionsystem.data.PersistentData;
+import dansplugins.factionsystem.integrators.DynmapIntegrator;
+import dansplugins.factionsystem.services.ConfigService;
+import dansplugins.factionsystem.services.LocaleService;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
-
-import dansplugins.factionsystem.MedievalFactions;
 import dansplugins.factionsystem.commands.abs.SubCommand;
-import dansplugins.factionsystem.utils.Locale;
 import preponderous.ponder.minecraft.bukkit.tools.UUIDChecker;
 
 /**
  * @author Callum Johnson
  */
 public class InviteCommand extends SubCommand {
+    private final MedievalFactions medievalFactions;
 
-    public InviteCommand() {
+    public InviteCommand(LocaleService localeService, PersistentData persistentData, EphemeralData ephemeralData, PersistentData.ChunkDataAccessor chunkDataAccessor, DynmapIntegrator dynmapIntegrator, ConfigService configService, MedievalFactions medievalFactions) {
         super(new String[]{
                 "invite", LOCALE_PREFIX + "CmdInvite"
-        }, true, true);
+        }, true, true, persistentData, localeService, ephemeralData, configService, chunkDataAccessor, dynmapIntegrator);
+        this.medievalFactions = medievalFactions;
     }
 
     /**
@@ -66,12 +71,12 @@ public class InviteCommand extends SubCommand {
                 return;
             }
         }
-        if (data.isInFaction(playerUUID)) {
+        if (persistentData.isInFaction(playerUUID)) {
             player.sendMessage(translate("&c" + getText("PlayerAlreadyInFaction")));
             return;
         }
         faction.invite(playerUUID);
-        player.sendMessage(ChatColor.GREEN + Locale.get("InvitationSent"));
+        player.sendMessage(ChatColor.GREEN + localeService.get("InvitationSent"));
         if (target.isOnline() && target.getPlayer() != null) {
             target.getPlayer().sendMessage(translate(
                     "&a" + getText("AlertBeenInvited", faction.getName(), faction.getName())
@@ -81,7 +86,7 @@ public class InviteCommand extends SubCommand {
         final long seconds = 1728000L;
         // make invitation expire in 24 hours, if server restarts it also expires since invites aren't saved
         final OfflinePlayer tmp = target;
-        getServer().getScheduler().runTaskLater(MedievalFactions.getInstance(), () -> {
+        getServer().getScheduler().runTaskLater(medievalFactions, () -> {
             faction.uninvite(playerUUID);
             if (tmp.isOnline() && tmp.getPlayer() != null) {
                 tmp.getPlayer().sendMessage(translate(

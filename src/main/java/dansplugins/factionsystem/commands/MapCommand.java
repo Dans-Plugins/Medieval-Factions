@@ -8,6 +8,11 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
+import dansplugins.factionsystem.data.EphemeralData;
+import dansplugins.factionsystem.data.PersistentData;
+import dansplugins.factionsystem.integrators.DynmapIntegrator;
+import dansplugins.factionsystem.services.ConfigService;
+import dansplugins.factionsystem.services.LocaleService;
 import org.bukkit.Chunk;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
@@ -23,10 +28,10 @@ import dansplugins.factionsystem.objects.domain.Faction;
 public class MapCommand extends SubCommand {
     private final char[] map_keys = "\\/#$%=&^ABCDEFGHJKLMNOPQRSTUVWXYZ0123456789abcdeghjmnopqrsuvwxyz?".toCharArray();
 
-    public MapCommand() {
+    public MapCommand(LocaleService localeService, PersistentData persistentData, EphemeralData ephemeralData, PersistentData.ChunkDataAccessor chunkDataAccessor, DynmapIntegrator dynmapIntegrator, ConfigService configService) {
         super(new String[]{
                 "map", "showmap", "displaymap"
-        }, true);
+        }, true, persistentData, localeService, ephemeralData, configService, chunkDataAccessor, dynmapIntegrator);
     }
 
     /**
@@ -47,7 +52,7 @@ public class MapCommand extends SubCommand {
         final int topLeftZ = center.getZ() - (map_height / 2);
         final int bottomRightX = center.getX() + (map_width / 2);
         final int bottomRightZ = center.getZ() + (map_height / 2);
-        final Faction faction = data.getPlayersFaction(player.getUniqueId());
+        final Faction faction = persistentData.getPlayersFaction(player.getUniqueId());
         final boolean hasFaction = faction != null;
         final HashMap<String, Integer> printedHolders = new HashMap<>();
         final HashMap<String, String> colourMap = new HashMap<>();
@@ -56,8 +61,8 @@ public class MapCommand extends SubCommand {
             final StringBuilder line = new StringBuilder();
             for (int x = topLeftX; x <= bottomRightX; x++) {
                 Chunk tmp = center.getWorld().getChunkAt(x, z);
-                if (chunks.isClaimed(tmp)) {
-                    ClaimedChunk chunk = chunks.getClaimedChunk(tmp);
+                if (chunkDataAccessor.isClaimed(tmp)) {
+                    ClaimedChunk chunk = chunkDataAccessor.getClaimedChunk(tmp);
                     printedHolders.put(chunk.getHolder(), printedHolders.getOrDefault(chunk.getHolder(), 0) + 1);
                     int index = getIndex(chunk.getHolder(), printedHolders);
                     char map_key = index == -1 ? '§' : map_keys[index];

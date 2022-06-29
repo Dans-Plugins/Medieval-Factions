@@ -6,11 +6,11 @@ package dansplugins.factionsystem.utils;
 
 import static org.bukkit.Material.LADDER;
 
+import dansplugins.factionsystem.data.EphemeralData;
+import dansplugins.factionsystem.services.ConfigService;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
 
-import dansplugins.factionsystem.MedievalFactions;
-import dansplugins.factionsystem.data.EphemeralData;
 import dansplugins.factionsystem.data.PersistentData;
 import dansplugins.factionsystem.objects.domain.ClaimedChunk;
 import dansplugins.factionsystem.objects.domain.Faction;
@@ -19,17 +19,16 @@ import dansplugins.factionsystem.objects.domain.Faction;
  * @author Daniel McCoy Stephenson
  */
 public class InteractionAccessChecker {
-    private static InteractionAccessChecker instance;
+    private final PersistentData persistentData;
+    private final ConfigService configService;
+    private final EphemeralData ephemeralData;
+    private final Logger logger;
 
-    private InteractionAccessChecker() {
-
-    }
-
-    public static InteractionAccessChecker getInstance() {
-        if (instance == null) {
-            instance = new InteractionAccessChecker();
-        }
-        return instance;
+    public InteractionAccessChecker(PersistentData persistentData, ConfigService configService, EphemeralData ephemeralData, Logger logger) {
+        this.persistentData = persistentData;
+        this.configService = configService;
+        this.ephemeralData = ephemeralData;
+        this.logger = logger;
     }
 
     public boolean shouldEventBeCancelled(ClaimedChunk claimedChunk, Player player) {
@@ -45,7 +44,7 @@ public class InteractionAccessChecker {
             return false;
         }
 
-        Faction playersFaction = PersistentData.getInstance().getPlayersFaction(player.getUniqueId());
+        Faction playersFaction = persistentData.getPlayersFaction(player.getUniqueId());
         if (playersFaction == null) {
             return true;
         }
@@ -58,27 +57,27 @@ public class InteractionAccessChecker {
     }
 
     private boolean factionsProtectionsNotEnabled() {
-        return !MedievalFactions.getInstance().getConfig().getBoolean("factionProtectionsEnabled");
+        return !configService.getBoolean("factionProtectionsEnabled");
     }
 
     private boolean isPlayerBypassing(Player player) {
-        return EphemeralData.getInstance().getAdminsBypassingProtections().contains(player.getUniqueId());
+        return ephemeralData.getAdminsBypassingProtections().contains(player.getUniqueId());
     }
 
     public boolean isOutsiderInteractionAllowed(Player player, ClaimedChunk chunk, Faction playersFaction) {
-        if (!MedievalFactions.getInstance().getConfig().getBoolean("factionProtectionsEnabled")) {
+        if (!configService.getBoolean("factionProtectionsEnabled")) {
             return true;
         }
 
-        final Faction chunkHolder = PersistentData.getInstance().getFaction(chunk.getHolder());
+        final Faction chunkHolder = persistentData.getFaction(chunk.getHolder());
 
-        boolean inVassalageTree = PersistentData.getInstance().isPlayerInFactionInVassalageTree(player, chunkHolder);
+        boolean inVassalageTree = persistentData.isPlayerInFactionInVassalageTree(player, chunkHolder);
         boolean isAlly = playersFaction.isAlly(chunk.getHolder());
         boolean allyInteractionAllowed = (boolean) chunkHolder.getFlags().getFlag("alliesCanInteractWithLand");
         boolean vassalageTreeInteractionAllowed = (boolean) chunkHolder.getFlags().getFlag("vassalageTreeCanInteractWithLand");
 
-        Logger.getInstance().debug("allyInteractionAllowed: " + allyInteractionAllowed);
-        Logger.getInstance().debug("vassalageTreeInteractionAllowed: " + vassalageTreeInteractionAllowed);
+        logger.debug("allyInteractionAllowed: " + allyInteractionAllowed);
+        logger.debug("vassalageTreeInteractionAllowed: " + vassalageTreeInteractionAllowed);
 
         boolean allowed = allyInteractionAllowed && isAlly;
 
@@ -90,7 +89,7 @@ public class InteractionAccessChecker {
     }
 
     public boolean isPlayerAttemptingToPlaceLadderInEnemyTerritoryAndIsThisAllowed(Block blockPlaced, Player player, ClaimedChunk claimedChunk) {
-        Faction playersFaction = PersistentData.getInstance().getPlayersFaction(player.getUniqueId());
+        Faction playersFaction = persistentData.getPlayersFaction(player.getUniqueId());
 
         if (playersFaction == null) {
             return false;
@@ -100,7 +99,7 @@ public class InteractionAccessChecker {
             return false;
         }
 
-        boolean laddersArePlaceableInEnemyTerritory = MedievalFactions.getInstance().getConfig().getBoolean("laddersPlaceableInEnemyFactionTerritory");
+        boolean laddersArePlaceableInEnemyTerritory = configService.getBoolean("laddersPlaceableInEnemyFactionTerritory");
         boolean playerIsTryingToPlaceLadderInEnemyTerritory = blockPlaced.getType() == LADDER && playersFaction.isEnemy(claimedChunk.getHolder());
         return laddersArePlaceableInEnemyTerritory && playerIsTryingToPlaceLadderInEnemyTerritory;
     }

@@ -4,6 +4,10 @@
  */
 package dansplugins.factionsystem.eventhandlers;
 
+import dansplugins.factionsystem.data.EphemeralData;
+import dansplugins.factionsystem.data.PersistentData;
+import dansplugins.factionsystem.services.ConfigService;
+import dansplugins.factionsystem.services.LocaleService;
 import org.bukkit.ChatColor;
 import org.bukkit.Chunk;
 import org.bukkit.Location;
@@ -18,20 +22,31 @@ import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.projectiles.ProjectileSource;
 
-import dansplugins.factionsystem.MedievalFactions;
-import dansplugins.factionsystem.data.EphemeralData;
-import dansplugins.factionsystem.data.PersistentData;
-import dansplugins.factionsystem.eventhandlers.helper.RelationChecker;
+import dansplugins.factionsystem.utils.RelationChecker;
 import dansplugins.factionsystem.objects.domain.ClaimedChunk;
 import dansplugins.factionsystem.objects.domain.Duel;
 import dansplugins.factionsystem.objects.domain.Faction;
-import dansplugins.factionsystem.utils.Locale;
 import dansplugins.factionsystem.utils.Logger;
 
 /**
  * @author Daniel McCoy Stephenson
  */
 public class DamageHandler implements Listener {
+    private final Logger logger;
+    private final PersistentData persistentData;
+    private final EphemeralData ephemeralData;
+    private final LocaleService localeService;
+    private final ConfigService configService;
+    private final RelationChecker relationChecker;
+
+    public DamageHandler(Logger logger, PersistentData persistentData, EphemeralData ephemeralData, LocaleService localeService, ConfigService configService, RelationChecker relationChecker) {
+        this.logger = logger;
+        this.persistentData = persistentData;
+        this.ephemeralData = ephemeralData;
+        this.localeService = localeService;
+        this.configService = configService;
+        this.relationChecker = relationChecker;
+    }
 
     /**
      * This method disallows PVP between members of the same faction and between factions who are not at war
@@ -44,7 +59,7 @@ public class DamageHandler implements Listener {
         Player victim = getVictim(event);
 
         if (attacker == null || victim == null) {
-            Logger.getInstance().debug("Attacker and/or victim was null in the DamageHandler class.");
+            logger.debug("Attacker and/or victim was null in the DamageHandler class.");
             return;
         }
 
@@ -60,43 +75,43 @@ public class DamageHandler implements Listener {
      * 4) Players are not in the same faction but are not enemies.
      */
     private void handlePlayerVersusPlayer(Player attacker, Player victim, EntityDamageByEntityEvent event) {
-        Logger.getInstance().debug("Handling damage between players.");
+        logger.debug("Handling damage between players.");
 
         // case 1
         if (arePlayersDueling(attacker, victim)) {
-            Logger.getInstance().debug("Players are dueling. Ending if necessary.");
+            logger.debug("Players are dueling. Ending if necessary.");
             endDuelIfNecessary(attacker, victim, event);
             return;
         }
 
         // case 2
-        if (RelationChecker.getInstance().playerNotInFaction(attacker) || RelationChecker.getInstance().playerNotInFaction(victim)) {
-            Logger.getInstance().debug("Attacker or victim is not in a faction. Returning.");
+        if (relationChecker.playerNotInFaction(attacker) || relationChecker.playerNotInFaction(victim)) {
+            logger.debug("Attacker or victim is not in a faction. Returning.");
             // allow since factionless don't have PVP restrictions
             return;
         }
 
         // case 3
-        if (RelationChecker.getInstance().arePlayersInSameFaction(attacker, victim)){
-            Logger.getInstance().debug("Players are in the same faction. Handling friendly fire.");
+        if (relationChecker.arePlayersInSameFaction(attacker, victim)){
+            logger.debug("Players are in the same faction. Handling friendly fire.");
             handleFriendlyFire(event, attacker, victim);
             return;
         }
 
         // case 4
-        if (RelationChecker.getInstance().arePlayersFactionsNotEnemies(attacker, victim)) {
-            Logger.getInstance().debug("Players factions are not enemies. Handling non-enemy fire.");
+        if (relationChecker.arePlayersFactionsNotEnemies(attacker, victim)) {
+            logger.debug("Players factions are not enemies. Handling non-enemy fire.");
             handleNonEnemyFire(event, attacker, victim);
         }
     }
 
     private void handleEntityDamage(Player attacker, EntityDamageByEntityEvent event) {
-        Logger.getInstance().debug("Handling entity damage.");
+        logger.debug("Handling entity damage.");
         if (event.getEntity() instanceof Player) {
-            Logger.getInstance().debug("Entity is an instance of a player. Returning.");
+            logger.debug("Entity is an instance of a player. Returning.");
             return;
         }
-        Faction playersFaction = PersistentData.getInstance().getPlayersFaction(attacker.getUniqueId());
+        Faction playersFaction = persistentData.getPlayersFaction(attacker.getUniqueId());
         if (playersFaction == null) {
             event.setCancelled(true);
             return;
@@ -124,7 +139,7 @@ public class DamageHandler implements Listener {
 
     private ClaimedChunk getClaimedChunkAtLocation(Location location) {
         Chunk chunk = location.getChunk();
-        return PersistentData.getInstance().getChunkDataAccessor().getClaimedChunk(chunk);
+        return persistentData.getChunkDataAccessor().getClaimedChunk(chunk);
     }
 
     private boolean isEntityProtected(Entity entity) {
@@ -163,11 +178,11 @@ public class DamageHandler implements Listener {
     }
 
     private void endDuelIfNecessary(Player attacker, Player victim, EntityDamageEvent event) {
-        Duel duel = EphemeralData.getInstance().getDuel(attacker, victim);
+        Duel duel = ephemeralData.getDuel(attacker, victim);
         if (isDuelActive(duel) && isVictimDead(victim.getHealth(), event.getFinalDamage())) {
             duel.setLoser(victim);
             duel.finishDuel(false);
-            EphemeralData.getInstance().getDuelingPlayers().remove(duel);
+            ephemeralData.getDuelingPlayers().remove(duel);
             event.setCancelled(true);
         }
     }
@@ -184,7 +199,7 @@ public class DamageHandler implements Listener {
         if (attacker == null) {
             return false;
         }
-        Duel duel = EphemeralData.getInstance().getDuel(attacker, victim);
+        Duel duel = ephemeralData.getDuel(attacker, victim);
         return duel != null;
     }
 
@@ -200,18 +215,18 @@ public class DamageHandler implements Listener {
      * This method is intended to prevent friendly fire if it is not allowed in the faction.
      */
     private void handleFriendlyFire(EntityDamageByEntityEvent event, Player attacker, Player victim) {
-        Faction faction = PersistentData.getInstance().getPlayersFaction(attacker.getUniqueId());
+        Faction faction = persistentData.getPlayersFaction(attacker.getUniqueId());
         boolean friendlyFireAllowed = (boolean) faction.getFlags().getFlag("allowFriendlyFire");
         if (!friendlyFireAllowed) {
             event.setCancelled(true);
-            attacker.sendMessage(ChatColor.RED + Locale.get("CannotAttackFactionMember"));
+            attacker.sendMessage(ChatColor.RED + localeService.get("CannotAttackFactionMember"));
         }
     }
 
     private void handleNonEnemyFire(EntityDamageByEntityEvent event, Player attacker, Player victim) {
-        if (MedievalFactions.getInstance().getConfig().getBoolean("warsRequiredForPVP")) {
+        if (configService.getBoolean("warsRequiredForPVP")) {
             event.setCancelled(true);
-            attacker.sendMessage(ChatColor.RED + Locale.get("CannotAttackNonWarringPlayer"));
+            attacker.sendMessage(ChatColor.RED + localeService.get("CannotAttackNonWarringPlayer"));
         }
     }
 }

@@ -4,6 +4,11 @@
  */
 package dansplugins.factionsystem.commands;
 
+import dansplugins.factionsystem.data.EphemeralData;
+import dansplugins.factionsystem.data.PersistentData;
+import dansplugins.factionsystem.integrators.DynmapIntegrator;
+import dansplugins.factionsystem.services.ConfigService;
+import dansplugins.factionsystem.services.LocaleService;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
@@ -15,10 +20,10 @@ import dansplugins.factionsystem.objects.domain.Faction;
  */
 public class UnclaimallCommand extends SubCommand {
 
-    public UnclaimallCommand() {
+    public UnclaimallCommand(LocaleService localeService, PersistentData persistentData, EphemeralData ephemeralData, PersistentData.ChunkDataAccessor chunkDataAccessor, DynmapIntegrator dynmapIntegrator, ConfigService configService) {
         super(new String[]{
                 "unclaimall", "ua", LOCALE_PREFIX + "CmdUnclaimall"
-        }, false);
+        }, false, persistentData, localeService, ephemeralData, configService, chunkDataAccessor, dynmapIntegrator);
     }
 
     /**
@@ -72,11 +77,11 @@ public class UnclaimallCommand extends SubCommand {
         messageFaction(faction, translate("&c" + getText("AlertFactionHomeRemoved")));
 
         // remove claimed chunks
-        chunks.removeAllClaimedChunks(faction.getName());
-        dynmap.updateClaims();
+        chunkDataAccessor.removeAllClaimedChunks(faction.getName());
+        dynmapIntegrator.updateClaims();
         sender.sendMessage(translate("&a" + getText("AllLandUnclaimedFrom", faction.getName())));
 
         // remove locks associated with this faction
-        data.removeAllLocks(faction.getName());
+        persistentData.removeAllLocks(faction.getName());
     }
 }

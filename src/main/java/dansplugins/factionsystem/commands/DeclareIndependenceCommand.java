@@ -4,6 +4,11 @@
  */
 package dansplugins.factionsystem.commands;
 
+import dansplugins.factionsystem.data.EphemeralData;
+import dansplugins.factionsystem.data.PersistentData;
+import dansplugins.factionsystem.integrators.DynmapIntegrator;
+import dansplugins.factionsystem.services.ConfigService;
+import dansplugins.factionsystem.services.LocaleService;
 import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
@@ -18,10 +23,10 @@ import dansplugins.factionsystem.objects.domain.Faction;
  */
 public class DeclareIndependenceCommand extends SubCommand {
 
-    public DeclareIndependenceCommand() {
+    public DeclareIndependenceCommand(LocaleService localeService, PersistentData persistentData, EphemeralData ephemeralData, PersistentData.ChunkDataAccessor chunkDataAccessor, DynmapIntegrator dynmapIntegrator, ConfigService configService) {
         super(new String[]{
                 "declareindependence", "di", LOCALE_PREFIX + "CmdDeclareIndependence"
-        }, true, true, false, true);
+        }, true, true, false, true, localeService, persistentData, ephemeralData, chunkDataAccessor, dynmapIntegrator, configService);
     }
 
     /**
@@ -53,7 +58,7 @@ public class DeclareIndependenceCommand extends SubCommand {
         liege.removeVassal(this.faction.getName());
         this.faction.setLiege("none");
 
-        if (!MedievalFactions.getInstance().getConfig().getBoolean("allowNeutrality") || (!((boolean) faction.getFlags().getFlag("neutral")) && !((boolean) liege.getFlags().getFlag("neutral")))) {
+        if (!configService.getBoolean("allowNeutrality") || (!((boolean) faction.getFlags().getFlag("neutral")) && !((boolean) liege.getFlags().getFlag("neutral")))) {
             // make enemies if (1) neutrality is disabled or (2) declaring faction is not neutral and liege is not neutral
             FactionWarStartEvent warStartEvent = new FactionWarStartEvent(this.faction, liege, player);
             Bukkit.getPluginManager().callEvent(warStartEvent);

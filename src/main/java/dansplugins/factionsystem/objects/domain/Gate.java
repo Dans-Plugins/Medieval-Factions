@@ -71,7 +71,7 @@ public class Gate {
         if (_world != null) {
             return _world;
         }
-        _world = MedievalFactions.getInstance().getServer().getWorld(world);
+        _world = medievalFactions.getServer().getWorld(world);
         return _world;
     }
 
@@ -314,7 +314,7 @@ public class Gate {
             } else if (isParallelToZ()) {
                 area = getDimZ() * getDimY();
             }
-            if (area > MedievalFactions.getInstance().getConfig().getInt("factionMaxGateArea")) {
+            if (area > configService.getInt("factionMaxGateArea")) {
                 // Gate size exceeds config limit.
                 coord2 = null;
                 return ErrorCodeAddCoord.Oversized;
@@ -403,7 +403,7 @@ public class Gate {
                 for (int y = bottomY; y <= topY; y++) {
                     c++;
                     final int blockY = y;
-                    Bukkit.getScheduler().runTaskLater(MedievalFactions.getInstance(), new Runnable() {
+                    Bukkit.getScheduler().runTaskLater(medievalFactions, new Runnable() {
                         Block b;
 
                         @Override
@@ -416,7 +416,7 @@ public class Gate {
                         }
                     }, c * 10L);
                 }
-                Bukkit.getScheduler().runTaskLater(MedievalFactions.getInstance(), new Runnable() {
+                Bukkit.getScheduler().runTaskLater(medievalFactions, new Runnable() {
                     @Override
                     public void run() {
                         gateStatus = GateStatus.READY;
@@ -445,7 +445,7 @@ public class Gate {
                 for (int y = bottomY; y <= topY; y++) {
                     c++;
                     final int blockY = y;
-                    Bukkit.getScheduler().runTaskLater(MedievalFactions.getInstance(), new Runnable() {
+                    Bukkit.getScheduler().runTaskLater(medievalFactions, new Runnable() {
                         Block b;
 
                         @Override
@@ -458,7 +458,7 @@ public class Gate {
                         }
                     }, c * 10L);
                 }
-                Bukkit.getScheduler().runTaskLater(MedievalFactions.getInstance(), new Runnable() {
+                Bukkit.getScheduler().runTaskLater(medievalFactions, new Runnable() {
                     @Override
                     public void run() {
                         gateStatus = GateStatus.READY;
@@ -501,7 +501,7 @@ public class Gate {
                 for (int y = topY; y >= bottomY; y--) {
                     c++;
                     final int blockY = y;
-                    Bukkit.getScheduler().runTaskLater(MedievalFactions.getInstance(), new Runnable() {
+                    Bukkit.getScheduler().runTaskLater(medievalFactions, new Runnable() {
                         Block b;
 
                         @Override
@@ -514,7 +514,7 @@ public class Gate {
                         }
                     }, c * 10L);
                 }
-                Bukkit.getScheduler().runTaskLater(MedievalFactions.getInstance(), new Runnable() {
+                Bukkit.getScheduler().runTaskLater(medievalFactions, new Runnable() {
                     @Override
                     public void run() {
                         gateStatus = GateStatus.READY;
@@ -543,7 +543,7 @@ public class Gate {
                 for (int y = topY; y >= bottomY; y--) {
                     c++;
                     final int blockY = y;
-                    Bukkit.getScheduler().runTaskLater(MedievalFactions.getInstance(), new Runnable() {
+                    Bukkit.getScheduler().runTaskLater(medievalFactions, new Runnable() {
                         Block b;
 
                         @Override
@@ -557,7 +557,7 @@ public class Gate {
                         }
                     }, c * 10L);
                 }
-                Bukkit.getScheduler().runTaskLater(MedievalFactions.getInstance(), new Runnable() {
+                Bukkit.getScheduler().runTaskLater(medievalFactions, new Runnable() {
                     @Override
                     public void run() {
                         gateStatus = GateStatus.READY;

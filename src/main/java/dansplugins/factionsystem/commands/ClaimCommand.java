@@ -4,6 +4,11 @@
  */
 package dansplugins.factionsystem.commands;
 
+import dansplugins.factionsystem.data.EphemeralData;
+import dansplugins.factionsystem.data.PersistentData;
+import dansplugins.factionsystem.integrators.DynmapIntegrator;
+import dansplugins.factionsystem.services.ConfigService;
+import dansplugins.factionsystem.services.LocaleService;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
@@ -14,10 +19,10 @@ import dansplugins.factionsystem.commands.abs.SubCommand;
  */
 public class ClaimCommand extends SubCommand {
 
-    public ClaimCommand() {
+    public ClaimCommand(LocaleService localeService, PersistentData persistentData, EphemeralData ephemeralData, PersistentData.ChunkDataAccessor chunkDataAccessor, DynmapIntegrator dynmapIntegrator, ConfigService configService) {
         super(new String[]{
                 "Claim", LOCALE_PREFIX + "CmdClaim"
-        }, true, true);
+        }, true, true, persistentData, localeService, ephemeralData, configService, chunkDataAccessor, dynmapIntegrator);
     }
 
     /**
@@ -43,12 +48,12 @@ public class ClaimCommand extends SubCommand {
             if (depth <= 0) {
                 player.sendMessage(translate("&c" + getText("UsageClaimRadius")));
             } else {
-                chunks.radiusClaimAtLocation(depth, player, player.getLocation(), faction);
+                chunkDataAccessor.radiusClaimAtLocation(depth, player, player.getLocation(), faction);
             }
         } else {
-            chunks.claimChunkAtLocation(player, player.getLocation(), faction);
+            chunkDataAccessor.claimChunkAtLocation(player, player.getLocation(), faction);
         }
-        dynmap.updateClaims();
+        dynmapIntegrator.updateClaims();
     }
 
     /**

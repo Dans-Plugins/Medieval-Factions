@@ -4,6 +4,11 @@
  */
 package dansplugins.factionsystem.commands;
 
+import dansplugins.factionsystem.data.EphemeralData;
+import dansplugins.factionsystem.data.PersistentData;
+import dansplugins.factionsystem.integrators.DynmapIntegrator;
+import dansplugins.factionsystem.services.ConfigService;
+import dansplugins.factionsystem.services.LocaleService;
 import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
@@ -17,8 +22,8 @@ import dansplugins.factionsystem.objects.domain.Duel.DuelState;
  */
 public class DuelCommand extends SubCommand {
 
-    public DuelCommand() {
-        super(new String[]{"dl", "duel", LOCALE_PREFIX + "CmdDuel"}, true);
+    public DuelCommand(LocaleService localeService, PersistentData persistentData, EphemeralData ephemeralData, PersistentData.ChunkDataAccessor chunkDataAccessor, DynmapIntegrator dynmapIntegrator, ConfigService configService) {
+        super(new String[]{"dl", "duel", LOCALE_PREFIX + "CmdDuel"}, true, persistentData, localeService, ephemeralData, configService, chunkDataAccessor, dynmapIntegrator);
     }
 
     /**
@@ -77,7 +82,7 @@ public class DuelCommand extends SubCommand {
                     player.sendMessage(translate("&c" + getText("PlayerNotFound")));
                     return;
                 }
-                duel = ephemeral.getDuel(player, target);
+                duel = ephemeralData.getDuel(player, target);
                 notChallenged = getText("AlertNotBeenChallengedByPlayer", target.getName());
                 alreadyDueling = getText("AlertAlreadyDuelingPlayer", target.getName());
             } else {
@@ -112,7 +117,7 @@ public class DuelCommand extends SubCommand {
                 player.sendMessage(translate("&c" + getText("CannotCancelActiveDuel")));
                 return;
             }
-            ephemeral.getDuelingPlayers().remove(duel);
+            ephemeralData.getDuelingPlayers().remove(duel);
             player.sendMessage(translate("&b" + getText("DuelChallengeCancelled")));
         } else {
             sendHelp(player);
@@ -139,18 +144,18 @@ public class DuelCommand extends SubCommand {
     }
 
     private Duel getDuel(Player player) {
-        return ephemeral.getDuelingPlayers().stream()
+        return ephemeralData.getDuelingPlayers().stream()
                 .filter(duel -> duel.isChallenged(player) || duel.isChallenger(player))
                 .findFirst().orElse(null);
     }
 
     private boolean isDuelling(Player player) {
-        return ephemeral.getDuelingPlayers().stream()
+        return ephemeralData.getDuelingPlayers().stream()
                 .anyMatch(duel -> duel.hasPlayer(player) && duel.getStatus().equals(DuelState.DUELLING));
     }
 
     private void inviteDuel(Player player, Player target, int limit) {
         target.sendMessage(translate("&b" + getText("AlertChallengedToDuelPlusHowTo", player.getName())));
-        ephemeral.getDuelingPlayers().add(new Duel(player, target, limit));
+        ephemeralData.getDuelingPlayers().add(new Duel(player, target, limit));
     }
 }

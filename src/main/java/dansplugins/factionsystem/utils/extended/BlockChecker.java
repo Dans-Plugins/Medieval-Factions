@@ -14,18 +14,6 @@ import dansplugins.factionsystem.data.PersistentData;
  * @author Caibinus
  */
 public class BlockChecker extends preponderous.ponder.minecraft.bukkit.tools.BlockChecker {
-    private static BlockChecker instance;
-
-    private BlockChecker() {
-
-    }
-
-    public static BlockChecker getInstance() {
-        if (instance == null) {
-            instance = new BlockChecker();
-        }
-        return instance;
-    }
 
     public boolean isNextToNonOwnedLockedChest(Player player, Block block) {
         // define blocks
@@ -34,26 +22,26 @@ public class BlockChecker extends preponderous.ponder.minecraft.bukkit.tools.Blo
         Block neighbor3 = block.getWorld().getBlockAt(block.getX(), block.getY(), block.getZ() + 1);
         Block neighbor4 = block.getWorld().getBlockAt(block.getX(), block.getY(), block.getZ() - 1);
 
-        if (BlockChecker.getInstance().isChest(neighbor1)) {
-            if (PersistentData.getInstance().isBlockLocked(neighbor1) && PersistentData.getInstance().getLockedBlock(neighbor1).getOwner() != player.getUniqueId()) {
+        if (blockChecker.isChest(neighbor1)) {
+            if (persistentData.isBlockLocked(neighbor1) && persistentData.getLockedBlock(neighbor1).getOwner() != player.getUniqueId()) {
                 return true;
             }
         }
 
-        if (BlockChecker.getInstance().isChest(neighbor2)) {
-            if (PersistentData.getInstance().isBlockLocked(neighbor2) && PersistentData.getInstance().getLockedBlock(neighbor2).getOwner() != player.getUniqueId()) {
+        if (blockChecker.isChest(neighbor2)) {
+            if (persistentData.isBlockLocked(neighbor2) && persistentData.getLockedBlock(neighbor2).getOwner() != player.getUniqueId()) {
                 return true;
             }
         }
 
-        if (BlockChecker.getInstance().isChest(neighbor3)) {
-            if (PersistentData.getInstance().isBlockLocked(neighbor3) && PersistentData.getInstance().getLockedBlock(neighbor3).getOwner() != player.getUniqueId()) {
+        if (blockChecker.isChest(neighbor3)) {
+            if (persistentData.isBlockLocked(neighbor3) && persistentData.getLockedBlock(neighbor3).getOwner() != player.getUniqueId()) {
                 return true;
             }
         }
 
-        if (BlockChecker.getInstance().isChest(neighbor4)) {
-            return PersistentData.getInstance().isBlockLocked(neighbor4) && PersistentData.getInstance().getLockedBlock(neighbor4).getOwner() != player.getUniqueId();
+        if (blockChecker.isChest(neighbor4)) {
+            return persistentData.isBlockLocked(neighbor4) && persistentData.getLockedBlock(neighbor4).getOwner() != player.getUniqueId();
         }
 
         return false;
@@ -64,14 +52,14 @@ public class BlockChecker extends preponderous.ponder.minecraft.bukkit.tools.Blo
         Block neighbor1 = block.getWorld().getBlockAt(block.getX(), block.getY() + 1, block.getZ());
         Block neighbor2 = block.getWorld().getBlockAt(block.getX(), block.getY() - 1, block.getZ());
 
-        if (BlockChecker.getInstance().isChest(neighbor1)) {
-            if (PersistentData.getInstance().isBlockLocked(neighbor1) && PersistentData.getInstance().getLockedBlock(neighbor1).getOwner() != player.getUniqueId()) {
+        if (blockChecker.isChest(neighbor1)) {
+            if (persistentData.isBlockLocked(neighbor1) && persistentData.getLockedBlock(neighbor1).getOwner() != player.getUniqueId()) {
                 return true;
             }
         }
 
-        if (BlockChecker.getInstance().isChest(neighbor2)) {
-            return PersistentData.getInstance().isBlockLocked(neighbor2) && PersistentData.getInstance().getLockedBlock(neighbor2).getOwner() != player.getUniqueId();
+        if (blockChecker.isChest(neighbor2)) {
+            return persistentData.isBlockLocked(neighbor2) && persistentData.getLockedBlock(neighbor2).getOwner() != player.getUniqueId();
         }
 
         return false;
