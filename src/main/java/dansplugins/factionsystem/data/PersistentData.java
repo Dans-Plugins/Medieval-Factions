@@ -74,8 +74,9 @@ public class PersistentData {
     private final DynmapIntegrator dynmapIntegrator;
     private final EphemeralData ephemeralData;
     private final BlockChecker blockChecker;
-    private final InteractionAccessChecker interactionAccessChecker;
     private final Logger logger;
+
+    private final InteractionAccessChecker interactionAccessChecker;
 
     private final ArrayList<Faction> factions = new ArrayList<>();
     private final ArrayList<ClaimedChunk> claimedChunks = new ArrayList<>();
@@ -87,7 +88,7 @@ public class PersistentData {
     private final ChunkDataAccessor chunkDataAccessor = new ChunkDataAccessor();
     private final LocalStorageService localStorageService = new LocalStorageService();
 
-    public PersistentData(LocaleService localeService, ConfigService configService, MedievalFactions medievalFactions, Messenger messenger, DynmapIntegrator dynmapIntegrator, EphemeralData ephemeralData, BlockChecker blockChecker, InteractionAccessChecker interactionAccessChecker, Logger logger) {
+    public PersistentData(LocaleService localeService, ConfigService configService, MedievalFactions medievalFactions, Messenger messenger, DynmapIntegrator dynmapIntegrator, EphemeralData ephemeralData, BlockChecker blockChecker, Logger logger) {
         this.localeService = localeService;
         this.configService = configService;
         this.medievalFactions = medievalFactions;
@@ -95,8 +96,9 @@ public class PersistentData {
         this.dynmapIntegrator = dynmapIntegrator;
         this.ephemeralData = ephemeralData;
         this.blockChecker = blockChecker;
-        this.interactionAccessChecker = interactionAccessChecker;
         this.logger = logger;
+
+        interactionAccessChecker = new InteractionAccessChecker(this, configService, ephemeralData, logger);
     }
 
     public ChunkDataAccessor getChunkDataAccessor() {
@@ -571,6 +573,10 @@ public class PersistentData {
 
     public ArrayList<PowerRecord> getPlayerPowerRecords() {
         return powerRecords;
+    }
+
+    public InteractionAccessChecker getInteractionAccessChecker() {
+        return interactionAccessChecker;
     }
 
     public static class SortableFaction implements Comparable<SortableFaction> {

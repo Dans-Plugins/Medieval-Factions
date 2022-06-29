@@ -56,12 +56,11 @@ public class MedievalFactions extends PonderBukkitPlugin {
     private final BlockChecker blockChecker = new BlockChecker();
     private final Logger logger = new Logger();
     private final WarFactory warFactory = new WarFactory();
-    private final PersistentData persistentData = new PersistentData(localeService, configService, this, messenger, dynmapIntegrator, ephemeralData, blockChecker, interactionAccessChecker, logger);
+    private final PersistentData persistentData = new PersistentData(localeService, configService, this, messenger, dynmapIntegrator, ephemeralData, blockChecker, logger);
     private final RelationChecker relationChecker = new RelationChecker(persistentData);
     private final PlayerTeleporter playerTeleporter = new PlayerTeleporter();
     private final Scheduler scheduler = new Scheduler(logger, localeService, this, persistentData, configService, playerTeleporter);
     private final CommandService commandService = new CommandService(localeService, this, configService, persistentData, ephemeralData, persistentData.getChunkDataAccessor(), dynmapIntegrator, warFactory, logger, scheduler, messenger, relationChecker);
-    private final InteractionAccessChecker interactionAccessChecker = new InteractionAccessChecker(persistentData, configService, ephemeralData, logger);
     private final GateService gateService = new GateService(persistentData, localeService, ephemeralData);
     private final LockService lockService = new LockService();
     private final TerritoryOwnerNotifier territoryOwnerNotifier = new TerritoryOwnerNotifier(localeService, configService, actionBarService);
@@ -202,7 +201,7 @@ public class MedievalFactions extends PonderBukkitPlugin {
                 new DamageHandler(logger, persistentData, ephemeralData, localeService, configService, relationChecker),
                 new DeathHandler(configService, persistentData, localeService),
                 new EffectHandler(ephemeralData, this, relationChecker),
-                new InteractionHandler(persistentData, interactionAccessChecker, localeService, blockChecker, this, lockService, ephemeralData, gateService),
+                new InteractionHandler(persistentData, persistentData.getInteractionAccessChecker(), localeService, blockChecker, this, lockService, ephemeralData, gateService),
                 new JoinHandler(persistentData, localeService, configService, logger, messenger, territoryOwnerNotifier),
                 new MoveHandler(persistentData, territoryOwnerNotifier, localeService, this, dynmapIntegrator),
                 new QuitHandler(ephemeralData, persistentData, actionBarService),
