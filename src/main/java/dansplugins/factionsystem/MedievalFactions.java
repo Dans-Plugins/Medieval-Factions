@@ -48,16 +48,14 @@ public class MedievalFactions extends PonderBukkitPlugin {
     private final FiefsIntegrator fiefsIntegrator = new FiefsIntegrator(this);
     private final Messenger messenger = new Messenger(configService.getLocaleService(), fiefsIntegrator);
     private final CurrenciesIntegrator currenciesIntegrator = new CurrenciesIntegrator();
-    private final DynmapIntegrator dynmapIntegrator = new DynmapIntegrator(logger, configService.getLocaleService(), this, persistentData); // TODO: resolve circular dependency
-    private final BlockChecker blockChecker = new BlockChecker(persistentData); // TODO: resolve circular dependency
-    private final PersistentData persistentData = new PersistentData(configService.getLocaleService(), configService, this, messenger, dynmapIntegrator, ephemeralData, blockChecker, logger, fiefsIntegrator, currenciesIntegrator);
+    private final PersistentData persistentData = new PersistentData(configService.getLocaleService(), configService, this, messenger, ephemeralData, logger, fiefsIntegrator, currenciesIntegrator);
     private final WarFactory warFactory = new WarFactory(persistentData);
     private final RelationChecker relationChecker = new RelationChecker(persistentData);
     private final PlayerTeleporter playerTeleporter = new PlayerTeleporter(logger);
     private final Scheduler scheduler = new Scheduler(logger, configService.getLocaleService(), this, persistentData, configService, playerTeleporter);
-    private final CommandService commandService = new CommandService(configService.getLocaleService(), this, configService, persistentData, ephemeralData, persistentData.getChunkDataAccessor(), dynmapIntegrator, warFactory, logger, scheduler, messenger, relationChecker, fiefsIntegrator, currenciesIntegrator);
+    private final CommandService commandService = new CommandService(configService.getLocaleService(), this, configService, persistentData, ephemeralData, persistentData.getChunkDataAccessor(), persistentData.getDynmapIntegrator(), warFactory, logger, scheduler, messenger, relationChecker, fiefsIntegrator, currenciesIntegrator);
     private final GateService gateService = new GateService(persistentData, configService.getLocaleService(), ephemeralData);
-    private final LockService lockService = new LockService(persistentData, configService.getLocaleService(), blockChecker, ephemeralData);
+    private final LockService lockService = new LockService(persistentData, configService.getLocaleService(), persistentData.getBlockChecker(), ephemeralData);
     private final TerritoryOwnerNotifier territoryOwnerNotifier = new TerritoryOwnerNotifier(configService.getLocaleService(), configService, actionBarService);
 
 
@@ -168,7 +166,7 @@ public class MedievalFactions extends PonderBukkitPlugin {
      * Loads stored data into Persistent Data.
      */
     private void load() {
-        localeService.loadStrings();
+        configService.getLocaleService().loadStrings();
         persistentData.getLocalStorageService().load();
     }
 
@@ -193,12 +191,12 @@ public class MedievalFactions extends PonderBukkitPlugin {
     private ArrayList<Listener> initializeListeners() {
         return new ArrayList<>(Arrays.asList(
                 new ChatHandler(persistentData, configService, ephemeralData, messenger),
-                new DamageHandler(logger, persistentData, ephemeralData, localeService, configService, relationChecker),
-                new DeathHandler(configService, persistentData, localeService),
+                new DamageHandler(logger, persistentData, ephemeralData, configService.getLocaleService(), configService, relationChecker),
+                new DeathHandler(configService, persistentData, configService.getLocaleService()),
                 new EffectHandler(ephemeralData, this, relationChecker),
-                new InteractionHandler(persistentData, persistentData.getInteractionAccessChecker(), localeService, blockChecker, this, lockService, ephemeralData, gateService),
-                new JoinHandler(persistentData, localeService, configService, logger, messenger, territoryOwnerNotifier),
-                new MoveHandler(persistentData, territoryOwnerNotifier, localeService, this, dynmapIntegrator),
+                new InteractionHandler(persistentData, persistentData.getInteractionAccessChecker(), configService.getLocaleService(), persistentData.getBlockChecker(), this, lockService, ephemeralData, gateService),
+                new JoinHandler(persistentData, configService.getLocaleService(), configService, logger, messenger, territoryOwnerNotifier),
+                new MoveHandler(persistentData, territoryOwnerNotifier, configService.getLocaleService(), this, persistentData.getDynmapIntegrator()),
                 new QuitHandler(ephemeralData, persistentData, actionBarService),
                 new SpawnHandler(configService, persistentData)
         ));
@@ -220,8 +218,8 @@ public class MedievalFactions extends PonderBukkitPlugin {
 
     private void handleDynmapIntegration() {
         if (DynmapIntegrator.hasDynmap()) {
-            dynmapIntegrator.scheduleClaimsUpdate(600); // Check once every 30 seconds for updates.
-            dynmapIntegrator.updateClaims();
+            persistentData.getDynmapIntegrator().scheduleClaimsUpdate(600); // Check once every 30 seconds for updates.
+            persistentData.getDynmapIntegrator().updateClaims();
         }
     }
 

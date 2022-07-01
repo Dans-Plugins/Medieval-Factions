@@ -44,9 +44,7 @@ public class PersistentData {
     private final ConfigService configService;
     private final MedievalFactions medievalFactions;
     private final Messenger messenger;
-    private final DynmapIntegrator dynmapIntegrator;
     private final EphemeralData ephemeralData;
-    private final BlockChecker blockChecker;
     private final Logger logger;
     private final FiefsIntegrator fiefsIntegrator;
     private final CurrenciesIntegrator currenciesIntegrator;
@@ -63,19 +61,30 @@ public class PersistentData {
     private final ChunkDataAccessor chunkDataAccessor = new ChunkDataAccessor();
     private final LocalStorageService localStorageService = new LocalStorageService(this);
 
-    public PersistentData(LocaleService localeService, ConfigService configService, MedievalFactions medievalFactions, Messenger messenger, DynmapIntegrator dynmapIntegrator, EphemeralData ephemeralData, BlockChecker blockChecker, Logger logger, FiefsIntegrator fiefsIntegrator, CurrenciesIntegrator currenciesIntegrator) {
+    private final DynmapIntegrator dynmapIntegrator;
+    private final BlockChecker blockChecker;
+
+    public DynmapIntegrator getDynmapIntegrator() {
+        return dynmapIntegrator;
+    }
+
+    public BlockChecker getBlockChecker() {
+        return blockChecker;
+    }
+
+    public PersistentData(LocaleService localeService, ConfigService configService, MedievalFactions medievalFactions, Messenger messenger, EphemeralData ephemeralData, Logger logger, FiefsIntegrator fiefsIntegrator, CurrenciesIntegrator currenciesIntegrator) {
         this.localeService = localeService;
         this.configService = configService;
         this.medievalFactions = medievalFactions;
         this.messenger = messenger;
-        this.dynmapIntegrator = dynmapIntegrator;
         this.ephemeralData = ephemeralData;
-        this.blockChecker = blockChecker;
         this.logger = logger;
         this.fiefsIntegrator = fiefsIntegrator;
         this.currenciesIntegrator = currenciesIntegrator;
 
         interactionAccessChecker = new InteractionAccessChecker(this, configService, ephemeralData, logger);
+        dynmapIntegrator = new DynmapIntegrator(logger, configService.getLocaleService(), medievalFactions, this); // TODO: resolve circular dependency
+        blockChecker = new BlockChecker(this); // TODO: resolve circular dependency
     }
 
     public ChunkDataAccessor getChunkDataAccessor() {
