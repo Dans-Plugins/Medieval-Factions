@@ -4,22 +4,28 @@
  */
 package dansplugins.factionsystem.placeholders;
 
-import java.util.Objects;
-
-import org.bukkit.Bukkit;
-import org.bukkit.Chunk;
-import org.bukkit.Location;
-import org.bukkit.entity.Player;
-import org.jetbrains.annotations.NotNull;
-
 import dansplugins.factionsystem.MedievalFactions;
 import dansplugins.factionsystem.data.PersistentData;
 import dansplugins.factionsystem.objects.domain.ClaimedChunk;
 import dansplugins.factionsystem.objects.domain.Faction;
 import dansplugins.factionsystem.objects.domain.PowerRecord;
 import me.clip.placeholderapi.expansion.PlaceholderExpansion;
+import org.bukkit.Bukkit;
+import org.bukkit.Chunk;
+import org.bukkit.Location;
+import org.bukkit.entity.Player;
+import org.jetbrains.annotations.NotNull;
+
+import java.util.Objects;
 
 public class PlaceholderAPI extends PlaceholderExpansion {
+    private final MedievalFactions medievalFactions;
+    private final PersistentData persistentData;
+
+    public PlaceholderAPI(MedievalFactions medievalFactions, PersistentData persistentData) {
+        this.medievalFactions = medievalFactions;
+        this.persistentData = persistentData;
+    }
 
     @Override
     public @NotNull String getIdentifier() {

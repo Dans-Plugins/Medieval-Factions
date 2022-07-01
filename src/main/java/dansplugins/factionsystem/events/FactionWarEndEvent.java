@@ -4,10 +4,9 @@
  */
 package dansplugins.factionsystem.events;
 
-import org.bukkit.event.Cancellable;
-
 import dansplugins.factionsystem.events.abs.FactionEvent;
 import dansplugins.factionsystem.objects.domain.Faction;
+import org.bukkit.event.Cancellable;
 
 /**
  * @author DanTheTechMan#3438

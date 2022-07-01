@@ -4,38 +4,46 @@
  */
 package dansplugins.factionsystem.objects.domain;
 
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+import dansplugins.factionsystem.data.PersistentData;
+import dansplugins.factionsystem.objects.inherited.PlayerRecord;
+import dansplugins.factionsystem.services.ConfigService;
+import preponderous.ponder.misc.abs.Savable;
+
 import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
-
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
-
-import dansplugins.factionsystem.objects.inherited.PlayerRecord;
-import preponderous.ponder.misc.abs.Savable;
 
 /**
  * @author Daniel McCoy Stephenson
  */
 public class PowerRecord extends PlayerRecord implements Savable {
+    private final ConfigService configService;
+    private final PersistentData persistentData;
+
     private double powerLevel = 0;
 
-    public PowerRecord(UUID playerUUID, int initial) {
+    public PowerRecord(UUID playerUUID, ConfigService configService, PersistentData persistentData, int initial) {
+        this.configService = configService;
+        this.persistentData = persistentData;
         this.playerUUID = playerUUID;
         powerLevel = initial;
     }
 
-    public PowerRecord(Map<String, String> data) {
+    public PowerRecord(Map<String, String> data, ConfigService configService, PersistentData persistentData) {
+        this.configService = configService;
+        this.persistentData = persistentData;
         this.load(data);
     }
 
     public int maxPower() {
         if (isPlayerAFactionOwner(playerUUID)) {
-            return (int) (configService.getDouble("initialMaxPowerLevel") * configService.getDouble("factionOwnerMultiplier", 2.0));
+            return (int) (configService.getDouble("initialMaxPowerLevel") * configService.getDouble("factionOwnerMultiplier"));
         }
 
         if (isPlayerAFactionOfficer(playerUUID)) {
-            return (int) (configService.getDouble("initialMaxPowerLevel") * configService.getDouble("factionOfficerMultiplier", 1.5));
+            return (int) (configService.getDouble("initialMaxPowerLevel") * configService.getDouble("factionOfficerMultiplier"));
         }
 
         return configService.getInt("initialMaxPowerLevel");

@@ -4,23 +4,35 @@
  */
 package dansplugins.factionsystem.externalapi;
 
-import java.util.UUID;
-
-import org.bukkit.Chunk;
-import org.bukkit.entity.Player;
-
 import dansplugins.factionsystem.MedievalFactions;
 import dansplugins.factionsystem.data.EphemeralData;
 import dansplugins.factionsystem.data.PersistentData;
 import dansplugins.factionsystem.objects.domain.Faction;
 import dansplugins.factionsystem.objects.domain.PowerRecord;
+import dansplugins.factionsystem.services.ConfigService;
+import org.bukkit.Chunk;
+import org.bukkit.entity.Player;
+
+import java.util.UUID;
 
 /**
  * @author Daniel McCoy Stephenson
  * @brief This class gives developers access to the external API for Medieval Factions.
  */
 public class MedievalFactionsAPI {
+    private final MedievalFactions medievalFactions;
+    private final PersistentData persistentData;
+    private final EphemeralData ephemeralData;
+    private final ConfigService configService;
+
     private final String APIVersion = "v1.0.0"; // every time the external API is altered, this should be incremented
+
+    public MedievalFactionsAPI(MedievalFactions medievalFactions, PersistentData persistentData, EphemeralData ephemeralData, ConfigService configService) {
+        this.medievalFactions = medievalFactions;
+        this.persistentData = persistentData;
+        this.ephemeralData = ephemeralData;
+        this.configService = configService;
+    }
 
     public String getAPIVersion() {
         return APIVersion;

@@ -4,20 +4,19 @@
  */
 package dansplugins.factionsystem.objects.helper;
 
-import java.awt.Color;
-import java.util.ArrayList;
-import java.util.HashMap;
-
 import dansplugins.factionsystem.integrators.CurrenciesIntegrator;
 import dansplugins.factionsystem.integrators.DynmapIntegrator;
 import dansplugins.factionsystem.integrators.FiefsIntegrator;
 import dansplugins.factionsystem.services.ConfigService;
 import dansplugins.factionsystem.services.LocaleService;
+import dansplugins.factionsystem.utils.ColorConversion;
 import dansplugins.factionsystem.utils.Logger;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 
-import dansplugins.factionsystem.utils.ColorConversion;
+import java.awt.*;
+import java.util.ArrayList;
+import java.util.HashMap;
 
 /**
  * @author Daniel McCoy Stephenson

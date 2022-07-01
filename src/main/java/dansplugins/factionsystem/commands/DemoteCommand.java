@@ -4,8 +4,7 @@
  */
 package dansplugins.factionsystem.commands;
 
-import java.util.UUID;
-
+import dansplugins.factionsystem.commands.abs.SubCommand;
 import dansplugins.factionsystem.data.EphemeralData;
 import dansplugins.factionsystem.data.PersistentData;
 import dansplugins.factionsystem.integrators.DynmapIntegrator;
@@ -16,7 +15,7 @@ import org.bukkit.OfflinePlayer;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
-import dansplugins.factionsystem.commands.abs.SubCommand;
+import java.util.UUID;
 
 /**
  * @author Callum Johnson

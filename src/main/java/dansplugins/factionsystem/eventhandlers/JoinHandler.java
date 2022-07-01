@@ -5,6 +5,10 @@
 package dansplugins.factionsystem.eventhandlers;
 
 import dansplugins.factionsystem.data.PersistentData;
+import dansplugins.factionsystem.events.FactionJoinEvent;
+import dansplugins.factionsystem.objects.domain.ActivityRecord;
+import dansplugins.factionsystem.objects.domain.Faction;
+import dansplugins.factionsystem.objects.domain.PowerRecord;
 import dansplugins.factionsystem.services.ConfigService;
 import dansplugins.factionsystem.services.LocaleService;
 import dansplugins.factionsystem.utils.Logger;
@@ -16,11 +20,6 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerJoinEvent;
-
-import dansplugins.factionsystem.events.FactionJoinEvent;
-import dansplugins.factionsystem.objects.domain.ActivityRecord;
-import dansplugins.factionsystem.objects.domain.Faction;
-import dansplugins.factionsystem.objects.domain.PowerRecord;
 
 
 /**
@@ -104,7 +103,7 @@ public class JoinHandler implements Listener {
     }
 
     private void createPowerRecordForPlayer(Player player) {
-        PowerRecord newRecord = new PowerRecord(player.getUniqueId(), configService.getInt("initialPowerLevel"));
+        PowerRecord newRecord = new PowerRecord(player.getUniqueId(), configService, persistentData, configService.getInt("initialPowerLevel"));
         persistentData.addPowerRecord(newRecord);
     }
 

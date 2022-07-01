@@ -4,11 +4,10 @@
  */
 package dansplugins.factionsystem.externalapi;
 
-import java.util.UUID;
-
+import dansplugins.factionsystem.objects.domain.Faction;
 import org.bukkit.entity.Player;
 
-import dansplugins.factionsystem.objects.domain.Faction;
+import java.util.UUID;
 
 /**
  * @author Daniel McCoy Stephenson

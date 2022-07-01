@@ -4,14 +4,19 @@
  */
 package dansplugins.factionsystem.utils;
 
-import java.util.logging.Level;
-
 import dansplugins.factionsystem.MedievalFactions;
+
+import java.util.logging.Level;
 
 /**
  * @author Daniel McCoy Stephenson
  */
 public class Logger {
+    private final MedievalFactions medievalFactions;
+
+    public Logger(MedievalFactions medievalFactions) {
+        this.medievalFactions = medievalFactions;
+    }
 
     /**
      * Log a debug message if the debug flag is enabled.

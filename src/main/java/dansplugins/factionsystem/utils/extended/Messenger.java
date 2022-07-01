@@ -4,25 +4,31 @@
  */
 package dansplugins.factionsystem.utils.extended;
 
-import static org.bukkit.Bukkit.getServer;
+import dansplugins.factionsystem.integrators.FiefsIntegrator;
+import dansplugins.factionsystem.objects.domain.Faction;
+import dansplugins.factionsystem.services.LocaleService;
+import dansplugins.fiefs.externalapi.FI_Fief;
+import org.bukkit.ChatColor;
+import org.bukkit.command.CommandSender;
+import org.bukkit.entity.Player;
+import preponderous.ponder.minecraft.bukkit.tools.UUIDChecker;
 
 import java.util.ArrayList;
 import java.util.UUID;
 
-import org.bukkit.ChatColor;
-import org.bukkit.command.CommandSender;
-import org.bukkit.entity.Player;
-
-import dansplugins.factionsystem.integrators.FiefsIntegrator;
-import dansplugins.factionsystem.objects.domain.Faction;
-import dansplugins.factionsystem.utils.Locale;
-import dansplugins.fiefs.externalapi.FI_Fief;
-import preponderous.ponder.minecraft.bukkit.tools.UUIDChecker;
+import static org.bukkit.Bukkit.getServer;
 
 /**
  * @author Daniel McCoy Stephenson
  */
 public class Messenger extends preponderous.ponder.minecraft.bukkit.tools.Messenger {
+    private final LocaleService localeService;
+    private final FiefsIntegrator fiefsIntegrator;
+
+    public Messenger(LocaleService localeService, FiefsIntegrator fiefsIntegrator) {
+        this.localeService = localeService;
+        this.fiefsIntegrator = fiefsIntegrator;
+    }
 
     public void sendFactionInfo(CommandSender sender, Faction faction, int power) {
         UUIDChecker uuidChecker = new UUIDChecker();

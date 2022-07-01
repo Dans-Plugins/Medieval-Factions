@@ -4,15 +4,14 @@
  */
 package dansplugins.factionsystem.services;
 
-import java.util.HashMap;
-import java.util.Map;
-
+import net.md_5.bungee.api.ChatMessageType;
+import net.md_5.bungee.api.chat.TextComponent;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.Plugin;
 
-import net.md_5.bungee.api.ChatMessageType;
-import net.md_5.bungee.api.chat.TextComponent;
+import java.util.HashMap;
+import java.util.Map;
 
 public class ActionBarService {
     private final Map<Player, TextComponent> playerActionBarMessages = new HashMap<>();

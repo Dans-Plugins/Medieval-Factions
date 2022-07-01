@@ -4,11 +4,11 @@
  */
 package dansplugins.factionsystem.eventhandlers;
 
-import java.util.Objects;
-
 import dansplugins.factionsystem.MedievalFactions;
 import dansplugins.factionsystem.data.EphemeralData;
 import dansplugins.factionsystem.data.PersistentData;
+import dansplugins.factionsystem.objects.domain.ClaimedChunk;
+import dansplugins.factionsystem.objects.domain.LockedBlock;
 import dansplugins.factionsystem.services.GateService;
 import dansplugins.factionsystem.services.LocaleService;
 import dansplugins.factionsystem.services.LockService;
@@ -33,17 +33,11 @@ import org.bukkit.event.block.BlockPlaceEvent;
 import org.bukkit.event.block.BlockRedstoneEvent;
 import org.bukkit.event.entity.EntityPlaceEvent;
 import org.bukkit.event.hanging.HangingBreakByEntityEvent;
-import org.bukkit.event.player.PlayerBucketEmptyEvent;
-import org.bukkit.event.player.PlayerBucketFillEvent;
-import org.bukkit.event.player.PlayerInteractAtEntityEvent;
-import org.bukkit.event.player.PlayerInteractEntityEvent;
-import org.bukkit.event.player.PlayerInteractEvent;
+import org.bukkit.event.player.*;
 import org.bukkit.inventory.InventoryHolder;
-
-import dansplugins.factionsystem.objects.domain.ClaimedChunk;
-import dansplugins.factionsystem.objects.domain.LockedBlock;
-
 import preponderous.ponder.minecraft.bukkit.tools.UUIDChecker;
+
+import java.util.Objects;
 
 /**
  * @author Daniel McCoy Stephenson

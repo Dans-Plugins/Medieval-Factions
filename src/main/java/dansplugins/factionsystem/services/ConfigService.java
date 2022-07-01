@@ -4,18 +4,24 @@
  */
 package dansplugins.factionsystem.services;
 
+import dansplugins.factionsystem.MedievalFactions;
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.configuration.file.FileConfiguration;
-
-import dansplugins.factionsystem.MedievalFactions;
-import dansplugins.factionsystem.utils.Locale;
 
 /**
  * @author Daniel McCoy Stephenson
  */
 public class ConfigService {
+    private final MedievalFactions medievalFactions;
+    private final LocaleService localeService;
+
     private boolean altered = false;
+
+    public ConfigService(MedievalFactions medievalFactions) {
+        this.medievalFactions = medievalFactions;
+        localeService = new LocaleService(medievalFactions, this);
+    }
 
     public void handleVersionMismatch() {
         if (!getConfig().isString("version")) {
@@ -239,7 +245,7 @@ public class ConfigService {
                 sender.sendMessage(ChatColor.GREEN + localeService.get("StringSet"));
 
                 if (option.equalsIgnoreCase("languageid")) {
-                    locale.reloadStrings();
+                    localeService.reloadStrings();
                 }
             }
 
@@ -360,7 +366,7 @@ public class ConfigService {
     }
 
     public FileConfiguration getConfig() {
-        return configService;
+        return medievalFactions.getConfig();
     }
 
     public int getInt(String option) {
@@ -377,5 +383,9 @@ public class ConfigService {
 
     public String getString(String option) {
         return getConfig().getString(option);
+    }
+
+    public LocaleService getLocaleService() {
+        return localeService;
     }
 }

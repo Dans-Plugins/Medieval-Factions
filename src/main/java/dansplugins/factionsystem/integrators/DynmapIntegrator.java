@@ -1,40 +1,33 @@
 package dansplugins.factionsystem.integrators;
 
-import static org.bukkit.Bukkit.getServer;
-
-import java.util.ArrayDeque;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-
-import org.bukkit.plugin.Plugin;
-import org.bukkit.plugin.PluginManager;
-import org.bukkit.scheduler.BukkitRunnable;
-import org.dynmap.DynmapCommonAPI;
-import org.dynmap.markers.AreaMarker;
-import org.dynmap.markers.Marker;
-import org.dynmap.markers.MarkerAPI;
-import org.dynmap.markers.MarkerSet;
-import org.dynmap.markers.PlayerSet;
-
 import dansplugins.factionsystem.MedievalFactions;
 import dansplugins.factionsystem.data.PersistentData;
 import dansplugins.factionsystem.objects.domain.ClaimedChunk;
 import dansplugins.factionsystem.objects.domain.Faction;
 import dansplugins.factionsystem.objects.domain.PowerRecord;
 import dansplugins.factionsystem.objects.helper.ChunkFlags;
-import dansplugins.factionsystem.utils.Locale;
+import dansplugins.factionsystem.services.LocaleService;
 import dansplugins.factionsystem.utils.Logger;
 import dansplugins.fiefs.utils.UUIDChecker;
+import org.bukkit.plugin.Plugin;
+import org.bukkit.plugin.PluginManager;
+import org.bukkit.scheduler.BukkitRunnable;
+import org.dynmap.DynmapCommonAPI;
+import org.dynmap.markers.*;
+
+import java.util.*;
+
+import static org.bukkit.Bukkit.getServer;
 
 /**
  * @author Caibinus
  */
 public class DynmapIntegrator {
+    private final Logger logger;
+    private final LocaleService localeService;
+    private final MedievalFactions medievalFactions;
+    private final PersistentData persistentData;
+
     public static boolean dynmapInitialized = false;
     public boolean updateClaimsAreaMarkers = false;
     MarkerSet claims;
@@ -52,31 +45,32 @@ public class DynmapIntegrator {
     private DynmapCommonAPI dynmapAPI;
     private MarkerAPI markerAPI;
 
-    public DynmapIntegrator() {
+    public DynmapIntegrator(Logger logger, LocaleService localeService, MedievalFactions medievalFactions, PersistentData persistentData) {
+        this.logger = logger;
+        this.localeService = localeService;
+        this.medievalFactions = medievalFactions;
+        this.persistentData = persistentData;
         PluginManager pm = getServer().getPluginManager();
 
         /* Get dynmap */
         dynmap = pm.getPlugin("dynmap");
 
         if (!isDynmapPresent()) {
-            logger.debug(localeService.get("CannotFindDynmap"));
+            this.logger.debug(this.localeService.get("CannotFindDynmap"));
         } else {
             try {
                 dynmapAPI = (DynmapCommonAPI) dynmap; /* Get API */
                 markerAPI = dynmapAPI.getMarkerAPI();
                 initializeMarkerSets();
-                logger.debug(localeService.get("DynmapIntegrationSuccessful"));
+                this.logger.debug(this.localeService.get("DynmapIntegrationSuccessful"));
             } catch (Exception e) {
-                logger.debug(localeService.get("ErrorIntegratingWithDynmap") + e.getMessage());
+                this.logger.debug(this.localeService.get("ErrorIntegratingWithDynmap") + e.getMessage());
             }
         }
     }
 
     public static boolean hasDynmap() {
-        if (!dynmapInitialized) {
-            return getInstance() != null;
-        }
-        return true;
+        return dynmapInitialized;
     }
 
     /***
@@ -91,15 +85,15 @@ public class DynmapIntegrator {
                 if (!isDynmapPresent()) {
                     return;
                 }
-                if (dynmapIntegrator.updateClaimsAreaMarkers) {
+                if (updateClaimsAreaMarkers) {
                     if (realms != null) {
                         realms.deleteMarkerSet();
                         claims.deleteMarkerSet();
                     }
                     initializeMarkerSets();
-                    dynmapIntegrator.dynmapUpdateFactions();
-                    dynmapIntegrator.dynmapUpdateRealms();
-                    dynmapIntegrator.updateClaimsAreaMarkers = false;
+                    dynmapUpdateFactions();
+                    dynmapUpdateRealms();
+                    updateClaimsAreaMarkers = false;
                 }
             }
         }.runTaskTimer(medievalFactions, 40, interval);
@@ -114,8 +108,8 @@ public class DynmapIntegrator {
             return;
         }
 
-        if (DynmapIntegrator.hasDynmap()) {
-            dynmapIntegrator.updateClaimsAreaMarkers = true;
+        if (hasDynmap()) {
+            updateClaimsAreaMarkers = true;
         }
     }
 

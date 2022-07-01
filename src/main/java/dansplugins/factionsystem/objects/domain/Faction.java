@@ -4,36 +4,46 @@
  */
 package dansplugins.factionsystem.objects.domain;
 
-import static org.bukkit.Bukkit.getServer;
-
-import java.lang.reflect.Type;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.UUID;
-
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.reflect.TypeToken;
-
+import dansplugins.factionsystem.MedievalFactions;
+import dansplugins.factionsystem.data.PersistentData;
+import dansplugins.factionsystem.integrators.CurrenciesIntegrator;
+import dansplugins.factionsystem.integrators.DynmapIntegrator;
+import dansplugins.factionsystem.integrators.FiefsIntegrator;
+import dansplugins.factionsystem.objects.helper.FactionFlags;
+import dansplugins.factionsystem.objects.inherited.Nation;
+import dansplugins.factionsystem.objects.inherited.specification.Feudal;
+import dansplugins.factionsystem.services.ConfigService;
+import dansplugins.factionsystem.services.LocaleService;
+import dansplugins.factionsystem.utils.Logger;
 import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.WorldCreator;
 import org.bukkit.block.Block;
-
-import dansplugins.factionsystem.objects.helper.FactionFlags;
-import dansplugins.factionsystem.objects.inherited.Nation;
-import dansplugins.factionsystem.objects.inherited.specification.Feudal;
-import dansplugins.factionsystem.utils.Locale;
 import preponderous.ponder.misc.abs.Savable;
+
+import java.lang.reflect.Type;
+import java.util.*;
+
+import static org.bukkit.Bukkit.getServer;
 
 /**
  * @author Daniel McCoy Stephenson
  */
 public class Faction extends Nation implements Feudal, Savable {
+    private final ConfigService configService;
+    private final LocaleService localeService;
+    private final FiefsIntegrator fiefsIntegrator;
+    private final CurrenciesIntegrator currenciesIntegrator;
+    private final DynmapIntegrator dynmapIntegrator;
+    private final Logger logger;
+    private final PersistentData persistentData;
+    private final MedievalFactions medievalFactions;
+
     private final ArrayList<Gate> gates = new ArrayList<>();
-    private final FactionFlags flags = new FactionFlags(configService, localeService, fiefsIntegrator, currenciesIntegrator, dynmapIntegrator, logger);
+    private final FactionFlags flags;
     private final ArrayList<String> attemptedVassalizations = new ArrayList<>();
     private ArrayList<String> vassals = new ArrayList<>();
     private String liege = "none";
@@ -42,20 +52,47 @@ public class Faction extends Nation implements Feudal, Savable {
     private int bonusPower = 0;
     private boolean autoclaim = false;
 
-    public Faction(String initialName, UUID creator) {
+    public Faction(String initialName, UUID creator, ConfigService configService, LocaleService localeService, FiefsIntegrator fiefsIntegrator, CurrenciesIntegrator currenciesIntegrator, DynmapIntegrator dynmapIntegrator, Logger logger, PersistentData persistentData, MedievalFactions medievalFactions) {
+        this.configService = configService;
+        this.localeService = localeService;
+        this.fiefsIntegrator = fiefsIntegrator;
+        this.currenciesIntegrator = currenciesIntegrator;
+        this.dynmapIntegrator = dynmapIntegrator;
+        this.logger = logger;
+        this.persistentData = persistentData;
+        this.medievalFactions = medievalFactions;
         setName(initialName);
         setOwner(creator);
         prefix = initialName;
+        flags = new FactionFlags(configService, localeService, fiefsIntegrator, currenciesIntegrator, dynmapIntegrator, logger);
         flags.initializeFlagValues();
     }
 
-    public Faction(String initialName) {
+    public Faction(ConfigService configService, LocaleService localeService, FiefsIntegrator fiefsIntegrator, CurrenciesIntegrator currenciesIntegrator, DynmapIntegrator dynmapIntegrator, Logger logger, PersistentData persistentData, MedievalFactions medievalFactions, String initialName) {
+        this.configService = configService;
+        this.localeService = localeService;
+        this.fiefsIntegrator = fiefsIntegrator;
+        this.currenciesIntegrator = currenciesIntegrator;
+        this.dynmapIntegrator = dynmapIntegrator;
+        this.logger = logger;
+        this.persistentData = persistentData;
+        this.medievalFactions = medievalFactions;
         setName(initialName);
         prefix = initialName;
+        flags = new FactionFlags(configService, localeService, fiefsIntegrator, currenciesIntegrator, dynmapIntegrator, logger);
         flags.initializeFlagValues();
     }
 
-    public Faction(Map<String, String> data) {
+    public Faction(Map<String, String> data, ConfigService configService, LocaleService localeService, FiefsIntegrator fiefsIntegrator, CurrenciesIntegrator currenciesIntegrator, DynmapIntegrator dynmapIntegrator, Logger logger, PersistentData persistentData, MedievalFactions medievalFactions) {
+        this.configService = configService;
+        this.localeService = localeService;
+        this.fiefsIntegrator = fiefsIntegrator;
+        this.currenciesIntegrator = currenciesIntegrator;
+        this.dynmapIntegrator = dynmapIntegrator;
+        this.logger = logger;
+        this.persistentData = persistentData;
+        this.medievalFactions = medievalFactions;
+        flags = new FactionFlags(configService, localeService, fiefsIntegrator, currenciesIntegrator, dynmapIntegrator, logger);
         this.load(data);
     }
 
@@ -430,8 +467,9 @@ public class Faction extends Nation implements Feudal, Savable {
         ArrayList<String> gateList = gson.fromJson(data.get("factionGates"), arrayListTypeString);
         if (gateList != null) {
             for (String item : gateList) {
-                Gate g = Gate.load(item);
-                gates.add(g);
+                Gate gate = new Gate(medievalFactions, configService);
+                gate.load(item);
+                gates.add(gate);
             }
         } else {
             System.out.println(localeService.get("MissingFactionGatesJSONCollection"));

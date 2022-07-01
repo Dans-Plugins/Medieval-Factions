@@ -4,16 +4,15 @@
  */
 package dansplugins.factionsystem.data;
 
+import dansplugins.factionsystem.objects.domain.Duel;
+import dansplugins.factionsystem.objects.domain.Gate;
+import org.bukkit.entity.AreaEffectCloud;
+import org.bukkit.entity.Player;
+import preponderous.ponder.misc.Pair;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.UUID;
-
-import org.bukkit.entity.AreaEffectCloud;
-import org.bukkit.entity.Player;
-
-import dansplugins.factionsystem.objects.domain.Duel;
-import dansplugins.factionsystem.objects.domain.Gate;
-import preponderous.ponder.misc.Pair;
 
 /**
  * @author Daniel McCoy Stephenson

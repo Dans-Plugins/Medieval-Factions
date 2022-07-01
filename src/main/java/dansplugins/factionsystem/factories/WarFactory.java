@@ -12,6 +12,11 @@ import dansplugins.factionsystem.objects.domain.War;
  * @author Daniel McCoy Stephenson
  */
 public class WarFactory {
+    private final PersistentData persistentData;
+
+    public WarFactory(PersistentData persistentData) {
+        this.persistentData = persistentData;
+    }
 
     public void createWar(Faction attacker, Faction defender) {
         createWar(attacker, defender, "testreason");

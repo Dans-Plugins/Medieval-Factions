@@ -4,10 +4,9 @@
  */
 package dansplugins.factionsystem.utils.extended;
 
-import java.util.Random;
-
 import dansplugins.factionsystem.MedievalFactions;
 import dansplugins.factionsystem.data.PersistentData;
+import dansplugins.factionsystem.objects.domain.Faction;
 import dansplugins.factionsystem.services.ConfigService;
 import dansplugins.factionsystem.services.LocaleService;
 import dansplugins.factionsystem.utils.Logger;
@@ -18,7 +17,7 @@ import org.bukkit.Location;
 import org.bukkit.entity.Player;
 import org.bukkit.scheduler.BukkitRunnable;
 
-import dansplugins.factionsystem.objects.domain.Faction;
+import java.util.Random;
 
 /**
  * @author Daniel McCoy Stephenson
