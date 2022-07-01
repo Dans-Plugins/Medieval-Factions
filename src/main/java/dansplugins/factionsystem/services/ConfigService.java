@@ -18,9 +18,9 @@ public class ConfigService {
 
     private boolean altered = false;
 
-    public ConfigService(MedievalFactions medievalFactions, LocaleService localeService) {
+    public ConfigService(MedievalFactions medievalFactions) {
         this.medievalFactions = medievalFactions;
-        this.localeService = localeService;
+        localeService = new LocaleService(medievalFactions, this);
     }
 
     public void handleVersionMismatch() {
@@ -383,5 +383,9 @@ public class ConfigService {
 
     public String getString(String option) {
         return getConfig().getString(option);
+    }
+
+    public LocaleService getLocaleService() {
+        return localeService;
     }
 }

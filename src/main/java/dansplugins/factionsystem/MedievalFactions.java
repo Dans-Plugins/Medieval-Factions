@@ -42,25 +42,23 @@ public class MedievalFactions extends PonderBukkitPlugin {
     private final String pluginVersion = "v" + getDescription().getVersion();
 
     private final ActionBarService actionBarService = new ActionBarService(this);
-    private final ConfigService configService = new ConfigService(this, localeService); // TODO: resolve circular dependency
-    private final LocaleService localeService = new LocaleService(this, configService);
+    private final ConfigService configService = new ConfigService(this);
     private final EphemeralData ephemeralData = new EphemeralData();
     private final Logger logger = new Logger(this);
-
     private final FiefsIntegrator fiefsIntegrator = new FiefsIntegrator(this);
-    private final Messenger messenger = new Messenger(localeService, fiefsIntegrator);
+    private final Messenger messenger = new Messenger(configService.getLocaleService(), fiefsIntegrator);
     private final CurrenciesIntegrator currenciesIntegrator = new CurrenciesIntegrator();
-    private final DynmapIntegrator dynmapIntegrator = new DynmapIntegrator(logger, localeService, this, persistentData); // TODO: resolve circular dependency
+    private final DynmapIntegrator dynmapIntegrator = new DynmapIntegrator(logger, configService.getLocaleService(), this, persistentData); // TODO: resolve circular dependency
     private final BlockChecker blockChecker = new BlockChecker(persistentData); // TODO: resolve circular dependency
-    private final PersistentData persistentData = new PersistentData(localeService, configService, this, messenger, dynmapIntegrator, ephemeralData, blockChecker, logger, fiefsIntegrator, currenciesIntegrator);
+    private final PersistentData persistentData = new PersistentData(configService.getLocaleService(), configService, this, messenger, dynmapIntegrator, ephemeralData, blockChecker, logger, fiefsIntegrator, currenciesIntegrator);
     private final WarFactory warFactory = new WarFactory(persistentData);
     private final RelationChecker relationChecker = new RelationChecker(persistentData);
     private final PlayerTeleporter playerTeleporter = new PlayerTeleporter(logger);
-    private final Scheduler scheduler = new Scheduler(logger, localeService, this, persistentData, configService, playerTeleporter);
-    private final CommandService commandService = new CommandService(localeService, this, configService, persistentData, ephemeralData, persistentData.getChunkDataAccessor(), dynmapIntegrator, warFactory, logger, scheduler, messenger, relationChecker, fiefsIntegrator, currenciesIntegrator);
-    private final GateService gateService = new GateService(persistentData, localeService, ephemeralData);
-    private final LockService lockService = new LockService(persistentData, localeService, blockChecker, ephemeralData);
-    private final TerritoryOwnerNotifier territoryOwnerNotifier = new TerritoryOwnerNotifier(localeService, configService, actionBarService);
+    private final Scheduler scheduler = new Scheduler(logger, configService.getLocaleService(), this, persistentData, configService, playerTeleporter);
+    private final CommandService commandService = new CommandService(configService.getLocaleService(), this, configService, persistentData, ephemeralData, persistentData.getChunkDataAccessor(), dynmapIntegrator, warFactory, logger, scheduler, messenger, relationChecker, fiefsIntegrator, currenciesIntegrator);
+    private final GateService gateService = new GateService(persistentData, configService.getLocaleService(), ephemeralData);
+    private final LockService lockService = new LockService(persistentData, configService.getLocaleService(), blockChecker, ephemeralData);
+    private final TerritoryOwnerNotifier territoryOwnerNotifier = new TerritoryOwnerNotifier(configService.getLocaleService(), configService, actionBarService);
 
 
 
