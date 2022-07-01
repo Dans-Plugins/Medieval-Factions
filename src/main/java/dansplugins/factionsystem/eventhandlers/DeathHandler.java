@@ -1,6 +1,7 @@
 package dansplugins.factionsystem.eventhandlers;
 
 import dansplugins.factionsystem.data.PersistentData;
+import dansplugins.factionsystem.objects.domain.PowerRecord;
 import dansplugins.factionsystem.services.ConfigService;
 import dansplugins.factionsystem.services.LocaleService;
 import org.bukkit.ChatColor;
@@ -8,8 +9,6 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.PlayerDeathEvent;
-
-import dansplugins.factionsystem.objects.domain.PowerRecord;
 
 public class DeathHandler implements Listener {
     private final ConfigService configService;

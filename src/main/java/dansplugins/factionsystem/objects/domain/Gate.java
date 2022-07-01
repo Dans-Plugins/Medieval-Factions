@@ -4,27 +4,29 @@
  */
 package dansplugins.factionsystem.objects.domain;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Map;
-
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
-
+import dansplugins.factionsystem.MedievalFactions;
+import dansplugins.factionsystem.objects.helper.GateCoord;
+import dansplugins.factionsystem.services.ConfigService;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.Sound;
 import org.bukkit.World;
 import org.bukkit.block.Block;
 
-import dansplugins.factionsystem.MedievalFactions;
-import dansplugins.factionsystem.objects.helper.GateCoord;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * @author Caibinus
  * @author Daniel McCoy Stephenson
  */
 public class Gate {
+    private final MedievalFactions medievalFactions;
+    private final ConfigService configService;
+
     private final Sound soundEffect = Sound.BLOCK_ANVIL_HIT;
     private String name = "gateName";
     private boolean open = false;
@@ -36,16 +38,20 @@ public class Gate {
     private World _world = null;
     private String world = "";
     private GateStatus gateStatus = GateStatus.READY;
-    public Gate() {
+    public Gate(MedievalFactions medievalFactions, ConfigService configService) {
 
+        this.medievalFactions = medievalFactions;
+        this.configService = configService;
     }
-    public Gate(String name) {
+    public Gate(String name, MedievalFactions medievalFactions, ConfigService configService) {
+        this.medievalFactions = medievalFactions;
+        this.configService = configService;
         setName(name);
     }
 
-    static Gate load(String jsonData) {
+    public Gate load(String jsonData) {
         Gson gson = new GsonBuilder().setPrettyPrinting().create();
-        Gate newGate = new Gate();
+        Gate newGate = new Gate(medievalFactions, configService);
 
         try {
             Gate.GateJson data = gson.fromJson(jsonData, Gate.GateJson.class);

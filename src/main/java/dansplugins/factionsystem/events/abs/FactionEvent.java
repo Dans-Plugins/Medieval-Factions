@@ -4,12 +4,11 @@
  */
 package dansplugins.factionsystem.events.abs;
 
+import dansplugins.factionsystem.objects.domain.Faction;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.event.Event;
 import org.bukkit.event.HandlerList;
 import org.jetbrains.annotations.NotNull;
-
-import dansplugins.factionsystem.objects.domain.Faction;
 
 /**
  * @author C A L L U M#4160

@@ -4,19 +4,17 @@
  */
 package dansplugins.factionsystem.objects.domain;
 
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+import com.google.gson.reflect.TypeToken;
+import org.bukkit.Bukkit;
+import preponderous.ponder.misc.abs.Lockable;
+import preponderous.ponder.misc.abs.Savable;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
-
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
-import com.google.gson.reflect.TypeToken;
-
-import org.bukkit.Bukkit;
-
-import preponderous.ponder.misc.abs.Lockable;
-import preponderous.ponder.misc.abs.Savable;
 
 
 /**

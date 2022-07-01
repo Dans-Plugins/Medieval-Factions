@@ -4,14 +4,13 @@
  */
 package dansplugins.factionsystem.objects.inherited;
 
-import static org.bukkit.Bukkit.getServer;
+import org.bukkit.entity.Player;
+import preponderous.ponder.minecraft.bukkit.tools.UUIDChecker;
 
 import java.util.ArrayList;
 import java.util.UUID;
 
-import org.bukkit.entity.Player;
-
-import preponderous.ponder.minecraft.bukkit.tools.UUIDChecker;
+import static org.bukkit.Bukkit.getServer;
 
 /**
  * @author Daniel McCoy Stephenson

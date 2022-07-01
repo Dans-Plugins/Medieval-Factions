@@ -1,8 +1,7 @@
 package dansplugins.factionsystem.utils;
 
-import org.bukkit.entity.Player;
-
 import dansplugins.factionsystem.data.PersistentData;
+import org.bukkit.entity.Player;
 import preponderous.ponder.misc.Pair;
 
 public class RelationChecker {

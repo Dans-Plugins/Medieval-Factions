@@ -4,64 +4,37 @@
  */
 package dansplugins.factionsystem.data;
 
-import static org.bukkit.Bukkit.getServer;
-import static org.bukkit.Material.LADDER;
-
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.io.OutputStreamWriter;
-import java.lang.reflect.Type;
-import java.nio.charset.StandardCharsets;
-import java.time.ZonedDateTime;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
-import java.util.Random;
-import java.util.Set;
-import java.util.UUID;
-import java.util.stream.Collectors;
-
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.reflect.TypeToken;
 import com.google.gson.stream.JsonReader;
-
 import dansplugins.factionsystem.MedievalFactions;
+import dansplugins.factionsystem.events.FactionClaimEvent;
+import dansplugins.factionsystem.events.FactionUnclaimEvent;
+import dansplugins.factionsystem.integrators.CurrenciesIntegrator;
 import dansplugins.factionsystem.integrators.DynmapIntegrator;
+import dansplugins.factionsystem.integrators.FiefsIntegrator;
+import dansplugins.factionsystem.objects.domain.*;
 import dansplugins.factionsystem.services.ConfigService;
+import dansplugins.factionsystem.services.LocaleService;
 import dansplugins.factionsystem.utils.InteractionAccessChecker;
 import dansplugins.factionsystem.utils.Logger;
 import dansplugins.factionsystem.utils.extended.BlockChecker;
 import dansplugins.factionsystem.utils.extended.Messenger;
-import org.bukkit.Bukkit;
-import org.bukkit.ChatColor;
-import org.bukkit.Chunk;
-import org.bukkit.Location;
-import org.bukkit.Material;
-import org.bukkit.OfflinePlayer;
-import org.bukkit.World;
+import org.bukkit.*;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
 import org.bukkit.event.player.PlayerInteractEvent;
 
-import dansplugins.factionsystem.events.FactionClaimEvent;
-import dansplugins.factionsystem.events.FactionUnclaimEvent;
-import dansplugins.factionsystem.objects.domain.ActivityRecord;
-import dansplugins.factionsystem.objects.domain.ClaimedChunk;
-import dansplugins.factionsystem.objects.domain.Faction;
-import dansplugins.factionsystem.objects.domain.Gate;
-import dansplugins.factionsystem.objects.domain.LockedBlock;
-import dansplugins.factionsystem.objects.domain.PowerRecord;
-import dansplugins.factionsystem.objects.domain.War;
-import dansplugins.factionsystem.services.LocaleService;
+import java.io.*;
+import java.lang.reflect.Type;
+import java.nio.charset.StandardCharsets;
+import java.time.ZonedDateTime;
+import java.util.*;
+import java.util.stream.Collectors;
+
+import static org.bukkit.Bukkit.getServer;
+import static org.bukkit.Material.LADDER;
 
 /**
  * @author Daniel McCoy Stephenson
@@ -75,6 +48,8 @@ public class PersistentData {
     private final EphemeralData ephemeralData;
     private final BlockChecker blockChecker;
     private final Logger logger;
+    private final FiefsIntegrator fiefsIntegrator;
+    private final CurrenciesIntegrator currenciesIntegrator;
 
     private final InteractionAccessChecker interactionAccessChecker;
 
@@ -86,9 +61,9 @@ public class PersistentData {
     private final HashSet<War> wars = new HashSet<>();
 
     private final ChunkDataAccessor chunkDataAccessor = new ChunkDataAccessor();
-    private final LocalStorageService localStorageService = new LocalStorageService();
+    private final LocalStorageService localStorageService = new LocalStorageService(this);
 
-    public PersistentData(LocaleService localeService, ConfigService configService, MedievalFactions medievalFactions, Messenger messenger, DynmapIntegrator dynmapIntegrator, EphemeralData ephemeralData, BlockChecker blockChecker, Logger logger) {
+    public PersistentData(LocaleService localeService, ConfigService configService, MedievalFactions medievalFactions, Messenger messenger, DynmapIntegrator dynmapIntegrator, EphemeralData ephemeralData, BlockChecker blockChecker, Logger logger, FiefsIntegrator fiefsIntegrator, CurrenciesIntegrator currenciesIntegrator) {
         this.localeService = localeService;
         this.configService = configService;
         this.medievalFactions = medievalFactions;
@@ -97,6 +72,8 @@ public class PersistentData {
         this.ephemeralData = ephemeralData;
         this.blockChecker = blockChecker;
         this.logger = logger;
+        this.fiefsIntegrator = fiefsIntegrator;
+        this.currenciesIntegrator = currenciesIntegrator;
 
         interactionAccessChecker = new InteractionAccessChecker(this, configService, ephemeralData, logger);
     }
@@ -1306,6 +1283,8 @@ public class PersistentData {
      * @author Pasarus
      */
     public class LocalStorageService {
+        private final PersistentData persistentData;
+
         private final static String FILE_PATH = "./plugins/MedievalFactions/";
         private final static String FACTIONS_FILE_NAME = "factions.json";
         private final static String CHUNKS_FILE_NAME = "claimedchunks.json";
@@ -1318,6 +1297,10 @@ public class PersistentData {
         }.getType();
 
         private final Gson gson = new GsonBuilder().setPrettyPrinting().create();
+
+        public LocalStorageService(PersistentData persistentData) {
+            this.persistentData = persistentData;
+        }
 
         public void save() {
             saveFactions();
@@ -1417,7 +1400,7 @@ public class PersistentData {
             ArrayList<HashMap<String, String>> data = loadDataFromFilename(FILE_PATH + FACTIONS_FILE_NAME);
 
             for (Map<String, String> factionData : data) {
-                Faction newFaction = new Faction(factionData);
+                Faction newFaction = new Faction(factionData, configService, localeService, fiefsIntegrator, currenciesIntegrator, dynmapIntegrator, logger, persistentData, medievalFactions);
                 factions.add(newFaction);
             }
         }
@@ -1439,7 +1422,7 @@ public class PersistentData {
             ArrayList<HashMap<String, String>> data = loadDataFromFilename(FILE_PATH + PLAYERPOWER_FILE_NAME);
 
             for (Map<String, String> powerRecord : data) {
-                PowerRecord player = new PowerRecord(powerRecord);
+                PowerRecord player = new PowerRecord(powerRecord, configService, persistentData);
                 powerRecords.add(player);
             }
         }

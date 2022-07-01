@@ -4,26 +4,28 @@
  */
 package dansplugins.factionsystem.commands;
 
+import dansplugins.factionsystem.MedievalFactions;
+import dansplugins.factionsystem.commands.abs.SubCommand;
 import dansplugins.factionsystem.data.EphemeralData;
 import dansplugins.factionsystem.data.PersistentData;
 import dansplugins.factionsystem.integrators.DynmapIntegrator;
+import dansplugins.factionsystem.objects.domain.Duel;
+import dansplugins.factionsystem.objects.domain.Duel.DuelState;
 import dansplugins.factionsystem.services.ConfigService;
 import dansplugins.factionsystem.services.LocaleService;
 import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
-import dansplugins.factionsystem.commands.abs.SubCommand;
-import dansplugins.factionsystem.objects.domain.Duel;
-import dansplugins.factionsystem.objects.domain.Duel.DuelState;
-
 /**
  * @author Callum Johnson
  */
 public class DuelCommand extends SubCommand {
+    private final MedievalFactions medievalFactions;
 
-    public DuelCommand(LocaleService localeService, PersistentData persistentData, EphemeralData ephemeralData, PersistentData.ChunkDataAccessor chunkDataAccessor, DynmapIntegrator dynmapIntegrator, ConfigService configService) {
+    public DuelCommand(LocaleService localeService, PersistentData persistentData, EphemeralData ephemeralData, PersistentData.ChunkDataAccessor chunkDataAccessor, DynmapIntegrator dynmapIntegrator, ConfigService configService, MedievalFactions medievalFactions) {
         super(new String[]{"dl", "duel", LOCALE_PREFIX + "CmdDuel"}, true, persistentData, localeService, ephemeralData, configService, chunkDataAccessor, dynmapIntegrator);
+        this.medievalFactions = medievalFactions;
     }
 
     /**
@@ -156,6 +158,6 @@ public class DuelCommand extends SubCommand {
 
     private void inviteDuel(Player player, Player target, int limit) {
         target.sendMessage(translate("&b" + getText("AlertChallengedToDuelPlusHowTo", player.getName())));
-        ephemeralData.getDuelingPlayers().add(new Duel(player, target, limit));
+        ephemeralData.getDuelingPlayers().add(new Duel(medievalFactions, ephemeralData, player, target, limit));
     }
 }

@@ -4,9 +4,8 @@
  */
 package dansplugins.factionsystem.objects.domain;
 
-import java.util.ArrayList;
-import java.util.Objects;
-
+import dansplugins.factionsystem.MedievalFactions;
+import dansplugins.factionsystem.data.EphemeralData;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
@@ -18,13 +17,16 @@ import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.SkullMeta;
 
-import dansplugins.factionsystem.MedievalFactions;
-import dansplugins.factionsystem.data.EphemeralData;
+import java.util.ArrayList;
+import java.util.Objects;
 
 /**
  * @author Daniel McCoy Stephenson
  */
 public class Duel {
+    private final MedievalFactions medievalFactions;
+    private final EphemeralData ephemeralData;
+
     private final Player _challenged;
     private final Player _challenger;
     private final float nearbyPlayerRadius = 64;
@@ -38,7 +40,9 @@ public class Duel {
     private int repeatingTaskId = 0;
     private double timeDecrementAmount = 0;
 
-    public Duel(Player challenger, Player challenged, int limit) {
+    public Duel(MedievalFactions medievalFactions, EphemeralData ephemeralData, Player challenger, Player challenged, int limit) {
+        this.medievalFactions = medievalFactions;
+        this.ephemeralData = ephemeralData;
         _challenger = challenger;
         challengerHealth = challenger.getHealth();
         _challenged = challenged;

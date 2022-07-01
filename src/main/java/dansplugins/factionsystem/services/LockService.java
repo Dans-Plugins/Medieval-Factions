@@ -4,9 +4,10 @@
  */
 package dansplugins.factionsystem.services;
 
-import java.util.Objects;
-import java.util.UUID;
-
+import dansplugins.factionsystem.data.EphemeralData;
+import dansplugins.factionsystem.data.PersistentData;
+import dansplugins.factionsystem.objects.domain.ClaimedChunk;
+import dansplugins.factionsystem.objects.domain.LockedBlock;
 import org.bukkit.ChatColor;
 import org.bukkit.block.Block;
 import org.bukkit.block.Chest;
@@ -14,19 +15,27 @@ import org.bukkit.block.DoubleChest;
 import org.bukkit.entity.Player;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.inventory.InventoryHolder;
-
-import dansplugins.factionsystem.data.EphemeralData;
-import dansplugins.factionsystem.data.PersistentData;
-import dansplugins.factionsystem.objects.domain.ClaimedChunk;
-import dansplugins.factionsystem.objects.domain.LockedBlock;
-import dansplugins.factionsystem.utils.Locale;
-import dansplugins.factionsystem.utils.extended.BlockChecker;
+import preponderous.ponder.minecraft.bukkit.tools.BlockChecker;
 import preponderous.ponder.minecraft.bukkit.tools.UUIDChecker;
+
+import java.util.Objects;
+import java.util.UUID;
 
 /**
  * @author Daniel McCoy Stephenson
  */
 public class LockService {
+    private final PersistentData persistentData;
+    private final LocaleService localeService;
+    private final BlockChecker blockChecker;
+    private final EphemeralData ephemeralData;
+
+    public LockService(PersistentData persistentData, LocaleService localeService, BlockChecker blockChecker, EphemeralData ephemeralData) {
+        this.persistentData = persistentData;
+        this.localeService = localeService;
+        this.blockChecker = blockChecker;
+        this.ephemeralData = ephemeralData;
+    }
 
     public void handleLockingBlock(PlayerInteractEvent event, Player player, Block clickedBlock) {
         // if chunk is claimed

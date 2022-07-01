@@ -4,9 +4,8 @@
  */
 package dansplugins.factionsystem.events;
 
-import org.bukkit.OfflinePlayer;
-
 import dansplugins.factionsystem.objects.domain.Faction;
+import org.bukkit.OfflinePlayer;
 
 /**
  * @author C A L L U M#4160

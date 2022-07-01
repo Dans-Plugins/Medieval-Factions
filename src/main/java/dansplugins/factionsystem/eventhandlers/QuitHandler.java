@@ -1,15 +1,14 @@
 package dansplugins.factionsystem.eventhandlers;
 
-import java.time.ZonedDateTime;
-
 import dansplugins.factionsystem.data.EphemeralData;
 import dansplugins.factionsystem.data.PersistentData;
+import dansplugins.factionsystem.objects.domain.ActivityRecord;
+import dansplugins.factionsystem.services.ActionBarService;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerQuitEvent;
 
-import dansplugins.factionsystem.objects.domain.ActivityRecord;
-import dansplugins.factionsystem.services.ActionBarService;
+import java.time.ZonedDateTime;
 
 public class QuitHandler implements Listener {
     private final EphemeralData ephemeralData;

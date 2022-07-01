@@ -4,35 +4,28 @@
  */
 package dansplugins.factionsystem.commands;
 
-import java.lang.reflect.Method;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.UUID;
-
+import dansplugins.factionsystem.MedievalFactions;
+import dansplugins.factionsystem.commands.abs.SubCommand;
 import dansplugins.factionsystem.data.EphemeralData;
+import dansplugins.factionsystem.data.PersistentData;
+import dansplugins.factionsystem.events.*;
+import dansplugins.factionsystem.integrators.CurrenciesIntegrator;
 import dansplugins.factionsystem.integrators.DynmapIntegrator;
+import dansplugins.factionsystem.integrators.FiefsIntegrator;
+import dansplugins.factionsystem.objects.domain.Faction;
+import dansplugins.factionsystem.objects.domain.PowerRecord;
 import dansplugins.factionsystem.services.ConfigService;
 import dansplugins.factionsystem.services.LocaleService;
+import dansplugins.factionsystem.utils.Logger;
+import dansplugins.fiefs.utils.UUIDChecker;
 import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
-
-import dansplugins.factionsystem.MedievalFactions;
-import dansplugins.factionsystem.commands.abs.SubCommand;
-import dansplugins.factionsystem.data.PersistentData;
-import dansplugins.factionsystem.events.FactionCreateEvent;
-import dansplugins.factionsystem.events.FactionJoinEvent;
-import dansplugins.factionsystem.events.FactionKickEvent;
-import dansplugins.factionsystem.events.FactionRenameEvent;
-import dansplugins.factionsystem.events.FactionWarEndEvent;
-import dansplugins.factionsystem.objects.domain.Faction;
-import dansplugins.factionsystem.objects.domain.PowerRecord;
-import dansplugins.factionsystem.utils.Logger;
-import dansplugins.fiefs.utils.UUIDChecker;
 import preponderous.ponder.misc.ArgumentParser;
+
+import java.lang.reflect.Method;
+import java.util.*;
 
 /**
  * @author Callum Johnson
@@ -40,6 +33,8 @@ import preponderous.ponder.misc.ArgumentParser;
 public class ForceCommand extends SubCommand {
     private final MedievalFactions medievalFactions;
     private final Logger logger;
+    private final FiefsIntegrator fiefsIntegrator;
+    private final CurrenciesIntegrator currenciesIntegrator;
 
     private final String[] commands = new String[]{
             "Save", "Load", "Peace", "Demote", "Join", "Kick", "Power", "Renounce", "Transfer", "RemoveVassal", "Rename", "BonusPower", "Unlock", "Create", "Claim", "Flag"
@@ -49,12 +44,14 @@ public class ForceCommand extends SubCommand {
     private final ArgumentParser argumentParser = new ArgumentParser();
     private final UUIDChecker uuidChecker = new UUIDChecker();
 
-    public ForceCommand(LocaleService localeService, PersistentData persistentData, EphemeralData ephemeralData, PersistentData.ChunkDataAccessor chunkDataAccessor, DynmapIntegrator dynmapIntegrator, ConfigService configService, MedievalFactions medievalFactions, Logger logger) {
+    public ForceCommand(LocaleService localeService, PersistentData persistentData, EphemeralData ephemeralData, PersistentData.ChunkDataAccessor chunkDataAccessor, DynmapIntegrator dynmapIntegrator, ConfigService configService, MedievalFactions medievalFactions, Logger logger, FiefsIntegrator fiefsIntegrator, CurrenciesIntegrator currenciesIntegrator) {
         super(new String[]{
                 "Force", LOCALE_PREFIX + "CmdForce"
         }, false, persistentData, localeService, ephemeralData, configService, chunkDataAccessor, dynmapIntegrator);
         this.medievalFactions = medievalFactions;
         this.logger = logger;
+        this.fiefsIntegrator = fiefsIntegrator;
+        this.currenciesIntegrator = currenciesIntegrator;
         // Register sub-commands.
         Arrays.stream(commands).forEach(command ->
                 subMap.put(Arrays.asList(command, getText("CmdForce" + command)), "force" + command)
@@ -556,7 +553,7 @@ public class ForceCommand extends SubCommand {
             return;
         }
 
-        this.faction = new Faction(newFactionName);
+        this.faction = new Faction(configService, localeService, fiefsIntegrator, currenciesIntegrator, dynmapIntegrator, logger, persistentData, medievalFactions, newFactionName);
         FactionCreateEvent createEvent = new FactionCreateEvent(this.faction, player);
         Bukkit.getPluginManager().callEvent(createEvent);
         if (!createEvent.isCancelled()) {

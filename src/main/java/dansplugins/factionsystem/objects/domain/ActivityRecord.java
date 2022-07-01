@@ -4,6 +4,12 @@
  */
 package dansplugins.factionsystem.objects.domain;
 
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+import dansplugins.factionsystem.objects.inherited.PlayerRecord;
+import dansplugins.factionsystem.services.ConfigService;
+import preponderous.ponder.misc.abs.Savable;
+
 import java.time.Duration;
 import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
@@ -11,13 +17,6 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
 import java.util.concurrent.TimeUnit;
-
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
-
-import dansplugins.factionsystem.objects.inherited.PlayerRecord;
-import dansplugins.factionsystem.services.ConfigService;
-import preponderous.ponder.misc.abs.Savable;
 
 /**
  * @author Daniel McCoy Stephenson

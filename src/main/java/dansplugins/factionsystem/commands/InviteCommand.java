@@ -4,11 +4,8 @@
  */
 package dansplugins.factionsystem.commands;
 
-import static org.bukkit.Bukkit.getServer;
-
-import java.util.UUID;
-
 import dansplugins.factionsystem.MedievalFactions;
+import dansplugins.factionsystem.commands.abs.SubCommand;
 import dansplugins.factionsystem.data.EphemeralData;
 import dansplugins.factionsystem.data.PersistentData;
 import dansplugins.factionsystem.integrators.DynmapIntegrator;
@@ -19,8 +16,11 @@ import org.bukkit.ChatColor;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
-import dansplugins.factionsystem.commands.abs.SubCommand;
 import preponderous.ponder.minecraft.bukkit.tools.UUIDChecker;
+
+import java.util.UUID;
+
+import static org.bukkit.Bukkit.getServer;
 
 /**
  * @author Callum Johnson

@@ -4,16 +4,15 @@
  */
 package dansplugins.factionsystem.utils;
 
-import static org.bukkit.Material.LADDER;
-
 import dansplugins.factionsystem.data.EphemeralData;
+import dansplugins.factionsystem.data.PersistentData;
+import dansplugins.factionsystem.objects.domain.ClaimedChunk;
+import dansplugins.factionsystem.objects.domain.Faction;
 import dansplugins.factionsystem.services.ConfigService;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
 
-import dansplugins.factionsystem.data.PersistentData;
-import dansplugins.factionsystem.objects.domain.ClaimedChunk;
-import dansplugins.factionsystem.objects.domain.Faction;
+import static org.bukkit.Material.LADDER;
 
 /**
  * @author Daniel McCoy Stephenson

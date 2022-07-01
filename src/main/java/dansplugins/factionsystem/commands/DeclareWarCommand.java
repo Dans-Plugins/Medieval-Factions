@@ -4,22 +4,21 @@
  */
 package dansplugins.factionsystem.commands;
 
-import java.util.List;
-
+import dansplugins.factionsystem.commands.abs.SubCommand;
 import dansplugins.factionsystem.data.EphemeralData;
 import dansplugins.factionsystem.data.PersistentData;
+import dansplugins.factionsystem.events.FactionWarStartEvent;
+import dansplugins.factionsystem.factories.WarFactory;
 import dansplugins.factionsystem.integrators.DynmapIntegrator;
+import dansplugins.factionsystem.objects.domain.Faction;
 import dansplugins.factionsystem.services.ConfigService;
 import dansplugins.factionsystem.services.LocaleService;
 import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
-
-import dansplugins.factionsystem.commands.abs.SubCommand;
-import dansplugins.factionsystem.events.FactionWarStartEvent;
-import dansplugins.factionsystem.factories.WarFactory;
-import dansplugins.factionsystem.objects.domain.Faction;
 import preponderous.ponder.misc.ArgumentParser;
+
+import java.util.List;
 
 /**
  * @author Callum Johnson

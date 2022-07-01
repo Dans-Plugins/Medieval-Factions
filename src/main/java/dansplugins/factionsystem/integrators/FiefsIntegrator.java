@@ -4,25 +4,27 @@
  */
 package dansplugins.factionsystem.integrators;
 
-import org.bukkit.Bukkit;
-
 import dansplugins.factionsystem.MedievalFactions;
 import dansplugins.fiefs.externalapi.FiefsAPI;
+import org.bukkit.Bukkit;
 
 /**
  * @author Daniel McCoy Stephenson
  */
 public class FiefsIntegrator {
+    private final MedievalFactions medievalFactions;
+
     private FiefsAPI fi_api = null;
 
-    public FiefsIntegrator() {
+    public FiefsIntegrator(MedievalFactions medievalFactions) {
+        this.medievalFactions = medievalFactions;
         if (isFiefsPresent()) {
-            if (medievalFactions.isDebugEnabled()) {
+            if (this.medievalFactions.isDebugEnabled()) {
                 System.out.println("[DEBUG] Fiefs was found successfully!");
             }
             fi_api = new FiefsAPI();
         } else {
-            if (medievalFactions.isDebugEnabled()) {
+            if (this.medievalFactions.isDebugEnabled()) {
                 System.out.println("[DEBUG] Fiefs was not found!");
             }
         }
