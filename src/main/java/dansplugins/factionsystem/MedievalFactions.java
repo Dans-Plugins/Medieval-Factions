@@ -41,7 +41,7 @@ import java.util.Arrays;
 public class MedievalFactions extends PonderBukkitPlugin {
     private final String pluginVersion = "v" + getDescription().getVersion();
 
-    private final ActionBarService actionBarService = new ActionBarService(this);
+    private final ActionBarService actionBarService = new ActionBarService();
     private final ConfigService configService = new ConfigService(this);
     private final EphemeralData ephemeralData = new EphemeralData();
     private final Logger logger = new Logger(this);
@@ -177,6 +177,7 @@ public class MedievalFactions extends PonderBukkitPlugin {
         scheduler.schedulePowerIncrease();
         scheduler.schedulePowerDecrease();
         scheduler.scheduleAutosave();
+        actionBarService.schedule(this);
     }
 
     /**
