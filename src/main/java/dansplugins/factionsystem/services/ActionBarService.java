@@ -16,7 +16,7 @@ import java.util.Map;
 public class ActionBarService {
     private final Map<Player, TextComponent> playerActionBarMessages = new HashMap<>();
 
-    public ActionBarService(Plugin plugin) {
+    public void schedule(Plugin plugin) {
         Bukkit.getScheduler().scheduleSyncRepeatingTask(plugin,
                 this::sendPlayerActionBarMessages, 5, 20);
     }
