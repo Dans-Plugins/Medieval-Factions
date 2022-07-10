@@ -13,7 +13,7 @@ authors:
 - VoChiDanh
 - alyphen
 version: @version@
-main: dansplugins.factionsystem.MedievalFactions
+main: com.dansplugins.factionsystem.MedievalFactions
 api-version: 1.13
 softdepend: [dynmap, PlaceholderAPI]
 description: Allows players to organise themselves into feudal, diplomatic, lawful groups akin to nations.

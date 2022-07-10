@@ -5,7 +5,7 @@ plugins {
     id 'nu.studer.jooq' version '7.1.1'
 }
 
-group = "dansplugins"
+group = "com.dansplugins"
 version = "5.0.0-SNAPSHOT"
 
 repositories {
@@ -16,6 +16,7 @@ repositories {
     maven { url 'https://repo.extendedclip.com/content/repositories/placeholderapi/' }
     maven { url 'https://jitpack.io' }
     maven { url 'https://repo.maven.apache.org/maven2/' }
+    maven { url 'https://repo.rpkit.com/repository/maven-public/' }
 }
 
 configurations {
@@ -37,6 +38,10 @@ dependencies {
     implementation 'com.zaxxer:HikariCP:5.0.1'
     implementation 'com.google.code.gson:gson:2.9.0'
     implementation 'org.slf4j:slf4j-api:1.8.0-beta4'
+    implementation 'com.github.Dans-Plugins:Mailboxes:v1.1'
+    implementation 'com.rpkit:rpk-core-bukkit:2.3.1:all'
+    implementation 'com.rpkit:rpk-player-lib-bukkit:2.3.1:all'
+    implementation 'com.rpkit:rpk-notification-lib-bukkit:2.3.1:all'
     testImplementation 'org.junit.jupiter:junit-jupiter:5.8.2'
     testImplementation 'io.mockk:mockk:1.12.4'
     jooqGenerator 'org.jooq:jooq-meta-extensions:3.17.2'
@@ -63,7 +68,7 @@ jooq {
                         properties {
                             property {
                                 key = "scripts"
-                                value = "src/main/resources/dansplugins/factionsystem/db/migration"
+                                value = "src/main/resources/com/dansplugins/factionsystem/db/migration"
                             }
                             property {
                                 key = "sort"
@@ -76,7 +81,7 @@ jooq {
                         }
                     }
                     target {
-                        packageName = 'dansplugins.factionsystem.jooq'
+                        packageName = 'com.dansplugins.factionsystem.jooq'
                     }
                 }
             }
@@ -117,22 +122,22 @@ shadowJar {
         include(dependency('com.google.code.gson:gson'))
     }
 
-    relocate 'com.google', 'dansplugins.factionsystem.shadow.com.google'
-    relocate 'com.mysql', 'dansplugins.factionsystem.shadow.com.mysql'
-    relocate 'com.sun', 'dansplugins.factionsystem.shadow.com.sun'
-    relocate 'com.zaxxer', 'dansplugins.factionsystem.shadow.com.zaxxer'
-    relocate 'dev.forkhandles', 'dansplugins.factionsystem.shadow.dev.forkhandles'
-    relocate 'google', 'dansplugins.factionsystem.shadow.google'
-    relocate 'io.r2dbc', 'dansplugins.factionsystem.shadow.io.r2dbc'
-    relocate 'jakarta', 'dansplugins.factionsystem.shadow.jakarta'
-    relocate 'kotlin', 'dansplugins.factionsystem.shadow.kotlin'
-    relocate 'org.bstats', 'dansplugins.factionsystem.shadow.org.bstats'
-    relocate 'org.flywaydb', 'dansplugins.factionsystem.shadow.org.flywaydb'
-    relocate 'org.h2', 'dansplugins.factionsystem.shadow.org.h2'
-    relocate 'org.intellij', 'dansplugins.factionsystem.shadow.org.intellij'
-    relocate 'org.jetbrains', 'dansplugins.factionsystem.shadow.org.jetbrains'
-    relocate 'org.jooq', 'dansplugins.factionsystem.shadow.org.jooq'
-    relocate 'org.reactivestreams', 'dansplugins.factionsystem.shadow.org.reactivestreams'
+    relocate 'com.google', 'com.dansplugins.factionsystem.shadow.com.google'
+    relocate 'com.mysql', 'com.dansplugins.factionsystem.shadow.com.mysql'
+    relocate 'com.sun', 'com.dansplugins.factionsystem.shadow.com.sun'
+    relocate 'com.zaxxer', 'com.dansplugins.factionsystem.shadow.com.zaxxer'
+    relocate 'dev.forkhandles', 'com.dansplugins.factionsystem.shadow.dev.forkhandles'
+    relocate 'google', 'com.dansplugins.factionsystem.shadow.google'
+    relocate 'io.r2dbc', 'com.dansplugins.factionsystem.shadow.io.r2dbc'
+    relocate 'jakarta', 'com.dansplugins.factionsystem.shadow.jakarta'
+    relocate 'kotlin', 'com.dansplugins.factionsystem.shadow.kotlin'
+    relocate 'org.bstats', 'com.dansplugins.factionsystem.shadow.org.bstats'
+    relocate 'org.flywaydb', 'com.dansplugins.factionsystem.shadow.org.flywaydb'
+    relocate 'org.h2', 'com.dansplugins.factionsystem.shadow.org.h2'
+    relocate 'org.intellij', 'com.dansplugins.factionsystem.shadow.org.intellij'
+    relocate 'org.jetbrains', 'com.dansplugins.factionsystem.shadow.org.jetbrains'
+    relocate 'org.jooq', 'com.dansplugins.factionsystem.shadow.org.jooq'
+    relocate 'org.reactivestreams', 'com.dansplugins.factionsystem.shadow.org.reactivestreams'
 }
 
 artifacts {
