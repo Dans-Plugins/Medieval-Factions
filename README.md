@@ -1,6 +1,6 @@
 # Medieval Factions
 
-## Description
+## Description 
 Medieval Factions is a system of mechanics that allows for the simulation of sovereign nations in Minecraft. Players can create nations, claim territory, engage in warfare or politics, write laws or hold dueling tournaments, and generally are able to attempt to recreate society somewhat.
 
 A list of features can be found [here](https://github.com/dmccoystephenson/Medieval-Factions/wiki/Features).
@@ -46,34 +46,34 @@ Alternatively, you can use the External API, the documentation for which can be 
 
 ## Authors and acknowledgement
 ### Developers
-Name | Main Contributions
------------- | -------------
-Daniel Stephenson | Creator
-[Pasarus](https://github.com/Pasarus) | Overhauled the Storage Manager to use UUIDs and JSON and made other improvements to the plugin
-Caibinus | Implemented Duels, Gates and Dynmap Integration
-[Callum](https://www.spigotmc.org/resources/authors/retrix_solutions.491191/) | Created event classes, overhauled the Command System, implemented PlaceholderAPI integration and made many other improvements to the plugin
-Richardhyy | Fixed some encoding issues
-Mitras2 | Implemented ActionBar territory alerts
-[Kaonami](https://github.com/Daniels7k) | Fixed a typo in the README
-GoodLucky777 | Fixed a bug and a few typos in the code
-Elafir | Made it possible to control gates with redstone
-[Deej](https://github.com/Mr-Deej) | Added checks to several commands
-VoChiDanh | Refactored parts the PersistentData class in an attempt to resolve java compatibility issues
+| Name                                                                          | Main Contributions                                                                                                                          |
+|-------------------------------------------------------------------------------|---------------------------------------------------------------------------------------------------------------------------------------------|
+| Daniel Stephenson                                                             | Creator                                                                                                                                     |
+| [Pasarus](https://github.com/Pasarus)                                         | Overhauled the Storage Manager to use UUIDs and JSON and made other improvements to the plugin                                              |
+| Caibinus                                                                      | Implemented Duels, Gates and Dynmap Integration                                                                                             |
+| [Callum](https://www.spigotmc.org/resources/authors/retrix_solutions.491191/) | Created event classes, overhauled the Command System, implemented PlaceholderAPI integration and made many other improvements to the plugin |
+| Richardhyy                                                                    | Fixed some encoding issues                                                                                                                  |
+| Mitras2                                                                       | Implemented ActionBar territory alerts                                                                                                      |
+| [Kaonami](https://github.com/Daniels7k)                                       | Fixed a typo in the README                                                                                                                  |
+| GoodLucky777                                                                  | Fixed a bug and a few typos in the code                                                                                                     |
+| Elafir                                                                        | Made it possible to control gates with redstone                                                                                             |
+| [Deej](https://github.com/Mr-Deej)                                            | Added checks to several commands                                                                                                            |
+| VoChiDanh                                                                     | Refactored parts the PersistentData class in an attempt to resolve java compatibility issues                                                |
 
 ### Translators
-Name | Language(s)
------------- | -------------
-Khanter | Spanish
-Neh | Spanish
-Johnny | Spanish
-lilhamoood | Spanish
-1barab1 | Russian
-2kManfridi | Russian
-[Kaonami](https://github.com/Daniels7k) | Portuguese Brazilian
-[graffity_X](https://www.spigotmc.org/members/kicker765.946561/) | German
-JustGllenn | Dutch
-TDL | Dutch
-[n0virus](https://www.youtube.com/c/n0virus) | Dutch
+| Name                                                             | Language(s)          |
+|------------------------------------------------------------------|----------------------|
+| Khanter                                                          | Spanish              |
+| Neh                                                              | Spanish              |
+| Johnny                                                           | Spanish              |
+| lilhamoood                                                       | Spanish              |
+| 1barab1                                                          | Russian              |
+| 2kManfridi                                                       | Russian              |
+| [Kaonami](https://github.com/Daniels7k)                          | Portuguese Brazilian |
+| [graffity_X](https://www.spigotmc.org/members/kicker765.946561/) | German               |
+| JustGllenn                                                       | Dutch                |
+| TDL                                                              | Dutch                |
+| [n0virus](https://www.youtube.com/c/n0virus)                     | Dutch                |
 
 I created this plugin because I wanted to use the original [Factions](https://www.spigotmc.org/resources/factions.1900/) plugin for an upcoming server of mine, but it wasn't updated for the version of minecraft I was going to be using. I decided to take inspiration from the concept of factions - groups of players that can claim land - and create my own factions plugin.
 

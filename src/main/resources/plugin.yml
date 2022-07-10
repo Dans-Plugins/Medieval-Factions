@@ -1,151 +1,30 @@
 name: MedievalFactions
-version: '@version@'
-authors: [DanTheTechMan, Pasarus, Caibinus, Callum, Richardhyy, Mitras2, Kaonami, GoodLucky777, Elafir, Deej, VoChiDanh, alyphen]
+authors:
+- DanTheTechMan
+- Pasarus
+- Caibinus
+- Callum
+- Richardhyy
+- Mitras2
+- Kaonami
+- GoodLucky777
+- Elafir
+- Deej
+- VoChiDanh
+- alyphen
+version: @version@
 main: dansplugins.factionsystem.MedievalFactions
 api-version: 1.13
-softdepend: [dynmap, PlaceholderAPI, Fiefs]
-description: This Minecraft plugin allows players to organize themselves into feudal, diplomatic, lawful groups akin to nations.
-
+softdepend: [dynmap, PlaceholderAPI]
+description: Allows players to organise themselves into feudal, diplomatic, lawful groups akin to nations.
 commands:
-  mf:
-  f:
   medievalfactions:
-  factions:
-
-permissions:
-  mf.claim:
-    default: true
-  mf.unclaim:
-    default: true
-  mf.unclaimall:
-    default: true
-  mf.checkclaim:
-    default: true
-  mf.autoclaim:
-    default: true
-  mf.version:
-    default: true
-  mf.addlaw:
-    default: true
-  mf.ally:
-    default: true
-  mf.breakalliance:
-    default: true
-  mf.chat:
-    default: true
-  mf.checkaccess:
-    default: true
-  mf.create:
-    default: true
-  mf.declareindependence:
-    default: true
-  mf.declarewar:
-    default: true
-  mf.demote:
-    default: true
-  mf.desc:
-    default: true
-  mf.disband:
-    default: true
-  mf.duel:
-    default: true
-  mf.editlaw:
-    default: true
-  mf.gate:
-    default: true
-  mf.grantindependence:
-    default: true
-  mf.help:
-    default: true
-  mf.home:
-    default: true
-  mf.info:
-    default: true
-  mf.invite:
-    default: true
-  mf.invoke:
-    default: true
-  mf.join:
-    default: true
-  mf.kick:
-    default: true
-  mf.laws:
-    default: true
-  mf.leave:
-    default: true
-  mf.list:
-    default: true
-  mf.lock:
-    default: true
-  mf.makepeace:
-    default: true
-  mf.members:
-    default: true
-  mf.power:
-    default: true
-  mf.promote:
-    default: true
-  mf.removelaw:
-    default: true
-  mf.rename:
-    default: true
-  mf.revokeaccess:
-    default: true
-  mf.sethome:
-    default: true
-  mf.swearfealty:
-    default: true
-  mf.transfer:
-    default: true
-  mf.unlock:
-    default: true
-  mf.vassalize:
-    default: true
-  mf.who:
-    default: true
-  mf.prefix:
-    default: true
-  mf.flags:
-    default: true
-  mf.bypass:
-    default: op
-  mf.config:
-    default: op
-  mf.unclaim.others:
-    default: op
-  mf.disband.others:
-    default: op
-  mf.resetpowerlevels:
-    default: op
-  mf.force.*:
-    default: op
-  mf.force.save:
-    default: op
-  mf.force.load:
-    default: op
-  mf.force.peace:
-    default: op
-  mf.force.demote:
-    default: op
-  mf.force.join:
-    default: op
-  mf.force.kick:
-    default: op
-  mf.force.power:
-    default: op
-  mf.force.renounce:
-    default: op
-  mf.force.transfer:
-    default: op
-  mf.force.removevassal:
-    default: op
-  mf.force.rename:
-    default: op
-  mf.force.bonuspower:
-    default: op
-  mf.force.unlock:
-    default: op
-  mf.force.create:
-    default: op
-  mf.force.claim:
-    default: op
+    description: |
+      Medieval Factions base command
+    aliases: [mf]
+    usage: /<command>
+  faction:
+    description: |
+      Faction management command
+    aliases: [f]
+    usage: /<command> [create]

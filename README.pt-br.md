@@ -13,7 +13,7 @@ Este plugin esta sendo desenvolvido utilizando a API Do Spigot. Os usuários tal
 
 3) Reinicie o seu servidor.
 
-### Integração ao Dynmap 
+### Integração ao Dynmap
 Dynmap esta integrado a este plugin. Para poder visualizar o terreno reivindicado em um mapa dinâmico, baixe e instale este plugin [aqui](https://www.spigotmc.org/resources/dynmap.274/).
 
 ### Expansões
@@ -50,33 +50,33 @@ Outra alternativa seria, você utilizar nossa External API, a documentação pod
 
 ## Autores e Reconhecimentos
 ### Desenvolvedores
-Nome | Principais Colaborações
------------- | -------------
-DanTheTechMan | Criador
-Pasarus | Revisão do gerenciador de armazenamento para uso UUIDs e JSON e também fez outras melhorias no plugin.
-Caibinus | Implementou os duelos, portões e a integração do Dynmap.
-[Callum](https://www.spigotmc.org/resources/authors/retrix_solutions.491191/) | Criou os eventos de classes, revisou o sistema de comandos, implementou a PlaceholderAPI integration e fez várias outras melhorias no plugin.
-Richardhyy | Corrigido alguns problemas de codificação.
-Mitras2 | Implementou a ActionBar de alerta de territórios.
-[Kaonami](https://github.com/Daniels7k) |Tradução para o Português Brasileiro e correção de erros de digitação no readme.
+| Nome                                                                          | Principais Colaborações                                                                                                                       |
+|-------------------------------------------------------------------------------|-----------------------------------------------------------------------------------------------------------------------------------------------|
+| DanTheTechMan                                                                 | Criador                                                                                                                                       |
+| Pasarus                                                                       | Revisão do gerenciador de armazenamento para uso UUIDs e JSON e também fez outras melhorias no plugin.                                        |
+| Caibinus                                                                      | Implementou os duelos, portões e a integração do Dynmap.                                                                                      |
+| [Callum](https://www.spigotmc.org/resources/authors/retrix_solutions.491191/) | Criou os eventos de classes, revisou o sistema de comandos, implementou a PlaceholderAPI integration e fez várias outras melhorias no plugin. |
+| Richardhyy                                                                    | Corrigido alguns problemas de codificação.                                                                                                    |
+| Mitras2                                                                       | Implementou a ActionBar de alerta de territórios.                                                                                             |
+| [Kaonami](https://github.com/Daniels7k)                                       | Tradução para o Português Brasileiro e correção de erros de digitação no readme.                                                              |
 
 ### Tradutores
-Nomes | Lígua(s)
------------- | -------------
-Khanter | Espanhol
-Neh | Espanhol
-Johnny | Espanhol
-lilhamoood | Espanhol
-1barab1 | Russo
-2kManfridi | Russo
-[Kaonami](https://github.com/Daniels7k) | Português Brasileiro
-[graffity_X](https://www.spigotmc.org/members/kicker765.946561/) | Alemão
-JustGllenn | Holandês
-TDL | Holandês
+| Nomes                                                            | Lígua(s)             |
+|------------------------------------------------------------------|----------------------|
+| Khanter                                                          | Espanhol             |
+| Neh                                                              | Espanhol             |
+| Johnny                                                           | Espanhol             |
+| lilhamoood                                                       | Espanhol             |
+| 1barab1                                                          | Russo                |
+| 2kManfridi                                                       | Russo                |
+| [Kaonami](https://github.com/Daniels7k)                          | Português Brasileiro |
+| [graffity_X](https://www.spigotmc.org/members/kicker765.946561/) | Alemão               |
+| JustGllenn                                                       | Holandês             |
+| TDL                                                              | Holandês             |
 
 Eu criei este plugin porque eu queria usar o plugin original [Factions](https://www.spigotmc.org/resources/factions.1900/) para um servidor meu, mas que não foi atualizado para a versão do Minecraft que eu estava usando. Eu decidi pegar de inspiração os conceitos de factions - grupos de jogadores que podem conquistar uma terra e criar minha própria atualização do plugin Factions.
 
-A primeira versão divulgada, [v1.7](https://github.com/dmccoystephenson/Medieval-Factions/releases/tag/v1.7), foi lançada no SpigotMC em junho de 2020 e é muito diferente da versão atual do plugin. 
+A primeira versão divulgada, [v1.7](https://github.com/dmccoystephenson/Medieval-Factions/releases/tag/v1.7), foi lançada no SpigotMC em junho de 2020 e é muito diferente da versão atual do plugin.
 
 Eu sou extremamente grato aqueles que deram o seu tempo parar melhorar este projeto, de um jeitou ou de outro. O plugin não estaria aqui hoje sem as contribuições de outros.
 
