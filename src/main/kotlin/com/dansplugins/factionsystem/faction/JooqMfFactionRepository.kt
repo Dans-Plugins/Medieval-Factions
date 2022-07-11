@@ -1,7 +1,5 @@
 package com.dansplugins.factionsystem.faction
 
-import com.google.gson.Gson
-import com.google.gson.reflect.TypeToken
 import com.dansplugins.factionsystem.MedievalFactions
 import com.dansplugins.factionsystem.area.MfPosition
 import com.dansplugins.factionsystem.faction.flag.MfFlagValues
@@ -15,13 +13,15 @@ import com.dansplugins.factionsystem.jooq.tables.records.MfFactionMemberRecord
 import com.dansplugins.factionsystem.jooq.tables.records.MfFactionRecord
 import com.dansplugins.factionsystem.player.MfPlayer
 import com.dansplugins.factionsystem.player.MfPlayerId
+import com.google.gson.Gson
+import com.google.gson.reflect.TypeToken
 import org.jooq.Condition
 import org.jooq.DSLContext
 import org.jooq.JSON
 import org.jooq.impl.DSL.`val`
 
 class JooqMfFactionRepository(
-    private val plugin: com.dansplugins.factionsystem.MedievalFactions,
+    private val plugin: MedievalFactions,
     private val dsl: DSLContext
 ) : MfFactionRepository {
 
@@ -167,7 +167,7 @@ class JooqMfFactionRepository(
             .toDomain()
     }
 
-    private fun com.dansplugins.factionsystem.jooq.tables.records.MfFactionRecord.toDomain(members: List<MfFactionMember> = emptyList(), invites: List<MfFactionInvite> = emptyList()): MfFaction {
+    private fun MfFactionRecord.toDomain(members: List<MfFactionMember> = emptyList(), invites: List<MfFactionInvite> = emptyList()): MfFaction {
         val roles = Gson().fromJson<List<MfFactionRole>>(roles.data(), TypeToken.getParameterized(List::class.java, MfFactionRole::class.java).type)
         return MfFaction(
             plugin = plugin,
@@ -215,13 +215,13 @@ class JooqMfFactionRepository(
         )
     }
 
-    private fun com.dansplugins.factionsystem.jooq.tables.records.MfFactionMemberRecord.toDomain(roles: List<MfFactionRole>) =
+    private fun MfFactionMemberRecord.toDomain(roles: List<MfFactionRole>) =
         MfFactionMember(
             MfPlayer(playerId.let(::MfPlayerId)),
             roles.single { it.id.value == roleId }
         )
 
-    private fun com.dansplugins.factionsystem.jooq.tables.records.MfFactionInviteRecord.toDomain() =
+    private fun MfFactionInviteRecord.toDomain() =
         MfFactionInvite(
             MfPlayer(playerId.let(::MfPlayerId))
         )

@@ -3,7 +3,7 @@ package com.dansplugins.factionsystem.faction.flag
 import com.dansplugins.factionsystem.MedievalFactions
 
 class MfFlags(
-    plugin: com.dansplugins.factionsystem.MedievalFactions,
+    plugin: MedievalFactions,
     private val flags: MutableList<MfFlag<Any?>> = mutableListOf(
         MfFlag("mustBeOfficerToManageLand", plugin.config.getBoolean("factions.defaults.flags.mustBeOfficerToManageLand")),
         MfFlag("mustBeOfficerToInviteOthers", plugin.config.getBoolean("factions.defaults.flags.mustBeOfficerToInviteOthers")),

@@ -18,7 +18,7 @@ public final class RpkNotificationDispatcher implements MfNotificationDispatcher
     public void sendNotification(@NotNull MfPlayer player, @NotNull MfNotification notification) {
         RPKMinecraftProfileService minecraftProfileService = Services.INSTANCE.get(RPKMinecraftProfileService.class);
         if (minecraftProfileService == null) return;
-        RPKMinecraftProfile minecraftProfile = minecraftProfileService.getMinecraftProfile(UUID.fromString(player.getId())).join();
+        RPKMinecraftProfile minecraftProfile = minecraftProfileService.getMinecraftProfile(player.toBukkit()).join();
         if (minecraftProfile == null) return;
         RPKThinProfile thinProfile = minecraftProfile.getProfile();
         if (!(thinProfile instanceof RPKProfile profile)) return;

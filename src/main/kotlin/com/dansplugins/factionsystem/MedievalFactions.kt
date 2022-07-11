@@ -18,6 +18,8 @@ import com.dansplugins.factionsystem.notification.RpkNotificationDispatcher
 import com.dansplugins.factionsystem.player.JooqMfPlayerRepository
 import com.dansplugins.factionsystem.player.MfPlayerRepository
 import com.dansplugins.factionsystem.player.MfPlayerService
+import com.dansplugins.factionsystem.relationship.JooqMfFactionRelationshipRepository
+import com.dansplugins.factionsystem.relationship.MfFactionRelationshipService
 import com.dansplugins.factionsystem.service.Services
 import com.zaxxer.hikari.HikariConfig
 import com.zaxxer.hikari.HikariDataSource
@@ -82,13 +84,16 @@ class MedievalFactions : JavaPlugin() {
         val playerRepository: MfPlayerRepository = JooqMfPlayerRepository(dsl)
         val factionRepository: MfFactionRepository = JooqMfFactionRepository(this, dsl)
         val lawRepository: MfLawRepository = JooqMfLawRepository(dsl)
+        val factionRelationshipRepository = JooqMfFactionRelationshipRepository(dsl)
         val playerService = MfPlayerService(playerRepository)
         val factionService = MfFactionService(factionRepository)
         val lawService = MfLawService(lawRepository)
+        val factionRelationshipService = MfFactionRelationshipService(factionRelationshipRepository)
         services = Services(
             playerService,
             factionService,
-            lawService
+            lawService,
+            factionRelationshipService
         )
         setupNotificationDispatcher()
 

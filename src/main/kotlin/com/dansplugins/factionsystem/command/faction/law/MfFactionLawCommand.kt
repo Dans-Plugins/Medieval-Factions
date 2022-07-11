@@ -6,7 +6,7 @@ import org.bukkit.command.Command
 import org.bukkit.command.CommandExecutor
 import org.bukkit.command.CommandSender
 
-class MfFactionLawCommand(private val plugin: com.dansplugins.factionsystem.MedievalFactions) : CommandExecutor {
+class MfFactionLawCommand(private val plugin: MedievalFactions) : CommandExecutor {
 
     private val factionLawAddCommand = MfFactionLawAddCommand(plugin)
     private val factionLawRemoveCommand = MfFactionLawRemoveCommand(plugin)

@@ -56,10 +56,10 @@ create table `mf_law`(
 );
 
 create table `mf_faction_relationship`(
+    `id` varchar(36) primary key not null,
     `faction_id` varchar(36) not null,
     `target_id` varchar(36) not null,
-    `relationship_type` varchar(32) not null,
-    primary key(`faction_id`, `target_id`),
+    `type` varchar(32) not null,
     foreign key(`faction_id`) references `mf_faction`(`id`) on delete cascade,
     foreign key(`target_id`) references `mf_faction`(`id`) on delete cascade
 );

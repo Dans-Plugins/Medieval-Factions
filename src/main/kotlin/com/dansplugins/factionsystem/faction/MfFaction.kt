@@ -8,10 +8,11 @@ import com.dansplugins.factionsystem.faction.permission.MfFactionPermission.*
 import com.dansplugins.factionsystem.faction.role.MfFactionRole
 import com.dansplugins.factionsystem.faction.role.MfFactionRoleId
 import com.dansplugins.factionsystem.faction.role.MfFactionRoles
+import com.dansplugins.factionsystem.notification.MfNotification
 import com.dansplugins.factionsystem.player.MfPlayerId
 
 data class MfFaction(
-    private val plugin: com.dansplugins.factionsystem.MedievalFactions,
+    private val plugin: MedievalFactions,
     val id: MfFactionId = MfFactionId.generate(),
     val version: Int = 0,
     val name: String,
@@ -62,7 +63,7 @@ data class MfFaction(
     )
 ) {
 
-    constructor(plugin: com.dansplugins.factionsystem.MedievalFactions, name: String) : this(
+    constructor(plugin: MedievalFactions, name: String) : this(
         plugin,
         MfFactionId.generate(),
         0,
@@ -76,4 +77,23 @@ data class MfFaction(
 
     fun getRole(playerId: MfPlayerId): MfFactionRole? = members.singleOrNull { it.player.id == playerId }?.role
     fun getRole(roleId: MfFactionRoleId): MfFactionRole? = roles.getRole(roleId)
+
+    fun sendMessage(title: String, message: String) {
+        members.map { it.player }
+            .forEach { mfPlayer ->
+                val offlinePlayer = mfPlayer.toBukkit()
+                val player = offlinePlayer.player
+                if (player != null) {
+                    player.sendMessage("$title - $message")
+                } else {
+                    plugin.server.scheduler.runTaskAsynchronously(plugin, Runnable {
+                        plugin.notificationDispatcher.sendNotification(mfPlayer, MfNotification(
+                            title,
+                            message
+                        ))
+                    })
+                }
+            }
+    }
+
 }

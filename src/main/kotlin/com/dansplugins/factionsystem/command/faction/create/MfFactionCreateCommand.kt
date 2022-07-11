@@ -14,7 +14,7 @@ import org.bukkit.command.CommandSender
 import org.bukkit.entity.Player
 import java.util.logging.Level.SEVERE
 
-class MfFactionCreateCommand(private val plugin: com.dansplugins.factionsystem.MedievalFactions) : CommandExecutor {
+class MfFactionCreateCommand(private val plugin: MedievalFactions) : CommandExecutor {
     override fun onCommand(sender: CommandSender, command: Command, label: String, args: Array<out String>): Boolean {
         if (sender !is Player) {
             sender.sendMessage("$RED${plugin.language["CommandFactionCreateNotAPlayer"]}")

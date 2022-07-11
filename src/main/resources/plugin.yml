@@ -15,7 +15,7 @@ authors:
 version: @version@
 main: com.dansplugins.factionsystem.MedievalFactions
 api-version: 1.13
-softdepend: [dynmap, PlaceholderAPI]
+softdepend: [dynmap, PlaceholderAPI, rpk-notification-lib-bukkit, Mailboxes]
 description: Allows players to organise themselves into feudal, diplomatic, lawful groups akin to nations.
 commands:
   medievalfactions:
