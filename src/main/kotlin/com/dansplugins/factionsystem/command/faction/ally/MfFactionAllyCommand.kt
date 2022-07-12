@@ -13,6 +13,7 @@ import org.bukkit.command.Command
 import org.bukkit.command.CommandExecutor
 import org.bukkit.command.CommandSender
 import org.bukkit.entity.Player
+import java.util.logging.Level
 
 class MfFactionAllyCommand(private val plugin: MedievalFactions) : CommandExecutor {
     override fun onCommand(sender: CommandSender, command: Command, label: String, args: Array<out String>): Boolean {
@@ -33,6 +34,7 @@ class MfFactionAllyCommand(private val plugin: MedievalFactions) : CommandExecut
             val mfPlayer = playerService.getPlayer(sender)
                 ?: playerService.save(MfPlayer.fromBukkit(sender)).onFailure {
                     sender.sendMessage("$RED${plugin.language["CommandFactionAllyFailedToSavePlayer"]}")
+                    plugin.logger.log(Level.SEVERE, "Failed to save player: ${it.reason.message}", it.reason.cause)
                     return@Runnable
                 }
             val factionService = plugin.services.factionService
@@ -74,6 +76,7 @@ class MfFactionAllyCommand(private val plugin: MedievalFactions) : CommandExecut
             factionRelationshipService.save(MfFactionRelationship(factionId = faction.id, targetId = target.id, type = ALLY))
                 .onFailure {
                     sender.sendMessage("$RED${plugin.language["CommandFactionAllyFailedToSaveRelationship"]}")
+                    plugin.logger.log(Level.SEVERE, "Failed to save faction relationship: ${it.reason.message}", it.reason.cause)
                     return@Runnable
                 }
             if (reverseRelationships.any { it.type == ALLY }) {

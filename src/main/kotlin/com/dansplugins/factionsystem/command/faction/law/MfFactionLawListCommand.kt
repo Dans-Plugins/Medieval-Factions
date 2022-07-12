@@ -14,6 +14,7 @@ import org.bukkit.command.Command
 import org.bukkit.command.CommandExecutor
 import org.bukkit.command.CommandSender
 import org.bukkit.entity.Player
+import java.util.logging.Level
 import net.md_5.bungee.api.ChatColor as SpigotChatColor
 import org.bukkit.ChatColor as BukkitChatColor
 
@@ -32,6 +33,7 @@ class MfFactionLawListCommand(private val plugin: MedievalFactions) : CommandExe
             val mfPlayer = playerService.getPlayer(sender)
                 ?: playerService.save(MfPlayer.fromBukkit(sender)).onFailure {
                     sender.sendMessage("${BukkitChatColor.RED}${plugin.language["CommandFactionLawListFailedToSavePlayer"]}")
+                    plugin.logger.log(Level.SEVERE, "Failed to save player: ${it.reason.message}", it.reason.cause)
                     return@Runnable
                 }
             val factionService = plugin.services.factionService
