@@ -36,7 +36,7 @@ class MfFactionJoinCommand(private val plugin: MedievalFactions) : CommandExecut
             val factionService = plugin.services.factionService
             val playerFaction = factionService.getFaction(mfPlayer.id)
             if (playerFaction != null) {
-                sender.sendMessage("$RED${plugin.language["CommandFactionJoinAlreadyInFaction"]}")
+                sender.sendMessage("$RED${plugin.language["CommandFactionJoinAlreadyInFaction", playerFaction.name]}")
                 return@Runnable
             }
             val faction = factionService.getFaction(args.joinToString(" "))
