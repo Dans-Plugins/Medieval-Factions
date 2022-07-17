@@ -26,5 +26,33 @@ commands:
   faction:
     description: |
       Faction management command
+      /f ally [faction] - Ally with a faction
+      /f create [name] - Create a faction with the given name
+      /f invite [player] - Invite a player to your faction
+      /f law add [law] - Create a law for your faction
+      /f law list - List your faction's laws
+      /f law remove [id] - Remove a law from your faction
     aliases: [f]
-    usage: /<command> [create]
+    usage: /<command> [ally|create|invite|law]
+permissions:
+  mf.ally:
+    description: Allows allying with other factions
+    default: true
+  mf.create:
+    description: Allows the creation of factions
+    default: true
+  mf.invite:
+    description: Allows inviting players to your faction
+    default: true
+  mf.join:
+    description: Allows joining factions
+    default: true
+  mf.addlaw:
+    description: Allows adding laws
+    default: true
+  mf.laws:
+    description: Allows listing the laws of your faction
+    default: true
+  mf.removelaw:
+    description: Allows removing laws
+    default: true
