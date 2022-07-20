@@ -51,7 +51,10 @@ class MfFactionLawRemoveCommand(private val plugin: MedievalFactions) : CommandE
                 sender.sendMessage("$RED${plugin.language["CommandFactionLawRemoveInvalidLawId"]}")
                 return@Runnable
             }
-            lawService.delete(law.id)
+            lawService.delete(law.id).onFailure {
+                sender.sendMessage("$RED${plugin.language["CommandFactionLawRemoveFailedToDeleteLaw"]}")
+                return@Runnable
+            }
             sender.sendMessage("$RED${plugin.language["CommandFactionLawRemoveSuccess"]}")
         })
         return true

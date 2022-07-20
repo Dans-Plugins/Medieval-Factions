@@ -18,9 +18,9 @@ class MfFactionLawCommand(private val plugin: MedievalFactions) : CommandExecuto
             return true
         }
         return when (args[0].lowercase()) {
-            "add", "create", "new", "a", "c", "n" -> factionLawAddCommand.onCommand(sender, command, label, args.drop(1).toTypedArray())
-            "remove", "delete", "rm", "r", "d" -> factionLawRemoveCommand.onCommand(sender, command, label, args.drop(1).toTypedArray())
-            "list", "ls", "l" -> factionLawListCommand.onCommand(sender, command, label, args.drop(1).toTypedArray())
+            "add", "create", "new", "a", "c", "n", plugin.language["CmdFactionLawAdd"] -> factionLawAddCommand.onCommand(sender, command, label, args.drop(1).toTypedArray())
+            "remove", "delete", "rm", "r", "d", plugin.language["CmdFactionLawRemove"] -> factionLawRemoveCommand.onCommand(sender, command, label, args.drop(1).toTypedArray())
+            "list", "ls", "l", plugin.language["CmdFactionLawList"] -> factionLawListCommand.onCommand(sender, command, label, args.drop(1).toTypedArray())
             else -> {
                 sender.sendMessage("${ChatColor.RED}${plugin.language["CommandFactionLawUsage"]}")
                 true

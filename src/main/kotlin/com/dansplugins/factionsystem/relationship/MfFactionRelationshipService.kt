@@ -20,6 +20,12 @@ class MfFactionRelationshipService(private val repository: MfFactionRelationship
         ServiceFailure(exception.toServiceFailureType(), "Service error: ${exception.message}", exception)
     }
 
+    fun delete(id: MfFactionRelationshipId): Result4k<Unit, ServiceFailure> = resultFrom {
+        repository.delete(id)
+    }.mapFailure { exception ->
+        ServiceFailure(exception.toServiceFailureType(), "Service error: ${exception.message}", exception)
+    }
+
     private fun Exception.toServiceFailureType(): ServiceFailureType {
         return when (this) {
             is OptimisticLockingFailureException -> ServiceFailureType.CONFLICT

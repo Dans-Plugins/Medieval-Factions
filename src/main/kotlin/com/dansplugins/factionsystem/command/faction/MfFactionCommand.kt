@@ -2,6 +2,7 @@ package com.dansplugins.factionsystem.command.faction
 
 import com.dansplugins.factionsystem.MedievalFactions
 import com.dansplugins.factionsystem.command.faction.ally.MfFactionAllyCommand
+import com.dansplugins.factionsystem.command.faction.breakalliance.MfFactionBreakAllianceCommand
 import com.dansplugins.factionsystem.command.faction.create.MfFactionCreateCommand
 import com.dansplugins.factionsystem.command.faction.invite.MfFactionInviteCommand
 import com.dansplugins.factionsystem.command.faction.join.MfFactionJoinCommand
@@ -16,6 +17,7 @@ class MfFactionCommand(private val plugin: MedievalFactions) : CommandExecutor {
     private val factionCreateCommand = MfFactionCreateCommand(plugin)
     private val factionLawCommand = MfFactionLawCommand(plugin)
     private val factionAllyCommand = MfFactionAllyCommand(plugin)
+    private val factionBreakAllianceCommand = MfFactionBreakAllianceCommand(plugin)
     private val factionInviteCommand = MfFactionInviteCommand(plugin)
     private val factionJoinCommand = MfFactionJoinCommand(plugin)
 
@@ -25,11 +27,12 @@ class MfFactionCommand(private val plugin: MedievalFactions) : CommandExecutor {
             return true
         }
         return when (args[0].lowercase()) {
-            "create" -> factionCreateCommand.onCommand(sender, command, label, args.drop(1).toTypedArray())
-            "law" -> factionLawCommand.onCommand(sender, command, label, args.drop(1).toTypedArray())
-            "ally" -> factionAllyCommand.onCommand(sender, command, label, args.drop(1).toTypedArray())
-            "invite" -> factionInviteCommand.onCommand(sender, command, label, args.drop(1).toTypedArray())
-            "join" -> factionJoinCommand.onCommand(sender, command, label, args.drop(1).toTypedArray())
+            "create", plugin.language["CmdFactionCreate"] -> factionCreateCommand.onCommand(sender, command, label, args.drop(1).toTypedArray())
+            "law", plugin.language["CmdFactionLaw"] -> factionLawCommand.onCommand(sender, command, label, args.drop(1).toTypedArray())
+            "ally", plugin.language["CmdFactionAlly"] -> factionAllyCommand.onCommand(sender, command, label, args.drop(1).toTypedArray())
+            "breakalliance", "ba", plugin.language["CmdFactionBreakAlliance"] -> factionBreakAllianceCommand.onCommand(sender, command, label, args.drop(1).toTypedArray())
+            "invite", plugin.language["CmdFactionInvite"] -> factionInviteCommand.onCommand(sender, command, label, args.drop(1).toTypedArray())
+            "join", plugin.language["CmdFactionJoin"] -> factionJoinCommand.onCommand(sender, command, label, args.drop(1).toTypedArray())
             else -> {
                 sender.sendMessage("$RED${plugin.language["CommandFactionUsage"]}")
                 true

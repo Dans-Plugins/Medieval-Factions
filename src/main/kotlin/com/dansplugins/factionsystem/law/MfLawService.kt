@@ -19,8 +19,10 @@ class MfLawService(private val repository: MfLawRepository) {
     }.mapFailure { exception ->
         ServiceFailure(exception.toServiceFailureType(), "Service error: ${exception.message}", exception)
     }
-    fun delete(id: MfLawId) {
+    fun delete(id: MfLawId): Result4k<Unit, ServiceFailure> = resultFrom {
         repository.delete(id)
+    }.mapFailure { exception ->
+        ServiceFailure(exception.toServiceFailureType(), "Service error: ${exception.message}", exception)
     }
 
     private fun Exception.toServiceFailureType(): ServiceFailureType {
