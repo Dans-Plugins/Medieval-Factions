@@ -4,6 +4,7 @@ import com.dansplugins.factionsystem.MedievalFactions
 import com.dansplugins.factionsystem.command.faction.ally.MfFactionAllyCommand
 import com.dansplugins.factionsystem.command.faction.breakalliance.MfFactionBreakAllianceCommand
 import com.dansplugins.factionsystem.command.faction.create.MfFactionCreateCommand
+import com.dansplugins.factionsystem.command.faction.declarewar.MfFactionDeclareWarCommand
 import com.dansplugins.factionsystem.command.faction.invite.MfFactionInviteCommand
 import com.dansplugins.factionsystem.command.faction.join.MfFactionJoinCommand
 import com.dansplugins.factionsystem.command.faction.law.MfFactionLawCommand
@@ -20,6 +21,7 @@ class MfFactionCommand(private val plugin: MedievalFactions) : CommandExecutor {
     private val factionBreakAllianceCommand = MfFactionBreakAllianceCommand(plugin)
     private val factionInviteCommand = MfFactionInviteCommand(plugin)
     private val factionJoinCommand = MfFactionJoinCommand(plugin)
+    private val factionDeclareWarCommand = MfFactionDeclareWarCommand(plugin)
 
     override fun onCommand(sender: CommandSender, command: Command, label: String, args: Array<out String>): Boolean {
         if (args.isEmpty()) {
@@ -33,6 +35,7 @@ class MfFactionCommand(private val plugin: MedievalFactions) : CommandExecutor {
             "breakalliance", "ba", plugin.language["CmdFactionBreakAlliance"] -> factionBreakAllianceCommand.onCommand(sender, command, label, args.drop(1).toTypedArray())
             "invite", plugin.language["CmdFactionInvite"] -> factionInviteCommand.onCommand(sender, command, label, args.drop(1).toTypedArray())
             "join", plugin.language["CmdFactionJoin"] -> factionJoinCommand.onCommand(sender, command, label, args.drop(1).toTypedArray())
+            "declarewar", "dw", plugin.language["CmdFactionDeclareWar"] -> factionDeclareWarCommand.onCommand(sender, command, label, args.drop(1).toTypedArray())
             else -> {
                 sender.sendMessage("$RED${plugin.language["CommandFactionUsage"]}")
                 true

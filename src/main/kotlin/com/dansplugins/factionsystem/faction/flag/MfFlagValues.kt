@@ -12,7 +12,7 @@ class MfFlagValues(private val values: Map<MfFlag<Any?>, Any?> = mutableMapOf())
     companion object {
         @JvmStatic
         fun deserialize(serialized: Map<String, Any?>): MfFlagValues {
-            val plugin = Bukkit.getPluginManager().getPlugin("MedievalFactions") as com.dansplugins.factionsystem.MedievalFactions
+            val plugin = Bukkit.getPluginManager().getPlugin("MedievalFactions") as MedievalFactions
             return MfFlagValues(serialized.mapKeys { (flagName, _) -> plugin.flags[flagName]!! })
         }
     }
