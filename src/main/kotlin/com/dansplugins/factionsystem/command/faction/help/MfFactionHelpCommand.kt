@@ -17,19 +17,19 @@ class MfFactionHelpCommand(private val plugin: MedievalFactions) : CommandExecut
             sender.sendMessage("$RED${plugin.language["CommandFactionHelpNoPermission"]}");
             return true
         }
-        sender.sendMessage("$AQUA${plugin.language["CommandFactionHelpListTitle"]}");
+        sender.sendMessage("$GREEN${plugin.language["CommandFactionHelpListTitle"]}");
 
         // more relevant to members
-        sender.sendMessage("$AQUA${plugin.language["CommandFactionHelpJoin"]}");
-        sender.sendMessage("$AQUA${plugin.language["CommandFactionHelpLawList"]}");
+        sender.sendMessage("$GREEN${plugin.language["CommandFactionHelpJoin"]}");
+        sender.sendMessage("$GREEN${plugin.language["CommandFactionHelpLawList"]}");
 
         // more relevant to leaders
-        sender.sendMessage("$AQUA${plugin.language["CommandFactionHelpCreate"]}");
-        sender.sendMessage("$AQUA${plugin.language["CommandFactionHelpInvite"]}");
-        sender.sendMessage("$AQUA${plugin.language["CommandFactionHelpLawAddRemove"]}");
-        sender.sendMessage("$AQUA${plugin.language["CommandFactionHelpAlly"]}");
-        sender.sendMessage("$AQUA${plugin.language["CommandFactionHelpBreakAlliance"]}");
-        sender.sendMessage("$AQUA${plugin.language["CommandFactionHelpDeclareWar"]}");
+        sender.sendMessage("$GREEN${plugin.language["CommandFactionHelpCreate"]}");
+        sender.sendMessage("$GREEN${plugin.language["CommandFactionHelpInvite"]}");
+        sender.sendMessage("$GREEN${plugin.language["CommandFactionHelpLawAddRemove"]}");
+        sender.sendMessage("$GREEN${plugin.language["CommandFactionHelpAlly"]}");
+        sender.sendMessage("$GREEN${plugin.language["CommandFactionHelpBreakAlliance"]}");
+        sender.sendMessage("$GREEN${plugin.language["CommandFactionHelpDeclareWar"]}");
         return true
     }
 }
