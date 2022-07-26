@@ -26,6 +26,7 @@ commands:
   faction:
     description: |
       Faction management command
+      /f help - View a list of helpful commands.
       /f ally [faction] - Ally with a faction
       /f create [name] - Create a faction with the given name
       /f invite [player] - Invite a player to your faction
@@ -35,6 +36,9 @@ commands:
     aliases: [f]
     usage: /<command> [ally|create|invite|law]
 permissions:
+  mf.help:
+    description: View a list of helpful commands.
+    default: true
   mf.ally:
     description: Allows allying with other factions
     default: true

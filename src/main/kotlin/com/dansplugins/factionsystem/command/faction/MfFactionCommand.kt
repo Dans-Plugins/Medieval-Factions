@@ -8,6 +8,7 @@ import com.dansplugins.factionsystem.command.faction.declarewar.MfFactionDeclare
 import com.dansplugins.factionsystem.command.faction.invite.MfFactionInviteCommand
 import com.dansplugins.factionsystem.command.faction.join.MfFactionJoinCommand
 import com.dansplugins.factionsystem.command.faction.law.MfFactionLawCommand
+import com.dansplugins.factionsystem.command.faction.help.MfFactionHelpCommand
 import org.bukkit.ChatColor.RED
 import org.bukkit.command.Command
 import org.bukkit.command.CommandExecutor
@@ -15,6 +16,7 @@ import org.bukkit.command.CommandSender
 
 class MfFactionCommand(private val plugin: MedievalFactions) : CommandExecutor {
 
+    private val factionHelpCommand = MfFactionHelpCommand(plugin)
     private val factionCreateCommand = MfFactionCreateCommand(plugin)
     private val factionLawCommand = MfFactionLawCommand(plugin)
     private val factionAllyCommand = MfFactionAllyCommand(plugin)
@@ -29,6 +31,7 @@ class MfFactionCommand(private val plugin: MedievalFactions) : CommandExecutor {
             return true
         }
         return when (args[0].lowercase()) {
+            "help", plugin.language["CmdFactionHelp"] -> factionHelpCommand.onCommand(sender, command, label, args.drop(1).toTypedArray())
             "create", plugin.language["CmdFactionCreate"] -> factionCreateCommand.onCommand(sender, command, label, args.drop(1).toTypedArray())
             "law", plugin.language["CmdFactionLaw"] -> factionLawCommand.onCommand(sender, command, label, args.drop(1).toTypedArray())
             "ally", plugin.language["CmdFactionAlly"] -> factionAllyCommand.onCommand(sender, command, label, args.drop(1).toTypedArray())
