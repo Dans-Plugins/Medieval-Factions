@@ -15,14 +15,6 @@ class MedievalFactionsCommand(private val plugin: MedievalFactions) : CommandExe
             sender.sendMessage(plugin.language["DeveloperList", plugin.description.authors.joinToString()])
             sender.sendMessage(plugin.language["WikiLink"])
             sender.sendMessage(plugin.language["CurrentLanguage", plugin.config.getString("language") ?: "en_US"])
-            // sender.sendMessage(plugin.language["SupportedLanguageList", Locale.getAvailableLocales().filter {
-            //     try {
-            //         ResourceBundle.getBundle("lang", it)
-            //         true
-            //     } catch(_: MissingResourceException) {
-            //         false
-            //     }
-            // }.joinToString { it.toString() }])
             return true
         }
         return when (args[0].lowercase()) {
