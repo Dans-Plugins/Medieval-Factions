@@ -28,13 +28,17 @@ commands:
       Faction management command
       /f help - View a list of helpful commands.
       /f ally [faction] - Ally with a faction
+      /f breakalliance [faction] - Break alliance with a faction
+      /f declarewar [faction] - Declares war on a faction
+      /f makepeace [faction] - Requests to make peace with a faction
       /f create [name] - Create a faction with the given name
       /f invite [player] - Invite a player to your faction
+      /f join [faction] - Joins a faction you have been invited to
       /f law add [law] - Create a law for your faction
       /f law list - List your faction's laws
       /f law remove [id] - Remove a law from your faction
     aliases: [f]
-    usage: /<command> [ally|create|invite|law]
+    usage: /<command> [help|ally|breakalliance|declarewar|makepeace|create|invite|join|law]
 permissions:
   mf.help:
     description: View a list of helpful commands.
@@ -42,8 +46,14 @@ permissions:
   mf.ally:
     description: Allows allying with other factions
     default: true
+  mf.breakalliance:
+    description: Allows breaking alliances with other factions
+    default: true
   mf.create:
     description: Allows the creation of factions
+    default: true
+  mf.declarewar:
+    description: Allows declaring war on other factions
     default: true
   mf.invite:
     description: Allows inviting players to your faction
@@ -59,4 +69,7 @@ permissions:
     default: true
   mf.removelaw:
     description: Allows removing laws
+    default: true
+  mf.makepeace:
+    description: Allows making peace with other factions
     default: true
