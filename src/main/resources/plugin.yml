@@ -102,6 +102,9 @@ permissions:
   mf.makepeace:
     description: Allows making peace with other factions
     default: true
+  mf.info:
+    description: View information about your faction.
+    default: true
   mf.role.view:
     description: Allows viewing roles
     default: true

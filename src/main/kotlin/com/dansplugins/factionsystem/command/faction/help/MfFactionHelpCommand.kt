@@ -16,6 +16,8 @@ class MfFactionHelpCommand(private val plugin: MedievalFactions) : CommandExecut
         sender.sendMessage("$AQUA${plugin.language["CommandFactionHelpListTitle"]}")
 
         // more relevant to members
+        sender.sendMessage("$AQUA${plugin.language["CommandFactionHelpHelp"]}")
+        sender.sendMessage("$AQUA${plugin.language["CommandFactionHelpInfo"]}")
         sender.sendMessage("$AQUA${plugin.language["CommandFactionHelpJoin"]}")
         sender.sendMessage("$AQUA${plugin.language["CommandFactionHelpMembers"]}")
         sender.sendMessage("$AQUA${plugin.language["CommandFactionHelpLawList"]}")
