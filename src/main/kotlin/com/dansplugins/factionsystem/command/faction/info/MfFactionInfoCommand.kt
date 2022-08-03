@@ -1,4 +1,4 @@
-package com.dansplugins.factionsystem.command.faction.help
+package com.dansplugins.factionsystem.command.faction.info
 
 import com.dansplugins.factionsystem.MedievalFactions
 import com.dansplugins.factionsystem.player.MfPlayer
