@@ -19,7 +19,9 @@ create table `mf_faction`(
 );
 
 create table `mf_player`(
-    `id` varchar(36) primary key not null
+    `id` varchar(36) primary key not null,
+    `version` integer not null,
+    `power` integer not null
 );
 
 create table `mf_faction_member`(

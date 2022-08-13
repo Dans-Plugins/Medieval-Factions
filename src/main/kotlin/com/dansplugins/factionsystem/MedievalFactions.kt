@@ -16,6 +16,7 @@ import com.dansplugins.factionsystem.notification.MfNotificationDispatcher
 import com.dansplugins.factionsystem.notification.NoOpNotificationDispatcher
 import com.dansplugins.factionsystem.notification.RpkNotificationDispatcher
 import com.dansplugins.factionsystem.player.JooqMfPlayerRepository
+import com.dansplugins.factionsystem.player.MfPlayerId
 import com.dansplugins.factionsystem.player.MfPlayerRepository
 import com.dansplugins.factionsystem.player.MfPlayerService
 import com.dansplugins.factionsystem.relationship.JooqMfFactionRelationshipRepository
@@ -101,6 +102,14 @@ class MedievalFactions : JavaPlugin() {
 
         getCommand("medievalfactions")?.setExecutor(MedievalFactionsCommand(this))
         getCommand("faction")?.setExecutor(MfFactionCommand(this))
+
+        server.scheduler.scheduleSyncRepeatingTask(this, {
+            val onlinePlayers = server.onlinePlayers
+            val onlineMfPlayerIds = onlinePlayers.map { MfPlayerId(it.uniqueId.toString()) }
+            server.scheduler.runTaskAsynchronously(this, Runnable {
+                playerService.updatePlayerPower(onlineMfPlayerIds)
+            })
+        }, (60 - LocalTime.now().minute) * 60 * 20L, 72000L)
     }
 
     private fun setupNotificationDispatcher() {

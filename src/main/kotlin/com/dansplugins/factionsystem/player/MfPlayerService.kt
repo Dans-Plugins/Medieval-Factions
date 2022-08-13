@@ -5,9 +5,7 @@ import com.dansplugins.factionsystem.failure.ServiceFailure
 import com.dansplugins.factionsystem.failure.ServiceFailureType
 import com.dansplugins.factionsystem.failure.ServiceFailureType.CONFLICT
 import com.dansplugins.factionsystem.failure.ServiceFailureType.GENERAL
-import dev.forkhandles.result4k.Result4k
-import dev.forkhandles.result4k.mapFailure
-import dev.forkhandles.result4k.resultFrom
+import dev.forkhandles.result4k.*
 import org.bukkit.OfflinePlayer
 
 class MfPlayerService(private val playerRepository: MfPlayerRepository) {
@@ -22,6 +20,20 @@ class MfPlayerService(private val playerRepository: MfPlayerRepository) {
         playerRepository.upsert(player)
     }.mapFailure { exception ->
         ServiceFailure(exception.toServiceFailureType(), "Service error: ${exception.message}", exception)
+    }
+
+    fun updatePlayerPower(onlinePlayerIds: List<MfPlayerId>): Result4k<Unit, ServiceFailure> {
+        resultFrom {
+            playerRepository.increaseOnlinePlayerPower(onlinePlayerIds)
+        }.mapFailure { exception ->
+            ServiceFailure(exception.toServiceFailureType(), "Service error: ${exception.message}", exception)
+        }.onFailure { return it }
+        resultFrom {
+            playerRepository.decreaseOfflinePlayerPower(onlinePlayerIds)
+        }.mapFailure { exception ->
+            ServiceFailure(exception.toServiceFailureType(), "Service error: ${exception.message}", exception)
+        }.onFailure { return it }
+        return Success(Unit)
     }
 
     private fun Exception.toServiceFailureType(): ServiceFailureType {
