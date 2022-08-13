@@ -1,7 +1,7 @@
 package com.dansplugins.factionsystem.command.faction.makepeace
 
 import com.dansplugins.factionsystem.MedievalFactions
-import com.dansplugins.factionsystem.faction.permission.MfFactionPermission.MAKE_PEACE
+import com.dansplugins.factionsystem.faction.permission.MfFactionPermission.Companion.MAKE_PEACE
 import com.dansplugins.factionsystem.player.MfPlayer
 import com.dansplugins.factionsystem.relationship.MfFactionRelationshipType.AT_WAR
 import dev.forkhandles.result4k.onFailure
@@ -44,7 +44,7 @@ class MfFactionMakePeaceCommand(private val plugin: MedievalFactions) : CommandE
             }
             val role = faction.getRole(mfPlayer.id)
             if (role == null || !role.hasPermission(faction, MAKE_PEACE)) {
-                sender.sendMessage("$RED${plugin.language["CommandFactionMakePeaceNoRolePermission"]}")
+                sender.sendMessage("$RED${plugin.language["CommandFactionMakePeaceNoFactionPermission"]}")
                 return@Runnable
             }
             val target = factionService.getFaction(args.joinToString(" "))

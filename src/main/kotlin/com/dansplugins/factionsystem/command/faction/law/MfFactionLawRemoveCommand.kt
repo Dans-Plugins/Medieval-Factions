@@ -1,7 +1,7 @@
 package com.dansplugins.factionsystem.command.faction.law
 
 import com.dansplugins.factionsystem.MedievalFactions
-import com.dansplugins.factionsystem.faction.permission.MfFactionPermission.REMOVE_LAW
+import com.dansplugins.factionsystem.faction.permission.MfFactionPermission.Companion.REMOVE_LAW
 import com.dansplugins.factionsystem.law.MfLawId
 import com.dansplugins.factionsystem.player.MfPlayer
 import dev.forkhandles.result4k.onFailure
@@ -42,7 +42,7 @@ class MfFactionLawRemoveCommand(private val plugin: MedievalFactions) : CommandE
             }
             val role = faction.getRole(mfPlayer.id)
             if (role == null || !role.hasPermission(faction, REMOVE_LAW)) {
-                sender.sendMessage("$RED${plugin.language["CommandFactionLawRemoveNoRolePermission"]}")
+                sender.sendMessage("$RED${plugin.language["CommandFactionLawRemoveNoFactionPermission"]}")
                 return@Runnable
             }
             val lawService = plugin.services.lawService

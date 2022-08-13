@@ -1,7 +1,7 @@
 package com.dansplugins.factionsystem.command.faction.law
 
 import com.dansplugins.factionsystem.MedievalFactions
-import com.dansplugins.factionsystem.faction.permission.MfFactionPermission.LIST_LAWS
+import com.dansplugins.factionsystem.faction.permission.MfFactionPermission.Companion.LIST_LAWS
 import com.dansplugins.factionsystem.player.MfPlayer
 import dev.forkhandles.result4k.onFailure
 import net.md_5.bungee.api.chat.ClickEvent
@@ -44,7 +44,7 @@ class MfFactionLawListCommand(private val plugin: MedievalFactions) : CommandExe
             }
             val role = faction.getRole(mfPlayer.id)
             if (role == null || !role.hasPermission(faction, LIST_LAWS)) {
-                sender.sendMessage("${org.bukkit.ChatColor.RED}${plugin.language["CommandFactionLawListNoRolePermission"]}")
+                sender.sendMessage("${org.bukkit.ChatColor.RED}${plugin.language["CommandFactionLawListNoFactionPermission"]}")
                 return@Runnable
             }
             val lawService = plugin.services.lawService

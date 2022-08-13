@@ -5,6 +5,7 @@ import com.dansplugins.factionsystem.area.MfPosition
 import com.dansplugins.factionsystem.faction.flag.MfFlagValues
 import com.dansplugins.factionsystem.faction.permission.MfFactionPermission
 import com.dansplugins.factionsystem.faction.role.MfFactionRole
+import com.dansplugins.factionsystem.faction.role.MfFactionRoleId
 import com.dansplugins.factionsystem.faction.role.MfFactionRoles
 import com.dansplugins.factionsystem.failure.OptimisticLockingFailureException
 import com.dansplugins.factionsystem.jooq.Tables.*
@@ -22,7 +23,8 @@ import org.jooq.impl.DSL.`val`
 
 class JooqMfFactionRepository(
     private val plugin: MedievalFactions,
-    private val dsl: DSLContext
+    private val dsl: DSLContext,
+    private val gson: Gson
 ) : MfFactionRepository {
 
     override fun getFaction(id: MfFactionId): MfFaction? = getFaction(MF_FACTION.ID.eq(id.value))
@@ -38,7 +40,7 @@ class JooqMfFactionRepository(
 
     private fun getFaction(condition: Condition): MfFaction? {
         val factionRecord = dsl.selectFrom(MF_FACTION).where(condition).fetchOne() ?: return null
-        val roles = Gson().fromJson<List<MfFactionRole>>(
+        val roles = gson.fromJson<List<MfFactionRole>>(
             factionRecord.roles.data(),
             TypeToken.getParameterized(List::class.java, MfFactionRole::class.java).type
         )
@@ -75,7 +77,7 @@ class JooqMfFactionRepository(
             .set(MF_FACTION.VERSION, 1)
             .set(MF_FACTION.NAME, faction.name)
             .set(MF_FACTION.DESCRIPTION, faction.description)
-            .set(MF_FACTION.FLAGS, JSON.valueOf(Gson().toJson(faction.flags.serialize())))
+            .set(MF_FACTION.FLAGS, JSON.valueOf(gson.toJson(faction.flags.serialize())))
             .set(MF_FACTION.PREFIX, faction.prefix)
             .set(MF_FACTION.HOME_WORLD, faction.home?.worldName)
             .set(MF_FACTION.HOME_X, faction.home?.x)
@@ -85,18 +87,21 @@ class JooqMfFactionRepository(
             .set(MF_FACTION.HOME_PITCH, faction.home?.pitch)
             .set(MF_FACTION.BONUS_POWER, faction.bonusPower)
             .set(MF_FACTION.AUTOCLAIM, faction.autoclaim)
-            .set(MF_FACTION.ROLES, JSON.valueOf(
-                Gson().toJson(faction.roles)
-            ))
+            .set(
+                MF_FACTION.ROLES, JSON.valueOf(
+                    gson.toJson(faction.roles)
+                )
+            )
             .set(MF_FACTION.DEFAULT_ROLE_ID, faction.roles.default.id.value)
-            .set(MF_FACTION.DEFAULT_PERMISSIONS, JSON.valueOf(
-                Gson().toJson(faction.defaultPermissions.mapKeys { it.key.name })
-            ))
+            .set(
+                MF_FACTION.DEFAULT_PERMISSIONS, JSON.valueOf(
+                    gson.toJson(faction.defaultPermissions.mapKeys { it.key.name })
+                )
+            )
             .onConflict(MF_FACTION.ID).doUpdate()
-            .set(MF_FACTION.VERSION, faction.version + 1)
             .set(MF_FACTION.NAME, faction.name)
             .set(MF_FACTION.DESCRIPTION, faction.description)
-            .set(MF_FACTION.FLAGS, JSON.valueOf(Gson().toJson(faction.flags)))
+            .set(MF_FACTION.FLAGS, JSON.valueOf(gson.toJson(faction.flags.serialize())))
             .set(MF_FACTION.PREFIX, faction.prefix)
             .set(MF_FACTION.HOME_WORLD, faction.home?.worldName)
             .set(MF_FACTION.HOME_X, faction.home?.x)
@@ -106,11 +111,14 @@ class JooqMfFactionRepository(
             .set(MF_FACTION.HOME_PITCH, faction.home?.pitch)
             .set(MF_FACTION.BONUS_POWER, faction.bonusPower)
             .set(MF_FACTION.AUTOCLAIM, faction.autoclaim)
-            .set(MF_FACTION.ROLES, JSON.valueOf(Gson().toJson(faction.roles)))
+            .set(MF_FACTION.ROLES, JSON.valueOf(gson.toJson(faction.roles)))
             .set(MF_FACTION.DEFAULT_ROLE_ID, faction.roles.default.id.value)
-            .set(MF_FACTION.DEFAULT_PERMISSIONS, JSON.valueOf(
-                Gson().toJson(faction.defaultPermissions.mapKeys { it.key.name })
-            ))
+            .set(
+                MF_FACTION.DEFAULT_PERMISSIONS, JSON.valueOf(
+                    gson.toJson(faction.defaultPermissions.mapKeys { it.key.name })
+                )
+            )
+            .set(MF_FACTION.VERSION, faction.version + 1)
             .where(MF_FACTION.ID.eq(faction.id.value))
             .and(MF_FACTION.VERSION.eq(faction.version))
             .execute()
@@ -120,7 +128,6 @@ class JooqMfFactionRepository(
             .fetchOne()
             .let(::requireNotNull)
             .toDomain()
-
     }
 
     private fun deleteMembers(dsl: DSLContext, factionId: MfFactionId) {
@@ -168,7 +175,11 @@ class JooqMfFactionRepository(
     }
 
     private fun MfFactionRecord.toDomain(members: List<MfFactionMember> = emptyList(), invites: List<MfFactionInvite> = emptyList()): MfFaction {
-        val roles = Gson().fromJson<List<MfFactionRole>>(roles.data(), TypeToken.getParameterized(List::class.java, MfFactionRole::class.java).type)
+        val roles = gson.fromJson<List<MfFactionRole>>(roles.data(), TypeToken.getParameterized(List::class.java, MfFactionRole::class.java).type)
+        val factionRoles = MfFactionRoles(
+            defaultRoleId = defaultRoleId.let(::MfFactionRoleId),
+            roles = roles
+        )
         return MfFaction(
             plugin = plugin,
             id = id.let(::MfFactionId),
@@ -178,7 +189,7 @@ class JooqMfFactionRepository(
             members = members,
             invites = invites,
             flags = MfFlagValues.deserialize(
-                Gson().fromJson(
+                gson.fromJson(
                     flags.data(),
                     TypeToken.getParameterized(
                         Map::class.java,
@@ -200,18 +211,19 @@ class JooqMfFactionRepository(
             },
             bonusPower = bonusPower,
             autoclaim = autoclaim,
-            roles = MfFactionRoles(
-                default = roles.single { it.id.value == defaultRoleId },
-                roles = roles
-            ),
-            defaultPermissions = Gson().fromJson<Map<String, Boolean>>(
+            roles = factionRoles,
+            defaultPermissions = gson.fromJson<Map<String, Boolean>>(
                 defaultPermissions.data(),
                 TypeToken.getParameterized(
                     Map::class.java,
                     String::class.java,
                     Boolean::class.javaObjectType
                 ).type
-            ).mapKeys { MfFactionPermission.valueOf(it.key) }
+            ).flatMap { (key, value) ->
+                MfFactionPermission.valueOf(key, plugin.flags)
+                    ?.let { listOf(it to value) }
+                    ?: emptyList()
+            }.toMap()
         )
     }
 
