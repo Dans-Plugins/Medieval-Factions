@@ -6,6 +6,8 @@ import com.dansplugins.factionsystem.faction.JooqMfFactionRepository
 import com.dansplugins.factionsystem.faction.MfFactionRepository
 import com.dansplugins.factionsystem.faction.MfFactionService
 import com.dansplugins.factionsystem.faction.flag.MfFlags
+import com.dansplugins.factionsystem.faction.permission.MfFactionPermission
+import com.dansplugins.factionsystem.faction.permission.MfFactionPermissionSerializer
 import com.dansplugins.factionsystem.lang.Language
 import com.dansplugins.factionsystem.law.JooqMfLawRepository
 import com.dansplugins.factionsystem.law.MfLawRepository
@@ -21,6 +23,7 @@ import com.dansplugins.factionsystem.player.MfPlayerService
 import com.dansplugins.factionsystem.relationship.JooqMfFactionRelationshipRepository
 import com.dansplugins.factionsystem.relationship.MfFactionRelationshipService
 import com.dansplugins.factionsystem.service.Services
+import com.google.gson.GsonBuilder
 import com.zaxxer.hikari.HikariConfig
 import com.zaxxer.hikari.HikariDataSource
 import org.bstats.bukkit.Metrics
@@ -29,6 +32,7 @@ import org.flywaydb.core.Flyway
 import org.jooq.SQLDialect
 import org.jooq.conf.Settings
 import org.jooq.impl.DSL
+import java.time.LocalTime
 import java.util.*
 import javax.sql.DataSource
 
@@ -81,8 +85,9 @@ class MedievalFactions : JavaPlugin() {
 
         flags = MfFlags(this)
 
+        val gson = GsonBuilder().registerTypeAdapter(MfFactionPermission::class.java, MfFactionPermissionSerializer(flags)).create()
         val playerRepository: MfPlayerRepository = JooqMfPlayerRepository(dsl)
-        val factionRepository: MfFactionRepository = JooqMfFactionRepository(this, dsl)
+        val factionRepository: MfFactionRepository = JooqMfFactionRepository(this, dsl, gson)
         val lawRepository: MfLawRepository = JooqMfLawRepository(dsl)
         val factionRelationshipRepository = JooqMfFactionRelationshipRepository(dsl)
         val playerService = MfPlayerService(playerRepository)

@@ -12,4 +12,6 @@ data class MfFactionRole(
         permissions[permission]
             ?: faction.defaultPermissions[permission]
             ?: false
+
+    fun getPermissionValue(permission: MfFactionPermission) = permissions[permission]
 }

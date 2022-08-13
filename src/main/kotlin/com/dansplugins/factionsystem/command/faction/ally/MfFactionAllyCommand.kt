@@ -1,7 +1,7 @@
 package com.dansplugins.factionsystem.command.faction.ally
 
 import com.dansplugins.factionsystem.MedievalFactions
-import com.dansplugins.factionsystem.faction.permission.MfFactionPermission.REQUEST_ALLIANCE
+import com.dansplugins.factionsystem.faction.permission.MfFactionPermission.Companion.REQUEST_ALLIANCE
 import com.dansplugins.factionsystem.player.MfPlayer
 import com.dansplugins.factionsystem.relationship.MfFactionRelationship
 import com.dansplugins.factionsystem.relationship.MfFactionRelationshipType.ALLY
@@ -45,7 +45,7 @@ class MfFactionAllyCommand(private val plugin: MedievalFactions) : CommandExecut
             }
             val role = faction.getRole(mfPlayer.id)
             if (role == null || !role.hasPermission(faction, REQUEST_ALLIANCE)) {
-                sender.sendMessage("$RED${plugin.language["CommandFactionAllyNoRolePermission"]}")
+                sender.sendMessage("$RED${plugin.language["CommandFactionAllyNoFactionPermission"]}")
                 return@Runnable
             }
             val target = factionService.getFaction(args.joinToString(" "))

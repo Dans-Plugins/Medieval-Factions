@@ -1,7 +1,7 @@
 package com.dansplugins.factionsystem.command.faction.declarewar
 
 import com.dansplugins.factionsystem.MedievalFactions
-import com.dansplugins.factionsystem.faction.permission.MfFactionPermission.DECLARE_WAR
+import com.dansplugins.factionsystem.faction.permission.MfFactionPermission.Companion.DECLARE_WAR
 import com.dansplugins.factionsystem.player.MfPlayer
 import com.dansplugins.factionsystem.relationship.MfFactionRelationship
 import com.dansplugins.factionsystem.relationship.MfFactionRelationshipType.*
@@ -46,7 +46,7 @@ class MfFactionDeclareWarCommand(private val plugin: MedievalFactions) : Command
             }
             val role = faction.getRole(mfPlayer.id)
             if (role == null || !role.hasPermission(faction, DECLARE_WAR)) {
-                sender.sendMessage("$RED${plugin.language["CommandFactionDeclareWarNoRolePermission"]}")
+                sender.sendMessage("$RED${plugin.language["CommandFactionDeclareWarNoFactionPermission"]}")
                 return@Runnable
             }
             val target = factionService.getFaction(args.joinToString(" "))

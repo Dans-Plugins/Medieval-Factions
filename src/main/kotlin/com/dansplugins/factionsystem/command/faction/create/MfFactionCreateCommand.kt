@@ -52,7 +52,7 @@ class MfFactionCreateCommand(private val plugin: MedievalFactions) : CommandExec
                 sender.sendMessage("$RED${plugin.language["CommandFactionCreateFactionAlreadyExists"]}")
                 return@Runnable
             }
-            val roles = MfFactionRoles.defaults()
+            val roles = MfFactionRoles.defaults(plugin.flags)
             val owner = roles.single { it.name == "Owner" }
             val faction = MfFaction(plugin, name = factionName, roles = roles, members = listOf(mfPlayer.withRole(owner)))
             val createdFaction = factionService.save(faction).onFailure { failure ->
