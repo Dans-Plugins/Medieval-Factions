@@ -44,7 +44,7 @@ commands:
       /f claim (radius) - Claims land
       /f power - Views power stats
       /f who - Views a player's faction
-    aliases: [f]
+    aliases: [f, fraktion, faccion, faccao, фракция]
     usage: /<command> [help|ally|breakalliance|declarewar|makepeace|create|invite|join|law|role|list|claim|power|who]
 permissions:
   mf.help:
@@ -100,4 +100,7 @@ permissions:
     default: true
   mf.who:
     description: Allows viewing which faction a player is part of
+    default: true
+  mf.disband:
+    description: Allows disbanding your faction
     default: true

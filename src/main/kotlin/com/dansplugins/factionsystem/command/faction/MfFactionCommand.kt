@@ -6,6 +6,7 @@ import com.dansplugins.factionsystem.command.faction.breakalliance.MfFactionBrea
 import com.dansplugins.factionsystem.command.faction.claim.MfFactionClaimCommand
 import com.dansplugins.factionsystem.command.faction.create.MfFactionCreateCommand
 import com.dansplugins.factionsystem.command.faction.declarewar.MfFactionDeclareWarCommand
+import com.dansplugins.factionsystem.command.faction.disband.MfFactionDisbandCommand
 import com.dansplugins.factionsystem.command.faction.help.MfFactionHelpCommand
 import com.dansplugins.factionsystem.command.faction.invite.MfFactionInviteCommand
 import com.dansplugins.factionsystem.command.faction.join.MfFactionJoinCommand
@@ -36,6 +37,7 @@ class MfFactionCommand(private val plugin: MedievalFactions) : CommandExecutor {
     private val factionClaimCommand = MfFactionClaimCommand(plugin)
     private val factionPowerCommand = MfFactionPowerCommand(plugin)
     private val factionWhoCommand = MfFactionWhoCommand(plugin)
+    private val factionDisbandCommand = MfFactionDisbandCommand(plugin)
 
     override fun onCommand(sender: CommandSender, command: Command, label: String, args: Array<out String>): Boolean {
         if (args.isEmpty()) {
@@ -57,6 +59,7 @@ class MfFactionCommand(private val plugin: MedievalFactions) : CommandExecutor {
             "claim", plugin.language["CmdFactionClaim"] -> factionClaimCommand.onCommand(sender, command, label, args.drop(1).toTypedArray())
             "power", plugin.language["CmdFactionPower"] -> factionPowerCommand.onCommand(sender, command, label, args.drop(1).toTypedArray())
             "who", plugin.language["CmdFactionWho"] -> factionWhoCommand.onCommand(sender, command, label, args.drop(1).toTypedArray())
+            "disband", plugin.language["CmdFactionDisband"] -> factionDisbandCommand.onCommand(sender, command, label, args.drop(1).toTypedArray())
             else -> {
                 sender.sendMessage("$RED${plugin.language["CommandFactionUsage"]}")
                 true

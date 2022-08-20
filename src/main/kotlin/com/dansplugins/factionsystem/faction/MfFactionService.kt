@@ -23,6 +23,11 @@ class MfFactionService(private val repository: MfFactionRepository) {
     }.mapFailure { exception ->
         ServiceFailure(exception.toServiceFailureType(), "Service error: ${exception.message}", exception)
     }
+    fun delete(factionId: MfFactionId): Result4k<Unit, ServiceFailure> = resultFrom {
+        repository.delete(factionId)
+    }.mapFailure { exception ->
+        ServiceFailure(exception.toServiceFailureType(), "Service error: ${exception.message}", exception)
+    }
 
     private fun Exception.toServiceFailureType(): ServiceFailureType {
         return when (this) {
