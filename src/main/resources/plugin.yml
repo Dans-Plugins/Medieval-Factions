@@ -42,8 +42,9 @@ commands:
       /f role list - Lists roles
       /f list - Lists factions
       /f claim (radius) - Claims land
+      /f power - Views power stats
     aliases: [f]
-    usage: /<command> [help|ally|breakalliance|declarewar|makepeace|create|invite|join|law|role|list]
+    usage: /<command> [help|ally|breakalliance|declarewar|makepeace|create|invite|join|law|role|list|claim|power]
 permissions:
   mf.help:
     description: View a list of helpful commands.
@@ -92,4 +93,7 @@ permissions:
     default: true
   mf.claim:
     description: Allows claiming land
+    default: true
+  mf.power:
+    description: Allows viewing power
     default: true
