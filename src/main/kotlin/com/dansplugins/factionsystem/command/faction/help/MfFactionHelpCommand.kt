@@ -26,7 +26,7 @@ class MfFactionHelpCommand(private val plugin: MedievalFactions) : CommandExecut
         sender.sendMessage("$AQUA${plugin.language["CommandFactionHelpAlly"]}")
         sender.sendMessage("$AQUA${plugin.language["CommandFactionHelpBreakAlliance"]}")
         sender.sendMessage("$AQUA${plugin.language["CommandFactionHelpDeclareWar"]}")
-        sender.sendMessage("$AQUA${plugin.language["CommandFacitonHelpMakePeace"]}")
+        sender.sendMessage("$AQUA${plugin.language["CommandFactionHelpMakePeace"]}")
         return true
     }
 }

@@ -37,8 +37,11 @@ commands:
       /f law add [law] - Create a law for your faction
       /f law list - List your faction's laws
       /f law remove [id] - Remove a law from your faction
+      /f role view [role] - Views a role
+      /f role setpermission [role] [permission] [value] - Sets a permission for a role
+      /f role list - Lists roles
     aliases: [f]
-    usage: /<command> [help|ally|breakalliance|declarewar|makepeace|create|invite|join|law]
+    usage: /<command> [help|ally|breakalliance|declarewar|makepeace|create|invite|join|law|role]
 permissions:
   mf.help:
     description: View a list of helpful commands.
@@ -72,4 +75,13 @@ permissions:
     default: true
   mf.makepeace:
     description: Allows making peace with other factions
+    default: true
+  mf.role.view:
+    description: Allows viewing roles
+    default: true
+  mf.role.list:
+    description: Allows listing roles
+    default: true
+  mf.role.setpermission:
+    description: Allows setting role permissions
     default: true

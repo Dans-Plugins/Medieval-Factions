@@ -10,6 +10,7 @@ class MfFactionRoleCommand(private val plugin: MedievalFactions) : CommandExecut
 
     private val factionRoleViewCommand = MfFactionRoleViewCommand(plugin)
     private val factionRoleSetPermissionCommand = MfFactionRoleSetPermissionCommand(plugin)
+    private val factionRoleListCommand = MfFactionRoleListCommand(plugin)
 
     override fun onCommand(sender: CommandSender, command: Command, label: String, args: Array<out String>): Boolean {
         if (args.isEmpty()) {
@@ -19,6 +20,7 @@ class MfFactionRoleCommand(private val plugin: MedievalFactions) : CommandExecut
         return when (args[0].lowercase()) {
             "view", plugin.language["CmdFactionRoleView"] -> factionRoleViewCommand.onCommand(sender, command, label, args.drop(1).toTypedArray())
             "setpermission", plugin.language["CmdFactionRoleSetPermission"] -> factionRoleSetPermissionCommand.onCommand(sender, command, label, args.drop(1).toTypedArray())
+            "list", plugin.language["CmdFactionRoleList"] -> factionRoleListCommand.onCommand(sender, command, label, args.drop(1).toTypedArray())
             else -> {
                 sender.sendMessage("$RED${plugin.language["CommandFactionRoleUsage"]}")
                 true
