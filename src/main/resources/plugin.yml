@@ -43,8 +43,9 @@ commands:
       /f list - Lists factions
       /f claim (radius) - Claims land
       /f power - Views power stats
+      /f who - Views a player's faction
     aliases: [f]
-    usage: /<command> [help|ally|breakalliance|declarewar|makepeace|create|invite|join|law|role|list|claim|power]
+    usage: /<command> [help|ally|breakalliance|declarewar|makepeace|create|invite|join|law|role|list|claim|power|who]
 permissions:
   mf.help:
     description: View a list of helpful commands.
@@ -96,4 +97,7 @@ permissions:
     default: true
   mf.power:
     description: Allows viewing power
+    default: true
+  mf.who:
+    description: Allows viewing which faction a player is part of
     default: true
