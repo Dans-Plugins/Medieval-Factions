@@ -38,6 +38,25 @@ class JooqMfFactionRepository(
             )
     )
 
+    override fun getFactions(): List<MfFaction> {
+        return dsl.selectFrom(MF_FACTION).fetch()
+            .map { factionRecord ->
+                val roles = gson.fromJson<List<MfFactionRole>>(
+                    factionRecord.roles.data(),
+                    TypeToken.getParameterized(List::class.java, MfFactionRole::class.java).type
+                )
+                val members = dsl.selectFrom(MF_FACTION_MEMBER).where(MF_FACTION_MEMBER.FACTION_ID.eq(factionRecord.id))
+                    .fetch().map { it.toDomain(roles) }
+                val invites = dsl.selectFrom(MF_FACTION_INVITE).where(MF_FACTION_INVITE.FACTION_ID.eq(factionRecord.id))
+                    .fetch().map { it.toDomain() }
+                return@map factionRecord.toDomain(
+                    members = members,
+                    invites = invites,
+                    roles = roles
+                )
+            }
+    }
+
     private fun getFaction(condition: Condition): MfFaction? {
         val factionRecord = dsl.selectFrom(MF_FACTION).where(condition).fetchOne() ?: return null
         val roles = gson.fromJson<List<MfFactionRole>>(
@@ -50,7 +69,8 @@ class JooqMfFactionRepository(
             .fetch().map { it.toDomain() }
         return factionRecord.toDomain(
             members = members,
-            invites = invites
+            invites = invites,
+            roles = roles
         )
     }
 
@@ -174,11 +194,10 @@ class JooqMfFactionRepository(
             .toDomain()
     }
 
-    private fun MfFactionRecord.toDomain(members: List<MfFactionMember> = emptyList(), invites: List<MfFactionInvite> = emptyList()): MfFaction {
-        val roles = gson.fromJson<List<MfFactionRole>>(roles.data(), TypeToken.getParameterized(List::class.java, MfFactionRole::class.java).type)
+    private fun MfFactionRecord.toDomain(members: List<MfFactionMember> = emptyList(), invites: List<MfFactionInvite> = emptyList(), roles: List<MfFactionRole>? = null): MfFaction {
         val factionRoles = MfFactionRoles(
             defaultRoleId = defaultRoleId.let(::MfFactionRoleId),
-            roles = roles
+            roles = roles ?: gson.fromJson(this.roles.data(), TypeToken.getParameterized(List::class.java, MfFactionRole::class.java).type)
         )
         return MfFaction(
             plugin = plugin,

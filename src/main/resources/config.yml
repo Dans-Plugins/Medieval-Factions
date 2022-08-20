@@ -4,8 +4,11 @@ database:
   dialect: 'H2'
   username: 'sa'
   password: ''
+players:
+  maxPower: 20
+  hoursToReachMaxPower: 12
+  hoursToReachMinPower: 72
 factions:
-  initialMaxPowerLevel: 20
   initialPowerLevel: 5
   mobsSpawnInFactionTerritory: false
   powerIncreaseAmount: 2
@@ -25,7 +28,7 @@ factions:
   maxGateArea: 64
   surroundedChunksProtected: true
   zeroPowerFactionsGetDisbanded: false
-  vassalContributionPercentageMultiplier: 0.75
+  vassalPowerContributionMultiplier: 0.75
   nonMembersCanInteractWithDoors: false
   playersChatWithPrefixes: true
   maxClaimRadius: 3

@@ -40,8 +40,9 @@ commands:
       /f role view [role] - Views a role
       /f role setpermission [role] [permission] [value] - Sets a permission for a role
       /f role list - Lists roles
+      /f list - Lists factions
     aliases: [f]
-    usage: /<command> [help|ally|breakalliance|declarewar|makepeace|create|invite|join|law|role]
+    usage: /<command> [help|ally|breakalliance|declarewar|makepeace|create|invite|join|law|role|list]
 permissions:
   mf.help:
     description: View a list of helpful commands.
@@ -84,4 +85,7 @@ permissions:
     default: true
   mf.role.setpermission:
     description: Allows setting role permissions
+    default: true
+  mf.list:
+    description: Allows listing factions
     default: true

@@ -14,6 +14,14 @@ class MfFactionRelationshipService(private val repository: MfFactionRelationship
         return repository.getFactionRelationships(factionId, targetId)
     }
 
+    fun getRelationships(factionId: MfFactionId): List<MfFactionRelationship> {
+        return repository.getFactionRelationships(factionId)
+    }
+
+    fun getRelationships(factionId: MfFactionId, type: MfFactionRelationshipType): List<MfFactionRelationship> {
+        return repository.getFactionRelationships(factionId, type)
+    }
+
     fun save(relationship: MfFactionRelationship): Result4k<MfFactionRelationship, ServiceFailure> = resultFrom {
         repository.upsert(relationship)
     }.mapFailure { exception ->
