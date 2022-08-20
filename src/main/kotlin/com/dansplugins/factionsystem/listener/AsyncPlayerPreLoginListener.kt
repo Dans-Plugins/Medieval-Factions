@@ -11,7 +11,10 @@ class AsyncPlayerPreLoginListener(private val playerService: MfPlayerService) : 
 
     @EventHandler
     fun onAsyncPlayerPreLogin(event: AsyncPlayerPreLoginEvent) {
-        playerService.save(MfPlayer(MfPlayerId(event.uniqueId.toString())))
+        val playerId = MfPlayerId(event.uniqueId.toString())
+        if (playerService.getPlayer(playerId) == null) {
+            playerService.save(MfPlayer(playerId))
+        }
     }
 
 }
