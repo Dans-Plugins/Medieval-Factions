@@ -111,18 +111,26 @@ data class MfFaction(
     }
 ) {
 
-    private val memberPower
+    val memberPower
         get() = members.sumOf { member -> member.player.power }
-    private val maxMemberPower
+    val maxMemberPower
         get() = members.size * plugin.config.getInt("players.maxPower")
-    private val vassalPower
+    val vassalPower
         get() = plugin.services.factionRelationshipService.getRelationships(id, VASSAL)
             .mapNotNull { relationship -> plugin.services.factionService.getFaction(relationship.targetId) }
             .sumOf { it.power * plugin.config.getDouble("factions.vassalPowerContributionMultiplier") }
             .roundToInt()
+    val maxVassalPower
+        get() = plugin.services.factionRelationshipService.getRelationships(id, VASSAL)
+            .mapNotNull { relationship -> plugin.services.factionService.getFaction(relationship.targetId) }
+            .sumOf { it.maxPower * plugin.config.getDouble("factions.vassalPowerContributionMultiplier") }
+            .roundToInt()
 
     val power: Int
         get() = memberPower + (if (memberPower >= maxMemberPower / 2) { vassalPower } else { 0 }) + bonusPower
+
+    val maxPower: Int
+        get() = maxMemberPower + maxVassalPower + bonusPower
 
     constructor(plugin: MedievalFactions, name: String) : this(
         plugin,
