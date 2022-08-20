@@ -23,6 +23,7 @@ import com.dansplugins.factionsystem.faction.permission.MfFactionPermission.Comp
 import com.dansplugins.factionsystem.faction.permission.MfFactionPermission.Companion.KICK
 import com.dansplugins.factionsystem.faction.permission.MfFactionPermission.Companion.LIST_GATES
 import com.dansplugins.factionsystem.faction.permission.MfFactionPermission.Companion.LIST_LAWS
+import com.dansplugins.factionsystem.faction.permission.MfFactionPermission.Companion.LIST_ROLES
 import com.dansplugins.factionsystem.faction.permission.MfFactionPermission.Companion.MAKE_PEACE
 import com.dansplugins.factionsystem.faction.permission.MfFactionPermission.Companion.MODIFY_ROLE
 import com.dansplugins.factionsystem.faction.permission.MfFactionPermission.Companion.PROMOTE
@@ -102,6 +103,7 @@ data class MfFaction(
             put(VIEW_ROLE(role.id), true)
             put(MODIFY_ROLE(role.id), false)
         }
+        put(LIST_ROLES, true)
 
         putAll(keys.map { permission -> SET_ROLE_PERMISSION(permission) to false })
     }
