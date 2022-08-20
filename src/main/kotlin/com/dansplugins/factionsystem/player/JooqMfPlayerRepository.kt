@@ -22,6 +22,8 @@ class JooqMfPlayerRepository(private val plugin: MedievalFactions, private val d
             .onConflict(MF_PLAYER.ID).doUpdate()
             .set(MF_PLAYER.POWER, player.power)
             .set(MF_PLAYER.VERSION, player.version + 1)
+            .where(MF_PLAYER.ID.eq(player.id.value))
+            .and(MF_PLAYER.VERSION.eq(MF_PLAYER.VERSION))
             .execute()
         if (rowCount == 0) throw OptimisticLockingFailureException("Invalid version: ${player.version}")
         return getPlayer(player.id).let(::requireNotNull)
@@ -73,5 +75,5 @@ class JooqMfPlayerRepository(private val plugin: MedievalFactions, private val d
             .execute()
     }
 
-    private fun MfPlayerRecord.toDomain() = MfPlayer(MfPlayerId(id), power)
+    private fun MfPlayerRecord.toDomain() = MfPlayer(MfPlayerId(id), version, power)
 }

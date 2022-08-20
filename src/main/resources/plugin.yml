@@ -41,6 +41,7 @@ commands:
       /f role setpermission [role] [permission] [value] - Sets a permission for a role
       /f role list - Lists roles
       /f list - Lists factions
+      /f claim (radius) - Claims land
     aliases: [f]
     usage: /<command> [help|ally|breakalliance|declarewar|makepeace|create|invite|join|law|role|list]
 permissions:
@@ -88,4 +89,7 @@ permissions:
     default: true
   mf.list:
     description: Allows listing factions
+    default: true
+  mf.claim:
+    description: Allows claiming land
     default: true
