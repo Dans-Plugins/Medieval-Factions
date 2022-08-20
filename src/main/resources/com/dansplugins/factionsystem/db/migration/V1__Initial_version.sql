@@ -5,7 +5,7 @@ create table `mf_faction`(
     `description` varchar(4096) not null,
     `flags` json not null,
     `prefix` varchar(256),
-    `home_world_id` varchar(36),
+    `home_world` varchar(256),
     `home_x` double,
     `home_y` double,
     `home_z` double,
@@ -67,11 +67,10 @@ create table `mf_faction_relationship`(
 );
 
 create table `mf_claimed_chunk`(
-    `world_id` varchar(36) not null,
-    `x` integer not null,
-    `z` integer not null,
     `faction_id` varchar(36) not null,
-    primary key(`world_id`, `x`, `z`),
+    `chunk_x` integer not null,
+    `chunk_z` integer not null,
+    primary key(`faction_id`, `chunk_x`, `chunk_z`),
     foreign key(`faction_id`) references `mf_faction`(`id`) on delete cascade
 );
 
@@ -85,7 +84,7 @@ create table `mf_gate`(
     `gate_id` varchar(36) primary key not null,
     `version` integer not null,
     `faction_id` varchar(36) not null,
-    `world_id` varchar(36) not null,
+    `world` varchar(256) not null,
     `min_x` integer not null,
     `min_y` integer not null,
     `min_z` integer not null,

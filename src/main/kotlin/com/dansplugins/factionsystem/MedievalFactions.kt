@@ -1,7 +1,5 @@
 package com.dansplugins.factionsystem
 
-import com.dansplugins.factionsystem.claim.JooqMfClaimedChunkRepository
-import com.dansplugins.factionsystem.claim.MfClaimService
 import com.dansplugins.factionsystem.command.MedievalFactionsCommand
 import com.dansplugins.factionsystem.command.faction.MfFactionCommand
 import com.dansplugins.factionsystem.faction.JooqMfFactionRepository
@@ -15,7 +13,6 @@ import com.dansplugins.factionsystem.law.JooqMfLawRepository
 import com.dansplugins.factionsystem.law.MfLawRepository
 import com.dansplugins.factionsystem.law.MfLawService
 import com.dansplugins.factionsystem.listener.AsyncPlayerPreLoginListener
-import com.dansplugins.factionsystem.listener.PlayerMoveListener
 import com.dansplugins.factionsystem.notification.MailboxesNotificationDispatcher
 import com.dansplugins.factionsystem.notification.MfNotificationDispatcher
 import com.dansplugins.factionsystem.notification.NoOpNotificationDispatcher
@@ -94,25 +91,19 @@ class MedievalFactions : JavaPlugin() {
         val factionRepository: MfFactionRepository = JooqMfFactionRepository(this, dsl, gson)
         val lawRepository: MfLawRepository = JooqMfLawRepository(dsl)
         val factionRelationshipRepository = JooqMfFactionRelationshipRepository(dsl)
-        val claimedChunkRepository = JooqMfClaimedChunkRepository(dsl)
-
         val playerService = MfPlayerService(playerRepository)
         val factionService = MfFactionService(factionRepository)
         val lawService = MfLawService(lawRepository)
         val factionRelationshipService = MfFactionRelationshipService(factionRelationshipRepository)
-        val claimedChunkService = MfClaimService(claimedChunkRepository)
-
         services = Services(
             playerService,
             factionService,
             lawService,
-            factionRelationshipService,
-            claimedChunkService
+            factionRelationshipService
         )
         setupNotificationDispatcher()
 
         server.pluginManager.registerEvents(AsyncPlayerPreLoginListener(playerService), this)
-        server.pluginManager.registerEvents(PlayerMoveListener(this), this)
 
         getCommand("medievalfactions")?.setExecutor(MedievalFactionsCommand(this))
         getCommand("faction")?.setExecutor(MfFactionCommand(this))
