@@ -1,12 +1,13 @@
 package com.dansplugins.factionsystem.player
 
+import com.dansplugins.factionsystem.MedievalFactions
 import com.dansplugins.factionsystem.failure.OptimisticLockingFailureException
 import com.dansplugins.factionsystem.jooq.Tables.MF_PLAYER
 import com.dansplugins.factionsystem.jooq.tables.records.MfPlayerRecord
 import org.jooq.DSLContext
 import org.jooq.impl.DSL.*
 
-class JooqMfPlayerRepository(private val dsl: DSLContext) : MfPlayerRepository {
+class JooqMfPlayerRepository(private val plugin: MedievalFactions, private val dsl: DSLContext) : MfPlayerRepository {
     override fun getPlayer(id: MfPlayerId) =
         dsl.selectFrom(MF_PLAYER)
             .where(MF_PLAYER.ID.eq(id.value))
@@ -27,8 +28,8 @@ class JooqMfPlayerRepository(private val dsl: DSLContext) : MfPlayerRepository {
     }
 
     override fun increaseOnlinePlayerPower(onlinePlayerIds: List<MfPlayerId>) {
-        val maxPower = 20
-        val hoursToReachMax = 12
+        val maxPower = plugin.config.getInt("players.maxPower")
+        val hoursToReachMax = plugin.config.getInt("players.hoursToReachMaxPower")
         val timeIncrementHours = 1
         dsl.update(MF_PLAYER)
             .set(MF_PLAYER.POWER, least(value(maxPower), greatest(value(0),
@@ -54,8 +55,8 @@ class JooqMfPlayerRepository(private val dsl: DSLContext) : MfPlayerRepository {
     }
 
     override fun decreaseOfflinePlayerPower(onlinePlayerIds: List<MfPlayerId>) {
-        val maxPower = 20
-        val hoursToReachMin = 72
+        val maxPower = plugin.config.getInt("players.maxPower")
+        val hoursToReachMin = plugin.config.getInt("players.hoursToReachMinPower")
         val timeIncrementHours = 1
         dsl.update(MF_PLAYER)
             .set(MF_PLAYER.POWER, least(value(maxPower), greatest(value(0),

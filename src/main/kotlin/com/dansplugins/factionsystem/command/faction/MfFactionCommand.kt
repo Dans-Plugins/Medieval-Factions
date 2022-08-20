@@ -9,6 +9,7 @@ import com.dansplugins.factionsystem.command.faction.help.MfFactionHelpCommand
 import com.dansplugins.factionsystem.command.faction.invite.MfFactionInviteCommand
 import com.dansplugins.factionsystem.command.faction.join.MfFactionJoinCommand
 import com.dansplugins.factionsystem.command.faction.law.MfFactionLawCommand
+import com.dansplugins.factionsystem.command.faction.list.MfFactionListCommand
 import com.dansplugins.factionsystem.command.faction.makepeace.MfFactionMakePeaceCommand
 import com.dansplugins.factionsystem.command.faction.role.MfFactionRoleCommand
 import org.bukkit.ChatColor.RED
@@ -28,6 +29,7 @@ class MfFactionCommand(private val plugin: MedievalFactions) : CommandExecutor {
     private val factionDeclareWarCommand = MfFactionDeclareWarCommand(plugin)
     private val factionMakePeaceCommand = MfFactionMakePeaceCommand(plugin)
     private val factionRoleCommand = MfFactionRoleCommand(plugin)
+    private val factionListCommand = MfFactionListCommand(plugin)
 
     override fun onCommand(sender: CommandSender, command: Command, label: String, args: Array<out String>): Boolean {
         if (args.isEmpty()) {
@@ -45,6 +47,7 @@ class MfFactionCommand(private val plugin: MedievalFactions) : CommandExecutor {
             "declarewar", "dw", plugin.language["CmdFactionDeclareWar"] -> factionDeclareWarCommand.onCommand(sender, command, label, args.drop(1).toTypedArray())
             "makepeace", "mp", plugin.language["CmdFactionMakePeace"] -> factionMakePeaceCommand.onCommand(sender, command, label, args.drop(1).toTypedArray())
             "role", plugin.language["CmdFactionRole"] -> factionRoleCommand.onCommand(sender, command, label, args.drop(1).toTypedArray())
+            "list", plugin.language["CmdFactionList"] -> factionListCommand.onCommand(sender, command, label, args.drop(1).toTypedArray())
             else -> {
                 sender.sendMessage("$RED${plugin.language["CommandFactionUsage"]}")
                 true

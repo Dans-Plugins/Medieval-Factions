@@ -87,7 +87,7 @@ class MedievalFactions : JavaPlugin() {
         flags = MfFlags(this)
 
         val gson = GsonBuilder().registerTypeAdapter(MfFactionPermission::class.java, MfFactionPermissionSerializer(flags)).create()
-        val playerRepository: MfPlayerRepository = JooqMfPlayerRepository(dsl)
+        val playerRepository: MfPlayerRepository = JooqMfPlayerRepository(this, dsl)
         val factionRepository: MfFactionRepository = JooqMfFactionRepository(this, dsl, gson)
         val lawRepository: MfLawRepository = JooqMfLawRepository(dsl)
         val factionRelationshipRepository = JooqMfFactionRelationshipRepository(dsl)

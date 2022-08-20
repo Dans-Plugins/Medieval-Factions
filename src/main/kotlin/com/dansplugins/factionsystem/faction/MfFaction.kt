@@ -47,6 +47,8 @@ import com.dansplugins.factionsystem.faction.role.MfFactionRoleId
 import com.dansplugins.factionsystem.faction.role.MfFactionRoles
 import com.dansplugins.factionsystem.notification.MfNotification
 import com.dansplugins.factionsystem.player.MfPlayerId
+import com.dansplugins.factionsystem.relationship.MfFactionRelationshipType.VASSAL
+import kotlin.math.roundToInt
 
 data class MfFaction(
     private val plugin: MedievalFactions,
@@ -108,6 +110,16 @@ data class MfFaction(
         putAll(keys.map { permission -> SET_ROLE_PERMISSION(permission) to false })
     }
 ) {
+
+    private val memberPower = members.sumOf { member -> member.player.power }
+    private val maxMemberPower = members.size * plugin.config.getInt("players.maxPower")
+    private val vassalPower = plugin.services.factionRelationshipService.getRelationships(id, VASSAL)
+        .mapNotNull { relationship -> plugin.services.factionService.getFaction(relationship.targetId) }
+        .sumOf { it.power * plugin.config.getDouble("factions.vassalPowerContributionMultiplier") }
+        .roundToInt()
+
+    val power: Int
+        get() = memberPower + (if (memberPower >= maxMemberPower / 2) { vassalPower } else { 0 }) + bonusPower
 
     constructor(plugin: MedievalFactions, name: String) : this(
         plugin,
