@@ -11,7 +11,6 @@ import com.dansplugins.factionsystem.command.faction.law.MfFactionLawCommand
 import com.dansplugins.factionsystem.command.faction.makepeace.MfFactionMakePeaceCommand
 import com.dansplugins.factionsystem.command.faction.help.MfFactionHelpCommand
 import com.dansplugins.factionsystem.command.faction.members.MfFactionMembersCommand
-import com.dansplugins.factionsystem.faction.MfFactionMember
 import org.bukkit.ChatColor.RED
 import org.bukkit.command.Command
 import org.bukkit.command.CommandExecutor
