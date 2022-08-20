@@ -195,6 +195,12 @@ class JooqMfFactionRepository(
             .toDomain()
     }
 
+    override fun delete(factionId: MfFactionId) {
+        dsl.deleteFrom(MF_FACTION)
+            .where(MF_FACTION.ID.eq(factionId.value))
+            .execute()
+    }
+
     private fun MfFactionRecord.toDomain(members: List<MfFactionMember> = emptyList(), invites: List<MfFactionInvite> = emptyList(), roles: List<MfFactionRole>? = null): MfFaction {
         val factionRoles = MfFactionRoles(
             defaultRoleId = defaultRoleId.let(::MfFactionRoleId),
