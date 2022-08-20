@@ -20,6 +20,7 @@ import org.jooq.Condition
 import org.jooq.DSLContext
 import org.jooq.JSON
 import org.jooq.impl.DSL.`val`
+import java.util.*
 
 class JooqMfFactionRepository(
     private val plugin: MedievalFactions,
@@ -99,7 +100,7 @@ class JooqMfFactionRepository(
             .set(MF_FACTION.DESCRIPTION, faction.description)
             .set(MF_FACTION.FLAGS, JSON.valueOf(gson.toJson(faction.flags.serialize())))
             .set(MF_FACTION.PREFIX, faction.prefix)
-            .set(MF_FACTION.HOME_WORLD, faction.home?.worldName)
+            .set(MF_FACTION.HOME_WORLD_ID, faction.home?.worldId?.toString())
             .set(MF_FACTION.HOME_X, faction.home?.x)
             .set(MF_FACTION.HOME_Y, faction.home?.y)
             .set(MF_FACTION.HOME_Z, faction.home?.z)
@@ -123,7 +124,7 @@ class JooqMfFactionRepository(
             .set(MF_FACTION.DESCRIPTION, faction.description)
             .set(MF_FACTION.FLAGS, JSON.valueOf(gson.toJson(faction.flags.serialize())))
             .set(MF_FACTION.PREFIX, faction.prefix)
-            .set(MF_FACTION.HOME_WORLD, faction.home?.worldName)
+            .set(MF_FACTION.HOME_WORLD_ID, faction.home?.worldId?.toString())
             .set(MF_FACTION.HOME_X, faction.home?.x)
             .set(MF_FACTION.HOME_Y, faction.home?.y)
             .set(MF_FACTION.HOME_Z, faction.home?.z)
@@ -218,9 +219,9 @@ class JooqMfFactionRepository(
                 )
             ),
             prefix = prefix,
-            home = homeWorld?.let {
+            home = homeWorldId?.let {
                 MfPosition(
-                    it,
+                    UUID.fromString(it),
                     homeX,
                     homeY,
                     homeZ,
@@ -246,11 +247,13 @@ class JooqMfFactionRepository(
         )
     }
 
-    private fun MfFactionMemberRecord.toDomain(roles: List<MfFactionRole>) =
-        MfFactionMember(
-            MfPlayer(playerId.let(::MfPlayerId)),
+    private fun MfFactionMemberRecord.toDomain(roles: List<MfFactionRole>): MfFactionMember {
+        val player = plugin.services.playerService.getPlayer(playerId.let(::MfPlayerId)).let(::requireNotNull)
+        return MfFactionMember(
+            player,
             roles.single { it.id.value == roleId }
         )
+    }
 
     private fun MfFactionInviteRecord.toDomain() =
         MfFactionInvite(
