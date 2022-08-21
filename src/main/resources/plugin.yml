@@ -44,6 +44,7 @@ commands:
       /f claim (radius) - Claims land
       /f power - Views power stats
       /f who - Views a player's faction
+      /f invoke [ally] [enemy] - Invokes a faction into war
     aliases: [f, fraktion, faccion, faccao, фракция]
     usage: /<command> [help|ally|breakalliance|declarewar|makepeace|create|invite|join|law|role|list|claim|power|who]
 permissions:
