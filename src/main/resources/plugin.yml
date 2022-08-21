@@ -113,3 +113,6 @@ permissions:
   mf.leave:
     description: Allows you to leave your faction
     default: true
+  mf.rename:
+    description: Allows you to rename your faction
+    default: true
