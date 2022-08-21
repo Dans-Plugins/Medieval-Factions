@@ -36,20 +36,20 @@ class MfFactionLeaveCommand(private val plugin: MedievalFactions) : CommandExecu
                 sender.sendMessage("$RED${plugin.language["CommandFactionLeaveMustBeInAFaction"]}")
                 return@Runnable
             }
+            if (faction.members.size == 1) {
+                factionService.delete(faction.id)
+                    .onFailure {
+                        sender.sendMessage("$RED${plugin.language["CommandFactionLeaveFailedToDisbandFaction"]}")
+                        return@Runnable
+                    }
+                return@Runnable
+            }
             val role = faction.getRole(mfPlayer.id)
             if (role != null && faction.members.filter { it.player.id.value != mfPlayer.id.value }.none {
                     val memberRole = faction.getRole(it.player.id)
                     memberRole?.hasPermission(faction, SET_MEMBER_ROLE(role.id)) == true
             }) {
                 sender.sendMessage("$RED${plugin.language["CommandFactionLeaveNoOneCanSetYourRole"]}")
-                return@Runnable
-            }
-            if (faction.members.isEmpty()) {
-                factionService.delete(faction.id)
-                    .onFailure {
-                        sender.sendMessage("$RED${plugin.language["CommandFactionLeaveFailedToDisbandFaction"]}")
-                        return@Runnable
-                    }
                 return@Runnable
             }
             factionService.save(faction.copy(members = faction.members.filter { it.player.id.value != mfPlayer.id.value }))

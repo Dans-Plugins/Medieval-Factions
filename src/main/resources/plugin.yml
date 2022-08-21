@@ -40,6 +40,7 @@ commands:
       /f role view [role] - Views a role
       /f role setpermission [role] [permission] [value] - Sets a permission for a role
       /f role list - Lists roles
+      /f role set [player] [role] - Sets a player to a given role
       /f list - Lists factions
       /f claim (radius) - Claims land
       /f power - Views power stats
@@ -91,6 +92,9 @@ permissions:
     default: true
   mf.role.setpermission:
     description: Allows setting role permissions
+    default: true
+  mf.role.set:
+    description: Allows setting a faction member's role
     default: true
   mf.list:
     description: Allows listing factions
