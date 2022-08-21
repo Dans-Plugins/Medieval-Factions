@@ -33,6 +33,7 @@ import com.dansplugins.factionsystem.faction.permission.MfFactionPermission.Comp
 import com.dansplugins.factionsystem.faction.permission.MfFactionPermission.Companion.REQUEST_ALLIANCE
 import com.dansplugins.factionsystem.faction.permission.MfFactionPermission.Companion.SET_FLAG
 import com.dansplugins.factionsystem.faction.permission.MfFactionPermission.Companion.SET_HOME
+import com.dansplugins.factionsystem.faction.permission.MfFactionPermission.Companion.SET_MEMBER_ROLE
 import com.dansplugins.factionsystem.faction.permission.MfFactionPermission.Companion.SET_ROLE_PERMISSION
 import com.dansplugins.factionsystem.faction.permission.MfFactionPermission.Companion.SWEAR_FEALTY
 import com.dansplugins.factionsystem.faction.permission.MfFactionPermission.Companion.TOGGLE_AUTOCLAIM
@@ -104,6 +105,7 @@ data class MfFaction(
         roles.forEach { role ->
             put(VIEW_ROLE(role.id), true)
             put(MODIFY_ROLE(role.id), false)
+            put(SET_MEMBER_ROLE(role.id), false)
         }
         put(LIST_ROLES, true)
 

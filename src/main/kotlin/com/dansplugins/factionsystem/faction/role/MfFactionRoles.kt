@@ -1,6 +1,7 @@
 package com.dansplugins.factionsystem.faction.role
 
 import com.dansplugins.factionsystem.faction.flag.MfFlags
+import com.dansplugins.factionsystem.faction.permission.MfFactionPermission
 import com.dansplugins.factionsystem.faction.permission.MfFactionPermission.Companion.ADD_LAW
 import com.dansplugins.factionsystem.faction.permission.MfFactionPermission.Companion.BREAK_ALLIANCE
 import com.dansplugins.factionsystem.faction.permission.MfFactionPermission.Companion.CHANGE_DESCRIPTION
@@ -29,6 +30,7 @@ import com.dansplugins.factionsystem.faction.permission.MfFactionPermission.Comp
 import com.dansplugins.factionsystem.faction.permission.MfFactionPermission.Companion.REQUEST_ALLIANCE
 import com.dansplugins.factionsystem.faction.permission.MfFactionPermission.Companion.SET_FLAG
 import com.dansplugins.factionsystem.faction.permission.MfFactionPermission.Companion.SET_HOME
+import com.dansplugins.factionsystem.faction.permission.MfFactionPermission.Companion.SET_MEMBER_ROLE
 import com.dansplugins.factionsystem.faction.permission.MfFactionPermission.Companion.SET_ROLE_PERMISSION
 import com.dansplugins.factionsystem.faction.permission.MfFactionPermission.Companion.SWEAR_FEALTY
 import com.dansplugins.factionsystem.faction.permission.MfFactionPermission.Companion.TOGGLE_AUTOCLAIM
@@ -62,6 +64,7 @@ data class MfFactionRoles(
                     put(KICK, true)
                     put(VIEW_ROLE(member.id), true)
                     put(MODIFY_ROLE(member.id), true)
+                    put(SET_MEMBER_ROLE(member.id), true)
                     put(SET_ROLE_PERMISSION(LIST_LAWS), true)
                     put(SET_ROLE_PERMISSION(CHAT), true)
                     put(SET_ROLE_PERMISSION(VIEW_FLAGS), true)
@@ -80,7 +83,9 @@ data class MfFactionRoles(
                     put(SET_ROLE_PERMISSION(MODIFY_ROLE(member.id)), true)
                 }
             )
+            val ownerId = MfFactionRoleId.generate()
             val owner = MfFactionRole(
+                id = ownerId,
                 name = "Owner",
                 permissions = buildMap {
                     put(ADD_LAW, true)
@@ -123,8 +128,10 @@ data class MfFactionRoles(
                     put(VIEW_ROLE(officer.id), true)
                     put(MODIFY_ROLE(member.id), true)
                     put(MODIFY_ROLE(officer.id), true)
+                    put(SET_MEMBER_ROLE(member.id), true)
+                    put(SET_MEMBER_ROLE(officer.id), true)
 
-                    putAll(keys.map { permission -> SET_ROLE_PERMISSION(permission) to true })
+                    putAll(MfFactionPermission.values(flags, listOf(member.id, officer.id, ownerId)).map { permission -> SET_ROLE_PERMISSION(permission) to true })
                 }
             )
             return MfFactionRoles(member.id, listOf(owner, officer, member))

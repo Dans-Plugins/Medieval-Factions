@@ -44,9 +44,11 @@ commands:
       /f claim (radius) - Claims land
       /f power - Views power stats
       /f who - Views a player's faction
+      /f disband - Disbands your faction
       /f invoke [ally] [enemy] - Invokes a faction into war
-    aliases: [f, fraktion, faccion, faccao, фракция]
-    usage: /<command> [help|ally|breakalliance|declarewar|makepeace|create|invite|join|law|role|list|claim|power|who]
+      /f leave - Leaves your faction
+    aliases: [f, fraktion, faccion, faccao, фракция, ф]
+    usage: /<command> [help|ally|breakalliance|declarewar|makepeace|create|invite|join|law|role|list|claim|power|who|invoke|leave]
 permissions:
   mf.help:
     description: View a list of helpful commands.
@@ -104,4 +106,10 @@ permissions:
     default: true
   mf.disband:
     description: Allows disbanding your faction
+    default: true
+  mf.invoke:
+    description: Allows invoking another faction into war
+    default: true
+  mf.leave:
+    description: Allows you to leave your faction
     default: true
