@@ -130,7 +130,7 @@ public class FactionFlags {
             return;
         }
 
-        if (!configService.getBoolean("factionsCanSetPrefixColors")) {
+        if (flag.equals("prefixColor") && !configService.getBoolean("factionsCanSetPrefixColors")) {
             player.sendMessage("Players can't set prefix colors.");
             return;
         }
