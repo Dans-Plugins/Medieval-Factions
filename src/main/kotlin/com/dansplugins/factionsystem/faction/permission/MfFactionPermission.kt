@@ -3,6 +3,7 @@ package com.dansplugins.factionsystem.faction.permission
 import com.dansplugins.factionsystem.faction.MfFaction
 import com.dansplugins.factionsystem.faction.flag.MfFlag
 import com.dansplugins.factionsystem.faction.flag.MfFlags
+import com.dansplugins.factionsystem.faction.role.MfFactionRole
 import com.dansplugins.factionsystem.faction.role.MfFactionRoleId
 import com.dansplugins.factionsystem.faction.role.MfFactionRoles
 import com.dansplugins.factionsystem.lang.Language
@@ -67,8 +68,9 @@ class MfFactionPermission(
         val INVOKE = MfFactionPermission("INVOKE", "FactionPermissionInvoke")
         val KICK = MfFactionPermission("KICK", "FactionPermissionKick")
         val VIEW_ROLE = { roleId: MfFactionRoleId -> MfFactionPermission("VIEW_ROLE(${roleId.value})") { language, faction -> language["FactionPermissionViewRole", faction.getRole(roleId)?.name ?: ""] } }
-        val SET_ROLE_PERMISSION = { permission: MfFactionPermission -> MfFactionPermission("SET_ROLE_PERMISSION(${permission.name})") { language -> language["FactionPermissionSetRolePermission", permission.name] } }
+        val SET_ROLE_PERMISSION = { permission: MfFactionPermission -> MfFactionPermission("SET_ROLE_PERMISSION(${permission.name})") { language, faction -> language["FactionPermissionSetRolePermission", permission.translate(language, faction)] } }
         val MODIFY_ROLE = { roleId: MfFactionRoleId -> MfFactionPermission("MODIFY_ROLE(${roleId.value})") { language, faction -> language["FactionPermissionModifyRole", faction.getRole(roleId)?.name ?: ""] } }
+        val SET_MEMBER_ROLE = { roleId: MfFactionRoleId -> MfFactionPermission("SET_MEMBER_ROLE(${roleId.value})") { language, faction -> language["FactionPermissionSetMemberRole", faction.getRole(roleId)?.name ?: ""]} }
         val LIST_ROLES = MfFactionPermission("LIST_ROLES", "FactionPermissionListRoles")
 
         fun valueOf(name: String, flags: MfFlags): MfFactionPermission? = when {
@@ -121,11 +123,17 @@ class MfFactionPermission(
                 ?.groupValues?.get(1)
                 ?.let(::MfFactionRoleId)
                 ?.let(MODIFY_ROLE)
+            name.matches(Regex("SET_MEMBER_ROLE\\((.+)\\)")) -> Regex("SET_MEMBER_ROLE\\((.+)\\)").find(name)
+                ?.groupValues?.get(1)
+                ?.let(::MfFactionRoleId)
+                ?.let(SET_MEMBER_ROLE)
             name == "LIST_ROLES" -> LIST_ROLES
             else -> null
         }
 
-        fun values(flags: MfFlags, roles: MfFactionRoles) = buildList {
+        fun values(flags: MfFlags, roles: MfFactionRoles) = values(flags, roles.map(MfFactionRole::id))
+
+        fun values(flags: MfFlags, roleIds: List<MfFactionRoleId>) = buildList {
             add(ADD_LAW)
             add(REMOVE_LAW)
             add(LIST_LAWS)
@@ -162,9 +170,10 @@ class MfFactionPermission(
             add(INVITE)
             add(INVOKE)
             add(KICK)
-            roles.forEach { role ->
-                add(VIEW_ROLE(role.id))
-                add(MODIFY_ROLE(role.id))
+            roleIds.forEach { roleId ->
+                add(VIEW_ROLE(roleId))
+                add(MODIFY_ROLE(roleId))
+                add(SET_MEMBER_ROLE(roleId))
             }
             add(LIST_ROLES)
 
