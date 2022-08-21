@@ -17,6 +17,7 @@ class MfFactionListCommand(private val plugin: MedievalFactions) : CommandExecut
         }
         plugin.server.scheduler.runTaskAsynchronously(plugin, Runnable {
             val factionService = plugin.services.factionService
+            val claimService = plugin.services.claimService
             val pageNumber = args.lastOrNull()?.toIntOrNull()?.minus(1) ?: 0
             val view = PaginatedView(
                 plugin.language,
@@ -59,14 +60,27 @@ class MfFactionListCommand(private val plugin: MedievalFactions) : CommandExecut
                                     color = SpigotChatColor.GRAY
                                 }
                             )
+                        },
+                        lazy {
+                            arrayOf(
+                                TextComponent("  " + plugin.language[
+                                        "CommandFactionListLand",
+                                        claimService.getClaims(faction.id).size.toString()
+                                ]).apply {
+                                    color = SpigotChatColor.GRAY
+                                }
+                            )
                         }
-                        //TODO Land, once claims are implemented
                     )
                 },
-                // Each faction is currently 3 lines so this should be a multiple of 3.
+                // Each faction is currently 4 lines so this should be a multiple of 4.
                 // If we change the amount of lines then this should change.
-                pageLength = 12
-            ) { page -> "/faction list ${page - 1}"}
+                pageLength = 16
+            ) { page -> "/faction list ${page - 1}" }
+            if (view.pages.isEmpty()) {
+                sender.sendMessage("${BukkitChatColor.RED}${plugin.language["CommandFactionListNoFactions"]}")
+                return@Runnable
+            }
             if (pageNumber !in view.pages.indices) {
                 sender.sendMessage("${BukkitChatColor.RED}${plugin.language["CommandFactionListInvalidPageNumber"]}")
                 return@Runnable

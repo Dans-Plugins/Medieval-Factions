@@ -17,6 +17,7 @@ import com.dansplugins.factionsystem.command.faction.list.MfFactionListCommand
 import com.dansplugins.factionsystem.command.faction.makepeace.MfFactionMakePeaceCommand
 import com.dansplugins.factionsystem.command.faction.power.MfFactionPowerCommand
 import com.dansplugins.factionsystem.command.faction.role.MfFactionRoleCommand
+import com.dansplugins.factionsystem.command.faction.set.MfFactionSetCommand
 import com.dansplugins.factionsystem.command.faction.who.MfFactionWhoCommand
 import org.bukkit.ChatColor.RED
 import org.bukkit.command.Command
@@ -42,6 +43,7 @@ class MfFactionCommand(private val plugin: MedievalFactions) : CommandExecutor {
     private val factionDisbandCommand = MfFactionDisbandCommand(plugin)
     private val factionInvokeCommand = MfFactionInvokeCommand(plugin)
     private val factionLeaveCommand = MfFactionLeaveCommand(plugin)
+    private val factionSetCommand = MfFactionSetCommand(plugin)
 
     override fun onCommand(sender: CommandSender, command: Command, label: String, args: Array<out String>): Boolean {
         if (args.isEmpty()) {
@@ -66,6 +68,7 @@ class MfFactionCommand(private val plugin: MedievalFactions) : CommandExecutor {
             "disband", plugin.language["CmdFactionDisband"] -> factionDisbandCommand.onCommand(sender, command, label, args.drop(1).toTypedArray())
             "invoke", plugin.language["CmdFactionInvoke"] -> factionInvokeCommand.onCommand(sender, command, label, args.drop(1).toTypedArray())
             "leave", plugin.language["CmdFactionLeave"] -> factionLeaveCommand.onCommand(sender, command, label, args.drop(1).toTypedArray())
+            "rename", plugin.language["CmdFactionSet"] -> factionSetCommand.onCommand(sender, command, label, args.drop(1).toTypedArray())
             else -> {
                 sender.sendMessage("$RED${plugin.language["CommandFactionUsage"]}")
                 true
