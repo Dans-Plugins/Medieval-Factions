@@ -42,6 +42,10 @@ public class MapCommand extends SubCommand {
      */
     @Override
     public void execute(Player player, String[] args, String key) {
+        final String permission = "mf.map";
+        if (!(checkPermissions(player, permission))) {
+            return;
+        }
         final Chunk center = player.getLocation().getChunk();
         // Needs to be Odd.
         int map_width = 53;

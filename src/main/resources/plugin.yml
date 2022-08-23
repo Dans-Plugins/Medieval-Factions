@@ -107,6 +107,8 @@ permissions:
     default: true
   mf.flags:
     default: true
+  mf.map:
+    default: true
   mf.bypass:
     default: op
   mf.config:
