@@ -4,12 +4,15 @@
  */
 package dansplugins.factionsystem.commands;
 
+import dansplugins.factionsystem.MedievalFactions;
 import dansplugins.factionsystem.commands.abs.SubCommand;
 import dansplugins.factionsystem.data.EphemeralData;
 import dansplugins.factionsystem.data.PersistentData;
 import dansplugins.factionsystem.integrators.DynmapIntegrator;
 import dansplugins.factionsystem.services.ConfigService;
 import dansplugins.factionsystem.services.LocaleService;
+import dansplugins.factionsystem.services.MessageService;
+import dansplugins.factionsystem.services.PlayerService;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
@@ -42,7 +45,11 @@ public class AutoClaimCommand extends SubCommand {
         }
 
         faction.toggleAutoClaim();
-        player.sendMessage(translate("&b" + getText("AutoclaimToggled")));
+        if (!MedievalFactions.USE_NEW_LANGUAGE_FILE) {
+            player.sendMessage(translate("&b" + getText("AutoclaimToggled")));
+        } else {
+            PlayerService.sendPlayerMessage(player, MessageService.getLanguage().getString("AutoclaimToggled"));
+        }
     }
 
     /**

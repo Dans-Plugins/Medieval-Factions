@@ -10,7 +10,7 @@ public class PlayerTeleporter {
         this.logger = logger;
     }
 
-    public boolean teleportPlayer(Player player, Location location) {
+    public void teleportPlayer(Player player, Location location) {
         logger.debug("Attempting to teleport " + player.getName() + " to " + location.toString());
         boolean success = player.teleport(location);
         if (success) {
@@ -18,6 +18,5 @@ public class PlayerTeleporter {
         } else {
             logger.debug("Failed to teleport " + player.getName());
         }
-        return success;
     }
 }

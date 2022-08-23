@@ -4,14 +4,19 @@
  */
 package dansplugins.factionsystem.commands;
 
+import dansplugins.factionsystem.MedievalFactions;
 import dansplugins.factionsystem.commands.abs.SubCommand;
 import dansplugins.factionsystem.data.EphemeralData;
 import dansplugins.factionsystem.data.PersistentData;
 import dansplugins.factionsystem.integrators.DynmapIntegrator;
 import dansplugins.factionsystem.services.ConfigService;
 import dansplugins.factionsystem.services.LocaleService;
+import dansplugins.factionsystem.services.MessageService;
+import dansplugins.factionsystem.services.PlayerService;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
+
+import java.util.Objects;
 
 /**
  * @author Callum Johnson
@@ -21,7 +26,6 @@ public class AddLawCommand extends SubCommand {
     /**
      * Constructor to initialise a Command.
      *
-     * @param localeService
      */
     public AddLawCommand(LocaleService localeService, PersistentData persistentData, EphemeralData ephemeralData, PersistentData.ChunkDataAccessor chunkDataAccessor, DynmapIntegrator dynmapIntegrator, ConfigService configService) {
         super(new String[]{
@@ -45,13 +49,22 @@ public class AddLawCommand extends SubCommand {
 
         // check if they have provided any strings beyond "addlaw"
         if (args.length == 0) {
-            player.sendMessage(translate("&c" + getText("UsageAddLaw")));
+            if (!MedievalFactions.USE_NEW_LANGUAGE_FILE) {
+                player.sendMessage(translate("&c" + getText("UsageAddLaw")));
+            } else {
+                PlayerService.sendPlayerMessage(player, MessageService.getLanguage().getString("UsageAddLaw"));
+            }
             return;
         }
 
         // add the law and send a success message.
         faction.addLaw(String.join(" ", args));
-        player.sendMessage(translate("&a" + getText("LawAdded")));
+        if (!MedievalFactions.USE_NEW_LANGUAGE_FILE) {
+            player.sendMessage(translate("&a" + getText("LawAdded")));
+        } else {
+            PlayerService.sendPlayerMessage(player, Objects.requireNonNull(MessageService.getLanguage().getString("LawAdded"))
+                    .replaceAll("#law#", String.join(" ", args)));
+        }
     }
 
     /**

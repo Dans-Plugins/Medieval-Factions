@@ -4,15 +4,19 @@
  */
 package dansplugins.factionsystem.commands.abs;
 
+import dansplugins.factionsystem.MedievalFactions;
 import dansplugins.factionsystem.data.EphemeralData;
 import dansplugins.factionsystem.data.PersistentData;
 import dansplugins.factionsystem.integrators.DynmapIntegrator;
 import dansplugins.factionsystem.objects.domain.Faction;
 import dansplugins.factionsystem.services.ConfigService;
 import dansplugins.factionsystem.services.LocaleService;
+import dansplugins.factionsystem.services.MessageService;
+import dansplugins.factionsystem.services.PlayerService;
 import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.command.CommandSender;
+import org.bukkit.command.ConsoleCommandSender;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.Player;
 
@@ -199,7 +203,17 @@ public abstract class SubCommand implements ColorTranslator {
             }
         }
         if (!has) {
-            sender.sendMessage(translate("&c" + getText("PermissionNeeded", permission[0])));
+            if (!MedievalFactions.USE_NEW_LANGUAGE_FILE) {
+                sender.sendMessage(translate("&c" + getText("PermissionNeeded", permission[0])));
+            } else {
+                if (sender instanceof Player) {
+                    PlayerService.sendPlayerMessage(((Player) sender).getPlayer(), Objects.requireNonNull(MessageService.getLanguage().getString("PermissionNeeded"))
+                            .replaceAll("#permission#", permission[0]));
+                } else if (sender instanceof ConsoleCommandSender) {
+                    PlayerService.sendConsoleMessage(sender.getServer().getConsoleSender(), Objects.requireNonNull(MessageService.getLanguage().getString("PermissionNeeded"))
+                            .replaceAll("#permission#", permission[0]));
+                }
+            }
         }
         return has;
     }
@@ -286,12 +300,36 @@ public abstract class SubCommand implements ColorTranslator {
     }
 
     /**
+     * Method to send an entire Faction a message.
+     *
+     * @param faction to send a message to.
+     * @param message to send to the Faction.
+     */
+    protected void sendMessageFaction(Faction faction, String message) {
+        faction.getMemberList().stream()
+                .map(Bukkit::getOfflinePlayer)
+                .filter(OfflinePlayer::isOnline)
+                .map(OfflinePlayer::getPlayer)
+                .filter(Objects::nonNull)
+                .forEach(player -> PlayerService.sendPlayerMessage(player, message));
+    }
+
+    /**
      * Method to send the entire Server a message.
      *
      * @param message to send to the players.
      */
     protected void messageServer(String message) {
         Bukkit.getOnlinePlayers().forEach(player -> player.sendMessage(message));
+    }
+
+    /**
+     * Method to send the entire Server a message.
+     *
+     * @param message to send to the players.
+     */
+    protected void sendMessageServer(String message) {
+        Bukkit.getOnlinePlayers().forEach(player -> PlayerService.sendPlayerMessage(player, message));
     }
 
     /**

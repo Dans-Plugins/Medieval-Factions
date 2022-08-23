@@ -154,6 +154,9 @@ public class ConfigService {
         if (!getConfig().isBoolean("bonusPowerEnabled")) {
             getConfig().addDefault("bonusPowerEnabled", true);
         }
+        if (!getConfig().isBoolean("useNewLanguageFile")) {
+            getConfig().addDefault("useNewLanguageFile", false);
+        }
         if (!getConfig().isDouble("powerLostOnDeath")) {
             getConfig().addDefault("powerLostOnDeath", 1.0);
         }
@@ -307,6 +310,7 @@ public class ConfigService {
         getConfig().addDefault("powerGainedOnKill", 1.0);
         getConfig().addDefault("teleportDelay", 3);
         getConfig().addDefault("factionless", "FactionLess");
+        getConfig().addDefault("useNewLanguageFile", false);
         getConfig().options().copyDefaults(true);
         medievalFactions.saveConfig();
     }

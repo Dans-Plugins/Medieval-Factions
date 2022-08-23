@@ -40,6 +40,7 @@ import java.util.Arrays;
 public class MedievalFactions extends PonderBukkitPlugin {
 
     private static MedievalFactions medievalFactions;
+    public static boolean USE_NEW_LANGUAGE_FILE = new ConfigService().getBoolean("useNewLanguageFile");
     private final String pluginVersion = "v" + getDescription().getVersion();
     private final ActionBarService actionBarService = new ActionBarService();
     private final ConfigService configService = new ConfigService();
@@ -70,6 +71,7 @@ public class MedievalFactions extends PonderBukkitPlugin {
     public void onEnable() {
         medievalFactions = this;
         initializeConfig();
+        MessageService.createLanguageFile();
         load();
         scheduleRecurringTasks();
         registerEventHandlers();
@@ -83,6 +85,7 @@ public class MedievalFactions extends PonderBukkitPlugin {
     @Override
     public void onDisable() {
         persistentData.getLocalStorageService().save();
+        MessageService.saveLanguage();
     }
 
     /**

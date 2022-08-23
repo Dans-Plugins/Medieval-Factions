@@ -4,6 +4,7 @@
  */
 package dansplugins.factionsystem.commands;
 
+import dansplugins.factionsystem.MedievalFactions;
 import dansplugins.factionsystem.commands.abs.SubCommand;
 import dansplugins.factionsystem.data.EphemeralData;
 import dansplugins.factionsystem.data.PersistentData;
@@ -11,8 +12,12 @@ import dansplugins.factionsystem.integrators.DynmapIntegrator;
 import dansplugins.factionsystem.objects.domain.Faction;
 import dansplugins.factionsystem.services.ConfigService;
 import dansplugins.factionsystem.services.LocaleService;
+import dansplugins.factionsystem.services.MessageService;
+import dansplugins.factionsystem.services.PlayerService;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
+
+import java.util.Objects;
 
 /**
  * @author Callum Johnson
@@ -43,30 +48,55 @@ public class BreakAllianceCommand extends SubCommand {
         }
 
         if (args.length == 0) {
-            player.sendMessage(translate("&c" + getText("UsageBreakAlliance")));
+            if (!MedievalFactions.USE_NEW_LANGUAGE_FILE) {
+                player.sendMessage(translate("&c" + getText("UsageBreakAlliance")));
+            } else {
+                PlayerService.sendPlayerMessage(player, MessageService.getLanguage().getString("UsageBreakAlliance"));
+            }
             return;
         }
 
         final Faction otherFaction = getFaction(String.join(" ", args));
         if (otherFaction == null) {
-            player.sendMessage(translate("&c" + getText("FactionNotFound")));
+            if (!MedievalFactions.USE_NEW_LANGUAGE_FILE) {
+                player.sendMessage(translate("&c" + getText("FactionNotFound")));
+            } else {
+                PlayerService.sendPlayerMessage(player, Objects.requireNonNull(MessageService.getLanguage().getString("FactionNotFound"))
+                        .replaceAll("#faction#", String.join(" ", args)));
+            }
             return;
         }
 
         if (otherFaction == faction) {
-            player.sendMessage(translate("&c" + getText("CannotBreakAllianceWithSelf")));
+            if (!MedievalFactions.USE_NEW_LANGUAGE_FILE) {
+                player.sendMessage(translate("&c" + getText("CannotBreakAllianceWithSelf")));
+            } else {
+                PlayerService.sendPlayerMessage(player, MessageService.getLanguage().getString("CannotBreakAllianceWithSelf"));
+            }
             return;
         }
 
         if (!faction.isAlly(otherFaction.getName())) {
-            player.sendMessage(translate("&c" + getText("AlertNotAllied", otherFaction.getName())));
+            if (!MedievalFactions.USE_NEW_LANGUAGE_FILE) {
+                player.sendMessage(translate("&c" + getText("AlertNotAllied", otherFaction.getName())));
+            } else {
+                PlayerService.sendPlayerMessage(player, Objects.requireNonNull(MessageService.getLanguage().getString("AlertNotAllied"))
+                        .replaceAll("#faction#", otherFaction.getName()));
+            }
             return;
         }
 
         faction.removeAlly(otherFaction.getName());
         otherFaction.removeAlly(faction.getName());
-        messageFaction(faction, translate("&c" + getText("AllianceBrokenWith", otherFaction.getName())));
-        messageFaction(otherFaction, translate("&c" + getText("AlertAllianceHasBeenBroken", faction.getName())));
+        if (!MedievalFactions.USE_NEW_LANGUAGE_FILE) {
+            messageFaction(faction, translate("&c" + getText("AllianceBrokenWith", otherFaction.getName())));
+            messageFaction(otherFaction, translate("&c" + getText("AlertAllianceHasBeenBroken", faction.getName())));
+        } else {
+            sendMessageFaction(faction, Objects.requireNonNull(MessageService.getLanguage().getString("AllianceBrokenWith"))
+                    .replaceAll("#faction#", otherFaction.getName()));
+            sendMessageFaction(otherFaction, Objects.requireNonNull(MessageService.getLanguage().getString("AlertAllianceHasBeenBroken"))
+                    .replaceAll("#faction#", faction.getName()));
+        }
     }
 
     /**
