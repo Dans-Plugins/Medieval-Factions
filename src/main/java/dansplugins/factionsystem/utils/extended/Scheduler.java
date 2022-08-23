@@ -104,7 +104,7 @@ public class Scheduler {
         final int teleport_delay = configService.getInt("teleportDelay");
         player.sendMessage(ChatColor.AQUA + "Teleporting in " + teleport_delay + " seconds...");
         DelayedTeleportTask delayedTeleportTask = new DelayedTeleportTask(player, destinationLocation);
-        delayedTeleportTask.runTaskLater(medievalFactions, (long) (teleport_delay * getRandomNumberBetween(15, 25)));
+        delayedTeleportTask.runTaskLater(medievalFactions, (long) teleport_delay * getRandomNumberBetween(15, 25));
     }
 
     private int getRandomNumberBetween(int num1, int num2) {
@@ -114,9 +114,9 @@ public class Scheduler {
     }
 
     private class DelayedTeleportTask extends BukkitRunnable {
-        private Player player;
-        private Location initialLocation;
-        private Location destinationLocation;
+        private final Player player;
+        private final Location initialLocation;
+        private final Location destinationLocation;
 
         public DelayedTeleportTask(Player player, Location destinationLocation) {
             this.player = player;
@@ -128,8 +128,7 @@ public class Scheduler {
         public void run() {
             if (playerHasNotMoved()) {
                 teleportPlayer();
-            }
-            else {
+            } else {
                 player.sendMessage(ChatColor.RED + "Teleport cancelled.");
             }
         }

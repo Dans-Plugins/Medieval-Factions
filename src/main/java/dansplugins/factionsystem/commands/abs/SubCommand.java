@@ -26,26 +26,27 @@ import java.util.UUID;
  */
 public abstract class SubCommand implements ColorTranslator {
     public static final String LOCALE_PREFIX = "Locale_";
-    private final boolean playerCommand;
-    private final boolean requiresFaction;
-    private final boolean requiresOfficer;
-    private final boolean requiresOwner;
     protected final LocaleService localeService;
     protected final PersistentData persistentData;
     protected final EphemeralData ephemeralData;
     protected final PersistentData.ChunkDataAccessor chunkDataAccessor;
     protected final DynmapIntegrator dynmapIntegrator;
     protected final ConfigService configService;
+    private final boolean playerCommand;
+    private final boolean requiresFaction;
+    private final boolean requiresOfficer;
+    private final boolean requiresOwner;
     protected Faction faction = null;
     private String[] names;
 
     /**
      * Constructor to initialise a Command.
-     * @param names           of the command, for example, "Fly, FFly, Flight".
-     * @param playerCommand   if the command is exclusive to players.
-     * @param requiresFaction if the command requires a Faction to perform.
-     * @param requiresOfficer if the command requires officer or higher.
-     * @param requiresOwner   if the command is reserved for Owners.
+     *
+     * @param names             of the command, for example, "Fly, FFly, Flight".
+     * @param playerCommand     if the command is exclusive to players.
+     * @param requiresFaction   if the command requires a Faction to perform.
+     * @param requiresOfficer   if the command requires officer or higher.
+     * @param requiresOwner     if the command is reserved for Owners.
      * @param localeService
      * @param persistentData
      * @param ephemeralData
@@ -69,9 +70,10 @@ public abstract class SubCommand implements ColorTranslator {
 
     /**
      * Constructor to initialise a command without owner/faction checks.
-     * @param names           of the command.
-     * @param playerCommand   if the command is exclusive to players.
-     * @param requiresFaction if the command requires a Faction to do.
+     *
+     * @param names             of the command.
+     * @param playerCommand     if the command is exclusive to players.
+     * @param requiresFaction   if the command requires a Faction to do.
      * @param persistentData
      * @param localeService
      * @param ephemeralData
@@ -85,8 +87,9 @@ public abstract class SubCommand implements ColorTranslator {
 
     /**
      * Constructor to initialise a command without faction checks.
-     * @param names         of the command.
-     * @param playerCommand if the command is exclusive to players.
+     *
+     * @param names             of the command.
+     * @param playerCommand     if the command is exclusive to players.
      * @param persistentData
      * @param localeService
      * @param ephemeralData

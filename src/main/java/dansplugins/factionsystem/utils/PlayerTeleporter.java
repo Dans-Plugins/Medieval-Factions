@@ -15,8 +15,7 @@ public class PlayerTeleporter {
         boolean success = player.teleport(location);
         if (success) {
             logger.debug("Successfully teleported " + player.getName());
-        }
-        else {
+        } else {
             logger.debug("Failed to teleport " + player.getName());
         }
         return success;

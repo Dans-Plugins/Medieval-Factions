@@ -20,6 +20,7 @@ public class AddLawCommand extends SubCommand {
 
     /**
      * Constructor to initialise a Command.
+     *
      * @param localeService
      */
     public AddLawCommand(LocaleService localeService, PersistentData persistentData, EphemeralData ephemeralData, PersistentData.ChunkDataAccessor chunkDataAccessor, DynmapIntegrator dynmapIntegrator, ConfigService configService) {

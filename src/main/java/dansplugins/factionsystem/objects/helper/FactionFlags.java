@@ -145,7 +145,7 @@ public class FactionFlags {
             return;
         }
 
-        if (flag.equals("officersCanMintCurrency") && !currenciesIntegrator.isCurrenciesPresent()) {
+        if (flag.equals("officersCanMintCurrency") && currenciesIntegrator.isCurrenciesPresent()) {
             // TODO: add locale message
             return;
         }
@@ -285,7 +285,7 @@ public class FactionFlags {
                 continue;
             }
 
-            if (flagName.equals("officersCanMintCurrency") && !currenciesIntegrator.isCurrenciesPresent()) {
+            if (flagName.equals("officersCanMintCurrency") && currenciesIntegrator.isCurrenciesPresent()) {
                 continue;
             }
 

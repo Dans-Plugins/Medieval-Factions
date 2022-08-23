@@ -178,12 +178,10 @@ public class LockService {
                 ephemeralData.getForcefullyUnlockingPlayers().remove(player.getUniqueId());
 
                 event.setCancelled(true);
-                return;
             }
         } else {
             player.sendMessage(ChatColor.RED + localeService.get("BlockIsNotLocked"));
             event.setCancelled(true);
-            return;
         }
     }
 

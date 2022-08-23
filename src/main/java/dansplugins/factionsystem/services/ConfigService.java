@@ -18,8 +18,8 @@ public class ConfigService {
 
     private boolean altered = false;
 
-    public ConfigService(MedievalFactions medievalFactions) {
-        this.medievalFactions = medievalFactions;
+    public ConfigService() {
+        this.medievalFactions = MedievalFactions.getMedievalFactions();
         localeService = new LocaleService(medievalFactions, this);
     }
 
@@ -163,7 +163,9 @@ public class ConfigService {
         if (!getConfig().isInt("teleportDelay")) {
             getConfig().addDefault("teleportDelay", 3);
         }
-
+        if (!getConfig().isString("factionless")) {
+            getConfig().addDefault("factionless", "FactionLess");
+        }
         deleteOldConfigOptionsIfPresent();
 
         getConfig().options().copyDefaults(true);
@@ -304,6 +306,7 @@ public class ConfigService {
         getConfig().addDefault("powerLostOnDeath", 1.0);
         getConfig().addDefault("powerGainedOnKill", 1.0);
         getConfig().addDefault("teleportDelay", 3);
+        getConfig().addDefault("factionless", "FactionLess");
         getConfig().options().copyDefaults(true);
         medievalFactions.saveConfig();
     }

@@ -9,6 +9,7 @@ import dansplugins.factionsystem.data.PersistentData;
 import dansplugins.factionsystem.objects.domain.ClaimedChunk;
 import dansplugins.factionsystem.objects.domain.Faction;
 import dansplugins.factionsystem.objects.domain.PowerRecord;
+import dansplugins.factionsystem.services.ConfigService;
 import me.clip.placeholderapi.expansion.PlaceholderExpansion;
 import org.bukkit.Bukkit;
 import org.bukkit.Chunk;
@@ -54,7 +55,7 @@ public class PlaceholderAPI extends PlaceholderExpansion {
 
     @Override
     public String onPlaceholderRequest(Player player, @NotNull String id) {
-        id = id.toLowerCase(); // I'm unsure if PlaceholderAPI enforces case, but lets just do it to make sure.
+        id = id.toLowerCase(); // I'm unsure if PlaceholderAPI enforces case, but let's just do it to make sure.
         if (player == null) return null; // We only want to handle Player-Placeholders here.
 
         final boolean hasFaction = persistentData.isInFaction(player.getUniqueId());
@@ -62,7 +63,7 @@ public class PlaceholderAPI extends PlaceholderExpansion {
 
         // Prerequisites.
         if (id.startsWith("faction_") && !hasFaction && !id.equalsIgnoreCase("faction_at_location")) {
-            return "Factionless"; // We don't want Faction-Specific Placeholders to return if they are Factionless!
+            return new ConfigService().getString("factionless"); // We don't want Faction-Specific Placeholders to return if they are Factionless!
         }
 
         // Faction-Specific.

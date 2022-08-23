@@ -14,12 +14,13 @@ import java.util.logging.Level;
 public class Logger {
     private final MedievalFactions medievalFactions;
 
-    public Logger(MedievalFactions medievalFactions) {
-        this.medievalFactions = medievalFactions;
+    public Logger() {
+        this.medievalFactions = MedievalFactions.getMedievalFactions();
     }
 
     /**
      * Log a debug message if the debug flag is enabled.
+     *
      * @param message The message to log.
      */
     public void debug(String message) {
@@ -30,6 +31,7 @@ public class Logger {
 
     /**
      * Log a message to the console.
+     *
      * @param message The message to log.
      */
     public void print(String message) {
@@ -38,6 +40,7 @@ public class Logger {
 
     /**
      * Log an error to the console.
+     *
      * @param message The message to log.
      */
     public void error(String message) {

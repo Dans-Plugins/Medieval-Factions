@@ -16,8 +16,8 @@ public class FiefsIntegrator {
 
     private FiefsAPI fi_api = null;
 
-    public FiefsIntegrator(MedievalFactions medievalFactions) {
-        this.medievalFactions = medievalFactions;
+    public FiefsIntegrator() {
+        this.medievalFactions = MedievalFactions.getMedievalFactions();
         if (isFiefsPresent()) {
             if (this.medievalFactions.isDebugEnabled()) {
                 System.out.println("[DEBUG] Fiefs was found successfully!");

@@ -64,14 +64,6 @@ public class PersistentData {
     private final DynmapIntegrator dynmapIntegrator;
     private final BlockChecker blockChecker;
 
-    public DynmapIntegrator getDynmapIntegrator() {
-        return dynmapIntegrator;
-    }
-
-    public BlockChecker getBlockChecker() {
-        return blockChecker;
-    }
-
     public PersistentData(LocaleService localeService, ConfigService configService, MedievalFactions medievalFactions, Messenger messenger, EphemeralData ephemeralData, Logger logger, FiefsIntegrator fiefsIntegrator, CurrenciesIntegrator currenciesIntegrator) {
         this.localeService = localeService;
         this.configService = configService;
@@ -85,6 +77,14 @@ public class PersistentData {
         interactionAccessChecker = new InteractionAccessChecker(this, configService, ephemeralData, logger);
         dynmapIntegrator = new DynmapIntegrator(logger, configService.getLocaleService(), medievalFactions, this); // TODO: resolve circular dependency
         blockChecker = new BlockChecker(this); // TODO: resolve circular dependency
+    }
+
+    public DynmapIntegrator getDynmapIntegrator() {
+        return dynmapIntegrator;
+    }
+
+    public BlockChecker getBlockChecker() {
+        return blockChecker;
     }
 
     public ChunkDataAccessor getChunkDataAccessor() {
@@ -1232,8 +1232,8 @@ public class PersistentData {
                     case STONE_BUTTON:
                     case LECTERN:
                         return false;
-					default:
-						break;
+                    default:
+                        break;
                 }
             }
             return true;
@@ -1280,8 +1280,8 @@ public class PersistentData {
                 case CHORUS_FRUIT:
                 case DRIED_KELP:
                 case BAKED_POTATO:
-				default:
-					break;
+                default:
+                    break;
             }
             return true;
         }
@@ -1292,16 +1292,14 @@ public class PersistentData {
      * @author Pasarus
      */
     public class LocalStorageService {
-        private final PersistentData persistentData;
-
         private final static String FILE_PATH = "./plugins/MedievalFactions/";
         private final static String FACTIONS_FILE_NAME = "factions.json";
         private final static String CHUNKS_FILE_NAME = "claimedchunks.json";
         private final static String PLAYERPOWER_FILE_NAME = "playerpowerrecords.json";
         private final static String PLAYERACTIVITY_FILE_NAME = "playeractivityrecords.json";
         private final static String LOCKED_BLOCKS_FILE_NAME = "lockedblocks.json";
-//        private final static String WARS_FILE_NAME = "wars.json";
-
+        private final PersistentData persistentData;
+        //        private final static String WARS_FILE_NAME = "wars.json";
         private final Type LIST_MAP_TYPE = new TypeToken<ArrayList<HashMap<String, String>>>() {
         }.getType();
 
