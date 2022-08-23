@@ -4,7 +4,6 @@
  */
 package dansplugins.factionsystem.commands;
 
-import dansplugins.factionsystem.MedievalFactions;
 import dansplugins.factionsystem.commands.abs.SubCommand;
 import dansplugins.factionsystem.data.EphemeralData;
 import dansplugins.factionsystem.data.PersistentData;
@@ -45,21 +44,13 @@ public class DeclareIndependenceCommand extends SubCommand {
         }
 
         if (!(this.faction.hasLiege()) || this.faction.getLiege() == null) {
-            if (!MedievalFactions.USE_NEW_LANGUAGE_FILE) {
-                player.sendMessage(translate("&c" + getText("NotAVassalOfAFaction")));
-            } else {
-                PlayerService.sendPlayerMessage(player, "NotAVassalOfAFaction", false);
-            }
+            PlayerService.sendMessageType(player, "&c" + getText("NotAVassalOfAFaction"), "NotAVassalOfAFaction", false);
             return;
         }
 
         final Faction liege = getFaction(this.faction.getLiege());
         if (liege == null) {
-            if (!MedievalFactions.USE_NEW_LANGUAGE_FILE) {
-                player.sendMessage(translate("&c" + getText("FactionNotFound")));
-            } else {
-                PlayerService.sendPlayerMessage(player, Objects.requireNonNull(MessageService.getLanguage().getString("FactionNotFound")).replaceAll("#faction#", String.join(" ", args)), false);
-            }
+            PlayerService.sendMessageType(player, "&c" + getText("FactionNotFound"), Objects.requireNonNull(MessageService.getLanguage().getString("FactionNotFound")).replaceAll("#faction#", String.join(" ", args)), true);
             return;
         }
 
@@ -83,11 +74,8 @@ public class DeclareIndependenceCommand extends SubCommand {
                 }
             }
         }
-        if (!MedievalFactions.USE_NEW_LANGUAGE_FILE) {
-            messageServer(translate("&c" + getText("HasDeclaredIndependence", faction.getName(), liege.getName())));
-        } else {
-            sendMessageServer(Objects.requireNonNull(MessageService.getLanguage().getString("HasDeclaredIndependence")).replaceAll("#faction_a#", faction.getName()).replaceAll("#faction_b#", liege.getName()));
-        }
+        messageServer("&c" + getText("HasDeclaredIndependence", faction.getName(), liege.getName()), Objects.requireNonNull(MessageService.getLanguage().getString("HasDeclaredIndependence")).replaceAll("#faction_a#", faction.getName()).replaceAll("#faction_b#", liege.getName()));
+
     }
 
     /**

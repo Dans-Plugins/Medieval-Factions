@@ -4,7 +4,6 @@
  */
 package dansplugins.factionsystem.commands;
 
-import dansplugins.factionsystem.MedievalFactions;
 import dansplugins.factionsystem.commands.abs.SubCommand;
 import dansplugins.factionsystem.data.EphemeralData;
 import dansplugins.factionsystem.data.PersistentData;
@@ -48,55 +47,38 @@ public class BreakAllianceCommand extends SubCommand {
         }
 
         if (args.length == 0) {
-            if (!MedievalFactions.USE_NEW_LANGUAGE_FILE) {
-                player.sendMessage(translate("&c" + getText("UsageBreakAlliance")));
-            } else {
-                PlayerService.sendPlayerMessage(player, "UsageBreakAlliance", true);
-            }
+            PlayerService.sendMessageType(player, "&c" + getText("UsageBreakAlliance"), "UsageBreakAlliance", false);
             return;
         }
 
         final Faction otherFaction = getFaction(String.join(" ", args));
         if (otherFaction == null) {
-            if (!MedievalFactions.USE_NEW_LANGUAGE_FILE) {
-                player.sendMessage(translate("&c" + getText("FactionNotFound")));
-            } else {
-                PlayerService.sendPlayerMessage(player, Objects.requireNonNull(MessageService.getLanguage().getString("FactionNotFound"))
-                        .replaceAll("#faction#", String.join(" ", args)), false);
-            }
+            PlayerService.sendMessageType(player, "&c" + getText("FactionNotFound"),
+                    Objects.requireNonNull(MessageService.getLanguage().getString("FactionNotFound"))
+                            .replaceAll("#faction#", String.join(" ", args)), true);
             return;
         }
 
         if (otherFaction == faction) {
-            if (!MedievalFactions.USE_NEW_LANGUAGE_FILE) {
-                player.sendMessage(translate("&c" + getText("CannotBreakAllianceWithSelf")));
-            } else {
-                PlayerService.sendPlayerMessage(player, "CannotBreakAllianceWithSelf", true);
-            }
+            PlayerService.sendMessageType(player, "&c" + getText("CannotBreakAllianceWithSelf"), "CannotBreakAllianceWithSelf", false);
             return;
         }
 
         if (!faction.isAlly(otherFaction.getName())) {
-            if (!MedievalFactions.USE_NEW_LANGUAGE_FILE) {
-                player.sendMessage(translate("&c" + getText("AlertNotAllied", otherFaction.getName())));
-            } else {
-                PlayerService.sendPlayerMessage(player, Objects.requireNonNull(MessageService.getLanguage().getString("AlertNotAllied"))
-                        .replaceAll("#faction#", otherFaction.getName()), false);
-            }
+            PlayerService.sendMessageType(player, "&c" + getText("AlertNotAllied", otherFaction.getName()),
+                    Objects.requireNonNull(MessageService.getLanguage().getString("AlertNotAllied"))
+                            .replaceAll("#faction#", otherFaction.getName()), true);
             return;
         }
 
         faction.removeAlly(otherFaction.getName());
         otherFaction.removeAlly(faction.getName());
-        if (!MedievalFactions.USE_NEW_LANGUAGE_FILE) {
-            messageFaction(faction, translate("&c" + getText("AllianceBrokenWith", otherFaction.getName())));
-            messageFaction(otherFaction, translate("&c" + getText("AlertAllianceHasBeenBroken", faction.getName())));
-        } else {
-            sendMessageFaction(faction, Objects.requireNonNull(MessageService.getLanguage().getString("AllianceBrokenWith"))
-                    .replaceAll("#faction#", otherFaction.getName()));
-            sendMessageFaction(otherFaction, Objects.requireNonNull(MessageService.getLanguage().getString("AlertAllianceHasBeenBroken"))
-                    .replaceAll("#faction#", faction.getName()));
-        }
+        messageFaction(faction, translate("&c" + getText("AllianceBrokenWith", otherFaction.getName()))
+                , Objects.requireNonNull(MessageService.getLanguage().getString("AllianceBrokenWith"))
+                        .replaceAll("#faction#", otherFaction.getName()));
+        messageFaction(otherFaction, translate("&c" + getText("AlertAllianceHasBeenBroken", faction.getName())),
+                Objects.requireNonNull(MessageService.getLanguage().getString("AlertAllianceHasBeenBroken"))
+                        .replaceAll("#faction#", faction.getName()));
     }
 
     /**

@@ -49,4 +49,23 @@ CannotDemoteSelf: "&cYou cannot demote yourself."
 PlayerIsNotOfficerOfFaction: "&cThat player isn't an officer in your faction."
 AlertDemotion: "&aYou have been demoted to member status in your faction."
 PlayerDemoted: "&cYou was demote player #name#."
-
+UsageDesc: "&aUsage: /mf desc (description)"
+Description: "&eDescription: #desc#"
+OnlyPlayersCanUseCommand: "&cOnly players can use this command."
+AlertMustKickAllPlayers: "&cYou need to kick all players before you can disband your faction."
+FactionSuccessfullyDisbanded: "&cFaction successfully disbanded."
+SuccessfulDisbandment: "&c#faction# has been successfully disbanded."
+CannotDuelSelf: "&cYou cannot duel yourself."
+AlertAlreadyDuelingSomeone: "&cYou are already dueling someone."
+PlayerNotFound: "&cPlayer #name# not found."
+PlayerAlreadyDueling: "&c#name# is already duelling someone."
+AlertChallengeIssued: "&aYou have challenged #name# to a duel."
+AlertNotBeenChallenged: "&cYou have not been challenged to a duel by anyone."
+AlertNotBeenChallengedByPlayer: "&cYou have not been challenged to a duel by #name#."
+AlertAlreadyDueling: "&eYou are already dueling."
+AlertAlreadyDuelingPlayer: "&aYou are already dueling #name#."
+AlertNoPendingChallenges: "&aYou have no pending challenges to cancel."
+Alias:
+  CmdDuelChallenge: challenge
+  CmdDuelAccept: accept
+  CmdDuelCancel: cancel

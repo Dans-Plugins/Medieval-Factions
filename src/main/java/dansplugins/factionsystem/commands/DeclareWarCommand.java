@@ -4,7 +4,6 @@
  */
 package dansplugins.factionsystem.commands;
 
-import dansplugins.factionsystem.MedievalFactions;
 import dansplugins.factionsystem.commands.abs.SubCommand;
 import dansplugins.factionsystem.data.EphemeralData;
 import dansplugins.factionsystem.data.PersistentData;
@@ -52,11 +51,8 @@ public class DeclareWarCommand extends SubCommand {
         }
 
         if (args.length == 0) {
-            if (!MedievalFactions.USE_NEW_LANGUAGE_FILE) {
-                player.sendMessage(translate("&c" + "Usage: /mf declarewar \"faction\""));
-            } else {
-                PlayerService.sendPlayerMessage(player, "UsageDeclareWar", true);
-            }
+            PlayerService.sendMessageType(player, "&c" + "Usage: /mf declarewar \"faction\"",
+                    "UsageDeclareWar", false);
             return;
         }
 
@@ -64,11 +60,8 @@ public class DeclareWarCommand extends SubCommand {
         List<String> doubleQuoteArgs = argumentParser.getArgumentsInsideDoubleQuotes(args);
 
         if (doubleQuoteArgs.size() == 0) {
-            if (!MedievalFactions.USE_NEW_LANGUAGE_FILE) {
-                player.sendMessage(translate("&c" + "Usage: /mf declarewar \"faction\" (quotation marks are required)"));
-            } else {
-                PlayerService.sendPlayerMessage(player, "UsageDeclareWar", true);
-            }
+            PlayerService.sendMessageType(player, "&c" + "Usage: /mf declarewar \"faction\" (quotation marks are required)",
+                    "UsageDeclareWar", false);
             return;
         }
 
@@ -76,40 +69,28 @@ public class DeclareWarCommand extends SubCommand {
 
         final Faction opponent = getFaction(factionName);
         if (opponent == null) {
-            if (!MedievalFactions.USE_NEW_LANGUAGE_FILE) {
-                player.sendMessage(translate("&c" + getText("FactionNotFound")));
-            } else {
-                PlayerService.sendPlayerMessage(player, Objects.requireNonNull(MessageService.getLanguage().getString("FactionNotFound"))
-                        .replaceAll("#faction#", String.join(" ", args)), false);
-            }
+            PlayerService.sendMessageType(player, "&c" + getText("FactionNotFound"), Objects.requireNonNull(MessageService.getLanguage().getString("FactionNotFound"))
+                    .replaceAll("#faction#", String.join(" ", args)), true);
             return;
         }
 
         if (opponent == faction) {
-            if (!MedievalFactions.USE_NEW_LANGUAGE_FILE) {
-                player.sendMessage(translate("&c" + getText("CannotDeclareWarOnYourself")));
-            } else {
-                PlayerService.sendPlayerMessage(player, "CannotDeclareWarOnYourself", true);
-            }
+            PlayerService.sendMessageType(player, "&c" + getText("CannotDeclareWarOnYourself")
+                    , "CannotDeclareWarOnYourself", false);
             return;
         }
 
         if (faction.isEnemy(opponent.getName())) {
-            if (!MedievalFactions.USE_NEW_LANGUAGE_FILE) {
-                player.sendMessage(translate("&c" + getText("AlertAlreadyAtWarWith", opponent.getName())));
-            } else {
-                PlayerService.sendPlayerMessage(player, Objects.requireNonNull(MessageService.getLanguage().getString("AlertAlreadyAtWarWith")).replaceAll("#faction#", opponent.getName()), false);
-            }
+            PlayerService.sendMessageType(player, "&c" + getText("CannotDeclareWarOnYourself")
+                    , Objects.requireNonNull(MessageService.getLanguage().getString("AlertAlreadyAtWarWith")).replaceAll("#faction#", opponent.getName()), true);
+
             return;
         }
 
         if (faction.hasLiege() && opponent.hasLiege()) {
             if (faction.isVassal(opponent.getName())) {
-                if (!MedievalFactions.USE_NEW_LANGUAGE_FILE) {
-                    player.sendMessage(translate("&c" + getText("CannotDeclareWarOnVassal")));
-                } else {
-                    PlayerService.sendPlayerMessage(player, "CannotDeclareWarOnVassal", true);
-                }
+                PlayerService.sendMessageType(player, "&c" + getText("CannotDeclareWarOnVassal")
+                        , "CannotDeclareWarOnVassal", false);
                 return;
             }
 
@@ -117,48 +98,34 @@ public class DeclareWarCommand extends SubCommand {
                 final Faction enemyLiege = getFaction(opponent.getLiege());
                 if (enemyLiege.calculateCumulativePowerLevelWithoutVassalContribution() <
                         enemyLiege.getMaximumCumulativePowerLevel() / 2) {
-                    if (!MedievalFactions.USE_NEW_LANGUAGE_FILE) {
-                        player.sendMessage(translate("&c" + getText("CannotDeclareWarIfLiegeNotWeakened")));
-                    } else {
-                        PlayerService.sendPlayerMessage(player, "CannotDeclareWarIfLiegeNotWeakened", true);
-                    }
+                    PlayerService.sendMessageType(player, "&c" + getText("CannotDeclareWarIfLiegeNotWeakened")
+                            , "CannotDeclareWarIfLiegeNotWeakened", false);
                 }
             }
         }
 
         if (faction.isLiege(opponent.getName())) {
-            if (!MedievalFactions.USE_NEW_LANGUAGE_FILE) {
-                player.sendMessage(translate("&c" + getText("CannotDeclareWarOnLiege")));
-            } else {
-                PlayerService.sendPlayerMessage(player, "CannotDeclareWarOnLiege", true);
-            }
+            PlayerService.sendMessageType(player, "&c" + getText("CannotDeclareWarOnLiege")
+                    , "CannotDeclareWarOnLiege", false);
             return;
         }
 
         if (faction.isAlly(opponent.getName())) {
-            if (!MedievalFactions.USE_NEW_LANGUAGE_FILE) {
-                player.sendMessage(translate("&c" + getText("CannotDeclareWarOnAlly")));
-            } else {
-                PlayerService.sendPlayerMessage(player, "CannotDeclareWarOnAlly", true);
-            }
+            PlayerService.sendMessageType(player, "&c" + getText("CannotDeclareWarOnAlly")
+                    , "CannotDeclareWarOnAlly", false);
             return;
         }
 
         if (configService.getBoolean("allowNeutrality") && ((boolean) opponent.getFlags().getFlag("neutral"))) {
-            if (!MedievalFactions.USE_NEW_LANGUAGE_FILE) {
-                player.sendMessage(translate("&c" + getText("CannotDeclareWarOnNeutralFaction")));
-            } else {
-                PlayerService.sendPlayerMessage(player, "CannotDeclareWarOnNeutralFaction", true);
-            }
+            PlayerService.sendMessageType(player, "&c" + getText("CannotDeclareWarOnNeutralFaction")
+                    , "CannotDeclareWarOnNeutralFaction", false);
             return;
         }
 
         if (configService.getBoolean("allowNeutrality") && ((boolean) faction.getFlags().getFlag("neutral"))) {
-            if (!MedievalFactions.USE_NEW_LANGUAGE_FILE) {
-                player.sendMessage(translate("&c" + getText("CannotDeclareWarIfNeutralFaction")));
-            } else {
-                PlayerService.sendPlayerMessage(player, "CannotDeclareWarIfNeutralFaction", true);
-            }
+
+            PlayerService.sendMessageType(player, "&c" + getText("CannotDeclareWarIfNeutralFaction")
+                    , "CannotDeclareWarIfNeutralFaction", false);
             return;
         }
 
@@ -169,13 +136,10 @@ public class DeclareWarCommand extends SubCommand {
             faction.addEnemy(opponent.getName());
             opponent.addEnemy(faction.getName());
             warFactory.createWar(faction, opponent);
-            if (!MedievalFactions.USE_NEW_LANGUAGE_FILE) {
-                messageServer(translate("&c" + getText("HasDeclaredWarAgainst", faction.getName(), opponent.getName())));
-            } else {
-                sendMessageServer(Objects.requireNonNull(MessageService.getLanguage().getString("HasDeclaredWarAgainst"))
-                        .replaceAll("#f_a#", faction.getName())
-                        .replaceAll("#f_b#", opponent.getName()));
-            }
+            messageServer("&c" + getText("HasDeclaredWarAgainst", faction.getName(), opponent.getName()), Objects.requireNonNull(MessageService.getLanguage().getString("HasDeclaredWarAgainst"))
+                    .replaceAll("#f_a#", faction.getName())
+                    .replaceAll("#f_b#", opponent.getName()));
+
         }
     }
 

@@ -4,7 +4,6 @@
  */
 package dansplugins.factionsystem.commands;
 
-import dansplugins.factionsystem.MedievalFactions;
 import dansplugins.factionsystem.commands.abs.SubCommand;
 import dansplugins.factionsystem.data.EphemeralData;
 import dansplugins.factionsystem.data.PersistentData;
@@ -49,11 +48,7 @@ public class ChatCommand extends SubCommand {
         } else {
             ephemeralData.getPlayersInFactionChat().add(player.getUniqueId());
         }
-        if (!MedievalFactions.USE_NEW_LANGUAGE_FILE) {
-            player.sendMessage(translate("&a" + getText(path)));
-        } else {
-            PlayerService.sendPlayerMessage(player, path, true);
-        }
+        PlayerService.sendMessageType(player, "&c" + getText(path), path, false);
     }
 
     /**

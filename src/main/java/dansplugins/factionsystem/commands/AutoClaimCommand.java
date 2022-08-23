@@ -4,7 +4,6 @@
  */
 package dansplugins.factionsystem.commands;
 
-import dansplugins.factionsystem.MedievalFactions;
 import dansplugins.factionsystem.commands.abs.SubCommand;
 import dansplugins.factionsystem.data.EphemeralData;
 import dansplugins.factionsystem.data.PersistentData;
@@ -44,11 +43,7 @@ public class AutoClaimCommand extends SubCommand {
         }
 
         faction.toggleAutoClaim();
-        if (!MedievalFactions.USE_NEW_LANGUAGE_FILE) {
-            player.sendMessage(translate("&b" + getText("AutoclaimToggled")));
-        } else {
-            PlayerService.sendPlayerMessage(player, "AutoclaimToggled", true);
-        }
+        PlayerService.sendMessageType(player, "&b" + getText("AutoclaimToggled"), "AutoclaimToggled", false);
     }
 
     /**

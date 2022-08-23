@@ -4,7 +4,6 @@
  */
 package dansplugins.factionsystem.commands;
 
-import dansplugins.factionsystem.MedievalFactions;
 import dansplugins.factionsystem.commands.abs.SubCommand;
 import dansplugins.factionsystem.data.EphemeralData;
 import dansplugins.factionsystem.data.PersistentData;
@@ -48,25 +47,13 @@ public class CheckAccessCommand extends SubCommand {
 
         if (cancel && contains) {
             ephemeralData.getPlayersCheckingAccess().remove(player.getUniqueId());
-            if (!MedievalFactions.USE_NEW_LANGUAGE_FILE) {
-                player.sendMessage(translate("&c" + getText("Cancelled")));
-            } else {
-                PlayerService.sendPlayerMessage(player, "Cancelled", true);
-            }
+            PlayerService.sendMessageType(player, "&c" + getText("Cancelled"), "Cancelled", false);
         } else {
             if (contains) {
-                if (!MedievalFactions.USE_NEW_LANGUAGE_FILE) {
-                    player.sendMessage(translate("&c" + getText("AlreadyEnteredCheckAccess")));
-                } else {
-                    PlayerService.sendPlayerMessage(player, "AlreadyEnteredCheckAccess", true);
-                }
+                PlayerService.sendMessageType(player, "&c" + getText("AlreadyEnteredCheckAccess"), "AlreadyEnteredCheckAccess", false);
             } else {
                 ephemeralData.getPlayersCheckingAccess().add(player.getUniqueId());
-                if (!MedievalFactions.USE_NEW_LANGUAGE_FILE) {
-                    player.sendMessage(translate("&a" + getText("RightClickCheckAccess")));
-                } else {
-                    PlayerService.sendPlayerMessage(player, "RightClickCheckAccess", true);
-                }
+                PlayerService.sendMessageType(player, "&a" + getText("RightClickCheckAccess"), "RightClickCheckAccess", false);
             }
         }
     }

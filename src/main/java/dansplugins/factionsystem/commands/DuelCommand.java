@@ -13,9 +13,13 @@ import dansplugins.factionsystem.objects.domain.Duel;
 import dansplugins.factionsystem.objects.domain.Duel.DuelState;
 import dansplugins.factionsystem.services.ConfigService;
 import dansplugins.factionsystem.services.LocaleService;
+import dansplugins.factionsystem.services.MessageService;
+import dansplugins.factionsystem.services.PlayerService;
 import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
+
+import java.util.Objects;
 
 /**
  * @author Callum Johnson
@@ -39,30 +43,30 @@ public class DuelCommand extends SubCommand {
     public void execute(Player player, String[] args, String key) {
         final String permission = "mf.duel";
         if (!(checkPermissions(player, permission))) return;
-        if (args.length <= 0) {
+        if (args.length == 0) {
             sendHelp(player);
             return;
         }
-        if (safeEquals(args[0], getText("CmdDuelChallenge"), "challenge")) {
+        if (safeEquals(args[0], PlayerService.getMessageType(getText("CmdDuelChallenge"), MessageService.getLanguage().getString("Alias.  CmdDuelChallenge")), "challenge")) {
             if (!(args.length >= 2)) {
                 sendHelp(player);
                 return;
             }
             if (player.getName().equals(args[1])) {
-                player.sendMessage(translate("&c" + getText("CannotDuelSelf")));
+                PlayerService.sendMessageType(player, translate("&c" + getText("CannotDuelSelf")), "CannotDuelSelf", false);
                 return;
             }
             if (isDuelling(player)) {
-                player.sendMessage(translate("&c" + getText("AlertAlreadyDuelingSomeone")));
+                PlayerService.sendMessageType(player, translate("&c" + getText("AlertAlreadyDuelingSomeone")), "AlertAlreadyDuelingSomeone", false);
                 return;
             }
             Player target = Bukkit.getPlayer(args[1]);
             if (target == null) {
-                player.sendMessage(translate("&c" + getText("PlayerNotFound")));
+                PlayerService.sendMessageType(player, translate("&c" + getText("PlayerNotFound")), Objects.requireNonNull(MessageService.getLanguage().getString("PlayerNotFound")).replaceAll("#name#", args[1]), true);
                 return;
             }
             if (isDuelling(target)) {
-                player.sendMessage(translate("&c" + getText("PlayerAlreadyDueling", target.getName())));
+                PlayerService.sendMessageType(player, translate("&c" + getText("PlayerAlreadyDueling", target.getName())), Objects.requireNonNull(MessageService.getLanguage().getString("PlayerAlreadyDueling")).replaceAll("#name#", args[1]), true);
                 return;
             }
             int timeLimit = 120; // Time limit in seconds. TODO: Make config option.
@@ -70,44 +74,48 @@ public class DuelCommand extends SubCommand {
                 timeLimit = getIntSafe(args[2], 120);
             }
             inviteDuel(player, target, timeLimit);
-            player.sendMessage(translate("&b" + getText("AlertChallengeIssued", target.getName())));
-        } else if (safeEquals(args[0], getText("CmdDuelAccept"), "accept")) {
+            PlayerService.sendMessageType(player, ("&b" + getText("AlertChallengeIssued", target.getName())), Objects.requireNonNull(MessageService.getLanguage().getString("AlertChallengeIssued")).replaceAll("#name#", target.getName()), true);
+        } else if (safeEquals(args[0], PlayerService.getMessageType(getText("CmdDuelAccept"), MessageService.getLanguage().getString("Alias.CmdDuelAccept")), "accept")) {
             if (isDuelling(player)) {
-                player.sendMessage(translate("&c" + getText("AlertAlreadyDuelingSomeone")));
+                PlayerService.sendMessageType(player, ("&c" + getText("AlertAlreadyDuelingSomeone")), "AlertAlreadyDuelingSomeone", false);
                 return;
             }
             final Duel duel;
-            final String notChallenged, alreadyDueling;
+            final String notChallenged, alreadyDueling, notChallenged2, alreadyDueling2;
             if (args.length >= 2) {
                 final Player target = Bukkit.getPlayer(args[2]);
                 if (target == null) {
-                    player.sendMessage(translate("&c" + getText("PlayerNotFound")));
+                    PlayerService.sendMessageType(player, ("&c" + getText("PlayerNotFound")), Objects.requireNonNull(MessageService.getLanguage().getString("PlayerNotFound")).replaceAll("#name#", args[1]), true);
                     return;
                 }
                 duel = ephemeralData.getDuel(player, target);
                 notChallenged = getText("AlertNotBeenChallengedByPlayer", target.getName());
+                notChallenged2 = Objects.requireNonNull(MessageService.getLanguage().getString("AlertNotBeenChallengedByPlayer")).replaceAll("#name#", target.getName());
                 alreadyDueling = getText("AlertAlreadyDuelingPlayer", target.getName());
+                alreadyDueling2 = Objects.requireNonNull(MessageService.getLanguage().getString("AlertAlreadyDuelingPlayer")).replaceAll("#name#", target.getName());
             } else {
                 duel = getDuel(player);
                 notChallenged = getText("AlertNotBeenChallenged");
                 alreadyDueling = getText("AlertAlreadyDueling");
+                notChallenged2 = MessageService.getLanguage().getString("AlertNotBeenChallenged");
+                alreadyDueling2 = MessageService.getLanguage().getString("AlertAlreadyDueling");
             }
             if (duel == null) {
-                player.sendMessage(translate("&c" + notChallenged));
+                PlayerService.sendMessageType(player, ("&c" + notChallenged), notChallenged2, true);
                 return;
             }
             if (duel.getStatus().equals(DuelState.DUELLING)) {
-                player.sendMessage(translate("&c" + alreadyDueling));
+                PlayerService.sendMessageType(player, "&c" + alreadyDueling, alreadyDueling2, true);
                 return;
             }
             if (!(duel.isChallenged(player))) {
-                player.sendMessage(translate("&c" + notChallenged));
+                PlayerService.sendMessageType(player, ("&c" + notChallenged), notChallenged2, true);
                 return;
             }
             duel.acceptDuel();
-        } else if (safeEquals(args[0], getText("CmdDuelCancel"), "cancel")) {
+        } else if (safeEquals(args[0], PlayerService.getMessageType(getText("CmdDuelCancel"), MessageService.getLanguage().getString("Alias.CmdDuelCancel")), "cancel")) {
             if (!isDuelling(player)) {
-                player.sendMessage(translate("&c" + getText("AlertNoPendingChallenges")));
+                PlayerService.sendMessageType(player, "&c" + getText("AlertNoPendingChallenges"), "AlertNoPendingChallenges", false);
                 return;
             }
             final Duel duel = getDuel(player);
@@ -146,14 +154,11 @@ public class DuelCommand extends SubCommand {
     }
 
     private Duel getDuel(Player player) {
-        return ephemeralData.getDuelingPlayers().stream()
-                .filter(duel -> duel.isChallenged(player) || duel.isChallenger(player))
-                .findFirst().orElse(null);
+        return ephemeralData.getDuelingPlayers().stream().filter(duel -> duel.isChallenged(player) || duel.isChallenger(player)).findFirst().orElse(null);
     }
 
     private boolean isDuelling(Player player) {
-        return ephemeralData.getDuelingPlayers().stream()
-                .anyMatch(duel -> duel.hasPlayer(player) && duel.getStatus().equals(DuelState.DUELLING));
+        return ephemeralData.getDuelingPlayers().stream().anyMatch(duel -> duel.hasPlayer(player) && duel.getStatus().equals(DuelState.DUELLING));
     }
 
     private void inviteDuel(Player player, Player target, int limit) {

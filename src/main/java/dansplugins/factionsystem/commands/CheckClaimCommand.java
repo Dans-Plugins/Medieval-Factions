@@ -4,7 +4,6 @@
  */
 package dansplugins.factionsystem.commands;
 
-import dansplugins.factionsystem.MedievalFactions;
 import dansplugins.factionsystem.commands.abs.SubCommand;
 import dansplugins.factionsystem.data.EphemeralData;
 import dansplugins.factionsystem.data.PersistentData;
@@ -44,18 +43,10 @@ public class CheckClaimCommand extends SubCommand {
         final String result = chunkDataAccessor.checkOwnershipAtPlayerLocation(player);
 
         if (result.equals("unclaimed")) {
-            if (!MedievalFactions.USE_NEW_LANGUAGE_FILE) {
-                player.sendMessage(translate("&a" + getText("LandIsUnclaimed")));
-            } else {
-                PlayerService.sendPlayerMessage(player, "LandIsUnclaimed", true);
-            }
+            PlayerService.sendMessageType(player, "&a" + getText("LandIsUnclaimed"), "LandIsUnclaimed", false);
         } else {
-            if (!MedievalFactions.USE_NEW_LANGUAGE_FILE) {
-                player.sendMessage(translate("&c" + getText("LandClaimedBy", result)));
-            } else {
-                PlayerService.sendPlayerMessage(player, Objects.requireNonNull(MessageService.getLanguage().getString("LandClaimedBy"))
-                        .replaceAll("#player#", result), false);
-            }
+            PlayerService.sendMessageType(player, "&c" + getText("LandClaimedBy"), Objects.requireNonNull(MessageService.getLanguage().getString("LandClaimedBy"))
+                    .replaceAll("#player#", result), true);
         }
     }
 

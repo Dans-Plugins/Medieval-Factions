@@ -4,6 +4,7 @@
  */
 package dansplugins.factionsystem.commands;
 
+import dansplugins.factionsystem.MedievalFactions;
 import dansplugins.factionsystem.commands.abs.SubCommand;
 import dansplugins.factionsystem.data.EphemeralData;
 import dansplugins.factionsystem.data.PersistentData;
@@ -12,11 +13,15 @@ import dansplugins.factionsystem.integrators.DynmapIntegrator;
 import dansplugins.factionsystem.objects.domain.Faction;
 import dansplugins.factionsystem.services.ConfigService;
 import dansplugins.factionsystem.services.LocaleService;
+import dansplugins.factionsystem.services.MessageService;
+import dansplugins.factionsystem.services.PlayerService;
 import dansplugins.factionsystem.utils.Logger;
 import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
+
+import java.util.Objects;
 
 /**
  * @author Callum Johnson
@@ -57,13 +62,18 @@ public class DisbandCommand extends SubCommand {
         if (args.length == 0) {
             if (!checkPermissions(sender, "mf.disband")) return;
             if (!(sender instanceof Player)) { // ONLY Players can be in a Faction
-                sender.sendMessage(translate(getText("OnlyPlayersCanUseCommand")));
+                if (!MedievalFactions.USE_NEW_LANGUAGE_FILE) {
+                    sender.sendMessage(translate(getText("OnlyPlayersCanUseCommand")));
+                } else {
+                    PlayerService.sendConsoleMessage(sender.getServer().getConsoleSender(), "OnlyPlayersCanUseCommand", true);
+                }
                 return;
             }
             disband = getPlayerFaction(sender);
             self = true;
             if (disband.getPopulation() != 1) {
-                sender.sendMessage(translate("&c" + getText("AlertMustKickAllPlayers")));
+                PlayerService.sendMessageType(sender, "&c" + getText("AlertMustKickAllPlayers")
+                        , "AlertMustKickAllPlayers", false);
                 return;
             }
         } else {
@@ -72,14 +82,20 @@ public class DisbandCommand extends SubCommand {
             self = false;
         }
         if (disband == null) {
-            sender.sendMessage(translate("&c" + getText("FactionNotFound")));
+            PlayerService.sendMessageType(sender, "&c" + getText("FactionNotFound")
+                    , Objects.requireNonNull(MessageService.getLanguage().getString("FactionNotFound"))
+                            .replaceAll("#faction#", String.join(" ", args)), true);
             return;
         }
         final int factionIndex = persistentData.getFactionIndexOf(disband);
         if (self) {
-            sender.sendMessage(translate("&a" + getText("FactionSuccessfullyDisbanded")));
+            PlayerService.sendMessageType(sender, "&c" + getText("FactionSuccessfullyDisbanded")
+                    , "FactionSuccessfullyDisbanded", false);
             ephemeralData.getPlayersInFactionChat().remove(((Player) sender).getUniqueId());
-        } else sender.sendMessage(translate("&a" + getText("SuccessfulDisbandment", disband.getName())));
+        } else {
+            PlayerService.sendMessageType(sender, "&c" + getText("SuccessfulDisbandment", disband.getName())
+                    , Objects.requireNonNull(MessageService.getLanguage().getString("SuccessfulDisbandment")).replaceAll("#faction#", disband.getName()), true);
+        }
         removeFaction(factionIndex, self ? ((OfflinePlayer) sender) : null);
     }
 

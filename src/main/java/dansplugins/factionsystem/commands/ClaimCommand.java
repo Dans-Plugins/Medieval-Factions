@@ -4,7 +4,6 @@
  */
 package dansplugins.factionsystem.commands;
 
-import dansplugins.factionsystem.MedievalFactions;
 import dansplugins.factionsystem.commands.abs.SubCommand;
 import dansplugins.factionsystem.data.EphemeralData;
 import dansplugins.factionsystem.data.PersistentData;
@@ -38,11 +37,7 @@ public class ClaimCommand extends SubCommand {
         if ((boolean) faction.getFlags().getFlag("mustBeOfficerToManageLand")) {
             // officer or owner rank required
             if (!faction.isOfficer(player.getUniqueId()) && !faction.isOwner(player.getUniqueId())) {
-                if (!MedievalFactions.USE_NEW_LANGUAGE_FILE) {
-                    player.sendMessage(translate("&c" + getText("AlertMustBeOfficerOrOwnerToClaimLand")));
-                } else {
-                    PlayerService.sendPlayerMessage(player, "AlertMustBeOfficerOrOwnerToClaimLand", true);
-                }
+                PlayerService.sendMessageType(player, "&a" + getText("AlertMustBeOfficerOrOwnerToClaimLand"), "AlertMustBeOfficerOrOwnerToClaimLand", false);
                 return;
             }
         }
@@ -51,11 +46,7 @@ public class ClaimCommand extends SubCommand {
             int depth = getIntSafe(args[0], -1);
 
             if (depth <= 0) {
-                if (!MedievalFactions.USE_NEW_LANGUAGE_FILE) {
-                    player.sendMessage(translate("&c" + getText("UsageClaimRadius")));
-                } else {
-                    PlayerService.sendPlayerMessage(player, "UsageClaimRadius", true);
-                }
+                PlayerService.sendMessageType(player, "&a" + getText("UsageClaimRadius"), "UsageClaimRadius", false);
             } else {
                 chunkDataAccessor.radiusClaimAtLocation(depth, player, player.getLocation(), faction);
             }
