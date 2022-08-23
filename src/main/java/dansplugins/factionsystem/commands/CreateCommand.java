@@ -15,11 +15,15 @@ import dansplugins.factionsystem.integrators.FiefsIntegrator;
 import dansplugins.factionsystem.objects.domain.Faction;
 import dansplugins.factionsystem.services.ConfigService;
 import dansplugins.factionsystem.services.LocaleService;
+import dansplugins.factionsystem.services.MessageService;
+import dansplugins.factionsystem.services.PlayerService;
 import dansplugins.factionsystem.utils.Logger;
 import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.Player;
+
+import java.util.Objects;
 
 /**
  * @author Callum Johnson
@@ -56,12 +60,20 @@ public class CreateCommand extends SubCommand {
 
         this.faction = getPlayerFaction(player);
         if (this.faction != null) {
-            player.sendMessage(translate("&c" + getText("AlreadyInFaction")));
+            if (!MedievalFactions.USE_NEW_LANGUAGE_FILE) {
+                player.sendMessage(translate("&c" + getText("AlreadyInFaction")));
+            } else {
+                PlayerService.sendPlayerMessage(player,"AlreadyInFaction", true);
+            }
             return;
         }
 
         if (args.length == 0) {
-            player.sendMessage(translate("&c" + getText("UsageCreate")));
+            if (!MedievalFactions.USE_NEW_LANGUAGE_FILE) {
+                player.sendMessage(translate("&c" + getText("UsageCreate")));
+            } else {
+                PlayerService.sendPlayerMessage(player, "UsageCreate", true);
+            }
             return;
         }
 
@@ -70,12 +82,22 @@ public class CreateCommand extends SubCommand {
         final FileConfiguration config = configService.getConfig();
 
         if (factionName.length() > config.getInt("factionMaxNameLength")) {
-            player.sendMessage(translate("&c" + getText("FactionNameTooLong")));
+            if (!MedievalFactions.USE_NEW_LANGUAGE_FILE) {
+                player.sendMessage(translate("&c" + getText("FactionNameTooLong")));
+            } else {
+                PlayerService.sendPlayerMessage(player, Objects.requireNonNull(MessageService.getLanguage().getString("FactionNameTooLong"))
+                        .replaceAll("#name#", factionName), false);
+            }
             return;
         }
 
         if (persistentData.getFaction(factionName) != null) {
-            player.sendMessage(translate("&c" + getText("FactionAlreadyExists")));
+            if (!MedievalFactions.USE_NEW_LANGUAGE_FILE) {
+                player.sendMessage(translate("&c" + getText("FactionAlreadyExists")));
+            } else {
+                PlayerService.sendPlayerMessage(player, Objects.requireNonNull(MessageService.getLanguage().getString("FactionAlreadyExists"))
+                        .replaceAll("#name#", factionName), false);
+            }
             return;
         }
 
@@ -87,7 +109,12 @@ public class CreateCommand extends SubCommand {
         Bukkit.getPluginManager().callEvent(createEvent);
         if (!createEvent.isCancelled()) {
             persistentData.addFaction(this.faction);
-            player.sendMessage(translate("&a" + getText("FactionCreated")));
+            if (!MedievalFactions.USE_NEW_LANGUAGE_FILE) {
+                player.sendMessage(translate("&a" + getText("FactionCreated")));
+            } else {
+                PlayerService.sendPlayerMessage(player, Objects.requireNonNull(MessageService.getLanguage().getString("FactionCreated"))
+                        .replaceAll("#name#", factionName), false);
+            }
         }
     }
 

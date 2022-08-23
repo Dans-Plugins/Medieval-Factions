@@ -51,7 +51,7 @@ public class BreakAllianceCommand extends SubCommand {
             if (!MedievalFactions.USE_NEW_LANGUAGE_FILE) {
                 player.sendMessage(translate("&c" + getText("UsageBreakAlliance")));
             } else {
-                PlayerService.sendPlayerMessage(player, MessageService.getLanguage().getString("UsageBreakAlliance"));
+                PlayerService.sendPlayerMessage(player, "UsageBreakAlliance", true);
             }
             return;
         }
@@ -62,7 +62,7 @@ public class BreakAllianceCommand extends SubCommand {
                 player.sendMessage(translate("&c" + getText("FactionNotFound")));
             } else {
                 PlayerService.sendPlayerMessage(player, Objects.requireNonNull(MessageService.getLanguage().getString("FactionNotFound"))
-                        .replaceAll("#faction#", String.join(" ", args)));
+                        .replaceAll("#faction#", String.join(" ", args)), false);
             }
             return;
         }
@@ -71,7 +71,7 @@ public class BreakAllianceCommand extends SubCommand {
             if (!MedievalFactions.USE_NEW_LANGUAGE_FILE) {
                 player.sendMessage(translate("&c" + getText("CannotBreakAllianceWithSelf")));
             } else {
-                PlayerService.sendPlayerMessage(player, MessageService.getLanguage().getString("CannotBreakAllianceWithSelf"));
+                PlayerService.sendPlayerMessage(player, "CannotBreakAllianceWithSelf", true);
             }
             return;
         }
@@ -81,7 +81,7 @@ public class BreakAllianceCommand extends SubCommand {
                 player.sendMessage(translate("&c" + getText("AlertNotAllied", otherFaction.getName())));
             } else {
                 PlayerService.sendPlayerMessage(player, Objects.requireNonNull(MessageService.getLanguage().getString("AlertNotAllied"))
-                        .replaceAll("#faction#", otherFaction.getName()));
+                        .replaceAll("#faction#", otherFaction.getName()), false);
             }
             return;
         }

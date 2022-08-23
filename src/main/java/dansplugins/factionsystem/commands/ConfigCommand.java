@@ -11,6 +11,7 @@ import dansplugins.factionsystem.data.PersistentData;
 import dansplugins.factionsystem.integrators.DynmapIntegrator;
 import dansplugins.factionsystem.services.ConfigService;
 import dansplugins.factionsystem.services.LocaleService;
+import dansplugins.factionsystem.services.MessageService;
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
@@ -93,6 +94,7 @@ public class ConfigCommand extends SubCommand {
             }
         } else if (reload) {
             medievalFactions.reloadConfig();
+            MessageService.reloadLanguage();
             sender.sendMessage(ChatColor.GREEN + "Config reloaded.");
         } else {
             sender.sendMessage(translate("&c" + getText("ValidSubCommandsShowSet")));

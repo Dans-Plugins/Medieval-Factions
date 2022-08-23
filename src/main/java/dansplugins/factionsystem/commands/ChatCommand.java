@@ -4,12 +4,14 @@
  */
 package dansplugins.factionsystem.commands;
 
+import dansplugins.factionsystem.MedievalFactions;
 import dansplugins.factionsystem.commands.abs.SubCommand;
 import dansplugins.factionsystem.data.EphemeralData;
 import dansplugins.factionsystem.data.PersistentData;
 import dansplugins.factionsystem.integrators.DynmapIntegrator;
 import dansplugins.factionsystem.services.ConfigService;
 import dansplugins.factionsystem.services.LocaleService;
+import dansplugins.factionsystem.services.PlayerService;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
@@ -34,8 +36,7 @@ public class ChatCommand extends SubCommand {
     @Override
     public void execute(Player player, String[] args, String key) {
         final String permission = "mf.chat";
-        if (!player.hasPermission(permission)) {
-            player.sendMessage(translate("&c" + getText("PermissionNeeded", permission)));
+        if (!checkPermissions(player, permission)) {
             return;
         }
 
@@ -48,8 +49,11 @@ public class ChatCommand extends SubCommand {
         } else {
             ephemeralData.getPlayersInFactionChat().add(player.getUniqueId());
         }
-
-        player.sendMessage(translate("&a" + getText(path)));
+        if (!MedievalFactions.USE_NEW_LANGUAGE_FILE) {
+            player.sendMessage(translate("&a" + getText(path)));
+        } else {
+            PlayerService.sendPlayerMessage(player, path, true);
+        }
     }
 
     /**

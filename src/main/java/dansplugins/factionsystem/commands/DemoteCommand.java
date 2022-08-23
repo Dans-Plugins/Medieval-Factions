@@ -4,17 +4,21 @@
  */
 package dansplugins.factionsystem.commands;
 
+import dansplugins.factionsystem.MedievalFactions;
 import dansplugins.factionsystem.commands.abs.SubCommand;
 import dansplugins.factionsystem.data.EphemeralData;
 import dansplugins.factionsystem.data.PersistentData;
 import dansplugins.factionsystem.integrators.DynmapIntegrator;
 import dansplugins.factionsystem.services.ConfigService;
 import dansplugins.factionsystem.services.LocaleService;
+import dansplugins.factionsystem.services.MessageService;
+import dansplugins.factionsystem.services.PlayerService;
 import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
+import java.util.Objects;
 import java.util.UUID;
 
 /**
@@ -43,7 +47,11 @@ public class DemoteCommand extends SubCommand {
         }
 
         if (args.length == 0) {
-            player.sendMessage(translate("&c" + getText("UsageDemote")));
+            if (!MedievalFactions.USE_NEW_LANGUAGE_FILE) {
+                player.sendMessage(translate("&c" + getText("UsageDemote")));
+            } else {
+                PlayerService.sendPlayerMessage(player, "UsageDemote", true);
+            }
             return;
         }
 
@@ -55,27 +63,48 @@ public class DemoteCommand extends SubCommand {
         }
 
         if (playerToBeDemoted == null) {
-            player.sendMessage(translate("&c" + getText("PlayerByNameNotFound", args[0])));
+            if (!MedievalFactions.USE_NEW_LANGUAGE_FILE) {
+                player.sendMessage(translate("&c" + getText("PlayerByNameNotFound", args[0])));
+            } else {
+                PlayerService.sendPlayerMessage(player, Objects.requireNonNull(MessageService.getLanguage().getString("PlayerByNameNotFound"))
+                        .replaceAll("#name#", args[0]), false);
+            }
             return;
         }
 
         if (playerToBeDemoted.getUniqueId() == player.getUniqueId()) {
-            player.sendMessage(translate("&c" + getText("CannotDemoteSelf")));
+            if (!MedievalFactions.USE_NEW_LANGUAGE_FILE) {
+                player.sendMessage(translate("&c" + getText("CannotDemoteSelf")));
+            } else {
+                PlayerService.sendPlayerMessage(player, "CannotDemoteSelf", true);
+            }
             return;
         }
 
         if (!this.faction.isOfficer(playerToBeDemoted.getUniqueId())) {
-            player.sendMessage(translate("&c" + getText("PlayerIsNotOfficerOfFaction")));
+            if (!MedievalFactions.USE_NEW_LANGUAGE_FILE) {
+                player.sendMessage(translate("&c" + getText("PlayerIsNotOfficerOfFaction")));
+            } else {
+                PlayerService.sendPlayerMessage(player, "PlayerIsNotOfficerOfFaction", true);
+            }
             return;
         }
 
         faction.removeOfficer(playerToBeDemoted.getUniqueId());
 
         if (playerToBeDemoted.isOnline()) {
-            ((Player) playerToBeDemoted).sendMessage(translate("&c" + getText("AlertDemotion")));
+            if (!MedievalFactions.USE_NEW_LANGUAGE_FILE) {
+                ((Player) playerToBeDemoted).sendMessage(translate("&c" + getText("AlertDemotion")));
+            } else {
+                PlayerService.sendPlayerMessage(player, "AlertDemotion", true);
+            }
         }
-
-        player.sendMessage(translate("&a" + getText("PlayerDemoted")));
+        if (!MedievalFactions.USE_NEW_LANGUAGE_FILE) {
+            player.sendMessage(translate("&a" + getText("PlayerDemoted")));
+        } else {
+            PlayerService.sendPlayerMessage(player, Objects.requireNonNull(MessageService.getLanguage().getString("PlayerDemoted"))
+                    .replaceAll("#name#", playerToBeDemoted.getName()), false);
+        }
     }
 
     /**

@@ -4,12 +4,15 @@
  */
 package dansplugins.factionsystem.commands;
 
+import dansplugins.factionsystem.MedievalFactions;
 import dansplugins.factionsystem.commands.abs.SubCommand;
 import dansplugins.factionsystem.data.EphemeralData;
 import dansplugins.factionsystem.data.PersistentData;
 import dansplugins.factionsystem.integrators.DynmapIntegrator;
 import dansplugins.factionsystem.services.ConfigService;
 import dansplugins.factionsystem.services.LocaleService;
+import dansplugins.factionsystem.services.MessageService;
+import dansplugins.factionsystem.services.PlayerService;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
@@ -49,8 +52,11 @@ public class BypassCommand extends SubCommand {
         } else {
             ephemeralData.getAdminsBypassingProtections().add(player.getUniqueId());
         }
-
-        player.sendMessage(translate("&a" + getText(path)));
+        if (!MedievalFactions.USE_NEW_LANGUAGE_FILE) {
+            player.sendMessage(translate("&a" + getText(path)));
+        } else {
+            PlayerService.sendPlayerMessage(player, path, true);
+        }
     }
 
     /**

@@ -4,12 +4,14 @@
  */
 package dansplugins.factionsystem.commands;
 
+import dansplugins.factionsystem.MedievalFactions;
 import dansplugins.factionsystem.commands.abs.SubCommand;
 import dansplugins.factionsystem.data.EphemeralData;
 import dansplugins.factionsystem.data.PersistentData;
 import dansplugins.factionsystem.integrators.DynmapIntegrator;
 import dansplugins.factionsystem.services.ConfigService;
 import dansplugins.factionsystem.services.LocaleService;
+import dansplugins.factionsystem.services.PlayerService;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
@@ -46,13 +48,25 @@ public class CheckAccessCommand extends SubCommand {
 
         if (cancel && contains) {
             ephemeralData.getPlayersCheckingAccess().remove(player.getUniqueId());
-            player.sendMessage(translate("&c" + getText("Cancelled")));
+            if (!MedievalFactions.USE_NEW_LANGUAGE_FILE) {
+                player.sendMessage(translate("&c" + getText("Cancelled")));
+            } else {
+                PlayerService.sendPlayerMessage(player, "Cancelled", true);
+            }
         } else {
             if (contains) {
-                player.sendMessage(translate("&c" + getText("AlreadyEnteredCheckAccess")));
+                if (!MedievalFactions.USE_NEW_LANGUAGE_FILE) {
+                    player.sendMessage(translate("&c" + getText("AlreadyEnteredCheckAccess")));
+                } else {
+                    PlayerService.sendPlayerMessage(player, "AlreadyEnteredCheckAccess", true);
+                }
             } else {
                 ephemeralData.getPlayersCheckingAccess().add(player.getUniqueId());
-                player.sendMessage(translate("&a" + getText("RightClickCheckAccess")));
+                if (!MedievalFactions.USE_NEW_LANGUAGE_FILE) {
+                    player.sendMessage(translate("&a" + getText("RightClickCheckAccess")));
+                } else {
+                    PlayerService.sendPlayerMessage(player, "RightClickCheckAccess", true);
+                }
             }
         }
     }

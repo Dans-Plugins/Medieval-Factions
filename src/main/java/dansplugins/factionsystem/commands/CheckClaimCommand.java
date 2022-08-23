@@ -4,14 +4,19 @@
  */
 package dansplugins.factionsystem.commands;
 
+import dansplugins.factionsystem.MedievalFactions;
 import dansplugins.factionsystem.commands.abs.SubCommand;
 import dansplugins.factionsystem.data.EphemeralData;
 import dansplugins.factionsystem.data.PersistentData;
 import dansplugins.factionsystem.integrators.DynmapIntegrator;
 import dansplugins.factionsystem.services.ConfigService;
 import dansplugins.factionsystem.services.LocaleService;
+import dansplugins.factionsystem.services.MessageService;
+import dansplugins.factionsystem.services.PlayerService;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
+
+import java.util.Objects;
 
 /**
  * @author Callum Johnson
@@ -39,9 +44,18 @@ public class CheckClaimCommand extends SubCommand {
         final String result = chunkDataAccessor.checkOwnershipAtPlayerLocation(player);
 
         if (result.equals("unclaimed")) {
-            player.sendMessage(translate("&a" + getText("LandIsUnclaimed")));
+            if (!MedievalFactions.USE_NEW_LANGUAGE_FILE) {
+                player.sendMessage(translate("&a" + getText("LandIsUnclaimed")));
+            } else {
+                PlayerService.sendPlayerMessage(player, "LandIsUnclaimed", true);
+            }
         } else {
-            player.sendMessage(translate("&c" + getText("LandClaimedBy", result)));
+            if (!MedievalFactions.USE_NEW_LANGUAGE_FILE) {
+                player.sendMessage(translate("&c" + getText("LandClaimedBy", result)));
+            } else {
+                PlayerService.sendPlayerMessage(player, Objects.requireNonNull(MessageService.getLanguage().getString("LandClaimedBy"))
+                        .replaceAll("#player#", result), false);
+            }
         }
     }
 

@@ -52,7 +52,7 @@ public class AddLawCommand extends SubCommand {
             if (!MedievalFactions.USE_NEW_LANGUAGE_FILE) {
                 player.sendMessage(translate("&c" + getText("UsageAddLaw")));
             } else {
-                PlayerService.sendPlayerMessage(player, MessageService.getLanguage().getString("UsageAddLaw"));
+                PlayerService.sendPlayerMessage(player, "UsageAddLaw", true);
             }
             return;
         }
@@ -63,7 +63,7 @@ public class AddLawCommand extends SubCommand {
             player.sendMessage(translate("&a" + getText("LawAdded")));
         } else {
             PlayerService.sendPlayerMessage(player, Objects.requireNonNull(MessageService.getLanguage().getString("LawAdded"))
-                    .replaceAll("#law#", String.join(" ", args)));
+                    .replaceAll("#law#", String.join(" ", args)), false);
         }
     }
 

@@ -208,7 +208,7 @@ public abstract class SubCommand implements ColorTranslator {
             } else {
                 if (sender instanceof Player) {
                     PlayerService.sendPlayerMessage(((Player) sender).getPlayer(), Objects.requireNonNull(MessageService.getLanguage().getString("PermissionNeeded"))
-                            .replaceAll("#permission#", permission[0]));
+                            .replaceAll("#permission#", permission[0]), false);
                 } else if (sender instanceof ConsoleCommandSender) {
                     PlayerService.sendConsoleMessage(sender.getServer().getConsoleSender(), Objects.requireNonNull(MessageService.getLanguage().getString("PermissionNeeded"))
                             .replaceAll("#permission#", permission[0]));
@@ -311,7 +311,7 @@ public abstract class SubCommand implements ColorTranslator {
                 .filter(OfflinePlayer::isOnline)
                 .map(OfflinePlayer::getPlayer)
                 .filter(Objects::nonNull)
-                .forEach(player -> PlayerService.sendPlayerMessage(player, message));
+                .forEach(player -> PlayerService.sendPlayerMessage(player, message, false));
     }
 
     /**
@@ -329,7 +329,7 @@ public abstract class SubCommand implements ColorTranslator {
      * @param message to send to the players.
      */
     protected void sendMessageServer(String message) {
-        Bukkit.getOnlinePlayers().forEach(player -> PlayerService.sendPlayerMessage(player, message));
+        Bukkit.getOnlinePlayers().forEach(player -> PlayerService.sendPlayerMessage(player, message, false));
     }
 
     /**

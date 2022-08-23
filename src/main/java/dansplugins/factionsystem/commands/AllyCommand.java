@@ -53,7 +53,7 @@ public class AllyCommand extends SubCommand {
             if (!MedievalFactions.USE_NEW_LANGUAGE_FILE) {
                 player.sendMessage(translate("&c" + getText("UsageAlly")));
             } else {
-                PlayerService.sendPlayerMessage(player, MessageService.getLanguage().getString("UsageAlly"));
+                PlayerService.sendPlayerMessage(player, "UsageAlly", true);
             }
             return;
         }
@@ -67,7 +67,7 @@ public class AllyCommand extends SubCommand {
                 player.sendMessage(translate("&c" + getText("FactionNotFound")));
             } else {
                 PlayerService.sendPlayerMessage(player, Objects.requireNonNull(MessageService.getLanguage().getString("FactionNotFound"))
-                        .replaceAll("#faction#", String.join(" ", args)));
+                        .replaceAll("#faction#", String.join(" ", args)), false);
             }
             return;
         }
@@ -77,7 +77,7 @@ public class AllyCommand extends SubCommand {
             if (!MedievalFactions.USE_NEW_LANGUAGE_FILE) {
                 player.sendMessage(translate("&c" + getText("CannotAllyWithSelf")));
             } else {
-                PlayerService.sendPlayerMessage(player, MessageService.getLanguage().getString("CannotAllyWithSelf"));
+                PlayerService.sendPlayerMessage(player, "CannotAllyWithSelf", true);
             }
             return;
         }
@@ -87,7 +87,7 @@ public class AllyCommand extends SubCommand {
             if (!MedievalFactions.USE_NEW_LANGUAGE_FILE) {
                 player.sendMessage(translate("&c" + getText("FactionAlreadyAlly")));
             } else {
-                PlayerService.sendPlayerMessage(player, MessageService.getLanguage().getString("FactionAlreadyAlly"));
+                PlayerService.sendPlayerMessage(player, "FactionAlreadyAlly", true);
             }
             return;
         }
@@ -96,7 +96,7 @@ public class AllyCommand extends SubCommand {
             if (!MedievalFactions.USE_NEW_LANGUAGE_FILE) {
                 player.sendMessage(ChatColor.RED + "That faction is currently at war with your faction.");
             } else {
-                PlayerService.sendPlayerMessage(player, MessageService.getLanguage().getString("FactionIsEnemy"));
+                PlayerService.sendPlayerMessage(player, "FactionIsEnemy", true);
             }
             return;
         }
@@ -105,7 +105,7 @@ public class AllyCommand extends SubCommand {
             if (!MedievalFactions.USE_NEW_LANGUAGE_FILE) {
                 player.sendMessage(translate("&c" + getText("AlertAlreadyRequestedAlliance")));
             } else {
-                PlayerService.sendPlayerMessage(player, MessageService.getLanguage().getString("AlertAlreadyRequestedAlliance"));
+                PlayerService.sendPlayerMessage(player, "AlertAlreadyRequestedAlliance", true);
             }
             return;
         }

@@ -4,6 +4,7 @@
  */
 package dansplugins.factionsystem.commands;
 
+import dansplugins.factionsystem.MedievalFactions;
 import dansplugins.factionsystem.commands.abs.SubCommand;
 import dansplugins.factionsystem.data.EphemeralData;
 import dansplugins.factionsystem.data.PersistentData;
@@ -12,9 +13,13 @@ import dansplugins.factionsystem.integrators.DynmapIntegrator;
 import dansplugins.factionsystem.objects.domain.Faction;
 import dansplugins.factionsystem.services.ConfigService;
 import dansplugins.factionsystem.services.LocaleService;
+import dansplugins.factionsystem.services.MessageService;
+import dansplugins.factionsystem.services.PlayerService;
 import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
+
+import java.util.Objects;
 
 /**
  * @author Callum Johnson
@@ -22,9 +27,7 @@ import org.bukkit.entity.Player;
 public class DeclareIndependenceCommand extends SubCommand {
 
     public DeclareIndependenceCommand(LocaleService localeService, PersistentData persistentData, EphemeralData ephemeralData, PersistentData.ChunkDataAccessor chunkDataAccessor, DynmapIntegrator dynmapIntegrator, ConfigService configService) {
-        super(new String[]{
-                "declareindependence", "di", LOCALE_PREFIX + "CmdDeclareIndependence"
-        }, true, true, false, true, localeService, persistentData, ephemeralData, chunkDataAccessor, dynmapIntegrator, configService);
+        super(new String[]{"declareindependence", "di", LOCALE_PREFIX + "CmdDeclareIndependence"}, true, true, false, true, localeService, persistentData, ephemeralData, chunkDataAccessor, dynmapIntegrator, configService);
     }
 
     /**
@@ -42,13 +45,21 @@ public class DeclareIndependenceCommand extends SubCommand {
         }
 
         if (!(this.faction.hasLiege()) || this.faction.getLiege() == null) {
-            player.sendMessage(translate("&c" + getText("NotAVassalOfAFaction")));
+            if (!MedievalFactions.USE_NEW_LANGUAGE_FILE) {
+                player.sendMessage(translate("&c" + getText("NotAVassalOfAFaction")));
+            } else {
+                PlayerService.sendPlayerMessage(player, "NotAVassalOfAFaction", false);
+            }
             return;
         }
 
         final Faction liege = getFaction(this.faction.getLiege());
         if (liege == null) {
-            player.sendMessage(translate("&c" + getText("FactionNotFound")));
+            if (!MedievalFactions.USE_NEW_LANGUAGE_FILE) {
+                player.sendMessage(translate("&c" + getText("FactionNotFound")));
+            } else {
+                PlayerService.sendPlayerMessage(player, Objects.requireNonNull(MessageService.getLanguage().getString("FactionNotFound")).replaceAll("#faction#", String.join(" ", args)), false);
+            }
             return;
         }
 
@@ -72,7 +83,11 @@ public class DeclareIndependenceCommand extends SubCommand {
                 }
             }
         }
-        messageServer(translate("&c" + getText("HasDeclaredIndependence", faction.getName(), liege.getName())));
+        if (!MedievalFactions.USE_NEW_LANGUAGE_FILE) {
+            messageServer(translate("&c" + getText("HasDeclaredIndependence", faction.getName(), liege.getName())));
+        } else {
+            sendMessageServer(Objects.requireNonNull(MessageService.getLanguage().getString("HasDeclaredIndependence")).replaceAll("#faction_a#", faction.getName()).replaceAll("#faction_b#", liege.getName()));
+        }
     }
 
     /**
