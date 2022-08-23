@@ -11,6 +11,7 @@ import dansplugins.factionsystem.integrators.DynmapIntegrator;
 import dansplugins.factionsystem.objects.domain.ClaimedChunk;
 import dansplugins.factionsystem.services.ConfigService;
 import dansplugins.factionsystem.services.LocaleService;
+import dansplugins.factionsystem.services.PlayerService;
 import dansplugins.factionsystem.utils.extended.Scheduler;
 import org.bukkit.Chunk;
 import org.bukkit.command.CommandSender;
@@ -40,21 +41,25 @@ public class HomeCommand extends SubCommand {
     public void execute(Player player, String[] args, String key) {
         if (!(checkPermissions(player, "mf.home"))) return;
         if (faction.getFactionHome() == null) {
-            player.sendMessage(translate("&c" + getText("FactionHomeNotSetYet")));
+            PlayerService.sendMessageType(player, "&c" + getText("FactionHomeNotSetYet")
+                    , "FactionHomeNotSetYet", false);
             return;
         }
         final Chunk home_chunk;
         if (!chunkDataAccessor.isClaimed(home_chunk = faction.getFactionHome().getChunk())) {
-            player.sendMessage(translate("&c" + getText("HomeIsInUnclaimedChunk")));
+            PlayerService.sendMessageType(player, "&c" + getText("HomeIsInUnclaimedChunk")
+                    , "HomeIsInUnclaimedChunk", false);
             return;
         }
         ClaimedChunk chunk = chunkDataAccessor.getClaimedChunk(home_chunk);
         if (chunk == null || chunk.getHolder() == null) {
-            player.sendMessage(translate("&c" + getText("HomeIsInUnclaimedChunk")));
+            PlayerService.sendMessageType(player, "&c" + getText("HomeIsInUnclaimedChunk")
+                    , "HomeIsInUnclaimedChunk", false);
             return;
         }
         if (!chunk.getHolder().equalsIgnoreCase(faction.getName())) {
-            player.sendMessage(translate("&c" + getText("HomeClaimedByAnotherFaction")));
+            PlayerService.sendMessageType(player, "&c" + getText("HomeClaimedByAnotherFaction")
+                    , "HomeClaimedByAnotherFaction", false);
             return;
         }
         scheduler.scheduleTeleport(player, faction.getFactionHome());

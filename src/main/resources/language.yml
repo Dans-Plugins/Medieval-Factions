@@ -65,7 +65,61 @@ AlertNotBeenChallengedByPlayer: "&cYou have not been challenged to a duel by #na
 AlertAlreadyDueling: "&eYou are already dueling."
 AlertAlreadyDuelingPlayer: "&aYou are already dueling #name#."
 AlertNoPendingChallenges: "&aYou have no pending challenges to cancel."
+CannotCancelActiveDuel: "&cCannot cancel an active duel."
+DuelChallengeCancelled: "&bDuel challenge cancelled."
+AlertChallengedToDuelPlusHowTo: "#name# has challenged you to a duel. Type /mf duel accept to begin."
+UsageEditLaw: "&cUsage: /mf editlaw (number) (edited law)"
+LawEdited: "&aLaw edited."
+ValidSubCommandsShowSet: "&cValid sub-commands: show, set"
+UsageFlagsSet: "&cUsage: /mf flags set (option) (value)"
+AlertNowAtPeaceWith: "#p1# is now at peace with #p2#."
+CreatingGateCancelled: "&cCreating gate cancelled."
+AlertAlreadyCreatingGate: "&cYou are already creating a gate."
+AlertMustBeOwnerOrOfficerToUseCommand: "&cYou need to be the owner of a faction or an officer of a faction to use this command."
+UnnamedGate: "Unnamed Gate"
+CreatingGateClickWithHoe: "&eCreating gate. Click on a block with a Golden Hoe to select the first point."
+FactionGate: "&aFaction Gate"
+GateLocation: "&6#name#: #location#"
+AlertNoGatesDefined: "&cYour faction has no gates defined."
+NoBlockDetectedToCheckForGate: "&eNo block detected to check for gate."
+TargetBlockNotPartOfGate: "&cTarget block is not part of a gate."
+ErrorCouldNotFindGatesFaction: "&cError: Could not find faction for gate #name#."
+RemovedGate: "Removed gate #name#."
+AlertChangedGateName: "Changed gate name to #name#."
+UsageGrantAccess: "&cUsage: /mf grantaccess (player-name)"
+CommandCancelled: "&cCommand cancelled."
+AlertAlreadyGrantingAccess: "&cYou are already granting access to someone. Type /mf grantaccess cancel to cancel this."
+CannotGrantAccessToSelf: "&cYou cannot grant access to yourself."
+RightClickGrantAccess: "&eRight click a chest or door to grant #name# access. Type /mf grantaccess cancel to cancel this."
+AlertGrantedIndependence: "&a#name# has granted your faction independence."
+AlertNoLongerVassalFaction: "&c#name# is no longer a vassal faction."
+FactionHomeNotSetYet: "&cThe faction home isn't set yet".
+HomeIsInUnclaimedChunk: "&cHome is in an unclaimed chunk, and is unavailable"
+HomeClaimedByAnotherFaction: "&cHome was claimed by another faction, and has been lost."
+AlertMustBeInFactionToUseCommand: "&cYou must be in a faction to use this command."
+PlayerAlreadyInFaction: "&cThat player is already in a faction, sorry."
+AlertBeenInvited: "&aYou've been invited to #name#. Type /mf join #name# to join."
+InvitationExpired: "Your invitation to #name# has expired."
+DuelHelp:
+  - "&bSub-commands:"
+  - "&b/mf duel challenge (player) (<optional>time limit in seconds)"
+  - "&b/mf duel accept (<optional>player)"
+  - "&b/mf duel cancel"
+GateHelp:
+  - "&bSub-commands:"
+  - "&b/mf gate create (<optional>name)"
+  - "&b/mf gate name (<optional>name)"
+  - "&b/mf gate list"
+  - "&b/mf gate remove"
+  - "&b/mf gate cancel"
 Alias:
   CmdDuelChallenge: challenge
   CmdDuelAccept: accept
   CmdDuelCancel: cancel
+  CmdFlagsShow: show
+  CmdFlagsSet: set
+  CmdGateCancel: cancel
+  CmdGateCreate: create
+  CmdGateList: list
+  CmdGateRemove: remove
+  CmdGateName: name

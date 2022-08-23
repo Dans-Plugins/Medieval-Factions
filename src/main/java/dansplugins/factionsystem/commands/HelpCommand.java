@@ -63,7 +63,7 @@ public class HelpCommand extends SubCommand {
         if (!(checkPermissions(sender, "mf.help"))) {
             return;
         }
-        int page = (args.length <= 0 ? 1 : getIntSafe(args[0], 1));
+        int page = (args.length == 0 ? 1 : getIntSafe(args[0], 1));
         if (page > LAST_PAGE) {
             page = LAST_PAGE; // Upper Limit over LAST_PAGE
         }

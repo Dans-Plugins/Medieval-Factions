@@ -10,10 +10,13 @@ import dansplugins.factionsystem.data.PersistentData;
 import dansplugins.factionsystem.integrators.DynmapIntegrator;
 import dansplugins.factionsystem.services.ConfigService;
 import dansplugins.factionsystem.services.LocaleService;
+import dansplugins.factionsystem.services.MessageService;
+import dansplugins.factionsystem.services.PlayerService;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import preponderous.ponder.minecraft.bukkit.tools.UUIDChecker;
 
+import java.util.Objects;
 import java.util.UUID;
 
 /**
@@ -37,29 +40,34 @@ public class GrantAccessCommand extends SubCommand {
     @Override
     public void execute(Player player, String[] args, String key) {
         if (args.length == 0) {
-            player.sendMessage(translate("&c" + getText("UsageGrantAccess")));
+            PlayerService.sendMessageType(player, "&c" + getText("UsageGrantAccess"),
+                    "UsageGrantAccess", false);
             return;
         }
         if (args[0].equalsIgnoreCase("cancel")) {
-            player.sendMessage(translate("&c" + getText("CommandCancelled")));
+            PlayerService.sendMessageType(player, "&c" + getText("CommandCancelled"), "CommandCancelled", false);
             return;
         }
         if (ephemeralData.getPlayersGrantingAccess().containsKey(player.getUniqueId())) {
-            player.sendMessage(translate("&c" + getText("AlertAlreadyGrantingAccess")));
+            PlayerService.sendMessageType(player, "&c" + getText("AlertAlreadyGrantingAccess")
+                    , "AlertAlreadyGrantingAccess", false);
             return;
         }
         UUIDChecker uuidChecker = new UUIDChecker();
         final UUID targetUUID = uuidChecker.findUUIDBasedOnPlayerName(args[0]);
         if (targetUUID == null) {
-            player.sendMessage(translate("&c" + getText("PlayerNotFound")));
+            PlayerService.sendMessageType(player, "&c" + getText("PlayerNotFound")
+                    , Objects.requireNonNull(MessageService.getLanguage().getString("PlayerNotFound")).replaceAll("#name#", args[0]), true);
             return;
         }
         if (targetUUID == player.getUniqueId()) {
-            player.sendMessage(translate("&c" + getText("CannotGrantAccessToSelf")));
+            PlayerService.sendMessageType(player, "&c" + getText("CannotGrantAccessToSelf")
+                    , "CannotGrantAccessToSelf", false);
             return;
         }
         ephemeralData.getPlayersGrantingAccess().put(player.getUniqueId(), targetUUID);
-        player.sendMessage(translate("&a" + getText("RightClickGrantAccess", args[0])));
+        PlayerService.sendMessageType(player,"&a" + getText("RightClickGrantAccess", args[0])
+        , Objects.requireNonNull(MessageService.getLanguage().getString("RightClickGrantAccess")).replaceAll("#name#", args[0]), true);
     }
 
     /**

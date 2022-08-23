@@ -11,6 +11,8 @@ import dansplugins.factionsystem.data.PersistentData;
 import dansplugins.factionsystem.integrators.DynmapIntegrator;
 import dansplugins.factionsystem.services.ConfigService;
 import dansplugins.factionsystem.services.LocaleService;
+import dansplugins.factionsystem.services.MessageService;
+import dansplugins.factionsystem.services.PlayerService;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.OfflinePlayer;
@@ -18,6 +20,7 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import preponderous.ponder.minecraft.bukkit.tools.UUIDChecker;
 
+import java.util.Objects;
 import java.util.UUID;
 
 import static org.bukkit.Bukkit.getServer;
@@ -46,41 +49,51 @@ public class InviteCommand extends SubCommand {
     public void execute(Player player, String[] args, String key) {
         final String permission = "mf.invite";
         if (!(checkPermissions(player, permission))) return;
-        if (args.length <= 0) {
+        if (args.length == 0) {
             player.sendMessage(translate("&c" + getText("UsageInvite")));
             return;
         }
         if ((boolean) faction.getFlags().getFlag("mustBeOfficerToInviteOthers")) {
             // officer or owner rank required
             if (!faction.isOfficer(player.getUniqueId()) && !faction.isOwner(player.getUniqueId())) {
-                player.sendMessage(translate("&c" + getText("AlertMustBeOwnerOrOfficerToUseCommand")));
+                PlayerService.sendMessageType(player, "&c" + getText("AlertMustBeOwnerOrOfficerToUseCommand")
+                        , "AlertMustBeOwnerOrOfficerToUseCommand", false);
                 return;
             }
         }
         UUIDChecker uuidChecker = new UUIDChecker();
         final UUID playerUUID = uuidChecker.findUUIDBasedOnPlayerName(args[0]);
         if (playerUUID == null) {
-            player.sendMessage(translate("&c" + getText("PlayerNotFound")));
+            PlayerService.sendMessageType(player, "&c" + getText("PlayerNotFound")
+                    , Objects.requireNonNull(MessageService.getLanguage().getString("PlayerNotFound"))
+                            .replaceAll("#name#", args[0])
+                    , true);
             return;
         }
         OfflinePlayer target = Bukkit.getOfflinePlayer(playerUUID);
         if (!target.hasPlayedBefore()) {
             target = Bukkit.getPlayer(args[0]);
             if (target == null) {
-                player.sendMessage(translate("&c" + getText("PlayerNotFound")));
+                PlayerService.sendMessageType(player, "&c" + getText("PlayerNotFound")
+                        , Objects.requireNonNull(MessageService.getLanguage().getString("PlayerNotFound"))
+                                .replaceAll("#name#", args[0])
+                        , true);
                 return;
             }
         }
         if (persistentData.isInFaction(playerUUID)) {
-            player.sendMessage(translate("&c" + getText("PlayerAlreadyInFaction")));
+            PlayerService.sendMessageType(player, "&c" + getText("PlayerAlreadyInFaction")
+                    , "PlayerAlreadyInFaction", false);
             return;
         }
         faction.invite(playerUUID);
         player.sendMessage(ChatColor.GREEN + localeService.get("InvitationSent"));
         if (target.isOnline() && target.getPlayer() != null) {
-            target.getPlayer().sendMessage(translate(
+            PlayerService.sendMessageType(target.getPlayer(),
                     "&a" + getText("AlertBeenInvited", faction.getName(), faction.getName())
-            ));
+                    , Objects.requireNonNull(MessageService.getLanguage().getString("AlertBeenInvited")).replaceAll("#name#", faction.getName()),
+                    true
+            );
         }
 
         final long seconds = 1728000L;
@@ -89,9 +102,12 @@ public class InviteCommand extends SubCommand {
         getServer().getScheduler().runTaskLater(medievalFactions, () -> {
             faction.uninvite(playerUUID);
             if (tmp.isOnline() && tmp.getPlayer() != null) {
-                tmp.getPlayer().sendMessage(translate(
-                        "&c" + getText("InvitationExpired", faction.getName())
-                ));
+                PlayerService.sendMessageType(player,
+                        "&c" + getText("InvitationExpired", faction.getName()),
+                        Objects.requireNonNull(MessageService.getLanguage().getString("InvitationExpired"))
+                                .replaceAll("#name#", faction.getName()),
+                        true
+                );
             }
         }, seconds);
     }

@@ -11,9 +11,13 @@ import dansplugins.factionsystem.integrators.DynmapIntegrator;
 import dansplugins.factionsystem.objects.domain.Faction;
 import dansplugins.factionsystem.services.ConfigService;
 import dansplugins.factionsystem.services.LocaleService;
+import dansplugins.factionsystem.services.MessageService;
+import dansplugins.factionsystem.services.PlayerService;
 import dansplugins.factionsystem.utils.extended.Messenger;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
+
+import java.util.Objects;
 
 /**
  * @author Callum Johnson
@@ -54,18 +58,22 @@ public class InfoCommand extends SubCommand {
         final Faction target;
         if (args.length == 0) {
             if (!(sender instanceof Player)) {
-                sender.sendMessage(translate(getText("OnlyPlayersCanUseCommand")));
+                PlayerService.sendMessageType(sender, getText("OnlyPlayersCanUseCommand")
+                        , "OnlyPlayersCanUseCommand", false);
                 return;
             }
             target = getPlayerFaction(sender);
             if (target == null) {
-                sender.sendMessage(translate("&c" + getText("AlertMustBeInFactionToUseCommand")));
+                PlayerService.sendMessageType(sender, "&c" + getText("AlertMustBeInFactionToUseCommand")
+                        , "AlertMustBeInFactionToUseCommand", false);
                 return;
             }
         } else {
             target = getFaction(String.join(" ", args));
             if (target == null) {
-                sender.sendMessage(translate("&c" + getText("FactionNotFound")));
+                PlayerService.sendMessageType(sender, "&c" + getText("FactionNotFound")
+                        , Objects.requireNonNull(MessageService.getLanguage().getString("FactionNotFound"))
+                                .replaceAll("#faction#", String.join(" ", args)), true);
                 return;
             }
         }

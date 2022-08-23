@@ -4,7 +4,6 @@ import dansplugins.factionsystem.MedievalFactions;
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.command.ConsoleCommandSender;
-import org.bukkit.entity.Player;
 
 import java.util.List;
 
@@ -26,8 +25,8 @@ public class PlayerService {
         }
     }
 
-    public static void sendPlayerMessage(Player p, List<String> msg) {
-        msg.forEach(s -> p.sendMessage(colorize(s)));
+    public static void sendListMessage(CommandSender sender, List<String> msg) {
+        msg.forEach(s -> sender.sendMessage(colorize(s)));
     }
 
     public static void sendConsoleMessage(ConsoleCommandSender c, String msg, Boolean message) {
