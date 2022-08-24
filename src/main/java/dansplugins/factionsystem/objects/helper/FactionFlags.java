@@ -9,6 +9,7 @@ import dansplugins.factionsystem.integrators.DynmapIntegrator;
 import dansplugins.factionsystem.integrators.FiefsIntegrator;
 import dansplugins.factionsystem.services.ConfigService;
 import dansplugins.factionsystem.services.LocaleService;
+import dansplugins.factionsystem.services.PlayerService;
 import dansplugins.factionsystem.utils.ColorConversion;
 import dansplugins.factionsystem.utils.Logger;
 import org.bukkit.ChatColor;
@@ -126,22 +127,23 @@ public class FactionFlags {
 
     public void setFlag(String flag, String value, Player player) {
         if (flag.equals("neutral") && !configService.getBoolean("allowNeutrality")) {
-            player.sendMessage(ChatColor.RED + "" + localeService.get("NeutralityDisabled"));
+            new PlayerService().sendMessageType(player, ChatColor.RED + "" + localeService.get("NeutralityDisabled")
+                    , "NeutralityDisabled", false);
             return;
         }
 
         if (flag.equals("prefixColor") && !configService.getBoolean("factionsCanSetPrefixColors")) {
-            player.sendMessage("Players can't set prefix colors.");
+            new PlayerService().sendMessageType(player, "&cPlayers can't set prefix colors.", "CannotSetPrefix", false);
             return;
         }
 
         if (flag.equals("prefixColor") && (!configService.getBoolean("playersChatWithPrefixes"))) {
-            player.sendMessage(ChatColor.RED + "" + localeService.get("PrefixesDisabled"));
+            new PlayerService().sendMessageType(player, ChatColor.RED + "" + localeService.get("PrefixesDisabled"), "PrefixesDisabled", false);
             return;
         }
 
         if (flag.equals("fiefsEnabled") && !fiefsIntegrator.isFiefsPresent()) {
-            player.sendMessage("Fiefs either isn't enabled or present.");
+            new PlayerService().sendMessageType(player, "&cFiefs either isn't enabled or present.", "FiefsNotEnable", false);
             return;
         }
 

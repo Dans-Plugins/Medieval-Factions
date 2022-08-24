@@ -103,11 +103,19 @@ public class CommandService {
             // no arguments check
             if (args.length == 0) {
                 // send plugin information
-                sender.sendMessage(ChatColor.AQUA + String.format(localeService.get("MedievalFactionsTitle"), medievalFactions.getVersion()));
-                sender.sendMessage(ChatColor.AQUA + String.format(localeService.get("DeveloperList"), "DanTheTechMan, Pasarus, Caibinus, Callum, Richardhyy, Mitras2, Kaonami"));
-                sender.sendMessage(ChatColor.AQUA + localeService.get("WikiLink"));
-                sender.sendMessage(ChatColor.AQUA + String.format(localeService.get("CurrentLanguageID"), configService.getString("languageid")));
-                sender.sendMessage(ChatColor.AQUA + String.format(localeService.get("SupportedLanguageIDList"), localeService.getSupportedLanguageIDsSeparatedByCommas()));
+                if (!medievalFactions.USE_NEW_LANGUAGE_FILE) {
+                    sender.sendMessage(ChatColor.AQUA + String.format(localeService.get("MedievalFactionsTitle"), medievalFactions.getVersion()));
+                    sender.sendMessage(ChatColor.AQUA + String.format(localeService.get("DeveloperList"), new MedievalFactions().getDescription().getAuthors()));
+                    sender.sendMessage(ChatColor.AQUA + localeService.get("WikiLink"));
+                    sender.sendMessage(ChatColor.AQUA + String.format(localeService.get("CurrentLanguageID"), configService.getString("languageid")));
+                    sender.sendMessage(ChatColor.AQUA + String.format(localeService.get("SupportedLanguageIDList"), localeService.getSupportedLanguageIDsSeparatedByCommas()));
+                } else {
+                    new MessageService().getLanguage().getStringList("PluginInfo")
+                            .forEach(s -> {
+                                s = s.replaceAll("#version#", medievalFactions.getVersion()).replaceAll("#dev#", medievalFactions.getDescription().getAuthors().toString());
+                                new PlayerService().sendMessageType(sender, s, s, true);
+                            });
+                }
                 return true;
             }
 
@@ -121,7 +129,7 @@ public class CommandService {
                 }
             }
 
-            sender.sendMessage(ChatColor.RED + localeService.get("CommandNotRecognized"));
+            new PlayerService().sendMessageType(sender, ChatColor.RED + localeService.get("CommandNotRecognized"), "CommandNotRecognized", false);
         }
         return false;
     }

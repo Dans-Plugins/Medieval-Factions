@@ -7,6 +7,7 @@ package dansplugins.factionsystem.utils.extended;
 import dansplugins.factionsystem.integrators.FiefsIntegrator;
 import dansplugins.factionsystem.objects.domain.Faction;
 import dansplugins.factionsystem.services.LocaleService;
+import dansplugins.factionsystem.services.PlayerService;
 import dansplugins.fiefs.externalapi.FI_Fief;
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
@@ -92,10 +93,9 @@ public class Messenger extends preponderous.ponder.minecraft.bukkit.tools.Messen
         for (UUID member : members) {
             try {
                 Player target = getServer().getPlayer(member);
-                if (target == null) {
-                    continue;
+                if (target != null) {
+                    target.sendMessage(new PlayerService().colorize(message));
                 }
-                target.sendMessage(message);
             } catch (Exception ignored) {
 
             }

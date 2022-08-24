@@ -10,6 +10,7 @@ import dansplugins.factionsystem.integrators.DynmapIntegrator;
 import dansplugins.factionsystem.objects.domain.ClaimedChunk;
 import dansplugins.factionsystem.objects.domain.Faction;
 import dansplugins.factionsystem.services.LocaleService;
+import dansplugins.factionsystem.services.PlayerService;
 import dansplugins.factionsystem.utils.TerritoryOwnerNotifier;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
@@ -97,7 +98,7 @@ public class MoveHandler implements Listener {
                 if (notAtDemesneLimit(playersFaction)) {
                     scheduleClaiming(player, playersFaction);
                 } else {
-                    player.sendMessage(ChatColor.RED + localeService.get("AlertReachedDemesne"));
+                    new PlayerService().sendMessageType(player, ChatColor.RED + localeService.get("AlertReachedDemesne"), "AlertReachedDemesne", false);
                 }
             }
         }

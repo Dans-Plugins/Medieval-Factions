@@ -9,9 +9,7 @@ import dansplugins.factionsystem.data.EphemeralData;
 import dansplugins.factionsystem.data.PersistentData;
 import dansplugins.factionsystem.objects.domain.ClaimedChunk;
 import dansplugins.factionsystem.objects.domain.LockedBlock;
-import dansplugins.factionsystem.services.GateService;
-import dansplugins.factionsystem.services.LocaleService;
-import dansplugins.factionsystem.services.LockService;
+import dansplugins.factionsystem.services.*;
 import dansplugins.factionsystem.utils.InteractionAccessChecker;
 import dansplugins.factionsystem.utils.extended.BlockChecker;
 import org.bukkit.ChatColor;
@@ -83,7 +81,8 @@ public class InteractionHandler implements Listener {
             boolean isOwner = persistentData.getLockedBlock(block).getOwner().equals(player.getUniqueId());
             if (!isOwner) {
                 event.setCancelled(true);
-                player.sendMessage(ChatColor.RED + localeService.get("AlertNonOwnership"));
+                new PlayerService().sendMessageType(player, ChatColor.RED + localeService.get("AlertNonOwnership")
+                        , "AlertNonOwnership", false);
                 return;
             }
 
@@ -125,7 +124,8 @@ public class InteractionHandler implements Listener {
         if (blockChecker.isChest(event.getBlock())) {
             boolean isNextToNonOwnedLockedChest = blockChecker.isNextToNonOwnedLockedChest(event.getPlayer(), event.getBlock());
             if (isNextToNonOwnedLockedChest) {
-                player.sendMessage(ChatColor.RED + localeService.get("CannotPlaceChestsNextToUnownedLockedChests"));
+                new PlayerService().sendMessageType(player, ChatColor.RED + localeService.get("CannotPlaceChestsNextToUnownedLockedChests")
+                        , "CannotPlaceChestsNextToUnownedLockedChests", false);
                 event.setCancelled(true);
                 return;
             }
@@ -168,7 +168,8 @@ public class InteractionHandler implements Listener {
             boolean isUnderOrAboveNonOwnedLockedChest = blockChecker.isUnderOrAboveNonOwnedLockedChest(event.getPlayer(), event.getBlock());
             if (isNextToNonOwnedLockedChest || isUnderOrAboveNonOwnedLockedChest) {
                 event.setCancelled(true);
-                player.sendMessage(ChatColor.RED + localeService.get("CannotPlaceHoppersNextToUnownedLockedChests"));
+                new PlayerService().sendMessageType(player, ChatColor.RED + localeService.get("CannotPlaceHoppersNextToUnownedLockedChests")
+                        , "CannotPlaceHoppersNextToUnownedLockedChests", false);
             }
         }
     }
@@ -197,7 +198,9 @@ public class InteractionHandler implements Listener {
             if (!playerHasAccess && !isPlayerBypassing) {
                 UUIDChecker uuidChecker = new UUIDChecker();
                 String owner = uuidChecker.findPlayerNameBasedOnUUID(lockedBlock.getOwner());
-                player.sendMessage(ChatColor.RED + String.format(localeService.get("LockedBy"), owner));
+                new PlayerService().sendMessageType(player, ChatColor.RED + String.format(localeService.get("LockedBy"), owner)
+                        , Objects.requireNonNull(new MessageService().getLanguage().getString("LockedBy"))
+                                .replaceAll("#name#", owner), true);
                 event.setCancelled(true);
                 return;
             }
@@ -225,7 +228,7 @@ public class InteractionHandler implements Listener {
 
         } else {
             if (isPlayerUsingAnAccessCommand(player)) {
-                player.sendMessage(ChatColor.RED + localeService.get("BlockIsNotLocked"));
+                new PlayerService().sendMessageType(player, ChatColor.RED + localeService.get("BlockIsNotLocked"), "BlockIsNotLocked", false);
             }
         }
 
