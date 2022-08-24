@@ -4,6 +4,8 @@
  */
 package dansplugins.factionsystem;
 
+import dansplugins.factionsystem.commands.AddLawCommand;
+import dansplugins.factionsystem.commands.abs.TabCompleterBase;
 import dansplugins.factionsystem.data.EphemeralData;
 import dansplugins.factionsystem.data.PersistentData;
 import dansplugins.factionsystem.eventhandlers.*;
@@ -58,6 +60,7 @@ public class MedievalFactions extends PonderBukkitPlugin {
     private final LockService lockService = new LockService(persistentData, configService.getLocaleService(), persistentData.getBlockChecker(), ephemeralData);
     private final TerritoryOwnerNotifier territoryOwnerNotifier = new TerritoryOwnerNotifier(configService.getLocaleService(), configService, actionBarService);
 
+
     /**
      * This runs when the server starts.
      */
@@ -69,6 +72,11 @@ public class MedievalFactions extends PonderBukkitPlugin {
         registerEventHandlers();
         handleIntegrations();
         makeSureEveryPlayerExperiencesPowerDecay();
+
+        this.getCommand("mf").setTabCompleter(new TabCompleterBase(persistentData, configService));
+        this.getCommand("f").setTabCompleter(new TabCompleterBase(persistentData, configService));
+        this.getCommand("medievalfactions").setTabCompleter(new TabCompleterBase(persistentData, configService));
+        this.getCommand("factions").setTabCompleter(new TabCompleterBase(persistentData, configService));
     }
 
     /**
