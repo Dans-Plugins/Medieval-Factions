@@ -36,14 +36,14 @@ public class EditLawCommand extends SubCommand {
         if (!(checkPermissions(player, permission))) return;
         final int lawToEdit = getIntSafe(args[0], 0) - 1;
         if (lawToEdit < 0 || lawToEdit >= faction.getLaws().size()) {
-            PlayerService.sendMessageType(player, "&c" + getText("UsageEditLaw"), "UsageEditLaw", false);
+            new PlayerService().sendMessageType(player, "&c" + getText("UsageEditLaw"), "UsageEditLaw", false);
             return;
         }
         String[] arguments = new String[args.length - 1];
         System.arraycopy(args, 1, arguments, 0, arguments.length);
         final String editedLaw = String.join(" ", arguments);
         if (faction.editLaw(lawToEdit, editedLaw)) {
-            PlayerService.sendMessageType(player, "&a" + getText("LawEdited"), "LawEdited", false);
+            new PlayerService().sendMessageType(player, "&a" + getText("LawEdited"), "LawEdited", false);
         }
     }
 

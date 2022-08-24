@@ -11,12 +11,12 @@ import java.io.IOException;
 public class MessageService {
 
 
-    private static File languageFile;
-    private static FileConfiguration language;
+    private File languageFile;
+    private FileConfiguration language;
 
-    public static void createLanguageFile() {
-        languageFile = new File(MedievalFactions.getMedievalFactions().getDataFolder(), "language.yml");
-        if (!languageFile.exists()) MedievalFactions.getMedievalFactions().saveResource("language.yml", false);
+    public void createLanguageFile() {
+        languageFile = new File(new MedievalFactions().getMedievalFactions().getDataFolder(), "language.yml");
+        if (!languageFile.exists()) new MedievalFactions().getMedievalFactions().saveResource("language.yml", false);
 
         language = new YamlConfiguration();
         try {
@@ -26,15 +26,15 @@ public class MessageService {
         }
     }
 
-    public static FileConfiguration getLanguage() {
+    public FileConfiguration getLanguage() {
         return language;
     }
 
-    public static void reloadLanguage() {
+    public void reloadLanguage() {
         language = YamlConfiguration.loadConfiguration(languageFile);
     }
 
-    public static void saveLanguage() {
+    public void saveLanguage() {
         try {
             language.save(languageFile);
         } catch (IOException ignored) {

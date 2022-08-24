@@ -41,24 +41,24 @@ public class HomeCommand extends SubCommand {
     public void execute(Player player, String[] args, String key) {
         if (!(checkPermissions(player, "mf.home"))) return;
         if (faction.getFactionHome() == null) {
-            PlayerService.sendMessageType(player, "&c" + getText("FactionHomeNotSetYet")
+            new PlayerService().sendMessageType(player, "&c" + getText("FactionHomeNotSetYet")
                     , "FactionHomeNotSetYet", false);
             return;
         }
         final Chunk home_chunk;
         if (!chunkDataAccessor.isClaimed(home_chunk = faction.getFactionHome().getChunk())) {
-            PlayerService.sendMessageType(player, "&c" + getText("HomeIsInUnclaimedChunk")
+            new PlayerService().sendMessageType(player, "&c" + getText("HomeIsInUnclaimedChunk")
                     , "HomeIsInUnclaimedChunk", false);
             return;
         }
         ClaimedChunk chunk = chunkDataAccessor.getClaimedChunk(home_chunk);
         if (chunk == null || chunk.getHolder() == null) {
-            PlayerService.sendMessageType(player, "&c" + getText("HomeIsInUnclaimedChunk")
+            new PlayerService().sendMessageType(player, "&c" + getText("HomeIsInUnclaimedChunk")
                     , "HomeIsInUnclaimedChunk", false);
             return;
         }
         if (!chunk.getHolder().equalsIgnoreCase(faction.getName())) {
-            PlayerService.sendMessageType(player, "&c" + getText("HomeClaimedByAnotherFaction")
+            new PlayerService().sendMessageType(player, "&c" + getText("HomeClaimedByAnotherFaction")
                     , "HomeClaimedByAnotherFaction", false);
             return;
         }

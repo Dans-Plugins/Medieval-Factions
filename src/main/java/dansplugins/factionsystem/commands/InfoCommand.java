@@ -58,21 +58,21 @@ public class InfoCommand extends SubCommand {
         final Faction target;
         if (args.length == 0) {
             if (!(sender instanceof Player)) {
-                PlayerService.sendMessageType(sender, getText("OnlyPlayersCanUseCommand")
+                new PlayerService().sendMessageType(sender, getText("OnlyPlayersCanUseCommand")
                         , "OnlyPlayersCanUseCommand", false);
                 return;
             }
             target = getPlayerFaction(sender);
             if (target == null) {
-                PlayerService.sendMessageType(sender, "&c" + getText("AlertMustBeInFactionToUseCommand")
+                new PlayerService().sendMessageType(sender, "&c" + getText("AlertMustBeInFactionToUseCommand")
                         , "AlertMustBeInFactionToUseCommand", false);
                 return;
             }
         } else {
             target = getFaction(String.join(" ", args));
             if (target == null) {
-                PlayerService.sendMessageType(sender, "&c" + getText("FactionNotFound")
-                        , Objects.requireNonNull(MessageService.getLanguage().getString("FactionNotFound"))
+                new PlayerService().sendMessageType(sender, "&c" + getText("FactionNotFound")
+                        , Objects.requireNonNull(new MessageService().getLanguage().getString("FactionNotFound"))
                                 .replaceAll("#faction#", String.join(" ", args)), true);
                 return;
             }

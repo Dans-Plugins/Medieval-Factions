@@ -94,7 +94,7 @@ public class ConfigCommand extends SubCommand {
             }
         } else if (reload) {
             medievalFactions.reloadConfig();
-            MessageService.reloadLanguage();
+            new MessageService().reloadLanguage();
             sender.sendMessage(ChatColor.GREEN + "Config reloaded.");
         } else {
             sender.sendMessage(translate("&c" + getText("ValidSubCommandsShowSet")));

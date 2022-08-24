@@ -47,13 +47,13 @@ public class CheckAccessCommand extends SubCommand {
 
         if (cancel && contains) {
             ephemeralData.getPlayersCheckingAccess().remove(player.getUniqueId());
-            PlayerService.sendMessageType(player, "&c" + getText("Cancelled"), "Cancelled", false);
+            new PlayerService().sendMessageType(player, "&c" + getText("Cancelled"), "Cancelled", false);
         } else {
             if (contains) {
-                PlayerService.sendMessageType(player, "&c" + getText("AlreadyEnteredCheckAccess"), "AlreadyEnteredCheckAccess", false);
+                new PlayerService().sendMessageType(player, "&c" + getText("AlreadyEnteredCheckAccess"), "AlreadyEnteredCheckAccess", false);
             } else {
                 ephemeralData.getPlayersCheckingAccess().add(player.getUniqueId());
-                PlayerService.sendMessageType(player, "&a" + getText("RightClickCheckAccess"), "RightClickCheckAccess", false);
+                new PlayerService().sendMessageType(player, "&a" + getText("RightClickCheckAccess"), "RightClickCheckAccess", false);
             }
         }
     }

@@ -4,6 +4,7 @@
  */
 package dansplugins.factionsystem.commands.abs;
 
+import dansplugins.factionsystem.MedievalFactions;
 import dansplugins.factionsystem.data.EphemeralData;
 import dansplugins.factionsystem.data.PersistentData;
 import dansplugins.factionsystem.integrators.DynmapIntegrator;
@@ -201,7 +202,7 @@ public abstract class SubCommand implements ColorTranslator {
             }
         }
         if (!has) {
-            PlayerService.sendMessageType(sender, translate("&c" + getText("PermissionNeeded", permission[0])), Objects.requireNonNull(MessageService.getLanguage().getString("PermissionNeeded")).replaceAll("#permission#", permission[0]), true);
+            new PlayerService().sendMessageType(sender, translate("&c" + getText("PermissionNeeded", permission[0])), Objects.requireNonNull(new MessageService().getLanguage().getString("PermissionNeeded")).replaceAll("#permission#", permission[0]), true);
         }
         return has;
     }
@@ -280,7 +281,7 @@ public abstract class SubCommand implements ColorTranslator {
      * @param new_message new message to send to the Faction.
      */
     protected void messageFaction(Faction faction, String old_message, String new_message) {
-        faction.getMemberList().stream().map(Bukkit::getOfflinePlayer).filter(OfflinePlayer::isOnline).map(OfflinePlayer::getPlayer).filter(Objects::nonNull).forEach(player -> PlayerService.sendMessageType(player, old_message, new_message, true));
+        faction.getMemberList().stream().map(Bukkit::getOfflinePlayer).filter(OfflinePlayer::isOnline).map(OfflinePlayer::getPlayer).filter(Objects::nonNull).forEach(player -> new PlayerService().sendMessageType(player, old_message, new_message, true));
     }
 
     /**
@@ -290,7 +291,7 @@ public abstract class SubCommand implements ColorTranslator {
      * @param new_message old message to send to the players.
      */
     protected void messageServer(String old_message, String new_message) {
-        Bukkit.getOnlinePlayers().forEach(player -> PlayerService.sendMessageType(player, old_message, new_message, true));
+        Bukkit.getOnlinePlayers().forEach(player -> new PlayerService().sendMessageType(player, old_message, new_message, true));
     }
 
     /**

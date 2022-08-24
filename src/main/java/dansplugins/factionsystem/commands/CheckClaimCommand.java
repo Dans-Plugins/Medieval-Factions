@@ -43,9 +43,9 @@ public class CheckClaimCommand extends SubCommand {
         final String result = chunkDataAccessor.checkOwnershipAtPlayerLocation(player);
 
         if (result.equals("unclaimed")) {
-            PlayerService.sendMessageType(player, "&a" + getText("LandIsUnclaimed"), "LandIsUnclaimed", false);
+            new PlayerService().sendMessageType(player, "&a" + getText("LandIsUnclaimed"), "LandIsUnclaimed", false);
         } else {
-            PlayerService.sendMessageType(player, "&c" + getText("LandClaimedBy"), Objects.requireNonNull(MessageService.getLanguage().getString("LandClaimedBy"))
+            new PlayerService().sendMessageType(player, "&c" + getText("LandClaimedBy"), Objects.requireNonNull(new MessageService().getLanguage().getString("LandClaimedBy"))
                     .replaceAll("#player#", result), true);
         }
     }

@@ -14,8 +14,8 @@ import java.util.logging.Level;
 public class Logger {
     private final MedievalFactions medievalFactions;
 
-    public Logger() {
-        this.medievalFactions = MedievalFactions.getMedievalFactions();
+    public Logger(MedievalFactions medievalFactions) {
+        this.medievalFactions = medievalFactions;
     }
 
     /**

@@ -12,10 +12,14 @@ import dansplugins.factionsystem.integrators.DynmapIntegrator;
 import dansplugins.factionsystem.objects.domain.Faction;
 import dansplugins.factionsystem.services.ConfigService;
 import dansplugins.factionsystem.services.LocaleService;
+import dansplugins.factionsystem.services.MessageService;
+import dansplugins.factionsystem.services.PlayerService;
 import dansplugins.factionsystem.utils.Logger;
 import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
+
+import java.util.Objects;
 
 /**
  * @author Callum Johnson
@@ -42,20 +46,23 @@ public class JoinCommand extends SubCommand {
         final String permission = "mf.join";
         if (!(checkPermissions(player, permission))) return;
         if (args.length == 0) {
-            player.sendMessage(translate("&c" + getText("UsageJoin")));
+            new PlayerService().sendMessageType(player, "&c" + getText("UsageJoin"), "UsageJoin", false);
             return;
         }
         if (persistentData.isInFaction(player.getUniqueId())) {
-            player.sendMessage(translate("&c" + getText("AlertAlreadyInFaction")));
+            new PlayerService().sendMessageType(player, "&c" + getText("AlertAlreadyInFaction")
+                    , "AlertAlreadyInFaction", false);
             return;
         }
         final Faction target = getFaction(String.join(" ", args));
         if (target == null) {
-            player.sendMessage(translate("&c" + getText("FactionNotFound")));
+            new PlayerService().sendMessageType(player, "&c" + getText("FactionNotFound"), Objects.requireNonNull(new MessageService().getLanguage().getString("FactionNotFound"))
+                    .replaceAll("#faction#", String.join(" ", args)), true);
             return;
         }
         if (!target.isInvited(player.getUniqueId())) {
-            player.sendMessage("You are not invited to this faction.");
+            new PlayerService().sendMessageType(player, "&cYou are not invited to this faction."
+                    , "NotInvite", false);
             return;
         }
         FactionJoinEvent joinEvent = new FactionJoinEvent(faction, player);
@@ -64,7 +71,10 @@ public class JoinCommand extends SubCommand {
             logger.debug("Join event was cancelled.");
             return;
         }
-        messageFaction(target, translate("&a" + getText("HasJoined", player.getName(), target.getName())));
+        messageFaction(target, "&a" + getText("HasJoined", player.getName(), target.getName())
+                , Objects.requireNonNull(new MessageService().getLanguage().getString("HasJoined"))
+                        .replaceAll("#name#", player.getName())
+                        .replaceAll("#faction#", target.getName()));
         target.addMember(player.getUniqueId());
         target.uninvite(player.getUniqueId());
         player.sendMessage(translate("&a" + getText("AlertJoinedFaction")));

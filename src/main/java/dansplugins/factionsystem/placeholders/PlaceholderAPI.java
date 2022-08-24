@@ -63,7 +63,7 @@ public class PlaceholderAPI extends PlaceholderExpansion {
 
         // Prerequisites.
         if (id.startsWith("faction_") && !hasFaction && !id.equalsIgnoreCase("faction_at_location")) {
-            return new ConfigService().getString("factionless"); // We don't want Faction-Specific Placeholders to return if they are Factionless!
+            return new MedievalFactions().getConfigService().getString("factionless"); // We don't want Faction-Specific Placeholders to return if they are Factionless!
         }
 
         // Faction-Specific.

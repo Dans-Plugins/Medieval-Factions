@@ -48,7 +48,7 @@ public class ChatCommand extends SubCommand {
         } else {
             ephemeralData.getPlayersInFactionChat().add(player.getUniqueId());
         }
-        PlayerService.sendMessageType(player, "&c" + getText(path), path, false);
+        new PlayerService().sendMessageType(player, "&c" + getText(path), path, false);
     }
 
     /**

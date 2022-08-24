@@ -62,17 +62,17 @@ public class DisbandCommand extends SubCommand {
         if (args.length == 0) {
             if (!checkPermissions(sender, "mf.disband")) return;
             if (!(sender instanceof Player)) { // ONLY Players can be in a Faction
-                if (!MedievalFactions.USE_NEW_LANGUAGE_FILE) {
+                if (!new MedievalFactions().USE_NEW_LANGUAGE_FILE) {
                     sender.sendMessage(translate(getText("OnlyPlayersCanUseCommand")));
                 } else {
-                    PlayerService.sendConsoleMessage(sender.getServer().getConsoleSender(), "OnlyPlayersCanUseCommand", true);
+                    new PlayerService().sendConsoleMessage(sender.getServer().getConsoleSender(), "OnlyPlayersCanUseCommand", true);
                 }
                 return;
             }
             disband = getPlayerFaction(sender);
             self = true;
             if (disband.getPopulation() != 1) {
-                PlayerService.sendMessageType(sender, "&c" + getText("AlertMustKickAllPlayers")
+                new PlayerService().sendMessageType(sender, "&c" + getText("AlertMustKickAllPlayers")
                         , "AlertMustKickAllPlayers", false);
                 return;
             }
@@ -82,19 +82,19 @@ public class DisbandCommand extends SubCommand {
             self = false;
         }
         if (disband == null) {
-            PlayerService.sendMessageType(sender, "&c" + getText("FactionNotFound")
-                    , Objects.requireNonNull(MessageService.getLanguage().getString("FactionNotFound"))
+            new PlayerService().sendMessageType(sender, "&c" + getText("FactionNotFound")
+                    , Objects.requireNonNull(new MessageService().getLanguage().getString("FactionNotFound"))
                             .replaceAll("#faction#", String.join(" ", args)), true);
             return;
         }
         final int factionIndex = persistentData.getFactionIndexOf(disband);
         if (self) {
-            PlayerService.sendMessageType(sender, "&c" + getText("FactionSuccessfullyDisbanded")
+            new PlayerService().sendMessageType(sender, "&c" + getText("FactionSuccessfullyDisbanded")
                     , "FactionSuccessfullyDisbanded", false);
             ephemeralData.getPlayersInFactionChat().remove(((Player) sender).getUniqueId());
         } else {
-            PlayerService.sendMessageType(sender, "&c" + getText("SuccessfulDisbandment", disband.getName())
-                    , Objects.requireNonNull(MessageService.getLanguage().getString("SuccessfulDisbandment")).replaceAll("#faction#", disband.getName()), true);
+            new PlayerService().sendMessageType(sender, "&c" + getText("SuccessfulDisbandment", disband.getName())
+                    , Objects.requireNonNull(new MessageService().getLanguage().getString("SuccessfulDisbandment")).replaceAll("#faction#", disband.getName()), true);
         }
         removeFaction(factionIndex, self ? ((OfflinePlayer) sender) : null);
     }

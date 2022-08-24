@@ -47,26 +47,26 @@ public class BreakAllianceCommand extends SubCommand {
         }
 
         if (args.length == 0) {
-            PlayerService.sendMessageType(player, "&c" + getText("UsageBreakAlliance"), "UsageBreakAlliance", false);
+            new PlayerService().sendMessageType(player, "&c" + getText("UsageBreakAlliance"), "UsageBreakAlliance", false);
             return;
         }
 
         final Faction otherFaction = getFaction(String.join(" ", args));
         if (otherFaction == null) {
-            PlayerService.sendMessageType(player, "&c" + getText("FactionNotFound"),
-                    Objects.requireNonNull(MessageService.getLanguage().getString("FactionNotFound"))
+            new PlayerService().sendMessageType(player, "&c" + getText("FactionNotFound"),
+                    Objects.requireNonNull(new MessageService().getLanguage().getString("FactionNotFound"))
                             .replaceAll("#faction#", String.join(" ", args)), true);
             return;
         }
 
         if (otherFaction == faction) {
-            PlayerService.sendMessageType(player, "&c" + getText("CannotBreakAllianceWithSelf"), "CannotBreakAllianceWithSelf", false);
+            new PlayerService().sendMessageType(player, "&c" + getText("CannotBreakAllianceWithSelf"), "CannotBreakAllianceWithSelf", false);
             return;
         }
 
         if (!faction.isAlly(otherFaction.getName())) {
-            PlayerService.sendMessageType(player, "&c" + getText("AlertNotAllied", otherFaction.getName()),
-                    Objects.requireNonNull(MessageService.getLanguage().getString("AlertNotAllied"))
+            new PlayerService().sendMessageType(player, "&c" + getText("AlertNotAllied", otherFaction.getName()),
+                    Objects.requireNonNull(new MessageService().getLanguage().getString("AlertNotAllied"))
                             .replaceAll("#faction#", otherFaction.getName()), true);
             return;
         }
@@ -74,10 +74,10 @@ public class BreakAllianceCommand extends SubCommand {
         faction.removeAlly(otherFaction.getName());
         otherFaction.removeAlly(faction.getName());
         messageFaction(faction, translate("&c" + getText("AllianceBrokenWith", otherFaction.getName()))
-                , Objects.requireNonNull(MessageService.getLanguage().getString("AllianceBrokenWith"))
+                , Objects.requireNonNull(new MessageService().getLanguage().getString("AllianceBrokenWith"))
                         .replaceAll("#faction#", otherFaction.getName()));
         messageFaction(otherFaction, translate("&c" + getText("AlertAllianceHasBeenBroken", faction.getName())),
-                Objects.requireNonNull(MessageService.getLanguage().getString("AlertAllianceHasBeenBroken"))
+                Objects.requireNonNull(new MessageService().getLanguage().getString("AlertAllianceHasBeenBroken"))
                         .replaceAll("#faction#", faction.getName()));
     }
 

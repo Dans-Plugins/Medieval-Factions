@@ -40,19 +40,19 @@ public class FlagsCommand extends SubCommand {
         }
 
         if (args.length == 0) {
-            PlayerService.sendMessageType(player, "&c" + getText("ValidSubCommandsShowSet"), "ValidSubCommandsShowSet", false);
+            new PlayerService().sendMessageType(player, "&c" + getText("ValidSubCommandsShowSet"), "ValidSubCommandsShowSet", false);
             return;
         }
 
         final Faction playersFaction = getPlayerFaction(player);
 
-        final boolean show = safeEquals(args[0], "get", "show", PlayerService.getMessageType(getText("CmdFlagsShow"), MessageService.getLanguage().getString("Alias.CmdFlagsShow")));
-        final boolean set = safeEquals(args[0], "set", PlayerService.getMessageType(getText("CmdFlagsSet"), MessageService.getLanguage().getString("Alias.CmdFlagsSet")));
+        final boolean show = safeEquals(args[0], "get", "show", new PlayerService().getMessageType(getText("CmdFlagsShow"), new MessageService().getLanguage().getString("Alias.CmdFlagsShow")));
+        final boolean set = safeEquals(args[0], "set", new PlayerService().getMessageType(getText("CmdFlagsSet"), new MessageService().getLanguage().getString("Alias.CmdFlagsSet")));
         if (show) {
             playersFaction.getFlags().sendFlagList(player);
         } else if (set) {
             if (args.length < 3) {
-                PlayerService.sendMessageType(player, "&c" + getText("UsageFlagsSet"), "UsageFlagsSet", false);
+                new PlayerService().sendMessageType(player, "&c" + getText("UsageFlagsSet"), "UsageFlagsSet", false);
             } else {
                 final StringBuilder builder = new StringBuilder(); // Send the flag_argument as one String
                 for (int i = 2; i < args.length; i++) builder.append(args[i]).append(" ");
@@ -60,7 +60,7 @@ public class FlagsCommand extends SubCommand {
 
             }
         } else {
-            PlayerService.sendMessageType(player, "&c" + getText("ValidSubCommandsShowSet"), "ValidSubCommandsShowSet", false);
+            new PlayerService().sendMessageType(player, "&c" + getText("ValidSubCommandsShowSet"), "ValidSubCommandsShowSet", false);
 
         }
     }

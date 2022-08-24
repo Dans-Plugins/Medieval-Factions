@@ -18,8 +18,8 @@ public class ConfigService {
 
     private boolean altered = false;
 
-    public ConfigService() {
-        this.medievalFactions = MedievalFactions.getMedievalFactions();
+    public ConfigService(MedievalFactions medievalFactions) {
+        this.medievalFactions = medievalFactions;
         localeService = new LocaleService(medievalFactions, this);
     }
 

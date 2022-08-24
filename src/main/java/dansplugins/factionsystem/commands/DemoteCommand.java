@@ -46,7 +46,7 @@ public class DemoteCommand extends SubCommand {
         }
 
         if (args.length == 0) {
-            PlayerService.sendMessageType(player, "&c" + getText("UsageDemote")
+            new PlayerService().sendMessageType(player, "&c" + getText("UsageDemote")
                     , "UsageDemote", false);
             return;
         }
@@ -59,20 +59,20 @@ public class DemoteCommand extends SubCommand {
         }
 
         if (playerToBeDemoted == null) {
-            PlayerService.sendMessageType(player, "&c" + getText("PlayerByNameNotFound")
-                    , Objects.requireNonNull(MessageService.getLanguage().getString("PlayerByNameNotFound"))
+            new PlayerService().sendMessageType(player, "&c" + getText("PlayerByNameNotFound")
+                    , Objects.requireNonNull(new MessageService().getLanguage().getString("PlayerByNameNotFound"))
                             .replaceAll("#name#", args[0]), true);
             return;
         }
 
         if (playerToBeDemoted.getUniqueId() == player.getUniqueId()) {
-            PlayerService.sendMessageType(player, "&c" + getText("CannotDemoteSelf")
+            new PlayerService().sendMessageType(player, "&c" + getText("CannotDemoteSelf")
                     , "CannotDemoteSelf", false);
             return;
         }
 
         if (!this.faction.isOfficer(playerToBeDemoted.getUniqueId())) {
-            PlayerService.sendMessageType(player, "&c" + getText("PlayerIsNotOfficerOfFaction")
+            new PlayerService().sendMessageType(player, "&c" + getText("PlayerIsNotOfficerOfFaction")
                     , "PlayerIsNotOfficerOfFaction", false);
             return;
         }
@@ -80,11 +80,11 @@ public class DemoteCommand extends SubCommand {
         faction.removeOfficer(playerToBeDemoted.getUniqueId());
 
         if (playerToBeDemoted.isOnline()) {
-            PlayerService.sendMessageType(player, "&c" + getText("AlertDemotion")
+            new PlayerService().sendMessageType(player, "&c" + getText("AlertDemotion")
                     , "AlertDemotion", false);
         }
-        PlayerService.sendMessageType(player, "&c" + getText("PlayerDemoted")
-                , Objects.requireNonNull(MessageService.getLanguage().getString("PlayerDemoted"))
+        new PlayerService().sendMessageType(player, "&c" + getText("PlayerDemoted")
+                , Objects.requireNonNull(new MessageService().getLanguage().getString("PlayerDemoted"))
                         .replaceAll("#name#", playerToBeDemoted.getName()), true);
     }
 

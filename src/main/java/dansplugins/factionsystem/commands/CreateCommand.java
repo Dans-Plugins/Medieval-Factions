@@ -60,13 +60,13 @@ public class CreateCommand extends SubCommand {
 
         this.faction = getPlayerFaction(player);
         if (this.faction != null) {
-            PlayerService.sendMessageType(player, "&c" + getText("AlreadyInFaction"),
+            new PlayerService().sendMessageType(player, "&c" + getText("AlreadyInFaction"),
                     "AlreadyInFaction", false);
             return;
         }
 
         if (args.length == 0) {
-            PlayerService.sendMessageType(player, "&c" + getText("UsageCreate"),
+            new PlayerService().sendMessageType(player, "&c" + getText("UsageCreate"),
                     "UsageCreate", false);
             return;
         }
@@ -76,15 +76,15 @@ public class CreateCommand extends SubCommand {
         final FileConfiguration config = configService.getConfig();
 
         if (factionName.length() > config.getInt("factionMaxNameLength")) {
-            PlayerService.sendMessageType(player, "&c" + getText("FactionNameTooLong"),
-                    Objects.requireNonNull(MessageService.getLanguage().getString("FactionNameTooLong"))
+            new PlayerService().sendMessageType(player, "&c" + getText("FactionNameTooLong"),
+                    Objects.requireNonNull(new MessageService().getLanguage().getString("FactionNameTooLong"))
                             .replaceAll("#name#", factionName), true);
             return;
         }
 
         if (persistentData.getFaction(factionName) != null) {
-            PlayerService.sendMessageType(player, "&c" + getText("FactionAlreadyExists"),
-                    Objects.requireNonNull(MessageService.getLanguage().getString("FactionAlreadyExists"))
+            new PlayerService().sendMessageType(player, "&c" + getText("FactionAlreadyExists"),
+                    Objects.requireNonNull(new MessageService().getLanguage().getString("FactionAlreadyExists"))
                             .replaceAll("#name#", factionName), true);
             return;
         }
@@ -97,8 +97,8 @@ public class CreateCommand extends SubCommand {
         Bukkit.getPluginManager().callEvent(createEvent);
         if (!createEvent.isCancelled()) {
             persistentData.addFaction(this.faction);
-            PlayerService.sendMessageType(player, "&a" + getText("FactionCreated"),
-                    Objects.requireNonNull(MessageService.getLanguage().getString("FactionCreated"))
+            new PlayerService().sendMessageType(player, "&a" + getText("FactionCreated"),
+                    Objects.requireNonNull(new MessageService().getLanguage().getString("FactionCreated"))
                             .replaceAll("#name#", factionName), true);
         }
     }
