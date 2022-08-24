@@ -59,6 +59,7 @@ GoodLucky777 | Fixed a bug and a few typos in the code
 Elafir | Made it possible to control gates with redstone
 [Deej](https://github.com/Mr-Deej) | Added checks to several commands
 VoChiDanh | Refactored parts the PersistentData class in an attempt to resolve java compatibility issues
+[JackAttack924](https://github.com/jackcayc924) | Created Tab-Completion functionality for commands
 
 ### Translators
 Name | Language(s)
