@@ -11,11 +11,14 @@ import dansplugins.factionsystem.integrators.DynmapIntegrator;
 import dansplugins.factionsystem.objects.domain.Faction;
 import dansplugins.factionsystem.services.ConfigService;
 import dansplugins.factionsystem.services.LocaleService;
+import dansplugins.factionsystem.services.MessageService;
+import dansplugins.factionsystem.services.PlayerService;
 import dansplugins.factionsystem.utils.extended.Messenger;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import preponderous.ponder.minecraft.bukkit.tools.UUIDChecker;
 
+import java.util.Objects;
 import java.util.UUID;
 
 /**
@@ -41,18 +44,20 @@ public class WhoCommand extends SubCommand {
         final String permission = "mf.who";
         if (!(checkPermissions(player, permission))) return;
         if (args.length == 0) {
-            player.sendMessage(translate("&c" + getText("UsageWho")));
+            new PlayerService().sendMessageType(player, "&c" + getText("UsageWho")
+                    , "UsageWho", false);
             return;
         }
         UUIDChecker uuidChecker = new UUIDChecker();
         final UUID targetUUID = uuidChecker.findUUIDBasedOnPlayerName(args[0]);
         if (targetUUID == null) {
-            player.sendMessage(translate("&c" + getText("PlayerNotFound")));
+            new PlayerService().sendMessageType(player, "&c" + getText("PlayerNotFound"), Objects.requireNonNull(new MessageService().getLanguage().getString("PlayerNotFound")).replaceAll("#name#", args[0]), true);
             return;
         }
         final Faction temp = getPlayerFaction(targetUUID);
         if (temp == null) {
-            player.sendMessage(translate("&c" + getText("PlayerIsNotInAFaction")));
+            new PlayerService().sendMessageType(player, "&c" + getText("PlayerIsNotInAFaction")
+                    , "PlayerIsNotInAFaction", false);
             return;
         }
         messenger.sendFactionInfo(player, temp,

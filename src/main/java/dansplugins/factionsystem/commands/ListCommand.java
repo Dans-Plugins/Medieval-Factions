@@ -11,6 +11,7 @@ import dansplugins.factionsystem.integrators.DynmapIntegrator;
 import dansplugins.factionsystem.objects.domain.Faction;
 import dansplugins.factionsystem.services.ConfigService;
 import dansplugins.factionsystem.services.LocaleService;
+import dansplugins.factionsystem.services.PlayerService;
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
@@ -52,10 +53,12 @@ public class ListCommand extends SubCommand {
         final String permission = "mf.list";
         if (!(checkPermissions(sender, permission))) return;
         if (persistentData.getNumFactions() == 0) {
-            sender.sendMessage(translate("&b" + getText("CurrentlyNoFactions")));
+            new PlayerService().sendMessageType(sender, "&b" + getText("CurrentlyNoFactions")
+                    , "CurrentlyNoFactions", false);
             return;
         }
-        sender.sendMessage(translate("&b&l" + getText("FactionsTitle")));
+        new PlayerService().sendMessageType(sender, "&b&l" + getText("FactionsTitle")
+                , "FactionsTitle", false);
         List<PersistentData.SortableFaction> sortedFactionList = persistentData.getSortedListOfFactions();
         sender.sendMessage(ChatColor.AQUA + localeService.get("ListLegend"));
         sender.sendMessage(ChatColor.AQUA + "-----");

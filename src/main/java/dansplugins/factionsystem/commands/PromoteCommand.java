@@ -10,12 +10,15 @@ import dansplugins.factionsystem.data.PersistentData;
 import dansplugins.factionsystem.integrators.DynmapIntegrator;
 import dansplugins.factionsystem.services.ConfigService;
 import dansplugins.factionsystem.services.LocaleService;
+import dansplugins.factionsystem.services.MessageService;
+import dansplugins.factionsystem.services.PlayerService;
 import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import preponderous.ponder.minecraft.bukkit.tools.UUIDChecker;
 
+import java.util.Objects;
 import java.util.UUID;
 
 /**
@@ -40,44 +43,52 @@ public class PromoteCommand extends SubCommand {
     public void execute(Player player, String[] args, String key) {
         final String permission = "mf.promote";
         if (!(checkPermissions(player, permission))) return;
-        if (args.length <= 0) {
-            player.sendMessage(translate("&c" + getText("UsagePromote")));
+        if (args.length == 0) {
+            new PlayerService().sendMessageType(player, "&c" + getText("UsagePromote")
+                    , "UsagePromote", false);
             return;
         }
         UUIDChecker uuidChecker = new UUIDChecker();
         final UUID targetUUID = uuidChecker.findUUIDBasedOnPlayerName(args[0]);
         if (targetUUID == null) {
-            player.sendMessage(translate("&c" + getText("PlayerNotFound")));
+            new PlayerService().sendMessageType(player, "&c" + getText("PlayerNotFound"), Objects.requireNonNull(new MessageService().getLanguage().getString("PlayerNotFound")).replaceAll("#name#", args[0]), true);
             return;
         }
         OfflinePlayer target = Bukkit.getOfflinePlayer(targetUUID);
         if (!target.hasPlayedBefore()) {
             target = Bukkit.getPlayer(args[0]);
             if (target == null) {
-                player.sendMessage(translate("&c" + getText("PlayerNotFound")));
+                new PlayerService().sendMessageType(player, "&c" + getText("PlayerNotFound"), Objects.requireNonNull(new MessageService().getLanguage().getString("PlayerNotFound")).replaceAll("#name#", args[0]), true);
                 return;
             }
         }
         if (!faction.isMember(targetUUID)) {
-            player.sendMessage(translate("&c" + getText("PlayerIsNotMemberOfFaction")));
+            new PlayerService().sendMessageType(player, "&c" + getText("PlayerIsNotMemberOfFaction")
+                    , "PlayerIsNotMemberOfFaction", false);
             return;
         }
         if (faction.isOfficer(targetUUID)) {
-            player.sendMessage(translate("&c" + getText("PlayerAlreadyOfficer")));
+            new PlayerService().sendMessageType(player, "&c" + getText("PlayerAlreadyOfficer")
+                    , "PlayerAlreadyOfficer", false);
             return;
         }
         if (targetUUID == player.getUniqueId()) {
-            player.sendMessage(translate("&c" + getText("CannotPromoteSelf")));
+            new PlayerService().sendMessageType(player, "&c" + getText("CannotPromoteSelf")
+                    , "CannotPromoteSelf", false);
             return;
         }
         if (faction.addOfficer(targetUUID)) {
-            player.sendMessage(translate("&a" + getText("PlayerPromoted")));
+            new PlayerService().sendMessageType(player, "&a" + getText("PlayerPromoted")
+                    , "PlayerPromoted", false);
             if (target.isOnline() && target.getPlayer() != null) {
-                target.getPlayer().sendMessage(translate("&a" + getText("PromotedToOfficer")));
+                new PlayerService().sendMessageType(target.getPlayer(), "&a" + getText("PromotedToOfficer")
+                        , "PromotedToOfficer", false);
             }
         } else {
-            player.sendMessage(translate("&c" +
-                    getText("PlayerCantBePromotedBecauseOfLimit", faction.calculateMaxOfficers())));
+            new PlayerService().sendMessageType(player, "&c" +
+                            getText("PlayerCantBePromotedBecauseOfLimit", faction.calculateMaxOfficers())
+                    , Objects.requireNonNull(new MessageService().getLanguage().getString("PlayerCantBePromotedBecauseOfLimit"))
+                            .replaceAll("#number#", String.valueOf(faction.calculateMaxOfficers())), true);
         }
     }
 

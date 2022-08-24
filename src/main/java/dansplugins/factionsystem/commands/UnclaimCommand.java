@@ -10,8 +10,12 @@ import dansplugins.factionsystem.data.PersistentData;
 import dansplugins.factionsystem.integrators.DynmapIntegrator;
 import dansplugins.factionsystem.services.ConfigService;
 import dansplugins.factionsystem.services.LocaleService;
+import dansplugins.factionsystem.services.MessageService;
+import dansplugins.factionsystem.services.PlayerService;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
+
+import java.util.Objects;
 
 /**
  * @author Callum Johnson
@@ -39,24 +43,27 @@ public class UnclaimCommand extends SubCommand {
         if ((boolean) faction.getFlags().getFlag("mustBeOfficerToManageLand")) {
             // officer or owner rank required
             if (!faction.isOfficer(player.getUniqueId()) && !faction.isOwner(player.getUniqueId()) && !isPlayerBypassing) {
-                player.sendMessage(translate("&c" + "You're not able to claim land at this time."));
+                new PlayerService().sendMessageType(player, "&c" + "You're not able to claim land at this time."
+                        , "NotAbleToClaim", false);
                 return;
             }
         }
         if (args.length == 0) {
             chunkDataAccessor.removeChunkAtPlayerLocation(player, faction);
             dynmapIntegrator.updateClaims();
-            player.sendMessage("Unclaimed your current claim.");
+            new PlayerService().sendMessageType(player, "&aUnclaimed your current claim."
+                    , "UnClaimed", false);
             return;
         }
         // https://github.com/dmccoystephenson/Medieval-Factions/issues/836
         int radius = getIntSafe(args[0], 1);
         if (radius <= 0) {
             radius = 1;
-            player.sendMessage("Your radius wasn't properly recognised, defaulting to 1.");
         }
         chunkDataAccessor.radiusUnclaimAtLocation(radius, player, faction);
-        player.sendMessage("Unclaimed radius of " + radius + " claims around you!");
+        new PlayerService().sendMessageType(player, "Unclaimed radius of " + radius + " claims around you!"
+                , Objects.requireNonNull(new MessageService().getLanguage().getString("UnClaimedRadius"))
+                        .replaceAll("#number#", String.valueOf(radius)), true);
     }
 
     /**

@@ -11,6 +11,7 @@ import dansplugins.factionsystem.integrators.DynmapIntegrator;
 import dansplugins.factionsystem.objects.domain.ClaimedChunk;
 import dansplugins.factionsystem.services.ConfigService;
 import dansplugins.factionsystem.services.LocaleService;
+import dansplugins.factionsystem.services.PlayerService;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
@@ -37,16 +38,19 @@ public class SetHomeCommand extends SubCommand {
         final String permission = "mf.sethome";
         if (!(checkPermissions(player, permission))) return;
         if (!chunkDataAccessor.isClaimed(player.getLocation().getChunk())) {
-            player.sendMessage(translate("&c" + getText("LandIsNotClaimed")));
+            new PlayerService().sendMessageType(player, "&c" + getText("LandIsNotClaimed")
+                    , "LandIsNotClaimed", false);
             return;
         }
         ClaimedChunk chunk = chunkDataAccessor.getClaimedChunk(player.getLocation().getChunk());
         if (chunk == null || !chunk.getHolder().equalsIgnoreCase(faction.getName())) {
-            player.sendMessage(translate("&c" + getText("CannotSetFactionHomeInWilderness")));
+            new PlayerService().sendMessageType(player, "&c" + getText("CannotSetFactionHomeInWilderness"),
+                    "CannotSetFactionHomeInWilderness", false);
             return;
         }
         faction.setFactionHome(player.getLocation());
-        player.sendMessage(translate("&a" + getText("FactionHomeSet")));
+        new PlayerService().sendMessageType(player, "&a" + getText("FactionHomeSet"),
+                "FactionHomeSet", false);
     }
 
     /**

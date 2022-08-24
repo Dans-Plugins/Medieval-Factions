@@ -11,8 +11,12 @@ import dansplugins.factionsystem.integrators.DynmapIntegrator;
 import dansplugins.factionsystem.objects.domain.Faction;
 import dansplugins.factionsystem.services.ConfigService;
 import dansplugins.factionsystem.services.LocaleService;
+import dansplugins.factionsystem.services.MessageService;
+import dansplugins.factionsystem.services.PlayerService;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
+
+import java.util.Objects;
 
 /**
  * @author Callum Johnson
@@ -37,16 +41,19 @@ public class SwearFealtyCommand extends SubCommand {
         final String permission = "mf.swearfealty";
         if (!(checkPermissions(player, permission))) return;
         if (args.length == 0) {
-            player.sendMessage(translate("&c" + getText("UsageSwearFealty")));
+            new PlayerService().sendMessageType(player, "&c" + getText("UsageSwearFealty")
+                    , "UsageSwearFealty", false);
             return;
         }
         final Faction target = getFaction(String.join(" ", args));
         if (target == null) {
-            player.sendMessage(translate("&c" + getText("FactionNotFound")));
+            new PlayerService().sendMessageType(player, "&c" + getText("FactionNotFound"), Objects.requireNonNull(new MessageService().getLanguage().getString("FactionNotFound"))
+                    .replaceAll("#faction#", String.join(" ", args)), true);
             return;
         }
         if (!target.hasBeenOfferedVassalization(faction.getName())) {
-            player.sendMessage(translate("&c" + getText("AlertNotOfferedVassalizationBy")));
+            new PlayerService().sendMessageType(player, "&c" + getText("AlertNotOfferedVassalizationBy")
+                    , "AlertNotOfferedVassalizationBy", false);
             return;
         }
         // set vassal
@@ -57,10 +64,14 @@ public class SwearFealtyCommand extends SubCommand {
         faction.setLiege(target.getName());
 
         // inform target faction that they have a new vassal
-        messageFaction(target, translate("&a" + getText("AlertFactionHasNewVassal", faction.getName())));
+        messageFaction(target, translate("&a" + getText("AlertFactionHasNewVassal", faction.getName()))
+                , Objects.requireNonNull(new MessageService().getLanguage().getString("AlertFactionHasNewVassal"))
+                        .replaceAll("#name#", faction.getName()));
 
         // inform players faction that they have a new liege
-        messageFaction(faction, translate("&a" + getText("AlertFactionHasBeenVassalized", target.getName())));
+        messageFaction(faction, translate("&a" + getText("AlertFactionHasBeenVassalized", target.getName()))
+                , Objects.requireNonNull(new MessageService().getLanguage().getString("AlertFactionHasBeenVassalized"))
+                        .replaceAll("#name#", target.getName()));
     }
 
     /**

@@ -11,10 +11,13 @@ import dansplugins.factionsystem.integrators.DynmapIntegrator;
 import dansplugins.factionsystem.objects.domain.PowerRecord;
 import dansplugins.factionsystem.services.ConfigService;
 import dansplugins.factionsystem.services.LocaleService;
+import dansplugins.factionsystem.services.MessageService;
+import dansplugins.factionsystem.services.PlayerService;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import preponderous.ponder.minecraft.bukkit.tools.UUIDChecker;
 
+import java.util.Objects;
 import java.util.UUID;
 
 /**
@@ -54,22 +57,31 @@ public class PowerCommand extends SubCommand {
         final PowerRecord record;
         if (args.length == 0) {
             if (!(sender instanceof Player)) {
-                sender.sendMessage(translate(getText("OnlyPlayersCanUseCommand")));
+                new PlayerService().sendMessageType(sender, getText("OnlyPlayersCanUseCommand")
+                        , "OnlyPlayersCanUseCommand", false);
                 return;
             }
             record = persistentData.getPlayersPowerRecord(((Player) sender).getUniqueId());
-            sender.sendMessage(translate("&b" +
-                    getText("AlertCurrentPowerLevel", record.getPower(), record.maxPower())));
+            new PlayerService().sendMessageType(sender, "&b" +
+                            getText("AlertCurrentPowerLevel", record.getPower(), record.maxPower())
+                    , Objects.requireNonNull(new MessageService().getLanguage().getString("AlertCurrentPowerLevel"))
+                            .replaceAll("#power#", String.valueOf(record.getPower()))
+                            .replaceAll("#max#", String.valueOf(record.maxPower())), true);
             return;
         }
         UUIDChecker uuidChecker = new UUIDChecker();
         final UUID target = uuidChecker.findUUIDBasedOnPlayerName(args[0]);
         if (target == null) {
-            sender.sendMessage(translate("&c" + getText("PlayerNotFound")));
+            new PlayerService().sendMessageType(sender, "&c" + getText("PlayerNotFound"),
+                    Objects.requireNonNull(new MessageService().getLanguage().getString("PlayerNotFound")).replaceAll("#name#", args[0]), true);
             return;
         }
         record = persistentData.getPlayersPowerRecord(target);
-        sender.sendMessage(translate("&b" +
-                getText("CurrentPowerLevel", args[0], record.getPower(), record.maxPower())));
+        new PlayerService().sendMessageType(sender, "&b" +
+                        getText("CurrentPowerLevel", args[0], record.getPower(), record.maxPower())
+                , Objects.requireNonNull(new MessageService().getLanguage().getString("CurrentPowerLevel"))
+                        .replaceAll("#power#", String.valueOf(record.getPower()))
+                        .replaceAll("#max#", String.valueOf(record.maxPower()))
+                        .replaceAll("#name#", args[0]), true);
     }
 }

@@ -11,10 +11,14 @@ import dansplugins.factionsystem.events.FactionLeaveEvent;
 import dansplugins.factionsystem.integrators.DynmapIntegrator;
 import dansplugins.factionsystem.services.ConfigService;
 import dansplugins.factionsystem.services.LocaleService;
+import dansplugins.factionsystem.services.MessageService;
+import dansplugins.factionsystem.services.PlayerService;
 import dansplugins.factionsystem.utils.Logger;
 import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
+
+import java.util.Objects;
 
 /**
  * @author Callum Johnson
@@ -55,8 +59,12 @@ public class LeaveCommand extends SubCommand {
         if (faction.isOfficer(player.getUniqueId())) faction.removeOfficer(player.getUniqueId()); // Remove Officer.
         ephemeralData.getPlayersInFactionChat().remove(player.getUniqueId()); // Remove from Faction Chat.
         faction.removeMember(player.getUniqueId());
-        player.sendMessage(translate("&b" + getText("AlertLeftFaction")));
-        messageFaction(faction, translate("&a" + player.getName() + " has left " + faction.getName()));
+        new PlayerService().sendMessageType(player, "&b" + getText("AlertLeftFaction")
+                , "AlertLeftFaction", false);
+        messageFaction(faction, translate("&a" + player.getName() + " has left " + faction.getName()),
+                Objects.requireNonNull(new MessageService().getLanguage().getString("AlertLeftFactionTeam"))
+                        .replaceAll("#name#", player.getName())
+                        .replaceAll("#faction#", faction.getName()));
 
     }
 

@@ -10,6 +10,7 @@ import dansplugins.factionsystem.data.PersistentData;
 import dansplugins.factionsystem.integrators.DynmapIntegrator;
 import dansplugins.factionsystem.services.ConfigService;
 import dansplugins.factionsystem.services.LocaleService;
+import dansplugins.factionsystem.services.PlayerService;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
@@ -37,11 +38,13 @@ public class PrefixCommand extends SubCommand {
         if (!(checkPermissions(player, permission))) return;
         final String newPrefix = String.join(" ", args);
         if (persistentData.isPrefixTaken(newPrefix)) {
-            player.sendMessage(translate("&c" + getText("PrefixTaken")));
+            new PlayerService().sendMessageType(player, "&c" + getText("PrefixTaken")
+                    , "PrefixTaken", false);
             return;
         }
         faction.setPrefix(newPrefix);
-        player.sendMessage(translate("&a" + getText("PrefixSet")));
+        new PlayerService().sendMessageType(player, "&c" + getText("PrefixSet")
+                , "PrefixSet", false);
     }
 
     /**

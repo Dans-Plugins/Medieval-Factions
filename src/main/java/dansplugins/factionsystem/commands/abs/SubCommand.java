@@ -4,7 +4,6 @@
  */
 package dansplugins.factionsystem.commands.abs;
 
-import dansplugins.factionsystem.MedievalFactions;
 import dansplugins.factionsystem.data.EphemeralData;
 import dansplugins.factionsystem.data.PersistentData;
 import dansplugins.factionsystem.integrators.DynmapIntegrator;
@@ -197,9 +196,8 @@ public abstract class SubCommand implements ColorTranslator {
     public boolean checkPermissions(CommandSender sender, String... permission) {
         boolean has = false;
         for (String perm : permission) {
-            if (has = sender.hasPermission(perm)) {
-                break;
-            }
+            has = sender.hasPermission(perm);
+            break;
         }
         if (!has) {
             new PlayerService().sendMessageType(sender, translate("&c" + getText("PermissionNeeded", permission[0])), Objects.requireNonNull(new MessageService().getLanguage().getString("PermissionNeeded")).replaceAll("#permission#", permission[0]), true);

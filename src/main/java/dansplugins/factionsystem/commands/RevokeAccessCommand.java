@@ -10,10 +10,13 @@ import dansplugins.factionsystem.data.PersistentData;
 import dansplugins.factionsystem.integrators.DynmapIntegrator;
 import dansplugins.factionsystem.services.ConfigService;
 import dansplugins.factionsystem.services.LocaleService;
+import dansplugins.factionsystem.services.MessageService;
+import dansplugins.factionsystem.services.PlayerService;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import preponderous.ponder.minecraft.bukkit.tools.UUIDChecker;
 
+import java.util.Objects;
 import java.util.UUID;
 
 /**
@@ -39,32 +42,36 @@ public class RevokeAccessCommand extends SubCommand {
         final String permission = "mf.revokeaccess";
         if (!(checkPermissions(player, permission))) return;
         if (args.length == 0) {
-            player.sendMessage(translate("&c" + getText("UsageRevokeAccess")));
+            new PlayerService().sendMessageType(player, "&c" + getText("UsageRevokeAccess")
+                    , "UsageRevokeAccess", false);
             return;
         }
         if (args[0].equalsIgnoreCase("cancel")) {
             ephemeralData.getPlayersRevokingAccess().remove(player.getUniqueId());
-            player.sendMessage(translate("&a" + getText("Cancelled")));
+            new PlayerService().sendMessageType(player, "&c" + getText("Cancelled"), "Cancelled", false);
             return;
         }
         if (ephemeralData.getPlayersRevokingAccess().containsKey(player.getUniqueId())) {
-            player.sendMessage(translate("&c" + getText("AlreadyEnteredRevokeAccess")));
+            new PlayerService().sendMessageType(player, "&c" + getText("AlreadyEnteredRevokeAccess")
+                    , "AlreadyEnteredRevokeAccess", false);
             return;
         }
         UUIDChecker uuidChecker = new UUIDChecker();
         final UUID targetUUID = uuidChecker.findUUIDBasedOnPlayerName(args[0]);
         if (targetUUID == null) {
-            player.sendMessage(translate("&c" + getText("PlayerNotFound")));
+            new PlayerService().sendMessageType(player, "&c" + getText("PlayerNotFound"), Objects.requireNonNull(new MessageService().getLanguage().getString("PlayerNotFound")).replaceAll("#name#", args[0]), true);
             return;
         }
         if (targetUUID == player.getUniqueId()) {
-            player.sendMessage(translate("&c" + getText("CannotRevokeAccessFromSelf")));
+            new PlayerService().sendMessageType(player, "&c" + getText("CannotRevokeAccessFromSelf")
+                    , "CannotRevokeAccessFromSelf", false);
             return;
         }
         ephemeralData.getPlayersRevokingAccess().put(
                 player.getUniqueId(), targetUUID
         );
-        player.sendMessage(translate("&a" + getText("RightClickRevokeAccess")));
+        new PlayerService().sendMessageType(player, "&a" + getText("RightClickRevokeAccess")
+                , "RightClickRevokeAccess", false);
     }
 
     /**

@@ -10,6 +10,7 @@ import dansplugins.factionsystem.data.PersistentData;
 import dansplugins.factionsystem.integrators.DynmapIntegrator;
 import dansplugins.factionsystem.services.ConfigService;
 import dansplugins.factionsystem.services.LocaleService;
+import dansplugins.factionsystem.services.PlayerService;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
@@ -36,15 +37,18 @@ public class RemoveLawCommand extends SubCommand {
         final String permission = "mf.removelaw";
         if (!(checkPermissions(player, permission))) return;
         if (args.length == 0) {
-            player.sendMessage(translate("&c" + getText("UsageRemoveLaw")));
+            new PlayerService().sendMessageType(player, "&c" + getText("UsageRemoveLaw")
+                    , "UsageRemoveLaw", false);
             return;
         }
         final int lawToRemove = getIntSafe(args[0], 0) - 1;
         if (lawToRemove < 0) {
-            player.sendMessage(translate("&c" + getText("UsageRemoveLaw")));
+            new PlayerService().sendMessageType(player, "&c" + getText("UsageRemoveLaw")
+                    , "UsageRemoveLaw", false);
             return;
         }
-        if (faction.removeLaw(lawToRemove)) player.sendMessage(translate("&a" + getText("LawRemoved")));
+        if (faction.removeLaw(lawToRemove)) new PlayerService().sendMessageType(player, "&a" + getText("LawRemoved")
+                , "LawRemoved", false);
     }
 
     /**
