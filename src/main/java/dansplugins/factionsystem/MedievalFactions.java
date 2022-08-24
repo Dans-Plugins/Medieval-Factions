@@ -68,7 +68,6 @@ public class MedievalFactions extends PonderBukkitPlugin {
         return configService;
     }
 
-
     /**
      * This runs when the server starts.
      */
