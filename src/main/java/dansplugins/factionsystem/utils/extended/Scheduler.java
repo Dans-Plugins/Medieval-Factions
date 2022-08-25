@@ -9,6 +9,8 @@ import dansplugins.factionsystem.data.PersistentData;
 import dansplugins.factionsystem.objects.domain.Faction;
 import dansplugins.factionsystem.services.ConfigService;
 import dansplugins.factionsystem.services.LocaleService;
+import dansplugins.factionsystem.services.MessageService;
+import dansplugins.factionsystem.services.PlayerService;
 import dansplugins.factionsystem.utils.Logger;
 import dansplugins.factionsystem.utils.PlayerTeleporter;
 import org.bukkit.Bukkit;
@@ -17,6 +19,7 @@ import org.bukkit.Location;
 import org.bukkit.entity.Player;
 import org.bukkit.scheduler.BukkitRunnable;
 
+import java.util.Objects;
 import java.util.Random;
 
 /**
@@ -29,14 +32,18 @@ public class Scheduler {
     private final PersistentData persistentData;
     private final ConfigService configService;
     private final PlayerTeleporter playerTeleporter;
+    private final PlayerService playerService;
+    private final MessageService messageService;
 
-    public Scheduler(Logger logger, LocaleService localeService, MedievalFactions medievalFactions, PersistentData persistentData, ConfigService configService, PlayerTeleporter playerTeleporter) {
+    public Scheduler(Logger logger, LocaleService localeService, MedievalFactions medievalFactions, PersistentData persistentData, ConfigService configService, PlayerTeleporter playerTeleporter, PlayerService playerService, MessageService messageService) {
         this.logger = logger;
         this.localeService = localeService;
         this.medievalFactions = medievalFactions;
         this.persistentData = persistentData;
         this.configService = configService;
         this.playerTeleporter = playerTeleporter;
+        this.playerService = playerService;
+        this.messageService = messageService;
     }
 
     public void scheduleAutosave() {
@@ -69,20 +76,17 @@ public class Scheduler {
         logger.debug(localeService.get("SchedulingPowerDecrease"));
         int delay = configService.getInt("minutesBetweenPowerDecreases") * 60;
         int secondsUntilRepeat = configService.getInt("minutesBetweenPowerDecreases") * 60;
-        Bukkit.getScheduler().scheduleSyncRepeatingTask(medievalFactions, new Runnable() {
-            @Override
-            public void run() {
-                logger.debug(String.format((localeService.get("AlertDecreasingThePowerOfInactivePlayers")) + "%n", configService.getInt("powerDecreaseAmount"), configService.getInt("minutesBeforePowerDecrease"), configService.getInt("minutesBetweenPowerDecreases")));
+        Bukkit.getScheduler().scheduleSyncRepeatingTask(medievalFactions, () -> {
+            logger.debug(String.format((localeService.get("AlertDecreasingThePowerOfInactivePlayers")) + "%n", configService.getInt("powerDecreaseAmount"), configService.getInt("minutesBeforePowerDecrease"), configService.getInt("minutesBetweenPowerDecreases")));
 
-                persistentData.decreasePowerForInactivePlayers();
+            persistentData.decreasePowerForInactivePlayers();
 
-                if (configService.getBoolean("zeroPowerFactionsGetDisbanded")) {
-                    persistentData.disbandAllZeroPowerFactions();
-                }
+            if (configService.getBoolean("zeroPowerFactionsGetDisbanded")) {
+                persistentData.disbandAllZeroPowerFactions();
+            }
 
-                for (Player player : medievalFactions.getServer().getOnlinePlayers()) {
-                    informPlayerIfTheirLandIsInDanger(player);
-                }
+            for (Player player : medievalFactions.getServer().getOnlinePlayers()) {
+                informPlayerIfTheirLandIsInDanger(player);
             }
         }, delay * 20L, secondsUntilRepeat * 20L);
     }
@@ -91,7 +95,8 @@ public class Scheduler {
         Faction faction = persistentData.getPlayersFaction(player.getUniqueId());
         if (faction != null) {
             if (isFactionExceedingTheirDemesneLimit(faction)) {
-                player.sendMessage(ChatColor.RED + localeService.get("AlertMoreClaimedChunksThanPower"));
+                playerService.sendMessageType(player, ChatColor.RED + localeService.get("AlertMoreClaimedChunksThanPower")
+                        , "AlertMoreClaimedChunksThanPower", false);
             }
         }
     }
@@ -102,7 +107,8 @@ public class Scheduler {
 
     public void scheduleTeleport(Player player, Location destinationLocation) {
         final int teleport_delay = configService.getInt("teleportDelay");
-        player.sendMessage(ChatColor.AQUA + "Teleporting in " + teleport_delay + " seconds...");
+        playerService.sendMessageType(player, ChatColor.AQUA + "Teleporting in " + teleport_delay + " seconds..."
+                , Objects.requireNonNull(messageService.getLanguage().getString("Teleport")).replaceAll("#time#", String.valueOf(teleport_delay)), true);
         DelayedTeleportTask delayedTeleportTask = new DelayedTeleportTask(player, destinationLocation);
         delayedTeleportTask.runTaskLater(medievalFactions, (long) teleport_delay * getRandomNumberBetween(15, 25));
     }
@@ -129,7 +135,8 @@ public class Scheduler {
             if (playerHasNotMoved()) {
                 teleportPlayer();
             } else {
-                player.sendMessage(ChatColor.RED + "Teleport cancelled.");
+                playerService.sendMessageType(player, ChatColor.RED + "Teleport cancelled.",
+                        "TeleportCancelled", false);
             }
         }
 

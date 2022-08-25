@@ -52,13 +52,13 @@ public class MedievalFactions extends PonderBukkitPlugin {
     private MedievalFactions medievalFactions;
     private final MessageService messageService = new MessageService(medievalFactions);
     private final PlayerService playerService = new PlayerService(medievalFactions, messageService);
-    private final Messenger messenger = new Messenger(configService.getLocaleService(), fiefsIntegrator, playerService);
+    private final Messenger messenger = new Messenger(configService.getLocaleService(), fiefsIntegrator, playerService, messageService, medievalFactions);
     private final PersistentData persistentData = new PersistentData(configService.getLocaleService(), configService, this, messenger, ephemeralData, logger, fiefsIntegrator, currenciesIntegrator, playerService, messageService);
     private final WarFactory warFactory = new WarFactory(persistentData);
     private final RelationChecker relationChecker = new RelationChecker(persistentData);
     private final GateService gateService = new GateService(persistentData, configService.getLocaleService(), ephemeralData, playerService, messageService);
-    private final LockService lockService = new LockService(persistentData, configService.getLocaleService(), persistentData.getBlockChecker(), ephemeralData);
-    private final Scheduler scheduler = new Scheduler(logger, configService.getLocaleService(), this, persistentData, configService, playerTeleporter);
+    private final LockService lockService = new LockService(persistentData, configService.getLocaleService(), persistentData.getBlockChecker(), playerService, messageService, ephemeralData);
+    private final Scheduler scheduler = new Scheduler(logger, configService.getLocaleService(), this, persistentData, configService, playerTeleporter, playerService, messageService);
     private final CommandService commandService = new CommandService(configService.getLocaleService(), this, configService, persistentData, ephemeralData, persistentData.getChunkDataAccessor(), persistentData.getDynmapIntegrator(), warFactory, logger, scheduler, messenger, relationChecker, fiefsIntegrator, currenciesIntegrator, playerService, messageService);
 
     public MedievalFactions getMedievalFactions() {
