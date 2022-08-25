@@ -14,6 +14,24 @@ class JooqMfFactionRelationshipRepository(val dsl: DSLContext) : MfFactionRelati
             .map { it.toDomain() }
     }
 
+    override fun getFactionRelationships(
+        factionId: MfFactionId,
+        type: MfFactionRelationshipType
+    ): List<MfFactionRelationship> {
+        return dsl.selectFrom(MF_FACTION_RELATIONSHIP)
+            .where(MF_FACTION_RELATIONSHIP.FACTION_ID.eq(factionId.value))
+            .and(MF_FACTION_RELATIONSHIP.TYPE.eq(type.name))
+            .fetch()
+            .map { it.toDomain() }
+    }
+
+    override fun getFactionRelationships(factionId: MfFactionId): List<MfFactionRelationship> {
+        return dsl.selectFrom(MF_FACTION_RELATIONSHIP)
+            .where(MF_FACTION_RELATIONSHIP.FACTION_ID.eq(factionId.value))
+            .fetch()
+            .map { it.toDomain() }
+    }
+
     override fun upsert(relationship: MfFactionRelationship): MfFactionRelationship {
         dsl.insertInto(MF_FACTION_RELATIONSHIP)
             .set(MF_FACTION_RELATIONSHIP.ID, relationship.id.value)

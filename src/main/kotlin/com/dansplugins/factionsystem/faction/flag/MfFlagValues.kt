@@ -13,7 +13,13 @@ class MfFlagValues(private val values: Map<MfFlag<Any?>, Any?> = mutableMapOf())
         @JvmStatic
         fun deserialize(serialized: Map<String, Any?>): MfFlagValues {
             val plugin = Bukkit.getPluginManager().getPlugin("MedievalFactions") as MedievalFactions
-            return MfFlagValues(serialized.mapKeys { (flagName, _) -> plugin.flags[flagName]!! })
+            return MfFlagValues(serialized.mapKeys { (flagName, _) ->
+                val flag: MfFlag<out Any?>? = plugin.flags[flagName]
+                if (flag == null) {
+                    println("null flag for flag name $flagName")
+                }
+                plugin.flags[flagName]!!
+            })
         }
     }
 }

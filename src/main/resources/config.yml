@@ -4,8 +4,13 @@ database:
   dialect: 'H2'
   username: 'sa'
   password: ''
+players:
+  maxPower: 20
+  hoursToReachMaxPower: 12
+  hoursToReachMinPower: 72
+wilderness:
+  territoryAlertColor: '#3e8e39'
 factions:
-  initialMaxPowerLevel: 20
   initialPowerLevel: 5
   mobsSpawnInFactionTerritory: false
   powerIncreaseAmount: 2
@@ -13,22 +18,16 @@ factions:
   minutesBeforeInitialPowerIncrease: 30
   minutesBetweenPowerIncreases: 60
   warsRequiredForPvp: true
-  factionOwnerMultiplier: 2.0
-  officerPerMemberCount: 5
-  factionOfficerMultiplier: 1.5
-  powerDecreases: true
-  minutesBetweenPowerDecreases: 1440
-  minutesBeforePowerDecrease: 20160
-  powerDecreaseAmount: 1
   maxNameLength: 20
   maxNumberGates: 5
   maxGateArea: 64
   surroundedChunksProtected: true
   zeroPowerFactionsGetDisbanded: false
-  vassalContributionPercentageMultiplier: 0.75
+  vassalPowerContributionMultiplier: 0.75
   nonMembersCanInteractWithDoors: false
   playersChatWithPrefixes: true
   maxClaimRadius: 3
+  limitLand: true
   defaults:
     flags:
       mustBeOfficerToManageLand: true

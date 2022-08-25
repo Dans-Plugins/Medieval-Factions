@@ -1,26 +1,33 @@
 package com.dansplugins.factionsystem
 
+import com.dansplugins.factionsystem.claim.JooqMfClaimedChunkRepository
+import com.dansplugins.factionsystem.claim.MfClaimService
 import com.dansplugins.factionsystem.command.MedievalFactionsCommand
 import com.dansplugins.factionsystem.command.faction.MfFactionCommand
 import com.dansplugins.factionsystem.faction.JooqMfFactionRepository
 import com.dansplugins.factionsystem.faction.MfFactionRepository
 import com.dansplugins.factionsystem.faction.MfFactionService
 import com.dansplugins.factionsystem.faction.flag.MfFlags
+import com.dansplugins.factionsystem.faction.permission.MfFactionPermission
+import com.dansplugins.factionsystem.faction.permission.MfFactionPermissionSerializer
 import com.dansplugins.factionsystem.lang.Language
 import com.dansplugins.factionsystem.law.JooqMfLawRepository
 import com.dansplugins.factionsystem.law.MfLawRepository
 import com.dansplugins.factionsystem.law.MfLawService
 import com.dansplugins.factionsystem.listener.AsyncPlayerPreLoginListener
+import com.dansplugins.factionsystem.listener.PlayerMoveListener
 import com.dansplugins.factionsystem.notification.MailboxesNotificationDispatcher
 import com.dansplugins.factionsystem.notification.MfNotificationDispatcher
 import com.dansplugins.factionsystem.notification.NoOpNotificationDispatcher
 import com.dansplugins.factionsystem.notification.RpkNotificationDispatcher
 import com.dansplugins.factionsystem.player.JooqMfPlayerRepository
+import com.dansplugins.factionsystem.player.MfPlayerId
 import com.dansplugins.factionsystem.player.MfPlayerRepository
 import com.dansplugins.factionsystem.player.MfPlayerService
 import com.dansplugins.factionsystem.relationship.JooqMfFactionRelationshipRepository
 import com.dansplugins.factionsystem.relationship.MfFactionRelationshipService
 import com.dansplugins.factionsystem.service.Services
+import com.google.gson.GsonBuilder
 import com.zaxxer.hikari.HikariConfig
 import com.zaxxer.hikari.HikariDataSource
 import org.bstats.bukkit.Metrics
@@ -29,6 +36,7 @@ import org.flywaydb.core.Flyway
 import org.jooq.SQLDialect
 import org.jooq.conf.Settings
 import org.jooq.impl.DSL
+import java.time.LocalTime
 import java.util.*
 import javax.sql.DataSource
 
@@ -81,26 +89,41 @@ class MedievalFactions : JavaPlugin() {
 
         flags = MfFlags(this)
 
-        val playerRepository: MfPlayerRepository = JooqMfPlayerRepository(dsl)
-        val factionRepository: MfFactionRepository = JooqMfFactionRepository(this, dsl)
+        val gson = GsonBuilder().registerTypeAdapter(MfFactionPermission::class.java, MfFactionPermissionSerializer(flags)).create()
+        val playerRepository: MfPlayerRepository = JooqMfPlayerRepository(this, dsl)
+        val factionRepository: MfFactionRepository = JooqMfFactionRepository(this, dsl, gson)
         val lawRepository: MfLawRepository = JooqMfLawRepository(dsl)
         val factionRelationshipRepository = JooqMfFactionRelationshipRepository(dsl)
+        val claimedChunkRepository = JooqMfClaimedChunkRepository(dsl)
+
         val playerService = MfPlayerService(playerRepository)
         val factionService = MfFactionService(factionRepository)
         val lawService = MfLawService(lawRepository)
         val factionRelationshipService = MfFactionRelationshipService(factionRelationshipRepository)
+        val claimedChunkService = MfClaimService(claimedChunkRepository)
+
         services = Services(
             playerService,
             factionService,
             lawService,
-            factionRelationshipService
+            factionRelationshipService,
+            claimedChunkService
         )
         setupNotificationDispatcher()
 
         server.pluginManager.registerEvents(AsyncPlayerPreLoginListener(playerService), this)
+        server.pluginManager.registerEvents(PlayerMoveListener(this), this)
 
         getCommand("medievalfactions")?.setExecutor(MedievalFactionsCommand(this))
         getCommand("faction")?.setExecutor(MfFactionCommand(this))
+
+        server.scheduler.scheduleSyncRepeatingTask(this, {
+            val onlinePlayers = server.onlinePlayers
+            val onlineMfPlayerIds = onlinePlayers.map { MfPlayerId(it.uniqueId.toString()) }
+            server.scheduler.runTaskAsynchronously(this, Runnable {
+                playerService.updatePlayerPower(onlineMfPlayerIds)
+            })
+        }, (60 - LocalTime.now().minute) * 60 * 20L, 72000L)
     }
 
     private fun setupNotificationDispatcher() {
