@@ -25,10 +25,12 @@ import static org.bukkit.Bukkit.getServer;
 public class Messenger extends preponderous.ponder.minecraft.bukkit.tools.Messenger {
     private final LocaleService localeService;
     private final FiefsIntegrator fiefsIntegrator;
+    private final PlayerService playerService;
 
-    public Messenger(LocaleService localeService, FiefsIntegrator fiefsIntegrator) {
+    public Messenger(LocaleService localeService, FiefsIntegrator fiefsIntegrator, PlayerService playerService) {
         this.localeService = localeService;
         this.fiefsIntegrator = fiefsIntegrator;
+        this.playerService = playerService;
     }
 
     public void sendFactionInfo(CommandSender sender, Faction faction, int power) {
@@ -94,7 +96,7 @@ public class Messenger extends preponderous.ponder.minecraft.bukkit.tools.Messen
             try {
                 Player target = getServer().getPlayer(member);
                 if (target != null) {
-                    target.sendMessage(new PlayerService().colorize(message));
+                    target.sendMessage(playerService.colorize(message));
                 }
             } catch (Exception ignored) {
 

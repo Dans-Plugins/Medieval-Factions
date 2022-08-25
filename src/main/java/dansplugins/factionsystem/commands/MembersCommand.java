@@ -25,10 +25,10 @@ import java.util.Objects;
  */
 public class MembersCommand extends SubCommand {
 
-    public MembersCommand(LocaleService localeService, PersistentData persistentData, EphemeralData ephemeralData, PersistentData.ChunkDataAccessor chunkDataAccessor, DynmapIntegrator dynmapIntegrator, ConfigService configService) {
+    public MembersCommand(LocaleService localeService, PersistentData persistentData, EphemeralData ephemeralData, PersistentData.ChunkDataAccessor chunkDataAccessor, DynmapIntegrator dynmapIntegrator, ConfigService configService, PlayerService playerService, MessageService messageService) {
         super(new String[]{
                 "members", LOCALE_PREFIX + "CmdMembers"
-        }, false, persistentData, localeService, ephemeralData, configService, chunkDataAccessor, dynmapIntegrator);
+        }, false, persistentData, localeService, ephemeralData, configService, playerService, messageService, chunkDataAccessor, dynmapIntegrator);
     }
 
     /**
@@ -57,21 +57,21 @@ public class MembersCommand extends SubCommand {
         final Faction faction;
         if (args.length == 0) {
             if (!(sender instanceof Player)) {
-                new PlayerService().sendMessageType(sender, getText("OnlyPlayersCanUseCommand")
+                playerService.sendMessageType(sender, getText("OnlyPlayersCanUseCommand")
                         , "OnlyPlayersCanUseCommand", false);
                 return;
             }
             faction = getPlayerFaction(sender);
             if (faction == null) {
-                new PlayerService().sendMessageType(sender, getText("AlertMustBeInFactionToUseCommand")
+                playerService.sendMessageType(sender, getText("AlertMustBeInFactionToUseCommand")
                         , "AlertMustBeInFactionToUseCommand", false);
                 return;
             }
         } else {
             faction = getFaction(String.join(" ", args));
             if (faction == null) {
-                new PlayerService().sendMessageType(sender, "&c" + getText("FactionNameNotRecognized"),
-                        Objects.requireNonNull(new MessageService().getLanguage().getString("FactionNotFound"))
+                playerService.sendMessageType(sender, "&c" + getText("FactionNameNotRecognized"),
+                        Objects.requireNonNull(messageService.getLanguage().getString("FactionNotFound"))
                                 .replaceAll("#faction#", String.join(" ", args
                                 )), true);
                 return;
@@ -98,28 +98,28 @@ public class MembersCommand extends SubCommand {
                     }).forEach(sender::sendMessage);
             sender.sendMessage(translate("&b----------\n"));
         } else {
-            new PlayerService().sendMessageType(sender, "", Objects.requireNonNull(new MessageService().getLanguage().getString("MembersFaction.Title"))
+            playerService.sendMessageType(sender, "", Objects.requireNonNull(messageService.getLanguage().getString("MembersFaction.Title"))
                             .replaceAll("#faction#", faction.getName())
                     , true);
             faction.getMemberList().stream()
                     .map(Bukkit::getOfflinePlayer)
                     .map(player -> {
-                        String rank = new MessageService().getLanguage().getString("MembersFaction.Member.Rank");
-                        String color = new MessageService().getLanguage().getString("MembersFaction.Member.Color");
+                        String rank = messageService.getLanguage().getString("MembersFaction.Member.Rank");
+                        String color = messageService.getLanguage().getString("MembersFaction.Member.Color");
                         if (faction.isOfficer(player.getUniqueId())) {
-                            rank = new MessageService().getLanguage().getString("MembersFaction.Officer.Rank");
-                            color = new MessageService().getLanguage().getString("MembersFaction.Officer.Color");
+                            rank = messageService.getLanguage().getString("MembersFaction.Officer.Rank");
+                            color = messageService.getLanguage().getString("MembersFaction.Officer.Color");
                         }
                         if (faction.isOwner(player.getUniqueId())) {
-                            rank = new MessageService().getLanguage().getString("MembersFaction.Owner.Rank");
-                            color = new MessageService().getLanguage().getString("MembersFaction.Owner.Color");
+                            rank = messageService.getLanguage().getString("MembersFaction.Owner.Rank");
+                            color = messageService.getLanguage().getString("MembersFaction.Owner.Color");
                         }
-                        return new PlayerService().colorize(Objects.requireNonNull(new MessageService().getLanguage().getString("MembersFaction.Message"))
+                        return playerService.colorize(Objects.requireNonNull(messageService.getLanguage().getString("MembersFaction.Message"))
                                 .replaceAll("#color#", Objects.requireNonNull(color))
                                 .replaceAll("#rank#", Objects.requireNonNull(rank))
                                 .replaceAll("#name#", Objects.requireNonNull(player.getName())));
                     }).forEach(sender::sendMessage);
-            new PlayerService().sendMessageType(sender, "", Objects.requireNonNull(new MessageService().getLanguage().getString("MembersFaction.SubTitle"))
+            playerService.sendMessageType(sender, "", Objects.requireNonNull(messageService.getLanguage().getString("MembersFaction.SubTitle"))
                             .replaceAll("#faction#", faction.getName())
                     , true);
 

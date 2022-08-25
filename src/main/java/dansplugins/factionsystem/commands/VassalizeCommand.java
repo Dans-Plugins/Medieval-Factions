@@ -25,10 +25,10 @@ import java.util.Objects;
 public class VassalizeCommand extends SubCommand {
     private final Logger logger;
 
-    public VassalizeCommand(LocaleService localeService, PersistentData persistentData, EphemeralData ephemeralData, PersistentData.ChunkDataAccessor chunkDataAccessor, DynmapIntegrator dynmapIntegrator, ConfigService configService, Logger logger) {
+    public VassalizeCommand(LocaleService localeService, PersistentData persistentData, EphemeralData ephemeralData, PersistentData.ChunkDataAccessor chunkDataAccessor, DynmapIntegrator dynmapIntegrator, ConfigService configService, Logger logger, PlayerService playerService, MessageService messageService) {
         super(new String[]{
                 "Vassalize", LOCALE_PREFIX + "CmdVassalize"
-        }, true, true, false, true, localeService, persistentData, ephemeralData, chunkDataAccessor, dynmapIntegrator, configService);
+        }, true, true, false, true, localeService, persistentData, ephemeralData, chunkDataAccessor, dynmapIntegrator, configService, playerService, messageService);
         this.logger = logger;
     }
 
@@ -44,31 +44,31 @@ public class VassalizeCommand extends SubCommand {
         final String permission = "mf.vassalize";
         if (!(checkPermissions(player, permission))) return;
         if (args.length == 0) {
-            new PlayerService().sendMessageType(player, "&c" + getText("UsageVassalize")
+            playerService.sendMessageType(player, "&c" + getText("UsageVassalize")
                     , "UsageVassalize", false);
             return;
         }
         final Faction target = getFaction(String.join(" ", args));
         if (target == null) {
-            new PlayerService().sendMessageType(player, "&c" + getText("FactionNotFound"), Objects.requireNonNull(new MessageService().getLanguage().getString("FactionNotFound"))
+            playerService.sendMessageType(player, "&c" + getText("FactionNotFound"), Objects.requireNonNull(messageService.getLanguage().getString("FactionNotFound"))
                     .replaceAll("#faction#", String.join(" ", args)), true);
             return;
         }
         // make sure player isn't trying to vassalize their own faction
         if (faction.getName().equalsIgnoreCase(target.getName())) {
-            new PlayerService().sendMessageType(player, "&c" + getText("CannotVassalizeSelf")
+            playerService.sendMessageType(player, "&c" + getText("CannotVassalizeSelf")
                     , "CannotVassalizeSelf", false);
             return;
         }
         // make sure player isn't trying to vassalize their liege
         if (target.getName().equalsIgnoreCase(faction.getLiege())) {
-            new PlayerService().sendMessageType(player, "&c" + getText("CannotVassalizeLiege")
+            playerService.sendMessageType(player, "&c" + getText("CannotVassalizeLiege")
                     , "CannotVassalizeLiege", false);
             return;
         }
         // make sure player isn't trying to vassalize a vassal
         if (target.hasLiege()) {
-            new PlayerService().sendMessageType(player, "&c" + getText("CannotVassalizeVassal")
+            playerService.sendMessageType(player, "&c" + getText("CannotVassalizeVassal")
                     , "CannotVassalizeVassal", false);
             return;
         }
@@ -84,12 +84,12 @@ public class VassalizeCommand extends SubCommand {
         // inform all players in that faction that they are trying to be vassalized
         messageFaction(target, translate("&a" +
                         getText("AlertAttemptedVassalization", faction.getName(), faction.getName()))
-                , Objects.requireNonNull(new MessageService().getLanguage().getString("AlertAttemptedVassalization"))
+                , Objects.requireNonNull(messageService.getLanguage().getString("AlertAttemptedVassalization"))
                         .replaceAll("#name#", faction.getName()));
 
         // inform all players in players faction that a vassalization offer was sent
         messageFaction(faction, translate("&a" + getText("AlertFactionAttemptedToVassalize", target.getName()))
-                , Objects.requireNonNull(new MessageService().getLanguage().getString("AlertFactionAttemptedToVassalize"))
+                , Objects.requireNonNull(messageService.getLanguage().getString("AlertFactionAttemptedToVassalize"))
                         .replaceAll("#name#", target.getName()));
     }
 

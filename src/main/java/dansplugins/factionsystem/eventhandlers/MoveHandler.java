@@ -32,13 +32,15 @@ public class MoveHandler implements Listener {
     private final LocaleService localeService;
     private final MedievalFactions medievalFactions;
     private final DynmapIntegrator dynmapIntegrator;
+    private final PlayerService playerService;
 
-    public MoveHandler(PersistentData persistentData, TerritoryOwnerNotifier territoryOwnerNotifier, LocaleService localeService, MedievalFactions medievalFactions, DynmapIntegrator dynmapIntegrator) {
+    public MoveHandler(PersistentData persistentData, TerritoryOwnerNotifier territoryOwnerNotifier, LocaleService localeService, MedievalFactions medievalFactions, DynmapIntegrator dynmapIntegrator, PlayerService playerService) {
         this.persistentData = persistentData;
         this.territoryOwnerNotifier = territoryOwnerNotifier;
         this.localeService = localeService;
         this.medievalFactions = medievalFactions;
         this.dynmapIntegrator = dynmapIntegrator;
+        this.playerService = playerService;
     }
 
     @EventHandler()
@@ -98,7 +100,7 @@ public class MoveHandler implements Listener {
                 if (notAtDemesneLimit(playersFaction)) {
                     scheduleClaiming(player, playersFaction);
                 } else {
-                    new PlayerService().sendMessageType(player, ChatColor.RED + localeService.get("AlertReachedDemesne"), "AlertReachedDemesne", false);
+                    playerService.sendMessageType(player, ChatColor.RED + localeService.get("AlertReachedDemesne"), "AlertReachedDemesne", false);
                 }
             }
         }

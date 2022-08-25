@@ -11,6 +11,7 @@ import dansplugins.factionsystem.integrators.DynmapIntegrator;
 import dansplugins.factionsystem.objects.domain.ClaimedChunk;
 import dansplugins.factionsystem.services.ConfigService;
 import dansplugins.factionsystem.services.LocaleService;
+import dansplugins.factionsystem.services.MessageService;
 import dansplugins.factionsystem.services.PlayerService;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
@@ -20,10 +21,10 @@ import org.bukkit.entity.Player;
  */
 public class SetHomeCommand extends SubCommand {
 
-    public SetHomeCommand(LocaleService localeService, PersistentData persistentData, EphemeralData ephemeralData, PersistentData.ChunkDataAccessor chunkDataAccessor, DynmapIntegrator dynmapIntegrator, ConfigService configService) {
+    public SetHomeCommand(LocaleService localeService, PersistentData persistentData, EphemeralData ephemeralData, PersistentData.ChunkDataAccessor chunkDataAccessor, DynmapIntegrator dynmapIntegrator, ConfigService configService, PlayerService playerService, MessageService messageService) {
         super(new String[]{
                 "sethome", "sh", LOCALE_PREFIX + "CmdSetHome"
-        }, true, true, true, false, localeService, persistentData, ephemeralData, chunkDataAccessor, dynmapIntegrator, configService);
+        }, true, true, true, false, localeService, persistentData, ephemeralData, chunkDataAccessor, dynmapIntegrator, configService, playerService, messageService);
     }
 
     /**
@@ -38,18 +39,18 @@ public class SetHomeCommand extends SubCommand {
         final String permission = "mf.sethome";
         if (!(checkPermissions(player, permission))) return;
         if (!chunkDataAccessor.isClaimed(player.getLocation().getChunk())) {
-            new PlayerService().sendMessageType(player, "&c" + getText("LandIsNotClaimed")
+            playerService.sendMessageType(player, "&c" + getText("LandIsNotClaimed")
                     , "LandIsNotClaimed", false);
             return;
         }
         ClaimedChunk chunk = chunkDataAccessor.getClaimedChunk(player.getLocation().getChunk());
         if (chunk == null || !chunk.getHolder().equalsIgnoreCase(faction.getName())) {
-            new PlayerService().sendMessageType(player, "&c" + getText("CannotSetFactionHomeInWilderness"),
+            playerService.sendMessageType(player, "&c" + getText("CannotSetFactionHomeInWilderness"),
                     "CannotSetFactionHomeInWilderness", false);
             return;
         }
         faction.setFactionHome(player.getLocation());
-        new PlayerService().sendMessageType(player, "&a" + getText("FactionHomeSet"),
+        playerService.sendMessageType(player, "&a" + getText("FactionHomeSet"),
                 "FactionHomeSet", false);
     }
 

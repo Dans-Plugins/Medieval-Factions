@@ -17,6 +17,7 @@ import dansplugins.factionsystem.objects.domain.PowerRecord;
 import dansplugins.factionsystem.services.ConfigService;
 import dansplugins.factionsystem.services.LocaleService;
 import dansplugins.factionsystem.services.MessageService;
+import dansplugins.factionsystem.services.PlayerService;
 import dansplugins.factionsystem.utils.Logger;
 import dansplugins.fiefs.utils.UUIDChecker;
 import org.bukkit.Bukkit;
@@ -45,10 +46,10 @@ public class ForceCommand extends SubCommand {
     private final ArgumentParser argumentParser = new ArgumentParser();
     private final UUIDChecker uuidChecker = new UUIDChecker();
 
-    public ForceCommand(LocaleService localeService, PersistentData persistentData, EphemeralData ephemeralData, PersistentData.ChunkDataAccessor chunkDataAccessor, DynmapIntegrator dynmapIntegrator, ConfigService configService, MedievalFactions medievalFactions, Logger logger, FiefsIntegrator fiefsIntegrator, CurrenciesIntegrator currenciesIntegrator) {
+    public ForceCommand(LocaleService localeService, PersistentData persistentData, EphemeralData ephemeralData, PersistentData.ChunkDataAccessor chunkDataAccessor, DynmapIntegrator dynmapIntegrator, ConfigService configService, MedievalFactions medievalFactions, Logger logger, FiefsIntegrator fiefsIntegrator, CurrenciesIntegrator currenciesIntegrator, PlayerService playerService, MessageService messageService) {
         super(new String[]{
                 "Force", LOCALE_PREFIX + "CmdForce"
-        }, false, persistentData, localeService, ephemeralData, configService, chunkDataAccessor, dynmapIntegrator);
+        }, false, persistentData, localeService, ephemeralData, configService, playerService, messageService, chunkDataAccessor, dynmapIntegrator);
         this.medievalFactions = medievalFactions;
         this.logger = logger;
         this.fiefsIntegrator = fiefsIntegrator;
@@ -152,7 +153,7 @@ public class ForceCommand extends SubCommand {
 
             // announce peace to all players on server.
             messageServer("&a" + getText("AlertNowAtPeaceWith", former.getName(), latter.getName()),
-                    Objects.requireNonNull(new MessageService().getLanguage().getString("AlertNowAtPeaceWith"))
+                    Objects.requireNonNull(messageService.getLanguage().getString("AlertNowAtPeaceWith"))
                             .replaceAll("#p1#", former.getName())
                             .replaceAll("#p2#", latter.getName())
             );
@@ -556,7 +557,7 @@ public class ForceCommand extends SubCommand {
             return;
         }
 
-        this.faction = new Faction(configService, localeService, fiefsIntegrator, currenciesIntegrator, dynmapIntegrator, logger, persistentData, medievalFactions, newFactionName);
+        this.faction = new Faction(configService, localeService, fiefsIntegrator, currenciesIntegrator, dynmapIntegrator, logger, persistentData, medievalFactions, playerService, newFactionName);
         FactionCreateEvent createEvent = new FactionCreateEvent(this.faction, player);
         Bukkit.getPluginManager().callEvent(createEvent);
         if (!createEvent.isCancelled()) {

@@ -26,10 +26,10 @@ import java.util.UUID;
  */
 public class PromoteCommand extends SubCommand {
 
-    public PromoteCommand(LocaleService localeService, PersistentData persistentData, EphemeralData ephemeralData, PersistentData.ChunkDataAccessor chunkDataAccessor, DynmapIntegrator dynmapIntegrator, ConfigService configService) {
+    public PromoteCommand(LocaleService localeService, PersistentData persistentData, EphemeralData ephemeralData, PersistentData.ChunkDataAccessor chunkDataAccessor, DynmapIntegrator dynmapIntegrator, ConfigService configService, PlayerService playerService, MessageService messageService) {
         super(new String[]{
                 "promote", LOCALE_PREFIX + "CmdPromote"
-        }, true, true, false, true, localeService, persistentData, ephemeralData, chunkDataAccessor, dynmapIntegrator, configService);
+        }, true, true, false, true, localeService, persistentData, ephemeralData, chunkDataAccessor, dynmapIntegrator, configService, playerService, messageService);
     }
 
     /**
@@ -44,50 +44,50 @@ public class PromoteCommand extends SubCommand {
         final String permission = "mf.promote";
         if (!(checkPermissions(player, permission))) return;
         if (args.length == 0) {
-            new PlayerService().sendMessageType(player, "&c" + getText("UsagePromote")
+            playerService.sendMessageType(player, "&c" + getText("UsagePromote")
                     , "UsagePromote", false);
             return;
         }
         UUIDChecker uuidChecker = new UUIDChecker();
         final UUID targetUUID = uuidChecker.findUUIDBasedOnPlayerName(args[0]);
         if (targetUUID == null) {
-            new PlayerService().sendMessageType(player, "&c" + getText("PlayerNotFound"), Objects.requireNonNull(new MessageService().getLanguage().getString("PlayerNotFound")).replaceAll("#name#", args[0]), true);
+            playerService.sendMessageType(player, "&c" + getText("PlayerNotFound"), Objects.requireNonNull(messageService.getLanguage().getString("PlayerNotFound")).replaceAll("#name#", args[0]), true);
             return;
         }
         OfflinePlayer target = Bukkit.getOfflinePlayer(targetUUID);
         if (!target.hasPlayedBefore()) {
             target = Bukkit.getPlayer(args[0]);
             if (target == null) {
-                new PlayerService().sendMessageType(player, "&c" + getText("PlayerNotFound"), Objects.requireNonNull(new MessageService().getLanguage().getString("PlayerNotFound")).replaceAll("#name#", args[0]), true);
+                playerService.sendMessageType(player, "&c" + getText("PlayerNotFound"), Objects.requireNonNull(messageService.getLanguage().getString("PlayerNotFound")).replaceAll("#name#", args[0]), true);
                 return;
             }
         }
         if (!faction.isMember(targetUUID)) {
-            new PlayerService().sendMessageType(player, "&c" + getText("PlayerIsNotMemberOfFaction")
+            playerService.sendMessageType(player, "&c" + getText("PlayerIsNotMemberOfFaction")
                     , "PlayerIsNotMemberOfFaction", false);
             return;
         }
         if (faction.isOfficer(targetUUID)) {
-            new PlayerService().sendMessageType(player, "&c" + getText("PlayerAlreadyOfficer")
+            playerService.sendMessageType(player, "&c" + getText("PlayerAlreadyOfficer")
                     , "PlayerAlreadyOfficer", false);
             return;
         }
         if (targetUUID == player.getUniqueId()) {
-            new PlayerService().sendMessageType(player, "&c" + getText("CannotPromoteSelf")
+            playerService.sendMessageType(player, "&c" + getText("CannotPromoteSelf")
                     , "CannotPromoteSelf", false);
             return;
         }
         if (faction.addOfficer(targetUUID)) {
-            new PlayerService().sendMessageType(player, "&a" + getText("PlayerPromoted")
+            playerService.sendMessageType(player, "&a" + getText("PlayerPromoted")
                     , "PlayerPromoted", false);
             if (target.isOnline() && target.getPlayer() != null) {
-                new PlayerService().sendMessageType(target.getPlayer(), "&a" + getText("PromotedToOfficer")
+                playerService.sendMessageType(target.getPlayer(), "&a" + getText("PromotedToOfficer")
                         , "PromotedToOfficer", false);
             }
         } else {
-            new PlayerService().sendMessageType(player, "&c" +
+            playerService.sendMessageType(player, "&c" +
                             getText("PlayerCantBePromotedBecauseOfLimit", faction.calculateMaxOfficers())
-                    , Objects.requireNonNull(new MessageService().getLanguage().getString("PlayerCantBePromotedBecauseOfLimit"))
+                    , Objects.requireNonNull(messageService.getLanguage().getString("PlayerCantBePromotedBecauseOfLimit"))
                             .replaceAll("#number#", String.valueOf(faction.calculateMaxOfficers())), true);
         }
     }

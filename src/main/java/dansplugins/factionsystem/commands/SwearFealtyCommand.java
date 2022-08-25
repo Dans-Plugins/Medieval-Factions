@@ -23,10 +23,10 @@ import java.util.Objects;
  */
 public class SwearFealtyCommand extends SubCommand {
 
-    public SwearFealtyCommand(LocaleService localeService, PersistentData persistentData, EphemeralData ephemeralData, PersistentData.ChunkDataAccessor chunkDataAccessor, DynmapIntegrator dynmapIntegrator, ConfigService configService) {
+    public SwearFealtyCommand(LocaleService localeService, PersistentData persistentData, EphemeralData ephemeralData, PersistentData.ChunkDataAccessor chunkDataAccessor, DynmapIntegrator dynmapIntegrator, ConfigService configService, PlayerService playerService, MessageService messageService) {
         super(new String[]{
                 "swearfealty", LOCALE_PREFIX + "CmdSwearFealty", "sf"
-        }, true, true, false, true, localeService, persistentData, ephemeralData, chunkDataAccessor, dynmapIntegrator, configService);
+        }, true, true, false, true, localeService, persistentData, ephemeralData, chunkDataAccessor, dynmapIntegrator, configService, playerService, messageService);
     }
 
     /**
@@ -41,18 +41,18 @@ public class SwearFealtyCommand extends SubCommand {
         final String permission = "mf.swearfealty";
         if (!(checkPermissions(player, permission))) return;
         if (args.length == 0) {
-            new PlayerService().sendMessageType(player, "&c" + getText("UsageSwearFealty")
+            playerService.sendMessageType(player, "&c" + getText("UsageSwearFealty")
                     , "UsageSwearFealty", false);
             return;
         }
         final Faction target = getFaction(String.join(" ", args));
         if (target == null) {
-            new PlayerService().sendMessageType(player, "&c" + getText("FactionNotFound"), Objects.requireNonNull(new MessageService().getLanguage().getString("FactionNotFound"))
+            playerService.sendMessageType(player, "&c" + getText("FactionNotFound"), Objects.requireNonNull(messageService.getLanguage().getString("FactionNotFound"))
                     .replaceAll("#faction#", String.join(" ", args)), true);
             return;
         }
         if (!target.hasBeenOfferedVassalization(faction.getName())) {
-            new PlayerService().sendMessageType(player, "&c" + getText("AlertNotOfferedVassalizationBy")
+            playerService.sendMessageType(player, "&c" + getText("AlertNotOfferedVassalizationBy")
                     , "AlertNotOfferedVassalizationBy", false);
             return;
         }
@@ -65,12 +65,12 @@ public class SwearFealtyCommand extends SubCommand {
 
         // inform target faction that they have a new vassal
         messageFaction(target, translate("&a" + getText("AlertFactionHasNewVassal", faction.getName()))
-                , Objects.requireNonNull(new MessageService().getLanguage().getString("AlertFactionHasNewVassal"))
+                , Objects.requireNonNull(messageService.getLanguage().getString("AlertFactionHasNewVassal"))
                         .replaceAll("#name#", faction.getName()));
 
         // inform players faction that they have a new liege
         messageFaction(faction, translate("&a" + getText("AlertFactionHasBeenVassalized", target.getName()))
-                , Objects.requireNonNull(new MessageService().getLanguage().getString("AlertFactionHasBeenVassalized"))
+                , Objects.requireNonNull(messageService.getLanguage().getString("AlertFactionHasBeenVassalized"))
                         .replaceAll("#name#", target.getName()));
     }
 

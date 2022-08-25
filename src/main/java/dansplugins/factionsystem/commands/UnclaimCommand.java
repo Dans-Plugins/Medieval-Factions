@@ -22,10 +22,10 @@ import java.util.Objects;
  */
 public class UnclaimCommand extends SubCommand {
 
-    public UnclaimCommand(LocaleService localeService, PersistentData persistentData, EphemeralData ephemeralData, PersistentData.ChunkDataAccessor chunkDataAccessor, DynmapIntegrator dynmapIntegrator, ConfigService configService) {
+    public UnclaimCommand(LocaleService localeService, PersistentData persistentData, EphemeralData ephemeralData, PersistentData.ChunkDataAccessor chunkDataAccessor, DynmapIntegrator dynmapIntegrator, ConfigService configService, PlayerService playerService, MessageService messageService) {
         super(new String[]{
                 "unclaim", LOCALE_PREFIX + "CmdUnclaim"
-        }, true, true, persistentData, localeService, ephemeralData, configService, chunkDataAccessor, dynmapIntegrator);
+        }, true, true, persistentData, localeService, ephemeralData, configService, playerService, messageService, chunkDataAccessor, dynmapIntegrator);
     }
 
     /**
@@ -43,7 +43,7 @@ public class UnclaimCommand extends SubCommand {
         if ((boolean) faction.getFlags().getFlag("mustBeOfficerToManageLand")) {
             // officer or owner rank required
             if (!faction.isOfficer(player.getUniqueId()) && !faction.isOwner(player.getUniqueId()) && !isPlayerBypassing) {
-                new PlayerService().sendMessageType(player, "&c" + "You're not able to claim land at this time."
+                playerService.sendMessageType(player, "&c" + "You're not able to claim land at this time."
                         , "NotAbleToClaim", false);
                 return;
             }
@@ -51,7 +51,7 @@ public class UnclaimCommand extends SubCommand {
         if (args.length == 0) {
             chunkDataAccessor.removeChunkAtPlayerLocation(player, faction);
             dynmapIntegrator.updateClaims();
-            new PlayerService().sendMessageType(player, "&aUnclaimed your current claim."
+            playerService.sendMessageType(player, "&aUnclaimed your current claim."
                     , "UnClaimed", false);
             return;
         }
@@ -61,8 +61,8 @@ public class UnclaimCommand extends SubCommand {
             radius = 1;
         }
         chunkDataAccessor.radiusUnclaimAtLocation(radius, player, faction);
-        new PlayerService().sendMessageType(player, "Unclaimed radius of " + radius + " claims around you!"
-                , Objects.requireNonNull(new MessageService().getLanguage().getString("UnClaimedRadius"))
+        playerService.sendMessageType(player, "Unclaimed radius of " + radius + " claims around you!"
+                , Objects.requireNonNull(messageService.getLanguage().getString("UnClaimedRadius"))
                         .replaceAll("#number#", String.valueOf(radius)), true);
     }
 

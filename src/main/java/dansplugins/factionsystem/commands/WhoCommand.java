@@ -27,8 +27,8 @@ import java.util.UUID;
 public class WhoCommand extends SubCommand {
     private final Messenger messenger;
 
-    public WhoCommand(LocaleService localeService, PersistentData persistentData, EphemeralData ephemeralData, PersistentData.ChunkDataAccessor chunkDataAccessor, DynmapIntegrator dynmapIntegrator, ConfigService configService, Messenger messenger) {
-        super(new String[]{"Who", LOCALE_PREFIX + "CmdWho"}, true, persistentData, localeService, ephemeralData, configService, chunkDataAccessor, dynmapIntegrator);
+    public WhoCommand(LocaleService localeService, PersistentData persistentData, EphemeralData ephemeralData, PersistentData.ChunkDataAccessor chunkDataAccessor, DynmapIntegrator dynmapIntegrator, ConfigService configService, Messenger messenger, PlayerService playerService, MessageService messageService) {
+        super(new String[]{"Who", LOCALE_PREFIX + "CmdWho"}, true, persistentData, localeService, ephemeralData, configService, playerService, messageService, chunkDataAccessor, dynmapIntegrator);
         this.messenger = messenger;
     }
 
@@ -44,19 +44,19 @@ public class WhoCommand extends SubCommand {
         final String permission = "mf.who";
         if (!(checkPermissions(player, permission))) return;
         if (args.length == 0) {
-            new PlayerService().sendMessageType(player, "&c" + getText("UsageWho")
+            playerService.sendMessageType(player, "&c" + getText("UsageWho")
                     , "UsageWho", false);
             return;
         }
         UUIDChecker uuidChecker = new UUIDChecker();
         final UUID targetUUID = uuidChecker.findUUIDBasedOnPlayerName(args[0]);
         if (targetUUID == null) {
-            new PlayerService().sendMessageType(player, "&c" + getText("PlayerNotFound"), Objects.requireNonNull(new MessageService().getLanguage().getString("PlayerNotFound")).replaceAll("#name#", args[0]), true);
+            playerService.sendMessageType(player, "&c" + getText("PlayerNotFound"), Objects.requireNonNull(messageService.getLanguage().getString("PlayerNotFound")).replaceAll("#name#", args[0]), true);
             return;
         }
         final Faction temp = getPlayerFaction(targetUUID);
         if (temp == null) {
-            new PlayerService().sendMessageType(player, "&c" + getText("PlayerIsNotInAFaction")
+            playerService.sendMessageType(player, "&c" + getText("PlayerIsNotInAFaction")
                     , "PlayerIsNotInAFaction", false);
             return;
         }

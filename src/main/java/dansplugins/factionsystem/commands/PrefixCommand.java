@@ -10,6 +10,7 @@ import dansplugins.factionsystem.data.PersistentData;
 import dansplugins.factionsystem.integrators.DynmapIntegrator;
 import dansplugins.factionsystem.services.ConfigService;
 import dansplugins.factionsystem.services.LocaleService;
+import dansplugins.factionsystem.services.MessageService;
 import dansplugins.factionsystem.services.PlayerService;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
@@ -19,10 +20,10 @@ import org.bukkit.entity.Player;
  */
 public class PrefixCommand extends SubCommand {
 
-    public PrefixCommand(LocaleService localeService, PersistentData persistentData, EphemeralData ephemeralData, PersistentData.ChunkDataAccessor chunkDataAccessor, DynmapIntegrator dynmapIntegrator, ConfigService configService) {
+    public PrefixCommand(LocaleService localeService, PersistentData persistentData, EphemeralData ephemeralData, PersistentData.ChunkDataAccessor chunkDataAccessor, DynmapIntegrator dynmapIntegrator, ConfigService configService, PlayerService playerService, MessageService messageService) {
         super(new String[]{
                 "prefix", LOCALE_PREFIX + "CmdPrefix"
-        }, true, true, false, true, localeService, persistentData, ephemeralData, chunkDataAccessor, dynmapIntegrator, configService);
+        }, true, true, false, true, localeService, persistentData, ephemeralData, chunkDataAccessor, dynmapIntegrator, configService, playerService, messageService);
     }
 
     /**
@@ -38,12 +39,12 @@ public class PrefixCommand extends SubCommand {
         if (!(checkPermissions(player, permission))) return;
         final String newPrefix = String.join(" ", args);
         if (persistentData.isPrefixTaken(newPrefix)) {
-            new PlayerService().sendMessageType(player, "&c" + getText("PrefixTaken")
+            playerService.sendMessageType(player, "&c" + getText("PrefixTaken")
                     , "PrefixTaken", false);
             return;
         }
         faction.setPrefix(newPrefix);
-        new PlayerService().sendMessageType(player, "&c" + getText("PrefixSet")
+        playerService.sendMessageType(player, "&c" + getText("PrefixSet")
                 , "PrefixSet", false);
     }
 

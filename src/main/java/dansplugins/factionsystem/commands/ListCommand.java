@@ -11,6 +11,7 @@ import dansplugins.factionsystem.integrators.DynmapIntegrator;
 import dansplugins.factionsystem.objects.domain.Faction;
 import dansplugins.factionsystem.services.ConfigService;
 import dansplugins.factionsystem.services.LocaleService;
+import dansplugins.factionsystem.services.MessageService;
 import dansplugins.factionsystem.services.PlayerService;
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
@@ -23,10 +24,10 @@ import java.util.List;
  */
 public class ListCommand extends SubCommand {
 
-    public ListCommand(LocaleService localeService, PersistentData persistentData, EphemeralData ephemeralData, PersistentData.ChunkDataAccessor chunkDataAccessor, DynmapIntegrator dynmapIntegrator, ConfigService configService) {
+    public ListCommand(LocaleService localeService, PersistentData persistentData, EphemeralData ephemeralData, PersistentData.ChunkDataAccessor chunkDataAccessor, DynmapIntegrator dynmapIntegrator, ConfigService configService, PlayerService playerService, MessageService messageService) {
         super(new String[]{
                 "list", LOCALE_PREFIX + "CmdList"
-        }, false, persistentData, localeService, ephemeralData, configService, chunkDataAccessor, dynmapIntegrator);
+        }, false, persistentData, localeService, ephemeralData, configService, playerService, messageService, chunkDataAccessor, dynmapIntegrator);
     }
 
     /**
@@ -53,11 +54,11 @@ public class ListCommand extends SubCommand {
         final String permission = "mf.list";
         if (!(checkPermissions(sender, permission))) return;
         if (persistentData.getNumFactions() == 0) {
-            new PlayerService().sendMessageType(sender, "&b" + getText("CurrentlyNoFactions")
+            playerService.sendMessageType(sender, "&b" + getText("CurrentlyNoFactions")
                     , "CurrentlyNoFactions", false);
             return;
         }
-        new PlayerService().sendMessageType(sender, "&b&l" + getText("FactionsTitle")
+        playerService.sendMessageType(sender, "&b&l" + getText("FactionsTitle")
                 , "FactionsTitle", false);
         List<PersistentData.SortableFaction> sortedFactionList = persistentData.getSortedListOfFactions();
         sender.sendMessage(ChatColor.AQUA + localeService.get("ListLegend"));

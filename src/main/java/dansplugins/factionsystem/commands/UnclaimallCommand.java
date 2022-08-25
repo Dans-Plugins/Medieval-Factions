@@ -23,10 +23,10 @@ import java.util.Objects;
  */
 public class UnclaimallCommand extends SubCommand {
 
-    public UnclaimallCommand(LocaleService localeService, PersistentData persistentData, EphemeralData ephemeralData, PersistentData.ChunkDataAccessor chunkDataAccessor, DynmapIntegrator dynmapIntegrator, ConfigService configService) {
+    public UnclaimallCommand(LocaleService localeService, PersistentData persistentData, EphemeralData ephemeralData, PersistentData.ChunkDataAccessor chunkDataAccessor, DynmapIntegrator dynmapIntegrator, ConfigService configService, PlayerService playerService, MessageService messageService) {
         super(new String[]{
                 "unclaimall", "ua", LOCALE_PREFIX + "CmdUnclaimall"
-        }, false, persistentData, localeService, ephemeralData, configService, chunkDataAccessor, dynmapIntegrator);
+        }, false, persistentData, localeService, ephemeralData, configService, playerService, messageService, chunkDataAccessor, dynmapIntegrator);
     }
 
     /**
@@ -54,19 +54,19 @@ public class UnclaimallCommand extends SubCommand {
         if (args.length == 0) {
             // Self
             if (!(sender instanceof Player)) {
-                new PlayerService().sendMessageType(sender, getText("OnlyPlayersCanUseCommand")
+                playerService.sendMessageType(sender, getText("OnlyPlayersCanUseCommand")
                         , "OnlyPlayersCanUseCommand", false);
                 return;
             }
             if (!(checkPermissions(sender, "mf.unclaimall"))) return;
             faction = getPlayerFaction(sender);
             if (faction == null) {
-                new PlayerService().sendMessageType(sender, "&c" + getText("AlertMustBeInFactionToUseCommand"),
+                playerService.sendMessageType(sender, "&c" + getText("AlertMustBeInFactionToUseCommand"),
                         "AlertMustBeInFactionToUseCommand", false);
                 return;
             }
             if (!faction.isOwner(((Player) sender).getUniqueId())) {
-                new PlayerService().sendMessageType(sender, "&c" + getText("AlertMustBeOwnerToUseCommand"),
+                playerService.sendMessageType(sender, "&c" + getText("AlertMustBeOwnerToUseCommand"),
                         "AlertMustBeOwnerToUseCommand", false);
                 return;
             }
@@ -74,8 +74,8 @@ public class UnclaimallCommand extends SubCommand {
             if (!(checkPermissions(sender, "mf.unclaimall.others", "mf.admin"))) return;
             faction = getFaction(String.join(" ", args));
             if (faction == null) {
-                new PlayerService().sendMessageType(sender, "&c" + getText("FactionNotFound"),
-                        Objects.requireNonNull(new MessageService().getLanguage().getString("FactionNotFound"))
+                playerService.sendMessageType(sender, "&c" + getText("FactionNotFound"),
+                        Objects.requireNonNull(messageService.getLanguage().getString("FactionNotFound"))
                                 .replaceAll("#faction#", String.join(" ", args)), true);
                 return;
             }
@@ -83,13 +83,13 @@ public class UnclaimallCommand extends SubCommand {
         // remove faction home
         faction.setFactionHome(null);
         messageFaction(faction, translate("&c" + getText("AlertFactionHomeRemoved"))
-                , new MessageService().getLanguage().getString("AlertFactionHomeRemoved"));
+                , messageService.getLanguage().getString("AlertFactionHomeRemoved"));
 
         // remove claimed chunks
         chunkDataAccessor.removeAllClaimedChunks(faction.getName());
         dynmapIntegrator.updateClaims();
-        new PlayerService().sendMessageType(sender, "&a" + getText("AllLandUnclaimedFrom", faction.getName())
-                , Objects.requireNonNull(new MessageService().getLanguage().getString("AllLandUnclaimedFrom"))
+        playerService.sendMessageType(sender, "&a" + getText("AllLandUnclaimedFrom", faction.getName())
+                , Objects.requireNonNull(messageService.getLanguage().getString("AllLandUnclaimedFrom"))
                         .replaceAll("#name#", faction.getName()), false);
 
         // remove locks associated with this faction

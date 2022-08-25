@@ -25,10 +25,10 @@ public class AddLawCommand extends SubCommand {
     /**
      * Constructor to initialise a Command.
      */
-    public AddLawCommand(LocaleService localeService, PersistentData persistentData, EphemeralData ephemeralData, PersistentData.ChunkDataAccessor chunkDataAccessor, DynmapIntegrator dynmapIntegrator, ConfigService configService) {
+    public AddLawCommand(LocaleService localeService, PersistentData persistentData, EphemeralData ephemeralData, PersistentData.ChunkDataAccessor chunkDataAccessor, DynmapIntegrator dynmapIntegrator, ConfigService configService, PlayerService playerService, MessageService messageService) {
         super(new String[]{
                 LOCALE_PREFIX + "CMDAddLaw", "AL", "addlaw"
-        }, true, true, false, true, localeService, persistentData, ephemeralData, chunkDataAccessor, dynmapIntegrator, configService);
+        }, true, true, false, true, localeService, persistentData, ephemeralData, chunkDataAccessor, dynmapIntegrator, configService, playerService, messageService);
     }
 
     /**
@@ -47,13 +47,13 @@ public class AddLawCommand extends SubCommand {
 
         // check if they have provided any strings beyond "addlaw"
         if (args.length == 0) {
-            new PlayerService().sendMessageType(player, translate("&c" + getText("UsageAddLaw")), "UsageAddLaw", false);
+            playerService.sendMessageType(player, translate("&c" + getText("UsageAddLaw")), "UsageAddLaw", false);
             return;
         }
 
         // add the law and send a success message.
         faction.addLaw(String.join(" ", args));
-        new PlayerService().sendMessageType(player, "&a" + getText("LawAdded"), Objects.requireNonNull(new MessageService().getLanguage().getString("LawAdded"))
+        playerService.sendMessageType(player, "&a" + getText("LawAdded"), Objects.requireNonNull(messageService.getLanguage().getString("LawAdded"))
                 .replaceAll("#law#", String.join(" ", args)), true);
     }
 

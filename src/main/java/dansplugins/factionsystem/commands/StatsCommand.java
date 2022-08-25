@@ -21,10 +21,10 @@ import org.bukkit.entity.Player;
  * @author Callum Johnson
  */
 public class StatsCommand extends SubCommand {
-    public StatsCommand(LocaleService localeService, PersistentData persistentData, EphemeralData ephemeralData, PersistentData.ChunkDataAccessor chunkDataAccessor, DynmapIntegrator dynmapIntegrator, ConfigService configService) {
+    public StatsCommand(LocaleService localeService, PersistentData persistentData, EphemeralData ephemeralData, PersistentData.ChunkDataAccessor chunkDataAccessor, DynmapIntegrator dynmapIntegrator, ConfigService configService, PlayerService playerService, MessageService messageService) {
         super(new String[]{
                 "stats", LOCALE_PREFIX + "CmdStats"
-        }, false, false, false, false, localeService, persistentData, ephemeralData, chunkDataAccessor, dynmapIntegrator, configService);
+        }, false, false, false, false, localeService, persistentData, ephemeralData, chunkDataAccessor, dynmapIntegrator, configService, playerService, messageService);
     }
 
     @Override
@@ -38,13 +38,13 @@ public class StatsCommand extends SubCommand {
             sender.sendMessage(ChatColor.AQUA + "=== Medieval Factions Stats ===");
             sender.sendMessage(ChatColor.AQUA + "Number of factions: " + persistentData.getNumFactions());
         } else {
-            new MessageService().getLanguage().getStringList("StatsFaction")
+            messageService.getLanguage().getStringList("StatsFaction")
                     .forEach(s -> {
                         if (s.contains("#faction#")) {
                             s = s.replaceAll("#faction#", String.valueOf(persistentData.getNumFactions()));
                         }
-                        s = new PlayerService().colorize(s);
-                        new PlayerService().sendMessageType(sender, "", s, true);
+                        s = playerService.colorize(s);
+                        playerService.sendMessageType(sender, "", s, true);
                     });
         }
     }

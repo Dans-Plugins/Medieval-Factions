@@ -7,22 +7,27 @@ import org.bukkit.configuration.file.YamlConfiguration;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.logging.Level;
 
 public class MessageService {
 
-
+    private final MedievalFactions medievalFactions;
     private File languageFile;
     private FileConfiguration language;
 
+    public MessageService(MedievalFactions medievalFactions) {
+        this.medievalFactions = medievalFactions;
+    }
+
     public void createLanguageFile() {
-        languageFile = new File(new MedievalFactions().getMedievalFactions().getDataFolder(), "language.yml");
-        if (!languageFile.exists()) new MedievalFactions().getMedievalFactions().saveResource("language.yml", false);
+        languageFile = new File(medievalFactions.getMedievalFactions().getDataFolder(), "language.yml");
+        if (!languageFile.exists()) medievalFactions.getMedievalFactions().saveResource("language.yml", false);
 
         language = new YamlConfiguration();
         try {
             language.load(languageFile);
         } catch (IOException | InvalidConfigurationException e) {
-            e.printStackTrace();
+            medievalFactions.getLogger().log(Level.WARNING, e.getCause().toString());
         }
     }
 

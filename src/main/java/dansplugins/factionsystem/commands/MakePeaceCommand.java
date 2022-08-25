@@ -25,10 +25,10 @@ import java.util.Objects;
  */
 public class MakePeaceCommand extends SubCommand {
 
-    public MakePeaceCommand(LocaleService localeService, PersistentData persistentData, EphemeralData ephemeralData, PersistentData.ChunkDataAccessor chunkDataAccessor, DynmapIntegrator dynmapIntegrator, ConfigService configService) {
+    public MakePeaceCommand(LocaleService localeService, PersistentData persistentData, EphemeralData ephemeralData, PersistentData.ChunkDataAccessor chunkDataAccessor, DynmapIntegrator dynmapIntegrator, ConfigService configService, PlayerService playerService, MessageService messageService) {
         super(new String[]{
                 "makepeace", "mp", LOCALE_PREFIX + "CmdMakePeace"
-        }, true, true, true, false, localeService, persistentData, ephemeralData, chunkDataAccessor, dynmapIntegrator, configService);
+        }, true, true, true, false, localeService, persistentData, ephemeralData, chunkDataAccessor, dynmapIntegrator, configService, playerService, messageService);
     }
 
     /**
@@ -43,41 +43,41 @@ public class MakePeaceCommand extends SubCommand {
         final String permission = "mf.makepeace";
         if (!(checkPermissions(player, permission))) return;
         if (args.length == 0) {
-            new PlayerService().sendMessageType(player,
+            playerService.sendMessageType(player,
                     "&c" + getText("UsageMakePeace")
                     , "UsageMakePeace", false);
             return;
         }
         final Faction target = getFaction(String.join(" ", args));
         if (target == null) {
-            new PlayerService().sendMessageType(player, "&c" + getText("FactionNotFound"),
-                    Objects.requireNonNull(new MessageService().getLanguage().getString("FactionNotFound"))
+            playerService.sendMessageType(player, "&c" + getText("FactionNotFound"),
+                    Objects.requireNonNull(messageService.getLanguage().getString("FactionNotFound"))
                             .replaceAll("#faction#", String.join(" ", args)), true);
             return;
         }
         if (target == faction) {
-            new PlayerService().sendMessageType(player, "&c" + getText("CannotMakePeaceWithSelf")
+            playerService.sendMessageType(player, "&c" + getText("CannotMakePeaceWithSelf")
                     , "CannotMakePeaceWithSelf", false);
             return;
         }
         if (faction.isTruceRequested(target.getName())) {
-            new PlayerService().sendMessageType(player, "&c" + getText("AlertAlreadyRequestedPeace")
+            playerService.sendMessageType(player, "&c" + getText("AlertAlreadyRequestedPeace")
                     , "AlertAlreadyRequestedPeace", false);
             return;
         }
         if (!faction.isEnemy(target.getName())) {
-            new PlayerService().sendMessageType(player, "&c" + getText("FactionNotEnemy")
+            playerService.sendMessageType(player, "&c" + getText("FactionNotEnemy")
                     , "FactionNotEnemy", false);
             return;
         }
         faction.requestTruce(target.getName());
-        new PlayerService().sendMessageType(player, "&a" + getText("AttemptedPeace", target.getName())
-                , Objects.requireNonNull(new MessageService().getLanguage().getString("AttemptedPeace"))
+        playerService.sendMessageType(player, "&a" + getText("AttemptedPeace", target.getName())
+                , Objects.requireNonNull(messageService.getLanguage().getString("AttemptedPeace"))
                         .replaceAll("#name#", target.getName()),
                 true);
         messageFaction(target,
                 translate("&a" + getText("HasAttemptedToMakePeaceWith", faction.getName(), target.getName())),
-                Objects.requireNonNull(new MessageService().getLanguage().getString("HasAttemptedToMakePeaceWith"))
+                Objects.requireNonNull(messageService.getLanguage().getString("HasAttemptedToMakePeaceWith"))
                         .replaceAll("#f1#", faction.getName())
                         .replaceAll("#f2#", target.getName()));
         if (faction.isTruceRequested(target.getName()) && target.isTruceRequested(faction.getName())) {
@@ -96,7 +96,7 @@ public class MakePeaceCommand extends SubCommand {
 
                 // Notify
                 messageServer("&a" + getText("AlertNowAtPeaceWith", faction.getName(), target.getName()),
-                        Objects.requireNonNull(new MessageService().getLanguage().getString("AlertNowAtPeaceWith"))
+                        Objects.requireNonNull(messageService.getLanguage().getString("AlertNowAtPeaceWith"))
                                 .replaceAll("#p1#", faction.getName())
                                 .replaceAll("#p2#", target.getName()));
             }

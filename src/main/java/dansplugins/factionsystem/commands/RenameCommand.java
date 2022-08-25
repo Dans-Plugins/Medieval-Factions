@@ -29,10 +29,10 @@ public class RenameCommand extends SubCommand {
     private final MedievalFactions medievalFactions;
     private final Logger logger;
 
-    public RenameCommand(LocaleService localeService, PersistentData persistentData, EphemeralData ephemeralData, PersistentData.ChunkDataAccessor chunkDataAccessor, DynmapIntegrator dynmapIntegrator, ConfigService configService, MedievalFactions medievalFactions, Logger logger) {
+    public RenameCommand(LocaleService localeService, PersistentData persistentData, EphemeralData ephemeralData, PersistentData.ChunkDataAccessor chunkDataAccessor, DynmapIntegrator dynmapIntegrator, ConfigService configService, MedievalFactions medievalFactions, Logger logger, PlayerService playerService, MessageService messageService) {
         super(new String[]{
                 "rename"
-        }, true, true, false, true, localeService, persistentData, ephemeralData, chunkDataAccessor, dynmapIntegrator, configService);
+        }, true, true, false, true, localeService, persistentData, ephemeralData, chunkDataAccessor, dynmapIntegrator, configService, playerService, messageService);
         this.medievalFactions = medievalFactions;
         this.logger = logger;
     }
@@ -49,22 +49,22 @@ public class RenameCommand extends SubCommand {
         final String permission = "mf.rename";
         if (!(checkPermissions(player, permission))) return;
         if (args.length == 0) {
-            new PlayerService().sendMessageType(player, "&c" + getText("UsageRename")
+            playerService.sendMessageType(player, "&c" + getText("UsageRename")
                     , "UsageRename", false);
             return;
         }
         final String newName = String.join(" ", args).trim();
         final FileConfiguration config = medievalFactions.getConfig();
         if (newName.length() > config.getInt("factionMaxNameLength")) {
-            new PlayerService().sendMessageType(player, "&c" + getText("FactionNameTooLong"),
-                    Objects.requireNonNull(new MessageService().getLanguage().getString("FactionNameTooLong"))
+            playerService.sendMessageType(player, "&c" + getText("FactionNameTooLong"),
+                    Objects.requireNonNull(messageService.getLanguage().getString("FactionNameTooLong"))
                             .replaceAll("#name#", newName), true);
             return;
         }
         final String oldName = faction.getName();
         if (getFaction(newName) != null) {
-            new PlayerService().sendMessageType(player, "&c" + getText("FactionAlreadyExists"),
-                    Objects.requireNonNull(new MessageService().getLanguage().getString("FactionAlreadyExists"))
+            playerService.sendMessageType(player, "&c" + getText("FactionAlreadyExists"),
+                    Objects.requireNonNull(messageService.getLanguage().getString("FactionAlreadyExists"))
                             .replaceAll("#name#", newName), true);
             return;
         }
@@ -77,7 +77,7 @@ public class RenameCommand extends SubCommand {
 
         // change name
         faction.setName(newName);
-        new PlayerService().sendMessageType(player, "&a" + getText("FactionNameChanged")
+        playerService.sendMessageType(player, "&a" + getText("FactionNameChanged")
                 , "FactionNameChanged", false);
 
         persistentData.updateFactionReferencesDueToNameChange(oldName, newName);

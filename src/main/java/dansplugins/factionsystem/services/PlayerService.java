@@ -9,19 +9,27 @@ import java.util.List;
 
 public class PlayerService {
 
-    public String getMessageType(String OldType, String NewType) {
-        if (new MedievalFactions().USE_NEW_LANGUAGE_FILE) {
-            return NewType;
+    private final MedievalFactions medievalFactions;
+    private final MessageService messageService;
+
+    public PlayerService(MedievalFactions medievalFactions, MessageService messageService) {
+        this.medievalFactions = medievalFactions;
+        this.messageService = messageService;
+    }
+
+    public String getMessageType(String oldtype, String newtype) {
+        if (medievalFactions.USE_NEW_LANGUAGE_FILE) {
+            return newtype;
         } else {
-            return OldType;
+            return oldtype;
         }
     }
 
-    public void sendMessageType(CommandSender sender, String OldType, String NewType, Boolean replace) {
+    public void sendMessageType(CommandSender sender, String oldtype, String newtype, Boolean replace) {
         if (!replace) {
-            sender.sendMessage(colorize(getMessageType(OldType, new MessageService().getLanguage().getString(NewType))));
+            sender.sendMessage(colorize(getMessageType(oldtype, messageService.getLanguage().getString(newtype))));
         } else {
-            sender.sendMessage(colorize(getMessageType(OldType, NewType)));
+            sender.sendMessage(colorize(getMessageType(oldtype, newtype)));
         }
     }
 
@@ -33,7 +41,7 @@ public class PlayerService {
         if (!message) {
             c.sendMessage(colorize(msg));
         } else {
-            c.sendMessage(colorize(new MessageService().getLanguage().getString(msg)));
+            c.sendMessage(colorize(messageService.getLanguage().getString(msg)));
         }
     }
 

@@ -28,8 +28,8 @@ import java.util.Objects;
  */
 public class InvokeCommand extends SubCommand {
 
-    public InvokeCommand(LocaleService localeService, PersistentData persistentData, EphemeralData ephemeralData, PersistentData.ChunkDataAccessor chunkDataAccessor, DynmapIntegrator dynmapIntegrator, ConfigService configService) {
-        super(new String[]{"invoke", LOCALE_PREFIX + "CmdInvoke"}, true, true, false, true, localeService, persistentData, ephemeralData, chunkDataAccessor, dynmapIntegrator, configService);
+    public InvokeCommand(LocaleService localeService, PersistentData persistentData, EphemeralData ephemeralData, PersistentData.ChunkDataAccessor chunkDataAccessor, DynmapIntegrator dynmapIntegrator, ConfigService configService, PlayerService playerService, MessageService messageService) {
+        super(new String[]{"invoke", LOCALE_PREFIX + "CmdInvoke"}, true, true, false, true, localeService, persistentData, ephemeralData, chunkDataAccessor, dynmapIntegrator, configService, playerService, messageService);
     }
 
     /**
@@ -56,23 +56,23 @@ public class InvokeCommand extends SubCommand {
         final Faction invokee = getFaction(argumentsInsideDoubleQuotes.get(0));
         final Faction warringFaction = getFaction(argumentsInsideDoubleQuotes.get(1));
         if (invokee == null || warringFaction == null) {
-            new PlayerService().sendMessageType(player, "&c" + getText("FactionNotFound"), Objects.requireNonNull(new MessageService().getLanguage().getString("FactionNotFound")).replaceAll("#faction#", argumentsInsideDoubleQuotes.get(0)), true);
-            new PlayerService().sendMessageType(player, "&c" + getText("FactionNotFound"), Objects.requireNonNull(new MessageService().getLanguage().getString("FactionNotFound")).replaceAll("#faction#", argumentsInsideDoubleQuotes.get(1)), true);
+            playerService.sendMessageType(player, "&c" + getText("FactionNotFound"), Objects.requireNonNull(messageService.getLanguage().getString("FactionNotFound")).replaceAll("#faction#", argumentsInsideDoubleQuotes.get(0)), true);
+            playerService.sendMessageType(player, "&c" + getText("FactionNotFound"), Objects.requireNonNull(messageService.getLanguage().getString("FactionNotFound")).replaceAll("#faction#", argumentsInsideDoubleQuotes.get(1)), true);
 
             return;
         }
         if (!this.faction.isAlly(invokee.getName()) && !this.faction.isVassal(invokee.getName())) {
-            new PlayerService().sendMessageType(player, "&c" + getText("NotAnAllyOrVassal", invokee.getName()), Objects.requireNonNull(new MessageService().getLanguage().getString("NotAnAllyOrVassal")).replaceAll("#name#", invokee.getName()), true);
+            playerService.sendMessageType(player, "&c" + getText("NotAnAllyOrVassal", invokee.getName()), Objects.requireNonNull(messageService.getLanguage().getString("NotAnAllyOrVassal")).replaceAll("#name#", invokee.getName()), true);
             return;
         }
         if (!this.faction.isEnemy(warringFaction.getName())) {
-            new PlayerService().sendMessageType(player, "&c" + getText("NotAtWarWith", warringFaction.getName())
-                    , new MessageService().getLanguage().getString("NotAtWarWith").replaceAll("#name#", warringFaction.getName())
+            playerService.sendMessageType(player, "&c" + getText("NotAtWarWith", warringFaction.getName())
+                    , messageService.getLanguage().getString("NotAtWarWith").replaceAll("#name#", warringFaction.getName())
                     , true);
             return;
         }
         if (configService.getBoolean("allowNeutrality") && ((boolean) invokee.getFlags().getFlag("neutral"))) {
-            new PlayerService().sendMessageType(player, "&c" + getText("CannotBringNeutralFactionIntoWar")
+            playerService.sendMessageType(player, "&c" + getText("CannotBringNeutralFactionIntoWar")
                     , "CannotBringNeutralFactionIntoWar", false);
             return;
         }
@@ -83,13 +83,13 @@ public class InvokeCommand extends SubCommand {
             warringFaction.addEnemy(invokee.getName());
 
             messageFaction(invokee, // Message ally faction
-                    "&c" + getText("AlertCalledToWar1", faction.getName(), warringFaction.getName()), Objects.requireNonNull(new MessageService().getLanguage().getString("AlertCalledToWar1")).replaceAll("#f1#", faction.getName()).replaceAll("#f2#", warringFaction.getName()));
+                    "&c" + getText("AlertCalledToWar1", faction.getName(), warringFaction.getName()), Objects.requireNonNull(messageService.getLanguage().getString("AlertCalledToWar1")).replaceAll("#f1#", faction.getName()).replaceAll("#f2#", warringFaction.getName()));
 
             messageFaction(warringFaction, // Message warring faction
-                    "&c" + getText("AlertCalledToWar2", faction.getName(), invokee.getName()), Objects.requireNonNull(new MessageService().getLanguage().getString("AlertCalledToWar2")).replaceAll("#f1#", faction.getName()).replaceAll("#f2#", invokee.getName()));
+                    "&c" + getText("AlertCalledToWar2", faction.getName(), invokee.getName()), Objects.requireNonNull(messageService.getLanguage().getString("AlertCalledToWar2")).replaceAll("#f1#", faction.getName()).replaceAll("#f2#", invokee.getName()));
 
             messageFaction(this.faction, // Message player faction
-                    "&a" + getText("AlertCalledToWar3", invokee.getName(), warringFaction.getName()), Objects.requireNonNull(new MessageService().getLanguage().getString("AlertCalledToWar3")).replaceAll("#f1#", faction.getName()).replaceAll("#f2#", warringFaction.getName()));
+                    "&a" + getText("AlertCalledToWar3", invokee.getName(), warringFaction.getName()), Objects.requireNonNull(messageService.getLanguage().getString("AlertCalledToWar3")).replaceAll("#f1#", faction.getName()).replaceAll("#f2#", warringFaction.getName()));
         }
     }
 

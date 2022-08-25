@@ -10,6 +10,7 @@ import dansplugins.factionsystem.data.PersistentData;
 import dansplugins.factionsystem.integrators.DynmapIntegrator;
 import dansplugins.factionsystem.services.ConfigService;
 import dansplugins.factionsystem.services.LocaleService;
+import dansplugins.factionsystem.services.MessageService;
 import dansplugins.factionsystem.services.PlayerService;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
@@ -19,8 +20,8 @@ import org.bukkit.entity.Player;
  */
 public class EditLawCommand extends SubCommand {
 
-    public EditLawCommand(LocaleService localeService, PersistentData persistentData, EphemeralData ephemeralData, PersistentData.ChunkDataAccessor chunkDataAccessor, DynmapIntegrator dynmapIntegrator, ConfigService configService) {
-        super(new String[]{"EditLaw", "EL", LOCALE_PREFIX + "CmdEditLaw"}, true, true, false, true, localeService, persistentData, ephemeralData, chunkDataAccessor, dynmapIntegrator, configService);
+    public EditLawCommand(LocaleService localeService, PersistentData persistentData, EphemeralData ephemeralData, PersistentData.ChunkDataAccessor chunkDataAccessor, DynmapIntegrator dynmapIntegrator, ConfigService configService, PlayerService playerService, MessageService messageService) {
+        super(new String[]{"EditLaw", "EL", LOCALE_PREFIX + "CmdEditLaw"}, true, true, false, true, localeService, persistentData, ephemeralData, chunkDataAccessor, dynmapIntegrator, configService, playerService, messageService);
     }
 
     /**
@@ -36,14 +37,14 @@ public class EditLawCommand extends SubCommand {
         if (!(checkPermissions(player, permission))) return;
         final int lawToEdit = getIntSafe(args[0], 0) - 1;
         if (lawToEdit < 0 || lawToEdit >= faction.getLaws().size()) {
-            new PlayerService().sendMessageType(player, "&c" + getText("UsageEditLaw"), "UsageEditLaw", false);
+            playerService.sendMessageType(player, "&c" + getText("UsageEditLaw"), "UsageEditLaw", false);
             return;
         }
         String[] arguments = new String[args.length - 1];
         System.arraycopy(args, 1, arguments, 0, arguments.length);
         final String editedLaw = String.join(" ", arguments);
         if (faction.editLaw(lawToEdit, editedLaw)) {
-            new PlayerService().sendMessageType(player, "&a" + getText("LawEdited"), "LawEdited", false);
+            playerService.sendMessageType(player, "&a" + getText("LawEdited"), "LawEdited", false);
         }
     }
 

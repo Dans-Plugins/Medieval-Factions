@@ -24,10 +24,10 @@ import java.util.stream.IntStream;
  */
 public class LawsCommand extends SubCommand {
 
-    public LawsCommand(LocaleService localeService, PersistentData persistentData, EphemeralData ephemeralData, PersistentData.ChunkDataAccessor chunkDataAccessor, DynmapIntegrator dynmapIntegrator, ConfigService configService) {
+    public LawsCommand(LocaleService localeService, PersistentData persistentData, EphemeralData ephemeralData, PersistentData.ChunkDataAccessor chunkDataAccessor, DynmapIntegrator dynmapIntegrator, ConfigService configService, PlayerService playerService, MessageService messageService) {
         super(new String[]{
                 "laws", LOCALE_PREFIX + "CmdLaws"
-        }, true, persistentData, localeService, ephemeralData, configService, chunkDataAccessor, dynmapIntegrator);
+        }, true, persistentData, localeService, ephemeralData, configService, playerService, messageService, chunkDataAccessor, dynmapIntegrator);
     }
 
     /**
@@ -45,31 +45,31 @@ public class LawsCommand extends SubCommand {
         if (args.length == 0) {
             target = getPlayerFaction(player);
             if (target == null) {
-                new PlayerService().sendMessageType(player, "&c" + getText("AlertMustBeInFactionToUseCommand")
+                playerService.sendMessageType(player, "&c" + getText("AlertMustBeInFactionToUseCommand")
                         , "AlertMustBeInFactionToUseCommand", false);
                 return;
             }
             if (target.getNumLaws() == 0) {
-                new PlayerService().sendMessageType(player, "&c" + getText("AlertNoLaws")
+                playerService.sendMessageType(player, "&c" + getText("AlertNoLaws")
                         , "AlertNoLaws", false);
                 return;
             }
         } else {
             target = getFaction(String.join(" ", args));
             if (target == null) {
-                new PlayerService().sendMessageType(player, "&c" + getText("FactionNotFound"),
-                        Objects.requireNonNull(new MessageService().getLanguage().getString("FactionNotFound"))
+                playerService.sendMessageType(player, "&c" + getText("FactionNotFound"),
+                        Objects.requireNonNull(messageService.getLanguage().getString("FactionNotFound"))
                                 .replaceAll("#faction#", String.join(" ", args)), true);
                 return;
             }
             if (target.getNumLaws() == 0) {
-                new PlayerService().sendMessageType(player, "&c" + getText("FactionDoesNotHaveLaws")
+                playerService.sendMessageType(player, "&c" + getText("FactionDoesNotHaveLaws")
                         , "FactionDoesNotHaveLaws", false);
                 return;
             }
         }
-        new PlayerService().sendMessageType(player,"&b" + getText("LawsTitle", target.getName())
-        , Objects.requireNonNull(new MessageService().getLanguage().getString("LawsTitle"))
+        playerService.sendMessageType(player, "&b" + getText("LawsTitle", target.getName())
+                , Objects.requireNonNull(messageService.getLanguage().getString("LawsTitle"))
                         .replaceAll("#name#", target.getName()), true);
         IntStream.range(0, target.getNumLaws())
                 .mapToObj(i -> translate("&b" + (i + 1) + ". " + target.getLaws().get(i)))

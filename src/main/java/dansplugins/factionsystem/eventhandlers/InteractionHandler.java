@@ -43,6 +43,8 @@ import java.util.Objects;
 public class InteractionHandler implements Listener {
     private final PersistentData persistentData;
     private final InteractionAccessChecker interactionAccessChecker;
+    private final PlayerService playerService;
+    private final MessageService messageService;
     private final LocaleService localeService;
     private final BlockChecker blockChecker;
     private final MedievalFactions medievalFactions;
@@ -50,7 +52,7 @@ public class InteractionHandler implements Listener {
     private final EphemeralData ephemeralData;
     private final GateService gateService;
 
-    public InteractionHandler(PersistentData persistentData, InteractionAccessChecker interactionAccessChecker, LocaleService localeService, BlockChecker blockChecker, MedievalFactions medievalFactions, LockService lockService, EphemeralData ephemeralData, GateService gateService) {
+    public InteractionHandler(PersistentData persistentData, InteractionAccessChecker interactionAccessChecker, LocaleService localeService, BlockChecker blockChecker, MedievalFactions medievalFactions, LockService lockService, EphemeralData ephemeralData, GateService gateService, PlayerService playerService, MessageService messageService) {
         this.persistentData = persistentData;
         this.interactionAccessChecker = interactionAccessChecker;
         this.localeService = localeService;
@@ -59,6 +61,8 @@ public class InteractionHandler implements Listener {
         this.lockService = lockService;
         this.ephemeralData = ephemeralData;
         this.gateService = gateService;
+        this.playerService = playerService;
+        this.messageService = messageService;
     }
 
     @EventHandler()
@@ -81,7 +85,7 @@ public class InteractionHandler implements Listener {
             boolean isOwner = persistentData.getLockedBlock(block).getOwner().equals(player.getUniqueId());
             if (!isOwner) {
                 event.setCancelled(true);
-                new PlayerService().sendMessageType(player, ChatColor.RED + localeService.get("AlertNonOwnership")
+                playerService.sendMessageType(player, ChatColor.RED + localeService.get("AlertNonOwnership")
                         , "AlertNonOwnership", false);
                 return;
             }
@@ -124,7 +128,7 @@ public class InteractionHandler implements Listener {
         if (blockChecker.isChest(event.getBlock())) {
             boolean isNextToNonOwnedLockedChest = blockChecker.isNextToNonOwnedLockedChest(event.getPlayer(), event.getBlock());
             if (isNextToNonOwnedLockedChest) {
-                new PlayerService().sendMessageType(player, ChatColor.RED + localeService.get("CannotPlaceChestsNextToUnownedLockedChests")
+                playerService.sendMessageType(player, ChatColor.RED + localeService.get("CannotPlaceChestsNextToUnownedLockedChests")
                         , "CannotPlaceChestsNextToUnownedLockedChests", false);
                 event.setCancelled(true);
                 return;
@@ -168,7 +172,7 @@ public class InteractionHandler implements Listener {
             boolean isUnderOrAboveNonOwnedLockedChest = blockChecker.isUnderOrAboveNonOwnedLockedChest(event.getPlayer(), event.getBlock());
             if (isNextToNonOwnedLockedChest || isUnderOrAboveNonOwnedLockedChest) {
                 event.setCancelled(true);
-                new PlayerService().sendMessageType(player, ChatColor.RED + localeService.get("CannotPlaceHoppersNextToUnownedLockedChests")
+                playerService.sendMessageType(player, ChatColor.RED + localeService.get("CannotPlaceHoppersNextToUnownedLockedChests")
                         , "CannotPlaceHoppersNextToUnownedLockedChests", false);
             }
         }
@@ -198,8 +202,8 @@ public class InteractionHandler implements Listener {
             if (!playerHasAccess && !isPlayerBypassing) {
                 UUIDChecker uuidChecker = new UUIDChecker();
                 String owner = uuidChecker.findPlayerNameBasedOnUUID(lockedBlock.getOwner());
-                new PlayerService().sendMessageType(player, ChatColor.RED + String.format(localeService.get("LockedBy"), owner)
-                        , Objects.requireNonNull(new MessageService().getLanguage().getString("LockedBy"))
+                playerService.sendMessageType(player, ChatColor.RED + String.format(localeService.get("LockedBy"), owner)
+                        , Objects.requireNonNull(messageService.getLanguage().getString("LockedBy"))
                                 .replaceAll("#name#", owner), true);
                 event.setCancelled(true);
                 return;
@@ -228,7 +232,7 @@ public class InteractionHandler implements Listener {
 
         } else {
             if (isPlayerUsingAnAccessCommand(player)) {
-                new PlayerService().sendMessageType(player, ChatColor.RED + localeService.get("BlockIsNotLocked"), "BlockIsNotLocked", false);
+                playerService.sendMessageType(player, ChatColor.RED + localeService.get("BlockIsNotLocked"), "BlockIsNotLocked", false);
             }
         }
 

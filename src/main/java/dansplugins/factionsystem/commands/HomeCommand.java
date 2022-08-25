@@ -11,6 +11,7 @@ import dansplugins.factionsystem.integrators.DynmapIntegrator;
 import dansplugins.factionsystem.objects.domain.ClaimedChunk;
 import dansplugins.factionsystem.services.ConfigService;
 import dansplugins.factionsystem.services.LocaleService;
+import dansplugins.factionsystem.services.MessageService;
 import dansplugins.factionsystem.services.PlayerService;
 import dansplugins.factionsystem.utils.extended.Scheduler;
 import org.bukkit.Chunk;
@@ -23,10 +24,10 @@ import org.bukkit.entity.Player;
 public class HomeCommand extends SubCommand {
     private final Scheduler scheduler;
 
-    public HomeCommand(LocaleService localeService, PersistentData persistentData, EphemeralData ephemeralData, PersistentData.ChunkDataAccessor chunkDataAccessor, DynmapIntegrator dynmapIntegrator, ConfigService configService, Scheduler scheduler) {
+    public HomeCommand(LocaleService localeService, PersistentData persistentData, EphemeralData ephemeralData, PersistentData.ChunkDataAccessor chunkDataAccessor, DynmapIntegrator dynmapIntegrator, ConfigService configService, Scheduler scheduler, PlayerService playerService, MessageService messageService) {
         super(new String[]{
                 "home", LOCALE_PREFIX + "CmdHome"
-        }, true, true, persistentData, localeService, ephemeralData, configService, chunkDataAccessor, dynmapIntegrator);
+        }, true, true, persistentData, localeService, ephemeralData, configService, playerService, messageService, chunkDataAccessor, dynmapIntegrator);
         this.scheduler = scheduler;
     }
 
@@ -41,24 +42,24 @@ public class HomeCommand extends SubCommand {
     public void execute(Player player, String[] args, String key) {
         if (!(checkPermissions(player, "mf.home"))) return;
         if (faction.getFactionHome() == null) {
-            new PlayerService().sendMessageType(player, "&c" + getText("FactionHomeNotSetYet")
+            playerService.sendMessageType(player, "&c" + getText("FactionHomeNotSetYet")
                     , "FactionHomeNotSetYet", false);
             return;
         }
         final Chunk home_chunk;
         if (!chunkDataAccessor.isClaimed(home_chunk = faction.getFactionHome().getChunk())) {
-            new PlayerService().sendMessageType(player, "&c" + getText("HomeIsInUnclaimedChunk")
+            playerService.sendMessageType(player, "&c" + getText("HomeIsInUnclaimedChunk")
                     , "HomeIsInUnclaimedChunk", false);
             return;
         }
         ClaimedChunk chunk = chunkDataAccessor.getClaimedChunk(home_chunk);
         if (chunk == null || chunk.getHolder() == null) {
-            new PlayerService().sendMessageType(player, "&c" + getText("HomeIsInUnclaimedChunk")
+            playerService.sendMessageType(player, "&c" + getText("HomeIsInUnclaimedChunk")
                     , "HomeIsInUnclaimedChunk", false);
             return;
         }
         if (!chunk.getHolder().equalsIgnoreCase(faction.getName())) {
-            new PlayerService().sendMessageType(player, "&c" + getText("HomeClaimedByAnotherFaction")
+            playerService.sendMessageType(player, "&c" + getText("HomeClaimedByAnotherFaction")
                     , "HomeClaimedByAnotherFaction", false);
             return;
         }

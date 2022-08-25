@@ -11,7 +11,7 @@ import org.bukkit.Bukkit;
  */
 public class CurrenciesIntegrator {
 
-    public boolean isCurrenciesPresent() {
+    public boolean isCurrenciesNotPresent() {
         return Bukkit.getServer().getPluginManager().getPlugin("Currencies") == null;
     }
 }

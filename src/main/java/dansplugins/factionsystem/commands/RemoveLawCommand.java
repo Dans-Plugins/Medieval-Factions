@@ -10,6 +10,7 @@ import dansplugins.factionsystem.data.PersistentData;
 import dansplugins.factionsystem.integrators.DynmapIntegrator;
 import dansplugins.factionsystem.services.ConfigService;
 import dansplugins.factionsystem.services.LocaleService;
+import dansplugins.factionsystem.services.MessageService;
 import dansplugins.factionsystem.services.PlayerService;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
@@ -19,10 +20,10 @@ import org.bukkit.entity.Player;
  */
 public class RemoveLawCommand extends SubCommand {
 
-    public RemoveLawCommand(LocaleService localeService, PersistentData persistentData, EphemeralData ephemeralData, PersistentData.ChunkDataAccessor chunkDataAccessor, DynmapIntegrator dynmapIntegrator, ConfigService configService) {
+    public RemoveLawCommand(LocaleService localeService, PersistentData persistentData, EphemeralData ephemeralData, PersistentData.ChunkDataAccessor chunkDataAccessor, DynmapIntegrator dynmapIntegrator, ConfigService configService, PlayerService playerService, MessageService messageService) {
         super(new String[]{
                 "removelaw", LOCALE_PREFIX + "CmdRemoveLaw"
-        }, true, true, false, true, localeService, persistentData, ephemeralData, chunkDataAccessor, dynmapIntegrator, configService);
+        }, true, true, false, true, localeService, persistentData, ephemeralData, chunkDataAccessor, dynmapIntegrator, configService, playerService, messageService);
     }
 
     /**
@@ -37,17 +38,17 @@ public class RemoveLawCommand extends SubCommand {
         final String permission = "mf.removelaw";
         if (!(checkPermissions(player, permission))) return;
         if (args.length == 0) {
-            new PlayerService().sendMessageType(player, "&c" + getText("UsageRemoveLaw")
+            playerService.sendMessageType(player, "&c" + getText("UsageRemoveLaw")
                     , "UsageRemoveLaw", false);
             return;
         }
         final int lawToRemove = getIntSafe(args[0], 0) - 1;
         if (lawToRemove < 0) {
-            new PlayerService().sendMessageType(player, "&c" + getText("UsageRemoveLaw")
+            playerService.sendMessageType(player, "&c" + getText("UsageRemoveLaw")
                     , "UsageRemoveLaw", false);
             return;
         }
-        if (faction.removeLaw(lawToRemove)) new PlayerService().sendMessageType(player, "&a" + getText("LawRemoved")
+        if (faction.removeLaw(lawToRemove)) playerService.sendMessageType(player, "&a" + getText("LawRemoved")
                 , "LawRemoved", false);
     }
 

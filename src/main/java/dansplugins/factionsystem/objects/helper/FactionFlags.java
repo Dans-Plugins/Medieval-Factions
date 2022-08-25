@@ -33,6 +33,7 @@ public class FactionFlags {
     private final CurrenciesIntegrator currenciesIntegrator;
     private final DynmapIntegrator dynmapIntegrator;
     private final Logger logger;
+    private final PlayerService playerService;
 
     private final ArrayList<String> flagNames = new ArrayList<>();
     private HashMap<String, Integer> integerValues = new HashMap<>();
@@ -40,13 +41,14 @@ public class FactionFlags {
     private HashMap<String, Double> doubleValues = new HashMap<>();
     private HashMap<String, String> stringValues = new HashMap<>();
 
-    public FactionFlags(ConfigService configService, LocaleService localeService, FiefsIntegrator fiefsIntegrator, CurrenciesIntegrator currenciesIntegrator, DynmapIntegrator dynmapIntegrator, Logger logger) {
+    public FactionFlags(ConfigService configService, LocaleService localeService, FiefsIntegrator fiefsIntegrator, CurrenciesIntegrator currenciesIntegrator, DynmapIntegrator dynmapIntegrator, Logger logger, PlayerService playerService) {
         this.configService = configService;
         this.localeService = localeService;
         this.fiefsIntegrator = fiefsIntegrator;
         this.currenciesIntegrator = currenciesIntegrator;
         this.dynmapIntegrator = dynmapIntegrator;
         this.logger = logger;
+        this.playerService = playerService;
         initializeFlagNames();
     }
 
@@ -127,27 +129,27 @@ public class FactionFlags {
 
     public void setFlag(String flag, String value, Player player) {
         if (flag.equals("neutral") && !configService.getBoolean("allowNeutrality")) {
-            new PlayerService().sendMessageType(player, ChatColor.RED + "" + localeService.get("NeutralityDisabled")
+            playerService.sendMessageType(player, ChatColor.RED + "" + localeService.get("NeutralityDisabled")
                     , "NeutralityDisabled", false);
             return;
         }
 
         if (flag.equals("prefixColor") && !configService.getBoolean("factionsCanSetPrefixColors")) {
-            new PlayerService().sendMessageType(player, "&cPlayers can't set prefix colors.", "CannotSetPrefix", false);
+            playerService.sendMessageType(player, "&cPlayers can't set prefix colors.", "CannotSetPrefix", false);
             return;
         }
 
         if (flag.equals("prefixColor") && (!configService.getBoolean("playersChatWithPrefixes"))) {
-            new PlayerService().sendMessageType(player, ChatColor.RED + "" + localeService.get("PrefixesDisabled"), "PrefixesDisabled", false);
+            playerService.sendMessageType(player, ChatColor.RED + "" + localeService.get("PrefixesDisabled"), "PrefixesDisabled", false);
             return;
         }
 
         if (flag.equals("fiefsEnabled") && !fiefsIntegrator.isFiefsPresent()) {
-            new PlayerService().sendMessageType(player, "&cFiefs either isn't enabled or present.", "FiefsNotEnable", false);
+            playerService.sendMessageType(player, "&cFiefs either isn't enabled or present.", "FiefsNotEnable", false);
             return;
         }
 
-        if (flag.equals("officersCanMintCurrency") && currenciesIntegrator.isCurrenciesPresent()) {
+        if (flag.equals("officersCanMintCurrency") && currenciesIntegrator.isCurrenciesNotPresent()) {
             // TODO: add locale message
             return;
         }
@@ -287,7 +289,7 @@ public class FactionFlags {
                 continue;
             }
 
-            if (flagName.equals("officersCanMintCurrency") && currenciesIntegrator.isCurrenciesPresent()) {
+            if (flagName.equals("officersCanMintCurrency") && currenciesIntegrator.isCurrenciesNotPresent()) {
                 continue;
             }
 

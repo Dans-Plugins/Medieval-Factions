@@ -24,10 +24,10 @@ import java.util.UUID;
  */
 public class RevokeAccessCommand extends SubCommand {
 
-    public RevokeAccessCommand(LocaleService localeService, PersistentData persistentData, EphemeralData ephemeralData, PersistentData.ChunkDataAccessor chunkDataAccessor, DynmapIntegrator dynmapIntegrator, ConfigService configService) {
+    public RevokeAccessCommand(LocaleService localeService, PersistentData persistentData, EphemeralData ephemeralData, PersistentData.ChunkDataAccessor chunkDataAccessor, DynmapIntegrator dynmapIntegrator, ConfigService configService, PlayerService playerService, MessageService messageService) {
         super(new String[]{
                 "ra", "revokeaccess", LOCALE_PREFIX + "CmdRevokeAccess"
-        }, true, persistentData, localeService, ephemeralData, configService, chunkDataAccessor, dynmapIntegrator);
+        }, true, persistentData, localeService, ephemeralData, configService, playerService, messageService, chunkDataAccessor, dynmapIntegrator);
     }
 
     /**
@@ -42,35 +42,35 @@ public class RevokeAccessCommand extends SubCommand {
         final String permission = "mf.revokeaccess";
         if (!(checkPermissions(player, permission))) return;
         if (args.length == 0) {
-            new PlayerService().sendMessageType(player, "&c" + getText("UsageRevokeAccess")
+            playerService.sendMessageType(player, "&c" + getText("UsageRevokeAccess")
                     , "UsageRevokeAccess", false);
             return;
         }
         if (args[0].equalsIgnoreCase("cancel")) {
             ephemeralData.getPlayersRevokingAccess().remove(player.getUniqueId());
-            new PlayerService().sendMessageType(player, "&c" + getText("Cancelled"), "Cancelled", false);
+            playerService.sendMessageType(player, "&c" + getText("Cancelled"), "Cancelled", false);
             return;
         }
         if (ephemeralData.getPlayersRevokingAccess().containsKey(player.getUniqueId())) {
-            new PlayerService().sendMessageType(player, "&c" + getText("AlreadyEnteredRevokeAccess")
+            playerService.sendMessageType(player, "&c" + getText("AlreadyEnteredRevokeAccess")
                     , "AlreadyEnteredRevokeAccess", false);
             return;
         }
         UUIDChecker uuidChecker = new UUIDChecker();
         final UUID targetUUID = uuidChecker.findUUIDBasedOnPlayerName(args[0]);
         if (targetUUID == null) {
-            new PlayerService().sendMessageType(player, "&c" + getText("PlayerNotFound"), Objects.requireNonNull(new MessageService().getLanguage().getString("PlayerNotFound")).replaceAll("#name#", args[0]), true);
+            playerService.sendMessageType(player, "&c" + getText("PlayerNotFound"), Objects.requireNonNull(messageService.getLanguage().getString("PlayerNotFound")).replaceAll("#name#", args[0]), true);
             return;
         }
         if (targetUUID == player.getUniqueId()) {
-            new PlayerService().sendMessageType(player, "&c" + getText("CannotRevokeAccessFromSelf")
+            playerService.sendMessageType(player, "&c" + getText("CannotRevokeAccessFromSelf")
                     , "CannotRevokeAccessFromSelf", false);
             return;
         }
         ephemeralData.getPlayersRevokingAccess().put(
                 player.getUniqueId(), targetUUID
         );
-        new PlayerService().sendMessageType(player, "&a" + getText("RightClickRevokeAccess")
+        playerService.sendMessageType(player, "&a" + getText("RightClickRevokeAccess")
                 , "RightClickRevokeAccess", false);
     }
 
