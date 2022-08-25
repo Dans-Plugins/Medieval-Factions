@@ -24,11 +24,13 @@ import java.util.Objects;
  * @author Callum Johnson
  */
 public class MembersCommand extends SubCommand {
+    private final MedievalFactions medievalFactions;
 
-    public MembersCommand(LocaleService localeService, PersistentData persistentData, EphemeralData ephemeralData, PersistentData.ChunkDataAccessor chunkDataAccessor, DynmapIntegrator dynmapIntegrator, ConfigService configService, PlayerService playerService, MessageService messageService) {
+    public MembersCommand(LocaleService localeService, PersistentData persistentData, EphemeralData ephemeralData, PersistentData.ChunkDataAccessor chunkDataAccessor, DynmapIntegrator dynmapIntegrator, ConfigService configService, PlayerService playerService, MessageService messageService, MedievalFactions medievalFactions) {
         super(new String[]{
                 "members", LOCALE_PREFIX + "CmdMembers"
         }, false, persistentData, localeService, ephemeralData, configService, playerService, messageService, chunkDataAccessor, dynmapIntegrator);
+        this.medievalFactions = medievalFactions;
     }
 
     /**
@@ -78,7 +80,7 @@ public class MembersCommand extends SubCommand {
             }
         }
         // send Faction Members
-        if (!new MedievalFactions().USE_NEW_LANGUAGE_FILE) {
+        if (!medievalFactions.USE_NEW_LANGUAGE_FILE) {
             sender.sendMessage(translate("&b----------\n" + getText("MembersOf", faction.getName())));
             sender.sendMessage(translate("&b----------\n"));
             faction.getMemberList().stream()
