@@ -95,9 +95,9 @@ public class Gate {
         saveMap.put("open", String.valueOf(open));
         saveMap.put("vertical", String.valueOf(vertical));
         saveMap.put("material", material.name());
-        saveMap.put("world", coord1.getWorld());
-        saveMap.put("coord1", coord1.toString());
-        saveMap.put("coord2", coord2.toString());
+        if (coord1 != null) saveMap.put("world", coord1.getWorld());
+        if (coord1 != null) saveMap.put("coord1", coord1.toString());
+        if (coord2 != null) saveMap.put("coord2", coord2.toString());
         saveMap.put("triggerCoord", trigger.toString());
 
         return saveMap;
@@ -580,7 +580,7 @@ public class Gate {
         }
 
         open = false;
-        // For vertical we only need to iterate over x/y
+        // For vertical, we only need to iterate over x/y
         if (vertical) {
             if (isParallelToX()) {
                 int topY = coord1.getY();
