@@ -73,7 +73,7 @@ public class InfoCommand extends SubCommand {
             if (target == null) {
                 playerService.sendMessageType(sender, "&c" + getText("FactionNotFound")
                         , Objects.requireNonNull(messageService.getLanguage().getString("FactionNotFound"))
-                                .replaceAll("#faction#", String.join(" ", args)), true);
+                                .replace("#faction#", String.join(" ", args)), true);
                 return;
             }
         }

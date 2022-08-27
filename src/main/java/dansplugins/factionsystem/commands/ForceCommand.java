@@ -154,8 +154,8 @@ public class ForceCommand extends SubCommand {
             // announce peace to all players on server.
             messageServer("&a" + getText("AlertNowAtPeaceWith", former.getName(), latter.getName()),
                     Objects.requireNonNull(messageService.getLanguage().getString("AlertNowAtPeaceWith"))
-                            .replaceAll("#p1#", former.getName())
-                            .replaceAll("#p2#", latter.getName())
+                            .replace("#p1#", former.getName())
+                            .replace("#p2#", latter.getName())
             );
         }
     }

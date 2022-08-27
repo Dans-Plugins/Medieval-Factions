@@ -63,7 +63,7 @@ public class GateService {
                 } else {
                     event.setCancelled(true);
                     playerService.sendMessageType(player, ChatColor.RED + String.format(localeService.get("PleaseWaitGate"), g.getStatus())
-                            , Objects.requireNonNull(messageService.getLanguage().getString("PleaseWaitGate")).replaceAll("#status#", g.getStatus()), true);
+                            , Objects.requireNonNull(messageService.getLanguage().getString("PleaseWaitGate")).replace("#status#", g.getStatus()), true);
                     return;
                 }
             } else {
@@ -72,7 +72,7 @@ public class GateService {
                 } else {
                     event.setCancelled(true);
                     playerService.sendMessageType(player, ChatColor.RED + String.format(localeService.get("PleaseWaitGate"), g.getStatus())
-                            , Objects.requireNonNull(messageService.getLanguage().getString("PleaseWaitGate")).replaceAll("#status#", g.getStatus()), true);
+                            , Objects.requireNonNull(messageService.getLanguage().getString("PleaseWaitGate")).replace("#status#", g.getStatus()), true);
                     return;
                 }
             }
@@ -218,7 +218,7 @@ public class GateService {
             }
         } else {
             playerService.sendMessageType(event.getPlayer(), ChatColor.RED + localeService.get("PermissionGate")
-                    , Objects.requireNonNull(messageService.getLanguage().getString("PermissionNeeded")).replaceAll("#permission#", "mf.gate"), true);
+                    , Objects.requireNonNull(messageService.getLanguage().getString("PermissionNeeded")).replace("#permission#", "mf.gate"), true);
         }
     }
 }

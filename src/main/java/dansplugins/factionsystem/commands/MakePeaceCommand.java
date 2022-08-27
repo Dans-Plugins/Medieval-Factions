@@ -52,7 +52,7 @@ public class MakePeaceCommand extends SubCommand {
         if (target == null) {
             playerService.sendMessageType(player, "&c" + getText("FactionNotFound"),
                     Objects.requireNonNull(messageService.getLanguage().getString("FactionNotFound"))
-                            .replaceAll("#faction#", String.join(" ", args)), true);
+                            .replace("#faction#", String.join(" ", args)), true);
             return;
         }
         if (target == faction) {
@@ -73,13 +73,13 @@ public class MakePeaceCommand extends SubCommand {
         faction.requestTruce(target.getName());
         playerService.sendMessageType(player, "&a" + getText("AttemptedPeace", target.getName())
                 , Objects.requireNonNull(messageService.getLanguage().getString("AttemptedPeace"))
-                        .replaceAll("#name#", target.getName()),
+                        .replace("#name#", target.getName()),
                 true);
         messageFaction(target,
                 translate("&a" + getText("HasAttemptedToMakePeaceWith", faction.getName(), target.getName())),
                 Objects.requireNonNull(messageService.getLanguage().getString("HasAttemptedToMakePeaceWith"))
-                        .replaceAll("#f1#", faction.getName())
-                        .replaceAll("#f2#", target.getName()));
+                        .replace("#f1#", faction.getName())
+                        .replace("#f2#", target.getName()));
         if (faction.isTruceRequested(target.getName()) && target.isTruceRequested(faction.getName())) {
             FactionWarEndEvent warEndEvent = new FactionWarEndEvent(this.faction, target);
             Bukkit.getPluginManager().callEvent(warEndEvent);
@@ -97,8 +97,8 @@ public class MakePeaceCommand extends SubCommand {
                 // Notify
                 messageServer("&a" + getText("AlertNowAtPeaceWith", faction.getName(), target.getName()),
                         Objects.requireNonNull(messageService.getLanguage().getString("AlertNowAtPeaceWith"))
-                                .replaceAll("#p1#", faction.getName())
-                                .replaceAll("#p2#", target.getName()));
+                                .replace("#p1#", faction.getName())
+                                .replace("#p2#", target.getName()));
             }
         }
 

@@ -55,17 +55,17 @@ public class Messenger extends preponderous.ponder.minecraft.bukkit.tools.Messen
             sender.sendMessage(ChatColor.AQUA + "----------\n");
         } else {
             messageService.getLanguage().getStringList("FactionInfo").forEach(s -> {
-                s = s.replaceAll("#faction#", faction.getName())
-                        .replaceAll("#name#", faction.getName())
-                        .replaceAll("#owner#", uuidChecker.findPlayerNameBasedOnUUID(faction.getOwner()))
-                        .replaceAll("#desc#", faction.getDescription())
-                        .replaceAll("#pplt#", String.valueOf(faction.getPopulation()))
-                        .replaceAll("#aw#", faction.getAlliesSeparatedByCommas())
-                        .replaceAll("#aww#", faction.getEnemiesSeparatedByCommas())
-                        .replaceAll("#pl#", String.valueOf(faction.getCumulativePowerLevel()))
-                        .replaceAll("#pl_max#", String.valueOf(faction.getMaximumCumulativePowerLevel()))
-                        .replaceAll("#number#", String.valueOf(power))
-                        .replaceAll("#max#", String.valueOf(faction.getCumulativePowerLevel()));
+                s = s.replace("#faction#", faction.getName())
+                        .replace("#name#", faction.getName())
+                        .replace("#owner#", uuidChecker.findPlayerNameBasedOnUUID(faction.getOwner()))
+                        .replace("#desc#", faction.getDescription())
+                        .replace("#pplt#", String.valueOf(faction.getPopulation()))
+                        .replace("#aw#", faction.getAlliesSeparatedByCommas())
+                        .replace("#aww#", faction.getEnemiesSeparatedByCommas())
+                        .replace("#pl#", String.valueOf(faction.getCumulativePowerLevel()))
+                        .replace("#pl_max#", String.valueOf(faction.getMaximumCumulativePowerLevel()))
+                        .replace("#number#", String.valueOf(power))
+                        .replace("#max#", String.valueOf(faction.getCumulativePowerLevel()));
                 playerService.sendMessageType(sender, "", s, true);
             });
         }
@@ -78,7 +78,7 @@ public class Messenger extends preponderous.ponder.minecraft.bukkit.tools.Messen
     private void sendBonusPowerInfo(Faction faction, CommandSender sender) {
         if (faction.getBonusPower() != 0) {
             playerService.sendMessageType(sender, ChatColor.AQUA + String.format(localeService.get("BonusPower"), faction.getBonusPower())
-                    , Objects.requireNonNull(messageService.getLanguage().getString("BonusPower")).replaceAll("BonusPower", String.valueOf(faction.getBonusPower())), true);
+                    , Objects.requireNonNull(messageService.getLanguage().getString("BonusPower")).replace("BonusPower", String.valueOf(faction.getBonusPower())), true);
         }
     }
 
@@ -87,10 +87,10 @@ public class Messenger extends preponderous.ponder.minecraft.bukkit.tools.Messen
         if (faction.isLiege()) {
             if (!faction.isWeakened()) {
                 playerService.sendMessageType(sender, ChatColor.AQUA + String.format(localeService.get("VassalContribution"), vassalContribution) + "\n"
-                        , Objects.requireNonNull(messageService.getLanguage().getString("VassalContribution")).replaceAll("#amount#", String.valueOf(vassalContribution)), true);
+                        , Objects.requireNonNull(messageService.getLanguage().getString("VassalContribution")).replace("#amount#", String.valueOf(vassalContribution)), true);
             } else {
                 playerService.sendMessageType(sender, ChatColor.AQUA + String.format(localeService.get("VassalContribution"), 0) + "\n"
-                        , Objects.requireNonNull(messageService.getLanguage().getString("VassalContribution")).replaceAll("#amount#", String.valueOf(0)), true);
+                        , Objects.requireNonNull(messageService.getLanguage().getString("VassalContribution")).replace("#amount#", String.valueOf(0)), true);
             }
         }
     }
@@ -104,7 +104,7 @@ public class Messenger extends preponderous.ponder.minecraft.bukkit.tools.Messen
                     fiefsSeparatedByCommas.append(fief.getName());
                 }
                 playerService.sendMessageType(sender, ChatColor.AQUA + String.format("Fiefs: %s", fiefsSeparatedByCommas)
-                        , Objects.requireNonNull(messageService.getLanguage().getString("Fiefs")).replaceAll("#fiefs#", String.valueOf(fiefsSeparatedByCommas)), true);
+                        , Objects.requireNonNull(messageService.getLanguage().getString("Fiefs")).replace("#fiefs#", String.valueOf(fiefsSeparatedByCommas)), true);
             }
         }
     }
@@ -112,11 +112,11 @@ public class Messenger extends preponderous.ponder.minecraft.bukkit.tools.Messen
     private void sendLiegeInfoIfVassal(Faction faction, CommandSender sender) {
         if (faction.hasLiege()) {
             playerService.sendMessageType(sender, ChatColor.AQUA + String.format(localeService.get("Liege"), faction.getLiege()) + "\n"
-                    , Objects.requireNonNull(messageService.getLanguage().getString("Liege")).replaceAll("#name#", faction.getLiege()), true);
+                    , Objects.requireNonNull(messageService.getLanguage().getString("Liege")).replace("#name#", faction.getLiege()), true);
         }
         if (faction.isLiege()) {
             playerService.sendMessageType(sender, ChatColor.AQUA + String.format(localeService.get("Vassals"), faction.getVassalsSeparatedByCommas()) + "\n"
-                    , Objects.requireNonNull(messageService.getLanguage().getString("Vassals")).replaceAll("#name#", faction.getVassalsSeparatedByCommas()), true);
+                    , Objects.requireNonNull(messageService.getLanguage().getString("Vassals")).replace("#name#", faction.getVassalsSeparatedByCommas()), true);
         }
     }
 

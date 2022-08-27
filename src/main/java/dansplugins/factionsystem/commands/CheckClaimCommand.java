@@ -46,7 +46,7 @@ public class CheckClaimCommand extends SubCommand {
             playerService.sendMessageType(player, "&a" + getText("LandIsUnclaimed"), "LandIsUnclaimed", false);
         } else {
             playerService.sendMessageType(player, "&c" + getText("LandClaimedBy"), Objects.requireNonNull(messageService.getLanguage().getString("LandClaimedBy"))
-                    .replaceAll("#player#", result), true);
+                    .replace("#player#", result), true);
         }
     }
 

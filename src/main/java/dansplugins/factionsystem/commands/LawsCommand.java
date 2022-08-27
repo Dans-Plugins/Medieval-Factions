@@ -59,7 +59,7 @@ public class LawsCommand extends SubCommand {
             if (target == null) {
                 playerService.sendMessageType(player, "&c" + getText("FactionNotFound"),
                         Objects.requireNonNull(messageService.getLanguage().getString("FactionNotFound"))
-                                .replaceAll("#faction#", String.join(" ", args)), true);
+                                .replace("#faction#", String.join(" ", args)), true);
                 return;
             }
             if (target.getNumLaws() == 0) {
@@ -70,7 +70,7 @@ public class LawsCommand extends SubCommand {
         }
         playerService.sendMessageType(player, "&b" + getText("LawsTitle", target.getName())
                 , Objects.requireNonNull(messageService.getLanguage().getString("LawsTitle"))
-                        .replaceAll("#name#", target.getName()), true);
+                        .replace("#name#", target.getName()), true);
         IntStream.range(0, target.getNumLaws())
                 .mapToObj(i -> translate("&b" + (i + 1) + ". " + target.getLaws().get(i)))
                 .forEach(player::sendMessage);

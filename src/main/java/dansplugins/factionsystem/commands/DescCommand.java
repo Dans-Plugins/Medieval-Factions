@@ -51,7 +51,7 @@ public class DescCommand extends SubCommand {
         faction.setDescription(String.join(" ", args));
         playerService.sendMessageType(player, "&c" + getText("DescriptionSet")
                 , Objects.requireNonNull(messageService.getLanguage().getString("Description"))
-                        .replaceAll("#desc#", String.join(" ", args)), true);
+                        .replace("#desc#", String.join(" ", args)), true);
     }
 
     /**

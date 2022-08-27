@@ -54,7 +54,7 @@ public class AddLawCommand extends SubCommand {
         // add the law and send a success message.
         faction.addLaw(String.join(" ", args));
         playerService.sendMessageType(player, "&a" + getText("LawAdded"), Objects.requireNonNull(messageService.getLanguage().getString("LawAdded"))
-                .replaceAll("#law#", String.join(" ", args)), true);
+                .replace("#law#", String.join(" ", args)), true);
     }
 
     /**

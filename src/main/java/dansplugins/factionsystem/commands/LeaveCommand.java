@@ -63,8 +63,8 @@ public class LeaveCommand extends SubCommand {
                 , "AlertLeftFaction", false);
         messageFaction(faction, translate("&a" + player.getName() + " has left " + faction.getName()),
                 Objects.requireNonNull(messageService.getLanguage().getString("AlertLeftFactionTeam"))
-                        .replaceAll("#name#", player.getName())
-                        .replaceAll("#faction#", faction.getName()));
+                        .replace("#name#", player.getName())
+                        .replace("#faction#", faction.getName()));
 
     }
 

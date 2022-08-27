@@ -204,7 +204,7 @@ public class InteractionHandler implements Listener {
                 String owner = uuidChecker.findPlayerNameBasedOnUUID(lockedBlock.getOwner());
                 playerService.sendMessageType(player, ChatColor.RED + String.format(localeService.get("LockedBy"), owner)
                         , Objects.requireNonNull(messageService.getLanguage().getString("LockedBy"))
-                                .replaceAll("#name#", owner), true);
+                                .replace("#name#", owner), true);
                 event.setCancelled(true);
                 return;
             }

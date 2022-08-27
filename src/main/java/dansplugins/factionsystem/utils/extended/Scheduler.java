@@ -108,7 +108,7 @@ public class Scheduler {
     public void scheduleTeleport(Player player, Location destinationLocation) {
         final int teleport_delay = configService.getInt("teleportDelay");
         playerService.sendMessageType(player, ChatColor.AQUA + "Teleporting in " + teleport_delay + " seconds..."
-                , Objects.requireNonNull(messageService.getLanguage().getString("Teleport")).replaceAll("#time#", String.valueOf(teleport_delay)), true);
+                , Objects.requireNonNull(messageService.getLanguage().getString("Teleport")).replace("#time#", String.valueOf(teleport_delay)), true);
         DelayedTeleportTask delayedTeleportTask = new DelayedTeleportTask(player, destinationLocation);
         delayedTeleportTask.runTaskLater(medievalFactions, (long) teleport_delay * getRandomNumberBetween(15, 25));
     }

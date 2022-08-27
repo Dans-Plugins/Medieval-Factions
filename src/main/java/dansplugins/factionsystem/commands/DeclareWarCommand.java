@@ -70,7 +70,7 @@ public class DeclareWarCommand extends SubCommand {
         final Faction opponent = getFaction(factionName);
         if (opponent == null) {
             playerService.sendMessageType(player, "&c" + getText("FactionNotFound"), Objects.requireNonNull(messageService.getLanguage().getString("FactionNotFound"))
-                    .replaceAll("#faction#", String.join(" ", args)), true);
+                    .replace("#faction#", String.join(" ", args)), true);
             return;
         }
 
@@ -82,7 +82,7 @@ public class DeclareWarCommand extends SubCommand {
 
         if (faction.isEnemy(opponent.getName())) {
             playerService.sendMessageType(player, "&c" + getText("CannotDeclareWarOnYourself")
-                    , Objects.requireNonNull(messageService.getLanguage().getString("AlertAlreadyAtWarWith")).replaceAll("#faction#", opponent.getName()), true);
+                    , Objects.requireNonNull(messageService.getLanguage().getString("AlertAlreadyAtWarWith")).replace("#faction#", opponent.getName()), true);
 
             return;
         }
@@ -137,8 +137,8 @@ public class DeclareWarCommand extends SubCommand {
             opponent.addEnemy(faction.getName());
             warFactory.createWar(faction, opponent);
             messageServer("&c" + getText("HasDeclaredWarAgainst", faction.getName(), opponent.getName()), Objects.requireNonNull(messageService.getLanguage().getString("HasDeclaredWarAgainst"))
-                    .replaceAll("#f_a#", faction.getName())
-                    .replaceAll("#f_b#", opponent.getName()));
+                    .replace("#f_a#", faction.getName())
+                    .replace("#f_b#", opponent.getName()));
 
         }
     }

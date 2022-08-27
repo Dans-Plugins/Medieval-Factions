@@ -51,7 +51,7 @@ public class VassalizeCommand extends SubCommand {
         final Faction target = getFaction(String.join(" ", args));
         if (target == null) {
             playerService.sendMessageType(player, "&c" + getText("FactionNotFound"), Objects.requireNonNull(messageService.getLanguage().getString("FactionNotFound"))
-                    .replaceAll("#faction#", String.join(" ", args)), true);
+                    .replace("#faction#", String.join(" ", args)), true);
             return;
         }
         // make sure player isn't trying to vassalize their own faction
@@ -85,12 +85,12 @@ public class VassalizeCommand extends SubCommand {
         messageFaction(target, translate("&a" +
                         getText("AlertAttemptedVassalization", faction.getName(), faction.getName()))
                 , Objects.requireNonNull(messageService.getLanguage().getString("AlertAttemptedVassalization"))
-                        .replaceAll("#name#", faction.getName()));
+                        .replace("#name#", faction.getName()));
 
         // inform all players in players faction that a vassalization offer was sent
         messageFaction(faction, translate("&a" + getText("AlertFactionAttemptedToVassalize", target.getName()))
                 , Objects.requireNonNull(messageService.getLanguage().getString("AlertFactionAttemptedToVassalize"))
-                        .replaceAll("#name#", target.getName()));
+                        .replace("#name#", target.getName()));
     }
 
     /**

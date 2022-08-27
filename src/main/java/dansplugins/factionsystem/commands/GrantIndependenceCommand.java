@@ -46,7 +46,7 @@ public class GrantIndependenceCommand extends SubCommand {
         final Faction target = getFaction(String.join(" ", args));
         if (target == null) {
             playerService.sendMessageType(player, "&c" + getText("FactionNotFound")
-                    , Objects.requireNonNull(messageService.getLanguage().getString("FactionNotFound")).replaceAll("#faction#", String.join(" ", args))
+                    , Objects.requireNonNull(messageService.getLanguage().getString("FactionNotFound")).replace("#faction#", String.join(" ", args))
                     , true);
             return;
         }
@@ -59,11 +59,11 @@ public class GrantIndependenceCommand extends SubCommand {
         // inform all players in that faction that they are now independent
         messageFaction(target, translate("&a" + getText("AlertGrantedIndependence", faction.getName())),
                 Objects.requireNonNull(messageService.getLanguage().getString("AlertGrantedIndependence"))
-                        .replaceAll("#name#", faction.getName()));
+                        .replace("#name#", faction.getName()));
         // inform all players in players faction that a vassal was granted independence
         messageFaction(faction, translate("&a" + getText("AlertNoLongerVassalFaction", target.getName()))
                 , Objects.requireNonNull(messageService.getLanguage().getString("AlertNoLongerVassalFaction"))
-                        .replaceAll("#name#", target.getName()));
+                        .replace("#name#", target.getName()));
     }
 
     /**

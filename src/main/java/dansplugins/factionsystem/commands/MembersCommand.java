@@ -74,7 +74,7 @@ public class MembersCommand extends SubCommand {
             if (faction == null) {
                 playerService.sendMessageType(sender, "&c" + getText("FactionNameNotRecognized"),
                         Objects.requireNonNull(messageService.getLanguage().getString("FactionNotFound"))
-                                .replaceAll("#faction#", String.join(" ", args
+                                .replace("#faction#", String.join(" ", args
                                 )), true);
                 return;
             }
@@ -101,7 +101,7 @@ public class MembersCommand extends SubCommand {
             sender.sendMessage(translate("&b----------\n"));
         } else {
             playerService.sendMessageType(sender, "", Objects.requireNonNull(messageService.getLanguage().getString("MembersFaction.Title"))
-                            .replaceAll("#faction#", faction.getName())
+                            .replace("#faction#", faction.getName())
                     , true);
             faction.getMemberList().stream()
                     .map(Bukkit::getOfflinePlayer)
@@ -117,12 +117,12 @@ public class MembersCommand extends SubCommand {
                             color = messageService.getLanguage().getString("MembersFaction.Owner.Color");
                         }
                         return playerService.colorize(Objects.requireNonNull(messageService.getLanguage().getString("MembersFaction.Message"))
-                                .replaceAll("#color#", Objects.requireNonNull(color))
-                                .replaceAll("#rank#", Objects.requireNonNull(rank))
-                                .replaceAll("#name#", Objects.requireNonNull(player.getName())));
+                                .replace("#color#", Objects.requireNonNull(color))
+                                .replace("#rank#", Objects.requireNonNull(rank))
+                                .replace("#name#", Objects.requireNonNull(player.getName())));
                     }).forEach(sender::sendMessage);
             playerService.sendMessageType(sender, "", Objects.requireNonNull(messageService.getLanguage().getString("MembersFaction.SubTitle"))
-                            .replaceAll("#faction#", faction.getName())
+                            .replace("#faction#", faction.getName())
                     , true);
 
         }

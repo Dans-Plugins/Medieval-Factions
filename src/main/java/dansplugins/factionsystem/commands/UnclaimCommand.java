@@ -63,7 +63,7 @@ public class UnclaimCommand extends SubCommand {
         chunkDataAccessor.radiusUnclaimAtLocation(radius, player, faction);
         playerService.sendMessageType(player, "Unclaimed radius of " + radius + " claims around you!"
                 , Objects.requireNonNull(messageService.getLanguage().getString("UnClaimedRadius"))
-                        .replaceAll("#number#", String.valueOf(radius)), true);
+                        .replace("#number#", String.valueOf(radius)), true);
     }
 
     /**

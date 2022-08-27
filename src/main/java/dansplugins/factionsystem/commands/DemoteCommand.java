@@ -61,7 +61,7 @@ public class DemoteCommand extends SubCommand {
         if (playerToBeDemoted == null) {
             playerService.sendMessageType(player, "&c" + getText("PlayerByNameNotFound")
                     , Objects.requireNonNull(messageService.getLanguage().getString("PlayerByNameNotFound"))
-                            .replaceAll("#name#", args[0]), true);
+                            .replace("#name#", args[0]), true);
             return;
         }
 
@@ -85,7 +85,7 @@ public class DemoteCommand extends SubCommand {
         }
         playerService.sendMessageType(player, "&c" + getText("PlayerDemoted")
                 , Objects.requireNonNull(messageService.getLanguage().getString("PlayerDemoted"))
-                        .replaceAll("#name#", playerToBeDemoted.getName()), true);
+                        .replace("#name#", playerToBeDemoted.getName()), true);
     }
 
     /**

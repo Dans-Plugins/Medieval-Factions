@@ -49,14 +49,14 @@ public class TransferCommand extends SubCommand {
         UUIDChecker uuidChecker = new UUIDChecker();
         final UUID targetUUID = uuidChecker.findUUIDBasedOnPlayerName(args[0]);
         if (targetUUID == null) {
-            playerService.sendMessageType(player, "&c" + getText("PlayerNotFound"), Objects.requireNonNull(messageService.getLanguage().getString("PlayerNotFound")).replaceAll("#name#", args[0]), true);
+            playerService.sendMessageType(player, "&c" + getText("PlayerNotFound"), Objects.requireNonNull(messageService.getLanguage().getString("PlayerNotFound")).replace("#name#", args[0]), true);
             return;
         }
         OfflinePlayer target = Bukkit.getOfflinePlayer(targetUUID);
         if (!target.hasPlayedBefore()) {
             target = Bukkit.getPlayer(args[0]);
             if (target == null) {
-                playerService.sendMessageType(player, "&c" + getText("PlayerNotFound"), Objects.requireNonNull(messageService.getLanguage().getString("PlayerNotFound")).replaceAll("#name#", args[0]), true);
+                playerService.sendMessageType(player, "&c" + getText("PlayerNotFound"), Objects.requireNonNull(messageService.getLanguage().getString("PlayerNotFound")).replace("#name#", args[0]), true);
                 return;
             }
         }
@@ -77,11 +77,11 @@ public class TransferCommand extends SubCommand {
         faction.setOwner(targetUUID);
         playerService.sendMessageType(player, "&b" + getText("OwnerShipTransferredTo", args[0])
                 , Objects.requireNonNull(messageService.getLanguage().getString("OwnerShipTransferredTo"))
-                        .replaceAll("#name#", args[0]), true);
+                        .replace("#name#", args[0]), true);
         if (target.isOnline() && target.getPlayer() != null) { // Message if we can :)
             playerService.sendMessageType(target.getPlayer(), "&a" + getText("OwnershipTransferred", faction.getName()),
                     Objects.requireNonNull(messageService.getLanguage().getString("'OwnershipTransferred"))
-                            .replaceAll("#name#", faction.getName()), true);
+                            .replace("#name#", faction.getName()), true);
         }
     }
 

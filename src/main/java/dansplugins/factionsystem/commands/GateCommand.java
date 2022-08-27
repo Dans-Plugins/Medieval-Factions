@@ -94,8 +94,8 @@ public class GateCommand extends SubCommand {
                 for (Gate gate : faction.getGates()) {
                     playerService.sendMessageType(player, "&b" + String.format("%s: %s", gate.getName(), gate.coordsToString()),
                             Objects.requireNonNull(messageService.getLanguage().getString("GateLocation"))
-                                    .replaceAll("#name#", gate.getName())
-                                    .replaceAll("#location#", gate.coordsToString()), true);
+                                    .replace("#name#", gate.getName())
+                                    .replace("#location#", gate.coordsToString()), true);
                 }
             } else {
                 playerService.sendMessageType(player, "&c" + getText("AlertNoGatesDefined"), "AlertNoGatesDefined", false);
@@ -126,7 +126,7 @@ public class GateCommand extends SubCommand {
             if (gateFaction == null) {
                 playerService.sendMessageType(player, "&c" + getText("ErrorCouldNotFindGatesFaction", gate.getName())
                         , Objects.requireNonNull(messageService.getLanguage().getString("ErrorCouldNotFindGatesFaction"))
-                                .replaceAll("#name#", gate.getName())
+                                .replace("#name#", gate.getName())
                         , true);
                 return;
             }
@@ -138,7 +138,7 @@ public class GateCommand extends SubCommand {
                 gateFaction.removeGate(gate);
                 playerService.sendMessageType(player, "&b" + getText("RemovedGate", gate.getName())
                         , Objects.requireNonNull(messageService.getLanguage().getString("RemovedGate"))
-                                .replaceAll("#name#", gate.getName())
+                                .replace("#name#", gate.getName())
                         , true);
             }
             if (rename) {
@@ -147,7 +147,7 @@ public class GateCommand extends SubCommand {
                 gate.setName(String.join(" ", arguments));
                 playerService.sendMessageType(player, "&b" + getText("AlertChangedGateName", gate.getName())
                         , Objects.requireNonNull(messageService.getLanguage().getString("AlertChangedGateName"))
-                                .replaceAll("#name#", gate.getName())
+                                .replace("#name#", gate.getName())
                         , true);
             }
         }

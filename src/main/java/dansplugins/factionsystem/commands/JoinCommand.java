@@ -57,7 +57,7 @@ public class JoinCommand extends SubCommand {
         final Faction target = getFaction(String.join(" ", args));
         if (target == null) {
             playerService.sendMessageType(player, "&c" + getText("FactionNotFound"), Objects.requireNonNull(messageService.getLanguage().getString("FactionNotFound"))
-                    .replaceAll("#faction#", String.join(" ", args)), true);
+                    .replace("#faction#", String.join(" ", args)), true);
             return;
         }
         if (!target.isInvited(player.getUniqueId())) {
@@ -73,8 +73,8 @@ public class JoinCommand extends SubCommand {
         }
         messageFaction(target, "&a" + getText("HasJoined", player.getName(), target.getName())
                 , Objects.requireNonNull(messageService.getLanguage().getString("HasJoined"))
-                        .replaceAll("#name#", player.getName())
-                        .replaceAll("#faction#", target.getName()));
+                        .replace("#name#", player.getName())
+                        .replace("#faction#", target.getName()));
         target.addMember(player.getUniqueId());
         target.uninvite(player.getUniqueId());
         player.sendMessage(translate("&a" + getText("AlertJoinedFaction")));

@@ -204,7 +204,7 @@ public abstract class SubCommand implements ColorTranslator {
             break;
         }
         if (!has) {
-            playerService.sendMessageType(sender, translate("&c" + getText("PermissionNeeded", permission[0])), Objects.requireNonNull(messageService.getLanguage().getString("PermissionNeeded")).replaceAll("#permission#", permission[0]), true);
+            playerService.sendMessageType(sender, translate("&c" + getText("PermissionNeeded", permission[0])), Objects.requireNonNull(messageService.getLanguage().getString("PermissionNeeded")).replace("#permission#", permission[0]), true);
         }
         return has;
     }

@@ -50,7 +50,7 @@ public class DeclareIndependenceCommand extends SubCommand {
 
         final Faction liege = getFaction(this.faction.getLiege());
         if (liege == null) {
-            playerService.sendMessageType(player, "&c" + getText("FactionNotFound"), Objects.requireNonNull(messageService.getLanguage().getString("FactionNotFound")).replaceAll("#faction#", String.join(" ", args)), true);
+            playerService.sendMessageType(player, "&c" + getText("FactionNotFound"), Objects.requireNonNull(messageService.getLanguage().getString("FactionNotFound")).replace("#faction#", String.join(" ", args)), true);
             return;
         }
 
@@ -74,7 +74,7 @@ public class DeclareIndependenceCommand extends SubCommand {
                 }
             }
         }
-        messageServer("&c" + getText("HasDeclaredIndependence", faction.getName(), liege.getName()), Objects.requireNonNull(messageService.getLanguage().getString("HasDeclaredIndependence")).replaceAll("#faction_a#", faction.getName()).replaceAll("#faction_b#", liege.getName()));
+        messageServer("&c" + getText("HasDeclaredIndependence", faction.getName(), liege.getName()), Objects.requireNonNull(messageService.getLanguage().getString("HasDeclaredIndependence")).replace("#faction_a#", faction.getName()).replace("#faction_b#", liege.getName()));
 
     }
 

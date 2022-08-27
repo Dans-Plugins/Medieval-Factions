@@ -84,7 +84,7 @@ public class DisbandCommand extends SubCommand {
         if (disband == null) {
             playerService.sendMessageType(sender, "&c" + getText("FactionNotFound")
                     , Objects.requireNonNull(messageService.getLanguage().getString("FactionNotFound"))
-                            .replaceAll("#faction#", String.join(" ", args)), true);
+                            .replace("#faction#", String.join(" ", args)), true);
             return;
         }
         final int factionIndex = persistentData.getFactionIndexOf(disband);
@@ -94,7 +94,7 @@ public class DisbandCommand extends SubCommand {
             ephemeralData.getPlayersInFactionChat().remove(((Player) sender).getUniqueId());
         } else {
             playerService.sendMessageType(sender, "&c" + getText("SuccessfulDisbandment", disband.getName())
-                    , Objects.requireNonNull(messageService.getLanguage().getString("SuccessfulDisbandment")).replaceAll("#faction#", disband.getName()), true);
+                    , Objects.requireNonNull(messageService.getLanguage().getString("SuccessfulDisbandment")).replace("#faction#", disband.getName()), true);
         }
         removeFaction(factionIndex, self ? ((OfflinePlayer) sender) : null);
     }

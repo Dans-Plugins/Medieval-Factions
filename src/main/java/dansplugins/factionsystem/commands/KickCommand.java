@@ -55,14 +55,14 @@ public class KickCommand extends SubCommand {
         UUIDChecker uuidChecker = new UUIDChecker();
         final UUID targetUUID = uuidChecker.findUUIDBasedOnPlayerName(args[0]);
         if (targetUUID == null) {
-            playerService.sendMessageType(player, "&c" + getText("PlayerNotFound"), Objects.requireNonNull(messageService.getLanguage().getString("PlayerNotFound")).replaceAll("#name#", args[0]), true);
+            playerService.sendMessageType(player, "&c" + getText("PlayerNotFound"), Objects.requireNonNull(messageService.getLanguage().getString("PlayerNotFound")).replace("#name#", args[0]), true);
             return;
         }
         OfflinePlayer target = Bukkit.getOfflinePlayer(targetUUID);
         if (!target.hasPlayedBefore()) {
             target = Bukkit.getPlayer(args[0]);
             if (target == null) {
-                playerService.sendMessageType(player, "&c" + getText("PlayerNotFound"), Objects.requireNonNull(messageService.getLanguage().getString("PlayerNotFound")).replaceAll("#name#", args[0]), true);
+                playerService.sendMessageType(player, "&c" + getText("PlayerNotFound"), Objects.requireNonNull(messageService.getLanguage().getString("PlayerNotFound")).replace("#name#", args[0]), true);
                 return;
             }
         }
@@ -89,12 +89,12 @@ public class KickCommand extends SubCommand {
         faction.removeMember(targetUUID);
         messageFaction(faction, "&c" + getText("HasBeenKickedFrom", target.getName(), faction.getName()),
                 Objects.requireNonNull(messageService.getLanguage().getString("HasBeenKickedFrom"))
-                        .replaceAll("#name#", args[0])
-                        .replaceAll("#faction#", faction.getName()));
+                        .replace("#name#", args[0])
+                        .replace("#faction#", faction.getName()));
         if (target.isOnline() && target.getPlayer() != null) {
             playerService.sendMessageType(player, "&c" + getText("AlertKicked", player.getName())
                     , Objects.requireNonNull(messageService.getLanguage().getString("AlertKicked"))
-                            .replaceAll("#name#", player.getName()), true);
+                            .replace("#name#", player.getName()), true);
         }
     }
 

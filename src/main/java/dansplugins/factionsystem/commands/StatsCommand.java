@@ -41,7 +41,7 @@ public class StatsCommand extends SubCommand {
             messageService.getLanguage().getStringList("StatsFaction")
                     .forEach(s -> {
                         if (s.contains("#faction#")) {
-                            s = s.replaceAll("#faction#", String.valueOf(persistentData.getNumFactions()));
+                            s = s.replace("#faction#", String.valueOf(persistentData.getNumFactions()));
                         }
                         s = playerService.colorize(s);
                         playerService.sendMessageType(sender, "", s, true);

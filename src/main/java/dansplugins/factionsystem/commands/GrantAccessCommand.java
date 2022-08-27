@@ -57,7 +57,7 @@ public class GrantAccessCommand extends SubCommand {
         final UUID targetUUID = uuidChecker.findUUIDBasedOnPlayerName(args[0]);
         if (targetUUID == null) {
             playerService.sendMessageType(player, "&c" + getText("PlayerNotFound")
-                    , Objects.requireNonNull(messageService.getLanguage().getString("PlayerNotFound")).replaceAll("#name#", args[0]), true);
+                    , Objects.requireNonNull(messageService.getLanguage().getString("PlayerNotFound")).replace("#name#", args[0]), true);
             return;
         }
         if (targetUUID == player.getUniqueId()) {
@@ -67,7 +67,7 @@ public class GrantAccessCommand extends SubCommand {
         }
         ephemeralData.getPlayersGrantingAccess().put(player.getUniqueId(), targetUUID);
         playerService.sendMessageType(player, "&a" + getText("RightClickGrantAccess", args[0])
-                , Objects.requireNonNull(messageService.getLanguage().getString("RightClickGrantAccess")).replaceAll("#name#", args[0]), true);
+                , Objects.requireNonNull(messageService.getLanguage().getString("RightClickGrantAccess")).replace("#name#", args[0]), true);
     }
 
     /**

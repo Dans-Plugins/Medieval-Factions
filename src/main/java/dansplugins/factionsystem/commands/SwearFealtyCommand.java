@@ -48,7 +48,7 @@ public class SwearFealtyCommand extends SubCommand {
         final Faction target = getFaction(String.join(" ", args));
         if (target == null) {
             playerService.sendMessageType(player, "&c" + getText("FactionNotFound"), Objects.requireNonNull(messageService.getLanguage().getString("FactionNotFound"))
-                    .replaceAll("#faction#", String.join(" ", args)), true);
+                    .replace("#faction#", String.join(" ", args)), true);
             return;
         }
         if (!target.hasBeenOfferedVassalization(faction.getName())) {
@@ -66,12 +66,12 @@ public class SwearFealtyCommand extends SubCommand {
         // inform target faction that they have a new vassal
         messageFaction(target, translate("&a" + getText("AlertFactionHasNewVassal", faction.getName()))
                 , Objects.requireNonNull(messageService.getLanguage().getString("AlertFactionHasNewVassal"))
-                        .replaceAll("#name#", faction.getName()));
+                        .replace("#name#", faction.getName()));
 
         // inform players faction that they have a new liege
         messageFaction(faction, translate("&a" + getText("AlertFactionHasBeenVassalized", target.getName()))
                 , Objects.requireNonNull(messageService.getLanguage().getString("AlertFactionHasBeenVassalized"))
-                        .replaceAll("#name#", target.getName()));
+                        .replace("#name#", target.getName()));
     }
 
     /**

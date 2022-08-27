@@ -51,14 +51,14 @@ public class PromoteCommand extends SubCommand {
         UUIDChecker uuidChecker = new UUIDChecker();
         final UUID targetUUID = uuidChecker.findUUIDBasedOnPlayerName(args[0]);
         if (targetUUID == null) {
-            playerService.sendMessageType(player, "&c" + getText("PlayerNotFound"), Objects.requireNonNull(messageService.getLanguage().getString("PlayerNotFound")).replaceAll("#name#", args[0]), true);
+            playerService.sendMessageType(player, "&c" + getText("PlayerNotFound"), Objects.requireNonNull(messageService.getLanguage().getString("PlayerNotFound")).replace("#name#", args[0]), true);
             return;
         }
         OfflinePlayer target = Bukkit.getOfflinePlayer(targetUUID);
         if (!target.hasPlayedBefore()) {
             target = Bukkit.getPlayer(args[0]);
             if (target == null) {
-                playerService.sendMessageType(player, "&c" + getText("PlayerNotFound"), Objects.requireNonNull(messageService.getLanguage().getString("PlayerNotFound")).replaceAll("#name#", args[0]), true);
+                playerService.sendMessageType(player, "&c" + getText("PlayerNotFound"), Objects.requireNonNull(messageService.getLanguage().getString("PlayerNotFound")).replace("#name#", args[0]), true);
                 return;
             }
         }
@@ -88,7 +88,7 @@ public class PromoteCommand extends SubCommand {
             playerService.sendMessageType(player, "&c" +
                             getText("PlayerCantBePromotedBecauseOfLimit", faction.calculateMaxOfficers())
                     , Objects.requireNonNull(messageService.getLanguage().getString("PlayerCantBePromotedBecauseOfLimit"))
-                            .replaceAll("#number#", String.valueOf(faction.calculateMaxOfficers())), true);
+                            .replace("#number#", String.valueOf(faction.calculateMaxOfficers())), true);
         }
     }
 

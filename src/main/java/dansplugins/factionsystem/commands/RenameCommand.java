@@ -58,14 +58,14 @@ public class RenameCommand extends SubCommand {
         if (newName.length() > config.getInt("factionMaxNameLength")) {
             playerService.sendMessageType(player, "&c" + getText("FactionNameTooLong"),
                     Objects.requireNonNull(messageService.getLanguage().getString("FactionNameTooLong"))
-                            .replaceAll("#name#", newName), true);
+                            .replace("#name#", newName), true);
             return;
         }
         final String oldName = faction.getName();
         if (getFaction(newName) != null) {
             playerService.sendMessageType(player, "&c" + getText("FactionAlreadyExists"),
                     Objects.requireNonNull(messageService.getLanguage().getString("FactionAlreadyExists"))
-                            .replaceAll("#name#", newName), true);
+                            .replace("#name#", newName), true);
             return;
         }
         final FactionRenameEvent renameEvent = new FactionRenameEvent(faction, oldName, newName);

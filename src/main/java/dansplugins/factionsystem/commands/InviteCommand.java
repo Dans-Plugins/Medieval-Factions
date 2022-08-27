@@ -66,7 +66,7 @@ public class InviteCommand extends SubCommand {
         if (playerUUID == null) {
             playerService.sendMessageType(player, "&c" + getText("PlayerNotFound")
                     , Objects.requireNonNull(messageService.getLanguage().getString("PlayerNotFound"))
-                            .replaceAll("#name#", args[0])
+                            .replace("#name#", args[0])
                     , true);
             return;
         }
@@ -76,7 +76,7 @@ public class InviteCommand extends SubCommand {
             if (target == null) {
                 playerService.sendMessageType(player, "&c" + getText("PlayerNotFound")
                         , Objects.requireNonNull(messageService.getLanguage().getString("PlayerNotFound"))
-                                .replaceAll("#name#", args[0])
+                                .replace("#name#", args[0])
                         , true);
                 return;
             }
@@ -91,7 +91,7 @@ public class InviteCommand extends SubCommand {
         if (target.isOnline() && target.getPlayer() != null) {
             playerService.sendMessageType(target.getPlayer(),
                     "&a" + getText("AlertBeenInvited", faction.getName(), faction.getName())
-                    , Objects.requireNonNull(messageService.getLanguage().getString("AlertBeenInvited")).replaceAll("#name#", faction.getName()),
+                    , Objects.requireNonNull(messageService.getLanguage().getString("AlertBeenInvited")).replace("#name#", faction.getName()),
                     true
             );
         }
@@ -105,7 +105,7 @@ public class InviteCommand extends SubCommand {
                 playerService.sendMessageType(player,
                         "&c" + getText("InvitationExpired", faction.getName()),
                         Objects.requireNonNull(messageService.getLanguage().getString("InvitationExpired"))
-                                .replaceAll("#name#", faction.getName()),
+                                .replace("#name#", faction.getName()),
                         true
                 );
             }

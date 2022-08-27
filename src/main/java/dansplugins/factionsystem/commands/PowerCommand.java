@@ -65,23 +65,23 @@ public class PowerCommand extends SubCommand {
             playerService.sendMessageType(sender, "&b" +
                             getText("AlertCurrentPowerLevel", record.getPower(), record.maxPower())
                     , Objects.requireNonNull(messageService.getLanguage().getString("AlertCurrentPowerLevel"))
-                            .replaceAll("#power#", String.valueOf(record.getPower()))
-                            .replaceAll("#max#", String.valueOf(record.maxPower())), true);
+                            .replace("#power#", String.valueOf(record.getPower()))
+                            .replace("#max#", String.valueOf(record.maxPower())), true);
             return;
         }
         UUIDChecker uuidChecker = new UUIDChecker();
         final UUID target = uuidChecker.findUUIDBasedOnPlayerName(args[0]);
         if (target == null) {
             playerService.sendMessageType(sender, "&c" + getText("PlayerNotFound"),
-                    Objects.requireNonNull(messageService.getLanguage().getString("PlayerNotFound")).replaceAll("#name#", args[0]), true);
+                    Objects.requireNonNull(messageService.getLanguage().getString("PlayerNotFound")).replace("#name#", args[0]), true);
             return;
         }
         record = persistentData.getPlayersPowerRecord(target);
         playerService.sendMessageType(sender, "&b" +
                         getText("CurrentPowerLevel", args[0], record.getPower(), record.maxPower())
                 , Objects.requireNonNull(messageService.getLanguage().getString("CurrentPowerLevel"))
-                        .replaceAll("#power#", String.valueOf(record.getPower()))
-                        .replaceAll("#max#", String.valueOf(record.maxPower()))
-                        .replaceAll("#name#", args[0]), true);
+                        .replace("#power#", String.valueOf(record.getPower()))
+                        .replace("#max#", String.valueOf(record.maxPower()))
+                        .replace("#name#", args[0]), true);
     }
 }

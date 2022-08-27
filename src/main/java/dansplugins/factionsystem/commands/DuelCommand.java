@@ -62,11 +62,11 @@ public class DuelCommand extends SubCommand {
             }
             Player target = Bukkit.getPlayer(args[1]);
             if (target == null) {
-                playerService.sendMessageType(player, "&c" + getText("PlayerNotFound"), Objects.requireNonNull(messageService.getLanguage().getString("PlayerNotFound")).replaceAll("#name#", args[1]), true);
+                playerService.sendMessageType(player, "&c" + getText("PlayerNotFound"), Objects.requireNonNull(messageService.getLanguage().getString("PlayerNotFound")).replace("#name#", args[1]), true);
                 return;
             }
             if (isDuelling(target)) {
-                playerService.sendMessageType(player, "&c" + getText("PlayerAlreadyDueling", target.getName()), Objects.requireNonNull(messageService.getLanguage().getString("PlayerAlreadyDueling")).replaceAll("#name#", args[1]), true);
+                playerService.sendMessageType(player, "&c" + getText("PlayerAlreadyDueling", target.getName()), Objects.requireNonNull(messageService.getLanguage().getString("PlayerAlreadyDueling")).replace("#name#", args[1]), true);
                 return;
             }
             int timeLimit = 120; // Time limit in seconds. TODO: Make config option.
@@ -74,7 +74,7 @@ public class DuelCommand extends SubCommand {
                 timeLimit = getIntSafe(args[2], 120);
             }
             inviteDuel(player, target, timeLimit);
-            playerService.sendMessageType(player, "&b" + getText("AlertChallengeIssued", target.getName()), Objects.requireNonNull(messageService.getLanguage().getString("AlertChallengeIssued")).replaceAll("#name#", target.getName()), true);
+            playerService.sendMessageType(player, "&b" + getText("AlertChallengeIssued", target.getName()), Objects.requireNonNull(messageService.getLanguage().getString("AlertChallengeIssued")).replace("#name#", target.getName()), true);
         } else if (safeEquals(args[0], playerService.getMessageType(getText("CmdDuelAccept"), messageService.getLanguage().getString("Alias.CmdDuelAccept")), "accept")) {
             if (isDuelling(player)) {
                 playerService.sendMessageType(player, "&c" + getText("AlertAlreadyDuelingSomeone"), "AlertAlreadyDuelingSomeone", false);
@@ -85,14 +85,14 @@ public class DuelCommand extends SubCommand {
             if (args.length >= 2) {
                 final Player target = Bukkit.getPlayer(args[2]);
                 if (target == null) {
-                    playerService.sendMessageType(player, "&c" + getText("PlayerNotFound"), Objects.requireNonNull(messageService.getLanguage().getString("PlayerNotFound")).replaceAll("#name#", args[1]), true);
+                    playerService.sendMessageType(player, "&c" + getText("PlayerNotFound"), Objects.requireNonNull(messageService.getLanguage().getString("PlayerNotFound")).replace("#name#", args[1]), true);
                     return;
                 }
                 duel = ephemeralData.getDuel(player, target);
                 notChallenged = getText("AlertNotBeenChallengedByPlayer", target.getName());
-                notChallenged2 = Objects.requireNonNull(messageService.getLanguage().getString("AlertNotBeenChallengedByPlayer")).replaceAll("#name#", target.getName());
+                notChallenged2 = Objects.requireNonNull(messageService.getLanguage().getString("AlertNotBeenChallengedByPlayer")).replace("#name#", target.getName());
                 alreadyDueling = getText("AlertAlreadyDuelingPlayer", target.getName());
-                alreadyDueling2 = Objects.requireNonNull(messageService.getLanguage().getString("AlertAlreadyDuelingPlayer")).replaceAll("#name#", target.getName());
+                alreadyDueling2 = Objects.requireNonNull(messageService.getLanguage().getString("AlertAlreadyDuelingPlayer")).replace("#name#", target.getName());
             } else {
                 duel = getDuel(player);
                 notChallenged = getText("AlertNotBeenChallenged");
@@ -168,7 +168,7 @@ public class DuelCommand extends SubCommand {
     private void inviteDuel(Player player, Player target, int limit) {
         playerService.sendMessageType(target, "&a" + getText("AlertChallengedToDuelPlusHowTo", player.getName()),
                 Objects.requireNonNull(messageService.getLanguage().getString("AlertChallengedToDuelPlusHowTo"))
-                        .replaceAll("#name#", player.getName()), true);
+                        .replace("#name#", player.getName()), true);
         ephemeralData.getDuelingPlayers().add(new Duel(medievalFactions, ephemeralData, player, target, limit));
     }
 }

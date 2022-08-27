@@ -76,7 +76,7 @@ public class UnclaimallCommand extends SubCommand {
             if (faction == null) {
                 playerService.sendMessageType(sender, "&c" + getText("FactionNotFound"),
                         Objects.requireNonNull(messageService.getLanguage().getString("FactionNotFound"))
-                                .replaceAll("#faction#", String.join(" ", args)), true);
+                                .replace("#faction#", String.join(" ", args)), true);
                 return;
             }
         }
@@ -90,7 +90,7 @@ public class UnclaimallCommand extends SubCommand {
         dynmapIntegrator.updateClaims();
         playerService.sendMessageType(sender, "&a" + getText("AllLandUnclaimedFrom", faction.getName())
                 , Objects.requireNonNull(messageService.getLanguage().getString("AllLandUnclaimedFrom"))
-                        .replaceAll("#name#", faction.getName()), false);
+                        .replace("#name#", faction.getName()), false);
 
         // remove locks associated with this faction
         persistentData.removeAllLocks(faction.getName());

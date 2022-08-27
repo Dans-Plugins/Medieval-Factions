@@ -58,7 +58,7 @@ public class AllyCommand extends SubCommand {
         // the faction needs to exist to ally
         if (otherFaction == null) {
             playerService.sendMessageType(player, "&c" + getText("FactionNotFound"), Objects.requireNonNull(messageService.getLanguage().getString("FactionNotFound"))
-                    .replaceAll("#faction#", String.join(" ", args)), true);
+                    .replace("#faction#", String.join(" ", args)), true);
             return;
         }
 
@@ -91,16 +91,16 @@ public class AllyCommand extends SubCommand {
                 faction,
                 translate("&a" + getText("AlertAttemptedAlliance", faction.getName(), otherFaction.getName())),
                 Objects.requireNonNull(messageService.getLanguage().getString("AlertAttemptedAlliance"))
-                        .replaceAll("#faction_a#", faction.getName())
-                        .replaceAll("#faction_b#", otherFaction.getName())
+                        .replace("#faction_a#", faction.getName())
+                        .replace("#faction_b#", otherFaction.getName())
         );
 
         messageFaction(
                 otherFaction,
                 translate("&a" + getText("AlertAttemptedAlliance", faction.getName(), otherFaction.getName())),
                 Objects.requireNonNull(messageService.getLanguage().getString("AlertAttemptedAlliance"))
-                        .replaceAll("#faction_a#", faction.getName())
-                        .replaceAll("#faction_b#", otherFaction.getName())
+                        .replace("#faction_a#", faction.getName())
+                        .replace("#faction_b#", otherFaction.getName())
         );
 
         // check if both factions are have requested an alliance
@@ -109,10 +109,10 @@ public class AllyCommand extends SubCommand {
             faction.addAlly(otherFaction.getName());
             otherFaction.addAlly(faction.getName());
             // message player's faction
-            messageFaction(faction, translate("&a" + getText("AlertNowAlliedWith", otherFaction.getName())), Objects.requireNonNull(messageService.getLanguage().getString("AlertNowAlliedWith")).replaceAll("#faction#", otherFaction.getName()));
+            messageFaction(faction, translate("&a" + getText("AlertNowAlliedWith", otherFaction.getName())), Objects.requireNonNull(messageService.getLanguage().getString("AlertNowAlliedWith")).replace("#faction#", otherFaction.getName()));
 
             // message target faction
-            messageFaction(otherFaction, translate("&a" + getText("AlertNowAlliedWith", faction.getName())), Objects.requireNonNull(messageService.getLanguage().getString("AlertNowAlliedWith")).replaceAll("#faction#", faction.getName()));
+            messageFaction(otherFaction, translate("&a" + getText("AlertNowAlliedWith", faction.getName())), Objects.requireNonNull(messageService.getLanguage().getString("AlertNowAlliedWith")).replace("#faction#", faction.getName()));
 
             // remove alliance requests
             faction.removeAllianceRequest(otherFaction.getName());

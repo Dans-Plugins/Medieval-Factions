@@ -78,14 +78,14 @@ public class CreateCommand extends SubCommand {
         if (factionName.length() > config.getInt("factionMaxNameLength")) {
             playerService.sendMessageType(player, "&c" + getText("FactionNameTooLong"),
                     Objects.requireNonNull(messageService.getLanguage().getString("FactionNameTooLong"))
-                            .replaceAll("#name#", factionName), true);
+                            .replace("#name#", factionName), true);
             return;
         }
 
         if (persistentData.getFaction(factionName) != null) {
             playerService.sendMessageType(player, "&c" + getText("FactionAlreadyExists"),
                     Objects.requireNonNull(messageService.getLanguage().getString("FactionAlreadyExists"))
-                            .replaceAll("#name#", factionName), true);
+                            .replace("#name#", factionName), true);
             return;
         }
 
@@ -99,7 +99,7 @@ public class CreateCommand extends SubCommand {
             persistentData.addFaction(this.faction);
             playerService.sendMessageType(player, "&a" + getText("FactionCreated"),
                     Objects.requireNonNull(messageService.getLanguage().getString("FactionCreated"))
-                            .replaceAll("#name#", factionName), true);
+                            .replace("#name#", factionName), true);
         }
     }
 
