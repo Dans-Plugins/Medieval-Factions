@@ -21,10 +21,13 @@ import org.bukkit.entity.Player;
  * @author Callum Johnson
  */
 public class StatsCommand extends SubCommand {
-    public StatsCommand(LocaleService localeService, PersistentData persistentData, EphemeralData ephemeralData, PersistentData.ChunkDataAccessor chunkDataAccessor, DynmapIntegrator dynmapIntegrator, ConfigService configService, PlayerService playerService, MessageService messageService) {
+    private MedievalFactions medievalFactions;
+
+    public StatsCommand(LocaleService localeService, PersistentData persistentData, EphemeralData ephemeralData, PersistentData.ChunkDataAccessor chunkDataAccessor, DynmapIntegrator dynmapIntegrator, ConfigService configService, PlayerService playerService, MessageService messageService, MedievalFactions medievalFactions) {
         super(new String[]{
                 "stats", LOCALE_PREFIX + "CmdStats"
         }, false, false, false, false, localeService, persistentData, ephemeralData, chunkDataAccessor, dynmapIntegrator, configService, playerService, messageService);
+        this.medievalFactions = medievalFactions;
     }
 
     @Override
@@ -34,7 +37,7 @@ public class StatsCommand extends SubCommand {
 
     @Override
     public void execute(CommandSender sender, String[] args, String key) {
-        if (!new MedievalFactions().USE_NEW_LANGUAGE_FILE) {
+        if (!medievalFactions.USE_NEW_LANGUAGE_FILE) {
             sender.sendMessage(ChatColor.AQUA + "=== Medieval Factions Stats ===");
             sender.sendMessage(ChatColor.AQUA + "Number of factions: " + persistentData.getNumFactions());
         } else {

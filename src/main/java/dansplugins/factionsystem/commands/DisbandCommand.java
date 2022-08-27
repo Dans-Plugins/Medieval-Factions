@@ -28,12 +28,14 @@ import java.util.Objects;
  */
 public class DisbandCommand extends SubCommand {
     private final Logger logger;
+    private final MedievalFactions medievalFactions;
 
-    public DisbandCommand(LocaleService localeService, PersistentData persistentData, EphemeralData ephemeralData, PersistentData.ChunkDataAccessor chunkDataAccessor, DynmapIntegrator dynmapIntegrator, ConfigService configService, Logger logger, PlayerService playerService, MessageService messageService) {
+    public DisbandCommand(LocaleService localeService, PersistentData persistentData, EphemeralData ephemeralData, PersistentData.ChunkDataAccessor chunkDataAccessor, DynmapIntegrator dynmapIntegrator, ConfigService configService, Logger logger, PlayerService playerService, MessageService messageService, MedievalFactions medievalFactions) {
         super(new String[]{
                 "disband", LOCALE_PREFIX + "CmdDisband"
         }, false, persistentData, localeService, ephemeralData, configService, playerService, messageService, chunkDataAccessor, dynmapIntegrator);
         this.logger = logger;
+        this.medievalFactions = medievalFactions;
     }
 
     /**
@@ -62,7 +64,7 @@ public class DisbandCommand extends SubCommand {
         if (args.length == 0) {
             if (!checkPermissions(sender, "mf.disband")) return;
             if (!(sender instanceof Player)) { // ONLY Players can be in a Faction
-                if (!new MedievalFactions().USE_NEW_LANGUAGE_FILE) {
+                if (!medievalFactions.USE_NEW_LANGUAGE_FILE) {
                     sender.sendMessage(translate(getText("OnlyPlayersCanUseCommand")));
                 } else {
                     playerService.sendConsoleMessage(sender.getServer().getConsoleSender(), "OnlyPlayersCanUseCommand", true);

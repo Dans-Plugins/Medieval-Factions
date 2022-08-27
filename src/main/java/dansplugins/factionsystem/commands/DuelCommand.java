@@ -147,7 +147,7 @@ public class DuelCommand extends SubCommand {
     }
 
     private void sendHelp(CommandSender sender) {
-        if (!new MedievalFactions().USE_NEW_LANGUAGE_FILE) {
+        if (!medievalFactions.USE_NEW_LANGUAGE_FILE) {
             sender.sendMessage("&b" + getText("SubCommands"));
             sender.sendMessage("&b" + getText("HelpDuelChallenge"));
             sender.sendMessage("&b" + getText("HelpDuelAccept"));
