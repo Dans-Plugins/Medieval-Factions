@@ -61,10 +61,6 @@ public class MedievalFactions extends PonderBukkitPlugin {
     private final Scheduler scheduler = new Scheduler(logger, configService.getLocaleService(), this, persistentData, configService, playerTeleporter, playerService, messageService);
     private final CommandService commandService = new CommandService(configService.getLocaleService(), this, configService, persistentData, ephemeralData, persistentData.getChunkDataAccessor(), persistentData.getDynmapIntegrator(), warFactory, logger, scheduler, messenger, relationChecker, fiefsIntegrator, currenciesIntegrator, playerService, messageService);
 
-    public MedievalFactions getMedievalFactions() {
-        return medievalFactions;
-    }
-
     public ConfigService getConfigService() {
         return configService;
     }
@@ -74,7 +70,6 @@ public class MedievalFactions extends PonderBukkitPlugin {
      */
     @Override
     public void onEnable() {
-        medievalFactions = this;
         initializeConfig();
         messageService.createLanguageFile();
         load();
