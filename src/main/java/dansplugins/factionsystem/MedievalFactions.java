@@ -18,7 +18,6 @@ import dansplugins.factionsystem.utils.Logger;
 import dansplugins.factionsystem.utils.PlayerTeleporter;
 import dansplugins.factionsystem.utils.RelationChecker;
 import dansplugins.factionsystem.utils.TerritoryOwnerNotifier;
-import dansplugins.factionsystem.utils.extended.BlockChecker;
 import dansplugins.factionsystem.utils.extended.Messenger;
 import dansplugins.factionsystem.utils.extended.Scheduler;
 import org.bstats.bukkit.Metrics;
@@ -39,24 +38,32 @@ import java.util.Arrays;
  * @since May 30th, 2020
  */
 public class MedievalFactions extends PonderBukkitPlugin {
-    private final String pluginVersion = "v" + getDescription().getVersion();
 
+    private final String pluginVersion = "v" + getDescription().getVersion();
     private final ActionBarService actionBarService = new ActionBarService();
     private final ConfigService configService = new ConfigService(this);
     private final EphemeralData ephemeralData = new EphemeralData();
     private final Logger logger = new Logger(this);
     private final FiefsIntegrator fiefsIntegrator = new FiefsIntegrator(this);
-    private final Messenger messenger = new Messenger(configService.getLocaleService(), fiefsIntegrator);
     private final CurrenciesIntegrator currenciesIntegrator = new CurrenciesIntegrator();
-    private final PersistentData persistentData = new PersistentData(configService.getLocaleService(), configService, this, messenger, ephemeralData, logger, fiefsIntegrator, currenciesIntegrator);
+    private final PlayerTeleporter playerTeleporter = new PlayerTeleporter(logger);
+    private final TerritoryOwnerNotifier territoryOwnerNotifier = new TerritoryOwnerNotifier(configService.getLocaleService(), configService, actionBarService);
+    public boolean USE_NEW_LANGUAGE_FILE = configService.getBoolean("useNewLanguageFile");
+    private MedievalFactions medievalFactions;
+    private final MessageService messageService = new MessageService(medievalFactions);
+    private final PlayerService playerService = new PlayerService(medievalFactions, messageService);
+    private final Messenger messenger = new Messenger(configService.getLocaleService(), fiefsIntegrator, playerService, messageService, medievalFactions);
+    private final PersistentData persistentData = new PersistentData(configService.getLocaleService(), configService, this, messenger, ephemeralData, logger, fiefsIntegrator, currenciesIntegrator, playerService, messageService);
     private final WarFactory warFactory = new WarFactory(persistentData);
     private final RelationChecker relationChecker = new RelationChecker(persistentData);
-    private final PlayerTeleporter playerTeleporter = new PlayerTeleporter(logger);
-    private final Scheduler scheduler = new Scheduler(logger, configService.getLocaleService(), this, persistentData, configService, playerTeleporter);
-    private final CommandService commandService = new CommandService(configService.getLocaleService(), this, configService, persistentData, ephemeralData, persistentData.getChunkDataAccessor(), persistentData.getDynmapIntegrator(), warFactory, logger, scheduler, messenger, relationChecker, fiefsIntegrator, currenciesIntegrator);
-    private final GateService gateService = new GateService(persistentData, configService.getLocaleService(), ephemeralData);
-    private final LockService lockService = new LockService(persistentData, configService.getLocaleService(), persistentData.getBlockChecker(), ephemeralData);
-    private final TerritoryOwnerNotifier territoryOwnerNotifier = new TerritoryOwnerNotifier(configService.getLocaleService(), configService, actionBarService);
+    private final GateService gateService = new GateService(persistentData, configService.getLocaleService(), ephemeralData, playerService, messageService);
+    private final LockService lockService = new LockService(persistentData, configService.getLocaleService(), persistentData.getBlockChecker(), playerService, messageService, ephemeralData);
+    private final Scheduler scheduler = new Scheduler(logger, configService.getLocaleService(), this, persistentData, configService, playerTeleporter, playerService, messageService);
+    private final CommandService commandService = new CommandService(configService.getLocaleService(), this, configService, persistentData, ephemeralData, persistentData.getChunkDataAccessor(), persistentData.getDynmapIntegrator(), warFactory, logger, scheduler, messenger, relationChecker, fiefsIntegrator, currenciesIntegrator, playerService, messageService);
+
+    public ConfigService getConfigService() {
+        return configService;
+    }
 
     /**
      * This runs when the server starts.
@@ -64,6 +71,7 @@ public class MedievalFactions extends PonderBukkitPlugin {
     @Override
     public void onEnable() {
         initializeConfig();
+        messageService.createLanguageFile();
         load();
         scheduleRecurringTasks();
         registerEventHandlers();
@@ -77,6 +85,7 @@ public class MedievalFactions extends PonderBukkitPlugin {
     @Override
     public void onDisable() {
         persistentData.getLocalStorageService().save();
+        messageService.saveLanguage();
     }
 
     /**
@@ -193,9 +202,9 @@ public class MedievalFactions extends PonderBukkitPlugin {
                 new DamageHandler(logger, persistentData, ephemeralData, configService.getLocaleService(), configService, relationChecker),
                 new DeathHandler(configService, persistentData, configService.getLocaleService()),
                 new EffectHandler(ephemeralData, this, relationChecker),
-                new InteractionHandler(persistentData, persistentData.getInteractionAccessChecker(), configService.getLocaleService(), persistentData.getBlockChecker(), this, lockService, ephemeralData, gateService),
+                new InteractionHandler(persistentData, persistentData.getInteractionAccessChecker(), configService.getLocaleService(), persistentData.getBlockChecker(), this, lockService, ephemeralData, gateService, playerService, messageService),
                 new JoinHandler(persistentData, configService.getLocaleService(), configService, logger, messenger, territoryOwnerNotifier),
-                new MoveHandler(persistentData, territoryOwnerNotifier, configService.getLocaleService(), this, persistentData.getDynmapIntegrator()),
+                new MoveHandler(persistentData, territoryOwnerNotifier, configService.getLocaleService(), this, persistentData.getDynmapIntegrator(), playerService),
                 new QuitHandler(ephemeralData, persistentData, actionBarService),
                 new SpawnHandler(configService, persistentData)
         ));
@@ -224,7 +233,7 @@ public class MedievalFactions extends PonderBukkitPlugin {
 
     private void handlePlaceholdersIntegration() {
         if (Bukkit.getPluginManager().getPlugin("PlaceholderAPI") != null) {
-            new PlaceholderAPI(this, persistentData).register();
+            new PlaceholderAPI(this, persistentData, configService).register();
         }
     }
 }

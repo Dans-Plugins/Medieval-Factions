@@ -11,6 +11,8 @@ import dansplugins.factionsystem.data.PersistentData;
 import dansplugins.factionsystem.integrators.DynmapIntegrator;
 import dansplugins.factionsystem.services.ConfigService;
 import dansplugins.factionsystem.services.LocaleService;
+import dansplugins.factionsystem.services.MessageService;
+import dansplugins.factionsystem.services.PlayerService;
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
@@ -21,10 +23,10 @@ import org.bukkit.entity.Player;
 public class ConfigCommand extends SubCommand {
     private final MedievalFactions medievalFactions;
 
-    public ConfigCommand(LocaleService localeService, PersistentData persistentData, EphemeralData ephemeralData, PersistentData.ChunkDataAccessor chunkDataAccessor, DynmapIntegrator dynmapIntegrator, ConfigService configService, MedievalFactions medievalFactions) {
+    public ConfigCommand(LocaleService localeService, PersistentData persistentData, EphemeralData ephemeralData, PersistentData.ChunkDataAccessor chunkDataAccessor, DynmapIntegrator dynmapIntegrator, ConfigService configService, MedievalFactions medievalFactions, PlayerService playerService, MessageService messageService) {
         super(new String[]{
                 "config", LOCALE_PREFIX + "CmdConfig"
-        }, false, persistentData, localeService, ephemeralData, configService, chunkDataAccessor, dynmapIntegrator);
+        }, false, persistentData, localeService, ephemeralData, configService, playerService, messageService, chunkDataAccessor, dynmapIntegrator);
         this.medievalFactions = medievalFactions;
     }
 
@@ -93,6 +95,7 @@ public class ConfigCommand extends SubCommand {
             }
         } else if (reload) {
             medievalFactions.reloadConfig();
+            messageService.reloadLanguage();
             sender.sendMessage(ChatColor.GREEN + "Config reloaded.");
         } else {
             sender.sendMessage(translate("&c" + getText("ValidSubCommandsShowSet")));

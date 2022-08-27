@@ -23,25 +23,22 @@ import static org.bukkit.Bukkit.getServer;
  * @author Caibinus
  */
 public class DynmapIntegrator {
+    public static boolean dynmapInitialized = false;
     private final Logger logger;
     private final LocaleService localeService;
     private final MedievalFactions medievalFactions;
     private final PersistentData persistentData;
-
-    public static boolean dynmapInitialized = false;
-    public boolean updateClaimsAreaMarkers = false;
-    MarkerSet claims;
-    MarkerSet realms;
-    
     // Claims/factions markers
     private final Map<String, AreaMarker> resareas = new HashMap<String, AreaMarker>();
     private final Map<String, Marker> resmark = new HashMap<String, Marker>();
-
     // Dynmap integration related members
     // Realms markers
     private final Map<String, AreaMarker> realmsareas = new HashMap<String, AreaMarker>();
     private final Map<String, Marker> realmsmark = new HashMap<String, Marker>();
     private final Plugin dynmap;
+    public boolean updateClaimsAreaMarkers = false;
+    MarkerSet claims;
+    MarkerSet realms;
     private DynmapCommonAPI dynmapAPI;
     private MarkerAPI markerAPI;
 
@@ -149,7 +146,7 @@ public class DynmapIntegrator {
         ArrayDeque<int[]> stack = new ArrayDeque<int[]>();
         stack.push(new int[]{x, y});
 
-        while (stack.isEmpty() == false) {
+        while (!stack.isEmpty()) {
             int[] nxt = stack.pop();
             x = nxt[0];
             y = nxt[1];
@@ -404,7 +401,7 @@ public class DynmapIntegrator {
                 if (m == null) {
                     m = markerSet.createAreaMarker(polyid, name, false, curworld, x, z, false);
                     if (m == null) {
-                        System.out.println(String.format(localeService.get("ErrorAddingAreaMarker"), polyid));
+                        System.out.printf((localeService.get("ErrorAddingAreaMarker")) + "%n", polyid);
                         return;
                     }
                 } else {
@@ -422,7 +419,7 @@ public class DynmapIntegrator {
                         m.setFillStyle(0.3, colrCode);
                     }
                 } catch (Exception e) {
-                    System.out.println(String.format(localeService.get("ErrorSettingAreaMarkerColor"), fillColor));
+                    System.out.printf((localeService.get("ErrorSettingAreaMarkerColor")) + "%n", fillColor);
                 }
                 m.setDescription(popupDescription); /* Set popup */
 
@@ -467,7 +464,7 @@ public class DynmapIntegrator {
      * @return Dynmap polygon Id corresponding to these chunk
      * coordinates.
      */
-    
+
     @SuppressWarnings("unused")
     private String getDynmapChunkPolyId(String worldName, int x, int z) {
         // return getDynmapFactionSetId() + "_" + String.format("%d-%d", chunk.getX(), chunk.getZ());
@@ -478,7 +475,7 @@ public class DynmapIntegrator {
      *
      * Refreshes the Dynmap Player List for the nation that owns the current chunk.
      */
-    
+
     @SuppressWarnings("unused")
     private void dynmapUpdateNationPlayerLists(String holder) {
         try {

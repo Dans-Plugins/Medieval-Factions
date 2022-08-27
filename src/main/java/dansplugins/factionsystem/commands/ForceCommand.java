@@ -16,6 +16,8 @@ import dansplugins.factionsystem.objects.domain.Faction;
 import dansplugins.factionsystem.objects.domain.PowerRecord;
 import dansplugins.factionsystem.services.ConfigService;
 import dansplugins.factionsystem.services.LocaleService;
+import dansplugins.factionsystem.services.MessageService;
+import dansplugins.factionsystem.services.PlayerService;
 import dansplugins.factionsystem.utils.Logger;
 import dansplugins.fiefs.utils.UUIDChecker;
 import org.bukkit.Bukkit;
@@ -44,10 +46,10 @@ public class ForceCommand extends SubCommand {
     private final ArgumentParser argumentParser = new ArgumentParser();
     private final UUIDChecker uuidChecker = new UUIDChecker();
 
-    public ForceCommand(LocaleService localeService, PersistentData persistentData, EphemeralData ephemeralData, PersistentData.ChunkDataAccessor chunkDataAccessor, DynmapIntegrator dynmapIntegrator, ConfigService configService, MedievalFactions medievalFactions, Logger logger, FiefsIntegrator fiefsIntegrator, CurrenciesIntegrator currenciesIntegrator) {
+    public ForceCommand(LocaleService localeService, PersistentData persistentData, EphemeralData ephemeralData, PersistentData.ChunkDataAccessor chunkDataAccessor, DynmapIntegrator dynmapIntegrator, ConfigService configService, MedievalFactions medievalFactions, Logger logger, FiefsIntegrator fiefsIntegrator, CurrenciesIntegrator currenciesIntegrator, PlayerService playerService, MessageService messageService) {
         super(new String[]{
                 "Force", LOCALE_PREFIX + "CmdForce"
-        }, false, persistentData, localeService, ephemeralData, configService, chunkDataAccessor, dynmapIntegrator);
+        }, false, persistentData, localeService, ephemeralData, configService, playerService, messageService, chunkDataAccessor, dynmapIntegrator);
         this.medievalFactions = medievalFactions;
         this.logger = logger;
         this.fiefsIntegrator = fiefsIntegrator;
@@ -79,7 +81,7 @@ public class ForceCommand extends SubCommand {
      */
     @Override
     public void execute(CommandSender sender, String[] args, String key) {
-        if (!(args.length <= 0)) { // If the Argument has Arguments in the 'args' list.
+        if (!(args.length == 0)) { // If the Argument has Arguments in the 'args' list.
             for (Map.Entry<List<String>, String> entry : subMap.entrySet()) { // Loop through the SubCommands.
                 // Map.Entry<List<String>, String> example => ([Save, CMDForceSave (translation key)], forceSave)
                 try {
@@ -150,9 +152,11 @@ public class ForceCommand extends SubCommand {
             if (latter.isEnemy(former.getName())) latter.removeEnemy(former.getName());
 
             // announce peace to all players on server.
-            messageServer(translate(
-                    "&a" + getText("AlertNowAtPeaceWith", former.getName(), latter.getName())
-            ));
+            messageServer("&a" + getText("AlertNowAtPeaceWith", former.getName(), latter.getName()),
+                    Objects.requireNonNull(messageService.getLanguage().getString("AlertNowAtPeaceWith"))
+                            .replace("#p1#", former.getName())
+                            .replace("#p2#", latter.getName())
+            );
         }
     }
 
@@ -223,7 +227,7 @@ public class ForceCommand extends SubCommand {
             logger.debug("Join event was cancelled.");
             return;
         }
-        messageFaction(faction, translate("&a" + getText("HasJoined", player.getName(), faction.getName())));
+        messageFaction(faction, translate("&a" + getText("HasJoined", player.getName(), faction.getName())), "");
         faction.addMember(playerUUID);
         if (player.isOnline() && player.getPlayer() != null) {
             player.getPlayer().sendMessage(translate("&b" + getText("AlertForcedToJoinFaction")));
@@ -271,7 +275,7 @@ public class ForceCommand extends SubCommand {
         }
         ephemeralData.getPlayersInFactionChat().remove(targetUUID);
         faction.removeMember(targetUUID);
-        messageFaction(faction, translate("&c" + getText("HasBeenKickedFrom", target.getName(), faction.getName())));
+        messageFaction(faction, translate("&c" + getText("HasBeenKickedFrom", target.getName(), faction.getName())), "");
         if (target.isOnline() && target.getPlayer() != null) {
             target.getPlayer().sendMessage(translate("&c" + getText("AlertKicked", "an admin")));
         }
@@ -519,7 +523,7 @@ public class ForceCommand extends SubCommand {
 
         ephemeralData.getLockingPlayers().remove(player.getUniqueId()); // Remove from locking
 
-        // inform them they need to right click the block that they want to lock or type /mf lock cancel to cancel it
+        // inform them they need to right-click the block that they want to lock or type /mf lock cancel to cancel it
         player.sendMessage(translate("&a" + getText("RightClickForceUnlock")));
     }
 
@@ -553,7 +557,7 @@ public class ForceCommand extends SubCommand {
             return;
         }
 
-        this.faction = new Faction(configService, localeService, fiefsIntegrator, currenciesIntegrator, dynmapIntegrator, logger, persistentData, medievalFactions, newFactionName);
+        this.faction = new Faction(configService, localeService, fiefsIntegrator, currenciesIntegrator, dynmapIntegrator, logger, persistentData, medievalFactions, playerService, newFactionName);
         FactionCreateEvent createEvent = new FactionCreateEvent(this.faction, player);
         Bukkit.getPluginManager().callEvent(createEvent);
         if (!createEvent.isCancelled()) {

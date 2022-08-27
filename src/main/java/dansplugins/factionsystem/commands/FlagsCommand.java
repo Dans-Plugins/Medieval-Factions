@@ -11,6 +11,8 @@ import dansplugins.factionsystem.integrators.DynmapIntegrator;
 import dansplugins.factionsystem.objects.domain.Faction;
 import dansplugins.factionsystem.services.ConfigService;
 import dansplugins.factionsystem.services.LocaleService;
+import dansplugins.factionsystem.services.MessageService;
+import dansplugins.factionsystem.services.PlayerService;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
@@ -19,10 +21,8 @@ import org.bukkit.entity.Player;
  */
 public class FlagsCommand extends SubCommand {
 
-    public FlagsCommand(LocaleService localeService, PersistentData persistentData, EphemeralData ephemeralData, PersistentData.ChunkDataAccessor chunkDataAccessor, DynmapIntegrator dynmapIntegrator, ConfigService configService) {
-        super(new String[]{
-                "flags", LOCALE_PREFIX + "CmdFlags"
-        }, true, true, false, true, localeService, persistentData, ephemeralData, chunkDataAccessor, dynmapIntegrator, configService);
+    public FlagsCommand(LocaleService localeService, PersistentData persistentData, EphemeralData ephemeralData, PersistentData.ChunkDataAccessor chunkDataAccessor, DynmapIntegrator dynmapIntegrator, ConfigService configService, PlayerService playerService, MessageService messageService) {
+        super(new String[]{"flags", LOCALE_PREFIX + "CmdFlags"}, true, true, false, true, localeService, persistentData, ephemeralData, chunkDataAccessor, dynmapIntegrator, configService, playerService, messageService);
     }
 
     /**
@@ -40,19 +40,19 @@ public class FlagsCommand extends SubCommand {
         }
 
         if (args.length == 0) {
-            player.sendMessage(translate("&c" + getText("ValidSubCommandsShowSet")));
+            playerService.sendMessageType(player, "&c" + getText("ValidSubCommandsShowSet"), "ValidSubCommandsShowSet", false);
             return;
         }
 
         final Faction playersFaction = getPlayerFaction(player);
 
-        final boolean show = safeEquals(args[0], "get", "show", getText("CmdFlagsShow"));
-        final boolean set = safeEquals(args[0], "set", getText("CmdFlagsSet"));
+        final boolean show = safeEquals(args[0], "get", "show", playerService.getMessageType(getText("CmdFlagsShow"), messageService.getLanguage().getString("Alias.CmdFlagsShow")));
+        final boolean set = safeEquals(args[0], "set", playerService.getMessageType(getText("CmdFlagsSet"), messageService.getLanguage().getString("Alias.CmdFlagsSet")));
         if (show) {
             playersFaction.getFlags().sendFlagList(player);
         } else if (set) {
             if (args.length < 3) {
-                player.sendMessage(translate("&c" + getText("UsageFlagsSet")));
+                playerService.sendMessageType(player, "&c" + getText("UsageFlagsSet"), "UsageFlagsSet", false);
             } else {
                 final StringBuilder builder = new StringBuilder(); // Send the flag_argument as one String
                 for (int i = 2; i < args.length; i++) builder.append(args[i]).append(" ");
@@ -60,7 +60,8 @@ public class FlagsCommand extends SubCommand {
 
             }
         } else {
-            player.sendMessage(translate("&c" + getText("FlagsValidSubCommandsShowSet")));
+            playerService.sendMessageType(player, "&c" + getText("ValidSubCommandsShowSet"), "ValidSubCommandsShowSet", false);
+
         }
     }
 
