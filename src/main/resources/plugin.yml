@@ -49,6 +49,9 @@ commands:
       /f invoke [ally] [enemy] - Invokes a faction into war
       /f leave - Leaves your faction
       /f vassalize [faction] - Sends a vassalization request to a faction.
+      /f swearfealty [faction] - Swears fealty to a faction that has sent you a vassalization request
+      /f declareindependence - Declares independence from your current liege, triggering a war
+      /f grantindependence [vassal] - Grants independence to one of your vassals
     aliases: [f, fraktion, faccion, faccao, фракция, ф]
     usage: /<command> [help|ally|breakalliance|declarewar|makepeace|create|invite|join|law|role|list|claim|power|who|invoke|leave|vassalize]
 permissions:
@@ -123,4 +126,13 @@ permissions:
     default: true
   mf.vassalize:
     description: Allows sending vassalization requests
+    default: true
+  mf.swearfealty:
+    description: Allows swearing fealty to another faction
+    default: true
+  mf.declareindependence:
+    description: Allows declaring independence from your liege
+    default: true
+  mf.grantindependence:
+    description: Allows granting independence to a vassal
     default: true
