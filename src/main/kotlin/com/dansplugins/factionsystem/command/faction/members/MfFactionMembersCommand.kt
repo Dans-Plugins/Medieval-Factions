@@ -1,6 +1,7 @@
 package com.dansplugins.factionsystem.command.faction.members
 
 import com.dansplugins.factionsystem.MedievalFactions
+import com.dansplugins.factionsystem.faction.permission.MfFactionPermission.Companion.LIST_MEMBERS
 import com.dansplugins.factionsystem.player.MfPlayer
 import dev.forkhandles.result4k.onFailure
 import org.bukkit.ChatColor.RED
@@ -38,15 +39,22 @@ class MfFactionMembersCommand(private val plugin: MedievalFactions) : CommandExe
                 return@Runnable
             }
             val role = faction.getRole(mfPlayer.id)
-            if (role == null || !role.hasPermission(faction, MEMBERS)) {
+            if (role == null || !role.hasPermission(faction, LIST_MEMBERS)) {
                 sender.sendMessage("$RED${plugin.language["CommandFactionMembersNoFactionPermission"]}")
                 return@Runnable
             }
             // send player list of members
             sender.sendMessage("$AQUA${plugin.language["CommandFactionMembersTitle", faction.name]}")
+            var toSend = ""
+            var memberCount = 0
             for (member in faction.members) {
-                sender.sendMessage("$AQUA" + member.player.toBukkit().getName())
+                toSend = toSend + member.player.toBukkit().getName()
+                memberCount = memberCount + 1
+                if (memberCount != faction.members.size) {
+                    toSend = toSend + ","
+                }
             }
+            sender.sendMessage("$AQUA" + toSend)
         })
         return true
     }

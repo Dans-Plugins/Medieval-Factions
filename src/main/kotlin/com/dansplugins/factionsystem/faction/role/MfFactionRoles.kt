@@ -21,6 +21,7 @@ import com.dansplugins.factionsystem.faction.permission.MfFactionPermission.Comp
 import com.dansplugins.factionsystem.faction.permission.MfFactionPermission.Companion.KICK
 import com.dansplugins.factionsystem.faction.permission.MfFactionPermission.Companion.LIST_GATES
 import com.dansplugins.factionsystem.faction.permission.MfFactionPermission.Companion.LIST_LAWS
+import com.dansplugins.factionsystem.faction.permission.MfFactionPermission.Companion.LIST_MEMBERS
 import com.dansplugins.factionsystem.faction.permission.MfFactionPermission.Companion.MAKE_PEACE
 import com.dansplugins.factionsystem.faction.permission.MfFactionPermission.Companion.MODIFY_ROLE
 import com.dansplugins.factionsystem.faction.permission.MfFactionPermission.Companion.PROMOTE
@@ -81,6 +82,7 @@ data class MfFactionRoles(
                     put(SET_ROLE_PERMISSION(SET_HOME), true)
                     put(SET_ROLE_PERMISSION(KICK), true)
                     put(SET_ROLE_PERMISSION(MODIFY_ROLE(member.id)), true)
+                    put(SET_ROLE_PERMISSION(LIST_MEMBERS), true)
                 }
             )
             val ownerId = MfFactionRoleId.generate()
@@ -130,6 +132,7 @@ data class MfFactionRoles(
                     put(MODIFY_ROLE(officer.id), true)
                     put(SET_MEMBER_ROLE(member.id), true)
                     put(SET_MEMBER_ROLE(officer.id), true)
+                    put(LIST_MEMBERS, true)
 
                     putAll(MfFactionPermission.values(flags, listOf(member.id, officer.id, ownerId)).map { permission -> SET_ROLE_PERMISSION(permission) to true })
                 }

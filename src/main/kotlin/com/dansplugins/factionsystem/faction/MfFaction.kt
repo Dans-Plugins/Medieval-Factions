@@ -23,6 +23,7 @@ import com.dansplugins.factionsystem.faction.permission.MfFactionPermission.Comp
 import com.dansplugins.factionsystem.faction.permission.MfFactionPermission.Companion.KICK
 import com.dansplugins.factionsystem.faction.permission.MfFactionPermission.Companion.LIST_GATES
 import com.dansplugins.factionsystem.faction.permission.MfFactionPermission.Companion.LIST_LAWS
+import com.dansplugins.factionsystem.faction.permission.MfFactionPermission.Companion.LIST_MEMBERS
 import com.dansplugins.factionsystem.faction.permission.MfFactionPermission.Companion.LIST_ROLES
 import com.dansplugins.factionsystem.faction.permission.MfFactionPermission.Companion.MAKE_PEACE
 import com.dansplugins.factionsystem.faction.permission.MfFactionPermission.Companion.MODIFY_ROLE
@@ -49,6 +50,7 @@ import com.dansplugins.factionsystem.faction.role.MfFactionRoles
 import com.dansplugins.factionsystem.notification.MfNotification
 import com.dansplugins.factionsystem.player.MfPlayerId
 import com.dansplugins.factionsystem.relationship.MfFactionRelationshipType.VASSAL
+import java.util.Collections.emptyList
 import kotlin.math.roundToInt
 
 data class MfFaction(
@@ -108,6 +110,7 @@ data class MfFaction(
             put(SET_MEMBER_ROLE(role.id), false)
         }
         put(LIST_ROLES, true)
+        put(LIST_MEMBERS, true)
 
         putAll(keys.map { permission -> SET_ROLE_PERMISSION(permission) to false })
     }
