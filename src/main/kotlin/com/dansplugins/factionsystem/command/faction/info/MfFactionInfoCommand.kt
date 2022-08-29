@@ -37,6 +37,11 @@ class MfFactionInfoCommand(private val plugin: MedievalFactions) : CommandExecut
                 sender.sendMessage("$RED${plugin.language["CommandFactionInfoMustBeInAFaction"]}")
                 return@Runnable
             }
+            val role = faction.getRole(mfPlayer.id)
+            if (role == null || !role.hasPermission(faction, INFO)) {
+                sender.sendMessage("$RED${plugin.language["CommandFactionInfoNoFactionPermission"]}")
+                return@Runnable
+            }
             // send player faction info
             sender.sendMessage("$AQUA${plugin.language["CommandFactionInfoTitle", faction.name]}")
             sender.sendMessage("$AQUA${plugin.language["CommandFactionInfoDescription", faction.description]}")
