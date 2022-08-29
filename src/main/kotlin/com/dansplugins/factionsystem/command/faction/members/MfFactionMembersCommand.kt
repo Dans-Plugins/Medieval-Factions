@@ -37,6 +37,11 @@ class MfFactionMembersCommand(private val plugin: MedievalFactions) : CommandExe
                 sender.sendMessage("$RED${plugin.language["CommandFactionMembersMustBeInAFaction"]}")
                 return@Runnable
             }
+            val role = faction.getRole(mfPlayer.id)
+            if (role == null || !role.hasPermission(faction, MEMBERS)) {
+                sender.sendMessage("$RED${plugin.language["CommandFactionMembersNoFactionPermission"]}")
+                return@Runnable
+            }
             // send player list of members
             sender.sendMessage("$AQUA${plugin.language["CommandFactionMembersTitle", faction.name]}")
             for (member in faction.members) {
