@@ -53,7 +53,7 @@ commands:
       /f declareindependence - Declares independence from your current liege, triggering a war
       /f grantindependence [vassal] - Grants independence to one of your vassals
     aliases: [f, fraktion, faccion, faccao, фракция, ф]
-    usage: /<command> [help|ally|breakalliance|declarewar|makepeace|create|invite|join|law|role|list|claim|power|who|invoke|leave|vassalize]
+    usage: /<command> [help|ally|breakalliance|declarewar|makepeace|create|invite|join|law|role|list|claim|power|who|invoke|leave|vassalize|swearfealty|declareindependence|grantindependence]
 permissions:
   mf.help:
     description: View a list of helpful commands.
