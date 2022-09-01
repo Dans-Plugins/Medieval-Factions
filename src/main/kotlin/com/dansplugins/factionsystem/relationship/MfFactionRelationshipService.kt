@@ -4,6 +4,8 @@ import com.dansplugins.factionsystem.faction.MfFactionId
 import com.dansplugins.factionsystem.failure.OptimisticLockingFailureException
 import com.dansplugins.factionsystem.failure.ServiceFailure
 import com.dansplugins.factionsystem.failure.ServiceFailureType
+import com.dansplugins.factionsystem.relationship.MfFactionRelationshipType.LIEGE
+import com.dansplugins.factionsystem.relationship.MfFactionRelationshipType.VASSAL
 import dev.forkhandles.result4k.Result4k
 import dev.forkhandles.result4k.mapFailure
 import dev.forkhandles.result4k.resultFrom
@@ -32,6 +34,27 @@ class MfFactionRelationshipService(private val repository: MfFactionRelationship
         repository.delete(id)
     }.mapFailure { exception ->
         ServiceFailure(exception.toServiceFailureType(), "Service error: ${exception.message}", exception)
+    }
+
+    fun getVassalTree(factionId: MfFactionId): MfVassalNode {
+        return MfVassalNode(
+            factionId,
+            getRelationships(factionId, VASSAL)
+                .filter { relationship ->
+                    getRelationships(relationship.targetId, factionId).any {
+                        it.type == LIEGE
+                    }
+                }.map { getVassalTree(it.targetId) }
+        )
+    }
+
+    fun getLiegeChain(factionId: MfFactionId): MfLiegeNode {
+        val liege = getRelationships(factionId, LIEGE).singleOrNull()?.targetId
+        return if (liege != null) {
+            MfLiegeNode(factionId, getLiegeChain(liege))
+        } else {
+            MfLiegeNode(factionId, null)
+        }
     }
 
     private fun Exception.toServiceFailureType(): ServiceFailureType {

@@ -5,8 +5,10 @@ import com.dansplugins.factionsystem.command.faction.ally.MfFactionAllyCommand
 import com.dansplugins.factionsystem.command.faction.breakalliance.MfFactionBreakAllianceCommand
 import com.dansplugins.factionsystem.command.faction.claim.MfFactionClaimCommand
 import com.dansplugins.factionsystem.command.faction.create.MfFactionCreateCommand
+import com.dansplugins.factionsystem.command.faction.declareindependence.MfFactionDeclareIndependenceCommand
 import com.dansplugins.factionsystem.command.faction.declarewar.MfFactionDeclareWarCommand
 import com.dansplugins.factionsystem.command.faction.disband.MfFactionDisbandCommand
+import com.dansplugins.factionsystem.command.faction.grantindependence.MfFactionGrantIndependenceCommand
 import com.dansplugins.factionsystem.command.faction.help.MfFactionHelpCommand
 import com.dansplugins.factionsystem.command.faction.invite.MfFactionInviteCommand
 import com.dansplugins.factionsystem.command.faction.invoke.MfFactionInvokeCommand
@@ -18,6 +20,8 @@ import com.dansplugins.factionsystem.command.faction.makepeace.MfFactionMakePeac
 import com.dansplugins.factionsystem.command.faction.power.MfFactionPowerCommand
 import com.dansplugins.factionsystem.command.faction.role.MfFactionRoleCommand
 import com.dansplugins.factionsystem.command.faction.set.MfFactionSetCommand
+import com.dansplugins.factionsystem.command.faction.swearfealty.MfFactionSwearFealtyCommand
+import com.dansplugins.factionsystem.command.faction.vassalize.MfFactionVassalizeCommand
 import com.dansplugins.factionsystem.command.faction.who.MfFactionWhoCommand
 import org.bukkit.ChatColor.RED
 import org.bukkit.command.Command
@@ -44,6 +48,10 @@ class MfFactionCommand(private val plugin: MedievalFactions) : CommandExecutor {
     private val factionInvokeCommand = MfFactionInvokeCommand(plugin)
     private val factionLeaveCommand = MfFactionLeaveCommand(plugin)
     private val factionSetCommand = MfFactionSetCommand(plugin)
+    private val factionVassalizeCommand = MfFactionVassalizeCommand(plugin)
+    private val factionSwearFealtyCommand = MfFactionSwearFealtyCommand(plugin)
+    private val factionGrantIndependenceCommand = MfFactionGrantIndependenceCommand(plugin)
+    private val factionDeclareIndependenceCommand = MfFactionDeclareIndependenceCommand(plugin)
 
     override fun onCommand(sender: CommandSender, command: Command, label: String, args: Array<out String>): Boolean {
         if (args.isEmpty()) {
@@ -69,6 +77,10 @@ class MfFactionCommand(private val plugin: MedievalFactions) : CommandExecutor {
             "invoke", plugin.language["CmdFactionInvoke"] -> factionInvokeCommand.onCommand(sender, command, label, args.drop(1).toTypedArray())
             "leave", plugin.language["CmdFactionLeave"] -> factionLeaveCommand.onCommand(sender, command, label, args.drop(1).toTypedArray())
             "rename", plugin.language["CmdFactionSet"] -> factionSetCommand.onCommand(sender, command, label, args.drop(1).toTypedArray())
+            "vassalize", "vassalise", plugin.language["CmdFactionVassalize"] -> factionVassalizeCommand.onCommand(sender, command, label, args.drop(1).toTypedArray())
+            "swearfealty", plugin.language["CmdFactionSwearFealty"] -> factionSwearFealtyCommand.onCommand(sender, command, label, args.drop(1).toTypedArray())
+            "grantindependence", plugin.language["CmdFactionGrantIndependence"] -> factionGrantIndependenceCommand.onCommand(sender, command, label, args.drop(1).toTypedArray())
+            "declareindependence", plugin.language["CmdFactionDeclareIndependence"] -> factionDeclareIndependenceCommand.onCommand(sender, command, label, args.drop(1).toTypedArray())
             else -> {
                 sender.sendMessage("$RED${plugin.language["CommandFactionUsage"]}")
                 true
