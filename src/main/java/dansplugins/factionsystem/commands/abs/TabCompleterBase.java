@@ -38,7 +38,7 @@ public class TabCompleterBase implements TabCompleter {
 	}
 
 	public List<String> filterStartingWith(String prefix, Stream<String> stream) {
-		return (List)stream.filter((s) -> {
+		return stream.filter((s) -> {
 			return s != null && !s.isEmpty() && s.toLowerCase().startsWith(prefix.toLowerCase());
 		}).collect(Collectors.toList());
 	}
