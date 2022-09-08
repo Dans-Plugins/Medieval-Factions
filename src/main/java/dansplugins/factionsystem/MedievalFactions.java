@@ -4,6 +4,8 @@
  */
 package dansplugins.factionsystem;
 
+import dansplugins.factionsystem.commands.AddLawCommand;
+import dansplugins.factionsystem.commands.abs.TabCompleterBase;
 import dansplugins.factionsystem.data.EphemeralData;
 import dansplugins.factionsystem.data.PersistentData;
 import dansplugins.factionsystem.eventhandlers.*;
@@ -49,10 +51,9 @@ public class MedievalFactions extends PonderBukkitPlugin {
     private final PlayerTeleporter playerTeleporter = new PlayerTeleporter(logger);
     private final TerritoryOwnerNotifier territoryOwnerNotifier = new TerritoryOwnerNotifier(configService.getLocaleService(), configService, actionBarService);
     public boolean USE_NEW_LANGUAGE_FILE = configService.getBoolean("useNewLanguageFile");
-    private MedievalFactions medievalFactions;
-    private final MessageService messageService = new MessageService(medievalFactions);
-    private final PlayerService playerService = new PlayerService(medievalFactions, messageService);
-    private final Messenger messenger = new Messenger(configService.getLocaleService(), fiefsIntegrator, playerService, messageService, medievalFactions);
+    private final MessageService messageService = new MessageService(this);
+    private final PlayerService playerService = new PlayerService(this, messageService);
+    private final Messenger messenger = new Messenger(configService.getLocaleService(), fiefsIntegrator, playerService, messageService, this);
     private final PersistentData persistentData = new PersistentData(configService.getLocaleService(), configService, this, messenger, ephemeralData, logger, fiefsIntegrator, currenciesIntegrator, playerService, messageService);
     private final WarFactory warFactory = new WarFactory(persistentData);
     private final RelationChecker relationChecker = new RelationChecker(persistentData);
@@ -64,6 +65,7 @@ public class MedievalFactions extends PonderBukkitPlugin {
     public ConfigService getConfigService() {
         return configService;
     }
+
 
     /**
      * This runs when the server starts.
@@ -77,6 +79,11 @@ public class MedievalFactions extends PonderBukkitPlugin {
         registerEventHandlers();
         handleIntegrations();
         makeSureEveryPlayerExperiencesPowerDecay();
+
+        getCommand("mf").setTabCompleter(new TabCompleterBase(persistentData, configService));
+        getCommand("f").setTabCompleter(new TabCompleterBase(persistentData, configService));
+        getCommand("medievalfactions").setTabCompleter(new TabCompleterBase(persistentData, configService));
+        getCommand("factions").setTabCompleter(new TabCompleterBase(persistentData, configService));
     }
 
     /**

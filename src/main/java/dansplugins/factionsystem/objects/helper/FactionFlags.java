@@ -123,6 +123,11 @@ public class FactionFlags {
         }
     }
 
+    public ArrayList<String> getFlagNamesList()
+    {
+        return flagNames;
+    }
+
     public void sendFlagList(Player player) {
         player.sendMessage(ChatColor.AQUA + "" + getFlagsSeparatedByCommas());
     }
