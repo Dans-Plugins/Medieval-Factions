@@ -16,14 +16,12 @@ import static org.bukkit.Bukkit.getServer;
  * @author Daniel McCoy Stephenson
  */
 public class Group {
+    private final ArrayList<UUID> invited = new ArrayList<>();
     protected String name = "defaultName";
     protected String description = "defaultDescription";
     protected UUID owner = UUID.randomUUID();
-
     protected ArrayList<UUID> members = new ArrayList<>();
     protected ArrayList<UUID> officers = new ArrayList<>();
-
-    private final ArrayList<UUID> invited = new ArrayList<>();
 
     public String getName() {
         return name;

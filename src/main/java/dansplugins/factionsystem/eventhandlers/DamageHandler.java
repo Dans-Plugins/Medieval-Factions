@@ -87,7 +87,7 @@ public class DamageHandler implements Listener {
         }
 
         // case 3
-        if (relationChecker.arePlayersInSameFaction(attacker, victim)){
+        if (relationChecker.arePlayersInSameFaction(attacker, victim)) {
             logger.debug("Players are in the same faction. Handling friendly fire.");
             handleFriendlyFire(event, attacker, victim);
             return;
@@ -153,11 +153,9 @@ public class DamageHandler implements Listener {
     private Player getAttacker(EntityDamageByEntityEvent event) {
         if (wasDamageWasBetweenPlayers(event)) {
             return (Player) event.getDamager();
-        }
-        else if (wasPlayerWasDamagedByAProjectile(event) && wasProjectileShotByPlayer(event)) {
+        } else if (wasPlayerWasDamagedByAProjectile(event) && wasProjectileShotByPlayer(event)) {
             return (Player) getProjectileSource(event);
-        }
-        else {
+        } else {
             return null;
         }
     }

@@ -10,6 +10,8 @@ import dansplugins.factionsystem.data.PersistentData;
 import dansplugins.factionsystem.integrators.DynmapIntegrator;
 import dansplugins.factionsystem.services.ConfigService;
 import dansplugins.factionsystem.services.LocaleService;
+import dansplugins.factionsystem.services.MessageService;
+import dansplugins.factionsystem.services.PlayerService;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
@@ -18,10 +20,10 @@ import org.bukkit.entity.Player;
  */
 public class ChatCommand extends SubCommand {
 
-    public ChatCommand(LocaleService localeService, PersistentData persistentData, EphemeralData ephemeralData, PersistentData.ChunkDataAccessor chunkDataAccessor, DynmapIntegrator dynmapIntegrator, ConfigService configService) {
+    public ChatCommand(LocaleService localeService, PersistentData persistentData, EphemeralData ephemeralData, PersistentData.ChunkDataAccessor chunkDataAccessor, DynmapIntegrator dynmapIntegrator, ConfigService configService, PlayerService playerService, MessageService messageService) {
         super(new String[]{
                 "chat", LOCALE_PREFIX + "CmdChat"
-        }, true, true, persistentData, localeService, ephemeralData, configService, chunkDataAccessor, dynmapIntegrator);
+        }, true, true, persistentData, localeService, ephemeralData, configService, playerService, messageService, chunkDataAccessor, dynmapIntegrator);
     }
 
     /**
@@ -34,8 +36,7 @@ public class ChatCommand extends SubCommand {
     @Override
     public void execute(Player player, String[] args, String key) {
         final String permission = "mf.chat";
-        if (!player.hasPermission(permission)) {
-            player.sendMessage(translate("&c" + getText("PermissionNeeded", permission)));
+        if (!checkPermissions(player, permission)) {
             return;
         }
 
@@ -48,8 +49,7 @@ public class ChatCommand extends SubCommand {
         } else {
             ephemeralData.getPlayersInFactionChat().add(player.getUniqueId());
         }
-
-        player.sendMessage(translate("&a" + getText(path)));
+        playerService.sendMessageType(player, "&c" + getText(path), path, false);
     }
 
     /**

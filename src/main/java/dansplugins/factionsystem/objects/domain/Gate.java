@@ -38,11 +38,13 @@ public class Gate {
     private World _world = null;
     private String world = "";
     private GateStatus gateStatus = GateStatus.READY;
+
     public Gate(MedievalFactions medievalFactions, ConfigService configService) {
 
         this.medievalFactions = medievalFactions;
         this.configService = configService;
     }
+
     public Gate(String name, MedievalFactions medievalFactions, ConfigService configService) {
         this.medievalFactions = medievalFactions;
         this.configService = configService;

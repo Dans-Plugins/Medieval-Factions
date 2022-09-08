@@ -10,6 +10,7 @@ import dansplugins.factionsystem.integrators.DynmapIntegrator;
 import dansplugins.factionsystem.objects.domain.ClaimedChunk;
 import dansplugins.factionsystem.objects.domain.Faction;
 import dansplugins.factionsystem.services.LocaleService;
+import dansplugins.factionsystem.services.PlayerService;
 import dansplugins.factionsystem.utils.TerritoryOwnerNotifier;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
@@ -31,13 +32,15 @@ public class MoveHandler implements Listener {
     private final LocaleService localeService;
     private final MedievalFactions medievalFactions;
     private final DynmapIntegrator dynmapIntegrator;
+    private final PlayerService playerService;
 
-    public MoveHandler(PersistentData persistentData, TerritoryOwnerNotifier territoryOwnerNotifier, LocaleService localeService, MedievalFactions medievalFactions, DynmapIntegrator dynmapIntegrator) {
+    public MoveHandler(PersistentData persistentData, TerritoryOwnerNotifier territoryOwnerNotifier, LocaleService localeService, MedievalFactions medievalFactions, DynmapIntegrator dynmapIntegrator, PlayerService playerService) {
         this.persistentData = persistentData;
         this.territoryOwnerNotifier = territoryOwnerNotifier;
         this.localeService = localeService;
         this.medievalFactions = medievalFactions;
         this.dynmapIntegrator = dynmapIntegrator;
+        this.playerService = playerService;
     }
 
     @EventHandler()
@@ -97,7 +100,7 @@ public class MoveHandler implements Listener {
                 if (notAtDemesneLimit(playersFaction)) {
                     scheduleClaiming(player, playersFaction);
                 } else {
-                    player.sendMessage(ChatColor.RED + localeService.get("AlertReachedDemesne"));
+                    playerService.sendMessageType(player, ChatColor.RED + localeService.get("AlertReachedDemesne"), "AlertReachedDemesne", false);
                 }
             }
         }

@@ -10,6 +10,8 @@ import dansplugins.factionsystem.data.PersistentData;
 import dansplugins.factionsystem.integrators.DynmapIntegrator;
 import dansplugins.factionsystem.services.ConfigService;
 import dansplugins.factionsystem.services.LocaleService;
+import dansplugins.factionsystem.services.MessageService;
+import dansplugins.factionsystem.services.PlayerService;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
@@ -24,10 +26,10 @@ public class HelpCommand extends SubCommand {
     private static final int LAST_PAGE = 7;
     private final HashMap<Integer, List<String>> helpPages = new HashMap<>();
 
-    public HelpCommand(LocaleService localeService, PersistentData persistentData, EphemeralData ephemeralData, PersistentData.ChunkDataAccessor chunkDataAccessor, DynmapIntegrator dynmapIntegrator, ConfigService configService) {
+    public HelpCommand(LocaleService localeService, PersistentData persistentData, EphemeralData ephemeralData, PersistentData.ChunkDataAccessor chunkDataAccessor, DynmapIntegrator dynmapIntegrator, ConfigService configService, PlayerService playerService, MessageService messageService) {
         super(new String[]{
                 "help", LOCALE_PREFIX + "CmdHelp"
-        }, false, persistentData, localeService, ephemeralData, configService, chunkDataAccessor, dynmapIntegrator);
+        }, false, persistentData, localeService, ephemeralData, configService, playerService, messageService, chunkDataAccessor, dynmapIntegrator);
 
         // there should be 9 commands per page
         helpPages.put(1, Arrays.asList("Help", "List", "Info", "Members", "Join", "Leave", "Create", "Invite", "Desc"));
@@ -63,7 +65,7 @@ public class HelpCommand extends SubCommand {
         if (!(checkPermissions(sender, "mf.help"))) {
             return;
         }
-        int page = (args.length <= 0 ? 1 : getIntSafe(args[0], 1));
+        int page = (args.length == 0 ? 1 : getIntSafe(args[0], 1));
         if (page > LAST_PAGE) {
             page = LAST_PAGE; // Upper Limit over LAST_PAGE
         }

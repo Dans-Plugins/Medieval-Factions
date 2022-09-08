@@ -10,6 +10,8 @@ import dansplugins.factionsystem.integrators.DynmapIntegrator;
 import dansplugins.factionsystem.objects.domain.Faction;
 import dansplugins.factionsystem.services.ConfigService;
 import dansplugins.factionsystem.services.LocaleService;
+import dansplugins.factionsystem.services.MessageService;
+import dansplugins.factionsystem.services.PlayerService;
 import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.command.CommandSender;
@@ -26,26 +28,29 @@ import java.util.UUID;
  */
 public abstract class SubCommand implements ColorTranslator {
     public static final String LOCALE_PREFIX = "Locale_";
-    private final boolean playerCommand;
-    private final boolean requiresFaction;
-    private final boolean requiresOfficer;
-    private final boolean requiresOwner;
     protected final LocaleService localeService;
     protected final PersistentData persistentData;
     protected final EphemeralData ephemeralData;
     protected final PersistentData.ChunkDataAccessor chunkDataAccessor;
     protected final DynmapIntegrator dynmapIntegrator;
     protected final ConfigService configService;
+    protected final PlayerService playerService;
+    protected final MessageService messageService;
+    private final boolean playerCommand;
+    private final boolean requiresFaction;
+    private final boolean requiresOfficer;
+    private final boolean requiresOwner;
     protected Faction faction = null;
     private String[] names;
 
     /**
      * Constructor to initialise a Command.
-     * @param names           of the command, for example, "Fly, FFly, Flight".
-     * @param playerCommand   if the command is exclusive to players.
-     * @param requiresFaction if the command requires a Faction to perform.
-     * @param requiresOfficer if the command requires officer or higher.
-     * @param requiresOwner   if the command is reserved for Owners.
+     *
+     * @param names             of the command, for example, "Fly, FFly, Flight".
+     * @param playerCommand     if the command is exclusive to players.
+     * @param requiresFaction   if the command requires a Faction to perform.
+     * @param requiresOfficer   if the command requires officer or higher.
+     * @param requiresOwner     if the command is reserved for Owners.
      * @param localeService
      * @param persistentData
      * @param ephemeralData
@@ -53,7 +58,7 @@ public abstract class SubCommand implements ColorTranslator {
      * @param dynmapIntegrator
      * @param configService
      */
-    public SubCommand(String[] names, boolean playerCommand, boolean requiresFaction, boolean requiresOfficer, boolean requiresOwner, LocaleService localeService, PersistentData persistentData, EphemeralData ephemeralData, PersistentData.ChunkDataAccessor chunkDataAccessor, DynmapIntegrator dynmapIntegrator, ConfigService configService) {
+    public SubCommand(String[] names, boolean playerCommand, boolean requiresFaction, boolean requiresOfficer, boolean requiresOwner, LocaleService localeService, PersistentData persistentData, EphemeralData ephemeralData, PersistentData.ChunkDataAccessor chunkDataAccessor, DynmapIntegrator dynmapIntegrator, ConfigService configService, PlayerService playerService, MessageService messageService) {
         this.localeService = localeService;
         this.persistentData = persistentData;
         this.ephemeralData = ephemeralData;
@@ -65,13 +70,16 @@ public abstract class SubCommand implements ColorTranslator {
         this.requiresFaction = requiresFaction;
         this.requiresOfficer = requiresOfficer;
         this.requiresOwner = requiresOwner;
+        this.playerService = playerService;
+        this.messageService = messageService;
     }
 
     /**
      * Constructor to initialise a command without owner/faction checks.
-     * @param names           of the command.
-     * @param playerCommand   if the command is exclusive to players.
-     * @param requiresFaction if the command requires a Faction to do.
+     *
+     * @param names             of the command.
+     * @param playerCommand     if the command is exclusive to players.
+     * @param requiresFaction   if the command requires a Faction to do.
      * @param persistentData
      * @param localeService
      * @param ephemeralData
@@ -79,14 +87,15 @@ public abstract class SubCommand implements ColorTranslator {
      * @param chunkDataAccessor
      * @param dynmapIntegrator
      */
-    public SubCommand(String[] names, boolean playerCommand, boolean requiresFaction, PersistentData persistentData, LocaleService localeService, EphemeralData ephemeralData, ConfigService configService, PersistentData.ChunkDataAccessor chunkDataAccessor, DynmapIntegrator dynmapIntegrator) {
-        this(names, playerCommand, requiresFaction, false, false, localeService, persistentData, ephemeralData, chunkDataAccessor, dynmapIntegrator, configService);
+    public SubCommand(String[] names, boolean playerCommand, boolean requiresFaction, PersistentData persistentData, LocaleService localeService, EphemeralData ephemeralData, ConfigService configService, PlayerService playerService, MessageService messageService, PersistentData.ChunkDataAccessor chunkDataAccessor, DynmapIntegrator dynmapIntegrator) {
+        this(names, playerCommand, requiresFaction, false, false, localeService, persistentData, ephemeralData, chunkDataAccessor, dynmapIntegrator, configService, playerService, messageService);
     }
 
     /**
      * Constructor to initialise a command without faction checks.
-     * @param names         of the command.
-     * @param playerCommand if the command is exclusive to players.
+     *
+     * @param names             of the command.
+     * @param playerCommand     if the command is exclusive to players.
      * @param persistentData
      * @param localeService
      * @param ephemeralData
@@ -94,8 +103,8 @@ public abstract class SubCommand implements ColorTranslator {
      * @param chunkDataAccessor
      * @param dynmapIntegrator
      */
-    public SubCommand(String[] names, boolean playerCommand, PersistentData persistentData, LocaleService localeService, EphemeralData ephemeralData, ConfigService configService, PersistentData.ChunkDataAccessor chunkDataAccessor, DynmapIntegrator dynmapIntegrator) {
-        this(names, playerCommand, false, persistentData, localeService, ephemeralData, configService, chunkDataAccessor, dynmapIntegrator);
+    public SubCommand(String[] names, boolean playerCommand, PersistentData persistentData, LocaleService localeService, EphemeralData ephemeralData, ConfigService configService, PlayerService playerService, MessageService messageService, PersistentData.ChunkDataAccessor chunkDataAccessor, DynmapIntegrator dynmapIntegrator) {
+        this(names, playerCommand, false, persistentData, localeService, ephemeralData, configService, playerService, messageService, chunkDataAccessor, dynmapIntegrator);
     }
 
     protected void loadCommandNames(String[] names) {
@@ -191,12 +200,11 @@ public abstract class SubCommand implements ColorTranslator {
     public boolean checkPermissions(CommandSender sender, String... permission) {
         boolean has = false;
         for (String perm : permission) {
-            if (has = sender.hasPermission(perm)) {
-                break;
-            }
+            has = sender.hasPermission(perm);
+            break;
         }
         if (!has) {
-            sender.sendMessage(translate("&c" + getText("PermissionNeeded", permission[0])));
+            playerService.sendMessageType(sender, translate("&c" + getText("PermissionNeeded", permission[0])), Objects.requireNonNull(messageService.getLanguage().getString("PermissionNeeded")).replace("#permission#", permission[0]), true);
         }
         return has;
     }
@@ -270,25 +278,22 @@ public abstract class SubCommand implements ColorTranslator {
     /**
      * Method to send an entire Faction a message.
      *
-     * @param faction to send a message to.
-     * @param message to send to the Faction.
+     * @param faction    to send a message to.
+     * @param oldmessage old message to send to the Faction.
+     * @param newmessage new message to send to the Faction.
      */
-    protected void messageFaction(Faction faction, String message) {
-        faction.getMemberList().stream()
-                .map(Bukkit::getOfflinePlayer)
-                .filter(OfflinePlayer::isOnline)
-                .map(OfflinePlayer::getPlayer)
-                .filter(Objects::nonNull)
-                .forEach(player -> player.sendMessage(message));
+    protected void messageFaction(Faction faction, String oldmessage, String newmessage) {
+        faction.getMemberList().stream().map(Bukkit::getOfflinePlayer).filter(OfflinePlayer::isOnline).map(OfflinePlayer::getPlayer).filter(Objects::nonNull).forEach(player -> playerService.sendMessageType(player, oldmessage, newmessage, true));
     }
 
     /**
      * Method to send the entire Server a message.
      *
-     * @param message to send to the players.
+     * @param oldmessage old message to send to the players.
+     * @param newmessage old message to send to the players.
      */
-    protected void messageServer(String message) {
-        Bukkit.getOnlinePlayers().forEach(player -> player.sendMessage(message));
+    protected void messageServer(String oldmessage, String newmessage) {
+        Bukkit.getOnlinePlayers().forEach(player -> playerService.sendMessageType(player, oldmessage, newmessage, true));
     }
 
     /**
@@ -314,9 +319,7 @@ public abstract class SubCommand implements ColorTranslator {
      * @return {@code true} if something in goals matches what.
      */
     protected boolean safeEquals(String what, String... goals) {
-        return Arrays.stream(goals).anyMatch(goal ->
-                goal.equalsIgnoreCase(what)
-        );
+        return Arrays.stream(goals).anyMatch(goal -> goal.equalsIgnoreCase(what));
     }
 
     /**

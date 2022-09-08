@@ -15,11 +15,15 @@ import dansplugins.factionsystem.integrators.FiefsIntegrator;
 import dansplugins.factionsystem.objects.domain.Faction;
 import dansplugins.factionsystem.services.ConfigService;
 import dansplugins.factionsystem.services.LocaleService;
+import dansplugins.factionsystem.services.MessageService;
+import dansplugins.factionsystem.services.PlayerService;
 import dansplugins.factionsystem.utils.Logger;
 import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.Player;
+
+import java.util.Objects;
 
 /**
  * @author Callum Johnson
@@ -30,10 +34,10 @@ public class CreateCommand extends SubCommand {
     private final Logger logger;
     private final MedievalFactions medievalFactions;
 
-    public CreateCommand(LocaleService localeService, PersistentData persistentData, EphemeralData ephemeralData, PersistentData.ChunkDataAccessor chunkDataAccessor, DynmapIntegrator dynmapIntegrator, ConfigService configService, FiefsIntegrator fiefsIntegrator, CurrenciesIntegrator currenciesIntegrator, Logger logger, MedievalFactions medievalFactions) {
+    public CreateCommand(LocaleService localeService, PersistentData persistentData, EphemeralData ephemeralData, PersistentData.ChunkDataAccessor chunkDataAccessor, DynmapIntegrator dynmapIntegrator, ConfigService configService, FiefsIntegrator fiefsIntegrator, CurrenciesIntegrator currenciesIntegrator, Logger logger, MedievalFactions medievalFactions, PlayerService playerService, MessageService messageService) {
         super(new String[]{
                 LOCALE_PREFIX + "CmdCreate", "Create"
-        }, true, persistentData, localeService, ephemeralData, configService, chunkDataAccessor, dynmapIntegrator);
+        }, true, persistentData, localeService, ephemeralData, configService, playerService, messageService, chunkDataAccessor, dynmapIntegrator);
         this.fiefsIntegrator = fiefsIntegrator;
         this.currenciesIntegrator = currenciesIntegrator;
         this.logger = logger;
@@ -56,12 +60,14 @@ public class CreateCommand extends SubCommand {
 
         this.faction = getPlayerFaction(player);
         if (this.faction != null) {
-            player.sendMessage(translate("&c" + getText("AlreadyInFaction")));
+            playerService.sendMessageType(player, "&c" + getText("AlreadyInFaction"),
+                    "AlreadyInFaction", false);
             return;
         }
 
         if (args.length == 0) {
-            player.sendMessage(translate("&c" + getText("UsageCreate")));
+            playerService.sendMessageType(player, "&c" + getText("UsageCreate"),
+                    "UsageCreate", false);
             return;
         }
 
@@ -70,16 +76,20 @@ public class CreateCommand extends SubCommand {
         final FileConfiguration config = configService.getConfig();
 
         if (factionName.length() > config.getInt("factionMaxNameLength")) {
-            player.sendMessage(translate("&c" + getText("FactionNameTooLong")));
+            playerService.sendMessageType(player, "&c" + getText("FactionNameTooLong"),
+                    Objects.requireNonNull(messageService.getLanguage().getString("FactionNameTooLong"))
+                            .replace("#name#", factionName), true);
             return;
         }
 
         if (persistentData.getFaction(factionName) != null) {
-            player.sendMessage(translate("&c" + getText("FactionAlreadyExists")));
+            playerService.sendMessageType(player, "&c" + getText("FactionAlreadyExists"),
+                    Objects.requireNonNull(messageService.getLanguage().getString("FactionAlreadyExists"))
+                            .replace("#name#", factionName), true);
             return;
         }
 
-        this.faction = new Faction(factionName, player.getUniqueId(), configService, localeService, fiefsIntegrator, currenciesIntegrator, dynmapIntegrator, logger, persistentData, medievalFactions);
+        this.faction = new Faction(factionName, player.getUniqueId(), configService, localeService, fiefsIntegrator, currenciesIntegrator, dynmapIntegrator, logger, persistentData, medievalFactions, playerService);
 
         this.faction.addMember(player.getUniqueId());
 
@@ -87,7 +97,9 @@ public class CreateCommand extends SubCommand {
         Bukkit.getPluginManager().callEvent(createEvent);
         if (!createEvent.isCancelled()) {
             persistentData.addFaction(this.faction);
-            player.sendMessage(translate("&a" + getText("FactionCreated")));
+            playerService.sendMessageType(player, "&a" + getText("FactionCreated"),
+                    Objects.requireNonNull(messageService.getLanguage().getString("FactionCreated"))
+                            .replace("#name#", factionName), true);
         }
     }
 
