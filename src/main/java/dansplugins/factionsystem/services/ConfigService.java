@@ -9,6 +9,9 @@ import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.configuration.file.FileConfiguration;
 
+import java.util.ArrayList;
+import java.util.Collections;
+
 /**
  * @author Daniel McCoy Stephenson
  */
@@ -366,6 +369,55 @@ public class ConfigService {
                 + ", powerLostOnDeath: " + getDouble("powerLostOnDeath")
                 + ", powerGainedOnKill: " + getDouble("powerGainedOnKill")
                 + ", teleportDelay: " + getInt("teleportDelay"));
+    }
+
+    public ArrayList<String> getStringConfigOptions()
+    {
+        final ArrayList<String> configOptions = new ArrayList<>();
+        Collections.addAll(configOptions,
+                "initialMaxPowerLevel",
+                "initialPowerLevel",
+                "powerIncreaseAmount",
+                "minutesBeforeInitialPowerIncrease",
+                "minutesBetweenPowerIncreases",
+                "officerLimit",
+                "officerPerMemberCount",
+                "minutesBetweenPowerDecreases",
+                "minutesBeforePowerDecrease",
+                "powerDecreaseAmount",
+                "factionMaxNameLength",
+                "factionMaxNumberGates",
+                "factionMaxGateArea",
+                "maxClaimRadius",
+                "teleportDelay",
+                "mobsSpawnInFactionTerritory",
+                "laddersPlaceableInEnemyFactionTerritory",
+                "warsRequiredForPVP",
+                "powerDecreases",
+                "surroundedChunksProtected",
+                "zeroPowerFactionsGetDisbanded",
+                "nonMembersCanInteractWithDoors",
+                "playersChatWithPrefixes",
+                "chatSharedInVassalageTrees",
+                "allowAllyInteraction",
+                "allowVassalageTreeInteraction",
+                "territoryAlertPopUp",
+                "territoryIndicatorActionbar",
+                "randomFactionAssignment",
+                "allowNeutrality",
+                "showPrefixesInFactionChat",
+                "debugMode",
+                "factionProtectionsEnabled",
+                "limitLand",
+                "factionsCanSetPrefixColors",
+                "playersLosePowerOnDeath",
+                "bonusPowerEnabled",
+                "factionOwnerMultiplier",
+                "factionOfficerMultiplier",
+                "vassalContributionPercentageMultiplier",
+                "powerLostOnDeath",
+                "powerGainedOnKill");
+        return configOptions;
     }
 
     public boolean hasBeenAltered() {

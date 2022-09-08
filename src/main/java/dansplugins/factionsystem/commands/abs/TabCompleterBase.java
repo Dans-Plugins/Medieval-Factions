@@ -85,7 +85,6 @@ public class TabCompleterBase implements TabCompleter {
 						"checkaccess",
 						"checkclaim",
 						"claim",
-						"config",
 						"create",
 						"declareindependence",
 						"declarewar",
@@ -117,7 +116,7 @@ public class TabCompleterBase implements TabCompleter {
 						"prefix",
 						"promote",
 						"removelaw",
-						"rename", // here I intentionally left out resetpowerlevels, since its an important command you wouldn't want to accidentally use.
+						"rename",
 						"revokeaccess",
 						"sethome",
 						"stats",
@@ -126,16 +125,22 @@ public class TabCompleterBase implements TabCompleter {
 						"unclaimall",
 						"unclaim",
 						"unlock",
-						"vassalize",
-						"version",
-						""
-
+						"vassalize"
 				));
 			}
 			if (args.length == 1) {
-				for(String a : argsLength1) {
-					if (a.toLowerCase().startsWith(args[0].toLowerCase())) {
-						result.add(a);
+				if(player.isOp()) {
+					argsLength1.addAll(Arrays.asList("config", "resetpowerlevels", "version", "bypass"));
+					for(String a : argsLength1)	{
+						if(a.toLowerCase().startsWith(args[0].toLowerCase())) {
+							result.add(a);
+						}
+					}
+				} else {
+					for(String a : argsLength1)	{
+						if(a.toLowerCase().startsWith(args[0].toLowerCase())) {
+							result.add(a);
+						}
 					}
 				}
 				return result;
@@ -275,7 +280,7 @@ public class TabCompleterBase implements TabCompleter {
 					if (persistentData.isInFaction(player.getUniqueId())) {
 						Faction faction = persistentData.getPlayersFaction(player.getUniqueId());
 						ArrayList<String> enemies = faction.getEnemyFactions();
-						return filterStartingWith(args[1], tackOnBeginningAndEndQuotes(enemies));
+						return filterStartingWith(args[1], enemies);
 					}
 				}
 				if (args[0].equalsIgnoreCase("members")) {
@@ -350,6 +355,7 @@ public class TabCompleterBase implements TabCompleter {
 				if (args[0].equalsIgnoreCase("who")) {
 					return filterStartingWith(args[1], getOnlinePlayers(args[1]));
 				}
+				return null;
 			}
 
 			if (args.length == 3) {
@@ -437,6 +443,7 @@ public class TabCompleterBase implements TabCompleter {
 						return filterStartingWith(args[1], tackOnBeginningAndEndQuotes(enemies));
 					}
 				}
+				return null;
 			}
 
 			if (args.length == 4) {
@@ -466,6 +473,7 @@ public class TabCompleterBase implements TabCompleter {
 						}
 					}
 				}
+				return null;
 			}
 		}
 

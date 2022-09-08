@@ -51,7 +51,7 @@ public class MedievalFactions extends PonderBukkitPlugin {
     private final PlayerTeleporter playerTeleporter = new PlayerTeleporter(logger);
     private final TerritoryOwnerNotifier territoryOwnerNotifier = new TerritoryOwnerNotifier(configService.getLocaleService(), configService, actionBarService);
     public boolean USE_NEW_LANGUAGE_FILE = configService.getBoolean("useNewLanguageFile");
-    private MedievalFactions medievalFactions;
+    private MedievalFactions medievalFactions = this;
     private final MessageService messageService = new MessageService(medievalFactions);
     private final PlayerService playerService = new PlayerService(medievalFactions, messageService);
     private final Messenger messenger = new Messenger(configService.getLocaleService(), fiefsIntegrator, playerService, messageService, medievalFactions);
