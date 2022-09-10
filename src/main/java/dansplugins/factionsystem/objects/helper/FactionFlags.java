@@ -65,7 +65,7 @@ public class FactionFlags {
         flagNames.add("fiefsEnabled");
         flagNames.add("officersCanMintCurrency");
         flagNames.add("acceptBonusPower");
-        flagNames.add("enableAnimalProtection");
+        flagNames.add("enableMobProtection");
     }
 
     public void initializeFlagValues() {
@@ -82,7 +82,7 @@ public class FactionFlags {
         booleanValues.put("fiefsEnabled", true);
         booleanValues.put("officersCanMintCurrency", false);
         booleanValues.put("acceptBonusPower", true);
-        booleanValues.put("enableAnimalProtection", true);
+        booleanValues.put("enableMobProtection", true);
     }
 
     public void loadMissingFlagsIfNecessary() {
@@ -123,8 +123,8 @@ public class FactionFlags {
         if (!booleanValues.containsKey("acceptBonusPower")) {
             booleanValues.put("acceptBonusPower", true);
         }
-        if (!booleanValues.containsKey("enableAnimalProtection")) {
-            booleanValues.put("enableAnimalProtection", true);
+        if (!booleanValues.containsKey("enableMobProtection")) {
+            booleanValues.put("enableMobProtection", true);
         }
     }
 

@@ -150,8 +150,8 @@ public class DamageHandler implements Listener {
 
         final Faction chunkHolder = persistentData.getFaction(persistentData.getChunkDataAccessor().getClaimedChunk(entity.getLocation().getChunk()).getHolder());
 
-        if (!(boolean) chunkHolder.getFlags().getFlag("enableAnimalProtection")) {
-            logger.debug("Animal Protection is disabled");
+        if (!(boolean) chunkHolder.getFlags().getFlag("enableMobProtection")) {
+            logger.debug("Mob Protection is disabled");
             return false;
         }
 
