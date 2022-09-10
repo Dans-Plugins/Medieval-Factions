@@ -9,6 +9,9 @@ import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.configuration.file.FileConfiguration;
 
+import java.util.ArrayList;
+import java.util.Collections;
+
 /**
  * @author Daniel McCoy Stephenson
  */
@@ -25,145 +28,150 @@ public class ConfigService {
 
     public void handleVersionMismatch() {
         if (!getConfig().isString("version")) {
-            getConfig().addDefault("version", medievalFactions.getVersion());
+            getConfig().set("version", medievalFactions.getVersion());
         } else {
             getConfig().set("version", medievalFactions.getVersion());
         }
 
         // add defaults if they don't exist
         if (!getConfig().isInt("initialMaxPowerLevel")) {
-            getConfig().addDefault("initialMaxPowerLevel", 20);
+            getConfig().set("initialMaxPowerLevel", 20);
         }
         if (!getConfig().isInt("initialPowerLevel")) {
-            getConfig().addDefault("initialPowerLevel", 5);
+            getConfig().set("initialPowerLevel", 5);
         }
         if (!getConfig().isBoolean("mobsSpawnInFactionTerritory")) {
-            getConfig().addDefault("mobsSpawnInFactionTerritory", false);
+            getConfig().set("mobsSpawnInFactionTerritory", false);
         }
         if (!getConfig().isInt("powerIncreaseAmount")) {
-            getConfig().addDefault("powerIncreaseAmount", 2);
+            getConfig().set("powerIncreaseAmount", 2);
         }
         if (!getConfig().isBoolean("laddersPlaceableInEnemyFactionTerritory")) {
-            getConfig().addDefault("laddersPlaceableInEnemyFactionTerritory", true);
+            getConfig().set("laddersPlaceableInEnemyFactionTerritory", true);
         }
         if (!getConfig().isInt("minutesBeforeInitialPowerIncrease")) {
-            getConfig().addDefault("minutesBeforeInitialPowerIncrease", 30);
+            getConfig().set("minutesBeforeInitialPowerIncrease", 30);
         }
         if (!getConfig().isInt("minutesBetweenPowerIncreases")) {
-            getConfig().addDefault("minutesBetweenPowerIncreases", 60);
+            getConfig().set("minutesBetweenPowerIncreases", 60);
         }
         if (!getConfig().isBoolean("warsRequiredForPVP")) {
-            getConfig().addDefault("warsRequiredForPVP", true);
+            getConfig().set("warsRequiredForPVP", true);
         }
         if (!getConfig().isDouble("factionOwnerMultiplier")) {
-            getConfig().addDefault("factionOwnerMultiplier", 2.0);
+            getConfig().set("factionOwnerMultiplier", 2.0);
         }
         if (!getConfig().isDouble("officerPerMemberCount")) {
-            getConfig().addDefault("officerPerMemberCount", 5);
+            getConfig().set("officerPerMemberCount", 5);
         }
         if (!getConfig().isDouble("factionOfficerMultiplier")) {
-            getConfig().addDefault("factionOfficerMultiplier", 1.5);
+            getConfig().set("factionOfficerMultiplier", 1.5);
         }
         if (!getConfig().isBoolean("powerDecreases")) {
-            getConfig().addDefault("powerDecreases", true);
+            getConfig().set("powerDecreases", true);
         }
         if (!getConfig().isInt("minutesBetweenPowerDecreases")) {
-            getConfig().addDefault("minutesBetweenPowerDecreases", 1440);
+            getConfig().set("minutesBetweenPowerDecreases", 1440);
         }
         if (!getConfig().isInt("minutesBeforePowerDecrease")) {
-            getConfig().addDefault("minutesBeforePowerDecrease", 20160);
+            getConfig().set("minutesBeforePowerDecrease", 20160);
         }
         if (!getConfig().isInt("powerDecreaseAmount")) {
-            getConfig().addDefault("powerDecreaseAmount", 1);
+            getConfig().set("powerDecreaseAmount", 1);
         }
         if (!getConfig().isInt("factionMaxNameLength")) {
-            getConfig().addDefault("factionMaxNameLength", 20);
+            getConfig().set("factionMaxNameLength", 20);
         }
         if (!getConfig().isInt("factionMaxNumberGates")) {
-            getConfig().addDefault("factionMaxNumberGates", 5);
+            getConfig().set("factionMaxNumberGates", 5);
         }
         if (!getConfig().isInt("factionMaxGateArea")) {
-            getConfig().addDefault("factionMaxGateArea", 64);
+            getConfig().set("factionMaxGateArea", 64);
         }
         if (!getConfig().isBoolean("surroundedChunksProtected")) {
-            getConfig().addDefault("surroundedChunksProtected", true);
+            getConfig().set("surroundedChunksProtected", true);
         }
         if (!getConfig().isBoolean("zeroPowerFactionsGetDisbanded")) {
-            getConfig().addDefault("zeroPowerFactionsGetDisbanded", false);
+            getConfig().set("zeroPowerFactionsGetDisbanded", false);
         }
         if (!getConfig().isDouble("vassalContributionPercentageMultiplier")) {
-            getConfig().addDefault("vassalContributionPercentageMultiplier", 0.75);
+            getConfig().set("vassalContributionPercentageMultiplier", 0.75);
         }
         if (!getConfig().isBoolean("nonMembersCanInteractWithDoors")) {
-            getConfig().addDefault("nonMembersCanInteractWithDoors", false);
+            getConfig().set("nonMembersCanInteractWithDoors", false);
         }
         if (!getConfig().isBoolean("playersChatWithPrefixes")) {
-            getConfig().addDefault("playersChatWithPrefixes", true);
+            getConfig().set("playersChatWithPrefixes", true);
         }
         if (!getConfig().isInt("maxClaimRadius")) {
-            getConfig().addDefault("maxClaimRadius", 3);
+            getConfig().set("maxClaimRadius", 3);
         }
         if (!getConfig().isString("languageid")) {
-            getConfig().addDefault("languageid", "en-us");
+            getConfig().set("languageid", "en-us");
         }
         if (!getConfig().isBoolean("chatSharedInVassalageTrees")) {
-            getConfig().addDefault("chatSharedInVassalageTrees", true);
+            getConfig().set("chatSharedInVassalageTrees", true);
         }
         if (!getConfig().isBoolean("allowAllyInteraction")) {
-            getConfig().addDefault("allowAllyInteraction", false);
+            getConfig().set("allowAllyInteraction", false);
         }
         if (!getConfig().isBoolean("allowVassalageTreeInteraction")) {
-            getConfig().addDefault("allowVassalageTreeInteraction", false);
+            getConfig().set("allowVassalageTreeInteraction", false);
         }
         if (!getConfig().isString("factionChatColor")) {
-            getConfig().addDefault("factionChatColor", "gold");
+            getConfig().set("factionChatColor", "gold");
         }
         if (!getConfig().isBoolean("territoryAlertPopUp")) {
-            getConfig().addDefault("territoryAlertPopUp", true);
+            getConfig().set("territoryAlertPopUp", true);
         }
         if (!getConfig().isBoolean("territoryIndicatorActionbar")) {
-            getConfig().addDefault("territoryIndicatorActionbar", true);
+            getConfig().set("territoryIndicatorActionbar", true);
         }
         if (!getConfig().isString("territoryAlertColor")) {
-            getConfig().addDefault("territoryAlertColor", "white");
+            getConfig().set("territoryAlertColor", "white");
         }
         if (!getConfig().isBoolean("randomFactionAssignment")) {
-            getConfig().addDefault("randomFactionAssignment", false);
+            getConfig().set("randomFactionAssignment", false);
         }
         if (!getConfig().isBoolean("allowNeutrality")) {
-            getConfig().addDefault("allowNeutrality", false);
+            getConfig().set("allowNeutrality", false);
         }
         if (!getConfig().isBoolean("showPrefixesInFactionChat")) {
-            getConfig().addDefault("showPrefixesInFactionChat", false);
+            getConfig().set("showPrefixesInFactionChat", false);
         }
         if (!getConfig().isBoolean("debugMode")) {
-            getConfig().addDefault("debugMode", false);
+            getConfig().set("debugMode", false);
         }
         if (!getConfig().isBoolean("factionProtectionsEnabled")) {
-            getConfig().addDefault("factionProtectionsEnabled", true);
+            getConfig().set("factionProtectionsEnabled", true);
         }
         if (!getConfig().isBoolean("limitLand")) {
-            getConfig().addDefault("limitLand", true);
+            getConfig().set("limitLand", true);
         }
         if (!getConfig().isBoolean("factionsCanSetPrefixColors")) {
-            getConfig().addDefault("factionsCanSetPrefixColors", true);
+            getConfig().set("factionsCanSetPrefixColors", true);
         }
         if (!getConfig().isBoolean("playersLosePowerOnDeath")) {
-            getConfig().addDefault("playersLosePowerOnDeath", true);
+            getConfig().set("playersLosePowerOnDeath", true);
         }
         if (!getConfig().isBoolean("bonusPowerEnabled")) {
-            getConfig().addDefault("bonusPowerEnabled", true);
+            getConfig().set("bonusPowerEnabled", true);
+        }
+        if (!getConfig().isBoolean("useNewLanguageFile")) {
+            getConfig().set("useNewLanguageFile", false);
         }
         if (!getConfig().isDouble("powerLostOnDeath")) {
-            getConfig().addDefault("powerLostOnDeath", 1.0);
+            getConfig().set("powerLostOnDeath", 1.0);
         }
         if (!getConfig().isDouble("powerGainedOnKill")) {
-            getConfig().addDefault("powerGainedOnKill", 1.0);
+            getConfig().set("powerGainedOnKill", 1.0);
         }
         if (!getConfig().isInt("teleportDelay")) {
-            getConfig().addDefault("teleportDelay", 3);
+            getConfig().set("teleportDelay", 3);
         }
-
+        if (!getConfig().isString("factionless")) {
+            getConfig().set("factionless", "FactionLess");
+        }
         deleteOldConfigOptionsIfPresent();
 
         getConfig().options().copyDefaults(true);
@@ -259,51 +267,53 @@ public class ConfigService {
     }
 
     public void saveConfigDefaults() {
-        getConfig().addDefault("version", medievalFactions.getVersion());
-        getConfig().addDefault("initialMaxPowerLevel", 20);
-        getConfig().addDefault("initialPowerLevel", 5);
-        getConfig().addDefault("powerIncreaseAmount", 2);
-        getConfig().addDefault("mobsSpawnInFactionTerritory", false);
-        getConfig().addDefault("laddersPlaceableInEnemyFactionTerritory", true);
-        getConfig().addDefault("minutesBeforeInitialPowerIncrease", 30);
-        getConfig().addDefault("minutesBetweenPowerIncreases", 60);
-        getConfig().addDefault("warsRequiredForPVP", true);
-        getConfig().addDefault("factionOwnerMultiplier", 2.0);
-        getConfig().addDefault("officerPerMemberCount", 5);
-        getConfig().addDefault("factionOfficerMultiplier", 1.5);
-        getConfig().addDefault("powerDecreases", true);
-        getConfig().addDefault("minutesBetweenPowerDecreases", 1440);
-        getConfig().addDefault("minutesBeforePowerDecrease", 20160);
-        getConfig().addDefault("powerDecreaseAmount", 1);
-        getConfig().addDefault("factionMaxNameLength", 20);
-        getConfig().addDefault("factionMaxNumberGates", 5);
-        getConfig().addDefault("factionMaxGateArea", 64);
-        getConfig().addDefault("surroundedChunksProtected", true);
-        getConfig().addDefault("zeroPowerFactionsGetDisbanded", false);
-        getConfig().addDefault("vassalContributionPercentageMultiplier", 0.75);
-        getConfig().addDefault("nonMembersCanInteractWithDoors", false);
-        getConfig().addDefault("playersChatWithPrefixes", true);
-        getConfig().addDefault("maxClaimRadius", 3);
-        getConfig().addDefault("languageid", "en-us");
-        getConfig().addDefault("chatSharedInVassalageTrees", true);
-        getConfig().addDefault("allowAllyInteraction", false);
-        getConfig().addDefault("allowVassalageTreeInteraction", false);
-        getConfig().addDefault("factionChatColor", "gold");
-        getConfig().addDefault("territoryAlertPopUp", true);
-        getConfig().addDefault("territoryAlertColor", "white");
-        getConfig().addDefault("territoryIndicatorActionbar", true);
-        getConfig().addDefault("randomFactionAssignment", false);
-        getConfig().addDefault("allowNeutrality", false);
-        getConfig().addDefault("showPrefixesInFactionChat", false);
-        getConfig().addDefault("debugMode", false);
-        getConfig().addDefault("factionProtectionsEnabled", true);
-        getConfig().addDefault("limitLand", true);
-        getConfig().addDefault("factionsCanSetPrefixColors", true);
-        getConfig().addDefault("playersLosePowerOnDeath", true);
-        getConfig().addDefault("bonusPowerEnabled", true);
-        getConfig().addDefault("powerLostOnDeath", 1.0);
-        getConfig().addDefault("powerGainedOnKill", 1.0);
-        getConfig().addDefault("teleportDelay", 3);
+        getConfig().set("version", medievalFactions.getVersion());
+        getConfig().set("initialMaxPowerLevel", 20);
+        getConfig().set("initialPowerLevel", 5);
+        getConfig().set("powerIncreaseAmount", 2);
+        getConfig().set("mobsSpawnInFactionTerritory", false);
+        getConfig().set("laddersPlaceableInEnemyFactionTerritory", true);
+        getConfig().set("minutesBeforeInitialPowerIncrease", 30);
+        getConfig().set("minutesBetweenPowerIncreases", 60);
+        getConfig().set("warsRequiredForPVP", true);
+        getConfig().set("factionOwnerMultiplier", 2.0);
+        getConfig().set("officerPerMemberCount", 5);
+        getConfig().set("factionOfficerMultiplier", 1.5);
+        getConfig().set("powerDecreases", true);
+        getConfig().set("minutesBetweenPowerDecreases", 1440);
+        getConfig().set("minutesBeforePowerDecrease", 20160);
+        getConfig().set("powerDecreaseAmount", 1);
+        getConfig().set("factionMaxNameLength", 20);
+        getConfig().set("factionMaxNumberGates", 5);
+        getConfig().set("factionMaxGateArea", 64);
+        getConfig().set("surroundedChunksProtected", true);
+        getConfig().set("zeroPowerFactionsGetDisbanded", false);
+        getConfig().set("vassalContributionPercentageMultiplier", 0.75);
+        getConfig().set("nonMembersCanInteractWithDoors", false);
+        getConfig().set("playersChatWithPrefixes", true);
+        getConfig().set("maxClaimRadius", 3);
+        getConfig().set("languageid", "en-us");
+        getConfig().set("chatSharedInVassalageTrees", true);
+        getConfig().set("allowAllyInteraction", false);
+        getConfig().set("allowVassalageTreeInteraction", false);
+        getConfig().set("factionChatColor", "gold");
+        getConfig().set("territoryAlertPopUp", true);
+        getConfig().set("territoryAlertColor", "white");
+        getConfig().set("territoryIndicatorActionbar", true);
+        getConfig().set("randomFactionAssignment", false);
+        getConfig().set("allowNeutrality", false);
+        getConfig().set("showPrefixesInFactionChat", false);
+        getConfig().set("debugMode", false);
+        getConfig().set("factionProtectionsEnabled", true);
+        getConfig().set("limitLand", true);
+        getConfig().set("factionsCanSetPrefixColors", true);
+        getConfig().set("playersLosePowerOnDeath", true);
+        getConfig().set("bonusPowerEnabled", true);
+        getConfig().set("powerLostOnDeath", 1.0);
+        getConfig().set("powerGainedOnKill", 1.0);
+        getConfig().set("teleportDelay", 3);
+        getConfig().set("factionless", "FactionLess");
+        getConfig().set("useNewLanguageFile", false);
         getConfig().options().copyDefaults(true);
         medievalFactions.saveConfig();
     }
@@ -359,6 +369,55 @@ public class ConfigService {
                 + ", powerLostOnDeath: " + getDouble("powerLostOnDeath")
                 + ", powerGainedOnKill: " + getDouble("powerGainedOnKill")
                 + ", teleportDelay: " + getInt("teleportDelay"));
+    }
+
+    public ArrayList<String> getStringConfigOptions()
+    {
+        final ArrayList<String> configOptions = new ArrayList<>();
+        Collections.addAll(configOptions,
+                "initialMaxPowerLevel",
+                "initialPowerLevel",
+                "powerIncreaseAmount",
+                "minutesBeforeInitialPowerIncrease",
+                "minutesBetweenPowerIncreases",
+                "officerLimit",
+                "officerPerMemberCount",
+                "minutesBetweenPowerDecreases",
+                "minutesBeforePowerDecrease",
+                "powerDecreaseAmount",
+                "factionMaxNameLength",
+                "factionMaxNumberGates",
+                "factionMaxGateArea",
+                "maxClaimRadius",
+                "teleportDelay",
+                "mobsSpawnInFactionTerritory",
+                "laddersPlaceableInEnemyFactionTerritory",
+                "warsRequiredForPVP",
+                "powerDecreases",
+                "surroundedChunksProtected",
+                "zeroPowerFactionsGetDisbanded",
+                "nonMembersCanInteractWithDoors",
+                "playersChatWithPrefixes",
+                "chatSharedInVassalageTrees",
+                "allowAllyInteraction",
+                "allowVassalageTreeInteraction",
+                "territoryAlertPopUp",
+                "territoryIndicatorActionbar",
+                "randomFactionAssignment",
+                "allowNeutrality",
+                "showPrefixesInFactionChat",
+                "debugMode",
+                "factionProtectionsEnabled",
+                "limitLand",
+                "factionsCanSetPrefixColors",
+                "playersLosePowerOnDeath",
+                "bonusPowerEnabled",
+                "factionOwnerMultiplier",
+                "factionOfficerMultiplier",
+                "vassalContributionPercentageMultiplier",
+                "powerLostOnDeath",
+                "powerGainedOnKill");
+        return configOptions;
     }
 
     public boolean hasBeenAltered() {

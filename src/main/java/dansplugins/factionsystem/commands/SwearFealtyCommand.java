@@ -11,18 +11,22 @@ import dansplugins.factionsystem.integrators.DynmapIntegrator;
 import dansplugins.factionsystem.objects.domain.Faction;
 import dansplugins.factionsystem.services.ConfigService;
 import dansplugins.factionsystem.services.LocaleService;
+import dansplugins.factionsystem.services.MessageService;
+import dansplugins.factionsystem.services.PlayerService;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
+
+import java.util.Objects;
 
 /**
  * @author Callum Johnson
  */
 public class SwearFealtyCommand extends SubCommand {
 
-    public SwearFealtyCommand(LocaleService localeService, PersistentData persistentData, EphemeralData ephemeralData, PersistentData.ChunkDataAccessor chunkDataAccessor, DynmapIntegrator dynmapIntegrator, ConfigService configService) {
+    public SwearFealtyCommand(LocaleService localeService, PersistentData persistentData, EphemeralData ephemeralData, PersistentData.ChunkDataAccessor chunkDataAccessor, DynmapIntegrator dynmapIntegrator, ConfigService configService, PlayerService playerService, MessageService messageService) {
         super(new String[]{
                 "swearfealty", LOCALE_PREFIX + "CmdSwearFealty", "sf"
-        }, true, true, false, true, localeService, persistentData, ephemeralData, chunkDataAccessor, dynmapIntegrator, configService);
+        }, true, true, false, true, localeService, persistentData, ephemeralData, chunkDataAccessor, dynmapIntegrator, configService, playerService, messageService);
     }
 
     /**
@@ -37,16 +41,19 @@ public class SwearFealtyCommand extends SubCommand {
         final String permission = "mf.swearfealty";
         if (!(checkPermissions(player, permission))) return;
         if (args.length == 0) {
-            player.sendMessage(translate("&c" + getText("UsageSwearFealty")));
+            playerService.sendMessageType(player, "&c" + getText("UsageSwearFealty")
+                    , "UsageSwearFealty", false);
             return;
         }
         final Faction target = getFaction(String.join(" ", args));
         if (target == null) {
-            player.sendMessage(translate("&c" + getText("FactionNotFound")));
+            playerService.sendMessageType(player, "&c" + getText("FactionNotFound"), Objects.requireNonNull(messageService.getLanguage().getString("FactionNotFound"))
+                    .replace("#faction#", String.join(" ", args)), true);
             return;
         }
         if (!target.hasBeenOfferedVassalization(faction.getName())) {
-            player.sendMessage(translate("&c" + getText("AlertNotOfferedVassalizationBy")));
+            playerService.sendMessageType(player, "&c" + getText("AlertNotOfferedVassalizationBy")
+                    , "AlertNotOfferedVassalizationBy", false);
             return;
         }
         // set vassal
@@ -57,10 +64,14 @@ public class SwearFealtyCommand extends SubCommand {
         faction.setLiege(target.getName());
 
         // inform target faction that they have a new vassal
-        messageFaction(target, translate("&a" + getText("AlertFactionHasNewVassal", faction.getName())));
+        messageFaction(target, translate("&a" + getText("AlertFactionHasNewVassal", faction.getName()))
+                , Objects.requireNonNull(messageService.getLanguage().getString("AlertFactionHasNewVassal"))
+                        .replace("#name#", faction.getName()));
 
         // inform players faction that they have a new liege
-        messageFaction(faction, translate("&a" + getText("AlertFactionHasBeenVassalized", target.getName())));
+        messageFaction(faction, translate("&a" + getText("AlertFactionHasBeenVassalized", target.getName()))
+                , Objects.requireNonNull(messageService.getLanguage().getString("AlertFactionHasBeenVassalized"))
+                        .replace("#name#", target.getName()));
     }
 
     /**

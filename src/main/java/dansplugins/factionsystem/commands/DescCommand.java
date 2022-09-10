@@ -10,18 +10,22 @@ import dansplugins.factionsystem.data.PersistentData;
 import dansplugins.factionsystem.integrators.DynmapIntegrator;
 import dansplugins.factionsystem.services.ConfigService;
 import dansplugins.factionsystem.services.LocaleService;
+import dansplugins.factionsystem.services.MessageService;
+import dansplugins.factionsystem.services.PlayerService;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
+
+import java.util.Objects;
 
 /**
  * @author Callum Johnson
  */
 public class DescCommand extends SubCommand {
 
-    public DescCommand(LocaleService localeService, PersistentData persistentData, EphemeralData ephemeralData, PersistentData.ChunkDataAccessor chunkDataAccessor, DynmapIntegrator dynmapIntegrator, ConfigService configService) {
+    public DescCommand(LocaleService localeService, PersistentData persistentData, EphemeralData ephemeralData, PersistentData.ChunkDataAccessor chunkDataAccessor, DynmapIntegrator dynmapIntegrator, ConfigService configService, PlayerService playerService, MessageService messageService) {
         super(new String[]{
                 "Desc", "Description", LOCALE_PREFIX + "CmdDesc"
-        }, true, true, false, true, localeService, persistentData, ephemeralData, chunkDataAccessor, dynmapIntegrator, configService);
+        }, true, true, false, true, localeService, persistentData, ephemeralData, chunkDataAccessor, dynmapIntegrator, configService, playerService, messageService);
     }
 
     /**
@@ -39,13 +43,15 @@ public class DescCommand extends SubCommand {
         }
 
         if (args.length == 0) {
-            player.sendMessage(translate("&c" + getText("UsageDesc")));
+            playerService.sendMessageType(player, "&c" + getText("UsageDesc")
+                    , "UsageDesc", false);
             return;
         }
 
         faction.setDescription(String.join(" ", args));
-
-        player.sendMessage(translate("&b" + getText("DescriptionSet")));
+        playerService.sendMessageType(player, "&c" + getText("DescriptionSet")
+                , Objects.requireNonNull(messageService.getLanguage().getString("Description"))
+                        .replace("#desc#", String.join(" ", args)), true);
     }
 
     /**

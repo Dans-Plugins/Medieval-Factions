@@ -10,6 +10,8 @@ import dansplugins.factionsystem.data.PersistentData;
 import dansplugins.factionsystem.integrators.DynmapIntegrator;
 import dansplugins.factionsystem.services.ConfigService;
 import dansplugins.factionsystem.services.LocaleService;
+import dansplugins.factionsystem.services.MessageService;
+import dansplugins.factionsystem.services.PlayerService;
 import dansplugins.factionsystem.utils.RelationChecker;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
@@ -20,8 +22,8 @@ import org.bukkit.entity.Player;
 public class UnlockCommand extends SubCommand {
     private final RelationChecker relationChecker;
 
-    public UnlockCommand(LocaleService localeService, PersistentData persistentData, EphemeralData ephemeralData, PersistentData.ChunkDataAccessor chunkDataAccessor, DynmapIntegrator dynmapIntegrator, ConfigService configService, RelationChecker relationChecker) {
-        super(new String[]{"unlock", LOCALE_PREFIX + "CmdUnlock"}, true, persistentData, localeService, ephemeralData, configService, chunkDataAccessor, dynmapIntegrator);
+    public UnlockCommand(LocaleService localeService, PersistentData persistentData, EphemeralData ephemeralData, PersistentData.ChunkDataAccessor chunkDataAccessor, DynmapIntegrator dynmapIntegrator, ConfigService configService, RelationChecker relationChecker, PlayerService playerService, MessageService messageService) {
+        super(new String[]{"unlock", LOCALE_PREFIX + "CmdUnlock"}, true, persistentData, localeService, ephemeralData, configService, playerService, messageService, chunkDataAccessor, dynmapIntegrator);
         this.relationChecker = relationChecker;
     }
 
@@ -44,7 +46,8 @@ public class UnlockCommand extends SubCommand {
         if (args.length != 0 && args[0].equalsIgnoreCase("cancel")) {
             ephemeralData.getUnlockingPlayers().remove(player.getUniqueId());
             ephemeralData.getForcefullyUnlockingPlayers().remove(player.getUniqueId()); // just in case the player tries to cancel a forceful unlock without using the force command
-            player.sendMessage(translate("&c" + getText("AlertUnlockingCancelled")));
+            playerService.sendMessageType(player, "&c" + getText("AlertUnlockingCancelled")
+                    , "AlertUnlockingCancelled", false);
             return;
         }
         if (!ephemeralData.getUnlockingPlayers().contains(player.getUniqueId())) {
@@ -53,7 +56,8 @@ public class UnlockCommand extends SubCommand {
         ephemeralData.getLockingPlayers().remove(player.getUniqueId());
 
         // inform them they need to right click the block that they want to lock or type /mf lock cancel to cancel it
-        player.sendMessage(translate("&a" + getText("RightClickUnlock")));
+        playerService.sendMessageType(player, "&a" + getText("RightClickUnlock")
+                , "RightClickUnlock", false);
     }
 
     /**

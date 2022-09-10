@@ -10,16 +10,20 @@ import dansplugins.factionsystem.data.PersistentData;
 import dansplugins.factionsystem.integrators.DynmapIntegrator;
 import dansplugins.factionsystem.services.ConfigService;
 import dansplugins.factionsystem.services.LocaleService;
+import dansplugins.factionsystem.services.MessageService;
+import dansplugins.factionsystem.services.PlayerService;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
+
+import java.util.Objects;
 
 /**
  * @author Callum Johnson
  */
 public class CheckClaimCommand extends SubCommand {
 
-    public CheckClaimCommand(LocaleService localeService, PersistentData persistentData, EphemeralData ephemeralData, PersistentData.ChunkDataAccessor chunkDataAccessor, DynmapIntegrator dynmapIntegrator, ConfigService configService) {
-        super(new String[]{"checkclaim", "cc", LOCALE_PREFIX + "CmdCheckClaim"}, true, persistentData, localeService, ephemeralData, configService, chunkDataAccessor, dynmapIntegrator);
+    public CheckClaimCommand(LocaleService localeService, PersistentData persistentData, EphemeralData ephemeralData, PersistentData.ChunkDataAccessor chunkDataAccessor, DynmapIntegrator dynmapIntegrator, ConfigService configService, PlayerService playerService, MessageService messageService) {
+        super(new String[]{"checkclaim", "cc", LOCALE_PREFIX + "CmdCheckClaim"}, true, persistentData, localeService, ephemeralData, configService, playerService, messageService, chunkDataAccessor, dynmapIntegrator);
     }
 
     /**
@@ -39,9 +43,10 @@ public class CheckClaimCommand extends SubCommand {
         final String result = chunkDataAccessor.checkOwnershipAtPlayerLocation(player);
 
         if (result.equals("unclaimed")) {
-            player.sendMessage(translate("&a" + getText("LandIsUnclaimed")));
+            playerService.sendMessageType(player, "&a" + getText("LandIsUnclaimed"), "LandIsUnclaimed", false);
         } else {
-            player.sendMessage(translate("&c" + getText("LandClaimedBy", result)));
+            playerService.sendMessageType(player, "&c" + getText("LandClaimedBy"), Objects.requireNonNull(messageService.getLanguage().getString("LandClaimedBy"))
+                    .replace("#player#", result), true);
         }
     }
 

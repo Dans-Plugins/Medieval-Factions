@@ -64,7 +64,7 @@ public class LocaleService {
             }
         }
         if (medievalFactions.isDebugEnabled()) {
-            System.out.println(String.format(getText("KeysLoaded"), keys.size()));
+            System.out.printf((getText("KeysLoaded")) + "%n", keys.size());
         }
     }
 
