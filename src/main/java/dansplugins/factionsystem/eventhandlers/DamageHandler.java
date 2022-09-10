@@ -55,11 +55,11 @@ public class DamageHandler implements Listener {
 
         if (attacker == null || victim == null) {
             logger.debug("Attacker and/or victim was null in the DamageHandler class.");
+            handleEntityDamage(attacker, event);
             return;
         }
 
         handlePlayerVersusPlayer(attacker, victim, event);
-        handleEntityDamage(attacker, event);
     }
 
     /**
@@ -106,40 +106,77 @@ public class DamageHandler implements Listener {
             logger.debug("Entity is an instance of a player. Returning.");
             return;
         }
-        Faction playersFaction = persistentData.getPlayersFaction(attacker.getUniqueId());
-        if (playersFaction == null) {
+
+        // If entity is protected, cancel the event and return
+        if (isEntityProtected(attacker, event.getEntity())) {
             event.setCancelled(true);
             return;
         }
 
-        if (isEntityProtected(event.getEntity())) {
-            cancelDamageIfNecessary(event, playersFaction);
-        }
+//        Faction playersFaction = persistentData.getPlayersFaction(attacker.getUniqueId());
+//        if (playersFaction == null) {
+//            event.setCancelled(true);
+//        }
     }
 
-    private void cancelDamageIfNecessary(EntityDamageByEntityEvent event, Faction playersFaction) {
-        ClaimedChunk claimedChunk = getClaimedChunkAtLocation(event.getEntity().getLocation());
-        if (claimedChunk == null) {
-            return;
-        }
+//    private void cancelDamageIfNecessary(EntityDamageByEntityEvent event, Faction playersFaction) {
+//        ClaimedChunk claimedChunk = getClaimedChunkAtLocation(event.getEntity().getLocation());
+//        if (claimedChunk == null) {
+//            return;
+//        }
+//
+//        if (!isHolderPlayersFaction(claimedChunk, playersFaction)) {
+//            event.setCancelled(true);
+//        }
+//    }
 
-        if (!isHolderPlayersFaction(claimedChunk, playersFaction)) {
-            event.setCancelled(true);
-        }
-    }
-
-    private boolean isHolderPlayersFaction(ClaimedChunk claimedChunk, Faction playersFaction) {
-        return claimedChunk.getHolder().equalsIgnoreCase(playersFaction.getName());
-    }
+//    private boolean isHolderPlayersFaction(ClaimedChunk claimedChunk, Faction playersFaction) {
+//        return claimedChunk.getHolder().equalsIgnoreCase(playersFaction.getName());
+//    }
 
     private ClaimedChunk getClaimedChunkAtLocation(Location location) {
         Chunk chunk = location.getChunk();
         return persistentData.getChunkDataAccessor().getClaimedChunk(chunk);
     }
 
-    private boolean isEntityProtected(Entity entity) {
-        return entity instanceof ArmorStand || entity instanceof ItemFrame;
+    private boolean isEntityProtected(Player attacker, Entity entity) {
+        if (entity instanceof ArmorStand || entity instanceof ItemFrame) return true;
 
+        // If entity isn't on claimed chunk, return false
+        if (!persistentData.getChunkDataAccessor().isClaimed(entity.getLocation().getChunk())) {
+            logger.debug("Chunk isn't claimed");
+            return false;
+        }
+
+        final Faction chunkHolder = persistentData.getFaction(persistentData.getChunkDataAccessor().getClaimedChunk(entity.getLocation().getChunk()).getHolder());
+
+        if (!(boolean) chunkHolder.getFlags().getFlag("enableAnimalProtection")) {
+            logger.debug("Animal Protection is disabled");
+            return false;
+        }
+
+        // If entity isn't a living one (like minecarts), return false
+        if (!(entity instanceof LivingEntity)) {
+            logger.debug("Entity isn't a living");
+            return false;
+        }
+
+        // If attacker is in faction which owns the chunk, return false
+        if (persistentData.getPlayersFaction(attacker.getUniqueId()) == chunkHolder) {
+            logger.debug("Attacker is in same faction as Chunkholder");
+            return false;
+        }
+
+        // If attacker is factionless, return true
+        if (persistentData.getFaction(attacker.getName()) == null) {
+            logger.debug("attacker is factionless");
+            return true;
+        }
+
+        // If attacker is at war with the faction, return false
+        if (persistentData.getFaction(attacker.getName()).isEnemy(chunkHolder.getName())) return false;
+
+        return true;
     }
 
     private Player getVictim(EntityDamageByEntityEvent event) {
@@ -157,7 +194,10 @@ public class DamageHandler implements Listener {
         else if (wasPlayerWasDamagedByAProjectile(event) && wasProjectileShotByPlayer(event)) {
             return (Player) getProjectileSource(event);
         }
-        else {
+        else if (wasDamageBetweenEntities(event)) {
+            return (Player) event.getDamager();
+
+        } else {
             return null;
         }
     }
@@ -170,6 +210,10 @@ public class DamageHandler implements Listener {
     private boolean wasProjectileShotByPlayer(EntityDamageByEntityEvent event) {
         ProjectileSource projectileSource = getProjectileSource(event);
         return projectileSource instanceof Player;
+    }
+
+    private boolean wasDamageBetweenEntities(EntityDamageByEntityEvent event) {
+        return event.getDamager() instanceof Player;
     }
 
     private void endDuelIfNecessary(Player attacker, Player victim, EntityDamageEvent event) {
