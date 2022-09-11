@@ -10,7 +10,7 @@ import com.dansplugins.factionsystem.command.faction.declarewar.MfFactionDeclare
 import com.dansplugins.factionsystem.command.faction.disband.MfFactionDisbandCommand
 import com.dansplugins.factionsystem.command.faction.grantindependence.MfFactionGrantIndependenceCommand
 import com.dansplugins.factionsystem.command.faction.help.MfFactionHelpCommand
-import com.dansplugins.factionsystem.command.faction.help.MfFactionInfoCommand
+import com.dansplugins.factionsystem.command.faction.info.MfFactionInfoCommand
 import com.dansplugins.factionsystem.command.faction.invite.MfFactionInviteCommand
 import com.dansplugins.factionsystem.command.faction.invoke.MfFactionInvokeCommand
 import com.dansplugins.factionsystem.command.faction.join.MfFactionJoinCommand

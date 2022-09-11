@@ -52,7 +52,7 @@ commands:
       /f swearfealty [faction] - Swears fealty to a faction that has sent you a vassalization request
       /f declareindependence - Declares independence from your current liege, triggering a war
       /f grantindependence [vassal] - Grants independence to one of your vassals
-    aliases: [f, fraktion, faccion, faccao, фракция, ф]
+    aliases: [f, fraktion, faccion, faccao]
     usage: /<command> [help|ally|breakalliance|declarewar|makepeace|create|invite|join|law|role|list|claim|power|who|invoke|leave|vassalize|swearfealty|declareindependence|grantindependence]
   lock:
     description: Enables or disables lock mode. To cancel lock mode, use /lock cancel.

@@ -1,6 +1,7 @@
 package com.dansplugins.factionsystem.command.faction.info
 
 import com.dansplugins.factionsystem.MedievalFactions
+import com.dansplugins.factionsystem.faction.permission.MfFactionPermission.Companion.VIEW_INFO
 import com.dansplugins.factionsystem.player.MfPlayer
 import dev.forkhandles.result4k.onFailure
 import org.bukkit.ChatColor.RED
@@ -38,7 +39,7 @@ class MfFactionInfoCommand(private val plugin: MedievalFactions) : CommandExecut
                 return@Runnable
             }
             val role = faction.getRole(mfPlayer.id)
-            if (role == null || !role.hasPermission(faction, INFO)) {
+            if (role == null || !role.hasPermission(faction, VIEW_INFO)) {
                 sender.sendMessage("$RED${plugin.language["CommandFactionInfoNoFactionPermission"]}")
                 return@Runnable
             }
