@@ -16,7 +16,7 @@ class MfFlagValues(private val values: Map<MfFlag<Any?>, Any?> = mutableMapOf())
             return MfFlagValues(serialized.mapKeys { (flagName, _) ->
                 val flag: MfFlag<out Any?>? = plugin.flags[flagName]
                 if (flag == null) {
-                    println("null flag for flag name $flagName")
+                    plugin.logger.warning("null flag for flag name $flagName")
                 }
                 plugin.flags[flagName]!!
             })

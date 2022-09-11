@@ -12,7 +12,6 @@ import org.bukkit.command.Command
 import org.bukkit.command.CommandExecutor
 import org.bukkit.command.CommandSender
 import org.bukkit.entity.Player
-import java.util.logging.Level
 import java.util.logging.Level.SEVERE
 
 class MfFactionDeclareWarCommand(private val plugin: MedievalFactions) : CommandExecutor {
@@ -35,7 +34,7 @@ class MfFactionDeclareWarCommand(private val plugin: MedievalFactions) : Command
             val mfPlayer = playerService.getPlayer(sender)
                 ?: playerService.save(MfPlayer.fromBukkit(sender)).onFailure {
                     sender.sendMessage("$RED${plugin.language["CommandFactionDeclareWarFailedToSavePlayer"]}")
-                    plugin.logger.log(Level.SEVERE, "Failed to save player: ${it.reason.message}", it.reason.cause)
+                    plugin.logger.log(SEVERE, "Failed to save player: ${it.reason.message}", it.reason.cause)
                     return@Runnable
                 }
             val factionService = plugin.services.factionService
@@ -80,7 +79,7 @@ class MfFactionDeclareWarCommand(private val plugin: MedievalFactions) : Command
             factionRelationshipService.save(MfFactionRelationship(factionId = faction.id, targetId = target.id, type = AT_WAR))
                 .onFailure {
                     sender.sendMessage("$RED${plugin.language["CommandFactionDeclareWarFailedToSaveRelationship"]}")
-                    plugin.logger.log(Level.SEVERE, "Failed to save faction relationship: ${it.reason.message}", it.reason.cause)
+                    plugin.logger.log(SEVERE, "Failed to save faction relationship: ${it.reason.message}", it.reason.cause)
                     return@Runnable
                 }
             factionRelationshipService.save(MfFactionRelationship(factionId = target.id, targetId = faction.id, type = AT_WAR))
