@@ -72,6 +72,7 @@ class MfFactionPermission(
         val MODIFY_ROLE = { roleId: MfFactionRoleId -> MfFactionPermission("MODIFY_ROLE(${roleId.value})") { language, faction -> language["FactionPermissionModifyRole", faction.getRole(roleId)?.name ?: ""] } }
         val SET_MEMBER_ROLE = { roleId: MfFactionRoleId -> MfFactionPermission("SET_MEMBER_ROLE(${roleId.value})") { language, faction -> language["FactionPermissionSetMemberRole", faction.getRole(roleId)?.name ?: ""]} }
         val LIST_ROLES = MfFactionPermission("LIST_ROLES", "FactionPermissionListRoles")
+        val LIST_MEMBERS = MfFactionPermission("LIST_MEMBERS", "FactionPermissionListMembers")
 
         fun valueOf(name: String, flags: MfFlags): MfFactionPermission? = when {
             name == "ADD_LAW" -> ADD_LAW
@@ -128,6 +129,7 @@ class MfFactionPermission(
                 ?.let(::MfFactionRoleId)
                 ?.let(SET_MEMBER_ROLE)
             name == "LIST_ROLES" -> LIST_ROLES
+            name == "LIST_MEMBERS" -> LIST_MEMBERS
             else -> null
         }
 
@@ -176,6 +178,7 @@ class MfFactionPermission(
                 add(SET_MEMBER_ROLE(roleId))
             }
             add(LIST_ROLES)
+            add(LIST_MEMBERS)
 
             addAll(map { permission -> SET_ROLE_PERMISSION(permission) })
         }
