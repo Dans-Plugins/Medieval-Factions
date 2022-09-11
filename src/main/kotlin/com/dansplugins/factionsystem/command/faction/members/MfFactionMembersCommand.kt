@@ -45,16 +45,7 @@ class MfFactionMembersCommand(private val plugin: MedievalFactions) : CommandExe
             }
             // send player list of members
             sender.sendMessage("$AQUA${plugin.language["CommandFactionMembersTitle", faction.name]}")
-            var toSend = ""
-            var memberCount = 0
-            for (member in faction.members) {
-                toSend = toSend + member.player.toBukkit().getName()
-                memberCount = memberCount + 1
-                if (memberCount != faction.members.size) {
-                    toSend = toSend + ","
-                }
-            }
-            sender.sendMessage("$AQUA" + toSend)
+            sender.sendMessage("$AQUA" + faction.members.joinToString { it.player.toBukkit().name ?: "(N/A)" })
         })
         return true
     }
