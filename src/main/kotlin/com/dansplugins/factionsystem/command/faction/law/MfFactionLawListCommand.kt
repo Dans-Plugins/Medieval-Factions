@@ -50,7 +50,7 @@ class MfFactionLawListCommand(private val plugin: MedievalFactions) : CommandExe
             val lawService = plugin.services.lawService
             sender.sendMessage(BukkitChatColor.WHITE.toString() + plugin.language["CommandFactionLawListTitle"])
             lawService.getLaws(faction.id).forEachIndexed { i, law ->
-                val deleteButton = TextComponent("x ")
+                val deleteButton = TextComponent("✖ ")
                 deleteButton.color = SpigotChatColor.RED
                 deleteButton.clickEvent = ClickEvent(RUN_COMMAND, "/faction law remove ${law.id.value}")
                 deleteButton.hoverEvent = HoverEvent(SHOW_TEXT, Text(plugin.language["CommandFactionLawListDeleteButtonHover"]))

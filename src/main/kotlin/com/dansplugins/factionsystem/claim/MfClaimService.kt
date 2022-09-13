@@ -8,10 +8,11 @@ import dev.forkhandles.result4k.mapFailure
 import dev.forkhandles.result4k.resultFrom
 import org.bukkit.Chunk
 import org.bukkit.World
+import java.util.concurrent.CopyOnWriteArrayList
 
 class MfClaimService(private val repository: MfClaimedChunkRepository) {
 
-    private val claims: MutableList<MfClaimedChunk> = repository.getClaims().toMutableList()
+    private val claims: MutableList<MfClaimedChunk> = CopyOnWriteArrayList(repository.getClaims().toMutableList())
     fun getClaim(world: World, x: Int, z: Int): MfClaimedChunk? = repository.getClaim(world, x, z)
     fun getClaim(chunk: Chunk): MfClaimedChunk? = getClaim(chunk.world, chunk.x, chunk.z)
     fun getClaims(factionId: MfFactionId): List<MfClaimedChunk> = repository.getClaims(factionId)

@@ -54,6 +54,20 @@ commands:
       /f grantindependence [vassal] - Grants independence to one of your vassals
     aliases: [f, fraktion, faccion, faccao, фракция, ф]
     usage: /<command> [help|ally|breakalliance|declarewar|makepeace|create|invite|join|law|role|list|claim|power|who|invoke|leave|vassalize|swearfealty|declareindependence|grantindependence]
+  lock:
+    description: Enables or disables lock mode. To cancel lock mode, use /lock cancel.
+    aliases: [verschließen, verschliessen, cerrar, trancar, запереть]
+    usage: /<command> (cancel)
+  unlock:
+    description: Enables or disables unlock mode. To cancel unlock mode, use /unlock cancel.
+    aliases: [aufschließen, aufschliessen, desbloquear, destravar, отпереть]
+    usage: /<command> (cancel)
+  accessors:
+    description: |
+      Accessor management command
+      /accessors list - View a list of people who can access a lock.
+      /accessors add - Add an accessor to a lock.
+      /accessors remove - Remove an accessor from a lock.
 permissions:
   mf.help:
     description: View a list of helpful commands.
@@ -135,4 +149,25 @@ permissions:
     default: true
   mf.grantindependence:
     description: Allows granting independence to a vassal
+    default: true
+  mf.lock:
+    description: Allows locking blocks
+    default: true
+  mf.unlock:
+    description: Allows unlocking blocks
+    default: true
+  mf.accessors.list:
+    description: Allows listing accessors for a locked block
+    default: true
+  mf.accessors.add:
+    description: Allows adding accessors to locked blocks
+    default: true
+  mf.grantaccess:
+    description: Allows adding accessors to locked blocks
+    default: true
+  mf.accessors.remove:
+    description: Allows removing accessors from locked blocks
+    default: true
+  mf.revokeaccess:
+    description: Allows removing accessors from locked blocks
     default: true

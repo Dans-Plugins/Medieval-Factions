@@ -3,19 +3,29 @@ package com.dansplugins.factionsystem
 import com.dansplugins.factionsystem.claim.JooqMfClaimedChunkRepository
 import com.dansplugins.factionsystem.claim.MfClaimService
 import com.dansplugins.factionsystem.command.MedievalFactionsCommand
+import com.dansplugins.factionsystem.command.accessors.MfAccessorsCommand
 import com.dansplugins.factionsystem.command.faction.MfFactionCommand
+import com.dansplugins.factionsystem.command.lock.MfLockCommand
+import com.dansplugins.factionsystem.command.unlock.MfUnlockCommand
 import com.dansplugins.factionsystem.faction.JooqMfFactionRepository
 import com.dansplugins.factionsystem.faction.MfFactionRepository
 import com.dansplugins.factionsystem.faction.MfFactionService
 import com.dansplugins.factionsystem.faction.flag.MfFlags
 import com.dansplugins.factionsystem.faction.permission.MfFactionPermission
 import com.dansplugins.factionsystem.faction.permission.MfFactionPermissionSerializer
+import com.dansplugins.factionsystem.interaction.JooqMfInteractionStatusRepository
+import com.dansplugins.factionsystem.interaction.MfInteractionService
 import com.dansplugins.factionsystem.lang.Language
 import com.dansplugins.factionsystem.law.JooqMfLawRepository
 import com.dansplugins.factionsystem.law.MfLawRepository
 import com.dansplugins.factionsystem.law.MfLawService
 import com.dansplugins.factionsystem.listener.AsyncPlayerPreLoginListener
+import com.dansplugins.factionsystem.listener.PlayerInteractListener
 import com.dansplugins.factionsystem.listener.PlayerMoveListener
+import com.dansplugins.factionsystem.listener.PlayerQuitListener
+import com.dansplugins.factionsystem.locks.JooqMfLockRepository
+import com.dansplugins.factionsystem.locks.MfLockService
+import com.dansplugins.factionsystem.locks.MfRpkLockService
 import com.dansplugins.factionsystem.notification.MailboxesNotificationDispatcher
 import com.dansplugins.factionsystem.notification.MfNotificationDispatcher
 import com.dansplugins.factionsystem.notification.NoOpNotificationDispatcher
@@ -95,27 +105,41 @@ class MedievalFactions : JavaPlugin() {
         val lawRepository: MfLawRepository = JooqMfLawRepository(dsl)
         val factionRelationshipRepository = JooqMfFactionRelationshipRepository(dsl)
         val claimedChunkRepository = JooqMfClaimedChunkRepository(dsl)
+        val lockRepository = JooqMfLockRepository(dsl)
+        val interactionStatusRepository = JooqMfInteractionStatusRepository(dsl)
 
         val playerService = MfPlayerService(playerRepository)
         val factionService = MfFactionService(factionRepository)
         val lawService = MfLawService(lawRepository)
         val factionRelationshipService = MfFactionRelationshipService(factionRelationshipRepository)
         val claimedChunkService = MfClaimService(claimedChunkRepository)
+        val lockService = MfLockService(this, lockRepository)
+        val interactionService = MfInteractionService(interactionStatusRepository)
+
+        lockService.loadLockedBlocks()
 
         services = Services(
             playerService,
             factionService,
             lawService,
             factionRelationshipService,
-            claimedChunkService
+            claimedChunkService,
+            lockService,
+            interactionService
         )
         setupNotificationDispatcher()
+        setupRpkLockService()
 
-        server.pluginManager.registerEvents(AsyncPlayerPreLoginListener(playerService), this)
+        server.pluginManager.registerEvents(AsyncPlayerPreLoginListener(this), this)
+        server.pluginManager.registerEvents(PlayerInteractListener(this), this)
         server.pluginManager.registerEvents(PlayerMoveListener(this), this)
+        server.pluginManager.registerEvents(PlayerQuitListener(this), this)
 
         getCommand("medievalfactions")?.setExecutor(MedievalFactionsCommand(this))
         getCommand("faction")?.setExecutor(MfFactionCommand(this))
+        getCommand("lock")?.setExecutor(MfLockCommand(this))
+        getCommand("unlock")?.setExecutor(MfUnlockCommand(this))
+        getCommand("accessors")?.setExecutor(MfAccessorsCommand(this))
 
         server.scheduler.scheduleSyncRepeatingTask(this, {
             val onlinePlayers = server.onlinePlayers
@@ -131,6 +155,12 @@ class MedievalFactions : JavaPlugin() {
             server.pluginManager.getPlugin("Mailboxes") != null -> MailboxesNotificationDispatcher(this)
             server.pluginManager.getPlugin("rpk-notification-lib-bukkit") != null -> RpkNotificationDispatcher()
             else -> NoOpNotificationDispatcher()
+        }
+    }
+
+    private fun setupRpkLockService() {
+        if (server.pluginManager.getPlugin("rpk-lock-lib-bukkit") != null) {
+            MfRpkLockService(this)
         }
     }
 

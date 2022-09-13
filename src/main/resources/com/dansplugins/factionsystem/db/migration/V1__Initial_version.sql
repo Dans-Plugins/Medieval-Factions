@@ -77,12 +77,12 @@ create table `mf_claimed_chunk`(
 
 create table `mf_player_interaction_status`(
     `player_id` varchar(36) primary key not null,
-    `interaction_status` varchar(32) not null,
+    `interaction_status` varchar(32),
     foreign key(`player_id`) references `mf_player`(`id`) on delete cascade
 );
 
 create table `mf_gate`(
-    `gate_id` varchar(36) primary key not null,
+    `id` varchar(36) primary key not null,
     `version` integer not null,
     `faction_id` varchar(36) not null,
     `world_id` varchar(36) not null,
@@ -99,4 +99,26 @@ create table `mf_gate`(
     `sound_effect` varchar(32) not null,
     `status` varchar(32) not null,
     foreign key(`faction_id`) references `mf_faction`(`id`)
+);
+
+create table `mf_locked_block`(
+    `id` varchar(36) primary key not null,
+    `version` integer not null,
+    `world_id` varchar(36) not null,
+    `x` integer not null,
+    `y` integer not null,
+    `z` integer not null,
+    `chunk_x` integer not null,
+    `chunk_z` integer not null,
+    `player_id` varchar(36) not null,
+    foreign key(`world_id`, `chunk_x`, `chunk_z`) references `mf_claimed_chunk`(`world_id`, `x`, `z`) on delete cascade,
+    foreign key(`player_id`) references `mf_player`(`id`) on delete cascade
+);
+
+create table `mf_locked_block_accessor`(
+    `locked_block_id` varchar(36),
+    `player_id` varchar(36),
+    primary key(`locked_block_id`, `player_id`),
+    foreign key(`locked_block_id`) references `mf_locked_block`(`id`) on delete cascade,
+    foreign key(`player_id`) references `mf_player`(`id`) on delete cascade
 )
