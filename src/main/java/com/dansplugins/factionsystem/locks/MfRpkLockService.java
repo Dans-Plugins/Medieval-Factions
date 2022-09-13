@@ -1,8 +1,10 @@
 package com.dansplugins.factionsystem.locks;
 
 import com.dansplugins.factionsystem.MedievalFactions;
+import com.dansplugins.factionsystem.area.MfBlockPosition;
 import com.dansplugins.factionsystem.interaction.MfInteractionService;
 import com.dansplugins.factionsystem.interaction.MfInteractionStatus;
+import com.rpkit.core.bukkit.location.LocationsKt;
 import com.rpkit.core.location.RPKBlockLocation;
 import com.rpkit.core.service.Services;
 import com.rpkit.locks.bukkit.lock.RPKLockService;
@@ -12,6 +14,7 @@ import org.bukkit.inventory.ItemStack;
 import java.util.concurrent.CompletableFuture;
 
 import static com.dansplugins.factionsystem.interaction.MfInteractionStatus.*;
+import static java.util.concurrent.CompletableFuture.completedFuture;
 import static java.util.concurrent.CompletableFuture.runAsync;
 
 public final class MfRpkLockService implements RPKLockService {
@@ -30,12 +33,13 @@ public final class MfRpkLockService implements RPKLockService {
 
     @Override
     public boolean isLocked(RPKBlockLocation location) {
-        return false;
+        MfLockService lockService = plugin.services.getLockService();
+        return lockService.getLockedBlock(MfBlockPosition.Companion.fromBukkitBlock(LocationsKt.toBukkitBlock(location))) != null;
     }
 
     @Override
     public CompletableFuture<Void> setLocked(RPKBlockLocation location, boolean isLocked) {
-        return null;
+        return completedFuture(null);
     }
 
     @Override
