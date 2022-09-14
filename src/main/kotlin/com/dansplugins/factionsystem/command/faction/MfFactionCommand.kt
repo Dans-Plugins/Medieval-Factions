@@ -10,6 +10,7 @@ import com.dansplugins.factionsystem.command.faction.declarewar.MfFactionDeclare
 import com.dansplugins.factionsystem.command.faction.disband.MfFactionDisbandCommand
 import com.dansplugins.factionsystem.command.faction.grantindependence.MfFactionGrantIndependenceCommand
 import com.dansplugins.factionsystem.command.faction.help.MfFactionHelpCommand
+import com.dansplugins.factionsystem.command.faction.info.MfFactionInfoCommand
 import com.dansplugins.factionsystem.command.faction.invite.MfFactionInviteCommand
 import com.dansplugins.factionsystem.command.faction.invoke.MfFactionInvokeCommand
 import com.dansplugins.factionsystem.command.faction.join.MfFactionJoinCommand
@@ -40,6 +41,7 @@ class MfFactionCommand(private val plugin: MedievalFactions) : CommandExecutor {
     private val factionJoinCommand = MfFactionJoinCommand(plugin)
     private val factionDeclareWarCommand = MfFactionDeclareWarCommand(plugin)
     private val factionMakePeaceCommand = MfFactionMakePeaceCommand(plugin)
+    private val factionInfoCommand = MfFactionInfoCommand(plugin)
     private val factionMembersCommand = MfFactionMembersCommand(plugin)
     private val factionRoleCommand = MfFactionRoleCommand(plugin)
     private val factionListCommand = MfFactionListCommand(plugin)
@@ -70,6 +72,7 @@ class MfFactionCommand(private val plugin: MedievalFactions) : CommandExecutor {
             "join", plugin.language["CmdFactionJoin"] -> factionJoinCommand.onCommand(sender, command, label, args.drop(1).toTypedArray())
             "declarewar", "dw", plugin.language["CmdFactionDeclareWar"] -> factionDeclareWarCommand.onCommand(sender, command, label, args.drop(1).toTypedArray())
             "makepeace", "mp", plugin.language["CmdFactionMakePeace"] -> factionMakePeaceCommand.onCommand(sender, command, label, args.drop(1).toTypedArray())
+            "info", plugin.language["CmdFactionInfo"] -> factionInfoCommand.onCommand(sender, command, label, args.drop(1).toTypedArray())
             "members", plugin.language["CmdFactionMembers"] -> factionMembersCommand.onCommand(sender, command, label, args.drop(1).toTypedArray())
             "role", plugin.language["CmdFactionRole"] -> factionRoleCommand.onCommand(sender, command, label, args.drop(1).toTypedArray())
             "list", plugin.language["CmdFactionList"] -> factionListCommand.onCommand(sender, command, label, args.drop(1).toTypedArray())
