@@ -3,6 +3,7 @@ package com.dansplugins.factionsystem.command.faction
 import com.dansplugins.factionsystem.MedievalFactions
 import com.dansplugins.factionsystem.command.faction.ally.MfFactionAllyCommand
 import com.dansplugins.factionsystem.command.faction.breakalliance.MfFactionBreakAllianceCommand
+import com.dansplugins.factionsystem.command.faction.checkclaim.MfFactionCheckClaimCommand
 import com.dansplugins.factionsystem.command.faction.claim.MfFactionClaimCommand
 import com.dansplugins.factionsystem.command.faction.create.MfFactionCreateCommand
 import com.dansplugins.factionsystem.command.faction.declareindependence.MfFactionDeclareIndependenceCommand
@@ -49,6 +50,7 @@ class MfFactionCommand(private val plugin: MedievalFactions) : CommandExecutor {
     private val factionListCommand = MfFactionListCommand(plugin)
     private val factionClaimCommand = MfFactionClaimCommand(plugin)
     private val factionUnclaimCommand = MfFactionUnclaimCommand(plugin)
+    private val factionCheckClaimCommand = MfFactionCheckClaimCommand(plugin)
     private val factionUnclaimAllCommand = MfFactionUnclaimAllCommand(plugin)
     private val factionPowerCommand = MfFactionPowerCommand(plugin)
     private val factionWhoCommand = MfFactionWhoCommand(plugin)
@@ -82,6 +84,7 @@ class MfFactionCommand(private val plugin: MedievalFactions) : CommandExecutor {
             "list", plugin.language["CmdFactionList"] -> factionListCommand.onCommand(sender, command, label, args.drop(1).toTypedArray())
             "claim", plugin.language["CmdFactionClaim"] -> factionClaimCommand.onCommand(sender, command, label, args.drop(1).toTypedArray())
             "unclaim", plugin.language["CmdFactionUnclaim"] -> factionUnclaimCommand.onCommand(sender, command, label, args.drop(1).toTypedArray())
+            "checkclaim", plugin.language["CmdFactionCheckClaim"] -> factionCheckClaimCommand.onCommand(sender, command, label, args.drop(1).toTypedArray())
             "unclaimall", plugin.language["CmdFactionUnclaimAll"] -> factionUnclaimAllCommand.onCommand(sender, command, label, args.drop(1).toTypedArray())
             "power", plugin.language["CmdFactionPower"] -> factionPowerCommand.onCommand(sender, command, label, args.drop(1).toTypedArray())
             "who", plugin.language["CmdFactionWho"] -> factionWhoCommand.onCommand(sender, command, label, args.drop(1).toTypedArray())
