@@ -18,9 +18,9 @@ class PlayerJoinListener(private val plugin: MedievalFactions) : Listener {
             plugin.server.scheduler.runTask(plugin, Runnable {
                 event.player.resetTitle()
                 val title = if (newChunkFaction != null) {
-                    "${ChatColor.of(newChunkFaction.flags[plugin.flags.territoryAlertColor])}${newChunkFaction.name}"
+                    "${ChatColor.of(newChunkFaction.flags[plugin.flags.color])}${newChunkFaction.name}"
                 } else {
-                    "${ChatColor.of(plugin.config.getString("wilderness.territoryAlertColor"))}${plugin.language["Wilderness"]}"
+                    "${ChatColor.of(plugin.config.getString("wilderness.color"))}${plugin.language["Wilderness"]}"
                 }
                 event.player.sendTitle(title, null, 10, 70, 20)
             })

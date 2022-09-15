@@ -56,8 +56,9 @@ commands:
       /f declareindependence - Declares independence from your current liege, triggering a war
       /f grantindependence [vassal] - Grants independence to one of your vassals
       /f kick [player] - Kicks a player from your faction
+      /f map (normal|diplomatic) - Shows the faction map
     aliases: [f, fraktion, faccion, faccao]
-    usage: /<command> [help|ally|breakalliance|declarewar|makepeace|create|invite|join|law|role|list|claim|unclaim|checkclaim|unclaimall|power|who|invoke|leave|vassalize|swearfealty|declareindependence|grantindependence|kick]
+    usage: /<command> [help|ally|breakalliance|declarewar|makepeace|create|invite|join|law|role|list|claim|unclaim|checkclaim|unclaimall|power|who|invoke|leave|vassalize|swearfealty|declareindependence|grantindependence|kick|map]
   lock:
     description: Enables or disables lock mode. To cancel lock mode, use /lock cancel.
     aliases: [verschließen, verschliessen, cerrar, trancar, запереть]
@@ -189,4 +190,7 @@ permissions:
     default: true
   mf.kick:
     description: Allows kicking players from a faction
+    default: true
+  mf.map:
+    description: Allows showing the faction map
     default: true

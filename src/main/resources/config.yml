@@ -9,7 +9,7 @@ players:
   hoursToReachMaxPower: 12
   hoursToReachMinPower: 72
 wilderness:
-  territoryAlertColor: '#3e8e39'
+  color: '#3e8e39'
 factions:
   initialPowerLevel: 5
   mobsSpawnInFactionTerritory: false
@@ -35,8 +35,6 @@ factions:
       alliesCanInteractWithLand: false
       vassalageTreeCanInteractWithLand: false
       neutral: false
-      dynmapTerritoryColor: '#ff0000'
-      territoryAlertColor: '#ffffff'
-      prefixColor: '#ffffff'
+      color: random # Can be hex colours, e.g. '#ffffff', '#ffcc00', etc., or 'random' to choose a random colour
       allowFriendlyFire: false
       acceptBonusPower: true

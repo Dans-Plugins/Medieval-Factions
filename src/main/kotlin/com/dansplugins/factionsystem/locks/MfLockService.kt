@@ -63,8 +63,9 @@ class MfLockService(private val plugin: MedievalFactions, private val repository
 
     fun loadLockedBlocks() {
         plugin.logger.info("Loading locked blocks...")
+        val startTime = System.currentTimeMillis()
         lockedBlocks.putAll(repository.getLockedBlocks().map { it.block to it })
-        plugin.logger.info("Locked blocks loaded.")
+        plugin.logger.info("Locked blocks loaded (${System.currentTimeMillis() - startTime}ms)")
     }
 
     private fun Exception.toServiceFailureType(): ServiceFailureType {
