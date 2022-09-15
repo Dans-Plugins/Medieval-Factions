@@ -21,6 +21,7 @@ import com.dansplugins.factionsystem.command.faction.law.MfFactionLawCommand
 import com.dansplugins.factionsystem.command.faction.leave.MfFactionLeaveCommand
 import com.dansplugins.factionsystem.command.faction.list.MfFactionListCommand
 import com.dansplugins.factionsystem.command.faction.makepeace.MfFactionMakePeaceCommand
+import com.dansplugins.factionsystem.command.faction.map.MfFactionMapCommand
 import com.dansplugins.factionsystem.command.faction.members.MfFactionMembersCommand
 import com.dansplugins.factionsystem.command.faction.power.MfFactionPowerCommand
 import com.dansplugins.factionsystem.command.faction.role.MfFactionRoleCommand
@@ -66,6 +67,7 @@ class MfFactionCommand(private val plugin: MedievalFactions) : CommandExecutor {
     private val factionGrantIndependenceCommand = MfFactionGrantIndependenceCommand(plugin)
     private val factionDeclareIndependenceCommand = MfFactionDeclareIndependenceCommand(plugin)
     private val factionKickCommand = MfFactionKickCommand(plugin)
+    private val factionMapCommand = MfFactionMapCommand(plugin)
 
     override fun onCommand(sender: CommandSender, command: Command, label: String, args: Array<out String>): Boolean {
         if (args.isEmpty()) {
@@ -102,6 +104,7 @@ class MfFactionCommand(private val plugin: MedievalFactions) : CommandExecutor {
             "grantindependence", plugin.language["CmdFactionGrantIndependence"] -> factionGrantIndependenceCommand.onCommand(sender, command, label, args.drop(1).toTypedArray())
             "declareindependence", plugin.language["CmdFactionDeclareIndependence"] -> factionDeclareIndependenceCommand.onCommand(sender, command, label, args.drop(1).toTypedArray())
             "kick", plugin.language["CmdFactionKick"] -> factionKickCommand.onCommand(sender, command, label, args.drop(1).toTypedArray())
+            "map", plugin.language["CmdFactionMap"] -> factionMapCommand.onCommand(sender, command, label, args.drop(1).toTypedArray())
             else -> {
                 sender.sendMessage("$RED${plugin.language["CommandFactionUsage"]}")
                 true

@@ -14,10 +14,17 @@ import java.util.concurrent.CopyOnWriteArrayList
 
 class MfClaimService(private val plugin: MedievalFactions, private val repository: MfClaimedChunkRepository) {
 
-    private val claims: MutableList<MfClaimedChunk> = CopyOnWriteArrayList(repository.getClaims().toMutableList())
+    private val claims: MutableList<MfClaimedChunk>
     fun getClaim(world: World, x: Int, z: Int): MfClaimedChunk? = repository.getClaim(world, x, z)
     fun getClaim(chunk: Chunk): MfClaimedChunk? = getClaim(chunk.world, chunk.x, chunk.z)
     fun getClaims(factionId: MfFactionId): List<MfClaimedChunk> = repository.getClaims(factionId)
+
+    init {
+        plugin.logger.info("Loading claims...")
+        val startTime = System.currentTimeMillis()
+        claims = CopyOnWriteArrayList(repository.getClaims().toMutableList())
+        plugin.logger.info("Claims loaded (${System.currentTimeMillis() - startTime}ms)")
+    }
 
     fun save(claim: MfClaimedChunk) = resultFrom {
         val result = repository.upsert(claim)
@@ -31,7 +38,7 @@ class MfClaimService(private val plugin: MedievalFactions, private val repositor
                     if (faction != null) {
                         players.forEach { player ->
                             player.resetTitle()
-                            val title = "${ChatColor.of(faction.flags[plugin.flags.territoryAlertColor])}${faction.name}"
+                            val title = "${ChatColor.of(faction.flags[plugin.flags.color])}${faction.name}"
                             player.sendTitle(title, null, 10, 70, 20)
                         }
                     }
@@ -51,7 +58,7 @@ class MfClaimService(private val plugin: MedievalFactions, private val repositor
                 if (players.isNotEmpty()) {
                     players.forEach { player ->
                         player.resetTitle()
-                        val title = "${ChatColor.of(plugin.config.getString("wilderness.territoryAlertColor"))}${plugin.language["Wilderness"]}"
+                        val title = "${ChatColor.of(plugin.config.getString("wilderness.color"))}${plugin.language["Wilderness"]}"
                         player.sendTitle(title, null, 10, 70, 20)
                     }
                 }

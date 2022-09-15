@@ -4,8 +4,8 @@ import com.dansplugins.factionsystem.MedievalFactions
 import com.dansplugins.factionsystem.faction.permission.MfFactionPermission.Companion.VIEW_INFO
 import com.dansplugins.factionsystem.player.MfPlayer
 import dev.forkhandles.result4k.onFailure
-import org.bukkit.ChatColor.RED
 import org.bukkit.ChatColor.AQUA
+import org.bukkit.ChatColor.RED
 import org.bukkit.command.Command
 import org.bukkit.command.CommandExecutor
 import org.bukkit.command.CommandSender
@@ -18,7 +18,6 @@ class MfFactionInfoCommand(private val plugin: MedievalFactions) : CommandExecut
             sender.sendMessage("$RED${plugin.language["CommandFactionInfoNoPermission"]}")
             return true
         }
-        
         if (sender !is Player) {
             sender.sendMessage("$RED${plugin.language["CommandFactionInfoNotAPlayer"]}")
             return true

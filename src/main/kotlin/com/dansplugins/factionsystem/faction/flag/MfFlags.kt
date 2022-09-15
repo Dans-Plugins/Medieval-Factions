@@ -1,32 +1,38 @@
 package com.dansplugins.factionsystem.faction.flag
 
 import com.dansplugins.factionsystem.MedievalFactions
+import java.awt.Color
+import kotlin.random.Random
 
 class MfFlags(
     plugin: MedievalFactions,
-    private val flags: MutableList<MfFlag<Any?>> = mutableListOf(
+    private val flags: MutableList<MfFlag<out Any?>> = mutableListOf(
         MfFlag("alliesCanInteractWithLand", plugin.config.getBoolean("factions.defaults.flags.alliesCanInteractWithLand")),
         MfFlag("vassalageTreeCanInteractWithLand", plugin.config.getBoolean("factions.defaults.flags.vassalageTreeCanInteractWithLand")),
         MfFlag("neutral", plugin.config.getBoolean("factions.defaults.flags.neutral")),
-        MfFlag("dynmapTerritoryColor", plugin.config.getString("factions.defaults.flags.dynmapTerritoryColor")),
-        MfFlag("territoryAlertColor", plugin.config.getString("factions.defaults.flags.territoryAlertColor")),
-        MfFlag("prefixColor", plugin.config.getString("factions.defaults.flags.prefixColor")),
+        MfFlag("color") {
+            val default = plugin.config.getString("factions.defaults.flags.color")
+            if (default == "random") {
+                val color = Color.getHSBColor(Random.nextFloat(), Random.nextFloat(), 0.8f + (Random.nextFloat() * 0.2f))
+                String.format("#%02x%02x%02x", color.red, color.green, color.blue)
+            } else {
+                default
+            }
+        },
         MfFlag("allowFriendlyFire", plugin.config.getBoolean("factions.defaults.flags.allowFriendlyFire")),
         MfFlag("acceptBonusPower", plugin.config.getBoolean("factions.defaults.flags.acceptBonusPower"))
     )
-) : MutableList<MfFlag<Any?>> by flags {
+) : MutableList<MfFlag<out Any?>> by flags {
 
     operator fun <T: Any?> get(name: String) = singleOrNull { it.name == name } as? MfFlag<T>
 
     val alliesCanInteractWithLand = get<Boolean>("alliesCanInteractWithLand")!!
     val vassalageTreeCanInteractWithLand = get<Boolean>("vassalageTreeCanInteractWithLand")!!
     val isNeutral = get<Boolean>("neutral")!!
-    val dynmapTerritoryColor = get<String>("dynmapTerritoryColor")!!
-    val territoryAlertColor = get<String>("territoryAlertColor")!!
-    val prefixColor = get<String>("prefixColor")!!
+    val color = get<String>("color")!!
     val allowFriendlyFire = get<Boolean>("allowFriendlyFire")!!
     val acceptBonusPower = get<Boolean>("acceptBonusPower")!!
 
-    fun defaults() = MfFlagValues(flags.associateWith(MfFlag<Any?>::defaultValue))
+    fun defaults() = MfFlagValues(flags.associateWith(MfFlag<out Any?>::defaultValue))
 
 }
