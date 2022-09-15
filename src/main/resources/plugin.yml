@@ -55,8 +55,9 @@ commands:
       /f swearfealty [faction] - Swears fealty to a faction that has sent you a vassalization request
       /f declareindependence - Declares independence from your current liege, triggering a war
       /f grantindependence [vassal] - Grants independence to one of your vassals
+      /f kick [player] - Kicks a player from your faction
     aliases: [f, fraktion, faccion, faccao]
-    usage: /<command> [help|ally|breakalliance|declarewar|makepeace|create|invite|join|law|role|list|claim|unclaim|checkclaim|unclaimall|power|who|invoke|leave|vassalize|swearfealty|declareindependence|grantindependence]
+    usage: /<command> [help|ally|breakalliance|declarewar|makepeace|create|invite|join|law|role|list|claim|unclaim|checkclaim|unclaimall|power|who|invoke|leave|vassalize|swearfealty|declareindependence|grantindependence|kick]
   lock:
     description: Enables or disables lock mode. To cancel lock mode, use /lock cancel.
     aliases: [verschließen, verschliessen, cerrar, trancar, запереть]
@@ -185,4 +186,7 @@ permissions:
     default: true
   mf.revokeaccess:
     description: Allows removing accessors from locked blocks
+    default: true
+  mf.kick:
+    description: Allows kicking players from a faction
     default: true
