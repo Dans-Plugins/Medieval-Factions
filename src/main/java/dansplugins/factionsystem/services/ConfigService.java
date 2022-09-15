@@ -172,6 +172,12 @@ public class ConfigService {
         if (!getConfig().isString("factionless")) {
             getConfig().set("factionless", "FactionLess");
         }
+        if (!getConfig().isSet("secondsBeforeInitialAutosave")) {
+            getConfig().set("secondsBeforeInitialAutosave", 60 * 60);
+        }
+        if (!getConfig().isSet("secondsBetweenAutosaves")) {
+            getConfig().set("secondsBetweenAutosaves", 60 * 60);
+        }
         deleteOldConfigOptionsIfPresent();
 
         getConfig().options().copyDefaults(true);
@@ -214,7 +220,9 @@ public class ConfigService {
                     || option.equalsIgnoreCase("factionMaxNumberGates")
                     || option.equalsIgnoreCase("factionMaxGateArea")
                     || option.equalsIgnoreCase("maxClaimRadius")
-                    || option.equalsIgnoreCase("teleportDelay")) {
+                    || option.equalsIgnoreCase("teleportDelay")
+                    || option.equalsIgnoreCase("secondsBeforeInitialAutosave")
+                    || option.equalsIgnoreCase("secondsBetweenAutosaves")) {
                 getConfig().set(option, Integer.parseInt(value));
                 sender.sendMessage(ChatColor.GREEN + localeService.get("IntegerSet"));
             } else if (option.equalsIgnoreCase("mobsSpawnInFactionTerritory")
@@ -314,6 +322,8 @@ public class ConfigService {
         getConfig().set("teleportDelay", 3);
         getConfig().set("factionless", "FactionLess");
         getConfig().set("useNewLanguageFile", false);
+        getConfig().set("secondsBeforeInitialAutosave", 60);
+        getConfig().set("secondsBetweenAutosaves", 60);
         getConfig().options().copyDefaults(true);
         medievalFactions.saveConfig();
     }
@@ -368,7 +378,11 @@ public class ConfigService {
                 + ", bonusPowerEnabled: " + getBoolean("bonusPowerEnabled")
                 + ", powerLostOnDeath: " + getDouble("powerLostOnDeath")
                 + ", powerGainedOnKill: " + getDouble("powerGainedOnKill")
-                + ", teleportDelay: " + getInt("teleportDelay"));
+                + ", teleportDelay: " + getInt("teleportDelay")
+                + ", factionless: " + getString("factionless")
+                + ", useNewLanguageFile: " + getBoolean("useNewLanguageFile")
+                + ", secondsBeforeInitialAutosave: " + getInt("secondsBeforeInitialAutosave")
+                + ", secondsBetweenAutosaves: " + getInt("secondsBetweenAutosaves"));
     }
 
     public ArrayList<String> getStringConfigOptions()
@@ -416,7 +430,11 @@ public class ConfigService {
                 "factionOfficerMultiplier",
                 "vassalContributionPercentageMultiplier",
                 "powerLostOnDeath",
-                "powerGainedOnKill");
+                "powerGainedOnKill",
+                "factionless",
+                "useNewLanguageFile",
+                "secondsBeforeInitialAutosave",
+                "secondsBetweenAutosaves");
         return configOptions;
     }
 
