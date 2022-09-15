@@ -43,6 +43,8 @@ commands:
       /f role set [player] [role] - Sets a player to a given role
       /f list - Lists factions
       /f claim (radius) - Claims land
+      /f unclaim (radius) - Unclaims land
+      /f checkclaim - Checks who has claimed the chunk you are in
       /f unclaimall - Unclaims all claimed land
       /f power - Views power stats
       /f who - Views a player's faction
@@ -54,7 +56,7 @@ commands:
       /f declareindependence - Declares independence from your current liege, triggering a war
       /f grantindependence [vassal] - Grants independence to one of your vassals
     aliases: [f, fraktion, faccion, faccao]
-    usage: /<command> [help|ally|breakalliance|declarewar|makepeace|create|invite|join|law|role|list|claim|power|who|invoke|leave|vassalize|swearfealty|declareindependence|grantindependence]
+    usage: /<command> [help|ally|breakalliance|declarewar|makepeace|create|invite|join|law|role|list|claim|unclaim|checkclaim|unclaimall|power|who|invoke|leave|vassalize|swearfealty|declareindependence|grantindependence]
   lock:
     description: Enables or disables lock mode. To cancel lock mode, use /lock cancel.
     aliases: [verschließen, verschliessen, cerrar, trancar, запереть]
@@ -123,6 +125,12 @@ permissions:
     default: true
   mf.claim:
     description: Allows claiming land
+    default: true
+  mf.unclaim:
+    description: Allows unclaiming land
+    default: true
+  mf.checkclaim:
+    description: Allows checking claims
     default: true
   mf.unclaimall:
     description: Allows unclaiming all land
