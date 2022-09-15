@@ -50,6 +50,9 @@ public class Scheduler {
         logger.debug(localeService.get("SchedulingHourlyAutoSave"));
         int delay = configService.getInt("secondsBeforeInitialAutosave");
         int secondsUntilRepeat = configService.getInt("secondsBetweenAutosaves");
+        if (delay == 0 || secondsUntilRepeat == 0) {
+            return;
+        }
         Bukkit.getScheduler().scheduleSyncRepeatingTask(medievalFactions, new Runnable() {
             @Override
             public void run() {
