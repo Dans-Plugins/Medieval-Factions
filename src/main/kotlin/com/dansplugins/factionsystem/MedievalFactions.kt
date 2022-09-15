@@ -19,10 +19,7 @@ import com.dansplugins.factionsystem.lang.Language
 import com.dansplugins.factionsystem.law.JooqMfLawRepository
 import com.dansplugins.factionsystem.law.MfLawRepository
 import com.dansplugins.factionsystem.law.MfLawService
-import com.dansplugins.factionsystem.listener.AsyncPlayerPreLoginListener
-import com.dansplugins.factionsystem.listener.PlayerInteractListener
-import com.dansplugins.factionsystem.listener.PlayerMoveListener
-import com.dansplugins.factionsystem.listener.PlayerQuitListener
+import com.dansplugins.factionsystem.listener.*
 import com.dansplugins.factionsystem.locks.JooqMfLockRepository
 import com.dansplugins.factionsystem.locks.MfLockService
 import com.dansplugins.factionsystem.locks.MfRpkLockService
@@ -112,7 +109,7 @@ class MedievalFactions : JavaPlugin() {
         val factionService = MfFactionService(factionRepository)
         val lawService = MfLawService(lawRepository)
         val factionRelationshipService = MfFactionRelationshipService(factionRelationshipRepository)
-        val claimedChunkService = MfClaimService(claimedChunkRepository)
+        val claimedChunkService = MfClaimService(this, claimedChunkRepository)
         val lockService = MfLockService(this, lockRepository)
         val interactionService = MfInteractionService(interactionStatusRepository)
 
@@ -132,6 +129,7 @@ class MedievalFactions : JavaPlugin() {
 
         server.pluginManager.registerEvents(AsyncPlayerPreLoginListener(this), this)
         server.pluginManager.registerEvents(PlayerInteractListener(this), this)
+        server.pluginManager.registerEvents(PlayerJoinListener(this), this)
         server.pluginManager.registerEvents(PlayerMoveListener(this), this)
         server.pluginManager.registerEvents(PlayerQuitListener(this), this)
 
