@@ -37,7 +37,7 @@ public class StatsCommand extends SubCommand {
 
     @Override
     public void execute(CommandSender sender, String[] args, String key) {
-        if (!medievalFactions.USE_NEW_LANGUAGE_FILE) {
+        if (!configService.getBoolean("useNewLanguageFile")) {
             sender.sendMessage(ChatColor.AQUA + "=== Medieval Factions Stats ===");
             sender.sendMessage(ChatColor.AQUA + "Number of factions: " + persistentData.getNumFactions());
         } else {

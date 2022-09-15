@@ -9,9 +9,7 @@ import dansplugins.factionsystem.commands.abs.SubCommand;
 import dansplugins.factionsystem.data.EphemeralData;
 import dansplugins.factionsystem.data.PersistentData;
 import dansplugins.factionsystem.events.FactionCreateEvent;
-import dansplugins.factionsystem.integrators.CurrenciesIntegrator;
 import dansplugins.factionsystem.integrators.DynmapIntegrator;
-import dansplugins.factionsystem.integrators.FiefsIntegrator;
 import dansplugins.factionsystem.objects.domain.Faction;
 import dansplugins.factionsystem.services.ConfigService;
 import dansplugins.factionsystem.services.LocaleService;
@@ -29,17 +27,13 @@ import java.util.Objects;
  * @author Callum Johnson
  */
 public class CreateCommand extends SubCommand {
-    private final FiefsIntegrator fiefsIntegrator;
-    private final CurrenciesIntegrator currenciesIntegrator;
     private final Logger logger;
     private final MedievalFactions medievalFactions;
 
-    public CreateCommand(LocaleService localeService, PersistentData persistentData, EphemeralData ephemeralData, PersistentData.ChunkDataAccessor chunkDataAccessor, DynmapIntegrator dynmapIntegrator, ConfigService configService, FiefsIntegrator fiefsIntegrator, CurrenciesIntegrator currenciesIntegrator, Logger logger, MedievalFactions medievalFactions, PlayerService playerService, MessageService messageService) {
+    public CreateCommand(LocaleService localeService, PersistentData persistentData, EphemeralData ephemeralData, PersistentData.ChunkDataAccessor chunkDataAccessor, DynmapIntegrator dynmapIntegrator, ConfigService configService, Logger logger, MedievalFactions medievalFactions, PlayerService playerService, MessageService messageService) {
         super(new String[]{
                 LOCALE_PREFIX + "CmdCreate", "Create"
         }, true, persistentData, localeService, ephemeralData, configService, playerService, messageService, chunkDataAccessor, dynmapIntegrator);
-        this.fiefsIntegrator = fiefsIntegrator;
-        this.currenciesIntegrator = currenciesIntegrator;
         this.logger = logger;
         this.medievalFactions = medievalFactions;
     }
@@ -89,7 +83,7 @@ public class CreateCommand extends SubCommand {
             return;
         }
 
-        this.faction = new Faction(factionName, player.getUniqueId(), configService, localeService, fiefsIntegrator, currenciesIntegrator, dynmapIntegrator, logger, persistentData, medievalFactions, playerService);
+        this.faction = new Faction(factionName, player.getUniqueId(), configService, localeService, dynmapIntegrator, logger, persistentData, medievalFactions, playerService);
 
         this.faction.addMember(player.getUniqueId());
 

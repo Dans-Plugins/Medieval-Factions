@@ -64,7 +64,7 @@ public class DisbandCommand extends SubCommand {
         if (args.length == 0) {
             if (!checkPermissions(sender, "mf.disband")) return;
             if (!(sender instanceof Player)) { // ONLY Players can be in a Faction
-                if (!medievalFactions.USE_NEW_LANGUAGE_FILE) {
+                if (!configService.getBoolean("useNewLanguageFile")) {
                     sender.sendMessage(translate(getText("OnlyPlayersCanUseCommand")));
                 } else {
                     playerService.sendConsoleMessage(sender.getServer().getConsoleSender(), "OnlyPlayersCanUseCommand", true);

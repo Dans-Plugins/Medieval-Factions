@@ -80,7 +80,7 @@ public class MembersCommand extends SubCommand {
             }
         }
         // send Faction Members
-        if (!medievalFactions.USE_NEW_LANGUAGE_FILE) {
+        if (!configService.getBoolean("useNewLanguageFile")) {
             sender.sendMessage(translate("&b----------\n" + getText("MembersOf", faction.getName())));
             sender.sendMessage(translate("&b----------\n"));
             faction.getMemberList().stream()
