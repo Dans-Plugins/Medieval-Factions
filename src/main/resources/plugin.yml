@@ -43,6 +43,7 @@ commands:
       /f role set [player] [role] - Sets a player to a given role
       /f list - Lists factions
       /f claim (radius) - Claims land
+      /f unclaimall - Unclaims all claimed land
       /f power - Views power stats
       /f who - Views a player's faction
       /f disband - Disbands your faction
@@ -122,6 +123,9 @@ permissions:
     default: true
   mf.claim:
     description: Allows claiming land
+    default: true
+  mf.unclaimall:
+    description: Allows unclaiming all land
     default: true
   mf.power:
     description: Allows viewing power

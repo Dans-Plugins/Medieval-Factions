@@ -33,6 +33,14 @@ class MfClaimService(private val repository: MfClaimedChunkRepository) {
         ServiceFailure(exception.toServiceFailureType(), "Service error: ${exception.message}", exception)
     }
 
+    fun deleteAllClaims(factionId: MfFactionId) = resultFrom {
+        val result = repository.deleteAll(factionId)
+        claims.removeAll { it.factionId.value == factionId.value }
+        return@resultFrom result
+    }.mapFailure { exception ->
+        ServiceFailure(exception.toServiceFailureType(), "Service error: ${exception.message}", exception)
+    }
+
     private fun Exception.toServiceFailureType(): ServiceFailureType {
         return when (this) {
             is OptimisticLockingFailureException -> ServiceFailureType.CONFLICT

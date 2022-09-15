@@ -59,6 +59,12 @@ class JooqMfClaimedChunkRepository(private val dsl: DSLContext) : MfClaimedChunk
             .execute()
     }
 
+    override fun deleteAll(factionId: MfFactionId) {
+        dsl.deleteFrom(MF_CLAIMED_CHUNK)
+            .where(MF_CLAIMED_CHUNK.FACTION_ID.eq(factionId.value))
+            .execute()
+    }
+
     private fun MfClaimedChunkRecord.toDomain() = MfClaimedChunk(
         worldId.let(UUID::fromString),
         x,
