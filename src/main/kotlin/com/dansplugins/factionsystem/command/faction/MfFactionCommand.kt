@@ -16,6 +16,7 @@ import com.dansplugins.factionsystem.command.faction.info.MfFactionInfoCommand
 import com.dansplugins.factionsystem.command.faction.invite.MfFactionInviteCommand
 import com.dansplugins.factionsystem.command.faction.invoke.MfFactionInvokeCommand
 import com.dansplugins.factionsystem.command.faction.join.MfFactionJoinCommand
+import com.dansplugins.factionsystem.command.faction.kick.MfFactionKickCommand
 import com.dansplugins.factionsystem.command.faction.law.MfFactionLawCommand
 import com.dansplugins.factionsystem.command.faction.leave.MfFactionLeaveCommand
 import com.dansplugins.factionsystem.command.faction.list.MfFactionListCommand
@@ -64,6 +65,7 @@ class MfFactionCommand(private val plugin: MedievalFactions) : CommandExecutor {
     private val factionSwearFealtyCommand = MfFactionSwearFealtyCommand(plugin)
     private val factionGrantIndependenceCommand = MfFactionGrantIndependenceCommand(plugin)
     private val factionDeclareIndependenceCommand = MfFactionDeclareIndependenceCommand(plugin)
+    private val factionKickCommand = MfFactionKickCommand(plugin)
 
     override fun onCommand(sender: CommandSender, command: Command, label: String, args: Array<out String>): Boolean {
         if (args.isEmpty()) {
@@ -99,6 +101,7 @@ class MfFactionCommand(private val plugin: MedievalFactions) : CommandExecutor {
             "swearfealty", plugin.language["CmdFactionSwearFealty"] -> factionSwearFealtyCommand.onCommand(sender, command, label, args.drop(1).toTypedArray())
             "grantindependence", plugin.language["CmdFactionGrantIndependence"] -> factionGrantIndependenceCommand.onCommand(sender, command, label, args.drop(1).toTypedArray())
             "declareindependence", plugin.language["CmdFactionDeclareIndependence"] -> factionDeclareIndependenceCommand.onCommand(sender, command, label, args.drop(1).toTypedArray())
+            "kick", plugin.language["CmdFactionKick"] -> factionKickCommand.onCommand(sender, command, label, args.drop(1).toTypedArray())
             else -> {
                 sender.sendMessage("$RED${plugin.language["CommandFactionUsage"]}")
                 true
