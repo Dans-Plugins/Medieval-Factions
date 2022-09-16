@@ -21,7 +21,9 @@ public class MessageService {
 
     public void createLanguageFile() {
         languageFile = new File(medievalFactions.getDataFolder(), "language.yml");
-        if (!languageFile.exists()) medievalFactions.saveResource("language.yml", false);
+        if (!languageFile.exists()) {
+            medievalFactions.saveResource("language.yml", false);
+        }
 
         language = new YamlConfiguration();
         try {

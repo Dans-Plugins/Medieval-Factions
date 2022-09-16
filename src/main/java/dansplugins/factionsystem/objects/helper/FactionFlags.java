@@ -56,7 +56,6 @@ public class FactionFlags {
         flagNames.add("territoryAlertColor");
         flagNames.add("prefixColor");
         flagNames.add("allowFriendlyFire");
-        flagNames.add("officersCanMintCurrency");
         flagNames.add("acceptBonusPower");
     }
 
@@ -71,7 +70,6 @@ public class FactionFlags {
         stringValues.put("territoryAlertColor", configService.getString("territoryAlertColor"));
         stringValues.put("prefixColor", "white");
         booleanValues.put("allowFriendlyFire", false);
-        booleanValues.put("officersCanMintCurrency", false);
         booleanValues.put("acceptBonusPower", true);
     }
 
@@ -103,9 +101,6 @@ public class FactionFlags {
         }
         if (!booleanValues.containsKey("allowFriendlyFire")) {
             booleanValues.put("allowFriendlyFire", false);
-        }
-        if (!booleanValues.containsKey("officersCanMintCurrency")) {
-            booleanValues.put("officersCanMintCurrency", false);
         }
         if (!booleanValues.containsKey("acceptBonusPower")) {
             booleanValues.put("acceptBonusPower", true);
