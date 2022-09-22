@@ -46,7 +46,7 @@ public class GateCommand extends SubCommand {
     public void execute(Player player, String[] args, String key) {
         if (!(checkPermissions(player, "mf.gate"))) return;
         if (args.length == 0) {
-            if (!medievalFactions.USE_NEW_LANGUAGE_FILE) {
+            if (!configService.getBoolean("useNewLanguageFile")) {
                 player.sendMessage(translate("&b" + getText("SubCommands")));
                 player.sendMessage(translate("&b" + getText("HelpGateCreate")));
                 player.sendMessage(translate("&b" + getText("HelpGateName")));

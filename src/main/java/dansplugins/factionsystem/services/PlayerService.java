@@ -8,17 +8,16 @@ import org.bukkit.command.ConsoleCommandSender;
 import java.util.List;
 
 public class PlayerService {
-
-    private final MedievalFactions medievalFactions;
+    private final ConfigService configService;
     private final MessageService messageService;
 
-    public PlayerService(MedievalFactions medievalFactions, MessageService messageService) {
-        this.medievalFactions = medievalFactions;
+    public PlayerService(ConfigService configService, MessageService messageService) {
+        this.configService = configService;
         this.messageService = messageService;
     }
 
     public String getMessageType(String oldtype, String newtype) {
-        if (medievalFactions.USE_NEW_LANGUAGE_FILE) {
+        if (configService.getBoolean("useNewLanguageFile")) {
             return newtype;
         } else {
             return oldtype;

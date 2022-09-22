@@ -5,12 +5,11 @@
 package dansplugins.factionsystem.utils.extended;
 
 import dansplugins.factionsystem.MedievalFactions;
-import dansplugins.factionsystem.integrators.FiefsIntegrator;
 import dansplugins.factionsystem.objects.domain.Faction;
+import dansplugins.factionsystem.services.ConfigService;
 import dansplugins.factionsystem.services.LocaleService;
 import dansplugins.factionsystem.services.MessageService;
 import dansplugins.factionsystem.services.PlayerService;
-import dansplugins.fiefs.externalapi.FI_Fief;
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
@@ -27,22 +26,22 @@ import static org.bukkit.Bukkit.getServer;
  */
 public class Messenger extends preponderous.ponder.minecraft.bukkit.tools.Messenger {
     private final LocaleService localeService;
-    private final FiefsIntegrator fiefsIntegrator;
     private final PlayerService playerService;
     private final MessageService messageService;
     private final MedievalFactions medievalFactions;
+    private final ConfigService configService;
 
-    public Messenger(LocaleService localeService, FiefsIntegrator fiefsIntegrator, PlayerService playerService, MessageService messageService, MedievalFactions medievalFactions) {
+    public Messenger(LocaleService localeService, PlayerService playerService, MessageService messageService, MedievalFactions medievalFactions, ConfigService configService) {
         this.localeService = localeService;
-        this.fiefsIntegrator = fiefsIntegrator;
         this.playerService = playerService;
         this.messageService = messageService;
         this.medievalFactions = medievalFactions;
+        this.configService = configService;
     }
 
     public void sendFactionInfo(CommandSender sender, Faction faction, int power) {
         UUIDChecker uuidChecker = new UUIDChecker();
-        if (!medievalFactions.USE_NEW_LANGUAGE_FILE) {
+        if (!configService.getBoolean("useNewLanguageFile")) {
             sender.sendMessage(ChatColor.BOLD + "" + ChatColor.AQUA + String.format(localeService.get("FactionInfo"), faction.getName()) + "\n----------\n");
             sender.sendMessage(ChatColor.AQUA + String.format(localeService.get("Name"), faction.getName()) + "\n");
             sender.sendMessage(ChatColor.AQUA + String.format(localeService.get("Owner"), uuidChecker.findPlayerNameBasedOnUUID(faction.getOwner())) + "\n");
@@ -70,7 +69,6 @@ public class Messenger extends preponderous.ponder.minecraft.bukkit.tools.Messen
             });
         }
         sendLiegeInfoIfVassal(faction, sender);
-        sendFiefsInfo(faction, sender);
         sendLiegeInfoIfLiege(faction, sender);
         sendBonusPowerInfo(faction, sender);
     }
@@ -91,20 +89,6 @@ public class Messenger extends preponderous.ponder.minecraft.bukkit.tools.Messen
             } else {
                 playerService.sendMessageType(sender, ChatColor.AQUA + String.format(localeService.get("VassalContribution"), 0) + "\n"
                         , Objects.requireNonNull(messageService.getLanguage().getString("VassalContribution")).replace("#amount#", String.valueOf(0)), true);
-            }
-        }
-    }
-
-    private void sendFiefsInfo(Faction faction, CommandSender sender) {
-        if (fiefsIntegrator.isFiefsPresent()) {
-            ArrayList<FI_Fief> fiefs = fiefsIntegrator.getAPI().getFiefsOfFaction(faction.getName());
-            if (fiefs.size() != 0) {
-                StringBuilder fiefsSeparatedByCommas = new StringBuilder();
-                for (FI_Fief fief : fiefs) {
-                    fiefsSeparatedByCommas.append(fief.getName());
-                }
-                playerService.sendMessageType(sender, ChatColor.AQUA + String.format("Fiefs: %s", fiefsSeparatedByCommas)
-                        , Objects.requireNonNull(messageService.getLanguage().getString("Fiefs")).replace("#fiefs#", String.valueOf(fiefsSeparatedByCommas)), true);
             }
         }
     }
