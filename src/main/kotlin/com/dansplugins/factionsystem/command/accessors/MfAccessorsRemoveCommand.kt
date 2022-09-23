@@ -154,7 +154,7 @@ class MfAccessorsRemoveCommand(private val plugin: MedievalFactions) : CommandEx
                 plugin.logger.log(Level.SEVERE, "Failed to save locked block: ${it.reason.message}", it.reason.cause)
                 return@Runnable
             }
-            sender.sendMessage("${ChatColor.GREEN}${plugin.language["CommandAccessorsRemoveSuccess", accessor.name ?: "unknown player"]}")
+            sender.sendMessage("${ChatColor.GREEN}${plugin.language["CommandAccessorsRemoveSuccess", accessor.name ?: plugin.language["UnknownPlayer"]]}")
         })
     }
 

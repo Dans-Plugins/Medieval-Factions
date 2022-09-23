@@ -17,7 +17,7 @@ class MfPowerCommand(private val plugin: MedievalFactions) : CommandExecutor {
             return true
         }
         return when (args.first().lowercase()) {
-            "set" -> powerSetCommand.onCommand(sender, command, label, args.drop(1).toTypedArray())
+            "set", plugin.language["CmdPowerSet"] -> powerSetCommand.onCommand(sender, command, label, args.drop(1).toTypedArray())
             else -> {
                 sender.sendMessage("$RED${plugin.language["CommandPowerUsage"]}")
                 true

@@ -54,7 +54,7 @@ class PlayerInteractListener(private val plugin: MedievalFactions) : Listener {
                         plugin.server.scheduler.runTaskAsynchronously(plugin, Runnable {
                             val playerService = plugin.services.playerService
                             val owner = playerService.getPlayer(lockedBlock.playerId)
-                            event.player.sendMessage("$RED${plugin.language["BlockLocked", owner?.toBukkit()?.name ?: "unknown player"]}")
+                            event.player.sendMessage("$RED${plugin.language["BlockLocked", owner?.toBukkit()?.name ?: plugin.language["UnknownPlayer"]]}")
                         })
                         event.isCancelled = true
                     }
@@ -89,7 +89,7 @@ class PlayerInteractListener(private val plugin: MedievalFactions) : Listener {
             val existingLock = lockService.getLockedBlock(blockPosition)
             if (existingLock != null) {
                 val existingLockOwner = playerService.getPlayer(existingLock.playerId)
-                player.sendMessage("$RED${plugin.language["BlockLockAlreadyLocked", existingLockOwner?.toBukkit()?.name ?: "unknown player"]}")
+                player.sendMessage("$RED${plugin.language["BlockLockAlreadyLocked", existingLockOwner?.toBukkit()?.name ?: plugin.language["UnknownPlayer"]]}")
                 return@Runnable
             }
             lockService.lock(blockPosition, claim, mfPlayer).onFailure {
@@ -124,9 +124,9 @@ class PlayerInteractListener(private val plugin: MedievalFactions) : Listener {
             if (lockedBlock.playerId.value != mfPlayer.id.value) {
                 val lockOwner = playerService.getPlayer(lockedBlock.playerId)
                 val ownerName = if (lockOwner == null) {
-                    "unknown player"
+                    plugin.language["UnknownPlayer"]
                 } else {
-                    lockOwner.toBukkit().name ?: "unknown player"
+                    lockOwner.toBukkit().name ?: plugin.language["UnknownPlayer"]
                 }
                 player.sendMessage("$RED${plugin.language["BlockUnlockOwnedByOtherPlayer", ownerName]}")
                 return@Runnable
