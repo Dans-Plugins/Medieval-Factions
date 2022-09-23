@@ -6,6 +6,14 @@ import com.dansplugins.factionsystem.jooq.tables.records.MfFactionRelationshipRe
 import org.jooq.DSLContext
 
 class JooqMfFactionRelationshipRepository(val dsl: DSLContext) : MfFactionRelationshipRepository {
+
+    override fun getFactionRelationship(relationshipId: MfFactionRelationshipId): MfFactionRelationship? {
+        return dsl.selectFrom(MF_FACTION_RELATIONSHIP)
+            .where(MF_FACTION_RELATIONSHIP.ID.eq(relationshipId.value))
+            .fetchOne()
+            ?.let { it.toDomain() }
+    }
+
     override fun getFactionRelationships(factionId: MfFactionId, targetId: MfFactionId): List<MfFactionRelationship> {
         return dsl.selectFrom(MF_FACTION_RELATIONSHIP)
             .where(MF_FACTION_RELATIONSHIP.FACTION_ID.eq(factionId.value))

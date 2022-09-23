@@ -52,11 +52,12 @@ class MfFactionUnclaimCommand(private val plugin: MedievalFactions) : CommandExe
                 return@Runnable
             }
             val claimService = plugin.services.claimService
-            val senderChunkX = sender.location.chunk.x
-            val senderChunkZ = sender.location.chunk.z
+            val senderChunk = sender.location.chunk
+            val senderChunkX = senderChunk.x
+            val senderChunkZ = senderChunk.z
             plugin.server.scheduler.runTask(plugin, Runnable {
                 val chunks = if (radius == null) {
-                    listOf(sender.location.chunk)
+                    listOf(senderChunk)
                 } else {
                     (senderChunkX - radius..senderChunkX + radius).flatMap { x ->
                         (senderChunkZ - radius..senderChunkZ + radius).filter { z ->
@@ -65,17 +66,19 @@ class MfFactionUnclaimCommand(private val plugin: MedievalFactions) : CommandExe
                             (a * a) + (b * b) <= radius * radius
                         }.map { z -> sender.world.getChunkAt(x, z) }
                     }
-                }.filter { chunk ->
-                    val claim = claimService.getClaim(chunk)
-                    return@filter claim != null && claim.factionId.value == faction.id.value
                 }
                 plugin.server.scheduler.runTaskAsynchronously(plugin, Runnable saveChunks@{
-                    if (chunks.isEmpty()) {
+                    val claims = chunks.mapNotNull { chunk ->
+                        claimService.getClaim(chunk)
+                    }.filter { claim ->
+                        return@filter claim.factionId.value == faction.id.value
+                    }
+                    if (claims.isEmpty()) {
                         sender.sendMessage("$RED${plugin.language["CommandFactionUnclaimNoUnclaimableChunks"]}")
                         return@saveChunks
                     }
-                    chunks.forEach { chunk ->
-                        claimService.delete(chunk.world, chunk.x, chunk.z)
+                    claims.forEach { claim ->
+                        claimService.delete(claim)
                             .onFailure {
                                 sender.sendMessage("$RED${plugin.language["CommandFactionUnclaimFailedToDeleteClaim"]}")
                                 plugin.logger.log(SEVERE, "Failed to delete claimed chunk: ${it.reason.message}", it.reason.cause)
