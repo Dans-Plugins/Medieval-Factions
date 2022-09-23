@@ -12,6 +12,7 @@ import com.dansplugins.factionsystem.command.faction.declarewar.MfFactionDeclare
 import com.dansplugins.factionsystem.command.faction.disband.MfFactionDisbandCommand
 import com.dansplugins.factionsystem.command.faction.grantindependence.MfFactionGrantIndependenceCommand
 import com.dansplugins.factionsystem.command.faction.help.MfFactionHelpCommand
+import com.dansplugins.factionsystem.command.faction.home.MfFactionHomeCommand
 import com.dansplugins.factionsystem.command.faction.info.MfFactionInfoCommand
 import com.dansplugins.factionsystem.command.faction.invite.MfFactionInviteCommand
 import com.dansplugins.factionsystem.command.faction.invoke.MfFactionInvokeCommand
@@ -26,6 +27,7 @@ import com.dansplugins.factionsystem.command.faction.members.MfFactionMembersCom
 import com.dansplugins.factionsystem.command.faction.power.MfFactionPowerCommand
 import com.dansplugins.factionsystem.command.faction.role.MfFactionRoleCommand
 import com.dansplugins.factionsystem.command.faction.set.MfFactionSetCommand
+import com.dansplugins.factionsystem.command.faction.sethome.MfFactionSetHomeCommand
 import com.dansplugins.factionsystem.command.faction.swearfealty.MfFactionSwearFealtyCommand
 import com.dansplugins.factionsystem.command.faction.unclaim.MfFactionUnclaimCommand
 import com.dansplugins.factionsystem.command.faction.unclaimall.MfFactionUnclaimAllCommand
@@ -68,6 +70,8 @@ class MfFactionCommand(private val plugin: MedievalFactions) : CommandExecutor {
     private val factionDeclareIndependenceCommand = MfFactionDeclareIndependenceCommand(plugin)
     private val factionKickCommand = MfFactionKickCommand(plugin)
     private val factionMapCommand = MfFactionMapCommand(plugin)
+    private val factionSetHomeCommand = MfFactionSetHomeCommand(plugin)
+    private val factionHomeCommand = MfFactionHomeCommand(plugin)
 
     override fun onCommand(sender: CommandSender, command: Command, label: String, args: Array<out String>): Boolean {
         if (args.isEmpty()) {
@@ -105,6 +109,8 @@ class MfFactionCommand(private val plugin: MedievalFactions) : CommandExecutor {
             "declareindependence", plugin.language["CmdFactionDeclareIndependence"] -> factionDeclareIndependenceCommand.onCommand(sender, command, label, args.drop(1).toTypedArray())
             "kick", plugin.language["CmdFactionKick"] -> factionKickCommand.onCommand(sender, command, label, args.drop(1).toTypedArray())
             "map", plugin.language["CmdFactionMap"] -> factionMapCommand.onCommand(sender, command, label, args.drop(1).toTypedArray())
+            "sethome", plugin.language["CmdFactionSetHome"] -> factionSetHomeCommand.onCommand(sender, command, label, args.drop(1).toTypedArray())
+            "home", plugin.language["CmdFactionHome"] -> factionHomeCommand.onCommand(sender, command, label, args.drop(1).toTypedArray())
             else -> {
                 sender.sendMessage("$RED${plugin.language["CommandFactionUsage"]}")
                 true
