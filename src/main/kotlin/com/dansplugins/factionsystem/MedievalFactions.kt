@@ -6,6 +6,7 @@ import com.dansplugins.factionsystem.command.MedievalFactionsCommand
 import com.dansplugins.factionsystem.command.accessors.MfAccessorsCommand
 import com.dansplugins.factionsystem.command.faction.MfFactionCommand
 import com.dansplugins.factionsystem.command.lock.MfLockCommand
+import com.dansplugins.factionsystem.command.power.MfPowerCommand
 import com.dansplugins.factionsystem.command.unlock.MfUnlockCommand
 import com.dansplugins.factionsystem.faction.JooqMfFactionRepository
 import com.dansplugins.factionsystem.faction.MfFactionRepository
@@ -138,6 +139,7 @@ class MedievalFactions : JavaPlugin() {
         getCommand("lock")?.setExecutor(MfLockCommand(this))
         getCommand("unlock")?.setExecutor(MfUnlockCommand(this))
         getCommand("accessors")?.setExecutor(MfAccessorsCommand(this))
+        getCommand("power")?.setExecutor(MfPowerCommand(this))
 
         server.scheduler.scheduleSyncRepeatingTask(this, {
             val onlinePlayers = server.onlinePlayers
