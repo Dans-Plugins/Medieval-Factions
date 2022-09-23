@@ -39,18 +39,18 @@ public class SetHomeCommand extends SubCommand {
         final String permission = "mf.sethome";
         if (!(checkPermissions(player, permission))) return;
         if (!chunkDataAccessor.isClaimed(player.getLocation().getChunk())) {
-            playerService.sendMessageType(player, "&c" + getText("LandIsNotClaimed")
+            playerService.sendMessage(player, "&c" + getText("LandIsNotClaimed")
                     , "LandIsNotClaimed", false);
             return;
         }
         ClaimedChunk chunk = chunkDataAccessor.getClaimedChunk(player.getLocation().getChunk());
         if (chunk == null || !chunk.getHolder().equalsIgnoreCase(faction.getName())) {
-            playerService.sendMessageType(player, "&c" + getText("CannotSetFactionHomeInWilderness"),
+            playerService.sendMessage(player, "&c" + getText("CannotSetFactionHomeInWilderness"),
                     "CannotSetFactionHomeInWilderness", false);
             return;
         }
         faction.setFactionHome(player.getLocation());
-        playerService.sendMessageType(player, "&a" + getText("FactionHomeSet"),
+        playerService.sendMessage(player, "&a" + getText("FactionHomeSet"),
                 "FactionHomeSet", false);
     }
 

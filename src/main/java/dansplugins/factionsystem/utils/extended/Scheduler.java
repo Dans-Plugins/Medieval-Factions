@@ -98,7 +98,7 @@ public class Scheduler {
         Faction faction = persistentData.getPlayersFaction(player.getUniqueId());
         if (faction != null) {
             if (isFactionExceedingTheirDemesneLimit(faction)) {
-                playerService.sendMessageType(player, ChatColor.RED + localeService.get("AlertMoreClaimedChunksThanPower")
+                playerService.sendMessage(player, ChatColor.RED + localeService.get("AlertMoreClaimedChunksThanPower")
                         , "AlertMoreClaimedChunksThanPower", false);
             }
         }
@@ -110,7 +110,7 @@ public class Scheduler {
 
     public void scheduleTeleport(Player player, Location destinationLocation) {
         final int teleport_delay = configService.getInt("teleportDelay");
-        playerService.sendMessageType(player, ChatColor.AQUA + "Teleporting in " + teleport_delay + " seconds..."
+        playerService.sendMessage(player, ChatColor.AQUA + "Teleporting in " + teleport_delay + " seconds..."
                 , Objects.requireNonNull(messageService.getLanguage().getString("Teleport")).replace("#time#", String.valueOf(teleport_delay)), true);
         DelayedTeleportTask delayedTeleportTask = new DelayedTeleportTask(player, destinationLocation);
         delayedTeleportTask.runTaskLater(medievalFactions, (long) teleport_delay * getRandomNumberBetween(15, 25));
@@ -138,7 +138,7 @@ public class Scheduler {
             if (playerHasNotMoved()) {
                 teleportPlayer();
             } else {
-                playerService.sendMessageType(player, ChatColor.RED + "Teleport cancelled.",
+                playerService.sendMessage(player, ChatColor.RED + "Teleport cancelled.",
                         "TeleportCancelled", false);
             }
         }

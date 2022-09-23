@@ -204,7 +204,7 @@ public abstract class SubCommand implements ColorTranslator {
             break;
         }
         if (!has) {
-            playerService.sendMessageType(sender, translate("&c" + getText("PermissionNeeded", permission[0])), Objects.requireNonNull(messageService.getLanguage().getString("PermissionNeeded")).replace("#permission#", permission[0]), true);
+            playerService.sendMessage(sender, translate("&c" + getText("PermissionNeeded", permission[0])), Objects.requireNonNull(messageService.getLanguage().getString("PermissionNeeded")).replace("#permission#", permission[0]), true);
         }
         return has;
     }
@@ -283,7 +283,7 @@ public abstract class SubCommand implements ColorTranslator {
      * @param newmessage new message to send to the Faction.
      */
     protected void messageFaction(Faction faction, String oldmessage, String newmessage) {
-        faction.getMemberList().stream().map(Bukkit::getOfflinePlayer).filter(OfflinePlayer::isOnline).map(OfflinePlayer::getPlayer).filter(Objects::nonNull).forEach(player -> playerService.sendMessageType(player, oldmessage, newmessage, true));
+        faction.getMemberList().stream().map(Bukkit::getOfflinePlayer).filter(OfflinePlayer::isOnline).map(OfflinePlayer::getPlayer).filter(Objects::nonNull).forEach(player -> playerService.sendMessage(player, oldmessage, newmessage, true));
     }
 
     /**
@@ -293,7 +293,7 @@ public abstract class SubCommand implements ColorTranslator {
      * @param newmessage old message to send to the players.
      */
     protected void messageServer(String oldmessage, String newmessage) {
-        Bukkit.getOnlinePlayers().forEach(player -> playerService.sendMessageType(player, oldmessage, newmessage, true));
+        Bukkit.getOnlinePlayers().forEach(player -> playerService.sendMessage(player, oldmessage, newmessage, true));
     }
 
     /**

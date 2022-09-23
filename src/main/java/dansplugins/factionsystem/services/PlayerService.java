@@ -1,6 +1,5 @@
 package dansplugins.factionsystem.services;
 
-import dansplugins.factionsystem.MedievalFactions;
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.command.ConsoleCommandSender;
@@ -16,7 +15,7 @@ public class PlayerService {
         this.messageService = messageService;
     }
 
-    public String getMessageType(String oldtype, String newtype) {
+    public String decideWhichMessageToUse(String oldtype, String newtype) {
         if (configService.getBoolean("useNewLanguageFile")) {
             return newtype;
         } else {
@@ -24,28 +23,24 @@ public class PlayerService {
         }
     }
 
-    public void sendMessageType(CommandSender sender, String oldtype, String newtype, Boolean replace) {
+    public void sendMessage(CommandSender sender, String oldtype, String newtype, Boolean replace) {
         if (!replace) {
-            sender.sendMessage(colorize(getMessageType(oldtype, messageService.getLanguage().getString(newtype))));
+            sender.sendMessage(colorize(decideWhichMessageToUse(oldtype, messageService.getLanguage().getString(newtype))));
         } else {
-            sender.sendMessage(colorize(getMessageType(oldtype, newtype)));
+            sender.sendMessage(colorize(decideWhichMessageToUse(oldtype, newtype)));
         }
     }
 
-    public void sendListMessage(CommandSender sender, List<String> msg) {
+    public void sendMultipleMessages(CommandSender sender, List<String> msg) {
         msg.forEach(s -> sender.sendMessage(colorize(s)));
     }
 
-    public void sendConsoleMessage(ConsoleCommandSender c, String msg, Boolean message) {
+    public void sendMessageToConsole(ConsoleCommandSender c, String msg, Boolean message) {
         if (!message) {
             c.sendMessage(colorize(msg));
         } else {
             c.sendMessage(colorize(messageService.getLanguage().getString(msg)));
         }
-    }
-
-    public void sendConsoleMessage(ConsoleCommandSender c, List<String> msg) {
-        msg.forEach(s -> sendConsoleMessage(c, s, false));
     }
 
     public String colorize(String input) {

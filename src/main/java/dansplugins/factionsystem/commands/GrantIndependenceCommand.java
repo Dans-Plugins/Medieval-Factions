@@ -45,7 +45,7 @@ public class GrantIndependenceCommand extends SubCommand {
         }
         final Faction target = getFaction(String.join(" ", args));
         if (target == null) {
-            playerService.sendMessageType(player, "&c" + getText("FactionNotFound")
+            playerService.sendMessage(player, "&c" + getText("FactionNotFound")
                     , Objects.requireNonNull(messageService.getLanguage().getString("FactionNotFound")).replace("#faction#", String.join(" ", args))
                     , true);
             return;

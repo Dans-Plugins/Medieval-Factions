@@ -59,7 +59,7 @@ public class LeaveCommand extends SubCommand {
         if (faction.isOfficer(player.getUniqueId())) faction.removeOfficer(player.getUniqueId()); // Remove Officer.
         ephemeralData.getPlayersInFactionChat().remove(player.getUniqueId()); // Remove from Faction Chat.
         faction.removeMember(player.getUniqueId());
-        playerService.sendMessageType(player, "&b" + getText("AlertLeftFaction")
+        playerService.sendMessage(player, "&b" + getText("AlertLeftFaction")
                 , "AlertLeftFaction", false);
         messageFaction(faction, translate("&a" + player.getName() + " has left " + faction.getName()),
                 Objects.requireNonNull(messageService.getLanguage().getString("AlertLeftFactionTeam"))

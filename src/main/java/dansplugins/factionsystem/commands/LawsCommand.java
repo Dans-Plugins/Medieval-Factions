@@ -45,30 +45,30 @@ public class LawsCommand extends SubCommand {
         if (args.length == 0) {
             target = getPlayerFaction(player);
             if (target == null) {
-                playerService.sendMessageType(player, "&c" + getText("AlertMustBeInFactionToUseCommand")
+                playerService.sendMessage(player, "&c" + getText("AlertMustBeInFactionToUseCommand")
                         , "AlertMustBeInFactionToUseCommand", false);
                 return;
             }
             if (target.getNumLaws() == 0) {
-                playerService.sendMessageType(player, "&c" + getText("AlertNoLaws")
+                playerService.sendMessage(player, "&c" + getText("AlertNoLaws")
                         , "AlertNoLaws", false);
                 return;
             }
         } else {
             target = getFaction(String.join(" ", args));
             if (target == null) {
-                playerService.sendMessageType(player, "&c" + getText("FactionNotFound"),
+                playerService.sendMessage(player, "&c" + getText("FactionNotFound"),
                         Objects.requireNonNull(messageService.getLanguage().getString("FactionNotFound"))
                                 .replace("#faction#", String.join(" ", args)), true);
                 return;
             }
             if (target.getNumLaws() == 0) {
-                playerService.sendMessageType(player, "&c" + getText("FactionDoesNotHaveLaws")
+                playerService.sendMessage(player, "&c" + getText("FactionDoesNotHaveLaws")
                         , "FactionDoesNotHaveLaws", false);
                 return;
             }
         }
-        playerService.sendMessageType(player, "&b" + getText("LawsTitle", target.getName())
+        playerService.sendMessage(player, "&b" + getText("LawsTitle", target.getName())
                 , Objects.requireNonNull(messageService.getLanguage().getString("LawsTitle"))
                         .replace("#name#", target.getName()), true);
         IntStream.range(0, target.getNumLaws())

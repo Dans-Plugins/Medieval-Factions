@@ -48,7 +48,7 @@ public class AllyCommand extends SubCommand {
         }
 
         if (args.length == 0) {
-            playerService.sendMessageType(player, "&c" + getText("UsageAlly"), "UsageAlly", false);
+            playerService.sendMessage(player, "&c" + getText("UsageAlly"), "UsageAlly", false);
             return;
         }
 
@@ -57,30 +57,30 @@ public class AllyCommand extends SubCommand {
 
         // the faction needs to exist to ally
         if (otherFaction == null) {
-            playerService.sendMessageType(player, "&c" + getText("FactionNotFound"), Objects.requireNonNull(messageService.getLanguage().getString("FactionNotFound"))
+            playerService.sendMessage(player, "&c" + getText("FactionNotFound"), Objects.requireNonNull(messageService.getLanguage().getString("FactionNotFound"))
                     .replace("#faction#", String.join(" ", args)), true);
             return;
         }
 
         // the faction can't be itself
         if (otherFaction == faction) {
-            playerService.sendMessageType(player, "&c" + getText("CannotAllyWithSelf"), "CannotAllyWithSelf", false);
+            playerService.sendMessage(player, "&c" + getText("CannotAllyWithSelf"), "CannotAllyWithSelf", false);
             return;
         }
 
         // no need to allow them to ally if they're already allies
         if (faction.isAlly(otherFaction.getName())) {
-            playerService.sendMessageType(player, "&c" + getText("FactionAlreadyAlly"), "FactionAlreadyAlly", false);
+            playerService.sendMessage(player, "&c" + getText("FactionAlreadyAlly"), "FactionAlreadyAlly", false);
             return;
         }
 
         if (faction.isEnemy(otherFaction.getName())) {
-            playerService.sendMessageType(player, "&cThat faction is currently at war with your faction.", "FactionIsEnemy", false);
+            playerService.sendMessage(player, "&cThat faction is currently at war with your faction.", "FactionIsEnemy", false);
             return;
         }
 
         if (faction.isRequestedAlly(otherFaction.getName())) {
-            playerService.sendMessageType(player, "&c" + getText("AlertAlreadyRequestedAlliance"), "AlertAlreadyRequestedAlliance", false);
+            playerService.sendMessage(player, "&c" + getText("AlertAlreadyRequestedAlliance"), "AlertAlreadyRequestedAlliance", false);
             return;
         }
 

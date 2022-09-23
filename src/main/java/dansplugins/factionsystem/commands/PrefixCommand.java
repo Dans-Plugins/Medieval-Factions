@@ -39,12 +39,12 @@ public class PrefixCommand extends SubCommand {
         if (!(checkPermissions(player, permission))) return;
         final String newPrefix = String.join(" ", args);
         if (persistentData.isPrefixTaken(newPrefix)) {
-            playerService.sendMessageType(player, "&c" + getText("PrefixTaken")
+            playerService.sendMessage(player, "&c" + getText("PrefixTaken")
                     , "PrefixTaken", false);
             return;
         }
         faction.setPrefix(newPrefix);
-        playerService.sendMessageType(player, "&c" + getText("PrefixSet")
+        playerService.sendMessage(player, "&c" + getText("PrefixSet")
                 , "PrefixSet", false);
     }
 

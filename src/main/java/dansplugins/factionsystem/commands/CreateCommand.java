@@ -54,13 +54,13 @@ public class CreateCommand extends SubCommand {
 
         this.faction = getPlayerFaction(player);
         if (this.faction != null) {
-            playerService.sendMessageType(player, "&c" + getText("AlreadyInFaction"),
+            playerService.sendMessage(player, "&c" + getText("AlreadyInFaction"),
                     "AlreadyInFaction", false);
             return;
         }
 
         if (args.length == 0) {
-            playerService.sendMessageType(player, "&c" + getText("UsageCreate"),
+            playerService.sendMessage(player, "&c" + getText("UsageCreate"),
                     "UsageCreate", false);
             return;
         }
@@ -70,14 +70,14 @@ public class CreateCommand extends SubCommand {
         final FileConfiguration config = configService.getConfig();
 
         if (factionName.length() > config.getInt("factionMaxNameLength")) {
-            playerService.sendMessageType(player, "&c" + getText("FactionNameTooLong"),
+            playerService.sendMessage(player, "&c" + getText("FactionNameTooLong"),
                     Objects.requireNonNull(messageService.getLanguage().getString("FactionNameTooLong"))
                             .replace("#name#", factionName), true);
             return;
         }
 
         if (persistentData.getFaction(factionName) != null) {
-            playerService.sendMessageType(player, "&c" + getText("FactionAlreadyExists"),
+            playerService.sendMessage(player, "&c" + getText("FactionAlreadyExists"),
                     Objects.requireNonNull(messageService.getLanguage().getString("FactionAlreadyExists"))
                             .replace("#name#", factionName), true);
             return;
@@ -91,7 +91,7 @@ public class CreateCommand extends SubCommand {
         Bukkit.getPluginManager().callEvent(createEvent);
         if (!createEvent.isCancelled()) {
             persistentData.addFaction(this.faction);
-            playerService.sendMessageType(player, "&a" + getText("FactionCreated"),
+            playerService.sendMessage(player, "&a" + getText("FactionCreated"),
                     Objects.requireNonNull(messageService.getLanguage().getString("FactionCreated"))
                             .replace("#name#", factionName), true);
         }

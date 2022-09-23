@@ -46,7 +46,7 @@ public class UnlockCommand extends SubCommand {
         if (args.length != 0 && args[0].equalsIgnoreCase("cancel")) {
             ephemeralData.getUnlockingPlayers().remove(player.getUniqueId());
             ephemeralData.getForcefullyUnlockingPlayers().remove(player.getUniqueId()); // just in case the player tries to cancel a forceful unlock without using the force command
-            playerService.sendMessageType(player, "&c" + getText("AlertUnlockingCancelled")
+            playerService.sendMessage(player, "&c" + getText("AlertUnlockingCancelled")
                     , "AlertUnlockingCancelled", false);
             return;
         }
@@ -56,7 +56,7 @@ public class UnlockCommand extends SubCommand {
         ephemeralData.getLockingPlayers().remove(player.getUniqueId());
 
         // inform them they need to right click the block that they want to lock or type /mf lock cancel to cancel it
-        playerService.sendMessageType(player, "&a" + getText("RightClickUnlock")
+        playerService.sendMessage(player, "&a" + getText("RightClickUnlock")
                 , "RightClickUnlock", false);
     }
 

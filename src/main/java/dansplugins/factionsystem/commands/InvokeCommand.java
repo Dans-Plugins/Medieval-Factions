@@ -56,23 +56,23 @@ public class InvokeCommand extends SubCommand {
         final Faction invokee = getFaction(argumentsInsideDoubleQuotes.get(0));
         final Faction warringFaction = getFaction(argumentsInsideDoubleQuotes.get(1));
         if (invokee == null || warringFaction == null) {
-            playerService.sendMessageType(player, "&c" + getText("FactionNotFound"), Objects.requireNonNull(messageService.getLanguage().getString("FactionNotFound")).replace("#faction#", argumentsInsideDoubleQuotes.get(0)), true);
-            playerService.sendMessageType(player, "&c" + getText("FactionNotFound"), Objects.requireNonNull(messageService.getLanguage().getString("FactionNotFound")).replace("#faction#", argumentsInsideDoubleQuotes.get(1)), true);
+            playerService.sendMessage(player, "&c" + getText("FactionNotFound"), Objects.requireNonNull(messageService.getLanguage().getString("FactionNotFound")).replace("#faction#", argumentsInsideDoubleQuotes.get(0)), true);
+            playerService.sendMessage(player, "&c" + getText("FactionNotFound"), Objects.requireNonNull(messageService.getLanguage().getString("FactionNotFound")).replace("#faction#", argumentsInsideDoubleQuotes.get(1)), true);
 
             return;
         }
         if (!this.faction.isAlly(invokee.getName()) && !this.faction.isVassal(invokee.getName())) {
-            playerService.sendMessageType(player, "&c" + getText("NotAnAllyOrVassal", invokee.getName()), Objects.requireNonNull(messageService.getLanguage().getString("NotAnAllyOrVassal")).replace("#name#", invokee.getName()), true);
+            playerService.sendMessage(player, "&c" + getText("NotAnAllyOrVassal", invokee.getName()), Objects.requireNonNull(messageService.getLanguage().getString("NotAnAllyOrVassal")).replace("#name#", invokee.getName()), true);
             return;
         }
         if (!this.faction.isEnemy(warringFaction.getName())) {
-            playerService.sendMessageType(player, "&c" + getText("NotAtWarWith", warringFaction.getName())
+            playerService.sendMessage(player, "&c" + getText("NotAtWarWith", warringFaction.getName())
                     , messageService.getLanguage().getString("NotAtWarWith").replace("#name#", warringFaction.getName())
                     , true);
             return;
         }
         if (configService.getBoolean("allowNeutrality") && ((boolean) invokee.getFlags().getFlag("neutral"))) {
-            playerService.sendMessageType(player, "&c" + getText("CannotBringNeutralFactionIntoWar")
+            playerService.sendMessage(player, "&c" + getText("CannotBringNeutralFactionIntoWar")
                     , "CannotBringNeutralFactionIntoWar", false);
             return;
         }

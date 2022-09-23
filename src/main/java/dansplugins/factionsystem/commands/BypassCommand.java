@@ -51,7 +51,7 @@ public class BypassCommand extends SubCommand {
         } else {
             ephemeralData.getAdminsBypassingProtections().add(player.getUniqueId());
         }
-        playerService.sendMessageType(player, "&a" + getText(path), path, false);
+        playerService.sendMessage(player, "&a" + getText(path), path, false);
     }
 
     /**

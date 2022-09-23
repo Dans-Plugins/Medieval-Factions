@@ -44,7 +44,7 @@ public class AutoClaimCommand extends SubCommand {
         }
 
         faction.toggleAutoClaim();
-        playerService.sendMessageType(player, "&b" + getText("AutoclaimToggled"), "AutoclaimToggled", false);
+        playerService.sendMessage(player, "&b" + getText("AutoclaimToggled"), "AutoclaimToggled", false);
     }
 
     /**
