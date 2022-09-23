@@ -73,6 +73,11 @@ commands:
       /accessors list - View a list of people who can access a lock.
       /accessors add - Add an accessor to a lock.
       /accessors remove - Remove an accessor from a lock.
+  power:
+    description: |
+      Power management command
+      /power set [player] [power] - Sets a player's power.
+    usage: /<command>
 permissions:
   mf.help:
     description: View a list of helpful commands.
@@ -194,3 +199,6 @@ permissions:
   mf.map:
     description: Allows showing the faction map
     default: true
+  mf.power.set:
+    description: Allows setting player power
+    default: op
