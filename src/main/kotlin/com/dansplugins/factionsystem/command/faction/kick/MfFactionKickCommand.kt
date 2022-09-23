@@ -1,6 +1,7 @@
 package com.dansplugins.factionsystem.command.faction.kick
 
 import com.dansplugins.factionsystem.MedievalFactions
+import com.dansplugins.factionsystem.event.faction.FactionKickEvent
 import com.dansplugins.factionsystem.faction.permission.MfFactionPermission.Companion.KICK
 import com.dansplugins.factionsystem.faction.permission.MfFactionPermission.Companion.SET_MEMBER_ROLE
 import com.dansplugins.factionsystem.player.MfPlayer
@@ -76,6 +77,12 @@ class MfFactionKickCommand(private val plugin: MedievalFactions) : CommandExecut
             }
             if (faction.members.none { it.player.id.value == targetMfPlayer.id.value }) {
                 sender.sendMessage("$RED${plugin.language["CommandFactionKickTargetNotInFaction"]}")
+                return@Runnable
+            }
+            val event = FactionKickEvent(faction.id, targetMfPlayer.id, true)
+            plugin.server.pluginManager.callEvent(event)
+            if (event.isCancelled) {
+                sender.sendMessage("$RED${plugin.language["CommandFactionKickEventCancelled"]}")
                 return@Runnable
             }
             factionService.save(

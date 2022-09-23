@@ -107,9 +107,9 @@ class MedievalFactions : JavaPlugin() {
         val interactionStatusRepository = JooqMfInteractionStatusRepository(dsl)
 
         val playerService = MfPlayerService(playerRepository)
-        val factionService = MfFactionService(factionRepository)
+        val factionService = MfFactionService(this, factionRepository)
         val lawService = MfLawService(lawRepository)
-        val factionRelationshipService = MfFactionRelationshipService(factionRelationshipRepository)
+        val factionRelationshipService = MfFactionRelationshipService(this, factionRelationshipRepository)
         val claimedChunkService = MfClaimService(this, claimedChunkRepository)
         val lockService = MfLockService(this, lockRepository)
         val interactionService = MfInteractionService(interactionStatusRepository)

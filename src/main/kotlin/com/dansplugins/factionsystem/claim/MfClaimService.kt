@@ -1,6 +1,9 @@
 package com.dansplugins.factionsystem.claim
 
 import com.dansplugins.factionsystem.MedievalFactions
+import com.dansplugins.factionsystem.event.faction.FactionClaimEvent
+import com.dansplugins.factionsystem.event.faction.FactionUnclaimEvent
+import com.dansplugins.factionsystem.exception.EventCancelledException
 import com.dansplugins.factionsystem.faction.MfFactionId
 import com.dansplugins.factionsystem.failure.OptimisticLockingFailureException
 import com.dansplugins.factionsystem.failure.ServiceFailure
@@ -27,26 +30,25 @@ class MfClaimService(private val plugin: MedievalFactions, private val repositor
     }
 
     fun save(claim: MfClaimedChunk) = resultFrom {
-        val result = repository.upsert(claim)
-        claims.add(claim)
+        val factionService = plugin.services.factionService
+        val faction = factionService.getFaction(claim.factionId).let(::requireNotNull)
+        val event = FactionClaimEvent(claim.factionId, claim, !plugin.server.isPrimaryThread)
+        plugin.server.pluginManager.callEvent(event)
+        if (event.isCancelled) throw EventCancelledException("Event cancelled")
+        val result = repository.upsert(event.claim)
+        claims.add(event.claim)
         plugin.server.scheduler.runTask(plugin, Runnable {
-            val world = plugin.server.getWorld(claim.worldId)
+            val world = plugin.server.getWorld(event.claim.worldId)
             if (world != null) {
                 val players = world.players.filter { it.location.chunk.x == claim.x && it.location.chunk.z == claim.z }
                 if (players.isNotEmpty()) {
-                    plugin.server.scheduler.runTaskAsynchronously(plugin, Runnable {
-                        val faction = plugin.services.factionService.getFaction(claim.factionId)
-                        if (faction != null) {
-                            plugin.server.scheduler.runTask(plugin, Runnable {
-                                players.forEach { player ->
-                                    player.resetTitle()
-                                    val title = "${ChatColor.of(faction.flags[plugin.flags.color])}${faction.name}"
-                                    player.sendTitle(title, null, 10, 70, 20)
-                                }
-                            })
+                    plugin.server.scheduler.runTask(plugin, Runnable {
+                        players.forEach { player ->
+                            player.resetTitle()
+                            val title = "${ChatColor.of(faction.flags[plugin.flags.color])}${faction.name}"
+                            player.sendTitle(title, null, 10, 70, 20)
                         }
                     })
-
                 }
             }
         })
@@ -55,18 +57,25 @@ class MfClaimService(private val plugin: MedievalFactions, private val repositor
         ServiceFailure(exception.toServiceFailureType(), "Service error: ${exception.message}", exception)
     }
 
-    fun delete(world: World, x: Int, z: Int) = resultFrom {
-        val result = repository.delete(world, x, z)
-        claims.removeAll { it.worldId == world.uid && it.x == x && it.z == z }
+    fun delete(claim: MfClaimedChunk) = resultFrom {
+        val event = FactionUnclaimEvent(claim.factionId, claim, !plugin.server.isPrimaryThread)
+        plugin.server.pluginManager.callEvent(event)
+        if (event.isCancelled) throw EventCancelledException("Event cancelled")
+        val result = repository.delete(event.claim.worldId, event.claim.x, event.claim.z)
+        claims.removeAll { it.worldId == event.claim.worldId && it.x == event.claim.x && it.z == event.claim.z }
         plugin.server.scheduler.runTask(plugin, Runnable {
-                val players = world.players.filter { it.location.chunk.x == x && it.location.chunk.z == z }
+            val world = plugin.server.getWorld(event.claim.worldId)
+            if (world != null) {
+                val players = world.players.filter { it.location.chunk.x == claim.x && it.location.chunk.z == claim.z }
                 if (players.isNotEmpty()) {
                     players.forEach { player ->
                         player.resetTitle()
-                        val title = "${ChatColor.of(plugin.config.getString("wilderness.color"))}${plugin.language["Wilderness"]}"
+                        val title =
+                            "${ChatColor.of(plugin.config.getString("wilderness.color"))}${plugin.language["Wilderness"]}"
                         player.sendTitle(title, null, 10, 70, 20)
                     }
                 }
+            }
         })
         return@resultFrom result
     }.mapFailure { exception ->
