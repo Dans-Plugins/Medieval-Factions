@@ -12,5 +12,17 @@ data class MfPosition(
     val yaw: Float,
     val pitch: Float
 ) {
+
+    companion object {
+        fun fromBukkitLocation(location: Location) = MfPosition(
+            location.world.let(::requireNotNull).uid,
+            location.x,
+            location.y,
+            location.z,
+            location.yaw,
+            location.pitch
+        )
+    }
+
     fun toBukkitLocation() = Bukkit.getWorld(worldId)?.let { world -> Location(world, x, y, z, yaw, pitch) }
 }
