@@ -67,7 +67,7 @@ class MfAccessorsListCommand(private val plugin: MedievalFactions) : CommandExec
                                 TextComponent("✖ ").apply {
                                     color = SpigotChatColor.RED
                                     clickEvent = ClickEvent(RUN_COMMAND, "/accessors remove $x $y $z ${accessor.value}")
-                                    hoverEvent = HoverEvent(SHOW_TEXT, Text(plugin.language["CommandAccessorsListDeleteAccessorButtonHover", player?.toBukkit()?.name ?: "unknown player"]))
+                                    hoverEvent = HoverEvent(SHOW_TEXT, Text(plugin.language["CommandAccessorsListDeleteAccessorButtonHover", player?.toBukkit()?.name ?: plugin.language["UnknownPlayer"]]))
                                 },
                                 if (player != null) {
                                     TextComponent(

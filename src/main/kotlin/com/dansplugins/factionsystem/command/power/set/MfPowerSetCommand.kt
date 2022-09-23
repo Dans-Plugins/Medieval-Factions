@@ -48,7 +48,7 @@ class MfPowerSetCommand(private val plugin: MedievalFactions) : CommandExecutor 
                 plugin.logger.log(Level.SEVERE, "Failed to save player: ${it.reason.message}", it.reason.cause)
                 return@Runnable
             }
-            sender.sendMessage("$GREEN${plugin.language["CommandPowerSetSuccess", target.name ?: "unknown player", power.toString(), maxPower.toString()]}")
+            sender.sendMessage("$GREEN${plugin.language["CommandPowerSetSuccess", target.name ?: plugin.language["UnknownPlayer"], power.toString(), maxPower.toString()]}")
         })
         return true
     }

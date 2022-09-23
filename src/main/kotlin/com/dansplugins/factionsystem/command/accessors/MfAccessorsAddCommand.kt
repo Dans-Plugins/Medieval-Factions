@@ -140,7 +140,7 @@ class MfAccessorsAddCommand(private val plugin: MedievalFactions) : CommandExecu
                 plugin.logger.log(SEVERE, "Failed to save locked block: ${it.reason.message}", it.reason.cause)
                 return@Runnable
             }
-            sender.sendMessage("$GREEN${plugin.language["CommandAccessorsAddSuccess", accessor.name ?: "unknown player"]}")
+            sender.sendMessage("$GREEN${plugin.language["CommandAccessorsAddSuccess", accessor.name ?: plugin.language["UnknownPlayer"]]}")
         })
     }
 

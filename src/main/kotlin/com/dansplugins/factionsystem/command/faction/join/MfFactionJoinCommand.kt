@@ -1,6 +1,7 @@
 package com.dansplugins.factionsystem.command.faction.join
 
 import com.dansplugins.factionsystem.MedievalFactions
+import com.dansplugins.factionsystem.faction.MfFactionId
 import com.dansplugins.factionsystem.faction.MfFactionMember
 import com.dansplugins.factionsystem.player.MfPlayer
 import dev.forkhandles.result4k.onFailure
@@ -39,7 +40,8 @@ class MfFactionJoinCommand(private val plugin: MedievalFactions) : CommandExecut
                 sender.sendMessage("$RED${plugin.language["CommandFactionJoinAlreadyInFaction", playerFaction.name]}")
                 return@Runnable
             }
-            val faction = factionService.getFaction(args.joinToString(" "))
+            val faction = factionService.getFaction(MfFactionId(args.joinToString(" ")))
+                ?: factionService.getFaction(args.joinToString(" "))
             if (faction == null) {
                 sender.sendMessage("$RED${plugin.language["CommandFactionJoinInvalidFaction"]}")
                 return@Runnable

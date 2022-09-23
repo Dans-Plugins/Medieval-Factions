@@ -4,6 +4,7 @@ import com.dansplugins.factionsystem.MedievalFactions
 import com.dansplugins.factionsystem.faction.permission.MfFactionPermission.Companion.CHANGE_NAME
 import com.dansplugins.factionsystem.player.MfPlayer
 import dev.forkhandles.result4k.onFailure
+import net.md_5.bungee.api.ChatColor
 import org.bukkit.ChatColor.GREEN
 import org.bukkit.ChatColor.RED
 import org.bukkit.command.Command
@@ -62,6 +63,7 @@ class MfFactionSetNameCommand(private val plugin: MedievalFactions): CommandExec
     }
 
     private fun setFactionName(player: Player, name: String) {
+        val onlinePlayers = plugin.server.onlinePlayers.associateWith { it.location.chunk }
         plugin.server.scheduler.runTaskAsynchronously(plugin, Runnable {
             val playerService = plugin.services.playerService
             val mfPlayer = playerService.getPlayer(player)
@@ -81,12 +83,22 @@ class MfFactionSetNameCommand(private val plugin: MedievalFactions): CommandExec
                 player.sendMessage("$RED${plugin.language["CommandFactionSetNameNoFactionPermission"]}")
                 return@Runnable
             }
-            factionService.save(faction.copy(name = name)).onFailure {
+            val updatedFaction = factionService.save(faction.copy(name = name)).onFailure {
                 player.sendMessage("$RED${plugin.language["CommandFactionSetNameFailedToSaveFaction"]}")
                 plugin.logger.log(Level.SEVERE, "Failed to save faction: ${it.reason.message}", it.reason.cause)
                 return@Runnable
             }
             player.sendMessage("$GREEN${plugin.language["CommandFactionSetNameSuccess", name]}")
+            plugin.server.scheduler.runTask(plugin, Runnable {
+                player.performCommand("faction info")
+            })
+            val claimService = plugin.services.claimService
+            onlinePlayers.filter { (_, chunk) -> claimService.getClaim(chunk)?.factionId == updatedFaction.id }
+                .forEach { (player, _) ->
+                    player.resetTitle()
+                    val title = "${ChatColor.of(updatedFaction.flags[plugin.flags.color])}${updatedFaction.name}"
+                    player.sendTitle(title, null, 10, 70, 20)
+                }
         })
     }
 }
