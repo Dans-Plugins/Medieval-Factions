@@ -4,7 +4,6 @@
  */
 package dansplugins.factionsystem;
 
-import dansplugins.factionsystem.commands.AddLawCommand;
 import dansplugins.factionsystem.commands.abs.TabCompleterBase;
 import dansplugins.factionsystem.data.EphemeralData;
 import dansplugins.factionsystem.data.PersistentData;
