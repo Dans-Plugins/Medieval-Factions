@@ -8,12 +8,12 @@ import dansplugins.factionsystem.objects.domain.PowerRecord;
 import dansplugins.factionsystem.objects.helper.ChunkFlags;
 import dansplugins.factionsystem.services.LocaleService;
 import dansplugins.factionsystem.utils.Logger;
-import dansplugins.fiefs.utils.UUIDChecker;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.PluginManager;
 import org.bukkit.scheduler.BukkitRunnable;
 import org.dynmap.DynmapCommonAPI;
 import org.dynmap.markers.*;
+import preponderous.ponder.minecraft.bukkit.tools.UUIDChecker;
 
 import java.util.*;
 

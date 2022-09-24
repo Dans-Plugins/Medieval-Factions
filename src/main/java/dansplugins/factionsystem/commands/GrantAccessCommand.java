@@ -24,10 +24,10 @@ import java.util.UUID;
  */
 public class GrantAccessCommand extends SubCommand {
 
-    public GrantAccessCommand(LocaleService localeService, PersistentData persistentData, EphemeralData ephemeralData, PersistentData.ChunkDataAccessor chunkDataAccessor, DynmapIntegrator dynmapIntegrator, ConfigService configService) {
+    public GrantAccessCommand(LocaleService localeService, PersistentData persistentData, EphemeralData ephemeralData, PersistentData.ChunkDataAccessor chunkDataAccessor, DynmapIntegrator dynmapIntegrator, ConfigService configService, PlayerService playerService, MessageService messageService) {
         super(new String[]{
                 "grantaccess", "ga", LOCALE_PREFIX + "CmdGrantAccess"
-        }, true, persistentData, localeService, ephemeralData, configService, chunkDataAccessor, dynmapIntegrator);
+        }, true, persistentData, localeService, ephemeralData, configService, playerService, messageService, chunkDataAccessor, dynmapIntegrator);
     }
 
     /**
@@ -40,34 +40,34 @@ public class GrantAccessCommand extends SubCommand {
     @Override
     public void execute(Player player, String[] args, String key) {
         if (args.length == 0) {
-            new PlayerService().sendMessageType(player, "&c" + getText("UsageGrantAccess"),
+            playerService.sendMessage(player, "&c" + getText("UsageGrantAccess"),
                     "UsageGrantAccess", false);
             return;
         }
         if (args[0].equalsIgnoreCase("cancel")) {
-            new PlayerService().sendMessageType(player, "&c" + getText("CommandCancelled"), "CommandCancelled", false);
+            playerService.sendMessage(player, "&c" + getText("CommandCancelled"), "CommandCancelled", false);
             return;
         }
         if (ephemeralData.getPlayersGrantingAccess().containsKey(player.getUniqueId())) {
-            new PlayerService().sendMessageType(player, "&c" + getText("AlertAlreadyGrantingAccess")
+            playerService.sendMessage(player, "&c" + getText("AlertAlreadyGrantingAccess")
                     , "AlertAlreadyGrantingAccess", false);
             return;
         }
         UUIDChecker uuidChecker = new UUIDChecker();
         final UUID targetUUID = uuidChecker.findUUIDBasedOnPlayerName(args[0]);
         if (targetUUID == null) {
-            new PlayerService().sendMessageType(player, "&c" + getText("PlayerNotFound")
-                    , Objects.requireNonNull(new MessageService().getLanguage().getString("PlayerNotFound")).replaceAll("#name#", args[0]), true);
+            playerService.sendMessage(player, "&c" + getText("PlayerNotFound")
+                    , Objects.requireNonNull(messageService.getLanguage().getString("PlayerNotFound")).replace("#name#", args[0]), true);
             return;
         }
         if (targetUUID == player.getUniqueId()) {
-            new PlayerService().sendMessageType(player, "&c" + getText("CannotGrantAccessToSelf")
+            playerService.sendMessage(player, "&c" + getText("CannotGrantAccessToSelf")
                     , "CannotGrantAccessToSelf", false);
             return;
         }
         ephemeralData.getPlayersGrantingAccess().put(player.getUniqueId(), targetUUID);
-        new PlayerService().sendMessageType(player,"&a" + getText("RightClickGrantAccess", args[0])
-        , Objects.requireNonNull(new MessageService().getLanguage().getString("RightClickGrantAccess")).replaceAll("#name#", args[0]), true);
+        playerService.sendMessage(player, "&a" + getText("RightClickGrantAccess", args[0])
+                , Objects.requireNonNull(messageService.getLanguage().getString("RightClickGrantAccess")).replace("#name#", args[0]), true);
     }
 
     /**

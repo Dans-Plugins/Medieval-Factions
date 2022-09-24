@@ -10,6 +10,7 @@ import dansplugins.factionsystem.data.PersistentData;
 import dansplugins.factionsystem.integrators.DynmapIntegrator;
 import dansplugins.factionsystem.services.ConfigService;
 import dansplugins.factionsystem.services.LocaleService;
+import dansplugins.factionsystem.services.MessageService;
 import dansplugins.factionsystem.services.PlayerService;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
@@ -22,10 +23,10 @@ public class AutoClaimCommand extends SubCommand {
     /**
      * Constructor to initialise a Command.
      */
-    public AutoClaimCommand(LocaleService localeService, PersistentData persistentData, EphemeralData ephemeralData, PersistentData.ChunkDataAccessor chunkDataAccessor, DynmapIntegrator dynmapIntegrator, ConfigService configService) {
+    public AutoClaimCommand(LocaleService localeService, PersistentData persistentData, EphemeralData ephemeralData, PersistentData.ChunkDataAccessor chunkDataAccessor, DynmapIntegrator dynmapIntegrator, ConfigService configService, PlayerService playerService, MessageService messageService) {
         super(new String[]{
                 "AC", "AUTOCLAIM", LOCALE_PREFIX + "CmdAutoClaim"
-        }, true, true, false, true, localeService, persistentData, ephemeralData, chunkDataAccessor, dynmapIntegrator, configService);
+        }, true, true, false, true, localeService, persistentData, ephemeralData, chunkDataAccessor, dynmapIntegrator, configService, playerService, messageService);
     }
 
     /**
@@ -43,7 +44,7 @@ public class AutoClaimCommand extends SubCommand {
         }
 
         faction.toggleAutoClaim();
-        new PlayerService().sendMessageType(player, "&b" + getText("AutoclaimToggled"), "AutoclaimToggled", false);
+        playerService.sendMessage(player, "&b" + getText("AutoclaimToggled"), "AutoclaimToggled", false);
     }
 
     /**

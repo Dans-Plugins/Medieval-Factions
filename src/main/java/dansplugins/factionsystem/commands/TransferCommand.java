@@ -10,12 +10,15 @@ import dansplugins.factionsystem.data.PersistentData;
 import dansplugins.factionsystem.integrators.DynmapIntegrator;
 import dansplugins.factionsystem.services.ConfigService;
 import dansplugins.factionsystem.services.LocaleService;
+import dansplugins.factionsystem.services.MessageService;
+import dansplugins.factionsystem.services.PlayerService;
 import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import preponderous.ponder.minecraft.bukkit.tools.UUIDChecker;
 
+import java.util.Objects;
 import java.util.UUID;
 
 /**
@@ -23,8 +26,8 @@ import java.util.UUID;
  */
 public class TransferCommand extends SubCommand {
 
-    public TransferCommand(LocaleService localeService, PersistentData persistentData, EphemeralData ephemeralData, PersistentData.ChunkDataAccessor chunkDataAccessor, DynmapIntegrator dynmapIntegrator, ConfigService configService) {
-        super(new String[]{"transfer", LOCALE_PREFIX + "CmdTransfer"}, true, true, false, true, localeService, persistentData, ephemeralData, chunkDataAccessor, dynmapIntegrator, configService);
+    public TransferCommand(LocaleService localeService, PersistentData persistentData, EphemeralData ephemeralData, PersistentData.ChunkDataAccessor chunkDataAccessor, DynmapIntegrator dynmapIntegrator, ConfigService configService, PlayerService playerService, MessageService messageService) {
+        super(new String[]{"transfer", LOCALE_PREFIX + "CmdTransfer"}, true, true, false, true, localeService, persistentData, ephemeralData, chunkDataAccessor, dynmapIntegrator, configService, playerService, messageService);
     }
 
     /**
@@ -39,29 +42,32 @@ public class TransferCommand extends SubCommand {
         final String permission = "mf.transfer";
         if (!(checkPermissions(player, permission))) return;
         if (args.length == 0) {
-            player.sendMessage(translate("&c" + getText("UsageTransfer")));
+            playerService.sendMessage(player, "&c" + getText("UsageTransfer")
+                    , "UsageTransfer", false);
             return;
         }
         UUIDChecker uuidChecker = new UUIDChecker();
         final UUID targetUUID = uuidChecker.findUUIDBasedOnPlayerName(args[0]);
         if (targetUUID == null) {
-            player.sendMessage(translate("&c" + getText("PlayerNotFound")));
+            playerService.sendMessage(player, "&c" + getText("PlayerNotFound"), Objects.requireNonNull(messageService.getLanguage().getString("PlayerNotFound")).replace("#name#", args[0]), true);
             return;
         }
         OfflinePlayer target = Bukkit.getOfflinePlayer(targetUUID);
         if (!target.hasPlayedBefore()) {
             target = Bukkit.getPlayer(args[0]);
             if (target == null) {
-                player.sendMessage(translate("&c" + getText("PlayerNotFound")));
+                playerService.sendMessage(player, "&c" + getText("PlayerNotFound"), Objects.requireNonNull(messageService.getLanguage().getString("PlayerNotFound")).replace("#name#", args[0]), true);
                 return;
             }
         }
         if (!faction.isMember(targetUUID)) {
-            player.sendMessage(translate("&c" + getText("PlayerIsNotInYourFaction")));
+            playerService.sendMessage(player, "&c" + getText("PlayerIsNotInYourFaction")
+                    , "PlayerIsNotInYourFaction", false);
             return;
         }
         if (targetUUID.equals(player.getUniqueId())) {
-            player.sendMessage(translate("&c" + getText("CannotTransferToSelf")));
+            playerService.sendMessage(player, "&c" + getText("CannotTransferToSelf")
+                    , "CannotTransferToSelf", false);
             return;
         }
 
@@ -69,9 +75,13 @@ public class TransferCommand extends SubCommand {
 
         // set owner
         faction.setOwner(targetUUID);
-        player.sendMessage(translate("&b" + getText("OwnerShipTransferredTo", args[0])));
+        playerService.sendMessage(player, "&b" + getText("OwnerShipTransferredTo", args[0])
+                , Objects.requireNonNull(messageService.getLanguage().getString("OwnerShipTransferredTo"))
+                        .replace("#name#", args[0]), true);
         if (target.isOnline() && target.getPlayer() != null) { // Message if we can :)
-            target.getPlayer().sendMessage(translate("&a" + getText("OwnershipTransferred", faction.getName())));
+            playerService.sendMessage(target.getPlayer(), "&a" + getText("OwnershipTransferred", faction.getName()),
+                    Objects.requireNonNull(messageService.getLanguage().getString("'OwnershipTransferred"))
+                            .replace("#name#", faction.getName()), true);
         }
     }
 

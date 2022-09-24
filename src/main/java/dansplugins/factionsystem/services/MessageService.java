@@ -7,22 +7,26 @@ import org.bukkit.configuration.file.YamlConfiguration;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.logging.Level;
 
 public class MessageService {
 
-
+    private final MedievalFactions medievalFactions;
     private File languageFile;
     private FileConfiguration language;
 
-    public void createLanguageFile() {
-        languageFile = new File(new MedievalFactions().getMedievalFactions().getDataFolder(), "language.yml");
-        if (!languageFile.exists()) new MedievalFactions().getMedievalFactions().saveResource("language.yml", false);
+    public MessageService(MedievalFactions medievalFactions) {
+        this.medievalFactions = medievalFactions;
+    }
 
+    public void createLanguageFile() {
+        languageFile = new File(medievalFactions.getDataFolder(), "language.yml");
+        if (!languageFile.exists()) medievalFactions.saveResource("language.yml", false);
         language = new YamlConfiguration();
         try {
             language.load(languageFile);
         } catch (IOException | InvalidConfigurationException e) {
-            e.printStackTrace();
+            medievalFactions.getLogger().log(Level.WARNING, e.getCause().toString());
         }
     }
 
@@ -30,15 +34,25 @@ public class MessageService {
         return language;
     }
 
+
     public void reloadLanguage() {
-        language = YamlConfiguration.loadConfiguration(languageFile);
+        if (languageFile.exists()) {
+            language = YamlConfiguration.loadConfiguration(languageFile);
+        } else {
+            createLanguageFile();
+        }
     }
 
     public void saveLanguage() {
-        try {
-            language.save(languageFile);
-        } catch (IOException ignored) {
+        if (languageFile.exists()) {
+            try {
+                language.save(languageFile);
+            } catch (IOException ignored) {
+            }
+        } else {
+            createLanguageFile();
         }
     }
+
 
 }

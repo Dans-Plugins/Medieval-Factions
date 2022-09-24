@@ -19,7 +19,6 @@ repositories {
 }
 
 dependencies {
-    implementation 'com.github.dmccoystephenson:Fiefs:v0.8'
     implementation 'com.github.Preponderous-Software:Ponder:1.1'
     implementation 'me.clip:placeholderapi:2.11.1'
     implementation 'org.spigotmc:spigot-api:1.14.1-R0.1-SNAPSHOT'
@@ -46,7 +45,6 @@ shadowJar {
         include(dependency('com.github.Preponderous-Software:Ponder'))
         include(dependency('org.bstats:bstats-bukkit'))
         include(dependency('org.bstats:bstats-base'))
-        include(dependency('com.github.dmccoystephenson:Fiefs'))
     }
     relocate 'preponderous.ponder', 'dansplugins.factionsystem.shadow.preponderous.ponder'
     relocate 'org.intellij', 'dansplugins.factionsystem.shadow.org.intellij'
@@ -55,7 +53,6 @@ shadowJar {
     relocate 'junit', 'dansplugins.factionsystem.shadow.junit'
     relocate 'org.hamcrest', 'dansplugins.factionsystem.shadow.org.hamcrest'
     relocate 'org.junit', 'dansplugins.factionsystem.shadow.org.junit'
-    relocate 'dansplugins.fiefs', 'dansplugins.factionsystem.shadow.dansplugins.fiefs'
 }
 
 artifacts {

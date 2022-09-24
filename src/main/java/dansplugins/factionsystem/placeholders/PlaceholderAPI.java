@@ -22,10 +22,12 @@ import java.util.Objects;
 public class PlaceholderAPI extends PlaceholderExpansion {
     private final MedievalFactions medievalFactions;
     private final PersistentData persistentData;
+    private final ConfigService configService;
 
-    public PlaceholderAPI(MedievalFactions medievalFactions, PersistentData persistentData) {
+    public PlaceholderAPI(MedievalFactions medievalFactions, PersistentData persistentData, ConfigService configService) {
         this.medievalFactions = medievalFactions;
         this.persistentData = persistentData;
+        this.configService = configService;
     }
 
     @Override
@@ -63,7 +65,7 @@ public class PlaceholderAPI extends PlaceholderExpansion {
 
         // Prerequisites.
         if (id.startsWith("faction_") && !hasFaction && !id.equalsIgnoreCase("faction_at_location")) {
-            return new MedievalFactions().getConfigService().getString("factionless"); // We don't want Faction-Specific Placeholders to return if they are Factionless!
+            return configService.getString("factionless"); // We don't want Faction-Specific Placeholders to return if they are Factionless!
         }
 
         // Faction-Specific.

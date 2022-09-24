@@ -10,6 +10,7 @@ import dansplugins.factionsystem.data.PersistentData;
 import dansplugins.factionsystem.integrators.DynmapIntegrator;
 import dansplugins.factionsystem.services.ConfigService;
 import dansplugins.factionsystem.services.LocaleService;
+import dansplugins.factionsystem.services.MessageService;
 import dansplugins.factionsystem.services.PlayerService;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
@@ -19,10 +20,10 @@ import org.bukkit.entity.Player;
  */
 public class ClaimCommand extends SubCommand {
 
-    public ClaimCommand(LocaleService localeService, PersistentData persistentData, EphemeralData ephemeralData, PersistentData.ChunkDataAccessor chunkDataAccessor, DynmapIntegrator dynmapIntegrator, ConfigService configService) {
+    public ClaimCommand(LocaleService localeService, PersistentData persistentData, EphemeralData ephemeralData, PersistentData.ChunkDataAccessor chunkDataAccessor, DynmapIntegrator dynmapIntegrator, ConfigService configService, PlayerService playerService, MessageService messageService) {
         super(new String[]{
                 "Claim", LOCALE_PREFIX + "CmdClaim"
-        }, true, true, persistentData, localeService, ephemeralData, configService, chunkDataAccessor, dynmapIntegrator);
+        }, true, true, persistentData, localeService, ephemeralData, configService, playerService, messageService, chunkDataAccessor, dynmapIntegrator);
     }
 
     /**
@@ -37,7 +38,7 @@ public class ClaimCommand extends SubCommand {
         if ((boolean) faction.getFlags().getFlag("mustBeOfficerToManageLand")) {
             // officer or owner rank required
             if (!faction.isOfficer(player.getUniqueId()) && !faction.isOwner(player.getUniqueId())) {
-                new PlayerService().sendMessageType(player, "&a" + getText("AlertMustBeOfficerOrOwnerToClaimLand"), "AlertMustBeOfficerOrOwnerToClaimLand", false);
+                playerService.sendMessage(player, "&a" + getText("AlertMustBeOfficerOrOwnerToClaimLand"), "AlertMustBeOfficerOrOwnerToClaimLand", false);
                 return;
             }
         }
@@ -46,7 +47,7 @@ public class ClaimCommand extends SubCommand {
             int depth = getIntSafe(args[0], -1);
 
             if (depth <= 0) {
-                new PlayerService().sendMessageType(player, "&a" + getText("UsageClaimRadius"), "UsageClaimRadius", false);
+                playerService.sendMessage(player, "&a" + getText("UsageClaimRadius"), "UsageClaimRadius", false);
             } else {
                 chunkDataAccessor.radiusClaimAtLocation(depth, player, player.getLocation(), faction);
             }

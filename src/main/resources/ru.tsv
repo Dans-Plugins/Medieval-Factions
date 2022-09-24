@@ -324,7 +324,7 @@ HelpForceFlag	/mf force flag 'фракция' 'опция' 'значение'
 HelpForceJoin	/mf force join 'игрок' фракция 2 '
 HelpForceKick	/mf force kick (игрок)
 HelpForceLoad	/mf force load
-HelpForcePeace	/mf force peace 'фракция1' фракция2 
+HelpForcePeace	/mf force peace 'фракция1' фракция2
 HelpForcePower	/mf force power 'игрок' 'номер'
 HelpForceRemoveVassal	/mf force removevassal 'фракция' 'вассал'
 HelpForceRename	/mf force rename 'фракцию' новое имя'

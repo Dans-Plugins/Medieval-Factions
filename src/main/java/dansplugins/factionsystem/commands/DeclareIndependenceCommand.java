@@ -25,8 +25,8 @@ import java.util.Objects;
  */
 public class DeclareIndependenceCommand extends SubCommand {
 
-    public DeclareIndependenceCommand(LocaleService localeService, PersistentData persistentData, EphemeralData ephemeralData, PersistentData.ChunkDataAccessor chunkDataAccessor, DynmapIntegrator dynmapIntegrator, ConfigService configService) {
-        super(new String[]{"declareindependence", "di", LOCALE_PREFIX + "CmdDeclareIndependence"}, true, true, false, true, localeService, persistentData, ephemeralData, chunkDataAccessor, dynmapIntegrator, configService);
+    public DeclareIndependenceCommand(LocaleService localeService, PersistentData persistentData, EphemeralData ephemeralData, PersistentData.ChunkDataAccessor chunkDataAccessor, DynmapIntegrator dynmapIntegrator, ConfigService configService, PlayerService playerService, MessageService messageService) {
+        super(new String[]{"declareindependence", "di", LOCALE_PREFIX + "CmdDeclareIndependence"}, true, true, false, true, localeService, persistentData, ephemeralData, chunkDataAccessor, dynmapIntegrator, configService, playerService, messageService);
     }
 
     /**
@@ -44,13 +44,13 @@ public class DeclareIndependenceCommand extends SubCommand {
         }
 
         if (!(this.faction.hasLiege()) || this.faction.getLiege() == null) {
-            new PlayerService().sendMessageType(player, "&c" + getText("NotAVassalOfAFaction"), "NotAVassalOfAFaction", false);
+            playerService.sendMessage(player, "&c" + getText("NotAVassalOfAFaction"), "NotAVassalOfAFaction", false);
             return;
         }
 
         final Faction liege = getFaction(this.faction.getLiege());
         if (liege == null) {
-            new PlayerService().sendMessageType(player, "&c" + getText("FactionNotFound"), Objects.requireNonNull(new MessageService().getLanguage().getString("FactionNotFound")).replaceAll("#faction#", String.join(" ", args)), true);
+            playerService.sendMessage(player, "&c" + getText("FactionNotFound"), Objects.requireNonNull(messageService.getLanguage().getString("FactionNotFound")).replace("#faction#", String.join(" ", args)), true);
             return;
         }
 
@@ -74,7 +74,7 @@ public class DeclareIndependenceCommand extends SubCommand {
                 }
             }
         }
-        messageServer("&c" + getText("HasDeclaredIndependence", faction.getName(), liege.getName()), Objects.requireNonNull(new MessageService().getLanguage().getString("HasDeclaredIndependence")).replaceAll("#faction_a#", faction.getName()).replaceAll("#faction_b#", liege.getName()));
+        messageServer("&c" + getText("HasDeclaredIndependence", faction.getName(), liege.getName()), Objects.requireNonNull(messageService.getLanguage().getString("HasDeclaredIndependence")).replace("#faction_a#", faction.getName()).replace("#faction_b#", liege.getName()));
 
     }
 

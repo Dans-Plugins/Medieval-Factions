@@ -25,10 +25,10 @@ import java.util.UUID;
  */
 public class DemoteCommand extends SubCommand {
 
-    public DemoteCommand(LocaleService localeService, PersistentData persistentData, EphemeralData ephemeralData, PersistentData.ChunkDataAccessor chunkDataAccessor, DynmapIntegrator dynmapIntegrator, ConfigService configService) {
+    public DemoteCommand(LocaleService localeService, PersistentData persistentData, EphemeralData ephemeralData, PersistentData.ChunkDataAccessor chunkDataAccessor, DynmapIntegrator dynmapIntegrator, ConfigService configService, PlayerService playerService, MessageService messageService) {
         super(new String[]{
                 "demote", LOCALE_PREFIX + "CmdDemote"
-        }, true, true, false, true, localeService, persistentData, ephemeralData, chunkDataAccessor, dynmapIntegrator, configService);
+        }, true, true, false, true, localeService, persistentData, ephemeralData, chunkDataAccessor, dynmapIntegrator, configService, playerService, messageService);
     }
 
     /**
@@ -46,7 +46,7 @@ public class DemoteCommand extends SubCommand {
         }
 
         if (args.length == 0) {
-            new PlayerService().sendMessageType(player, "&c" + getText("UsageDemote")
+            playerService.sendMessage(player, "&c" + getText("UsageDemote")
                     , "UsageDemote", false);
             return;
         }
@@ -59,20 +59,20 @@ public class DemoteCommand extends SubCommand {
         }
 
         if (playerToBeDemoted == null) {
-            new PlayerService().sendMessageType(player, "&c" + getText("PlayerByNameNotFound")
-                    , Objects.requireNonNull(new MessageService().getLanguage().getString("PlayerByNameNotFound"))
-                            .replaceAll("#name#", args[0]), true);
+            playerService.sendMessage(player, "&c" + getText("PlayerByNameNotFound")
+                    , Objects.requireNonNull(messageService.getLanguage().getString("PlayerByNameNotFound"))
+                            .replace("#name#", args[0]), true);
             return;
         }
 
         if (playerToBeDemoted.getUniqueId() == player.getUniqueId()) {
-            new PlayerService().sendMessageType(player, "&c" + getText("CannotDemoteSelf")
+            playerService.sendMessage(player, "&c" + getText("CannotDemoteSelf")
                     , "CannotDemoteSelf", false);
             return;
         }
 
         if (!this.faction.isOfficer(playerToBeDemoted.getUniqueId())) {
-            new PlayerService().sendMessageType(player, "&c" + getText("PlayerIsNotOfficerOfFaction")
+            playerService.sendMessage(player, "&c" + getText("PlayerIsNotOfficerOfFaction")
                     , "PlayerIsNotOfficerOfFaction", false);
             return;
         }
@@ -80,12 +80,12 @@ public class DemoteCommand extends SubCommand {
         faction.removeOfficer(playerToBeDemoted.getUniqueId());
 
         if (playerToBeDemoted.isOnline()) {
-            new PlayerService().sendMessageType(player, "&c" + getText("AlertDemotion")
+            playerService.sendMessage(player, "&c" + getText("AlertDemotion")
                     , "AlertDemotion", false);
         }
-        new PlayerService().sendMessageType(player, "&c" + getText("PlayerDemoted")
-                , Objects.requireNonNull(new MessageService().getLanguage().getString("PlayerDemoted"))
-                        .replaceAll("#name#", playerToBeDemoted.getName()), true);
+        playerService.sendMessage(player, "&c" + getText("PlayerDemoted")
+                , Objects.requireNonNull(messageService.getLanguage().getString("PlayerDemoted"))
+                        .replace("#name#", playerToBeDemoted.getName()), true);
     }
 
     /**

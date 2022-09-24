@@ -4,7 +4,6 @@
  */
 package dansplugins.factionsystem.commands.abs;
 
-import dansplugins.factionsystem.MedievalFactions;
 import dansplugins.factionsystem.data.EphemeralData;
 import dansplugins.factionsystem.data.PersistentData;
 import dansplugins.factionsystem.integrators.DynmapIntegrator;
@@ -35,6 +34,8 @@ public abstract class SubCommand implements ColorTranslator {
     protected final PersistentData.ChunkDataAccessor chunkDataAccessor;
     protected final DynmapIntegrator dynmapIntegrator;
     protected final ConfigService configService;
+    protected final PlayerService playerService;
+    protected final MessageService messageService;
     private final boolean playerCommand;
     private final boolean requiresFaction;
     private final boolean requiresOfficer;
@@ -57,7 +58,7 @@ public abstract class SubCommand implements ColorTranslator {
      * @param dynmapIntegrator
      * @param configService
      */
-    public SubCommand(String[] names, boolean playerCommand, boolean requiresFaction, boolean requiresOfficer, boolean requiresOwner, LocaleService localeService, PersistentData persistentData, EphemeralData ephemeralData, PersistentData.ChunkDataAccessor chunkDataAccessor, DynmapIntegrator dynmapIntegrator, ConfigService configService) {
+    public SubCommand(String[] names, boolean playerCommand, boolean requiresFaction, boolean requiresOfficer, boolean requiresOwner, LocaleService localeService, PersistentData persistentData, EphemeralData ephemeralData, PersistentData.ChunkDataAccessor chunkDataAccessor, DynmapIntegrator dynmapIntegrator, ConfigService configService, PlayerService playerService, MessageService messageService) {
         this.localeService = localeService;
         this.persistentData = persistentData;
         this.ephemeralData = ephemeralData;
@@ -69,6 +70,8 @@ public abstract class SubCommand implements ColorTranslator {
         this.requiresFaction = requiresFaction;
         this.requiresOfficer = requiresOfficer;
         this.requiresOwner = requiresOwner;
+        this.playerService = playerService;
+        this.messageService = messageService;
     }
 
     /**
@@ -84,8 +87,8 @@ public abstract class SubCommand implements ColorTranslator {
      * @param chunkDataAccessor
      * @param dynmapIntegrator
      */
-    public SubCommand(String[] names, boolean playerCommand, boolean requiresFaction, PersistentData persistentData, LocaleService localeService, EphemeralData ephemeralData, ConfigService configService, PersistentData.ChunkDataAccessor chunkDataAccessor, DynmapIntegrator dynmapIntegrator) {
-        this(names, playerCommand, requiresFaction, false, false, localeService, persistentData, ephemeralData, chunkDataAccessor, dynmapIntegrator, configService);
+    public SubCommand(String[] names, boolean playerCommand, boolean requiresFaction, PersistentData persistentData, LocaleService localeService, EphemeralData ephemeralData, ConfigService configService, PlayerService playerService, MessageService messageService, PersistentData.ChunkDataAccessor chunkDataAccessor, DynmapIntegrator dynmapIntegrator) {
+        this(names, playerCommand, requiresFaction, false, false, localeService, persistentData, ephemeralData, chunkDataAccessor, dynmapIntegrator, configService, playerService, messageService);
     }
 
     /**
@@ -100,8 +103,8 @@ public abstract class SubCommand implements ColorTranslator {
      * @param chunkDataAccessor
      * @param dynmapIntegrator
      */
-    public SubCommand(String[] names, boolean playerCommand, PersistentData persistentData, LocaleService localeService, EphemeralData ephemeralData, ConfigService configService, PersistentData.ChunkDataAccessor chunkDataAccessor, DynmapIntegrator dynmapIntegrator) {
-        this(names, playerCommand, false, persistentData, localeService, ephemeralData, configService, chunkDataAccessor, dynmapIntegrator);
+    public SubCommand(String[] names, boolean playerCommand, PersistentData persistentData, LocaleService localeService, EphemeralData ephemeralData, ConfigService configService, PlayerService playerService, MessageService messageService, PersistentData.ChunkDataAccessor chunkDataAccessor, DynmapIntegrator dynmapIntegrator) {
+        this(names, playerCommand, false, persistentData, localeService, ephemeralData, configService, playerService, messageService, chunkDataAccessor, dynmapIntegrator);
     }
 
     protected void loadCommandNames(String[] names) {
@@ -197,12 +200,11 @@ public abstract class SubCommand implements ColorTranslator {
     public boolean checkPermissions(CommandSender sender, String... permission) {
         boolean has = false;
         for (String perm : permission) {
-            if (has = sender.hasPermission(perm)) {
-                break;
-            }
+            has = sender.hasPermission(perm);
+            break;
         }
         if (!has) {
-            new PlayerService().sendMessageType(sender, translate("&c" + getText("PermissionNeeded", permission[0])), Objects.requireNonNull(new MessageService().getLanguage().getString("PermissionNeeded")).replaceAll("#permission#", permission[0]), true);
+            playerService.sendMessage(sender, translate("&c" + getText("PermissionNeeded", permission[0])), Objects.requireNonNull(messageService.getLanguage().getString("PermissionNeeded")).replace("#permission#", permission[0]), true);
         }
         return has;
     }
@@ -276,22 +278,22 @@ public abstract class SubCommand implements ColorTranslator {
     /**
      * Method to send an entire Faction a message.
      *
-     * @param faction     to send a message to.
-     * @param old_message old message to send to the Faction.
-     * @param new_message new message to send to the Faction.
+     * @param faction    to send a message to.
+     * @param oldmessage old message to send to the Faction.
+     * @param newmessage new message to send to the Faction.
      */
-    protected void messageFaction(Faction faction, String old_message, String new_message) {
-        faction.getMemberList().stream().map(Bukkit::getOfflinePlayer).filter(OfflinePlayer::isOnline).map(OfflinePlayer::getPlayer).filter(Objects::nonNull).forEach(player -> new PlayerService().sendMessageType(player, old_message, new_message, true));
+    protected void messageFaction(Faction faction, String oldmessage, String newmessage) {
+        faction.getMemberList().stream().map(Bukkit::getOfflinePlayer).filter(OfflinePlayer::isOnline).map(OfflinePlayer::getPlayer).filter(Objects::nonNull).forEach(player -> playerService.sendMessage(player, oldmessage, newmessage, true));
     }
 
     /**
      * Method to send the entire Server a message.
      *
-     * @param old_message old message to send to the players.
-     * @param new_message old message to send to the players.
+     * @param oldmessage old message to send to the players.
+     * @param newmessage old message to send to the players.
      */
-    protected void messageServer(String old_message, String new_message) {
-        Bukkit.getOnlinePlayers().forEach(player -> new PlayerService().sendMessageType(player, old_message, new_message, true));
+    protected void messageServer(String oldmessage, String newmessage) {
+        Bukkit.getOnlinePlayers().forEach(player -> playerService.sendMessage(player, oldmessage, newmessage, true));
     }
 
     /**

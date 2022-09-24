@@ -29,10 +29,10 @@ import java.util.UUID;
 public class KickCommand extends SubCommand {
     private final Logger logger;
 
-    public KickCommand(LocaleService localeService, PersistentData persistentData, EphemeralData ephemeralData, PersistentData.ChunkDataAccessor chunkDataAccessor, DynmapIntegrator dynmapIntegrator, ConfigService configService, Logger logger) {
+    public KickCommand(LocaleService localeService, PersistentData persistentData, EphemeralData ephemeralData, PersistentData.ChunkDataAccessor chunkDataAccessor, DynmapIntegrator dynmapIntegrator, ConfigService configService, Logger logger, PlayerService playerService, MessageService messageService) {
         super(new String[]{
                 "kick", LOCALE_PREFIX + "CmdKick"
-        }, true, true, true, false, localeService, persistentData, ephemeralData, chunkDataAccessor, dynmapIntegrator, configService);
+        }, true, true, true, false, localeService, persistentData, ephemeralData, chunkDataAccessor, dynmapIntegrator, configService, playerService, messageService);
         this.logger = logger;
     }
 
@@ -48,31 +48,31 @@ public class KickCommand extends SubCommand {
         final String permission = "mf.kick";
         if (!(checkPermissions(player, permission))) return;
         if (args.length == 0) {
-            new PlayerService().sendMessageType(player, "&c" + getText("UsageKick")
+            playerService.sendMessage(player, "&c" + getText("UsageKick")
                     , "UsageKick", false);
             return;
         }
         UUIDChecker uuidChecker = new UUIDChecker();
         final UUID targetUUID = uuidChecker.findUUIDBasedOnPlayerName(args[0]);
         if (targetUUID == null) {
-            new PlayerService().sendMessageType(player, "&c" + getText("PlayerNotFound"), Objects.requireNonNull(new MessageService().getLanguage().getString("PlayerNotFound")).replaceAll("#name#", args[0]), true);
+            playerService.sendMessage(player, "&c" + getText("PlayerNotFound"), Objects.requireNonNull(messageService.getLanguage().getString("PlayerNotFound")).replace("#name#", args[0]), true);
             return;
         }
         OfflinePlayer target = Bukkit.getOfflinePlayer(targetUUID);
         if (!target.hasPlayedBefore()) {
             target = Bukkit.getPlayer(args[0]);
             if (target == null) {
-                new PlayerService().sendMessageType(player, "&c" + getText("PlayerNotFound"), Objects.requireNonNull(new MessageService().getLanguage().getString("PlayerNotFound")).replaceAll("#name#", args[0]), true);
+                playerService.sendMessage(player, "&c" + getText("PlayerNotFound"), Objects.requireNonNull(messageService.getLanguage().getString("PlayerNotFound")).replace("#name#", args[0]), true);
                 return;
             }
         }
         if (target.getUniqueId().equals(player.getUniqueId())) {
-            new PlayerService().sendMessageType(player, "&c" + getText("CannotKickSelf")
+            playerService.sendMessage(player, "&c" + getText("CannotKickSelf")
                     , "CannotKickSelf", false);
             return;
         }
         if (this.faction.isOwner(targetUUID)) {
-            new PlayerService().sendMessageType(player, "&c" + getText("CannotKickOwner")
+            playerService.sendMessage(player, "&c" + getText("CannotKickOwner")
                     , "CannotKickOwner", false);
             return;
         }
@@ -88,13 +88,13 @@ public class KickCommand extends SubCommand {
         ephemeralData.getPlayersInFactionChat().remove(targetUUID);
         faction.removeMember(targetUUID);
         messageFaction(faction, "&c" + getText("HasBeenKickedFrom", target.getName(), faction.getName()),
-                Objects.requireNonNull(new MessageService().getLanguage().getString("HasBeenKickedFrom"))
-                        .replaceAll("#name#", args[0])
-                        .replaceAll("#faction#", faction.getName()));
+                Objects.requireNonNull(messageService.getLanguage().getString("HasBeenKickedFrom"))
+                        .replace("#name#", args[0])
+                        .replace("#faction#", faction.getName()));
         if (target.isOnline() && target.getPlayer() != null) {
-            new PlayerService().sendMessageType(player, "&c" + getText("AlertKicked", player.getName())
-                    , Objects.requireNonNull(new MessageService().getLanguage().getString("AlertKicked"))
-                            .replaceAll("#name#", player.getName()), true);
+            playerService.sendMessage(player, "&c" + getText("AlertKicked", player.getName())
+                    , Objects.requireNonNull(messageService.getLanguage().getString("AlertKicked"))
+                            .replace("#name#", player.getName()), true);
         }
     }
 

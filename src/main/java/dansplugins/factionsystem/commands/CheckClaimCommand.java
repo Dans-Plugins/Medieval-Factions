@@ -22,8 +22,8 @@ import java.util.Objects;
  */
 public class CheckClaimCommand extends SubCommand {
 
-    public CheckClaimCommand(LocaleService localeService, PersistentData persistentData, EphemeralData ephemeralData, PersistentData.ChunkDataAccessor chunkDataAccessor, DynmapIntegrator dynmapIntegrator, ConfigService configService) {
-        super(new String[]{"checkclaim", "cc", LOCALE_PREFIX + "CmdCheckClaim"}, true, persistentData, localeService, ephemeralData, configService, chunkDataAccessor, dynmapIntegrator);
+    public CheckClaimCommand(LocaleService localeService, PersistentData persistentData, EphemeralData ephemeralData, PersistentData.ChunkDataAccessor chunkDataAccessor, DynmapIntegrator dynmapIntegrator, ConfigService configService, PlayerService playerService, MessageService messageService) {
+        super(new String[]{"checkclaim", "cc", LOCALE_PREFIX + "CmdCheckClaim"}, true, persistentData, localeService, ephemeralData, configService, playerService, messageService, chunkDataAccessor, dynmapIntegrator);
     }
 
     /**
@@ -43,10 +43,10 @@ public class CheckClaimCommand extends SubCommand {
         final String result = chunkDataAccessor.checkOwnershipAtPlayerLocation(player);
 
         if (result.equals("unclaimed")) {
-            new PlayerService().sendMessageType(player, "&a" + getText("LandIsUnclaimed"), "LandIsUnclaimed", false);
+            playerService.sendMessage(player, "&a" + getText("LandIsUnclaimed"), "LandIsUnclaimed", false);
         } else {
-            new PlayerService().sendMessageType(player, "&c" + getText("LandClaimedBy"), Objects.requireNonNull(new MessageService().getLanguage().getString("LandClaimedBy"))
-                    .replaceAll("#player#", result), true);
+            playerService.sendMessage(player, "&c" + getText("LandClaimedBy"), Objects.requireNonNull(messageService.getLanguage().getString("LandClaimedBy"))
+                    .replace("#player#", result), true);
         }
     }
 

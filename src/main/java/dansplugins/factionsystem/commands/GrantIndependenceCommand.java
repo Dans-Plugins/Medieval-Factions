@@ -23,10 +23,10 @@ import java.util.Objects;
  */
 public class GrantIndependenceCommand extends SubCommand {
 
-    public GrantIndependenceCommand(LocaleService localeService, PersistentData persistentData, EphemeralData ephemeralData, PersistentData.ChunkDataAccessor chunkDataAccessor, DynmapIntegrator dynmapIntegrator, ConfigService configService) {
+    public GrantIndependenceCommand(LocaleService localeService, PersistentData persistentData, EphemeralData ephemeralData, PersistentData.ChunkDataAccessor chunkDataAccessor, DynmapIntegrator dynmapIntegrator, ConfigService configService, PlayerService playerService, MessageService messageService) {
         super(new String[]{
                 "GrantIndependence", "GI", LOCALE_PREFIX + "CmdGrantIndependence"
-        }, true, true, false, true, localeService, persistentData, ephemeralData, chunkDataAccessor, dynmapIntegrator, configService);
+        }, true, true, false, true, localeService, persistentData, ephemeralData, chunkDataAccessor, dynmapIntegrator, configService, playerService, messageService);
     }
 
     /**
@@ -45,8 +45,8 @@ public class GrantIndependenceCommand extends SubCommand {
         }
         final Faction target = getFaction(String.join(" ", args));
         if (target == null) {
-            new PlayerService().sendMessageType(player, "&c" + getText("FactionNotFound")
-                    , Objects.requireNonNull(new MessageService().getLanguage().getString("FactionNotFound")).replaceAll("#faction#", String.join(" ", args))
+            playerService.sendMessage(player, "&c" + getText("FactionNotFound")
+                    , Objects.requireNonNull(messageService.getLanguage().getString("FactionNotFound")).replace("#faction#", String.join(" ", args))
                     , true);
             return;
         }
@@ -58,12 +58,12 @@ public class GrantIndependenceCommand extends SubCommand {
         this.faction.removeVassal(target.getName());
         // inform all players in that faction that they are now independent
         messageFaction(target, translate("&a" + getText("AlertGrantedIndependence", faction.getName())),
-                Objects.requireNonNull(new MessageService().getLanguage().getString("AlertGrantedIndependence"))
-                        .replaceAll("#name#", faction.getName()));
+                Objects.requireNonNull(messageService.getLanguage().getString("AlertGrantedIndependence"))
+                        .replace("#name#", faction.getName()));
         // inform all players in players faction that a vassal was granted independence
         messageFaction(faction, translate("&a" + getText("AlertNoLongerVassalFaction", target.getName()))
-                , Objects.requireNonNull(new MessageService().getLanguage().getString("AlertNoLongerVassalFaction"))
-                        .replaceAll("#name#", target.getName()));
+                , Objects.requireNonNull(messageService.getLanguage().getString("AlertNoLongerVassalFaction"))
+                        .replace("#name#", target.getName()));
     }
 
     /**

@@ -139,9 +139,9 @@ public class ColorConversion {
 
         public boolean equals(String in) {
             return name().equalsIgnoreCase(in) ||
-                    name().equalsIgnoreCase(in.replaceAll(" ", "_")) ||
+                    name().equalsIgnoreCase(in.replace(" ", "_")) ||
                     getColor().equalsIgnoreCase(in) ||
-                    getColor().equalsIgnoreCase(in.replaceAll(" ", "_"));
+                    getColor().equalsIgnoreCase(in.replace(" ", "_"));
         }
 
         @Override
