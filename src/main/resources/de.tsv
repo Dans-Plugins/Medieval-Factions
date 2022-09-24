@@ -1,93 +1,93 @@
-AcceptedChallengeDuelHasBegun                                                           	Du hast die Herausforderung von %s angenommen, das Duell hat begonnen.
-AlertAccessGrantedTo                                                                    	Zugriff auf %s gewährt
-AlertAccessRevokedFor                                                                   	Zugriff für %s widerrufen
-AlertAllianceHasBeenBroken                                                              	%s hat deine Allianz deiner Fraktion gebrochen.
-AlertAlreadyAtWarWith                                                                   	Deine Fraktion befindet sich bereits im Krieg mit%s.
-AlertAlreadyCreatingGate                                                                	Du erstellst bereits ein Gate.
-AlertAlreadyDueling                                                                     	Du bist bereits in einem Duell
-AlertAlreadyDuelingPlayer                                                               	Du duellerist dich bereits mit %s
-AlertAlreadyDuelingSomeone                                                              	Du duellierst dich schon mit jemandem.
-AlertAlreadyGrantingAccess                                                              	Du gewährst bereits jemandem Zugriff. Gebe / mf grantaccess cancel ein, um dies abzubrechen.
-AlertAlreadyInFaction                                                                   	Du bist schon in einer Fraktion, sorry.
-AlertAlreadyRequestedAlliance                                                           	Du hast bereits ein Bündnisangebot an diese Faction gesendet.
-AlertAlreadyRequestedPeace                                                              	Du hast bereits ein Friedensangebot an diese Faction gesendet.
-AlertAttemptedAlliance                                                                  	%s hat versucht sich mit %s zu verbünden
-AlertAttemptedVassalization                                                             	%s hat versucht, deine Fraktion zu vassalisieren. Wenn du der Eigentümer bist, gebe '/mf swearfealty %s' ein, um zu akzeptieren.
-AlertBeenInvited                                                                        	Du wurdest zu %s eingeladen. Gebe /mf join %s ein, um beizutreten.
-AlertCalledToWar1                                                                       	%s hat deine Fraktion in ihren Krieg mit %s gerufen.
-AlertCalledToWar2                                                                       	%s hat %s in den Krieg mit deiner Faction gerufen.
+AcceptedChallengeDuelHasBegun	Du hast die Herausforderung von %s angenommen, das Duell hat begonnen.
+AlertAccessGrantedTo	 Zugriff auf %s gewährt
+AlertAccessRevokedFor	Zugriff für %s widerrufen
+AlertAllianceHasBeenBroken	%s hat deine Allianz deiner Fraktion gebrochen.
+AlertAlreadyAtWarWith	Deine Fraktion befindet sich bereits im Krieg mit%s.
+AlertAlreadyCreatingGate	Du erstellst bereits ein Gate.
+AlertAlreadyDueling	Du bist bereits in einem Duell
+AlertAlreadyDuelingPlayer	Du duellerist dich bereits mit %s
+AlertAlreadyDuelingSomeone	Du duellierst dich schon mit jemandem.
+AlertAlreadyGrantingAccess	Du gewährst bereits jemandem Zugriff. Gebe / mf grantaccess cancel ein, um dies abzubrechen.
+AlertAlreadyInFaction	Du bist schon in einer Fraktion, sorry.
+AlertAlreadyRequestedAlliance	Du hast bereits ein Bündnisangebot an diese Faction gesendet.
+AlertAlreadyRequestedPeace	Du hast bereits ein Friedensangebot an diese Faction gesendet.
+AlertAttemptedAlliance	%s hat versucht sich mit %s zu verbünden
+AlertAttemptedVassalization	%s hat versucht, deine Fraktion zu vassalisieren. Wenn du der Eigentümer bist, gebe '/mf swearfealty %s' ein, um zu akzeptieren.
+AlertBeenInvited	 Du wurdest zu %s eingeladen. Gebe /mf join %s ein, um beizutreten.
+AlertCalledToWar1	%s hat deine Fraktion in ihren Krieg mit %s gerufen.
+AlertCalledToWar2	%s hat %s in den Krieg mit deiner Faction gerufen.
 AlertCalledToWar3
-Deine Fraktion hat %s in deinen Krieg mit %s gerufen.
+ Deine Fraktion hat %s in deinen Krieg mit %s gerufen.
 AlertChallengedToDuel
-%s hat %s zu einem Duell herausgefordert.
-AlertChallengedToDuelPlusHowTo                                                          	%s hat dich zu einem Duell herausgefordert. Typ /mf duell akzeptieren, um zu beginnen.
+ %s hat %s zu einem Duell herausgefordert.
+AlertChallengedToDuelPlusHowTo	%s hat dich zu einem Duell herausgefordert. Typ /mf duell akzeptieren, um zu beginnen.
 
 AlertChallengeIssued
-Du hast %s zu einem Duell herausgefordert.
-AlertChallengeWasAccepted                                                               	%s hat deine Herausforderung angenommen, das Duell hat begonnen.
-AlertChangedGateName                                                                    	Der Gate-Name wurde in '% s' geändert.
-AlertCurrentPowerLevel                                                                  	Deine aktuelles Power Level ist% d /% d.
-AlertDecreasingThePowerOfInactivePlayers                                                	Medieval Factions verringert die Power jedes Spielers um %d, wenn sie seit mehr als%d Minuten nicht mehr online waren. Dies geschieht alle %d Minuten.
-AlertDemotion                                                                           	Du wurdest in deiner Fraktion zum Mitgliedsstatus herabgestuft.
-AlertDisbandmentDueToZeroPower                                                          	Deine Fraktion wurde aufgelöst, weil deine kumulative Power Null erreicht hat.
-AlertFactionAttemptedToVassalize                                                        	Deine Fraktion hat versucht, %s zu vassalisieren.
-AlertFactionHasBeenVassalized                                                           	Deine Fraktion wurde vassalisiert und hat einen neuen Lehnsherrn: %s
-AlertFactionHasNewVassal                                                                	Deine Fraktion hat einen neuen Vasallen: %s
-AlertFactionHomeRemoved                                                                 	Dein Factionhome wurde entfernt.
-AlertFactionIsWeakened                                                                  	Deine Faction hat weniger als die Häflte der Max-Power. Sie wird keinen Bonus Power von ihren, jetzt unabhängigen, Vasallen mehr bekommen.
+ Du hast %s zu einem Duell herausgefordert.
+AlertChallengeWasAccepted	%s hat deine Herausforderung angenommen, das Duell hat begonnen.
+AlertChangedGateName	Der Gate-Name wurde in '% s' geändert.
+AlertCurrentPowerLevel	Deine aktuelles Power Level ist% d /% d.
+AlertDecreasingThePowerOfInactivePlayers	Medieval Factions verringert die Power jedes Spielers um %d, wenn sie seit mehr als%d Minuten nicht mehr online waren. Dies geschieht alle %d Minuten.
+AlertDemotion	 Du wurdest in deiner Fraktion zum Mitgliedsstatus herabgestuft.
+AlertDisbandmentDueToZeroPower	 Deine Fraktion wurde aufgelöst, weil deine kumulative Power Null erreicht hat.
+AlertFactionAttemptedToVassalize	 Deine Fraktion hat versucht, %s zu vassalisieren.
+AlertFactionHasBeenVassalized	Deine Fraktion wurde vassalisiert und hat einen neuen Lehnsherrn: %s
+AlertFactionHasNewVassal	Deine Fraktion hat einen neuen Vasallen: %s
+AlertFactionHomeRemoved	Dein Factionhome wurde entfernt.
+AlertFactionIsWeakened	Deine Faction hat weniger als die Häflte der Max-Power. Sie wird keinen Bonus Power von ihren, jetzt unabhängigen, Vasallen mehr bekommen.
 AlertForcedDemotion
-Du wurdest in deiner Fraktion gewaltsam vom Offiziersstatus herabgestuft.
+ Du wurdest in deiner Fraktion gewaltsam vom Offiziersstatus herabgestuft.
 AlertForcedKick
-Du wurdest gewaltsam aus deiner Fraktion geworfen.
-AlertForcedLoad                                                                         	Medieval Factions wurde zum Laden gezwungen.
-AlertForcedSave                                                                         	Medieval Factions wurde gezwungen zu speichern.
-AlertForcedToJoinFaction                                                                	Du wurdest gezwungen, einer Fraktion beizutreten.
-AlertGate                                                                               	Das ist das '%s' Tor.
-AlertGrantedIndependence                                                                	%s hat deiner Fraktion Unabhängigkeit gewährt.
+ Du wurdest gewaltsam aus deiner Fraktion geworfen.
+AlertForcedLoad	 Medieval Factions wurde zum Laden gezwungen.
+AlertForcedSave	Medieval Factions wurde gezwungen zu speichern.
+AlertForcedToJoinFaction	Du wurdest gezwungen, einer Fraktion beizutreten.
+AlertGate	Das ist das '%s' Tor.
+AlertGrantedIndependence	 %s hat deiner Fraktion Unabhängigkeit gewährt.
 AlertIncreasingThePowerOfEveryPlayer
-Medieval Factions erhöht die Power jedes Spielers um %d. Dies geschieht alle %d Minuten.
-AlertJoinedFaction                                                                      	Du bist der Fraktion beigetreten.
-AlertKicked                                                                             	Du wurdest von %s aus deiner Fraktion geworfen.
-AlertLandClaimed                                                                        	Land beansprucht. Herrschaftsgröße: %d/%d
-AlertLandConqueredFromAnotherFaction                                                    	Land erobert von %s. Größe deiner Faction: %d%d
-AlertLandConqueredFromYourFaction                                                       	%s hat Land von deiner Fraktion erobert.
-AlertLeftFaction                                                                        	Du hast deine Fraktion verlassen.
-AlertLeftFactionAndItGotDeleted                                                         	Du hast deine Faction verlassen. Sie wurde gelöscht, da sie nun keine Mitglieder mehr hat
-AlertMoreClaimedChunksThanPower                                                         	Deine Fraktion hat mehr geclaimte Chunks als Power. Dein Land kann erobert werden.
-AlertMustBeAtWarToConquer                                                               	Beide Fraktionen müssen sich im Krieg befinden, damit du Land erobern kannst.
-AlertMustBeInFactionToUseCommand                                                        	Du musst in einer Faction sein um diesen Command zu benutzen
-AlertMustBeMemberToCreateGate                                                           	Du musst Member der Faction sein um ein Gate zu erstellen
-AlertMustBeOfficerOrOwnerToClaimLand                                                    	Du musst entweder Vizeanführer- oder Anführer sein um Land zu claimen
-AlertMustBeOwnerOrOfficerToCreateGate                                                   	Du musst Faction Owner oder Vizeanführer sein um ein Gate zu erstellen
-AlertMustBeOwnerOrOfficerToUseCommand                                                   	Du musst Anführer oder Vizeanführer einer Faction sein um diesen Command zu benutzen
-AlertMustBeOwnerToInvokeAlliance                                                        	Du musst Anführer einer Faction sein um eine Allianz zu beschließen!
-AlertMustBeOwnerToUseCommand                                                            	Du musst Anführer einer Faction sein um diesen Command zu nutzen
-AlertMustKickAllPlayers                                                                 	Du musst alle Spieler aus der Faction kicken, bevor du sie löschen kannst!
-AlertNoGatesDefined                                                                     	Deine Faction hat keine eigenen Gates.
-AlertNoLaws                                                                             	Deine Faction hat keine eigenen Regeln
-AlertNoLongerVassalFaction                                                              	%s ist nicht mehr Vasall deiner Faction
-AlertNonOwnership                                                                       	Das gehört dir nicht!
-AlertNoPendingChallenges                                                                	Du hast keine anstehenden Herausforderungen, die du abbrechen kannst
-AlertNotAllied                                                                          	Deine Faction ist in keinem Bündnis mit %s
-AlertNotBeenChallenged                                                                  	Du hast keine ausstehenden Duellherausforderungen mehr
-AlertNotBeenChallengedByPlayer                                                          	Du wurdest nicht zu einem Duell mit %s herausgefordert
-AlertNotInFaction                                                                       	Du bist in keiner Faction!
-AlertNotInvitedToFaction                                                                	Du bist nicht in diese Faction eingeladen worden.
-AlertNotOfferedVassalizationBy                                                          	Du hast kein Angebot um Vasall dieser Faction zu werden
-AlertNowAlliedWith                                                                      	Dein Faction hat jetzt ein Bündnis mit %s
-AlertNowAtPeaceWith                                                                     	%s steht nun wieder im Frieden mit %s.
-AlertPlayerAlreadyOwner                                                                 	Dieser Spieler ist bereits der Anführer dieser Faction!
-AlertPlayerNotInFaction                                                                 	Dieser Spieler ist nicht in dieser Faction
-AlertPowerLevelDecreased                                                                	Dein Powerlevel ist gesunken
-AlertPowerLevelIncreasedBy                                                              	Du fühlst dich wieder stärker. Dein Powerlevel ist auf %d gestiegen.
-AlertReachedDemesne                                                                     	Du hast das Limit der Menge von Land erreicht. Lade mehr Spieler ein um dieses Limit anzuheben.
-AlertUnlocked                                                                           	Entsperrt.
-AlertUnlockingCancelled                                                                 	Entsperrung abgebrochen.
-AllianceBrokenWith                                                                      	Die Allianz mit %s wurde gebrochen
-AlliedWith                                                                              	Verbündet mit: %s
-AllLandUnclaimed                                                                        	All dein Land wurde unclaimed
-AllLandUnclaimedFrom                                                                    	Alles Land von %s wurde unclaimed
-AlreadyEnteredCheckAccess                                                               	Du hast diesen Command bereits durchgeführt. Tippe "/mf checkaccess cancel' um ihn abzubrechen
+ Medieval Factions erhöht die Power jedes Spielers um %d. Dies geschieht alle %d Minuten.
+AlertJoinedFaction	Du bist der Fraktion beigetreten.
+AlertKicked	Du wurdest von %s aus deiner Fraktion geworfen.
+AlertLandClaimed	Land beansprucht. Herrschaftsgröße: %d/%d
+AlertLandConqueredFromAnotherFaction	Land erobert von %s. Größe deiner Faction: %d%d
+AlertLandConqueredFromYourFaction	 %s hat Land von deiner Fraktion erobert.
+AlertLeftFaction	Du hast deine Fraktion verlassen.
+AlertLeftFactionAndItGotDeleted	Du hast deine Faction verlassen. Sie wurde gelöscht, da sie nun keine Mitglieder mehr hat
+AlertMoreClaimedChunksThanPower	 Deine Fraktion hat mehr geclaimte Chunks als Power. Dein Land kann erobert werden.
+AlertMustBeAtWarToConquer	Beide Fraktionen müssen sich im Krieg befinden, damit du Land erobern kannst.
+AlertMustBeInFactionToUseCommand	Du musst in einer Faction sein um diesen Command zu benutzen
+AlertMustBeMemberToCreateGate	Du musst Member der Faction sein um ein Gate zu erstellen
+AlertMustBeOfficerOrOwnerToClaimLand	Du musst entweder Vizeanführer- oder Anführer sein um Land zu claimen
+AlertMustBeOwnerOrOfficerToCreateGate	Du musst Faction Owner oder Vizeanführer sein um ein Gate zu erstellen
+AlertMustBeOwnerOrOfficerToUseCommand	Du musst Anführer oder Vizeanführer einer Faction sein um diesen Command zu benutzen
+AlertMustBeOwnerToInvokeAlliance	Du musst Anführer einer Faction sein um eine Allianz zu beschließen!
+AlertMustBeOwnerToUseCommand	Du musst Anführer einer Faction sein um diesen Command zu nutzen
+AlertMustKickAllPlayers	Du musst alle Spieler aus der Faction kicken, bevor du sie löschen kannst!
+AlertNoGatesDefined	Deine Faction hat keine eigenen Gates.
+AlertNoLaws	Deine Faction hat keine eigenen Regeln
+AlertNoLongerVassalFaction	%s ist nicht mehr Vasall deiner Faction
+AlertNonOwnership	Das gehört dir nicht!
+AlertNoPendingChallenges	Du hast keine anstehenden Herausforderungen, die du abbrechen kannst
+AlertNotAllied	Deine Faction ist in keinem Bündnis mit %s
+AlertNotBeenChallenged	Du hast keine ausstehenden Duellherausforderungen mehr
+AlertNotBeenChallengedByPlayer	Du wurdest nicht zu einem Duell mit %s herausgefordert
+AlertNotInFaction	Du bist in keiner Faction!
+AlertNotInvitedToFaction	Du bist nicht in diese Faction eingeladen worden.
+AlertNotOfferedVassalizationBy	Du hast kein Angebot um Vasall dieser Faction zu werden
+AlertNowAlliedWith	Dein Faction hat jetzt ein Bündnis mit %s
+AlertNowAtPeaceWith	%s steht nun wieder im Frieden mit %s.
+AlertPlayerAlreadyOwner	Dieser Spieler ist bereits der Anführer dieser Faction!
+AlertPlayerNotInFaction	Dieser Spieler ist nicht in dieser Faction
+AlertPowerLevelDecreased	Dein Powerlevel ist gesunken
+AlertPowerLevelIncreasedBy	Du fühlst dich wieder stärker. Dein Powerlevel ist auf %d gestiegen.
+AlertReachedDemesne	Du hast das Limit der Menge von Land erreicht. Lade mehr Spieler ein um dieses Limit anzuheben.
+AlertUnlocked	Entsperrt.
+AlertUnlockingCancelled	Entsperrung abgebrochen.
+AllianceBrokenWith	Die Allianz mit %s wurde gebrochen
+AlliedWith	Verbündet mit: %s
+AllLandUnclaimed	All dein Land wurde unclaimed
+AllLandUnclaimedFrom	Alles Land von %s wurde unclaimed
+AlreadyEnteredCheckAccess	Du hast diesen Command bereits durchgeführt. Tippe "/mf checkaccess cancel' um ihn abzubrechen
 AlreadyEnteredRevokeAccess	Du hast diesen Command bereits durchgeführt. Tippe /mf revokeacces cancel um ihn zurückzuziehen
 AlreadyInFaction	Sorry, du bist bereits in einer Faction. Verlasse sie um eine neue zu erstellen
 ArgumentMustBeNumber	Das Argument muss eine Zahl sein.
