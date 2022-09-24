@@ -25,53 +25,56 @@ public class PlayerService {
 
     /**
      * Decide which message to send to the player.
-     * @param oldtype The old type of message.
-     * @param newtype The new type of message.
+     * @param tsvMessage The old type of message.
+     * @param ymlMessage The new type of message.
      * @return
      */
-    public String decideWhichMessageToUse(String oldtype, String newtype) {
+    public String decideWhichMessageToUse(String tsvMessage, String ymlMessage) {
         if (configService.getBoolean("useNewLanguageFile")) {
-            return newtype;
-        } else {
-            return oldtype;
+            return ymlMessage;
+        }
+        else {
+            return tsvMessage;
         }
     }
 
     /**
      * Send a message to the player.
      * @param sender The player to send the message to.
-     * @param oldtype The old type of message.
-     * @param newtype The new type of message.
-     * @param replace Whether or not parts of the message in the newtype are replaced.
+     * @param tsvMessage The old type of message.
+     * @param ymlMessage The new type of message.
+     * @param placeholdersReplaced Whether or not parts of the message in the newtype are replaced.
      */
-    public void sendMessage(CommandSender sender, String oldtype, String newtype, Boolean replace) {
-        if (!replace) {
-            sender.sendMessage(colorize(decideWhichMessageToUse(oldtype, messageService.getLanguage().getString(newtype))));
-        } else {
-            sender.sendMessage(colorize(decideWhichMessageToUse(oldtype, newtype)));
+    public void sendMessage(CommandSender sender, String tsvMessage, String ymlMessage, Boolean placeholdersReplaced) {
+        if (!placeholdersReplaced) {
+            sender.sendMessage(colorize(decideWhichMessageToUse(tsvMessage, messageService.getLanguage().getString(ymlMessage))));
+        }
+        else {
+            sender.sendMessage(colorize(decideWhichMessageToUse(tsvMessage, ymlMessage)));
         }
     }
 
     /**
      * Send multiple messages to the player.
      * @param sender The player to send the messages to.
-     * @param msg The messages to send.
+     * @param messages The messages to send.
      */
-    public void sendMultipleMessages(CommandSender sender, List<String> msg) {
-        msg.forEach(s -> sender.sendMessage(colorize(s)));
+    public void sendMultipleMessages(CommandSender sender, List<String> messages) {
+        messages.forEach(s -> sender.sendMessage(colorize(s)));
     }
 
     /**
      * Send a message to the console.
-     * @param c The console to send the message to.
-     * @param msg The message to send.
-     * @param message Whether or not to use the message service.
+     * @param console The console to send the message to.
+     * @param message The message to send.
+     * @param useMessageService Whether or not to use the message service.
      */
-    public void sendMessageToConsole(ConsoleCommandSender c, String msg, Boolean message) {
-        if (!message) {
-            c.sendMessage(colorize(msg));
-        } else {
-            c.sendMessage(colorize(messageService.getLanguage().getString(msg)));
+    public void sendMessageToConsole(ConsoleCommandSender console, String message, Boolean useMessageService) {
+        if (!useMessageService) {
+            console.sendMessage(colorize(message));
+        }
+        else {
+            console.sendMessage(colorize(messageService.getLanguage().getString(message)));
         }
     }
 
