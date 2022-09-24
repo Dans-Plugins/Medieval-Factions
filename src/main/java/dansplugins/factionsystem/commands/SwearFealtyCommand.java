@@ -41,18 +41,18 @@ public class SwearFealtyCommand extends SubCommand {
         final String permission = "mf.swearfealty";
         if (!(checkPermissions(player, permission))) return;
         if (args.length == 0) {
-            playerService.sendMessageType(player, "&c" + getText("UsageSwearFealty")
+            playerService.sendMessage(player, "&c" + getText("UsageSwearFealty")
                     , "UsageSwearFealty", false);
             return;
         }
         final Faction target = getFaction(String.join(" ", args));
         if (target == null) {
-            playerService.sendMessageType(player, "&c" + getText("FactionNotFound"), Objects.requireNonNull(messageService.getLanguage().getString("FactionNotFound"))
+            playerService.sendMessage(player, "&c" + getText("FactionNotFound"), Objects.requireNonNull(messageService.getLanguage().getString("FactionNotFound"))
                     .replace("#faction#", String.join(" ", args)), true);
             return;
         }
         if (!target.hasBeenOfferedVassalization(faction.getName())) {
-            playerService.sendMessageType(player, "&c" + getText("AlertNotOfferedVassalizationBy")
+            playerService.sendMessage(player, "&c" + getText("AlertNotOfferedVassalizationBy")
                     , "AlertNotOfferedVassalizationBy", false);
             return;
         }

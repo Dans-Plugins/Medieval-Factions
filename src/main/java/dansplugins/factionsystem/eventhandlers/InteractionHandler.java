@@ -85,7 +85,7 @@ public class InteractionHandler implements Listener {
             boolean isOwner = persistentData.getLockedBlock(block).getOwner().equals(player.getUniqueId());
             if (!isOwner) {
                 event.setCancelled(true);
-                playerService.sendMessageType(player, ChatColor.RED + localeService.get("AlertNonOwnership")
+                playerService.sendMessage(player, ChatColor.RED + localeService.get("AlertNonOwnership")
                         , "AlertNonOwnership", false);
                 return;
             }
@@ -128,7 +128,7 @@ public class InteractionHandler implements Listener {
         if (blockChecker.isChest(event.getBlock())) {
             boolean isNextToNonOwnedLockedChest = blockChecker.isNextToNonOwnedLockedChest(event.getPlayer(), event.getBlock());
             if (isNextToNonOwnedLockedChest) {
-                playerService.sendMessageType(player, ChatColor.RED + localeService.get("CannotPlaceChestsNextToUnownedLockedChests")
+                playerService.sendMessage(player, ChatColor.RED + localeService.get("CannotPlaceChestsNextToUnownedLockedChests")
                         , "CannotPlaceChestsNextToUnownedLockedChests", false);
                 event.setCancelled(true);
                 return;
@@ -172,7 +172,7 @@ public class InteractionHandler implements Listener {
             boolean isUnderOrAboveNonOwnedLockedChest = blockChecker.isUnderOrAboveNonOwnedLockedChest(event.getPlayer(), event.getBlock());
             if (isNextToNonOwnedLockedChest || isUnderOrAboveNonOwnedLockedChest) {
                 event.setCancelled(true);
-                playerService.sendMessageType(player, ChatColor.RED + localeService.get("CannotPlaceHoppersNextToUnownedLockedChests")
+                playerService.sendMessage(player, ChatColor.RED + localeService.get("CannotPlaceHoppersNextToUnownedLockedChests")
                         , "CannotPlaceHoppersNextToUnownedLockedChests", false);
             }
         }
@@ -202,7 +202,7 @@ public class InteractionHandler implements Listener {
             if (!playerHasAccess && !isPlayerBypassing) {
                 UUIDChecker uuidChecker = new UUIDChecker();
                 String owner = uuidChecker.findPlayerNameBasedOnUUID(lockedBlock.getOwner());
-                playerService.sendMessageType(player, ChatColor.RED + String.format(localeService.get("LockedBy"), owner)
+                playerService.sendMessage(player, ChatColor.RED + String.format(localeService.get("LockedBy"), owner)
                         , Objects.requireNonNull(messageService.getLanguage().getString("LockedBy"))
                                 .replace("#name#", owner), true);
                 event.setCancelled(true);
@@ -232,7 +232,7 @@ public class InteractionHandler implements Listener {
 
         } else {
             if (isPlayerUsingAnAccessCommand(player)) {
-                playerService.sendMessageType(player, ChatColor.RED + localeService.get("BlockIsNotLocked"), "BlockIsNotLocked", false);
+                playerService.sendMessage(player, ChatColor.RED + localeService.get("BlockIsNotLocked"), "BlockIsNotLocked", false);
             }
         }
 

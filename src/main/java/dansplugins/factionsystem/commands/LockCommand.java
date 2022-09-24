@@ -47,14 +47,14 @@ public class LockCommand extends SubCommand {
         }
         if (args.length >= 1 && safeEquals(args[0], "cancel")) {
             if (ephemeralData.getLockingPlayers().remove(player.getUniqueId())) { // Remove them
-                playerService.sendMessageType(player, "&c" + getText("LockingCancelled"),
+                playerService.sendMessage(player, "&c" + getText("LockingCancelled"),
                         "LockingCancelled", false);
                 return;
             }
         }
         ephemeralData.getLockingPlayers().add(player.getUniqueId());
         ephemeralData.getUnlockingPlayers().remove(player.getUniqueId());
-        playerService.sendMessageType(player, "&a" + getText("RightClickLock")
+        playerService.sendMessage(player, "&a" + getText("RightClickLock")
                 , "RightClickLock", false);
     }
 

@@ -44,19 +44,19 @@ public class WhoCommand extends SubCommand {
         final String permission = "mf.who";
         if (!(checkPermissions(player, permission))) return;
         if (args.length == 0) {
-            playerService.sendMessageType(player, "&c" + getText("UsageWho")
+            playerService.sendMessage(player, "&c" + getText("UsageWho")
                     , "UsageWho", false);
             return;
         }
         UUIDChecker uuidChecker = new UUIDChecker();
         final UUID targetUUID = uuidChecker.findUUIDBasedOnPlayerName(args[0]);
         if (targetUUID == null) {
-            playerService.sendMessageType(player, "&c" + getText("PlayerNotFound"), Objects.requireNonNull(messageService.getLanguage().getString("PlayerNotFound")).replace("#name#", args[0]), true);
+            playerService.sendMessage(player, "&c" + getText("PlayerNotFound"), Objects.requireNonNull(messageService.getLanguage().getString("PlayerNotFound")).replace("#name#", args[0]), true);
             return;
         }
         final Faction temp = getPlayerFaction(targetUUID);
         if (temp == null) {
-            playerService.sendMessageType(player, "&c" + getText("PlayerIsNotInAFaction")
+            playerService.sendMessage(player, "&c" + getText("PlayerIsNotInAFaction")
                     , "PlayerIsNotInAFaction", false);
             return;
         }

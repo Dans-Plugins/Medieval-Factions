@@ -42,35 +42,35 @@ public class RevokeAccessCommand extends SubCommand {
         final String permission = "mf.revokeaccess";
         if (!(checkPermissions(player, permission))) return;
         if (args.length == 0) {
-            playerService.sendMessageType(player, "&c" + getText("UsageRevokeAccess")
+            playerService.sendMessage(player, "&c" + getText("UsageRevokeAccess")
                     , "UsageRevokeAccess", false);
             return;
         }
         if (args[0].equalsIgnoreCase("cancel")) {
             ephemeralData.getPlayersRevokingAccess().remove(player.getUniqueId());
-            playerService.sendMessageType(player, "&c" + getText("Cancelled"), "Cancelled", false);
+            playerService.sendMessage(player, "&c" + getText("Cancelled"), "Cancelled", false);
             return;
         }
         if (ephemeralData.getPlayersRevokingAccess().containsKey(player.getUniqueId())) {
-            playerService.sendMessageType(player, "&c" + getText("AlreadyEnteredRevokeAccess")
+            playerService.sendMessage(player, "&c" + getText("AlreadyEnteredRevokeAccess")
                     , "AlreadyEnteredRevokeAccess", false);
             return;
         }
         UUIDChecker uuidChecker = new UUIDChecker();
         final UUID targetUUID = uuidChecker.findUUIDBasedOnPlayerName(args[0]);
         if (targetUUID == null) {
-            playerService.sendMessageType(player, "&c" + getText("PlayerNotFound"), Objects.requireNonNull(messageService.getLanguage().getString("PlayerNotFound")).replace("#name#", args[0]), true);
+            playerService.sendMessage(player, "&c" + getText("PlayerNotFound"), Objects.requireNonNull(messageService.getLanguage().getString("PlayerNotFound")).replace("#name#", args[0]), true);
             return;
         }
         if (targetUUID == player.getUniqueId()) {
-            playerService.sendMessageType(player, "&c" + getText("CannotRevokeAccessFromSelf")
+            playerService.sendMessage(player, "&c" + getText("CannotRevokeAccessFromSelf")
                     , "CannotRevokeAccessFromSelf", false);
             return;
         }
         ephemeralData.getPlayersRevokingAccess().put(
                 player.getUniqueId(), targetUUID
         );
-        playerService.sendMessageType(player, "&a" + getText("RightClickRevokeAccess")
+        playerService.sendMessage(player, "&a" + getText("RightClickRevokeAccess")
                 , "RightClickRevokeAccess", false);
     }
 

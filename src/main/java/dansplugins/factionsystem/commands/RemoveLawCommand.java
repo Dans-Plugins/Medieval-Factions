@@ -38,17 +38,17 @@ public class RemoveLawCommand extends SubCommand {
         final String permission = "mf.removelaw";
         if (!(checkPermissions(player, permission))) return;
         if (args.length == 0) {
-            playerService.sendMessageType(player, "&c" + getText("UsageRemoveLaw")
+            playerService.sendMessage(player, "&c" + getText("UsageRemoveLaw")
                     , "UsageRemoveLaw", false);
             return;
         }
         final int lawToRemove = getIntSafe(args[0], 0) - 1;
         if (lawToRemove < 0) {
-            playerService.sendMessageType(player, "&c" + getText("UsageRemoveLaw")
+            playerService.sendMessage(player, "&c" + getText("UsageRemoveLaw")
                     , "UsageRemoveLaw", false);
             return;
         }
-        if (faction.removeLaw(lawToRemove)) playerService.sendMessageType(player, "&a" + getText("LawRemoved")
+        if (faction.removeLaw(lawToRemove)) playerService.sendMessage(player, "&a" + getText("LawRemoved")
                 , "LawRemoved", false);
     }
 

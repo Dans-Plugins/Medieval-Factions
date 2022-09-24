@@ -56,7 +56,7 @@ public class InviteCommand extends SubCommand {
         if ((boolean) faction.getFlags().getFlag("mustBeOfficerToInviteOthers")) {
             // officer or owner rank required
             if (!faction.isOfficer(player.getUniqueId()) && !faction.isOwner(player.getUniqueId())) {
-                playerService.sendMessageType(player, "&c" + getText("AlertMustBeOwnerOrOfficerToUseCommand")
+                playerService.sendMessage(player, "&c" + getText("AlertMustBeOwnerOrOfficerToUseCommand")
                         , "AlertMustBeOwnerOrOfficerToUseCommand", false);
                 return;
             }
@@ -64,7 +64,7 @@ public class InviteCommand extends SubCommand {
         UUIDChecker uuidChecker = new UUIDChecker();
         final UUID playerUUID = uuidChecker.findUUIDBasedOnPlayerName(args[0]);
         if (playerUUID == null) {
-            playerService.sendMessageType(player, "&c" + getText("PlayerNotFound")
+            playerService.sendMessage(player, "&c" + getText("PlayerNotFound")
                     , Objects.requireNonNull(messageService.getLanguage().getString("PlayerNotFound"))
                             .replace("#name#", args[0])
                     , true);
@@ -74,7 +74,7 @@ public class InviteCommand extends SubCommand {
         if (!target.hasPlayedBefore()) {
             target = Bukkit.getPlayer(args[0]);
             if (target == null) {
-                playerService.sendMessageType(player, "&c" + getText("PlayerNotFound")
+                playerService.sendMessage(player, "&c" + getText("PlayerNotFound")
                         , Objects.requireNonNull(messageService.getLanguage().getString("PlayerNotFound"))
                                 .replace("#name#", args[0])
                         , true);
@@ -82,14 +82,14 @@ public class InviteCommand extends SubCommand {
             }
         }
         if (persistentData.isInFaction(playerUUID)) {
-            playerService.sendMessageType(player, "&c" + getText("PlayerAlreadyInFaction")
+            playerService.sendMessage(player, "&c" + getText("PlayerAlreadyInFaction")
                     , "PlayerAlreadyInFaction", false);
             return;
         }
         faction.invite(playerUUID);
         player.sendMessage(ChatColor.GREEN + localeService.get("InvitationSent"));
         if (target.isOnline() && target.getPlayer() != null) {
-            playerService.sendMessageType(target.getPlayer(),
+            playerService.sendMessage(target.getPlayer(),
                     "&a" + getText("AlertBeenInvited", faction.getName(), faction.getName())
                     , Objects.requireNonNull(messageService.getLanguage().getString("AlertBeenInvited")).replace("#name#", faction.getName()),
                     true
@@ -102,7 +102,7 @@ public class InviteCommand extends SubCommand {
         getServer().getScheduler().runTaskLater(medievalFactions, () -> {
             faction.uninvite(playerUUID);
             if (tmp.isOnline() && tmp.getPlayer() != null) {
-                playerService.sendMessageType(player,
+                playerService.sendMessage(player,
                         "&c" + getText("InvitationExpired", faction.getName()),
                         Objects.requireNonNull(messageService.getLanguage().getString("InvitationExpired"))
                                 .replace("#name#", faction.getName()),

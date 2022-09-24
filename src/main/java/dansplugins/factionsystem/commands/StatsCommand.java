@@ -47,7 +47,7 @@ public class StatsCommand extends SubCommand {
                             s = s.replace("#faction#", String.valueOf(persistentData.getNumFactions()));
                         }
                         s = playerService.colorize(s);
-                        playerService.sendMessageType(sender, "", s, true);
+                        playerService.sendMessage(sender, "", s, true);
                     });
         }
     }

@@ -46,7 +46,7 @@ public class DemoteCommand extends SubCommand {
         }
 
         if (args.length == 0) {
-            playerService.sendMessageType(player, "&c" + getText("UsageDemote")
+            playerService.sendMessage(player, "&c" + getText("UsageDemote")
                     , "UsageDemote", false);
             return;
         }
@@ -59,20 +59,20 @@ public class DemoteCommand extends SubCommand {
         }
 
         if (playerToBeDemoted == null) {
-            playerService.sendMessageType(player, "&c" + getText("PlayerByNameNotFound")
+            playerService.sendMessage(player, "&c" + getText("PlayerByNameNotFound")
                     , Objects.requireNonNull(messageService.getLanguage().getString("PlayerByNameNotFound"))
                             .replace("#name#", args[0]), true);
             return;
         }
 
         if (playerToBeDemoted.getUniqueId() == player.getUniqueId()) {
-            playerService.sendMessageType(player, "&c" + getText("CannotDemoteSelf")
+            playerService.sendMessage(player, "&c" + getText("CannotDemoteSelf")
                     , "CannotDemoteSelf", false);
             return;
         }
 
         if (!this.faction.isOfficer(playerToBeDemoted.getUniqueId())) {
-            playerService.sendMessageType(player, "&c" + getText("PlayerIsNotOfficerOfFaction")
+            playerService.sendMessage(player, "&c" + getText("PlayerIsNotOfficerOfFaction")
                     , "PlayerIsNotOfficerOfFaction", false);
             return;
         }
@@ -80,10 +80,10 @@ public class DemoteCommand extends SubCommand {
         faction.removeOfficer(playerToBeDemoted.getUniqueId());
 
         if (playerToBeDemoted.isOnline()) {
-            playerService.sendMessageType(player, "&c" + getText("AlertDemotion")
+            playerService.sendMessage(player, "&c" + getText("AlertDemotion")
                     , "AlertDemotion", false);
         }
-        playerService.sendMessageType(player, "&c" + getText("PlayerDemoted")
+        playerService.sendMessage(player, "&c" + getText("PlayerDemoted")
                 , Objects.requireNonNull(messageService.getLanguage().getString("PlayerDemoted"))
                         .replace("#name#", playerToBeDemoted.getName()), true);
     }

@@ -47,13 +47,13 @@ public class AddLawCommand extends SubCommand {
 
         // check if they have provided any strings beyond "addlaw"
         if (args.length == 0) {
-            playerService.sendMessageType(player, translate("&c" + getText("UsageAddLaw")), "UsageAddLaw", false);
+            playerService.sendMessage(player, translate("&c" + getText("UsageAddLaw")), "UsageAddLaw", false);
             return;
         }
 
         // add the law and send a success message.
         faction.addLaw(String.join(" ", args));
-        playerService.sendMessageType(player, "&a" + getText("LawAdded"), Objects.requireNonNull(messageService.getLanguage().getString("LawAdded"))
+        playerService.sendMessage(player, "&a" + getText("LawAdded"), Objects.requireNonNull(messageService.getLanguage().getString("LawAdded"))
                 .replace("#law#", String.join(" ", args)), true);
     }
 

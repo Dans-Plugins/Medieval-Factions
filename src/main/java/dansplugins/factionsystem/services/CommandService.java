@@ -114,7 +114,7 @@ public class CommandService {
                     messageService.getLanguage().getStringList("PluginInfo")
                             .forEach(s -> {
                                 s = s.replace("#version#", medievalFactions.getVersion()).replace("#dev#", medievalFactions.getDescription().getAuthors().toString());
-                                playerService.sendMessageType(sender, s, s, true);
+                                playerService.sendMessage(sender, s, s, true);
                             });
                 }
                 return true;
@@ -130,7 +130,7 @@ public class CommandService {
                 }
             }
 
-            playerService.sendMessageType(sender, ChatColor.RED + localeService.get("CommandNotRecognized"), "CommandNotRecognized", false);
+            playerService.sendMessage(sender, ChatColor.RED + localeService.get("CommandNotRecognized"), "CommandNotRecognized", false);
         }
         return false;
     }

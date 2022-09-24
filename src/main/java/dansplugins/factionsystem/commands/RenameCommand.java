@@ -49,21 +49,21 @@ public class RenameCommand extends SubCommand {
         final String permission = "mf.rename";
         if (!(checkPermissions(player, permission))) return;
         if (args.length == 0) {
-            playerService.sendMessageType(player, "&c" + getText("UsageRename")
+            playerService.sendMessage(player, "&c" + getText("UsageRename")
                     , "UsageRename", false);
             return;
         }
         final String newName = String.join(" ", args).trim();
         final FileConfiguration config = medievalFactions.getConfig();
         if (newName.length() > config.getInt("factionMaxNameLength")) {
-            playerService.sendMessageType(player, "&c" + getText("FactionNameTooLong"),
+            playerService.sendMessage(player, "&c" + getText("FactionNameTooLong"),
                     Objects.requireNonNull(messageService.getLanguage().getString("FactionNameTooLong"))
                             .replace("#name#", newName), true);
             return;
         }
         final String oldName = faction.getName();
         if (getFaction(newName) != null) {
-            playerService.sendMessageType(player, "&c" + getText("FactionAlreadyExists"),
+            playerService.sendMessage(player, "&c" + getText("FactionAlreadyExists"),
                     Objects.requireNonNull(messageService.getLanguage().getString("FactionAlreadyExists"))
                             .replace("#name#", newName), true);
             return;
@@ -77,7 +77,7 @@ public class RenameCommand extends SubCommand {
 
         // change name
         faction.setName(newName);
-        playerService.sendMessageType(player, "&a" + getText("FactionNameChanged")
+        playerService.sendMessage(player, "&a" + getText("FactionNameChanged")
                 , "FactionNameChanged", false);
 
         persistentData.updateFactionReferencesDueToNameChange(oldName, newName);

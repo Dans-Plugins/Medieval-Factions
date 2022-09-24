@@ -57,12 +57,12 @@ public class PowerCommand extends SubCommand {
         final PowerRecord record;
         if (args.length == 0) {
             if (!(sender instanceof Player)) {
-                playerService.sendMessageType(sender, getText("OnlyPlayersCanUseCommand")
+                playerService.sendMessage(sender, getText("OnlyPlayersCanUseCommand")
                         , "OnlyPlayersCanUseCommand", false);
                 return;
             }
             record = persistentData.getPlayersPowerRecord(((Player) sender).getUniqueId());
-            playerService.sendMessageType(sender, "&b" +
+            playerService.sendMessage(sender, "&b" +
                             getText("AlertCurrentPowerLevel", record.getPower(), record.maxPower())
                     , Objects.requireNonNull(messageService.getLanguage().getString("AlertCurrentPowerLevel"))
                             .replace("#power#", String.valueOf(record.getPower()))
@@ -72,12 +72,12 @@ public class PowerCommand extends SubCommand {
         UUIDChecker uuidChecker = new UUIDChecker();
         final UUID target = uuidChecker.findUUIDBasedOnPlayerName(args[0]);
         if (target == null) {
-            playerService.sendMessageType(sender, "&c" + getText("PlayerNotFound"),
+            playerService.sendMessage(sender, "&c" + getText("PlayerNotFound"),
                     Objects.requireNonNull(messageService.getLanguage().getString("PlayerNotFound")).replace("#name#", args[0]), true);
             return;
         }
         record = persistentData.getPlayersPowerRecord(target);
-        playerService.sendMessageType(sender, "&b" +
+        playerService.sendMessage(sender, "&b" +
                         getText("CurrentPowerLevel", args[0], record.getPower(), record.maxPower())
                 , Objects.requireNonNull(messageService.getLanguage().getString("CurrentPowerLevel"))
                         .replace("#power#", String.valueOf(record.getPower()))

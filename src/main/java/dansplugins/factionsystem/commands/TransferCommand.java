@@ -42,31 +42,31 @@ public class TransferCommand extends SubCommand {
         final String permission = "mf.transfer";
         if (!(checkPermissions(player, permission))) return;
         if (args.length == 0) {
-            playerService.sendMessageType(player, "&c" + getText("UsageTransfer")
+            playerService.sendMessage(player, "&c" + getText("UsageTransfer")
                     , "UsageTransfer", false);
             return;
         }
         UUIDChecker uuidChecker = new UUIDChecker();
         final UUID targetUUID = uuidChecker.findUUIDBasedOnPlayerName(args[0]);
         if (targetUUID == null) {
-            playerService.sendMessageType(player, "&c" + getText("PlayerNotFound"), Objects.requireNonNull(messageService.getLanguage().getString("PlayerNotFound")).replace("#name#", args[0]), true);
+            playerService.sendMessage(player, "&c" + getText("PlayerNotFound"), Objects.requireNonNull(messageService.getLanguage().getString("PlayerNotFound")).replace("#name#", args[0]), true);
             return;
         }
         OfflinePlayer target = Bukkit.getOfflinePlayer(targetUUID);
         if (!target.hasPlayedBefore()) {
             target = Bukkit.getPlayer(args[0]);
             if (target == null) {
-                playerService.sendMessageType(player, "&c" + getText("PlayerNotFound"), Objects.requireNonNull(messageService.getLanguage().getString("PlayerNotFound")).replace("#name#", args[0]), true);
+                playerService.sendMessage(player, "&c" + getText("PlayerNotFound"), Objects.requireNonNull(messageService.getLanguage().getString("PlayerNotFound")).replace("#name#", args[0]), true);
                 return;
             }
         }
         if (!faction.isMember(targetUUID)) {
-            playerService.sendMessageType(player, "&c" + getText("PlayerIsNotInYourFaction")
+            playerService.sendMessage(player, "&c" + getText("PlayerIsNotInYourFaction")
                     , "PlayerIsNotInYourFaction", false);
             return;
         }
         if (targetUUID.equals(player.getUniqueId())) {
-            playerService.sendMessageType(player, "&c" + getText("CannotTransferToSelf")
+            playerService.sendMessage(player, "&c" + getText("CannotTransferToSelf")
                     , "CannotTransferToSelf", false);
             return;
         }
@@ -75,11 +75,11 @@ public class TransferCommand extends SubCommand {
 
         // set owner
         faction.setOwner(targetUUID);
-        playerService.sendMessageType(player, "&b" + getText("OwnerShipTransferredTo", args[0])
+        playerService.sendMessage(player, "&b" + getText("OwnerShipTransferredTo", args[0])
                 , Objects.requireNonNull(messageService.getLanguage().getString("OwnerShipTransferredTo"))
                         .replace("#name#", args[0]), true);
         if (target.isOnline() && target.getPlayer() != null) { // Message if we can :)
-            playerService.sendMessageType(target.getPlayer(), "&a" + getText("OwnershipTransferred", faction.getName()),
+            playerService.sendMessage(target.getPlayer(), "&a" + getText("OwnershipTransferred", faction.getName()),
                     Objects.requireNonNull(messageService.getLanguage().getString("'OwnershipTransferred"))
                             .replace("#name#", faction.getName()), true);
         }

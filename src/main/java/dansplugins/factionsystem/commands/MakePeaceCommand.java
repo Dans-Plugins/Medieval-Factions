@@ -43,35 +43,35 @@ public class MakePeaceCommand extends SubCommand {
         final String permission = "mf.makepeace";
         if (!(checkPermissions(player, permission))) return;
         if (args.length == 0) {
-            playerService.sendMessageType(player,
+            playerService.sendMessage(player,
                     "&c" + getText("UsageMakePeace")
                     , "UsageMakePeace", false);
             return;
         }
         final Faction target = getFaction(String.join(" ", args));
         if (target == null) {
-            playerService.sendMessageType(player, "&c" + getText("FactionNotFound"),
+            playerService.sendMessage(player, "&c" + getText("FactionNotFound"),
                     Objects.requireNonNull(messageService.getLanguage().getString("FactionNotFound"))
                             .replace("#faction#", String.join(" ", args)), true);
             return;
         }
         if (target == faction) {
-            playerService.sendMessageType(player, "&c" + getText("CannotMakePeaceWithSelf")
+            playerService.sendMessage(player, "&c" + getText("CannotMakePeaceWithSelf")
                     , "CannotMakePeaceWithSelf", false);
             return;
         }
         if (faction.isTruceRequested(target.getName())) {
-            playerService.sendMessageType(player, "&c" + getText("AlertAlreadyRequestedPeace")
+            playerService.sendMessage(player, "&c" + getText("AlertAlreadyRequestedPeace")
                     , "AlertAlreadyRequestedPeace", false);
             return;
         }
         if (!faction.isEnemy(target.getName())) {
-            playerService.sendMessageType(player, "&c" + getText("FactionNotEnemy")
+            playerService.sendMessage(player, "&c" + getText("FactionNotEnemy")
                     , "FactionNotEnemy", false);
             return;
         }
         faction.requestTruce(target.getName());
-        playerService.sendMessageType(player, "&a" + getText("AttemptedPeace", target.getName())
+        playerService.sendMessage(player, "&a" + getText("AttemptedPeace", target.getName())
                 , Objects.requireNonNull(messageService.getLanguage().getString("AttemptedPeace"))
                         .replace("#name#", target.getName()),
                 true);

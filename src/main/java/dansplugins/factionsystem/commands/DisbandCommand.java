@@ -67,14 +67,14 @@ public class DisbandCommand extends SubCommand {
                 if (!configService.getBoolean("useNewLanguageFile")) {
                     sender.sendMessage(translate(getText("OnlyPlayersCanUseCommand")));
                 } else {
-                    playerService.sendConsoleMessage(sender.getServer().getConsoleSender(), "OnlyPlayersCanUseCommand", true);
+                    playerService.sendMessageToConsole(sender.getServer().getConsoleSender(), "OnlyPlayersCanUseCommand", true);
                 }
                 return;
             }
             disband = getPlayerFaction(sender);
             self = true;
             if (disband.getPopulation() != 1) {
-                playerService.sendMessageType(sender, "&c" + getText("AlertMustKickAllPlayers")
+                playerService.sendMessage(sender, "&c" + getText("AlertMustKickAllPlayers")
                         , "AlertMustKickAllPlayers", false);
                 return;
             }
@@ -84,18 +84,18 @@ public class DisbandCommand extends SubCommand {
             self = false;
         }
         if (disband == null) {
-            playerService.sendMessageType(sender, "&c" + getText("FactionNotFound")
+            playerService.sendMessage(sender, "&c" + getText("FactionNotFound")
                     , Objects.requireNonNull(messageService.getLanguage().getString("FactionNotFound"))
                             .replace("#faction#", String.join(" ", args)), true);
             return;
         }
         final int factionIndex = persistentData.getFactionIndexOf(disband);
         if (self) {
-            playerService.sendMessageType(sender, "&c" + getText("FactionSuccessfullyDisbanded")
+            playerService.sendMessage(sender, "&c" + getText("FactionSuccessfullyDisbanded")
                     , "FactionSuccessfullyDisbanded", false);
             ephemeralData.getPlayersInFactionChat().remove(((Player) sender).getUniqueId());
         } else {
-            playerService.sendMessageType(sender, "&c" + getText("SuccessfulDisbandment", disband.getName())
+            playerService.sendMessage(sender, "&c" + getText("SuccessfulDisbandment", disband.getName())
                     , Objects.requireNonNull(messageService.getLanguage().getString("SuccessfulDisbandment")).replace("#faction#", disband.getName()), true);
         }
         removeFaction(factionIndex, self ? ((OfflinePlayer) sender) : null);

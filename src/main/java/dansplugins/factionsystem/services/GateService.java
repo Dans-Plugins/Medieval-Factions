@@ -62,7 +62,7 @@ public class GateService {
                     g.openGate();
                 } else {
                     event.setCancelled(true);
-                    playerService.sendMessageType(player, ChatColor.RED + String.format(localeService.get("PleaseWaitGate"), g.getStatus())
+                    playerService.sendMessage(player, ChatColor.RED + String.format(localeService.get("PleaseWaitGate"), g.getStatus())
                             , Objects.requireNonNull(messageService.getLanguage().getString("PleaseWaitGate")).replace("#status#", g.getStatus()), true);
                     return;
                 }
@@ -71,7 +71,7 @@ public class GateService {
                     g.closeGate();
                 } else {
                     event.setCancelled(true);
-                    playerService.sendMessageType(player, ChatColor.RED + String.format(localeService.get("PleaseWaitGate"), g.getStatus())
+                    playerService.sendMessage(player, ChatColor.RED + String.format(localeService.get("PleaseWaitGate"), g.getStatus())
                             , Objects.requireNonNull(messageService.getLanguage().getString("PleaseWaitGate")).replace("#status#", g.getStatus()), true);
                     return;
                 }
@@ -108,19 +108,19 @@ public class GateService {
 
     public void handleCreatingGate(Block clickedBlock, Player player, PlayerInteractEvent event) {
         if (!persistentData.getChunkDataAccessor().isClaimed(clickedBlock.getChunk())) {
-            playerService.sendMessageType(player, ChatColor.RED + localeService.get("CanOnlyCreateGatesInClaimedTerritory"), "CanOnlyCreateGatesInClaimedTerritory", false);
+            playerService.sendMessage(player, ChatColor.RED + localeService.get("CanOnlyCreateGatesInClaimedTerritory"), "CanOnlyCreateGatesInClaimedTerritory", false);
             return;
         } else {
             ClaimedChunk claimedChunk = persistentData.getChunkDataAccessor().getClaimedChunk(clickedBlock.getChunk());
             if (claimedChunk != null) {
                 if (!persistentData.getFaction(claimedChunk.getHolder()).isMember(player.getUniqueId())) {
-                    playerService.sendMessageType(player, ChatColor.RED + localeService.get("AlertMustBeMemberToCreateGate"), "AlertMustBeMemberToCreateGate", false);
+                    playerService.sendMessage(player, ChatColor.RED + localeService.get("AlertMustBeMemberToCreateGate"), "AlertMustBeMemberToCreateGate", false);
 
                     return;
                 } else {
                     if (!persistentData.getFaction(claimedChunk.getHolder()).isOwner(player.getUniqueId())
                             && !persistentData.getFaction(claimedChunk.getHolder()).isOfficer(player.getUniqueId())) {
-                        playerService.sendMessageType(player, ChatColor.RED + localeService.get("AlertMustBeOwnerOrOfficerToCreateGate"), "AlertMustBeOwnerOrOfficerToCreateGate", false);
+                        playerService.sendMessage(player, ChatColor.RED + localeService.get("AlertMustBeOwnerOrOfficerToCreateGate"), "AlertMustBeOwnerOrOfficerToCreateGate", false);
                         return;
                     }
                 }
@@ -132,24 +132,24 @@ public class GateService {
             if (ephemeralData.getCreatingGatePlayers().containsKey(event.getPlayer().getUniqueId()) && ephemeralData.getCreatingGatePlayers().get(event.getPlayer().getUniqueId()).getCoord1() == null) {
                 Gate.ErrorCodeAddCoord e = ephemeralData.getCreatingGatePlayers().get(event.getPlayer().getUniqueId()).addCoord(clickedBlock);
                 if (e.equals(Gate.ErrorCodeAddCoord.None)) {
-                    playerService.sendMessageType(event.getPlayer(), ChatColor.GREEN + localeService.get("Point1PlacementSuccessful")
+                    playerService.sendMessage(event.getPlayer(), ChatColor.GREEN + localeService.get("Point1PlacementSuccessful")
                             , "Point1PlacementSuccessful", false);
-                    playerService.sendMessageType(event.getPlayer(), ChatColor.YELLOW + localeService.get("ClickToPlaceSecondCorner")
+                    playerService.sendMessage(event.getPlayer(), ChatColor.YELLOW + localeService.get("ClickToPlaceSecondCorner")
                             , "ClickToPlaceSecondCorner", false);
                 } else if (e.equals(Gate.ErrorCodeAddCoord.MaterialMismatch)) {
-                    playerService.sendMessageType(event.getPlayer(), ChatColor.RED + localeService.get("MaterialsMismatch1")
+                    playerService.sendMessage(event.getPlayer(), ChatColor.RED + localeService.get("MaterialsMismatch1")
                             , "MaterialsMismatch1", false);
                     ephemeralData.getCreatingGatePlayers().remove(event.getPlayer().getUniqueId());
                 } else if (e.equals(Gate.ErrorCodeAddCoord.WorldMismatch)) {
-                    playerService.sendMessageType(event.getPlayer(), ChatColor.RED + localeService.get("WorldsMismatch1")
+                    playerService.sendMessage(event.getPlayer(), ChatColor.RED + localeService.get("WorldsMismatch1")
                             , "WorldsMismatch1", false);
                     ephemeralData.getCreatingGatePlayers().remove(event.getPlayer().getUniqueId());
                 } else if (e.equals(Gate.ErrorCodeAddCoord.NoCuboids)) {
-                    playerService.sendMessageType(player, ChatColor.RED + localeService.get("CuboidDisallowed1")
+                    playerService.sendMessage(player, ChatColor.RED + localeService.get("CuboidDisallowed1")
                             , "CuboidDisallowed1", false);
                     ephemeralData.getCreatingGatePlayers().remove(event.getPlayer().getUniqueId());
                 } else {
-                    playerService.sendMessageType(player, ChatColor.RED + localeService.get("CancelledGatePlacement1")
+                    playerService.sendMessage(player, ChatColor.RED + localeService.get("CancelledGatePlacement1")
                             , "CancelledGatePlacement1", false);
                     ephemeralData.getCreatingGatePlayers().remove(event.getPlayer().getUniqueId());
                 }
@@ -159,28 +159,28 @@ public class GateService {
                 if (!ephemeralData.getCreatingGatePlayers().get(event.getPlayer().getUniqueId()).getCoord1().equals(clickedBlock)) {
                     Gate.ErrorCodeAddCoord e = ephemeralData.getCreatingGatePlayers().get(event.getPlayer().getUniqueId()).addCoord(clickedBlock);
                     if (e.equals(Gate.ErrorCodeAddCoord.None)) {
-                        playerService.sendMessageType(event.getPlayer(), ChatColor.GREEN + localeService.get("Point2PlacementSuccessful")
+                        playerService.sendMessage(event.getPlayer(), ChatColor.GREEN + localeService.get("Point2PlacementSuccessful")
                                 , "Point2PlacementSuccessful", false);
-                        playerService.sendMessageType(event.getPlayer(), ChatColor.YELLOW + "Click on the trigger block..."
+                        playerService.sendMessage(event.getPlayer(), ChatColor.YELLOW + "Click on the trigger block..."
                                 , "ClickTBlock", false);
                     } else if (e.equals(Gate.ErrorCodeAddCoord.MaterialMismatch)) {
-                        playerService.sendMessageType(event.getPlayer(), ChatColor.RED + localeService.get("MaterialsMismatch2")
+                        playerService.sendMessage(event.getPlayer(), ChatColor.RED + localeService.get("MaterialsMismatch2")
                                 , "MaterialsMismatch2", false);
                         ephemeralData.getCreatingGatePlayers().remove(event.getPlayer().getUniqueId());
                     } else if (e.equals(Gate.ErrorCodeAddCoord.WorldMismatch)) {
-                        playerService.sendMessageType(event.getPlayer(), ChatColor.RED + localeService.get("WorldsMismatch2")
+                        playerService.sendMessage(event.getPlayer(), ChatColor.RED + localeService.get("WorldsMismatch2")
                                 , "WorldsMismatch2", false);
                         ephemeralData.getCreatingGatePlayers().remove(event.getPlayer().getUniqueId());
                     } else if (e.equals(Gate.ErrorCodeAddCoord.NoCuboids)) {
-                        playerService.sendMessageType(player, ChatColor.RED + localeService.get("CuboidDisallowed2")
+                        playerService.sendMessage(player, ChatColor.RED + localeService.get("CuboidDisallowed2")
                                 , "CuboidDisallowed2", false);
                         ephemeralData.getCreatingGatePlayers().remove(event.getPlayer().getUniqueId());
                     } else if (e.equals(Gate.ErrorCodeAddCoord.LessThanThreeHigh)) {
-                        playerService.sendMessageType(player, ChatColor.RED + localeService.get("ThreeBlockRequirement")
+                        playerService.sendMessage(player, ChatColor.RED + localeService.get("ThreeBlockRequirement")
                                 , "ThreeBlockRequirement", false);
                         ephemeralData.getCreatingGatePlayers().remove(event.getPlayer().getUniqueId());
                     } else {
-                        playerService.sendMessageType(player, ChatColor.RED + localeService.get("CancelledGatePlacement2")
+                        playerService.sendMessage(player, ChatColor.RED + localeService.get("CancelledGatePlacement2")
                                 , "CancelledGatePlacement2", false);
                         ephemeralData.getCreatingGatePlayers().remove(event.getPlayer().getUniqueId());
                     }
@@ -196,28 +196,28 @@ public class GateService {
                             Faction faction = persistentData.getFaction(claim.getHolder());
                             faction.addGate(ephemeralData.getCreatingGatePlayers().get(event.getPlayer().getUniqueId()));
                             ephemeralData.getCreatingGatePlayers().remove(event.getPlayer().getUniqueId());
-                            playerService.sendMessageType(event.getPlayer(), ChatColor.GREEN + "Creating Gate 4/4: Trigger successfully linked."
+                            playerService.sendMessage(event.getPlayer(), ChatColor.GREEN + "Creating Gate 4/4: Trigger successfully linked."
                                     , "Point4TriggeredSuccessfully", false);
-                            playerService.sendMessageType(event.getPlayer(), ChatColor.GREEN + localeService.get("GateCreated")
+                            playerService.sendMessage(event.getPlayer(), ChatColor.GREEN + localeService.get("GateCreated")
                                     , "GateCreated", false);
                         } else {
-                            playerService.sendMessageType(event.getPlayer(), ChatColor.RED + localeService.get("CancelledGatePlacementErrorLinking")
+                            playerService.sendMessage(event.getPlayer(), ChatColor.RED + localeService.get("CancelledGatePlacementErrorLinking")
                                     , "CancelledGatePlacementErrorLinking", false);
                             ephemeralData.getCreatingGatePlayers().remove(event.getPlayer().getUniqueId());
                         }
                     } else {
-                        playerService.sendMessageType(event.getPlayer(), ChatColor.RED + "Error: Can only use triggers in claimed territory."
+                        playerService.sendMessage(event.getPlayer(), ChatColor.RED + "Error: Can only use triggers in claimed territory."
                                 , "CanOnlyTrigger", false);
                         ephemeralData.getCreatingGatePlayers().remove(event.getPlayer().getUniqueId());
                     }
                 } else {
-                    playerService.sendMessageType(event.getPlayer(), ChatColor.RED + "Trigger block was not powerable. Cancelled gate placement."
+                    playerService.sendMessage(event.getPlayer(), ChatColor.RED + "Trigger block was not powerable. Cancelled gate placement."
                             , "TriggerBlockNotPowerable", false);
                     ephemeralData.getCreatingGatePlayers().remove(event.getPlayer().getUniqueId());
                 }
             }
         } else {
-            playerService.sendMessageType(event.getPlayer(), ChatColor.RED + localeService.get("PermissionGate")
+            playerService.sendMessage(event.getPlayer(), ChatColor.RED + localeService.get("PermissionGate")
                     , Objects.requireNonNull(messageService.getLanguage().getString("PermissionNeeded")).replace("#permission#", "mf.gate"), true);
         }
     }

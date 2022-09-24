@@ -47,25 +47,25 @@ public class BreakAllianceCommand extends SubCommand {
         }
 
         if (args.length == 0) {
-            playerService.sendMessageType(player, "&c" + getText("UsageBreakAlliance"), "UsageBreakAlliance", false);
+            playerService.sendMessage(player, "&c" + getText("UsageBreakAlliance"), "UsageBreakAlliance", false);
             return;
         }
 
         final Faction otherFaction = getFaction(String.join(" ", args));
         if (otherFaction == null) {
-            playerService.sendMessageType(player, "&c" + getText("FactionNotFound"),
+            playerService.sendMessage(player, "&c" + getText("FactionNotFound"),
                     Objects.requireNonNull(messageService.getLanguage().getString("FactionNotFound"))
                             .replace("#faction#", String.join(" ", args)), true);
             return;
         }
 
         if (otherFaction == faction) {
-            playerService.sendMessageType(player, "&c" + getText("CannotBreakAllianceWithSelf"), "CannotBreakAllianceWithSelf", false);
+            playerService.sendMessage(player, "&c" + getText("CannotBreakAllianceWithSelf"), "CannotBreakAllianceWithSelf", false);
             return;
         }
 
         if (!faction.isAlly(otherFaction.getName())) {
-            playerService.sendMessageType(player, "&c" + getText("AlertNotAllied", otherFaction.getName()),
+            playerService.sendMessage(player, "&c" + getText("AlertNotAllied", otherFaction.getName()),
                     Objects.requireNonNull(messageService.getLanguage().getString("AlertNotAllied"))
                             .replace("#faction#", otherFaction.getName()), true);
             return;

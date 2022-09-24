@@ -118,18 +118,18 @@ public class FactionFlags {
 
     public void setFlag(String flag, String value, Player player) {
         if (flag.equals("neutral") && !configService.getBoolean("allowNeutrality")) {
-            playerService.sendMessageType(player, ChatColor.RED + "" + localeService.get("NeutralityDisabled")
+            playerService.sendMessage(player, ChatColor.RED + "" + localeService.get("NeutralityDisabled")
                     , "NeutralityDisabled", false);
             return;
         }
 
         if (flag.equals("prefixColor") && !configService.getBoolean("factionsCanSetPrefixColors")) {
-            playerService.sendMessageType(player, "&cPlayers can't set prefix colors.", "CannotSetPrefix", false);
+            playerService.sendMessage(player, "&cPlayers can't set prefix colors.", "CannotSetPrefix", false);
             return;
         }
 
         if (flag.equals("prefixColor") && (!configService.getBoolean("playersChatWithPrefixes"))) {
-            playerService.sendMessageType(player, ChatColor.RED + "" + localeService.get("PrefixesDisabled"), "PrefixesDisabled", false);
+            playerService.sendMessage(player, ChatColor.RED + "" + localeService.get("PrefixesDisabled"), "PrefixesDisabled", false);
             return;
         }
 

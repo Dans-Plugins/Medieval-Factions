@@ -48,31 +48,31 @@ public class KickCommand extends SubCommand {
         final String permission = "mf.kick";
         if (!(checkPermissions(player, permission))) return;
         if (args.length == 0) {
-            playerService.sendMessageType(player, "&c" + getText("UsageKick")
+            playerService.sendMessage(player, "&c" + getText("UsageKick")
                     , "UsageKick", false);
             return;
         }
         UUIDChecker uuidChecker = new UUIDChecker();
         final UUID targetUUID = uuidChecker.findUUIDBasedOnPlayerName(args[0]);
         if (targetUUID == null) {
-            playerService.sendMessageType(player, "&c" + getText("PlayerNotFound"), Objects.requireNonNull(messageService.getLanguage().getString("PlayerNotFound")).replace("#name#", args[0]), true);
+            playerService.sendMessage(player, "&c" + getText("PlayerNotFound"), Objects.requireNonNull(messageService.getLanguage().getString("PlayerNotFound")).replace("#name#", args[0]), true);
             return;
         }
         OfflinePlayer target = Bukkit.getOfflinePlayer(targetUUID);
         if (!target.hasPlayedBefore()) {
             target = Bukkit.getPlayer(args[0]);
             if (target == null) {
-                playerService.sendMessageType(player, "&c" + getText("PlayerNotFound"), Objects.requireNonNull(messageService.getLanguage().getString("PlayerNotFound")).replace("#name#", args[0]), true);
+                playerService.sendMessage(player, "&c" + getText("PlayerNotFound"), Objects.requireNonNull(messageService.getLanguage().getString("PlayerNotFound")).replace("#name#", args[0]), true);
                 return;
             }
         }
         if (target.getUniqueId().equals(player.getUniqueId())) {
-            playerService.sendMessageType(player, "&c" + getText("CannotKickSelf")
+            playerService.sendMessage(player, "&c" + getText("CannotKickSelf")
                     , "CannotKickSelf", false);
             return;
         }
         if (this.faction.isOwner(targetUUID)) {
-            playerService.sendMessageType(player, "&c" + getText("CannotKickOwner")
+            playerService.sendMessage(player, "&c" + getText("CannotKickOwner")
                     , "CannotKickOwner", false);
             return;
         }
@@ -92,7 +92,7 @@ public class KickCommand extends SubCommand {
                         .replace("#name#", args[0])
                         .replace("#faction#", faction.getName()));
         if (target.isOnline() && target.getPlayer() != null) {
-            playerService.sendMessageType(player, "&c" + getText("AlertKicked", player.getName())
+            playerService.sendMessage(player, "&c" + getText("AlertKicked", player.getName())
                     , Objects.requireNonNull(messageService.getLanguage().getString("AlertKicked"))
                             .replace("#name#", player.getName()), true);
         }
