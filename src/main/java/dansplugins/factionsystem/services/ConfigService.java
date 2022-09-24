@@ -158,7 +158,7 @@ public class ConfigService {
             getConfig().set("bonusPowerEnabled", true);
         }
         if (!getConfig().isBoolean("useNewLanguageFile")) {
-            getConfig().set("useNewLanguageFile", false);
+            getConfig().set("useNewLanguageFile", true);
         }
         if (!getConfig().isDouble("powerLostOnDeath")) {
             getConfig().set("powerLostOnDeath", 1.0);
@@ -321,7 +321,7 @@ public class ConfigService {
         getConfig().set("powerGainedOnKill", 1.0);
         getConfig().set("teleportDelay", 3);
         getConfig().set("factionless", "FactionLess");
-        getConfig().set("useNewLanguageFile", false);
+        getConfig().set("useNewLanguageFile", true);
         getConfig().set("secondsBeforeInitialAutosave", 60);
         getConfig().set("secondsBetweenAutosaves", 60);
         getConfig().options().copyDefaults(true);
