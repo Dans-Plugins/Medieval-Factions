@@ -1,6 +1,7 @@
 package com.dansplugins.factionsystem.area
 
 import org.bukkit.Bukkit
+import org.bukkit.Location
 import org.bukkit.block.Block
 import java.util.*
 
@@ -20,6 +21,8 @@ data class MfBlockPosition(
             block.y,
             block.z
         )
+
+        fun fromBukkitLocation(location: Location) = location.world?.getBlockAt(location)?.let { fromBukkitBlock(it) }
     }
 
 }

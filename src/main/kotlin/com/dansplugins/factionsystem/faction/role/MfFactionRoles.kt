@@ -19,7 +19,6 @@ import com.dansplugins.factionsystem.faction.permission.MfFactionPermission.Comp
 import com.dansplugins.factionsystem.faction.permission.MfFactionPermission.Companion.INVITE
 import com.dansplugins.factionsystem.faction.permission.MfFactionPermission.Companion.INVOKE
 import com.dansplugins.factionsystem.faction.permission.MfFactionPermission.Companion.KICK
-import com.dansplugins.factionsystem.faction.permission.MfFactionPermission.Companion.LIST_GATES
 import com.dansplugins.factionsystem.faction.permission.MfFactionPermission.Companion.LIST_LAWS
 import com.dansplugins.factionsystem.faction.permission.MfFactionPermission.Companion.LIST_MEMBERS
 import com.dansplugins.factionsystem.faction.permission.MfFactionPermission.Companion.MAKE_PEACE
@@ -27,7 +26,6 @@ import com.dansplugins.factionsystem.faction.permission.MfFactionPermission.Comp
 import com.dansplugins.factionsystem.faction.permission.MfFactionPermission.Companion.PROMOTE
 import com.dansplugins.factionsystem.faction.permission.MfFactionPermission.Companion.REMOVE_GATE
 import com.dansplugins.factionsystem.faction.permission.MfFactionPermission.Companion.REMOVE_LAW
-import com.dansplugins.factionsystem.faction.permission.MfFactionPermission.Companion.RENAME_GATE
 import com.dansplugins.factionsystem.faction.permission.MfFactionPermission.Companion.REQUEST_ALLIANCE
 import com.dansplugins.factionsystem.faction.permission.MfFactionPermission.Companion.SET_FLAG
 import com.dansplugins.factionsystem.faction.permission.MfFactionPermission.Companion.SET_HOME
@@ -117,8 +115,6 @@ data class MfFactionRoles(
                     put(VIEW_FLAGS, true)
                     put(CREATE_GATE, true)
                     put(REMOVE_GATE, true)
-                    put(RENAME_GATE, true)
-                    put(LIST_GATES, true)
                     put(SET_HOME, true)
                     put(GO_HOME, true)
                     put(VIEW_INFO, true)

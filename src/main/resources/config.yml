@@ -14,6 +14,7 @@ gates:
   minHeight: 3
   maxBlocks: 64
   maxPerFaction: 5
+  maxRemoveDistance: 12
 factions:
   initialPowerLevel: 5
   mobsSpawnInFactionTerritory: false

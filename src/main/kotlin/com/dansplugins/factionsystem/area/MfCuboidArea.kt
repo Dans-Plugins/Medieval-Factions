@@ -63,4 +63,27 @@ data class MfCuboidArea(
                 && position.x <= maxPosition.x
                 && position.y <= maxPosition.y
                 && position.z <= maxPosition.z
+
+    fun distanceSquared(position: MfBlockPosition): Int {
+        val x = position.x
+        val y = position.y
+        val z = position.z
+        val closestX = when {
+            x < minPosition.x -> minPosition.x
+            minPosition.x <= x && x <= maxPosition.x -> x
+            else -> maxPosition.x
+        }
+        val closestY = when {
+            y < minPosition.y -> minPosition.y
+            minPosition.y <= y && y <= maxPosition.y -> y
+            else -> maxPosition.y
+        }
+        val closestZ = when {
+            z < minPosition.z -> minPosition.z
+            minPosition.z <= z && z <= maxPosition.z -> z
+            else -> maxPosition.z
+        }
+        return ((closestX - x) * (closestX - x)) + ((closestY - y) * (closestY - y)) + ((closestZ - z) * (closestZ - z))
+    }
+
 }

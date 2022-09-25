@@ -58,8 +58,6 @@ class MfFactionPermission(
         val VIEW_FLAGS = MfFactionPermission("VIEW_FLAGS", "FactionPermissionViewFlags")
         val CREATE_GATE = MfFactionPermission("CREATE_GATE", "FactionPermissionCreateGate")
         val REMOVE_GATE = MfFactionPermission("REMOVE_GATE", "FactionPermissionRemoveGate")
-        val RENAME_GATE = MfFactionPermission("RENAME_GATE", "FactionPermissionRenameGate")
-        val LIST_GATES = MfFactionPermission("LIST_GATES", "FactionPermissionListGates")
         val SET_HOME = MfFactionPermission("SET_HOME", "FactionPermissionSetHome")
         val GO_HOME = MfFactionPermission("GO_HOME", "FactionPermissionGoHome")
         val VIEW_INFO = MfFactionPermission("VIEW_INFO", "FactionPermissionViewInfo")
@@ -103,8 +101,6 @@ class MfFactionPermission(
             name == "VIEW_FLAGS" -> VIEW_FLAGS
             name == "CREATE_GATE" -> CREATE_GATE
             name == "REMOVE_GATE" -> REMOVE_GATE
-            name == "RENAME_GATE" -> RENAME_GATE
-            name == "LIST_GATES" -> LIST_GATES
             name == "SET_HOME" -> SET_HOME
             name == "GO_HOME" -> GO_HOME
             name == "VIEW_INFO" -> VIEW_INFO
@@ -163,8 +159,6 @@ class MfFactionPermission(
             add(VIEW_FLAGS)
             add(CREATE_GATE)
             add(REMOVE_GATE)
-            add(RENAME_GATE)
-            add(LIST_GATES)
             add(SET_HOME)
             add(GO_HOME)
             add(VIEW_INFO)

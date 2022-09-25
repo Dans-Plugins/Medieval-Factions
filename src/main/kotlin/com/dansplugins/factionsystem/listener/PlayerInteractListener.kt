@@ -396,7 +396,11 @@ class PlayerInteractListener(private val plugin: MedievalFactions) : Listener {
                     area = area,
                     trigger = ctx.trigger,
                     material = material
-                ))
+                )).onFailure {
+                    player.sendMessage("$RED${plugin.language["GateCreateFailedToSaveGate"]}")
+                    plugin.logger.log(SEVERE, "Failed to save gate: ${it.reason.message}", it.reason.cause)
+                    return@updateInteractionStatus
+                }
                 gateService.deleteGateCreationContext(ctx.playerId).onFailure {
                     player.sendMessage("$RED${plugin.language["GateCreateFailedToDeleteCreationContext"]}")
                     plugin.logger.log(SEVERE, "Failed to delete gate creation context: ${it.reason.message}", it.reason.cause)

@@ -96,7 +96,6 @@ create table `mf_gate`(
     `trigger_y` integer not null,
     `trigger_z` integer not null,
     `material` varchar(32) not null,
-    `sound_effect` varchar(32) not null,
     `status` varchar(32) not null,
     foreign key(`faction_id`) references `mf_faction`(`id`)
 );
