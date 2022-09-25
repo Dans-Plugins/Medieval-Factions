@@ -139,7 +139,7 @@ class MfFactionInviteCommand(private val plugin: MedievalFactions) : CommandExec
                     }
                 ))
             } else {
-                plugin.notificationDispatcher.sendNotification(targetMfPlayer, MfNotification(
+                plugin.services.notificationService.sendNotification(targetMfPlayer, MfNotification(
                     plugin.language["CommandFactionInviteReceivedNotificationTitle", faction.name],
                     plugin.language["CommandFactionInviteReceivedNotificationBody", faction.name]
                 ))

@@ -2,6 +2,6 @@ package com.dansplugins.factionsystem.notification
 
 import com.dansplugins.factionsystem.player.MfPlayer
 
-interface MfNotificationDispatcher {
+interface MfNotificationService {
     fun sendNotification(player: MfPlayer, notification: MfNotification)
 }

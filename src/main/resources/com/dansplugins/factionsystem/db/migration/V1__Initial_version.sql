@@ -101,6 +101,22 @@ create table `mf_gate`(
     foreign key(`faction_id`) references `mf_faction`(`id`)
 );
 
+create table `mf_gate_creation_context`(
+    `player_id` varchar(36) primary key not null,
+    `version` integer not null,
+    `world_id` varchar(36) null,
+    `x_1` integer null,
+    `y_1` integer null,
+    `z_1` integer null,
+    `x_2` integer null,
+    `y_2` integer null,
+    `z_2` integer null,
+    `trigger_x` integer null,
+    `trigger_y` integer null,
+    `trigger_z` integer null,
+    foreign key(`player_id`) references `mf_player`(`id`) on delete cascade
+);
+
 create table `mf_locked_block`(
     `id` varchar(36) primary key not null,
     `version` integer not null,

@@ -162,7 +162,7 @@ data class MfFaction(
                     player.sendMessage("$title - $message")
                 } else {
                     plugin.server.scheduler.runTaskAsynchronously(plugin, Runnable {
-                        plugin.notificationDispatcher.sendNotification(mfPlayer, MfNotification(
+                        plugin.services.notificationService.sendNotification(mfPlayer, MfNotification(
                             title,
                             message
                         ))

@@ -1,6 +1,7 @@
-package com.dansplugins.factionsystem.notification;
+package com.dansplugins.factionsystem.notification.rpkit;
 
-import com.dansplugins.factionsystem.MedievalFactions;
+import com.dansplugins.factionsystem.notification.MfNotification;
+import com.dansplugins.factionsystem.notification.MfNotificationService;
 import com.dansplugins.factionsystem.player.MfPlayer;
 import com.rpkit.core.service.Services;
 import com.rpkit.notifications.bukkit.notification.RPKNotificationService;
@@ -10,9 +11,7 @@ import com.rpkit.players.bukkit.profile.minecraft.RPKMinecraftProfile;
 import com.rpkit.players.bukkit.profile.minecraft.RPKMinecraftProfileService;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.UUID;
-
-public final class RpkNotificationDispatcher implements MfNotificationDispatcher {
+public final class RpkNotificationService implements MfNotificationService {
 
     @Override
     public void sendNotification(@NotNull MfPlayer player, @NotNull MfNotification notification) {

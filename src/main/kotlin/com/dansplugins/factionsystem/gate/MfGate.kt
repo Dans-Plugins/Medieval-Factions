@@ -1,20 +1,17 @@
 package com.dansplugins.factionsystem.gate
 
-import com.dansplugins.factionsystem.area.MfCuboidArea
 import com.dansplugins.factionsystem.area.MfBlockPosition
-import com.dansplugins.factionsystem.faction.MfFaction
-import com.dansplugins.factionsystem.gate.MfGateStatus.READY
+import com.dansplugins.factionsystem.area.MfCuboidArea
+import com.dansplugins.factionsystem.faction.MfFactionId
+import com.dansplugins.factionsystem.gate.MfGateStatus.CLOSED
 import org.bukkit.Material
-import org.bukkit.Material.IRON_BARS
 
 data class MfGate(
-    val id: MfGateId,
-    val name: String,
-    val faction: MfFaction,
-    val isOpen: Boolean,
-    val isVertical: Boolean,
+    val id: MfGateId = MfGateId.generate(),
+    val version: Int = 0,
+    val factionId: MfFactionId,
     val area: MfCuboidArea,
     val trigger: MfBlockPosition,
-    val material: Material = IRON_BARS,
-    val status: MfGateStatus = READY
+    val material: Material,
+    val status: MfGateStatus = CLOSED
 )
