@@ -392,6 +392,7 @@ class PlayerInteractListener(private val plugin: MedievalFactions) : Listener {
                     return@updateInteractionStatus
                 }
                 gateService.save(MfGate(
+                    plugin,
                     factionId = faction.id,
                     area = area,
                     trigger = ctx.trigger,

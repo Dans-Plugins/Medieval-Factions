@@ -1,5 +1,6 @@
 package com.dansplugins.factionsystem.gate
 
+import com.dansplugins.factionsystem.MedievalFactions
 import com.dansplugins.factionsystem.area.MfBlockPosition
 import com.dansplugins.factionsystem.area.MfCuboidArea
 import com.dansplugins.factionsystem.faction.MfFactionId
@@ -11,6 +12,7 @@ import org.jooq.DSLContext
 import java.util.*
 
 class JooqMfGateRepository(
+    private val plugin: MedievalFactions,
     private val dsl: DSLContext
 ) : MfGateRepository {
     override fun getGate(id: MfGateId): MfGate? {
@@ -72,6 +74,7 @@ class JooqMfGateRepository(
     }
 
     private fun MfGateRecord.toDomain() = MfGate(
+        plugin,
         id.let(::MfGateId),
         version,
         factionId.let(::MfFactionId),

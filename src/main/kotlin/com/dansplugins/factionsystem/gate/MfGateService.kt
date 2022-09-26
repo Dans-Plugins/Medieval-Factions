@@ -17,22 +17,25 @@ class MfGateService(
     private val gateCreationContextRepo: MfGateCreationContextRepository
 ) {
 
-    private val gates: MutableMap<MfGateId, MfGate> = ConcurrentHashMap()
+    private val _gates: MutableMap<MfGateId, MfGate> = ConcurrentHashMap()
+    val gates: List<MfGate>
+        get() = _gates.values.toList()
 
     fun loadGates() {
         plugin.logger.info("Loading gates...")
         val startTime = System.currentTimeMillis()
-        gates.putAll(gateRepo.getGates().associateBy { it.id })
+        _gates.putAll(gateRepo.getGates().associateBy { it.id })
         plugin.logger.info("Gates loaded (${System.currentTimeMillis() - startTime}ms)")
     }
 
-    fun getGatesByTrigger(trigger: MfBlockPosition) = gates.values.filter { it.trigger == trigger }
-    fun getGatesAt(block: MfBlockPosition) = gates.values.filter { it.area.contains(block) }
-    fun getGatesByFaction(factionId: MfFactionId) = gates.values.filter { it.factionId == factionId }
+    fun getGatesByTrigger(trigger: MfBlockPosition) = _gates.values.filter { it.trigger == trigger }
+    fun getGatesAt(block: MfBlockPosition) = _gates.values.filter { it.area.contains(block) }
+    fun getGatesByFaction(factionId: MfFactionId) = _gates.values.filter { it.factionId == factionId }
+    fun getGatesByStatus(status: MfGateStatus) = _gates.values.filter { it.status == status }
 
     fun save(gate: MfGate) = resultFrom {
         val result = gateRepo.upsert(gate)
-        gates[gate.id] = gate
+        _gates[gate.id] = gate
         return@resultFrom result
     }.mapFailure { exception ->
         ServiceFailure(exception.toServiceFailureType(), "Service error: ${exception.message}", exception)
@@ -40,7 +43,7 @@ class MfGateService(
 
     fun delete(gateId: MfGateId) = resultFrom {
         val result = gateRepo.delete(gateId)
-        gates.remove(gateId)
+        _gates.remove(gateId)
         return@resultFrom result
     }.mapFailure { exception ->
         ServiceFailure(exception.toServiceFailureType(), "Service error: ${exception.message}", exception)

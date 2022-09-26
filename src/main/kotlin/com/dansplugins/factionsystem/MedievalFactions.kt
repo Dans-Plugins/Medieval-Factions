@@ -17,6 +17,8 @@ import com.dansplugins.factionsystem.faction.flag.MfFlags
 import com.dansplugins.factionsystem.faction.permission.MfFactionPermission
 import com.dansplugins.factionsystem.faction.permission.MfFactionPermissionSerializer
 import com.dansplugins.factionsystem.gate.*
+import com.dansplugins.factionsystem.gate.MfGateStatus.CLOSING
+import com.dansplugins.factionsystem.gate.MfGateStatus.OPENING
 import com.dansplugins.factionsystem.interaction.JooqMfInteractionStatusRepository
 import com.dansplugins.factionsystem.interaction.MfInteractionService
 import com.dansplugins.factionsystem.interaction.MfInteractionStatusRepository
@@ -114,7 +116,7 @@ class MedievalFactions : JavaPlugin() {
         val claimedChunkRepository: MfClaimedChunkRepository = JooqMfClaimedChunkRepository(dsl)
         val lockRepository: MfLockRepository = JooqMfLockRepository(dsl)
         val interactionStatusRepository: MfInteractionStatusRepository = JooqMfInteractionStatusRepository(dsl)
-        val gateRepository: MfGateRepository = JooqMfGateRepository(dsl)
+        val gateRepository: MfGateRepository = JooqMfGateRepository(this, dsl)
         val gateCreationContextRepository: MfGateCreationContextRepository = JooqMfGateCreationContextRepository(dsl)
 
         val playerService = MfPlayerService(playerRepository)
@@ -164,6 +166,18 @@ class MedievalFactions : JavaPlugin() {
                 playerService.updatePlayerPower(onlineMfPlayerIds)
             })
         }, (60 - LocalTime.now().minute) * 60 * 20L, 72000L)
+        server.scheduler.scheduleSyncRepeatingTask(this, {
+            val gates = gateService.gates
+            gates.filter(MfGate::shouldOpen).forEach(MfGate::open)
+            gates.filter(MfGate::shouldClose).forEach(MfGate::close)
+        }, 20L, 20L)
+
+        server.scheduler.scheduleSyncRepeatingTask(this, {
+            gateService.getGatesByStatus(CLOSING).forEach(MfGate::continueClosing)
+        }, 20L, 5L)
+        server.scheduler.scheduleSyncRepeatingTask(this, {
+            gateService.getGatesByStatus(OPENING).forEach(MfGate::continueOpening)
+        }, 20L, 20L)
     }
 
     private fun setupNotificationService(): MfNotificationService = when {
