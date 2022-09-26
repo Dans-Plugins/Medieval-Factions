@@ -84,7 +84,10 @@ data class MfGate(
         if (centerBukkitBlock != null) {
             centerBukkitBlock.world.playSound(centerBukkitBlock.location, Sound.BLOCK_ANVIL_HIT, 1f, 0f)
         }
-        val highestEmptyBlocks = area.blocks.filter { it.toBukkitBlock()?.type != material }.groupBy { it.y }.maxByOrNull { it.key }?.value
+        val highestEmptyBlocks = area.blocks.filter { it.toBukkitBlock()?.type != material }
+            .groupBy { it.y }
+            .maxByOrNull { it.key }
+            ?.value
         highestEmptyBlocks?.map { it.toBukkitBlock() }?.forEach { it?.type = material }
         if (area.blocks.all { it.toBukkitBlock()?.type == material }) {
             plugin.server.scheduler.runTaskAsynchronously(plugin, Runnable {

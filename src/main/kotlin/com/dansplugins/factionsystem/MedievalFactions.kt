@@ -52,6 +52,7 @@ import org.flywaydb.core.Flyway
 import org.jooq.SQLDialect
 import org.jooq.conf.Settings
 import org.jooq.impl.DSL
+import preponderous.ponder.minecraft.bukkit.plugin.registerListeners
 import java.time.LocalTime
 import java.util.*
 import javax.sql.DataSource
@@ -145,11 +146,19 @@ class MedievalFactions : JavaPlugin() {
         )
         setupRpkLockService()
 
-        server.pluginManager.registerEvents(AsyncPlayerPreLoginListener(this), this)
-        server.pluginManager.registerEvents(PlayerInteractListener(this), this)
-        server.pluginManager.registerEvents(PlayerJoinListener(this), this)
-        server.pluginManager.registerEvents(PlayerMoveListener(this), this)
-        server.pluginManager.registerEvents(PlayerQuitListener(this), this)
+        registerListeners(
+            AsyncPlayerPreLoginListener(this),
+            BlockBreakListener(this),
+            BlockExplodeListener(this),
+            BlockPistonExtendListener(this),
+            BlockPistonRetractListener(this),
+            BlockPlaceListener(this),
+            EntityExplodeListener(this),
+            PlayerInteractListener(this),
+            PlayerJoinListener(this),
+            PlayerMoveListener(this),
+            PlayerQuitListener(this)
+        )
 
         getCommand("medievalfactions")?.setExecutor(MedievalFactionsCommand(this))
         getCommand("faction")?.setExecutor(MfFactionCommand(this))
