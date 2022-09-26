@@ -59,8 +59,9 @@ commands:
       /f map (normal|diplomatic) - Shows the faction map
       /f sethome - Sets your faction's home
       /f home - Teleports to your faction's home
+      /f flag [list|set] - Faction flag management
     aliases: [f, fraktion, faccion, faccao]
-    usage: /<command> [help|ally|breakalliance|declarewar|makepeace|create|invite|join|law|role|list|claim|unclaim|checkclaim|unclaimall|power|who|invoke|leave|vassalize|swearfealty|declareindependence|grantindependence|kick|map|sethome|home]
+    usage: /<command> [help|ally|breakalliance|declarewar|makepeace|create|invite|join|law|role|list|claim|unclaim|checkclaim|unclaimall|power|who|invoke|leave|vassalize|swearfealty|declareindependence|grantindependence|kick|map|sethome|home|flag]
   lock:
     description: Enables or disables lock mode. To cancel lock mode, use /lock cancel.
     aliases: [verschließen, verschliessen, cerrar, trancar, запереть]
@@ -213,4 +214,10 @@ permissions:
     default: true
   mf.home:
     description: Allows you to teleport to your faction's home location
+    default: true
+  mf.flags.list:
+    description: Allows listing faction flags
+    default: true
+  mf.flags.set:
+    description: Allows setting faction flags
     default: true
