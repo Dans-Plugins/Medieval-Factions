@@ -10,6 +10,7 @@ import com.dansplugins.factionsystem.command.faction.create.MfFactionCreateComma
 import com.dansplugins.factionsystem.command.faction.declareindependence.MfFactionDeclareIndependenceCommand
 import com.dansplugins.factionsystem.command.faction.declarewar.MfFactionDeclareWarCommand
 import com.dansplugins.factionsystem.command.faction.disband.MfFactionDisbandCommand
+import com.dansplugins.factionsystem.command.faction.flag.MfFactionFlagCommand
 import com.dansplugins.factionsystem.command.faction.grantindependence.MfFactionGrantIndependenceCommand
 import com.dansplugins.factionsystem.command.faction.help.MfFactionHelpCommand
 import com.dansplugins.factionsystem.command.faction.home.MfFactionHomeCommand
@@ -72,6 +73,7 @@ class MfFactionCommand(private val plugin: MedievalFactions) : CommandExecutor {
     private val factionMapCommand = MfFactionMapCommand(plugin)
     private val factionSetHomeCommand = MfFactionSetHomeCommand(plugin)
     private val factionHomeCommand = MfFactionHomeCommand(plugin)
+    private val factionFlagCommand = MfFactionFlagCommand(plugin)
 
     override fun onCommand(sender: CommandSender, command: Command, label: String, args: Array<out String>): Boolean {
         if (args.isEmpty()) {
@@ -111,6 +113,7 @@ class MfFactionCommand(private val plugin: MedievalFactions) : CommandExecutor {
             "map", plugin.language["CmdFactionMap"] -> factionMapCommand.onCommand(sender, command, label, args.drop(1).toTypedArray())
             "sethome", plugin.language["CmdFactionSetHome"] -> factionSetHomeCommand.onCommand(sender, command, label, args.drop(1).toTypedArray())
             "home", plugin.language["CmdFactionHome"] -> factionHomeCommand.onCommand(sender, command, label, args.drop(1).toTypedArray())
+            "flag", "flags", plugin.language["CmdFactionFlag"] -> factionFlagCommand.onCommand(sender, command, label, args.drop(1).toTypedArray())
             else -> {
                 sender.sendMessage("$RED${plugin.language["CommandFactionUsage"]}")
                 true
