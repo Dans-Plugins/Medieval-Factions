@@ -4,6 +4,7 @@ import com.dansplugins.factionsystem.MedievalFactions
 import com.dansplugins.factionsystem.claim.MfClaimedChunk
 import com.dansplugins.factionsystem.faction.permission.MfFactionPermission.Companion.CLAIM
 import com.dansplugins.factionsystem.player.MfPlayer
+import com.dansplugins.factionsystem.relationship.MfFactionRelationshipType.AT_WAR
 import dev.forkhandles.result4k.onFailure
 import org.bukkit.ChatColor.GREEN
 import org.bukkit.ChatColor.RED
@@ -52,7 +53,6 @@ class MfFactionClaimCommand(private val plugin: MedievalFactions) : CommandExecu
                 sender.sendMessage("$RED${plugin.language["CommandFactionClaimMaxClaimRadius", maxClaimRadius.toString()]}")
                 return@Runnable
             }
-            val claimService = plugin.services.claimService
             val senderChunkX = sender.location.chunk.x
             val senderChunkZ = sender.location.chunk.z
             plugin.server.scheduler.runTask(plugin, Runnable {
@@ -66,11 +66,25 @@ class MfFactionClaimCommand(private val plugin: MedievalFactions) : CommandExecu
                             (a * a) + (b * b) <= radius * radius
                         }.map { z -> sender.world.getChunkAt(x, z) }
                     }
-                }.filter { chunk ->
-                    claimService.getClaim(chunk) == null
                 }
                 plugin.server.scheduler.runTaskAsynchronously(plugin, Runnable saveChunks@{
-                    if (chunks.isEmpty()) {
+                    val claimService = plugin.services.claimService
+                    val claims = chunks.associateWith(claimService::getClaim)
+                    val relationshipService = plugin.services.factionRelationshipService
+                    val unclaimedChunks = claims.filter { (_, claim) -> claim == null }.keys
+                    val contestedChunks = claims
+                        .mapNotNull { (chunk, claim) -> claim?.let { chunk to it } }
+                        .groupBy { (_, claim) -> claim.factionId }
+                        .filter { (claimFactionId, claims) ->
+                            val claimFaction = factionService.getFaction(claimFactionId) ?: return@filter true
+                            val relationships = relationshipService.getRelationships(faction.id, claimFactionId)
+                            val reverseRelationships = relationshipService.getRelationships(claimFactionId, faction.id)
+                            return@filter (relationships + reverseRelationships).any { it.type == AT_WAR }
+                                    && claimFaction.power < claimService.getClaims(claimFactionId).size - claims.size
+                        }
+                        .flatMap { it.value.map { (chunk, _) -> chunk } }
+                    val claimableChunks = unclaimedChunks + contestedChunks
+                    if (claimableChunks.isEmpty()) {
                         sender.sendMessage("$RED${plugin.language["CommandFactionClaimNoClaimableChunks"]}")
                         return@saveChunks
                     }
@@ -78,7 +92,7 @@ class MfFactionClaimCommand(private val plugin: MedievalFactions) : CommandExecu
                         sender.sendMessage("$RED${plugin.language["CommandFactionClaimReachedDemesneLimit", faction.power.toString()]}")
                         return@saveChunks
                     }
-                    chunks.forEach { chunk ->
+                    claimableChunks.forEach { chunk ->
                         claimService.save(MfClaimedChunk(chunk, faction.id))
                             .onFailure {
                                 sender.sendMessage("$RED${plugin.language["CommandFactionClaimFailedToSaveClaim"]}")
