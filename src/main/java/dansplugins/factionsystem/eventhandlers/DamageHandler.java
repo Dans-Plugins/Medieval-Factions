@@ -173,7 +173,7 @@ public class DamageHandler implements Listener {
         else if (wasPlayerWasDamagedByAProjectile(event) && wasProjectileShotByPlayer(event)) {
             return (Player) getProjectileSource(event);
         }
-        else if (wasDamageBetweenEntities(event)) {
+        else if (isDamagerPlayer(event)) {
             return (Player) event.getDamager();
 
         } else {
@@ -191,7 +191,7 @@ public class DamageHandler implements Listener {
         return projectileSource instanceof Player;
     }
 
-    private boolean wasDamageBetweenEntities(EntityDamageByEntityEvent event) {
+    private boolean isDamagerPlayer(EntityDamageByEntityEvent event) {
         return event.getDamager() instanceof Player;
     }
 
