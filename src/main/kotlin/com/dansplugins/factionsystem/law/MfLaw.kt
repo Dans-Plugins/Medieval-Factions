@@ -5,7 +5,7 @@ import com.dansplugins.factionsystem.faction.MfFactionId
 
 data class MfLaw(
     val id: MfLawId,
-    val version: Int,
+    val version: Int = 0,
     val factionId: MfFactionId,
     val text: String
 ) {

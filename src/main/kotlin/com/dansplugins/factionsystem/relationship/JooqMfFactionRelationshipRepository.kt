@@ -9,9 +9,9 @@ class JooqMfFactionRelationshipRepository(val dsl: DSLContext) : MfFactionRelati
 
     override fun getFactionRelationship(relationshipId: MfFactionRelationshipId): MfFactionRelationship? {
         return dsl.selectFrom(MF_FACTION_RELATIONSHIP)
-            .where(MF_FACTION_RELATIONSHIP.ID.eq(relationshipId.value))
-            .fetchOne()
-            ?.let { it.toDomain() }
+                .where(MF_FACTION_RELATIONSHIP.ID.eq(relationshipId.value))
+                .fetchOne()
+            ?.toDomain()
     }
 
     override fun getFactionRelationships(factionId: MfFactionId, targetId: MfFactionId): List<MfFactionRelationship> {

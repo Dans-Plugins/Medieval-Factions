@@ -10,6 +10,11 @@ players:
   hoursToReachMinPower: 72
 wilderness:
   color: '#3e8e39'
+gates:
+  minHeight: 3
+  maxBlocks: 64
+  maxPerFaction: 5
+  maxRemoveDistance: 12
 factions:
   initialPowerLevel: 5
   mobsSpawnInFactionTerritory: false
@@ -19,8 +24,6 @@ factions:
   minutesBetweenPowerIncreases: 60
   warsRequiredForPvp: true
   maxNameLength: 20
-  maxNumberGates: 5
-  maxGateArea: 64
   surroundedChunksProtected: true
   zeroPowerFactionsGetDisbanded: false
   vassalPowerContributionMultiplier: 0.75

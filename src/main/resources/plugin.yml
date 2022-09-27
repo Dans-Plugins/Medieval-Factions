@@ -15,7 +15,13 @@ authors:
 version: @version@
 main: com.dansplugins.factionsystem.MedievalFactions
 api-version: 1.13
-softdepend: [dynmap, PlaceholderAPI, rpk-notification-lib-bukkit, Mailboxes]
+softdepend:
+- dynmap
+- PlaceholderAPI
+- rpk-notification-lib-bukkit
+- rpk-lock-lib-bukkit
+- rpk-selection-lib-bukkit
+- Mailboxes
 description: Allows players to organise themselves into feudal, diplomatic, lawful groups akin to nations.
 commands:
   medievalfactions:
@@ -76,12 +82,22 @@ commands:
       /accessors list - View a list of people who can access a lock.
       /accessors add - Add an accessor to a lock.
       /accessors remove - Remove an accessor from a lock.
+    aliases: [accessoren, accesorios, assessores, доступа]
+    usage: /<command> [list|add|remove]
   power:
     description: |
       Power management command
       /power set [player] [power] - Sets a player's power.
     aliases: [macht, poder, власть]
-    usage: /<command>
+    usage: /<command> [set]
+  gate:
+    description: |
+      Gate management command
+      /gate create - Creates a gate
+      /gate remove - Removes a gate
+      /gate cancel - Cancels gate creation
+    aliases: [tor, puerta, portao, ворота]
+    usage: /<command> [create|remove|cancel]
 permissions:
   mf.help:
     description: View a list of helpful commands.
@@ -214,6 +230,9 @@ permissions:
     default: true
   mf.home:
     description: Allows you to teleport to your faction's home location
+    default: true
+  mf.gate:
+    description: Allows gate management
     default: true
   mf.flags.list:
     description: Allows listing faction flags

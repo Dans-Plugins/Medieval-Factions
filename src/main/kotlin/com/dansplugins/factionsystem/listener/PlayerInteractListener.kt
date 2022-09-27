@@ -2,6 +2,9 @@ package com.dansplugins.factionsystem.listener
 
 import com.dansplugins.factionsystem.MedievalFactions
 import com.dansplugins.factionsystem.area.MfBlockPosition
+import com.dansplugins.factionsystem.area.MfCuboidArea
+import com.dansplugins.factionsystem.gate.MfGate
+import com.dansplugins.factionsystem.gate.MfGateCreationContext
 import com.dansplugins.factionsystem.interaction.MfInteractionStatus.*
 import com.dansplugins.factionsystem.player.MfPlayer
 import com.dansplugins.factionsystem.player.MfPlayerId
@@ -13,12 +16,14 @@ import org.bukkit.entity.Player
 import org.bukkit.event.EventHandler
 import org.bukkit.event.Listener
 import org.bukkit.event.player.PlayerInteractEvent
+import org.bukkit.inventory.EquipmentSlot.HAND
 import java.util.logging.Level.SEVERE
 
 class PlayerInteractListener(private val plugin: MedievalFactions) : Listener {
 
     @EventHandler
     fun onPlayerInteract(event: PlayerInteractEvent) {
+        if (event.hand != HAND) return
         val clickedBlock = event.clickedBlock ?: return
         val interactionService = plugin.services.interactionService
         // Looking up the player currently involves a blocking call to the database, but since UUIDs are used as
@@ -44,6 +49,18 @@ class PlayerInteractListener(private val plugin: MedievalFactions) : Listener {
             }
             REMOVING_ACCESSOR -> {
                 removeAccessor(event.player, clickedBlock)
+                event.isCancelled = true
+            }
+            SELECTING_GATE_POSITION_1 -> {
+                selectGatePosition1(event.player, clickedBlock)
+                event.isCancelled = true
+            }
+            SELECTING_GATE_POSITION_2 -> {
+                selectGatePosition2(event.player, clickedBlock)
+                event.isCancelled = true
+            }
+            SELECTING_GATE_TRIGGER -> {
+                selectGateTrigger(event.player, clickedBlock)
                 event.isCancelled = true
             }
             null -> {
@@ -99,7 +116,7 @@ class PlayerInteractListener(private val plugin: MedievalFactions) : Listener {
             }
             val interactionService = plugin.services.interactionService
             interactionService.setInteractionStatus(mfPlayer.id, null).onFailure {
-                player.sendMessage("$RED${plugin.language["BlockLockFailedToSaveInteractionStatus"]}")
+                player.sendMessage("$RED${plugin.language["BlockLockFailedToSetInteractionStatus"]}")
                 plugin.logger.log(SEVERE, "Failed to save interaction status: ${it.reason.message}", it.reason.cause)
                 return@Runnable
             }
@@ -138,7 +155,7 @@ class PlayerInteractListener(private val plugin: MedievalFactions) : Listener {
             }
             val interactionService = plugin.services.interactionService
             interactionService.setInteractionStatus(mfPlayer.id, null).onFailure {
-                player.sendMessage("$RED${plugin.language["BlockUnlockFailedToSaveInteractionStatus"]}")
+                player.sendMessage("$RED${plugin.language["BlockUnlockFailedToSetInteractionStatus"]}")
                 plugin.logger.log(SEVERE, "Failed to save interaction status: ${it.reason.message}", it.reason.cause)
                 return@Runnable
             }
@@ -202,6 +219,221 @@ class PlayerInteractListener(private val plugin: MedievalFactions) : Listener {
             val interactionService = plugin.services.interactionService
             interactionService.setInteractionStatus(mfPlayer.id, null).onFailure {
                 player.sendMessage("$RED${plugin.language["BlockRemoveAccessorFailedToSetInteractionStatus"]}")
+                plugin.logger.log(SEVERE, "Failed to set interaction status: ${it.reason.message}", it.reason.cause)
+                return@Runnable
+            }
+        })
+    }
+
+    private fun selectGatePosition1(player: Player, block: Block) {
+        plugin.server.scheduler.runTaskAsynchronously(plugin, Runnable {
+            val playerService = plugin.services.playerService
+            val mfPlayer = playerService.getPlayer(player) ?: playerService.save(MfPlayer.fromBukkit(player)).onFailure {
+                player.sendMessage("$RED${plugin.language["GateCreateSelectFirstPositionFailedToSavePlayer"]}")
+                plugin.logger.log(SEVERE, "Failed to save player: ${it.reason.message}", it.reason.cause)
+                return@Runnable
+            }
+            val gateService = plugin.services.gateService
+            val ctx = gateService.getGateCreationContext(mfPlayer.id).onFailure {
+                player.sendMessage("$RED${plugin.language["GateCreateSelectFirstPositionFailedToGetGateCreationContext"]}")
+                plugin.logger.log(SEVERE, "Failed to get gate creation context: ${it.reason.message}", it.reason.cause)
+                return@Runnable
+            } ?: MfGateCreationContext(mfPlayer.id)
+            gateService.save(ctx.copy(position1 = MfBlockPosition.fromBukkitBlock(block))).onFailure {
+                player.sendMessage("$RED${plugin.language["GateCreateSelectFirstPositionFailedToSaveGateCreationContext"]}")
+                plugin.logger.log(SEVERE, "Failed to save gate creation context: ${it.reason.message}", it.reason.cause)
+                return@Runnable
+            }
+            val interactionService = plugin.services.interactionService
+            interactionService.setInteractionStatus(mfPlayer.id, SELECTING_GATE_POSITION_2).onFailure {
+                player.sendMessage("$RED${plugin.language["GateCreateSelectFirstPositionFailedToSetInteractionStatus"]}")
+                plugin.logger.log(SEVERE, "Failed to set interaction status: ${it.reason.message}", it.reason.cause)
+                return@Runnable
+            }
+            player.sendMessage("$GREEN${plugin.language["GateCreateSelectSecondPosition"]}")
+        })
+    }
+
+    private fun selectGatePosition2(player: Player, block: Block) {
+        plugin.server.scheduler.runTaskAsynchronously(plugin, Runnable {
+            val playerService = plugin.services.playerService
+            val mfPlayer = playerService.getPlayer(player) ?: playerService.save(MfPlayer.fromBukkit(player)).onFailure {
+                player.sendMessage("$RED${plugin.language["GateCreateSelectSecondPositionFailedToSavePlayer"]}")
+                plugin.logger.log(SEVERE, "Failed to save player: ${it.reason.message}", it.reason.cause)
+                return@Runnable
+            }
+            val gateService = plugin.services.gateService
+            val ctx = gateService.getGateCreationContext(mfPlayer.id).onFailure {
+                player.sendMessage("$RED${plugin.language["GateCreateSelectSecondPositionFailedToGetGateCreationContext"]}")
+                plugin.logger.log(SEVERE, "Failed to get gate creation context: ${it.reason.message}", it.reason.cause)
+                return@Runnable
+            } ?: MfGateCreationContext(mfPlayer.id)
+            gateService.save(ctx.copy(position2 = MfBlockPosition.fromBukkitBlock(block))).onFailure {
+                player.sendMessage("$RED${plugin.language["GateCreateSelectSecondPositionFailedToSaveGateCreationContext"]}")
+                plugin.logger.log(SEVERE, "Failed to save gate creation context: ${it.reason.message}", it.reason.cause)
+                return@Runnable
+            }
+            val interactionService = plugin.services.interactionService
+            interactionService.setInteractionStatus(mfPlayer.id, SELECTING_GATE_TRIGGER).onFailure {
+                player.sendMessage("$RED${plugin.language["GateCreateSelectSecondPositionFailedToSetInteractionStatus"]}")
+                plugin.logger.log(SEVERE, "Failed to set interaction status: ${it.reason.message}", it.reason.cause)
+                return@Runnable
+            }
+            player.sendMessage("$GREEN${plugin.language["GateCreateSelectTrigger"]}")
+        })
+    }
+
+    private fun selectGateTrigger(player: Player, block: Block) {
+        plugin.server.scheduler.runTaskAsynchronously(plugin, Runnable {
+            val playerService = plugin.services.playerService
+            val mfPlayer = playerService.getPlayer(player) ?: playerService.save(MfPlayer.fromBukkit(player)).onFailure {
+                player.sendMessage("$RED${plugin.language["GateCreateSelectTriggerFailedToSavePlayer"]}")
+                plugin.logger.log(SEVERE, "Failed to save player: ${it.reason.message}", it.reason.cause)
+                return@Runnable
+            }
+            val gateService = plugin.services.gateService
+            val ctx = gateService.getGateCreationContext(mfPlayer.id).onFailure {
+                player.sendMessage("$RED${plugin.language["GateCreateSelectTriggerFailedToGetGateCreationContext"]}")
+                plugin.logger.log(SEVERE, "Failed to get gate creation context: ${it.reason.message}", it.reason.cause)
+                return@Runnable
+            } ?: MfGateCreationContext(mfPlayer.id)
+            val updatedCtx = gateService.save(ctx.copy(trigger = MfBlockPosition.fromBukkitBlock(block))).onFailure {
+                player.sendMessage("$RED${plugin.language["GateCreateSelectTriggerFailedToSaveGateCreationContext"]}")
+                plugin.logger.log(SEVERE, "Failed to save gate creation context: ${it.reason.message}", it.reason.cause)
+                return@Runnable
+            }
+            createGate(player, updatedCtx)
+        })
+    }
+
+    private fun createGate(player: Player, ctx: MfGateCreationContext) {
+        plugin.server.scheduler.runTask(plugin, Runnable syncValidations@{
+            val position1 = ctx.position1
+            if (position1 == null) {
+                player.sendMessage("$RED${plugin.language["GateCreateFirstPositionNotSet"]}")
+                restartGateCreation(player, ctx)
+                return@syncValidations
+            }
+            val position2 = ctx.position2
+            if (position2 == null) {
+                player.sendMessage("$RED${plugin.language["GateCreateSecondPositionNotSet"]}")
+                restartGateCreation(player, ctx)
+                return@syncValidations
+            }
+            val trigger = ctx.trigger
+            if (trigger == null) {
+                player.sendMessage("$RED${plugin.language["GateCreateTriggerNotSet"]}")
+                restartGateCreation(player, ctx)
+                return@syncValidations
+            }
+            val area = MfCuboidArea(position1, position2)
+            if (area.width > 1 && area.depth > 1) {
+                player.sendMessage("$RED${plugin.language["GateCreateMustBeFlatPlane"]}")
+                restartGateCreation(player, ctx)
+                return@syncValidations
+            }
+            val minHeight = plugin.config.getInt("gates.minHeight")
+            if (area.height < minHeight) {
+                player.sendMessage("$RED${plugin.language["GateCreateMinHeightNotMet", minHeight.toString()]}")
+                restartGateCreation(player, ctx)
+                return@syncValidations
+            }
+            val blocks = area.blocks
+            val maxBlocks = plugin.config.getInt("gates.maxBlocks")
+            if (blocks.size > maxBlocks) {
+                player.sendMessage("$RED${plugin.language["GateCreateAreaLimitExceeded", maxBlocks.toString()]}")
+                restartGateCreation(player, ctx)
+                return@syncValidations
+            }
+            val chunks = blocks.mapTo(mutableSetOf()) { it.toBukkitBlock()?.chunk }
+            val triggerChunk = trigger.toBukkitBlock()?.chunk
+            val materials = blocks.mapTo(mutableSetOf()) { it.toBukkitBlock()?.type }
+            val material = materials.singleOrNull()
+            if (material == null) {
+                player.sendMessage("$RED${plugin.language[
+                        "GateCreateGateMustContainSingleBlockType",
+                        materials.joinToString {
+                            it?.toString()
+                                ?.lowercase()
+                                ?.replace('_', ' ')
+                                ?: plugin.language["UnrecognisedBlock"]
+                        }
+                ]}")
+                restartGateCreation(player, ctx)
+                return@syncValidations
+            }
+            plugin.server.scheduler.runTaskAsynchronously(plugin, Runnable updateInteractionStatus@{
+                val interactionService = plugin.services.interactionService
+                val factionService = plugin.services.factionService
+                val faction = factionService.getFaction(ctx.playerId)
+                if (faction == null) {
+                    player.sendMessage("$RED${plugin.language["GateCreateMustBeInAFaction"]}")
+                    cancelGateCreation(player, ctx)
+                    return@updateInteractionStatus
+                }
+                val claimService = plugin.services.claimService
+                val claims = chunks.map { chunk -> chunk?.let { claimService.getClaim(it) } }
+                if (claims.any { it == null || it.factionId != faction.id }) {
+                    player.sendMessage("$RED${plugin.language["GateCreateGateCrossesUnclaimedTerritory"]}")
+                    restartGateCreation(player, ctx)
+                    return@updateInteractionStatus
+                }
+                val triggerClaim = triggerChunk?.let { claimService.getClaim(triggerChunk) }
+                if (triggerClaim == null || triggerClaim.factionId != faction.id) {
+                    player.sendMessage("$RED${plugin.language["GateCreateTriggerInUnclaimedTerritory"]}")
+                    restartGateCreation(player, ctx)
+                    return@updateInteractionStatus
+                }
+                val gateService = plugin.services.gateService
+                val maxGates = plugin.config.getInt("gates.maxPerFaction")
+                if (gateService.getGatesByFaction(faction.id).size >= maxGates) {
+                    player.sendMessage("$RED${plugin.language["GateCreateFactionMaxGatesReached", maxGates.toString()]}")
+                    cancelGateCreation(player, ctx)
+                    return@updateInteractionStatus
+                }
+                gateService.save(MfGate(
+                    plugin,
+                    factionId = faction.id,
+                    area = area,
+                    trigger = ctx.trigger,
+                    material = material
+                )).onFailure {
+                    player.sendMessage("$RED${plugin.language["GateCreateFailedToSaveGate"]}")
+                    plugin.logger.log(SEVERE, "Failed to save gate: ${it.reason.message}", it.reason.cause)
+                    return@updateInteractionStatus
+                }
+                gateService.deleteGateCreationContext(ctx.playerId).onFailure {
+                    player.sendMessage("$RED${plugin.language["GateCreateFailedToDeleteCreationContext"]}")
+                    plugin.logger.log(SEVERE, "Failed to delete gate creation context: ${it.reason.message}", it.reason.cause)
+                    return@updateInteractionStatus
+                }
+                interactionService.setInteractionStatus(ctx.playerId, null).onFailure {
+                    player.sendMessage("$RED${plugin.language["GateCreateFailedToSetInteractionStatus"]}")
+                    plugin.logger.log(SEVERE, "Failed to set interaction status: ${it.reason.message}", it.reason.cause)
+                    return@updateInteractionStatus
+                }
+                player.sendMessage("$GREEN${plugin.language["GateCreated"]}")
+            })
+        })
+    }
+
+    private fun restartGateCreation(player: Player, ctx: MfGateCreationContext) {
+        plugin.server.scheduler.runTaskAsynchronously(plugin, Runnable {
+            val interactionService = plugin.services.interactionService
+            interactionService.setInteractionStatus(ctx.playerId, SELECTING_GATE_POSITION_1).onFailure {
+                player.sendMessage("$RED${plugin.language["GateCreateFailedToSetInteractionStatus"]}")
+                plugin.logger.log(SEVERE, "Failed to set interaction status: ${it.reason.message}", it.reason.cause)
+                return@Runnable
+            }
+            player.sendMessage("$GREEN${plugin.language["GateCreateSelectFirstPosition"]}")
+        })
+    }
+
+    private fun cancelGateCreation(player: Player, ctx: MfGateCreationContext) {
+        plugin.server.scheduler.runTaskAsynchronously(plugin, Runnable {
+            val interactionService = plugin.services.interactionService
+            interactionService.setInteractionStatus(ctx.playerId, null).onFailure {
+                player.sendMessage("$RED${plugin.language["GateCreateFailedToSetInteractionStatus"]}")
                 plugin.logger.log(SEVERE, "Failed to set interaction status: ${it.reason.message}", it.reason.cause)
                 return@Runnable
             }

@@ -21,7 +21,6 @@ import com.dansplugins.factionsystem.faction.permission.MfFactionPermission.Comp
 import com.dansplugins.factionsystem.faction.permission.MfFactionPermission.Companion.INVITE
 import com.dansplugins.factionsystem.faction.permission.MfFactionPermission.Companion.INVOKE
 import com.dansplugins.factionsystem.faction.permission.MfFactionPermission.Companion.KICK
-import com.dansplugins.factionsystem.faction.permission.MfFactionPermission.Companion.LIST_GATES
 import com.dansplugins.factionsystem.faction.permission.MfFactionPermission.Companion.LIST_LAWS
 import com.dansplugins.factionsystem.faction.permission.MfFactionPermission.Companion.LIST_MEMBERS
 import com.dansplugins.factionsystem.faction.permission.MfFactionPermission.Companion.LIST_ROLES
@@ -30,7 +29,6 @@ import com.dansplugins.factionsystem.faction.permission.MfFactionPermission.Comp
 import com.dansplugins.factionsystem.faction.permission.MfFactionPermission.Companion.PROMOTE
 import com.dansplugins.factionsystem.faction.permission.MfFactionPermission.Companion.REMOVE_GATE
 import com.dansplugins.factionsystem.faction.permission.MfFactionPermission.Companion.REMOVE_LAW
-import com.dansplugins.factionsystem.faction.permission.MfFactionPermission.Companion.RENAME_GATE
 import com.dansplugins.factionsystem.faction.permission.MfFactionPermission.Companion.REQUEST_ALLIANCE
 import com.dansplugins.factionsystem.faction.permission.MfFactionPermission.Companion.SET_FLAG
 import com.dansplugins.factionsystem.faction.permission.MfFactionPermission.Companion.SET_HOME
@@ -95,8 +93,6 @@ data class MfFaction(
         }
         put(CREATE_GATE, false)
         put(REMOVE_GATE, false)
-        put(RENAME_GATE, false)
-        put(LIST_GATES, false)
         put(SET_HOME, false)
         put(GO_HOME, true)
         put(VIEW_INFO, true)
@@ -162,7 +158,7 @@ data class MfFaction(
                     player.sendMessage("$title - $message")
                 } else {
                     plugin.server.scheduler.runTaskAsynchronously(plugin, Runnable {
-                        plugin.notificationDispatcher.sendNotification(mfPlayer, MfNotification(
+                        plugin.services.notificationService.sendNotification(mfPlayer, MfNotification(
                             title,
                             message
                         ))

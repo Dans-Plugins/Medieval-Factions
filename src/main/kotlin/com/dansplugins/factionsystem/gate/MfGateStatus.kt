@@ -1,7 +1,8 @@
 package com.dansplugins.factionsystem.gate
 
 enum class MfGateStatus {
-    READY,
+    OPEN,
     OPENING,
+    CLOSED,
     CLOSING
 }
