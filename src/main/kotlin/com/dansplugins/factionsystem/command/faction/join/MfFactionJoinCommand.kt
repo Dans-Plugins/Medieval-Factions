@@ -1,16 +1,25 @@
 package com.dansplugins.factionsystem.command.faction.join
 
 import com.dansplugins.factionsystem.MedievalFactions
+import com.dansplugins.factionsystem.faction.MfFaction
 import com.dansplugins.factionsystem.faction.MfFactionId
 import com.dansplugins.factionsystem.faction.MfFactionMember
 import com.dansplugins.factionsystem.player.MfPlayer
 import dev.forkhandles.result4k.onFailure
+import net.md_5.bungee.api.chat.ClickEvent
+import net.md_5.bungee.api.chat.ClickEvent.Action.RUN_COMMAND
+import net.md_5.bungee.api.chat.HoverEvent
+import net.md_5.bungee.api.chat.HoverEvent.Action.SHOW_TEXT
+import net.md_5.bungee.api.chat.TextComponent
+import net.md_5.bungee.api.chat.hover.content.Text
+import org.bukkit.ChatColor.GREEN
 import org.bukkit.ChatColor.RED
 import org.bukkit.command.Command
 import org.bukkit.command.CommandExecutor
 import org.bukkit.command.CommandSender
 import org.bukkit.entity.Player
 import java.util.logging.Level
+import net.md_5.bungee.api.ChatColor as SpigotChatColor
 
 class MfFactionJoinCommand(private val plugin: MedievalFactions) : CommandExecutor {
     override fun onCommand(sender: CommandSender, command: Command, label: String, args: Array<out String>): Boolean {
@@ -18,7 +27,15 @@ class MfFactionJoinCommand(private val plugin: MedievalFactions) : CommandExecut
             sender.sendMessage("$RED${plugin.language["CommandFactionJoinNoPermission"]}")
             return true
         }
-        if (args.isEmpty()) {
+        val hasUninvitedJoinPermission = sender.hasPermission("mf.force.join")
+        var lastArgOffset = 0
+        val force = if (hasUninvitedJoinPermission && args.lastOrNull() == "-f") {
+            lastArgOffset = 1
+            true
+        } else {
+            false
+        }
+        if (args.size <= lastArgOffset) {
             sender.sendMessage("$RED${plugin.language["CommandFactionJoinUsage"]}")
             return true
         }
@@ -40,14 +57,19 @@ class MfFactionJoinCommand(private val plugin: MedievalFactions) : CommandExecut
                 sender.sendMessage("$RED${plugin.language["CommandFactionJoinAlreadyInFaction", playerFaction.name]}")
                 return@Runnable
             }
-            val faction = factionService.getFaction(MfFactionId(args.joinToString(" ")))
-                ?: factionService.getFaction(args.joinToString(" "))
+
+            val faction = factionService.getFaction(MfFactionId(args.dropLast(lastArgOffset).joinToString(" ")))
+                ?: factionService.getFaction(args.dropLast(lastArgOffset).joinToString(" "))
             if (faction == null) {
                 sender.sendMessage("$RED${plugin.language["CommandFactionJoinInvalidFaction"]}")
                 return@Runnable
             }
-            if (!faction.invites.any { it.playerId == mfPlayer.id }) {
-                sender.sendMessage("$RED${plugin.language["CommandFactionJoinNotInvited"]}")
+            if (!faction.invites.any { it.playerId == mfPlayer.id } && !force) {
+                if (hasUninvitedJoinPermission) {
+                    confirmJoin(sender, faction)
+                } else {
+                    sender.sendMessage("$RED${plugin.language["CommandFactionJoinNotInvited"]}")
+                }
                 return@Runnable
             }
             val updatedFaction = factionService.save(faction.copy(
@@ -63,9 +85,22 @@ class MfFactionJoinCommand(private val plugin: MedievalFactions) : CommandExecut
                 plugin.language["FactionNewMemberNotificationBody", sender.name]
             )
             sender.sendMessage(
-                plugin.language["CommandFactionJoinSuccess", faction.name]
+                "$GREEN${plugin.language["CommandFactionJoinSuccess", faction.name]}"
             )
         })
         return true
+    }
+
+    private fun confirmJoin(player: Player, faction: MfFaction) {
+        player.sendMessage("$RED${plugin.language["CommandFactionJoinConfirmNoInvitation", faction.name]}")
+        player.spigot().sendMessage(
+            TextComponent(
+                plugin.language["CommandFactionJoinConfirmNoInvitationConfirmButton"]
+            ).apply {
+                color = SpigotChatColor.GREEN
+                hoverEvent = HoverEvent(SHOW_TEXT, Text(plugin.language["CommandFactionJoinConfirmNoInvitationConfirmButtonHover", faction.name]))
+                clickEvent = ClickEvent(RUN_COMMAND, "/faction join ${faction.id.value} -f")
+            }
+        )
     }
 }

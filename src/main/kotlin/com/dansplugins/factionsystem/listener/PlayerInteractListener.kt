@@ -79,7 +79,7 @@ class PlayerInteractListener(private val plugin: MedievalFactions) : Listener {
                 val lockedBlock = lockService.getLockedBlock(MfBlockPosition.fromBukkitBlock(clickedBlock))
                 if (lockedBlock != null) {
                     if (event.player.uniqueId.toString() !in (lockedBlock.accessors + lockedBlock.playerId).map(MfPlayerId::value)) {
-                        if (mfPlayer.isBypassEnabled) {
+                        if (mfPlayer.isBypassEnabled && event.player.hasPermission("mf.bypass")) {
                             plugin.server.scheduler.runTaskAsynchronously(plugin, Runnable {
                                 val owner = playerService.getPlayer(lockedBlock.playerId)
                                 event.player.sendMessage("$RED${plugin.language["LockProtectionBypassed", owner?.toBukkit()?.name ?: plugin.language["UnknownPlayer"]]}")
@@ -105,7 +105,7 @@ class PlayerInteractListener(private val plugin: MedievalFactions) : Listener {
                 val factionService = plugin.services.factionService
                 val claimFaction = factionService.getFaction(claim.factionId) ?: return
                 if (!claimService.isInteractionAllowed(mfPlayer.id, claim)) {
-                    if (mfPlayer.isBypassEnabled) {
+                    if (mfPlayer.isBypassEnabled && event.player.hasPermission("mf.bypass")) {
                         event.player.sendMessage("$RED${plugin.language["FactionTerritoryProtectionBypassed"]}")
                     } else {
                         event.isCancelled = true
