@@ -28,11 +28,7 @@ class PlayerInteractListener(private val plugin: MedievalFactions) : Listener {
         if (event.hand != HAND) return
         val clickedBlock = event.clickedBlock ?: return
         val interactionService = plugin.services.interactionService
-        // Looking up the player currently involves a blocking call to the database, but since UUIDs are used as
-        // player IDs, and they're in memory anyway, we can just pass that to getInteractionStatus, which doesn't
-        // involve any slow database calls.
-        val interactionStatus = interactionService.getInteractionStatus(MfPlayerId(event.player.uniqueId.toString()))
-        when (interactionStatus) {
+        when (interactionService.getInteractionStatus(MfPlayerId(event.player.uniqueId.toString()))) {
             LOCKING -> {
                 lock(event.player, clickedBlock)
                 event.isCancelled = true
@@ -66,16 +62,35 @@ class PlayerInteractListener(private val plugin: MedievalFactions) : Listener {
                 event.isCancelled = true
             }
             null -> {
+                val playerService = plugin.services.playerService
+                val mfPlayer = playerService.getPlayer(event.player)
+                if (mfPlayer == null) {
+                    event.isCancelled = true
+                    plugin.server.scheduler.runTaskAsynchronously(plugin, Runnable {
+                        playerService.save(MfPlayer(plugin, event.player)).onFailure {
+                            event.player.sendMessage("$RED${plugin.language["BlockInteractFailedToSavePlayer"]}")
+                            plugin.logger.log(SEVERE, "Failed to save player: ${it.reason.message}", it.reason.cause)
+                            return@Runnable
+                        }
+                    })
+                    return
+                }
                 val lockService = plugin.services.lockService
                 val lockedBlock = lockService.getLockedBlock(MfBlockPosition.fromBukkitBlock(clickedBlock))
                 if (lockedBlock != null) {
                     if (event.player.uniqueId.toString() !in (lockedBlock.accessors + lockedBlock.playerId).map(MfPlayerId::value)) {
-                        plugin.server.scheduler.runTaskAsynchronously(plugin, Runnable {
-                            val playerService = plugin.services.playerService
-                            val owner = playerService.getPlayer(lockedBlock.playerId)
-                            event.player.sendMessage("$RED${plugin.language["BlockLocked", owner?.toBukkit()?.name ?: plugin.language["UnknownPlayer"]]}")
-                        })
-                        event.isCancelled = true
+                        if (mfPlayer.isBypassEnabled) {
+                            plugin.server.scheduler.runTaskAsynchronously(plugin, Runnable {
+                                val owner = playerService.getPlayer(lockedBlock.playerId)
+                                event.player.sendMessage("$RED${plugin.language["LockProtectionBypassed", owner?.toBukkit()?.name ?: plugin.language["UnknownPlayer"]]}")
+                            })
+                        } else {
+                            plugin.server.scheduler.runTaskAsynchronously(plugin, Runnable {
+                                val owner = playerService.getPlayer(lockedBlock.playerId)
+                                event.player.sendMessage("$RED${plugin.language["BlockLocked", owner?.toBukkit()?.name ?: plugin.language["UnknownPlayer"]]}")
+                            })
+                            event.isCancelled = true
+                        }
                         return
                     }
                 }
@@ -89,10 +104,13 @@ class PlayerInteractListener(private val plugin: MedievalFactions) : Listener {
                 val claim = claimService.getClaim(clickedBlock.chunk) ?: return
                 val factionService = plugin.services.factionService
                 val claimFaction = factionService.getFaction(claim.factionId) ?: return
-                val playerId = MfPlayerId(event.player.uniqueId.toString())
-                if (!claimService.isInteractionAllowed(playerId, claim)) {
-                    event.isCancelled = true
-                    event.player.sendMessage("$RED${plugin.language["CannotInteractWithBlockInFactionTerritory", claimFaction.name]}")
+                if (!claimService.isInteractionAllowed(mfPlayer.id, claim)) {
+                    if (mfPlayer.isBypassEnabled) {
+                        event.player.sendMessage("$RED${plugin.language["FactionTerritoryProtectionBypassed"]}")
+                    } else {
+                        event.isCancelled = true
+                        event.player.sendMessage("$RED${plugin.language["CannotInteractWithBlockInFactionTerritory", claimFaction.name]}")
+                    }
                 }
             }
         }

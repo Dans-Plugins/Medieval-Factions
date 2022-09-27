@@ -4,6 +4,7 @@ import com.dansplugins.factionsystem.MedievalFactions
 import com.dansplugins.factionsystem.command.faction.ally.MfFactionAllyCommand
 import com.dansplugins.factionsystem.command.faction.autoclaim.MfFactionAutoclaimCommand
 import com.dansplugins.factionsystem.command.faction.breakalliance.MfFactionBreakAllianceCommand
+import com.dansplugins.factionsystem.command.faction.bypass.MfFactionBypassCommand
 import com.dansplugins.factionsystem.command.faction.checkclaim.MfFactionCheckClaimCommand
 import com.dansplugins.factionsystem.command.faction.claim.MfFactionClaimCommand
 import com.dansplugins.factionsystem.command.faction.create.MfFactionCreateCommand
@@ -74,6 +75,7 @@ class MfFactionCommand(private val plugin: MedievalFactions) : CommandExecutor {
     private val factionSetHomeCommand = MfFactionSetHomeCommand(plugin)
     private val factionHomeCommand = MfFactionHomeCommand(plugin)
     private val factionFlagCommand = MfFactionFlagCommand(plugin)
+    private val factionBypassCommand = MfFactionBypassCommand(plugin)
 
     override fun onCommand(sender: CommandSender, command: Command, label: String, args: Array<out String>): Boolean {
         if (args.isEmpty()) {
@@ -114,6 +116,7 @@ class MfFactionCommand(private val plugin: MedievalFactions) : CommandExecutor {
             "sethome", plugin.language["CmdFactionSetHome"] -> factionSetHomeCommand.onCommand(sender, command, label, args.drop(1).toTypedArray())
             "home", plugin.language["CmdFactionHome"] -> factionHomeCommand.onCommand(sender, command, label, args.drop(1).toTypedArray())
             "flag", "flags", plugin.language["CmdFactionFlag"] -> factionFlagCommand.onCommand(sender, command, label, args.drop(1).toTypedArray())
+            "bypass", plugin.language["CmdFactionBypass"] -> factionBypassCommand.onCommand(sender, command, label, args.drop(1).toTypedArray())
             else -> {
                 sender.sendMessage("$RED${plugin.language["CommandFactionUsage"]}")
                 true

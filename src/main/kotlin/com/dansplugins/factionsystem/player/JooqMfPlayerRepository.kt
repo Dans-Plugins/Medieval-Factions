@@ -24,8 +24,10 @@ class JooqMfPlayerRepository(private val plugin: MedievalFactions, private val d
             .set(MF_PLAYER.ID, player.id.value)
             .set(MF_PLAYER.VERSION, 1)
             .set(MF_PLAYER.POWER, player.power)
+            .set(MF_PLAYER.BYPASS_ENABLED, player.isBypassEnabled)
             .onConflict(MF_PLAYER.ID).doUpdate()
             .set(MF_PLAYER.POWER, player.power)
+            .set(MF_PLAYER.BYPASS_ENABLED, player.isBypassEnabled)
             .set(MF_PLAYER.VERSION, player.version + 1)
             .where(MF_PLAYER.ID.eq(player.id.value))
             .and(MF_PLAYER.VERSION.eq(MF_PLAYER.VERSION))
@@ -80,5 +82,5 @@ class JooqMfPlayerRepository(private val plugin: MedievalFactions, private val d
             .execute()
     }
 
-    private fun MfPlayerRecord.toDomain() = MfPlayer(MfPlayerId(id), version, power)
+    private fun MfPlayerRecord.toDomain() = MfPlayer(MfPlayerId(id), version, power, bypassEnabled)
 }
