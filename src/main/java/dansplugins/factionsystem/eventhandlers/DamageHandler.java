@@ -110,29 +110,8 @@ public class DamageHandler implements Listener {
         // If entity is protected, cancel the event and return
         if (isEntityProtected(attacker, event.getEntity())) {
             event.setCancelled(true);
-            return;
         }
-
-//        Faction playersFaction = persistentData.getPlayersFaction(attacker.getUniqueId());
-//        if (playersFaction == null) {
-//            event.setCancelled(true);
-//        }
     }
-
-//    private void cancelDamageIfNecessary(EntityDamageByEntityEvent event, Faction playersFaction) {
-//        ClaimedChunk claimedChunk = getClaimedChunkAtLocation(event.getEntity().getLocation());
-//        if (claimedChunk == null) {
-//            return;
-//        }
-//
-//        if (!isHolderPlayersFaction(claimedChunk, playersFaction)) {
-//            event.setCancelled(true);
-//        }
-//    }
-
-//    private boolean isHolderPlayersFaction(ClaimedChunk claimedChunk, Faction playersFaction) {
-//        return claimedChunk.getHolder().equalsIgnoreCase(playersFaction.getName());
-//    }
 
     private ClaimedChunk getClaimedChunkAtLocation(Location location) {
         Chunk chunk = location.getChunk();
