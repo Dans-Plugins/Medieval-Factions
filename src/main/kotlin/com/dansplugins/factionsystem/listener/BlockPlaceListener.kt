@@ -41,7 +41,7 @@ class BlockPlaceListener(private val plugin: MedievalFactions) : Listener {
             return
         }
         if (!claimService.isInteractionAllowed(mfPlayer.id, claim)) {
-            if (mfPlayer.isBypassEnabled) {
+            if (mfPlayer.isBypassEnabled && event.player.hasPermission("mf.bypass")) {
                 event.player.sendMessage("$RED${plugin.language["FactionTerritoryProtectionBypassed"]}")
             } else {
                 event.isCancelled = true
