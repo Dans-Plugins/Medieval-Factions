@@ -27,7 +27,7 @@ class PlayerMoveListener(private val plugin: MedievalFactions) : Listener {
             val newChunkFaction = newChunkClaim?.let { factionService.getFaction(it.factionId) }
             val playerService = plugin.services.playerService
             val mfPlayer = playerService.getPlayer(event.player)
-                ?: playerService.save(MfPlayer.fromBukkit(event.player)).onFailure {
+                ?: playerService.save(MfPlayer(plugin, event.player)).onFailure {
                     plugin.logger.log(SEVERE, "Failed to save player: ${it.reason.message}", it.reason.cause)
                     return@Runnable
                 }

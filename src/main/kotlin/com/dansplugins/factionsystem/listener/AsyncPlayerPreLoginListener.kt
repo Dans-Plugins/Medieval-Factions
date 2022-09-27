@@ -15,10 +15,12 @@ class AsyncPlayerPreLoginListener(private val plugin: MedievalFactions) : Listen
     fun onAsyncPlayerPreLogin(event: AsyncPlayerPreLoginEvent) {
         val playerService = plugin.services.playerService
         val playerId = MfPlayerId(event.uniqueId.toString())
-        val player = playerService.getPlayer(playerId) ?: playerService.save(MfPlayer(playerId)).onFailure {
-            plugin.logger.log(SEVERE, "Failed to save player: ${it.reason.message}", it.reason.cause)
-            return
-        }
+        val player = playerService.getPlayer(playerId)
+            ?: playerService.save(MfPlayer(plugin, playerId))
+                .onFailure {
+                    plugin.logger.log(SEVERE, "Failed to save player: ${it.reason.message}", it.reason.cause)
+                    return
+                }
 
         val interactionService = plugin.services.interactionService
         interactionService.loadInteractionStatus(player.id)

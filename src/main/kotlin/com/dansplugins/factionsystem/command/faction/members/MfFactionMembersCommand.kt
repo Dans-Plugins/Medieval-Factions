@@ -27,7 +27,7 @@ class MfFactionMembersCommand(private val plugin: MedievalFactions) : CommandExe
             // get player's faction
             val playerService = plugin.services.playerService
             val mfPlayer = playerService.getPlayer(sender)
-                ?: playerService.save(MfPlayer.fromBukkit(sender)).onFailure {
+                ?: playerService.save(MfPlayer(plugin, sender)).onFailure {
                     sender.sendMessage("$RED${plugin.language["CommandFactionMembersFailedToSavePlayer"]}")
                     plugin.logger.log(SEVERE, "Failed to save player: ${it.reason.message}", it.reason.cause)
                     return@Runnable

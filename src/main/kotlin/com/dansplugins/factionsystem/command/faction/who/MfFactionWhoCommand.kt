@@ -28,7 +28,7 @@ class MfFactionWhoCommand(private val plugin: MedievalFactions) : CommandExecuto
         plugin.server.scheduler.runTaskAsynchronously(plugin, Runnable {
             val playerService = plugin.services.playerService
             val targetMfPlayer = playerService.getPlayer(target)
-                ?: playerService.save(MfPlayer.fromBukkit(target)).onFailure {
+                ?: playerService.save(MfPlayer(plugin, target)).onFailure {
                     sender.sendMessage("$RED${plugin.language["CommandFactionWhoFailedToSaveTargetPlayer"]}")
                     plugin.logger.log(SEVERE, "Failed to save player: ${it.reason.message}", it.reason.cause)
                     return@Runnable

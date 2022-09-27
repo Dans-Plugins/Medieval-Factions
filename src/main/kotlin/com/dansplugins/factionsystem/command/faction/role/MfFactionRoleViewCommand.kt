@@ -40,7 +40,7 @@ class MfFactionRoleViewCommand(private val plugin: MedievalFactions) : CommandEx
         plugin.server.scheduler.runTaskAsynchronously(plugin, Runnable {
             val playerService = plugin.services.playerService
             val mfPlayer = playerService.getPlayer(sender)
-                ?: playerService.save(MfPlayer.fromBukkit(sender)).onFailure {
+                ?: playerService.save(MfPlayer(plugin, sender)).onFailure {
                     sender.sendMessage("${BukkitChatColor.RED}${plugin.language["CommandFactionRoleViewFailedToSavePlayer"]}")
                     plugin.logger.log(Level.SEVERE, "Failed to save player: ${it.reason.message}", it.reason.cause)
                     return@Runnable

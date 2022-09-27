@@ -1,5 +1,6 @@
 package com.dansplugins.factionsystem.player
 
+import com.dansplugins.factionsystem.MedievalFactions
 import org.bukkit.OfflinePlayer
 
 data class MfPlayer(
@@ -9,7 +10,8 @@ data class MfPlayer(
 ) {
     fun toBukkit() = id.toBukkitPlayer()
 
-    companion object {
-        fun fromBukkit(player: OfflinePlayer) = MfPlayer(MfPlayerId(player.uniqueId.toString()))
-    }
+    constructor(plugin: MedievalFactions, id: MfPlayerId): this(id, power = plugin.config.getInt("players.initialPower"))
+    constructor(player: OfflinePlayer, version: Int = 0, power: Int = 0): this(MfPlayerId.fromBukkitPlayer(player), version, power)
+    constructor(plugin: MedievalFactions, player: OfflinePlayer): this(MfPlayerId.fromBukkitPlayer(player), power = plugin.config.getInt("players.initialPower"))
+
 }

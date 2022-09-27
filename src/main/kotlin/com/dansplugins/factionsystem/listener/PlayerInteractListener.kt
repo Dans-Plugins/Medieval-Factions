@@ -102,7 +102,7 @@ class PlayerInteractListener(private val plugin: MedievalFactions) : Listener {
     private fun lock(player: Player, block: Block) {
         plugin.server.scheduler.runTaskAsynchronously(plugin, Runnable {
             val playerService = plugin.services.playerService
-            val mfPlayer = playerService.getPlayer(player) ?: playerService.save(MfPlayer.fromBukkit(player)).onFailure {
+            val mfPlayer = playerService.getPlayer(player) ?: playerService.save(MfPlayer(plugin, player)).onFailure {
                 player.sendMessage("$RED${plugin.language["BlockLockFailedToSavePlayer"]}")
                 plugin.logger.log(SEVERE, "Failed to save player: ${it.reason.message}", it.reason.cause)
                 return@Runnable
@@ -145,7 +145,7 @@ class PlayerInteractListener(private val plugin: MedievalFactions) : Listener {
     private fun unlock(player: Player, block: Block) {
         plugin.server.scheduler.runTaskAsynchronously(plugin, Runnable {
             val playerService = plugin.services.playerService
-            val mfPlayer = playerService.getPlayer(player) ?: playerService.save(MfPlayer.fromBukkit(player)).onFailure {
+            val mfPlayer = playerService.getPlayer(player) ?: playerService.save(MfPlayer(plugin, player)).onFailure {
                 player.sendMessage("$RED${plugin.language["BlockUnlockFailedToSavePlayer"]}")
                 plugin.logger.log(SEVERE, "Failed to save player: ${it.reason.message}", it.reason.cause)
                 return@Runnable
@@ -184,7 +184,7 @@ class PlayerInteractListener(private val plugin: MedievalFactions) : Listener {
     private fun checkAccess(player: Player, block: Block) {
         plugin.server.scheduler.runTaskAsynchronously(plugin, Runnable {
             val playerService = plugin.services.playerService
-            val mfPlayer = playerService.getPlayer(player) ?: playerService.save(MfPlayer.fromBukkit(player)).onFailure {
+            val mfPlayer = playerService.getPlayer(player) ?: playerService.save(MfPlayer(plugin, player)).onFailure {
                 player.sendMessage("$RED${plugin.language["BlockCheckAccessFailedToSavePlayer"]}")
                 plugin.logger.log(SEVERE, "Failed to save player: ${it.reason.message}", it.reason.cause)
                 return@Runnable
@@ -211,7 +211,7 @@ class PlayerInteractListener(private val plugin: MedievalFactions) : Listener {
         player.performCommand("accessors add ${block.x} ${block.y} ${block.z}")
         plugin.server.scheduler.runTaskAsynchronously(plugin, Runnable {
             val playerService = plugin.services.playerService
-            val mfPlayer = playerService.getPlayer(player) ?: playerService.save(MfPlayer.fromBukkit(player)).onFailure {
+            val mfPlayer = playerService.getPlayer(player) ?: playerService.save(MfPlayer(plugin, player)).onFailure {
                 player.sendMessage("$RED${plugin.language["BlockAddAccessorFailedToSavePlayer"]}")
                 plugin.logger.log(SEVERE, "Failed to save player: ${it.reason.message}", it.reason.cause)
                 return@Runnable
@@ -229,7 +229,7 @@ class PlayerInteractListener(private val plugin: MedievalFactions) : Listener {
         player.performCommand("accessors remove ${block.x} ${block.y} ${block.z}")
         plugin.server.scheduler.runTaskAsynchronously(plugin, Runnable {
             val playerService = plugin.services.playerService
-            val mfPlayer = playerService.getPlayer(player) ?: playerService.save(MfPlayer.fromBukkit(player)).onFailure {
+            val mfPlayer = playerService.getPlayer(player) ?: playerService.save(MfPlayer(plugin, player)).onFailure {
                 player.sendMessage("$RED${plugin.language["BlockRemoveAccessorFailedToSavePlayer"]}")
                 plugin.logger.log(SEVERE, "Failed to save player: ${it.reason.message}", it.reason.cause)
                 return@Runnable
@@ -246,7 +246,7 @@ class PlayerInteractListener(private val plugin: MedievalFactions) : Listener {
     private fun selectGatePosition1(player: Player, block: Block) {
         plugin.server.scheduler.runTaskAsynchronously(plugin, Runnable {
             val playerService = plugin.services.playerService
-            val mfPlayer = playerService.getPlayer(player) ?: playerService.save(MfPlayer.fromBukkit(player)).onFailure {
+            val mfPlayer = playerService.getPlayer(player) ?: playerService.save(MfPlayer(plugin, player)).onFailure {
                 player.sendMessage("$RED${plugin.language["GateCreateSelectFirstPositionFailedToSavePlayer"]}")
                 plugin.logger.log(SEVERE, "Failed to save player: ${it.reason.message}", it.reason.cause)
                 return@Runnable
@@ -275,7 +275,7 @@ class PlayerInteractListener(private val plugin: MedievalFactions) : Listener {
     private fun selectGatePosition2(player: Player, block: Block) {
         plugin.server.scheduler.runTaskAsynchronously(plugin, Runnable {
             val playerService = plugin.services.playerService
-            val mfPlayer = playerService.getPlayer(player) ?: playerService.save(MfPlayer.fromBukkit(player)).onFailure {
+            val mfPlayer = playerService.getPlayer(player) ?: playerService.save(MfPlayer(plugin, player)).onFailure {
                 player.sendMessage("$RED${plugin.language["GateCreateSelectSecondPositionFailedToSavePlayer"]}")
                 plugin.logger.log(SEVERE, "Failed to save player: ${it.reason.message}", it.reason.cause)
                 return@Runnable
@@ -304,7 +304,7 @@ class PlayerInteractListener(private val plugin: MedievalFactions) : Listener {
     private fun selectGateTrigger(player: Player, block: Block) {
         plugin.server.scheduler.runTaskAsynchronously(plugin, Runnable {
             val playerService = plugin.services.playerService
-            val mfPlayer = playerService.getPlayer(player) ?: playerService.save(MfPlayer.fromBukkit(player)).onFailure {
+            val mfPlayer = playerService.getPlayer(player) ?: playerService.save(MfPlayer(plugin, player)).onFailure {
                 player.sendMessage("$RED${plugin.language["GateCreateSelectTriggerFailedToSavePlayer"]}")
                 plugin.logger.log(SEVERE, "Failed to save player: ${it.reason.message}", it.reason.cause)
                 return@Runnable

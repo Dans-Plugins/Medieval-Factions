@@ -10,7 +10,6 @@ import org.bukkit.command.Command
 import org.bukkit.command.CommandExecutor
 import org.bukkit.command.CommandSender
 import org.bukkit.entity.Player
-import java.util.logging.Level
 import java.util.logging.Level.SEVERE
 
 class MfFactionUnclaimAllCommand(private val plugin: MedievalFactions) : CommandExecutor {
@@ -26,9 +25,9 @@ class MfFactionUnclaimAllCommand(private val plugin: MedievalFactions) : Command
         plugin.server.scheduler.runTaskAsynchronously(plugin, Runnable {
             val playerService = plugin.services.playerService
             val mfPlayer = playerService.getPlayer(sender)
-                ?: playerService.save(MfPlayer.fromBukkit(sender)).onFailure {
+                ?: playerService.save(MfPlayer(plugin, sender)).onFailure {
                     sender.sendMessage("$RED${plugin.language["CommandFactionUnclaimAllFailedToSavePlayer"]}")
-                    plugin.logger.log(Level.SEVERE, "Failed to save player: ${it.reason.message}", it.reason.cause)
+                    plugin.logger.log(SEVERE, "Failed to save player: ${it.reason.message}", it.reason.cause)
                     return@Runnable
                 }
             val factionService = plugin.services.factionService

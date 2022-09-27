@@ -42,7 +42,7 @@ class MfPowerSetCommand(private val plugin: MedievalFactions) : CommandExecutor 
         }
         plugin.server.scheduler.runTaskAsynchronously(plugin, Runnable {
             val playerService = plugin.services.playerService
-            val targetMfPlayer = playerService.getPlayer(target) ?: MfPlayer.fromBukkit(target)
+            val targetMfPlayer = playerService.getPlayer(target) ?: MfPlayer(plugin, target)
             playerService.save(targetMfPlayer.copy(power = power)).onFailure {
                 sender.sendMessage("$RED${plugin.language["CommandPowerSetFailedToSaveTargetPlayer"]}")
                 plugin.logger.log(Level.SEVERE, "Failed to save player: ${it.reason.message}", it.reason.cause)

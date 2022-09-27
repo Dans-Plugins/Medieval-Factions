@@ -73,7 +73,7 @@ class MfAccessorsAddCommand(private val plugin: MedievalFactions) : CommandExecu
             plugin.server.scheduler.runTaskAsynchronously(plugin, Runnable {
                 val playerService = plugin.services.playerService
                 val mfPlayer = playerService.getPlayer(sender)
-                    ?: playerService.save(MfPlayer.fromBukkit(sender)).onFailure {
+                    ?: playerService.save(MfPlayer(plugin, sender)).onFailure {
                         sender.sendMessage("$RED${plugin.language["CommandAccessorsAddFailedToSavePlayer"]}")
                         plugin.logger.log(SEVERE, "Failed to save player: ${it.reason.message}", it.reason.cause)
                         return@Runnable
@@ -114,13 +114,13 @@ class MfAccessorsAddCommand(private val plugin: MedievalFactions) : CommandExecu
         plugin.server.scheduler.runTaskAsynchronously(plugin, Runnable {
             val playerService = plugin.services.playerService
             val mfPlayer = playerService.getPlayer(sender)
-                ?: playerService.save(MfPlayer.fromBukkit(sender)).onFailure {
+                ?: playerService.save(MfPlayer(plugin, sender)).onFailure {
                     sender.sendMessage("$RED${plugin.language["CommandAccessorsAddFailedToSavePlayer"]}")
                     plugin.logger.log(SEVERE, "Failed to save player: ${it.reason.message}", it.reason.cause)
                     return@Runnable
                 }
             val accessorMfPlayer = playerService.getPlayer(accessor)
-                ?: playerService.save(MfPlayer.fromBukkit(accessor)).onFailure {
+                ?: playerService.save(MfPlayer(plugin, accessor)).onFailure {
                     sender.sendMessage("$RED${plugin.language["CommandAccessorsAddFailedToSavePlayer"]}")
                     plugin.logger.log(SEVERE, "Failed to save player: ${it.reason.message}", it.reason.cause)
                     return@Runnable
