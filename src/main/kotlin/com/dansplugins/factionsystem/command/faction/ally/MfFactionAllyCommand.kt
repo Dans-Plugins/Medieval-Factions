@@ -32,7 +32,7 @@ class MfFactionAllyCommand(private val plugin: MedievalFactions) : CommandExecut
         plugin.server.scheduler.runTaskAsynchronously(plugin, Runnable {
             val playerService = plugin.services.playerService
             val mfPlayer = playerService.getPlayer(sender)
-                ?: playerService.save(MfPlayer.fromBukkit(sender)).onFailure {
+                ?: playerService.save(MfPlayer(plugin, sender)).onFailure {
                     sender.sendMessage("$RED${plugin.language["CommandFactionAllyFailedToSavePlayer"]}")
                     plugin.logger.log(Level.SEVERE, "Failed to save player: ${it.reason.message}", it.reason.cause)
                     return@Runnable

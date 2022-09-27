@@ -5,6 +5,7 @@ database:
   username: 'sa'
   password: ''
 players:
+  initialPower: 5
   maxPower: 20
   hoursToReachMaxPower: 12
   hoursToReachMinPower: 72
@@ -16,7 +17,6 @@ gates:
   maxPerFaction: 5
   maxRemoveDistance: 12
 factions:
-  initialPowerLevel: 5
   mobsSpawnInFactionTerritory: false
   powerIncreaseAmount: 2
   laddersPlaceableInEnemyFactionTerritory: true

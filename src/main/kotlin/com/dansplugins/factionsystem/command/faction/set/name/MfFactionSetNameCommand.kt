@@ -67,7 +67,7 @@ class MfFactionSetNameCommand(private val plugin: MedievalFactions): CommandExec
         plugin.server.scheduler.runTaskAsynchronously(plugin, Runnable {
             val playerService = plugin.services.playerService
             val mfPlayer = playerService.getPlayer(player)
-                ?: playerService.save(MfPlayer.fromBukkit(player)).onFailure {
+                ?: playerService.save(MfPlayer(plugin, player)).onFailure {
                     player.sendMessage("$RED${plugin.language["CommandFactionSetNameFailedToSavePlayer"]}")
                     plugin.logger.log(Level.SEVERE, "Failed to save player: ${it.reason.message}", it.reason.cause)
                     return@Runnable
