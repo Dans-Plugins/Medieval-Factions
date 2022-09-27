@@ -12,7 +12,6 @@ import com.dansplugins.factionsystem.jooq.Tables.*
 import com.dansplugins.factionsystem.jooq.tables.records.MfFactionInviteRecord
 import com.dansplugins.factionsystem.jooq.tables.records.MfFactionMemberRecord
 import com.dansplugins.factionsystem.jooq.tables.records.MfFactionRecord
-import com.dansplugins.factionsystem.player.MfPlayer
 import com.dansplugins.factionsystem.player.MfPlayerId
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
@@ -184,12 +183,12 @@ class JooqMfFactionRepository(
     private fun upsertInvite(dsl: DSLContext, factionId: MfFactionId, invite: MfFactionInvite): MfFactionInvite {
         dsl.insertInto(MF_FACTION_INVITE)
             .set(MF_FACTION_INVITE.FACTION_ID, factionId.value)
-            .set(MF_FACTION_INVITE.PLAYER_ID, invite.player.id.value)
+            .set(MF_FACTION_INVITE.PLAYER_ID, invite.playerId.value)
             .onConflict(MF_FACTION_INVITE.FACTION_ID, MF_FACTION_INVITE.PLAYER_ID).doNothing()
             .execute()
         return dsl.selectFrom(MF_FACTION_INVITE)
             .where(MF_FACTION_INVITE.FACTION_ID.eq(factionId.value))
-            .and(MF_FACTION_INVITE.PLAYER_ID.eq(invite.player.id.value))
+            .and(MF_FACTION_INVITE.PLAYER_ID.eq(invite.playerId.value))
             .fetchOne()
             .let(::requireNotNull)
             .toDomain()
@@ -260,7 +259,7 @@ class JooqMfFactionRepository(
 
     private fun MfFactionInviteRecord.toDomain() =
         MfFactionInvite(
-            MfPlayer(playerId.let(::MfPlayerId))
+            playerId.let(::MfPlayerId)
         )
 
 }

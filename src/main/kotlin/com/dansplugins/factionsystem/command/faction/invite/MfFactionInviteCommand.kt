@@ -108,7 +108,7 @@ class MfFactionInviteCommand(private val plugin: MedievalFactions) : CommandExec
                 sender.sendMessage("${BukkitChatColor.RED}${plugin.language["CommandFactionInviteNoFactionPermission"]}")
                 return@Runnable
             }
-            if (faction.invites.any { it.player.id == targetMfPlayer.id }) {
+            if (faction.invites.any { it.playerId == targetMfPlayer.id }) {
                 sender.sendMessage("${BukkitChatColor.RED}${plugin.language["CommandFactionInviteAlreadyInvited"]}")
                 return@Runnable
             }
@@ -118,7 +118,7 @@ class MfFactionInviteCommand(private val plugin: MedievalFactions) : CommandExec
             }
             factionService.save(
                 faction.copy(
-                    invites = faction.invites + MfFactionInvite(targetMfPlayer)
+                    invites = faction.invites + MfFactionInvite(targetMfPlayer.id)
                 )
             ).onFailure {
                 sender.sendMessage("${BukkitChatColor.RED}${plugin.language["CommandFactionInviteFailedToSaveFaction"]}")
