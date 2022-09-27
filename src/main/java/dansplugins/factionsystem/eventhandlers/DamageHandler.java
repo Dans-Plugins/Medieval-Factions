@@ -113,11 +113,6 @@ public class DamageHandler implements Listener {
         }
     }
 
-    private ClaimedChunk getClaimedChunkAtLocation(Location location) {
-        Chunk chunk = location.getChunk();
-        return persistentData.getChunkDataAccessor().getClaimedChunk(chunk);
-    }
-
     private boolean isEntityProtected(Player attacker, Entity entity) {
         if (entity instanceof ArmorStand || entity instanceof ItemFrame) return true;
 
