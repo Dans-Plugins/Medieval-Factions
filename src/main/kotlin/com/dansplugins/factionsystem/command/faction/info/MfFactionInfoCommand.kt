@@ -72,7 +72,7 @@ class MfFactionInfoCommand(private val plugin: MedievalFactions) : CommandExecut
                 sender.sendMessage("    ${BukkitChatColor.GRAY}${members.joinToString { it.playerId.toBukkitPlayer().name ?: plugin.language["UnknownPlayer"] }}")
             }
             sender.sendMessage("${BukkitChatColor.WHITE}${plugin.language["CommandFactionInfoInvitesTitle", faction.invites.size.toString()]}")
-            sender.sendMessage("  ${BukkitChatColor.GRAY}${faction.invites.joinToString { it.player.toBukkit().name ?: plugin.language["UnknownPlayer"] }}")
+            sender.sendMessage("  ${BukkitChatColor.GRAY}${faction.invites.joinToString { it.playerId.toBukkitPlayer().name ?: plugin.language["UnknownPlayer"] }}")
             if (sender.hasPermission("mf.invite") && role.hasPermission(faction, INVITE)) {
                 sender.spigot().sendMessage(TextComponent(plugin.language["CommandFactionInfoInvite"]).apply {
                     color = SpigotChatColor.GREEN

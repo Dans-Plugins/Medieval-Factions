@@ -1,7 +1,7 @@
 package com.dansplugins.factionsystem.faction
 
-import com.dansplugins.factionsystem.player.MfPlayer
+import com.dansplugins.factionsystem.player.MfPlayerId
 
 data class MfFactionInvite(
-    val player: MfPlayer
+    val playerId: MfPlayerId
 )
