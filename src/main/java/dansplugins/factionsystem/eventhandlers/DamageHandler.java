@@ -128,6 +128,7 @@ public class DamageHandler implements Listener {
         }
 
         final Faction chunkHolder = persistentData.getFaction(persistentData.getChunkDataAccessor().getClaimedChunk(entity.getLocation().getChunk()).getHolder());
+        final Faction attackerFaction = persistentData.getFaction(attacker.getName());
 
         if (!(boolean) chunkHolder.getFlags().getFlag("enableMobProtection")) {
             logger.debug("Mob Protection is disabled");
@@ -147,13 +148,13 @@ public class DamageHandler implements Listener {
         }
 
         // If attacker is factionless, return true
-        if (persistentData.getFaction(attacker.getName()) == null) {
+        if (attackerFaction == null) {
             logger.debug("attacker is factionless");
             return true;
         }
 
         // If attacker is at war with the faction, return false
-        if (persistentData.getFaction(attacker.getName()).isEnemy(chunkHolder.getName())) return false;
+        if (attackerFaction.isEnemy(chunkHolder.getName())) return false;
 
         return true;
     }
