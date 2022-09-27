@@ -12,15 +12,26 @@ import com.dansplugins.factionsystem.player.MfPlayerId
 import dev.forkhandles.result4k.Result4k
 import dev.forkhandles.result4k.mapFailure
 import dev.forkhandles.result4k.resultFrom
+import java.util.concurrent.ConcurrentHashMap
 
 class MfFactionService(private val plugin: MedievalFactions, private val repository: MfFactionRepository) {
 
+    private val factionsById: MutableMap<MfFactionId, MfFaction> = ConcurrentHashMap()
     val factions: List<MfFaction>
-        get() = repository.getFactions()
+        get() = factionsById.values.toList()
 
-    fun getFaction(name: String): MfFaction? = repository.getFaction(name)
-    fun getFaction(playerId: MfPlayerId): MfFaction? = repository.getFaction(playerId)
-    fun getFaction(factionId: MfFactionId): MfFaction? = repository.getFaction(factionId)
+    init {
+        plugin.logger.info("Loading factions...")
+        val startTime = System.currentTimeMillis()
+        factionsById.putAll(repository.getFactions().associateBy(MfFaction::id))
+        plugin.logger.info("${factionsById.size} factions loaded (${System.currentTimeMillis() - startTime}ms)")
+    }
+
+    fun getFaction(name: String): MfFaction? = factions.singleOrNull { it.name == name }
+    fun getFaction(playerId: MfPlayerId): MfFaction? = factions.singleOrNull { faction ->
+        faction.members.any { member -> member.playerId == playerId }
+    }
+    fun getFaction(factionId: MfFactionId): MfFaction? = factionsById[factionId]
     fun save(faction: MfFaction): Result4k<MfFaction, ServiceFailure> = resultFrom {
         val previousState = getFaction(faction.id)
         if (previousState == null) {
@@ -51,7 +62,7 @@ class MfFactionService(private val plugin: MedievalFactions, private val reposit
                     throw EventCancelledException("Event cancelled")
                 }
             }
-            val newMembers = faction.members.map { it.player.id } - previousState.members.map { it.player.id }
+            val newMembers = faction.members.map(MfFactionMember::playerId) - previousState.members.map(MfFactionMember::playerId)
             newMembers.forEach { newMember ->
                 val event = FactionJoinEvent(faction.id, newMember, !plugin.server.isPrimaryThread)
                 plugin.server.pluginManager.callEvent(event)
@@ -59,7 +70,7 @@ class MfFactionService(private val plugin: MedievalFactions, private val reposit
                     throw EventCancelledException("Event cancelled")
                 }
             }
-            val oldMembers = previousState.members.map { it.player.id } - faction.members.map { it.player.id }
+            val oldMembers = previousState.members.map(MfFactionMember::playerId) - faction.members.map(MfFactionMember::playerId)
             oldMembers.forEach { oldMember ->
                 val event = FactionLeaveEvent(faction.id, oldMember, !plugin.server.isPrimaryThread)
                 plugin.server.pluginManager.callEvent(event)
@@ -68,7 +79,9 @@ class MfFactionService(private val plugin: MedievalFactions, private val reposit
                 }
             }
         }
-        repository.upsert(faction)
+        val result = repository.upsert(faction)
+        factionsById[result.id] = result
+        return@resultFrom result
     }.mapFailure { exception ->
         ServiceFailure(exception.toServiceFailureType(), "Service error: ${exception.message}", exception)
     }
@@ -78,7 +91,9 @@ class MfFactionService(private val plugin: MedievalFactions, private val reposit
         if (event.isCancelled) {
             throw EventCancelledException("Event cancelled")
         }
-        repository.delete(factionId)
+        val result = repository.delete(factionId)
+        factionsById.remove(factionId)
+        return@resultFrom result
     }.mapFailure { exception ->
         ServiceFailure(exception.toServiceFailureType(), "Service error: ${exception.message}", exception)
     }

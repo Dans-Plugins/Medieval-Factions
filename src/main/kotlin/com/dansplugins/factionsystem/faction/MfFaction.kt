@@ -113,7 +113,7 @@ data class MfFaction(
 ) {
 
     val memberPower
-        get() = members.sumOf { member -> member.player.power }
+        get() = members.sumOf { plugin.services.playerService.getPlayer(it.playerId)?.power ?: 0 }
     val maxMemberPower
         get() = members.size * plugin.config.getInt("players.maxPower")
     val vassalPower
@@ -145,14 +145,14 @@ data class MfFaction(
         prefix = name
     )
 
-    fun getRole(playerId: MfPlayerId): MfFactionRole? = members.singleOrNull { it.player.id == playerId }?.role
+    fun getRole(playerId: MfPlayerId): MfFactionRole? = members.singleOrNull { it.playerId == playerId }?.role
     fun getRole(roleId: MfFactionRoleId): MfFactionRole? = roles.getRole(roleId)
     fun getRole(name: String): MfFactionRole? = roles.getRole(name)
 
     fun sendMessage(title: String, message: String) {
-        members.map { it.player }
+        members.map { it.playerId }
             .forEach { mfPlayer ->
-                val offlinePlayer = mfPlayer.toBukkit()
+                val offlinePlayer = mfPlayer.toBukkitPlayer()
                 val player = offlinePlayer.player
                 if (player != null) {
                     player.sendMessage("$title - $message")

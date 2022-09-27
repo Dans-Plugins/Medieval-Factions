@@ -108,11 +108,11 @@ class MfFactionInviteCommand(private val plugin: MedievalFactions) : CommandExec
                 sender.sendMessage("${BukkitChatColor.RED}${plugin.language["CommandFactionInviteNoFactionPermission"]}")
                 return@Runnable
             }
-            if (faction.invites.any { it.player.id.value == targetMfPlayer.id.value }) {
+            if (faction.invites.any { it.player.id == targetMfPlayer.id }) {
                 sender.sendMessage("${BukkitChatColor.RED}${plugin.language["CommandFactionInviteAlreadyInvited"]}")
                 return@Runnable
             }
-            if (faction.members.any { it.player.id.value == targetMfPlayer.id.value }) {
+            if (faction.members.any { it.playerId == targetMfPlayer.id }) {
                 sender.sendMessage("${BukkitChatColor.RED}${plugin.language["CommandFactionInviteAlreadyMember"]}")
                 return@Runnable
             }
@@ -139,7 +139,7 @@ class MfFactionInviteCommand(private val plugin: MedievalFactions) : CommandExec
                     }
                 ))
             } else {
-                plugin.services.notificationService.sendNotification(targetMfPlayer, MfNotification(
+                plugin.services.notificationService.sendNotification(targetMfPlayer.id, MfNotification(
                     plugin.language["CommandFactionInviteReceivedNotificationTitle", faction.name],
                     plugin.language["CommandFactionInviteReceivedNotificationBody", faction.name]
                 ))

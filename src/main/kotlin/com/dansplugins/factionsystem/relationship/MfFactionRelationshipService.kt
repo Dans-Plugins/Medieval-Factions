@@ -13,23 +13,35 @@ import com.dansplugins.factionsystem.relationship.MfFactionRelationshipType.VASS
 import dev.forkhandles.result4k.Result4k
 import dev.forkhandles.result4k.mapFailure
 import dev.forkhandles.result4k.resultFrom
+import java.util.concurrent.ConcurrentHashMap
 
 class MfFactionRelationshipService(private val plugin: MedievalFactions, private val repository: MfFactionRelationshipRepository) {
 
+    private val relationshipsById: MutableMap<MfFactionRelationshipId, MfFactionRelationship> = ConcurrentHashMap()
+    private val relationships: List<MfFactionRelationship>
+        get() = relationshipsById.values.toList()
+
+    init {
+        plugin.logger.info("Loading faction relationships...")
+        val startTime = System.currentTimeMillis()
+        relationshipsById.putAll(repository.getFactionRelationships().associateBy(MfFactionRelationship::id))
+        plugin.logger.info("${relationshipsById.size} faction relationships loaded (${System.currentTimeMillis() - startTime}ms)")
+    }
+
     fun getRelationship(relationshipId: MfFactionRelationshipId): MfFactionRelationship? {
-        return repository.getFactionRelationship(relationshipId)
+        return relationshipsById[relationshipId]
     }
 
     fun getRelationships(factionId: MfFactionId, targetId: MfFactionId): List<MfFactionRelationship> {
-        return repository.getFactionRelationships(factionId, targetId)
+        return relationships.filter { it.factionId == factionId && it.targetId == targetId }
     }
 
     fun getRelationships(factionId: MfFactionId): List<MfFactionRelationship> {
-        return repository.getFactionRelationships(factionId)
+        return relationships.filter { it.factionId == factionId }
     }
 
     fun getRelationships(factionId: MfFactionId, type: MfFactionRelationshipType): List<MfFactionRelationship> {
-        return repository.getFactionRelationships(factionId, type)
+        return relationships.filter { it.factionId == factionId && it.type == type }
     }
 
     fun save(relationship: MfFactionRelationship): Result4k<MfFactionRelationship, ServiceFailure> = resultFrom {
@@ -41,7 +53,9 @@ class MfFactionRelationshipService(private val plugin: MedievalFactions, private
                 throw EventCancelledException("Event cancelled")
             }
         }
-        repository.upsert(relationship)
+        val result = repository.upsert(relationship)
+        relationshipsById[result.id] = result
+        return@resultFrom result
     }.mapFailure { exception ->
         ServiceFailure(exception.toServiceFailureType(), "Service error: ${exception.message}", exception)
     }
@@ -52,7 +66,9 @@ class MfFactionRelationshipService(private val plugin: MedievalFactions, private
         if (event.isCancelled) {
             throw EventCancelledException("Event cancelled")
         }
-        repository.delete(id)
+        val result = repository.delete(id)
+        relationshipsById.remove(id)
+        return@resultFrom result
     }.mapFailure { exception ->
         ServiceFailure(exception.toServiceFailureType(), "Service error: ${exception.message}", exception)
     }

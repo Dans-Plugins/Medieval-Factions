@@ -99,7 +99,7 @@ class MfFactionDeclareWarCommand(private val plugin: MedievalFactions) : Command
                     plugin.language["FactionAtWarNotificationBody", faction.name]
                 )
                 plugin.server.onlinePlayers.filter { onlinePlayer ->
-                    (faction.members + target.members).none { member -> member.player.toBukkit().uniqueId == onlinePlayer.uniqueId }
+                    (faction.members + target.members).none { member -> member.playerId.toBukkitPlayer().uniqueId == onlinePlayer.uniqueId }
                 }.forEach { onlinePlayer -> onlinePlayer.sendMessage("$RED${plugin.language["FactionDeclaredWar", faction.name, target.name]}") }
             })
         })

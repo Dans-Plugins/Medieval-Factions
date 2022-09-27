@@ -51,7 +51,7 @@ class MfFactionJoinCommand(private val plugin: MedievalFactions) : CommandExecut
                 return@Runnable
             }
             val updatedFaction = factionService.save(faction.copy(
-                members = faction.members + MfFactionMember(mfPlayer, faction.roles.default),
+                members = faction.members + MfFactionMember(mfPlayer.id, faction.roles.default),
                 invites = faction.invites.filter { it.player.id.value != mfPlayer.id.value }
             )).onFailure {
                 sender.sendMessage("$RED${plugin.language["CommandFactionJoinFailedToSaveFaction"]}")

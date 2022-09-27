@@ -16,6 +16,13 @@ class MfLockService(private val plugin: MedievalFactions, private val repository
 
     private val lockedBlocks: MutableMap<MfBlockPosition, MfLockedBlock> = ConcurrentHashMap()
 
+    init {
+        plugin.logger.info("Loading locked blocks...")
+        val startTime = System.currentTimeMillis()
+        lockedBlocks.putAll(repository.getLockedBlocks().map { it.block to it })
+        plugin.logger.info("${lockedBlocks.size} locked blocks loaded (${System.currentTimeMillis() - startTime}ms)")
+    }
+
     fun lock(block: MfBlockPosition, claim: MfClaimedChunk, player: MfPlayer): Result4k<MfLockedBlock, ServiceFailure> = resultFrom {
         val lockedBlock = repository.upsert(MfLockedBlock(
             block = MfBlockPosition(
@@ -59,13 +66,6 @@ class MfLockService(private val plugin: MedievalFactions, private val repository
         repository.getLockedBlock(id)
     }.mapFailure { exception ->
         ServiceFailure(exception.toServiceFailureType(), "Service error: ${exception.message}", exception)
-    }
-
-    fun loadLockedBlocks() {
-        plugin.logger.info("Loading locked blocks...")
-        val startTime = System.currentTimeMillis()
-        lockedBlocks.putAll(repository.getLockedBlocks().map { it.block to it })
-        plugin.logger.info("Locked blocks loaded (${System.currentTimeMillis() - startTime}ms)")
     }
 
     private fun Exception.toServiceFailureType(): ServiceFailureType {

@@ -40,6 +40,12 @@ class JooqMfFactionRelationshipRepository(val dsl: DSLContext) : MfFactionRelati
             .map { it.toDomain() }
     }
 
+    override fun getFactionRelationships(): List<MfFactionRelationship> {
+        return dsl.selectFrom(MF_FACTION_RELATIONSHIP)
+            .fetch()
+            .map { it.toDomain() }
+    }
+
     override fun upsert(relationship: MfFactionRelationship): MfFactionRelationship {
         dsl.insertInto(MF_FACTION_RELATIONSHIP)
             .set(MF_FACTION_RELATIONSHIP.ID, relationship.id.value)

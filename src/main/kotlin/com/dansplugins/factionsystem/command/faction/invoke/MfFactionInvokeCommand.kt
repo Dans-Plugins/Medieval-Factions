@@ -121,7 +121,7 @@ class MfFactionInvokeCommand(private val plugin: MedievalFactions) : CommandExec
                     plugin.language["EnemyInvokedAllyNotificationBody", faction.name, ally.name]
                 )
                 plugin.server.onlinePlayers.filter { onlinePlayer ->
-                    (faction.members + ally.members + enemy.members).none { member -> member.player.toBukkit().uniqueId == onlinePlayer.uniqueId }
+                    (faction.members + ally.members + enemy.members).none { member -> member.playerId.toBukkitPlayer().uniqueId == onlinePlayer.uniqueId }
                 }.forEach { onlinePlayer -> onlinePlayer.sendMessage("$RED${plugin.language["FactionInvokedAlly", faction.name, ally.name, enemy.name]}") }
             })
         })

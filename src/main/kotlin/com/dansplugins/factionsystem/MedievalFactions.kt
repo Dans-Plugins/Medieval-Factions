@@ -120,7 +120,7 @@ class MedievalFactions : JavaPlugin() {
         val gateRepository: MfGateRepository = JooqMfGateRepository(this, dsl)
         val gateCreationContextRepository: MfGateCreationContextRepository = JooqMfGateCreationContextRepository(dsl)
 
-        val playerService = MfPlayerService(playerRepository)
+        val playerService = MfPlayerService(this, playerRepository)
         val factionService = MfFactionService(this, factionRepository)
         val lawService = MfLawService(lawRepository)
         val factionRelationshipService = MfFactionRelationshipService(this, factionRelationshipRepository)
@@ -129,9 +129,6 @@ class MedievalFactions : JavaPlugin() {
         val interactionService = MfInteractionService(interactionStatusRepository)
         val notificationService = setupNotificationService()
         val gateService = MfGateService(this, gateRepository, gateCreationContextRepository)
-
-        lockService.loadLockedBlocks()
-        gateService.loadGates()
 
         services = Services(
             playerService,
@@ -191,7 +188,7 @@ class MedievalFactions : JavaPlugin() {
 
     private fun setupNotificationService(): MfNotificationService = when {
         server.pluginManager.getPlugin("Mailboxes") != null -> MailboxesNotificationService(this)
-        server.pluginManager.getPlugin("rpk-notification-lib-bukkit") != null -> RpkNotificationService()
+        server.pluginManager.getPlugin("rpk-notification-lib-bukkit") != null -> RpkNotificationService(this)
         else -> NoOpNotificationService()
     }
 
