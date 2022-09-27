@@ -68,14 +68,14 @@ class MfFactionKickCommand(private val plugin: MedievalFactions) : CommandExecut
                 return@Runnable
             }
             val targetRole = faction.getRole(targetMfPlayer.id)
-            if (targetRole != null && faction.members.filter { it.player.id.value != targetMfPlayer.id.value }.none {
-                val memberRole = faction.getRole(it.player.id)
+            if (targetRole != null && faction.members.filter { it.playerId != targetMfPlayer.id }.none {
+                val memberRole = faction.getRole(it.playerId)
                 memberRole?.hasPermission(faction, SET_MEMBER_ROLE(targetRole.id)) == true
             }) {
                 sender.sendMessage("$RED${plugin.language["CommandFactionKickNoOneCanSetTheirRole"]}")
                 return@Runnable
             }
-            if (faction.members.none { it.player.id.value == targetMfPlayer.id.value }) {
+            if (faction.members.none { it.playerId == targetMfPlayer.id }) {
                 sender.sendMessage("$RED${plugin.language["CommandFactionKickTargetNotInFaction"]}")
                 return@Runnable
             }
@@ -86,7 +86,7 @@ class MfFactionKickCommand(private val plugin: MedievalFactions) : CommandExecut
                 return@Runnable
             }
             factionService.save(
-                faction.copy(members = faction.members.filter { it.player.id.value != targetMfPlayer.id.value })
+                faction.copy(members = faction.members.filter { it.playerId != targetMfPlayer.id })
             ).onFailure {
                 sender.sendMessage("$RED${plugin.language["CommandFactionKickFailedToSaveFaction"]}")
                 plugin.logger.log(SEVERE, "Failed to save faction: ${it.reason.message}", it.reason.cause)

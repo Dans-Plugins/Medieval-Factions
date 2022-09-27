@@ -90,7 +90,7 @@ class MfFactionDeclareIndependenceCommand(private val plugin: MedievalFactions) 
                         plugin.language["VassalDeclaredIndependenceWarNotificationBody", faction.name]
                     )
                     plugin.server.onlinePlayers.filter { onlinePlayer ->
-                        (faction.members + liege.members).none { member -> member.player.toBukkit().uniqueId == onlinePlayer.uniqueId }
+                        (faction.members + liege.members).none { member -> member.playerId.toBukkitPlayer().uniqueId == onlinePlayer.uniqueId }
                     }.forEach { onlinePlayer -> onlinePlayer.sendMessage("$RED${plugin.language["FactionDeclaredIndependenceWar", faction.name, liege.name]}") }
                 })
             } else {
@@ -104,7 +104,7 @@ class MfFactionDeclareIndependenceCommand(private val plugin: MedievalFactions) 
                         plugin.language["VassalDeclaredIndependenceNotificationBody", faction.name]
                     )
                     plugin.server.onlinePlayers.filter { onlinePlayer ->
-                        (faction.members + liege.members).none { member -> member.player.toBukkit().uniqueId == onlinePlayer.uniqueId }
+                        (faction.members + liege.members).none { member -> member.playerId.toBukkitPlayer().uniqueId == onlinePlayer.uniqueId }
                     }.forEach { onlinePlayer -> onlinePlayer.sendMessage("$RED${plugin.language["FactionDeclaredIndependence", faction.name, liege.name]}") }
                 })
             }

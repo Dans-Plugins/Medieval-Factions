@@ -4,8 +4,8 @@ import com.dansplugins.factionsystem.MedievalFactions
 import com.dansplugins.factionsystem.faction.permission.MfFactionPermission.Companion.LIST_MEMBERS
 import com.dansplugins.factionsystem.player.MfPlayer
 import dev.forkhandles.result4k.onFailure
-import org.bukkit.ChatColor.RED
 import org.bukkit.ChatColor.AQUA
+import org.bukkit.ChatColor.RED
 import org.bukkit.command.Command
 import org.bukkit.command.CommandExecutor
 import org.bukkit.command.CommandSender
@@ -45,7 +45,7 @@ class MfFactionMembersCommand(private val plugin: MedievalFactions) : CommandExe
             }
             // send player list of members
             sender.sendMessage("$AQUA${plugin.language["CommandFactionMembersTitle", faction.name]}")
-            sender.sendMessage("$AQUA" + faction.members.joinToString { it.player.toBukkit().name ?: "(N/A)" })
+            sender.sendMessage("$AQUA" + faction.members.joinToString { it.playerId.toBukkitPlayer().name ?: "(N/A)" })
         })
         return true
     }

@@ -17,25 +17,25 @@ class MfGateService(
     private val gateCreationContextRepo: MfGateCreationContextRepository
 ) {
 
-    private val _gates: MutableMap<MfGateId, MfGate> = ConcurrentHashMap()
+    private val gatesById: MutableMap<MfGateId, MfGate> = ConcurrentHashMap()
     val gates: List<MfGate>
-        get() = _gates.values.toList()
+        get() = gatesById.values.toList()
 
-    fun loadGates() {
+    init {
         plugin.logger.info("Loading gates...")
         val startTime = System.currentTimeMillis()
-        _gates.putAll(gateRepo.getGates().associateBy { it.id })
-        plugin.logger.info("Gates loaded (${System.currentTimeMillis() - startTime}ms)")
+        gatesById.putAll(gateRepo.getGates().associateBy { it.id })
+        plugin.logger.info("${gatesById.size} gates loaded (${System.currentTimeMillis() - startTime}ms)")
     }
 
-    fun getGatesByTrigger(trigger: MfBlockPosition) = _gates.values.filter { it.trigger == trigger }
-    fun getGatesAt(block: MfBlockPosition) = _gates.values.filter { it.area.contains(block) }
-    fun getGatesByFaction(factionId: MfFactionId) = _gates.values.filter { it.factionId == factionId }
-    fun getGatesByStatus(status: MfGateStatus) = _gates.values.filter { it.status == status }
+    fun getGatesByTrigger(trigger: MfBlockPosition) = gatesById.values.filter { it.trigger == trigger }
+    fun getGatesAt(block: MfBlockPosition) = gatesById.values.filter { it.area.contains(block) }
+    fun getGatesByFaction(factionId: MfFactionId) = gatesById.values.filter { it.factionId == factionId }
+    fun getGatesByStatus(status: MfGateStatus) = gatesById.values.filter { it.status == status }
 
     fun save(gate: MfGate) = resultFrom {
         val result = gateRepo.upsert(gate)
-        _gates[gate.id] = gate
+        gatesById[result.id] = result
         return@resultFrom result
     }.mapFailure { exception ->
         ServiceFailure(exception.toServiceFailureType(), "Service error: ${exception.message}", exception)
@@ -43,7 +43,7 @@ class MfGateService(
 
     fun delete(gateId: MfGateId) = resultFrom {
         val result = gateRepo.delete(gateId)
-        _gates.remove(gateId)
+        gatesById.remove(gateId)
         return@resultFrom result
     }.mapFailure { exception ->
         ServiceFailure(exception.toServiceFailureType(), "Service error: ${exception.message}", exception)

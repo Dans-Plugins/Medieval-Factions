@@ -67,9 +67,9 @@ class MfFactionInfoCommand(private val plugin: MedievalFactions) : CommandExecut
                 })
             }
             sender.sendMessage("${BukkitChatColor.WHITE}${plugin.language["CommandFactionInfoMembersTitle", faction.members.size.toString()]}")
-            faction.members.groupBy { faction.getRole(it.player.id) }.forEach { (memberRole, members) ->
+            faction.members.groupBy { faction.getRole(it.playerId) }.forEach { (memberRole, members) ->
                 sender.sendMessage("  ${BukkitChatColor.WHITE}${plugin.language["CommandFactionInfoMembersRoleTitle", memberRole?.name ?: plugin.language["NoRole"]]}")
-                sender.sendMessage("    ${BukkitChatColor.GRAY}${members.joinToString { it.player.toBukkit().name ?: plugin.language["UnknownPlayer"] }}")
+                sender.sendMessage("    ${BukkitChatColor.GRAY}${members.joinToString { it.playerId.toBukkitPlayer().name ?: plugin.language["UnknownPlayer"] }}")
             }
             sender.sendMessage("${BukkitChatColor.WHITE}${plugin.language["CommandFactionInfoInvitesTitle", faction.invites.size.toString()]}")
             sender.sendMessage("  ${BukkitChatColor.GRAY}${faction.invites.joinToString { it.player.toBukkit().name ?: plugin.language["UnknownPlayer"] }}")

@@ -14,6 +14,11 @@ class JooqMfPlayerRepository(private val plugin: MedievalFactions, private val d
             .fetchOne()
             ?.toDomain()
 
+    override fun getPlayers(): List<MfPlayer> =
+        dsl.selectFrom(MF_PLAYER)
+            .fetch()
+            .map { it.toDomain() }
+
     override fun upsert(player: MfPlayer): MfPlayer {
         val rowCount = dsl.insertInto(MF_PLAYER)
             .set(MF_PLAYER.ID, player.id.value)

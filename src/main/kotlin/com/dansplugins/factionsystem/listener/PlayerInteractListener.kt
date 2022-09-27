@@ -12,6 +12,8 @@ import dev.forkhandles.result4k.onFailure
 import org.bukkit.ChatColor.GREEN
 import org.bukkit.ChatColor.RED
 import org.bukkit.block.Block
+import org.bukkit.block.data.type.Door
+import org.bukkit.block.data.type.TrapDoor
 import org.bukkit.entity.Player
 import org.bukkit.event.EventHandler
 import org.bukkit.event.Listener
@@ -74,7 +76,23 @@ class PlayerInteractListener(private val plugin: MedievalFactions) : Listener {
                             event.player.sendMessage("$RED${plugin.language["BlockLocked", owner?.toBukkit()?.name ?: plugin.language["UnknownPlayer"]]}")
                         })
                         event.isCancelled = true
+                        return
                     }
+                }
+
+                if (plugin.config.getBoolean("factions.nonMembersCanInteractWithDoors")) {
+                    if (clickedBlock.state is Door || clickedBlock.state is TrapDoor) {
+                        return
+                    }
+                }
+                val claimService = plugin.services.claimService
+                val claim = claimService.getClaim(clickedBlock.chunk) ?: return
+                val factionService = plugin.services.factionService
+                val claimFaction = factionService.getFaction(claim.factionId) ?: return
+                val playerId = MfPlayerId(event.player.uniqueId.toString())
+                if (!claimService.isInteractionAllowed(playerId, claim)) {
+                    event.isCancelled = true
+                    event.player.sendMessage("$RED${plugin.language["CannotInteractWithBlockInFactionTerritory", claimFaction.name]}")
                 }
             }
         }

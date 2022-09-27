@@ -8,25 +8,47 @@ import com.dansplugins.factionsystem.faction.MfFactionId
 import com.dansplugins.factionsystem.failure.OptimisticLockingFailureException
 import com.dansplugins.factionsystem.failure.ServiceFailure
 import com.dansplugins.factionsystem.failure.ServiceFailureType
+import com.dansplugins.factionsystem.player.MfPlayerId
+import com.dansplugins.factionsystem.relationship.MfFactionRelationshipType
 import dev.forkhandles.result4k.mapFailure
 import dev.forkhandles.result4k.resultFrom
 import net.md_5.bungee.api.ChatColor
 import org.bukkit.Chunk
 import org.bukkit.World
-import java.util.concurrent.CopyOnWriteArrayList
+import java.util.*
+import java.util.concurrent.ConcurrentHashMap
 
 class MfClaimService(private val plugin: MedievalFactions, private val repository: MfClaimedChunkRepository) {
 
-    private val claims: MutableList<MfClaimedChunk>
-    fun getClaim(world: World, x: Int, z: Int): MfClaimedChunk? = repository.getClaim(world, x, z)
-    fun getClaim(chunk: Chunk): MfClaimedChunk? = getClaim(chunk.world, chunk.x, chunk.z)
-    fun getClaims(factionId: MfFactionId): List<MfClaimedChunk> = repository.getClaims(factionId)
+    private data class ClaimKey(val worldId: UUID, val x: Int, val z: Int) {
+        constructor(claimedChunk: MfClaimedChunk): this(claimedChunk.worldId, claimedChunk.x, claimedChunk.z)
+    }
+
+    private val claimsByKey: MutableMap<ClaimKey, MfClaimedChunk> = ConcurrentHashMap()
+    private val claims: List<MfClaimedChunk>
+        get() = claimsByKey.values.toList()
 
     init {
         plugin.logger.info("Loading claims...")
         val startTime = System.currentTimeMillis()
-        claims = CopyOnWriteArrayList(repository.getClaims().toMutableList())
-        plugin.logger.info("Claims loaded (${System.currentTimeMillis() - startTime}ms)")
+        claimsByKey.putAll(repository.getClaims().associateBy { ClaimKey(it.worldId, it.x, it.z) })
+        plugin.logger.info("${claimsByKey.size} claims loaded (${System.currentTimeMillis() - startTime}ms)")
+    }
+
+    fun getClaim(world: World, x: Int, z: Int): MfClaimedChunk? = repository.getClaim(world, x, z)
+    fun getClaim(chunk: Chunk): MfClaimedChunk? = getClaim(chunk.world, chunk.x, chunk.z)
+    fun getClaims(factionId: MfFactionId): List<MfClaimedChunk> = repository.getClaims(factionId)
+    fun isInteractionAllowed(playerId: MfPlayerId, claim: MfClaimedChunk): Boolean {
+        val factionService = plugin.services.factionService
+        val playerFaction = factionService.getFaction(playerId) ?: return false
+        if (claim.factionId == playerFaction.id) return true
+        val claimFaction = factionService.getFaction(claim.factionId) ?: return true
+        val relationshipService = plugin.services.factionRelationshipService
+        val vassals = relationshipService.getVassalTree(claim.factionId)
+        if (claimFaction.flags[plugin.flags.vassalageTreeCanInteractWithLand] && vassals.contains(playerFaction.id)) return true
+        val allies = relationshipService.getRelationships(claim.factionId, MfFactionRelationshipType.ALLY).map { it.targetId }
+        if (claimFaction.flags[plugin.flags.alliesCanInteractWithLand] && allies.contains(playerFaction.id)) return true
+        return false
     }
 
     fun save(claim: MfClaimedChunk) = resultFrom {
@@ -36,7 +58,7 @@ class MfClaimService(private val plugin: MedievalFactions, private val repositor
         plugin.server.pluginManager.callEvent(event)
         if (event.isCancelled) throw EventCancelledException("Event cancelled")
         val result = repository.upsert(event.claim)
-        claims.add(event.claim)
+        claimsByKey[ClaimKey(result)] = result
         plugin.server.scheduler.runTask(plugin, Runnable {
             val world = plugin.server.getWorld(event.claim.worldId)
             if (world != null) {
@@ -62,7 +84,7 @@ class MfClaimService(private val plugin: MedievalFactions, private val repositor
         plugin.server.pluginManager.callEvent(event)
         if (event.isCancelled) throw EventCancelledException("Event cancelled")
         val result = repository.delete(event.claim.worldId, event.claim.x, event.claim.z)
-        claims.removeAll { it.worldId == event.claim.worldId && it.x == event.claim.x && it.z == event.claim.z }
+        claimsByKey.remove(ClaimKey(event.claim))
         plugin.server.scheduler.runTask(plugin, Runnable {
             val world = plugin.server.getWorld(event.claim.worldId)
             if (world != null) {
@@ -84,7 +106,10 @@ class MfClaimService(private val plugin: MedievalFactions, private val repositor
 
     fun deleteAllClaims(factionId: MfFactionId) = resultFrom {
         val result = repository.deleteAll(factionId)
-        claims.removeAll { it.factionId.value == factionId.value }
+        val claimsToDelete = claimsByKey.filterValues { it.factionId == factionId }
+        claimsToDelete.forEach { (key, value) ->
+            claimsByKey.remove(key, value)
+        }
         return@resultFrom result
     }.mapFailure { exception ->
         ServiceFailure(exception.toServiceFailureType(), "Service error: ${exception.message}", exception)

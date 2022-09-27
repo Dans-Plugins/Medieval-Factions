@@ -45,14 +45,14 @@ class MfFactionLeaveCommand(private val plugin: MedievalFactions) : CommandExecu
                 return@Runnable
             }
             val role = faction.getRole(mfPlayer.id)
-            if (role != null && faction.members.filter { it.player.id.value != mfPlayer.id.value }.none {
-                    val memberRole = faction.getRole(it.player.id)
+            if (role != null && faction.members.filter { it.playerId != mfPlayer.id }.none {
+                    val memberRole = faction.getRole(it.playerId)
                     memberRole?.hasPermission(faction, SET_MEMBER_ROLE(role.id)) == true
             }) {
                 sender.sendMessage("$RED${plugin.language["CommandFactionLeaveNoOneCanSetYourRole"]}")
                 return@Runnable
             }
-            factionService.save(faction.copy(members = faction.members.filter { it.player.id.value != mfPlayer.id.value }))
+            factionService.save(faction.copy(members = faction.members.filter { it.playerId != mfPlayer.id }))
                 .onFailure {
                     sender.sendMessage("$RED${plugin.language["CommandFactionLeaveFailedToSaveFaction"]}")
                     plugin.logger.log(SEVERE, "Failed to save faction: ${it.reason.message}", it.reason.cause)

@@ -2,10 +2,11 @@ package com.dansplugins.factionsystem.faction
 
 import com.dansplugins.factionsystem.faction.role.MfFactionRole
 import com.dansplugins.factionsystem.player.MfPlayer
+import com.dansplugins.factionsystem.player.MfPlayerId
 
 data class MfFactionMember(
-    val player: MfPlayer,
+    val playerId: MfPlayerId,
     val role: MfFactionRole
 )
 
-fun MfPlayer.withRole(role: MfFactionRole) = MfFactionMember(this, role)
+fun MfPlayer.withRole(role: MfFactionRole) = MfFactionMember(this.id, role)

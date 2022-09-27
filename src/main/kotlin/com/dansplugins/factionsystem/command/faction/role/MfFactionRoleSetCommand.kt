@@ -55,7 +55,7 @@ class MfFactionRoleSetCommand(private val plugin: MedievalFactions) : CommandExe
                 sender.sendMessage("$RED${plugin.language["CommandFactionRoleSetMustBeInAFaction"]}")
                 return@Runnable
             }
-            if (faction.members.none { it.player.id.value == targetMfPlayer.id.value }) {
+            if (faction.members.none { it.playerId == targetMfPlayer.id }) {
                 sender.sendMessage("$RED${plugin.language["CommandFactionRoleSetTargetMustBeInFaction"]}")
                 return@Runnable
             }
@@ -70,7 +70,7 @@ class MfFactionRoleSetCommand(private val plugin: MedievalFactions) : CommandExe
                 return@Runnable
             }
             factionService.save(faction.copy(members = faction.members.map { member ->
-                if (member.player.id.value == targetMfPlayer.id.value) {
+                if (member.playerId == targetMfPlayer.id) {
                     member.copy(role = targetRole)
                 } else {
                     member

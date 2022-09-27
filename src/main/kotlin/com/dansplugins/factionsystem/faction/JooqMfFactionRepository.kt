@@ -160,16 +160,16 @@ class JooqMfFactionRepository(
     private fun upsertMember(dsl: DSLContext, factionId: MfFactionId, member: MfFactionMember, roles: List<MfFactionRole>): MfFactionMember {
         dsl.insertInto(MF_FACTION_MEMBER)
             .set(MF_FACTION_MEMBER.FACTION_ID, factionId.value)
-            .set(MF_FACTION_MEMBER.PLAYER_ID, member.player.id.value)
+            .set(MF_FACTION_MEMBER.PLAYER_ID, member.playerId.value)
             .set(MF_FACTION_MEMBER.ROLE_ID, member.role.id.value)
             .onConflict(MF_FACTION_MEMBER.FACTION_ID, MF_FACTION_MEMBER.PLAYER_ID).doUpdate()
             .set(MF_FACTION_MEMBER.ROLE_ID, member.role.id.value)
             .where(MF_FACTION_MEMBER.FACTION_ID.eq(factionId.value))
-            .and(MF_FACTION_MEMBER.PLAYER_ID.eq(member.player.id.value))
+            .and(MF_FACTION_MEMBER.PLAYER_ID.eq(member.playerId.value))
             .execute()
         return dsl.selectFrom(MF_FACTION_MEMBER)
             .where(MF_FACTION_MEMBER.FACTION_ID.eq(factionId.value))
-            .and(MF_FACTION_MEMBER.PLAYER_ID.eq(member.player.id.value))
+            .and(MF_FACTION_MEMBER.PLAYER_ID.eq(member.playerId.value))
             .fetchOne()
             .let(::requireNotNull)
             .toDomain(roles)
@@ -253,13 +253,10 @@ class JooqMfFactionRepository(
         )
     }
 
-    private fun MfFactionMemberRecord.toDomain(roles: List<MfFactionRole>): MfFactionMember {
-        val player = plugin.services.playerService.getPlayer(playerId.let(::MfPlayerId)).let(::requireNotNull)
-        return MfFactionMember(
-            player,
-            roles.single { it.id.value == roleId }
-        )
-    }
+    private fun MfFactionMemberRecord.toDomain(roles: List<MfFactionRole>): MfFactionMember = MfFactionMember(
+        playerId.let(::MfPlayerId),
+        roles.single { it.id.value == roleId }
+    )
 
     private fun MfFactionInviteRecord.toDomain() =
         MfFactionInvite(
