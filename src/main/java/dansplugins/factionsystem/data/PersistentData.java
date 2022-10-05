@@ -463,7 +463,7 @@ public class PersistentData {
             powerRecord.increasePower();
             playerService.sendMessage(getServer().getPlayer(powerRecord.getPlayerUUID()), ChatColor.GREEN + String.format(localeService.get("AlertPowerLevelIncreasedBy"), configService.getInt("powerIncreaseAmount"))
                     , Objects.requireNonNull(messageService.getLanguage().getString("AlertPowerLevelIncreasedBy"))
-                            .replace("#number#", String.valueOf(configService.getInt("powerIncreaseAmount"))), true);
+                            .replace("#amount#", String.valueOf(configService.getInt("powerIncreaseAmount"))), true);
         }
     }
 
