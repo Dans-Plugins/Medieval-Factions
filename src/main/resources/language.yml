@@ -249,7 +249,7 @@ FactionInfo:
   - "&bPopulation: #pplt#"
   - "&bAllied With: #aw#"
   - "&bAt War With: #aww#"
-  - "&bPower Level: #pl/#pl_max#"
+  - "&bPower Level: #pl#/#pl_max#"
   - "&bDemesne Size: #number#/#max#"
 PluginInfo:
   - "&b== Medieval Factions #version# =="
