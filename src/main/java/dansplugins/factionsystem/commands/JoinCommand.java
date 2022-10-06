@@ -46,22 +46,22 @@ public class JoinCommand extends SubCommand {
         final String permission = "mf.join";
         if (!(checkPermissions(player, permission))) return;
         if (args.length == 0) {
-            playerService.sendMessageType(player, "&c" + getText("UsageJoin"), "UsageJoin", false);
+            playerService.sendMessage(player, "&c" + getText("UsageJoin"), "UsageJoin", false);
             return;
         }
         if (persistentData.isInFaction(player.getUniqueId())) {
-            playerService.sendMessageType(player, "&c" + getText("AlertAlreadyInFaction")
+            playerService.sendMessage(player, "&c" + getText("AlertAlreadyInFaction")
                     , "AlertAlreadyInFaction", false);
             return;
         }
         final Faction target = getFaction(String.join(" ", args));
         if (target == null) {
-            playerService.sendMessageType(player, "&c" + getText("FactionNotFound"), Objects.requireNonNull(messageService.getLanguage().getString("FactionNotFound"))
+            playerService.sendMessage(player, "&c" + getText("FactionNotFound"), Objects.requireNonNull(messageService.getLanguage().getString("FactionNotFound"))
                     .replace("#faction#", String.join(" ", args)), true);
             return;
         }
         if (!target.isInvited(player.getUniqueId())) {
-            playerService.sendMessageType(player, "&cYou are not invited to this faction."
+            playerService.sendMessage(player, "&cYou are not invited to this faction."
                     , "NotInvite", false);
             return;
         }

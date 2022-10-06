@@ -38,7 +38,7 @@ public class ClaimCommand extends SubCommand {
         if ((boolean) faction.getFlags().getFlag("mustBeOfficerToManageLand")) {
             // officer or owner rank required
             if (!faction.isOfficer(player.getUniqueId()) && !faction.isOwner(player.getUniqueId())) {
-                playerService.sendMessageType(player, "&a" + getText("AlertMustBeOfficerOrOwnerToClaimLand"), "AlertMustBeOfficerOrOwnerToClaimLand", false);
+                playerService.sendMessage(player, "&a" + getText("AlertMustBeOfficerOrOwnerToClaimLand"), "AlertMustBeOfficerOrOwnerToClaimLand", false);
                 return;
             }
         }
@@ -47,7 +47,7 @@ public class ClaimCommand extends SubCommand {
             int depth = getIntSafe(args[0], -1);
 
             if (depth <= 0) {
-                playerService.sendMessageType(player, "&a" + getText("UsageClaimRadius"), "UsageClaimRadius", false);
+                playerService.sendMessage(player, "&a" + getText("UsageClaimRadius"), "UsageClaimRadius", false);
             } else {
                 chunkDataAccessor.radiusClaimAtLocation(depth, player, player.getLocation(), faction);
             }

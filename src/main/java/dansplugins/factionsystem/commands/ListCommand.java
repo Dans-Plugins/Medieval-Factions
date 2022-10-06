@@ -54,11 +54,11 @@ public class ListCommand extends SubCommand {
         final String permission = "mf.list";
         if (!(checkPermissions(sender, permission))) return;
         if (persistentData.getNumFactions() == 0) {
-            playerService.sendMessageType(sender, "&b" + getText("CurrentlyNoFactions")
+            playerService.sendMessage(sender, "&b" + getText("CurrentlyNoFactions")
                     , "CurrentlyNoFactions", false);
             return;
         }
-        playerService.sendMessageType(sender, "&b&l" + getText("FactionsTitle")
+        playerService.sendMessage(sender, "&b&l" + getText("FactionsTitle")
                 , "FactionsTitle", false);
         List<PersistentData.SortableFaction> sortedFactionList = persistentData.getSortedListOfFactions();
         sender.sendMessage(ChatColor.AQUA + localeService.get("ListLegend"));

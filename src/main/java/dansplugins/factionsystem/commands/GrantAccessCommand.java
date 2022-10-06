@@ -40,33 +40,33 @@ public class GrantAccessCommand extends SubCommand {
     @Override
     public void execute(Player player, String[] args, String key) {
         if (args.length == 0) {
-            playerService.sendMessageType(player, "&c" + getText("UsageGrantAccess"),
+            playerService.sendMessage(player, "&c" + getText("UsageGrantAccess"),
                     "UsageGrantAccess", false);
             return;
         }
         if (args[0].equalsIgnoreCase("cancel")) {
-            playerService.sendMessageType(player, "&c" + getText("CommandCancelled"), "CommandCancelled", false);
+            playerService.sendMessage(player, "&c" + getText("CommandCancelled"), "CommandCancelled", false);
             return;
         }
         if (ephemeralData.getPlayersGrantingAccess().containsKey(player.getUniqueId())) {
-            playerService.sendMessageType(player, "&c" + getText("AlertAlreadyGrantingAccess")
+            playerService.sendMessage(player, "&c" + getText("AlertAlreadyGrantingAccess")
                     , "AlertAlreadyGrantingAccess", false);
             return;
         }
         UUIDChecker uuidChecker = new UUIDChecker();
         final UUID targetUUID = uuidChecker.findUUIDBasedOnPlayerName(args[0]);
         if (targetUUID == null) {
-            playerService.sendMessageType(player, "&c" + getText("PlayerNotFound")
+            playerService.sendMessage(player, "&c" + getText("PlayerNotFound")
                     , Objects.requireNonNull(messageService.getLanguage().getString("PlayerNotFound")).replace("#name#", args[0]), true);
             return;
         }
         if (targetUUID == player.getUniqueId()) {
-            playerService.sendMessageType(player, "&c" + getText("CannotGrantAccessToSelf")
+            playerService.sendMessage(player, "&c" + getText("CannotGrantAccessToSelf")
                     , "CannotGrantAccessToSelf", false);
             return;
         }
         ephemeralData.getPlayersGrantingAccess().put(player.getUniqueId(), targetUUID);
-        playerService.sendMessageType(player, "&a" + getText("RightClickGrantAccess", args[0])
+        playerService.sendMessage(player, "&a" + getText("RightClickGrantAccess", args[0])
                 , Objects.requireNonNull(messageService.getLanguage().getString("RightClickGrantAccess")).replace("#name#", args[0]), true);
     }
 

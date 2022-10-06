@@ -10,9 +10,7 @@ import dansplugins.factionsystem.commands.abs.SubCommand;
 import dansplugins.factionsystem.data.EphemeralData;
 import dansplugins.factionsystem.data.PersistentData;
 import dansplugins.factionsystem.factories.WarFactory;
-import dansplugins.factionsystem.integrators.CurrenciesIntegrator;
 import dansplugins.factionsystem.integrators.DynmapIntegrator;
-import dansplugins.factionsystem.integrators.FiefsIntegrator;
 import dansplugins.factionsystem.utils.Logger;
 import dansplugins.factionsystem.utils.RelationChecker;
 import dansplugins.factionsystem.utils.extended.Messenger;
@@ -35,7 +33,7 @@ public class CommandService {
     private final MessageService messageService;
     private final Set<SubCommand> subCommands = new HashSet<>();
 
-    public CommandService(LocaleService localeService, MedievalFactions medievalFactions, ConfigService configService, PersistentData persistentData, EphemeralData ephemeralData, PersistentData.ChunkDataAccessor chunkDataAccessor, DynmapIntegrator dynmapIntegrator, WarFactory warFactory, Logger logger, Scheduler scheduler, Messenger messenger, RelationChecker relationChecker, FiefsIntegrator fiefsIntegrator, CurrenciesIntegrator currenciesIntegrator, PlayerService playerService, MessageService messageService) {
+    public CommandService(LocaleService localeService, MedievalFactions medievalFactions, ConfigService configService, PersistentData persistentData, EphemeralData ephemeralData, PersistentData.ChunkDataAccessor chunkDataAccessor, DynmapIntegrator dynmapIntegrator, WarFactory warFactory, Logger logger, Scheduler scheduler, Messenger messenger, RelationChecker relationChecker, PlayerService playerService, MessageService messageService) {
         this.localeService = localeService;
         this.medievalFactions = medievalFactions;
         this.configService = configService;
@@ -52,7 +50,7 @@ public class CommandService {
                 new CheckClaimCommand(localeService, persistentData, ephemeralData, chunkDataAccessor, dynmapIntegrator, configService, playerService, messageService),
                 new ClaimCommand(localeService, persistentData, ephemeralData, chunkDataAccessor, dynmapIntegrator, configService, playerService, messageService),
                 new ConfigCommand(localeService, persistentData, ephemeralData, chunkDataAccessor, dynmapIntegrator, configService, medievalFactions, playerService, messageService),
-                new CreateCommand(localeService, persistentData, ephemeralData, chunkDataAccessor, dynmapIntegrator, configService, fiefsIntegrator, currenciesIntegrator, logger, medievalFactions, playerService, messageService),
+                new CreateCommand(localeService, persistentData, ephemeralData, chunkDataAccessor, dynmapIntegrator, configService, logger, medievalFactions, playerService, messageService),
                 new DeclareIndependenceCommand(localeService, persistentData, ephemeralData, chunkDataAccessor, dynmapIntegrator, configService, playerService, messageService),
                 new DeclareWarCommand(localeService, persistentData, ephemeralData, chunkDataAccessor, dynmapIntegrator, configService, warFactory, playerService, messageService),
                 new DemoteCommand(localeService, persistentData, ephemeralData, chunkDataAccessor, dynmapIntegrator, configService, playerService, messageService),
@@ -61,7 +59,7 @@ public class CommandService {
                 new DuelCommand(localeService, persistentData, ephemeralData, chunkDataAccessor, dynmapIntegrator, configService, medievalFactions, playerService, messageService),
                 new EditLawCommand(localeService, persistentData, ephemeralData, chunkDataAccessor, dynmapIntegrator, configService, playerService, messageService),
                 new FlagsCommand(localeService, persistentData, ephemeralData, chunkDataAccessor, dynmapIntegrator, configService, playerService, messageService),
-                new ForceCommand(localeService, persistentData, ephemeralData, chunkDataAccessor, dynmapIntegrator, configService, medievalFactions, logger, fiefsIntegrator, currenciesIntegrator, playerService, messageService),
+                new ForceCommand(localeService, persistentData, ephemeralData, chunkDataAccessor, dynmapIntegrator, configService, medievalFactions, logger, playerService, messageService),
                 new GateCommand(localeService, persistentData, ephemeralData, chunkDataAccessor, dynmapIntegrator, configService, medievalFactions, playerService, messageService),
                 new GrantAccessCommand(localeService, persistentData, ephemeralData, chunkDataAccessor, dynmapIntegrator, configService, playerService, messageService),
                 new GrantIndependenceCommand(localeService, persistentData, ephemeralData, chunkDataAccessor, dynmapIntegrator, configService, playerService, messageService),
@@ -106,7 +104,7 @@ public class CommandService {
             // no arguments check
             if (args.length == 0) {
                 // send plugin information
-                if (!medievalFactions.USE_NEW_LANGUAGE_FILE) {
+                if (!configService.getBoolean("useNewLanguageFile")) {
                     sender.sendMessage(ChatColor.AQUA + String.format(localeService.get("MedievalFactionsTitle"), medievalFactions.getVersion()));
                     sender.sendMessage(ChatColor.AQUA + String.format(localeService.get("DeveloperList"), medievalFactions.getDescription().getAuthors()));
                     sender.sendMessage(ChatColor.AQUA + localeService.get("WikiLink"));
@@ -116,7 +114,7 @@ public class CommandService {
                     messageService.getLanguage().getStringList("PluginInfo")
                             .forEach(s -> {
                                 s = s.replace("#version#", medievalFactions.getVersion()).replace("#dev#", medievalFactions.getDescription().getAuthors().toString());
-                                playerService.sendMessageType(sender, s, s, true);
+                                playerService.sendMessage(sender, s, s, true);
                             });
                 }
                 return true;
@@ -132,7 +130,7 @@ public class CommandService {
                 }
             }
 
-            playerService.sendMessageType(sender, ChatColor.RED + localeService.get("CommandNotRecognized"), "CommandNotRecognized", false);
+            playerService.sendMessage(sender, ChatColor.RED + localeService.get("CommandNotRecognized"), "CommandNotRecognized", false);
         }
         return false;
     }

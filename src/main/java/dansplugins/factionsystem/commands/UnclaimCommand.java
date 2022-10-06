@@ -43,7 +43,7 @@ public class UnclaimCommand extends SubCommand {
         if ((boolean) faction.getFlags().getFlag("mustBeOfficerToManageLand")) {
             // officer or owner rank required
             if (!faction.isOfficer(player.getUniqueId()) && !faction.isOwner(player.getUniqueId()) && !isPlayerBypassing) {
-                playerService.sendMessageType(player, "&c" + "You're not able to claim land at this time."
+                playerService.sendMessage(player, "&c" + "You're not able to claim land at this time."
                         , "NotAbleToClaim", false);
                 return;
             }
@@ -51,7 +51,7 @@ public class UnclaimCommand extends SubCommand {
         if (args.length == 0) {
             chunkDataAccessor.removeChunkAtPlayerLocation(player, faction);
             dynmapIntegrator.updateClaims();
-            playerService.sendMessageType(player, "&aUnclaimed your current claim."
+            playerService.sendMessage(player, "&aUnclaimed your current claim."
                     , "UnClaimed", false);
             return;
         }
@@ -61,7 +61,7 @@ public class UnclaimCommand extends SubCommand {
             radius = 1;
         }
         chunkDataAccessor.radiusUnclaimAtLocation(radius, player, faction);
-        playerService.sendMessageType(player, "Unclaimed radius of " + radius + " claims around you!"
+        playerService.sendMessage(player, "Unclaimed radius of " + radius + " claims around you!"
                 , Objects.requireNonNull(messageService.getLanguage().getString("UnClaimedRadius"))
                         .replace("#number#", String.valueOf(radius)), true);
     }

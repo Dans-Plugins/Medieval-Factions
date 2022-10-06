@@ -96,12 +96,6 @@
             <scope>provided</scope>
         </dependency>
         <dependency>
-            <groupId>com.github.dmccoystephenson</groupId>
-            <artifactId>Fiefs</artifactId>
-            <version>v0.8</version>
-            <scope>compile</scope>
-        </dependency>
-        <dependency>
             <groupId>com.github.Preponderous-Software</groupId>
             <artifactId>Ponder</artifactId>
             <version>1.0</version>

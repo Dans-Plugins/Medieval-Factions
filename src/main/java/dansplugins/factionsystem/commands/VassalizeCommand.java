@@ -44,31 +44,31 @@ public class VassalizeCommand extends SubCommand {
         final String permission = "mf.vassalize";
         if (!(checkPermissions(player, permission))) return;
         if (args.length == 0) {
-            playerService.sendMessageType(player, "&c" + getText("UsageVassalize")
+            playerService.sendMessage(player, "&c" + getText("UsageVassalize")
                     , "UsageVassalize", false);
             return;
         }
         final Faction target = getFaction(String.join(" ", args));
         if (target == null) {
-            playerService.sendMessageType(player, "&c" + getText("FactionNotFound"), Objects.requireNonNull(messageService.getLanguage().getString("FactionNotFound"))
+            playerService.sendMessage(player, "&c" + getText("FactionNotFound"), Objects.requireNonNull(messageService.getLanguage().getString("FactionNotFound"))
                     .replace("#faction#", String.join(" ", args)), true);
             return;
         }
         // make sure player isn't trying to vassalize their own faction
         if (faction.getName().equalsIgnoreCase(target.getName())) {
-            playerService.sendMessageType(player, "&c" + getText("CannotVassalizeSelf")
+            playerService.sendMessage(player, "&c" + getText("CannotVassalizeSelf")
                     , "CannotVassalizeSelf", false);
             return;
         }
         // make sure player isn't trying to vassalize their liege
         if (target.getName().equalsIgnoreCase(faction.getLiege())) {
-            playerService.sendMessageType(player, "&c" + getText("CannotVassalizeLiege")
+            playerService.sendMessage(player, "&c" + getText("CannotVassalizeLiege")
                     , "CannotVassalizeLiege", false);
             return;
         }
         // make sure player isn't trying to vassalize a vassal
         if (target.hasLiege()) {
-            playerService.sendMessageType(player, "&c" + getText("CannotVassalizeVassal")
+            playerService.sendMessage(player, "&c" + getText("CannotVassalizeVassal")
                     , "CannotVassalizeVassal", false);
             return;
         }

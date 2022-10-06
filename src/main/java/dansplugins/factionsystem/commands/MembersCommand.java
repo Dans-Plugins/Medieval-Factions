@@ -59,20 +59,20 @@ public class MembersCommand extends SubCommand {
         final Faction faction;
         if (args.length == 0) {
             if (!(sender instanceof Player)) {
-                playerService.sendMessageType(sender, getText("OnlyPlayersCanUseCommand")
+                playerService.sendMessage(sender, getText("OnlyPlayersCanUseCommand")
                         , "OnlyPlayersCanUseCommand", false);
                 return;
             }
             faction = getPlayerFaction(sender);
             if (faction == null) {
-                playerService.sendMessageType(sender, getText("AlertMustBeInFactionToUseCommand")
+                playerService.sendMessage(sender, getText("AlertMustBeInFactionToUseCommand")
                         , "AlertMustBeInFactionToUseCommand", false);
                 return;
             }
         } else {
             faction = getFaction(String.join(" ", args));
             if (faction == null) {
-                playerService.sendMessageType(sender, "&c" + getText("FactionNameNotRecognized"),
+                playerService.sendMessage(sender, "&c" + getText("FactionNameNotRecognized"),
                         Objects.requireNonNull(messageService.getLanguage().getString("FactionNotFound"))
                                 .replace("#faction#", String.join(" ", args
                                 )), true);
@@ -80,7 +80,7 @@ public class MembersCommand extends SubCommand {
             }
         }
         // send Faction Members
-        if (!medievalFactions.USE_NEW_LANGUAGE_FILE) {
+        if (!configService.getBoolean("useNewLanguageFile")) {
             sender.sendMessage(translate("&b----------\n" + getText("MembersOf", faction.getName())));
             sender.sendMessage(translate("&b----------\n"));
             faction.getMemberList().stream()
@@ -100,7 +100,7 @@ public class MembersCommand extends SubCommand {
                     }).forEach(sender::sendMessage);
             sender.sendMessage(translate("&b----------\n"));
         } else {
-            playerService.sendMessageType(sender, "", Objects.requireNonNull(messageService.getLanguage().getString("MembersFaction.Title"))
+            playerService.sendMessage(sender, "", Objects.requireNonNull(messageService.getLanguage().getString("MembersFaction.Title"))
                             .replace("#faction#", faction.getName())
                     , true);
             faction.getMemberList().stream()
@@ -121,7 +121,7 @@ public class MembersCommand extends SubCommand {
                                 .replace("#rank#", Objects.requireNonNull(rank))
                                 .replace("#name#", Objects.requireNonNull(player.getName())));
                     }).forEach(sender::sendMessage);
-            playerService.sendMessageType(sender, "", Objects.requireNonNull(messageService.getLanguage().getString("MembersFaction.SubTitle"))
+            playerService.sendMessage(sender, "", Objects.requireNonNull(messageService.getLanguage().getString("MembersFaction.SubTitle"))
                             .replace("#faction#", faction.getName())
                     , true);
 

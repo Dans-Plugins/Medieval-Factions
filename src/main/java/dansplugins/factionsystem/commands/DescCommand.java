@@ -43,13 +43,13 @@ public class DescCommand extends SubCommand {
         }
 
         if (args.length == 0) {
-            playerService.sendMessageType(player, "&c" + getText("UsageDesc")
+            playerService.sendMessage(player, "&c" + getText("UsageDesc")
                     , "UsageDesc", false);
             return;
         }
 
         faction.setDescription(String.join(" ", args));
-        playerService.sendMessageType(player, "&c" + getText("DescriptionSet")
+        playerService.sendMessage(player, "&c" + getText("DescriptionSet")
                 , Objects.requireNonNull(messageService.getLanguage().getString("Description"))
                         .replace("#desc#", String.join(" ", args)), true);
     }

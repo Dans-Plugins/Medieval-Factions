@@ -54,19 +54,19 @@ public class UnclaimallCommand extends SubCommand {
         if (args.length == 0) {
             // Self
             if (!(sender instanceof Player)) {
-                playerService.sendMessageType(sender, getText("OnlyPlayersCanUseCommand")
+                playerService.sendMessage(sender, getText("OnlyPlayersCanUseCommand")
                         , "OnlyPlayersCanUseCommand", false);
                 return;
             }
             if (!(checkPermissions(sender, "mf.unclaimall"))) return;
             faction = getPlayerFaction(sender);
             if (faction == null) {
-                playerService.sendMessageType(sender, "&c" + getText("AlertMustBeInFactionToUseCommand"),
+                playerService.sendMessage(sender, "&c" + getText("AlertMustBeInFactionToUseCommand"),
                         "AlertMustBeInFactionToUseCommand", false);
                 return;
             }
             if (!faction.isOwner(((Player) sender).getUniqueId())) {
-                playerService.sendMessageType(sender, "&c" + getText("AlertMustBeOwnerToUseCommand"),
+                playerService.sendMessage(sender, "&c" + getText("AlertMustBeOwnerToUseCommand"),
                         "AlertMustBeOwnerToUseCommand", false);
                 return;
             }
@@ -74,7 +74,7 @@ public class UnclaimallCommand extends SubCommand {
             if (!(checkPermissions(sender, "mf.unclaimall.others", "mf.admin"))) return;
             faction = getFaction(String.join(" ", args));
             if (faction == null) {
-                playerService.sendMessageType(sender, "&c" + getText("FactionNotFound"),
+                playerService.sendMessage(sender, "&c" + getText("FactionNotFound"),
                         Objects.requireNonNull(messageService.getLanguage().getString("FactionNotFound"))
                                 .replace("#faction#", String.join(" ", args)), true);
                 return;
@@ -88,7 +88,7 @@ public class UnclaimallCommand extends SubCommand {
         // remove claimed chunks
         chunkDataAccessor.removeAllClaimedChunks(faction.getName());
         dynmapIntegrator.updateClaims();
-        playerService.sendMessageType(sender, "&a" + getText("AllLandUnclaimedFrom", faction.getName())
+        playerService.sendMessage(sender, "&a" + getText("AllLandUnclaimedFrom", faction.getName())
                 , Objects.requireNonNull(messageService.getLanguage().getString("AllLandUnclaimedFrom"))
                         .replace("#name#", faction.getName()), false);
 

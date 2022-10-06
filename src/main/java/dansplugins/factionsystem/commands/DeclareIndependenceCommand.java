@@ -44,13 +44,13 @@ public class DeclareIndependenceCommand extends SubCommand {
         }
 
         if (!(this.faction.hasLiege()) || this.faction.getLiege() == null) {
-            playerService.sendMessageType(player, "&c" + getText("NotAVassalOfAFaction"), "NotAVassalOfAFaction", false);
+            playerService.sendMessage(player, "&c" + getText("NotAVassalOfAFaction"), "NotAVassalOfAFaction", false);
             return;
         }
 
         final Faction liege = getFaction(this.faction.getLiege());
         if (liege == null) {
-            playerService.sendMessageType(player, "&c" + getText("FactionNotFound"), Objects.requireNonNull(messageService.getLanguage().getString("FactionNotFound")).replace("#faction#", String.join(" ", args)), true);
+            playerService.sendMessage(player, "&c" + getText("FactionNotFound"), Objects.requireNonNull(messageService.getLanguage().getString("FactionNotFound")).replace("#faction#", String.join(" ", args)), true);
             return;
         }
 

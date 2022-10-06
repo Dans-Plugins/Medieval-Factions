@@ -44,48 +44,48 @@ public class PromoteCommand extends SubCommand {
         final String permission = "mf.promote";
         if (!(checkPermissions(player, permission))) return;
         if (args.length == 0) {
-            playerService.sendMessageType(player, "&c" + getText("UsagePromote")
+            playerService.sendMessage(player, "&c" + getText("UsagePromote")
                     , "UsagePromote", false);
             return;
         }
         UUIDChecker uuidChecker = new UUIDChecker();
         final UUID targetUUID = uuidChecker.findUUIDBasedOnPlayerName(args[0]);
         if (targetUUID == null) {
-            playerService.sendMessageType(player, "&c" + getText("PlayerNotFound"), Objects.requireNonNull(messageService.getLanguage().getString("PlayerNotFound")).replace("#name#", args[0]), true);
+            playerService.sendMessage(player, "&c" + getText("PlayerNotFound"), Objects.requireNonNull(messageService.getLanguage().getString("PlayerNotFound")).replace("#name#", args[0]), true);
             return;
         }
         OfflinePlayer target = Bukkit.getOfflinePlayer(targetUUID);
         if (!target.hasPlayedBefore()) {
             target = Bukkit.getPlayer(args[0]);
             if (target == null) {
-                playerService.sendMessageType(player, "&c" + getText("PlayerNotFound"), Objects.requireNonNull(messageService.getLanguage().getString("PlayerNotFound")).replace("#name#", args[0]), true);
+                playerService.sendMessage(player, "&c" + getText("PlayerNotFound"), Objects.requireNonNull(messageService.getLanguage().getString("PlayerNotFound")).replace("#name#", args[0]), true);
                 return;
             }
         }
         if (!faction.isMember(targetUUID)) {
-            playerService.sendMessageType(player, "&c" + getText("PlayerIsNotMemberOfFaction")
+            playerService.sendMessage(player, "&c" + getText("PlayerIsNotMemberOfFaction")
                     , "PlayerIsNotMemberOfFaction", false);
             return;
         }
         if (faction.isOfficer(targetUUID)) {
-            playerService.sendMessageType(player, "&c" + getText("PlayerAlreadyOfficer")
+            playerService.sendMessage(player, "&c" + getText("PlayerAlreadyOfficer")
                     , "PlayerAlreadyOfficer", false);
             return;
         }
         if (targetUUID == player.getUniqueId()) {
-            playerService.sendMessageType(player, "&c" + getText("CannotPromoteSelf")
+            playerService.sendMessage(player, "&c" + getText("CannotPromoteSelf")
                     , "CannotPromoteSelf", false);
             return;
         }
         if (faction.addOfficer(targetUUID)) {
-            playerService.sendMessageType(player, "&a" + getText("PlayerPromoted")
+            playerService.sendMessage(player, "&a" + getText("PlayerPromoted")
                     , "PlayerPromoted", false);
             if (target.isOnline() && target.getPlayer() != null) {
-                playerService.sendMessageType(target.getPlayer(), "&a" + getText("PromotedToOfficer")
+                playerService.sendMessage(target.getPlayer(), "&a" + getText("PromotedToOfficer")
                         , "PromotedToOfficer", false);
             }
         } else {
-            playerService.sendMessageType(player, "&c" +
+            playerService.sendMessage(player, "&c" +
                             getText("PlayerCantBePromotedBecauseOfLimit", faction.calculateMaxOfficers())
                     , Objects.requireNonNull(messageService.getLanguage().getString("PlayerCantBePromotedBecauseOfLimit"))
                             .replace("#number#", String.valueOf(faction.calculateMaxOfficers())), true);
