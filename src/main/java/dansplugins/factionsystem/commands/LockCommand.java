@@ -10,6 +10,8 @@ import dansplugins.factionsystem.data.PersistentData;
 import dansplugins.factionsystem.integrators.DynmapIntegrator;
 import dansplugins.factionsystem.services.ConfigService;
 import dansplugins.factionsystem.services.LocaleService;
+import dansplugins.factionsystem.services.MessageService;
+import dansplugins.factionsystem.services.PlayerService;
 import dansplugins.factionsystem.utils.RelationChecker;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
@@ -20,10 +22,10 @@ import org.bukkit.entity.Player;
 public class LockCommand extends SubCommand {
     private final RelationChecker relationChecker;
 
-    public LockCommand(LocaleService localeService, PersistentData persistentData, EphemeralData ephemeralData, PersistentData.ChunkDataAccessor chunkDataAccessor, DynmapIntegrator dynmapIntegrator, ConfigService configService, RelationChecker relationChecker) {
+    public LockCommand(LocaleService localeService, PersistentData persistentData, EphemeralData ephemeralData, PersistentData.ChunkDataAccessor chunkDataAccessor, DynmapIntegrator dynmapIntegrator, ConfigService configService, RelationChecker relationChecker, PlayerService playerService, MessageService messageService) {
         super(new String[]{
                 "lock", LOCALE_PREFIX + "CmdLock"
-        }, true, persistentData, localeService, ephemeralData, configService, chunkDataAccessor, dynmapIntegrator);
+        }, true, persistentData, localeService, ephemeralData, configService, playerService, messageService, chunkDataAccessor, dynmapIntegrator);
         this.relationChecker = relationChecker;
     }
 
@@ -45,13 +47,15 @@ public class LockCommand extends SubCommand {
         }
         if (args.length >= 1 && safeEquals(args[0], "cancel")) {
             if (ephemeralData.getLockingPlayers().remove(player.getUniqueId())) { // Remove them
-                player.sendMessage(translate("&c" + getText("LockingCancelled")));
+                playerService.sendMessage(player, "&c" + getText("LockingCancelled"),
+                        "LockingCancelled", false);
                 return;
             }
         }
         ephemeralData.getLockingPlayers().add(player.getUniqueId());
         ephemeralData.getUnlockingPlayers().remove(player.getUniqueId());
-        player.sendMessage(translate("&a" + getText("RightClickLock")));
+        playerService.sendMessage(player, "&a" + getText("RightClickLock")
+                , "RightClickLock", false);
     }
 
     /**

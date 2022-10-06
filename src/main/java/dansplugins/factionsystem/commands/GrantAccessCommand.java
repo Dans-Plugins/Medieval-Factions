@@ -10,10 +10,13 @@ import dansplugins.factionsystem.data.PersistentData;
 import dansplugins.factionsystem.integrators.DynmapIntegrator;
 import dansplugins.factionsystem.services.ConfigService;
 import dansplugins.factionsystem.services.LocaleService;
+import dansplugins.factionsystem.services.MessageService;
+import dansplugins.factionsystem.services.PlayerService;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import preponderous.ponder.minecraft.bukkit.tools.UUIDChecker;
 
+import java.util.Objects;
 import java.util.UUID;
 
 /**
@@ -21,10 +24,10 @@ import java.util.UUID;
  */
 public class GrantAccessCommand extends SubCommand {
 
-    public GrantAccessCommand(LocaleService localeService, PersistentData persistentData, EphemeralData ephemeralData, PersistentData.ChunkDataAccessor chunkDataAccessor, DynmapIntegrator dynmapIntegrator, ConfigService configService) {
+    public GrantAccessCommand(LocaleService localeService, PersistentData persistentData, EphemeralData ephemeralData, PersistentData.ChunkDataAccessor chunkDataAccessor, DynmapIntegrator dynmapIntegrator, ConfigService configService, PlayerService playerService, MessageService messageService) {
         super(new String[]{
                 "grantaccess", "ga", LOCALE_PREFIX + "CmdGrantAccess"
-        }, true, persistentData, localeService, ephemeralData, configService, chunkDataAccessor, dynmapIntegrator);
+        }, true, persistentData, localeService, ephemeralData, configService, playerService, messageService, chunkDataAccessor, dynmapIntegrator);
     }
 
     /**
@@ -37,29 +40,34 @@ public class GrantAccessCommand extends SubCommand {
     @Override
     public void execute(Player player, String[] args, String key) {
         if (args.length == 0) {
-            player.sendMessage(translate("&c" + getText("UsageGrantAccess")));
+            playerService.sendMessage(player, "&c" + getText("UsageGrantAccess"),
+                    "UsageGrantAccess", false);
             return;
         }
         if (args[0].equalsIgnoreCase("cancel")) {
-            player.sendMessage(translate("&c" + getText("CommandCancelled")));
+            playerService.sendMessage(player, "&c" + getText("CommandCancelled"), "CommandCancelled", false);
             return;
         }
         if (ephemeralData.getPlayersGrantingAccess().containsKey(player.getUniqueId())) {
-            player.sendMessage(translate("&c" + getText("AlertAlreadyGrantingAccess")));
+            playerService.sendMessage(player, "&c" + getText("AlertAlreadyGrantingAccess")
+                    , "AlertAlreadyGrantingAccess", false);
             return;
         }
         UUIDChecker uuidChecker = new UUIDChecker();
         final UUID targetUUID = uuidChecker.findUUIDBasedOnPlayerName(args[0]);
         if (targetUUID == null) {
-            player.sendMessage(translate("&c" + getText("PlayerNotFound")));
+            playerService.sendMessage(player, "&c" + getText("PlayerNotFound")
+                    , Objects.requireNonNull(messageService.getLanguage().getString("PlayerNotFound")).replace("#name#", args[0]), true);
             return;
         }
         if (targetUUID == player.getUniqueId()) {
-            player.sendMessage(translate("&c" + getText("CannotGrantAccessToSelf")));
+            playerService.sendMessage(player, "&c" + getText("CannotGrantAccessToSelf")
+                    , "CannotGrantAccessToSelf", false);
             return;
         }
         ephemeralData.getPlayersGrantingAccess().put(player.getUniqueId(), targetUUID);
-        player.sendMessage(translate("&a" + getText("RightClickGrantAccess", args[0])));
+        playerService.sendMessage(player, "&a" + getText("RightClickGrantAccess", args[0])
+                , Objects.requireNonNull(messageService.getLanguage().getString("RightClickGrantAccess")).replace("#name#", args[0]), true);
     }
 
     /**

@@ -10,6 +10,8 @@ import dansplugins.factionsystem.data.PersistentData;
 import dansplugins.factionsystem.integrators.DynmapIntegrator;
 import dansplugins.factionsystem.services.ConfigService;
 import dansplugins.factionsystem.services.LocaleService;
+import dansplugins.factionsystem.services.MessageService;
+import dansplugins.factionsystem.services.PlayerService;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
@@ -18,10 +20,10 @@ import org.bukkit.entity.Player;
  */
 public class CheckAccessCommand extends SubCommand {
 
-    public CheckAccessCommand(LocaleService localeService, PersistentData persistentData, EphemeralData ephemeralData, PersistentData.ChunkDataAccessor chunkDataAccessor, DynmapIntegrator dynmapIntegrator, ConfigService configService) {
+    public CheckAccessCommand(LocaleService localeService, PersistentData persistentData, EphemeralData ephemeralData, PersistentData.ChunkDataAccessor chunkDataAccessor, DynmapIntegrator dynmapIntegrator, ConfigService configService, PlayerService playerService, MessageService messageService) {
         super(new String[]{
                 "ca", "checkaccess", LOCALE_PREFIX + "CmdCheckAccess"
-        }, true, persistentData, localeService, ephemeralData, configService, chunkDataAccessor, dynmapIntegrator);
+        }, true, persistentData, localeService, ephemeralData, configService, playerService, messageService, chunkDataAccessor, dynmapIntegrator);
     }
 
     /**
@@ -46,13 +48,13 @@ public class CheckAccessCommand extends SubCommand {
 
         if (cancel && contains) {
             ephemeralData.getPlayersCheckingAccess().remove(player.getUniqueId());
-            player.sendMessage(translate("&c" + getText("Cancelled")));
+            playerService.sendMessage(player, "&c" + getText("Cancelled"), "Cancelled", false);
         } else {
             if (contains) {
-                player.sendMessage(translate("&c" + getText("AlreadyEnteredCheckAccess")));
+                playerService.sendMessage(player, "&c" + getText("AlreadyEnteredCheckAccess"), "AlreadyEnteredCheckAccess", false);
             } else {
                 ephemeralData.getPlayersCheckingAccess().add(player.getUniqueId());
-                player.sendMessage(translate("&a" + getText("RightClickCheckAccess")));
+                playerService.sendMessage(player, "&a" + getText("RightClickCheckAccess"), "RightClickCheckAccess", false);
             }
         }
     }

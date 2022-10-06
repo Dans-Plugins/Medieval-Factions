@@ -4,12 +4,15 @@
  */
 package dansplugins.factionsystem.commands;
 
+import dansplugins.factionsystem.MedievalFactions;
 import dansplugins.factionsystem.commands.abs.SubCommand;
 import dansplugins.factionsystem.data.EphemeralData;
 import dansplugins.factionsystem.data.PersistentData;
 import dansplugins.factionsystem.integrators.DynmapIntegrator;
 import dansplugins.factionsystem.services.ConfigService;
 import dansplugins.factionsystem.services.LocaleService;
+import dansplugins.factionsystem.services.MessageService;
+import dansplugins.factionsystem.services.PlayerService;
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
@@ -18,10 +21,13 @@ import org.bukkit.entity.Player;
  * @author Callum Johnson
  */
 public class StatsCommand extends SubCommand {
-    public StatsCommand(LocaleService localeService, PersistentData persistentData, EphemeralData ephemeralData, PersistentData.ChunkDataAccessor chunkDataAccessor, DynmapIntegrator dynmapIntegrator, ConfigService configService) {
+    private MedievalFactions medievalFactions;
+
+    public StatsCommand(LocaleService localeService, PersistentData persistentData, EphemeralData ephemeralData, PersistentData.ChunkDataAccessor chunkDataAccessor, DynmapIntegrator dynmapIntegrator, ConfigService configService, PlayerService playerService, MessageService messageService, MedievalFactions medievalFactions) {
         super(new String[]{
                 "stats", LOCALE_PREFIX + "CmdStats"
-        }, false, false, false, false, localeService, persistentData, ephemeralData, chunkDataAccessor, dynmapIntegrator, configService);
+        }, false, false, false, false, localeService, persistentData, ephemeralData, chunkDataAccessor, dynmapIntegrator, configService, playerService, messageService);
+        this.medievalFactions = medievalFactions;
     }
 
     @Override
@@ -31,7 +37,18 @@ public class StatsCommand extends SubCommand {
 
     @Override
     public void execute(CommandSender sender, String[] args, String key) {
-        sender.sendMessage(ChatColor.AQUA + "=== Medieval Factions Stats ===");
-        sender.sendMessage(ChatColor.AQUA + "Number of factions: " + persistentData.getNumFactions());
+        if (!configService.getBoolean("useNewLanguageFile")) {
+            sender.sendMessage(ChatColor.AQUA + "=== Medieval Factions Stats ===");
+            sender.sendMessage(ChatColor.AQUA + "Number of factions: " + persistentData.getNumFactions());
+        } else {
+            messageService.getLanguage().getStringList("StatsFaction")
+                    .forEach(s -> {
+                        if (s.contains("#faction#")) {
+                            s = s.replace("#faction#", String.valueOf(persistentData.getNumFactions()));
+                        }
+                        s = playerService.colorize(s);
+                        playerService.sendMessage(sender, "", s, true);
+                    });
+        }
     }
 }

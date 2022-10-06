@@ -12,19 +12,21 @@ import dansplugins.factionsystem.integrators.DynmapIntegrator;
 import dansplugins.factionsystem.objects.domain.Faction;
 import dansplugins.factionsystem.services.ConfigService;
 import dansplugins.factionsystem.services.LocaleService;
+import dansplugins.factionsystem.services.MessageService;
+import dansplugins.factionsystem.services.PlayerService;
 import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
+
+import java.util.Objects;
 
 /**
  * @author Callum Johnson
  */
 public class DeclareIndependenceCommand extends SubCommand {
 
-    public DeclareIndependenceCommand(LocaleService localeService, PersistentData persistentData, EphemeralData ephemeralData, PersistentData.ChunkDataAccessor chunkDataAccessor, DynmapIntegrator dynmapIntegrator, ConfigService configService) {
-        super(new String[]{
-                "declareindependence", "di", LOCALE_PREFIX + "CmdDeclareIndependence"
-        }, true, true, false, true, localeService, persistentData, ephemeralData, chunkDataAccessor, dynmapIntegrator, configService);
+    public DeclareIndependenceCommand(LocaleService localeService, PersistentData persistentData, EphemeralData ephemeralData, PersistentData.ChunkDataAccessor chunkDataAccessor, DynmapIntegrator dynmapIntegrator, ConfigService configService, PlayerService playerService, MessageService messageService) {
+        super(new String[]{"declareindependence", "di", LOCALE_PREFIX + "CmdDeclareIndependence"}, true, true, false, true, localeService, persistentData, ephemeralData, chunkDataAccessor, dynmapIntegrator, configService, playerService, messageService);
     }
 
     /**
@@ -42,13 +44,13 @@ public class DeclareIndependenceCommand extends SubCommand {
         }
 
         if (!(this.faction.hasLiege()) || this.faction.getLiege() == null) {
-            player.sendMessage(translate("&c" + getText("NotAVassalOfAFaction")));
+            playerService.sendMessage(player, "&c" + getText("NotAVassalOfAFaction"), "NotAVassalOfAFaction", false);
             return;
         }
 
         final Faction liege = getFaction(this.faction.getLiege());
         if (liege == null) {
-            player.sendMessage(translate("&c" + getText("FactionNotFound")));
+            playerService.sendMessage(player, "&c" + getText("FactionNotFound"), Objects.requireNonNull(messageService.getLanguage().getString("FactionNotFound")).replace("#faction#", String.join(" ", args)), true);
             return;
         }
 
@@ -72,7 +74,8 @@ public class DeclareIndependenceCommand extends SubCommand {
                 }
             }
         }
-        messageServer(translate("&c" + getText("HasDeclaredIndependence", faction.getName(), liege.getName())));
+        messageServer("&c" + getText("HasDeclaredIndependence", faction.getName(), liege.getName()), Objects.requireNonNull(messageService.getLanguage().getString("HasDeclaredIndependence")).replace("#faction_a#", faction.getName()).replace("#faction_b#", liege.getName()));
+
     }
 
     /**

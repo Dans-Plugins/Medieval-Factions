@@ -1,9 +1,9 @@
 name: MedievalFactions
 version: '@version@'
-authors: [DanTheTechMan, Pasarus, Caibinus, Callum, Richardhyy, Mitras2, Kaonami, GoodLucky777, Elafir, Deej, VoChiDanh, alyphen]
+authors: [DanTheTechMan, Pasarus, Caibinus, Callum, Richardhyy, Mitras2, Kaonami, GoodLucky777, Elafir, Deej, VoChiDanh, alyphen, JackAttack924]
 main: dansplugins.factionsystem.MedievalFactions
 api-version: 1.13
-softdepend: [dynmap, PlaceholderAPI, Fiefs]
+softdepend: [ dynmap, PlaceholderAPI]
 description: This Minecraft plugin allows players to organize themselves into feudal, diplomatic, lawful groups akin to nations.
 
 commands:

@@ -9,14 +9,13 @@ import com.google.gson.GsonBuilder;
 import com.google.gson.reflect.TypeToken;
 import dansplugins.factionsystem.MedievalFactions;
 import dansplugins.factionsystem.data.PersistentData;
-import dansplugins.factionsystem.integrators.CurrenciesIntegrator;
 import dansplugins.factionsystem.integrators.DynmapIntegrator;
-import dansplugins.factionsystem.integrators.FiefsIntegrator;
 import dansplugins.factionsystem.objects.helper.FactionFlags;
 import dansplugins.factionsystem.objects.inherited.Nation;
 import dansplugins.factionsystem.objects.inherited.specification.Feudal;
 import dansplugins.factionsystem.services.ConfigService;
 import dansplugins.factionsystem.services.LocaleService;
+import dansplugins.factionsystem.services.PlayerService;
 import dansplugins.factionsystem.utils.Logger;
 import org.bukkit.Location;
 import org.bukkit.World;
@@ -35,12 +34,11 @@ import static org.bukkit.Bukkit.getServer;
 public class Faction extends Nation implements Feudal, Savable {
     private final ConfigService configService;
     private final LocaleService localeService;
-    private final FiefsIntegrator fiefsIntegrator;
-    private final CurrenciesIntegrator currenciesIntegrator;
     private final DynmapIntegrator dynmapIntegrator;
     private final Logger logger;
     private final PersistentData persistentData;
     private final MedievalFactions medievalFactions;
+    private final PlayerService playerService;
 
     private final ArrayList<Gate> gates = new ArrayList<>();
     private final FactionFlags flags;
@@ -52,47 +50,44 @@ public class Faction extends Nation implements Feudal, Savable {
     private int bonusPower = 0;
     private boolean autoclaim = false;
 
-    public Faction(String initialName, UUID creator, ConfigService configService, LocaleService localeService, FiefsIntegrator fiefsIntegrator, CurrenciesIntegrator currenciesIntegrator, DynmapIntegrator dynmapIntegrator, Logger logger, PersistentData persistentData, MedievalFactions medievalFactions) {
+    public Faction(String initialName, UUID creator, ConfigService configService, LocaleService localeService, DynmapIntegrator dynmapIntegrator, Logger logger, PersistentData persistentData, MedievalFactions medievalFactions, PlayerService playerService) {
         this.configService = configService;
         this.localeService = localeService;
-        this.fiefsIntegrator = fiefsIntegrator;
-        this.currenciesIntegrator = currenciesIntegrator;
         this.dynmapIntegrator = dynmapIntegrator;
         this.logger = logger;
         this.persistentData = persistentData;
         this.medievalFactions = medievalFactions;
+        this.playerService = playerService;
         setName(initialName);
         setOwner(creator);
         prefix = initialName;
-        flags = new FactionFlags(configService, localeService, fiefsIntegrator, currenciesIntegrator, dynmapIntegrator, logger);
+        flags = new FactionFlags(configService, localeService, dynmapIntegrator, logger, this.playerService);
         flags.initializeFlagValues();
     }
 
-    public Faction(ConfigService configService, LocaleService localeService, FiefsIntegrator fiefsIntegrator, CurrenciesIntegrator currenciesIntegrator, DynmapIntegrator dynmapIntegrator, Logger logger, PersistentData persistentData, MedievalFactions medievalFactions, String initialName) {
+    public Faction(ConfigService configService, LocaleService localeService, DynmapIntegrator dynmapIntegrator, Logger logger, PersistentData persistentData, MedievalFactions medievalFactions, PlayerService playerService, String initialName) {
         this.configService = configService;
         this.localeService = localeService;
-        this.fiefsIntegrator = fiefsIntegrator;
-        this.currenciesIntegrator = currenciesIntegrator;
         this.dynmapIntegrator = dynmapIntegrator;
         this.logger = logger;
         this.persistentData = persistentData;
         this.medievalFactions = medievalFactions;
+        this.playerService = playerService;
         setName(initialName);
         prefix = initialName;
-        flags = new FactionFlags(configService, localeService, fiefsIntegrator, currenciesIntegrator, dynmapIntegrator, logger);
+        flags = new FactionFlags(configService, localeService, dynmapIntegrator, logger, this.playerService);
         flags.initializeFlagValues();
     }
 
-    public Faction(Map<String, String> data, ConfigService configService, LocaleService localeService, FiefsIntegrator fiefsIntegrator, CurrenciesIntegrator currenciesIntegrator, DynmapIntegrator dynmapIntegrator, Logger logger, PersistentData persistentData, MedievalFactions medievalFactions) {
+    public Faction(Map<String, String> data, ConfigService configService, LocaleService localeService, DynmapIntegrator dynmapIntegrator, Logger logger, PersistentData persistentData, MedievalFactions medievalFactions, PlayerService playerService) {
         this.configService = configService;
         this.localeService = localeService;
-        this.fiefsIntegrator = fiefsIntegrator;
-        this.currenciesIntegrator = currenciesIntegrator;
         this.dynmapIntegrator = dynmapIntegrator;
         this.logger = logger;
         this.persistentData = persistentData;
         this.medievalFactions = medievalFactions;
-        flags = new FactionFlags(configService, localeService, fiefsIntegrator, currenciesIntegrator, dynmapIntegrator, logger);
+        this.playerService = playerService;
+        flags = new FactionFlags(configService, localeService, dynmapIntegrator, logger, this.playerService);
         this.load(data);
     }
 

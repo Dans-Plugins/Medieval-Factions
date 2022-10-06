@@ -11,9 +11,13 @@ import dansplugins.factionsystem.integrators.DynmapIntegrator;
 import dansplugins.factionsystem.objects.domain.Faction;
 import dansplugins.factionsystem.services.ConfigService;
 import dansplugins.factionsystem.services.LocaleService;
+import dansplugins.factionsystem.services.MessageService;
+import dansplugins.factionsystem.services.PlayerService;
 import dansplugins.factionsystem.utils.extended.Messenger;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
+
+import java.util.Objects;
 
 /**
  * @author Callum Johnson
@@ -21,10 +25,10 @@ import org.bukkit.entity.Player;
 public class InfoCommand extends SubCommand {
     private final Messenger messenger;
 
-    public InfoCommand(LocaleService localeService, PersistentData persistentData, EphemeralData ephemeralData, PersistentData.ChunkDataAccessor chunkDataAccessor, DynmapIntegrator dynmapIntegrator, ConfigService configService, Messenger messenger) {
+    public InfoCommand(LocaleService localeService, PersistentData persistentData, EphemeralData ephemeralData, PersistentData.ChunkDataAccessor chunkDataAccessor, DynmapIntegrator dynmapIntegrator, ConfigService configService, Messenger messenger, PlayerService playerService, MessageService messageService) {
         super(new String[]{
                 "info", LOCALE_PREFIX + "CmdInfo"
-        }, false, persistentData, localeService, ephemeralData, configService, chunkDataAccessor, dynmapIntegrator);
+        }, false, persistentData, localeService, ephemeralData, configService, playerService, messageService, chunkDataAccessor, dynmapIntegrator);
         this.messenger = messenger;
     }
 
@@ -54,18 +58,22 @@ public class InfoCommand extends SubCommand {
         final Faction target;
         if (args.length == 0) {
             if (!(sender instanceof Player)) {
-                sender.sendMessage(translate(getText("OnlyPlayersCanUseCommand")));
+                playerService.sendMessage(sender, getText("OnlyPlayersCanUseCommand")
+                        , "OnlyPlayersCanUseCommand", false);
                 return;
             }
             target = getPlayerFaction(sender);
             if (target == null) {
-                sender.sendMessage(translate("&c" + getText("AlertMustBeInFactionToUseCommand")));
+                playerService.sendMessage(sender, "&c" + getText("AlertMustBeInFactionToUseCommand")
+                        , "AlertMustBeInFactionToUseCommand", false);
                 return;
             }
         } else {
             target = getFaction(String.join(" ", args));
             if (target == null) {
-                sender.sendMessage(translate("&c" + getText("FactionNotFound")));
+                playerService.sendMessage(sender, "&c" + getText("FactionNotFound")
+                        , Objects.requireNonNull(messageService.getLanguage().getString("FactionNotFound"))
+                                .replace("#faction#", String.join(" ", args)), true);
                 return;
             }
         }

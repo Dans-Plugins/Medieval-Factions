@@ -84,8 +84,8 @@ AlreadyEnteredCheckAccess	Ya has usado este comando. Escribe '/mf veracceso canc
 AlreadyEnteredRevokeAccess	Ya has usado este comando. Escribe '/mf quitaracceso cancelar' para cancelar.
 AlreadyInFaction	Perdona, ya estás en una facción. Abandónala si quieres crear una distinta.
 ArgumentMustBeNumber	El argumento debe ser un número.
-ArgumentsSingleQuotesRequirement	Los argumentos deben designarse entre comillas simples. 
-AssignedToRandomFaction	Te han asignado a una facción aleatoria. 
+ArgumentsSingleQuotesRequirement	Los argumentos deben designarse entre comillas simples.
+AssignedToRandomFaction	Te han asignado a una facción aleatoria.
 AttemptedAlliance	Alianza intentada con %s
 AttemptedPeace	Pan intentada con %s
 AtWarWith	En Conflicto con: %s
@@ -161,8 +161,8 @@ CmdDuelAccept	aceptar
 CmdDuelCancel	cancelar
 CmdDuelChallenge	desafiar
 CmdEditLaw	editarley
-CmdFlags	banderas 
-CmdFlagsSet	colocar 
+CmdFlags	banderas
+CmdFlagsSet	colocar
 CmdFlagsShow	show
 CmdForce	forzar
 CmdForceBonusPower	extrapoder
@@ -313,7 +313,7 @@ HelpDuelAccept	/mf duelo aceptar (<opcional>jugador)
 HelpDuelCancel	/mf duelo cancelar
 HelpDuelChallenge	/mf duelo desafiar (jugador) (<opcional>límite de tiempo en segundos)
 HelpEditLaw	/mf editarley - Edita una ley que ya existe en tu facción.
-HelpFlagsSet	/mf banderas colocar (opción) (valor): establece una bandera de facción. 
+HelpFlagsSet	/mf banderas colocar (opción) (valor): establece una bandera de facción.
 HelpFlagsShow	/mf banderas show - Muestra banderas de facción.
 HelpForce	/mf forzar - Fuerza al plugin a realizar ciertas acciones.
 HelpForceBonusPower	/mf forzar extrapoder 'facción' 'número'
@@ -509,7 +509,7 @@ UsageDeclareWar	Uso: /mf declararconflicto (facción)
 UsageDemote	Uso: /mf degradar (jugador)
 UsageDesc	Uso: /mf desc (descripción)
 UsageEditLaw	Uso: /mf editarley (número) (ley editada)
-UsageFlagsSet	Uso: /mf banderas colocar (opción) (valor) 
+UsageFlagsSet	Uso: /mf banderas colocar (opción) (valor)
 UsageForceBonusPower	Uso: /mf forzar extrapoder 'facción' 'número'
 UsageForceClaim	Uso: /mf force reclamo 'nombre de facción'
 UsageForceCreate	Uso: /mf forzar crear 'facción'

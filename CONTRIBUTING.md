@@ -3,7 +3,6 @@
 Thank you so much for being willing to contribute to this project! It wouldn't be where it is today without the help of others. Please feel free to fork the repository and contact me on my [support discord server](https://discord.gg/xXtuAQ2).
 
 ## Some Things To Know
-- I use ZenHub to manage repository issues. This is optional for contributors.
 - Our highest priority issues will given the "priority" label. [Check them out here](https://github.com/dmccoystephenson/Medieval-Factions/issues?q=is%3Aissue+is%3Aopen+label%3Apriority)
 
 ## Process

@@ -11,6 +11,8 @@ import dansplugins.factionsystem.events.FactionKickEvent;
 import dansplugins.factionsystem.integrators.DynmapIntegrator;
 import dansplugins.factionsystem.services.ConfigService;
 import dansplugins.factionsystem.services.LocaleService;
+import dansplugins.factionsystem.services.MessageService;
+import dansplugins.factionsystem.services.PlayerService;
 import dansplugins.factionsystem.utils.Logger;
 import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
@@ -18,6 +20,7 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import preponderous.ponder.minecraft.bukkit.tools.UUIDChecker;
 
+import java.util.Objects;
 import java.util.UUID;
 
 /**
@@ -26,10 +29,10 @@ import java.util.UUID;
 public class KickCommand extends SubCommand {
     private final Logger logger;
 
-    public KickCommand(LocaleService localeService, PersistentData persistentData, EphemeralData ephemeralData, PersistentData.ChunkDataAccessor chunkDataAccessor, DynmapIntegrator dynmapIntegrator, ConfigService configService, Logger logger) {
+    public KickCommand(LocaleService localeService, PersistentData persistentData, EphemeralData ephemeralData, PersistentData.ChunkDataAccessor chunkDataAccessor, DynmapIntegrator dynmapIntegrator, ConfigService configService, Logger logger, PlayerService playerService, MessageService messageService) {
         super(new String[]{
                 "kick", LOCALE_PREFIX + "CmdKick"
-        }, true, true, true, false, localeService, persistentData, ephemeralData, chunkDataAccessor, dynmapIntegrator, configService);
+        }, true, true, true, false, localeService, persistentData, ephemeralData, chunkDataAccessor, dynmapIntegrator, configService, playerService, messageService);
         this.logger = logger;
     }
 
@@ -45,29 +48,32 @@ public class KickCommand extends SubCommand {
         final String permission = "mf.kick";
         if (!(checkPermissions(player, permission))) return;
         if (args.length == 0) {
-            player.sendMessage(translate("&c" + getText("UsageKick")));
+            playerService.sendMessage(player, "&c" + getText("UsageKick")
+                    , "UsageKick", false);
             return;
         }
         UUIDChecker uuidChecker = new UUIDChecker();
         final UUID targetUUID = uuidChecker.findUUIDBasedOnPlayerName(args[0]);
         if (targetUUID == null) {
-            player.sendMessage(translate("&c" + getText("PlayerNotFound")));
+            playerService.sendMessage(player, "&c" + getText("PlayerNotFound"), Objects.requireNonNull(messageService.getLanguage().getString("PlayerNotFound")).replace("#name#", args[0]), true);
             return;
         }
         OfflinePlayer target = Bukkit.getOfflinePlayer(targetUUID);
         if (!target.hasPlayedBefore()) {
             target = Bukkit.getPlayer(args[0]);
             if (target == null) {
-                player.sendMessage(translate("&c" + getText("PlayerNotFound")));
+                playerService.sendMessage(player, "&c" + getText("PlayerNotFound"), Objects.requireNonNull(messageService.getLanguage().getString("PlayerNotFound")).replace("#name#", args[0]), true);
                 return;
             }
         }
         if (target.getUniqueId().equals(player.getUniqueId())) {
-            player.sendMessage(translate("&c" + getText("CannotKickSelf")));
+            playerService.sendMessage(player, "&c" + getText("CannotKickSelf")
+                    , "CannotKickSelf", false);
             return;
         }
         if (this.faction.isOwner(targetUUID)) {
-            player.sendMessage(translate("&c" + getText("CannotKickOwner")));
+            playerService.sendMessage(player, "&c" + getText("CannotKickOwner")
+                    , "CannotKickOwner", false);
             return;
         }
         FactionKickEvent kickEvent = new FactionKickEvent(faction, target, player);
@@ -81,9 +87,14 @@ public class KickCommand extends SubCommand {
         }
         ephemeralData.getPlayersInFactionChat().remove(targetUUID);
         faction.removeMember(targetUUID);
-        messageFaction(faction, translate("&c" + getText("HasBeenKickedFrom", target.getName(), faction.getName())));
+        messageFaction(faction, "&c" + getText("HasBeenKickedFrom", target.getName(), faction.getName()),
+                Objects.requireNonNull(messageService.getLanguage().getString("HasBeenKickedFrom"))
+                        .replace("#name#", args[0])
+                        .replace("#faction#", faction.getName()));
         if (target.isOnline() && target.getPlayer() != null) {
-            target.getPlayer().sendMessage(translate("&c" + getText("AlertKicked", player.getName())));
+            playerService.sendMessage(player, "&c" + getText("AlertKicked", player.getName())
+                    , Objects.requireNonNull(messageService.getLanguage().getString("AlertKicked"))
+                            .replace("#name#", player.getName()), true);
         }
     }
 
