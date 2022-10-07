@@ -6,7 +6,6 @@ import com.dansplugins.factionsystem.chat.MfChatService
 import com.dansplugins.factionsystem.claim.JooqMfClaimedChunkRepository
 import com.dansplugins.factionsystem.claim.MfClaimService
 import com.dansplugins.factionsystem.claim.MfClaimedChunkRepository
-import com.dansplugins.factionsystem.command.MedievalFactionsCommand
 import com.dansplugins.factionsystem.command.accessors.MfAccessorsCommand
 import com.dansplugins.factionsystem.command.faction.MfFactionCommand
 import com.dansplugins.factionsystem.command.gate.MfGateCommand
@@ -164,7 +163,6 @@ class MedievalFactions : JavaPlugin() {
             PlayerQuitListener(this)
         )
 
-        getCommand("medievalfactions")?.setExecutor(MedievalFactionsCommand(this))
         getCommand("faction")?.setExecutor(MfFactionCommand(this))
         getCommand("lock")?.setExecutor(MfLockCommand(this))
         getCommand("unlock")?.setExecutor(MfUnlockCommand(this))

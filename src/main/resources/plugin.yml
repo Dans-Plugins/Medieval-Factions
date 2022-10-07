@@ -24,11 +24,6 @@ softdepend:
 - Mailboxes
 description: Allows players to organise themselves into feudal, diplomatic, lawful groups akin to nations.
 commands:
-  medievalfactions:
-    description: |
-      Medieval Factions base command
-    aliases: [mf]
-    usage: /<command>
   faction:
     description: |
       Faction management command
@@ -69,7 +64,7 @@ commands:
       /f bypass - Toggles bypass mode
       /f chat (faction|vassals|allies) - Toggles faction chat
       /f set [name|description|prefix] (value) - Sets faction name/description/prefix
-    aliases: [f, fraktion, faccion, faccao]
+    aliases: [medievalfactions, mf, f, fraktion, faccion, faccao]
     usage: /<command> [help|ally|breakalliance|declarewar|makepeace|create|invite|join|law|role|list|claim|unclaim|checkclaim|unclaimall|power|who|invoke|leave|vassalize|swearfealty|declareindependence|grantindependence|kick|map|sethome|home|flag|bypass|chat|set]
   lock:
     description: Enables or disables lock mode. To cancel lock mode, use /lock cancel.

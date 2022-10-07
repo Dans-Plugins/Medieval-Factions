@@ -37,7 +37,7 @@ import com.dansplugins.factionsystem.command.faction.unclaim.MfFactionUnclaimCom
 import com.dansplugins.factionsystem.command.faction.unclaimall.MfFactionUnclaimAllCommand
 import com.dansplugins.factionsystem.command.faction.vassalize.MfFactionVassalizeCommand
 import com.dansplugins.factionsystem.command.faction.who.MfFactionWhoCommand
-import org.bukkit.ChatColor.RED
+import org.bukkit.ChatColor.*
 import org.bukkit.command.Command
 import org.bukkit.command.CommandExecutor
 import org.bukkit.command.CommandSender
@@ -82,11 +82,7 @@ class MfFactionCommand(private val plugin: MedievalFactions) : CommandExecutor {
     private val factionClaimFillCommand = MfFactionClaimFillCommand(plugin)
 
     override fun onCommand(sender: CommandSender, command: Command, label: String, args: Array<out String>): Boolean {
-        if (args.isEmpty()) {
-            sender.sendMessage("$RED${plugin.language["CommandFactionUsage"]}")
-            return true
-        }
-        return when (args[0].lowercase()) {
+        return when (args.firstOrNull()?.lowercase()) {
             "help", plugin.language["CmdFactionHelp"] -> factionHelpCommand.onCommand(sender, command, label, args.drop(1).toTypedArray())
             "create", plugin.language["CmdFactionCreate"] -> factionCreateCommand.onCommand(sender, command, label, args.drop(1).toTypedArray())
             "law", plugin.language["CmdFactionLaw"] -> factionLawCommand.onCommand(sender, command, label, args.drop(1).toTypedArray())
@@ -124,7 +120,11 @@ class MfFactionCommand(private val plugin: MedievalFactions) : CommandExecutor {
             "chat", plugin.language["CmdFactionChat"] -> factionChatCommand.onCommand(sender, command, label, args.drop(1).toTypedArray())
             "claimfill", plugin.language["CmdFactionClaimFill"] -> factionClaimFillCommand.onCommand(sender, command, label, args.drop(1).toTypedArray())
             else -> {
-                sender.sendMessage("$RED${plugin.language["CommandFactionUsage"]}")
+                sender.sendMessage("$AQUA${plugin.language["MedievalFactionsTitle", plugin.description.version]}")
+                sender.sendMessage("$GRAY${plugin.language["DeveloperList", plugin.description.authors.joinToString()]}")
+                sender.sendMessage("$GRAY${plugin.language["WikiLink"]}")
+                sender.sendMessage("$GRAY${plugin.language["CurrentLanguage", plugin.config.getString("language") ?: "en_US"]}")
+                sender.sendMessage("$YELLOW${plugin.language["CommandFactionUsage"]}")
                 true
             }
         }
