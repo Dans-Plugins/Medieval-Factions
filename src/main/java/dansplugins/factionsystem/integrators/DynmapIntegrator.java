@@ -131,6 +131,7 @@ public class DynmapIntegrator {
     }
 
     private boolean isDynmapPresent() {
+        logger.debug("Is dynmap present? " + (dynmap != null));
         return (dynmap != null);
     }
 

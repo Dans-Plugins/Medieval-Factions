@@ -225,9 +225,14 @@ public class MedievalFactions extends PonderBukkitPlugin {
     }
 
     private void handleDynmapIntegration() {
+        logger.debug("Handling dynmap integration...");
         if (DynmapIntegrator.hasDynmap()) {
+            logger.debug("Found dynmap! Scheduling claims update and updating claims.");
             persistentData.getDynmapIntegrator().scheduleClaimsUpdate(600); // Check once every 30 seconds for updates.
             persistentData.getDynmapIntegrator().updateClaims();
+        }
+        else {
+            logger.debug("Dynmap not found! Claims update will not be scheduled.");
         }
     }
 
