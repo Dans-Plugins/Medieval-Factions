@@ -3,6 +3,7 @@ package com.dansplugins.factionsystem.command.faction
 import com.dansplugins.factionsystem.MedievalFactions
 import com.dansplugins.factionsystem.command.faction.ally.MfFactionAllyCommand
 import com.dansplugins.factionsystem.command.faction.autoclaim.MfFactionAutoclaimCommand
+import com.dansplugins.factionsystem.command.faction.bonuspower.MfFactionBonusPowerCommand
 import com.dansplugins.factionsystem.command.faction.breakalliance.MfFactionBreakAllianceCommand
 import com.dansplugins.factionsystem.command.faction.bypass.MfFactionBypassCommand
 import com.dansplugins.factionsystem.command.faction.chat.MfFactionChatCommand
@@ -80,6 +81,7 @@ class MfFactionCommand(private val plugin: MedievalFactions) : CommandExecutor {
     private val factionBypassCommand = MfFactionBypassCommand(plugin)
     private val factionChatCommand = MfFactionChatCommand(plugin)
     private val factionClaimFillCommand = MfFactionClaimFillCommand(plugin)
+    private val factionBonusPowerCommand = MfFactionBonusPowerCommand(plugin)
 
     override fun onCommand(sender: CommandSender, command: Command, label: String, args: Array<out String>): Boolean {
         return when (args.firstOrNull()?.lowercase()) {
@@ -119,6 +121,7 @@ class MfFactionCommand(private val plugin: MedievalFactions) : CommandExecutor {
             "bypass", plugin.language["CmdFactionBypass"] -> factionBypassCommand.onCommand(sender, command, label, args.drop(1).toTypedArray())
             "chat", plugin.language["CmdFactionChat"] -> factionChatCommand.onCommand(sender, command, label, args.drop(1).toTypedArray())
             "claimfill", plugin.language["CmdFactionClaimFill"] -> factionClaimFillCommand.onCommand(sender, command, label, args.drop(1).toTypedArray())
+            "bonuspower", plugin.language["CmdFactionBonusPower"] -> factionBonusPowerCommand.onCommand(sender, command, label, args.drop(1).toTypedArray())
             else -> {
                 sender.sendMessage("$AQUA${plugin.language["MedievalFactionsTitle", plugin.description.version]}")
                 sender.sendMessage("$GRAY${plugin.language["DeveloperList", plugin.description.authors.joinToString()]}")

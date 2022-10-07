@@ -13,7 +13,7 @@ import java.util.logging.Level
 class MfPowerSetCommand(private val plugin: MedievalFactions) : CommandExecutor {
 
     override fun onCommand(sender: CommandSender, command: Command, label: String, args: Array<out String>): Boolean {
-        if (!sender.hasPermission("mf.power.set")) {
+        if (!sender.hasPermission("mf.power.set") && !sender.hasPermission("mf.force.power")) {
             sender.sendMessage("$RED${plugin.language["CommandPowerSetNoPermission"]}")
             return true
         }
