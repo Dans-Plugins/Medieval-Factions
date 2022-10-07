@@ -10,6 +10,8 @@ import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.logging.Level;
 
 /**
@@ -30,7 +32,7 @@ public class Logger {
     public void debug(String message) {
         if (medievalFactions.isDebugEnabled()) {
             medievalFactions.getLogger().log(Level.INFO, "[Medieval Factions DEBUG] " + message);
-            logToFile(message);
+            logToFile("[DEBUG] " + message);
         }
     }
 
@@ -41,7 +43,7 @@ public class Logger {
      */
     public void print(String message) {
         medievalFactions.getLogger().log(Level.INFO, "[Medieval Factions] " + message);
-        logToFile(message);
+        logToFile("[INFO] " + message);
     }
 
     /**
@@ -51,10 +53,16 @@ public class Logger {
      */
     public void error(String message) {
         medievalFactions.getLogger().log(Level.SEVERE, "[Medieval Factions ERROR] " + message);
-        logToFile(message);
+        logToFile("[ERROR] " + message);
     }
 
     private void logToFile(String message) {
+        // add time to message
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+        String formattedDateTime = LocalDateTime.now().format(formatter);
+        String dateMessage = "[" + formattedDateTime + "] " + message;
+
+        // append to file
         File file = new File("plugins/MedievalFactions/logs.txt");
         try {
             if (!file.exists()) {
@@ -62,7 +70,7 @@ public class Logger {
             }
             FileWriter fileWriter = new FileWriter(file, true);
             BufferedWriter bufferedWriter = new BufferedWriter(fileWriter);
-            bufferedWriter.write(message);
+            bufferedWriter.write(dateMessage);
             bufferedWriter.newLine();
             bufferedWriter.close();
         } catch (IOException e) {
