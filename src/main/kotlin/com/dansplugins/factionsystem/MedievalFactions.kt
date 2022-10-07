@@ -1,5 +1,6 @@
 package com.dansplugins.factionsystem
 
+import com.dansplugins.factionsystem.chat.MfChatService
 import com.dansplugins.factionsystem.claim.JooqMfClaimedChunkRepository
 import com.dansplugins.factionsystem.claim.MfClaimService
 import com.dansplugins.factionsystem.claim.MfClaimedChunkRepository
@@ -129,6 +130,7 @@ class MedievalFactions : JavaPlugin() {
         val interactionService = MfInteractionService(interactionStatusRepository)
         val notificationService = setupNotificationService()
         val gateService = MfGateService(this, gateRepository, gateCreationContextRepository)
+        val chatService = MfChatService(this)
 
         services = Services(
             playerService,
@@ -139,11 +141,13 @@ class MedievalFactions : JavaPlugin() {
             lockService,
             interactionService,
             notificationService,
-            gateService
+            gateService,
+            chatService
         )
         setupRpkLockService()
 
         registerListeners(
+            AsyncPlayerChatListener(this),
             AsyncPlayerPreLoginListener(this),
             BlockBreakListener(this),
             BlockExplodeListener(this),

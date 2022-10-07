@@ -1,5 +1,6 @@
 package com.dansplugins.factionsystem.faction.permission
 
+import com.dansplugins.factionsystem.chat.MfFactionChatChannel
 import com.dansplugins.factionsystem.faction.MfFaction
 import com.dansplugins.factionsystem.faction.flag.MfFlag
 import com.dansplugins.factionsystem.faction.flag.MfFlags
@@ -39,7 +40,7 @@ class MfFactionPermission(
         val REQUEST_ALLIANCE = MfFactionPermission("REQUEST_ALLIANCE", "FactionPermissionRequestAlliance")
         val BREAK_ALLIANCE = MfFactionPermission("BREAK_ALLIANCE", "FactionPermissionBreakAlliance")
         val TOGGLE_AUTOCLAIM = MfFactionPermission("TOGGLE_AUTOCLAIM", "FactionPermissionToggleAutoclaim")
-        val CHAT = MfFactionPermission("CHAT", "FactionPermissionChat")
+        val CHAT = { chatChannel: MfFactionChatChannel -> MfFactionPermission("CHAT(${chatChannel.name})") { language -> language["FactionPermissionChat", chatChannel.toString().lowercase()] } }
         val CLAIM = MfFactionPermission("CLAIM", "FactionPermissionClaim")
         val UNCLAIM = MfFactionPermission("UNCLAIM", "FactionPermissionUnclaim")
         val DECLARE_INDEPENDENCE = MfFactionPermission("DECLARE_INDEPENDENCE", "FactionPermissionDeclareIndependence")
@@ -79,7 +80,10 @@ class MfFactionPermission(
             name == "REQUEST_ALLIANCE" -> REQUEST_ALLIANCE
             name == "BREAK_ALLIANCE" -> BREAK_ALLIANCE
             name == "TOGGLE_AUTOCLAIM" -> TOGGLE_AUTOCLAIM
-            name == "CHAT" -> CHAT
+            name.matches(Regex("CHAT\\((.+)\\)")) -> Regex("CHAT\\((.+)\\)").find(name)
+                ?.groupValues?.get(1)
+                ?.let(MfFactionChatChannel::valueOf)
+                ?.let(CHAT)
             name == "CLAIM" -> CLAIM
             name == "UNCLAIM" -> UNCLAIM
             name == "DECLARE_INDEPENDENCE" -> DECLARE_INDEPENDENCE
@@ -138,7 +142,9 @@ class MfFactionPermission(
             add(REQUEST_ALLIANCE)
             add(BREAK_ALLIANCE)
             add(TOGGLE_AUTOCLAIM)
-            add(CHAT)
+            MfFactionChatChannel.values().forEach { chatChannel ->
+                add(CHAT(chatChannel))
+            }
             add(CLAIM)
             add(UNCLAIM)
             add(DECLARE_INDEPENDENCE)

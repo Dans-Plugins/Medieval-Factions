@@ -1,6 +1,7 @@
 package com.dansplugins.factionsystem.player
 
 import com.dansplugins.factionsystem.MedievalFactions
+import com.dansplugins.factionsystem.chat.MfFactionChatChannel
 import com.dansplugins.factionsystem.failure.OptimisticLockingFailureException
 import com.dansplugins.factionsystem.jooq.Tables.MF_PLAYER
 import com.dansplugins.factionsystem.jooq.tables.records.MfPlayerRecord
@@ -25,9 +26,11 @@ class JooqMfPlayerRepository(private val plugin: MedievalFactions, private val d
             .set(MF_PLAYER.VERSION, 1)
             .set(MF_PLAYER.POWER, player.power)
             .set(MF_PLAYER.BYPASS_ENABLED, player.isBypassEnabled)
+            .set(MF_PLAYER.CHAT_CHANNEL, player.chatChannel?.name)
             .onConflict(MF_PLAYER.ID).doUpdate()
             .set(MF_PLAYER.POWER, player.power)
             .set(MF_PLAYER.BYPASS_ENABLED, player.isBypassEnabled)
+            .set(MF_PLAYER.CHAT_CHANNEL, player.chatChannel?.name)
             .set(MF_PLAYER.VERSION, player.version + 1)
             .where(MF_PLAYER.ID.eq(player.id.value))
             .and(MF_PLAYER.VERSION.eq(MF_PLAYER.VERSION))
@@ -82,5 +85,11 @@ class JooqMfPlayerRepository(private val plugin: MedievalFactions, private val d
             .execute()
     }
 
-    private fun MfPlayerRecord.toDomain() = MfPlayer(MfPlayerId(id), version, power, bypassEnabled)
+    private fun MfPlayerRecord.toDomain() = MfPlayer(
+        MfPlayerId(id),
+        version,
+        power,
+        bypassEnabled,
+        chatChannel?.let(MfFactionChatChannel::valueOf)
+    )
 }

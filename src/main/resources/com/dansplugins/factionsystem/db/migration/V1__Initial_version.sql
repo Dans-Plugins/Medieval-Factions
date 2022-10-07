@@ -22,7 +22,8 @@ create table `mf_player`(
     `id` varchar(36) primary key not null,
     `version` integer not null,
     `power` integer not null,
-    `bypass_enabled` boolean not null
+    `bypass_enabled` boolean not null,
+    `chat_channel` varchar(16) null
 );
 
 create table `mf_faction_member`(

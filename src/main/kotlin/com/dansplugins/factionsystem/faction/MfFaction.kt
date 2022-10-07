@@ -2,6 +2,7 @@ package com.dansplugins.factionsystem.faction
 
 import com.dansplugins.factionsystem.MedievalFactions
 import com.dansplugins.factionsystem.area.MfPosition
+import com.dansplugins.factionsystem.chat.MfFactionChatChannel.*
 import com.dansplugins.factionsystem.faction.flag.MfFlagValues
 import com.dansplugins.factionsystem.faction.permission.MfFactionPermission
 import com.dansplugins.factionsystem.faction.permission.MfFactionPermission.Companion.ADD_LAW
@@ -72,7 +73,9 @@ data class MfFaction(
         put(REQUEST_ALLIANCE, false)
         put(BREAK_ALLIANCE, false)
         put(TOGGLE_AUTOCLAIM, false)
-        put(CHAT, true)
+        put(CHAT(FACTION), true)
+        put(CHAT(VASSALS), true)
+        put(CHAT(ALLIES), true)
         put(CLAIM, false)
         put(UNCLAIM, false)
         put(DECLARE_INDEPENDENCE, false)
