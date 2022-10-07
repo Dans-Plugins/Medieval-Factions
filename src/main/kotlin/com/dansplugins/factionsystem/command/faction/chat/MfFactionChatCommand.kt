@@ -14,6 +14,8 @@ import org.bukkit.entity.Player
 import java.util.logging.Level
 
 class MfFactionChatCommand(private val plugin: MedievalFactions) : CommandExecutor {
+    private val chatHistoryCommand = MfFactionChatHistoryCommand(plugin)
+
     override fun onCommand(sender: CommandSender, command: Command, label: String, args: Array<out String>): Boolean {
         if (!sender.hasPermission("mf.chat")) {
             sender.sendMessage("$RED${plugin.language["CommandFactionChatNoPermission"]}")
@@ -29,7 +31,19 @@ class MfFactionChatCommand(private val plugin: MedievalFactions) : CommandExecut
             val chatChannel = if (args.isEmpty()) {
                 FACTION
             } else {
-                MfFactionChatChannel.valueOf(args[0].uppercase())
+                try {
+                    MfFactionChatChannel.valueOf(args[0].uppercase())
+                } catch (exception: IllegalArgumentException) {
+                    null
+                }
+            }
+            if (chatChannel == null) {
+                if (args[0].lowercase() in listOf("history", "logs", "log", plugin.language["CmdFactionChatHistory"])) {
+                    plugin.server.scheduler.runTask(plugin, Runnable {
+                        chatHistoryCommand.onCommand(sender, command, label, args.drop(1).toTypedArray())
+                    })
+                    return@Runnable
+                }
             }
             val updatedMfPlayer = playerService.save(mfPlayer.copy(
                 chatChannel = if (mfPlayer.chatChannel != chatChannel) {

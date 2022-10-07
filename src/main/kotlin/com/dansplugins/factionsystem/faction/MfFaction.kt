@@ -11,6 +11,7 @@ import com.dansplugins.factionsystem.faction.permission.MfFactionPermission.Comp
 import com.dansplugins.factionsystem.faction.permission.MfFactionPermission.Companion.CHANGE_NAME
 import com.dansplugins.factionsystem.faction.permission.MfFactionPermission.Companion.CHANGE_PREFIX
 import com.dansplugins.factionsystem.faction.permission.MfFactionPermission.Companion.CHAT
+import com.dansplugins.factionsystem.faction.permission.MfFactionPermission.Companion.CHAT_HISTORY
 import com.dansplugins.factionsystem.faction.permission.MfFactionPermission.Companion.CLAIM
 import com.dansplugins.factionsystem.faction.permission.MfFactionPermission.Companion.CREATE_GATE
 import com.dansplugins.factionsystem.faction.permission.MfFactionPermission.Companion.DECLARE_INDEPENDENCE
@@ -76,6 +77,7 @@ data class MfFaction(
         put(CHAT(FACTION), true)
         put(CHAT(VASSALS), true)
         put(CHAT(ALLIES), true)
+        put(CHAT_HISTORY, true)
         put(CLAIM, false)
         put(UNCLAIM, false)
         put(DECLARE_INDEPENDENCE, false)

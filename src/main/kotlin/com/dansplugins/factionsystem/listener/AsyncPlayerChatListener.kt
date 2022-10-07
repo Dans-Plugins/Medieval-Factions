@@ -31,7 +31,9 @@ class AsyncPlayerChatListener(private val plugin: MedievalFactions) : Listener {
             }
             event.isCancelled = true
             val chatService = plugin.services.chatService
-            chatService.sendMessage(mfPlayer, faction, mfPlayer.chatChannel, event.message)
+            plugin.server.scheduler.runTask(plugin, Runnable {
+                chatService.sendMessage(mfPlayer, faction, mfPlayer.chatChannel, event.message)
+            })
         }
     }
 

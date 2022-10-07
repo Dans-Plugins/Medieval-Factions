@@ -1,5 +1,7 @@
 package com.dansplugins.factionsystem
 
+import com.dansplugins.factionsystem.chat.JooqMfChatChannelMessageRepository
+import com.dansplugins.factionsystem.chat.MfChatChannelMessageRepository
 import com.dansplugins.factionsystem.chat.MfChatService
 import com.dansplugins.factionsystem.claim.JooqMfClaimedChunkRepository
 import com.dansplugins.factionsystem.claim.MfClaimService
@@ -120,6 +122,7 @@ class MedievalFactions : JavaPlugin() {
         val interactionStatusRepository: MfInteractionStatusRepository = JooqMfInteractionStatusRepository(dsl)
         val gateRepository: MfGateRepository = JooqMfGateRepository(this, dsl)
         val gateCreationContextRepository: MfGateCreationContextRepository = JooqMfGateCreationContextRepository(dsl)
+        val chatMessageRepository: MfChatChannelMessageRepository = JooqMfChatChannelMessageRepository(dsl)
 
         val playerService = MfPlayerService(this, playerRepository)
         val factionService = MfFactionService(this, factionRepository)
@@ -130,7 +133,7 @@ class MedievalFactions : JavaPlugin() {
         val interactionService = MfInteractionService(interactionStatusRepository)
         val notificationService = setupNotificationService()
         val gateService = MfGateService(this, gateRepository, gateCreationContextRepository)
-        val chatService = MfChatService(this)
+        val chatService = MfChatService(this, chatMessageRepository)
 
         services = Services(
             playerService,

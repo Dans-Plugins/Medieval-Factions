@@ -138,4 +138,15 @@ create table `mf_locked_block_accessor`(
     primary key(`locked_block_id`, `player_id`),
     foreign key(`locked_block_id`) references `mf_locked_block`(`id`) on delete cascade,
     foreign key(`player_id`) references `mf_player`(`id`) on delete cascade
-)
+);
+
+-- No foreign keys here as we want to keep chat channel messages even if factions or players are deleted
+-- The reference will be lost but we will still retain the data.
+-- Maybe in the future we should soft-delete factions & players instead of deleting them.
+create table `mf_chat_channel_message`(
+    `timestamp` datetime,
+    `player_id` varchar(36),
+    `faction_id` varchar(36),
+    `chat_channel` varchar(16),
+    `message` varchar(1024)
+);

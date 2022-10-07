@@ -3,15 +3,13 @@ package com.dansplugins.factionsystem.chat
 import com.dansplugins.factionsystem.MedievalFactions
 import com.dansplugins.factionsystem.chat.MfFactionChatChannel.*
 import com.dansplugins.factionsystem.faction.MfFaction
+import com.dansplugins.factionsystem.faction.MfFactionId
 import com.dansplugins.factionsystem.player.MfPlayer
 import com.dansplugins.factionsystem.relationship.MfFactionRelationshipType.ALLY
-import java.util.concurrent.ConcurrentHashMap
-import net.md_5.bungee.api.ChatColor as SpigotChatColor
-import org.bukkit.ChatColor as BukkitChatColor
+import net.md_5.bungee.api.ChatColor
+import java.time.Instant
 
-class MfChatService(private val plugin: MedievalFactions) {
-
-    private val formats = ConcurrentHashMap(MfFactionChatChannel.values().associateWith { plugin.config.getString("chat.${it.toString().lowercase()}.format") })
+class MfChatService(private val plugin: MedievalFactions, private val repo: MfChatChannelMessageRepository) {
 
     fun sendMessage(mfPlayer: MfPlayer, faction: MfFaction, channel: MfFactionChatChannel, message: String) {
         val bukkitPlayer = mfPlayer.toBukkit()
@@ -19,19 +17,19 @@ class MfChatService(private val plugin: MedievalFactions) {
         val displayName = bukkitPlayer.player?.displayName ?: bukkitPlayer.name ?: plugin.language["UnknownPlayer"]
         val factionService = plugin.services.factionService
         val relationshipService = plugin.services.factionRelationshipService
-        val formattedMessage = (formats[channel] ?: when (mfPlayer.chatChannel) {
+        val formattedMessage = (plugin.config.getString("chat.${channel.toString().lowercase()}.format") ?: when (mfPlayer.chatChannel) {
             FACTION -> "&7[faction] [\${factionColor}\${faction}&7] [\${role}] &f\${displayName}: \${message}"
             VASSALS -> "&7[vassals] [\${factionColor}\${faction}&7] [\${role}] &f\${displayName}: \${message}"
             ALLIES -> "&7[allies] [\${factionColor}\${faction}&7] [\${role}] &f\${displayName}: \${message}"
             null -> ""
         })
-            .replace("\${factionColor}", SpigotChatColor.of(faction.flags[plugin.flags.color]).toString())
+            .replace("\${factionColor}", ChatColor.of(faction.flags[plugin.flags.color]).toString())
             .replace("\${faction}", faction.name)
             .replace("\${role}", faction.getRole(mfPlayer.id)?.name ?: plugin.language["NoRole"])
             .replace("\${name}", name)
             .replace("\${displayName}", displayName)
             .replace("\${message}", message)
-            .let { BukkitChatColor.translateAlternateColorCodes('&', it) }
+            .let { ChatColor.translateAlternateColorCodes('&', it) }
         val recipients = when (channel) {
             FACTION -> faction.members.mapNotNull { it.playerId.toBukkitPlayer().player }
             VASSALS -> (faction.members + relationshipService.getVassalTree(faction.id)
@@ -49,6 +47,25 @@ class MfChatService(private val plugin: MedievalFactions) {
                 }.flatMap { it.members }).mapNotNull { it.playerId.toBukkitPlayer().player }
         }
         recipients.forEach { it.sendMessage(bukkitPlayer.uniqueId, formattedMessage) }
+        plugin.server.scheduler.runTaskAsynchronously(plugin, Runnable {
+            repo.insert(MfChatChannelMessage(Instant.now(), mfPlayer.id, faction.id, channel, message))
+        })
+        // Using console sender means that colour codes will come through in console
+        // It doesn't automatically give the [MedievalFactions] prefix like with the plugin's logger though
+        // If we want to use the plugin's logger we could do something like ChatColor.stripColor.
+        plugin.server.consoleSender.sendMessage(formattedMessage)
+    }
+
+    fun getChatChannelMessages(factionId: MfFactionId): List<MfChatChannelMessage> {
+        return repo.getChatChannelMessages(factionId)
+    }
+
+    fun getChatChannelMessages(factionId: MfFactionId, limit: Int, offset: Int = 0): List<MfChatChannelMessage> {
+        return repo.getChatChannelMessages(factionId, limit, offset)
+    }
+
+    fun getChatChannelMessageCount(factionId: MfFactionId): Int {
+        return repo.getChatChannelMessageCount(factionId)
     }
 
 }

@@ -41,6 +41,7 @@ class MfFactionPermission(
         val BREAK_ALLIANCE = MfFactionPermission("BREAK_ALLIANCE", "FactionPermissionBreakAlliance")
         val TOGGLE_AUTOCLAIM = MfFactionPermission("TOGGLE_AUTOCLAIM", "FactionPermissionToggleAutoclaim")
         val CHAT = { chatChannel: MfFactionChatChannel -> MfFactionPermission("CHAT(${chatChannel.name})") { language -> language["FactionPermissionChat", chatChannel.toString().lowercase()] } }
+        val CHAT_HISTORY = MfFactionPermission("CHAT_HISTORY", "FactionPermissionChatHistory")
         val CLAIM = MfFactionPermission("CLAIM", "FactionPermissionClaim")
         val UNCLAIM = MfFactionPermission("UNCLAIM", "FactionPermissionUnclaim")
         val DECLARE_INDEPENDENCE = MfFactionPermission("DECLARE_INDEPENDENCE", "FactionPermissionDeclareIndependence")
@@ -84,6 +85,7 @@ class MfFactionPermission(
                 ?.groupValues?.get(1)
                 ?.let(MfFactionChatChannel::valueOf)
                 ?.let(CHAT)
+            name == "CHAT_HISTORY" -> CHAT_HISTORY
             name == "CLAIM" -> CLAIM
             name == "UNCLAIM" -> UNCLAIM
             name == "DECLARE_INDEPENDENCE" -> DECLARE_INDEPENDENCE
@@ -145,6 +147,7 @@ class MfFactionPermission(
             MfFactionChatChannel.values().forEach { chatChannel ->
                 add(CHAT(chatChannel))
             }
+            add(CHAT_HISTORY)
             add(CLAIM)
             add(UNCLAIM)
             add(DECLARE_INDEPENDENCE)
