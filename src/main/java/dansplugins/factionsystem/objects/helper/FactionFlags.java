@@ -57,6 +57,7 @@ public class FactionFlags {
         flagNames.add("prefixColor");
         flagNames.add("allowFriendlyFire");
         flagNames.add("acceptBonusPower");
+        flagNames.add("enableMobProtection");
     }
 
     public void initializeFlagValues() {
@@ -71,6 +72,7 @@ public class FactionFlags {
         stringValues.put("prefixColor", "white");
         booleanValues.put("allowFriendlyFire", false);
         booleanValues.put("acceptBonusPower", true);
+        booleanValues.put("enableMobProtection", true);
     }
 
     public void loadMissingFlagsIfNecessary() {
@@ -104,6 +106,9 @@ public class FactionFlags {
         }
         if (!booleanValues.containsKey("acceptBonusPower")) {
             booleanValues.put("acceptBonusPower", true);
+        }
+        if (!booleanValues.containsKey("enableMobProtection")) {
+            booleanValues.put("enableMobProtection", true);
         }
     }
 

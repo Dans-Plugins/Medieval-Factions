@@ -6,7 +6,6 @@ package dansplugins.factionsystem.eventhandlers;
 
 import dansplugins.factionsystem.data.EphemeralData;
 import dansplugins.factionsystem.data.PersistentData;
-import dansplugins.factionsystem.objects.domain.ClaimedChunk;
 import dansplugins.factionsystem.objects.domain.Duel;
 import dansplugins.factionsystem.objects.domain.Faction;
 import dansplugins.factionsystem.services.ConfigService;
@@ -14,8 +13,6 @@ import dansplugins.factionsystem.services.LocaleService;
 import dansplugins.factionsystem.utils.Logger;
 import dansplugins.factionsystem.utils.RelationChecker;
 import org.bukkit.ChatColor;
-import org.bukkit.Chunk;
-import org.bukkit.Location;
 import org.bukkit.entity.*;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -55,11 +52,11 @@ public class DamageHandler implements Listener {
 
         if (attacker == null || victim == null) {
             logger.debug("Attacker and/or victim was null in the DamageHandler class.");
+            handleEntityDamage(attacker, event);
             return;
         }
 
         handlePlayerVersusPlayer(attacker, victim, event);
-        handleEntityDamage(attacker, event);
     }
 
     /**
@@ -87,7 +84,7 @@ public class DamageHandler implements Listener {
         }
 
         // case 3
-        if (relationChecker.arePlayersInSameFaction(attacker, victim)) {
+        if (relationChecker.arePlayersInSameFaction(attacker, victim)){
             logger.debug("Players are in the same faction. Handling friendly fire.");
             handleFriendlyFire(event, attacker, victim);
             return;
@@ -106,40 +103,52 @@ public class DamageHandler implements Listener {
             logger.debug("Entity is an instance of a player. Returning.");
             return;
         }
-        Faction playersFaction = persistentData.getPlayersFaction(attacker.getUniqueId());
-        if (playersFaction == null) {
-            event.setCancelled(true);
-            return;
-        }
 
-        if (isEntityProtected(event.getEntity())) {
-            cancelDamageIfNecessary(event, playersFaction);
-        }
-    }
-
-    private void cancelDamageIfNecessary(EntityDamageByEntityEvent event, Faction playersFaction) {
-        ClaimedChunk claimedChunk = getClaimedChunkAtLocation(event.getEntity().getLocation());
-        if (claimedChunk == null) {
-            return;
-        }
-
-        if (!isHolderPlayersFaction(claimedChunk, playersFaction)) {
+        // If entity is protected, cancel the event and return
+        if (isEntityProtected(attacker, event.getEntity())) {
             event.setCancelled(true);
         }
     }
 
-    private boolean isHolderPlayersFaction(ClaimedChunk claimedChunk, Faction playersFaction) {
-        return claimedChunk.getHolder().equalsIgnoreCase(playersFaction.getName());
-    }
+    private boolean isEntityProtected(Player attacker, Entity entity) {
+        if (entity instanceof ArmorStand || entity instanceof ItemFrame) return true;
 
-    private ClaimedChunk getClaimedChunkAtLocation(Location location) {
-        Chunk chunk = location.getChunk();
-        return persistentData.getChunkDataAccessor().getClaimedChunk(chunk);
-    }
+        // If entity isn't on claimed chunk, return false
+        if (!persistentData.getChunkDataAccessor().isClaimed(entity.getLocation().getChunk())) {
+            logger.debug("Chunk isn't claimed");
+            return false;
+        }
 
-    private boolean isEntityProtected(Entity entity) {
-        return entity instanceof ArmorStand || entity instanceof ItemFrame;
+        final Faction chunkHolder = persistentData.getFaction(persistentData.getChunkDataAccessor().getClaimedChunk(entity.getLocation().getChunk()).getHolder());
+        final Faction attackerFaction = persistentData.getFaction(attacker.getName());
 
+        if (!(boolean) chunkHolder.getFlags().getFlag("enableMobProtection")) {
+            logger.debug("Mob Protection is disabled");
+            return false;
+        }
+
+        // If entity isn't a living one (like minecarts), return false
+        if (!(entity instanceof LivingEntity)) {
+            logger.debug("Entity isn't a living");
+            return false;
+        }
+
+        // If attacker is in faction which owns the chunk, return false
+        if (persistentData.getPlayersFaction(attacker.getUniqueId()) == chunkHolder) {
+            logger.debug("Attacker is in same faction as Chunkholder");
+            return false;
+        }
+
+        // If attacker is factionless, return true
+        if (attackerFaction == null) {
+            logger.debug("attacker is factionless");
+            return true;
+        }
+
+        // If attacker is at war with the faction, return false
+        if (attackerFaction.isEnemy(chunkHolder.getName())) return false;
+
+        return true;
     }
 
     private Player getVictim(EntityDamageByEntityEvent event) {
@@ -153,8 +162,13 @@ public class DamageHandler implements Listener {
     private Player getAttacker(EntityDamageByEntityEvent event) {
         if (wasDamageWasBetweenPlayers(event)) {
             return (Player) event.getDamager();
-        } else if (wasPlayerWasDamagedByAProjectile(event) && wasProjectileShotByPlayer(event)) {
+        }
+        else if (wasPlayerWasDamagedByAProjectile(event) && wasProjectileShotByPlayer(event)) {
             return (Player) getProjectileSource(event);
+        }
+        else if (isDamagerPlayer(event)) {
+            return (Player) event.getDamager();
+
         } else {
             return null;
         }
@@ -168,6 +182,10 @@ public class DamageHandler implements Listener {
     private boolean wasProjectileShotByPlayer(EntityDamageByEntityEvent event) {
         ProjectileSource projectileSource = getProjectileSource(event);
         return projectileSource instanceof Player;
+    }
+
+    private boolean isDamagerPlayer(EntityDamageByEntityEvent event) {
+        return event.getDamager() instanceof Player;
     }
 
     private void endDuelIfNecessary(Player attacker, Player victim, EntityDamageEvent event) {
