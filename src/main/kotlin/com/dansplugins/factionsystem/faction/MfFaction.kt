@@ -62,7 +62,7 @@ data class MfFaction(
     val members: List<MfFactionMember> = emptyList(),
     val invites: List<MfFactionInvite> = emptyList(),
     val flags: MfFlagValues = plugin.flags.defaults(),
-    val prefix: String? = name,
+    val prefix: String? = null,
     val home: MfPosition? = null,
     val bonusPower: Int = 0,
     val autoclaim: Boolean = false,
@@ -146,8 +146,7 @@ data class MfFaction(
         "",
         emptyList(),
         emptyList(),
-        plugin.flags.defaults(),
-        prefix = name
+        plugin.flags.defaults()
     )
 
     fun getRole(playerId: MfPlayerId): MfFactionRole? = members.singleOrNull { it.playerId == playerId }?.role
