@@ -23,15 +23,14 @@ public class ConfigService {
 
     public ConfigService(MedievalFactions medievalFactions) {
         this.medievalFactions = medievalFactions;
+        if (!getConfig().isSet("languageid")) {
+            getConfig().set("languageid", "en-us");
+        }
         localeService = new LocaleService(medievalFactions, this);
     }
 
     public void handleVersionMismatch() {
-        if (!getConfig().isString("version")) {
-            getConfig().set("version", medievalFactions.getVersion());
-        } else {
-            getConfig().set("version", medievalFactions.getVersion());
-        }
+        getConfig().set("version", medievalFactions.getVersion());
 
         // add defaults if they don't exist
         if (!getConfig().isInt("initialMaxPowerLevel")) {
