@@ -6,6 +6,10 @@ package dansplugins.factionsystem.utils;
 
 import dansplugins.factionsystem.MedievalFactions;
 
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.util.logging.Level;
 
 /**
@@ -26,6 +30,7 @@ public class Logger {
     public void debug(String message) {
         if (medievalFactions.isDebugEnabled()) {
             medievalFactions.getLogger().log(Level.INFO, "[Medieval Factions DEBUG] " + message);
+            logToFile(message);
         }
     }
 
@@ -36,6 +41,7 @@ public class Logger {
      */
     public void print(String message) {
         medievalFactions.getLogger().log(Level.INFO, "[Medieval Factions] " + message);
+        logToFile(message);
     }
 
     /**
@@ -45,5 +51,22 @@ public class Logger {
      */
     public void error(String message) {
         medievalFactions.getLogger().log(Level.SEVERE, "[Medieval Factions ERROR] " + message);
+        logToFile(message);
+    }
+
+    private void logToFile(String message) {
+        File file = new File("plugins/MedievalFactions/logs.txt");
+        try {
+            if (!file.exists()) {
+                file.createNewFile();
+            }
+            FileWriter fileWriter = new FileWriter(file, true);
+            BufferedWriter bufferedWriter = new BufferedWriter(fileWriter);
+            bufferedWriter.write(message);
+            bufferedWriter.newLine();
+            bufferedWriter.close();
+        } catch (IOException e) {
+            error("An error occurred while logging to file.");
+        }
     }
 }
