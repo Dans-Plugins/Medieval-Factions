@@ -59,7 +59,7 @@ public class Scheduler {
                 logger.debug(localeService.get("HourlySaveAlert"));
                 persistentData.getLocalStorageService().save();
             }
-        }, delay * 20, secondsUntilRepeat * 20);
+        }, delay * 20L, secondsUntilRepeat * 20L);
     }
 
     public void schedulePowerIncrease() {
