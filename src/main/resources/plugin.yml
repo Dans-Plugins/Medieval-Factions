@@ -67,8 +67,9 @@ commands:
       /f home - Teleports to your faction's home
       /f flag [list|set] - Faction flag management
       /f bypass - Toggles bypass mode
+      /f chat (faction|vassals|allies) - Toggles faction chat
     aliases: [f, fraktion, faccion, faccao]
-    usage: /<command> [help|ally|breakalliance|declarewar|makepeace|create|invite|join|law|role|list|claim|unclaim|checkclaim|unclaimall|power|who|invoke|leave|vassalize|swearfealty|declareindependence|grantindependence|kick|map|sethome|home|flag|bypass]
+    usage: /<command> [help|ally|breakalliance|declarewar|makepeace|create|invite|join|law|role|list|claim|unclaim|checkclaim|unclaimall|power|who|invoke|leave|vassalize|swearfealty|declareindependence|grantindependence|kick|map|sethome|home|flag|bypass|chat]
   lock:
     description: Enables or disables lock mode. To cancel lock mode, use /lock cancel.
     aliases: [verschließen, verschliessen, cerrar, trancar, запереть]
@@ -247,3 +248,9 @@ permissions:
   mf.force.join:
     description: Allows joining a faction without being invited
     default: op
+  mf.chat:
+    description: Allows using faction chat
+    default: true
+  mf.chat.history:
+    description: Allows viewing chat history
+    default: true

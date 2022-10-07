@@ -1,5 +1,6 @@
 package com.dansplugins.factionsystem.faction.role
 
+import com.dansplugins.factionsystem.chat.MfFactionChatChannel.*
 import com.dansplugins.factionsystem.faction.flag.MfFlags
 import com.dansplugins.factionsystem.faction.permission.MfFactionPermission
 import com.dansplugins.factionsystem.faction.permission.MfFactionPermission.Companion.ADD_LAW
@@ -65,7 +66,9 @@ data class MfFactionRoles(
                     put(MODIFY_ROLE(member.id), true)
                     put(SET_MEMBER_ROLE(member.id), true)
                     put(SET_ROLE_PERMISSION(LIST_LAWS), true)
-                    put(SET_ROLE_PERMISSION(CHAT), true)
+                    put(SET_ROLE_PERMISSION(CHAT(FACTION)), true)
+                    put(SET_ROLE_PERMISSION(CHAT(VASSALS)), true)
+                    put(SET_ROLE_PERMISSION(CHAT(ALLIES)), true)
                     put(SET_ROLE_PERMISSION(VIEW_FLAGS), true)
                     put(SET_ROLE_PERMISSION(GO_HOME), true)
                     put(SET_ROLE_PERMISSION(VIEW_INFO), true)
@@ -94,7 +97,9 @@ data class MfFactionRoles(
                     put(REQUEST_ALLIANCE, true)
                     put(BREAK_ALLIANCE, true)
                     put(TOGGLE_AUTOCLAIM, true)
-                    put(CHAT, true)
+                    put(SET_ROLE_PERMISSION(CHAT(FACTION)), true)
+                    put(SET_ROLE_PERMISSION(CHAT(VASSALS)), true)
+                    put(SET_ROLE_PERMISSION(CHAT(ALLIES)), true)
                     put(CLAIM, true)
                     put(UNCLAIM, true)
                     put(DECLARE_INDEPENDENCE, true)

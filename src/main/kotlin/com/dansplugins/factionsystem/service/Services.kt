@@ -1,5 +1,6 @@
 package com.dansplugins.factionsystem.service
 
+import com.dansplugins.factionsystem.chat.MfChatService
 import com.dansplugins.factionsystem.claim.MfClaimService
 import com.dansplugins.factionsystem.faction.MfFactionService
 import com.dansplugins.factionsystem.gate.MfGateService
@@ -19,5 +20,6 @@ class Services(
     val lockService: MfLockService,
     val interactionService: MfInteractionService,
     val notificationService: MfNotificationService,
-    val gateService: MfGateService
+    val gateService: MfGateService,
+    val chatService: MfChatService
 )

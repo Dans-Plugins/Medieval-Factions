@@ -2,6 +2,7 @@ package com.dansplugins.factionsystem.faction
 
 import com.dansplugins.factionsystem.MedievalFactions
 import com.dansplugins.factionsystem.area.MfPosition
+import com.dansplugins.factionsystem.chat.MfFactionChatChannel.*
 import com.dansplugins.factionsystem.faction.flag.MfFlagValues
 import com.dansplugins.factionsystem.faction.permission.MfFactionPermission
 import com.dansplugins.factionsystem.faction.permission.MfFactionPermission.Companion.ADD_LAW
@@ -10,6 +11,7 @@ import com.dansplugins.factionsystem.faction.permission.MfFactionPermission.Comp
 import com.dansplugins.factionsystem.faction.permission.MfFactionPermission.Companion.CHANGE_NAME
 import com.dansplugins.factionsystem.faction.permission.MfFactionPermission.Companion.CHANGE_PREFIX
 import com.dansplugins.factionsystem.faction.permission.MfFactionPermission.Companion.CHAT
+import com.dansplugins.factionsystem.faction.permission.MfFactionPermission.Companion.CHAT_HISTORY
 import com.dansplugins.factionsystem.faction.permission.MfFactionPermission.Companion.CLAIM
 import com.dansplugins.factionsystem.faction.permission.MfFactionPermission.Companion.CREATE_GATE
 import com.dansplugins.factionsystem.faction.permission.MfFactionPermission.Companion.DECLARE_INDEPENDENCE
@@ -72,7 +74,10 @@ data class MfFaction(
         put(REQUEST_ALLIANCE, false)
         put(BREAK_ALLIANCE, false)
         put(TOGGLE_AUTOCLAIM, false)
-        put(CHAT, true)
+        put(CHAT(FACTION), true)
+        put(CHAT(VASSALS), true)
+        put(CHAT(ALLIES), true)
+        put(CHAT_HISTORY, true)
         put(CLAIM, false)
         put(UNCLAIM, false)
         put(DECLARE_INDEPENDENCE, false)
