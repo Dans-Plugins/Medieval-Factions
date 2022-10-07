@@ -8,6 +8,7 @@ import com.dansplugins.factionsystem.command.faction.bypass.MfFactionBypassComma
 import com.dansplugins.factionsystem.command.faction.chat.MfFactionChatCommand
 import com.dansplugins.factionsystem.command.faction.checkclaim.MfFactionCheckClaimCommand
 import com.dansplugins.factionsystem.command.faction.claim.MfFactionClaimCommand
+import com.dansplugins.factionsystem.command.faction.claimfill.MfFactionClaimFillCommand
 import com.dansplugins.factionsystem.command.faction.create.MfFactionCreateCommand
 import com.dansplugins.factionsystem.command.faction.declareindependence.MfFactionDeclareIndependenceCommand
 import com.dansplugins.factionsystem.command.faction.declarewar.MfFactionDeclareWarCommand
@@ -78,6 +79,7 @@ class MfFactionCommand(private val plugin: MedievalFactions) : CommandExecutor {
     private val factionFlagCommand = MfFactionFlagCommand(plugin)
     private val factionBypassCommand = MfFactionBypassCommand(plugin)
     private val factionChatCommand = MfFactionChatCommand(plugin)
+    private val factionClaimFillCommand = MfFactionClaimFillCommand(plugin)
 
     override fun onCommand(sender: CommandSender, command: Command, label: String, args: Array<out String>): Boolean {
         if (args.isEmpty()) {
@@ -120,6 +122,7 @@ class MfFactionCommand(private val plugin: MedievalFactions) : CommandExecutor {
             "flag", "flags", plugin.language["CmdFactionFlag"] -> factionFlagCommand.onCommand(sender, command, label, args.drop(1).toTypedArray())
             "bypass", plugin.language["CmdFactionBypass"] -> factionBypassCommand.onCommand(sender, command, label, args.drop(1).toTypedArray())
             "chat", plugin.language["CmdFactionChat"] -> factionChatCommand.onCommand(sender, command, label, args.drop(1).toTypedArray())
+            "claimfill", plugin.language["CmdFactionClaimFill"] -> factionClaimFillCommand.onCommand(sender, command, label, args.drop(1).toTypedArray())
             else -> {
                 sender.sendMessage("$RED${plugin.language["CommandFactionUsage"]}")
                 true

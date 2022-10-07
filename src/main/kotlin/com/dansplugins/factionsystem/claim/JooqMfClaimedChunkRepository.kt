@@ -3,14 +3,13 @@ package com.dansplugins.factionsystem.claim
 import com.dansplugins.factionsystem.faction.MfFactionId
 import com.dansplugins.factionsystem.jooq.Tables.MF_CLAIMED_CHUNK
 import com.dansplugins.factionsystem.jooq.tables.records.MfClaimedChunkRecord
-import org.bukkit.World
 import org.jooq.DSLContext
 import java.util.*
 
 class JooqMfClaimedChunkRepository(private val dsl: DSLContext) : MfClaimedChunkRepository {
-    override fun getClaim(world: World, x: Int, z: Int): MfClaimedChunk? {
+    override fun getClaim(worldId: UUID, x: Int, z: Int): MfClaimedChunk? {
         return dsl.selectFrom(MF_CLAIMED_CHUNK)
-            .where(MF_CLAIMED_CHUNK.WORLD_ID.eq(world.uid.toString()))
+            .where(MF_CLAIMED_CHUNK.WORLD_ID.eq(worldId.toString()))
             .and(MF_CLAIMED_CHUNK.X.eq(x))
             .and(MF_CLAIMED_CHUNK.Z.eq(z))
             .fetchOne()

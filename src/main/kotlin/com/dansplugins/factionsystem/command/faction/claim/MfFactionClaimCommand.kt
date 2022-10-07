@@ -2,6 +2,7 @@ package com.dansplugins.factionsystem.command.faction.claim
 
 import com.dansplugins.factionsystem.MedievalFactions
 import com.dansplugins.factionsystem.claim.MfClaimedChunk
+import com.dansplugins.factionsystem.command.faction.claimfill.MfFactionClaimFillCommand
 import com.dansplugins.factionsystem.faction.permission.MfFactionPermission.Companion.CLAIM
 import com.dansplugins.factionsystem.player.MfPlayer
 import com.dansplugins.factionsystem.relationship.MfFactionRelationshipType.AT_WAR
@@ -15,6 +16,7 @@ import org.bukkit.entity.Player
 import java.util.logging.Level.SEVERE
 
 class MfFactionClaimCommand(private val plugin: MedievalFactions) : CommandExecutor {
+    private val factionClaimFillCommand = MfFactionClaimFillCommand(plugin)
     override fun onCommand(sender: CommandSender, command: Command, label: String, args: Array<out String>): Boolean {
         if (!sender.hasPermission("mf.claim")) {
             sender.sendMessage("$RED${plugin.language["CommandFactionClaimNoPermission"]}")
@@ -23,6 +25,9 @@ class MfFactionClaimCommand(private val plugin: MedievalFactions) : CommandExecu
         if (sender !is Player) {
             sender.sendMessage("$RED${plugin.language["CommandFactionClaimNotAPlayer"]}")
             return true
+        }
+        if (args.isNotEmpty() && args[0].equals("fill", ignoreCase = true)) {
+            return factionClaimFillCommand.onCommand(sender, command, label, args.drop(1).toTypedArray())
         }
         plugin.server.scheduler.runTaskAsynchronously(plugin, Runnable {
             val playerService = plugin.services.playerService
@@ -88,7 +93,7 @@ class MfFactionClaimCommand(private val plugin: MedievalFactions) : CommandExecu
                         sender.sendMessage("$RED${plugin.language["CommandFactionClaimNoClaimableChunks"]}")
                         return@saveChunks
                     }
-                    if (plugin.config.getBoolean("factions.limitLand") && chunks.size + claimService.getClaims(faction.id).size > faction.power) {
+                    if (plugin.config.getBoolean("factions.limitLand") && claimableChunks.size + claimService.getClaims(faction.id).size > faction.power) {
                         sender.sendMessage("$RED${plugin.language["CommandFactionClaimReachedDemesneLimit", faction.power.toString()]}")
                         return@saveChunks
                     }
