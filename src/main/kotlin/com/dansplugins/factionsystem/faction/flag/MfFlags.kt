@@ -27,7 +27,7 @@ class MfFlags(
             {
                 val default = plugin.config.getString("factions.defaults.flags.color") ?: "random"
                 if (default == "random") {
-                    val color = Color.getHSBColor(Random.nextFloat(), Random.nextFloat(), 0.8f + (Random.nextFloat() * 0.2f))
+                    val color = Color.getHSBColor(Random.nextFloat(), 0.7f + (Random.nextFloat() * 0.3f), 0.3f + (Random.nextFloat() * 0.7f))
                     String.format("#%02x%02x%02x", color.red, color.green, color.blue)
                 } else {
                     default

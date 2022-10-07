@@ -68,8 +68,9 @@ commands:
       /f flag [list|set] - Faction flag management
       /f bypass - Toggles bypass mode
       /f chat (faction|vassals|allies) - Toggles faction chat
+      /f set [name|description|prefix] (value) - Sets faction name/description/prefix
     aliases: [f, fraktion, faccion, faccao]
-    usage: /<command> [help|ally|breakalliance|declarewar|makepeace|create|invite|join|law|role|list|claim|unclaim|checkclaim|unclaimall|power|who|invoke|leave|vassalize|swearfealty|declareindependence|grantindependence|kick|map|sethome|home|flag|bypass|chat]
+    usage: /<command> [help|ally|breakalliance|declarewar|makepeace|create|invite|join|law|role|list|claim|unclaim|checkclaim|unclaimall|power|who|invoke|leave|vassalize|swearfealty|declareindependence|grantindependence|kick|map|sethome|home|flag|bypass|chat|set]
   lock:
     description: Enables or disables lock mode. To cancel lock mode, use /lock cancel.
     aliases: [verschließen, verschliessen, cerrar, trancar, запереть]
@@ -253,4 +254,7 @@ permissions:
     default: true
   mf.chat.history:
     description: Allows viewing chat history
+    default: true
+  mf.prefix:
+    description: Allows setting faction prefix
     default: true

@@ -58,6 +58,18 @@ class MfFactionInfoCommand(private val plugin: MedievalFactions) : CommandExecut
                     clickEvent = ClickEvent(RUN_COMMAND, "/faction set name")
                 })
             }
+            if (faction.prefix != null) {
+                sender.sendMessage("${BukkitChatColor.GRAY}${plugin.language["CommandFactionInfoPrefix", faction.prefix]}")
+            } else {
+                sender.sendMessage("${BukkitChatColor.GRAY}${plugin.language["CommandFactionInfoNoPrefix"]}")
+            }
+            if (sender.hasPermission("mf.prefix")) {
+                sender.spigot().sendMessage(TextComponent(plugin.language["CommandFactionInfoSetPrefix"]).apply {
+                    color = SpigotChatColor.GREEN
+                    hoverEvent = HoverEvent(SHOW_TEXT, Text(plugin.language["CommandFactionInfoSetPrefixHover"]))
+                    clickEvent = ClickEvent(RUN_COMMAND, "/faction set prefix")
+                })
+            }
             sender.sendMessage("${BukkitChatColor.GRAY}${plugin.language["CommandFactionInfoDescription", faction.description]}")
             if (sender.hasPermission("mf.desc")) {
                 sender.spigot().sendMessage(TextComponent(plugin.language["CommandFactionInfoSetDescription"]).apply {
