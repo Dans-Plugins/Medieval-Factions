@@ -1,6 +1,7 @@
 package com.dansplugins.factionsystem.claim
 
 import com.dansplugins.factionsystem.MedievalFactions
+import com.dansplugins.factionsystem.area.MfChunkPosition
 import com.dansplugins.factionsystem.event.faction.FactionClaimEvent
 import com.dansplugins.factionsystem.event.faction.FactionUnclaimEvent
 import com.dansplugins.factionsystem.exception.EventCancelledException
@@ -35,9 +36,11 @@ class MfClaimService(private val plugin: MedievalFactions, private val repositor
         plugin.logger.info("${claimsByKey.size} claims loaded (${System.currentTimeMillis() - startTime}ms)")
     }
 
-    fun getClaim(world: World, x: Int, z: Int): MfClaimedChunk? = repository.getClaim(world, x, z)
+    fun getClaim(worldId: UUID, x: Int, z: Int): MfClaimedChunk? = claimsByKey[ClaimKey(worldId, x, z)]
+    fun getClaim(world: World, x: Int, z: Int): MfClaimedChunk? = getClaim(world.uid, x, z)
     fun getClaim(chunk: Chunk): MfClaimedChunk? = getClaim(chunk.world, chunk.x, chunk.z)
-    fun getClaims(factionId: MfFactionId): List<MfClaimedChunk> = repository.getClaims(factionId)
+    fun getClaim(chunkPosition: MfChunkPosition): MfClaimedChunk? = getClaim(chunkPosition.worldId, chunkPosition.x, chunkPosition.z)
+    fun getClaims(factionId: MfFactionId): List<MfClaimedChunk> = claims.filter { it.factionId == factionId }
     fun isInteractionAllowed(playerId: MfPlayerId, claim: MfClaimedChunk): Boolean {
         val factionService = plugin.services.factionService
         val playerFaction = factionService.getFaction(playerId) ?: return false
