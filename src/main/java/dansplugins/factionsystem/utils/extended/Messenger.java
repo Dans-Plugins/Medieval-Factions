@@ -76,7 +76,7 @@ public class Messenger extends preponderous.ponder.minecraft.bukkit.tools.Messen
     private void sendBonusPowerInfo(Faction faction, CommandSender sender) {
         if (faction.getBonusPower() != 0) {
             playerService.sendMessage(sender, ChatColor.AQUA + String.format(localeService.get("BonusPower"), faction.getBonusPower())
-                    , Objects.requireNonNull(messageService.getLanguage().getString("BonusPower")).replace("BonusPower", String.valueOf(faction.getBonusPower())), true);
+                    , Objects.requireNonNull(messageService.getLanguage().getString("BonusPower")).replace("#amount#", String.valueOf(faction.getBonusPower())), true);
         }
     }
 
