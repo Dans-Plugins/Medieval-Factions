@@ -64,8 +64,9 @@ commands:
       /f bypass - Toggles bypass mode
       /f chat (faction|vassals|allies) - Toggles faction chat
       /f set [name|description|prefix] (value) - Sets faction name/description/prefix
+      /f bonuspower [faction] [bonus power] - Sets faction bonus power
     aliases: [medievalfactions, mf, f, fraktion, faccion, faccao]
-    usage: /<command> [help|ally|breakalliance|declarewar|makepeace|create|invite|join|law|role|list|claim|unclaim|checkclaim|unclaimall|power|who|invoke|leave|vassalize|swearfealty|declareindependence|grantindependence|kick|map|sethome|home|flag|bypass|chat|set]
+    usage: /<command> [help|ally|breakalliance|declarewar|makepeace|create|invite|join|law|role|list|claim|unclaim|checkclaim|unclaimall|power|who|invoke|leave|vassalize|swearfealty|declareindependence|grantindependence|kick|map|sethome|home|flag|bypass|chat|set|bonuspower]
   lock:
     description: Enables or disables lock mode. To cancel lock mode, use /lock cancel.
     aliases: [verschließen, verschliessen, cerrar, trancar, запереть]
@@ -241,9 +242,6 @@ permissions:
   mf.bypass:
     description: Allows bypassing faction protections
     default: op
-  mf.force.join:
-    description: Allows joining a faction without being invited
-    default: op
   mf.chat:
     description: Allows using faction chat
     default: true
@@ -253,3 +251,49 @@ permissions:
   mf.prefix:
     description: Allows setting faction prefix
     default: true
+  mf.force.join:
+    description: Allows joining a faction without being invited
+    default: op
+  mf.force.kick:
+    description: Allows kicking a member from another faction
+    default: op
+  mf.force.bonuspower:
+    description: Allows setting faction bonus power
+    default: op
+  mf.force.power:
+    description: Allows setting player power
+    default: op
+  mf.force.rename:
+    description: Allows forcing faction renames
+    default: op
+  mf.force.unlock:
+    description: Allows unlocking other players' locked blocks
+    default: op
+  mf.force.claim:
+    description: Allows claiming land for other factions
+    default: op
+  mf.force.unclaim:
+    description: Allows unclaiming land for other factions
+    default: op
+  mf.force.flag:
+    description: Allows setting flags for other factions
+    default: op
+  mf.force.*:
+    description: Allows all force commands
+    default: op
+    children:
+    - mf.force.join
+    - mf.force.kick
+    - mf.force.bonuspower
+    - mf.force.power
+    - mf.force.rename
+    - mf.force.unlock
+    - mf.force.claim
+    - mf.force.unclaim
+    - mf.force.flag
+  mf.admin:
+    description: Admin permission
+    default: op
+    children:
+    - mf.force.*
+    - mf.bypass
