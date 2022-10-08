@@ -61,7 +61,7 @@ Elafir | Made it possible to control gates with redstone
 VoChiDanh | Refactored parts the PersistentData class in an attempt to resolve java compatibility issues
 alyphen | Transitioned the project from using maven to gradle.
 [JackAttack924](https://github.com/jackcayc924) | Created Tab-Completion functionality for commands
-ConfusedAlex | Added null check for gate coordinates and mob protection flag
+[ConfusedAlex](https://github.com/ConfusedAlex) | Added null check for gate coordinates and mob protection flag
 
 ### Translators
 Name | Language(s)
