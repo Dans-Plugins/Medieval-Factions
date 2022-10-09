@@ -96,7 +96,7 @@ AssignedToRandomFaction	Du wurdest einer zufälligen Faction zugeordnet
 AttemptedAlliance	Bündnisangebot an %s gesendet
 AttemptedPeace	Friedensangebot an %s gesendet
 AtWarWith	Im Krieg mit. %s
-AutoclaimToggled	Autoclaim aktiviert.
+AutoclaimToggled	Autoclaim umgeschalten.
 BlockAlreadyLocked	Dieser Block ist bereits gesichert
 BlockIsNotLocked	Dieser Block ist noch nicht gesichert
 BlockIsPartOfGateMustRemoveGate	Dieser Block ist Teil von Gate '%s'. Du musst zuerst das Gate removen!
