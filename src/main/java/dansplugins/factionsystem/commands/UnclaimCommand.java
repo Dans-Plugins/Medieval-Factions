@@ -55,7 +55,6 @@ public class UnclaimCommand extends SubCommand {
                     , "UnClaimed", false);
             return;
         }
-        // https://github.com/dmccoystephenson/Medieval-Factions/issues/836
         int radius = getIntSafe(args[0], 1);
         if (radius <= 0) {
             radius = 1;
