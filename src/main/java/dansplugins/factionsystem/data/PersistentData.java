@@ -918,6 +918,10 @@ public class PersistentData {
             addClaimedChunk(location.getChunk(), faction, Objects.requireNonNull(location.getWorld()));
         }
 
+        public getNumPlayers() {
+            return playerpowerrecords.size();
+        }
+
         /**
          * This is a private method intended to be used by this class to retrieve a claimed chunk.
          *

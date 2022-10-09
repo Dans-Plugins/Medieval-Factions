@@ -258,6 +258,7 @@ PluginInfo:
 StatsFaction:
   - "&a=== Medieval Factions Stats ==="
   - "&aNumber of factions: #faction#"
+  - "&aNumber of players: #players#"
 MembersFaction:
   Title: "&b---------- &aMembers of #faction# &b----------"
   SubTitle: "&b---------- &aMembers of #faction# &b----------"

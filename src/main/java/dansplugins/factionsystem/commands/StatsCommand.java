@@ -40,11 +40,15 @@ public class StatsCommand extends SubCommand {
         if (!configService.getBoolean("useNewLanguageFile")) {
             sender.sendMessage(ChatColor.AQUA + "=== Medieval Factions Stats ===");
             sender.sendMessage(ChatColor.AQUA + "Number of factions: " + persistentData.getNumFactions());
+            sender.sendMessage(ChatColor.AQUA + "Number of players: " + persistentData.getNumPlayers());
         } else {
             messageService.getLanguage().getStringList("StatsFaction")
                     .forEach(s -> {
                         if (s.contains("#faction#")) {
                             s = s.replace("#faction#", String.valueOf(persistentData.getNumFactions()));
+                        }
+                        if (s.contains("#players#")) {
+                            s = s.replace("#players#", String.valueOf(persistentData.getNumPlayers()));
                         }
                         s = playerService.colorize(s);
                         playerService.sendMessage(sender, "", s, true);
