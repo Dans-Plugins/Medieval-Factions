@@ -66,7 +66,7 @@ public class DynmapIntegrator {
                 initializeMarkerSets();
                 this.logger.debug(this.localeService.get("DynmapIntegrationSuccessful"));
             } catch (Exception e) {
-                this.logger.debug(this.localeService.get("ErrorIntegratingWithDynmap") + e.getMessage());
+                this.logger.error(this.localeService.get("ErrorIntegratingWithDynmap") + e.getMessage());
             }
         }
     }
@@ -127,7 +127,7 @@ public class DynmapIntegrator {
         if (set == null) {
             set = markerAPI.createMarkerSet(getDynmapPluginSetId(markerLabel), getDynmapPluginLayer(), null, false);
             if (set == null) {
-                logger.debug(localeService.get("ErrorCreatingMarkerSet") + ": markerLabel = " + markerLabel);
+                logger.error(localeService.get("ErrorCreatingMarkerSet") + ": markerLabel = " + markerLabel);
                 return null;
             }
         }
@@ -405,7 +405,7 @@ public class DynmapIntegrator {
                 if (m == null) {
                     m = markerSet.createAreaMarker(polyid, name, false, currentWorld, x, z, false);
                     if (m == null) {
-                        System.out.printf((localeService.get("ErrorAddingAreaMarker")) + "%n", polyid);
+                        logger.error(String.format(localeService.get("ErrorAddingAreaMarker")), polyid);
                         return;
                     }
                 } else {
@@ -422,7 +422,7 @@ public class DynmapIntegrator {
                         m.setFillStyle(0.3, colrCode);
                     }
                 } catch (Exception e) {
-                    System.out.printf((localeService.get("ErrorSettingAreaMarkerColor")) + "%n", colorCode);
+                    logger.error((localeService.get("ErrorSettingAreaMarkerColor")) + "%n", colorCode);
                 }
                 m.setDescription(popupDescription); /* Set popup */
 

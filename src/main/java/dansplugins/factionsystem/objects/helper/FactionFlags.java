@@ -196,21 +196,21 @@ public class FactionFlags {
 
     public Object getFlag(String flag) {
         if (!isFlag(flag)) {
-            logger.debug(String.format("[DEBUG] Flag '%s' was not found!", flag));
+            logger.debug(String.format("Flag '%s' was not found!", flag));
             return false;
         }
 
         if (integerValues.containsKey(flag)) {
-            logger.debug(String.format("[DEBUG] Flag '%s' was found! Value: '%s'", flag, integerValues.get(flag)));
+            logger.debug(String.format("Flag '%s' was found! Value: '%s'", flag, integerValues.get(flag)));
             return integerValues.get(flag);
         } else if (booleanValues.containsKey(flag)) {
-            logger.debug(String.format("[DEBUG] Flag '%s' was found! Value: '%s'", flag, booleanValues.get(flag)));
+            logger.debug(String.format("Flag '%s' was found! Value: '%s'", flag, booleanValues.get(flag)));
             return booleanValues.get(flag);
         } else if (doubleValues.containsKey(flag)) {
-            logger.debug(String.format("[DEBUG] Flag '%s' was found! Value: '%s'", flag, doubleValues.get(flag)));
+            logger.debug(String.format("Flag '%s' was found! Value: '%s'", flag, doubleValues.get(flag)));
             return doubleValues.get(flag);
         } else if (stringValues.containsKey(flag)) {
-            logger.debug(String.format("[DEBUG] Flag '%s' was found! Value: '%s'", flag, stringValues.get(flag)));
+            logger.debug(String.format("Flag '%s' was found! Value: '%s'", flag, stringValues.get(flag)));
             return stringValues.get(flag);
         }
         return null;

@@ -811,7 +811,7 @@ public class PersistentData {
                     try {
                         itr.remove();
                     } catch (Exception e) {
-                        System.out.println(localeService.get("ErrorClaimedChunkRemoval"));
+                        logger.error(localeService.get("ErrorClaimedChunkRemoval"));
                     }
                 }
             }
