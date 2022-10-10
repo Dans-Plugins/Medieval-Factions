@@ -76,7 +76,7 @@ class MfFactionListCommand(private val plugin: MedievalFactions) : CommandExecut
                 // Each faction is currently 4 lines so this should be a multiple of 4.
                 // If we change the amount of lines then this should change.
                 pageLength = 16
-            ) { page -> "/faction list ${page - 1}" }
+            ) { page -> "/faction list ${page + 1}" }
             if (view.pages.isEmpty()) {
                 sender.sendMessage("${BukkitChatColor.RED}${plugin.language["CommandFactionListNoFactions"]}")
                 return@Runnable

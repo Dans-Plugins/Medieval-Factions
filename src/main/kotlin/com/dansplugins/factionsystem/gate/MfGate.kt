@@ -22,13 +22,17 @@ data class MfGate(
 ) {
 
     fun shouldOpen(): Boolean {
-        val triggerBukkitBlock = trigger.toBukkitBlock()
-        return triggerBukkitBlock?.isBlockIndirectlyPowered == true || triggerBukkitBlock?.isBlockPowered == true
+        val world = plugin.server.getWorld(trigger.worldId) ?: return false
+        if (!world.isChunkLoaded(trigger.x / 16, trigger.z / 16)) return false
+        val triggerBukkitBlock = trigger.toBukkitBlock() ?: return false
+        return triggerBukkitBlock.isBlockIndirectlyPowered || triggerBukkitBlock.isBlockPowered
     }
 
     fun shouldClose(): Boolean {
-        val triggerBukkitBlock = trigger.toBukkitBlock()
-        return triggerBukkitBlock?.isBlockIndirectlyPowered != true && triggerBukkitBlock?.isBlockPowered != true
+        val world = plugin.server.getWorld(trigger.worldId) ?: return false
+        if (!world.isChunkLoaded(trigger.x / 16, trigger.z / 16)) return false
+        val triggerBukkitBlock = trigger.toBukkitBlock() ?: return false
+        return !triggerBukkitBlock.isBlockIndirectlyPowered && !triggerBukkitBlock.isBlockPowered
     }
 
     fun open() {

@@ -28,6 +28,7 @@ import com.dansplugins.factionsystem.lang.Language
 import com.dansplugins.factionsystem.law.JooqMfLawRepository
 import com.dansplugins.factionsystem.law.MfLawRepository
 import com.dansplugins.factionsystem.law.MfLawService
+import com.dansplugins.factionsystem.legacy.MfLegacyDataMigrator
 import com.dansplugins.factionsystem.listener.*
 import com.dansplugins.factionsystem.locks.JooqMfLockRepository
 import com.dansplugins.factionsystem.locks.MfLockRepository
@@ -68,6 +69,20 @@ class MedievalFactions : JavaPlugin() {
     lateinit var language: Language
 
     override fun onEnable() {
+        val migrator = MfLegacyDataMigrator(this)
+        if (config.getString("version")?.startsWith("v4.") == true) {
+            migrator.backup()
+            saveDefaultConfig()
+            reloadConfig()
+            config.set("migrateMf4", true)
+            saveConfig()
+            logger.warning("Shutting down the server due to Medieval Factions 4 migration.")
+            logger.warning("If you have a database, please configure it before starting the server again.")
+            logger.warning("Otherwise, simply start your server again to begin migration.")
+            server.shutdown()
+            return
+        }
+
         saveDefaultConfig()
 
         language = Language(ResourceBundle.getBundle("lang", Locale.forLanguageTag(config.getString("language"))))
@@ -147,6 +162,12 @@ class MedievalFactions : JavaPlugin() {
             chatService
         )
         setupRpkLockService()
+
+        if (config.getBoolean("migrateMf4")) {
+            migrator.migrate()
+            config.set("migrateMf4", null)
+            saveConfig()
+        }
 
         registerListeners(
             AsyncPlayerChatListener(this),
