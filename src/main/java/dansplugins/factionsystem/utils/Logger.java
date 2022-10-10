@@ -25,45 +25,42 @@ public class Logger {
     }
 
     /**
-     * Log a debug message if the debug flag is enabled.
+     * Log a debug message to the debug log file if the debug flag is enabled.
      *
      * @param message The message to log.
      */
     public void debug(String message) {
         if (medievalFactions.isDebugEnabled()) {
-            medievalFactions.getLogger().log(Level.INFO, "[Medieval Factions DEBUG] " + message);
-            logToFile("[DEBUG] " + message);
+            logToFile(message, "log.debug.txt");
         }
     }
 
     /**
-     * Log a message to the console.
+     * Log a message to the info log file.
      *
      * @param message The message to log.
      */
     public void print(String message) {
-        medievalFactions.getLogger().log(Level.INFO, "[Medieval Factions] " + message);
-        logToFile("[INFO] " + message);
+        logToFile(message, "log.info.txt");
     }
 
     /**
-     * Log an error to the console.
+     * Log an error to the the error log file.
      *
      * @param message The message to log.
      */
     public void error(String message) {
-        medievalFactions.getLogger().log(Level.SEVERE, "[Medieval Factions ERROR] " + message);
-        logToFile("[ERROR] " + message);
+        logToFile(message, "log.error.txt");
     }
 
-    private void logToFile(String message) {
+    private void logToFile(String message, String fileName) {
         // add time to message
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
         String formattedDateTime = LocalDateTime.now().format(formatter);
         String dateMessage = "[" + formattedDateTime + "] " + message;
 
         // append to file
-        File file = new File("plugins/MedievalFactions/logs.txt");
+        File file = new File("plugins/MedievalFactions/" + fileName);
         try {
             if (!file.exists()) {
                 file.createNewFile();
