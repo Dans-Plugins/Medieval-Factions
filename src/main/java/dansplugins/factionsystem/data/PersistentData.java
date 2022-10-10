@@ -402,6 +402,10 @@ public class PersistentData {
         return factions.size();
     }
 
+    public int getNumPlayers() {
+        return powerRecords.size();
+    }
+
     public void updateFactionReferencesDueToNameChange(String oldName, String newName) {
         // Change Ally/Enemy/Vassal/Liege references
         factions.forEach(fac -> fac.updateData(oldName, newName));
@@ -916,10 +920,6 @@ public class PersistentData {
             }
 
             addClaimedChunk(location.getChunk(), faction, Objects.requireNonNull(location.getWorld()));
-        }
-
-        public getNumPlayers() {
-            return playerpowerrecords.size();
         }
 
         /**
