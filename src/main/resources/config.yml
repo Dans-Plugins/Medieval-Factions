@@ -1,3 +1,4 @@
+version: @version@
 language: en-US
 database:
   url: 'jdbc:h2:./medieval_factions_db;AUTO_SERVER=true;MODE=MYSQL;DATABASE_TO_UPPER=false'
@@ -9,6 +10,8 @@ players:
   maxPower: 20
   hoursToReachMaxPower: 12
   hoursToReachMinPower: 72
+  powerLostOnDeath: 1
+  powerGainedOnKill: 1
 wilderness:
   color: '#3e8e39'
 gates:
@@ -18,13 +21,10 @@ gates:
   maxRemoveDistance: 12
 factions:
   mobsSpawnInFactionTerritory: false
-  powerIncreaseAmount: 2
   laddersPlaceableInEnemyFactionTerritory: true
-  minutesBeforeInitialPowerIncrease: 30
-  minutesBetweenPowerIncreases: 60
   warsRequiredForPvp: true
   maxNameLength: 20
-  surroundedChunksProtected: true
+  surroundingChunksProtected: true
   zeroPowerFactionsGetDisbanded: false
   vassalPowerContributionMultiplier: 0.75
   nonMembersCanInteractWithDoors: false

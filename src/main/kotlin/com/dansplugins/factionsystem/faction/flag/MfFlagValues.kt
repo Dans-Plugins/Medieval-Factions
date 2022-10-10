@@ -7,6 +7,7 @@ import org.bukkit.configuration.serialization.ConfigurationSerializable
 class MfFlagValues(private val values: Map<MfFlag<out Any>, Any?> = mutableMapOf()) : ConfigurationSerializable {
     operator fun <T: Any> get(flag: MfFlag<T>): T = values[flag] as? T ?: flag.defaultValue
     operator fun <T: Any> plus(flagValue: Pair<MfFlag<T>, T>): MfFlagValues = MfFlagValues(values + flagValue)
+    operator fun plus(flagValues: Map<MfFlag<out Any>, Any?>): MfFlagValues = MfFlagValues(values + flagValues)
     override fun serialize(): Map<String, Any?> {
         return values.mapKeys { (flag, _) -> flag.name }
     }
