@@ -69,7 +69,7 @@ public class Scheduler {
         Bukkit.getScheduler().scheduleSyncRepeatingTask(medievalFactions, new Runnable() {
             @Override
             public void run() {
-                logger.debug(String.format((localeService.get("AlertIncreasingThePowerOfEveryPlayer")), configService.getInt("powerIncreaseAmount"), configService.getInt("minutesBetweenPowerIncreases")));
+                logger.debug(String.format((localeService.get("AlertIncreasingThePowerOfEveryPlayer")) + "%n", configService.getInt("powerIncreaseAmount"), configService.getInt("minutesBetweenPowerIncreases")));
                 persistentData.initiatePowerIncreaseForAllPlayers();
             }
         }, delay * 20L, secondsUntilRepeat * 20L);
@@ -80,7 +80,7 @@ public class Scheduler {
         int delay = configService.getInt("minutesBetweenPowerDecreases") * 60;
         int secondsUntilRepeat = configService.getInt("minutesBetweenPowerDecreases") * 60;
         Bukkit.getScheduler().scheduleSyncRepeatingTask(medievalFactions, () -> {
-            logger.debug(String.format((localeService.get("AlertDecreasingThePowerOfInactivePlayers")), configService.getInt("powerDecreaseAmount"), configService.getInt("minutesBeforePowerDecrease"), configService.getInt("minutesBetweenPowerDecreases")));
+            logger.debug(String.format((localeService.get("AlertDecreasingThePowerOfInactivePlayers")) + "%n", configService.getInt("powerDecreaseAmount"), configService.getInt("minutesBeforePowerDecrease"), configService.getInt("minutesBetweenPowerDecreases")));
 
             persistentData.decreasePowerForInactivePlayers();
 
