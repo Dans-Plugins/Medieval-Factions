@@ -11,6 +11,7 @@ import com.dansplugins.factionsystem.failure.ServiceFailureType.GENERAL
 import com.dansplugins.factionsystem.player.MfPlayerId
 import dev.forkhandles.result4k.Result4k
 import dev.forkhandles.result4k.mapFailure
+import dev.forkhandles.result4k.onFailure
 import dev.forkhandles.result4k.resultFrom
 import java.util.concurrent.ConcurrentHashMap
 
@@ -76,6 +77,11 @@ class MfFactionService(private val plugin: MedievalFactions, private val reposit
                 plugin.server.pluginManager.callEvent(event)
                 if (event.isCancelled) {
                     throw EventCancelledException("Event cancelled")
+                }
+                val lockService = plugin.services.lockService
+                lockService.getLockedBlocks(oldMember).forEach { lockedBlock ->
+                    lockService.delete(lockedBlock.block)
+                        .onFailure { failure -> throw failure.reason.cause }
                 }
             }
         }

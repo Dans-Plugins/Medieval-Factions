@@ -7,6 +7,7 @@ import com.dansplugins.factionsystem.failure.OptimisticLockingFailureException
 import com.dansplugins.factionsystem.failure.ServiceFailure
 import com.dansplugins.factionsystem.failure.ServiceFailureType
 import com.dansplugins.factionsystem.player.MfPlayer
+import com.dansplugins.factionsystem.player.MfPlayerId
 import dev.forkhandles.result4k.Result4k
 import dev.forkhandles.result4k.mapFailure
 import dev.forkhandles.result4k.resultFrom
@@ -66,6 +67,10 @@ class MfLockService(private val plugin: MedievalFactions, private val repository
         repository.getLockedBlock(id)
     }.mapFailure { exception ->
         ServiceFailure(exception.toServiceFailureType(), "Service error: ${exception.message}", exception)
+    }
+
+    fun getLockedBlocks(playerId: MfPlayerId): List<MfLockedBlock> {
+        return lockedBlocks.values.filter { it.playerId == playerId }
     }
 
     private fun Exception.toServiceFailureType(): ServiceFailureType {

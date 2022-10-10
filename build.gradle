@@ -25,16 +25,16 @@ configurations {
 }
 
 dependencies {
-    implementation 'me.clip:placeholderapi:2.11.1'
+    implementation 'me.clip:placeholderapi:2.11.2'
     implementation 'org.spigotmc:spigot-api:1.19.2-R0.1-SNAPSHOT'
     implementation 'us.dynmap:dynmap-api:2.2'
     implementation 'org.bstats:bstats-bukkit:3.0.0'
     implementation platform("dev.forkhandles:forkhandles-bom:2.2.0.0")
     implementation 'dev.forkhandles:result4k'
-    implementation 'org.jooq:jooq:3.17.2'
-    implementation 'org.flywaydb:flyway-core:8.5.13'
-    implementation 'org.flywaydb:flyway-mysql:8.5.13'
-    implementation 'org.mariadb.jdbc:mariadb-java-client:3.0.5'
+    implementation 'org.jooq:jooq:3.17.4'
+    implementation 'org.flywaydb:flyway-core:9.4.0'
+    implementation 'org.flywaydb:flyway-mysql:9.4.0'
+    implementation 'org.mariadb.jdbc:mariadb-java-client:3.0.6'
     implementation 'com.h2database:h2:2.1.214'
     implementation 'com.zaxxer:HikariCP:5.0.1'
     implementation 'com.google.code.gson:gson:2.9.0'
@@ -46,9 +46,9 @@ dependencies {
     implementation 'com.rpkit:rpk-lock-lib-bukkit:2.3.2:all'
     implementation 'com.dansplugins:ponder-bukkit:2.0.0'
     implementation 'com.dansplugins:ponder-commands:2.0.0'
-    testImplementation 'org.junit.jupiter:junit-jupiter:5.8.2'
-    testImplementation 'io.mockk:mockk:1.12.4'
-    jooqGenerator 'org.jooq:jooq-meta-extensions:3.17.2'
+    testImplementation 'org.junit.jupiter:junit-jupiter:5.9.0'
+    testImplementation 'io.mockk:mockk:1.13.2'
+    jooqGenerator 'org.jooq:jooq-meta-extensions:3.17.4'
 }
 
 kotlin {

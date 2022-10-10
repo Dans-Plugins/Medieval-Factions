@@ -3,7 +3,7 @@ package com.dansplugins.factionsystem.failure
 data class ServiceFailure(
     val type: ServiceFailureType,
     val message: String,
-    val cause: Throwable? = null
+    val cause: Throwable
 )
 
 enum class ServiceFailureType {

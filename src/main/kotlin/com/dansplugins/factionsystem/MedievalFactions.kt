@@ -38,6 +38,7 @@ import com.dansplugins.factionsystem.notification.MfNotificationService
 import com.dansplugins.factionsystem.notification.mailboxes.MailboxesNotificationService
 import com.dansplugins.factionsystem.notification.noop.NoOpNotificationService
 import com.dansplugins.factionsystem.notification.rpkit.RpkNotificationService
+import com.dansplugins.factionsystem.placeholder.MedievalFactionsPlaceholderExpansion
 import com.dansplugins.factionsystem.player.JooqMfPlayerRepository
 import com.dansplugins.factionsystem.player.MfPlayerId
 import com.dansplugins.factionsystem.player.MfPlayerRepository
@@ -167,6 +168,10 @@ class MedievalFactions : JavaPlugin() {
             migrator.migrate()
             config.set("migrateMf4", null)
             saveConfig()
+        }
+
+        if (server.pluginManager.getPlugin("PlaceholderAPI") != null) {
+            MedievalFactionsPlaceholderExpansion(this).register()
         }
 
         registerListeners(
