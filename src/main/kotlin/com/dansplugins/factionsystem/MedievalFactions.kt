@@ -57,6 +57,8 @@ import org.jooq.SQLDialect
 import org.jooq.conf.Settings
 import org.jooq.impl.DSL
 import preponderous.ponder.minecraft.bukkit.plugin.registerListeners
+import java.io.File
+import java.net.URLClassLoader
 import java.time.LocalTime
 import java.util.*
 import javax.sql.DataSource
@@ -86,7 +88,19 @@ class MedievalFactions : JavaPlugin() {
 
         saveDefaultConfig()
 
-        language = Language(ResourceBundle.getBundle("lang", Locale.forLanguageTag(config.getString("language"))))
+        val languageFolder = File(dataFolder, "lang")
+        if (!languageFolder.exists()) {
+            languageFolder.mkdirs()
+            saveResource("lang/lang_en_US.properties", false)
+            saveResource("lang/lang_de.properties", false)
+        }
+        val urls = arrayOf(languageFolder.toURI().toURL())
+        val langClassLoader = URLClassLoader(urls)
+        language = Language(ResourceBundle.getBundle(
+            "lang",
+            Locale.forLanguageTag(config.getString("language")),
+            langClassLoader
+        ))
         Metrics(this, 8929)
 
         Class.forName("org.h2.Driver")
