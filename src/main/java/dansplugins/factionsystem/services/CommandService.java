@@ -106,26 +106,26 @@ public class CommandService implements TabCompleter {
             // no arguments check
             if (args.length == 0) {
                 // send plugin information
-                if (!configService.getBoolean("useNewLanguageFile")) {
-                    sender.sendMessage(ChatColor.AQUA + String.format(localeService.get("MedievalFactionsTitle"), medievalFactions.getVersion()));
-                    sender.sendMessage(ChatColor.AQUA + String.format(localeService.get("DeveloperList"), medievalFactions.getDescription().getAuthors()));
-                    sender.sendMessage(ChatColor.AQUA + localeService.get("WikiLink"));
-                    sender.sendMessage(ChatColor.AQUA + String.format(localeService.get("CurrentLanguageID"), configService.getString("languageid")));
-                    sender.sendMessage(ChatColor.AQUA + String.format(localeService.get("SupportedLanguageIDList"), localeService.getSupportedLanguageIDsSeparatedByCommas()));
+                if (!this.configService.getBoolean("useNewLanguageFile")) {
+                    sender.sendMessage(ChatColor.AQUA + String.format(this.localeService.get("MedievalFactionsTitle"), this.medievalFactions.getVersion()));
+                    sender.sendMessage(ChatColor.AQUA + String.format(this.localeService.get("DeveloperList"), this.medievalFactions.getDescription().getAuthors()));
+                    sender.sendMessage(ChatColor.AQUA + this.localeService.get("WikiLink"));
+                    sender.sendMessage(ChatColor.AQUA + String.format(this.localeService.get("CurrentLanguageID"), this.configService.getString("languageid")));
+                    sender.sendMessage(ChatColor.AQUA + String.format(localeService.get("SupportedLanguageIDList"), this.localeService.getSupportedLanguageIDsSeparatedByCommas()));
                 } else {
-                    messageService.getLanguage().getStringList("PluginInfo")
+                    this.messageService.getLanguage().getStringList("PluginInfo")
                             .forEach(s -> {
-                                s = s.replace("#version#", medievalFactions.getVersion()).replace("#dev#", medievalFactions.getDescription().getAuthors().toString());
-                                playerService.sendMessage(sender, s, s, true);
+                                s = s.replace("#version#", this.medievalFactions.getVersion()).replace("#dev#", this.medievalFactions.getDescription().getAuthors().toString());
+                                this.playerService.sendMessage(sender, s, s, true);
                             });
                 }
                 return true;
             }
 
             // Find the subcommand, if it exists.
-            SubCommand subCommand = findSubCommandByName(args[0]);
+            SubCommand subCommand = this.findSubCommandByName(args[0]);
             if (subCommand == null) {
-                playerService.sendMessage(sender, ChatColor.RED + localeService.get("CommandNotRecognized"), "CommandNotRecognized", false);
+                this.playerService.sendMessage(sender, ChatColor.RED + this.localeService.get("CommandNotRecognized"), "CommandNotRecognized", false);
             }
             String[] arguments = new String[args.length - 1]; // Take first argument out of Array.
             System.arraycopy(args, 1, arguments, 0, arguments.length);
@@ -136,7 +136,7 @@ public class CommandService implements TabCompleter {
     }
 
     private SubCommand findSubCommandByName(String name) {
-        for (SubCommand subCommand : subCommands) {
+        for (SubCommand subCommand : this.subCommands) {
             if (subCommand.isCommand(name)) {
                 return subCommand;
             }
@@ -146,7 +146,7 @@ public class CommandService implements TabCompleter {
 
     private ArrayList<String> getSubCommandNamesForSender(CommandSender sender) {
         ArrayList<String> commandNames = new ArrayList<String>();
-        for (SubCommand subCommand : subCommand) {
+        for (SubCommand subCommand : this.subCommand) {
             if (subCommand.checkPermissions(sender)) commandNames.add(subCommand.getPrimaryCommandName().toLowerCase());
         }
         return commandNames;
@@ -156,19 +156,19 @@ public class CommandService implements TabCompleter {
 	public List<String> onTabComplete(CommandSender sender, Command command, String alias, String[] args) {
         List<String> result = new ArrayList<String>();
 
-		if (sender instanceof Player) {
-			Player player = (Player) sender;
+        if (sender instanceof Player) {
+            Player player = (Player) sender;
 
             // Auto-complete subcommands
             if (args.length == 1) {
-                ArrayList<String> accessibleCommands = getSubCommandNamesForSender(sender);
+                ArrayList<String> accessibleCommands = this.getSubCommandNamesForSender(sender);
                 for (String commandName : accessibleCommands) {
                     if (commandName.startsWith(args[0].toLowerCase())) result.add(commandName);
                 }
                 return result;
             } else {
                 // Attempt to find subcommand based on first argument
-                SubCommand subCommand = findSubCommandByName(args[0]);
+                SubCommand subCommand = this.findSubCommandByName(args[0]);
                 // Bail if no command found (can't autocomplete something we don't know about)
                 if (subCommand == null) {
                     return null;

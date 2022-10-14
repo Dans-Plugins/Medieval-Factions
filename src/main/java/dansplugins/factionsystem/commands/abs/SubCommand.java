@@ -41,8 +41,8 @@ public abstract class SubCommand implements ColorTranslator {
     private final boolean requiresOfficer;
     private final boolean requiresOwner;
     protected Faction faction = null;
-    private String[] names;
-    private String[] requiredPermissions;
+    protected String[] names;
+    protected String[] requiredPermissions;
 
     /**
      * Constructor to initialise a Command.
@@ -116,7 +116,7 @@ public abstract class SubCommand implements ColorTranslator {
         this.names = new String[names.length];
         for (int i = 0; i < this.names.length; i++) {
             String name = names[i];
-            if (name.contains(LOCALE_PREFIX)) name = localeService.getText(name.replace(LOCALE_PREFIX, ""));
+            if (name.contains(LOCALE_PREFIX)) name = this.localeService.getText(name.replace(LOCALE_PREFIX, ""));
             this.names[i] = name;
         }
     }
@@ -135,14 +135,14 @@ public abstract class SubCommand implements ColorTranslator {
      * @param key    of the sub-command.
      */
     public void performCommand(CommandSender sender, String[] args, String key) {
-        if (playerCommand) {
+        if (this.playerCommand) {
             if (!(sender instanceof Player)) { // Require a player for a player-only command.
                 sender.sendMessage(translate(getText("OnlyPlayersCanUseCommand")));
                 return;
             }
             Player player = (Player) sender;
-            if (requiresFaction) { // Find and check the status of a Faction.
-                this.faction = getPlayerFaction(player);
+            if (this.requiresFaction) { // Find and check the status of a Faction.
+                this.faction = this.getPlayerFaction(player);
                 if (faction == null) {
                     player.sendMessage(translate("&c" + getText("AlertMustBeInFactionToUseCommand")));
                     return;
@@ -153,18 +153,18 @@ public abstract class SubCommand implements ColorTranslator {
                         return;
                     }
                 }
-                if (requiresOwner && !faction.isOwner(player.getUniqueId())) { // If the command requires an owner only, check for it.
+                if (this.requiresOwner && !faction.isOwner(player.getUniqueId())) { // If the command requires an owner only, check for it.
                     player.sendMessage(translate("&c" + getText("AlertMustBeOwnerToUseCommand")));
                     return;
                 }
             }
-            if (!checkPermissions(sender, true)) {
+            if (!this.checkPermissions(sender, true)) {
                 return;
             }
-            execute(player, args, key); // 100% a player so you can safely use it
+            this.execute(player, args, key); // 100% a player so you can safely use it
             return;
         }
-        execute(sender, args, key); // Sender can still be a player if this is executed.
+        this.execute(sender, args, key); // Sender can still be a player if this is executed.
     }
 
     /**
@@ -208,16 +208,16 @@ public abstract class SubCommand implements ColorTranslator {
      * @return {@code true} if it is.
      */
     public boolean isCommand(String name) {
-        return Arrays.stream(names).anyMatch(s -> s.equalsIgnoreCase(name));
+        return Arrays.stream(this.names).anyMatch(s -> s.equalsIgnoreCase(name));
     }
 
     // Helper methods for checkPermissions in different cases
     public boolean checkPermissions(CommandSender sender) {
-        return this.checkPermissions(sender, false, ...requiredPermissions);
+        return this.checkPermissions(sender, false, ...this.requiredPermissions);
     }
 
     public boolean checkPermissions(CommandSender sender, boolean announcePermissionsMissing) {
-        return this.checkPermissions(sender, announcePermissionsMissing, ...requiredPermissions);
+        return this.checkPermissions(sender, announcePermissionsMissing, ...this.requiredPermissions);
     }
 
     public boolean checkPermissions(CommandSender sender, String... permissions) {
@@ -235,17 +235,17 @@ public abstract class SubCommand implements ColorTranslator {
      * @return {@code true} if they do.
      */
     public boolean checkPermissions(CommandSender sender, boolean announcePermissionsMissing, String... permissions) {
-        boolean has = false;
+        boolean hasPermission = false;
         String[] missingPermissions = [];
-        for (String perm : requiredPermissions) {
-            has = sender.hasPermission(perm);
-            if (has) break;
+        for (String perm : permissions) {
+            hasPermission = sender.hasPermission(perm);
+            if (hasPermission) break;
             missingPermissions.append(perm);
         }
-        if (!has && announcePermissionsMissing) {
-            playerService.sendMessage(sender, translate("&c" + getText("PermissionNeeded", missingPermissions.join(', '))), Objects.requireNonNull(messageService.getLanguage().getString("PermissionNeeded")).replace("#permission#", missingPermissions.join(' ')), true);
+        if (!hasPermission && announcePermissionsMissing) {
+            playerService.sendMessage(sender, translate("&c" + getText("PermissionNeeded", missingPermissions.join(', '))), Objects.requireNonNull(this.messageService.getLanguage().getString("PermissionNeeded")).replace("#permission#", missingPermissions.join(' ')), true);
         }
-        return has;
+        return hasPermission;
     }
 
     /**
@@ -255,9 +255,8 @@ public abstract class SubCommand implements ColorTranslator {
      * @return String message
      */
     protected String getText(String key) {
-        String text = localeService.getText(key);
-        text = text.replace("%d", "%s");
-        return text;
+        String text = this.localeService.getText(key);
+        return text.replace("%d", "%s");
     }
 
     /**
@@ -268,7 +267,7 @@ public abstract class SubCommand implements ColorTranslator {
      * @return String message
      */
     protected String getText(String key, Object... replacements) {
-        return String.format(getText(key), replacements);
+        return String.format(this.getText(key), replacements);
     }
 
     /**
@@ -285,16 +284,16 @@ public abstract class SubCommand implements ColorTranslator {
     @SuppressWarnings("deprecation")
     protected Faction getPlayerFaction(Object object) {
         if (object instanceof OfflinePlayer) {
-            return persistentData.getPlayersFaction(((OfflinePlayer) object).getUniqueId());
+            return this.persistentData.getPlayersFaction(((OfflinePlayer) object).getUniqueId());
         } else if (object instanceof UUID) {
-            return persistentData.getPlayersFaction((UUID) object);
+            return this.persistentData.getPlayersFaction((UUID) object);
         } else if (object instanceof String) {
             try {
                 return persistentData.getPlayersFaction(UUID.fromString((String) object));
             } catch (Exception e) {
                 OfflinePlayer player = Bukkit.getOfflinePlayer((String) object);
                 if (player.hasPlayedBefore()) {
-                    return persistentData.getPlayersFaction(player.getUniqueId());
+                    return this.persistentData.getPlayersFaction(player.getUniqueId());
                 }
             }
         }
@@ -305,14 +304,14 @@ public abstract class SubCommand implements ColorTranslator {
      * Method to retrieve the list of command names for this command.
      */
     public String[] getCommandNames() {
-        return names;
+        return this.names;
     }
 
     /**
      * Get primary command name.
     */
     public String getPrimaryCommandName() {
-        return names[0];
+        return this.names[0];
     }
 
     /**
@@ -325,28 +324,34 @@ public abstract class SubCommand implements ColorTranslator {
      * @return {@link Faction}
      */
     protected Faction getFaction(String name) {
-        return persistentData.getFaction(name);
+        return this.persistentData.getFaction(name);
     }
 
     /**
      * Method to send an entire Faction a message.
      *
      * @param faction    to send a message to.
-     * @param oldmessage old message to send to the Faction.
-     * @param newmessage new message to send to the Faction.
+     * @param oldMessage old message to send to the Faction.
+     * @param newMessage new message to send to the Faction.
      */
-    protected void messageFaction(Faction faction, String oldmessage, String newmessage) {
-        faction.getMemberList().stream().map(Bukkit::getOfflinePlayer).filter(OfflinePlayer::isOnline).map(OfflinePlayer::getPlayer).filter(Objects::nonNull).forEach(player -> playerService.sendMessage(player, oldmessage, newmessage, true));
+    protected void messageFaction(Faction faction, String oldMessage, String newMessage) {
+        faction.getMemberList()
+            .stream()
+            .map(Bukkit::getOfflinePlayer)
+            .filter(OfflinePlayer::isOnline)
+            .map(OfflinePlayer::getPlayer)
+            .filter(Objects::nonNull)
+            .forEach(player -> this.playerService.sendMessage(player, oldMessage, newMessage, true));
     }
 
     /**
      * Method to send the entire Server a message.
      *
-     * @param oldmessage old message to send to the players.
-     * @param newmessage old message to send to the players.
+     * @param oldMessage old message to send to the players.
+     * @param newMessage old message to send to the players.
      */
-    protected void messageServer(String oldmessage, String newmessage) {
-        Bukkit.getOnlinePlayers().forEach(player -> playerService.sendMessage(player, oldmessage, newmessage, true));
+    protected void messageServer(String oldMessage, String newMessage) {
+        Bukkit.getOnlinePlayers().forEach(player -> this.playerService.sendMessage(player, oldMessage, newMessage, true));
     }
 
     /**
@@ -381,12 +386,12 @@ public abstract class SubCommand implements ColorTranslator {
      * @return {@link FileConfiguration}
      */
     protected FileConfiguration getConfig() {
-        return configService.getConfig();
+        return this.configService.getConfig();
     }
 
     @Override
     public String toString() {
-        return getClass().getSimpleName() + "{" + "names=" + Arrays.toString(names) + '}';
+        return getClass().getSimpleName() + "{" + "names=" + Arrays.toString(this.names) + '}';
     }
 
 }
