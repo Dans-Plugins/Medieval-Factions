@@ -44,8 +44,8 @@ public class ForceCommand extends SubCommand {
 
     public ForceCommand(LocaleService localeService, PersistentData persistentData, EphemeralData ephemeralData, PersistentData.ChunkDataAccessor chunkDataAccessor, DynmapIntegrator dynmapIntegrator, ConfigService configService, MedievalFactions medievalFactions, Logger logger, PlayerService playerService, MessageService messageService) {
         super(new String[]{
-                "Force", LOCALE_PREFIX + "CmdForce"
-        }, false, persistentData, localeService, ephemeralData, configService, playerService, messageService, chunkDataAccessor, dynmapIntegrator);
+                "force", LOCALE_PREFIX + "CmdForce"
+        }, false, [], persistentData, localeService, ephemeralData, configService, playerService, messageService, chunkDataAccessor, dynmapIntegrator);
         this.medievalFactions = medievalFactions;
         this.logger = logger;
         // Register sub-commands.
