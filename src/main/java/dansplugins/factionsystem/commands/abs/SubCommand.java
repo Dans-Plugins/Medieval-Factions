@@ -143,11 +143,11 @@ public abstract class SubCommand implements ColorTranslator {
             Player player = (Player) sender;
             if (this.requiresFaction) { // Find and check the status of a Faction.
                 this.faction = this.getPlayerFaction(player);
-                if (faction == null) {
+                if (this.faction == null) {
                     player.sendMessage(translate("&c" + getText("AlertMustBeInFactionToUseCommand")));
                     return;
                 }
-                if (requiresOfficer) { // If the command requires an Officer or higher, check for it.
+                if (this.requiresOfficer) { // If the command requires an Officer or higher, check for it.
                     if (!(faction.isOwner(player.getUniqueId()) || faction.isOfficer(player.getUniqueId()))) {
                         player.sendMessage(translate("&c" + getText("AlertMustBeOwnerOrOfficerToUseCommand")));
                         return;
