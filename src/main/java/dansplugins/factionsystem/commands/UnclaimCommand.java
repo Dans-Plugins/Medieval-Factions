@@ -25,7 +25,7 @@ public class UnclaimCommand extends SubCommand {
     public UnclaimCommand(LocaleService localeService, PersistentData persistentData, EphemeralData ephemeralData, PersistentData.ChunkDataAccessor chunkDataAccessor, DynmapIntegrator dynmapIntegrator, ConfigService configService, PlayerService playerService, MessageService messageService) {
         super(new String[]{
                 "unclaim", LOCALE_PREFIX + "CmdUnclaim"
-        }, true, true, persistentData, localeService, ephemeralData, configService, playerService, messageService, chunkDataAccessor, dynmapIntegrator);
+        }, true, true, ["mf.unclaim"], persistentData, localeService, ephemeralData, configService, playerService, messageService, chunkDataAccessor, dynmapIntegrator);
     }
 
     /**
@@ -37,32 +37,41 @@ public class UnclaimCommand extends SubCommand {
      */
     @Override
     public void execute(Player player, String[] args, String key) {
-        final String permission = "mf.unclaim";
-        if (!(checkPermissions(player, permission))) return;
-        final boolean isPlayerBypassing = ephemeralData.getAdminsBypassingProtections().contains(player.getUniqueId());
-        if ((boolean) faction.getFlags().getFlag("mustBeOfficerToManageLand")) {
+        final boolean isPlayerBypassing = this.ephemeralData.getAdminsBypassingProtections().contains(player.getUniqueId());
+        if ((boolean) this.faction.getFlags().getFlag("mustBeOfficerToManageLand")) {
             // officer or owner rank required
-            if (!faction.isOfficer(player.getUniqueId()) && !faction.isOwner(player.getUniqueId()) && !isPlayerBypassing) {
-                playerService.sendMessage(player, "&c" + "You're not able to claim land at this time."
-                        , "NotAbleToClaim", false);
+            if (!this.faction.isOfficer(player.getUniqueId()) && !this.faction.isOwner(player.getUniqueId()) && !isPlayerBypassing) {
+                this.playerService.sendMessage(
+                    player, 
+                    "&c" + "You're not able to claim land at this time."
+                    "NotAbleToClaim", 
+                    false
+                );
                 return;
             }
         }
         if (args.length == 0) {
-            chunkDataAccessor.removeChunkAtPlayerLocation(player, faction);
-            dynmapIntegrator.updateClaims();
-            playerService.sendMessage(player, "&aUnclaimed your current claim."
-                    , "UnClaimed", false);
+            this.chunkDataAccessor.removeChunkAtPlayerLocation(player, this.faction);
+            this.dynmapIntegrator.updateClaims();
+            this.playerService.sendMessage(
+                player, 
+                "&a" + "Unclaimed your current claim.",
+                "UnClaimed", 
+                false
+            );
             return;
         }
-        int radius = getIntSafe(args[0], 1);
+        int radius = this.getIntSafe(args[0], 1);
         if (radius <= 0) {
             radius = 1;
         }
-        chunkDataAccessor.radiusUnclaimAtLocation(radius, player, faction);
-        playerService.sendMessage(player, "Unclaimed radius of " + radius + " claims around you!"
-                , Objects.requireNonNull(messageService.getLanguage().getString("UnClaimedRadius"))
-                        .replace("#number#", String.valueOf(radius)), true);
+        this.chunkDataAccessor.radiusUnclaimAtLocation(radius, player, this.faction);
+        this.playerService.sendMessage(
+            player, 
+            "Unclaimed radius of " + radius + " claims around you!",
+            Objects.requireNonNull(this.messageService.getLanguage().getString("UnClaimedRadius")).replace("#number#", String.valueOf(radius)), 
+            true
+        );
     }
 
     /**

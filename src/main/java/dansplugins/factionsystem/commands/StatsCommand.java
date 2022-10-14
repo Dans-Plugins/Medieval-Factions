@@ -27,7 +27,7 @@ public class StatsCommand extends SubCommand {
     public StatsCommand(LocaleService localeService, PersistentData persistentData, EphemeralData ephemeralData, PersistentData.ChunkDataAccessor chunkDataAccessor, DynmapIntegrator dynmapIntegrator, ConfigService configService, PlayerService playerService, MessageService messageService, MedievalFactions medievalFactions) {
         super(new String[]{
                 "stats", LOCALE_PREFIX + "CmdStats"
-        }, false, false, false, false, localeService, persistentData, ephemeralData, chunkDataAccessor, dynmapIntegrator, configService, playerService, messageService);
+        }, false, false, false, false, [], localeService, persistentData, ephemeralData, chunkDataAccessor, dynmapIntegrator, configService, playerService, messageService);
         this.medievalFactions = medievalFactions;
         this.persistentData = persistentData;
     }
@@ -39,21 +39,21 @@ public class StatsCommand extends SubCommand {
 
     @Override
     public void execute(CommandSender sender, String[] args, String key) {
-        if (!configService.getBoolean("useNewLanguageFile")) {
+        if (!this.configService.getBoolean("useNewLanguageFile")) {
             sender.sendMessage(ChatColor.AQUA + "=== Medieval Factions Stats ===");
-            sender.sendMessage(ChatColor.AQUA + "Number of factions: " + persistentData.getNumFactions());
-            sender.sendMessage(ChatColor.AQUA + "Number of players: " + persistentData.getNumPlayers());
+            sender.sendMessage(ChatColor.AQUA + "Number of factions: " + this.persistentData.getNumFactions());
+            sender.sendMessage(ChatColor.AQUA + "Number of players: " + this.persistentData.getNumPlayers());
         } else {
-            messageService.getLanguage().getStringList("StatsFaction")
+            this.messageService.getLanguage().getStringList("StatsFaction")
                     .forEach(s -> {
                         if (s.contains("#faction#")) {
-                            s = s.replace("#faction#", String.valueOf(persistentData.getNumFactions()));
+                            s = s.replace("#faction#", String.valueOf(this.persistentData.getNumFactions()));
                         }
                         if (s.contains("#players#")) {
-                            s = s.replace("#players#", String.valueOf(persistentData.getNumPlayers()));
+                            s = s.replace("#players#", String.valueOf(this.persistentData.getNumPlayers()));
                         }
-                        s = playerService.colorize(s);
-                        playerService.sendMessage(sender, "", s, true);
+                        s = this.playerService.colorize(s);
+                        this.playerService.sendMessage(sender, "", s, true);
                     });
         }
     }

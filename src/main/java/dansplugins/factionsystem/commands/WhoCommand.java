@@ -13,6 +13,7 @@ import dansplugins.factionsystem.services.ConfigService;
 import dansplugins.factionsystem.services.LocaleService;
 import dansplugins.factionsystem.services.MessageService;
 import dansplugins.factionsystem.services.PlayerService;
+import dansplugins.factionsystem.utils.TabCompleteTools;
 import dansplugins.factionsystem.utils.extended.Messenger;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
@@ -28,7 +29,9 @@ public class WhoCommand extends SubCommand {
     private final Messenger messenger;
 
     public WhoCommand(LocaleService localeService, PersistentData persistentData, EphemeralData ephemeralData, PersistentData.ChunkDataAccessor chunkDataAccessor, DynmapIntegrator dynmapIntegrator, ConfigService configService, Messenger messenger, PlayerService playerService, MessageService messageService) {
-        super(new String[]{"Who", LOCALE_PREFIX + "CmdWho"}, true, persistentData, localeService, ephemeralData, configService, playerService, messageService, chunkDataAccessor, dynmapIntegrator);
+        super(new String[]{
+            "who", LOCALE_PREFIX + "CmdWho"
+        }, true, ["mf.who"], persistentData, localeService, ephemeralData, configService, playerService, messageService, chunkDataAccessor, dynmapIntegrator);
         this.messenger = messenger;
     }
 
@@ -41,27 +44,32 @@ public class WhoCommand extends SubCommand {
      */
     @Override
     public void execute(Player player, String[] args, String key) {
-        final String permission = "mf.who";
-        if (!(checkPermissions(player, permission))) return;
         if (args.length == 0) {
-            playerService.sendMessage(player, "&c" + getText("UsageWho")
-                    , "UsageWho", false);
+            this.playerService.sendMessage(player, "&c" + this.getText("UsageWho"), "UsageWho", false);
             return;
         }
         UUIDChecker uuidChecker = new UUIDChecker();
         final UUID targetUUID = uuidChecker.findUUIDBasedOnPlayerName(args[0]);
         if (targetUUID == null) {
-            playerService.sendMessage(player, "&c" + getText("PlayerNotFound"), Objects.requireNonNull(messageService.getLanguage().getString("PlayerNotFound")).replace("#name#", args[0]), true);
+            this.playerService.sendMessage(
+                player, 
+                "&c" + this. getText("PlayerNotFound"), 
+                Objects.requireNonNull(this.messageService.getLanguage().getString("PlayerNotFound")).replace("#name#", args[0]), 
+                true
+            );
             return;
         }
-        final Faction temp = getPlayerFaction(targetUUID);
+        final Faction temp = this.getPlayerFaction(targetUUID);
         if (temp == null) {
-            playerService.sendMessage(player, "&c" + getText("PlayerIsNotInAFaction")
+            this.playerService.sendMessage(player, "&c" + this.getText("PlayerIsNotInAFaction")
                     , "PlayerIsNotInAFaction", false);
             return;
         }
-        messenger.sendFactionInfo(player, temp,
-                chunkDataAccessor.getChunksClaimedByFaction(temp.getName()));
+        this.messenger.sendFactionInfo(
+            player, 
+            temp,
+            this.chunkDataAccessor.getChunksClaimedByFaction(temp.getName())
+        );
     }
 
     /**
@@ -74,5 +82,16 @@ public class WhoCommand extends SubCommand {
     @Override
     public void execute(CommandSender sender, String[] args, String key) {
 
+    }
+
+    /**
+     * Method to handle tab completion.
+     * 
+     * @param sender who sent the command.
+     * @param args   of the command.
+     */
+    @Override
+    public List<String> handleTabComplete(Sender sender, String[] args) {
+        return TabCompleteTools.allOnlinePlayersMatching(args[0]);
     }
 }

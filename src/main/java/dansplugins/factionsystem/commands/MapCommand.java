@@ -32,7 +32,7 @@ public class MapCommand extends SubCommand {
     public MapCommand(LocaleService localeService, PersistentData persistentData, EphemeralData ephemeralData, PersistentData.ChunkDataAccessor chunkDataAccessor, DynmapIntegrator dynmapIntegrator, ConfigService configService, PlayerService playerService, MessageService messageService) {
         super(new String[]{
                 "map", "showmap", "displaymap"
-        }, true, persistentData, localeService, ephemeralData, configService, playerService, messageService, chunkDataAccessor, dynmapIntegrator);
+        }, true, ["mf.map"], persistentData, localeService, ephemeralData, configService, playerService, messageService, chunkDataAccessor, dynmapIntegrator);
     }
 
     /**
@@ -44,10 +44,6 @@ public class MapCommand extends SubCommand {
      */
     @Override
     public void execute(Player player, String[] args, String key) {
-        final String permission = "mf.map";
-        if (!(checkPermissions(player, permission))) {
-            return;
-        }
         final Chunk center = player.getLocation().getChunk();
         // Needs to be Odd.
         int map_width = 53;
@@ -57,7 +53,7 @@ public class MapCommand extends SubCommand {
         final int topLeftZ = center.getZ() - (map_height / 2);
         final int bottomRightX = center.getX() + (map_width / 2);
         final int bottomRightZ = center.getZ() + (map_height / 2);
-        final Faction faction = persistentData.getPlayersFaction(player.getUniqueId());
+        final Faction faction = this.persistentData.getPlayersFaction(player.getUniqueId());
         final boolean hasFaction = faction != null;
         final HashMap<String, Integer> printedHolders = new HashMap<>();
         final HashMap<String, String> colourMap = new HashMap<>();
@@ -66,10 +62,10 @@ public class MapCommand extends SubCommand {
             final StringBuilder line = new StringBuilder();
             for (int x = topLeftX; x <= bottomRightX; x++) {
                 Chunk tmp = center.getWorld().getChunkAt(x, z);
-                if (chunkDataAccessor.isClaimed(tmp)) {
-                    ClaimedChunk chunk = chunkDataAccessor.getClaimedChunk(tmp);
+                if (this.chunkDataAccessor.isClaimed(tmp)) {
+                    ClaimedChunk chunk = this.chunkDataAccessor.getClaimedChunk(tmp);
                     printedHolders.put(chunk.getHolder(), printedHolders.getOrDefault(chunk.getHolder(), 0) + 1);
-                    int index = getIndex(chunk.getHolder(), printedHolders);
+                    int index = this.getIndex(chunk.getHolder(), printedHolders);
                     char map_key = index == -1 ? '§' : map_keys[index];
                     if (hasFaction) {
                         String colour;
@@ -103,9 +99,9 @@ public class MapCommand extends SubCommand {
                     }
                 }
             }
-            player.sendMessage(translate(line.toString()));
+            player.sendMessage(this.translate(line.toString()));
         }
-        player.sendMessage(translate(" &5+&7 = You"));
+        player.sendMessage(this.translate(" &5+&7 = You"));
         final List<String> added = new ArrayList<>();
         int index = 0;
         for (String printedHolder : printedHolders.keySet()) {
@@ -129,7 +125,7 @@ public class MapCommand extends SubCommand {
             index++;
         }
         if (!added.isEmpty()) { // We don't wanna send an empty line, so check if the added lines is empty or not.
-            player.sendMessage(" " + translate(String.join(", ", added)));
+            player.sendMessage(" " + this.translate(String.join(", ", added)));
         }
     }
 

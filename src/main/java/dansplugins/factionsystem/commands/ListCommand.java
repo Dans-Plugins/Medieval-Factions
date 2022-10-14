@@ -27,7 +27,7 @@ public class ListCommand extends SubCommand {
     public ListCommand(LocaleService localeService, PersistentData persistentData, EphemeralData ephemeralData, PersistentData.ChunkDataAccessor chunkDataAccessor, DynmapIntegrator dynmapIntegrator, ConfigService configService, PlayerService playerService, MessageService messageService) {
         super(new String[]{
                 "list", LOCALE_PREFIX + "CmdList"
-        }, false, persistentData, localeService, ephemeralData, configService, playerService, messageService, chunkDataAccessor, dynmapIntegrator);
+        }, false, ["mf.list"], persistentData, localeService, ephemeralData, configService, playerService, messageService, chunkDataAccessor, dynmapIntegrator);
     }
 
     /**
@@ -51,23 +51,29 @@ public class ListCommand extends SubCommand {
      */
     @Override
     public void execute(CommandSender sender, String[] args, String key) {
-        final String permission = "mf.list";
-        if (!(checkPermissions(sender, permission))) return;
-        if (persistentData.getNumFactions() == 0) {
-            playerService.sendMessage(sender, "&b" + getText("CurrentlyNoFactions")
-                    , "CurrentlyNoFactions", false);
+        if (this.persistentData.getNumFactions() == 0) {
+            this.playerService.sendMessage(
+                sender, 
+                "&b" + this.getText("CurrentlyNoFactions"),
+                "CurrentlyNoFactions", 
+                false
+            );
             return;
         }
-        playerService.sendMessage(sender, "&b&l" + getText("FactionsTitle")
-                , "FactionsTitle", false);
-        List<PersistentData.SortableFaction> sortedFactionList = persistentData.getSortedListOfFactions();
-        sender.sendMessage(ChatColor.AQUA + localeService.get("ListLegend"));
+        this.playerService.sendMessage(
+            sender, 
+            "&b&l" + this.getText("FactionsTitle"),
+            "FactionsTitle", 
+            false
+        );
+        List<PersistentData.SortableFaction> sortedFactionList = this.persistentData.getSortedListOfFactions();
+        sender.sendMessage(ChatColor.AQUA + this.localeService.get("ListLegend"));
         sender.sendMessage(ChatColor.AQUA + "-----");
         for (PersistentData.SortableFaction sortableFaction : sortedFactionList) {
             final Faction temp = sortableFaction.getFaction();
             sender.sendMessage(ChatColor.AQUA + String.format("%-25s %10s %10s %10s", temp.getName(), "P: " +
                     temp.getCumulativePowerLevel(), "M: " + temp.getPopulation(), "L: " +
-                    chunkDataAccessor.getChunksClaimedByFaction(temp.getName())));
+                    this.chunkDataAccessor.getChunksClaimedByFaction(temp.getName())));
         }
     }
 }

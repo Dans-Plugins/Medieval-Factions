@@ -24,8 +24,8 @@ public class DescCommand extends SubCommand {
 
     public DescCommand(LocaleService localeService, PersistentData persistentData, EphemeralData ephemeralData, PersistentData.ChunkDataAccessor chunkDataAccessor, DynmapIntegrator dynmapIntegrator, ConfigService configService, PlayerService playerService, MessageService messageService) {
         super(new String[]{
-                "Desc", "Description", LOCALE_PREFIX + "CmdDesc"
-        }, true, true, false, true, localeService, persistentData, ephemeralData, chunkDataAccessor, dynmapIntegrator, configService, playerService, messageService);
+                "description", "desc", LOCALE_PREFIX + "CmdDesc"
+        }, true, true, false, true, ["mf.desc"], localeService, persistentData, ephemeralData, chunkDataAccessor, dynmapIntegrator, configService, playerService, messageService);
     }
 
     /**
@@ -37,21 +37,23 @@ public class DescCommand extends SubCommand {
      */
     @Override
     public void execute(Player player, String[] args, String key) {
-        final String permission = "mf.desc";
-        if (!(checkPermissions(player, permission))) {
-            return;
-        }
-
         if (args.length == 0) {
-            playerService.sendMessage(player, "&c" + getText("UsageDesc")
-                    , "UsageDesc", false);
+            this.playerService.sendMessage(
+                player, 
+                "&c" + this.getText("UsageDesc"),
+                "UsageDesc", 
+                false
+            );
             return;
         }
 
-        faction.setDescription(String.join(" ", args));
-        playerService.sendMessage(player, "&c" + getText("DescriptionSet")
-                , Objects.requireNonNull(messageService.getLanguage().getString("Description"))
-                        .replace("#desc#", String.join(" ", args)), true);
+        this.faction.setDescription(String.join(" ", args));
+        this.playerService.sendMessage(
+            player, 
+            "&c" + this.getText("DescriptionSet"),
+            Objects.requireNonNull(this.messageService.getLanguage().getString("Description")).replace("#desc#", String.join(" ", args)), 
+            true
+        );
     }
 
     /**

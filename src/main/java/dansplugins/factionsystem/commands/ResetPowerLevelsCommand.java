@@ -23,7 +23,7 @@ public class ResetPowerLevelsCommand extends SubCommand {
     public ResetPowerLevelsCommand(LocaleService localeService, PersistentData persistentData, EphemeralData ephemeralData, PersistentData.ChunkDataAccessor chunkDataAccessor, DynmapIntegrator dynmapIntegrator, ConfigService configService, PlayerService playerService, MessageService messageService) {
         super(new String[]{
                 "resetpowerlevels", LOCALE_PREFIX + "CmdResetPowerLevels", "rpl"
-        }, false, persistentData, localeService, ephemeralData, configService, playerService, messageService, chunkDataAccessor, dynmapIntegrator);
+        }, false, ["mf.resetpowerlevels", "mf.admin"], persistentData, localeService, ephemeralData, configService, playerService, messageService, chunkDataAccessor, dynmapIntegrator);
     }
 
     /**
@@ -47,9 +47,8 @@ public class ResetPowerLevelsCommand extends SubCommand {
      */
     @Override
     public void execute(CommandSender sender, String[] args, String key) {
-        if (!(checkPermissions(sender, "mf.resetpowerlevels", "mf.admin"))) return;
-        sender.sendMessage(translate("&aPower Levels Resetting..."));
-        System.out.println(getText("ResettingIndividualPowerRecords"));
-        persistentData.resetPowerLevels();
+        sender.sendMessage(this.translate("&aPower Levels Resetting..."));
+        System.out.println(this.getText("ResettingIndividualPowerRecords"));
+        this.persistentData.resetPowerLevels();
     }
 }

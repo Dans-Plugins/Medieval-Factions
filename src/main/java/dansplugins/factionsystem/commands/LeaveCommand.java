@@ -28,7 +28,9 @@ public class LeaveCommand extends SubCommand {
     private final DisbandCommand disbandCommand;
 
     public LeaveCommand(LocaleService localeService, PersistentData persistentData, EphemeralData ephemeralData, PersistentData.ChunkDataAccessor chunkDataAccessor, DynmapIntegrator dynmapIntegrator, ConfigService configService, Logger logger, DisbandCommand disbandCommand, PlayerService playerService, MessageService messageService) {
-        super(new String[]{"leave", LOCALE_PREFIX + "CmdLeave"}, true, true, false, false, localeService, persistentData, ephemeralData, chunkDataAccessor, dynmapIntegrator, configService, playerService, messageService);
+        super(new String[]{
+            "leave", LOCALE_PREFIX + "CmdLeave"
+        }, true, true, false, false, ["mf.leave"], localeService, persistentData, ephemeralData, chunkDataAccessor, dynmapIntegrator, configService, playerService, messageService);
         this.logger = logger;
         this.disbandCommand = disbandCommand;
     }
@@ -42,29 +44,34 @@ public class LeaveCommand extends SubCommand {
      */
     @Override
     public void execute(Player player, String[] args, String key) {
-        final String permission = "mf.leave";
-        if (!(checkPermissions(player, permission))) return;
         final boolean isOwner = this.faction.isOwner(player.getUniqueId());
         if (isOwner) {
-            disbandCommand.execute((CommandSender) player, args, key); // Disband the Faction.
+            this.disbandCommand.execute((CommandSender) player, args, key); // Disband the Faction.
             return;
         }
-        FactionLeaveEvent leaveEvent = new FactionLeaveEvent(faction, player);
+        FactionLeaveEvent leaveEvent = new FactionLeaveEvent(this.faction, player);
         Bukkit.getPluginManager().callEvent(leaveEvent);
         if (leaveEvent.isCancelled()) {
-            logger.debug("Leave event was cancelled.");
+            this.logger.debug("Leave event was cancelled.");
             return;
         }
 
-        if (faction.isOfficer(player.getUniqueId())) faction.removeOfficer(player.getUniqueId()); // Remove Officer.
-        ephemeralData.getPlayersInFactionChat().remove(player.getUniqueId()); // Remove from Faction Chat.
-        faction.removeMember(player.getUniqueId());
-        playerService.sendMessage(player, "&b" + getText("AlertLeftFaction")
-                , "AlertLeftFaction", false);
-        messageFaction(faction, translate("&a" + player.getName() + " has left " + faction.getName()),
-                Objects.requireNonNull(messageService.getLanguage().getString("AlertLeftFactionTeam"))
-                        .replace("#name#", player.getName())
-                        .replace("#faction#", faction.getName()));
+        if (this.faction.isOfficer(player.getUniqueId())) this.faction.removeOfficer(player.getUniqueId()); // Remove Officer.
+        this.ephemeralData.getPlayersInFactionChat().remove(player.getUniqueId()); // Remove from Faction Chat.
+        this.faction.removeMember(player.getUniqueId());
+        this.playerService.sendMessage(
+            player, 
+            "&b" + this.getText("AlertLeftFaction"),
+            "AlertLeftFaction", 
+            false
+        );
+        this.messageFaction(
+            this.faction, 
+            this.translate("&a" + player.getName() + " has left " + this.faction.getName()),
+            Objects.requireNonNull(this.messageService.getLanguage().getString("AlertLeftFactionTeam"))
+                .replace("#name#", player.getName())
+                .replace("#faction#", this.faction.getName())
+        );
 
     }
 

@@ -13,6 +13,7 @@ import dansplugins.factionsystem.services.LocaleService;
 import dansplugins.factionsystem.services.MessageService;
 import dansplugins.factionsystem.services.PlayerService;
 import dansplugins.factionsystem.utils.RelationChecker;
+import dansplugins.factionsystem.utils.TabCompleteTools;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
@@ -23,7 +24,9 @@ public class UnlockCommand extends SubCommand {
     private final RelationChecker relationChecker;
 
     public UnlockCommand(LocaleService localeService, PersistentData persistentData, EphemeralData ephemeralData, PersistentData.ChunkDataAccessor chunkDataAccessor, DynmapIntegrator dynmapIntegrator, ConfigService configService, RelationChecker relationChecker, PlayerService playerService, MessageService messageService) {
-        super(new String[]{"unlock", LOCALE_PREFIX + "CmdUnlock"}, true, persistentData, localeService, ephemeralData, configService, playerService, messageService, chunkDataAccessor, dynmapIntegrator);
+        super(new String[]{
+            "unlock", LOCALE_PREFIX + "CmdUnlock"
+        }, true, true, ["mf.unlock"], persistentData, localeService, ephemeralData, configService, playerService, messageService, chunkDataAccessor, dynmapIntegrator);
         this.relationChecker = relationChecker;
     }
 
@@ -36,28 +39,29 @@ public class UnlockCommand extends SubCommand {
      */
     @Override
     public void execute(Player player, String[] args, String key) {
-        final String permission = "mf.unlock";
-        if (relationChecker.playerNotInFaction(player)) {
-            return;
-        }
-        if (!checkPermissions(player, permission)) {
-            return;
-        }
         if (args.length != 0 && args[0].equalsIgnoreCase("cancel")) {
-            ephemeralData.getUnlockingPlayers().remove(player.getUniqueId());
-            ephemeralData.getForcefullyUnlockingPlayers().remove(player.getUniqueId()); // just in case the player tries to cancel a forceful unlock without using the force command
-            playerService.sendMessage(player, "&c" + getText("AlertUnlockingCancelled")
-                    , "AlertUnlockingCancelled", false);
+            this.ephemeralData.getUnlockingPlayers().remove(player.getUniqueId());
+            this.ephemeralData.getForcefullyUnlockingPlayers().remove(player.getUniqueId()); // just in case the player tries to cancel a forceful unlock without using the force command
+            this.playerService.sendMessage(
+                player, 
+                "&c" + this.getText("AlertUnlockingCancelled"),
+                "AlertUnlockingCancelled", 
+                false
+            );
             return;
         }
-        if (!ephemeralData.getUnlockingPlayers().contains(player.getUniqueId())) {
-            ephemeralData.getUnlockingPlayers().add(player.getUniqueId());
+        if (!this.ephemeralData.getUnlockingPlayers().contains(player.getUniqueId())) {
+            this.ephemeralData.getUnlockingPlayers().add(player.getUniqueId());
         }
-        ephemeralData.getLockingPlayers().remove(player.getUniqueId());
+        this.ephemeralData.getLockingPlayers().remove(player.getUniqueId());
 
         // inform them they need to right click the block that they want to lock or type /mf lock cancel to cancel it
-        playerService.sendMessage(player, "&a" + getText("RightClickUnlock")
-                , "RightClickUnlock", false);
+        this.playerService.sendMessage(
+            player, 
+            "&a" + this.getText("RightClickUnlock"),
+            "RightClickUnlock", 
+            false
+        );
     }
 
     /**
@@ -70,5 +74,16 @@ public class UnlockCommand extends SubCommand {
     @Override
     public void execute(CommandSender sender, String[] args, String key) {
 
+    }
+
+    /**
+     * Method to handle tab completion.
+     * 
+     * @param sender who sent the command.
+     * @param args   of the command.
+     */
+    @Override
+    public List<String> handleTabComplete(Sender sender, String[] args) {
+        return TabCompleteTools.completeSingleOption(args[0], "cancel");
     }
 }

@@ -24,7 +24,7 @@ public class SetHomeCommand extends SubCommand {
     public SetHomeCommand(LocaleService localeService, PersistentData persistentData, EphemeralData ephemeralData, PersistentData.ChunkDataAccessor chunkDataAccessor, DynmapIntegrator dynmapIntegrator, ConfigService configService, PlayerService playerService, MessageService messageService) {
         super(new String[]{
                 "sethome", "sh", LOCALE_PREFIX + "CmdSetHome"
-        }, true, true, true, false, localeService, persistentData, ephemeralData, chunkDataAccessor, dynmapIntegrator, configService, playerService, messageService);
+        }, true, true, true, false, ["mf.sethome"], localeService, persistentData, ephemeralData, chunkDataAccessor, dynmapIntegrator, configService, playerService, messageService);
     }
 
     /**
@@ -36,22 +36,32 @@ public class SetHomeCommand extends SubCommand {
      */
     @Override
     public void execute(Player player, String[] args, String key) {
-        final String permission = "mf.sethome";
-        if (!(checkPermissions(player, permission))) return;
-        if (!chunkDataAccessor.isClaimed(player.getLocation().getChunk())) {
-            playerService.sendMessage(player, "&c" + getText("LandIsNotClaimed")
-                    , "LandIsNotClaimed", false);
+        if (!this.chunkDataAccessor.isClaimed(player.getLocation().getChunk())) {
+            this.playerService.sendMessage(
+                player, 
+                "&c" + this.getText("LandIsNotClaimed"),
+                "LandIsNotClaimed", 
+                false
+            );
             return;
         }
-        ClaimedChunk chunk = chunkDataAccessor.getClaimedChunk(player.getLocation().getChunk());
-        if (chunk == null || !chunk.getHolder().equalsIgnoreCase(faction.getName())) {
-            playerService.sendMessage(player, "&c" + getText("CannotSetFactionHomeInWilderness"),
-                    "CannotSetFactionHomeInWilderness", false);
+        ClaimedChunk chunk = this.chunkDataAccessor.getClaimedChunk(player.getLocation().getChunk());
+        if (chunk == null || !chunk.getHolder().equalsIgnoreCase(this.faction.getName())) {
+            this.playerService.sendMessage(
+                player, 
+                "&c" + this.getText("CannotSetFactionHomeInWilderness"),
+                "CannotSetFactionHomeInWilderness", 
+                false
+            );
             return;
         }
-        faction.setFactionHome(player.getLocation());
-        playerService.sendMessage(player, "&a" + getText("FactionHomeSet"),
-                "FactionHomeSet", false);
+        this.faction.setFactionHome(player.getLocation());
+        this.playerService.sendMessage(
+            player, 
+            "&a" + this.getText("FactionHomeSet"),
+            "FactionHomeSet", 
+            false
+        );
     }
 
     /**

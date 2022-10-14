@@ -22,7 +22,9 @@ import org.bukkit.entity.Player;
 public class FlagsCommand extends SubCommand {
 
     public FlagsCommand(LocaleService localeService, PersistentData persistentData, EphemeralData ephemeralData, PersistentData.ChunkDataAccessor chunkDataAccessor, DynmapIntegrator dynmapIntegrator, ConfigService configService, PlayerService playerService, MessageService messageService) {
-        super(new String[]{"flags", LOCALE_PREFIX + "CmdFlags"}, true, true, false, true, localeService, persistentData, ephemeralData, chunkDataAccessor, dynmapIntegrator, configService, playerService, messageService);
+        super(new String[]{
+            "flags", LOCALE_PREFIX + "CmdFlags"
+        }, true, true, false, true, ["mf.flags"], localeService, persistentData, ephemeralData, chunkDataAccessor, dynmapIntegrator, configService, playerService, messageService);
     }
 
     /**
@@ -34,25 +36,30 @@ public class FlagsCommand extends SubCommand {
      */
     @Override
     public void execute(Player player, String[] args, String key) {
-        final String permission = "mf.flags";
-        if (!(checkPermissions(player, permission))) {
-            return;
-        }
-
         if (args.length == 0) {
-            playerService.sendMessage(player, "&c" + getText("ValidSubCommandsShowSet"), "ValidSubCommandsShowSet", false);
+            this.playerService.sendMessage(player, "&c" + this.getText("ValidSubCommandsShowSet"), "ValidSubCommandsShowSet", false);
             return;
         }
 
-        final Faction playersFaction = getPlayerFaction(player);
+        final Faction playersFaction = this.getPlayerFaction(player);
 
-        final boolean show = safeEquals(args[0], "get", "show", playerService.decideWhichMessageToUse(getText("CmdFlagsShow"), messageService.getLanguage().getString("Alias.CmdFlagsShow")));
-        final boolean set = safeEquals(args[0], "set", playerService.decideWhichMessageToUse(getText("CmdFlagsSet"), messageService.getLanguage().getString("Alias.CmdFlagsSet")));
+        final boolean show = this.safeEquals(args[0], "get", "show", 
+            this.playerService.decideWhichMessageToUse(
+                this.getText("CmdFlagsShow"), 
+                this.messageService.getLanguage().getString("Alias.CmdFlagsShow")
+            )
+        );
+        final boolean set = this.safeEquals(args[0], "set", 
+            this.playerService.decideWhichMessageToUse(
+                this.getText("CmdFlagsSet"), 
+                this.messageService.getLanguage().getString("Alias.CmdFlagsSet")
+            )
+        );
         if (show) {
             playersFaction.getFlags().sendFlagList(player);
         } else if (set) {
             if (args.length < 3) {
-                playerService.sendMessage(player, "&c" + getText("UsageFlagsSet"), "UsageFlagsSet", false);
+                this.playerService.sendMessage(player, "&c" + this.getText("UsageFlagsSet"), "UsageFlagsSet", false);
             } else {
                 final StringBuilder builder = new StringBuilder(); // Send the flag_argument as one String
                 for (int i = 2; i < args.length; i++) builder.append(args[i]).append(" ");
@@ -60,7 +67,7 @@ public class FlagsCommand extends SubCommand {
 
             }
         } else {
-            playerService.sendMessage(player, "&c" + getText("ValidSubCommandsShowSet"), "ValidSubCommandsShowSet", false);
+            this.playerService.sendMessage(player, "&c" + this.getText("ValidSubCommandsShowSet"), "ValidSubCommandsShowSet", false);
 
         }
     }
@@ -75,5 +82,26 @@ public class FlagsCommand extends SubCommand {
     @Override
     public void execute(CommandSender sender, String[] args, String key) {
 
+    }
+
+    /**
+     * Method to handle tab completion.
+     * 
+     * @param sender who sent the command.
+     * @param args   of the command.
+     */
+    @Override
+    public List<String> handleTabComplete(Sender sender, String[] args) {
+        if (args.length == 1) {
+            return TabCompleteTools.completeMultipleOptions(args[0], "set", "show");
+        } else if (args.length == 2) {
+            if (args[0] == "set") {
+                if (this.persistentData.isInFaction(sender.getUniqueId())) {
+                    Faction faction = this.persistentData.getPlayersFaction(player.getUniqueId());
+                    return TabCompleteTools.filterStartingWith(args[1], faction.getFlags().getFlagNamesList());
+                }
+            }
+        }
+        return null;
     }
 }
