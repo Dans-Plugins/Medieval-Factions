@@ -14,6 +14,7 @@ import dansplugins.factionsystem.services.ConfigService;
 import dansplugins.factionsystem.services.LocaleService;
 import dansplugins.factionsystem.services.MessageService;
 import dansplugins.factionsystem.services.PlayerService;
+import dansplugins.factionsystem.utils.TabCompleteTools;
 import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
@@ -28,7 +29,7 @@ public class MakePeaceCommand extends SubCommand {
     public MakePeaceCommand(LocaleService localeService, PersistentData persistentData, EphemeralData ephemeralData, PersistentData.ChunkDataAccessor chunkDataAccessor, DynmapIntegrator dynmapIntegrator, ConfigService configService, PlayerService playerService, MessageService messageService) {
         super(new String[]{
                 "makepeace", "mp", LOCALE_PREFIX + "CmdMakePeace"
-        }, true, true, true, false, localeService, persistentData, ephemeralData, chunkDataAccessor, dynmapIntegrator, configService, playerService, messageService);
+        }, true, true, true, false, ["mf.makepeace"], localeService, persistentData, ephemeralData, chunkDataAccessor, dynmapIntegrator, configService, playerService, messageService);
     }
 
     /**
@@ -40,75 +41,97 @@ public class MakePeaceCommand extends SubCommand {
      */
     @Override
     public void execute(Player player, String[] args, String key) {
-        final String permission = "mf.makepeace";
-        if (!(checkPermissions(player, permission))) return;
         if (args.length == 0) {
-            playerService.sendMessage(player,
-                    "&c" + getText("UsageMakePeace")
-                    , "UsageMakePeace", false);
+            this.playerService.sendMessage(
+                player,
+                "&c" + this.getText("UsageMakePeace"),
+                "UsageMakePeace",
+                false
+            );
             return;
         }
-        final Faction target = getFaction(String.join(" ", args));
+        final Faction target = this.getFaction(String.join(" ", args));
         if (target == null) {
-            playerService.sendMessage(player, "&c" + getText("FactionNotFound"),
-                    Objects.requireNonNull(messageService.getLanguage().getString("FactionNotFound"))
-                            .replace("#faction#", String.join(" ", args)), true);
+            this.playerService.sendMessage(
+                player,
+                "&c" + this.getText("FactionNotFound"),
+                Objects.requireNonNull(this.messageService.getLanguage().getString("FactionNotFound")).replace("#faction#", String.join(" ", args)),
+                true
+            );
             return;
         }
-        if (target == faction) {
-            playerService.sendMessage(player, "&c" + getText("CannotMakePeaceWithSelf")
-                    , "CannotMakePeaceWithSelf", false);
+        if (target == this.faction) {
+            this.playerService.sendMessage(
+                player,
+                "&c" + this.getText("CannotMakePeaceWithSelf"),
+                "CannotMakePeaceWithSelf",
+                false
+            );
             return;
         }
-        if (faction.isTruceRequested(target.getName())) {
-            playerService.sendMessage(player, "&c" + getText("AlertAlreadyRequestedPeace")
-                    , "AlertAlreadyRequestedPeace", false);
+        if (this.faction.isTruceRequested(target.getName())) {
+            this.playerService.sendMessage(
+                player,
+                "&c" + this.getText("AlertAlreadyRequestedPeace"),
+                "AlertAlreadyRequestedPeace",
+                false
+            );
             return;
         }
-        if (!faction.isEnemy(target.getName())) {
-            playerService.sendMessage(player, "&c" + getText("FactionNotEnemy")
-                    , "FactionNotEnemy", false);
+        if (!this.faction.isEnemy(target.getName())) {
+            this.playerService.sendMessage(
+                player,
+                "&c" + this.getText("FactionNotEnemy"),
+                "FactionNotEnemy",
+                false
+            );
             return;
         }
-        faction.requestTruce(target.getName());
-        playerService.sendMessage(player, "&a" + getText("AttemptedPeace", target.getName())
-                , Objects.requireNonNull(messageService.getLanguage().getString("AttemptedPeace"))
-                        .replace("#name#", target.getName()),
-                true);
-        messageFaction(target,
-                translate("&a" + getText("HasAttemptedToMakePeaceWith", faction.getName(), target.getName())),
-                Objects.requireNonNull(messageService.getLanguage().getString("HasAttemptedToMakePeaceWith"))
-                        .replace("#f1#", faction.getName())
-                        .replace("#f2#", target.getName()));
-        if (faction.isTruceRequested(target.getName()) && target.isTruceRequested(faction.getName())) {
+        this.faction.requestTruce(target.getName());
+        this.playerService.sendMessage(
+            player,
+            "&a" + this.getText("AttemptedPeace", target.getName()),
+            Objects.requireNonNull(this.messageService.getLanguage().getString("AttemptedPeace")).replace("#name#", target.getName()),
+            true
+        );
+        this.messageFaction(
+            target,
+            this.translate("&a" + this.getText("HasAttemptedToMakePeaceWith", this.faction.getName(), target.getName())),
+            Objects.requireNonNull(this.messageService.getLanguage().getString("HasAttemptedToMakePeaceWith"))
+                .replace("#f1#", this.faction.getName())
+                .replace("#f2#", target.getName())
+        );
+        if (this.faction.isTruceRequested(target.getName()) && target.isTruceRequested(this.faction.getName())) {
             FactionWarEndEvent warEndEvent = new FactionWarEndEvent(this.faction, target);
             Bukkit.getPluginManager().callEvent(warEndEvent);
             if (!warEndEvent.isCancelled()) {
                 // remove requests in case war breaks out again, and they need to make peace again
-                faction.removeRequestedTruce(target.getName());
-                target.removeRequestedTruce(faction.getName());
+                this.faction.removeRequestedTruce(target.getName());
+                target.removeRequestedTruce(this.faction.getName());
 
                 // make peace between factions
-                faction.removeEnemy(target.getName());
-                target.removeEnemy(faction.getName());
+                this.faction.removeEnemy(target.getName());
+                target.removeEnemy(this.faction.getName());
 
                 // TODO: set active flag in war to false
 
                 // Notify
-                messageServer("&a" + getText("AlertNowAtPeaceWith", faction.getName(), target.getName()),
-                        Objects.requireNonNull(messageService.getLanguage().getString("AlertNowAtPeaceWith"))
-                                .replace("#p1#", faction.getName())
-                                .replace("#p2#", target.getName()));
+                this.messageServer(
+                    "&a" + this.getText("AlertNowAtPeaceWith", this.faction.getName(), target.getName()),
+                    Objects.requireNonNull(this.messageService.getLanguage().getString("AlertNowAtPeaceWith"))
+                        .replace("#p1#", this.faction.getName())
+                        .replace("#p2#", target.getName())
+                );
             }
         }
 
         // if faction was a liege, then make peace with all of their vassals as well
         if (target.isLiege()) {
             for (String vassalName : target.getVassals()) {
-                faction.removeEnemy(vassalName);
+                this.faction.removeEnemy(vassalName);
 
-                Faction vassal = getFaction(vassalName);
-                vassal.removeEnemy(faction.getName());
+                Faction vassal = this.getFaction(vassalName);
+                vassal.removeEnemy(this.faction.getName());
             }
         }
     }
@@ -123,5 +146,20 @@ public class MakePeaceCommand extends SubCommand {
     @Override
     public void execute(CommandSender sender, String[] args, String key) {
 
+    }
+
+    /**
+     * Method to handle tab completion.
+     * 
+     * @param sender who sent the command.
+     * @param args   of the command.
+     */
+    @Override
+    public List<String> handleTabComplete(Sender sender, String[] args) {
+        if (this.persistentData.isInFaction(sender.getUniqueId())) {
+            Faction playerFaction = this.persistentData.getPlayersFaction(sender.getUniqueId());
+            ArrayList<String> factionEnemies = playerFaction.getEnemyFactions();
+            return TabCompleteTools.filterStartingWith(args[0], factionEnemies);
+        }
     }
 }

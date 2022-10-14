@@ -32,7 +32,7 @@ public class KickCommand extends SubCommand {
     public KickCommand(LocaleService localeService, PersistentData persistentData, EphemeralData ephemeralData, PersistentData.ChunkDataAccessor chunkDataAccessor, DynmapIntegrator dynmapIntegrator, ConfigService configService, Logger logger, PlayerService playerService, MessageService messageService) {
         super(new String[]{
                 "kick", LOCALE_PREFIX + "CmdKick"
-        }, true, true, true, false, localeService, persistentData, ephemeralData, chunkDataAccessor, dynmapIntegrator, configService, playerService, messageService);
+        }, true, true, true, false, ["mf.kick"], localeService, persistentData, ephemeralData, chunkDataAccessor, dynmapIntegrator, configService, playerService, messageService);
         this.logger = logger;
     }
 
@@ -45,56 +45,82 @@ public class KickCommand extends SubCommand {
      */
     @Override
     public void execute(Player player, String[] args, String key) {
-        final String permission = "mf.kick";
-        if (!(checkPermissions(player, permission))) return;
         if (args.length == 0) {
-            playerService.sendMessage(player, "&c" + getText("UsageKick")
-                    , "UsageKick", false);
+            this.playerService.sendMessage(
+                player, 
+                "&c" + this.getText("UsageKick"),
+                "UsageKick", 
+                false
+            );
             return;
         }
         UUIDChecker uuidChecker = new UUIDChecker();
         final UUID targetUUID = uuidChecker.findUUIDBasedOnPlayerName(args[0]);
         if (targetUUID == null) {
-            playerService.sendMessage(player, "&c" + getText("PlayerNotFound"), Objects.requireNonNull(messageService.getLanguage().getString("PlayerNotFound")).replace("#name#", args[0]), true);
+            this.playerService.sendMessage(
+                player,
+                "&c" + this.getText("PlayerNotFound"),
+                Objects.requireNonNull(this.messageService.getLanguage().getString("PlayerNotFound")).replace("#name#", args[0]), 
+                true
+            );
             return;
         }
         OfflinePlayer target = Bukkit.getOfflinePlayer(targetUUID);
         if (!target.hasPlayedBefore()) {
             target = Bukkit.getPlayer(args[0]);
             if (target == null) {
-                playerService.sendMessage(player, "&c" + getText("PlayerNotFound"), Objects.requireNonNull(messageService.getLanguage().getString("PlayerNotFound")).replace("#name#", args[0]), true);
+                this.playerService.sendMessage(
+                    player, 
+                    "&c" + this.getText("PlayerNotFound"),
+                    Objects.requireNonNull(this.messageService.getLanguage().getString("PlayerNotFound")).replace("#name#", args[0]), 
+                    true
+                );
                 return;
             }
         }
         if (target.getUniqueId().equals(player.getUniqueId())) {
-            playerService.sendMessage(player, "&c" + getText("CannotKickSelf")
-                    , "CannotKickSelf", false);
+            this.playerService.sendMessage(
+                player,
+                "&c" + this.getText("CannotKickSelf"),
+                "CannotKickSelf",
+                false
+            );
             return;
         }
         if (this.faction.isOwner(targetUUID)) {
-            playerService.sendMessage(player, "&c" + getText("CannotKickOwner")
-                    , "CannotKickOwner", false);
+            this.playerService.sendMessage(
+                player,
+                "&c" + this.getText("CannotKickOwner"),
+                "CannotKickOwner",
+                false
+            );
             return;
         }
-        FactionKickEvent kickEvent = new FactionKickEvent(faction, target, player);
+        FactionKickEvent kickEvent = new FactionKickEvent(this.faction, target, player);
         Bukkit.getPluginManager().callEvent(kickEvent);
         if (kickEvent.isCancelled()) {
-            logger.debug("Kick event was cancelled.");
+            this.logger.debug("Kick event was cancelled.");
             return;
         }
-        if (faction.isOfficer(targetUUID)) {
-            faction.removeOfficer(targetUUID); // Remove Officer (if one)
+        if (this.faction.isOfficer(targetUUID)) {
+            this.faction.removeOfficer(targetUUID); // Remove Officer (if one)
         }
-        ephemeralData.getPlayersInFactionChat().remove(targetUUID);
-        faction.removeMember(targetUUID);
-        messageFaction(faction, "&c" + getText("HasBeenKickedFrom", target.getName(), faction.getName()),
-                Objects.requireNonNull(messageService.getLanguage().getString("HasBeenKickedFrom"))
-                        .replace("#name#", args[0])
-                        .replace("#faction#", faction.getName()));
+        this.ephemeralData.getPlayersInFactionChat().remove(targetUUID);
+        this.faction.removeMember(targetUUID);
+        this.messageFaction(
+            this.faction,
+            "&c" + this.getText("HasBeenKickedFrom", target.getName(), this.faction.getName()),
+            Objects.requireNonNull(this.messageService.getLanguage().getString("HasBeenKickedFrom"))
+                    .replace("#name#", args[0])
+                    .replace("#faction#", this.faction.getName())
+        );
         if (target.isOnline() && target.getPlayer() != null) {
-            playerService.sendMessage(player, "&c" + getText("AlertKicked", player.getName())
-                    , Objects.requireNonNull(messageService.getLanguage().getString("AlertKicked"))
-                            .replace("#name#", player.getName()), true);
+            this.playerService.sendMessage(
+                player,
+                "&c" + this.getText("AlertKicked", player.getName()),
+                Objects.requireNonNull(this.messageService.getLanguage().getString("AlertKicked")).replace("#name#", player.getName()),
+                true
+            );
         }
     }
 
@@ -108,5 +134,26 @@ public class KickCommand extends SubCommand {
     @Override
     public void execute(CommandSender sender, String[] args, String key) {
 
+    }
+
+    /**
+     * Method to handle tab completion.
+     * 
+     * @param sender who sent the command.
+     * @param args   of the command.
+     */
+    @Override
+    public List<String> handleTabComplete(Sender sender, String[] args) {
+        final List<String> membersInFaction = new ArrayList<>();
+        if (this.persistentData.isInFaction(sender.getUniqueId())) {
+            Faction playerFaction = this.persistentData.getPlayersFaction(sender.getUniqueId());
+            for (UUID uuid : playerFaction.getMemberList()) {
+                Player member = Bukkit.getPlayer(uuid);
+                if (member != null) {
+                    membersInFaction.add(member.getName());
+                }
+            }
+            return TabCompleteTools.filterStartingWith(args[0], membersInFaction);
+        }
     }
 }

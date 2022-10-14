@@ -13,6 +13,7 @@ import dansplugins.factionsystem.services.ConfigService;
 import dansplugins.factionsystem.services.LocaleService;
 import dansplugins.factionsystem.services.MessageService;
 import dansplugins.factionsystem.services.PlayerService;
+import dansplugins.factionsystem.utils.TabCompleteTools;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import preponderous.ponder.minecraft.bukkit.tools.UUIDChecker;
@@ -28,7 +29,7 @@ public class PowerCommand extends SubCommand {
     public PowerCommand(LocaleService localeService, PersistentData persistentData, EphemeralData ephemeralData, PersistentData.ChunkDataAccessor chunkDataAccessor, DynmapIntegrator dynmapIntegrator, ConfigService configService, PlayerService playerService, MessageService messageService) {
         super(new String[]{
                 "power", LOCALE_PREFIX + "CmdPower"
-        }, false, persistentData, localeService, ephemeralData, configService, playerService, messageService, chunkDataAccessor, dynmapIntegrator);
+        }, false, ["mf.power"], persistentData, localeService, ephemeralData, configService, playerService, messageService, chunkDataAccessor, dynmapIntegrator);
     }
 
     /**
@@ -52,36 +53,59 @@ public class PowerCommand extends SubCommand {
      */
     @Override
     public void execute(CommandSender sender, String[] args, String key) {
-        final String permission = "mf.power";
-        if (!(checkPermissions(sender, permission))) return;
         final PowerRecord record;
         if (args.length == 0) {
             if (!(sender instanceof Player)) {
-                playerService.sendMessage(sender, getText("OnlyPlayersCanUseCommand")
-                        , "OnlyPlayersCanUseCommand", false);
+                this.playerService.sendMessage(
+                    sender,
+                    this.getText("OnlyPlayersCanUseCommand"),
+                    "OnlyPlayersCanUseCommand",
+                    false
+                );
                 return;
             }
-            record = persistentData.getPlayersPowerRecord(((Player) sender).getUniqueId());
-            playerService.sendMessage(sender, "&b" +
-                            getText("AlertCurrentPowerLevel", record.getPower(), record.maxPower())
-                    , Objects.requireNonNull(messageService.getLanguage().getString("AlertCurrentPowerLevel"))
-                            .replace("#power#", String.valueOf(record.getPower()))
-                            .replace("#max#", String.valueOf(record.maxPower())), true);
+            record = this.persistentData.getPlayersPowerRecord(((Player) sender).getUniqueId());
+            this.playerService.sendMessage(
+                sender,
+                "&b" + this.getText("AlertCurrentPowerLevel", record.getPower(), record.maxPower()),
+                Objects.requireNonNull(this.messageService.getLanguage().getString("AlertCurrentPowerLevel"))
+                    .replace("#power#", String.valueOf(record.getPower()))
+                    .replace("#max#", String.valueOf(record.maxPower())),
+                true
+            );
             return;
         }
         UUIDChecker uuidChecker = new UUIDChecker();
         final UUID target = uuidChecker.findUUIDBasedOnPlayerName(args[0]);
         if (target == null) {
-            playerService.sendMessage(sender, "&c" + getText("PlayerNotFound"),
-                    Objects.requireNonNull(messageService.getLanguage().getString("PlayerNotFound")).replace("#name#", args[0]), true);
+            this.playerService.sendMessage(
+                sender,
+                "&c" + this.getText("PlayerNotFound"),
+                Objects.requireNonNull(this.messageService.getLanguage().getString("PlayerNotFound")).replace("#name#", args[0]),
+                true
+            );
             return;
         }
-        record = persistentData.getPlayersPowerRecord(target);
-        playerService.sendMessage(sender, "&b" +
-                        getText("CurrentPowerLevel", args[0], record.getPower(), record.maxPower())
-                , Objects.requireNonNull(messageService.getLanguage().getString("CurrentPowerLevel"))
-                        .replace("#power#", String.valueOf(record.getPower()))
-                        .replace("#max#", String.valueOf(record.maxPower()))
-                        .replace("#name#", args[0]), true);
+        record = this.persistentData.getPlayersPowerRecord(target);
+        this.playerService.sendMessage(
+            sender, 
+            "&b" + this.getText("CurrentPowerLevel", args[0], record.getPower(), record.maxPower()),
+            Objects.requireNonNull(this.messageService.getLanguage().getString("CurrentPowerLevel"))
+                .replace("#power#", String.valueOf(record.getPower()))
+                .replace("#max#", String.valueOf(record.maxPower()))
+                .replace("#name#", args[0]),
+            true
+        );
+    }
+
+    /**
+     * Method to handle tab completion.
+     * 
+     * @param sender who sent the command.
+     * @param args   of the command.
+     */
+    @Override
+    public List<String> handleTabComplete(Sender sender, String[] args) {
+        return TabCompleteTools.allOnlinePlayersMatching(args[0]);
     }
 }

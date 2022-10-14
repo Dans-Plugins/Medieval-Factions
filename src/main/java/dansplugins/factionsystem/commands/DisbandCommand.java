@@ -16,6 +16,7 @@ import dansplugins.factionsystem.services.LocaleService;
 import dansplugins.factionsystem.services.MessageService;
 import dansplugins.factionsystem.services.PlayerService;
 import dansplugins.factionsystem.utils.Logger;
+import dansplugins.factionsystem.utils.TabCompleteTools;
 import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.command.CommandSender;
@@ -33,7 +34,7 @@ public class DisbandCommand extends SubCommand {
     public DisbandCommand(LocaleService localeService, PersistentData persistentData, EphemeralData ephemeralData, PersistentData.ChunkDataAccessor chunkDataAccessor, DynmapIntegrator dynmapIntegrator, ConfigService configService, Logger logger, PlayerService playerService, MessageService messageService, MedievalFactions medievalFactions) {
         super(new String[]{
                 "disband", LOCALE_PREFIX + "CmdDisband"
-        }, false, persistentData, localeService, ephemeralData, configService, playerService, messageService, chunkDataAccessor, dynmapIntegrator);
+        }, false, [], persistentData, localeService, ephemeralData, configService, playerService, messageService, chunkDataAccessor, dynmapIntegrator);
         this.logger = logger;
         this.medievalFactions = medievalFactions;
     }
@@ -62,48 +63,63 @@ public class DisbandCommand extends SubCommand {
         final Faction disband;
         final boolean self;
         if (args.length == 0) {
-            if (!checkPermissions(sender, "mf.disband")) return;
+            if (!this.checkPermissions(sender, "mf.disband")) return;
             if (!(sender instanceof Player)) { // ONLY Players can be in a Faction
-                if (!configService.getBoolean("useNewLanguageFile")) {
-                    sender.sendMessage(translate(getText("OnlyPlayersCanUseCommand")));
+                if (!this.configService.getBoolean("useNewLanguageFile")) {
+                    sender.sendMessage(this.translate(this.getText("OnlyPlayersCanUseCommand")));
                 } else {
-                    playerService.sendMessageToConsole(sender.getServer().getConsoleSender(), "OnlyPlayersCanUseCommand", true);
+                    this.playerService.sendMessageToConsole(sender.getServer().getConsoleSender(), "OnlyPlayersCanUseCommand", true);
                 }
                 return;
             }
-            disband = getPlayerFaction(sender);
+            disband = this.getPlayerFaction(sender);
             self = true;
             if (disband.getPopulation() != 1) {
-                playerService.sendMessage(sender, "&c" + getText("AlertMustKickAllPlayers")
-                        , "AlertMustKickAllPlayers", false);
+                this.playerService.sendMessage(
+                    sender,
+                    "&c" + this.getText("AlertMustKickAllPlayers"),
+                    "AlertMustKickAllPlayers",
+                    false
+                );
                 return;
             }
         } else {
-            if (!checkPermissions(sender, "mf.disband.others", "mf.admin")) return;
-            disband = getFaction(String.join(" ", args));
+            if (!this.checkPermissions(sender, "mf.disband.others", "mf.admin")) return;
+            disband = this.getFaction(String.join(" ", args));
             self = false;
         }
         if (disband == null) {
-            playerService.sendMessage(sender, "&c" + getText("FactionNotFound")
-                    , Objects.requireNonNull(messageService.getLanguage().getString("FactionNotFound"))
-                            .replace("#faction#", String.join(" ", args)), true);
+            this.playerService.sendMessage(
+                sender,
+                "&c" + this.getText("FactionNotFound"),
+                Objects.requireNonNull(this.messageService.getLanguage().getString("FactionNotFound")).replace("#faction#", String.join(" ", args)),
+                true
+            );
             return;
         }
         final int factionIndex = persistentData.getFactionIndexOf(disband);
         if (self) {
-            playerService.sendMessage(sender, "&c" + getText("FactionSuccessfullyDisbanded")
-                    , "FactionSuccessfullyDisbanded", false);
-            ephemeralData.getPlayersInFactionChat().remove(((Player) sender).getUniqueId());
+            this.playerService.sendMessage(
+                sender,
+                "&c" + this.getText("FactionSuccessfullyDisbanded"),
+                "FactionSuccessfullyDisbanded", 
+                false
+            );
+            this.ephemeralData.getPlayersInFactionChat().remove(((Player) sender).getUniqueId());
         } else {
-            playerService.sendMessage(sender, "&c" + getText("SuccessfulDisbandment", disband.getName())
-                    , Objects.requireNonNull(messageService.getLanguage().getString("SuccessfulDisbandment")).replace("#faction#", disband.getName()), true);
+            this.playerService.sendMessage(
+                sender,
+                "&c" + this.getText("SuccessfulDisbandment", disband.getName()),
+                Objects.requireNonNull(this.messageService.getLanguage().getString("SuccessfulDisbandment")).replace("#faction#", disband.getName()), 
+                true
+            );
         }
-        removeFaction(factionIndex, self ? ((OfflinePlayer) sender) : null);
+        this.removeFaction(factionIndex, self ? ((OfflinePlayer) sender) : null);
     }
 
     private void removeFaction(int i, OfflinePlayer disbandingPlayer) {
 
-        Faction disbandingThisFaction = persistentData.getFactionByIndex(i);
+        Faction disbandingThisFaction = this.persistentData.getFactionByIndex(i);
         String nameOfFactionToRemove = disbandingThisFaction.getName();
         FactionDisbandEvent event = new FactionDisbandEvent(
                 disbandingThisFaction,
@@ -111,19 +127,31 @@ public class DisbandCommand extends SubCommand {
         );
         Bukkit.getPluginManager().callEvent(event);
         if (event.isCancelled()) {
-            logger.debug("Disband event was cancelled.");
+            this.logger.debug("Disband event was cancelled.");
             return;
         }
 
         // remove claimed land objects associated with this faction
-        persistentData.getChunkDataAccessor().removeAllClaimedChunks(nameOfFactionToRemove);
-        dynmapIntegrator.updateClaims();
+        this.persistentData.getChunkDataAccessor().removeAllClaimedChunks(nameOfFactionToRemove);
+        this.dynmapIntegrator.updateClaims();
 
         // remove locks associated with this faction
-        persistentData.removeAllLocks(persistentData.getFactionByIndex(i).getName());
+        this.persistentData.removeAllLocks(this.persistentData.getFactionByIndex(i).getName());
 
-        persistentData.removePoliticalTiesToFaction(nameOfFactionToRemove);
+        this.persistentData.removePoliticalTiesToFaction(nameOfFactionToRemove);
 
-        persistentData.removeFactionByIndex(i);
+        this.persistentData.removeFactionByIndex(i);
+    }
+
+    /**
+     * Method to handle tab completion.
+     * 
+     * @param sender who sent the command.
+     * @param args   of the command.
+     */
+    @Override
+    public List<String> handleTabComplete(Sender sender, String[] args) {
+        if (! this.checkPermissions(sender)) return null;
+        return TabCompleteTools.allFactionsMatching(args[0], this.persistentData);
     }
 }

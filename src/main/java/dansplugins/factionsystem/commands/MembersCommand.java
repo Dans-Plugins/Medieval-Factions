@@ -14,6 +14,7 @@ import dansplugins.factionsystem.services.ConfigService;
 import dansplugins.factionsystem.services.LocaleService;
 import dansplugins.factionsystem.services.MessageService;
 import dansplugins.factionsystem.services.PlayerService;
+import dansplugins.factionsystem.utils.TabCompleteTools;
 import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
@@ -29,7 +30,7 @@ public class MembersCommand extends SubCommand {
     public MembersCommand(LocaleService localeService, PersistentData persistentData, EphemeralData ephemeralData, PersistentData.ChunkDataAccessor chunkDataAccessor, DynmapIntegrator dynmapIntegrator, ConfigService configService, PlayerService playerService, MessageService messageService, MedievalFactions medievalFactions) {
         super(new String[]{
                 "members", LOCALE_PREFIX + "CmdMembers"
-        }, false, persistentData, localeService, ephemeralData, configService, playerService, messageService, chunkDataAccessor, dynmapIntegrator);
+        }, false, ["mf.members"], persistentData, localeService, ephemeralData, configService, playerService, messageService, chunkDataAccessor, dynmapIntegrator);
         this.medievalFactions = medievalFactions;
     }
 
@@ -54,35 +55,43 @@ public class MembersCommand extends SubCommand {
      */
     @Override
     public void execute(CommandSender sender, String[] args, String key) {
-        final String permission = "mf.members";
-        if (!(checkPermissions(sender, permission))) return;
         final Faction faction;
         if (args.length == 0) {
             if (!(sender instanceof Player)) {
-                playerService.sendMessage(sender, getText("OnlyPlayersCanUseCommand")
-                        , "OnlyPlayersCanUseCommand", false);
+                this.playerService.sendMessage(
+                    sender,
+                    this.getText("OnlyPlayersCanUseCommand"),
+                    "OnlyPlayersCanUseCommand",
+                    false
+                );
                 return;
             }
             faction = getPlayerFaction(sender);
             if (faction == null) {
-                playerService.sendMessage(sender, getText("AlertMustBeInFactionToUseCommand")
-                        , "AlertMustBeInFactionToUseCommand", false);
+                this.playerService.sendMessage(
+                    sender, 
+                    this.getText("AlertMustBeInFactionToUseCommand"),
+                    "AlertMustBeInFactionToUseCommand",
+                    false
+                );
                 return;
             }
         } else {
-            faction = getFaction(String.join(" ", args));
+            faction = this.getFaction(String.join(" ", args));
             if (faction == null) {
-                playerService.sendMessage(sender, "&c" + getText("FactionNameNotRecognized"),
-                        Objects.requireNonNull(messageService.getLanguage().getString("FactionNotFound"))
-                                .replace("#faction#", String.join(" ", args
-                                )), true);
+                this.playerService.sendMessage(
+                    sender,
+                    "&c" + this.getText("FactionNameNotRecognized"),
+                    Objects.requireNonNull(this.messageService.getLanguage().getString("FactionNotFound")).replace("#faction#", String.join(" ", args)),
+                    true
+                );
                 return;
             }
         }
         // send Faction Members
-        if (!configService.getBoolean("useNewLanguageFile")) {
-            sender.sendMessage(translate("&b----------\n" + getText("MembersOf", faction.getName())));
-            sender.sendMessage(translate("&b----------\n"));
+        if (!this.configService.getBoolean("useNewLanguageFile")) {
+            sender.sendMessage(this.translate("&b----------\n" + getText("MembersOf", faction.getName())));
+            sender.sendMessage(this.translate("&b----------\n"));
             faction.getMemberList().stream()
                     .map(Bukkit::getOfflinePlayer)
                     .map(player -> {
@@ -96,35 +105,52 @@ public class MembersCommand extends SubCommand {
                             rank = "**";
                             color = "&c";
                         }
-                        return translate("&f" + player.getName() + color + rank);
+                        return this.translate("&f" + player.getName() + color + rank);
                     }).forEach(sender::sendMessage);
-            sender.sendMessage(translate("&b----------\n"));
+            sender.sendMessage(this.translate("&b----------\n"));
         } else {
-            playerService.sendMessage(sender, "", Objects.requireNonNull(messageService.getLanguage().getString("MembersFaction.Title"))
-                            .replace("#faction#", faction.getName())
-                    , true);
+            this.playerService.sendMessage(
+                sender,
+                "",
+                Objects.requireNonNull(this.messageService.getLanguage().getString("MembersFaction.Title")).replace("#faction#", faction.getName()),
+                true
+            );
             faction.getMemberList().stream()
                     .map(Bukkit::getOfflinePlayer)
                     .map(player -> {
-                        String rank = messageService.getLanguage().getString("MembersFaction.Member.Rank");
-                        String color = messageService.getLanguage().getString("MembersFaction.Member.Color");
+                        String rank = this.messageService.getLanguage().getString("MembersFaction.Member.Rank");
+                        String color = this.messageService.getLanguage().getString("MembersFaction.Member.Color");
                         if (faction.isOfficer(player.getUniqueId())) {
-                            rank = messageService.getLanguage().getString("MembersFaction.Officer.Rank");
-                            color = messageService.getLanguage().getString("MembersFaction.Officer.Color");
+                            rank = this.messageService.getLanguage().getString("MembersFaction.Officer.Rank");
+                            color = this.messageService.getLanguage().getString("MembersFaction.Officer.Color");
                         }
                         if (faction.isOwner(player.getUniqueId())) {
-                            rank = messageService.getLanguage().getString("MembersFaction.Owner.Rank");
-                            color = messageService.getLanguage().getString("MembersFaction.Owner.Color");
+                            rank = this.messageService.getLanguage().getString("MembersFaction.Owner.Rank");
+                            color = this.messageService.getLanguage().getString("MembersFaction.Owner.Color");
                         }
-                        return playerService.colorize(Objects.requireNonNull(messageService.getLanguage().getString("MembersFaction.Message"))
+                        return this.playerService.colorize(Objects.requireNonNull(this.messageService.getLanguage().getString("MembersFaction.Message"))
                                 .replace("#color#", Objects.requireNonNull(color))
                                 .replace("#rank#", Objects.requireNonNull(rank))
                                 .replace("#name#", Objects.requireNonNull(player.getName())));
                     }).forEach(sender::sendMessage);
-            playerService.sendMessage(sender, "", Objects.requireNonNull(messageService.getLanguage().getString("MembersFaction.SubTitle"))
-                            .replace("#faction#", faction.getName())
-                    , true);
+            this.playerService.sendMessage(
+                sender,
+                "",
+                Objects.requireNonNull(this.messageService.getLanguage().getString("MembersFaction.SubTitle")).replace("#faction#", faction.getName()),
+                true
+            );
 
         }
+    }
+
+    /**
+     * Method to handle tab completion.
+     * 
+     * @param sender who sent the command.
+     * @param args   of the command.
+     */
+    @Override
+    public List<String> handleTabComplete(Sender sender, String[] args) {
+        return TabCompleteTools.allFactionsMatching(args[0], this.persistentData);
     }
 }

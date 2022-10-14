@@ -12,6 +12,7 @@ import dansplugins.factionsystem.services.ConfigService;
 import dansplugins.factionsystem.services.LocaleService;
 import dansplugins.factionsystem.services.MessageService;
 import dansplugins.factionsystem.services.PlayerService;
+import dansplugins.factionsystem.utils.TabCompleteTools;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
@@ -23,7 +24,7 @@ public class RemoveLawCommand extends SubCommand {
     public RemoveLawCommand(LocaleService localeService, PersistentData persistentData, EphemeralData ephemeralData, PersistentData.ChunkDataAccessor chunkDataAccessor, DynmapIntegrator dynmapIntegrator, ConfigService configService, PlayerService playerService, MessageService messageService) {
         super(new String[]{
                 "removelaw", LOCALE_PREFIX + "CmdRemoveLaw"
-        }, true, true, false, true, localeService, persistentData, ephemeralData, chunkDataAccessor, dynmapIntegrator, configService, playerService, messageService);
+        }, true, true, false, true, ["mf.removelaw"], localeService, persistentData, ephemeralData, chunkDataAccessor, dynmapIntegrator, configService, playerService, messageService);
     }
 
     /**
@@ -35,21 +36,33 @@ public class RemoveLawCommand extends SubCommand {
      */
     @Override
     public void execute(Player player, String[] args, String key) {
-        final String permission = "mf.removelaw";
-        if (!(checkPermissions(player, permission))) return;
         if (args.length == 0) {
-            playerService.sendMessage(player, "&c" + getText("UsageRemoveLaw")
-                    , "UsageRemoveLaw", false);
+            this.playerService.sendMessage(
+                player,
+                "&c" + this.getText("UsageRemoveLaw"),
+                "UsageRemoveLaw",
+                false
+            );
             return;
         }
-        final int lawToRemove = getIntSafe(args[0], 0) - 1;
+        final int lawToRemove = this.getIntSafe(args[0], 0) - 1;
         if (lawToRemove < 0) {
-            playerService.sendMessage(player, "&c" + getText("UsageRemoveLaw")
-                    , "UsageRemoveLaw", false);
+            this.playerService.sendMessage(
+                player,
+                "&c" + this.getText("UsageRemoveLaw"),
+                "UsageRemoveLaw",
+                false
+            );
             return;
         }
-        if (faction.removeLaw(lawToRemove)) playerService.sendMessage(player, "&a" + getText("LawRemoved")
-                , "LawRemoved", false);
+        if (this.faction.removeLaw(lawToRemove)) {
+            this.playerService.sendMessage(
+                player, 
+                "&a" + this.getText("LawRemoved"),
+                "LawRemoved",
+                false
+            );
+        }
     }
 
     /**
@@ -62,5 +75,27 @@ public class RemoveLawCommand extends SubCommand {
     @Override
     public void execute(CommandSender sender, String[] args, String key) {
 
+    }
+
+    /**
+     * Method to handle tab completion.
+     * 
+     * @param sender who sent the command.
+     * @param args   of the command.
+     */
+    @Override
+    public List<String> handleTabComplete(Sender sender, String[] args) {
+        if (this.persistentData.isInFaction(sender.getUniqueId())) {
+            Faction playerFaction = this.persistentData.getPlayersFaction(sender.getUniqueId());
+            if (playerFaction.getNumLaws() != 0) {
+                ArrayList<String> numbers = new ArrayList<>();
+                for (int i = 1; i < playerFaction.getNumLaws() + 1; i++) {
+                    numbers.add(Integer.toString(i));
+                }
+                return TabCompleteTools.filterStartingWith(args[0], numbers);
+            }
+            return null;
+        }
+        return null;
     }
 }

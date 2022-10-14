@@ -13,6 +13,7 @@ import dansplugins.factionsystem.services.ConfigService;
 import dansplugins.factionsystem.services.LocaleService;
 import dansplugins.factionsystem.services.MessageService;
 import dansplugins.factionsystem.services.PlayerService;
+import dansplugins.factionsystem.utils.TabCompleteTools;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
@@ -26,7 +27,7 @@ public class UnclaimallCommand extends SubCommand {
     public UnclaimallCommand(LocaleService localeService, PersistentData persistentData, EphemeralData ephemeralData, PersistentData.ChunkDataAccessor chunkDataAccessor, DynmapIntegrator dynmapIntegrator, ConfigService configService, PlayerService playerService, MessageService messageService) {
         super(new String[]{
                 "unclaimall", "ua", LOCALE_PREFIX + "CmdUnclaimall"
-        }, false, persistentData, localeService, ephemeralData, configService, playerService, messageService, chunkDataAccessor, dynmapIntegrator);
+        }, false, [], persistentData, localeService, ephemeralData, configService, playerService, messageService, chunkDataAccessor, dynmapIntegrator);
     }
 
     /**
@@ -54,45 +55,78 @@ public class UnclaimallCommand extends SubCommand {
         if (args.length == 0) {
             // Self
             if (!(sender instanceof Player)) {
-                playerService.sendMessage(sender, getText("OnlyPlayersCanUseCommand")
-                        , "OnlyPlayersCanUseCommand", false);
+                this.playerService.sendMessage(
+                    sender, 
+                    this.getText("OnlyPlayersCanUseCommand"),
+                    "OnlyPlayersCanUseCommand", 
+                    false
+                );
                 return;
             }
-            if (!(checkPermissions(sender, "mf.unclaimall"))) return;
-            faction = getPlayerFaction(sender);
+            if (!(this.checkPermissions(sender, "mf.unclaimall"))) return;
+            faction = this.getPlayerFaction(sender);
             if (faction == null) {
-                playerService.sendMessage(sender, "&c" + getText("AlertMustBeInFactionToUseCommand"),
-                        "AlertMustBeInFactionToUseCommand", false);
+                this.playerService.sendMessage(
+                    sender, 
+                    "&c" + this.getText("AlertMustBeInFactionToUseCommand"),
+                    "AlertMustBeInFactionToUseCommand", 
+                    false
+                );
                 return;
             }
             if (!faction.isOwner(((Player) sender).getUniqueId())) {
-                playerService.sendMessage(sender, "&c" + getText("AlertMustBeOwnerToUseCommand"),
-                        "AlertMustBeOwnerToUseCommand", false);
+                this.playerService.sendMessage(
+                    sender, 
+                    "&c" + this.getText("AlertMustBeOwnerToUseCommand"),
+                    "AlertMustBeOwnerToUseCommand", 
+                    false
+                );
                 return;
             }
         } else {
-            if (!(checkPermissions(sender, "mf.unclaimall.others", "mf.admin"))) return;
-            faction = getFaction(String.join(" ", args));
+            if (!(this.checkPermissions(sender, "mf.unclaimall.others", "mf.admin"))) return;
+            faction = this.getFaction(String.join(" ", args));
             if (faction == null) {
-                playerService.sendMessage(sender, "&c" + getText("FactionNotFound"),
-                        Objects.requireNonNull(messageService.getLanguage().getString("FactionNotFound"))
-                                .replace("#faction#", String.join(" ", args)), true);
+                this.playerService.sendMessage(
+                    sender, 
+                    "&c" + this.getText("FactionNotFound"),
+                    Objects.requireNonNull(this.messageService.getLanguage().getString("FactionNotFound")).replace("#faction#", String.join(" ", args)), 
+                    true
+                );
                 return;
             }
         }
         // remove faction home
         faction.setFactionHome(null);
-        messageFaction(faction, translate("&c" + getText("AlertFactionHomeRemoved"))
-                , messageService.getLanguage().getString("AlertFactionHomeRemoved"));
+        this.messageFaction(
+            faction, 
+            this.translate("&c" + this.getText("AlertFactionHomeRemoved")),
+            this.messageService.getLanguage().getString("AlertFactionHomeRemoved")
+        );
 
         // remove claimed chunks
-        chunkDataAccessor.removeAllClaimedChunks(faction.getName());
-        dynmapIntegrator.updateClaims();
-        playerService.sendMessage(sender, "&a" + getText("AllLandUnclaimedFrom", faction.getName())
-                , Objects.requireNonNull(messageService.getLanguage().getString("AllLandUnclaimedFrom"))
-                        .replace("#name#", faction.getName()), false);
+        this.chunkDataAccessor.removeAllClaimedChunks(faction.getName());
+        this.dynmapIntegrator.updateClaims();
+        this.playerService.sendMessage(
+            sender, 
+            "&a" + this.getText("AllLandUnclaimedFrom", faction.getName()),
+            Objects.requireNonNull(this.messageService.getLanguage().getString("AllLandUnclaimedFrom")).replace("#name#", faction.getName()), 
+            false
+        );
 
         // remove locks associated with this faction
-        persistentData.removeAllLocks(faction.getName());
+        this.persistentData.removeAllLocks(faction.getName());
+    }
+
+    /**
+     * Method to handle tab completion.
+     * 
+     * @param sender who sent the command.
+     * @param args   of the command.
+     */
+    @Override
+    public List<String> handleTabComplete(Sender sender, String[] args) {
+        if (! this.checkPermissions(sender)) return null;
+        return TabCompleteTools.allFactionsMatching(args[0], this.persistentData);
     }
 }

@@ -12,6 +12,7 @@ import dansplugins.factionsystem.services.ConfigService;
 import dansplugins.factionsystem.services.LocaleService;
 import dansplugins.factionsystem.services.MessageService;
 import dansplugins.factionsystem.services.PlayerService;
+import dansplugins.factionsystem.utils.TabCompleteTools;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import preponderous.ponder.minecraft.bukkit.tools.UUIDChecker;
@@ -26,8 +27,8 @@ public class RevokeAccessCommand extends SubCommand {
 
     public RevokeAccessCommand(LocaleService localeService, PersistentData persistentData, EphemeralData ephemeralData, PersistentData.ChunkDataAccessor chunkDataAccessor, DynmapIntegrator dynmapIntegrator, ConfigService configService, PlayerService playerService, MessageService messageService) {
         super(new String[]{
-                "ra", "revokeaccess", LOCALE_PREFIX + "CmdRevokeAccess"
-        }, true, persistentData, localeService, ephemeralData, configService, playerService, messageService, chunkDataAccessor, dynmapIntegrator);
+                "revokeaccess", "ra", LOCALE_PREFIX + "CmdRevokeAccess"
+        }, true, ["mf.revokeaccess"], persistentData, localeService, ephemeralData, configService, playerService, messageService, chunkDataAccessor, dynmapIntegrator);
     }
 
     /**
@@ -39,39 +40,63 @@ public class RevokeAccessCommand extends SubCommand {
      */
     @Override
     public void execute(Player player, String[] args, String key) {
-        final String permission = "mf.revokeaccess";
-        if (!(checkPermissions(player, permission))) return;
         if (args.length == 0) {
-            playerService.sendMessage(player, "&c" + getText("UsageRevokeAccess")
-                    , "UsageRevokeAccess", false);
+            this.playerService.sendMessage(
+                player,
+                "&c" + this.getText("UsageRevokeAccess"),
+                "UsageRevokeAccess",
+                false
+            );
             return;
         }
         if (args[0].equalsIgnoreCase("cancel")) {
-            ephemeralData.getPlayersRevokingAccess().remove(player.getUniqueId());
-            playerService.sendMessage(player, "&c" + getText("Cancelled"), "Cancelled", false);
+            this.ephemeralData.getPlayersRevokingAccess().remove(player.getUniqueId());
+            this.playerService.sendMessage(
+                player,
+                "&c" + this.getText("Cancelled"),
+                "Cancelled",
+                false
+            );
             return;
         }
-        if (ephemeralData.getPlayersRevokingAccess().containsKey(player.getUniqueId())) {
-            playerService.sendMessage(player, "&c" + getText("AlreadyEnteredRevokeAccess")
-                    , "AlreadyEnteredRevokeAccess", false);
+        if (this.ephemeralData.getPlayersRevokingAccess().containsKey(player.getUniqueId())) {
+            this.playerService.sendMessage(
+                player,
+                "&c" + this.getText("AlreadyEnteredRevokeAccess"),
+                "AlreadyEnteredRevokeAccess",
+                false
+            );
             return;
         }
         UUIDChecker uuidChecker = new UUIDChecker();
         final UUID targetUUID = uuidChecker.findUUIDBasedOnPlayerName(args[0]);
         if (targetUUID == null) {
-            playerService.sendMessage(player, "&c" + getText("PlayerNotFound"), Objects.requireNonNull(messageService.getLanguage().getString("PlayerNotFound")).replace("#name#", args[0]), true);
+            this.playerService.sendMessage(
+                player,
+                "&c" + this.getText("PlayerNotFound"),
+                Objects.requireNonNull(this.messageService.getLanguage().getString("PlayerNotFound")).replace("#name#", args[0]),
+                true
+            );
             return;
         }
         if (targetUUID == player.getUniqueId()) {
-            playerService.sendMessage(player, "&c" + getText("CannotRevokeAccessFromSelf")
-                    , "CannotRevokeAccessFromSelf", false);
+            this.playerService.sendMessage(
+                player,
+                "&c" + this.getText("CannotRevokeAccessFromSelf"),
+                "CannotRevokeAccessFromSelf",
+                false
+            );
             return;
         }
-        ephemeralData.getPlayersRevokingAccess().put(
+        this.ephemeralData.getPlayersRevokingAccess().put(
                 player.getUniqueId(), targetUUID
         );
-        playerService.sendMessage(player, "&a" + getText("RightClickRevokeAccess")
-                , "RightClickRevokeAccess", false);
+        this.playerService.sendMessage(
+            player,
+            "&a" + this.getText("RightClickRevokeAccess"),
+            "RightClickRevokeAccess",
+            false)
+        ;
     }
 
     /**
@@ -84,5 +109,16 @@ public class RevokeAccessCommand extends SubCommand {
     @Override
     public void execute(CommandSender sender, String[] args, String key) {
 
+    }
+
+    /**
+     * Method to handle tab completion.
+     * 
+     * @param sender who sent the command.
+     * @param args   of the command.
+     */
+    @Override
+    public List<String> handleTabComplete(Sender sender, String[] args) {
+        return TabCompleteTools.allOnlinePlayersMatching(args[0], true);
     }
 }

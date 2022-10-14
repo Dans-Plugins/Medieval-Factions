@@ -14,6 +14,7 @@ import dansplugins.factionsystem.services.LocaleService;
 import dansplugins.factionsystem.services.MessageService;
 import dansplugins.factionsystem.services.PlayerService;
 import dansplugins.factionsystem.utils.Logger;
+import dansplugins.factionsystem.utils.TabCompleteTools;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
@@ -27,8 +28,8 @@ public class VassalizeCommand extends SubCommand {
 
     public VassalizeCommand(LocaleService localeService, PersistentData persistentData, EphemeralData ephemeralData, PersistentData.ChunkDataAccessor chunkDataAccessor, DynmapIntegrator dynmapIntegrator, ConfigService configService, Logger logger, PlayerService playerService, MessageService messageService) {
         super(new String[]{
-                "Vassalize", LOCALE_PREFIX + "CmdVassalize"
-        }, true, true, false, true, localeService, persistentData, ephemeralData, chunkDataAccessor, dynmapIntegrator, configService, playerService, messageService);
+                "vassalize", LOCALE_PREFIX + "CmdVassalize"
+        }, true, true, false, true, ["mf.vassalize"], localeService, persistentData, ephemeralData, chunkDataAccessor, dynmapIntegrator, configService, playerService, messageService);
         this.logger = logger;
     }
 
@@ -41,56 +42,79 @@ public class VassalizeCommand extends SubCommand {
      */
     @Override
     public void execute(Player player, String[] args, String key) {
-        final String permission = "mf.vassalize";
-        if (!(checkPermissions(player, permission))) return;
         if (args.length == 0) {
-            playerService.sendMessage(player, "&c" + getText("UsageVassalize")
-                    , "UsageVassalize", false);
+            this.playerService.sendMessage(
+                player,
+                "&c" + this.getText("UsageVassalize"),
+                "UsageVassalize",
+                false
+            );
             return;
         }
-        final Faction target = getFaction(String.join(" ", args));
+        final Faction target = this.getFaction(String.join(" ", args));
         if (target == null) {
-            playerService.sendMessage(player, "&c" + getText("FactionNotFound"), Objects.requireNonNull(messageService.getLanguage().getString("FactionNotFound"))
-                    .replace("#faction#", String.join(" ", args)), true);
+            this.playerService.sendMessage(
+                player,
+                "&c" + this.getText("FactionNotFound"),
+                Objects.requireNonNull(this.messageService.getLanguage().getString("FactionNotFound")).replace("#faction#", String.join(" ", args)),
+                true
+            );
             return;
         }
         // make sure player isn't trying to vassalize their own faction
-        if (faction.getName().equalsIgnoreCase(target.getName())) {
-            playerService.sendMessage(player, "&c" + getText("CannotVassalizeSelf")
-                    , "CannotVassalizeSelf", false);
+        if (this.faction.getName().equalsIgnoreCase(target.getName())) {
+            this.playerService.sendMessage(
+                player,
+                "&c" + this.getText("CannotVassalizeSelf"),
+                "CannotVassalizeSelf",
+                false
+            );
             return;
         }
         // make sure player isn't trying to vassalize their liege
         if (target.getName().equalsIgnoreCase(faction.getLiege())) {
-            playerService.sendMessage(player, "&c" + getText("CannotVassalizeLiege")
-                    , "CannotVassalizeLiege", false);
+            this.playerService.sendMessage(
+                player,
+                "&c" + this.getText("CannotVassalizeLiege"),
+                "CannotVassalizeLiege",
+                false
+            );
             return;
         }
         // make sure player isn't trying to vassalize a vassal
         if (target.hasLiege()) {
-            playerService.sendMessage(player, "&c" + getText("CannotVassalizeVassal")
-                    , "CannotVassalizeVassal", false);
+            this.playerService.sendMessage(
+                player,
+                "&c" + this.getText("CannotVassalizeVassal"),
+                "CannotVassalizeVassal",
+                false
+            );
             return;
         }
         // make sure this vassalization won't result in a vassalization loop
-        final int loopCheck = willVassalizationResultInLoop(faction, target);
+        final int loopCheck = this.willVassalizationResultInLoop(faction, target);
         if (loopCheck == 1 || loopCheck == 2) {
-            logger.debug("Vassalization was cancelled due to potential loop");
+            this.logger.debug("Vassalization was cancelled due to potential loop");
             return;
         }
         // add faction to attemptedVassalizations
-        faction.addAttemptedVassalization(target.getName());
+        this.faction.addAttemptedVassalization(target.getName());
 
         // inform all players in that faction that they are trying to be vassalized
-        messageFaction(target, translate("&a" +
-                        getText("AlertAttemptedVassalization", faction.getName(), faction.getName()))
-                , Objects.requireNonNull(messageService.getLanguage().getString("AlertAttemptedVassalization"))
-                        .replace("#name#", faction.getName()));
+        this.messageFaction(
+            target, 
+            this.translate("&a" + this.getText("AlertAttemptedVassalization", this.faction.getName(), this.faction.getName())),
+            Objects.requireNonNull(this.messageService.getLanguage().getString("AlertAttemptedVassalization"))
+                .replace("#name#", this.faction.getName())
+        );
 
         // inform all players in players faction that a vassalization offer was sent
-        messageFaction(faction, translate("&a" + getText("AlertFactionAttemptedToVassalize", target.getName()))
-                , Objects.requireNonNull(messageService.getLanguage().getString("AlertFactionAttemptedToVassalize"))
-                        .replace("#name#", target.getName()));
+        this.messageFaction(
+            this.faction,
+            this.translate("&a" + this.getText("AlertFactionAttemptedToVassalize", target.getName())),
+            Objects.requireNonNull(this.messageService.getLanguage().getString("AlertFactionAttemptedToVassalize"))
+                .replace("#name#", target.getName())
+        );
     }
 
     /**
@@ -113,9 +137,30 @@ public class VassalizeCommand extends SubCommand {
             String liegeName = current.getLiege();
             if (liegeName.equalsIgnoreCase("none")) return 0; // no loop will be formed
             if (liegeName.equalsIgnoreCase(potentialVassal.getName())) return 1; // loop will be formed
-            current = persistentData.getFaction(liegeName);
+            current = this.persistentData.getFaction(liegeName);
             steps++;
         }
         return 2; // We don't know :/
     }
+
+    /**
+     * Method to handle tab completion.
+     * 
+     * @param sender who sent the command.
+     * @param args   of the command.
+     */
+    @Override
+    public List<String> handleTabComplete(Sender sender, String[] args) {
+        if (this.persistentData.isInFaction(sender.getUniqueId())) {
+            Faction playerFaction = this.persistentData.getPlayersFaction(sender.getUniqueId());
+            ArrayList<String> vassalizeableFactions = new ArrayList<>();
+            for (Faction faction : this.persistentData.getFactions()) {
+                if (!playerFaction.getVassals().contains(faction.getName())) {
+                    vassalizeableFactions.add(faction.getName());
+                }
+            }
+            return TabCompleteTools.filterStartingWith(args[0], vassalizeableFactions);
+        }
+    }
+    
 }
