@@ -73,10 +73,7 @@ public class MedievalFactions extends PonderBukkitPlugin {
         handleIntegrations();
         makeSureEveryPlayerExperiencesPowerDecay();
 
-        getCommand("mf").setTabCompleter(new TabCompleterBase(persistentData, configService));
-        getCommand("f").setTabCompleter(new TabCompleterBase(persistentData, configService));
-        getCommand("medievalfactions").setTabCompleter(new TabCompleterBase(persistentData, configService));
-        getCommand("factions").setTabCompleter(new TabCompleterBase(persistentData, configService));
+        getCommand("mf").setTabCompleter(commandService);
     }
 
     /**

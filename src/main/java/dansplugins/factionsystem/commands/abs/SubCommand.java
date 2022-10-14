@@ -42,6 +42,7 @@ public abstract class SubCommand implements ColorTranslator {
     private final boolean requiresOwner;
     protected Faction faction = null;
     private String[] names;
+    private String[] requiredPermissions;
 
     /**
      * Constructor to initialise a Command.
@@ -51,6 +52,7 @@ public abstract class SubCommand implements ColorTranslator {
      * @param requiresFaction   if the command requires a Faction to perform.
      * @param requiresOfficer   if the command requires officer or higher.
      * @param requiresOwner     if the command is reserved for Owners.
+     * @param requiredPermissions permissions required to utilize this command
      * @param localeService
      * @param persistentData
      * @param ephemeralData
@@ -58,7 +60,7 @@ public abstract class SubCommand implements ColorTranslator {
      * @param dynmapIntegrator
      * @param configService
      */
-    public SubCommand(String[] names, boolean playerCommand, boolean requiresFaction, boolean requiresOfficer, boolean requiresOwner, LocaleService localeService, PersistentData persistentData, EphemeralData ephemeralData, PersistentData.ChunkDataAccessor chunkDataAccessor, DynmapIntegrator dynmapIntegrator, ConfigService configService, PlayerService playerService, MessageService messageService) {
+    public SubCommand(String[] names, boolean playerCommand, boolean requiresFaction, boolean requiresOfficer, boolean requiresOwner, String[] requiredPermissions, LocaleService localeService, PersistentData persistentData, EphemeralData ephemeralData, PersistentData.ChunkDataAccessor chunkDataAccessor, DynmapIntegrator dynmapIntegrator, ConfigService configService, PlayerService playerService, MessageService messageService) {
         this.localeService = localeService;
         this.persistentData = persistentData;
         this.ephemeralData = ephemeralData;
@@ -72,14 +74,16 @@ public abstract class SubCommand implements ColorTranslator {
         this.requiresOwner = requiresOwner;
         this.playerService = playerService;
         this.messageService = messageService;
+        this.requiredPermissions = requiredPermissions;
     }
 
     /**
      * Constructor to initialise a command without owner/faction checks.
      *
-     * @param names             of the command.
-     * @param playerCommand     if the command is exclusive to players.
-     * @param requiresFaction   if the command requires a Faction to do.
+     * @param names               of the command.
+     * @param playerCommand       if the command is exclusive to players.
+     * @param requiresFaction     if the command requires a Faction to do.
+     * @param requiredPermissions permissions required to utilize this command
      * @param persistentData
      * @param localeService
      * @param ephemeralData
@@ -87,8 +91,8 @@ public abstract class SubCommand implements ColorTranslator {
      * @param chunkDataAccessor
      * @param dynmapIntegrator
      */
-    public SubCommand(String[] names, boolean playerCommand, boolean requiresFaction, PersistentData persistentData, LocaleService localeService, EphemeralData ephemeralData, ConfigService configService, PlayerService playerService, MessageService messageService, PersistentData.ChunkDataAccessor chunkDataAccessor, DynmapIntegrator dynmapIntegrator) {
-        this(names, playerCommand, requiresFaction, false, false, localeService, persistentData, ephemeralData, chunkDataAccessor, dynmapIntegrator, configService, playerService, messageService);
+    public SubCommand(String[] names, boolean playerCommand, boolean requiresFaction, String[] requiredPermissions, PersistentData persistentData, LocaleService localeService, EphemeralData ephemeralData, ConfigService configService, PlayerService playerService, MessageService messageService, PersistentData.ChunkDataAccessor chunkDataAccessor, DynmapIntegrator dynmapIntegrator) {
+        this(names, playerCommand, requiresFaction, false, false, requiredPermissions, localeService, persistentData, ephemeralData, chunkDataAccessor, dynmapIntegrator, configService, playerService, messageService);
     }
 
     /**
@@ -96,6 +100,7 @@ public abstract class SubCommand implements ColorTranslator {
      *
      * @param names             of the command.
      * @param playerCommand     if the command is exclusive to players.
+     * @param requiredPermissions permissions required to utilize this command
      * @param persistentData
      * @param localeService
      * @param ephemeralData
@@ -103,8 +108,8 @@ public abstract class SubCommand implements ColorTranslator {
      * @param chunkDataAccessor
      * @param dynmapIntegrator
      */
-    public SubCommand(String[] names, boolean playerCommand, PersistentData persistentData, LocaleService localeService, EphemeralData ephemeralData, ConfigService configService, PlayerService playerService, MessageService messageService, PersistentData.ChunkDataAccessor chunkDataAccessor, DynmapIntegrator dynmapIntegrator) {
-        this(names, playerCommand, false, persistentData, localeService, ephemeralData, configService, playerService, messageService, chunkDataAccessor, dynmapIntegrator);
+    public SubCommand(String[] names, boolean playerCommand, String[] requiredPermissions, PersistentData persistentData, LocaleService localeService, EphemeralData ephemeralData, ConfigService configService, PlayerService playerService, MessageService messageService, PersistentData.ChunkDataAccessor chunkDataAccessor, DynmapIntegrator dynmapIntegrator) {
+        this(names, playerCommand, false, persistentData, requiredPermissions, localeService, ephemeralData, configService, playerService, messageService, chunkDataAccessor, dynmapIntegrator);
     }
 
     protected void loadCommandNames(String[] names) {
@@ -153,6 +158,9 @@ public abstract class SubCommand implements ColorTranslator {
                     return;
                 }
             }
+            if (!checkPermissions(sender, true)) {
+                return;
+            }
             execute(player, args, key); // 100% a player so you can safely use it
             return;
         }
@@ -178,6 +186,22 @@ public abstract class SubCommand implements ColorTranslator {
     public abstract void execute(CommandSender sender, String[] args, String key);
 
     /**
+     * Parent method to conduct tab completion. This will check permissions first, then hand to the child.
+     */
+    public List<String> onTabComplete(CommandSender sender, String[] args) {
+        if (!this.checkPermissions(sender)) return null;
+        return this.handleTabComplete(sender, args);
+    }
+
+    /**
+     * Child method to conduct tab completion. Classes that inherit this class should override this if they can offer tab completion.
+     */
+    public List<String> handleTabComplete(CommandSender sender, String[] args) {
+        return null;
+    }
+
+
+    /**
      * Method to determine if a String is this SubCommand or not.
      *
      * @param name of the command.
@@ -185,6 +209,19 @@ public abstract class SubCommand implements ColorTranslator {
      */
     public boolean isCommand(String name) {
         return Arrays.stream(names).anyMatch(s -> s.equalsIgnoreCase(name));
+    }
+
+    // Helper methods for checkPermissions in different cases
+    public boolean checkPermissions(CommandSender sender) {
+        return this.checkPermissions(sender, false, ...requiredPermissions);
+    }
+
+    public boolean checkPermissions(CommandSender sender, boolean announcePermissionsMissing) {
+        return this.checkPermissions(sender, announcePermissionsMissing, ...requiredPermissions);
+    }
+
+    public boolean checkPermissions(CommandSender sender, String... permissions) {
+        return this.checkPermissions(sender, true, permissions);
     }
 
     /**
@@ -197,14 +234,16 @@ public abstract class SubCommand implements ColorTranslator {
      * @param permission to test for.
      * @return {@code true} if they do.
      */
-    public boolean checkPermissions(CommandSender sender, String... permission) {
+    public boolean checkPermissions(CommandSender sender, boolean announcePermissionsMissing, String... permissions) {
         boolean has = false;
-        for (String perm : permission) {
+        String[] missingPermissions = [];
+        for (String perm : requiredPermissions) {
             has = sender.hasPermission(perm);
-            break;
+            if (has) break;
+            missingPermissions.append(perm);
         }
-        if (!has) {
-            playerService.sendMessage(sender, translate("&c" + getText("PermissionNeeded", permission[0])), Objects.requireNonNull(messageService.getLanguage().getString("PermissionNeeded")).replace("#permission#", permission[0]), true);
+        if (!has && announcePermissionsMissing) {
+            playerService.sendMessage(sender, translate("&c" + getText("PermissionNeeded", missingPermissions.join(', '))), Objects.requireNonNull(messageService.getLanguage().getString("PermissionNeeded")).replace("#permission#", missingPermissions.join(' ')), true);
         }
         return has;
     }
@@ -260,6 +299,20 @@ public abstract class SubCommand implements ColorTranslator {
             }
         }
         throw new IllegalArgumentException(object + " cannot be transferred into a Player");
+    }
+
+    /** 
+     * Method to retrieve the list of command names for this command.
+     */
+    public String[] getCommandNames() {
+        return names;
+    }
+
+    /**
+     * Get primary command name.
+    */
+    public String getPrimaryCommandName() {
+        return names[0];
     }
 
     /**
