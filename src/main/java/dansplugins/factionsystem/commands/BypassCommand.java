@@ -25,8 +25,8 @@ public class BypassCommand extends SubCommand {
      */
     public BypassCommand(LocaleService localeService, PersistentData persistentData, EphemeralData ephemeralData, PersistentData.ChunkDataAccessor chunkDataAccessor, DynmapIntegrator dynmapIntegrator, ConfigService configService, PlayerService playerService, MessageService messageService) {
         super(new String[]{
-                "bypass", "Locale_CmdBypass"
-        }, true, persistentData, localeService, ephemeralData, configService, playerService, messageService, chunkDataAccessor, dynmapIntegrator);
+                "bypass", LOCALE_PREFIX + "CmdBypass"
+        }, true, ["mf.bypass", "mf.admin"], persistentData, localeService, ephemeralData, configService, playerService, messageService, chunkDataAccessor, dynmapIntegrator);
     }
 
     /**
@@ -38,20 +38,16 @@ public class BypassCommand extends SubCommand {
      */
     @Override
     public void execute(Player player, String[] args, String key) {
-        if (!checkPermissions(player, "mf.bypass", "mf.admin")) {
-            return;
-        }
-
-        final boolean contains = ephemeralData.getAdminsBypassingProtections().contains(player.getUniqueId());
+        final boolean contains = this.ephemeralData.getAdminsBypassingProtections().contains(player.getUniqueId());
 
         final String path = (contains ? "NoLonger" : "Now") + "BypassingProtections";
 
         if (contains) {
-            ephemeralData.getAdminsBypassingProtections().remove(player.getUniqueId());
+            this.ephemeralData.getAdminsBypassingProtections().remove(player.getUniqueId());
         } else {
-            ephemeralData.getAdminsBypassingProtections().add(player.getUniqueId());
+            this.ephemeralData.getAdminsBypassingProtections().add(player.getUniqueId());
         }
-        playerService.sendMessage(player, "&a" + getText(path), path, false);
+        this.playerService.sendMessage(player, "&a" + this.getText(path), path, false);
     }
 
     /**

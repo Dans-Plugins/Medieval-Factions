@@ -26,7 +26,9 @@ import java.util.Objects;
 public class DeclareIndependenceCommand extends SubCommand {
 
     public DeclareIndependenceCommand(LocaleService localeService, PersistentData persistentData, EphemeralData ephemeralData, PersistentData.ChunkDataAccessor chunkDataAccessor, DynmapIntegrator dynmapIntegrator, ConfigService configService, PlayerService playerService, MessageService messageService) {
-        super(new String[]{"declareindependence", "di", LOCALE_PREFIX + "CmdDeclareIndependence"}, true, true, false, true, localeService, persistentData, ephemeralData, chunkDataAccessor, dynmapIntegrator, configService, playerService, messageService);
+        super(new String[]{
+            "declareindependence", "di", LOCALE_PREFIX + "CmdDeclareIndependence"
+        }, true, true, false, true, ["mf.declareindependence"], localeService, persistentData, ephemeralData, chunkDataAccessor, dynmapIntegrator, configService, playerService, messageService);
     }
 
     /**
@@ -38,19 +40,19 @@ public class DeclareIndependenceCommand extends SubCommand {
      */
     @Override
     public void execute(Player player, String[] args, String key) {
-        final String permission = "mf.declareindependence";
-        if (!(checkPermissions(player, permission))) {
-            return;
-        }
-
         if (!(this.faction.hasLiege()) || this.faction.getLiege() == null) {
-            playerService.sendMessage(player, "&c" + getText("NotAVassalOfAFaction"), "NotAVassalOfAFaction", false);
+            this.playerService.sendMessage(player, "&c" + this.getText("NotAVassalOfAFaction"), "NotAVassalOfAFaction", false);
             return;
         }
 
-        final Faction liege = getFaction(this.faction.getLiege());
+        final Faction liege = this.getFaction(this.faction.getLiege());
         if (liege == null) {
-            playerService.sendMessage(player, "&c" + getText("FactionNotFound"), Objects.requireNonNull(messageService.getLanguage().getString("FactionNotFound")).replace("#faction#", String.join(" ", args)), true);
+            this.playerService.sendMessage(
+                player, 
+                "&c" + getText("FactionNotFound"), 
+                Objects.requireNonNull(this.messageService.getLanguage().getString("FactionNotFound"))
+                    .replace("#faction#", String.join(" ", args)), true
+            );
             return;
         }
 
@@ -58,7 +60,7 @@ public class DeclareIndependenceCommand extends SubCommand {
         liege.removeVassal(this.faction.getName());
         this.faction.setLiege("none");
 
-        if (!configService.getBoolean("allowNeutrality") || (!((boolean) faction.getFlags().getFlag("neutral")) && !((boolean) liege.getFlags().getFlag("neutral")))) {
+        if (!this.configService.getBoolean("allowNeutrality") || (!((boolean) this.faction.getFlags().getFlag("neutral")) && !((boolean) liege.getFlags().getFlag("neutral")))) {
             // make enemies if (1) neutrality is disabled or (2) declaring faction is not neutral and liege is not neutral
             FactionWarStartEvent warStartEvent = new FactionWarStartEvent(this.faction, liege, player);
             Bukkit.getPluginManager().callEvent(warStartEvent);
@@ -74,7 +76,12 @@ public class DeclareIndependenceCommand extends SubCommand {
                 }
             }
         }
-        messageServer("&c" + getText("HasDeclaredIndependence", faction.getName(), liege.getName()), Objects.requireNonNull(messageService.getLanguage().getString("HasDeclaredIndependence")).replace("#faction_a#", faction.getName()).replace("#faction_b#", liege.getName()));
+        this.messageServer(
+            "&c" + this.getText("HasDeclaredIndependence", this.faction.getName(), liege.getName()), 
+            Objects.requireNonNull(this.messageService.getLanguage().getString("HasDeclaredIndependence"))
+                .replace("#faction_a#", this.faction.getName())
+                .replace("#faction_b#", liege.getName())
+        );
 
     }
 

@@ -23,7 +23,7 @@ public class ChatCommand extends SubCommand {
     public ChatCommand(LocaleService localeService, PersistentData persistentData, EphemeralData ephemeralData, PersistentData.ChunkDataAccessor chunkDataAccessor, DynmapIntegrator dynmapIntegrator, ConfigService configService, PlayerService playerService, MessageService messageService) {
         super(new String[]{
                 "chat", LOCALE_PREFIX + "CmdChat"
-        }, true, true, persistentData, localeService, ephemeralData, configService, playerService, messageService, chunkDataAccessor, dynmapIntegrator);
+        }, true, true, ["mf.chat"], persistentData, localeService, ephemeralData, configService, playerService, messageService, chunkDataAccessor, dynmapIntegrator);
     }
 
     /**
@@ -35,21 +35,16 @@ public class ChatCommand extends SubCommand {
      */
     @Override
     public void execute(Player player, String[] args, String key) {
-        final String permission = "mf.chat";
-        if (!checkPermissions(player, permission)) {
-            return;
-        }
-
-        final boolean contains = ephemeralData.getPlayersInFactionChat().contains(player.getUniqueId());
+        final boolean contains = this.ephemeralData.getPlayersInFactionChat().contains(player.getUniqueId());
 
         final String path = (contains ? "NoLonger" : "NowSpeaking") + "InFactionChat";
 
         if (contains) {
-            ephemeralData.getPlayersInFactionChat().remove(player.getUniqueId());
+            this.ephemeralData.getPlayersInFactionChat().remove(player.getUniqueId());
         } else {
-            ephemeralData.getPlayersInFactionChat().add(player.getUniqueId());
+            this.ephemeralData.getPlayersInFactionChat().add(player.getUniqueId());
         }
-        playerService.sendMessage(player, "&c" + getText(path), path, false);
+        this.playerService.sendMessage(player, "&c" + this.getText(path), path, false);
     }
 
     /**

@@ -23,7 +23,9 @@ import java.util.Objects;
 public class CheckClaimCommand extends SubCommand {
 
     public CheckClaimCommand(LocaleService localeService, PersistentData persistentData, EphemeralData ephemeralData, PersistentData.ChunkDataAccessor chunkDataAccessor, DynmapIntegrator dynmapIntegrator, ConfigService configService, PlayerService playerService, MessageService messageService) {
-        super(new String[]{"checkclaim", "cc", LOCALE_PREFIX + "CmdCheckClaim"}, true, persistentData, localeService, ephemeralData, configService, playerService, messageService, chunkDataAccessor, dynmapIntegrator);
+        super(new String[]{
+            "checkclaim", "cc", LOCALE_PREFIX + "CmdCheckClaim"
+        }, true, ["mf.checkclaim"], persistentData, localeService, ephemeralData, configService, playerService, messageService, chunkDataAccessor, dynmapIntegrator);
     }
 
     /**
@@ -35,17 +37,12 @@ public class CheckClaimCommand extends SubCommand {
      */
     @Override
     public void execute(Player player, String[] args, String key) {
-        final String permission = "mf.checkclaim";
-        if (!(checkPermissions(player, permission))) {
-            return;
-        }
-
-        final String result = chunkDataAccessor.checkOwnershipAtPlayerLocation(player);
+        final String result = this.chunkDataAccessor.checkOwnershipAtPlayerLocation(player);
 
         if (result.equals("unclaimed")) {
-            playerService.sendMessage(player, "&a" + getText("LandIsUnclaimed"), "LandIsUnclaimed", false);
+            this.playerService.sendMessage(player, "&a" + this.getText("LandIsUnclaimed"), "LandIsUnclaimed", false);
         } else {
-            playerService.sendMessage(player, "&c" + getText("LandClaimedBy"), Objects.requireNonNull(messageService.getLanguage().getString("LandClaimedBy"))
+            this.playerService.sendMessage(player, "&c" + this.getText("LandClaimedBy"), Objects.requireNonNull(this.messageService.getLanguage().getString("LandClaimedBy"))
                     .replace("#player#", result), true);
         }
     }

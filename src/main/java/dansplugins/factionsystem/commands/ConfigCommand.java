@@ -13,6 +13,7 @@ import dansplugins.factionsystem.services.ConfigService;
 import dansplugins.factionsystem.services.LocaleService;
 import dansplugins.factionsystem.services.MessageService;
 import dansplugins.factionsystem.services.PlayerService;
+import dansplugins.factionsystem.utils.TabCompleteTools;
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
@@ -26,7 +27,7 @@ public class ConfigCommand extends SubCommand {
     public ConfigCommand(LocaleService localeService, PersistentData persistentData, EphemeralData ephemeralData, PersistentData.ChunkDataAccessor chunkDataAccessor, DynmapIntegrator dynmapIntegrator, ConfigService configService, MedievalFactions medievalFactions, PlayerService playerService, MessageService messageService) {
         super(new String[]{
                 "config", LOCALE_PREFIX + "CmdConfig"
-        }, false, persistentData, localeService, ephemeralData, configService, playerService, messageService, chunkDataAccessor, dynmapIntegrator);
+        }, false, ["mf.config", "mf.admin"], persistentData, localeService, ephemeralData, configService, playerService, messageService, chunkDataAccessor, dynmapIntegrator);
         this.medievalFactions = medievalFactions;
     }
 
@@ -51,54 +52,67 @@ public class ConfigCommand extends SubCommand {
      */
     @Override
     public void execute(CommandSender sender, String[] args, String key) {
-        if (!(checkPermissions(sender, "mf.config", "mf.admin"))) {
-            return;
-        }
-
         if (args.length == 0) {
             sender.sendMessage(ChatColor.RED + "Valid subcommands: show, set, reload");
             return;
         }
 
-        final boolean show = safeEquals(args[0], "get", "show", getText("CmdConfigShow"));
-        final boolean set = safeEquals(args[0], "set", getText("CmdConfigSet"));
-        final boolean reload = safeEquals(args[0], "reload", "CmdConfigReload");
+        final boolean show = this.safeEquals(args[0], "get", "show", this.getText("CmdConfigShow"));
+        final boolean set = this.safeEquals(args[0], "set", this.getText("CmdConfigSet"));
+        final boolean reload = this.safeEquals(args[0], "reload", "CmdConfigReload");
 
         if (show) {
             if (args.length < 2) {
-                sender.sendMessage(translate("&c" + getText("UsageConfigShow")));
+                sender.sendMessage(this.translate("&c" + this.getText("UsageConfigShow")));
                 return;
             }
 
-            int page = getIntSafe(args[1], -1);
+            int page = this.getIntSafe(args[1], -1);
 
             if (page == -1) {
-                sender.sendMessage(translate("&c" + getText("ArgumentMustBeNumber")));
+                sender.sendMessage(this.translate("&c" + this.getText("ArgumentMustBeNumber")));
                 return;
             }
 
             switch (page) {
                 case 1:
-                    configService.sendPageOneOfConfigList(sender);
+                    this.configService.sendPageOneOfConfigList(sender);
                     break;
                 case 2:
-                    configService.sendPageTwoOfConfigList(sender);
+                    this.configService.sendPageTwoOfConfigList(sender);
                     break;
                 default:
-                    sender.sendMessage(translate("&c" + getText("UsageConfigShow")));
+                    sender.sendMessage(this.translate("&c" + this.getText("UsageConfigShow")));
             }
         } else if (set) {
             if (args.length < 3) {
-                sender.sendMessage(translate("&c" + getText("UsageConfigSet")));
+                sender.sendMessage(this.translate("&c" + this.getText("UsageConfigSet")));
             } else {
-                configService.setConfigOption(args[1], args[2], sender);
+                this.configService.setConfigOption(args[1], args[2], sender);
             }
         } else if (reload) {
-            medievalFactions.reloadConfig();
-            messageService.reloadLanguage();
+            this.medievalFactions.reloadConfig();
+            this.messageService.reloadLanguage();
             sender.sendMessage(ChatColor.GREEN + "Config reloaded.");
         } else {
-            sender.sendMessage(translate("&c" + getText("ValidSubCommandsShowSet")));
+            sender.sendMessage(this.translate("&c" + this.getText("ValidSubCommandsShowSet")));
         }
+    }
+
+    /**
+     * Method to handle tab completion.
+     * 
+     * @param sender who sent the command.
+     * @param args   of the command.
+     */
+    @Override
+    public List<String> handleTabComplete(Sender sender, String[] args) {
+        if (args.length == 1) {
+            return TabCompleteTools.completeMultipleOptions(args[0], "show", "set", "reload");
+        } else if (args.length == 2) {
+            if (args[0] == "show") return TabCompleteTools.completeMultipleOptions(args[1], "1", "2");
+            if (args[0] == "set") return TabCompleteTools.filterStartingWith(args[1], configService.getStringConfigOptions());
+        }
+        return null;
     }
 }

@@ -27,8 +27,8 @@ public class AddLawCommand extends SubCommand {
      */
     public AddLawCommand(LocaleService localeService, PersistentData persistentData, EphemeralData ephemeralData, PersistentData.ChunkDataAccessor chunkDataAccessor, DynmapIntegrator dynmapIntegrator, ConfigService configService, PlayerService playerService, MessageService messageService) {
         super(new String[]{
-                LOCALE_PREFIX + "CMDAddLaw", "AL", "addlaw"
-        }, true, true, false, true, localeService, persistentData, ephemeralData, chunkDataAccessor, dynmapIntegrator, configService, playerService, messageService);
+                "addlaw", LOCALE_PREFIX + "CMDAddLaw", "AL"
+        }, true, true, false, true, ["mf.addlaw"], localeService, persistentData, ephemeralData, chunkDataAccessor, dynmapIntegrator, configService, playerService, messageService);
     }
 
     /**
@@ -40,20 +40,15 @@ public class AddLawCommand extends SubCommand {
      */
     @Override
     public void execute(Player player, String[] args, String key) {
-        final String permission = "mf.addlaw";
-        if (!(checkPermissions(player, permission))) {
-            return;
-        }
-
         // check if they have provided any strings beyond "addlaw"
         if (args.length == 0) {
-            playerService.sendMessage(player, translate("&c" + getText("UsageAddLaw")), "UsageAddLaw", false);
+            this.playerService.sendMessage(player, translate("&c" + getText("UsageAddLaw")), "UsageAddLaw", false);
             return;
         }
 
         // add the law and send a success message.
-        faction.addLaw(String.join(" ", args));
-        playerService.sendMessage(player, "&a" + getText("LawAdded"), Objects.requireNonNull(messageService.getLanguage().getString("LawAdded"))
+        this.faction.addLaw(String.join(" ", args));
+        this.playerService.sendMessage(player, "&a" + this.getText("LawAdded"), Objects.requireNonNull(this.messageService.getLanguage().getString("LawAdded"))
                 .replace("#law#", String.join(" ", args)), true);
     }
 

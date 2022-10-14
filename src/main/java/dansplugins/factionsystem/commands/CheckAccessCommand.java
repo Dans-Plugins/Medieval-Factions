@@ -12,6 +12,7 @@ import dansplugins.factionsystem.services.ConfigService;
 import dansplugins.factionsystem.services.LocaleService;
 import dansplugins.factionsystem.services.MessageService;
 import dansplugins.factionsystem.services.PlayerService;
+import dansplugins.factionsystem.utils.TabCompleteTools;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
@@ -22,8 +23,8 @@ public class CheckAccessCommand extends SubCommand {
 
     public CheckAccessCommand(LocaleService localeService, PersistentData persistentData, EphemeralData ephemeralData, PersistentData.ChunkDataAccessor chunkDataAccessor, DynmapIntegrator dynmapIntegrator, ConfigService configService, PlayerService playerService, MessageService messageService) {
         super(new String[]{
-                "ca", "checkaccess", LOCALE_PREFIX + "CmdCheckAccess"
-        }, true, persistentData, localeService, ephemeralData, configService, playerService, messageService, chunkDataAccessor, dynmapIntegrator);
+                "checkaccess", "ca", LOCALE_PREFIX + "CmdCheckAccess"
+        }, true, ["mf.checkaccess"], persistentData, localeService, ephemeralData, configService, playerService, messageService, chunkDataAccessor, dynmapIntegrator);
     }
 
     /**
@@ -35,26 +36,21 @@ public class CheckAccessCommand extends SubCommand {
      */
     @Override
     public void execute(Player player, String[] args, String key) {
-        final String permission = "mf.checkaccess";
-        if (!(checkPermissions(player, permission))) {
-            return;
-        }
-
-        boolean cancel = false, contains = ephemeralData.getPlayersCheckingAccess().contains(player.getUniqueId());
+        boolean cancel = false, contains = this.ephemeralData.getPlayersCheckingAccess().contains(player.getUniqueId());
 
         if (args.length >= 1) {
             cancel = args[0].equalsIgnoreCase("cancel");
         }
 
         if (cancel && contains) {
-            ephemeralData.getPlayersCheckingAccess().remove(player.getUniqueId());
-            playerService.sendMessage(player, "&c" + getText("Cancelled"), "Cancelled", false);
+            this.ephemeralData.getPlayersCheckingAccess().remove(player.getUniqueId());
+            this.playerService.sendMessage(player, "&c" + this.getText("Cancelled"), "Cancelled", false);
         } else {
             if (contains) {
-                playerService.sendMessage(player, "&c" + getText("AlreadyEnteredCheckAccess"), "AlreadyEnteredCheckAccess", false);
+                this.playerService.sendMessage(player, "&c" + this.getText("AlreadyEnteredCheckAccess"), "AlreadyEnteredCheckAccess", false);
             } else {
-                ephemeralData.getPlayersCheckingAccess().add(player.getUniqueId());
-                playerService.sendMessage(player, "&a" + getText("RightClickCheckAccess"), "RightClickCheckAccess", false);
+                this.ephemeralData.getPlayersCheckingAccess().add(player.getUniqueId());
+                this.playerService.sendMessage(player, "&a" + this.getText("RightClickCheckAccess"), "RightClickCheckAccess", false);
             }
         }
     }
@@ -69,5 +65,16 @@ public class CheckAccessCommand extends SubCommand {
     @Override
     public void execute(CommandSender sender, String[] args, String key) {
 
+    }
+
+    /**
+     * Method to handle tab completion.
+     * 
+     * @param sender who sent the command.
+     * @param args   of the command.
+     */
+    @Override
+    public List<String> handleTabComplete(Sender sender, String[] args) {
+        return TabCompleteTools.completeSingleOption(args[0], "cancel");
     }
 }

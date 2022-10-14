@@ -32,8 +32,8 @@ public class CreateCommand extends SubCommand {
 
     public CreateCommand(LocaleService localeService, PersistentData persistentData, EphemeralData ephemeralData, PersistentData.ChunkDataAccessor chunkDataAccessor, DynmapIntegrator dynmapIntegrator, ConfigService configService, Logger logger, MedievalFactions medievalFactions, PlayerService playerService, MessageService messageService) {
         super(new String[]{
-                LOCALE_PREFIX + "CmdCreate", "Create"
-        }, true, persistentData, localeService, ephemeralData, configService, playerService, messageService, chunkDataAccessor, dynmapIntegrator);
+                "create", LOCALE_PREFIX + "CmdCreate"
+        }, true, ["mf.create"], persistentData, localeService, ephemeralData, configService, playerService, messageService, chunkDataAccessor, dynmapIntegrator);
         this.logger = logger;
         this.medievalFactions = medievalFactions;
     }
@@ -47,53 +47,55 @@ public class CreateCommand extends SubCommand {
      */
     @Override
     public void execute(Player player, String[] args, String key) {
-        final String permission = "mf.create";
-        if (!(checkPermissions(player, permission))) {
-            return;
-        }
-
-        this.faction = getPlayerFaction(player);
-        if (this.faction != null) {
-            playerService.sendMessage(player, "&c" + getText("AlreadyInFaction"),
+        Faction playerFaction = getPlayerFaction(player);
+        if (playerFaction != null) {
+            this.playerService.sendMessage(player, "&c" + this.getText("AlreadyInFaction"),
                     "AlreadyInFaction", false);
             return;
         }
 
         if (args.length == 0) {
-            playerService.sendMessage(player, "&c" + getText("UsageCreate"),
+            this.playerService.sendMessage(player, "&c" + this.getText("UsageCreate"),
                     "UsageCreate", false);
             return;
         }
 
         final String factionName = String.join(" ", args).trim();
 
-        final FileConfiguration config = configService.getConfig();
+        final FileConfiguration config = this.configService.getConfig();
 
         if (factionName.length() > config.getInt("factionMaxNameLength")) {
-            playerService.sendMessage(player, "&c" + getText("FactionNameTooLong"),
-                    Objects.requireNonNull(messageService.getLanguage().getString("FactionNameTooLong"))
-                            .replace("#name#", factionName), true);
+            this.playerService.sendMessage(
+                player, 
+                "&c" + this.getText("FactionNameTooLong"),
+                Objects.requireNonNull(this.messageService.getLanguage().getString("FactionNameTooLong"))
+                    .replace("#name#", factionName), true
+            );
             return;
         }
 
-        if (persistentData.getFaction(factionName) != null) {
-            playerService.sendMessage(player, "&c" + getText("FactionAlreadyExists"),
-                    Objects.requireNonNull(messageService.getLanguage().getString("FactionAlreadyExists"))
-                            .replace("#name#", factionName), true);
+        if (this.persistentData.getFaction(factionName) != null) {
+            this.playerService.sendMessage(
+                player, 
+                "&c" + this.getText("FactionAlreadyExists"),
+                Objects.requireNonNull(this.messageService.getLanguage().getString("FactionAlreadyExists"))
+                    .replace("#name#", factionName), true
+            );
             return;
         }
 
-        this.faction = new Faction(factionName, player.getUniqueId(), configService, localeService, dynmapIntegrator, logger, persistentData, medievalFactions, playerService);
-
-        this.faction.addMember(player.getUniqueId());
-
-        FactionCreateEvent createEvent = new FactionCreateEvent(this.faction, player);
+        playerFaction = new Faction(factionName, player.getUniqueId(), this.configService, this.localeService, this.dynmapIntegrator, this.logger, this.persistentData, this.medievalFactions, this.playerService);
+        playerFaction.addMember(player.getUniqueId());
+        FactionCreateEvent createEvent = new FactionCreateEvent(playerFaction, player);
         Bukkit.getPluginManager().callEvent(createEvent);
         if (!createEvent.isCancelled()) {
-            persistentData.addFaction(this.faction);
-            playerService.sendMessage(player, "&a" + getText("FactionCreated"),
-                    Objects.requireNonNull(messageService.getLanguage().getString("FactionCreated"))
-                            .replace("#name#", factionName), true);
+            this.persistentData.addFaction(playerFaction);
+            this.playerService.sendMessage(
+                player, 
+                "&a" + getText("FactionCreated"),
+                Objects.requireNonNull(this.messageService.getLanguage().getString("FactionCreated"))
+                    .replace("#name#", factionName), true
+            );
         }
     }
 

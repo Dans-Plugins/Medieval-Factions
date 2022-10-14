@@ -25,8 +25,8 @@ public class AutoClaimCommand extends SubCommand {
      */
     public AutoClaimCommand(LocaleService localeService, PersistentData persistentData, EphemeralData ephemeralData, PersistentData.ChunkDataAccessor chunkDataAccessor, DynmapIntegrator dynmapIntegrator, ConfigService configService, PlayerService playerService, MessageService messageService) {
         super(new String[]{
-                "AC", "AUTOCLAIM", LOCALE_PREFIX + "CmdAutoClaim"
-        }, true, true, false, true, localeService, persistentData, ephemeralData, chunkDataAccessor, dynmapIntegrator, configService, playerService, messageService);
+                "autoclaim", "AC", LOCALE_PREFIX + "CmdAutoClaim"
+        }, true, true, false, true, ["mf.autoclaim"], localeService, persistentData, ephemeralData, chunkDataAccessor, dynmapIntegrator, configService, playerService, messageService);
     }
 
     /**
@@ -38,13 +38,8 @@ public class AutoClaimCommand extends SubCommand {
      */
     @Override
     public void execute(Player player, String[] args, String key) {
-        final String permission = "mf.autoclaim";
-        if (!checkPermissions(player, permission)) {
-            return;
-        }
-
-        faction.toggleAutoClaim();
-        playerService.sendMessage(player, "&b" + getText("AutoclaimToggled"), "AutoclaimToggled", false);
+        this.faction.toggleAutoClaim();
+        this.playerService.sendMessage(player, "&b" + getText("AutoclaimToggled"), "AutoclaimToggled", false);
     }
 
     /**
