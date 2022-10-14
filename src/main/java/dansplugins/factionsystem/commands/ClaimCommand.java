@@ -22,8 +22,8 @@ public class ClaimCommand extends SubCommand {
 
     public ClaimCommand(LocaleService localeService, PersistentData persistentData, EphemeralData ephemeralData, PersistentData.ChunkDataAccessor chunkDataAccessor, DynmapIntegrator dynmapIntegrator, ConfigService configService, PlayerService playerService, MessageService messageService) {
         super(new String[]{
-                "Claim", LOCALE_PREFIX + "CmdClaim"
-        }, true, true, persistentData, localeService, ephemeralData, configService, playerService, messageService, chunkDataAccessor, dynmapIntegrator);
+                "claim", LOCALE_PREFIX + "CmdClaim"
+        }, true, true, [], persistentData, localeService, ephemeralData, configService, playerService, messageService, chunkDataAccessor, dynmapIntegrator);
     }
 
     /**
@@ -35,26 +35,26 @@ public class ClaimCommand extends SubCommand {
      */
     @Override
     public void execute(Player player, String[] args, String key) {
-        if ((boolean) faction.getFlags().getFlag("mustBeOfficerToManageLand")) {
+        if ((boolean) this.faction.getFlags().getFlag("mustBeOfficerToManageLand")) {
             // officer or owner rank required
-            if (!faction.isOfficer(player.getUniqueId()) && !faction.isOwner(player.getUniqueId())) {
-                playerService.sendMessage(player, "&a" + getText("AlertMustBeOfficerOrOwnerToClaimLand"), "AlertMustBeOfficerOrOwnerToClaimLand", false);
+            if (!this.faction.isOfficer(player.getUniqueId()) && !this.faction.isOwner(player.getUniqueId())) {
+                this.playerService.sendMessage(player, "&a" + this.getText("AlertMustBeOfficerOrOwnerToClaimLand"), "AlertMustBeOfficerOrOwnerToClaimLand", false);
                 return;
             }
         }
 
         if (args.length != 0) {
-            int depth = getIntSafe(args[0], -1);
+            int depth = this.getIntSafe(args[0], -1);
 
             if (depth <= 0) {
-                playerService.sendMessage(player, "&a" + getText("UsageClaimRadius"), "UsageClaimRadius", false);
+                this.playerService.sendMessage(player, "&a" + this.getText("UsageClaimRadius"), "UsageClaimRadius", false);
             } else {
-                chunkDataAccessor.radiusClaimAtLocation(depth, player, player.getLocation(), faction);
+                this.chunkDataAccessor.radiusClaimAtLocation(depth, player, player.getLocation(), this.faction);
             }
         } else {
-            chunkDataAccessor.claimChunkAtLocation(player, player.getLocation(), faction);
+            this.chunkDataAccessor.claimChunkAtLocation(player, player.getLocation(), this.faction);
         }
-        dynmapIntegrator.updateClaims();
+        this.dynmapIntegrator.updateClaims();
     }
 
     /**

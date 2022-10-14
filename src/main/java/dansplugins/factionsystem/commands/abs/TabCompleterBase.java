@@ -76,32 +76,18 @@ public class TabCompleterBase implements TabCompleter {
 			Player player = (Player) sender;
 			if (argsLength1.isEmpty()) {
 				argsLength1.addAll(Arrays.asList(
-						"addlaw",
-						"ally",
-						"autoclaim",
-						"breakalliance",
-						"bypass",
-						"chat",
-						"checkaccess",
-						"checkclaim",
-						"claim",
-						"create",
-						"declareindependence",
 						"declarewar",
 						"demote",
 						"desc",
 						"disband",
-						"duel",
 						"editlaw",
 						"flags",
 						"force",
 						"gate",
-						"grantaccess",
 						"grantindependence",
 						"help",
 						"home",
 						"info",
-						"invite",
 						"invoke",
 						"join",
 						"kick",
@@ -112,7 +98,6 @@ public class TabCompleterBase implements TabCompleter {
 						"makepeace",
 						"map",
 						"members",
-						"power",
 						"prefix",
 						"promote",
 						"removelaw",
@@ -124,52 +109,10 @@ public class TabCompleterBase implements TabCompleter {
 						"transfer",
 						"unclaimall",
 						"unclaim",
-						"unlock",
 						"vassalize"
 				));
 			}
-			if (args.length == 1) {
-				if(player.isOp()) {
-					argsLength1.addAll(Arrays.asList("config", "resetpowerlevels", "version", "bypass"));
-					for(String a : argsLength1)	{
-						if(a.toLowerCase().startsWith(args[0].toLowerCase())) {
-							result.add(a);
-						}
-					}
-				} else {
-					for(String a : argsLength1)	{
-						if(a.toLowerCase().startsWith(args[0].toLowerCase())) {
-							result.add(a);
-						}
-					}
-				}
-				return result;
-			}
 			if (args.length == 2) {
-				if (args[0].equalsIgnoreCase("ally")) {
-					if (persistentData.isInFaction(player.getUniqueId())) {
-						Faction playerFaction = persistentData.getPlayersFaction(player.getUniqueId());
-						ArrayList<String> playerAllies = playerFaction.getAllies();
-						for(Faction faction : persistentData.getFactions()) {
-							if(!playerAllies.contains(faction.getName()) && !faction.getName().equals(playerFaction.getName())) {
-								factionsAllowedtoAlly.add(faction.getName());
-							}
-						}
-						return filterStartingWith(args[1], factionsAllowedtoAlly);
-					}
-				}
-				if (args[0].equalsIgnoreCase("breakalliance")) {
-					if (persistentData.isInFaction(player.getUniqueId())) {
-						Faction playerFaction = persistentData.getPlayersFaction(player.getUniqueId());
-						return filterStartingWith(args[1], playerFaction.getAllies());
-					}
-				}
-				if (args[0].equalsIgnoreCase("checkaccess")) {
-					return filterStartingWith(args[1], Collections.singletonList("cancel"));
-				}
-				if (args[0].equalsIgnoreCase("config") && sender.hasPermission("mf.admin") || args[0].equalsIgnoreCase("config") && sender.hasPermission("mf.config")) {
-					return filterStartingWith(args[1], Arrays.asList("get", "show", "set"));
-				}
 				if (args[0].equalsIgnoreCase("declarewar")) {
 					if(persistentData.isInFaction(player.getUniqueId())) {
 						Faction playerFaction = persistentData.getPlayersFaction(player.getUniqueId());
@@ -202,9 +145,6 @@ public class TabCompleterBase implements TabCompleter {
 						return filterStartingWith(args[1], factionNames);
 					}
 				}
-				if (args[0].equalsIgnoreCase("duel")) {
-					return filterStartingWith(args[1], Arrays.asList("challenge", "accept", "cancel"));
-				}
 				if (args[0].equalsIgnoreCase("editlaw")) {
 					if (persistentData.isInFaction(player.getUniqueId())) {
 						Faction playerFaction = persistentData.getPlayersFaction(player.getUniqueId());
@@ -228,9 +168,6 @@ public class TabCompleterBase implements TabCompleter {
 				if (args[0].equalsIgnoreCase("gate")) {
 					return filterStartingWith(args[1], Arrays.asList("create", "name", "list", "remove", "cancel"));
 				}
-				if (args[0].equalsIgnoreCase("grantaccess")) {
-					return filterStartingWith(args[1], getOnlinePlayers(args[1]));
-				}
 				if (args[0].equalsIgnoreCase("grantindependence")) {
 					if(persistentData.isInFaction(player.getUniqueId())) {
 						Faction faction = persistentData.getPlayersFaction(player.getUniqueId());
@@ -244,18 +181,12 @@ public class TabCompleterBase implements TabCompleter {
 					persistentData.getFactions().forEach(faction1 -> factionNames.add(faction1.getName()));
 					return filterStartingWith(args[1], factionNames);
 				}
-				if (args[0].equalsIgnoreCase("invite")) {
-					return filterStartingWith(args[1], getOnlinePlayers(args[1]));
-				}
 				if (args[0].equalsIgnoreCase("invoke")) {
 					if (persistentData.isInFaction(player.getUniqueId())) {
 						Faction faction = persistentData.getPlayersFaction(player.getUniqueId());
 						ArrayList<String> allies = faction.getAllies();
 						return filterStartingWith(args[1], tackOnBeginningAndEndQuotes(allies));
 					}
-				}
-				if (args[0].equalsIgnoreCase("invite")) {
-					return filterStartingWith(args[1], getOnlinePlayers(args[1]));
 				}
 				if (args[0].equalsIgnoreCase("join")) {
 					persistentData.getFactions().forEach(faction1 -> factionNames.add(faction1.getName()));
@@ -286,9 +217,6 @@ public class TabCompleterBase implements TabCompleter {
 				if (args[0].equalsIgnoreCase("members")) {
 					persistentData.getFactions().forEach(faction1 -> factionNames.add(faction1.getName()));
 					return filterStartingWith(args[1], factionNames);
-				}
-				if (args[0].equalsIgnoreCase("power")) {
-					return filterStartingWith(args[1], getOnlinePlayers(args[1]));
 				}
 				if (args[0].equalsIgnoreCase("promote")) {
 					if (persistentData.isInFaction(player.getUniqueId())) {
@@ -337,9 +265,6 @@ public class TabCompleterBase implements TabCompleter {
 						return filterStartingWith(args[1], membersInFaction);
 					}
 				}
-				if (args[0].equalsIgnoreCase("unlock")) {
-					return filterStartingWith(args[1], Collections.singletonList("cancel"));
-				}
 				if (args[0].equalsIgnoreCase("vassalize")) {
 					if (persistentData.isInFaction(player.getUniqueId())) {
 						Faction playerFaction = persistentData.getPlayersFaction(player.getUniqueId());
@@ -352,29 +277,10 @@ public class TabCompleterBase implements TabCompleter {
 						return filterStartingWith(args[1], vassalizeableFactions);
 					}
 				}
-				if (args[0].equalsIgnoreCase("who")) {
-					return filterStartingWith(args[1], getOnlinePlayers(args[1]));
-				}
 				return null;
 			}
 
 			if (args.length == 3) {
-				if (args[0].equalsIgnoreCase("config") && sender.hasPermission("mf.admin") || args[0].equalsIgnoreCase("config") && sender.hasPermission("mf.config")) {
-					if (args[1].equalsIgnoreCase("show")) {
-						return filterStartingWith(args[2], Arrays.asList("1", "2"));
-					}
-					if (args[1].equalsIgnoreCase("get")) {
-						return filterStartingWith(args[2], Arrays.asList("1", "2"));
-					}
-					if (args[1].equalsIgnoreCase("set")) {
-						return filterStartingWith(args[2], configService.getStringConfigOptions());
-					}
-				}
-				if (args[0].equalsIgnoreCase("duel")) {
-					if (args[1].equalsIgnoreCase("challenge")) {
-						return filterStartingWith(args[2], getOnlinePlayers(args[2]));
-					}
-				}
 				if (args[0].equalsIgnoreCase("flags")) {
 					if (args[1].equalsIgnoreCase("set")) {
 						if (persistentData.isInFaction(player.getUniqueId())) {
