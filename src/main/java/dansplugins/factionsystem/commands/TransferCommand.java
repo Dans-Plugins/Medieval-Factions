@@ -12,6 +12,7 @@ import dansplugins.factionsystem.services.ConfigService;
 import dansplugins.factionsystem.services.LocaleService;
 import dansplugins.factionsystem.services.MessageService;
 import dansplugins.factionsystem.services.PlayerService;
+import dansplugins.factionsystem.utils.TabCompleteTools;
 import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.command.CommandSender;
@@ -27,7 +28,9 @@ import java.util.UUID;
 public class TransferCommand extends SubCommand {
 
     public TransferCommand(LocaleService localeService, PersistentData persistentData, EphemeralData ephemeralData, PersistentData.ChunkDataAccessor chunkDataAccessor, DynmapIntegrator dynmapIntegrator, ConfigService configService, PlayerService playerService, MessageService messageService) {
-        super(new String[]{"transfer", LOCALE_PREFIX + "CmdTransfer"}, true, true, false, true, localeService, persistentData, ephemeralData, chunkDataAccessor, dynmapIntegrator, configService, playerService, messageService);
+        super(new String[]{
+            "transfer", LOCALE_PREFIX + "CmdTransfer"
+        }, true, true, false, true, ["mf.transfer"], localeService, persistentData, ephemeralData, chunkDataAccessor, dynmapIntegrator, configService, playerService, messageService);
     }
 
     /**
@@ -39,49 +42,75 @@ public class TransferCommand extends SubCommand {
      */
     @Override
     public void execute(Player player, String[] args, String key) {
-        final String permission = "mf.transfer";
-        if (!(checkPermissions(player, permission))) return;
         if (args.length == 0) {
-            playerService.sendMessage(player, "&c" + getText("UsageTransfer")
-                    , "UsageTransfer", false);
+            this.playerService.sendMessage(
+                player,
+                "&c" + this.getText("UsageTransfer"),
+                "UsageTransfer",
+                false
+            );
             return;
         }
         UUIDChecker uuidChecker = new UUIDChecker();
         final UUID targetUUID = uuidChecker.findUUIDBasedOnPlayerName(args[0]);
         if (targetUUID == null) {
-            playerService.sendMessage(player, "&c" + getText("PlayerNotFound"), Objects.requireNonNull(messageService.getLanguage().getString("PlayerNotFound")).replace("#name#", args[0]), true);
+            this.playerService.sendMessage(
+                player,
+                "&c" + this.getText("PlayerNotFound"),
+                Objects.requireNonNull(this.messageService.getLanguage().getString("PlayerNotFound")).replace("#name#", args[0]),
+                true
+            );
             return;
         }
         OfflinePlayer target = Bukkit.getOfflinePlayer(targetUUID);
         if (!target.hasPlayedBefore()) {
             target = Bukkit.getPlayer(args[0]);
             if (target == null) {
-                playerService.sendMessage(player, "&c" + getText("PlayerNotFound"), Objects.requireNonNull(messageService.getLanguage().getString("PlayerNotFound")).replace("#name#", args[0]), true);
+                this.playerService.sendMessage(
+                    player, 
+                    "&c" + this.getText("PlayerNotFound"),
+                    Objects.requireNonNull(this.messageService.getLanguage().getString("PlayerNotFound")).replace("#name#", args[0]),
+                    true
+                );
                 return;
             }
         }
-        if (!faction.isMember(targetUUID)) {
-            playerService.sendMessage(player, "&c" + getText("PlayerIsNotInYourFaction")
-                    , "PlayerIsNotInYourFaction", false);
+        if (!this.faction.isMember(targetUUID)) {
+            this.playerService.sendMessage(
+                player,
+                "&c" + this.getText("PlayerIsNotInYourFaction"),
+                "PlayerIsNotInYourFaction",
+                false
+            );
             return;
         }
         if (targetUUID.equals(player.getUniqueId())) {
-            playerService.sendMessage(player, "&c" + getText("CannotTransferToSelf")
-                    , "CannotTransferToSelf", false);
+            this.playerService.sendMessage(
+                player,
+                "&c" + this.getText("CannotTransferToSelf"),
+                "CannotTransferToSelf",
+                false
+            );
             return;
         }
 
-        if (faction.isOfficer(targetUUID)) faction.removeOfficer(targetUUID); // Remove Officer (if there is one)
+        if (this.faction.isOfficer(targetUUID)) this.faction.removeOfficer(targetUUID); // Remove Officer (if there is one)
 
         // set owner
-        faction.setOwner(targetUUID);
-        playerService.sendMessage(player, "&b" + getText("OwnerShipTransferredTo", args[0])
-                , Objects.requireNonNull(messageService.getLanguage().getString("OwnerShipTransferredTo"))
-                        .replace("#name#", args[0]), true);
+        this.faction.setOwner(targetUUID);
+        this.playerService.sendMessage(
+            player,
+            "&b" + this.getText("OwnerShipTransferredTo", args[0]),
+            Objects.requireNonNull(this.messageService.getLanguage().getString("OwnerShipTransferredTo")).replace("#name#", args[0]),
+            true
+        );
         if (target.isOnline() && target.getPlayer() != null) { // Message if we can :)
-            playerService.sendMessage(target.getPlayer(), "&a" + getText("OwnershipTransferred", faction.getName()),
-                    Objects.requireNonNull(messageService.getLanguage().getString("'OwnershipTransferred"))
-                            .replace("#name#", faction.getName()), true);
+            this.playerService.sendMessage(
+                target.getPlayer(),
+                "&a" + this.getText("OwnershipTransferred", this.faction.getName()),
+                Objects.requireNonNull(this.messageService.getLanguage().getString("'OwnershipTransferred")).replace("#name#", this.faction.getName()),
+                true
+            );
         }
     }
 
@@ -95,5 +124,26 @@ public class TransferCommand extends SubCommand {
     @Override
     public void execute(CommandSender sender, String[] args, String key) {
 
+    }
+
+    /**
+     * Method to handle tab completion.
+     * 
+     * @param sender who sent the command.
+     * @param args   of the command.
+     */
+    @Override
+    public List<String> handleTabComplete(Sender sender, String[] args) {
+        final List<String> membersInFaction = new ArrayList<>();
+        if (this.persistentData.isInFaction(sender.getUniqueId())) {
+            Faction playerFaction = this.persistentData.getPlayersFaction(sender.getUniqueId());
+            for (UUID uuid : playerFaction.getMemberList()) {
+                Player member = Bukkit.getPlayer(uuid);
+                if (member != null) {
+                    membersInFaction.add(member.getName());
+                }
+            }
+            return TabCompleteTools.filterStartingWith(args[0], membersInFaction);
+        }
     }
 }

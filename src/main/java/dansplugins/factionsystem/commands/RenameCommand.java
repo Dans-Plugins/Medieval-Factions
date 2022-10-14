@@ -32,7 +32,7 @@ public class RenameCommand extends SubCommand {
     public RenameCommand(LocaleService localeService, PersistentData persistentData, EphemeralData ephemeralData, PersistentData.ChunkDataAccessor chunkDataAccessor, DynmapIntegrator dynmapIntegrator, ConfigService configService, MedievalFactions medievalFactions, Logger logger, PlayerService playerService, MessageService messageService) {
         super(new String[]{
                 "rename"
-        }, true, true, false, true, localeService, persistentData, ephemeralData, chunkDataAccessor, dynmapIntegrator, configService, playerService, messageService);
+        }, true, true, false, true, ["mf.rename"], localeService, persistentData, ephemeralData, chunkDataAccessor, dynmapIntegrator, configService, playerService, messageService);
         this.medievalFactions = medievalFactions;
         this.logger = logger;
     }
@@ -46,47 +46,59 @@ public class RenameCommand extends SubCommand {
      */
     @Override
     public void execute(Player player, String[] args, String key) {
-        final String permission = "mf.rename";
-        if (!(checkPermissions(player, permission))) return;
         if (args.length == 0) {
-            playerService.sendMessage(player, "&c" + getText("UsageRename")
-                    , "UsageRename", false);
+            this.playerService.sendMessage(
+                player,
+                "&c" + this.getText("UsageRename"),
+                "UsageRename",
+                false
+            );
             return;
         }
         final String newName = String.join(" ", args).trim();
-        final FileConfiguration config = medievalFactions.getConfig();
+        final FileConfiguration config = this.medievalFactions.getConfig();
         if (newName.length() > config.getInt("factionMaxNameLength")) {
-            playerService.sendMessage(player, "&c" + getText("FactionNameTooLong"),
-                    Objects.requireNonNull(messageService.getLanguage().getString("FactionNameTooLong"))
-                            .replace("#name#", newName), true);
+            this.playerService.sendMessage(
+                player,
+                "&c" + this.getText("FactionNameTooLong"),
+                Objects.requireNonNull(this.messageService.getLanguage().getString("FactionNameTooLong")).replace("#name#", newName),
+                true
+            );
             return;
         }
-        final String oldName = faction.getName();
-        if (getFaction(newName) != null) {
-            playerService.sendMessage(player, "&c" + getText("FactionAlreadyExists"),
-                    Objects.requireNonNull(messageService.getLanguage().getString("FactionAlreadyExists"))
-                            .replace("#name#", newName), true);
+        final String oldName = this.faction.getName();
+        if (this.getFaction(newName) != null) {
+            this.playerService.sendMessage(
+                player, 
+                "&c" + this.getText("FactionAlreadyExists"),
+                Objects.requireNonNull(this.messageService.getLanguage().getString("FactionAlreadyExists")).replace("#name#", newName),
+                true
+            );
             return;
         }
-        final FactionRenameEvent renameEvent = new FactionRenameEvent(faction, oldName, newName);
+        final FactionRenameEvent renameEvent = new FactionRenameEvent(this.faction, oldName, newName);
         Bukkit.getPluginManager().callEvent(renameEvent);
         if (renameEvent.isCancelled()) {
-            logger.debug("Rename event was cancelled.");
+            this.logger.debug("Rename event was cancelled.");
             return;
         }
 
         // change name
-        faction.setName(newName);
-        playerService.sendMessage(player, "&a" + getText("FactionNameChanged")
-                , "FactionNameChanged", false);
+        this.faction.setName(newName);
+        this.playerService.sendMessage(
+            player,
+            "&a" + this.getText("FactionNameChanged"),
+            "FactionNameChanged",
+            false
+        );
 
-        persistentData.updateFactionReferencesDueToNameChange(oldName, newName);
+        this.persistentData.updateFactionReferencesDueToNameChange(oldName, newName);
 
         // Prefix (if it was unset)
-        if (faction.getPrefix().equalsIgnoreCase(oldName)) faction.setPrefix(newName);
+        if (this.faction.getPrefix().equalsIgnoreCase(oldName)) this.faction.setPrefix(newName);
 
         // Save again to overwrite current data
-        persistentData.getLocalStorageService().save();
+        this.persistentData.getLocalStorageService().save();
     }
 
     /**

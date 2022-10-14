@@ -23,7 +23,7 @@ public class PrefixCommand extends SubCommand {
     public PrefixCommand(LocaleService localeService, PersistentData persistentData, EphemeralData ephemeralData, PersistentData.ChunkDataAccessor chunkDataAccessor, DynmapIntegrator dynmapIntegrator, ConfigService configService, PlayerService playerService, MessageService messageService) {
         super(new String[]{
                 "prefix", LOCALE_PREFIX + "CmdPrefix"
-        }, true, true, false, true, localeService, persistentData, ephemeralData, chunkDataAccessor, dynmapIntegrator, configService, playerService, messageService);
+        }, true, true, false, true, ["mf.prefix"], localeService, persistentData, ephemeralData, chunkDataAccessor, dynmapIntegrator, configService, playerService, messageService);
     }
 
     /**
@@ -35,17 +35,23 @@ public class PrefixCommand extends SubCommand {
      */
     @Override
     public void execute(Player player, String[] args, String key) {
-        final String permission = "mf.prefix";
-        if (!(checkPermissions(player, permission))) return;
         final String newPrefix = String.join(" ", args);
-        if (persistentData.isPrefixTaken(newPrefix)) {
-            playerService.sendMessage(player, "&c" + getText("PrefixTaken")
-                    , "PrefixTaken", false);
+        if (this.persistentData.isPrefixTaken(newPrefix)) {
+            this.playerService.sendMessage(
+                player, 
+                "&c" + this.getText("PrefixTaken"),
+                "PrefixTaken",
+                false
+            );
             return;
         }
-        faction.setPrefix(newPrefix);
-        playerService.sendMessage(player, "&c" + getText("PrefixSet")
-                , "PrefixSet", false);
+        this.faction.setPrefix(newPrefix);
+        this.playerService.sendMessage(
+            player,
+            "&c" + this.getText("PrefixSet"),
+            "PrefixSet",
+            false
+        );
     }
 
     /**

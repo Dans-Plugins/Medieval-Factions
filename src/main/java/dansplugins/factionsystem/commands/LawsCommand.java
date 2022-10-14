@@ -13,6 +13,7 @@ import dansplugins.factionsystem.services.ConfigService;
 import dansplugins.factionsystem.services.LocaleService;
 import dansplugins.factionsystem.services.MessageService;
 import dansplugins.factionsystem.services.PlayerService;
+import dansplugins.factionsystem.utils.TabCompleteTools;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
@@ -27,7 +28,7 @@ public class LawsCommand extends SubCommand {
     public LawsCommand(LocaleService localeService, PersistentData persistentData, EphemeralData ephemeralData, PersistentData.ChunkDataAccessor chunkDataAccessor, DynmapIntegrator dynmapIntegrator, ConfigService configService, PlayerService playerService, MessageService messageService) {
         super(new String[]{
                 "laws", LOCALE_PREFIX + "CmdLaws"
-        }, true, persistentData, localeService, ephemeralData, configService, playerService, messageService, chunkDataAccessor, dynmapIntegrator);
+        }, true, ["mf.laws"], persistentData, localeService, ephemeralData, configService, playerService, messageService, chunkDataAccessor, dynmapIntegrator);
     }
 
     /**
@@ -39,38 +40,54 @@ public class LawsCommand extends SubCommand {
      */
     @Override
     public void execute(Player player, String[] args, String key) {
-        final String permission = "mf.laws";
-        if (!(checkPermissions(player, permission))) return;
         final Faction target;
         if (args.length == 0) {
-            target = getPlayerFaction(player);
+            target = this.getPlayerFaction(player);
             if (target == null) {
-                playerService.sendMessage(player, "&c" + getText("AlertMustBeInFactionToUseCommand")
-                        , "AlertMustBeInFactionToUseCommand", false);
+                this.playerService.sendMessage(
+                    player,
+                    "&c" + this.getText("AlertMustBeInFactionToUseCommand"),
+                    "AlertMustBeInFactionToUseCommand",
+                    false
+                );
                 return;
             }
             if (target.getNumLaws() == 0) {
-                playerService.sendMessage(player, "&c" + getText("AlertNoLaws")
-                        , "AlertNoLaws", false);
+                this.playerService.sendMessage(
+                    player,
+                    "&c" + this.getText("AlertNoLaws")
+                    "AlertNoLaws",
+                    false
+                );
                 return;
             }
         } else {
-            target = getFaction(String.join(" ", args));
+            target = this.getFaction(String.join(" ", args));
             if (target == null) {
-                playerService.sendMessage(player, "&c" + getText("FactionNotFound"),
-                        Objects.requireNonNull(messageService.getLanguage().getString("FactionNotFound"))
-                                .replace("#faction#", String.join(" ", args)), true);
+                this.playerService.sendMessage(
+                    player,
+                    "&c" + this.getText("FactionNotFound"),
+                    Objects.requireNonNull(this.messageService.getLanguage().getString("FactionNotFound")).replace("#faction#", String.join(" ", args)),
+                    true
+                );
                 return;
             }
             if (target.getNumLaws() == 0) {
-                playerService.sendMessage(player, "&c" + getText("FactionDoesNotHaveLaws")
-                        , "FactionDoesNotHaveLaws", false);
+                this.playerService.sendMessage(
+                    player,
+                    "&c" + this.getText("FactionDoesNotHaveLaws"),
+                    "FactionDoesNotHaveLaws",
+                    false
+                );
                 return;
             }
         }
-        playerService.sendMessage(player, "&b" + getText("LawsTitle", target.getName())
-                , Objects.requireNonNull(messageService.getLanguage().getString("LawsTitle"))
-                        .replace("#name#", target.getName()), true);
+        this.playerService.sendMessage(
+            player,
+            "&b" + this.getText("LawsTitle", target.getName()),
+            Objects.requireNonNull(this.messageService.getLanguage().getString("LawsTitle")).replace("#name#", target.getName()),
+            true
+        );
         IntStream.range(0, target.getNumLaws())
                 .mapToObj(i -> translate("&b" + (i + 1) + ". " + target.getLaws().get(i)))
                 .forEach(player::sendMessage);
@@ -87,5 +104,16 @@ public class LawsCommand extends SubCommand {
     @Override
     public void execute(CommandSender sender, String[] args, String key) {
 
+    }
+
+    /**
+     * Method to handle tab completion.
+     * 
+     * @param sender who sent the command.
+     * @param args   of the command.
+     */
+    @Override
+    public List<String> handleTabComplete(Sender sender, String[] args) {
+        return TabCompleteTools.allFactionsMatching(args[0], this.persistentData);
     }
 }
