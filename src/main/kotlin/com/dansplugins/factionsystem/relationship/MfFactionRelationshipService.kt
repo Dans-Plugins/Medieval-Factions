@@ -8,8 +8,7 @@ import com.dansplugins.factionsystem.faction.MfFactionId
 import com.dansplugins.factionsystem.failure.OptimisticLockingFailureException
 import com.dansplugins.factionsystem.failure.ServiceFailure
 import com.dansplugins.factionsystem.failure.ServiceFailureType
-import com.dansplugins.factionsystem.relationship.MfFactionRelationshipType.LIEGE
-import com.dansplugins.factionsystem.relationship.MfFactionRelationshipType.VASSAL
+import com.dansplugins.factionsystem.relationship.MfFactionRelationshipType.*
 import dev.forkhandles.result4k.Result4k
 import dev.forkhandles.result4k.mapFailure
 import dev.forkhandles.result4k.resultFrom
@@ -76,22 +75,54 @@ class MfFactionRelationshipService(private val plugin: MedievalFactions, private
     fun getVassalTree(factionId: MfFactionId): MfVassalNode {
         return MfVassalNode(
             factionId,
-            getRelationships(factionId, VASSAL)
-                .filter { relationship ->
-                    getRelationships(relationship.targetId, factionId).any {
-                        it.type == LIEGE
-                    }
-                }.map { getVassalTree(it.targetId) }
+            getVassals(factionId).map(::getVassalTree)
         )
     }
 
     fun getLiegeChain(factionId: MfFactionId): MfLiegeNode {
-        val liege = getRelationships(factionId, LIEGE).singleOrNull()?.targetId
+        val liege = getLiege(factionId)
         return if (liege != null) {
             MfLiegeNode(factionId, getLiegeChain(liege))
         } else {
             MfLiegeNode(factionId, null)
         }
+    }
+
+    fun getLiege(factionId: MfFactionId): MfFactionId? {
+        val liege = getRelationships(factionId, LIEGE).firstOrNull()?.targetId
+        if (liege != null) {
+            val reverseRelationships = getRelationships(liege, factionId)
+            if (reverseRelationships.any { it.type == VASSAL }) {
+                return liege
+            }
+        }
+        return null
+    }
+
+    fun getVassals(factionId: MfFactionId): List<MfFactionId> {
+        return getRelationships(factionId, VASSAL)
+            .filter { relationship ->
+                getRelationships(relationship.targetId, factionId).any {
+                    it.type == LIEGE
+                }
+            }.map(MfFactionRelationship::targetId)
+    }
+
+    fun getAllies(factionId: MfFactionId): List<MfFactionId> {
+        return getRelationships(factionId, ALLY)
+            .filter { relationship ->
+                getRelationships(relationship.targetId, relationship.factionId).any {
+                    it.type == ALLY
+                }
+            }.map(MfFactionRelationship::targetId)
+    }
+
+    fun getFactionsAtWarWith(factionId: MfFactionId): List<MfFactionId> {
+        return relationships
+            .filter { it.type == AT_WAR && (it.factionId == factionId || it.targetId == factionId) }
+            .map {
+                if (it.factionId == factionId) it.targetId else it.factionId
+            }
     }
 
     private fun Exception.toServiceFailureType(): ServiceFailureType {

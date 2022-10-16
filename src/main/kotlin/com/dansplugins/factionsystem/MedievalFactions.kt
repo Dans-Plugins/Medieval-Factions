@@ -12,6 +12,7 @@ import com.dansplugins.factionsystem.command.gate.MfGateCommand
 import com.dansplugins.factionsystem.command.lock.MfLockCommand
 import com.dansplugins.factionsystem.command.power.MfPowerCommand
 import com.dansplugins.factionsystem.command.unlock.MfUnlockCommand
+import com.dansplugins.factionsystem.dynmap.MfDynmapService
 import com.dansplugins.factionsystem.faction.JooqMfFactionRepository
 import com.dansplugins.factionsystem.faction.MfFactionRepository
 import com.dansplugins.factionsystem.faction.MfFactionService
@@ -57,10 +58,7 @@ import org.jooq.SQLDialect
 import org.jooq.conf.Settings
 import org.jooq.impl.DSL
 import preponderous.ponder.minecraft.bukkit.plugin.registerListeners
-import java.io.File
-import java.net.URLClassLoader
 import java.time.LocalTime
-import java.util.*
 import javax.sql.DataSource
 
 class MedievalFactions : JavaPlugin() {
@@ -88,19 +86,8 @@ class MedievalFactions : JavaPlugin() {
 
         saveDefaultConfig()
 
-        val languageFolder = File(dataFolder, "lang")
-        if (!languageFolder.exists()) {
-            languageFolder.mkdirs()
-            saveResource("lang/lang_en_US.properties", false)
-            saveResource("lang/lang_de.properties", false)
-        }
-        val urls = arrayOf(languageFolder.toURI().toURL())
-        val langClassLoader = URLClassLoader(urls)
-        language = Language(ResourceBundle.getBundle(
-            "lang",
-            Locale.forLanguageTag(config.getString("language")),
-            langClassLoader
-        ))
+
+        language = Language(this, config.getString("language") ?: "en-US")
         Metrics(this, 8929)
 
         Class.forName("org.h2.Driver")
@@ -163,6 +150,11 @@ class MedievalFactions : JavaPlugin() {
         val notificationService = setupNotificationService()
         val gateService = MfGateService(this, gateRepository, gateCreationContextRepository)
         val chatService = MfChatService(this, chatMessageRepository)
+        val dynmapService = if (server.pluginManager.getPlugin("dynmap") != null) {
+            MfDynmapService(this)
+        } else {
+            null
+        }
 
         services = Services(
             playerService,
@@ -174,7 +166,8 @@ class MedievalFactions : JavaPlugin() {
             interactionService,
             notificationService,
             gateService,
-            chatService
+            chatService,
+            dynmapService
         )
         setupRpkLockService()
 
@@ -186,6 +179,12 @@ class MedievalFactions : JavaPlugin() {
 
         if (server.pluginManager.getPlugin("PlaceholderAPI") != null) {
             MedievalFactionsPlaceholderExpansion(this).register()
+        }
+
+        if (dynmapService != null) {
+            factionService.factions.forEach { faction ->
+                dynmapService.updateClaims(faction)
+            }
         }
 
         registerListeners(
