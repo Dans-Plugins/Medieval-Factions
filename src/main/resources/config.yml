@@ -48,3 +48,6 @@ chat:
     format: '&7[vassals] [${factionColor}${faction}&7] [${role}] &f${displayName}: ${message}'
   allies:
     format: '&7[allies] [${factionColor}${faction}&7] [${role}] &f${displayName}: ${message}'
+duels:
+  duration: PT2M
+  notificationDistance: 64

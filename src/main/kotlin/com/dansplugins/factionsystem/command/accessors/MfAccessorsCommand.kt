@@ -1,6 +1,9 @@
 package com.dansplugins.factionsystem.command.accessors
 
 import com.dansplugins.factionsystem.MedievalFactions
+import com.dansplugins.factionsystem.command.accessors.add.MfAccessorsAddCommand
+import com.dansplugins.factionsystem.command.accessors.list.MfAccessorsListCommand
+import com.dansplugins.factionsystem.command.accessors.remove.MfAccessorsRemoveCommand
 import org.bukkit.ChatColor.RED
 import org.bukkit.command.Command
 import org.bukkit.command.CommandExecutor

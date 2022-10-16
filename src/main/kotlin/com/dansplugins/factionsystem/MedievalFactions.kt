@@ -7,11 +7,13 @@ import com.dansplugins.factionsystem.claim.JooqMfClaimedChunkRepository
 import com.dansplugins.factionsystem.claim.MfClaimService
 import com.dansplugins.factionsystem.claim.MfClaimedChunkRepository
 import com.dansplugins.factionsystem.command.accessors.MfAccessorsCommand
+import com.dansplugins.factionsystem.command.duel.MfDuelCommand
 import com.dansplugins.factionsystem.command.faction.MfFactionCommand
 import com.dansplugins.factionsystem.command.gate.MfGateCommand
 import com.dansplugins.factionsystem.command.lock.MfLockCommand
 import com.dansplugins.factionsystem.command.power.MfPowerCommand
 import com.dansplugins.factionsystem.command.unlock.MfUnlockCommand
+import com.dansplugins.factionsystem.duel.*
 import com.dansplugins.factionsystem.dynmap.MfDynmapService
 import com.dansplugins.factionsystem.faction.JooqMfFactionRepository
 import com.dansplugins.factionsystem.faction.MfFactionRepository
@@ -51,14 +53,22 @@ import com.dansplugins.factionsystem.service.Services
 import com.google.gson.GsonBuilder
 import com.zaxxer.hikari.HikariConfig
 import com.zaxxer.hikari.HikariDataSource
+import dev.forkhandles.result4k.onFailure
 import org.bstats.bukkit.Metrics
+import org.bukkit.NamespacedKey
+import org.bukkit.boss.BarColor
+import org.bukkit.boss.BarStyle
+import org.bukkit.entity.Player
 import org.bukkit.plugin.java.JavaPlugin
 import org.flywaydb.core.Flyway
 import org.jooq.SQLDialect
 import org.jooq.conf.Settings
 import org.jooq.impl.DSL
 import preponderous.ponder.minecraft.bukkit.plugin.registerListeners
+import java.time.Duration
+import java.time.Instant
 import java.time.LocalTime
+import java.util.logging.Level.SEVERE
 import javax.sql.DataSource
 
 class MedievalFactions : JavaPlugin() {
@@ -139,6 +149,8 @@ class MedievalFactions : JavaPlugin() {
         val gateRepository: MfGateRepository = JooqMfGateRepository(this, dsl)
         val gateCreationContextRepository: MfGateCreationContextRepository = JooqMfGateCreationContextRepository(dsl)
         val chatMessageRepository: MfChatChannelMessageRepository = JooqMfChatChannelMessageRepository(dsl)
+        val duelRepository: MfDuelRepository = JooqMfDuelRepository(dsl)
+        val duelInviteRepository: MfDuelInviteRepository = JooqMfDuelInviteRepository(dsl)
 
         val playerService = MfPlayerService(this, playerRepository)
         val factionService = MfFactionService(this, factionRepository)
@@ -150,6 +162,7 @@ class MedievalFactions : JavaPlugin() {
         val notificationService = setupNotificationService()
         val gateService = MfGateService(this, gateRepository, gateCreationContextRepository)
         val chatService = MfChatService(this, chatMessageRepository)
+        val duelService = MfDuelService(this, duelRepository, duelInviteRepository)
         val dynmapService = if (server.pluginManager.getPlugin("dynmap") != null) {
             MfDynmapService(this)
         } else {
@@ -167,6 +180,7 @@ class MedievalFactions : JavaPlugin() {
             notificationService,
             gateService,
             chatService,
+            duelService,
             dynmapService
         )
         setupRpkLockService()
@@ -195,6 +209,7 @@ class MedievalFactions : JavaPlugin() {
             BlockPistonExtendListener(this),
             BlockPistonRetractListener(this),
             BlockPlaceListener(this),
+            EntityDamageListener(this),
             EntityExplodeListener(this),
             PlayerInteractListener(this),
             PlayerJoinListener(this),
@@ -208,6 +223,7 @@ class MedievalFactions : JavaPlugin() {
         getCommand("accessors")?.setExecutor(MfAccessorsCommand(this))
         getCommand("power")?.setExecutor(MfPowerCommand(this))
         getCommand("gate")?.setExecutor(MfGateCommand(this))
+        getCommand("duel")?.setExecutor(MfDuelCommand(this))
 
         server.scheduler.scheduleSyncRepeatingTask(this, {
             val onlinePlayers = server.onlinePlayers
@@ -227,6 +243,60 @@ class MedievalFactions : JavaPlugin() {
         }, 20L, 5L)
         server.scheduler.scheduleSyncRepeatingTask(this, {
             gateService.getGatesByStatus(OPENING).forEach(MfGate::continueOpening)
+        }, 20L, 20L)
+
+        server.scheduler.scheduleSyncRepeatingTask(this, {
+            duelService.duels.forEach { duel ->
+                if (Instant.now().isBefore(duel.endTime)) {
+                    val bar = server.getBossBar(NamespacedKey(this, "duel_${duel.id.value}"))
+                        ?: server.createBossBar(
+                            NamespacedKey(this, "duel_${duel.id.value}"),
+                            (duel.challengerId.toBukkitPlayer().name ?: language["UnknownPlayer"]) +
+                                    " vs " +
+                                    (duel.challengedId.toBukkitPlayer().name ?: language["UnknownPlayer"]),
+                            BarColor.WHITE,
+                            BarStyle.SEGMENTED_20
+                        ).also { bar ->
+                            duel.challengerId.toBukkitPlayer().player?.let { bar.addPlayer(it) }
+                            duel.challengedId.toBukkitPlayer().player?.let { bar.addPlayer(it) }
+                        }
+                    bar.progress = Duration.between(Instant.now(), duel.endTime).toMillis()
+                        .toDouble() / Duration.parse(config.getString("duels.duration")).toMillis().toDouble()
+                } else {
+                    server.getBossBar(NamespacedKey(this, "duel_${duel.id.value}"))?.removeAll()
+                    server.removeBossBar(NamespacedKey(this, "duel_${duel.id.value}"))
+                    val notificationDistance = config.getInt("duels.notificationDistance")
+                    val notificationDistanceSquared = notificationDistance * notificationDistance
+                    val challengerBukkitPlayer = duel.challengerId.toBukkitPlayer().player
+                    val nearbyPlayers = mutableSetOf<Player>()
+                    if (challengerBukkitPlayer != null) {
+                        challengerBukkitPlayer.activePotionEffects.clear()
+                        challengerBukkitPlayer.fireTicks = 0
+                        challengerBukkitPlayer.health = duel.challengerHealth
+                        nearbyPlayers += challengerBukkitPlayer.world.players
+                            .filter { it.location.distanceSquared(challengerBukkitPlayer.location) <= notificationDistanceSquared }
+                    }
+                    val challengedBukkitPlayer = duel.challengedId.toBukkitPlayer().player
+                    if (challengedBukkitPlayer != null) {
+                        challengedBukkitPlayer.activePotionEffects.clear()
+                        challengedBukkitPlayer.fireTicks = 0
+                        challengedBukkitPlayer.health = duel.challengedHealth
+                        nearbyPlayers += challengedBukkitPlayer.world.players
+                            .filter { it.location.distanceSquared(challengedBukkitPlayer.location) <= notificationDistanceSquared }
+                    }
+                    nearbyPlayers.forEach { notifiedPlayer -> notifiedPlayer.sendMessage(language[
+                            "DuelTie",
+                            duel.challengerId.toBukkitPlayer().name ?: language["UnknownPlayer"],
+                            duel.challengedId.toBukkitPlayer().name ?: language["UnknownPlayer"]
+                    ]) }
+                    server.scheduler.runTaskAsynchronously(this, Runnable {
+                        duelService.delete(duel.id).onFailure {
+                            logger.log(SEVERE, "Failed to delete duel: ${it.reason.message}", it.reason.cause)
+                            return@Runnable
+                        }
+                    })
+                }
+            }
         }, 20L, 20L)
     }
 
