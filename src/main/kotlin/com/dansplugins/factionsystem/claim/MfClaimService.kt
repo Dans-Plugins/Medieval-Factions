@@ -77,6 +77,12 @@ class MfClaimService(private val plugin: MedievalFactions, private val repositor
                 }
             }
         })
+        val dynmapService = plugin.services.dynmapService
+        if (dynmapService != null) {
+            plugin.server.scheduler.runTask(plugin, Runnable {
+                dynmapService.updateClaims(faction)
+            })
+        }
         return@resultFrom result
     }.mapFailure { exception ->
         ServiceFailure(exception.toServiceFailureType(), "Service error: ${exception.message}", exception)
@@ -102,6 +108,16 @@ class MfClaimService(private val plugin: MedievalFactions, private val repositor
                 }
             }
         })
+        val dynmapService = plugin.services.dynmapService
+        if (dynmapService != null) {
+            val factionService = plugin.services.factionService
+            val faction = factionService.getFaction(claim.factionId)
+            if (faction != null) {
+                plugin.server.scheduler.runTask(plugin, Runnable {
+                    dynmapService.updateClaims(faction)
+                })
+            }
+        }
         return@resultFrom result
     }.mapFailure { exception ->
         ServiceFailure(exception.toServiceFailureType(), "Service error: ${exception.message}", exception)

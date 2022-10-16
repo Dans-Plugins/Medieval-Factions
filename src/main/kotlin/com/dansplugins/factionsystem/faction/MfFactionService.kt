@@ -87,6 +87,12 @@ class MfFactionService(private val plugin: MedievalFactions, private val reposit
         }
         val result = repository.upsert(faction)
         factionsById[result.id] = result
+        val dynmapService = plugin.services.dynmapService
+        if (dynmapService != null) {
+            plugin.server.scheduler.runTask(plugin, Runnable {
+                dynmapService.updateClaims(result)
+            })
+        }
         return@resultFrom result
     }.mapFailure { exception ->
         ServiceFailure(exception.toServiceFailureType(), "Service error: ${exception.message}", exception)

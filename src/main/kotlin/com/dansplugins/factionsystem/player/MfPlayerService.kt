@@ -33,6 +33,16 @@ class MfPlayerService(private val plugin: MedievalFactions, private val playerRe
     fun save(player: MfPlayer): Result4k<MfPlayer, ServiceFailure> = resultFrom {
         val result = playerRepository.upsert(player)
         playersById[result.id] = result
+        val dynmapService = plugin.services.dynmapService
+        if (dynmapService != null) {
+            val factionService = plugin.services.factionService
+            val faction = factionService.getFaction(result.id)
+            if (faction != null) {
+                plugin.server.scheduler.runTask(plugin, Runnable {
+                    dynmapService.updateClaims(faction)
+                })
+            }
+        }
         return@resultFrom result
     }.mapFailure { exception ->
         ServiceFailure(exception.toServiceFailureType(), "Service error: ${exception.message}", exception)
@@ -43,6 +53,15 @@ class MfPlayerService(private val plugin: MedievalFactions, private val playerRe
             playerRepository.increaseOnlinePlayerPower(onlinePlayerIds)
             playerRepository.decreaseOfflinePlayerPower(onlinePlayerIds)
             playersById.putAll(playerRepository.getPlayers().associateBy(MfPlayer::id))
+            val dynmapService = plugin.services.dynmapService
+            if (dynmapService != null) {
+                val factionService = plugin.services.factionService
+                factionService.factions.forEach { faction ->
+                    plugin.server.scheduler.runTask(plugin, Runnable {
+                        dynmapService.updateClaims(faction)
+                    })
+                }
+            }
         }.mapFailure { exception ->
             ServiceFailure(exception.toServiceFailureType(), "Service error: ${exception.message}", exception)
         }

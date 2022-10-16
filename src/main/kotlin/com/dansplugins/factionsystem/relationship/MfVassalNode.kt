@@ -25,4 +25,11 @@ data class MfVassalNode(val factionId: MfFactionId, val vassals: List<MfVassalNo
             return@flatMap results
         }
     }
+
+    fun forEach(action: (MfFactionId) -> Unit) {
+        vassals.forEach { vassal ->
+            vassal.forEach(action)
+            action(vassal.factionId)
+        }
+    }
 }
