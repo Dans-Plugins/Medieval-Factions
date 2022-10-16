@@ -1,4 +1,4 @@
-package com.dansplugins.factionsystem.command.accessors
+package com.dansplugins.factionsystem.command.accessors.list
 
 import com.dansplugins.factionsystem.MedievalFactions
 import com.dansplugins.factionsystem.area.MfBlockPosition

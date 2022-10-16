@@ -133,8 +133,8 @@ create table `mf_locked_block`(
 );
 
 create table `mf_locked_block_accessor`(
-    `locked_block_id` varchar(36),
-    `player_id` varchar(36),
+    `locked_block_id` varchar(36) not null,
+    `player_id` varchar(36) not null,
     primary key(`locked_block_id`, `player_id`),
     foreign key(`locked_block_id`) references `mf_locked_block`(`id`) on delete cascade,
     foreign key(`player_id`) references `mf_player`(`id`) on delete cascade
@@ -144,9 +144,27 @@ create table `mf_locked_block_accessor`(
 -- The reference will be lost but we will still retain the data.
 -- Maybe in the future we should soft-delete factions & players instead of deleting them.
 create table `mf_chat_channel_message`(
-    `timestamp` datetime,
-    `player_id` varchar(36),
-    `faction_id` varchar(36),
-    `chat_channel` varchar(16),
-    `message` varchar(1024)
+    `timestamp` datetime not null,
+    `player_id` varchar(36) not null,
+    `faction_id` varchar(36) not null,
+    `chat_channel` varchar(16) not null,
+    `message` varchar(1024) not null
+);
+
+create table `mf_duel`(
+    `id` varchar(36) primary key not null,
+    `version` integer not null,
+    `challenger_id` varchar(36) not null,
+    `challenged_id` varchar(36) not null,
+    `challenger_health` double not null,
+    `challenged_health` double not null,
+    `end_time` datetime not null,
+    foreign key(`challenger_id`) references `mf_player`(`id`) on delete cascade,
+    foreign key(`challenged_id`) references `mf_player`(`id`) on delete cascade
+);
+
+create table `mf_duel_invite`(
+    `inviter_id` varchar(36) not null,
+    `invitee_id` varchar(36) not null,
+    primary key(`inviter_id`, `invitee_id`)
 );

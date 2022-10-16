@@ -97,6 +97,12 @@ commands:
       /gate cancel - Cancels gate creation
     aliases: [tor, puerta, portao, ворота]
     usage: /<command> [create|remove|cancel]
+  duel:
+    description: |
+      Duel management command
+      /duel challenge [player] - Challenges a player to a duel
+      /duel accept [player] - Accepts a duel from a player
+      /duel cancel [player] - Cancels or turns down a duel
 permissions:
   mf.help:
     description: View a list of helpful commands.
@@ -250,6 +256,9 @@ permissions:
     default: true
   mf.prefix:
     description: Allows setting faction prefix
+    default: true
+  mf.duel:
+    description: Allows duelling
     default: true
   mf.force.join:
     description: Allows joining a faction without being invited
