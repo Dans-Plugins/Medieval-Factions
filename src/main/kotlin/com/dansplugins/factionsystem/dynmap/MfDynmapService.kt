@@ -8,6 +8,10 @@ import org.dynmap.DynmapAPI
 import org.dynmap.markers.AreaMarker
 import java.util.concurrent.ConcurrentHashMap
 
+private typealias Point = Pair<Int, Int>
+private typealias LineSegment = Pair<Point, Point>
+private typealias Path = List<Point>
+
 class MfDynmapService(private val plugin: MedievalFactions) {
 
     private val dynmap = plugin.server.pluginManager.getPlugin("dynmap") as DynmapAPI
@@ -31,7 +35,7 @@ class MfDynmapService(private val plugin: MedievalFactions) {
                 paths.forEachIndexed { index, path ->
                     val corners = getCorners(path)
                     val areaMarker = claimsMarkerSet.createAreaMarker(
-                        "claim_${faction.id.value}_${worldId}_$index",
+                        "claim_border_${faction.id.value}_${worldId}_$index",
                         faction.name,
                         false,
                         world.name,
@@ -39,10 +43,26 @@ class MfDynmapService(private val plugin: MedievalFactions) {
                         corners.map { (_, z) -> z * 16.0 }.toDoubleArray(),
                         false
                     )
-                    areaMarker.label = faction.name
+                    val color = Integer.decode(faction.flags[plugin.flags.color])
+                    areaMarker.setFillStyle(0.0, color)
+                    areaMarker.setLineStyle(1, 1.0, color)
+                    areaMarker.description = buildFactionInfo(faction)
+                    val factionMarkers = factionMarkersByFactionId[faction.id] ?: listOf()
+                    factionMarkersByFactionId[faction.id] = factionMarkers + areaMarker
+                }
+                worldClaims.forEachIndexed { index, claim ->
+                    val areaMarker = claimsMarkerSet.createAreaMarker(
+                        "claim_${faction.id.value}_${worldId}_$index",
+                        faction.name,
+                        false,
+                        world.name,
+                        doubleArrayOf(claim.x * 16.0, (claim.x + 1) * 16.0, (claim.x + 1) * 16.0, claim.x * 16.0),
+                        doubleArrayOf(claim.z * 16.0, claim.z * 16.0, (claim.z + 1) * 16.0, (claim.z + 1) * 16.0),
+                        false
+                    )
                     val color = Integer.decode(faction.flags[plugin.flags.color])
                     areaMarker.setFillStyle(0.3, color)
-                    areaMarker.setLineStyle(1, 1.0, color)
+                    areaMarker.setLineStyle(0, 0.0, color)
                     areaMarker.description = buildFactionInfo(faction)
                     val factionMarkers = factionMarkersByFactionId[faction.id] ?: listOf()
                     factionMarkersByFactionId[faction.id] = factionMarkers + areaMarker
@@ -80,7 +100,7 @@ class MfDynmapService(private val plugin: MedievalFactions) {
         }
     }
 
-    private fun getCorners(points: List<Pair<Int, Int>>): List<Pair<Int, Int>> {
+    private fun getCorners(points: List<Point>): List<Point> {
         val corners = mutableListOf<Pair<Int, Int>>()
         for (i in points.indices) {
             val (prevX, prevZ) = if (i > 0) points[i - 1] else points.last()
@@ -92,9 +112,9 @@ class MfDynmapService(private val plugin: MedievalFactions) {
         return corners
     }
 
-    private fun getPaths(claims: List<MfClaimedChunk>): List<List<Pair<Int, Int>>> {
+    private fun getPaths(claims: List<MfClaimedChunk>): List<Path> {
         // lineSegments maps points to line segments that have an ending at that position
-        val lineSegments = mutableMapOf<Pair<Int, Int>, List<Pair<Pair<Int, Int>, Pair<Int, Int>>>>()
+        val lineSegments = mutableMapOf<Point, List<LineSegment>>()
         claims.sortedWith { a, b ->
             val xComp = a.x.compareTo(b.x)
             if (xComp != 0) return@sortedWith xComp
