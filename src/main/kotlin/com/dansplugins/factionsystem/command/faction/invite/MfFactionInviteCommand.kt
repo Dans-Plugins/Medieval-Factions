@@ -74,7 +74,7 @@ class MfFactionInviteCommand(private val plugin: MedievalFactions) : CommandExec
             return true
         }
         val target = plugin.server.getOfflinePlayer(args[0])
-        if (!target.hasPlayedBefore()) {
+        if (!target.isOnline && !target.hasPlayedBefore()) {
             sender.sendMessage("${BukkitChatColor.RED}${plugin.language["CommandFactionInviteInvalidTarget"]}")
             return true
         }

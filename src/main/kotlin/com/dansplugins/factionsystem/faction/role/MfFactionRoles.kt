@@ -129,10 +129,13 @@ data class MfFactionRoles(
                     put(KICK, true)
                     put(VIEW_ROLE(member.id), true)
                     put(VIEW_ROLE(officer.id), true)
+                    put(VIEW_ROLE(ownerId), true)
                     put(MODIFY_ROLE(member.id), true)
                     put(MODIFY_ROLE(officer.id), true)
+                    put(MODIFY_ROLE(ownerId), true)
                     put(SET_MEMBER_ROLE(member.id), true)
                     put(SET_MEMBER_ROLE(officer.id), true)
+                    put(SET_MEMBER_ROLE(ownerId), true)
                     put(LIST_MEMBERS, true)
 
                     putAll(MfFactionPermission.values(flags, listOf(member.id, officer.id, ownerId)).map { permission -> SET_ROLE_PERMISSION(permission) to true })

@@ -30,14 +30,15 @@ class MfFactionKickCommand(private val plugin: MedievalFactions) : CommandExecut
             return true
         }
         val target = try {
-            plugin.server.getPlayer(UUID.fromString(args[0])) ?: plugin.server.getOfflinePlayer(args[0])
+            plugin.server.getPlayer(UUID.fromString(args.last())) ?: plugin.server.getOfflinePlayer(args.last())
         } catch (exception: IllegalArgumentException) {
-            plugin.server.getOfflinePlayer(args[0])
+            plugin.server.getOfflinePlayer(args.last())
         }
-        if (!target.hasPlayedBefore()) {
+        if (!target.isOnline && !target.hasPlayedBefore()) {
             sender.sendMessage("$RED${plugin.language["CommandFactionKickInvalidTarget"]}")
             return true
         }
+        val hasForcePermission = sender.hasPermission("mf.force.kick")
         plugin.server.scheduler.runTaskAsynchronously(plugin, Runnable {
             val playerService = plugin.services.playerService
             val mfPlayer = playerService.getPlayer(sender)
@@ -53,9 +54,20 @@ class MfFactionKickCommand(private val plugin: MedievalFactions) : CommandExecut
                     return@Runnable
                 }
             val factionService = plugin.services.factionService
-            val faction = factionService.getFaction(mfPlayer.id)
+            val faction = if (args.size > 1 && hasForcePermission) {
+                factionService.getFaction(args.dropLast(1).joinToString(" "))
+            } else {
+                factionService.getFaction(mfPlayer.id)
+            }
             if (faction == null) {
-                sender.sendMessage("$RED${plugin.language["CommandFactionKickMustBeInAFaction"]}")
+                if (args.size > 1 && hasForcePermission) {
+                    sender.sendMessage("$RED${plugin.language[
+                            "CommandFactionKickInvalidFaction",
+                            args.dropLast(1).joinToString(" ")
+                    ]}")
+                } else {
+                    sender.sendMessage("$RED${plugin.language["CommandFactionKickMustBeInAFaction"]}")
+                }
                 return@Runnable
             }
             val role = faction.getRole(mfPlayer.id)
