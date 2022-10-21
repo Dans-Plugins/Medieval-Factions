@@ -54,6 +54,9 @@ import com.google.gson.GsonBuilder
 import com.zaxxer.hikari.HikariConfig
 import com.zaxxer.hikari.HikariDataSource
 import dev.forkhandles.result4k.onFailure
+import net.md_5.bungee.api.ChatColor
+import net.md_5.bungee.api.ChatMessageType.ACTION_BAR
+import net.md_5.bungee.api.chat.TextComponent
 import org.bstats.bukkit.Metrics
 import org.bukkit.NamespacedKey
 import org.bukkit.boss.BarColor
@@ -156,7 +159,7 @@ class MedievalFactions : JavaPlugin() {
         val factionService = MfFactionService(this, factionRepository)
         val lawService = MfLawService(lawRepository)
         val factionRelationshipService = MfFactionRelationshipService(this, factionRelationshipRepository)
-        val claimedChunkService = MfClaimService(this, claimedChunkRepository)
+        val claimService = MfClaimService(this, claimedChunkRepository)
         val lockService = MfLockService(this, lockRepository)
         val interactionService = MfInteractionService(interactionStatusRepository)
         val notificationService = setupNotificationService()
@@ -174,7 +177,7 @@ class MedievalFactions : JavaPlugin() {
             factionService,
             lawService,
             factionRelationshipService,
-            claimedChunkService,
+            claimService,
             lockService,
             interactionService,
             notificationService,
@@ -300,6 +303,29 @@ class MedievalFactions : JavaPlugin() {
                 }
             }
         }, 20L, 20L)
+
+        if (config.getBoolean("factions.actionBarTerritoryIndicator")) {
+            server.scheduler.scheduleSyncRepeatingTask(this, {
+                server.onlinePlayers.forEach { player ->
+                    val chunk = player.location.chunk
+                    val claim = claimService.getClaim(chunk)
+                    val faction = claim?.let { factionService.getFaction(it.factionId) }
+                    if (faction == null) {
+                        player.spigot().sendMessage(
+                            ACTION_BAR,
+                            *TextComponent.fromLegacyText(
+                                "${ChatColor.of(config.getString("wilderness.color"))}${language["Wilderness"]}"
+                            )
+                        )
+                    } else {
+                        player.spigot().sendMessage(
+                            ACTION_BAR,
+                            *TextComponent.fromLegacyText("${ChatColor.of(faction.flags[flags.color])}${faction.name}")
+                        )
+                    }
+                }
+            }, 5L, 20L)
+        }
     }
 
     private fun setupNotificationService(): MfNotificationService = when {

@@ -14,6 +14,8 @@ import com.dansplugins.factionsystem.relationship.MfFactionRelationshipType
 import dev.forkhandles.result4k.mapFailure
 import dev.forkhandles.result4k.resultFrom
 import net.md_5.bungee.api.ChatColor
+import net.md_5.bungee.api.ChatMessageType.ACTION_BAR
+import net.md_5.bungee.api.chat.TextComponent
 import org.bukkit.Chunk
 import org.bukkit.World
 import java.util.*
@@ -72,6 +74,9 @@ class MfClaimService(private val plugin: MedievalFactions, private val repositor
                             player.resetTitle()
                             val title = "${ChatColor.of(faction.flags[plugin.flags.color])}${faction.name}"
                             player.sendTitle(title, null, 10, 70, 20)
+                            if (plugin.config.getBoolean("factions.actionBarTerritoryIndicator")) {
+                                player.spigot().sendMessage(ACTION_BAR, *TextComponent.fromLegacyText(title))
+                            }
                         }
                     })
                 }
@@ -104,6 +109,7 @@ class MfClaimService(private val plugin: MedievalFactions, private val repositor
                         val title =
                             "${ChatColor.of(plugin.config.getString("wilderness.color"))}${plugin.language["Wilderness"]}"
                         player.sendTitle(title, null, 10, 70, 20)
+                        player.spigot().sendMessage(ACTION_BAR, *TextComponent.fromLegacyText(title))
                     }
                 }
             }

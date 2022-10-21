@@ -5,6 +5,8 @@ import com.dansplugins.factionsystem.faction.permission.MfFactionPermission.Comp
 import com.dansplugins.factionsystem.player.MfPlayer
 import dev.forkhandles.result4k.onFailure
 import net.md_5.bungee.api.ChatColor
+import net.md_5.bungee.api.ChatMessageType.ACTION_BAR
+import net.md_5.bungee.api.chat.TextComponent
 import org.bukkit.ChatColor.GREEN
 import org.bukkit.ChatColor.RED
 import org.bukkit.command.Command
@@ -98,6 +100,9 @@ class MfFactionSetNameCommand(private val plugin: MedievalFactions): CommandExec
                     player.resetTitle()
                     val title = "${ChatColor.of(updatedFaction.flags[plugin.flags.color])}${updatedFaction.name}"
                     player.sendTitle(title, null, 10, 70, 20)
+                    if (plugin.config.getBoolean("factions.actionBarTerritoryIndicator")) {
+                        player.spigot().sendMessage(ACTION_BAR, *TextComponent.fromLegacyText(title))
+                    }
                 }
         })
     }

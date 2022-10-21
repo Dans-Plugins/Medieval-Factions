@@ -2,6 +2,8 @@ package com.dansplugins.factionsystem.listener
 
 import com.dansplugins.factionsystem.MedievalFactions
 import net.md_5.bungee.api.ChatColor
+import net.md_5.bungee.api.ChatMessageType.ACTION_BAR
+import net.md_5.bungee.api.chat.TextComponent
 import org.bukkit.event.EventHandler
 import org.bukkit.event.Listener
 import org.bukkit.event.player.PlayerJoinEvent
@@ -23,6 +25,9 @@ class PlayerJoinListener(private val plugin: MedievalFactions) : Listener {
                     "${ChatColor.of(plugin.config.getString("wilderness.color"))}${plugin.language["Wilderness"]}"
                 }
                 event.player.sendTitle(title, null, 10, 70, 20)
+                if (plugin.config.getBoolean("factions.actionBarTerritoryIndicator")) {
+                    event.player.spigot().sendMessage(ACTION_BAR, *TextComponent.fromLegacyText(title))
+                }
             })
         })
     }
