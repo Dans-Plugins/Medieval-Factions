@@ -27,7 +27,7 @@ class MfFactionRoleSetCommand(private val plugin: MedievalFactions) : CommandExe
             return true
         }
         val target = plugin.server.getOfflinePlayer(args[0])
-        if (!target.hasPlayedBefore()) {
+        if (!target.isOnline && !target.hasPlayedBefore()) {
             sender.sendMessage("$RED${plugin.language["CommandFactionRoleSetInvalidTarget"]}")
             return true
         }

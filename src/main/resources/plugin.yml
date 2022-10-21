@@ -56,7 +56,7 @@ commands:
       /f swearfealty [faction] - Swears fealty to a faction that has sent you a vassalization request
       /f declareindependence - Declares independence from your current liege, triggering a war
       /f grantindependence [vassal] - Grants independence to one of your vassals
-      /f kick [player] - Kicks a player from your faction
+      /f kick (faction) [player] - Kicks a player from your faction, or the specified faction
       /f map (normal|diplomatic) - Shows the faction map
       /f sethome - Sets your faction's home
       /f home - Teleports to your faction's home

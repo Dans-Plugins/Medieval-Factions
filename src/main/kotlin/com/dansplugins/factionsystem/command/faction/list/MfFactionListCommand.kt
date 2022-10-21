@@ -29,50 +29,52 @@ class MfFactionListCommand(private val plugin: MedievalFactions) : CommandExecut
                         }
                     )
                 },
-                factionService.factions.flatMap { faction ->
-                    listOf(
-                        lazy {
-                            arrayOf(
-                                TextComponent(plugin.language[
-                                        "CommandFactionListItem",
-                                        faction.name
-                                ]).apply {
-                                    color = SpigotChatColor.AQUA
-                                }
-                            )
-                        },
-                        lazy {
-                            arrayOf(
-                                TextComponent("  " + plugin.language[
-                                        "CommandFactionListPower",
-                                        faction.power.toString()
-                                ]).apply {
-                                    color = SpigotChatColor.GRAY
-                                }
-                            )
-                        },
-                        lazy {
-                            arrayOf(
-                                TextComponent("  " + plugin.language[
-                                        "CommandFactionListMembers",
-                                        faction.members.size.toString()
-                                ]).apply {
-                                    color = SpigotChatColor.GRAY
-                                }
-                            )
-                        },
-                        lazy {
-                            arrayOf(
-                                TextComponent("  " + plugin.language[
-                                        "CommandFactionListLand",
-                                        claimService.getClaims(faction.id).size.toString()
-                                ]).apply {
-                                    color = SpigotChatColor.GRAY
-                                }
-                            )
-                        }
-                    )
-                },
+                factionService.factions
+                    .sortedByDescending { it.power }
+                    .flatMap { faction ->
+                        listOf(
+                            lazy {
+                                arrayOf(
+                                    TextComponent(plugin.language[
+                                            "CommandFactionListItem",
+                                            faction.name
+                                    ]).apply {
+                                        color = SpigotChatColor.AQUA
+                                    }
+                                )
+                            },
+                            lazy {
+                                arrayOf(
+                                    TextComponent("  " + plugin.language[
+                                            "CommandFactionListPower",
+                                            faction.power.toString()
+                                    ]).apply {
+                                        color = SpigotChatColor.GRAY
+                                    }
+                                )
+                            },
+                            lazy {
+                                arrayOf(
+                                    TextComponent("  " + plugin.language[
+                                            "CommandFactionListMembers",
+                                            faction.members.size.toString()
+                                    ]).apply {
+                                        color = SpigotChatColor.GRAY
+                                    }
+                                )
+                            },
+                            lazy {
+                                arrayOf(
+                                    TextComponent("  " + plugin.language[
+                                            "CommandFactionListLand",
+                                            claimService.getClaims(faction.id).size.toString()
+                                    ]).apply {
+                                        color = SpigotChatColor.GRAY
+                                    }
+                                )
+                            }
+                        )
+                    },
                 // Each faction is currently 4 lines so this should be a multiple of 4.
                 // If we change the amount of lines then this should change.
                 pageLength = 16

@@ -22,7 +22,7 @@ class MfPowerSetCommand(private val plugin: MedievalFactions) : CommandExecutor 
             return true
         }
         val target = plugin.server.getOfflinePlayer(args[0])
-        if (!target.hasPlayedBefore()) {
+        if (!target.isOnline && !target.hasPlayedBefore()) {
             sender.sendMessage("$RED${plugin.language["CommandPowerSetInvalidTarget"]}")
             return true
         }
