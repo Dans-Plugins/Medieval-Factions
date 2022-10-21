@@ -211,6 +211,7 @@ class MedievalFactions : JavaPlugin() {
             BlockPlaceListener(this),
             EntityDamageListener(this),
             EntityExplodeListener(this),
+            PlayerDeathListener(this),
             PlayerInteractListener(this),
             PlayerJoinListener(this),
             PlayerMoveListener(this),

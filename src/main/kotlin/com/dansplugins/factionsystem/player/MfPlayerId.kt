@@ -7,7 +7,6 @@ import java.util.*
 @JvmInline
 value class MfPlayerId(val value: String) {
     companion object {
-        fun generate() = MfPlayerId(UUID.randomUUID().toString())
         fun fromBukkitPlayer(player: OfflinePlayer) = MfPlayerId(player.uniqueId.toString())
     }
 
