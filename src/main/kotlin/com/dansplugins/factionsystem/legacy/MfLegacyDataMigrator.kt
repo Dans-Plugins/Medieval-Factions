@@ -87,6 +87,7 @@ class MfLegacyDataMigrator(private val plugin: MedievalFactions) {
         plugin.config.set("factions.playersChatWithPrefixes", oldConfig.getBoolean("playersChatWithPrefixes"))
         plugin.config.set("factions.maxClaimRadius", oldConfig.getBoolean("maxClaimRadius"))
         plugin.config.set("language", oldConfig.getString("languageid"))
+        plugin.config.set("factions.actionBarTerritoryIndicator", oldConfig.getBoolean("territoryIndicatorActionbar"))
         plugin.config.set("factions.limitLand", oldConfig.getBoolean("limitLand"))
         plugin.config.set("players.powerLostOnDeath", oldConfig.getDouble("powerLostOnDeath").roundToInt())
         plugin.config.set("players.powerGainedOnKill", oldConfig.getDouble("powerGainedOnKill").roundToInt())

@@ -22,31 +22,31 @@ gates:
 factions:
   mobsSpawnInFactionTerritory: false
   allowedMobSpawnReasons:
-    - BEEHIVE
-    - BREEDING
-    - BUILD_IRONGOLEM
-    - BUILD_SNOWMAN
-    - COMMAND
-    - CURED
-    - CUSTOM
-    - DEFAULT
-    - DISPENSE_EGG
-    - EGG
-    - ENDER_PEARL
-    - EXPLOSION
-    - FROZEN
-    - INFECTION
-    - JOCKEY
-    - METAMORPHOSIS
-    - OCELOT_BABY
-    - SHEARED
-    - SHOULDER_ENTITY
-    - SILVERFISH_BLOCK
-    - SLIME_SPLIT
-    - SPAWNER
-    - SPAWNER_EGG
-    - SPELL
-    - VILLAGE_DEFENSE
+  - BEEHIVE
+  - BREEDING
+  - BUILD_IRONGOLEM
+  - BUILD_SNOWMAN
+  - COMMAND
+  - CURED
+  - CUSTOM
+  - DEFAULT
+  - DISPENSE_EGG
+  - EGG
+  - ENDER_PEARL
+  - EXPLOSION
+  - FROZEN
+  - INFECTION
+  - JOCKEY
+  - METAMORPHOSIS
+  - OCELOT_BABY
+  - SHEARED
+  - SHOULDER_ENTITY
+  - SILVERFISH_BLOCK
+  - SLIME_SPLIT
+  - SPAWNER
+  - SPAWNER_EGG
+  - SPELL
+  - VILLAGE_DEFENSE
   laddersPlaceableInEnemyFactionTerritory: true
   warsRequiredForPvp: true
   maxNameLength: 20
@@ -57,6 +57,7 @@ factions:
   playersChatWithPrefixes: true
   maxClaimRadius: 3
   limitLand: true
+  actionBarTerritoryIndicator: true
   defaults:
     flags:
       mustBeOfficerToManageLand: true

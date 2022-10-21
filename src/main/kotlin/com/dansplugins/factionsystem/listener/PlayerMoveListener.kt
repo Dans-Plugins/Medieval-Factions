@@ -5,6 +5,8 @@ import com.dansplugins.factionsystem.claim.MfClaimedChunk
 import com.dansplugins.factionsystem.player.MfPlayer
 import dev.forkhandles.result4k.onFailure
 import net.md_5.bungee.api.ChatColor
+import net.md_5.bungee.api.ChatMessageType.ACTION_BAR
+import net.md_5.bungee.api.chat.TextComponent
 import org.bukkit.ChatColor.RED
 import org.bukkit.event.EventHandler
 import org.bukkit.event.Listener
@@ -62,6 +64,9 @@ class PlayerMoveListener(private val plugin: MedievalFactions) : Listener {
                     "${ChatColor.of(plugin.config.getString("wilderness.color"))}${plugin.language["Wilderness"]}"
                 }
                 event.player.sendTitle(title, null, 10, 70, 20)
+                if (plugin.config.getBoolean("factions.actionBarTerritoryIndicator")) {
+                    event.player.spigot().sendMessage(ACTION_BAR, *TextComponent.fromLegacyText(title))
+                }
             })
         })
     }
