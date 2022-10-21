@@ -1,1 +1,1 @@
-./gradlew clean build
+./gradlew build
