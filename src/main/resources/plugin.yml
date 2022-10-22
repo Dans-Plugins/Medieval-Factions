@@ -272,6 +272,15 @@ permissions:
   mf.duel:
     description: Allows duelling
     default: true
+  mf.relationship.view:
+    description: Allows viewing faction relationships
+    default: op
+  mf.relationship.add:
+    description: Allows adding relationships to any faction
+    default: op
+  mf.relationship.remove:
+    description: Allows removing relationships from any faction
+    default: op
   mf.force.join:
     description: Allows joining a faction without being invited
     default: op
@@ -318,3 +327,7 @@ permissions:
     children:
     - mf.force.*
     - mf.bypass
+    - mf.relationship.view
+    - mf.relationship.add
+    - mf.relationship.remove
+    - mf.power.set

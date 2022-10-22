@@ -64,7 +64,7 @@ class MfFactionDeclareWarCommand(private val plugin: MedievalFactions) : Command
                 sender.sendMessage("$RED${plugin.language["CommandFactionDeclareWarAlreadyAtWar", target.name]}")
                 return@Runnable
             }
-            if (reverseRelationships.any { it.type == ALLY }) {
+            if (existingRelationships.any { it.type == ALLY } && reverseRelationships.any { it.type == ALLY }) {
                 sender.sendMessage("$RED${plugin.language["CommandFactionDeclareWarAlliedTarget"]}")
                 return@Runnable
             }

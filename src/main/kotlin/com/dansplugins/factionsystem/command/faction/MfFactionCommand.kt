@@ -30,6 +30,7 @@ import com.dansplugins.factionsystem.command.faction.makepeace.MfFactionMakePeac
 import com.dansplugins.factionsystem.command.faction.map.MfFactionMapCommand
 import com.dansplugins.factionsystem.command.faction.members.MfFactionMembersCommand
 import com.dansplugins.factionsystem.command.faction.power.MfFactionPowerCommand
+import com.dansplugins.factionsystem.command.faction.relationship.MfFactionRelationshipCommand
 import com.dansplugins.factionsystem.command.faction.role.MfFactionRoleCommand
 import com.dansplugins.factionsystem.command.faction.set.MfFactionSetCommand
 import com.dansplugins.factionsystem.command.faction.set.name.MfFactionSetNameCommand
@@ -84,6 +85,7 @@ class MfFactionCommand(private val plugin: MedievalFactions) : CommandExecutor {
     private val factionChatCommand = MfFactionChatCommand(plugin)
     private val factionClaimFillCommand = MfFactionClaimFillCommand(plugin)
     private val factionBonusPowerCommand = MfFactionBonusPowerCommand(plugin)
+    private val factionRelationshipCommand = MfFactionRelationshipCommand(plugin)
 
     override fun onCommand(sender: CommandSender, command: Command, label: String, args: Array<out String>): Boolean {
         return when (args.firstOrNull()?.lowercase()) {
@@ -125,6 +127,7 @@ class MfFactionCommand(private val plugin: MedievalFactions) : CommandExecutor {
             "chat", plugin.language["CmdFactionChat"] -> factionChatCommand.onCommand(sender, command, label, args.drop(1).toTypedArray())
             "claimfill", plugin.language["CmdFactionClaimFill"] -> factionClaimFillCommand.onCommand(sender, command, label, args.drop(1).toTypedArray())
             "bonuspower", plugin.language["CmdFactionBonusPower"] -> factionBonusPowerCommand.onCommand(sender, command, label, args.drop(1).toTypedArray())
+            "relationship", plugin.language["CmdFactionRelationship"] -> factionRelationshipCommand.onCommand(sender, command, label, args.drop(1).toTypedArray())
             else -> {
                 sender.sendMessage("$AQUA${plugin.language["MedievalFactionsTitle", plugin.description.version]}")
                 sender.sendMessage("$GRAY${plugin.language["DeveloperList", plugin.description.authors.joinToString()]}")

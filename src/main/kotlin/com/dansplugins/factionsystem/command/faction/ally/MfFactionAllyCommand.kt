@@ -69,7 +69,7 @@ class MfFactionAllyCommand(private val plugin: MedievalFactions) : CommandExecut
                     return@Runnable
                 }
             }
-            if (reverseRelationships.any { it.type == AT_WAR }) {
+            if (existingRelationships.any { it.type == AT_WAR } || reverseRelationships.any { it.type == AT_WAR }) {
                 sender.sendMessage("$RED${plugin.language["CommandFactionAllyAtWar"]}")
                 return@Runnable
             }
