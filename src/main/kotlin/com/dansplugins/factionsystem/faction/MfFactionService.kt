@@ -3,6 +3,7 @@ package com.dansplugins.factionsystem.faction
 import com.dansplugins.factionsystem.MedievalFactions
 import com.dansplugins.factionsystem.event.faction.*
 import com.dansplugins.factionsystem.exception.EventCancelledException
+import com.dansplugins.factionsystem.faction.field.MfFactionField
 import com.dansplugins.factionsystem.failure.OptimisticLockingFailureException
 import com.dansplugins.factionsystem.failure.ServiceFailure
 import com.dansplugins.factionsystem.failure.ServiceFailureType
@@ -14,12 +15,17 @@ import dev.forkhandles.result4k.mapFailure
 import dev.forkhandles.result4k.onFailure
 import dev.forkhandles.result4k.resultFrom
 import java.util.concurrent.ConcurrentHashMap
+import java.util.concurrent.CopyOnWriteArrayList
 
 class MfFactionService(private val plugin: MedievalFactions, private val repository: MfFactionRepository) {
 
     private val factionsById: MutableMap<MfFactionId, MfFaction> = ConcurrentHashMap()
     val factions: List<MfFaction>
         get() = factionsById.values.toList()
+
+    private val _fields: MutableList<MfFactionField> = CopyOnWriteArrayList()
+    val fields: List<MfFactionField>
+        get() = _fields
 
     init {
         plugin.logger.info("Loading factions...")
@@ -108,6 +114,10 @@ class MfFactionService(private val plugin: MedievalFactions, private val reposit
         return@resultFrom result
     }.mapFailure { exception ->
         ServiceFailure(exception.toServiceFailureType(), "Service error: ${exception.message}", exception)
+    }
+
+    fun addField(field: MfFactionField) {
+        _fields.add(field)
     }
 
     private fun Exception.toServiceFailureType(): ServiceFailureType {
