@@ -19,6 +19,10 @@ gates:
   maxBlocks: 64
   maxPerFaction: 5
   maxRemoveDistance: 12
+pvp:
+  enabledForFactionlessPlayers: true
+  warRequiredForPlayersOfDifferentFactions: true
+  friendlyFire: false
 factions:
   mobsSpawnInFactionTerritory: false
   allowedMobSpawnReasons:

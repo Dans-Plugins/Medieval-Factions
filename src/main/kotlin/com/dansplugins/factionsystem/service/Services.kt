@@ -11,6 +11,7 @@ import com.dansplugins.factionsystem.law.MfLawService
 import com.dansplugins.factionsystem.locks.MfLockService
 import com.dansplugins.factionsystem.notification.MfNotificationService
 import com.dansplugins.factionsystem.player.MfPlayerService
+import com.dansplugins.factionsystem.potion.MfPotionService
 import com.dansplugins.factionsystem.relationship.MfFactionRelationshipService
 
 class Services(
@@ -25,5 +26,6 @@ class Services(
     val gateService: MfGateService,
     val chatService: MfChatService,
     val duelService: MfDuelService,
+    val potionService: MfPotionService,
     val dynmapService: MfDynmapService?
 )
