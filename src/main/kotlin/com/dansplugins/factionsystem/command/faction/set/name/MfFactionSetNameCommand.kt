@@ -70,6 +70,7 @@ class MfFactionSetNameCommand(private val plugin: MedievalFactions): CommandExec
     private fun setFactionName(player: Player, args: Array<out String>) {
         val onlinePlayers = plugin.server.onlinePlayers.associateWith { it.location.chunk }
         val hasForcePermission = player.hasPermission("mf.force.rename")
+        val maxFactionNameLength = plugin.config.getInt("factions.maxNameLength")
         plugin.server.scheduler.runTaskAsynchronously(plugin, Runnable {
             val playerService = plugin.services.playerService
             val mfPlayer = playerService.getPlayer(player)
@@ -91,6 +92,10 @@ class MfFactionSetNameCommand(private val plugin: MedievalFactions): CommandExec
             if (faction == null) {
                 faction = factionService.getFaction(mfPlayer.id)
                 name = args.joinToString(" ")
+            }
+            if (name.length > maxFactionNameLength) {
+                player.sendMessage("$RED${plugin.language["CommandFactionSetNameNameTooLong", maxFactionNameLength.toString()]}")
+                return@Runnable
             }
             if (faction == null) {
                 player.sendMessage("$RED${plugin.language["CommandFactionSetNameMustBeInAFaction"]}")
