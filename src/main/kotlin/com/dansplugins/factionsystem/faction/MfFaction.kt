@@ -138,17 +138,6 @@ data class MfFaction(
     val maxPower: Int
         get() = maxMemberPower + maxVassalPower + bonusPower
 
-    constructor(plugin: MedievalFactions, name: String) : this(
-        plugin,
-        MfFactionId.generate(),
-        0,
-        name,
-        "",
-        emptyList(),
-        emptyList(),
-        plugin.flags.defaults()
-    )
-
     fun getRole(playerId: MfPlayerId): MfFactionRole? = members.singleOrNull { it.playerId == playerId }?.role
     fun getRole(roleId: MfFactionRoleId): MfFactionRole? = roles.getRole(roleId)
     fun getRole(name: String): MfFactionRole? = roles.getRole(name)
