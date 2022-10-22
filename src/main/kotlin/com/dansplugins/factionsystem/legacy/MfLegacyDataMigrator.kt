@@ -81,7 +81,6 @@ class MfLegacyDataMigrator(private val plugin: MedievalFactions) {
         plugin.config.set("factions.maxNameLength", oldConfig.getString("factionMaxNameLength"))
         plugin.config.set("gates.maxPerFaction", oldConfig.getInt("factionMaxNumberGates"))
         plugin.config.set("gates.maxBlocks", oldConfig.getInt("factionMaxGateArea"))
-        plugin.config.set("factions.surroundingChunksProtected", oldConfig.getBoolean("surroundedChunksProtected"))
         plugin.config.set("factions.zeroPowerFactionsGetDisbanded", oldConfig.getBoolean("zeroPowerFactionsGetDisbanded"))
         plugin.config.set("factions.vassalPowerContributionMultiplier", oldConfig.getDouble("vassalContributionPercentageMultiplier"))
         plugin.config.set("factions.playersChatWithPrefixes", oldConfig.getBoolean("playersChatWithPrefixes"))
