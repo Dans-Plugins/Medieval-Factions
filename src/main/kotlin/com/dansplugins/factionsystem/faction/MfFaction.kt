@@ -14,8 +14,10 @@ import com.dansplugins.factionsystem.faction.permission.MfFactionPermission.Comp
 import com.dansplugins.factionsystem.faction.permission.MfFactionPermission.Companion.CHAT_HISTORY
 import com.dansplugins.factionsystem.faction.permission.MfFactionPermission.Companion.CLAIM
 import com.dansplugins.factionsystem.faction.permission.MfFactionPermission.Companion.CREATE_GATE
+import com.dansplugins.factionsystem.faction.permission.MfFactionPermission.Companion.CREATE_ROLE
 import com.dansplugins.factionsystem.faction.permission.MfFactionPermission.Companion.DECLARE_INDEPENDENCE
 import com.dansplugins.factionsystem.faction.permission.MfFactionPermission.Companion.DECLARE_WAR
+import com.dansplugins.factionsystem.faction.permission.MfFactionPermission.Companion.DELETE_ROLE
 import com.dansplugins.factionsystem.faction.permission.MfFactionPermission.Companion.DEMOTE
 import com.dansplugins.factionsystem.faction.permission.MfFactionPermission.Companion.DISBAND
 import com.dansplugins.factionsystem.faction.permission.MfFactionPermission.Companion.GO_HOME
@@ -32,6 +34,7 @@ import com.dansplugins.factionsystem.faction.permission.MfFactionPermission.Comp
 import com.dansplugins.factionsystem.faction.permission.MfFactionPermission.Companion.REMOVE_GATE
 import com.dansplugins.factionsystem.faction.permission.MfFactionPermission.Companion.REMOVE_LAW
 import com.dansplugins.factionsystem.faction.permission.MfFactionPermission.Companion.REQUEST_ALLIANCE
+import com.dansplugins.factionsystem.faction.permission.MfFactionPermission.Companion.SET_DEFAULT_ROLE
 import com.dansplugins.factionsystem.faction.permission.MfFactionPermission.Companion.SET_FLAG
 import com.dansplugins.factionsystem.faction.permission.MfFactionPermission.Companion.SET_HOME
 import com.dansplugins.factionsystem.faction.permission.MfFactionPermission.Companion.SET_MEMBER_ROLE
@@ -109,9 +112,12 @@ data class MfFaction(
             put(VIEW_ROLE(role.id), true)
             put(MODIFY_ROLE(role.id), false)
             put(SET_MEMBER_ROLE(role.id), false)
+            put(DELETE_ROLE(role.id), false)
         }
         put(LIST_ROLES, true)
         put(LIST_MEMBERS, true)
+        put(CREATE_ROLE, false)
+        put(SET_DEFAULT_ROLE, false)
 
         putAll(keys.map { permission -> SET_ROLE_PERMISSION(permission) to false })
     }

@@ -159,7 +159,7 @@ tasks.named('test') {
 publishing {
     publications {
         maven(MavenPublication) { publication ->
-            from(project.shadow.component(publication))
+            from components.java
         }
     }
 }

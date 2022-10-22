@@ -73,6 +73,9 @@ class MfFactionPermission(
         val SET_MEMBER_ROLE = { roleId: MfFactionRoleId -> MfFactionPermission("SET_MEMBER_ROLE(${roleId.value})") { language, faction -> language["FactionPermissionSetMemberRole", faction.getRole(roleId)?.name ?: ""]} }
         val LIST_ROLES = MfFactionPermission("LIST_ROLES", "FactionPermissionListRoles")
         val LIST_MEMBERS = MfFactionPermission("LIST_MEMBERS", "FactionPermissionListMembers")
+        val CREATE_ROLE = MfFactionPermission("CREATE_ROLE", "FactionPermissionCreateRole")
+        val DELETE_ROLE = { roleId: MfFactionRoleId -> MfFactionPermission("DELETE_ROLE(${roleId.value})") { language, faction -> language["FactionPermissionDeleteRole", faction.getRole(roleId)?.name ?: ""]} }
+        val SET_DEFAULT_ROLE = MfFactionPermission("SET_DEFAULT_ROLE", "FactionPermissionSetDefaultRole")
 
         fun valueOf(name: String, flags: MfFlags): MfFactionPermission? = when {
             name == "ADD_LAW" -> ADD_LAW
@@ -132,6 +135,12 @@ class MfFactionPermission(
                 ?.let(SET_MEMBER_ROLE)
             name == "LIST_ROLES" -> LIST_ROLES
             name == "LIST_MEMBERS" -> LIST_MEMBERS
+            name == "CREATE_ROLE" -> CREATE_ROLE
+            name.matches(Regex("DELETE_ROLE\\((.+)\\)")) -> Regex("DELETE_ROLE\\((.+)\\)").find(name)
+                ?.groupValues?.get(1)
+                ?.let(::MfFactionRoleId)
+                ?.let(DELETE_ROLE)
+            name == "SET_DEFAULT_ROLE" -> SET_DEFAULT_ROLE
             else -> null
         }
 
@@ -179,9 +188,12 @@ class MfFactionPermission(
                 add(VIEW_ROLE(roleId))
                 add(MODIFY_ROLE(roleId))
                 add(SET_MEMBER_ROLE(roleId))
+                add(DELETE_ROLE(roleId))
             }
             add(LIST_ROLES)
             add(LIST_MEMBERS)
+            add(CREATE_ROLE)
+            add(SET_DEFAULT_ROLE)
 
             addAll(map { permission -> SET_ROLE_PERMISSION(permission) })
         }

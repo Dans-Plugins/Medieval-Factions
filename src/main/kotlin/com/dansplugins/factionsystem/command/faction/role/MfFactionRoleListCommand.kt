@@ -2,6 +2,11 @@ package com.dansplugins.factionsystem.command.faction.role
 
 import com.dansplugins.factionsystem.MedievalFactions
 import com.dansplugins.factionsystem.faction.permission.MfFactionPermission
+import com.dansplugins.factionsystem.faction.permission.MfFactionPermission.Companion.CREATE_ROLE
+import com.dansplugins.factionsystem.faction.permission.MfFactionPermission.Companion.DELETE_ROLE
+import com.dansplugins.factionsystem.faction.permission.MfFactionPermission.Companion.MODIFY_ROLE
+import com.dansplugins.factionsystem.faction.permission.MfFactionPermission.Companion.SET_DEFAULT_ROLE
+import com.dansplugins.factionsystem.faction.permission.MfFactionPermission.Companion.SET_MEMBER_ROLE
 import com.dansplugins.factionsystem.pagination.PaginatedView
 import com.dansplugins.factionsystem.player.MfPlayer
 import dev.forkhandles.result4k.onFailure
@@ -62,15 +67,65 @@ class MfFactionRoleListCommand(private val plugin: MedievalFactions) : CommandEx
                 },
                 faction.roles.map { role ->
                     lazy {
-                        arrayOf(
-                            TextComponent(
+                        buildList {
+                            add(TextComponent(
                                 plugin.language["CommandFactionRoleListItem", role.name]
                             ).apply {
-                                color = SpigotChatColor.AQUA
+                                color = SpigotChatColor.GRAY
                                 clickEvent = ClickEvent(RUN_COMMAND, "/faction role view ${role.id.value}")
-                                hoverEvent = HoverEvent(SHOW_TEXT, Text(plugin.language["CommandFactionRoleListItemHover", role.name]))
+                                hoverEvent = HoverEvent(
+                                    SHOW_TEXT,
+                                    Text(plugin.language["CommandFactionRoleListItemHover", role.name])
+                                )
+                            })
+                            if (faction.roles.defaultRoleId == role.id) {
+                                add(TextComponent(" "))
+                                add(TextComponent(
+                                    plugin.language["CommandFactionRoleListDefault"]
+                                ).apply {
+                                    color = SpigotChatColor.AQUA
+                                })
                             }
-                        )
+                            if (playerRole.hasPermission(faction, MODIFY_ROLE(role.id))) {
+                                add(TextComponent(" "))
+                                add(TextComponent(
+                                    plugin.language["CommandFactionRoleListRenameButton", role.name]
+                                ).apply {
+                                    color = SpigotChatColor.GREEN
+                                    clickEvent = ClickEvent(RUN_COMMAND, "/faction role rename ${role.id.value} p=${pageNumber + 1}")
+                                    hoverEvent = HoverEvent(
+                                        SHOW_TEXT,
+                                        Text(plugin.language["CommandFactionRoleListRenameButtonHover", role.name])
+                                    )
+                                })
+                            }
+                            if (playerRole.hasPermission(faction, DELETE_ROLE(role.id))) {
+                                add(TextComponent(" "))
+                                add(TextComponent(
+                                    plugin.language["CommandFactionRoleListDeleteButton", role.name]
+                                ).apply {
+                                    color = SpigotChatColor.RED
+                                    clickEvent = ClickEvent(RUN_COMMAND, "/faction role delete ${role.id.value} p=${pageNumber + 1}")
+                                    hoverEvent = HoverEvent(
+                                        SHOW_TEXT,
+                                        Text(plugin.language["CommandFactionRoleListDeleteButtonHover", role.name])
+                                    )
+                                })
+                            }
+                            if (playerRole.hasPermission(faction, SET_DEFAULT_ROLE) && playerRole.hasPermission(faction, SET_MEMBER_ROLE(role.id))) {
+                                add(TextComponent(" "))
+                                add(TextComponent(
+                                    plugin.language["CommandFactionRoleListSetDefaultRoleButton"]
+                                ).apply {
+                                    color = SpigotChatColor.YELLOW
+                                    clickEvent = ClickEvent(RUN_COMMAND, "/faction role setdefault ${role.id.value} p=${pageNumber + 1}")
+                                    hoverEvent = HoverEvent(
+                                        SHOW_TEXT,
+                                        Text(plugin.language["CommandFactionRoleListSetDefaultRoleButtonHover", role.name])
+                                    )
+                                })
+                            }
+                        }.toTypedArray()
                     }
                 }
             ) { page -> "/faction role list ${page + 1}" }
@@ -79,6 +134,17 @@ class MfFactionRoleListCommand(private val plugin: MedievalFactions) : CommandEx
                 return@Runnable
             }
             view.sendPage(sender, pageNumber)
+            if (playerRole.hasPermission(faction, CREATE_ROLE)) {
+                sender.spigot().sendMessage(*arrayOf(
+                    TextComponent(
+                        plugin.language["CommandFactionRoleListCreateButton"]
+                    ).apply {
+                        color = SpigotChatColor.GREEN
+                        clickEvent = ClickEvent(RUN_COMMAND, "/faction role create")
+                        hoverEvent = HoverEvent(SHOW_TEXT, Text(plugin.language["CommandFactionRoleListCreateButtonHover"]))
+                    }
+                ))
+            }
         })
         return true
     }
