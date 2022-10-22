@@ -5,6 +5,7 @@ import com.dansplugins.factionsystem.area.MfBlockPosition
 import com.dansplugins.factionsystem.player.MfPlayer
 import dev.forkhandles.result4k.onFailure
 import org.bukkit.ChatColor.RED
+import org.bukkit.Material
 import org.bukkit.event.EventHandler
 import org.bukkit.event.Listener
 import org.bukkit.event.block.BlockPlaceEvent
@@ -27,6 +28,7 @@ class BlockPlaceListener(private val plugin: MedievalFactions) : Listener {
         val claim = claimService.getClaim(event.block.chunk) ?: return
         val factionService = plugin.services.factionService
         val claimFaction = factionService.getFaction(claim.factionId) ?: return
+        val relationshipService = plugin.services.factionRelationshipService
         val playerService = plugin.services.playerService
         val mfPlayer = playerService.getPlayer(event.player)
         if (mfPlayer == null) {
@@ -40,9 +42,15 @@ class BlockPlaceListener(private val plugin: MedievalFactions) : Listener {
             })
             return
         }
+        val playerFaction = factionService.getFaction(mfPlayer.id)
         if (!claimService.isInteractionAllowed(mfPlayer.id, claim)) {
             if (mfPlayer.isBypassEnabled && event.player.hasPermission("mf.bypass")) {
                 event.player.sendMessage("$RED${plugin.language["FactionTerritoryProtectionBypassed"]}")
+            } else if (playerFaction != null && relationshipService.getFactionsAtWarWith(playerFaction.id).contains(claimFaction.id)) {
+                if (event.block.type != Material.LADDER || !plugin.config.getBoolean("factions.laddersPlaceableInEnemyFactionTerritory")) {
+                    event.isCancelled = true
+                    event.player.sendMessage("$RED${plugin.language["CannotPlaceBlockInFactionTerritory", claimFaction.name]}")
+                }
             } else {
                 event.isCancelled = true
                 event.player.sendMessage("$RED${plugin.language["CannotPlaceBlockInFactionTerritory", claimFaction.name]}")
