@@ -105,12 +105,12 @@ class MedievalFactionsPlaceholderExpansion(private val plugin: MedievalFactions)
 
     private fun getFactionBonusPower(player: OfflinePlayer): String {
         val faction = getPlayerFaction(player) ?: return "Factionless"
-        return faction.bonusPower.toString()
+        return if (faction.flags[plugin.flags.acceptBonusPower]) faction.bonusPower.toString() else "0"
     }
 
     private fun getFactionPowerWithoutBonus(player: OfflinePlayer): String {
         val faction = getPlayerFaction(player) ?: return "Factionless"
-        return (faction.power - faction.bonusPower).toString()
+        return (faction.power - (if (faction.flags[plugin.flags.acceptBonusPower]) faction.bonusPower else 0)).toString()
     }
 
     private fun getFactionAllyCount(player: OfflinePlayer): String {
