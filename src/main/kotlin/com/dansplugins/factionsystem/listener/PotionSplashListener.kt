@@ -51,7 +51,7 @@ class PotionSplashListener(private val plugin: MedievalFactions) : Listener {
                 return
             }
             if (damagerFaction.id == damagedFaction.id) {
-                if (!plugin.config.getBoolean("pvp.friendlyFire")) {
+                if (!plugin.config.getBoolean("pvp.friendlyFire") && !damagerFaction.flags[plugin.flags.allowFriendlyFire]) {
                     event.setIntensity(damaged, 0.0)
                 }
                 return
