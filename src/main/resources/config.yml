@@ -56,7 +56,6 @@ factions:
   zeroPowerFactionsGetDisbanded: false
   vassalPowerContributionMultiplier: 0.75
   nonMembersCanInteractWithDoors: false
-  playersChatWithPrefixes: true
   maxClaimRadius: 3
   limitLand: true
   actionBarTerritoryIndicator: true
@@ -71,6 +70,7 @@ factions:
       allowFriendlyFire: false
       acceptBonusPower: true
 chat:
+  enableDefaultChatFormatting: true
   faction:
     format: '&7[faction] [${factionColor}${faction}&7] [${role}] &f${displayName}: ${message}'
   vassals:

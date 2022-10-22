@@ -4,6 +4,7 @@ import com.dansplugins.factionsystem.MedievalFactions
 import com.dansplugins.factionsystem.faction.permission.MfFactionPermission.Companion.CHAT
 import com.dansplugins.factionsystem.player.MfPlayer
 import dev.forkhandles.result4k.onFailure
+import net.md_5.bungee.api.ChatColor
 import org.bukkit.ChatColor.RED
 import org.bukkit.event.EventHandler
 import org.bukkit.event.Listener
@@ -11,6 +12,8 @@ import org.bukkit.event.player.AsyncPlayerChatEvent
 import java.util.logging.Level.SEVERE
 
 class AsyncPlayerChatListener(private val plugin: MedievalFactions) : Listener {
+
+    private val isDefaultChatFormattingEnabled = plugin.config.getBoolean("chat.enableDefaultChatFormatting")
 
     @EventHandler
     fun onAsyncPlayerChat(event: AsyncPlayerChatEvent) {
@@ -34,6 +37,8 @@ class AsyncPlayerChatListener(private val plugin: MedievalFactions) : Listener {
             plugin.server.scheduler.runTask(plugin, Runnable {
                 chatService.sendMessage(mfPlayer, faction, mfPlayer.chatChannel, event.message)
             })
+        } else if (isDefaultChatFormattingEnabled) {
+            event.format = "${ChatColor.WHITE}[${ChatColor.of(faction.flags[plugin.flags.color])}${faction.prefix ?: faction.name}${ChatColor.WHITE}] %s: %s"
         }
     }
 
