@@ -84,7 +84,7 @@ class MfLegacyDataMigrator(private val plugin: MedievalFactions) {
         plugin.config.set("factions.zeroPowerFactionsGetDisbanded", oldConfig.getBoolean("zeroPowerFactionsGetDisbanded"))
         plugin.config.set("factions.vassalPowerContributionMultiplier", oldConfig.getDouble("vassalContributionPercentageMultiplier"))
         plugin.config.set("factions.nonMembersCanInteractWithDoors", oldConfig.getBoolean("nonMembersCanInteractWithDoors"))
-        plugin.config.set("factions.playersChatWithPrefixes", oldConfig.getBoolean("playersChatWithPrefixes"))
+        plugin.config.set("chat.enableDefaultChatFormatting", oldConfig.getBoolean("playersChatWithPrefixes"))
         plugin.config.set("factions.maxClaimRadius", oldConfig.getBoolean("maxClaimRadius"))
         plugin.config.set("language", oldConfig.getString("languageid"))
         plugin.config.set("factions.actionBarTerritoryIndicator", oldConfig.getBoolean("territoryIndicatorActionbar"))
