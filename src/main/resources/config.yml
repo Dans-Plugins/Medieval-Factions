@@ -59,6 +59,7 @@ factions:
   maxClaimRadius: 3
   limitLand: true
   actionBarTerritoryIndicator: true
+  titleTerritoryIndicator: true
   defaults:
     flags:
       mustBeOfficerToManageLand: true
