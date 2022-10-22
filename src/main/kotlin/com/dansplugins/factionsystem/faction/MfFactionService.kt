@@ -1,9 +1,12 @@
 package com.dansplugins.factionsystem.faction
 
 import com.dansplugins.factionsystem.MedievalFactions
+import com.dansplugins.factionsystem.area.MfPosition
 import com.dansplugins.factionsystem.event.faction.*
 import com.dansplugins.factionsystem.exception.EventCancelledException
 import com.dansplugins.factionsystem.faction.field.MfFactionField
+import com.dansplugins.factionsystem.faction.flag.MfFlagValues
+import com.dansplugins.factionsystem.faction.role.MfFactionRoles
 import com.dansplugins.factionsystem.failure.OptimisticLockingFailureException
 import com.dansplugins.factionsystem.failure.ServiceFailure
 import com.dansplugins.factionsystem.failure.ServiceFailureType
@@ -35,10 +38,13 @@ class MfFactionService(private val plugin: MedievalFactions, private val reposit
     }
 
     fun getFaction(name: String): MfFaction? = factions.singleOrNull { it.name == name }
+
     fun getFaction(playerId: MfPlayerId): MfFaction? = factions.singleOrNull { faction ->
         faction.members.any { member -> member.playerId == playerId }
     }
+
     fun getFaction(factionId: MfFactionId): MfFaction? = factionsById[factionId]
+
     fun save(faction: MfFaction): Result4k<MfFaction, ServiceFailure> = resultFrom {
         val previousState = getFaction(faction.id)
         if (previousState == null) {
@@ -103,6 +109,7 @@ class MfFactionService(private val plugin: MedievalFactions, private val reposit
     }.mapFailure { exception ->
         ServiceFailure(exception.toServiceFailureType(), "Service error: ${exception.message}", exception)
     }
+
     fun delete(factionId: MfFactionId): Result4k<Unit, ServiceFailure> = resultFrom {
         val event = FactionDisbandEvent(factionId, !plugin.server.isPrimaryThread)
         plugin.server.pluginManager.callEvent(event)
@@ -114,6 +121,34 @@ class MfFactionService(private val plugin: MedievalFactions, private val reposit
         return@resultFrom result
     }.mapFailure { exception ->
         ServiceFailure(exception.toServiceFailureType(), "Service error: ${exception.message}", exception)
+    }
+
+    @JvmOverloads
+    fun createFaction(
+        name: String,
+        description: String = "",
+        members: List<MfFactionMember> = emptyList(),
+        invites: List<MfFactionInvite> = emptyList(),
+        flags: MfFlagValues = plugin.flags.defaults(),
+        prefix: String? = null,
+        home: MfPosition? = null,
+        bonusPower: Int = 0,
+        autoclaim: Boolean = false,
+        roles: MfFactionRoles = MfFactionRoles.defaults(plugin.flags)
+    ): Result4k<MfFaction, ServiceFailure> {
+        return save(MfFaction(
+            plugin = plugin,
+            name = name,
+            description = description,
+            members = members,
+            invites = invites,
+            flags = flags,
+            prefix = prefix,
+            home = home,
+            bonusPower = bonusPower,
+            autoclaim = autoclaim,
+            roles = roles
+        ))
     }
 
     fun addField(field: MfFactionField) {
