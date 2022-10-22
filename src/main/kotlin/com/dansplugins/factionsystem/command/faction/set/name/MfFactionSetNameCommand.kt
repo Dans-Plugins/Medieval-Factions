@@ -1,6 +1,8 @@
 package com.dansplugins.factionsystem.command.faction.set.name
 
 import com.dansplugins.factionsystem.MedievalFactions
+import com.dansplugins.factionsystem.faction.MfFaction
+import com.dansplugins.factionsystem.faction.MfFactionId
 import com.dansplugins.factionsystem.faction.permission.MfFactionPermission.Companion.CHANGE_NAME
 import com.dansplugins.factionsystem.player.MfPlayer
 import dev.forkhandles.result4k.onFailure
@@ -17,6 +19,7 @@ import org.bukkit.conversations.ConversationFactory
 import org.bukkit.conversations.Prompt
 import org.bukkit.conversations.StringPrompt
 import org.bukkit.entity.Player
+import preponderous.ponder.command.unquote
 import java.util.logging.Level
 
 class MfFactionSetNameCommand(private val plugin: MedievalFactions): CommandExecutor {
@@ -42,7 +45,7 @@ class MfFactionSetNameCommand(private val plugin: MedievalFactions): CommandExec
             val conversable = context.forWhom
             if (conversable !is Player) return END_OF_CONVERSATION
             if (input == null) return END_OF_CONVERSATION
-            setFactionName(conversable, input)
+            setFactionName(conversable, arrayOf(input))
             return END_OF_CONVERSATION
         }
     }
@@ -60,12 +63,13 @@ class MfFactionSetNameCommand(private val plugin: MedievalFactions): CommandExec
             conversationFactory.buildConversation(sender).begin()
             return true
         }
-        setFactionName(sender, args.joinToString(" "))
+        setFactionName(sender, args)
         return true
     }
 
-    private fun setFactionName(player: Player, name: String) {
+    private fun setFactionName(player: Player, args: Array<out String>) {
         val onlinePlayers = plugin.server.onlinePlayers.associateWith { it.location.chunk }
+        val hasForcePermission = player.hasPermission("mf.force.rename")
         plugin.server.scheduler.runTaskAsynchronously(plugin, Runnable {
             val playerService = plugin.services.playerService
             val mfPlayer = playerService.getPlayer(player)
@@ -75,7 +79,19 @@ class MfFactionSetNameCommand(private val plugin: MedievalFactions): CommandExec
                     return@Runnable
                 }
             val factionService = plugin.services.factionService
-            val faction = factionService.getFaction(mfPlayer.id)
+            var faction: MfFaction? = null
+            var name = ""
+            if (hasForcePermission) {
+                val unquotedArgs = args.unquote()
+                if (unquotedArgs.size > 1) {
+                    faction = factionService.getFaction(MfFactionId(unquotedArgs[0])) ?: factionService.getFaction(unquotedArgs[0])
+                    name = unquotedArgs.drop(1).joinToString(" ")
+                }
+            }
+            if (faction == null) {
+                faction = factionService.getFaction(mfPlayer.id)
+                name = args.joinToString(" ")
+            }
             if (faction == null) {
                 player.sendMessage("$RED${plugin.language["CommandFactionSetNameMustBeInAFaction"]}")
                 return@Runnable

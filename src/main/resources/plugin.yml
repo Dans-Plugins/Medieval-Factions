@@ -152,6 +152,18 @@ permissions:
   mf.role.set:
     description: Allows setting a faction member's role
     default: true
+  mf.role.create:
+    description: Allows creating roles
+    default: true
+  mf.role.delete:
+    description: Allows deleting roles
+    default: true
+  mf.role.setdefault:
+    description: Allows setting the default role
+    default: true
+  mf.role.rename:
+    description: Allows renaming roles
+    default: true
   mf.list:
     description: Allows listing factions
     default: true

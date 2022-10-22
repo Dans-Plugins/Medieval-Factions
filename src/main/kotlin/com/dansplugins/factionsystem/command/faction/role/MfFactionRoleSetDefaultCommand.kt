@@ -17,7 +17,7 @@ import java.util.logging.Level.SEVERE
 class MfFactionRoleSetDefaultCommand(private val plugin: MedievalFactions) : CommandExecutor {
 
     override fun onCommand(sender: CommandSender, command: Command, label: String, args: Array<out String>): Boolean {
-        if (!sender.hasPermission("mf.role.rename")) {
+        if (!sender.hasPermission("mf.role.setdefault")) {
             sender.sendMessage("$RED${plugin.language["CommandFactionRoleSetDefaultNoPermission"]}")
             return true
         }
