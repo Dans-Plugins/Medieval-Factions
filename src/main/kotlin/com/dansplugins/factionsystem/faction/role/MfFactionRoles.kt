@@ -11,8 +11,10 @@ import com.dansplugins.factionsystem.faction.permission.MfFactionPermission.Comp
 import com.dansplugins.factionsystem.faction.permission.MfFactionPermission.Companion.CHAT
 import com.dansplugins.factionsystem.faction.permission.MfFactionPermission.Companion.CLAIM
 import com.dansplugins.factionsystem.faction.permission.MfFactionPermission.Companion.CREATE_GATE
+import com.dansplugins.factionsystem.faction.permission.MfFactionPermission.Companion.CREATE_ROLE
 import com.dansplugins.factionsystem.faction.permission.MfFactionPermission.Companion.DECLARE_INDEPENDENCE
 import com.dansplugins.factionsystem.faction.permission.MfFactionPermission.Companion.DECLARE_WAR
+import com.dansplugins.factionsystem.faction.permission.MfFactionPermission.Companion.DELETE_ROLE
 import com.dansplugins.factionsystem.faction.permission.MfFactionPermission.Companion.DEMOTE
 import com.dansplugins.factionsystem.faction.permission.MfFactionPermission.Companion.DISBAND
 import com.dansplugins.factionsystem.faction.permission.MfFactionPermission.Companion.GO_HOME
@@ -28,6 +30,7 @@ import com.dansplugins.factionsystem.faction.permission.MfFactionPermission.Comp
 import com.dansplugins.factionsystem.faction.permission.MfFactionPermission.Companion.REMOVE_GATE
 import com.dansplugins.factionsystem.faction.permission.MfFactionPermission.Companion.REMOVE_LAW
 import com.dansplugins.factionsystem.faction.permission.MfFactionPermission.Companion.REQUEST_ALLIANCE
+import com.dansplugins.factionsystem.faction.permission.MfFactionPermission.Companion.SET_DEFAULT_ROLE
 import com.dansplugins.factionsystem.faction.permission.MfFactionPermission.Companion.SET_FLAG
 import com.dansplugins.factionsystem.faction.permission.MfFactionPermission.Companion.SET_HOME
 import com.dansplugins.factionsystem.faction.permission.MfFactionPermission.Companion.SET_MEMBER_ROLE
@@ -64,6 +67,7 @@ data class MfFactionRoles(
                     put(KICK, true)
                     put(VIEW_ROLE(member.id), true)
                     put(MODIFY_ROLE(member.id), true)
+                    put(DELETE_ROLE(member.id), true)
                     put(SET_MEMBER_ROLE(member.id), true)
                     put(SET_ROLE_PERMISSION(LIST_LAWS), true)
                     put(SET_ROLE_PERMISSION(CHAT(FACTION)), true)
@@ -84,6 +88,7 @@ data class MfFactionRoles(
                     put(SET_ROLE_PERMISSION(KICK), true)
                     put(SET_ROLE_PERMISSION(MODIFY_ROLE(member.id)), true)
                     put(SET_ROLE_PERMISSION(LIST_MEMBERS), true)
+                    put(CREATE_ROLE, true)
                 }
             )
             val ownerId = MfFactionRoleId.generate()
@@ -136,7 +141,12 @@ data class MfFactionRoles(
                     put(SET_MEMBER_ROLE(member.id), true)
                     put(SET_MEMBER_ROLE(officer.id), true)
                     put(SET_MEMBER_ROLE(ownerId), true)
+                    put(DELETE_ROLE(member.id), true)
+                    put(DELETE_ROLE(officer.id), true)
+                    put(DELETE_ROLE(ownerId), true)
                     put(LIST_MEMBERS, true)
+                    put(CREATE_ROLE, true)
+                    put(SET_DEFAULT_ROLE, true)
 
                     putAll(MfFactionPermission.values(flags, listOf(member.id, officer.id, ownerId)).map { permission -> SET_ROLE_PERMISSION(permission) to true })
                 }
