@@ -71,9 +71,11 @@ class MfClaimService(private val plugin: MedievalFactions, private val repositor
                 if (players.isNotEmpty()) {
                     plugin.server.scheduler.runTask(plugin, Runnable {
                         players.forEach { player ->
-                            player.resetTitle()
                             val title = "${ChatColor.of(faction.flags[plugin.flags.color])}${faction.name}"
-                            player.sendTitle(title, null, 10, 70, 20)
+                            if (plugin.config.getBoolean("factions.titleTerritoryIndicator")) {
+                                player.resetTitle()
+                                player.sendTitle(title, null, 10, 70, 20)
+                            }
                             if (plugin.config.getBoolean("factions.actionBarTerritoryIndicator")) {
                                 player.spigot().sendMessage(ACTION_BAR, *TextComponent.fromLegacyText(title))
                             }
@@ -105,11 +107,15 @@ class MfClaimService(private val plugin: MedievalFactions, private val repositor
                 val players = world.players.filter { it.location.chunk.x == claim.x && it.location.chunk.z == claim.z }
                 if (players.isNotEmpty()) {
                     players.forEach { player ->
-                        player.resetTitle()
                         val title =
                             "${ChatColor.of(plugin.config.getString("wilderness.color"))}${plugin.language["Wilderness"]}"
-                        player.sendTitle(title, null, 10, 70, 20)
-                        player.spigot().sendMessage(ACTION_BAR, *TextComponent.fromLegacyText(title))
+                        if (plugin.config.getBoolean("factions.titleTerritoryIndicator")) {
+                            player.resetTitle()
+                            player.sendTitle(title, null, 10, 70, 20)
+                        }
+                        if (plugin.config.getBoolean("factions.actionBarTerritoryIndicator")) {
+                            player.spigot().sendMessage(ACTION_BAR, *TextComponent.fromLegacyText(title))
+                        }
                     }
                 }
             }
