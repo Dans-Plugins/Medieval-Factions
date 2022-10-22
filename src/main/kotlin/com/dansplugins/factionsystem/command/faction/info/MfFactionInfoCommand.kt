@@ -92,6 +92,16 @@ class MfFactionInfoCommand(private val plugin: MedievalFactions) : CommandExecut
                     clickEvent = ClickEvent(RUN_COMMAND, "/faction invite")
                 })
             }
+            factionService.fields
+                .filter { field -> field.isVisibleFor(faction.id, mfPlayer.id) }
+                .forEach { field ->
+                    sender.spigot().sendMessage(
+                        TextComponent("${field.name}: ").apply {
+                            color = SpigotChatColor.GRAY
+                        },
+                        *field.get(faction.id)
+                    )
+                }
         })
         return true
     }
