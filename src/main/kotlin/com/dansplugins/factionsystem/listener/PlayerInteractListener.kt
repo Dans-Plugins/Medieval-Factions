@@ -181,8 +181,12 @@ class PlayerInteractListener(private val plugin: MedievalFactions) : Listener {
                 } else {
                     lockOwner.toBukkit().name ?: plugin.language["UnknownPlayer"]
                 }
-                player.sendMessage("$RED${plugin.language["BlockUnlockOwnedByOtherPlayer", ownerName]}")
-                return@Runnable
+                if (!player.hasPermission("mf.force.unlock")) {
+                    player.sendMessage("$RED${plugin.language["BlockUnlockOwnedByOtherPlayer", ownerName]}")
+                    return@Runnable
+                } else {
+                    player.sendMessage("$RED${plugin.language["BlockUnlockProtectionBypassed", ownerName]}")
+                }
             }
             lockService.delete(lockedBlock.block).onFailure {
                 player.sendMessage("$RED${plugin.language["BlockUnlockFailedToDeleteBlock"]}")

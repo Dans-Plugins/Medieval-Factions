@@ -121,7 +121,7 @@ shadowJar {
         include(dependency('com.sun.activation:jakarta.activation'))
         include(dependency('org.flywaydb:flyway-core'))
         include(dependency('org.flywaydb:flyway-mysql'))
-        include(dependency('org.mariadb.hdbc:mariadb-java-client'))
+        include(dependency('org.mariadb.jdbc:mariadb-java-client'))
         include(dependency('com.h2database:h2'))
         include(dependency('com.zaxxer:HikariCP'))
         include(dependency('com.google.code.gson:gson'))
@@ -130,7 +130,7 @@ shadowJar {
     }
 
     relocate 'com.google', 'com.dansplugins.factionsystem.shadow.com.google'
-    relocate 'com.mysql', 'com.dansplugins.factionsystem.shadow.com.mysql'
+    relocate 'org.mariadb', 'com.dansplugins.factionsystem.shadow.org.mariadb'
     relocate 'com.sun', 'com.dansplugins.factionsystem.shadow.com.sun'
     relocate 'com.zaxxer', 'com.dansplugins.factionsystem.shadow.com.zaxxer'
     relocate 'dev.forkhandles', 'com.dansplugins.factionsystem.shadow.dev.forkhandles'
