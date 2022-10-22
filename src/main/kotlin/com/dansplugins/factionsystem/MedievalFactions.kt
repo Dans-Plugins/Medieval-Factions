@@ -240,8 +240,24 @@ class MedievalFactions : JavaPlugin() {
         server.scheduler.scheduleSyncRepeatingTask(this, {
             val onlinePlayers = server.onlinePlayers
             val onlineMfPlayerIds = onlinePlayers.map { MfPlayerId(it.uniqueId.toString()) }
+            val disbandZeroPowerFactions = config.getBoolean("factions.zeroPowerFactionsGetDisbanded")
             server.scheduler.runTaskAsynchronously(this, Runnable {
                 playerService.updatePlayerPower(onlineMfPlayerIds)
+                if (disbandZeroPowerFactions) {
+                    factionService.factions.forEach { faction ->
+                        if (faction.power <= 0) {
+                            faction.sendMessage(language["FactionDisbandedZeroPowerNotificationTitle"], language["FactionDisbandedZeroPowerNotificationBody"])
+                            claimService.deleteAllClaims(faction.id).onFailure {
+                                logger.log(SEVERE, "Failed to delete all claims for faction: ${it.reason.message}", it.reason.cause)
+                                return@Runnable
+                            }
+                            factionService.delete(faction.id).onFailure {
+                                logger.log(SEVERE, "Failed to delete faction: ${it.reason.message}", it.reason.cause)
+                                return@Runnable
+                            }
+                        }
+                    }
+                }
             })
         }, (60 - LocalTime.now().minute) * 60 * 20L, 72000L)
         server.scheduler.scheduleSyncRepeatingTask(this, {
