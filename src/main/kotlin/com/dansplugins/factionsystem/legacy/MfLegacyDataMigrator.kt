@@ -77,7 +77,7 @@ class MfLegacyDataMigrator(private val plugin: MedievalFactions) {
         plugin.config.set("factions.mobsSpawnInFactionTerritory", oldConfig.getBoolean("mobsSpawnInFactionTerritory"))
         plugin.config.set("players.hoursToReachMaxPower", ((oldConfig.getInt("initialMaxPowerLevel") / oldConfig.getInt("powerIncreaseAmount")) * (oldConfig.getInt("minutesBetweenPowerIncreases").toDouble() / 60.0)).roundToInt())
         plugin.config.set("factions.laddersPlaceableInEnemyFactionTerritory", oldConfig.getBoolean("laddersPlaceableInEnemyFactionTerritory"))
-        plugin.config.set("factions.warsRequiredForPvp", oldConfig.getBoolean("warsRequiredForPVP"))
+        plugin.config.set("pvp.warRequiredForPlayersOfDifferentFactions", oldConfig.getBoolean("warsRequiredForPVP"))
         plugin.config.set("factions.maxNameLength", oldConfig.getString("factionMaxNameLength"))
         plugin.config.set("gates.maxPerFaction", oldConfig.getInt("factionMaxNumberGates"))
         plugin.config.set("gates.maxBlocks", oldConfig.getInt("factionMaxGateArea"))

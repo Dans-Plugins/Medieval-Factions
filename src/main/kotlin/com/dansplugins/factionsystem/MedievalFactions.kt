@@ -46,6 +46,7 @@ import com.dansplugins.factionsystem.player.JooqMfPlayerRepository
 import com.dansplugins.factionsystem.player.MfPlayerId
 import com.dansplugins.factionsystem.player.MfPlayerRepository
 import com.dansplugins.factionsystem.player.MfPlayerService
+import com.dansplugins.factionsystem.potion.MfPotionService
 import com.dansplugins.factionsystem.relationship.JooqMfFactionRelationshipRepository
 import com.dansplugins.factionsystem.relationship.MfFactionRelationshipRepository
 import com.dansplugins.factionsystem.relationship.MfFactionRelationshipService
@@ -166,6 +167,7 @@ class MedievalFactions : JavaPlugin() {
         val gateService = MfGateService(this, gateRepository, gateCreationContextRepository)
         val chatService = MfChatService(this, chatMessageRepository)
         val duelService = MfDuelService(this, duelRepository, duelInviteRepository)
+        val potionService = MfPotionService(this)
         val dynmapService = if (server.pluginManager.getPlugin("dynmap") != null) {
             MfDynmapService(this)
         } else {
@@ -184,6 +186,7 @@ class MedievalFactions : JavaPlugin() {
             gateService,
             chatService,
             duelService,
+            potionService,
             dynmapService
         )
         setupRpkLockService()
@@ -205,6 +208,7 @@ class MedievalFactions : JavaPlugin() {
         }
 
         registerListeners(
+            AreaEffectCloudApplyListener(this),
             AsyncPlayerChatListener(this),
             AsyncPlayerPreLoginListener(this),
             BlockBreakListener(this),
@@ -213,13 +217,16 @@ class MedievalFactions : JavaPlugin() {
             BlockPistonRetractListener(this),
             BlockPlaceListener(this),
             CreatureSpawnListener(this),
+            EntityDamageByEntityListener(this),
             EntityDamageListener(this),
             EntityExplodeListener(this),
+            LingeringPotionSplashListener(this),
             PlayerDeathListener(this),
             PlayerInteractListener(this),
             PlayerJoinListener(this),
             PlayerMoveListener(this),
-            PlayerQuitListener(this)
+            PlayerQuitListener(this),
+            PotionSplashListener(this)
         )
 
         getCommand("faction")?.setExecutor(MfFactionCommand(this))
