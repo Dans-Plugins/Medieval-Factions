@@ -32,6 +32,7 @@ import com.dansplugins.factionsystem.command.faction.members.MfFactionMembersCom
 import com.dansplugins.factionsystem.command.faction.power.MfFactionPowerCommand
 import com.dansplugins.factionsystem.command.faction.role.MfFactionRoleCommand
 import com.dansplugins.factionsystem.command.faction.set.MfFactionSetCommand
+import com.dansplugins.factionsystem.command.faction.set.name.MfFactionSetNameCommand
 import com.dansplugins.factionsystem.command.faction.sethome.MfFactionSetHomeCommand
 import com.dansplugins.factionsystem.command.faction.swearfealty.MfFactionSwearFealtyCommand
 import com.dansplugins.factionsystem.command.faction.unclaim.MfFactionUnclaimCommand
@@ -69,6 +70,7 @@ class MfFactionCommand(private val plugin: MedievalFactions) : CommandExecutor {
     private val factionInvokeCommand = MfFactionInvokeCommand(plugin)
     private val factionLeaveCommand = MfFactionLeaveCommand(plugin)
     private val factionSetCommand = MfFactionSetCommand(plugin)
+    private val factionSetNameCommand = MfFactionSetNameCommand(plugin)
     private val factionVassalizeCommand = MfFactionVassalizeCommand(plugin)
     private val factionSwearFealtyCommand = MfFactionSwearFealtyCommand(plugin)
     private val factionGrantIndependenceCommand = MfFactionGrantIndependenceCommand(plugin)
@@ -108,7 +110,8 @@ class MfFactionCommand(private val plugin: MedievalFactions) : CommandExecutor {
             "disband", plugin.language["CmdFactionDisband"] -> factionDisbandCommand.onCommand(sender, command, label, args.drop(1).toTypedArray())
             "invoke", plugin.language["CmdFactionInvoke"] -> factionInvokeCommand.onCommand(sender, command, label, args.drop(1).toTypedArray())
             "leave", plugin.language["CmdFactionLeave"] -> factionLeaveCommand.onCommand(sender, command, label, args.drop(1).toTypedArray())
-            "rename", plugin.language["CmdFactionSet"] -> factionSetCommand.onCommand(sender, command, label, args.drop(1).toTypedArray())
+            "set", plugin.language["CmdFactionSet"] -> factionSetCommand.onCommand(sender, command, label, args.drop(1).toTypedArray())
+            "rename" -> factionSetNameCommand.onCommand(sender, command, label, args.drop(1).toTypedArray())
             "vassalize", "vassalise", plugin.language["CmdFactionVassalize"] -> factionVassalizeCommand.onCommand(sender, command, label, args.drop(1).toTypedArray())
             "swearfealty", plugin.language["CmdFactionSwearFealty"] -> factionSwearFealtyCommand.onCommand(sender, command, label, args.drop(1).toTypedArray())
             "grantindependence", plugin.language["CmdFactionGrantIndependence"] -> factionGrantIndependenceCommand.onCommand(sender, command, label, args.drop(1).toTypedArray())
