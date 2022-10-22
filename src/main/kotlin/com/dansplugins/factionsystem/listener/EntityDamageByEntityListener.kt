@@ -41,7 +41,7 @@ class EntityDamageByEntityListener(private val plugin: MedievalFactions) : Liste
                 return
             }
             if (damagerFaction.id == damagedFaction.id) {
-                if (!plugin.config.getBoolean("pvp.friendlyFire")) {
+                if (!plugin.config.getBoolean("pvp.friendlyFire") && !damagerFaction.flags[plugin.flags.allowFriendlyFire]) {
                     event.isCancelled = true
                 }
                 return
