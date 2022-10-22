@@ -139,10 +139,10 @@ data class MfFaction(
             .roundToInt()
 
     val power: Int
-        get() = memberPower + (if (memberPower >= maxMemberPower / 2) { vassalPower } else { 0 }) + bonusPower
+        get() = memberPower + (if (memberPower >= maxMemberPower / 2) { vassalPower } else { 0 }) + (if (flags[plugin.flags.acceptBonusPower]) bonusPower else 0)
 
     val maxPower: Int
-        get() = maxMemberPower + maxVassalPower + bonusPower
+        get() = maxMemberPower + maxVassalPower + (if (flags[plugin.flags.acceptBonusPower]) bonusPower else 0)
 
     fun getRole(playerId: MfPlayerId): MfFactionRole? = members.singleOrNull { it.playerId == playerId }?.role
     fun getRole(roleId: MfFactionRoleId): MfFactionRole? = roles.getRole(roleId)

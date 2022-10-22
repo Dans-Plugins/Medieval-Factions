@@ -47,7 +47,7 @@ class MfFactionPowerCommand(private val plugin: MedievalFactions) : CommandExecu
                                 faction.maxMemberPower.toString(),
                                 faction.vassalPower.toString(),
                                 faction.maxVassalPower.toString(),
-                                faction.bonusPower.toString()
+                                if (faction.flags[plugin.flags.acceptBonusPower]) faction.bonusPower.toString() else "0"
                         ]
                     }"
                 )
