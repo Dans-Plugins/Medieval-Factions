@@ -52,7 +52,6 @@ factions:
   - SPELL
   - VILLAGE_DEFENSE
   laddersPlaceableInEnemyFactionTerritory: true
-  warsRequiredForPvp: true
   maxNameLength: 20
   surroundingChunksProtected: true
   zeroPowerFactionsGetDisbanded: false
