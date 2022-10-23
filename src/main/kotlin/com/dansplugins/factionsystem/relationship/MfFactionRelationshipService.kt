@@ -27,18 +27,22 @@ class MfFactionRelationshipService(private val plugin: MedievalFactions, private
         plugin.logger.info("${relationshipsById.size} faction relationships loaded (${System.currentTimeMillis() - startTime}ms)")
     }
 
+    @JvmName("getRelationshipByRelationshipId")
     fun getRelationship(relationshipId: MfFactionRelationshipId): MfFactionRelationship? {
         return relationshipsById[relationshipId]
     }
 
+    @JvmName("getRelationshipsByFactionIdAndTargetId")
     fun getRelationships(factionId: MfFactionId, targetId: MfFactionId): List<MfFactionRelationship> {
         return relationships.filter { it.factionId == factionId && it.targetId == targetId }
     }
 
+    @JvmName("getRelationshipsByFactionId")
     fun getRelationships(factionId: MfFactionId): List<MfFactionRelationship> {
         return relationships.filter { it.factionId == factionId }
     }
 
+    @JvmName("getRelationshipsByFactionIdAndType")
     fun getRelationships(factionId: MfFactionId, type: MfFactionRelationshipType): List<MfFactionRelationship> {
         return relationships.filter { it.factionId == factionId && it.type == type }
     }
@@ -59,6 +63,7 @@ class MfFactionRelationshipService(private val plugin: MedievalFactions, private
         ServiceFailure(exception.toServiceFailureType(), "Service error: ${exception.message}", exception)
     }
 
+    @JvmName("deleteRelationshipByRelationshipId")
     fun delete(id: MfFactionRelationshipId): Result4k<Unit, ServiceFailure> = resultFrom {
         val event = RelationshipDeleteEvent(id, !plugin.server.isPrimaryThread)
         plugin.server.pluginManager.callEvent(event)
@@ -72,6 +77,7 @@ class MfFactionRelationshipService(private val plugin: MedievalFactions, private
         ServiceFailure(exception.toServiceFailureType(), "Service error: ${exception.message}", exception)
     }
 
+    @JvmName("getVassalTreeByFactionId")
     fun getVassalTree(factionId: MfFactionId): MfVassalNode {
         return MfVassalNode(
             factionId,
@@ -79,6 +85,7 @@ class MfFactionRelationshipService(private val plugin: MedievalFactions, private
         )
     }
 
+    @JvmName("getLiegeChainByFactionId")
     fun getLiegeChain(factionId: MfFactionId): MfLiegeNode {
         val liege = getLiege(factionId)
         return if (liege != null) {
@@ -88,6 +95,7 @@ class MfFactionRelationshipService(private val plugin: MedievalFactions, private
         }
     }
 
+    @JvmName("getLiegeByFactionId")
     fun getLiege(factionId: MfFactionId): MfFactionId? {
         val liege = getRelationships(factionId, LIEGE).firstOrNull()?.targetId
         if (liege != null) {
@@ -99,6 +107,7 @@ class MfFactionRelationshipService(private val plugin: MedievalFactions, private
         return null
     }
 
+    @JvmName("getVassalsByFactionId")
     fun getVassals(factionId: MfFactionId): List<MfFactionId> {
         return getRelationships(factionId, VASSAL)
             .filter { relationship ->
@@ -108,6 +117,7 @@ class MfFactionRelationshipService(private val plugin: MedievalFactions, private
             }.map(MfFactionRelationship::targetId)
     }
 
+    @JvmName("getAlliesByFactionId")
     fun getAllies(factionId: MfFactionId): List<MfFactionId> {
         return getRelationships(factionId, ALLY)
             .filter { relationship ->
@@ -117,6 +127,7 @@ class MfFactionRelationshipService(private val plugin: MedievalFactions, private
             }.map(MfFactionRelationship::targetId)
     }
 
+    @JvmName("getFactionsAtWarWithByFactionId")
     fun getFactionsAtWarWith(factionId: MfFactionId): List<MfFactionId> {
         return relationships
             .filter { it.type == AT_WAR && (it.factionId == factionId || it.targetId == factionId) }

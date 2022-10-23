@@ -63,12 +63,14 @@ class MfLockService(private val plugin: MedievalFactions, private val repository
         return lockedBlocks[block]
     }
 
+    @JvmName("getLockedBlockByLockedBlockId")
     fun getLockedBlock(id: MfLockedBlockId): Result4k<MfLockedBlock?, ServiceFailure> = resultFrom {
         repository.getLockedBlock(id)
     }.mapFailure { exception ->
         ServiceFailure(exception.toServiceFailureType(), "Service error: ${exception.message}", exception)
     }
 
+    @JvmName("getLockedBlocksByPlayerId")
     fun getLockedBlocks(playerId: MfPlayerId): List<MfLockedBlock> {
         return lockedBlocks.values.filter { it.playerId == playerId }
     }

@@ -24,10 +24,12 @@ class MfPlayerService(private val plugin: MedievalFactions, private val playerRe
         plugin.logger.info("${playersById.size} players loaded (${System.currentTimeMillis() - startTime}ms)")
     }
 
+    @JvmName("getPlayerByPlayerId")
     fun getPlayer(id: MfPlayerId): MfPlayer? {
         return playersById[id]
     }
 
+    @JvmName("getPlayerByBukkitPlayer")
     fun getPlayer(player: OfflinePlayer): MfPlayer? = getPlayer(MfPlayerId(player.uniqueId.toString()))
 
     fun save(player: MfPlayer): Result4k<MfPlayer, ServiceFailure> = resultFrom {
@@ -48,6 +50,7 @@ class MfPlayerService(private val plugin: MedievalFactions, private val playerRe
         ServiceFailure(exception.toServiceFailureType(), "Service error: ${exception.message}", exception)
     }
 
+    @JvmName("updatePlayerPower")
     fun updatePlayerPower(onlinePlayerIds: List<MfPlayerId>): Result4k<Unit, ServiceFailure> {
         return resultFrom {
             playerRepository.increaseOnlinePlayerPower(onlinePlayerIds)

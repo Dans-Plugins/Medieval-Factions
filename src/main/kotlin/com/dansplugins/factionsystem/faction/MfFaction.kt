@@ -58,6 +58,7 @@ import kotlin.math.roundToInt
 
 data class MfFaction(
     private val plugin: MedievalFactions,
+    @get:JvmName("getId")
     val id: MfFactionId = MfFactionId.generate(),
     val version: Int = 0,
     val name: String,
@@ -144,8 +145,11 @@ data class MfFaction(
     val maxPower: Int
         get() = maxMemberPower + maxVassalPower + (if (flags[plugin.flags.acceptBonusPower]) bonusPower else 0)
 
+    @JvmName("getRoleByPlayerId")
     fun getRole(playerId: MfPlayerId): MfFactionRole? = members.singleOrNull { it.playerId == playerId }?.role
+    @JvmName("getRoleByRoleId")
     fun getRole(roleId: MfFactionRoleId): MfFactionRole? = roles.getRole(roleId)
+    @JvmName("getRoleByName")
     fun getRole(name: String): MfFactionRole? = roles.getRole(name)
 
     fun sendMessage(title: String, message: String) {

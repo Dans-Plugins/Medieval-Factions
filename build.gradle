@@ -113,7 +113,6 @@ processResources {
 }
 
 shadowJar {
-    archiveClassifier.set('')
     mergeServiceFiles()
     dependencies {
         include(dependency('org.jetbrains.kotlin:kotlin-stdlib-jdk8'))

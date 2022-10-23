@@ -9,6 +9,7 @@ data class MfClaimedChunk(
     val worldId: UUID,
     val x: Int,
     val z: Int,
+    @get:JvmName("getFactionId")
     val factionId: MfFactionId
 ) {
     constructor(chunk: Chunk, factionId: MfFactionId) : this(chunk.world.uid, chunk.x, chunk.z, factionId)

@@ -175,7 +175,8 @@ class MfLegacyDataMigrator(private val plugin: MedievalFactions) {
                     plugin.flags.isNeutral to (booleanFlagValues["neutral"] ?: plugin.flags.isNeutral.defaultValue),
                     plugin.flags.color to (stringFlagValues["dynmapTerritoryColor"] ?: plugin.flags.color.defaultValue),
                     plugin.flags.allowFriendlyFire to (booleanFlagValues["allowFriendlyFire"] ?: plugin.flags.allowFriendlyFire.defaultValue),
-                    plugin.flags.acceptBonusPower to (booleanFlagValues["acceptBonusPower"] ?: plugin.flags.acceptBonusPower.defaultValue)
+                    plugin.flags.acceptBonusPower to (booleanFlagValues["acceptBonusPower"] ?: plugin.flags.acceptBonusPower.defaultValue),
+                    plugin.flags.enableMobProtection to (booleanFlagValues["enableMobProtection"] ?: plugin.flags.enableMobProtection.defaultValue)
                 ),
                 prefix,
                 if (worldName == null || x == null || y == null || z == null) {

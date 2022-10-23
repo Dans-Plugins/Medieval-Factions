@@ -30,6 +30,7 @@ class MfGateService(
 
     fun getGatesByTrigger(trigger: MfBlockPosition) = gatesById.values.filter { it.trigger == trigger }
     fun getGatesAt(block: MfBlockPosition) = gatesById.values.filter { it.area.contains(block) }
+    @JvmName("getGatesByFactionId")
     fun getGatesByFaction(factionId: MfFactionId) = gatesById.values.filter { it.factionId == factionId }
     fun getGatesByStatus(status: MfGateStatus) = gatesById.values.filter { it.status == status }
 
@@ -41,6 +42,7 @@ class MfGateService(
         ServiceFailure(exception.toServiceFailureType(), "Service error: ${exception.message}", exception)
     }
 
+    @JvmName("deleteGateByGateId")
     fun delete(gateId: MfGateId) = resultFrom {
         val result = gateRepo.delete(gateId)
         gatesById.remove(gateId)
@@ -49,6 +51,7 @@ class MfGateService(
         ServiceFailure(exception.toServiceFailureType(), "Service error: ${exception.message}", exception)
     }
 
+    @JvmName("getGateCreationContextByPlayerId")
     fun getGateCreationContext(playerId: MfPlayerId) = resultFrom {
         gateCreationContextRepo.getContext(playerId)
     }.mapFailure { exception ->
@@ -61,6 +64,7 @@ class MfGateService(
         ServiceFailure(exception.toServiceFailureType(), "Service error: ${exception.message}", exception)
     }
 
+    @JvmName("deleteGateCreationContextByPlayerId")
     fun deleteGateCreationContext(playerId: MfPlayerId) = resultFrom {
         gateCreationContextRepo.delete(playerId)
     }.mapFailure { exception ->
