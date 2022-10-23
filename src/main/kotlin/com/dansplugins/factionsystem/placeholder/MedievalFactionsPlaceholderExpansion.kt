@@ -18,6 +18,7 @@ class MedievalFactionsPlaceholderExpansion(private val plugin: MedievalFactions)
     override fun getAuthor() = plugin.description.authors.joinToString()
     override fun getVersion() = plugin.description.version
     override fun persist() = true
+    override fun canRegister() = true
 
     override fun onRequest(player: OfflinePlayer?, params: String): String? {
         if (player == null) return null
