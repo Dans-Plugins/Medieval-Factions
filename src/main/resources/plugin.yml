@@ -42,6 +42,8 @@ commands:
       /f role setpermission [role] [permission] [value] - Sets a permission for a role
       /f role list - Lists roles
       /f role set [player] [role] - Sets a player to a given role
+      /f role rename [name] (new name) - Renames a role
+      /f role setdefault [name] - Sets a role to be the default role
       /f list - Lists factions
       /f claim (radius) - Claims land
       /f unclaim (radius) - Unclaims land
@@ -65,15 +67,18 @@ commands:
       /f chat (faction|vassals|allies) - Toggles faction chat
       /f set [name|description|prefix] (value) - Sets faction name/description/prefix
       /f bonuspower [faction] [bonus power] - Sets faction bonus power
-    aliases: [medievalfactions, mf, f, fraktion, faccion, faccao]
-    usage: /<command> [help|ally|breakalliance|declarewar|makepeace|create|invite|join|law|role|list|claim|unclaim|checkclaim|unclaimall|power|who|invoke|leave|vassalize|swearfealty|declareindependence|grantindependence|kick|map|sethome|home|flag|bypass|chat|set|bonuspower]
+      /f relationship add [faction1] [faction2] (relationship type) - Adds a relationship between two factions
+      /f relationship remove [faction1] [faction2] [relationship type] - Removes a relationship between two factions
+      /f relationship view [faction1] [faction2] - Views the relationship between two factions
+    aliases: [medievalfactions, mf, f, fraktion]
+    usage: /<command> [help|ally|breakalliance|declarewar|makepeace|create|invite|join|law|role|list|claim|unclaim|checkclaim|unclaimall|power|who|invoke|leave|vassalize|swearfealty|declareindependence|grantindependence|kick|map|sethome|home|flag|bypass|chat|set|bonuspower|relationship]
   lock:
     description: Enables or disables lock mode. To cancel lock mode, use /lock cancel.
-    aliases: [verschließen, verschliessen, cerrar, trancar, запереть]
+    aliases: [verschließen, verschliessen]
     usage: /<command> (cancel)
   unlock:
     description: Enables or disables unlock mode. To cancel unlock mode, use /unlock cancel.
-    aliases: [aufschließen, aufschliessen, desbloquear, destravar, отпереть]
+    aliases: [aufschließen, aufschliessen]
     usage: /<command> (cancel)
   accessors:
     description: |
@@ -81,13 +86,13 @@ commands:
       /accessors list - View a list of people who can access a lock.
       /accessors add - Add an accessor to a lock.
       /accessors remove - Remove an accessor from a lock.
-    aliases: [accessoren, accesorios, assessores, доступа]
+    aliases: [accessoren]
     usage: /<command> [list|add|remove]
   power:
     description: |
       Power management command
       /power set [player] [power] - Sets a player's power.
-    aliases: [macht, poder, власть]
+    aliases: [macht]
     usage: /<command> [set]
   gate:
     description: |
@@ -95,7 +100,7 @@ commands:
       /gate create - Creates a gate
       /gate remove - Removes a gate
       /gate cancel - Cancels gate creation
-    aliases: [tor, puerta, portao, ворота]
+    aliases: [tor]
     usage: /<command> [create|remove|cancel]
   duel:
     description: |
@@ -103,6 +108,8 @@ commands:
       /duel challenge [player] - Challenges a player to a duel
       /duel accept [player] - Accepts a duel from a player
       /duel cancel [player] - Cancels or turns down a duel
+    aliases: [duell]
+    usage: /<command> [challenge|accept|cancel]
 permissions:
   mf.help:
     description: View a list of helpful commands.

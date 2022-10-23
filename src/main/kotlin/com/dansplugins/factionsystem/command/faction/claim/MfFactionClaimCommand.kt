@@ -12,10 +12,11 @@ import org.bukkit.ChatColor.RED
 import org.bukkit.command.Command
 import org.bukkit.command.CommandExecutor
 import org.bukkit.command.CommandSender
+import org.bukkit.command.TabCompleter
 import org.bukkit.entity.Player
 import java.util.logging.Level.SEVERE
 
-class MfFactionClaimCommand(private val plugin: MedievalFactions) : CommandExecutor {
+class MfFactionClaimCommand(private val plugin: MedievalFactions) : CommandExecutor, TabCompleter {
     private val factionClaimFillCommand = MfFactionClaimFillCommand(plugin)
     override fun onCommand(sender: CommandSender, command: Command, label: String, args: Array<out String>): Boolean {
         if (!sender.hasPermission("mf.claim")) {
@@ -110,5 +111,16 @@ class MfFactionClaimCommand(private val plugin: MedievalFactions) : CommandExecu
             })
         })
         return true
+    }
+
+    override fun onTabComplete(
+        sender: CommandSender,
+        command: Command,
+        label: String,
+        args: Array<out String>
+    ) = when {
+        args.isEmpty() -> listOf("fill")
+        args.size == 1 && "fill".startsWith(args[0].lowercase()) -> listOf("fill")
+        else -> emptyList()
     }
 }

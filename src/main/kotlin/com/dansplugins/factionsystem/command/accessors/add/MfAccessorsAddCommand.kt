@@ -12,6 +12,7 @@ import org.bukkit.block.Block
 import org.bukkit.command.Command
 import org.bukkit.command.CommandExecutor
 import org.bukkit.command.CommandSender
+import org.bukkit.command.TabCompleter
 import org.bukkit.conversations.ConversationContext
 import org.bukkit.conversations.ConversationFactory
 import org.bukkit.conversations.Prompt
@@ -19,7 +20,7 @@ import org.bukkit.conversations.ValidatingPrompt
 import org.bukkit.entity.Player
 import java.util.logging.Level.SEVERE
 
-class MfAccessorsAddCommand(private val plugin: MedievalFactions) : CommandExecutor {
+class MfAccessorsAddCommand(private val plugin: MedievalFactions) : CommandExecutor, TabCompleter {
 
     private val conversationFactory = ConversationFactory(plugin)
         .withModality(true)
@@ -40,7 +41,8 @@ class MfAccessorsAddCommand(private val plugin: MedievalFactions) : CommandExecu
         override fun getPromptText(context: ConversationContext) = plugin.language["CommandAccessorsAddNamePrompt", plugin.language["EscapeSequence"]]
 
         override fun isInputValid(context: ConversationContext, input: String): Boolean {
-            return plugin.server.getOfflinePlayer(input).hasPlayedBefore()
+            val player = plugin.server.getOfflinePlayer(input)
+            return player.isOnline || player.hasPlayedBefore()
         }
 
         override fun getFailedValidationText(context: ConversationContext, invalidInput: String): String? {
@@ -101,7 +103,7 @@ class MfAccessorsAddCommand(private val plugin: MedievalFactions) : CommandExecu
             return true
         }
         val player = plugin.server.getOfflinePlayer(args[3])
-        if (!player.hasPlayedBefore()) {
+        if (!player.isOnline && !player.hasPlayedBefore()) {
             sender.sendMessage("$RED${plugin.language["CommandAccessorsAddInvalidPlayer"]}")
             return true
         }
@@ -142,6 +144,19 @@ class MfAccessorsAddCommand(private val plugin: MedievalFactions) : CommandExecu
             }
             sender.sendMessage("$GREEN${plugin.language["CommandAccessorsAddSuccess", accessor.name ?: plugin.language["UnknownPlayer"]]}")
         })
+    }
+
+    override fun onTabComplete(
+        sender: CommandSender,
+        command: Command,
+        label: String,
+        args: Array<out String>
+    ) = when {
+        args.size <= 3 -> emptyList()
+        args.size == 4 -> plugin.server.offlinePlayers
+            .filter { it.name?.lowercase()?.startsWith(args[3].lowercase()) == true }
+            .mapNotNull(OfflinePlayer::getName)
+        else -> emptyList()
     }
 
 }

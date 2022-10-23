@@ -5,16 +5,18 @@ import com.dansplugins.factionsystem.faction.permission.MfFactionPermission
 import com.dansplugins.factionsystem.faction.permission.MfFactionPermission.Companion.MODIFY_ROLE
 import com.dansplugins.factionsystem.faction.permission.MfFactionPermission.Companion.SET_ROLE_PERMISSION
 import com.dansplugins.factionsystem.player.MfPlayer
+import com.dansplugins.factionsystem.player.MfPlayerId
 import dev.forkhandles.result4k.onFailure
 import org.bukkit.ChatColor.GREEN
 import org.bukkit.ChatColor.RED
 import org.bukkit.command.Command
 import org.bukkit.command.CommandExecutor
 import org.bukkit.command.CommandSender
+import org.bukkit.command.TabCompleter
 import org.bukkit.entity.Player
 import java.util.logging.Level.SEVERE
 
-class MfFactionRoleSetPermissionCommand(private val plugin: MedievalFactions) : CommandExecutor {
+class MfFactionRoleSetPermissionCommand(private val plugin: MedievalFactions) : CommandExecutor, TabCompleter {
     override fun onCommand(sender: CommandSender, command: Command, label: String, args: Array<out String>): Boolean {
         if (!sender.hasPermission("mf.role.setpermission")) {
             sender.sendMessage("$RED${plugin.language["CommandFactionRoleSetPermissionNoPermission"]}")
@@ -96,5 +98,24 @@ class MfFactionRoleSetPermissionCommand(private val plugin: MedievalFactions) : 
             }
         })
         return true
+    }
+
+    override fun onTabComplete(
+        sender: CommandSender,
+        command: Command,
+        label: String,
+        args: Array<out String>
+    ): List<String> {
+        if (sender !is Player) return emptyList()
+        val playerId = MfPlayerId.fromBukkitPlayer(sender)
+        val factionService = plugin.services.factionService
+        val faction = factionService.getFaction(playerId) ?: return emptyList()
+        return when {
+            args.isEmpty() -> faction.roles.map { it.name }
+            args.size == 1 -> faction.roles.filter { it.name.lowercase().startsWith(args[0].lowercase()) }.map { it.name }
+            args.size == 2 -> MfFactionPermission.values(plugin.flags, faction.roles).filter { it.name.lowercase().startsWith(args[1].lowercase()) }.map { it.name }
+            args.size == 3 -> listOf("allow", "deny", "default").filter { it.startsWith(args[2].lowercase()) }
+            else -> emptyList()
+        }
     }
 }

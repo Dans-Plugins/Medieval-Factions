@@ -14,11 +14,12 @@ import org.bukkit.ChatColor.*
 import org.bukkit.command.Command
 import org.bukkit.command.CommandExecutor
 import org.bukkit.command.CommandSender
+import org.bukkit.command.TabCompleter
 import org.bukkit.entity.Player
 import java.util.logging.Level.SEVERE
 import net.md_5.bungee.api.ChatColor as SpigotChatColor
 
-class MfDuelChallengeCommand(private val plugin: MedievalFactions) : CommandExecutor {
+class MfDuelChallengeCommand(private val plugin: MedievalFactions) : CommandExecutor, TabCompleter {
     override fun onCommand(sender: CommandSender, command: Command, label: String, args: Array<out String>): Boolean {
         if (!sender.hasPermission("mf.duel")) {
             sender.sendMessage("$RED${plugin.language["CommandDuelChallengeNoPermission"]}")
@@ -66,6 +67,11 @@ class MfDuelChallengeCommand(private val plugin: MedievalFactions) : CommandExec
                 sender.sendMessage("$RED${plugin.language["CommandDuelChallengeTargetAlreadyInDuel"]}")
                 return@Runnable
             }
+            val existingInvite = duelService.getInvite(mfPlayer.id, targetMfPlayer.id)
+            if (existingInvite != null) {
+                sender.sendMessage("$RED${plugin.language["CommandDuelChallengeTargetAlreadyInvited"]}")
+                return@Runnable
+            }
             duelService.save(MfDuelInvite(
                 mfPlayer.id,
                 targetMfPlayer.id
@@ -93,5 +99,18 @@ class MfDuelChallengeCommand(private val plugin: MedievalFactions) : CommandExec
             )
         })
         return true
+    }
+
+    override fun onTabComplete(
+        sender: CommandSender,
+        command: Command,
+        label: String,
+        args: Array<out String>
+    ) = when {
+        args.isEmpty() -> plugin.server.onlinePlayers.map(Player::getName)
+        args.size == 1 -> plugin.server.onlinePlayers
+            .filter { it.name.lowercase().startsWith(args[0].lowercase()) }
+            .map(Player::getName)
+        else -> emptyList()
     }
 }

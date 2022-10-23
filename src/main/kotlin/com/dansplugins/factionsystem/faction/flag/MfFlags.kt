@@ -53,7 +53,7 @@ class MfFlags(
     )
 ) : MutableList<MfFlag<out Any>> by flags {
 
-    operator fun <T: Any> get(name: String) = singleOrNull { it.name == name } as? MfFlag<T>
+    operator fun <T: Any> get(name: String) = singleOrNull { it.name.equals(name, ignoreCase = true) } as? MfFlag<T>
 
     val alliesCanInteractWithLand = get<Boolean>("alliesCanInteractWithLand")!!
     val vassalageTreeCanInteractWithLand = get<Boolean>("vassalageTreeCanInteractWithLand")!!

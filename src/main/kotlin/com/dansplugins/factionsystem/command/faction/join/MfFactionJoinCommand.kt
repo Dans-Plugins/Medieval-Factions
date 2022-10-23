@@ -17,11 +17,12 @@ import org.bukkit.ChatColor.RED
 import org.bukkit.command.Command
 import org.bukkit.command.CommandExecutor
 import org.bukkit.command.CommandSender
+import org.bukkit.command.TabCompleter
 import org.bukkit.entity.Player
 import java.util.logging.Level
 import net.md_5.bungee.api.ChatColor as SpigotChatColor
 
-class MfFactionJoinCommand(private val plugin: MedievalFactions) : CommandExecutor {
+class MfFactionJoinCommand(private val plugin: MedievalFactions) : CommandExecutor, TabCompleter {
     override fun onCommand(sender: CommandSender, command: Command, label: String, args: Array<out String>): Boolean {
         if (!sender.hasPermission("mf.join")) {
             sender.sendMessage("$RED${plugin.language["CommandFactionJoinNoPermission"]}")
@@ -102,5 +103,21 @@ class MfFactionJoinCommand(private val plugin: MedievalFactions) : CommandExecut
                 clickEvent = ClickEvent(RUN_COMMAND, "/faction join ${faction.id.value} -f")
             }
         )
+    }
+
+    override fun onTabComplete(
+        sender: CommandSender,
+        command: Command,
+        label: String,
+        args: Array<out String>
+    ): List<String> {
+        val factionService = plugin.services.factionService
+        return when {
+            args.isEmpty() -> factionService.factions.map(MfFaction::name)
+            args.size == 1 -> factionService.factions
+                .filter { it.name.lowercase().startsWith(args[0].lowercase()) }
+                .map(MfFaction::name)
+            else -> emptyList()
+        }
     }
 }

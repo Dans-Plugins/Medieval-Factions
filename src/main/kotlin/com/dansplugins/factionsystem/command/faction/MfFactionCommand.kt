@@ -44,8 +44,9 @@ import org.bukkit.ChatColor.*
 import org.bukkit.command.Command
 import org.bukkit.command.CommandExecutor
 import org.bukkit.command.CommandSender
+import org.bukkit.command.TabCompleter
 
-class MfFactionCommand(private val plugin: MedievalFactions) : CommandExecutor {
+class MfFactionCommand(private val plugin: MedievalFactions) : CommandExecutor, TabCompleter {
 
     private val factionHelpCommand = MfFactionHelpCommand(plugin)
     private val factionCreateCommand = MfFactionCreateCommand(plugin)
@@ -87,47 +88,127 @@ class MfFactionCommand(private val plugin: MedievalFactions) : CommandExecutor {
     private val factionBonusPowerCommand = MfFactionBonusPowerCommand(plugin)
     private val factionRelationshipCommand = MfFactionRelationshipCommand(plugin)
 
+    private val helpAliases = listOf("help", plugin.language["CmdFactionHelp"])
+    private val createAliases = listOf("create", plugin.language["CmdFactionCreate"])
+    private val lawAliases = listOf("law", plugin.language["CmdFactionLaw"])
+    private val allyAliases = listOf("ally", plugin.language["CmdFactionAlly"])
+    private val breakAllianceAliases = listOf("breakalliance", "ba", plugin.language["CmdFactionBreakAlliance"])
+    private val inviteAliases = listOf("invite", plugin.language["CmdFactionInvite"])
+    private val joinAliases = listOf("join", plugin.language["CmdFactionJoin"])
+    private val declareWarAliases = listOf("declarewar", "dw", plugin.language["CmdFactionDeclareWar"])
+    private val makePeaceAliases = listOf("makepeace", "mp", plugin.language["CmdFactionMakePeace"])
+    private val infoAliases = listOf("info", plugin.language["CmdFactionInfo"])
+    private val membersAliases = listOf("members", plugin.language["CmdFactionMembers"])
+    private val roleAliases = listOf("role", plugin.language["CmdFactionRole"])
+    private val listAliases = listOf("list", plugin.language["CmdFactionList"])
+    private val claimAliases = listOf("claim", plugin.language["CmdFactionClaim"])
+    private val unclaimAliases = listOf("unclaim", plugin.language["CmdFactionUnclaim"])
+    private val checkClaimAliases = listOf("checkclaim", plugin.language["CmdFactionCheckClaim"])
+    private val unclaimAllAliases = listOf("unclaimall", plugin.language["CmdFactionUnclaimAll"])
+    private val autoclaimAliases = listOf("autoclaim", plugin.language["CmdFactionAutoclaim"])
+    private val powerAliases = listOf("power", plugin.language["CmdFactionPower"])
+    private val whoAliases = listOf("who", plugin.language["CmdFactionWho"])
+    private val disbandAliases = listOf("disband", plugin.language["CmdFactionDisband"])
+    private val invokeAliases = listOf("invoke", plugin.language["CmdFactionInvoke"])
+    private val leaveAliases = listOf("leave", plugin.language["CmdFactionLeave"])
+    private val setAliases = listOf("set", plugin.language["CmdFactionSet"])
+    private val renameAliases = listOf("rename")
+    private val vassalizeAliases = listOf("vassalize", "vassalise", plugin.language["CmdFactionVassalize"])
+    private val swearFealtyAliases = listOf("swearfealty", plugin.language["CmdFactionSwearFealty"])
+    private val grantIndependenceAliases = listOf("grantindependence", plugin.language["CmdFactionGrantIndependence"])
+    private val declareIndependenceAliases = listOf("declareindependence", plugin.language["CmdFactionDeclareIndependence"])
+    private val kickAliases = listOf("kick", plugin.language["CmdFactionKick"])
+    private val mapAliases = listOf("map", plugin.language["CmdFactionMap"])
+    private val setHomeAliases = listOf("sethome", plugin.language["CmdFactionSetHome"])
+    private val homeAliases = listOf("home", plugin.language["CmdFactionHome"])
+    private val flagAliases = listOf("flag", "flags", plugin.language["CmdFactionFlag"])
+    private val bypassAliases = listOf("bypass", plugin.language["CmdFactionBypass"])
+    private val chatAliases = listOf("chat", plugin.language["CmdFactionChat"])
+    private val claimFillAliases = listOf("claimfill", plugin.language["CmdFactionClaimFill"])
+    private val bonusPowerAliases = listOf("bonuspower", plugin.language["CmdFactionBonusPower"])
+    private val relationshipAliases = listOf("relationship", plugin.language["CmdFactionRelationship"])
+
+    private val subcommands = helpAliases +
+            createAliases +
+            lawAliases +
+            allyAliases +
+            breakAllianceAliases +
+            inviteAliases +
+            joinAliases +
+            declareWarAliases +
+            makePeaceAliases +
+            infoAliases +
+            membersAliases +
+            roleAliases +
+            listAliases +
+            claimAliases +
+            unclaimAliases +
+            checkClaimAliases +
+            unclaimAllAliases +
+            autoclaimAliases +
+            powerAliases +
+            whoAliases +
+            disbandAliases +
+            invokeAliases +
+            leaveAliases +
+            setAliases +
+            renameAliases +
+            vassalizeAliases +
+            swearFealtyAliases +
+            grantIndependenceAliases +
+            declareIndependenceAliases +
+            kickAliases +
+            mapAliases +
+            setHomeAliases +
+            homeAliases +
+            flagAliases +
+            bypassAliases +
+            chatAliases +
+            claimFillAliases +
+            bonusPowerAliases +
+            relationshipAliases
+
     override fun onCommand(sender: CommandSender, command: Command, label: String, args: Array<out String>): Boolean {
         return when (args.firstOrNull()?.lowercase()) {
-            "help", plugin.language["CmdFactionHelp"] -> factionHelpCommand.onCommand(sender, command, label, args.drop(1).toTypedArray())
-            "create", plugin.language["CmdFactionCreate"] -> factionCreateCommand.onCommand(sender, command, label, args.drop(1).toTypedArray())
-            "law", plugin.language["CmdFactionLaw"] -> factionLawCommand.onCommand(sender, command, label, args.drop(1).toTypedArray())
-            "ally", plugin.language["CmdFactionAlly"] -> factionAllyCommand.onCommand(sender, command, label, args.drop(1).toTypedArray())
-            "breakalliance", "ba", plugin.language["CmdFactionBreakAlliance"] -> factionBreakAllianceCommand.onCommand(sender, command, label, args.drop(1).toTypedArray())
-            "invite", plugin.language["CmdFactionInvite"] -> factionInviteCommand.onCommand(sender, command, label, args.drop(1).toTypedArray())
-            "join", plugin.language["CmdFactionJoin"] -> factionJoinCommand.onCommand(sender, command, label, args.drop(1).toTypedArray())
-            "declarewar", "dw", plugin.language["CmdFactionDeclareWar"] -> factionDeclareWarCommand.onCommand(sender, command, label, args.drop(1).toTypedArray())
-            "makepeace", "mp", plugin.language["CmdFactionMakePeace"] -> factionMakePeaceCommand.onCommand(sender, command, label, args.drop(1).toTypedArray())
-            "info", plugin.language["CmdFactionInfo"] -> factionInfoCommand.onCommand(sender, command, label, args.drop(1).toTypedArray())
-            "members", plugin.language["CmdFactionMembers"] -> factionMembersCommand.onCommand(sender, command, label, args.drop(1).toTypedArray())
-            "role", plugin.language["CmdFactionRole"] -> factionRoleCommand.onCommand(sender, command, label, args.drop(1).toTypedArray())
-            "list", plugin.language["CmdFactionList"] -> factionListCommand.onCommand(sender, command, label, args.drop(1).toTypedArray())
-            "claim", plugin.language["CmdFactionClaim"] -> factionClaimCommand.onCommand(sender, command, label, args.drop(1).toTypedArray())
-            "unclaim", plugin.language["CmdFactionUnclaim"] -> factionUnclaimCommand.onCommand(sender, command, label, args.drop(1).toTypedArray())
-            "checkclaim", plugin.language["CmdFactionCheckClaim"] -> factionCheckClaimCommand.onCommand(sender, command, label, args.drop(1).toTypedArray())
-            "unclaimall", plugin.language["CmdFactionUnclaimAll"] -> factionUnclaimAllCommand.onCommand(sender, command, label, args.drop(1).toTypedArray())
-            "autoclaim", plugin.language["CmdFactionAutoclaim"] -> factionAutoclaimCommand.onCommand(sender, command, label, args.drop(1).toTypedArray())
-            "power", plugin.language["CmdFactionPower"] -> factionPowerCommand.onCommand(sender, command, label, args.drop(1).toTypedArray())
-            "who", plugin.language["CmdFactionWho"] -> factionWhoCommand.onCommand(sender, command, label, args.drop(1).toTypedArray())
-            "disband", plugin.language["CmdFactionDisband"] -> factionDisbandCommand.onCommand(sender, command, label, args.drop(1).toTypedArray())
-            "invoke", plugin.language["CmdFactionInvoke"] -> factionInvokeCommand.onCommand(sender, command, label, args.drop(1).toTypedArray())
-            "leave", plugin.language["CmdFactionLeave"] -> factionLeaveCommand.onCommand(sender, command, label, args.drop(1).toTypedArray())
-            "set", plugin.language["CmdFactionSet"] -> factionSetCommand.onCommand(sender, command, label, args.drop(1).toTypedArray())
-            "rename" -> factionSetNameCommand.onCommand(sender, command, label, args.drop(1).toTypedArray())
-            "vassalize", "vassalise", plugin.language["CmdFactionVassalize"] -> factionVassalizeCommand.onCommand(sender, command, label, args.drop(1).toTypedArray())
-            "swearfealty", plugin.language["CmdFactionSwearFealty"] -> factionSwearFealtyCommand.onCommand(sender, command, label, args.drop(1).toTypedArray())
-            "grantindependence", plugin.language["CmdFactionGrantIndependence"] -> factionGrantIndependenceCommand.onCommand(sender, command, label, args.drop(1).toTypedArray())
-            "declareindependence", plugin.language["CmdFactionDeclareIndependence"] -> factionDeclareIndependenceCommand.onCommand(sender, command, label, args.drop(1).toTypedArray())
-            "kick", plugin.language["CmdFactionKick"] -> factionKickCommand.onCommand(sender, command, label, args.drop(1).toTypedArray())
-            "map", plugin.language["CmdFactionMap"] -> factionMapCommand.onCommand(sender, command, label, args.drop(1).toTypedArray())
-            "sethome", plugin.language["CmdFactionSetHome"] -> factionSetHomeCommand.onCommand(sender, command, label, args.drop(1).toTypedArray())
-            "home", plugin.language["CmdFactionHome"] -> factionHomeCommand.onCommand(sender, command, label, args.drop(1).toTypedArray())
-            "flag", "flags", plugin.language["CmdFactionFlag"] -> factionFlagCommand.onCommand(sender, command, label, args.drop(1).toTypedArray())
-            "bypass", plugin.language["CmdFactionBypass"] -> factionBypassCommand.onCommand(sender, command, label, args.drop(1).toTypedArray())
-            "chat", plugin.language["CmdFactionChat"] -> factionChatCommand.onCommand(sender, command, label, args.drop(1).toTypedArray())
-            "claimfill", plugin.language["CmdFactionClaimFill"] -> factionClaimFillCommand.onCommand(sender, command, label, args.drop(1).toTypedArray())
-            "bonuspower", plugin.language["CmdFactionBonusPower"] -> factionBonusPowerCommand.onCommand(sender, command, label, args.drop(1).toTypedArray())
-            "relationship", plugin.language["CmdFactionRelationship"] -> factionRelationshipCommand.onCommand(sender, command, label, args.drop(1).toTypedArray())
+            in helpAliases -> factionHelpCommand.onCommand(sender, command, label, args.drop(1).toTypedArray())
+            in createAliases -> factionCreateCommand.onCommand(sender, command, label, args.drop(1).toTypedArray())
+            in lawAliases -> factionLawCommand.onCommand(sender, command, label, args.drop(1).toTypedArray())
+            in allyAliases -> factionAllyCommand.onCommand(sender, command, label, args.drop(1).toTypedArray())
+            in breakAllianceAliases -> factionBreakAllianceCommand.onCommand(sender, command, label, args.drop(1).toTypedArray())
+            in inviteAliases -> factionInviteCommand.onCommand(sender, command, label, args.drop(1).toTypedArray())
+            in joinAliases -> factionJoinCommand.onCommand(sender, command, label, args.drop(1).toTypedArray())
+            in declareWarAliases -> factionDeclareWarCommand.onCommand(sender, command, label, args.drop(1).toTypedArray())
+            in makePeaceAliases -> factionMakePeaceCommand.onCommand(sender, command, label, args.drop(1).toTypedArray())
+            in infoAliases -> factionInfoCommand.onCommand(sender, command, label, args.drop(1).toTypedArray())
+            in membersAliases -> factionMembersCommand.onCommand(sender, command, label, args.drop(1).toTypedArray())
+            in roleAliases -> factionRoleCommand.onCommand(sender, command, label, args.drop(1).toTypedArray())
+            in listAliases -> factionListCommand.onCommand(sender, command, label, args.drop(1).toTypedArray())
+            in claimAliases -> factionClaimCommand.onCommand(sender, command, label, args.drop(1).toTypedArray())
+            in unclaimAliases -> factionUnclaimCommand.onCommand(sender, command, label, args.drop(1).toTypedArray())
+            in checkClaimAliases -> factionCheckClaimCommand.onCommand(sender, command, label, args.drop(1).toTypedArray())
+            in unclaimAllAliases -> factionUnclaimAllCommand.onCommand(sender, command, label, args.drop(1).toTypedArray())
+            in autoclaimAliases -> factionAutoclaimCommand.onCommand(sender, command, label, args.drop(1).toTypedArray())
+            in powerAliases -> factionPowerCommand.onCommand(sender, command, label, args.drop(1).toTypedArray())
+            in whoAliases -> factionWhoCommand.onCommand(sender, command, label, args.drop(1).toTypedArray())
+            in disbandAliases -> factionDisbandCommand.onCommand(sender, command, label, args.drop(1).toTypedArray())
+            in invokeAliases -> factionInvokeCommand.onCommand(sender, command, label, args.drop(1).toTypedArray())
+            in leaveAliases -> factionLeaveCommand.onCommand(sender, command, label, args.drop(1).toTypedArray())
+            in setAliases -> factionSetCommand.onCommand(sender, command, label, args.drop(1).toTypedArray())
+            in renameAliases -> factionSetNameCommand.onCommand(sender, command, label, args.drop(1).toTypedArray())
+            in vassalizeAliases -> factionVassalizeCommand.onCommand(sender, command, label, args.drop(1).toTypedArray())
+            in swearFealtyAliases -> factionSwearFealtyCommand.onCommand(sender, command, label, args.drop(1).toTypedArray())
+            in grantIndependenceAliases -> factionGrantIndependenceCommand.onCommand(sender, command, label, args.drop(1).toTypedArray())
+            in declareIndependenceAliases -> factionDeclareIndependenceCommand.onCommand(sender, command, label, args.drop(1).toTypedArray())
+            in kickAliases -> factionKickCommand.onCommand(sender, command, label, args.drop(1).toTypedArray())
+            in mapAliases -> factionMapCommand.onCommand(sender, command, label, args.drop(1).toTypedArray())
+            in setHomeAliases -> factionSetHomeCommand.onCommand(sender, command, label, args.drop(1).toTypedArray())
+            in homeAliases -> factionHomeCommand.onCommand(sender, command, label, args.drop(1).toTypedArray())
+            in flagAliases -> factionFlagCommand.onCommand(sender, command, label, args.drop(1).toTypedArray())
+            in bypassAliases -> factionBypassCommand.onCommand(sender, command, label, args.drop(1).toTypedArray())
+            in chatAliases -> factionChatCommand.onCommand(sender, command, label, args.drop(1).toTypedArray())
+            in claimFillAliases -> factionClaimFillCommand.onCommand(sender, command, label, args.drop(1).toTypedArray())
+            in bonusPowerAliases -> factionBonusPowerCommand.onCommand(sender, command, label, args.drop(1).toTypedArray())
+            in relationshipAliases -> factionRelationshipCommand.onCommand(sender, command, label, args.drop(1).toTypedArray())
             else -> {
                 sender.sendMessage("$AQUA${plugin.language["MedievalFactionsTitle", plugin.description.version]}")
                 sender.sendMessage("$GRAY${plugin.language["DeveloperList", plugin.description.authors.joinToString()]}")
@@ -136,6 +217,58 @@ class MfFactionCommand(private val plugin: MedievalFactions) : CommandExecutor {
                 sender.sendMessage("$YELLOW${plugin.language["CommandFactionUsage"]}")
                 true
             }
+        }
+    }
+
+    override fun onTabComplete(
+        sender: CommandSender,
+        command: Command,
+        label: String,
+        args: Array<out String>
+    ) = when {
+        args.isEmpty() -> subcommands
+        args.size == 1 -> subcommands.filter { it.startsWith(args[0].lowercase()) }
+        else -> when (args.first().lowercase()) {
+            in helpAliases -> factionHelpCommand.onTabComplete(sender, command, label, args.drop(1).toTypedArray())
+            in createAliases -> factionCreateCommand.onTabComplete(sender, command, label, args.drop(1).toTypedArray())
+            in lawAliases -> factionLawCommand.onTabComplete(sender, command, label, args.drop(1).toTypedArray())
+            in allyAliases -> factionAllyCommand.onTabComplete(sender, command, label, args.drop(1).toTypedArray())
+            in breakAllianceAliases -> factionBreakAllianceCommand.onTabComplete(sender, command, label, args.drop(1).toTypedArray())
+            in inviteAliases -> factionInviteCommand.onTabComplete(sender, command, label, args.drop(1).toTypedArray())
+            in joinAliases -> factionJoinCommand.onTabComplete(sender, command, label, args.drop(1).toTypedArray())
+            in declareWarAliases -> factionDeclareWarCommand.onTabComplete(sender, command, label, args.drop(1).toTypedArray())
+            in makePeaceAliases -> factionMakePeaceCommand.onTabComplete(sender, command, label, args.drop(1).toTypedArray())
+            in infoAliases -> factionInfoCommand.onTabComplete(sender, command, label, args.drop(1).toTypedArray())
+            in membersAliases -> factionMembersCommand.onTabComplete(sender, command, label, args.drop(1).toTypedArray())
+            in roleAliases -> factionRoleCommand.onTabComplete(sender, command, label, args.drop(1).toTypedArray())
+            in listAliases -> factionListCommand.onTabComplete(sender, command, label, args.drop(1).toTypedArray())
+            in claimAliases -> factionClaimCommand.onTabComplete(sender, command, label, args.drop(1).toTypedArray())
+            in unclaimAliases -> factionUnclaimCommand.onTabComplete(sender, command, label, args.drop(1).toTypedArray())
+            in checkClaimAliases -> factionCheckClaimCommand.onTabComplete(sender, command, label, args.drop(1).toTypedArray())
+            in unclaimAllAliases -> factionUnclaimAllCommand.onTabComplete(sender, command, label, args.drop(1).toTypedArray())
+            in autoclaimAliases -> factionAutoclaimCommand.onTabComplete(sender, command, label, args.drop(1).toTypedArray())
+            in powerAliases -> factionPowerCommand.onTabComplete(sender, command, label, args.drop(1).toTypedArray())
+            in whoAliases -> factionWhoCommand.onTabComplete(sender, command, label, args.drop(1).toTypedArray())
+            in disbandAliases -> factionDisbandCommand.onTabComplete(sender, command, label, args.drop(1).toTypedArray())
+            in invokeAliases -> factionInvokeCommand.onTabComplete(sender, command, label, args.drop(1).toTypedArray())
+            in leaveAliases -> factionLeaveCommand.onTabComplete(sender, command, label, args.drop(1).toTypedArray())
+            in setAliases -> factionSetCommand.onTabComplete(sender, command, label, args.drop(1).toTypedArray())
+            in renameAliases -> factionSetNameCommand.onTabComplete(sender, command, label, args.drop(1).toTypedArray())
+            in vassalizeAliases -> factionVassalizeCommand.onTabComplete(sender, command, label, args.drop(1).toTypedArray())
+            in swearFealtyAliases -> factionSwearFealtyCommand.onTabComplete(sender, command, label, args.drop(1).toTypedArray())
+            in grantIndependenceAliases -> factionGrantIndependenceCommand.onTabComplete(sender, command, label, args.drop(1).toTypedArray())
+            in declareIndependenceAliases -> factionDeclareIndependenceCommand.onTabComplete(sender, command, label, args.drop(1).toTypedArray())
+            in kickAliases -> factionKickCommand.onTabComplete(sender, command, label, args.drop(1).toTypedArray())
+            in mapAliases -> factionMapCommand.onTabComplete(sender, command, label, args.drop(1).toTypedArray())
+            in setHomeAliases -> factionSetHomeCommand.onTabComplete(sender, command, label, args.drop(1).toTypedArray())
+            in homeAliases -> factionHomeCommand.onTabComplete(sender, command, label, args.drop(1).toTypedArray())
+            in flagAliases -> factionFlagCommand.onTabComplete(sender, command, label, args.drop(1).toTypedArray())
+            in bypassAliases -> factionBypassCommand.onTabComplete(sender, command, label, args.drop(1).toTypedArray())
+            in chatAliases -> factionChatCommand.onTabComplete(sender, command, label, args.drop(1).toTypedArray())
+            in claimFillAliases -> factionClaimFillCommand.onTabComplete(sender, command, label, args.drop(1).toTypedArray())
+            in bonusPowerAliases -> factionBonusPowerCommand.onTabComplete(sender, command, label, args.drop(1).toTypedArray())
+            in relationshipAliases -> factionRelationshipCommand.onTabComplete(sender, command, label, args.drop(1).toTypedArray())
+            else -> emptyList()
         }
     }
 }

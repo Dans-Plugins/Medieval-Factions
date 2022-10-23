@@ -13,11 +13,12 @@ import org.bukkit.ChatColor.RED
 import org.bukkit.command.Command
 import org.bukkit.command.CommandExecutor
 import org.bukkit.command.CommandSender
+import org.bukkit.command.TabCompleter
 import org.bukkit.entity.Player
 import java.util.*
 import java.util.logging.Level.SEVERE
 
-class MfFactionClaimFillCommand(private val plugin: MedievalFactions) : CommandExecutor {
+class MfFactionClaimFillCommand(private val plugin: MedievalFactions) : CommandExecutor, TabCompleter {
     override fun onCommand(sender: CommandSender, command: Command, label: String, args: Array<out String>): Boolean {
         if (!sender.hasPermission("mf.claimfill")) {
             sender.sendMessage("$RED${plugin.language["CommandFactionClaimFillNoPermission"]}")
@@ -114,4 +115,11 @@ class MfFactionClaimFillCommand(private val plugin: MedievalFactions) : CommandE
         newChunks += southChunks
         return newChunks
     }
+
+    override fun onTabComplete(
+        sender: CommandSender,
+        command: Command,
+        label: String,
+        args: Array<out String>
+    ) = emptyList<String>()
 }

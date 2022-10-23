@@ -15,6 +15,7 @@ import org.bukkit.ChatColor.RED
 import org.bukkit.command.Command
 import org.bukkit.command.CommandExecutor
 import org.bukkit.command.CommandSender
+import org.bukkit.command.TabCompleter
 import org.bukkit.conversations.ConversationContext
 import org.bukkit.conversations.ConversationFactory
 import org.bukkit.conversations.Prompt
@@ -22,7 +23,7 @@ import org.bukkit.conversations.StringPrompt
 import org.bukkit.entity.Player
 import java.util.logging.Level.SEVERE
 
-class MfFactionRoleCreateCommand(private val plugin: MedievalFactions) : CommandExecutor {
+class MfFactionRoleCreateCommand(private val plugin: MedievalFactions) : CommandExecutor, TabCompleter {
 
     private val conversationFactory = ConversationFactory(plugin)
         .withModality(true)
@@ -134,4 +135,11 @@ class MfFactionRoleCreateCommand(private val plugin: MedievalFactions) : Command
             }
         })
     }
+
+    override fun onTabComplete(
+        sender: CommandSender,
+        command: Command,
+        label: String,
+        args: Array<out String>
+    ) = emptyList<String>()
 }

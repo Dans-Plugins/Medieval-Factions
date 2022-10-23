@@ -16,12 +16,13 @@ import org.bukkit.World
 import org.bukkit.command.Command
 import org.bukkit.command.CommandExecutor
 import org.bukkit.command.CommandSender
+import org.bukkit.command.TabCompleter
 import org.bukkit.entity.Player
 import java.util.logging.Level
 import net.md_5.bungee.api.ChatColor as SpigotChatColor
 import org.bukkit.ChatColor as BukkitChatColor
 
-class MfFactionMapCommand(private val plugin: MedievalFactions) : CommandExecutor {
+class MfFactionMapCommand(private val plugin: MedievalFactions) : CommandExecutor, TabCompleter {
 
     enum class MapType(val supportsFactionless: Boolean) {
         NORMAL(true),
@@ -140,5 +141,16 @@ class MfFactionMapCommand(private val plugin: MedievalFactions) : CommandExecuto
                 }
             }
         }
+    }
+
+    override fun onTabComplete(
+        sender: CommandSender,
+        command: Command,
+        label: String,
+        args: Array<out String>
+    ) = when {
+        args.isEmpty() -> MapType.values().map { it.name.lowercase() }
+        args.size == 1 -> MapType.values().map { it.name.lowercase() }.filter { it.startsWith(args[0].lowercase()) }
+        else -> emptyList()
     }
 }

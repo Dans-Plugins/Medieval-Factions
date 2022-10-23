@@ -16,6 +16,7 @@ import org.bukkit.OfflinePlayer
 import org.bukkit.command.Command
 import org.bukkit.command.CommandExecutor
 import org.bukkit.command.CommandSender
+import org.bukkit.command.TabCompleter
 import org.bukkit.conversations.ConversationContext
 import org.bukkit.conversations.ConversationFactory
 import org.bukkit.conversations.Prompt
@@ -25,7 +26,7 @@ import java.util.logging.Level.SEVERE
 import net.md_5.bungee.api.ChatColor as SpigotChatColor
 import org.bukkit.ChatColor as BukkitChatColor
 
-class MfFactionInviteCommand(private val plugin: MedievalFactions) : CommandExecutor {
+class MfFactionInviteCommand(private val plugin: MedievalFactions) : CommandExecutor, TabCompleter {
 
     private val conversationFactory = ConversationFactory(plugin)
         .withModality(true)
@@ -46,8 +47,10 @@ class MfFactionInviteCommand(private val plugin: MedievalFactions) : CommandExec
         override fun getPromptText(context: ConversationContext) =
             plugin.language["CommandFactionInvitePlayerPrompt", plugin.language["EscapeSequence"]]
 
-        override fun isInputValid(context: ConversationContext, input: String) =
-            plugin.server.getOfflinePlayer(input).hasPlayedBefore()
+        override fun isInputValid(context: ConversationContext, input: String): Boolean {
+            val player = plugin.server.getOfflinePlayer(input)
+            return player.isOnline || player.hasPlayedBefore()
+        }
 
         override fun getFailedValidationText(context: ConversationContext, invalidInput: String) =
             "${BukkitChatColor.RED}${plugin.language["CommandFactionInviteInvalidTarget"]}"
@@ -148,5 +151,19 @@ class MfFactionInviteCommand(private val plugin: MedievalFactions) : CommandExec
                 sender.performCommand("faction info")
             })
         })
+    }
+
+    override fun onTabComplete(
+        sender: CommandSender,
+        command: Command,
+        label: String,
+        args: Array<out String>
+    ) = when {
+        args.isEmpty() -> plugin.server.offlinePlayers
+            .mapNotNull { it.name }
+        args.size == 1 -> plugin.server.offlinePlayers
+            .filter { it.name?.lowercase()?.startsWith(args[0].lowercase()) == true }
+            .mapNotNull { it.name }
+        else -> emptyList()
     }
 }

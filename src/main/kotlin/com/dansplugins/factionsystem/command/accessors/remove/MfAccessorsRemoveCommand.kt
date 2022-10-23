@@ -12,6 +12,7 @@ import org.bukkit.block.Block
 import org.bukkit.command.Command
 import org.bukkit.command.CommandExecutor
 import org.bukkit.command.CommandSender
+import org.bukkit.command.TabCompleter
 import org.bukkit.conversations.ConversationContext
 import org.bukkit.conversations.ConversationFactory
 import org.bukkit.conversations.Prompt
@@ -20,7 +21,7 @@ import org.bukkit.entity.Player
 import java.util.*
 import java.util.logging.Level
 
-class MfAccessorsRemoveCommand(private val plugin: MedievalFactions) : CommandExecutor {
+class MfAccessorsRemoveCommand(private val plugin: MedievalFactions) : CommandExecutor, TabCompleter {
 
     private val conversationFactory = ConversationFactory(plugin)
         .withModality(true)
@@ -46,7 +47,7 @@ class MfAccessorsRemoveCommand(private val plugin: MedievalFactions) : CommandEx
             } catch (exception: IllegalArgumentException) {
                 plugin.server.getOfflinePlayer(input)
             }
-            return player.hasPlayedBefore()
+            return player.isOnline || player.hasPlayedBefore()
         }
 
         override fun getFailedValidationText(context: ConversationContext, invalidInput: String): String? {
@@ -65,7 +66,7 @@ class MfAccessorsRemoveCommand(private val plugin: MedievalFactions) : CommandEx
                 context.getSessionData("y") as Int,
                 context.getSessionData("z") as Int
             )
-            addAccessor(sender, block, player)
+            removeAccessor(sender, block, player)
             return END_OF_CONVERSATION
         }
     }
@@ -115,16 +116,16 @@ class MfAccessorsRemoveCommand(private val plugin: MedievalFactions) : CommandEx
         } catch (exception: IllegalArgumentException) {
             plugin.server.getOfflinePlayer(args[3])
         }
-        if (!player.hasPlayedBefore()) {
+        if (!player.isOnline && !player.hasPlayedBefore()) {
             sender.sendMessage("$RED${plugin.language["CommandAccessorsRemoveInvalidPlayer"]}")
             return true
         }
         val block = sender.world.getBlockAt(x, y, z)
-        addAccessor(sender, block, player)
+        removeAccessor(sender, block, player)
         return true
     }
 
-    private fun addAccessor(sender: Player, block: Block, accessor: OfflinePlayer) {
+    private fun removeAccessor(sender: Player, block: Block, accessor: OfflinePlayer) {
         plugin.server.scheduler.runTaskAsynchronously(plugin, Runnable {
             val playerService = plugin.services.playerService
             val mfPlayer = playerService.getPlayer(sender)
@@ -156,6 +157,19 @@ class MfAccessorsRemoveCommand(private val plugin: MedievalFactions) : CommandEx
             }
             sender.sendMessage("${ChatColor.GREEN}${plugin.language["CommandAccessorsRemoveSuccess", accessor.name ?: plugin.language["UnknownPlayer"]]}")
         })
+    }
+
+    override fun onTabComplete(
+        sender: CommandSender,
+        command: Command,
+        label: String,
+        args: Array<out String>
+    ) = when {
+        args.size <= 3 -> emptyList()
+        args.size == 4 -> plugin.server.offlinePlayers
+            .filter { it.name?.lowercase()?.startsWith(args[3].lowercase()) == true }
+            .mapNotNull { it.name }
+        else -> emptyList()
     }
 
 }

@@ -9,10 +9,11 @@ import org.bukkit.ChatColor.RED
 import org.bukkit.command.Command
 import org.bukkit.command.CommandExecutor
 import org.bukkit.command.CommandSender
+import org.bukkit.command.TabCompleter
 import org.bukkit.entity.Player
 import java.util.logging.Level.SEVERE
 
-class MfLockCommand(private val plugin: MedievalFactions) : CommandExecutor {
+class MfLockCommand(private val plugin: MedievalFactions) : CommandExecutor, TabCompleter {
     override fun onCommand(sender: CommandSender, command: Command, label: String, args: Array<out String>): Boolean {
         if (!sender.hasPermission("mf.lock")) {
             sender.sendMessage("$RED${plugin.language["CommandLockNoPermission"]}")
@@ -54,5 +55,16 @@ class MfLockCommand(private val plugin: MedievalFactions) : CommandExecutor {
             sender.sendMessage("$GREEN${plugin.language["CommandLockSuccess"]}")
         })
         return true
+    }
+
+    override fun onTabComplete(
+        sender: CommandSender,
+        command: Command,
+        label: String,
+        args: Array<out String>
+    ) = when {
+        args.isEmpty() -> listOf("cancel")
+        args.size == 1 && "cancel".startsWith(args[0].lowercase()) -> listOf("cancel")
+        else -> emptyList()
     }
 }

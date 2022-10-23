@@ -8,9 +8,10 @@ import org.bukkit.ChatColor.RED
 import org.bukkit.command.Command
 import org.bukkit.command.CommandExecutor
 import org.bukkit.command.CommandSender
+import org.bukkit.command.TabCompleter
 import java.util.logging.Level
 
-class MfPowerSetCommand(private val plugin: MedievalFactions) : CommandExecutor {
+class MfPowerSetCommand(private val plugin: MedievalFactions) : CommandExecutor, TabCompleter {
 
     override fun onCommand(sender: CommandSender, command: Command, label: String, args: Array<out String>): Boolean {
         if (!sender.hasPermission("mf.power.set") && !sender.hasPermission("mf.force.power")) {
@@ -51,6 +52,20 @@ class MfPowerSetCommand(private val plugin: MedievalFactions) : CommandExecutor 
             sender.sendMessage("$GREEN${plugin.language["CommandPowerSetSuccess", target.name ?: plugin.language["UnknownPlayer"], power.toString(), maxPower.toString()]}")
         })
         return true
+    }
+
+    override fun onTabComplete(
+        sender: CommandSender,
+        command: Command,
+        label: String,
+        args: Array<out String>
+    ) = when {
+        args.isEmpty() -> plugin.server.offlinePlayers
+            .mapNotNull { it.name }
+        args.size == 1 -> plugin.server.offlinePlayers
+            .filter { it.name?.lowercase()?.startsWith(args[0].lowercase()) == true }
+            .mapNotNull { it.name }
+        else -> emptyList()
     }
 
 }

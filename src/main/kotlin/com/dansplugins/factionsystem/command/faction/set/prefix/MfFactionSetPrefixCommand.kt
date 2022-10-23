@@ -8,6 +8,7 @@ import org.bukkit.ChatColor
 import org.bukkit.command.Command
 import org.bukkit.command.CommandExecutor
 import org.bukkit.command.CommandSender
+import org.bukkit.command.TabCompleter
 import org.bukkit.conversations.ConversationContext
 import org.bukkit.conversations.ConversationFactory
 import org.bukkit.conversations.Prompt
@@ -15,7 +16,7 @@ import org.bukkit.conversations.StringPrompt
 import org.bukkit.entity.Player
 import java.util.logging.Level
 
-class MfFactionSetPrefixCommand(private val plugin: MedievalFactions) : CommandExecutor {
+class MfFactionSetPrefixCommand(private val plugin: MedievalFactions) : CommandExecutor, TabCompleter {
     private val conversationFactory = ConversationFactory(plugin)
         .withModality(true)
         .withFirstPrompt(PrefixPrompt())
@@ -60,7 +61,6 @@ class MfFactionSetPrefixCommand(private val plugin: MedievalFactions) : CommandE
     }
 
     private fun setFactionPrefix(player: Player, prefix: String) {
-        val onlinePlayers = plugin.server.onlinePlayers.associateWith { it.location.chunk }
         plugin.server.scheduler.runTaskAsynchronously(plugin, Runnable {
             val playerService = plugin.services.playerService
             val mfPlayer = playerService.getPlayer(player)
@@ -91,4 +91,11 @@ class MfFactionSetPrefixCommand(private val plugin: MedievalFactions) : CommandE
             })
         })
     }
+
+    override fun onTabComplete(
+        sender: CommandSender,
+        command: Command,
+        label: String,
+        args: Array<out String>
+    ) = emptyList<String>()
 }

@@ -3,16 +3,18 @@ package com.dansplugins.factionsystem.command.faction.role
 import com.dansplugins.factionsystem.MedievalFactions
 import com.dansplugins.factionsystem.faction.permission.MfFactionPermission.Companion.SET_MEMBER_ROLE
 import com.dansplugins.factionsystem.player.MfPlayer
+import com.dansplugins.factionsystem.player.MfPlayerId
 import dev.forkhandles.result4k.onFailure
 import org.bukkit.ChatColor.GREEN
 import org.bukkit.ChatColor.RED
 import org.bukkit.command.Command
 import org.bukkit.command.CommandExecutor
 import org.bukkit.command.CommandSender
+import org.bukkit.command.TabCompleter
 import org.bukkit.entity.Player
 import java.util.logging.Level.SEVERE
 
-class MfFactionRoleSetCommand(private val plugin: MedievalFactions) : CommandExecutor {
+class MfFactionRoleSetCommand(private val plugin: MedievalFactions) : CommandExecutor, TabCompleter {
     override fun onCommand(sender: CommandSender, command: Command, label: String, args: Array<out String>): Boolean {
         if (!sender.hasPermission("mf.role.set")) {
             sender.sendMessage("$RED${plugin.language["CommandFactionRoleSetNoPermission"]}")
@@ -83,5 +85,28 @@ class MfFactionRoleSetCommand(private val plugin: MedievalFactions) : CommandExe
             sender.sendMessage("$GREEN${plugin.language["CommandFactionRoleSetSuccess", target.name ?: "", targetRole.name]}")
         })
         return true
+    }
+
+    override fun onTabComplete(
+        sender: CommandSender,
+        command: Command,
+        label: String,
+        args: Array<out String>
+    ): List<String> {
+        return when {
+            args.isEmpty() -> plugin.server.offlinePlayers
+                .mapNotNull { it.name }
+            args.size == 1 -> plugin.server.offlinePlayers
+                .filter { it.name?.lowercase()?.startsWith(args[0].lowercase()) == true }
+                .mapNotNull { it.name }
+            args.size == 2 -> {
+                if (sender !is Player) return emptyList()
+                val playerId = MfPlayerId.fromBukkitPlayer(sender)
+                val factionService = plugin.services.factionService
+                val faction = factionService.getFaction(playerId) ?: return emptyList()
+                faction.roles.filter { it.name.lowercase().startsWith(args[0].lowercase()) }.map { it.name }
+            }
+            else -> emptyList()
+        }
     }
 }
