@@ -14,7 +14,6 @@ class EntityDamageByEntityListener(private val plugin: MedievalFactions) : Liste
     @EventHandler
     fun onEntityDamageByEntity(event: EntityDamageByEntityEvent) {
         val damaged = event.entity
-        if (damaged !is Player) return
         val damager = event.damager
         val damagerPlayer: Player? = when (damager) {
             is Player -> damager
@@ -27,6 +26,15 @@ class EntityDamageByEntityListener(private val plugin: MedievalFactions) : Liste
             val duelService = plugin.services.duelService
             val damagerMfPlayer = playerService.getPlayer(damagerPlayer) ?: MfPlayer(plugin, damagerPlayer)
             val damagerFaction = factionService.getFaction(damagerMfPlayer.id)
+            if (damaged !is Player) {
+                val claimService = plugin.services.claimService
+                val claim = claimService.getClaim(damaged.location.chunk) ?: return
+                val damagedFaction = factionService.getFaction(claim.factionId) ?: return
+                if (!damagedFaction.flags[plugin.flags.enableMobProtection]) return
+                if (damagerFaction?.id == damagedFaction.id) return
+                event.isCancelled = true
+                return
+            }
             val damagedMfPlayer = playerService.getPlayer(damaged) ?: MfPlayer(plugin, damaged)
             val damagerDuel = duelService.getDuel(damagerMfPlayer.id)
             val damagedDuel = duelService.getDuel(damagedMfPlayer.id)

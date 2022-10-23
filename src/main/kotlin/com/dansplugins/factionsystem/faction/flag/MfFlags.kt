@@ -49,6 +49,11 @@ class MfFlags(
             plugin,
             "acceptBonusPower",
             plugin.config.getBoolean("factions.defaults.flags.acceptBonusPower")
+        ),
+        MfFlag.boolean(
+            plugin,
+            "enableMobProtection",
+            plugin.config.getBoolean("factions.defaults.flags.enableMobProtection")
         )
     )
 ) : MutableList<MfFlag<out Any>> by flags {
@@ -61,6 +66,7 @@ class MfFlags(
     val color = get<String>("color")!!
     val allowFriendlyFire = get<Boolean>("allowFriendlyFire")!!
     val acceptBonusPower = get<Boolean>("acceptBonusPower")!!
+    val enableMobProtection = get<Boolean>("enableMobProtection")!!
 
     fun defaults() = MfFlagValues(flags.associateWith(MfFlag<out Any>::defaultValue))
 
