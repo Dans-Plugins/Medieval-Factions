@@ -5,6 +5,7 @@ import com.dansplugins.factionsystem.chat.MfFactionChatChannel
 import org.bukkit.OfflinePlayer
 
 data class MfPlayer(
+    @get:JvmName("getId")
     val id: MfPlayerId,
     val version: Int = 0,
     val power: Int = 0,

@@ -12,8 +12,10 @@ import java.util.logging.Level
 
 data class MfGate(
     private val plugin: MedievalFactions,
+    @get:JvmName("getId")
     val id: MfGateId = MfGateId.generate(),
     val version: Int = 0,
+    @get:JvmName("getFactionId")
     val factionId: MfFactionId,
     val area: MfCuboidArea,
     val trigger: MfBlockPosition,

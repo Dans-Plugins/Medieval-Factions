@@ -5,7 +5,11 @@ import org.bukkit.event.Cancellable
 import org.bukkit.event.Event
 import org.bukkit.event.HandlerList
 
-class FactionDisbandEvent(override val factionId: MfFactionId, isAsync: Boolean) : Event(isAsync), FactionEvent, Cancellable {
+class FactionDisbandEvent(
+    @get:JvmName("getFactionId")
+    override val factionId: MfFactionId,
+    isAsync: Boolean
+) : Event(isAsync), FactionEvent, Cancellable {
 
     companion object {
         @JvmStatic private val handlers: HandlerList = HandlerList()

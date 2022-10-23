@@ -39,10 +39,12 @@ class MfFactionService(private val plugin: MedievalFactions, private val reposit
 
     fun getFaction(name: String): MfFaction? = factions.singleOrNull { it.name == name }
 
+    @JvmName("getFactionByPlayerId")
     fun getFaction(playerId: MfPlayerId): MfFaction? = factions.singleOrNull { faction ->
         faction.members.any { member -> member.playerId == playerId }
     }
 
+    @JvmName("getFactionByFactionId")
     fun getFaction(factionId: MfFactionId): MfFaction? = factionsById[factionId]
 
     fun save(faction: MfFaction): Result4k<MfFaction, ServiceFailure> = resultFrom {
@@ -110,6 +112,7 @@ class MfFactionService(private val plugin: MedievalFactions, private val reposit
         ServiceFailure(exception.toServiceFailureType(), "Service error: ${exception.message}", exception)
     }
 
+    @JvmName("deleteFactionByFactionId")
     fun delete(factionId: MfFactionId): Result4k<Unit, ServiceFailure> = resultFrom {
         val event = FactionDisbandEvent(factionId, !plugin.server.isPrimaryThread)
         plugin.server.pluginManager.callEvent(event)
