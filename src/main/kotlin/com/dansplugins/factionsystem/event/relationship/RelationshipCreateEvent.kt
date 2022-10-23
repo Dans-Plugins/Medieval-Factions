@@ -7,6 +7,7 @@ import org.bukkit.event.Event
 import org.bukkit.event.HandlerList
 
 class RelationshipCreateEvent(
+    @get:JvmName("getRelationshipId")
     override val relationshipId: MfFactionRelationshipId,
     val relationship: MfFactionRelationship,
     isAsync: Boolean

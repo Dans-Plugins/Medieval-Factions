@@ -56,14 +56,17 @@ class MfChatService(private val plugin: MedievalFactions, private val repo: MfCh
         plugin.server.consoleSender.sendMessage(formattedMessage)
     }
 
+    @JvmName("getChatChannelMessagesByFactionId")
     fun getChatChannelMessages(factionId: MfFactionId): List<MfChatChannelMessage> {
         return repo.getChatChannelMessages(factionId)
     }
 
+    @JvmName("getChatChannelMessagesByFactionId")
     fun getChatChannelMessages(factionId: MfFactionId, limit: Int, offset: Int = 0): List<MfChatChannelMessage> {
         return repo.getChatChannelMessages(factionId, limit, offset)
     }
 
+    @JvmName("getChatChannelMessageCountByFactionId")
     fun getChatChannelMessageCount(factionId: MfFactionId): Int {
         return repo.getChatChannelMessageCount(factionId)
     }

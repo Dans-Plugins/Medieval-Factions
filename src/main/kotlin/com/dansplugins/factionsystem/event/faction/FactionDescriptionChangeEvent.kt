@@ -6,6 +6,7 @@ import org.bukkit.event.Event
 import org.bukkit.event.HandlerList
 
 class FactionDescriptionChangeEvent(
+    @get:JvmName("getFactionId")
     override val factionId: MfFactionId,
     val description: String,
     isAsync: Boolean

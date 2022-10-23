@@ -94,13 +94,13 @@ class MfFactionInfoCommand(private val plugin: MedievalFactions) : CommandExecut
                 })
             }
             factionService.fields
-                .filter { field -> field.isVisibleFor(faction.id, mfPlayer.id) }
+                .filter { field -> field.isVisibleFor(faction.id.value, mfPlayer.id.value) }
                 .forEach { field ->
                     sender.spigot().sendMessage(
                         TextComponent("${field.name}: ").apply {
                             color = SpigotChatColor.GRAY
                         },
-                        *field.get(faction.id)
+                        *field.get(faction.id.value)
                     )
                 }
         })

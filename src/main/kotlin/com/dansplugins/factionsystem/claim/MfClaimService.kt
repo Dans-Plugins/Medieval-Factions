@@ -42,7 +42,11 @@ class MfClaimService(private val plugin: MedievalFactions, private val repositor
     fun getClaim(world: World, x: Int, z: Int): MfClaimedChunk? = getClaim(world.uid, x, z)
     fun getClaim(chunk: Chunk): MfClaimedChunk? = getClaim(chunk.world, chunk.x, chunk.z)
     fun getClaim(chunkPosition: MfChunkPosition): MfClaimedChunk? = getClaim(chunkPosition.worldId, chunkPosition.x, chunkPosition.z)
+
+    @JvmName("getClaimsByFactionId")
     fun getClaims(factionId: MfFactionId): List<MfClaimedChunk> = claims.filter { it.factionId == factionId }
+
+    @JvmName("isInteractionAllowedForPlayerInChunk")
     fun isInteractionAllowed(playerId: MfPlayerId, claim: MfClaimedChunk): Boolean {
         val factionService = plugin.services.factionService
         val playerFaction = factionService.getFaction(playerId) ?: return false
@@ -135,6 +139,7 @@ class MfClaimService(private val plugin: MedievalFactions, private val repositor
         ServiceFailure(exception.toServiceFailureType(), "Service error: ${exception.message}", exception)
     }
 
+    @JvmName("deleteAllClaimsByFactionId")
     fun deleteAllClaims(factionId: MfFactionId) = resultFrom {
         val result = repository.deleteAll(factionId)
         val claimsToDelete = claimsByKey.filterValues { it.factionId == factionId }

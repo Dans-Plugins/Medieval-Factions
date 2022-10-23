@@ -7,6 +7,7 @@ import org.bukkit.event.Event
 import org.bukkit.event.HandlerList
 
 class FactionCreateEvent(
+    @get:JvmName("getFactionId")
     override val factionId: MfFactionId,
     val faction: MfFaction,
     isAsync: Boolean

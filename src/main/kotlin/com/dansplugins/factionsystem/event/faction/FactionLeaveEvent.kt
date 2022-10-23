@@ -8,7 +8,9 @@ import org.bukkit.event.Event
 import org.bukkit.event.HandlerList
 
 class FactionLeaveEvent(
+    @get:JvmName("getFactionId")
     override val factionId: MfFactionId,
+    @get:JvmName("getPlayerId")
     override val playerId: MfPlayerId,
     isAsync: Boolean
 ) : Event(isAsync), FactionEvent, PlayerEvent, Cancellable {
