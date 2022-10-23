@@ -14,7 +14,7 @@ authors:
 - alyphen
 version: @version@
 main: com.dansplugins.factionsystem.MedievalFactions
-api-version: 1.13
+api-version: 1.17
 softdepend:
 - dynmap
 - PlaceholderAPI
