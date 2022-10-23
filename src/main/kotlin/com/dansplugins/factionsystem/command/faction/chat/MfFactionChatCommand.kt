@@ -10,11 +10,14 @@ import org.bukkit.ChatColor.RED
 import org.bukkit.command.Command
 import org.bukkit.command.CommandExecutor
 import org.bukkit.command.CommandSender
+import org.bukkit.command.TabCompleter
 import org.bukkit.entity.Player
 import java.util.logging.Level
 
-class MfFactionChatCommand(private val plugin: MedievalFactions) : CommandExecutor {
+class MfFactionChatCommand(private val plugin: MedievalFactions) : CommandExecutor, TabCompleter {
     private val chatHistoryCommand = MfFactionChatHistoryCommand(plugin)
+
+    private val historyAliases = listOf("history", "logs", "log", plugin.language["CmdFactionChatHistory"])
 
     override fun onCommand(sender: CommandSender, command: Command, label: String, args: Array<out String>): Boolean {
         if (!sender.hasPermission("mf.chat")) {
@@ -38,7 +41,7 @@ class MfFactionChatCommand(private val plugin: MedievalFactions) : CommandExecut
                 }
             }
             if (chatChannel == null) {
-                if (args[0].lowercase() in listOf("history", "logs", "log", plugin.language["CmdFactionChatHistory"])) {
+                if (args[0].lowercase() in historyAliases) {
                     plugin.server.scheduler.runTask(plugin, Runnable {
                         chatHistoryCommand.onCommand(sender, command, label, args.drop(1).toTypedArray())
                     })
@@ -71,5 +74,18 @@ class MfFactionChatCommand(private val plugin: MedievalFactions) : CommandExecut
             }
         })
         return true
+    }
+
+    override fun onTabComplete(
+        sender: CommandSender,
+        command: Command,
+        label: String,
+        args: Array<out String>
+    ) = when {
+        args.isEmpty() -> MfFactionChatChannel.values().map { it.name.lowercase() } + historyAliases
+        args.size == 1 -> (MfFactionChatChannel.values().map { it.name.lowercase() } + historyAliases)
+            .filter { it.startsWith(args[0].lowercase()) }
+        args.size > 1 && args[0].lowercase() in historyAliases -> chatHistoryCommand.onTabComplete(sender, command, label, args.drop(1).toTypedArray())
+        else -> emptyList()
     }
 }

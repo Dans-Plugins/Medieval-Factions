@@ -6,10 +6,11 @@ import net.md_5.bungee.api.chat.TextComponent
 import org.bukkit.command.Command
 import org.bukkit.command.CommandExecutor
 import org.bukkit.command.CommandSender
+import org.bukkit.command.TabCompleter
 import net.md_5.bungee.api.ChatColor as SpigotChatColor
 import org.bukkit.ChatColor as BukkitChatColor
 
-class MfFactionListCommand(private val plugin: MedievalFactions) : CommandExecutor {
+class MfFactionListCommand(private val plugin: MedievalFactions) : CommandExecutor, TabCompleter {
     override fun onCommand(sender: CommandSender, command: Command, label: String, args: Array<out String>): Boolean {
         if (!sender.hasPermission("mf.list")) {
             sender.sendMessage("${BukkitChatColor.RED}${plugin.language["CommandFactionListNoPermission"]}")
@@ -91,4 +92,11 @@ class MfFactionListCommand(private val plugin: MedievalFactions) : CommandExecut
         })
         return true
     }
+
+    override fun onTabComplete(
+        sender: CommandSender,
+        command: Command,
+        label: String,
+        args: Array<out String>
+    ) = emptyList<String>()
 }

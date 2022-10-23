@@ -3,6 +3,7 @@ package com.dansplugins.factionsystem.command.duel.accept
 import com.dansplugins.factionsystem.MedievalFactions
 import com.dansplugins.factionsystem.duel.MfDuel
 import com.dansplugins.factionsystem.player.MfPlayer
+import com.dansplugins.factionsystem.player.MfPlayerId
 import dev.forkhandles.result4k.onFailure
 import org.bukkit.ChatColor.*
 import org.bukkit.NamespacedKey
@@ -12,13 +13,14 @@ import org.bukkit.boss.BarStyle
 import org.bukkit.command.Command
 import org.bukkit.command.CommandExecutor
 import org.bukkit.command.CommandSender
+import org.bukkit.command.TabCompleter
 import org.bukkit.entity.Player
 import java.time.Duration
 import java.time.Instant
 import java.util.logging.Level
 import java.util.logging.Level.SEVERE
 
-class MfDuelAcceptCommand(private val plugin: MedievalFactions) : CommandExecutor {
+class MfDuelAcceptCommand(private val plugin: MedievalFactions) : CommandExecutor, TabCompleter {
     override fun onCommand(sender: CommandSender, command: Command, label: String, args: Array<out String>): Boolean {
         if (!sender.hasPermission("mf.duel")) {
             sender.sendMessage("$RED${plugin.language["CommandDuelAcceptNoPermission"]}")
@@ -66,11 +68,7 @@ class MfDuelAcceptCommand(private val plugin: MedievalFactions) : CommandExecuto
                 sender.sendMessage("$RED${plugin.language["CommandDuelAcceptTargetAlreadyInDuel"]}")
                 return@Runnable
             }
-            val invite = duelService.getInvite(targetMfPlayer.id, mfPlayer.id).onFailure {
-                sender.sendMessage("$RED${plugin.language["CommandDuelAcceptFailedToGetInvite"]}")
-                plugin.logger.log(SEVERE, "Failed to get invite: ${it.reason.message}", it.reason.cause)
-                return@Runnable
-            }
+            val invite = duelService.getInvite(targetMfPlayer.id, mfPlayer.id)
             if (invite == null) {
                 sender.sendMessage("$RED${plugin.language["CommandDuelAcceptNoInvite", target.name]}")
                 return@Runnable
@@ -122,5 +120,30 @@ class MfDuelAcceptCommand(private val plugin: MedievalFactions) : CommandExecuto
             })
         })
         return true
+    }
+
+    override fun onTabComplete(
+        sender: CommandSender,
+        command: Command,
+        label: String,
+        args: Array<out String>
+    ): List<String> {
+        if (sender !is Player) return emptyList()
+        val senderMfPlayerId = MfPlayerId.fromBukkitPlayer(sender)
+        val duelService = plugin.services.duelService
+        return when {
+            args.isEmpty() -> plugin.server.onlinePlayers.filter { bukkitPlayer ->
+                duelService.getInvitesByInvitee(senderMfPlayerId).any {
+                    it.inviterId == MfPlayerId.fromBukkitPlayer(bukkitPlayer)
+                }
+            }.map(Player::getName)
+            args.size == 1 -> plugin.server.onlinePlayers.filter { bukkitPlayer ->
+                if (!bukkitPlayer.name.lowercase().startsWith(args[0].lowercase())) return@filter false
+                duelService.getInvitesByInvitee(senderMfPlayerId).any {
+                    it.inviterId == MfPlayerId.fromBukkitPlayer(bukkitPlayer)
+                }
+            }.map(Player::getName)
+            else -> emptyList()
+        }
     }
 }

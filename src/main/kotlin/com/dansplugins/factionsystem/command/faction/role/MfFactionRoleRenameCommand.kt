@@ -5,12 +5,14 @@ import com.dansplugins.factionsystem.faction.permission.MfFactionPermission.Comp
 import com.dansplugins.factionsystem.faction.role.MfFactionRole
 import com.dansplugins.factionsystem.faction.role.MfFactionRoleId
 import com.dansplugins.factionsystem.player.MfPlayer
+import com.dansplugins.factionsystem.player.MfPlayerId
 import dev.forkhandles.result4k.onFailure
 import org.bukkit.ChatColor
 import org.bukkit.ChatColor.RED
 import org.bukkit.command.Command
 import org.bukkit.command.CommandExecutor
 import org.bukkit.command.CommandSender
+import org.bukkit.command.TabCompleter
 import org.bukkit.conversations.ConversationContext
 import org.bukkit.conversations.ConversationFactory
 import org.bukkit.conversations.Prompt
@@ -19,7 +21,7 @@ import org.bukkit.entity.Player
 import preponderous.ponder.command.unquote
 import java.util.logging.Level
 
-class MfFactionRoleRenameCommand(private val plugin: MedievalFactions) : CommandExecutor {
+class MfFactionRoleRenameCommand(private val plugin: MedievalFactions) : CommandExecutor, TabCompleter {
     private val conversationFactory = ConversationFactory(plugin)
         .withModality(true)
         .withFirstPrompt(NamePrompt())
@@ -147,5 +149,22 @@ class MfFactionRoleRenameCommand(private val plugin: MedievalFactions) : Command
                 })
             }
         })
+    }
+
+    override fun onTabComplete(
+        sender: CommandSender,
+        command: Command,
+        label: String,
+        args: Array<out String>
+    ): List<String> {
+        if (sender !is Player) return emptyList()
+        val playerId = MfPlayerId.fromBukkitPlayer(sender)
+        val factionService = plugin.services.factionService
+        val faction = factionService.getFaction(playerId) ?: return emptyList()
+        return when {
+            args.isEmpty() -> faction.roles.map { it.name }
+            args.size == 1 -> faction.roles.filter { it.name.lowercase().startsWith(args[0].lowercase()) }.map { it.name }
+            else -> emptyList()
+        }
     }
 }

@@ -7,6 +7,7 @@ import com.dansplugins.factionsystem.faction.permission.MfFactionPermission.Comp
 import com.dansplugins.factionsystem.faction.permission.MfFactionPermission.Companion.VIEW_ROLE
 import com.dansplugins.factionsystem.pagination.PaginatedView
 import com.dansplugins.factionsystem.player.MfPlayer
+import com.dansplugins.factionsystem.player.MfPlayerId
 import dev.forkhandles.result4k.onFailure
 import net.md_5.bungee.api.chat.ClickEvent
 import net.md_5.bungee.api.chat.ClickEvent.Action.RUN_COMMAND
@@ -17,12 +18,13 @@ import net.md_5.bungee.api.chat.hover.content.Text
 import org.bukkit.command.Command
 import org.bukkit.command.CommandExecutor
 import org.bukkit.command.CommandSender
+import org.bukkit.command.TabCompleter
 import org.bukkit.entity.Player
 import java.util.logging.Level
 import net.md_5.bungee.api.ChatColor as SpigotChatColor
 import org.bukkit.ChatColor as BukkitChatColor
 
-class MfFactionRoleViewCommand(private val plugin: MedievalFactions) : CommandExecutor {
+class MfFactionRoleViewCommand(private val plugin: MedievalFactions) : CommandExecutor, TabCompleter {
 
     override fun onCommand(sender: CommandSender, command: Command, label: String, args: Array<out String>): Boolean {
         if (!sender.hasPermission("mf.role.view")) {
@@ -161,5 +163,22 @@ class MfFactionRoleViewCommand(private val plugin: MedievalFactions) : CommandEx
     private fun String.bracket(openingBracket: String = "[", closingBracket: String = "]") = "$openingBracket$this$closingBracket"
     private fun String.bracketIf(openingBracket: String = "[", closingBracket: String = "]", condition: () -> Boolean) =
         if (condition()) bracket(openingBracket, closingBracket) else this
+
+    override fun onTabComplete(
+        sender: CommandSender,
+        command: Command,
+        label: String,
+        args: Array<out String>
+    ): List<String> {
+        if (sender !is Player) return emptyList()
+        val playerId = MfPlayerId.fromBukkitPlayer(sender)
+        val factionService = plugin.services.factionService
+        val faction = factionService.getFaction(playerId) ?: return emptyList()
+        return when {
+            args.isEmpty() -> faction.roles.map { it.name }
+            args.size == 1 -> faction.roles.filter { it.name.lowercase().startsWith(args[0].lowercase()) }.map { it.name }
+            else -> emptyList()
+        }
+    }
 
 }

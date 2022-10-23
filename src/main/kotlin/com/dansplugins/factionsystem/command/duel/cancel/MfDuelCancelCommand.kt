@@ -2,16 +2,18 @@ package com.dansplugins.factionsystem.command.duel.cancel
 
 import com.dansplugins.factionsystem.MedievalFactions
 import com.dansplugins.factionsystem.player.MfPlayer
+import com.dansplugins.factionsystem.player.MfPlayerId
 import dev.forkhandles.result4k.onFailure
 import org.bukkit.ChatColor.GREEN
 import org.bukkit.ChatColor.RED
 import org.bukkit.command.Command
 import org.bukkit.command.CommandExecutor
 import org.bukkit.command.CommandSender
+import org.bukkit.command.TabCompleter
 import org.bukkit.entity.Player
 import java.util.logging.Level.SEVERE
 
-class MfDuelCancelCommand(private val plugin: MedievalFactions) : CommandExecutor {
+class MfDuelCancelCommand(private val plugin: MedievalFactions) : CommandExecutor, TabCompleter {
     override fun onCommand(sender: CommandSender, command: Command, label: String, args: Array<out String>): Boolean {
         if (!sender.hasPermission("mf.duel")) {
             sender.sendMessage("$RED${plugin.language["CommandDuelCancelNoPermission"]}")
@@ -45,15 +47,8 @@ class MfDuelCancelCommand(private val plugin: MedievalFactions) : CommandExecuto
                     return@Runnable
                 }
             val duelService = plugin.services.duelService
-            val invite = duelService.getInvite(targetMfPlayer.id, mfPlayer.id).onFailure {
-                sender.sendMessage("$RED${plugin.language["CommandDuelCancelFailedToGetInvite"]}")
-                plugin.logger.log(SEVERE, "Failed to get invite: ${it.reason.message}", it.reason.cause)
-                return@Runnable
-            } ?: duelService.getInvite(mfPlayer.id, targetMfPlayer.id).onFailure {
-                sender.sendMessage("$RED${plugin.language["CommandDuelCancelFailedToGetInvite"]}")
-                plugin.logger.log(SEVERE, "Failed to get invite: ${it.reason.message}", it.reason.cause)
-                return@Runnable
-            }
+            val invite = duelService.getInvite(targetMfPlayer.id, mfPlayer.id)
+                ?: duelService.getInvite(mfPlayer.id, targetMfPlayer.id)
             if (invite == null) {
                 sender.sendMessage("$RED${plugin.language["CommandDuelCancelNoInvite", target.name]}")
                 return@Runnable
@@ -70,8 +65,36 @@ class MfDuelCancelCommand(private val plugin: MedievalFactions) : CommandExecuto
                 sender.sendMessage("$GREEN${plugin.language["CommandDuelCancelSuccessDeclined", target.name]}")
                 target.sendMessage("$RED${plugin.language["CommandDuelCancelChallengeDeclined", sender.name]}")
             }
-
         })
         return true
+    }
+
+    override fun onTabComplete(
+        sender: CommandSender,
+        command: Command,
+        label: String,
+        args: Array<out String>
+    ): List<String> {
+        if (sender !is Player) return emptyList()
+        val senderMfPlayerId = MfPlayerId.fromBukkitPlayer(sender)
+        val duelService = plugin.services.duelService
+        return when {
+            args.isEmpty() -> plugin.server.onlinePlayers.filter { bukkitPlayer ->
+                duelService.getInvitesByInvitee(senderMfPlayerId).any {
+                    it.inviterId == MfPlayerId.fromBukkitPlayer(bukkitPlayer)
+                } || duelService.getInvitesByInviter(senderMfPlayerId).any {
+                    it.inviteeId == MfPlayerId.fromBukkitPlayer(bukkitPlayer)
+                }
+            }.map(Player::getName)
+            args.size == 1 -> plugin.server.onlinePlayers.filter { bukkitPlayer ->
+                if (!bukkitPlayer.name.lowercase().startsWith(args[0].lowercase())) return@filter false
+                duelService.getInvitesByInvitee(senderMfPlayerId).any {
+                    it.inviterId == MfPlayerId.fromBukkitPlayer(bukkitPlayer)
+                } || duelService.getInvitesByInviter(senderMfPlayerId).any {
+                    it.inviteeId == MfPlayerId.fromBukkitPlayer(bukkitPlayer)
+                }
+            }.map(Player::getName)
+            else -> emptyList()
+        }
     }
 }

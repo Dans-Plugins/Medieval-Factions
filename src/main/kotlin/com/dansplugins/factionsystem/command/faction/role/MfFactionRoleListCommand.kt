@@ -19,12 +19,13 @@ import net.md_5.bungee.api.chat.hover.content.Text
 import org.bukkit.command.Command
 import org.bukkit.command.CommandExecutor
 import org.bukkit.command.CommandSender
+import org.bukkit.command.TabCompleter
 import org.bukkit.entity.Player
 import java.util.logging.Level.SEVERE
 import net.md_5.bungee.api.ChatColor as SpigotChatColor
 import org.bukkit.ChatColor as BukkitChatColor
 
-class MfFactionRoleListCommand(private val plugin: MedievalFactions) : CommandExecutor {
+class MfFactionRoleListCommand(private val plugin: MedievalFactions) : CommandExecutor, TabCompleter {
 
     override fun onCommand(sender: CommandSender, command: Command, label: String, args: Array<out String>): Boolean {
         if (!sender.hasPermission("mf.role.list")) {
@@ -148,5 +149,12 @@ class MfFactionRoleListCommand(private val plugin: MedievalFactions) : CommandEx
         })
         return true
     }
+
+    override fun onTabComplete(
+        sender: CommandSender,
+        command: Command,
+        label: String,
+        args: Array<out String>
+    ) = emptyList<String>()
 
 }

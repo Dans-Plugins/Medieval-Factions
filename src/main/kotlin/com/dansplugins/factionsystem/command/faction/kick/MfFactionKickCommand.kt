@@ -11,11 +11,12 @@ import org.bukkit.ChatColor.RED
 import org.bukkit.command.Command
 import org.bukkit.command.CommandExecutor
 import org.bukkit.command.CommandSender
+import org.bukkit.command.TabCompleter
 import org.bukkit.entity.Player
 import java.util.*
 import java.util.logging.Level.SEVERE
 
-class MfFactionKickCommand(private val plugin: MedievalFactions) : CommandExecutor {
+class MfFactionKickCommand(private val plugin: MedievalFactions) : CommandExecutor, TabCompleter {
     override fun onCommand(sender: CommandSender, command: Command, label: String, args: Array<out String>): Boolean {
         if (!sender.hasPermission("mf.kick")) {
             sender.sendMessage("$RED${plugin.language["CommandFactionKickNoPermission"]}")
@@ -107,5 +108,19 @@ class MfFactionKickCommand(private val plugin: MedievalFactions) : CommandExecut
             sender.sendMessage("$GREEN${plugin.language["CommandFactionKickSuccess", target.name ?: plugin.language["UnknownPlayer"], faction.name]}")
         })
         return true
+    }
+
+    override fun onTabComplete(
+        sender: CommandSender,
+        command: Command,
+        label: String,
+        args: Array<out String>
+    ) = when {
+        args.isEmpty() -> plugin.server.offlinePlayers
+            .mapNotNull { it.name }
+        args.size == 1 -> plugin.server.offlinePlayers
+            .filter { it.name?.lowercase()?.startsWith(args[0].lowercase()) == true }
+            .mapNotNull { it.name }
+        else -> emptyList()
     }
 }

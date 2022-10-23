@@ -13,6 +13,11 @@ class JooqMfDuelInviteRepository(private val dsl: DSLContext) : MfDuelInviteRepo
             .fetchOne()
             ?.toDomain()
 
+    override fun getInvites(): List<MfDuelInvite> =
+        dsl.selectFrom(MF_DUEL_INVITE)
+            .fetch()
+            .map { it.toDomain() }
+
     override fun upsert(invite: MfDuelInvite): MfDuelInvite {
         dsl.insertInto(MF_DUEL_INVITE)
             .set(MF_DUEL_INVITE.INVITER_ID, invite.inviterId.value)

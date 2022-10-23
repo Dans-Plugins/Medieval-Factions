@@ -1,6 +1,7 @@
 package com.dansplugins.factionsystem.command.faction.swearfealty
 
 import com.dansplugins.factionsystem.MedievalFactions
+import com.dansplugins.factionsystem.faction.MfFaction
 import com.dansplugins.factionsystem.faction.permission.MfFactionPermission.Companion.SWEAR_FEALTY
 import com.dansplugins.factionsystem.player.MfPlayer
 import com.dansplugins.factionsystem.relationship.MfFactionRelationship
@@ -12,10 +13,11 @@ import org.bukkit.ChatColor.RED
 import org.bukkit.command.Command
 import org.bukkit.command.CommandExecutor
 import org.bukkit.command.CommandSender
+import org.bukkit.command.TabCompleter
 import org.bukkit.entity.Player
 import java.util.logging.Level.SEVERE
 
-class MfFactionSwearFealtyCommand(private val plugin: MedievalFactions) : CommandExecutor {
+class MfFactionSwearFealtyCommand(private val plugin: MedievalFactions) : CommandExecutor, TabCompleter {
     override fun onCommand(sender: CommandSender, command: Command, label: String, args: Array<out String>): Boolean {
         if (!sender.hasPermission("mf.swearfealty")) {
             sender.sendMessage("$RED${plugin.language["CommandFactionSwearFealtyNoPermission"]}")
@@ -105,5 +107,21 @@ class MfFactionSwearFealtyCommand(private val plugin: MedievalFactions) : Comman
             })
         })
         return true
+    }
+
+    override fun onTabComplete(
+        sender: CommandSender,
+        command: Command,
+        label: String,
+        args: Array<out String>
+    ): List<String> {
+        val factionService = plugin.services.factionService
+        return when {
+            args.isEmpty() -> factionService.factions.map(MfFaction::name)
+            args.size == 1 -> factionService.factions
+                .filter { it.name.lowercase().startsWith(args[0].lowercase()) }
+                .map(MfFaction::name)
+            else -> emptyList()
+        }
     }
 }
