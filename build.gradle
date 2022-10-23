@@ -6,7 +6,7 @@ plugins {
 }
 
 group = "com.dansplugins"
-version = "5.0.0-SNAPSHOT"
+version = "5.0.0-beta.1"
 
 def repoUsername = ""
 def repoPassword = ""
@@ -14,8 +14,8 @@ def propertiesFile = new File("repo.properties")
 if (propertiesFile.exists()) {
     def properties = new Properties()
     properties.load(new FileInputStream(propertiesFile))
-    repoUsername = properties.getProperty("repo-username")
-    repoPassword = properties.getProperty("repo-password")
+    repoUsername = properties.getProperty("username")
+    repoPassword = properties.getProperty("password")
 }
 
 repositories {
