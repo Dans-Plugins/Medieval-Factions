@@ -177,6 +177,9 @@ permissions:
   mf.claim:
     description: Allows claiming land
     default: true
+  mf.autoclaim:
+    description: Allows toggling autoclaim for your faction
+    default: true
   mf.unclaim:
     description: Allows unclaiming land
     default: true
@@ -258,10 +261,10 @@ permissions:
   mf.gate:
     description: Allows gate management
     default: true
-  mf.flags.list:
+  mf.flag.list:
     description: Allows listing faction flags
     default: true
-  mf.flags.set:
+  mf.flag.set:
     description: Allows setting faction flags
     default: true
   mf.bypass:

@@ -7,6 +7,7 @@ import org.bukkit.event.Event
 import org.bukkit.event.HandlerList
 
 class FactionUnclaimEvent(
+    @get:JvmName("getFactionId")
     override val factionId: MfFactionId,
     val claim: MfClaimedChunk,
     isAsync: Boolean

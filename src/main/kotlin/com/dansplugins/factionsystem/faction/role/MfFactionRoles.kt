@@ -45,6 +45,7 @@ import com.dansplugins.factionsystem.faction.permission.MfFactionPermission.Comp
 import com.dansplugins.factionsystem.faction.permission.MfFactionPermission.Companion.VIEW_STATS
 
 data class MfFactionRoles(
+    @get:JvmName("getDefaultRoleId")
     val defaultRoleId: MfFactionRoleId,
     val roles: List<MfFactionRole>
 ) : List<MfFactionRole> by roles {
@@ -154,6 +155,8 @@ data class MfFactionRoles(
             return MfFactionRoles(member.id, listOf(owner, officer, member))
         }
     }
+    @JvmName("getRoleByRoleId")
     fun getRole(roleId: MfFactionRoleId) = roles.singleOrNull { it.id.value == roleId.value }
+    @JvmName("getRoleByName")
     fun getRole(name: String) = getRole(MfFactionRoleId(name)) ?: roles.singleOrNull { it.name.equals(name, ignoreCase = true) }
 }

@@ -34,10 +34,12 @@ class MfDuelService(
         plugin.logger.info("${duelInvites.size} duel invites loaded (${System.currentTimeMillis() - startTime}ms)")
     }
 
+    @JvmName("getDuelByPlayerId")
     fun getDuel(playerId: MfPlayerId): MfDuel? {
         return duelsById.values.singleOrNull { it.challengerId == playerId || it.challengedId == playerId }
     }
 
+    @JvmName("getDuelByDuelId")
     fun getDuel(duelId: MfDuelId): MfDuel? {
         return duelsById[duelId]
     }
@@ -50,6 +52,7 @@ class MfDuelService(
         ServiceFailure(exception.toServiceFailureType(), "Service error: ${exception.message}", exception)
     }
 
+    @JvmName("deleteDuelByDuelId")
     fun delete(duelId: MfDuelId) = resultFrom {
         val result = duelRepo.delete(duelId)
         duelsById.remove(duelId)
@@ -58,8 +61,11 @@ class MfDuelService(
         ServiceFailure(exception.toServiceFailureType(), "Service error: ${exception.message}", exception)
     }
 
+    @JvmName("getInviteByInviterIdAndInviteeId")
     fun getInvite(inviter: MfPlayerId, invitee: MfPlayerId) = duelInvites.singleOrNull { it.inviterId == inviter && it.inviteeId == invitee }
+    @JvmName("getInvitesByInviteeId")
     fun getInvitesByInvitee(invitee: MfPlayerId) = duelInvites.filter { it.inviteeId == invitee }
+    @JvmName("getInvitesByInviterId")
     fun getInvitesByInviter(inviter: MfPlayerId) = duelInvites.filter { it.inviterId == inviter }
 
     fun save(invite: MfDuelInvite) = resultFrom {
@@ -70,6 +76,7 @@ class MfDuelService(
         ServiceFailure(exception.toServiceFailureType(), "Service error: ${exception.message}", exception)
     }
 
+    @JvmName("deleteInviteByInviterIdAndInviteeId")
     fun deleteInvite(inviter: MfPlayerId, invitee: MfPlayerId) = resultFrom {
         val result = duelInviteRepo.deleteInvite(inviter, invitee)
         val duelInvitesToRemove = duelInvites.filter { it.inviterId == inviter && it.inviteeId == invitee }

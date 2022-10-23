@@ -14,8 +14,6 @@ class MfInteractionService(private val repository: MfInteractionStatusRepository
 
     private val interactionStatus: MutableMap<String, MfInteractionStatus> = ConcurrentHashMap()
 
-    // JvmName is specified due to the value class, in order to make calling methods from Java slightly prettier
-
     @JvmName("getInteractionStatus")
     fun getInteractionStatus(playerId: MfPlayerId) = interactionStatus[playerId.value]
 
@@ -35,6 +33,8 @@ class MfInteractionService(private val repository: MfInteractionStatusRepository
         }
         return result
     }
+
+    @JvmName("loadInteractionStatusByPlayerId")
     fun loadInteractionStatus(playerId: MfPlayerId) {
         val status = repository.getInteractionStatus(playerId)
         if (status != null) {
@@ -44,6 +44,7 @@ class MfInteractionService(private val repository: MfInteractionStatusRepository
         }
     }
 
+    @JvmName("unloadInteractionStatusByPlayerId")
     fun unloadInteractionStatus(playerId: MfPlayerId) {
         interactionStatus.remove(playerId.value)
     }
