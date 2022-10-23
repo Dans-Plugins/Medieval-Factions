@@ -8,6 +8,16 @@ plugins {
 group = "com.dansplugins"
 version = "5.0.0-SNAPSHOT"
 
+def repoUsername = ""
+def repoPassword = ""
+def propertiesFile = new File("repo.properties")
+if (propertiesFile.exists()) {
+    def properties = new Properties()
+    properties.load(new FileInputStream(propertiesFile))
+    repoUsername = properties.getProperty("repo-username")
+    repoPassword = properties.getProperty("repo-password")
+}
+
 repositories {
     mavenCentral()
     maven { url 'https://hub.spigotmc.org/nexus/content/repositories/public/' }
@@ -157,8 +167,23 @@ tasks.named('test') {
 }
 
 publishing {
+    repositories {
+        maven {
+            credentials {
+                username repoUsername
+                password repoPassword
+            }
+            def releasesRepoUrl = "https://repo.dansplugins.com/repository/maven-releases/"
+            def snapshotsRepoUrl = "https://repo.dansplugins.com/repository/maven-snapshots/"
+            url = version.endsWith("SNAPSHOT") ? snapshotsRepoUrl : releasesRepoUrl
+        }
+    }
     publications {
         maven(MavenPublication) { publication ->
+            groupId = project.group
+            artifactId = project.name
+            version = project.version
+
             from components.java
         }
     }
