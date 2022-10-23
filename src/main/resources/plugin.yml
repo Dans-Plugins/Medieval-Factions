@@ -258,10 +258,10 @@ permissions:
   mf.gate:
     description: Allows gate management
     default: true
-  mf.flags.list:
+  mf.flag.list:
     description: Allows listing faction flags
     default: true
-  mf.flags.set:
+  mf.flag.set:
     description: Allows setting faction flags
     default: true
   mf.bypass:
