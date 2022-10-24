@@ -1,48 +1,7 @@
 package com.dansplugins.factionsystem.faction.role
 
+import com.dansplugins.factionsystem.MedievalFactions
 import com.dansplugins.factionsystem.chat.MfFactionChatChannel.*
-import com.dansplugins.factionsystem.faction.flag.MfFlags
-import com.dansplugins.factionsystem.faction.permission.MfFactionPermission
-import com.dansplugins.factionsystem.faction.permission.MfFactionPermission.Companion.ADD_LAW
-import com.dansplugins.factionsystem.faction.permission.MfFactionPermission.Companion.BREAK_ALLIANCE
-import com.dansplugins.factionsystem.faction.permission.MfFactionPermission.Companion.CHANGE_DESCRIPTION
-import com.dansplugins.factionsystem.faction.permission.MfFactionPermission.Companion.CHANGE_NAME
-import com.dansplugins.factionsystem.faction.permission.MfFactionPermission.Companion.CHANGE_PREFIX
-import com.dansplugins.factionsystem.faction.permission.MfFactionPermission.Companion.CHAT
-import com.dansplugins.factionsystem.faction.permission.MfFactionPermission.Companion.CLAIM
-import com.dansplugins.factionsystem.faction.permission.MfFactionPermission.Companion.CREATE_GATE
-import com.dansplugins.factionsystem.faction.permission.MfFactionPermission.Companion.CREATE_ROLE
-import com.dansplugins.factionsystem.faction.permission.MfFactionPermission.Companion.DECLARE_INDEPENDENCE
-import com.dansplugins.factionsystem.faction.permission.MfFactionPermission.Companion.DECLARE_WAR
-import com.dansplugins.factionsystem.faction.permission.MfFactionPermission.Companion.DELETE_ROLE
-import com.dansplugins.factionsystem.faction.permission.MfFactionPermission.Companion.DEMOTE
-import com.dansplugins.factionsystem.faction.permission.MfFactionPermission.Companion.DISBAND
-import com.dansplugins.factionsystem.faction.permission.MfFactionPermission.Companion.GO_HOME
-import com.dansplugins.factionsystem.faction.permission.MfFactionPermission.Companion.GRANT_INDEPENDENCE
-import com.dansplugins.factionsystem.faction.permission.MfFactionPermission.Companion.INVITE
-import com.dansplugins.factionsystem.faction.permission.MfFactionPermission.Companion.INVOKE
-import com.dansplugins.factionsystem.faction.permission.MfFactionPermission.Companion.KICK
-import com.dansplugins.factionsystem.faction.permission.MfFactionPermission.Companion.LIST_LAWS
-import com.dansplugins.factionsystem.faction.permission.MfFactionPermission.Companion.LIST_MEMBERS
-import com.dansplugins.factionsystem.faction.permission.MfFactionPermission.Companion.MAKE_PEACE
-import com.dansplugins.factionsystem.faction.permission.MfFactionPermission.Companion.MODIFY_ROLE
-import com.dansplugins.factionsystem.faction.permission.MfFactionPermission.Companion.PROMOTE
-import com.dansplugins.factionsystem.faction.permission.MfFactionPermission.Companion.REMOVE_GATE
-import com.dansplugins.factionsystem.faction.permission.MfFactionPermission.Companion.REMOVE_LAW
-import com.dansplugins.factionsystem.faction.permission.MfFactionPermission.Companion.REQUEST_ALLIANCE
-import com.dansplugins.factionsystem.faction.permission.MfFactionPermission.Companion.SET_DEFAULT_ROLE
-import com.dansplugins.factionsystem.faction.permission.MfFactionPermission.Companion.SET_FLAG
-import com.dansplugins.factionsystem.faction.permission.MfFactionPermission.Companion.SET_HOME
-import com.dansplugins.factionsystem.faction.permission.MfFactionPermission.Companion.SET_MEMBER_ROLE
-import com.dansplugins.factionsystem.faction.permission.MfFactionPermission.Companion.SET_ROLE_PERMISSION
-import com.dansplugins.factionsystem.faction.permission.MfFactionPermission.Companion.SWEAR_FEALTY
-import com.dansplugins.factionsystem.faction.permission.MfFactionPermission.Companion.TOGGLE_AUTOCLAIM
-import com.dansplugins.factionsystem.faction.permission.MfFactionPermission.Companion.UNCLAIM
-import com.dansplugins.factionsystem.faction.permission.MfFactionPermission.Companion.VASSALIZE
-import com.dansplugins.factionsystem.faction.permission.MfFactionPermission.Companion.VIEW_FLAGS
-import com.dansplugins.factionsystem.faction.permission.MfFactionPermission.Companion.VIEW_INFO
-import com.dansplugins.factionsystem.faction.permission.MfFactionPermission.Companion.VIEW_ROLE
-import com.dansplugins.factionsystem.faction.permission.MfFactionPermission.Companion.VIEW_STATS
 
 data class MfFactionRoles(
     @get:JvmName("getDefaultRoleId")
@@ -54,102 +13,99 @@ data class MfFactionRoles(
         get() = getRole(defaultRoleId)!!
 
     companion object {
-        fun defaults(flags: MfFlags): MfFactionRoles {
-            val member = MfFactionRole(name = "Member")
+        fun defaults(plugin: MedievalFactions): MfFactionRoles {
+            val member = MfFactionRole(plugin, name = "Member")
             val officer = MfFactionRole(
+                plugin,
                 name = "Officer",
-                permissions = buildMap {
-                    put(REQUEST_ALLIANCE, true)
-                    put(DECLARE_WAR, true)
-                    put(MAKE_PEACE, true)
-                    put(PROMOTE, true)
-                    put(DEMOTE, true)
-                    put(SET_HOME, true)
-                    put(KICK, true)
-                    put(VIEW_ROLE(member.id), true)
-                    put(MODIFY_ROLE(member.id), true)
-                    put(DELETE_ROLE(member.id), true)
-                    put(SET_MEMBER_ROLE(member.id), true)
-                    put(SET_ROLE_PERMISSION(LIST_LAWS), true)
-                    put(SET_ROLE_PERMISSION(CHAT(FACTION)), true)
-                    put(SET_ROLE_PERMISSION(CHAT(VASSALS)), true)
-                    put(SET_ROLE_PERMISSION(CHAT(ALLIES)), true)
-                    put(SET_ROLE_PERMISSION(VIEW_FLAGS), true)
-                    put(SET_ROLE_PERMISSION(GO_HOME), true)
-                    put(SET_ROLE_PERMISSION(VIEW_INFO), true)
-                    put(SET_ROLE_PERMISSION(VIEW_STATS), true)
-                    put(SET_ROLE_PERMISSION(INVITE), true)
-                    put(SET_ROLE_PERMISSION(VIEW_ROLE(member.id)), true)
-                    put(SET_ROLE_PERMISSION(REQUEST_ALLIANCE), true)
-                    put(SET_ROLE_PERMISSION(DECLARE_WAR), true)
-                    put(SET_ROLE_PERMISSION(MAKE_PEACE), true)
-                    put(SET_ROLE_PERMISSION(PROMOTE), true)
-                    put(SET_ROLE_PERMISSION(DEMOTE), true)
-                    put(SET_ROLE_PERMISSION(SET_HOME), true)
-                    put(SET_ROLE_PERMISSION(KICK), true)
-                    put(SET_ROLE_PERMISSION(MODIFY_ROLE(member.id)), true)
-                    put(SET_ROLE_PERMISSION(LIST_MEMBERS), true)
-                    put(CREATE_ROLE, true)
+                permissionsByName = buildMap {
+                    put(plugin.factionPermissions.requestAlliance.name, true)
+                    put(plugin.factionPermissions.declareWar.name, true)
+                    put(plugin.factionPermissions.makePeace.name, true)
+                    put(plugin.factionPermissions.setHome.name, true)
+                    put(plugin.factionPermissions.kick.name, true)
+                    put(plugin.factionPermissions.viewRole(member.id).name, true)
+                    put(plugin.factionPermissions.modifyRole(member.id).name, true)
+                    put(plugin.factionPermissions.deleteRole(member.id).name, true)
+                    put(plugin.factionPermissions.setMemberRole(member.id).name, true)
+                    put(plugin.factionPermissions.setRolePermission(plugin.factionPermissions.listLaws).name, true)
+                    put(plugin.factionPermissions.setRolePermission(plugin.factionPermissions.chat(FACTION)).name, true)
+                    put(plugin.factionPermissions.setRolePermission(plugin.factionPermissions.chat(VASSALS)).name, true)
+                    put(plugin.factionPermissions.setRolePermission(plugin.factionPermissions.chat(ALLIES)).name, true)
+                    put(plugin.factionPermissions.setRolePermission(plugin.factionPermissions.viewFlags).name, true)
+                    put(plugin.factionPermissions.setRolePermission(plugin.factionPermissions.goHome).name, true)
+                    put(plugin.factionPermissions.setRolePermission(plugin.factionPermissions.viewInfo).name, true)
+                    put(plugin.factionPermissions.setRolePermission(plugin.factionPermissions.viewStats).name, true)
+                    put(plugin.factionPermissions.setRolePermission(plugin.factionPermissions.invite).name, true)
+                    put(plugin.factionPermissions.setRolePermission(plugin.factionPermissions.viewRole(member.id)).name, true)
+                    put(plugin.factionPermissions.setRolePermission(plugin.factionPermissions.requestAlliance).name, true)
+                    put(plugin.factionPermissions.setRolePermission(plugin.factionPermissions.declareWar).name, true)
+                    put(plugin.factionPermissions.setRolePermission(plugin.factionPermissions.makePeace).name, true)
+                    put(plugin.factionPermissions.setRolePermission(plugin.factionPermissions.setHome).name, true)
+                    put(plugin.factionPermissions.setRolePermission(plugin.factionPermissions.kick).name, true)
+                    put(plugin.factionPermissions.setRolePermission(plugin.factionPermissions.modifyRole(member.id)).name, true)
+                    put(plugin.factionPermissions.setRolePermission(plugin.factionPermissions.listMembers).name, true)
+                    put(plugin.factionPermissions.createRole.name, true)
                 }
             )
             val ownerId = MfFactionRoleId.generate()
             val owner = MfFactionRole(
+                plugin,
                 id = ownerId,
                 name = "Owner",
-                permissions = buildMap {
-                    put(ADD_LAW, true)
-                    put(REMOVE_LAW, true)
-                    put(LIST_LAWS, true)
-                    put(REQUEST_ALLIANCE, true)
-                    put(BREAK_ALLIANCE, true)
-                    put(TOGGLE_AUTOCLAIM, true)
-                    put(SET_ROLE_PERMISSION(CHAT(FACTION)), true)
-                    put(SET_ROLE_PERMISSION(CHAT(VASSALS)), true)
-                    put(SET_ROLE_PERMISSION(CHAT(ALLIES)), true)
-                    put(CLAIM, true)
-                    put(UNCLAIM, true)
-                    put(DECLARE_INDEPENDENCE, true)
-                    put(SWEAR_FEALTY, true)
-                    put(GRANT_INDEPENDENCE, true)
-                    put(VASSALIZE, true)
-                    put(DECLARE_WAR, true)
-                    put(MAKE_PEACE, true)
-                    put(PROMOTE, true)
-                    put(DEMOTE, true)
-                    put(CHANGE_NAME, true)
-                    put(CHANGE_DESCRIPTION, true)
-                    put(CHANGE_PREFIX, true)
-                    put(DISBAND, true)
-                    flags.forEach { flag ->
-                        put(SET_FLAG(flag), true)
+                permissionsByName = buildMap {
+                    put(plugin.factionPermissions.addLaw.name, true)
+                    put(plugin.factionPermissions.removeLaw.name, true)
+                    put(plugin.factionPermissions.listLaws.name, true)
+                    put(plugin.factionPermissions.requestAlliance.name, true)
+                    put(plugin.factionPermissions.breakAlliance.name, true)
+                    put(plugin.factionPermissions.toggleAutoclaim.name, true)
+                    put(plugin.factionPermissions.setRolePermission(plugin.factionPermissions.chat(FACTION)).name, true)
+                    put(plugin.factionPermissions.setRolePermission(plugin.factionPermissions.chat(VASSALS)).name, true)
+                    put(plugin.factionPermissions.setRolePermission(plugin.factionPermissions.chat(ALLIES)).name, true)
+                    put(plugin.factionPermissions.claim.name, true)
+                    put(plugin.factionPermissions.unclaim.name, true)
+                    put(plugin.factionPermissions.declareIndependence.name, true)
+                    put(plugin.factionPermissions.swearFealty.name, true)
+                    put(plugin.factionPermissions.grantIndependence.name, true)
+                    put(plugin.factionPermissions.vassalize.name, true)
+                    put(plugin.factionPermissions.declareWar.name, true)
+                    put(plugin.factionPermissions.makePeace.name, true)
+                    put(plugin.factionPermissions.changeName.name, true)
+                    put(plugin.factionPermissions.changeDescription.name, true)
+                    put(plugin.factionPermissions.changePrefix.name, true)
+                    put(plugin.factionPermissions.disband.name, true)
+                    plugin.flags.forEach { flag ->
+                        put(plugin.factionPermissions.setFlag(flag).name, true)
                     }
-                    put(VIEW_FLAGS, true)
-                    put(CREATE_GATE, true)
-                    put(REMOVE_GATE, true)
-                    put(SET_HOME, true)
-                    put(GO_HOME, true)
-                    put(VIEW_INFO, true)
-                    put(VIEW_STATS, true)
-                    put(INVITE, true)
-                    put(INVOKE, true)
-                    put(KICK, true)
-                    put(VIEW_ROLE(member.id), true)
-                    put(VIEW_ROLE(officer.id), true)
-                    put(VIEW_ROLE(ownerId), true)
-                    put(MODIFY_ROLE(member.id), true)
-                    put(MODIFY_ROLE(officer.id), true)
-                    put(MODIFY_ROLE(ownerId), true)
-                    put(SET_MEMBER_ROLE(member.id), true)
-                    put(SET_MEMBER_ROLE(officer.id), true)
-                    put(SET_MEMBER_ROLE(ownerId), true)
-                    put(DELETE_ROLE(member.id), true)
-                    put(DELETE_ROLE(officer.id), true)
-                    put(DELETE_ROLE(ownerId), true)
-                    put(LIST_MEMBERS, true)
-                    put(CREATE_ROLE, true)
-                    put(SET_DEFAULT_ROLE, true)
+                    put(plugin.factionPermissions.viewFlags.name, true)
+                    put(plugin.factionPermissions.createGate.name, true)
+                    put(plugin.factionPermissions.removeGate.name, true)
+                    put(plugin.factionPermissions.setHome.name, true)
+                    put(plugin.factionPermissions.goHome.name, true)
+                    put(plugin.factionPermissions.viewInfo.name, true)
+                    put(plugin.factionPermissions.viewStats.name, true)
+                    put(plugin.factionPermissions.invite.name, true)
+                    put(plugin.factionPermissions.invoke.name, true)
+                    put(plugin.factionPermissions.kick.name, true)
+                    put(plugin.factionPermissions.viewRole(member.id).name, true)
+                    put(plugin.factionPermissions.viewRole(officer.id).name, true)
+                    put(plugin.factionPermissions.viewRole(ownerId).name, true)
+                    put(plugin.factionPermissions.modifyRole(member.id).name, true)
+                    put(plugin.factionPermissions.modifyRole(officer.id).name, true)
+                    put(plugin.factionPermissions.modifyRole(ownerId).name, true)
+                    put(plugin.factionPermissions.setMemberRole(member.id).name, true)
+                    put(plugin.factionPermissions.setMemberRole(officer.id).name, true)
+                    put(plugin.factionPermissions.setMemberRole(ownerId).name, true)
+                    put(plugin.factionPermissions.deleteRole(member.id).name, true)
+                    put(plugin.factionPermissions.deleteRole(officer.id).name, true)
+                    put(plugin.factionPermissions.deleteRole(ownerId).name, true)
+                    put(plugin.factionPermissions.listMembers.name, true)
+                    put(plugin.factionPermissions.createRole.name, true)
+                    put(plugin.factionPermissions.setDefaultRole.name, true)
 
-                    putAll(MfFactionPermission.values(flags, listOf(member.id, officer.id, ownerId)).map { permission -> SET_ROLE_PERMISSION(permission) to true })
+                    putAll(plugin.factionPermissions.permissionsFor(listOf(member.id, officer.id, ownerId))
+                        .map { permission -> plugin.factionPermissions.setRolePermission(permission).name to true })
                 }
             )
             return MfFactionRoles(member.id, listOf(owner, officer, member))

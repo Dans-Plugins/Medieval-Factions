@@ -1,7 +1,6 @@
 package com.dansplugins.factionsystem.command.faction.role
 
 import com.dansplugins.factionsystem.MedievalFactions
-import com.dansplugins.factionsystem.faction.permission.MfFactionPermission.Companion.DELETE_ROLE
 import com.dansplugins.factionsystem.faction.role.MfFactionRoleId
 import com.dansplugins.factionsystem.faction.role.MfFactionRoles
 import com.dansplugins.factionsystem.player.MfPlayer
@@ -92,7 +91,7 @@ class MfFactionRoleDeleteCommand(private val plugin: MedievalFactions) : Command
                 return@Runnable
             }
             val role = faction.getRole(mfPlayer.id)
-            if (role == null || !role.hasPermission(faction, DELETE_ROLE(roleToRemove.id))) {
+            if (role == null || !role.hasPermission(faction, plugin.factionPermissions.deleteRole(roleToRemove.id))) {
                 player.sendMessage("$RED${plugin.language["CommandFactionRoleDeleteNoFactionPermission"]}")
                 return@Runnable
             }

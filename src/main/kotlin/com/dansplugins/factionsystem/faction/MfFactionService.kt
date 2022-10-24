@@ -137,7 +137,7 @@ class MfFactionService(private val plugin: MedievalFactions, private val reposit
         home: MfPosition? = null,
         bonusPower: Int = 0,
         autoclaim: Boolean = false,
-        roles: MfFactionRoles = MfFactionRoles.defaults(plugin.flags)
+        roles: MfFactionRoles = MfFactionRoles.defaults(plugin)
     ): Result4k<MfFaction, ServiceFailure> {
         return save(MfFaction(
             plugin = plugin,

@@ -1,7 +1,6 @@
 package com.dansplugins.factionsystem.command.faction.chat
 
 import com.dansplugins.factionsystem.MedievalFactions
-import com.dansplugins.factionsystem.faction.permission.MfFactionPermission.Companion.CHAT_HISTORY
 import com.dansplugins.factionsystem.pagination.PaginatedView
 import com.dansplugins.factionsystem.player.MfPlayer
 import dev.forkhandles.result4k.onFailure
@@ -44,7 +43,7 @@ class MfFactionChatHistoryCommand(private val plugin: MedievalFactions): Command
                 return@Runnable
             }
             val role = faction.getRole(mfPlayer.id)
-            if (role == null || !role.hasPermission(faction, CHAT_HISTORY)) {
+            if (role == null || !role.hasPermission(faction, plugin.factionPermissions.chatHistory)) {
                 sender.sendMessage("${BukkitChatColor.RED}${plugin.language["CommandFactionChatHistoryNoFactionPermission"]}")
                 return@Runnable
             }

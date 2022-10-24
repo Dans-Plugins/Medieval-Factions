@@ -1,7 +1,6 @@
 package com.dansplugins.factionsystem.command.faction.set.prefix
 
 import com.dansplugins.factionsystem.MedievalFactions
-import com.dansplugins.factionsystem.faction.permission.MfFactionPermission
 import com.dansplugins.factionsystem.player.MfPlayer
 import dev.forkhandles.result4k.onFailure
 import org.bukkit.ChatColor
@@ -76,7 +75,7 @@ class MfFactionSetPrefixCommand(private val plugin: MedievalFactions) : CommandE
                 return@Runnable
             }
             val role = faction.getRole(mfPlayer.id)
-            if (role == null || !role.hasPermission(faction, MfFactionPermission.CHANGE_PREFIX)) {
+            if (role == null || !role.hasPermission(faction, plugin.factionPermissions.changePrefix)) {
                 player.sendMessage("${ChatColor.RED}${plugin.language["CommandFactionSetPrefixNoFactionPermission"]}")
                 return@Runnable
             }

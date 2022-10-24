@@ -2,7 +2,6 @@ package com.dansplugins.factionsystem.command.gate.remove
 
 import com.dansplugins.factionsystem.MedievalFactions
 import com.dansplugins.factionsystem.area.MfBlockPosition
-import com.dansplugins.factionsystem.faction.permission.MfFactionPermission
 import com.dansplugins.factionsystem.player.MfPlayer
 import dev.forkhandles.result4k.onFailure
 import org.bukkit.ChatColor.GREEN
@@ -41,7 +40,7 @@ class MfGateRemoveCommand(private val plugin: MedievalFactions) : CommandExecuto
                 return@Runnable
             }
             val role = faction.getRole(mfPlayer.id)
-            if (role == null || !role.hasPermission(faction, MfFactionPermission.REMOVE_GATE)) {
+            if (role == null || !role.hasPermission(faction, plugin.factionPermissions.removeGate)) {
                 sender.sendMessage("$RED${plugin.language["CommandGateRemoveNoFactionPermission"]}")
                 return@Runnable
             }

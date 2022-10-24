@@ -2,7 +2,6 @@ package com.dansplugins.factionsystem.command.faction.invite
 
 import com.dansplugins.factionsystem.MedievalFactions
 import com.dansplugins.factionsystem.faction.MfFactionInvite
-import com.dansplugins.factionsystem.faction.permission.MfFactionPermission.Companion.INVITE
 import com.dansplugins.factionsystem.notification.MfNotification
 import com.dansplugins.factionsystem.player.MfPlayer
 import dev.forkhandles.result4k.onFailure
@@ -107,7 +106,7 @@ class MfFactionInviteCommand(private val plugin: MedievalFactions) : CommandExec
                 return@Runnable
             }
             val role = faction.getRole(mfPlayer.id)
-            if (role == null || !role.hasPermission(faction, INVITE)) {
+            if (role == null || !role.hasPermission(faction, plugin.factionPermissions.invite)) {
                 sender.sendMessage("${BukkitChatColor.RED}${plugin.language["CommandFactionInviteNoFactionPermission"]}")
                 return@Runnable
             }

@@ -2,7 +2,6 @@ package com.dansplugins.factionsystem.command.faction.vassalize
 
 import com.dansplugins.factionsystem.MedievalFactions
 import com.dansplugins.factionsystem.faction.MfFaction
-import com.dansplugins.factionsystem.faction.permission.MfFactionPermission.Companion.VASSALIZE
 import com.dansplugins.factionsystem.player.MfPlayer
 import com.dansplugins.factionsystem.relationship.MfFactionRelationship
 import com.dansplugins.factionsystem.relationship.MfFactionRelationshipType.LIEGE
@@ -47,7 +46,7 @@ class MfFactionVassalizeCommand(private val plugin: MedievalFactions) : CommandE
                 return@Runnable
             }
             val role = faction.getRole(mfPlayer.id)
-            if (role == null || !role.hasPermission(faction, VASSALIZE)) {
+            if (role == null || !role.hasPermission(faction, plugin.factionPermissions.vassalize)) {
                 sender.sendMessage("$RED${plugin.language["CommandFactionVassalizeNoFactionPermission"]}")
                 return@Runnable
             }

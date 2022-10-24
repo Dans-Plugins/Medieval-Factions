@@ -1,7 +1,6 @@
 package com.dansplugins.factionsystem.command.faction.role
 
 import com.dansplugins.factionsystem.MedievalFactions
-import com.dansplugins.factionsystem.faction.permission.MfFactionPermission.Companion.MODIFY_ROLE
 import com.dansplugins.factionsystem.faction.role.MfFactionRole
 import com.dansplugins.factionsystem.faction.role.MfFactionRoleId
 import com.dansplugins.factionsystem.player.MfPlayer
@@ -117,7 +116,7 @@ class MfFactionRoleRenameCommand(private val plugin: MedievalFactions) : Command
                 return@Runnable
             }
             val role = faction.getRole(mfPlayer.id)
-            if (role == null || !role.hasPermission(faction, MODIFY_ROLE(targetRole.id))) {
+            if (role == null || !role.hasPermission(faction, plugin.factionPermissions.modifyRole(targetRole.id))) {
                 player.sendMessage("$RED${plugin.language["CommandFactionRoleRenameNoFactionPermission"]}")
                 return@Runnable
             }

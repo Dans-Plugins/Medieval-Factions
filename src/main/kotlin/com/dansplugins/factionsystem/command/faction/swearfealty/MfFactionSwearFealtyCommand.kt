@@ -2,7 +2,6 @@ package com.dansplugins.factionsystem.command.faction.swearfealty
 
 import com.dansplugins.factionsystem.MedievalFactions
 import com.dansplugins.factionsystem.faction.MfFaction
-import com.dansplugins.factionsystem.faction.permission.MfFactionPermission.Companion.SWEAR_FEALTY
 import com.dansplugins.factionsystem.player.MfPlayer
 import com.dansplugins.factionsystem.relationship.MfFactionRelationship
 import com.dansplugins.factionsystem.relationship.MfFactionRelationshipType.LIEGE
@@ -46,7 +45,7 @@ class MfFactionSwearFealtyCommand(private val plugin: MedievalFactions) : Comman
                 return@Runnable
             }
             val role = faction.getRole(mfPlayer.id)
-            if (role == null || !role.hasPermission(faction, SWEAR_FEALTY)) {
+            if (role == null || !role.hasPermission(faction, plugin.factionPermissions.swearFealty)) {
                 sender.sendMessage("$RED${plugin.language["CommandFactionSwearFealtyNoFactionPermission"]}")
                 return@Runnable
             }

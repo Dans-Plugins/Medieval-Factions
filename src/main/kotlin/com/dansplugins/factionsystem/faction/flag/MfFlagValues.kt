@@ -1,27 +1,16 @@
 package com.dansplugins.factionsystem.faction.flag
 
 import com.dansplugins.factionsystem.MedievalFactions
-import org.bukkit.Bukkit
-import org.bukkit.configuration.serialization.ConfigurationSerializable
 
-class MfFlagValues(private val values: Map<MfFlag<out Any>, Any?> = mutableMapOf()) : ConfigurationSerializable {
-    operator fun <T: Any> get(flag: MfFlag<T>): T = values[flag] as? T ?: flag.defaultValue
-    operator fun <T: Any> plus(flagValue: Pair<MfFlag<T>, T>): MfFlagValues = MfFlagValues(values + flagValue)
-    operator fun plus(flagValues: Map<MfFlag<out Any>, Any?>): MfFlagValues = MfFlagValues(values + flagValues)
-    override fun serialize(): Map<String, Any?> {
-        return values.mapKeys { (flag, _) -> flag.name }
-    }
-    companion object {
-        @JvmStatic
-        fun deserialize(serialized: Map<String, Any?>): MfFlagValues {
-            val plugin = Bukkit.getPluginManager().getPlugin("MedievalFactions") as MedievalFactions
-            return MfFlagValues(serialized.mapNotNull { (flagName: String, flagValue: Any?) ->
-                val flag: MfFlag<out Any>? = plugin.flags[flagName]
-                if (flag == null) {
-                    plugin.logger.warning("Missing flag definition: $flagName")
-                }
-                flagValue?.let { value -> flag?.let { flag to value } }
-            }.toMap())
-        }
-    }
+class MfFlagValues(
+    private val plugin: MedievalFactions,
+    val valuesByName: Map<String, Any?> = mutableMapOf()
+) {
+    val values: Map<MfFlag<out Any>, Any?>
+        get() = valuesByName.toList().map { (key, value) -> plugin.flags.get<MfFlag<out Any>>(key) to value }
+            .filter { (key, _) -> key != null }
+            .associate { (key, value) -> key!! to value }
+    operator fun <T: Any> get(flag: MfFlag<T>): T = valuesByName[flag.name] as? T ?: flag.defaultValue
+    operator fun <T: Any> plus(flagValue: Pair<MfFlag<T>, T>): MfFlagValues = MfFlagValues(plugin, valuesByName + (flagValue.first.name to flagValue.second))
+    operator fun plus(flagValues: Map<MfFlag<out Any>, Any?>): MfFlagValues = MfFlagValues(plugin, valuesByName + flagValues.mapKeys { (key, _) -> key.name })
 }

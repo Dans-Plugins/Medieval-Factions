@@ -1,12 +1,6 @@
 package com.dansplugins.factionsystem.command.faction.role
 
 import com.dansplugins.factionsystem.MedievalFactions
-import com.dansplugins.factionsystem.faction.permission.MfFactionPermission
-import com.dansplugins.factionsystem.faction.permission.MfFactionPermission.Companion.CREATE_ROLE
-import com.dansplugins.factionsystem.faction.permission.MfFactionPermission.Companion.DELETE_ROLE
-import com.dansplugins.factionsystem.faction.permission.MfFactionPermission.Companion.MODIFY_ROLE
-import com.dansplugins.factionsystem.faction.permission.MfFactionPermission.Companion.SET_DEFAULT_ROLE
-import com.dansplugins.factionsystem.faction.permission.MfFactionPermission.Companion.SET_MEMBER_ROLE
 import com.dansplugins.factionsystem.pagination.PaginatedView
 import com.dansplugins.factionsystem.player.MfPlayer
 import dev.forkhandles.result4k.onFailure
@@ -51,7 +45,7 @@ class MfFactionRoleListCommand(private val plugin: MedievalFactions) : CommandEx
                 return@Runnable
             }
             val playerRole = faction.getRole(mfPlayer.id)
-            if (playerRole == null || !playerRole.hasPermission(faction, MfFactionPermission.LIST_ROLES)) {
+            if (playerRole == null || !playerRole.hasPermission(faction, plugin.factionPermissions.listRoles)) {
                 sender.sendMessage("${BukkitChatColor.RED}${plugin.language["CommandFactionRoleListNoFactionPermission"]}")
                 return@Runnable
             }
@@ -87,7 +81,7 @@ class MfFactionRoleListCommand(private val plugin: MedievalFactions) : CommandEx
                                     color = SpigotChatColor.AQUA
                                 })
                             }
-                            if (playerRole.hasPermission(faction, MODIFY_ROLE(role.id))) {
+                            if (playerRole.hasPermission(faction, plugin.factionPermissions.modifyRole(role.id))) {
                                 add(TextComponent(" "))
                                 add(TextComponent(
                                     plugin.language["CommandFactionRoleListRenameButton", role.name]
@@ -100,7 +94,7 @@ class MfFactionRoleListCommand(private val plugin: MedievalFactions) : CommandEx
                                     )
                                 })
                             }
-                            if (playerRole.hasPermission(faction, DELETE_ROLE(role.id))) {
+                            if (playerRole.hasPermission(faction, plugin.factionPermissions.deleteRole(role.id))) {
                                 add(TextComponent(" "))
                                 add(TextComponent(
                                     plugin.language["CommandFactionRoleListDeleteButton", role.name]
@@ -113,7 +107,7 @@ class MfFactionRoleListCommand(private val plugin: MedievalFactions) : CommandEx
                                     )
                                 })
                             }
-                            if (playerRole.hasPermission(faction, SET_DEFAULT_ROLE) && playerRole.hasPermission(faction, SET_MEMBER_ROLE(role.id))) {
+                            if (playerRole.hasPermission(faction, plugin.factionPermissions.setDefaultRole) && playerRole.hasPermission(faction, plugin.factionPermissions.setMemberRole(role.id))) {
                                 add(TextComponent(" "))
                                 add(TextComponent(
                                     plugin.language["CommandFactionRoleListSetDefaultRoleButton"]
@@ -135,7 +129,7 @@ class MfFactionRoleListCommand(private val plugin: MedievalFactions) : CommandEx
                 return@Runnable
             }
             view.sendPage(sender, pageNumber)
-            if (playerRole.hasPermission(faction, CREATE_ROLE)) {
+            if (playerRole.hasPermission(faction, plugin.factionPermissions.createRole)) {
                 sender.spigot().sendMessage(*arrayOf(
                     TextComponent(
                         plugin.language["CommandFactionRoleListCreateButton"]

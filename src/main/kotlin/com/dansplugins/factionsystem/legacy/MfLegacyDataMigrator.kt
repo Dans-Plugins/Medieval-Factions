@@ -151,7 +151,7 @@ class MfLegacyDataMigrator(private val plugin: MedievalFactions) {
             val z = gson.fromJson(location.z, Double::class.javaObjectType)
             val bonusPower = gson.fromJson(legacyFaction.bonusPower, String::class.java).toIntOrNull() ?: 0
 
-            val roles = MfFactionRoles.defaults(plugin.flags)
+            val roles = MfFactionRoles.defaults(plugin)
             return@associateWith factionService.save(MfFaction(
                 plugin,
                 MfFactionId.generate(),
@@ -371,7 +371,7 @@ class MfLegacyDataMigrator(private val plugin: MedievalFactions) {
                 return@forEach
             }
             val ownerId = gson.fromJson(legacyLockedBlock.owner, String::class.java)
-            val accessList = gson.fromJson<List<String>>(legacyLockedBlock.accessList, TypeToken.getParameterized(List::class.java, String::class.java).type)
+            val accessList = gson.fromJson<List<String?>>(legacyLockedBlock.accessList, TypeToken.getParameterized(List::class.java, String::class.java).type)
             lockService.save(MfLockedBlock(
                 MfLockedBlockId.generate(),
                 0,
@@ -379,7 +379,7 @@ class MfLegacyDataMigrator(private val plugin: MedievalFactions) {
                 chunkX,
                 chunkZ,
                 MfPlayerId(ownerId),
-                accessList.map(::MfPlayerId)
+                accessList.filterNotNull().map(::MfPlayerId)
             )).onFailure {
                 plugin.logger.log(SEVERE, "Failed to save locked block ${world.name}, $x, $y, $z: ${it.reason.message}", it.reason.cause)
                 return@forEach

@@ -1,10 +1,6 @@
 package com.dansplugins.factionsystem.command.faction.role
 
 import com.dansplugins.factionsystem.MedievalFactions
-import com.dansplugins.factionsystem.faction.permission.MfFactionPermission
-import com.dansplugins.factionsystem.faction.permission.MfFactionPermission.Companion.MODIFY_ROLE
-import com.dansplugins.factionsystem.faction.permission.MfFactionPermission.Companion.SET_ROLE_PERMISSION
-import com.dansplugins.factionsystem.faction.permission.MfFactionPermission.Companion.VIEW_ROLE
 import com.dansplugins.factionsystem.pagination.PaginatedView
 import com.dansplugins.factionsystem.player.MfPlayer
 import com.dansplugins.factionsystem.player.MfPlayerId
@@ -65,7 +61,7 @@ class MfFactionRoleViewCommand(private val plugin: MedievalFactions) : CommandEx
                 return@Runnable
             }
             val playerRole = faction.getRole(mfPlayer.id)
-            if (playerRole == null || !playerRole.hasPermission(faction, VIEW_ROLE(targetRole.id))) {
+            if (playerRole == null || !playerRole.hasPermission(faction, plugin.factionPermissions.viewRole(targetRole.id))) {
                 sender.sendMessage("${BukkitChatColor.RED}${plugin.language["CommandFactionRoleViewNoFactionPermission"]}")
                 return@Runnable
             }
@@ -79,16 +75,16 @@ class MfFactionRoleViewCommand(private val plugin: MedievalFactions) : CommandEx
                         }
                     )
                 },
-                MfFactionPermission.values(plugin.flags, faction.roles).map { permission ->
+                plugin.factionPermissions.permissionsFor(faction.roles).map { permission ->
                     lazy {
                         val permissionValue = targetRole.getPermissionValue(permission)
-                        if (playerRole.hasPermission(faction, MODIFY_ROLE(targetRole.id))
-                            && playerRole.hasPermission(faction, SET_ROLE_PERMISSION(permission))) {
+                        if (playerRole.hasPermission(faction, plugin.factionPermissions.modifyRole(targetRole.id))
+                            && playerRole.hasPermission(faction, plugin.factionPermissions.setRolePermission(permission))) {
                             arrayOf(
                                 TextComponent(
                                     plugin.language[
                                             "CommandFactionRoleViewPermission",
-                                            permission.translate(plugin.language, faction)
+                                            permission.translate(faction)
                                     ]
                                 ).apply {
                                     color = SpigotChatColor.AQUA
@@ -126,7 +122,7 @@ class MfFactionRoleViewCommand(private val plugin: MedievalFactions) : CommandEx
                                 TextComponent(
                                     plugin.language[
                                             "CommandFactionRoleViewPermission",
-                                            permission.translate(plugin.language, faction)
+                                            permission.translate(faction)
                                     ]
                                 ).apply {
                                     color = SpigotChatColor.AQUA
