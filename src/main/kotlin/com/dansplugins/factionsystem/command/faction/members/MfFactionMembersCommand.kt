@@ -1,7 +1,6 @@
 package com.dansplugins.factionsystem.command.faction.members
 
 import com.dansplugins.factionsystem.MedievalFactions
-import com.dansplugins.factionsystem.faction.permission.MfFactionPermission.Companion.LIST_MEMBERS
 import com.dansplugins.factionsystem.player.MfPlayer
 import dev.forkhandles.result4k.onFailure
 import org.bukkit.ChatColor.AQUA
@@ -40,7 +39,7 @@ class MfFactionMembersCommand(private val plugin: MedievalFactions) : CommandExe
                 return@Runnable
             }
             val role = faction.getRole(mfPlayer.id)
-            if (role == null || !role.hasPermission(faction, LIST_MEMBERS)) {
+            if (role == null || !role.hasPermission(faction, plugin.factionPermissions.listMembers)) {
                 sender.sendMessage("$RED${plugin.language["CommandFactionMembersNoFactionPermission"]}")
                 return@Runnable
             }

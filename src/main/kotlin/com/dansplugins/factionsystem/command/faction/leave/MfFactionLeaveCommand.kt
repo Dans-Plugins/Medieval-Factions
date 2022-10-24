@@ -1,7 +1,6 @@
 package com.dansplugins.factionsystem.command.faction.leave
 
 import com.dansplugins.factionsystem.MedievalFactions
-import com.dansplugins.factionsystem.faction.permission.MfFactionPermission.Companion.SET_MEMBER_ROLE
 import com.dansplugins.factionsystem.player.MfPlayer
 import dev.forkhandles.result4k.onFailure
 import org.bukkit.ChatColor.GREEN
@@ -43,12 +42,13 @@ class MfFactionLeaveCommand(private val plugin: MedievalFactions) : CommandExecu
                         sender.sendMessage("$RED${plugin.language["CommandFactionLeaveFailedToDisbandFaction"]}")
                         return@Runnable
                     }
+                sender.sendMessage("$GREEN${plugin.language["CommandFactionLeaveSuccess"]}")
                 return@Runnable
             }
             val role = faction.getRole(mfPlayer.id)
             if (role != null && faction.members.filter { it.playerId != mfPlayer.id }.none {
                     val memberRole = faction.getRole(it.playerId)
-                    memberRole?.hasPermission(faction, SET_MEMBER_ROLE(role.id)) == true
+                    memberRole?.hasPermission(faction, plugin.factionPermissions.setMemberRole(role.id)) == true
             }) {
                 sender.sendMessage("$RED${plugin.language["CommandFactionLeaveNoOneCanSetYourRole"]}")
                 return@Runnable

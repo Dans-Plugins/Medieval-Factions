@@ -1,8 +1,6 @@
 package com.dansplugins.factionsystem.command.faction.flag
 
 import com.dansplugins.factionsystem.MedievalFactions
-import com.dansplugins.factionsystem.faction.permission.MfFactionPermission.Companion.SET_FLAG
-import com.dansplugins.factionsystem.faction.permission.MfFactionPermission.Companion.VIEW_FLAGS
 import com.dansplugins.factionsystem.pagination.PaginatedView
 import com.dansplugins.factionsystem.player.MfPlayer
 import dev.forkhandles.result4k.onFailure
@@ -46,7 +44,7 @@ class MfFactionFlagListCommand(private val plugin: MedievalFactions) : CommandEx
                 return@Runnable
             }
             val role = faction.getRole(mfPlayer.id)
-            if (role == null || !role.hasPermission(faction, VIEW_FLAGS)) {
+            if (role == null || !role.hasPermission(faction, plugin.factionPermissions.viewFlags)) {
                 sender.sendMessage("${BukkitChatColor.RED}${plugin.language["CommandFactionFlagListNoFactionPermission"]}")
                 return@Runnable
             }
@@ -74,7 +72,7 @@ class MfFactionFlagListCommand(private val plugin: MedievalFactions) : CommandEx
                             add(TextComponent("$flagValue ").apply {
                                 color = SpigotChatColor.WHITE
                             })
-                            if (sender.hasPermission("mf.flag.set") && role.hasPermission(faction, SET_FLAG(flag))) {
+                            if (sender.hasPermission("mf.flag.set") && role.hasPermission(faction, plugin.factionPermissions.setFlag(flag))) {
                                 add(TextComponent("(${plugin.language["CommandFactionFlagListSet"]})").apply {
                                     color = SpigotChatColor.GREEN
                                     hoverEvent = HoverEvent(

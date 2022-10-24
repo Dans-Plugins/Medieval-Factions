@@ -19,8 +19,7 @@ import com.dansplugins.factionsystem.faction.JooqMfFactionRepository
 import com.dansplugins.factionsystem.faction.MfFactionRepository
 import com.dansplugins.factionsystem.faction.MfFactionService
 import com.dansplugins.factionsystem.faction.flag.MfFlags
-import com.dansplugins.factionsystem.faction.permission.MfFactionPermission
-import com.dansplugins.factionsystem.faction.permission.MfFactionPermissionSerializer
+import com.dansplugins.factionsystem.faction.permission.MfFactionPermissions
 import com.dansplugins.factionsystem.gate.*
 import com.dansplugins.factionsystem.gate.MfGateStatus.CLOSING
 import com.dansplugins.factionsystem.gate.MfGateStatus.OPENING
@@ -51,7 +50,7 @@ import com.dansplugins.factionsystem.relationship.JooqMfFactionRelationshipRepos
 import com.dansplugins.factionsystem.relationship.MfFactionRelationshipRepository
 import com.dansplugins.factionsystem.relationship.MfFactionRelationshipService
 import com.dansplugins.factionsystem.service.Services
-import com.google.gson.GsonBuilder
+import com.google.gson.Gson
 import com.zaxxer.hikari.HikariConfig
 import com.zaxxer.hikari.HikariDataSource
 import dev.forkhandles.result4k.onFailure
@@ -80,6 +79,7 @@ class MedievalFactions : JavaPlugin() {
     private lateinit var dataSource: DataSource
 
     lateinit var flags: MfFlags
+    lateinit var factionPermissions: MfFactionPermissions
     lateinit var services: Services
     lateinit var language: Language
 
@@ -141,8 +141,9 @@ class MedievalFactions : JavaPlugin() {
         )
 
         flags = MfFlags(this)
+        factionPermissions = MfFactionPermissions(this)
 
-        val gson = GsonBuilder().registerTypeAdapter(MfFactionPermission::class.java, MfFactionPermissionSerializer(flags)).create()
+        val gson = Gson()
         val playerRepository: MfPlayerRepository = JooqMfPlayerRepository(this, dsl)
         val factionRepository: MfFactionRepository = JooqMfFactionRepository(this, dsl, gson)
         val lawRepository: MfLawRepository = JooqMfLawRepository(dsl)

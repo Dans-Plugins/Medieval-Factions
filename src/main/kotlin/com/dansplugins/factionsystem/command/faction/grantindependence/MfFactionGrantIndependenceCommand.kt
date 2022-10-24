@@ -2,7 +2,6 @@ package com.dansplugins.factionsystem.command.faction.grantindependence
 
 import com.dansplugins.factionsystem.MedievalFactions
 import com.dansplugins.factionsystem.faction.MfFaction
-import com.dansplugins.factionsystem.faction.permission.MfFactionPermission.Companion.GRANT_INDEPENDENCE
 import com.dansplugins.factionsystem.player.MfPlayer
 import com.dansplugins.factionsystem.relationship.MfFactionRelationshipType.LIEGE
 import com.dansplugins.factionsystem.relationship.MfFactionRelationshipType.VASSAL
@@ -45,7 +44,7 @@ class MfFactionGrantIndependenceCommand(private val plugin: MedievalFactions) : 
                 return@Runnable
             }
             val role = faction.getRole(mfPlayer.id)
-            if (role == null || !role.hasPermission(faction, GRANT_INDEPENDENCE)) {
+            if (role == null || !role.hasPermission(faction, plugin.factionPermissions.grantIndependence)) {
                 sender.sendMessage("$RED${plugin.language["CommandFactionGrantIndependenceNoFactionPermission"]}")
                 return@Runnable
             }

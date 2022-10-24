@@ -1,7 +1,6 @@
 package com.dansplugins.factionsystem.command.faction.law
 
 import com.dansplugins.factionsystem.MedievalFactions
-import com.dansplugins.factionsystem.faction.permission.MfFactionPermission.Companion.ADD_LAW
 import com.dansplugins.factionsystem.law.MfLaw
 import com.dansplugins.factionsystem.player.MfPlayer
 import dev.forkhandles.result4k.onFailure
@@ -43,7 +42,7 @@ class MfFactionLawAddCommand(private val plugin: MedievalFactions) : CommandExec
                 return@Runnable
             }
             val role = faction.getRole(mfPlayer.id)
-            if (role == null || !role.hasPermission(faction, ADD_LAW)) {
+            if (role == null || !role.hasPermission(faction, plugin.factionPermissions.addLaw)) {
                 sender.sendMessage("$RED${plugin.language["CommandFactionLawAddNoFactionPermission"]}")
                 return@Runnable
             }

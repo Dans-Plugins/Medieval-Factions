@@ -1,7 +1,6 @@
 package com.dansplugins.factionsystem.listener
 
 import com.dansplugins.factionsystem.MedievalFactions
-import com.dansplugins.factionsystem.faction.permission.MfFactionPermission.Companion.CHAT
 import com.dansplugins.factionsystem.player.MfPlayer
 import dev.forkhandles.result4k.onFailure
 import net.md_5.bungee.api.ChatColor
@@ -27,7 +26,7 @@ class AsyncPlayerChatListener(private val plugin: MedievalFactions) : Listener {
             }
         val faction = factionService.getFaction(mfPlayer.id) ?: return
         if (mfPlayer.chatChannel != null) {
-            if (faction.getRole(mfPlayer.id)?.hasPermission(faction, CHAT(mfPlayer.chatChannel)) != true) {
+            if (faction.getRole(mfPlayer.id)?.hasPermission(faction, plugin.factionPermissions.chat(mfPlayer.chatChannel)) != true) {
                 event.player.sendMessage("$RED${plugin.language["ChatNoFactionPermission", mfPlayer.chatChannel.toString().lowercase()]}")
                 event.isCancelled = true
                 return
