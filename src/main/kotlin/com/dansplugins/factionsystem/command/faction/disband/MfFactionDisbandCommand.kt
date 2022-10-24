@@ -1,7 +1,6 @@
 package com.dansplugins.factionsystem.command.faction.disband
 
 import com.dansplugins.factionsystem.MedievalFactions
-import com.dansplugins.factionsystem.faction.permission.MfFactionPermission.Companion.DISBAND
 import com.dansplugins.factionsystem.player.MfPlayer
 import dev.forkhandles.result4k.onFailure
 import org.bukkit.ChatColor.GREEN
@@ -38,7 +37,7 @@ class MfFactionDisbandCommand(private val plugin: MedievalFactions) : CommandExe
                 return@Runnable
             }
             val role = faction.getRole(mfPlayer.id)
-            if (role == null || !role.hasPermission(faction, DISBAND)) {
+            if (role == null || !role.hasPermission(faction, plugin.factionPermissions.disband)) {
                 sender.sendMessage("$RED${plugin.language["CommandFactionDisbandNoFactionPermission"]}")
                 return@Runnable
             }

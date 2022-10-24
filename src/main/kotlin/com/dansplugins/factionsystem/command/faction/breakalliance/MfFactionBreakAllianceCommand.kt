@@ -2,7 +2,6 @@ package com.dansplugins.factionsystem.command.faction.breakalliance
 
 import com.dansplugins.factionsystem.MedievalFactions
 import com.dansplugins.factionsystem.faction.MfFaction
-import com.dansplugins.factionsystem.faction.permission.MfFactionPermission.Companion.BREAK_ALLIANCE
 import com.dansplugins.factionsystem.player.MfPlayer
 import com.dansplugins.factionsystem.relationship.MfFactionRelationshipType.ALLY
 import dev.forkhandles.result4k.onFailure
@@ -43,7 +42,7 @@ class MfFactionBreakAllianceCommand(private val plugin: MedievalFactions) : Comm
                 return@Runnable
             }
             val role = faction.getRole(mfPlayer.id)
-            if (role == null || !role.hasPermission(faction, BREAK_ALLIANCE)) {
+            if (role == null || !role.hasPermission(faction, plugin.factionPermissions.breakAlliance)) {
                 sender.sendMessage("$RED${plugin.language["CommandFactionBreakAllianceNoFactionPermission"]}")
                 return@Runnable
             }

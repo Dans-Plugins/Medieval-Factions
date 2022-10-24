@@ -5,7 +5,7 @@ import java.awt.Color
 import kotlin.random.Random
 
 class MfFlags(
-    plugin: MedievalFactions,
+    private val plugin: MedievalFactions,
     private val flags: MutableList<MfFlag<out Any>> = mutableListOf(
         MfFlag.boolean(
             plugin,
@@ -68,6 +68,6 @@ class MfFlags(
     val acceptBonusPower = get<Boolean>("acceptBonusPower")!!
     val enableMobProtection = get<Boolean>("enableMobProtection")!!
 
-    fun defaults() = MfFlagValues(flags.associateWith(MfFlag<out Any>::defaultValue))
+    fun defaults() = MfFlagValues(plugin, flags.associate { it.name to it.defaultValue })
 
 }

@@ -1,7 +1,6 @@
 package com.dansplugins.factionsystem.command.gate.create
 
 import com.dansplugins.factionsystem.MedievalFactions
-import com.dansplugins.factionsystem.faction.permission.MfFactionPermission.Companion.CREATE_GATE
 import com.dansplugins.factionsystem.gate.MfGateCreationContext
 import com.dansplugins.factionsystem.interaction.MfInteractionStatus.SELECTING_GATE_POSITION_1
 import com.dansplugins.factionsystem.player.MfPlayer
@@ -40,7 +39,7 @@ class MfGateCreateCommand(private val plugin: MedievalFactions) : CommandExecuto
                 return@Runnable
             }
             val role = faction.getRole(mfPlayer.id)
-            if (role == null || !role.hasPermission(faction, CREATE_GATE)) {
+            if (role == null || !role.hasPermission(faction, plugin.factionPermissions.createGate)) {
                 sender.sendMessage("$RED${plugin.language["CommandGateCreateNoFactionPermission"]}")
                 return@Runnable
             }

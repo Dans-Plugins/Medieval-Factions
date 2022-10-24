@@ -1,8 +1,6 @@
 package com.dansplugins.factionsystem.command.faction.info
 
 import com.dansplugins.factionsystem.MedievalFactions
-import com.dansplugins.factionsystem.faction.permission.MfFactionPermission.Companion.INVITE
-import com.dansplugins.factionsystem.faction.permission.MfFactionPermission.Companion.VIEW_INFO
 import com.dansplugins.factionsystem.player.MfPlayer
 import dev.forkhandles.result4k.onFailure
 import net.md_5.bungee.api.chat.ClickEvent
@@ -46,7 +44,7 @@ class MfFactionInfoCommand(private val plugin: MedievalFactions) : CommandExecut
                 return@Runnable
             }
             val role = faction.getRole(mfPlayer.id)
-            if (role == null || !role.hasPermission(faction, VIEW_INFO)) {
+            if (role == null || !role.hasPermission(faction, plugin.factionPermissions.viewInfo)) {
                 sender.sendMessage("${BukkitChatColor.RED}${plugin.language["CommandFactionInfoNoFactionPermission"]}")
                 return@Runnable
             }
@@ -86,7 +84,7 @@ class MfFactionInfoCommand(private val plugin: MedievalFactions) : CommandExecut
             }
             sender.sendMessage("${BukkitChatColor.WHITE}${plugin.language["CommandFactionInfoInvitesTitle", faction.invites.size.toString()]}")
             sender.sendMessage("  ${BukkitChatColor.GRAY}${faction.invites.joinToString { it.playerId.toBukkitPlayer().name ?: plugin.language["UnknownPlayer"] }}")
-            if (sender.hasPermission("mf.invite") && role.hasPermission(faction, INVITE)) {
+            if (sender.hasPermission("mf.invite") && role.hasPermission(faction, plugin.factionPermissions.invite)) {
                 sender.spigot().sendMessage(TextComponent(plugin.language["CommandFactionInfoInvite"]).apply {
                     color = SpigotChatColor.GREEN
                     hoverEvent = HoverEvent(SHOW_TEXT, Text(plugin.language["CommandFactionInfoInviteHover"]))

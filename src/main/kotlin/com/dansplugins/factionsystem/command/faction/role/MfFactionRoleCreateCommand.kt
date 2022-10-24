@@ -1,11 +1,6 @@
 package com.dansplugins.factionsystem.command.faction.role
 
 import com.dansplugins.factionsystem.MedievalFactions
-import com.dansplugins.factionsystem.faction.permission.MfFactionPermission.Companion.CREATE_ROLE
-import com.dansplugins.factionsystem.faction.permission.MfFactionPermission.Companion.DELETE_ROLE
-import com.dansplugins.factionsystem.faction.permission.MfFactionPermission.Companion.MODIFY_ROLE
-import com.dansplugins.factionsystem.faction.permission.MfFactionPermission.Companion.SET_MEMBER_ROLE
-import com.dansplugins.factionsystem.faction.permission.MfFactionPermission.Companion.VIEW_ROLE
 import com.dansplugins.factionsystem.faction.role.MfFactionRole
 import com.dansplugins.factionsystem.faction.role.MfFactionRoles
 import com.dansplugins.factionsystem.player.MfPlayer
@@ -91,7 +86,7 @@ class MfFactionRoleCreateCommand(private val plugin: MedievalFactions) : Command
                 return@Runnable
             }
             val role = faction.getRole(mfPlayer.id)
-            if (role == null || !role.hasPermission(faction, CREATE_ROLE)) {
+            if (role == null || !role.hasPermission(faction, plugin.factionPermissions.createRole)) {
                 player.sendMessage("$RED${plugin.language["CommandFactionRoleCreateNoFactionPermission"]}")
                 return@Runnable
             }
@@ -99,24 +94,24 @@ class MfFactionRoleCreateCommand(private val plugin: MedievalFactions) : Command
                 player.sendMessage("$RED${plugin.language["CommandFactionRoleCreateRoleWithNameAlreadyExists"]}")
                 return@Runnable
             }
-            val newRole = MfFactionRole(name = name)
+            val newRole = MfFactionRole(plugin, name = name)
             factionService.save(
                 faction.copy(
                     roles = MfFactionRoles(
                         faction.roles.defaultRoleId,
                         faction.roles.map { existingRole ->
-                            existingRole.copy(permissions = existingRole.permissions + buildMap {
-                                if (existingRole.hasPermission(faction, VIEW_ROLE(role.id))) {
-                                    put(VIEW_ROLE(newRole.id), true)
+                            existingRole.copy(permissionsByName = existingRole.permissionsByName + buildMap {
+                                if (existingRole.hasPermission(faction, plugin.factionPermissions.viewRole(role.id))) {
+                                    put(plugin.factionPermissions.viewRole(newRole.id).name, true)
                                 }
-                                if (existingRole.hasPermission(faction, MODIFY_ROLE(role.id))) {
-                                    put(MODIFY_ROLE(newRole.id), true)
+                                if (existingRole.hasPermission(faction, plugin.factionPermissions.modifyRole(role.id))) {
+                                    put(plugin.factionPermissions.modifyRole(newRole.id).name, true)
                                 }
-                                if (existingRole.hasPermission(faction, SET_MEMBER_ROLE(role.id))) {
-                                    put(SET_MEMBER_ROLE(newRole.id), true)
+                                if (existingRole.hasPermission(faction, plugin.factionPermissions.setMemberRole(role.id))) {
+                                    put(plugin.factionPermissions.setMemberRole(newRole.id).name, true)
                                 }
-                                if (existingRole.hasPermission(faction, DELETE_ROLE(role.id))) {
-                                    put(DELETE_ROLE(newRole.id), true)
+                                if (existingRole.hasPermission(faction, plugin.factionPermissions.modifyRole(role.id))) {
+                                    put(plugin.factionPermissions.deleteRole(newRole.id).name, true)
                                 }
                             })
                         } + newRole

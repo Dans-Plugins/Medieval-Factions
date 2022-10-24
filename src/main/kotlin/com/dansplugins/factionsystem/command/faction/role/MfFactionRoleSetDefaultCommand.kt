@@ -1,8 +1,6 @@
 package com.dansplugins.factionsystem.command.faction.role
 
 import com.dansplugins.factionsystem.MedievalFactions
-import com.dansplugins.factionsystem.faction.permission.MfFactionPermission.Companion.SET_DEFAULT_ROLE
-import com.dansplugins.factionsystem.faction.permission.MfFactionPermission.Companion.SET_MEMBER_ROLE
 import com.dansplugins.factionsystem.faction.role.MfFactionRoleId
 import com.dansplugins.factionsystem.player.MfPlayer
 import com.dansplugins.factionsystem.player.MfPlayerId
@@ -59,8 +57,8 @@ class MfFactionRoleSetDefaultCommand(private val plugin: MedievalFactions) : Com
             }
             val role = faction.getRole(mfPlayer.id)
             if (role == null
-                || !role.hasPermission(faction, SET_DEFAULT_ROLE)
-                || !role.hasPermission(faction, SET_MEMBER_ROLE(targetRole.id))) {
+                || !role.hasPermission(faction, plugin.factionPermissions.setDefaultRole)
+                || !role.hasPermission(faction, plugin.factionPermissions.setMemberRole(targetRole.id))) {
                 sender.sendMessage("$RED${plugin.language["CommandFactionRoleSetDefaultNoFactionPermission"]}")
                 return@Runnable
             }

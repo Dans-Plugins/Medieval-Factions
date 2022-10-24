@@ -1,7 +1,6 @@
 package com.dansplugins.factionsystem.command.faction.set.description
 
 import com.dansplugins.factionsystem.MedievalFactions
-import com.dansplugins.factionsystem.faction.permission.MfFactionPermission.Companion.CHANGE_DESCRIPTION
 import com.dansplugins.factionsystem.player.MfPlayer
 import dev.forkhandles.result4k.onFailure
 import org.bukkit.ChatColor.GREEN
@@ -89,7 +88,7 @@ class MfFactionSetDescriptionCommand(private val plugin: MedievalFactions): Comm
                 return@Runnable
             }
             val role = faction.getRole(mfPlayer.id)
-            if (role == null || !role.hasPermission(faction, CHANGE_DESCRIPTION)) {
+            if (role == null || !role.hasPermission(faction, plugin.factionPermissions.changeDescription)) {
                 player.sendMessage("$RED${plugin.language["CommandFactionSetDescriptionNoFactionPermission"]}")
                 return@Runnable
             }

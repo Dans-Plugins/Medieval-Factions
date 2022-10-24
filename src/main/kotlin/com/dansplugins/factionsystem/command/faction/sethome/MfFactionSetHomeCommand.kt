@@ -2,7 +2,6 @@ package com.dansplugins.factionsystem.command.faction.sethome
 
 import com.dansplugins.factionsystem.MedievalFactions
 import com.dansplugins.factionsystem.area.MfPosition
-import com.dansplugins.factionsystem.faction.permission.MfFactionPermission.Companion.SET_HOME
 import com.dansplugins.factionsystem.player.MfPlayer
 import dev.forkhandles.result4k.onFailure
 import org.bukkit.ChatColor.GREEN
@@ -40,7 +39,7 @@ class MfFactionSetHomeCommand(private val plugin: MedievalFactions) : CommandExe
                 return@Runnable
             }
             val role = faction.getRole(mfPlayer.id)
-            if (role == null || !role.hasPermission(faction, SET_HOME)) {
+            if (role == null || !role.hasPermission(faction, plugin.factionPermissions.setHome)) {
                 sender.sendMessage("$RED${plugin.language["CommandFactionSetHomeNoFactionPermission"]}")
                 return@Runnable
             }

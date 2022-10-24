@@ -1,11 +1,11 @@
 package com.dansplugins.factionsystem.faction.permission
 
-import com.dansplugins.factionsystem.faction.flag.MfFlags
+import com.dansplugins.factionsystem.MedievalFactions
 import com.google.gson.*
 import java.lang.reflect.Type
 
 class MfFactionPermissionSerializer(
-    private val flags: MfFlags
+    private val plugin: MedievalFactions
 ) : JsonSerializer<MfFactionPermission?>, JsonDeserializer<MfFactionPermission?> {
     override fun serialize(
         src: MfFactionPermission?,
@@ -22,6 +22,6 @@ class MfFactionPermissionSerializer(
     ): MfFactionPermission? {
         if (json !is JsonPrimitive) return null
         if (!json.isString) return null
-        return MfFactionPermission.valueOf(json.asString, flags)
+        return plugin.factionPermissions.parse(json.asString)
     }
 }
