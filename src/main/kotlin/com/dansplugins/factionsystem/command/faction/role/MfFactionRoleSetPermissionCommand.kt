@@ -1,9 +1,6 @@
 package com.dansplugins.factionsystem.command.faction.role
 
 import com.dansplugins.factionsystem.MedievalFactions
-import com.dansplugins.factionsystem.faction.permission.MfFactionPermission
-import com.dansplugins.factionsystem.faction.permission.MfFactionPermission.Companion.MODIFY_ROLE
-import com.dansplugins.factionsystem.faction.permission.MfFactionPermission.Companion.SET_ROLE_PERMISSION
 import com.dansplugins.factionsystem.player.MfPlayer
 import com.dansplugins.factionsystem.player.MfPlayerId
 import dev.forkhandles.result4k.onFailure
@@ -49,7 +46,7 @@ class MfFactionRoleSetPermissionCommand(private val plugin: MedievalFactions) : 
                 lastArgOffset = 1
                 args.last().substring("p=".length).toIntOrNull()
             } else null
-            val permission = MfFactionPermission.valueOf(args[args.lastIndex - (1 + lastArgOffset)], plugin.flags)
+            val permission = plugin.factionPermissions.parse(args[args.lastIndex - (1 + lastArgOffset)])
             if (permission == null) {
                 sender.sendMessage("$RED${plugin.language["CommandFactionRoleSetPermissionInvalidPermission"]}")
                 return@Runnable
@@ -68,25 +65,24 @@ class MfFactionRoleSetPermissionCommand(private val plugin: MedievalFactions) : 
             val playerRole = faction.getRole(mfPlayer.id)
             if (playerRole == null || !playerRole.hasPermission(
                     faction,
-                    SET_ROLE_PERMISSION(permission)
-                ) || !playerRole.hasPermission(faction, MODIFY_ROLE(targetRole.id))
+                    plugin.factionPermissions.setRolePermission(permission)
+                ) || !playerRole.hasPermission(faction, plugin.factionPermissions.modifyRole(targetRole.id))
             ) {
                 sender.sendMessage("$RED${plugin.language["CommandFactionRoleSetPermissionNoFactionPermission"]}")
                 return@Runnable
             }
-            val newFaction = faction.copy(roles = faction.roles.copy(roles = faction.roles.map {
+            val updatedFaction = factionService.save(faction.copy(roles = faction.roles.copy(roles = faction.roles.map {
                 if (it.id.value == targetRole.id.value) {
-                    targetRole.copy(permissions = targetRole.permissions + (permission to permissionValue))
+                    targetRole.copy(permissionsByName = targetRole.permissionsByName + (permission.name to permissionValue))
                 } else {
                     it
                 }
-            }))
-            factionService.save(newFaction).onFailure {
+            }))).onFailure {
                 sender.sendMessage("$RED${plugin.language["CommandFactionRoleSetPermissionFailedToSaveFaction"]}")
                 plugin.logger.log(SEVERE, "Failed to save faction: ${it.reason.message}", it.reason.cause)
                 return@Runnable
             }
-            sender.sendMessage("$GREEN${plugin.language["CommandFactionRoleSetPermissionSuccess", targetRole.name, permission.name, when (permissionValue) {
+            sender.sendMessage("$GREEN${plugin.language["CommandFactionRoleSetPermissionSuccess", targetRole.name, permission.translate(updatedFaction), when (permissionValue) {
                 true -> "allow"
                 false -> "deny"
                 null -> "default"
@@ -113,7 +109,7 @@ class MfFactionRoleSetPermissionCommand(private val plugin: MedievalFactions) : 
         return when {
             args.isEmpty() -> faction.roles.map { it.name }
             args.size == 1 -> faction.roles.filter { it.name.lowercase().startsWith(args[0].lowercase()) }.map { it.name }
-            args.size == 2 -> MfFactionPermission.values(plugin.flags, faction.roles).filter { it.name.lowercase().startsWith(args[1].lowercase()) }.map { it.name }
+            args.size == 2 -> plugin.factionPermissions.permissionsFor(faction.roles).filter { it.name.lowercase().startsWith(args[1].lowercase()) }.map { it.name }
             args.size == 3 -> listOf("allow", "deny", "default").filter { it.startsWith(args[2].lowercase()) }
             else -> emptyList()
         }

@@ -1,7 +1,6 @@
 package com.dansplugins.factionsystem.command.faction.autoclaim
 
 import com.dansplugins.factionsystem.MedievalFactions
-import com.dansplugins.factionsystem.faction.permission.MfFactionPermission.Companion.TOGGLE_AUTOCLAIM
 import com.dansplugins.factionsystem.player.MfPlayer
 import dev.forkhandles.result4k.onFailure
 import org.bukkit.ChatColor.GREEN
@@ -38,7 +37,7 @@ class MfFactionAutoclaimCommand(private val plugin: MedievalFactions) : CommandE
                 return@Runnable
             }
             val role = faction.getRole(mfPlayer.id)
-            if (role == null || !role.hasPermission(faction, TOGGLE_AUTOCLAIM)) {
+            if (role == null || !role.hasPermission(faction, plugin.factionPermissions.toggleAutoclaim)) {
                 sender.sendMessage("$RED${plugin.language["CommandFactionAutoclaimNoFactionPermission"]}")
                 return@Runnable
             }

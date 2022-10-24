@@ -1,7 +1,6 @@
 package com.dansplugins.factionsystem.command.faction.unclaim
 
 import com.dansplugins.factionsystem.MedievalFactions
-import com.dansplugins.factionsystem.faction.permission.MfFactionPermission.Companion.UNCLAIM
 import com.dansplugins.factionsystem.player.MfPlayer
 import dev.forkhandles.result4k.onFailure
 import org.bukkit.ChatColor.GREEN
@@ -38,7 +37,7 @@ class MfFactionUnclaimCommand(private val plugin: MedievalFactions) : CommandExe
                 return@Runnable
             }
             val role = faction.getRole(mfPlayer.id)
-            if (role == null || !role.hasPermission(faction, UNCLAIM)) {
+            if (role == null || !role.hasPermission(faction, plugin.factionPermissions.unclaim)) {
                 sender.sendMessage("$RED${plugin.language["CommandFactionUnclaimNoFactionPermission"]}")
                 return@Runnable
             }

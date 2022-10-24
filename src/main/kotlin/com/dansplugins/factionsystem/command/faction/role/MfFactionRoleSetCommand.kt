@@ -1,7 +1,6 @@
 package com.dansplugins.factionsystem.command.faction.role
 
 import com.dansplugins.factionsystem.MedievalFactions
-import com.dansplugins.factionsystem.faction.permission.MfFactionPermission.Companion.SET_MEMBER_ROLE
 import com.dansplugins.factionsystem.player.MfPlayer
 import com.dansplugins.factionsystem.player.MfPlayerId
 import dev.forkhandles.result4k.onFailure
@@ -67,7 +66,7 @@ class MfFactionRoleSetCommand(private val plugin: MedievalFactions) : CommandExe
                 sender.sendMessage("$RED${plugin.language["CommandFactionRoleSetInvalidTargetRole"]}")
                 return@Runnable
             }
-            if (role == null || !role.hasPermission(faction, SET_MEMBER_ROLE(targetRole.id))) {
+            if (role == null || !role.hasPermission(faction, plugin.factionPermissions.setMemberRole(targetRole.id))) {
                 sender.sendMessage("$RED${plugin.language["CommandFactionRoleSetNoFactionPermission"]}")
                 return@Runnable
             }

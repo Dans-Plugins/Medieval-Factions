@@ -2,7 +2,6 @@ package com.dansplugins.factionsystem.command.faction.invoke
 
 import com.dansplugins.factionsystem.MedievalFactions
 import com.dansplugins.factionsystem.faction.MfFaction
-import com.dansplugins.factionsystem.faction.permission.MfFactionPermission.Companion.INVOKE
 import com.dansplugins.factionsystem.player.MfPlayer
 import com.dansplugins.factionsystem.relationship.MfFactionRelationship
 import com.dansplugins.factionsystem.relationship.MfFactionRelationshipType.*
@@ -47,7 +46,7 @@ class MfFactionInvokeCommand(private val plugin: MedievalFactions) : CommandExec
                 return@Runnable
             }
             val role = faction.getRole(mfPlayer.id)
-            if (role == null || !role.hasPermission(faction, INVOKE)) {
+            if (role == null || !role.hasPermission(faction, plugin.factionPermissions.invoke)) {
                 sender.sendMessage("$RED${plugin.language["CommandFactionInvokeNoFactionPermission"]}")
                 return@Runnable
             }

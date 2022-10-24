@@ -1,7 +1,6 @@
 package com.dansplugins.factionsystem.command.faction.declareindependence
 
 import com.dansplugins.factionsystem.MedievalFactions
-import com.dansplugins.factionsystem.faction.permission.MfFactionPermission.Companion.DECLARE_INDEPENDENCE
 import com.dansplugins.factionsystem.player.MfPlayer
 import com.dansplugins.factionsystem.relationship.MfFactionRelationship
 import com.dansplugins.factionsystem.relationship.MfFactionRelationshipType.AT_WAR
@@ -41,7 +40,7 @@ class MfFactionDeclareIndependenceCommand(private val plugin: MedievalFactions) 
                 return@Runnable
             }
             val role = faction.getRole(mfPlayer.id)
-            if (role == null || !role.hasPermission(faction, DECLARE_INDEPENDENCE)) {
+            if (role == null || !role.hasPermission(faction, plugin.factionPermissions.declareIndependence)) {
                 sender.sendMessage("$RED${plugin.language["CommandFactionDeclareIndependenceNoFactionPermission"]}")
                 return@Runnable
             }

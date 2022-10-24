@@ -1,7 +1,6 @@
 package com.dansplugins.factionsystem.command.faction.home
 
 import com.dansplugins.factionsystem.MedievalFactions
-import com.dansplugins.factionsystem.faction.permission.MfFactionPermission.Companion.GO_HOME
 import com.dansplugins.factionsystem.player.MfPlayer
 import dev.forkhandles.result4k.onFailure
 import org.bukkit.ChatColor.GREEN
@@ -38,7 +37,7 @@ class MfFactionHomeCommand(private val plugin: MedievalFactions) : CommandExecut
                 return@Runnable
             }
             val role = faction.getRole(mfPlayer.id)
-            if (role == null || !role.hasPermission(faction, GO_HOME)) {
+            if (role == null || !role.hasPermission(faction, plugin.factionPermissions.goHome)) {
                 sender.sendMessage("$RED${plugin.language["CommandFactionHomeNoFactionPermission"]}")
                 return@Runnable
             }

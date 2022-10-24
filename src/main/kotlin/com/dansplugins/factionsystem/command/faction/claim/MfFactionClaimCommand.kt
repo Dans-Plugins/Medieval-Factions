@@ -3,7 +3,6 @@ package com.dansplugins.factionsystem.command.faction.claim
 import com.dansplugins.factionsystem.MedievalFactions
 import com.dansplugins.factionsystem.claim.MfClaimedChunk
 import com.dansplugins.factionsystem.command.faction.claimfill.MfFactionClaimFillCommand
-import com.dansplugins.factionsystem.faction.permission.MfFactionPermission.Companion.CLAIM
 import com.dansplugins.factionsystem.player.MfPlayer
 import com.dansplugins.factionsystem.relationship.MfFactionRelationshipType.AT_WAR
 import dev.forkhandles.result4k.onFailure
@@ -45,7 +44,7 @@ class MfFactionClaimCommand(private val plugin: MedievalFactions) : CommandExecu
                 return@Runnable
             }
             val role = faction.getRole(mfPlayer.id)
-            if (role == null || !role.hasPermission(faction, CLAIM)) {
+            if (role == null || !role.hasPermission(faction, plugin.factionPermissions.claim)) {
                 sender.sendMessage("$RED${plugin.language["CommandFactionClaimNoFactionPermission"]}")
                 return@Runnable
             }

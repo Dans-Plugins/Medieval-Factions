@@ -151,7 +151,7 @@ class MfLegacyDataMigrator(private val plugin: MedievalFactions) {
             val z = gson.fromJson(location.z, Double::class.javaObjectType)
             val bonusPower = gson.fromJson(legacyFaction.bonusPower, String::class.java).toIntOrNull() ?: 0
 
-            val roles = MfFactionRoles.defaults(plugin.flags)
+            val roles = MfFactionRoles.defaults(plugin)
             return@associateWith factionService.save(MfFaction(
                 plugin,
                 MfFactionId.generate(),

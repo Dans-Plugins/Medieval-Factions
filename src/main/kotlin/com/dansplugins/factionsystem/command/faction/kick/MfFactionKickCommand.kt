@@ -2,8 +2,6 @@ package com.dansplugins.factionsystem.command.faction.kick
 
 import com.dansplugins.factionsystem.MedievalFactions
 import com.dansplugins.factionsystem.event.faction.FactionKickEvent
-import com.dansplugins.factionsystem.faction.permission.MfFactionPermission.Companion.KICK
-import com.dansplugins.factionsystem.faction.permission.MfFactionPermission.Companion.SET_MEMBER_ROLE
 import com.dansplugins.factionsystem.player.MfPlayer
 import dev.forkhandles.result4k.onFailure
 import org.bukkit.ChatColor.GREEN
@@ -72,7 +70,7 @@ class MfFactionKickCommand(private val plugin: MedievalFactions) : CommandExecut
                 return@Runnable
             }
             val role = faction.getRole(mfPlayer.id)
-            if (role == null || !role.hasPermission(faction, KICK)) {
+            if (role == null || !role.hasPermission(faction, plugin.factionPermissions.kick)) {
                 sender.sendMessage("$RED${plugin.language["CommandFactionKickNoFactionPermission"]}")
                 return@Runnable
             }
@@ -83,7 +81,7 @@ class MfFactionKickCommand(private val plugin: MedievalFactions) : CommandExecut
             val targetRole = faction.getRole(targetMfPlayer.id)
             if (targetRole != null && faction.members.filter { it.playerId != targetMfPlayer.id }.none {
                 val memberRole = faction.getRole(it.playerId)
-                memberRole?.hasPermission(faction, SET_MEMBER_ROLE(targetRole.id)) == true
+                memberRole?.hasPermission(faction, plugin.factionPermissions.setMemberRole(targetRole.id)) == true
             }) {
                 sender.sendMessage("$RED${plugin.language["CommandFactionKickNoOneCanSetTheirRole"]}")
                 return@Runnable

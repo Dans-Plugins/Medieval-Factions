@@ -2,7 +2,6 @@ package com.dansplugins.factionsystem.command.faction.flag
 
 import com.dansplugins.factionsystem.MedievalFactions
 import com.dansplugins.factionsystem.faction.flag.*
-import com.dansplugins.factionsystem.faction.permission.MfFactionPermission.Companion.SET_FLAG
 import com.dansplugins.factionsystem.player.MfPlayer
 import dev.forkhandles.result4k.onFailure
 import org.bukkit.ChatColor.GREEN
@@ -126,7 +125,7 @@ class MfFactionFlagSetCommand(private val plugin: MedievalFactions) : CommandExe
                 return@Runnable
             }
             val role = faction.getRole(mfPlayer.id)
-            if (role == null || !role.hasPermission(faction, SET_FLAG(flag))) {
+            if (role == null || !role.hasPermission(faction, plugin.factionPermissions.setFlag(flag))) {
                 sender.sendMessage("$RED${plugin.language["CommandFactionFlagSetNoFactionPermission"]}")
                 return@Runnable
             }

@@ -3,7 +3,6 @@ package com.dansplugins.factionsystem.command.faction.set.name
 import com.dansplugins.factionsystem.MedievalFactions
 import com.dansplugins.factionsystem.faction.MfFaction
 import com.dansplugins.factionsystem.faction.MfFactionId
-import com.dansplugins.factionsystem.faction.permission.MfFactionPermission.Companion.CHANGE_NAME
 import com.dansplugins.factionsystem.player.MfPlayer
 import dev.forkhandles.result4k.onFailure
 import net.md_5.bungee.api.ChatColor
@@ -103,7 +102,7 @@ class MfFactionSetNameCommand(private val plugin: MedievalFactions): CommandExec
                 return@Runnable
             }
             val role = faction.getRole(mfPlayer.id)
-            if (role == null || !role.hasPermission(faction, CHANGE_NAME)) {
+            if (role == null || !role.hasPermission(faction, plugin.factionPermissions.changeName)) {
                 player.sendMessage("$RED${plugin.language["CommandFactionSetNameNoFactionPermission"]}")
                 return@Runnable
             }
