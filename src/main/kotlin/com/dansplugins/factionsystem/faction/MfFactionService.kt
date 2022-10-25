@@ -32,9 +32,22 @@ class MfFactionService(private val plugin: MedievalFactions, private val reposit
 
     init {
         plugin.logger.info("Loading factions...")
-        val startTime = System.currentTimeMillis()
+        var startTime = System.currentTimeMillis()
         factionsById.putAll(repository.getFactions().associateBy(MfFaction::id))
         plugin.logger.info("${factionsById.size} factions loaded (${System.currentTimeMillis() - startTime}ms)")
+        if (!plugin.config.getBoolean("factions.allowNeutrality")) {
+            plugin.logger.info("Disabling neutrality for existing factions due to config setting...")
+            startTime = System.currentTimeMillis()
+            val updatedFactions = factions.filter { it.flags[plugin.flags.isNeutral] }.map { faction ->
+                save(faction.copy(flags = faction.flags + (plugin.flags.isNeutral to false))).onFailure { throw it.reason.cause }
+            }.associateBy(MfFaction::id)
+            if (updatedFactions.isNotEmpty()) {
+                factionsById.putAll(updatedFactions)
+                plugin.logger.info("Updated neutrality setting for ${updatedFactions.size} factions (${System.currentTimeMillis() - startTime}ms)")
+            } else {
+                plugin.logger.info("No factions required updating.")
+            }
+        }
     }
 
     fun getFaction(name: String): MfFaction? = factions.singleOrNull { it.name == name }

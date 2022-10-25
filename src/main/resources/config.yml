@@ -60,6 +60,7 @@ factions:
   limitLand: true
   actionBarTerritoryIndicator: true
   titleTerritoryIndicator: true
+  allowNeutrality: false
   defaults:
     flags:
       mustBeOfficerToManageLand: true
