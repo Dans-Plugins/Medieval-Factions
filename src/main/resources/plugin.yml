@@ -192,6 +192,9 @@ permissions:
   mf.power:
     description: Allows viewing power
     default: true
+  mf.power.view.other:
+    description: Allows viewing other player/faction power
+    default: true
   mf.who:
     description: Allows viewing which faction a player is part of
     default: true
