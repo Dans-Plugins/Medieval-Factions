@@ -11,4 +11,6 @@ data class MfLiegeNode(
     fun contains(factionId: MfFactionId): Boolean {
         return liege != null && (liege.factionId == factionId || liege.contains(factionId))
     }
+
+    fun last(): MfLiegeNode = liege?.last() ?: this
 }
