@@ -61,6 +61,7 @@ factions:
   actionBarTerritoryIndicator: true
   titleTerritoryIndicator: true
   allowNeutrality: false
+  factionlessFactionName: Factionless
   defaults:
     flags:
       mustBeOfficerToManageLand: true

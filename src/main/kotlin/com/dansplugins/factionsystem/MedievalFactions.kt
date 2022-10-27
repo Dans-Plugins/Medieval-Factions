@@ -89,6 +89,7 @@ class MedievalFactions : JavaPlugin() {
             migrator.backup()
             saveDefaultConfig()
             reloadConfig()
+            config.options().copyDefaults(true)
             config.set("migrateMf4", true)
             saveConfig()
             logger.warning("Shutting down the server due to Medieval Factions 4 migration.")
@@ -99,7 +100,9 @@ class MedievalFactions : JavaPlugin() {
         }
 
         saveDefaultConfig()
-
+        config.options().copyDefaults(true)
+        config.set("version", description.version)
+        saveConfig()
 
         language = Language(this, config.getString("language") ?: "en-US")
         Metrics(this, 8929)
