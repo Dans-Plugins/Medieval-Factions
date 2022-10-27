@@ -22,6 +22,10 @@ class EntityDamageListener(private val plugin: MedievalFactions) : Listener {
         if (entity is Player) {
             val playerService = plugin.services.playerService
             val mfPlayer = playerService.getPlayer(entity) ?: MfPlayer(plugin, entity)
+
+            val teleportService = plugin.services.teleportService
+            teleportService.cancelTeleportation(entity)
+
             val duelService = plugin.services.duelService
             val duel = duelService.getDuel(mfPlayer.id)
             if (duel != null && entity.health - event.finalDamage <= 0) {

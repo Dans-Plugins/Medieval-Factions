@@ -50,6 +50,7 @@ import com.dansplugins.factionsystem.relationship.JooqMfFactionRelationshipRepos
 import com.dansplugins.factionsystem.relationship.MfFactionRelationshipRepository
 import com.dansplugins.factionsystem.relationship.MfFactionRelationshipService
 import com.dansplugins.factionsystem.service.Services
+import com.dansplugins.factionsystem.teleport.MfTeleportService
 import com.google.gson.Gson
 import com.zaxxer.hikari.HikariConfig
 import com.zaxxer.hikari.HikariDataSource
@@ -172,6 +173,7 @@ class MedievalFactions : JavaPlugin() {
         val chatService = MfChatService(this, chatMessageRepository)
         val duelService = MfDuelService(this, duelRepository, duelInviteRepository)
         val potionService = MfPotionService(this)
+        val teleportService = MfTeleportService(this)
         val dynmapService = if (server.pluginManager.getPlugin("dynmap") != null) {
             MfDynmapService(this)
         } else {
@@ -191,6 +193,7 @@ class MedievalFactions : JavaPlugin() {
             chatService,
             duelService,
             potionService,
+            teleportService,
             dynmapService
         )
         setupRpkLockService()
@@ -230,6 +233,7 @@ class MedievalFactions : JavaPlugin() {
             PlayerJoinListener(this),
             PlayerMoveListener(this),
             PlayerQuitListener(this),
+            PlayerTeleportListener(this),
             PotionSplashListener(this)
         )
 

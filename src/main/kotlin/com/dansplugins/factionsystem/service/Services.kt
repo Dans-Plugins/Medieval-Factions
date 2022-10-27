@@ -13,6 +13,7 @@ import com.dansplugins.factionsystem.notification.MfNotificationService
 import com.dansplugins.factionsystem.player.MfPlayerService
 import com.dansplugins.factionsystem.potion.MfPotionService
 import com.dansplugins.factionsystem.relationship.MfFactionRelationshipService
+import com.dansplugins.factionsystem.teleport.MfTeleportService
 
 class Services(
     val playerService: MfPlayerService,
@@ -27,5 +28,6 @@ class Services(
     val chatService: MfChatService,
     val duelService: MfDuelService,
     val potionService: MfPotionService,
+    val teleportService: MfTeleportService,
     val dynmapService: MfDynmapService?
 )
