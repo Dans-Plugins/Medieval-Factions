@@ -1,6 +1,7 @@
 package com.dansplugins.factionsystem.command.faction.info
 
 import com.dansplugins.factionsystem.MedievalFactions
+import com.dansplugins.factionsystem.faction.MfFaction
 import com.dansplugins.factionsystem.player.MfPlayer
 import dev.forkhandles.result4k.onFailure
 import net.md_5.bungee.api.chat.ClickEvent
@@ -29,25 +30,46 @@ class MfFactionInfoCommand(private val plugin: MedievalFactions) : CommandExecut
             return true
         }
         plugin.server.scheduler.runTaskAsynchronously(plugin, Runnable {
-            // get player's faction
             val playerService = plugin.services.playerService
-            val mfPlayer = playerService.getPlayer(sender)
-                ?: playerService.save(MfPlayer(plugin, sender)).onFailure {
-                    sender.sendMessage("${BukkitChatColor.RED}${plugin.language["CommandFactionInfoFailedToSavePlayer"]}")
-                    plugin.logger.log(SEVERE, "Failed to save player: ${it.reason.message}", it.reason.cause)
+            val factionService = plugin.services.factionService
+            var faction: MfFaction? = null
+            var mfPlayer: MfPlayer? = null
+
+            // if a faction name was provided, grab that faction
+            if (args.size > 0) {
+                faction = plugin.services.factionService.getFaction(args[0])
+                if (faction == null) {
+                    sender.sendMessage("${BukkitChatColor.RED}${plugin.language["CommandFactionInfoFactionNotFound"]}")
                     return@Runnable
                 }
-            val factionService = plugin.services.factionService
-            val faction = factionService.getFaction(mfPlayer.id)
-            if (faction == null) {
-                sender.sendMessage("${BukkitChatColor.RED}${plugin.language["CommandFactionInfoMustBeInAFaction"]}")
-                return@Runnable
             }
-            val role = faction.getRole(mfPlayer.id)
+            else {
+                // if the player is in a faction, grab that faction
+                val player = plugin.services.playerService.getPlayer(sender)
+                if (player != null) {
+
+                    mfPlayer = playerService.getPlayer(sender)
+                        ?: playerService.save(MfPlayer(plugin, sender)).onFailure {
+                            sender.sendMessage("${BukkitChatColor.RED}${plugin.language["CommandFactionInfoFailedToSavePlayer"]}")
+                            plugin.logger.log(SEVERE, "Failed to save player: ${it.reason.message}", it.reason.cause)
+                            return@Runnable
+                        }
+                    faction = factionService.getFaction(mfPlayer.id)
+                }
+                // if the player is not in a faction, tell them to provide a faction name
+                if (faction == null) {
+                    sender.sendMessage("${BukkitChatColor.RED}${plugin.language["CommandFactionInfoNoFactionSpecified"]}")
+                    return@Runnable
+                }
+            }
+
+            // check player's role
+            val role = faction.getRole(mfPlayer!!.id)
             if (role == null || !role.hasPermission(faction, plugin.factionPermissions.viewInfo)) {
                 sender.sendMessage("${BukkitChatColor.RED}${plugin.language["CommandFactionInfoNoFactionPermission"]}")
                 return@Runnable
             }
+
             // send player faction info
             sender.sendMessage("${BukkitChatColor.AQUA}${plugin.language["CommandFactionInfoTitle", faction.name]}")
             if (sender.hasPermission("mf.rename")) {
@@ -58,7 +80,7 @@ class MfFactionInfoCommand(private val plugin: MedievalFactions) : CommandExecut
                 })
             }
             if (faction.prefix != null) {
-                sender.sendMessage("${BukkitChatColor.GRAY}${plugin.language["CommandFactionInfoPrefix", faction.prefix]}")
+                sender.sendMessage("${BukkitChatColor.GRAY}${plugin.language["CommandFactionInfoPrefix", faction.prefix!!]}")
             } else {
                 sender.sendMessage("${BukkitChatColor.GRAY}${plugin.language["CommandFactionInfoNoPrefix"]}")
             }
