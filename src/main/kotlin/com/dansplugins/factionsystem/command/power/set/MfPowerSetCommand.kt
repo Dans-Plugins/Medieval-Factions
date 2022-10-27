@@ -9,9 +9,13 @@ import org.bukkit.command.Command
 import org.bukkit.command.CommandExecutor
 import org.bukkit.command.CommandSender
 import org.bukkit.command.TabCompleter
+import java.text.DecimalFormat
+import java.text.DecimalFormatSymbols
 import java.util.logging.Level
 
 class MfPowerSetCommand(private val plugin: MedievalFactions) : CommandExecutor, TabCompleter {
+
+    private val decimalFormat = DecimalFormat("0.##", DecimalFormatSymbols.getInstance(plugin.language.locale))
 
     override fun onCommand(sender: CommandSender, command: Command, label: String, args: Array<out String>): Boolean {
         if (!sender.hasPermission("mf.power.set") && !sender.hasPermission("mf.force.power")) {
@@ -27,18 +31,18 @@ class MfPowerSetCommand(private val plugin: MedievalFactions) : CommandExecutor,
             sender.sendMessage("$RED${plugin.language["CommandPowerSetInvalidTarget"]}")
             return true
         }
-        val power = args[1].toIntOrNull()
+        val power = args[1].toDoubleOrNull()
         if (power == null) {
-            sender.sendMessage("$RED${plugin.language["CommandPowerSetInvalidPowerMustBeInteger"]}")
+            sender.sendMessage("$RED${plugin.language["CommandPowerSetInvalidPowerMustBeNumber"]}")
             return true
         }
         if (power < 0) {
             sender.sendMessage("$RED${plugin.language["CommandPowerSetInvalidPowerCannotBeNegative"]}")
             return true
         }
-        val maxPower = plugin.config.getInt("players.maxPower")
+        val maxPower = plugin.config.getDouble("players.maxPower")
         if (power > maxPower) {
-            sender.sendMessage("$RED${plugin.language["CommandPowerSetInvalidPowerTooHigh", maxPower.toString()]}")
+            sender.sendMessage("$RED${plugin.language["CommandPowerSetInvalidPowerTooHigh", decimalFormat.format(maxPower)]}")
             return true
         }
         plugin.server.scheduler.runTaskAsynchronously(plugin, Runnable {
@@ -49,7 +53,7 @@ class MfPowerSetCommand(private val plugin: MedievalFactions) : CommandExecutor,
                 plugin.logger.log(Level.SEVERE, "Failed to save player: ${it.reason.message}", it.reason.cause)
                 return@Runnable
             }
-            sender.sendMessage("$GREEN${plugin.language["CommandPowerSetSuccess", target.name ?: plugin.language["UnknownPlayer"], power.toString(), maxPower.toString()]}")
+            sender.sendMessage("$GREEN${plugin.language["CommandPowerSetSuccess", target.name ?: plugin.language["UnknownPlayer"], decimalFormat.format(power), decimalFormat.format(maxPower)]}")
         })
         return true
     }

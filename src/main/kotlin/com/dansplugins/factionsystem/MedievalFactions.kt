@@ -246,7 +246,7 @@ class MedievalFactions : JavaPlugin() {
                 playerService.updatePlayerPower(onlineMfPlayerIds)
                 if (disbandZeroPowerFactions) {
                     factionService.factions.forEach { faction ->
-                        if (faction.power <= 0) {
+                        if (faction.power <= 0.0) {
                             faction.sendMessage(language["FactionDisbandedZeroPowerNotificationTitle"], language["FactionDisbandedZeroPowerNotificationBody"])
                             claimService.deleteAllClaims(faction.id).onFailure {
                                 logger.log(SEVERE, "Failed to delete all claims for faction: ${it.reason.message}", it.reason.cause)

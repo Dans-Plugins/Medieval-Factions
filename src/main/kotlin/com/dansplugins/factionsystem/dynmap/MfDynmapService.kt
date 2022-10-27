@@ -6,7 +6,11 @@ import com.dansplugins.factionsystem.faction.MfFaction
 import com.dansplugins.factionsystem.faction.MfFactionId
 import org.dynmap.DynmapAPI
 import org.dynmap.markers.AreaMarker
+import java.text.DecimalFormat
+import java.text.DecimalFormatSymbols
 import java.util.concurrent.ConcurrentHashMap
+import kotlin.math.floor
+import kotlin.math.roundToInt
 
 private typealias Point = Pair<Int, Int>
 private typealias LineSegment = Pair<Point, Point>
@@ -16,6 +20,7 @@ class MfDynmapService(private val plugin: MedievalFactions) {
 
     private val dynmap = plugin.server.pluginManager.getPlugin("dynmap") as DynmapAPI
     private val factionMarkersByFactionId = ConcurrentHashMap<MfFactionId, List<AreaMarker>>()
+    private val decimalFormat = DecimalFormat("0.##", DecimalFormatSymbols.getInstance(plugin.language.locale))
 
     fun updateClaims(faction: MfFaction) {
         val markerApi = dynmap.markerAPI
@@ -228,11 +233,11 @@ class MfDynmapService(private val plugin: MedievalFactions) {
                 append("<br />")
             }
             append("<h2>Power</h2>")
-            append(faction.power)
+            append(decimalFormat.format(faction.power))
             append("<br />")
             append("<h2>Demesne</h2>")
             val claims = claimService.getClaims(faction.id)
-            append("${claims.size}/${faction.power}")
+            append("${claims.size}/${floor(faction.power).roundToInt()}")
         }
     }
 

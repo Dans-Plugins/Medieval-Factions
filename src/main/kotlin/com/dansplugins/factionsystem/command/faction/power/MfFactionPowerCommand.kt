@@ -11,9 +11,13 @@ import org.bukkit.command.CommandExecutor
 import org.bukkit.command.CommandSender
 import org.bukkit.command.TabCompleter
 import org.bukkit.entity.Player
+import java.text.DecimalFormat
+import java.text.DecimalFormatSymbols
 import java.util.logging.Level.SEVERE
 
 class MfFactionPowerCommand(private val plugin: MedievalFactions) : CommandExecutor, TabCompleter {
+    private val decimalFormat = DecimalFormat("0.##", DecimalFormatSymbols.getInstance(plugin.language.locale))
+
     override fun onCommand(sender: CommandSender, command: Command, label: String, args: Array<out String>): Boolean {
         if (!sender.hasPermission("mf.power")) {
             sender.sendMessage("$RED${plugin.language["CommandFactionPowerNoPermission"]}")
@@ -30,6 +34,8 @@ class MfFactionPowerCommand(private val plugin: MedievalFactions) : CommandExecu
             if (!targetPlayer.isOnline && !targetPlayer.hasPlayedBefore()) {
                 targetPlayer = null
             }
+        } else if (sender is Player) {
+            targetPlayer = sender
         } else {
             targetPlayer = null
         }
@@ -76,8 +82,8 @@ class MfFactionPowerCommand(private val plugin: MedievalFactions) : CommandExecu
                             "$GRAY${
                                 plugin.language[
                                         "CommandFactionPowerPlayerPower",
-                                        mfPlayer.power.toString(),
-                                        plugin.config.getInt("players.maxPower").toString()
+                                        decimalFormat.format(mfPlayer.power),
+                                        decimalFormat.format(plugin.config.getDouble("players.maxPower"))
                                 ]
                             }"
                         )
@@ -87,8 +93,8 @@ class MfFactionPowerCommand(private val plugin: MedievalFactions) : CommandExecu
                                 plugin.language[
                                         "CommandFactionPowerOtherPlayerPower",
                                         targetPlayer?.name ?: plugin.language["UnknownPlayer"],
-                                        mfPlayer.power.toString(),
-                                        plugin.config.getInt("players.maxPower").toString()
+                                        decimalFormat.format(mfPlayer.power),
+                                        decimalFormat.format(plugin.config.getDouble("players.maxPower"))
                                 ]
                             }"
                         )
@@ -99,13 +105,13 @@ class MfFactionPowerCommand(private val plugin: MedievalFactions) : CommandExecu
                         "$GRAY${
                             plugin.language[
                                     "CommandFactionPowerFactionPower",
-                                    faction.power.toString(),
-                                    faction.maxPower.toString(),
-                                    faction.memberPower.toString(),
-                                    faction.maxMemberPower.toString(),
-                                    faction.vassalPower.toString(),
-                                    faction.maxVassalPower.toString(),
-                                    if (faction.flags[plugin.flags.acceptBonusPower]) faction.bonusPower.toString() else "0"
+                                    decimalFormat.format(faction.power),
+                                    decimalFormat.format(faction.maxPower),
+                                    decimalFormat.format(faction.memberPower),
+                                    decimalFormat.format(faction.maxMemberPower),
+                                    decimalFormat.format(faction.vassalPower),
+                                    decimalFormat.format(faction.maxVassalPower),
+                                    decimalFormat.format(if (faction.flags[plugin.flags.acceptBonusPower]) faction.bonusPower else 0)
                             ]
                         }"
                     )

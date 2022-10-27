@@ -10,9 +10,13 @@ import net.md_5.bungee.api.ChatColor
 import net.md_5.bungee.api.ChatColor.WHITE
 import org.bukkit.OfflinePlayer
 import org.bukkit.entity.Player
+import java.text.DecimalFormat
+import java.text.DecimalFormatSymbols
 
 
 class MedievalFactionsPlaceholderExpansion(private val plugin: MedievalFactions) : PlaceholderExpansion(), Relational {
+
+    private val decimalFormat = DecimalFormat("0.##", DecimalFormatSymbols.getInstance(plugin.language.locale))
 
     override fun getIdentifier() = plugin.name
     override fun getAuthor() = plugin.description.authors.joinToString()
@@ -101,17 +105,17 @@ class MedievalFactionsPlaceholderExpansion(private val plugin: MedievalFactions)
 
     private fun getFactionPower(player: OfflinePlayer): String {
         val faction = getPlayerFaction(player) ?: return "Factionless"
-        return faction.power.toString()
+        return decimalFormat.format(faction.power)
     }
 
     private fun getFactionBonusPower(player: OfflinePlayer): String {
         val faction = getPlayerFaction(player) ?: return "Factionless"
-        return if (faction.flags[plugin.flags.acceptBonusPower]) faction.bonusPower.toString() else "0"
+        return decimalFormat.format(if (faction.flags[plugin.flags.acceptBonusPower]) faction.bonusPower else 0.0)
     }
 
     private fun getFactionPowerWithoutBonus(player: OfflinePlayer): String {
         val faction = getPlayerFaction(player) ?: return "Factionless"
-        return (faction.power - (if (faction.flags[plugin.flags.acceptBonusPower]) faction.bonusPower else 0)).toString()
+        return decimalFormat.format(faction.power - (if (faction.flags[plugin.flags.acceptBonusPower]) faction.bonusPower else 0.0))
     }
 
     private fun getFactionAllyCount(player: OfflinePlayer): String {
@@ -174,12 +178,12 @@ class MedievalFactionsPlaceholderExpansion(private val plugin: MedievalFactions)
     private fun getPower(player: OfflinePlayer): String {
         val playerService = plugin.services.playerService
         val mfPlayer = playerService.getPlayer(player)
-            ?: return plugin.config.getInt("players.initialPower").toString()
-        return mfPlayer.power.toString()
+            ?: return decimalFormat.format(plugin.config.getDouble("players.initialPower"))
+        return decimalFormat.format(mfPlayer.power)
     }
 
     private fun getMaxPower(): String {
-        return plugin.config.getInt("players.maxPower").toString()
+        return decimalFormat.format(plugin.config.getDouble("players.maxPower"))
     }
 
     private fun getFormattedPlayerPower(player: OfflinePlayer): String {
