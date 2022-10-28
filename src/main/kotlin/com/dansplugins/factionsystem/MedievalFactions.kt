@@ -50,6 +50,7 @@ import com.dansplugins.factionsystem.relationship.JooqMfFactionRelationshipRepos
 import com.dansplugins.factionsystem.relationship.MfFactionRelationshipRepository
 import com.dansplugins.factionsystem.relationship.MfFactionRelationshipService
 import com.dansplugins.factionsystem.service.Services
+import com.dansplugins.factionsystem.teleport.MfTeleportService
 import com.google.gson.Gson
 import com.zaxxer.hikari.HikariConfig
 import com.zaxxer.hikari.HikariDataSource
@@ -89,6 +90,7 @@ class MedievalFactions : JavaPlugin() {
             migrator.backup()
             saveDefaultConfig()
             reloadConfig()
+            config.options().copyDefaults(true)
             config.set("migrateMf4", true)
             saveConfig()
             logger.warning("Shutting down the server due to Medieval Factions 4 migration.")
@@ -99,7 +101,9 @@ class MedievalFactions : JavaPlugin() {
         }
 
         saveDefaultConfig()
-
+        config.options().copyDefaults(true)
+        config.set("version", description.version)
+        saveConfig()
 
         language = Language(this, config.getString("language") ?: "en-US")
         Metrics(this, 8929)
@@ -169,6 +173,7 @@ class MedievalFactions : JavaPlugin() {
         val chatService = MfChatService(this, chatMessageRepository)
         val duelService = MfDuelService(this, duelRepository, duelInviteRepository)
         val potionService = MfPotionService(this)
+        val teleportService = MfTeleportService(this)
         val dynmapService = if (server.pluginManager.getPlugin("dynmap") != null) {
             MfDynmapService(this)
         } else {
@@ -188,6 +193,7 @@ class MedievalFactions : JavaPlugin() {
             chatService,
             duelService,
             potionService,
+            teleportService,
             dynmapService
         )
         setupRpkLockService()
@@ -227,6 +233,7 @@ class MedievalFactions : JavaPlugin() {
             PlayerJoinListener(this),
             PlayerMoveListener(this),
             PlayerQuitListener(this),
+            PlayerTeleportListener(this),
             PotionSplashListener(this)
         )
 
@@ -246,7 +253,7 @@ class MedievalFactions : JavaPlugin() {
                 playerService.updatePlayerPower(onlineMfPlayerIds)
                 if (disbandZeroPowerFactions) {
                     factionService.factions.forEach { faction ->
-                        if (faction.power <= 0) {
+                        if (faction.power <= 0.0) {
                             faction.sendMessage(language["FactionDisbandedZeroPowerNotificationTitle"], language["FactionDisbandedZeroPowerNotificationBody"])
                             claimService.deleteAllClaims(faction.id).onFailure {
                                 logger.log(SEVERE, "Failed to delete all claims for faction: ${it.reason.message}", it.reason.cause)

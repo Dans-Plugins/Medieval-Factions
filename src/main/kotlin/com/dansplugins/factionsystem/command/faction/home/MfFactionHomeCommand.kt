@@ -47,8 +47,7 @@ class MfFactionHomeCommand(private val plugin: MedievalFactions) : CommandExecut
                 return@Runnable
             }
             plugin.server.scheduler.runTask(plugin, Runnable {
-                sender.teleport(home)
-                sender.sendMessage("$GREEN${plugin.language["CommandFactionHomeSuccess"]}")
+                plugin.services.teleportService.teleport(sender, home, "$GREEN${plugin.language["CommandFactionHomeSuccess"]}")
             })
         })
         return true

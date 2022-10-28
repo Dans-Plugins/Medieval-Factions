@@ -9,6 +9,7 @@ import java.util.*
 class Language(plugin: MedievalFactions, private val language: String) {
 
     private val resourceBundles: List<ResourceBundle>
+    val locale = Locale.forLanguageTag(language)
 
     init {
         val languageFolder = File(plugin.dataFolder, "lang")
@@ -22,12 +23,12 @@ class Language(plugin: MedievalFactions, private val language: String) {
         val externalClassLoader = URLClassLoader(externalUrls)
         val externalResourceBundle = ResourceBundle.getBundle(
             "lang",
-            Locale.forLanguageTag(language),
+            locale,
             externalClassLoader
         )
         val internalResourceBundle = ResourceBundle.getBundle(
             "lang/lang",
-            Locale.forLanguageTag(language)
+            locale
         )
         resourceBundles = listOf(externalResourceBundle, internalResourceBundle)
     }

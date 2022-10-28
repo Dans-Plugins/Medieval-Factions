@@ -12,6 +12,9 @@ class PlayerQuitListener(private val plugin: MedievalFactions) : Listener {
 
     @EventHandler
     fun onPlayerQuit(event: PlayerQuitEvent) {
+        val teleportService = plugin.services.teleportService
+        teleportService.cancelTeleportation(event.player)
+
         val playerService = plugin.services.playerService
         val player = playerService.getPlayer(event.player) ?: playerService.save(MfPlayer(plugin, event.player)).onFailure {
             plugin.logger.log(SEVERE, "Failed to save player: ${it.reason.message}", it.reason.cause)

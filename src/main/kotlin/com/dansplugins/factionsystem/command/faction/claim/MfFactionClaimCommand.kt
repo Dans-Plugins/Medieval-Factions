@@ -13,10 +13,17 @@ import org.bukkit.command.CommandExecutor
 import org.bukkit.command.CommandSender
 import org.bukkit.command.TabCompleter
 import org.bukkit.entity.Player
+import java.text.DecimalFormat
+import java.text.DecimalFormatSymbols
 import java.util.logging.Level.SEVERE
+import kotlin.math.floor
+import kotlin.math.roundToInt
 
 class MfFactionClaimCommand(private val plugin: MedievalFactions) : CommandExecutor, TabCompleter {
     private val factionClaimFillCommand = MfFactionClaimFillCommand(plugin)
+
+    private val decimalFormat = DecimalFormat("0.##", DecimalFormatSymbols.getInstance(plugin.language.locale))
+
     override fun onCommand(sender: CommandSender, command: Command, label: String, args: Array<out String>): Boolean {
         if (!sender.hasPermission("mf.claim")) {
             sender.sendMessage("$RED${plugin.language["CommandFactionClaimNoPermission"]}")
@@ -94,7 +101,7 @@ class MfFactionClaimCommand(private val plugin: MedievalFactions) : CommandExecu
                         return@saveChunks
                     }
                     if (plugin.config.getBoolean("factions.limitLand") && claimableChunks.size + claimService.getClaims(faction.id).size > faction.power) {
-                        sender.sendMessage("$RED${plugin.language["CommandFactionClaimReachedDemesneLimit", faction.power.toString()]}")
+                        sender.sendMessage("$RED${plugin.language["CommandFactionClaimReachedDemesneLimit", floor(faction.power).roundToInt().toString()]}")
                         return@saveChunks
                     }
                     claimableChunks.forEach { chunk ->

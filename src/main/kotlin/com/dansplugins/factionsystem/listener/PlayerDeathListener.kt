@@ -13,14 +13,19 @@ import org.bukkit.entity.Player
 import org.bukkit.event.EventHandler
 import org.bukkit.event.Listener
 import org.bukkit.event.entity.PlayerDeathEvent
+import java.text.DecimalFormat
+import java.text.DecimalFormatSymbols
 import java.util.logging.Level.SEVERE
+import kotlin.math.abs
 
 class PlayerDeathListener(private val plugin: MedievalFactions) : Listener {
 
+    private val decimalFormat = DecimalFormat("0.##", DecimalFormatSymbols.getInstance(plugin.language.locale))
+
     @EventHandler
     fun onPlayerDeath(event: PlayerDeathEvent) {
-        val powerLostOnDeath = plugin.config.getInt("players.powerLostOnDeath")
-        val powerGainedOnKill = plugin.config.getInt("players.powerGainedOnKill")
+        val powerLostOnDeath = plugin.config.getDouble("players.powerLostOnDeath")
+        val powerGainedOnKill = plugin.config.getDouble("players.powerGainedOnKill")
         val disbandZeroPowerFactions = plugin.config.getBoolean("factions.zeroPowerFactionsGetDisbanded")
 
         plugin.server.scheduler.runTaskAsynchronously(plugin, Runnable {
@@ -30,7 +35,7 @@ class PlayerDeathListener(private val plugin: MedievalFactions) : Listener {
 
             val victim = event.entity
             val victimMfPlayer = playerService.getPlayer(victim) ?: MfPlayer(plugin, victim)
-            if (powerLostOnDeath != 0) {
+            if (abs(powerLostOnDeath) > 0.00001) {
                 removePowerFromVictim(
                     playerService,
                     victim,
@@ -38,14 +43,14 @@ class PlayerDeathListener(private val plugin: MedievalFactions) : Listener {
                     powerLostOnDeath
                 )
                 val victimFaction = factionService.getFaction(victimMfPlayer.id)
-                if (disbandZeroPowerFactions && victimFaction != null && victimFaction.power <= 0) {
+                if (disbandZeroPowerFactions && victimFaction != null && victimFaction.power <= 0.0) {
                     disband(victimFaction, claimService, factionService)
                 }
             }
 
             val killer = victim.killer ?: return@Runnable
             val killerMfPlayer = playerService.getPlayer(killer) ?: MfPlayer(plugin, killer)
-            if (powerGainedOnKill != 0) {
+            if (abs(powerGainedOnKill) > 0.00001) {
                 addPowerToKiller(
                     playerService,
                     killer,
@@ -53,7 +58,7 @@ class PlayerDeathListener(private val plugin: MedievalFactions) : Listener {
                     powerGainedOnKill
                 )
                 val killerFaction = factionService.getFaction(killerMfPlayer.id)
-                if (disbandZeroPowerFactions && killerFaction != null && killerFaction.power <= 0) {
+                if (disbandZeroPowerFactions && killerFaction != null && killerFaction.power <= 0.0) {
                     disband(killerFaction, claimService, factionService)
                 }
             }
@@ -83,12 +88,12 @@ class PlayerDeathListener(private val plugin: MedievalFactions) : Listener {
         playerService: MfPlayerService,
         victim: Player,
         victimMfPlayer: MfPlayer,
-        powerLostOnDeath: Int
+        powerLostOnDeath: Double
     ) {
         val newPower = (victimMfPlayer.power - powerLostOnDeath)
-            .coerceAtLeast(0)
-            .coerceAtMost(plugin.config.getInt("players.maxPower"))
-        if (newPower == victimMfPlayer.power) {
+            .coerceAtLeast(0.0)
+            .coerceAtMost(plugin.config.getDouble("players.maxPower"))
+        if (abs(newPower - victimMfPlayer.power) < 0.00001) {
             return
         }
         playerService.save(
@@ -98,19 +103,19 @@ class PlayerDeathListener(private val plugin: MedievalFactions) : Listener {
             return
         }
 
-        victim.sendMessage("$RED${plugin.language["PowerLostOnDeath", powerLostOnDeath.toString()]}")
+        victim.sendMessage("$RED${plugin.language["PowerLostOnDeath", decimalFormat.format(powerLostOnDeath)]}")
     }
 
     private fun addPowerToKiller(
         playerService: MfPlayerService,
         killer: Player,
         killerMfPlayer: MfPlayer,
-        powerGainedOnKill: Int
+        powerGainedOnKill: Double
     ) {
         val newPower = (killerMfPlayer.power + powerGainedOnKill)
-            .coerceAtLeast(0)
-            .coerceAtMost(plugin.config.getInt("players.maxPower"))
-        if (newPower == killerMfPlayer.power) {
+            .coerceAtLeast(0.0)
+            .coerceAtMost(plugin.config.getDouble("players.maxPower"))
+        if (abs(newPower - killerMfPlayer.power) < 0.00001) {
             return
         }
         playerService.save(
@@ -120,6 +125,6 @@ class PlayerDeathListener(private val plugin: MedievalFactions) : Listener {
             return
         }
 
-        killer.sendMessage("$GREEN${plugin.language["PowerGainedOnKill", powerGainedOnKill.toString()]}")
+        killer.sendMessage("$GREEN${plugin.language["PowerGainedOnKill", decimalFormat.format(powerGainedOnKill)]}")
     }
 }

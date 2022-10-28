@@ -32,9 +32,13 @@ class MfChatService(private val plugin: MedievalFactions, private val repo: MfCh
             .let { ChatColor.translateAlternateColorCodes('&', it) }
         val recipients = when (channel) {
             FACTION -> faction.members.mapNotNull { it.playerId.toBukkitPlayer().player }
-            VASSALS -> (faction.members + relationshipService.getVassalTree(faction.id)
-                .mapNotNull { factionService.getFaction(it) }
-                .flatMap { vassal -> vassal.members }).mapNotNull { member -> member.playerId.toBukkitPlayer().player }
+            VASSALS -> {
+                val topLiegeId = relationshipService.getLiegeChain(faction.id).last().factionId
+                val topLiege = factionService.getFaction(topLiegeId)
+                ((topLiege?.members ?: emptyList()) + relationshipService.getVassalTree(topLiegeId)
+                    .mapNotNull { factionService.getFaction(it) }
+                    .flatMap { vassal -> vassal.members }).mapNotNull { member -> member.playerId.toBukkitPlayer().player }
+            }
             ALLIES -> (faction.members + relationshipService.getRelationships(faction.id, ALLY)
                 .mapNotNull { relationship ->
                     val reverseRelationships =
