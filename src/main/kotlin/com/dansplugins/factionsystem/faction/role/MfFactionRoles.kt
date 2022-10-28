@@ -2,6 +2,7 @@ package com.dansplugins.factionsystem.faction.role
 
 import com.dansplugins.factionsystem.MedievalFactions
 import com.dansplugins.factionsystem.chat.MfFactionChatChannel.*
+import com.dansplugins.factionsystem.faction.MfFactionId
 
 data class MfFactionRoles(
     @get:JvmName("getDefaultRoleId")
@@ -13,7 +14,7 @@ data class MfFactionRoles(
         get() = getRole(defaultRoleId)!!
 
     companion object {
-        fun defaults(plugin: MedievalFactions): MfFactionRoles {
+        fun defaults(plugin: MedievalFactions, factionId: MfFactionId): MfFactionRoles {
             val member = MfFactionRole(plugin, name = "Member")
             val officer = MfFactionRole(
                 plugin,
@@ -104,7 +105,7 @@ data class MfFactionRoles(
                     put(plugin.factionPermissions.createRole.name, true)
                     put(plugin.factionPermissions.setDefaultRole.name, true)
 
-                    putAll(plugin.factionPermissions.permissionsFor(listOf(member.id, officer.id, ownerId))
+                    putAll(plugin.factionPermissions.permissionsFor(factionId, listOf(member.id, officer.id, ownerId))
                         .map { permission -> plugin.factionPermissions.setRolePermission(permission).name to true })
                 }
             )

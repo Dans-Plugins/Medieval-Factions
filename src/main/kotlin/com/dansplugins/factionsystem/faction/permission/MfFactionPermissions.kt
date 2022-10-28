@@ -3,6 +3,7 @@ package com.dansplugins.factionsystem.faction.permission
 import com.dansplugins.factionsystem.MedievalFactions
 import com.dansplugins.factionsystem.chat.MfFactionChatChannel
 import com.dansplugins.factionsystem.faction.MfFaction
+import com.dansplugins.factionsystem.faction.MfFactionId
 import com.dansplugins.factionsystem.faction.flag.MfFlag
 import com.dansplugins.factionsystem.faction.permission.permissions.*
 import com.dansplugins.factionsystem.faction.role.MfFactionRoleId
@@ -106,8 +107,9 @@ class MfFactionPermissions(private val plugin: MedievalFactions) {
     val setDefaultRole = parse("SET_DEFAULT_ROLE")!!
     fun setRolePermission(permission: MfFactionPermission) = parse("SET_ROLE_PERMISSION(${permission.name})")!!
 
-    fun permissionsFor(roles: MfFactionRoles): List<MfFactionPermission> = permissionsFor(roles.map { it.id })
-    fun permissionsFor(roleIds: List<MfFactionRoleId>) = permissionTypes.flatMap { type -> type.permissionsFor(roleIds) }
+    fun permissionsFor(factionId: MfFactionId, roles: MfFactionRoles): List<MfFactionPermission> = permissionsFor(factionId, roles.map { it.id })
+    fun permissionsFor(faction: MfFaction) = permissionsFor(faction.id, faction.roles)
+    fun permissionsFor(factionId: MfFactionId, roleIds: List<MfFactionRoleId>) = permissionTypes.flatMap { type -> type.permissionsFor(factionId, roleIds) }
 
     fun parse(name: String) = permissionTypes.firstNotNullOfOrNull { type -> type.parse(name) }
 
@@ -119,7 +121,7 @@ class MfFactionPermissions(private val plugin: MedievalFactions) {
             return if (name == permission.name) permission else null
         }
 
-        override fun permissionsFor(roleIds: List<MfFactionRoleId>): List<MfFactionPermission> {
+        override fun permissionsFor(factionId: MfFactionId, roleIds: List<MfFactionRoleId>): List<MfFactionPermission> {
             return listOf(permission)
         }
     }

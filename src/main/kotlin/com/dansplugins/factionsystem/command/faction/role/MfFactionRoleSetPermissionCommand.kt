@@ -109,7 +109,7 @@ class MfFactionRoleSetPermissionCommand(private val plugin: MedievalFactions) : 
         return when {
             args.isEmpty() -> faction.roles.map { it.name }
             args.size == 1 -> faction.roles.filter { it.name.lowercase().startsWith(args[0].lowercase()) }.map { it.name }
-            args.size == 2 -> plugin.factionPermissions.permissionsFor(faction.roles).filter { it.name.lowercase().startsWith(args[1].lowercase()) }.map { it.name }
+            args.size == 2 -> plugin.factionPermissions.permissionsFor(faction).filter { it.name.lowercase().startsWith(args[1].lowercase()) }.map { it.name }
             args.size == 3 -> listOf("allow", "deny", "default").filter { it.startsWith(args[2].lowercase()) }
             else -> emptyList()
         }
