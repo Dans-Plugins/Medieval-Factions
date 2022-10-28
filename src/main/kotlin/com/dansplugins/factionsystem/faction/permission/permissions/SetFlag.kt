@@ -1,6 +1,7 @@
 package com.dansplugins.factionsystem.faction.permission.permissions
 
 import com.dansplugins.factionsystem.MedievalFactions
+import com.dansplugins.factionsystem.faction.MfFactionId
 import com.dansplugins.factionsystem.faction.flag.MfFlag
 import com.dansplugins.factionsystem.faction.permission.MfFactionPermission
 import com.dansplugins.factionsystem.faction.permission.MfFactionPermissionType
@@ -17,7 +18,7 @@ class SetFlag(private val plugin: MedievalFactions) : MfFactionPermissionType() 
             null
         }
 
-    override fun permissionsFor(roleIds: List<MfFactionRoleId>): List<MfFactionPermission> {
+    override fun permissionsFor(factionId: MfFactionId, roleIds: List<MfFactionRoleId>): List<MfFactionPermission> {
         return plugin.flags.map(::permissionFor)
     }
 

@@ -1,6 +1,7 @@
 package com.dansplugins.factionsystem.faction.permission.permissions
 
 import com.dansplugins.factionsystem.MedievalFactions
+import com.dansplugins.factionsystem.faction.MfFactionId
 import com.dansplugins.factionsystem.faction.permission.MfFactionPermission
 import com.dansplugins.factionsystem.faction.permission.MfFactionPermissionType
 import com.dansplugins.factionsystem.faction.role.MfFactionRoleId
@@ -16,10 +17,10 @@ class SetRolePermission(private val plugin: MedievalFactions) : MfFactionPermiss
             null
         }
 
-    override fun permissionsFor(roleIds: List<MfFactionRoleId>): List<MfFactionPermission> =
+    override fun permissionsFor(factionId: MfFactionId, roleIds: List<MfFactionRoleId>): List<MfFactionPermission> =
         plugin.factionPermissions.permissionTypes
             .filter { it !is SetRolePermission }
-            .flatMap { it.permissionsFor(roleIds) }
+            .flatMap { it.permissionsFor(factionId, roleIds) }
             .map(::permissionFor)
 
     private fun permissionFor(permission: MfFactionPermission) = MfFactionPermission(

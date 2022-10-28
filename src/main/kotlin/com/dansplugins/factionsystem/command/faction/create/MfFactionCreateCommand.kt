@@ -2,6 +2,7 @@ package com.dansplugins.factionsystem.command.faction.create
 
 import com.dansplugins.factionsystem.MedievalFactions
 import com.dansplugins.factionsystem.faction.MfFaction
+import com.dansplugins.factionsystem.faction.MfFactionId
 import com.dansplugins.factionsystem.faction.role.MfFactionRoles
 import com.dansplugins.factionsystem.faction.withRole
 import com.dansplugins.factionsystem.player.MfPlayer
@@ -53,9 +54,10 @@ class MfFactionCreateCommand(private val plugin: MedievalFactions) : CommandExec
                 sender.sendMessage("$RED${plugin.language["CommandFactionCreateFactionAlreadyExists"]}")
                 return@Runnable
             }
-            val roles = MfFactionRoles.defaults(plugin)
+            val factionId = MfFactionId.generate()
+            val roles = MfFactionRoles.defaults(plugin, factionId)
             val owner = roles.single { it.name == "Owner" }
-            val faction = MfFaction(plugin, name = factionName, roles = roles, members = listOf(mfPlayer.withRole(owner)))
+            val faction = MfFaction(plugin, id = factionId, name = factionName, roles = roles, members = listOf(mfPlayer.withRole(owner)))
             val createdFaction = factionService.save(faction).onFailure { failure ->
                 sender.sendMessage("$RED${plugin.language["CommandFactionCreateFactionFailedToSave"]}")
                 plugin.logger.log(SEVERE, "Failed to save faction: ${failure.reason.message}", failure.reason.cause)
