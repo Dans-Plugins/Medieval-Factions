@@ -145,7 +145,10 @@ permissions:
     description: Allows making peace with other factions
     default: true
   mf.info:
-    description: View information about your faction.
+    description: Allows viewing information about your faction
+    default: true
+  mf.info.other:
+    description: Allows viewing information about other players' factions
     default: true
   mf.role.view:
     description: Allows viewing roles
