@@ -7,10 +7,15 @@ import org.bukkit.command.Command
 import org.bukkit.command.CommandExecutor
 import org.bukkit.command.CommandSender
 import org.bukkit.command.TabCompleter
+import java.text.DecimalFormat
+import java.text.DecimalFormatSymbols
 import net.md_5.bungee.api.ChatColor as SpigotChatColor
 import org.bukkit.ChatColor as BukkitChatColor
 
 class MfFactionListCommand(private val plugin: MedievalFactions) : CommandExecutor, TabCompleter {
+
+    private val decimalFormat = DecimalFormat("0.##", DecimalFormatSymbols.getInstance(plugin.language.locale))
+
     override fun onCommand(sender: CommandSender, command: Command, label: String, args: Array<out String>): Boolean {
         if (!sender.hasPermission("mf.list")) {
             sender.sendMessage("${BukkitChatColor.RED}${plugin.language["CommandFactionListNoPermission"]}")
@@ -48,7 +53,7 @@ class MfFactionListCommand(private val plugin: MedievalFactions) : CommandExecut
                                 arrayOf(
                                     TextComponent("  " + plugin.language[
                                             "CommandFactionListPower",
-                                            faction.power.toString()
+                                            decimalFormat.format(faction.power)
                                     ]).apply {
                                         color = SpigotChatColor.GRAY
                                     }

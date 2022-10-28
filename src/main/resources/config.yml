@@ -60,6 +60,9 @@ factions:
   limitLand: true
   actionBarTerritoryIndicator: true
   titleTerritoryIndicator: true
+  allowNeutrality: false
+  factionlessFactionName: Factionless
+  factionHomeTeleportDelay: 5
   defaults:
     flags:
       mustBeOfficerToManageLand: true

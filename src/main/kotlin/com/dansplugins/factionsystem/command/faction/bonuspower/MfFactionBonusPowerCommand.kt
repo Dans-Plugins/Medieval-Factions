@@ -10,9 +10,14 @@ import org.bukkit.command.Command
 import org.bukkit.command.CommandExecutor
 import org.bukkit.command.CommandSender
 import org.bukkit.command.TabCompleter
+import java.text.DecimalFormat
+import java.text.DecimalFormatSymbols
 import java.util.logging.Level.SEVERE
 
 class MfFactionBonusPowerCommand(private val plugin: MedievalFactions) : CommandExecutor, TabCompleter {
+
+    private val decimalFormat = DecimalFormat("0.##", DecimalFormatSymbols.getInstance(plugin.language.locale))
+
     override fun onCommand(sender: CommandSender, command: Command, label: String, args: Array<out String>): Boolean {
         if (!sender.hasPermission("mf.force.bonuspower")) {
             sender.sendMessage("$RED${plugin.language["CommandFactionBonusPowerNoPermission"]}")
@@ -31,7 +36,7 @@ class MfFactionBonusPowerCommand(private val plugin: MedievalFactions) : Command
                 sender.sendMessage("$RED${plugin.language["CommandFactionBonusPowerInvalidFaction"]}")
                 return@Runnable
             }
-            val bonusPower = args.last().toIntOrNull()
+            val bonusPower = args.last().toDoubleOrNull()
             if (bonusPower == null) {
                 sender.sendMessage("$RED${plugin.language["CommandFactionBonusPowerInvalidBonusPower"]}")
                 return@Runnable
@@ -41,7 +46,7 @@ class MfFactionBonusPowerCommand(private val plugin: MedievalFactions) : Command
                 plugin.logger.log(SEVERE, "Failed to save faction: ${it.reason.message}", it.reason.cause)
                 return@Runnable
             }
-            sender.sendMessage("$GREEN${plugin.language["CommandFactionBonusPowerSuccess", updatedFaction.name, updatedFaction.bonusPower.toString()]}")
+            sender.sendMessage("$GREEN${plugin.language["CommandFactionBonusPowerSuccess", updatedFaction.name, decimalFormat.format(updatedFaction.bonusPower)]}")
         })
         return true
     }

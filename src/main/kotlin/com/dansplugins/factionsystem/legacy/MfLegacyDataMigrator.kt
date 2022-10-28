@@ -72,10 +72,10 @@ class MfLegacyDataMigrator(private val plugin: MedievalFactions) {
         plugin.logger.info("Migrating config settings...")
         val startTime = System.currentTimeMillis()
         val oldConfig = YamlConfiguration.loadConfiguration(oldConfigFile)
-        plugin.config.set("players.maxPower", oldConfig.getInt("initialMaxPowerLevel"))
-        plugin.config.set("players.initialPower", oldConfig.getInt("initialPowerLevel"))
+        plugin.config.set("players.maxPower", oldConfig.getDouble("initialMaxPowerLevel"))
+        plugin.config.set("players.initialPower", oldConfig.getDouble("initialPowerLevel"))
         plugin.config.set("factions.mobsSpawnInFactionTerritory", oldConfig.getBoolean("mobsSpawnInFactionTerritory"))
-        plugin.config.set("players.hoursToReachMaxPower", ((oldConfig.getInt("initialMaxPowerLevel") / oldConfig.getInt("powerIncreaseAmount")) * (oldConfig.getInt("minutesBetweenPowerIncreases").toDouble() / 60.0)).roundToInt())
+        plugin.config.set("players.hoursToReachMaxPower", ((oldConfig.getDouble("initialMaxPowerLevel") / oldConfig.getDouble("powerIncreaseAmount")) * (oldConfig.getDouble("minutesBetweenPowerIncreases") / 60.0)).roundToInt())
         plugin.config.set("factions.laddersPlaceableInEnemyFactionTerritory", oldConfig.getBoolean("laddersPlaceableInEnemyFactionTerritory"))
         plugin.config.set("pvp.warRequiredForPlayersOfDifferentFactions", oldConfig.getBoolean("warsRequiredForPVP"))
         plugin.config.set("factions.maxNameLength", oldConfig.getString("factionMaxNameLength"))
@@ -89,9 +89,10 @@ class MfLegacyDataMigrator(private val plugin: MedievalFactions) {
         plugin.config.set("language", oldConfig.getString("languageid"))
         plugin.config.set("factions.titleTerritoryIndicator", oldConfig.getBoolean("territoryAlertPopUp"))
         plugin.config.set("factions.actionBarTerritoryIndicator", oldConfig.getBoolean("territoryIndicatorActionbar"))
+        plugin.config.set("factions.allowNeutrality", oldConfig.getBoolean("allowNeutrality"))
         plugin.config.set("factions.limitLand", oldConfig.getBoolean("limitLand"))
-        plugin.config.set("players.powerLostOnDeath", oldConfig.getDouble("powerLostOnDeath").roundToInt())
-        plugin.config.set("players.powerGainedOnKill", oldConfig.getDouble("powerGainedOnKill").roundToInt())
+        plugin.config.set("players.powerLostOnDeath", oldConfig.getDouble("powerLostOnDeath"))
+        plugin.config.set("players.powerGainedOnKill", oldConfig.getDouble("powerGainedOnKill"))
         plugin.saveConfig()
         plugin.logger.info("Config migration complete (${System.currentTimeMillis() - startTime}ms)")
     }
@@ -109,8 +110,8 @@ class MfLegacyDataMigrator(private val plugin: MedievalFactions) {
             playerService.save(MfPlayer(
                 bukkitPlayer,
                 0,
-                powerRecord?.powerLevel?.toDoubleOrNull()?.roundToInt()
-                    ?: plugin.config.getInt("players.initialPower"),
+                powerRecord?.powerLevel?.toDoubleOrNull()
+                    ?: plugin.config.getDouble("players.initialPower"),
                 false,
                 null
             )).onFailure {
@@ -149,7 +150,7 @@ class MfLegacyDataMigrator(private val plugin: MedievalFactions) {
             val x = gson.fromJson(location.x, Double::class.javaObjectType)
             val y = gson.fromJson(location.y, Double::class.javaObjectType)
             val z = gson.fromJson(location.z, Double::class.javaObjectType)
-            val bonusPower = gson.fromJson(legacyFaction.bonusPower, String::class.java).toIntOrNull() ?: 0
+            val bonusPower = gson.fromJson(legacyFaction.bonusPower, String::class.java).toDoubleOrNull() ?: 0.0
 
             val roles = MfFactionRoles.defaults(plugin)
             return@associateWith factionService.save(MfFaction(

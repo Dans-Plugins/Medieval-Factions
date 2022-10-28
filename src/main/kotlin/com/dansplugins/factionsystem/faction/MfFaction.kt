@@ -12,7 +12,6 @@ import com.dansplugins.factionsystem.notification.MfNotification
 import com.dansplugins.factionsystem.player.MfPlayerId
 import com.dansplugins.factionsystem.relationship.MfFactionRelationshipType.VASSAL
 import java.util.Collections.emptyList
-import kotlin.math.roundToInt
 
 data class MfFaction(
     private val plugin: MedievalFactions,
@@ -26,32 +25,30 @@ data class MfFaction(
     val flags: MfFlagValues = plugin.flags.defaults(),
     val prefix: String? = null,
     val home: MfPosition? = null,
-    val bonusPower: Int = 0,
+    val bonusPower: Double = 0.0,
     val autoclaim: Boolean = false,
     val roles: MfFactionRoles = MfFactionRoles.defaults(plugin),
     val defaultPermissionsByName: Map<String, Boolean> = plugin.factionPermissions.permissionsFor(roles).associate { it.name to it.default }
 ) {
 
     val memberPower
-        get() = members.sumOf { plugin.services.playerService.getPlayer(it.playerId)?.power ?: 0 }
+        get() = members.sumOf { plugin.services.playerService.getPlayer(it.playerId)?.power ?: 0.0 }
     val maxMemberPower
-        get() = members.size * plugin.config.getInt("players.maxPower")
+        get() = members.size * plugin.config.getDouble("players.maxPower")
     val vassalPower
         get() = plugin.services.factionRelationshipService.getRelationships(id, VASSAL)
             .mapNotNull { relationship -> plugin.services.factionService.getFaction(relationship.targetId) }
             .sumOf { it.power * plugin.config.getDouble("factions.vassalPowerContributionMultiplier") }
-            .roundToInt()
     val maxVassalPower
         get() = plugin.services.factionRelationshipService.getRelationships(id, VASSAL)
             .mapNotNull { relationship -> plugin.services.factionService.getFaction(relationship.targetId) }
             .sumOf { it.maxPower * plugin.config.getDouble("factions.vassalPowerContributionMultiplier") }
-            .roundToInt()
 
-    val power: Int
-        get() = memberPower + (if (memberPower >= maxMemberPower / 2) { vassalPower } else { 0 }) + (if (flags[plugin.flags.acceptBonusPower]) bonusPower else 0)
+    val power: Double
+        get() = memberPower + (if (memberPower >= maxMemberPower / 2.0) { vassalPower } else { 0.0 }) + (if (flags[plugin.flags.acceptBonusPower]) bonusPower else 0.0)
 
-    val maxPower: Int
-        get() = maxMemberPower + maxVassalPower + (if (flags[plugin.flags.acceptBonusPower]) bonusPower else 0)
+    val maxPower: Double
+        get() = maxMemberPower + maxVassalPower + (if (flags[plugin.flags.acceptBonusPower]) bonusPower else 0.0)
 
     val defaultPermissions: Map<MfFactionPermission, Boolean>
         get() = defaultPermissionsByName.toList().map { (key, value) -> plugin.factionPermissions.parse(key) to value }

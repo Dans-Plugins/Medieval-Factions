@@ -110,6 +110,7 @@ class MfFactionFlagSetCommand(private val plugin: MedievalFactions) : CommandExe
     }
 
     private fun setFlagValue(sender: Player, flag: MfFlag<Any>, flagValue: String, page: Int? = null) {
+        val allowNeutrality = plugin.config.getBoolean("factions.allowNeutrality")
         plugin.server.scheduler.runTaskAsynchronously(plugin, Runnable {
             val playerService = plugin.services.playerService
             val mfPlayer = playerService.getPlayer(sender)
@@ -138,8 +139,12 @@ class MfFactionFlagSetCommand(private val plugin: MedievalFactions) : CommandExe
                     when (val validationResult = flag.validate(coercionResult.value)) {
                         is MfFlagValidationFailure -> sender.sendMessage("$RED${plugin.language["CommandFactionFlagSetValueValidationFailed"]}: ${validationResult.failureMessage}")
                         is MfFlagValidationSuccess -> {
+                            if (flag == plugin.flags.isNeutral && coercionResult.value == true && !allowNeutrality) {
+                                sender.sendMessage("$RED${plugin.language["CommandFactionFlagSetNeutralityDisabled"]}")
+                                return@Runnable
+                            }
                             factionService.save(faction.copy(flags = faction.flags + (flag to coercionResult.value))).onFailure {
-                                sender.sendMessage("$RED${plugin.language["CommandFactionFlagSetValueFailedToSaveFaction"]}")
+                                sender.sendMessage("$RED${plugin.language["CommandFactionFlagSetFailedToSaveFaction"]}")
                                 plugin.logger.log(SEVERE, "Failed to save faction: ${it.reason.message}", it.reason.cause)
                                 return@Runnable
                             }
