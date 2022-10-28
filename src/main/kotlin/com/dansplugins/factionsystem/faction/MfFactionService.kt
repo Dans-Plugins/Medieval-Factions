@@ -142,6 +142,7 @@ class MfFactionService(private val plugin: MedievalFactions, private val reposit
     @JvmOverloads
     fun createFaction(
         name: String,
+        id: String = MfFactionId.generate().value,
         description: String = "",
         members: List<MfFactionMember> = emptyList(),
         invites: List<MfFactionInvite> = emptyList(),
@@ -150,10 +151,11 @@ class MfFactionService(private val plugin: MedievalFactions, private val reposit
         home: MfPosition? = null,
         bonusPower: Double = 0.0,
         autoclaim: Boolean = false,
-        roles: MfFactionRoles = MfFactionRoles.defaults(plugin)
+        roles: MfFactionRoles = MfFactionRoles.defaults(plugin, MfFactionId(id))
     ): Result4k<MfFaction, ServiceFailure> {
         return save(MfFaction(
             plugin = plugin,
+            id = MfFactionId(id),
             name = name,
             description = description,
             members = members,
