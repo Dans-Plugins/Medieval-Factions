@@ -93,7 +93,7 @@ class MfFactionAllyCommand(private val plugin: MedievalFactions) : CommandExecut
                     )
                 })
             } else {
-                sender.sendMessage("$GREEN${plugin.language["CommandFactionAllyRequested"]}")
+                sender.sendMessage("$GREEN${plugin.language["CommandFactionAllyRequested", target.name]}")
                 plugin.server.scheduler.runTask(plugin, Runnable {
                     faction.sendMessage(
                         plugin.language["FactionAllyRequestSentNotificationTitle", sender.name, target.name],
