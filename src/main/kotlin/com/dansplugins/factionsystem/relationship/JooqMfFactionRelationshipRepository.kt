@@ -52,7 +52,7 @@ class JooqMfFactionRelationshipRepository(val dsl: DSLContext) : MfFactionRelati
             .set(MF_FACTION_RELATIONSHIP.FACTION_ID, relationship.factionId.value)
             .set(MF_FACTION_RELATIONSHIP.TARGET_ID, relationship.targetId.value)
             .set(MF_FACTION_RELATIONSHIP.TYPE, relationship.type.name)
-            .onConflict(MF_FACTION_RELATIONSHIP.FACTION_ID, MF_FACTION_RELATIONSHIP.TARGET_ID).doUpdate()
+            .onConflict(MF_FACTION_RELATIONSHIP.ID).doUpdate()
             .set(MF_FACTION_RELATIONSHIP.FACTION_ID, relationship.factionId.value)
             .set(MF_FACTION_RELATIONSHIP.TARGET_ID, relationship.targetId.value)
             .set(MF_FACTION_RELATIONSHIP.TYPE, relationship.type.name)
