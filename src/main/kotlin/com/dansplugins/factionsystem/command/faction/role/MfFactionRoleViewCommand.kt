@@ -75,7 +75,7 @@ class MfFactionRoleViewCommand(private val plugin: MedievalFactions) : CommandEx
                         }
                     )
                 },
-                plugin.factionPermissions.permissionsFor(faction.roles).map { permission ->
+                plugin.factionPermissions.permissionsFor(faction).map { permission ->
                     lazy {
                         val permissionValue = targetRole.getPermissionValue(permission)
                         if (playerRole.hasPermission(faction, plugin.factionPermissions.modifyRole(targetRole.id))
