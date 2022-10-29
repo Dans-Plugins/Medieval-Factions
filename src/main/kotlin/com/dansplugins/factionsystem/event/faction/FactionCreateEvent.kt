@@ -9,7 +9,7 @@ import org.bukkit.event.HandlerList
 class FactionCreateEvent(
     @get:JvmName("getFactionId")
     override val factionId: MfFactionId,
-    val faction: MfFaction,
+    var faction: MfFaction,
     isAsync: Boolean
 ) : Event(isAsync), FactionEvent, Cancellable {
 
