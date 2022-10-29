@@ -62,12 +62,14 @@ class MfFactionService(private val plugin: MedievalFactions, private val reposit
 
     fun save(faction: MfFaction): Result4k<MfFaction, ServiceFailure> = resultFrom {
         val previousState = getFaction(faction.id)
+        var factionToSave = faction
         if (previousState == null) {
             val event = FactionCreateEvent(faction.id, faction, !plugin.server.isPrimaryThread)
             plugin.server.pluginManager.callEvent(event)
             if (event.isCancelled) {
                 throw EventCancelledException("Event cancelled")
             }
+            factionToSave = event.faction
         } else {
             if (previousState.name != faction.name) {
                 val event = FactionRenameEvent(faction.id, faction.name, !plugin.server.isPrimaryThread)
@@ -112,7 +114,7 @@ class MfFactionService(private val plugin: MedievalFactions, private val reposit
                 }
             }
         }
-        val result = repository.upsert(faction)
+        val result = repository.upsert(factionToSave)
         factionsById[result.id] = result
         val dynmapService = plugin.services.dynmapService
         if (dynmapService != null) {
