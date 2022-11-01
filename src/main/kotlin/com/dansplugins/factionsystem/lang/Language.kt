@@ -17,6 +17,7 @@ class Language(plugin: MedievalFactions, private val language: String) {
             languageFolder.mkdirs()
             plugin.saveResource("lang/lang_en_US.properties", false)
             plugin.saveResource("lang/lang_en_GB.properties", false)
+            plugin.saveResource("lang/lang_fr_FR.properties", false)
         }
         val externalUrls = arrayOf(languageFolder.toURI().toURL())
         val externalClassLoader = URLClassLoader(externalUrls)
