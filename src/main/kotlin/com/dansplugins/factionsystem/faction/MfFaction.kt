@@ -10,7 +10,6 @@ import com.dansplugins.factionsystem.faction.role.MfFactionRoleId
 import com.dansplugins.factionsystem.faction.role.MfFactionRoles
 import com.dansplugins.factionsystem.notification.MfNotification
 import com.dansplugins.factionsystem.player.MfPlayerId
-import com.dansplugins.factionsystem.relationship.MfFactionRelationshipType.VASSAL
 import java.util.Collections.emptyList
 
 data class MfFaction(
@@ -36,12 +35,12 @@ data class MfFaction(
     val maxMemberPower
         get() = members.size * plugin.config.getDouble("players.maxPower")
     val vassalPower
-        get() = plugin.services.factionRelationshipService.getRelationships(id, VASSAL)
-            .mapNotNull { relationship -> plugin.services.factionService.getFaction(relationship.targetId) }
+        get() = plugin.services.factionRelationshipService.getVassals(id)
+            .mapNotNull(plugin.services.factionService::getFaction)
             .sumOf { it.power * plugin.config.getDouble("factions.vassalPowerContributionMultiplier") }
     val maxVassalPower
-        get() = plugin.services.factionRelationshipService.getRelationships(id, VASSAL)
-            .mapNotNull { relationship -> plugin.services.factionService.getFaction(relationship.targetId) }
+        get() = plugin.services.factionRelationshipService.getVassals(id)
+            .mapNotNull(plugin.services.factionService::getFaction)
             .sumOf { it.maxPower * plugin.config.getDouble("factions.vassalPowerContributionMultiplier") }
 
     val power: Double
