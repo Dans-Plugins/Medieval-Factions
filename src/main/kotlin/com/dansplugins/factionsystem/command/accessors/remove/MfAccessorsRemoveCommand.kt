@@ -141,15 +141,7 @@ class MfAccessorsRemoveCommand(private val plugin: MedievalFactions) : CommandEx
                     return@Runnable
                 }
             val lockService = plugin.services.lockService
-            val blocks = (block.x - 1..block.x + 1).flatMap { x ->
-                (block.y - 1..block.y + 1).flatMap { y ->
-                    (block.z - 1..block.z + 1).map { z ->
-                        block.world.getBlockAt(x, y, z)
-                    }
-                }
-            }
-            val lockedBlocks = blocks.mapNotNull { block -> lockService.getLockedBlock(MfBlockPosition.fromBukkitBlock(block)) }
-            val lockedBlock = lockedBlocks.firstOrNull()
+            val lockedBlock = lockService.getLockedBlock(MfBlockPosition.fromBukkitBlock(block))
             if (lockedBlock == null) {
                 sender.sendMessage("$RED${plugin.language["CommandAccessorsRemoveBlockNotLocked"]}")
                 return@Runnable
