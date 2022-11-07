@@ -141,7 +141,15 @@ class MfAccessorsRemoveCommand(private val plugin: MedievalFactions) : CommandEx
                     return@Runnable
                 }
             val lockService = plugin.services.lockService
-            val lockedBlock = lockService.getLockedBlock(MfBlockPosition.fromBukkitBlock(block))
+            val blocks = (block.x - 1..block.x + 1).flatMap { x ->
+                (block.y - 1..block.y + 1).flatMap { y ->
+                    (block.z - 1..block.z + 1).map { z ->
+                        block.world.getBlockAt(x, y, z)
+                    }
+                }
+            }
+            val lockedBlocks = blocks.mapNotNull { block -> lockService.getLockedBlock(MfBlockPosition.fromBukkitBlock(block)) }
+            val lockedBlock = lockedBlocks.firstOrNull()
             if (lockedBlock == null) {
                 sender.sendMessage("$RED${plugin.language["CommandAccessorsRemoveBlockNotLocked"]}")
                 return@Runnable
@@ -157,7 +165,7 @@ class MfAccessorsRemoveCommand(private val plugin: MedievalFactions) : CommandEx
             }
             sender.sendMessage("${ChatColor.GREEN}${plugin.language["CommandAccessorsRemoveSuccess", accessor.name ?: plugin.language["UnknownPlayer"]]}")
             plugin.server.scheduler.runTask(plugin, Runnable {
-                sender.performCommand("accessors list ${block.x} ${block.y} ${block.z}")
+                sender.performCommand("accessors list ${lockedBlock.block.x} ${lockedBlock.block.y} ${lockedBlock.block.z}")
             })
         })
     }

@@ -128,7 +128,15 @@ class MfAccessorsAddCommand(private val plugin: MedievalFactions) : CommandExecu
                     return@Runnable
                 }
             val lockService = plugin.services.lockService
-            val lockedBlock = lockService.getLockedBlock(MfBlockPosition.fromBukkitBlock(block))
+            val blocks = (block.x - 1..block.x + 1).flatMap { x ->
+                (block.y - 1..block.y + 1).flatMap { y ->
+                    (block.z - 1..block.z + 1).map { z ->
+                        block.world.getBlockAt(x, y, z)
+                    }
+                }
+            }
+            val lockedBlocks = blocks.mapNotNull { block -> lockService.getLockedBlock(MfBlockPosition.fromBukkitBlock(block)) }
+            val lockedBlock = lockedBlocks.firstOrNull()
             if (lockedBlock == null) {
                 sender.sendMessage("$RED${plugin.language["CommandAccessorsAddBlockNotLocked"]}")
                 return@Runnable
@@ -144,7 +152,7 @@ class MfAccessorsAddCommand(private val plugin: MedievalFactions) : CommandExecu
             }
             sender.sendMessage("$GREEN${plugin.language["CommandAccessorsAddSuccess", accessor.name ?: plugin.language["UnknownPlayer"]]}")
             plugin.server.scheduler.runTask(plugin, Runnable {
-                sender.performCommand("accessors list ${block.x} ${block.y} ${block.z}")
+                sender.performCommand("accessors list ${lockedBlock.block.x} ${lockedBlock.block.y} ${lockedBlock.block.z}")
             })
         })
     }
