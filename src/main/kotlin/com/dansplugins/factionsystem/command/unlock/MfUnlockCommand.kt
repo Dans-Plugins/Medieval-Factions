@@ -1,7 +1,6 @@
 package com.dansplugins.factionsystem.command.unlock
 
 import com.dansplugins.factionsystem.MedievalFactions
-import com.dansplugins.factionsystem.interaction.MfInteractionStatus
 import com.dansplugins.factionsystem.interaction.MfInteractionStatus.UNLOCKING
 import com.dansplugins.factionsystem.player.MfPlayer
 import dev.forkhandles.result4k.onFailure
@@ -37,8 +36,8 @@ class MfUnlockCommand(private val plugin: MedievalFactions) : CommandExecutor, T
             val interactionService = plugin.services.interactionService
             val status = interactionService.getInteractionStatus(mfPlayer.id)
             if (cancel) {
-                if (status != MfInteractionStatus.LOCKING) {
-                    sender.sendMessage("$RED${plugin.language["CommandUnlockCancelNotLocking"]}")
+                if (status != UNLOCKING) {
+                    sender.sendMessage("$RED${plugin.language["CommandUnlockCancelNotUnlocking"]}")
                     return@Runnable
                 }
                 interactionService.setInteractionStatus(mfPlayer.id, null).onFailure {
