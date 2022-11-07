@@ -87,16 +87,7 @@ class PlayerInteractListener(private val plugin: MedievalFactions) : Listener {
             return
         }
         val lockService = plugin.services.lockService
-        val blocks = (clickedBlock.x - 1..clickedBlock.x + 1).flatMap { x ->
-            (clickedBlock.y - 1..clickedBlock.y + 1).flatMap { y ->
-                (clickedBlock.z - 1..clickedBlock.z + 1).map { z ->
-                    clickedBlock.world.getBlockAt(x, y, z)
-                }
-            }
-        }
-        val lockedBlocks =
-            blocks.mapNotNull { block -> lockService.getLockedBlock(MfBlockPosition.fromBukkitBlock(block)) }
-        val lockedBlock = lockedBlocks.firstOrNull()
+        val lockedBlock = lockService.getLockedBlock(MfBlockPosition.fromBukkitBlock(clickedBlock))
         if (lockedBlock != null) {
             if (event.player.uniqueId.toString() !in (lockedBlock.accessors + lockedBlock.playerId).map(MfPlayerId::value)) {
                 if (mfPlayer.isBypassEnabled && event.player.hasPermission("mf.bypass")) {
@@ -159,15 +150,7 @@ class PlayerInteractListener(private val plugin: MedievalFactions) : Listener {
             }
             val lockService = plugin.services.lockService
             val blockPosition = MfBlockPosition.fromBukkitBlock(block)
-            val blocks = (block.x - 1..block.x + 1).flatMap { x ->
-                (block.y - 1..block.y + 1).flatMap { y ->
-                    (block.z - 1..block.z + 1).map { z ->
-                        block.world.getBlockAt(x, y, z)
-                    }
-                }
-            }
-            val lockedBlocks = blocks.mapNotNull { block -> lockService.getLockedBlock(MfBlockPosition.fromBukkitBlock(block)) }
-            val existingLock = lockedBlocks.firstOrNull()
+            val existingLock = lockService.getLockedBlock(blockPosition)
             if (existingLock != null) {
                 val existingLockOwner = playerService.getPlayer(existingLock.playerId)
                 player.sendMessage("$RED${plugin.language["BlockLockAlreadyLocked", existingLockOwner?.toBukkit()?.name ?: plugin.language["UnknownPlayer"]]}")
@@ -197,15 +180,7 @@ class PlayerInteractListener(private val plugin: MedievalFactions) : Listener {
                 return@Runnable
             }
             val lockService = plugin.services.lockService
-            val blocks = (block.x - 1..block.x + 1).flatMap { x ->
-                (block.y - 1..block.y + 1).flatMap { y ->
-                    (block.z - 1..block.z + 1).map { z ->
-                        block.world.getBlockAt(x, y, z)
-                    }
-                }
-            }
-            val lockedBlocks = blocks.mapNotNull { block -> lockService.getLockedBlock(MfBlockPosition.fromBukkitBlock(block)) }
-            val lockedBlock = lockedBlocks.firstOrNull()
+            val lockedBlock = lockService.getLockedBlock(MfBlockPosition.fromBukkitBlock(block))
             if (lockedBlock == null) {
                 player.sendMessage("$RED${plugin.language["BlockUnlockNotLocked"]}")
                 return@Runnable
@@ -248,15 +223,7 @@ class PlayerInteractListener(private val plugin: MedievalFactions) : Listener {
                 return@Runnable
             }
             val lockService = plugin.services.lockService
-            val blocks = (block.x - 1..block.x + 1).flatMap { x ->
-                (block.y - 1..block.y + 1).flatMap { y ->
-                    (block.z - 1..block.z + 1).map { z ->
-                        block.world.getBlockAt(x, y, z)
-                    }
-                }
-            }
-            val lockedBlocks = blocks.mapNotNull { block -> lockService.getLockedBlock(MfBlockPosition.fromBukkitBlock(block)) }
-            val lockedBlock = lockedBlocks.firstOrNull()
+            val lockedBlock = lockService.getLockedBlock(MfBlockPosition.fromBukkitBlock(block))
             if (lockedBlock == null) {
                 player.sendMessage("$RED${plugin.language["BlockCheckAccessNotLocked"]}")
                 return@Runnable
