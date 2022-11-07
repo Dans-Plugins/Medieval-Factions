@@ -81,6 +81,10 @@ class MfFactionVassalizeCommand(private val plugin: MedievalFactions) : CommandE
                 sender.sendMessage("$RED${plugin.language["CommandFactionVassalizeWouldCreateCycle"]}")
                 return@Runnable
             }
+            if (relationships.any { it.type == VASSAL }) {
+                sender.sendMessage("$RED${plugin.language["CommandFactionVassalizeAlreadyRequestedVassalization"]}")
+                return@Runnable
+            }
             factionRelationshipService.save(MfFactionRelationship(
                 factionId = faction.id,
                 targetId = target.id,

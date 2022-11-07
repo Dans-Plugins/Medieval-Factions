@@ -14,9 +14,10 @@ import org.bukkit.entity.Player
 import java.text.DecimalFormat
 import java.text.DecimalFormatSymbols
 import java.util.logging.Level.SEVERE
+import kotlin.math.floor
 
 class MfFactionPowerCommand(private val plugin: MedievalFactions) : CommandExecutor, TabCompleter {
-    private val decimalFormat = DecimalFormat("0.##", DecimalFormatSymbols.getInstance(plugin.language.locale))
+    private val decimalFormat = DecimalFormat("0", DecimalFormatSymbols.getInstance(plugin.language.locale))
 
     override fun onCommand(sender: CommandSender, command: Command, label: String, args: Array<out String>): Boolean {
         if (!sender.hasPermission("mf.power")) {
@@ -82,8 +83,8 @@ class MfFactionPowerCommand(private val plugin: MedievalFactions) : CommandExecu
                             "$GRAY${
                                 plugin.language[
                                         "CommandFactionPowerPlayerPower",
-                                        decimalFormat.format(mfPlayer.power),
-                                        decimalFormat.format(plugin.config.getDouble("players.maxPower"))
+                                        decimalFormat.format(floor(mfPlayer.power)),
+                                        decimalFormat.format(floor(plugin.config.getDouble("players.maxPower")))
                                 ]
                             }"
                         )
@@ -93,8 +94,8 @@ class MfFactionPowerCommand(private val plugin: MedievalFactions) : CommandExecu
                                 plugin.language[
                                         "CommandFactionPowerOtherPlayerPower",
                                         targetPlayer?.name ?: plugin.language["UnknownPlayer"],
-                                        decimalFormat.format(mfPlayer.power),
-                                        decimalFormat.format(plugin.config.getDouble("players.maxPower"))
+                                        decimalFormat.format(floor(mfPlayer.power)),
+                                        decimalFormat.format(floor(plugin.config.getDouble("players.maxPower")))
                                 ]
                             }"
                         )
@@ -105,13 +106,13 @@ class MfFactionPowerCommand(private val plugin: MedievalFactions) : CommandExecu
                         "$GRAY${
                             plugin.language[
                                     "CommandFactionPowerFactionPower",
-                                    decimalFormat.format(faction.power),
-                                    decimalFormat.format(faction.maxPower),
-                                    decimalFormat.format(faction.memberPower),
-                                    decimalFormat.format(faction.maxMemberPower),
-                                    decimalFormat.format(faction.vassalPower),
-                                    decimalFormat.format(faction.maxVassalPower),
-                                    decimalFormat.format(if (faction.flags[plugin.flags.acceptBonusPower]) faction.bonusPower else 0)
+                                    decimalFormat.format(floor(faction.power)),
+                                    decimalFormat.format(floor(faction.maxPower)),
+                                    decimalFormat.format(floor(faction.memberPower)),
+                                    decimalFormat.format(floor(faction.maxMemberPower)),
+                                    decimalFormat.format(floor(faction.vassalPower)),
+                                    decimalFormat.format(floor(faction.maxVassalPower)),
+                                    decimalFormat.format(if (faction.flags[plugin.flags.acceptBonusPower]) floor(faction.bonusPower) else 0)
                             ]
                         }"
                     )
@@ -134,7 +135,7 @@ class MfFactionPowerCommand(private val plugin: MedievalFactions) : CommandExecu
                 plugin.server.offlinePlayers.mapNotNull(OfflinePlayer::getName)
         args.size == 1 -> (plugin.services.factionService.factions.map(MfFaction::name) +
                 plugin.server.offlinePlayers.mapNotNull(OfflinePlayer::getName))
-            .filter { it.startsWith(args[0]) }
+            .filter { it.lowercase().startsWith(args[0].lowercase()) }
         else -> emptyList()
     }
 }

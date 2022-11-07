@@ -45,7 +45,8 @@ class MfLockService(private val plugin: MedievalFactions, private val repository
 
     fun save(lockedBlock: MfLockedBlock): Result4k<MfLockedBlock, ServiceFailure> = resultFrom {
         val upsertedLockedBlock = repository.upsert(lockedBlock)
-        lockedBlocks[lockedBlock.block] = lockedBlock
+        lockedBlocks.remove(lockedBlock.block)
+        lockedBlocks[upsertedLockedBlock.block] = upsertedLockedBlock
         return@resultFrom upsertedLockedBlock
     }.mapFailure { exception ->
         ServiceFailure(exception.toServiceFailureType(), "Service error: ${exception.message}", exception)
@@ -64,15 +65,26 @@ class MfLockService(private val plugin: MedievalFactions, private val repository
     }
 
     @JvmName("getLockedBlockByLockedBlockId")
-    fun getLockedBlock(id: MfLockedBlockId): Result4k<MfLockedBlock?, ServiceFailure> = resultFrom {
-        repository.getLockedBlock(id)
-    }.mapFailure { exception ->
-        ServiceFailure(exception.toServiceFailureType(), "Service error: ${exception.message}", exception)
+    fun getLockedBlock(id: MfLockedBlockId): MfLockedBlock? {
+        return lockedBlocks.values.singleOrNull { it.id == id }
     }
 
     @JvmName("getLockedBlocksByPlayerId")
     fun getLockedBlocks(playerId: MfPlayerId): List<MfLockedBlock> {
         return lockedBlocks.values.filter { it.playerId == playerId }
+    }
+
+    @JvmName("getLockedBlocksByClaim")
+    fun getLockedBlocks(claim: MfClaimedChunk): List<MfLockedBlock> {
+        return lockedBlocks.values.filter {
+            it.block.worldId == claim.worldId
+                    && it.chunkX == claim.x
+                    && it.chunkZ == claim.z
+        }
+    }
+
+    internal fun unloadLockedBlocks(claim: MfClaimedChunk) {
+        getLockedBlocks(claim).forEach { lockedBlocks.remove(it.block) }
     }
 
     private fun Exception.toServiceFailureType(): ServiceFailureType {

@@ -40,6 +40,7 @@ class EntityDamageListener(private val plugin: MedievalFactions) : Listener {
                     challengerBukkitPlayer.activePotionEffects.clear()
                     challengerBukkitPlayer.fireTicks = 0
                     challengerBukkitPlayer.health = duel.challengerHealth
+                    duel.challengerLocation?.toBukkitLocation()?.let(challengerBukkitPlayer::teleport)
                     nearbyPlayers += challengerBukkitPlayer.world.players
                         .filter { it.location.distanceSquared(challengerBukkitPlayer.location) <= notificationDistanceSquared }
                 }
@@ -48,6 +49,7 @@ class EntityDamageListener(private val plugin: MedievalFactions) : Listener {
                     challengedBukkitPlayer.activePotionEffects.clear()
                     challengedBukkitPlayer.fireTicks = 0
                     challengedBukkitPlayer.health = duel.challengedHealth
+                    duel.challengedLocation?.toBukkitLocation()?.let(challengedBukkitPlayer::teleport)
                     nearbyPlayers += challengedBukkitPlayer.world.players
                         .filter { it.location.distanceSquared(challengedBukkitPlayer.location) <= notificationDistanceSquared }
                 }

@@ -19,11 +19,10 @@ import java.text.DecimalFormatSymbols
 import java.util.*
 import java.util.logging.Level.SEVERE
 import kotlin.math.floor
-import kotlin.math.roundToInt
 
 class MfFactionClaimFillCommand(private val plugin: MedievalFactions) : CommandExecutor, TabCompleter {
 
-    private val decimalFormat = DecimalFormat("0.##", DecimalFormatSymbols.getInstance(plugin.language.locale))
+    private val decimalFormat = DecimalFormat("0", DecimalFormatSymbols.getInstance(plugin.language.locale))
 
     override fun onCommand(sender: CommandSender, command: Command, label: String, args: Array<out String>): Boolean {
         if (!sender.hasPermission("mf.claimfill")) {
@@ -87,7 +86,7 @@ class MfFactionClaimFillCommand(private val plugin: MedievalFactions) : CommandE
                     return@saveChunks
                 }
                 if (plugin.config.getBoolean("factions.limitLand") && claimableChunks.size + claimService.getClaims(faction.id).size > faction.power) {
-                    sender.sendMessage("$RED${plugin.language["CommandFactionClaimFillReachedDemesneLimit", floor(faction.power).roundToInt().toString()]}")
+                    sender.sendMessage("$RED${plugin.language["CommandFactionClaimFillReachedDemesneLimit", decimalFormat.format(floor(faction.power))]}")
                     return@saveChunks
                 }
                 claimableChunks.forEach { chunk ->
