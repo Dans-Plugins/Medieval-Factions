@@ -1,5 +1,6 @@
 package com.dansplugins.factionsystem.duel
 
+import com.dansplugins.factionsystem.area.MfPosition
 import com.dansplugins.factionsystem.player.MfPlayerId
 import java.time.Instant
 
@@ -13,5 +14,7 @@ data class MfDuel(
     val challengedId: MfPlayerId,
     val challengerHealth: Double,
     val challengedHealth: Double,
-    val endTime: Instant
+    val endTime: Instant,
+    val challengerLocation: MfPosition?,
+    val challengedLocation: MfPosition?
 )
