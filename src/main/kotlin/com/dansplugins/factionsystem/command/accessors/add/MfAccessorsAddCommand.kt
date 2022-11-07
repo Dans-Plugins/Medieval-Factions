@@ -143,6 +143,9 @@ class MfAccessorsAddCommand(private val plugin: MedievalFactions) : CommandExecu
                 return@Runnable
             }
             sender.sendMessage("$GREEN${plugin.language["CommandAccessorsAddSuccess", accessor.name ?: plugin.language["UnknownPlayer"]]}")
+            plugin.server.scheduler.runTask(plugin, Runnable {
+                sender.performCommand("accessors list ${block.x} ${block.y} ${block.z}")
+            })
         })
     }
 
