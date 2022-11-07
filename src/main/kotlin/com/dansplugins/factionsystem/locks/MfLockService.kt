@@ -74,6 +74,19 @@ class MfLockService(private val plugin: MedievalFactions, private val repository
         return lockedBlocks.values.filter { it.playerId == playerId }
     }
 
+    @JvmName("getLockedBlocksByClaim")
+    fun getLockedBlocks(claim: MfClaimedChunk): List<MfLockedBlock> {
+        return lockedBlocks.values.filter {
+            it.block.worldId == claim.worldId
+                    && it.chunkX == claim.x
+                    && it.chunkZ == claim.z
+        }
+    }
+
+    internal fun unloadLockedBlocks(claim: MfClaimedChunk) {
+        getLockedBlocks(claim).forEach { lockedBlocks.remove(it.block) }
+    }
+
     private fun Exception.toServiceFailureType(): ServiceFailureType {
         return when (this) {
             is OptimisticLockingFailureException -> ServiceFailureType.CONFLICT
