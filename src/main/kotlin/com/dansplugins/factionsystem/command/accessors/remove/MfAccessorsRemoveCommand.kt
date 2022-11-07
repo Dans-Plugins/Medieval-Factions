@@ -156,6 +156,9 @@ class MfAccessorsRemoveCommand(private val plugin: MedievalFactions) : CommandEx
                 return@Runnable
             }
             sender.sendMessage("${ChatColor.GREEN}${plugin.language["CommandAccessorsRemoveSuccess", accessor.name ?: plugin.language["UnknownPlayer"]]}")
+            plugin.server.scheduler.runTask(plugin, Runnable {
+                sender.performCommand("accessors list ${block.x} ${block.y} ${block.z}")
+            })
         })
     }
 

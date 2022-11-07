@@ -45,7 +45,8 @@ class MfLockService(private val plugin: MedievalFactions, private val repository
 
     fun save(lockedBlock: MfLockedBlock): Result4k<MfLockedBlock, ServiceFailure> = resultFrom {
         val upsertedLockedBlock = repository.upsert(lockedBlock)
-        lockedBlocks[lockedBlock.block] = lockedBlock
+        lockedBlocks.remove(lockedBlock.block)
+        lockedBlocks[upsertedLockedBlock.block] = upsertedLockedBlock
         return@resultFrom upsertedLockedBlock
     }.mapFailure { exception ->
         ServiceFailure(exception.toServiceFailureType(), "Service error: ${exception.message}", exception)
@@ -64,10 +65,8 @@ class MfLockService(private val plugin: MedievalFactions, private val repository
     }
 
     @JvmName("getLockedBlockByLockedBlockId")
-    fun getLockedBlock(id: MfLockedBlockId): Result4k<MfLockedBlock?, ServiceFailure> = resultFrom {
-        repository.getLockedBlock(id)
-    }.mapFailure { exception ->
-        ServiceFailure(exception.toServiceFailureType(), "Service error: ${exception.message}", exception)
+    fun getLockedBlock(id: MfLockedBlockId): MfLockedBlock? {
+        return lockedBlocks.values.singleOrNull { it.id == id }
     }
 
     @JvmName("getLockedBlocksByPlayerId")
