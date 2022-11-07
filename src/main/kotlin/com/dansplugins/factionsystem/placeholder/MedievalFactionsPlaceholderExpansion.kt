@@ -12,11 +12,12 @@ import org.bukkit.OfflinePlayer
 import org.bukkit.entity.Player
 import java.text.DecimalFormat
 import java.text.DecimalFormatSymbols
+import kotlin.math.floor
 
 
 class MedievalFactionsPlaceholderExpansion(private val plugin: MedievalFactions) : PlaceholderExpansion(), Relational {
 
-    private val decimalFormat = DecimalFormat("0.##", DecimalFormatSymbols.getInstance(plugin.language.locale))
+    private val decimalFormat = DecimalFormat("0", DecimalFormatSymbols.getInstance(plugin.language.locale))
 
     override fun getIdentifier() = plugin.name
     override fun getAuthor() = plugin.description.authors.joinToString()
@@ -109,19 +110,19 @@ class MedievalFactionsPlaceholderExpansion(private val plugin: MedievalFactions)
     private fun getFactionPower(player: OfflinePlayer): String {
         val faction = getPlayerFaction(player)
             ?: return (plugin.config.getString("factions.factionlessFactionName") ?: "Factionless")
-        return decimalFormat.format(faction.power)
+        return decimalFormat.format(floor(faction.power))
     }
 
     private fun getFactionBonusPower(player: OfflinePlayer): String {
         val faction = getPlayerFaction(player)
             ?: return (plugin.config.getString("factions.factionlessFactionName") ?: "Factionless")
-        return decimalFormat.format(if (faction.flags[plugin.flags.acceptBonusPower]) faction.bonusPower else 0.0)
+        return decimalFormat.format(if (faction.flags[plugin.flags.acceptBonusPower]) floor(faction.bonusPower) else 0.0)
     }
 
     private fun getFactionPowerWithoutBonus(player: OfflinePlayer): String {
         val faction = getPlayerFaction(player)
             ?: return (plugin.config.getString("factions.factionlessFactionName") ?: "Factionless")
-        return decimalFormat.format(faction.power - (if (faction.flags[plugin.flags.acceptBonusPower]) faction.bonusPower else 0.0))
+        return decimalFormat.format(floor(faction.power - (if (faction.flags[plugin.flags.acceptBonusPower]) faction.bonusPower else 0.0)))
     }
 
     private fun getFactionAllyCount(player: OfflinePlayer): String {
@@ -192,12 +193,12 @@ class MedievalFactionsPlaceholderExpansion(private val plugin: MedievalFactions)
     private fun getPower(player: OfflinePlayer): String {
         val playerService = plugin.services.playerService
         val mfPlayer = playerService.getPlayer(player)
-            ?: return decimalFormat.format(plugin.config.getDouble("players.initialPower"))
-        return decimalFormat.format(mfPlayer.power)
+            ?: return decimalFormat.format(floor(plugin.config.getDouble("players.initialPower")))
+        return decimalFormat.format(floor(mfPlayer.power))
     }
 
     private fun getMaxPower(): String {
-        return decimalFormat.format(plugin.config.getDouble("players.maxPower"))
+        return decimalFormat.format(floor(plugin.config.getDouble("players.maxPower")))
     }
 
     private fun getFormattedPlayerPower(player: OfflinePlayer): String {

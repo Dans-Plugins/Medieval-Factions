@@ -20,7 +20,7 @@ class MfDynmapService(private val plugin: MedievalFactions) {
 
     private val dynmap = plugin.server.pluginManager.getPlugin("dynmap") as DynmapAPI
     private val factionMarkersByFactionId = ConcurrentHashMap<MfFactionId, List<AreaMarker>>()
-    private val decimalFormat = DecimalFormat("0.##", DecimalFormatSymbols.getInstance(plugin.language.locale))
+    private val decimalFormat = DecimalFormat("0", DecimalFormatSymbols.getInstance(plugin.language.locale))
 
     fun updateClaims(faction: MfFaction) {
         val markerApi = dynmap.markerAPI
@@ -233,7 +233,7 @@ class MfDynmapService(private val plugin: MedievalFactions) {
                 append("<br />")
             }
             append("<h2>Power</h2>")
-            append(decimalFormat.format(faction.power))
+            append(decimalFormat.format(floor(faction.power)))
             append("<br />")
             append("<h2>Demesne</h2>")
             val claims = claimService.getClaims(faction.id)

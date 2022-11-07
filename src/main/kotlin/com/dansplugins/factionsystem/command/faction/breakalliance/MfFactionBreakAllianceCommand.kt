@@ -51,10 +51,6 @@ class MfFactionBreakAllianceCommand(private val plugin: MedievalFactions) : Comm
                 sender.sendMessage("$RED${plugin.language["CommandFactionBreakAllianceInvalidTarget"]}")
                 return@Runnable
             }
-            if (target.id.value == faction.id.value) {
-                sender.sendMessage("$RED${plugin.language["CommandFactionAllyCannotBreakAllianceWithSelf"]}")
-                return@Runnable
-            }
             val factionRelationshipService = plugin.services.factionRelationshipService
             val existingRelationships = factionRelationshipService.getRelationships(faction.id, target.id)
             val reverseRelationships = factionRelationshipService.getRelationships(target.id, faction.id)
@@ -65,11 +61,11 @@ class MfFactionBreakAllianceCommand(private val plugin: MedievalFactions) : Comm
             (existingRelationships + reverseRelationships).filter { it.type == ALLY }
                 .forEach { relationship ->
                     factionRelationshipService.delete(relationship.id).onFailure {
-                        sender.sendMessage("$RED${plugin.language["CommandFactionBreakAlliance"]}")
+                        sender.sendMessage("$RED${plugin.language["CommandFactionBreakAllianceFailedToDeleteRelationship"]}")
                         return@forEach
                     }
                 }
-            sender.sendMessage("$RED${plugin.language["CommandFactionBreakAllianceSuccess"]}")
+            sender.sendMessage("$RED${plugin.language["CommandFactionBreakAllianceSuccess", target.name]}")
             plugin.server.scheduler.runTask(plugin, Runnable {
                 faction.sendMessage(
                     plugin.language["FactionAllianceBrokenNotificationTitle", target.name],

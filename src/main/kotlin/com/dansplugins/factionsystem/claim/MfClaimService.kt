@@ -134,6 +134,8 @@ class MfClaimService(private val plugin: MedievalFactions, private val repositor
                 })
             }
         }
+        val lockService = plugin.services.lockService
+        lockService.unloadLockedBlocks(claim)
         return@resultFrom result
     }.mapFailure { exception ->
         ServiceFailure(exception.toServiceFailureType(), "Service error: ${exception.message}", exception)

@@ -17,6 +17,7 @@ import org.bukkit.block.data.type.TrapDoor
 import org.bukkit.entity.Player
 import org.bukkit.event.EventHandler
 import org.bukkit.event.Listener
+import org.bukkit.event.block.Action.PHYSICAL
 import org.bukkit.event.player.PlayerInteractEvent
 import org.bukkit.inventory.EquipmentSlot.HAND
 import java.util.logging.Level.SEVERE
@@ -25,6 +26,10 @@ class PlayerInteractListener(private val plugin: MedievalFactions) : Listener {
 
     @EventHandler
     fun onPlayerInteract(event: PlayerInteractEvent) {
+        if (event.action == PHYSICAL) { // farmland, pressure plates, tripwire, etc...
+            applyProtections(event)
+            return
+        }
         if (event.hand != HAND) return
         val clickedBlock = event.clickedBlock ?: return
         val interactionService = plugin.services.interactionService
@@ -61,60 +66,75 @@ class PlayerInteractListener(private val plugin: MedievalFactions) : Listener {
                 selectGateTrigger(event.player, clickedBlock)
                 event.isCancelled = true
             }
-            null -> {
-                val playerService = plugin.services.playerService
-                val mfPlayer = playerService.getPlayer(event.player)
-                if (mfPlayer == null) {
-                    event.isCancelled = true
-                    plugin.server.scheduler.runTaskAsynchronously(plugin, Runnable {
-                        playerService.save(MfPlayer(plugin, event.player)).onFailure {
-                            event.player.sendMessage("$RED${plugin.language["BlockInteractFailedToSavePlayer"]}")
-                            plugin.logger.log(SEVERE, "Failed to save player: ${it.reason.message}", it.reason.cause)
-                            return@Runnable
-                        }
-                    })
-                    return
-                }
-                val lockService = plugin.services.lockService
-                val lockedBlock = lockService.getLockedBlock(MfBlockPosition.fromBukkitBlock(clickedBlock))
-                if (lockedBlock != null) {
-                    if (event.player.uniqueId.toString() !in (lockedBlock.accessors + lockedBlock.playerId).map(MfPlayerId::value)) {
-                        if (mfPlayer.isBypassEnabled && event.player.hasPermission("mf.bypass")) {
-                            plugin.server.scheduler.runTaskAsynchronously(plugin, Runnable {
-                                val owner = playerService.getPlayer(lockedBlock.playerId)
-                                event.player.sendMessage("$RED${plugin.language["LockProtectionBypassed", owner?.toBukkit()?.name ?: plugin.language["UnknownPlayer"]]}")
-                            })
-                        } else {
-                            plugin.server.scheduler.runTaskAsynchronously(plugin, Runnable {
-                                val owner = playerService.getPlayer(lockedBlock.playerId)
-                                event.player.sendMessage("$RED${plugin.language["BlockLocked", owner?.toBukkit()?.name ?: plugin.language["UnknownPlayer"]]}")
-                            })
-                            event.isCancelled = true
-                        }
-                        return
-                    }
-                }
+            null -> applyProtections(event)
+        }
 
-                if (plugin.config.getBoolean("factions.nonMembersCanInteractWithDoors")) {
-                    if (clickedBlock.state is Door || clickedBlock.state is TrapDoor) {
-                        return
-                    }
+    }
+
+    private fun applyProtections(event: PlayerInteractEvent) {
+        val clickedBlock = event.clickedBlock ?: return
+        val playerService = plugin.services.playerService
+        val mfPlayer = playerService.getPlayer(event.player)
+        if (mfPlayer == null) {
+            event.isCancelled = true
+            plugin.server.scheduler.runTaskAsynchronously(plugin, Runnable {
+                playerService.save(MfPlayer(plugin, event.player)).onFailure {
+                    event.player.sendMessage("$RED${plugin.language["BlockInteractFailedToSavePlayer"]}")
+                    plugin.logger.log(SEVERE, "Failed to save player: ${it.reason.message}", it.reason.cause)
+                    return@Runnable
                 }
-                val claimService = plugin.services.claimService
-                val claim = claimService.getClaim(clickedBlock.chunk) ?: return
-                val factionService = plugin.services.factionService
-                val claimFaction = factionService.getFaction(claim.factionId) ?: return
-                if (!claimService.isInteractionAllowed(mfPlayer.id, claim)) {
-                    if (mfPlayer.isBypassEnabled && event.player.hasPermission("mf.bypass")) {
-                        event.player.sendMessage("$RED${plugin.language["FactionTerritoryProtectionBypassed"]}")
-                    } else {
-                        event.isCancelled = true
-                        event.player.sendMessage("$RED${plugin.language["CannotInteractWithBlockInFactionTerritory", claimFaction.name]}")
-                    }
+            })
+            return
+        }
+        val lockService = plugin.services.lockService
+        val blocks = (clickedBlock.x - 1..clickedBlock.x + 1).flatMap { x ->
+            (clickedBlock.y - 1..clickedBlock.y + 1).flatMap { y ->
+                (clickedBlock.z - 1..clickedBlock.z + 1).map { z ->
+                    clickedBlock.world.getBlockAt(x, y, z)
                 }
             }
         }
+        val lockedBlocks =
+            blocks.mapNotNull { block -> lockService.getLockedBlock(MfBlockPosition.fromBukkitBlock(block)) }
+        val lockedBlock = lockedBlocks.firstOrNull()
+        if (lockedBlock != null) {
+            if (event.player.uniqueId.toString() !in (lockedBlock.accessors + lockedBlock.playerId).map(MfPlayerId::value)) {
+                if (mfPlayer.isBypassEnabled && event.player.hasPermission("mf.bypass")) {
+                    plugin.server.scheduler.runTaskAsynchronously(plugin, Runnable {
+                        val owner = playerService.getPlayer(lockedBlock.playerId)
+                        event.player.sendMessage("$RED${plugin.language["LockProtectionBypassed", owner?.toBukkit()?.name ?: plugin.language["UnknownPlayer"]]}")
+                    })
+                } else {
+                    plugin.server.scheduler.runTaskAsynchronously(plugin, Runnable {
+                        val owner = playerService.getPlayer(lockedBlock.playerId)
+                        event.player.sendMessage("$RED${plugin.language["BlockLocked", owner?.toBukkit()?.name ?: plugin.language["UnknownPlayer"]]}")
+                    })
+                    event.isCancelled = true
+                }
+                return
+            } else {
+                return // bypass claim protection to allow access to locks where a player is an accessor
+            }
+        }
 
+        if (plugin.config.getBoolean("factions.nonMembersCanInteractWithDoors")) {
+            if (clickedBlock.state is Door || clickedBlock.state is TrapDoor) {
+                return
+            }
+        }
+        val claimService = plugin.services.claimService
+        val claim = claimService.getClaim(clickedBlock.chunk) ?: return
+        val factionService = plugin.services.factionService
+        val claimFaction = factionService.getFaction(claim.factionId) ?: return
+        if (!claimService.isInteractionAllowed(mfPlayer.id, claim)) {
+            if (mfPlayer.isBypassEnabled && event.player.hasPermission("mf.bypass")) {
+                event.player.sendMessage("$RED${plugin.language["FactionTerritoryProtectionBypassed"]}")
+            } else {
+                event.isCancelled = true
+                event.player.sendMessage("$RED${plugin.language["CannotInteractWithBlockInFactionTerritory", claimFaction.name]}")
+            }
+        }
+        return
     }
 
     private fun lock(player: Player, block: Block) {
@@ -139,7 +159,15 @@ class PlayerInteractListener(private val plugin: MedievalFactions) : Listener {
             }
             val lockService = plugin.services.lockService
             val blockPosition = MfBlockPosition.fromBukkitBlock(block)
-            val existingLock = lockService.getLockedBlock(blockPosition)
+            val blocks = (block.x - 1..block.x + 1).flatMap { x ->
+                (block.y - 1..block.y + 1).flatMap { y ->
+                    (block.z - 1..block.z + 1).map { z ->
+                        block.world.getBlockAt(x, y, z)
+                    }
+                }
+            }
+            val lockedBlocks = blocks.mapNotNull { block -> lockService.getLockedBlock(MfBlockPosition.fromBukkitBlock(block)) }
+            val existingLock = lockedBlocks.firstOrNull()
             if (existingLock != null) {
                 val existingLockOwner = playerService.getPlayer(existingLock.playerId)
                 player.sendMessage("$RED${plugin.language["BlockLockAlreadyLocked", existingLockOwner?.toBukkit()?.name ?: plugin.language["UnknownPlayer"]]}")
@@ -169,7 +197,15 @@ class PlayerInteractListener(private val plugin: MedievalFactions) : Listener {
                 return@Runnable
             }
             val lockService = plugin.services.lockService
-            val lockedBlock = lockService.getLockedBlock(MfBlockPosition.fromBukkitBlock(block))
+            val blocks = (block.x - 1..block.x + 1).flatMap { x ->
+                (block.y - 1..block.y + 1).flatMap { y ->
+                    (block.z - 1..block.z + 1).map { z ->
+                        block.world.getBlockAt(x, y, z)
+                    }
+                }
+            }
+            val lockedBlocks = blocks.mapNotNull { block -> lockService.getLockedBlock(MfBlockPosition.fromBukkitBlock(block)) }
+            val lockedBlock = lockedBlocks.firstOrNull()
             if (lockedBlock == null) {
                 player.sendMessage("$RED${plugin.language["BlockUnlockNotLocked"]}")
                 return@Runnable
@@ -212,13 +248,21 @@ class PlayerInteractListener(private val plugin: MedievalFactions) : Listener {
                 return@Runnable
             }
             val lockService = plugin.services.lockService
-            val lockedBlock = lockService.getLockedBlock(MfBlockPosition.fromBukkitBlock(block))
+            val blocks = (block.x - 1..block.x + 1).flatMap { x ->
+                (block.y - 1..block.y + 1).flatMap { y ->
+                    (block.z - 1..block.z + 1).map { z ->
+                        block.world.getBlockAt(x, y, z)
+                    }
+                }
+            }
+            val lockedBlocks = blocks.mapNotNull { block -> lockService.getLockedBlock(MfBlockPosition.fromBukkitBlock(block)) }
+            val lockedBlock = lockedBlocks.firstOrNull()
             if (lockedBlock == null) {
                 player.sendMessage("$RED${plugin.language["BlockCheckAccessNotLocked"]}")
                 return@Runnable
             }
             plugin.server.scheduler.runTask(plugin, Runnable {
-                player.performCommand("accessors list ${block.x} ${block.y} ${block.z}")
+                player.performCommand("accessors list ${lockedBlock.block.x} ${lockedBlock.block.y} ${lockedBlock.block.z}")
             })
             val interactionService = plugin.services.interactionService
             interactionService.setInteractionStatus(mfPlayer.id, null).onFailure {

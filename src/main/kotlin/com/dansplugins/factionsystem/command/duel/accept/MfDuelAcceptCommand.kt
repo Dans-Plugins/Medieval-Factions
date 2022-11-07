@@ -1,6 +1,7 @@
 package com.dansplugins.factionsystem.command.duel.accept
 
 import com.dansplugins.factionsystem.MedievalFactions
+import com.dansplugins.factionsystem.area.MfPosition
 import com.dansplugins.factionsystem.duel.MfDuel
 import com.dansplugins.factionsystem.player.MfPlayer
 import com.dansplugins.factionsystem.player.MfPlayerId
@@ -83,7 +84,9 @@ class MfDuelAcceptCommand(private val plugin: MedievalFactions) : CommandExecuto
                 challengedId = invite.inviteeId,
                 challengerHealth = target.health,
                 challengedHealth = sender.health,
-                endTime = Instant.now().plus(Duration.parse(plugin.config.getString("duels.duration")))
+                endTime = Instant.now().plus(Duration.parse(plugin.config.getString("duels.duration"))),
+                challengerLocation = MfPosition.fromBukkitLocation(target.location),
+                challengedLocation = MfPosition.fromBukkitLocation(sender.location)
             )).onFailure {
                 sender.sendMessage("$RED${plugin.language["CommandDuelAcceptFailedToSaveDuel"]}")
                 plugin.logger.log(SEVERE, "Failed to save duel: ${it.reason.message}", it.reason.cause)

@@ -34,9 +34,17 @@ class JooqMfLockRepository(private val dsl: DSLContext) : MfLockRepository {
     }
 
     override fun getLockedBlocks(): List<MfLockedBlock> {
-        return dsl.selectFrom(MF_LOCKED_BLOCK)
-            .fetch()
-            .map { it.toDomain() }
+        return dsl.selectFrom(
+            MF_LOCKED_BLOCK
+                .leftJoin(MF_LOCKED_BLOCK_ACCESSOR)
+                .on(MF_LOCKED_BLOCK.ID.eq(MF_LOCKED_BLOCK_ACCESSOR.LOCKED_BLOCK_ID))
+        ).fetch()
+            .groupBy { it[MF_LOCKED_BLOCK.ID] }
+            .map { (_, records) ->
+                val accessors = records.filter { it[MF_LOCKED_BLOCK_ACCESSOR.PLAYER_ID] != null}
+                    .map { it.into(MF_LOCKED_BLOCK_ACCESSOR).playerId.let(::MfPlayerId) }
+                records.first().into(MF_LOCKED_BLOCK).toDomain(accessors)
+            }
     }
 
     override fun upsert(lockedBlock: MfLockedBlock): MfLockedBlock {
