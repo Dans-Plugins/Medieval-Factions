@@ -36,16 +36,9 @@ class MfAccessorsListCommand(private val plugin: MedievalFactions) : CommandExec
         if (args.size >= 3) {
             val (x, y, z) = args.take(3).map(String::toIntOrNull)
             if (x != null && y != null && z != null) {
-                val specifiedBlock = sender.world.getBlockAt(x, y, z)
-                val blocks = (specifiedBlock.x - 1..specifiedBlock.x + 1).flatMap { x ->
-                    (specifiedBlock.y - 1..specifiedBlock.y + 1).flatMap { y ->
-                        (specifiedBlock.z - 1..specifiedBlock.z + 1).map { z ->
-                            specifiedBlock.world.getBlockAt(x, y, z)
-                        }
-                    }
-                }
-                val lockedBlocks = blocks.mapNotNull { block -> lockService.getLockedBlock(MfBlockPosition.fromBukkitBlock(block)) }
-                val lockedBlock = lockedBlocks.firstOrNull()
+                val block = sender.world.getBlockAt(x, y, z)
+                val mfBlock = MfBlockPosition.fromBukkitBlock(block)
+                val lockedBlock = lockService.getLockedBlock(mfBlock)
                 if (lockedBlock == null) {
                     sender.sendMessage("${BukkitChatColor.RED}${plugin.language["CommandAccessorsListBlockNotLocked"]}")
                     return true
