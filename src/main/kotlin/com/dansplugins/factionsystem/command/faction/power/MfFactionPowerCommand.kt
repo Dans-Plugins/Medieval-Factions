@@ -135,7 +135,7 @@ class MfFactionPowerCommand(private val plugin: MedievalFactions) : CommandExecu
                 plugin.server.offlinePlayers.mapNotNull(OfflinePlayer::getName)
         args.size == 1 -> (plugin.services.factionService.factions.map(MfFaction::name) +
                 plugin.server.offlinePlayers.mapNotNull(OfflinePlayer::getName))
-            .filter { it.startsWith(args[0]) }
+            .filter { it.lowercase().startsWith(args[0].lowercase()) }
         else -> emptyList()
     }
 }
