@@ -12,6 +12,10 @@ import net.md_5.bungee.api.chat.HoverEvent
 import net.md_5.bungee.api.chat.HoverEvent.Action.SHOW_TEXT
 import net.md_5.bungee.api.chat.TextComponent
 import net.md_5.bungee.api.chat.hover.content.Text
+import org.bukkit.block.BlockFace
+import org.bukkit.block.Chest
+import org.bukkit.block.DoubleChest
+import org.bukkit.block.data.Bisected
 import org.bukkit.command.Command
 import org.bukkit.command.CommandExecutor
 import org.bukkit.command.CommandSender
@@ -37,8 +41,23 @@ class MfAccessorsListCommand(private val plugin: MedievalFactions) : CommandExec
             val (x, y, z) = args.take(3).map(String::toIntOrNull)
             if (x != null && y != null && z != null) {
                 val block = sender.world.getBlockAt(x, y, z)
-                val mfBlock = MfBlockPosition.fromBukkitBlock(block)
-                val lockedBlock = lockService.getLockedBlock(mfBlock)
+                val blockData = block.blockData
+                val holder = (block.state as? Chest)?.inventory?.holder
+                val blocks = if (blockData is Bisected) {
+                    if (blockData.half == Bisected.Half.BOTTOM) {
+                        listOf(block, block.getRelative(BlockFace.UP))
+                    } else {
+                        listOf(block, block.getRelative(BlockFace.DOWN))
+                    }
+                } else if (holder is DoubleChest) {
+                    val left = holder.leftSide as? Chest
+                    val right = holder.rightSide as? Chest
+                    listOfNotNull(left?.block, right?.block)
+                } else {
+                    listOf(block)
+                }
+                val lockedBlocks = blocks.mapNotNull { lockService.getLockedBlock(MfBlockPosition.fromBukkitBlock(it)) }
+                val lockedBlock = lockedBlocks.firstOrNull()
                 if (lockedBlock == null) {
                     sender.sendMessage("${BukkitChatColor.RED}${plugin.language["CommandAccessorsListBlockNotLocked"]}")
                     return true

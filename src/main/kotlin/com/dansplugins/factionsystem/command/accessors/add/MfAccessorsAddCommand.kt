@@ -9,6 +9,10 @@ import org.bukkit.ChatColor.GREEN
 import org.bukkit.ChatColor.RED
 import org.bukkit.OfflinePlayer
 import org.bukkit.block.Block
+import org.bukkit.block.BlockFace
+import org.bukkit.block.Chest
+import org.bukkit.block.DoubleChest
+import org.bukkit.block.data.Bisected
 import org.bukkit.command.Command
 import org.bukkit.command.CommandExecutor
 import org.bukkit.command.CommandSender
@@ -57,7 +61,22 @@ class MfAccessorsAddCommand(private val plugin: MedievalFactions) : CommandExecu
                 context.getSessionData("y") as Int,
                 context.getSessionData("z") as Int
             )
-            addAccessor(sender, block, player)
+            val blockData = block.blockData
+            val holder = (block.state as? Chest)?.inventory?.holder
+            val blocks = if (blockData is Bisected) {
+                if (blockData.half == Bisected.Half.BOTTOM) {
+                    listOf(block, block.getRelative(BlockFace.UP))
+                } else {
+                    listOf(block, block.getRelative(BlockFace.DOWN))
+                }
+            } else if (holder is DoubleChest) {
+                val left = holder.leftSide as? Chest
+                val right = holder.rightSide as? Chest
+                listOfNotNull(left?.block, right?.block)
+            } else {
+                listOf(block)
+            }
+            addAccessor(sender, blocks, player)
             return END_OF_CONVERSATION
         }
     }
@@ -108,11 +127,26 @@ class MfAccessorsAddCommand(private val plugin: MedievalFactions) : CommandExecu
             return true
         }
         val block = sender.world.getBlockAt(x, y, z)
-        addAccessor(sender, block, player)
+        val blockData = block.blockData
+        val holder = (block.state as? Chest)?.inventory?.holder
+        val blocks = if (blockData is Bisected) {
+            if (blockData.half == Bisected.Half.BOTTOM) {
+                listOf(block, block.getRelative(BlockFace.UP))
+            } else {
+                listOf(block, block.getRelative(BlockFace.DOWN))
+            }
+        } else if (holder is DoubleChest) {
+            val left = holder.leftSide as? Chest
+            val right = holder.rightSide as? Chest
+            listOfNotNull(left?.block, right?.block)
+        } else {
+            listOf(block)
+        }
+        addAccessor(sender, blocks, player)
         return true
     }
 
-    private fun addAccessor(sender: Player, block: Block, accessor: OfflinePlayer) {
+    private fun addAccessor(sender: Player, blocks: List<Block>, accessor: OfflinePlayer) {
         plugin.server.scheduler.runTaskAsynchronously(plugin, Runnable {
             val playerService = plugin.services.playerService
             val mfPlayer = playerService.getPlayer(sender)
@@ -128,7 +162,8 @@ class MfAccessorsAddCommand(private val plugin: MedievalFactions) : CommandExecu
                     return@Runnable
                 }
             val lockService = plugin.services.lockService
-            val lockedBlock = lockService.getLockedBlock(MfBlockPosition.fromBukkitBlock(block))
+            val lockedBlocks = blocks.mapNotNull { lockService.getLockedBlock(MfBlockPosition.fromBukkitBlock(it)) }
+            val lockedBlock = lockedBlocks.firstOrNull()
             if (lockedBlock == null) {
                 sender.sendMessage("$RED${plugin.language["CommandAccessorsAddBlockNotLocked"]}")
                 return@Runnable
