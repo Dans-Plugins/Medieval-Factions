@@ -12,6 +12,12 @@ import dev.forkhandles.result4k.onFailure
 import org.bukkit.ChatColor.GREEN
 import org.bukkit.ChatColor.RED
 import org.bukkit.block.Block
+import org.bukkit.block.BlockFace.DOWN
+import org.bukkit.block.BlockFace.UP
+import org.bukkit.block.Chest
+import org.bukkit.block.DoubleChest
+import org.bukkit.block.data.Bisected
+import org.bukkit.block.data.Bisected.Half.BOTTOM
 import org.bukkit.block.data.type.Door
 import org.bukkit.block.data.type.TrapDoor
 import org.bukkit.entity.Player
@@ -87,7 +93,23 @@ class PlayerInteractListener(private val plugin: MedievalFactions) : Listener {
             return
         }
         val lockService = plugin.services.lockService
-        val lockedBlock = lockService.getLockedBlock(MfBlockPosition.fromBukkitBlock(clickedBlock))
+        val blockData = clickedBlock.blockData
+        val holder = (clickedBlock.state as? Chest)?.inventory?.holder
+        val blocks = if (blockData is Bisected) {
+            if (blockData.half == BOTTOM) {
+                listOf(clickedBlock, clickedBlock.getRelative(UP))
+            } else {
+                listOf(clickedBlock, clickedBlock.getRelative(DOWN))
+            }
+        } else if (holder is DoubleChest) {
+            val left = holder.leftSide as? Chest
+            val right = holder.rightSide as? Chest
+            listOfNotNull(left?.block, right?.block)
+        } else {
+            listOf(clickedBlock)
+        }
+        val lockedBlocks = blocks.mapNotNull { lockService.getLockedBlock(MfBlockPosition.fromBukkitBlock(it)) }
+        val lockedBlock = lockedBlocks.firstOrNull()
         if (lockedBlock != null) {
             if (event.player.uniqueId.toString() !in (lockedBlock.accessors + lockedBlock.playerId).map(MfPlayerId::value)) {
                 if (mfPlayer.isBypassEnabled && event.player.hasPermission("mf.bypass")) {
@@ -129,6 +151,21 @@ class PlayerInteractListener(private val plugin: MedievalFactions) : Listener {
     }
 
     private fun lock(player: Player, block: Block) {
+        val blockData = block.blockData
+        val holder = (block.state as? Chest)?.inventory?.holder
+        val blocks = if (blockData is Bisected) {
+            if (blockData.half == BOTTOM) {
+                listOf(block, block.getRelative(UP))
+            } else {
+                listOf(block, block.getRelative(DOWN))
+            }
+        } else if (holder is DoubleChest) {
+            val left = holder.leftSide as? Chest
+            val right = holder.rightSide as? Chest
+            listOfNotNull(left?.block, right?.block)
+        } else {
+            listOf(block)
+        }
         plugin.server.scheduler.runTaskAsynchronously(plugin, Runnable {
             val playerService = plugin.services.playerService
             val mfPlayer = playerService.getPlayer(player) ?: playerService.save(MfPlayer(plugin, player)).onFailure {
@@ -149,14 +186,14 @@ class PlayerInteractListener(private val plugin: MedievalFactions) : Listener {
                 return@Runnable
             }
             val lockService = plugin.services.lockService
-            val blockPosition = MfBlockPosition.fromBukkitBlock(block)
-            val existingLock = lockService.getLockedBlock(blockPosition)
+            val lockedBlocks = blocks.mapNotNull { lockService.getLockedBlock(MfBlockPosition.fromBukkitBlock(it)) }
+            val existingLock = lockedBlocks.firstOrNull()
             if (existingLock != null) {
                 val existingLockOwner = playerService.getPlayer(existingLock.playerId)
                 player.sendMessage("$RED${plugin.language["BlockLockAlreadyLocked", existingLockOwner?.toBukkit()?.name ?: plugin.language["UnknownPlayer"]]}")
                 return@Runnable
             }
-            lockService.lock(blockPosition, claim, mfPlayer).onFailure {
+            lockService.lock(MfBlockPosition.fromBukkitBlock(block), claim, mfPlayer).onFailure {
                 player.sendMessage("$RED${plugin.language["BlockLockFailedToSaveLockedBlock"]}")
                 plugin.logger.log(SEVERE, "Failed to save locked block: ${it.reason.message}", it.reason.cause)
                 return@Runnable
@@ -172,6 +209,21 @@ class PlayerInteractListener(private val plugin: MedievalFactions) : Listener {
     }
 
     private fun unlock(player: Player, block: Block) {
+        val blockData = block.blockData
+        val holder = (block.state as? Chest)?.inventory?.holder
+        val blocks = if (blockData is Bisected) {
+            if (blockData.half == BOTTOM) {
+                listOf(block, block.getRelative(UP))
+            } else {
+                listOf(block, block.getRelative(DOWN))
+            }
+        } else if (holder is DoubleChest) {
+            val left = holder.leftSide as? Chest
+            val right = holder.rightSide as? Chest
+            listOfNotNull(left?.block, right?.block)
+        } else {
+            listOf(block)
+        }
         plugin.server.scheduler.runTaskAsynchronously(plugin, Runnable {
             val playerService = plugin.services.playerService
             val mfPlayer = playerService.getPlayer(player) ?: playerService.save(MfPlayer(plugin, player)).onFailure {
@@ -180,7 +232,8 @@ class PlayerInteractListener(private val plugin: MedievalFactions) : Listener {
                 return@Runnable
             }
             val lockService = plugin.services.lockService
-            val lockedBlock = lockService.getLockedBlock(MfBlockPosition.fromBukkitBlock(block))
+            val lockedBlocks = blocks.mapNotNull { lockService.getLockedBlock(MfBlockPosition.fromBukkitBlock(it)) }
+            val lockedBlock = lockedBlocks.firstOrNull()
             if (lockedBlock == null) {
                 player.sendMessage("$RED${plugin.language["BlockUnlockNotLocked"]}")
                 return@Runnable
@@ -215,6 +268,21 @@ class PlayerInteractListener(private val plugin: MedievalFactions) : Listener {
     }
 
     private fun checkAccess(player: Player, block: Block) {
+        val blockData = block.blockData
+        val holder = (block.state as? Chest)?.inventory?.holder
+        val blocks = if (blockData is Bisected) {
+            if (blockData.half == BOTTOM) {
+                listOf(block, block.getRelative(UP))
+            } else {
+                listOf(block, block.getRelative(DOWN))
+            }
+        } else if (holder is DoubleChest) {
+            val left = holder.leftSide as? Chest
+            val right = holder.rightSide as? Chest
+            listOfNotNull(left?.block, right?.block)
+        } else {
+            listOf(block)
+        }
         plugin.server.scheduler.runTaskAsynchronously(plugin, Runnable {
             val playerService = plugin.services.playerService
             val mfPlayer = playerService.getPlayer(player) ?: playerService.save(MfPlayer(plugin, player)).onFailure {
@@ -223,15 +291,21 @@ class PlayerInteractListener(private val plugin: MedievalFactions) : Listener {
                 return@Runnable
             }
             val lockService = plugin.services.lockService
-            val lockedBlock = lockService.getLockedBlock(MfBlockPosition.fromBukkitBlock(block))
+            val lockedBlocks = blocks.mapNotNull { lockService.getLockedBlock(MfBlockPosition.fromBukkitBlock(it)) }
+            val lockedBlock = lockedBlocks.firstOrNull()
+            val interactionService = plugin.services.interactionService
             if (lockedBlock == null) {
                 player.sendMessage("$RED${plugin.language["BlockCheckAccessNotLocked"]}")
+                interactionService.setInteractionStatus(mfPlayer.id, null).onFailure {
+                    player.sendMessage("$RED${plugin.language["BlockCheckAccessFailedToSetInteractionStatus"]}")
+                    plugin.logger.log(SEVERE, "Failed to set interaction status: ${it.reason.message}", it.reason.cause)
+                    return@Runnable
+                }
                 return@Runnable
             }
             plugin.server.scheduler.runTask(plugin, Runnable {
                 player.performCommand("accessors list ${lockedBlock.block.x} ${lockedBlock.block.y} ${lockedBlock.block.z}")
             })
-            val interactionService = plugin.services.interactionService
             interactionService.setInteractionStatus(mfPlayer.id, null).onFailure {
                 player.sendMessage("$RED${plugin.language["BlockCheckAccessFailedToSetInteractionStatus"]}")
                 plugin.logger.log(SEVERE, "Failed to set interaction status: ${it.reason.message}", it.reason.cause)
