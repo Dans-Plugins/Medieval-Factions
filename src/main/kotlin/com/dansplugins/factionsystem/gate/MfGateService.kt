@@ -51,6 +51,18 @@ class MfGateService(
         ServiceFailure(exception.toServiceFailureType(), "Service error: ${exception.message}", exception)
     }
 
+    @JvmName("deleteAllGatesByFactionId")
+    fun deleteAllGates(factionId: MfFactionId) = resultFrom {
+        val result = gateRepo.deleteAll(factionId)
+        val gatesToDelete = gatesById.filterValues { it.factionId == factionId }
+        gatesToDelete.forEach { (key, value) ->
+            gatesById.remove(key, value)
+        }
+        return@resultFrom result
+    }.mapFailure { exception ->
+        ServiceFailure(exception.toServiceFailureType(), "Service error: ${exception.message}", exception)
+    }
+
     @JvmName("getGateCreationContextByPlayerId")
     fun getGateCreationContext(playerId: MfPlayerId) = resultFrom {
         gateCreationContextRepo.getContext(playerId)

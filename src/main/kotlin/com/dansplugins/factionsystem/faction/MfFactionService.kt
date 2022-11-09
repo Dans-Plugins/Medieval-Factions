@@ -134,6 +134,14 @@ class MfFactionService(private val plugin: MedievalFactions, private val reposit
         if (event.isCancelled) {
             throw EventCancelledException("Event cancelled")
         }
+        val claimService = plugin.services.claimService
+        claimService.deleteAllClaims(factionId).onFailure {
+            throw it.reason.cause
+        }
+        val gateService = plugin.services.gateService
+        gateService.deleteAllGates(factionId).onFailure {
+            throw it.reason.cause
+        }
         val result = repository.delete(factionId)
         factionsById.remove(factionId)
         return@resultFrom result

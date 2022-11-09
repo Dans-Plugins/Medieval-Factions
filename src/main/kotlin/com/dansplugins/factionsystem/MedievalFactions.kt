@@ -254,12 +254,14 @@ class MedievalFactions : JavaPlugin() {
             val disbandZeroPowerFactions = config.getBoolean("factions.zeroPowerFactionsGetDisbanded")
             val initialPower = config.getDouble("players.initialPower")
             server.scheduler.runTaskAsynchronously(this, Runnable {
-                val originalOnlinePlayerPower = onlineMfPlayerIds.associateWith { playerService.getPlayer(it)?.power ?: initialPower }
+                val originalOnlinePlayerPower =
+                    onlineMfPlayerIds.associateWith { playerService.getPlayer(it)?.power ?: initialPower }
                 playerService.updatePlayerPower(onlineMfPlayerIds).onFailure {
                     logger.log(SEVERE, "Failed to update player power: ${it.reason.message}", it.reason.cause)
                     return@Runnable
                 }
-                val newOnlinePlayerPower = onlineMfPlayerIds.associateWith { playerService.getPlayer(it)?.power ?: initialPower }
+                val newOnlinePlayerPower =
+                    onlineMfPlayerIds.associateWith { playerService.getPlayer(it)?.power ?: initialPower }
                 server.scheduler.runTask(this, Runnable {
                     onlinePlayers.forEach { onlinePlayer ->
                         val playerId = MfPlayerId.fromBukkitPlayer(onlinePlayer)
@@ -274,11 +276,10 @@ class MedievalFactions : JavaPlugin() {
                 if (disbandZeroPowerFactions) {
                     factionService.factions.forEach { faction ->
                         if (faction.power <= 0.0) {
-                            faction.sendMessage(language["FactionDisbandedZeroPowerNotificationTitle"], language["FactionDisbandedZeroPowerNotificationBody"])
-                            claimService.deleteAllClaims(faction.id).onFailure {
-                                logger.log(SEVERE, "Failed to delete all claims for faction: ${it.reason.message}", it.reason.cause)
-                                return@Runnable
-                            }
+                            faction.sendMessage(
+                                language["FactionDisbandedZeroPowerNotificationTitle"],
+                                language["FactionDisbandedZeroPowerNotificationBody"]
+                            )
                             factionService.delete(faction.id).onFailure {
                                 logger.log(SEVERE, "Failed to delete faction: ${it.reason.message}", it.reason.cause)
                                 return@Runnable
