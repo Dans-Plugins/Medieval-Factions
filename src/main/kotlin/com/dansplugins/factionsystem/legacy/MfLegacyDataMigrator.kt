@@ -112,6 +112,8 @@ class MfLegacyDataMigrator(private val plugin: MedievalFactions) {
                 0,
                 powerRecord?.powerLevel?.toDoubleOrNull()
                     ?: plugin.config.getDouble("players.initialPower"),
+                powerRecord?.powerLevel?.toDoubleOrNull()
+                    ?: plugin.config.getDouble("players.initialPower"),
                 false,
                 null
             )).onFailure {

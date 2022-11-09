@@ -56,6 +56,7 @@ import com.zaxxer.hikari.HikariConfig
 import com.zaxxer.hikari.HikariDataSource
 import dev.forkhandles.result4k.onFailure
 import net.md_5.bungee.api.ChatColor
+import net.md_5.bungee.api.ChatColor.GREEN
 import net.md_5.bungee.api.ChatMessageType.ACTION_BAR
 import net.md_5.bungee.api.chat.TextComponent
 import org.bstats.bukkit.Metrics
@@ -74,6 +75,8 @@ import java.time.Instant
 import java.time.LocalTime
 import java.util.logging.Level.SEVERE
 import javax.sql.DataSource
+import kotlin.math.floor
+import kotlin.math.roundToInt
 
 class MedievalFactions : JavaPlugin() {
 
@@ -247,10 +250,27 @@ class MedievalFactions : JavaPlugin() {
 
         server.scheduler.scheduleSyncRepeatingTask(this, {
             val onlinePlayers = server.onlinePlayers
-            val onlineMfPlayerIds = onlinePlayers.map { MfPlayerId(it.uniqueId.toString()) }
+            val onlineMfPlayerIds = onlinePlayers.map(MfPlayerId.Companion::fromBukkitPlayer)
             val disbandZeroPowerFactions = config.getBoolean("factions.zeroPowerFactionsGetDisbanded")
+            val initialPower = config.getDouble("players.initialPower")
             server.scheduler.runTaskAsynchronously(this, Runnable {
-                playerService.updatePlayerPower(onlineMfPlayerIds)
+                val originalOnlinePlayerPower = onlineMfPlayerIds.associateWith { playerService.getPlayer(it)?.power ?: initialPower }
+                playerService.updatePlayerPower(onlineMfPlayerIds).onFailure {
+                    logger.log(SEVERE, "Failed to update player power: ${it.reason.message}", it.reason.cause)
+                    return@Runnable
+                }
+                val newOnlinePlayerPower = onlineMfPlayerIds.associateWith { playerService.getPlayer(it)?.power ?: initialPower }
+                server.scheduler.runTask(this, Runnable {
+                    onlinePlayers.forEach { onlinePlayer ->
+                        val playerId = MfPlayerId.fromBukkitPlayer(onlinePlayer)
+                        val newPower = newOnlinePlayerPower[playerId] ?: initialPower
+                        val originalPower = originalOnlinePlayerPower[playerId] ?: initialPower
+                        val powerIncrease = floor(newPower).roundToInt() - floor(originalPower).roundToInt()
+                        if (powerIncrease > 0) {
+                            onlinePlayer.sendMessage("$GREEN${language["PowerIncreased", powerIncrease.toString()]}")
+                        }
+                    }
+                })
                 if (disbandZeroPowerFactions) {
                     factionService.factions.forEach { faction ->
                         if (faction.power <= 0.0) {
@@ -267,7 +287,7 @@ class MedievalFactions : JavaPlugin() {
                     }
                 }
             })
-        }, (60 - LocalTime.now().minute) * 60 * 20L, 72000L)
+        }, (15 - (LocalTime.now().minute % 15)) * 60 * 20L, 18000L)
         server.scheduler.scheduleSyncRepeatingTask(this, {
             val gates = gateService.gates
             gates.filter(MfGate::shouldOpen).forEach(MfGate::open)
