@@ -9,6 +9,7 @@ data class MfPlayer(
     val id: MfPlayerId,
     val version: Int = 0,
     val power: Double = 0.0,
+    val powerAtLogout: Double = 0.0,
     val isBypassEnabled: Boolean = false,
     val chatChannel: MfFactionChatChannel? = null
 ) {
@@ -19,19 +20,22 @@ data class MfPlayer(
         id: MfPlayerId
     ): this(
         id,
-        power = plugin.config.getDouble("players.initialPower")
+        power = plugin.config.getDouble("players.initialPower"),
+        powerAtLogout = plugin.config.getDouble("players.initialPower")
     )
 
     constructor(
         player: OfflinePlayer,
         version: Int = 0,
         power: Double = 0.0,
+        powerOnLogout: Double = power,
         isBypassEnabled: Boolean = false,
         chatChannel: MfFactionChatChannel? = null
     ): this(
         MfPlayerId.fromBukkitPlayer(player),
         version,
         power,
+        powerOnLogout,
         isBypassEnabled,
         chatChannel
     )
@@ -41,7 +45,8 @@ data class MfPlayer(
         player: OfflinePlayer
     ): this(
         MfPlayerId.fromBukkitPlayer(player),
-        power = plugin.config.getDouble("players.initialPower")
+        power = plugin.config.getDouble("players.initialPower"),
+        powerAtLogout = plugin.config.getDouble("players.initialPower")
     )
 
 }

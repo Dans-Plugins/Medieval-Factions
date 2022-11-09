@@ -25,10 +25,12 @@ class JooqMfPlayerRepository(private val plugin: MedievalFactions, private val d
             .set(MF_PLAYER.ID, player.id.value)
             .set(MF_PLAYER.VERSION, 1)
             .set(MF_PLAYER.POWER, player.power)
+            .set(MF_PLAYER.POWER_AT_LOGOUT, player.powerAtLogout)
             .set(MF_PLAYER.BYPASS_ENABLED, player.isBypassEnabled)
             .set(MF_PLAYER.CHAT_CHANNEL, player.chatChannel?.name)
             .onConflict(MF_PLAYER.ID).doUpdate()
             .set(MF_PLAYER.POWER, player.power)
+            .set(MF_PLAYER.POWER_AT_LOGOUT, player.powerAtLogout)
             .set(MF_PLAYER.BYPASS_ENABLED, player.isBypassEnabled)
             .set(MF_PLAYER.CHAT_CHANNEL, player.chatChannel?.name)
             .set(MF_PLAYER.VERSION, player.version + 1)
@@ -42,7 +44,7 @@ class JooqMfPlayerRepository(private val plugin: MedievalFactions, private val d
     override fun increaseOnlinePlayerPower(onlinePlayerIds: List<MfPlayerId>) {
         val maxPower = plugin.config.getDouble("players.maxPower")
         val hoursToReachMax = plugin.config.getDouble("players.hoursToReachMaxPower")
-        val timeIncrementHours = 1
+        val timeIncrementHours = 0.25
         dsl.update(MF_PLAYER)
             .set(MF_PLAYER.POWER, least(value(maxPower), greatest(value(0.0),
                 value((hoursToReachMax * 2) + timeIncrementHours)
@@ -63,16 +65,17 @@ class JooqMfPlayerRepository(private val plugin: MedievalFactions, private val d
             )))
             .set(MF_PLAYER.VERSION, MF_PLAYER.VERSION.plus(1))
             .where(MF_PLAYER.ID.`in`(onlinePlayerIds.map { it.value }))
+            .and(MF_PLAYER.POWER.lt(maxPower))
             .execute()
     }
 
     override fun decreaseOfflinePlayerPower(onlinePlayerIds: List<MfPlayerId>) {
         val maxPower = plugin.config.getDouble("players.maxPower")
         val hoursToReachMin = plugin.config.getDouble("players.hoursToReachMinPower")
-        val timeIncrementHours = 1
+        val timeIncrementHours = 0.25
         dsl.update(MF_PLAYER)
             .set(MF_PLAYER.POWER, least(value(maxPower), greatest(value(0.0),
-                MF_PLAYER.POWER.div(maxPower)
+                least(MF_PLAYER.POWER, MF_PLAYER.POWER_AT_LOGOUT, maxPower).div(MF_PLAYER.POWER_AT_LOGOUT)
                     .minus(1)
                     .div(-1)
                     .pow(0.25)
@@ -82,10 +85,12 @@ class JooqMfPlayerRepository(private val plugin: MedievalFactions, private val d
                     .pow(4)
                     .times(-1)
                     .plus(1)
-                    .times(maxPower)
+                    .times(MF_PLAYER.POWER_AT_LOGOUT)
             )))
             .set(MF_PLAYER.VERSION, MF_PLAYER.VERSION.plus(1))
             .where(MF_PLAYER.ID.notIn(onlinePlayerIds.map { it.value }))
+            .and(MF_PLAYER.POWER_AT_LOGOUT.gt(0.0))
+            .and(MF_PLAYER.POWER.gt(0.0))
             .execute()
     }
 
@@ -93,6 +98,7 @@ class JooqMfPlayerRepository(private val plugin: MedievalFactions, private val d
         MfPlayerId(id),
         version,
         power,
+        powerAtLogout,
         bypassEnabled,
         chatChannel?.let(MfFactionChatChannel::valueOf)
     )
