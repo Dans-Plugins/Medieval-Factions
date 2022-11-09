@@ -73,6 +73,12 @@ class JooqMfGateRepository(
             .execute()
     }
 
+    override fun deleteAll(factionId: MfFactionId) {
+        dsl.deleteFrom(MF_GATE)
+            .where(MF_GATE.FACTION_ID.eq(factionId.value))
+            .execute()
+    }
+
     private fun MfGateRecord.toDomain() = MfGate(
         plugin,
         id.let(::MfGateId),

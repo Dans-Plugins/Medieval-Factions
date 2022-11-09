@@ -1,7 +1,6 @@
 package com.dansplugins.factionsystem.listener
 
 import com.dansplugins.factionsystem.MedievalFactions
-import com.dansplugins.factionsystem.claim.MfClaimService
 import com.dansplugins.factionsystem.faction.MfFaction
 import com.dansplugins.factionsystem.faction.MfFactionService
 import com.dansplugins.factionsystem.player.MfPlayer
@@ -31,7 +30,6 @@ class PlayerDeathListener(private val plugin: MedievalFactions) : Listener {
         plugin.server.scheduler.runTaskAsynchronously(plugin, Runnable {
             val playerService = plugin.services.playerService
             val factionService = plugin.services.factionService
-            val claimService = plugin.services.claimService
 
             val victim = event.entity
             val victimMfPlayer = playerService.getPlayer(victim) ?: MfPlayer(plugin, victim)
@@ -44,7 +42,7 @@ class PlayerDeathListener(private val plugin: MedievalFactions) : Listener {
                 )
                 val victimFaction = factionService.getFaction(victimMfPlayer.id)
                 if (disbandZeroPowerFactions && victimFaction != null && victimFaction.power <= 0.0) {
-                    disband(victimFaction, claimService, factionService)
+                    disband(victimFaction, factionService)
                 }
             }
 
@@ -59,7 +57,7 @@ class PlayerDeathListener(private val plugin: MedievalFactions) : Listener {
                 )
                 val killerFaction = factionService.getFaction(killerMfPlayer.id)
                 if (disbandZeroPowerFactions && killerFaction != null && killerFaction.power <= 0.0) {
-                    disband(killerFaction, claimService, factionService)
+                    disband(killerFaction, factionService)
                 }
             }
         })
@@ -67,17 +65,12 @@ class PlayerDeathListener(private val plugin: MedievalFactions) : Listener {
 
     private fun disband(
         killerFaction: MfFaction,
-        claimService: MfClaimService,
         factionService: MfFactionService
     ) {
         killerFaction.sendMessage(
             plugin.language["FactionDisbandedZeroPowerNotificationTitle"],
             plugin.language["FactionDisbandedZeroPowerNotificationBody"]
         )
-        claimService.deleteAllClaims(killerFaction.id).onFailure {
-            plugin.logger.log(SEVERE, "Failed to delete all claims for faction: ${it.reason.message}", it.reason.cause)
-            return
-        }
         factionService.delete(killerFaction.id).onFailure {
             plugin.logger.log(SEVERE, "Failed to delete faction: ${it.reason.message}", it.reason.cause)
             return
