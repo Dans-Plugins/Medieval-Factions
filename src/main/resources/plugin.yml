@@ -22,6 +22,7 @@ softdepend:
 - rpk-lock-lib-bukkit
 - rpk-selection-lib-bukkit
 - Mailboxes
+- Multiverse-Core
 description: Allows players to organise themselves into feudal, diplomatic, lawful groups akin to nations.
 commands:
   faction:
@@ -149,6 +150,9 @@ permissions:
     default: true
   mf.info.other:
     description: Allows viewing information about other players' factions
+    default: true
+  mf.members:
+    description: Allows viewing the members of a faction
     default: true
   mf.role.view:
     description: Allows viewing roles
