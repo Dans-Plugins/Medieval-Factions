@@ -151,6 +151,9 @@ permissions:
   mf.info.other:
     description: Allows viewing information about other players' factions
     default: true
+  mf.members:
+    description: Allows viewing the members of a faction
+    default: true
   mf.role.view:
     description: Allows viewing roles
     default: true
