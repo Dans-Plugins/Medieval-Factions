@@ -22,6 +22,7 @@ softdepend:
 - rpk-lock-lib-bukkit
 - rpk-selection-lib-bukkit
 - Mailboxes
+- Multiverse-Core
 description: Allows players to organise themselves into feudal, diplomatic, lawful groups akin to nations.
 commands:
   faction:
