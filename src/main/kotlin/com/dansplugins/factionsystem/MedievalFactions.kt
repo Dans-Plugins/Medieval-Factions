@@ -64,6 +64,7 @@ import org.bukkit.NamespacedKey
 import org.bukkit.boss.BarColor
 import org.bukkit.boss.BarStyle
 import org.bukkit.entity.Player
+import org.bukkit.event.player.AsyncPlayerChatEvent
 import org.bukkit.plugin.java.JavaPlugin
 import org.flywaydb.core.Flyway
 import org.jooq.SQLDialect
@@ -239,6 +240,9 @@ class MedievalFactions : JavaPlugin() {
             PlayerTeleportListener(this),
             PotionSplashListener(this)
         )
+        if (isChatPreviewEventAvailable()) {
+            registerListeners(AsyncPlayerChatPreviewListener(this))
+        }
 
         getCommand("faction")?.setExecutor(MfFactionCommand(this))
         getCommand("lock")?.setExecutor(MfLockCommand(this))
@@ -392,6 +396,13 @@ class MedievalFactions : JavaPlugin() {
         if (server.pluginManager.getPlugin("rpk-lock-lib-bukkit") != null) {
             MfRpkLockService(this)
         }
+    }
+
+    private fun isChatPreviewEventAvailable() = try {
+        val previewClass = Class.forName("org.bukkit.event.player.AsyncPlayerChatPreviewEvent");
+        AsyncPlayerChatEvent::class.java.isAssignableFrom(previewClass)
+    } catch (exception: ClassNotFoundException) {
+        false
     }
 
 }
