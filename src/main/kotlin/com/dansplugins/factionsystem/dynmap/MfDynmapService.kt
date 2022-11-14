@@ -33,6 +33,7 @@ class MfDynmapService(private val plugin: MedievalFactions) {
         factionMarkersByFactionId[faction.id]?.forEach { marker -> marker.deleteMarker() }
         val claimService = plugin.services.claimService
         val claims = claimService.getClaims(faction.id)
+        val factionInfo = buildFactionInfo(faction)
         claims.groupBy { it.worldId }.forEach { (worldId, worldClaims) ->
             val world = plugin.server.getWorld(worldId)
             if (world != null) {
@@ -51,7 +52,7 @@ class MfDynmapService(private val plugin: MedievalFactions) {
                     val color = Integer.decode(faction.flags[plugin.flags.color])
                     areaMarker.setFillStyle(0.0, color)
                     areaMarker.setLineStyle(1, 1.0, color)
-                    areaMarker.description = buildFactionInfo(faction)
+                    areaMarker.description = factionInfo
                     val factionMarkers = factionMarkersByFactionId[faction.id] ?: listOf()
                     factionMarkersByFactionId[faction.id] = factionMarkers + areaMarker
                 }
@@ -68,7 +69,7 @@ class MfDynmapService(private val plugin: MedievalFactions) {
                     val color = Integer.decode(faction.flags[plugin.flags.color])
                     areaMarker.setFillStyle(0.3, color)
                     areaMarker.setLineStyle(0, 0.0, color)
-                    areaMarker.description = buildFactionInfo(faction)
+                    areaMarker.description = factionInfo
                     val factionMarkers = factionMarkersByFactionId[faction.id] ?: listOf()
                     factionMarkersByFactionId[faction.id] = factionMarkers + areaMarker
                 }
@@ -97,7 +98,7 @@ class MfDynmapService(private val plugin: MedievalFactions) {
                     val color = Integer.decode(faction.flags[plugin.flags.color])
                     areaMarker.setFillStyle(0.0, color)
                     areaMarker.setLineStyle(4, 1.0, color)
-                    areaMarker.description = buildFactionInfo(faction)
+                    areaMarker.description = factionInfo
                     val factionMarkers = factionMarkersByFactionId[faction.id] ?: listOf()
                     factionMarkersByFactionId[faction.id] = factionMarkers + areaMarker
                 }
@@ -194,6 +195,7 @@ class MfDynmapService(private val plugin: MedievalFactions) {
         val factionService = plugin.services.factionService
         val relationshipService = plugin.services.factionRelationshipService
         val claimService = plugin.services.claimService
+        val playerService = plugin.services.playerService
         return buildString {
             append("<h1>${faction.name}</h1>")
             append("<h2>Description</h2>")
@@ -203,7 +205,7 @@ class MfDynmapService(private val plugin: MedievalFactions) {
                 faction.members.groupBy { it.role }.map { (role, members) ->
                     """
                         <h3>${role.name} (${faction.members.count { it.role.id == role.id }})</h3>
-                        ${members.map { member -> member.playerId.toBukkitPlayer().name }.joinToString()}
+                        ${members.joinToString { member -> playerService.getPlayer(member.playerId)?.name ?: plugin.language["UnknownPlayer"] }}
                     """.trimIndent()
                 }.joinToString("<br />")
             )

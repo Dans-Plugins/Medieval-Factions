@@ -8,6 +8,7 @@ data class MfPlayer(
     @get:JvmName("getId")
     val id: MfPlayerId,
     val version: Int = 0,
+    val name: String? = null,
     val power: Double = 0.0,
     val powerAtLogout: Double = 0.0,
     val isBypassEnabled: Boolean = false,
@@ -17,9 +18,11 @@ data class MfPlayer(
 
     constructor(
         plugin: MedievalFactions,
-        id: MfPlayerId
+        id: MfPlayerId,
+        name: String?
     ): this(
         id,
+        name = name,
         power = plugin.config.getDouble("players.initialPower"),
         powerAtLogout = plugin.config.getDouble("players.initialPower")
     )
@@ -34,6 +37,7 @@ data class MfPlayer(
     ): this(
         MfPlayerId.fromBukkitPlayer(player),
         version,
+        player.name,
         power,
         powerOnLogout,
         isBypassEnabled,
@@ -45,6 +49,7 @@ data class MfPlayer(
         player: OfflinePlayer
     ): this(
         MfPlayerId.fromBukkitPlayer(player),
+        name = player.name,
         power = plugin.config.getDouble("players.initialPower"),
         powerAtLogout = plugin.config.getDouble("players.initialPower")
     )

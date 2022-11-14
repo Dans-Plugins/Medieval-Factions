@@ -133,7 +133,7 @@ class MfFactionRelationshipService(private val plugin: MedievalFactions, private
             .filter { it.type == AT_WAR && (it.factionId == factionId || it.targetId == factionId) }
             .map {
                 if (it.factionId == factionId) it.targetId else it.factionId
-            }
+            }.toSet().toList()
     }
 
     private fun Exception.toServiceFailureType(): ServiceFailureType {
