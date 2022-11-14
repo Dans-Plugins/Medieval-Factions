@@ -35,26 +35,24 @@ class PlayerMoveListener(private val plugin: MedievalFactions) : Listener {
                 }
             val playerFaction = factionService.getFaction(mfPlayer.id)
             if (playerFaction != null) {
-                plugin.server.scheduler.runTaskAsynchronously(plugin, Runnable claimLand@{
-                    if (newChunkFaction == null && playerFaction.autoclaim) {
-                        if (plugin.config.getBoolean("factions.limitLand") && claimService.getClaims(playerFaction.id).size + 1 > playerFaction.power) {
-                            event.player.sendMessage("$RED${plugin.language["AutoclaimPowerLimitReached"]}")
-                            val updatedFaction = factionService.save(playerFaction.copy(autoclaim = false)).onFailure {
-                                plugin.logger.log(SEVERE, "Failed to save faction: ${it.reason.message}", it.reason.cause)
-                                return@claimLand
-                            }
-                            updatedFaction.sendMessage(
-                                plugin.language["AutoclaimDisabledNotificationTitle"],
-                                plugin.language["AutoclaimDisabledNotificationBody"]
-                            )
-                            return@claimLand
+                if (newChunkFaction == null && playerFaction.autoclaim) {
+                    if (plugin.config.getBoolean("factions.limitLand") && claimService.getClaims(playerFaction.id).size + 1 > playerFaction.power) {
+                        event.player.sendMessage("$RED${plugin.language["AutoclaimPowerLimitReached"]}")
+                        val updatedFaction = factionService.save(playerFaction.copy(autoclaim = false)).onFailure {
+                            plugin.logger.log(SEVERE, "Failed to save faction: ${it.reason.message}", it.reason.cause)
+                            return@Runnable
                         }
-                        claimService.save(MfClaimedChunk(to.chunk, playerFaction.id)).onFailure {
-                            plugin.logger.log(SEVERE, "Failed to save chunk claim: ${it.reason.message}", it.reason.cause)
-                            return@claimLand
-                        }
+                        updatedFaction.sendMessage(
+                            plugin.language["AutoclaimDisabledNotificationTitle"],
+                            plugin.language["AutoclaimDisabledNotificationBody"]
+                        )
+                        return@Runnable
                     }
-                })
+                    claimService.save(MfClaimedChunk(to.chunk, playerFaction.id)).onFailure {
+                        plugin.logger.log(SEVERE, "Failed to save chunk claim: ${it.reason.message}", it.reason.cause)
+                        return@Runnable
+                    }
+                }
             }
             plugin.server.scheduler.runTask(plugin, Runnable {
                 val title = if (newChunkFaction != null) {
