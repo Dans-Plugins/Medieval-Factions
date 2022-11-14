@@ -8,9 +8,11 @@ import com.dansplugins.factionsystem.failure.ServiceFailureType.CONFLICT
 import com.dansplugins.factionsystem.failure.ServiceFailureType.GENERAL
 import dev.forkhandles.result4k.Result4k
 import dev.forkhandles.result4k.mapFailure
+import dev.forkhandles.result4k.onFailure
 import dev.forkhandles.result4k.resultFrom
 import org.bukkit.OfflinePlayer
 import java.util.concurrent.ConcurrentHashMap
+import java.util.logging.Level.SEVERE
 import kotlin.collections.set
 
 class MfPlayerService(private val plugin: MedievalFactions, private val playerRepository: MfPlayerRepository) {
@@ -21,6 +23,18 @@ class MfPlayerService(private val plugin: MedievalFactions, private val playerRe
         plugin.logger.info("Loading players...")
         val startTime = System.currentTimeMillis()
         playersById.putAll(playerRepository.getPlayers().associateBy(MfPlayer::id))
+        val playersToUpdate = playersById.values
+            .associateWith(MfPlayer::toBukkit)
+            .filter { (mfPlayer, bukkitPlayer) -> bukkitPlayer.name != mfPlayer.name }
+        playersToUpdate.forEach { (mfPlayer, bukkitPlayer) ->
+            val updatedPlayer = resultFrom {
+                playerRepository.upsert(mfPlayer.copy(name = bukkitPlayer.name))
+            }.onFailure {
+                plugin.logger.log(SEVERE, "Failed to update player: ${it.reason.message}", it.reason.cause)
+                return@forEach
+            }
+            playersById[updatedPlayer.id] = updatedPlayer
+        }
         plugin.logger.info("${playersById.size} players loaded (${System.currentTimeMillis() - startTime}ms)")
     }
 

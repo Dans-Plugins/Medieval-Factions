@@ -61,9 +61,9 @@ import net.md_5.bungee.api.ChatMessageType.ACTION_BAR
 import net.md_5.bungee.api.chat.TextComponent
 import org.bstats.bukkit.Metrics
 import org.bukkit.NamespacedKey
-import org.bukkit.boss.BarColor
-import org.bukkit.boss.BarStyle
+import org.bukkit.boss.KeyedBossBar
 import org.bukkit.entity.Player
+import org.bukkit.event.player.AsyncPlayerChatEvent
 import org.bukkit.plugin.java.JavaPlugin
 import org.flywaydb.core.Flyway
 import org.jooq.SQLDialect
@@ -239,6 +239,9 @@ class MedievalFactions : JavaPlugin() {
             PlayerTeleportListener(this),
             PotionSplashListener(this)
         )
+        if (isChatPreviewEventAvailable()) {
+            registerListeners(AsyncPlayerChatPreviewListener(this))
+        }
 
         getCommand("faction")?.setExecutor(MfFactionCommand(this))
         getCommand("lock")?.setExecutor(MfLockCommand(this))
@@ -302,22 +305,28 @@ class MedievalFactions : JavaPlugin() {
             gateService.getGatesByStatus(OPENING).forEach(MfGate::continueOpening)
         }, 20L, 20L)
 
+        val bossBars = mutableListOf<KeyedBossBar>()
+        server.bossBars.forEach { bossBar ->
+            if (bossBar.key.namespace.equals(name, ignoreCase = true)) {
+                if (bossBar.key.key.startsWith("duel_")) {
+                    val duelId = MfDuelId(bossBar.key.key.replaceFirst("duel_", ""))
+                    val duel = duelService.getDuel(duelId)
+                    if (duel == null) {
+                        bossBars.add(bossBar)
+                    }
+                }
+            }
+        }
+        bossBars.forEach { bossBar ->
+            bossBar.removeAll()
+            server.removeBossBar(bossBar.key)
+        }
+
         server.scheduler.scheduleSyncRepeatingTask(this, {
             duelService.duels.forEach { duel ->
                 if (Instant.now().isBefore(duel.endTime)) {
                     val bar = server.getBossBar(NamespacedKey(this, "duel_${duel.id.value}"))
-                        ?: server.createBossBar(
-                            NamespacedKey(this, "duel_${duel.id.value}"),
-                            (duel.challengerId.toBukkitPlayer().name ?: language["UnknownPlayer"]) +
-                                    " vs " +
-                                    (duel.challengedId.toBukkitPlayer().name ?: language["UnknownPlayer"]),
-                            BarColor.WHITE,
-                            BarStyle.SEGMENTED_20
-                        ).also { bar ->
-                            duel.challengerId.toBukkitPlayer().player?.let { bar.addPlayer(it) }
-                            duel.challengedId.toBukkitPlayer().player?.let { bar.addPlayer(it) }
-                        }
-                    bar.progress = Duration.between(Instant.now(), duel.endTime).toMillis()
+                    bar?.progress = Duration.between(Instant.now(), duel.endTime).toMillis()
                         .toDouble() / Duration.parse(config.getString("duels.duration")).toMillis().toDouble()
                 } else {
                     server.getBossBar(NamespacedKey(this, "duel_${duel.id.value}"))?.removeAll()
@@ -392,6 +401,13 @@ class MedievalFactions : JavaPlugin() {
         if (server.pluginManager.getPlugin("rpk-lock-lib-bukkit") != null) {
             MfRpkLockService(this)
         }
+    }
+
+    private fun isChatPreviewEventAvailable() = try {
+        val previewClass = Class.forName("org.bukkit.event.player.AsyncPlayerChatPreviewEvent");
+        AsyncPlayerChatEvent::class.java.isAssignableFrom(previewClass)
+    } catch (exception: ClassNotFoundException) {
+        false
     }
 
 }

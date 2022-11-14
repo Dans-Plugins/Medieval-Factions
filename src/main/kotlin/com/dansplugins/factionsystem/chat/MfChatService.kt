@@ -50,7 +50,7 @@ class MfChatService(private val plugin: MedievalFactions, private val repo: MfCh
                     }
                 }.flatMap { it.members }).mapNotNull { it.playerId.toBukkitPlayer().player }
         }
-        recipients.forEach { it.sendMessage(bukkitPlayer.uniqueId, formattedMessage) }
+        recipients.forEach { it.sendMessage(formattedMessage) }
         plugin.server.scheduler.runTaskAsynchronously(plugin, Runnable {
             repo.insert(MfChatChannelMessage(Instant.now(), mfPlayer.id, faction.id, channel, message))
         })
