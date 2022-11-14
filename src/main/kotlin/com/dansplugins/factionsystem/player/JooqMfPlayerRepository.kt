@@ -24,11 +24,13 @@ class JooqMfPlayerRepository(private val plugin: MedievalFactions, private val d
         val rowCount = dsl.insertInto(MF_PLAYER)
             .set(MF_PLAYER.ID, player.id.value)
             .set(MF_PLAYER.VERSION, 1)
+            .set(MF_PLAYER.NAME, player.name)
             .set(MF_PLAYER.POWER, player.power)
             .set(MF_PLAYER.POWER_AT_LOGOUT, player.powerAtLogout)
             .set(MF_PLAYER.BYPASS_ENABLED, player.isBypassEnabled)
             .set(MF_PLAYER.CHAT_CHANNEL, player.chatChannel?.name)
             .onConflict(MF_PLAYER.ID).doUpdate()
+            .set(MF_PLAYER.NAME, player.name)
             .set(MF_PLAYER.POWER, player.power)
             .set(MF_PLAYER.POWER_AT_LOGOUT, player.powerAtLogout)
             .set(MF_PLAYER.BYPASS_ENABLED, player.isBypassEnabled)
@@ -97,6 +99,7 @@ class JooqMfPlayerRepository(private val plugin: MedievalFactions, private val d
     private fun MfPlayerRecord.toDomain() = MfPlayer(
         MfPlayerId(id),
         version,
+        name,
         power,
         powerAtLogout,
         bypassEnabled,
