@@ -25,9 +25,7 @@ class AsyncPlayerChatPreviewListener(private val plugin: MedievalFactions) : Lis
                 return
             }
         val faction = factionService.getFaction(mfPlayer.id) ?: return
-        if (mfPlayer.chatChannel != null) {
-            event.isCancelled = true
-        } else if (isDefaultChatFormattingEnabled) {
+        if (isDefaultChatFormattingEnabled) {
             event.format = "${SpigotChatColor.WHITE}[${SpigotChatColor.of(faction.flags[plugin.flags.color])}${faction.prefix ?: faction.name}${SpigotChatColor.WHITE}] %s: %s"
         }
     }
