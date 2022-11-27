@@ -1,6 +1,8 @@
 package com.dansplugins.factionsystem.command.faction.unclaim
 
 import com.dansplugins.factionsystem.MedievalFactions
+import com.dansplugins.factionsystem.claim.MfClaimedChunk
+import com.dansplugins.factionsystem.faction.MfFaction
 import com.dansplugins.factionsystem.player.MfPlayer
 import dev.forkhandles.result4k.onFailure
 import org.bukkit.ChatColor.GREEN
@@ -31,15 +33,18 @@ class MfFactionUnclaimCommand(private val plugin: MedievalFactions) : CommandExe
                     return@Runnable
                 }
             val factionService = plugin.services.factionService
-            val faction = factionService.getFaction(mfPlayer.id)
-            if (faction == null) {
-                sender.sendMessage("$RED${plugin.language["CommandFactionUnclaimMustBeInAFaction"]}")
-                return@Runnable
-            }
-            val role = faction.getRole(mfPlayer.id)
-            if (role == null || !role.hasPermission(faction, plugin.factionPermissions.unclaim)) {
-                sender.sendMessage("$RED${plugin.language["CommandFactionUnclaimNoFactionPermission"]}")
-                return@Runnable
+            var faction: MfFaction? = null
+            if (!mfPlayer.isBypassEnabled) { // skip faction check if in bypass mode
+                faction = factionService.getFaction(mfPlayer.id)
+                if (faction == null) {
+                    sender.sendMessage("$RED${plugin.language["CommandFactionUnclaimMustBeInAFaction"]}")
+                    return@Runnable
+                }
+                val role = faction.getRole(mfPlayer.id)
+                if (role == null || !role.hasPermission(faction, plugin.factionPermissions.unclaim)) {
+                    sender.sendMessage("$RED${plugin.language["CommandFactionUnclaimNoFactionPermission"]}")
+                    return@Runnable
+                }
             }
             val radius = if (args.isNotEmpty()) {
                 args[0].toIntOrNull()
@@ -68,10 +73,19 @@ class MfFactionUnclaimCommand(private val plugin: MedievalFactions) : CommandExe
                     }
                 }
                 plugin.server.scheduler.runTaskAsynchronously(plugin, Runnable saveChunks@{
-                    val claims = chunks.mapNotNull { chunk ->
-                        claimService.getClaim(chunk)
-                    }.filter { claim ->
-                        return@filter claim.factionId.value == faction.id.value
+                    val claims: List<MfClaimedChunk> = if (!mfPlayer.isBypassEnabled) {
+                        chunks.mapNotNull { chunk ->
+                            claimService.getClaim(chunk)
+                        }.filter { claim ->
+                            if (faction == null) {
+                                return@filter false
+                            }
+                            return@filter claim.factionId.value == faction.id.value
+                        }
+                    } else {
+                        chunks.mapNotNull { chunk ->
+                            claimService.getClaim(chunk)
+                        }
                     }
                     if (claims.isEmpty()) {
                         sender.sendMessage("$RED${plugin.language["CommandFactionUnclaimNoUnclaimableChunks"]}")
