@@ -93,7 +93,7 @@ class MfFactionInfoCommand(private val plugin: MedievalFactions) : CommandExecut
                 sender.sendMessage("${BukkitChatColor.RED}${plugin.language["CommandFactionInfoNoFactionPermission"]}")
                 return@Runnable
             }
-            // send player faction info
+            // send name of faction
             sender.sendMessage("${BukkitChatColor.AQUA}${plugin.language["CommandFactionInfoTitle", faction.name]}")
             if (sender.hasPermission("mf.rename") && senderFaction?.id == faction.id && role?.hasPermission(faction, plugin.factionPermissions.changeName) == true) {
                 sender.spigot().sendMessage(TextComponent(plugin.language["CommandFactionInfoSetName"]).apply {
@@ -102,6 +102,8 @@ class MfFactionInfoCommand(private val plugin: MedievalFactions) : CommandExecut
                     clickEvent = ClickEvent(RUN_COMMAND, "/faction set name")
                 })
             }
+
+            // send prefix
             if (faction.prefix != null) {
                 sender.sendMessage("${BukkitChatColor.GRAY}${plugin.language["CommandFactionInfoPrefix", faction.prefix]}")
             } else {
@@ -115,6 +117,8 @@ class MfFactionInfoCommand(private val plugin: MedievalFactions) : CommandExecut
                 })
             }
             sender.sendMessage("${BukkitChatColor.GRAY}${plugin.language["CommandFactionInfoDescription", faction.description]}")
+
+            // send description
             if (sender.hasPermission("mf.desc") && senderFaction?.id == faction.id && role?.hasPermission(faction, plugin.factionPermissions.changeDescription) == true) {
                 sender.spigot().sendMessage(TextComponent(plugin.language["CommandFactionInfoSetDescription"]).apply {
                     color = SpigotChatColor.GREEN
@@ -122,11 +126,15 @@ class MfFactionInfoCommand(private val plugin: MedievalFactions) : CommandExecut
                     clickEvent = ClickEvent(RUN_COMMAND, "/faction set description")
                 })
             }
+
+            // send member information
             sender.sendMessage("${BukkitChatColor.WHITE}${plugin.language["CommandFactionInfoMembersTitle", faction.members.size.toString()]}")
             faction.members.groupBy { faction.getRole(it.playerId) }.forEach { (memberRole, members) ->
                 sender.sendMessage("  ${BukkitChatColor.WHITE}${plugin.language["CommandFactionInfoMembersRoleTitle", memberRole?.name ?: plugin.language["NoRole"]]}")
                 sender.sendMessage("    ${BukkitChatColor.GRAY}${members.joinToString { it.playerId.toBukkitPlayer().name ?: plugin.language["UnknownPlayer"] }}")
             }
+
+            // send invites information
             sender.sendMessage("${BukkitChatColor.WHITE}${plugin.language["CommandFactionInfoInvitesTitle", faction.invites.size.toString()]}")
             sender.sendMessage("  ${BukkitChatColor.GRAY}${faction.invites.joinToString { it.playerId.toBukkitPlayer().name ?: plugin.language["UnknownPlayer"] }}")
             if (sender.hasPermission("mf.invite") && senderFaction?.id == faction.id && role?.hasPermission(faction, plugin.factionPermissions.invite) == true) {
@@ -136,6 +144,28 @@ class MfFactionInfoCommand(private val plugin: MedievalFactions) : CommandExecut
                     clickEvent = ClickEvent(RUN_COMMAND, "/faction invite")
                 })
             }
+
+            // send vassals information
+            val vassals = plugin.services.factionRelationshipService.getVassals(faction.id).mapNotNull(factionService::getFaction)
+            if (vassals.isNotEmpty()) {
+                sender.sendMessage("${BukkitChatColor.WHITE}${plugin.language["CommandFactionInfoVassalsTitle"]}") // TODO: add translation
+                sender.sendMessage("${BukkitChatColor.GRAY}" + vassals.joinToString(transform = MfFaction::name))
+            }
+
+            // send allies information
+            val allies = plugin.services.factionRelationshipService.getAllies(faction.id).mapNotNull(factionService::getFaction)
+            if (allies.isNotEmpty()) {
+                sender.sendMessage("${BukkitChatColor.WHITE}${plugin.language["CommandFactionInfoAlliesTitle"]}") // TODO: add translation
+                sender.sendMessage("${BukkitChatColor.GRAY}" + allies.joinToString(transform = MfFaction::name))
+            }
+
+            // send wars information
+            val atWarWith = plugin.services.factionRelationshipService.getFactionsAtWarWith(faction.id).mapNotNull(factionService::getFaction)
+            if (atWarWith.isNotEmpty()) {
+                sender.sendMessage("${BukkitChatColor.WHITE}${plugin.language["CommandFactionInfoEnemiesTitle"]}") // TODO: add translation
+                sender.sendMessage("${BukkitChatColor.GRAY}" + atWarWith.joinToString(transform = MfFaction::name))
+            }
+
             factionService.fields
                 .filter { field -> field.isVisibleFor(faction.id.value, senderMfPlayer?.id?.value ?: return@filter false) }
                 .forEach { field ->
