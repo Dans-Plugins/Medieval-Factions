@@ -96,11 +96,11 @@ class JooqMfDuelRepository(private val dsl: DSLContext) : MfDuelRepository {
         challengedWorld?.let { worldId ->
             MfPosition(
                 worldId.let(UUID::fromString),
-                challengerX,
-                challengerY,
-                challengerZ,
-                challengerYaw,
-                challengerPitch
+                challengedX,
+                challengedY,
+                challengedZ,
+                challengedYaw,
+                challengedPitch
             )
         }
     )
