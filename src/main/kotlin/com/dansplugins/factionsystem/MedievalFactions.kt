@@ -60,6 +60,7 @@ import net.md_5.bungee.api.ChatColor.GREEN
 import net.md_5.bungee.api.ChatMessageType.ACTION_BAR
 import net.md_5.bungee.api.chat.TextComponent
 import org.bstats.bukkit.Metrics
+import org.bstats.charts.SimplePie
 import org.bukkit.NamespacedKey
 import org.bukkit.boss.KeyedBossBar
 import org.bukkit.entity.Player
@@ -109,7 +110,12 @@ class MedievalFactions : JavaPlugin() {
         saveConfig()
 
         language = Language(this, config.getString("language") ?: "en-US")
-        Metrics(this, 8929)
+        val metrics = Metrics(this, 8929)
+        metrics.addCustomChart(
+            SimplePie("language_used") {
+                config.getString("language")
+            }
+        )
 
         Class.forName("org.h2.Driver")
         val hikariConfig = HikariConfig()
