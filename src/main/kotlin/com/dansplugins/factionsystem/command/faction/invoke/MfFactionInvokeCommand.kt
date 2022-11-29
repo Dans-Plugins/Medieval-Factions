@@ -64,7 +64,7 @@ class MfFactionInvokeCommand(private val plugin: MedievalFactions) : CommandExec
             val reverseAllyRelationships = factionRelationshipService.getRelationships(ally.id, faction.id)
             val isAlly = existingAllyRelationships.any { it.type == ALLY } && reverseAllyRelationships.any { it.type == ALLY }
             val isVassal = existingAllyRelationships.any { it.type == VASSAL } && reverseAllyRelationships.any { it.type == LIEGE }
-            if (isAlly || isVassal) {
+            if (!isAlly && !isVassal) {
                 sender.sendMessage("$RED${plugin.language["CommandFactionInvokeNotAllied", ally.name]}")
                 return@Runnable
             }
