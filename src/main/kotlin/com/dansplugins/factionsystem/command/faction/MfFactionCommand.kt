@@ -129,7 +129,7 @@ class MfFactionCommand(private val plugin: MedievalFactions) : CommandExecutor, 
     private val claimFillAliases = listOf("claimfill", plugin.language["CmdFactionClaimFill"])
     private val bonusPowerAliases = listOf("bonuspower", plugin.language["CmdFactionBonusPower"])
     private val relationshipAliases = listOf("relationship", plugin.language["CmdFactionRelationship"])
-    private val addMemberAliases = listOf("addmember", plugin.language["CmdFactionAddMember"]) // TODO: add translation
+    private val addMemberAliases = listOf("addmember", plugin.language["CmdFactionAddMember"])
 
     private val subcommands = helpAliases +
             createAliases +
