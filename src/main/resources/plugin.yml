@@ -328,6 +328,9 @@ permissions:
   mf.force.flag:
     description: Allows setting flags for other factions
     default: op
+  mf.force.addmember:
+    description: Allows forcefully adding a member to a faction.
+    default: op
   mf.force.*:
     description: Allows all force commands
     default: op
@@ -341,6 +344,7 @@ permissions:
     - mf.force.claim
     - mf.force.unclaim
     - mf.force.flag
+    - mf.force.addmember
   mf.admin:
     description: Admin permission
     default: op

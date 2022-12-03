@@ -98,6 +98,7 @@ class MfFactionHelpCommand(private val plugin: MedievalFactions) : CommandExecut
                 arrayOf(TextComponent(plugin.language["CommandFactionHelpPower"]).apply { color = SpigotChatColor.GRAY }),
                 arrayOf(TextComponent(plugin.language["CommandFactionHelpPowerSet"]).apply { color = SpigotChatColor.GRAY }),
                 arrayOf(TextComponent(plugin.language["CommandFactionHelpUnlock"]).apply { color = SpigotChatColor.GRAY }),
+                arrayOf(TextComponent(plugin.language["CommandFactionHelpAddMember"]).apply { color = SpigotChatColor.GRAY })
             )
         ) { page -> "/faction help ${page + 1}" }
         if (pageNumber !in view.pages.indices) {

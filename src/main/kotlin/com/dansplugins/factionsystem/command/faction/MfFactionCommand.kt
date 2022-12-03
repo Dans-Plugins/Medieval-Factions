@@ -1,6 +1,7 @@
 package com.dansplugins.factionsystem.command.faction
 
 import com.dansplugins.factionsystem.MedievalFactions
+import com.dansplugins.factionsystem.command.faction.addmember.MfFactionAddMemberCommand
 import com.dansplugins.factionsystem.command.faction.ally.MfFactionAllyCommand
 import com.dansplugins.factionsystem.command.faction.autoclaim.MfFactionAutoclaimCommand
 import com.dansplugins.factionsystem.command.faction.bonuspower.MfFactionBonusPowerCommand
@@ -87,6 +88,7 @@ class MfFactionCommand(private val plugin: MedievalFactions) : CommandExecutor, 
     private val factionClaimFillCommand = MfFactionClaimFillCommand(plugin)
     private val factionBonusPowerCommand = MfFactionBonusPowerCommand(plugin)
     private val factionRelationshipCommand = MfFactionRelationshipCommand(plugin)
+    private val factionAddMemberCommand = MfFactionAddMemberCommand(plugin)
 
     private val helpAliases = listOf("help", plugin.language["CmdFactionHelp"])
     private val createAliases = listOf("create", plugin.language["CmdFactionCreate"])
@@ -127,6 +129,7 @@ class MfFactionCommand(private val plugin: MedievalFactions) : CommandExecutor, 
     private val claimFillAliases = listOf("claimfill", plugin.language["CmdFactionClaimFill"])
     private val bonusPowerAliases = listOf("bonuspower", plugin.language["CmdFactionBonusPower"])
     private val relationshipAliases = listOf("relationship", plugin.language["CmdFactionRelationship"])
+    private val addMemberAliases = listOf("addmember", plugin.language["CmdFactionAddMember"]) // TODO: add translation
 
     private val subcommands = helpAliases +
             createAliases +
@@ -166,7 +169,8 @@ class MfFactionCommand(private val plugin: MedievalFactions) : CommandExecutor, 
             chatAliases +
             claimFillAliases +
             bonusPowerAliases +
-            relationshipAliases
+            relationshipAliases +
+            addMemberAliases
 
     override fun onCommand(sender: CommandSender, command: Command, label: String, args: Array<out String>): Boolean {
         return when (args.firstOrNull()?.lowercase()) {
@@ -209,6 +213,7 @@ class MfFactionCommand(private val plugin: MedievalFactions) : CommandExecutor, 
             in claimFillAliases -> factionClaimFillCommand.onCommand(sender, command, label, args.drop(1).toTypedArray())
             in bonusPowerAliases -> factionBonusPowerCommand.onCommand(sender, command, label, args.drop(1).toTypedArray())
             in relationshipAliases -> factionRelationshipCommand.onCommand(sender, command, label, args.drop(1).toTypedArray())
+            in addMemberAliases -> factionAddMemberCommand.onCommand(sender, command, label, args.drop(1).toTypedArray())
             else -> {
                 sender.sendMessage("$AQUA${plugin.language["MedievalFactionsTitle", plugin.description.version]}")
                 sender.sendMessage("$GRAY${plugin.language["DeveloperList", plugin.description.authors.joinToString()]}")
@@ -268,6 +273,7 @@ class MfFactionCommand(private val plugin: MedievalFactions) : CommandExecutor, 
             in claimFillAliases -> factionClaimFillCommand.onTabComplete(sender, command, label, args.drop(1).toTypedArray())
             in bonusPowerAliases -> factionBonusPowerCommand.onTabComplete(sender, command, label, args.drop(1).toTypedArray())
             in relationshipAliases -> factionRelationshipCommand.onTabComplete(sender, command, label, args.drop(1).toTypedArray())
+            in addMemberAliases -> factionAddMemberCommand.onTabComplete(sender, command, label, args.drop(1).toTypedArray())
             else -> emptyList()
         }
     }
