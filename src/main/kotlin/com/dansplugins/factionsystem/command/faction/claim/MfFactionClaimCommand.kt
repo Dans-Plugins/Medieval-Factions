@@ -1,6 +1,7 @@
 package com.dansplugins.factionsystem.command.faction.claim
 
 import com.dansplugins.factionsystem.MedievalFactions
+import com.dansplugins.factionsystem.area.MfChunkPosition
 import com.dansplugins.factionsystem.claim.MfClaimedChunk
 import com.dansplugins.factionsystem.command.faction.claimfill.MfFactionClaimFillCommand
 import com.dansplugins.factionsystem.player.MfPlayer
@@ -68,14 +69,14 @@ class MfFactionClaimCommand(private val plugin: MedievalFactions) : CommandExecu
             val senderChunkZ = sender.location.chunk.z
             plugin.server.scheduler.runTask(plugin, Runnable {
                 val chunks = if (radius == null) {
-                    listOf(sender.location.chunk)
+                    listOf(MfChunkPosition(sender.world.uid, senderChunkX, senderChunkZ))
                 } else {
                     (senderChunkX - radius..senderChunkX + radius).flatMap { x ->
                         (senderChunkZ - radius..senderChunkZ + radius).filter { z ->
                             val a = x - senderChunkX
                             val b = z - senderChunkZ
                             (a * a) + (b * b) <= radius * radius
-                        }.map { z -> sender.world.getChunkAt(x, z) }
+                        }.map { z -> MfChunkPosition.fromBukkit(sender.world.getChunkAt(x, z)) }
                     }
                 }
                 plugin.server.scheduler.runTaskAsynchronously(plugin, Runnable saveChunks@{
@@ -101,6 +102,13 @@ class MfFactionClaimCommand(private val plugin: MedievalFactions) : CommandExecu
                     }
                     if (plugin.config.getBoolean("factions.limitLand") && claimableChunks.size + claimService.getClaims(faction.id).size > faction.power) {
                         sender.sendMessage("$RED${plugin.language["CommandFactionClaimReachedDemesneLimit", decimalFormat.format(floor(faction.power))]}")
+                        return@saveChunks
+                    }
+                    // Checks if the attempted claim is connected to an already existing claim. Will make an exception if the faction has no claims.
+                    if (plugin.config.getBoolean("factions.contiguousClaims") &&
+                            !claimService.isClaimAdjacent(faction.id, *claimableChunks.toTypedArray()) &&
+                            claimService.getClaims(faction.id).isNotEmpty()) {
+                        sender.sendMessage("$RED${plugin.language["CommandFactionClaimNotContiguous"]}")
                         return@saveChunks
                     }
                     claimableChunks.forEach { chunk ->

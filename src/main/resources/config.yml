@@ -58,6 +58,7 @@ factions:
   nonMembersCanInteractWithDoors: false
   maxClaimRadius: 3
   limitLand: true
+  contiguousClaims: false
   actionBarTerritoryIndicator: true
   titleTerritoryIndicator: true
   allowNeutrality: false
