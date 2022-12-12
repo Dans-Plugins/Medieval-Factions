@@ -66,8 +66,6 @@ factions:
   factionHomeTeleportDelay: 5
   defaults:
     flags:
-      mustBeOfficerToManageLand: true
-      mustBeOfficierToInviteOthers: true
       alliesCanInteractWithLand: false
       vassalageTreeCanInteractWithLand: false
       neutral: false
