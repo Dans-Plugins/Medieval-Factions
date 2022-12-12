@@ -106,7 +106,7 @@ class MfFactionClaimCommand(private val plugin: MedievalFactions) : CommandExecu
                     }
                     //Checks if the attempted claim is connected to an already existing claim. Will make an exception if the faction has no claims.
                     if (plugin.config.getBoolean("factions.contiguousClaims") &&
-                            !claimService.claimIsAdjacent(claimableChunks, faction.id) &&
+                            !claimService.isClaimAdjacent(claimableChunks, faction.id) &&
                             claimService.getClaims(faction.id).isNotEmpty()) {
                         sender.sendMessage("$RED${plugin.language["CommandFactionClaimNotContiguous"]}")
                         return@saveChunks
