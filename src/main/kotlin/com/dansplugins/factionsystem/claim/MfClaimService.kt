@@ -61,12 +61,13 @@ class MfClaimService(private val plugin: MedievalFactions, private val repositor
     }
 
     // Checks whether a set of chunks has at least one chunk that is adjacent to an existing claim. Works across multiple worlds.
-    fun isClaimAdjacent (chunks: Set<MfChunkPosition>, id: MfFactionId): Boolean {
+    fun isClaimAdjacent(id: MfFactionId, vararg chunks: MfChunkPosition): Boolean {
+        plugin.logger.info("Amount of chunks: ${chunks.size}")
         return chunks.any { chunk ->
-            (getClaim(chunk.worldId, chunk.x-1, chunk.z) != null && getClaim(chunk.worldId, chunk.x-1, chunk.z)?.factionId == id) ||
-                    (getClaim(chunk.worldId, chunk.x+1, chunk.z) != null && getClaim(chunk.worldId, chunk.x+1, chunk.z)?.factionId == id) ||
-                    (getClaim(chunk.worldId, chunk.x, chunk.z-1) != null && getClaim(chunk.worldId, chunk.x, chunk.z-1)?.factionId == id) ||
-                    (getClaim(chunk.worldId, chunk.x, chunk.z+1) != null && getClaim(chunk.worldId, chunk.x, chunk.z+1)?.factionId == id)
+            getClaim(chunk.worldId, chunk.x - 1, chunk.z)?.factionId == id ||
+                    getClaim(chunk.worldId, chunk.x + 1, chunk.z)?.factionId == id ||
+                    getClaim(chunk.worldId, chunk.x, chunk.z - 1)?.factionId == id ||
+                    getClaim(chunk.worldId, chunk.x, chunk.z + 1)?.factionId == id
         }
     }
 

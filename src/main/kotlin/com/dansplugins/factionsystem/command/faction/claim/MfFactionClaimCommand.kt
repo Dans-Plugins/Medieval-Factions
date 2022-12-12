@@ -104,9 +104,9 @@ class MfFactionClaimCommand(private val plugin: MedievalFactions) : CommandExecu
                         sender.sendMessage("$RED${plugin.language["CommandFactionClaimReachedDemesneLimit", decimalFormat.format(floor(faction.power))]}")
                         return@saveChunks
                     }
-                    //Checks if the attempted claim is connected to an already existing claim. Will make an exception if the faction has no claims.
+                    // Checks if the attempted claim is connected to an already existing claim. Will make an exception if the faction has no claims.
                     if (plugin.config.getBoolean("factions.contiguousClaims") &&
-                            !claimService.isClaimAdjacent(claimableChunks, faction.id) &&
+                            !claimService.isClaimAdjacent(faction.id, *claimableChunks.toTypedArray()) &&
                             claimService.getClaims(faction.id).isNotEmpty()) {
                         sender.sendMessage("$RED${plugin.language["CommandFactionClaimNotContiguous"]}")
                         return@saveChunks
