@@ -1,6 +1,7 @@
 package com.dansplugins.factionsystem.command.faction.claim
 
 import com.dansplugins.factionsystem.MedievalFactions
+import com.dansplugins.factionsystem.area.MfChunkPosition
 import com.dansplugins.factionsystem.claim.MfClaimedChunk
 import com.dansplugins.factionsystem.command.faction.claimfill.MfFactionClaimFillCommand
 import com.dansplugins.factionsystem.player.MfPlayer
@@ -68,14 +69,14 @@ class MfFactionClaimCommand(private val plugin: MedievalFactions) : CommandExecu
             val senderChunkZ = sender.location.chunk.z
             plugin.server.scheduler.runTask(plugin, Runnable {
                 val chunks = if (radius == null) {
-                    listOf(sender.location.chunk)
+                    listOf(MfChunkPosition(sender.world.uid, senderChunkX, senderChunkZ))
                 } else {
                     (senderChunkX - radius..senderChunkX + radius).flatMap { x ->
                         (senderChunkZ - radius..senderChunkZ + radius).filter { z ->
                             val a = x - senderChunkX
                             val b = z - senderChunkZ
                             (a * a) + (b * b) <= radius * radius
-                        }.map { z -> sender.world.getChunkAt(x, z) }
+                        }.map { z -> MfChunkPosition.fromBukkit(sender.world.getChunkAt(x, z)) }
                     }
                 }
                 plugin.server.scheduler.runTaskAsynchronously(plugin, Runnable saveChunks@{
