@@ -5,6 +5,7 @@ import com.dansplugins.factionsystem.player.MfPlayer
 import com.dansplugins.factionsystem.player.MfPlayerId
 
 data class MfFactionMember(
+    @get:JvmName("getPlayerId")
     val playerId: MfPlayerId,
     val role: MfFactionRole
 )
