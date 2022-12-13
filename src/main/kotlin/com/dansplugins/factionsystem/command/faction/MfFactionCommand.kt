@@ -6,7 +6,10 @@ import com.dansplugins.factionsystem.command.faction.bonuspower.MfFactionBonusPo
 import com.dansplugins.factionsystem.command.faction.breakalliance.MfFactionBreakAllianceCommand
 import com.dansplugins.factionsystem.command.faction.bypass.MfFactionBypassCommand
 import com.dansplugins.factionsystem.command.faction.chat.MfFactionChatCommand
+import com.dansplugins.factionsystem.command.faction.claim.MfFactionClaimAutoCommand
+import com.dansplugins.factionsystem.command.faction.claim.MfFactionClaimCheckCommand
 import com.dansplugins.factionsystem.command.faction.claim.MfFactionClaimCommandManager
+import com.dansplugins.factionsystem.command.faction.claim.MfFactionClaimFillCommand
 import com.dansplugins.factionsystem.command.faction.create.MfFactionCreateCommand
 import com.dansplugins.factionsystem.command.faction.declareindependence.MfFactionDeclareIndependenceCommand
 import com.dansplugins.factionsystem.command.faction.declarewar.MfFactionDeclareWarCommand
@@ -39,6 +42,7 @@ import com.dansplugins.factionsystem.command.faction.vassalize.MfFactionVassaliz
 import com.dansplugins.factionsystem.command.faction.who.MfFactionWhoCommand
 import org.bukkit.ChatColor.AQUA
 import org.bukkit.ChatColor.GRAY
+import org.bukkit.ChatColor.RED
 import org.bukkit.ChatColor.YELLOW
 import org.bukkit.command.Command
 import org.bukkit.command.CommandExecutor
@@ -84,9 +88,14 @@ class MfFactionCommand(private val plugin: MedievalFactions) : CommandExecutor, 
     private val factionBonusPowerCommand = MfFactionBonusPowerCommand(plugin)
     private val factionRelationshipCommand = MfFactionRelationshipCommand(plugin)
 
+    // Backwards compatibility:
+    private val factionClaimAutoCommand = MfFactionClaimAutoCommand(plugin)
+    private val factionClaimFillCommand = MfFactionClaimFillCommand(plugin)
+    private val factionClaimCheckCommand = MfFactionClaimCheckCommand(plugin)
+
     private val helpAliases = listOf("help", plugin.language["CmdFactionHelp"])
     private val createAliases = listOf("create", plugin.language["CmdFactionCreate"])
-    private val claimAliases = listOf("create", plugin.language["CmdFactionClaim"])
+    private val claimAliases = listOf("claim", plugin.language["CmdFactionClaim"])
     private val lawAliases = listOf("law", plugin.language["CmdFactionLaw"])
     private val allyAliases = listOf("ally", plugin.language["CmdFactionAlly"])
     private val breakAllianceAliases = listOf("breakalliance", "ba", plugin.language["CmdFactionBreakAlliance"])
@@ -120,6 +129,11 @@ class MfFactionCommand(private val plugin: MedievalFactions) : CommandExecutor, 
     private val chatAliases = listOf("chat", plugin.language["CmdFactionChat"])
     private val bonusPowerAliases = listOf("bonuspower", plugin.language["CmdFactionBonusPower"])
     private val relationshipAliases = listOf("relationship", plugin.language["CmdFactionRelationship"])
+
+    // Backwards compatibility:
+    private val claimAutoAliases = listOf("autoclaim")
+    private val claimFillAliases = listOf("claimfill")
+    private val claimCheckAliases = listOf("checkclaim")
 
     private val subcommands = helpAliases +
         createAliases +
@@ -156,7 +170,11 @@ class MfFactionCommand(private val plugin: MedievalFactions) : CommandExecutor, 
         bypassAliases +
         chatAliases +
         bonusPowerAliases +
-        relationshipAliases
+        relationshipAliases +
+        // Backwards compatibility aliases:
+        claimAutoAliases +
+        claimFillAliases +
+        claimCheckAliases
 
     override fun onCommand(sender: CommandSender, command: Command, label: String, args: Array<out String>): Boolean {
         return when (args.firstOrNull()?.lowercase()) {
@@ -196,6 +214,19 @@ class MfFactionCommand(private val plugin: MedievalFactions) : CommandExecutor, 
             in chatAliases -> factionChatCommand.onCommand(sender, command, label, args.drop(1).toTypedArray())
             in bonusPowerAliases -> factionBonusPowerCommand.onCommand(sender, command, label, args.drop(1).toTypedArray())
             in relationshipAliases -> factionRelationshipCommand.onCommand(sender, command, label, args.drop(1).toTypedArray())
+            // Backwards compatibility:
+            in claimAutoAliases -> {
+                sender.sendMessage("${RED}Command deprecated, use \"/mf claim auto\" instead")
+                factionClaimAutoCommand.onCommand(sender, command, label, args.drop(1).toTypedArray())
+            }
+            in claimFillAliases -> {
+                sender.sendMessage("${RED}Command deprecated, use \"/mf claim fill\" instead")
+                factionClaimFillCommand.onCommand(sender, command, label, args.drop(1).toTypedArray())
+            }
+            in claimCheckAliases -> {
+                sender.sendMessage("${RED}Command deprecated, use \"/mf claim check\" instead")
+                factionClaimCheckCommand.onCommand(sender, command, label, args.drop(1).toTypedArray())
+            }
             else -> {
                 sender.sendMessage("$AQUA${plugin.language["MedievalFactionsTitle", plugin.description.version]}")
                 sender.sendMessage("$GRAY${plugin.language["DeveloperList", plugin.description.authors.joinToString()]}")
@@ -252,6 +283,10 @@ class MfFactionCommand(private val plugin: MedievalFactions) : CommandExecutor, 
             in chatAliases -> factionChatCommand.onTabComplete(sender, command, label, args.drop(1).toTypedArray())
             in bonusPowerAliases -> factionBonusPowerCommand.onTabComplete(sender, command, label, args.drop(1).toTypedArray())
             in relationshipAliases -> factionRelationshipCommand.onTabComplete(sender, command, label, args.drop(1).toTypedArray())
+            // Backwards compatibility:
+            in claimAutoAliases -> factionClaimAutoCommand.onTabComplete(sender, command, label, args.drop(1).toTypedArray())
+            in claimFillAliases -> factionClaimFillCommand.onTabComplete(sender, command, label, args.drop(1).toTypedArray())
+            in claimCheckAliases -> factionClaimCheckCommand.onTabComplete(sender, command, label, args.drop(1).toTypedArray())
             else -> emptyList()
         }
     }
