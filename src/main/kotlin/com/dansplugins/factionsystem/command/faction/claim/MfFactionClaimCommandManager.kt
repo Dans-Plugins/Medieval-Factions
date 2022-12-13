@@ -22,6 +22,8 @@ class MfFactionClaimCommandManager(private val plugin: MedievalFactions) : Comma
     //private val squareAliases = listOf("square", plugin.language["CmdFactionCheckClaim"])
     //private val rectangleAliases = listOf("rectangle", plugin.language["CmdFactionCheckClaim"])
 
+    private val subcommands = autoAliases + fillAliases + checkAliases
+
     override fun onCommand(sender: CommandSender, command: Command, label: String, args: Array<out String>): Boolean
     {
         return when (args.firstOrNull()?.lowercase())
@@ -39,8 +41,8 @@ class MfFactionClaimCommandManager(private val plugin: MedievalFactions) : Comma
 
     override fun onTabComplete(sender: CommandSender, command: Command, label: String, args: Array<out String>) = when
     {
-        args.isEmpty() -> listOf("auto", "fill", "check", "circle", "square", "rectangle")
-        args.size == 1 && "fill".startsWith(args[0].lowercase()) -> listOf("auto", "fill", "check", "circle", "square", "rectangle")
+        args.isEmpty() -> subcommands
+        args.size == 1 -> subcommands.filter { it.startsWith(args[0].lowercase()) }
         else -> emptyList()
     }
 }
