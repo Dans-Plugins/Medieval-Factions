@@ -46,36 +46,39 @@ class MfFactionMapCommand(private val plugin: MedievalFactions) : CommandExecuto
         val senderChunk = sender.location.chunk
         val senderChunkX = senderChunk.x
         val senderChunkZ = senderChunk.z
-        plugin.server.scheduler.runTaskAsynchronously(plugin, Runnable {
-            val playerService = plugin.services.playerService
-            val mfPlayer = playerService.getPlayer(sender)
-                ?: playerService.save(MfPlayer(plugin, sender)).onFailure {
-                    sender.sendMessage("${BukkitChatColor.RED}${plugin.language["CommandFactionMapFailedToSavePlayer"]}")
-                    plugin.logger.log(Level.SEVERE, "Failed to save player: ${it.reason.message}", it.reason.cause)
+        plugin.server.scheduler.runTaskAsynchronously(
+            plugin,
+            Runnable {
+                val playerService = plugin.services.playerService
+                val mfPlayer = playerService.getPlayer(sender)
+                    ?: playerService.save(MfPlayer(plugin, sender)).onFailure {
+                        sender.sendMessage("${BukkitChatColor.RED}${plugin.language["CommandFactionMapFailedToSavePlayer"]}")
+                        plugin.logger.log(Level.SEVERE, "Failed to save player: ${it.reason.message}", it.reason.cause)
+                        return@Runnable
+                    }
+                val factionService = plugin.services.factionService
+                val faction = factionService.getFaction(mfPlayer.id)
+                if (faction == null && !mapType.supportsFactionless) {
+                    sender.sendMessage("${BukkitChatColor.RED}${plugin.language["CommandFactionMapMapTypeRequiresFaction"]}")
                     return@Runnable
                 }
-            val factionService = plugin.services.factionService
-            val faction = factionService.getFaction(mfPlayer.id)
-            if (faction == null && !mapType.supportsFactionless) {
-                sender.sendMessage("${BukkitChatColor.RED}${plugin.language["CommandFactionMapMapTypeRequiresFaction"]}")
-                return@Runnable
-            }
-            val map = renderMap(faction, mapType, sender.world, senderChunkX - 10, senderChunkZ - 4, senderChunkX + 10, senderChunkZ + 4)
-            map.forEach { row ->
-                sender.spigot().sendMessage(*row)
-            }
-            if (mapType == DIPLOMATIC) {
-                sender.sendMessage(
-                    "${BukkitChatColor.GRAY}${plugin.language["FactionMapKey"]} " +
+                val map = renderMap(faction, mapType, sender.world, senderChunkX - 10, senderChunkZ - 4, senderChunkX + 10, senderChunkZ + 4)
+                map.forEach { row ->
+                    sender.spigot().sendMessage(*row)
+                }
+                if (mapType == DIPLOMATIC) {
+                    sender.sendMessage(
+                        "${BukkitChatColor.GRAY}${plugin.language["FactionMapKey"]} " +
                             "${BukkitChatColor.GREEN}■ ${plugin.language["FactionMapYourFaction"]} " +
                             "${BukkitChatColor.RED}■ ${plugin.language["FactionMapEnemy"]} " +
                             "${BukkitChatColor.BLUE}■ ${plugin.language["FactionMapAlly"]} " +
                             "${BukkitChatColor.DARK_GREEN}■ ${plugin.language["FactionMapVassal"]} " +
                             "${BukkitChatColor.YELLOW}■ ${plugin.language["FactionMapLiege"]} " +
                             "${BukkitChatColor.WHITE}■ ${plugin.language["FactionMapNeutral"]}"
-                )
+                    )
+                }
             }
-        })
+        )
         return true
     }
 

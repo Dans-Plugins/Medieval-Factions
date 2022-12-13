@@ -5,5 +5,4 @@ enum class MfFactionChatChannel {
     FACTION,
     VASSALS,
     ALLIES
-
 }

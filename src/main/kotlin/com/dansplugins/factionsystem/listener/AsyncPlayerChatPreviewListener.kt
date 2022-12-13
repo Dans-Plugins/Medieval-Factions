@@ -29,5 +29,4 @@ class AsyncPlayerChatPreviewListener(private val plugin: MedievalFactions) : Lis
             event.format = "${SpigotChatColor.WHITE}[${SpigotChatColor.of(faction.flags[plugin.flags.color])}${faction.prefix ?: faction.name}${SpigotChatColor.WHITE}] %s: %s"
         }
     }
-
 }

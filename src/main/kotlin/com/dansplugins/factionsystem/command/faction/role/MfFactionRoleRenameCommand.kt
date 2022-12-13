@@ -61,93 +61,107 @@ class MfFactionRoleRenameCommand(private val plugin: MedievalFactions) : Command
         val returnPage = if (args.lastOrNull()?.startsWith("p=") == true) {
             lastArgOffset = 1
             args.last().substring("p=".length).toIntOrNull()
-        } else null
+        } else {
+            null
+        }
         if (args.dropLast(lastArgOffset).isEmpty()) {
             sender.sendMessage("$RED${plugin.language["CommandFactionRoleRenameUsage"]}")
             return true
         }
         val unquotedArgs = args.dropLast(lastArgOffset).toTypedArray().unquote()
-        plugin.server.scheduler.runTaskAsynchronously(plugin, Runnable {
-            val playerService = plugin.services.playerService
-            val mfPlayer = playerService.getPlayer(sender)
-                ?: playerService.save(MfPlayer(plugin, sender)).onFailure {
-                    sender.sendMessage("$RED${plugin.language["CommandFactionRoleRenameFailedToSavePlayer"]}")
-                    plugin.logger.log(Level.SEVERE, "Failed to save player: ${it.reason.message}", it.reason.cause)
+        plugin.server.scheduler.runTaskAsynchronously(
+            plugin,
+            Runnable {
+                val playerService = plugin.services.playerService
+                val mfPlayer = playerService.getPlayer(sender)
+                    ?: playerService.save(MfPlayer(plugin, sender)).onFailure {
+                        sender.sendMessage("$RED${plugin.language["CommandFactionRoleRenameFailedToSavePlayer"]}")
+                        plugin.logger.log(Level.SEVERE, "Failed to save player: ${it.reason.message}", it.reason.cause)
+                        return@Runnable
+                    }
+                val factionService = plugin.services.factionService
+                val faction = factionService.getFaction(mfPlayer.id)
+                if (faction == null) {
+                    sender.sendMessage("$RED${plugin.language["CommandFactionRoleRenameMustBeInAFaction"]}")
                     return@Runnable
                 }
-            val factionService = plugin.services.factionService
-            val faction = factionService.getFaction(mfPlayer.id)
-            if (faction == null) {
-                sender.sendMessage("$RED${plugin.language["CommandFactionRoleRenameMustBeInAFaction"]}")
-                return@Runnable
+                val targetRole = faction.roles.getRole(MfFactionRoleId(unquotedArgs[0])) ?: faction.roles.getRole(unquotedArgs[0])
+                if (targetRole == null) {
+                    sender.sendMessage("$RED${plugin.language["CommandFactionRoleRenameInvalidTargetRole"]}")
+                    return@Runnable
+                }
+                if (unquotedArgs.size < 2) {
+                    plugin.server.scheduler.runTask(
+                        plugin,
+                        Runnable {
+                            val conversation = conversationFactory.buildConversation(sender)
+                            conversation.context.setSessionData("role", targetRole)
+                            conversation.context.setSessionData("page", returnPage)
+                            conversation.begin()
+                        }
+                    )
+                    return@Runnable
+                }
+                renameRole(sender, targetRole, unquotedArgs.drop(1).joinToString(" "), returnPage)
             }
-            val targetRole = faction.roles.getRole(MfFactionRoleId(unquotedArgs[0])) ?: faction.roles.getRole(unquotedArgs[0])
-            if (targetRole == null) {
-                sender.sendMessage("$RED${plugin.language["CommandFactionRoleRenameInvalidTargetRole"]}")
-                return@Runnable
-            }
-            if (unquotedArgs.size < 2) {
-                plugin.server.scheduler.runTask(plugin, Runnable {
-                    val conversation = conversationFactory.buildConversation(sender)
-                    conversation.context.setSessionData("role", targetRole)
-                    conversation.context.setSessionData("page", returnPage)
-                    conversation.begin()
-                })
-                return@Runnable
-            }
-            renameRole(sender, targetRole, unquotedArgs.drop(1).joinToString(" "), returnPage)
-        })
+        )
         return true
     }
 
     private fun renameRole(player: Player, targetRole: MfFactionRole, name: String, returnPage: Int?) {
-        plugin.server.scheduler.runTaskAsynchronously(plugin, Runnable {
-            val playerService = plugin.services.playerService
-            val mfPlayer = playerService.getPlayer(player)
-                ?: playerService.save(MfPlayer(plugin, player)).onFailure {
-                    player.sendMessage("$RED${plugin.language["CommandFactionRoleRenameFailedToSavePlayer"]}")
-                    plugin.logger.log(Level.SEVERE, "Failed to save player: ${it.reason.message}", it.reason.cause)
+        plugin.server.scheduler.runTaskAsynchronously(
+            plugin,
+            Runnable {
+                val playerService = plugin.services.playerService
+                val mfPlayer = playerService.getPlayer(player)
+                    ?: playerService.save(MfPlayer(plugin, player)).onFailure {
+                        player.sendMessage("$RED${plugin.language["CommandFactionRoleRenameFailedToSavePlayer"]}")
+                        plugin.logger.log(Level.SEVERE, "Failed to save player: ${it.reason.message}", it.reason.cause)
+                        return@Runnable
+                    }
+                val factionService = plugin.services.factionService
+                val faction = factionService.getFaction(mfPlayer.id)
+                if (faction == null) {
+                    player.sendMessage("$RED${plugin.language["CommandFactionRoleRenameMustBeInAFaction"]}")
                     return@Runnable
                 }
-            val factionService = plugin.services.factionService
-            val faction = factionService.getFaction(mfPlayer.id)
-            if (faction == null) {
-                player.sendMessage("$RED${plugin.language["CommandFactionRoleRenameMustBeInAFaction"]}")
-                return@Runnable
-            }
-            val role = faction.getRole(mfPlayer.id)
-            if (role == null || !role.hasPermission(faction, plugin.factionPermissions.modifyRole(targetRole.id))) {
-                player.sendMessage("$RED${plugin.language["CommandFactionRoleRenameNoFactionPermission"]}")
-                return@Runnable
-            }
-            if (faction.roles.any { it.name.equals(name, ignoreCase = true) }) {
-                player.sendMessage("$RED${plugin.language["CommandFactionRoleRenameRoleWithNameAlreadyExists"]}")
-                return@Runnable
-            }
-            factionService.save(
-                faction.copy(
-                    roles = faction.roles.copy(
-                        roles = faction.roles.map { existingRole ->
-                            if (existingRole.id == targetRole.id) {
-                                existingRole.copy(name = name)
-                            } else {
-                                existingRole
+                val role = faction.getRole(mfPlayer.id)
+                if (role == null || !role.hasPermission(faction, plugin.factionPermissions.modifyRole(targetRole.id))) {
+                    player.sendMessage("$RED${plugin.language["CommandFactionRoleRenameNoFactionPermission"]}")
+                    return@Runnable
+                }
+                if (faction.roles.any { it.name.equals(name, ignoreCase = true) }) {
+                    player.sendMessage("$RED${plugin.language["CommandFactionRoleRenameRoleWithNameAlreadyExists"]}")
+                    return@Runnable
+                }
+                factionService.save(
+                    faction.copy(
+                        roles = faction.roles.copy(
+                            roles = faction.roles.map { existingRole ->
+                                if (existingRole.id == targetRole.id) {
+                                    existingRole.copy(name = name)
+                                } else {
+                                    existingRole
+                                }
                             }
+                        )
+                    )
+                ).onFailure {
+                    player.sendMessage("$RED${plugin.language["CommandFactionRoleRenameFailedToSaveFaction"]}")
+                    plugin.logger.log(Level.SEVERE, "Failed to save faction: ${it.reason.message}", it.reason.cause)
+                    return@Runnable
+                }
+                player.sendMessage("${ChatColor.GREEN}${plugin.language["CommandFactionRoleRenameSuccess", targetRole.name, name]}")
+                if (returnPage != null) {
+                    plugin.server.scheduler.runTask(
+                        plugin,
+                        Runnable {
+                            player.performCommand("faction role list $returnPage")
                         }
                     )
-                )
-            ).onFailure {
-                player.sendMessage("$RED${plugin.language["CommandFactionRoleRenameFailedToSaveFaction"]}")
-                plugin.logger.log(Level.SEVERE, "Failed to save faction: ${it.reason.message}", it.reason.cause)
-                return@Runnable
+                }
             }
-            player.sendMessage("${ChatColor.GREEN}${plugin.language["CommandFactionRoleRenameSuccess", targetRole.name, name]}")
-            if (returnPage != null) {
-                plugin.server.scheduler.runTask(plugin, Runnable {
-                    player.performCommand("faction role list $returnPage")
-                })
-            }
-        })
+        )
     }
 
     override fun onTabComplete(

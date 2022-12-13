@@ -7,5 +7,4 @@ interface MfPlayerRepository {
     fun upsert(player: MfPlayer): MfPlayer
     fun increaseOnlinePlayerPower(onlinePlayerIds: List<MfPlayerId>)
     fun decreaseOfflinePlayerPower(onlinePlayerIds: List<MfPlayerId>)
-
 }

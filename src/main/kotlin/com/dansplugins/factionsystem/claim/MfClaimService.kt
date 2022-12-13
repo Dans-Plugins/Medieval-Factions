@@ -24,7 +24,7 @@ import java.util.concurrent.ConcurrentHashMap
 class MfClaimService(private val plugin: MedievalFactions, private val repository: MfClaimedChunkRepository) {
 
     private data class ClaimKey(val worldId: UUID, val x: Int, val z: Int) {
-        constructor(claimedChunk: MfClaimedChunk): this(claimedChunk.worldId, claimedChunk.x, claimedChunk.z)
+        constructor(claimedChunk: MfClaimedChunk) : this(claimedChunk.worldId, claimedChunk.x, claimedChunk.z)
     }
 
     private val claimsByKey: MutableMap<ClaimKey, MfClaimedChunk> = ConcurrentHashMap()
@@ -64,9 +64,9 @@ class MfClaimService(private val plugin: MedievalFactions, private val repositor
     fun isClaimAdjacent(id: MfFactionId, vararg chunks: MfChunkPosition): Boolean {
         return chunks.any { chunk ->
             getClaim(chunk.worldId, chunk.x - 1, chunk.z)?.factionId == id ||
-                    getClaim(chunk.worldId, chunk.x + 1, chunk.z)?.factionId == id ||
-                    getClaim(chunk.worldId, chunk.x, chunk.z - 1)?.factionId == id ||
-                    getClaim(chunk.worldId, chunk.x, chunk.z + 1)?.factionId == id
+                getClaim(chunk.worldId, chunk.x + 1, chunk.z)?.factionId == id ||
+                getClaim(chunk.worldId, chunk.x, chunk.z - 1)?.factionId == id ||
+                getClaim(chunk.worldId, chunk.x, chunk.z + 1)?.factionId == id
         }
     }
 
@@ -78,31 +78,40 @@ class MfClaimService(private val plugin: MedievalFactions, private val repositor
         if (event.isCancelled) throw EventCancelledException("Event cancelled")
         val result = repository.upsert(event.claim)
         claimsByKey[ClaimKey(result)] = result
-        plugin.server.scheduler.runTask(plugin, Runnable {
-            val world = plugin.server.getWorld(event.claim.worldId)
-            if (world != null) {
-                val players = world.players.filter { it.location.chunk.x == claim.x && it.location.chunk.z == claim.z }
-                if (players.isNotEmpty()) {
-                    plugin.server.scheduler.runTask(plugin, Runnable {
-                        players.forEach { player ->
-                            val title = "${ChatColor.of(faction.flags[plugin.flags.color])}${faction.name}"
-                            if (plugin.config.getBoolean("factions.titleTerritoryIndicator")) {
-                                player.resetTitle()
-                                player.sendTitle(title, null, 10, 70, 20)
+        plugin.server.scheduler.runTask(
+            plugin,
+            Runnable {
+                val world = plugin.server.getWorld(event.claim.worldId)
+                if (world != null) {
+                    val players = world.players.filter { it.location.chunk.x == claim.x && it.location.chunk.z == claim.z }
+                    if (players.isNotEmpty()) {
+                        plugin.server.scheduler.runTask(
+                            plugin,
+                            Runnable {
+                                players.forEach { player ->
+                                    val title = "${ChatColor.of(faction.flags[plugin.flags.color])}${faction.name}"
+                                    if (plugin.config.getBoolean("factions.titleTerritoryIndicator")) {
+                                        player.resetTitle()
+                                        player.sendTitle(title, null, 10, 70, 20)
+                                    }
+                                    if (plugin.config.getBoolean("factions.actionBarTerritoryIndicator")) {
+                                        player.spigot().sendMessage(ACTION_BAR, *TextComponent.fromLegacyText(title))
+                                    }
+                                }
                             }
-                            if (plugin.config.getBoolean("factions.actionBarTerritoryIndicator")) {
-                                player.spigot().sendMessage(ACTION_BAR, *TextComponent.fromLegacyText(title))
-                            }
-                        }
-                    })
+                        )
+                    }
                 }
             }
-        })
+        )
         val dynmapService = plugin.services.dynmapService
         if (dynmapService != null) {
-            plugin.server.scheduler.runTask(plugin, Runnable {
-                dynmapService.updateClaims(faction)
-            })
+            plugin.server.scheduler.runTask(
+                plugin,
+                Runnable {
+                    dynmapService.updateClaims(faction)
+                }
+            )
         }
         return@resultFrom result
     }.mapFailure { exception ->
@@ -115,33 +124,39 @@ class MfClaimService(private val plugin: MedievalFactions, private val repositor
         if (event.isCancelled) throw EventCancelledException("Event cancelled")
         val result = repository.delete(event.claim.worldId, event.claim.x, event.claim.z)
         claimsByKey.remove(ClaimKey(event.claim))
-        plugin.server.scheduler.runTask(plugin, Runnable {
-            val world = plugin.server.getWorld(event.claim.worldId)
-            if (world != null) {
-                val players = world.players.filter { it.location.chunk.x == claim.x && it.location.chunk.z == claim.z }
-                if (players.isNotEmpty()) {
-                    players.forEach { player ->
-                        val title =
-                            "${ChatColor.of(plugin.config.getString("wilderness.color"))}${plugin.language["Wilderness"]}"
-                        if (plugin.config.getBoolean("factions.titleTerritoryIndicator")) {
-                            player.resetTitle()
-                            player.sendTitle(title, null, 10, 70, 20)
-                        }
-                        if (plugin.config.getBoolean("factions.actionBarTerritoryIndicator")) {
-                            player.spigot().sendMessage(ACTION_BAR, *TextComponent.fromLegacyText(title))
+        plugin.server.scheduler.runTask(
+            plugin,
+            Runnable {
+                val world = plugin.server.getWorld(event.claim.worldId)
+                if (world != null) {
+                    val players = world.players.filter { it.location.chunk.x == claim.x && it.location.chunk.z == claim.z }
+                    if (players.isNotEmpty()) {
+                        players.forEach { player ->
+                            val title =
+                                "${ChatColor.of(plugin.config.getString("wilderness.color"))}${plugin.language["Wilderness"]}"
+                            if (plugin.config.getBoolean("factions.titleTerritoryIndicator")) {
+                                player.resetTitle()
+                                player.sendTitle(title, null, 10, 70, 20)
+                            }
+                            if (plugin.config.getBoolean("factions.actionBarTerritoryIndicator")) {
+                                player.spigot().sendMessage(ACTION_BAR, *TextComponent.fromLegacyText(title))
+                            }
                         }
                     }
                 }
             }
-        })
+        )
         val dynmapService = plugin.services.dynmapService
         if (dynmapService != null) {
             val factionService = plugin.services.factionService
             val faction = factionService.getFaction(claim.factionId)
             if (faction != null) {
-                plugin.server.scheduler.runTask(plugin, Runnable {
-                    dynmapService.updateClaims(faction)
-                })
+                plugin.server.scheduler.runTask(
+                    plugin,
+                    Runnable {
+                        dynmapService.updateClaims(faction)
+                    }
+                )
             }
         }
         val lockService = plugin.services.lockService
@@ -169,5 +184,4 @@ class MfClaimService(private val plugin: MedievalFactions, private val repositor
             else -> ServiceFailureType.GENERAL
         }
     }
-
 }

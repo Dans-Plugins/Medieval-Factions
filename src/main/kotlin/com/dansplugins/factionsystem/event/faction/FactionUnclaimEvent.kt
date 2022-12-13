@@ -15,6 +15,7 @@ class FactionUnclaimEvent(
 
     companion object {
         @JvmStatic private val handlers: HandlerList = HandlerList()
+
         @JvmStatic fun getHandlerList() = handlers
     }
 

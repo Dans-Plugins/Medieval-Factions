@@ -55,5 +55,4 @@ class MfInteractionService(private val repository: MfInteractionStatusRepository
             else -> ServiceFailureType.GENERAL
         }
     }
-
 }

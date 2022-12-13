@@ -20,7 +20,7 @@ data class MfPlayer(
         plugin: MedievalFactions,
         id: MfPlayerId,
         name: String?
-    ): this(
+    ) : this(
         id,
         name = name,
         power = plugin.config.getDouble("players.initialPower"),
@@ -34,7 +34,7 @@ data class MfPlayer(
         powerOnLogout: Double = power,
         isBypassEnabled: Boolean = false,
         chatChannel: MfFactionChatChannel? = null
-    ): this(
+    ) : this(
         MfPlayerId.fromBukkitPlayer(player),
         version,
         player.name,
@@ -47,11 +47,10 @@ data class MfPlayer(
     constructor(
         plugin: MedievalFactions,
         player: OfflinePlayer
-    ): this(
+    ) : this(
         MfPlayerId.fromBukkitPlayer(player),
         name = player.name,
         power = plugin.config.getDouble("players.initialPower"),
         powerAtLogout = plugin.config.getDouble("players.initialPower")
     )
-
 }
