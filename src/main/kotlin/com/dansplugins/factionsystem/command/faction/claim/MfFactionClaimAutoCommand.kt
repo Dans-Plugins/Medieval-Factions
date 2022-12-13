@@ -1,4 +1,4 @@
-package com.dansplugins.factionsystem.command.faction.autoclaim
+package com.dansplugins.factionsystem.command.faction.claim
 
 import com.dansplugins.factionsystem.MedievalFactions
 import com.dansplugins.factionsystem.player.MfPlayer
@@ -12,7 +12,7 @@ import org.bukkit.command.TabCompleter
 import org.bukkit.entity.Player
 import java.util.logging.Level.SEVERE
 
-class MfFactionAutoclaimCommand(private val plugin: MedievalFactions) : CommandExecutor, TabCompleter {
+class MfFactionClaimAutoCommand(private val plugin: MedievalFactions) : CommandExecutor, TabCompleter {
     override fun onCommand(sender: CommandSender, command: Command, label: String, args: Array<out String>): Boolean {
         if (!sender.hasPermission("mf.autoclaim")) {
             sender.sendMessage("$RED${plugin.language["CommandFactionAutoclaimNoPermission"]}")

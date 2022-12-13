@@ -1,4 +1,4 @@
-package com.dansplugins.factionsystem.command.faction.claimfill
+package com.dansplugins.factionsystem.command.faction.claim
 
 import com.dansplugins.factionsystem.MedievalFactions
 import com.dansplugins.factionsystem.area.MfChunkPosition
