@@ -1,12 +1,10 @@
 package com.dansplugins.factionsystem.command.faction.claim
 
 import com.dansplugins.factionsystem.MedievalFactions
-import org.bukkit.ChatColor
 import org.bukkit.command.Command
 import org.bukkit.command.CommandExecutor
 import org.bukkit.command.CommandSender
 import org.bukkit.command.TabCompleter
-import org.bukkit.entity.Player
 
 class MfFactionClaimCommandManager(private val plugin: MedievalFactions) : CommandExecutor, TabCompleter
 {
