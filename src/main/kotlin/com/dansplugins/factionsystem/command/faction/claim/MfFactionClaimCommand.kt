@@ -3,7 +3,6 @@ package com.dansplugins.factionsystem.command.faction.claim
 import com.dansplugins.factionsystem.MedievalFactions
 import com.dansplugins.factionsystem.area.MfChunkPosition
 import com.dansplugins.factionsystem.claim.MfClaimedChunk
-import com.dansplugins.factionsystem.command.faction.claimfill.MfFactionClaimFillCommand
 import com.dansplugins.factionsystem.player.MfPlayer
 import com.dansplugins.factionsystem.relationship.MfFactionRelationshipType.AT_WAR
 import dev.forkhandles.result4k.onFailure

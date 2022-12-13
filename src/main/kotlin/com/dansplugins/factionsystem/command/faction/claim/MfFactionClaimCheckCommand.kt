@@ -1,4 +1,4 @@
-package com.dansplugins.factionsystem.command.faction.checkclaim
+package com.dansplugins.factionsystem.command.faction.claim
 
 import com.dansplugins.factionsystem.MedievalFactions
 import org.bukkit.ChatColor.GREEN
@@ -9,7 +9,7 @@ import org.bukkit.command.CommandSender
 import org.bukkit.command.TabCompleter
 import org.bukkit.entity.Player
 
-class MfFactionCheckClaimCommand(private val plugin: MedievalFactions) : CommandExecutor, TabCompleter {
+class MfFactionClaimCheckCommand(private val plugin: MedievalFactions) : CommandExecutor, TabCompleter {
     override fun onCommand(sender: CommandSender, command: Command, label: String, args: Array<out String>): Boolean {
         if (!sender.hasPermission("mf.checkclaim")) {
             sender.sendMessage("$RED${plugin.language["CommandFactionCheckClaimNoPermission"]}")
