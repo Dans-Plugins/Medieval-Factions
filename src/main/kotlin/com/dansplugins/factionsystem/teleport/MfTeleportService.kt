@@ -22,14 +22,18 @@ class MfTeleportService(private val plugin: MedievalFactions) {
         val uuid = player.uniqueId
         tasks[uuid]?.cancel()
         player.sendMessage("$GRAY${plugin.language["Teleporting", teleportDelay.toString()]}")
-        val task = plugin.server.scheduler.runTaskLater(plugin, Runnable {
-            tasks.remove(uuid)
-            val playerToTeleport = plugin.server.getPlayer(uuid)
-            if (playerToTeleport != null) {
-                playerToTeleport.teleport(location)
-                if (message != null) playerToTeleport.sendMessage(message)
-            }
-        }, teleportDelay * 20L)
+        val task = plugin.server.scheduler.runTaskLater(
+            plugin,
+            Runnable {
+                tasks.remove(uuid)
+                val playerToTeleport = plugin.server.getPlayer(uuid)
+                if (playerToTeleport != null) {
+                    playerToTeleport.teleport(location)
+                    if (message != null) playerToTeleport.sendMessage(message)
+                }
+            },
+            teleportDelay * 20L
+        )
         tasks[uuid] = task
     }
 
@@ -41,5 +45,4 @@ class MfTeleportService(private val plugin: MedievalFactions) {
             player.sendMessage("${ChatColor.RED}${plugin.language["TeleportationCancelled"]}")
         }
     }
-
 }

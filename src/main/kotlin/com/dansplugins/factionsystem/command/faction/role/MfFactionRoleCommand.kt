@@ -28,13 +28,13 @@ class MfFactionRoleCommand(private val plugin: MedievalFactions) : CommandExecut
     private val setDefaultAliases = listOf("setdefault", plugin.language["CmdFactionRoleSetDefault"])
 
     private val subcommands = viewAliases +
-            setPermissionAliases +
-            listAliases +
-            setAliases +
-            createAliases +
-            deleteAliases +
-            renameAliases +
-            setDefaultAliases
+        setPermissionAliases +
+        listAliases +
+        setAliases +
+        createAliases +
+        deleteAliases +
+        renameAliases +
+        setDefaultAliases
 
     override fun onCommand(sender: CommandSender, command: Command, label: String, args: Array<out String>): Boolean {
         return when (args.firstOrNull()?.lowercase()) {

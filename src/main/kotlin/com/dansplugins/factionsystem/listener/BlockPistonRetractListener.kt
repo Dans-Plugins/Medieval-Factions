@@ -17,5 +17,4 @@ class BlockPistonRetractListener(private val plugin: MedievalFactions) : Listene
             event.isCancelled = true
         }
     }
-
 }

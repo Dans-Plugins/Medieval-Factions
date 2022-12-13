@@ -40,12 +40,15 @@ data class MfGate(
     fun open() {
         if (status == MfGateStatus.OPENING || status == MfGateStatus.OPEN) return
         val gateService = plugin.services.gateService
-        plugin.server.scheduler.runTaskAsynchronously(plugin, Runnable {
-            gateService.save(copy(status = MfGateStatus.OPENING)).onFailure {
-                plugin.logger.log(Level.SEVERE, "Failed to save gate: ${it.reason.message}", it.reason.cause)
-                return@Runnable
+        plugin.server.scheduler.runTaskAsynchronously(
+            plugin,
+            Runnable {
+                gateService.save(copy(status = MfGateStatus.OPENING)).onFailure {
+                    plugin.logger.log(Level.SEVERE, "Failed to save gate: ${it.reason.message}", it.reason.cause)
+                    return@Runnable
+                }
             }
-        })
+        )
     }
 
     fun continueOpening() {
@@ -60,24 +63,30 @@ data class MfGate(
             ?.value
         lowestBlocks?.map { it.toBukkitBlock() }?.forEach { it?.type = Material.AIR }
         if (area.blocks.all { it.toBukkitBlock()?.type == Material.AIR }) {
-            plugin.server.scheduler.runTaskAsynchronously(plugin, Runnable {
-                gateService.save(copy(status = MfGateStatus.OPEN)).onFailure {
-                    plugin.logger.log(Level.SEVERE, "Failed to save gate: ${it.reason.message}", it.reason.cause)
-                    return@Runnable
+            plugin.server.scheduler.runTaskAsynchronously(
+                plugin,
+                Runnable {
+                    gateService.save(copy(status = MfGateStatus.OPEN)).onFailure {
+                        plugin.logger.log(Level.SEVERE, "Failed to save gate: ${it.reason.message}", it.reason.cause)
+                        return@Runnable
+                    }
                 }
-            })
+            )
         }
     }
 
     fun close() {
         if (status == MfGateStatus.CLOSING || status == CLOSED) return
         val gateService = plugin.services.gateService
-        plugin.server.scheduler.runTaskAsynchronously(plugin, Runnable {
-            gateService.save(copy(status = MfGateStatus.CLOSING)).onFailure {
-                plugin.logger.log(Level.SEVERE, "Failed to save gate: ${it.reason.message}", it.reason.cause)
-                return@Runnable
+        plugin.server.scheduler.runTaskAsynchronously(
+            plugin,
+            Runnable {
+                gateService.save(copy(status = MfGateStatus.CLOSING)).onFailure {
+                    plugin.logger.log(Level.SEVERE, "Failed to save gate: ${it.reason.message}", it.reason.cause)
+                    return@Runnable
+                }
             }
-        })
+        )
         val centerBukkitBlock = area.centerPosition.toBukkitBlock()
         if (centerBukkitBlock != null) {
             centerBukkitBlock.world.playSound(centerBukkitBlock.location, Sound.BLOCK_ANVIL_HIT, 1f, 0f)
@@ -96,13 +105,15 @@ data class MfGate(
             ?.value
         highestEmptyBlocks?.map { it.toBukkitBlock() }?.forEach { it?.type = material }
         if (area.blocks.all { it.toBukkitBlock()?.type == material }) {
-            plugin.server.scheduler.runTaskAsynchronously(plugin, Runnable {
-                gateService.save(copy(status = CLOSED)).onFailure {
-                    plugin.logger.log(Level.SEVERE, "Failed to save gate: ${it.reason.message}", it.reason.cause)
-                    return@Runnable
+            plugin.server.scheduler.runTaskAsynchronously(
+                plugin,
+                Runnable {
+                    gateService.save(copy(status = CLOSED)).onFailure {
+                        plugin.logger.log(Level.SEVERE, "Failed to save gate: ${it.reason.message}", it.reason.cause)
+                        return@Runnable
+                    }
                 }
-            })
+            )
         }
     }
-
 }

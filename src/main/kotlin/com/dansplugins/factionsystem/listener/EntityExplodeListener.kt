@@ -12,10 +12,9 @@ class EntityExplodeListener(private val plugin: MedievalFactions) : Listener {
     fun onEntityExplode(event: EntityExplodeEvent) {
         val gateService = plugin.services.gateService
         val blocks = event.blockList().filter { block ->
-            gateService.getGatesAt(MfBlockPosition.fromBukkitBlock(block)).isNotEmpty()
-                    || gateService.getGatesByTrigger(MfBlockPosition.fromBukkitBlock(block)).isNotEmpty()
+            gateService.getGatesAt(MfBlockPosition.fromBukkitBlock(block)).isNotEmpty() ||
+                gateService.getGatesByTrigger(MfBlockPosition.fromBukkitBlock(block)).isNotEmpty()
         }
         event.blockList().removeAll(blocks)
     }
-
 }

@@ -19,21 +19,24 @@ class MfFactionClaimCheckCommand(private val plugin: MedievalFactions) : Command
             sender.sendMessage("$RED${plugin.language["CommandFactionCheckClaimNotAPlayer"]}")
             return true
         }
-        plugin.server.scheduler.runTaskAsynchronously(plugin, Runnable {
-            val claimService = plugin.services.claimService
-            val claim = claimService.getClaim(sender.location.chunk)
-            if (claim == null) {
-                sender.sendMessage("$GREEN${plugin.language["CommandFactionCheckClaimNotClaimed"]}")
-                return@Runnable
+        plugin.server.scheduler.runTaskAsynchronously(
+            plugin,
+            Runnable {
+                val claimService = plugin.services.claimService
+                val claim = claimService.getClaim(sender.location.chunk)
+                if (claim == null) {
+                    sender.sendMessage("$GREEN${plugin.language["CommandFactionCheckClaimNotClaimed"]}")
+                    return@Runnable
+                }
+                val factionService = plugin.services.factionService
+                val faction = factionService.getFaction(claim.factionId)
+                if (faction == null) {
+                    sender.sendMessage("$GREEN${plugin.language["CommandFactionCheckClaimNotClaimed"]}")
+                    return@Runnable
+                }
+                sender.sendMessage("$GREEN${plugin.language["CommandFactionCheckClaimClaimed", faction.name]}")
             }
-            val factionService = plugin.services.factionService
-            val faction = factionService.getFaction(claim.factionId)
-            if (faction == null) {
-                sender.sendMessage("$GREEN${plugin.language["CommandFactionCheckClaimNotClaimed"]}")
-                return@Runnable
-            }
-            sender.sendMessage("$GREEN${plugin.language["CommandFactionCheckClaimClaimed", faction.name]}")
-        })
+        )
         return true
     }
 

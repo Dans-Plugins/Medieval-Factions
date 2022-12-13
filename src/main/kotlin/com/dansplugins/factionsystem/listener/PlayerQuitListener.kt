@@ -25,5 +25,4 @@ class PlayerQuitListener(private val plugin: MedievalFactions) : Listener {
         val interactionService = plugin.services.interactionService
         interactionService.unloadInteractionStatus(player.id)
     }
-
 }

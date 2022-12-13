@@ -44,51 +44,56 @@ class MfFactionJoinCommand(private val plugin: MedievalFactions) : CommandExecut
             sender.sendMessage("$RED${plugin.language["CommandFactionJoinNotAPlayer"]}")
             return true
         }
-        plugin.server.scheduler.runTaskAsynchronously(plugin, Runnable {
-            val playerService = plugin.services.playerService
-            val mfPlayer = playerService.getPlayer(sender)
-                ?: playerService.save(MfPlayer(plugin, sender)).onFailure {
-                    sender.sendMessage("$RED${plugin.language["CommandFactionJoinFailedToSavePlayer"]}")
-                    plugin.logger.log(Level.SEVERE, "Failed to save player: ${it.reason.message}", it.reason.cause)
+        plugin.server.scheduler.runTaskAsynchronously(
+            plugin,
+            Runnable {
+                val playerService = plugin.services.playerService
+                val mfPlayer = playerService.getPlayer(sender)
+                    ?: playerService.save(MfPlayer(plugin, sender)).onFailure {
+                        sender.sendMessage("$RED${plugin.language["CommandFactionJoinFailedToSavePlayer"]}")
+                        plugin.logger.log(Level.SEVERE, "Failed to save player: ${it.reason.message}", it.reason.cause)
+                        return@Runnable
+                    }
+                val factionService = plugin.services.factionService
+                val playerFaction = factionService.getFaction(mfPlayer.id)
+                if (playerFaction != null) {
+                    sender.sendMessage("$RED${plugin.language["CommandFactionJoinAlreadyInFaction", playerFaction.name]}")
                     return@Runnable
                 }
-            val factionService = plugin.services.factionService
-            val playerFaction = factionService.getFaction(mfPlayer.id)
-            if (playerFaction != null) {
-                sender.sendMessage("$RED${plugin.language["CommandFactionJoinAlreadyInFaction", playerFaction.name]}")
-                return@Runnable
-            }
 
-            val faction = factionService.getFaction(MfFactionId(args.dropLast(lastArgOffset).joinToString(" ")))
-                ?: factionService.getFaction(args.dropLast(lastArgOffset).joinToString(" "))
-            if (faction == null) {
-                sender.sendMessage("$RED${plugin.language["CommandFactionJoinInvalidFaction"]}")
-                return@Runnable
-            }
-            if (!faction.invites.any { it.playerId == mfPlayer.id } && !force) {
-                if (hasUninvitedJoinPermission) {
-                    confirmJoin(sender, faction)
-                } else {
-                    sender.sendMessage("$RED${plugin.language["CommandFactionJoinNotInvited"]}")
+                val faction = factionService.getFaction(MfFactionId(args.dropLast(lastArgOffset).joinToString(" ")))
+                    ?: factionService.getFaction(args.dropLast(lastArgOffset).joinToString(" "))
+                if (faction == null) {
+                    sender.sendMessage("$RED${plugin.language["CommandFactionJoinInvalidFaction"]}")
+                    return@Runnable
                 }
-                return@Runnable
+                if (!faction.invites.any { it.playerId == mfPlayer.id } && !force) {
+                    if (hasUninvitedJoinPermission) {
+                        confirmJoin(sender, faction)
+                    } else {
+                        sender.sendMessage("$RED${plugin.language["CommandFactionJoinNotInvited"]}")
+                    }
+                    return@Runnable
+                }
+                val updatedFaction = factionService.save(
+                    faction.copy(
+                        members = faction.members + MfFactionMember(mfPlayer.id, faction.roles.default),
+                        invites = faction.invites.filter { it.playerId != mfPlayer.id }
+                    )
+                ).onFailure {
+                    sender.sendMessage("$RED${plugin.language["CommandFactionJoinFailedToSaveFaction"]}")
+                    plugin.logger.log(Level.SEVERE, "Failed to save faction: ${it.reason.message}", it.reason.cause)
+                    return@Runnable
+                }
+                updatedFaction.sendMessage(
+                    plugin.language["FactionNewMemberNotificationTitle", sender.name],
+                    plugin.language["FactionNewMemberNotificationBody", sender.name]
+                )
+                sender.sendMessage(
+                    "$GREEN${plugin.language["CommandFactionJoinSuccess", faction.name]}"
+                )
             }
-            val updatedFaction = factionService.save(faction.copy(
-                members = faction.members + MfFactionMember(mfPlayer.id, faction.roles.default),
-                invites = faction.invites.filter { it.playerId != mfPlayer.id }
-            )).onFailure {
-                sender.sendMessage("$RED${plugin.language["CommandFactionJoinFailedToSaveFaction"]}")
-                plugin.logger.log(Level.SEVERE, "Failed to save faction: ${it.reason.message}", it.reason.cause)
-                return@Runnable
-            }
-            updatedFaction.sendMessage(
-                plugin.language["FactionNewMemberNotificationTitle", sender.name],
-                plugin.language["FactionNewMemberNotificationBody", sender.name]
-            )
-            sender.sendMessage(
-                "$GREEN${plugin.language["CommandFactionJoinSuccess", faction.name]}"
-            )
-        })
+        )
         return true
     }
 
@@ -114,9 +119,10 @@ class MfFactionJoinCommand(private val plugin: MedievalFactions) : CommandExecut
         val factionService = plugin.services.factionService
         return when {
             args.isEmpty() -> factionService.factions.map(MfFaction::name)
-            args.size == 1 -> factionService.factions
-                .filter { it.name.lowercase().startsWith(args[0].lowercase()) }
-                .map(MfFaction::name)
+            args.size == 1 ->
+                factionService.factions
+                    .filter { it.name.lowercase().startsWith(args[0].lowercase()) }
+                    .map(MfFaction::name)
             else -> emptyList()
         }
     }
