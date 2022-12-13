@@ -42,6 +42,7 @@ import com.dansplugins.factionsystem.command.faction.vassalize.MfFactionVassaliz
 import com.dansplugins.factionsystem.command.faction.who.MfFactionWhoCommand
 import org.bukkit.ChatColor.AQUA
 import org.bukkit.ChatColor.GRAY
+import org.bukkit.ChatColor.RED
 import org.bukkit.ChatColor.YELLOW
 import org.bukkit.command.Command
 import org.bukkit.command.CommandExecutor
@@ -214,9 +215,18 @@ class MfFactionCommand(private val plugin: MedievalFactions) : CommandExecutor, 
             in bonusPowerAliases -> factionBonusPowerCommand.onCommand(sender, command, label, args.drop(1).toTypedArray())
             in relationshipAliases -> factionRelationshipCommand.onCommand(sender, command, label, args.drop(1).toTypedArray())
             // Backwards compatibility:
-            in claimAutoAliases -> factionClaimAutoCommand.onCommand(sender, command, label, args.drop(1).toTypedArray())
-            in claimFillAliases -> factionClaimFillCommand.onCommand(sender, command, label, args.drop(1).toTypedArray())
-            in claimCheckAliases -> factionClaimCheckCommand.onCommand(sender, command, label, args.drop(1).toTypedArray())
+            in claimAutoAliases -> {
+                sender.sendMessage("${RED}Command deprecated, use \"/mf claim auto\" instead")
+                factionClaimAutoCommand.onCommand(sender, command, label, args.drop(1).toTypedArray())
+            }
+            in claimFillAliases -> {
+                sender.sendMessage("${RED}Command deprecated, use \"/mf claim fill\" instead")
+                factionClaimFillCommand.onCommand(sender, command, label, args.drop(1).toTypedArray())
+            }
+            in claimCheckAliases -> {
+                sender.sendMessage("${RED}Command deprecated, use \"/mf claim check\" instead")
+                factionClaimCheckCommand.onCommand(sender, command, label, args.drop(1).toTypedArray())
+            }
             else -> {
                 sender.sendMessage("$AQUA${plugin.language["MedievalFactionsTitle", plugin.description.version]}")
                 sender.sendMessage("$GRAY${plugin.language["DeveloperList", plugin.description.authors.joinToString()]}")
