@@ -45,16 +45,19 @@ class MfPowerSetCommand(private val plugin: MedievalFactions) : CommandExecutor,
             sender.sendMessage("$RED${plugin.language["CommandPowerSetInvalidPowerTooHigh", decimalFormat.format(maxPower)]}")
             return true
         }
-        plugin.server.scheduler.runTaskAsynchronously(plugin, Runnable {
-            val playerService = plugin.services.playerService
-            val targetMfPlayer = playerService.getPlayer(target) ?: MfPlayer(plugin, target)
-            playerService.save(targetMfPlayer.copy(power = power)).onFailure {
-                sender.sendMessage("$RED${plugin.language["CommandPowerSetFailedToSaveTargetPlayer"]}")
-                plugin.logger.log(Level.SEVERE, "Failed to save player: ${it.reason.message}", it.reason.cause)
-                return@Runnable
+        plugin.server.scheduler.runTaskAsynchronously(
+            plugin,
+            Runnable {
+                val playerService = plugin.services.playerService
+                val targetMfPlayer = playerService.getPlayer(target) ?: MfPlayer(plugin, target)
+                playerService.save(targetMfPlayer.copy(power = power)).onFailure {
+                    sender.sendMessage("$RED${plugin.language["CommandPowerSetFailedToSaveTargetPlayer"]}")
+                    plugin.logger.log(Level.SEVERE, "Failed to save player: ${it.reason.message}", it.reason.cause)
+                    return@Runnable
+                }
+                sender.sendMessage("$GREEN${plugin.language["CommandPowerSetSuccess", target.name ?: plugin.language["UnknownPlayer"], decimalFormat.format(power), decimalFormat.format(maxPower)]}")
             }
-            sender.sendMessage("$GREEN${plugin.language["CommandPowerSetSuccess", target.name ?: plugin.language["UnknownPlayer"], decimalFormat.format(power), decimalFormat.format(maxPower)]}")
-        })
+        )
         return true
     }
 
@@ -64,12 +67,13 @@ class MfPowerSetCommand(private val plugin: MedievalFactions) : CommandExecutor,
         label: String,
         args: Array<out String>
     ) = when {
-        args.isEmpty() -> plugin.server.offlinePlayers
-            .mapNotNull { it.name }
-        args.size == 1 -> plugin.server.offlinePlayers
-            .filter { it.name?.lowercase()?.startsWith(args[0].lowercase()) == true }
-            .mapNotNull { it.name }
+        args.isEmpty() ->
+            plugin.server.offlinePlayers
+                .mapNotNull { it.name }
+        args.size == 1 ->
+            plugin.server.offlinePlayers
+                .filter { it.name?.lowercase()?.startsWith(args[0].lowercase()) == true }
+                .mapNotNull { it.name }
         else -> emptyList()
     }
-
 }

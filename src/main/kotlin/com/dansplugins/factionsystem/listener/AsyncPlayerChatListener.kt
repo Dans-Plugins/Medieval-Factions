@@ -33,12 +33,14 @@ class AsyncPlayerChatListener(private val plugin: MedievalFactions) : Listener {
             }
             event.isCancelled = true
             val chatService = plugin.services.chatService
-            plugin.server.scheduler.runTask(plugin, Runnable {
-                chatService.sendMessage(mfPlayer, faction, mfPlayer.chatChannel, event.message)
-            })
+            plugin.server.scheduler.runTask(
+                plugin,
+                Runnable {
+                    chatService.sendMessage(mfPlayer, faction, mfPlayer.chatChannel, event.message)
+                }
+            )
         } else if (isDefaultChatFormattingEnabled) {
             event.format = "${ChatColor.WHITE}[${ChatColor.of(faction.flags[plugin.flags.color])}${faction.prefix ?: faction.name}${ChatColor.WHITE}] %s: %s"
         }
     }
-
 }

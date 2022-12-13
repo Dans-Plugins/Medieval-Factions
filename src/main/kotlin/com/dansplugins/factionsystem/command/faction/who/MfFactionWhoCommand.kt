@@ -26,22 +26,25 @@ class MfFactionWhoCommand(private val plugin: MedievalFactions) : CommandExecuto
             sender.sendMessage("$RED${plugin.language["CommandFactionWhoInvalidTarget"]}")
             return true
         }
-        plugin.server.scheduler.runTaskAsynchronously(plugin, Runnable {
-            val playerService = plugin.services.playerService
-            val targetMfPlayer = playerService.getPlayer(target)
-                ?: playerService.save(MfPlayer(plugin, target)).onFailure {
-                    sender.sendMessage("$RED${plugin.language["CommandFactionWhoFailedToSaveTargetPlayer"]}")
-                    plugin.logger.log(SEVERE, "Failed to save player: ${it.reason.message}", it.reason.cause)
+        plugin.server.scheduler.runTaskAsynchronously(
+            plugin,
+            Runnable {
+                val playerService = plugin.services.playerService
+                val targetMfPlayer = playerService.getPlayer(target)
+                    ?: playerService.save(MfPlayer(plugin, target)).onFailure {
+                        sender.sendMessage("$RED${plugin.language["CommandFactionWhoFailedToSaveTargetPlayer"]}")
+                        plugin.logger.log(SEVERE, "Failed to save player: ${it.reason.message}", it.reason.cause)
+                        return@Runnable
+                    }
+                val factionService = plugin.services.factionService
+                val faction = factionService.getFaction(targetMfPlayer.id)
+                if (faction == null) {
+                    sender.sendMessage("$RED${plugin.language["CommandFactionWhoNotInAFaction", target.name ?: plugin.language["UnknownPlayer"]]}")
                     return@Runnable
                 }
-            val factionService = plugin.services.factionService
-            val faction = factionService.getFaction(targetMfPlayer.id)
-            if (faction == null) {
-                sender.sendMessage("$RED${plugin.language["CommandFactionWhoNotInAFaction", target.name ?: plugin.language["UnknownPlayer"]]}")
-                return@Runnable
+                sender.sendMessage("$GREEN${plugin.language["CommandFactionWhoSuccess", target.name ?: plugin.language["UnknownPlayer"], faction.name]}")
             }
-            sender.sendMessage("$GREEN${plugin.language["CommandFactionWhoSuccess", target.name ?: plugin.language["UnknownPlayer"], faction.name]}")
-        })
+        )
         return true
     }
 
@@ -51,11 +54,13 @@ class MfFactionWhoCommand(private val plugin: MedievalFactions) : CommandExecuto
         label: String,
         args: Array<out String>
     ) = when {
-        args.isEmpty() -> plugin.server.offlinePlayers
-            .mapNotNull { it.name }
-        args.size == 1 -> plugin.server.offlinePlayers
-            .filter { it.name?.lowercase()?.startsWith(args[0].lowercase()) == true }
-            .mapNotNull { it.name }
+        args.isEmpty() ->
+            plugin.server.offlinePlayers
+                .mapNotNull { it.name }
+        args.size == 1 ->
+            plugin.server.offlinePlayers
+                .filter { it.name?.lowercase()?.startsWith(args[0].lowercase()) == true }
+                .mapNotNull { it.name }
         else -> emptyList()
     }
 }

@@ -6,7 +6,9 @@ import com.dansplugins.factionsystem.failure.OptimisticLockingFailureException
 import com.dansplugins.factionsystem.jooq.Tables.MF_PLAYER
 import com.dansplugins.factionsystem.jooq.tables.records.MfPlayerRecord
 import org.jooq.DSLContext
-import org.jooq.impl.DSL.*
+import org.jooq.impl.DSL.greatest
+import org.jooq.impl.DSL.least
+import org.jooq.impl.DSL.value
 
 class JooqMfPlayerRepository(private val plugin: MedievalFactions, private val dsl: DSLContext) : MfPlayerRepository {
     override fun getPlayer(id: MfPlayerId) =
@@ -48,23 +50,30 @@ class JooqMfPlayerRepository(private val plugin: MedievalFactions, private val d
         val hoursToReachMax = plugin.config.getDouble("players.hoursToReachMaxPower")
         val timeIncrementHours = 0.25
         dsl.update(MF_PLAYER)
-            .set(MF_PLAYER.POWER, least(value(maxPower), greatest(value(0.0),
-                value((hoursToReachMax * 2) + timeIncrementHours)
-                    .minus(
-                        MF_PLAYER.POWER.div(maxPower)
+            .set(
+                MF_PLAYER.POWER,
+                least(
+                    value(maxPower),
+                    greatest(
+                        value(0.0),
+                        value((hoursToReachMax * 2) + timeIncrementHours)
+                            .minus(
+                                MF_PLAYER.POWER.div(maxPower)
+                                    .minus(1)
+                                    .div(-1)
+                                    .pow(0.25)
+                                    .plus(1)
+                                    .times(hoursToReachMax)
+                            )
+                            .div(hoursToReachMax)
                             .minus(1)
-                            .div(-1)
-                            .pow(0.25)
+                            .pow(4)
+                            .times(-1)
                             .plus(1)
-                            .times(hoursToReachMax)
+                            .times(maxPower)
                     )
-                    .div(hoursToReachMax)
-                    .minus(1)
-                    .pow(4)
-                    .times(-1)
-                    .plus(1)
-                    .times(maxPower)
-            )))
+                )
+            )
             .set(MF_PLAYER.VERSION, MF_PLAYER.VERSION.plus(1))
             .where(MF_PLAYER.ID.`in`(onlinePlayerIds.map { it.value }))
             .and(MF_PLAYER.POWER.lt(maxPower))
@@ -76,19 +85,26 @@ class JooqMfPlayerRepository(private val plugin: MedievalFactions, private val d
         val hoursToReachMin = plugin.config.getDouble("players.hoursToReachMinPower")
         val timeIncrementHours = 0.25
         dsl.update(MF_PLAYER)
-            .set(MF_PLAYER.POWER, least(value(maxPower), greatest(value(0.0),
-                least(MF_PLAYER.POWER, MF_PLAYER.POWER_AT_LOGOUT, maxPower).div(MF_PLAYER.POWER_AT_LOGOUT)
-                    .minus(1)
-                    .div(-1)
-                    .pow(0.25)
-                    .times(hoursToReachMin)
-                    .plus(timeIncrementHours)
-                    .div(hoursToReachMin)
-                    .pow(4)
-                    .times(-1)
-                    .plus(1)
-                    .times(MF_PLAYER.POWER_AT_LOGOUT)
-            )))
+            .set(
+                MF_PLAYER.POWER,
+                least(
+                    value(maxPower),
+                    greatest(
+                        value(0.0),
+                        least(MF_PLAYER.POWER, MF_PLAYER.POWER_AT_LOGOUT, maxPower).div(MF_PLAYER.POWER_AT_LOGOUT)
+                            .minus(1)
+                            .div(-1)
+                            .pow(0.25)
+                            .times(hoursToReachMin)
+                            .plus(timeIncrementHours)
+                            .div(hoursToReachMin)
+                            .pow(4)
+                            .times(-1)
+                            .plus(1)
+                            .times(MF_PLAYER.POWER_AT_LOGOUT)
+                    )
+                )
+            )
             .set(MF_PLAYER.VERSION, MF_PLAYER.VERSION.plus(1))
             .where(MF_PLAYER.ID.notIn(onlinePlayerIds.map { it.value }))
             .and(MF_PLAYER.POWER_AT_LOGOUT.gt(0.0))

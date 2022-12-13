@@ -37,7 +37,9 @@ import com.dansplugins.factionsystem.command.faction.unclaim.MfFactionUnclaimCom
 import com.dansplugins.factionsystem.command.faction.unclaimall.MfFactionUnclaimAllCommand
 import com.dansplugins.factionsystem.command.faction.vassalize.MfFactionVassalizeCommand
 import com.dansplugins.factionsystem.command.faction.who.MfFactionWhoCommand
-import org.bukkit.ChatColor.*
+import org.bukkit.ChatColor.AQUA
+import org.bukkit.ChatColor.GRAY
+import org.bukkit.ChatColor.YELLOW
 import org.bukkit.command.Command
 import org.bukkit.command.CommandExecutor
 import org.bukkit.command.CommandSender
@@ -120,41 +122,41 @@ class MfFactionCommand(private val plugin: MedievalFactions) : CommandExecutor, 
     private val relationshipAliases = listOf("relationship", plugin.language["CmdFactionRelationship"])
 
     private val subcommands = helpAliases +
-            createAliases +
-            claimAliases +
-            lawAliases +
-            allyAliases +
-            breakAllianceAliases +
-            inviteAliases +
-            joinAliases +
-            declareWarAliases +
-            makePeaceAliases +
-            infoAliases +
-            membersAliases +
-            roleAliases +
-            listAliases +
-            unclaimAliases +
-            unclaimAllAliases +
-            powerAliases +
-            whoAliases +
-            disbandAliases +
-            invokeAliases +
-            leaveAliases +
-            setAliases +
-            renameAliases +
-            vassalizeAliases +
-            swearFealtyAliases +
-            grantIndependenceAliases +
-            declareIndependenceAliases +
-            kickAliases +
-            mapAliases +
-            setHomeAliases +
-            homeAliases +
-            flagAliases +
-            bypassAliases +
-            chatAliases +
-            bonusPowerAliases +
-            relationshipAliases
+        createAliases +
+        claimAliases +
+        lawAliases +
+        allyAliases +
+        breakAllianceAliases +
+        inviteAliases +
+        joinAliases +
+        declareWarAliases +
+        makePeaceAliases +
+        infoAliases +
+        membersAliases +
+        roleAliases +
+        listAliases +
+        unclaimAliases +
+        unclaimAllAliases +
+        powerAliases +
+        whoAliases +
+        disbandAliases +
+        invokeAliases +
+        leaveAliases +
+        setAliases +
+        renameAliases +
+        vassalizeAliases +
+        swearFealtyAliases +
+        grantIndependenceAliases +
+        declareIndependenceAliases +
+        kickAliases +
+        mapAliases +
+        setHomeAliases +
+        homeAliases +
+        flagAliases +
+        bypassAliases +
+        chatAliases +
+        bonusPowerAliases +
+        relationshipAliases
 
     override fun onCommand(sender: CommandSender, command: Command, label: String, args: Array<out String>): Boolean {
         return when (args.firstOrNull()?.lowercase()) {

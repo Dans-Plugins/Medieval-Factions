@@ -30,6 +30,7 @@ class MfGateService(
 
     fun getGatesByTrigger(trigger: MfBlockPosition) = gatesById.values.filter { it.trigger == trigger }
     fun getGatesAt(block: MfBlockPosition) = gatesById.values.filter { it.area.contains(block) }
+
     @JvmName("getGatesByFactionId")
     fun getGatesByFaction(factionId: MfFactionId) = gatesById.values.filter { it.factionId == factionId }
     fun getGatesByStatus(status: MfGateStatus) = gatesById.values.filter { it.status == status }
@@ -89,5 +90,4 @@ class MfGateService(
             else -> ServiceFailureType.GENERAL
         }
     }
-
 }

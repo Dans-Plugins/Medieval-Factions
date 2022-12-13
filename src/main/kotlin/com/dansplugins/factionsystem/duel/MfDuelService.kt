@@ -63,8 +63,10 @@ class MfDuelService(
 
     @JvmName("getInviteByInviterIdAndInviteeId")
     fun getInvite(inviter: MfPlayerId, invitee: MfPlayerId) = duelInvites.singleOrNull { it.inviterId == inviter && it.inviteeId == invitee }
+
     @JvmName("getInvitesByInviteeId")
     fun getInvitesByInvitee(invitee: MfPlayerId) = duelInvites.filter { it.inviteeId == invitee }
+
     @JvmName("getInvitesByInviterId")
     fun getInvitesByInviter(inviter: MfPlayerId) = duelInvites.filter { it.inviterId == inviter }
 
@@ -92,5 +94,4 @@ class MfDuelService(
             else -> ServiceFailureType.GENERAL
         }
     }
-
 }

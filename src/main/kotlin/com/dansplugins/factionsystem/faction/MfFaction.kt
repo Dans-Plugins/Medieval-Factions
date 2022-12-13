@@ -2,7 +2,6 @@ package com.dansplugins.factionsystem.faction
 
 import com.dansplugins.factionsystem.MedievalFactions
 import com.dansplugins.factionsystem.area.MfPosition
-import com.dansplugins.factionsystem.chat.MfFactionChatChannel.*
 import com.dansplugins.factionsystem.faction.flag.MfFlagValues
 import com.dansplugins.factionsystem.faction.permission.MfFactionPermission
 import com.dansplugins.factionsystem.faction.role.MfFactionRole
@@ -56,8 +55,10 @@ data class MfFaction(
 
     @JvmName("getRoleByPlayerId")
     fun getRole(playerId: MfPlayerId): MfFactionRole? = members.singleOrNull { it.playerId == playerId }?.role
+
     @JvmName("getRoleByRoleId")
     fun getRole(roleId: MfFactionRoleId): MfFactionRole? = roles.getRole(roleId)
+
     @JvmName("getRoleByName")
     fun getRole(name: String): MfFactionRole? = roles.getRole(name)
 
@@ -69,14 +70,19 @@ data class MfFaction(
                 if (player != null) {
                     player.sendMessage("$title - $message")
                 } else {
-                    plugin.server.scheduler.runTaskAsynchronously(plugin, Runnable {
-                        plugin.services.notificationService.sendNotification(mfPlayer, MfNotification(
-                            title,
-                            message
-                        ))
-                    })
+                    plugin.server.scheduler.runTaskAsynchronously(
+                        plugin,
+                        Runnable {
+                            plugin.services.notificationService.sendNotification(
+                                mfPlayer,
+                                MfNotification(
+                                    title,
+                                    message
+                                )
+                            )
+                        }
+                    )
                 }
             }
     }
-
 }

@@ -91,21 +91,24 @@ class MfAccessorsAddCommand(private val plugin: MedievalFactions) : CommandExecu
             return true
         }
         if (args.size < 3) {
-            plugin.server.scheduler.runTaskAsynchronously(plugin, Runnable {
-                val playerService = plugin.services.playerService
-                val mfPlayer = playerService.getPlayer(sender)
-                    ?: playerService.save(MfPlayer(plugin, sender)).onFailure {
-                        sender.sendMessage("$RED${plugin.language["CommandAccessorsAddFailedToSavePlayer"]}")
-                        plugin.logger.log(SEVERE, "Failed to save player: ${it.reason.message}", it.reason.cause)
+            plugin.server.scheduler.runTaskAsynchronously(
+                plugin,
+                Runnable {
+                    val playerService = plugin.services.playerService
+                    val mfPlayer = playerService.getPlayer(sender)
+                        ?: playerService.save(MfPlayer(plugin, sender)).onFailure {
+                            sender.sendMessage("$RED${plugin.language["CommandAccessorsAddFailedToSavePlayer"]}")
+                            plugin.logger.log(SEVERE, "Failed to save player: ${it.reason.message}", it.reason.cause)
+                            return@Runnable
+                        }
+                    val interactionService = plugin.services.interactionService
+                    interactionService.setInteractionStatus(mfPlayer.id, ADDING_ACCESSOR).onFailure {
+                        sender.sendMessage("$RED${plugin.language["CommandAccessorsAddFailedToSetInteractionStatus"]}")
                         return@Runnable
                     }
-                val interactionService = plugin.services.interactionService
-                interactionService.setInteractionStatus(mfPlayer.id, ADDING_ACCESSOR).onFailure {
-                    sender.sendMessage("$RED${plugin.language["CommandAccessorsAddFailedToSetInteractionStatus"]}")
-                    return@Runnable
+                    sender.sendMessage("$GREEN${plugin.language["CommandAccessorsAddSelectBlock"]}")
                 }
-                sender.sendMessage("$GREEN${plugin.language["CommandAccessorsAddSelectBlock"]}")
-            })
+            )
             return true
         }
         val (x, y, z) = args.take(3).map(String::toIntOrNull)
@@ -147,41 +150,47 @@ class MfAccessorsAddCommand(private val plugin: MedievalFactions) : CommandExecu
     }
 
     private fun addAccessor(sender: Player, blocks: List<Block>, accessor: OfflinePlayer) {
-        plugin.server.scheduler.runTaskAsynchronously(plugin, Runnable {
-            val playerService = plugin.services.playerService
-            val mfPlayer = playerService.getPlayer(sender)
-                ?: playerService.save(MfPlayer(plugin, sender)).onFailure {
-                    sender.sendMessage("$RED${plugin.language["CommandAccessorsAddFailedToSavePlayer"]}")
-                    plugin.logger.log(SEVERE, "Failed to save player: ${it.reason.message}", it.reason.cause)
+        plugin.server.scheduler.runTaskAsynchronously(
+            plugin,
+            Runnable {
+                val playerService = plugin.services.playerService
+                val mfPlayer = playerService.getPlayer(sender)
+                    ?: playerService.save(MfPlayer(plugin, sender)).onFailure {
+                        sender.sendMessage("$RED${plugin.language["CommandAccessorsAddFailedToSavePlayer"]}")
+                        plugin.logger.log(SEVERE, "Failed to save player: ${it.reason.message}", it.reason.cause)
+                        return@Runnable
+                    }
+                val accessorMfPlayer = playerService.getPlayer(accessor)
+                    ?: playerService.save(MfPlayer(plugin, accessor)).onFailure {
+                        sender.sendMessage("$RED${plugin.language["CommandAccessorsAddFailedToSavePlayer"]}")
+                        plugin.logger.log(SEVERE, "Failed to save player: ${it.reason.message}", it.reason.cause)
+                        return@Runnable
+                    }
+                val lockService = plugin.services.lockService
+                val lockedBlocks = blocks.mapNotNull { lockService.getLockedBlock(MfBlockPosition.fromBukkitBlock(it)) }
+                val lockedBlock = lockedBlocks.firstOrNull()
+                if (lockedBlock == null) {
+                    sender.sendMessage("$RED${plugin.language["CommandAccessorsAddBlockNotLocked"]}")
                     return@Runnable
                 }
-            val accessorMfPlayer = playerService.getPlayer(accessor)
-                ?: playerService.save(MfPlayer(plugin, accessor)).onFailure {
-                    sender.sendMessage("$RED${plugin.language["CommandAccessorsAddFailedToSavePlayer"]}")
-                    plugin.logger.log(SEVERE, "Failed to save player: ${it.reason.message}", it.reason.cause)
+                if (lockedBlock.playerId.value != mfPlayer.id.value && lockedBlock.accessors.none { it.value == mfPlayer.id.value }) {
+                    sender.sendMessage("$RED${plugin.language["CommandAccessorsAddMustHaveAccess"]}")
                     return@Runnable
                 }
-            val lockService = plugin.services.lockService
-            val lockedBlocks = blocks.mapNotNull { lockService.getLockedBlock(MfBlockPosition.fromBukkitBlock(it)) }
-            val lockedBlock = lockedBlocks.firstOrNull()
-            if (lockedBlock == null) {
-                sender.sendMessage("$RED${plugin.language["CommandAccessorsAddBlockNotLocked"]}")
-                return@Runnable
+                lockService.save(lockedBlock.copy(accessors = lockedBlock.accessors + accessorMfPlayer.id)).onFailure {
+                    sender.sendMessage("$RED${plugin.language["CommandAccessorsAddFailedToSaveLockedBlock"]}")
+                    plugin.logger.log(SEVERE, "Failed to save locked block: ${it.reason.message}", it.reason.cause)
+                    return@Runnable
+                }
+                sender.sendMessage("$GREEN${plugin.language["CommandAccessorsAddSuccess", accessor.name ?: plugin.language["UnknownPlayer"]]}")
+                plugin.server.scheduler.runTask(
+                    plugin,
+                    Runnable {
+                        sender.performCommand("accessors list ${lockedBlock.block.x} ${lockedBlock.block.y} ${lockedBlock.block.z}")
+                    }
+                )
             }
-            if (lockedBlock.playerId.value != mfPlayer.id.value && lockedBlock.accessors.none { it.value == mfPlayer.id.value }) {
-                sender.sendMessage("$RED${plugin.language["CommandAccessorsAddMustHaveAccess"]}")
-                return@Runnable
-            }
-            lockService.save(lockedBlock.copy(accessors = lockedBlock.accessors + accessorMfPlayer.id)).onFailure {
-                sender.sendMessage("$RED${plugin.language["CommandAccessorsAddFailedToSaveLockedBlock"]}")
-                plugin.logger.log(SEVERE, "Failed to save locked block: ${it.reason.message}", it.reason.cause)
-                return@Runnable
-            }
-            sender.sendMessage("$GREEN${plugin.language["CommandAccessorsAddSuccess", accessor.name ?: plugin.language["UnknownPlayer"]]}")
-            plugin.server.scheduler.runTask(plugin, Runnable {
-                sender.performCommand("accessors list ${lockedBlock.block.x} ${lockedBlock.block.y} ${lockedBlock.block.z}")
-            })
-        })
+        )
     }
 
     override fun onTabComplete(
@@ -191,10 +200,10 @@ class MfAccessorsAddCommand(private val plugin: MedievalFactions) : CommandExecu
         args: Array<out String>
     ) = when {
         args.size <= 3 -> emptyList()
-        args.size == 4 -> plugin.server.offlinePlayers
-            .filter { it.name?.lowercase()?.startsWith(args[3].lowercase()) == true }
-            .mapNotNull(OfflinePlayer::getName)
+        args.size == 4 ->
+            plugin.server.offlinePlayers
+                .filter { it.name?.lowercase()?.startsWith(args[3].lowercase()) == true }
+                .mapNotNull(OfflinePlayer::getName)
         else -> emptyList()
     }
-
 }

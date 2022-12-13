@@ -28,40 +28,43 @@ class MfFactionLawListCommand(private val plugin: MedievalFactions) : CommandExe
             sender.sendMessage("${BukkitChatColor.RED}${plugin.language["CommandFactionLawListNotAPlayer"]}")
             return true
         }
-        plugin.server.scheduler.runTaskAsynchronously(plugin, Runnable {
-            val playerService = plugin.services.playerService
-            val mfPlayer = playerService.getPlayer(sender)
-                ?: playerService.save(MfPlayer(plugin, sender)).onFailure {
-                    sender.sendMessage("${BukkitChatColor.RED}${plugin.language["CommandFactionLawListFailedToSavePlayer"]}")
-                    plugin.logger.log(Level.SEVERE, "Failed to save player: ${it.reason.message}", it.reason.cause)
+        plugin.server.scheduler.runTaskAsynchronously(
+            plugin,
+            Runnable {
+                val playerService = plugin.services.playerService
+                val mfPlayer = playerService.getPlayer(sender)
+                    ?: playerService.save(MfPlayer(plugin, sender)).onFailure {
+                        sender.sendMessage("${BukkitChatColor.RED}${plugin.language["CommandFactionLawListFailedToSavePlayer"]}")
+                        plugin.logger.log(Level.SEVERE, "Failed to save player: ${it.reason.message}", it.reason.cause)
+                        return@Runnable
+                    }
+                val factionService = plugin.services.factionService
+                val faction = factionService.getFaction(mfPlayer.id)
+                if (faction == null) {
+                    sender.sendMessage("${BukkitChatColor.RED}${plugin.language["CommandFactionLawListMustBeInAFaction"]}")
                     return@Runnable
                 }
-            val factionService = plugin.services.factionService
-            val faction = factionService.getFaction(mfPlayer.id)
-            if (faction == null) {
-                sender.sendMessage("${BukkitChatColor.RED}${plugin.language["CommandFactionLawListMustBeInAFaction"]}")
-                return@Runnable
+                val role = faction.getRole(mfPlayer.id)
+                if (role == null || !role.hasPermission(faction, plugin.factionPermissions.listLaws)) {
+                    sender.sendMessage("${org.bukkit.ChatColor.RED}${plugin.language["CommandFactionLawListNoFactionPermission"]}")
+                    return@Runnable
+                }
+                val lawService = plugin.services.lawService
+                sender.sendMessage(BukkitChatColor.WHITE.toString() + plugin.language["CommandFactionLawListTitle"])
+                lawService.getLaws(faction.id).forEachIndexed { i, law ->
+                    val deleteButton = TextComponent("✖ ")
+                    deleteButton.color = SpigotChatColor.RED
+                    deleteButton.clickEvent = ClickEvent(RUN_COMMAND, "/faction law remove ${law.id.value}")
+                    deleteButton.hoverEvent = HoverEvent(SHOW_TEXT, Text(plugin.language["CommandFactionLawListDeleteButtonHover"]))
+                    val text = TextComponent(plugin.language["CommandFactionLawListLaw", (i + 1).toString(), law.text])
+                    text.color = SpigotChatColor.AQUA
+                    sender.spigot().sendMessage(
+                        deleteButton,
+                        text
+                    )
+                }
             }
-            val role = faction.getRole(mfPlayer.id)
-            if (role == null || !role.hasPermission(faction, plugin.factionPermissions.listLaws)) {
-                sender.sendMessage("${org.bukkit.ChatColor.RED}${plugin.language["CommandFactionLawListNoFactionPermission"]}")
-                return@Runnable
-            }
-            val lawService = plugin.services.lawService
-            sender.sendMessage(BukkitChatColor.WHITE.toString() + plugin.language["CommandFactionLawListTitle"])
-            lawService.getLaws(faction.id).forEachIndexed { i, law ->
-                val deleteButton = TextComponent("✖ ")
-                deleteButton.color = SpigotChatColor.RED
-                deleteButton.clickEvent = ClickEvent(RUN_COMMAND, "/faction law remove ${law.id.value}")
-                deleteButton.hoverEvent = HoverEvent(SHOW_TEXT, Text(plugin.language["CommandFactionLawListDeleteButtonHover"]))
-                val text = TextComponent(plugin.language["CommandFactionLawListLaw", (i + 1).toString(), law.text])
-                text.color = SpigotChatColor.AQUA
-                sender.spigot().sendMessage(
-                    deleteButton,
-                    text
-                )
-            }
-        })
+        )
         return true
     }
 

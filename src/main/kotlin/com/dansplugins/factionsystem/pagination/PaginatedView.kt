@@ -106,5 +106,4 @@ class PaginatedView(
         )
         sender.spigot().sendMessage(*pageControls)
     }
-
 }

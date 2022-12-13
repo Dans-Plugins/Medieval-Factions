@@ -70,5 +70,4 @@ class JooqMfClaimedChunkRepository(private val dsl: DSLContext) : MfClaimedChunk
         z,
         factionId.let(::MfFactionId)
     )
-
 }
