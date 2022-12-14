@@ -8,7 +8,7 @@ import com.dansplugins.factionsystem.command.faction.bypass.MfFactionBypassComma
 import com.dansplugins.factionsystem.command.faction.chat.MfFactionChatCommand
 import com.dansplugins.factionsystem.command.faction.claim.MfFactionClaimAutoCommand
 import com.dansplugins.factionsystem.command.faction.claim.MfFactionClaimCheckCommand
-import com.dansplugins.factionsystem.command.faction.claim.MfFactionClaimCommandManager
+import com.dansplugins.factionsystem.command.faction.claim.MfFactionClaimCommand
 import com.dansplugins.factionsystem.command.faction.claim.MfFactionClaimFillCommand
 import com.dansplugins.factionsystem.command.faction.create.MfFactionCreateCommand
 import com.dansplugins.factionsystem.command.faction.declareindependence.MfFactionDeclareIndependenceCommand
@@ -53,7 +53,7 @@ class MfFactionCommand(private val plugin: MedievalFactions) : CommandExecutor, 
 
     private val factionHelpCommand = MfFactionHelpCommand(plugin)
     private val factionCreateCommand = MfFactionCreateCommand(plugin)
-    private val factionClaimCommandManager = MfFactionClaimCommandManager(plugin)
+    private val factionClaimCommand = MfFactionClaimCommand(plugin)
     private val factionLawCommand = MfFactionLawCommand(plugin)
     private val factionAllyCommand = MfFactionAllyCommand(plugin)
     private val factionBreakAllianceCommand = MfFactionBreakAllianceCommand(plugin)
@@ -180,7 +180,7 @@ class MfFactionCommand(private val plugin: MedievalFactions) : CommandExecutor, 
         return when (args.firstOrNull()?.lowercase()) {
             in helpAliases -> factionHelpCommand.onCommand(sender, command, label, args.drop(1).toTypedArray())
             in createAliases -> factionCreateCommand.onCommand(sender, command, label, args.drop(1).toTypedArray())
-            in claimAliases -> factionClaimCommandManager.onCommand(sender, command, label, args.drop(1).toTypedArray())
+            in claimAliases -> factionClaimCommand.onCommand(sender, command, label, args.drop(1).toTypedArray())
             in lawAliases -> factionLawCommand.onCommand(sender, command, label, args.drop(1).toTypedArray())
             in allyAliases -> factionAllyCommand.onCommand(sender, command, label, args.drop(1).toTypedArray())
             in breakAllianceAliases -> factionBreakAllianceCommand.onCommand(sender, command, label, args.drop(1).toTypedArray())
@@ -260,7 +260,7 @@ class MfFactionCommand(private val plugin: MedievalFactions) : CommandExecutor, 
             in membersAliases -> factionMembersCommand.onTabComplete(sender, command, label, args.drop(1).toTypedArray())
             in roleAliases -> factionRoleCommand.onTabComplete(sender, command, label, args.drop(1).toTypedArray())
             in listAliases -> factionListCommand.onTabComplete(sender, command, label, args.drop(1).toTypedArray())
-            in claimAliases -> factionClaimCommandManager.onTabComplete(sender, command, label, args.drop(1).toTypedArray())
+            in claimAliases -> factionClaimCommand.onTabComplete(sender, command, label, args.drop(1).toTypedArray())
             in unclaimAliases -> factionUnclaimCommand.onTabComplete(sender, command, label, args.drop(1).toTypedArray())
             in unclaimAllAliases -> factionUnclaimAllCommand.onTabComplete(sender, command, label, args.drop(1).toTypedArray())
             in powerAliases -> factionPowerCommand.onTabComplete(sender, command, label, args.drop(1).toTypedArray())
