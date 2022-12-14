@@ -30,7 +30,7 @@ class MfFactionClaimCommand(private val plugin: MedievalFactions) : CommandExecu
             // in squareAliases -> FactionClaimSquareCommand.onCommand(sender, command, label, args.drop(1).toTypedArray())
             // in rectangleAliases -> FactionClaimRectangleCommand.onCommand(sender, command, label, args.drop(1).toTypedArray())
             else -> {
-                return factionClaimCircleCommand.onCommand(sender, command, label, args.drop(1).toTypedArray())
+                return factionClaimCircleCommand.onCommand(sender, command, label, args)
             }
         }
     }

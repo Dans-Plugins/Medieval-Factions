@@ -135,7 +135,5 @@ class MfFactionClaimCircleCommand(private val plugin: MedievalFactions) : Comman
         command: Command,
         label: String,
         args: Array<out String>
-    ): MutableList<String>? {
-        TODO("Not yet implemented")
-    }
+    ) = emptyList<String>()
 }
