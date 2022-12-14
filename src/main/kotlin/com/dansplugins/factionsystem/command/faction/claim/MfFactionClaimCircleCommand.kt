@@ -30,9 +30,6 @@ class MfFactionClaimCircleCommand(private val plugin: MedievalFactions) : Comman
             sender.sendMessage("${ChatColor.RED}${plugin.language["CommandFactionClaimNotAPlayer"]}")
             return true
         }
-        if (args.isNotEmpty() && args[0].equals("fill", ignoreCase = true)) {
-            return true
-        }
         plugin.server.scheduler.runTaskAsynchronously(
             plugin,
             Runnable {
