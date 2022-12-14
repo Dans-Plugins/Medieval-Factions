@@ -19,11 +19,37 @@ import java.util.logging.Level.SEVERE
 import kotlin.math.floor
 
 class MfFactionClaimCommand(private val plugin: MedievalFactions) : CommandExecutor, TabCompleter {
+    private val factionClaimAutoCommand = MfFactionClaimAutoCommand(plugin)
     private val factionClaimFillCommand = MfFactionClaimFillCommand(plugin)
+    private val factionClaimCheckCommand = MfFactionClaimCheckCommand(plugin)
+
+    private val autoAliases = listOf("auto", plugin.language["CmdFactionClaimAuto"])
+    private val fillAliases = listOf("fill", plugin.language["CmdFactionClaimFill"])
+    private val checkAliases = listOf("check", plugin.language["CmdFactionClaimCheck"])
+    // private val circleAliases = listOf("circle", plugin.language["CmdFactionCheckClaim"])
+    // private val squareAliases = listOf("square", plugin.language["CmdFactionCheckClaim"])
+    // private val rectangleAliases = listOf("rectangle", plugin.language["CmdFactionCheckClaim"])
+
+    private val subcommands = autoAliases + fillAliases + checkAliases
 
     private val decimalFormat = DecimalFormat("0", DecimalFormatSymbols.getInstance(plugin.language.locale))
 
     override fun onCommand(sender: CommandSender, command: Command, label: String, args: Array<out String>): Boolean {
+        return when (args.firstOrNull()?.lowercase()) {
+            null -> MfFactionClaimCommand(sender, command, label, args.drop(1).toTypedArray())
+            in autoAliases -> factionClaimAutoCommand.onCommand(sender, command, label, args.drop(1).toTypedArray())
+            in fillAliases -> factionClaimFillCommand.onCommand(sender, command, label, args.drop(1).toTypedArray())
+            in checkAliases -> factionClaimCheckCommand.onCommand(sender, command, label, args.drop(1).toTypedArray())
+            // in circleAliases -> FactionClaimCircleCommand.onCommand(sender, command, label, args.drop(1).toTypedArray())
+            // in squareAliases -> FactionClaimSquareCommand.onCommand(sender, command, label, args.drop(1).toTypedArray())
+            // in rectangleAliases -> FactionClaimRectangleCommand.onCommand(sender, command, label, args.drop(1).toTypedArray())
+            else -> {
+                return true
+            }
+        }
+    }
+
+    fun MfFactionClaimCommand(sender: CommandSender, command: Command, label: String, args: Array<out String>): Boolean {
         if (!sender.hasPermission("mf.claim")) {
             sender.sendMessage("$RED${plugin.language["CommandFactionClaimNoPermission"]}")
             return true
@@ -141,8 +167,8 @@ class MfFactionClaimCommand(private val plugin: MedievalFactions) : CommandExecu
         label: String,
         args: Array<out String>
     ) = when {
-        args.isEmpty() -> listOf("fill")
-        args.size == 1 && "fill".startsWith(args[0].lowercase()) -> listOf("fill")
+        args.isEmpty() -> subcommands
+        args.size == 1 -> subcommands.filter { it.startsWith(args[0].lowercase()) }
         else -> emptyList()
     }
 }
