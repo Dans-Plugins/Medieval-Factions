@@ -187,6 +187,9 @@ permissions:
   mf.autoclaim:
     description: Allows toggling autoclaim for your faction
     default: true
+  mf.claimfill:
+    description: Allows filling a void enclosed by your claims
+    default: true
   mf.unclaim:
     description: Allows unclaiming land
     default: true
