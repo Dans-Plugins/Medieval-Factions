@@ -184,17 +184,29 @@ permissions:
   mf.claim:
     description: Allows claiming land
     default: true
+  mf.claim.circle:
+    description: Allows claiming land in a circle
+    default: true
+  mf.claim.auto:
+    description: Allows toggling autoclaim for your faction
+    default: true
+  mf.claim.fill:
+    description: Allows filling a void enclosed by your claims
+    default: true
+  mf.claim.check:
+    description: Allows checking claims
+    default: true
   mf.autoclaim:
     description: Allows toggling autoclaim for your faction
     default: true
   mf.claimfill:
     description: Allows filling a void enclosed by your claims
     default: true
-  mf.unclaim:
-    description: Allows unclaiming land
-    default: true
   mf.checkclaim:
     description: Allows checking claims
+    default: true
+  mf.unclaim:
+    description: Allows unclaiming land
     default: true
   mf.unclaimall:
     description: Allows unclaiming all land
