@@ -53,8 +53,7 @@ class MfFactionDisbandCommand(private val plugin: MedievalFactions) : CommandExe
                     sender.sendMessage("$RED${plugin.language["CommandFactionDisbandFactionMustBeEmpty"]}")
                     return@Runnable
                 }
-            }
-            else {
+            } else {
                 // attempt to use specified faction
                 if (!sender.hasPermission("mf.disband.others")) {
                     sender.sendMessage("$RED${plugin.language["CommandFactionDisbandOthersNoPermission"]}")
@@ -86,5 +85,14 @@ class MfFactionDisbandCommand(private val plugin: MedievalFactions) : CommandExe
         command: Command,
         label: String,
         args: Array<out String>
-    ) = emptyList<String>()
+    ): List<String> {
+        val factionService = plugin.services.factionService
+        return when {
+            args.isEmpty() -> factionService.factions.map(MfFaction::name)
+            args.size == 1 -> factionService.factions
+                .filter { it.name.lowercase().startsWith(args[0].lowercase()) }
+                .map(MfFaction::name)
+            else -> emptyList()
+        }
+    }
 }
