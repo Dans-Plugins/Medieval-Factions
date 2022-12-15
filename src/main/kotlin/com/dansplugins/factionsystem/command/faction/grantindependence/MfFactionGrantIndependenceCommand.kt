@@ -29,57 +29,63 @@ class MfFactionGrantIndependenceCommand(private val plugin: MedievalFactions) : 
             sender.sendMessage("$RED${plugin.language["CommandFactionGrantIndependenceNotAPlayer"]}")
             return true
         }
-        plugin.server.scheduler.runTaskAsynchronously(plugin, Runnable {
-            val playerService = plugin.services.playerService
-            val mfPlayer = playerService.getPlayer(sender)
-                ?: playerService.save(MfPlayer(plugin, sender)).onFailure {
-                    sender.sendMessage("$RED${plugin.language["CommandFactionGrantIndependenceFailedToSavePlayer"]}")
-                    plugin.logger.log(SEVERE, "Failed to save player: ${it.reason.message}", it.reason.cause)
-                    return@Runnable
-                }
-            val factionService = plugin.services.factionService
-            val faction = factionService.getFaction(mfPlayer.id)
-            if (faction == null) {
-                sender.sendMessage("$RED${plugin.language["CommandFactionGrantIndependenceMustBeInAFaction"]}")
-                return@Runnable
-            }
-            val role = faction.getRole(mfPlayer.id)
-            if (role == null || !role.hasPermission(faction, plugin.factionPermissions.grantIndependence)) {
-                sender.sendMessage("$RED${plugin.language["CommandFactionGrantIndependenceNoFactionPermission"]}")
-                return@Runnable
-            }
-            val target = factionService.getFaction(args.joinToString(" "))
-            if (target == null) {
-                sender.sendMessage("$RED${plugin.language["CommandFactionGrantIndependenceInvalidTarget"]}")
-                return@Runnable
-            }
-            val factionRelationshipService = plugin.services.factionRelationshipService
-            val relationships = factionRelationshipService.getRelationships(faction.id, target.id)
-            val reverseRelationships = factionRelationshipService.getRelationships(target.id, faction.id)
-            if (relationships.none { it.type == VASSAL } || reverseRelationships.none { it.type == LIEGE }) {
-                sender.sendMessage("$RED${plugin.language["CommandFactionGrantIndependenceNotAVassal"]}")
-                return@Runnable
-            }
-            (relationships.filter { it.type == VASSAL } + reverseRelationships.filter { it.type == LIEGE })
-                .forEach { relationship ->
-                    factionRelationshipService.delete(relationship.id).onFailure {
-                        sender.sendMessage("$RED${plugin.language["CommandFactionGrantIndependenceFailedToDeleteRelationship"]}")
-                        plugin.logger.log(SEVERE, "Failed to delete relationship: ${it.reason.message}", it.reason.cause)
+        plugin.server.scheduler.runTaskAsynchronously(
+            plugin,
+            Runnable {
+                val playerService = plugin.services.playerService
+                val mfPlayer = playerService.getPlayer(sender)
+                    ?: playerService.save(MfPlayer(plugin, sender)).onFailure {
+                        sender.sendMessage("$RED${plugin.language["CommandFactionGrantIndependenceFailedToSavePlayer"]}")
+                        plugin.logger.log(SEVERE, "Failed to save player: ${it.reason.message}", it.reason.cause)
                         return@Runnable
                     }
+                val factionService = plugin.services.factionService
+                val faction = factionService.getFaction(mfPlayer.id)
+                if (faction == null) {
+                    sender.sendMessage("$RED${plugin.language["CommandFactionGrantIndependenceMustBeInAFaction"]}")
+                    return@Runnable
                 }
-            sender.sendMessage("$GREEN${plugin.language["CommandFactionGrantIndependenceSuccess", target.name]}")
-            plugin.server.scheduler.runTask(plugin, Runnable {
-                faction.sendMessage(
-                    plugin.language["VassalGrantedIndependenceNotificationTitle", target.name],
-                    plugin.language["VassalGrantedIndependenceNotificationBody", target.name]
+                val role = faction.getRole(mfPlayer.id)
+                if (role == null || !role.hasPermission(faction, plugin.factionPermissions.grantIndependence)) {
+                    sender.sendMessage("$RED${plugin.language["CommandFactionGrantIndependenceNoFactionPermission"]}")
+                    return@Runnable
+                }
+                val target = factionService.getFaction(args.joinToString(" "))
+                if (target == null) {
+                    sender.sendMessage("$RED${plugin.language["CommandFactionGrantIndependenceInvalidTarget"]}")
+                    return@Runnable
+                }
+                val factionRelationshipService = plugin.services.factionRelationshipService
+                val relationships = factionRelationshipService.getRelationships(faction.id, target.id)
+                val reverseRelationships = factionRelationshipService.getRelationships(target.id, faction.id)
+                if (relationships.none { it.type == VASSAL } || reverseRelationships.none { it.type == LIEGE }) {
+                    sender.sendMessage("$RED${plugin.language["CommandFactionGrantIndependenceNotAVassal"]}")
+                    return@Runnable
+                }
+                (relationships.filter { it.type == VASSAL } + reverseRelationships.filter { it.type == LIEGE })
+                    .forEach { relationship ->
+                        factionRelationshipService.delete(relationship.id).onFailure {
+                            sender.sendMessage("$RED${plugin.language["CommandFactionGrantIndependenceFailedToDeleteRelationship"]}")
+                            plugin.logger.log(SEVERE, "Failed to delete relationship: ${it.reason.message}", it.reason.cause)
+                            return@Runnable
+                        }
+                    }
+                sender.sendMessage("$GREEN${plugin.language["CommandFactionGrantIndependenceSuccess", target.name]}")
+                plugin.server.scheduler.runTask(
+                    plugin,
+                    Runnable {
+                        faction.sendMessage(
+                            plugin.language["VassalGrantedIndependenceNotificationTitle", target.name],
+                            plugin.language["VassalGrantedIndependenceNotificationBody", target.name]
+                        )
+                        target.sendMessage(
+                            plugin.language["FactionGrantedIndependenceNotificationTitle", faction.name],
+                            plugin.language["FactionGrantedIndependenceNotificationBody", faction.name]
+                        )
+                    }
                 )
-                target.sendMessage(
-                    plugin.language["FactionGrantedIndependenceNotificationTitle", faction.name],
-                    plugin.language["FactionGrantedIndependenceNotificationBody", faction.name]
-                )
-            })
-        })
+            }
+        )
         return true
     }
 
@@ -92,9 +98,10 @@ class MfFactionGrantIndependenceCommand(private val plugin: MedievalFactions) : 
         val factionService = plugin.services.factionService
         return when {
             args.isEmpty() -> factionService.factions.map(MfFaction::name)
-            args.size == 1 -> factionService.factions
-                .filter { it.name.lowercase().startsWith(args[0].lowercase()) }
-                .map(MfFaction::name)
+            args.size == 1 ->
+                factionService.factions
+                    .filter { it.name.lowercase().startsWith(args[0].lowercase()) }
+                    .map(MfFaction::name)
             else -> emptyList()
         }
     }

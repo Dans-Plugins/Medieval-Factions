@@ -30,82 +30,91 @@ class MfFactionAllyCommand(private val plugin: MedievalFactions) : CommandExecut
             sender.sendMessage("$RED${plugin.language["CommandFactionAllyNotAPlayer"]}")
             return true
         }
-        plugin.server.scheduler.runTaskAsynchronously(plugin, Runnable {
-            val playerService = plugin.services.playerService
-            val mfPlayer = playerService.getPlayer(sender)
-                ?: playerService.save(MfPlayer(plugin, sender)).onFailure {
-                    sender.sendMessage("$RED${plugin.language["CommandFactionAllyFailedToSavePlayer"]}")
-                    plugin.logger.log(Level.SEVERE, "Failed to save player: ${it.reason.message}", it.reason.cause)
+        plugin.server.scheduler.runTaskAsynchronously(
+            plugin,
+            Runnable {
+                val playerService = plugin.services.playerService
+                val mfPlayer = playerService.getPlayer(sender)
+                    ?: playerService.save(MfPlayer(plugin, sender)).onFailure {
+                        sender.sendMessage("$RED${plugin.language["CommandFactionAllyFailedToSavePlayer"]}")
+                        plugin.logger.log(Level.SEVERE, "Failed to save player: ${it.reason.message}", it.reason.cause)
+                        return@Runnable
+                    }
+                val factionService = plugin.services.factionService
+                val faction = factionService.getFaction(mfPlayer.id)
+                if (faction == null) {
+                    sender.sendMessage("$RED${plugin.language["CommandFactionAllyMustBeInAFaction"]}")
                     return@Runnable
                 }
-            val factionService = plugin.services.factionService
-            val faction = factionService.getFaction(mfPlayer.id)
-            if (faction == null) {
-                sender.sendMessage("$RED${plugin.language["CommandFactionAllyMustBeInAFaction"]}")
-                return@Runnable
-            }
-            val role = faction.getRole(mfPlayer.id)
-            if (role == null || !role.hasPermission(faction, plugin.factionPermissions.requestAlliance)) {
-                sender.sendMessage("$RED${plugin.language["CommandFactionAllyNoFactionPermission"]}")
-                return@Runnable
-            }
-            val target = factionService.getFaction(args.joinToString(" "))
-            if (target == null) {
-                sender.sendMessage("$RED${plugin.language["CommandFactionAllyInvalidTarget"]}")
-                return@Runnable
-            }
-            if (target.id.value == faction.id.value) {
-                sender.sendMessage("$RED${plugin.language["CommandFactionAllyCannotAllyWithSelf"]}")
-                return@Runnable
-            }
-            val factionRelationshipService = plugin.services.factionRelationshipService
-            val existingRelationships = factionRelationshipService.getRelationships(faction.id, target.id)
-            val reverseRelationships = factionRelationshipService.getRelationships(target.id, faction.id)
-            if (existingRelationships.any { it.type == ALLY }) {
+                val role = faction.getRole(mfPlayer.id)
+                if (role == null || !role.hasPermission(faction, plugin.factionPermissions.requestAlliance)) {
+                    sender.sendMessage("$RED${plugin.language["CommandFactionAllyNoFactionPermission"]}")
+                    return@Runnable
+                }
+                val target = factionService.getFaction(args.joinToString(" "))
+                if (target == null) {
+                    sender.sendMessage("$RED${plugin.language["CommandFactionAllyInvalidTarget"]}")
+                    return@Runnable
+                }
+                if (target.id.value == faction.id.value) {
+                    sender.sendMessage("$RED${plugin.language["CommandFactionAllyCannotAllyWithSelf"]}")
+                    return@Runnable
+                }
+                val factionRelationshipService = plugin.services.factionRelationshipService
+                val existingRelationships = factionRelationshipService.getRelationships(faction.id, target.id)
+                val reverseRelationships = factionRelationshipService.getRelationships(target.id, faction.id)
+                if (existingRelationships.any { it.type == ALLY }) {
+                    if (reverseRelationships.any { it.type == ALLY }) {
+                        sender.sendMessage("$RED${plugin.language["CommandFactionAllyAlreadyAlly"]}")
+                        return@Runnable
+                    } else {
+                        sender.sendMessage("$RED${plugin.language["CommandFactionAllyAlreadyRequested"]}")
+                        return@Runnable
+                    }
+                }
+                if (existingRelationships.any { it.type == AT_WAR } || reverseRelationships.any { it.type == AT_WAR }) {
+                    sender.sendMessage("$RED${plugin.language["CommandFactionAllyAtWar"]}")
+                    return@Runnable
+                }
+                factionRelationshipService.save(MfFactionRelationship(factionId = faction.id, targetId = target.id, type = ALLY))
+                    .onFailure {
+                        sender.sendMessage("$RED${plugin.language["CommandFactionAllyFailedToSaveRelationship"]}")
+                        plugin.logger.log(Level.SEVERE, "Failed to save faction relationship: ${it.reason.message}", it.reason.cause)
+                        return@Runnable
+                    }
                 if (reverseRelationships.any { it.type == ALLY }) {
-                    sender.sendMessage("$RED${plugin.language["CommandFactionAllyAlreadyAlly"]}")
-                    return@Runnable
+                    sender.sendMessage("$GREEN${plugin.language["CommandFactionAllySuccess", target.name]}")
+                    plugin.server.scheduler.runTask(
+                        plugin,
+                        Runnable {
+                            faction.sendMessage(
+                                plugin.language["FactionAllyNotificationTitle", target.name],
+                                plugin.language["FactionAllyNotificationBody", target.name]
+                            )
+                            target.sendMessage(
+                                plugin.language["FactionAllyNotificationTitle", faction.name],
+                                plugin.language["FactionAllyNotificationBody", faction.name]
+                            )
+                        }
+                    )
                 } else {
-                    sender.sendMessage("$RED${plugin.language["CommandFactionAllyAlreadyRequested"]}")
-                    return@Runnable
+                    sender.sendMessage("$GREEN${plugin.language["CommandFactionAllyRequested", target.name]}")
+                    plugin.server.scheduler.runTask(
+                        plugin,
+                        Runnable {
+                            faction.sendMessage(
+                                plugin.language["FactionAllyRequestSentNotificationTitle", sender.name, target.name],
+                                plugin.language["FactionAllyRequestSentNotificationBody", sender.name, target.name]
+                            )
+                            target.sendMessage(
+                                plugin.language["FactionAllyRequestReceivedNotificationTitle", sender.name, faction.name],
+                                plugin.language["FactionAllyRequestReceivedNotificationBody", sender.name, faction.name]
+                            )
+                        }
+                    )
                 }
             }
-            if (existingRelationships.any { it.type == AT_WAR } || reverseRelationships.any { it.type == AT_WAR }) {
-                sender.sendMessage("$RED${plugin.language["CommandFactionAllyAtWar"]}")
-                return@Runnable
-            }
-            factionRelationshipService.save(MfFactionRelationship(factionId = faction.id, targetId = target.id, type = ALLY))
-                .onFailure {
-                    sender.sendMessage("$RED${plugin.language["CommandFactionAllyFailedToSaveRelationship"]}")
-                    plugin.logger.log(Level.SEVERE, "Failed to save faction relationship: ${it.reason.message}", it.reason.cause)
-                    return@Runnable
-                }
-            if (reverseRelationships.any { it.type == ALLY }) {
-                sender.sendMessage("$GREEN${plugin.language["CommandFactionAllySuccess", target.name]}")
-                plugin.server.scheduler.runTask(plugin, Runnable {
-                    faction.sendMessage(
-                        plugin.language["FactionAllyNotificationTitle", target.name],
-                        plugin.language["FactionAllyNotificationBody", target.name]
-                    )
-                    target.sendMessage(
-                        plugin.language["FactionAllyNotificationTitle", faction.name],
-                        plugin.language["FactionAllyNotificationBody", faction.name]
-                    )
-                })
-            } else {
-                sender.sendMessage("$GREEN${plugin.language["CommandFactionAllyRequested", target.name]}")
-                plugin.server.scheduler.runTask(plugin, Runnable {
-                    faction.sendMessage(
-                        plugin.language["FactionAllyRequestSentNotificationTitle", sender.name, target.name],
-                        plugin.language["FactionAllyRequestSentNotificationBody", sender.name, target.name]
-                    )
-                    target.sendMessage(
-                        plugin.language["FactionAllyRequestReceivedNotificationTitle", sender.name, faction.name],
-                        plugin.language["FactionAllyRequestReceivedNotificationBody", sender.name, faction.name]
-                    )
-                })
-            }
-        })
+        )
         return true
     }
 
@@ -118,9 +127,10 @@ class MfFactionAllyCommand(private val plugin: MedievalFactions) : CommandExecut
         val factionService = plugin.services.factionService
         return when {
             args.isEmpty() -> factionService.factions.map(MfFaction::name)
-            args.size == 1 -> factionService.factions
-                .filter { it.name.lowercase().startsWith(args[0].lowercase()) }
-                .map(MfFaction::name)
+            args.size == 1 ->
+                factionService.factions
+                    .filter { it.name.lowercase().startsWith(args[0].lowercase()) }
+                    .map(MfFaction::name)
             else -> emptyList()
         }
     }

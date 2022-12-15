@@ -2,7 +2,13 @@ package com.dansplugins.factionsystem.faction
 
 import com.dansplugins.factionsystem.MedievalFactions
 import com.dansplugins.factionsystem.area.MfPosition
-import com.dansplugins.factionsystem.event.faction.*
+import com.dansplugins.factionsystem.event.faction.FactionCreateEvent
+import com.dansplugins.factionsystem.event.faction.FactionDescriptionChangeEvent
+import com.dansplugins.factionsystem.event.faction.FactionDisbandEvent
+import com.dansplugins.factionsystem.event.faction.FactionJoinEvent
+import com.dansplugins.factionsystem.event.faction.FactionLeaveEvent
+import com.dansplugins.factionsystem.event.faction.FactionPrefixChangeEvent
+import com.dansplugins.factionsystem.event.faction.FactionRenameEvent
 import com.dansplugins.factionsystem.exception.EventCancelledException
 import com.dansplugins.factionsystem.faction.field.MfFactionField
 import com.dansplugins.factionsystem.faction.flag.MfFlagValues
@@ -118,9 +124,12 @@ class MfFactionService(private val plugin: MedievalFactions, private val reposit
         factionsById[result.id] = result
         val dynmapService = plugin.services.dynmapService
         if (dynmapService != null) {
-            plugin.server.scheduler.runTask(plugin, Runnable {
-                dynmapService.updateClaims(result)
-            })
+            plugin.server.scheduler.runTask(
+                plugin,
+                Runnable {
+                    dynmapService.updateClaims(result)
+                }
+            )
         }
         return@resultFrom result
     }.mapFailure { exception ->
@@ -163,20 +172,22 @@ class MfFactionService(private val plugin: MedievalFactions, private val reposit
         autoclaim: Boolean = false,
         roles: MfFactionRoles = MfFactionRoles.defaults(plugin, MfFactionId(id))
     ): Result4k<MfFaction, ServiceFailure> {
-        return save(MfFaction(
-            plugin = plugin,
-            id = MfFactionId(id),
-            name = name,
-            description = description,
-            members = members,
-            invites = invites,
-            flags = flags,
-            prefix = prefix,
-            home = home,
-            bonusPower = bonusPower,
-            autoclaim = autoclaim,
-            roles = roles
-        ))
+        return save(
+            MfFaction(
+                plugin = plugin,
+                id = MfFactionId(id),
+                name = name,
+                description = description,
+                members = members,
+                invites = invites,
+                flags = flags,
+                prefix = prefix,
+                home = home,
+                bonusPower = bonusPower,
+                autoclaim = autoclaim,
+                roles = roles
+            )
+        )
     }
 
     fun addField(field: MfFactionField) {
@@ -189,5 +200,4 @@ class MfFactionService(private val plugin: MedievalFactions, private val reposit
             else -> GENERAL
         }
     }
-
 }

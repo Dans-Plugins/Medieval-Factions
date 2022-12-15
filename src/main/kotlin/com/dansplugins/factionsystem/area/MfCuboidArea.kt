@@ -56,13 +56,13 @@ data class MfCuboidArea(
         }
 
     fun contains(position: MfBlockPosition) =
-        position.worldId == minPosition.worldId
-                && position.x >= minPosition.x
-                && position.y >= minPosition.y
-                && position.z >= minPosition.z
-                && position.x <= maxPosition.x
-                && position.y <= maxPosition.y
-                && position.z <= maxPosition.z
+        position.worldId == minPosition.worldId &&
+            position.x >= minPosition.x &&
+            position.y >= minPosition.y &&
+            position.z >= minPosition.z &&
+            position.x <= maxPosition.x &&
+            position.y <= maxPosition.y &&
+            position.z <= maxPosition.z
 
     fun distanceSquared(position: MfBlockPosition): Int {
         val x = position.x
@@ -85,5 +85,4 @@ data class MfCuboidArea(
         }
         return ((closestX - x) * (closestX - x)) + ((closestY - y) * (closestY - y)) + ((closestZ - z) * (closestZ - z))
     }
-
 }

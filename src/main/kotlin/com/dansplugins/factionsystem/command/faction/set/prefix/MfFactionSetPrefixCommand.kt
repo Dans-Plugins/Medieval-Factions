@@ -60,35 +60,41 @@ class MfFactionSetPrefixCommand(private val plugin: MedievalFactions) : CommandE
     }
 
     private fun setFactionPrefix(player: Player, prefix: String) {
-        plugin.server.scheduler.runTaskAsynchronously(plugin, Runnable {
-            val playerService = plugin.services.playerService
-            val mfPlayer = playerService.getPlayer(player)
-                ?: playerService.save(MfPlayer(plugin, player)).onFailure {
-                    player.sendMessage("${ChatColor.RED}${plugin.language["CommandFactionSetPrefixFailedToSavePlayer"]}")
-                    plugin.logger.log(Level.SEVERE, "Failed to save player: ${it.reason.message}", it.reason.cause)
+        plugin.server.scheduler.runTaskAsynchronously(
+            plugin,
+            Runnable {
+                val playerService = plugin.services.playerService
+                val mfPlayer = playerService.getPlayer(player)
+                    ?: playerService.save(MfPlayer(plugin, player)).onFailure {
+                        player.sendMessage("${ChatColor.RED}${plugin.language["CommandFactionSetPrefixFailedToSavePlayer"]}")
+                        plugin.logger.log(Level.SEVERE, "Failed to save player: ${it.reason.message}", it.reason.cause)
+                        return@Runnable
+                    }
+                val factionService = plugin.services.factionService
+                val faction = factionService.getFaction(mfPlayer.id)
+                if (faction == null) {
+                    player.sendMessage("${ChatColor.RED}${plugin.language["CommandFactionSetPrefixMustBeInAFaction"]}")
                     return@Runnable
                 }
-            val factionService = plugin.services.factionService
-            val faction = factionService.getFaction(mfPlayer.id)
-            if (faction == null) {
-                player.sendMessage("${ChatColor.RED}${plugin.language["CommandFactionSetPrefixMustBeInAFaction"]}")
-                return@Runnable
+                val role = faction.getRole(mfPlayer.id)
+                if (role == null || !role.hasPermission(faction, plugin.factionPermissions.changePrefix)) {
+                    player.sendMessage("${ChatColor.RED}${plugin.language["CommandFactionSetPrefixNoFactionPermission"]}")
+                    return@Runnable
+                }
+                factionService.save(faction.copy(prefix = prefix)).onFailure {
+                    player.sendMessage("${ChatColor.RED}${plugin.language["CommandFactionSetPrefixFailedToSaveFaction"]}")
+                    plugin.logger.log(Level.SEVERE, "Failed to save faction: ${it.reason.message}", it.reason.cause)
+                    return@Runnable
+                }
+                player.sendMessage("${ChatColor.GREEN}${plugin.language["CommandFactionSetPrefixSuccess", prefix]}")
+                plugin.server.scheduler.runTask(
+                    plugin,
+                    Runnable {
+                        player.performCommand("faction info")
+                    }
+                )
             }
-            val role = faction.getRole(mfPlayer.id)
-            if (role == null || !role.hasPermission(faction, plugin.factionPermissions.changePrefix)) {
-                player.sendMessage("${ChatColor.RED}${plugin.language["CommandFactionSetPrefixNoFactionPermission"]}")
-                return@Runnable
-            }
-            factionService.save(faction.copy(prefix = prefix)).onFailure {
-                player.sendMessage("${ChatColor.RED}${plugin.language["CommandFactionSetPrefixFailedToSaveFaction"]}")
-                plugin.logger.log(Level.SEVERE, "Failed to save faction: ${it.reason.message}", it.reason.cause)
-                return@Runnable
-            }
-            player.sendMessage("${ChatColor.GREEN}${plugin.language["CommandFactionSetPrefixSuccess", prefix]}")
-            plugin.server.scheduler.runTask(plugin, Runnable {
-                player.performCommand("faction info")
-            })
-        })
+        )
     }
 
     override fun onTabComplete(

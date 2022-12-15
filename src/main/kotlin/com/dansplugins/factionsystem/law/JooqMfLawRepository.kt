@@ -3,7 +3,6 @@ package com.dansplugins.factionsystem.law
 import com.dansplugins.factionsystem.faction.MfFactionId
 import com.dansplugins.factionsystem.failure.OptimisticLockingFailureException
 import com.dansplugins.factionsystem.jooq.Tables.MF_LAW
-import com.dansplugins.factionsystem.jooq.tables.records.MfLawRecord
 import org.jooq.DSLContext
 
 class JooqMfLawRepository(

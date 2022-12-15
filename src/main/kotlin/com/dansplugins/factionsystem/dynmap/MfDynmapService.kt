@@ -242,5 +242,4 @@ class MfDynmapService(private val plugin: MedievalFactions) {
             append("${claims.size}/${floor(faction.power).roundToInt()}")
         }
     }
-
 }

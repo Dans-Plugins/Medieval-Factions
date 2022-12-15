@@ -140,22 +140,25 @@ class MfAccessorsListCommand(private val plugin: MedievalFactions) : CommandExec
                 }
             }
         } else {
-            plugin.server.scheduler.runTask(plugin, Runnable {
-                val playerService = plugin.services.playerService
-                val mfPlayer = playerService.getPlayer(sender)
-                    ?: playerService.save(MfPlayer(plugin, sender)).onFailure {
-                        sender.sendMessage("${BukkitChatColor.RED}${plugin.language["CommandAccessorsListFailedToSavePlayer"]}")
-                        plugin.logger.log(SEVERE, "Failed to save player: ${it.reason.message}", it.reason.cause)
+            plugin.server.scheduler.runTask(
+                plugin,
+                Runnable {
+                    val playerService = plugin.services.playerService
+                    val mfPlayer = playerService.getPlayer(sender)
+                        ?: playerService.save(MfPlayer(plugin, sender)).onFailure {
+                            sender.sendMessage("${BukkitChatColor.RED}${plugin.language["CommandAccessorsListFailedToSavePlayer"]}")
+                            plugin.logger.log(SEVERE, "Failed to save player: ${it.reason.message}", it.reason.cause)
+                            return@Runnable
+                        }
+                    val interactionService = plugin.services.interactionService
+                    interactionService.setInteractionStatus(mfPlayer.id, CHECKING_ACCESS).onFailure {
+                        sender.sendMessage("${BukkitChatColor.RED}${plugin.language["CommandAccessorsListFailedToSetInteractionStatus"]}")
+                        plugin.logger.log(SEVERE, "Failed to set interaction status: ${it.reason.message}", it.reason.cause)
                         return@Runnable
                     }
-                val interactionService = plugin.services.interactionService
-                interactionService.setInteractionStatus(mfPlayer.id, CHECKING_ACCESS).onFailure {
-                    sender.sendMessage("${BukkitChatColor.RED}${plugin.language["CommandAccessorsListFailedToSetInteractionStatus"]}")
-                    plugin.logger.log(SEVERE, "Failed to set interaction status: ${it.reason.message}", it.reason.cause)
-                    return@Runnable
+                    sender.sendMessage("${BukkitChatColor.GREEN}${plugin.language["CommandAccessorsListSelectBlock"]}")
                 }
-                sender.sendMessage("${BukkitChatColor.GREEN}${plugin.language["CommandAccessorsListSelectBlock"]}")
-            })
+            )
         }
         return true
     }
@@ -166,5 +169,4 @@ class MfAccessorsListCommand(private val plugin: MedievalFactions) : CommandExec
         label: String,
         args: Array<out String>
     ) = emptyList<String>()
-
 }

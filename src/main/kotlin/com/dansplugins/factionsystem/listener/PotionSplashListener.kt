@@ -68,5 +68,4 @@ class PotionSplashListener(private val plugin: MedievalFactions) : Listener {
             }
         }
     }
-
 }

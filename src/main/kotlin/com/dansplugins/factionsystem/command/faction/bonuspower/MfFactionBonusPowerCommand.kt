@@ -27,27 +27,30 @@ class MfFactionBonusPowerCommand(private val plugin: MedievalFactions) : Command
             sender.sendMessage("$RED${plugin.language["CommandFactionBonusPowerUsage"]}")
             return true
         }
-        plugin.server.scheduler.runTaskAsynchronously(plugin, Runnable {
-            val factionService = plugin.services.factionService
-            val factionIdentifier = args.dropLast(1).joinToString(" ")
-            val faction = factionService.getFaction(MfFactionId(factionIdentifier))
-                ?: factionService.getFaction(factionIdentifier)
-            if (faction == null) {
-                sender.sendMessage("$RED${plugin.language["CommandFactionBonusPowerInvalidFaction"]}")
-                return@Runnable
+        plugin.server.scheduler.runTaskAsynchronously(
+            plugin,
+            Runnable {
+                val factionService = plugin.services.factionService
+                val factionIdentifier = args.dropLast(1).joinToString(" ")
+                val faction = factionService.getFaction(MfFactionId(factionIdentifier))
+                    ?: factionService.getFaction(factionIdentifier)
+                if (faction == null) {
+                    sender.sendMessage("$RED${plugin.language["CommandFactionBonusPowerInvalidFaction"]}")
+                    return@Runnable
+                }
+                val bonusPower = args.last().toDoubleOrNull()
+                if (bonusPower == null) {
+                    sender.sendMessage("$RED${plugin.language["CommandFactionBonusPowerInvalidBonusPower"]}")
+                    return@Runnable
+                }
+                val updatedFaction = factionService.save(faction.copy(bonusPower = bonusPower)).onFailure {
+                    sender.sendMessage("$RED${plugin.language["CommandFactionBonusPowerFailedToSaveFaction"]}")
+                    plugin.logger.log(SEVERE, "Failed to save faction: ${it.reason.message}", it.reason.cause)
+                    return@Runnable
+                }
+                sender.sendMessage("$GREEN${plugin.language["CommandFactionBonusPowerSuccess", updatedFaction.name, decimalFormat.format(updatedFaction.bonusPower)]}")
             }
-            val bonusPower = args.last().toDoubleOrNull()
-            if (bonusPower == null) {
-                sender.sendMessage("$RED${plugin.language["CommandFactionBonusPowerInvalidBonusPower"]}")
-                return@Runnable
-            }
-            val updatedFaction = factionService.save(faction.copy(bonusPower = bonusPower)).onFailure {
-                sender.sendMessage("$RED${plugin.language["CommandFactionBonusPowerFailedToSaveFaction"]}")
-                plugin.logger.log(SEVERE, "Failed to save faction: ${it.reason.message}", it.reason.cause)
-                return@Runnable
-            }
-            sender.sendMessage("$GREEN${plugin.language["CommandFactionBonusPowerSuccess", updatedFaction.name, decimalFormat.format(updatedFaction.bonusPower)]}")
-        })
+        )
         return true
     }
 
@@ -60,9 +63,10 @@ class MfFactionBonusPowerCommand(private val plugin: MedievalFactions) : Command
         val factionService = plugin.services.factionService
         return when {
             args.isEmpty() -> factionService.factions.map(MfFaction::name)
-            args.size == 1 -> factionService.factions
-                .filter { it.name.lowercase().startsWith(args[0].lowercase()) }
-                .map(MfFaction::name)
+            args.size == 1 ->
+                factionService.factions
+                    .filter { it.name.lowercase().startsWith(args[0].lowercase()) }
+                    .map(MfFaction::name)
             else -> emptyList()
         }
     }

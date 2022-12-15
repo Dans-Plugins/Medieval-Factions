@@ -17,6 +17,7 @@ class FactionKickEvent(
 
     companion object {
         @JvmStatic private val handlers: HandlerList = HandlerList()
+
         @JvmStatic fun getHandlerList() = handlers
     }
 
@@ -31,5 +32,4 @@ class FactionKickEvent(
     override fun setCancelled(cancel: Boolean) {
         this.cancel = cancel
     }
-
 }
