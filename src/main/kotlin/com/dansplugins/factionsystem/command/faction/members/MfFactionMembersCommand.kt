@@ -23,30 +23,33 @@ class MfFactionMembersCommand(private val plugin: MedievalFactions) : CommandExe
             sender.sendMessage("$RED${plugin.language["CommandFactionMembersNotAPlayer"]}")
             return true
         }
-        plugin.server.scheduler.runTaskAsynchronously(plugin, Runnable {
-            // get player's faction
-            val playerService = plugin.services.playerService
-            val mfPlayer = playerService.getPlayer(sender)
-                ?: playerService.save(MfPlayer(plugin, sender)).onFailure {
-                    sender.sendMessage("$RED${plugin.language["CommandFactionMembersFailedToSavePlayer"]}")
-                    plugin.logger.log(SEVERE, "Failed to save player: ${it.reason.message}", it.reason.cause)
+        plugin.server.scheduler.runTaskAsynchronously(
+            plugin,
+            Runnable {
+                // get player's faction
+                val playerService = plugin.services.playerService
+                val mfPlayer = playerService.getPlayer(sender)
+                    ?: playerService.save(MfPlayer(plugin, sender)).onFailure {
+                        sender.sendMessage("$RED${plugin.language["CommandFactionMembersFailedToSavePlayer"]}")
+                        plugin.logger.log(SEVERE, "Failed to save player: ${it.reason.message}", it.reason.cause)
+                        return@Runnable
+                    }
+                val factionService = plugin.services.factionService
+                val faction = factionService.getFaction(mfPlayer.id)
+                if (faction == null) {
+                    sender.sendMessage("$RED${plugin.language["CommandFactionMembersMustBeInAFaction"]}")
                     return@Runnable
                 }
-            val factionService = plugin.services.factionService
-            val faction = factionService.getFaction(mfPlayer.id)
-            if (faction == null) {
-                sender.sendMessage("$RED${plugin.language["CommandFactionMembersMustBeInAFaction"]}")
-                return@Runnable
+                val role = faction.getRole(mfPlayer.id)
+                if (role == null || !role.hasPermission(faction, plugin.factionPermissions.listMembers)) {
+                    sender.sendMessage("$RED${plugin.language["CommandFactionMembersNoFactionPermission"]}")
+                    return@Runnable
+                }
+                // send player list of members
+                sender.sendMessage("$AQUA${plugin.language["CommandFactionMembersTitle", faction.name]}")
+                sender.sendMessage("$AQUA" + faction.members.joinToString { it.playerId.toBukkitPlayer().name ?: "(N/A)" })
             }
-            val role = faction.getRole(mfPlayer.id)
-            if (role == null || !role.hasPermission(faction, plugin.factionPermissions.listMembers)) {
-                sender.sendMessage("$RED${plugin.language["CommandFactionMembersNoFactionPermission"]}")
-                return@Runnable
-            }
-            // send player list of members
-            sender.sendMessage("$AQUA${plugin.language["CommandFactionMembersTitle", faction.name]}")
-            sender.sendMessage("$AQUA" + faction.members.joinToString { it.playerId.toBukkitPlayer().name ?: "(N/A)" })
-        })
+        )
         return true
     }
 

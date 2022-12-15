@@ -5,5 +5,4 @@ import com.dansplugins.factionsystem.relationship.MfFactionRelationshipId
 interface RelationshipEvent {
 
     val relationshipId: MfFactionRelationshipId
-
 }

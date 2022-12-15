@@ -65,9 +65,9 @@ class EntityDamageListener(private val plugin: MedievalFactions) : Listener {
                     nearbyPlayers.forEach { notifiedPlayer ->
                         notifiedPlayer.sendMessage(
                             plugin.language[
-                                    "DuelWin",
-                                    duel.challengedId.toBukkitPlayer().name ?: plugin.language["UnknownPlayer"],
-                                    duel.challengerId.toBukkitPlayer().name ?: plugin.language["UnknownPlayer"]
+                                "DuelWin",
+                                duel.challengedId.toBukkitPlayer().name ?: plugin.language["UnknownPlayer"],
+                                duel.challengerId.toBukkitPlayer().name ?: plugin.language["UnknownPlayer"]
                             ]
                         )
                     }
@@ -83,19 +83,22 @@ class EntityDamageListener(private val plugin: MedievalFactions) : Listener {
                     nearbyPlayers.forEach { notifiedPlayer ->
                         notifiedPlayer.sendMessage(
                             plugin.language[
-                                    "DuelWin",
-                                    duel.challengerId.toBukkitPlayer().name ?: plugin.language["UnknownPlayer"],
-                                    duel.challengedId.toBukkitPlayer().name ?: plugin.language["UnknownPlayer"]
+                                "DuelWin",
+                                duel.challengerId.toBukkitPlayer().name ?: plugin.language["UnknownPlayer"],
+                                duel.challengedId.toBukkitPlayer().name ?: plugin.language["UnknownPlayer"]
                             ]
                         )
                     }
                 }
-                plugin.server.scheduler.runTaskAsynchronously(plugin, Runnable {
-                    duelService.delete(duel.id).onFailure {
-                        plugin.logger.log(Level.SEVERE, "Failed to delete duel: ${it.reason.message}", it.reason.cause)
-                        return@Runnable
+                plugin.server.scheduler.runTaskAsynchronously(
+                    plugin,
+                    Runnable {
+                        duelService.delete(duel.id).onFailure {
+                            plugin.logger.log(Level.SEVERE, "Failed to delete duel: ${it.reason.message}", it.reason.cause)
+                            return@Runnable
+                        }
                     }
-                })
+                )
             }
         }
     }
@@ -113,5 +116,4 @@ class EntityDamageListener(private val plugin: MedievalFactions) : Listener {
         item.itemMeta = meta
         return item
     }
-
 }

@@ -65,5 +65,4 @@ class EntityDamageByEntityListener(private val plugin: MedievalFactions) : Liste
             }
         }
     }
-
 }

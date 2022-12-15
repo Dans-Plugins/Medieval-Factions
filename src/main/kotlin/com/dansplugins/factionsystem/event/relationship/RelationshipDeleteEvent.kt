@@ -13,6 +13,7 @@ class RelationshipDeleteEvent(
 
     companion object {
         @JvmStatic private val handlers: HandlerList = HandlerList()
+
         @JvmStatic fun getHandlerList() = handlers
     }
 
@@ -27,5 +28,4 @@ class RelationshipDeleteEvent(
     override fun setCancelled(cancel: Boolean) {
         this.cancel = cancel
     }
-
 }

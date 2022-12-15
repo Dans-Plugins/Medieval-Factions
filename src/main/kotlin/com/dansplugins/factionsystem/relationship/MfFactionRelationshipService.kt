@@ -8,7 +8,10 @@ import com.dansplugins.factionsystem.faction.MfFactionId
 import com.dansplugins.factionsystem.failure.OptimisticLockingFailureException
 import com.dansplugins.factionsystem.failure.ServiceFailure
 import com.dansplugins.factionsystem.failure.ServiceFailureType
-import com.dansplugins.factionsystem.relationship.MfFactionRelationshipType.*
+import com.dansplugins.factionsystem.relationship.MfFactionRelationshipType.ALLY
+import com.dansplugins.factionsystem.relationship.MfFactionRelationshipType.AT_WAR
+import com.dansplugins.factionsystem.relationship.MfFactionRelationshipType.LIEGE
+import com.dansplugins.factionsystem.relationship.MfFactionRelationshipType.VASSAL
 import dev.forkhandles.result4k.Result4k
 import dev.forkhandles.result4k.mapFailure
 import dev.forkhandles.result4k.resultFrom
@@ -142,5 +145,4 @@ class MfFactionRelationshipService(private val plugin: MedievalFactions, private
             else -> ServiceFailureType.GENERAL
         }
     }
-
 }

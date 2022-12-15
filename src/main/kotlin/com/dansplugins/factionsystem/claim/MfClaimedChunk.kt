@@ -13,5 +13,5 @@ data class MfClaimedChunk(
     val factionId: MfFactionId
 ) {
     constructor(chunk: Chunk, factionId: MfFactionId) : this(chunk.world.uid, chunk.x, chunk.z, factionId)
-    constructor(chunkPosition: MfChunkPosition, factionId: MfFactionId): this(chunkPosition.worldId, chunkPosition.x, chunkPosition.z, factionId)
+    constructor(chunkPosition: MfChunkPosition, factionId: MfFactionId) : this(chunkPosition.worldId, chunkPosition.x, chunkPosition.z, factionId)
 }

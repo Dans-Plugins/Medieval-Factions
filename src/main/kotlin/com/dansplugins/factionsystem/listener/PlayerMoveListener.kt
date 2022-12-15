@@ -1,6 +1,7 @@
 package com.dansplugins.factionsystem.listener
 
 import com.dansplugins.factionsystem.MedievalFactions
+import com.dansplugins.factionsystem.area.MfChunkPosition
 import com.dansplugins.factionsystem.claim.MfClaimedChunk
 import com.dansplugins.factionsystem.player.MfPlayer
 import dev.forkhandles.result4k.onFailure
@@ -20,55 +21,75 @@ class PlayerMoveListener(private val plugin: MedievalFactions) : Listener {
         val from = event.from
         val to = event.to ?: return
         if (from.chunk == to.chunk) return
-        plugin.server.scheduler.runTaskAsynchronously(plugin, Runnable {
-            val claimService = plugin.services.claimService
-            val newChunkClaim = claimService.getClaim(to.chunk)
-            val oldChunkClaim = claimService.getClaim(from.chunk)
-            if (newChunkClaim?.factionId?.value == oldChunkClaim?.factionId?.value) return@Runnable
-            val factionService = plugin.services.factionService
-            val newChunkFaction = newChunkClaim?.let { factionService.getFaction(it.factionId) }
-            val playerService = plugin.services.playerService
-            val mfPlayer = playerService.getPlayer(event.player)
-                ?: playerService.save(MfPlayer(plugin, event.player)).onFailure {
-                    plugin.logger.log(SEVERE, "Failed to save player: ${it.reason.message}", it.reason.cause)
-                    return@Runnable
-                }
-            val playerFaction = factionService.getFaction(mfPlayer.id)
-            if (playerFaction != null) {
-                if (newChunkFaction == null && playerFaction.autoclaim) {
-                    if (plugin.config.getBoolean("factions.limitLand") && claimService.getClaims(playerFaction.id).size + 1 > playerFaction.power) {
-                        event.player.sendMessage("$RED${plugin.language["AutoclaimPowerLimitReached"]}")
-                        val updatedFaction = factionService.save(playerFaction.copy(autoclaim = false)).onFailure {
-                            plugin.logger.log(SEVERE, "Failed to save faction: ${it.reason.message}", it.reason.cause)
+        plugin.server.scheduler.runTaskAsynchronously(
+            plugin,
+            Runnable {
+                val claimService = plugin.services.claimService
+                val newChunkClaim = claimService.getClaim(to.chunk)
+                val oldChunkClaim = claimService.getClaim(from.chunk)
+                val factionService = plugin.services.factionService
+                val newChunkFaction = newChunkClaim?.let { factionService.getFaction(it.factionId) }
+                val playerService = plugin.services.playerService
+                val mfPlayer = playerService.getPlayer(event.player)
+                    ?: playerService.save(MfPlayer(plugin, event.player)).onFailure {
+                        plugin.logger.log(SEVERE, "Failed to save player: ${it.reason.message}", it.reason.cause)
+                        return@Runnable
+                    }
+                val playerFaction = factionService.getFaction(mfPlayer.id)
+                if (playerFaction != null) {
+                    if (newChunkFaction == null && playerFaction.autoclaim) {
+                        if (plugin.config.getBoolean("factions.limitLand") && claimService.getClaims(playerFaction.id).size + 1 > playerFaction.power) {
+                            event.player.sendMessage("$RED${plugin.language["AutoclaimPowerLimitReached"]}")
+                            val updatedFaction = factionService.save(playerFaction.copy(autoclaim = false)).onFailure {
+                                plugin.logger.log(SEVERE, "Failed to save faction: ${it.reason.message}", it.reason.cause)
+                                return@Runnable
+                            }
+                            updatedFaction.sendMessage(
+                                plugin.language["AutoclaimDisabledNotificationTitle"],
+                                plugin.language["AutoclaimDisabledNotificationBody"]
+                            )
                             return@Runnable
                         }
-                        updatedFaction.sendMessage(
-                            plugin.language["AutoclaimDisabledNotificationTitle"],
-                            plugin.language["AutoclaimDisabledNotificationBody"]
-                        )
-                        return@Runnable
-                    }
-                    claimService.save(MfClaimedChunk(to.chunk, playerFaction.id)).onFailure {
-                        plugin.logger.log(SEVERE, "Failed to save chunk claim: ${it.reason.message}", it.reason.cause)
-                        return@Runnable
+                        if (plugin.config.getBoolean("factions.contiguousClaims") &&
+                            !claimService.isClaimAdjacent(playerFaction.id, *listOfNotNull(to.world?.let { MfChunkPosition(it.uid, to.chunk.x, to.chunk.z) }).toTypedArray()) &&
+                            claimService.getClaims(playerFaction.id).isNotEmpty()
+                        ) {
+                            event.player.sendMessage("$RED${plugin.language["CommandFactionClaimNotContiguous"]}")
+                            val updatedFaction = factionService.save(playerFaction.copy(autoclaim = false)).onFailure {
+                                plugin.logger.log(SEVERE, "Failed to save faction: ${it.reason.message}", it.reason.cause)
+                                return@Runnable
+                            }
+                            updatedFaction.sendMessage(
+                                plugin.language["AutoclaimDisabledNotificationTitle"],
+                                plugin.language["AutoclaimDisabledNotificationBody"]
+                            )
+                            return@Runnable
+                        }
+                        claimService.save(MfClaimedChunk(to.chunk, playerFaction.id)).onFailure {
+                            plugin.logger.log(SEVERE, "Failed to save chunk claim: ${it.reason.message}", it.reason.cause)
+                            return@Runnable
+                        }
                     }
                 }
+                if (newChunkClaim?.factionId?.value == oldChunkClaim?.factionId?.value) return@Runnable
+                plugin.server.scheduler.runTask(
+                    plugin,
+                    Runnable {
+                        val title = if (newChunkFaction != null) {
+                            "${ChatColor.of(newChunkFaction.flags[plugin.flags.color])}${newChunkFaction.name}"
+                        } else {
+                            "${ChatColor.of(plugin.config.getString("wilderness.color"))}${plugin.language["Wilderness"]}"
+                        }
+                        if (plugin.config.getBoolean("factions.titleTerritoryIndicator")) {
+                            event.player.resetTitle()
+                            event.player.sendTitle(title, null, 10, 70, 20)
+                        }
+                        if (plugin.config.getBoolean("factions.actionBarTerritoryIndicator")) {
+                            event.player.spigot().sendMessage(ACTION_BAR, *TextComponent.fromLegacyText(title))
+                        }
+                    }
+                )
             }
-            plugin.server.scheduler.runTask(plugin, Runnable {
-                val title = if (newChunkFaction != null) {
-                    "${ChatColor.of(newChunkFaction.flags[plugin.flags.color])}${newChunkFaction.name}"
-                } else {
-                    "${ChatColor.of(plugin.config.getString("wilderness.color"))}${plugin.language["Wilderness"]}"
-                }
-                if (plugin.config.getBoolean("factions.titleTerritoryIndicator")) {
-                    event.player.resetTitle()
-                    event.player.sendTitle(title, null, 10, 70, 20)
-                }
-                if (plugin.config.getBoolean("factions.actionBarTerritoryIndicator")) {
-                    event.player.spigot().sendMessage(ACTION_BAR, *TextComponent.fromLegacyText(title))
-                }
-            })
-        })
+        )
     }
-
 }

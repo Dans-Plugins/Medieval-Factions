@@ -28,5 +28,4 @@ class SetRolePermission(private val plugin: MedievalFactions) : MfFactionPermiss
         { faction -> plugin.language["FactionPermissionSetRolePermission", permission.translate(faction)] },
         false
     )
-
 }

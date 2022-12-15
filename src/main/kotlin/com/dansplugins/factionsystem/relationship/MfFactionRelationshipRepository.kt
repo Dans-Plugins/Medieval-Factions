@@ -11,5 +11,4 @@ interface MfFactionRelationshipRepository {
     fun getFactionRelationships(): List<MfFactionRelationship>
     fun upsert(relationship: MfFactionRelationship): MfFactionRelationship
     fun delete(relationshipId: MfFactionRelationshipId)
-
 }
