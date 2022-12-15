@@ -358,7 +358,7 @@ permissions:
     - mf.force.flag
   mf.player:
     description: Player permission
-    default: true
+    default: false
     children:
       - mf.help
       - mf.ally
