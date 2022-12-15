@@ -22,7 +22,7 @@ class MfFactionClaimCircleCommand(private val plugin: MedievalFactions) : Comman
     private val decimalFormat = DecimalFormat("0", DecimalFormatSymbols.getInstance(plugin.language.locale))
 
     override fun onCommand(sender: CommandSender, command: Command, label: String, args: Array<out String>): Boolean {
-        if (!sender.hasPermission("mf.claim")) {
+        if (!sender.hasPermission("mf.claim.circle") && !sender.hasPermission("mf.claim")) {
             sender.sendMessage("${ChatColor.RED}${plugin.language["CommandFactionClaimNoPermission"]}")
             return true
         }

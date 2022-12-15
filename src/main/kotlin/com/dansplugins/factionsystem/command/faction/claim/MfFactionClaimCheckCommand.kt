@@ -11,7 +11,7 @@ import org.bukkit.entity.Player
 
 class MfFactionClaimCheckCommand(private val plugin: MedievalFactions) : CommandExecutor, TabCompleter {
     override fun onCommand(sender: CommandSender, command: Command, label: String, args: Array<out String>): Boolean {
-        if (!sender.hasPermission("mf.checkclaim")) {
+        if (!sender.hasPermission("mf.claim.check") && !sender.hasPermission("mf.checkclaim")) {
             sender.sendMessage("$RED${plugin.language["CommandFactionCheckClaimNoPermission"]}")
             return true
         }

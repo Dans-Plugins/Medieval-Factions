@@ -25,7 +25,7 @@ class MfFactionClaimFillCommand(private val plugin: MedievalFactions) : CommandE
     private val decimalFormat = DecimalFormat("0", DecimalFormatSymbols.getInstance(plugin.language.locale))
 
     override fun onCommand(sender: CommandSender, command: Command, label: String, args: Array<out String>): Boolean {
-        if (!sender.hasPermission("mf.claimfill")) {
+        if (!sender.hasPermission("mf.claim.fill") && !sender.hasPermission("mf.claimfill")) {
             sender.sendMessage("$RED${plugin.language["CommandFactionClaimFillNoPermission"]}")
             return true
         }
