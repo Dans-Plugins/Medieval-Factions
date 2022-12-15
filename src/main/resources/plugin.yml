@@ -356,6 +356,70 @@ permissions:
     - mf.force.claim
     - mf.force.unclaim
     - mf.force.flag
+  mf.player:
+    description: Player permission
+    default: true
+    children:
+      - mf.help
+      - mf.ally
+      - mf.breakalliance
+      - mf.create
+      - mf.declarewar
+      - mf.invite
+      - mf.join
+      - mf.addlaw
+      - mf.laws
+      - mf.removelaw
+      - mf.makepeace
+      - mf.info
+      - mf.info.other
+      - mf.members
+      - mf.role.view
+      - mf.role.list
+      - mf.role.setpermission
+      - mf.role.set
+      - mf.role.create
+      - mf.role.delete
+      - mf.role.setdefault
+      - mf.role.rename
+      - mf.list
+      - mf.claim
+      - mf.claim.auto
+      - mf.claim.circle
+      - mf.claim.fill
+      - mf.claim.check
+      - mf.unclaim
+      - mf.unclaimall
+      - mf.power
+      - mf.power.view.other
+      - mf.who
+      - mf.disband
+      - mf.invoke
+      - mf.leave
+      - mf.rename
+      - mf.desc
+      - mf.vassalize
+      - mf.swearfealty
+      - mf.declareindependence
+      - mf.grantindependence
+      - mf.lock
+      - mf.unlock
+      - mf.kick
+      - mf.map
+      - mf.sethome
+      - mf.home
+      - mf.gate
+      - mf.flag.list
+      - mf.flag.set
+      - mf.relationship.view
+      - mf.relationship.add
+      - mf.relationship.remove
+      - mf.duel
+      - mf.accessors.list
+      - mf.accessors.add
+      - mf.grantaccess
+      - mf.accessors.remove
+      - mf.revokeaccess
   mf.admin:
     description: Admin permission
     default: op
