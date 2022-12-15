@@ -73,20 +73,21 @@ Alternatively, you can use the External API, the documentation for which can be 
 
 ## Authors and acknowledgement
 ### Developers
-| Name                                                                           | Main Contributions                                                                                                                          |
-|--------------------------------------------------------------------------------|---------------------------------------------------------------------------------------------------------------------------------------------|
-| Daniel Stephenson                                                              | Original creator                                                                                                                            |
-| [Ren Binden](https://github.com/alyphen)                                       | Created Medieval Faction 5                                                                                                                  |
-| [Pasarus](https://github.com/Pasarus)                                          | Overhauled the Storage Manager to use UUIDs and JSON and made other improvements to the plugin                                              |
-| Caibinus                                                                       | Implemented Duels, Gates and Dynmap Integration                                                                                             |
-| [Callum](https://www.spigotmc.org/resources/authors/retrix_solutions.491191/)  | Created event classes, overhauled the Command System, implemented PlaceholderAPI integration and made many other improvements to the plugin |
-| Richardhyy                                                                     | Fixed some encoding issues                                                                                                                  |
-| Mitras2                                                                        | Implemented ActionBar territory alerts                                                                                                      |
-| [Kaonami](https://github.com/Daniels7k)                                        | Fixed a typo in the README                                                                                                                  |
-| GoodLucky777                                                                   | Fixed a bug and a few typos in the code                                                                                                     |
-| Elafir                                                                         | Made it possible to control gates with redstone                                                                                             |
-| [Deej](https://github.com/Mr-Deej)                                             | Added checks to several commands                                                                                                            |
-| VoChiDanh                                                                      | Refactored parts the PersistentData class in an attempt to resolve java compatibility issues                                                |
+| Name                                                                          | Main Contributions                                                                                                                          |
+|-------------------------------------------------------------------------------|---------------------------------------------------------------------------------------------------------------------------------------------|
+| Daniel Stephenson                                                             | Original creator                                                                                                                            |
+| [Ren Binden](https://github.com/alyphen)                                      | Created Medieval Faction 5                                                                                                                  |
+| [Pasarus](https://github.com/Pasarus)                                         | Overhauled the Storage Manager to use UUIDs and JSON and made other improvements to the plugin                                              |
+| Caibinus                                                                      | Implemented Duels, Gates and Dynmap Integration                                                                                             |
+| [Callum](https://www.spigotmc.org/resources/authors/retrix_solutions.491191/) | Created event classes, overhauled the Command System, implemented PlaceholderAPI integration and made many other improvements to the plugin |
+| Richardhyy                                                                    | Fixed some encoding issues                                                                                                                  |
+| Mitras2                                                                       | Implemented ActionBar territory alerts                                                                                                      |
+| [Kaonami](https://github.com/Daniels7k)                                       | Fixed a typo in the README                                                                                                                  |
+| GoodLucky777                                                                  | Fixed a bug and a few typos in the code                                                                                                     |
+| Elafir                                                                        | Made it possible to control gates with redstone                                                                                             |
+| [Deej](https://github.com/Mr-Deej)                                            | Added checks to several commands                                                                                                            |
+| VoChiDanh                                                                     | Refactored parts the PersistentData class in an attempt to resolve java compatibility issues                                                |
+| Kyrenic                                                                       | Implemented contiguous claims config option                                                                                                 |
 
 ### Translators
 | Name                                                             | Language(s)          |

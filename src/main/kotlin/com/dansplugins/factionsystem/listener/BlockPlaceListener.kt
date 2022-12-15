@@ -33,13 +33,16 @@ class BlockPlaceListener(private val plugin: MedievalFactions) : Listener {
         val mfPlayer = playerService.getPlayer(event.player)
         if (mfPlayer == null) {
             event.isCancelled = true
-            plugin.server.scheduler.runTaskAsynchronously(plugin, Runnable {
-                playerService.save(MfPlayer(plugin, event.player)).onFailure {
-                    event.player.sendMessage("$RED${plugin.language["BlockPlaceFailedToSavePlayer"]}")
-                    plugin.logger.log(Level.SEVERE, "Failed to save player: ${it.reason.message}", it.reason.cause)
-                    return@Runnable
+            plugin.server.scheduler.runTaskAsynchronously(
+                plugin,
+                Runnable {
+                    playerService.save(MfPlayer(plugin, event.player)).onFailure {
+                        event.player.sendMessage("$RED${plugin.language["BlockPlaceFailedToSavePlayer"]}")
+                        plugin.logger.log(Level.SEVERE, "Failed to save player: ${it.reason.message}", it.reason.cause)
+                        return@Runnable
+                    }
                 }
-            })
+            )
             return
         }
         val playerFaction = factionService.getFaction(mfPlayer.id)
@@ -57,5 +60,4 @@ class BlockPlaceListener(private val plugin: MedievalFactions) : Listener {
             }
         }
     }
-
 }

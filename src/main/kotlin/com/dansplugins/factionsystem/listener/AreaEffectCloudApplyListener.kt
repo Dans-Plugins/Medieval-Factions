@@ -69,5 +69,4 @@ class AreaEffectCloudApplyListener(private val plugin: MedievalFactions) : Liste
             }
         }
     }
-
 }

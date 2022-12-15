@@ -7,7 +7,9 @@ import com.dansplugins.factionsystem.faction.role.MfFactionRole
 import com.dansplugins.factionsystem.faction.role.MfFactionRoleId
 import com.dansplugins.factionsystem.faction.role.MfFactionRoles
 import com.dansplugins.factionsystem.failure.OptimisticLockingFailureException
-import com.dansplugins.factionsystem.jooq.Tables.*
+import com.dansplugins.factionsystem.jooq.Tables.MF_FACTION
+import com.dansplugins.factionsystem.jooq.Tables.MF_FACTION_INVITE
+import com.dansplugins.factionsystem.jooq.Tables.MF_FACTION_MEMBER
 import com.dansplugins.factionsystem.jooq.tables.records.MfFactionInviteRecord
 import com.dansplugins.factionsystem.jooq.tables.records.MfFactionMemberRecord
 import com.dansplugins.factionsystem.jooq.tables.records.MfFactionRecord
@@ -121,13 +123,15 @@ class JooqMfFactionRepository(
             .set(MF_FACTION.BONUS_POWER, faction.bonusPower)
             .set(MF_FACTION.AUTOCLAIM, faction.autoclaim)
             .set(
-                MF_FACTION.ROLES, JSON.valueOf(
+                MF_FACTION.ROLES,
+                JSON.valueOf(
                     gson.toJson(faction.roles.map(MfFactionRole::serialize))
                 )
             )
             .set(MF_FACTION.DEFAULT_ROLE_ID, faction.roles.default.id.value)
             .set(
-                MF_FACTION.DEFAULT_PERMISSIONS, JSON.valueOf(
+                MF_FACTION.DEFAULT_PERMISSIONS,
+                JSON.valueOf(
                     gson.toJson(faction.defaultPermissions.mapKeys { it.key.name })
                 )
             )
@@ -147,7 +151,8 @@ class JooqMfFactionRepository(
             .set(MF_FACTION.ROLES, JSON.valueOf(gson.toJson(faction.roles.map(MfFactionRole::serialize))))
             .set(MF_FACTION.DEFAULT_ROLE_ID, faction.roles.default.id.value)
             .set(
-                MF_FACTION.DEFAULT_PERMISSIONS, JSON.valueOf(
+                MF_FACTION.DEFAULT_PERMISSIONS,
+                JSON.valueOf(
                     gson.toJson(faction.defaultPermissions.mapKeys { it.key.name })
                 )
             )
@@ -281,5 +286,4 @@ class JooqMfFactionRepository(
         MfFactionInvite(
             playerId.let(::MfPlayerId)
         )
-
 }

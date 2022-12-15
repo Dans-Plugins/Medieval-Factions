@@ -19,7 +19,10 @@ import com.dansplugins.factionsystem.locks.MfLockedBlockId
 import com.dansplugins.factionsystem.player.MfPlayer
 import com.dansplugins.factionsystem.player.MfPlayerId
 import com.dansplugins.factionsystem.relationship.MfFactionRelationship
-import com.dansplugins.factionsystem.relationship.MfFactionRelationshipType.*
+import com.dansplugins.factionsystem.relationship.MfFactionRelationshipType.ALLY
+import com.dansplugins.factionsystem.relationship.MfFactionRelationshipType.AT_WAR
+import com.dansplugins.factionsystem.relationship.MfFactionRelationshipType.LIEGE
+import com.dansplugins.factionsystem.relationship.MfFactionRelationshipType.VASSAL
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
 import dev.forkhandles.result4k.onFailure
@@ -107,16 +110,18 @@ class MfLegacyDataMigrator(private val plugin: MedievalFactions) {
         )
         plugin.server.offlinePlayers.map { bukkitPlayer ->
             val powerRecord = playerPowerRecords.singleOrNull { gson.fromJson(it.playerUUID, String::class.java) == bukkitPlayer.uniqueId.toString() }
-            playerService.save(MfPlayer(
-                bukkitPlayer,
-                0,
-                powerRecord?.powerLevel?.toDoubleOrNull()
-                    ?: plugin.config.getDouble("players.initialPower"),
-                powerRecord?.powerLevel?.toDoubleOrNull()
-                    ?: plugin.config.getDouble("players.initialPower"),
-                false,
-                null
-            )).onFailure {
+            playerService.save(
+                MfPlayer(
+                    bukkitPlayer,
+                    0,
+                    powerRecord?.powerLevel?.toDoubleOrNull()
+                        ?: plugin.config.getDouble("players.initialPower"),
+                    powerRecord?.powerLevel?.toDoubleOrNull()
+                        ?: plugin.config.getDouble("players.initialPower"),
+                    false,
+                    null
+                )
+            ).onFailure {
                 plugin.logger.log(SEVERE, "Failed to save player \"${bukkitPlayer.uniqueId}\": ${it.reason.message}", it.reason.cause)
                 return@map
             }
@@ -156,51 +161,53 @@ class MfLegacyDataMigrator(private val plugin: MedievalFactions) {
 
             val factionId = MfFactionId.generate()
             val roles = MfFactionRoles.defaults(plugin, factionId)
-            return@associateWith factionService.save(MfFaction(
-                plugin,
-                factionId,
-                0,
-                name,
-                description,
-                memberUuids.map { uuid ->
-                    MfFactionMember(
-                        MfPlayerId(uuid),
-                        when (uuid) {
-                            ownerUuid -> roles.getRole("Owner")
-                            in officerUuids -> roles.getRole("Officer")
-                            else -> roles.getRole("Member")
-                        }!!
-                    )
-                },
-                emptyList(),
-                plugin.flags.defaults() + mapOf(
-                    plugin.flags.alliesCanInteractWithLand to (booleanFlagValues["alliesCanInteractWithLand"] ?: plugin.flags.alliesCanInteractWithLand.defaultValue),
-                    plugin.flags.vassalageTreeCanInteractWithLand to (booleanFlagValues["vassalageTreeCanInteractWithLand"] ?: plugin.flags.vassalageTreeCanInteractWithLand.defaultValue),
-                    plugin.flags.isNeutral to (booleanFlagValues["neutral"] ?: plugin.flags.isNeutral.defaultValue),
-                    plugin.flags.color to (stringFlagValues["dynmapTerritoryColor"] ?: plugin.flags.color.defaultValue),
-                    plugin.flags.allowFriendlyFire to (booleanFlagValues["allowFriendlyFire"] ?: plugin.flags.allowFriendlyFire.defaultValue),
-                    plugin.flags.acceptBonusPower to (booleanFlagValues["acceptBonusPower"] ?: plugin.flags.acceptBonusPower.defaultValue),
-                    plugin.flags.enableMobProtection to (booleanFlagValues["enableMobProtection"] ?: plugin.flags.enableMobProtection.defaultValue)
-                ),
-                prefix,
-                if (worldName == null || x == null || y == null || z == null) {
-                    null
-                } else {
-                    plugin.server.getWorld(worldName)?.uid?.let { worldId ->
-                        MfPosition(
-                            worldId,
-                            x,
-                            y,
-                            z,
-                            0f,
-                            0f
+            return@associateWith factionService.save(
+                MfFaction(
+                    plugin,
+                    factionId,
+                    0,
+                    name,
+                    description,
+                    memberUuids.map { uuid ->
+                        MfFactionMember(
+                            MfPlayerId(uuid),
+                            when (uuid) {
+                                ownerUuid -> roles.getRole("Owner")
+                                in officerUuids -> roles.getRole("Officer")
+                                else -> roles.getRole("Member")
+                            }!!
                         )
-                    }
-                },
-                bonusPower,
-                false,
-                roles
-            )).onFailure {
+                    },
+                    emptyList(),
+                    plugin.flags.defaults() + mapOf(
+                        plugin.flags.alliesCanInteractWithLand to (booleanFlagValues["alliesCanInteractWithLand"] ?: plugin.flags.alliesCanInteractWithLand.defaultValue),
+                        plugin.flags.vassalageTreeCanInteractWithLand to (booleanFlagValues["vassalageTreeCanInteractWithLand"] ?: plugin.flags.vassalageTreeCanInteractWithLand.defaultValue),
+                        plugin.flags.isNeutral to (booleanFlagValues["neutral"] ?: plugin.flags.isNeutral.defaultValue),
+                        plugin.flags.color to (stringFlagValues["dynmapTerritoryColor"] ?: plugin.flags.color.defaultValue),
+                        plugin.flags.allowFriendlyFire to (booleanFlagValues["allowFriendlyFire"] ?: plugin.flags.allowFriendlyFire.defaultValue),
+                        plugin.flags.acceptBonusPower to (booleanFlagValues["acceptBonusPower"] ?: plugin.flags.acceptBonusPower.defaultValue),
+                        plugin.flags.enableMobProtection to (booleanFlagValues["enableMobProtection"] ?: plugin.flags.enableMobProtection.defaultValue)
+                    ),
+                    prefix,
+                    if (worldName == null || x == null || y == null || z == null) {
+                        null
+                    } else {
+                        plugin.server.getWorld(worldName)?.uid?.let { worldId ->
+                            MfPosition(
+                                worldId,
+                                x,
+                                y,
+                                z,
+                                0f,
+                                0f
+                            )
+                        }
+                    },
+                    bonusPower,
+                    false,
+                    roles
+                )
+            ).onFailure {
                 plugin.logger.log(SEVERE, "Failed to save faction \"${legacyFaction.name}\": ${it.reason.message}")
                 return@associateWith null
             }
@@ -215,11 +222,13 @@ class MfLegacyDataMigrator(private val plugin: MedievalFactions) {
             )
             val enemyFactions = enemyFactionNames.mapNotNull(factionService::getFaction)
             enemyFactions.forEach createRelationships@{ enemyFaction ->
-                factionRelationshipService.save(MfFactionRelationship(
-                    factionId = faction.id,
-                    targetId = enemyFaction.id,
-                    type = AT_WAR
-                )).onFailure {
+                factionRelationshipService.save(
+                    MfFactionRelationship(
+                        factionId = faction.id,
+                        targetId = enemyFaction.id,
+                        type = AT_WAR
+                    )
+                ).onFailure {
                     plugin.logger.log(SEVERE, "Failed to save faction relationship between \"${faction.name}\" and \"${enemyFaction.name}\": ${it.reason.message}", it.reason.cause)
                     return@createRelationships
                 }
@@ -230,11 +239,13 @@ class MfLegacyDataMigrator(private val plugin: MedievalFactions) {
             )
             val allyFactions = allyFactionNames.mapNotNull(factionService::getFaction)
             allyFactions.forEach createRelationships@{ allyFaction ->
-                factionRelationshipService.save(MfFactionRelationship(
-                    factionId = faction.id,
-                    targetId = allyFaction.id,
-                    type = ALLY
-                )).onFailure {
+                factionRelationshipService.save(
+                    MfFactionRelationship(
+                        factionId = faction.id,
+                        targetId = allyFaction.id,
+                        type = ALLY
+                    )
+                ).onFailure {
                     plugin.logger.log(SEVERE, "Failed to save faction relationship between \"${faction.name}\" and \"${allyFaction.name}\": ${it.reason.message}", it.reason.cause)
                     return@createRelationships
                 }
@@ -245,20 +256,24 @@ class MfLegacyDataMigrator(private val plugin: MedievalFactions) {
             )
             val vassalFactions = vassalFactionNames.mapNotNull(factionService::getFaction)
             vassalFactions.forEach createRelationships@{ vassalFaction ->
-                factionRelationshipService.save(MfFactionRelationship(
-                    factionId = faction.id,
-                    targetId = vassalFaction.id,
-                    type = VASSAL
-                ))
+                factionRelationshipService.save(
+                    MfFactionRelationship(
+                        factionId = faction.id,
+                        targetId = vassalFaction.id,
+                        type = VASSAL
+                    )
+                )
             }
             val liegeFactionName = gson.fromJson(legacyFaction.liege, String::class.java)
             val liegeFaction = factionService.getFaction(liegeFactionName)
             if (liegeFaction != null) {
-                factionRelationshipService.save(MfFactionRelationship(
-                    factionId = faction.id,
-                    targetId = liegeFaction.id,
-                    type = LIEGE
-                ))
+                factionRelationshipService.save(
+                    MfFactionRelationship(
+                        factionId = faction.id,
+                        targetId = liegeFaction.id,
+                        type = LIEGE
+                    )
+                )
             }
             val gateJson = gson.fromJson<List<String>>(legacyFaction.factionGates, TypeToken.getParameterized(List::class.java, String::class.java).type)
             val gates = gateJson.map { gson.fromJson(it, MfLegacyGate::class.java) }
@@ -268,24 +283,25 @@ class MfLegacyDataMigrator(private val plugin: MedievalFactions) {
                 val triggerPosition = parseGateCoord(legacyGate.triggerCoord) ?: return@migrateGate
                 val material = Material.valueOf(legacyGate.material)
                 val isOpen = legacyGate.open.toBooleanStrict()
-                gateService.save(MfGate(
-                    plugin,
-                    MfGateId.generate(),
-                    0,
-                    faction.id,
-                    MfCuboidArea(
-                        position1,
-                        position2
-                    ),
-                    triggerPosition,
-                    material,
-                    if (isOpen) OPEN else CLOSED
-                )).onFailure {
+                gateService.save(
+                    MfGate(
+                        plugin,
+                        MfGateId.generate(),
+                        0,
+                        faction.id,
+                        MfCuboidArea(
+                            position1,
+                            position2
+                        ),
+                        triggerPosition,
+                        material,
+                        if (isOpen) OPEN else CLOSED
+                    )
+                ).onFailure {
                     plugin.logger.log(SEVERE, "Failed to save gate \"${legacyGate.name}\": ${it.reason.message}", it.reason.cause)
                     return@migrateGate
                 }
             }
-
         }
         plugin.logger.info("Faction information migrated (${System.currentTimeMillis() - startTime}ms)")
     }
@@ -325,11 +341,13 @@ class MfLegacyDataMigrator(private val plugin: MedievalFactions) {
                 plugin.logger.warning("Could not find faction \"${factionName}\", skipping claimed chunk")
                 return@forEach
             }
-            claimService.save(MfClaimedChunk(
-                MfChunkPosition(world.uid, x, z),
-                faction.id
-            )).onFailure {
-                plugin.logger.log(SEVERE, "Failed to save claimed chunk ${worldName}, ${x}, ${z}: ${it.reason.message}", it.reason.cause)
+            claimService.save(
+                MfClaimedChunk(
+                    MfChunkPosition(world.uid, x, z),
+                    faction.id
+                )
+            ).onFailure {
+                plugin.logger.log(SEVERE, "Failed to save claimed chunk $worldName, $x, $z: ${it.reason.message}", it.reason.cause)
                 return@forEach
             }
         }
@@ -376,20 +394,21 @@ class MfLegacyDataMigrator(private val plugin: MedievalFactions) {
             }
             val ownerId = gson.fromJson(legacyLockedBlock.owner, String::class.java)
             val accessList = gson.fromJson<List<String?>>(legacyLockedBlock.accessList, TypeToken.getParameterized(List::class.java, String::class.java).type)
-            lockService.save(MfLockedBlock(
-                MfLockedBlockId.generate(),
-                0,
-                blockPosition,
-                chunkX,
-                chunkZ,
-                MfPlayerId(ownerId),
-                accessList.filterNotNull().map(::MfPlayerId)
-            )).onFailure {
+            lockService.save(
+                MfLockedBlock(
+                    MfLockedBlockId.generate(),
+                    0,
+                    blockPosition,
+                    chunkX,
+                    chunkZ,
+                    MfPlayerId(ownerId),
+                    accessList.filterNotNull().map(::MfPlayerId)
+                )
+            ).onFailure {
                 plugin.logger.log(SEVERE, "Failed to save locked block ${world.name}, $x, $y, $z: ${it.reason.message}", it.reason.cause)
                 return@forEach
             }
         }
         plugin.logger.info("Locked blocks migrated (${System.currentTimeMillis() - startTime}ms)")
     }
-
 }

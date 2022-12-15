@@ -54,9 +54,12 @@ class MfPlayerService(private val plugin: MedievalFactions, private val playerRe
             val factionService = plugin.services.factionService
             val faction = factionService.getFaction(result.id)
             if (faction != null) {
-                plugin.server.scheduler.runTask(plugin, Runnable {
-                    dynmapService.updateClaims(faction)
-                })
+                plugin.server.scheduler.runTask(
+                    plugin,
+                    Runnable {
+                        dynmapService.updateClaims(faction)
+                    }
+                )
             }
         }
         return@resultFrom result
@@ -74,9 +77,12 @@ class MfPlayerService(private val plugin: MedievalFactions, private val playerRe
             if (dynmapService != null) {
                 val factionService = plugin.services.factionService
                 factionService.factions.forEach { faction ->
-                    plugin.server.scheduler.runTask(plugin, Runnable {
-                        dynmapService.updateClaims(faction)
-                    })
+                    plugin.server.scheduler.runTask(
+                        plugin,
+                        Runnable {
+                            dynmapService.updateClaims(faction)
+                        }
+                    )
                 }
             }
         }.mapFailure { exception ->
@@ -90,5 +96,4 @@ class MfPlayerService(private val plugin: MedievalFactions, private val playerRe
             else -> GENERAL
         }
     }
-
 }

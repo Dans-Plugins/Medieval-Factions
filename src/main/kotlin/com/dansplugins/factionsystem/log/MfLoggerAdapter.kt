@@ -12,7 +12,6 @@ import java.util.logging.LogRecord
 import java.util.logging.Logger
 import java.util.logging.Level as JulLevel
 
-
 class MfLoggerAdapter(name: String) : MarkerIgnoringBase(), LocationAwareLogger {
 
     init {

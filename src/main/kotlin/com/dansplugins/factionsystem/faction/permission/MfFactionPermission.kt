@@ -8,7 +8,7 @@ data class MfFactionPermission(
     val default: Boolean
 ) {
 
-    constructor(name: String, translation: String, default: Boolean): this(name, { translation }, default)
+    constructor(name: String, translation: String, default: Boolean) : this(name, { translation }, default)
 
     override fun toString() = name
 

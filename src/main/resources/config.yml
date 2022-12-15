@@ -58,6 +58,7 @@ factions:
   nonMembersCanInteractWithDoors: false
   maxClaimRadius: 3
   limitLand: true
+  contiguousClaims: false
   actionBarTerritoryIndicator: true
   titleTerritoryIndicator: true
   allowNeutrality: false
@@ -65,8 +66,6 @@ factions:
   factionHomeTeleportDelay: 5
   defaults:
     flags:
-      mustBeOfficerToManageLand: true
-      mustBeOfficierToInviteOthers: true
       alliesCanInteractWithLand: false
       vassalageTreeCanInteractWithLand: false
       neutral: false

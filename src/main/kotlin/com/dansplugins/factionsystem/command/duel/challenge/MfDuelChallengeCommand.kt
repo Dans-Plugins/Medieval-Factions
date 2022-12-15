@@ -10,7 +10,9 @@ import net.md_5.bungee.api.chat.HoverEvent
 import net.md_5.bungee.api.chat.HoverEvent.Action.SHOW_TEXT
 import net.md_5.bungee.api.chat.TextComponent
 import net.md_5.bungee.api.chat.hover.content.Text
-import org.bukkit.ChatColor.*
+import org.bukkit.ChatColor.GRAY
+import org.bukkit.ChatColor.GREEN
+import org.bukkit.ChatColor.RED
 import org.bukkit.command.Command
 import org.bukkit.command.CommandExecutor
 import org.bukkit.command.CommandSender
@@ -42,62 +44,67 @@ class MfDuelChallengeCommand(private val plugin: MedievalFactions) : CommandExec
             sender.sendMessage("$RED${plugin.language["CommandDuelChallengeCannotDuelSelf"]}")
             return true
         }
-        plugin.server.scheduler.runTaskAsynchronously(plugin, Runnable {
-            val playerService = plugin.services.playerService
-            val mfPlayer = playerService.getPlayer(sender)
-                ?: playerService.save(MfPlayer(plugin, sender)).onFailure {
-                    sender.sendMessage("$RED${plugin.language["CommandDuelChallengeFailedToSavePlayer"]}")
-                    plugin.logger.log(SEVERE, "Failed to save player: ${it.reason.message}", it.reason.cause)
+        plugin.server.scheduler.runTaskAsynchronously(
+            plugin,
+            Runnable {
+                val playerService = plugin.services.playerService
+                val mfPlayer = playerService.getPlayer(sender)
+                    ?: playerService.save(MfPlayer(plugin, sender)).onFailure {
+                        sender.sendMessage("$RED${plugin.language["CommandDuelChallengeFailedToSavePlayer"]}")
+                        plugin.logger.log(SEVERE, "Failed to save player: ${it.reason.message}", it.reason.cause)
+                        return@Runnable
+                    }
+                val targetMfPlayer = playerService.getPlayer(target)
+                    ?: playerService.save(MfPlayer(plugin, target)).onFailure {
+                        sender.sendMessage("$RED${plugin.language["CommandDuelChallengeFailedToSaveTargetPlayer"]}")
+                        plugin.logger.log(SEVERE, "Failed to save player: ${it.reason.message}", it.reason.cause)
+                        return@Runnable
+                    }
+                val duelService = plugin.services.duelService
+                val existingDuel = duelService.getDuel(mfPlayer.id)
+                if (existingDuel != null) {
+                    sender.sendMessage("$RED${plugin.language["CommandDuelChallengeAlreadyInADuel"]}")
                     return@Runnable
                 }
-            val targetMfPlayer = playerService.getPlayer(target)
-                ?: playerService.save(MfPlayer(plugin, target)).onFailure {
-                    sender.sendMessage("$RED${plugin.language["CommandDuelChallengeFailedToSaveTargetPlayer"]}")
-                    plugin.logger.log(SEVERE, "Failed to save player: ${it.reason.message}", it.reason.cause)
+                val targetExistingDuel = duelService.getDuel(targetMfPlayer.id)
+                if (targetExistingDuel != null) {
+                    sender.sendMessage("$RED${plugin.language["CommandDuelChallengeTargetAlreadyInDuel"]}")
                     return@Runnable
                 }
-            val duelService = plugin.services.duelService
-            val existingDuel = duelService.getDuel(mfPlayer.id)
-            if (existingDuel != null) {
-                sender.sendMessage("$RED${plugin.language["CommandDuelChallengeAlreadyInADuel"]}")
-                return@Runnable
-            }
-            val targetExistingDuel = duelService.getDuel(targetMfPlayer.id)
-            if (targetExistingDuel != null) {
-                sender.sendMessage("$RED${plugin.language["CommandDuelChallengeTargetAlreadyInDuel"]}")
-                return@Runnable
-            }
-            val existingInvite = duelService.getInvite(mfPlayer.id, targetMfPlayer.id)
-            if (existingInvite != null) {
-                sender.sendMessage("$RED${plugin.language["CommandDuelChallengeTargetAlreadyInvited"]}")
-                return@Runnable
-            }
-            duelService.save(MfDuelInvite(
-                mfPlayer.id,
-                targetMfPlayer.id
-            )).onFailure {
-                sender.sendMessage("$RED${plugin.language["CommandDuelChallengeFailedToSaveInvite"]}")
-                plugin.logger.log(SEVERE, "Failed to save duel invite: ${it.reason.message}", it.reason.cause)
-                return@Runnable
-            }
-            sender.sendMessage("$GREEN${plugin.language["CommandDuelChallengeSuccess", target.name]}")
-            target.sendMessage("$GRAY${plugin.language["CommandDuelChallengeReceived", sender.name]}")
-            target.spigot().sendMessage(
-                TextComponent(plugin.language["CommandDuelChallengeReceivedAccept"]).apply {
-                    color = SpigotChatColor.GREEN
-                    isBold = true
-                    hoverEvent = HoverEvent(SHOW_TEXT, Text(plugin.language["CommandDuelChallengeReceivedAcceptHover"]))
-                    clickEvent = ClickEvent(RUN_COMMAND, "/duel accept ${sender.name}")
-                },
-                TextComponent(" "),
-                TextComponent(plugin.language["CommandDuelChallengeReceivedDecline"]).apply {
-                    color = SpigotChatColor.RED
-                    isBold = true
-                    hoverEvent = HoverEvent(SHOW_TEXT, Text(plugin.language["CommandDuelChallengeReceivedDeclineHover"]))
-                    clickEvent = ClickEvent(RUN_COMMAND, "/duel cancel ${sender.name}")
+                val existingInvite = duelService.getInvite(mfPlayer.id, targetMfPlayer.id)
+                if (existingInvite != null) {
+                    sender.sendMessage("$RED${plugin.language["CommandDuelChallengeTargetAlreadyInvited"]}")
+                    return@Runnable
                 }
-            )
-        })
+                duelService.save(
+                    MfDuelInvite(
+                        mfPlayer.id,
+                        targetMfPlayer.id
+                    )
+                ).onFailure {
+                    sender.sendMessage("$RED${plugin.language["CommandDuelChallengeFailedToSaveInvite"]}")
+                    plugin.logger.log(SEVERE, "Failed to save duel invite: ${it.reason.message}", it.reason.cause)
+                    return@Runnable
+                }
+                sender.sendMessage("$GREEN${plugin.language["CommandDuelChallengeSuccess", target.name]}")
+                target.sendMessage("$GRAY${plugin.language["CommandDuelChallengeReceived", sender.name]}")
+                target.spigot().sendMessage(
+                    TextComponent(plugin.language["CommandDuelChallengeReceivedAccept"]).apply {
+                        color = SpigotChatColor.GREEN
+                        isBold = true
+                        hoverEvent = HoverEvent(SHOW_TEXT, Text(plugin.language["CommandDuelChallengeReceivedAcceptHover"]))
+                        clickEvent = ClickEvent(RUN_COMMAND, "/duel accept ${sender.name}")
+                    },
+                    TextComponent(" "),
+                    TextComponent(plugin.language["CommandDuelChallengeReceivedDecline"]).apply {
+                        color = SpigotChatColor.RED
+                        isBold = true
+                        hoverEvent = HoverEvent(SHOW_TEXT, Text(plugin.language["CommandDuelChallengeReceivedDeclineHover"]))
+                        clickEvent = ClickEvent(RUN_COMMAND, "/duel cancel ${sender.name}")
+                    }
+                )
+            }
+        )
         return true
     }
 
@@ -108,9 +115,10 @@ class MfDuelChallengeCommand(private val plugin: MedievalFactions) : CommandExec
         args: Array<out String>
     ) = when {
         args.isEmpty() -> plugin.server.onlinePlayers.map(Player::getName)
-        args.size == 1 -> plugin.server.onlinePlayers
-            .filter { it.name.lowercase().startsWith(args[0].lowercase()) }
-            .map(Player::getName)
+        args.size == 1 ->
+            plugin.server.onlinePlayers
+                .filter { it.name.lowercase().startsWith(args[0].lowercase()) }
+                .map(Player::getName)
         else -> emptyList()
     }
 }

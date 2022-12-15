@@ -13,7 +13,7 @@ import java.util.*
 class JooqMfLockRepository(private val dsl: DSLContext) : MfLockRepository {
     override fun getLockedBlock(id: MfLockedBlockId): MfLockedBlock? = getLockedBlock(MF_LOCKED_BLOCK.ID.eq(id.value))
 
-    override fun getLockedBlock(worldId: UUID, x: Int, y: Int, z: Int): MfLockedBlock?  =
+    override fun getLockedBlock(worldId: UUID, x: Int, y: Int, z: Int): MfLockedBlock? =
         getLockedBlock(
             MF_LOCKED_BLOCK.WORLD_ID.eq(worldId.toString())
                 .and(MF_LOCKED_BLOCK.X.eq(MF_LOCKED_BLOCK.X))
@@ -41,7 +41,7 @@ class JooqMfLockRepository(private val dsl: DSLContext) : MfLockRepository {
         ).fetch()
             .groupBy { it[MF_LOCKED_BLOCK.ID] }
             .map { (_, records) ->
-                val accessors = records.filter { it[MF_LOCKED_BLOCK_ACCESSOR.PLAYER_ID] != null}
+                val accessors = records.filter { it[MF_LOCKED_BLOCK_ACCESSOR.PLAYER_ID] != null }
                     .map { it.into(MF_LOCKED_BLOCK_ACCESSOR).playerId.let(::MfPlayerId) }
                 records.first().into(MF_LOCKED_BLOCK).toDomain(accessors)
             }
@@ -136,5 +136,4 @@ class JooqMfLockRepository(private val dsl: DSLContext) : MfLockRepository {
         playerId = playerId.let(::MfPlayerId),
         accessors = accessors
     )
-
 }

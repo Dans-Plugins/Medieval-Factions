@@ -41,6 +41,5 @@ class Language(plugin: MedievalFactions, private val language: String) {
             } catch (exception: MissingResourceException) {
                 null
             }
-        } ?: "Missing translation for ${language}: $key"
-
+        } ?: "Missing translation for $language: $key"
 }

@@ -23,12 +23,20 @@ class MfFactionDisbandCommand(private val plugin: MedievalFactions) : CommandExe
             sender.sendMessage("$RED${plugin.language["CommandFactionDisbandNotAPlayer"]}")
             return true
         }
-        plugin.server.scheduler.runTaskAsynchronously(plugin, Runnable {
-            val playerService = plugin.services.playerService
-            val mfPlayer = playerService.getPlayer(sender)
-                ?: playerService.save(MfPlayer(plugin, sender)).onFailure {
-                    sender.sendMessage("$RED${plugin.language["CommandFactionDisbandFailedToSavePlayer"]}")
-                    plugin.logger.log(SEVERE, "Failed to save player: ${it.reason.message}", it.reason.cause)
+        plugin.server.scheduler.runTaskAsynchronously(
+            plugin,
+            Runnable {
+                val playerService = plugin.services.playerService
+                val mfPlayer = playerService.getPlayer(sender)
+                    ?: playerService.save(MfPlayer(plugin, sender)).onFailure {
+                        sender.sendMessage("$RED${plugin.language["CommandFactionDisbandFailedToSavePlayer"]}")
+                        plugin.logger.log(SEVERE, "Failed to save player: ${it.reason.message}", it.reason.cause)
+                        return@Runnable
+                    }
+                val factionService = plugin.services.factionService
+                val faction = factionService.getFaction(mfPlayer.id)
+                if (faction == null) {
+                    sender.sendMessage("$RED${plugin.language["CommandFactionDisbandMustBeInAFaction"]}")
                     return@Runnable
                 }
 
@@ -76,7 +84,7 @@ class MfFactionDisbandCommand(private val plugin: MedievalFactions) : CommandExe
                 return@Runnable
             }
             sender.sendMessage("$GREEN${plugin.language["CommandFactionDisbandSuccess"]}")
-        })
+        )
         return true
     }
 
