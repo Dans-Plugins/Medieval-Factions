@@ -360,9 +360,9 @@ permissions:
     description: Admin permission
     default: op
     children:
-    - mf.force.*
-    - mf.bypass
-    - mf.relationship.view
-    - mf.relationship.add
-    - mf.relationship.remove
-    - mf.power.set
+      - mf.force.*
+      - mf.bypass
+      - mf.relationship.view
+      - mf.relationship.add
+      - mf.relationship.remove
+      - mf.power.set
