@@ -54,6 +54,11 @@ class MfFlags(
             plugin,
             "enableMobProtection",
             plugin.config.getBoolean("factions.defaults.flags.enableMobProtection")
+        ),
+        MfFlag.boolean(
+            plugin,
+            "liegeChainCanInteractWithLand",
+            plugin.config.getBoolean("factions.defaults.flags.liegeChainCanInteractWithLand")
         )
     )
 ) : MutableList<MfFlag<out Any>> by flags {
@@ -67,6 +72,7 @@ class MfFlags(
     val allowFriendlyFire = get<Boolean>("allowFriendlyFire")!!
     val acceptBonusPower = get<Boolean>("acceptBonusPower")!!
     val enableMobProtection = get<Boolean>("enableMobProtection")!!
+    val liegeChainCanInteractWithLand = get<Boolean>("liegeChainCanInteractWithLand")!!
 
     fun defaults() = MfFlagValues(plugin, flags.associate { it.name to it.defaultValue })
 }
