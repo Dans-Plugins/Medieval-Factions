@@ -223,6 +223,9 @@ permissions:
   mf.disband:
     description: Allows disbanding your faction
     default: true
+  mf.disband.others:
+    description: Allows disbanding other factions
+    default: op
   mf.invoke:
     description: Allows invoking another faction into war
     default: true
