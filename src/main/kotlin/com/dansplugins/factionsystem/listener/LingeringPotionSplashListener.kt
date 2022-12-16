@@ -15,5 +15,4 @@ class LingeringPotionSplashListener(private val plugin: MedievalFactions) : List
             plugin.services.potionService.addLingeringEffectThrower(event.areaEffectCloud, thrower)
         }
     }
-
 }

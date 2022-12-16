@@ -32,40 +32,43 @@ class MfDuelCancelCommand(private val plugin: MedievalFactions) : CommandExecuto
             sender.sendMessage("$RED${plugin.language["CommandDuelCancelInvalidTarget"]}")
             return true
         }
-        plugin.server.scheduler.runTaskAsynchronously(plugin, Runnable {
-            val playerService = plugin.services.playerService
-            val mfPlayer = playerService.getPlayer(sender)
-                ?: playerService.save(MfPlayer(plugin, sender)).onFailure {
-                    sender.sendMessage("$RED${plugin.language["CommandDuelCancelFailedToSavePlayer"]}")
-                    plugin.logger.log(SEVERE, "Failed to save player: ${it.reason.message}", it.reason.cause)
+        plugin.server.scheduler.runTaskAsynchronously(
+            plugin,
+            Runnable {
+                val playerService = plugin.services.playerService
+                val mfPlayer = playerService.getPlayer(sender)
+                    ?: playerService.save(MfPlayer(plugin, sender)).onFailure {
+                        sender.sendMessage("$RED${plugin.language["CommandDuelCancelFailedToSavePlayer"]}")
+                        plugin.logger.log(SEVERE, "Failed to save player: ${it.reason.message}", it.reason.cause)
+                        return@Runnable
+                    }
+                val targetMfPlayer = playerService.getPlayer(target)
+                    ?: playerService.save(MfPlayer(plugin, target)).onFailure {
+                        sender.sendMessage("$RED${plugin.language["CommandDuelCancelFailedToSaveTargetPlayer"]}")
+                        plugin.logger.log(SEVERE, "Failed to save player: ${it.reason.message}", it.reason.cause)
+                        return@Runnable
+                    }
+                val duelService = plugin.services.duelService
+                val invite = duelService.getInvite(targetMfPlayer.id, mfPlayer.id)
+                    ?: duelService.getInvite(mfPlayer.id, targetMfPlayer.id)
+                if (invite == null) {
+                    sender.sendMessage("$RED${plugin.language["CommandDuelCancelNoInvite", target.name]}")
                     return@Runnable
                 }
-            val targetMfPlayer = playerService.getPlayer(target)
-                ?: playerService.save(MfPlayer(plugin, target)).onFailure {
-                    sender.sendMessage("$RED${plugin.language["CommandDuelCancelFailedToSaveTargetPlayer"]}")
-                    plugin.logger.log(SEVERE, "Failed to save player: ${it.reason.message}", it.reason.cause)
+                duelService.deleteInvite(invite.inviterId, invite.inviteeId).onFailure {
+                    sender.sendMessage("$RED${plugin.language["CommandDuelCancelFailedToDeleteInvite"]}")
+                    plugin.logger.log(SEVERE, "Failed to delete invite", it.reason.cause)
                     return@Runnable
                 }
-            val duelService = plugin.services.duelService
-            val invite = duelService.getInvite(targetMfPlayer.id, mfPlayer.id)
-                ?: duelService.getInvite(mfPlayer.id, targetMfPlayer.id)
-            if (invite == null) {
-                sender.sendMessage("$RED${plugin.language["CommandDuelCancelNoInvite", target.name]}")
-                return@Runnable
+                if (invite.inviterId == mfPlayer.id) {
+                    sender.sendMessage("$GREEN${plugin.language["CommandDuelCancelSuccessCancelled", target.name]}")
+                    target.sendMessage("$RED${plugin.language["CommandDuelCancelChallengeCancelled", sender.name]}")
+                } else {
+                    sender.sendMessage("$GREEN${plugin.language["CommandDuelCancelSuccessDeclined", target.name]}")
+                    target.sendMessage("$RED${plugin.language["CommandDuelCancelChallengeDeclined", sender.name]}")
+                }
             }
-            duelService.deleteInvite(invite.inviterId, invite.inviteeId).onFailure {
-                sender.sendMessage("$RED${plugin.language["CommandDuelCancelFailedToDeleteInvite"]}")
-                plugin.logger.log(SEVERE, "Failed to delete invite", it.reason.cause)
-                return@Runnable
-            }
-            if (invite.inviterId == mfPlayer.id) {
-                sender.sendMessage("$GREEN${plugin.language["CommandDuelCancelSuccessCancelled", target.name]}")
-                target.sendMessage("$RED${plugin.language["CommandDuelCancelChallengeCancelled", sender.name]}")
-            } else {
-                sender.sendMessage("$GREEN${plugin.language["CommandDuelCancelSuccessDeclined", target.name]}")
-                target.sendMessage("$RED${plugin.language["CommandDuelCancelChallengeDeclined", sender.name]}")
-            }
-        })
+        )
         return true
     }
 

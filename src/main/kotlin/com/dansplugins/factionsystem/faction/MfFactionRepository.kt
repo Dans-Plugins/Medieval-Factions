@@ -10,5 +10,4 @@ interface MfFactionRepository {
     fun getFactions(): List<MfFaction>
     fun upsert(faction: MfFaction): MfFaction
     fun delete(factionId: MfFactionId)
-
 }

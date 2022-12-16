@@ -11,5 +11,4 @@ interface MfClaimedChunkRepository {
     fun upsert(claim: MfClaimedChunk): MfClaimedChunk
     fun delete(worldId: UUID, x: Int, z: Int)
     fun deleteAll(factionId: MfFactionId)
-
 }

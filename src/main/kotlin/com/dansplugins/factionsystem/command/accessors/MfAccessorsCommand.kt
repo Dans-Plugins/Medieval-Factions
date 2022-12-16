@@ -26,7 +26,7 @@ class MfAccessorsCommand(private val plugin: MedievalFactions) : CommandExecutor
         plugin.language["CmdAccessorsRemove"],
         "remove",
         "rm",
-        "r",
+        "r"
     )
 
     private val listAliases = listOf(

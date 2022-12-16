@@ -26,37 +26,40 @@ class MfFactionLawRemoveCommand(private val plugin: MedievalFactions) : CommandE
             sender.sendMessage("$RED${plugin.language["CommandFactionLawRemoveNotAPlayer"]}")
             return true
         }
-        plugin.server.scheduler.runTaskAsynchronously(plugin, Runnable {
-            val playerService = plugin.services.playerService
-            val mfPlayer = playerService.getPlayer(sender)
-                ?: playerService.save(MfPlayer(plugin, sender)).onFailure {
-                    sender.sendMessage("$RED${plugin.language["CommandFactionLawRemoveFailedToSavePlayer"]}")
-                    plugin.logger.log(Level.SEVERE, "Failed to save player: ${it.reason.message}", it.reason.cause)
+        plugin.server.scheduler.runTaskAsynchronously(
+            plugin,
+            Runnable {
+                val playerService = plugin.services.playerService
+                val mfPlayer = playerService.getPlayer(sender)
+                    ?: playerService.save(MfPlayer(plugin, sender)).onFailure {
+                        sender.sendMessage("$RED${plugin.language["CommandFactionLawRemoveFailedToSavePlayer"]}")
+                        plugin.logger.log(Level.SEVERE, "Failed to save player: ${it.reason.message}", it.reason.cause)
+                        return@Runnable
+                    }
+                val factionService = plugin.services.factionService
+                val faction = factionService.getFaction(mfPlayer.id)
+                if (faction == null) {
+                    sender.sendMessage("$RED${plugin.language["CommandFactionLawRemoveMustBeInAFaction"]}")
                     return@Runnable
                 }
-            val factionService = plugin.services.factionService
-            val faction = factionService.getFaction(mfPlayer.id)
-            if (faction == null) {
-                sender.sendMessage("$RED${plugin.language["CommandFactionLawRemoveMustBeInAFaction"]}")
-                return@Runnable
+                val role = faction.getRole(mfPlayer.id)
+                if (role == null || !role.hasPermission(faction, plugin.factionPermissions.removeLaw)) {
+                    sender.sendMessage("$RED${plugin.language["CommandFactionLawRemoveNoFactionPermission"]}")
+                    return@Runnable
+                }
+                val lawService = plugin.services.lawService
+                val law = lawService.getLaw(MfLawId(args[0]))
+                if (law == null) {
+                    sender.sendMessage("$RED${plugin.language["CommandFactionLawRemoveInvalidLawId"]}")
+                    return@Runnable
+                }
+                lawService.delete(law.id).onFailure {
+                    sender.sendMessage("$RED${plugin.language["CommandFactionLawRemoveFailedToDeleteLaw"]}")
+                    return@Runnable
+                }
+                sender.sendMessage("$RED${plugin.language["CommandFactionLawRemoveSuccess"]}")
             }
-            val role = faction.getRole(mfPlayer.id)
-            if (role == null || !role.hasPermission(faction, plugin.factionPermissions.removeLaw)) {
-                sender.sendMessage("$RED${plugin.language["CommandFactionLawRemoveNoFactionPermission"]}")
-                return@Runnable
-            }
-            val lawService = plugin.services.lawService
-            val law = lawService.getLaw(MfLawId(args[0]))
-            if (law == null) {
-                sender.sendMessage("$RED${plugin.language["CommandFactionLawRemoveInvalidLawId"]}")
-                return@Runnable
-            }
-            lawService.delete(law.id).onFailure {
-                sender.sendMessage("$RED${plugin.language["CommandFactionLawRemoveFailedToDeleteLaw"]}")
-                return@Runnable
-            }
-            sender.sendMessage("$RED${plugin.language["CommandFactionLawRemoveSuccess"]}")
-        })
+        )
         return true
     }
 

@@ -24,5 +24,4 @@ data class MfBlockPosition(
 
         fun fromBukkitLocation(location: Location) = location.world?.getBlockAt(location)?.let { fromBukkitBlock(it) }
     }
-
 }

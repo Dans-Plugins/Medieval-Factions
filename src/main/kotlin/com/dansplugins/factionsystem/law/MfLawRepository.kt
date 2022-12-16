@@ -8,5 +8,4 @@ interface MfLawRepository {
     fun getLaws(factionId: MfFactionId): List<MfLaw>
     fun upsert(law: MfLaw): MfLaw
     fun delete(id: MfLawId)
-
 }

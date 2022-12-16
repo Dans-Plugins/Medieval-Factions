@@ -16,7 +16,7 @@ import org.bukkit.conversations.StringPrompt
 import org.bukkit.entity.Player
 import java.util.logging.Level
 
-class MfFactionSetDescriptionCommand(private val plugin: MedievalFactions): CommandExecutor, TabCompleter {
+class MfFactionSetDescriptionCommand(private val plugin: MedievalFactions) : CommandExecutor, TabCompleter {
 
     private val conversationFactory = ConversationFactory(plugin)
         .withModality(true)
@@ -73,39 +73,45 @@ class MfFactionSetDescriptionCommand(private val plugin: MedievalFactions): Comm
     }
 
     private fun setFactionDescription(player: Player, description: String) {
-        plugin.server.scheduler.runTaskAsynchronously(plugin, Runnable {
-            val playerService = plugin.services.playerService
-            val mfPlayer = playerService.getPlayer(player)
-                ?: playerService.save(MfPlayer(plugin, player)).onFailure {
-                    player.sendMessage("$RED${plugin.language["CommandFactionSetDescriptionFailedToSavePlayer"]}")
-                    plugin.logger.log(Level.SEVERE, "Failed to save player: ${it.reason.message}", it.reason.cause)
+        plugin.server.scheduler.runTaskAsynchronously(
+            plugin,
+            Runnable {
+                val playerService = plugin.services.playerService
+                val mfPlayer = playerService.getPlayer(player)
+                    ?: playerService.save(MfPlayer(plugin, player)).onFailure {
+                        player.sendMessage("$RED${plugin.language["CommandFactionSetDescriptionFailedToSavePlayer"]}")
+                        plugin.logger.log(Level.SEVERE, "Failed to save player: ${it.reason.message}", it.reason.cause)
+                        return@Runnable
+                    }
+                val factionService = plugin.services.factionService
+                val faction = factionService.getFaction(mfPlayer.id)
+                if (faction == null) {
+                    player.sendMessage("$RED${plugin.language["CommandFactionSetDescriptionMustBeInAFaction"]}")
                     return@Runnable
                 }
-            val factionService = plugin.services.factionService
-            val faction = factionService.getFaction(mfPlayer.id)
-            if (faction == null) {
-                player.sendMessage("$RED${plugin.language["CommandFactionSetDescriptionMustBeInAFaction"]}")
-                return@Runnable
-            }
-            val role = faction.getRole(mfPlayer.id)
-            if (role == null || !role.hasPermission(faction, plugin.factionPermissions.changeDescription)) {
-                player.sendMessage("$RED${plugin.language["CommandFactionSetDescriptionNoFactionPermission"]}")
-                return@Runnable
-            }
-            factionService.save(
-                faction.copy(
-                    description = if (description.length <= 4096) description else description.substring(0, 4095) + "…"
+                val role = faction.getRole(mfPlayer.id)
+                if (role == null || !role.hasPermission(faction, plugin.factionPermissions.changeDescription)) {
+                    player.sendMessage("$RED${plugin.language["CommandFactionSetDescriptionNoFactionPermission"]}")
+                    return@Runnable
+                }
+                factionService.save(
+                    faction.copy(
+                        description = if (description.length <= 4096) description else description.substring(0, 4095) + "…"
+                    )
+                ).onFailure {
+                    player.sendMessage("$RED${plugin.language["CommandFactionSetDescriptionFailedToSaveFaction"]}")
+                    plugin.logger.log(Level.SEVERE, "Failed to save faction: ${it.reason.message}", it.reason.cause)
+                    return@Runnable
+                }
+                player.sendMessage("$GREEN${plugin.language["CommandFactionSetDescriptionSuccess", description]}")
+                plugin.server.scheduler.runTask(
+                    plugin,
+                    Runnable {
+                        player.performCommand("faction info")
+                    }
                 )
-            ).onFailure {
-                player.sendMessage("$RED${plugin.language["CommandFactionSetDescriptionFailedToSaveFaction"]}")
-                plugin.logger.log(Level.SEVERE, "Failed to save faction: ${it.reason.message}", it.reason.cause)
-                return@Runnable
             }
-            player.sendMessage("$GREEN${plugin.language["CommandFactionSetDescriptionSuccess", description]}")
-            plugin.server.scheduler.runTask(plugin, Runnable {
-                player.performCommand("faction info")
-            })
-        })
+        )
     }
 
     override fun onTabComplete(

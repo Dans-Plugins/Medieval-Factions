@@ -3,14 +3,14 @@ package com.dansplugins.factionsystem.command.faction
 import com.dansplugins.factionsystem.MedievalFactions
 import com.dansplugins.factionsystem.command.faction.addmember.MfFactionAddMemberCommand
 import com.dansplugins.factionsystem.command.faction.ally.MfFactionAllyCommand
-import com.dansplugins.factionsystem.command.faction.autoclaim.MfFactionAutoclaimCommand
 import com.dansplugins.factionsystem.command.faction.bonuspower.MfFactionBonusPowerCommand
 import com.dansplugins.factionsystem.command.faction.breakalliance.MfFactionBreakAllianceCommand
 import com.dansplugins.factionsystem.command.faction.bypass.MfFactionBypassCommand
 import com.dansplugins.factionsystem.command.faction.chat.MfFactionChatCommand
-import com.dansplugins.factionsystem.command.faction.checkclaim.MfFactionCheckClaimCommand
+import com.dansplugins.factionsystem.command.faction.claim.MfFactionClaimAutoCommand
+import com.dansplugins.factionsystem.command.faction.claim.MfFactionClaimCheckCommand
 import com.dansplugins.factionsystem.command.faction.claim.MfFactionClaimCommand
-import com.dansplugins.factionsystem.command.faction.claimfill.MfFactionClaimFillCommand
+import com.dansplugins.factionsystem.command.faction.claim.MfFactionClaimFillCommand
 import com.dansplugins.factionsystem.command.faction.create.MfFactionCreateCommand
 import com.dansplugins.factionsystem.command.faction.declareindependence.MfFactionDeclareIndependenceCommand
 import com.dansplugins.factionsystem.command.faction.declarewar.MfFactionDeclareWarCommand
@@ -41,7 +41,10 @@ import com.dansplugins.factionsystem.command.faction.unclaim.MfFactionUnclaimCom
 import com.dansplugins.factionsystem.command.faction.unclaimall.MfFactionUnclaimAllCommand
 import com.dansplugins.factionsystem.command.faction.vassalize.MfFactionVassalizeCommand
 import com.dansplugins.factionsystem.command.faction.who.MfFactionWhoCommand
-import org.bukkit.ChatColor.*
+import org.bukkit.ChatColor.AQUA
+import org.bukkit.ChatColor.GRAY
+import org.bukkit.ChatColor.RED
+import org.bukkit.ChatColor.YELLOW
 import org.bukkit.command.Command
 import org.bukkit.command.CommandExecutor
 import org.bukkit.command.CommandSender
@@ -51,6 +54,7 @@ class MfFactionCommand(private val plugin: MedievalFactions) : CommandExecutor, 
 
     private val factionHelpCommand = MfFactionHelpCommand(plugin)
     private val factionCreateCommand = MfFactionCreateCommand(plugin)
+    private val factionClaimCommand = MfFactionClaimCommand(plugin)
     private val factionLawCommand = MfFactionLawCommand(plugin)
     private val factionAllyCommand = MfFactionAllyCommand(plugin)
     private val factionBreakAllianceCommand = MfFactionBreakAllianceCommand(plugin)
@@ -62,11 +66,8 @@ class MfFactionCommand(private val plugin: MedievalFactions) : CommandExecutor, 
     private val factionMembersCommand = MfFactionMembersCommand(plugin)
     private val factionRoleCommand = MfFactionRoleCommand(plugin)
     private val factionListCommand = MfFactionListCommand(plugin)
-    private val factionClaimCommand = MfFactionClaimCommand(plugin)
     private val factionUnclaimCommand = MfFactionUnclaimCommand(plugin)
-    private val factionCheckClaimCommand = MfFactionCheckClaimCommand(plugin)
     private val factionUnclaimAllCommand = MfFactionUnclaimAllCommand(plugin)
-    private val factionAutoclaimCommand = MfFactionAutoclaimCommand(plugin)
     private val factionPowerCommand = MfFactionPowerCommand(plugin)
     private val factionWhoCommand = MfFactionWhoCommand(plugin)
     private val factionDisbandCommand = MfFactionDisbandCommand(plugin)
@@ -85,13 +86,18 @@ class MfFactionCommand(private val plugin: MedievalFactions) : CommandExecutor, 
     private val factionFlagCommand = MfFactionFlagCommand(plugin)
     private val factionBypassCommand = MfFactionBypassCommand(plugin)
     private val factionChatCommand = MfFactionChatCommand(plugin)
-    private val factionClaimFillCommand = MfFactionClaimFillCommand(plugin)
     private val factionBonusPowerCommand = MfFactionBonusPowerCommand(plugin)
     private val factionRelationshipCommand = MfFactionRelationshipCommand(plugin)
     private val factionAddMemberCommand = MfFactionAddMemberCommand(plugin)
 
+    // Backwards compatibility:
+    private val factionClaimAutoCommand = MfFactionClaimAutoCommand(plugin)
+    private val factionClaimFillCommand = MfFactionClaimFillCommand(plugin)
+    private val factionClaimCheckCommand = MfFactionClaimCheckCommand(plugin)
+
     private val helpAliases = listOf("help", plugin.language["CmdFactionHelp"])
     private val createAliases = listOf("create", plugin.language["CmdFactionCreate"])
+    private val claimAliases = listOf("claim", plugin.language["CmdFactionClaim"])
     private val lawAliases = listOf("law", plugin.language["CmdFactionLaw"])
     private val allyAliases = listOf("ally", plugin.language["CmdFactionAlly"])
     private val breakAllianceAliases = listOf("breakalliance", "ba", plugin.language["CmdFactionBreakAlliance"])
@@ -103,11 +109,8 @@ class MfFactionCommand(private val plugin: MedievalFactions) : CommandExecutor, 
     private val membersAliases = listOf("members", plugin.language["CmdFactionMembers"])
     private val roleAliases = listOf("role", plugin.language["CmdFactionRole"])
     private val listAliases = listOf("list", plugin.language["CmdFactionList"])
-    private val claimAliases = listOf("claim", plugin.language["CmdFactionClaim"])
     private val unclaimAliases = listOf("unclaim", plugin.language["CmdFactionUnclaim"])
-    private val checkClaimAliases = listOf("checkclaim", plugin.language["CmdFactionCheckClaim"])
     private val unclaimAllAliases = listOf("unclaimall", plugin.language["CmdFactionUnclaimAll"])
-    private val autoclaimAliases = listOf("autoclaim", plugin.language["CmdFactionAutoclaim"])
     private val powerAliases = listOf("power", plugin.language["CmdFactionPower"])
     private val whoAliases = listOf("who", plugin.language["CmdFactionWho"])
     private val disbandAliases = listOf("disband", plugin.language["CmdFactionDisband"])
@@ -126,56 +129,62 @@ class MfFactionCommand(private val plugin: MedievalFactions) : CommandExecutor, 
     private val flagAliases = listOf("flag", "flags", plugin.language["CmdFactionFlag"])
     private val bypassAliases = listOf("bypass", plugin.language["CmdFactionBypass"])
     private val chatAliases = listOf("chat", plugin.language["CmdFactionChat"])
-    private val claimFillAliases = listOf("claimfill", plugin.language["CmdFactionClaimFill"])
     private val bonusPowerAliases = listOf("bonuspower", plugin.language["CmdFactionBonusPower"])
     private val relationshipAliases = listOf("relationship", plugin.language["CmdFactionRelationship"])
     private val addMemberAliases = listOf("addmember", plugin.language["CmdFactionAddMember"])
 
+    // Backwards compatibility:
+    private val claimAutoAliases = listOf("autoclaim")
+    private val claimFillAliases = listOf("claimfill")
+    private val claimCheckAliases = listOf("checkclaim")
+
     private val subcommands = helpAliases +
-            createAliases +
-            lawAliases +
-            allyAliases +
-            breakAllianceAliases +
-            inviteAliases +
-            joinAliases +
-            declareWarAliases +
-            makePeaceAliases +
-            infoAliases +
-            membersAliases +
-            roleAliases +
-            listAliases +
-            claimAliases +
-            unclaimAliases +
-            checkClaimAliases +
-            unclaimAllAliases +
-            autoclaimAliases +
-            powerAliases +
-            whoAliases +
-            disbandAliases +
-            invokeAliases +
-            leaveAliases +
-            setAliases +
-            renameAliases +
-            vassalizeAliases +
-            swearFealtyAliases +
-            grantIndependenceAliases +
-            declareIndependenceAliases +
-            kickAliases +
-            mapAliases +
-            setHomeAliases +
-            homeAliases +
-            flagAliases +
-            bypassAliases +
-            chatAliases +
-            claimFillAliases +
-            bonusPowerAliases +
-            relationshipAliases +
-            addMemberAliases
+        createAliases +
+        claimAliases +
+        lawAliases +
+        allyAliases +
+        breakAllianceAliases +
+        inviteAliases +
+        joinAliases +
+        declareWarAliases +
+        makePeaceAliases +
+        infoAliases +
+        membersAliases +
+        roleAliases +
+        listAliases +
+        unclaimAliases +
+        unclaimAllAliases +
+        powerAliases +
+        whoAliases +
+        disbandAliases +
+        invokeAliases +
+        leaveAliases +
+        setAliases +
+        renameAliases +
+        vassalizeAliases +
+        swearFealtyAliases +
+        grantIndependenceAliases +
+        declareIndependenceAliases +
+        kickAliases +
+        mapAliases +
+        setHomeAliases +
+        homeAliases +
+        flagAliases +
+        bypassAliases +
+        chatAliases +
+        bonusPowerAliases +
+        relationshipAliases +
+        addMemberAliases +
+        // Backwards compatibility aliases:
+        claimAutoAliases +
+        claimFillAliases +
+        claimCheckAliases
 
     override fun onCommand(sender: CommandSender, command: Command, label: String, args: Array<out String>): Boolean {
         return when (args.firstOrNull()?.lowercase()) {
             in helpAliases -> factionHelpCommand.onCommand(sender, command, label, args.drop(1).toTypedArray())
             in createAliases -> factionCreateCommand.onCommand(sender, command, label, args.drop(1).toTypedArray())
+            in claimAliases -> factionClaimCommand.onCommand(sender, command, label, args.drop(1).toTypedArray())
             in lawAliases -> factionLawCommand.onCommand(sender, command, label, args.drop(1).toTypedArray())
             in allyAliases -> factionAllyCommand.onCommand(sender, command, label, args.drop(1).toTypedArray())
             in breakAllianceAliases -> factionBreakAllianceCommand.onCommand(sender, command, label, args.drop(1).toTypedArray())
@@ -187,11 +196,8 @@ class MfFactionCommand(private val plugin: MedievalFactions) : CommandExecutor, 
             in membersAliases -> factionMembersCommand.onCommand(sender, command, label, args.drop(1).toTypedArray())
             in roleAliases -> factionRoleCommand.onCommand(sender, command, label, args.drop(1).toTypedArray())
             in listAliases -> factionListCommand.onCommand(sender, command, label, args.drop(1).toTypedArray())
-            in claimAliases -> factionClaimCommand.onCommand(sender, command, label, args.drop(1).toTypedArray())
             in unclaimAliases -> factionUnclaimCommand.onCommand(sender, command, label, args.drop(1).toTypedArray())
-            in checkClaimAliases -> factionCheckClaimCommand.onCommand(sender, command, label, args.drop(1).toTypedArray())
             in unclaimAllAliases -> factionUnclaimAllCommand.onCommand(sender, command, label, args.drop(1).toTypedArray())
-            in autoclaimAliases -> factionAutoclaimCommand.onCommand(sender, command, label, args.drop(1).toTypedArray())
             in powerAliases -> factionPowerCommand.onCommand(sender, command, label, args.drop(1).toTypedArray())
             in whoAliases -> factionWhoCommand.onCommand(sender, command, label, args.drop(1).toTypedArray())
             in disbandAliases -> factionDisbandCommand.onCommand(sender, command, label, args.drop(1).toTypedArray())
@@ -210,10 +216,22 @@ class MfFactionCommand(private val plugin: MedievalFactions) : CommandExecutor, 
             in flagAliases -> factionFlagCommand.onCommand(sender, command, label, args.drop(1).toTypedArray())
             in bypassAliases -> factionBypassCommand.onCommand(sender, command, label, args.drop(1).toTypedArray())
             in chatAliases -> factionChatCommand.onCommand(sender, command, label, args.drop(1).toTypedArray())
-            in claimFillAliases -> factionClaimFillCommand.onCommand(sender, command, label, args.drop(1).toTypedArray())
             in bonusPowerAliases -> factionBonusPowerCommand.onCommand(sender, command, label, args.drop(1).toTypedArray())
             in relationshipAliases -> factionRelationshipCommand.onCommand(sender, command, label, args.drop(1).toTypedArray())
             in addMemberAliases -> factionAddMemberCommand.onCommand(sender, command, label, args.drop(1).toTypedArray())
+            // Backwards compatibility:
+            in claimAutoAliases -> {
+                sender.sendMessage("${RED}Command deprecated, use \"/mf claim auto\" instead")
+                factionClaimAutoCommand.onCommand(sender, command, label, args.drop(1).toTypedArray())
+            }
+            in claimFillAliases -> {
+                sender.sendMessage("${RED}Command deprecated, use \"/mf claim fill\" instead")
+                factionClaimFillCommand.onCommand(sender, command, label, args.drop(1).toTypedArray())
+            }
+            in claimCheckAliases -> {
+                sender.sendMessage("${RED}Command deprecated, use \"/mf claim check\" instead")
+                factionClaimCheckCommand.onCommand(sender, command, label, args.drop(1).toTypedArray())
+            }
             else -> {
                 sender.sendMessage("$AQUA${plugin.language["MedievalFactionsTitle", plugin.description.version]}")
                 sender.sendMessage("$GRAY${plugin.language["DeveloperList", plugin.description.authors.joinToString()]}")
@@ -249,9 +267,7 @@ class MfFactionCommand(private val plugin: MedievalFactions) : CommandExecutor, 
             in listAliases -> factionListCommand.onTabComplete(sender, command, label, args.drop(1).toTypedArray())
             in claimAliases -> factionClaimCommand.onTabComplete(sender, command, label, args.drop(1).toTypedArray())
             in unclaimAliases -> factionUnclaimCommand.onTabComplete(sender, command, label, args.drop(1).toTypedArray())
-            in checkClaimAliases -> factionCheckClaimCommand.onTabComplete(sender, command, label, args.drop(1).toTypedArray())
             in unclaimAllAliases -> factionUnclaimAllCommand.onTabComplete(sender, command, label, args.drop(1).toTypedArray())
-            in autoclaimAliases -> factionAutoclaimCommand.onTabComplete(sender, command, label, args.drop(1).toTypedArray())
             in powerAliases -> factionPowerCommand.onTabComplete(sender, command, label, args.drop(1).toTypedArray())
             in whoAliases -> factionWhoCommand.onTabComplete(sender, command, label, args.drop(1).toTypedArray())
             in disbandAliases -> factionDisbandCommand.onTabComplete(sender, command, label, args.drop(1).toTypedArray())
@@ -270,10 +286,13 @@ class MfFactionCommand(private val plugin: MedievalFactions) : CommandExecutor, 
             in flagAliases -> factionFlagCommand.onTabComplete(sender, command, label, args.drop(1).toTypedArray())
             in bypassAliases -> factionBypassCommand.onTabComplete(sender, command, label, args.drop(1).toTypedArray())
             in chatAliases -> factionChatCommand.onTabComplete(sender, command, label, args.drop(1).toTypedArray())
-            in claimFillAliases -> factionClaimFillCommand.onTabComplete(sender, command, label, args.drop(1).toTypedArray())
             in bonusPowerAliases -> factionBonusPowerCommand.onTabComplete(sender, command, label, args.drop(1).toTypedArray())
             in relationshipAliases -> factionRelationshipCommand.onTabComplete(sender, command, label, args.drop(1).toTypedArray())
             in addMemberAliases -> factionAddMemberCommand.onTabComplete(sender, command, label, args.drop(1).toTypedArray())
+            // Backwards compatibility:
+            in claimAutoAliases -> factionClaimAutoCommand.onTabComplete(sender, command, label, args.drop(1).toTypedArray())
+            in claimFillAliases -> factionClaimFillCommand.onTabComplete(sender, command, label, args.drop(1).toTypedArray())
+            in claimCheckAliases -> factionClaimCheckCommand.onTabComplete(sender, command, label, args.drop(1).toTypedArray())
             else -> emptyList()
         }
     }

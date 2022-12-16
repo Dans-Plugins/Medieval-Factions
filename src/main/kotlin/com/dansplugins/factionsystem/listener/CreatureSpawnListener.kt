@@ -17,7 +17,7 @@ class CreatureSpawnListener(private val plugin: MedievalFactions) : Listener {
             .mapNotNull {
                 try {
                     return@mapNotNull CreatureSpawnEvent.SpawnReason.valueOf(it)
-                } catch(exception: IllegalArgumentException) {
+                } catch (exception: IllegalArgumentException) {
                     return@mapNotNull null
                 }
             }
@@ -32,5 +32,4 @@ class CreatureSpawnListener(private val plugin: MedievalFactions) : Listener {
 
         event.isCancelled = true
     }
-
 }

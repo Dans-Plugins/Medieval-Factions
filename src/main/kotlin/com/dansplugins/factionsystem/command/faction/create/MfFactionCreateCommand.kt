@@ -27,44 +27,47 @@ class MfFactionCreateCommand(private val plugin: MedievalFactions) : CommandExec
             return true
         }
         val maxFactionNameLength = plugin.config.getInt("factions.maxNameLength")
-        plugin.server.scheduler.runTaskAsynchronously(plugin, Runnable {
-            val playerService = plugin.services.playerService
-            val mfPlayer = playerService.getPlayer(sender)
-                ?: playerService.save(MfPlayer(plugin, sender)).onFailure {
-                    sender.sendMessage("$RED${plugin.language["CommandFactionCreateFailedToSavePlayer"]}")
-                    plugin.logger.log(SEVERE, "Failed to save player: ${it.reason.message}", it.reason.cause)
+        plugin.server.scheduler.runTaskAsynchronously(
+            plugin,
+            Runnable {
+                val playerService = plugin.services.playerService
+                val mfPlayer = playerService.getPlayer(sender)
+                    ?: playerService.save(MfPlayer(plugin, sender)).onFailure {
+                        sender.sendMessage("$RED${plugin.language["CommandFactionCreateFailedToSavePlayer"]}")
+                        plugin.logger.log(SEVERE, "Failed to save player: ${it.reason.message}", it.reason.cause)
+                        return@Runnable
+                    }
+                val factionService = plugin.services.factionService
+                val existingFaction = factionService.getFaction(mfPlayer.id)
+                if (existingFaction != null) {
+                    sender.sendMessage("$RED${plugin.language["CommandFactionCreateAlreadyInFaction"]}")
                     return@Runnable
                 }
-            val factionService = plugin.services.factionService
-            val existingFaction = factionService.getFaction(mfPlayer.id)
-            if (existingFaction != null) {
-                sender.sendMessage("$RED${plugin.language["CommandFactionCreateAlreadyInFaction"]}")
-                return@Runnable
+                if (args.isEmpty()) {
+                    sender.sendMessage("$RED${plugin.language["CommandFactionCreateUsage"]}")
+                    return@Runnable
+                }
+                val factionName = args.joinToString(" ")
+                if (factionName.length > maxFactionNameLength) {
+                    sender.sendMessage("$RED${plugin.language["CommandFactionCreateNameTooLong", maxFactionNameLength.toString()]}")
+                    return@Runnable
+                }
+                if (factionService.getFaction(factionName) != null) {
+                    sender.sendMessage("$RED${plugin.language["CommandFactionCreateFactionAlreadyExists"]}")
+                    return@Runnable
+                }
+                val factionId = MfFactionId.generate()
+                val roles = MfFactionRoles.defaults(plugin, factionId)
+                val owner = roles.single { it.name == "Owner" }
+                val faction = MfFaction(plugin, id = factionId, name = factionName, roles = roles, members = listOf(mfPlayer.withRole(owner)))
+                val createdFaction = factionService.save(faction).onFailure { failure ->
+                    sender.sendMessage("$RED${plugin.language["CommandFactionCreateFactionFailedToSave"]}")
+                    plugin.logger.log(SEVERE, "Failed to save faction: ${failure.reason.message}", failure.reason.cause)
+                    return@Runnable
+                }
+                sender.sendMessage("$GREEN${plugin.language["CommandFactionCreateSuccess", createdFaction.name]}")
             }
-            if (args.isEmpty()) {
-                sender.sendMessage("$RED${plugin.language["CommandFactionCreateUsage"]}")
-                return@Runnable
-            }
-            val factionName = args.joinToString(" ")
-            if (factionName.length > maxFactionNameLength) {
-                sender.sendMessage("$RED${plugin.language["CommandFactionCreateNameTooLong", maxFactionNameLength.toString()]}")
-                return@Runnable
-            }
-            if (factionService.getFaction(factionName) != null) {
-                sender.sendMessage("$RED${plugin.language["CommandFactionCreateFactionAlreadyExists"]}")
-                return@Runnable
-            }
-            val factionId = MfFactionId.generate()
-            val roles = MfFactionRoles.defaults(plugin, factionId)
-            val owner = roles.single { it.name == "Owner" }
-            val faction = MfFaction(plugin, id = factionId, name = factionName, roles = roles, members = listOf(mfPlayer.withRole(owner)))
-            val createdFaction = factionService.save(faction).onFailure { failure ->
-                sender.sendMessage("$RED${plugin.language["CommandFactionCreateFactionFailedToSave"]}")
-                plugin.logger.log(SEVERE, "Failed to save faction: ${failure.reason.message}", failure.reason.cause)
-                return@Runnable
-            }
-            sender.sendMessage("$GREEN${plugin.language["CommandFactionCreateSuccess", createdFaction.name]}")
-        })
+        )
         return true
     }
 
