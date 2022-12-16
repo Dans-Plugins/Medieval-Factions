@@ -55,6 +55,8 @@ class MfClaimService(private val plugin: MedievalFactions, private val repositor
         val relationshipService = plugin.services.factionRelationshipService
         val vassals = relationshipService.getVassalTree(claim.factionId)
         if (claimFaction.flags[plugin.flags.vassalageTreeCanInteractWithLand] && vassals.contains(playerFaction.id)) return true
+        val lieges = relationshipService.getLiegeChain(claim.factionId)
+        if (claimFaction.flags[plugin.flags.liegeChainCanInteractWithLand] && lieges.contains(playerFaction.id)) return true
         val allies = relationshipService.getRelationships(claim.factionId, MfFactionRelationshipType.ALLY).map { it.targetId }
         if (claimFaction.flags[plugin.flags.alliesCanInteractWithLand] && allies.contains(playerFaction.id)) return true
         return false
