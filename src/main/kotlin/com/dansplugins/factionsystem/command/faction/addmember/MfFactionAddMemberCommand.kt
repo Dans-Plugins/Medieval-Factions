@@ -1,6 +1,7 @@
 package com.dansplugins.factionsystem.command.faction.addmember
 
 import com.dansplugins.factionsystem.MedievalFactions
+import com.dansplugins.factionsystem.faction.MfFaction
 import com.dansplugins.factionsystem.faction.MfFactionMember
 import com.dansplugins.factionsystem.player.MfPlayer
 import dev.forkhandles.result4k.onFailure
@@ -60,10 +61,12 @@ class MfFactionAddMemberCommand(private val plugin: MedievalFactions) : CommandE
         }
 
         // add member to faction
-        val updatedFaction = factionService.save(targetFaction.copy(
-            members = targetFaction.members + MfFactionMember(targetMfPlayer.id, targetFaction.roles.default),
-            invites = targetFaction.invites.filter { it.playerId != targetMfPlayer.id }
-        )).onFailure {
+        val updatedFaction = factionService.save(
+            targetFaction.copy(
+                members = targetFaction.members + MfFactionMember(targetMfPlayer.id, targetFaction.roles.default),
+                invites = targetFaction.invites.filter { it.playerId != targetMfPlayer.id }
+            )
+        ).onFailure {
             sender.sendMessage("${ChatColor.RED}${plugin.language["CommandFactionAddMemberFailedToSaveFaction"]}")
             plugin.logger.log(Level.SEVERE, "Failed to save faction: ${it.reason.message}", it.reason.cause)
             return true
@@ -87,13 +90,21 @@ class MfFactionAddMemberCommand(private val plugin: MedievalFactions) : CommandE
         command: Command,
         label: String,
         args: Array<out String>
-    ) = when {
-        args.isEmpty() -> plugin.server.offlinePlayers
-            .mapNotNull { it.name }
-        args.size == 1 -> plugin.server.offlinePlayers
-            .filter { it.name?.lowercase()?.startsWith(args[0].lowercase()) == true }
-            .mapNotNull { it.name }
-        else -> emptyList()
+    ): List<String> {
+        val factionService = plugin.services.factionService
+        return when {
+            args.isEmpty() ->
+                plugin.server.offlinePlayers
+                    .mapNotNull { it.name }
+            args.size == 1 ->
+                plugin.server.offlinePlayers
+                    .filter { it.name?.lowercase()?.startsWith(args[0].lowercase()) == true }
+                    .mapNotNull { it.name }
+            args.size == 2 ->
+                factionService.factions
+                    .filter { it.name.lowercase().startsWith(args[1].lowercase()) }
+                    .map(MfFaction::name)
+            else -> emptyList()
+        }
     }
-
 }
