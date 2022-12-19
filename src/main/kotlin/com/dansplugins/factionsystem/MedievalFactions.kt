@@ -31,7 +31,28 @@ import com.dansplugins.factionsystem.law.JooqMfLawRepository
 import com.dansplugins.factionsystem.law.MfLawRepository
 import com.dansplugins.factionsystem.law.MfLawService
 import com.dansplugins.factionsystem.legacy.MfLegacyDataMigrator
-import com.dansplugins.factionsystem.listener.*
+import com.dansplugins.factionsystem.listener.AreaEffectCloudApplyListener
+import com.dansplugins.factionsystem.listener.AsyncPlayerChatListener
+import com.dansplugins.factionsystem.listener.AsyncPlayerChatPreviewListener
+import com.dansplugins.factionsystem.listener.AsyncPlayerPreLoginListener
+import com.dansplugins.factionsystem.listener.BlockBreakListener
+import com.dansplugins.factionsystem.listener.BlockExplodeListener
+import com.dansplugins.factionsystem.listener.BlockPistonExtendListener
+import com.dansplugins.factionsystem.listener.BlockPistonRetractListener
+import com.dansplugins.factionsystem.listener.BlockPlaceListener
+import com.dansplugins.factionsystem.listener.CreatureSpawnListener
+import com.dansplugins.factionsystem.listener.EntityDamageByEntityListener
+import com.dansplugins.factionsystem.listener.EntityDamageListener
+import com.dansplugins.factionsystem.listener.EntityExplodeListener
+import com.dansplugins.factionsystem.listener.InventoryMoveItemListener
+import com.dansplugins.factionsystem.listener.LingeringPotionSplashListener
+import com.dansplugins.factionsystem.listener.PlayerDeathListener
+import com.dansplugins.factionsystem.listener.PlayerInteractListener
+import com.dansplugins.factionsystem.listener.PlayerJoinListener
+import com.dansplugins.factionsystem.listener.PlayerMoveListener
+import com.dansplugins.factionsystem.listener.PlayerQuitListener
+import com.dansplugins.factionsystem.listener.PlayerTeleportListener
+import com.dansplugins.factionsystem.listener.PotionSplashListener
 import com.dansplugins.factionsystem.locks.JooqMfLockRepository
 import com.dansplugins.factionsystem.locks.MfLockRepository
 import com.dansplugins.factionsystem.locks.MfLockService
@@ -230,6 +251,7 @@ class MedievalFactions : JavaPlugin() {
             EntityDamageByEntityListener(this),
             EntityDamageListener(this),
             EntityExplodeListener(this),
+            InventoryMoveItemListener(this),
             LingeringPotionSplashListener(this),
             PlayerDeathListener(this),
             PlayerInteractListener(this),
