@@ -1,7 +1,6 @@
 package com.dansplugins.factionsystem.command.faction.law
 
 import com.dansplugins.factionsystem.MedievalFactions
-import com.dansplugins.factionsystem.law.MfLawId
 import com.dansplugins.factionsystem.player.MfPlayer
 import dev.forkhandles.result4k.onFailure
 import org.bukkit.ChatColor.RED
@@ -14,7 +13,7 @@ import java.util.logging.Level
 
 class MfFactionLawRemoveCommand(private val plugin: MedievalFactions) : CommandExecutor, TabCompleter {
     override fun onCommand(sender: CommandSender, command: Command, label: String, args: Array<out String>): Boolean {
-        if (!sender.hasPermission("mf.removelaw")) {
+        if (!sender.hasPermission("mf.law.remove") || !sender.hasPermission("mf.removelaw")) {
             sender.sendMessage("$RED${plugin.language["CommandFactionLawRemoveNoPermission"]}")
             return true
         }
@@ -48,12 +47,12 @@ class MfFactionLawRemoveCommand(private val plugin: MedievalFactions) : CommandE
                     return@Runnable
                 }
                 val lawService = plugin.services.lawService
-                val law = lawService.getLaw(MfLawId(args[0]))
+                val law = lawService.getLaw(faction.id, args.elementAt(0).toInt())
                 if (law == null) {
                     sender.sendMessage("$RED${plugin.language["CommandFactionLawRemoveInvalidLawId"]}")
                     return@Runnable
                 }
-                lawService.delete(law.id).onFailure {
+                lawService.delete(law).onFailure {
                     sender.sendMessage("$RED${plugin.language["CommandFactionLawRemoveFailedToDeleteLaw"]}")
                     return@Runnable
                 }
