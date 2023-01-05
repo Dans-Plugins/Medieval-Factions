@@ -9,12 +9,14 @@ data class MfLaw(
     val version: Int = 0,
     @get:JvmName("getFactionId")
     val factionId: MfFactionId,
-    val text: String
+    val text: String,
+    val number: Int?
 ) {
     constructor(faction: MfFaction, text: String) : this(
         MfLawId.generate(),
         1,
         faction.id,
-        text
+        text,
+        null
     )
 }

@@ -15,7 +15,7 @@ import java.util.logging.Level
 
 class MfFactionLawAddCommand(private val plugin: MedievalFactions) : CommandExecutor, TabCompleter {
     override fun onCommand(sender: CommandSender, command: Command, label: String, args: Array<out String>): Boolean {
-        if (!sender.hasPermission("mf.addlaw")) {
+        if (!sender.hasPermission("mf.law.add") || !sender.hasPermission("mf.addlaw")) {
             sender.sendMessage("$RED${plugin.language["CommandFactionLawAddNoPermission"]}")
             return true
         }

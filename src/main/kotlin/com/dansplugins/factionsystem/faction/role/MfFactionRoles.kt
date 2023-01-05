@@ -58,6 +58,8 @@ data class MfFactionRoles(
                 name = "Owner",
                 permissionsByName = buildMap {
                     put(plugin.factionPermissions.addLaw.name, true)
+                    put(plugin.factionPermissions.editLaw.name, true)
+                    put(plugin.factionPermissions.moveLaw.name, true)
                     put(plugin.factionPermissions.removeLaw.name, true)
                     put(plugin.factionPermissions.listLaws.name, true)
                     put(plugin.factionPermissions.requestAlliance.name, true)
