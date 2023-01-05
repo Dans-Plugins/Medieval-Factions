@@ -146,6 +146,28 @@ class MfFactionInfoCommand(private val plugin: MedievalFactions) : CommandExecut
                         }
                     )
                 }
+
+                // send vassals information
+                val vassals = plugin.services.factionRelationshipService.getVassals(faction.id).mapNotNull(factionService::getFaction)
+                if (vassals.isNotEmpty()) {
+                    sender.sendMessage("${BukkitChatColor.WHITE}${plugin.language["CommandFactionInfoVassalsTitle"]}")
+                    sender.sendMessage("${BukkitChatColor.GRAY}" + vassals.joinToString(transform = MfFaction::name))
+                }
+
+                // send allies information
+                val allies = plugin.services.factionRelationshipService.getAllies(faction.id).mapNotNull(factionService::getFaction)
+                if (allies.isNotEmpty()) {
+                    sender.sendMessage("${BukkitChatColor.WHITE}${plugin.language["CommandFactionInfoAlliesTitle"]}")
+                    sender.sendMessage("${BukkitChatColor.GRAY}" + allies.joinToString(transform = MfFaction::name))
+                }
+
+                // send wars information
+                val atWarWith = plugin.services.factionRelationshipService.getFactionsAtWarWith(faction.id).mapNotNull(factionService::getFaction)
+                if (atWarWith.isNotEmpty()) {
+                    sender.sendMessage("${BukkitChatColor.WHITE}${plugin.language["CommandFactionInfoEnemiesTitle"]}")
+                    sender.sendMessage("${BukkitChatColor.GRAY}" + atWarWith.joinToString(transform = MfFaction::name))
+                }
+
                 factionService.fields
                     .filter { field -> field.isVisibleFor(faction.id.value, senderMfPlayer?.id?.value ?: return@filter false) }
                     .forEach { field ->
