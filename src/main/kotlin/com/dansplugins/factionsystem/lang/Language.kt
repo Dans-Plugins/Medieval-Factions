@@ -40,7 +40,7 @@ class Language(plugin: MedievalFactions, private val language: String) {
         if (!de_de_file.exists()) {
             plugin.saveResource(de_de_filename, false)
         }
-        plugin.saveResource("lang/lang_de_DE.properties", false)
+        plugin.saveResource(de_de_filename, false)
 
         val externalUrls = arrayOf(languageFolder.toURI().toURL())
         val externalClassLoader = URLClassLoader(externalUrls)
