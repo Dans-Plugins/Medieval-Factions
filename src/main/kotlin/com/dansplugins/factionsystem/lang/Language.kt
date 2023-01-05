@@ -17,28 +17,28 @@ class Language(plugin: MedievalFactions, private val language: String) {
             languageFolder.mkdirs()
         }
 
-        val en_us_filename = "lang/lang_en_US.properties"
-        var en_us_file = File(en_us_filename)
-        if (!en_us_file.exists()) {
-            plugin.saveResource(en_us_filename, false)
+        val enUsFilename = "lang/lang_en_US.properties"
+        var enUsFile = File(enUsFilename)
+        if (!enUsFile.exists()) {
+            plugin.saveResource(enUsFilename, false)
         }
 
-        val en_gb_filename = "lang/lang_en_GB.properties"
-        var en_gb_file = File(en_gb_filename)
-        if (!en_gb_file.exists()) {
-            plugin.saveResource(en_gb_filename, false)
+        val enGbFilename = "lang/lang_en_GB.properties"
+        var enGbFile = File(enGbFilename)
+        if (!enGbFile.exists()) {
+            plugin.saveResource(enGbFilename, false)
         }
 
-        val fr_fr_filename = "lang/lang_fr_FR.properties"
-        var fr_fr_file = File(fr_fr_filename)
-        if (!fr_fr_file.exists()) {
-            plugin.saveResource(fr_fr_filename, false)
+        val frFrFilename = "lang/lang_fr_FR.properties"
+        var frFrFile = File(frFrFilename)
+        if (!frFrFile.exists()) {
+            plugin.saveResource(frFrFilename, false)
         }
 
-        val de_de_filename = "lang/lang_de_DE.properties"
-        var de_de_file = File(de_de_filename)
-        if (!de_de_file.exists()) {
-            plugin.saveResource(de_de_filename, false)
+        val deDeFilename = "lang/lang_de_DE.properties"
+        var deDeFile = File(deDeFilename)
+        if (!deDeFile.exists()) {
+            plugin.saveResource(deDeFilename, false)
         }
 
         val externalUrls = arrayOf(languageFolder.toURI().toURL())
