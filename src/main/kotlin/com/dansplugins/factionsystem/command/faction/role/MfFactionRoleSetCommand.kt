@@ -53,9 +53,10 @@ class MfFactionRoleSetCommand(private val plugin: MedievalFactions) : CommandExe
                     return@Runnable
                 }
                 val factionService = plugin.services.factionService
-                val faction = factionService.getFaction(mfPlayer.id)
+                val faction = factionService.getFaction(targetMfPlayer.id)
                 if (faction == null) {
                     sender.sendMessage("$RED${plugin.language["CommandFactionRoleSetMustBeInAFaction"]}")
+                    sender.sendMessage("$RED${plugin.language["CommandFactionRoleSetTargetMustBeInAFaction"]}")
                     return@Runnable
                 }
                 if (faction.members.none { it.playerId == targetMfPlayer.id }) {
@@ -68,9 +69,15 @@ class MfFactionRoleSetCommand(private val plugin: MedievalFactions) : CommandExe
                     sender.sendMessage("$RED${plugin.language["CommandFactionRoleSetInvalidTargetRole"]}")
                     return@Runnable
                 }
-                if (role == null || !role.hasPermission(faction, plugin.factionPermissions.setMemberRole(targetRole.id))) {
-                    sender.sendMessage("$RED${plugin.language["CommandFactionRoleSetNoFactionPermission"]}")
-                    return@Runnable
+                if (!mfPlayer.isBypassEnabled) {
+                    if (role == null || !role.hasPermission(
+                            faction,
+                            plugin.factionPermissions.setMemberRole(targetRole.id)
+                        )
+                    ) {
+                        sender.sendMessage("$RED${plugin.language["CommandFactionRoleSetNoFactionPermission"]}")
+                        return@Runnable
+                    }
                 }
                 factionService.save(
                     faction.copy(
