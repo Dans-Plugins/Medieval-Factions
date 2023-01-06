@@ -47,6 +47,13 @@ class BlockBreakListener(private val plugin: MedievalFactions) : Listener {
                 event.player.sendMessage("$RED${plugin.language["CannotBreakBlockInFactionTerritory", claimFaction.name]}")
             }
         }
+
+        // if block locked and breaker is owner, unlock
+        val lockService = plugin.services.lockService
+        val lockedBlock = lockService.getLockedBlock(blockPosition)
+        if (lockedBlock != null && lockedBlock.playerId == mfPlayer.id) {
+            lockService.unlock(event.player, event.block)
+        }
     }
 
 }
