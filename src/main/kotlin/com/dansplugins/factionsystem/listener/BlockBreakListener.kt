@@ -56,7 +56,8 @@ class BlockBreakListener(private val plugin: MedievalFactions) : Listener {
         }
         else {
             event.isCancelled = true
-            event.player.sendMessage("$RED${plugin.language["CannotBreakLockedBlock"]}")
+            val owner = playerService.getPlayer(lockedBlock.playerId)
+            event.player.sendMessage("$RED${plugin.language["BlockLocked", owner?.toBukkit()?.name ?: plugin.language["UnknownPlayer"]]}")
         }
     }
 
