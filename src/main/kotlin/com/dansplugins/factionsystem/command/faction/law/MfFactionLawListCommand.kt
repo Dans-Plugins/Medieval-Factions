@@ -63,36 +63,39 @@ class MfFactionLawListCommand(private val plugin: MedievalFactions) : CommandExe
                 sender.sendMessage(BukkitChatColor.WHITE.toString() + plugin.language["CommandFactionLawListTitle"])
                 val laws = lawService.getLaws(faction.id)
                 laws.forEachIndexed { i, law ->
-                    var deleteButton = TextComponent("")
+                    // This ensures that all legacy laws will have an index number. Should probably do this somewhere else though...
+                    if (law.number == null) {
+                        lawService.save(law.copy(number = i + 1))
+                    }
+                    val buttonList: MutableList<TextComponent> = mutableListOf()
                     if ((sender.hasPermission("mf.law.remove") || sender.hasPermission("mf.removelaw")) && role.hasPermission(faction, plugin.factionPermissions.removeLaw)) {
-                        deleteButton = TextComponent("✖ ")
+                        val deleteButton = TextComponent("✖ ")
                         deleteButton.color = SpigotChatColor.RED
-                        deleteButton.clickEvent = ClickEvent(RUN_COMMAND, "/faction law remove ${law.number}")
+                        deleteButton.clickEvent = ClickEvent(RUN_COMMAND, "/faction law remove ${law.id.value}")
                         deleteButton.hoverEvent =
                             HoverEvent(SHOW_TEXT, Text(plugin.language["CommandFactionLawListDeleteButtonHover"]))
+                        buttonList.add(deleteButton)
                     }
-                    var editButton = TextComponent("")
                     if (sender.hasPermission("mf.law.edit") && role.hasPermission(faction, plugin.factionPermissions.editLaw)) {
-                        editButton = TextComponent("✎ ")
+                        val editButton = TextComponent("✎ ")
                         editButton.color = SpigotChatColor.YELLOW
-                        editButton.clickEvent = ClickEvent(RUN_COMMAND, "/faction law edit ${law.number}")
+                        editButton.clickEvent = ClickEvent(RUN_COMMAND, "/faction law edit ${law.id.value}")
                         editButton.hoverEvent =
                             HoverEvent(SHOW_TEXT, Text(plugin.language["CommandFactionLawListEditButtonHover"]))
+                        buttonList.add(editButton)
                     }
-                    var moveButton = TextComponent("")
                     if (laws.size > 1 && sender.hasPermission("mf.law.move") && role.hasPermission(faction, plugin.factionPermissions.moveLaw)) {
-                        moveButton = TextComponent("☰ ")
+                        val moveButton = TextComponent("☰ ")
                         moveButton.color = SpigotChatColor.BLUE
-                        moveButton.clickEvent = ClickEvent(RUN_COMMAND, "/faction law move ${law.number}")
+                        moveButton.clickEvent = ClickEvent(RUN_COMMAND, "/faction law move ${law.id.value}")
                         moveButton.hoverEvent =
                             HoverEvent(SHOW_TEXT, Text(plugin.language["CommandFactionLawListMoveButtonHover"]))
+                        buttonList.add(moveButton)
                     }
-                    val text = TextComponent(plugin.language["CommandFactionLawListLaw", law.number.toString(), law.text])
+                    val text = TextComponent(plugin.language["CommandFactionLawListLaw", (i + 1).toString(), law.text])
                     text.color = SpigotChatColor.AQUA
                     sender.spigot().sendMessage(
-                        deleteButton,
-                        editButton,
-                        moveButton,
+                        *buttonList.toTypedArray(),
                         text
                     )
                 }

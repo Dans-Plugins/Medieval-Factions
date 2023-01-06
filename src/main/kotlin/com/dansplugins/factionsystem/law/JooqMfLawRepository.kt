@@ -14,7 +14,7 @@ class JooqMfLawRepository(
             .fetchOne()
             ?.toDomain()
 
-    override fun getLaw(factionId: MfFactionId, index: Int): MfLaw? =
+    override fun getLaw(factionId: MfFactionId, index: Int?): MfLaw? =
         dsl.selectFrom(MF_LAW)
             .where(MF_LAW.FACTION_ID.eq(factionId.value))
             .and(MF_LAW.NUMBER.eq(index))
@@ -48,7 +48,7 @@ class JooqMfLawRepository(
     }
 
     override fun delete(id: MfLawId) {
-        delete(getLaw(id)!!)
+        delete(getLaw(id) ?: return)
     }
 
     override fun delete(law: MfLaw) {
@@ -61,16 +61,9 @@ class JooqMfLawRepository(
             .and(MF_LAW.NUMBER.gt(law.number))
     }
 
-    override fun edit(law: MfLaw, text: String) {
-        dsl.update(MF_LAW)
-            .set(MF_LAW.TEXT, text)
-            .where(MF_LAW.FACTION_ID.eq(law.factionId.value))
-            .and(MF_LAW.NUMBER.eq(law.number))
-            .execute()
-    }
-
     override fun move(law: MfLaw, number: Int) {
-        if (law.number!! > number) {
+        if (law.number == null) return
+        if (law.number > number) {
             dsl.update(MF_LAW)
                 .set(MF_LAW.NUMBER, (MF_LAW.NUMBER + 1))
                 .where(MF_LAW.FACTION_ID.eq(law.factionId.value))

@@ -1,6 +1,7 @@
 package com.dansplugins.factionsystem.command.faction.law
 
 import com.dansplugins.factionsystem.MedievalFactions
+import com.dansplugins.factionsystem.law.MfLawId
 import com.dansplugins.factionsystem.player.MfPlayer
 import dev.forkhandles.result4k.onFailure
 import org.bukkit.ChatColor
@@ -27,7 +28,7 @@ class MfFactionLawEditCommand(private val plugin: MedievalFactions) : CommandExe
         }
         if (args.size == 1) {
             val conversation = conversationFactory.buildConversation(sender)
-            conversation.context.setSessionData("lawNumber", args[0])
+            conversation.context.setSessionData("lawReference", args[0])
             conversation.begin()
             return true
         }
@@ -60,7 +61,7 @@ class MfFactionLawEditCommand(private val plugin: MedievalFactions) : CommandExe
             val conversable = context.forWhom
             if (conversable !is Player) return END_OF_CONVERSATION
             if (input == null) return END_OF_CONVERSATION
-            editLaw(conversable, arrayOf(context.getSessionData("lawNumber").toString(), input))
+            editLaw(conversable, arrayOf(context.getSessionData("lawReference").toString(), input))
             return END_OF_CONVERSATION
         }
     }
@@ -88,11 +89,18 @@ class MfFactionLawEditCommand(private val plugin: MedievalFactions) : CommandExe
                     return@Runnable
                 }
                 val lawService = plugin.services.lawService
-                val textArgs = args.drop(1).toTypedArray()
-                val law = lawService.getLaw(faction.id, args.elementAt(0).toInt()) ?: return@Runnable
-                lawService.edit(law, textArgs.joinToString(" "))
+                var law = lawService.getLaw(MfLawId(args.elementAt(0))) ?: lawService.getLaw(faction.id, args.elementAt(0).toIntOrNull())
+                if (law == null) {
+                    player.sendMessage("${ChatColor.RED}${plugin.language["CommandFactionLawEditNotNumberOrId"]}")
+                    return@Runnable
+                }
+                if (law.factionId != faction.id) {
+                    player.sendMessage("${ChatColor.RED}${plugin.language["CommandFactionLawEditNotYourFaction"]}")
+                    return@Runnable
+                }
+                lawService.save(law.copy(text = args.drop(1).joinToString(" ")))
                     .onFailure {
-                        player.sendMessage("${ChatColor.RED}${plugin.language["CommandFactionLawEditLawFailedToSave"]}")
+                        player.sendMessage("${ChatColor.RED}${plugin.language["CommandFactionLawEditFailedToEdit"]}")
                         plugin.logger.log(Level.SEVERE, "Failed to edit law: ${it.reason.message}", it.reason.cause)
                         return@Runnable
                     }
