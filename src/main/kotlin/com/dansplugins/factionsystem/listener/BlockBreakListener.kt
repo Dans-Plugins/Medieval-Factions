@@ -50,9 +50,13 @@ class BlockBreakListener(private val plugin: MedievalFactions) : Listener {
 
         // if block locked and breaker is owner, unlock
         val lockService = plugin.services.lockService
-        val lockedBlock = lockService.getLockedBlock(blockPosition)
-        if (lockedBlock != null && lockedBlock.playerId == mfPlayer.id) {
+        val lockedBlock = lockService.getLockedBlock(blockPosition) ?: return
+        if (lockedBlock.playerId == mfPlayer.id) {
             lockService.unlock(event.player, event.block)
+        }
+        else {
+            event.isCancelled = true
+            event.player.sendMessage("$RED${plugin.language["CannotBreakLockedBlock"]}")
         }
     }
 
