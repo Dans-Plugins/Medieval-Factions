@@ -1,8 +1,10 @@
 package com.dansplugins.factionsystem.command.faction.law
 
 import com.dansplugins.factionsystem.MedievalFactions
+import com.dansplugins.factionsystem.law.MfLawId
 import com.dansplugins.factionsystem.player.MfPlayer
 import dev.forkhandles.result4k.onFailure
+import org.bukkit.ChatColor
 import org.bukkit.ChatColor.RED
 import org.bukkit.command.Command
 import org.bukkit.command.CommandExecutor
@@ -47,9 +49,13 @@ class MfFactionLawRemoveCommand(private val plugin: MedievalFactions) : CommandE
                     return@Runnable
                 }
                 val lawService = plugin.services.lawService
-                val law = lawService.getLaw(faction.id, args.elementAt(0).toInt())
+                val law = lawService.getLaw(MfLawId(args.elementAt(0))) ?: lawService.getLaw(faction.id, args.elementAt(0).toIntOrNull())
                 if (law == null) {
-                    sender.sendMessage("$RED${plugin.language["CommandFactionLawRemoveInvalidLawId"]}")
+                    sender.sendMessage("${ChatColor.RED}${plugin.language["CommandFactionLawRemoveNotNumberOrId"]}")
+                    return@Runnable
+                }
+                if (law.factionId != faction.id) {
+                    sender.sendMessage("${ChatColor.RED}${plugin.language["CommandFactionLawRemoveNotYourFaction"]}")
                     return@Runnable
                 }
                 lawService.delete(law).onFailure {

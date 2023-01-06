@@ -16,7 +16,7 @@ class MfLawService(private val repository: MfLawRepository) {
     fun getLaw(id: MfLawId): MfLaw? = repository.getLaw(id)
 
     @JvmName("getLawByIndex")
-    fun getLaw(factionId: MfFactionId, index: Int): MfLaw? = repository.getLaw(factionId, index)
+    fun getLaw(factionId: MfFactionId, index: Int?): MfLaw? = repository.getLaw(factionId, index)
 
     @JvmName("getLawsByFactionId")
     fun getLaws(factionId: MfFactionId): List<MfLaw> = repository.getLaws(factionId)
@@ -36,12 +36,6 @@ class MfLawService(private val repository: MfLawRepository) {
     @JvmName("deleteLawByLawId")
     fun delete(id: MfLawId): Result4k<Unit, ServiceFailure> = resultFrom {
         repository.delete(id)
-    }.mapFailure { exception ->
-        ServiceFailure(exception.toServiceFailureType(), "Service error: ${exception.message}", exception)
-    }
-
-    fun edit(law: MfLaw, text: String): Result4k<Unit, ServiceFailure> = resultFrom {
-        repository.edit(law, text)
     }.mapFailure { exception ->
         ServiceFailure(exception.toServiceFailureType(), "Service error: ${exception.message}", exception)
     }

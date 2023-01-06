@@ -1,6 +1,7 @@
 package com.dansplugins.factionsystem.command.faction.law
 
 import com.dansplugins.factionsystem.MedievalFactions
+import com.dansplugins.factionsystem.law.MfLawId
 import com.dansplugins.factionsystem.player.MfPlayer
 import dev.forkhandles.result4k.onFailure
 import org.bukkit.ChatColor
@@ -27,7 +28,7 @@ class MfFactionLawMoveCommand(private val plugin: MedievalFactions) : CommandExe
         }
         if (args.size == 1) {
             val conversation = conversationFactory.buildConversation(sender)
-            conversation.context.setSessionData("lawNumber", args[0])
+            conversation.context.setSessionData("lawReference", args[0])
             conversation.begin()
             return true
         }
@@ -60,7 +61,7 @@ class MfFactionLawMoveCommand(private val plugin: MedievalFactions) : CommandExe
             val conversable = context.forWhom
             if (conversable !is Player) return END_OF_CONVERSATION
             if (input == null) return END_OF_CONVERSATION
-            moveLaw(conversable, arrayOf(context.getSessionData("lawNumber").toString(), input))
+            moveLaw(conversable, arrayOf(context.getSessionData("lawReference").toString(), input))
             return END_OF_CONVERSATION
         }
     }
@@ -88,10 +89,18 @@ class MfFactionLawMoveCommand(private val plugin: MedievalFactions) : CommandExe
                     return@Runnable
                 }
                 val lawService = plugin.services.lawService
-                val law = lawService.getLaw(faction.id, args.elementAt(0).toInt())
-                lawService.move(law!!, args.elementAt(1).toInt())
+                val law = lawService.getLaw(MfLawId(args.elementAt(0))) ?: lawService.getLaw(faction.id, args.elementAt(0).toIntOrNull())
+                if (law == null) {
+                    player.sendMessage("${ChatColor.RED}${plugin.language["CommandFactionLawMoveNotNumberOrId"]}")
+                    return@Runnable
+                }
+                if (law.factionId != faction.id) {
+                    player.sendMessage("${ChatColor.RED}${plugin.language["CommandFactionLawMoveNotYourFaction"]}")
+                    return@Runnable
+                }
+                lawService.move(law, args.elementAt(1).toInt())
                     .onFailure {
-                        player.sendMessage("${ChatColor.RED}${plugin.language["CommandFactionLawMoveLawFailedToSave"]}")
+                        player.sendMessage("${ChatColor.RED}${plugin.language["CommandFactionLawMoveFailedToMove"]}")
                         plugin.logger.log(Level.SEVERE, "Failed to move law: ${it.reason.message}", it.reason.cause)
                         return@Runnable
                     }
