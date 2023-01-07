@@ -32,7 +32,7 @@ class MfFactionAddMemberCommand(private val plugin: MedievalFactions) : CommandE
 
         // get target player
         val targetPlayer = plugin.server.getOfflinePlayer(args[0])
-        if (!targetPlayer.hasPlayedBefore()) {
+        if (!targetPlayer.hasPlayedBefore() && !targetPlayer.isOnline) {
             sender.sendMessage("${ChatColor.RED}${plugin.language["CommandFactionAddMemberInvalidTargetPlayer"]}")
             return true
         }
