@@ -38,7 +38,7 @@ class PlayerMoveListener(private val plugin: MedievalFactions) : Listener {
                 if (newChunkFaction == null && playerFaction.autoclaim) {
                     val playerRole = playerFaction.getRole(mfPlayer.id) ?: return@Runnable
                     val claimPermissionValue = playerRole.getPermissionValue(plugin.factionPermissions.claim) ?: return@Runnable
-                    if (!claimPermissionValue) return@Runnable
+                    if (!claimPermissionValue || !event.player.hasPermission("mf.claim")) return@Runnable
 
                     if (plugin.config.getBoolean("factions.limitLand") && claimService.getClaims(playerFaction.id).size + 1 > playerFaction.power) {
                         event.player.sendMessage("$RED${plugin.language["AutoclaimPowerLimitReached"]}")
