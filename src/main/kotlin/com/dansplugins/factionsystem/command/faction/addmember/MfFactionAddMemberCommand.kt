@@ -17,7 +17,7 @@ import java.util.logging.Level
 class MfFactionAddMemberCommand(private val plugin: MedievalFactions) : CommandExecutor, TabCompleter {
 
     override fun onCommand(sender: CommandSender, command: Command, label: String, args: Array<out String>): Boolean {
-        if (!sender.hasPermission("mf.force.addmember")) {
+        if (!sender.hasPermission("mf.force.addmember") && !sender.hasPermission("mf.force.join")) {
             sender.sendMessage("${ChatColor.RED}${plugin.language["CommandFactionAddMemberNoPermission"]}")
             return true
         }
