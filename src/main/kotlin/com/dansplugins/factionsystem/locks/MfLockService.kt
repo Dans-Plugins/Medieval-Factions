@@ -6,21 +6,23 @@ import com.dansplugins.factionsystem.claim.MfClaimedChunk
 import com.dansplugins.factionsystem.failure.OptimisticLockingFailureException
 import com.dansplugins.factionsystem.failure.ServiceFailure
 import com.dansplugins.factionsystem.failure.ServiceFailureType
+import com.dansplugins.factionsystem.locks.MfUnlockResult.FAILURE
+import com.dansplugins.factionsystem.locks.MfUnlockResult.NOT_LOCKED
+import com.dansplugins.factionsystem.locks.MfUnlockResult.SUCCESS
 import com.dansplugins.factionsystem.player.MfPlayer
 import com.dansplugins.factionsystem.player.MfPlayerId
 import dev.forkhandles.result4k.Result4k
 import dev.forkhandles.result4k.mapFailure
+import dev.forkhandles.result4k.onFailure
 import dev.forkhandles.result4k.resultFrom
+import org.bukkit.block.Block
+import org.bukkit.block.BlockFace.DOWN
+import org.bukkit.block.BlockFace.UP
 import org.bukkit.block.Chest
 import org.bukkit.block.DoubleChest
 import org.bukkit.block.data.Bisected
-import java.util.concurrent.ConcurrentHashMap
 import org.bukkit.block.data.Bisected.Half.BOTTOM
-import org.bukkit.block.BlockFace.DOWN
-import org.bukkit.block.BlockFace.UP
-import org.bukkit.block.Block
-import com.dansplugins.factionsystem.interaction.MfInteractionStatus.*
-import dev.forkhandles.result4k.onFailure
+import java.util.concurrent.ConcurrentHashMap
 import java.util.logging.Level.SEVERE
 
 class MfLockService(private val plugin: MedievalFactions, private val repository: MfLockRepository) {
@@ -55,7 +57,7 @@ class MfLockService(private val plugin: MedievalFactions, private val repository
         ServiceFailure(exception.toServiceFailureType(), "Service error: ${exception.message}", exception)
     }
 
-    fun unlock(block: Block): MfUnlockResult {
+    fun unlock(block: Block, callback: (result: MfUnlockResult) -> Unit) {
         val blockData = block.blockData
         val holder = (block.state as? Chest)?.inventory?.holder
         val blocks = if (blockData is Bisected) {
@@ -71,21 +73,23 @@ class MfLockService(private val plugin: MedievalFactions, private val repository
         } else {
             listOf(block)
         }
-        var toReturn = MfUnlockResult.SUCCESS
-        plugin.server.scheduler.runTaskAsynchronously(plugin, Runnable {
-            val lockedBlocks = blocks.mapNotNull { getLockedBlock(MfBlockPosition.fromBukkitBlock(it)) }
-            val lockedBlock = lockedBlocks.firstOrNull()
-            if (lockedBlock == null) {
-                toReturn = MfUnlockResult.NOT_LOCKED
-                return@Runnable
+        plugin.server.scheduler.runTaskAsynchronously(
+            plugin,
+            Runnable {
+                val lockedBlocks = blocks.mapNotNull { getLockedBlock(MfBlockPosition.fromBukkitBlock(it)) }
+                val lockedBlock = lockedBlocks.firstOrNull()
+                if (lockedBlock == null) {
+                    callback(NOT_LOCKED)
+                    return@Runnable
+                }
+                delete(lockedBlock.block).onFailure {
+                    plugin.logger.log(SEVERE, "Failed to delete block: ${it.reason.message}", it.reason.cause)
+                    callback(FAILURE)
+                    return@Runnable
+                }
+                callback(SUCCESS)
             }
-            delete(lockedBlock.block).onFailure {
-                plugin.logger.log(SEVERE, "Failed to delete block: ${it.reason.message}", it.reason.cause)
-                toReturn = MfUnlockResult.FAILURE
-                return@Runnable
-            }
-        })
-        return toReturn
+        )
     }
 
     fun save(lockedBlock: MfLockedBlock): Result4k<MfLockedBlock, ServiceFailure> = resultFrom {

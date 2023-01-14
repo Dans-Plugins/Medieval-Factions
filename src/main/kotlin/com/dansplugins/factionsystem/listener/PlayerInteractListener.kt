@@ -5,8 +5,6 @@ import com.dansplugins.factionsystem.area.MfBlockPosition
 import com.dansplugins.factionsystem.area.MfCuboidArea
 import com.dansplugins.factionsystem.gate.MfGate
 import com.dansplugins.factionsystem.gate.MfGateCreationContext
-import com.dansplugins.factionsystem.interaction.MfInteractionStatus.*
-import com.dansplugins.factionsystem.locks.MfUnlockResult
 import com.dansplugins.factionsystem.interaction.MfInteractionStatus.ADDING_ACCESSOR
 import com.dansplugins.factionsystem.interaction.MfInteractionStatus.CHECKING_ACCESS
 import com.dansplugins.factionsystem.interaction.MfInteractionStatus.LOCKING
@@ -15,6 +13,9 @@ import com.dansplugins.factionsystem.interaction.MfInteractionStatus.SELECTING_G
 import com.dansplugins.factionsystem.interaction.MfInteractionStatus.SELECTING_GATE_POSITION_2
 import com.dansplugins.factionsystem.interaction.MfInteractionStatus.SELECTING_GATE_TRIGGER
 import com.dansplugins.factionsystem.interaction.MfInteractionStatus.UNLOCKING
+import com.dansplugins.factionsystem.locks.MfUnlockResult.FAILURE
+import com.dansplugins.factionsystem.locks.MfUnlockResult.NOT_LOCKED
+import com.dansplugins.factionsystem.locks.MfUnlockResult.SUCCESS
 import com.dansplugins.factionsystem.player.MfPlayer
 import com.dansplugins.factionsystem.player.MfPlayerId
 import dev.forkhandles.result4k.onFailure
@@ -251,16 +252,11 @@ class PlayerInteractListener(private val plugin: MedievalFactions) : Listener {
                 player.sendMessage("$RED${plugin.language["BlockUnlockProtectionBypassed", ownerName]}")
             }
         }
-        val result = lockService.unlock(block)
-        when (result) {
-            MfUnlockResult.SUCCESS -> {
-                player.sendMessage("$GREEN${plugin.language["BlockUnlockSuccessful"]}")
-            }
-            MfUnlockResult.NOT_LOCKED -> {
-                player.sendMessage("$RED${plugin.language["BlockNotLocked"]}")
-            }
-            MfUnlockResult.FAILURE -> {
-                player.sendMessage("$RED${plugin.language["BlockUnlockFailedToSaveLockedBlock"]}")
+        val result = lockService.unlock(block) { result ->
+            when (result) {
+                SUCCESS -> player.sendMessage("$GREEN${plugin.language["BlockUnlockSuccessful"]}")
+                NOT_LOCKED -> player.sendMessage("$RED${plugin.language["BlockNotLocked"]}")
+                FAILURE -> player.sendMessage("$RED${plugin.language["BlockUnlockFailedToSaveLockedBlock"]}")
             }
         }
     }
