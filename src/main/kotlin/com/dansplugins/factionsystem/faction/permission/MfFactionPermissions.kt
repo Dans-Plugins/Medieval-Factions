@@ -27,6 +27,8 @@ class MfFactionPermissions(private val plugin: MedievalFactions) {
         _permissionTypes.addAll(
             listOf(
                 wrapSimplePermission("ADD_LAW", plugin.language["FactionPermissionAddLaw"], false),
+                wrapSimplePermission("EDIT_LAW", plugin.language["FactionPermissionEditLaw"], false),
+                wrapSimplePermission("MOVE_LAW", plugin.language["FactionPermissionMoveLaw"], false),
                 wrapSimplePermission("REMOVE_LAW", plugin.language["FactionPermissionRemoveLaw"], false),
                 wrapSimplePermission("LIST_LAWS", plugin.language["FactionPermissionListLaws"], true),
                 wrapSimplePermission("REQUEST_ALLIANCE", plugin.language["FactionPermissionRequestAlliance"], false),
@@ -75,6 +77,8 @@ class MfFactionPermissions(private val plugin: MedievalFactions) {
     }
 
     val addLaw = parse("ADD_LAW")!!
+    val editLaw = parse("EDIT_LAW")!!
+    val moveLaw = parse("MOVE_LAW")!!
     val removeLaw = parse("REMOVE_LAW")!!
     val listLaws = parse("LIST_LAWS")!!
     val requestAlliance = parse("REQUEST_ALLIANCE")!!
