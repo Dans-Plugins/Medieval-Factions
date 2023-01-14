@@ -5,7 +5,13 @@ import com.dansplugins.factionsystem.chat.MfFactionChatChannel
 import com.dansplugins.factionsystem.faction.MfFaction
 import com.dansplugins.factionsystem.faction.MfFactionId
 import com.dansplugins.factionsystem.faction.flag.MfFlag
-import com.dansplugins.factionsystem.faction.permission.permissions.*
+import com.dansplugins.factionsystem.faction.permission.permissions.Chat
+import com.dansplugins.factionsystem.faction.permission.permissions.DeleteRole
+import com.dansplugins.factionsystem.faction.permission.permissions.ModifyRole
+import com.dansplugins.factionsystem.faction.permission.permissions.SetFlag
+import com.dansplugins.factionsystem.faction.permission.permissions.SetMemberRole
+import com.dansplugins.factionsystem.faction.permission.permissions.SetRolePermission
+import com.dansplugins.factionsystem.faction.permission.permissions.ViewRole
 import com.dansplugins.factionsystem.faction.role.MfFactionRoleId
 import com.dansplugins.factionsystem.faction.role.MfFactionRoles
 import java.util.*
@@ -18,48 +24,52 @@ class MfFactionPermissions(private val plugin: MedievalFactions) {
         get() = Collections.unmodifiableList(_permissionTypes)
 
     init {
-        _permissionTypes.addAll(listOf(
-            wrapSimplePermission("ADD_LAW", plugin.language["FactionPermissionAddLaw"], false),
-            wrapSimplePermission("REMOVE_LAW", plugin.language["FactionPermissionRemoveLaw"], false),
-            wrapSimplePermission("LIST_LAWS", plugin.language["FactionPermissionListLaws"], true),
-            wrapSimplePermission("REQUEST_ALLIANCE", plugin.language["FactionPermissionRequestAlliance"], false),
-            wrapSimplePermission("BREAK_ALLIANCE", plugin.language["FactionPermissionBreakAlliance"], false),
-            wrapSimplePermission("TOGGLE_AUTOCLAIM", plugin.language["FactionPermissionToggleAutoclaim"], false),
-            Chat(plugin),
-            wrapSimplePermission("CHAT_HISTORY", plugin.language["FactionPermissionChatHistory"], true),
-            wrapSimplePermission("CLAIM", plugin.language["FactionPermissionClaim"], false),
-            wrapSimplePermission("UNCLAIM", plugin.language["FactionPermissionUnclaim"], false),
-            wrapSimplePermission("DECLARE_INDEPENDENCE", plugin.language["FactionPermissionDeclareIndependence"], false),
-            wrapSimplePermission("SWEAR_FEALTY", plugin.language["FactionPermissionSwearFealty"], false),
-            wrapSimplePermission("GRANT_INDEPENDENCE", plugin.language["FactionPermissionGrantIndependence"], false),
-            wrapSimplePermission("VASSALIZE", plugin.language["FactionPermissionVassalize"], false),
-            wrapSimplePermission("DECLARE_WAR", plugin.language["FactionPermissionDeclareWar"], false),
-            wrapSimplePermission("MAKE_PEACE", plugin.language["FactionPermissionMakePeace"], false),
-            wrapSimplePermission("CHANGE_NAME", plugin.language["FactionPermissionChangeName"], false),
-            wrapSimplePermission("CHANGE_DESCRIPTION", plugin.language["FactionPermissionChangeDescription"], false),
-            wrapSimplePermission("CHANGE_PREFIX", plugin.language["FactionPermissionChangePrefix"], false),
-            wrapSimplePermission("DISBAND", plugin.language["FactionPermissionDisband"], false),
-            SetFlag(plugin),
-            wrapSimplePermission("VIEW_FLAGS", plugin.language["FactionPermissionViewFlags"], true),
-            wrapSimplePermission("CREATE_GATE", plugin.language["FactionPermissionCreateGate"], false),
-            wrapSimplePermission("REMOVE_GATE", plugin.language["FactionPermissionRemoveGate"], false),
-            wrapSimplePermission("SET_HOME", plugin.language["FactionPermissionSetHome"], false),
-            wrapSimplePermission("GO_HOME", plugin.language["FactionPermissionGoHome"], true),
-            wrapSimplePermission("VIEW_INFO", plugin.language["FactionPermissionViewInfo"], true),
-            wrapSimplePermission("VIEW_STATS", plugin.language["FactionPermissionViewStats"], true),
-            wrapSimplePermission("INVITE", plugin.language["FactionPermissionInvite"], true),
-            wrapSimplePermission("INVOKE", plugin.language["FactionPermissionInvoke"], false),
-            wrapSimplePermission("KICK", plugin.language["FactionPermissionKick"], false),
-            ViewRole(plugin),
-            ModifyRole(plugin),
-            SetMemberRole(plugin),
-            DeleteRole(plugin),
-            wrapSimplePermission("LIST_ROLES", plugin.language["FactionPermissionListRoles"], true),
-            wrapSimplePermission("LIST_MEMBERS", plugin.language["FactionPermissionListMembers"], true),
-            wrapSimplePermission("CREATE_ROLE", plugin.language["FactionPermissionCreateRole"], false),
-            wrapSimplePermission("SET_DEFAULT_ROLE", plugin.language["FactionPermissionSetDefaultRole"], false),
-            SetRolePermission(plugin)
-        ))
+        _permissionTypes.addAll(
+            listOf(
+                wrapSimplePermission("ADD_LAW", plugin.language["FactionPermissionAddLaw"], false),
+                wrapSimplePermission("EDIT_LAW", plugin.language["FactionPermissionEditLaw"], false),
+                wrapSimplePermission("MOVE_LAW", plugin.language["FactionPermissionMoveLaw"], false),
+                wrapSimplePermission("REMOVE_LAW", plugin.language["FactionPermissionRemoveLaw"], false),
+                wrapSimplePermission("LIST_LAWS", plugin.language["FactionPermissionListLaws"], true),
+                wrapSimplePermission("REQUEST_ALLIANCE", plugin.language["FactionPermissionRequestAlliance"], false),
+                wrapSimplePermission("BREAK_ALLIANCE", plugin.language["FactionPermissionBreakAlliance"], false),
+                wrapSimplePermission("TOGGLE_AUTOCLAIM", plugin.language["FactionPermissionToggleAutoclaim"], false),
+                Chat(plugin),
+                wrapSimplePermission("CHAT_HISTORY", plugin.language["FactionPermissionChatHistory"], true),
+                wrapSimplePermission("CLAIM", plugin.language["FactionPermissionClaim"], false),
+                wrapSimplePermission("UNCLAIM", plugin.language["FactionPermissionUnclaim"], false),
+                wrapSimplePermission("DECLARE_INDEPENDENCE", plugin.language["FactionPermissionDeclareIndependence"], false),
+                wrapSimplePermission("SWEAR_FEALTY", plugin.language["FactionPermissionSwearFealty"], false),
+                wrapSimplePermission("GRANT_INDEPENDENCE", plugin.language["FactionPermissionGrantIndependence"], false),
+                wrapSimplePermission("VASSALIZE", plugin.language["FactionPermissionVassalize"], false),
+                wrapSimplePermission("DECLARE_WAR", plugin.language["FactionPermissionDeclareWar"], false),
+                wrapSimplePermission("MAKE_PEACE", plugin.language["FactionPermissionMakePeace"], false),
+                wrapSimplePermission("CHANGE_NAME", plugin.language["FactionPermissionChangeName"], false),
+                wrapSimplePermission("CHANGE_DESCRIPTION", plugin.language["FactionPermissionChangeDescription"], false),
+                wrapSimplePermission("CHANGE_PREFIX", plugin.language["FactionPermissionChangePrefix"], false),
+                wrapSimplePermission("DISBAND", plugin.language["FactionPermissionDisband"], false),
+                SetFlag(plugin),
+                wrapSimplePermission("VIEW_FLAGS", plugin.language["FactionPermissionViewFlags"], true),
+                wrapSimplePermission("CREATE_GATE", plugin.language["FactionPermissionCreateGate"], false),
+                wrapSimplePermission("REMOVE_GATE", plugin.language["FactionPermissionRemoveGate"], false),
+                wrapSimplePermission("SET_HOME", plugin.language["FactionPermissionSetHome"], false),
+                wrapSimplePermission("GO_HOME", plugin.language["FactionPermissionGoHome"], true),
+                wrapSimplePermission("VIEW_INFO", plugin.language["FactionPermissionViewInfo"], true),
+                wrapSimplePermission("VIEW_STATS", plugin.language["FactionPermissionViewStats"], true),
+                wrapSimplePermission("INVITE", plugin.language["FactionPermissionInvite"], true),
+                wrapSimplePermission("INVOKE", plugin.language["FactionPermissionInvoke"], false),
+                wrapSimplePermission("KICK", plugin.language["FactionPermissionKick"], false),
+                ViewRole(plugin),
+                ModifyRole(plugin),
+                SetMemberRole(plugin),
+                DeleteRole(plugin),
+                wrapSimplePermission("LIST_ROLES", plugin.language["FactionPermissionListRoles"], true),
+                wrapSimplePermission("LIST_MEMBERS", plugin.language["FactionPermissionListMembers"], true),
+                wrapSimplePermission("CREATE_ROLE", plugin.language["FactionPermissionCreateRole"], false),
+                wrapSimplePermission("SET_DEFAULT_ROLE", plugin.language["FactionPermissionSetDefaultRole"], false),
+                SetRolePermission(plugin)
+            )
+        )
     }
 
     fun addPermissionType(permissionType: MfFactionPermissionType) {
@@ -67,6 +77,8 @@ class MfFactionPermissions(private val plugin: MedievalFactions) {
     }
 
     val addLaw = parse("ADD_LAW")!!
+    val editLaw = parse("EDIT_LAW")!!
+    val moveLaw = parse("MOVE_LAW")!!
     val removeLaw = parse("REMOVE_LAW")!!
     val listLaws = parse("LIST_LAWS")!!
     val requestAlliance = parse("REQUEST_ALLIANCE")!!
@@ -125,5 +137,4 @@ class MfFactionPermissions(private val plugin: MedievalFactions) {
             return listOf(permission)
         }
     }
-
 }

@@ -15,7 +15,7 @@ import java.util.logging.Level
 
 class MfFactionLawAddCommand(private val plugin: MedievalFactions) : CommandExecutor, TabCompleter {
     override fun onCommand(sender: CommandSender, command: Command, label: String, args: Array<out String>): Boolean {
-        if (!sender.hasPermission("mf.addlaw")) {
+        if (!sender.hasPermission("mf.law.add") || !sender.hasPermission("mf.addlaw")) {
             sender.sendMessage("$RED${plugin.language["CommandFactionLawAddNoPermission"]}")
             return true
         }
@@ -27,34 +27,37 @@ class MfFactionLawAddCommand(private val plugin: MedievalFactions) : CommandExec
             sender.sendMessage("$RED${plugin.language["CommandFactionLawAddNotAPlayer"]}")
             return true
         }
-        plugin.server.scheduler.runTaskAsynchronously(plugin, Runnable {
-            val playerService = plugin.services.playerService
-            val mfPlayer = playerService.getPlayer(sender)
-                ?: playerService.save(MfPlayer(plugin, sender)).onFailure {
-                    sender.sendMessage("$RED${plugin.language["CommandFactionLawAddFailedToSavePlayer"]}")
-                    plugin.logger.log(Level.SEVERE, "Failed to save player: ${it.reason.message}", it.reason.cause)
+        plugin.server.scheduler.runTaskAsynchronously(
+            plugin,
+            Runnable {
+                val playerService = plugin.services.playerService
+                val mfPlayer = playerService.getPlayer(sender)
+                    ?: playerService.save(MfPlayer(plugin, sender)).onFailure {
+                        sender.sendMessage("$RED${plugin.language["CommandFactionLawAddFailedToSavePlayer"]}")
+                        plugin.logger.log(Level.SEVERE, "Failed to save player: ${it.reason.message}", it.reason.cause)
+                        return@Runnable
+                    }
+                val factionService = plugin.services.factionService
+                val faction = factionService.getFaction(mfPlayer.id)
+                if (faction == null) {
+                    sender.sendMessage("$RED${plugin.language["CommandFactionLawAddMustBeInAFaction"]}")
                     return@Runnable
                 }
-            val factionService = plugin.services.factionService
-            val faction = factionService.getFaction(mfPlayer.id)
-            if (faction == null) {
-                sender.sendMessage("$RED${plugin.language["CommandFactionLawAddMustBeInAFaction"]}")
-                return@Runnable
-            }
-            val role = faction.getRole(mfPlayer.id)
-            if (role == null || !role.hasPermission(faction, plugin.factionPermissions.addLaw)) {
-                sender.sendMessage("$RED${plugin.language["CommandFactionLawAddNoFactionPermission"]}")
-                return@Runnable
-            }
-            val lawService = plugin.services.lawService
-            lawService.save(MfLaw(faction, args.joinToString(" ")))
-                .onFailure {
-                    sender.sendMessage("$RED${plugin.language["CommandFactionLawAddLawFailedToSave"]}")
-                    plugin.logger.log(Level.SEVERE, "Failed to save law: ${it.reason.message}", it.reason.cause)
+                val role = faction.getRole(mfPlayer.id)
+                if (role == null || !role.hasPermission(faction, plugin.factionPermissions.addLaw)) {
+                    sender.sendMessage("$RED${plugin.language["CommandFactionLawAddNoFactionPermission"]}")
                     return@Runnable
                 }
-            sender.sendMessage("$GREEN${plugin.language["CommandFactionLawAddSuccess"]}")
-        })
+                val lawService = plugin.services.lawService
+                lawService.save(MfLaw(faction, args.joinToString(" ")))
+                    .onFailure {
+                        sender.sendMessage("$RED${plugin.language["CommandFactionLawAddLawFailedToSave"]}")
+                        plugin.logger.log(Level.SEVERE, "Failed to save law: ${it.reason.message}", it.reason.cause)
+                        return@Runnable
+                    }
+                sender.sendMessage("$GREEN${plugin.language["CommandFactionLawAddSuccess"]}")
+            }
+        )
         return true
     }
 

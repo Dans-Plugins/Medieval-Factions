@@ -3,12 +3,12 @@ package com.dansplugins.factionsystem.faction.flag
 import com.dansplugins.factionsystem.MedievalFactions
 import kotlin.reflect.KClass
 
-data class MfFlag<T: Any>(
+data class MfFlag<T : Any>(
     val name: String,
     val type: KClass<T>,
     private val default: () -> T,
     val coerce: (value: String) -> MfFlagValueCoercionResult,
-    val validate: (value: T) -> MfFlagValidationResult = { MfFlagValidationSuccess },
+    val validate: (value: T) -> MfFlagValidationResult = { MfFlagValidationSuccess }
 ) {
 
     companion object {
@@ -65,7 +65,7 @@ data class MfFlag<T: Any>(
         type: KClass<T>,
         defaultValue: T,
         coerce: (value: String?) -> MfFlagValueCoercionResult
-    ): this(
+    ) : this(
         name,
         type,
         { defaultValue },

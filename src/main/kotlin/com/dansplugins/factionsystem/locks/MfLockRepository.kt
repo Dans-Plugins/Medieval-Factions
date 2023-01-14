@@ -10,5 +10,4 @@ interface MfLockRepository {
     fun getLockedBlocks(): List<MfLockedBlock>
     fun upsert(lockedBlock: MfLockedBlock): MfLockedBlock
     fun delete(block: MfBlockPosition)
-
 }

@@ -31,5 +31,4 @@ class AsyncPlayerPreLoginListener(private val plugin: MedievalFactions) : Listen
         val interactionService = plugin.services.interactionService
         interactionService.loadInteractionStatus(player.id)
     }
-
 }

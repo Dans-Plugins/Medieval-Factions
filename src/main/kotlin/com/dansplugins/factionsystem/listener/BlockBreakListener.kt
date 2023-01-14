@@ -32,13 +32,16 @@ class BlockBreakListener(private val plugin: MedievalFactions) : Listener {
         val mfPlayer = playerService.getPlayer(event.player)
         if (mfPlayer == null) {
             event.isCancelled = true
-            plugin.server.scheduler.runTaskAsynchronously(plugin, Runnable {
-                playerService.save(MfPlayer(plugin, event.player)).onFailure {
-                    event.player.sendMessage("$RED${plugin.language["BlockBreakFailedToSavePlayer"]}")
-                    plugin.logger.log(SEVERE, "Failed to save player: ${it.reason.message}", it.reason.cause)
-                    return@Runnable
+            plugin.server.scheduler.runTaskAsynchronously(
+                plugin,
+                Runnable {
+                    playerService.save(MfPlayer(plugin, event.player)).onFailure {
+                        event.player.sendMessage("$RED${plugin.language["BlockBreakFailedToSavePlayer"]}")
+                        plugin.logger.log(SEVERE, "Failed to save player: ${it.reason.message}", it.reason.cause)
+                        return@Runnable
+                    }
                 }
-            })
+            )
             return
         }
         if (!claimService.isInteractionAllowed(mfPlayer.id, claim)) {
@@ -89,5 +92,4 @@ class BlockBreakListener(private val plugin: MedievalFactions) : Listener {
             event.player.sendMessage("$RED${plugin.language["BlockLocked", owner?.toBukkit()?.name ?: plugin.language["UnknownPlayer"]]}")
         }
     }
-
 }

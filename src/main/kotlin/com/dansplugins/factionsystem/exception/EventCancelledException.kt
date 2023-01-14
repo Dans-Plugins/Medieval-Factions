@@ -12,5 +12,4 @@ class EventCancelledException : RuntimeException {
         enableSuppression,
         writableStackTrace
     )
-
 }

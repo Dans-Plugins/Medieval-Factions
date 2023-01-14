@@ -12,5 +12,4 @@ class PlayerTeleportListener(private val plugin: MedievalFactions) : Listener {
         val teleportService = plugin.services.teleportService
         teleportService.cancelTeleportation(event.player)
     }
-
 }

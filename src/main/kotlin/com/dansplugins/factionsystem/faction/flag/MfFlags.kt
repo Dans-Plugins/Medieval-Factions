@@ -15,7 +15,7 @@ class MfFlags(
         MfFlag.boolean(
             plugin,
             "vassalageTreeCanInteractWithLand",
-            plugin.config.getBoolean("factions.defaults.flags.vassalageTreeCanInteractWithLand"),
+            plugin.config.getBoolean("factions.defaults.flags.vassalageTreeCanInteractWithLand")
         ),
         MfFlag.boolean(
             plugin,
@@ -54,11 +54,16 @@ class MfFlags(
             plugin,
             "enableMobProtection",
             plugin.config.getBoolean("factions.defaults.flags.enableMobProtection")
+        ),
+        MfFlag.boolean(
+            plugin,
+            "liegeChainCanInteractWithLand",
+            plugin.config.getBoolean("factions.defaults.flags.liegeChainCanInteractWithLand")
         )
     )
 ) : MutableList<MfFlag<out Any>> by flags {
 
-    operator fun <T: Any> get(name: String) = singleOrNull { it.name.equals(name, ignoreCase = true) } as? MfFlag<T>
+    operator fun <T : Any> get(name: String) = singleOrNull { it.name.equals(name, ignoreCase = true) } as? MfFlag<T>
 
     val alliesCanInteractWithLand = get<Boolean>("alliesCanInteractWithLand")!!
     val vassalageTreeCanInteractWithLand = get<Boolean>("vassalageTreeCanInteractWithLand")!!
@@ -67,7 +72,7 @@ class MfFlags(
     val allowFriendlyFire = get<Boolean>("allowFriendlyFire")!!
     val acceptBonusPower = get<Boolean>("acceptBonusPower")!!
     val enableMobProtection = get<Boolean>("enableMobProtection")!!
+    val liegeChainCanInteractWithLand = get<Boolean>("liegeChainCanInteractWithLand")!!
 
     fun defaults() = MfFlagValues(plugin, flags.associate { it.name to it.defaultValue })
-
 }

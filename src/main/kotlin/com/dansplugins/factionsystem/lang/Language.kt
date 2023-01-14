@@ -15,11 +15,32 @@ class Language(plugin: MedievalFactions, private val language: String) {
         val languageFolder = File(plugin.dataFolder, "lang")
         if (!languageFolder.exists()) {
             languageFolder.mkdirs()
-            plugin.saveResource("lang/lang_en_US.properties", false)
-            plugin.saveResource("lang/lang_en_GB.properties", false)
-            plugin.saveResource("lang/lang_fr_FR.properties", false)
-            plugin.saveResource("lang/lang_de_DE.properties", false)
         }
+
+        val enUsFilename = "lang/lang_en_US.properties"
+        val enUsFile = File(enUsFilename)
+        if (!enUsFile.exists()) {
+            plugin.saveResource(enUsFilename, false)
+        }
+
+        val enGbFilename = "lang/lang_en_GB.properties"
+        val enGbFile = File(enGbFilename)
+        if (!enGbFile.exists()) {
+            plugin.saveResource(enGbFilename, false)
+        }
+
+        val frFrFilename = "lang/lang_fr_FR.properties"
+        val frFrFile = File(frFrFilename)
+        if (!frFrFile.exists()) {
+            plugin.saveResource(frFrFilename, false)
+        }
+
+        val deDeFilename = "lang/lang_de_DE.properties"
+        val deDeFile = File(deDeFilename)
+        if (!deDeFile.exists()) {
+            plugin.saveResource(deDeFilename, false)
+        }
+
         val externalUrls = arrayOf(languageFolder.toURI().toURL())
         val externalClassLoader = URLClassLoader(externalUrls)
         val externalResourceBundle = ResourceBundle.getBundle(
@@ -41,6 +62,5 @@ class Language(plugin: MedievalFactions, private val language: String) {
             } catch (exception: MissingResourceException) {
                 null
             }
-        } ?: "Missing translation for ${language}: $key"
-
+        } ?: "Missing translation for $language: $key"
 }

@@ -22,20 +22,23 @@ class MfFactionBypassCommand(private val plugin: MedievalFactions) : CommandExec
             sender.sendMessage("$RED${plugin.language["CommandFactionBypassNotAPlayer"]}")
             return true
         }
-        plugin.server.scheduler.runTaskAsynchronously(plugin, Runnable {
-            val playerService = plugin.services.playerService
-            val mfPlayer = playerService.getPlayer(sender) ?: MfPlayer(plugin, sender)
-            val updatedMfPlayer = playerService.save(mfPlayer.copy(isBypassEnabled = !mfPlayer.isBypassEnabled)).onFailure {
-                sender.sendMessage("$RED${plugin.language["CommandFactionBypassFailedToSavePlayer"]}")
-                plugin.logger.log(Level.SEVERE, "Failed to save player: ${it.reason.message}", it.reason.cause)
-                return@Runnable
+        plugin.server.scheduler.runTaskAsynchronously(
+            plugin,
+            Runnable {
+                val playerService = plugin.services.playerService
+                val mfPlayer = playerService.getPlayer(sender) ?: MfPlayer(plugin, sender)
+                val updatedMfPlayer = playerService.save(mfPlayer.copy(isBypassEnabled = !mfPlayer.isBypassEnabled)).onFailure {
+                    sender.sendMessage("$RED${plugin.language["CommandFactionBypassFailedToSavePlayer"]}")
+                    plugin.logger.log(Level.SEVERE, "Failed to save player: ${it.reason.message}", it.reason.cause)
+                    return@Runnable
+                }
+                if (updatedMfPlayer.isBypassEnabled) {
+                    sender.sendMessage("$GREEN${plugin.language["CommandFactionBypassEnabled"]}")
+                } else {
+                    sender.sendMessage("$GREEN${plugin.language["CommandFactionBypassDisabled"]}")
+                }
             }
-            if (updatedMfPlayer.isBypassEnabled) {
-                sender.sendMessage("$GREEN${plugin.language["CommandFactionBypassEnabled"]}")
-            } else {
-                sender.sendMessage("$GREEN${plugin.language["CommandFactionBypassDisabled"]}")
-            }
-        })
+        )
         return true
     }
 

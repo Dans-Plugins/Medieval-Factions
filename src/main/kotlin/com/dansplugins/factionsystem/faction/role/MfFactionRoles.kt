@@ -1,7 +1,9 @@
 package com.dansplugins.factionsystem.faction.role
 
 import com.dansplugins.factionsystem.MedievalFactions
-import com.dansplugins.factionsystem.chat.MfFactionChatChannel.*
+import com.dansplugins.factionsystem.chat.MfFactionChatChannel.ALLIES
+import com.dansplugins.factionsystem.chat.MfFactionChatChannel.FACTION
+import com.dansplugins.factionsystem.chat.MfFactionChatChannel.VASSALS
 import com.dansplugins.factionsystem.faction.MfFactionId
 
 data class MfFactionRoles(
@@ -56,6 +58,8 @@ data class MfFactionRoles(
                 name = "Owner",
                 permissionsByName = buildMap {
                     put(plugin.factionPermissions.addLaw.name, true)
+                    put(plugin.factionPermissions.editLaw.name, true)
+                    put(plugin.factionPermissions.moveLaw.name, true)
                     put(plugin.factionPermissions.removeLaw.name, true)
                     put(plugin.factionPermissions.listLaws.name, true)
                     put(plugin.factionPermissions.requestAlliance.name, true)
@@ -105,15 +109,19 @@ data class MfFactionRoles(
                     put(plugin.factionPermissions.createRole.name, true)
                     put(plugin.factionPermissions.setDefaultRole.name, true)
 
-                    putAll(plugin.factionPermissions.permissionsFor(factionId, listOf(member.id, officer.id, ownerId))
-                        .map { permission -> plugin.factionPermissions.setRolePermission(permission).name to true })
+                    putAll(
+                        plugin.factionPermissions.permissionsFor(factionId, listOf(member.id, officer.id, ownerId))
+                            .map { permission -> plugin.factionPermissions.setRolePermission(permission).name to true }
+                    )
                 }
             )
             return MfFactionRoles(member.id, listOf(owner, officer, member))
         }
     }
+
     @JvmName("getRoleByRoleId")
     fun getRole(roleId: MfFactionRoleId) = roles.singleOrNull { it.id.value == roleId.value }
+
     @JvmName("getRoleByName")
     fun getRole(name: String) = getRole(MfFactionRoleId(name)) ?: roles.singleOrNull { it.name.equals(name, ignoreCase = true) }
 }

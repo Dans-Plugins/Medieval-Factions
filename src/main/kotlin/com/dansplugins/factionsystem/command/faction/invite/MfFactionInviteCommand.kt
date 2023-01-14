@@ -85,71 +85,82 @@ class MfFactionInviteCommand(private val plugin: MedievalFactions) : CommandExec
     }
 
     private fun invitePlayer(sender: Player, target: OfflinePlayer) {
-        plugin.server.scheduler.runTaskAsynchronously(plugin, Runnable {
-            val playerService = plugin.services.playerService
-            val mfPlayer = playerService.getPlayer(sender)
-                ?: playerService.save(MfPlayer(plugin, sender)).onFailure {
-                    sender.sendMessage("${BukkitChatColor.RED}${plugin.language["CommandFactionInviteFailedToSavePlayer"]}")
-                    plugin.logger.log(SEVERE, "Failed to save player: ${it.reason.message}", it.reason.cause)
-                    return@Runnable
-                }
-            val targetMfPlayer = playerService.getPlayer(target)
-                ?: playerService.save(MfPlayer(plugin, target)).onFailure {
-                    sender.sendMessage("${BukkitChatColor.RED}${plugin.language["CommandFactionInviteFailedToSaveTargetPlayer"]}")
-                    plugin.logger.log(SEVERE, "Failed to save player: ${it.reason.message}", it.reason.cause)
-                    return@Runnable
-                }
-            val factionService = plugin.services.factionService
-            val faction = factionService.getFaction(mfPlayer.id)
-            if (faction == null) {
-                sender.sendMessage("${BukkitChatColor.RED}${plugin.language["CommandFactionInviteMustBeInAFaction"]}")
-                return@Runnable
-            }
-            val role = faction.getRole(mfPlayer.id)
-            if (role == null || !role.hasPermission(faction, plugin.factionPermissions.invite)) {
-                sender.sendMessage("${BukkitChatColor.RED}${plugin.language["CommandFactionInviteNoFactionPermission"]}")
-                return@Runnable
-            }
-            if (faction.invites.any { it.playerId == targetMfPlayer.id }) {
-                sender.sendMessage("${BukkitChatColor.RED}${plugin.language["CommandFactionInviteAlreadyInvited"]}")
-                return@Runnable
-            }
-            if (faction.members.any { it.playerId == targetMfPlayer.id }) {
-                sender.sendMessage("${BukkitChatColor.RED}${plugin.language["CommandFactionInviteAlreadyMember"]}")
-                return@Runnable
-            }
-            factionService.save(
-                faction.copy(
-                    invites = faction.invites + MfFactionInvite(targetMfPlayer.id)
-                )
-            ).onFailure {
-                sender.sendMessage("${BukkitChatColor.RED}${plugin.language["CommandFactionInviteFailedToSaveFaction"]}")
-                plugin.logger.log(SEVERE, "Failed to save faction: ${it.reason.message}", it.reason.cause)
-                return@Runnable
-            }
-            sender.sendMessage("${BukkitChatColor.GREEN}${plugin.language["CommandFactionInviteSuccess", target.name ?: plugin.language["UnknownPlayer"]]}")
-            val targetOnlinePlayer = target.player
-            if (targetOnlinePlayer != null) {
-                targetOnlinePlayer.spigot().sendMessage(*arrayOf(
-                    TextComponent(plugin.language["CommandFactionInviteReceived", faction.name] + " ").apply {
-                        color = SpigotChatColor.GRAY
-                    },
-                    TextComponent(plugin.language["CommandFactionInviteAccept", faction.name]).apply {
-                        color = SpigotChatColor.GREEN
-                        hoverEvent = HoverEvent(SHOW_TEXT, Text(plugin.language["CommandFactionInviteAcceptHover"]))
-                        clickEvent = ClickEvent(RUN_COMMAND, "/faction join ${faction.id.value}")
+        plugin.server.scheduler.runTaskAsynchronously(
+            plugin,
+            Runnable {
+                val playerService = plugin.services.playerService
+                val mfPlayer = playerService.getPlayer(sender)
+                    ?: playerService.save(MfPlayer(plugin, sender)).onFailure {
+                        sender.sendMessage("${BukkitChatColor.RED}${plugin.language["CommandFactionInviteFailedToSavePlayer"]}")
+                        plugin.logger.log(SEVERE, "Failed to save player: ${it.reason.message}", it.reason.cause)
+                        return@Runnable
                     }
-                ))
-            } else {
-                plugin.services.notificationService.sendNotification(targetMfPlayer.id, MfNotification(
-                    plugin.language["CommandFactionInviteReceivedNotificationTitle", faction.name],
-                    plugin.language["CommandFactionInviteReceivedNotificationBody", faction.name]
-                ))
+                val targetMfPlayer = playerService.getPlayer(target)
+                    ?: playerService.save(MfPlayer(plugin, target)).onFailure {
+                        sender.sendMessage("${BukkitChatColor.RED}${plugin.language["CommandFactionInviteFailedToSaveTargetPlayer"]}")
+                        plugin.logger.log(SEVERE, "Failed to save player: ${it.reason.message}", it.reason.cause)
+                        return@Runnable
+                    }
+                val factionService = plugin.services.factionService
+                val faction = factionService.getFaction(mfPlayer.id)
+                if (faction == null) {
+                    sender.sendMessage("${BukkitChatColor.RED}${plugin.language["CommandFactionInviteMustBeInAFaction"]}")
+                    return@Runnable
+                }
+                val role = faction.getRole(mfPlayer.id)
+                if (role == null || !role.hasPermission(faction, plugin.factionPermissions.invite)) {
+                    sender.sendMessage("${BukkitChatColor.RED}${plugin.language["CommandFactionInviteNoFactionPermission"]}")
+                    return@Runnable
+                }
+                if (faction.invites.any { it.playerId == targetMfPlayer.id }) {
+                    sender.sendMessage("${BukkitChatColor.RED}${plugin.language["CommandFactionInviteAlreadyInvited"]}")
+                    return@Runnable
+                }
+                if (faction.members.any { it.playerId == targetMfPlayer.id }) {
+                    sender.sendMessage("${BukkitChatColor.RED}${plugin.language["CommandFactionInviteAlreadyMember"]}")
+                    return@Runnable
+                }
+                factionService.save(
+                    faction.copy(
+                        invites = faction.invites + MfFactionInvite(targetMfPlayer.id)
+                    )
+                ).onFailure {
+                    sender.sendMessage("${BukkitChatColor.RED}${plugin.language["CommandFactionInviteFailedToSaveFaction"]}")
+                    plugin.logger.log(SEVERE, "Failed to save faction: ${it.reason.message}", it.reason.cause)
+                    return@Runnable
+                }
+                sender.sendMessage("${BukkitChatColor.GREEN}${plugin.language["CommandFactionInviteSuccess", target.name ?: plugin.language["UnknownPlayer"]]}")
+                val targetOnlinePlayer = target.player
+                if (targetOnlinePlayer != null) {
+                    targetOnlinePlayer.spigot().sendMessage(
+                        *arrayOf(
+                            TextComponent(plugin.language["CommandFactionInviteReceived", faction.name] + " ").apply {
+                                color = SpigotChatColor.GRAY
+                            },
+                            TextComponent(plugin.language["CommandFactionInviteAccept", faction.name]).apply {
+                                color = SpigotChatColor.GREEN
+                                hoverEvent = HoverEvent(SHOW_TEXT, Text(plugin.language["CommandFactionInviteAcceptHover"]))
+                                clickEvent = ClickEvent(RUN_COMMAND, "/faction join ${faction.id.value}")
+                            }
+                        )
+                    )
+                } else {
+                    plugin.services.notificationService.sendNotification(
+                        targetMfPlayer.id,
+                        MfNotification(
+                            plugin.language["CommandFactionInviteReceivedNotificationTitle", faction.name],
+                            plugin.language["CommandFactionInviteReceivedNotificationBody", faction.name]
+                        )
+                    )
+                }
+                plugin.server.scheduler.runTask(
+                    plugin,
+                    Runnable {
+                        sender.performCommand("faction info")
+                    }
+                )
             }
-            plugin.server.scheduler.runTask(plugin, Runnable {
-                sender.performCommand("faction info")
-            })
-        })
+        )
     }
 
     override fun onTabComplete(
@@ -158,11 +169,13 @@ class MfFactionInviteCommand(private val plugin: MedievalFactions) : CommandExec
         label: String,
         args: Array<out String>
     ) = when {
-        args.isEmpty() -> plugin.server.offlinePlayers
-            .mapNotNull { it.name }
-        args.size == 1 -> plugin.server.offlinePlayers
-            .filter { it.name?.lowercase()?.startsWith(args[0].lowercase()) == true }
-            .mapNotNull { it.name }
+        args.isEmpty() ->
+            plugin.server.offlinePlayers
+                .mapNotNull { it.name }
+        args.size == 1 ->
+            plugin.server.offlinePlayers
+                .filter { it.name?.lowercase()?.startsWith(args[0].lowercase()) == true }
+                .mapNotNull { it.name }
         else -> emptyList()
     }
 }

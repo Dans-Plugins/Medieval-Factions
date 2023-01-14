@@ -3,7 +3,10 @@ package com.dansplugins.factionsystem.placeholder
 import com.dansplugins.factionsystem.MedievalFactions
 import com.dansplugins.factionsystem.faction.MfFaction
 import com.dansplugins.factionsystem.faction.flag.MfFlag
-import com.dansplugins.factionsystem.relationship.MfFactionRelationshipType.*
+import com.dansplugins.factionsystem.relationship.MfFactionRelationshipType.ALLY
+import com.dansplugins.factionsystem.relationship.MfFactionRelationshipType.AT_WAR
+import com.dansplugins.factionsystem.relationship.MfFactionRelationshipType.LIEGE
+import com.dansplugins.factionsystem.relationship.MfFactionRelationshipType.VASSAL
 import me.clip.placeholderapi.expansion.PlaceholderExpansion
 import me.clip.placeholderapi.expansion.Relational
 import net.md_5.bungee.api.ChatColor
@@ -13,7 +16,6 @@ import org.bukkit.entity.Player
 import java.text.DecimalFormat
 import java.text.DecimalFormatSymbols
 import kotlin.math.floor
-
 
 class MedievalFactionsPlaceholderExpansion(private val plugin: MedievalFactions) : PlaceholderExpansion(), Relational {
 
@@ -131,8 +133,8 @@ class MedievalFactionsPlaceholderExpansion(private val plugin: MedievalFactions)
         val factionService = plugin.services.factionService
         val relationshipService = plugin.services.factionRelationshipService
         return factionService.factions.count {
-            relationshipService.getRelationships(faction.id, it.id).any { relationship -> relationship.type == ALLY }
-                    && relationshipService.getRelationships(it.id, faction.id).any { relationship -> relationship.type == ALLY }
+            relationshipService.getRelationships(faction.id, it.id).any { relationship -> relationship.type == ALLY } &&
+                relationshipService.getRelationships(it.id, faction.id).any { relationship -> relationship.type == ALLY }
         }.toString()
     }
 
@@ -142,8 +144,8 @@ class MedievalFactionsPlaceholderExpansion(private val plugin: MedievalFactions)
         val factionService = plugin.services.factionService
         val relationshipService = plugin.services.factionRelationshipService
         return factionService.factions.count {
-            relationshipService.getRelationships(faction.id, it.id).any { relationship -> relationship.type == AT_WAR }
-                    && relationshipService.getRelationships(it.id, faction.id).any { relationship -> relationship.type == AT_WAR }
+            relationshipService.getRelationships(faction.id, it.id).any { relationship -> relationship.type == AT_WAR } &&
+                relationshipService.getRelationships(it.id, faction.id).any { relationship -> relationship.type == AT_WAR }
         }.toString()
     }
 
@@ -153,8 +155,8 @@ class MedievalFactionsPlaceholderExpansion(private val plugin: MedievalFactions)
         val factionService = plugin.services.factionService
         val relationshipService = plugin.services.factionRelationshipService
         return factionService.factions.count {
-            relationshipService.getRelationships(faction.id, it.id).any { relationship -> relationship.type == VASSAL }
-                    && relationshipService.getRelationships(it.id, faction.id).any { relationship -> relationship.type == LIEGE }
+            relationshipService.getRelationships(faction.id, it.id).any { relationship -> relationship.type == VASSAL } &&
+                relationshipService.getRelationships(it.id, faction.id).any { relationship -> relationship.type == LIEGE }
         }.toString()
     }
 
@@ -243,16 +245,20 @@ class MedievalFactionsPlaceholderExpansion(private val plugin: MedievalFactions)
         val playerFaction = getPlayerFaction(player)
             ?: return (plugin.config.getString("factions.factionlessFactionName") ?: "Factionless")
         val relationshipService = plugin.services.factionRelationshipService
-        return (relationshipService.getRelationships(playerFaction.id, faction.id).any { it.type == AT_WAR }
-            || relationshipService.getRelationships(faction.id, playerFaction.id).any { it.type == AT_WAR }).toString()
+        return (
+            relationshipService.getRelationships(playerFaction.id, faction.id).any { it.type == AT_WAR } ||
+                relationshipService.getRelationships(faction.id, playerFaction.id).any { it.type == AT_WAR }
+            ).toString()
     }
 
     private fun isPlayerFactionAlly(player: OfflinePlayer, faction: MfFaction): String {
         val playerFaction = getPlayerFaction(player)
             ?: return (plugin.config.getString("factions.factionlessFactionName") ?: "Factionless")
         val relationshipService = plugin.services.factionRelationshipService
-        return (relationshipService.getRelationships(playerFaction.id, faction.id).any { it.type == ALLY }
-                && relationshipService.getRelationships(faction.id, playerFaction.id).any { it.type == ALLY }).toString()
+        return (
+            relationshipService.getRelationships(playerFaction.id, faction.id).any { it.type == ALLY } &&
+                relationshipService.getRelationships(faction.id, playerFaction.id).any { it.type == ALLY }
+            ).toString()
     }
 
     private fun getFactionFlagValue(player: OfflinePlayer, flag: MfFlag<*>): String {
@@ -267,8 +273,10 @@ class MedievalFactionsPlaceholderExpansion(private val plugin: MedievalFactions)
         val factionTwo = getPlayerFaction(two)
             ?: return (plugin.config.getString("factions.factionlessFactionName") ?: "Factionless")
         val relationshipService = plugin.services.factionRelationshipService
-        return (relationshipService.getRelationships(factionOne.id, factionTwo.id).any { it.type == AT_WAR }
-                || relationshipService.getRelationships(factionTwo.id, factionOne.id).any { it.type == AT_WAR }).toString()
+        return (
+            relationshipService.getRelationships(factionOne.id, factionTwo.id).any { it.type == AT_WAR } ||
+                relationshipService.getRelationships(factionTwo.id, factionOne.id).any { it.type == AT_WAR }
+            ).toString()
     }
 
     private fun getPlayerFactionAllies(one: Player, two: Player): String {
@@ -277,8 +285,10 @@ class MedievalFactionsPlaceholderExpansion(private val plugin: MedievalFactions)
         val factionTwo = getPlayerFaction(two)
             ?: return (plugin.config.getString("factions.factionlessFactionName") ?: "Factionless")
         val relationshipService = plugin.services.factionRelationshipService
-        return (relationshipService.getRelationships(factionOne.id, factionTwo.id).any { it.type == ALLY }
-                && relationshipService.getRelationships(factionTwo.id, factionOne.id).any { it.type == ALLY }).toString()
+        return (
+            relationshipService.getRelationships(factionOne.id, factionTwo.id).any { it.type == ALLY } &&
+                relationshipService.getRelationships(factionTwo.id, factionOne.id).any { it.type == ALLY }
+            ).toString()
     }
 
     private fun getPlayerFactionVassal(one: Player, two: Player): String {
@@ -287,8 +297,10 @@ class MedievalFactionsPlaceholderExpansion(private val plugin: MedievalFactions)
         val factionTwo = getPlayerFaction(two)
             ?: return (plugin.config.getString("factions.factionlessFactionName") ?: "Factionless")
         val relationshipService = plugin.services.factionRelationshipService
-        return (relationshipService.getRelationships(factionOne.id, factionTwo.id).any { it.type == VASSAL }
-                && relationshipService.getRelationships(factionTwo.id, factionOne.id).any { it.type == LIEGE }).toString()
+        return (
+            relationshipService.getRelationships(factionOne.id, factionTwo.id).any { it.type == VASSAL } &&
+                relationshipService.getRelationships(factionTwo.id, factionOne.id).any { it.type == LIEGE }
+            ).toString()
     }
 
     private fun getPlayerFactionLiege(one: Player, two: Player): String {
@@ -297,8 +309,9 @@ class MedievalFactionsPlaceholderExpansion(private val plugin: MedievalFactions)
         val factionTwo = getPlayerFaction(two)
             ?: return (plugin.config.getString("factions.factionlessFactionName") ?: "Factionless")
         val relationshipService = plugin.services.factionRelationshipService
-        return (relationshipService.getRelationships(factionOne.id, factionTwo.id).any { it.type == LIEGE }
-                && relationshipService.getRelationships(factionTwo.id, factionOne.id).any { it.type == VASSAL }).toString()
+        return (
+            relationshipService.getRelationships(factionOne.id, factionTwo.id).any { it.type == LIEGE } &&
+                relationshipService.getRelationships(factionTwo.id, factionOne.id).any { it.type == VASSAL }
+            ).toString()
     }
-
 }

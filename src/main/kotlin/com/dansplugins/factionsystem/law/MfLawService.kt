@@ -14,6 +14,10 @@ class MfLawService(private val repository: MfLawRepository) {
 
     @JvmName("getLawByLawId")
     fun getLaw(id: MfLawId): MfLaw? = repository.getLaw(id)
+
+    @JvmName("getLawByIndex")
+    fun getLaw(factionId: MfFactionId, index: Int?): MfLaw? = repository.getLaw(factionId, index)
+
     @JvmName("getLawsByFactionId")
     fun getLaws(factionId: MfFactionId): List<MfLaw> = repository.getLaws(factionId)
     fun save(law: MfLaw): Result4k<MfLaw, ServiceFailure> = resultFrom {
@@ -21,9 +25,23 @@ class MfLawService(private val repository: MfLawRepository) {
     }.mapFailure { exception ->
         ServiceFailure(exception.toServiceFailureType(), "Service error: ${exception.message}", exception)
     }
+
+    @JvmName("deleteLaw")
+    fun delete(law: MfLaw): Result4k<Unit, ServiceFailure> = resultFrom {
+        repository.delete(law)
+    }.mapFailure { exception ->
+        ServiceFailure(exception.toServiceFailureType(), "Service error: ${exception.message}", exception)
+    }
+
     @JvmName("deleteLawByLawId")
     fun delete(id: MfLawId): Result4k<Unit, ServiceFailure> = resultFrom {
         repository.delete(id)
+    }.mapFailure { exception ->
+        ServiceFailure(exception.toServiceFailureType(), "Service error: ${exception.message}", exception)
+    }
+
+    fun move(law: MfLaw, number: Int): Result4k<Unit, ServiceFailure> = resultFrom {
+        repository.move(law, number)
     }.mapFailure { exception ->
         ServiceFailure(exception.toServiceFailureType(), "Service error: ${exception.message}", exception)
     }
@@ -34,5 +52,4 @@ class MfLawService(private val repository: MfLawRepository) {
             else -> GENERAL
         }
     }
-
 }

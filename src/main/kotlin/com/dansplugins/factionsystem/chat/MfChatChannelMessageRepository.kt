@@ -8,5 +8,4 @@ interface MfChatChannelMessageRepository {
     fun getChatChannelMessages(factionId: MfFactionId): List<MfChatChannelMessage>
     fun getChatChannelMessages(factionId: MfFactionId, limit: Int, offset: Int = 0): List<MfChatChannelMessage>
     fun getChatChannelMessageCount(factionId: MfFactionId): Int
-
 }

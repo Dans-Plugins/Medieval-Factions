@@ -58,6 +58,7 @@ factions:
   nonMembersCanInteractWithDoors: false
   maxClaimRadius: 3
   limitLand: true
+  contiguousClaims: false
   actionBarTerritoryIndicator: true
   titleTerritoryIndicator: true
   allowNeutrality: false
@@ -65,10 +66,9 @@ factions:
   factionHomeTeleportDelay: 5
   defaults:
     flags:
-      mustBeOfficerToManageLand: true
-      mustBeOfficierToInviteOthers: true
       alliesCanInteractWithLand: false
       vassalageTreeCanInteractWithLand: false
+      liegeChainCanInteractWithLand: false
       neutral: false
       color: random # Can be hex colours, e.g. '#ffffff', '#ffcc00', etc., or 'random' to choose a random colour
       allowFriendlyFire: false

@@ -1,0 +1,1 @@
+ALTER TABLE `mf_law` ADD `number` integer;

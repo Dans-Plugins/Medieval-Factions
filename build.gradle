@@ -3,10 +3,11 @@ plugins {
     id 'maven-publish'
     id 'com.github.johnrengelman.shadow' version '7.1.2'
     id 'nu.studer.jooq' version '7.1.1'
+    id 'org.jmailen.kotlinter' version '3.12.0'
 }
 
 group = "com.dansplugins"
-version = "5.0.7-SNAPSHOT"
+version = "5.1.0-SNAPSHOT"
 
 def repoUsername = ""
 def repoPassword = ""
@@ -65,6 +66,10 @@ kotlin {
     jvmToolchain {
         languageVersion.set(JavaLanguageVersion.of(17))
     }
+}
+
+tasks.named('check') {
+    dependsOn 'installKotlinterPrePushHook'
 }
 
 jooq {
