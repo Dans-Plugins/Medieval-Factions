@@ -6,6 +6,7 @@ import com.dansplugins.factionsystem.area.MfCuboidArea
 import com.dansplugins.factionsystem.gate.MfGate
 import com.dansplugins.factionsystem.gate.MfGateCreationContext
 import com.dansplugins.factionsystem.interaction.MfInteractionStatus.*
+import com.dansplugins.factionsystem.locks.MfUnlockResult
 import com.dansplugins.factionsystem.player.MfPlayer
 import com.dansplugins.factionsystem.player.MfPlayerId
 import dev.forkhandles.result4k.onFailure
@@ -233,13 +234,13 @@ class PlayerInteractListener(private val plugin: MedievalFactions) : Listener {
         }
         val result = lockService.unlock(block)
         when (result) {
-            0 -> {
+            MfUnlockResult.SUCCESS -> {
                 player.sendMessage("$GREEN${plugin.language["BlockUnlockSuccessful"]}")
             }
-            1 -> {
+            MfUnlockResult.NOT_LOCKED -> {
                 player.sendMessage("$RED${plugin.language["BlockNotLocked"]}")
             }
-            2 -> {
+            MfUnlockResult.FAILURE -> {
                 player.sendMessage("$RED${plugin.language["BlockUnlockFailedToSaveLockedBlock"]}")
             }
         }

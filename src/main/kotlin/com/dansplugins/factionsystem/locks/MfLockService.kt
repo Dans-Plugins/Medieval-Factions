@@ -53,7 +53,7 @@ class MfLockService(private val plugin: MedievalFactions, private val repository
         ServiceFailure(exception.toServiceFailureType(), "Service error: ${exception.message}", exception)
     }
 
-    fun unlock(block: Block): Int {
+    fun unlock(block: Block): MfUnlockResult {
         val blockData = block.blockData
         val holder = (block.state as? Chest)?.inventory?.holder
         val blocks = if (blockData is Bisected) {
@@ -69,17 +69,17 @@ class MfLockService(private val plugin: MedievalFactions, private val repository
         } else {
             listOf(block)
         }
-        var toReturn = 0
+        var toReturn = MfUnlockResult.SUCCESS
         plugin.server.scheduler.runTaskAsynchronously(plugin, Runnable {
             val lockedBlocks = blocks.mapNotNull { getLockedBlock(MfBlockPosition.fromBukkitBlock(it)) }
             val lockedBlock = lockedBlocks.firstOrNull()
             if (lockedBlock == null) {
-                toReturn = 1
+                toReturn = MfUnlockResult.NOT_LOCKED
                 return@Runnable
             }
             delete(lockedBlock.block).onFailure {
                 plugin.logger.log(SEVERE, "Failed to delete block: ${it.reason.message}", it.reason.cause)
-                toReturn = 2
+                toReturn = MfUnlockResult.FAILURE
                 return@Runnable
             }
         })

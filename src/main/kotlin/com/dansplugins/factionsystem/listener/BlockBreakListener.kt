@@ -2,6 +2,7 @@ package com.dansplugins.factionsystem.listener
 
 import com.dansplugins.factionsystem.MedievalFactions
 import com.dansplugins.factionsystem.area.MfBlockPosition
+import com.dansplugins.factionsystem.locks.MfUnlockResult
 import com.dansplugins.factionsystem.player.MfPlayer
 import dev.forkhandles.result4k.onFailure
 import org.bukkit.ChatColor.RED
@@ -70,15 +71,15 @@ class BlockBreakListener(private val plugin: MedievalFactions) : Listener {
             lockService.unlock(event.block)
             val result = lockService.unlock(event.block)
             when (result) {
-                0 -> {
+                MfUnlockResult.SUCCESS -> {
                     event.player.sendMessage("$GREEN${plugin.language["BlockUnlockSuccessful"]}")
                 }
 
-                1 -> {
+                MfUnlockResult.NOT_LOCKED -> {
                     event.player.sendMessage("$RED${plugin.language["BlockNotLocked"]}")
                 }
 
-                2 -> {
+                MfUnlockResult.FAILURE -> {
                     event.player.sendMessage("$RED${plugin.language["BlockUnlockFailedToSaveLockedBlock"]}")
                 }
             }
