@@ -5,7 +5,7 @@ import com.dansplugins.factionsystem.area.MfBlockPosition
 import com.dansplugins.factionsystem.player.MfPlayer
 import dev.forkhandles.result4k.onFailure
 import org.bukkit.ChatColor.RED
-import org.bukkit.Color.GREEN
+import org.bukkit.ChatColor.GREEN
 import org.bukkit.event.EventHandler
 import org.bukkit.event.Listener
 import org.bukkit.event.block.BlockBreakEvent
