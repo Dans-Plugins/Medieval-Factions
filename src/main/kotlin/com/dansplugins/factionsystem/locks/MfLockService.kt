@@ -6,12 +6,24 @@ import com.dansplugins.factionsystem.claim.MfClaimedChunk
 import com.dansplugins.factionsystem.failure.OptimisticLockingFailureException
 import com.dansplugins.factionsystem.failure.ServiceFailure
 import com.dansplugins.factionsystem.failure.ServiceFailureType
+import com.dansplugins.factionsystem.locks.MfUnlockResult.FAILURE
+import com.dansplugins.factionsystem.locks.MfUnlockResult.NOT_LOCKED
+import com.dansplugins.factionsystem.locks.MfUnlockResult.SUCCESS
 import com.dansplugins.factionsystem.player.MfPlayer
 import com.dansplugins.factionsystem.player.MfPlayerId
 import dev.forkhandles.result4k.Result4k
 import dev.forkhandles.result4k.mapFailure
+import dev.forkhandles.result4k.onFailure
 import dev.forkhandles.result4k.resultFrom
+import org.bukkit.block.Block
+import org.bukkit.block.BlockFace.DOWN
+import org.bukkit.block.BlockFace.UP
+import org.bukkit.block.Chest
+import org.bukkit.block.DoubleChest
+import org.bukkit.block.data.Bisected
+import org.bukkit.block.data.Bisected.Half.BOTTOM
 import java.util.concurrent.ConcurrentHashMap
+import java.util.logging.Level.SEVERE
 
 class MfLockService(private val plugin: MedievalFactions, private val repository: MfLockRepository) {
 
@@ -43,6 +55,41 @@ class MfLockService(private val plugin: MedievalFactions, private val repository
         return@resultFrom lockedBlock
     }.mapFailure { exception ->
         ServiceFailure(exception.toServiceFailureType(), "Service error: ${exception.message}", exception)
+    }
+
+    fun unlock(block: Block, callback: (result: MfUnlockResult) -> Unit) {
+        val blockData = block.blockData
+        val holder = (block.state as? Chest)?.inventory?.holder
+        val blocks = if (blockData is Bisected) {
+            if (blockData.half == BOTTOM) {
+                listOf(block, block.getRelative(UP))
+            } else {
+                listOf(block, block.getRelative(DOWN))
+            }
+        } else if (holder is DoubleChest) {
+            val left = holder.leftSide as? Chest
+            val right = holder.rightSide as? Chest
+            listOfNotNull(left?.block, right?.block)
+        } else {
+            listOf(block)
+        }
+        plugin.server.scheduler.runTaskAsynchronously(
+            plugin,
+            Runnable {
+                val lockedBlocks = blocks.mapNotNull { getLockedBlock(MfBlockPosition.fromBukkitBlock(it)) }
+                val lockedBlock = lockedBlocks.firstOrNull()
+                if (lockedBlock == null) {
+                    callback(NOT_LOCKED)
+                    return@Runnable
+                }
+                delete(lockedBlock.block).onFailure {
+                    plugin.logger.log(SEVERE, "Failed to delete block: ${it.reason.message}", it.reason.cause)
+                    callback(FAILURE)
+                    return@Runnable
+                }
+                callback(SUCCESS)
+            }
+        )
     }
 
     fun save(lockedBlock: MfLockedBlock): Result4k<MfLockedBlock, ServiceFailure> = resultFrom {

@@ -2,8 +2,11 @@ package com.dansplugins.factionsystem.listener
 
 import com.dansplugins.factionsystem.MedievalFactions
 import com.dansplugins.factionsystem.area.MfBlockPosition
+import com.dansplugins.factionsystem.locks.MfUnlockResult.FAILURE
+import com.dansplugins.factionsystem.locks.MfUnlockResult.SUCCESS
 import com.dansplugins.factionsystem.player.MfPlayer
 import dev.forkhandles.result4k.onFailure
+import org.bukkit.ChatColor.GREEN
 import org.bukkit.ChatColor.RED
 import org.bukkit.event.EventHandler
 import org.bukkit.event.Listener
@@ -20,6 +23,7 @@ class BlockBreakListener(private val plugin: MedievalFactions) : Listener {
         if (gates.isNotEmpty()) {
             event.isCancelled = true
             event.player.sendMessage("$RED${plugin.language["CannotBreakBlockInGate"]}")
+            return
         }
 
         val claimService = plugin.services.claimService
@@ -48,6 +52,31 @@ class BlockBreakListener(private val plugin: MedievalFactions) : Listener {
             } else {
                 event.isCancelled = true
                 event.player.sendMessage("$RED${plugin.language["CannotBreakBlockInFactionTerritory", claimFaction.name]}")
+                return
+            }
+        }
+
+        // if block locked and breaker is owner, unlock
+        val lockService = plugin.services.lockService
+        val lockedBlock = lockService.getLockedBlock(blockPosition) ?: return
+        if (lockedBlock.playerId != mfPlayer.id) {
+            val lockOwner = playerService.getPlayer(lockedBlock.playerId)
+            val ownerName = if (lockOwner == null) {
+                plugin.language["UnknownPlayer"]
+            } else {
+                lockOwner.toBukkit().name ?: plugin.language["UnknownPlayer"]
+            }
+            if (!event.player.hasPermission("mf.force.unlock")) {
+                event.player.sendMessage("$RED${plugin.language["BlockUnlockOwnedByOtherPlayer", ownerName]}")
+                event.isCancelled = true
+                return
+            }
+        }
+        lockService.unlock(event.block) { result ->
+            when (result) {
+                SUCCESS -> event.player.sendMessage("$GREEN${plugin.language["BlockUnlockSuccessful"]}")
+                FAILURE -> event.player.sendMessage("$RED${plugin.language["BlockUnlockFailedToSaveLockedBlock"]}")
+                else -> {}
             }
         }
     }
