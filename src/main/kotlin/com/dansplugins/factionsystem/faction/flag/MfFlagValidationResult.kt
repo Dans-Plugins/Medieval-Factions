@@ -9,6 +9,6 @@ data class MfFlagValidationFailure(
 
 fun MfFlagValidationResult.onFailure(block: (MfFlagValidationFailure) -> Nothing) {
     if (this is MfFlagValidationFailure) {
-         block(this)
+        block(this)
     }
 }

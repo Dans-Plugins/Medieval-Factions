@@ -184,14 +184,29 @@ permissions:
   mf.claim:
     description: Allows claiming land
     default: true
+  mf.claim.circle:
+    description: Allows claiming land in a circle
+    default: true
+  mf.claim.auto:
+    description: Allows toggling autoclaim for your faction
+    default: true
+  mf.claim.fill:
+    description: Allows filling a void enclosed by your claims
+    default: true
+  mf.claim.check:
+    description: Allows checking claims
+    default: true
   mf.autoclaim:
     description: Allows toggling autoclaim for your faction
     default: true
-  mf.unclaim:
-    description: Allows unclaiming land
+  mf.claimfill:
+    description: Allows filling a void enclosed by your claims
     default: true
   mf.checkclaim:
     description: Allows checking claims
+    default: true
+  mf.unclaim:
+    description: Allows unclaiming land
     default: true
   mf.unclaimall:
     description: Allows unclaiming all land
@@ -208,6 +223,9 @@ permissions:
   mf.disband:
     description: Allows disbanding your faction
     default: true
+  mf.disband.others:
+    description: Allows disbanding other factions
+    default: op
   mf.invoke:
     description: Allows invoking another faction into war
     default: true
@@ -328,6 +346,9 @@ permissions:
   mf.force.flag:
     description: Allows setting flags for other factions
     default: op
+  mf.force.addmember:
+    description: Allows forcefully adding a member to a faction.
+    default: op
   mf.force.*:
     description: Allows all force commands
     default: op
@@ -341,6 +362,7 @@ permissions:
     - mf.force.claim
     - mf.force.unclaim
     - mf.force.flag
+    - mf.force.addmember
   mf.admin:
     description: Admin permission
     default: op

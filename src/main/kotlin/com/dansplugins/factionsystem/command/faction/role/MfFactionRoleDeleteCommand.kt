@@ -59,7 +59,9 @@ class MfFactionRoleDeleteCommand(private val plugin: MedievalFactions) : Command
         val returnPage = if (args.lastOrNull()?.startsWith("p=") == true) {
             lastArgOffset = 1
             args.last().substring("p=".length).toIntOrNull()
-        } else null
+        } else {
+            null
+        }
         if (args.dropLast(lastArgOffset).isEmpty()) {
             val conversation = conversationFactory.buildConversation(sender)
             conversation.context.setSessionData("page", returnPage)
@@ -71,57 +73,63 @@ class MfFactionRoleDeleteCommand(private val plugin: MedievalFactions) : Command
     }
 
     private fun deleteRole(player: Player, name: String, returnPage: Int?) {
-        plugin.server.scheduler.runTaskAsynchronously(plugin, Runnable {
-            val playerService = plugin.services.playerService
-            val mfPlayer = playerService.getPlayer(player)
-                ?: playerService.save(MfPlayer(plugin, player)).onFailure {
-                    player.sendMessage("$RED${plugin.language["CommandFactionRoleDeleteFailedToSavePlayer"]}")
-                    plugin.logger.log(SEVERE, "Failed to save player: ${it.reason.message}", it.reason.cause)
+        plugin.server.scheduler.runTaskAsynchronously(
+            plugin,
+            Runnable {
+                val playerService = plugin.services.playerService
+                val mfPlayer = playerService.getPlayer(player)
+                    ?: playerService.save(MfPlayer(plugin, player)).onFailure {
+                        player.sendMessage("$RED${plugin.language["CommandFactionRoleDeleteFailedToSavePlayer"]}")
+                        plugin.logger.log(SEVERE, "Failed to save player: ${it.reason.message}", it.reason.cause)
+                        return@Runnable
+                    }
+                val factionService = plugin.services.factionService
+                val faction = factionService.getFaction(mfPlayer.id)
+                if (faction == null) {
+                    player.sendMessage("$RED${plugin.language["CommandFactionRoleDeleteMustBeInAFaction"]}")
                     return@Runnable
                 }
-            val factionService = plugin.services.factionService
-            val faction = factionService.getFaction(mfPlayer.id)
-            if (faction == null) {
-                player.sendMessage("$RED${plugin.language["CommandFactionRoleDeleteMustBeInAFaction"]}")
-                return@Runnable
-            }
-            val roleToRemove = faction.roles.getRole(MfFactionRoleId(name)) ?: faction.roles.getRole(name)
-            if (roleToRemove == null) {
-                player.sendMessage("$RED${plugin.language["CommandFactionRoleDeleteInvalidRole"]}")
-                return@Runnable
-            }
-            val role = faction.getRole(mfPlayer.id)
-            if (role == null || !role.hasPermission(faction, plugin.factionPermissions.deleteRole(roleToRemove.id))) {
-                player.sendMessage("$RED${plugin.language["CommandFactionRoleDeleteNoFactionPermission"]}")
-                return@Runnable
-            }
-            if (faction.members.any { it.role.id == roleToRemove.id }) {
-                player.sendMessage("$RED${plugin.language["CommandFactionRoleDeleteCannotDeleteWithMembersInRole"]}")
-                return@Runnable
-            }
-            if (faction.roles.defaultRoleId == roleToRemove.id) {
-                player.sendMessage("$RED${plugin.language["CommandFactionRoleDeleteCannotDeleteDefaultRole"]}")
-                return@Runnable
-            }
-            factionService.save(
-                faction.copy(
-                    roles = MfFactionRoles(
-                        faction.roles.defaultRoleId,
-                        faction.roles.filter { it.id != roleToRemove.id }
+                val roleToRemove = faction.roles.getRole(MfFactionRoleId(name)) ?: faction.roles.getRole(name)
+                if (roleToRemove == null) {
+                    player.sendMessage("$RED${plugin.language["CommandFactionRoleDeleteInvalidRole"]}")
+                    return@Runnable
+                }
+                val role = faction.getRole(mfPlayer.id)
+                if (role == null || !role.hasPermission(faction, plugin.factionPermissions.deleteRole(roleToRemove.id))) {
+                    player.sendMessage("$RED${plugin.language["CommandFactionRoleDeleteNoFactionPermission"]}")
+                    return@Runnable
+                }
+                if (faction.members.any { it.role.id == roleToRemove.id }) {
+                    player.sendMessage("$RED${plugin.language["CommandFactionRoleDeleteCannotDeleteWithMembersInRole"]}")
+                    return@Runnable
+                }
+                if (faction.roles.defaultRoleId == roleToRemove.id) {
+                    player.sendMessage("$RED${plugin.language["CommandFactionRoleDeleteCannotDeleteDefaultRole"]}")
+                    return@Runnable
+                }
+                factionService.save(
+                    faction.copy(
+                        roles = MfFactionRoles(
+                            faction.roles.defaultRoleId,
+                            faction.roles.filter { it.id != roleToRemove.id }
+                        )
                     )
-                )
-            ).onFailure {
-                player.sendMessage("$RED${plugin.language["CommandFactionRoleDeleteFailedToSaveFaction"]}")
-                plugin.logger.log(SEVERE, "Failed to save faction: ${it.reason.message}", it.reason.cause)
-                return@Runnable
+                ).onFailure {
+                    player.sendMessage("$RED${plugin.language["CommandFactionRoleDeleteFailedToSaveFaction"]}")
+                    plugin.logger.log(SEVERE, "Failed to save faction: ${it.reason.message}", it.reason.cause)
+                    return@Runnable
+                }
+                player.sendMessage("$GREEN${plugin.language["CommandFactionRoleDeleteSuccess", roleToRemove.name]}")
+                if (returnPage != null) {
+                    plugin.server.scheduler.runTask(
+                        plugin,
+                        Runnable {
+                            player.performCommand("faction role list $returnPage")
+                        }
+                    )
+                }
             }
-            player.sendMessage("$GREEN${plugin.language["CommandFactionRoleDeleteSuccess", roleToRemove.name]}")
-            if (returnPage != null) {
-                plugin.server.scheduler.runTask(plugin, Runnable {
-                    player.performCommand("faction role list $returnPage")
-                })
-            }
-        })
+        )
     }
 
     override fun onTabComplete(

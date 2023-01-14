@@ -100,21 +100,24 @@ class MfAccessorsRemoveCommand(private val plugin: MedievalFactions) : CommandEx
             return true
         }
         if (args.size < 3) {
-            plugin.server.scheduler.runTaskAsynchronously(plugin, Runnable {
-                val playerService = plugin.services.playerService
-                val mfPlayer = playerService.getPlayer(sender)
-                    ?: playerService.save(MfPlayer(plugin, sender)).onFailure {
-                        sender.sendMessage("$RED${plugin.language["CommandAccessorsRemoveFailedToSavePlayer"]}")
-                        plugin.logger.log(Level.SEVERE, "Failed to save player: ${it.reason.message}", it.reason.cause)
+            plugin.server.scheduler.runTaskAsynchronously(
+                plugin,
+                Runnable {
+                    val playerService = plugin.services.playerService
+                    val mfPlayer = playerService.getPlayer(sender)
+                        ?: playerService.save(MfPlayer(plugin, sender)).onFailure {
+                            sender.sendMessage("$RED${plugin.language["CommandAccessorsRemoveFailedToSavePlayer"]}")
+                            plugin.logger.log(Level.SEVERE, "Failed to save player: ${it.reason.message}", it.reason.cause)
+                            return@Runnable
+                        }
+                    val interactionService = plugin.services.interactionService
+                    interactionService.setInteractionStatus(mfPlayer.id, REMOVING_ACCESSOR).onFailure {
+                        sender.sendMessage("$RED${plugin.language["CommandAccessorsRemoveFailedToSetInteractionStatus"]}")
                         return@Runnable
                     }
-                val interactionService = plugin.services.interactionService
-                interactionService.setInteractionStatus(mfPlayer.id, REMOVING_ACCESSOR).onFailure {
-                    sender.sendMessage("$RED${plugin.language["CommandAccessorsRemoveFailedToSetInteractionStatus"]}")
-                    return@Runnable
+                    sender.sendMessage("${ChatColor.GREEN}${plugin.language["CommandAccessorsRemoveSelectBlock"]}")
                 }
-                sender.sendMessage("${ChatColor.GREEN}${plugin.language["CommandAccessorsRemoveSelectBlock"]}")
-            })
+            )
             return true
         }
         val (x, y, z) = args.take(3).map(String::toIntOrNull)
@@ -160,41 +163,47 @@ class MfAccessorsRemoveCommand(private val plugin: MedievalFactions) : CommandEx
     }
 
     private fun removeAccessor(sender: Player, blocks: List<Block>, accessor: OfflinePlayer) {
-        plugin.server.scheduler.runTaskAsynchronously(plugin, Runnable {
-            val playerService = plugin.services.playerService
-            val mfPlayer = playerService.getPlayer(sender)
-                ?: playerService.save(MfPlayer(plugin, sender)).onFailure {
-                    sender.sendMessage("$RED${plugin.language["CommandAccessorsRemoveFailedToSavePlayer"]}")
-                    plugin.logger.log(Level.SEVERE, "Failed to save player: ${it.reason.message}", it.reason.cause)
+        plugin.server.scheduler.runTaskAsynchronously(
+            plugin,
+            Runnable {
+                val playerService = plugin.services.playerService
+                val mfPlayer = playerService.getPlayer(sender)
+                    ?: playerService.save(MfPlayer(plugin, sender)).onFailure {
+                        sender.sendMessage("$RED${plugin.language["CommandAccessorsRemoveFailedToSavePlayer"]}")
+                        plugin.logger.log(Level.SEVERE, "Failed to save player: ${it.reason.message}", it.reason.cause)
+                        return@Runnable
+                    }
+                val accessorMfPlayer = playerService.getPlayer(accessor)
+                    ?: playerService.save(MfPlayer(plugin, accessor)).onFailure {
+                        sender.sendMessage("$RED${plugin.language["CommandAccessorsRemoveFailedToSavePlayer"]}")
+                        plugin.logger.log(Level.SEVERE, "Failed to save player: ${it.reason.message}", it.reason.cause)
+                        return@Runnable
+                    }
+                val lockService = plugin.services.lockService
+                val lockedBlocks = blocks.mapNotNull { lockService.getLockedBlock(MfBlockPosition.fromBukkitBlock(it)) }
+                val lockedBlock = lockedBlocks.firstOrNull()
+                if (lockedBlock == null) {
+                    sender.sendMessage("$RED${plugin.language["CommandAccessorsRemoveBlockNotLocked"]}")
                     return@Runnable
                 }
-            val accessorMfPlayer = playerService.getPlayer(accessor)
-                ?: playerService.save(MfPlayer(plugin, accessor)).onFailure {
-                    sender.sendMessage("$RED${plugin.language["CommandAccessorsRemoveFailedToSavePlayer"]}")
-                    plugin.logger.log(Level.SEVERE, "Failed to save player: ${it.reason.message}", it.reason.cause)
+                if (lockedBlock.playerId.value != mfPlayer.id.value && lockedBlock.accessors.none { it.value == mfPlayer.id.value }) {
+                    sender.sendMessage("$RED${plugin.language["CommandAccessorsRemoveMustHaveAccess"]}")
                     return@Runnable
                 }
-            val lockService = plugin.services.lockService
-            val lockedBlocks = blocks.mapNotNull { lockService.getLockedBlock(MfBlockPosition.fromBukkitBlock(it)) }
-            val lockedBlock = lockedBlocks.firstOrNull()
-            if (lockedBlock == null) {
-                sender.sendMessage("$RED${plugin.language["CommandAccessorsRemoveBlockNotLocked"]}")
-                return@Runnable
+                lockService.save(lockedBlock.copy(accessors = lockedBlock.accessors - accessorMfPlayer.id)).onFailure {
+                    sender.sendMessage("$RED${plugin.language["CommandAccessorsRemoveFailedToSaveLockedBlock"]}")
+                    plugin.logger.log(Level.SEVERE, "Failed to save locked block: ${it.reason.message}", it.reason.cause)
+                    return@Runnable
+                }
+                sender.sendMessage("${ChatColor.GREEN}${plugin.language["CommandAccessorsRemoveSuccess", accessor.name ?: plugin.language["UnknownPlayer"]]}")
+                plugin.server.scheduler.runTask(
+                    plugin,
+                    Runnable {
+                        sender.performCommand("accessors list ${lockedBlock.block.x} ${lockedBlock.block.y} ${lockedBlock.block.z}")
+                    }
+                )
             }
-            if (lockedBlock.playerId.value != mfPlayer.id.value && lockedBlock.accessors.none { it.value == mfPlayer.id.value }) {
-                sender.sendMessage("$RED${plugin.language["CommandAccessorsRemoveMustHaveAccess"]}")
-                return@Runnable
-            }
-            lockService.save(lockedBlock.copy(accessors = lockedBlock.accessors - accessorMfPlayer.id)).onFailure {
-                sender.sendMessage("$RED${plugin.language["CommandAccessorsRemoveFailedToSaveLockedBlock"]}")
-                plugin.logger.log(Level.SEVERE, "Failed to save locked block: ${it.reason.message}", it.reason.cause)
-                return@Runnable
-            }
-            sender.sendMessage("${ChatColor.GREEN}${plugin.language["CommandAccessorsRemoveSuccess", accessor.name ?: plugin.language["UnknownPlayer"]]}")
-            plugin.server.scheduler.runTask(plugin, Runnable {
-                sender.performCommand("accessors list ${lockedBlock.block.x} ${lockedBlock.block.y} ${lockedBlock.block.z}")
-            })
-        })
+        )
     }
 
     override fun onTabComplete(
@@ -204,10 +213,10 @@ class MfAccessorsRemoveCommand(private val plugin: MedievalFactions) : CommandEx
         args: Array<out String>
     ) = when {
         args.size <= 3 -> emptyList()
-        args.size == 4 -> plugin.server.offlinePlayers
-            .filter { it.name?.lowercase()?.startsWith(args[3].lowercase()) == true }
-            .mapNotNull { it.name }
+        args.size == 4 ->
+            plugin.server.offlinePlayers
+                .filter { it.name?.lowercase()?.startsWith(args[3].lowercase()) == true }
+                .mapNotNull { it.name }
         else -> emptyList()
     }
-
 }

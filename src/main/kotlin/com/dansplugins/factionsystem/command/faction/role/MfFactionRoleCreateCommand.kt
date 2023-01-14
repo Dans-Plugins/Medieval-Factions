@@ -59,7 +59,9 @@ class MfFactionRoleCreateCommand(private val plugin: MedievalFactions) : Command
         val returnPage = if (args.lastOrNull()?.startsWith("p=") == true) {
             lastArgOffset = 1
             args.last().substring("p=".length).toIntOrNull()
-        } else null
+        } else {
+            null
+        }
         if (args.dropLast(lastArgOffset).isEmpty()) {
             val conversation = conversationFactory.buildConversation(sender)
             conversation.context.setSessionData("page", returnPage)
@@ -71,64 +73,72 @@ class MfFactionRoleCreateCommand(private val plugin: MedievalFactions) : Command
     }
 
     private fun createRole(player: Player, name: String, returnPage: Int?) {
-        plugin.server.scheduler.runTaskAsynchronously(plugin, Runnable {
-            val playerService = plugin.services.playerService
-            val mfPlayer = playerService.getPlayer(player)
-                ?: playerService.save(MfPlayer(plugin, player)).onFailure {
-                    player.sendMessage("$RED${plugin.language["CommandFactionRoleCreateFailedToSavePlayer"]}")
-                    plugin.logger.log(SEVERE, "Failed to save player: ${it.reason.message}", it.reason.cause)
+        plugin.server.scheduler.runTaskAsynchronously(
+            plugin,
+            Runnable {
+                val playerService = plugin.services.playerService
+                val mfPlayer = playerService.getPlayer(player)
+                    ?: playerService.save(MfPlayer(plugin, player)).onFailure {
+                        player.sendMessage("$RED${plugin.language["CommandFactionRoleCreateFailedToSavePlayer"]}")
+                        plugin.logger.log(SEVERE, "Failed to save player: ${it.reason.message}", it.reason.cause)
+                        return@Runnable
+                    }
+                val factionService = plugin.services.factionService
+                val faction = factionService.getFaction(mfPlayer.id)
+                if (faction == null) {
+                    player.sendMessage("$RED${plugin.language["CommandFactionRoleCreateMustBeInAFaction"]}")
                     return@Runnable
                 }
-            val factionService = plugin.services.factionService
-            val faction = factionService.getFaction(mfPlayer.id)
-            if (faction == null) {
-                player.sendMessage("$RED${plugin.language["CommandFactionRoleCreateMustBeInAFaction"]}")
-                return@Runnable
-            }
-            val role = faction.getRole(mfPlayer.id)
-            if (role == null || !role.hasPermission(faction, plugin.factionPermissions.createRole)) {
-                player.sendMessage("$RED${plugin.language["CommandFactionRoleCreateNoFactionPermission"]}")
-                return@Runnable
-            }
-            if (faction.roles.any { it.name.equals(name, ignoreCase = true) }) {
-                player.sendMessage("$RED${plugin.language["CommandFactionRoleCreateRoleWithNameAlreadyExists"]}")
-                return@Runnable
-            }
-            val newRole = MfFactionRole(plugin, name = name)
-            factionService.save(
-                faction.copy(
-                    roles = MfFactionRoles(
-                        faction.roles.defaultRoleId,
-                        faction.roles.map { existingRole ->
-                            existingRole.copy(permissionsByName = existingRole.permissionsByName + buildMap {
-                                if (existingRole.hasPermission(faction, plugin.factionPermissions.viewRole(role.id))) {
-                                    put(plugin.factionPermissions.viewRole(newRole.id).name, true)
-                                }
-                                if (existingRole.hasPermission(faction, plugin.factionPermissions.modifyRole(role.id))) {
-                                    put(plugin.factionPermissions.modifyRole(newRole.id).name, true)
-                                }
-                                if (existingRole.hasPermission(faction, plugin.factionPermissions.setMemberRole(role.id))) {
-                                    put(plugin.factionPermissions.setMemberRole(newRole.id).name, true)
-                                }
-                                if (existingRole.hasPermission(faction, plugin.factionPermissions.modifyRole(role.id))) {
-                                    put(plugin.factionPermissions.deleteRole(newRole.id).name, true)
-                                }
-                            })
-                        } + newRole
+                val role = faction.getRole(mfPlayer.id)
+                if (role == null || !role.hasPermission(faction, plugin.factionPermissions.createRole)) {
+                    player.sendMessage("$RED${plugin.language["CommandFactionRoleCreateNoFactionPermission"]}")
+                    return@Runnable
+                }
+                if (faction.roles.any { it.name.equals(name, ignoreCase = true) }) {
+                    player.sendMessage("$RED${plugin.language["CommandFactionRoleCreateRoleWithNameAlreadyExists"]}")
+                    return@Runnable
+                }
+                val newRole = MfFactionRole(plugin, name = name)
+                factionService.save(
+                    faction.copy(
+                        roles = MfFactionRoles(
+                            faction.roles.defaultRoleId,
+                            faction.roles.map { existingRole ->
+                                existingRole.copy(
+                                    permissionsByName = existingRole.permissionsByName + buildMap {
+                                        if (existingRole.hasPermission(faction, plugin.factionPermissions.viewRole(role.id))) {
+                                            put(plugin.factionPermissions.viewRole(newRole.id).name, true)
+                                        }
+                                        if (existingRole.hasPermission(faction, plugin.factionPermissions.modifyRole(role.id))) {
+                                            put(plugin.factionPermissions.modifyRole(newRole.id).name, true)
+                                        }
+                                        if (existingRole.hasPermission(faction, plugin.factionPermissions.setMemberRole(role.id))) {
+                                            put(plugin.factionPermissions.setMemberRole(newRole.id).name, true)
+                                        }
+                                        if (existingRole.hasPermission(faction, plugin.factionPermissions.modifyRole(role.id))) {
+                                            put(plugin.factionPermissions.deleteRole(newRole.id).name, true)
+                                        }
+                                    }
+                                )
+                            } + newRole
+                        )
                     )
-                )
-            ).onFailure {
-                player.sendMessage("$RED${plugin.language["CommandFactionRoleCreateFailedToSaveFaction"]}")
-                plugin.logger.log(SEVERE, "Failed to save faction: ${it.reason.message}", it.reason.cause)
-                return@Runnable
+                ).onFailure {
+                    player.sendMessage("$RED${plugin.language["CommandFactionRoleCreateFailedToSaveFaction"]}")
+                    plugin.logger.log(SEVERE, "Failed to save faction: ${it.reason.message}", it.reason.cause)
+                    return@Runnable
+                }
+                player.sendMessage("$GREEN${plugin.language["CommandFactionRoleCreateSuccess", name]}")
+                if (returnPage != null) {
+                    plugin.server.scheduler.runTask(
+                        plugin,
+                        Runnable {
+                            player.performCommand("faction role list $returnPage")
+                        }
+                    )
+                }
             }
-            player.sendMessage("$GREEN${plugin.language["CommandFactionRoleCreateSuccess", name]}")
-            if (returnPage != null) {
-                plugin.server.scheduler.runTask(plugin, Runnable {
-                    player.performCommand("faction role list $returnPage")
-                })
-            }
-        })
+        )
     }
 
     override fun onTabComplete(

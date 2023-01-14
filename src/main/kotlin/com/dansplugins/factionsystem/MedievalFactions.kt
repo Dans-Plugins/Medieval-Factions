@@ -13,14 +13,24 @@ import com.dansplugins.factionsystem.command.gate.MfGateCommand
 import com.dansplugins.factionsystem.command.lock.MfLockCommand
 import com.dansplugins.factionsystem.command.power.MfPowerCommand
 import com.dansplugins.factionsystem.command.unlock.MfUnlockCommand
-import com.dansplugins.factionsystem.duel.*
+import com.dansplugins.factionsystem.duel.JooqMfDuelInviteRepository
+import com.dansplugins.factionsystem.duel.JooqMfDuelRepository
+import com.dansplugins.factionsystem.duel.MfDuelId
+import com.dansplugins.factionsystem.duel.MfDuelInviteRepository
+import com.dansplugins.factionsystem.duel.MfDuelRepository
+import com.dansplugins.factionsystem.duel.MfDuelService
 import com.dansplugins.factionsystem.dynmap.MfDynmapService
 import com.dansplugins.factionsystem.faction.JooqMfFactionRepository
 import com.dansplugins.factionsystem.faction.MfFactionRepository
 import com.dansplugins.factionsystem.faction.MfFactionService
 import com.dansplugins.factionsystem.faction.flag.MfFlags
 import com.dansplugins.factionsystem.faction.permission.MfFactionPermissions
-import com.dansplugins.factionsystem.gate.*
+import com.dansplugins.factionsystem.gate.JooqMfGateCreationContextRepository
+import com.dansplugins.factionsystem.gate.JooqMfGateRepository
+import com.dansplugins.factionsystem.gate.MfGate
+import com.dansplugins.factionsystem.gate.MfGateCreationContextRepository
+import com.dansplugins.factionsystem.gate.MfGateRepository
+import com.dansplugins.factionsystem.gate.MfGateService
 import com.dansplugins.factionsystem.gate.MfGateStatus.CLOSING
 import com.dansplugins.factionsystem.gate.MfGateStatus.OPENING
 import com.dansplugins.factionsystem.interaction.JooqMfInteractionStatusRepository
@@ -81,6 +91,7 @@ import net.md_5.bungee.api.ChatColor.GREEN
 import net.md_5.bungee.api.ChatMessageType.ACTION_BAR
 import net.md_5.bungee.api.chat.TextComponent
 import org.bstats.bukkit.Metrics
+import org.bstats.charts.SimplePie
 import org.bukkit.NamespacedKey
 import org.bukkit.boss.KeyedBossBar
 import org.bukkit.entity.Player
@@ -130,7 +141,12 @@ class MedievalFactions : JavaPlugin() {
         saveConfig()
 
         language = Language(this, config.getString("language") ?: "en-US")
-        Metrics(this, 8929)
+        val metrics = Metrics(this, 8929)
+        metrics.addCustomChart(
+            SimplePie("language_used") {
+                config.getString("language")
+            }
+        )
 
         Class.forName("org.h2.Driver")
         val hikariConfig = HikariConfig()
@@ -278,41 +294,47 @@ class MedievalFactions : JavaPlugin() {
             val onlineMfPlayerIds = onlinePlayers.map(MfPlayerId.Companion::fromBukkitPlayer)
             val disbandZeroPowerFactions = config.getBoolean("factions.zeroPowerFactionsGetDisbanded")
             val initialPower = config.getDouble("players.initialPower")
-            server.scheduler.runTaskAsynchronously(this, Runnable {
-                val originalOnlinePlayerPower =
-                    onlineMfPlayerIds.associateWith { playerService.getPlayer(it)?.power ?: initialPower }
-                playerService.updatePlayerPower(onlineMfPlayerIds).onFailure {
-                    logger.log(SEVERE, "Failed to update player power: ${it.reason.message}", it.reason.cause)
-                    return@Runnable
-                }
-                val newOnlinePlayerPower =
-                    onlineMfPlayerIds.associateWith { playerService.getPlayer(it)?.power ?: initialPower }
-                server.scheduler.runTask(this, Runnable {
-                    onlinePlayers.forEach { onlinePlayer ->
-                        val playerId = MfPlayerId.fromBukkitPlayer(onlinePlayer)
-                        val newPower = newOnlinePlayerPower[playerId] ?: initialPower
-                        val originalPower = originalOnlinePlayerPower[playerId] ?: initialPower
-                        val powerIncrease = floor(newPower).roundToInt() - floor(originalPower).roundToInt()
-                        if (powerIncrease > 0) {
-                            onlinePlayer.sendMessage("$GREEN${language["PowerIncreased", powerIncrease.toString()]}")
-                        }
+            server.scheduler.runTaskAsynchronously(
+                this,
+                Runnable {
+                    val originalOnlinePlayerPower =
+                        onlineMfPlayerIds.associateWith { playerService.getPlayer(it)?.power ?: initialPower }
+                    playerService.updatePlayerPower(onlineMfPlayerIds).onFailure {
+                        logger.log(SEVERE, "Failed to update player power: ${it.reason.message}", it.reason.cause)
+                        return@Runnable
                     }
-                })
-                if (disbandZeroPowerFactions) {
-                    factionService.factions.forEach { faction ->
-                        if (faction.power <= 0.0) {
-                            faction.sendMessage(
-                                language["FactionDisbandedZeroPowerNotificationTitle"],
-                                language["FactionDisbandedZeroPowerNotificationBody"]
-                            )
-                            factionService.delete(faction.id).onFailure {
-                                logger.log(SEVERE, "Failed to delete faction: ${it.reason.message}", it.reason.cause)
-                                return@Runnable
+                    val newOnlinePlayerPower =
+                        onlineMfPlayerIds.associateWith { playerService.getPlayer(it)?.power ?: initialPower }
+                    server.scheduler.runTask(
+                        this,
+                        Runnable {
+                            onlinePlayers.forEach { onlinePlayer ->
+                                val playerId = MfPlayerId.fromBukkitPlayer(onlinePlayer)
+                                val newPower = newOnlinePlayerPower[playerId] ?: initialPower
+                                val originalPower = originalOnlinePlayerPower[playerId] ?: initialPower
+                                val powerIncrease = floor(newPower).roundToInt() - floor(originalPower).roundToInt()
+                                if (powerIncrease > 0) {
+                                    onlinePlayer.sendMessage("$GREEN${language["PowerIncreased", powerIncrease.toString()]}")
+                                }
+                            }
+                        }
+                    )
+                    if (disbandZeroPowerFactions) {
+                        factionService.factions.forEach { faction ->
+                            if (faction.power <= 0.0) {
+                                faction.sendMessage(
+                                    language["FactionDisbandedZeroPowerNotificationTitle"],
+                                    language["FactionDisbandedZeroPowerNotificationBody"]
+                                )
+                                factionService.delete(faction.id).onFailure {
+                                    logger.log(SEVERE, "Failed to delete faction: ${it.reason.message}", it.reason.cause)
+                                    return@Runnable
+                                }
                             }
                         }
                     }
                 }
-            })
+            )
         }, (15 - (LocalTime.now().minute % 15)) * 60 * 20L, 18000L)
         server.scheduler.scheduleSyncRepeatingTask(this, {
             val gates = gateService.gates
@@ -374,17 +396,24 @@ class MedievalFactions : JavaPlugin() {
                         nearbyPlayers += challengedBukkitPlayer.world.players
                             .filter { it.location.distanceSquared(challengedBukkitPlayer.location) <= notificationDistanceSquared }
                     }
-                    nearbyPlayers.forEach { notifiedPlayer -> notifiedPlayer.sendMessage(language[
-                            "DuelTie",
-                            duel.challengerId.toBukkitPlayer().name ?: language["UnknownPlayer"],
-                            duel.challengedId.toBukkitPlayer().name ?: language["UnknownPlayer"]
-                    ]) }
-                    server.scheduler.runTaskAsynchronously(this, Runnable {
-                        duelService.delete(duel.id).onFailure {
-                            logger.log(SEVERE, "Failed to delete duel: ${it.reason.message}", it.reason.cause)
-                            return@Runnable
+                    nearbyPlayers.forEach { notifiedPlayer ->
+                        notifiedPlayer.sendMessage(
+                            language[
+                                "DuelTie",
+                                duel.challengerId.toBukkitPlayer().name ?: language["UnknownPlayer"],
+                                duel.challengedId.toBukkitPlayer().name ?: language["UnknownPlayer"]
+                            ]
+                        )
+                    }
+                    server.scheduler.runTaskAsynchronously(
+                        this,
+                        Runnable {
+                            duelService.delete(duel.id).onFailure {
+                                logger.log(SEVERE, "Failed to delete duel: ${it.reason.message}", it.reason.cause)
+                                return@Runnable
+                            }
                         }
-                    })
+                    )
                 }
             }
         }, 20L, 20L)
@@ -426,10 +455,9 @@ class MedievalFactions : JavaPlugin() {
     }
 
     private fun isChatPreviewEventAvailable() = try {
-        val previewClass = Class.forName("org.bukkit.event.player.AsyncPlayerChatPreviewEvent");
+        val previewClass = Class.forName("org.bukkit.event.player.AsyncPlayerChatPreviewEvent")
         AsyncPlayerChatEvent::class.java.isAssignableFrom(previewClass)
     } catch (exception: ClassNotFoundException) {
         false
     }
-
 }

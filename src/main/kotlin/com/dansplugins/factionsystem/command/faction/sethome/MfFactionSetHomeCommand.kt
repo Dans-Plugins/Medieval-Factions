@@ -24,38 +24,41 @@ class MfFactionSetHomeCommand(private val plugin: MedievalFactions) : CommandExe
             return true
         }
         val senderLocation = sender.location
-        plugin.server.scheduler.runTaskAsynchronously(plugin, Runnable {
-            val playerService = plugin.services.playerService
-            val mfPlayer = playerService.getPlayer(sender)
-                ?: playerService.save(MfPlayer(plugin, sender)).onFailure {
-                    sender.sendMessage("$RED${plugin.language["CommandFactionSetHomeFailedToSavePlayer"]}")
-                    plugin.logger.log(SEVERE, "Failed to save player: ${it.reason.message}", it.reason.cause)
+        plugin.server.scheduler.runTaskAsynchronously(
+            plugin,
+            Runnable {
+                val playerService = plugin.services.playerService
+                val mfPlayer = playerService.getPlayer(sender)
+                    ?: playerService.save(MfPlayer(plugin, sender)).onFailure {
+                        sender.sendMessage("$RED${plugin.language["CommandFactionSetHomeFailedToSavePlayer"]}")
+                        plugin.logger.log(SEVERE, "Failed to save player: ${it.reason.message}", it.reason.cause)
+                        return@Runnable
+                    }
+                val factionService = plugin.services.factionService
+                val faction = factionService.getFaction(mfPlayer.id)
+                if (faction == null) {
+                    sender.sendMessage("$RED${plugin.language["CommandFactionSetHomeMustBeInAFaction"]}")
                     return@Runnable
                 }
-            val factionService = plugin.services.factionService
-            val faction = factionService.getFaction(mfPlayer.id)
-            if (faction == null) {
-                sender.sendMessage("$RED${plugin.language["CommandFactionSetHomeMustBeInAFaction"]}")
-                return@Runnable
+                val role = faction.getRole(mfPlayer.id)
+                if (role == null || !role.hasPermission(faction, plugin.factionPermissions.setHome)) {
+                    sender.sendMessage("$RED${plugin.language["CommandFactionSetHomeNoFactionPermission"]}")
+                    return@Runnable
+                }
+                val claimService = plugin.services.claimService
+                val claim = claimService.getClaim(senderLocation.chunk)
+                if (claim == null || claim.factionId.value != faction.id.value) {
+                    sender.sendMessage("$RED${plugin.language["CommandFactionSetHomeNoClaim"]}")
+                    return@Runnable
+                }
+                factionService.save(faction.copy(home = MfPosition.fromBukkitLocation(senderLocation))).onFailure {
+                    sender.sendMessage("$RED${plugin.language["CommandFactionSetHomeFailedToSaveFaction"]}")
+                    plugin.logger.log(SEVERE, "Failed to save faction: ${it.reason.message}", it.reason.cause)
+                    return@Runnable
+                }
+                sender.sendMessage("$GREEN${plugin.language["CommandFactionSetHomeSuccessful"]}")
             }
-            val role = faction.getRole(mfPlayer.id)
-            if (role == null || !role.hasPermission(faction, plugin.factionPermissions.setHome)) {
-                sender.sendMessage("$RED${plugin.language["CommandFactionSetHomeNoFactionPermission"]}")
-                return@Runnable
-            }
-            val claimService = plugin.services.claimService
-            val claim = claimService.getClaim(senderLocation.chunk)
-            if (claim == null || claim.factionId.value != faction.id.value) {
-                sender.sendMessage("$RED${plugin.language["CommandFactionSetHomeNoClaim"]}")
-                return@Runnable
-            }
-            factionService.save(faction.copy(home = MfPosition.fromBukkitLocation(senderLocation))).onFailure {
-                sender.sendMessage("$RED${plugin.language["CommandFactionSetHomeFailedToSaveFaction"]}")
-                plugin.logger.log(SEVERE, "Failed to save faction: ${it.reason.message}", it.reason.cause)
-                return@Runnable
-            }
-            sender.sendMessage("$GREEN${plugin.language["CommandFactionSetHomeSuccessful"]}")
-        })
+        )
         return true
     }
 

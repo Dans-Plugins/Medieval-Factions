@@ -22,7 +22,7 @@ import org.bukkit.entity.Player
 import preponderous.ponder.command.unquote
 import java.util.logging.Level
 
-class MfFactionSetNameCommand(private val plugin: MedievalFactions): CommandExecutor, TabCompleter {
+class MfFactionSetNameCommand(private val plugin: MedievalFactions) : CommandExecutor, TabCompleter {
 
     private val conversationFactory = ConversationFactory(plugin)
         .withModality(true)
@@ -71,63 +71,69 @@ class MfFactionSetNameCommand(private val plugin: MedievalFactions): CommandExec
         val onlinePlayers = plugin.server.onlinePlayers.associateWith { it.location.chunk }
         val hasForcePermission = player.hasPermission("mf.force.rename")
         val maxFactionNameLength = plugin.config.getInt("factions.maxNameLength")
-        plugin.server.scheduler.runTaskAsynchronously(plugin, Runnable {
-            val playerService = plugin.services.playerService
-            val mfPlayer = playerService.getPlayer(player)
-                ?: playerService.save(MfPlayer(plugin, player)).onFailure {
-                    player.sendMessage("$RED${plugin.language["CommandFactionSetNameFailedToSavePlayer"]}")
-                    plugin.logger.log(Level.SEVERE, "Failed to save player: ${it.reason.message}", it.reason.cause)
+        plugin.server.scheduler.runTaskAsynchronously(
+            plugin,
+            Runnable {
+                val playerService = plugin.services.playerService
+                val mfPlayer = playerService.getPlayer(player)
+                    ?: playerService.save(MfPlayer(plugin, player)).onFailure {
+                        player.sendMessage("$RED${plugin.language["CommandFactionSetNameFailedToSavePlayer"]}")
+                        plugin.logger.log(Level.SEVERE, "Failed to save player: ${it.reason.message}", it.reason.cause)
+                        return@Runnable
+                    }
+                val factionService = plugin.services.factionService
+                var faction: MfFaction? = null
+                var name = ""
+                if (hasForcePermission) {
+                    val unquotedArgs = args.unquote()
+                    if (unquotedArgs.size > 1) {
+                        faction = factionService.getFaction(MfFactionId(unquotedArgs[0])) ?: factionService.getFaction(unquotedArgs[0])
+                        name = unquotedArgs.drop(1).joinToString(" ")
+                    }
+                }
+                if (faction == null) {
+                    faction = factionService.getFaction(mfPlayer.id)
+                    name = args.joinToString(" ")
+                }
+                if (name.length > maxFactionNameLength) {
+                    player.sendMessage("$RED${plugin.language["CommandFactionSetNameNameTooLong", maxFactionNameLength.toString()]}")
                     return@Runnable
                 }
-            val factionService = plugin.services.factionService
-            var faction: MfFaction? = null
-            var name = ""
-            if (hasForcePermission) {
-                val unquotedArgs = args.unquote()
-                if (unquotedArgs.size > 1) {
-                    faction = factionService.getFaction(MfFactionId(unquotedArgs[0])) ?: factionService.getFaction(unquotedArgs[0])
-                    name = unquotedArgs.drop(1).joinToString(" ")
+                if (faction == null) {
+                    player.sendMessage("$RED${plugin.language["CommandFactionSetNameMustBeInAFaction"]}")
+                    return@Runnable
                 }
-            }
-            if (faction == null) {
-                faction = factionService.getFaction(mfPlayer.id)
-                name = args.joinToString(" ")
-            }
-            if (name.length > maxFactionNameLength) {
-                player.sendMessage("$RED${plugin.language["CommandFactionSetNameNameTooLong", maxFactionNameLength.toString()]}")
-                return@Runnable
-            }
-            if (faction == null) {
-                player.sendMessage("$RED${plugin.language["CommandFactionSetNameMustBeInAFaction"]}")
-                return@Runnable
-            }
-            val role = faction.getRole(mfPlayer.id)
-            if (role == null || !role.hasPermission(faction, plugin.factionPermissions.changeName)) {
-                player.sendMessage("$RED${plugin.language["CommandFactionSetNameNoFactionPermission"]}")
-                return@Runnable
-            }
-            val updatedFaction = factionService.save(faction.copy(name = name)).onFailure {
-                player.sendMessage("$RED${plugin.language["CommandFactionSetNameFailedToSaveFaction"]}")
-                plugin.logger.log(Level.SEVERE, "Failed to save faction: ${it.reason.message}", it.reason.cause)
-                return@Runnable
-            }
-            player.sendMessage("$GREEN${plugin.language["CommandFactionSetNameSuccess", name]}")
-            plugin.server.scheduler.runTask(plugin, Runnable {
-                player.performCommand("faction info")
-            })
-            val claimService = plugin.services.claimService
-            onlinePlayers.filter { (_, chunk) -> claimService.getClaim(chunk)?.factionId == updatedFaction.id }
-                .forEach { (player, _) ->
-                    val title = "${ChatColor.of(updatedFaction.flags[plugin.flags.color])}${updatedFaction.name}"
-                    if (plugin.config.getBoolean("factions.titleTerritoryIndicator")) {
-                        player.resetTitle()
-                        player.sendTitle(title, null, 10, 70, 20)
-                    }
-                    if (plugin.config.getBoolean("factions.actionBarTerritoryIndicator")) {
-                        player.spigot().sendMessage(ACTION_BAR, *TextComponent.fromLegacyText(title))
-                    }
+                val role = faction.getRole(mfPlayer.id)
+                if (role == null || !role.hasPermission(faction, plugin.factionPermissions.changeName)) {
+                    player.sendMessage("$RED${plugin.language["CommandFactionSetNameNoFactionPermission"]}")
+                    return@Runnable
                 }
-        })
+                val updatedFaction = factionService.save(faction.copy(name = name)).onFailure {
+                    player.sendMessage("$RED${plugin.language["CommandFactionSetNameFailedToSaveFaction"]}")
+                    plugin.logger.log(Level.SEVERE, "Failed to save faction: ${it.reason.message}", it.reason.cause)
+                    return@Runnable
+                }
+                player.sendMessage("$GREEN${plugin.language["CommandFactionSetNameSuccess", name]}")
+                plugin.server.scheduler.runTask(
+                    plugin,
+                    Runnable {
+                        player.performCommand("faction info")
+                    }
+                )
+                val claimService = plugin.services.claimService
+                onlinePlayers.filter { (_, chunk) -> claimService.getClaim(chunk)?.factionId == updatedFaction.id }
+                    .forEach { (player, _) ->
+                        val title = "${ChatColor.of(updatedFaction.flags[plugin.flags.color])}${updatedFaction.name}"
+                        if (plugin.config.getBoolean("factions.titleTerritoryIndicator")) {
+                            player.resetTitle()
+                            player.sendTitle(title, null, 10, 70, 20)
+                        }
+                        if (plugin.config.getBoolean("factions.actionBarTerritoryIndicator")) {
+                            player.spigot().sendMessage(ACTION_BAR, *TextComponent.fromLegacyText(title))
+                        }
+                    }
+            }
+        )
     }
 
     override fun onTabComplete(

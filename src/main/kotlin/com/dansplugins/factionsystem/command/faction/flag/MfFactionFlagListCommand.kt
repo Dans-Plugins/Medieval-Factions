@@ -29,70 +29,81 @@ class MfFactionFlagListCommand(private val plugin: MedievalFactions) : CommandEx
             sender.sendMessage("${BukkitChatColor.RED}${plugin.language["CommandFactionFlagListNotAPlayer"]}")
             return true
         }
-        plugin.server.scheduler.runTaskAsynchronously(plugin, Runnable {
-            val playerService = plugin.services.playerService
-            val mfPlayer = playerService.getPlayer(sender)
-                ?: playerService.save(MfPlayer(plugin, sender)).onFailure {
-                    sender.sendMessage("${BukkitChatColor.RED}${plugin.language["CommandFactionFlagListFailedToSavePlayer"]}")
-                    plugin.logger.log(SEVERE, "Failed to save player: ${it.reason.message}", it.reason.cause)
+        plugin.server.scheduler.runTaskAsynchronously(
+            plugin,
+            Runnable {
+                val playerService = plugin.services.playerService
+                val mfPlayer = playerService.getPlayer(sender)
+                    ?: playerService.save(MfPlayer(plugin, sender)).onFailure {
+                        sender.sendMessage("${BukkitChatColor.RED}${plugin.language["CommandFactionFlagListFailedToSavePlayer"]}")
+                        plugin.logger.log(SEVERE, "Failed to save player: ${it.reason.message}", it.reason.cause)
+                        return@Runnable
+                    }
+                val factionService = plugin.services.factionService
+                val faction = factionService.getFaction(mfPlayer.id)
+                if (faction == null) {
+                    sender.sendMessage("${BukkitChatColor.RED}${plugin.language["CommandFactionFlagListMustBeInAFaction"]}")
                     return@Runnable
                 }
-            val factionService = plugin.services.factionService
-            val faction = factionService.getFaction(mfPlayer.id)
-            if (faction == null) {
-                sender.sendMessage("${BukkitChatColor.RED}${plugin.language["CommandFactionFlagListMustBeInAFaction"]}")
-                return@Runnable
-            }
-            val role = faction.getRole(mfPlayer.id)
-            if (role == null || !role.hasPermission(faction, plugin.factionPermissions.viewFlags)) {
-                sender.sendMessage("${BukkitChatColor.RED}${plugin.language["CommandFactionFlagListNoFactionPermission"]}")
-                return@Runnable
-            }
-            val pageNumber = args.lastOrNull()?.toIntOrNull()?.minus(1) ?: 0
-            val view = PaginatedView(
-                plugin.language,
-                lazy {
-                    arrayOf(
-                        TextComponent(plugin.language["CommandFactionFlagListTitle", faction.name]).apply {
-                            color = SpigotChatColor.AQUA
-                            isBold = true
-                        }
-                    )
-                },
-                plugin.flags.map { flag ->
-                    lazy {
-                        val flagValue = faction.flags[flag]
-                        buildList {
-                            add(TextComponent(flag.name).apply {
-                                color = SpigotChatColor.GRAY
-                            })
-                            add(TextComponent(" (${flag.type.simpleName}): ").apply {
-                                color = SpigotChatColor.GRAY
-                            })
-                            add(TextComponent("$flagValue ").apply {
-                                color = SpigotChatColor.WHITE
-                            })
-                            if (sender.hasPermission("mf.flag.set") && role.hasPermission(faction, plugin.factionPermissions.setFlag(flag))) {
-                                add(TextComponent("(${plugin.language["CommandFactionFlagListSet"]})").apply {
-                                    color = SpigotChatColor.GREEN
-                                    hoverEvent = HoverEvent(
-                                        SHOW_TEXT,
-                                        Text(plugin.language["CommandFactionFlagListSetHover", flag.name])
-                                    )
-                                    clickEvent =
-                                        ClickEvent(RUN_COMMAND, "/faction flag set ${flag.name} p=${pageNumber + 1}")
-                                })
-                            }
-                        }.toTypedArray()
-                    }
+                val role = faction.getRole(mfPlayer.id)
+                if (role == null || !role.hasPermission(faction, plugin.factionPermissions.viewFlags)) {
+                    sender.sendMessage("${BukkitChatColor.RED}${plugin.language["CommandFactionFlagListNoFactionPermission"]}")
+                    return@Runnable
                 }
-            ) { page -> "/faction flag list ${page + 1}" }
-            if (pageNumber !in view.pages.indices) {
-                sender.sendMessage("${BukkitChatColor.RED}${plugin.language["CommandFactionFlagListInvalidPageNumber"]}")
-                return@Runnable
+                val pageNumber = args.lastOrNull()?.toIntOrNull()?.minus(1) ?: 0
+                val view = PaginatedView(
+                    plugin.language,
+                    lazy {
+                        arrayOf(
+                            TextComponent(plugin.language["CommandFactionFlagListTitle", faction.name]).apply {
+                                color = SpigotChatColor.AQUA
+                                isBold = true
+                            }
+                        )
+                    },
+                    plugin.flags.map { flag ->
+                        lazy {
+                            val flagValue = faction.flags[flag]
+                            buildList {
+                                add(
+                                    TextComponent(flag.name).apply {
+                                        color = SpigotChatColor.GRAY
+                                    }
+                                )
+                                add(
+                                    TextComponent(" (${flag.type.simpleName}): ").apply {
+                                        color = SpigotChatColor.GRAY
+                                    }
+                                )
+                                add(
+                                    TextComponent("$flagValue ").apply {
+                                        color = SpigotChatColor.WHITE
+                                    }
+                                )
+                                if (sender.hasPermission("mf.flag.set") && role.hasPermission(faction, plugin.factionPermissions.setFlag(flag))) {
+                                    add(
+                                        TextComponent("(${plugin.language["CommandFactionFlagListSet"]})").apply {
+                                            color = SpigotChatColor.GREEN
+                                            hoverEvent = HoverEvent(
+                                                SHOW_TEXT,
+                                                Text(plugin.language["CommandFactionFlagListSetHover", flag.name])
+                                            )
+                                            clickEvent =
+                                                ClickEvent(RUN_COMMAND, "/faction flag set ${flag.name} p=${pageNumber + 1}")
+                                        }
+                                    )
+                                }
+                            }.toTypedArray()
+                        }
+                    }
+                ) { page -> "/faction flag list ${page + 1}" }
+                if (pageNumber !in view.pages.indices) {
+                    sender.sendMessage("${BukkitChatColor.RED}${plugin.language["CommandFactionFlagListInvalidPageNumber"]}")
+                    return@Runnable
+                }
+                view.sendPage(sender, pageNumber)
             }
-            view.sendPage(sender, pageNumber)
-        })
+        )
         return true
     }
 

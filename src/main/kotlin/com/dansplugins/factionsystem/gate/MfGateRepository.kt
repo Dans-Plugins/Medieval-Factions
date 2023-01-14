@@ -9,5 +9,4 @@ interface MfGateRepository {
     fun upsert(gate: MfGate): MfGate
     fun delete(gateId: MfGateId)
     fun deleteAll(factionId: MfFactionId)
-
 }
