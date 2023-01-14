@@ -5,6 +5,7 @@ import com.dansplugins.factionsystem.area.MfBlockPosition
 import com.dansplugins.factionsystem.player.MfPlayer
 import dev.forkhandles.result4k.onFailure
 import org.bukkit.ChatColor.RED
+import org.bukkit.Color.GREEN
 import org.bukkit.event.EventHandler
 import org.bukkit.event.Listener
 import org.bukkit.event.block.BlockBreakEvent
@@ -52,9 +53,36 @@ class BlockBreakListener(private val plugin: MedievalFactions) : Listener {
         val lockService = plugin.services.lockService
         val lockedBlock = lockService.getLockedBlock(blockPosition) ?: return
         if (lockedBlock.playerId == mfPlayer.id) {
-            lockService.unlock(event.player, event.block)
-        }
-        else {
+            if (lockedBlock.playerId.value != mfPlayer.id.value) {
+                val lockOwner = playerService.getPlayer(lockedBlock.playerId)
+                val ownerName = if (lockOwner == null) {
+                    plugin.language["UnknownPlayer"]
+                } else {
+                    lockOwner.toBukkit().name ?: plugin.language["UnknownPlayer"]
+                }
+                if (!event.player.hasPermission("mf.force.unlock")) {
+                    event.player.sendMessage("$RED${plugin.language["BlockUnlockOwnedByOtherPlayer", ownerName]}")
+                    return
+                } else {
+                    event.player.sendMessage("$RED${plugin.language["BlockUnlockProtectionBypassed", ownerName]}")
+                }
+            }
+            lockService.unlock(event.block)
+            val result = lockService.unlock(event.block)
+            when (result) {
+                0 -> {
+                    event.player.sendMessage("$GREEN${plugin.language["BlockUnlockSuccessful"]}")
+                }
+
+                1 -> {
+                    event.player.sendMessage("$RED${plugin.language["BlockNotLocked"]}")
+                }
+
+                2 -> {
+                    event.player.sendMessage("$RED${plugin.language["BlockUnlockFailedToSaveLockedBlock"]}")
+                }
+            }
+        } else {
             event.isCancelled = true
             val owner = playerService.getPlayer(lockedBlock.playerId)
             event.player.sendMessage("$RED${plugin.language["BlockLocked", owner?.toBukkit()?.name ?: plugin.language["UnknownPlayer"]]}")

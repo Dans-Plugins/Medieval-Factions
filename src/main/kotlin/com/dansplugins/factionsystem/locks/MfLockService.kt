@@ -14,7 +14,6 @@ import dev.forkhandles.result4k.resultFrom
 import org.bukkit.block.Chest
 import org.bukkit.block.DoubleChest
 import org.bukkit.block.data.Bisected
-import org.bukkit.entity.Player
 import java.util.concurrent.ConcurrentHashMap
 import org.bukkit.block.data.Bisected.Half.BOTTOM
 import org.bukkit.block.BlockFace.DOWN
@@ -22,7 +21,6 @@ import org.bukkit.block.BlockFace.UP
 import org.bukkit.block.Block
 import com.dansplugins.factionsystem.interaction.MfInteractionStatus.*
 import dev.forkhandles.result4k.onFailure
-import org.bukkit.ChatColor.RED
 import java.util.logging.Level.SEVERE
 
 class MfLockService(private val plugin: MedievalFactions, private val repository: MfLockRepository) {
@@ -55,7 +53,7 @@ class MfLockService(private val plugin: MedievalFactions, private val repository
         ServiceFailure(exception.toServiceFailureType(), "Service error: ${exception.message}", exception)
     }
 
-    public fun unlock(player: Player, block: Block) {
+    fun unlock(block: Block): Int {
         val blockData = block.blockData
         val holder = (block.state as? Chest)?.inventory?.holder
         val blocks = if (blockData is Bisected) {
@@ -71,46 +69,21 @@ class MfLockService(private val plugin: MedievalFactions, private val repository
         } else {
             listOf(block)
         }
+        var toReturn = 0
         plugin.server.scheduler.runTaskAsynchronously(plugin, Runnable {
-            val playerService = plugin.services.playerService
-            val mfPlayer = playerService.getPlayer(player) ?: playerService.save(MfPlayer(plugin, player)).onFailure {
-                player.sendMessage("$RED${plugin.language["BlockUnlockFailedToSavePlayer"]}")
-                plugin.logger.log(SEVERE, "Failed to save player: ${it.reason.message}", it.reason.cause)
-                return@Runnable
-            }
             val lockedBlocks = blocks.mapNotNull { getLockedBlock(MfBlockPosition.fromBukkitBlock(it)) }
             val lockedBlock = lockedBlocks.firstOrNull()
             if (lockedBlock == null) {
-                player.sendMessage("$RED${plugin.language["BlockUnlockNotLocked"]}")
+                toReturn = 1
                 return@Runnable
-            }
-            if (lockedBlock.playerId.value != mfPlayer.id.value) {
-                val lockOwner = playerService.getPlayer(lockedBlock.playerId)
-                val ownerName = if (lockOwner == null) {
-                    plugin.language["UnknownPlayer"]
-                } else {
-                    lockOwner.toBukkit().name ?: plugin.language["UnknownPlayer"]
-                }
-                if (!player.hasPermission("mf.force.unlock")) {
-                    player.sendMessage("$RED${plugin.language["BlockUnlockOwnedByOtherPlayer", ownerName]}")
-                    return@Runnable
-                } else {
-                    player.sendMessage("$RED${plugin.language["BlockUnlockProtectionBypassed", ownerName]}")
-                }
             }
             delete(lockedBlock.block).onFailure {
-                player.sendMessage("$RED${plugin.language["BlockUnlockFailedToDeleteBlock"]}")
                 plugin.logger.log(SEVERE, "Failed to delete block: ${it.reason.message}", it.reason.cause)
+                toReturn = 2
                 return@Runnable
             }
-            val interactionService = plugin.services.interactionService
-            interactionService.setInteractionStatus(mfPlayer.id, null).onFailure {
-                player.sendMessage("$RED${plugin.language["BlockUnlockFailedToSetInteractionStatus"]}")
-                plugin.logger.log(SEVERE, "Failed to save interaction status: ${it.reason.message}", it.reason.cause)
-                return@Runnable
-            }
-            player.sendMessage("$RED${plugin.language["BlockUnlockSuccessful"]}")
         })
+        return toReturn
     }
 
     fun save(lockedBlock: MfLockedBlock): Result4k<MfLockedBlock, ServiceFailure> = resultFrom {

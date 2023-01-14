@@ -210,7 +210,39 @@ class PlayerInteractListener(private val plugin: MedievalFactions) : Listener {
 
     private fun unlock(player: Player, block: Block) {
         val lockService = plugin.services.lockService
-        lockService.unlock(player, block)
+        val lockedBlock = lockService.getLockedBlock(MfBlockPosition.fromBukkitBlock(block))
+        if (lockedBlock == null) {
+            player.sendMessage("$RED${plugin.language["BlockUnlockNotLocked"]}")
+            return
+        }
+        val playerService = plugin.services.playerService
+        val mfPlayer = playerService.getPlayer(player) ?: return
+        if (lockedBlock.playerId.value != mfPlayer.id.value) {
+            val lockOwner = playerService.getPlayer(lockedBlock.playerId)
+            val ownerName = if (lockOwner == null) {
+                plugin.language["UnknownPlayer"]
+            } else {
+                lockOwner.toBukkit().name ?: plugin.language["UnknownPlayer"]
+            }
+            if (!player.hasPermission("mf.force.unlock")) {
+                player.sendMessage("$RED${plugin.language["BlockUnlockOwnedByOtherPlayer", ownerName]}")
+                return
+            } else {
+                player.sendMessage("$RED${plugin.language["BlockUnlockProtectionBypassed", ownerName]}")
+            }
+        }
+        val result = lockService.unlock(block)
+        when (result) {
+            0 -> {
+                player.sendMessage("$GREEN${plugin.language["BlockUnlockSuccessful"]}")
+            }
+            1 -> {
+                player.sendMessage("$RED${plugin.language["BlockNotLocked"]}")
+            }
+            2 -> {
+                player.sendMessage("$RED${plugin.language["BlockUnlockFailedToSaveLockedBlock"]}")
+            }
+        }
     }
 
     private fun checkAccess(player: Player, block: Block) {
