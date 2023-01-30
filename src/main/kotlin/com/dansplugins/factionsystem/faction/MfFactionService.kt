@@ -127,7 +127,7 @@ class MfFactionService(private val plugin: MedievalFactions, private val reposit
             plugin.server.scheduler.runTask(
                 plugin,
                 Runnable {
-                    dynmapService.updateClaims(result)
+                    dynmapService.scheduleUpdateClaims(result)
                 }
             )
         }

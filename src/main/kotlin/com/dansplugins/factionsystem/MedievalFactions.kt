@@ -250,7 +250,7 @@ class MedievalFactions : JavaPlugin() {
 
         if (dynmapService != null) {
             factionService.factions.forEach { faction ->
-                dynmapService.updateClaims(faction)
+                dynmapService.scheduleUpdateClaims(faction)
             }
         }
 

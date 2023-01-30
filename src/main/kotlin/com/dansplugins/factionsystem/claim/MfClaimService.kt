@@ -111,7 +111,7 @@ class MfClaimService(private val plugin: MedievalFactions, private val repositor
             plugin.server.scheduler.runTask(
                 plugin,
                 Runnable {
-                    dynmapService.updateClaims(faction)
+                    dynmapService.scheduleUpdateClaims(faction)
                 }
             )
         }
@@ -156,7 +156,7 @@ class MfClaimService(private val plugin: MedievalFactions, private val repositor
                 plugin.server.scheduler.runTask(
                     plugin,
                     Runnable {
-                        dynmapService.updateClaims(faction)
+                        dynmapService.scheduleUpdateClaims(faction)
                     }
                 )
             }

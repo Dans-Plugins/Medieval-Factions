@@ -57,7 +57,7 @@ class MfPlayerService(private val plugin: MedievalFactions, private val playerRe
                 plugin.server.scheduler.runTask(
                     plugin,
                     Runnable {
-                        dynmapService.updateClaims(faction)
+                        dynmapService.scheduleUpdateClaims(faction)
                     }
                 )
             }
@@ -80,7 +80,7 @@ class MfPlayerService(private val plugin: MedievalFactions, private val playerRe
                     plugin.server.scheduler.runTask(
                         plugin,
                         Runnable {
-                            dynmapService.updateClaims(faction)
+                            dynmapService.scheduleUpdateClaims(faction)
                         }
                     )
                 }
