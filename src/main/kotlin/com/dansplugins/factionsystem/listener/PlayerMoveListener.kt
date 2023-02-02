@@ -41,18 +41,19 @@ class PlayerMoveListener(private val plugin: MedievalFactions) : Listener {
                         val playerRole = playerFaction.getRole(mfPlayer.id) ?: return@Runnable
                         val claimPermissionValue = playerRole.getPermissionValue(plugin.factionPermissions.claim) ?: return@Runnable
                         if (!claimPermissionValue || !event.player.hasPermission("mf.claim")) {
-                            if (plugin.config.getBoolean("factions.limitLand") && claimService.getClaims(playerFaction.id).size + 1 > playerFaction.power) {
-                                event.player.sendMessage("$RED${plugin.language["AutoclaimPowerLimitReached"]}")
-                                val updatedFaction = factionService.save(playerFaction.copy(autoclaim = false)).onFailure {
-                                    plugin.logger.log(SEVERE, "Failed to save faction: ${it.reason.message}", it.reason.cause)
-                                    return@Runnable
-                                }
-                                updatedFaction.sendMessage(
-                                    plugin.language["AutoclaimDisabledNotificationTitle"],
-                                    plugin.language["AutoclaimDisabledNotificationBody"]
-                                )
+                            return@Runnable
+                        }
+                        if (plugin.config.getBoolean("factions.limitLand") && claimService.getClaims(playerFaction.id).size + 1 > playerFaction.power) {
+                            event.player.sendMessage("$RED${plugin.language["AutoclaimPowerLimitReached"]}")
+                            val updatedFaction = factionService.save(playerFaction.copy(autoclaim = false)).onFailure {
+                                plugin.logger.log(SEVERE, "Failed to save faction: ${it.reason.message}", it.reason.cause)
                                 return@Runnable
                             }
+                            updatedFaction.sendMessage(
+                                plugin.language["AutoclaimDisabledNotificationTitle"],
+                                plugin.language["AutoclaimDisabledNotificationBody"]
+                            )
+                            return@Runnable
                         }
                         if (plugin.config.getBoolean("factions.contiguousClaims") &&
                             !claimService.isClaimAdjacent(playerFaction.id, *listOfNotNull(to.world?.let { MfChunkPosition(it.uid, to.chunk.x, to.chunk.z) }).toTypedArray()) &&

@@ -84,3 +84,5 @@ chat:
 duels:
   duration: PT2M
   notificationDistance: 64
+dev:
+  enableDevCommands: false
