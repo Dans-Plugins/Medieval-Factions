@@ -19,7 +19,7 @@ class Language(plugin: MedievalFactions, private val language: String) {
 
         val filenames = listOf("lang_en_US", "lang_en_GB", "lang_fr_FR", "lang_de_DE")
 
-        filenames.forEach {filename ->
+        filenames.forEach { filename ->
             val filepath = "lang/$filename.properties"
             val file = File(plugin.dataFolder, filepath)
             if (!file.exists()) {
