@@ -18,25 +18,25 @@ class Language(plugin: MedievalFactions, private val language: String) {
         }
 
         val enUsFilename = "lang/lang_en_US.properties"
-        val enUsFile = File(enUsFilename)
+        val enUsFile = File(plugin.dataFolder, enUsFilename)
         if (!enUsFile.exists()) {
             plugin.saveResource(enUsFilename, false)
         }
 
         val enGbFilename = "lang/lang_en_GB.properties"
-        val enGbFile = File(enGbFilename)
+        val enGbFile = File(plugin.dataFolder, enGbFilename)
         if (!enGbFile.exists()) {
             plugin.saveResource(enGbFilename, false)
         }
 
         val frFrFilename = "lang/lang_fr_FR.properties"
-        val frFrFile = File(frFrFilename)
+        val frFrFile = File(plugin.dataFolder, frFrFilename)
         if (!frFrFile.exists()) {
             plugin.saveResource(frFrFilename, false)
         }
 
         val deDeFilename = "lang/lang_de_DE.properties"
-        val deDeFile = File(deDeFilename)
+        val deDeFile = File(plugin.dataFolder, deDeFilename)
         if (!deDeFile.exists()) {
             plugin.saveResource(deDeFilename, false)
         }
