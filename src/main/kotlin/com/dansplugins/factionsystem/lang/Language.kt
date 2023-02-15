@@ -17,28 +17,14 @@ class Language(plugin: MedievalFactions, private val language: String) {
             languageFolder.mkdirs()
         }
 
-        val enUsFilename = "lang/lang_en_US.properties"
-        val enUsFile = File(enUsFilename)
-        if (!enUsFile.exists()) {
-            plugin.saveResource(enUsFilename, false)
-        }
+        val filenames = listOf("lang_en_US", "lang_en_GB", "lang_fr_FR", "lang_de_DE")
 
-        val enGbFilename = "lang/lang_en_GB.properties"
-        val enGbFile = File(enGbFilename)
-        if (!enGbFile.exists()) {
-            plugin.saveResource(enGbFilename, false)
-        }
-
-        val frFrFilename = "lang/lang_fr_FR.properties"
-        val frFrFile = File(frFrFilename)
-        if (!frFrFile.exists()) {
-            plugin.saveResource(frFrFilename, false)
-        }
-
-        val deDeFilename = "lang/lang_de_DE.properties"
-        val deDeFile = File(deDeFilename)
-        if (!deDeFile.exists()) {
-            plugin.saveResource(deDeFilename, false)
+        filenames.forEach { filename ->
+            val filepath = "lang/$filename.properties"
+            val file = File(plugin.dataFolder, filepath)
+            if (!file.exists()) {
+                plugin.saveResource(filepath, false)
+            }
         }
 
         val externalUrls = arrayOf(languageFolder.toURI().toURL())
