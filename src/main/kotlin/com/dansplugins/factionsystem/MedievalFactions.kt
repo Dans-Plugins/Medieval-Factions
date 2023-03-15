@@ -248,7 +248,8 @@ class MedievalFactions : JavaPlugin() {
                 factionService.factions
                     .map {
                         claimService.getClaims(it.id).size
-                    }.average().toString()
+                    }
+                    .average().toInt().toString()
             }
         )
         metrics.addCustomChart(
@@ -284,7 +285,7 @@ class MedievalFactions : JavaPlugin() {
             }
         )
         metrics.addCustomChart(
-            SimplePie("allowNeutrality") {
+            SimplePie("allow_neutrality") {
                 config.getBoolean("factions.allowNeutrality").toString()
             }
         )
