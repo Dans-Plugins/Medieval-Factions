@@ -249,7 +249,7 @@ class MedievalFactions : JavaPlugin() {
                     .map {
                         claimService.getClaims(it.id).size
                     }
-                    .average().toInt().toString()
+                    .average().roundToInt().toString()
             }
         )
         metrics.addCustomChart(
