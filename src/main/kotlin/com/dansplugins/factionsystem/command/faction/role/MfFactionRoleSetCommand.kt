@@ -48,7 +48,7 @@ class MfFactionRoleSetCommand(private val plugin: MedievalFactions) : CommandExe
                         plugin.logger.log(SEVERE, "Failed to save target player: ${it.reason.message}", it.reason.cause)
                         return@Runnable
                     }
-                if (mfPlayer.id.value == targetMfPlayer.id.value) {
+                if (mfPlayer.id.value == targetMfPlayer.id.value && !mfPlayer.isBypassEnabled) {
                     sender.sendMessage("$RED${plugin.language["CommandFactionRoleSetCannotSetOwnRole"]}")
                     return@Runnable
                 }
