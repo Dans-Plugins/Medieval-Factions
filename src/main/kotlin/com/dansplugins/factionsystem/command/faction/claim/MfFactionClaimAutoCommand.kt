@@ -14,7 +14,7 @@ import java.util.logging.Level.SEVERE
 
 class MfFactionClaimAutoCommand(private val plugin: MedievalFactions) : CommandExecutor, TabCompleter {
     override fun onCommand(sender: CommandSender, command: Command, label: String, args: Array<out String>): Boolean {
-        if (!sender.hasPermission("mf.claim.auto") && !sender.hasPermission("mf.autoclaim")) {
+        if (!sender.hasPermission("mf.claim.auto") || !sender.hasPermission("mf.autoclaim")) {
             sender.sendMessage("$RED${plugin.language["CommandFactionAutoclaimNoPermission"]}")
             return true
         }
