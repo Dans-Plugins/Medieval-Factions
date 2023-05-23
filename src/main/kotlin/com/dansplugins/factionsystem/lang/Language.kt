@@ -8,8 +8,8 @@ import java.util.*
 
 class Language(plugin: MedievalFactions, private val language: String) {
 
-    private var resourceBundles: List<ResourceBundle>
-    val locale = Locale.forLanguageTag(language)
+    private val resourceBundles: List<ResourceBundle>
+    val locale: Locale = Locale.forLanguageTag(language)
 
     init {
         val languageFolder = File(plugin.dataFolder, "lang")
