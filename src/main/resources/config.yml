@@ -23,6 +23,7 @@ pvp:
   enabledForFactionlessPlayers: true
   warRequiredForPlayersOfDifferentFactions: true
   friendlyFire: false
+  grantPowerToKillerIfVictimHasZeroPower: false
 factions:
   mobsSpawnInFactionTerritory: false
   allowedMobSpawnReasons:
