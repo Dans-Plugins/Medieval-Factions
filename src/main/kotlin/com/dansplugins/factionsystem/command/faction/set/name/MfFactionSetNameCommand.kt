@@ -108,6 +108,10 @@ class MfFactionSetNameCommand(private val plugin: MedievalFactions) : CommandExe
                     player.sendMessage("$RED${plugin.language["CommandFactionSetNameNoFactionPermission"]}")
                     return@Runnable
                 }
+                if (factionService.getFaction(name) != null) {
+                    player.sendMessage("$RED${plugin.language["CommandFactionSetNameFactionAlreadyExists"]}")
+                    return@Runnable
+                }
                 val updatedFaction = factionService.save(faction.copy(name = name)).onFailure {
                     player.sendMessage("$RED${plugin.language["CommandFactionSetNameFailedToSaveFaction"]}")
                     plugin.logger.log(Level.SEVERE, "Failed to save faction: ${it.reason.message}", it.reason.cause)
