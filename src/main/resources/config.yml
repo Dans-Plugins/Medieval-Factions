@@ -8,6 +8,7 @@ database:
 players:
   initialPower: 5
   maxPower: 20
+  minPower: -5
   hoursToReachMaxPower: 12
   hoursToReachMinPower: 72
   powerLostOnDeath: 1

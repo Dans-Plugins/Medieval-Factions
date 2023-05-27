@@ -82,6 +82,7 @@ class JooqMfPlayerRepository(private val plugin: MedievalFactions, private val d
 
     override fun decreaseOfflinePlayerPower(onlinePlayerIds: List<MfPlayerId>) {
         val maxPower = plugin.config.getDouble("players.maxPower")
+        val minPower = plugin.config.getDouble("players.minPower")
         val hoursToReachMin = plugin.config.getDouble("players.hoursToReachMinPower")
         val timeIncrementHours = 0.25
         dsl.update(MF_PLAYER)
@@ -90,7 +91,7 @@ class JooqMfPlayerRepository(private val plugin: MedievalFactions, private val d
                 least(
                     value(maxPower),
                     greatest(
-                        value(0.0),
+                        value(minPower),
                         least(MF_PLAYER.POWER, MF_PLAYER.POWER_AT_LOGOUT, maxPower).div(MF_PLAYER.POWER_AT_LOGOUT)
                             .minus(1)
                             .div(-1)
@@ -107,8 +108,8 @@ class JooqMfPlayerRepository(private val plugin: MedievalFactions, private val d
             )
             .set(MF_PLAYER.VERSION, MF_PLAYER.VERSION.plus(1))
             .where(MF_PLAYER.ID.notIn(onlinePlayerIds.map { it.value }))
-            .and(MF_PLAYER.POWER_AT_LOGOUT.gt(0.0))
-            .and(MF_PLAYER.POWER.gt(0.0))
+            .and(MF_PLAYER.POWER_AT_LOGOUT.gt(minPower))
+            .and(MF_PLAYER.POWER.gt(minPower))
             .execute()
     }
 
