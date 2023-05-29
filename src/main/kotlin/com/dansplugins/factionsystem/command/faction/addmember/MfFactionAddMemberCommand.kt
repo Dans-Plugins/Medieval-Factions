@@ -60,6 +60,12 @@ class MfFactionAddMemberCommand(private val plugin: MedievalFactions) : CommandE
             return true
         }
 
+        val maxMembers = plugin.config.getInt("factions.maxMembers")
+        if (maxMembers > 0 && targetFaction.members.size >= maxMembers) {
+            sender.sendMessage("${ChatColor.RED}${plugin.language["CommandFactionAddMemberTargetFactionFull"]}")
+            return true
+        }
+
         // add member to faction
         val updatedFaction = factionService.save(
             targetFaction.copy(

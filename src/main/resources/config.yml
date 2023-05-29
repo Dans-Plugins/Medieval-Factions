@@ -65,6 +65,7 @@ factions:
   allowNeutrality: false
   factionlessFactionName: Factionless
   factionHomeTeleportDelay: 5
+  maxMembers: -1
   defaults:
     flags:
       alliesCanInteractWithLand: false
