@@ -75,6 +75,7 @@ factions:
       color: random # Can be hex colours, e.g. '#ffffff', '#ffcc00', etc., or 'random' to choose a random colour
       allowFriendlyFire: false
       acceptBonusPower: true
+      protectVillagerTrade: true
 chat:
   enableDefaultChatFormatting: true
   faction:
