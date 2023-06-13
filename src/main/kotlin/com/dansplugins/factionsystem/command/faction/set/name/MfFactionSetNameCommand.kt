@@ -128,9 +128,12 @@ class MfFactionSetNameCommand(private val plugin: MedievalFactions) : CommandExe
                 onlinePlayers.filter { (_, chunk) -> claimService.getClaim(chunk)?.factionId == updatedFaction.id }
                     .forEach { (player, _) ->
                         val title = "${ChatColor.of(updatedFaction.flags[plugin.flags.color])}${updatedFaction.name}"
+                        val subtitle = "${ChatColor.of(updatedFaction.flags[plugin.flags.color])}${updatedFaction.description}"
                         if (plugin.config.getBoolean("factions.titleTerritoryIndicator")) {
                             player.resetTitle()
-                            player.sendTitle(title, null, 10, 70, 20)
+                            player.sendTitle(title, subtitle, plugin.config.getInt("factions.titleTerritoryFadeInLength"),
+                                plugin.config.getInt("factions.titleTerritoryDuration"),
+                                plugin.config.getInt("factions.titleTerritoryFadeOutLength"))
                         }
                         if (plugin.config.getBoolean("factions.actionBarTerritoryIndicator")) {
                             player.spigot().sendMessage(ACTION_BAR, *TextComponent.fromLegacyText(title))
