@@ -62,6 +62,9 @@ factions:
   contiguousClaims: false
   actionBarTerritoryIndicator: true
   titleTerritoryIndicator: true
+  titleTerritoryFadeInLength: 5  # "Length" is measured in ticks (20 ticks = 1 second).
+  titleTerritoryDuration: 20
+  titleTerritoryFadeOutLength: 5
   allowNeutrality: false
   factionlessFactionName: Factionless
   factionHomeTeleportDelay: 5
