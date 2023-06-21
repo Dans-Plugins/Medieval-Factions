@@ -59,6 +59,11 @@ class MfFlags(
             plugin,
             "liegeChainCanInteractWithLand",
             plugin.config.getBoolean("factions.defaults.flags.liegeChainCanInteractWithLand")
+        ),
+        MfFlag.boolean(
+            plugin,
+            "protectVillagerTrade",
+            plugin.config.getBoolean("factions.defaults.flags.protectVillagerTrade")
         )
     )
 ) : MutableList<MfFlag<out Any>> by flags {
@@ -73,6 +78,7 @@ class MfFlags(
     val acceptBonusPower = get<Boolean>("acceptBonusPower")!!
     val enableMobProtection = get<Boolean>("enableMobProtection")!!
     val liegeChainCanInteractWithLand = get<Boolean>("liegeChainCanInteractWithLand")!!
+    val protectVillagerTrade = get<Boolean>("protectVillagerTrade")!!
 
     fun defaults() = MfFlagValues(plugin, flags.associate { it.name to it.defaultValue })
 }

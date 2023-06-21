@@ -56,6 +56,7 @@ import com.dansplugins.factionsystem.listener.EntityExplodeListener
 import com.dansplugins.factionsystem.listener.InventoryMoveItemListener
 import com.dansplugins.factionsystem.listener.LingeringPotionSplashListener
 import com.dansplugins.factionsystem.listener.PlayerDeathListener
+import com.dansplugins.factionsystem.listener.PlayerInteractEntityListener
 import com.dansplugins.factionsystem.listener.PlayerInteractListener
 import com.dansplugins.factionsystem.listener.PlayerJoinListener
 import com.dansplugins.factionsystem.listener.PlayerMoveListener
@@ -139,12 +140,6 @@ class MedievalFactions : JavaPlugin() {
         saveConfig()
 
         language = Language(this, config.getString("language") ?: "en-US")
-        val metrics = Metrics(this, 8929)
-        metrics.addCustomChart(
-            SimplePie("language_used") {
-                config.getString("language")
-            }
-        )
 
         Class.forName("org.h2.Driver")
         val hikariConfig = HikariConfig()
@@ -236,6 +231,64 @@ class MedievalFactions : JavaPlugin() {
         )
         setupRpkLockService()
 
+        val metrics = Metrics(this, 8929)
+        metrics.addCustomChart(
+            SimplePie("language_used") {
+                config.getString("language")
+            }
+        )
+        metrics.addCustomChart(
+            SimplePie("database_dialect") {
+                config.getString("database.dialect")
+            }
+        )
+        metrics.addCustomChart(
+            SimplePie("average_claims") {
+                factionService.factions
+                    .map {
+                        claimService.getClaims(it.id).size
+                    }
+                    .average().roundToInt().toString()
+            }
+        )
+        metrics.addCustomChart(
+            SimplePie("total_claims") {
+                factionService.factions.sumOf {
+                    claimService.getClaims(it.id).size
+                }.toString()
+            }
+        )
+        metrics.addCustomChart(
+            SimplePie("initial_power") {
+                config.getDouble("players.initialPower").toString()
+            }
+        )
+        metrics.addCustomChart(
+            SimplePie("max_power") {
+                config.getDouble("players.maxPower").toString()
+            }
+        )
+        metrics.addCustomChart(
+            SimplePie("hours_to_reach_max_power") {
+                config.getDouble("players.hoursToReachMaxPower").toString()
+            }
+        )
+        metrics.addCustomChart(
+            SimplePie("hours_to_reach_min_power") {
+                config.getDouble("players.hoursToReachMinPower").toString()
+            }
+        )
+        metrics.addCustomChart(
+            SimplePie("limit_land") {
+                config.getBoolean("factions.limitLand").toString()
+            }
+        )
+        metrics.addCustomChart(
+            SimplePie("allow_neutrality") {
+                config.getBoolean("factions.allowNeutrality").toString()
+            }
+        )
+
         if (config.getBoolean("migrateMf4")) {
             migrator.migrate()
             config.set("migrateMf4", null)
@@ -273,7 +326,8 @@ class MedievalFactions : JavaPlugin() {
             PlayerMoveListener(this),
             PlayerQuitListener(this),
             PlayerTeleportListener(this),
-            PotionSplashListener(this)
+            PotionSplashListener(this),
+            PlayerInteractEntityListener(this)
         )
 
         getCommand("faction")?.setExecutor(MfFactionCommand(this))
