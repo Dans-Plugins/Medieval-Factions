@@ -131,9 +131,13 @@ class MfFactionSetNameCommand(private val plugin: MedievalFactions) : CommandExe
                         val subtitle = "${ChatColor.of(updatedFaction.flags[plugin.flags.color])}${updatedFaction.description}"
                         if (plugin.config.getBoolean("factions.titleTerritoryIndicator")) {
                             player.resetTitle()
-                            player.sendTitle(title, subtitle, plugin.config.getInt("factions.titleTerritoryFadeInLength"),
+                            player.sendTitle(
+                                title,
+                                subtitle,
+                                plugin.config.getInt("factions.titleTerritoryFadeInLength"),
                                 plugin.config.getInt("factions.titleTerritoryDuration"),
-                                plugin.config.getInt("factions.titleTerritoryFadeOutLength"))
+                                plugin.config.getInt("factions.titleTerritoryFadeOutLength")
+                            )
                         }
                         if (plugin.config.getBoolean("factions.actionBarTerritoryIndicator")) {
                             player.spigot().sendMessage(ACTION_BAR, *TextComponent.fromLegacyText(title))

@@ -90,5 +90,7 @@ chat:
 duels:
   duration: PT2M
   notificationDistance: 64
+dynmap:
+  enableDynmapIntegration: true
 dev:
   enableDevCommands: false
