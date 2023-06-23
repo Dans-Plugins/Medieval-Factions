@@ -92,7 +92,8 @@ class JooqMfPlayerRepository(private val plugin: MedievalFactions, private val d
                     value(maxPower),
                     greatest(
                         value(minPower),
-                        least(MF_PLAYER.POWER, MF_PLAYER.POWER_AT_LOGOUT, maxPower).div(MF_PLAYER.POWER_AT_LOGOUT)
+                        least(MF_PLAYER.POWER, MF_PLAYER.POWER_AT_LOGOUT, maxPower)
+                            .div(MF_PLAYER.POWER_AT_LOGOUT.plus(minPower)).minus(minPower))
                             .minus(1)
                             .div(-1)
                             .pow(0.25)
@@ -102,7 +103,7 @@ class JooqMfPlayerRepository(private val plugin: MedievalFactions, private val d
                             .pow(4)
                             .times(-1)
                             .plus(1)
-                            .times(MF_PLAYER.POWER_AT_LOGOUT - minPower)
+                            .times(MF_PLAYER.POWER_AT_LOGOUT.minus(minPower)
                     ).plus(minPower)
                 )
             )
