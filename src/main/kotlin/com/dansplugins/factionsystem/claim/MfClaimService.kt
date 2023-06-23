@@ -95,9 +95,13 @@ class MfClaimService(private val plugin: MedievalFactions, private val repositor
                                     val subtitle = "${ChatColor.of(faction.flags[plugin.flags.color])}${faction.description}"
                                     if (plugin.config.getBoolean("factions.titleTerritoryIndicator")) {
                                         player.resetTitle()
-                                        player.sendTitle(title, subtitle, plugin.config.getInt("factions.titleTerritoryFadeInLength"),
+                                        player.sendTitle(
+                                            title,
+                                            subtitle,
+                                            plugin.config.getInt("factions.titleTerritoryFadeInLength"),
                                             plugin.config.getInt("factions.titleTerritoryDuration"),
-                                            plugin.config.getInt("factions.titleTerritoryFadeOutLength"))
+                                            plugin.config.getInt("factions.titleTerritoryFadeOutLength")
+                                        )
                                     }
                                     if (plugin.config.getBoolean("factions.actionBarTerritoryIndicator")) {
                                         player.spigot().sendMessage(ACTION_BAR, *TextComponent.fromLegacyText(title))
@@ -141,9 +145,13 @@ class MfClaimService(private val plugin: MedievalFactions, private val repositor
                                 "${ChatColor.of(plugin.config.getString("wilderness.color"))}${plugin.language["Wilderness"]}"
                             if (plugin.config.getBoolean("factions.titleTerritoryIndicator")) {
                                 player.resetTitle()
-                                player.sendTitle(title, null, plugin.config.getInt("factions.titleTerritoryFadeInLength"),
+                                player.sendTitle(
+                                    title,
+                                    null,
+                                    plugin.config.getInt("factions.titleTerritoryFadeInLength"),
                                     plugin.config.getInt("factions.titleTerritoryDuration"),
-                                    plugin.config.getInt("factions.titleTerritoryFadeOutLength"))
+                                    plugin.config.getInt("factions.titleTerritoryFadeOutLength")
+                                )
                             }
                             if (plugin.config.getBoolean("factions.actionBarTerritoryIndicator")) {
                                 player.spigot().sendMessage(ACTION_BAR, *TextComponent.fromLegacyText(title))
