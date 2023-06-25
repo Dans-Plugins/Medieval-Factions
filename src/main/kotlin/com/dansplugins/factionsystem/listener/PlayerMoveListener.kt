@@ -93,9 +93,13 @@ class PlayerMoveListener(private val plugin: MedievalFactions) : Listener {
                         }
                         if (plugin.config.getBoolean("factions.titleTerritoryIndicator")) {
                             event.player.resetTitle()
-                            event.player.sendTitle(title, subtitle, plugin.config.getInt("factions.titleTerritoryFadeInLength"),
+                            event.player.sendTitle(
+                                title,
+                                subtitle,
+                                plugin.config.getInt("factions.titleTerritoryFadeInLength"),
                                 plugin.config.getInt("factions.titleTerritoryDuration"),
-                                plugin.config.getInt("factions.titleTerritoryFadeOutLength"))
+                                plugin.config.getInt("factions.titleTerritoryFadeOutLength")
+                            )
                         }
                         if (plugin.config.getBoolean("factions.actionBarTerritoryIndicator")) {
                             event.player.spigot().sendMessage(ACTION_BAR, *TextComponent.fromLegacyText(title))
