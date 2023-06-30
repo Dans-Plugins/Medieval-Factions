@@ -24,6 +24,7 @@ pvp:
   warRequiredForPlayersOfDifferentFactions: true
   friendlyFire: false
   grantPowerToKillerIfVictimHasZeroPower: false
+  enableWartimeBlockDestruction: false
 factions:
   mobsSpawnInFactionTerritory: false
   allowedMobSpawnReasons:
