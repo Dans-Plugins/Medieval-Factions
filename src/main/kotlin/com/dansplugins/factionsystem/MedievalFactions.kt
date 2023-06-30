@@ -207,7 +207,7 @@ class MedievalFactions : JavaPlugin() {
         val duelService = MfDuelService(this, duelRepository, duelInviteRepository)
         val potionService = MfPotionService(this)
         val teleportService = MfTeleportService(this)
-        val dynmapService = if (server.pluginManager.getPlugin("dynmap") != null) {
+        val dynmapService = if (server.pluginManager.getPlugin("dynmap") != null && config.getBoolean("dynmap.enableDynmapIntegration")) {
             MfDynmapService(this)
         } else {
             null
