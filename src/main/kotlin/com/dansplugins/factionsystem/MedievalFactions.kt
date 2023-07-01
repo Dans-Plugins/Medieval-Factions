@@ -292,42 +292,12 @@ class MedievalFactions : JavaPlugin() {
             server.scheduler.runTaskAsynchronously(
                 this,
                 Runnable {
-                    val originalOnlinePlayerPower =
-                        onlineMfPlayerIds.associateWith { playerService.getPlayer(it)?.power ?: initialPower }
-                    playerService.updatePlayerPower(onlineMfPlayerIds).onFailure {
-                        logger.log(SEVERE, "Failed to update player power: ${it.reason.message}", it.reason.cause)
-                        return@Runnable
-                    }
-                    val newOnlinePlayerPower =
-                        onlineMfPlayerIds.associateWith { playerService.getPlayer(it)?.power ?: initialPower }
-                    server.scheduler.runTask(
-                        this,
-                        Runnable {
-                            onlinePlayers.forEach { onlinePlayer ->
-                                val playerId = MfPlayerId.fromBukkitPlayer(onlinePlayer)
-                                val newPower = newOnlinePlayerPower[playerId] ?: initialPower
-                                val originalPower = originalOnlinePlayerPower[playerId] ?: initialPower
-                                val powerIncrease = floor(newPower).roundToInt() - floor(originalPower).roundToInt()
-                                if (powerIncrease > 0) {
-                                    onlinePlayer.sendMessage("$GREEN${language["PowerIncreased", powerIncrease.toString()]}")
-                                }
-                            }
-                        }
+                    onPowerCycle(
+                        onlineMfPlayerIds,
+                        initialPower,
+                        onlinePlayers,
+                        disbandZeroPowerFactions
                     )
-                    if (disbandZeroPowerFactions) {
-                        factionService.factions.forEach { faction ->
-                            if (faction.power <= 0.0) {
-                                faction.sendMessage(
-                                    language["FactionDisbandedZeroPowerNotificationTitle"],
-                                    language["FactionDisbandedZeroPowerNotificationBody"]
-                                )
-                                factionService.delete(faction.id).onFailure {
-                                    logger.log(SEVERE, "Failed to delete faction: ${it.reason.message}", it.reason.cause)
-                                    return@Runnable
-                                }
-                            }
-                        }
-                    }
                 }
             )
         }, (15 - (LocalTime.now().minute % 15)) * 60 * 20L, 18000L)
@@ -434,6 +404,53 @@ class MedievalFactions : JavaPlugin() {
                     }
                 }
             }, 5L, 20L)
+        }
+    }
+
+    internal fun onPowerCycle(
+        onlineMfPlayerIds: List<MfPlayerId>,
+        initialPower: Double,
+        onlinePlayers: Collection<Player>,
+        disbandZeroPowerFactions: Boolean
+    ) {
+        val playerService = services.playerService
+        val factionService = services.factionService
+
+        val originalOnlinePlayerPower =
+            onlineMfPlayerIds.associateWith { playerService.getPlayer(it)?.power ?: initialPower }
+        playerService.updatePlayerPower(onlineMfPlayerIds).onFailure {
+            logger.log(SEVERE, "Failed to update player power: ${it.reason.message}", it.reason.cause)
+            return
+        }
+        val newOnlinePlayerPower =
+            onlineMfPlayerIds.associateWith { playerService.getPlayer(it)?.power ?: initialPower }
+        server.scheduler.runTask(
+            this,
+            Runnable {
+                onlinePlayers.forEach { onlinePlayer ->
+                    val playerId = MfPlayerId.fromBukkitPlayer(onlinePlayer)
+                    val newPower = newOnlinePlayerPower[playerId] ?: initialPower
+                    val originalPower = originalOnlinePlayerPower[playerId] ?: initialPower
+                    val powerIncrease = floor(newPower).roundToInt() - floor(originalPower).roundToInt()
+                    if (powerIncrease > 0) {
+                        onlinePlayer.sendMessage("$GREEN${language["PowerIncreased", powerIncrease.toString()]}")
+                    }
+                }
+            }
+        )
+        if (disbandZeroPowerFactions) {
+            factionService.factions.forEach { faction ->
+                if (faction.power <= 0.0) {
+                    faction.sendMessage(
+                        language["FactionDisbandedZeroPowerNotificationTitle"],
+                        language["FactionDisbandedZeroPowerNotificationBody"]
+                    )
+                    factionService.delete(faction.id).onFailure {
+                        logger.log(SEVERE, "Failed to delete faction: ${it.reason.message}", it.reason.cause)
+                        return
+                    }
+                }
+            }
         }
     }
 
