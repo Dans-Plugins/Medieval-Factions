@@ -133,13 +133,19 @@ permissions:
   mf.join:
     description: Allows joining factions
     default: true
-  mf.addlaw:
+  mf.law.add:
     description: Allows adding laws
     default: true
-  mf.laws:
-    description: Allows listing the laws of your faction
+  mf.law.edit:
+    description: Allows editing laws
     default: true
-  mf.removelaw:
+  mf.law.list:
+    description: Allows listing laws
+    default: true
+  mf.law.move:
+    description: Allows moving laws
+    default: true
+  mf.law.remove:
     description: Allows removing laws
     default: true
   mf.makepeace:
