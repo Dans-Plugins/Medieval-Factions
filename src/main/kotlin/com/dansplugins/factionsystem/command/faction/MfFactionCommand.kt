@@ -226,16 +226,16 @@ class MfFactionCommand(private val plugin: MedievalFactions) : CommandExecutor, 
             in devAliases -> factionDevCommand.onCommand(sender, command, label, args.drop(1).toTypedArray())
             // Backwards compatibility:
             in claimAutoAliases -> {
-                sender.sendMessage("${RED}Command deprecated, use \"/mf claim auto\" instead")
-                factionClaimAutoCommand.onCommand(sender, command, label, args.drop(1).toTypedArray())
+                sender.sendMessage("${RED}${plugin.language["DeprecationWarningAutoclaim"]}")
+                false
             }
             in claimFillAliases -> {
-                sender.sendMessage("${RED}Command deprecated, use \"/mf claim fill\" instead")
-                factionClaimFillCommand.onCommand(sender, command, label, args.drop(1).toTypedArray())
+                sender.sendMessage("${RED}${plugin.language["DeprecationWarningFillclaim"]}")
+                false
             }
             in claimCheckAliases -> {
-                sender.sendMessage("${RED}Command deprecated, use \"/mf claim check\" instead")
-                factionClaimCheckCommand.onCommand(sender, command, label, args.drop(1).toTypedArray())
+                sender.sendMessage("${RED}${plugin.language["DeprecationWarningCheckclaim"]}")
+                false
             }
             else -> {
                 sender.sendMessage("$AQUA${plugin.language["MedievalFactionsTitle", plugin.description.version]}")
