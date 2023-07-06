@@ -46,6 +46,7 @@ class JooqMfPlayerRepository(private val plugin: MedievalFactions, private val d
     }
 
     override fun increaseOnlinePlayerPower(onlinePlayerIds: List<MfPlayerId>) {
+        val minPower = plugin.config.getDouble("players.minPower")
         val maxPower = plugin.config.getDouble("players.maxPower")
         val hoursToReachMax = plugin.config.getDouble("players.hoursToReachMaxPower")
         val timeIncrementHours = 0.25
@@ -55,7 +56,7 @@ class JooqMfPlayerRepository(private val plugin: MedievalFactions, private val d
                 least(
                     value(maxPower),
                     greatest(
-                        value(0.0),
+                        value(minPower),
                         value((hoursToReachMax * 2) + timeIncrementHours)
                             .minus(
                                 MF_PLAYER.POWER.div(maxPower)
@@ -82,6 +83,7 @@ class JooqMfPlayerRepository(private val plugin: MedievalFactions, private val d
 
     override fun decreaseOfflinePlayerPower(onlinePlayerIds: List<MfPlayerId>) {
         val maxPower = plugin.config.getDouble("players.maxPower")
+        val minPower = plugin.config.getDouble("players.minPower")
         val hoursToReachMin = plugin.config.getDouble("players.hoursToReachMinPower")
         val timeIncrementHours = 0.25
         dsl.update(MF_PLAYER)
@@ -90,25 +92,31 @@ class JooqMfPlayerRepository(private val plugin: MedievalFactions, private val d
                 least(
                     value(maxPower),
                     greatest(
-                        value(0.0),
-                        least(MF_PLAYER.POWER, MF_PLAYER.POWER_AT_LOGOUT, maxPower).div(MF_PLAYER.POWER_AT_LOGOUT)
+                        value(minPower),
+                        // Determine the current time by running the inverse
+                        least(MF_PLAYER.POWER, MF_PLAYER.POWER_AT_LOGOUT, maxPower)
+                            .minus(minPower)
+                            .div(MF_PLAYER.POWER_AT_LOGOUT.minus(minPower))
                             .minus(1)
                             .div(-1)
                             .pow(0.25)
                             .times(hoursToReachMin)
+                            // Add the time increment to the time value we've determined
                             .plus(timeIncrementHours)
-                            .div(hoursToReachMin)
-                            .pow(4)
-                            .times(-1)
-                            .plus(1)
-                            .times(MF_PLAYER.POWER_AT_LOGOUT)
+                            // Run the formula normally on the new time to determine the new power value
+                            .div(hoursToReachMin) // extend the graph from reaching the minimum value at 1 to hoursToReachMin
+                            .pow(4) // exp4 curve
+                            .times(-1) // flip the graph (exp4 is normally U-shaped)
+                            .plus(1) // shift the graph up above the x axis (it will usually peak at the minimum value)
+                            .times(MF_PLAYER.POWER_AT_LOGOUT.minus(minPower)) // scale the graph to the range of the power values
+                            .plus(minPower) // shift the graph back down to the minimum power value
                     )
                 )
             )
             .set(MF_PLAYER.VERSION, MF_PLAYER.VERSION.plus(1))
             .where(MF_PLAYER.ID.notIn(onlinePlayerIds.map { it.value }))
-            .and(MF_PLAYER.POWER_AT_LOGOUT.gt(0.0))
-            .and(MF_PLAYER.POWER.gt(0.0))
+            .and(MF_PLAYER.POWER_AT_LOGOUT.gt(minPower))
+            .and(MF_PLAYER.POWER.gt(minPower))
             .execute()
     }
 
