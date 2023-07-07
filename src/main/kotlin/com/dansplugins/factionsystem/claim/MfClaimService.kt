@@ -59,6 +59,8 @@ class MfClaimService(private val plugin: MedievalFactions, private val repositor
         if (claimFaction.flags[plugin.flags.liegeChainCanInteractWithLand] && lieges.contains(playerFaction.id)) return true
         val allies = relationshipService.getRelationships(claim.factionId, MfFactionRelationshipType.ALLY).map { it.targetId }
         if (claimFaction.flags[plugin.flags.alliesCanInteractWithLand] && allies.contains(playerFaction.id)) return true
+        val atWar = relationshipService.getRelationships(claim.factionId, MfFactionRelationshipType.AT_WAR).map { it.targetId }
+        if (plugin.config.getBoolean("pvp.enableWartimeBlockDestruction") && atWar.contains(playerFaction.id)) return true
         return false
     }
 
@@ -92,9 +94,16 @@ class MfClaimService(private val plugin: MedievalFactions, private val repositor
                             Runnable {
                                 players.forEach { player ->
                                     val title = "${ChatColor.of(faction.flags[plugin.flags.color])}${faction.name}"
+                                    val subtitle = "${ChatColor.of(faction.flags[plugin.flags.color])}${faction.description}"
                                     if (plugin.config.getBoolean("factions.titleTerritoryIndicator")) {
                                         player.resetTitle()
-                                        player.sendTitle(title, null, 10, 70, 20)
+                                        player.sendTitle(
+                                            title,
+                                            subtitle,
+                                            plugin.config.getInt("factions.titleTerritoryFadeInLength"),
+                                            plugin.config.getInt("factions.titleTerritoryDuration"),
+                                            plugin.config.getInt("factions.titleTerritoryFadeOutLength")
+                                        )
                                     }
                                     if (plugin.config.getBoolean("factions.actionBarTerritoryIndicator")) {
                                         player.spigot().sendMessage(ACTION_BAR, *TextComponent.fromLegacyText(title))
@@ -138,7 +147,13 @@ class MfClaimService(private val plugin: MedievalFactions, private val repositor
                                 "${ChatColor.of(plugin.config.getString("wilderness.color"))}${plugin.language["Wilderness"]}"
                             if (plugin.config.getBoolean("factions.titleTerritoryIndicator")) {
                                 player.resetTitle()
-                                player.sendTitle(title, null, 10, 70, 20)
+                                player.sendTitle(
+                                    title,
+                                    null,
+                                    plugin.config.getInt("factions.titleTerritoryFadeInLength"),
+                                    plugin.config.getInt("factions.titleTerritoryDuration"),
+                                    plugin.config.getInt("factions.titleTerritoryFadeOutLength")
+                                )
                             }
                             if (plugin.config.getBoolean("factions.actionBarTerritoryIndicator")) {
                                 player.spigot().sendMessage(ACTION_BAR, *TextComponent.fromLegacyText(title))

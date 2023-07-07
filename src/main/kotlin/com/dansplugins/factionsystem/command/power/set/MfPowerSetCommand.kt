@@ -36,8 +36,9 @@ class MfPowerSetCommand(private val plugin: MedievalFactions) : CommandExecutor,
             sender.sendMessage("$RED${plugin.language["CommandPowerSetInvalidPowerMustBeNumber"]}")
             return true
         }
-        if (power < 0) {
-            sender.sendMessage("$RED${plugin.language["CommandPowerSetInvalidPowerCannotBeNegative"]}")
+        val minPower = plugin.config.getDouble("players.minPower")
+        if (power < minPower) {
+            sender.sendMessage("$RED${plugin.language["CommandPowerSetInvalidPowerTooLow", decimalFormat.format(minPower)]}")
             return true
         }
         val maxPower = plugin.config.getDouble("players.maxPower")

@@ -27,9 +27,22 @@ class PlayerJoinListener(private val plugin: MedievalFactions) : Listener {
                         } else {
                             "${ChatColor.of(plugin.config.getString("wilderness.color"))}${plugin.language["Wilderness"]}"
                         }
+
+                        val subtitle = if (newChunkFaction != null) {
+                            "${ChatColor.of(newChunkFaction.flags[plugin.flags.color])}${newChunkFaction.description}"
+                        } else {
+                            "${ChatColor.of(plugin.config.getString("wilderness.color"))}${plugin.language["Wilderness"]}"
+                        }
+
                         if (plugin.config.getBoolean("factions.titleTerritoryIndicator")) {
                             event.player.resetTitle()
-                            event.player.sendTitle(title, null, 10, 70, 20)
+                            event.player.sendTitle(
+                                title,
+                                subtitle,
+                                plugin.config.getInt("factions.titleTerritoryFadeInLength"),
+                                plugin.config.getInt("factions.titleTerritoryDuration"),
+                                plugin.config.getInt("factions.titleTerritoryFadeOutLength")
+                            )
                         }
                         if (plugin.config.getBoolean("factions.actionBarTerritoryIndicator")) {
                             event.player.spigot().sendMessage(ACTION_BAR, *TextComponent.fromLegacyText(title))

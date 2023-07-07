@@ -75,6 +75,11 @@ class MfFactionJoinCommand(private val plugin: MedievalFactions) : CommandExecut
                     }
                     return@Runnable
                 }
+                val maxMembers = plugin.config.getInt("factions.maxMembers")
+                if (maxMembers > 0 && faction.members.size >= maxMembers) {
+                    sender.sendMessage("$RED${plugin.language["CommandFactionJoinFactionFull"]}")
+                    return@Runnable
+                }
                 val updatedFaction = factionService.save(
                     faction.copy(
                         members = faction.members + MfFactionMember(mfPlayer.id, faction.roles.default),

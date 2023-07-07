@@ -43,7 +43,6 @@ import com.dansplugins.factionsystem.law.MfLawService
 import com.dansplugins.factionsystem.legacy.MfLegacyDataMigrator
 import com.dansplugins.factionsystem.listener.AreaEffectCloudApplyListener
 import com.dansplugins.factionsystem.listener.AsyncPlayerChatListener
-import com.dansplugins.factionsystem.listener.AsyncPlayerChatPreviewListener
 import com.dansplugins.factionsystem.listener.AsyncPlayerPreLoginListener
 import com.dansplugins.factionsystem.listener.BlockBreakListener
 import com.dansplugins.factionsystem.listener.BlockExplodeListener
@@ -57,6 +56,7 @@ import com.dansplugins.factionsystem.listener.EntityExplodeListener
 import com.dansplugins.factionsystem.listener.InventoryMoveItemListener
 import com.dansplugins.factionsystem.listener.LingeringPotionSplashListener
 import com.dansplugins.factionsystem.listener.PlayerDeathListener
+import com.dansplugins.factionsystem.listener.PlayerInteractEntityListener
 import com.dansplugins.factionsystem.listener.PlayerInteractListener
 import com.dansplugins.factionsystem.listener.PlayerJoinListener
 import com.dansplugins.factionsystem.listener.PlayerMoveListener
@@ -95,7 +95,6 @@ import org.bstats.charts.SimplePie
 import org.bukkit.NamespacedKey
 import org.bukkit.boss.KeyedBossBar
 import org.bukkit.entity.Player
-import org.bukkit.event.player.AsyncPlayerChatEvent
 import org.bukkit.plugin.java.JavaPlugin
 import org.flywaydb.core.Flyway
 import org.jooq.SQLDialect
@@ -141,12 +140,6 @@ class MedievalFactions : JavaPlugin() {
         saveConfig()
 
         language = Language(this, config.getString("language") ?: "en-US")
-        val metrics = Metrics(this, 8929)
-        metrics.addCustomChart(
-            SimplePie("language_used") {
-                config.getString("language")
-            }
-        )
 
         Class.forName("org.h2.Driver")
         val hikariConfig = HikariConfig()
@@ -214,7 +207,7 @@ class MedievalFactions : JavaPlugin() {
         val duelService = MfDuelService(this, duelRepository, duelInviteRepository)
         val potionService = MfPotionService(this)
         val teleportService = MfTeleportService(this)
-        val dynmapService = if (server.pluginManager.getPlugin("dynmap") != null) {
+        val dynmapService = if (server.pluginManager.getPlugin("dynmap") != null && config.getBoolean("dynmap.enableDynmapIntegration")) {
             MfDynmapService(this)
         } else {
             null
@@ -237,6 +230,64 @@ class MedievalFactions : JavaPlugin() {
             dynmapService
         )
         setupRpkLockService()
+
+        val metrics = Metrics(this, 8929)
+        metrics.addCustomChart(
+            SimplePie("language_used") {
+                config.getString("language")
+            }
+        )
+        metrics.addCustomChart(
+            SimplePie("database_dialect") {
+                config.getString("database.dialect")
+            }
+        )
+        metrics.addCustomChart(
+            SimplePie("average_claims") {
+                factionService.factions
+                    .map {
+                        claimService.getClaims(it.id).size
+                    }
+                    .average().roundToInt().toString()
+            }
+        )
+        metrics.addCustomChart(
+            SimplePie("total_claims") {
+                factionService.factions.sumOf {
+                    claimService.getClaims(it.id).size
+                }.toString()
+            }
+        )
+        metrics.addCustomChart(
+            SimplePie("initial_power") {
+                config.getDouble("players.initialPower").toString()
+            }
+        )
+        metrics.addCustomChart(
+            SimplePie("max_power") {
+                config.getDouble("players.maxPower").toString()
+            }
+        )
+        metrics.addCustomChart(
+            SimplePie("hours_to_reach_max_power") {
+                config.getDouble("players.hoursToReachMaxPower").toString()
+            }
+        )
+        metrics.addCustomChart(
+            SimplePie("hours_to_reach_min_power") {
+                config.getDouble("players.hoursToReachMinPower").toString()
+            }
+        )
+        metrics.addCustomChart(
+            SimplePie("limit_land") {
+                config.getBoolean("factions.limitLand").toString()
+            }
+        )
+        metrics.addCustomChart(
+            SimplePie("allow_neutrality") {
+                config.getBoolean("factions.allowNeutrality").toString()
+            }
+        )
 
         if (config.getBoolean("migrateMf4")) {
             migrator.migrate()
@@ -275,11 +326,9 @@ class MedievalFactions : JavaPlugin() {
             PlayerMoveListener(this),
             PlayerQuitListener(this),
             PlayerTeleportListener(this),
-            PotionSplashListener(this)
+            PotionSplashListener(this),
+            PlayerInteractEntityListener(this)
         )
-        if (isChatPreviewEventAvailable()) {
-            registerListeners(AsyncPlayerChatPreviewListener(this))
-        }
 
         getCommand("faction")?.setExecutor(MfFactionCommand(this))
         getCommand("lock")?.setExecutor(MfLockCommand(this))
@@ -297,42 +346,12 @@ class MedievalFactions : JavaPlugin() {
             server.scheduler.runTaskAsynchronously(
                 this,
                 Runnable {
-                    val originalOnlinePlayerPower =
-                        onlineMfPlayerIds.associateWith { playerService.getPlayer(it)?.power ?: initialPower }
-                    playerService.updatePlayerPower(onlineMfPlayerIds).onFailure {
-                        logger.log(SEVERE, "Failed to update player power: ${it.reason.message}", it.reason.cause)
-                        return@Runnable
-                    }
-                    val newOnlinePlayerPower =
-                        onlineMfPlayerIds.associateWith { playerService.getPlayer(it)?.power ?: initialPower }
-                    server.scheduler.runTask(
-                        this,
-                        Runnable {
-                            onlinePlayers.forEach { onlinePlayer ->
-                                val playerId = MfPlayerId.fromBukkitPlayer(onlinePlayer)
-                                val newPower = newOnlinePlayerPower[playerId] ?: initialPower
-                                val originalPower = originalOnlinePlayerPower[playerId] ?: initialPower
-                                val powerIncrease = floor(newPower).roundToInt() - floor(originalPower).roundToInt()
-                                if (powerIncrease > 0) {
-                                    onlinePlayer.sendMessage("$GREEN${language["PowerIncreased", powerIncrease.toString()]}")
-                                }
-                            }
-                        }
+                    onPowerCycle(
+                        onlineMfPlayerIds,
+                        initialPower,
+                        onlinePlayers,
+                        disbandZeroPowerFactions
                     )
-                    if (disbandZeroPowerFactions) {
-                        factionService.factions.forEach { faction ->
-                            if (faction.power <= 0.0) {
-                                faction.sendMessage(
-                                    language["FactionDisbandedZeroPowerNotificationTitle"],
-                                    language["FactionDisbandedZeroPowerNotificationBody"]
-                                )
-                                factionService.delete(faction.id).onFailure {
-                                    logger.log(SEVERE, "Failed to delete faction: ${it.reason.message}", it.reason.cause)
-                                    return@Runnable
-                                }
-                            }
-                        }
-                    }
                 }
             )
         }, (15 - (LocalTime.now().minute % 15)) * 60 * 20L, 18000L)
@@ -442,6 +461,53 @@ class MedievalFactions : JavaPlugin() {
         }
     }
 
+    internal fun onPowerCycle(
+        onlineMfPlayerIds: List<MfPlayerId>,
+        initialPower: Double,
+        onlinePlayers: Collection<Player>,
+        disbandZeroPowerFactions: Boolean
+    ) {
+        val playerService = services.playerService
+        val factionService = services.factionService
+
+        val originalOnlinePlayerPower =
+            onlineMfPlayerIds.associateWith { playerService.getPlayer(it)?.power ?: initialPower }
+        playerService.updatePlayerPower(onlineMfPlayerIds).onFailure {
+            logger.log(SEVERE, "Failed to update player power: ${it.reason.message}", it.reason.cause)
+            return
+        }
+        val newOnlinePlayerPower =
+            onlineMfPlayerIds.associateWith { playerService.getPlayer(it)?.power ?: initialPower }
+        server.scheduler.runTask(
+            this,
+            Runnable {
+                onlinePlayers.forEach { onlinePlayer ->
+                    val playerId = MfPlayerId.fromBukkitPlayer(onlinePlayer)
+                    val newPower = newOnlinePlayerPower[playerId] ?: initialPower
+                    val originalPower = originalOnlinePlayerPower[playerId] ?: initialPower
+                    val powerIncrease = floor(newPower).roundToInt() - floor(originalPower).roundToInt()
+                    if (powerIncrease > 0) {
+                        onlinePlayer.sendMessage("$GREEN${language["PowerIncreased", powerIncrease.toString()]}")
+                    }
+                }
+            }
+        )
+        if (disbandZeroPowerFactions) {
+            factionService.factions.forEach { faction ->
+                if (faction.power <= 0.0) {
+                    faction.sendMessage(
+                        language["FactionDisbandedZeroPowerNotificationTitle"],
+                        language["FactionDisbandedZeroPowerNotificationBody"]
+                    )
+                    factionService.delete(faction.id).onFailure {
+                        logger.log(SEVERE, "Failed to delete faction: ${it.reason.message}", it.reason.cause)
+                        return
+                    }
+                }
+            }
+        }
+    }
+
     private fun setupNotificationService(): MfNotificationService = when {
         server.pluginManager.getPlugin("Mailboxes") != null -> MailboxesNotificationService(this)
         server.pluginManager.getPlugin("rpk-notification-lib-bukkit") != null -> RpkNotificationService(this)
@@ -452,12 +518,5 @@ class MedievalFactions : JavaPlugin() {
         if (server.pluginManager.getPlugin("rpk-lock-lib-bukkit") != null) {
             MfRpkLockService(this)
         }
-    }
-
-    private fun isChatPreviewEventAvailable() = try {
-        val previewClass = Class.forName("org.bukkit.event.player.AsyncPlayerChatPreviewEvent")
-        AsyncPlayerChatEvent::class.java.isAssignableFrom(previewClass)
-    } catch (exception: ClassNotFoundException) {
-        false
     }
 }

@@ -8,6 +8,7 @@ database:
 players:
   initialPower: 5
   maxPower: 20
+  minPower: -5
   hoursToReachMaxPower: 12
   hoursToReachMinPower: 72
   powerLostOnDeath: 1
@@ -24,6 +25,7 @@ pvp:
   warRequiredForPlayersOfDifferentFactions: true
   friendlyFire: false
   grantPowerToKillerIfVictimHasZeroPower: false
+  enableWartimeBlockDestruction: false
 factions:
   mobsSpawnInFactionTerritory: false
   allowedMobSpawnReasons:
@@ -62,9 +64,13 @@ factions:
   contiguousClaims: false
   actionBarTerritoryIndicator: true
   titleTerritoryIndicator: true
+  titleTerritoryFadeInLength: 5  # "Length" is measured in ticks (20 ticks = 1 second).
+  titleTerritoryDuration: 20
+  titleTerritoryFadeOutLength: 5
   allowNeutrality: false
   factionlessFactionName: Factionless
   factionHomeTeleportDelay: 5
+  maxMembers: -1
   defaults:
     flags:
       alliesCanInteractWithLand: false
@@ -74,6 +80,7 @@ factions:
       color: random # Can be hex colours, e.g. '#ffffff', '#ffcc00', etc., or 'random' to choose a random colour
       allowFriendlyFire: false
       acceptBonusPower: true
+      protectVillagerTrade: true
 chat:
   enableDefaultChatFormatting: true
   faction:
@@ -85,5 +92,7 @@ chat:
 duels:
   duration: PT2M
   notificationDistance: 64
+dynmap:
+  enableDynmapIntegration: true
 dev:
   enableDevCommands: false

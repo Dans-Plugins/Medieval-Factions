@@ -120,6 +120,11 @@ class MfFactionInviteCommand(private val plugin: MedievalFactions) : CommandExec
                     sender.sendMessage("${BukkitChatColor.RED}${plugin.language["CommandFactionInviteAlreadyMember"]}")
                     return@Runnable
                 }
+                val maxMembers = plugin.config.getInt("factions.maxMembers")
+                if (maxMembers > 0 && faction.members.size >= maxMembers) {
+                    sender.sendMessage("${BukkitChatColor.RED}${plugin.language["CommandFactionInviteFactionFull"]}")
+                    return@Runnable
+                }
                 factionService.save(
                     faction.copy(
                         invites = faction.invites + MfFactionInvite(targetMfPlayer.id)
