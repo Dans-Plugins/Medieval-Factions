@@ -142,6 +142,7 @@ class MedievalFactions : JavaPlugin() {
         language = Language(this, config.getString("language") ?: "en-US")
 
         Class.forName("org.h2.Driver")
+        Class.forName("org.mariadb.jdbc.Driver")
         val hikariConfig = HikariConfig()
         hikariConfig.jdbcUrl = config.getString("database.url")
         val databaseUsername = config.getString("database.username")
