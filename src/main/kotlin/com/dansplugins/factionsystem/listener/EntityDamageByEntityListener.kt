@@ -32,6 +32,7 @@ class EntityDamageByEntityListener(private val plugin: MedievalFactions) : Liste
                 val damagedFaction = factionService.getFaction(claim.factionId) ?: return
                 if (!damagedFaction.flags[plugin.flags.enableMobProtection]) return
                 if (damagerFaction?.id == damagedFaction.id) return
+                if (damaged is Monster) return
                 event.isCancelled = true
                 return
             }
