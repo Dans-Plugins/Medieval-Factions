@@ -161,8 +161,15 @@ class PlayerInteractListener(private val plugin: MedievalFactions) : Listener {
             if (mfPlayer.isBypassEnabled && event.player.hasPermission("mf.bypass")) {
                 event.player.sendMessage("$RED${plugin.language["FactionTerritoryProtectionBypassed"]}")
             } else {
-                event.isCancelled = true
-                event.player.sendMessage("$RED${plugin.language["CannotInteractWithBlockInFactionTerritory", claimFaction.name]}")
+                if (event.item?.type?.isEdible == true) {
+                    if (event.clickedBlock!!.type.isInteractable) {
+                        event.isCancelled = true
+                        event.player.sendMessage("$RED${plugin.language["CannotInteractWithBlockInFactionTerritory", claimFaction.name]}")
+                    }
+                } else {
+                    event.isCancelled = true
+                    event.player.sendMessage("$RED${plugin.language["CannotInteractWithBlockInFactionTerritory", claimFaction.name]}")
+                }
             }
         }
         return
