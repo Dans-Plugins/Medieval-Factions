@@ -157,7 +157,10 @@ class PlayerInteractListener(private val plugin: MedievalFactions) : Listener {
         val claim = claimService.getClaim(clickedBlock.chunk) ?: return
         val factionService = plugin.services.factionService
         val claimFaction = factionService.getFaction(claim.factionId) ?: return
-        if (event.item?.type?.isEdible == true && event.clickedBlock!!.type.isInteractable == false) return
+        val item = event.item
+        if (item != null) {
+            if (item.type.isEdible && !clickedBlock.type.isInteractable) return
+        }
         if (!claimService.isInteractionAllowed(mfPlayer.id, claim)) {
             if (mfPlayer.isBypassEnabled && event.player.hasPermission("mf.bypass")) {
                 event.player.sendMessage("$RED${plugin.language["FactionTerritoryProtectionBypassed"]}")
