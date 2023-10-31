@@ -47,7 +47,7 @@ class PlayerBucketListener(private val plugin: MedievalFactions) : Listener {
                 event.player.sendMessage("${ChatColor.RED}${plugin.language["FactionTerritoryProtectionBypassed"]}")
             } else {
                 event.isCancelled = true
-                event.player.sendMessage("${ChatColor.RED}${plugin.language["CannotPlaceBlockInFactionTerritory", claimFaction.name]}")
+                event.player.sendMessage("${ChatColor.RED}${plugin.language["CannotBreakBlockInFactionTerritory", claimFaction.name]}")
             }
         }
     }
