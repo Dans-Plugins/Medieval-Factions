@@ -7,11 +7,12 @@ import org.bukkit.ChatColor
 import org.bukkit.event.EventHandler
 import org.bukkit.event.Listener
 import org.bukkit.event.player.PlayerBucketEmptyEvent
+import org.bukkit.event.player.PlayerBucketEvent
+import org.bukkit.event.player.PlayerBucketFillEvent
 import java.util.logging.Level
 
 class PlayerBucketListener(private val plugin: MedievalFactions) : Listener {
-    @EventHandler
-    fun playerBucketEmptyEvent(event: PlayerBucketEmptyEvent) {
+    fun handleProtection(event: PlayerBucketEvent) {
         val gateService = plugin.services.gateService
         val blockPosition = MfBlockPosition.fromBukkitBlock(event.block)
         val gates = gateService.getGatesAt(blockPosition)
@@ -50,5 +51,15 @@ class PlayerBucketListener(private val plugin: MedievalFactions) : Listener {
                 event.player.sendMessage("${ChatColor.RED}${plugin.language["CannotBreakBlockInFactionTerritory", claimFaction.name]}")
             }
         }
+    }
+
+    @EventHandler
+    fun playerBuckeEmptytEvent(event: PlayerBucketEmptyEvent) {
+        handleProtection(event)
+    }
+
+    @EventHandler
+    fun playerBucketFillEvent(event: PlayerBucketFillEvent) {
+        handleProtection(event)
     }
 }
