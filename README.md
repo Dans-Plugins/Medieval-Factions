@@ -88,6 +88,7 @@ Alternatively, you can use the External API, the documentation for which can be 
 | [Deej](https://github.com/Mr-Deej)                                            | Added checks to several commands                                                                                                            |
 | VoChiDanh                                                                     | Refactored parts the PersistentData class in an attempt to resolve java compatibility issues                                                |
 | Kyrenic                                                                       | Implemented contiguous claims config option                                                                                                 |
+| [Tems](https://github.com/Tems-py)                                            | Fixed claim protection issues                                                                                                               |
 
 ### Translators
 | Name                                                             | Language(s)          |
