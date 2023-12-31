@@ -89,6 +89,11 @@ class MfFactionClaimFillCommand(private val plugin: MedievalFactions) : CommandE
                             sender.sendMessage("$RED${plugin.language["CommandFactionClaimFillNoClaimableChunks"]}")
                             return@saveChunks
                         }
+                        val claimFillMaxChunks = plugin.config.getInt("factions.claimFillMaxChunks", -1)
+                        if (claimFillMaxChunks > 0 && claimableChunks.size > claimFillMaxChunks) {
+                            sender.sendMessage("$RED${plugin.language["CommandFactionClaimFillTooManyChunks", plugin.config.getInt("factions.claimFillMaxChunks").toString()]}")
+                            return@saveChunks
+                        }
                         if (plugin.config.getBoolean("factions.limitLand") && claimableChunks.size + claimService.getClaims(faction.id).size > faction.power) {
                             sender.sendMessage("$RED${plugin.language["CommandFactionClaimFillReachedDemesneLimit", decimalFormat.format(floor(faction.power))]}")
                             return@saveChunks
