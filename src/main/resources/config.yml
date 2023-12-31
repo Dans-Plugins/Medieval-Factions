@@ -94,5 +94,6 @@ duels:
   notificationDistance: 64
 dynmap:
   enableDynmapIntegration: true
+  onlyRenderTerritoriesUponStartup: false
 dev:
   enableDevCommands: false
