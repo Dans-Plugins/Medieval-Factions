@@ -144,7 +144,5 @@ class MfFactionClaimFillCommand(private val plugin: MedievalFactions) : CommandE
         args: Array<out String>
     ) = emptyList<String>()
 
-    class ClaimFillLimitReachedException: Exception() {
-
-    }
+    class ClaimFillLimitReachedException : Exception()
 }
