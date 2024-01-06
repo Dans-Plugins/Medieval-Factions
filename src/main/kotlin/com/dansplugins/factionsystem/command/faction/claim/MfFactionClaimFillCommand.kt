@@ -61,6 +61,7 @@ class MfFactionClaimFillCommand(private val plugin: MedievalFactions) : CommandE
                     sender.sendMessage("$RED${plugin.language["CommandFactionClaimFillMustBeInWorld"]}")
                     return@Runnable
                 }
+                val claimFillMaxChunks = plugin.config.getInt("factions.claimFillMaxChunks", -1)
                 plugin.server.scheduler.runTaskAsynchronously(
                     plugin,
                     Runnable saveChunks@{
@@ -89,7 +90,6 @@ class MfFactionClaimFillCommand(private val plugin: MedievalFactions) : CommandE
                             sender.sendMessage("$RED${plugin.language["CommandFactionClaimFillNoClaimableChunks"]}")
                             return@saveChunks
                         }
-                        val claimFillMaxChunks = plugin.config.getInt("factions.claimFillMaxChunks", -1)
                         if (claimFillMaxChunks > 0 && claimableChunks.size > claimFillMaxChunks) {
                             sender.sendMessage("$RED${plugin.language["CommandFactionClaimFillTooManyChunks", plugin.config.getInt("factions.claimFillMaxChunks").toString()]}")
                             return@saveChunks
