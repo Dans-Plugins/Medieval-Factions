@@ -89,6 +89,7 @@ Alternatively, you can use the External API, the documentation for which can be 
 | VoChiDanh                                                                     | Refactored parts the PersistentData class in an attempt to resolve java compatibility issues                                                |
 | Kyrenic                                                                       | Implemented contiguous claims config option                                                                                                 |
 | [Tems](https://github.com/Tems-py)                                            | Fixed claim protection issues                                                                                                               |
+| MestreWilll                                                                   | Contributed Brazilian Portueguese translation                                                                                               |  
 
 ### Translators
 | Name                                                             | Language(s)          |
@@ -104,6 +105,7 @@ Alternatively, you can use the External API, the documentation for which can be 
 | JustGllenn                                                       | Dutch                |
 | TDL                                                              | Dutch                |
 | [n0virus](https://www.youtube.com/c/n0virus)                     | Dutch                |
+| MestreWilll                                                      | Brazilian Portuguese |   
 
 I created this plugin because I wanted to use the original [Factions](https://www.spigotmc.org/resources/factions.1900/) plugin for an upcoming server of mine, but it wasn't updated for the version of minecraft I was going to be using. I decided to take inspiration from the concept of factions - groups of players that can claim land - and create my own factions plugin.
 
