@@ -300,6 +300,10 @@ class MedievalFactions : JavaPlugin() {
             MedievalFactionsPlaceholderExpansion(this).register()
         }
 
+        if (config.getBoolean("dynmap.onlyRenderTerritoriesUponStartup")) {
+            logger.info(language["DynmapOnlyRenderTerritoriesUponStartupEnabled"])
+        }
+
         if (dynmapService != null) {
             factionService.factions.forEach { faction ->
                 dynmapService.scheduleUpdateClaims(faction)
