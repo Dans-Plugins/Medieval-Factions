@@ -65,7 +65,7 @@ class MfFactionClaimFillCommand(private val plugin: MedievalFactions) : CommandE
                 plugin.server.scheduler.runTaskAsynchronously(
                     plugin,
                     Runnable saveChunks@{
-                        var chunks: Set<MfChunkPosition>?
+                        val chunks: Set<MfChunkPosition>?
                         try {
                             chunks = fill(senderWorldId, senderChunkX, senderChunkZ, faction)
                         } catch (e: ClaimFillLimitReachedException) {
