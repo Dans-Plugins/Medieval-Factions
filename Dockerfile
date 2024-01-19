@@ -5,8 +5,7 @@ RUN apt-get update
 RUN apt-get install -y git \
     openjdk-17-jdk \
     openjdk-17-jre \
-    wget \
-    locales
+    wget
 
 # Create server directory
 WORKDIR /testmcserver
@@ -17,11 +16,6 @@ RUN git config --global --unset core.autocrlf || :
 RUN java -jar BuildTools.jar --rev 1.20.4
 RUN echo "eula=true" > eula.txt
 RUN mkdir plugins
-
-# set locale to support us, de, fr, & br
-RUN locale-gen en_US.UTF-8 de_DE.UTF-8 fr_FR.UTF-8 pt_BR.UTF-8 && \
-    update-locale LANG=en_US.UTF-8 LANGUAGE=en_US.UTF-8 LC_ALL=en_US.UTF-8 && \
-    dpkg-reconfigure --frontend=noninteractive locales
 
 # Build plugin
 COPY . .
