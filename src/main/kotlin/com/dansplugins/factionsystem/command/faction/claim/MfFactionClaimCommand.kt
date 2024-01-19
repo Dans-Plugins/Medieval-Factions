@@ -16,8 +16,6 @@ class MfFactionClaimCommand(private val plugin: MedievalFactions) : CommandExecu
     private val fillAliases = listOf("fill", plugin.language["CmdFactionClaimFill"])
     private val checkAliases = listOf("check", plugin.language["CmdFactionClaimCheck"])
     private val circleAliases = listOf("circle", plugin.language["CmdFactionClaimCircle"])
-    // private val squareAliases = listOf("square", plugin.language["CmdFactionClaimSquare"])
-    // private val rectangleAliases = listOf("rectangle", plugin.language["CmdFactionClaimRectangle"])
 
     private val subcommands = autoAliases + fillAliases + checkAliases + circleAliases
 
@@ -27,8 +25,6 @@ class MfFactionClaimCommand(private val plugin: MedievalFactions) : CommandExecu
             in fillAliases -> factionClaimFillCommand.onCommand(sender, command, label, args.drop(1).toTypedArray())
             in checkAliases -> factionClaimCheckCommand.onCommand(sender, command, label, args.drop(1).toTypedArray())
             in circleAliases -> factionClaimCircleCommand.onCommand(sender, command, label, args.drop(1).toTypedArray())
-            // in squareAliases -> FactionClaimSquareCommand.onCommand(sender, command, label, args.drop(1).toTypedArray())
-            // in rectangleAliases -> FactionClaimRectangleCommand.onCommand(sender, command, label, args.drop(1).toTypedArray())
             else -> {
                 return factionClaimCircleCommand.onCommand(sender, command, label, args)
             }

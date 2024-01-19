@@ -55,6 +55,7 @@ import com.dansplugins.factionsystem.listener.EntityDamageListener
 import com.dansplugins.factionsystem.listener.EntityExplodeListener
 import com.dansplugins.factionsystem.listener.InventoryMoveItemListener
 import com.dansplugins.factionsystem.listener.LingeringPotionSplashListener
+import com.dansplugins.factionsystem.listener.PlayerBucketListener
 import com.dansplugins.factionsystem.listener.PlayerDeathListener
 import com.dansplugins.factionsystem.listener.PlayerInteractEntityListener
 import com.dansplugins.factionsystem.listener.PlayerInteractListener
@@ -182,6 +183,11 @@ class MedievalFactions : JavaPlugin() {
 
         val gson = Gson()
         val playerRepository: MfPlayerRepository = JooqMfPlayerRepository(this, dsl)
+        val dynmapService = if (server.pluginManager.getPlugin("dynmap") != null && config.getBoolean("dynmap.enableDynmapIntegration")) {
+            MfDynmapService(this)
+        } else {
+            null
+        }
         val factionRepository: MfFactionRepository = JooqMfFactionRepository(this, dsl, gson)
         val lawRepository: MfLawRepository = JooqMfLawRepository(dsl)
         val factionRelationshipRepository: MfFactionRelationshipRepository = JooqMfFactionRelationshipRepository(dsl)
@@ -207,11 +213,6 @@ class MedievalFactions : JavaPlugin() {
         val duelService = MfDuelService(this, duelRepository, duelInviteRepository)
         val potionService = MfPotionService(this)
         val teleportService = MfTeleportService(this)
-        val dynmapService = if (server.pluginManager.getPlugin("dynmap") != null && config.getBoolean("dynmap.enableDynmapIntegration")) {
-            MfDynmapService(this)
-        } else {
-            null
-        }
 
         services = Services(
             playerService,
@@ -299,6 +300,10 @@ class MedievalFactions : JavaPlugin() {
             MedievalFactionsPlaceholderExpansion(this).register()
         }
 
+        if (config.getBoolean("dynmap.onlyRenderTerritoriesUponStartup")) {
+            logger.info(language["DynmapOnlyRenderTerritoriesUponStartupEnabled"])
+        }
+
         if (dynmapService != null) {
             factionService.factions.forEach { faction ->
                 dynmapService.scheduleUpdateClaims(faction)
@@ -320,6 +325,7 @@ class MedievalFactions : JavaPlugin() {
             EntityExplodeListener(this),
             InventoryMoveItemListener(this),
             LingeringPotionSplashListener(this),
+            PlayerBucketListener(this),
             PlayerDeathListener(this),
             PlayerInteractListener(this),
             PlayerJoinListener(this),
