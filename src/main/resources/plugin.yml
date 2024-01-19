@@ -75,11 +75,11 @@ commands:
     usage: /<command> [help|ally|breakalliance|declarewar|makepeace|create|invite|join|law|role|list|claim|unclaim|checkclaim|unclaimall|power|who|invoke|leave|vassalize|swearfealty|declareindependence|grantindependence|kick|map|sethome|home|flag|bypass|chat|set|bonuspower|relationship]
   lock:
     description: Enables or disables lock mode. To cancel lock mode, use /lock cancel.
-    aliases: [verschließen, verschliessen, verrouiller]
+    aliases: [verschlieBen, verschliessen, verrouiller]
     usage: /<command> (cancel)
   unlock:
     description: Enables or disables unlock mode. To cancel unlock mode, use /unlock cancel.
-    aliases: [aufschließen, aufschliessen, déverrouiller, deverrouiller]
+    aliases: [aufschlieBen, aufschliessen, deverrouiller, deverrouiller]
     usage: /<command> (cancel)
   accessors:
     description: |
