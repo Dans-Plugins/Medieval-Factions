@@ -71,6 +71,7 @@ factions:
   factionlessFactionName: Factionless
   factionHomeTeleportDelay: 5
   maxMembers: -1
+  claimFillMaxChunks: 100
   defaults:
     flags:
       alliesCanInteractWithLand: false

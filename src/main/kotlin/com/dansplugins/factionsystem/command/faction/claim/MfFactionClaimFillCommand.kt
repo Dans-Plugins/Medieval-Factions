@@ -23,6 +23,7 @@ import kotlin.math.floor
 class MfFactionClaimFillCommand(private val plugin: MedievalFactions) : CommandExecutor, TabCompleter {
 
     private val decimalFormat = DecimalFormat("0", DecimalFormatSymbols.getInstance(plugin.language.locale))
+    private val claimFillMaxChunks = plugin.config.getInt("factions.claimFillMaxChunks", -1)
 
     override fun onCommand(sender: CommandSender, command: Command, label: String, args: Array<out String>): Boolean {
         if (!sender.hasPermission("mf.claim.fill") && !sender.hasPermission("mf.claimfill")) {
@@ -64,7 +65,13 @@ class MfFactionClaimFillCommand(private val plugin: MedievalFactions) : CommandE
                 plugin.server.scheduler.runTaskAsynchronously(
                     plugin,
                     Runnable saveChunks@{
-                        val chunks = fill(senderWorldId, senderChunkX, senderChunkZ, faction)
+                        val chunks: Set<MfChunkPosition>?
+                        try {
+                            chunks = fill(senderWorldId, senderChunkX, senderChunkZ, faction)
+                        } catch (e: ClaimFillLimitReachedException) {
+                            sender.sendMessage("$RED${plugin.language["CommandFactionClaimFillTooManyChunks", claimFillMaxChunks.toString()]}")
+                            return@saveChunks
+                        }
                         if (chunks == null) {
                             sender.sendMessage("$RED${plugin.language["CommandFactionClaimFillNotEnoughPower"]}")
                             return@saveChunks
@@ -116,6 +123,9 @@ class MfFactionClaimFillCommand(private val plugin: MedievalFactions) : CommandE
         if (chunksToFill.contains(MfChunkPosition(worldId, startChunkX, startChunkZ))) return chunksToFill
         val newChunks = mutableSetOf(*chunksToFill.toTypedArray(), MfChunkPosition(worldId, startChunkX, startChunkZ))
         if (newChunks.size + claimService.getClaims(faction.id).size > faction.power) return null
+        if (claimFillMaxChunks > 0 && newChunks.size > claimFillMaxChunks) {
+            throw ClaimFillLimitReachedException()
+        }
         val westChunks = fill(worldId, startChunkX - 1, startChunkZ, faction, newChunks) ?: return null
         newChunks += westChunks
         val eastChunks = fill(worldId, startChunkX + 1, startChunkZ, faction, newChunks) ?: return null
@@ -133,4 +143,6 @@ class MfFactionClaimFillCommand(private val plugin: MedievalFactions) : CommandE
         label: String,
         args: Array<out String>
     ) = emptyList<String>()
+
+    class ClaimFillLimitReachedException : Exception()
 }
