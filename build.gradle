@@ -60,6 +60,7 @@ dependencies {
     testImplementation 'org.junit.jupiter:junit-jupiter:5.9.0'
     testImplementation 'io.mockk:mockk:1.13.2'
     jooqGenerator 'org.jooq:jooq-meta-extensions:3.17.4'
+    testImplementation 'junit:junit:4.13.2'
 }
 
 kotlin {
