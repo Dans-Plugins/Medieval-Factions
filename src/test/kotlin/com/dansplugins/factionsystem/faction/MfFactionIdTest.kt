@@ -1,8 +1,7 @@
 package com.dansplugins.factionsystem.faction
 
-import com.dansplugins.factionsystem.player.MfPlayerId
-import org.junit.Test
 import org.junit.Assert.assertEquals
+import org.junit.Test
 
 class MfFactionIdTest {
     /**
