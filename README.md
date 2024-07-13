@@ -1,9 +1,7 @@
 # Medieval Factions
-
-## Description 
 Medieval Factions is a system of mechanics that allows for the simulation of sovereign nations in Minecraft. Players can create nations, claim territory, engage in warfare or politics, write laws or hold dueling tournaments, and generally are able to attempt to recreate society somewhat.
 
-A list of features can be found [here](https://github.com/dmccoystephenson/Medieval-Factions/wiki/Features).
+A list of features can be found [here](https://github.com/Dans-Plugins/Medieval-Factions/wiki/Features).
 
 ### Fifth Major Version - MF 5
 Medieval Factions 5 reimagines and reworks everything about the plugin. The development of the fifth major version of MF was led by [alyphen](https://github.com/alyphen) (creator of [RPKit](https://github.com/RP-Kit/RPKit/wiki)). Huge thanks to her!
@@ -12,32 +10,9 @@ Medieval Factions 5 reimagines and reworks everything about the plugin. The deve
 This is a complete rewrite of Medieval Factions so everything has received a fresh coat of paint since 4.6.x/4.7.x. Commands, permissions, placeholders, etc should mostly be compatible, though some things have changed, such as locks, roles, and force commands.
 
 ## Installation
-### First Time Installation
 1) You can download the plugin from [this page](https://www.spigotmc.org/resources/medieval-factions-sovereign-nation-simulator.79941/updates).
 2) Once downloaded, place the jar in the plugins folder of your server files.
 3) Restart your server.
-
-### Upgrading from Medieval Factions 4
-
-1. If you have a Medieval Factions 4 install, replace the Medieval Factions 4 jar with Medieval Factions 5.
-
-2. On the next start, Medieval Factions 5 will detect the Medieval Factions 4 config and make a backup of all of the data in mf4_backup in the data folder. It will then proceed to generate the new config file, and shut down the server.
-
-3. At this point, you should configure your database, if you have one.
-
-If you have MySQL or MariaDB database, this should look something like:
-
-```
-database:
-url: 'jdbc:mysql://127.0.0.1/database'
-dialect: 'MYSQL'
-username: 'username'
-password: 'password'
-```
-
-If you do not have a MySQL database, you can ignore this, as the plugin will create an h2 file-based database in your server's working directory.
-
-4. Start the server one more time, and the configuration and data from the Medieval Factions 4 backup will be migrated to your new Medieval Factions 5 install.
 
 ### Dynmap Integration
 Dynmap has been integrated with this plugin. In order to be able to view claimed land on a dynamic map, download and install the plugin [here](https://www.spigotmc.org/resources/dynmap.274/).
@@ -107,11 +82,11 @@ Alternatively, you can use the External API, the documentation for which can be 
 | [n0virus](https://www.youtube.com/c/n0virus)                     | Dutch                |
 | MestreWilll                                                      | Brazilian Portuguese |   
 
-I created this plugin because I wanted to use the original [Factions](https://www.spigotmc.org/resources/factions.1900/) plugin for an upcoming server of mine, but it wasn't updated for the version of minecraft I was going to be using. I decided to take inspiration from the concept of factions - groups of players that can claim land - and create my own factions plugin.
-
-The first release version, [v1.7](https://github.com/dmccoystephenson/Medieval-Factions/releases/tag/v1.7), was released on SpigotMC in June 2020 and looked much different than the plugin does today.
-
-I am extremely grateful to those that have donated their time improving the project, one way or another. The plugin wouldn't be where it is today without the contributions of others.
+### Note From Original Creator
+> This plugin was created because I wanted to use the original [Factions](https://www.spigotmc.org/resources/factions.1900/) plugin for a server of mine, but it wasn't updated for the version of minecraft I was going to be using. I decided to take inspiration from the concept of factions - groups of players that can claim land - and create a new factions plugin.
+> The first release version, [v1.7](https://github.com/dmccoystephenson/Medieval-Factions/releases/tag/v1.7), was released on SpigotMC in June 2020 and looked much different than the plugin does today.
+> I am extremely grateful to those that have donated their time improving the project. The plugin wouldn't be where it is today without the contributions of others.
+> - Daniel Stephenson
 
 ## License
 GPL3
