@@ -57,15 +57,24 @@ dependencies {
     implementation 'com.rpkit:rpk-lock-lib-bukkit:2.3.2:all'
     implementation 'com.dansplugins:ponder-bukkit:2.0.0'
     implementation 'com.dansplugins:ponder-commands:2.0.0'
-    testImplementation 'org.junit.jupiter:junit-jupiter:5.9.0'
-    testImplementation 'io.mockk:mockk:1.13.2'
     jooqGenerator 'org.jooq:jooq-meta-extensions:3.17.4'
-    testImplementation 'junit:junit:4.13.2'
+
+    // Use the Kotlin JUnit 5 integration.
+    testImplementation("org.jetbrains.kotlin:kotlin-test-junit5")
+
+    testRuntimeOnly("org.junit.platform:junit-platform-launcher")
 }
 
 kotlin {
     jvmToolchain {
         languageVersion.set(JavaLanguageVersion.of(17))
+    }
+}
+
+// Apply a specific Java toolchain to ease working on different environments.
+java {
+    toolchain {
+        languageVersion = JavaLanguageVersion.of(17)
     }
 }
 
@@ -167,10 +176,6 @@ artifacts {
     archives shadowJar
 }
 
-tasks.named('test') {
-    useJUnitPlatform()
-}
-
 publishing {
     repositories {
         maven {
@@ -192,4 +197,9 @@ publishing {
             from components.java
         }
     }
+}
+
+tasks.named('test') {
+    // Use JUnit Platform for unit tests.
+    useJUnitPlatform()
 }

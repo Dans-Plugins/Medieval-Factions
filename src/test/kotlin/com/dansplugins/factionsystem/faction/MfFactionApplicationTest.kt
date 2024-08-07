@@ -1,8 +1,8 @@
 package com.dansplugins.factionsystem.faction
 
 import com.dansplugins.factionsystem.player.MfPlayerId
-import org.junit.Assert.assertEquals
-import org.junit.Test
+import kotlin.test.Test
+import kotlin.test.assertEquals
 
 class MfFactionApplicationTest {
 
@@ -13,7 +13,7 @@ class MfFactionApplicationTest {
         val mfFactionId = MfFactionId.generate()
 
         // execute
-        val mfFactionApplication = MfFactionApplication(mfPlayerId, mfFactionId)
+        val mfFactionApplication = MfFactionApplication(mfFactionId, mfPlayerId)
 
         // verify
         assertEquals(mfPlayerId, mfFactionApplication.applicantId)
