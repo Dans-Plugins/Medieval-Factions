@@ -295,6 +295,9 @@ permissions:
   mf.flag.set:
     description: Allows setting faction flags
     default: true
+  mf.apply:
+    description: Allows applying to a faction
+    default: true
   mf.bypass:
     description: Allows bypassing faction protections
     default: op
