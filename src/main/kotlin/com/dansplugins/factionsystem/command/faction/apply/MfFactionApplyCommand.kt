@@ -27,8 +27,13 @@ class MfFactionApplyCommand(private val plugin: MedievalFactions) : CommandExecu
             sender.sendMessage("${ChatColor.RED}${plugin.language["CommandFactionApplyUsage"]}")
             return true
         }
-        val targetFactionName = args.joinToString(" ")
-        sendApplication(sender, targetFactionName)
+        val targetFactionName = args.dropLast(1).joinToString(" ")
+        val lastArg = args.last()
+        if (lastArg.equals("cancel", ignoreCase = true)) {
+            cancelApplication(sender, targetFactionName)
+        } else {
+            sendApplication(sender, args.joinToString(" "))
+        }
         return true
     }
 
@@ -46,18 +51,16 @@ class MfFactionApplyCommand(private val plugin: MedievalFactions) : CommandExecu
                         return@Runnable
                     }
                 val faction = factionService.getFaction(mfPlayer.id)
-                if (faction == null) {
-                    sender.sendMessage("${ChatColor.RED}${plugin.language["CommandFactionApplyMustBeInAFaction"]}")
-                    return@Runnable
-                }
                 val target = factionService.getFaction(targetFactionName)
                 if (target == null) {
                     sender.sendMessage("${ChatColor.RED}${plugin.language["CommandFactionApplyInvalidTarget"]}")
                     return@Runnable
                 }
-                if (target.id.value == faction.id.value) {
-                    sender.sendMessage("${ChatColor.RED}${plugin.language["CommandFactionApplyCannotApplyToCurrentFaction"]}")
-                    return@Runnable
+                if (faction != null) {
+                    if (target.id.value == faction.id.value) {
+                        sender.sendMessage("${ChatColor.RED}${plugin.language["CommandFactionApplyCannotApplyToCurrentFaction"]}")
+                        return@Runnable
+                    }
                 }
 
                 factionService.save(target.copy(applications = target.applications + MfFactionApplication(target.id, mfPlayer.id))).onFailure {
@@ -65,6 +68,42 @@ class MfFactionApplyCommand(private val plugin: MedievalFactions) : CommandExecu
                     plugin.logger.log(SEVERE, "Failed to save faction: ${it.reason.message}", it.reason.cause)
                     return@Runnable
                 }
+            }
+        )
+    }
+
+    private fun cancelApplication(sender: Player, targetFactionName: String) {
+        plugin.logger.info("Player " + sender.name + " is cancelling application to faction " + targetFactionName)
+        plugin.server.scheduler.runTaskAsynchronously(
+            plugin,
+            Runnable {
+                val factionService = plugin.services.factionService
+                val playerService = plugin.services.playerService
+                val mfPlayer = playerService.getPlayer(sender)
+                    ?: playerService.save(MfPlayer(plugin, sender)).onFailure {
+                        sender.sendMessage("${ChatColor.RED}${plugin.language["CommandFactionApplyCancelFailedToSaveFaction"]}")
+                        plugin.logger.log(SEVERE, "Failed to save player: ${it.reason.message}", it.reason.cause)
+                        return@Runnable
+                    }
+                val target = factionService.getFaction(targetFactionName)
+                if (target == null) {
+                    sender.sendMessage("${ChatColor.RED}${plugin.language["CommandFactionApplyCancelInvalidTarget"]}")
+                    return@Runnable
+                }
+
+                // if the player has not applied to the faction, do nothing
+                if (!target.applications.any { it.applicantId == mfPlayer.id }) {
+                    sender.sendMessage("${ChatColor.RED}${plugin.language["CommandFactionApplyCancelNotApplied"]}")
+                    return@Runnable
+                }
+
+                val updatedApplications = target.applications.filterNot { it.applicantId == mfPlayer.id }
+                factionService.save(target.copy(applications = updatedApplications)).onFailure {
+                    sender.sendMessage("${ChatColor.RED}${plugin.language["CommandFactionApplyCancelFailedToSaveFaction"]}")
+                    plugin.logger.log(SEVERE, "Failed to save faction: ${it.reason.message}", it.reason.cause)
+                    return@Runnable
+                }
+                sender.sendMessage("${ChatColor.GREEN}${plugin.language["CommandFactionApplyCancelSuccess", target.name]}")
             }
         )
     }
