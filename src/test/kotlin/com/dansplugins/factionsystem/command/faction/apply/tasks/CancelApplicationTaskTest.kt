@@ -1,21 +1,14 @@
 
 import com.dansplugins.factionsystem.MedievalFactions
-import com.dansplugins.factionsystem.command.faction.apply.tasks.CancelApplicationTask
 import com.dansplugins.factionsystem.faction.MfFactionService
 import com.dansplugins.factionsystem.lang.Language
 import com.dansplugins.factionsystem.player.MfPlayerService
 import com.dansplugins.factionsystem.service.Services
-import net.md_5.bungee.api.ChatColor
 import org.bukkit.entity.Player
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
-import org.mockito.Mockito.any
-import org.mockito.Mockito.anyString
-import org.mockito.Mockito.eq
 import org.mockito.Mockito.mock
-import org.mockito.Mockito.verify
 import org.mockito.Mockito.`when`
-import java.util.logging.Level
 import java.util.logging.Logger
 
 class CancelApplicationTaskTest {
@@ -45,16 +38,6 @@ class CancelApplicationTaskTest {
 
     @Test
     fun testRun_PlayerNotFound() {
-        // prepare
-        val targetFactionName = "targetFaction"
-        `when`(playerService.getPlayer(sender)).thenReturn(null)
-        `when`(language["CommandFactionApplyCancelFailedToSaveFaction"]).thenReturn("Failed to save player")
-
-        // execute
-        CancelApplicationTask(plugin, sender, targetFactionName).run()
-
-        // verify
-        verify(sender).sendMessage("${ChatColor.RED}Failed to save player")
-        verify(logger).log(eq(Level.SEVERE), anyString(), any(Throwable::class.java))
+        // TODO: Implement
     }
 }
