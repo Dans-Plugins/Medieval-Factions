@@ -35,6 +35,7 @@ import com.dansplugins.factionsystem.command.faction.role.MfFactionRoleCommand
 import com.dansplugins.factionsystem.command.faction.set.MfFactionSetCommand
 import com.dansplugins.factionsystem.command.faction.set.name.MfFactionSetNameCommand
 import com.dansplugins.factionsystem.command.faction.sethome.MfFactionSetHomeCommand
+import com.dansplugins.factionsystem.command.faction.showapps.MfShowAppsCommand
 import com.dansplugins.factionsystem.command.faction.swearfealty.MfFactionSwearFealtyCommand
 import com.dansplugins.factionsystem.command.faction.unclaim.MfFactionUnclaimCommand
 import com.dansplugins.factionsystem.command.faction.unclaimall.MfFactionUnclaimAllCommand
@@ -89,6 +90,7 @@ class MfFactionCommand(private val plugin: MedievalFactions) : CommandExecutor, 
     private val factionAddMemberCommand = MfFactionAddMemberCommand(plugin)
     private val factionDevCommand = MfFactionDevCommand(plugin)
     private val factionApplyCommand = MfFactionApplyCommand(plugin)
+    private val factionShowAppsCommand = MfShowAppsCommand(plugin)
 
     private val helpAliases = listOf("help", plugin.language["CmdFactionHelp"])
     private val createAliases = listOf("create", plugin.language["CmdFactionCreate"])
@@ -129,6 +131,7 @@ class MfFactionCommand(private val plugin: MedievalFactions) : CommandExecutor, 
     private val addMemberAliases = listOf("addmember", plugin.language["CmdFactionAddMember"])
     private val devAliases = if (plugin.config.getBoolean("dev.enableDevCommands")) listOf("dev") else emptyList()
     private val applyAliases = listOf("apply", plugin.language["CmdFactionApply"])
+    private val showAppsAliases = listOf("showapps", plugin.language["CmdFactionShowApps"])
 
     private val subcommands = helpAliases +
         createAliases +
@@ -168,7 +171,8 @@ class MfFactionCommand(private val plugin: MedievalFactions) : CommandExecutor, 
         relationshipAliases +
         addMemberAliases +
         devAliases +
-        applyAliases
+        applyAliases +
+        showAppsAliases
 
     override fun onCommand(sender: CommandSender, command: Command, label: String, args: Array<out String>): Boolean {
         return when (args.firstOrNull()?.lowercase()) {
@@ -211,6 +215,7 @@ class MfFactionCommand(private val plugin: MedievalFactions) : CommandExecutor, 
             in addMemberAliases -> factionAddMemberCommand.onCommand(sender, command, label, args.drop(1).toTypedArray())
             in devAliases -> factionDevCommand.onCommand(sender, command, label, args.drop(1).toTypedArray())
             in applyAliases -> factionApplyCommand.onCommand(sender, command, label, args.drop(1).toTypedArray())
+            in showAppsAliases -> factionShowAppsCommand.onCommand(sender, command, label, args.drop(1).toTypedArray())
             else -> {
                 sender.sendMessage("$AQUA${plugin.language["MedievalFactionsTitle", plugin.description.version]}")
                 sender.sendMessage("$GRAY${plugin.language["DeveloperList", plugin.description.authors.joinToString()]}")

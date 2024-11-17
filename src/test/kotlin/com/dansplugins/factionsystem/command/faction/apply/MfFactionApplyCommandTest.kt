@@ -25,11 +25,14 @@ import java.util.logging.Logger
 
 class MfFactionApplyCommandTest {
 
+    // class under test
+    private lateinit var mfFactionApplyCommand: MfFactionApplyCommand
+
+    // dependencies
     private lateinit var plugin: MedievalFactions
     private lateinit var command: Command
     private lateinit var sender: CommandSender
     private lateinit var player: Player
-    private lateinit var mfFactionApplyCommand: MfFactionApplyCommand
     private lateinit var language: Language
 
     @BeforeEach
