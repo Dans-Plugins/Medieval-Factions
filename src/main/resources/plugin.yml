@@ -117,11 +117,12 @@ commands:
   showapps:
     description: Shows the list of applications to your faction
     usage: /<command>
-    permission: mf.showapps
   approveapp:
     description: Approves a player's application to your faction
     usage: /<command> <player>
-    permission: mf.approveapp
+  denyapp:
+    description: Denies a player's application to your faction
+    usage: /<command> <player>
 permissions:
   mf.help:
     description: View a list of helpful commands.
@@ -329,6 +330,9 @@ permissions:
     default: true
   mf.approveapp:
     description: Approves a player's application to your faction
+    default: true
+  mf.denyapp:
+    description: Denies a player's application to your faction
     default: true
   mf.relationship.view:
     description: Allows viewing faction relationships
