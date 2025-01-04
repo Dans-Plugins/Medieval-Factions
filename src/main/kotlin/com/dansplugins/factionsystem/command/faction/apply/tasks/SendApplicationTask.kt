@@ -22,9 +22,10 @@ class SendApplicationTask(
         val playerService = plugin.services.playerService
 
         val mfPlayer = getOrSavePlayer(playerService, sender) ?: return
+        val faction = factionService.getFaction(mfPlayer.id)
         val target = getTargetFaction(factionService, targetFactionName, sender) ?: return
 
-        if (isPlayerInTargetFaction(factionService, mfPlayer, target)) {
+        if (faction != null && target.id.value == faction.id.value) {
             sender.sendMessage("${ChatColor.RED}${plugin.language["CommandFactionApplyCannotApplyToCurrentFaction"]}")
             return
         }
@@ -45,11 +46,6 @@ class SendApplicationTask(
             sender.sendMessage("${ChatColor.RED}${plugin.language["CommandFactionApplyInvalidTarget"]}")
         }
         return target
-    }
-
-    private fun isPlayerInTargetFaction(factionService: MfFactionService, mfPlayer: MfPlayer, target: MfFaction): Boolean {
-        val faction = factionService.getFaction(mfPlayer.id)
-        return faction != null && target.id.value == faction.id.value
     }
 
     private fun saveFactionApplication(factionService: MfFactionService, target: MfFaction, mfPlayer: MfPlayer, sender: Player) {
