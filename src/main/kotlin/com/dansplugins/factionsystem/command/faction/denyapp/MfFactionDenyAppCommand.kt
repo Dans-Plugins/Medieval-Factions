@@ -24,7 +24,7 @@ class MfFactionDenyAppCommand(private val plugin: MedievalFactions) : CommandExe
             return true
         }
         val targetPlayerName = args[0]
-        plugin.logger.info("Player ${sender.name} is approving application for player $targetPlayerName")
+        plugin.logger.info("Player ${sender.name} is denying application for player $targetPlayerName")
         plugin.server.scheduler.runTaskAsynchronously(
             plugin,
             DenyApplicationTask(plugin, sender, targetPlayerName)
