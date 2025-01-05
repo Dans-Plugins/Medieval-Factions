@@ -60,5 +60,11 @@ class ApproveApplicationTask(
             "${org.bukkit.ChatColor.GREEN}${plugin.language["CommandFactionApproveAppApplicationAccepted"]}",
             "${targetMfPlayer.name} ${plugin.language["CommandFactionApproveAppApplicationAcceptedMessage"]}"
         )
+        try {
+            factionService.cancelAllApplicationsForPlayer(mfPlayer)
+        } catch (e: Exception) {
+            sender.sendMessage("${org.bukkit.ChatColor.RED}${plugin.language["CommandFactionApproveAppFailedToCancelApplications"]}") // TODO: add to language file
+            plugin.logger.log(Level.SEVERE, "Failed to cancel applications: ${e.message}", e)
+        }
     }
 }
