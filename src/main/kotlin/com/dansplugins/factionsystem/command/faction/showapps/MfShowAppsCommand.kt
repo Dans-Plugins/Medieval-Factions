@@ -14,7 +14,7 @@ import org.bukkit.entity.Player
 class MfShowAppsCommand(private val plugin: MedievalFactions) : CommandExecutor {
 
     override fun onCommand(sender: CommandSender, command: Command, label: String, args: Array<out String>): Boolean {
-        if (!sender.hasPermission("mf.apply")) {
+        if (!sender.hasPermission("mf.showapps")) {
             sender.sendMessage("${ChatColor.RED}${plugin.language["CommandFactionShowAppsNoPermission"]}")
             return true
         }
