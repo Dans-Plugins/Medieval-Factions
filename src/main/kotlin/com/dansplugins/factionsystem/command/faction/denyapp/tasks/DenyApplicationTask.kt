@@ -39,6 +39,11 @@ class DenyApplicationTask(
             sender.sendMessage("${org.bukkit.ChatColor.RED}${plugin.language["CommandFactionDenyAppNoApplication"]}")
             return
         }
+        val role = faction.getRole(mfPlayer.id)
+        if (role == null || !role.hasPermission(faction, plugin.factionPermissions.denyApp)) {
+            sender.sendMessage("${org.bukkit.ChatColor.RED}${plugin.language["CommandFactionDenyAppNoPermission"]}") // TODO: add to language file
+            return
+        }
 
         // Remove the player's application record from the faction
         val updatedFaction = faction.copy(applications = faction.applications.filter { it.applicantId != targetMfPlayer.id })

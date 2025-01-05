@@ -40,6 +40,11 @@ class ApproveApplicationTask(
             sender.sendMessage("${org.bukkit.ChatColor.RED}${plugin.language["CommandFactionApproveAppNoApplication"]}")
             return
         }
+        val role = faction.getRole(mfPlayer.id)
+        if (role == null || !role.hasPermission(faction, plugin.factionPermissions.approveApp)) {
+            sender.sendMessage("${org.bukkit.ChatColor.RED}${plugin.language["CommandFactionApproveAppNoPermission"]}") // TODO: add to language file
+            return
+        }
         if (faction.members.size >= plugin.config.getInt("max-members")) {
             sender.sendMessage("${org.bukkit.ChatColor.RED}${plugin.language["CommandFactionApproveAppMaxMembers"]}")
             return
