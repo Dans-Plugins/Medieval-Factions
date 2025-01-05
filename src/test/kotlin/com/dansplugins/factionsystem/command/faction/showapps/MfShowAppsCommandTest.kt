@@ -50,7 +50,7 @@ class MfShowAppsCommandTest {
     @Test
     fun testOnCommand_senderWithoutPermission() {
         // prepare
-        `when`(sender.hasPermission("mf.apply")).thenReturn(false)
+        `when`(sender.hasPermission("mf.showapps")).thenReturn(false)
         `when`(language["CommandFactionShowAppsNoPermission"]).thenReturn("No permission")
 
         // execute
@@ -64,7 +64,7 @@ class MfShowAppsCommandTest {
     @Test
     fun testOnCommand_SenderNotAPlayer() {
         // prepare
-        `when`(sender.hasPermission("mf.apply")).thenReturn(true)
+        `when`(sender.hasPermission("mf.showapps")).thenReturn(true)
         `when`(language["CommandFactionShowAppsNotAPlayer"]).thenReturn("Not a player")
 
         // execute
@@ -78,7 +78,7 @@ class MfShowAppsCommandTest {
     @Test
     fun testOnCommand_ValidPlayerWithPermission() {
         // prepare
-        `when`(player.hasPermission("mf.apply")).thenReturn(true)
+        `when`(player.hasPermission("mf.showapps")).thenReturn(true)
 
         // execute
         val result = mfShowAppsCommand.onCommand(player, command, "label", arrayOf())
