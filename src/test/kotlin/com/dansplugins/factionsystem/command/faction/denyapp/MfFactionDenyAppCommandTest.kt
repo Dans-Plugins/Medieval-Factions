@@ -111,7 +111,7 @@ class MfFactionDenyAppCommandTest {
 
         // verify
         assertTrue(result)
-        verify(plugin.logger).info("Player playerName is approving application for player targetPlayerName")
+        verify(plugin.logger).info("Player playerName is denying application for player targetPlayerName")
         verify(plugin.server.scheduler).runTaskAsynchronously(
             eq(plugin),
             any(DenyApplicationTask::class.java)
