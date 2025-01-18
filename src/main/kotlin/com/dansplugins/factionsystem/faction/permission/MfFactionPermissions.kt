@@ -67,6 +67,7 @@ class MfFactionPermissions(private val plugin: MedievalFactions) {
                 wrapSimplePermission("LIST_MEMBERS", plugin.language["FactionPermissionListMembers"], true),
                 wrapSimplePermission("CREATE_ROLE", plugin.language["FactionPermissionCreateRole"], false),
                 wrapSimplePermission("SET_DEFAULT_ROLE", plugin.language["FactionPermissionSetDefaultRole"], false),
+                wrapSimplePermission("APPROVE_APP", plugin.language["FactionPermissionApproveApp"], false),
                 SetRolePermission(plugin)
             )
         )
@@ -117,7 +118,7 @@ class MfFactionPermissions(private val plugin: MedievalFactions) {
     val listMembers = parse("LIST_MEMBERS")!!
     val createRole = parse("CREATE_ROLE")!!
     val setDefaultRole = parse("SET_DEFAULT_ROLE")!!
-    val approveApp = parse("APPROVE_APP")!!
+    val approveApp = parse("APPROVE_APP")!! // TODO: fix null exception
     val denyApp = parse("DENY_APP")!!
     fun setRolePermission(permission: MfFactionPermission) = parse("SET_ROLE_PERMISSION(${permission.name})")!!
 
