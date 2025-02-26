@@ -45,10 +45,6 @@ class ApproveApplicationTask(
             sender.sendMessage("${org.bukkit.ChatColor.RED}${plugin.language["CommandFactionApproveAppNoPermission"]}") // TODO: add to language file
             return
         }
-        if (faction.members.size >= plugin.config.getInt("max-members")) {
-            sender.sendMessage("${org.bukkit.ChatColor.RED}${plugin.language["CommandFactionApproveAppMaxMembers"]}")
-            return
-        }
         val updatedFaction = factionService.save(
             faction.copy(
                 members = faction.members + MfFactionMember(targetMfPlayer.id, faction.roles.default),
