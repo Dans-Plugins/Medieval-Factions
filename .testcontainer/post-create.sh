@@ -7,9 +7,6 @@ if [ -z "$(ls -A /testmcserver)" ]; then
     # Create plugins directory
     mkdir /testmcserver/plugins
 
-    # Install Medieval Factions
-    cp /testmcserver-build/MedievalFactions/build/libs/*-all.jar /testmcserver/plugins
-
     # Create ops.json file on the fly
     echo '[
       {
@@ -25,5 +22,8 @@ if [ -z "$(ls -A /testmcserver)" ]; then
 else
     echo "Server is already set up."
 fi
+
+# Always copy the latest plugin JAR
+cp /testmcserver-build/MedievalFactions/build/libs/*-all.jar /testmcserver/plugins
 
 java -jar /testmcserver/spigot-1.20.4.jar
