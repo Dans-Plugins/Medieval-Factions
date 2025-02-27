@@ -31,6 +31,7 @@ class SendApplicationTask(
         }
 
         saveFactionApplication(factionService, target, mfPlayer, sender)
+        target.sendMessage("${ChatColor.GREEN}${plugin.language["CommandFactionApplyNewApplicationTitle"]}", "${ChatColor.AQUA}${plugin.language["CommandFactionApplyNewApplicationMessage", mfPlayer.name.toString()]}")
     }
 
     private fun getOrSavePlayer(playerService: MfPlayerService, sender: Player): MfPlayer? {

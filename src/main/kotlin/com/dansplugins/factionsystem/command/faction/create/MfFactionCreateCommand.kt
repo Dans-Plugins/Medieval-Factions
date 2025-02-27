@@ -69,7 +69,7 @@ class MfFactionCreateCommand(private val plugin: MedievalFactions) : CommandExec
                 try {
                     factionService.cancelAllApplicationsForPlayer(mfPlayer)
                 } catch (e: Exception) {
-                    sender.sendMessage("${org.bukkit.ChatColor.RED}${plugin.language["CommandFactionCreateFailedToCancelApplications"]}") // TODO: add to language file
+                    sender.sendMessage("${org.bukkit.ChatColor.RED}${plugin.language["CommandFactionCreateFailedToCancelApplications"]}")
                     plugin.logger.log(SEVERE, "Failed to cancel applications: ${e.message}", e)
                 }
             }
