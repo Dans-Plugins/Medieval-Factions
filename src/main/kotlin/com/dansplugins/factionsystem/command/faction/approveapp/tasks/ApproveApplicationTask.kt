@@ -42,7 +42,7 @@ class ApproveApplicationTask(
         }
         val role = faction.getRole(mfPlayer.id)
         if (role == null || !role.hasPermission(faction, plugin.factionPermissions.approveApp)) {
-            sender.sendMessage("${org.bukkit.ChatColor.RED}${plugin.language["CommandFactionApproveAppNoPermission"]}") // TODO: add to language file
+            sender.sendMessage("${org.bukkit.ChatColor.RED}${plugin.language["CommandFactionApproveAppNoPermission"]}")
             return
         }
         val updatedFaction = factionService.save(
@@ -55,16 +55,16 @@ class ApproveApplicationTask(
             plugin.logger.log(Level.SEVERE, "Failed to save faction: ${it.reason.message}", it.reason.cause)
             return
         }
-        targetPlayer.player?.sendMessage("${org.bukkit.ChatColor.GREEN}${plugin.language["CommandFactionApproveAppApplicationAccepted"]}")
-        sender.sendMessage("${org.bukkit.ChatColor.GREEN}${plugin.language["CommandFactionApproveAppApplicationAccepted"]} ${faction.name}")
+        targetPlayer.player?.sendMessage("${org.bukkit.ChatColor.GREEN}${plugin.language["CommandFactionApproveAppAccepted", faction.name]}")
+        sender.sendMessage("${org.bukkit.ChatColor.GREEN}${plugin.language["CommandFactionApproveAppAcceptedSender", targetMfPlayer.name.toString()]}")
         updatedFaction.sendMessage(
-            "${org.bukkit.ChatColor.GREEN}${plugin.language["CommandFactionApproveAppApplicationAccepted"]}",
-            "${targetMfPlayer.name} ${plugin.language["CommandFactionApproveAppApplicationAcceptedMessage"]}"
+            "${org.bukkit.ChatColor.GREEN}${plugin.language["CommandFactionApproveAppNewMember"]}",
+            "${org.bukkit.ChatColor.GREEN}${plugin.language["CommandFactionApproveAppNewMemberMessage", targetMfPlayer.name.toString()]}"
         )
         try {
             factionService.cancelAllApplicationsForPlayer(mfPlayer)
         } catch (e: Exception) {
-            sender.sendMessage("${org.bukkit.ChatColor.RED}${plugin.language["CommandFactionApproveAppFailedToCancelApplications"]}") // TODO: add to language file
+            sender.sendMessage("${org.bukkit.ChatColor.RED}${plugin.language["CommandFactionApproveAppFailedToCancelApplications"]}")
             plugin.logger.log(Level.SEVERE, "Failed to cancel applications: ${e.message}", e)
         }
     }

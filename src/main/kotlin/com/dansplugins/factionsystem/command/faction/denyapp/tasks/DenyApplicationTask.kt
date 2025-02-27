@@ -41,7 +41,7 @@ class DenyApplicationTask(
         }
         val role = faction.getRole(mfPlayer.id)
         if (role == null || !role.hasPermission(faction, plugin.factionPermissions.denyApp)) {
-            sender.sendMessage("${org.bukkit.ChatColor.RED}${plugin.language["CommandFactionDenyAppNoPermission"]}") // TODO: add to language file
+            sender.sendMessage("${org.bukkit.ChatColor.RED}${plugin.language["CommandFactionDenyAppNoPermission"]}")
             return
         }
 
@@ -55,8 +55,8 @@ class DenyApplicationTask(
 
         // Inform the applicant that their application has been denied
         if (targetPlayer.isOnline) {
-            targetPlayer.player?.sendMessage("${org.bukkit.ChatColor.RED}${plugin.language["CommandFactionDenyAppApplicationDenied"]} ${faction.name}")
+            targetPlayer.player?.sendMessage("${org.bukkit.ChatColor.RED}${plugin.language["CommandFactionDenyAppDenied", faction.name]}")
         }
-        sender.sendMessage("${org.bukkit.ChatColor.GREEN}${plugin.language["CommandFactionDenyAppApplicationDeniedMessage"]} $targetPlayerName")
+        sender.sendMessage("${org.bukkit.ChatColor.GREEN}${plugin.language["CommandFactionDenyAppDeniedSender", targetMfPlayer.name.toString()]}")
     }
 }
