@@ -59,10 +59,13 @@ class JooqMfFactionRepository(
                     .fetch().map { it.toDomain(roles) }
                 val invites = dsl.selectFrom(MF_FACTION_INVITE).where(MF_FACTION_INVITE.FACTION_ID.eq(factionRecord.id))
                     .fetch().map { it.toDomain() }
+                val applications = dsl.selectFrom(MF_FACTION_APPLICATION).where(MF_FACTION_APPLICATION.FACTION_ID.eq(factionRecord.id))
+                    .fetch().map { it.toDomain() }
                 return@map factionRecord.toDomain(
                     members = members,
                     invites = invites,
-                    roles = roles
+                    roles = roles,
+                    applications = applications
                 )
             }
     }
@@ -84,10 +87,13 @@ class JooqMfFactionRepository(
             .fetch().map { it.toDomain(roles) }
         val invites = dsl.selectFrom(MF_FACTION_INVITE).where(MF_FACTION_INVITE.FACTION_ID.eq(factionRecord.id))
             .fetch().map { it.toDomain() }
+        val applications = dsl.selectFrom(MF_FACTION_APPLICATION).where(MF_FACTION_APPLICATION.FACTION_ID.eq(factionRecord.id))
+            .fetch().map { it.toDomain() }
         return factionRecord.toDomain(
             members = members,
             invites = invites,
-            roles = roles
+            roles = roles,
+            applications = applications
         )
     }
 
@@ -243,7 +249,7 @@ class JooqMfFactionRepository(
             .execute()
     }
 
-    private fun MfFactionRecord.toDomain(members: List<MfFactionMember> = emptyList(), invites: List<MfFactionInvite> = emptyList(), roles: List<MfFactionRole>? = null): MfFaction {
+    private fun MfFactionRecord.toDomain(members: List<MfFactionMember> = emptyList(), invites: List<MfFactionInvite> = emptyList(), roles: List<MfFactionRole>? = null, applications: List<MfFactionApplication> = emptyList()): MfFaction {
         val factionRoles = MfFactionRoles(
             defaultRoleId = defaultRoleId.let(::MfFactionRoleId),
             roles = roles ?: gson.fromJson<List<Map<String, Any?>>>(
@@ -298,7 +304,8 @@ class JooqMfFactionRepository(
                     String::class.java,
                     Boolean::class.javaObjectType
                 ).type
-            )
+            ),
+            applications = applications
         )
     }
 
