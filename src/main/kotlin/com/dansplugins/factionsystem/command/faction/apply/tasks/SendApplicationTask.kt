@@ -30,6 +30,11 @@ class SendApplicationTask(
             return
         }
 
+        if (target.applications.any { it.applicantId == mfPlayer.id }) {
+            sender.sendMessage("${ChatColor.RED}${plugin.language["CommandFactionApplyDuplicateApplication"]}")
+            return
+        }
+
         saveFactionApplication(factionService, target, mfPlayer, sender)
         target.sendMessage("${ChatColor.GREEN}${plugin.language["CommandFactionApplyNewApplicationTitle"]}", "${ChatColor.AQUA}${plugin.language["CommandFactionApplyNewApplicationMessage", mfPlayer.name.toString()]}")
     }
