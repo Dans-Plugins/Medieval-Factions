@@ -13,7 +13,7 @@ RUN wget -O BuildTools.jar https://hub.spigotmc.org/jenkins/job/BuildTools/lastS
 RUN git config --global --unset core.autocrlf || :
 RUN java -jar BuildTools.jar --rev 1.20.4
 
-# Build plugin
+# Copy plugin jar
 COPY ./build/libs /testmcserver-build/MedievalFactions/build/libs
 
 # Copy resources and make post-create.sh executable

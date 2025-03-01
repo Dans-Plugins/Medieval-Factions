@@ -8,6 +8,7 @@ if [ -z "$(ls -A /testmcserver)" ]; then
     mkdir /testmcserver/plugins
 
     # Create ops.json file on the fly
+    echo "Creating ops.json file..."
     echo '[
       {
         "uuid": "0a9fa342-3139-49d7-8acb-fcf4d9c1f0ef",
@@ -23,7 +24,22 @@ else
     echo "Server is already set up."
 fi
 
-# Always copy the latest plugin JAR
-cp /testmcserver-build/MedievalFactions/build/libs/*-all.jar /testmcserver/plugins
+# Always delete lang directory to get the latest translations
+echo "Deleting lang directory..."
+rm -rf /testmcserver/plugins/MedievalFactions/lang
 
+# Always copy the latest plugin JAR
+nameOfJar=$(ls /testmcserver-build/MedievalFactions/build/libs/*-all.jar)
+currentDate=$(date +%s)
+jarDate=$(date -r "$nameOfJar" +%s)
+diff=$((currentDate - jarDate))
+
+if [ $diff -gt 300 ]; then
+    echo "WARNING: The plugin JAR is older than 5 minutes. It may be necessary to rebuild the plugin."
+fi
+
+echo "Copying plugin JAR... (created $diff seconds ago)"
+cp "$nameOfJar" /testmcserver/plugins
+
+echo "Starting server..."
 java -jar /testmcserver/spigot-1.20.4.jar
