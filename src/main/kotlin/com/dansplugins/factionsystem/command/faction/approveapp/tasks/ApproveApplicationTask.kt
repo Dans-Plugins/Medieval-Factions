@@ -77,7 +77,7 @@ class ApproveApplicationTask(
             "${org.bukkit.ChatColor.GREEN}${plugin.language["CommandFactionApproveAppNewMemberMessage", targetMfPlayer.name.toString()]}"
         )
         try {
-            factionService.cancelAllApplicationsForPlayer(mfPlayer)
+            factionService.cancelAllApplicationsForPlayer(MfPlayer(plugin, targetPlayer))
         } catch (e: Exception) {
             sender.sendMessage("${org.bukkit.ChatColor.RED}${plugin.language["CommandFactionApproveAppFailedToCancelApplications"]}")
             plugin.logger.log(Level.SEVERE, "Failed to cancel applications: ${e.message}", e)

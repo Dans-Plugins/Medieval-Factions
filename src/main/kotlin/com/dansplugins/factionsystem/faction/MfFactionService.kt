@@ -203,13 +203,17 @@ class MfFactionService(private val plugin: MedievalFactions, private val reposit
     }
 
     fun cancelAllApplicationsForPlayer(player: MfPlayer) {
-        val faction = getFaction(player.id) ?: return
-        save(
-            faction.copy(
-                applications = faction.applications.filter { it.applicantId != player.id }
-            )
-        ).onFailure {
-            throw it.reason.cause
+        plugin.logger.info("Cancelling all applications for player ${player.name}")
+        factions.forEach { faction ->
+            plugin.logger.info("Checking faction ${faction.name}")
+            save(
+                faction.copy(
+                    applications = faction.applications.filter { it.applicantId != player.id }
+                )
+            ).onFailure {
+                plugin.logger.warning("Failed to cancel applications for player ${player.name} in faction ${faction.name}: ${it.reason.message}")
+                throw it.reason.cause
+            }
         }
     }
 }
