@@ -45,6 +45,21 @@ class ApproveApplicationTask(
             sender.sendMessage("${org.bukkit.ChatColor.RED}${plugin.language["CommandFactionApproveAppNoPermission"]}")
             return
         }
+
+        // Remove the player from their current faction if they are already in one
+        val currentFaction = factionService.getFaction(targetMfPlayer.id)
+        if (currentFaction != null) {
+            factionService.save(
+                currentFaction.copy(
+                    members = currentFaction.members.filter { it.playerId != targetMfPlayer.id }
+                )
+            ).onFailure {
+                sender.sendMessage("${org.bukkit.ChatColor.RED}${plugin.language["CommandFactionApproveAppFailedToRemoveFromCurrentFaction"]}")
+                plugin.logger.log(Level.SEVERE, "Failed to remove player from current faction: ${it.reason.message}", it.reason.cause)
+                return
+            }
+        }
+
         val updatedFaction = factionService.save(
             faction.copy(
                 members = faction.members + MfFactionMember(targetMfPlayer.id, faction.roles.default),
