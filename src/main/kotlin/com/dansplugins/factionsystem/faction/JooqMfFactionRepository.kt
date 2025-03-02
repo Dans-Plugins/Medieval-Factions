@@ -8,8 +8,10 @@ import com.dansplugins.factionsystem.faction.role.MfFactionRoleId
 import com.dansplugins.factionsystem.faction.role.MfFactionRoles
 import com.dansplugins.factionsystem.failure.OptimisticLockingFailureException
 import com.dansplugins.factionsystem.jooq.Tables.MF_FACTION
+import com.dansplugins.factionsystem.jooq.Tables.MF_FACTION_APPLICATION
 import com.dansplugins.factionsystem.jooq.Tables.MF_FACTION_INVITE
 import com.dansplugins.factionsystem.jooq.Tables.MF_FACTION_MEMBER
+import com.dansplugins.factionsystem.jooq.tables.records.MfFactionApplicationRecord
 import com.dansplugins.factionsystem.jooq.tables.records.MfFactionInviteRecord
 import com.dansplugins.factionsystem.jooq.tables.records.MfFactionMemberRecord
 import com.dansplugins.factionsystem.jooq.tables.records.MfFactionRecord
@@ -57,10 +59,13 @@ class JooqMfFactionRepository(
                     .fetch().map { it.toDomain(roles) }
                 val invites = dsl.selectFrom(MF_FACTION_INVITE).where(MF_FACTION_INVITE.FACTION_ID.eq(factionRecord.id))
                     .fetch().map { it.toDomain() }
+                val applications = dsl.selectFrom(MF_FACTION_APPLICATION).where(MF_FACTION_APPLICATION.FACTION_ID.eq(factionRecord.id))
+                    .fetch().map { it.toDomain() }
                 return@map factionRecord.toDomain(
                     members = members,
                     invites = invites,
-                    roles = roles
+                    roles = roles,
+                    applications = applications
                 )
             }
     }
@@ -82,10 +87,13 @@ class JooqMfFactionRepository(
             .fetch().map { it.toDomain(roles) }
         val invites = dsl.selectFrom(MF_FACTION_INVITE).where(MF_FACTION_INVITE.FACTION_ID.eq(factionRecord.id))
             .fetch().map { it.toDomain() }
+        val applications = dsl.selectFrom(MF_FACTION_APPLICATION).where(MF_FACTION_APPLICATION.FACTION_ID.eq(factionRecord.id))
+            .fetch().map { it.toDomain() }
         return factionRecord.toDomain(
             members = members,
             invites = invites,
-            roles = roles
+            roles = roles,
+            applications = applications
         )
     }
 
@@ -98,10 +106,13 @@ class JooqMfFactionRepository(
             val newMembers = faction.members.map { upsertMember(transactionalDsl, faction.id, it, newState.roles) }
             deleteInvites(transactionalDsl, faction.id)
             val newInvites = faction.invites.map { upsertInvite(transactionalDsl, faction.id, it) }
+            deleteApplications(transactionalDsl, faction.id)
+            val newApplications = faction.applications.map { upsertApplication(transactionalDsl, faction.id, it) }
 
             return@transactionResult newState.copy(
                 members = newMembers,
-                invites = newInvites
+                invites = newInvites,
+                applications = newApplications
             )
         }
     }
@@ -212,13 +223,33 @@ class JooqMfFactionRepository(
             .toDomain()
     }
 
+    private fun deleteApplications(dsl: DSLContext, factionId: MfFactionId) {
+        dsl.deleteFrom(MF_FACTION_APPLICATION)
+            .where(MF_FACTION_APPLICATION.FACTION_ID.eq(factionId.value))
+            .execute()
+    }
+
+    private fun upsertApplication(dsl: DSLContext, factionId: MfFactionId, application: MfFactionApplication): MfFactionApplication {
+        dsl.insertInto(MF_FACTION_APPLICATION)
+            .set(MF_FACTION_APPLICATION.FACTION_ID, factionId.value)
+            .set(MF_FACTION_APPLICATION.PLAYER_ID, application.applicantId.value)
+            .onConflict(MF_FACTION_APPLICATION.FACTION_ID, MF_FACTION_APPLICATION.PLAYER_ID).doNothing()
+            .execute()
+        return dsl.selectFrom(MF_FACTION_APPLICATION)
+            .where(MF_FACTION_APPLICATION.FACTION_ID.eq(factionId.value))
+            .and(MF_FACTION_APPLICATION.PLAYER_ID.eq(application.applicantId.value))
+            .fetchOne()
+            .let(::requireNotNull)
+            .toDomain()
+    }
+
     override fun delete(factionId: MfFactionId) {
         dsl.deleteFrom(MF_FACTION)
             .where(MF_FACTION.ID.eq(factionId.value))
             .execute()
     }
 
-    private fun MfFactionRecord.toDomain(members: List<MfFactionMember> = emptyList(), invites: List<MfFactionInvite> = emptyList(), roles: List<MfFactionRole>? = null): MfFaction {
+    private fun MfFactionRecord.toDomain(members: List<MfFactionMember> = emptyList(), invites: List<MfFactionInvite> = emptyList(), roles: List<MfFactionRole>? = null, applications: List<MfFactionApplication> = emptyList()): MfFaction {
         val factionRoles = MfFactionRoles(
             defaultRoleId = defaultRoleId.let(::MfFactionRoleId),
             roles = roles ?: gson.fromJson<List<Map<String, Any?>>>(
@@ -273,7 +304,8 @@ class JooqMfFactionRepository(
                     String::class.java,
                     Boolean::class.javaObjectType
                 ).type
-            )
+            ),
+            applications = applications
         )
     }
 
@@ -286,4 +318,11 @@ class JooqMfFactionRepository(
         MfFactionInvite(
             playerId.let(::MfPlayerId)
         )
+
+    private fun MfFactionApplicationRecord.toDomain(): MfFactionApplication {
+        return MfFactionApplication(
+            applicantId = MfPlayerId(this.playerId),
+            factionId = MfFactionId(this.factionId)
+        )
+    }
 }
