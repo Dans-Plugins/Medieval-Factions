@@ -18,6 +18,7 @@ import com.dansplugins.factionsystem.failure.ServiceFailure
 import com.dansplugins.factionsystem.failure.ServiceFailureType
 import com.dansplugins.factionsystem.failure.ServiceFailureType.CONFLICT
 import com.dansplugins.factionsystem.failure.ServiceFailureType.GENERAL
+import com.dansplugins.factionsystem.player.MfPlayer
 import com.dansplugins.factionsystem.player.MfPlayerId
 import dev.forkhandles.result4k.Result4k
 import dev.forkhandles.result4k.mapFailure
@@ -198,6 +199,21 @@ class MfFactionService(private val plugin: MedievalFactions, private val reposit
         return when (this) {
             is OptimisticLockingFailureException -> CONFLICT
             else -> GENERAL
+        }
+    }
+
+    fun cancelAllApplicationsForPlayer(player: MfPlayer) {
+        plugin.logger.info("Cancelling all applications for player ${player.name}")
+        factions.forEach { faction ->
+            plugin.logger.info("Checking faction ${faction.name}")
+            save(
+                faction.copy(
+                    applications = faction.applications.filter { it.applicantId != player.id }
+                )
+            ).onFailure {
+                plugin.logger.warning("Failed to cancel applications for player ${player.name} in faction ${faction.name}: ${it.reason.message}")
+                throw it.reason.cause
+            }
         }
     }
 }

@@ -13,6 +13,7 @@ import org.bukkit.command.TabCompleter
 import org.bukkit.entity.Player
 import preponderous.ponder.command.dropFirst
 import java.util.logging.Level
+import java.util.logging.Level.SEVERE
 
 class MfFactionAddMemberCommand(private val plugin: MedievalFactions) : CommandExecutor, TabCompleter {
 
@@ -88,6 +89,12 @@ class MfFactionAddMemberCommand(private val plugin: MedievalFactions) : CommandE
         sender.sendMessage(
             "${ChatColor.GREEN}${plugin.language["CommandFactionAddMemberSuccess", targetFaction.name]}"
         )
+        try {
+            factionService.cancelAllApplicationsForPlayer(targetMfPlayer)
+        } catch (e: Exception) {
+            sender.sendMessage("${org.bukkit.ChatColor.RED}${plugin.language["CommandFactionAddMemberFailedToCancelApplications"]}")
+            plugin.logger.log(SEVERE, "Failed to cancel applications: ${e.message}", e)
+        }
         return true
     }
 

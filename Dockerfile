@@ -7,21 +7,20 @@ RUN apt-get install -y git \
     openjdk-17-jre \
     wget
 
-# Create server directory
-WORKDIR /testmcserver
-
 # Build server
+WORKDIR /testmcserver-build
 RUN wget -O BuildTools.jar https://hub.spigotmc.org/jenkins/job/BuildTools/lastSuccessfulBuild/artifact/target/BuildTools.jar
 RUN git config --global --unset core.autocrlf || :
 RUN java -jar BuildTools.jar --rev 1.20.4
-RUN echo "eula=true" > eula.txt
-RUN mkdir plugins
 
-# Build plugin
-COPY . .
-RUN ./gradlew build
-RUN cp build/libs/*-all.jar plugins
+# Copy plugin jar
+COPY ./build/libs /testmcserver-build/MedievalFactions/build/libs
+
+# Copy resources and make post-create.sh executable
+COPY ./.testcontainer /resources
+RUN chmod +x /resources/post-create.sh
 
 # Run server
+WORKDIR /testmcserver
 EXPOSE 25565
-ENTRYPOINT java -jar spigot-1.20.4.jar
+ENTRYPOINT /resources/post-create.sh
