@@ -1,29 +1,25 @@
 package com.dansplugins.factionsystem.dynmap
 
 import com.dansplugins.factionsystem.MedievalFactions
-import com.dansplugins.factionsystem.claim.MfClaimedChunk
+import com.dansplugins.factionsystem.dynmap.builders.ClaimPathBuilder
+import com.dansplugins.factionsystem.dynmap.builders.FactionInfoBuilder
 import com.dansplugins.factionsystem.faction.MfFaction
 import com.dansplugins.factionsystem.faction.MfFactionId
 import org.bukkit.scheduler.BukkitRunnable
 import org.bukkit.scheduler.BukkitTask
 import org.dynmap.DynmapAPI
 import org.dynmap.markers.AreaMarker
-import java.text.DecimalFormat
-import java.text.DecimalFormatSymbols
 import java.util.*
 import java.util.concurrent.ConcurrentHashMap
-import kotlin.math.floor
-import kotlin.math.roundToInt
 
-private typealias Point = Pair<Int, Int>
-private typealias LineSegment = Pair<Point, Point>
-private typealias Path = List<Point>
+typealias Point = Pair<Int, Int>
+typealias LineSegment = Pair<Point, Point>
+typealias Path = List<Point>
 
 class MfDynmapService(private val plugin: MedievalFactions) {
 
     private val dynmap = plugin.server.pluginManager.getPlugin("dynmap") as DynmapAPI
     private val factionMarkersByFactionId = ConcurrentHashMap<MfFactionId, List<AreaMarker>>()
-    private val decimalFormat = DecimalFormat("0", DecimalFormatSymbols.getInstance(plugin.language.locale))
     private val updateTasks: MutableMap<MfFactionId, MutableList<BukkitTask>> = Collections.synchronizedMap(mutableMapOf<MfFactionId, MutableList<BukkitTask>>())
 
     fun scheduleUpdateClaims(faction: MfFaction) {
@@ -65,7 +61,7 @@ class MfDynmapService(private val plugin: MedievalFactions) {
         val claimService = plugin.services.claimService
         createUpdateTask(faction.id, {
             val claims = claimService.getClaims(faction.id)
-            val factionInfo = buildFactionInfo(faction)
+            val factionInfo = FactionInfoBuilder(plugin).build(faction)
             claims.groupBy { it.worldId }.forEach { (worldId, worldClaims) ->
                 createUpdateTask(
                     faction.id,
@@ -75,7 +71,7 @@ class MfDynmapService(private val plugin: MedievalFactions) {
                             createUpdateTask(
                                 faction.id,
                                 {
-                                    val paths = getPaths(worldClaims)
+                                    val paths = ClaimPathBuilder.getPaths(worldClaims)
                                     paths.forEachIndexed { index, path ->
                                         val corners = getCorners(path)
                                         createUpdateTask(
@@ -142,7 +138,7 @@ class MfDynmapService(private val plugin: MedievalFactions) {
                             createUpdateTask(
                                 faction.id,
                                 {
-                                    val paths = getPaths(worldClaims)
+                                    val paths = ClaimPathBuilder.getPaths(worldClaims)
                                     paths.forEachIndexed { index, path ->
                                         val corners = getCorners(path)
                                         createUpdateTask(
@@ -186,130 +182,5 @@ class MfDynmapService(private val plugin: MedievalFactions) {
             }
         }
         return corners
-    }
-
-    private fun getPaths(claims: List<MfClaimedChunk>): List<Path> {
-        // lineSegments maps points to line segments that have an ending at that position
-        val lineSegments = mutableMapOf<Point, List<LineSegment>>()
-        claims.sortedWith { a, b ->
-            val xComp = a.x.compareTo(b.x)
-            if (xComp != 0) return@sortedWith xComp
-            return@sortedWith a.z.compareTo(b.z)
-        }.forEach { claim ->
-            val x = claim.x
-            val z = claim.z
-            val isNorthClaimed = claims.any { it.x == x && it.z == z - 1 }
-            if (!isNorthClaimed) {
-                val lineSegment = (x to z) to (x + 1 to z)
-                val lineSegmentsAtFirstPoint = lineSegments[lineSegment.first] ?: emptyList()
-                val lineSegmentsAtSecondPoint = lineSegments[lineSegment.second] ?: emptyList()
-                lineSegments[lineSegment.first] = lineSegmentsAtFirstPoint + lineSegment
-                lineSegments[lineSegment.second] = lineSegmentsAtSecondPoint + lineSegment
-            }
-            val isEastClaimed = claims.any { it.x == x + 1 && it.z == z }
-            if (!isEastClaimed) {
-                val lineSegment = (x + 1 to z) to (x + 1 to z + 1)
-                val lineSegmentsAtFirstPoint = lineSegments[lineSegment.first] ?: emptyList()
-                val lineSegmentsAtSecondPoint = lineSegments[lineSegment.second] ?: emptyList()
-                lineSegments[lineSegment.first] = lineSegmentsAtFirstPoint + lineSegment
-                lineSegments[lineSegment.second] = lineSegmentsAtSecondPoint + lineSegment
-            }
-            val isSouthClaimed = claims.any { it.x == x && it.z == z + 1 }
-            if (!isSouthClaimed) {
-                val lineSegment = (x to z + 1) to (x + 1 to z + 1)
-                val lineSegmentsAtFirstPoint = lineSegments[lineSegment.first] ?: emptyList()
-                val lineSegmentsAtSecondPoint = lineSegments[lineSegment.second] ?: emptyList()
-                lineSegments[lineSegment.first] = lineSegmentsAtFirstPoint + lineSegment
-                lineSegments[lineSegment.second] = lineSegmentsAtSecondPoint + lineSegment
-            }
-            val isWestClaimed = claims.any { it.x == x - 1 && it.z == z }
-            if (!isWestClaimed) {
-                val lineSegment = (x to z) to (x to z + 1)
-                val lineSegmentsAtFirstPoint = lineSegments[lineSegment.first] ?: emptyList()
-                val lineSegmentsAtSecondPoint = lineSegments[lineSegment.second] ?: emptyList()
-                lineSegments[lineSegment.first] = lineSegmentsAtFirstPoint + lineSegment
-                lineSegments[lineSegment.second] = lineSegmentsAtSecondPoint + lineSegment
-            }
-        }
-        if (lineSegments.isEmpty()) return emptyList()
-        val paths = mutableListOf<List<Pair<Int, Int>>>()
-        var (point, lineSegmentsAtPoint) = lineSegments.entries.first { (_, lineSegmentsAtPoint) -> lineSegmentsAtPoint.isNotEmpty() }
-        var currentPath = mutableListOf<Pair<Int, Int>>()
-        while (!lineSegments.values.all { it.isEmpty() }) {
-            currentPath.add(point)
-            val lineSegmentToFollow = lineSegmentsAtPoint.first()
-            val (first, second) = lineSegmentToFollow
-            val lineSegmentsAtFirst = lineSegments[first]
-            val lineSegmentsAtSecond = lineSegments[second]
-            if (lineSegmentsAtFirst != null) {
-                lineSegments[first] = lineSegmentsAtFirst - lineSegmentToFollow
-            }
-            if (lineSegmentsAtSecond != null) {
-                lineSegments[second] = lineSegmentsAtSecond - lineSegmentToFollow
-            }
-            point = if (first == point) second else first
-            lineSegmentsAtPoint = lineSegments[point] ?: emptyList()
-            if (!lineSegments.values.all { it.isEmpty() } && lineSegmentsAtPoint.isEmpty()) {
-                val (newPoint, newLineSegmentsAtPoint) = lineSegments.entries.first { (_, lineSegmentsAtPoint) -> lineSegmentsAtPoint.isNotEmpty() }
-                point = newPoint
-                lineSegmentsAtPoint = newLineSegmentsAtPoint
-                paths.add(currentPath)
-                currentPath = mutableListOf()
-            }
-        }
-        paths.add(currentPath)
-        return paths
-    }
-
-    private fun buildFactionInfo(faction: MfFaction): String {
-        val factionService = plugin.services.factionService
-        val relationshipService = plugin.services.factionRelationshipService
-        val claimService = plugin.services.claimService
-        val playerService = plugin.services.playerService
-        return buildString {
-            append("<h1>${faction.name}</h1>")
-            append("<h2>Description</h2>")
-            append(faction.description)
-            append("<h2>Members (${faction.members.size})</h2>")
-            append(
-                faction.members.groupBy { it.role }.map { (role, members) ->
-                    """
-                        <h3>${role.name} (${faction.members.count { it.role.id == role.id }})</h3>
-                        ${members.joinToString { member -> playerService.getPlayer(member.playerId)?.name ?: plugin.language["UnknownPlayer"] }}
-                    """.trimIndent()
-                }.joinToString("<br />")
-            )
-            val liegeId = relationshipService.getLiege(faction.id)
-            val liege = liegeId?.let(factionService::getFaction)
-            if (liege != null) {
-                append("<h2>Liege</h2>")
-                append(liege.name)
-                append("<br />")
-            }
-            val vassals = relationshipService.getVassals(faction.id).mapNotNull(factionService::getFaction)
-            if (vassals.isNotEmpty()) {
-                append("<h2>Vassals</h2>")
-                append(vassals.joinToString(transform = MfFaction::name))
-                append("<br />")
-            }
-            val allies = relationshipService.getAllies(faction.id).mapNotNull(factionService::getFaction)
-            if (allies.isNotEmpty()) {
-                append("<h2>Allies</h2>")
-                append(allies.joinToString(transform = MfFaction::name))
-                append("<br />")
-            }
-            val atWarWith = relationshipService.getFactionsAtWarWith(faction.id).mapNotNull(factionService::getFaction)
-            if (atWarWith.isNotEmpty()) {
-                append("<h2>At war with</h2>")
-                append(atWarWith.joinToString(transform = MfFaction::name))
-                append("<br />")
-            }
-            append("<h2>Power</h2>")
-            append(decimalFormat.format(floor(faction.power)))
-            append("<br />")
-            append("<h2>Demesne</h2>")
-            val claims = claimService.getClaims(faction.id)
-            append("${claims.size}/${floor(faction.power).roundToInt()}")
-        }
     }
 }
