@@ -46,4 +46,86 @@ class ClaimPathBuilderTest {
         val expectedPaths = emptyList<Path>()
         assertEquals(expectedPaths, paths)
     }
+
+    @Test
+    fun testGetPaths_nonContiguousClaims() {
+        val uuid = UUID.randomUUID()
+        val factionId = MfFactionId("factionId")
+        val claims = listOf(
+            MfClaimedChunk(uuid, 0, 0, factionId),
+            MfClaimedChunk(uuid, 2, 2, factionId)
+        )
+        val paths = ClaimPathBuilder.getPaths(claims)
+        val expectedPaths = listOf(
+            listOf(Point(0, 0), Point(1, 0), Point(1, 1), Point(0, 1)),
+            listOf(Point(2, 2), Point(3, 2), Point(3, 3), Point(2, 3))
+        )
+        assertEquals(expectedPaths, paths)
+    }
+
+    @Test
+    fun testGetPaths_singleRowOfClaims() {
+        val uuid = UUID.randomUUID()
+        val factionId = MfFactionId("factionId")
+        val claims = listOf(
+            MfClaimedChunk(uuid, 0, 0, factionId),
+            MfClaimedChunk(uuid, 1, 0, factionId),
+            MfClaimedChunk(uuid, 2, 0, factionId)
+        )
+        val paths = ClaimPathBuilder.getPaths(claims)
+        val expectedPaths = listOf(
+            listOf(Point(0, 0), Point(1, 0), Point(2, 0), Point(3, 0), Point(3, 1), Point(2, 1), Point(1, 1), Point(0, 1))
+        )
+        assertEquals(expectedPaths, paths)
+    }
+
+    @Test
+    fun testGetPaths_singleColumnOfClaims() {
+        val uuid = UUID.randomUUID()
+        val factionId = MfFactionId("factionId")
+        val claims = listOf(
+            MfClaimedChunk(uuid, 0, 0, factionId),
+            MfClaimedChunk(uuid, 0, 1, factionId),
+            MfClaimedChunk(uuid, 0, 2, factionId)
+        )
+        val paths = ClaimPathBuilder.getPaths(claims)
+        val expectedPaths = listOf(
+            listOf(Point(0, 0), Point(1, 0), Point(1, 1), Point(1, 2), Point(1, 3), Point(0, 3), Point(0, 2), Point(0, 1))
+        )
+        assertEquals(expectedPaths, paths)
+    }
+
+    @Test
+    fun testGetPaths_LShapedClaims() {
+        val uuid = UUID.randomUUID()
+        val factionId = MfFactionId("factionId")
+        val claims = listOf(
+            MfClaimedChunk(uuid, 0, 0, factionId),
+            MfClaimedChunk(uuid, 1, 0, factionId),
+            MfClaimedChunk(uuid, 1, 1, factionId)
+        )
+        val paths = ClaimPathBuilder.getPaths(claims)
+        val expectedPaths = listOf(
+            listOf(Point(0, 0), Point(1, 0), Point(2, 0), Point(2, 1), Point(2, 2), Point(1, 2), Point(1, 1), Point(0, 1))
+        )
+        assertEquals(expectedPaths, paths)
+    }
+
+    @Test
+    fun testGetPaths_diagonalClaims() {
+        val uuid = UUID.randomUUID()
+        val factionId = MfFactionId("factionId")
+        val claims = listOf(
+            MfClaimedChunk(uuid, 0, 0, factionId),
+            MfClaimedChunk(uuid, 1, 1, factionId),
+            MfClaimedChunk(uuid, 2, 2, factionId)
+        )
+        val paths = ClaimPathBuilder.getPaths(claims)
+        val expectedPaths = listOf(
+            listOf(Point(0, 0), Point(1, 0), Point(1, 1), Point(0, 1)),
+            listOf(Point(1, 1), Point(2, 1), Point(2, 2), Point(1, 2)),
+            listOf(Point(2, 2), Point(3, 2), Point(3, 3), Point(2, 3))
+        )
+        assertEquals(expectedPaths, paths)
+    }
 }
