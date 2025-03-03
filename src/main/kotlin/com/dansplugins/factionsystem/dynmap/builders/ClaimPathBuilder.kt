@@ -5,8 +5,17 @@ import com.dansplugins.factionsystem.dynmap.LineSegment
 import com.dansplugins.factionsystem.dynmap.Path
 import com.dansplugins.factionsystem.dynmap.Point
 
+/**
+ * Object responsible for building paths from claimed chunks.
+ */
 object ClaimPathBuilder {
 
+    /**
+     * Generates a list of paths from the given list of claimed chunks.
+     *
+     * @param claims The list of claimed chunks.
+     * @return A list of paths, where each path is a list of points representing the boundary of the claimed chunks.
+     */
     fun getPaths(claims: List<MfClaimedChunk>): List<Path> {
         val lineSegments = mutableMapOf<Point, List<LineSegment>>()
         claims.sortedWith { a, b ->
