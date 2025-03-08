@@ -41,5 +41,14 @@ fi
 echo "Copying plugin JAR... (created $diff seconds ago)"
 cp "$nameOfJar" /testmcserver/plugins
 
+# Copy or delete Dynmap JAR based on environment variable
+if [ "$DYNMAP_ENABLED" = "true" ]; then
+      echo "Dynmap enabled. Copying Dynmap plugin from /resources/jars..."
+      cp /resources/jars/Dynmap-*.jar /testmcserver/plugins
+else
+    echo "Dynmap disabled. Deleting Dynmap plugin if it exists..."
+    rm -f /testmcserver/plugins/Dynmap-*.jar
+fi
+
 echo "Starting server..."
 java -jar /testmcserver/spigot-1.20.4.jar

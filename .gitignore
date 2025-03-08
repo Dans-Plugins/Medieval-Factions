@@ -37,3 +37,9 @@ bin/
 
 ### Mac OS ###
 .DS_Store
+
+# test server
+/testmcserver/
+
+# env file
+.env
