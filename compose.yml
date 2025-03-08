@@ -6,9 +6,11 @@ services:
     ports:
       - "25565:25565"
       - "8123:8123"
+      - "8100:8100"
     volumes:
       - ./testmcserver:/testmcserver
     environment:
       - MINECRAFT_VERSION=${MINECRAFT_VERSION}
-      - DYNMAP_ENABLED=${DYNMAP_ENABLED}
       - OVERWRITE_EXISTING_SERVER=${OVERWRITE_EXISTING_SERVER}
+      - DYNMAP_ENABLED=${DYNMAP_ENABLED}
+      - BLUEMAP_ENABLED=${BLUEMAP_ENABLED}
