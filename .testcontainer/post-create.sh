@@ -41,5 +41,11 @@ fi
 echo "Copying plugin JAR... (created $diff seconds ago)"
 cp "$nameOfJar" /testmcserver/plugins
 
+# Copy dynmap JAR if present
+if [ -d "/testmcserver-build/dynmap" ]; then
+    echo "Copying Dynmap plugin..."
+    cp /testmcserver-build/dynmap/target/Dynmap-*.jar /testmcserver/plugins
+fi
+
 echo "Starting server..."
 java -jar /testmcserver/spigot-1.20.4.jar
