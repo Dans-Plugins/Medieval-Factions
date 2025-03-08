@@ -74,7 +74,6 @@ class MfDynmapService(private val plugin: MedievalFactions) {
         if (debug) {
             plugin.logger.info("Updating ${faction.name} claims. Invocation count: $updateClaimsInvocationCount")
         }
-        val startTime = System.currentTimeMillis()
         val markerApi = dynmap.markerAPI
         if (markerApi == null) {
             plugin.logger.warning("Failed to find Dynmap Marker API, skipping update of ${faction.name} claims")
@@ -224,11 +223,6 @@ class MfDynmapService(private val plugin: MedievalFactions) {
                 ) { runTask(plugin) }
             }
         }) { runTaskAsynchronously(plugin) }
-        val endTime = System.currentTimeMillis()
-        val duration = endTime - startTime
-        if (debug) {
-            plugin.logger.info("updateClaims for ${faction.name} took $duration ms")
-        }
     }
 
     private fun getCorners(points: List<Point>): List<Point> {
