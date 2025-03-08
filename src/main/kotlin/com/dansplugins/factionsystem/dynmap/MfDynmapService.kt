@@ -5,6 +5,7 @@ import com.dansplugins.factionsystem.claim.MfClaimService
 import com.dansplugins.factionsystem.claim.MfClaimedChunk
 import com.dansplugins.factionsystem.dynmap.builders.ClaimPathBuilder
 import com.dansplugins.factionsystem.dynmap.builders.FactionInfoBuilder
+import com.dansplugins.factionsystem.dynmap.helpers.MarkerSetHelper
 import com.dansplugins.factionsystem.faction.MfFaction
 import com.dansplugins.factionsystem.faction.MfFactionId
 import org.bukkit.World
@@ -12,7 +13,6 @@ import org.bukkit.scheduler.BukkitRunnable
 import org.bukkit.scheduler.BukkitTask
 import org.dynmap.DynmapAPI
 import org.dynmap.markers.AreaMarker
-import org.dynmap.markers.MarkerAPI
 import org.dynmap.markers.MarkerSet
 import java.util.*
 import java.util.concurrent.ConcurrentHashMap
@@ -27,6 +27,8 @@ class MfDynmapService(private val plugin: MedievalFactions) {
     private val factionMarkersByFactionId = ConcurrentHashMap<MfFactionId, List<AreaMarker>>()
     private val updateTasks: MutableMap<MfFactionId, MutableList<BukkitTask>> =
         Collections.synchronizedMap(mutableMapOf<MfFactionId, MutableList<BukkitTask>>())
+
+    private val markerSetHelper = MarkerSetHelper()
 
     private val debug = false
 
@@ -84,16 +86,12 @@ class MfDynmapService(private val plugin: MedievalFactions) {
             plugin.logger.warning("Failed to find Dynmap Marker API, skipping update of ${faction.name} claims")
             return
         }
-        val claimsMarkerSet = getOrCreateMarkerSet(markerApi, "claims", "Claims")
-        val realmMarkerSet = getOrCreateMarkerSet(markerApi, "realms", "Realms")
+        val claimsMarkerSet = markerSetHelper.getOrCreateMarkerSet(markerApi, "claims", "Claims")
+        val realmMarkerSet = markerSetHelper.getOrCreateMarkerSet(markerApi, "realms", "Realms")
         factionMarkersByFactionId[faction.id]?.forEach { marker -> marker.deleteMarker() }
         val claimService = plugin.services.claimService
         createUpdateTask(faction.id, { updateFactionClaims(faction, claimsMarkerSet, claimService) }) { runTaskAsynchronously(plugin) }
         createUpdateTask(faction.id, { updateFactionRealm(faction, realmMarkerSet, claimService) }) { runTaskAsynchronously(plugin) }
-    }
-
-    private fun getOrCreateMarkerSet(markerApi: MarkerAPI, setId: String, setName: String): MarkerSet {
-        return markerApi.getMarkerSet(setId) ?: markerApi.createMarkerSet(setId, setName, null, false)
     }
 
     private fun updateFactionClaims(faction: MfFaction, claimsMarkerSet: MarkerSet, claimService: MfClaimService) {
