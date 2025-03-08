@@ -23,11 +23,11 @@ class FactionInfoBuilder(private val plugin: MedievalFactions) {
             append("<h2>Members (${faction.members.size})</h2>")
             append(
                 faction.members.groupBy { it.role }.map { (role, members) ->
-                """
+                    """
                         <h3>${role.name} (${faction.members.count { it.role.id == role.id }})</h3>
                         ${members.joinToString { member -> playerService.getPlayer(member.playerId)?.name ?: plugin.language["UnknownPlayer"] }}
                     """.trimIndent()
-            }.joinToString("<br />")
+                }.joinToString("<br />")
             )
             val liegeId = relationshipService.getLiege(faction.id)
             val liege = liegeId?.let(factionService::getFaction)

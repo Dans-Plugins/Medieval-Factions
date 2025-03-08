@@ -33,7 +33,9 @@ class MfDynmapService(private val plugin: MedievalFactions) {
     }
 
     private fun createUpdateTask(
-        factionId: MfFactionId, runnable: Runnable, schedule: BukkitRunnable.() -> BukkitTask
+        factionId: MfFactionId,
+        runnable: Runnable,
+        schedule: BukkitRunnable.() -> BukkitTask
     ) {
         val updateTask = object : BukkitRunnable() {
             override fun run() {
@@ -67,16 +69,19 @@ class MfDynmapService(private val plugin: MedievalFactions) {
             val factionInfo = FactionInfoBuilder(plugin).build(faction)
             claims.groupBy { it.worldId }.forEach { (worldId, worldClaims) ->
                 createUpdateTask(
-                    faction.id, {
+                    faction.id,
+                    {
                         val world = plugin.server.getWorld(worldId)
                         if (world != null) {
                             createUpdateTask(
-                                faction.id, {
+                                faction.id,
+                                {
                                     val paths = ClaimPathBuilder.getPaths(worldClaims)
                                     paths.forEachIndexed { index, path ->
                                         val corners = getCorners(path)
                                         createUpdateTask(
-                                            faction.id, {
+                                            faction.id,
+                                            {
                                                 val areaMarker = claimsMarkerSet.createAreaMarker(
                                                     "claim_border_${faction.id.value}_${worldId}_$index",
                                                     faction.name,
@@ -95,11 +100,13 @@ class MfDynmapService(private val plugin: MedievalFactions) {
                                                         factionMarkersByFactionId[faction.id] ?: listOf()
                                                     factionMarkersByFactionId[faction.id] = factionMarkers + areaMarker
                                                 }
-                                            }) { runTask(plugin) }
+                                            }
+                                        ) { runTask(plugin) }
                                     }
                                     worldClaims.forEachIndexed { index, claim ->
                                         plugin.server.scheduler.runTask(
-                                            plugin, Runnable {
+                                            plugin,
+                                            Runnable {
                                                 val areaMarker = claimsMarkerSet.createAreaMarker(
                                                     "claim_${faction.id.value}_${worldId}_$index",
                                                     faction.name,
@@ -125,26 +132,32 @@ class MfDynmapService(private val plugin: MedievalFactions) {
                                                 areaMarker.description = factionInfo
                                                 val factionMarkers = factionMarkersByFactionId[faction.id] ?: listOf()
                                                 factionMarkersByFactionId[faction.id] = factionMarkers + areaMarker
-                                            })
+                                            }
+                                        )
                                     }
-                                }) { runTaskAsynchronously(plugin) }
+                                }
+                            ) { runTaskAsynchronously(plugin) }
                         }
-                    }) { runTask(plugin) }
+                    }
+                ) { runTask(plugin) }
             }
             val relationshipService = plugin.services.factionRelationshipService
             val realm = claims + relationshipService.getVassalTree(faction.id).flatMap(claimService::getClaims)
             realm.groupBy { it.worldId }.forEach { (worldId, worldClaims) ->
                 createUpdateTask(
-                    faction.id, {
+                    faction.id,
+                    {
                         val world = plugin.server.getWorld(worldId)
                         if (world != null) {
                             createUpdateTask(
-                                faction.id, {
+                                faction.id,
+                                {
                                     val paths = ClaimPathBuilder.getPaths(worldClaims)
                                     paths.forEachIndexed { index, path ->
                                         val corners = getCorners(path)
                                         createUpdateTask(
-                                            faction.id, {
+                                            faction.id,
+                                            {
                                                 val areaMarker = realmMarkerSet.createAreaMarker(
                                                     "realm_${faction.id.value}_${worldId}_$index",
                                                     faction.name,
@@ -161,11 +174,14 @@ class MfDynmapService(private val plugin: MedievalFactions) {
                                                 areaMarker.description = factionInfo
                                                 val factionMarkers = factionMarkersByFactionId[faction.id] ?: listOf()
                                                 factionMarkersByFactionId[faction.id] = factionMarkers + areaMarker
-                                            }) { runTask(plugin) }
+                                            }
+                                        ) { runTask(plugin) }
                                     }
-                                }) { runTaskAsynchronously(plugin) }
+                                }
+                            ) { runTaskAsynchronously(plugin) }
                         }
-                    }) { runTask(plugin) }
+                    }
+                ) { runTask(plugin) }
             }
         }) { runTaskAsynchronously(plugin) }
     }
