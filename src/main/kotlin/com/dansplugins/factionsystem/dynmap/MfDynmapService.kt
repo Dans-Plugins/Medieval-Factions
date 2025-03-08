@@ -23,7 +23,17 @@ class MfDynmapService(private val plugin: MedievalFactions) {
     private val updateTasks: MutableMap<MfFactionId, MutableList<BukkitTask>> =
         Collections.synchronizedMap(mutableMapOf<MfFactionId, MutableList<BukkitTask>>())
 
+    private val debug = false
+
+    private var scheduleUpdateClaimsInvocationCount = 0
+    private var createUpdateTaskInvocationCount = 0
+    private var updateClaimsInvocationCount = 0
+
     fun scheduleUpdateClaims(faction: MfFaction) {
+        scheduleUpdateClaimsInvocationCount++
+        if (debug) {
+            plugin.logger.info("Scheduling update of ${faction.name} claims. Invocation count: $scheduleUpdateClaimsInvocationCount")
+        }
         val factionUpdateTasks = updateTasks[faction.id]
         if (!factionUpdateTasks.isNullOrEmpty()) {
             factionUpdateTasks.forEach(BukkitTask::cancel)
@@ -37,6 +47,10 @@ class MfDynmapService(private val plugin: MedievalFactions) {
         runnable: Runnable,
         schedule: BukkitRunnable.() -> BukkitTask
     ) {
+        createUpdateTaskInvocationCount++
+        if (debug) {
+            plugin.logger.info("Creating update task for faction $factionId. Invocation count: $createUpdateTaskInvocationCount")
+        }
         val updateTask = object : BukkitRunnable() {
             override fun run() {
                 runnable.run()
@@ -53,6 +67,11 @@ class MfDynmapService(private val plugin: MedievalFactions) {
     }
 
     fun updateClaims(faction: MfFaction) {
+        updateClaimsInvocationCount++
+        if (debug) {
+            plugin.logger.info("Updating ${faction.name} claims. Invocation count: $updateClaimsInvocationCount")
+
+        }
         val markerApi = dynmap.markerAPI
         if (markerApi == null) {
             plugin.logger.warning("Failed to find Dynmap Marker API, skipping update of ${faction.name} claims")
