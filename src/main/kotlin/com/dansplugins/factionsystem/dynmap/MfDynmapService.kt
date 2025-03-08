@@ -28,6 +28,8 @@ class MfDynmapService(private val plugin: MedievalFactions) {
     private val updateTasks: MutableMap<MfFactionId, MutableList<BukkitTask>> =
         Collections.synchronizedMap(mutableMapOf<MfFactionId, MutableList<BukkitTask>>())
 
+    private val factionInfoBuilder = FactionInfoBuilder(plugin)
+    private val claimPathBuilder = ClaimPathBuilder()
     private val markerSetHelper = MarkerSetHelper()
 
     private val debug = false
@@ -99,7 +101,7 @@ class MfDynmapService(private val plugin: MedievalFactions) {
         if (debug) {
             plugin.logger.info("Fetched ${claims.size} claims for faction ${faction.name}")
         }
-        val factionInfo = FactionInfoBuilder(plugin).build(faction)
+        val factionInfo = factionInfoBuilder.build(faction)
         claims.groupBy { it.worldId }.forEach { (worldId, worldClaims) ->
             createUpdateTask(faction.id, { updateWorldClaims(faction, worldId, worldClaims, claimsMarkerSet, factionInfo) }) { runTask(plugin) }
         }
@@ -113,7 +115,7 @@ class MfDynmapService(private val plugin: MedievalFactions) {
     }
 
     private fun createAreaMarkers(faction: MfFaction, world: World, worldClaims: List<MfClaimedChunk>, claimsMarkerSet: MarkerSet, factionInfo: String) {
-        val paths = ClaimPathBuilder.getPaths(worldClaims)
+        val paths = claimPathBuilder.getPaths(worldClaims)
         if (debug) {
             plugin.logger.info("Generated ${paths.size} paths for world ${world.name}")
         }
@@ -196,7 +198,7 @@ class MfDynmapService(private val plugin: MedievalFactions) {
     }
 
     private fun createRealmMarkers(faction: MfFaction, world: World, worldClaims: List<MfClaimedChunk>, realmMarkerSet: MarkerSet) {
-        val paths = ClaimPathBuilder.getPaths(worldClaims)
+        val paths = claimPathBuilder.getPaths(worldClaims)
         if (debug) {
             plugin.logger.info("Generated ${paths.size} paths for realm in world ${world.name}")
         }

@@ -6,9 +6,9 @@ import com.dansplugins.factionsystem.dynmap.Path
 import com.dansplugins.factionsystem.dynmap.Point
 
 /**
- * Object responsible for building paths from claimed chunks.
+ * Responsible for building paths from claimed chunks.
  */
-object ClaimPathBuilder {
+class ClaimPathBuilder {
 
     /**
      * Generates a list of paths from the given list of claimed chunks.
