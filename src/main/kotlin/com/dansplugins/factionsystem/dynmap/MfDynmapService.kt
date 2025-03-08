@@ -1,14 +1,19 @@
 package com.dansplugins.factionsystem.dynmap
 
 import com.dansplugins.factionsystem.MedievalFactions
+import com.dansplugins.factionsystem.claim.MfClaimService
+import com.dansplugins.factionsystem.claim.MfClaimedChunk
 import com.dansplugins.factionsystem.dynmap.builders.ClaimPathBuilder
 import com.dansplugins.factionsystem.dynmap.builders.FactionInfoBuilder
 import com.dansplugins.factionsystem.faction.MfFaction
 import com.dansplugins.factionsystem.faction.MfFactionId
+import org.bukkit.World
 import org.bukkit.scheduler.BukkitRunnable
 import org.bukkit.scheduler.BukkitTask
 import org.dynmap.DynmapAPI
 import org.dynmap.markers.AreaMarker
+import org.dynmap.markers.MarkerAPI
+import org.dynmap.markers.MarkerSet
 import java.util.*
 import java.util.concurrent.ConcurrentHashMap
 
@@ -69,7 +74,7 @@ class MfDynmapService(private val plugin: MedievalFactions) {
         }
     }
 
-    fun updateClaims(faction: MfFaction) {
+    private fun updateClaims(faction: MfFaction) {
         updateClaimsInvocationCount++
         if (debug) {
             plugin.logger.info("Updating ${faction.name} claims. Invocation count: $updateClaimsInvocationCount")
@@ -79,150 +84,150 @@ class MfDynmapService(private val plugin: MedievalFactions) {
             plugin.logger.warning("Failed to find Dynmap Marker API, skipping update of ${faction.name} claims")
             return
         }
-        val claimsMarkerSet =
-            markerApi.getMarkerSet("claims") ?: markerApi.createMarkerSet("claims", "Claims", null, false)
-        val realmMarkerSet =
-            markerApi.getMarkerSet("realms") ?: markerApi.createMarkerSet("realms", "Realms", null, false)
+        val claimsMarkerSet = getOrCreateMarkerSet(markerApi, "claims", "Claims")
+        val realmMarkerSet = getOrCreateMarkerSet(markerApi, "realms", "Realms")
         factionMarkersByFactionId[faction.id]?.forEach { marker -> marker.deleteMarker() }
         val claimService = plugin.services.claimService
-        createUpdateTask(faction.id, {
-            val claims = claimService.getClaims(faction.id)
+        createUpdateTask(faction.id, { updateFactionClaims(faction, claimsMarkerSet, claimService) }) { runTaskAsynchronously(plugin) }
+        createUpdateTask(faction.id, { updateFactionRealm(faction, realmMarkerSet, claimService) }) { runTaskAsynchronously(plugin) }
+    }
+
+    private fun getOrCreateMarkerSet(markerApi: MarkerAPI, setId: String, setName: String): MarkerSet {
+        return markerApi.getMarkerSet(setId) ?: markerApi.createMarkerSet(setId, setName, null, false)
+    }
+
+    private fun updateFactionClaims(faction: MfFaction, claimsMarkerSet: MarkerSet, claimService: MfClaimService) {
+        val claims = claimService.getClaims(faction.id)
+        if (debug) {
+            plugin.logger.info("Fetched ${claims.size} claims for faction ${faction.name}")
+        }
+        val factionInfo = FactionInfoBuilder(plugin).build(faction)
+        claims.groupBy { it.worldId }.forEach { (worldId, worldClaims) ->
+            createUpdateTask(faction.id, { updateWorldClaims(faction, worldId, worldClaims, claimsMarkerSet, factionInfo) }) { runTask(plugin) }
+        }
+    }
+
+    private fun updateWorldClaims(faction: MfFaction, worldId: UUID, worldClaims: List<MfClaimedChunk>, claimsMarkerSet: MarkerSet, factionInfo: String) {
+        val world = plugin.server.getWorld(worldId)
+        if (world != null) {
+            createUpdateTask(faction.id, { createAreaMarkers(faction, world, worldClaims, claimsMarkerSet, factionInfo) }) { runTaskAsynchronously(plugin) }
+        }
+    }
+
+    private fun createAreaMarkers(faction: MfFaction, world: World, worldClaims: List<MfClaimedChunk>, claimsMarkerSet: MarkerSet, factionInfo: String) {
+        val paths = ClaimPathBuilder.getPaths(worldClaims)
+        if (debug) {
+            plugin.logger.info("Generated ${paths.size} paths for world ${world.name}")
+        }
+        paths.forEachIndexed { index, path ->
+            val corners = getCorners(path)
+            createUpdateTask(faction.id, { createAreaMarker(faction, world, corners, claimsMarkerSet, factionInfo, index) }) { runTask(plugin) }
+        }
+        worldClaims.forEachIndexed { index, claim ->
+            createUpdateTask(faction.id, { createClaimMarker(faction, world, claim, claimsMarkerSet, factionInfo, index) }) { runTask(plugin) }
+        }
+    }
+
+    private fun createAreaMarker(faction: MfFaction, world: World, corners: List<Point>, claimsMarkerSet: MarkerSet, factionInfo: String, index: Int) {
+        val areaMarker = claimsMarkerSet.createAreaMarker(
+            "claim_border_${faction.id.value}_${world.name}_$index",
+            faction.name,
+            false,
+            world.name,
+            corners.map { (x, _) -> x * 16.0 }.toDoubleArray(),
+            corners.map { (_, z) -> z * 16.0 }.toDoubleArray(),
+            false
+        )
+        if (areaMarker != null) {
+            val color = Integer.decode(faction.flags[plugin.flags.color])
+            areaMarker.setFillStyle(0.0, color)
+            areaMarker.setLineStyle(1, 1.0, color)
+            areaMarker.description = factionInfo
+            val factionMarkers = factionMarkersByFactionId[faction.id] ?: listOf()
+            factionMarkersByFactionId[faction.id] = factionMarkers + areaMarker
             if (debug) {
-                plugin.logger.info("Fetched ${claims.size} claims for faction ${faction.name}")
+                plugin.logger.info("Created area marker for path $index in world ${world.name}")
             }
-            val factionInfo = FactionInfoBuilder(plugin).build(faction)
-            claims.groupBy { it.worldId }.forEach { (worldId, worldClaims) ->
-                createUpdateTask(
-                    faction.id,
-                    {
-                        val world = plugin.server.getWorld(worldId)
-                        if (world != null) {
-                            createUpdateTask(
-                                faction.id,
-                                {
-                                    val paths = ClaimPathBuilder.getPaths(worldClaims)
-                                    if (debug) {
-                                        plugin.logger.info("Generated ${paths.size} paths for world $worldId")
-                                    }
-                                    paths.forEachIndexed { index, path ->
-                                        val corners = getCorners(path)
-                                        createUpdateTask(
-                                            faction.id,
-                                            {
-                                                val areaMarker = claimsMarkerSet.createAreaMarker(
-                                                    "claim_border_${faction.id.value}_${worldId}_$index",
-                                                    faction.name,
-                                                    false,
-                                                    world.name,
-                                                    corners.map { (x, _) -> x * 16.0 }.toDoubleArray(),
-                                                    corners.map { (_, z) -> z * 16.0 }.toDoubleArray(),
-                                                    false
-                                                )
-                                                if (areaMarker != null) {
-                                                    val color = Integer.decode(faction.flags[plugin.flags.color])
-                                                    areaMarker.setFillStyle(0.0, color)
-                                                    areaMarker.setLineStyle(1, 1.0, color)
-                                                    areaMarker.description = factionInfo
-                                                    val factionMarkers =
-                                                        factionMarkersByFactionId[faction.id] ?: listOf()
-                                                    factionMarkersByFactionId[faction.id] = factionMarkers + areaMarker
-                                                    if (debug) {
-                                                        plugin.logger.info("Created area marker for path $index in world $worldId")
-                                                    }
-                                                }
-                                            }
-                                        ) { runTask(plugin) }
-                                    }
-                                    worldClaims.forEachIndexed { index, claim ->
-                                        plugin.server.scheduler.runTask(
-                                            plugin,
-                                            Runnable {
-                                                val areaMarker = claimsMarkerSet.createAreaMarker(
-                                                    "claim_${faction.id.value}_${worldId}_$index",
-                                                    faction.name,
-                                                    false,
-                                                    world.name,
-                                                    doubleArrayOf(
-                                                        claim.x * 16.0,
-                                                        (claim.x + 1) * 16.0,
-                                                        (claim.x + 1) * 16.0,
-                                                        claim.x * 16.0
-                                                    ),
-                                                    doubleArrayOf(
-                                                        claim.z * 16.0,
-                                                        claim.z * 16.0,
-                                                        (claim.z + 1) * 16.0,
-                                                        (claim.z + 1) * 16.0
-                                                    ),
-                                                    false
-                                                )
-                                                val color = Integer.decode(faction.flags[plugin.flags.color])
-                                                areaMarker.setFillStyle(0.3, color)
-                                                areaMarker.setLineStyle(0, 0.0, color)
-                                                areaMarker.description = factionInfo
-                                                val factionMarkers = factionMarkersByFactionId[faction.id] ?: listOf()
-                                                factionMarkersByFactionId[faction.id] = factionMarkers + areaMarker
-                                                if (debug) {
-                                                    plugin.logger.info("Created area marker for claim $index in world $worldId")
-                                                }
-                                            }
-                                        )
-                                    }
-                                }
-                            ) { runTaskAsynchronously(plugin) }
-                        }
-                    }
-                ) { runTask(plugin) }
-            }
-            val relationshipService = plugin.services.factionRelationshipService
-            val realm = claims + relationshipService.getVassalTree(faction.id).flatMap(claimService::getClaims)
-            realm.groupBy { it.worldId }.forEach { (worldId, worldClaims) ->
-                createUpdateTask(
-                    faction.id,
-                    {
-                        val world = plugin.server.getWorld(worldId)
-                        if (world != null) {
-                            createUpdateTask(
-                                faction.id,
-                                {
-                                    val paths = ClaimPathBuilder.getPaths(worldClaims)
-                                    if (debug) {
-                                        plugin.logger.info("Generated ${paths.size} paths for realm in world $worldId")
-                                    }
-                                    paths.forEachIndexed { index, path ->
-                                        val corners = getCorners(path)
-                                        createUpdateTask(
-                                            faction.id,
-                                            {
-                                                val areaMarker = realmMarkerSet.createAreaMarker(
-                                                    "realm_${faction.id.value}_${worldId}_$index",
-                                                    faction.name,
-                                                    false,
-                                                    world.name,
-                                                    corners.map { (x, _) -> x * 16.0 }.toDoubleArray(),
-                                                    corners.map { (_, z) -> z * 16.0 }.toDoubleArray(),
-                                                    false
-                                                )
-                                                areaMarker.label = faction.name
-                                                val color = Integer.decode(faction.flags[plugin.flags.color])
-                                                areaMarker.setFillStyle(0.0, color)
-                                                areaMarker.setLineStyle(4, 1.0, color)
-                                                areaMarker.description = factionInfo
-                                                val factionMarkers = factionMarkersByFactionId[faction.id] ?: listOf()
-                                                factionMarkersByFactionId[faction.id] = factionMarkers + areaMarker
-                                                if (debug) {
-                                                    plugin.logger.info("Created realm area marker for path $index in world $worldId")
-                                                }
-                                            }
-                                        ) { runTask(plugin) }
-                                    }
-                                }
-                            ) { runTaskAsynchronously(plugin) }
-                        }
-                    }
-                ) { runTask(plugin) }
-            }
-        }) { runTaskAsynchronously(plugin) }
+        }
+    }
+
+    private fun createClaimMarker(faction: MfFaction, world: World, claim: MfClaimedChunk, claimsMarkerSet: MarkerSet, factionInfo: String, index: Int) {
+        val areaMarker = claimsMarkerSet.createAreaMarker(
+            "claim_${faction.id.value}_${world.name}_$index",
+            faction.name,
+            false,
+            world.name,
+            doubleArrayOf(
+                claim.x * 16.0,
+                (claim.x + 1) * 16.0,
+                (claim.x + 1) * 16.0,
+                claim.x * 16.0
+            ),
+            doubleArrayOf(
+                claim.z * 16.0,
+                claim.z * 16.0,
+                (claim.z + 1) * 16.0,
+                (claim.z + 1) * 16.0
+            ),
+            false
+        )
+        val color = Integer.decode(faction.flags[plugin.flags.color])
+        areaMarker.setFillStyle(0.3, color)
+        areaMarker.setLineStyle(0, 0.0, color)
+        areaMarker.description = factionInfo
+        val factionMarkers = factionMarkersByFactionId[faction.id] ?: listOf()
+        factionMarkersByFactionId[faction.id] = factionMarkers + areaMarker
+        if (debug) {
+            plugin.logger.info("Created area marker for claim $index in world ${world.name}")
+        }
+    }
+
+    private fun updateFactionRealm(faction: MfFaction, realmMarkerSet: MarkerSet, claimService: MfClaimService) {
+        val relationshipService = plugin.services.factionRelationshipService
+        val realm = claimService.getClaims(faction.id) + relationshipService.getVassalTree(faction.id).flatMap(claimService::getClaims)
+        realm.groupBy { it.worldId }.forEach { (worldId, worldClaims) ->
+            createUpdateTask(faction.id, { updateWorldRealm(faction, worldId, worldClaims, realmMarkerSet) }) { runTask(plugin) }
+        }
+    }
+
+    private fun updateWorldRealm(faction: MfFaction, worldId: UUID, worldClaims: List<MfClaimedChunk>, realmMarkerSet: MarkerSet) {
+        val world = plugin.server.getWorld(worldId)
+        if (world != null) {
+            createUpdateTask(faction.id, { createRealmMarkers(faction, world, worldClaims, realmMarkerSet) }) { runTaskAsynchronously(plugin) }
+        }
+    }
+
+    private fun createRealmMarkers(faction: MfFaction, world: World, worldClaims: List<MfClaimedChunk>, realmMarkerSet: MarkerSet) {
+        val paths = ClaimPathBuilder.getPaths(worldClaims)
+        if (debug) {
+            plugin.logger.info("Generated ${paths.size} paths for realm in world ${world.name}")
+        }
+        paths.forEachIndexed { index, path ->
+            val corners = getCorners(path)
+            createUpdateTask(faction.id, { createRealmAreaMarker(faction, world, corners, realmMarkerSet, index) }) { runTask(plugin) }
+        }
+    }
+
+    private fun createRealmAreaMarker(faction: MfFaction, world: World, corners: List<Point>, realmMarkerSet: MarkerSet, index: Int) {
+        val areaMarker = realmMarkerSet.createAreaMarker(
+            "realm_${faction.id.value}_${world.name}_$index",
+            faction.name,
+            false,
+            world.name,
+            corners.map { (x, _) -> x * 16.0 }.toDoubleArray(),
+            corners.map { (_, z) -> z * 16.0 }.toDoubleArray(),
+            false
+        )
+        areaMarker.label = faction.name
+        val color = Integer.decode(faction.flags[plugin.flags.color])
+        areaMarker.setFillStyle(0.0, color)
+        areaMarker.setLineStyle(4, 1.0, color)
+        areaMarker.description = FactionInfoBuilder(plugin).build(faction)
+        val factionMarkers = factionMarkersByFactionId[faction.id] ?: listOf()
+        factionMarkersByFactionId[faction.id] = factionMarkers + areaMarker
+        if (debug) {
+            plugin.logger.info("Created realm area marker for path $index in world ${world.name}")
+        }
     }
 
     private fun getCorners(points: List<Point>): List<Point> {
