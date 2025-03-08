@@ -53,6 +53,9 @@ class MfDynmapService(private val plugin: MedievalFactions) {
         }
         val updateTask = object : BukkitRunnable() {
             override fun run() {
+                if (debug) {
+                    plugin.logger.info("Running update task for faction $factionId")
+                }
                 runnable.run()
                 val factionUpdateTasks = updateTasks[factionId]
                 factionUpdateTasks?.removeAll(plugin.server.scheduler.pendingTasks.filter { it.taskId == taskId })
@@ -70,8 +73,8 @@ class MfDynmapService(private val plugin: MedievalFactions) {
         updateClaimsInvocationCount++
         if (debug) {
             plugin.logger.info("Updating ${faction.name} claims. Invocation count: $updateClaimsInvocationCount")
-
         }
+        val startTime = System.currentTimeMillis()
         val markerApi = dynmap.markerAPI
         if (markerApi == null) {
             plugin.logger.warning("Failed to find Dynmap Marker API, skipping update of ${faction.name} claims")
@@ -85,6 +88,9 @@ class MfDynmapService(private val plugin: MedievalFactions) {
         val claimService = plugin.services.claimService
         createUpdateTask(faction.id, {
             val claims = claimService.getClaims(faction.id)
+            if (debug) {
+                plugin.logger.info("Fetched ${claims.size} claims for faction ${faction.name}")
+            }
             val factionInfo = FactionInfoBuilder(plugin).build(faction)
             claims.groupBy { it.worldId }.forEach { (worldId, worldClaims) ->
                 createUpdateTask(
@@ -96,6 +102,9 @@ class MfDynmapService(private val plugin: MedievalFactions) {
                                 faction.id,
                                 {
                                     val paths = ClaimPathBuilder.getPaths(worldClaims)
+                                    if (debug) {
+                                        plugin.logger.info("Generated ${paths.size} paths for world $worldId")
+                                    }
                                     paths.forEachIndexed { index, path ->
                                         val corners = getCorners(path)
                                         createUpdateTask(
@@ -118,6 +127,9 @@ class MfDynmapService(private val plugin: MedievalFactions) {
                                                     val factionMarkers =
                                                         factionMarkersByFactionId[faction.id] ?: listOf()
                                                     factionMarkersByFactionId[faction.id] = factionMarkers + areaMarker
+                                                    if (debug) {
+                                                        plugin.logger.info("Created area marker for path $index in world $worldId")
+                                                    }
                                                 }
                                             }
                                         ) { runTask(plugin) }
@@ -151,6 +163,9 @@ class MfDynmapService(private val plugin: MedievalFactions) {
                                                 areaMarker.description = factionInfo
                                                 val factionMarkers = factionMarkersByFactionId[faction.id] ?: listOf()
                                                 factionMarkersByFactionId[faction.id] = factionMarkers + areaMarker
+                                                if (debug) {
+                                                    plugin.logger.info("Created area marker for claim $index in world $worldId")
+                                                }
                                             }
                                         )
                                     }
@@ -172,6 +187,9 @@ class MfDynmapService(private val plugin: MedievalFactions) {
                                 faction.id,
                                 {
                                     val paths = ClaimPathBuilder.getPaths(worldClaims)
+                                    if (debug) {
+                                        plugin.logger.info("Generated ${paths.size} paths for realm in world $worldId")
+                                    }
                                     paths.forEachIndexed { index, path ->
                                         val corners = getCorners(path)
                                         createUpdateTask(
@@ -193,6 +211,9 @@ class MfDynmapService(private val plugin: MedievalFactions) {
                                                 areaMarker.description = factionInfo
                                                 val factionMarkers = factionMarkersByFactionId[faction.id] ?: listOf()
                                                 factionMarkersByFactionId[faction.id] = factionMarkers + areaMarker
+                                                if (debug) {
+                                                    plugin.logger.info("Created realm area marker for path $index in world $worldId")
+                                                }
                                             }
                                         ) { runTask(plugin) }
                                     }
@@ -203,6 +224,11 @@ class MfDynmapService(private val plugin: MedievalFactions) {
                 ) { runTask(plugin) }
             }
         }) { runTaskAsynchronously(plugin) }
+        val endTime = System.currentTimeMillis()
+        val duration = endTime - startTime
+        if (debug) {
+            plugin.logger.info("updateClaims for ${faction.name} took $duration ms")
+        }
     }
 
     private fun getCorners(points: List<Point>): List<Point> {
@@ -213,6 +239,9 @@ class MfDynmapService(private val plugin: MedievalFactions) {
             if (prevX != nextX && prevZ != nextZ) {
                 corners.add(points[i])
             }
+        }
+        if (debug) {
+            plugin.logger.info("Calculated ${corners.size} corners from points")
         }
         return corners
     }
