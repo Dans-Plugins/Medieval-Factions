@@ -9,4 +9,6 @@ services:
     volumes:
       - ./testmcserver:/testmcserver
     environment:
+      - MINECRAFT_VERSION=${MINECRAFT_VERSION}
       - DYNMAP_ENABLED=${DYNMAP_ENABLED}
+      - OVERWRITE_EXISTING_SERVER=${OVERWRITE_EXISTING_SERVER}
