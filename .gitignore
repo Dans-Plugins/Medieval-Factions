@@ -40,3 +40,6 @@ bin/
 
 # test server
 /testmcserver/
+
+# env file
+.env

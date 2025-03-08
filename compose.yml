@@ -5,5 +5,8 @@ services:
     container_name: mf-test-mc-server
     ports:
       - "25565:25565"
+      - "8123:8123"
     volumes:
       - ./testmcserver:/testmcserver
+    environment:
+      - DYNMAP_ENABLED=${DYNMAP_ENABLED}

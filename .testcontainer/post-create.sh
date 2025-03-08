@@ -41,10 +41,13 @@ fi
 echo "Copying plugin JAR... (created $diff seconds ago)"
 cp "$nameOfJar" /testmcserver/plugins
 
-# Copy dynmap JAR if present
-if [ -d "/testmcserver-build/dynmap" ]; then
-    echo "Copying Dynmap plugin..."
-    cp /testmcserver-build/dynmap/target/Dynmap-*.jar /testmcserver/plugins
+# Copy or delete Dynmap JAR based on environment variable
+if [ "$DYNMAP_ENABLED" = "true" ]; then
+      echo "Dynmap enabled. Copying Dynmap plugin from /resources/jars..."
+      cp /resources/jars/Dynmap-*.jar /testmcserver/plugins
+else
+    echo "Dynmap disabled. Deleting Dynmap plugin if it exists..."
+    rm -f /testmcserver/plugins/Dynmap-*.jar
 fi
 
 echo "Starting server..."
