@@ -1,8 +1,15 @@
 echo "Running 'post-create.sh' script..."
-if [ -z "$(ls -A /testmcserver)" ]; then
+if [ -z "$(ls -A /testmcserver)" ] || [ "$OVERWRITE_EXISTING_SERVER" = "true" ]; then
     echo "Setting up server..."
+
+    # if OVERWRITE_EXISTING_SERVER is true, delete the server directory
+    if [ "$OVERWRITE_EXISTING_SERVER" = "true" ]; then
+        echo "OVERWRITE_EXISTING_SERVER is set to 'true'. Deleting contents of /testmcserver..."
+        rm -rf /testmcserver/*
+    fi
+
     # Copy server JAR
-    cp /testmcserver-build/spigot-1.20.4.jar /testmcserver/spigot-1.20.4.jar
+cp /testmcserver-build/spigot-"${MINECRAFT_VERSION}".jar /testmcserver/spigot-"${MINECRAFT_VERSION}".jar
 
     # Create plugins directory
     mkdir /testmcserver/plugins
@@ -21,7 +28,7 @@ if [ -z "$(ls -A /testmcserver)" ]; then
     # Accept EULA
     cd /testmcserver && echo "eula=true" > eula.txt
 else
-    echo "Server is already set up."
+  echo "Server is already set up. To overwrite the existing server, set the 'OVERWRITE_EXISTING_SERVER' environment variable to 'true'."
 fi
 
 # Always delete lang directory to get the latest translations
@@ -51,4 +58,4 @@ else
 fi
 
 echo "Starting server..."
-java -jar /testmcserver/spigot-1.20.4.jar
+java -jar /testmcserver/spigot-"${MINECRAFT_VERSION}".jar
