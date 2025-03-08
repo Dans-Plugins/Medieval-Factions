@@ -57,5 +57,18 @@ else
     rm -f /testmcserver/plugins/Dynmap-*.jar
 fi
 
+# Copy or delete Bluemap JAR based on environment variable
+if [ "$BLUEMAP_ENABLED" = "true" ]; then
+      echo "Bluemap enabled. Copying Bluemap plugin from /resources/jars..."
+      cp /resources/jars/bluemap-*.jar /testmcserver/plugins
+
+      # update /testmcserver/plugins/bluemap/core.conf to have accept-download: true
+      echo "Updating /testmcserver/plugins/bluemap/core.conf to have accept-download: true..."
+      sed -i 's/accept-download: false/accept-download: true/g' /testmcserver/plugins/bluemap/core.conf
+else
+    echo "Bluemap disabled. Deleting Bluemap plugin if it exists..."
+    rm -f /testmcserver/plugins/bluemap-*.jar
+fi
+
 echo "Starting server..."
 java -jar /testmcserver/spigot-"${MINECRAFT_VERSION}".jar
