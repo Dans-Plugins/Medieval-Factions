@@ -19,7 +19,6 @@ import com.dansplugins.factionsystem.duel.MfDuelId
 import com.dansplugins.factionsystem.duel.MfDuelInviteRepository
 import com.dansplugins.factionsystem.duel.MfDuelRepository
 import com.dansplugins.factionsystem.duel.MfDuelService
-import com.dansplugins.factionsystem.dynmap.DynmapService
 import com.dansplugins.factionsystem.faction.JooqMfFactionRepository
 import com.dansplugins.factionsystem.faction.MfFactionRepository
 import com.dansplugins.factionsystem.faction.MfFactionService
@@ -68,6 +67,7 @@ import com.dansplugins.factionsystem.locks.JooqMfLockRepository
 import com.dansplugins.factionsystem.locks.MfLockRepository
 import com.dansplugins.factionsystem.locks.MfLockService
 import com.dansplugins.factionsystem.locks.MfRpkLockService
+import com.dansplugins.factionsystem.map.dynmap.DynmapService
 import com.dansplugins.factionsystem.notification.MfNotificationService
 import com.dansplugins.factionsystem.notification.mailboxes.MailboxesNotificationService
 import com.dansplugins.factionsystem.notification.noop.NoOpNotificationService

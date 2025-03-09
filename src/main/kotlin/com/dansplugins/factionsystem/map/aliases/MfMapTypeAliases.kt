@@ -1,4 +1,4 @@
-package com.dansplugins.factionsystem.dynmap.aliases
+package com.dansplugins.factionsystem.map.aliases
 
 /**
  * Represents a point in a 2D space with x and y coordinates.

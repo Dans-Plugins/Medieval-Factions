@@ -1,4 +1,4 @@
-package com.dansplugins.factionsystem.dynmap.builders
+package com.dansplugins.factionsystem.map.builders
 
 import com.dansplugins.factionsystem.MedievalFactions
 import com.dansplugins.factionsystem.faction.MfFaction

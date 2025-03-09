@@ -1,9 +1,9 @@
-package com.dansplugins.factionsystem.dynmap.builders
+package com.dansplugins.factionsystem.map.builders
 
 import com.dansplugins.factionsystem.claim.MfClaimedChunk
-import com.dansplugins.factionsystem.dynmap.aliases.LineSegment
-import com.dansplugins.factionsystem.dynmap.aliases.Path
-import com.dansplugins.factionsystem.dynmap.aliases.Point
+import com.dansplugins.factionsystem.map.aliases.LineSegment
+import com.dansplugins.factionsystem.map.aliases.Path
+import com.dansplugins.factionsystem.map.aliases.Point
 
 /**
  * Responsible for building paths from claimed chunks.

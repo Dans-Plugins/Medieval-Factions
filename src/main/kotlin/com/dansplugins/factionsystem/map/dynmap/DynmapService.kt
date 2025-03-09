@@ -1,14 +1,16 @@
-package com.dansplugins.factionsystem.dynmap
+package com.dansplugins.factionsystem.map.dynmap
 
 import com.dansplugins.factionsystem.MedievalFactions
 import com.dansplugins.factionsystem.claim.MfClaimService
 import com.dansplugins.factionsystem.claim.MfClaimedChunk
-import com.dansplugins.factionsystem.dynmap.aliases.Point
-import com.dansplugins.factionsystem.dynmap.builders.ClaimPathBuilder
-import com.dansplugins.factionsystem.dynmap.builders.FactionInfoBuilder
-import com.dansplugins.factionsystem.dynmap.helpers.MarkerSetHelper
+import com.dansplugins.factionsystem.dynmap.TaskScheduler
 import com.dansplugins.factionsystem.faction.MfFaction
 import com.dansplugins.factionsystem.faction.MfFactionId
+import com.dansplugins.factionsystem.map.MapService
+import com.dansplugins.factionsystem.map.aliases.Point
+import com.dansplugins.factionsystem.map.builders.ClaimPathBuilder
+import com.dansplugins.factionsystem.map.builders.FactionInfoBuilder
+import com.dansplugins.factionsystem.map.dynmap.helpers.MarkerSetHelper
 import org.bukkit.World
 import org.dynmap.DynmapAPI
 import org.dynmap.markers.AreaMarker
