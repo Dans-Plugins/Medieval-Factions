@@ -96,5 +96,7 @@ duels:
 dynmap:
   enableDynmapIntegration: true
   onlyRenderTerritoriesUponStartup: false
+  minimalDynmapGeometry : true
+  debug: true
 dev:
   enableDevCommands: false
