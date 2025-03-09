@@ -29,48 +29,64 @@ class FactionInfoBuilder(private val plugin: MedievalFactions) {
         val playerService = plugin.services.playerService
         return buildString {
             append("<h1>${faction.name}</h1>")
-            append("<h2>Description</h2>")
-            append(faction.description)
-            append("<h2>Members (${faction.members.size})</h2>")
-            append(
-                faction.members.groupBy { it.role }.map { (role, members) ->
-                    """
-                        <h3>${role.name} (${faction.members.count { it.role.id == role.id }})</h3>
-                        ${members.joinToString { member -> playerService.getPlayer(member.playerId)?.name ?: plugin.language["UnknownPlayer"] }}
-                    """.trimIndent()
-                }.joinToString("<br />")
-            )
-            val liegeId = relationshipService.getLiege(faction.id)
-            val liege = liegeId?.let(factionService::getFaction)
-            if (liege != null) {
-                append("<h2>Liege</h2>")
-                append(liege.name)
+            if (plugin.config.getBoolean("showDescription")) {
+                append("<h2>Description</h2>")
+                append(faction.description)
+            }
+            if (plugin.config.getBoolean("showMembers")) {
+                append("<h2>Members (${faction.members.size})</h2>")
+                append(
+                    faction.members.groupBy { it.role }.map { (role, members) ->
+                        """
+                <h3>${role.name} (${faction.members.count { it.role.id == role.id }})</h3>
+                ${members.joinToString { member -> playerService.getPlayer(member.playerId)?.name ?: plugin.language["UnknownPlayer"] }}
+                        """.trimIndent()
+                    }.joinToString("<br />")
+                )
+            }
+            if (plugin.config.getBoolean("showLiege")) {
+                val liegeId = relationshipService.getLiege(faction.id)
+                val liege = liegeId?.let(factionService::getFaction)
+                if (liege != null) {
+                    append("<h2>Liege</h2>")
+                    append(liege.name)
+                    append("<br />")
+                }
+            }
+            if (plugin.config.getBoolean("showVassals")) {
+                val vassals = relationshipService.getVassals(faction.id).mapNotNull(factionService::getFaction)
+                if (vassals.isNotEmpty()) {
+                    append("<h2>Vassals</h2>")
+                    append(vassals.joinToString(transform = MfFaction::name))
+                    append("<br />")
+                }
+            }
+            if (plugin.config.getBoolean("showAllies")) {
+                val allies = relationshipService.getAllies(faction.id).mapNotNull(factionService::getFaction)
+                if (allies.isNotEmpty()) {
+                    append("<h2>Allies</h2>")
+                    append(allies.joinToString(transform = MfFaction::name))
+                    append("<br />")
+                }
+            }
+            if (plugin.config.getBoolean("showAtWarWith")) {
+                val atWarWith = relationshipService.getFactionsAtWarWith(faction.id).mapNotNull(factionService::getFaction)
+                if (atWarWith.isNotEmpty()) {
+                    append("<h2>At war with</h2>")
+                    append(atWarWith.joinToString(transform = MfFaction::name))
+                    append("<br />")
+                }
+            }
+            if (plugin.config.getBoolean("showPower")) {
+                append("<h2>Power</h2>")
+                append(decimalFormat.format(floor(faction.power)))
                 append("<br />")
             }
-            val vassals = relationshipService.getVassals(faction.id).mapNotNull(factionService::getFaction)
-            if (vassals.isNotEmpty()) {
-                append("<h2>Vassals</h2>")
-                append(vassals.joinToString(transform = MfFaction::name))
-                append("<br />")
+            if (plugin.config.getBoolean("showDemesne")) {
+                append("<h2>Demesne</h2>")
+                val claims = claimService.getClaims(faction.id)
+                append("${claims.size}/${floor(faction.power).roundToInt()}")
             }
-            val allies = relationshipService.getAllies(faction.id).mapNotNull(factionService::getFaction)
-            if (allies.isNotEmpty()) {
-                append("<h2>Allies</h2>")
-                append(allies.joinToString(transform = MfFaction::name))
-                append("<br />")
-            }
-            val atWarWith = relationshipService.getFactionsAtWarWith(faction.id).mapNotNull(factionService::getFaction)
-            if (atWarWith.isNotEmpty()) {
-                append("<h2>At war with</h2>")
-                append(atWarWith.joinToString(transform = MfFaction::name))
-                append("<br />")
-            }
-            append("<h2>Power</h2>")
-            append(decimalFormat.format(floor(faction.power)))
-            append("<br />")
-            append("<h2>Demesne</h2>")
-            val claims = claimService.getClaims(faction.id)
-            append("${claims.size}/${floor(faction.power).roundToInt()}")
         }
     }
 }
