@@ -97,6 +97,7 @@ dynmap:
   enableDynmapIntegration: true
   showRealms: false
   showDescription: true
+  showMembers: false
   showLiege: false
   showVassals: false
   showAllies: false
