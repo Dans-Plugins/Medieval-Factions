@@ -7,10 +7,21 @@ import java.text.DecimalFormatSymbols
 import kotlin.math.floor
 import kotlin.math.roundToInt
 
+/**
+ * A builder class for creating faction information in HTML format.
+ *
+ * @param plugin The MedievalFactions plugin instance.
+ */
 class FactionInfoBuilder(private val plugin: MedievalFactions) {
 
     private val decimalFormat = DecimalFormat("0", DecimalFormatSymbols.getInstance(plugin.language.locale))
 
+    /**
+     * Builds the faction information as an HTML string.
+     *
+     * @param faction The faction for which the information is being built.
+     * @return The faction information in HTML format.
+     */
     fun build(faction: MfFaction): String {
         val factionService = plugin.services.factionService
         val relationshipService = plugin.services.factionRelationshipService

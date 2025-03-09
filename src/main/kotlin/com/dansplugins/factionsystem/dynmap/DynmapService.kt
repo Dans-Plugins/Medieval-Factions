@@ -16,6 +16,11 @@ import org.dynmap.markers.MarkerSet
 import java.util.*
 import java.util.concurrent.ConcurrentHashMap
 
+/**
+ * Service for managing Dynmap markers for factions.
+ *
+ * @param plugin The MedievalFactions plugin instance.
+ */
 class DynmapService(private val plugin: MedievalFactions) : MapService {
 
     private val dynmap = plugin.server.pluginManager.getPlugin("dynmap") as DynmapAPI
@@ -26,11 +31,21 @@ class DynmapService(private val plugin: MedievalFactions) : MapService {
     private val claimPathBuilder = ClaimPathBuilder()
     private val markerSetHelper = MarkerSetHelper()
 
+    /**
+     * Schedules an update for the claims of the specified faction.
+     *
+     * @param faction The faction whose claims need to be updated.
+     */
     override fun scheduleUpdateClaims(faction: MfFaction) {
         taskScheduler.cancelTasks(faction.id)
         taskScheduler.scheduleTask(faction.id, { updateClaims(faction) }, 100L)
     }
 
+    /**
+     * Updates the claims for the specified faction.
+     *
+     * @param faction The faction whose claims need to be updated.
+     */
     private fun updateClaims(faction: MfFaction) {
         if (plugin.config.getBoolean("dynmap.debug")) {
             plugin.logger.info("[Dynmap Service] Updating ${faction.name} claims.")
@@ -50,6 +65,13 @@ class DynmapService(private val plugin: MedievalFactions) : MapService {
         }
     }
 
+    /**
+     * Updates the claims for the specified faction in the given marker set.
+     *
+     * @param faction The faction whose claims need to be updated.
+     * @param claimsMarkerSet The marker set for claims.
+     * @param claimService The claim service.
+     */
     private fun updateFactionClaims(faction: MfFaction, claimsMarkerSet: MarkerSet, claimService: MfClaimService) {
         val claims = claimService.getClaims(faction.id)
         if (plugin.config.getBoolean("dynmap.debug")) {
@@ -61,6 +83,15 @@ class DynmapService(private val plugin: MedievalFactions) : MapService {
         }
     }
 
+    /**
+     * Updates the claims for the specified faction in the given world.
+     *
+     * @param faction The faction whose claims need to be updated.
+     * @param worldId The ID of the world.
+     * @param worldClaims The list of claims in the world.
+     * @param claimsMarkerSet The marker set for claims.
+     * @param factionInfo The faction information.
+     */
     private fun updateWorldClaims(faction: MfFaction, worldId: UUID, worldClaims: List<MfClaimedChunk>, claimsMarkerSet: MarkerSet, factionInfo: String) {
         val world = plugin.server.getWorld(worldId)
         if (world != null) {
@@ -68,6 +99,15 @@ class DynmapService(private val plugin: MedievalFactions) : MapService {
         }
     }
 
+    /**
+     * Creates area markers for the specified faction in the given world.
+     *
+     * @param faction The faction whose area markers need to be created.
+     * @param world The world.
+     * @param worldClaims The list of claims in the world.
+     * @param claimsMarkerSet The marker set for claims.
+     * @param factionInfo The faction information.
+     */
     private fun createAreaMarkers(faction: MfFaction, world: World, worldClaims: List<MfClaimedChunk>, claimsMarkerSet: MarkerSet, factionInfo: String) {
         val paths = claimPathBuilder.getPaths(worldClaims)
         if (plugin.config.getBoolean("dynmap.debug")) {
@@ -82,6 +122,16 @@ class DynmapService(private val plugin: MedievalFactions) : MapService {
         }
     }
 
+    /**
+     * Creates an area marker for the specified faction in the given world.
+     *
+     * @param faction The faction whose area marker needs to be created.
+     * @param world The world.
+     * @param corners The list of corner points.
+     * @param claimsMarkerSet The marker set for claims.
+     * @param factionInfo The faction information.
+     * @param index The index of the area marker.
+     */
     private fun createAreaMarker(faction: MfFaction, world: World, corners: List<Point>, claimsMarkerSet: MarkerSet, factionInfo: String, index: Int) {
         val areaMarker = claimsMarkerSet.createAreaMarker(
             "claim_border_${faction.id}_${world.name}_$index",
@@ -105,6 +155,16 @@ class DynmapService(private val plugin: MedievalFactions) : MapService {
         }
     }
 
+    /**
+     * Creates a claim marker for the specified faction in the given world.
+     *
+     * @param faction The faction whose claim marker needs to be created.
+     * @param world The world.
+     * @param claim The claimed chunk.
+     * @param claimsMarkerSet The marker set for claims.
+     * @param factionInfo The faction information.
+     * @param index The index of the claim marker.
+     */
     private fun createClaimMarker(faction: MfFaction, world: World, claim: MfClaimedChunk, claimsMarkerSet: MarkerSet, factionInfo: String, index: Int) {
         val areaMarker = claimsMarkerSet.createAreaMarker(
             "claim_${faction.id}_${world.name}_$index",
@@ -133,6 +193,13 @@ class DynmapService(private val plugin: MedievalFactions) : MapService {
         factionMarkersByFactionId[faction.id] = factionMarkers + areaMarker
     }
 
+    /**
+     * Updates the realm for the specified faction in the given marker set.
+     *
+     * @param faction The faction whose realm needs to be updated.
+     * @param realmMarkerSet The marker set for realms.
+     * @param claimService The claim service.
+     */
     private fun updateFactionRealm(faction: MfFaction, realmMarkerSet: MarkerSet, claimService: MfClaimService) {
         val relationshipService = plugin.services.factionRelationshipService
         val realm = claimService.getClaims(faction.id) + relationshipService.getVassalTree(faction.id).flatMap(claimService::getClaims)
@@ -141,6 +208,14 @@ class DynmapService(private val plugin: MedievalFactions) : MapService {
         }
     }
 
+    /**
+     * Updates the realm for the specified faction in the given world.
+     *
+     * @param faction The faction whose realm needs to be updated.
+     * @param worldId The ID of the world.
+     * @param worldClaims The list of claims in the world.
+     * @param realmMarkerSet The marker set for realms.
+     */
     private fun updateWorldRealm(faction: MfFaction, worldId: UUID, worldClaims: List<MfClaimedChunk>, realmMarkerSet: MarkerSet) {
         val world = plugin.server.getWorld(worldId)
         if (world != null) {
@@ -148,6 +223,14 @@ class DynmapService(private val plugin: MedievalFactions) : MapService {
         }
     }
 
+    /**
+     * Creates realm markers for the specified faction in the given world.
+     *
+     * @param faction The faction whose realm markers need to be created.
+     * @param world The world.
+     * @param worldClaims The list of claims in the world.
+     * @param realmMarkerSet The marker set for realms.
+     */
     private fun createRealmMarkers(faction: MfFaction, world: World, worldClaims: List<MfClaimedChunk>, realmMarkerSet: MarkerSet) {
         val paths = claimPathBuilder.getPaths(worldClaims)
         if (plugin.config.getBoolean("dynmap.debug")) {
@@ -159,6 +242,15 @@ class DynmapService(private val plugin: MedievalFactions) : MapService {
         }
     }
 
+    /**
+     * Creates a realm area marker for the specified faction in the given world.
+     *
+     * @param faction The faction whose realm area marker needs to be created.
+     * @param world The world.
+     * @param corners The list of corner points.
+     * @param realmMarkerSet The marker set for realms.
+     * @param index The index of the realm area marker.
+     */
     private fun createRealmAreaMarker(faction: MfFaction, world: World, corners: List<Point>, realmMarkerSet: MarkerSet, index: Int) {
         val areaMarker = realmMarkerSet.createAreaMarker(
             "realm_${faction.id}_${world.name}_$index",
@@ -181,6 +273,12 @@ class DynmapService(private val plugin: MedievalFactions) : MapService {
         }
     }
 
+    /**
+     * Calculates the corners from a list of points.
+     *
+     * @param points The list of points.
+     * @return The list of corner points.
+     */
     private fun getCorners(points: List<Point>): List<Point> {
         val corners = mutableListOf<Pair<Int, Int>>()
         for (i in points.indices) {
