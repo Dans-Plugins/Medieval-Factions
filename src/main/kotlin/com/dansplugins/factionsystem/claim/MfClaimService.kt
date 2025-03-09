@@ -115,12 +115,12 @@ class MfClaimService(private val plugin: MedievalFactions, private val repositor
                 }
             }
         )
-        val dynmapService = plugin.services.dynmapService
-        if (dynmapService != null && !plugin.config.getBoolean("dynmap.onlyRenderTerritoriesUponStartup")) {
+        val mapService = plugin.services.mapService
+        if (mapService != null && !plugin.config.getBoolean("dynmap.onlyRenderTerritoriesUponStartup")) {
             plugin.server.scheduler.runTask(
                 plugin,
                 Runnable {
-                    dynmapService.scheduleUpdateClaims(faction)
+                    mapService.scheduleUpdateClaims(faction)
                 }
             )
         }
@@ -163,15 +163,15 @@ class MfClaimService(private val plugin: MedievalFactions, private val repositor
                 }
             }
         )
-        val dynmapService = plugin.services.dynmapService
-        if (dynmapService != null) {
+        val mapService = plugin.services.mapService
+        if (mapService != null) {
             val factionService = plugin.services.factionService
             val faction = factionService.getFaction(claim.factionId)
             if (faction != null && !plugin.config.getBoolean("dynmap.onlyRenderTerritoriesUponStartup")) {
                 plugin.server.scheduler.runTask(
                     plugin,
                     Runnable {
-                        dynmapService.scheduleUpdateClaims(faction)
+                        mapService.scheduleUpdateClaims(faction)
                     }
                 )
             }

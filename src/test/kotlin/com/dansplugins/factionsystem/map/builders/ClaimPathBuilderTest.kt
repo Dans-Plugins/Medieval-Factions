@@ -1,9 +1,9 @@
-package com.dansplugins.factionsystem.dynmap.builders
+package com.dansplugins.factionsystem.map.builders
 
 import com.dansplugins.factionsystem.claim.MfClaimedChunk
-import com.dansplugins.factionsystem.dynmap.Path
-import com.dansplugins.factionsystem.dynmap.Point
 import com.dansplugins.factionsystem.faction.MfFactionId
+import com.dansplugins.factionsystem.map.aliases.Path
+import com.dansplugins.factionsystem.map.aliases.Point
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Test
 import java.util.*

@@ -95,6 +95,16 @@ duels:
   notificationDistance: 64
 dynmap:
   enableDynmapIntegration: true
+  showRealms: false
+  showDescription: true
+  showMembers: false
+  showLiege: false
+  showVassals: false
+  showAllies: false
+  showAtWarWith: false
+  showPower: false
+  showDemesne: false
   onlyRenderTerritoriesUponStartup: false
+  debug: false
 dev:
   enableDevCommands: false

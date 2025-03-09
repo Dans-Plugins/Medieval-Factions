@@ -1,4 +1,4 @@
-package com.dansplugins.factionsystem.dynmap.helpers
+package com.dansplugins.factionsystem.map.dynmap.helpers
 
 import org.dynmap.markers.MarkerAPI
 import org.dynmap.markers.MarkerSet
