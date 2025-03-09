@@ -3,7 +3,7 @@ package com.dansplugins.factionsystem.service
 import com.dansplugins.factionsystem.chat.MfChatService
 import com.dansplugins.factionsystem.claim.MfClaimService
 import com.dansplugins.factionsystem.duel.MfDuelService
-import com.dansplugins.factionsystem.dynmap.MfDynmapService
+import com.dansplugins.factionsystem.dynmap.MapService
 import com.dansplugins.factionsystem.faction.MfFactionService
 import com.dansplugins.factionsystem.gate.MfGateService
 import com.dansplugins.factionsystem.interaction.MfInteractionService
@@ -29,5 +29,5 @@ class Services(
     val duelService: MfDuelService,
     val potionService: MfPotionService,
     val teleportService: MfTeleportService,
-    val dynmapService: MfDynmapService?
+    val mapService: MapService?
 )

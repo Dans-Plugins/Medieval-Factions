@@ -16,7 +16,7 @@ import org.dynmap.markers.MarkerSet
 import java.util.*
 import java.util.concurrent.ConcurrentHashMap
 
-class MfDynmapServiceImpl(private val plugin: MedievalFactions) : MfDynmapService {
+class DynmapService(private val plugin: MedievalFactions) : MapService {
 
     private val dynmap = plugin.server.pluginManager.getPlugin("dynmap") as DynmapAPI
     private val factionMarkersByFactionId = ConcurrentHashMap<MfFactionId, List<AreaMarker>>()

@@ -49,7 +49,7 @@ class MfPlayerService(private val plugin: MedievalFactions, private val playerRe
     fun save(player: MfPlayer): Result4k<MfPlayer, ServiceFailure> = resultFrom {
         val result = playerRepository.upsert(player)
         playersById[result.id] = result
-        val dynmapService = plugin.services.dynmapService
+        val dynmapService = plugin.services.mapService
         if (dynmapService != null) {
             val factionService = plugin.services.factionService
             val faction = factionService.getFaction(result.id)
@@ -73,7 +73,7 @@ class MfPlayerService(private val plugin: MedievalFactions, private val playerRe
             playerRepository.increaseOnlinePlayerPower(onlinePlayerIds)
             playerRepository.decreaseOfflinePlayerPower(onlinePlayerIds)
             playersById.putAll(playerRepository.getPlayers().associateBy(MfPlayer::id))
-            val dynmapService = plugin.services.dynmapService
+            val dynmapService = plugin.services.mapService
             if (dynmapService != null && !plugin.config.getBoolean("dynmap.onlyRenderTerritoriesUponStartup")) {
                 val factionService = plugin.services.factionService
                 factionService.factions.forEach { faction ->

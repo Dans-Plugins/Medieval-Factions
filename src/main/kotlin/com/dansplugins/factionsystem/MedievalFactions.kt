@@ -19,7 +19,7 @@ import com.dansplugins.factionsystem.duel.MfDuelId
 import com.dansplugins.factionsystem.duel.MfDuelInviteRepository
 import com.dansplugins.factionsystem.duel.MfDuelRepository
 import com.dansplugins.factionsystem.duel.MfDuelService
-import com.dansplugins.factionsystem.dynmap.MfDynmapServiceImpl
+import com.dansplugins.factionsystem.dynmap.DynmapService
 import com.dansplugins.factionsystem.faction.JooqMfFactionRepository
 import com.dansplugins.factionsystem.faction.MfFactionRepository
 import com.dansplugins.factionsystem.faction.MfFactionService
@@ -184,7 +184,7 @@ class MedievalFactions : JavaPlugin() {
         val gson = Gson()
         val playerRepository: MfPlayerRepository = JooqMfPlayerRepository(this, dsl)
         val dynmapService = if (server.pluginManager.getPlugin("dynmap") != null && config.getBoolean("dynmap.enableDynmapIntegration")) {
-            MfDynmapServiceImpl(this)
+            DynmapService(this)
         } else {
             null
         }
