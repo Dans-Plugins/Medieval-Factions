@@ -97,6 +97,6 @@ dynmap:
   enableDynmapIntegration: true
   onlyRenderTerritoriesUponStartup: false
   showRealms : false
-  debug: true
+  debug: false
 dev:
   enableDevCommands: false
