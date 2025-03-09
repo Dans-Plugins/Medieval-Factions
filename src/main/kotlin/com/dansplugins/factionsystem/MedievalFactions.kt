@@ -183,7 +183,7 @@ class MedievalFactions : JavaPlugin() {
 
         val gson = Gson()
         val playerRepository: MfPlayerRepository = JooqMfPlayerRepository(this, dsl)
-        val dynmapService = if (server.pluginManager.getPlugin("dynmap") != null && config.getBoolean("dynmap.enableDynmapIntegration")) {
+        val mapService = if (server.pluginManager.getPlugin("dynmap") != null && config.getBoolean("dynmap.enableDynmapIntegration")) {
             DynmapService(this)
         } else {
             null
@@ -228,7 +228,7 @@ class MedievalFactions : JavaPlugin() {
             duelService,
             potionService,
             teleportService,
-            dynmapService
+            mapService
         )
         setupRpkLockService()
 
@@ -304,9 +304,9 @@ class MedievalFactions : JavaPlugin() {
             logger.info(language["DynmapOnlyRenderTerritoriesUponStartupEnabled"])
         }
 
-        if (dynmapService != null) {
+        if (mapService != null) {
             factionService.factions.forEach { faction ->
-                dynmapService.scheduleUpdateClaims(faction)
+                mapService.scheduleUpdateClaims(faction)
             }
         }
 

@@ -123,12 +123,12 @@ class MfFactionService(private val plugin: MedievalFactions, private val reposit
         }
         val result = repository.upsert(factionToSave)
         factionsById[result.id] = result
-        val dynmapService = plugin.services.mapService
-        if (dynmapService != null && !plugin.config.getBoolean("dynmap.onlyRenderTerritoriesUponStartup")) {
+        val mapService = plugin.services.mapService
+        if (mapService != null && !plugin.config.getBoolean("dynmap.onlyRenderTerritoriesUponStartup")) {
             plugin.server.scheduler.runTask(
                 plugin,
                 Runnable {
-                    dynmapService.scheduleUpdateClaims(result)
+                    mapService.scheduleUpdateClaims(result)
                 }
             )
         }
