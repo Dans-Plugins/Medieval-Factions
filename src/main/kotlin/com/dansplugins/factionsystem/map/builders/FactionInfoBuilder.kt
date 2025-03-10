@@ -29,11 +29,11 @@ class FactionInfoBuilder(private val plugin: MedievalFactions) {
         val playerService = plugin.services.playerService
         return buildString {
             append("<h1>${faction.name}</h1>")
-            if (plugin.config.getBoolean("showDescription")) {
+            if (plugin.config.getBoolean("dynmap.showDescription")) {
                 append("<h2>Description</h2>")
                 append(faction.description)
             }
-            if (plugin.config.getBoolean("showMembers")) {
+            if (plugin.config.getBoolean("dynmap.showMembers")) {
                 append("<h2>Members (${faction.members.size})</h2>")
                 append(
                     faction.members.groupBy { it.role }.map { (role, members) ->
@@ -44,7 +44,7 @@ class FactionInfoBuilder(private val plugin: MedievalFactions) {
                     }.joinToString("<br />")
                 )
             }
-            if (plugin.config.getBoolean("showLiege")) {
+            if (plugin.config.getBoolean("dynmap.showLiege")) {
                 val liegeId = relationshipService.getLiege(faction.id)
                 val liege = liegeId?.let(factionService::getFaction)
                 if (liege != null) {
@@ -53,7 +53,7 @@ class FactionInfoBuilder(private val plugin: MedievalFactions) {
                     append("<br />")
                 }
             }
-            if (plugin.config.getBoolean("showVassals")) {
+            if (plugin.config.getBoolean("dynmap.showVassals")) {
                 val vassals = relationshipService.getVassals(faction.id).mapNotNull(factionService::getFaction)
                 if (vassals.isNotEmpty()) {
                     append("<h2>Vassals</h2>")
@@ -61,7 +61,7 @@ class FactionInfoBuilder(private val plugin: MedievalFactions) {
                     append("<br />")
                 }
             }
-            if (plugin.config.getBoolean("showAllies")) {
+            if (plugin.config.getBoolean("dynmap.showAllies")) {
                 val allies = relationshipService.getAllies(faction.id).mapNotNull(factionService::getFaction)
                 if (allies.isNotEmpty()) {
                     append("<h2>Allies</h2>")
@@ -69,7 +69,7 @@ class FactionInfoBuilder(private val plugin: MedievalFactions) {
                     append("<br />")
                 }
             }
-            if (plugin.config.getBoolean("showAtWarWith")) {
+            if (plugin.config.getBoolean("dynmap.showAtWarWith")) {
                 val atWarWith = relationshipService.getFactionsAtWarWith(faction.id).mapNotNull(factionService::getFaction)
                 if (atWarWith.isNotEmpty()) {
                     append("<h2>At war with</h2>")
@@ -77,12 +77,12 @@ class FactionInfoBuilder(private val plugin: MedievalFactions) {
                     append("<br />")
                 }
             }
-            if (plugin.config.getBoolean("showPower")) {
+            if (plugin.config.getBoolean("dynmap.showPower")) {
                 append("<h2>Power</h2>")
                 append(decimalFormat.format(floor(faction.power)))
                 append("<br />")
             }
-            if (plugin.config.getBoolean("showDemesne")) {
+            if (plugin.config.getBoolean("dynmap.showDemesne")) {
                 append("<h2>Demesne</h2>")
                 val claims = claimService.getClaims(faction.id)
                 append("${claims.size}/${floor(faction.power).roundToInt()}")
