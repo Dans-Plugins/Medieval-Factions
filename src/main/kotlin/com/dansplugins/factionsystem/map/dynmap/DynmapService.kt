@@ -267,7 +267,7 @@ class DynmapService(private val plugin: MedievalFactions) : MapService {
         val color = Integer.decode(faction.flags[plugin.flags.color])
         areaMarker.setFillStyle(0.0, color)
         areaMarker.setLineStyle(4, 1.0, color)
-        areaMarker.description = FactionInfoBuilder(plugin).build(faction)
+        areaMarker.description = factionInfoBuilder.build(faction)
         val factionMarkers = factionMarkersByFactionId[faction.id] ?: listOf()
         factionMarkersByFactionId[faction.id] = factionMarkers + areaMarker
         if (plugin.config.getBoolean("dynmap.debug")) {
