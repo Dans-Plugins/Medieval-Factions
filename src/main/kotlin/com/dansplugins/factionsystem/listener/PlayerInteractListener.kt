@@ -21,6 +21,7 @@ import com.dansplugins.factionsystem.player.MfPlayerId
 import dev.forkhandles.result4k.onFailure
 import org.bukkit.ChatColor.GREEN
 import org.bukkit.ChatColor.RED
+import org.bukkit.Material
 import org.bukkit.block.Block
 import org.bukkit.block.BlockFace.DOWN
 import org.bukkit.block.BlockFace.UP
@@ -360,10 +361,39 @@ class PlayerInteractListener(private val plugin: MedievalFactions) : Listener {
         )
     }
 
+    private val restrictedBlocksForGates = setOf(
+        Material.SAND,
+        Material.RED_SAND,
+        Material.GRAVEL,
+        Material.ANVIL,
+        Material.WHITE_CONCRETE_POWDER,
+        Material.ORANGE_CONCRETE_POWDER,
+        Material.MAGENTA_CONCRETE_POWDER,
+        Material.LIGHT_BLUE_CONCRETE_POWDER,
+        Material.YELLOW_CONCRETE_POWDER,
+        Material.LIME_CONCRETE_POWDER,
+        Material.PINK_CONCRETE_POWDER,
+        Material.GRAY_CONCRETE_POWDER,
+        Material.LIGHT_GRAY_CONCRETE_POWDER,
+        Material.CYAN_CONCRETE_POWDER,
+        Material.PURPLE_CONCRETE_POWDER,
+        Material.BLUE_CONCRETE_POWDER,
+        Material.BROWN_CONCRETE_POWDER,
+        Material.GREEN_CONCRETE_POWDER,
+        Material.RED_CONCRETE_POWDER,
+        Material.BLACK_CONCRETE_POWDER,
+        Material.DRAGON_EGG,
+        Material.SCAFFOLDING
+    )
+
     private fun selectGatePosition1(player: Player, block: Block) {
         plugin.server.scheduler.runTaskAsynchronously(
             plugin,
             Runnable {
+                if (block.type in restrictedBlocksForGates) {
+                    player.sendMessage("$RED${plugin.language["GateCreateRestrictedBlock"]}") // TODO: add language key
+                    return@Runnable
+                }
                 val playerService = plugin.services.playerService
                 val mfPlayer = playerService.getPlayer(player) ?: playerService.save(MfPlayer(plugin, player)).onFailure {
                     player.sendMessage("$RED${plugin.language["GateCreateSelectFirstPositionFailedToSavePlayer"]}")
@@ -396,6 +426,10 @@ class PlayerInteractListener(private val plugin: MedievalFactions) : Listener {
         plugin.server.scheduler.runTaskAsynchronously(
             plugin,
             Runnable {
+                if (block.type in restrictedBlocksForGates) {
+                    player.sendMessage("$RED${plugin.language["GateCreateRestrictedBlock"]}") // TODO: add language key
+                    return@Runnable
+                }
                 val playerService = plugin.services.playerService
                 val mfPlayer = playerService.getPlayer(player) ?: playerService.save(MfPlayer(plugin, player)).onFailure {
                     player.sendMessage("$RED${plugin.language["GateCreateSelectSecondPositionFailedToSavePlayer"]}")
@@ -428,6 +462,10 @@ class PlayerInteractListener(private val plugin: MedievalFactions) : Listener {
         plugin.server.scheduler.runTaskAsynchronously(
             plugin,
             Runnable {
+                if (block.type in restrictedBlocksForGates) {
+                    player.sendMessage("$RED${plugin.language["GateCreateRestrictedBlock"]}") // TODO: add language key
+                    return@Runnable
+                }
                 val playerService = plugin.services.playerService
                 val mfPlayer = playerService.getPlayer(player) ?: playerService.save(MfPlayer(plugin, player)).onFailure {
                     player.sendMessage("$RED${plugin.language["GateCreateSelectTriggerFailedToSavePlayer"]}")
@@ -472,6 +510,8 @@ class PlayerInteractListener(private val plugin: MedievalFactions) : Listener {
                     restartGateCreation(player, ctx)
                     return@syncValidations
                 }
+
+                // Validate area dimensions
                 val area = MfCuboidArea(position1, position2)
                 if (area.width > 1 && area.depth > 1) {
                     player.sendMessage("$RED${plugin.language["GateCreateMustBeFlatPlane"]}")
@@ -484,15 +524,26 @@ class PlayerInteractListener(private val plugin: MedievalFactions) : Listener {
                     restartGateCreation(player, ctx)
                     return@syncValidations
                 }
+
+                // Validate restricted blocks within the area
                 val blocks = area.blocks
+                val restrictedBlock = blocks.firstOrNull { it.toBukkitBlock()?.type in restrictedBlocksForGates }
+                if (restrictedBlock != null) {
+                    player.sendMessage("$RED${plugin.language["GateCreateAreaRestrictedBlock"]}") // TODO: add language key
+                    restartGateCreation(player, ctx)
+                    return@syncValidations
+                }
+
                 val maxBlocks = plugin.config.getInt("gates.maxBlocks")
                 if (blocks.size > maxBlocks) {
                     player.sendMessage("$RED${plugin.language["GateCreateAreaLimitExceeded", maxBlocks.toString()]}")
                     restartGateCreation(player, ctx)
                     return@syncValidations
                 }
+
                 val chunks = blocks.mapTo(mutableSetOf()) { it.toBukkitBlock()?.chunk }
                 val triggerChunk = trigger.toBukkitBlock()?.chunk
+
                 val materials = blocks.mapTo(mutableSetOf()) { it.toBukkitBlock()?.type }
                 val material = materials.singleOrNull()
                 if (material == null) {
@@ -510,6 +561,7 @@ class PlayerInteractListener(private val plugin: MedievalFactions) : Listener {
                     restartGateCreation(player, ctx)
                     return@syncValidations
                 }
+
                 plugin.server.scheduler.runTaskAsynchronously(
                     plugin,
                     Runnable updateInteractionStatus@{
@@ -521,6 +573,7 @@ class PlayerInteractListener(private val plugin: MedievalFactions) : Listener {
                             cancelGateCreation(player, ctx)
                             return@updateInteractionStatus
                         }
+
                         val claimService = plugin.services.claimService
                         val claims = chunks.map { chunk -> chunk?.let { claimService.getClaim(it) } }
                         if (claims.any { it == null || it.factionId != faction.id }) {
