@@ -21,7 +21,6 @@ import com.dansplugins.factionsystem.player.MfPlayerId
 import dev.forkhandles.result4k.onFailure
 import org.bukkit.ChatColor.GREEN
 import org.bukkit.ChatColor.RED
-import org.bukkit.Material
 import org.bukkit.block.Block
 import org.bukkit.block.BlockFace.DOWN
 import org.bukkit.block.BlockFace.UP
@@ -361,37 +360,12 @@ class PlayerInteractListener(private val plugin: MedievalFactions) : Listener {
         )
     }
 
-    private val restrictedBlocksForGates = setOf(
-        Material.SAND,
-        Material.RED_SAND,
-        Material.GRAVEL,
-        Material.ANVIL,
-        Material.WHITE_CONCRETE_POWDER,
-        Material.ORANGE_CONCRETE_POWDER,
-        Material.MAGENTA_CONCRETE_POWDER,
-        Material.LIGHT_BLUE_CONCRETE_POWDER,
-        Material.YELLOW_CONCRETE_POWDER,
-        Material.LIME_CONCRETE_POWDER,
-        Material.PINK_CONCRETE_POWDER,
-        Material.GRAY_CONCRETE_POWDER,
-        Material.LIGHT_GRAY_CONCRETE_POWDER,
-        Material.CYAN_CONCRETE_POWDER,
-        Material.PURPLE_CONCRETE_POWDER,
-        Material.BLUE_CONCRETE_POWDER,
-        Material.BROWN_CONCRETE_POWDER,
-        Material.GREEN_CONCRETE_POWDER,
-        Material.RED_CONCRETE_POWDER,
-        Material.BLACK_CONCRETE_POWDER,
-        Material.DRAGON_EGG,
-        Material.SCAFFOLDING
-    )
-
     private fun selectGatePosition1(player: Player, block: Block) {
         plugin.server.scheduler.runTaskAsynchronously(
             plugin,
             Runnable {
-                if (block.type in restrictedBlocksForGates) {
-                    player.sendMessage("$RED${plugin.language["GateCreateRestrictedBlock"]}") // TODO: add language key
+                if (block.type in plugin.services.gateService.fallingBlockMaterials) {
+                    player.sendMessage("$RED${plugin.language["GateCreateRestrictedBlock"]}")
                     return@Runnable
                 }
                 val playerService = plugin.services.playerService
@@ -426,8 +400,8 @@ class PlayerInteractListener(private val plugin: MedievalFactions) : Listener {
         plugin.server.scheduler.runTaskAsynchronously(
             plugin,
             Runnable {
-                if (block.type in restrictedBlocksForGates) {
-                    player.sendMessage("$RED${plugin.language["GateCreateRestrictedBlock"]}") // TODO: add language key
+                if (block.type in plugin.services.gateService.fallingBlockMaterials) {
+                    player.sendMessage("$RED${plugin.language["GateCreateRestrictedBlock"]}")
                     return@Runnable
                 }
                 val playerService = plugin.services.playerService
@@ -462,8 +436,8 @@ class PlayerInteractListener(private val plugin: MedievalFactions) : Listener {
         plugin.server.scheduler.runTaskAsynchronously(
             plugin,
             Runnable {
-                if (block.type in restrictedBlocksForGates) {
-                    player.sendMessage("$RED${plugin.language["GateCreateRestrictedBlock"]}") // TODO: add language key
+                if (block.type in plugin.services.gateService.fallingBlockMaterials) {
+                    player.sendMessage("$RED${plugin.language["GateCreateRestrictedBlock"]}")
                     return@Runnable
                 }
                 val playerService = plugin.services.playerService
@@ -525,11 +499,12 @@ class PlayerInteractListener(private val plugin: MedievalFactions) : Listener {
                     return@syncValidations
                 }
 
-                // Validate restricted blocks within the area
                 val blocks = area.blocks
-                val restrictedBlock = blocks.firstOrNull { it.toBukkitBlock()?.type in restrictedBlocksForGates }
+
+                // Validate restricted blocks within the area
+                val restrictedBlock = blocks.firstOrNull { it.toBukkitBlock()?.type in plugin.services.gateService.fallingBlockMaterials }
                 if (restrictedBlock != null) {
-                    player.sendMessage("$RED${plugin.language["GateCreateAreaRestrictedBlock"]}") // TODO: add language key
+                    player.sendMessage("$RED${plugin.language["GateCreateAreaRestrictedBlock"]}")
                     restartGateCreation(player, ctx)
                     return@syncValidations
                 }
