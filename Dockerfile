@@ -1,17 +1,14 @@
 FROM ubuntu
 
 # Install dependencies
-RUN apt-get update
-RUN apt-get install -y git \
-    openjdk-17-jdk \
-    openjdk-17-jre \
-    wget
+RUN apt update
+RUN DEBIAN_FRONTEND=noninteractive apt install -y wget git openjdk-21-jdk openjdk-21-jre
 
 # Build server
 WORKDIR /testmcserver-build
 RUN wget -O BuildTools.jar https://hub.spigotmc.org/jenkins/job/BuildTools/lastSuccessfulBuild/artifact/target/BuildTools.jar
 RUN git config --global --unset core.autocrlf || :
-RUN java -jar BuildTools.jar --rev 1.20.4
+RUN java -jar BuildTools.jar --rev 1.21.4
 
 # Copy plugin jar
 COPY ./build/libs /testmcserver-build/MedievalFactions/build/libs

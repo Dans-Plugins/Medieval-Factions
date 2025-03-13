@@ -1,8 +1,15 @@
 echo "Running 'post-create.sh' script..."
-if [ -z "$(ls -A /testmcserver)" ]; then
+if [ -z "$(ls -A /testmcserver)" ] || [ "$OVERWRITE_EXISTING_SERVER" = "true" ]; then
     echo "Setting up server..."
+
+    # if OVERWRITE_EXISTING_SERVER is true, delete the server directory
+    if [ "$OVERWRITE_EXISTING_SERVER" = "true" ]; then
+        echo "OVERWRITE_EXISTING_SERVER is set to 'true'. Deleting contents of /testmcserver..."
+        rm -rf /testmcserver/*
+    fi
+
     # Copy server JAR
-    cp /testmcserver-build/spigot-1.20.4.jar /testmcserver/spigot-1.20.4.jar
+cp /testmcserver-build/spigot-"${MINECRAFT_VERSION}".jar /testmcserver/spigot-"${MINECRAFT_VERSION}".jar
 
     # Create plugins directory
     mkdir /testmcserver/plugins
@@ -21,7 +28,7 @@ if [ -z "$(ls -A /testmcserver)" ]; then
     # Accept EULA
     cd /testmcserver && echo "eula=true" > eula.txt
 else
-    echo "Server is already set up."
+  echo "Server is already set up. To overwrite the existing server, set the 'OVERWRITE_EXISTING_SERVER' environment variable to 'true'."
 fi
 
 # Always delete lang directory to get the latest translations
@@ -41,5 +48,27 @@ fi
 echo "Copying plugin JAR... (created $diff seconds ago)"
 cp "$nameOfJar" /testmcserver/plugins
 
+# Copy or delete Dynmap JAR based on environment variable
+if [ "$DYNMAP_ENABLED" = "true" ]; then
+      echo "Dynmap enabled. Copying Dynmap plugin from /resources/jars..."
+      cp /resources/jars/Dynmap-*.jar /testmcserver/plugins
+else
+    echo "Dynmap disabled. Deleting Dynmap plugin if it exists..."
+    rm -f /testmcserver/plugins/Dynmap-*.jar
+fi
+
+# Copy or delete Bluemap JAR based on environment variable
+if [ "$BLUEMAP_ENABLED" = "true" ]; then
+      echo "Bluemap enabled. Copying Bluemap plugin from /resources/jars..."
+      cp /resources/jars/bluemap-*.jar /testmcserver/plugins
+
+      # update /testmcserver/plugins/bluemap/core.conf to have accept-download: true
+      echo "Updating /testmcserver/plugins/bluemap/core.conf to have accept-download: true..."
+      sed -i 's/accept-download: false/accept-download: true/g' /testmcserver/plugins/bluemap/core.conf
+else
+    echo "Bluemap disabled. Deleting Bluemap plugin if it exists..."
+    rm -f /testmcserver/plugins/bluemap-*.jar
+fi
+
 echo "Starting server..."
-java -jar /testmcserver/spigot-1.20.4.jar
+java -jar /testmcserver/spigot-"${MINECRAFT_VERSION}".jar

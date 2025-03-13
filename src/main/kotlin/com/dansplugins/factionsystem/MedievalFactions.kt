@@ -19,7 +19,6 @@ import com.dansplugins.factionsystem.duel.MfDuelId
 import com.dansplugins.factionsystem.duel.MfDuelInviteRepository
 import com.dansplugins.factionsystem.duel.MfDuelRepository
 import com.dansplugins.factionsystem.duel.MfDuelService
-import com.dansplugins.factionsystem.dynmap.MfDynmapService
 import com.dansplugins.factionsystem.faction.JooqMfFactionRepository
 import com.dansplugins.factionsystem.faction.MfFactionRepository
 import com.dansplugins.factionsystem.faction.MfFactionService
@@ -68,6 +67,7 @@ import com.dansplugins.factionsystem.locks.JooqMfLockRepository
 import com.dansplugins.factionsystem.locks.MfLockRepository
 import com.dansplugins.factionsystem.locks.MfLockService
 import com.dansplugins.factionsystem.locks.MfRpkLockService
+import com.dansplugins.factionsystem.map.dynmap.DynmapService
 import com.dansplugins.factionsystem.notification.MfNotificationService
 import com.dansplugins.factionsystem.notification.mailboxes.MailboxesNotificationService
 import com.dansplugins.factionsystem.notification.noop.NoOpNotificationService
@@ -183,8 +183,8 @@ class MedievalFactions : JavaPlugin() {
 
         val gson = Gson()
         val playerRepository: MfPlayerRepository = JooqMfPlayerRepository(this, dsl)
-        val dynmapService = if (server.pluginManager.getPlugin("dynmap") != null && config.getBoolean("dynmap.enableDynmapIntegration")) {
-            MfDynmapService(this)
+        val mapService = if (server.pluginManager.getPlugin("dynmap") != null && config.getBoolean("dynmap.enableDynmapIntegration")) {
+            DynmapService(this)
         } else {
             null
         }
@@ -228,7 +228,7 @@ class MedievalFactions : JavaPlugin() {
             duelService,
             potionService,
             teleportService,
-            dynmapService
+            mapService
         )
         setupRpkLockService()
 
@@ -304,9 +304,9 @@ class MedievalFactions : JavaPlugin() {
             logger.info(language["DynmapOnlyRenderTerritoriesUponStartupEnabled"])
         }
 
-        if (dynmapService != null) {
+        if (mapService != null) {
             factionService.factions.forEach { faction ->
-                dynmapService.scheduleUpdateClaims(faction)
+                mapService.scheduleUpdateClaims(faction)
             }
         }
 
