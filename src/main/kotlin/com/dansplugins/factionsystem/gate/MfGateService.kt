@@ -8,8 +8,11 @@ import com.dansplugins.factionsystem.failure.ServiceFailure
 import com.dansplugins.factionsystem.failure.ServiceFailureType
 import com.dansplugins.factionsystem.player.MfPlayerId
 import dev.forkhandles.result4k.mapFailure
+import dev.forkhandles.result4k.onFailure
 import dev.forkhandles.result4k.resultFrom
+import org.bukkit.Material
 import java.util.concurrent.ConcurrentHashMap
+import java.util.logging.Level.SEVERE
 
 class MfGateService(
     private val plugin: MedievalFactions,
@@ -26,6 +29,17 @@ class MfGateService(
         val startTime = System.currentTimeMillis()
         gatesById.putAll(gateRepo.getGates().associateBy { it.id })
         plugin.logger.info("${gatesById.size} gates loaded (${System.currentTimeMillis() - startTime}ms)")
+
+        plugin.server.scheduler.runTaskAsynchronously(
+            plugin,
+            Runnable {
+                try {
+                    updateFallingBlockGates()
+                } catch (e: Exception) {
+                    plugin.logger.log(SEVERE, "Error during gate material review:", e)
+                }
+            }
+        )
     }
 
     fun getGatesByTrigger(trigger: MfBlockPosition) = gatesById.values.filter { it.trigger == trigger }
@@ -90,4 +104,42 @@ class MfGateService(
             else -> ServiceFailureType.GENERAL
         }
     }
+
+    private fun updateFallingBlockGates() {
+        val gateService = plugin.services.gateService
+
+        gates.forEach { gate ->
+            if (gate.material in fallingBlockMaterials) {
+                plugin.logger.info("Deleting gate with ID: ${gate.id} as it uses a falling block material: ${gate.material}")
+
+                gateService.delete(gate.id).onFailure {
+                    plugin.logger.log(SEVERE, "Failed to delete gate with ID: ${gate.id}.") as Nothing
+                }
+            }
+        }
+
+        plugin.logger.info("Gate material review and deletion completed.")
+    }
+
+    val fallingBlockMaterials = setOf(
+        Material.SAND,
+        Material.GRAVEL,
+        Material.ANVIL,
+        Material.WHITE_CONCRETE_POWDER,
+        Material.ORANGE_CONCRETE_POWDER,
+        Material.MAGENTA_CONCRETE_POWDER,
+        Material.LIGHT_BLUE_CONCRETE_POWDER,
+        Material.YELLOW_CONCRETE_POWDER,
+        Material.LIME_CONCRETE_POWDER,
+        Material.PINK_CONCRETE_POWDER,
+        Material.GRAY_CONCRETE_POWDER,
+        Material.LIGHT_GRAY_CONCRETE_POWDER,
+        Material.CYAN_CONCRETE_POWDER,
+        Material.PURPLE_CONCRETE_POWDER,
+        Material.BLUE_CONCRETE_POWDER,
+        Material.BROWN_CONCRETE_POWDER,
+        Material.GREEN_CONCRETE_POWDER,
+        Material.RED_CONCRETE_POWDER,
+        Material.BLACK_CONCRETE_POWDER
+    )
 }
