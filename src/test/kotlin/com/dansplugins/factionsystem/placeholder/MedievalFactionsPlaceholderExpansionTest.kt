@@ -11,30 +11,30 @@ import java.util.*
 
 class MedievalFactionsPlaceholderExpansionTest {
 
- private lateinit var plugin: MedievalFactions
- private lateinit var placeholderExpansion: MedievalFactionsPlaceholderExpansion
- private lateinit var language: Language
+    private lateinit var plugin: MedievalFactions
+    private lateinit var placeholderExpansion: MedievalFactionsPlaceholderExpansion
+    private lateinit var language: Language
 
- @BeforeEach
- fun setUp() {
-  // Mocking MedievalFactions plugin and Language
-  plugin = mock(MedievalFactions::class.java)
-  language = mock(Language::class.java)
+    @BeforeEach
+    fun setUp() {
+        // Mocking MedievalFactions plugin and Language
+        plugin = mock(MedievalFactions::class.java)
+        language = mock(Language::class.java)
 
-  // Mock the plugin.name to avoid NullPointerException
-  `when`(plugin.name).thenReturn("MedievalFactions")
+        // Mock the plugin.name to avoid NullPointerException
+        `when`(plugin.name).thenReturn("MedievalFactions")
 
-  // Ensure language locale is non-null
-  `when`(plugin.language).thenReturn(language)
-  `when`(language.locale).thenReturn(Locale.ENGLISH)
+        // Ensure language locale is non-null
+        `when`(plugin.language).thenReturn(language)
+        `when`(language.locale).thenReturn(Locale.ENGLISH)
 
-  // Initialize the placeholder expansion
-  placeholderExpansion = MedievalFactionsPlaceholderExpansion(plugin)
- }
+        // Initialize the placeholder expansion
+        placeholderExpansion = MedievalFactionsPlaceholderExpansion(plugin)
+    }
 
- @Test
- fun testGetIdentifier() {
-  val identifier = placeholderExpansion.identifier
-  assertEquals("MedievalFactions", identifier)
- }
+    @Test
+    fun testGetIdentifier() {
+        val identifier = placeholderExpansion.identifier
+        assertEquals("MedievalFactions", identifier)
+    }
 }
