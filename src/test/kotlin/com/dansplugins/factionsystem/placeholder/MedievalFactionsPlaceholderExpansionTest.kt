@@ -65,4 +65,22 @@ class MedievalFactionsPlaceholderExpansionTest {
         val result = placeholderExpansion.onRequest(player, "faction_name")
         assertEquals("TestFaction", result)
     }
+
+    @Test
+    fun testFactionPrefix() {
+        val player = mock(OfflinePlayer::class.java)
+        val factionService = mock(MfFactionService::class.java)
+        val playerService = mock(MfPlayerService::class.java)
+        val faction = mock(MfFaction::class.java)
+        val mfPlayer = mock(MfPlayer::class.java)
+
+        `when`(plugin.services.factionService).thenReturn(factionService)
+        `when`(plugin.services.playerService).thenReturn(playerService)
+        `when`(playerService.getPlayer(player)).thenReturn(mfPlayer)
+        `when`(factionService.getFaction(mfPlayer.id)).thenReturn(faction)
+        `when`(faction.prefix).thenReturn("TestPrefix")
+
+        val result = placeholderExpansion.onRequest(player, "faction_prefix")
+        assertEquals("TestPrefix", result)
+    }
 }
