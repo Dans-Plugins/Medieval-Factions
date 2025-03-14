@@ -296,4 +296,6 @@ class MedievalFactionsPlaceholderExpansionTest {
         val result = placeholderExpansion.onRequest(player, "player_location")
         assertEquals("0:0:0", result)
     }
+
+    // TODO: add unit tests for the following placeholders: faction_bonus_power, faction_power, faction_player_max_power, faction_player_power_full, faction_at_location, faction_color, player_chunk_location, player_world
 }
