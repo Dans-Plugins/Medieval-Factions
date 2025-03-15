@@ -1,12 +1,16 @@
 package com.dansplugins.factionsystem.placeholder
 import com.dansplugins.factionsystem.MedievalFactions
 import com.dansplugins.factionsystem.claim.MfClaimService
+import com.dansplugins.factionsystem.claim.MfClaimedChunk
 import com.dansplugins.factionsystem.faction.MfFaction
+import com.dansplugins.factionsystem.faction.MfFactionMember
 import com.dansplugins.factionsystem.faction.MfFactionService
+import com.dansplugins.factionsystem.gate.MfGate
 import com.dansplugins.factionsystem.gate.MfGateService
 import com.dansplugins.factionsystem.lang.Language
 import com.dansplugins.factionsystem.player.MfPlayer
 import com.dansplugins.factionsystem.player.MfPlayerService
+import com.dansplugins.factionsystem.relationship.MfFactionRelationship
 import com.dansplugins.factionsystem.relationship.MfFactionRelationshipService
 import com.dansplugins.factionsystem.relationship.MfFactionRelationshipType
 import com.dansplugins.factionsystem.service.Services
@@ -90,7 +94,7 @@ class MedievalFactionsPlaceholderExpansionTest {
     }
 
     @Test
-    fun testFactionTotalClaimedChunks() {
+    fun testFactionTotalClaimedChunks_ZeroChunks() {
         val player = mock(OfflinePlayer::class.java)
         val factionService = mock(MfFactionService::class.java)
         val playerService = mock(MfPlayerService::class.java)
@@ -107,6 +111,26 @@ class MedievalFactionsPlaceholderExpansionTest {
 
         val result = placeholderExpansion.onRequest(player, "faction_total_claimed_chunks")
         assertEquals("0", result)
+    }
+
+    @Test
+    fun testFactionTotalClaimedChunks_NonZeroChunks() {
+        val player = mock(OfflinePlayer::class.java)
+        val factionService = mock(MfFactionService::class.java)
+        val playerService = mock(MfPlayerService::class.java)
+        val claimService = mock(MfClaimService::class.java)
+        val faction = mock(MfFaction::class.java)
+        val mfPlayer = mock(MfPlayer::class.java)
+
+        `when`(plugin.services.factionService).thenReturn(factionService)
+        `when`(plugin.services.playerService).thenReturn(playerService)
+        `when`(plugin.services.claimService).thenReturn(claimService)
+        `when`(playerService.getPlayer(player)).thenReturn(mfPlayer)
+        `when`(factionService.getFaction(mfPlayer.id)).thenReturn(faction)
+        `when`(claimService.getClaims(faction.id)).thenReturn(listOf(mock(MfClaimedChunk::class.java)))
+
+        val result = placeholderExpansion.onRequest(player, "faction_total_claimed_chunks")
+        assertEquals("1", result)
     }
 
     @Test
@@ -128,7 +152,7 @@ class MedievalFactionsPlaceholderExpansionTest {
     }
 
     @Test
-    fun testFactionAllyCount() {
+    fun testFactionAllyCount_ZeroAllies() {
         val player = mock(OfflinePlayer::class.java)
         val factionService = mock(MfFactionService::class.java)
         val playerService = mock(MfPlayerService::class.java)
@@ -149,7 +173,30 @@ class MedievalFactionsPlaceholderExpansionTest {
     }
 
     @Test
-    fun testFactionEnemyCount() {
+    fun testFactionAllyCount_NonZeroAllies() {
+        val player = mock(OfflinePlayer::class.java)
+        val factionService = mock(MfFactionService::class.java)
+        val playerService = mock(MfPlayerService::class.java)
+        val relationshipService = mock(MfFactionRelationshipService::class.java)
+        val faction = mock(MfFaction::class.java)
+        val mfPlayer = mock(MfPlayer::class.java)
+
+        `when`(plugin.services.factionService).thenReturn(factionService)
+        `when`(plugin.services.playerService).thenReturn(playerService)
+        `when`(plugin.services.factionRelationshipService).thenReturn(relationshipService)
+        `when`(playerService.getPlayer(player)).thenReturn(mfPlayer)
+        `when`(factionService.getFaction(mfPlayer.id)).thenReturn(faction)
+        `when`(factionService.factions).thenReturn(listOf(faction))
+        val allyRelationship = mock(MfFactionRelationship::class.java)
+        `when`(allyRelationship.type).thenReturn(MfFactionRelationshipType.ALLY)
+        `when`(relationshipService.getRelationships(faction.id, faction.id)).thenReturn(listOf(allyRelationship))
+
+        val result = placeholderExpansion.onRequest(player, "faction_ally_count")
+        assertEquals("1", result)
+    }
+
+    @Test
+    fun testFactionEnemyCount_ZeroEnemies() {
         val player = mock(OfflinePlayer::class.java)
         val factionService = mock(MfFactionService::class.java)
         val playerService = mock(MfPlayerService::class.java)
@@ -170,7 +217,30 @@ class MedievalFactionsPlaceholderExpansionTest {
     }
 
     @Test
-    fun testFactionVassalCount() {
+    fun testFactionEnemyCount_NonZeroEnemies() {
+        val player = mock(OfflinePlayer::class.java)
+        val factionService = mock(MfFactionService::class.java)
+        val playerService = mock(MfPlayerService::class.java)
+        val relationshipService = mock(MfFactionRelationshipService::class.java)
+        val faction = mock(MfFaction::class.java)
+        val mfPlayer = mock(MfPlayer::class.java)
+
+        `when`(plugin.services.factionService).thenReturn(factionService)
+        `when`(plugin.services.playerService).thenReturn(playerService)
+        `when`(plugin.services.factionRelationshipService).thenReturn(relationshipService)
+        `when`(playerService.getPlayer(player)).thenReturn(mfPlayer)
+        `when`(factionService.getFaction(mfPlayer.id)).thenReturn(faction)
+        `when`(factionService.factions).thenReturn(listOf(faction))
+        val enemyRelationship = mock(MfFactionRelationship::class.java)
+        `when`(enemyRelationship.type).thenReturn(MfFactionRelationshipType.AT_WAR)
+        `when`(relationshipService.getRelationships(faction.id, faction.id)).thenReturn(listOf(enemyRelationship))
+
+        val result = placeholderExpansion.onRequest(player, "faction_enemy_count")
+        assertEquals("1", result)
+    }
+
+    @Test
+    fun testFactionVassalCount_ZeroVassals() {
         val player = mock(OfflinePlayer::class.java)
         val factionService = mock(MfFactionService::class.java)
         val playerService = mock(MfPlayerService::class.java)
@@ -191,7 +261,30 @@ class MedievalFactionsPlaceholderExpansionTest {
     }
 
     @Test
-    fun testFactionGateCount() {
+    fun testFactionVassalCount_NonZeroVassals() {
+        val player = mock(OfflinePlayer::class.java)
+        val factionService = mock(MfFactionService::class.java)
+        val playerService = mock(MfPlayerService::class.java)
+        val relationshipService = mock(MfFactionRelationshipService::class.java)
+        val faction = mock(MfFaction::class.java)
+        val mfPlayer = mock(MfPlayer::class.java)
+
+        `when`(plugin.services.factionService).thenReturn(factionService)
+        `when`(plugin.services.playerService).thenReturn(playerService)
+        `when`(plugin.services.factionRelationshipService).thenReturn(relationshipService)
+        `when`(playerService.getPlayer(player)).thenReturn(mfPlayer)
+        `when`(factionService.getFaction(mfPlayer.id)).thenReturn(faction)
+        `when`(factionService.factions).thenReturn(listOf(faction))
+        val vassalRelationship = mock(MfFactionRelationship::class.java)
+        `when`(vassalRelationship.type).thenReturn(MfFactionRelationshipType.VASSAL)
+        `when`(relationshipService.getRelationships(faction.id, faction.id)).thenReturn(listOf(vassalRelationship))
+
+        val result = placeholderExpansion.onRequest(player, "faction_vassal_count")
+        assertEquals("0", result)
+    }
+
+    @Test
+    fun testFactionGateCount_ZeroGates() {
         val player = mock(OfflinePlayer::class.java)
         val factionService = mock(MfFactionService::class.java)
         val playerService = mock(MfPlayerService::class.java)
@@ -208,6 +301,27 @@ class MedievalFactionsPlaceholderExpansionTest {
 
         val result = placeholderExpansion.onRequest(player, "faction_gate_count")
         assertEquals("0", result)
+    }
+
+    @Test
+    fun testFactionGateCount_NonZeroGates() {
+        val player = mock(OfflinePlayer::class.java)
+        val factionService = mock(MfFactionService::class.java)
+        val playerService = mock(MfPlayerService::class.java)
+        val gateService = mock(MfGateService::class.java)
+        val faction = mock(MfFaction::class.java)
+        val mfPlayer = mock(MfPlayer::class.java)
+
+        `when`(plugin.services.factionService).thenReturn(factionService)
+        `when`(plugin.services.playerService).thenReturn(playerService)
+        `when`(plugin.services.gateService).thenReturn(gateService)
+        `when`(playerService.getPlayer(player)).thenReturn(mfPlayer)
+        `when`(factionService.getFaction(mfPlayer.id)).thenReturn(faction)
+        val gate = mock(MfGate::class.java)
+        `when`(gateService.getGatesByFaction(faction.id)).thenReturn(listOf(gate))
+
+        val result = placeholderExpansion.onRequest(player, "faction_gate_count")
+        assertEquals("1", result)
     }
 
     @Test
@@ -231,7 +345,7 @@ class MedievalFactionsPlaceholderExpansionTest {
     }
 
     @Test
-    fun testFactionPopulation() {
+    fun testFactionPopulation_ZeroPop() {
         val player = mock(OfflinePlayer::class.java)
         val factionService = mock(MfFactionService::class.java)
         val playerService = mock(MfPlayerService::class.java)
@@ -246,6 +360,25 @@ class MedievalFactionsPlaceholderExpansionTest {
 
         val result = placeholderExpansion.onRequest(player, "faction_population")
         assertEquals("0", result)
+    }
+
+    @Test
+    fun testFactionPopulation_NonZeroPop() {
+        val player = mock(OfflinePlayer::class.java)
+        val factionService = mock(MfFactionService::class.java)
+        val playerService = mock(MfPlayerService::class.java)
+        val faction = mock(MfFaction::class.java)
+        val mfPlayer = mock(MfPlayer::class.java)
+
+        `when`(plugin.services.factionService).thenReturn(factionService)
+        `when`(plugin.services.playerService).thenReturn(playerService)
+        `when`(playerService.getPlayer(player)).thenReturn(mfPlayer)
+        `when`(factionService.getFaction(mfPlayer.id)).thenReturn(faction)
+        val factionMember = mock(MfFactionMember::class.java)
+        `when`(faction.members).thenReturn(listOf(factionMember))
+
+        val result = placeholderExpansion.onRequest(player, "faction_population")
+        assertEquals("1", result)
     }
 
     @Test
