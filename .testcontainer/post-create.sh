@@ -70,5 +70,14 @@ else
     rm -f /testmcserver/plugins/bluemap-*.jar
 fi
 
+# Copy or delete PlaceholderAPI JAR based on environment variable
+if [ "$PLACEHOLDER_API_ENABLED" = "true" ]; then
+      echo "PlaceholderAPI enabled. Copying PlaceholderAPI plugin from /resources/jars..."
+      cp /resources/jars/PlaceholderAPI-*.jar /testmcserver/plugins
+else
+    echo "PlaceholderAPI disabled. Deleting PlaceholderAPI plugin if it exists..."
+    rm -f /testmcserver/plugins/PlaceholderAPI-*.jar
+fi
+
 echo "Starting server..."
 java -jar /testmcserver/spigot-"${MINECRAFT_VERSION}".jar
