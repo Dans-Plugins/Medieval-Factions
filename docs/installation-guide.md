@@ -4,7 +4,7 @@ To install the Medieval Factions plugin on your Minecraft server, follow these s
 
 Ensure your server meets the following prerequisites:
 
-- **Minecraft Version**: Compatible with versions 1.17 to 1.20.6. citeturn0search4
+- **Minecraft Version**: Tested against 1.21.4, but may work with other versions.
 
 - **Server Software**: Running Spigot or a Spigot-compatible server.
 
@@ -48,13 +48,13 @@ Enhance functionality with expansions:
 
 - **Fiefs Expansion**: Allows for the creation and management of fiefs within factions.
 
-- **Currencies Expansion**: Enables faction owners to create and mint local currencies. citeturn0search5
+- **Currencies Expansion**: Enables faction owners to create and mint local currencies.
 
 **7. Seek Support**
 
 For assistance:
 
-- **Discord Community**: Join the [support Discord server](https://discord.com/invite/your-discord-invite) for help and discussions.
+- **Discord Community**: Join the [support Discord server](https://discord.gg/xXtuAQ2) for help and discussions.
 
 - **Bug Reports**: Report issues on the [GitHub Issues page](https://github.com/Dans-Plugins/Medieval-Factions/issues).
 
