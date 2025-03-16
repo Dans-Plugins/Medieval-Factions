@@ -9,7 +9,7 @@ import org.bukkit.event.block.BlockBurnEvent
 class BlockBurnListener(private val plugin: MedievalFactions) : Listener {
 
     @EventHandler
-    fun onBlockExplode(event: BlockBurnEvent) {
+    fun onBlockBurn(event: BlockBurnEvent) {
         val gateService = plugin.services.gateService
         val block = event.block
 
