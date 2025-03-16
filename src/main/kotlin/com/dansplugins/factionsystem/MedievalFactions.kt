@@ -44,6 +44,7 @@ import com.dansplugins.factionsystem.listener.AreaEffectCloudApplyListener
 import com.dansplugins.factionsystem.listener.AsyncPlayerChatListener
 import com.dansplugins.factionsystem.listener.AsyncPlayerPreLoginListener
 import com.dansplugins.factionsystem.listener.BlockBreakListener
+import com.dansplugins.factionsystem.listener.BlockBurnListener
 import com.dansplugins.factionsystem.listener.BlockExplodeListener
 import com.dansplugins.factionsystem.listener.BlockPistonExtendListener
 import com.dansplugins.factionsystem.listener.BlockPistonRetractListener
@@ -315,6 +316,7 @@ class MedievalFactions : JavaPlugin() {
             AsyncPlayerChatListener(this),
             AsyncPlayerPreLoginListener(this),
             BlockBreakListener(this),
+            BlockBurnListener(this),
             BlockExplodeListener(this),
             BlockPistonExtendListener(this),
             BlockPistonRetractListener(this),
