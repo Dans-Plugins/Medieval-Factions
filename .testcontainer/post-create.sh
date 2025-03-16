@@ -48,6 +48,15 @@ fi
 echo "Copying plugin JAR... (created $diff seconds ago)"
 cp "$nameOfJar" /testmcserver/plugins
 
+# Copy or delete Currencies JAR based on environment variable
+if [ "$CURRENCIES_ENABLED" = "true" ]; then
+      echo "Currencies enabled. Copying Currencies plugin from /resources/jars..."
+      cp /resources/jars/currencies-*.jar /testmcserver/plugins
+else
+    echo "Currencies disabled. Deleting Currencies plugin if it exists..."
+    rm -f /testmcserver/plugins/currencies-*.jar
+fi
+
 # Copy or delete Dynmap JAR based on environment variable
 if [ "$DYNMAP_ENABLED" = "true" ]; then
       echo "Dynmap enabled. Copying Dynmap plugin from /resources/jars..."
