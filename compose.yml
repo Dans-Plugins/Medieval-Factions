@@ -11,6 +11,9 @@ services:
       - ./testmcserver:/testmcserver
     environment:
       - MINECRAFT_VERSION=${MINECRAFT_VERSION}
+      - OPS_UUID=${OPS_UUID}
+      - OPS_NAME=${OPS_NAME}
+      - OPS_LEVEL=${OPS_LEVEL}
       - OVERWRITE_EXISTING_SERVER=${OVERWRITE_EXISTING_SERVER}
       - CURRENCIES_ENABLED=${CURRENCIES_ENABLED}
       - DYNMAP_ENABLED=${DYNMAP_ENABLED}

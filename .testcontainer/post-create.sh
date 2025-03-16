@@ -24,12 +24,12 @@ setup_server() {
 # Function: Setup ops.json file
 setup_ops_file() {
     log "Creating ops.json file..."
-    cat <<EOF > "$SERVER_DIR"/ops.json
+    cat <<EOF > /testmcserver/ops.json
     [
       {
-        "uuid": "0a9fa342-3139-49d7-8acb-fcf4d9c1f0ef",
-        "name": "DanTheTechMan",
-        "level": 4,
+        "uuid": "${OPS_UUID}",
+        "name": "${OPS_NAME}",
+        "level": ${OPS_LEVEL},
         "bypassesPlayerLimit": false
       }
     ]
