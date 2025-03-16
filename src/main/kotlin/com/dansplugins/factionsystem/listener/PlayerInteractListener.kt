@@ -364,7 +364,7 @@ class PlayerInteractListener(private val plugin: MedievalFactions) : Listener {
         plugin.server.scheduler.runTaskAsynchronously(
             plugin,
             Runnable {
-                if (block.type in plugin.services.gateService.fallingBlockMaterials) {
+                if (block.type in plugin.services.gateService.restrictedBlockMaterials) {
                     player.sendMessage("$RED${plugin.language["GateCreateRestrictedBlock"]}")
                     return@Runnable
                 }
@@ -400,7 +400,7 @@ class PlayerInteractListener(private val plugin: MedievalFactions) : Listener {
         plugin.server.scheduler.runTaskAsynchronously(
             plugin,
             Runnable {
-                if (block.type in plugin.services.gateService.fallingBlockMaterials) {
+                if (block.type in plugin.services.gateService.restrictedBlockMaterials) {
                     player.sendMessage("$RED${plugin.language["GateCreateRestrictedBlock"]}")
                     return@Runnable
                 }
@@ -436,7 +436,7 @@ class PlayerInteractListener(private val plugin: MedievalFactions) : Listener {
         plugin.server.scheduler.runTaskAsynchronously(
             plugin,
             Runnable {
-                if (block.type in plugin.services.gateService.fallingBlockMaterials) {
+                if (block.type in plugin.services.gateService.restrictedBlockMaterials) {
                     player.sendMessage("$RED${plugin.language["GateCreateRestrictedBlock"]}")
                     return@Runnable
                 }
@@ -502,7 +502,7 @@ class PlayerInteractListener(private val plugin: MedievalFactions) : Listener {
                 val blocks = area.blocks
 
                 // Validate restricted blocks within the area
-                val restrictedBlock = blocks.firstOrNull { it.toBukkitBlock()?.type in plugin.services.gateService.fallingBlockMaterials }
+                val restrictedBlock = blocks.firstOrNull { it.toBukkitBlock()?.type in plugin.services.gateService.restrictedBlockMaterials }
                 if (restrictedBlock != null) {
                     player.sendMessage("$RED${plugin.language["GateCreateAreaRestrictedBlock"]}")
                     restartGateCreation(player, ctx)

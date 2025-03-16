@@ -34,7 +34,7 @@ class MfGateService(
             plugin,
             Runnable {
                 try {
-                    updateFallingBlockGates()
+                    updateGatesWithRestrictedBlocks()
                 } catch (e: Exception) {
                     plugin.logger.log(SEVERE, "Error during gate material review:", e)
                 }
@@ -105,12 +105,12 @@ class MfGateService(
         }
     }
 
-    private fun updateFallingBlockGates() {
+    private fun updateGatesWithRestrictedBlocks() {
         val gateService = plugin.services.gateService
 
         gates.forEach { gate ->
-            if (gate.material in fallingBlockMaterials) {
-                plugin.logger.info("Deleting gate with ID: ${gate.id} as it uses a falling block material: ${gate.material}")
+            if (gate.material in restrictedBlockMaterials) {
+                plugin.logger.info("Deleting gate with ID: ${gate.id} as it uses a restricted block material: ${gate.material}")
 
                 gateService.delete(gate.id).onFailure {
                     plugin.logger.log(SEVERE, "Failed to delete gate with ID: ${gate.id}.") as Nothing
@@ -121,7 +121,7 @@ class MfGateService(
         plugin.logger.info("Gate material review and deletion completed.")
     }
 
-    val fallingBlockMaterials = setOf(
+    val restrictedBlockMaterials = setOf(
         Material.SAND,
         Material.GRAVEL,
         Material.ANVIL,
