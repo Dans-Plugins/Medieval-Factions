@@ -33,8 +33,8 @@ class MfGateService(
         gatesById.putAll(gateRepo.getGates().associateBy { it.id })
         plugin.logger.info("${gatesById.size} gates loaded (${System.currentTimeMillis() - startTime}ms)")
 
-        // Load restricted block materials
         restrictedBlockMaterials = loadRestrictedBlocksFromConfig()
+        plugin.logger.info("Loaded ${restrictedBlockMaterials.size} restricted block materials.")
 
         plugin.server.scheduler.runTaskAsynchronously(
             plugin,
