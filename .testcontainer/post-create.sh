@@ -77,6 +77,8 @@ manage_plugin_dependencies() {
     if [ "${!enabled_var}" = "true" ]; then
         log "${plugin_name} enabled. Copying plugin JAR..."
         cp "$RESOURCES_DIR"/${plugin_name}-*.jar "$SERVER_DIR"/plugins
+    elif [ "${!enabled_var}" = "false" ]; then
+        log "${plugin_name} disabled. Removing plugin JAR if it exists..."
         rm -f "$SERVER_DIR"/plugins/${plugin_name}-*.jar
     fi
 }
