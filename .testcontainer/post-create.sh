@@ -50,8 +50,23 @@ delete_lang_directory() {
 
 # Function: Copy the latest plugin JAR with timestamp check
 copy_latest_plugin_jar() {
-    local nameOfJar=$(ls "$BUILD_DIR"/MedievalFactions/build/libs/*-all.jar)
-    cp "$nameOfJar" "$SERVER_DIR"/plugins
+    log "Copying the latest plugin JAR..."
+    local jarFile=$(find "$BUILD_DIR/MedievalFactions/build/libs" -name "*-all.jar" -type f -print -quit)
+
+    if [ -z "$jarFile" ]; then
+        log "ERROR: No plugin JAR file found in the build directory."
+        return 1
+    fi
+
+    local currentDate=$(date +%s)
+    local jarDate=$(stat -c %Y "$jarFile")
+    local diff=$((currentDate - jarDate))
+
+    if [ $diff -gt 300 ]; then
+        log "WARNING: The plugin JAR is older than 5 minutes. It may be necessary to rebuild the plugin."
+    fi
+
+    cp "$jarFile" "$SERVER_DIR/plugins" || log "ERROR: Failed to copy the plugin JAR."
 }
 
 # Function: Generic plugin manager for enabling or disabling
@@ -84,7 +99,10 @@ setup_server
 setup_ops_file
 accept_eula
 delete_lang_directory
-copy_latest_plugin_jar
+if ! copy_latest_plugin_jar; then
+    log "Exiting script due to error in copying the latest plugin JAR."
+    exit 1
+fi
 
 # Manage plugins
 manage_plugin_dependencies "currencies" "CURRENCIES_ENABLED"
