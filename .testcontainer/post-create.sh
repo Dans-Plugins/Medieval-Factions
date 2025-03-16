@@ -1,83 +1,117 @@
-echo "Running 'post-create.sh' script..."
-if [ -z "$(ls -A /testmcserver)" ] || [ "$OVERWRITE_EXISTING_SERVER" = "true" ]; then
-    echo "Setting up server..."
+#!/bin/bash
 
-    # if OVERWRITE_EXISTING_SERVER is true, delete the server directory
-    if [ "$OVERWRITE_EXISTING_SERVER" = "true" ]; then
-        echo "OVERWRITE_EXISTING_SERVER is set to 'true'. Deleting contents of /testmcserver..."
-        rm -rf /testmcserver/*
+SERVER_DIR="/testmcserver"
+BUILD_DIR="/testmcserver-build"
+RESOURCES_DIR="/resources/jars"
+
+# Function: Log a message with the [POST-CREATE] prefix
+log() {
+    local message="$1"
+    echo "[POST-CREATE] $message"
+}
+
+# Function: Setup server
+setup_server() {
+    if [ -z "$(ls -A "$SERVER_DIR")" ] || [ "$OVERWRITE_EXISTING_SERVER" = "true" ]; then
+            rm -rf "$SERVER_DIR"/*
+        cp "$BUILD_DIR"/spigot-"${MINECRAFT_VERSION}".jar "$SERVER_DIR"/spigot-"${MINECRAFT_VERSION}".jar
+        mkdir "$SERVER_DIR"/plugins
+    else
+        log "Server is already set up."
     fi
+}
 
-    # Copy server JAR
-cp /testmcserver-build/spigot-"${MINECRAFT_VERSION}".jar /testmcserver/spigot-"${MINECRAFT_VERSION}".jar
-
-    # Create plugins directory
-    mkdir /testmcserver/plugins
-
-    # Create ops.json file on the fly
-    echo "Creating ops.json file..."
-    echo '[
+# Function: Setup ops.json file
+setup_ops_file() {
+    log "Creating ops.json file..."
+    cat <<EOF > /testmcserver/ops.json
+    [
       {
-        "uuid": "0a9fa342-3139-49d7-8acb-fcf4d9c1f0ef",
-        "name": "DanTheTechMan",
-        "level": 4,
+        "uuid": "${OPERATOR_UUID}",
+        "name": "${OPERATOR_NAME}",
+        "level": ${OPERATOR_LEVEL},
         "bypassesPlayerLimit": false
       }
-    ]' >> /testmcserver/ops.json
+    ]
+EOF
+}
 
-    # Accept EULA
-    cd /testmcserver && echo "eula=true" > eula.txt
-else
-  echo "Server is already set up. To overwrite the existing server, set the 'OVERWRITE_EXISTING_SERVER' environment variable to 'true'."
+# Function: Accept EULA
+accept_eula() {
+    log "Accepting Minecraft EULA..."
+    echo "eula=true" > "$SERVER_DIR"/eula.txt
+}
+
+# Function: Delete lang directory
+delete_lang_directory() {
+    log "Deleting lang directory..."
+    rm -rf "$SERVER_DIR"/plugins/MedievalFactions/lang
+}
+
+# Function: Copy the latest plugin JAR with timestamp check
+copy_latest_plugin_jar() {
+    log "Copying the latest plugin JAR..."
+    local jarFile=$(find "$BUILD_DIR/MedievalFactions/build/libs" -name "*-all.jar" -type f -print -quit)
+
+    if [ -z "$jarFile" ]; then
+        log "ERROR: No plugin JAR file found in the build directory."
+        return 1
+    fi
+
+    local currentDate=$(date +%s)
+    local jarDate=$(stat -c %Y "$jarFile")
+    local diff=$((currentDate - jarDate))
+
+    if [ $diff -gt 300 ]; then
+        log "WARNING: The plugin JAR is older than 5 minutes. It may be necessary to rebuild the plugin."
+    fi
+
+    cp "$jarFile" "$SERVER_DIR/plugins" || log "ERROR: Failed to copy the plugin JAR."
+}
+
+# Function: Generic plugin manager for enabling or disabling
+manage_plugin_dependencies() {
+    local plugin_name="$1"
+    local enabled_var="$2"
+
+    if [ "${!enabled_var}" = "true" ]; then
+        log "${plugin_name} enabled. Copying plugin JAR..."
+        cp "$RESOURCES_DIR"/${plugin_name}-*.jar "$SERVER_DIR"/plugins
+        rm -f "$SERVER_DIR"/plugins/${plugin_name}-*.jar
+    fi
+}
+
+# Function: Update Bluemap configuration
+update_bluemap_config() {
+    log "Updating Bluemap configuration..."
+    sed -i 's/accept-download: false/accept-download: true/g' "$SERVER_DIR"/plugins/bluemap/core.conf
+}
+
+# Function: Start server
+start_server() {
+    log "Starting server..."
+    java -jar "$SERVER_DIR"/spigot-"${MINECRAFT_VERSION}".jar
+}
+
+# Main Process
+log "Running 'post-create.sh' script..."
+setup_server
+setup_ops_file
+accept_eula
+delete_lang_directory
+if ! copy_latest_plugin_jar; then
+    log "Exiting script due to error in copying the latest plugin JAR."
+    exit 1
 fi
 
-# Always delete lang directory to get the latest translations
-echo "Deleting lang directory..."
-rm -rf /testmcserver/plugins/MedievalFactions/lang
-
-# Always copy the latest plugin JAR
-nameOfJar=$(ls /testmcserver-build/MedievalFactions/build/libs/*-all.jar)
-currentDate=$(date +%s)
-jarDate=$(date -r "$nameOfJar" +%s)
-diff=$((currentDate - jarDate))
-
-if [ $diff -gt 300 ]; then
-    echo "WARNING: The plugin JAR is older than 5 minutes. It may be necessary to rebuild the plugin."
-fi
-
-echo "Copying plugin JAR... (created $diff seconds ago)"
-cp "$nameOfJar" /testmcserver/plugins
-
-# Copy or delete Dynmap JAR based on environment variable
-if [ "$DYNMAP_ENABLED" = "true" ]; then
-      echo "Dynmap enabled. Copying Dynmap plugin from /resources/jars..."
-      cp /resources/jars/Dynmap-*.jar /testmcserver/plugins
-else
-    echo "Dynmap disabled. Deleting Dynmap plugin if it exists..."
-    rm -f /testmcserver/plugins/Dynmap-*.jar
-fi
-
-# Copy or delete Bluemap JAR based on environment variable
+# Manage plugins
+manage_plugin_dependencies "currencies" "CURRENCIES_ENABLED"
+manage_plugin_dependencies "Dynmap" "DYNMAP_ENABLED"
+manage_plugin_dependencies "bluemap" "BLUEMAP_ENABLED"
 if [ "$BLUEMAP_ENABLED" = "true" ]; then
-      echo "Bluemap enabled. Copying Bluemap plugin from /resources/jars..."
-      cp /resources/jars/bluemap-*.jar /testmcserver/plugins
-
-      # update /testmcserver/plugins/bluemap/core.conf to have accept-download: true
-      echo "Updating /testmcserver/plugins/bluemap/core.conf to have accept-download: true..."
-      sed -i 's/accept-download: false/accept-download: true/g' /testmcserver/plugins/bluemap/core.conf
-else
-    echo "Bluemap disabled. Deleting Bluemap plugin if it exists..."
-    rm -f /testmcserver/plugins/bluemap-*.jar
+    update_bluemap_config
 fi
+manage_plugin_dependencies "PlaceholderAPI" "PLACEHOLDER_API_ENABLED"
 
-# Copy or delete PlaceholderAPI JAR based on environment variable
-if [ "$PLACEHOLDER_API_ENABLED" = "true" ]; then
-      echo "PlaceholderAPI enabled. Copying PlaceholderAPI plugin from /resources/jars..."
-      cp /resources/jars/PlaceholderAPI-*.jar /testmcserver/plugins
-else
-    echo "PlaceholderAPI disabled. Deleting PlaceholderAPI plugin if it exists..."
-    rm -f /testmcserver/plugins/PlaceholderAPI-*.jar
-fi
-
-echo "Starting server..."
-java -jar /testmcserver/spigot-"${MINECRAFT_VERSION}".jar
+# Start Server
+start_server
