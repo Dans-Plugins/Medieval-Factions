@@ -27,9 +27,9 @@ setup_ops_file() {
     cat <<EOF > /testmcserver/ops.json
     [
       {
-        "uuid": "${OPS_UUID}",
-        "name": "${OPS_NAME}",
-        "level": ${OPS_LEVEL},
+        "uuid": "${OPERATOR_UUID}",
+        "name": "${OPERATOR_NAME}",
+        "level": ${OPERATOR_LEVEL},
         "bypassesPlayerLimit": false
       }
     ]
