@@ -1,28 +1,34 @@
 #!/bin/bash
 
+# Function: Log a message with the [POST-CREATE] prefix
+log() {
+    local message="$1"
+    echo "[POST-CREATE] $message"
+}
+
 # Function: Setup server
 setup_server() {
     if [ -z "$(ls -A /testmcserver)" ] || [ "$OVERWRITE_EXISTING_SERVER" = "true" ]; then
-        echo "Setting up server..."
-        
+        log "Setting up server..."
+
         if [ "$OVERWRITE_EXISTING_SERVER" = "true" ]; then
-            echo "Deleting existing server contents..."
+            log "Deleting existing server contents..."
             rm -rf /testmcserver/*
         fi
 
-        echo "Copying server JAR..."
+        log "Copying server JAR..."
         cp /testmcserver-build/spigot-"${MINECRAFT_VERSION}".jar /testmcserver/spigot-"${MINECRAFT_VERSION}".jar
 
-        echo "Creating plugins directory..."
+        log "Creating plugins directory..."
         mkdir /testmcserver/plugins
     else
-        echo "Server is already set up."
+        log "Server is already set up."
     fi
 }
 
 # Function: Setup ops.json file
 setup_ops_file() {
-    echo "Creating ops.json file..."
+    log "Creating ops.json file..."
     cat <<EOF > /testmcserver/ops.json
     [
       {
@@ -37,13 +43,13 @@ EOF
 
 # Function: Accept EULA
 accept_eula() {
-    echo "Accepting Minecraft EULA..."
+    log "Accepting Minecraft EULA..."
     echo "eula=true" > /testmcserver/eula.txt
 }
 
 # Function: Delete lang directory
 delete_lang_directory() {
-    echo "Deleting lang directory..."
+    log "Deleting lang directory..."
     rm -rf /testmcserver/plugins/MedievalFactions/lang
 }
 
@@ -55,10 +61,10 @@ copy_latest_plugin_jar() {
     local diff=$((currentDate - jarDate))
 
     if [ $diff -gt 300 ]; then
-        echo "WARNING: The plugin JAR is older than 5 minutes."
+        log "WARNING: The plugin JAR is older than 5 minutes."
     fi
 
-    echo "Copying plugin JAR..."
+    log "Copying plugin JAR..."
     cp "$nameOfJar" /testmcserver/plugins
 }
 
@@ -68,28 +74,28 @@ manage_plugin_dependencies() {
     local enabled_var="$2"
 
     if [ "${!enabled_var}" = "true" ]; then
-        echo "${plugin_name} enabled. Copying plugin JAR..."
+        log "${plugin_name} enabled. Copying plugin JAR..."
         cp /resources/jars/${plugin_name}-*.jar /testmcserver/plugins
     else
-        echo "${plugin_name} disabled. Deleting plugin JAR if it exists..."
+        log "${plugin_name} disabled. Deleting plugin JAR if it exists..."
         rm -f /testmcserver/plugins/${plugin_name}-*.jar
     fi
 }
 
 # Function: Update Bluemap configuration
 update_bluemap_config() {
-    echo "Updating Bluemap configuration..."
+    log "Updating Bluemap configuration..."
     sed -i 's/accept-download: false/accept-download: true/g' /testmcserver/plugins/bluemap/core.conf
 }
 
 # Function: Start server
 start_server() {
-    echo "Starting server..."
+    log "Starting server..."
     java -jar /testmcserver/spigot-"${MINECRAFT_VERSION}".jar
 }
 
 # Main Process
-echo "Running 'post-create.sh' script..."
+log "Running 'post-create.sh' script..."
 setup_server
 setup_ops_file
 accept_eula
