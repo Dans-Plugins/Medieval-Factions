@@ -25,7 +25,14 @@ class BlockPlaceListener(private val plugin: MedievalFactions) : Listener {
         }
 
         val claimService = plugin.services.claimService
-        val claim = claimService.getClaim(event.block.chunk) ?: return
+        val claim = claimService.getClaim(event.block.chunk)
+        if (claim == null) {
+            if (plugin.config.getBoolean("wilderness.preventBlockPlace", false)) {
+                event.isCancelled = true
+                event.player.sendMessage("$RED${plugin.language["CannotPlaceBlockInWilderness"]}")
+            }
+            return
+        }
         val factionService = plugin.services.factionService
         val claimFaction = factionService.getFaction(claim.factionId) ?: return
         val relationshipService = plugin.services.factionRelationshipService
