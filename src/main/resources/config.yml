@@ -16,7 +16,7 @@ players:
 wilderness:
   color: '#3e8e39'
   preventBlockInteraction: false
-  preventBlockPlacement: false
+  preventBlockPlace: false
   preventBlockBreak: false
 pvp:
   enabledForFactionlessPlayers: true
