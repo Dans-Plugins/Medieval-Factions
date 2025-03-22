@@ -154,7 +154,14 @@ class PlayerInteractListener(private val plugin: MedievalFactions) : Listener {
             }
         }
         val claimService = plugin.services.claimService
-        val claim = claimService.getClaim(clickedBlock.chunk) ?: return
+        val claim = claimService.getClaim(clickedBlock.chunk)
+        if (claim == null) {
+            if (plugin.config.getBoolean("wilderness.preventBlockInteraction", false)) {
+                event.isCancelled = true
+                event.player.sendMessage("$RED${plugin.language["CannotInteractBlockInWilderness"]}")
+            }
+            return
+        }
         val factionService = plugin.services.factionService
         val claimFaction = factionService.getFaction(claim.factionId) ?: return
         val item = event.item
