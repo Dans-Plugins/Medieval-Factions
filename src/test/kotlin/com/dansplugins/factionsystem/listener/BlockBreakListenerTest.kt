@@ -135,11 +135,33 @@ class BlockBreakListenerTest {
         verify(event).isCancelled = true
     }
 
-//    @Test
-//    fun onBlockBreak_Claimed_InteractionNotAllowed_ShouldCancelAndInformPlayer() {
-//        // TODO: Implement this test
-//    }
-//
+    @Test
+    fun onBlockBreak_Claimed_InteractionNotAllowed_ShouldCancelAndInformPlayer() {
+        // Arrange
+        val block = fixture.block
+        val player = fixture.player
+        val event = fixture.event
+
+        val claim = mock(com.dansplugins.factionsystem.claim.MfClaimedChunk::class.java)
+        `when`(claimService.getClaim(block.chunk)).thenReturn(claim)
+
+        val faction = mock(com.dansplugins.factionsystem.faction.MfFaction::class.java)
+        `when`(factionService.getFaction(claim.factionId)).thenReturn(faction)
+        `when`(faction.name).thenReturn("test")
+
+        val mfPlayer = mock(com.dansplugins.factionsystem.player.MfPlayer::class.java)
+        `when`(playerService.getPlayer(player)).thenReturn(mfPlayer)
+
+        `when`(claimService.isInteractionAllowed(mfPlayer.id, claim)).thenReturn(false)
+
+        // Act
+        blockBreakListener.onBlockBreak(event)
+
+        // Assert
+        verify(event).isCancelled = true
+        verify(player).sendMessage("${ChatColor.RED}Cannot break block in faction territory")
+    }
+
 //    @Test
 //    fun onBlockBreak_PlayerIsOwnerOfLockedBlock_ShouldUnlockBlock() {
 //        // TODO: Implement this test
@@ -209,6 +231,7 @@ class BlockBreakListenerTest {
         val language = mock(Language::class.java)
         `when`(language["CannotBreakBlockInGate"]).thenReturn("Cannot break block in gate")
         `when`(language["CannotBreakBlockInWilderness"]).thenReturn("Cannot break block in wilderness")
+        `when`(language["CannotBreakBlockInFactionTerritory", "test"]).thenReturn("Cannot break block in faction territory")
         `when`(medievalFactions.language).thenReturn(language)
     }
 
