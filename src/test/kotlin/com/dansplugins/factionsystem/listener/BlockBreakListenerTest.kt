@@ -162,21 +162,6 @@ class BlockBreakListenerTest {
         verify(player).sendMessage("${ChatColor.RED}Cannot break block in faction territory")
     }
 
-//    @Test
-//    fun onBlockBreak_PlayerIsOwnerOfLockedBlock_ShouldUnlockBlock() {
-//        // TODO: Implement this test
-//    }
-//
-//    @Test
-//    fun onBlockBreak_PlayerNotOwnerAndDoesNotHaveForceUnlockPermission_ShouldCancelAndInformPlayer() {
-//        // TODO: Implement this test
-//    }
-//
-//    @Test
-//    fun onBlockBreak_PlayerNotOwnerButHasForceUnlockPermission_ShouldUnlockBlock() {
-//        // TODO: Implement this test
-//    }
-
     // Helper functions
 
     private fun createMockBlock(world: World = mock(World::class.java)): Block {
