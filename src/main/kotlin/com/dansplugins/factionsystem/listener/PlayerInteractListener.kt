@@ -154,7 +154,16 @@ class PlayerInteractListener(private val plugin: MedievalFactions) : Listener {
             }
         }
         val claimService = plugin.services.claimService
-        val claim = claimService.getClaim(clickedBlock.chunk) ?: return
+        val claim = claimService.getClaim(clickedBlock.chunk)
+        if (claim == null) {
+            if (plugin.config.getBoolean("wilderness.interaction.prevent", false)) {
+                event.isCancelled = true
+                if (plugin.config.getBoolean("wilderness.interaction.alert", true)) {
+                    event.player.sendMessage("$RED${plugin.language["CannotInteractBlockInWilderness"]}")
+                }
+            }
+            return
+        }
         val factionService = plugin.services.factionService
         val claimFaction = factionService.getFaction(claim.factionId) ?: return
         val item = event.item
@@ -256,7 +265,7 @@ class PlayerInteractListener(private val plugin: MedievalFactions) : Listener {
                 player.sendMessage("$RED${plugin.language["BlockUnlockProtectionBypassed", ownerName]}")
             }
         }
-        val result = lockService.unlock(block) { result ->
+        lockService.unlock(block) { result ->
             when (result) {
                 SUCCESS -> player.sendMessage("$GREEN${plugin.language["BlockUnlockSuccessful"]}")
                 NOT_LOCKED -> player.sendMessage("$RED${plugin.language["BlockNotLocked"]}")

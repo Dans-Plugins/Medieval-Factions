@@ -15,6 +15,15 @@ players:
   powerGainedOnKill: 1
 wilderness:
   color: '#3e8e39'
+  interaction:
+    prevent: false
+    alert: false
+  place:
+    prevent: false
+    alert: true
+  break:
+    prevent: false
+    alert: true
 pvp:
   enabledForFactionlessPlayers: true
   warRequiredForPlayersOfDifferentFactions: true
