@@ -29,9 +29,11 @@ class BlockBreakListener(private val plugin: MedievalFactions) : Listener {
         val claimService = plugin.services.claimService
         val claim = claimService.getClaim(event.block.chunk)
         if (claim == null) {
-            if (plugin.config.getBoolean("wilderness.preventBlockBreak", false)) {
+            if (plugin.config.getBoolean("wilderness.break.prevent", false)) {
                 event.isCancelled = true
-                event.player.sendMessage("$RED${plugin.language["CannotBreakBlockInWilderness"]}")
+                if (plugin.config.getBoolean("wilderness.break.alert", true)) {
+                    event.player.sendMessage("$RED${plugin.language["CannotBreakBlockInWilderness"]}")
+                }
             }
             return
         }

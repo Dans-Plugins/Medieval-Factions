@@ -80,7 +80,8 @@ class BlockBreakListenerTest {
 
         `when`(claimService.getClaim(block.chunk)).thenReturn(null)
         `when`(medievalFactions.config).thenReturn(mock(org.bukkit.configuration.file.FileConfiguration::class.java))
-        `when`(medievalFactions.config.getBoolean("wilderness.preventBlockBreak", false)).thenReturn(true)
+        `when`(medievalFactions.config.getBoolean("wilderness.break.prevent", false)).thenReturn(true)
+        `when`(medievalFactions.config.getBoolean("wilderness.break.alert", true)).thenReturn(true)
 
         // Act
         blockBreakListener.onBlockBreak(event)
@@ -98,7 +99,7 @@ class BlockBreakListenerTest {
 
         `when`(claimService.getClaim(block.chunk)).thenReturn(null)
         `when`(medievalFactions.config).thenReturn(mock(org.bukkit.configuration.file.FileConfiguration::class.java))
-        `when`(medievalFactions.config.getBoolean("wilderness.preventBlockBreak", false)).thenReturn(false)
+        `when`(medievalFactions.config.getBoolean("wilderness.break.prevent", false)).thenReturn(false)
 
         // Act
         blockBreakListener.onBlockBreak(event)

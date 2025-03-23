@@ -70,7 +70,8 @@ class BlockPlaceListenerTest {
 
         `when`(claimService.getClaim(block.chunk)).thenReturn(null)
         `when`(medievalFactions.config).thenReturn(mock(org.bukkit.configuration.file.FileConfiguration::class.java))
-        `when`(medievalFactions.config.getBoolean("wilderness.preventBlockPlace", false)).thenReturn(true)
+        `when`(medievalFactions.config.getBoolean("wilderness.place.prevent", false)).thenReturn(true)
+        `when`(medievalFactions.config.getBoolean("wilderness.place.alert", true)).thenReturn(true)
 
         // Act
         blockPlaceListener.onBlockPlace(event)
@@ -88,7 +89,7 @@ class BlockPlaceListenerTest {
 
         `when`(claimService.getClaim(block.chunk)).thenReturn(null)
         `when`(medievalFactions.config).thenReturn(mock(org.bukkit.configuration.file.FileConfiguration::class.java))
-        `when`(medievalFactions.config.getBoolean("wilderness.preventBlockPlace", false)).thenReturn(false)
+        `when`(medievalFactions.config.getBoolean("wilderness.place.prevent", false)).thenReturn(false)
 
         // Act
         blockPlaceListener.onBlockPlace(event)

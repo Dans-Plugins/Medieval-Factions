@@ -27,9 +27,11 @@ class BlockPlaceListener(private val plugin: MedievalFactions) : Listener {
         val claimService = plugin.services.claimService
         val claim = claimService.getClaim(event.block.chunk)
         if (claim == null) {
-            if (plugin.config.getBoolean("wilderness.preventBlockPlace", false)) {
+            if (plugin.config.getBoolean("wilderness.place.prevent", false)) {
                 event.isCancelled = true
-                event.player.sendMessage("$RED${plugin.language["CannotPlaceBlockInWilderness"]}")
+                if (plugin.config.getBoolean("wilderness.place.alert", true)) {
+                    event.player.sendMessage("$RED${plugin.language["CannotPlaceBlockInWilderness"]}")
+                }
             }
             return
         }
