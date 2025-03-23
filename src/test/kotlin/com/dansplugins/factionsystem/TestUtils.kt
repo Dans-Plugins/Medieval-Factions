@@ -4,6 +4,7 @@ import org.bukkit.World
 import org.bukkit.block.Block
 import org.bukkit.entity.Player
 import org.bukkit.event.block.BlockBreakEvent
+import org.bukkit.event.block.BlockPlaceEvent
 import org.mockito.Mockito.mock
 import org.mockito.Mockito.`when`
 
@@ -11,6 +12,7 @@ import org.mockito.Mockito.`when`
  * A utility class for creating mock objects and events, commonly used in testing scenarios.
  */
 class TestUtils {
+
     /**
      * Creates a mock implementation of a Block with default properties and a specified or mocked world.
      *
@@ -49,6 +51,20 @@ class TestUtils {
      */
     fun createBlockBreakEvent(block: Block, player: Player): BlockBreakEvent {
         val event = mock(BlockBreakEvent::class.java)
+        `when`(event.block).thenReturn(block)
+        `when`(event.player).thenReturn(player)
+        return event
+    }
+
+    /**
+     * Creates a mocked instance of a BlockPlaceEvent with a specified block and player.
+     *
+     * @param block The block involved in the block place event.
+     * @param player The player who placed the block.
+     * @return A mocked BlockPlaceEvent with the provided block and player set.
+     */
+    fun createBlockPlaceEvent(block: Block, player: Player): BlockPlaceEvent {
+        val event = mock(BlockPlaceEvent::class.java)
         `when`(event.block).thenReturn(block)
         `when`(event.player).thenReturn(player)
         return event

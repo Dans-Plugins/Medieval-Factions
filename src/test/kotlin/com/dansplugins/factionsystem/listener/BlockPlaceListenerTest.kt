@@ -1,6 +1,7 @@
 package com.dansplugins.factionsystem.listener
 
 import com.dansplugins.factionsystem.MedievalFactions
+import com.dansplugins.factionsystem.TestUtils
 import com.dansplugins.factionsystem.area.MfBlockPosition
 import com.dansplugins.factionsystem.claim.MfClaimService
 import com.dansplugins.factionsystem.gate.MfGate
@@ -19,29 +20,25 @@ import org.mockito.Mockito.verify
 import org.mockito.Mockito.`when`
 
 class BlockPlaceListenerTest {
+    private val testUtils = TestUtils()
+
+    private lateinit var fixture: BlockPlaceListenerTestFixture
 
     private lateinit var medievalFactions: MedievalFactions
+
     private lateinit var gateService: MfGateService
     private lateinit var claimService: MfClaimService
+
     private lateinit var blockPlaceListener: BlockPlaceListener
 
     @BeforeEach
     fun setUp() {
+        fixture = createBasicFixture()
+
         medievalFactions = mock(MedievalFactions::class.java)
-        gateService = mock(MfGateService::class.java)
-        claimService = mock(MfClaimService::class.java)
 
-        // Mock services
-        val services = mock(com.dansplugins.factionsystem.service.Services::class.java)
-        `when`(medievalFactions.services).thenReturn(services)
-        `when`(services.gateService).thenReturn(gateService)
-        `when`(services.claimService).thenReturn(claimService)
-
-        // Mock language system
-        val language = mock(Language::class.java)
-        `when`(language["CannotPlaceBlockInGate"]).thenReturn("Cannot place block in gate")
-        `when`(language["CannotPlaceBlockInWilderness"]).thenReturn("Cannot place block in wilderness")
-        `when`(medievalFactions.language).thenReturn(language)
+        mockServices()
+        mockLanguageSystem()
 
         blockPlaceListener = BlockPlaceListener(medievalFactions)
     }
@@ -49,20 +46,9 @@ class BlockPlaceListenerTest {
     @Test
     fun onBlockPlace_BlockIsInGate_ShouldCancelAndInformPlayer() {
         // Arrange
-        val block = mock(Block::class.java)
-        val world = mock(World::class.java)
-        val player = mock(Player::class.java)
-        val worldUid = mock(java.util.UUID::class.java)
-
-        `when`(block.world).thenReturn(world)
-        `when`(world.uid).thenReturn(worldUid)
-        `when`(block.x).thenReturn(0)
-        `when`(block.y).thenReturn(0)
-        `when`(block.z).thenReturn(0)
-
-        val event = mock(BlockPlaceEvent::class.java)
-        `when`(event.block).thenReturn(block)
-        `when`(event.player).thenReturn(player)
+        val block = fixture.block
+        val player = fixture.player
+        val event = fixture.event
 
         val blockPosition = MfBlockPosition.fromBukkitBlock(block)
         `when`(gateService.getGatesAt(blockPosition)).thenReturn(listOf(mock(MfGate::class.java)))
@@ -78,23 +64,11 @@ class BlockPlaceListenerTest {
     @Test
     fun onBlockPlace_BlockInWilderness_WildernessPreventBlockPlaceSetToTrue_ShouldCancelAndInformPlayer() {
         // Arrange
-        val block = mock(Block::class.java)
-        val world = mock(World::class.java)
-        val player = mock(Player::class.java)
-        val worldUid = mock(java.util.UUID::class.java)
+        val block = fixture.block
+        val player = fixture.player
+        val event = fixture.event
 
-        `when`(block.world).thenReturn(world)
-        `when`(world.uid).thenReturn(worldUid)
-        `when`(block.x).thenReturn(0)
-        `when`(block.y).thenReturn(0)
-        `when`(block.z).thenReturn(0)
-        `when`(block.chunk).thenReturn(mock(org.bukkit.Chunk::class.java))
         `when`(claimService.getClaim(block.chunk)).thenReturn(null)
-
-        val event = mock(BlockPlaceEvent::class.java)
-        `when`(event.block).thenReturn(block)
-        `when`(event.player).thenReturn(player)
-
         `when`(medievalFactions.config).thenReturn(mock(org.bukkit.configuration.file.FileConfiguration::class.java))
         `when`(medievalFactions.config.getBoolean("wilderness.preventBlockPlace", false)).thenReturn(true)
 
@@ -109,23 +83,10 @@ class BlockPlaceListenerTest {
     @Test
     fun onBlockPlace_BlockInWilderness_WildernessPreventBlockPlaceSetToFalse_ShouldReturn() {
         // Arrange
-        val block = mock(Block::class.java)
-        val world = mock(World::class.java)
-        val player = mock(Player::class.java)
-        val worldUid = mock(java.util.UUID::class.java)
+        val block = fixture.block
+        val event = fixture.event
 
-        `when`(block.world).thenReturn(world)
-        `when`(world.uid).thenReturn(worldUid)
-        `when`(block.x).thenReturn(0)
-        `when`(block.y).thenReturn(0)
-        `when`(block.z).thenReturn(0)
-        `when`(block.chunk).thenReturn(mock(org.bukkit.Chunk::class.java))
         `when`(claimService.getClaim(block.chunk)).thenReturn(null)
-
-        val event = mock(BlockPlaceEvent::class.java)
-        `when`(event.block).thenReturn(block)
-        `when`(event.player).thenReturn(player)
-
         `when`(medievalFactions.config).thenReturn(mock(org.bukkit.configuration.file.FileConfiguration::class.java))
         `when`(medievalFactions.config.getBoolean("wilderness.preventBlockPlace", false)).thenReturn(false)
 
@@ -135,5 +96,39 @@ class BlockPlaceListenerTest {
         // Assert
         verify(event, never()).isCancelled = true
         verify(event, never()).isCancelled = false
+    }
+
+    // Helper functions
+
+    private fun createBasicFixture(): BlockPlaceListenerTestFixture {
+        val world = testUtils.createMockWorld()
+        val block = testUtils.createMockBlock(world)
+        val player = mock(Player::class.java)
+        val event = testUtils.createBlockPlaceEvent(block, player)
+        return BlockPlaceListenerTestFixture(world, block, player, event)
+    }
+
+    private data class BlockPlaceListenerTestFixture(
+        val world: World,
+        val block: Block,
+        val player: Player,
+        val event: BlockPlaceEvent
+    )
+
+    private fun mockServices() {
+        gateService = mock(MfGateService::class.java)
+        claimService = mock(MfClaimService::class.java)
+
+        val services = mock(com.dansplugins.factionsystem.service.Services::class.java)
+        `when`(medievalFactions.services).thenReturn(services)
+        `when`(services.gateService).thenReturn(gateService)
+        `when`(services.claimService).thenReturn(claimService)
+    }
+
+    private fun mockLanguageSystem() {
+        val language = mock(Language::class.java)
+        `when`(language["CannotPlaceBlockInGate"]).thenReturn("Cannot place block in gate")
+        `when`(language["CannotPlaceBlockInWilderness"]).thenReturn("Cannot place block in wilderness")
+        `when`(medievalFactions.language).thenReturn(language)
     }
 }

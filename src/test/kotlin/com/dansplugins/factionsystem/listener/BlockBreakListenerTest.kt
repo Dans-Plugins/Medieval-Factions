@@ -212,5 +212,4 @@ class BlockBreakListenerTest {
         `when`(medievalFactions.server).thenReturn(server)
         `when`(server.scheduler).thenReturn(scheduler)
     }
-
 }
