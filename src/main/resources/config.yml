@@ -20,10 +20,10 @@ wilderness:
     alert: false
   place:
     prevent: false
-    alert: false
+    alert: true
   break:
     prevent: false
-    alert: false
+    alert: true
 pvp:
   enabledForFactionlessPlayers: true
   warRequiredForPlayersOfDifferentFactions: true
