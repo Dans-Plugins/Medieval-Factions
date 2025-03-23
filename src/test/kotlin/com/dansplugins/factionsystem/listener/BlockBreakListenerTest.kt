@@ -33,6 +33,45 @@ class BlockBreakListenerTest {
     private lateinit var playerService: MfPlayerService
     private lateinit var blockBreakListener: BlockBreakListener
 
+    private fun createMockBlock(world: World = mock(World::class.java)): Block {
+        val block = mock(Block::class.java)
+        `when`(block.world).thenReturn(world)
+        `when`(block.x).thenReturn(0)
+        `when`(block.y).thenReturn(0)
+        `when`(block.z).thenReturn(0)
+        `when`(block.chunk).thenReturn(mock(org.bukkit.Chunk::class.java))
+        return block
+    }
+
+    private fun createMockWorld(): World {
+        val world = mock(World::class.java)
+        val worldUid = mock(java.util.UUID::class.java)
+        `when`(world.uid).thenReturn(worldUid)
+        return world
+    }
+
+    private fun createBlockBreakEvent(block: Block, player: Player): BlockBreakEvent {
+        val event = mock(BlockBreakEvent::class.java)
+        `when`(event.block).thenReturn(block)
+        `when`(event.player).thenReturn(player)
+        return event
+    }
+
+    private data class TestFixture(
+        val world: World,
+        val block: Block,
+        val player: Player,
+        val event: BlockBreakEvent
+    )
+
+    private fun createBasicFixture(): TestFixture {
+        val world = createMockWorld()
+        val block = createMockBlock(world)
+        val player = mock(Player::class.java)
+        val event = createBlockBreakEvent(block, player)
+        return TestFixture(world, block, player, event)
+    }
+
     @BeforeEach
     fun setUp() {
         medievalFactions = mock(MedievalFactions::class.java)
@@ -69,22 +108,12 @@ class BlockBreakListenerTest {
     @Test
     fun onBlockBreak_BlockIsInGate_ShouldCancelAndInformPlayer() {
         // Arrange
-        val world = mock(World::class.java)
-        val worldUid = mock(java.util.UUID::class.java)
-        `when`(world.uid).thenReturn(worldUid)
+        val fixture = createBasicFixture()
+        val block = fixture.block
+        val player = fixture.player
+        val event = fixture.event
 
-        val block = mock(Block::class.java)
-        `when`(block.world).thenReturn(world)
-        `when`(block.x).thenReturn(0)
-        `when`(block.y).thenReturn(0)
-        `when`(block.z).thenReturn(0)
-
-        val player = mock(Player::class.java)
         val blockPosition = MfBlockPosition.fromBukkitBlock(block)
-
-        val event = mock(BlockBreakEvent::class.java)
-        `when`(event.block).thenReturn(block)
-        `when`(event.player).thenReturn(player)
 
         `when`(gateService.getGatesAt(blockPosition)).thenReturn(listOf(mock(MfGate::class.java)))
 
@@ -99,25 +128,12 @@ class BlockBreakListenerTest {
     @Test
     fun onBlockBreak_BlockInWilderness_WildernessPreventBlockBreakSetToTrue_ShouldCancelAndInformPlayer() {
         // Arrange
-        val world = mock(World::class.java)
-        val worldUid = mock(java.util.UUID::class.java)
-        `when`(world.uid).thenReturn(worldUid)
-
-        val block = mock(Block::class.java)
-        `when`(block.world).thenReturn(world)
-        `when`(block.x).thenReturn(0)
-        `when`(block.y).thenReturn(0)
-        `when`(block.z).thenReturn(0)
-        `when`(block.chunk).thenReturn(mock(org.bukkit.Chunk::class.java))
-
-        val player = mock(Player::class.java)
+        val fixture = createBasicFixture()
+        val block = fixture.block
+        val player = fixture.player
+        val event = fixture.event
 
         `when`(claimService.getClaim(block.chunk)).thenReturn(null)
-
-        val event = mock(BlockBreakEvent::class.java)
-        `when`(event.block).thenReturn(block)
-        `when`(event.player).thenReturn(player)
-
         `when`(medievalFactions.config).thenReturn(mock(org.bukkit.configuration.file.FileConfiguration::class.java))
         `when`(medievalFactions.config.getBoolean("wilderness.preventBlockBreak", false)).thenReturn(true)
 
@@ -132,25 +148,11 @@ class BlockBreakListenerTest {
     @Test
     fun onBlockBreak_BlockInWilderness_WildernessPreventBlockBreakSetToFalse_ShouldReturn() {
         // Arrange
-        val world = mock(World::class.java)
-        val worldUid = mock(java.util.UUID::class.java)
-        `when`(world.uid).thenReturn(worldUid)
-
-        val block = mock(Block::class.java)
-        `when`(block.world).thenReturn(world)
-        `when`(block.x).thenReturn(0)
-        `when`(block.y).thenReturn(0)
-        `when`(block.z).thenReturn(0)
-        `when`(block.chunk).thenReturn(mock(org.bukkit.Chunk::class.java))
+        val fixture = createBasicFixture()
+        val block = fixture.block
+        val event = fixture.event
 
         `when`(claimService.getClaim(block.chunk)).thenReturn(null)
-
-        val player = mock(Player::class.java)
-
-        val event = mock(BlockBreakEvent::class.java)
-        `when`(event.block).thenReturn(block)
-        `when`(event.player).thenReturn(player)
-
         `when`(medievalFactions.config).thenReturn(mock(org.bukkit.configuration.file.FileConfiguration::class.java))
         `when`(medievalFactions.config.getBoolean("wilderness.preventBlockBreak", false)).thenReturn(false)
 
@@ -165,19 +167,10 @@ class BlockBreakListenerTest {
     @Test
     fun onBlockBreak_PlayerIsNotInDatabase_ShouldCancel() {
         // Arrange
-        val world = mock(World::class.java)
-        val worldUid = mock(java.util.UUID::class.java)
-        `when`(world.uid).thenReturn(worldUid)
-
-        val block = mock(Block::class.java)
-        `when`(block.world).thenReturn(world)
-        `when`(block.x).thenReturn(0)
-        `when`(block.y).thenReturn(0)
-        `when`(block.z).thenReturn(0)
-        `when`(block.chunk).thenReturn(mock(org.bukkit.Chunk::class.java))
-
-        val player = mock(Player::class.java)
-        `when`(playerService.getPlayer(player)).thenReturn(null)
+        val fixture = createBasicFixture()
+        val block = fixture.block
+        val player = fixture.player
+        val event = fixture.event
 
         val claim = mock(com.dansplugins.factionsystem.claim.MfClaimedChunk::class.java)
         `when`(claimService.getClaim(block.chunk)).thenReturn(claim)
@@ -185,13 +178,15 @@ class BlockBreakListenerTest {
         val faction = mock(com.dansplugins.factionsystem.faction.MfFaction::class.java)
         `when`(factionService.getFaction(claim.factionId)).thenReturn(faction)
 
-        val event = mock(BlockBreakEvent::class.java)
-        `when`(event.block).thenReturn(block)
-        `when`(event.player).thenReturn(player)
-
-        `when`(medievalFactions.server.scheduler.runTaskAsynchronously(medievalFactions, Runnable {
+        val runnable = Runnable {
             playerService.save(com.dansplugins.factionsystem.player.MfPlayer(medievalFactions, player))
-        })).thenReturn(mock(org.bukkit.scheduler.BukkitTask::class.java))
+        }
+        `when`(
+            medievalFactions.server.scheduler.runTaskAsynchronously(
+                medievalFactions,
+                runnable
+            )
+        ).thenReturn(mock(org.bukkit.scheduler.BukkitTask::class.java))
 
         // Act
         blockBreakListener.onBlockBreak(event)
