@@ -1,6 +1,7 @@
 package com.dansplugins.factionsystem.listener
 
 import com.dansplugins.factionsystem.MedievalFactions
+import com.dansplugins.factionsystem.TestUtils
 import com.dansplugins.factionsystem.area.MfBlockPosition
 import com.dansplugins.factionsystem.claim.MfClaimService
 import com.dansplugins.factionsystem.faction.MfFactionService
@@ -27,6 +28,8 @@ import org.mockito.Mockito.`when`
 
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 class BlockBreakListenerTest {
+    private val testUtils = TestUtils()
+
     private lateinit var fixture: BlockBreakListenerTestFixture
 
     private lateinit var medievalFactions: MedievalFactions
@@ -164,37 +167,20 @@ class BlockBreakListenerTest {
 
     // Helper functions
 
-    private fun createMockBlock(world: World = mock(World::class.java)): Block {
-        val block = mock(Block::class.java)
-        `when`(block.world).thenReturn(world)
-        `when`(block.x).thenReturn(0)
-        `when`(block.y).thenReturn(0)
-        `when`(block.z).thenReturn(0)
-        `when`(block.chunk).thenReturn(mock(org.bukkit.Chunk::class.java))
-        return block
-    }
-
-    private fun createMockWorld(): World {
-        val world = mock(World::class.java)
-        val worldUid = mock(java.util.UUID::class.java)
-        `when`(world.uid).thenReturn(worldUid)
-        return world
-    }
-
-    private fun createBlockBreakEvent(block: Block, player: Player): BlockBreakEvent {
-        val event = mock(BlockBreakEvent::class.java)
-        `when`(event.block).thenReturn(block)
-        `when`(event.player).thenReturn(player)
-        return event
-    }
-
     private fun createBasicFixture(): BlockBreakListenerTestFixture {
-        val world = createMockWorld()
-        val block = createMockBlock(world)
+        val world = testUtils.createMockWorld()
+        val block = testUtils.createMockBlock(world)
         val player = mock(Player::class.java)
-        val event = createBlockBreakEvent(block, player)
+        val event = testUtils.createBlockBreakEvent(block, player)
         return BlockBreakListenerTestFixture(world, block, player, event)
     }
+
+    private data class BlockBreakListenerTestFixture(
+        val world: World,
+        val block: Block,
+        val player: Player,
+        val event: BlockBreakEvent
+    )
 
     private fun mockServices() {
         gateService = mock(MfGateService::class.java)
@@ -226,12 +212,5 @@ class BlockBreakListenerTest {
         `when`(medievalFactions.server).thenReturn(server)
         `when`(server.scheduler).thenReturn(scheduler)
     }
-
-    private data class BlockBreakListenerTestFixture(
-        val world: World,
-        val block: Block,
-        val player: Player,
-        val event: BlockBreakEvent
-    )
 
 }
