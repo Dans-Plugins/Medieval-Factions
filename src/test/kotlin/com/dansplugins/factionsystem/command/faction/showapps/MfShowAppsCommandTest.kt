@@ -35,10 +35,10 @@ class MfShowAppsCommandTest {
     fun setUp() {
         fixture = testUtils.createCommandTestFixture()
         plugin = mock(MedievalFactions::class.java)
-        mockServices();
-        mockLanguageSystem();
-        mockScheduler();
-        mockLogger();
+        mockServices()
+        mockLanguageSystem()
+        mockScheduler()
+        mockLogger()
         uut = MfShowAppsCommand(plugin)
     }
 

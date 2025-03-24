@@ -96,5 +96,4 @@ class BlockBurnListenerTest {
         gateService = mock(MfGateService::class.java)
         `when`(services.gateService).thenReturn(gateService)
     }
-
 }

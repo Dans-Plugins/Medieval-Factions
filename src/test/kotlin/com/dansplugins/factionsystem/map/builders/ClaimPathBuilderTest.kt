@@ -11,7 +11,7 @@ import java.util.*
 
 class ClaimPathBuilderTest {
     private lateinit var uut: ClaimPathBuilder
-    
+
     @BeforeEach
     fun setUp() {
         uut = ClaimPathBuilder()
