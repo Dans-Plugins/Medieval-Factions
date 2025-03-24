@@ -13,16 +13,15 @@ import org.mockito.Mockito.verify
 import org.mockito.Mockito.`when`
 
 class MarkerSetHelperTest {
-
     private val markerApi = mock(MarkerAPI::class.java)
-    private val markerSetHelper = MarkerSetHelper()
+    private val uut = MarkerSetHelper()
 
     @Test
     fun getOrCreateMarkerSet_ShouldReturnExistingMarkerSet() {
         val existingMarkerSet = mock(MarkerSet::class.java)
         `when`(markerApi.getMarkerSet("claims")).thenReturn(existingMarkerSet)
 
-        val result = markerSetHelper.getOrCreateMarkerSet(markerApi, "claims", "Claims")
+        val result = uut.getOrCreateMarkerSet(markerApi, "claims", "Claims")
 
         assertEquals(existingMarkerSet, result)
         verify(markerApi, never()).createMarkerSet(anyString(), anyString(), isNull(), anyBoolean())
@@ -34,7 +33,7 @@ class MarkerSetHelperTest {
         val newMarkerSet = mock(MarkerSet::class.java)
         `when`(markerApi.createMarkerSet("claims", "Claims", null, false)).thenReturn(newMarkerSet)
 
-        val result = markerSetHelper.getOrCreateMarkerSet(markerApi, "claims", "Claims")
+        val result = uut.getOrCreateMarkerSet(markerApi, "claims", "Claims")
 
         assertEquals(newMarkerSet, result)
         verify(markerApi).createMarkerSet("claims", "Claims", null, false)
