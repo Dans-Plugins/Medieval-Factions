@@ -31,25 +31,22 @@ class BlockBreakListenerTest {
     private val testUtils = TestUtils()
 
     private lateinit var fixture: BlockBreakListenerTestFixture
-
-    private lateinit var medievalFactions: MedievalFactions
-
+    private lateinit var plugin: MedievalFactions
     private lateinit var gateService: MfGateService
     private lateinit var claimService: MfClaimService
     private lateinit var lockService: MfLockService
     private lateinit var factionService: MfFactionService
     private lateinit var playerService: MfPlayerService
-
-    private lateinit var blockBreakListener: BlockBreakListener
+    private lateinit var uut: BlockBreakListener
 
     @BeforeEach
     fun setUp() {
-        fixture = createBasicFixture()
-        medievalFactions = mock(MedievalFactions::class.java)
+        fixture = createFixture()
+        plugin = mock(MedievalFactions::class.java)
         mockServices()
         mockLanguageSystem()
         mockScheduler()
-        blockBreakListener = BlockBreakListener(medievalFactions)
+        uut = BlockBreakListener(plugin)
     }
 
     @Test
@@ -64,7 +61,7 @@ class BlockBreakListenerTest {
         `when`(gateService.getGatesAt(blockPosition)).thenReturn(listOf(mock(MfGate::class.java)))
 
         // Act
-        blockBreakListener.onBlockBreak(event)
+        uut.onBlockBreak(event)
 
         // Assert
         verify(event).isCancelled = true
@@ -79,12 +76,12 @@ class BlockBreakListenerTest {
         val event = fixture.event
 
         `when`(claimService.getClaim(block.chunk)).thenReturn(null)
-        `when`(medievalFactions.config).thenReturn(mock(org.bukkit.configuration.file.FileConfiguration::class.java))
-        `when`(medievalFactions.config.getBoolean("wilderness.break.prevent", false)).thenReturn(true)
-        `when`(medievalFactions.config.getBoolean("wilderness.break.alert", true)).thenReturn(true)
+        `when`(plugin.config).thenReturn(mock(org.bukkit.configuration.file.FileConfiguration::class.java))
+        `when`(plugin.config.getBoolean("wilderness.break.prevent", false)).thenReturn(true)
+        `when`(plugin.config.getBoolean("wilderness.break.alert", true)).thenReturn(true)
 
         // Act
-        blockBreakListener.onBlockBreak(event)
+        uut.onBlockBreak(event)
 
         // Assert
         verify(event).isCancelled = true
@@ -98,11 +95,11 @@ class BlockBreakListenerTest {
         val event = fixture.event
 
         `when`(claimService.getClaim(block.chunk)).thenReturn(null)
-        `when`(medievalFactions.config).thenReturn(mock(org.bukkit.configuration.file.FileConfiguration::class.java))
-        `when`(medievalFactions.config.getBoolean("wilderness.break.prevent", false)).thenReturn(false)
+        `when`(plugin.config).thenReturn(mock(org.bukkit.configuration.file.FileConfiguration::class.java))
+        `when`(plugin.config.getBoolean("wilderness.break.prevent", false)).thenReturn(false)
 
         // Act
-        blockBreakListener.onBlockBreak(event)
+        uut.onBlockBreak(event)
 
         // Assert
         verify(event, never()).isCancelled = true
@@ -123,17 +120,17 @@ class BlockBreakListenerTest {
         `when`(factionService.getFaction(claim.factionId)).thenReturn(faction)
 
         val runnable = Runnable {
-            playerService.save(com.dansplugins.factionsystem.player.MfPlayer(medievalFactions, player))
+            playerService.save(com.dansplugins.factionsystem.player.MfPlayer(plugin, player))
         }
         `when`(
-            medievalFactions.server.scheduler.runTaskAsynchronously(
-                medievalFactions,
+            plugin.server.scheduler.runTaskAsynchronously(
+                plugin,
                 runnable
             )
         ).thenReturn(mock(org.bukkit.scheduler.BukkitTask::class.java))
 
         // Act
-        blockBreakListener.onBlockBreak(event)
+        uut.onBlockBreak(event)
 
         // Assert
         verify(event).isCancelled = true
@@ -159,7 +156,7 @@ class BlockBreakListenerTest {
         `when`(claimService.isInteractionAllowed(mfPlayer.id, claim)).thenReturn(false)
 
         // Act
-        blockBreakListener.onBlockBreak(event)
+        uut.onBlockBreak(event)
 
         // Assert
         verify(event).isCancelled = true
@@ -168,7 +165,7 @@ class BlockBreakListenerTest {
 
     // Helper functions
 
-    private fun createBasicFixture(): BlockBreakListenerTestFixture {
+    private fun createFixture(): BlockBreakListenerTestFixture {
         val world = testUtils.createMockWorld()
         val block = testUtils.createMockBlock(world)
         val player = mock(Player::class.java)
@@ -184,18 +181,22 @@ class BlockBreakListenerTest {
     )
 
     private fun mockServices() {
-        gateService = mock(MfGateService::class.java)
-        claimService = mock(MfClaimService::class.java)
-        lockService = mock(MfLockService::class.java)
-        factionService = mock(MfFactionService::class.java)
-        playerService = mock(MfPlayerService::class.java)
-
         val services = mock(Services::class.java)
-        `when`(medievalFactions.services).thenReturn(services)
+        `when`(plugin.services).thenReturn(services)
+
+        gateService = mock(MfGateService::class.java)
         `when`(services.gateService).thenReturn(gateService)
+
+        claimService = mock(MfClaimService::class.java)
         `when`(services.claimService).thenReturn(claimService)
+
+        lockService = mock(MfLockService::class.java)
         `when`(services.lockService).thenReturn(lockService)
+
+        factionService = mock(MfFactionService::class.java)
         `when`(services.factionService).thenReturn(factionService)
+
+        playerService = mock(MfPlayerService::class.java)
         `when`(services.playerService).thenReturn(playerService)
     }
 
@@ -204,13 +205,13 @@ class BlockBreakListenerTest {
         `when`(language["CannotBreakBlockInGate"]).thenReturn("Cannot break block in gate")
         `when`(language["CannotBreakBlockInWilderness"]).thenReturn("Cannot break block in wilderness")
         `when`(language["CannotBreakBlockInFactionTerritory", "test"]).thenReturn("Cannot break block in faction territory")
-        `when`(medievalFactions.language).thenReturn(language)
+        `when`(plugin.language).thenReturn(language)
     }
 
     private fun mockScheduler() {
         val server = mock(Server::class.java)
         val scheduler = mock(BukkitScheduler::class.java)
-        `when`(medievalFactions.server).thenReturn(server)
+        `when`(plugin.server).thenReturn(server)
         `when`(server.scheduler).thenReturn(scheduler)
     }
 }
