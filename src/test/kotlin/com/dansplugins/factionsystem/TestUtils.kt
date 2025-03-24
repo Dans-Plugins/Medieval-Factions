@@ -2,6 +2,8 @@ package com.dansplugins.factionsystem
 
 import org.bukkit.World
 import org.bukkit.block.Block
+import org.bukkit.command.Command
+import org.bukkit.command.CommandSender
 import org.bukkit.entity.Player
 import org.bukkit.event.block.BlockBreakEvent
 import org.bukkit.event.block.BlockPlaceEvent
@@ -69,4 +71,29 @@ class TestUtils {
         `when`(event.player).thenReturn(player)
         return event
     }
+
+    /**
+     * Creates a mocked `CommandTestFixture` containing mocked instances of `Player`, `Command`, and `CommandSender`.
+     *
+     * @return A `CommandTestFixture` object with mocked components.
+     */
+    fun createCommandTestFixture(): CommandTestFixture {
+        val player = mock(Player::class.java)
+        val command = mock(Command::class.java)
+        val sender = mock(CommandSender::class.java)
+        return CommandTestFixture(player, command, sender)
+    }
+
+    /**
+     * A data class representing a fixture for testing commands in a mocked environment.
+     *
+     * @property player The mocked player involved in the command test.
+     * @property command The mocked command under test.
+     * @property sender The mocked command sender executing the command.
+     */
+    data class CommandTestFixture(
+        val player: Player,
+        val command: Command,
+        val sender: CommandSender
+    )
 }

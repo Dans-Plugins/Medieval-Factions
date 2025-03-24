@@ -23,24 +23,18 @@ class BlockPlaceListenerTest {
     private val testUtils = TestUtils()
 
     private lateinit var fixture: BlockPlaceListenerTestFixture
-
     private lateinit var medievalFactions: MedievalFactions
-
     private lateinit var gateService: MfGateService
     private lateinit var claimService: MfClaimService
-
-    private lateinit var blockPlaceListener: BlockPlaceListener
+    private lateinit var uut: BlockPlaceListener
 
     @BeforeEach
     fun setUp() {
         fixture = createBasicFixture()
-
         medievalFactions = mock(MedievalFactions::class.java)
-
         mockServices()
         mockLanguageSystem()
-
-        blockPlaceListener = BlockPlaceListener(medievalFactions)
+        uut = BlockPlaceListener(medievalFactions)
     }
 
     @Test
@@ -54,7 +48,7 @@ class BlockPlaceListenerTest {
         `when`(gateService.getGatesAt(blockPosition)).thenReturn(listOf(mock(MfGate::class.java)))
 
         // Act
-        blockPlaceListener.onBlockPlace(event)
+        uut.onBlockPlace(event)
 
         // Assert
         verify(event).isCancelled = true
@@ -74,7 +68,7 @@ class BlockPlaceListenerTest {
         `when`(medievalFactions.config.getBoolean("wilderness.place.alert", true)).thenReturn(true)
 
         // Act
-        blockPlaceListener.onBlockPlace(event)
+        uut.onBlockPlace(event)
 
         // Assert
         verify(event).isCancelled = true
@@ -92,7 +86,7 @@ class BlockPlaceListenerTest {
         `when`(medievalFactions.config.getBoolean("wilderness.place.prevent", false)).thenReturn(false)
 
         // Act
-        blockPlaceListener.onBlockPlace(event)
+        uut.onBlockPlace(event)
 
         // Assert
         verify(event, never()).isCancelled = true
