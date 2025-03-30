@@ -1,38 +1,51 @@
 ---
-name: Bug report
-about: Create a report to help us improve
-title: Bug Report
-labels: ''
-assignees: ''
+name: Bug Report
+about: Report an issue to help us improve the project.
+title: "[Bug] "
+labels: ["bug"]
+assignees: []
 
 ---
 
-## Describe the bug
-(A clear and concise description of what the bug is.)
+## Description
+*A clear and concise description of the bug.*
 
-## To Reproduce
-(Steps to reproduce the behavior)
+## Steps to Reproduce
+*Provide step-by-step instructions to reproduce the issue.*
+1.
+2.
+3.
 
-## Expected behavior
-(A clear and concise description of what you expected to happen.)
+## Expected Behavior
+*Describe what you expected to happen instead of the bug.*
+
+## Actual Behavior
+*Describe what actually happened, including any error messages if applicable.*
 
 ## Screenshots or Logs
-(If applicable, add screenshots to help explain your problem.)
+*If applicable, add screenshots or logs to help explain the issue.*
 
-## Java version
- - [ ] Java 8
- - [ ] Java 11
- - [ ] Java 16
- - [ ] Java 17 
+## Environment Details
 
-**Plugin version**
- - [ ] v4.1
- - [ ] v4.2
- - [ ] v4.3
- - [ ] v4.4
- - [ ] v4.5.x
----
-**Spigot/Paper version** _(Please Specify which server software you are using)_
- - [ ] 1.16.x
- - [ ] 1.17.x
- - [ ] 1.18.x
+### Java Version:
+- [ ] Java 8
+- [ ] Java 11
+- [ ] Java 16
+- [ ] Java 17
+- [ ] Other (Specify: ___)
+
+### Plugin Version:
+- [ ] v5.3.0
+- [ ] v5.4.0
+- [ ] v5.5.0
+- [ ] Other (Specify: ___)
+
+### Server Software & Version:
+- [ ] Spigot
+- [ ] Paper
+- [ ] Other (Specify: ___)
+
+Version: `___` (e.g., 1.21.4)
+
+## Additional Context
+*Add any other context or relevant details about the issue.*

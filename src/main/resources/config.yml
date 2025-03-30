@@ -15,11 +15,15 @@ players:
   powerGainedOnKill: 1
 wilderness:
   color: '#3e8e39'
-gates:
-  minHeight: 3
-  maxBlocks: 64
-  maxPerFaction: 5
-  maxRemoveDistance: 12
+  interaction:
+    prevent: false
+    alert: false
+  place:
+    prevent: false
+    alert: true
+  break:
+    prevent: false
+    alert: true
 pvp:
   enabledForFactionlessPlayers: true
   warRequiredForPlayersOfDifferentFactions: true
@@ -106,5 +110,143 @@ dynmap:
   showDemesne: false
   onlyRenderTerritoriesUponStartup: false
   debug: false
+gates:
+  minHeight: 3
+  maxBlocks: 64
+  maxPerFaction: 5
+  maxRemoveDistance: 12
+  restrictedBlocks:
+    # Direct block entries
+    - &simple_blocks
+      - SAND
+      - GRAVEL
+      - ANVIL
+      - WEEPING_VINES
+      - TWISTING_VINES
+      - SUGAR_CANE
+      - KELP
+      - BIG_DRIPLEAF
+      - BAMBOO
+      - TORCH
+      - SOUL_TORCH
+      - REDSTONE_TORCH
+      - CHORUS_PLANT
+      - CHORUS_FLOWER
+      - LADDER
+      - CACTUS
+      - SCAFFOLDING
+      - BELL
+      - POINTED_DRIPSTONE
+      - AMETHYST_CLUSTER
+      - TRIPWIRE_HOOK
+
+    # Concrete powder types
+    - &concrete_powders
+      - WHITE_CONCRETE_POWDER
+      - ORANGE_CONCRETE_POWDER
+      - MAGENTA_CONCRETE_POWDER
+      - LIGHT_BLUE_CONCRETE_POWDER
+      - YELLOW_CONCRETE_POWDER
+      - LIME_CONCRETE_POWDER
+      - PINK_CONCRETE_POWDER
+      - GRAY_CONCRETE_POWDER
+      - LIGHT_GRAY_CONCRETE_POWDER
+      - CYAN_CONCRETE_POWDER
+      - PURPLE_CONCRETE_POWDER
+      - BLUE_CONCRETE_POWDER
+      - BROWN_CONCRETE_POWDER
+      - GREEN_CONCRETE_POWDER
+      - RED_CONCRETE_POWDER
+      - BLACK_CONCRETE_POWDER
+
+    # Carpets
+    - &carpets
+      - WHITE_CARPET
+      - ORANGE_CARPET
+      - MAGENTA_CARPET
+      - LIGHT_BLUE_CARPET
+      - YELLOW_CARPET
+      - LIME_CARPET
+      - PINK_CARPET
+      - GRAY_CARPET
+      - LIGHT_GRAY_CARPET
+      - CYAN_CARPET
+      - PURPLE_CARPET
+      - BLUE_CARPET
+      - BROWN_CARPET
+      - GREEN_CARPET
+      - RED_CARPET
+      - BLACK_CARPET
+
+    # Banners
+    - &banners
+      - WHITE_BANNER
+      - ORANGE_BANNER
+      - MAGENTA_BANNER
+      - LIGHT_BLUE_BANNER
+      - YELLOW_BANNER
+      - LIME_BANNER
+      - PINK_BANNER
+      - GRAY_BANNER
+      - LIGHT_GRAY_BANNER
+      - CYAN_BANNER
+      - PURPLE_BANNER
+      - BLUE_BANNER
+      - BROWN_BANNER
+      - GREEN_BANNER
+      - RED_BANNER
+      - BLACK_BANNER
+
+    # Beds
+    - &beds
+      - WHITE_BED
+      - ORANGE_BED
+      - MAGENTA_BED
+      - LIGHT_BLUE_BED
+      - YELLOW_BED
+      - LIME_BED
+      - PINK_BED
+      - GRAY_BED
+      - LIGHT_GRAY_BED
+      - CYAN_BED
+      - PURPLE_BED
+      - BLUE_BED
+      - BROWN_BED
+      - GREEN_BED
+      - RED_BED
+      - BLACK_BED
+
+    # Signs
+    - &signs
+      - OAK_SIGN
+      - SPRUCE_SIGN
+      - BIRCH_SIGN
+      - ACACIA_SIGN
+      - JUNGLE_SIGN
+      - DARK_OAK_SIGN
+      - CRIMSON_SIGN
+      - WARPED_SIGN
+
+    # Buttons
+    - &buttons
+      - OAK_BUTTON
+      - SPRUCE_BUTTON
+      - BIRCH_BUTTON
+      - ACACIA_BUTTON
+      - JUNGLE_BUTTON
+      - DARK_OAK_BUTTON
+      - CRIMSON_BUTTON
+      - WARPED_BUTTON
+      - STONE_BUTTON
+      - POLISHED_BLACKSTONE_BUTTON
+
+    # Add all grouped aliases for final list
+    - *simple_blocks
+    - *concrete_powders
+    - *carpets
+    - *banners
+    - *beds
+    - *signs
+    - *buttons
 dev:
   enableDevCommands: false

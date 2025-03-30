@@ -1,18 +1,22 @@
 ---
 name: API Call Request
-about: Request an API call.
-title: ''
-labels: API Call Request
-assignees: ''
+about: Request a new API call or modification to an existing one.
+title: "[API] "
+labels: ["API Call Request"]
+assignees: []
 
 ---
 
----
-name: Feature request
-- about: Request an API call.
-- title: ''
-- labels: enhancement
+## API Call Request
 
----
+### Description
+What do you want the API call to do? Please provide a clear and concise description.
 
-What do you want the API call to do?
+### Expected Input
+Describe the expected input parameters (e.g., request body, query params, headers).
+
+### Expected Output
+Describe the expected response, including status codes and response body format.
+
+### Additional Context
+Add any other context, related issues, or use cases that would help clarify the request.

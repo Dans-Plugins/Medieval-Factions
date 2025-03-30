@@ -59,7 +59,7 @@ class MedievalFactionsPlaceholderExpansion(private val plugin: MedievalFactions)
                         factions.singleOrNull { paramsLowercase == "faction_${it.name.lowercase()}_enemy" }
                     if (matchingEnemyFaction != null) return isPlayerFactionEnemy(player, matchingEnemyFaction)
                 }
-                if (paramsLowercase.startsWith("faction_") && paramsLowercase.endsWith("_enemy")) {
+                if (paramsLowercase.startsWith("faction_") && paramsLowercase.endsWith("ally")) {
                     val matchingAllyFaction = factions.singleOrNull { paramsLowercase == "faction_${it.name.lowercase()}_ally" }
                     if (matchingAllyFaction != null) return isPlayerFactionAlly(player, matchingAllyFaction)
                 }
