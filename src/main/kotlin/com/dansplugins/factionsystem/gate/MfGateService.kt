@@ -56,9 +56,21 @@ class MfGateService(
     fun getGatesByStatus(status: MfGateStatus) = gatesById.values.filter { it.status == status }
 
     fun save(gate: MfGate) = resultFrom {
-        val result = gateRepo.upsert(gate)
-        gatesById[result.id] = result
-        return@resultFrom result
+        try {
+            val result = gateRepo.upsert(gate)
+            gatesById[result.id] = result
+            return@resultFrom result
+        } catch (e: OptimisticLockingFailureException) {
+            plugin.logger.warning("Optimistic locking failure for gate with ID: ${gate.id}. Retrying...")
+            val reloadedGate = gateRepo.getGate(gate.id) ?: throw IllegalStateException("Gate not found: ${gate.id}")
+            val mergedGate = reloadedGate.copy(
+                status = gate.status,
+                version = reloadedGate.version + 1
+            )
+            val result = gateRepo.upsert(mergedGate)
+            gatesById[result.id] = result
+            return@resultFrom result
+        }
     }.mapFailure { exception ->
         ServiceFailure(exception.toServiceFailureType(), "Service error: ${exception.message}", exception)
     }
