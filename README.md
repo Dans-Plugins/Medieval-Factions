@@ -103,7 +103,16 @@ The first release version, [v1.7](https://github.com/dmccoystephenson/Medieval-F
 I am extremely grateful to those that have donated their time improving the project, one way or another. The plugin wouldn't be where it is today without the contributions of others.
 
 ## License
-GPL3
+This project is licensed under the **Dan’s Plugins Community Non-Commercial License (DPC-NC)**,  
+based on the GNU General Public License, Version 3 (GPLv3), with additional terms restricting commercial use.  
+© 2025 Daniel McCoy Stephenson. All rights reserved.  
+
+You may use, modify, and share this software for **non-commercial purposes only**.  
+Commercial use is prohibited without explicit written permission from the copyright holder.  
+
+Full license text: [DPC-NC License](https://github.com/Dans-Plugins-Community/dpc-nc-license)  
+SPDX Identifier: `DPC-NC`
+
 
 ## Project Status
 This project is in active development.
