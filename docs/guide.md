@@ -55,7 +55,7 @@
 * Lieges are granted bonus power proportional to their vassals' power. If a liege drops below 50% of its maximum cumulative power, it will no longer receive their vassal bonuses.
 * Vassals cannot be declared war on by any factions except those with the same liege.
 
-### Gates
+### **Gates**
 You can create a gate using the /mf gate create command. You need to be holding a golden hoe. The command will guide you through the process.
 
 If you’re stuck, check out this example [here](https://imgur.com/a/6A5CvHz).
