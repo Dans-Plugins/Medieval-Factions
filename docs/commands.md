@@ -120,7 +120,7 @@ Addons [Optional]
 | /mf flags set | mf.flags | /mf flags set <option> <value> | Set a faction flag. |
 | /mf gate create | mf.gate | /mf gate create (optional:name) | Create a gate, optionally with a name. |
 | /mf gate cancel | mf.gate | /mf gate cancel | Cancel's the creation of a gate. |
-| /mf gate list | mf.gate | /mg gate list | List of your gates. |
+| /mf gate list | mf.gate | /mf gate list | List of your gates. |
 | /mf gate name | mf.gate | - | - |
 | /mf gate remove | mf.gate | - | Removes a gate |
 | /mf grantaccess | mf.grantaccess | Grant someone access to a locked block. |
