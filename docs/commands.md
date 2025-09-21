@@ -15,7 +15,7 @@ Use `/mf create` to establish your new faction.
 **Management**
 > To rename your faction, use the command: `/mf rename [new-name]`
 >
-> To set your faction description, use the command: `/mf desc [description`
+> To set your faction description, use the command: `/mf desc [description]`
 >
 > To promote a player to an officer of your faction, use the command: `/mf promote [player-name]`
 >
