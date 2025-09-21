@@ -24,6 +24,7 @@ class MfFactionClaimFillCommand(private val plugin: MedievalFactions) : CommandE
 
     private val decimalFormat = DecimalFormat("0", DecimalFormatSymbols.getInstance(plugin.language.locale))
     private val claimFillMaxChunks = plugin.config.getInt("factions.claimFillMaxChunks", -1)
+    private val claimFillMaxDepth = plugin.config.getInt("factions.claimFillMaxDepth", 50)
 
     override fun onCommand(sender: CommandSender, command: Command, label: String, args: Array<out String>): Boolean {
         if (!sender.hasPermission("mf.claim.fill") && !sender.hasPermission("mf.claimfill")) {
@@ -67,9 +68,12 @@ class MfFactionClaimFillCommand(private val plugin: MedievalFactions) : CommandE
                     Runnable saveChunks@{
                         val chunks: Set<MfChunkPosition>?
                         try {
-                            chunks = fill(senderWorldId, senderChunkX, senderChunkZ, faction)
+                            chunks = fill(senderWorldId, senderChunkX, senderChunkZ, faction, emptySet(), 0)
                         } catch (e: ClaimFillLimitReachedException) {
                             sender.sendMessage("$RED${plugin.language["CommandFactionClaimFillTooManyChunks", claimFillMaxChunks.toString()]}")
+                            return@saveChunks
+                        } catch (e: ClaimFillDepthLimitReachedException) {
+                            sender.sendMessage("$RED${plugin.language["CommandFactionClaimFillTooDeep", claimFillMaxDepth.toString()]}")
                             return@saveChunks
                         }
                         if (chunks == null) {
@@ -116,7 +120,12 @@ class MfFactionClaimFillCommand(private val plugin: MedievalFactions) : CommandE
         return true
     }
 
-    private fun fill(worldId: UUID, startChunkX: Int, startChunkZ: Int, faction: MfFaction, chunksToFill: Set<MfChunkPosition> = emptySet()): Set<MfChunkPosition>? {
+    private fun fill(worldId: UUID, startChunkX: Int, startChunkZ: Int, faction: MfFaction, chunksToFill: Set<MfChunkPosition> = emptySet(), depth: Int = 0): Set<MfChunkPosition>? {
+        // Check if we've exceeded the maximum recursion depth
+        if (depth > claimFillMaxDepth) {
+            throw ClaimFillDepthLimitReachedException()
+        }
+        
         val claimService = plugin.services.claimService
         val claim = claimService.getClaim(worldId, startChunkX, startChunkZ)
         if (claim?.factionId == faction.id) return chunksToFill
@@ -126,13 +135,13 @@ class MfFactionClaimFillCommand(private val plugin: MedievalFactions) : CommandE
         if (claimFillMaxChunks > 0 && newChunks.size > claimFillMaxChunks) {
             throw ClaimFillLimitReachedException()
         }
-        val westChunks = fill(worldId, startChunkX - 1, startChunkZ, faction, newChunks) ?: return null
+        val westChunks = fill(worldId, startChunkX - 1, startChunkZ, faction, newChunks, depth + 1) ?: return null
         newChunks += westChunks
-        val eastChunks = fill(worldId, startChunkX + 1, startChunkZ, faction, newChunks) ?: return null
+        val eastChunks = fill(worldId, startChunkX + 1, startChunkZ, faction, newChunks, depth + 1) ?: return null
         newChunks += eastChunks
-        val northChunks = fill(worldId, startChunkX, startChunkZ - 1, faction, newChunks) ?: return null
+        val northChunks = fill(worldId, startChunkX, startChunkZ - 1, faction, newChunks, depth + 1) ?: return null
         newChunks += northChunks
-        val southChunks = fill(worldId, startChunkX, startChunkZ + 1, faction, newChunks) ?: return null
+        val southChunks = fill(worldId, startChunkX, startChunkZ + 1, faction, newChunks, depth + 1) ?: return null
         newChunks += southChunks
         return newChunks
     }
@@ -145,4 +154,5 @@ class MfFactionClaimFillCommand(private val plugin: MedievalFactions) : CommandE
     ) = emptyList<String>()
 
     class ClaimFillLimitReachedException : Exception()
+    class ClaimFillDepthLimitReachedException : Exception()
 }
