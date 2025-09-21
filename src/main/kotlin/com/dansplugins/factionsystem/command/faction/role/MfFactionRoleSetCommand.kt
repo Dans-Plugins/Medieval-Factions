@@ -55,7 +55,6 @@ class MfFactionRoleSetCommand(private val plugin: MedievalFactions) : CommandExe
                 val factionService = plugin.services.factionService
                 val faction = factionService.getFaction(targetMfPlayer.id)
                 if (faction == null) {
-                    sender.sendMessage("$RED${plugin.language["CommandFactionRoleSetMustBeInAFaction"]}")
                     sender.sendMessage("$RED${plugin.language["CommandFactionRoleSetTargetMustBeInAFaction"]}")
                     return@Runnable
                 }
