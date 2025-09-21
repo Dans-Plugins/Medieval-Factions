@@ -123,7 +123,7 @@ Addons [Optional]
 | /mf gate list | mf.gate | /mf gate list | List of your gates. |
 | /mf gate name | mf.gate | - | - |
 | /mf gate remove | mf.gate | - | Removes a gate |
-| /mf grantaccess | mf.grantaccess | Grant someone access to a locked block. |
+| /mf grantaccess | mf.grantaccess | /mf grantaccess <player> | Grant someone access to a locked block. |
 | /mf grantindependence | mf.grantindependence | - | Grant a vassal faction independence. |
 | /mf help | mf.help | /mf help # | Shows a list of useful commands. |
 | /mf home | mf.home | /mf home | Teleport to your faction home. |
