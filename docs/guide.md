@@ -14,7 +14,7 @@
 * To set the description of your faction, type /mf desc (description).
 * To view the laws of your faction, type /mf laws.
 * To add a law, type /mf addlaw (law) or /mf al (law).
-* To remove a law, type /mf (removelaw (number) or /mf rl (number).
+* To remove a law, type /mf removelaw (number) or /mf rl (number).
 * To edit a law, type /mf editlaw (number) (edited law) or /mf el (number) (edited law).
 
 ### **Claiming Land**
