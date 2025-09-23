@@ -29,6 +29,7 @@ repositories {
     maven { url 'https://repo.maven.apache.org/maven2/' }
     maven { url 'https://repo.rpkit.com/repository/maven-public/' }
     maven { url 'https://repo.dansplugins.com/repository/maven-public/' }
+    maven { url 'https://repo.bluecolored.de/releases' }
 }
 
 configurations {
@@ -39,6 +40,7 @@ dependencies {
     implementation 'me.clip:placeholderapi:2.11.6'
     implementation 'org.spigotmc:spigot-api:1.19.2-R0.1-SNAPSHOT'
     implementation 'us.dynmap:dynmap-api:2.2'
+    // compileOnly 'de.bluecolored.bluemap:BlueMapAPI:2.6.2'
     implementation 'org.bstats:bstats-bukkit:3.0.0'
     implementation platform("dev.forkhandles:forkhandles-bom:2.2.0.0")
     implementation 'dev.forkhandles:result4k'

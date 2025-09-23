@@ -69,6 +69,7 @@ import com.dansplugins.factionsystem.locks.MfLockRepository
 import com.dansplugins.factionsystem.locks.MfLockService
 import com.dansplugins.factionsystem.locks.MfRpkLockService
 import com.dansplugins.factionsystem.map.dynmap.DynmapService
+import com.dansplugins.factionsystem.map.bluemap.BlueMapService
 import com.dansplugins.factionsystem.notification.MfNotificationService
 import com.dansplugins.factionsystem.notification.mailboxes.MailboxesNotificationService
 import com.dansplugins.factionsystem.notification.noop.NoOpNotificationService
@@ -184,10 +185,14 @@ class MedievalFactions : JavaPlugin() {
 
         val gson = Gson()
         val playerRepository: MfPlayerRepository = JooqMfPlayerRepository(this, dsl)
-        val mapService = if (server.pluginManager.getPlugin("dynmap") != null && config.getBoolean("dynmap.enableDynmapIntegration")) {
-            DynmapService(this)
-        } else {
-            null
+        val mapService = when {
+            server.pluginManager.getPlugin("BlueMap") != null && config.getBoolean("bluemap.enableBluemapIntegration") -> {
+                BlueMapService(this)
+            }
+            server.pluginManager.getPlugin("dynmap") != null && config.getBoolean("dynmap.enableDynmapIntegration") -> {
+                DynmapService(this)
+            }
+            else -> null
         }
         val factionRepository: MfFactionRepository = JooqMfFactionRepository(this, dsl, gson)
         val lawRepository: MfLawRepository = JooqMfLawRepository(dsl)
@@ -305,7 +310,15 @@ class MedievalFactions : JavaPlugin() {
             logger.info(language["DynmapOnlyRenderTerritoriesUponStartupEnabled"])
         }
 
+        if (config.getBoolean("bluemap.onlyRenderTerritoriesUponStartup")) {
+            logger.info(language["BluemapOnlyRenderTerritoriesUponStartupEnabled"])
+        }
+
         if (mapService != null) {
+            when (mapService) {
+                is BlueMapService -> logger.info("BlueMap integration enabled - faction territories will be displayed on BlueMap")
+                is DynmapService -> logger.info("Dynmap integration enabled - faction territories will be displayed on Dynmap")
+            }
             factionService.factions.forEach { faction ->
                 mapService.scheduleUpdateClaims(faction)
             }
