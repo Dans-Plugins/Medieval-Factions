@@ -3,6 +3,7 @@ package com.dansplugins.factionsystem.listener
 import com.dansplugins.factionsystem.MedievalFactions
 import com.dansplugins.factionsystem.area.MfChunkPosition
 import com.dansplugins.factionsystem.claim.MfClaimedChunk
+import com.dansplugins.factionsystem.exception.WorldClaimBlockedException
 import com.dansplugins.factionsystem.player.MfPlayer
 import dev.forkhandles.result4k.onFailure
 import net.md_5.bungee.api.ChatColor
@@ -74,8 +75,16 @@ class PlayerMoveListener(private val plugin: MedievalFactions) : Listener {
                             return@Runnable
                         }
                         claimService.save(MfClaimedChunk(to.chunk, playerFaction.id)).onFailure {
-                            plugin.logger.log(SEVERE, "Failed to save chunk claim: ${it.reason.message}", it.reason.cause)
-                            return@Runnable
+                            when(it.reason.cause) {
+                                is WorldClaimBlockedException -> {
+                                    // Silently skip autoclaim if world is blocked
+                                    return@Runnable
+                                }
+                                else -> {
+                                    plugin.logger.log(SEVERE, "Failed to save chunk claim: ${it.reason.message}", it.reason.cause)
+                                    return@Runnable
+                                }
+                            }
                         }
                     }
                 }

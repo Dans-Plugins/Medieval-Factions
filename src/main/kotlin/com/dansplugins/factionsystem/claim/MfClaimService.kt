@@ -5,6 +5,7 @@ import com.dansplugins.factionsystem.area.MfChunkPosition
 import com.dansplugins.factionsystem.event.faction.FactionClaimEvent
 import com.dansplugins.factionsystem.event.faction.FactionUnclaimEvent
 import com.dansplugins.factionsystem.exception.EventCancelledException
+import com.dansplugins.factionsystem.exception.WorldClaimBlockedException
 import com.dansplugins.factionsystem.faction.MfFactionId
 import com.dansplugins.factionsystem.failure.OptimisticLockingFailureException
 import com.dansplugins.factionsystem.failure.ServiceFailure
@@ -86,7 +87,7 @@ class MfClaimService(private val plugin: MedievalFactions, private val repositor
     fun save(claim: MfClaimedChunk) = resultFrom {
         val world = plugin.server.getWorld(claim.worldId)
         if (world != null && isClaimingBlockedInWorld(world)) {
-            throw IllegalArgumentException("Claims are not allowed in this world")
+            throw WorldClaimBlockedException("Claims are not allowed in this world")
         }
         val factionService = plugin.services.factionService
         val faction = factionService.getFaction(claim.factionId).let(::requireNotNull)
