@@ -66,6 +66,7 @@ factions:
   maxClaimRadius: 3
   limitLand: true
   contiguousClaims: false
+  blockedClaimWorlds: []
   actionBarTerritoryIndicator: true
   titleTerritoryIndicator: true
   titleTerritoryFadeInLength: 5  # "Length" is measured in ticks (20 ticks = 1 second).

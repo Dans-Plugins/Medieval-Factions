@@ -51,6 +51,11 @@ class MfFactionClaimCircleCommand(private val plugin: MedievalFactions) : Comman
                     sender.sendMessage("${ChatColor.RED}${plugin.language["CommandFactionClaimNoFactionPermission"]}")
                     return@Runnable
                 }
+                val claimService = plugin.services.claimService
+                if (claimService.isClaimingBlockedInWorld(sender.world)) {
+                    sender.sendMessage("${ChatColor.RED}${plugin.language["CommandFactionClaimWorldBlocked"]}")
+                    return@Runnable
+                }
                 val radius = if (args.isNotEmpty()) {
                     args[0].toIntOrNull()
                 } else {

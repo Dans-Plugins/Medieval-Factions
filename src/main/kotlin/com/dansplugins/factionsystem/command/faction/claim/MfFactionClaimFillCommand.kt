@@ -55,6 +55,11 @@ class MfFactionClaimFillCommand(private val plugin: MedievalFactions) : CommandE
                     sender.sendMessage("$RED${plugin.language["CommandFactionClaimFillNoFactionPermission"]}")
                     return@Runnable
                 }
+                val claimService = plugin.services.claimService
+                if (claimService.isClaimingBlockedInWorld(sender.world)) {
+                    sender.sendMessage("$RED${plugin.language["CommandFactionClaimWorldBlocked"]}")
+                    return@Runnable
+                }
                 val senderWorldId = sender.location.world?.uid
                 val senderChunkX = sender.location.chunk.x
                 val senderChunkZ = sender.location.chunk.z
