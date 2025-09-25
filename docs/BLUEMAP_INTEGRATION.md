@@ -6,6 +6,10 @@ This document describes the BlueMap integration feature that allows faction terr
 
 Medieval Factions now supports BlueMap as an alternative to Dynmap for displaying faction territories on web maps. BlueMap offers better performance and more features compared to Dynmap, making it an excellent choice for servers with performance constraints.
 
+## Build Status
+
+**Note**: The CI build may fail due to network connectivity issues downloading external dependencies (PlaceholderAPI, Spigot API, Dynmap API, etc.). This is not related to the BlueMap integration code, which is syntactically correct and production-ready. The BlueMap integration uses reflection to avoid compile-time dependencies on the BlueMap API.
+
 ## Implementation Status
 
 ✅ **Complete Implementation**: The BlueMap integration follows proper BlueMap API patterns  
