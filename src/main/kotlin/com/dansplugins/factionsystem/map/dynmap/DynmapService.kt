@@ -80,9 +80,14 @@ class DynmapService(private val plugin: MedievalFactions) : MapService {
             plugin.logger.info("[Dynmap Service] Fetched ${claims.size} claims for faction ${faction.name}")
         }
         val factionInfo = factionInfoBuilder.build(faction)
-        claims.groupBy { it.worldId }.forEach { (worldId, worldClaims) ->
-            taskScheduler.scheduleTask(faction.id, { updateWorldClaims(faction, worldId, worldClaims, claimsMarkerSet, factionInfo) })
-        }
+        
+        // Group claims by world and process all worlds in one batch task
+        val claimsByWorld = claims.groupBy { it.worldId }
+        taskScheduler.scheduleTask(faction.id, { 
+            claimsByWorld.forEach { (worldId, worldClaims) ->
+                updateWorldClaims(faction, worldId, worldClaims, claimsMarkerSet, factionInfo)
+            }
+        })
     }
 
     /**
@@ -97,7 +102,7 @@ class DynmapService(private val plugin: MedievalFactions) : MapService {
     private fun updateWorldClaims(faction: MfFaction, worldId: UUID, worldClaims: List<MfClaimedChunk>, claimsMarkerSet: MarkerSet, factionInfo: String) {
         val world = plugin.server.getWorld(worldId)
         if (world != null) {
-            taskScheduler.scheduleTask(faction.id, { createAreaMarkers(faction, world, worldClaims, claimsMarkerSet, factionInfo) })
+            createAreaMarkers(faction, world, worldClaims, claimsMarkerSet, factionInfo)
         }
     }
 
@@ -115,12 +120,14 @@ class DynmapService(private val plugin: MedievalFactions) : MapService {
         if (plugin.config.getBoolean("dynmap.debug")) {
             plugin.logger.info("[Dynmap Service] Generated ${paths.size} paths for world ${world.name}")
         }
+        
+        // Batch create all markers in one pass instead of scheduling each individually
         paths.forEachIndexed { index, path ->
             val corners = getCorners(path)
-            taskScheduler.scheduleTask(faction.id, { createAreaMarker(faction, world, corners, claimsMarkerSet, factionInfo, index) })
+            createAreaMarker(faction, world, corners, claimsMarkerSet, factionInfo, index)
         }
         worldClaims.forEachIndexed { index, claim ->
-            taskScheduler.scheduleTask(faction.id, { createClaimMarker(faction, world, claim, claimsMarkerSet, factionInfo, index) })
+            createClaimMarker(faction, world, claim, claimsMarkerSet, factionInfo, index)
         }
     }
 
@@ -205,9 +212,14 @@ class DynmapService(private val plugin: MedievalFactions) : MapService {
     private fun updateFactionRealm(faction: MfFaction, realmMarkerSet: MarkerSet, claimService: MfClaimService) {
         val relationshipService = plugin.services.factionRelationshipService
         val realm = claimService.getClaims(faction.id) + relationshipService.getVassalTree(faction.id).flatMap(claimService::getClaims)
-        realm.groupBy { it.worldId }.forEach { (worldId, worldClaims) ->
-            taskScheduler.scheduleTask(faction.id, { updateWorldRealm(faction, worldId, worldClaims, realmMarkerSet) })
-        }
+        
+        // Group by world and process all worlds in one batch task
+        val realmByWorld = realm.groupBy { it.worldId }
+        taskScheduler.scheduleTask(faction.id, {
+            realmByWorld.forEach { (worldId, worldClaims) ->
+                updateWorldRealm(faction, worldId, worldClaims, realmMarkerSet)
+            }
+        })
     }
 
     /**
@@ -221,7 +233,7 @@ class DynmapService(private val plugin: MedievalFactions) : MapService {
     private fun updateWorldRealm(faction: MfFaction, worldId: UUID, worldClaims: List<MfClaimedChunk>, realmMarkerSet: MarkerSet) {
         val world = plugin.server.getWorld(worldId)
         if (world != null) {
-            taskScheduler.scheduleTask(faction.id, { createRealmMarkers(faction, world, worldClaims, realmMarkerSet) })
+            createRealmMarkers(faction, world, worldClaims, realmMarkerSet)
         }
     }
 
@@ -238,9 +250,11 @@ class DynmapService(private val plugin: MedievalFactions) : MapService {
         if (plugin.config.getBoolean("dynmap.debug")) {
             plugin.logger.info("[Dynmap Service] Generated ${paths.size} paths for realm in world ${world.name}")
         }
+        
+        // Batch create all realm markers instead of scheduling each individually
         paths.forEachIndexed { index, path ->
             val corners = getCorners(path)
-            taskScheduler.scheduleTask(faction.id, { createRealmAreaMarker(faction, world, corners, realmMarkerSet, index) })
+            createRealmAreaMarker(faction, world, corners, realmMarkerSet, index)
         }
     }
 
