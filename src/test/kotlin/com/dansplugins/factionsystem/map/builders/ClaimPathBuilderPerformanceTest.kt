@@ -92,4 +92,91 @@ class ClaimPathBuilderPerformanceTest {
         // This should still be relatively fast with O(n) algorithm
         assert(time < 1000) { "Processing 1000 claims in complex shape took ${time}ms, expected < 1000ms" }
     }
+
+    @Test
+    fun testGetPaths_performance_sparseDistribution() {
+        val uuid = UUID.randomUUID()
+        val factionId = MfFactionId("factionId")
+        
+        // Create 500 claims spaced far apart
+        val claims = mutableListOf<MfClaimedChunk>()
+        for (i in 0 until 500) {
+            claims.add(MfClaimedChunk(uuid, i * 10, i * 10, factionId))
+        }
+        
+        val time = measureTimeMillis {
+            val paths = uut.getPaths(claims)
+            assert(paths.size == 500) // Each claim should be separate
+        }
+        
+        println("Time to process 500 sparse claims: ${time}ms")
+        assert(time < 500) { "Processing 500 sparse claims took ${time}ms, expected < 500ms" }
+    }
+
+    @Test
+    fun testGetPaths_performance_longStrip() {
+        val uuid = UUID.randomUUID()
+        val factionId = MfFactionId("factionId")
+        
+        // Create a very long strip of 1000 claims
+        val claims = mutableListOf<MfClaimedChunk>()
+        for (x in 0 until 1000) {
+            claims.add(MfClaimedChunk(uuid, x, 0, factionId))
+        }
+        
+        val time = measureTimeMillis {
+            val paths = uut.getPaths(claims)
+            assert(paths.size == 1)
+        }
+        
+        println("Time to process 1000 claims in a strip: ${time}ms")
+        assert(time < 500) { "Processing 1000 claims in a strip took ${time}ms, expected < 500ms" }
+    }
+
+    @Test
+    fun testGetPaths_performance_withNegativeCoordinates() {
+        val uuid = UUID.randomUUID()
+        val factionId = MfFactionId("factionId")
+        
+        // Create a 20x20 grid centered at origin (spans negative and positive)
+        val claims = mutableListOf<MfClaimedChunk>()
+        for (x in -10 until 10) {
+            for (z in -10 until 10) {
+                claims.add(MfClaimedChunk(uuid, x, z, factionId))
+            }
+        }
+        
+        val time = measureTimeMillis {
+            val paths = uut.getPaths(claims)
+            assert(paths.isNotEmpty())
+        }
+        
+        println("Time to process 400 claims with negative coordinates: ${time}ms")
+        assert(time < 200) { "Processing 400 claims with negative coords took ${time}ms, expected < 200ms" }
+    }
+
+    @Test
+    fun testGetPaths_performance_worstCaseCheckerboard() {
+        val uuid = UUID.randomUUID()
+        val factionId = MfFactionId("factionId")
+        
+        // Create a checkerboard pattern - worst case for path building
+        val claims = mutableListOf<MfClaimedChunk>()
+        for (x in 0 until 20) {
+            for (z in 0 until 20) {
+                if ((x + z) % 2 == 0) {
+                    claims.add(MfClaimedChunk(uuid, x, z, factionId))
+                }
+            }
+        }
+        
+        val time = measureTimeMillis {
+            val paths = uut.getPaths(claims)
+            // Checkerboard creates many separate regions
+            assert(paths.size == 200) // Each claim is separate
+        }
+        
+        println("Time to process 200 claims in checkerboard pattern: ${time}ms")
+        assert(time < 500) { "Processing 200 claims in checkerboard took ${time}ms, expected < 500ms" }
+    }
 }
