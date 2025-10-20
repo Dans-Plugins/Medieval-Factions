@@ -119,6 +119,7 @@ if [ "$BLUEMAP_ENABLED" = "true" ]; then
 fi
 manage_plugin_dependencies "PlaceholderAPI" "PLACEHOLDER_API_ENABLED"
 manage_plugin_dependencies "ServerUtils" "SERVERUTILS_ENABLED"
+manage_plugin_dependencies "Slimefun" "SLIMEFUN_ENABLED"
 
 # Start Server
 start_server

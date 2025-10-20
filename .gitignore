@@ -43,3 +43,5 @@ bin/
 
 # env file
 .env
+# Slimefun plugin JAR (must be downloaded separately)
+.testcontainer/jars/Slimefun*.jar
