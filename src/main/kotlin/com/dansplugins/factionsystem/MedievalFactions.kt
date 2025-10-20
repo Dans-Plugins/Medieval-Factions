@@ -53,14 +53,19 @@ import com.dansplugins.factionsystem.listener.CreatureSpawnListener
 import com.dansplugins.factionsystem.listener.EntityDamageByEntityListener
 import com.dansplugins.factionsystem.listener.EntityDamageListener
 import com.dansplugins.factionsystem.listener.EntityExplodeListener
+import com.dansplugins.factionsystem.listener.HighPriorityPlayerInteractListener
+import com.dansplugins.factionsystem.listener.InventoryClickListener
 import com.dansplugins.factionsystem.listener.InventoryMoveItemListener
 import com.dansplugins.factionsystem.listener.LingeringPotionSplashListener
 import com.dansplugins.factionsystem.listener.PlayerBucketListener
 import com.dansplugins.factionsystem.listener.PlayerDeathListener
+import com.dansplugins.factionsystem.listener.PlayerDropItemListener
+import com.dansplugins.factionsystem.listener.PlayerInteractAtEntityListener
 import com.dansplugins.factionsystem.listener.PlayerInteractEntityListener
 import com.dansplugins.factionsystem.listener.PlayerInteractListener
 import com.dansplugins.factionsystem.listener.PlayerJoinListener
 import com.dansplugins.factionsystem.listener.PlayerMoveListener
+import com.dansplugins.factionsystem.listener.PlayerPickupItemListener
 import com.dansplugins.factionsystem.listener.PlayerQuitListener
 import com.dansplugins.factionsystem.listener.PlayerTeleportListener
 import com.dansplugins.factionsystem.listener.PotionSplashListener
@@ -325,17 +330,22 @@ class MedievalFactions : JavaPlugin() {
             EntityDamageByEntityListener(this),
             EntityDamageListener(this),
             EntityExplodeListener(this),
+            HighPriorityPlayerInteractListener(this),
+            InventoryClickListener(this),
             InventoryMoveItemListener(this),
             LingeringPotionSplashListener(this),
             PlayerBucketListener(this),
             PlayerDeathListener(this),
+            PlayerDropItemListener(this),
+            PlayerInteractAtEntityListener(this),
+            PlayerInteractEntityListener(this),
             PlayerInteractListener(this),
             PlayerJoinListener(this),
             PlayerMoveListener(this),
+            PlayerPickupItemListener(this),
             PlayerQuitListener(this),
             PlayerTeleportListener(this),
-            PotionSplashListener(this),
-            PlayerInteractEntityListener(this)
+            PotionSplashListener(this)
         )
 
         getCommand("faction")?.setExecutor(MfFactionCommand(this))
