@@ -110,6 +110,19 @@ dynmap:
   showDemesne: false
   onlyRenderTerritoriesUponStartup: false
   debug: false
+bluemap:
+  enableBluemapIntegration: true
+  showRealms: false
+  showDescription: true
+  showMembers: false
+  showLiege: false
+  showVassals: false
+  showAllies: false
+  showAtWarWith: false
+  showPower: false
+  showDemesne: false
+  onlyRenderTerritoriesUponStartup: false
+  debug: false
 gates:
   minHeight: 3
   maxBlocks: 64
