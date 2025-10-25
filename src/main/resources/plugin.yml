@@ -390,6 +390,9 @@ permissions:
   mf.admin.create:
     description: Allows creating leaderless factions
     default: op
+  mf.admin.setleader:
+    description: Allows setting a player as the leader of a faction
+    default: op
   mf.admin:
     description: Admin permission
     default: op
@@ -401,3 +404,4 @@ permissions:
     - mf.relationship.remove
     - mf.power.set
     - mf.admin.create
+    - mf.admin.setleader
