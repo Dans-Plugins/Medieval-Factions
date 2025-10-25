@@ -10,7 +10,7 @@ import org.bukkit.ChatColor.GRAY
 import org.bukkit.ChatColor.GREEN
 import org.bukkit.ChatColor.RED
 import org.bukkit.NamespacedKey
-import org.bukkit.attribute.Attribute.GENERIC_MAX_HEALTH
+import org.bukkit.attribute.Attribute.MAX_HEALTH
 import org.bukkit.boss.BarColor
 import org.bukkit.boss.BarStyle
 import org.bukkit.command.Command
@@ -53,13 +53,13 @@ class MfDuelAcceptCommand(private val plugin: MedievalFactions) : CommandExecuto
                 val mfPlayer = playerService.getPlayer(sender)
                     ?: playerService.save(MfPlayer(plugin, sender)).onFailure {
                         sender.sendMessage("$RED${plugin.language["CommandDuelAcceptFailedToSavePlayer"]}")
-                        plugin.logger.log(Level.SEVERE, "Failed to save player: ${it.reason.message}", it.reason.cause)
+                        plugin.logger.log(SEVERE, "Failed to save player: ${it.reason.message}", it.reason.cause)
                         return@Runnable
                     }
                 val targetMfPlayer = playerService.getPlayer(target)
                     ?: playerService.save(MfPlayer(plugin, target)).onFailure {
                         sender.sendMessage("$RED${plugin.language["CommandDuelAcceptFailedToSaveTargetPlayer"]}")
-                        plugin.logger.log(Level.SEVERE, "Failed to save player: ${it.reason.message}", it.reason.cause)
+                        plugin.logger.log(SEVERE, "Failed to save player: ${it.reason.message}", it.reason.cause)
                         return@Runnable
                     }
                 val duelService = plugin.services.duelService
@@ -103,8 +103,8 @@ class MfDuelAcceptCommand(private val plugin: MedievalFactions) : CommandExecuto
                 plugin.server.scheduler.runTask(
                     plugin,
                     Runnable {
-                        sender.health = sender.getAttribute(GENERIC_MAX_HEALTH)?.value ?: sender.health
-                        target.health = target.getAttribute(GENERIC_MAX_HEALTH)?.value ?: target.health
+                        sender.health = sender.getAttribute(MAX_HEALTH)?.value ?: sender.health
+                        target.health = target.getAttribute(MAX_HEALTH)?.value ?: target.health
 
                         val bar = plugin.server.createBossBar(
                             NamespacedKey(plugin, "duel_${duel.id.value}"),

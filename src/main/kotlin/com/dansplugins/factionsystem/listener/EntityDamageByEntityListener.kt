@@ -4,7 +4,7 @@ import com.dansplugins.factionsystem.MedievalFactions
 import com.dansplugins.factionsystem.player.MfPlayer
 import com.dansplugins.factionsystem.relationship.MfFactionRelationshipType
 import org.bukkit.ChatColor
-import org.bukkit.entity.Monster
+import org.bukkit.entity.Enemy
 import org.bukkit.entity.Player
 import org.bukkit.entity.Projectile
 import org.bukkit.event.EventHandler
@@ -34,7 +34,7 @@ class EntityDamageByEntityListener(private val plugin: MedievalFactions) : Liste
                 val damagedFaction = factionService.getFaction(claim.factionId) ?: return
                 if (!damagedFaction.flags[plugin.flags.enableMobProtection]) return
                 if (damagerFaction?.id == damagedFaction.id) return
-                if (damaged is Monster) return
+                if (damaged is Enemy) return
                 if (damagerMfPlayer.isBypassEnabled && damagerPlayer.hasPermission("mf.bypass")) {
                     damagerPlayer.sendMessage("${ChatColor.RED}${plugin.language["FactionTerritoryProtectionBypassed"]}")
                     return
