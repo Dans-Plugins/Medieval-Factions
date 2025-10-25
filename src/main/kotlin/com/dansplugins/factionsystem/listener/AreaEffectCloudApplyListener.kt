@@ -30,8 +30,8 @@ class AreaEffectCloudApplyListener(private val plugin: MedievalFactions) : Liste
 
     @EventHandler
     fun onAreaEffectCloudApply(event: AreaEffectCloudApplyEvent) {
-        val basePotionData = event.entity.basePotionData ?: return
-        if (!harmfulPotionEffectTypes.contains(basePotionData.type.effectType)) return
+        val potionEffects = event.entity.basePotionType?.potionEffects ?: return
+        if (potionEffects.none { harmfulPotionEffectTypes.contains(it.type) }) return
         val potionService = plugin.services.potionService
         val damager = potionService.getLingeringPotionEffectThrower(event.entity) ?: return
         for (damaged in event.affectedEntities.filterIsInstance<Player>()) {
