@@ -113,11 +113,11 @@ class MfFactionAdminSetLeaderCommand(private val plugin: MedievalFactions) : Com
         val factionService = plugin.services.factionService
         return when {
             args.isEmpty() ->
-                plugin.server.offlinePlayers
+                plugin.server.onlinePlayers
                     .mapNotNull { it.name }
             args.size == 1 ->
-                plugin.server.offlinePlayers
-                    .filter { it.name?.lowercase()?.startsWith(args[0].lowercase()) == true }
+                plugin.server.onlinePlayers
+                    .filter { it.name.lowercase().startsWith(args[0].lowercase()) }
                     .mapNotNull { it.name }
             args.size == 2 ->
                 factionService.factions
