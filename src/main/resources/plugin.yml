@@ -387,6 +387,9 @@ permissions:
     - mf.force.unclaim
     - mf.force.flag
     - mf.force.addmember
+  mf.admin.create:
+    description: Allows creating leaderless factions
+    default: op
   mf.admin:
     description: Admin permission
     default: op
@@ -397,3 +400,4 @@ permissions:
     - mf.relationship.add
     - mf.relationship.remove
     - mf.power.set
+    - mf.admin.create

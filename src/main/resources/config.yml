@@ -76,6 +76,7 @@ factions:
   factionHomeTeleportDelay: 5
   maxMembers: -1
   claimFillMaxChunks: 100
+  allowLeaderlessFactions: false
   defaults:
     flags:
       alliesCanInteractWithLand: false
