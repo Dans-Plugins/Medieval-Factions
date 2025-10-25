@@ -76,7 +76,7 @@ factions:
   factionHomeTeleportDelay: 5
   maxMembers: -1
   claimFillMaxChunks: 100
-  allowLeaderlessFactions: false
+  allowLeaderlessFactions: false  # When true, factions can exist without any members. When the last member leaves, the faction and its claims remain intact. Operators can create leaderless factions using /faction admin create.
   defaults:
     flags:
       alliesCanInteractWithLand: false
