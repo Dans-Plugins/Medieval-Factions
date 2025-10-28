@@ -20,13 +20,20 @@ import java.util.*
 import java.util.logging.Level.SEVERE
 import kotlin.math.floor
 
-class MfFactionClaimFillCommand(private val plugin: MedievalFactions) : CommandExecutor, TabCompleter {
-
+class MfFactionClaimFillCommand(
+    private val plugin: MedievalFactions,
+) : CommandExecutor,
+    TabCompleter {
     private val decimalFormat = DecimalFormat("0", DecimalFormatSymbols.getInstance(plugin.language.locale))
     private val claimFillMaxChunks = plugin.config.getInt("factions.claimFillMaxChunks", -1)
     private val claimFillMaxDepth = plugin.config.getInt("factions.claimFillMaxDepth", 50)
 
-    override fun onCommand(sender: CommandSender, command: Command, label: String, args: Array<out String>): Boolean {
+    override fun onCommand(
+        sender: CommandSender,
+        command: Command,
+        label: String,
+        args: Array<out String>,
+    ): Boolean {
         if (!sender.hasPermission("mf.claim.fill") && !sender.hasPermission("mf.claimfill")) {
             sender.sendMessage("$RED${plugin.language["CommandFactionClaimFillNoPermission"]}")
             return true
@@ -39,12 +46,13 @@ class MfFactionClaimFillCommand(private val plugin: MedievalFactions) : CommandE
             plugin,
             Runnable {
                 val playerService = plugin.services.playerService
-                val mfPlayer = playerService.getPlayer(sender)
-                    ?: playerService.save(MfPlayer(plugin, sender)).onFailure {
-                        sender.sendMessage("$RED${plugin.language["CommandFactionClaimFillFailedToSavePlayer"]}")
-                        plugin.logger.log(SEVERE, "Failed to save player: ${it.reason.message}", it.reason.cause)
-                        return@Runnable
-                    }
+                val mfPlayer =
+                    playerService.getPlayer(sender)
+                        ?: playerService.save(MfPlayer(plugin, sender)).onFailure {
+                            sender.sendMessage("$RED${plugin.language["CommandFactionClaimFillFailedToSavePlayer"]}")
+                            plugin.logger.log(SEVERE, "Failed to save player: ${it.reason.message}", it.reason.cause)
+                            return@Runnable
+                        }
                 val factionService = plugin.services.factionService
                 val faction = factionService.getFaction(mfPlayer.id)
                 if (faction == null) {
@@ -70,7 +78,9 @@ class MfFactionClaimFillCommand(private val plugin: MedievalFactions) : CommandE
                         try {
                             chunks = fill(senderWorldId, senderChunkX, senderChunkZ, faction, emptySet(), 0)
                         } catch (e: ClaimFillLimitReachedException) {
-                            sender.sendMessage("$RED${plugin.language["CommandFactionClaimFillTooManyChunks", claimFillMaxChunks.toString()]}")
+                            sender.sendMessage(
+                                "$RED${plugin.language["CommandFactionClaimFillTooManyChunks", claimFillMaxChunks.toString()]}",
+                            )
                             return@saveChunks
                         } catch (e: ClaimFillDepthLimitReachedException) {
                             sender.sendMessage("$RED${plugin.language["CommandFactionClaimFillTooDeep", claimFillMaxDepth.toString()]}")
@@ -84,28 +94,37 @@ class MfFactionClaimFillCommand(private val plugin: MedievalFactions) : CommandE
                         val claims = chunks.associateWith(claimService::getClaim)
                         val relationshipService = plugin.services.factionRelationshipService
                         val unclaimedChunks = claims.filter { (_, claim) -> claim == null }.keys
-                        val contestedChunks = claims
-                            .mapNotNull { (chunk, claim) -> claim?.let { chunk to it } }
-                            .groupBy { (_, claim) -> claim.factionId }
-                            .filter { (claimFactionId, claims) ->
-                                val claimFaction = factionService.getFaction(claimFactionId) ?: return@filter true
-                                val relationships = relationshipService.getRelationships(faction.id, claimFactionId)
-                                val reverseRelationships = relationshipService.getRelationships(claimFactionId, faction.id)
-                                return@filter (relationships + reverseRelationships).any { it.type == AT_WAR } &&
-                                    claimFaction.power < claimService.getClaims(claimFactionId).size - claims.size
-                            }
-                            .flatMap { it.value.map { (chunk, _) -> chunk } }
+                        val contestedChunks =
+                            claims
+                                .mapNotNull { (chunk, claim) -> claim?.let { chunk to it } }
+                                .groupBy { (_, claim) -> claim.factionId }
+                                .filter { (claimFactionId, claims) ->
+                                    val claimFaction = factionService.getFaction(claimFactionId) ?: return@filter true
+                                    val relationships = relationshipService.getRelationships(faction.id, claimFactionId)
+                                    val reverseRelationships = relationshipService.getRelationships(claimFactionId, faction.id)
+                                    return@filter (relationships + reverseRelationships).any { it.type == AT_WAR } &&
+                                        claimFaction.power < claimService.getClaims(claimFactionId).size - claims.size
+                                }.flatMap { it.value.map { (chunk, _) -> chunk } }
                         val claimableChunks = unclaimedChunks + contestedChunks
                         if (claimableChunks.isEmpty()) {
                             sender.sendMessage("$RED${plugin.language["CommandFactionClaimFillNoClaimableChunks"]}")
                             return@saveChunks
                         }
-                        if (plugin.config.getBoolean("factions.limitLand") && claimableChunks.size + claimService.getClaims(faction.id).size > faction.power) {
-                            sender.sendMessage("$RED${plugin.language["CommandFactionClaimFillReachedDemesneLimit", decimalFormat.format(floor(faction.power))]}")
+                        if (plugin.config.getBoolean("factions.limitLand") &&
+                            claimableChunks.size + claimService.getClaims(faction.id).size > faction.power
+                        ) {
+                            sender.sendMessage(
+                                "$RED${plugin.language[
+                                    "CommandFactionClaimFillReachedDemesneLimit", decimalFormat.format(
+                                        floor(faction.power),
+                                    ),
+                                ]}",
+                            )
                             return@saveChunks
                         }
                         claimableChunks.forEach { chunk ->
-                            claimService.save(MfClaimedChunk(chunk, faction.id))
+                            claimService
+                                .save(MfClaimedChunk(chunk, faction.id))
                                 .onFailure {
                                     sender.sendMessage("$RED${plugin.language["CommandFactionClaimFillFailedToSaveClaim"]}")
                                     plugin.logger.log(SEVERE, "Failed to save claimed chunk: ${it.reason.message}", it.reason.cause)
@@ -113,14 +132,21 @@ class MfFactionClaimFillCommand(private val plugin: MedievalFactions) : CommandE
                                 }
                         }
                         sender.sendMessage("$GREEN${plugin.language["CommandFactionClaimFillSuccess", chunks.size.toString()]}")
-                    }
+                    },
                 )
-            }
+            },
         )
         return true
     }
 
-    private fun fill(worldId: UUID, startChunkX: Int, startChunkZ: Int, faction: MfFaction, chunksToFill: Set<MfChunkPosition> = emptySet(), depth: Int = 0): Set<MfChunkPosition>? {
+    private fun fill(
+        worldId: UUID,
+        startChunkX: Int,
+        startChunkZ: Int,
+        faction: MfFaction,
+        chunksToFill: Set<MfChunkPosition> = emptySet(),
+        depth: Int = 0,
+    ): Set<MfChunkPosition>? {
         // Check if we've exceeded the maximum recursion depth
         if (depth > claimFillMaxDepth) {
             throw ClaimFillDepthLimitReachedException()
@@ -150,9 +176,10 @@ class MfFactionClaimFillCommand(private val plugin: MedievalFactions) : CommandE
         sender: CommandSender,
         command: Command,
         label: String,
-        args: Array<out String>
+        args: Array<out String>,
     ) = emptyList<String>()
 
     class ClaimFillLimitReachedException : Exception()
+
     class ClaimFillDepthLimitReachedException : Exception()
 }

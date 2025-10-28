@@ -20,32 +20,44 @@ import java.util.*
 import java.util.logging.Level.SEVERE
 import kotlin.random.Random
 
-class MfFactionDevGenerateCommand(private val plugin: MedievalFactions) : CommandExecutor, TabCompleter {
-    override fun onCommand(sender: CommandSender, command: Command, label: String, args: Array<out String>): Boolean {
-        val players = listOf(
-            UUID.fromString("0a9fa342-3139-49d7-8acb-fcf4d9c1f0ef"),
-            UUID.fromString("3fcad669-b828-4d6d-be88-1c28b067c5d8"),
-            UUID.fromString("128ba8e4-7ba9-44c2-9968-cab2897f758f"),
-            UUID.fromString("ef26130a-44c6-4c44-ab56-d35f11fb516e"),
-            UUID.fromString("9d44baf4-e390-4d2e-8ba4-d0ffa722e53f"),
-            UUID.fromString("3e45785c-2520-46ba-a34d-be448c7fdf82"),
-            UUID.fromString("b3637649-0ddb-46a0-9c1f-84bf9225ad91"),
-            UUID.fromString("3de2323f-8295-48cf-b46e-156c276b0246"),
-            UUID.fromString("880d5589-3bdf-425a-9f0e-a758ce766b5d"),
-            UUID.fromString("77ae6081-6495-420e-94e3-042918c11746"),
-            UUID.fromString("13039937-663c-43c6-9c85-42c552d96740"),
-            UUID.fromString("f2011fd5-d734-4d12-8748-e1a839c1c3a2"),
-            UUID.fromString("5469d055-0edd-4c2c-bb4e-64b1dc04295a"),
-            UUID.fromString("037fb8ce-8db6-4976-9af3-898ca547e4aa"),
-            UUID.fromString("030d9655-b403-441a-8766-adba39881452"),
-            UUID.fromString("1cb24001-21f3-411a-afe8-c4629c97436a"),
-            UUID.fromString("12f7e421-57bc-4897-a866-131b405bf676"),
-            UUID.fromString("be9ee451-7453-4887-9919-cf2db6c9862d"),
-            UUID.fromString("697b8978-a214-438e-b313-849a4bcdc743"),
-            UUID.fromString("7dab0167-4689-4bd6-9724-132b23e644fc"),
-            UUID.fromString("8c1ac1d3-be4d-45ec-8047-e008719a8296")
-        ).map { uuid -> plugin.server.getOfflinePlayer(uuid) }
-        val spawnLocation = plugin.server.worlds.first().spawnLocation
+class MfFactionDevGenerateCommand(
+    private val plugin: MedievalFactions,
+) : CommandExecutor,
+    TabCompleter {
+    override fun onCommand(
+        sender: CommandSender,
+        command: Command,
+        label: String,
+        args: Array<out String>,
+    ): Boolean {
+        val players =
+            listOf(
+                UUID.fromString("0a9fa342-3139-49d7-8acb-fcf4d9c1f0ef"),
+                UUID.fromString("3fcad669-b828-4d6d-be88-1c28b067c5d8"),
+                UUID.fromString("128ba8e4-7ba9-44c2-9968-cab2897f758f"),
+                UUID.fromString("ef26130a-44c6-4c44-ab56-d35f11fb516e"),
+                UUID.fromString("9d44baf4-e390-4d2e-8ba4-d0ffa722e53f"),
+                UUID.fromString("3e45785c-2520-46ba-a34d-be448c7fdf82"),
+                UUID.fromString("b3637649-0ddb-46a0-9c1f-84bf9225ad91"),
+                UUID.fromString("3de2323f-8295-48cf-b46e-156c276b0246"),
+                UUID.fromString("880d5589-3bdf-425a-9f0e-a758ce766b5d"),
+                UUID.fromString("77ae6081-6495-420e-94e3-042918c11746"),
+                UUID.fromString("13039937-663c-43c6-9c85-42c552d96740"),
+                UUID.fromString("f2011fd5-d734-4d12-8748-e1a839c1c3a2"),
+                UUID.fromString("5469d055-0edd-4c2c-bb4e-64b1dc04295a"),
+                UUID.fromString("037fb8ce-8db6-4976-9af3-898ca547e4aa"),
+                UUID.fromString("030d9655-b403-441a-8766-adba39881452"),
+                UUID.fromString("1cb24001-21f3-411a-afe8-c4629c97436a"),
+                UUID.fromString("12f7e421-57bc-4897-a866-131b405bf676"),
+                UUID.fromString("be9ee451-7453-4887-9919-cf2db6c9862d"),
+                UUID.fromString("697b8978-a214-438e-b313-849a4bcdc743"),
+                UUID.fromString("7dab0167-4689-4bd6-9724-132b23e644fc"),
+                UUID.fromString("8c1ac1d3-be4d-45ec-8047-e008719a8296"),
+            ).map { uuid -> plugin.server.getOfflinePlayer(uuid) }
+        val spawnLocation =
+            plugin.server.worlds
+                .first()
+                .spawnLocation
         val worldId = spawnLocation.world!!.uid
         val chunkX = spawnLocation.chunk.x
         val chunkZ = spawnLocation.chunk.z
@@ -56,21 +68,30 @@ class MfFactionDevGenerateCommand(private val plugin: MedievalFactions) : Comman
             plugin,
             Runnable {
                 players.forEach { bukkitPlayer ->
-                    val mfPlayer = playerService.getPlayer(bukkitPlayer)
-                        ?: playerService.save(MfPlayer(plugin, bukkitPlayer)).onFailure {
-                            sender.sendMessage("${RED}Failed to save player while generating data")
-                            plugin.logger.log(SEVERE, "Failed to save player: ${it.reason.message}", it.reason.cause)
-                            return@forEach
-                        }
+                    val mfPlayer =
+                        playerService.getPlayer(bukkitPlayer)
+                            ?: playerService.save(MfPlayer(plugin, bukkitPlayer)).onFailure {
+                                sender.sendMessage("${RED}Failed to save player while generating data")
+                                plugin.logger.log(SEVERE, "Failed to save player: ${it.reason.message}", it.reason.cause)
+                                return@forEach
+                            }
                     val factionId = MfFactionId.generate()
                     val roles = MfFactionRoles.defaults(plugin, factionId)
                     val owner = roles.single { it.name == "Owner" }
-                    val faction = MfFaction(plugin, id = factionId, name = "${adjectives.random()} ${adjectives.random()} ${nouns.random()}", roles = roles, members = listOf(mfPlayer.withRole(owner)))
-                    val createdFaction = factionService.save(faction).onFailure {
-                        sender.sendMessage("${RED}Failed to save faction while generating data")
-                        plugin.logger.log(SEVERE, "Failed to save faction: ${it.reason.message}", it.reason.cause)
-                        return@forEach
-                    }
+                    val faction =
+                        MfFaction(
+                            plugin,
+                            id = factionId,
+                            name = "${adjectives.random()} ${adjectives.random()} ${nouns.random()}",
+                            roles = roles,
+                            members = listOf(mfPlayer.withRole(owner)),
+                        )
+                    val createdFaction =
+                        factionService.save(faction).onFailure {
+                            sender.sendMessage("${RED}Failed to save faction while generating data")
+                            plugin.logger.log(SEVERE, "Failed to save faction: ${it.reason.message}", it.reason.cause)
+                            return@forEach
+                        }
                     sender.sendMessage("${GREEN}Generated faction ${createdFaction.name}")
                     val startX = chunkX + Random.nextInt(1000) - 500
                     val startZ = chunkZ + Random.nextInt(1000) - 500
@@ -95,7 +116,7 @@ class MfFactionDevGenerateCommand(private val plugin: MedievalFactions) : Comman
                     sender.sendMessage("${GREEN}Claimed chunks for ${createdFaction.name}")
                 }
                 sender.sendMessage("${GREEN}Completed data generation.")
-            }
+            },
         )
         return true
     }
@@ -104,6 +125,6 @@ class MfFactionDevGenerateCommand(private val plugin: MedievalFactions) : Comman
         sender: CommandSender,
         command: Command,
         label: String,
-        args: Array<out String>
+        args: Array<out String>,
     ) = emptyList<String>()
 }

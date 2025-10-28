@@ -19,8 +19,16 @@ import org.bukkit.entity.Player
 import preponderous.ponder.command.unquote
 import java.util.logging.Level
 
-class MfFactionInvokeCommand(private val plugin: MedievalFactions) : CommandExecutor, TabCompleter {
-    override fun onCommand(sender: CommandSender, command: Command, label: String, args: Array<out String>): Boolean {
+class MfFactionInvokeCommand(
+    private val plugin: MedievalFactions,
+) : CommandExecutor,
+    TabCompleter {
+    override fun onCommand(
+        sender: CommandSender,
+        command: Command,
+        label: String,
+        args: Array<out String>,
+    ): Boolean {
         if (!sender.hasPermission("mf.invoke")) {
             sender.sendMessage("$RED${plugin.language["CommandFactionInvokeNoPermission"]}")
             return true
@@ -38,12 +46,13 @@ class MfFactionInvokeCommand(private val plugin: MedievalFactions) : CommandExec
             plugin,
             Runnable {
                 val playerService = plugin.services.playerService
-                val mfPlayer = playerService.getPlayer(sender)
-                    ?: playerService.save(MfPlayer(plugin, sender)).onFailure {
-                        sender.sendMessage("$RED${plugin.language["CommandFactionInvokeFailedToSavePlayer"]}")
-                        plugin.logger.log(Level.SEVERE, "Failed to save player: ${it.reason.message}", it.reason.cause)
-                        return@Runnable
-                    }
+                val mfPlayer =
+                    playerService.getPlayer(sender)
+                        ?: playerService.save(MfPlayer(plugin, sender)).onFailure {
+                            sender.sendMessage("$RED${plugin.language["CommandFactionInvokeFailedToSavePlayer"]}")
+                            plugin.logger.log(Level.SEVERE, "Failed to save player: ${it.reason.message}", it.reason.cause)
+                            return@Runnable
+                        }
                 val factionService = plugin.services.factionService
                 val faction = factionService.getFaction(mfPlayer.id)
                 if (faction == null) {
@@ -94,19 +103,23 @@ class MfFactionInvokeCommand(private val plugin: MedievalFactions) : CommandExec
                     sender.sendMessage("$RED${plugin.language["CommandFactionInvokeAllyAlreadyAtWarWithEnemy"]}")
                     return@Runnable
                 }
-                val isAllyAlliedToEnemy = existingAllyEnemyRelationships.any { it.type == ALLY } && existingEnemyAllyRelationships.any { it.type == ALLY }
-                val isEnemyVassalOfAlly = existingAllyEnemyRelationships.any { it.type == VASSAL } && existingEnemyAllyRelationships.any { it.type == LIEGE }
+                val isAllyAlliedToEnemy =
+                    existingAllyEnemyRelationships.any { it.type == ALLY } && existingEnemyAllyRelationships.any { it.type == ALLY }
+                val isEnemyVassalOfAlly =
+                    existingAllyEnemyRelationships.any { it.type == VASSAL } && existingEnemyAllyRelationships.any { it.type == LIEGE }
                 if (isAllyAlliedToEnemy || isEnemyVassalOfAlly) {
                     sender.sendMessage("$RED${plugin.language["CommandFactionInvokeAllyAlliedToEnemy"]}")
                     return@Runnable
                 }
-                factionRelationshipService.save(MfFactionRelationship(factionId = ally.id, targetId = enemy.id, type = AT_WAR))
+                factionRelationshipService
+                    .save(MfFactionRelationship(factionId = ally.id, targetId = enemy.id, type = AT_WAR))
                     .onFailure {
                         sender.sendMessage("$RED${plugin.language["CommandFactionInvokeFailedToSaveRelationship"]}")
                         plugin.logger.log(Level.SEVERE, "Failed to save faction relationship: ${it.reason.message}", it.reason.cause)
                         return@Runnable
                     }
-                factionRelationshipService.save(MfFactionRelationship(factionId = enemy.id, targetId = ally.id, type = AT_WAR))
+                factionRelationshipService
+                    .save(MfFactionRelationship(factionId = enemy.id, targetId = ally.id, type = AT_WAR))
                     .onFailure {
                         sender.sendMessage("$RED${plugin.language["CommandFactionInvokeFailedToSaveReverseRelationship"]}")
                         plugin.logger.log(Level.SEVERE, "Failed to save faction relationship: ${it.reason.message}", it.reason.cause)
@@ -118,22 +131,30 @@ class MfFactionInvokeCommand(private val plugin: MedievalFactions) : CommandExec
                     Runnable {
                         faction.sendMessage(
                             plugin.language["AllyInvokedNotificationTitle", ally.name, enemy.name],
-                            plugin.language["AllyInvokedNotificationBody", ally.name, enemy.name]
+                            plugin.language["AllyInvokedNotificationBody", ally.name, enemy.name],
                         )
                         ally.sendMessage(
                             plugin.language["InvokedByAllyNotificationTitle", faction.name, enemy.name],
-                            plugin.language["InvokedByAllyNotificationBody", faction.name, enemy.name]
+                            plugin.language["InvokedByAllyNotificationBody", faction.name, enemy.name],
                         )
                         enemy.sendMessage(
                             plugin.language["EnemyInvokedAllyNotificationTitle", faction.name, ally.name],
-                            plugin.language["EnemyInvokedAllyNotificationBody", faction.name, ally.name]
+                            plugin.language["EnemyInvokedAllyNotificationBody", faction.name, ally.name],
                         )
-                        plugin.server.onlinePlayers.filter { onlinePlayer ->
-                            (faction.members + ally.members + enemy.members).none { member -> member.playerId.toBukkitPlayer().uniqueId == onlinePlayer.uniqueId }
-                        }.forEach { onlinePlayer -> onlinePlayer.sendMessage("$RED${plugin.language["FactionInvokedAlly", faction.name, ally.name, enemy.name]}") }
-                    }
+                        plugin.server.onlinePlayers
+                            .filter { onlinePlayer ->
+                                (faction.members + ally.members + enemy.members).none { member ->
+                                    member.playerId.toBukkitPlayer().uniqueId ==
+                                        onlinePlayer.uniqueId
+                                }
+                            }.forEach { onlinePlayer ->
+                                onlinePlayer.sendMessage(
+                                    "$RED${plugin.language["FactionInvokedAlly", faction.name, ally.name, enemy.name]}",
+                                )
+                            }
+                    },
                 )
-            }
+            },
         )
         return true
     }
@@ -142,7 +163,7 @@ class MfFactionInvokeCommand(private val plugin: MedievalFactions) : CommandExec
         sender: CommandSender,
         command: Command,
         label: String,
-        args: Array<out String>
+        args: Array<out String>,
     ): List<String> {
         val factionService = plugin.services.factionService
         return when {

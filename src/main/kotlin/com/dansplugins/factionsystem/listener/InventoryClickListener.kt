@@ -12,8 +12,9 @@ import org.bukkit.event.inventory.InventoryClickEvent
 import org.bukkit.inventory.BlockInventoryHolder
 import java.util.logging.Level.SEVERE
 
-class InventoryClickListener(private val plugin: MedievalFactions) : Listener {
-
+class InventoryClickListener(
+    private val plugin: MedievalFactions,
+) : Listener {
     @EventHandler
     fun onInventoryClick(event: InventoryClickEvent) {
         val player = event.whoClicked
@@ -23,11 +24,12 @@ class InventoryClickListener(private val plugin: MedievalFactions) : Listener {
         val holder = inventory.holder
 
         // Check if the inventory belongs to a block in claimed territory
-        val block: Block? = when (holder) {
-            is BlockInventoryHolder -> holder.block
-            is BlockState -> holder.block
-            else -> null
-        }
+        val block: Block? =
+            when (holder) {
+                is BlockInventoryHolder -> holder.block
+                is BlockState -> holder.block
+                else -> null
+            }
 
         if (block == null) return
 
@@ -43,7 +45,7 @@ class InventoryClickListener(private val plugin: MedievalFactions) : Listener {
                         plugin.logger.log(SEVERE, "Failed to save player: ${it.reason.message}", it.reason.cause)
                         return@Runnable
                     }
-                }
+                },
             )
             return
         }

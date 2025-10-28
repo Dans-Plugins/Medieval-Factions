@@ -14,12 +14,20 @@ import org.bukkit.command.TabCompleter
 import org.bukkit.entity.Player
 import java.util.logging.Level
 
-class MfFactionChatCommand(private val plugin: MedievalFactions) : CommandExecutor, TabCompleter {
+class MfFactionChatCommand(
+    private val plugin: MedievalFactions,
+) : CommandExecutor,
+    TabCompleter {
     private val chatHistoryCommand = MfFactionChatHistoryCommand(plugin)
 
     private val historyAliases = listOf("history", "logs", "log", plugin.language["CmdFactionChatHistory"])
 
-    override fun onCommand(sender: CommandSender, command: Command, label: String, args: Array<out String>): Boolean {
+    override fun onCommand(
+        sender: CommandSender,
+        command: Command,
+        label: String,
+        args: Array<out String>,
+    ): Boolean {
         if (!sender.hasPermission("mf.chat")) {
             sender.sendMessage("$RED${plugin.language["CommandFactionChatNoPermission"]}")
             return true
@@ -33,53 +41,57 @@ class MfFactionChatCommand(private val plugin: MedievalFactions) : CommandExecut
             Runnable {
                 val playerService = plugin.services.playerService
                 val mfPlayer = playerService.getPlayer(sender) ?: MfPlayer(plugin, sender)
-                val chatChannel = if (args.isEmpty()) {
-                    FACTION
-                } else {
-                    try {
-                        MfFactionChatChannel.valueOf(args[0].uppercase())
-                    } catch (exception: IllegalArgumentException) {
-                        null
+                val chatChannel =
+                    if (args.isEmpty()) {
+                        FACTION
+                    } else {
+                        try {
+                            MfFactionChatChannel.valueOf(args[0].uppercase())
+                        } catch (exception: IllegalArgumentException) {
+                            null
+                        }
                     }
-                }
                 if (chatChannel == null) {
                     if (args[0].lowercase() in historyAliases) {
                         plugin.server.scheduler.runTask(
                             plugin,
                             Runnable {
                                 chatHistoryCommand.onCommand(sender, command, label, args.drop(1).toTypedArray())
-                            }
+                            },
                         )
                         return@Runnable
                     }
                 }
-                val updatedMfPlayer = playerService.save(
-                    mfPlayer.copy(
-                        chatChannel = if (mfPlayer.chatChannel != chatChannel) {
-                            chatChannel
-                        } else {
-                            null
+                val updatedMfPlayer =
+                    playerService
+                        .save(
+                            mfPlayer.copy(
+                                chatChannel =
+                                    if (mfPlayer.chatChannel != chatChannel) {
+                                        chatChannel
+                                    } else {
+                                        null
+                                    },
+                            ),
+                        ).onFailure {
+                            sender.sendMessage("$RED${plugin.language["CommandFactionChatFailedToSavePlayer"]}")
+                            plugin.logger.log(Level.SEVERE, "Failed to save player: ${it.reason.message}", it.reason.cause)
+                            return@Runnable
                         }
-                    )
-                ).onFailure {
-                    sender.sendMessage("$RED${plugin.language["CommandFactionChatFailedToSavePlayer"]}")
-                    plugin.logger.log(Level.SEVERE, "Failed to save player: ${it.reason.message}", it.reason.cause)
-                    return@Runnable
-                }
                 if (updatedMfPlayer.chatChannel != null) {
                     sender.sendMessage(
                         "$GREEN${
-                        plugin.language["CommandFactionChatFactionChatEnabled", chatChannel.toString().lowercase()]
-                        }"
+                            plugin.language["CommandFactionChatFactionChatEnabled", chatChannel.toString().lowercase()]
+                        }",
                     )
                 } else {
                     sender.sendMessage(
                         "$GREEN${
-                        plugin.language["CommandFactionChatFactionChatDisabled"]
-                        }"
+                            plugin.language["CommandFactionChatFactionChatDisabled"]
+                        }",
                     )
                 }
-            }
+            },
         )
         return true
     }
@@ -88,12 +100,19 @@ class MfFactionChatCommand(private val plugin: MedievalFactions) : CommandExecut
         sender: CommandSender,
         command: Command,
         label: String,
-        args: Array<out String>
+        args: Array<out String>,
     ) = when {
         args.isEmpty() -> MfFactionChatChannel.values().map { it.name.lowercase() } + historyAliases
-        args.size == 1 -> (MfFactionChatChannel.values().map { it.name.lowercase() } + historyAliases)
-            .filter { it.startsWith(args[0].lowercase()) }
-        args.size > 1 && args[0].lowercase() in historyAliases -> chatHistoryCommand.onTabComplete(sender, command, label, args.drop(1).toTypedArray())
+        args.size == 1 ->
+            (MfFactionChatChannel.values().map { it.name.lowercase() } + historyAliases)
+                .filter { it.startsWith(args[0].lowercase()) }
+        args.size > 1 && args[0].lowercase() in historyAliases ->
+            chatHistoryCommand.onTabComplete(
+                sender,
+                command,
+                label,
+                args.drop(1).toTypedArray(),
+            )
         else -> emptyList()
     }
 }

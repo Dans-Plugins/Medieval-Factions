@@ -7,7 +7,10 @@ import org.bukkit.command.CommandExecutor
 import org.bukkit.command.CommandSender
 import org.bukkit.command.TabCompleter
 
-class MfFactionRelationshipCommand(private val plugin: MedievalFactions) : CommandExecutor, TabCompleter {
+class MfFactionRelationshipCommand(
+    private val plugin: MedievalFactions,
+) : CommandExecutor,
+    TabCompleter {
     private val factionRelationshipViewCommand = MfFactionRelationshipViewCommand(plugin)
     private val factionRelationshipAddCommand = MfFactionRelationshipAddCommand(plugin)
     private val factionRelationshipRemoveCommand = MfFactionRelationshipRemoveCommand(plugin)
@@ -18,8 +21,13 @@ class MfFactionRelationshipCommand(private val plugin: MedievalFactions) : Comma
 
     private val subcommands = viewAliases + addAliases + removeAliases
 
-    override fun onCommand(sender: CommandSender, command: Command, label: String, args: Array<out String>): Boolean {
-        return when (args.firstOrNull()?.lowercase()) {
+    override fun onCommand(
+        sender: CommandSender,
+        command: Command,
+        label: String,
+        args: Array<out String>,
+    ): Boolean =
+        when (args.firstOrNull()?.lowercase()) {
             in viewAliases -> factionRelationshipViewCommand.onCommand(sender, command, label, args.drop(1).toTypedArray())
             in addAliases -> factionRelationshipAddCommand.onCommand(sender, command, label, args.drop(1).toTypedArray())
             in removeAliases -> factionRelationshipRemoveCommand.onCommand(sender, command, label, args.drop(1).toTypedArray())
@@ -28,21 +36,21 @@ class MfFactionRelationshipCommand(private val plugin: MedievalFactions) : Comma
                 true
             }
         }
-    }
 
     override fun onTabComplete(
         sender: CommandSender,
         command: Command,
         label: String,
-        args: Array<out String>
+        args: Array<out String>,
     ) = when {
         args.isEmpty() -> subcommands
         args.size == 1 -> subcommands.filter { it.startsWith(args[0].lowercase()) }
-        else -> when (args.first().lowercase()) {
-            in viewAliases -> factionRelationshipViewCommand.onTabComplete(sender, command, label, args.drop(1).toTypedArray())
-            in addAliases -> factionRelationshipAddCommand.onTabComplete(sender, command, label, args.drop(1).toTypedArray())
-            in removeAliases -> factionRelationshipRemoveCommand.onTabComplete(sender, command, label, args.drop(1).toTypedArray())
-            else -> emptyList()
-        }
+        else ->
+            when (args.first().lowercase()) {
+                in viewAliases -> factionRelationshipViewCommand.onTabComplete(sender, command, label, args.drop(1).toTypedArray())
+                in addAliases -> factionRelationshipAddCommand.onTabComplete(sender, command, label, args.drop(1).toTypedArray())
+                in removeAliases -> factionRelationshipRemoveCommand.onTabComplete(sender, command, label, args.drop(1).toTypedArray())
+                else -> emptyList()
+            }
     }
 }

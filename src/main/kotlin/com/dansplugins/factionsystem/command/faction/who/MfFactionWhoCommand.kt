@@ -11,8 +11,16 @@ import org.bukkit.command.CommandSender
 import org.bukkit.command.TabCompleter
 import java.util.logging.Level.SEVERE
 
-class MfFactionWhoCommand(private val plugin: MedievalFactions) : CommandExecutor, TabCompleter {
-    override fun onCommand(sender: CommandSender, command: Command, label: String, args: Array<out String>): Boolean {
+class MfFactionWhoCommand(
+    private val plugin: MedievalFactions,
+) : CommandExecutor,
+    TabCompleter {
+    override fun onCommand(
+        sender: CommandSender,
+        command: Command,
+        label: String,
+        args: Array<out String>,
+    ): Boolean {
         if (!sender.hasPermission("mf.who")) {
             sender.sendMessage("$RED${plugin.language["CommandFactionWhoNoPermission"]}")
             return true
@@ -30,20 +38,25 @@ class MfFactionWhoCommand(private val plugin: MedievalFactions) : CommandExecuto
             plugin,
             Runnable {
                 val playerService = plugin.services.playerService
-                val targetMfPlayer = playerService.getPlayer(target)
-                    ?: playerService.save(MfPlayer(plugin, target)).onFailure {
-                        sender.sendMessage("$RED${plugin.language["CommandFactionWhoFailedToSaveTargetPlayer"]}")
-                        plugin.logger.log(SEVERE, "Failed to save player: ${it.reason.message}", it.reason.cause)
-                        return@Runnable
-                    }
+                val targetMfPlayer =
+                    playerService.getPlayer(target)
+                        ?: playerService.save(MfPlayer(plugin, target)).onFailure {
+                            sender.sendMessage("$RED${plugin.language["CommandFactionWhoFailedToSaveTargetPlayer"]}")
+                            plugin.logger.log(SEVERE, "Failed to save player: ${it.reason.message}", it.reason.cause)
+                            return@Runnable
+                        }
                 val factionService = plugin.services.factionService
                 val faction = factionService.getFaction(targetMfPlayer.id)
                 if (faction == null) {
-                    sender.sendMessage("$RED${plugin.language["CommandFactionWhoNotInAFaction", target.name ?: plugin.language["UnknownPlayer"]]}")
+                    sender.sendMessage(
+                        "$RED${plugin.language["CommandFactionWhoNotInAFaction", target.name ?: plugin.language["UnknownPlayer"]]}",
+                    )
                     return@Runnable
                 }
-                sender.sendMessage("$GREEN${plugin.language["CommandFactionWhoSuccess", target.name ?: plugin.language["UnknownPlayer"], faction.name]}")
-            }
+                sender.sendMessage(
+                    "$GREEN${plugin.language["CommandFactionWhoSuccess", target.name ?: plugin.language["UnknownPlayer"], faction.name]}",
+                )
+            },
         )
         return true
     }
@@ -52,7 +65,7 @@ class MfFactionWhoCommand(private val plugin: MedievalFactions) : CommandExecuto
         sender: CommandSender,
         command: Command,
         label: String,
-        args: Array<out String>
+        args: Array<out String>,
     ) = when {
         args.isEmpty() ->
             plugin.server.offlinePlayers

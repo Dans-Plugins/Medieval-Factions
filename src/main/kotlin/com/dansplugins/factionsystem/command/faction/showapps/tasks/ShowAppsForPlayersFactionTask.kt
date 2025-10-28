@@ -6,9 +6,8 @@ import org.bukkit.entity.Player
 
 class ShowAppsForPlayersFactionTask(
     private val plugin: MedievalFactions,
-    private val sender: Player
+    private val sender: Player,
 ) : Runnable {
-
     override fun run() {
         val factionService = plugin.services.factionService
         val playerService = plugin.services.playerService

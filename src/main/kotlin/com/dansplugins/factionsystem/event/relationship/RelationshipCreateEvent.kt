@@ -10,9 +10,10 @@ class RelationshipCreateEvent(
     @get:JvmName("getRelationshipId")
     override val relationshipId: MfFactionRelationshipId,
     val relationship: MfFactionRelationship,
-    isAsync: Boolean
-) : Event(isAsync), RelationshipEvent, Cancellable {
-
+    isAsync: Boolean,
+) : Event(isAsync),
+    RelationshipEvent,
+    Cancellable {
     companion object {
         @JvmStatic private val handlers: HandlerList = HandlerList()
 
@@ -23,9 +24,7 @@ class RelationshipCreateEvent(
 
     override fun getHandlers(): HandlerList = getHandlerList()
 
-    override fun isCancelled(): Boolean {
-        return cancel
-    }
+    override fun isCancelled(): Boolean = cancel
 
     override fun setCancelled(cancel: Boolean) {
         this.cancel = cancel

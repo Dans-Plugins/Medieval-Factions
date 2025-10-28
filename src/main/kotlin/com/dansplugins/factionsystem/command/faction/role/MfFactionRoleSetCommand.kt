@@ -13,8 +13,16 @@ import org.bukkit.command.TabCompleter
 import org.bukkit.entity.Player
 import java.util.logging.Level.SEVERE
 
-class MfFactionRoleSetCommand(private val plugin: MedievalFactions) : CommandExecutor, TabCompleter {
-    override fun onCommand(sender: CommandSender, command: Command, label: String, args: Array<out String>): Boolean {
+class MfFactionRoleSetCommand(
+    private val plugin: MedievalFactions,
+) : CommandExecutor,
+    TabCompleter {
+    override fun onCommand(
+        sender: CommandSender,
+        command: Command,
+        label: String,
+        args: Array<out String>,
+    ): Boolean {
         if (!sender.hasPermission("mf.role.set")) {
             sender.sendMessage("$RED${plugin.language["CommandFactionRoleSetNoPermission"]}")
             return true
@@ -36,18 +44,20 @@ class MfFactionRoleSetCommand(private val plugin: MedievalFactions) : CommandExe
             plugin,
             Runnable {
                 val playerService = plugin.services.playerService
-                val mfPlayer = playerService.getPlayer(sender)
-                    ?: playerService.save(MfPlayer(plugin, sender)).onFailure {
-                        sender.sendMessage("$RED${plugin.language["CommandFactionRoleSetFailedToSavePlayer"]}")
-                        plugin.logger.log(SEVERE, "Failed to save player: ${it.reason.message}", it.reason.cause)
-                        return@Runnable
-                    }
-                val targetMfPlayer = playerService.getPlayer(target)
-                    ?: playerService.save(MfPlayer(plugin, sender)).onFailure {
-                        sender.sendMessage("$RED${plugin.language["CommandFactionRoleSetFailedToSaveTargetPlayer"]}")
-                        plugin.logger.log(SEVERE, "Failed to save target player: ${it.reason.message}", it.reason.cause)
-                        return@Runnable
-                    }
+                val mfPlayer =
+                    playerService.getPlayer(sender)
+                        ?: playerService.save(MfPlayer(plugin, sender)).onFailure {
+                            sender.sendMessage("$RED${plugin.language["CommandFactionRoleSetFailedToSavePlayer"]}")
+                            plugin.logger.log(SEVERE, "Failed to save player: ${it.reason.message}", it.reason.cause)
+                            return@Runnable
+                        }
+                val targetMfPlayer =
+                    playerService.getPlayer(target)
+                        ?: playerService.save(MfPlayer(plugin, sender)).onFailure {
+                            sender.sendMessage("$RED${plugin.language["CommandFactionRoleSetFailedToSaveTargetPlayer"]}")
+                            plugin.logger.log(SEVERE, "Failed to save target player: ${it.reason.message}", it.reason.cause)
+                            return@Runnable
+                        }
                 if (mfPlayer.id.value == targetMfPlayer.id.value && !mfPlayer.isBypassEnabled) {
                     sender.sendMessage("$RED${plugin.language["CommandFactionRoleSetCannotSetOwnRole"]}")
                     return@Runnable
@@ -70,32 +80,35 @@ class MfFactionRoleSetCommand(private val plugin: MedievalFactions) : CommandExe
                     return@Runnable
                 }
                 if (!mfPlayer.isBypassEnabled) {
-                    if (role == null || !role.hasPermission(
+                    if (role == null ||
+                        !role.hasPermission(
                             faction,
-                            plugin.factionPermissions.setMemberRole(targetRole.id)
+                            plugin.factionPermissions.setMemberRole(targetRole.id),
                         )
                     ) {
                         sender.sendMessage("$RED${plugin.language["CommandFactionRoleSetNoFactionPermission"]}")
                         return@Runnable
                     }
                 }
-                factionService.save(
-                    faction.copy(
-                        members = faction.members.map { member ->
-                            if (member.playerId == targetMfPlayer.id) {
-                                member.copy(role = targetRole)
-                            } else {
-                                member
-                            }
-                        }
-                    )
-                ).onFailure {
-                    sender.sendMessage("$RED${plugin.language["CommandFactionRoleSetFailedToSaveFaction"]}")
-                    plugin.logger.log(SEVERE, "Failed to save faction: ${it.reason.message}", it.reason.cause)
-                    return@Runnable
-                }
+                factionService
+                    .save(
+                        faction.copy(
+                            members =
+                                faction.members.map { member ->
+                                    if (member.playerId == targetMfPlayer.id) {
+                                        member.copy(role = targetRole)
+                                    } else {
+                                        member
+                                    }
+                                },
+                        ),
+                    ).onFailure {
+                        sender.sendMessage("$RED${plugin.language["CommandFactionRoleSetFailedToSaveFaction"]}")
+                        plugin.logger.log(SEVERE, "Failed to save faction: ${it.reason.message}", it.reason.cause)
+                        return@Runnable
+                    }
                 sender.sendMessage("$GREEN${plugin.language["CommandFactionRoleSetSuccess", target.name ?: "", targetRole.name]}")
-            }
+            },
         )
         return true
     }
@@ -104,7 +117,7 @@ class MfFactionRoleSetCommand(private val plugin: MedievalFactions) : CommandExe
         sender: CommandSender,
         command: Command,
         label: String,
-        args: Array<out String>
+        args: Array<out String>,
     ): List<String> {
         return when {
             args.isEmpty() ->

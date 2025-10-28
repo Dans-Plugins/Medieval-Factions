@@ -9,18 +9,21 @@ import org.bukkit.event.Listener
 import org.bukkit.event.player.AsyncPlayerPreLoginEvent
 import java.util.logging.Level.SEVERE
 
-class AsyncPlayerPreLoginListener(private val plugin: MedievalFactions) : Listener {
-
+class AsyncPlayerPreLoginListener(
+    private val plugin: MedievalFactions,
+) : Listener {
     @EventHandler
     fun onAsyncPlayerPreLogin(event: AsyncPlayerPreLoginEvent) {
         val playerService = plugin.services.playerService
         val playerId = MfPlayerId(event.uniqueId.toString())
-        val player = playerService.getPlayer(playerId)
-            ?: playerService.save(MfPlayer(plugin, playerId, event.name))
-                .onFailure {
-                    plugin.logger.log(SEVERE, "Failed to save player: ${it.reason.message}", it.reason.cause)
-                    return
-                }
+        val player =
+            playerService.getPlayer(playerId)
+                ?: playerService
+                    .save(MfPlayer(plugin, playerId, event.name))
+                    .onFailure {
+                        plugin.logger.log(SEVERE, "Failed to save player: ${it.reason.message}", it.reason.cause)
+                        return
+                    }
         if (player.name != event.name) {
             playerService.save(player.copy(name = event.name)).onFailure {
                 plugin.logger.log(SEVERE, "Failed to save player: ${it.reason.message}", it.reason.cause)

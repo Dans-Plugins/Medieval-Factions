@@ -5,7 +5,6 @@ import kotlin.test.Test
 import kotlin.test.assertEquals
 
 class MfFactionApplicationTest {
-
     @Test fun testInitialization() {
         // prepare
         val mfPlayerId = MfPlayerId("test")

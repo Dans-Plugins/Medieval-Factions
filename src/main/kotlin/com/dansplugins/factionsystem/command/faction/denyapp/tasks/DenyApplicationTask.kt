@@ -10,30 +10,31 @@ import java.util.logging.Level
 class DenyApplicationTask(
     private val plugin: MedievalFactions,
     private val sender: Player,
-    private val targetPlayerName: String
+    private val targetPlayerName: String,
 ) : Runnable {
-
     override fun run() {
         val factionService = plugin.services.factionService
         val playerService = plugin.services.playerService
-        val mfPlayer = playerService.getPlayer(sender)
-            ?: playerService.save(MfPlayer(plugin, sender)).onFailure {
-                sender.sendMessage("${ChatColor.RED}${plugin.language["CommandFactionDenyAppFailedToSavePlayer"]}")
-                plugin.logger.log(Level.SEVERE, "Failed to save player: ${it.reason.message}", it.reason.cause)
-                return
-            }
+        val mfPlayer =
+            playerService.getPlayer(sender)
+                ?: playerService.save(MfPlayer(plugin, sender)).onFailure {
+                    sender.sendMessage("${ChatColor.RED}${plugin.language["CommandFactionDenyAppFailedToSavePlayer"]}")
+                    plugin.logger.log(Level.SEVERE, "Failed to save player: ${it.reason.message}", it.reason.cause)
+                    return
+                }
         val faction = factionService.getFaction(mfPlayer.id)
         val targetPlayer = plugin.server.getOfflinePlayer(targetPlayerName)
         if (!targetPlayer.isOnline && !targetPlayer.hasPlayedBefore()) {
             sender.sendMessage("${org.bukkit.ChatColor.RED}${plugin.language["CommandFactionDenyAppInvalidTarget"]}")
             return
         }
-        val targetMfPlayer = playerService.getPlayer(targetPlayer)
-            ?: playerService.save(MfPlayer(plugin, targetPlayer)).onFailure {
-                sender.sendMessage("${org.bukkit.ChatColor.RED}${plugin.language["CommandFactionDenyAppFailedToSaveTargetPlayer"]}")
-                plugin.logger.log(Level.SEVERE, "Failed to save player: ${it.reason.message}", it.reason.cause)
-                return
-            }
+        val targetMfPlayer =
+            playerService.getPlayer(targetPlayer)
+                ?: playerService.save(MfPlayer(plugin, targetPlayer)).onFailure {
+                    sender.sendMessage("${org.bukkit.ChatColor.RED}${plugin.language["CommandFactionDenyAppFailedToSaveTargetPlayer"]}")
+                    plugin.logger.log(Level.SEVERE, "Failed to save player: ${it.reason.message}", it.reason.cause)
+                    return
+                }
         val application = faction?.applications?.find { it.applicantId == targetMfPlayer.id }
         if (application == null) {
             sender.sendMessage("${org.bukkit.ChatColor.RED}${plugin.language["CommandFactionDenyAppNoApplication"]}")
@@ -57,6 +58,8 @@ class DenyApplicationTask(
         if (targetPlayer.isOnline) {
             targetPlayer.player?.sendMessage("${org.bukkit.ChatColor.RED}${plugin.language["CommandFactionDenyAppDenied", faction.name]}")
         }
-        sender.sendMessage("${org.bukkit.ChatColor.GREEN}${plugin.language["CommandFactionDenyAppDeniedSender", targetMfPlayer.name.toString()]}")
+        sender.sendMessage(
+            "${org.bukkit.ChatColor.GREEN}${plugin.language["CommandFactionDenyAppDeniedSender", targetMfPlayer.name.toString()]}",
+        )
     }
 }

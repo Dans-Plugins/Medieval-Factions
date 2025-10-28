@@ -14,9 +14,16 @@ import org.bukkit.command.TabCompleter
 import org.bukkit.entity.Player
 import java.util.logging.Level.SEVERE
 
-class MfFactionRoleSetDefaultCommand(private val plugin: MedievalFactions) : CommandExecutor, TabCompleter {
-
-    override fun onCommand(sender: CommandSender, command: Command, label: String, args: Array<out String>): Boolean {
+class MfFactionRoleSetDefaultCommand(
+    private val plugin: MedievalFactions,
+) : CommandExecutor,
+    TabCompleter {
+    override fun onCommand(
+        sender: CommandSender,
+        command: Command,
+        label: String,
+        args: Array<out String>,
+    ): Boolean {
         if (!sender.hasPermission("mf.role.setdefault")) {
             sender.sendMessage("$RED${plugin.language["CommandFactionRoleSetDefaultNoPermission"]}")
             return true
@@ -26,12 +33,13 @@ class MfFactionRoleSetDefaultCommand(private val plugin: MedievalFactions) : Com
             return true
         }
         var lastArgOffset = 0
-        val returnPage = if (args.lastOrNull()?.startsWith("p=") == true) {
-            lastArgOffset = 1
-            args.last().substring("p=".length).toIntOrNull()
-        } else {
-            null
-        }
+        val returnPage =
+            if (args.lastOrNull()?.startsWith("p=") == true) {
+                lastArgOffset = 1
+                args.last().substring("p=".length).toIntOrNull()
+            } else {
+                null
+            }
         if (args.dropLast(lastArgOffset).isEmpty()) {
             sender.sendMessage("$RED${plugin.language["CommandFactionRoleSetDefaultUsage"]}")
             return true
@@ -40,12 +48,13 @@ class MfFactionRoleSetDefaultCommand(private val plugin: MedievalFactions) : Com
             plugin,
             Runnable {
                 val playerService = plugin.services.playerService
-                val mfPlayer = playerService.getPlayer(sender)
-                    ?: playerService.save(MfPlayer(plugin, sender)).onFailure {
-                        sender.sendMessage("$RED${plugin.language["CommandFactionRoleSetDefaultFailedToSavePlayer"]}")
-                        plugin.logger.log(SEVERE, "Failed to save player: ${it.reason.message}", it.reason.cause)
-                        return@Runnable
-                    }
+                val mfPlayer =
+                    playerService.getPlayer(sender)
+                        ?: playerService.save(MfPlayer(plugin, sender)).onFailure {
+                            sender.sendMessage("$RED${plugin.language["CommandFactionRoleSetDefaultFailedToSavePlayer"]}")
+                            plugin.logger.log(SEVERE, "Failed to save player: ${it.reason.message}", it.reason.cause)
+                            return@Runnable
+                        }
                 val factionService = plugin.services.factionService
                 val faction = factionService.getFaction(mfPlayer.id)
                 if (faction == null) {
@@ -67,25 +76,26 @@ class MfFactionRoleSetDefaultCommand(private val plugin: MedievalFactions) : Com
                     sender.sendMessage("$RED${plugin.language["CommandFactionRoleSetDefaultNoFactionPermission"]}")
                     return@Runnable
                 }
-                factionService.save(
-                    faction.copy(
-                        roles = faction.roles.copy(defaultRoleId = targetRole.id)
-                    )
-                ).onFailure {
-                    sender.sendMessage("$RED${plugin.language["CommandFactionRoleSetDefaultFailedToSaveFaction"]}")
-                    plugin.logger.log(SEVERE, "Failed to save faction: ${it.reason.message}", it.reason.cause)
-                    return@Runnable
-                }
+                factionService
+                    .save(
+                        faction.copy(
+                            roles = faction.roles.copy(defaultRoleId = targetRole.id),
+                        ),
+                    ).onFailure {
+                        sender.sendMessage("$RED${plugin.language["CommandFactionRoleSetDefaultFailedToSaveFaction"]}")
+                        plugin.logger.log(SEVERE, "Failed to save faction: ${it.reason.message}", it.reason.cause)
+                        return@Runnable
+                    }
                 sender.sendMessage("$GREEN${plugin.language["CommandFactionRoleSetDefaultSuccess", targetRole.name]}")
                 if (returnPage != null) {
                     plugin.server.scheduler.runTask(
                         plugin,
                         Runnable {
                             sender.performCommand("faction role list $returnPage")
-                        }
+                        },
                     )
                 }
-            }
+            },
         )
         return true
     }
@@ -94,7 +104,7 @@ class MfFactionRoleSetDefaultCommand(private val plugin: MedievalFactions) : Com
         sender: CommandSender,
         command: Command,
         label: String,
-        args: Array<out String>
+        args: Array<out String>,
     ): List<String> {
         if (sender !is Player) return emptyList()
         val playerId = MfPlayerId.fromBukkitPlayer(sender)

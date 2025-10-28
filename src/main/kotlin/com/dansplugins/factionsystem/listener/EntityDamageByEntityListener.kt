@@ -11,17 +11,19 @@ import org.bukkit.event.EventHandler
 import org.bukkit.event.Listener
 import org.bukkit.event.entity.EntityDamageByEntityEvent
 
-class EntityDamageByEntityListener(private val plugin: MedievalFactions) : Listener {
-
+class EntityDamageByEntityListener(
+    private val plugin: MedievalFactions,
+) : Listener {
     @EventHandler
     fun onEntityDamageByEntity(event: EntityDamageByEntityEvent) {
         val damaged = event.entity
         val damager = event.damager
-        val damagerPlayer: Player? = when (damager) {
-            is Player -> damager
-            is Projectile -> damager.shooter as? Player
-            else -> null
-        }
+        val damagerPlayer: Player? =
+            when (damager) {
+                is Player -> damager
+                is Projectile -> damager.shooter as? Player
+                else -> null
+            }
         if (damagerPlayer != null) {
             val playerService = plugin.services.playerService
             val factionService = plugin.services.factionService

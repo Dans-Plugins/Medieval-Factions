@@ -11,26 +11,31 @@ data class MfFactionRole(
     @get:JvmName("getId")
     val id: MfFactionRoleId = MfFactionRoleId.generate(),
     val name: String,
-    val permissionsByName: Map<String, Boolean?> = emptyMap()
+    val permissionsByName: Map<String, Boolean?> = emptyMap(),
 ) : ConfigurationSerializable {
-
     val permissions: Map<MfFactionPermission, Boolean?>
-        get() = permissionsByName.toList().map { (key, value) -> plugin.factionPermissions.parse(key) to value }
-            .filter { (key, _) -> key != null }
-            .associate { (key, value) -> key!! to value }
+        get() =
+            permissionsByName
+                .toList()
+                .map { (key, value) -> plugin.factionPermissions.parse(key) to value }
+                .filter { (key, _) -> key != null }
+                .associate { (key, value) -> key!! to value }
 
-    fun hasPermission(faction: MfFaction, permission: MfFactionPermission) =
-        permissions[permission]
-            ?: faction.defaultPermissions[permission]
-            ?: permission.default
+    fun hasPermission(
+        faction: MfFaction,
+        permission: MfFactionPermission,
+    ) = permissions[permission]
+        ?: faction.defaultPermissions[permission]
+        ?: permission.default
 
     fun getPermissionValue(permission: MfFactionPermission) = permissions[permission]
 
-    override fun serialize() = mapOf(
-        "id" to id.value,
-        "name" to name,
-        "permissions" to permissionsByName
-    )
+    override fun serialize() =
+        mapOf(
+            "id" to id.value,
+            "name" to name,
+            "permissions" to permissionsByName,
+        )
 
     companion object {
         @JvmStatic
@@ -42,7 +47,7 @@ data class MfFactionRole(
                 Bukkit.getPluginManager().getPlugin("MedievalFactions") as MedievalFactions,
                 id,
                 name,
-                permissionsByName
+                permissionsByName,
             )
         }
     }

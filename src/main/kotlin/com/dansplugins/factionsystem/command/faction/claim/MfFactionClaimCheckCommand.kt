@@ -9,8 +9,16 @@ import org.bukkit.command.CommandSender
 import org.bukkit.command.TabCompleter
 import org.bukkit.entity.Player
 
-class MfFactionClaimCheckCommand(private val plugin: MedievalFactions) : CommandExecutor, TabCompleter {
-    override fun onCommand(sender: CommandSender, command: Command, label: String, args: Array<out String>): Boolean {
+class MfFactionClaimCheckCommand(
+    private val plugin: MedievalFactions,
+) : CommandExecutor,
+    TabCompleter {
+    override fun onCommand(
+        sender: CommandSender,
+        command: Command,
+        label: String,
+        args: Array<out String>,
+    ): Boolean {
         if (!sender.hasPermission("mf.claim.check") && !sender.hasPermission("mf.checkclaim")) {
             sender.sendMessage("$RED${plugin.language["CommandFactionCheckClaimNoPermission"]}")
             return true
@@ -35,7 +43,7 @@ class MfFactionClaimCheckCommand(private val plugin: MedievalFactions) : Command
                     return@Runnable
                 }
                 sender.sendMessage("$GREEN${plugin.language["CommandFactionCheckClaimClaimed", faction.name]}")
-            }
+            },
         )
         return true
     }
@@ -44,6 +52,6 @@ class MfFactionClaimCheckCommand(private val plugin: MedievalFactions) : Command
         sender: CommandSender,
         command: Command,
         label: String,
-        args: Array<out String>
+        args: Array<out String>,
     ) = emptyList<String>()
 }

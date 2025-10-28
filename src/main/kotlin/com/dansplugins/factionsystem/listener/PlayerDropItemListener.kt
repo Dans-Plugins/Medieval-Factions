@@ -9,8 +9,9 @@ import org.bukkit.event.Listener
 import org.bukkit.event.player.PlayerDropItemEvent
 import java.util.logging.Level.SEVERE
 
-class PlayerDropItemListener(private val plugin: MedievalFactions) : Listener {
-
+class PlayerDropItemListener(
+    private val plugin: MedievalFactions,
+) : Listener {
     @EventHandler
     fun onPlayerDropItem(event: PlayerDropItemEvent) {
         val playerService = plugin.services.playerService
@@ -25,7 +26,7 @@ class PlayerDropItemListener(private val plugin: MedievalFactions) : Listener {
                         plugin.logger.log(SEVERE, "Failed to save player: ${it.reason.message}", it.reason.cause)
                         return@Runnable
                     }
-                }
+                },
             )
             return
         }

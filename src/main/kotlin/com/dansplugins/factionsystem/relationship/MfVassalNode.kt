@@ -5,22 +5,17 @@ import com.dansplugins.factionsystem.faction.MfFactionId
 data class MfVassalNode(
     @get:JvmName("getFactionId")
     val factionId: MfFactionId,
-    val vassals: List<MfVassalNode>
+    val vassals: List<MfVassalNode>,
 ) {
     @JvmName("contains")
-    fun contains(factionId: MfFactionId): Boolean {
-        return vassals.any { it.factionId == factionId || it.contains(factionId) }
-    }
+    fun contains(factionId: MfFactionId): Boolean = vassals.any { it.factionId == factionId || it.contains(factionId) }
 
     @JvmName("flatMap")
-    fun <R> flatMap(transform: (MfFactionId) -> Iterable<R>): List<R> {
-        return vassals.flatMap { vassal -> vassal.flatMap(transform) + transform(vassal.factionId) }
-    }
+    fun <R> flatMap(transform: (MfFactionId) -> Iterable<R>): List<R> =
+        vassals.flatMap { vassal -> vassal.flatMap(transform) + transform(vassal.factionId) }
 
     @JvmName("map")
-    fun <R> map(transform: (MfFactionId) -> R): List<R> {
-        return vassals.flatMap { vassal -> vassal.map(transform) + transform(vassal.factionId) }
-    }
+    fun <R> map(transform: (MfFactionId) -> R): List<R> = vassals.flatMap { vassal -> vassal.map(transform) + transform(vassal.factionId) }
 
     @JvmName("mapNotNull")
     fun <R> mapNotNull(transform: (MfFactionId) -> R?): List<R> {

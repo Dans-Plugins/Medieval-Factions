@@ -22,14 +22,23 @@ import java.util.logging.Level
 import net.md_5.bungee.api.ChatColor as SpigotChatColor
 import org.bukkit.ChatColor as BukkitChatColor
 
-class MfFactionMapCommand(private val plugin: MedievalFactions) : CommandExecutor, TabCompleter {
-
-    enum class MapType(val supportsFactionless: Boolean) {
+class MfFactionMapCommand(
+    private val plugin: MedievalFactions,
+) : CommandExecutor,
+    TabCompleter {
+    enum class MapType(
+        val supportsFactionless: Boolean,
+    ) {
         NORMAL(true),
-        DIPLOMATIC(false)
+        DIPLOMATIC(false),
     }
 
-    override fun onCommand(sender: CommandSender, command: Command, label: String, args: Array<out String>): Boolean {
+    override fun onCommand(
+        sender: CommandSender,
+        command: Command,
+        label: String,
+        args: Array<out String>,
+    ): Boolean {
         if (!sender.hasPermission("mf.map")) {
             sender.sendMessage("${BukkitChatColor.RED}${plugin.language["CommandFactionMapNoPermission"]}")
             return true
@@ -38,11 +47,12 @@ class MfFactionMapCommand(private val plugin: MedievalFactions) : CommandExecuto
             sender.sendMessage("${BukkitChatColor.RED}${plugin.language["CommandFactionMapNotAPlayer"]}")
             return true
         }
-        val mapType = if (args.isEmpty()) {
-            MapType.NORMAL
-        } else {
-            MapType.valueOf(args.joinToString(" ").uppercase())
-        }
+        val mapType =
+            if (args.isEmpty()) {
+                MapType.NORMAL
+            } else {
+                MapType.valueOf(args.joinToString(" ").uppercase())
+            }
         val senderChunk = sender.location.chunk
         val senderChunkX = senderChunk.x
         val senderChunkZ = senderChunk.z
@@ -50,19 +60,21 @@ class MfFactionMapCommand(private val plugin: MedievalFactions) : CommandExecuto
             plugin,
             Runnable {
                 val playerService = plugin.services.playerService
-                val mfPlayer = playerService.getPlayer(sender)
-                    ?: playerService.save(MfPlayer(plugin, sender)).onFailure {
-                        sender.sendMessage("${BukkitChatColor.RED}${plugin.language["CommandFactionMapFailedToSavePlayer"]}")
-                        plugin.logger.log(Level.SEVERE, "Failed to save player: ${it.reason.message}", it.reason.cause)
-                        return@Runnable
-                    }
+                val mfPlayer =
+                    playerService.getPlayer(sender)
+                        ?: playerService.save(MfPlayer(plugin, sender)).onFailure {
+                            sender.sendMessage("${BukkitChatColor.RED}${plugin.language["CommandFactionMapFailedToSavePlayer"]}")
+                            plugin.logger.log(Level.SEVERE, "Failed to save player: ${it.reason.message}", it.reason.cause)
+                            return@Runnable
+                        }
                 val factionService = plugin.services.factionService
                 val faction = factionService.getFaction(mfPlayer.id)
                 if (faction == null && !mapType.supportsFactionless) {
                     sender.sendMessage("${BukkitChatColor.RED}${plugin.language["CommandFactionMapMapTypeRequiresFaction"]}")
                     return@Runnable
                 }
-                val map = renderMap(faction, mapType, sender.world, senderChunkX - 10, senderChunkZ - 4, senderChunkX + 10, senderChunkZ + 4)
+                val map =
+                    renderMap(faction, mapType, sender.world, senderChunkX - 10, senderChunkZ - 4, senderChunkX + 10, senderChunkZ + 4)
                 map.forEach { row ->
                     sender.spigot().sendMessage(*row)
                 }
@@ -74,46 +86,60 @@ class MfFactionMapCommand(private val plugin: MedievalFactions) : CommandExecuto
                             "${BukkitChatColor.BLUE}■ ${plugin.language["FactionMapAlly"]} " +
                             "${BukkitChatColor.DARK_GREEN}■ ${plugin.language["FactionMapVassal"]} " +
                             "${BukkitChatColor.YELLOW}■ ${plugin.language["FactionMapLiege"]} " +
-                            "${BukkitChatColor.WHITE}■ ${plugin.language["FactionMapNeutral"]}"
+                            "${BukkitChatColor.WHITE}■ ${plugin.language["FactionMapNeutral"]}",
                     )
                 }
-            }
+            },
         )
         return true
     }
 
-    private fun renderMap(viewerFaction: MfFaction?, mapType: MapType, world: World, minX: Int, minZ: Int, maxX: Int, maxZ: Int): List<Array<out BaseComponent>> {
+    private fun renderMap(
+        viewerFaction: MfFaction?,
+        mapType: MapType,
+        world: World,
+        minX: Int,
+        minZ: Int,
+        maxX: Int,
+        maxZ: Int,
+    ): List<Array<out BaseComponent>> {
         val claimService = plugin.services.claimService
         val factionService = plugin.services.factionService
         return (minZ..maxZ).map { z ->
-            (minX..maxX).map { x ->
-                val claim = claimService.getClaim(world, x, z)
-                val faction = claim?.factionId?.let(factionService::getFaction)
-                val color = getColor(viewerFaction, faction, mapType)
-                TextComponent(if (x == (minX + maxX) / 2 && z == (minZ + maxZ) / 2) "\u2b1c" else "\u2b1b").apply {
-                    this.color = color
-                    hoverEvent = HoverEvent(
-                        SHOW_TEXT,
-                        Text(
-                            arrayOf(
-                                if (faction != null) {
-                                    TextComponent(faction.name).apply {
-                                        this.color = color
-                                    }
-                                } else {
-                                    TextComponent(plugin.language["Wilderness"]).apply {
-                                        this.color = SpigotChatColor.of(plugin.config.getString("wilderness.color"))
-                                    }
-                                }
+            (minX..maxX)
+                .map { x ->
+                    val claim = claimService.getClaim(world, x, z)
+                    val faction = claim?.factionId?.let(factionService::getFaction)
+                    val color = getColor(viewerFaction, faction, mapType)
+                    TextComponent(if (x == (minX + maxX) / 2 && z == (minZ + maxZ) / 2) "\u2b1c" else "\u2b1b").apply {
+                        this.color = color
+                        hoverEvent =
+                            HoverEvent(
+                                SHOW_TEXT,
+                                Text(
+                                    arrayOf(
+                                        if (faction != null) {
+                                            TextComponent(faction.name).apply {
+                                                this.color = color
+                                            }
+                                        } else {
+                                            TextComponent(plugin.language["Wilderness"]).apply {
+                                                this.color = SpigotChatColor.of(plugin.config.getString("wilderness.color"))
+                                            }
+                                        },
+                                    ),
+                                ),
                             )
-                        )
-                    )
-                }
-            }.toTypedArray()
+                    }
+                }.toTypedArray()
         }
     }
 
-    private fun getColor(viewer: MfFaction?, faction: MfFaction?, mapType: MapType): SpigotChatColor {
+    private fun getColor(
+        viewer: MfFaction?,
+        faction: MfFaction?,
+        mapType: MapType,
+    ): SpigotChatColor {
         val relationshipService = plugin.services.factionRelationshipService
         when (mapType) {
             MapType.NORMAL -> {
@@ -150,7 +176,7 @@ class MfFactionMapCommand(private val plugin: MedievalFactions) : CommandExecuto
         sender: CommandSender,
         command: Command,
         label: String,
-        args: Array<out String>
+        args: Array<out String>,
     ) = when {
         args.isEmpty() -> MapType.values().map { it.name.lowercase() }
         args.size == 1 -> MapType.values().map { it.name.lowercase() }.filter { it.startsWith(args[0].lowercase()) }

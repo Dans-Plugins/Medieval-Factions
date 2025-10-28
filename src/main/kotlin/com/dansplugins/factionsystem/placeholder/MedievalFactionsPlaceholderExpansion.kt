@@ -17,17 +17,26 @@ import java.text.DecimalFormat
 import java.text.DecimalFormatSymbols
 import kotlin.math.floor
 
-class MedievalFactionsPlaceholderExpansion(private val plugin: MedievalFactions) : PlaceholderExpansion(), Relational {
-
+class MedievalFactionsPlaceholderExpansion(
+    private val plugin: MedievalFactions,
+) : PlaceholderExpansion(),
+    Relational {
     private val decimalFormat = DecimalFormat("0", DecimalFormatSymbols.getInstance(plugin.language.locale))
 
     override fun getIdentifier() = plugin.name
+
     override fun getAuthor() = plugin.description.authors.joinToString()
+
     override fun getVersion() = plugin.description.version
+
     override fun persist() = true
+
     override fun canRegister() = true
 
-    override fun onRequest(player: OfflinePlayer?, params: String): String? {
+    override fun onRequest(
+        player: OfflinePlayer?,
+        params: String,
+    ): String? {
         if (player == null) return null
         return when (val paramsLowercase = params.lowercase()) {
             "faction_name" -> getFactionName(player)
@@ -72,7 +81,11 @@ class MedievalFactionsPlaceholderExpansion(private val plugin: MedievalFactions)
         }
     }
 
-    override fun onPlaceholderRequest(one: Player?, two: Player?, identifier: String): String? {
+    override fun onPlaceholderRequest(
+        one: Player?,
+        two: Player?,
+        identifier: String,
+    ): String? {
         if (one == null || two == null) return null
         return when (identifier) {
             "faction_enemies" -> getPlayerFactionEnemies(one, two)
@@ -91,85 +104,99 @@ class MedievalFactionsPlaceholderExpansion(private val plugin: MedievalFactions)
     }
 
     private fun getFactionName(player: OfflinePlayer): String {
-        val faction = getPlayerFaction(player)
-            ?: return (plugin.config.getString("factions.factionlessFactionName") ?: "Factionless")
+        val faction =
+            getPlayerFaction(player)
+                ?: return (plugin.config.getString("factions.factionlessFactionName") ?: "Factionless")
         return faction.name
     }
 
     private fun getFactionPrefix(player: OfflinePlayer): String {
-        val faction = getPlayerFaction(player)
-            ?: return (plugin.config.getString("factions.factionlessFactionName") ?: "Factionless")
+        val faction =
+            getPlayerFaction(player)
+                ?: return (plugin.config.getString("factions.factionlessFactionName") ?: "Factionless")
         return faction.prefix ?: faction.name
     }
 
     private fun getFactionTotalClaimedChunks(player: OfflinePlayer): String {
-        val faction = getPlayerFaction(player)
-            ?: return (plugin.config.getString("factions.factionlessFactionName") ?: "Factionless")
+        val faction =
+            getPlayerFaction(player)
+                ?: return (plugin.config.getString("factions.factionlessFactionName") ?: "Factionless")
         val claimService = plugin.services.claimService
         return claimService.getClaims(faction.id).size.toString()
     }
 
     private fun getFactionPower(player: OfflinePlayer): String {
-        val faction = getPlayerFaction(player)
-            ?: return (plugin.config.getString("factions.factionlessFactionName") ?: "Factionless")
+        val faction =
+            getPlayerFaction(player)
+                ?: return (plugin.config.getString("factions.factionlessFactionName") ?: "Factionless")
         return decimalFormat.format(floor(faction.power))
     }
 
     private fun getFactionBonusPower(player: OfflinePlayer): String {
-        val faction = getPlayerFaction(player)
-            ?: return (plugin.config.getString("factions.factionlessFactionName") ?: "Factionless")
+        val faction =
+            getPlayerFaction(player)
+                ?: return (plugin.config.getString("factions.factionlessFactionName") ?: "Factionless")
         return decimalFormat.format(if (faction.flags[plugin.flags.acceptBonusPower]) floor(faction.bonusPower) else 0.0)
     }
 
     private fun getFactionPowerWithoutBonus(player: OfflinePlayer): String {
-        val faction = getPlayerFaction(player)
-            ?: return (plugin.config.getString("factions.factionlessFactionName") ?: "Factionless")
+        val faction =
+            getPlayerFaction(player)
+                ?: return (plugin.config.getString("factions.factionlessFactionName") ?: "Factionless")
         return decimalFormat.format(floor(faction.power - (if (faction.flags[plugin.flags.acceptBonusPower]) faction.bonusPower else 0.0)))
     }
 
     private fun getFactionAllyCount(player: OfflinePlayer): String {
-        val faction = getPlayerFaction(player)
-            ?: return (plugin.config.getString("factions.factionlessFactionName") ?: "Factionless")
+        val faction =
+            getPlayerFaction(player)
+                ?: return (plugin.config.getString("factions.factionlessFactionName") ?: "Factionless")
         val factionService = plugin.services.factionService
         val relationshipService = plugin.services.factionRelationshipService
-        return factionService.factions.count {
-            relationshipService.getRelationships(faction.id, it.id).any { relationship -> relationship.type == ALLY } &&
-                relationshipService.getRelationships(it.id, faction.id).any { relationship -> relationship.type == ALLY }
-        }.toString()
+        return factionService.factions
+            .count {
+                relationshipService.getRelationships(faction.id, it.id).any { relationship -> relationship.type == ALLY } &&
+                    relationshipService.getRelationships(it.id, faction.id).any { relationship -> relationship.type == ALLY }
+            }.toString()
     }
 
     private fun getFactionEnemyCount(player: OfflinePlayer): String {
-        val faction = getPlayerFaction(player)
-            ?: return (plugin.config.getString("factions.factionlessFactionName") ?: "Factionless")
+        val faction =
+            getPlayerFaction(player)
+                ?: return (plugin.config.getString("factions.factionlessFactionName") ?: "Factionless")
         val factionService = plugin.services.factionService
         val relationshipService = plugin.services.factionRelationshipService
-        return factionService.factions.count {
-            relationshipService.getRelationships(faction.id, it.id).any { relationship -> relationship.type == AT_WAR } &&
-                relationshipService.getRelationships(it.id, faction.id).any { relationship -> relationship.type == AT_WAR }
-        }.toString()
+        return factionService.factions
+            .count {
+                relationshipService.getRelationships(faction.id, it.id).any { relationship -> relationship.type == AT_WAR } &&
+                    relationshipService.getRelationships(it.id, faction.id).any { relationship -> relationship.type == AT_WAR }
+            }.toString()
     }
 
     private fun getFactionVassalCount(player: OfflinePlayer): String {
-        val faction = getPlayerFaction(player)
-            ?: return (plugin.config.getString("factions.factionlessFactionName") ?: "Factionless")
+        val faction =
+            getPlayerFaction(player)
+                ?: return (plugin.config.getString("factions.factionlessFactionName") ?: "Factionless")
         val factionService = plugin.services.factionService
         val relationshipService = plugin.services.factionRelationshipService
-        return factionService.factions.count {
-            relationshipService.getRelationships(faction.id, it.id).any { relationship -> relationship.type == VASSAL } &&
-                relationshipService.getRelationships(it.id, faction.id).any { relationship -> relationship.type == LIEGE }
-        }.toString()
+        return factionService.factions
+            .count {
+                relationshipService.getRelationships(faction.id, it.id).any { relationship -> relationship.type == VASSAL } &&
+                    relationshipService.getRelationships(it.id, faction.id).any { relationship -> relationship.type == LIEGE }
+            }.toString()
     }
 
     private fun getFactionGateCount(player: OfflinePlayer): String {
-        val faction = getPlayerFaction(player)
-            ?: return (plugin.config.getString("factions.factionlessFactionName") ?: "Factionless")
+        val faction =
+            getPlayerFaction(player)
+                ?: return (plugin.config.getString("factions.factionlessFactionName") ?: "Factionless")
         val gateService = plugin.services.gateService
         return gateService.getGatesByFaction(faction.id).size.toString()
     }
 
     private fun getFactionLiege(player: OfflinePlayer): String {
-        val faction = getPlayerFaction(player)
-            ?: return (plugin.config.getString("factions.factionlessFactionName") ?: "Factionless")
+        val faction =
+            getPlayerFaction(player)
+                ?: return (plugin.config.getString("factions.factionlessFactionName") ?: "Factionless")
         val factionService = plugin.services.factionService
         val relationshipService = plugin.services.factionRelationshipService
         val liegeId = relationshipService.getRelationships(faction.id, LIEGE).singleOrNull()?.targetId ?: return "N/A"
@@ -177,35 +204,35 @@ class MedievalFactionsPlaceholderExpansion(private val plugin: MedievalFactions)
     }
 
     private fun getFactionPopulation(player: OfflinePlayer): String {
-        val faction = getPlayerFaction(player)
-            ?: return (plugin.config.getString("factions.factionlessFactionName") ?: "Factionless")
+        val faction =
+            getPlayerFaction(player)
+                ?: return (plugin.config.getString("factions.factionlessFactionName") ?: "Factionless")
         return faction.members.size.toString()
     }
 
     private fun getFactionRole(player: OfflinePlayer): String {
         val playerService = plugin.services.playerService
-        val mfPlayer = playerService.getPlayer(player)
-            ?: return (plugin.config.getString("factions.factionlessFactionName") ?: "Factionless")
-        val faction = getPlayerFaction(player)
-            ?: return (plugin.config.getString("factions.factionlessFactionName") ?: "Factionless")
+        val mfPlayer =
+            playerService.getPlayer(player)
+                ?: return (plugin.config.getString("factions.factionlessFactionName") ?: "Factionless")
+        val faction =
+            getPlayerFaction(player)
+                ?: return (plugin.config.getString("factions.factionlessFactionName") ?: "Factionless")
         val role = faction.getRole(mfPlayer.id)
         return role?.name ?: "N/A"
     }
 
     private fun getPower(player: OfflinePlayer): String {
         val playerService = plugin.services.playerService
-        val mfPlayer = playerService.getPlayer(player)
-            ?: return decimalFormat.format(floor(plugin.config.getDouble("players.initialPower")))
+        val mfPlayer =
+            playerService.getPlayer(player)
+                ?: return decimalFormat.format(floor(plugin.config.getDouble("players.initialPower")))
         return decimalFormat.format(floor(mfPlayer.power))
     }
 
-    private fun getMaxPower(): String {
-        return decimalFormat.format(floor(plugin.config.getDouble("players.maxPower")))
-    }
+    private fun getMaxPower(): String = decimalFormat.format(floor(plugin.config.getDouble("players.maxPower")))
 
-    private fun getFormattedPlayerPower(player: OfflinePlayer): String {
-        return getPower(player) + "/" + getMaxPower()
-    }
+    private fun getFormattedPlayerPower(player: OfflinePlayer): String = getPower(player) + "/" + getMaxPower()
 
     private fun getFactionAtLocation(player: OfflinePlayer): String? {
         val onlinePlayer = player.player ?: return null
@@ -241,77 +268,109 @@ class MedievalFactionsPlaceholderExpansion(private val plugin: MedievalFactions)
         return onlinePlayer.location.world?.name ?: "World Undefined"
     }
 
-    private fun isPlayerFactionEnemy(player: OfflinePlayer, faction: MfFaction): String {
-        val playerFaction = getPlayerFaction(player)
-            ?: return (plugin.config.getString("factions.factionlessFactionName") ?: "Factionless")
+    private fun isPlayerFactionEnemy(
+        player: OfflinePlayer,
+        faction: MfFaction,
+    ): String {
+        val playerFaction =
+            getPlayerFaction(player)
+                ?: return (plugin.config.getString("factions.factionlessFactionName") ?: "Factionless")
         val relationshipService = plugin.services.factionRelationshipService
         return (
             relationshipService.getRelationships(playerFaction.id, faction.id).any { it.type == AT_WAR } ||
                 relationshipService.getRelationships(faction.id, playerFaction.id).any { it.type == AT_WAR }
-            ).toString()
+        ).toString()
     }
 
-    private fun isPlayerFactionAlly(player: OfflinePlayer, faction: MfFaction): String {
-        val playerFaction = getPlayerFaction(player)
-            ?: return (plugin.config.getString("factions.factionlessFactionName") ?: "Factionless")
+    private fun isPlayerFactionAlly(
+        player: OfflinePlayer,
+        faction: MfFaction,
+    ): String {
+        val playerFaction =
+            getPlayerFaction(player)
+                ?: return (plugin.config.getString("factions.factionlessFactionName") ?: "Factionless")
         val relationshipService = plugin.services.factionRelationshipService
         return (
             relationshipService.getRelationships(playerFaction.id, faction.id).any { it.type == ALLY } &&
                 relationshipService.getRelationships(faction.id, playerFaction.id).any { it.type == ALLY }
-            ).toString()
+        ).toString()
     }
 
-    private fun getFactionFlagValue(player: OfflinePlayer, flag: MfFlag<*>): String {
-        val playerFaction = getPlayerFaction(player)
-            ?: return (plugin.config.getString("factions.factionlessFactionName") ?: "Factionless")
+    private fun getFactionFlagValue(
+        player: OfflinePlayer,
+        flag: MfFlag<*>,
+    ): String {
+        val playerFaction =
+            getPlayerFaction(player)
+                ?: return (plugin.config.getString("factions.factionlessFactionName") ?: "Factionless")
         return playerFaction.flags[flag].toString()
     }
 
-    private fun getPlayerFactionEnemies(one: Player, two: Player): String {
-        val factionOne = getPlayerFaction(one)
-            ?: return (plugin.config.getString("factions.factionlessFactionName") ?: "Factionless")
-        val factionTwo = getPlayerFaction(two)
-            ?: return (plugin.config.getString("factions.factionlessFactionName") ?: "Factionless")
+    private fun getPlayerFactionEnemies(
+        one: Player,
+        two: Player,
+    ): String {
+        val factionOne =
+            getPlayerFaction(one)
+                ?: return (plugin.config.getString("factions.factionlessFactionName") ?: "Factionless")
+        val factionTwo =
+            getPlayerFaction(two)
+                ?: return (plugin.config.getString("factions.factionlessFactionName") ?: "Factionless")
         val relationshipService = plugin.services.factionRelationshipService
         return (
             relationshipService.getRelationships(factionOne.id, factionTwo.id).any { it.type == AT_WAR } ||
                 relationshipService.getRelationships(factionTwo.id, factionOne.id).any { it.type == AT_WAR }
-            ).toString()
+        ).toString()
     }
 
-    private fun getPlayerFactionAllies(one: Player, two: Player): String {
-        val factionOne = getPlayerFaction(one)
-            ?: return (plugin.config.getString("factions.factionlessFactionName") ?: "Factionless")
-        val factionTwo = getPlayerFaction(two)
-            ?: return (plugin.config.getString("factions.factionlessFactionName") ?: "Factionless")
+    private fun getPlayerFactionAllies(
+        one: Player,
+        two: Player,
+    ): String {
+        val factionOne =
+            getPlayerFaction(one)
+                ?: return (plugin.config.getString("factions.factionlessFactionName") ?: "Factionless")
+        val factionTwo =
+            getPlayerFaction(two)
+                ?: return (plugin.config.getString("factions.factionlessFactionName") ?: "Factionless")
         val relationshipService = plugin.services.factionRelationshipService
         return (
             relationshipService.getRelationships(factionOne.id, factionTwo.id).any { it.type == ALLY } &&
                 relationshipService.getRelationships(factionTwo.id, factionOne.id).any { it.type == ALLY }
-            ).toString()
+        ).toString()
     }
 
-    private fun getPlayerFactionVassal(one: Player, two: Player): String {
-        val factionOne = getPlayerFaction(one)
-            ?: return (plugin.config.getString("factions.factionlessFactionName") ?: "Factionless")
-        val factionTwo = getPlayerFaction(two)
-            ?: return (plugin.config.getString("factions.factionlessFactionName") ?: "Factionless")
+    private fun getPlayerFactionVassal(
+        one: Player,
+        two: Player,
+    ): String {
+        val factionOne =
+            getPlayerFaction(one)
+                ?: return (plugin.config.getString("factions.factionlessFactionName") ?: "Factionless")
+        val factionTwo =
+            getPlayerFaction(two)
+                ?: return (plugin.config.getString("factions.factionlessFactionName") ?: "Factionless")
         val relationshipService = plugin.services.factionRelationshipService
         return (
             relationshipService.getRelationships(factionOne.id, factionTwo.id).any { it.type == VASSAL } &&
                 relationshipService.getRelationships(factionTwo.id, factionOne.id).any { it.type == LIEGE }
-            ).toString()
+        ).toString()
     }
 
-    private fun getPlayerFactionLiege(one: Player, two: Player): String {
-        val factionOne = getPlayerFaction(one)
-            ?: return (plugin.config.getString("factions.factionlessFactionName") ?: "Factionless")
-        val factionTwo = getPlayerFaction(two)
-            ?: return (plugin.config.getString("factions.factionlessFactionName") ?: "Factionless")
+    private fun getPlayerFactionLiege(
+        one: Player,
+        two: Player,
+    ): String {
+        val factionOne =
+            getPlayerFaction(one)
+                ?: return (plugin.config.getString("factions.factionlessFactionName") ?: "Factionless")
+        val factionTwo =
+            getPlayerFaction(two)
+                ?: return (plugin.config.getString("factions.factionlessFactionName") ?: "Factionless")
         val relationshipService = plugin.services.factionRelationshipService
         return (
             relationshipService.getRelationships(factionOne.id, factionTwo.id).any { it.type == LIEGE } &&
                 relationshipService.getRelationships(factionTwo.id, factionOne.id).any { it.type == VASSAL }
-            ).toString()
+        ).toString()
     }
 }

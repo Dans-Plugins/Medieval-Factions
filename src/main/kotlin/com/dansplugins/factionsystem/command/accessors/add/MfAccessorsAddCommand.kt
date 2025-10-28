@@ -24,64 +24,82 @@ import org.bukkit.conversations.ValidatingPrompt
 import org.bukkit.entity.Player
 import java.util.logging.Level.SEVERE
 
-class MfAccessorsAddCommand(private val plugin: MedievalFactions) : CommandExecutor, TabCompleter {
-
-    private val conversationFactory = ConversationFactory(plugin)
-        .withModality(true)
-        .withFirstPrompt(NamePrompt())
-        .withEscapeSequence(plugin.language["EscapeSequence"])
-        .withLocalEcho(false)
-        .thatExcludesNonPlayersWithMessage(plugin.language["CommandAccessorsAddNotAPlayer"])
-        .addConversationAbandonedListener { event ->
-            if (!event.gracefulExit()) {
-                val conversable = event.context.forWhom
-                if (conversable is Player) {
-                    conversable.sendMessage(plugin.language["CommandAccessorsAddOperationCancelled"])
+class MfAccessorsAddCommand(
+    private val plugin: MedievalFactions,
+) : CommandExecutor,
+    TabCompleter {
+    private val conversationFactory =
+        ConversationFactory(plugin)
+            .withModality(true)
+            .withFirstPrompt(NamePrompt())
+            .withEscapeSequence(plugin.language["EscapeSequence"])
+            .withLocalEcho(false)
+            .thatExcludesNonPlayersWithMessage(plugin.language["CommandAccessorsAddNotAPlayer"])
+            .addConversationAbandonedListener { event ->
+                if (!event.gracefulExit()) {
+                    val conversable = event.context.forWhom
+                    if (conversable is Player) {
+                        conversable.sendMessage(plugin.language["CommandAccessorsAddOperationCancelled"])
+                    }
                 }
             }
-        }
 
     private inner class NamePrompt : ValidatingPrompt() {
-        override fun getPromptText(context: ConversationContext) = plugin.language["CommandAccessorsAddNamePrompt", plugin.language["EscapeSequence"]]
+        override fun getPromptText(context: ConversationContext) =
+            plugin.language["CommandAccessorsAddNamePrompt", plugin.language["EscapeSequence"]]
 
-        override fun isInputValid(context: ConversationContext, input: String): Boolean {
+        override fun isInputValid(
+            context: ConversationContext,
+            input: String,
+        ): Boolean {
             val player = plugin.server.getOfflinePlayer(input)
             return player.isOnline || player.hasPlayedBefore()
         }
 
-        override fun getFailedValidationText(context: ConversationContext, invalidInput: String): String? {
-            return plugin.language["CommandAccessorsAddInvalidPlayer"]
-        }
+        override fun getFailedValidationText(
+            context: ConversationContext,
+            invalidInput: String,
+        ): String? = plugin.language["CommandAccessorsAddInvalidPlayer"]
 
-        override fun acceptValidatedInput(context: ConversationContext, input: String): Prompt? {
+        override fun acceptValidatedInput(
+            context: ConversationContext,
+            input: String,
+        ): Prompt? {
             val sender = context.forWhom as Player
             val player = plugin.server.getOfflinePlayer(input)
-            val block = sender.world.getBlockAt(
-                context.getSessionData("x") as Int,
-                context.getSessionData("y") as Int,
-                context.getSessionData("z") as Int
-            )
+            val block =
+                sender.world.getBlockAt(
+                    context.getSessionData("x") as Int,
+                    context.getSessionData("y") as Int,
+                    context.getSessionData("z") as Int,
+                )
             val blockData = block.blockData
             val holder = (block.state as? Chest)?.inventory?.holder
-            val blocks = if (blockData is Bisected) {
-                if (blockData.half == Bisected.Half.BOTTOM) {
-                    listOf(block, block.getRelative(BlockFace.UP))
+            val blocks =
+                if (blockData is Bisected) {
+                    if (blockData.half == Bisected.Half.BOTTOM) {
+                        listOf(block, block.getRelative(BlockFace.UP))
+                    } else {
+                        listOf(block, block.getRelative(BlockFace.DOWN))
+                    }
+                } else if (holder is DoubleChest) {
+                    val left = holder.leftSide as? Chest
+                    val right = holder.rightSide as? Chest
+                    listOfNotNull(left?.block, right?.block)
                 } else {
-                    listOf(block, block.getRelative(BlockFace.DOWN))
+                    listOf(block)
                 }
-            } else if (holder is DoubleChest) {
-                val left = holder.leftSide as? Chest
-                val right = holder.rightSide as? Chest
-                listOfNotNull(left?.block, right?.block)
-            } else {
-                listOf(block)
-            }
             addAccessor(sender, blocks, player)
             return END_OF_CONVERSATION
         }
     }
 
-    override fun onCommand(sender: CommandSender, command: Command, label: String, args: Array<out String>): Boolean {
+    override fun onCommand(
+        sender: CommandSender,
+        command: Command,
+        label: String,
+        args: Array<out String>,
+    ): Boolean {
         if (!sender.hasPermission("mf.accessors.add") && !sender.hasPermission("mf.grantaccess")) {
             sender.sendMessage("$RED${plugin.language["CommandAccessorsAddNoPermission"]}")
             return true
@@ -95,19 +113,20 @@ class MfAccessorsAddCommand(private val plugin: MedievalFactions) : CommandExecu
                 plugin,
                 Runnable {
                     val playerService = plugin.services.playerService
-                    val mfPlayer = playerService.getPlayer(sender)
-                        ?: playerService.save(MfPlayer(plugin, sender)).onFailure {
-                            sender.sendMessage("$RED${plugin.language["CommandAccessorsAddFailedToSavePlayer"]}")
-                            plugin.logger.log(SEVERE, "Failed to save player: ${it.reason.message}", it.reason.cause)
-                            return@Runnable
-                        }
+                    val mfPlayer =
+                        playerService.getPlayer(sender)
+                            ?: playerService.save(MfPlayer(plugin, sender)).onFailure {
+                                sender.sendMessage("$RED${plugin.language["CommandAccessorsAddFailedToSavePlayer"]}")
+                                plugin.logger.log(SEVERE, "Failed to save player: ${it.reason.message}", it.reason.cause)
+                                return@Runnable
+                            }
                     val interactionService = plugin.services.interactionService
                     interactionService.setInteractionStatus(mfPlayer.id, ADDING_ACCESSOR).onFailure {
                         sender.sendMessage("$RED${plugin.language["CommandAccessorsAddFailedToSetInteractionStatus"]}")
                         return@Runnable
                     }
                     sender.sendMessage("$GREEN${plugin.language["CommandAccessorsAddSelectBlock"]}")
-                }
+                },
             )
             return true
         }
@@ -132,40 +151,47 @@ class MfAccessorsAddCommand(private val plugin: MedievalFactions) : CommandExecu
         val block = sender.world.getBlockAt(x, y, z)
         val blockData = block.blockData
         val holder = (block.state as? Chest)?.inventory?.holder
-        val blocks = if (blockData is Bisected) {
-            if (blockData.half == Bisected.Half.BOTTOM) {
-                listOf(block, block.getRelative(BlockFace.UP))
+        val blocks =
+            if (blockData is Bisected) {
+                if (blockData.half == Bisected.Half.BOTTOM) {
+                    listOf(block, block.getRelative(BlockFace.UP))
+                } else {
+                    listOf(block, block.getRelative(BlockFace.DOWN))
+                }
+            } else if (holder is DoubleChest) {
+                val left = holder.leftSide as? Chest
+                val right = holder.rightSide as? Chest
+                listOfNotNull(left?.block, right?.block)
             } else {
-                listOf(block, block.getRelative(BlockFace.DOWN))
+                listOf(block)
             }
-        } else if (holder is DoubleChest) {
-            val left = holder.leftSide as? Chest
-            val right = holder.rightSide as? Chest
-            listOfNotNull(left?.block, right?.block)
-        } else {
-            listOf(block)
-        }
         addAccessor(sender, blocks, player)
         return true
     }
 
-    private fun addAccessor(sender: Player, blocks: List<Block>, accessor: OfflinePlayer) {
+    private fun addAccessor(
+        sender: Player,
+        blocks: List<Block>,
+        accessor: OfflinePlayer,
+    ) {
         plugin.server.scheduler.runTaskAsynchronously(
             plugin,
             Runnable {
                 val playerService = plugin.services.playerService
-                val mfPlayer = playerService.getPlayer(sender)
-                    ?: playerService.save(MfPlayer(plugin, sender)).onFailure {
-                        sender.sendMessage("$RED${plugin.language["CommandAccessorsAddFailedToSavePlayer"]}")
-                        plugin.logger.log(SEVERE, "Failed to save player: ${it.reason.message}", it.reason.cause)
-                        return@Runnable
-                    }
-                val accessorMfPlayer = playerService.getPlayer(accessor)
-                    ?: playerService.save(MfPlayer(plugin, accessor)).onFailure {
-                        sender.sendMessage("$RED${plugin.language["CommandAccessorsAddFailedToSavePlayer"]}")
-                        plugin.logger.log(SEVERE, "Failed to save player: ${it.reason.message}", it.reason.cause)
-                        return@Runnable
-                    }
+                val mfPlayer =
+                    playerService.getPlayer(sender)
+                        ?: playerService.save(MfPlayer(plugin, sender)).onFailure {
+                            sender.sendMessage("$RED${plugin.language["CommandAccessorsAddFailedToSavePlayer"]}")
+                            plugin.logger.log(SEVERE, "Failed to save player: ${it.reason.message}", it.reason.cause)
+                            return@Runnable
+                        }
+                val accessorMfPlayer =
+                    playerService.getPlayer(accessor)
+                        ?: playerService.save(MfPlayer(plugin, accessor)).onFailure {
+                            sender.sendMessage("$RED${plugin.language["CommandAccessorsAddFailedToSavePlayer"]}")
+                            plugin.logger.log(SEVERE, "Failed to save player: ${it.reason.message}", it.reason.cause)
+                            return@Runnable
+                        }
                 val lockService = plugin.services.lockService
                 val lockedBlocks = blocks.mapNotNull { lockService.getLockedBlock(MfBlockPosition.fromBukkitBlock(it)) }
                 val lockedBlock = lockedBlocks.firstOrNull()
@@ -182,14 +208,16 @@ class MfAccessorsAddCommand(private val plugin: MedievalFactions) : CommandExecu
                     plugin.logger.log(SEVERE, "Failed to save locked block: ${it.reason.message}", it.reason.cause)
                     return@Runnable
                 }
-                sender.sendMessage("$GREEN${plugin.language["CommandAccessorsAddSuccess", accessor.name ?: plugin.language["UnknownPlayer"]]}")
+                sender.sendMessage(
+                    "$GREEN${plugin.language["CommandAccessorsAddSuccess", accessor.name ?: plugin.language["UnknownPlayer"]]}",
+                )
                 plugin.server.scheduler.runTask(
                     plugin,
                     Runnable {
                         sender.performCommand("accessors list ${lockedBlock.block.x} ${lockedBlock.block.y} ${lockedBlock.block.z}")
-                    }
+                    },
                 )
-            }
+            },
         )
     }
 
@@ -197,7 +225,7 @@ class MfAccessorsAddCommand(private val plugin: MedievalFactions) : CommandExecu
         sender: CommandSender,
         command: Command,
         label: String,
-        args: Array<out String>
+        args: Array<out String>,
     ) = when {
         args.size <= 3 -> emptyList()
         args.size == 4 ->

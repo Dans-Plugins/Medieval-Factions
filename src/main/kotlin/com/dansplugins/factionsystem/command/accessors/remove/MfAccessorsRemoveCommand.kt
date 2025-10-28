@@ -25,72 +25,92 @@ import org.bukkit.entity.Player
 import java.util.*
 import java.util.logging.Level
 
-class MfAccessorsRemoveCommand(private val plugin: MedievalFactions) : CommandExecutor, TabCompleter {
-
-    private val conversationFactory = ConversationFactory(plugin)
-        .withModality(true)
-        .withFirstPrompt(NamePrompt())
-        .withEscapeSequence(plugin.language["EscapeSequence"])
-        .withLocalEcho(false)
-        .thatExcludesNonPlayersWithMessage(plugin.language["CommandAccessorsRemoveNotAPlayer"])
-        .addConversationAbandonedListener { event ->
-            if (!event.gracefulExit()) {
-                val conversable = event.context.forWhom
-                if (conversable is Player) {
-                    conversable.sendMessage(plugin.language["CommandAccessorsRemoveOperationCancelled"])
+class MfAccessorsRemoveCommand(
+    private val plugin: MedievalFactions,
+) : CommandExecutor,
+    TabCompleter {
+    private val conversationFactory =
+        ConversationFactory(plugin)
+            .withModality(true)
+            .withFirstPrompt(NamePrompt())
+            .withEscapeSequence(plugin.language["EscapeSequence"])
+            .withLocalEcho(false)
+            .thatExcludesNonPlayersWithMessage(plugin.language["CommandAccessorsRemoveNotAPlayer"])
+            .addConversationAbandonedListener { event ->
+                if (!event.gracefulExit()) {
+                    val conversable = event.context.forWhom
+                    if (conversable is Player) {
+                        conversable.sendMessage(plugin.language["CommandAccessorsRemoveOperationCancelled"])
+                    }
                 }
             }
-        }
 
     private inner class NamePrompt : ValidatingPrompt() {
-        override fun getPromptText(context: ConversationContext) = plugin.language["CommandAccessorsRemoveNamePrompt", plugin.language["EscapeSequence"]]
+        override fun getPromptText(context: ConversationContext) =
+            plugin.language["CommandAccessorsRemoveNamePrompt", plugin.language["EscapeSequence"]]
 
-        override fun isInputValid(context: ConversationContext, input: String): Boolean {
-            val player = try {
-                plugin.server.getOfflinePlayer(UUID.fromString(input))
-            } catch (exception: IllegalArgumentException) {
-                plugin.server.getOfflinePlayer(input)
-            }
+        override fun isInputValid(
+            context: ConversationContext,
+            input: String,
+        ): Boolean {
+            val player =
+                try {
+                    plugin.server.getOfflinePlayer(UUID.fromString(input))
+                } catch (exception: IllegalArgumentException) {
+                    plugin.server.getOfflinePlayer(input)
+                }
             return player.isOnline || player.hasPlayedBefore()
         }
 
-        override fun getFailedValidationText(context: ConversationContext, invalidInput: String): String? {
-            return plugin.language["CommandAccessorsRemoveInvalidPlayer"]
-        }
+        override fun getFailedValidationText(
+            context: ConversationContext,
+            invalidInput: String,
+        ): String? = plugin.language["CommandAccessorsRemoveInvalidPlayer"]
 
-        override fun acceptValidatedInput(context: ConversationContext, input: String): Prompt? {
+        override fun acceptValidatedInput(
+            context: ConversationContext,
+            input: String,
+        ): Prompt? {
             val sender = context.forWhom as Player
-            val player = try {
-                plugin.server.getOfflinePlayer(UUID.fromString(input))
-            } catch (exception: IllegalArgumentException) {
-                plugin.server.getOfflinePlayer(input)
-            }
-            val block = sender.world.getBlockAt(
-                context.getSessionData("x") as Int,
-                context.getSessionData("y") as Int,
-                context.getSessionData("z") as Int
-            )
+            val player =
+                try {
+                    plugin.server.getOfflinePlayer(UUID.fromString(input))
+                } catch (exception: IllegalArgumentException) {
+                    plugin.server.getOfflinePlayer(input)
+                }
+            val block =
+                sender.world.getBlockAt(
+                    context.getSessionData("x") as Int,
+                    context.getSessionData("y") as Int,
+                    context.getSessionData("z") as Int,
+                )
             val blockData = block.blockData
             val holder = (block.state as? Chest)?.inventory?.holder
-            val blocks = if (blockData is Bisected) {
-                if (blockData.half == Bisected.Half.BOTTOM) {
-                    listOf(block, block.getRelative(BlockFace.UP))
+            val blocks =
+                if (blockData is Bisected) {
+                    if (blockData.half == Bisected.Half.BOTTOM) {
+                        listOf(block, block.getRelative(BlockFace.UP))
+                    } else {
+                        listOf(block, block.getRelative(BlockFace.DOWN))
+                    }
+                } else if (holder is DoubleChest) {
+                    val left = holder.leftSide as? Chest
+                    val right = holder.rightSide as? Chest
+                    listOfNotNull(left?.block, right?.block)
                 } else {
-                    listOf(block, block.getRelative(BlockFace.DOWN))
+                    listOf(block)
                 }
-            } else if (holder is DoubleChest) {
-                val left = holder.leftSide as? Chest
-                val right = holder.rightSide as? Chest
-                listOfNotNull(left?.block, right?.block)
-            } else {
-                listOf(block)
-            }
             removeAccessor(sender, blocks, player)
             return END_OF_CONVERSATION
         }
     }
 
-    override fun onCommand(sender: CommandSender, command: Command, label: String, args: Array<out String>): Boolean {
+    override fun onCommand(
+        sender: CommandSender,
+        command: Command,
+        label: String,
+        args: Array<out String>,
+    ): Boolean {
         if (!sender.hasPermission("mf.accessors.remove") && !sender.hasPermission("mf.revokeaccess")) {
             sender.sendMessage("$RED${plugin.language["CommandAccessorsRemoveNoPermission"]}")
             return true
@@ -104,19 +124,20 @@ class MfAccessorsRemoveCommand(private val plugin: MedievalFactions) : CommandEx
                 plugin,
                 Runnable {
                     val playerService = plugin.services.playerService
-                    val mfPlayer = playerService.getPlayer(sender)
-                        ?: playerService.save(MfPlayer(plugin, sender)).onFailure {
-                            sender.sendMessage("$RED${plugin.language["CommandAccessorsRemoveFailedToSavePlayer"]}")
-                            plugin.logger.log(Level.SEVERE, "Failed to save player: ${it.reason.message}", it.reason.cause)
-                            return@Runnable
-                        }
+                    val mfPlayer =
+                        playerService.getPlayer(sender)
+                            ?: playerService.save(MfPlayer(plugin, sender)).onFailure {
+                                sender.sendMessage("$RED${plugin.language["CommandAccessorsRemoveFailedToSavePlayer"]}")
+                                plugin.logger.log(Level.SEVERE, "Failed to save player: ${it.reason.message}", it.reason.cause)
+                                return@Runnable
+                            }
                     val interactionService = plugin.services.interactionService
                     interactionService.setInteractionStatus(mfPlayer.id, REMOVING_ACCESSOR).onFailure {
                         sender.sendMessage("$RED${plugin.language["CommandAccessorsRemoveFailedToSetInteractionStatus"]}")
                         return@Runnable
                     }
                     sender.sendMessage("${ChatColor.GREEN}${plugin.language["CommandAccessorsRemoveSelectBlock"]}")
-                }
+                },
             )
             return true
         }
@@ -133,11 +154,12 @@ class MfAccessorsRemoveCommand(private val plugin: MedievalFactions) : CommandEx
             conversation.begin()
             return true
         }
-        val player = try {
-            plugin.server.getOfflinePlayer(UUID.fromString(args[3]))
-        } catch (exception: IllegalArgumentException) {
-            plugin.server.getOfflinePlayer(args[3])
-        }
+        val player =
+            try {
+                plugin.server.getOfflinePlayer(UUID.fromString(args[3]))
+            } catch (exception: IllegalArgumentException) {
+                plugin.server.getOfflinePlayer(args[3])
+            }
         if (!player.isOnline && !player.hasPlayedBefore()) {
             sender.sendMessage("$RED${plugin.language["CommandAccessorsRemoveInvalidPlayer"]}")
             return true
@@ -145,40 +167,47 @@ class MfAccessorsRemoveCommand(private val plugin: MedievalFactions) : CommandEx
         val block = sender.world.getBlockAt(x, y, z)
         val blockData = block.blockData
         val holder = (block.state as? Chest)?.inventory?.holder
-        val blocks = if (blockData is Bisected) {
-            if (blockData.half == Bisected.Half.BOTTOM) {
-                listOf(block, block.getRelative(BlockFace.UP))
+        val blocks =
+            if (blockData is Bisected) {
+                if (blockData.half == Bisected.Half.BOTTOM) {
+                    listOf(block, block.getRelative(BlockFace.UP))
+                } else {
+                    listOf(block, block.getRelative(BlockFace.DOWN))
+                }
+            } else if (holder is DoubleChest) {
+                val left = holder.leftSide as? Chest
+                val right = holder.rightSide as? Chest
+                listOfNotNull(left?.block, right?.block)
             } else {
-                listOf(block, block.getRelative(BlockFace.DOWN))
+                listOf(block)
             }
-        } else if (holder is DoubleChest) {
-            val left = holder.leftSide as? Chest
-            val right = holder.rightSide as? Chest
-            listOfNotNull(left?.block, right?.block)
-        } else {
-            listOf(block)
-        }
         removeAccessor(sender, blocks, player)
         return true
     }
 
-    private fun removeAccessor(sender: Player, blocks: List<Block>, accessor: OfflinePlayer) {
+    private fun removeAccessor(
+        sender: Player,
+        blocks: List<Block>,
+        accessor: OfflinePlayer,
+    ) {
         plugin.server.scheduler.runTaskAsynchronously(
             plugin,
             Runnable {
                 val playerService = plugin.services.playerService
-                val mfPlayer = playerService.getPlayer(sender)
-                    ?: playerService.save(MfPlayer(plugin, sender)).onFailure {
-                        sender.sendMessage("$RED${plugin.language["CommandAccessorsRemoveFailedToSavePlayer"]}")
-                        plugin.logger.log(Level.SEVERE, "Failed to save player: ${it.reason.message}", it.reason.cause)
-                        return@Runnable
-                    }
-                val accessorMfPlayer = playerService.getPlayer(accessor)
-                    ?: playerService.save(MfPlayer(plugin, accessor)).onFailure {
-                        sender.sendMessage("$RED${plugin.language["CommandAccessorsRemoveFailedToSavePlayer"]}")
-                        plugin.logger.log(Level.SEVERE, "Failed to save player: ${it.reason.message}", it.reason.cause)
-                        return@Runnable
-                    }
+                val mfPlayer =
+                    playerService.getPlayer(sender)
+                        ?: playerService.save(MfPlayer(plugin, sender)).onFailure {
+                            sender.sendMessage("$RED${plugin.language["CommandAccessorsRemoveFailedToSavePlayer"]}")
+                            plugin.logger.log(Level.SEVERE, "Failed to save player: ${it.reason.message}", it.reason.cause)
+                            return@Runnable
+                        }
+                val accessorMfPlayer =
+                    playerService.getPlayer(accessor)
+                        ?: playerService.save(MfPlayer(plugin, accessor)).onFailure {
+                            sender.sendMessage("$RED${plugin.language["CommandAccessorsRemoveFailedToSavePlayer"]}")
+                            plugin.logger.log(Level.SEVERE, "Failed to save player: ${it.reason.message}", it.reason.cause)
+                            return@Runnable
+                        }
                 val lockService = plugin.services.lockService
                 val lockedBlocks = blocks.mapNotNull { lockService.getLockedBlock(MfBlockPosition.fromBukkitBlock(it)) }
                 val lockedBlock = lockedBlocks.firstOrNull()
@@ -195,14 +224,16 @@ class MfAccessorsRemoveCommand(private val plugin: MedievalFactions) : CommandEx
                     plugin.logger.log(Level.SEVERE, "Failed to save locked block: ${it.reason.message}", it.reason.cause)
                     return@Runnable
                 }
-                sender.sendMessage("${ChatColor.GREEN}${plugin.language["CommandAccessorsRemoveSuccess", accessor.name ?: plugin.language["UnknownPlayer"]]}")
+                sender.sendMessage(
+                    "${ChatColor.GREEN}${plugin.language["CommandAccessorsRemoveSuccess", accessor.name ?: plugin.language["UnknownPlayer"]]}",
+                )
                 plugin.server.scheduler.runTask(
                     plugin,
                     Runnable {
                         sender.performCommand("accessors list ${lockedBlock.block.x} ${lockedBlock.block.y} ${lockedBlock.block.z}")
-                    }
+                    },
                 )
-            }
+            },
         )
     }
 
@@ -210,7 +241,7 @@ class MfAccessorsRemoveCommand(private val plugin: MedievalFactions) : CommandEx
         sender: CommandSender,
         command: Command,
         label: String,
-        args: Array<out String>
+        args: Array<out String>,
     ) = when {
         args.size <= 3 -> emptyList()
         args.size == 4 ->

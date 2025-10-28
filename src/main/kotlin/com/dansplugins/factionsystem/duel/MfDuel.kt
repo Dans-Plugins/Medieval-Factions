@@ -16,5 +16,5 @@ data class MfDuel(
     val challengedHealth: Double,
     val endTime: Instant,
     val challengerLocation: MfPosition?,
-    val challengedLocation: MfPosition?
+    val challengedLocation: MfPosition?,
 )

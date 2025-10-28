@@ -9,6 +9,6 @@ class OptimisticLockingFailureException : Exception {
         message,
         cause,
         enableSuppression,
-        writableStackTrace
+        writableStackTrace,
     )
 }

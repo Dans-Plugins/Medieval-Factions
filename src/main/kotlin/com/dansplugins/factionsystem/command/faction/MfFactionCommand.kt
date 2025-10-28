@@ -51,8 +51,10 @@ import org.bukkit.command.CommandExecutor
 import org.bukkit.command.CommandSender
 import org.bukkit.command.TabCompleter
 
-class MfFactionCommand(private val plugin: MedievalFactions) : CommandExecutor, TabCompleter {
-
+class MfFactionCommand(
+    private val plugin: MedievalFactions,
+) : CommandExecutor,
+    TabCompleter {
     private val factionHelpCommand = MfFactionHelpCommand(plugin)
     private val factionCreateCommand = MfFactionCreateCommand(plugin)
     private val factionClaimCommand = MfFactionClaimCommand(plugin)
@@ -139,51 +141,57 @@ class MfFactionCommand(private val plugin: MedievalFactions) : CommandExecutor, 
     private val approveAppAliases = listOf("approveapp", plugin.language["CmdFactionApproveApp"])
     private val denyAppAliases = listOf("denyapp", plugin.language["CmdFactionDenyApp"])
 
-    private val subcommands = helpAliases +
-        createAliases +
-        claimAliases +
-        lawAliases +
-        allyAliases +
-        breakAllianceAliases +
-        inviteAliases +
-        joinAliases +
-        declareWarAliases +
-        makePeaceAliases +
-        infoAliases +
-        membersAliases +
-        roleAliases +
-        listAliases +
-        unclaimAliases +
-        unclaimAllAliases +
-        powerAliases +
-        whoAliases +
-        disbandAliases +
-        invokeAliases +
-        leaveAliases +
-        setAliases +
-        renameAliases +
-        vassalizeAliases +
-        swearFealtyAliases +
-        grantIndependenceAliases +
-        declareIndependenceAliases +
-        kickAliases +
-        mapAliases +
-        setHomeAliases +
-        homeAliases +
-        flagAliases +
-        bypassAliases +
-        chatAliases +
-        bonusPowerAliases +
-        relationshipAliases +
-        addMemberAliases +
-        devAliases +
-        applyAliases +
-        showAppsAliases +
-        approveAppAliases +
-        denyAppAliases
+    private val subcommands =
+        helpAliases +
+            createAliases +
+            claimAliases +
+            lawAliases +
+            allyAliases +
+            breakAllianceAliases +
+            inviteAliases +
+            joinAliases +
+            declareWarAliases +
+            makePeaceAliases +
+            infoAliases +
+            membersAliases +
+            roleAliases +
+            listAliases +
+            unclaimAliases +
+            unclaimAllAliases +
+            powerAliases +
+            whoAliases +
+            disbandAliases +
+            invokeAliases +
+            leaveAliases +
+            setAliases +
+            renameAliases +
+            vassalizeAliases +
+            swearFealtyAliases +
+            grantIndependenceAliases +
+            declareIndependenceAliases +
+            kickAliases +
+            mapAliases +
+            setHomeAliases +
+            homeAliases +
+            flagAliases +
+            bypassAliases +
+            chatAliases +
+            bonusPowerAliases +
+            relationshipAliases +
+            addMemberAliases +
+            devAliases +
+            applyAliases +
+            showAppsAliases +
+            approveAppAliases +
+            denyAppAliases
 
-    override fun onCommand(sender: CommandSender, command: Command, label: String, args: Array<out String>): Boolean {
-        return when (args.firstOrNull()?.lowercase()) {
+    override fun onCommand(
+        sender: CommandSender,
+        command: Command,
+        label: String,
+        args: Array<out String>,
+    ): Boolean =
+        when (args.firstOrNull()?.lowercase()) {
             in helpAliases -> factionHelpCommand.onCommand(sender, command, label, args.drop(1).toTypedArray())
             in createAliases -> factionCreateCommand.onCommand(sender, command, label, args.drop(1).toTypedArray())
             in claimAliases -> factionClaimCommand.onCommand(sender, command, label, args.drop(1).toTypedArray())
@@ -210,7 +218,13 @@ class MfFactionCommand(private val plugin: MedievalFactions) : CommandExecutor, 
             in vassalizeAliases -> factionVassalizeCommand.onCommand(sender, command, label, args.drop(1).toTypedArray())
             in swearFealtyAliases -> factionSwearFealtyCommand.onCommand(sender, command, label, args.drop(1).toTypedArray())
             in grantIndependenceAliases -> factionGrantIndependenceCommand.onCommand(sender, command, label, args.drop(1).toTypedArray())
-            in declareIndependenceAliases -> factionDeclareIndependenceCommand.onCommand(sender, command, label, args.drop(1).toTypedArray())
+            in declareIndependenceAliases ->
+                factionDeclareIndependenceCommand.onCommand(
+                    sender,
+                    command,
+                    label,
+                    args.drop(1).toTypedArray(),
+                )
             in kickAliases -> factionKickCommand.onCommand(sender, command, label, args.drop(1).toTypedArray())
             in mapAliases -> factionMapCommand.onCommand(sender, command, label, args.drop(1).toTypedArray())
             in setHomeAliases -> factionSetHomeCommand.onCommand(sender, command, label, args.drop(1).toTypedArray())
@@ -235,59 +249,71 @@ class MfFactionCommand(private val plugin: MedievalFactions) : CommandExecutor, 
                 true
             }
         }
-    }
 
     override fun onTabComplete(
         sender: CommandSender,
         command: Command,
         label: String,
-        args: Array<out String>
+        args: Array<out String>,
     ) = when {
         args.isEmpty() -> subcommands
         args.size == 1 -> subcommands.filter { it.startsWith(args[0].lowercase()) }
-        else -> when (args.first().lowercase()) {
-            in helpAliases -> factionHelpCommand.onTabComplete(sender, command, label, args.drop(1).toTypedArray())
-            in createAliases -> factionCreateCommand.onTabComplete(sender, command, label, args.drop(1).toTypedArray())
-            in lawAliases -> factionLawCommand.onTabComplete(sender, command, label, args.drop(1).toTypedArray())
-            in allyAliases -> factionAllyCommand.onTabComplete(sender, command, label, args.drop(1).toTypedArray())
-            in breakAllianceAliases -> factionBreakAllianceCommand.onTabComplete(sender, command, label, args.drop(1).toTypedArray())
-            in inviteAliases -> factionInviteCommand.onTabComplete(sender, command, label, args.drop(1).toTypedArray())
-            in joinAliases -> factionJoinCommand.onTabComplete(sender, command, label, args.drop(1).toTypedArray())
-            in declareWarAliases -> factionDeclareWarCommand.onTabComplete(sender, command, label, args.drop(1).toTypedArray())
-            in makePeaceAliases -> factionMakePeaceCommand.onTabComplete(sender, command, label, args.drop(1).toTypedArray())
-            in infoAliases -> factionInfoCommand.onTabComplete(sender, command, label, args.drop(1).toTypedArray())
-            in membersAliases -> factionMembersCommand.onTabComplete(sender, command, label, args.drop(1).toTypedArray())
-            in roleAliases -> factionRoleCommand.onTabComplete(sender, command, label, args.drop(1).toTypedArray())
-            in listAliases -> factionListCommand.onTabComplete(sender, command, label, args.drop(1).toTypedArray())
-            in claimAliases -> factionClaimCommand.onTabComplete(sender, command, label, args.drop(1).toTypedArray())
-            in unclaimAliases -> factionUnclaimCommand.onTabComplete(sender, command, label, args.drop(1).toTypedArray())
-            in unclaimAllAliases -> factionUnclaimAllCommand.onTabComplete(sender, command, label, args.drop(1).toTypedArray())
-            in powerAliases -> factionPowerCommand.onTabComplete(sender, command, label, args.drop(1).toTypedArray())
-            in whoAliases -> factionWhoCommand.onTabComplete(sender, command, label, args.drop(1).toTypedArray())
-            in disbandAliases -> factionDisbandCommand.onTabComplete(sender, command, label, args.drop(1).toTypedArray())
-            in invokeAliases -> factionInvokeCommand.onTabComplete(sender, command, label, args.drop(1).toTypedArray())
-            in leaveAliases -> factionLeaveCommand.onTabComplete(sender, command, label, args.drop(1).toTypedArray())
-            in setAliases -> factionSetCommand.onTabComplete(sender, command, label, args.drop(1).toTypedArray())
-            in renameAliases -> factionSetNameCommand.onTabComplete(sender, command, label, args.drop(1).toTypedArray())
-            in vassalizeAliases -> factionVassalizeCommand.onTabComplete(sender, command, label, args.drop(1).toTypedArray())
-            in swearFealtyAliases -> factionSwearFealtyCommand.onTabComplete(sender, command, label, args.drop(1).toTypedArray())
-            in grantIndependenceAliases -> factionGrantIndependenceCommand.onTabComplete(sender, command, label, args.drop(1).toTypedArray())
-            in declareIndependenceAliases -> factionDeclareIndependenceCommand.onTabComplete(sender, command, label, args.drop(1).toTypedArray())
-            in kickAliases -> factionKickCommand.onTabComplete(sender, command, label, args.drop(1).toTypedArray())
-            in mapAliases -> factionMapCommand.onTabComplete(sender, command, label, args.drop(1).toTypedArray())
-            in setHomeAliases -> factionSetHomeCommand.onTabComplete(sender, command, label, args.drop(1).toTypedArray())
-            in homeAliases -> factionHomeCommand.onTabComplete(sender, command, label, args.drop(1).toTypedArray())
-            in flagAliases -> factionFlagCommand.onTabComplete(sender, command, label, args.drop(1).toTypedArray())
-            in bypassAliases -> factionBypassCommand.onTabComplete(sender, command, label, args.drop(1).toTypedArray())
-            in chatAliases -> factionChatCommand.onTabComplete(sender, command, label, args.drop(1).toTypedArray())
-            in bonusPowerAliases -> factionBonusPowerCommand.onTabComplete(sender, command, label, args.drop(1).toTypedArray())
-            in relationshipAliases -> factionRelationshipCommand.onTabComplete(sender, command, label, args.drop(1).toTypedArray())
-            in addMemberAliases -> factionAddMemberCommand.onTabComplete(sender, command, label, args.drop(1).toTypedArray())
-            in devAliases -> factionDevCommand.onTabComplete(sender, command, label, args.drop(1).toTypedArray())
-            in applyAliases -> factionApplyCommand.onTabComplete(sender, command, label, args.drop(1).toTypedArray())
-            in approveAppAliases -> factionApproveAppCommand.onTabComplete(sender, command, label, args.drop(1).toTypedArray())
-            in denyAppAliases -> factionDenyAppCommand.onTabComplete(sender, command, label, args.drop(1).toTypedArray())
-            else -> emptyList()
-        }
+        else ->
+            when (args.first().lowercase()) {
+                in helpAliases -> factionHelpCommand.onTabComplete(sender, command, label, args.drop(1).toTypedArray())
+                in createAliases -> factionCreateCommand.onTabComplete(sender, command, label, args.drop(1).toTypedArray())
+                in lawAliases -> factionLawCommand.onTabComplete(sender, command, label, args.drop(1).toTypedArray())
+                in allyAliases -> factionAllyCommand.onTabComplete(sender, command, label, args.drop(1).toTypedArray())
+                in breakAllianceAliases -> factionBreakAllianceCommand.onTabComplete(sender, command, label, args.drop(1).toTypedArray())
+                in inviteAliases -> factionInviteCommand.onTabComplete(sender, command, label, args.drop(1).toTypedArray())
+                in joinAliases -> factionJoinCommand.onTabComplete(sender, command, label, args.drop(1).toTypedArray())
+                in declareWarAliases -> factionDeclareWarCommand.onTabComplete(sender, command, label, args.drop(1).toTypedArray())
+                in makePeaceAliases -> factionMakePeaceCommand.onTabComplete(sender, command, label, args.drop(1).toTypedArray())
+                in infoAliases -> factionInfoCommand.onTabComplete(sender, command, label, args.drop(1).toTypedArray())
+                in membersAliases -> factionMembersCommand.onTabComplete(sender, command, label, args.drop(1).toTypedArray())
+                in roleAliases -> factionRoleCommand.onTabComplete(sender, command, label, args.drop(1).toTypedArray())
+                in listAliases -> factionListCommand.onTabComplete(sender, command, label, args.drop(1).toTypedArray())
+                in claimAliases -> factionClaimCommand.onTabComplete(sender, command, label, args.drop(1).toTypedArray())
+                in unclaimAliases -> factionUnclaimCommand.onTabComplete(sender, command, label, args.drop(1).toTypedArray())
+                in unclaimAllAliases -> factionUnclaimAllCommand.onTabComplete(sender, command, label, args.drop(1).toTypedArray())
+                in powerAliases -> factionPowerCommand.onTabComplete(sender, command, label, args.drop(1).toTypedArray())
+                in whoAliases -> factionWhoCommand.onTabComplete(sender, command, label, args.drop(1).toTypedArray())
+                in disbandAliases -> factionDisbandCommand.onTabComplete(sender, command, label, args.drop(1).toTypedArray())
+                in invokeAliases -> factionInvokeCommand.onTabComplete(sender, command, label, args.drop(1).toTypedArray())
+                in leaveAliases -> factionLeaveCommand.onTabComplete(sender, command, label, args.drop(1).toTypedArray())
+                in setAliases -> factionSetCommand.onTabComplete(sender, command, label, args.drop(1).toTypedArray())
+                in renameAliases -> factionSetNameCommand.onTabComplete(sender, command, label, args.drop(1).toTypedArray())
+                in vassalizeAliases -> factionVassalizeCommand.onTabComplete(sender, command, label, args.drop(1).toTypedArray())
+                in swearFealtyAliases -> factionSwearFealtyCommand.onTabComplete(sender, command, label, args.drop(1).toTypedArray())
+                in grantIndependenceAliases ->
+                    factionGrantIndependenceCommand.onTabComplete(
+                        sender,
+                        command,
+                        label,
+                        args.drop(1).toTypedArray(),
+                    )
+                in declareIndependenceAliases ->
+                    factionDeclareIndependenceCommand.onTabComplete(
+                        sender,
+                        command,
+                        label,
+                        args.drop(1).toTypedArray(),
+                    )
+                in kickAliases -> factionKickCommand.onTabComplete(sender, command, label, args.drop(1).toTypedArray())
+                in mapAliases -> factionMapCommand.onTabComplete(sender, command, label, args.drop(1).toTypedArray())
+                in setHomeAliases -> factionSetHomeCommand.onTabComplete(sender, command, label, args.drop(1).toTypedArray())
+                in homeAliases -> factionHomeCommand.onTabComplete(sender, command, label, args.drop(1).toTypedArray())
+                in flagAliases -> factionFlagCommand.onTabComplete(sender, command, label, args.drop(1).toTypedArray())
+                in bypassAliases -> factionBypassCommand.onTabComplete(sender, command, label, args.drop(1).toTypedArray())
+                in chatAliases -> factionChatCommand.onTabComplete(sender, command, label, args.drop(1).toTypedArray())
+                in bonusPowerAliases -> factionBonusPowerCommand.onTabComplete(sender, command, label, args.drop(1).toTypedArray())
+                in relationshipAliases -> factionRelationshipCommand.onTabComplete(sender, command, label, args.drop(1).toTypedArray())
+                in addMemberAliases -> factionAddMemberCommand.onTabComplete(sender, command, label, args.drop(1).toTypedArray())
+                in devAliases -> factionDevCommand.onTabComplete(sender, command, label, args.drop(1).toTypedArray())
+                in applyAliases -> factionApplyCommand.onTabComplete(sender, command, label, args.drop(1).toTypedArray())
+                in approveAppAliases -> factionApproveAppCommand.onTabComplete(sender, command, label, args.drop(1).toTypedArray())
+                in denyAppAliases -> factionDenyAppCommand.onTabComplete(sender, command, label, args.drop(1).toTypedArray())
+                else -> emptyList()
+            }
     }
 }

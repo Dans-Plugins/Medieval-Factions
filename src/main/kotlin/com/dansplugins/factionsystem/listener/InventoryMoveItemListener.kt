@@ -7,8 +7,9 @@ import org.bukkit.event.Listener
 import org.bukkit.event.inventory.InventoryMoveItemEvent
 import org.bukkit.inventory.BlockInventoryHolder
 
-class InventoryMoveItemListener(private val plugin: MedievalFactions) : Listener {
-
+class InventoryMoveItemListener(
+    private val plugin: MedievalFactions,
+) : Listener {
     @EventHandler
     fun onInventoryMoveItem(event: InventoryMoveItemEvent) {
         // Stop hoppers from taking items from locked blocks.

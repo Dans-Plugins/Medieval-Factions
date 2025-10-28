@@ -28,7 +28,6 @@ import java.util.*
 
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 class MedievalFactionsPlaceholderExpansionTest {
-
     private lateinit var fixture: PlaceholderExpansionTestFixture
     private lateinit var plugin: MedievalFactions
     private lateinit var factionService: MfFactionService
@@ -331,7 +330,7 @@ class MedievalFactionsPlaceholderExpansionTest {
     private data class PlaceholderExpansionTestFixture(
         val player: OfflinePlayer,
         val faction: MfFaction,
-        val mfPlayer: MfPlayer
+        val mfPlayer: MfPlayer,
     )
 
     private fun mockServices() {

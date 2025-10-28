@@ -17,9 +17,8 @@ import java.util.logging.Level.SEVERE
 class MfGateService(
     private val plugin: MedievalFactions,
     private val gateRepo: MfGateRepository,
-    private val gateCreationContextRepo: MfGateCreationContextRepository
+    private val gateCreationContextRepo: MfGateCreationContextRepository,
 ) {
-
     private val gatesById: MutableMap<MfGateId, MfGate> = ConcurrentHashMap()
     val gates: List<MfGate>
         get() = gatesById.values.toList()
@@ -44,72 +43,79 @@ class MfGateService(
                 } catch (e: Exception) {
                     plugin.logger.log(SEVERE, "Error during gate material review:", e)
                 }
-            }
+            },
         )
     }
 
     fun getGatesByTrigger(trigger: MfBlockPosition) = gatesById.values.filter { it.trigger == trigger }
+
     fun getGatesAt(block: MfBlockPosition) = gatesById.values.filter { it.area.contains(block) }
 
     @JvmName("getGatesByFactionId")
     fun getGatesByFaction(factionId: MfFactionId) = gatesById.values.filter { it.factionId == factionId }
+
     fun getGatesByStatus(status: MfGateStatus) = gatesById.values.filter { it.status == status }
 
-    fun save(gate: MfGate) = resultFrom {
-        val result = gateRepo.upsert(gate)
-        gatesById[result.id] = result
-        return@resultFrom result
-    }.mapFailure { exception ->
-        ServiceFailure(exception.toServiceFailureType(), "Service error: ${exception.message}", exception)
-    }
+    fun save(gate: MfGate) =
+        resultFrom {
+            val result = gateRepo.upsert(gate)
+            gatesById[result.id] = result
+            return@resultFrom result
+        }.mapFailure { exception ->
+            ServiceFailure(exception.toServiceFailureType(), "Service error: ${exception.message}", exception)
+        }
 
     @JvmName("deleteGateByGateId")
-    fun delete(gateId: MfGateId) = resultFrom {
-        val result = gateRepo.delete(gateId)
-        gatesById.remove(gateId)
-        return@resultFrom result
-    }.mapFailure { exception ->
-        ServiceFailure(exception.toServiceFailureType(), "Service error: ${exception.message}", exception)
-    }
+    fun delete(gateId: MfGateId) =
+        resultFrom {
+            val result = gateRepo.delete(gateId)
+            gatesById.remove(gateId)
+            return@resultFrom result
+        }.mapFailure { exception ->
+            ServiceFailure(exception.toServiceFailureType(), "Service error: ${exception.message}", exception)
+        }
 
     @JvmName("deleteAllGatesByFactionId")
-    fun deleteAllGates(factionId: MfFactionId) = resultFrom {
-        val result = gateRepo.deleteAll(factionId)
-        val gatesToDelete = gatesById.filterValues { it.factionId == factionId }
-        gatesToDelete.forEach { (key, value) ->
-            gatesById.remove(key, value)
+    fun deleteAllGates(factionId: MfFactionId) =
+        resultFrom {
+            val result = gateRepo.deleteAll(factionId)
+            val gatesToDelete = gatesById.filterValues { it.factionId == factionId }
+            gatesToDelete.forEach { (key, value) ->
+                gatesById.remove(key, value)
+            }
+            return@resultFrom result
+        }.mapFailure { exception ->
+            ServiceFailure(exception.toServiceFailureType(), "Service error: ${exception.message}", exception)
         }
-        return@resultFrom result
-    }.mapFailure { exception ->
-        ServiceFailure(exception.toServiceFailureType(), "Service error: ${exception.message}", exception)
-    }
 
     @JvmName("getGateCreationContextByPlayerId")
-    fun getGateCreationContext(playerId: MfPlayerId) = resultFrom {
-        gateCreationContextRepo.getContext(playerId)
-    }.mapFailure { exception ->
-        ServiceFailure(exception.toServiceFailureType(), "Service error: ${exception.message}", exception)
-    }
+    fun getGateCreationContext(playerId: MfPlayerId) =
+        resultFrom {
+            gateCreationContextRepo.getContext(playerId)
+        }.mapFailure { exception ->
+            ServiceFailure(exception.toServiceFailureType(), "Service error: ${exception.message}", exception)
+        }
 
-    fun save(ctx: MfGateCreationContext) = resultFrom {
-        gateCreationContextRepo.upsert(ctx)
-    }.mapFailure { exception ->
-        ServiceFailure(exception.toServiceFailureType(), "Service error: ${exception.message}", exception)
-    }
+    fun save(ctx: MfGateCreationContext) =
+        resultFrom {
+            gateCreationContextRepo.upsert(ctx)
+        }.mapFailure { exception ->
+            ServiceFailure(exception.toServiceFailureType(), "Service error: ${exception.message}", exception)
+        }
 
     @JvmName("deleteGateCreationContextByPlayerId")
-    fun deleteGateCreationContext(playerId: MfPlayerId) = resultFrom {
-        gateCreationContextRepo.delete(playerId)
-    }.mapFailure { exception ->
-        ServiceFailure(exception.toServiceFailureType(), "Service error: ${exception.message}", exception)
-    }
+    fun deleteGateCreationContext(playerId: MfPlayerId) =
+        resultFrom {
+            gateCreationContextRepo.delete(playerId)
+        }.mapFailure { exception ->
+            ServiceFailure(exception.toServiceFailureType(), "Service error: ${exception.message}", exception)
+        }
 
-    private fun Exception.toServiceFailureType(): ServiceFailureType {
-        return when (this) {
+    private fun Exception.toServiceFailureType(): ServiceFailureType =
+        when (this) {
             is OptimisticLockingFailureException -> ServiceFailureType.CONFLICT
             else -> ServiceFailureType.GENERAL
         }
-    }
 
     private fun updateGatesWithRestrictedBlocks() {
         val gateService = plugin.services.gateService
@@ -129,13 +135,14 @@ class MfGateService(
 
     private fun loadRestrictedBlocksFromConfig(): Set<Material> {
         val blockNames = plugin.config.getStringList("gates.restrictedBlocks")
-        return blockNames.mapNotNull { blockName ->
-            try {
-                Material.valueOf(blockName)
-            } catch (e: IllegalArgumentException) {
-                plugin.logger.warning("Invalid block material in config: $blockName")
-                null
-            }
-        }.toSet()
+        return blockNames
+            .mapNotNull { blockName ->
+                try {
+                    Material.valueOf(blockName)
+                } catch (e: IllegalArgumentException) {
+                    plugin.logger.warning("Invalid block material in config: $blockName")
+                    null
+                }
+            }.toSet()
     }
 }

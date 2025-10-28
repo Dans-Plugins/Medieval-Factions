@@ -13,8 +13,16 @@ import org.bukkit.command.TabCompleter
 import org.bukkit.entity.Player
 import java.util.logging.Level.SEVERE
 
-class MfFactionDisbandCommand(private val plugin: MedievalFactions) : CommandExecutor, TabCompleter {
-    override fun onCommand(sender: CommandSender, command: Command, label: String, args: Array<out String>): Boolean {
+class MfFactionDisbandCommand(
+    private val plugin: MedievalFactions,
+) : CommandExecutor,
+    TabCompleter {
+    override fun onCommand(
+        sender: CommandSender,
+        command: Command,
+        label: String,
+        args: Array<out String>,
+    ): Boolean {
         if (!sender.hasPermission("mf.disband")) {
             sender.sendMessage("$RED${plugin.language["CommandFactionDisbandNoPermission"]}")
             return true
@@ -27,12 +35,13 @@ class MfFactionDisbandCommand(private val plugin: MedievalFactions) : CommandExe
             plugin,
             Runnable {
                 val playerService = plugin.services.playerService
-                val mfPlayer = playerService.getPlayer(sender)
-                    ?: playerService.save(MfPlayer(plugin, sender)).onFailure {
-                        sender.sendMessage("$RED${plugin.language["CommandFactionDisbandFailedToSavePlayer"]}")
-                        plugin.logger.log(SEVERE, "Failed to save player: ${it.reason.message}", it.reason.cause)
-                        return@Runnable
-                    }
+                val mfPlayer =
+                    playerService.getPlayer(sender)
+                        ?: playerService.save(MfPlayer(plugin, sender)).onFailure {
+                            sender.sendMessage("$RED${plugin.language["CommandFactionDisbandFailedToSavePlayer"]}")
+                            plugin.logger.log(SEVERE, "Failed to save player: ${it.reason.message}", it.reason.cause)
+                            return@Runnable
+                        }
 
                 // get faction
                 val factionService = plugin.services.factionService
@@ -85,10 +94,10 @@ class MfFactionDisbandCommand(private val plugin: MedievalFactions) : CommandExe
                         plugin,
                         Runnable {
                             mapService.scheduleUpdateClaims(faction)
-                        }
+                        },
                     )
                 }
-            }
+            },
         )
         return true
     }
@@ -97,7 +106,7 @@ class MfFactionDisbandCommand(private val plugin: MedievalFactions) : CommandExe
         sender: CommandSender,
         command: Command,
         label: String,
-        args: Array<out String>
+        args: Array<out String>,
     ): List<String> {
         val factionService = plugin.services.factionService
         return when {

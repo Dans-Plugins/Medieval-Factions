@@ -10,37 +10,45 @@ import org.jooq.impl.DSL.greatest
 import org.jooq.impl.DSL.least
 import org.jooq.impl.DSL.value
 
-class JooqMfPlayerRepository(private val plugin: MedievalFactions, private val dsl: DSLContext) : MfPlayerRepository {
+class JooqMfPlayerRepository(
+    private val plugin: MedievalFactions,
+    private val dsl: DSLContext,
+) : MfPlayerRepository {
     override fun getPlayer(id: MfPlayerId) =
-        dsl.selectFrom(MF_PLAYER)
+        dsl
+            .selectFrom(MF_PLAYER)
             .where(MF_PLAYER.ID.eq(id.value))
             .fetchOne()
             ?.toDomain()
 
     override fun getPlayers(): List<MfPlayer> =
-        dsl.selectFrom(MF_PLAYER)
+        dsl
+            .selectFrom(MF_PLAYER)
             .fetch()
             .map { it.toDomain() }
 
     override fun upsert(player: MfPlayer): MfPlayer {
-        val rowCount = dsl.insertInto(MF_PLAYER)
-            .set(MF_PLAYER.ID, player.id.value)
-            .set(MF_PLAYER.VERSION, 1)
-            .set(MF_PLAYER.NAME, player.name)
-            .set(MF_PLAYER.POWER, player.power)
-            .set(MF_PLAYER.POWER_AT_LOGOUT, player.powerAtLogout)
-            .set(MF_PLAYER.BYPASS_ENABLED, player.isBypassEnabled)
-            .set(MF_PLAYER.CHAT_CHANNEL, player.chatChannel?.name)
-            .onConflict(MF_PLAYER.ID).doUpdate()
-            .set(MF_PLAYER.NAME, player.name)
-            .set(MF_PLAYER.POWER, player.power)
-            .set(MF_PLAYER.POWER_AT_LOGOUT, player.powerAtLogout)
-            .set(MF_PLAYER.BYPASS_ENABLED, player.isBypassEnabled)
-            .set(MF_PLAYER.CHAT_CHANNEL, player.chatChannel?.name)
-            .set(MF_PLAYER.VERSION, player.version + 1)
-            .where(MF_PLAYER.ID.eq(player.id.value))
-            .and(MF_PLAYER.VERSION.eq(MF_PLAYER.VERSION))
-            .execute()
+        val rowCount =
+            dsl
+                .insertInto(MF_PLAYER)
+                .set(MF_PLAYER.ID, player.id.value)
+                .set(MF_PLAYER.VERSION, 1)
+                .set(MF_PLAYER.NAME, player.name)
+                .set(MF_PLAYER.POWER, player.power)
+                .set(MF_PLAYER.POWER_AT_LOGOUT, player.powerAtLogout)
+                .set(MF_PLAYER.BYPASS_ENABLED, player.isBypassEnabled)
+                .set(MF_PLAYER.CHAT_CHANNEL, player.chatChannel?.name)
+                .onConflict(MF_PLAYER.ID)
+                .doUpdate()
+                .set(MF_PLAYER.NAME, player.name)
+                .set(MF_PLAYER.POWER, player.power)
+                .set(MF_PLAYER.POWER_AT_LOGOUT, player.powerAtLogout)
+                .set(MF_PLAYER.BYPASS_ENABLED, player.isBypassEnabled)
+                .set(MF_PLAYER.CHAT_CHANNEL, player.chatChannel?.name)
+                .set(MF_PLAYER.VERSION, player.version + 1)
+                .where(MF_PLAYER.ID.eq(player.id.value))
+                .and(MF_PLAYER.VERSION.eq(MF_PLAYER.VERSION))
+                .execute()
         if (rowCount == 0) throw OptimisticLockingFailureException("Invalid version: ${player.version}")
         return getPlayer(player.id).let(::requireNotNull)
     }
@@ -50,7 +58,8 @@ class JooqMfPlayerRepository(private val plugin: MedievalFactions, private val d
         val maxPower = plugin.config.getDouble("players.maxPower")
         val hoursToReachMax = plugin.config.getDouble("players.hoursToReachMaxPower")
         val timeIncrementHours = 0.25
-        dsl.update(MF_PLAYER)
+        dsl
+            .update(MF_PLAYER)
             .set(
                 MF_PLAYER.POWER,
                 least(
@@ -59,23 +68,22 @@ class JooqMfPlayerRepository(private val plugin: MedievalFactions, private val d
                         value(minPower),
                         value((hoursToReachMax * 2) + timeIncrementHours)
                             .minus(
-                                MF_PLAYER.POWER.div(maxPower)
+                                MF_PLAYER.POWER
+                                    .div(maxPower)
                                     .minus(1)
                                     .div(-1)
                                     .pow(0.25)
                                     .plus(1)
-                                    .times(hoursToReachMax)
-                            )
-                            .div(hoursToReachMax)
+                                    .times(hoursToReachMax),
+                            ).div(hoursToReachMax)
                             .minus(1)
                             .pow(4)
                             .times(-1)
                             .plus(1)
-                            .times(maxPower)
-                    )
-                )
-            )
-            .set(MF_PLAYER.VERSION, MF_PLAYER.VERSION.plus(1))
+                            .times(maxPower),
+                    ),
+                ),
+            ).set(MF_PLAYER.VERSION, MF_PLAYER.VERSION.plus(1))
             .where(MF_PLAYER.ID.`in`(onlinePlayerIds.map { it.value }))
             .and(MF_PLAYER.POWER.lt(maxPower))
             .execute()
@@ -86,7 +94,8 @@ class JooqMfPlayerRepository(private val plugin: MedievalFactions, private val d
         val minPower = plugin.config.getDouble("players.minPower")
         val hoursToReachMin = plugin.config.getDouble("players.hoursToReachMinPower")
         val timeIncrementHours = 0.25
-        dsl.update(MF_PLAYER)
+        dsl
+            .update(MF_PLAYER)
             .set(
                 MF_PLAYER.POWER,
                 least(
@@ -109,24 +118,24 @@ class JooqMfPlayerRepository(private val plugin: MedievalFactions, private val d
                             .times(-1) // flip the graph (exp4 is normally U-shaped)
                             .plus(1) // shift the graph up above the x axis (it will usually peak at the minimum value)
                             .times(MF_PLAYER.POWER_AT_LOGOUT.minus(minPower)) // scale the graph to the range of the power values
-                            .plus(minPower) // shift the graph back down to the minimum power value
-                    )
-                )
-            )
-            .set(MF_PLAYER.VERSION, MF_PLAYER.VERSION.plus(1))
+                            .plus(minPower), // shift the graph back down to the minimum power value
+                    ),
+                ),
+            ).set(MF_PLAYER.VERSION, MF_PLAYER.VERSION.plus(1))
             .where(MF_PLAYER.ID.notIn(onlinePlayerIds.map { it.value }))
             .and(MF_PLAYER.POWER_AT_LOGOUT.gt(minPower))
             .and(MF_PLAYER.POWER.gt(minPower))
             .execute()
     }
 
-    private fun MfPlayerRecord.toDomain() = MfPlayer(
-        MfPlayerId(id),
-        version,
-        name,
-        power,
-        powerAtLogout,
-        bypassEnabled,
-        chatChannel?.let(MfFactionChatChannel::valueOf)
-    )
+    private fun MfPlayerRecord.toDomain() =
+        MfPlayer(
+            MfPlayerId(id),
+            version,
+            name,
+            power,
+            powerAtLogout,
+            bypassEnabled,
+            chatChannel?.let(MfFactionChatChannel::valueOf),
+        )
 }

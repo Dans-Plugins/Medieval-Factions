@@ -13,8 +13,16 @@ import org.bukkit.command.TabCompleter
 import org.bukkit.entity.Player
 import java.util.logging.Level.SEVERE
 
-class MfDuelCancelCommand(private val plugin: MedievalFactions) : CommandExecutor, TabCompleter {
-    override fun onCommand(sender: CommandSender, command: Command, label: String, args: Array<out String>): Boolean {
+class MfDuelCancelCommand(
+    private val plugin: MedievalFactions,
+) : CommandExecutor,
+    TabCompleter {
+    override fun onCommand(
+        sender: CommandSender,
+        command: Command,
+        label: String,
+        args: Array<out String>,
+    ): Boolean {
         if (!sender.hasPermission("mf.duel")) {
             sender.sendMessage("$RED${plugin.language["CommandDuelCancelNoPermission"]}")
             return true
@@ -36,21 +44,24 @@ class MfDuelCancelCommand(private val plugin: MedievalFactions) : CommandExecuto
             plugin,
             Runnable {
                 val playerService = plugin.services.playerService
-                val mfPlayer = playerService.getPlayer(sender)
-                    ?: playerService.save(MfPlayer(plugin, sender)).onFailure {
-                        sender.sendMessage("$RED${plugin.language["CommandDuelCancelFailedToSavePlayer"]}")
-                        plugin.logger.log(SEVERE, "Failed to save player: ${it.reason.message}", it.reason.cause)
-                        return@Runnable
-                    }
-                val targetMfPlayer = playerService.getPlayer(target)
-                    ?: playerService.save(MfPlayer(plugin, target)).onFailure {
-                        sender.sendMessage("$RED${plugin.language["CommandDuelCancelFailedToSaveTargetPlayer"]}")
-                        plugin.logger.log(SEVERE, "Failed to save player: ${it.reason.message}", it.reason.cause)
-                        return@Runnable
-                    }
+                val mfPlayer =
+                    playerService.getPlayer(sender)
+                        ?: playerService.save(MfPlayer(plugin, sender)).onFailure {
+                            sender.sendMessage("$RED${plugin.language["CommandDuelCancelFailedToSavePlayer"]}")
+                            plugin.logger.log(SEVERE, "Failed to save player: ${it.reason.message}", it.reason.cause)
+                            return@Runnable
+                        }
+                val targetMfPlayer =
+                    playerService.getPlayer(target)
+                        ?: playerService.save(MfPlayer(plugin, target)).onFailure {
+                            sender.sendMessage("$RED${plugin.language["CommandDuelCancelFailedToSaveTargetPlayer"]}")
+                            plugin.logger.log(SEVERE, "Failed to save player: ${it.reason.message}", it.reason.cause)
+                            return@Runnable
+                        }
                 val duelService = plugin.services.duelService
-                val invite = duelService.getInvite(targetMfPlayer.id, mfPlayer.id)
-                    ?: duelService.getInvite(mfPlayer.id, targetMfPlayer.id)
+                val invite =
+                    duelService.getInvite(targetMfPlayer.id, mfPlayer.id)
+                        ?: duelService.getInvite(mfPlayer.id, targetMfPlayer.id)
                 if (invite == null) {
                     sender.sendMessage("$RED${plugin.language["CommandDuelCancelNoInvite", target.name]}")
                     return@Runnable
@@ -67,7 +78,7 @@ class MfDuelCancelCommand(private val plugin: MedievalFactions) : CommandExecuto
                     sender.sendMessage("$GREEN${plugin.language["CommandDuelCancelSuccessDeclined", target.name]}")
                     target.sendMessage("$RED${plugin.language["CommandDuelCancelChallengeDeclined", sender.name]}")
                 }
-            }
+            },
         )
         return true
     }
@@ -76,27 +87,33 @@ class MfDuelCancelCommand(private val plugin: MedievalFactions) : CommandExecuto
         sender: CommandSender,
         command: Command,
         label: String,
-        args: Array<out String>
+        args: Array<out String>,
     ): List<String> {
         if (sender !is Player) return emptyList()
         val senderMfPlayerId = MfPlayerId.fromBukkitPlayer(sender)
         val duelService = plugin.services.duelService
         return when {
-            args.isEmpty() -> plugin.server.onlinePlayers.filter { bukkitPlayer ->
-                duelService.getInvitesByInvitee(senderMfPlayerId).any {
-                    it.inviterId == MfPlayerId.fromBukkitPlayer(bukkitPlayer)
-                } || duelService.getInvitesByInviter(senderMfPlayerId).any {
-                    it.inviteeId == MfPlayerId.fromBukkitPlayer(bukkitPlayer)
-                }
-            }.map(Player::getName)
-            args.size == 1 -> plugin.server.onlinePlayers.filter { bukkitPlayer ->
-                if (!bukkitPlayer.name.lowercase().startsWith(args[0].lowercase())) return@filter false
-                duelService.getInvitesByInvitee(senderMfPlayerId).any {
-                    it.inviterId == MfPlayerId.fromBukkitPlayer(bukkitPlayer)
-                } || duelService.getInvitesByInviter(senderMfPlayerId).any {
-                    it.inviteeId == MfPlayerId.fromBukkitPlayer(bukkitPlayer)
-                }
-            }.map(Player::getName)
+            args.isEmpty() ->
+                plugin.server.onlinePlayers
+                    .filter { bukkitPlayer ->
+                        duelService.getInvitesByInvitee(senderMfPlayerId).any {
+                            it.inviterId == MfPlayerId.fromBukkitPlayer(bukkitPlayer)
+                        } ||
+                            duelService.getInvitesByInviter(senderMfPlayerId).any {
+                                it.inviteeId == MfPlayerId.fromBukkitPlayer(bukkitPlayer)
+                            }
+                    }.map(Player::getName)
+            args.size == 1 ->
+                plugin.server.onlinePlayers
+                    .filter { bukkitPlayer ->
+                        if (!bukkitPlayer.name.lowercase().startsWith(args[0].lowercase())) return@filter false
+                        duelService.getInvitesByInvitee(senderMfPlayerId).any {
+                            it.inviterId == MfPlayerId.fromBukkitPlayer(bukkitPlayer)
+                        } ||
+                            duelService.getInvitesByInviter(senderMfPlayerId).any {
+                                it.inviteeId == MfPlayerId.fromBukkitPlayer(bukkitPlayer)
+                            }
+                    }.map(Player::getName)
             else -> emptyList()
         }
     }

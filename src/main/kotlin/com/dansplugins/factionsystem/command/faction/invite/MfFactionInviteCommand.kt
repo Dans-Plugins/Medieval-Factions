@@ -25,36 +25,47 @@ import java.util.logging.Level.SEVERE
 import net.md_5.bungee.api.ChatColor as SpigotChatColor
 import org.bukkit.ChatColor as BukkitChatColor
 
-class MfFactionInviteCommand(private val plugin: MedievalFactions) : CommandExecutor, TabCompleter {
-
-    private val conversationFactory = ConversationFactory(plugin)
-        .withModality(true)
-        .withFirstPrompt(PlayerPrompt())
-        .withEscapeSequence(plugin.language["EscapeSequence"])
-        .withLocalEcho(false)
-        .thatExcludesNonPlayersWithMessage(plugin.language["CommandFactionInviteNotAPlayer"])
-        .addConversationAbandonedListener { event ->
-            if (!event.gracefulExit()) {
-                val conversable = event.context.forWhom
-                if (conversable is Player) {
-                    conversable.sendMessage(plugin.language["CommandFactionInviteOperationCancelled"])
+class MfFactionInviteCommand(
+    private val plugin: MedievalFactions,
+) : CommandExecutor,
+    TabCompleter {
+    private val conversationFactory =
+        ConversationFactory(plugin)
+            .withModality(true)
+            .withFirstPrompt(PlayerPrompt())
+            .withEscapeSequence(plugin.language["EscapeSequence"])
+            .withLocalEcho(false)
+            .thatExcludesNonPlayersWithMessage(plugin.language["CommandFactionInviteNotAPlayer"])
+            .addConversationAbandonedListener { event ->
+                if (!event.gracefulExit()) {
+                    val conversable = event.context.forWhom
+                    if (conversable is Player) {
+                        conversable.sendMessage(plugin.language["CommandFactionInviteOperationCancelled"])
+                    }
                 }
             }
-        }
 
     private inner class PlayerPrompt : ValidatingPrompt() {
         override fun getPromptText(context: ConversationContext) =
             plugin.language["CommandFactionInvitePlayerPrompt", plugin.language["EscapeSequence"]]
 
-        override fun isInputValid(context: ConversationContext, input: String): Boolean {
+        override fun isInputValid(
+            context: ConversationContext,
+            input: String,
+        ): Boolean {
             val player = plugin.server.getOfflinePlayer(input)
             return player.isOnline || player.hasPlayedBefore()
         }
 
-        override fun getFailedValidationText(context: ConversationContext, invalidInput: String) =
-            "${BukkitChatColor.RED}${plugin.language["CommandFactionInviteInvalidTarget"]}"
+        override fun getFailedValidationText(
+            context: ConversationContext,
+            invalidInput: String,
+        ) = "${BukkitChatColor.RED}${plugin.language["CommandFactionInviteInvalidTarget"]}"
 
-        override fun acceptValidatedInput(context: ConversationContext, input: String): Prompt? {
+        override fun acceptValidatedInput(
+            context: ConversationContext,
+            input: String,
+        ): Prompt? {
             val conversable = context.forWhom
             if (conversable !is Player) return END_OF_CONVERSATION
             invitePlayer(conversable, plugin.server.getOfflinePlayer(input))
@@ -62,7 +73,12 @@ class MfFactionInviteCommand(private val plugin: MedievalFactions) : CommandExec
         }
     }
 
-    override fun onCommand(sender: CommandSender, command: Command, label: String, args: Array<out String>): Boolean {
+    override fun onCommand(
+        sender: CommandSender,
+        command: Command,
+        label: String,
+        args: Array<out String>,
+    ): Boolean {
         if (!sender.hasPermission("mf.invite")) {
             sender.sendMessage("${BukkitChatColor.RED}${plugin.language["CommandFactionInviteNoPermission"]}")
             return true
@@ -84,23 +100,28 @@ class MfFactionInviteCommand(private val plugin: MedievalFactions) : CommandExec
         return true
     }
 
-    private fun invitePlayer(sender: Player, target: OfflinePlayer) {
+    private fun invitePlayer(
+        sender: Player,
+        target: OfflinePlayer,
+    ) {
         plugin.server.scheduler.runTaskAsynchronously(
             plugin,
             Runnable {
                 val playerService = plugin.services.playerService
-                val mfPlayer = playerService.getPlayer(sender)
-                    ?: playerService.save(MfPlayer(plugin, sender)).onFailure {
-                        sender.sendMessage("${BukkitChatColor.RED}${plugin.language["CommandFactionInviteFailedToSavePlayer"]}")
-                        plugin.logger.log(SEVERE, "Failed to save player: ${it.reason.message}", it.reason.cause)
-                        return@Runnable
-                    }
-                val targetMfPlayer = playerService.getPlayer(target)
-                    ?: playerService.save(MfPlayer(plugin, target)).onFailure {
-                        sender.sendMessage("${BukkitChatColor.RED}${plugin.language["CommandFactionInviteFailedToSaveTargetPlayer"]}")
-                        plugin.logger.log(SEVERE, "Failed to save player: ${it.reason.message}", it.reason.cause)
-                        return@Runnable
-                    }
+                val mfPlayer =
+                    playerService.getPlayer(sender)
+                        ?: playerService.save(MfPlayer(plugin, sender)).onFailure {
+                            sender.sendMessage("${BukkitChatColor.RED}${plugin.language["CommandFactionInviteFailedToSavePlayer"]}")
+                            plugin.logger.log(SEVERE, "Failed to save player: ${it.reason.message}", it.reason.cause)
+                            return@Runnable
+                        }
+                val targetMfPlayer =
+                    playerService.getPlayer(target)
+                        ?: playerService.save(MfPlayer(plugin, target)).onFailure {
+                            sender.sendMessage("${BukkitChatColor.RED}${plugin.language["CommandFactionInviteFailedToSaveTargetPlayer"]}")
+                            plugin.logger.log(SEVERE, "Failed to save player: ${it.reason.message}", it.reason.cause)
+                            return@Runnable
+                        }
                 val factionService = plugin.services.factionService
                 val faction = factionService.getFaction(mfPlayer.id)
                 if (faction == null) {
@@ -125,16 +146,19 @@ class MfFactionInviteCommand(private val plugin: MedievalFactions) : CommandExec
                     sender.sendMessage("${BukkitChatColor.RED}${plugin.language["CommandFactionInviteFactionFull"]}")
                     return@Runnable
                 }
-                factionService.save(
-                    faction.copy(
-                        invites = faction.invites + MfFactionInvite(targetMfPlayer.id)
-                    )
-                ).onFailure {
-                    sender.sendMessage("${BukkitChatColor.RED}${plugin.language["CommandFactionInviteFailedToSaveFaction"]}")
-                    plugin.logger.log(SEVERE, "Failed to save faction: ${it.reason.message}", it.reason.cause)
-                    return@Runnable
-                }
-                sender.sendMessage("${BukkitChatColor.GREEN}${plugin.language["CommandFactionInviteSuccess", target.name ?: plugin.language["UnknownPlayer"]]}")
+                factionService
+                    .save(
+                        faction.copy(
+                            invites = faction.invites + MfFactionInvite(targetMfPlayer.id),
+                        ),
+                    ).onFailure {
+                        sender.sendMessage("${BukkitChatColor.RED}${plugin.language["CommandFactionInviteFailedToSaveFaction"]}")
+                        plugin.logger.log(SEVERE, "Failed to save faction: ${it.reason.message}", it.reason.cause)
+                        return@Runnable
+                    }
+                sender.sendMessage(
+                    "${BukkitChatColor.GREEN}${plugin.language["CommandFactionInviteSuccess", target.name ?: plugin.language["UnknownPlayer"]]}",
+                )
                 val targetOnlinePlayer = target.player
                 if (targetOnlinePlayer != null) {
                     targetOnlinePlayer.spigot().sendMessage(
@@ -146,25 +170,25 @@ class MfFactionInviteCommand(private val plugin: MedievalFactions) : CommandExec
                                 color = SpigotChatColor.GREEN
                                 hoverEvent = HoverEvent(SHOW_TEXT, Text(plugin.language["CommandFactionInviteAcceptHover"]))
                                 clickEvent = ClickEvent(RUN_COMMAND, "/faction join ${faction.id.value}")
-                            }
-                        )
+                            },
+                        ),
                     )
                 } else {
                     plugin.services.notificationService.sendNotification(
                         targetMfPlayer.id,
                         MfNotification(
                             plugin.language["CommandFactionInviteReceivedNotificationTitle", faction.name],
-                            plugin.language["CommandFactionInviteReceivedNotificationBody", faction.name]
-                        )
+                            plugin.language["CommandFactionInviteReceivedNotificationBody", faction.name],
+                        ),
                     )
                 }
                 plugin.server.scheduler.runTask(
                     plugin,
                     Runnable {
                         sender.performCommand("faction info")
-                    }
+                    },
                 )
-            }
+            },
         )
     }
 
@@ -172,7 +196,7 @@ class MfFactionInviteCommand(private val plugin: MedievalFactions) : CommandExec
         sender: CommandSender,
         command: Command,
         label: String,
-        args: Array<out String>
+        args: Array<out String>,
     ) = when {
         args.isEmpty() ->
             plugin.server.offlinePlayers

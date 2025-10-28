@@ -9,8 +9,16 @@ import org.bukkit.command.CommandSender
 import org.bukkit.command.TabCompleter
 import org.bukkit.entity.Player
 
-class MfFactionApproveAppCommand(private val plugin: MedievalFactions) : CommandExecutor, TabCompleter {
-    override fun onCommand(sender: CommandSender, command: Command, label: String, args: Array<out String>?): Boolean {
+class MfFactionApproveAppCommand(
+    private val plugin: MedievalFactions,
+) : CommandExecutor,
+    TabCompleter {
+    override fun onCommand(
+        sender: CommandSender,
+        command: Command,
+        label: String,
+        args: Array<out String>?,
+    ): Boolean {
         if (!sender.hasPermission("mf.approveapp")) {
             sender.sendMessage("${ChatColor.RED}${plugin.language["CommandFactionApproveAppNoPermission"]}")
             return true
@@ -27,7 +35,7 @@ class MfFactionApproveAppCommand(private val plugin: MedievalFactions) : Command
         plugin.logger.info("Player ${sender.name} is approving application for player $targetPlayerName")
         plugin.server.scheduler.runTaskAsynchronously(
             plugin,
-            ApproveApplicationTask(plugin, sender, targetPlayerName)
+            ApproveApplicationTask(plugin, sender, targetPlayerName),
         )
         return true
     }
@@ -36,7 +44,7 @@ class MfFactionApproveAppCommand(private val plugin: MedievalFactions) : Command
         sender: CommandSender,
         command: Command,
         label: String,
-        args: Array<out String>?
+        args: Array<out String>?,
     ): MutableList<String>? {
         if (!sender.hasPermission("mf.approveapp")) {
             return mutableListOf()

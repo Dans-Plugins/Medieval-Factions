@@ -13,8 +13,9 @@ import org.bukkit.event.Listener
 import org.bukkit.event.block.BlockBreakEvent
 import java.util.logging.Level.SEVERE
 
-class BlockBreakListener(private val plugin: MedievalFactions) : Listener {
-
+class BlockBreakListener(
+    private val plugin: MedievalFactions,
+) : Listener {
     @EventHandler
     fun onBlockBreak(event: BlockBreakEvent) {
         val gateService = plugin.services.gateService
@@ -51,7 +52,7 @@ class BlockBreakListener(private val plugin: MedievalFactions) : Listener {
                         plugin.logger.log(SEVERE, "Failed to save player: ${it.reason.message}", it.reason.cause)
                         return@Runnable
                     }
-                }
+                },
             )
             return
         }
@@ -70,11 +71,12 @@ class BlockBreakListener(private val plugin: MedievalFactions) : Listener {
         val lockedBlock = lockService.getLockedBlock(blockPosition) ?: return
         if (lockedBlock.playerId != mfPlayer.id) {
             val lockOwner = playerService.getPlayer(lockedBlock.playerId)
-            val ownerName = if (lockOwner == null) {
-                plugin.language["UnknownPlayer"]
-            } else {
-                lockOwner.toBukkit().name ?: plugin.language["UnknownPlayer"]
-            }
+            val ownerName =
+                if (lockOwner == null) {
+                    plugin.language["UnknownPlayer"]
+                } else {
+                    lockOwner.toBukkit().name ?: plugin.language["UnknownPlayer"]
+                }
             if (!event.player.hasPermission("mf.force.unlock")) {
                 event.player.sendMessage("$RED${plugin.language["BlockUnlockOwnedByOtherPlayer", ownerName]}")
                 event.isCancelled = true

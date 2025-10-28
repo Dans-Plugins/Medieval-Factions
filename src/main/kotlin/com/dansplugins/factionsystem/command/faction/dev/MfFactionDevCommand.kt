@@ -7,8 +7,10 @@ import org.bukkit.command.CommandExecutor
 import org.bukkit.command.CommandSender
 import org.bukkit.command.TabCompleter
 
-class MfFactionDevCommand(private val plugin: MedievalFactions) : CommandExecutor, TabCompleter {
-
+class MfFactionDevCommand(
+    private val plugin: MedievalFactions,
+) : CommandExecutor,
+    TabCompleter {
     private val factionDevGenerateCommand = MfFactionDevGenerateCommand(plugin)
     private val factionDevPowerCycleCommand = MfFactionDevPowerCycleCommand(plugin)
 
@@ -17,8 +19,13 @@ class MfFactionDevCommand(private val plugin: MedievalFactions) : CommandExecuto
 
     private val subcommands = generateAliases + powerCycleAliases
 
-    override fun onCommand(sender: CommandSender, command: Command, label: String, args: Array<out String>): Boolean {
-        return when (args.firstOrNull()?.lowercase()) {
+    override fun onCommand(
+        sender: CommandSender,
+        command: Command,
+        label: String,
+        args: Array<out String>,
+    ): Boolean =
+        when (args.firstOrNull()?.lowercase()) {
             in generateAliases -> factionDevGenerateCommand.onCommand(sender, command, label, args.drop(1).toTypedArray())
             in powerCycleAliases -> factionDevPowerCycleCommand.onCommand(sender, command, label, args.drop(1).toTypedArray())
             else -> {
@@ -26,20 +33,20 @@ class MfFactionDevCommand(private val plugin: MedievalFactions) : CommandExecuto
                 true
             }
         }
-    }
 
     override fun onTabComplete(
         sender: CommandSender,
         command: Command,
         label: String,
-        args: Array<out String>
+        args: Array<out String>,
     ) = when {
         args.isEmpty() -> subcommands
         args.size == 1 -> subcommands.filter { it.startsWith(args[0].lowercase()) }
-        else -> when (args.first().lowercase()) {
-            in generateAliases -> factionDevGenerateCommand.onTabComplete(sender, command, label, args.drop(1).toTypedArray())
-            in powerCycleAliases -> factionDevPowerCycleCommand.onTabComplete(sender, command, label, args.drop(1).toTypedArray())
-            else -> emptyList()
-        }
+        else ->
+            when (args.first().lowercase()) {
+                in generateAliases -> factionDevGenerateCommand.onTabComplete(sender, command, label, args.drop(1).toTypedArray())
+                in powerCycleAliases -> factionDevPowerCycleCommand.onTabComplete(sender, command, label, args.drop(1).toTypedArray())
+                else -> emptyList()
+            }
     }
 }

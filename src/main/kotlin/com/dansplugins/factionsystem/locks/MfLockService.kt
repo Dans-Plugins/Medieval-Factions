@@ -25,8 +25,10 @@ import org.bukkit.block.data.Bisected.Half.BOTTOM
 import java.util.concurrent.ConcurrentHashMap
 import java.util.logging.Level.SEVERE
 
-class MfLockService(private val plugin: MedievalFactions, private val repository: MfLockRepository) {
-
+class MfLockService(
+    private val plugin: MedievalFactions,
+    private val repository: MfLockRepository,
+) {
     private val lockedBlocks: MutableMap<MfBlockPosition, MfLockedBlock> = ConcurrentHashMap()
 
     init {
@@ -36,43 +38,54 @@ class MfLockService(private val plugin: MedievalFactions, private val repository
         plugin.logger.info("${lockedBlocks.size} locked blocks loaded (${System.currentTimeMillis() - startTime}ms)")
     }
 
-    fun lock(block: MfBlockPosition, claim: MfClaimedChunk, player: MfPlayer): Result4k<MfLockedBlock, ServiceFailure> = resultFrom {
-        val lockedBlock = repository.upsert(
-            MfLockedBlock(
-                block = MfBlockPosition(
-                    worldId = block.worldId,
-                    x = block.x,
-                    y = block.y,
-                    z = block.z
-                ),
-                chunkX = claim.x,
-                chunkZ = claim.z,
-                playerId = player.id,
-                accessors = emptyList()
-            )
-        )
-        lockedBlocks[block] = lockedBlock
-        return@resultFrom lockedBlock
-    }.mapFailure { exception ->
-        ServiceFailure(exception.toServiceFailureType(), "Service error: ${exception.message}", exception)
-    }
+    fun lock(
+        block: MfBlockPosition,
+        claim: MfClaimedChunk,
+        player: MfPlayer,
+    ): Result4k<MfLockedBlock, ServiceFailure> =
+        resultFrom {
+            val lockedBlock =
+                repository.upsert(
+                    MfLockedBlock(
+                        block =
+                            MfBlockPosition(
+                                worldId = block.worldId,
+                                x = block.x,
+                                y = block.y,
+                                z = block.z,
+                            ),
+                        chunkX = claim.x,
+                        chunkZ = claim.z,
+                        playerId = player.id,
+                        accessors = emptyList(),
+                    ),
+                )
+            lockedBlocks[block] = lockedBlock
+            return@resultFrom lockedBlock
+        }.mapFailure { exception ->
+            ServiceFailure(exception.toServiceFailureType(), "Service error: ${exception.message}", exception)
+        }
 
-    fun unlock(block: Block, callback: (result: MfUnlockResult) -> Unit) {
+    fun unlock(
+        block: Block,
+        callback: (result: MfUnlockResult) -> Unit,
+    ) {
         val blockData = block.blockData
         val holder = (block.state as? Chest)?.inventory?.holder
-        val blocks = if (blockData is Bisected) {
-            if (blockData.half == BOTTOM) {
-                listOf(block, block.getRelative(UP))
+        val blocks =
+            if (blockData is Bisected) {
+                if (blockData.half == BOTTOM) {
+                    listOf(block, block.getRelative(UP))
+                } else {
+                    listOf(block, block.getRelative(DOWN))
+                }
+            } else if (holder is DoubleChest) {
+                val left = holder.leftSide as? Chest
+                val right = holder.rightSide as? Chest
+                listOfNotNull(left?.block, right?.block)
             } else {
-                listOf(block, block.getRelative(DOWN))
+                listOf(block)
             }
-        } else if (holder is DoubleChest) {
-            val left = holder.leftSide as? Chest
-            val right = holder.rightSide as? Chest
-            listOfNotNull(left?.block, right?.block)
-        } else {
-            listOf(block)
-        }
         plugin.server.scheduler.runTaskAsynchronously(
             plugin,
             Runnable {
@@ -88,58 +101,52 @@ class MfLockService(private val plugin: MedievalFactions, private val repository
                     return@Runnable
                 }
                 callback(SUCCESS)
-            }
+            },
         )
     }
 
-    fun save(lockedBlock: MfLockedBlock): Result4k<MfLockedBlock, ServiceFailure> = resultFrom {
-        val upsertedLockedBlock = repository.upsert(lockedBlock)
-        lockedBlocks.remove(lockedBlock.block)
-        lockedBlocks[upsertedLockedBlock.block] = upsertedLockedBlock
-        return@resultFrom upsertedLockedBlock
-    }.mapFailure { exception ->
-        ServiceFailure(exception.toServiceFailureType(), "Service error: ${exception.message}", exception)
-    }
+    fun save(lockedBlock: MfLockedBlock): Result4k<MfLockedBlock, ServiceFailure> =
+        resultFrom {
+            val upsertedLockedBlock = repository.upsert(lockedBlock)
+            lockedBlocks.remove(lockedBlock.block)
+            lockedBlocks[upsertedLockedBlock.block] = upsertedLockedBlock
+            return@resultFrom upsertedLockedBlock
+        }.mapFailure { exception ->
+            ServiceFailure(exception.toServiceFailureType(), "Service error: ${exception.message}", exception)
+        }
 
-    fun delete(block: MfBlockPosition): Result4k<Unit, ServiceFailure> = resultFrom {
-        repository.delete(block)
-        lockedBlocks.remove(block)
-        return@resultFrom
-    }.mapFailure { exception ->
-        ServiceFailure(exception.toServiceFailureType(), "Service error: ${exception.message}", exception)
-    }
+    fun delete(block: MfBlockPosition): Result4k<Unit, ServiceFailure> =
+        resultFrom {
+            repository.delete(block)
+            lockedBlocks.remove(block)
+            return@resultFrom
+        }.mapFailure { exception ->
+            ServiceFailure(exception.toServiceFailureType(), "Service error: ${exception.message}", exception)
+        }
 
-    fun getLockedBlock(block: MfBlockPosition): MfLockedBlock? {
-        return lockedBlocks[block]
-    }
+    fun getLockedBlock(block: MfBlockPosition): MfLockedBlock? = lockedBlocks[block]
 
     @JvmName("getLockedBlockByLockedBlockId")
-    fun getLockedBlock(id: MfLockedBlockId): MfLockedBlock? {
-        return lockedBlocks.values.singleOrNull { it.id == id }
-    }
+    fun getLockedBlock(id: MfLockedBlockId): MfLockedBlock? = lockedBlocks.values.singleOrNull { it.id == id }
 
     @JvmName("getLockedBlocksByPlayerId")
-    fun getLockedBlocks(playerId: MfPlayerId): List<MfLockedBlock> {
-        return lockedBlocks.values.filter { it.playerId == playerId }
-    }
+    fun getLockedBlocks(playerId: MfPlayerId): List<MfLockedBlock> = lockedBlocks.values.filter { it.playerId == playerId }
 
     @JvmName("getLockedBlocksByClaim")
-    fun getLockedBlocks(claim: MfClaimedChunk): List<MfLockedBlock> {
-        return lockedBlocks.values.filter {
+    fun getLockedBlocks(claim: MfClaimedChunk): List<MfLockedBlock> =
+        lockedBlocks.values.filter {
             it.block.worldId == claim.worldId &&
                 it.chunkX == claim.x &&
                 it.chunkZ == claim.z
         }
-    }
 
     internal fun unloadLockedBlocks(claim: MfClaimedChunk) {
         getLockedBlocks(claim).forEach { lockedBlocks.remove(it.block) }
     }
 
-    private fun Exception.toServiceFailureType(): ServiceFailureType {
-        return when (this) {
+    private fun Exception.toServiceFailureType(): ServiceFailureType =
+        when (this) {
             is OptimisticLockingFailureException -> ServiceFailureType.CONFLICT
             else -> ServiceFailureType.GENERAL
         }
-    }
 }

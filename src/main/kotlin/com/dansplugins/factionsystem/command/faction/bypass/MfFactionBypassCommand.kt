@@ -12,8 +12,16 @@ import org.bukkit.command.TabCompleter
 import org.bukkit.entity.Player
 import java.util.logging.Level
 
-class MfFactionBypassCommand(private val plugin: MedievalFactions) : CommandExecutor, TabCompleter {
-    override fun onCommand(sender: CommandSender, command: Command, label: String, args: Array<out String>): Boolean {
+class MfFactionBypassCommand(
+    private val plugin: MedievalFactions,
+) : CommandExecutor,
+    TabCompleter {
+    override fun onCommand(
+        sender: CommandSender,
+        command: Command,
+        label: String,
+        args: Array<out String>,
+    ): Boolean {
         if (!sender.hasPermission("mf.bypass")) {
             sender.sendMessage("$RED${plugin.language["CommandFactionBypassNoPermission"]}")
             return true
@@ -27,17 +35,18 @@ class MfFactionBypassCommand(private val plugin: MedievalFactions) : CommandExec
             Runnable {
                 val playerService = plugin.services.playerService
                 val mfPlayer = playerService.getPlayer(sender) ?: MfPlayer(plugin, sender)
-                val updatedMfPlayer = playerService.save(mfPlayer.copy(isBypassEnabled = !mfPlayer.isBypassEnabled)).onFailure {
-                    sender.sendMessage("$RED${plugin.language["CommandFactionBypassFailedToSavePlayer"]}")
-                    plugin.logger.log(Level.SEVERE, "Failed to save player: ${it.reason.message}", it.reason.cause)
-                    return@Runnable
-                }
+                val updatedMfPlayer =
+                    playerService.save(mfPlayer.copy(isBypassEnabled = !mfPlayer.isBypassEnabled)).onFailure {
+                        sender.sendMessage("$RED${plugin.language["CommandFactionBypassFailedToSavePlayer"]}")
+                        plugin.logger.log(Level.SEVERE, "Failed to save player: ${it.reason.message}", it.reason.cause)
+                        return@Runnable
+                    }
                 if (updatedMfPlayer.isBypassEnabled) {
                     sender.sendMessage("$GREEN${plugin.language["CommandFactionBypassEnabled"]}")
                 } else {
                     sender.sendMessage("$GREEN${plugin.language["CommandFactionBypassDisabled"]}")
                 }
-            }
+            },
         )
         return true
     }
@@ -46,6 +55,6 @@ class MfFactionBypassCommand(private val plugin: MedievalFactions) : CommandExec
         sender: CommandSender,
         command: Command,
         label: String,
-        args: Array<out String>
+        args: Array<out String>,
     ) = emptyList<String>()
 }

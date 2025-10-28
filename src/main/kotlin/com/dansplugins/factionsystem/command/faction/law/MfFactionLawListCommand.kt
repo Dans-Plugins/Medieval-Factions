@@ -19,8 +19,16 @@ import java.util.logging.Level
 import net.md_5.bungee.api.ChatColor as SpigotChatColor
 import org.bukkit.ChatColor as BukkitChatColor
 
-class MfFactionLawListCommand(private val plugin: MedievalFactions) : CommandExecutor, TabCompleter {
-    override fun onCommand(sender: CommandSender, command: Command, label: String, args: Array<out String>): Boolean {
+class MfFactionLawListCommand(
+    private val plugin: MedievalFactions,
+) : CommandExecutor,
+    TabCompleter {
+    override fun onCommand(
+        sender: CommandSender,
+        command: Command,
+        label: String,
+        args: Array<out String>,
+    ): Boolean {
         if (!sender.hasPermission("mf.law.list") || !sender.hasPermission("mf.laws")) {
             sender.sendMessage("${BukkitChatColor.RED}${plugin.language["CommandFactionLawListNoPermission"]}")
             return true
@@ -33,24 +41,28 @@ class MfFactionLawListCommand(private val plugin: MedievalFactions) : CommandExe
             plugin,
             Runnable {
                 val playerService = plugin.services.playerService
-                val mfPlayer = playerService.getPlayer(sender)
-                    ?: playerService.save(MfPlayer(plugin, sender)).onFailure {
-                        sender.sendMessage("${BukkitChatColor.RED}${plugin.language["CommandFactionLawListFailedToSavePlayer"]}")
-                        plugin.logger.log(Level.SEVERE, "Failed to save player: ${it.reason.message}", it.reason.cause)
-                        return@Runnable
-                    }
+                val mfPlayer =
+                    playerService.getPlayer(sender)
+                        ?: playerService.save(MfPlayer(plugin, sender)).onFailure {
+                            sender.sendMessage("${BukkitChatColor.RED}${plugin.language["CommandFactionLawListFailedToSavePlayer"]}")
+                            plugin.logger.log(Level.SEVERE, "Failed to save player: ${it.reason.message}", it.reason.cause)
+                            return@Runnable
+                        }
                 val factionService = plugin.services.factionService
-                val faction: MfFaction? = if (args.elementAtOrNull(0) != null) {
-                    factionService.getFaction(args.elementAt(0))
-                } else {
-                    factionService.getFaction(mfPlayer.id)
-                }
+                val faction: MfFaction? =
+                    if (args.elementAtOrNull(0) != null) {
+                        factionService.getFaction(args.elementAt(0))
+                    } else {
+                        factionService.getFaction(mfPlayer.id)
+                    }
                 if (faction == null) {
                     if (args.elementAtOrNull(0) == null) {
                         sender.sendMessage("${BukkitChatColor.RED}${plugin.language["CommandFactionLawListMustBeInAFaction"]}")
                         return@Runnable
                     } else {
-                        sender.sendMessage("${BukkitChatColor.RED}${plugin.language["CommandFactionLawListFactionNotFound", args.elementAt(0)]}")
+                        sender.sendMessage(
+                            "${BukkitChatColor.RED}${plugin.language["CommandFactionLawListFactionNotFound", args.elementAt(0)]}",
+                        )
                         return@Runnable
                     }
                 }
@@ -68,7 +80,9 @@ class MfFactionLawListCommand(private val plugin: MedievalFactions) : CommandExe
                         lawService.save(law.copy(number = i + 1))
                     }
                     val buttonList: MutableList<TextComponent> = mutableListOf()
-                    if ((sender.hasPermission("mf.law.remove") || sender.hasPermission("mf.removelaw")) && role.hasPermission(faction, plugin.factionPermissions.removeLaw)) {
+                    if ((sender.hasPermission("mf.law.remove") || sender.hasPermission("mf.removelaw")) &&
+                        role.hasPermission(faction, plugin.factionPermissions.removeLaw)
+                    ) {
                         val deleteButton = TextComponent("✖ ")
                         deleteButton.color = SpigotChatColor.RED
                         deleteButton.clickEvent = ClickEvent(RUN_COMMAND, "/faction law remove ${law.id.value}")
@@ -84,7 +98,9 @@ class MfFactionLawListCommand(private val plugin: MedievalFactions) : CommandExe
                             HoverEvent(SHOW_TEXT, Text(plugin.language["CommandFactionLawListEditButtonHover"]))
                         buttonList.add(editButton)
                     }
-                    if (laws.size > 1 && sender.hasPermission("mf.law.move") && role.hasPermission(faction, plugin.factionPermissions.moveLaw)) {
+                    if (laws.size > 1 && sender.hasPermission("mf.law.move") &&
+                        role.hasPermission(faction, plugin.factionPermissions.moveLaw)
+                    ) {
                         val moveButton = TextComponent("☰ ")
                         moveButton.color = SpigotChatColor.BLUE
                         moveButton.clickEvent = ClickEvent(RUN_COMMAND, "/faction law move ${law.id.value}")
@@ -96,10 +112,10 @@ class MfFactionLawListCommand(private val plugin: MedievalFactions) : CommandExe
                     text.color = SpigotChatColor.AQUA
                     sender.spigot().sendMessage(
                         *buttonList.toTypedArray(),
-                        text
+                        text,
                     )
                 }
-            }
+            },
         )
         return true
     }
@@ -108,6 +124,6 @@ class MfFactionLawListCommand(private val plugin: MedievalFactions) : CommandExe
         sender: CommandSender,
         command: Command,
         label: String,
-        args: Array<out String>
+        args: Array<out String>,
     ) = emptyList<String>()
 }

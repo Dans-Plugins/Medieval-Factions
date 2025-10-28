@@ -19,8 +19,16 @@ import preponderous.ponder.command.unquote
 import net.md_5.bungee.api.ChatColor as SpigotChatColor
 import org.bukkit.ChatColor as BukkitChatColor
 
-class MfFactionRelationshipViewCommand(private val plugin: MedievalFactions) : CommandExecutor, TabCompleter {
-    override fun onCommand(sender: CommandSender, command: Command, label: String, args: Array<out String>): Boolean {
+class MfFactionRelationshipViewCommand(
+    private val plugin: MedievalFactions,
+) : CommandExecutor,
+    TabCompleter {
+    override fun onCommand(
+        sender: CommandSender,
+        command: Command,
+        label: String,
+        args: Array<out String>,
+    ): Boolean {
         if (!sender.hasPermission("mf.relationship.view")) {
             sender.sendMessage("${BukkitChatColor.RED}${plugin.language["CommandFactionRelationshipViewNoPermission"]}")
             return true
@@ -36,12 +44,16 @@ class MfFactionRelationshipViewCommand(private val plugin: MedievalFactions) : C
                 val factionService = plugin.services.factionService
                 val faction1 = factionService.getFaction(MfFactionId(unquotedArgs[0])) ?: factionService.getFaction(unquotedArgs[0])
                 if (faction1 == null) {
-                    sender.sendMessage("${BukkitChatColor.RED}${plugin.language["CommandFactionRelationshipViewInvalidFaction", unquotedArgs[0]]}")
+                    sender.sendMessage(
+                        "${BukkitChatColor.RED}${plugin.language["CommandFactionRelationshipViewInvalidFaction", unquotedArgs[0]]}",
+                    )
                     return@Runnable
                 }
                 val faction2 = factionService.getFaction(MfFactionId(unquotedArgs[1])) ?: factionService.getFaction(unquotedArgs[1])
                 if (faction2 == null) {
-                    sender.sendMessage("${BukkitChatColor.RED}${plugin.language["CommandFactionRelationshipViewInvalidFaction", unquotedArgs[1]]}")
+                    sender.sendMessage(
+                        "${BukkitChatColor.RED}${plugin.language["CommandFactionRelationshipViewInvalidFaction", unquotedArgs[1]]}",
+                    )
                     return@Runnable
                 }
                 if (faction1.id == faction2.id) {
@@ -56,9 +68,10 @@ class MfFactionRelationshipViewCommand(private val plugin: MedievalFactions) : C
                     sender.spigot().sendMessage(
                         TextComponent(plugin.language["CommandFactionRelationshipViewCreateRelationshipButton"]).apply {
                             color = SpigotChatColor.GREEN
-                            hoverEvent = HoverEvent(SHOW_TEXT, Text(plugin.language["CommandFactionRelationshipViewCreateRelationshipButtonHover"]))
+                            hoverEvent =
+                                HoverEvent(SHOW_TEXT, Text(plugin.language["CommandFactionRelationshipViewCreateRelationshipButtonHover"]))
                             clickEvent = ClickEvent(RUN_COMMAND, "/faction relationship add ${faction1.id.value} ${faction2.id.value}")
-                        }
+                        },
                     )
                 }
                 val reverseRelationships = relationshipService.getRelationships(faction2.id, faction1.id)
@@ -67,27 +80,29 @@ class MfFactionRelationshipViewCommand(private val plugin: MedievalFactions) : C
                 sender.spigot().sendMessage(
                     TextComponent(plugin.language["CommandFactionRelationshipViewCreateReverseRelationshipButton"]).apply {
                         color = SpigotChatColor.GREEN
-                        hoverEvent = HoverEvent(SHOW_TEXT, Text(plugin.language["CommandFactionRelationshipViewCreateReverseRelationshipButtonHover"]))
+                        hoverEvent =
+                            HoverEvent(
+                                SHOW_TEXT,
+                                Text(plugin.language["CommandFactionRelationshipViewCreateReverseRelationshipButtonHover"]),
+                            )
                         clickEvent = ClickEvent(RUN_COMMAND, "/faction relationship add ${faction2.id.value} ${faction1.id.value}")
-                    }
+                    },
                 )
-            }
+            },
         )
         return true
     }
 
-    private fun CommandSender.sendRelationshipView(
-        relationships: List<MfFactionRelationship>
-    ) {
+    private fun CommandSender.sendRelationshipView(relationships: List<MfFactionRelationship>) {
         relationships.forEach { relationship ->
             spigot().sendMessage(
                 *buildList {
                     add(
                         TextComponent(
-                            relationship.type.toTranslation()
+                            relationship.type.toTranslation(),
                         ).apply {
                             color = SpigotChatColor.GRAY
-                        }
+                        },
                     )
                     if (hasPermission("mf.relationship.remove")) {
                         add(TextComponent(" "))
@@ -97,32 +112,34 @@ class MfFactionRelationshipViewCommand(private val plugin: MedievalFactions) : C
                                 hoverEvent =
                                     HoverEvent(
                                         SHOW_TEXT,
-                                        Text(plugin.language["CommandFactionRelationshipViewDeleteRelationshipButtonHover"])
+                                        Text(plugin.language["CommandFactionRelationshipViewDeleteRelationshipButtonHover"]),
                                     )
-                                clickEvent = ClickEvent(
-                                    RUN_COMMAND,
-                                    "/faction relationship remove ${relationship.factionId.value} ${relationship.targetId.value} ${relationship.type.name}"
-                                )
-                            }
+                                clickEvent =
+                                    ClickEvent(
+                                        RUN_COMMAND,
+                                        "/faction relationship remove ${relationship.factionId.value} ${relationship.targetId.value} ${relationship.type.name}",
+                                    )
+                            },
                         )
                     }
-                }.toTypedArray()
+                }.toTypedArray(),
             )
         }
     }
 
-    private fun MfFactionRelationshipType.toTranslation() = when (this) {
-        MfFactionRelationshipType.ALLY -> plugin.language["Ally"]
-        MfFactionRelationshipType.AT_WAR -> plugin.language["AtWar"]
-        MfFactionRelationshipType.VASSAL -> plugin.language["Vassal"]
-        MfFactionRelationshipType.LIEGE -> plugin.language["Liege"]
-    }
+    private fun MfFactionRelationshipType.toTranslation() =
+        when (this) {
+            MfFactionRelationshipType.ALLY -> plugin.language["Ally"]
+            MfFactionRelationshipType.AT_WAR -> plugin.language["AtWar"]
+            MfFactionRelationshipType.VASSAL -> plugin.language["Vassal"]
+            MfFactionRelationshipType.LIEGE -> plugin.language["Liege"]
+        }
 
     override fun onTabComplete(
         sender: CommandSender,
         command: Command,
         label: String,
-        args: Array<out String>
+        args: Array<out String>,
     ): List<String> {
         val factionService = plugin.services.factionService
         return when {

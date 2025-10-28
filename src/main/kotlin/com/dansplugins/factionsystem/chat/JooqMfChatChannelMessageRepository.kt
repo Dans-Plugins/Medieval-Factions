@@ -8,9 +8,12 @@ import org.jooq.DSLContext
 import java.time.LocalDateTime
 import java.time.ZoneOffset.UTC
 
-class JooqMfChatChannelMessageRepository(private val dsl: DSLContext) : MfChatChannelMessageRepository {
+class JooqMfChatChannelMessageRepository(
+    private val dsl: DSLContext,
+) : MfChatChannelMessageRepository {
     override fun insert(message: MfChatChannelMessage) {
-        dsl.insertInto(MF_CHAT_CHANNEL_MESSAGE)
+        dsl
+            .insertInto(MF_CHAT_CHANNEL_MESSAGE)
             .set(MF_CHAT_CHANNEL_MESSAGE.TIMESTAMP, LocalDateTime.ofInstant(message.timestamp, UTC))
             .set(MF_CHAT_CHANNEL_MESSAGE.PLAYER_ID, message.playerId.value)
             .set(MF_CHAT_CHANNEL_MESSAGE.FACTION_ID, message.factionId.value)
@@ -19,37 +22,43 @@ class JooqMfChatChannelMessageRepository(private val dsl: DSLContext) : MfChatCh
             .execute()
     }
 
-    override fun getChatChannelMessages(factionId: MfFactionId): List<MfChatChannelMessage> {
-        return dsl.selectFrom(MF_CHAT_CHANNEL_MESSAGE)
+    override fun getChatChannelMessages(factionId: MfFactionId): List<MfChatChannelMessage> =
+        dsl
+            .selectFrom(MF_CHAT_CHANNEL_MESSAGE)
             .where(MF_CHAT_CHANNEL_MESSAGE.FACTION_ID.eq(factionId.value))
             .orderBy(MF_CHAT_CHANNEL_MESSAGE.TIMESTAMP.desc())
             .fetch()
             .map { it.toDomain() }
-    }
 
-    override fun getChatChannelMessages(factionId: MfFactionId, limit: Int, offset: Int): List<MfChatChannelMessage> {
-        return dsl.selectFrom(MF_CHAT_CHANNEL_MESSAGE)
+    override fun getChatChannelMessages(
+        factionId: MfFactionId,
+        limit: Int,
+        offset: Int,
+    ): List<MfChatChannelMessage> =
+        dsl
+            .selectFrom(MF_CHAT_CHANNEL_MESSAGE)
             .where(MF_CHAT_CHANNEL_MESSAGE.FACTION_ID.eq(factionId.value))
             .orderBy(MF_CHAT_CHANNEL_MESSAGE.TIMESTAMP.desc())
             .limit(limit)
             .offset(offset)
             .fetch()
             .map { it.toDomain() }
-    }
 
-    override fun getChatChannelMessageCount(factionId: MfFactionId): Int {
-        return dsl.selectCount().from(MF_CHAT_CHANNEL_MESSAGE)
+    override fun getChatChannelMessageCount(factionId: MfFactionId): Int =
+        dsl
+            .selectCount()
+            .from(MF_CHAT_CHANNEL_MESSAGE)
             .where(MF_CHAT_CHANNEL_MESSAGE.FACTION_ID.eq(factionId.value))
             .fetchOne()
             ?.value1()
             ?: 0
-    }
 
-    private fun MfChatChannelMessageRecord.toDomain() = MfChatChannelMessage(
-        timestamp.toInstant(UTC),
-        playerId.let(::MfPlayerId),
-        factionId.let(::MfFactionId),
-        chatChannel.let(MfFactionChatChannel::valueOf),
-        message
-    )
+    private fun MfChatChannelMessageRecord.toDomain() =
+        MfChatChannelMessage(
+            timestamp.toInstant(UTC),
+            playerId.let(::MfPlayerId),
+            factionId.let(::MfFactionId),
+            chatChannel.let(MfFactionChatChannel::valueOf),
+            message,
+        )
 }

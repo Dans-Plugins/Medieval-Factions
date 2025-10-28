@@ -17,8 +17,9 @@ import com.dansplugins.factionsystem.faction.role.MfFactionRoles
 import java.util.*
 import java.util.concurrent.CopyOnWriteArrayList
 
-class MfFactionPermissions(private val plugin: MedievalFactions) {
-
+class MfFactionPermissions(
+    private val plugin: MedievalFactions,
+) {
     private val _permissionTypes = CopyOnWriteArrayList<MfFactionPermissionType>()
     val permissionTypes: List<MfFactionPermissionType>
         get() = Collections.unmodifiableList(_permissionTypes)
@@ -69,8 +70,8 @@ class MfFactionPermissions(private val plugin: MedievalFactions) {
                 wrapSimplePermission("SET_DEFAULT_ROLE", plugin.language["FactionPermissionSetDefaultRole"], false),
                 wrapSimplePermission("APPROVE_APP", plugin.language["FactionPermissionApproveApp"], false),
                 wrapSimplePermission("DENY_APP", plugin.language["FactionPermissionDenyApp"], false),
-                SetRolePermission(plugin)
-            )
+                SetRolePermission(plugin),
+            ),
         )
     }
 
@@ -86,7 +87,9 @@ class MfFactionPermissions(private val plugin: MedievalFactions) {
     val requestAlliance = parse("REQUEST_ALLIANCE")!!
     val breakAlliance = parse("BREAK_ALLIANCE")!!
     val toggleAutoclaim = parse("TOGGLE_AUTOCLAIM")!!
+
     fun chat(chatChannel: MfFactionChatChannel) = parse("CHAT(${chatChannel.name})")!!
+
     val chatHistory = parse("CHAT_HISTORY")!!
     val claim = parse("CLAIM")!!
     val unclaim = parse("UNCLAIM")!!
@@ -100,7 +103,9 @@ class MfFactionPermissions(private val plugin: MedievalFactions) {
     val changeDescription = parse("CHANGE_DESCRIPTION")!!
     val changePrefix = parse("CHANGE_PREFIX")!!
     val disband = parse("DISBAND")!!
+
     fun setFlag(flag: MfFlag<out Any>) = parse("SET_FLAG(${flag.name})")!!
+
     val viewFlags = parse("VIEW_FLAGS")!!
     val createGate = parse("CREATE_GATE")!!
     val removeGate = parse("REMOVE_GATE")!!
@@ -111,34 +116,62 @@ class MfFactionPermissions(private val plugin: MedievalFactions) {
     val invite = parse("INVITE")!!
     val invoke = parse("INVOKE")!!
     val kick = parse("KICK")!!
+
     fun viewRole(roleId: MfFactionRoleId) = parse("VIEW_ROLE(${roleId.value})")!!
+
     fun modifyRole(roleId: MfFactionRoleId) = parse("MODIFY_ROLE(${roleId.value})")!!
+
     fun setMemberRole(roleId: MfFactionRoleId) = parse("SET_MEMBER_ROLE(${roleId.value})")!!
+
     fun deleteRole(roleId: MfFactionRoleId) = parse("DELETE_ROLE(${roleId.value})")!!
+
     val listRoles = parse("LIST_ROLES")!!
     val listMembers = parse("LIST_MEMBERS")!!
     val createRole = parse("CREATE_ROLE")!!
     val setDefaultRole = parse("SET_DEFAULT_ROLE")!!
     val approveApp = parse("APPROVE_APP")!!
     val denyApp = parse("DENY_APP")!!
+
     fun setRolePermission(permission: MfFactionPermission) = parse("SET_ROLE_PERMISSION(${permission.name})")!!
 
-    fun permissionsFor(factionId: MfFactionId, roles: MfFactionRoles): List<MfFactionPermission> = permissionsFor(factionId, roles.map { it.id })
+    fun permissionsFor(
+        factionId: MfFactionId,
+        roles: MfFactionRoles,
+    ): List<MfFactionPermission> =
+        permissionsFor(
+            factionId,
+            roles.map {
+                it.id
+            },
+        )
+
     fun permissionsFor(faction: MfFaction) = permissionsFor(faction.id, faction.roles)
-    fun permissionsFor(factionId: MfFactionId, roleIds: List<MfFactionRoleId>) = permissionTypes.flatMap { type -> type.permissionsFor(factionId, roleIds) }
+
+    fun permissionsFor(
+        factionId: MfFactionId,
+        roleIds: List<MfFactionRoleId>,
+    ) = permissionTypes.flatMap { type -> type.permissionsFor(factionId, roleIds) }
 
     fun parse(name: String) = permissionTypes.firstNotNullOfOrNull { type -> type.parse(name) }
 
-    fun wrapSimplePermission(name: String, translation: String, default: Boolean) = wrapSimplePermission(name, { translation }, default)
+    fun wrapSimplePermission(
+        name: String,
+        translation: String,
+        default: Boolean,
+    ) = wrapSimplePermission(name, { translation }, default)
 
-    fun wrapSimplePermission(name: String, translate: (faction: MfFaction) -> String, default: Boolean) = object : MfFactionPermissionType() {
+    fun wrapSimplePermission(
+        name: String,
+        translate: (faction: MfFaction) -> String,
+        default: Boolean,
+    ) = object : MfFactionPermissionType() {
         val permission = MfFactionPermission(name, translate, default)
-        override fun parse(name: String): MfFactionPermission? {
-            return if (name == permission.name) permission else null
-        }
 
-        override fun permissionsFor(factionId: MfFactionId, roleIds: List<MfFactionRoleId>): List<MfFactionPermission> {
-            return listOf(permission)
-        }
+        override fun parse(name: String): MfFactionPermission? = if (name == permission.name) permission else null
+
+        override fun permissionsFor(
+            factionId: MfFactionId,
+            roleIds: List<MfFactionRoleId>,
+        ): List<MfFactionPermission> = listOf(permission)
     }
 }

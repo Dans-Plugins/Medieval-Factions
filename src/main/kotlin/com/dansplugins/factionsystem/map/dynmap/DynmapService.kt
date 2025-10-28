@@ -23,8 +23,9 @@ import java.util.concurrent.ConcurrentHashMap
  *
  * @param plugin The MedievalFactions plugin instance.
  */
-class DynmapService(private val plugin: MedievalFactions) : MapService {
-
+class DynmapService(
+    private val plugin: MedievalFactions,
+) : MapService {
     private val dynmap = plugin.server.pluginManager.getPlugin("dynmap") as DynmapAPI
     private val factionMarkersByFactionId = ConcurrentHashMap<MfFactionId, List<AreaMarker>>()
 
@@ -74,7 +75,11 @@ class DynmapService(private val plugin: MedievalFactions) : MapService {
      * @param claimsMarkerSet The marker set for claims.
      * @param claimService The claim service.
      */
-    private fun updateFactionClaims(faction: MfFaction, claimsMarkerSet: MarkerSet, claimService: MfClaimService) {
+    private fun updateFactionClaims(
+        faction: MfFaction,
+        claimsMarkerSet: MarkerSet,
+        claimService: MfClaimService,
+    ) {
         val claims = claimService.getClaims(faction.id)
         if (plugin.config.getBoolean("dynmap.debug")) {
             plugin.logger.info("[Dynmap Service] Fetched ${claims.size} claims for faction ${faction.name}")
@@ -94,7 +99,13 @@ class DynmapService(private val plugin: MedievalFactions) : MapService {
      * @param claimsMarkerSet The marker set for claims.
      * @param factionInfo The faction information.
      */
-    private fun updateWorldClaims(faction: MfFaction, worldId: UUID, worldClaims: List<MfClaimedChunk>, claimsMarkerSet: MarkerSet, factionInfo: String) {
+    private fun updateWorldClaims(
+        faction: MfFaction,
+        worldId: UUID,
+        worldClaims: List<MfClaimedChunk>,
+        claimsMarkerSet: MarkerSet,
+        factionInfo: String,
+    ) {
         val world = plugin.server.getWorld(worldId)
         if (world != null) {
             taskScheduler.scheduleTask(faction.id, { createAreaMarkers(faction, world, worldClaims, claimsMarkerSet, factionInfo) })
@@ -110,7 +121,13 @@ class DynmapService(private val plugin: MedievalFactions) : MapService {
      * @param claimsMarkerSet The marker set for claims.
      * @param factionInfo The faction information.
      */
-    private fun createAreaMarkers(faction: MfFaction, world: World, worldClaims: List<MfClaimedChunk>, claimsMarkerSet: MarkerSet, factionInfo: String) {
+    private fun createAreaMarkers(
+        faction: MfFaction,
+        world: World,
+        worldClaims: List<MfClaimedChunk>,
+        claimsMarkerSet: MarkerSet,
+        factionInfo: String,
+    ) {
         val paths = claimPathBuilder.getPaths(worldClaims)
         if (plugin.config.getBoolean("dynmap.debug")) {
             plugin.logger.info("[Dynmap Service] Generated ${paths.size} paths for world ${world.name}")
@@ -134,16 +151,24 @@ class DynmapService(private val plugin: MedievalFactions) : MapService {
      * @param factionInfo The faction information.
      * @param index The index of the area marker.
      */
-    private fun createAreaMarker(faction: MfFaction, world: World, corners: List<Point>, claimsMarkerSet: MarkerSet, factionInfo: String, index: Int) {
-        val areaMarker = claimsMarkerSet.createAreaMarker(
-            "claim_border_${faction.id}_${world.name}_$index",
-            faction.name,
-            false,
-            world.name,
-            corners.map { (x, _) -> x * 16.0 }.toDoubleArray(),
-            corners.map { (_, z) -> z * 16.0 }.toDoubleArray(),
-            false
-        )
+    private fun createAreaMarker(
+        faction: MfFaction,
+        world: World,
+        corners: List<Point>,
+        claimsMarkerSet: MarkerSet,
+        factionInfo: String,
+        index: Int,
+    ) {
+        val areaMarker =
+            claimsMarkerSet.createAreaMarker(
+                "claim_border_${faction.id}_${world.name}_$index",
+                faction.name,
+                false,
+                world.name,
+                corners.map { (x, _) -> x * 16.0 }.toDoubleArray(),
+                corners.map { (_, z) -> z * 16.0 }.toDoubleArray(),
+                false,
+            )
         if (areaMarker != null) {
             val color = Integer.decode(faction.flags[plugin.flags.color])
             areaMarker.setFillStyle(0.0, color)
@@ -167,26 +192,34 @@ class DynmapService(private val plugin: MedievalFactions) : MapService {
      * @param factionInfo The faction information.
      * @param index The index of the claim marker.
      */
-    private fun createClaimMarker(faction: MfFaction, world: World, claim: MfClaimedChunk, claimsMarkerSet: MarkerSet, factionInfo: String, index: Int) {
-        val areaMarker = claimsMarkerSet.createAreaMarker(
-            "claim_${faction.id}_${world.name}_$index",
-            faction.name,
-            false,
-            world.name,
-            doubleArrayOf(
-                claim.x * 16.0,
-                (claim.x + 1) * 16.0,
-                (claim.x + 1) * 16.0,
-                claim.x * 16.0
-            ),
-            doubleArrayOf(
-                claim.z * 16.0,
-                claim.z * 16.0,
-                (claim.z + 1) * 16.0,
-                (claim.z + 1) * 16.0
-            ),
-            false
-        )
+    private fun createClaimMarker(
+        faction: MfFaction,
+        world: World,
+        claim: MfClaimedChunk,
+        claimsMarkerSet: MarkerSet,
+        factionInfo: String,
+        index: Int,
+    ) {
+        val areaMarker =
+            claimsMarkerSet.createAreaMarker(
+                "claim_${faction.id}_${world.name}_$index",
+                faction.name,
+                false,
+                world.name,
+                doubleArrayOf(
+                    claim.x * 16.0,
+                    (claim.x + 1) * 16.0,
+                    (claim.x + 1) * 16.0,
+                    claim.x * 16.0,
+                ),
+                doubleArrayOf(
+                    claim.z * 16.0,
+                    claim.z * 16.0,
+                    (claim.z + 1) * 16.0,
+                    (claim.z + 1) * 16.0,
+                ),
+                false,
+            )
         val color = Integer.decode(faction.flags[plugin.flags.color])
         areaMarker.setFillStyle(0.3, color)
         areaMarker.setLineStyle(0, 0.0, color)
@@ -202,7 +235,11 @@ class DynmapService(private val plugin: MedievalFactions) : MapService {
      * @param realmMarkerSet The marker set for realms.
      * @param claimService The claim service.
      */
-    private fun updateFactionRealm(faction: MfFaction, realmMarkerSet: MarkerSet, claimService: MfClaimService) {
+    private fun updateFactionRealm(
+        faction: MfFaction,
+        realmMarkerSet: MarkerSet,
+        claimService: MfClaimService,
+    ) {
         val relationshipService = plugin.services.factionRelationshipService
         val realm = claimService.getClaims(faction.id) + relationshipService.getVassalTree(faction.id).flatMap(claimService::getClaims)
         realm.groupBy { it.worldId }.forEach { (worldId, worldClaims) ->
@@ -218,7 +255,12 @@ class DynmapService(private val plugin: MedievalFactions) : MapService {
      * @param worldClaims The list of claims in the world.
      * @param realmMarkerSet The marker set for realms.
      */
-    private fun updateWorldRealm(faction: MfFaction, worldId: UUID, worldClaims: List<MfClaimedChunk>, realmMarkerSet: MarkerSet) {
+    private fun updateWorldRealm(
+        faction: MfFaction,
+        worldId: UUID,
+        worldClaims: List<MfClaimedChunk>,
+        realmMarkerSet: MarkerSet,
+    ) {
         val world = plugin.server.getWorld(worldId)
         if (world != null) {
             taskScheduler.scheduleTask(faction.id, { createRealmMarkers(faction, world, worldClaims, realmMarkerSet) })
@@ -233,7 +275,12 @@ class DynmapService(private val plugin: MedievalFactions) : MapService {
      * @param worldClaims The list of claims in the world.
      * @param realmMarkerSet The marker set for realms.
      */
-    private fun createRealmMarkers(faction: MfFaction, world: World, worldClaims: List<MfClaimedChunk>, realmMarkerSet: MarkerSet) {
+    private fun createRealmMarkers(
+        faction: MfFaction,
+        world: World,
+        worldClaims: List<MfClaimedChunk>,
+        realmMarkerSet: MarkerSet,
+    ) {
         val paths = claimPathBuilder.getPaths(worldClaims)
         if (plugin.config.getBoolean("dynmap.debug")) {
             plugin.logger.info("[Dynmap Service] Generated ${paths.size} paths for realm in world ${world.name}")
@@ -253,16 +300,23 @@ class DynmapService(private val plugin: MedievalFactions) : MapService {
      * @param realmMarkerSet The marker set for realms.
      * @param index The index of the realm area marker.
      */
-    private fun createRealmAreaMarker(faction: MfFaction, world: World, corners: List<Point>, realmMarkerSet: MarkerSet, index: Int) {
-        val areaMarker = realmMarkerSet.createAreaMarker(
-            "realm_${faction.id}_${world.name}_$index",
-            faction.name,
-            false,
-            world.name,
-            corners.map { (x, _) -> x * 16.0 }.toDoubleArray(),
-            corners.map { (_, z) -> z * 16.0 }.toDoubleArray(),
-            false
-        )
+    private fun createRealmAreaMarker(
+        faction: MfFaction,
+        world: World,
+        corners: List<Point>,
+        realmMarkerSet: MarkerSet,
+        index: Int,
+    ) {
+        val areaMarker =
+            realmMarkerSet.createAreaMarker(
+                "realm_${faction.id}_${world.name}_$index",
+                faction.name,
+                false,
+                world.name,
+                corners.map { (x, _) -> x * 16.0 }.toDoubleArray(),
+                corners.map { (_, z) -> z * 16.0 }.toDoubleArray(),
+                false,
+            )
         areaMarker.label = faction.name
         val color = Integer.decode(faction.flags[plugin.flags.color])
         areaMarker.setFillStyle(0.0, color)

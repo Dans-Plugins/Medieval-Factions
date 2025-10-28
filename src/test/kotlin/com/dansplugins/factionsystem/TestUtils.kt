@@ -14,7 +14,6 @@ import org.mockito.Mockito.`when`
  * A utility class for creating mock objects and events, commonly used in testing scenarios.
  */
 class TestUtils {
-
     /**
      * Creates a mock implementation of a Block with default properties and a specified or mocked world.
      *
@@ -51,7 +50,10 @@ class TestUtils {
      * @param player The player who broke the block.
      * @return A mocked BlockBreakEvent with the provided block and player set.
      */
-    fun createBlockBreakEvent(block: Block, player: Player): BlockBreakEvent {
+    fun createBlockBreakEvent(
+        block: Block,
+        player: Player,
+    ): BlockBreakEvent {
         val event = mock(BlockBreakEvent::class.java)
         `when`(event.block).thenReturn(block)
         `when`(event.player).thenReturn(player)
@@ -65,7 +67,10 @@ class TestUtils {
      * @param player The player who placed the block.
      * @return A mocked BlockPlaceEvent with the provided block and player set.
      */
-    fun createBlockPlaceEvent(block: Block, player: Player): BlockPlaceEvent {
+    fun createBlockPlaceEvent(
+        block: Block,
+        player: Player,
+    ): BlockPlaceEvent {
         val event = mock(BlockPlaceEvent::class.java)
         `when`(event.block).thenReturn(block)
         `when`(event.player).thenReturn(player)
@@ -94,6 +99,6 @@ class TestUtils {
     data class CommandTestFixture(
         val player: Player,
         val command: Command,
-        val sender: CommandSender
+        val sender: CommandSender,
     )
 }

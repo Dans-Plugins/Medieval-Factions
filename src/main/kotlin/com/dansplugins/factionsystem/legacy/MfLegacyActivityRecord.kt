@@ -4,5 +4,5 @@ data class MfLegacyActivityRecord(
     val playerUUID: String,
     val lastLogout: String,
     val powerLost: String,
-    val logins: String
+    val logins: String,
 )

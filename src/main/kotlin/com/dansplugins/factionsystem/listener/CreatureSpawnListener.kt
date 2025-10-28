@@ -5,22 +5,25 @@ import org.bukkit.event.EventHandler
 import org.bukkit.event.Listener
 import org.bukkit.event.entity.CreatureSpawnEvent
 
-class CreatureSpawnListener(private val plugin: MedievalFactions) : Listener {
-
+class CreatureSpawnListener(
+    private val plugin: MedievalFactions,
+) : Listener {
     @EventHandler
     fun onCreatureSpawn(event: CreatureSpawnEvent) {
         if (plugin.config.getBoolean("factions.mobsSpawnInFactionTerritory")) {
             return
         }
 
-        val spawnReasonsToAllow = plugin.config.getStringList("factions.allowedMobSpawnReasons")
-            .mapNotNull {
-                try {
-                    return@mapNotNull CreatureSpawnEvent.SpawnReason.valueOf(it)
-                } catch (exception: IllegalArgumentException) {
-                    return@mapNotNull null
+        val spawnReasonsToAllow =
+            plugin.config
+                .getStringList("factions.allowedMobSpawnReasons")
+                .mapNotNull {
+                    try {
+                        return@mapNotNull CreatureSpawnEvent.SpawnReason.valueOf(it)
+                    } catch (exception: IllegalArgumentException) {
+                        return@mapNotNull null
+                    }
                 }
-            }
         if (spawnReasonsToAllow.contains(event.spawnReason)) {
             return
         }

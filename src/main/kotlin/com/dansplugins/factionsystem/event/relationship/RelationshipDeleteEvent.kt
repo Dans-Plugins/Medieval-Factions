@@ -8,9 +8,10 @@ import org.bukkit.event.HandlerList
 class RelationshipDeleteEvent(
     @get:JvmName("getRelationshipId")
     override val relationshipId: MfFactionRelationshipId,
-    isAsync: Boolean
-) : Event(isAsync), RelationshipEvent, Cancellable {
-
+    isAsync: Boolean,
+) : Event(isAsync),
+    RelationshipEvent,
+    Cancellable {
     companion object {
         @JvmStatic private val handlers: HandlerList = HandlerList()
 
@@ -21,9 +22,7 @@ class RelationshipDeleteEvent(
 
     override fun getHandlers(): HandlerList = getHandlerList()
 
-    override fun isCancelled(): Boolean {
-        return cancel
-    }
+    override fun isCancelled(): Boolean = cancel
 
     override fun setCancelled(cancel: Boolean) {
         this.cancel = cancel

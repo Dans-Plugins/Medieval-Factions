@@ -21,22 +21,25 @@ import org.bukkit.conversations.ValidatingPrompt
 import org.bukkit.entity.Player
 import java.util.logging.Level.SEVERE
 
-class MfFactionFlagSetCommand(private val plugin: MedievalFactions) : CommandExecutor, TabCompleter {
-
-    private val conversationFactory = ConversationFactory(plugin)
-        .withModality(true)
-        .withFirstPrompt(ValuePrompt())
-        .withEscapeSequence(plugin.language["EscapeSequence"])
-        .withLocalEcho(false)
-        .thatExcludesNonPlayersWithMessage(plugin.language["CommandFactionFlagSetNotAPlayer"])
-        .addConversationAbandonedListener { event ->
-            if (!event.gracefulExit()) {
-                val conversable = event.context.forWhom
-                if (conversable is Player) {
-                    conversable.sendMessage(plugin.language["CommandFactionFlagSetOperationCancelled"])
+class MfFactionFlagSetCommand(
+    private val plugin: MedievalFactions,
+) : CommandExecutor,
+    TabCompleter {
+    private val conversationFactory =
+        ConversationFactory(plugin)
+            .withModality(true)
+            .withFirstPrompt(ValuePrompt())
+            .withEscapeSequence(plugin.language["EscapeSequence"])
+            .withLocalEcho(false)
+            .thatExcludesNonPlayersWithMessage(plugin.language["CommandFactionFlagSetNotAPlayer"])
+            .addConversationAbandonedListener { event ->
+                if (!event.gracefulExit()) {
+                    val conversable = event.context.forWhom
+                    if (conversable is Player) {
+                        conversable.sendMessage(plugin.language["CommandFactionFlagSetOperationCancelled"])
+                    }
                 }
             }
-        }
 
     private inner class ValuePrompt : ValidatingPrompt() {
         override fun getPromptText(context: ConversationContext): String {
@@ -44,7 +47,10 @@ class MfFactionFlagSetCommand(private val plugin: MedievalFactions) : CommandExe
             return plugin.language["CommandFactionFlagSetValuePrompt", flag?.name ?: plugin.language["UnknownFlag"], plugin.language["EscapeSequence"]]
         }
 
-        override fun acceptValidatedInput(context: ConversationContext, input: String): Prompt? {
+        override fun acceptValidatedInput(
+            context: ConversationContext,
+            input: String,
+        ): Prompt? {
             val conversable = context.forWhom
             if (conversable !is Player) return END_OF_CONVERSATION
             val flag = context.getSessionData("flag") as? MfFlag<Any> ?: return END_OF_CONVERSATION
@@ -53,12 +59,15 @@ class MfFactionFlagSetCommand(private val plugin: MedievalFactions) : CommandExe
             return END_OF_CONVERSATION
         }
 
-        override fun getFailedValidationText(context: ConversationContext, invalidInput: String): String {
+        override fun getFailedValidationText(
+            context: ConversationContext,
+            invalidInput: String,
+        ): String {
             val flag = context.getSessionData("flag") as MfFlag<Any>
             return when (val coercionResult = flag.coerce(invalidInput)) {
                 is MfFlagValueCoercionFailure -> "$RED${plugin.language[
                     "CommandFactionFlagSetValueCoercionFailed",
-                    flag.type.simpleName ?: plugin.language["UnknownFlagType"]
+                    flag.type.simpleName ?: plugin.language["UnknownFlagType"],
                 ]}: ${coercionResult.failureMessage}"
                 is MfFlagValueCoercionSuccess<*> -> {
                     when (val validationResult = flag.validate(coercionResult.value)) {
@@ -69,7 +78,10 @@ class MfFactionFlagSetCommand(private val plugin: MedievalFactions) : CommandExe
             }
         }
 
-        override fun isInputValid(context: ConversationContext, input: String): Boolean {
+        override fun isInputValid(
+            context: ConversationContext,
+            input: String,
+        ): Boolean {
             val flag = context.getSessionData("flag") as MfFlag<Any>
             val coercionResult = flag.coerce(input)
             if (coercionResult !is MfFlagValueCoercionSuccess<*>) return false
@@ -78,7 +90,12 @@ class MfFactionFlagSetCommand(private val plugin: MedievalFactions) : CommandExe
         }
     }
 
-    override fun onCommand(sender: CommandSender, command: Command, label: String, args: Array<out String>): Boolean {
+    override fun onCommand(
+        sender: CommandSender,
+        command: Command,
+        label: String,
+        args: Array<out String>,
+    ): Boolean {
         if (!sender.hasPermission("mf.flag.set")) {
             sender.sendMessage("$RED${plugin.language["CommandFactionFlagSetNoPermission"]}")
             return true
@@ -97,12 +114,13 @@ class MfFactionFlagSetCommand(private val plugin: MedievalFactions) : CommandExe
             return true
         }
         var lastArgOffset = 0
-        val returnPage = if (args.last().startsWith("p=")) {
-            lastArgOffset = 1
-            args.last().substring("p=".length).toIntOrNull()
-        } else {
-            null
-        }
+        val returnPage =
+            if (args.last().startsWith("p=")) {
+                lastArgOffset = 1
+                args.last().substring("p=".length).toIntOrNull()
+            } else {
+                null
+            }
         if (args.size - lastArgOffset < 2) {
             val conversation = conversationFactory.buildConversation(sender)
             conversation.context.setSessionData("page", returnPage)
@@ -115,18 +133,24 @@ class MfFactionFlagSetCommand(private val plugin: MedievalFactions) : CommandExe
         return true
     }
 
-    private fun setFlagValue(sender: Player, flag: MfFlag<Any>, flagValue: String, page: Int? = null) {
+    private fun setFlagValue(
+        sender: Player,
+        flag: MfFlag<Any>,
+        flagValue: String,
+        page: Int? = null,
+    ) {
         val allowNeutrality = plugin.config.getBoolean("factions.allowNeutrality")
         plugin.server.scheduler.runTaskAsynchronously(
             plugin,
             Runnable {
                 val playerService = plugin.services.playerService
-                val mfPlayer = playerService.getPlayer(sender)
-                    ?: playerService.save(MfPlayer(plugin, sender)).onFailure {
-                        sender.sendMessage("$RED${plugin.language["CommandFactionFlagSetFailedToSavePlayer"]}")
-                        plugin.logger.log(SEVERE, "Failed to save player: ${it.reason.message}", it.reason.cause)
-                        return@Runnable
-                    }
+                val mfPlayer =
+                    playerService.getPlayer(sender)
+                        ?: playerService.save(MfPlayer(plugin, sender)).onFailure {
+                            sender.sendMessage("$RED${plugin.language["CommandFactionFlagSetFailedToSavePlayer"]}")
+                            plugin.logger.log(SEVERE, "Failed to save player: ${it.reason.message}", it.reason.cause)
+                            return@Runnable
+                        }
                 val factionService = plugin.services.factionService
                 val faction = factionService.getFaction(mfPlayer.id)
                 if (faction == null) {
@@ -139,15 +163,19 @@ class MfFactionFlagSetCommand(private val plugin: MedievalFactions) : CommandExe
                     return@Runnable
                 }
                 when (val coercionResult = flag.coerce(flagValue)) {
-                    is MfFlagValueCoercionFailure -> sender.sendMessage(
-                        "$RED${plugin.language[
-                            "CommandFactionFlagSetValueCoercionFailed",
-                            flag.type.simpleName ?: plugin.language["UnknownFlagType"]
-                        ]}: ${coercionResult.failureMessage}"
-                    )
+                    is MfFlagValueCoercionFailure ->
+                        sender.sendMessage(
+                            "$RED${plugin.language[
+                                "CommandFactionFlagSetValueCoercionFailed",
+                                flag.type.simpleName ?: plugin.language["UnknownFlagType"],
+                            ]}: ${coercionResult.failureMessage}",
+                        )
                     is MfFlagValueCoercionSuccess<*> -> {
                         when (val validationResult = flag.validate(coercionResult.value)) {
-                            is MfFlagValidationFailure -> sender.sendMessage("$RED${plugin.language["CommandFactionFlagSetValueValidationFailed"]}: ${validationResult.failureMessage}")
+                            is MfFlagValidationFailure ->
+                                sender.sendMessage(
+                                    "$RED${plugin.language["CommandFactionFlagSetValueValidationFailed"]}: ${validationResult.failureMessage}",
+                                )
                             is MfFlagValidationSuccess -> {
                                 if (flag == plugin.flags.isNeutral && coercionResult.value == true && !allowNeutrality) {
                                     sender.sendMessage("$RED${plugin.language["CommandFactionFlagSetNeutralityDisabled"]}")
@@ -158,18 +186,20 @@ class MfFactionFlagSetCommand(private val plugin: MedievalFactions) : CommandExe
                                     plugin.logger.log(SEVERE, "Failed to save faction: ${it.reason.message}", it.reason.cause)
                                     return@Runnable
                                 }
-                                sender.sendMessage("$GREEN${plugin.language["CommandFactionFlagSetSuccess", flag.name, coercionResult.value.toString()]}")
+                                sender.sendMessage(
+                                    "$GREEN${plugin.language["CommandFactionFlagSetSuccess", flag.name, coercionResult.value.toString()]}",
+                                )
                                 plugin.server.scheduler.runTask(
                                     plugin,
                                     Runnable {
                                         sender.performCommand("faction flag list" + if (page != null) " $page" else "")
-                                    }
+                                    },
                                 )
                             }
                         }
                     }
                 }
-            }
+            },
         )
     }
 
@@ -177,7 +207,7 @@ class MfFactionFlagSetCommand(private val plugin: MedievalFactions) : CommandExe
         sender: CommandSender,
         command: Command,
         label: String,
-        args: Array<out String>
+        args: Array<out String>,
     ) = when {
         args.isEmpty() -> plugin.flags.map { it.name }
         args.size == 1 -> plugin.flags.filter { it.name.lowercase().startsWith(args[0].lowercase()) }.map { it.name }

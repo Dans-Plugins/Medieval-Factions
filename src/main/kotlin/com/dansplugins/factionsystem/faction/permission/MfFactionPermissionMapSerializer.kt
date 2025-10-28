@@ -7,17 +7,17 @@ import com.google.gson.JsonElement
 import java.lang.reflect.Type
 
 class MfFactionPermissionMapSerializer(
-    private val plugin: MedievalFactions
+    private val plugin: MedievalFactions,
 ) : JsonDeserializer<Map<MfFactionPermission, Boolean?>> {
-
     override fun deserialize(
         json: JsonElement?,
         typeOfT: Type?,
-        context: JsonDeserializationContext?
+        context: JsonDeserializationContext?,
     ): Map<MfFactionPermission, Boolean?>? {
         if (json?.isJsonObject != true) return null
         val permissionsJsonObject = json.asJsonObject
-        return permissionsJsonObject.keySet()
+        return permissionsJsonObject
+            .keySet()
             .associateWith { plugin.factionPermissions.parse(it) }
             .filter { (_, value) -> value != null }
             .toList()

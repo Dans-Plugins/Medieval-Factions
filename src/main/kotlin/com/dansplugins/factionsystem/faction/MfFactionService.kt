@@ -27,8 +27,10 @@ import dev.forkhandles.result4k.resultFrom
 import java.util.concurrent.ConcurrentHashMap
 import java.util.concurrent.CopyOnWriteArrayList
 
-class MfFactionService(private val plugin: MedievalFactions, private val repository: MfFactionRepository) {
-
+class MfFactionService(
+    private val plugin: MedievalFactions,
+    private val repository: MfFactionRepository,
+) {
     private val factionsById: MutableMap<MfFactionId, MfFaction> = ConcurrentHashMap()
     val factions: List<MfFaction>
         get() = factionsById.values.toList()
@@ -45,12 +47,17 @@ class MfFactionService(private val plugin: MedievalFactions, private val reposit
         if (!plugin.config.getBoolean("factions.allowNeutrality")) {
             plugin.logger.info("Disabling neutrality for existing factions due to config setting...")
             startTime = System.currentTimeMillis()
-            val updatedFactions = factions.filter { it.flags[plugin.flags.isNeutral] }.map { faction ->
-                save(faction.copy(flags = faction.flags + (plugin.flags.isNeutral to false))).onFailure { throw it.reason.cause }
-            }.associateBy(MfFaction::id)
+            val updatedFactions =
+                factions
+                    .filter { it.flags[plugin.flags.isNeutral] }
+                    .map { faction ->
+                        save(faction.copy(flags = faction.flags + (plugin.flags.isNeutral to false))).onFailure { throw it.reason.cause }
+                    }.associateBy(MfFaction::id)
             if (updatedFactions.isNotEmpty()) {
                 factionsById.putAll(updatedFactions)
-                plugin.logger.info("Updated neutrality setting for ${updatedFactions.size} factions (${System.currentTimeMillis() - startTime}ms)")
+                plugin.logger.info(
+                    "Updated neutrality setting for ${updatedFactions.size} factions (${System.currentTimeMillis() - startTime}ms)",
+                )
             } else {
                 plugin.logger.info("No factions required updating.")
             }
@@ -60,104 +67,108 @@ class MfFactionService(private val plugin: MedievalFactions, private val reposit
     fun getFaction(name: String): MfFaction? = factions.singleOrNull { it.name == name }
 
     @JvmName("getFactionByPlayerId")
-    fun getFaction(playerId: MfPlayerId): MfFaction? = factions.singleOrNull { faction ->
-        faction.members.any { member -> member.playerId == playerId }
-    }
+    fun getFaction(playerId: MfPlayerId): MfFaction? =
+        factions.singleOrNull { faction ->
+            faction.members.any { member -> member.playerId == playerId }
+        }
 
     @JvmName("getFactionByFactionId")
     fun getFaction(factionId: MfFactionId): MfFaction? = factionsById[factionId]
 
-    fun save(faction: MfFaction): Result4k<MfFaction, ServiceFailure> = resultFrom {
-        val previousState = getFaction(faction.id)
-        var factionToSave = faction
-        if (previousState == null) {
-            val event = FactionCreateEvent(faction.id, faction, !plugin.server.isPrimaryThread)
+    fun save(faction: MfFaction): Result4k<MfFaction, ServiceFailure> =
+        resultFrom {
+            val previousState = getFaction(faction.id)
+            var factionToSave = faction
+            if (previousState == null) {
+                val event = FactionCreateEvent(faction.id, faction, !plugin.server.isPrimaryThread)
+                plugin.server.pluginManager.callEvent(event)
+                if (event.isCancelled) {
+                    throw EventCancelledException("Event cancelled")
+                }
+                factionToSave = event.faction
+            } else {
+                if (previousState.name != faction.name) {
+                    val event = FactionRenameEvent(faction.id, faction.name, !plugin.server.isPrimaryThread)
+                    plugin.server.pluginManager.callEvent(event)
+                    if (event.isCancelled) {
+                        throw EventCancelledException("Event cancelled")
+                    }
+                }
+                if (previousState.description != faction.description) {
+                    val event = FactionDescriptionChangeEvent(faction.id, faction.description, !plugin.server.isPrimaryThread)
+                    plugin.server.pluginManager.callEvent(event)
+                    if (event.isCancelled) {
+                        throw EventCancelledException("Event cancelled")
+                    }
+                }
+                if (previousState.prefix != faction.prefix) {
+                    val event = FactionPrefixChangeEvent(faction.id, faction.prefix, !plugin.server.isPrimaryThread)
+                    plugin.server.pluginManager.callEvent(event)
+                    if (event.isCancelled) {
+                        throw EventCancelledException("Event cancelled")
+                    }
+                }
+                val newMembers = faction.members.map(MfFactionMember::playerId) - previousState.members.map(MfFactionMember::playerId)
+                newMembers.forEach { newMember ->
+                    val event = FactionJoinEvent(faction.id, newMember, !plugin.server.isPrimaryThread)
+                    plugin.server.pluginManager.callEvent(event)
+                    if (event.isCancelled) {
+                        throw EventCancelledException("Event cancelled")
+                    }
+                }
+                val oldMembers = previousState.members.map(MfFactionMember::playerId) - faction.members.map(MfFactionMember::playerId)
+                oldMembers.forEach { oldMember ->
+                    val event = FactionLeaveEvent(faction.id, oldMember, !plugin.server.isPrimaryThread)
+                    plugin.server.pluginManager.callEvent(event)
+                    if (event.isCancelled) {
+                        throw EventCancelledException("Event cancelled")
+                    }
+                    val lockService = plugin.services.lockService
+                    lockService.getLockedBlocks(oldMember).forEach { lockedBlock ->
+                        lockService
+                            .delete(lockedBlock.block)
+                            .onFailure { failure -> throw failure.reason.cause }
+                    }
+                }
+            }
+            val result = repository.upsert(factionToSave)
+            factionsById[result.id] = result
+            val mapService = plugin.services.mapService
+            if (mapService != null && !plugin.config.getBoolean("dynmap.onlyRenderTerritoriesUponStartup")) {
+                plugin.server.scheduler.runTask(
+                    plugin,
+                    Runnable {
+                        mapService.scheduleUpdateClaims(result)
+                    },
+                )
+            }
+            return@resultFrom result
+        }.mapFailure { exception ->
+            ServiceFailure(exception.toServiceFailureType(), "Service error: ${exception.message}", exception)
+        }
+
+    @JvmName("deleteFactionByFactionId")
+    fun delete(factionId: MfFactionId): Result4k<Unit, ServiceFailure> =
+        resultFrom {
+            val event = FactionDisbandEvent(factionId, !plugin.server.isPrimaryThread)
             plugin.server.pluginManager.callEvent(event)
             if (event.isCancelled) {
                 throw EventCancelledException("Event cancelled")
             }
-            factionToSave = event.faction
-        } else {
-            if (previousState.name != faction.name) {
-                val event = FactionRenameEvent(faction.id, faction.name, !plugin.server.isPrimaryThread)
-                plugin.server.pluginManager.callEvent(event)
-                if (event.isCancelled) {
-                    throw EventCancelledException("Event cancelled")
-                }
+            val claimService = plugin.services.claimService
+            claimService.deleteAllClaims(factionId).onFailure {
+                throw it.reason.cause
             }
-            if (previousState.description != faction.description) {
-                val event = FactionDescriptionChangeEvent(faction.id, faction.description, !plugin.server.isPrimaryThread)
-                plugin.server.pluginManager.callEvent(event)
-                if (event.isCancelled) {
-                    throw EventCancelledException("Event cancelled")
-                }
+            val gateService = plugin.services.gateService
+            gateService.deleteAllGates(factionId).onFailure {
+                throw it.reason.cause
             }
-            if (previousState.prefix != faction.prefix) {
-                val event = FactionPrefixChangeEvent(faction.id, faction.prefix, !plugin.server.isPrimaryThread)
-                plugin.server.pluginManager.callEvent(event)
-                if (event.isCancelled) {
-                    throw EventCancelledException("Event cancelled")
-                }
-            }
-            val newMembers = faction.members.map(MfFactionMember::playerId) - previousState.members.map(MfFactionMember::playerId)
-            newMembers.forEach { newMember ->
-                val event = FactionJoinEvent(faction.id, newMember, !plugin.server.isPrimaryThread)
-                plugin.server.pluginManager.callEvent(event)
-                if (event.isCancelled) {
-                    throw EventCancelledException("Event cancelled")
-                }
-            }
-            val oldMembers = previousState.members.map(MfFactionMember::playerId) - faction.members.map(MfFactionMember::playerId)
-            oldMembers.forEach { oldMember ->
-                val event = FactionLeaveEvent(faction.id, oldMember, !plugin.server.isPrimaryThread)
-                plugin.server.pluginManager.callEvent(event)
-                if (event.isCancelled) {
-                    throw EventCancelledException("Event cancelled")
-                }
-                val lockService = plugin.services.lockService
-                lockService.getLockedBlocks(oldMember).forEach { lockedBlock ->
-                    lockService.delete(lockedBlock.block)
-                        .onFailure { failure -> throw failure.reason.cause }
-                }
-            }
+            val result = repository.delete(factionId)
+            factionsById.remove(factionId)
+            return@resultFrom result
+        }.mapFailure { exception ->
+            ServiceFailure(exception.toServiceFailureType(), "Service error: ${exception.message}", exception)
         }
-        val result = repository.upsert(factionToSave)
-        factionsById[result.id] = result
-        val mapService = plugin.services.mapService
-        if (mapService != null && !plugin.config.getBoolean("dynmap.onlyRenderTerritoriesUponStartup")) {
-            plugin.server.scheduler.runTask(
-                plugin,
-                Runnable {
-                    mapService.scheduleUpdateClaims(result)
-                }
-            )
-        }
-        return@resultFrom result
-    }.mapFailure { exception ->
-        ServiceFailure(exception.toServiceFailureType(), "Service error: ${exception.message}", exception)
-    }
-
-    @JvmName("deleteFactionByFactionId")
-    fun delete(factionId: MfFactionId): Result4k<Unit, ServiceFailure> = resultFrom {
-        val event = FactionDisbandEvent(factionId, !plugin.server.isPrimaryThread)
-        plugin.server.pluginManager.callEvent(event)
-        if (event.isCancelled) {
-            throw EventCancelledException("Event cancelled")
-        }
-        val claimService = plugin.services.claimService
-        claimService.deleteAllClaims(factionId).onFailure {
-            throw it.reason.cause
-        }
-        val gateService = plugin.services.gateService
-        gateService.deleteAllGates(factionId).onFailure {
-            throw it.reason.cause
-        }
-        val result = repository.delete(factionId)
-        factionsById.remove(factionId)
-        return@resultFrom result
-    }.mapFailure { exception ->
-        ServiceFailure(exception.toServiceFailureType(), "Service error: ${exception.message}", exception)
-    }
 
     @JvmOverloads
     fun createFaction(
@@ -171,9 +182,9 @@ class MfFactionService(private val plugin: MedievalFactions, private val reposit
         home: MfPosition? = null,
         bonusPower: Double = 0.0,
         autoclaim: Boolean = false,
-        roles: MfFactionRoles = MfFactionRoles.defaults(plugin, MfFactionId(id))
-    ): Result4k<MfFaction, ServiceFailure> {
-        return save(
+        roles: MfFactionRoles = MfFactionRoles.defaults(plugin, MfFactionId(id)),
+    ): Result4k<MfFaction, ServiceFailure> =
+        save(
             MfFaction(
                 plugin = plugin,
                 id = MfFactionId(id),
@@ -186,21 +197,19 @@ class MfFactionService(private val plugin: MedievalFactions, private val reposit
                 home = home,
                 bonusPower = bonusPower,
                 autoclaim = autoclaim,
-                roles = roles
-            )
+                roles = roles,
+            ),
         )
-    }
 
     fun addField(field: MfFactionField) {
         _fields.add(field)
     }
 
-    private fun Exception.toServiceFailureType(): ServiceFailureType {
-        return when (this) {
+    private fun Exception.toServiceFailureType(): ServiceFailureType =
+        when (this) {
             is OptimisticLockingFailureException -> CONFLICT
             else -> GENERAL
         }
-    }
 
     fun cancelAllApplicationsForPlayer(player: MfPlayer) {
         plugin.logger.info("Cancelling all applications for player ${player.name}")
@@ -208,10 +217,12 @@ class MfFactionService(private val plugin: MedievalFactions, private val reposit
             plugin.logger.info("Checking faction ${faction.name}")
             save(
                 faction.copy(
-                    applications = faction.applications.filter { it.applicantId != player.id }
-                )
+                    applications = faction.applications.filter { it.applicantId != player.id },
+                ),
             ).onFailure {
-                plugin.logger.warning("Failed to cancel applications for player ${player.name} in faction ${faction.name}: ${it.reason.message}")
+                plugin.logger.warning(
+                    "Failed to cancel applications for player ${player.name} in faction ${faction.name}: ${it.reason.message}",
+                )
                 throw it.reason.cause
             }
         }

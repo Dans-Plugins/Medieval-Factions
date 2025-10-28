@@ -10,7 +10,10 @@ import org.bukkit.command.CommandExecutor
 import org.bukkit.command.CommandSender
 import org.bukkit.command.TabCompleter
 
-class MfDuelCommand(private val plugin: MedievalFactions) : CommandExecutor, TabCompleter {
+class MfDuelCommand(
+    private val plugin: MedievalFactions,
+) : CommandExecutor,
+    TabCompleter {
     private val duelChallengeCommand = MfDuelChallengeCommand(plugin)
     private val duelAcceptCommand = MfDuelAcceptCommand(plugin)
     private val duelCancelCommand = MfDuelCancelCommand(plugin)
@@ -21,8 +24,13 @@ class MfDuelCommand(private val plugin: MedievalFactions) : CommandExecutor, Tab
 
     private val subcommands = challengeAliases + acceptAliases + cancelAliases
 
-    override fun onCommand(sender: CommandSender, command: Command, label: String, args: Array<out String>): Boolean {
-        return when (args.firstOrNull()?.lowercase()) {
+    override fun onCommand(
+        sender: CommandSender,
+        command: Command,
+        label: String,
+        args: Array<out String>,
+    ): Boolean =
+        when (args.firstOrNull()?.lowercase()) {
             in challengeAliases -> duelChallengeCommand.onCommand(sender, command, label, args.drop(1).toTypedArray())
             in acceptAliases -> duelAcceptCommand.onCommand(sender, command, label, args.drop(1).toTypedArray())
             in cancelAliases -> duelCancelCommand.onCommand(sender, command, label, args.drop(1).toTypedArray())
@@ -31,21 +39,21 @@ class MfDuelCommand(private val plugin: MedievalFactions) : CommandExecutor, Tab
                 true
             }
         }
-    }
 
     override fun onTabComplete(
         sender: CommandSender,
         command: Command,
         label: String,
-        args: Array<out String>
+        args: Array<out String>,
     ) = when {
         args.isEmpty() -> subcommands
         args.size == 1 -> subcommands.filter { it.startsWith(args[0].lowercase()) }
-        else -> when (args.first().lowercase()) {
-            in challengeAliases -> duelChallengeCommand.onTabComplete(sender, command, label, args.drop(1).toTypedArray())
-            in acceptAliases -> duelAcceptCommand.onTabComplete(sender, command, label, args.drop(1).toTypedArray())
-            in cancelAliases -> duelCancelCommand.onTabComplete(sender, command, label, args.drop(1).toTypedArray())
-            else -> emptyList()
-        }
+        else ->
+            when (args.first().lowercase()) {
+                in challengeAliases -> duelChallengeCommand.onTabComplete(sender, command, label, args.drop(1).toTypedArray())
+                in acceptAliases -> duelAcceptCommand.onTabComplete(sender, command, label, args.drop(1).toTypedArray())
+                in cancelAliases -> duelCancelCommand.onTabComplete(sender, command, label, args.drop(1).toTypedArray())
+                else -> emptyList()
+            }
     }
 }

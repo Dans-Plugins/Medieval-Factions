@@ -9,18 +9,18 @@ import java.util.logging.Level.SEVERE
 class CancelApplicationTask(
     private val plugin: MedievalFactions,
     private val sender: Player,
-    private val targetFactionName: String
+    private val targetFactionName: String,
 ) : Runnable {
-
     override fun run() {
         val factionService = plugin.services.factionService
         val playerService = plugin.services.playerService
-        val mfPlayer = playerService.getPlayer(sender)
-            ?: playerService.save(MfPlayer(plugin, sender)).onFailure {
-                sender.sendMessage("${ChatColor.RED}${plugin.language["CommandFactionApplyCancelFailedToSaveFaction"]}")
-                plugin.logger.log(SEVERE, "Failed to save player: ${it.reason.message}", it.reason.cause)
-                return
-            }
+        val mfPlayer =
+            playerService.getPlayer(sender)
+                ?: playerService.save(MfPlayer(plugin, sender)).onFailure {
+                    sender.sendMessage("${ChatColor.RED}${plugin.language["CommandFactionApplyCancelFailedToSaveFaction"]}")
+                    plugin.logger.log(SEVERE, "Failed to save player: ${it.reason.message}", it.reason.cause)
+                    return
+                }
         val target = factionService.getFaction(targetFactionName)
         if (target == null) {
             sender.sendMessage("${ChatColor.RED}${plugin.language["CommandFactionApplyCancelInvalidTarget"]}")
