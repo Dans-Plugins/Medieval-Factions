@@ -540,4 +540,18 @@ class MedievalFactions : JavaPlugin() {
             MfRpkLockService(this)
         }
     }
+
+    /**
+     * Checks if map territories should be rendered dynamically (i.e., not only on startup).
+     * 
+     * @return true if territories should be updated dynamically, false if only on startup
+     */
+    fun shouldRenderMapTerritoriesDynamically(): Boolean {
+        val mapService = services.mapService ?: return false
+        return when (mapService) {
+            is BlueMapService -> !config.getBoolean("bluemap.onlyRenderTerritoriesUponStartup")
+            is DynmapService -> !config.getBoolean("dynmap.onlyRenderTerritoriesUponStartup")
+            else -> true
+        }
+    }
 }

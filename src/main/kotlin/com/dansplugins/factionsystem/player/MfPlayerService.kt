@@ -53,7 +53,7 @@ class MfPlayerService(private val plugin: MedievalFactions, private val playerRe
         if (mapService != null) {
             val factionService = plugin.services.factionService
             val faction = factionService.getFaction(result.id)
-            if (faction != null && !plugin.config.getBoolean("dynmap.onlyRenderTerritoriesUponStartup")) {
+            if (faction != null && plugin.shouldRenderMapTerritoriesDynamically()) {
                 plugin.server.scheduler.runTask(
                     plugin,
                     Runnable {
@@ -74,7 +74,7 @@ class MfPlayerService(private val plugin: MedievalFactions, private val playerRe
             playerRepository.decreaseOfflinePlayerPower(onlinePlayerIds)
             playersById.putAll(playerRepository.getPlayers().associateBy(MfPlayer::id))
             val mapService = plugin.services.mapService
-            if (mapService != null && !plugin.config.getBoolean("dynmap.onlyRenderTerritoriesUponStartup")) {
+            if (mapService != null && plugin.shouldRenderMapTerritoriesDynamically()) {
                 val factionService = plugin.services.factionService
                 factionService.factions.forEach { faction ->
                     plugin.server.scheduler.runTask(
