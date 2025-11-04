@@ -124,7 +124,7 @@ class MfFactionService(private val plugin: MedievalFactions, private val reposit
         val result = repository.upsert(factionToSave)
         factionsById[result.id] = result
         val mapService = plugin.services.mapService
-        if (mapService != null && !plugin.config.getBoolean("dynmap.onlyRenderTerritoriesUponStartup")) {
+        if (mapService != null && plugin.shouldRenderMapTerritoriesDynamically()) {
             plugin.server.scheduler.runTask(
                 plugin,
                 Runnable {

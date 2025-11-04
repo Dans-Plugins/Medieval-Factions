@@ -13,8 +13,13 @@ The development of the fifth major version of MF was led by [alyphen](https://gi
 2) Once downloaded, place the jar in the plugins folder of your server files.
 3) Restart your server.
 
-### Dynmap Integration
-Dynmap has been integrated with this plugin. In order to be able to view claimed land on a dynamic map, download and install the plugin [here](https://www.spigotmc.org/resources/dynmap.274/).
+### Map Integration
+This plugin supports both **BlueMap** and **Dynmap** for displaying faction territories on web maps:
+
+- **BlueMap Integration** (Recommended): For better performance and modern features, install [BlueMap](https://bluemap.bluecolored.de/). BlueMap provides 3D web maps with excellent performance.
+- **Dynmap Integration**: For traditional 2D web maps, install [Dynmap](https://www.spigotmc.org/resources/dynmap.274/).
+
+The plugin will automatically detect which map plugin you have installed and use the appropriate integration. If both are installed, BlueMap takes priority. See [BlueMap Integration Documentation](docs/BLUEMAP_INTEGRATION.md) for detailed configuration.
 
 ### Expansions
 1) [Fiefs](https://github.com/dmccoystephenson/Fiefs)

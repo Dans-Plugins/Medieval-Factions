@@ -52,7 +52,7 @@ class MfFactionUnclaimAllCommand(private val plugin: MedievalFactions) : Command
                 sender.sendMessage("$GREEN${plugin.language["CommandFactionUnclaimAllSuccess"]}")
 
                 val mapService = plugin.services.mapService
-                if (mapService != null && !plugin.config.getBoolean("dynmap.onlyRenderTerritoriesUponStartup")) {
+                if (mapService != null && plugin.shouldRenderMapTerritoriesDynamically()) {
                     plugin.server.scheduler.runTask(
                         plugin,
                         Runnable {
