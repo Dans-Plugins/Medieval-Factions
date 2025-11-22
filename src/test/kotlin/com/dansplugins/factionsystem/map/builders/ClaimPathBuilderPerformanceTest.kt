@@ -54,9 +54,11 @@ class ClaimPathBuilderPerformanceTest {
             val scalingFactor = times[2].toDouble() / times[0].toDouble()
             println("Scaling factor (4x input): ${scalingFactor}x time")
             // O(n) should scale closer to 4x, O(n²) would scale closer to 16x
-            assertTrue(scalingFactor < 12.0,
-                "Scaling factor ${scalingFactor} suggests worse than O(n) performance. " +
-                "Expected < 12x for 4x input increase (O(n²) would be ~16x)")
+            assertTrue(
+                scalingFactor < 12.0,
+                "Scaling factor $scalingFactor suggests worse than O(n) performance. " +
+                    "Expected < 12x for 4x input increase (O(n²) would be ~16x)"
+            )
         }
     }
 
@@ -102,9 +104,11 @@ class ClaimPathBuilderPerformanceTest {
 
         // With O(n), time per claim should stay under 0.5ms even for large inputs
         // With O(n²), this would grow significantly
-        assertTrue(timePerClaim < 1.0,
-            "Time per claim (${timePerClaim}ms) is too high for ${lastSize} claims. " +
-            "This suggests O(n²) complexity. Expected < 1.0ms per claim with O(n).")
+        assertTrue(
+            timePerClaim < 1.0,
+            "Time per claim (${timePerClaim}ms) is too high for $lastSize claims. " +
+                "This suggests O(n²) complexity. Expected < 1.0ms per claim with O(n)."
+        )
     }
 
     /**
@@ -133,10 +137,12 @@ class ClaimPathBuilderPerformanceTest {
 
         // With HashSet O(1) lookups, 1024 claims should complete in < 100ms
         // Old O(n²) with list.any() would take ~4000ms
-        assertTrue(time < 100,
+        assertTrue(
+            time < 100,
             "Processing 1024 claims took ${time}ms. " +
-            "Expected < 100ms with HashSet optimization. " +
-            "Old O(n²) algorithm would take ~4000ms.")
+                "Expected < 100ms with HashSet optimization. " +
+                "Old O(n²) algorithm would take ~4000ms."
+        )
     }
 
     @Test
@@ -185,7 +191,6 @@ class ClaimPathBuilderPerformanceTest {
         // With O(n) optimization, 1000 claims should complete in < 500ms
         // Old O(n²) algorithm would take ~4000ms for 1024 claims (10x slower!)
         assert(time < 500) { "Processing 1024 claims took ${time}ms, expected < 500ms. This proves significant optimization." }
-    }
     }
 
     @Test
