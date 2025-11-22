@@ -76,6 +76,7 @@ class ClaimPathBuilder {
         val paths = mutableListOf<List<Pair<Int, Int>>>()
         var (point, lineSegmentsAtPoint) = lineSegments.entries.first { (_, segs) -> segs.isNotEmpty() }
         var currentPath = mutableListOf<Pair<Int, Int>>()
+        var startPoint = point
 
         while (!lineSegments.values.all { it.isEmpty() }) {
             currentPath.add(point)
@@ -95,15 +96,26 @@ class ClaimPathBuilder {
             point = if (first == point) second else first
             lineSegmentsAtPoint = lineSegments[point] ?: emptyList()
 
-            if (!lineSegments.values.all { it.isEmpty() } && lineSegmentsAtPoint.isEmpty()) {
-                val (newPoint, newLineSegmentsAtPoint) = lineSegments.entries.first { (_, segs) -> segs.isNotEmpty() }
-                point = newPoint
-                lineSegmentsAtPoint = newLineSegmentsAtPoint
+            // Check if we've completed a closed loop (returned to start)
+            val completedLoop = currentPath.isNotEmpty() && point == startPoint
+            // Or if current point has no segments (reached dead end in disconnected regions)
+            val reachedDeadEnd = !lineSegments.values.all { it.isEmpty() } && lineSegmentsAtPoint.isEmpty()
+
+            if (completedLoop || reachedDeadEnd) {
                 paths.add(currentPath)
                 currentPath = mutableListOf()
+                // Always find a new starting point for the next path
+                if (!lineSegments.values.all { it.isEmpty() }) {
+                    val (newPoint, newLineSegmentsAtPoint) = lineSegments.entries.first { (_, segs) -> segs.isNotEmpty() }
+                    point = newPoint
+                    lineSegmentsAtPoint = newLineSegmentsAtPoint
+                    startPoint = point
+                }
             }
         }
-        paths.add(currentPath)
+        if (currentPath.isNotEmpty()) {
+            paths.add(currentPath)
+        }
         return paths
     }
 }
