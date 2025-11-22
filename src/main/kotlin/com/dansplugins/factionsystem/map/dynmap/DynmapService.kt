@@ -80,10 +80,10 @@ class DynmapService(private val plugin: MedievalFactions) : MapService {
             plugin.logger.info("[Dynmap Service] Fetched ${claims.size} claims for faction ${faction.name}")
         }
         val factionInfo = factionInfoBuilder.build(faction)
-        
+
         // Group claims by world and process all worlds in one batch task
         val claimsByWorld = claims.groupBy { it.worldId }
-        taskScheduler.scheduleTask(faction.id, { 
+        taskScheduler.scheduleTask(faction.id, {
             claimsByWorld.forEach { (worldId, worldClaims) ->
                 updateWorldClaims(faction, worldId, worldClaims, claimsMarkerSet, factionInfo)
             }
@@ -120,7 +120,7 @@ class DynmapService(private val plugin: MedievalFactions) : MapService {
         if (plugin.config.getBoolean("dynmap.debug")) {
             plugin.logger.info("[Dynmap Service] Generated ${paths.size} paths for world ${world.name}")
         }
-        
+
         // Batch create all markers in one pass instead of scheduling each individually
         paths.forEachIndexed { index, path ->
             val corners = getCorners(path)
@@ -212,7 +212,7 @@ class DynmapService(private val plugin: MedievalFactions) : MapService {
     private fun updateFactionRealm(faction: MfFaction, realmMarkerSet: MarkerSet, claimService: MfClaimService) {
         val relationshipService = plugin.services.factionRelationshipService
         val realm = claimService.getClaims(faction.id) + relationshipService.getVassalTree(faction.id).flatMap(claimService::getClaims)
-        
+
         // Group by world and process all worlds in one batch task
         val realmByWorld = realm.groupBy { it.worldId }
         taskScheduler.scheduleTask(faction.id, {
@@ -250,7 +250,7 @@ class DynmapService(private val plugin: MedievalFactions) : MapService {
         if (plugin.config.getBoolean("dynmap.debug")) {
             plugin.logger.info("[Dynmap Service] Generated ${paths.size} paths for realm in world ${world.name}")
         }
-        
+
         // Batch create all realm markers instead of scheduling each individually
         paths.forEachIndexed { index, path ->
             val corners = getCorners(path)
