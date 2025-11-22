@@ -22,8 +22,8 @@ class ClaimPathBuilder {
         // Build a HashSet for O(1) lookups instead of O(n) list searches
         val claimSet = claims.mapTo(HashSet()) { it.x to it.z }
 
-        // Use mutable lists instead of repeated list concatenation
-        val lineSegments = mutableMapOf<Point, MutableList<LineSegment>>()
+        // Use a map to track line segments at each point
+        val lineSegments = mutableMapOf<Point, List<LineSegment>>()
 
         // Sort claims to ensure consistent path ordering (required for tests)
         claims.sortedWith { a, b ->
@@ -37,29 +37,37 @@ class ClaimPathBuilder {
             // Check north
             if ((x to z - 1) !in claimSet) {
                 val lineSegment = (x to z) to (x + 1 to z)
-                lineSegments.getOrPut(lineSegment.first) { mutableListOf() }.add(lineSegment)
-                lineSegments.getOrPut(lineSegment.second) { mutableListOf() }.add(lineSegment)
+                val lineSegmentsAtFirst = lineSegments[lineSegment.first] ?: emptyList()
+                val lineSegmentsAtSecond = lineSegments[lineSegment.second] ?: emptyList()
+                lineSegments[lineSegment.first] = lineSegmentsAtFirst + lineSegment
+                lineSegments[lineSegment.second] = lineSegmentsAtSecond + lineSegment
             }
 
             // Check east
             if ((x + 1 to z) !in claimSet) {
                 val lineSegment = (x + 1 to z) to (x + 1 to z + 1)
-                lineSegments.getOrPut(lineSegment.first) { mutableListOf() }.add(lineSegment)
-                lineSegments.getOrPut(lineSegment.second) { mutableListOf() }.add(lineSegment)
+                val lineSegmentsAtFirst = lineSegments[lineSegment.first] ?: emptyList()
+                val lineSegmentsAtSecond = lineSegments[lineSegment.second] ?: emptyList()
+                lineSegments[lineSegment.first] = lineSegmentsAtFirst + lineSegment
+                lineSegments[lineSegment.second] = lineSegmentsAtSecond + lineSegment
             }
 
             // Check south
             if ((x to z + 1) !in claimSet) {
                 val lineSegment = (x to z + 1) to (x + 1 to z + 1)
-                lineSegments.getOrPut(lineSegment.first) { mutableListOf() }.add(lineSegment)
-                lineSegments.getOrPut(lineSegment.second) { mutableListOf() }.add(lineSegment)
+                val lineSegmentsAtFirst = lineSegments[lineSegment.first] ?: emptyList()
+                val lineSegmentsAtSecond = lineSegments[lineSegment.second] ?: emptyList()
+                lineSegments[lineSegment.first] = lineSegmentsAtFirst + lineSegment
+                lineSegments[lineSegment.second] = lineSegmentsAtSecond + lineSegment
             }
 
             // Check west
             if ((x - 1 to z) !in claimSet) {
                 val lineSegment = (x to z) to (x to z + 1)
-                lineSegments.getOrPut(lineSegment.first) { mutableListOf() }.add(lineSegment)
-                lineSegments.getOrPut(lineSegment.second) { mutableListOf() }.add(lineSegment)
+                val lineSegmentsAtFirst = lineSegments[lineSegment.first] ?: emptyList()
+                val lineSegmentsAtSecond = lineSegments[lineSegment.second] ?: emptyList()
+                lineSegments[lineSegment.first] = lineSegmentsAtFirst + lineSegment
+                lineSegments[lineSegment.second] = lineSegmentsAtSecond + lineSegment
             }
         }
 
@@ -74,12 +82,18 @@ class ClaimPathBuilder {
             val lineSegmentToFollow = lineSegmentsAtPoint.first()
             val (first, second) = lineSegmentToFollow
 
-            // Remove from both endpoints
-            lineSegments[first]?.remove(lineSegmentToFollow)
-            lineSegments[second]?.remove(lineSegmentToFollow)
+            // Remove segment from both endpoints
+            val lineSegmentsAtFirst = lineSegments[first]
+            val lineSegmentsAtSecond = lineSegments[second]
+            if (lineSegmentsAtFirst != null) {
+                lineSegments[first] = lineSegmentsAtFirst - lineSegmentToFollow
+            }
+            if (lineSegmentsAtSecond != null) {
+                lineSegments[second] = lineSegmentsAtSecond - lineSegmentToFollow
+            }
 
             point = if (first == point) second else first
-            lineSegmentsAtPoint = lineSegments[point] ?: mutableListOf()
+            lineSegmentsAtPoint = lineSegments[point] ?: emptyList()
 
             if (!lineSegments.values.all { it.isEmpty() } && lineSegmentsAtPoint.isEmpty()) {
                 val (newPoint, newLineSegmentsAtPoint) = lineSegments.entries.first { (_, segs) -> segs.isNotEmpty() }
