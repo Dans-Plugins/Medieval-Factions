@@ -34,7 +34,7 @@ class EntityDamageByEntityListener(private val plugin: MedievalFactions) : Liste
                 val damagedFaction = factionService.getFaction(claim.factionId) ?: return
                 if (!damagedFaction.flags[plugin.flags.enableMobProtection]) return
                 if (damaged is Monster) return
-                if (damagerFaction != null && claimService.isInteractionAllowed(damagerMfPlayer.id, claim)) return
+                if (claimService.isInteractionAllowed(damagerMfPlayer.id, claim)) return
                 if (damagerMfPlayer.isBypassEnabled && damagerPlayer.hasPermission("mf.bypass")) {
                     damagerPlayer.sendMessage("${ChatColor.RED}${plugin.language["FactionTerritoryProtectionBypassed"]}")
                     return

@@ -176,6 +176,51 @@ class EntityDamageByEntityListenerTest {
     }
 
     @Test
+    fun onEntityDamageByEntity_ArmorStandInFactionTerritory_DamagerHasNoFaction_ShouldCancel() {
+        // Arrange
+        val damager = mock(Player::class.java)
+        val armorStand = mock(ArmorStand::class.java)
+        val event = mock(EntityDamageByEntityEvent::class.java)
+        val chunk = mock(Chunk::class.java)
+        val location = mock(Location::class.java)
+
+        `when`(event.damager).thenReturn(damager)
+        `when`(event.entity).thenReturn(armorStand)
+        `when`(armorStand.location).thenReturn(location)
+        `when`(location.chunk).thenReturn(chunk)
+
+        val mfPlayer = mock(MfPlayer::class.java)
+        val playerId = mock(MfPlayerId::class.java)
+        `when`(mfPlayer.id).thenReturn(playerId)
+        `when`(mfPlayer.isBypassEnabled).thenReturn(false)
+        `when`(playerService.getPlayer(damager)).thenReturn(mfPlayer)
+
+        val claim = mock(MfClaimedChunk::class.java)
+        val factionId = mock(MfFactionId::class.java)
+        `when`(claim.factionId).thenReturn(factionId)
+        `when`(claimService.getClaim(chunk)).thenReturn(claim)
+
+        val faction = mock(MfFaction::class.java)
+        `when`(factionService.getFaction(factionId)).thenReturn(faction)
+        `when`(factionService.getFaction(playerId)).thenReturn(null) // damager has no faction
+
+        val enableMobProtectionFlag = mock(com.dansplugins.factionsystem.faction.flag.MfFlag::class.java) as com.dansplugins.factionsystem.faction.flag.MfFlag<Boolean>
+        `when`(flags.enableMobProtection).thenReturn(enableMobProtectionFlag)
+        val flagValues = mock(com.dansplugins.factionsystem.faction.flag.MfFlagValues::class.java)
+        `when`(faction.flags).thenReturn(flagValues)
+        `when`(flagValues.get(enableMobProtectionFlag)).thenReturn(true)
+
+        // isInteractionAllowed returns false when player has no faction
+        `when`(claimService.isInteractionAllowed(playerId, claim)).thenReturn(false)
+
+        // Act
+        uut.onEntityDamageByEntity(event)
+
+        // Assert
+        verify(event).isCancelled = true
+    }
+
+    @Test
     fun onEntityDamageByEntity_ArmorStandInFactionTerritory_MobProtectionDisabled_ShouldNotCancel() {
         // Arrange
         val damager = mock(Player::class.java)
