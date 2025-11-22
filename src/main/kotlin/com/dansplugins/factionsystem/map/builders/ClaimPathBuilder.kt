@@ -25,7 +25,12 @@ class ClaimPathBuilder {
         // Use mutable lists instead of repeated list concatenation
         val lineSegments = mutableMapOf<Point, MutableList<LineSegment>>()
 
-        claims.forEach { claim ->
+        // Sort claims to ensure consistent path ordering (required for tests)
+        claims.sortedWith { a, b ->
+            val xComp = a.x.compareTo(b.x)
+            if (xComp != 0) return@sortedWith xComp
+            return@sortedWith a.z.compareTo(b.z)
+        }.forEach { claim ->
             val x = claim.x
             val z = claim.z
 
