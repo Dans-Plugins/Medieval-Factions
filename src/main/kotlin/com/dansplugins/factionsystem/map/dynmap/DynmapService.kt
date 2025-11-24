@@ -121,13 +121,11 @@ class DynmapService(private val plugin: MedievalFactions) : MapService {
             plugin.logger.info("[Dynmap Service] Generated ${paths.size} paths for world ${world.name}")
         }
 
-        // Batch create all markers in one pass instead of scheduling each individually
+        // Only create territory border markers - individual claim markers are redundant
+        // and cause web interface lag with thousands of claims
         paths.forEachIndexed { index, path ->
             val corners = getCorners(path)
             createAreaMarker(faction, world, corners, claimsMarkerSet, factionInfo, index)
-        }
-        worldClaims.forEachIndexed { index, claim ->
-            createClaimMarker(faction, world, claim, claimsMarkerSet, factionInfo, index)
         }
     }
 
@@ -162,44 +160,6 @@ class DynmapService(private val plugin: MedievalFactions) : MapService {
                 plugin.logger.info("[Dynmap Service] Created area marker for path $index in world ${world.name}")
             }
         }
-    }
-
-    /**
-     * Creates a claim marker for the specified faction in the given world.
-     *
-     * @param faction The faction whose claim marker needs to be created.
-     * @param world The world.
-     * @param claim The claimed chunk.
-     * @param claimsMarkerSet The marker set for claims.
-     * @param factionInfo The faction information.
-     * @param index The index of the claim marker.
-     */
-    private fun createClaimMarker(faction: MfFaction, world: World, claim: MfClaimedChunk, claimsMarkerSet: MarkerSet, factionInfo: String, index: Int) {
-        val areaMarker = claimsMarkerSet.createAreaMarker(
-            "claim_${faction.id}_${world.name}_$index",
-            faction.name,
-            false,
-            world.name,
-            doubleArrayOf(
-                claim.x * 16.0,
-                (claim.x + 1) * 16.0,
-                (claim.x + 1) * 16.0,
-                claim.x * 16.0
-            ),
-            doubleArrayOf(
-                claim.z * 16.0,
-                claim.z * 16.0,
-                (claim.z + 1) * 16.0,
-                (claim.z + 1) * 16.0
-            ),
-            false
-        )
-        val color = Integer.decode(faction.flags[plugin.flags.color])
-        areaMarker.setFillStyle(0.3, color)
-        areaMarker.setLineStyle(0, 0.0, color)
-        areaMarker.description = factionInfo
-        val factionMarkers = factionMarkersByFactionId[faction.id] ?: listOf()
-        factionMarkersByFactionId[faction.id] = factionMarkers + areaMarker
     }
 
     /**
