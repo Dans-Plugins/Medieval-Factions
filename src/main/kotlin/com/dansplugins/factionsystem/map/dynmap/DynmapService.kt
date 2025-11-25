@@ -151,7 +151,10 @@ class DynmapService(private val plugin: MedievalFactions) : MapService {
         )
         if (areaMarker != null) {
             val color = Integer.decode(faction.flags[plugin.flags.color])
-            areaMarker.setFillStyle(0.0, color)
+            // Use configurable fill opacity - 0.0 for borders only, higher values to fill territories
+            val fillTerritories = plugin.config.getBoolean("dynmap.fillTerritories", true)
+            val fillOpacity = if (fillTerritories) plugin.config.getDouble("dynmap.fillOpacity", 0.35) else 0.0
+            areaMarker.setFillStyle(fillOpacity, color)
             areaMarker.setLineStyle(1, 1.0, color)
             areaMarker.description = factionInfo
             val factionMarkers = factionMarkersByFactionId[faction.id] ?: listOf()
@@ -239,7 +242,10 @@ class DynmapService(private val plugin: MedievalFactions) : MapService {
         )
         areaMarker.label = faction.name
         val color = Integer.decode(faction.flags[plugin.flags.color])
-        areaMarker.setFillStyle(0.0, color)
+        // Use configurable fill opacity - 0.0 for borders only, higher values to fill territories
+        val fillTerritories = plugin.config.getBoolean("dynmap.fillTerritories", true)
+        val fillOpacity = if (fillTerritories) plugin.config.getDouble("dynmap.fillOpacity", 0.35) else 0.0
+        areaMarker.setFillStyle(fillOpacity, color)
         areaMarker.setLineStyle(4, 1.0, color)
         areaMarker.description = factionInfoBuilder.build(faction)
         val factionMarkers = factionMarkersByFactionId[faction.id] ?: listOf()
