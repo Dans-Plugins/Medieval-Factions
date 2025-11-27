@@ -116,110 +116,15 @@ class DynmapService(private val plugin: MedievalFactions) : MapService {
      * @param factionInfo The faction information.
      */
     private fun createAreaMarkers(faction: MfFaction, world: World, worldClaims: List<MfClaimedChunk>, claimsMarkerSet: MarkerSet, factionInfo: String) {
-        val borderFillDistance = plugin.config.getInt("dynmap.borderFillDistance", -1)
+        val fillClaims = plugin.config.getBoolean("dynmap.fillClaims", true)
 
-        if (borderFillDistance == -1) {
-            // Fill entire territory using border paths (original behavior)
-            val paths = claimPathBuilder.getPaths(worldClaims)
-            if (plugin.config.getBoolean("dynmap.debug")) {
-                plugin.logger.info("[Dynmap Service] Generated ${paths.size} paths for world ${world.name}")
-            }
-            paths.forEachIndexed { index, path ->
-                val corners = getCorners(path)
-                createAreaMarker(faction, world, corners, claimsMarkerSet, factionInfo, index, fillEnabled = true)
-            }
-        } else if (borderFillDistance == 0) {
-            // Only show border lines, no fill
-            val paths = claimPathBuilder.getPaths(worldClaims)
-            if (plugin.config.getBoolean("dynmap.debug")) {
-                plugin.logger.info("[Dynmap Service] Generated ${paths.size} border paths for world ${world.name}")
-            }
-            paths.forEachIndexed { index, path ->
-                val corners = getCorners(path)
-                createAreaMarker(faction, world, corners, claimsMarkerSet, factionInfo, index, fillEnabled = false)
-            }
-        } else {
-            // Fill only chunks within borderFillDistance from the border
-            // First create border paths (no fill)
-            val paths = claimPathBuilder.getPaths(worldClaims)
-            if (plugin.config.getBoolean("dynmap.debug")) {
-                plugin.logger.info("[Dynmap Service] Generated ${paths.size} border paths for world ${world.name}")
-            }
-            paths.forEachIndexed { index, path ->
-                val corners = getCorners(path)
-                createAreaMarker(faction, world, corners, claimsMarkerSet, factionInfo, index, fillEnabled = false)
-            }
-
-            // Then create individual markers for border chunks
-            val borderChunks = getBorderChunks(worldClaims, borderFillDistance)
-            if (plugin.config.getBoolean("dynmap.debug")) {
-                plugin.logger.info("[Dynmap Service] Creating ${borderChunks.size} border chunk markers")
-            }
-            borderChunks.forEachIndexed { index, chunk ->
-                createChunkMarker(faction, world, chunk, claimsMarkerSet, factionInfo, index)
-            }
+        val paths = claimPathBuilder.getPaths(worldClaims)
+        if (plugin.config.getBoolean("dynmap.debug")) {
+            plugin.logger.info("[Dynmap Service] Generated ${paths.size} paths for world ${world.name}")
         }
-    }
-
-    /**
-     * Gets chunks that are within the specified distance from the border.
-     *
-     * @param claims All claims in the world.
-     * @param distance Maximum distance from border (in chunks).
-     * @return List of chunks within the distance from any border.
-     */
-    private fun getBorderChunks(claims: List<MfClaimedChunk>, distance: Int): List<MfClaimedChunk> {
-        val claimSet = claims.mapTo(HashSet()) { it.x to it.z }
-
-        return claims.filter { claim ->
-            // Check if this chunk is within 'distance' chunks of a border
-            for (dx in -distance..distance) {
-                for (dz in -distance..distance) {
-                    val checkX = claim.x + dx
-                    val checkZ = claim.z + dz
-                    // If any adjacent position (within distance) is not claimed, this chunk is near a border
-                    if ((checkX to checkZ) !in claimSet) {
-                        return@filter true
-                    }
-                }
-            }
-            false
-        }
-    }
-
-    /**
-     * Creates a marker for a single chunk.
-     *
-     * @param faction The faction.
-     * @param world The world.
-     * @param chunk The claimed chunk.
-     * @param claimsMarkerSet The marker set.
-     * @param factionInfo The faction information.
-     * @param index The index for unique marker ID.
-     */
-    private fun createChunkMarker(faction: MfFaction, world: World, chunk: MfClaimedChunk, claimsMarkerSet: MarkerSet, factionInfo: String, index: Int) {
-        val x = chunk.x
-        val z = chunk.z
-        val xCorners = doubleArrayOf(x * 16.0, (x + 1) * 16.0, (x + 1) * 16.0, x * 16.0)
-        val zCorners = doubleArrayOf(z * 16.0, z * 16.0, (z + 1) * 16.0, (z + 1) * 16.0)
-
-        val areaMarker = claimsMarkerSet.createAreaMarker(
-            "claim_fill_${faction.id}_${world.name}_$index",
-            faction.name,
-            false,
-            world.name,
-            xCorners,
-            zCorners,
-            false
-        )
-        if (areaMarker != null) {
-            val color = Integer.decode(faction.flags[plugin.flags.color])
-            val fillOpacity = plugin.config.getDouble("dynmap.fillOpacity", 0.35)
-            areaMarker.setFillStyle(fillOpacity, color)
-            areaMarker.setLineStyle(0, 0.0, color) // No border line for fill chunks
-            areaMarker.description = factionInfo
-            val factionMarkers = factionMarkersByFactionId[faction.id] ?: listOf()
-            factionMarkersByFactionId[faction.id] = factionMarkers + areaMarker
+        paths.forEachIndexed { index, path ->
+            val corners = getCorners(path)
+            createAreaMarker(faction, world, corners, claimsMarkerSet, factionInfo, index, fillEnabled = fillClaims)
         }
     }
 
@@ -336,8 +241,8 @@ class DynmapService(private val plugin: MedievalFactions) : MapService {
         areaMarker.label = faction.name
         val color = Integer.decode(faction.flags[plugin.flags.color])
         // For realms, use the same fill logic as claims
-        val borderFillDistance = plugin.config.getInt("dynmap.borderFillDistance", -1)
-        val fillOpacity = if (borderFillDistance == -1) plugin.config.getDouble("dynmap.fillOpacity", 0.35) else 0.0
+        val fillClaims = plugin.config.getBoolean("dynmap.fillClaims", true)
+        val fillOpacity = if (fillClaims) plugin.config.getDouble("dynmap.fillOpacity", 0.35) else 0.0
         areaMarker.setFillStyle(fillOpacity, color)
         areaMarker.setLineStyle(4, 1.0, color)
         areaMarker.description = factionInfoBuilder.build(faction)

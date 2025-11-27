@@ -110,13 +110,10 @@ dynmap:
   showDemesne: false
   onlyRenderTerritoriesUponStartup: false
   debug: false
-  # Territory fill settings - controls how faction territories are displayed
-  # borderFillDistance: Number of chunks from the border to fill with color
-  #   -1 = fill entire territory (like original behavior)
-  #   0 = only show border lines (no fill)
-  #   1+ = fill only chunks within this distance from the border
-  # Higher values help distinguish neighboring factions while reducing marker count
-  borderFillDistance: -1
+  # fillClaims: Whether to fill faction territories with color
+  #   true = fill entire territory with color (default)
+  #   false = only show border lines (better performance, but harder to distinguish factions)
+  fillClaims: true
   # fillOpacity: 0.0-1.0, controls how transparent the territory fill is (0.0 = invisible, 1.0 = solid)
   fillOpacity: 0.35
 gates:
