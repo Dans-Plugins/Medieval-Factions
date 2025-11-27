@@ -14,7 +14,6 @@ import com.dansplugins.factionsystem.player.MfPlayerService
 import org.bukkit.Chunk
 import org.bukkit.Location
 import org.bukkit.entity.ArmorStand
-import org.bukkit.entity.Monster
 import org.bukkit.entity.Player
 import org.bukkit.entity.Zombie
 import org.bukkit.event.entity.EntityDamageByEntityEvent
@@ -112,7 +111,7 @@ class EntityDamageByEntityListenerTest {
 
         val faction = mock(MfFaction::class.java)
         `when`(factionService.getFaction(factionId)).thenReturn(faction)
-        
+
         val damagerFaction = mock(MfFaction::class.java)
         `when`(factionService.getFaction(playerId)).thenReturn(damagerFaction)
 
