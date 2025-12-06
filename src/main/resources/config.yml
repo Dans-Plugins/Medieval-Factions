@@ -111,6 +111,12 @@ dynmap:
   showDemesne: false
   onlyRenderTerritoriesUponStartup: false
   debug: false
+  # fillClaims: Whether to fill faction territories with color
+  #   true = fill entire territory with color (default)
+  #   false = only show border lines (better performance, but harder to distinguish factions)
+  fillClaims: true
+  # fillOpacity: 0.0-1.0, controls how transparent the territory fill is (0.0 = invisible, 1.0 = solid)
+  fillOpacity: 0.35
 gates:
   minHeight: 3
   maxBlocks: 64
