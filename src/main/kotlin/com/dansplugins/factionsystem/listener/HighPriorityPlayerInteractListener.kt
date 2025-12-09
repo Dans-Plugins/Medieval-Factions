@@ -16,7 +16,7 @@ class HighPriorityPlayerInteractListener(private val plugin: MedievalFactions) :
     fun onPlayerInteract(event: PlayerInteractEvent) {
         // Only check protection if event hasn't been cancelled by other protection systems
         if (event.isCancelled) return
-        
+
         val clickedBlock = event.clickedBlock ?: return
         val playerService = plugin.services.playerService
         val mfPlayer = playerService.getPlayer(event.player)

@@ -125,7 +125,7 @@ class MfFactionClaimFillCommand(private val plugin: MedievalFactions) : CommandE
         if (depth > claimFillMaxDepth) {
             throw ClaimFillDepthLimitReachedException()
         }
-        
+
         val claimService = plugin.services.claimService
         val claim = claimService.getClaim(worldId, startChunkX, startChunkZ)
         if (claim?.factionId == faction.id) return chunksToFill
