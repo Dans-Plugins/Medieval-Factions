@@ -15,7 +15,7 @@ class InventoryMoveItemListener(private val plugin: MedievalFactions) : Listener
     fun onInventoryMoveItem(event: InventoryMoveItemEvent) {
         // Stop hoppers from taking items from or putting items into locked blocks.
         val lockService = plugin.services.lockService
-        
+
         // Check source inventory (where items are being taken from)
         val sourceInventoryHolder = event.source.holder
         val sourceBlocksToCheck = when (sourceInventoryHolder) {
@@ -27,7 +27,7 @@ class InventoryMoveItemListener(private val plugin: MedievalFactions) : Listener
             }
             else -> emptyList()
         }
-        
+
         // Check if any of the source blocks are locked
         for (block in sourceBlocksToCheck) {
             val lockedBlock = lockService.getLockedBlock(MfBlockPosition.fromBukkitBlock(block))
@@ -36,7 +36,7 @@ class InventoryMoveItemListener(private val plugin: MedievalFactions) : Listener
                 return
             }
         }
-        
+
         // Check destination inventory (where items are being put into)
         val destinationInventoryHolder = event.destination.holder
         val destinationBlocksToCheck = when (destinationInventoryHolder) {
@@ -48,7 +48,7 @@ class InventoryMoveItemListener(private val plugin: MedievalFactions) : Listener
             }
             else -> emptyList()
         }
-        
+
         // Check if any of the destination blocks are locked
         for (block in destinationBlocksToCheck) {
             val lockedBlock = lockService.getLockedBlock(MfBlockPosition.fromBukkitBlock(block))

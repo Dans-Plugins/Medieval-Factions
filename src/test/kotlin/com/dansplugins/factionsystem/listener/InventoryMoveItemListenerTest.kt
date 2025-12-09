@@ -5,7 +5,6 @@ import com.dansplugins.factionsystem.TestUtils
 import com.dansplugins.factionsystem.area.MfBlockPosition
 import com.dansplugins.factionsystem.locks.MfLockService
 import com.dansplugins.factionsystem.locks.MfLockedBlock
-import com.dansplugins.factionsystem.player.MfPlayerId
 import com.dansplugins.factionsystem.service.Services
 import org.bukkit.World
 import org.bukkit.block.Block
@@ -23,7 +22,6 @@ import org.mockito.Mockito.mock
 import org.mockito.Mockito.never
 import org.mockito.Mockito.verify
 import org.mockito.Mockito.`when`
-import java.util.UUID
 
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 class InventoryMoveItemListenerTest {
@@ -139,7 +137,7 @@ class InventoryMoveItemListenerTest {
         val destinationInventory = mock(Inventory::class.java)
         val item = mock(ItemStack::class.java)
         val event = mock(InventoryMoveItemEvent::class.java)
-        
+
         // Source holder is not a BlockInventoryHolder or DoubleChest
         val sourceHolder = mock(InventoryHolder::class.java)
         `when`(sourceInventory.holder).thenReturn(sourceHolder)
@@ -230,25 +228,25 @@ class InventoryMoveItemListenerTest {
     private fun createSingleChestFixture(): InventoryMoveItemListenerTestFixture {
         val world = testUtils.createMockWorld()
         val sourceBlock = testUtils.createMockBlock(world)
-        
+
         val sourceChest = mock(Chest::class.java)
         val sourceInventory = mock(Inventory::class.java)
         `when`(sourceChest.block).thenReturn(sourceBlock)
         `when`(sourceChest.inventory).thenReturn(sourceInventory)
         `when`(sourceInventory.holder).thenReturn(sourceChest)
-        
+
         val destinationBlock = testUtils.createMockBlock(world)
         val destinationHolder = mock(BlockInventoryHolder::class.java)
         val destinationInventory = mock(Inventory::class.java)
         `when`(destinationHolder.block).thenReturn(destinationBlock)
         `when`(destinationInventory.holder).thenReturn(destinationHolder)
-        
+
         val item = mock(ItemStack::class.java)
         val event = mock(InventoryMoveItemEvent::class.java)
         `when`(event.source).thenReturn(sourceInventory)
         `when`(event.destination).thenReturn(destinationInventory)
         `when`(event.item).thenReturn(item)
-        
+
         return InventoryMoveItemListenerTestFixture(world, sourceBlock, event, null, null, null)
     }
 
@@ -256,56 +254,56 @@ class InventoryMoveItemListenerTest {
         val world = testUtils.createMockWorld()
         val leftBlock = testUtils.createMockBlock(world)
         val rightBlock = testUtils.createMockBlock(world)
-        
+
         val leftChest = mock(Chest::class.java)
         val rightChest = mock(Chest::class.java)
         `when`(leftChest.block).thenReturn(leftBlock)
         `when`(rightChest.block).thenReturn(rightBlock)
-        
+
         val doubleChest = mock(DoubleChest::class.java)
         `when`(doubleChest.leftSide).thenReturn(leftChest)
         `when`(doubleChest.rightSide).thenReturn(rightChest)
-        
+
         val sourceInventory = mock(Inventory::class.java)
         `when`(sourceInventory.holder).thenReturn(doubleChest)
-        
+
         val destinationBlock = testUtils.createMockBlock(world)
         val destinationHolder = mock(BlockInventoryHolder::class.java)
         val destinationInventory = mock(Inventory::class.java)
         `when`(destinationHolder.block).thenReturn(destinationBlock)
         `when`(destinationInventory.holder).thenReturn(destinationHolder)
-        
+
         val item = mock(ItemStack::class.java)
         val event = mock(InventoryMoveItemEvent::class.java)
         `when`(event.source).thenReturn(sourceInventory)
         `when`(event.destination).thenReturn(destinationInventory)
         `when`(event.item).thenReturn(item)
-        
+
         return InventoryMoveItemListenerTestFixture(world, leftBlock, event, leftBlock, rightBlock, null)
     }
 
     private fun createSingleChestDestinationFixture(): InventoryMoveItemListenerTestFixture {
         val world = testUtils.createMockWorld()
         val destinationBlock = testUtils.createMockBlock(world)
-        
+
         val destinationChest = mock(Chest::class.java)
         val destinationInventory = mock(Inventory::class.java)
         `when`(destinationChest.block).thenReturn(destinationBlock)
         `when`(destinationChest.inventory).thenReturn(destinationInventory)
         `when`(destinationInventory.holder).thenReturn(destinationChest)
-        
+
         val sourceBlock = testUtils.createMockBlock(world)
         val sourceHolder = mock(BlockInventoryHolder::class.java)
         val sourceInventory = mock(Inventory::class.java)
         `when`(sourceHolder.block).thenReturn(sourceBlock)
         `when`(sourceInventory.holder).thenReturn(sourceHolder)
-        
+
         val item = mock(ItemStack::class.java)
         val event = mock(InventoryMoveItemEvent::class.java)
         `when`(event.source).thenReturn(sourceInventory)
         `when`(event.destination).thenReturn(destinationInventory)
         `when`(event.item).thenReturn(item)
-        
+
         return InventoryMoveItemListenerTestFixture(world, sourceBlock, event, null, null, destinationBlock)
     }
 
@@ -313,31 +311,31 @@ class InventoryMoveItemListenerTest {
         val world = testUtils.createMockWorld()
         val leftBlock = testUtils.createMockBlock(world)
         val rightBlock = testUtils.createMockBlock(world)
-        
+
         val leftChest = mock(Chest::class.java)
         val rightChest = mock(Chest::class.java)
         `when`(leftChest.block).thenReturn(leftBlock)
         `when`(rightChest.block).thenReturn(rightBlock)
-        
+
         val doubleChest = mock(DoubleChest::class.java)
         `when`(doubleChest.leftSide).thenReturn(leftChest)
         `when`(doubleChest.rightSide).thenReturn(rightChest)
-        
+
         val destinationInventory = mock(Inventory::class.java)
         `when`(destinationInventory.holder).thenReturn(doubleChest)
-        
+
         val sourceBlock = testUtils.createMockBlock(world)
         val sourceHolder = mock(BlockInventoryHolder::class.java)
         val sourceInventory = mock(Inventory::class.java)
         `when`(sourceHolder.block).thenReturn(sourceBlock)
         `when`(sourceInventory.holder).thenReturn(sourceHolder)
-        
+
         val item = mock(ItemStack::class.java)
         val event = mock(InventoryMoveItemEvent::class.java)
         `when`(event.source).thenReturn(sourceInventory)
         `when`(event.destination).thenReturn(destinationInventory)
         `when`(event.item).thenReturn(item)
-        
+
         return InventoryMoveItemListenerTestFixture(world, sourceBlock, event, leftBlock, rightBlock, null)
     }
 
