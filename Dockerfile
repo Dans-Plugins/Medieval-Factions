@@ -8,7 +8,7 @@ RUN DEBIAN_FRONTEND=noninteractive apt install -y wget git openjdk-21-jdk openjd
 WORKDIR /testmcserver-build
 RUN wget -O BuildTools.jar https://hub.spigotmc.org/jenkins/job/BuildTools/lastSuccessfulBuild/artifact/target/BuildTools.jar
 RUN git config --global --unset core.autocrlf || :
-RUN java -jar BuildTools.jar --rev 1.21.4
+RUN java -jar BuildTools.jar --rev 1.21.11
 
 # Copy plugin jar
 COPY ./build/libs /testmcserver-build/MedievalFactions/build/libs
