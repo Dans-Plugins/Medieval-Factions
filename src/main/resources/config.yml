@@ -35,8 +35,10 @@ factions:
   allowedMobSpawnReasons:
   - BEEHIVE
   - BREEDING
+  - BUCKET
   - BUILD_IRONGOLEM
   - BUILD_SNOWMAN
+  - BUILD_COPPERGOLEM
   - COMMAND
   - CURED
   - CUSTOM
@@ -50,6 +52,7 @@ factions:
   - JOCKEY
   - METAMORPHOSIS
   - OCELOT_BABY
+  - POTION_EFFECT
   - SHEARED
   - SHOULDER_ENTITY
   - SILVERFISH_BLOCK
@@ -57,6 +60,7 @@ factions:
   - SPAWNER
   - SPAWNER_EGG
   - SPELL
+  - TRIAL_SPAWNER
   - VILLAGE_DEFENSE
   laddersPlaceableInEnemyFactionTerritory: true
   maxNameLength: 20
