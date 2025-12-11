@@ -66,6 +66,7 @@ factions:
   maxClaimRadius: 3
   limitLand: true
   contiguousClaims: false
+  blockedClaimWorlds: [] # List of world names where claiming is not allowed. Example: ["world_nether", "world_the_end"]
   actionBarTerritoryIndicator: true
   titleTerritoryIndicator: true
   titleTerritoryFadeInLength: 5  # "Length" is measured in ticks (20 ticks = 1 second).
