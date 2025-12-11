@@ -2,10 +2,7 @@ package com.dansplugins.factionsystem.listener
 
 import com.dansplugins.factionsystem.MedievalFactions
 import org.bukkit.entity.AreaEffectCloud
-import org.bukkit.entity.LivingEntity
 import org.bukkit.event.entity.AreaEffectCloudApplyEvent
-import org.bukkit.potion.PotionData
-import org.bukkit.potion.PotionEffectType
 import org.bukkit.potion.PotionType
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
@@ -26,15 +23,12 @@ class AreaEffectCloudApplyListenerTest {
     }
 
     @Test
-    fun onAreaEffectCloudApply_BasePotionDataIsNull_ShouldReturnWithoutError() {
+    fun onAreaEffectCloudApply_BasePotionTypeIsNull_ShouldReturnWithoutError() {
         // Arrange
         val areaEffectCloud = mock(AreaEffectCloud::class.java)
-        val affectedEntities = mutableListOf<LivingEntity>()
         val event = mock(AreaEffectCloudApplyEvent::class.java)
-
         `when`(event.entity).thenReturn(areaEffectCloud)
-        `when`(event.affectedEntities).thenReturn(affectedEntities)
-        `when`(areaEffectCloud.basePotionData).thenReturn(null)
+        `when`(areaEffectCloud.basePotionType).thenReturn(null)
 
         // Act - should not throw NullPointerException
         uut.onAreaEffectCloudApply(event)
@@ -44,20 +38,16 @@ class AreaEffectCloudApplyListenerTest {
     }
 
     @Test
-    fun onAreaEffectCloudApply_BasePotionDataIsNotHarmful_ShouldReturn() {
+    fun onAreaEffectCloudApply_BasePotionTypeIsNotHarmful_ShouldReturn() {
         // Arrange
         val areaEffectCloud = mock(AreaEffectCloud::class.java)
-        val affectedEntities = mutableListOf<LivingEntity>()
         val event = mock(AreaEffectCloudApplyEvent::class.java)
-        val potionData = mock(PotionData::class.java)
         val potionType = mock(PotionType::class.java)
-
+        
         `when`(event.entity).thenReturn(areaEffectCloud)
-        `when`(event.affectedEntities).thenReturn(affectedEntities)
-        `when`(areaEffectCloud.basePotionData).thenReturn(potionData)
-        `when`(potionData.type).thenReturn(potionType)
-        // Return a non-harmful effect type (e.g., SPEED or REGENERATION)
-        `when`(potionType.effectType).thenReturn(PotionEffectType.SPEED)
+        `when`(areaEffectCloud.basePotionType).thenReturn(potionType)
+        // Return an empty list of potion effects (non-harmful)
+        `when`(potionType.potionEffects).thenReturn(emptyList())
 
         // Act
         uut.onAreaEffectCloudApply(event)
