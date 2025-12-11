@@ -231,12 +231,6 @@ class PlayerInteractListener(private val plugin: MedievalFactions) : Listener {
                     plugin.logger.log(SEVERE, "Failed to save locked block: ${it.reason.message}", it.reason.cause)
                     return@Runnable
                 }
-                val interactionService = plugin.services.interactionService
-                interactionService.setInteractionStatus(mfPlayer.id, null).onFailure {
-                    player.sendMessage("$RED${plugin.language["BlockLockFailedToSetInteractionStatus"]}")
-                    plugin.logger.log(SEVERE, "Failed to save interaction status: ${it.reason.message}", it.reason.cause)
-                    return@Runnable
-                }
                 player.sendMessage("$GREEN${plugin.language["BlockLockSuccessful"]}")
             }
         )

@@ -25,10 +25,22 @@ class MfPlayerService(private val plugin: MedievalFactions, private val playerRe
         playersById.putAll(playerRepository.getPlayers().associateBy(MfPlayer::id))
         val playersToUpdate = playersById.values
             .associateWith(MfPlayer::toBukkit)
-            .filter { (mfPlayer, bukkitPlayer) -> bukkitPlayer.name != mfPlayer.name }
-        playersToUpdate.forEach { (mfPlayer, bukkitPlayer) ->
+            .mapNotNull { (mfPlayer, bukkitPlayer) ->
+                try {
+                    val bukkitPlayerName = bukkitPlayer.name
+                    if (bukkitPlayerName != null && bukkitPlayerName != mfPlayer.name) {
+                        mfPlayer to bukkitPlayerName
+                    } else {
+                        null
+                    }
+                } catch (e: NoSuchElementException) {
+                    plugin.logger.warning("Failed to get name for player ${mfPlayer.id.value}: ${e.message}")
+                    null
+                }
+            }
+        playersToUpdate.forEach { (mfPlayer, bukkitPlayerName) ->
             val updatedPlayer = resultFrom {
-                playerRepository.upsert(mfPlayer.copy(name = bukkitPlayer.name))
+                playerRepository.upsert(mfPlayer.copy(name = bukkitPlayerName))
             }.onFailure {
                 plugin.logger.log(SEVERE, "Failed to update player: ${it.reason.message}", it.reason.cause)
                 return@forEach
