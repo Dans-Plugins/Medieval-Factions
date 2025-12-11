@@ -142,7 +142,7 @@ class MfFactionRoleViewCommand(
                                                         plugin.language[
                                                             "CommandFactionRoleViewDenyHover",
                                                             targetRole.name,
-                                                            permission.name
+                                                            permission.name,
                                                         ],
                                                     ),
                                                 )
@@ -165,7 +165,7 @@ class MfFactionRoleViewCommand(
                                                         plugin.language[
                                                             "CommandFactionRoleViewDefaultHover",
                                                             targetRole.name,
-                                                            permission.name
+                                                            permission.name,
                                                         ],
                                                     ),
                                                 )

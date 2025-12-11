@@ -47,7 +47,7 @@ class MfFactionFlagSetCommand(
             return plugin.language[
                 "CommandFactionFlagSetValuePrompt",
                 flag?.name ?: plugin.language["UnknownFlag"],
-                plugin.language["EscapeSequence"]
+                plugin.language["EscapeSequence"],
             ]
         }
 
