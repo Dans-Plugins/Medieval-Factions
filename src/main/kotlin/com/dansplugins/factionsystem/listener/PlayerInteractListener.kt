@@ -262,12 +262,12 @@ class PlayerInteractListener(private val plugin: MedievalFactions) : Listener {
             }
             
             // Check if player has bypass permission from mf.force.unlock or faction permission
-            if (!player.hasPermission("mf.force.unlock") && !hasLockBypassPermission(mfPlayer)) {
+            val canBypass = player.hasPermission("mf.force.unlock") || hasLockBypassPermission(mfPlayer)
+            if (!canBypass) {
                 player.sendMessage("$RED${plugin.language["BlockUnlockOwnedByOtherPlayer", ownerName]}")
                 return
-            } else {
-                player.sendMessage("$RED${plugin.language["BlockUnlockProtectionBypassed", ownerName]}")
             }
+            player.sendMessage("$RED${plugin.language["BlockUnlockProtectionBypassed", ownerName]}")
         }
         lockService.unlock(block) { result ->
             when (result) {
