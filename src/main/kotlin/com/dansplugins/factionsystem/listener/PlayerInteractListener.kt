@@ -86,6 +86,13 @@ class PlayerInteractListener(private val plugin: MedievalFactions) : Listener {
         }
     }
 
+    private fun hasLockBypassPermission(mfPlayer: MfPlayer): Boolean {
+        val factionService = plugin.services.factionService
+        val playerFaction = factionService.getFaction(mfPlayer.id) ?: return false
+        val role = playerFaction.getRole(mfPlayer.id) ?: return false
+        return role.hasPermission(playerFaction, plugin.factionPermissions.bypassLocks)
+    }
+
     private fun applyProtections(event: PlayerInteractEvent) {
         val clickedBlock = event.clickedBlock ?: return
         val playerService = plugin.services.playerService
@@ -125,16 +132,7 @@ class PlayerInteractListener(private val plugin: MedievalFactions) : Listener {
         if (lockedBlock != null) {
             if (event.player.uniqueId.toString() !in (lockedBlock.accessors + lockedBlock.playerId).map(MfPlayerId::value)) {
                 // Check if player has bypass permission from mf.bypass or faction permission
-                val factionService = plugin.services.factionService
-                val playerFaction = factionService.getFaction(mfPlayer.id)
-                val hasFactionalBypass = if (playerFaction != null) {
-                    val role = playerFaction.getRole(mfPlayer.id)
-                    role?.hasPermission(playerFaction, plugin.factionPermissions.bypassLocks) == true
-                } else {
-                    false
-                }
-                
-                if ((mfPlayer.isBypassEnabled && event.player.hasPermission("mf.bypass")) || hasFactionalBypass) {
+                if ((mfPlayer.isBypassEnabled && event.player.hasPermission("mf.bypass")) || hasLockBypassPermission(mfPlayer)) {
                     plugin.server.scheduler.runTaskAsynchronously(
                         plugin,
                         Runnable {
@@ -264,16 +262,7 @@ class PlayerInteractListener(private val plugin: MedievalFactions) : Listener {
             }
             
             // Check if player has bypass permission from mf.force.unlock or faction permission
-            val factionService = plugin.services.factionService
-            val playerFaction = factionService.getFaction(mfPlayer.id)
-            val hasFactionalBypass = if (playerFaction != null) {
-                val role = playerFaction.getRole(mfPlayer.id)
-                role?.hasPermission(playerFaction, plugin.factionPermissions.bypassLocks) == true
-            } else {
-                false
-            }
-            
-            if (!player.hasPermission("mf.force.unlock") && !hasFactionalBypass) {
+            if (!player.hasPermission("mf.force.unlock") && !hasLockBypassPermission(mfPlayer)) {
                 player.sendMessage("$RED${plugin.language["BlockUnlockOwnedByOtherPlayer", ownerName]}")
                 return
             } else {
