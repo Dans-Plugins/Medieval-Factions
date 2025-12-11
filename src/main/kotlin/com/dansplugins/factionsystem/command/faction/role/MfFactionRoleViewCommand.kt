@@ -116,7 +116,11 @@ class MfFactionRoleViewCommand(
                                                 HoverEvent(
                                                     SHOW_TEXT,
                                                     Text(
-                                                        plugin.language["CommandFactionRoleViewAllowHover", targetRole.name, permission.name],
+                                                        plugin.language[
+                                                            "CommandFactionRoleViewAllowHover",
+                                                            targetRole.name,
+                                                            permission.name,
+                                                        ],
                                                     ),
                                                 )
                                         },
@@ -135,7 +139,11 @@ class MfFactionRoleViewCommand(
                                                 HoverEvent(
                                                     SHOW_TEXT,
                                                     Text(
-                                                        plugin.language["CommandFactionRoleViewDenyHover", targetRole.name, permission.name],
+                                                        plugin.language[
+                                                            "CommandFactionRoleViewDenyHover",
+                                                            targetRole.name,
+                                                            permission.name
+                                                        ],
                                                     ),
                                                 )
                                         },

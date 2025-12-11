@@ -40,7 +40,7 @@ class MfLoggerAdapter(
      */
     override fun trace(msg: String) {
         if (logger.isLoggable(JulLevel.FINEST)) {
-            log(SELF, JulLevel.FINEST, msg, null)
+            log(self, JulLevel.FINEST, msg, null)
         }
     }
 
@@ -65,7 +65,7 @@ class MfLoggerAdapter(
     ) {
         if (logger.isLoggable(JulLevel.FINEST)) {
             val ft = MessageFormatter.format(format, arg)
-            log(SELF, JulLevel.FINEST, ft.message, ft.throwable)
+            log(self, JulLevel.FINEST, ft.message, ft.throwable)
         }
     }
 
@@ -93,7 +93,7 @@ class MfLoggerAdapter(
     ) {
         if (logger.isLoggable(JulLevel.FINEST)) {
             val ft = MessageFormatter.format(format, arg1, arg2)
-            log(SELF, JulLevel.FINEST, ft.message, ft.throwable)
+            log(self, JulLevel.FINEST, ft.message, ft.throwable)
         }
     }
 
@@ -118,7 +118,7 @@ class MfLoggerAdapter(
     ) {
         if (logger.isLoggable(JulLevel.FINEST)) {
             val ft = MessageFormatter.arrayFormat(format, argArray)
-            log(SELF, JulLevel.FINEST, ft.message, ft.throwable)
+            log(self, JulLevel.FINEST, ft.message, ft.throwable)
         }
     }
 
@@ -135,7 +135,7 @@ class MfLoggerAdapter(
         t: Throwable?,
     ) {
         if (logger.isLoggable(JulLevel.FINEST)) {
-            log(SELF, JulLevel.FINEST, msg, t)
+            log(self, JulLevel.FINEST, msg, t)
         }
     }
 
@@ -154,7 +154,7 @@ class MfLoggerAdapter(
      */
     override fun debug(msg: String) {
         if (logger.isLoggable(JulLevel.FINE)) {
-            log(SELF, JulLevel.FINE, msg, null)
+            log(self, JulLevel.FINE, msg, null)
         }
     }
 
@@ -178,7 +178,7 @@ class MfLoggerAdapter(
     ) {
         if (logger.isLoggable(JulLevel.FINE)) {
             val ft = MessageFormatter.format(format, arg)
-            log(SELF, JulLevel.FINE, ft.message, ft.throwable)
+            log(self, JulLevel.FINE, ft.message, ft.throwable)
         }
     }
 
@@ -206,7 +206,7 @@ class MfLoggerAdapter(
     ) {
         if (logger.isLoggable(JulLevel.FINE)) {
             val ft = MessageFormatter.format(format, arg1, arg2)
-            log(SELF, JulLevel.FINE, ft.message, ft.throwable)
+            log(self, JulLevel.FINE, ft.message, ft.throwable)
         }
     }
 
@@ -231,7 +231,7 @@ class MfLoggerAdapter(
     ) {
         if (logger.isLoggable(JulLevel.FINE)) {
             val ft = MessageFormatter.arrayFormat(format, argArray)
-            log(SELF, JulLevel.FINE, ft.message, ft.throwable)
+            log(self, JulLevel.FINE, ft.message, ft.throwable)
         }
     }
 
@@ -248,7 +248,7 @@ class MfLoggerAdapter(
         t: Throwable?,
     ) {
         if (logger.isLoggable(JulLevel.FINE)) {
-            log(SELF, JulLevel.FINE, msg, t)
+            log(self, JulLevel.FINE, msg, t)
         }
     }
 
@@ -267,7 +267,7 @@ class MfLoggerAdapter(
      */
     override fun info(msg: String) {
         if (logger.isLoggable(JulLevel.INFO)) {
-            log(SELF, JulLevel.INFO, msg, null)
+            log(self, JulLevel.INFO, msg, null)
         }
     }
 
@@ -291,7 +291,7 @@ class MfLoggerAdapter(
     ) {
         if (logger.isLoggable(JulLevel.INFO)) {
             val ft = MessageFormatter.format(format, arg)
-            log(SELF, JulLevel.INFO, ft.message, ft.throwable)
+            log(self, JulLevel.INFO, ft.message, ft.throwable)
         }
     }
 
@@ -319,7 +319,7 @@ class MfLoggerAdapter(
     ) {
         if (logger.isLoggable(JulLevel.INFO)) {
             val ft = MessageFormatter.format(format, arg1, arg2)
-            log(SELF, JulLevel.INFO, ft.message, ft.throwable)
+            log(self, JulLevel.INFO, ft.message, ft.throwable)
         }
     }
 
@@ -344,7 +344,7 @@ class MfLoggerAdapter(
     ) {
         if (logger.isLoggable(JulLevel.INFO)) {
             val ft = MessageFormatter.arrayFormat(format, argArray)
-            log(SELF, JulLevel.INFO, ft.message, ft.throwable)
+            log(self, JulLevel.INFO, ft.message, ft.throwable)
         }
     }
 
@@ -362,7 +362,7 @@ class MfLoggerAdapter(
         t: Throwable?,
     ) {
         if (logger.isLoggable(JulLevel.INFO)) {
-            log(SELF, JulLevel.INFO, msg, t)
+            log(self, JulLevel.INFO, msg, t)
         }
     }
 
@@ -382,7 +382,7 @@ class MfLoggerAdapter(
      */
     override fun warn(msg: String) {
         if (logger.isLoggable(JulLevel.WARNING)) {
-            log(SELF, JulLevel.WARNING, msg, null)
+            log(self, JulLevel.WARNING, msg, null)
         }
     }
 
@@ -407,7 +407,7 @@ class MfLoggerAdapter(
     ) {
         if (logger.isLoggable(JulLevel.WARNING)) {
             val ft = MessageFormatter.format(format, arg)
-            log(SELF, JulLevel.WARNING, ft.message, ft.throwable)
+            log(self, JulLevel.WARNING, ft.message, ft.throwable)
         }
     }
 
@@ -435,7 +435,7 @@ class MfLoggerAdapter(
     ) {
         if (logger.isLoggable(JulLevel.WARNING)) {
             val ft = MessageFormatter.format(format, arg1, arg2)
-            log(SELF, JulLevel.WARNING, ft.message, ft.throwable)
+            log(self, JulLevel.WARNING, ft.message, ft.throwable)
         }
     }
 
@@ -460,7 +460,7 @@ class MfLoggerAdapter(
     ) {
         if (logger.isLoggable(JulLevel.WARNING)) {
             val ft = MessageFormatter.arrayFormat(format, argArray)
-            log(SELF, JulLevel.WARNING, ft.message, ft.throwable)
+            log(self, JulLevel.WARNING, ft.message, ft.throwable)
         }
     }
 
@@ -478,7 +478,7 @@ class MfLoggerAdapter(
         t: Throwable?,
     ) {
         if (logger.isLoggable(JulLevel.WARNING)) {
-            log(SELF, JulLevel.WARNING, msg, t)
+            log(self, JulLevel.WARNING, msg, t)
         }
     }
 
@@ -497,7 +497,7 @@ class MfLoggerAdapter(
      */
     override fun error(msg: String) {
         if (logger.isLoggable(JulLevel.SEVERE)) {
-            log(SELF, JulLevel.SEVERE, msg, null)
+            log(self, JulLevel.SEVERE, msg, null)
         }
     }
 
@@ -522,7 +522,7 @@ class MfLoggerAdapter(
     ) {
         if (logger.isLoggable(JulLevel.SEVERE)) {
             val ft = MessageFormatter.format(format, arg)
-            log(SELF, JulLevel.SEVERE, ft.message, ft.throwable)
+            log(self, JulLevel.SEVERE, ft.message, ft.throwable)
         }
     }
 
@@ -550,7 +550,7 @@ class MfLoggerAdapter(
     ) {
         if (logger.isLoggable(JulLevel.SEVERE)) {
             val ft = MessageFormatter.format(format, arg1, arg2)
-            log(SELF, JulLevel.SEVERE, ft.message, ft.throwable)
+            log(self, JulLevel.SEVERE, ft.message, ft.throwable)
         }
     }
 
@@ -575,7 +575,7 @@ class MfLoggerAdapter(
     ) {
         if (logger.isLoggable(JulLevel.SEVERE)) {
             val ft = MessageFormatter.arrayFormat(format, arguments)
-            log(SELF, JulLevel.SEVERE, ft.message, ft.throwable)
+            log(self, JulLevel.SEVERE, ft.message, ft.throwable)
         }
     }
 
@@ -593,7 +593,7 @@ class MfLoggerAdapter(
         t: Throwable?,
     ) {
         if (logger.isLoggable(JulLevel.SEVERE)) {
-            log(SELF, JulLevel.SEVERE, msg, t)
+            log(self, JulLevel.SEVERE, msg, t)
         }
     }
 
@@ -624,8 +624,8 @@ class MfLoggerAdapter(
         logger.log(record)
     }
 
-    var SELF: String = MfLoggerAdapter::class.java.name
-    var SUPER = MarkerIgnoringBase::class.java.name
+    var self: String = MfLoggerAdapter::class.java.name
+    var superclass: String = MarkerIgnoringBase::class.java.name
 
     /**
      * Fill in caller data if possible.
@@ -641,7 +641,7 @@ class MfLoggerAdapter(
         var selfIndex = -1
         for (i in steArray.indices) {
             val className = steArray[i].className
-            if (className.equals(callerFQCN) || className.equals(SUPER)) {
+            if (className.equals(callerFQCN) || className.equals(superclass)) {
                 selfIndex = i
                 break
             }
@@ -649,7 +649,7 @@ class MfLoggerAdapter(
         var found = -1
         for (i in selfIndex + 1 until steArray.size) {
             val className = steArray[i].className
-            if (!(className.equals(callerFQCN) || className.equals(SUPER))) {
+            if (!(className.equals(callerFQCN) || className.equals(superclass))) {
                 found = i
                 break
             }
