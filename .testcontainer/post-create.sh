@@ -92,6 +92,10 @@ update_bluemap_config() {
 # Function: Start server
 start_server() {
     log "Starting server..."
+    log "ServerUtils plugin manager is available for hot-reloading plugins during development."
+    log "To reload Medieval Factions plugin after rebuilding, use: /serverutils reload MedievalFactions"
+    log "To unload: /serverutils unload MedievalFactions"
+    log "To load: /serverutils load MedievalFactions"
     java -jar "$SERVER_DIR"/spigot-"${MINECRAFT_VERSION}".jar
 }
 
@@ -114,6 +118,7 @@ if [ "$BLUEMAP_ENABLED" = "true" ]; then
     update_bluemap_config
 fi
 manage_plugin_dependencies "PlaceholderAPI" "PLACEHOLDER_API_ENABLED"
+manage_plugin_dependencies "ServerUtils" "SERVERUTILS_ENABLED"
 
 # Start Server
 start_server

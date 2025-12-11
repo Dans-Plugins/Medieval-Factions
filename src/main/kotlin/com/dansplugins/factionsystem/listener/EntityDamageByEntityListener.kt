@@ -4,26 +4,24 @@ import com.dansplugins.factionsystem.MedievalFactions
 import com.dansplugins.factionsystem.player.MfPlayer
 import com.dansplugins.factionsystem.relationship.MfFactionRelationshipType
 import org.bukkit.ChatColor
-import org.bukkit.entity.Enemy
+import org.bukkit.entity.Monster
 import org.bukkit.entity.Player
 import org.bukkit.entity.Projectile
 import org.bukkit.event.EventHandler
 import org.bukkit.event.Listener
 import org.bukkit.event.entity.EntityDamageByEntityEvent
 
-class EntityDamageByEntityListener(
-    private val plugin: MedievalFactions,
-) : Listener {
+class EntityDamageByEntityListener(private val plugin: MedievalFactions) : Listener {
+
     @EventHandler
     fun onEntityDamageByEntity(event: EntityDamageByEntityEvent) {
         val damaged = event.entity
         val damager = event.damager
-        val damagerPlayer: Player? =
-            when (damager) {
-                is Player -> damager
-                is Projectile -> damager.shooter as? Player
-                else -> null
-            }
+        val damagerPlayer: Player? = when (damager) {
+            is Player -> damager
+            is Projectile -> damager.shooter as? Player
+            else -> null
+        }
         if (damagerPlayer != null) {
             val playerService = plugin.services.playerService
             val factionService = plugin.services.factionService
@@ -35,8 +33,8 @@ class EntityDamageByEntityListener(
                 val claim = claimService.getClaim(damaged.location.chunk) ?: return
                 val damagedFaction = factionService.getFaction(claim.factionId) ?: return
                 if (!damagedFaction.flags[plugin.flags.enableMobProtection]) return
-                if (damagerFaction?.id == damagedFaction.id) return
-                if (damaged is Enemy) return
+                if (damaged is Monster) return
+                if (claimService.isInteractionAllowed(damagerMfPlayer.id, claim)) return
                 if (damagerMfPlayer.isBypassEnabled && damagerPlayer.hasPermission("mf.bypass")) {
                     damagerPlayer.sendMessage("${ChatColor.RED}${plugin.language["FactionTerritoryProtectionBypassed"]}")
                     return

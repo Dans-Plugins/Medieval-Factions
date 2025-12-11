@@ -3,6 +3,7 @@ package com.dansplugins.factionsystem.listener
 import com.dansplugins.factionsystem.MedievalFactions
 import com.dansplugins.factionsystem.area.MfChunkPosition
 import com.dansplugins.factionsystem.claim.MfClaimedChunk
+import com.dansplugins.factionsystem.exception.WorldClaimBlockedException
 import com.dansplugins.factionsystem.player.MfPlayer
 import dev.forkhandles.result4k.onFailure
 import net.md_5.bungee.api.ChatColor
@@ -14,9 +15,8 @@ import org.bukkit.event.Listener
 import org.bukkit.event.player.PlayerMoveEvent
 import java.util.logging.Level.SEVERE
 
-class PlayerMoveListener(
-    private val plugin: MedievalFactions,
-) : Listener {
+class PlayerMoveListener(private val plugin: MedievalFactions) : Listener {
+
     @EventHandler
     fun onPlayerMove(event: PlayerMoveEvent) {
         val from = event.from
@@ -31,12 +31,11 @@ class PlayerMoveListener(
                 val factionService = plugin.services.factionService
                 val newChunkFaction = newChunkClaim?.let { factionService.getFaction(it.factionId) }
                 val playerService = plugin.services.playerService
-                val mfPlayer =
-                    playerService.getPlayer(event.player)
-                        ?: playerService.save(MfPlayer(plugin, event.player)).onFailure {
-                            plugin.logger.log(SEVERE, "Failed to save player: ${it.reason.message}", it.reason.cause)
-                            return@Runnable
-                        }
+                val mfPlayer = playerService.getPlayer(event.player)
+                    ?: playerService.save(MfPlayer(plugin, event.player)).onFailure {
+                        plugin.logger.log(SEVERE, "Failed to save player: ${it.reason.message}", it.reason.cause)
+                        return@Runnable
+                    }
                 val playerFaction = factionService.getFaction(mfPlayer.id)
                 if (playerFaction != null) {
                     if (newChunkFaction == null && playerFaction.autoclaim) {
@@ -45,47 +44,47 @@ class PlayerMoveListener(
                         if (!claimPermissionValue || !event.player.hasPermission("mf.claim")) {
                             return@Runnable
                         }
-                        if (plugin.config.getBoolean("factions.limitLand") &&
-                            claimService.getClaims(playerFaction.id).size + 1 > playerFaction.power
-                        ) {
+                        if (claimService.isClaimingBlockedInWorld(to.world!!)) {
+                            return@Runnable
+                        }
+                        if (plugin.config.getBoolean("factions.limitLand") && claimService.getClaims(playerFaction.id).size + 1 > playerFaction.power) {
                             event.player.sendMessage("$RED${plugin.language["AutoclaimPowerLimitReached"]}")
-                            val updatedFaction =
-                                factionService.save(playerFaction.copy(autoclaim = false)).onFailure {
-                                    plugin.logger.log(SEVERE, "Failed to save faction: ${it.reason.message}", it.reason.cause)
-                                    return@Runnable
-                                }
+                            val updatedFaction = factionService.save(playerFaction.copy(autoclaim = false)).onFailure {
+                                plugin.logger.log(SEVERE, "Failed to save faction: ${it.reason.message}", it.reason.cause)
+                                return@Runnable
+                            }
                             updatedFaction.sendMessage(
                                 plugin.language["AutoclaimDisabledNotificationTitle"],
-                                plugin.language["AutoclaimDisabledNotificationBody"],
+                                plugin.language["AutoclaimDisabledNotificationBody"]
                             )
                             return@Runnable
                         }
                         if (plugin.config.getBoolean("factions.contiguousClaims") &&
-                            !claimService.isClaimAdjacent(
-                                playerFaction.id,
-                                *listOfNotNull(
-                                    to.world?.let {
-                                        MfChunkPosition(it.uid, to.chunk.x, to.chunk.z)
-                                    },
-                                ).toTypedArray(),
-                            ) &&
+                            !claimService.isClaimAdjacent(playerFaction.id, *listOfNotNull(to.world?.let { MfChunkPosition(it.uid, to.chunk.x, to.chunk.z) }).toTypedArray()) &&
                             claimService.getClaims(playerFaction.id).isNotEmpty()
                         ) {
                             event.player.sendMessage("$RED${plugin.language["CommandFactionClaimNotContiguous"]}")
-                            val updatedFaction =
-                                factionService.save(playerFaction.copy(autoclaim = false)).onFailure {
-                                    plugin.logger.log(SEVERE, "Failed to save faction: ${it.reason.message}", it.reason.cause)
-                                    return@Runnable
-                                }
+                            val updatedFaction = factionService.save(playerFaction.copy(autoclaim = false)).onFailure {
+                                plugin.logger.log(SEVERE, "Failed to save faction: ${it.reason.message}", it.reason.cause)
+                                return@Runnable
+                            }
                             updatedFaction.sendMessage(
                                 plugin.language["AutoclaimDisabledNotificationTitle"],
-                                plugin.language["AutoclaimDisabledNotificationBody"],
+                                plugin.language["AutoclaimDisabledNotificationBody"]
                             )
                             return@Runnable
                         }
                         claimService.save(MfClaimedChunk(to.chunk, playerFaction.id)).onFailure {
-                            plugin.logger.log(SEVERE, "Failed to save chunk claim: ${it.reason.message}", it.reason.cause)
-                            return@Runnable
+                            when (it.reason.cause) {
+                                is WorldClaimBlockedException -> {
+                                    // Silently skip autoclaim if world is blocked
+                                    return@Runnable
+                                }
+                                else -> {
+                                    plugin.logger.log(SEVERE, "Failed to save chunk claim: ${it.reason.message}", it.reason.cause)
+                                    return@Runnable
+                                }
+                            }
                         }
                     }
                 }
@@ -93,19 +92,17 @@ class PlayerMoveListener(
                 plugin.server.scheduler.runTask(
                     plugin,
                     Runnable {
-                        val title =
-                            if (newChunkFaction != null) {
-                                "${ChatColor.of(newChunkFaction.flags[plugin.flags.color])}${newChunkFaction.name}"
-                            } else {
-                                "${ChatColor.of(plugin.config.getString("wilderness.color"))}${plugin.language["Wilderness"]}"
-                            }
+                        val title = if (newChunkFaction != null) {
+                            "${ChatColor.of(newChunkFaction.flags[plugin.flags.color])}${newChunkFaction.name}"
+                        } else {
+                            "${ChatColor.of(plugin.config.getString("wilderness.color"))}${plugin.language["Wilderness"]}"
+                        }
 
-                        val subtitle =
-                            if (newChunkFaction != null) {
-                                "${ChatColor.of(newChunkFaction.flags[plugin.flags.color])}${newChunkFaction.description}"
-                            } else {
-                                null
-                            }
+                        val subtitle = if (newChunkFaction != null) {
+                            "${ChatColor.of(newChunkFaction.flags[plugin.flags.color])}${newChunkFaction.description}"
+                        } else {
+                            null
+                        }
                         if (plugin.config.getBoolean("factions.titleTerritoryIndicator")) {
                             event.player.resetTitle()
                             event.player.sendTitle(
@@ -113,15 +110,15 @@ class PlayerMoveListener(
                                 subtitle,
                                 plugin.config.getInt("factions.titleTerritoryFadeInLength"),
                                 plugin.config.getInt("factions.titleTerritoryDuration"),
-                                plugin.config.getInt("factions.titleTerritoryFadeOutLength"),
+                                plugin.config.getInt("factions.titleTerritoryFadeOutLength")
                             )
                         }
                         if (plugin.config.getBoolean("factions.actionBarTerritoryIndicator")) {
                             event.player.spigot().sendMessage(ACTION_BAR, *TextComponent.fromLegacyText(title))
                         }
-                    },
+                    }
                 )
-            },
+            }
         )
     }
 }

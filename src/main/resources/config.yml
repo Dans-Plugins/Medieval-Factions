@@ -35,8 +35,10 @@ factions:
   allowedMobSpawnReasons:
   - BEEHIVE
   - BREEDING
+  - BUCKET
   - BUILD_IRONGOLEM
   - BUILD_SNOWMAN
+  - BUILD_COPPERGOLEM
   - COMMAND
   - CURED
   - CUSTOM
@@ -50,6 +52,7 @@ factions:
   - JOCKEY
   - METAMORPHOSIS
   - OCELOT_BABY
+  - POTION_EFFECT
   - SHEARED
   - SHOULDER_ENTITY
   - SILVERFISH_BLOCK
@@ -57,6 +60,7 @@ factions:
   - SPAWNER
   - SPAWNER_EGG
   - SPELL
+  - TRIAL_SPAWNER
   - VILLAGE_DEFENSE
   laddersPlaceableInEnemyFactionTerritory: true
   maxNameLength: 20
@@ -66,6 +70,7 @@ factions:
   maxClaimRadius: 3
   limitLand: true
   contiguousClaims: false
+  blockedClaimWorlds: [] # List of world names where claiming is not allowed. Example: ["world_nether", "world_the_end"]
   actionBarTerritoryIndicator: true
   titleTerritoryIndicator: true
   titleTerritoryFadeInLength: 5  # "Length" is measured in ticks (20 ticks = 1 second).
@@ -77,6 +82,7 @@ factions:
   maxMembers: -1
   claimFillMaxChunks: 100
   claimFillMaxDepth: 50
+  allowLeaderlessFactions: false  # When true, factions can exist without any members. When the last member leaves, the faction and its claims remain intact. Operators can create leaderless factions using /faction admin create.
   defaults:
     flags:
       alliesCanInteractWithLand: false
@@ -111,6 +117,12 @@ dynmap:
   showDemesne: false
   onlyRenderTerritoriesUponStartup: false
   debug: false
+  # fillClaims: Whether to fill faction territories with color
+  #   true = fill entire territory with color (default)
+  #   false = only show border lines (better performance, but harder to distinguish factions)
+  fillClaims: true
+  # fillOpacity: 0.0-1.0, controls how transparent the territory fill is (0.0 = invisible, 1.0 = solid)
+  fillOpacity: 0.35
 gates:
   minHeight: 3
   maxBlocks: 64

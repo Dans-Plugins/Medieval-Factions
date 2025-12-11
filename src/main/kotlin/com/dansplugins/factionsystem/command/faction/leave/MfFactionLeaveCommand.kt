@@ -12,16 +12,8 @@ import org.bukkit.command.TabCompleter
 import org.bukkit.entity.Player
 import java.util.logging.Level.SEVERE
 
-class MfFactionLeaveCommand(
-    private val plugin: MedievalFactions,
-) : CommandExecutor,
-    TabCompleter {
-    override fun onCommand(
-        sender: CommandSender,
-        command: Command,
-        label: String,
-        args: Array<out String>,
-    ): Boolean {
+class MfFactionLeaveCommand(private val plugin: MedievalFactions) : CommandExecutor, TabCompleter {
+    override fun onCommand(sender: CommandSender, command: Command, label: String, args: Array<out String>): Boolean {
         if (!sender.hasPermission("mf.leave")) {
             sender.sendMessage("$RED${plugin.language["CommandFactionLeaveNoPermission"]}")
             return true
@@ -34,13 +26,12 @@ class MfFactionLeaveCommand(
             plugin,
             Runnable {
                 val playerService = plugin.services.playerService
-                val mfPlayer =
-                    playerService.getPlayer(sender)
-                        ?: playerService.save(MfPlayer(plugin, sender)).onFailure {
-                            sender.sendMessage("$RED${plugin.language["CommandFactionLeaveFailedToSavePlayer"]}")
-                            plugin.logger.log(SEVERE, "Failed to save player: ${it.reason.message}", it.reason.cause)
-                            return@Runnable
-                        }
+                val mfPlayer = playerService.getPlayer(sender)
+                    ?: playerService.save(MfPlayer(plugin, sender)).onFailure {
+                        sender.sendMessage("$RED${plugin.language["CommandFactionLeaveFailedToSavePlayer"]}")
+                        plugin.logger.log(SEVERE, "Failed to save player: ${it.reason.message}", it.reason.cause)
+                        return@Runnable
+                    }
                 val factionService = plugin.services.factionService
                 val faction = factionService.getFaction(mfPlayer.id)
                 if (faction == null) {
@@ -48,34 +39,45 @@ class MfFactionLeaveCommand(
                     return@Runnable
                 }
                 if (faction.members.size == 1) {
-                    factionService
-                        .delete(faction.id)
-                        .onFailure {
-                            sender.sendMessage("$RED${plugin.language["CommandFactionLeaveFailedToDisbandFaction"]}")
-                            return@Runnable
-                        }
-                    sender.sendMessage("$GREEN${plugin.language["CommandFactionLeaveSuccess"]}")
-                    return@Runnable
+                    val allowLeaderlessFactions = plugin.config.getBoolean("factions.allowLeaderlessFactions")
+                    if (allowLeaderlessFactions) {
+                        // Remove the member but keep the faction
+                        factionService.save(faction.copy(members = emptyList()))
+                            .onFailure {
+                                sender.sendMessage("$RED${plugin.language["CommandFactionLeaveFailedToSaveFaction"]}")
+                                plugin.logger.log(SEVERE, "Failed to save faction: ${it.reason.message}", it.reason.cause)
+                                return@Runnable
+                            }
+                        sender.sendMessage("$GREEN${plugin.language["CommandFactionLeaveSuccess"]}")
+                        return@Runnable
+                    } else {
+                        // Original behavior: disband the faction
+                        factionService.delete(faction.id)
+                            .onFailure {
+                                sender.sendMessage("$RED${plugin.language["CommandFactionLeaveFailedToDisbandFaction"]}")
+                                return@Runnable
+                            }
+                        sender.sendMessage("$GREEN${plugin.language["CommandFactionLeaveSuccess"]}")
+                        return@Runnable
+                    }
                 }
                 val role = faction.getRole(mfPlayer.id)
-                if (role != null &&
-                    faction.members.filter { it.playerId != mfPlayer.id }.none {
-                        val memberRole = faction.getRole(it.playerId)
-                        memberRole?.hasPermission(faction, plugin.factionPermissions.setMemberRole(role.id)) == true
-                    }
+                if (role != null && faction.members.filter { it.playerId != mfPlayer.id }.none {
+                    val memberRole = faction.getRole(it.playerId)
+                    memberRole?.hasPermission(faction, plugin.factionPermissions.setMemberRole(role.id)) == true
+                }
                 ) {
                     sender.sendMessage("$RED${plugin.language["CommandFactionLeaveNoOneCanSetYourRole"]}")
                     return@Runnable
                 }
-                factionService
-                    .save(faction.copy(members = faction.members.filter { it.playerId != mfPlayer.id }))
+                factionService.save(faction.copy(members = faction.members.filter { it.playerId != mfPlayer.id }))
                     .onFailure {
                         sender.sendMessage("$RED${plugin.language["CommandFactionLeaveFailedToSaveFaction"]}")
                         plugin.logger.log(SEVERE, "Failed to save faction: ${it.reason.message}", it.reason.cause)
                         return@Runnable
                     }
                 sender.sendMessage("$GREEN${plugin.language["CommandFactionLeaveSuccess"]}")
-            },
+            }
         )
         return true
     }
@@ -84,6 +86,6 @@ class MfFactionLeaveCommand(
         sender: CommandSender,
         command: Command,
         label: String,
-        args: Array<out String>,
+        args: Array<out String>
     ) = emptyList<String>()
 }

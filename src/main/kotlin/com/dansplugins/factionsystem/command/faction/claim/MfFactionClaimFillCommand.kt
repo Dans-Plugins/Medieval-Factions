@@ -3,6 +3,7 @@ package com.dansplugins.factionsystem.command.faction.claim
 import com.dansplugins.factionsystem.MedievalFactions
 import com.dansplugins.factionsystem.area.MfChunkPosition
 import com.dansplugins.factionsystem.claim.MfClaimedChunk
+import com.dansplugins.factionsystem.exception.WorldClaimBlockedException
 import com.dansplugins.factionsystem.faction.MfFaction
 import com.dansplugins.factionsystem.player.MfPlayer
 import com.dansplugins.factionsystem.relationship.MfFactionRelationshipType.AT_WAR
@@ -62,6 +63,11 @@ class MfFactionClaimFillCommand(
                 val role = faction.getRole(mfPlayer.id)
                 if (role == null || !role.hasPermission(faction, plugin.factionPermissions.claim)) {
                     sender.sendMessage("$RED${plugin.language["CommandFactionClaimFillNoFactionPermission"]}")
+                    return@Runnable
+                }
+                val claimService = plugin.services.claimService
+                if (claimService.isClaimingBlockedInWorld(sender.world)) {
+                    sender.sendMessage("$RED${plugin.language["CommandFactionClaimWorldBlocked"]}")
                     return@Runnable
                 }
                 val senderWorldId = sender.location.world?.uid
@@ -126,8 +132,15 @@ class MfFactionClaimFillCommand(
                             claimService
                                 .save(MfClaimedChunk(chunk, faction.id))
                                 .onFailure {
-                                    sender.sendMessage("$RED${plugin.language["CommandFactionClaimFillFailedToSaveClaim"]}")
-                                    plugin.logger.log(SEVERE, "Failed to save claimed chunk: ${it.reason.message}", it.reason.cause)
+                                    when (it.reason.cause) {
+                                        is WorldClaimBlockedException -> {
+                                            sender.sendMessage("$RED${plugin.language["CommandFactionClaimWorldBlocked"]}")
+                                        }
+                                        else -> {
+                                            sender.sendMessage("$RED${plugin.language["CommandFactionClaimFillFailedToSaveClaim"]}")
+                                            plugin.logger.log(SEVERE, "Failed to save claimed chunk: ${it.reason.message}", it.reason.cause)
+                                        }
+                                    }
                                     return@saveChunks
                                 }
                         }
