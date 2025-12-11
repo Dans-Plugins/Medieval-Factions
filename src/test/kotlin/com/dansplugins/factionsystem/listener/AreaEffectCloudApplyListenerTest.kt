@@ -2,7 +2,7 @@ package com.dansplugins.factionsystem.listener
 
 import com.dansplugins.factionsystem.MedievalFactions
 import org.bukkit.entity.AreaEffectCloud
-import org.bukkit.entity.Player
+import org.bukkit.entity.LivingEntity
 import org.bukkit.event.entity.AreaEffectCloudApplyEvent
 import org.bukkit.potion.PotionData
 import org.bukkit.potion.PotionEffectType
@@ -29,7 +29,7 @@ class AreaEffectCloudApplyListenerTest {
     fun onAreaEffectCloudApply_BasePotionDataIsNull_ShouldReturnWithoutError() {
         // Arrange
         val areaEffectCloud = mock(AreaEffectCloud::class.java)
-        val affectedEntities = mutableListOf<Player>()
+        val affectedEntities = mutableListOf<LivingEntity>()
         val event = mock(AreaEffectCloudApplyEvent::class.java)
 
         `when`(event.entity).thenReturn(areaEffectCloud)
@@ -47,7 +47,7 @@ class AreaEffectCloudApplyListenerTest {
     fun onAreaEffectCloudApply_BasePotionDataIsNotHarmful_ShouldReturn() {
         // Arrange
         val areaEffectCloud = mock(AreaEffectCloud::class.java)
-        val affectedEntities = mutableListOf<Player>()
+        val affectedEntities = mutableListOf<LivingEntity>()
         val event = mock(AreaEffectCloudApplyEvent::class.java)
         val potionData = mock(PotionData::class.java)
         val potionType = mock(PotionType::class.java)
