@@ -19,6 +19,7 @@ class PotionSplashListener(
             "CONFUSION",
             "DARKNESS",
             "HARM",
+            "HARMING",
             "HUNGER",
             "POISON",
             "SLOW",
