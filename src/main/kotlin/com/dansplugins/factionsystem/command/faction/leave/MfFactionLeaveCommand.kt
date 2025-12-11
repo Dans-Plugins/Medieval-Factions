@@ -39,13 +39,27 @@ class MfFactionLeaveCommand(private val plugin: MedievalFactions) : CommandExecu
                     return@Runnable
                 }
                 if (faction.members.size == 1) {
-                    factionService.delete(faction.id)
-                        .onFailure {
-                            sender.sendMessage("$RED${plugin.language["CommandFactionLeaveFailedToDisbandFaction"]}")
-                            return@Runnable
-                        }
-                    sender.sendMessage("$GREEN${plugin.language["CommandFactionLeaveSuccess"]}")
-                    return@Runnable
+                    val allowLeaderlessFactions = plugin.config.getBoolean("factions.allowLeaderlessFactions")
+                    if (allowLeaderlessFactions) {
+                        // Remove the member but keep the faction
+                        factionService.save(faction.copy(members = emptyList()))
+                            .onFailure {
+                                sender.sendMessage("$RED${plugin.language["CommandFactionLeaveFailedToSaveFaction"]}")
+                                plugin.logger.log(SEVERE, "Failed to save faction: ${it.reason.message}", it.reason.cause)
+                                return@Runnable
+                            }
+                        sender.sendMessage("$GREEN${plugin.language["CommandFactionLeaveSuccess"]}")
+                        return@Runnable
+                    } else {
+                        // Original behavior: disband the faction
+                        factionService.delete(faction.id)
+                            .onFailure {
+                                sender.sendMessage("$RED${plugin.language["CommandFactionLeaveFailedToDisbandFaction"]}")
+                                return@Runnable
+                            }
+                        sender.sendMessage("$GREEN${plugin.language["CommandFactionLeaveSuccess"]}")
+                        return@Runnable
+                    }
                 }
                 val role = faction.getRole(mfPlayer.id)
                 if (role != null && faction.members.filter { it.playerId != mfPlayer.id }.none {

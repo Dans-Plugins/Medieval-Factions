@@ -3,6 +3,7 @@ package com.dansplugins.factionsystem.command.faction.claim
 import com.dansplugins.factionsystem.MedievalFactions
 import com.dansplugins.factionsystem.area.MfChunkPosition
 import com.dansplugins.factionsystem.claim.MfClaimedChunk
+import com.dansplugins.factionsystem.exception.WorldClaimBlockedException
 import com.dansplugins.factionsystem.player.MfPlayer
 import com.dansplugins.factionsystem.relationship.MfFactionRelationshipType
 import dev.forkhandles.result4k.onFailure
@@ -49,6 +50,11 @@ class MfFactionClaimCircleCommand(private val plugin: MedievalFactions) : Comman
                 val role = faction.getRole(mfPlayer.id)
                 if (role == null || !role.hasPermission(faction, plugin.factionPermissions.claim)) {
                     sender.sendMessage("${ChatColor.RED}${plugin.language["CommandFactionClaimNoFactionPermission"]}")
+                    return@Runnable
+                }
+                val claimService = plugin.services.claimService
+                if (claimService.isClaimingBlockedInWorld(sender.world)) {
+                    sender.sendMessage("${ChatColor.RED}${plugin.language["CommandFactionClaimWorldBlocked"]}")
                     return@Runnable
                 }
                 val radius = if (args.isNotEmpty()) {
@@ -115,8 +121,15 @@ class MfFactionClaimCircleCommand(private val plugin: MedievalFactions) : Comman
                                 claimableChunks.forEach { chunk ->
                                     claimService.save(MfClaimedChunk(chunk, faction.id))
                                         .onFailure {
-                                            sender.sendMessage("${ChatColor.RED}${plugin.language["CommandFactionClaimFailedToSaveClaim"]}")
-                                            plugin.logger.log(Level.SEVERE, "Failed to save claimed chunk: ${it.reason.message}", it.reason.cause)
+                                            when (it.reason.cause) {
+                                                is WorldClaimBlockedException -> {
+                                                    sender.sendMessage("${ChatColor.RED}${plugin.language["CommandFactionClaimWorldBlocked"]}")
+                                                }
+                                                else -> {
+                                                    sender.sendMessage("${ChatColor.RED}${plugin.language["CommandFactionClaimFailedToSaveClaim"]}")
+                                                    plugin.logger.log(Level.SEVERE, "Failed to save claimed chunk: ${it.reason.message}", it.reason.cause)
+                                                }
+                                            }
                                             return@saveChunks
                                         }
                                 }
