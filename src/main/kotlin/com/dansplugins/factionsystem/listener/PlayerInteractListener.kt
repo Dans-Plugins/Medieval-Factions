@@ -149,7 +149,7 @@ class PlayerInteractListener(private val plugin: MedievalFactions) : Listener {
         }
 
         if (plugin.config.getBoolean("factions.nonMembersCanInteractWithDoors")) {
-            if (clickedBlock.state is Door || clickedBlock.state is TrapDoor) {
+            if (clickedBlock.blockData is Door || clickedBlock.blockData is TrapDoor) {
                 return
             }
         }
