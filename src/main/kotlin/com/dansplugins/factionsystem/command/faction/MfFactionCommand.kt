@@ -1,8 +1,8 @@
 package com.dansplugins.factionsystem.command.faction
 
 import com.dansplugins.factionsystem.MedievalFactions
-import com.dansplugins.factionsystem.command.faction.admin.MfFactionAdminCommand
 import com.dansplugins.factionsystem.command.faction.addmember.MfFactionAddMemberCommand
+import com.dansplugins.factionsystem.command.faction.admin.MfFactionAdminCommand
 import com.dansplugins.factionsystem.command.faction.ally.MfFactionAllyCommand
 import com.dansplugins.factionsystem.command.faction.apply.MfFactionApplyCommand
 import com.dansplugins.factionsystem.command.faction.approveapp.MfFactionApproveAppCommand

@@ -20,12 +20,12 @@ class MfFactionAdminSetLeaderCommand(private val plugin: MedievalFactions) : Com
             sender.sendMessage("$RED${plugin.language["CommandFactionAdminSetLeaderNoPermission"]}")
             return true
         }
-        
+
         if (args.size < 2) {
             sender.sendMessage("$RED${plugin.language["CommandFactionAdminSetLeaderUsage"]}")
             return true
         }
-        
+
         plugin.server.scheduler.runTaskAsynchronously(
             plugin,
             Runnable {
@@ -35,7 +35,7 @@ class MfFactionAdminSetLeaderCommand(private val plugin: MedievalFactions) : Com
                     sender.sendMessage("$RED${plugin.language["CommandFactionAdminSetLeaderInvalidTargetPlayer"]}")
                     return@Runnable
                 }
-                
+
                 val playerService = plugin.services.playerService
                 val targetMfPlayer = playerService.getPlayer(targetPlayer)
                     ?: playerService.save(MfPlayer(plugin, targetPlayer)).onFailure {
@@ -43,35 +43,35 @@ class MfFactionAdminSetLeaderCommand(private val plugin: MedievalFactions) : Com
                         plugin.logger.log(SEVERE, "Failed to save player: ${it.reason.message}", it.reason.cause)
                         return@Runnable
                     }
-                
+
                 val factionService = plugin.services.factionService
-                
+
                 // Check if target player is already in a faction
                 if (factionService.getFaction(targetMfPlayer.id) != null) {
                     sender.sendMessage("$RED${plugin.language["CommandFactionAdminSetLeaderTargetPlayerAlreadyInFaction"]}")
                     return@Runnable
                 }
-                
+
                 // Get target faction
                 val targetFaction = factionService.getFaction(args.dropFirst().joinToString(" "))
                 if (targetFaction == null) {
                     sender.sendMessage("$RED${plugin.language["CommandFactionAdminSetLeaderInvalidTargetFaction"]}")
                     return@Runnable
                 }
-                
+
                 val maxMembers = plugin.config.getInt("factions.maxMembers")
                 if (maxMembers > 0 && targetFaction.members.size >= maxMembers) {
                     sender.sendMessage("$RED${plugin.language["CommandFactionAdminSetLeaderTargetFactionFull"]}")
                     return@Runnable
                 }
-                
+
                 // Find the Owner role
                 val ownerRole = targetFaction.roles.roles.find { it.name == "Owner" }
                 if (ownerRole == null) {
                     sender.sendMessage("$RED${plugin.language["CommandFactionAdminSetLeaderNoOwnerRole"]}")
                     return@Runnable
                 }
-                
+
                 // Add player as the owner
                 val updatedFaction = factionService.save(
                     targetFaction.copy(
@@ -83,7 +83,7 @@ class MfFactionAdminSetLeaderCommand(private val plugin: MedievalFactions) : Com
                     plugin.logger.log(SEVERE, "Failed to save faction: ${it.reason.message}", it.reason.cause)
                     return@Runnable
                 }
-                
+
                 val targetName = targetMfPlayer.name ?: plugin.language["CommandFactionAdminSetLeaderUnknownPlayer"]
                 updatedFaction.sendMessage(
                     plugin.language["FactionNewLeaderNotificationTitle", targetName],
@@ -92,7 +92,7 @@ class MfFactionAdminSetLeaderCommand(private val plugin: MedievalFactions) : Com
                 sender.sendMessage(
                     "$GREEN${plugin.language["CommandFactionAdminSetLeaderSuccess", targetName, targetFaction.name]}"
                 )
-                
+
                 try {
                     factionService.cancelAllApplicationsForPlayer(targetMfPlayer)
                 } catch (e: Exception) {

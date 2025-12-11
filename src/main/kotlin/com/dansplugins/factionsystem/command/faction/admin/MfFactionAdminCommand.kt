@@ -12,10 +12,10 @@ class MfFactionAdminCommand(private val plugin: MedievalFactions) : CommandExecu
 
     private val adminCreateCommand = MfFactionAdminCreateCommand(plugin)
     private val adminSetLeaderCommand = MfFactionAdminSetLeaderCommand(plugin)
-    
+
     private val createAliases = listOf("create", plugin.language["CmdFactionAdminCreate"])
     private val setLeaderAliases = listOf("setleader", plugin.language["CmdFactionAdminSetLeader"])
-    
+
     private val subcommands = createAliases + setLeaderAliases
 
     override fun onCommand(sender: CommandSender, command: Command, label: String, args: Array<out String>): Boolean {
@@ -23,7 +23,7 @@ class MfFactionAdminCommand(private val plugin: MedievalFactions) : CommandExecu
             sender.sendMessage("$RED${plugin.language["CommandFactionAdminNoPermission"]}")
             return true
         }
-        
+
         return when (args.firstOrNull()?.lowercase()) {
             in createAliases -> adminCreateCommand.onCommand(sender, command, label, args.drop(1).toTypedArray())
             in setLeaderAliases -> adminSetLeaderCommand.onCommand(sender, command, label, args.drop(1).toTypedArray())
