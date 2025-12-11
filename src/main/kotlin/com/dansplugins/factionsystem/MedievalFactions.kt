@@ -73,8 +73,8 @@ import com.dansplugins.factionsystem.locks.JooqMfLockRepository
 import com.dansplugins.factionsystem.locks.MfLockRepository
 import com.dansplugins.factionsystem.locks.MfLockService
 import com.dansplugins.factionsystem.locks.MfRpkLockService
-import com.dansplugins.factionsystem.map.dynmap.DynmapService
 import com.dansplugins.factionsystem.map.bluemap.BlueMapService
+import com.dansplugins.factionsystem.map.dynmap.DynmapService
 import com.dansplugins.factionsystem.notification.MfNotificationService
 import com.dansplugins.factionsystem.notification.mailboxes.MailboxesNotificationService
 import com.dansplugins.factionsystem.notification.noop.NoOpNotificationService
@@ -553,8 +553,7 @@ class MedievalFactions : JavaPlugin() {
 
     /**
      * Checks if map territories should be rendered dynamically (i.e., not only on startup).
-     * 
-     * @return true if territories should be updated dynamically, false if only on startup
+     * * @return true if territories should be updated dynamically, false if only on startup
      */
     fun shouldRenderMapTerritoriesDynamically(): Boolean {
         val mapService = services.mapService ?: return false
