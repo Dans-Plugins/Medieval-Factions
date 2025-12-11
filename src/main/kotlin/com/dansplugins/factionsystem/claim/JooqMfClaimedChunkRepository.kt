@@ -4,7 +4,7 @@ import com.dansplugins.factionsystem.faction.MfFactionId
 import com.dansplugins.factionsystem.jooq.Tables.MF_CLAIMED_CHUNK
 import com.dansplugins.factionsystem.jooq.tables.records.MfClaimedChunkRecord
 import org.jooq.DSLContext
-import java.util.*
+import java.util.UUID
 
 class JooqMfClaimedChunkRepository(
     private val dsl: DSLContext,

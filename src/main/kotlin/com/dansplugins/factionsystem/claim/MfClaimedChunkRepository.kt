@@ -1,7 +1,7 @@
 package com.dansplugins.factionsystem.claim
 
 import com.dansplugins.factionsystem.faction.MfFactionId
-import java.util.*
+import java.util.UUID
 
 interface MfClaimedChunkRepository {
     fun getClaim(

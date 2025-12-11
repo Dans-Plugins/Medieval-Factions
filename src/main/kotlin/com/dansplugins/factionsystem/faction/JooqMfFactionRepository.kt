@@ -22,7 +22,7 @@ import org.jooq.Condition
 import org.jooq.DSLContext
 import org.jooq.JSON
 import org.jooq.impl.DSL.`val`
-import java.util.*
+import java.util.UUID
 
 class JooqMfFactionRepository(
     private val plugin: MedievalFactions,

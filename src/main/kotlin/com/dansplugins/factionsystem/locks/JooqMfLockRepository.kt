@@ -8,7 +8,7 @@ import com.dansplugins.factionsystem.jooq.tables.records.MfLockedBlockRecord
 import com.dansplugins.factionsystem.player.MfPlayerId
 import org.jooq.Condition
 import org.jooq.DSLContext
-import java.util.*
+import java.util.UUID
 
 class JooqMfLockRepository(
     private val dsl: DSLContext,

@@ -14,7 +14,7 @@ import com.dansplugins.factionsystem.faction.permission.permissions.SetRolePermi
 import com.dansplugins.factionsystem.faction.permission.permissions.ViewRole
 import com.dansplugins.factionsystem.faction.role.MfFactionRoleId
 import com.dansplugins.factionsystem.faction.role.MfFactionRoles
-import java.util.*
+import java.util.Collections
 import java.util.concurrent.CopyOnWriteArrayList
 
 class MfFactionPermissions(

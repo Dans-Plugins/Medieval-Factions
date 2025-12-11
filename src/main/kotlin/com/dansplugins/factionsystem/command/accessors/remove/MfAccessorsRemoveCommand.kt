@@ -22,7 +22,7 @@ import org.bukkit.conversations.ConversationFactory
 import org.bukkit.conversations.Prompt
 import org.bukkit.conversations.ValidatingPrompt
 import org.bukkit.entity.Player
-import java.util.*
+import java.util.UUID
 import java.util.logging.Level
 
 class MfAccessorsRemoveCommand(

@@ -3,7 +3,7 @@ package com.dansplugins.factionsystem.area
 import org.bukkit.Bukkit
 import org.bukkit.Location
 import org.bukkit.block.Block
-import java.util.*
+import java.util.UUID
 
 data class MfBlockPosition(
     val worldId: UUID,

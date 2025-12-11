@@ -15,7 +15,6 @@ import org.mockito.Mockito.verify
 import org.mockito.Mockito.`when`
 
 class AreaEffectCloudApplyListenerTest {
-
     private lateinit var medievalFactions: MedievalFactions
     private lateinit var uut: AreaEffectCloudApplyListener
 

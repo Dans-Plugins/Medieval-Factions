@@ -345,7 +345,7 @@ class InventoryMoveItemListenerTest {
         val event: InventoryMoveItemEvent,
         val leftBlock: Block?,
         val rightBlock: Block?,
-        val destinationBlock: Block?
+        val destinationBlock: Block?,
     )
 
     private fun mockServices() {

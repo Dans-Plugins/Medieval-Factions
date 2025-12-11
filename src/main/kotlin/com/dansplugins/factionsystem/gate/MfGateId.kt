@@ -1,6 +1,6 @@
 package com.dansplugins.factionsystem.gate
 
-import java.util.*
+import java.util.UUID
 
 @JvmInline
 value class MfGateId(

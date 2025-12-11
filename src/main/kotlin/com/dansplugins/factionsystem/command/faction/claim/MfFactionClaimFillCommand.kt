@@ -17,7 +17,7 @@ import org.bukkit.command.TabCompleter
 import org.bukkit.entity.Player
 import java.text.DecimalFormat
 import java.text.DecimalFormatSymbols
-import java.util.*
+import java.util.UUID
 import java.util.logging.Level.SEVERE
 import kotlin.math.floor
 

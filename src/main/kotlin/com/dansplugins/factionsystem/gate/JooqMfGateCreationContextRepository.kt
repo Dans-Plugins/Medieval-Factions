@@ -6,7 +6,7 @@ import com.dansplugins.factionsystem.jooq.Tables.MF_GATE_CREATION_CONTEXT
 import com.dansplugins.factionsystem.jooq.tables.records.MfGateCreationContextRecord
 import com.dansplugins.factionsystem.player.MfPlayerId
 import org.jooq.DSLContext
-import java.util.*
+import java.util.UUID
 
 class JooqMfGateCreationContextRepository(
     private val dsl: DSLContext,

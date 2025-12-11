@@ -2,7 +2,7 @@ package com.dansplugins.factionsystem.player
 
 import org.bukkit.Bukkit
 import org.bukkit.OfflinePlayer
-import java.util.*
+import java.util.UUID
 
 @JvmInline
 value class MfPlayerId(

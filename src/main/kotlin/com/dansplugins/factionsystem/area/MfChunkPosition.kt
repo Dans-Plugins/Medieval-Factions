@@ -2,7 +2,7 @@ package com.dansplugins.factionsystem.area
 
 import org.bukkit.Bukkit
 import org.bukkit.Chunk
-import java.util.*
+import java.util.UUID
 
 data class MfChunkPosition(
     val worldId: UUID,

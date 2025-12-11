@@ -1,6 +1,6 @@
 package com.dansplugins.factionsystem.locks
 
-import java.util.*
+import java.util.UUID
 
 @JvmInline
 value class MfLockedBlockId(

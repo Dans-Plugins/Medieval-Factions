@@ -24,7 +24,7 @@ import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.TestInstance
 import org.mockito.Mockito.mock
 import org.mockito.Mockito.`when`
-import java.util.*
+import java.util.Locale
 
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 class MedievalFactionsPlaceholderExpansionTest {

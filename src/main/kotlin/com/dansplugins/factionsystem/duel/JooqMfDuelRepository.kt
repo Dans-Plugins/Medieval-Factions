@@ -8,7 +8,7 @@ import com.dansplugins.factionsystem.player.MfPlayerId
 import org.jooq.DSLContext
 import java.time.LocalDateTime
 import java.time.ZoneOffset.UTC
-import java.util.*
+import java.util.UUID
 
 class JooqMfDuelRepository(
     private val dsl: DSLContext,

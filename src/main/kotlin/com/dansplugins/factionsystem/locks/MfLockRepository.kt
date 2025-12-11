@@ -1,7 +1,7 @@
 package com.dansplugins.factionsystem.locks
 
 import com.dansplugins.factionsystem.area.MfBlockPosition
-import java.util.*
+import java.util.UUID
 
 interface MfLockRepository {
     fun getLockedBlock(id: MfLockedBlockId): MfLockedBlock?

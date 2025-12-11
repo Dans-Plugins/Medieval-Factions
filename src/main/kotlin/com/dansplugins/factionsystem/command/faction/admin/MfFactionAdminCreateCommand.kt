@@ -13,8 +13,16 @@ import org.bukkit.command.CommandSender
 import org.bukkit.command.TabCompleter
 import java.util.logging.Level.SEVERE
 
-class MfFactionAdminCreateCommand(private val plugin: MedievalFactions) : CommandExecutor, TabCompleter {
-    override fun onCommand(sender: CommandSender, command: Command, label: String, args: Array<out String>): Boolean {
+class MfFactionAdminCreateCommand(
+    private val plugin: MedievalFactions,
+) : CommandExecutor,
+    TabCompleter {
+    override fun onCommand(
+        sender: CommandSender,
+        command: Command,
+        label: String,
+        args: Array<out String>,
+    ): Boolean {
         if (!sender.hasPermission("mf.admin.create")) {
             sender.sendMessage("$RED${plugin.language["CommandFactionAdminCreateNoPermission"]}")
             return true
@@ -50,22 +58,24 @@ class MfFactionAdminCreateCommand(private val plugin: MedievalFactions) : Comman
 
                 val factionId = MfFactionId.generate()
                 val roles = MfFactionRoles.defaults(plugin, factionId)
-                val faction = MfFaction(
-                    plugin = plugin,
-                    id = factionId,
-                    name = factionName,
-                    roles = roles,
-                    members = emptyList()
-                )
+                val faction =
+                    MfFaction(
+                        plugin = plugin,
+                        id = factionId,
+                        name = factionName,
+                        roles = roles,
+                        members = emptyList(),
+                    )
 
-                val createdFaction = factionService.save(faction).onFailure { failure ->
-                    sender.sendMessage("$RED${plugin.language["CommandFactionCreateFactionFailedToSave"]}")
-                    plugin.logger.log(SEVERE, "Failed to save faction: ${failure.reason.message}", failure.reason.cause)
-                    return@Runnable
-                }
+                val createdFaction =
+                    factionService.save(faction).onFailure { failure ->
+                        sender.sendMessage("$RED${plugin.language["CommandFactionCreateFactionFailedToSave"]}")
+                        plugin.logger.log(SEVERE, "Failed to save faction: ${failure.reason.message}", failure.reason.cause)
+                        return@Runnable
+                    }
 
                 sender.sendMessage("$GREEN${plugin.language["CommandFactionAdminCreateSuccess", createdFaction.name]}")
-            }
+            },
         )
         return true
     }
@@ -74,6 +84,6 @@ class MfFactionAdminCreateCommand(private val plugin: MedievalFactions) : Comman
         sender: CommandSender,
         command: Command,
         label: String,
-        args: Array<out String>
+        args: Array<out String>,
     ) = emptyList<String>()
 }

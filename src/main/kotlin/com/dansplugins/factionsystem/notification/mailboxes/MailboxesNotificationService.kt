@@ -5,7 +5,7 @@ import com.dansplugins.factionsystem.notification.MfNotification
 import com.dansplugins.factionsystem.notification.MfNotificationService
 import com.dansplugins.factionsystem.player.MfPlayerId
 import dansplugins.mailboxes.Mailboxes
-import java.util.*
+import java.util.UUID
 
 class MailboxesNotificationService(
     private val plugin: MedievalFactions,

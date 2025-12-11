@@ -1,6 +1,6 @@
 package com.dansplugins.factionsystem.duel
 
-import java.util.*
+import java.util.UUID
 
 @JvmInline
 value class MfDuelId(

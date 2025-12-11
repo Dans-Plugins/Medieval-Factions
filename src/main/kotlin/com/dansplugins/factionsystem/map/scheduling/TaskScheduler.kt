@@ -4,7 +4,7 @@ import com.dansplugins.factionsystem.MedievalFactions
 import com.dansplugins.factionsystem.faction.MfFactionId
 import org.bukkit.scheduler.BukkitRunnable
 import org.bukkit.scheduler.BukkitTask
-import java.util.*
+import java.util.Collections
 
 /**
  * A class responsible for scheduling and managing tasks related to faction updates.

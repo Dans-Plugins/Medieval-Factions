@@ -6,7 +6,7 @@ import org.bukkit.ChatColor.GRAY
 import org.bukkit.Location
 import org.bukkit.entity.Player
 import org.bukkit.scheduler.BukkitTask
-import java.util.*
+import java.util.UUID
 
 class MfTeleportService(
     private val plugin: MedievalFactions,

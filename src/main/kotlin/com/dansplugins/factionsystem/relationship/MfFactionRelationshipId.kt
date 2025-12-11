@@ -1,6 +1,6 @@
 package com.dansplugins.factionsystem.relationship
 
-import java.util.*
+import java.util.UUID
 
 @JvmInline
 value class MfFactionRelationshipId(

@@ -3,7 +3,7 @@ package com.dansplugins.factionsystem.claim
 import com.dansplugins.factionsystem.area.MfChunkPosition
 import com.dansplugins.factionsystem.faction.MfFactionId
 import org.bukkit.Chunk
-import java.util.*
+import java.util.UUID
 
 data class MfClaimedChunk(
     val worldId: UUID,

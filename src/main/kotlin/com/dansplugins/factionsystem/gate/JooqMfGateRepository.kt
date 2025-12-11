@@ -9,7 +9,7 @@ import com.dansplugins.factionsystem.jooq.Tables.MF_GATE
 import com.dansplugins.factionsystem.jooq.tables.records.MfGateRecord
 import org.bukkit.Material
 import org.jooq.DSLContext
-import java.util.*
+import java.util.UUID
 
 class JooqMfGateRepository(
     private val plugin: MedievalFactions,

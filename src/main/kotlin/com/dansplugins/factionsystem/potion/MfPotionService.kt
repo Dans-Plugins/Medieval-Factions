@@ -4,7 +4,7 @@ import com.dansplugins.factionsystem.MedievalFactions
 import org.bukkit.OfflinePlayer
 import org.bukkit.entity.AreaEffectCloud
 import org.bukkit.entity.Player
-import java.util.*
+import java.util.UUID
 
 class MfPotionService(
     private val plugin: MedievalFactions,
