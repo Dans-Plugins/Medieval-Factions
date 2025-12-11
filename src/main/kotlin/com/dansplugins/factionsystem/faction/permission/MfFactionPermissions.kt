@@ -38,6 +38,7 @@ class MfFactionPermissions(private val plugin: MedievalFactions) {
                 wrapSimplePermission("CHAT_HISTORY", plugin.language["FactionPermissionChatHistory"], true),
                 wrapSimplePermission("CLAIM", plugin.language["FactionPermissionClaim"], false),
                 wrapSimplePermission("UNCLAIM", plugin.language["FactionPermissionUnclaim"], false),
+                wrapSimplePermission("BYPASS_LOCKS", plugin.language["FactionPermissionBypassLocks"], false),
                 wrapSimplePermission("DECLARE_INDEPENDENCE", plugin.language["FactionPermissionDeclareIndependence"], false),
                 wrapSimplePermission("SWEAR_FEALTY", plugin.language["FactionPermissionSwearFealty"], false),
                 wrapSimplePermission("GRANT_INDEPENDENCE", plugin.language["FactionPermissionGrantIndependence"], false),
@@ -90,6 +91,7 @@ class MfFactionPermissions(private val plugin: MedievalFactions) {
     val chatHistory = parse("CHAT_HISTORY")!!
     val claim = parse("CLAIM")!!
     val unclaim = parse("UNCLAIM")!!
+    val bypassLocks = parse("BYPASS_LOCKS")!!
     val declareIndependence = parse("DECLARE_INDEPENDENCE")!!
     val swearFealty = parse("SWEAR_FEALTY")!!
     val grantIndependence = parse("GRANT_INDEPENDENCE")!!
