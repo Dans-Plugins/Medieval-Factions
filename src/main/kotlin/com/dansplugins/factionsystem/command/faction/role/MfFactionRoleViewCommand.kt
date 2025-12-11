@@ -162,7 +162,11 @@ class MfFactionRoleViewCommand(
                                                 HoverEvent(
                                                     SHOW_TEXT,
                                                     Text(
-                                                        plugin.language["CommandFactionRoleViewDefaultHover", targetRole.name, permission.name],
+                                                        plugin.language[
+                                                            "CommandFactionRoleViewDefaultHover",
+                                                            targetRole.name,
+                                                            permission.name
+                                                        ],
                                                     ),
                                                 )
                                         },
