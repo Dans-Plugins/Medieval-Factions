@@ -55,10 +55,30 @@ class MfGateService(
     fun getGatesByFaction(factionId: MfFactionId) = gatesById.values.filter { it.factionId == factionId }
     fun getGatesByStatus(status: MfGateStatus) = gatesById.values.filter { it.status == status }
 
-    fun save(gate: MfGate) = resultFrom {
-        val result = gateRepo.upsert(gate)
-        gatesById[result.id] = result
-        return@resultFrom result
+    fun save(gate: MfGate, maxRetries: Int = 3) = resultFrom {
+        var lastException: Exception? = null
+        var currentGate = gate
+        val targetStatus = gate.status  // Preserve the intended status change
+        
+        repeat(maxRetries) { attempt ->
+            try {
+                val result = gateRepo.upsert(currentGate)
+                gatesById[result.id] = result
+                return@resultFrom result
+            } catch (e: OptimisticLockingFailureException) {
+                lastException = e
+                if (attempt < maxRetries - 1) {
+                    // Re-fetch the current state from the database for next retry
+                    val freshGate = gateRepo.getGate(currentGate.id) ?: throw e
+                    // Apply the intended status change to the fresh gate state
+                    currentGate = freshGate.copy(status = targetStatus)
+                    // Small delay before retry to reduce contention
+                    Thread.sleep(50L * (attempt + 1))
+                }
+            }
+        }
+        
+        throw lastException ?: IllegalStateException("Retry failed without exception")
     }.mapFailure { exception ->
         ServiceFailure(exception.toServiceFailureType(), "Service error: ${exception.message}", exception)
     }
