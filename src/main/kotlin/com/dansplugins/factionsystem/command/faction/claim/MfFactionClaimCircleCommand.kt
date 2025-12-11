@@ -121,7 +121,7 @@ class MfFactionClaimCircleCommand(private val plugin: MedievalFactions) : Comman
                                 claimableChunks.forEach { chunk ->
                                     claimService.save(MfClaimedChunk(chunk, faction.id))
                                         .onFailure {
-                                            when(it.reason.cause) {
+                                            when (it.reason.cause) {
                                                 is WorldClaimBlockedException -> {
                                                     sender.sendMessage("${ChatColor.RED}${plugin.language["CommandFactionClaimWorldBlocked"]}")
                                                 }

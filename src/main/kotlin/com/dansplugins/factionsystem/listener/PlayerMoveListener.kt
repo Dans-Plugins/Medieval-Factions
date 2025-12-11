@@ -75,7 +75,7 @@ class PlayerMoveListener(private val plugin: MedievalFactions) : Listener {
                             return@Runnable
                         }
                         claimService.save(MfClaimedChunk(to.chunk, playerFaction.id)).onFailure {
-                            when(it.reason.cause) {
+                            when (it.reason.cause) {
                                 is WorldClaimBlockedException -> {
                                     // Silently skip autoclaim if world is blocked
                                     return@Runnable
