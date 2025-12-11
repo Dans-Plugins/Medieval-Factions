@@ -57,24 +57,21 @@ class MfGateService(
 
     /**
      * Save a gate to the database with automatic retry on optimistic locking failures.
-     * 
-     * This method implements a retry mechanism to handle concurrent updates to the same gate,
+     * * This method implements a retry mechanism to handle concurrent updates to the same gate,
      * which commonly occurs during gate opening/closing animations where multiple async tasks
      * may attempt to save status changes simultaneously.
-     * 
-     * On retry, the method re-fetches the current gate state from the database and re-applies
+     * * On retry, the method re-fetches the current gate state from the database and re-applies
      * the intended status change. This is designed for the common case where only the status
      * field is being modified (e.g., gate.copy(status = OPENING)).
-     * 
-     * @param gate The gate to save (typically with a status change)
+     * * @param gate The gate to save (typically with a status change)
      * @param maxRetries Maximum number of retry attempts (default: 3)
      * @return Result containing the saved gate or a ServiceFailure
      */
     fun save(gate: MfGate, maxRetries: Int = 3) = resultFrom {
         var lastException: Exception? = null
         var currentGate = gate
-        val targetStatus = gate.status  // Preserve the intended status change
-        
+        val targetStatus = gate.status // Preserve the intended status change
+
         repeat(maxRetries) { attempt ->
             try {
                 val result = gateRepo.upsert(currentGate)
@@ -92,7 +89,7 @@ class MfGateService(
                 }
             }
         }
-        
+
         throw lastException ?: IllegalStateException("Retry failed without exception")
     }.mapFailure { exception ->
         ServiceFailure(exception.toServiceFailureType(), "Service error: ${exception.message}", exception)
