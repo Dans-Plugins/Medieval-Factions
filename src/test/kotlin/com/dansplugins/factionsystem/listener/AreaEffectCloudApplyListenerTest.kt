@@ -31,7 +31,7 @@ class AreaEffectCloudApplyListenerTest {
         val areaEffectCloud = mock(AreaEffectCloud::class.java)
         val affectedEntities = mutableListOf<Player>()
         val event = mock(AreaEffectCloudApplyEvent::class.java)
-        
+
         `when`(event.entity).thenReturn(areaEffectCloud)
         `when`(event.affectedEntities).thenReturn(affectedEntities)
         `when`(areaEffectCloud.basePotionData).thenReturn(null)
@@ -51,7 +51,7 @@ class AreaEffectCloudApplyListenerTest {
         val event = mock(AreaEffectCloudApplyEvent::class.java)
         val potionData = mock(PotionData::class.java)
         val potionType = mock(PotionType::class.java)
-        
+
         `when`(event.entity).thenReturn(areaEffectCloud)
         `when`(event.affectedEntities).thenReturn(affectedEntities)
         `when`(areaEffectCloud.basePotionData).thenReturn(potionData)
