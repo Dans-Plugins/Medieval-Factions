@@ -86,6 +86,13 @@ class PlayerInteractListener(private val plugin: MedievalFactions) : Listener {
         }
     }
 
+    /**
+     * Checks if a player has the faction permission to bypass locks.
+     * 
+     * @param mfPlayer The player to check
+     * @return true if the player's faction role has the BYPASS_LOCKS permission, false otherwise
+     *         (including when the player has no faction or no role)
+     */
     private fun hasLockBypassPermission(mfPlayer: MfPlayer): Boolean {
         val factionService = plugin.services.factionService
         val playerFaction = factionService.getFaction(mfPlayer.id) ?: return false
