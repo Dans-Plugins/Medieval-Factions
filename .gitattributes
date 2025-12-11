@@ -1,0 +1,10 @@
+# Set default behavior to automatically normalize line endings
+* text=auto
+
+# Shell scripts should always use LF line endings
+*.sh text eol=lf
+
+# Additional file types that should use LF
+*.bash text eol=lf
+*.py text eol=lf
+*.pl text eol=lf

@@ -45,7 +45,7 @@ assignees: []
 - [ ] Paper
 - [ ] Other (Specify: ___)
 
-Version: `___` (e.g., 1.21.4)
+Version: `___` (e.g., 1.21.11)
 
 ## Additional Context
 *Add any other context or relevant details about the issue.*
