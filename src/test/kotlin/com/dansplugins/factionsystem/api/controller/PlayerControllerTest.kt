@@ -2,6 +2,7 @@ package com.dansplugins.factionsystem.api.controller
 
 import com.dansplugins.factionsystem.faction.MfFaction
 import com.dansplugins.factionsystem.faction.MfFactionId
+import com.dansplugins.factionsystem.faction.MfFactionMember
 import com.dansplugins.factionsystem.faction.MfFactionService
 import com.dansplugins.factionsystem.player.MfPlayer
 import com.dansplugins.factionsystem.player.MfPlayerId
@@ -36,6 +37,7 @@ class PlayerControllerTest {
         val player1 = createMockPlayer("Player1")
         val player2 = createMockPlayer("Player2")
         `when`(playerService.players).thenReturn(listOf(player1, player2))
+        `when`(factionService.factions).thenReturn(emptyList())
         `when`(context.json(org.mockito.ArgumentMatchers.any())).thenReturn(context)
 
         // Act
@@ -115,6 +117,38 @@ class PlayerControllerTest {
         // Assert
         verify(playerService).getPlayer(playerId)
         verify(factionService).getFaction(playerId)
+        verify(context).json(org.mockito.ArgumentMatchers.any())
+        verify(context).status(HttpStatus.OK)
+    }
+    
+    @Test
+    fun getAll_WithPlayersInFactions_ShouldReturnPlayersWithFactionIds() {
+        // Arrange
+        val playerId1 = MfPlayerId(UUID.randomUUID())
+        val playerId2 = MfPlayerId(UUID.randomUUID())
+        val player1 = createMockPlayer("Player1", playerId1)
+        val player2 = createMockPlayer("Player2", playerId2)
+        
+        val factionId = MfFactionId(UUID.randomUUID())
+        val faction = mock(MfFaction::class.java)
+        val member1 = mock(MfFactionMember::class.java)
+        val member2 = mock(MfFactionMember::class.java)
+        
+        `when`(member1.playerId).thenReturn(playerId1)
+        `when`(member2.playerId).thenReturn(playerId2)
+        `when`(faction.id).thenReturn(factionId)
+        `when`(faction.members).thenReturn(listOf(member1, member2))
+        
+        `when`(playerService.players).thenReturn(listOf(player1, player2))
+        `when`(factionService.factions).thenReturn(listOf(faction))
+        `when`(context.json(org.mockito.ArgumentMatchers.any())).thenReturn(context)
+
+        // Act
+        controller.getAll(context)
+
+        // Assert
+        verify(playerService).players
+        verify(factionService).factions
         verify(context).json(org.mockito.ArgumentMatchers.any())
         verify(context).status(HttpStatus.OK)
     }

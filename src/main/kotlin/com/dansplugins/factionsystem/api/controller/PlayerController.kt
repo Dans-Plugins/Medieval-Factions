@@ -15,9 +15,19 @@ class PlayerController(
 ) {
 
     fun getAll(ctx: Context) {
-        val players = playerService.players.map { player ->
-            val faction = factionService.getFaction(player.id)
-            PlayerDto.fromPlayer(player, faction?.id?.value?.toString())
+        // Build a map of player IDs to faction IDs to avoid N+1 lookups
+        val allPlayers = playerService.players
+        val playerIdToFactionId = mutableMapOf<MfPlayerId, String>()
+        
+        // Get all factions and build the mapping
+        factionService.factions.forEach { faction ->
+            faction.members.forEach { member ->
+                playerIdToFactionId[member.playerId] = faction.id.value.toString()
+            }
+        }
+        
+        val players = allPlayers.map { player ->
+            PlayerDto.fromPlayer(player, playerIdToFactionId[player.id])
         }
         ctx.json(players).status(HttpStatus.OK)
     }
