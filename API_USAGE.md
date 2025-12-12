@@ -436,11 +436,11 @@ getAllFactions();
 
 **Python Example:**
 ```python
-from medieval_factions_client import ApiClient, DefaultApi
+from medieval_factions_client import ApiClient, DefaultApi, Configuration
 from medieval_factions_client.rest import ApiException
 
 # Create API client
-configuration = medieval_factions_client.Configuration()
+configuration = Configuration()
 configuration.host = "http://localhost:8080"
 api_client = ApiClient(configuration)
 api = DefaultApi(api_client)
