@@ -1,6 +1,7 @@
 package com.dansplugins.factionsystem.api
 
 import com.dansplugins.factionsystem.MedievalFactions
+import com.dansplugins.factionsystem.api.controller.ClaimController
 import com.dansplugins.factionsystem.api.controller.FactionController
 import com.dansplugins.factionsystem.api.controller.PlayerController
 import com.dansplugins.factionsystem.api.controller.RelationshipController
@@ -15,6 +16,7 @@ class MfApiServer(private val plugin: MedievalFactions) {
     private lateinit var factionController: FactionController
     private lateinit var playerController: PlayerController
     private lateinit var relationshipController: RelationshipController
+    private lateinit var claimController: ClaimController
     
     fun start() {
         if (!plugin.config.getBoolean("api.enabled", true)) {
@@ -32,6 +34,7 @@ class MfApiServer(private val plugin: MedievalFactions) {
             factionController = FactionController(plugin.services.factionService)
             playerController = PlayerController(plugin.services.playerService, plugin.services.factionService)
             relationshipController = RelationshipController(plugin.services.factionRelationshipService)
+            claimController = ClaimController(plugin.services.claimService)
             
             // Create Javalin app
             app = Javalin.create { config ->
@@ -68,6 +71,10 @@ class MfApiServer(private val plugin: MedievalFactions) {
             // Relationship endpoints
             get("/api/relationships") { ctx -> relationshipController.getAll(ctx) }
             get("/api/relationships/faction/{id}") { ctx -> relationshipController.getByFactionId(ctx) }
+            
+            // Claim endpoints
+            get("/api/claims") { ctx -> claimController.getAll(ctx) }
+            get("/api/claims/faction/{id}") { ctx -> claimController.getByFactionId(ctx) }
             
             // OpenAPI spec endpoint
             get("/api/openapi") { ctx -> 
@@ -234,6 +241,43 @@ paths:
                 type: array
                 items:
                   $ref: '#/components/schemas/Relationship'
+  /api/claims:
+    get:
+      summary: Get all claims
+      responses:
+        '200':
+          description: List of all claims
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Claim'
+  /api/claims/faction/{id}:
+    get:
+      summary: Get claims for a specific faction
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        '200':
+          description: List of claims for the faction
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Claim'
+        '400':
+          description: Invalid faction ID
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
 components:
   schemas:
     Faction:
@@ -301,6 +345,23 @@ components:
         type:
           type: string
           enum: [ALLY, AT_WAR, LIEGE, VASSAL]
+    Claim:
+      type: object
+      properties:
+        worldId:
+          type: string
+          format: uuid
+          description: The UUID of the world where the claim is located
+        x:
+          type: integer
+          description: The x coordinate of the chunk
+        z:
+          type: integer
+          description: The z coordinate of the chunk
+        factionId:
+          type: string
+          format: uuid
+          description: The UUID of the faction that owns this claim
     Error:
       type: object
       properties:

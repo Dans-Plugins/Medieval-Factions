@@ -221,6 +221,63 @@ Retrieve all relationships for a specific faction.
 
 ---
 
+### Claims
+
+#### Get All Claims
+
+Retrieve all claimed chunks across all factions.
+
+**GET** `/api/claims`
+
+**Response:**
+```json
+[
+  {
+    "worldId": "a1b2c3d4-e5f6-7890-abcd-ef1234567890",
+    "x": 10,
+    "z": 20,
+    "factionId": "550e8400-e29b-41d4-a716-446655440000"
+  },
+  {
+    "worldId": "a1b2c3d4-e5f6-7890-abcd-ef1234567890",
+    "x": 11,
+    "z": 20,
+    "factionId": "550e8400-e29b-41d4-a716-446655440000"
+  }
+]
+```
+
+#### Get Claims for a Faction
+
+Retrieve all claimed chunks for a specific faction.
+
+**GET** `/api/claims/faction/{id}`
+
+**Parameters:**
+- `id` (path): Faction UUID
+
+**Response:**
+```json
+[
+  {
+    "worldId": "a1b2c3d4-e5f6-7890-abcd-ef1234567890",
+    "x": 10,
+    "z": 20,
+    "factionId": "550e8400-e29b-41d4-a716-446655440000"
+  }
+]
+```
+
+**Response (400 Bad Request):**
+```json
+{
+  "error": "INVALID_ID",
+  "message": "Invalid faction ID format"
+}
+```
+
+---
+
 ### OpenAPI Specification
 
 Get the OpenAPI specification for the API.
@@ -399,6 +456,148 @@ async def faction(ctx, player_name: str):
             
     except Exception as e:
         await ctx.send(f"Error: {e}")
+```
+
+### Use Case 5: Dynmap/Bluemap Integration
+
+A bridge plugin that displays faction claims on Dynmap or Bluemap.
+
+```java
+// Example using Java plugin
+import com.google.gson.Gson;
+import org.bukkit.Bukkit;
+import org.dynmap.DynmapAPI;
+import org.dynmap.markers.AreaMarker;
+import org.dynmap.markers.MarkerAPI;
+import org.dynmap.markers.MarkerSet;
+
+import java.net.http.HttpClient;
+import java.net.http.HttpRequest;
+import java.net.http.HttpResponse;
+import java.net.URI;
+import java.util.*;
+import java.util.stream.Collectors;
+
+public class FactionClaimRenderer {
+    private static final String API_URL = "http://localhost:8080/api";
+    private static final HttpClient client = HttpClient.newHttpClient();
+    private static final Gson gson = new Gson();
+    private final DynmapAPI dynmap;
+    private final MarkerSet markerSet;
+    
+    public static class Claim {
+        public String worldId;
+        public int x;
+        public int z;
+        public String factionId;
+    }
+    
+    public static class Faction {
+        public String id;
+        public String name;
+        public String prefix;
+    }
+    
+    public FactionClaimRenderer(DynmapAPI dynmap) {
+        this.dynmap = dynmap;
+        MarkerAPI markerAPI = dynmap.getMarkerAPI();
+        this.markerSet = markerAPI.createMarkerSet(
+            "medievalfactions.claims", 
+            "Faction Claims", 
+            null, 
+            false
+        );
+    }
+    
+    public void renderAllClaims() throws Exception {
+        // Get all claims
+        HttpRequest claimsRequest = HttpRequest.newBuilder()
+            .uri(URI.create(API_URL + "/claims"))
+            .GET()
+            .build();
+        HttpResponse<String> claimsResponse = client.send(
+            claimsRequest, 
+            HttpResponse.BodyHandlers.ofString()
+        );
+        Claim[] claims = gson.fromJson(claimsResponse.body(), Claim[].class);
+        
+        // Get all factions
+        HttpRequest factionsRequest = HttpRequest.newBuilder()
+            .uri(URI.create(API_URL + "/factions"))
+            .GET()
+            .build();
+        HttpResponse<String> factionsResponse = client.send(
+            factionsRequest, 
+            HttpResponse.BodyHandlers.ofString()
+        );
+        Faction[] factions = gson.fromJson(factionsResponse.body(), Faction[].class);
+        
+        // Create a map of faction ID to faction
+        Map<String, Faction> factionMap = Arrays.stream(factions)
+            .collect(Collectors.toMap(f -> f.id, f -> f));
+        
+        // Group claims by faction
+        Map<String, List<Claim>> claimsByFaction = Arrays.stream(claims)
+            .collect(Collectors.groupingBy(c -> c.factionId));
+        
+        // Clear existing markers
+        markerSet.getMarkers().forEach(marker -> marker.deleteMarker());
+        
+        // Render each faction's claims
+        for (Map.Entry<String, List<Claim>> entry : claimsByFaction.entrySet()) {
+            String factionId = entry.getKey();
+            List<Claim> factionClaims = entry.getValue();
+            Faction faction = factionMap.get(factionId);
+            
+            if (faction == null) continue;
+            
+            // Group contiguous chunks into regions
+            for (Claim claim : factionClaims) {
+                String worldName = getWorldNameFromUUID(claim.worldId);
+                if (worldName == null) continue;
+                
+                // Calculate chunk coordinates in blocks
+                double[] x = new double[] {
+                    claim.x * 16, (claim.x + 1) * 16
+                };
+                double[] z = new double[] {
+                    claim.z * 16, (claim.z + 1) * 16
+                };
+                
+                // Create area marker for this chunk
+                String markerId = "claim_" + claim.worldId + "_" + claim.x + "_" + claim.z;
+                AreaMarker marker = markerSet.createAreaMarker(
+                    markerId,
+                    faction.name + " Territory",
+                    false,
+                    worldName,
+                    x,
+                    z,
+                    false
+                );
+                
+                // Set marker style based on faction
+                if (marker != null) {
+                    marker.setLineStyle(2, 1.0, 0x00FF00);
+                    marker.setFillStyle(0.3, 0x00FF00);
+                    marker.setDescription(
+                        "<b>" + faction.name + "</b><br/>" +
+                        "Chunk: " + claim.x + ", " + claim.z
+                    );
+                }
+            }
+        }
+    }
+    
+    private String getWorldNameFromUUID(String worldUUID) {
+        try {
+            UUID uuid = UUID.fromString(worldUUID);
+            return Bukkit.getWorld(uuid) != null ? Bukkit.getWorld(uuid).getName() : null;
+        } catch (Exception e) {
+            return null;
+        }
+    }
+}
 ```
 
 ## Best Practices
