@@ -12,6 +12,10 @@ import io.javalin.json.JavalinJackson
 
 class MfApiServer(private val plugin: MedievalFactions) {
     
+    companion object {
+        private const val OPENAPI_SPEC_PATH = "/openapi.yaml"
+    }
+    
     private var app: Javalin? = null
     private lateinit var factionController: FactionController
     private lateinit var playerController: PlayerController
@@ -99,8 +103,19 @@ class MfApiServer(private val plugin: MedievalFactions) {
     
     private fun getOpenApiSpec(): String {
         // Load OpenAPI spec from resources
-        val specTemplate = this::class.java.getResourceAsStream("/openapi.yaml")?.bufferedReader()?.use { it.readText() }
-            ?: return "Error: OpenAPI specification not found"
+        val specTemplate = this::class.java.getResourceAsStream(OPENAPI_SPEC_PATH)?.bufferedReader()?.use { it.readText() }
+        
+        if (specTemplate == null) {
+            plugin.logger.severe("Failed to load OpenAPI specification from resources")
+            return """
+openapi: 3.0.0
+info:
+  title: Medieval Factions API
+  description: REST API for Medieval Factions plugin (specification could not be loaded)
+  version: ${plugin.description.version}
+paths: {}
+            """.trimIndent()
+        }
         
         // Replace placeholders with actual values
         return specTemplate
