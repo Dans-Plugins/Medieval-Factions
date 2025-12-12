@@ -39,6 +39,7 @@ class PlayerController(
             val player = playerService.getPlayer(playerId)
             
             if (player != null) {
+                // Single player lookup - direct faction query is acceptable here
                 val faction = factionService.getFaction(player.id)
                 ctx.json(PlayerDto.fromPlayer(player, faction?.id?.value?.toString())).status(HttpStatus.OK)
             } else {
