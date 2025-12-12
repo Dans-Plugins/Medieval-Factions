@@ -10,9 +10,15 @@ The API can be configured in the `config.yml` file:
 
 ```yaml
 api:
-  enabled: true  # Set to false to disable the API
-  port: 8080     # Port the API server listens on
+  enabled: true         # Set to false to disable the API
+  host: 127.0.0.1      # Bind address - use 127.0.0.1 (localhost) for local access only, or 0.0.0.0 for external access
+  port: 8080           # Port the API server listens on (1-65535)
 ```
+
+**Security Considerations:**
+- By default, the API binds to `127.0.0.1` (localhost only) for security
+- To allow external access, change `host` to `0.0.0.0`, but ensure proper firewall rules are in place
+- The API does not require authentication - access control must be managed at the network level
 
 ## Base URL
 
@@ -21,9 +27,22 @@ By default, the API is available at:
 http://localhost:8080/api
 ```
 
-## Authentication
+## Authentication and Security
 
-Currently, the API does not require authentication. It is recommended to use this API only in trusted environments or implement additional security measures at the network level (e.g., firewall rules, reverse proxy with authentication).
+The API currently does not include built-in authentication. **Security is managed through network-level controls:**
+
+**Default Security (Recommended):**
+- API binds to `127.0.0.1` (localhost only)
+- Only accessible from the same machine running the server
+- Suitable for local plugins and scripts
+
+**External Access (Advanced):**
+If you need external access, you must implement additional security measures:
+- Configure `api.host: 0.0.0.0` in config.yml
+- Use a reverse proxy (nginx, Apache) with authentication
+- Implement firewall rules to restrict access to trusted IPs
+- Use HTTPS/TLS for encrypted communication
+- Consider API keys or token-based authentication at the reverse proxy level
 
 ## Endpoints
 
@@ -608,12 +627,18 @@ public class FactionClaimRenderer {
 
 3. **Rate Limiting**: If making frequent requests, implement rate limiting to avoid overwhelming the server.
 
-4. **Security**: The API currently doesn't require authentication. If exposing it beyond localhost, implement security measures:
-   - Use a reverse proxy with authentication
-   - Implement firewall rules to restrict access
-   - Use HTTPS/TLS for encrypted communication
+4. **Security**: 
+   - **Default Configuration**: The API binds to `127.0.0.1` (localhost) by default for security. This is suitable for local plugins and scripts.
+   - **External Access**: Only enable external access (`api.host: 0.0.0.0`) if absolutely necessary, and implement additional security:
+     - Use a reverse proxy (nginx, Apache) with authentication
+     - Implement firewall rules to restrict access to trusted IPs only
+     - Use HTTPS/TLS for encrypted communication
+     - Consider API keys or token-based authentication at the reverse proxy level
+   - **Network Isolation**: Ensure the API port is not exposed to untrusted networks
 
 5. **Version Compatibility**: Check the plugin version via the `/api/health` endpoint to ensure compatibility with your integration.
+
+6. **Performance**: Be aware that some endpoints (like `/api/players`) may perform multiple database queries. Consider caching results when making frequent requests.
 
 ## Troubleshooting
 
@@ -622,10 +647,14 @@ public class FactionClaimRenderer {
 - Check if the API is enabled in `config.yml`
 - Verify the correct port is being used
 - Check server logs for errors
+- Ensure the port is within valid range (1-65535)
 
 ### Connection Refused
 
 - Ensure the Minecraft server is running
+- Check if `api.host` is set correctly:
+  - `127.0.0.1` for local access only
+  - `0.0.0.0` for external access (ensure firewall allows it)
 - Verify firewall settings allow connections on the API port
 - Check if another application is using the same port
 

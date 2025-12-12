@@ -1,7 +1,6 @@
 package com.dansplugins.factionsystem.api.dto
 
 import com.dansplugins.factionsystem.claim.MfClaimedChunk
-import java.util.UUID
 
 data class ClaimDto(
     val worldId: String,

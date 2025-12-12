@@ -25,6 +25,12 @@ class MfApiServer(private val plugin: MedievalFactions) {
         }
         
         val port = plugin.config.getInt("api.port", 8080)
+        if (port !in 1..65535) {
+            plugin.logger.severe("Invalid API port: $port. Please specify a port between 1 and 65535 in the configuration.")
+            return
+        }
+        
+        val host = plugin.config.getString("api.host", "127.0.0.1")
         
         try {
             // Configure Jackson for Kotlin
@@ -40,12 +46,12 @@ class MfApiServer(private val plugin: MedievalFactions) {
             app = Javalin.create { config ->
                 config.jsonMapper(JavalinJackson(objectMapper))
                 config.showJavalinBanner = false
-            }.start(port)
+            }.start(host, port)
             
             // Register routes
             registerRoutes()
             
-            plugin.logger.info("REST API server started on port $port")
+            plugin.logger.info("REST API server started on $host:$port")
         } catch (e: Exception) {
             plugin.logger.severe("Failed to start REST API server: ${e.message}")
             e.printStackTrace()
@@ -53,8 +59,10 @@ class MfApiServer(private val plugin: MedievalFactions) {
     }
     
     fun stop() {
-        app?.stop()
-        plugin.logger.info("REST API server stopped")
+        if (app != null) {
+            app?.stop()
+            plugin.logger.info("REST API server stopped")
+        }
     }
     
     private fun registerRoutes() {
@@ -78,7 +86,7 @@ class MfApiServer(private val plugin: MedievalFactions) {
             
             // OpenAPI spec endpoint
             get("/api/openapi") { ctx -> 
-                ctx.contentType("text/plain")
+                ctx.contentType("application/x-yaml")
                 ctx.result(getOpenApiSpec())
             }
             
