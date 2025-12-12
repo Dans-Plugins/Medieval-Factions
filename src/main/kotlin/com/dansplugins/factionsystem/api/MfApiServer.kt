@@ -122,7 +122,7 @@ paths:
               schema:
                 type: array
                 items:
-                  $$ref: '#/components/schemas/Faction'
+                  $ref: '#/components/schemas/Faction'
   /api/factions/{id}:
     get:
       summary: Get faction by ID
@@ -139,13 +139,13 @@ paths:
           content:
             application/json:
               schema:
-                $$ref: '#/components/schemas/Faction'
+                $ref: '#/components/schemas/Faction'
         '404':
           description: Faction not found
           content:
             application/json:
               schema:
-                $$ref: '#/components/schemas/Error'
+                $ref: '#/components/schemas/Error'
   /api/factions/name/{name}:
     get:
       summary: Get faction by name
@@ -161,13 +161,13 @@ paths:
           content:
             application/json:
               schema:
-                $$ref: '#/components/schemas/Faction'
+                $ref: '#/components/schemas/Faction'
         '404':
           description: Faction not found
           content:
             application/json:
               schema:
-                $$ref: '#/components/schemas/Error'
+                $ref: '#/components/schemas/Error'
   /api/players:
     get:
       summary: Get all players
@@ -179,7 +179,7 @@ paths:
               schema:
                 type: array
                 items:
-                  $$ref: '#/components/schemas/Player'
+                  $ref: '#/components/schemas/Player'
   /api/players/{id}:
     get:
       summary: Get player by ID
@@ -196,13 +196,13 @@ paths:
           content:
             application/json:
               schema:
-                $$ref: '#/components/schemas/Player'
+                $ref: '#/components/schemas/Player'
         '404':
           description: Player not found
           content:
             application/json:
               schema:
-                $$ref: '#/components/schemas/Error'
+                $ref: '#/components/schemas/Error'
   /api/relationships:
     get:
       summary: Get all faction relationships
@@ -214,7 +214,7 @@ paths:
               schema:
                 type: array
                 items:
-                  $$ref: '#/components/schemas/Relationship'
+                  $ref: '#/components/schemas/Relationship'
   /api/relationships/faction/{id}:
     get:
       summary: Get relationships for a specific faction
@@ -233,7 +233,7 @@ paths:
               schema:
                 type: array
                 items:
-                  $$ref: '#/components/schemas/Relationship'
+                  $ref: '#/components/schemas/Relationship'
 components:
   schemas:
     Faction:
@@ -258,7 +258,7 @@ components:
         memberCount:
           type: integer
         home:
-          $$ref: '#/components/schemas/Position'
+          $ref: '#/components/schemas/Position'
     Player:
       type: object
       properties:

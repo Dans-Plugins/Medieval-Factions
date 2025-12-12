@@ -1,6 +1,5 @@
 package com.dansplugins.factionsystem.api.controller
 
-import com.dansplugins.factionsystem.MedievalFactions
 import com.dansplugins.factionsystem.faction.MfFaction
 import com.dansplugins.factionsystem.faction.MfFactionId
 import com.dansplugins.factionsystem.faction.MfFactionService
@@ -18,14 +17,12 @@ class FactionControllerTest {
     private lateinit var factionService: MfFactionService
     private lateinit var controller: FactionController
     private lateinit var context: Context
-    private lateinit var plugin: MedievalFactions
 
     @BeforeEach
     fun setUp() {
         factionService = mock(MfFactionService::class.java)
         controller = FactionController(factionService)
         context = mock(Context::class.java)
-        plugin = mock(MedievalFactions::class.java)
     }
 
     @Test
