@@ -209,6 +209,7 @@ components:
         memberCount:
           type: integer
         home:
+          nullable: true
           $ref: '#/components/schemas/Position'
     Player:
       type: object

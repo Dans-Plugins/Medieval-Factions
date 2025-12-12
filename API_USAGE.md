@@ -303,7 +303,184 @@ Get the OpenAPI specification for the API.
 
 **GET** `/api/openapi`
 
-**Response:** Returns the OpenAPI specification in YAML format.
+**Response:** Returns the OpenAPI 3.0 specification in YAML format.
+
+#### Using the OpenAPI Specification to Generate Client Libraries
+
+The Medieval Factions API provides a complete OpenAPI 3.0 specification that can be used to automatically generate client libraries for your application in virtually any programming language. This saves development time and ensures type-safe API calls.
+
+**Step 1: Retrieve the OpenAPI Specification**
+
+You can get the OpenAPI spec in two ways:
+
+1. **From the running API:**
+   ```bash
+   curl http://localhost:8080/api/openapi > medieval-factions-api.yaml
+   ```
+
+2. **From the source code:**
+   The spec is located at `src/main/resources/openapi.yaml` in the Medieval Factions repository.
+
+**Step 2: Generate Client Code**
+
+Use the [OpenAPI Generator](https://openapi-generator.tech/) to create client libraries. Here are examples for popular languages:
+
+**Java Client:**
+```bash
+# Install OpenAPI Generator (requires Java 8+)
+npm install @openapitools/openapi-generator-cli -g
+
+# Generate Java client
+openapi-generator-cli generate \
+  -i medieval-factions-api.yaml \
+  -g java \
+  -o ./medieval-factions-client-java \
+  --additional-properties=invokerPackage=com.example.mfclient,apiPackage=com.example.mfclient.api,modelPackage=com.example.mfclient.model
+```
+
+**JavaScript/TypeScript Client:**
+```bash
+# Generate TypeScript client for Node.js
+openapi-generator-cli generate \
+  -i medieval-factions-api.yaml \
+  -g typescript-node \
+  -o ./medieval-factions-client-ts
+
+# Or for browser/React
+openapi-generator-cli generate \
+  -i medieval-factions-api.yaml \
+  -g typescript-fetch \
+  -o ./medieval-factions-client-ts
+```
+
+**Python Client:**
+```bash
+# Generate Python client
+openapi-generator-cli generate \
+  -i medieval-factions-api.yaml \
+  -g python \
+  -o ./medieval-factions-client-python \
+  --additional-properties=packageName=medieval_factions_client
+```
+
+**Other Languages:**
+OpenAPI Generator supports 50+ languages and frameworks including:
+- C# / .NET
+- Go
+- Rust
+- Ruby
+- PHP
+- Kotlin
+- Swift
+- And many more
+
+See the [full list of supported languages](https://openapi-generator.tech/docs/generators).
+
+**Step 3: Use the Generated Client**
+
+After generation, you can use the client in your application:
+
+**Java Example:**
+```java
+import com.example.mfclient.ApiClient;
+import com.example.mfclient.api.DefaultApi;
+import com.example.mfclient.model.FactionDto;
+
+public class MedievalFactionsIntegration {
+    public static void main(String[] args) {
+        ApiClient client = new ApiClient();
+        client.setBasePath("http://localhost:8080");
+        
+        DefaultApi api = new DefaultApi(client);
+        
+        try {
+            // Get all factions with type safety
+            List<FactionDto> factions = api.apiFactionsGet();
+            
+            for (FactionDto faction : factions) {
+                System.out.println("Faction: " + faction.getName());
+                System.out.println("Power: " + faction.getPower() + "/" + faction.getMaxPower());
+            }
+        } catch (ApiException e) {
+            System.err.println("Error: " + e.getMessage());
+        }
+    }
+}
+```
+
+**TypeScript Example:**
+```typescript
+import { DefaultApi, Configuration } from './medieval-factions-client-ts';
+
+const config = new Configuration({
+  basePath: 'http://localhost:8080'
+});
+
+const api = new DefaultApi(config);
+
+async function getAllFactions() {
+  try {
+    const factions = await api.apiFactionsGet();
+    
+    factions.forEach(faction => {
+      console.log(`Faction: ${faction.name}`);
+      console.log(`Power: ${faction.power}/${faction.maxPower}`);
+    });
+  } catch (error) {
+    console.error('Error fetching factions:', error);
+  }
+}
+
+getAllFactions();
+```
+
+**Python Example:**
+```python
+from medieval_factions_client import ApiClient, DefaultApi
+from medieval_factions_client.rest import ApiException
+
+# Create API client
+configuration = medieval_factions_client.Configuration()
+configuration.host = "http://localhost:8080"
+api_client = ApiClient(configuration)
+api = DefaultApi(api_client)
+
+try:
+    # Get all factions with type safety
+    factions = api.api_factions_get()
+    
+    for faction in factions:
+        print(f"Faction: {faction.name}")
+        print(f"Power: {faction.power}/{faction.max_power}")
+        
+except ApiException as e:
+    print(f"Error: {e}")
+```
+
+**Benefits of Using Generated Clients:**
+
+1. **Type Safety**: Generated clients include strongly-typed models matching the API exactly
+2. **Auto-completion**: IDEs can provide intelligent code completion for all API methods
+3. **Documentation**: Generated code includes inline documentation from the OpenAPI spec
+4. **Error Handling**: Built-in error handling and validation
+5. **Consistency**: Same API interface across different languages
+6. **Maintenance**: Regenerate clients when the API changes to stay in sync
+
+**Alternative: OpenAPI Tools**
+
+You can also use other OpenAPI-compatible tools:
+
+- **Swagger UI**: Interactive API documentation and testing interface
+  ```bash
+  # Run Swagger UI with the spec
+  docker run -p 8081:8080 -e SWAGGER_JSON=/openapi.yaml -v $(pwd):/openapi swaggerapi/swagger-ui
+  ```
+
+- **Postman**: Import the OpenAPI spec directly into Postman for API testing
+
+- **Insomnia**: Another popular API client that supports OpenAPI specs
+
+- **Stoplight Studio**: Visual OpenAPI editor and documentation tool
 
 ---
 
