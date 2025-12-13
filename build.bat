@@ -22,35 +22,48 @@ if %ERRORLEVEL% NEQ 0 (
 
 REM Check Java version
 REM Extract version from various Java version formats
-for /f "usebackq tokens=*" %%i in (`java -version 2^>^&1`) do (
+set JAVA_VERSION_LINE=
+for /f "usebackq tokens=*" %%i in (`java -version 2^>^&1 ^| findstr /i "version"`) do (
     set JAVA_VERSION_LINE=%%i
-    goto :parse_version
 )
 
-:parse_version
-REM Extract the version string from the line
+REM Extract the version string from the line (typically third token)
+set JAVA_VERSION_STRING=
 for /f "tokens=3" %%g in ("%JAVA_VERSION_LINE%") do (
     set JAVA_VERSION_STRING=%%g
 )
 
-REM Remove quotes and extract major version
+REM Remove quotes
 set JAVA_VERSION_STRING=%JAVA_VERSION_STRING:"=%
+
 REM Handle both old format (1.8.0) and new format (17.0.1)
 for /f "tokens=1 delims=." %%v in ("%JAVA_VERSION_STRING%") do (
     set JAVA_MAJOR_VERSION=%%v
 )
+
 REM If version starts with 1, take the second part (e.g., 1.8 -> 8)
 if "%JAVA_MAJOR_VERSION%"=="1" (
     for /f "tokens=2 delims=." %%v in ("%JAVA_VERSION_STRING%") do (
         set JAVA_MAJOR_VERSION=%%v
     )
 )
+
 REM Remove any non-numeric suffixes
 for /f "tokens=1 delims=-+" %%v in ("%JAVA_MAJOR_VERSION%") do (
     set JAVA_MAJOR_VERSION=%%v
 )
 
 echo Detected Java version: %JAVA_MAJOR_VERSION%
+
+REM Check if version was extracted successfully
+if "%JAVA_MAJOR_VERSION%"=="" (
+    echo ERROR: Could not determine Java version
+    echo Please install Java 17 or higher from:
+    echo   - https://adoptium.net/ ^(recommended^)
+    echo   - https://www.oracle.com/java/technologies/downloads/
+    pause
+    exit /b 1
+)
 
 if %JAVA_MAJOR_VERSION% LSS 17 (
     echo ERROR: Java 17 or higher is required

@@ -21,11 +21,31 @@ fi
 # Check Java version
 # This extracts the major version number from various Java version formats
 JAVA_VERSION_OUTPUT=$(java -version 2>&1 | head -n 1)
-JAVA_VERSION=$(echo "$JAVA_VERSION_OUTPUT" | sed -n 's/.*version "\(.*\)".*/\1/p' | sed 's/^1\.//' | cut -d'.' -f1 | cut -d'-' -f1 | cut -d'+' -f1)
+
+# Extract version string from quotes
+VERSION_STRING=$(echo "$JAVA_VERSION_OUTPUT" | sed -n 's/.*version "\(.*\)".*/\1/p')
+
+# Remove leading '1.' for old Java versions (e.g., 1.8.0 -> 8.0)
+VERSION_STRING=$(echo "$VERSION_STRING" | sed 's/^1\.//')
+
+# Extract major version number (first part before '.' or '-' or '+')
+JAVA_VERSION=$(echo "$VERSION_STRING" | cut -d'.' -f1 | cut -d'-' -f1 | cut -d'+' -f1)
+
+# Remove any non-numeric characters
+JAVA_VERSION=$(echo "$JAVA_VERSION" | tr -cd '0-9')
 
 echo "Detected Java version: $JAVA_VERSION"
 
-if [ -z "$JAVA_VERSION" ] || [ "$JAVA_VERSION" -lt 17 ] 2>/dev/null; then
+# Validate that we extracted a numeric version and check if it meets requirements
+if [ -z "$JAVA_VERSION" ]; then
+    echo "ERROR: Could not determine Java version"
+    echo "Please install Java 17 or higher from:"
+    echo "  - https://adoptium.net/ (recommended)"
+    echo "  - https://www.oracle.com/java/technologies/downloads/"
+    exit 1
+fi
+
+if [ "$JAVA_VERSION" -lt 17 ] 2>/dev/null; then
     echo "ERROR: Java 17 or higher is required"
     echo "Current version: $JAVA_VERSION"
     echo "Please install Java 17 or higher from:"
