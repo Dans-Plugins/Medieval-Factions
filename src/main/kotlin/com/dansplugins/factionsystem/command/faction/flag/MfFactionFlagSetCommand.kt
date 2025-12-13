@@ -1,6 +1,8 @@
 package com.dansplugins.factionsystem.command.faction.flag
 
 import com.dansplugins.factionsystem.MedievalFactions
+import com.dansplugins.factionsystem.faction.MfFaction
+import com.dansplugins.factionsystem.faction.MfFactionId
 import com.dansplugins.factionsystem.faction.flag.MfFlag
 import com.dansplugins.factionsystem.faction.flag.MfFlagValidationFailure
 import com.dansplugins.factionsystem.faction.flag.MfFlagValidationSuccess
@@ -19,6 +21,7 @@ import org.bukkit.conversations.ConversationFactory
 import org.bukkit.conversations.Prompt
 import org.bukkit.conversations.ValidatingPrompt
 import org.bukkit.entity.Player
+import preponderous.ponder.command.unquote
 import java.util.logging.Level.SEVERE
 
 class MfFactionFlagSetCommand(private val plugin: MedievalFactions) : CommandExecutor, TabCompleter {
@@ -49,7 +52,8 @@ class MfFactionFlagSetCommand(private val plugin: MedievalFactions) : CommandExe
             if (conversable !is Player) return END_OF_CONVERSATION
             val flag = context.getSessionData("flag") as? MfFlag<Any> ?: return END_OF_CONVERSATION
             val page = context.getSessionData("page") as? Int?
-            setFlagValue(conversable, flag, input, page)
+            val targetFaction = context.getSessionData("targetFaction") as? MfFaction
+            setFlagValue(conversable, targetFaction, flag, input, page)
             return END_OF_CONVERSATION
         }
 
@@ -91,31 +95,66 @@ class MfFactionFlagSetCommand(private val plugin: MedievalFactions) : CommandExe
             sender.sendMessage("$RED${plugin.language["CommandFactionFlagSetUsage"]}")
             return true
         }
-        val flag = plugin.flags.get<Any>(args[0])
-        if (flag == null) {
-            sender.sendMessage("$RED${plugin.language["CommandFactionFlagSetInvalidFlag"]}")
-            return true
-        }
+        
+        val hasForcePermission = sender.hasPermission("mf.force.flag")
+        val unquotedArgs = args.unquote()
+        
+        // Parse arguments to determine if faction is specified
+        var targetFaction: MfFaction? = null
+        var flagName: String
+        var flagValueArgs: List<String>
         var lastArgOffset = 0
+        
+        // Check for page parameter at the end
         val returnPage = if (args.last().startsWith("p=")) {
             lastArgOffset = 1
             args.last().substring("p=".length).toIntOrNull()
         } else {
             null
         }
-        if (args.size - lastArgOffset < 2) {
+        
+        if (hasForcePermission && unquotedArgs.size >= 2) {
+            // Try to parse first argument as faction name/ID
+            val factionService = plugin.services.factionService
+            val potentialFaction = factionService.getFaction(MfFactionId(unquotedArgs[0])) ?: factionService.getFaction(unquotedArgs[0])
+            
+            if (potentialFaction != null && unquotedArgs.size >= 3) {
+                // First arg is a valid faction, second arg is flag name
+                targetFaction = potentialFaction
+                flagName = unquotedArgs[1]
+                flagValueArgs = unquotedArgs.drop(2).dropLast(lastArgOffset)
+            } else {
+                // First arg is flag name
+                flagName = unquotedArgs[0]
+                flagValueArgs = unquotedArgs.drop(1).dropLast(lastArgOffset)
+            }
+        } else {
+            // No force permission or not enough args, use standard parsing
+            flagName = unquotedArgs[0]
+            flagValueArgs = unquotedArgs.drop(1).dropLast(lastArgOffset)
+        }
+        
+        val flag = plugin.flags.get<Any>(flagName)
+        if (flag == null) {
+            sender.sendMessage("$RED${plugin.language["CommandFactionFlagSetInvalidFlag"]}")
+            return true
+        }
+        
+        if (flagValueArgs.isEmpty()) {
             val conversation = conversationFactory.buildConversation(sender)
             conversation.context.setSessionData("page", returnPage)
             conversation.context.setSessionData("flag", flag)
+            conversation.context.setSessionData("targetFaction", targetFaction)
             conversation.begin()
             return true
         }
-        val flagValue = args.drop(1).dropLast(lastArgOffset).joinToString(" ")
-        setFlagValue(sender, flag, flagValue, returnPage)
+        
+        val flagValue = flagValueArgs.joinToString(" ")
+        setFlagValue(sender, targetFaction, flag, flagValue, returnPage)
         return true
     }
 
-    private fun setFlagValue(sender: Player, flag: MfFlag<Any>, flagValue: String, page: Int? = null) {
+    private fun setFlagValue(sender: Player, targetFaction: MfFaction?, flag: MfFlag<Any>, flagValue: String, page: Int? = null) {
         val allowNeutrality = plugin.config.getBoolean("factions.allowNeutrality")
         plugin.server.scheduler.runTaskAsynchronously(
             plugin,
@@ -128,16 +167,35 @@ class MfFactionFlagSetCommand(private val plugin: MedievalFactions) : CommandExe
                         return@Runnable
                     }
                 val factionService = plugin.services.factionService
-                val faction = factionService.getFaction(mfPlayer.id)
-                if (faction == null) {
-                    sender.sendMessage("$RED${plugin.language["CommandFactionFlagSetMustBeInAFaction"]}")
-                    return@Runnable
+                
+                // Determine which faction to modify
+                val faction = if (targetFaction != null) {
+                    targetFaction
+                } else {
+                    val playerFaction = factionService.getFaction(mfPlayer.id)
+                    if (playerFaction == null) {
+                        sender.sendMessage("$RED${plugin.language["CommandFactionFlagSetMustBeInAFaction"]}")
+                        return@Runnable
+                    }
+                    playerFaction
                 }
-                val role = faction.getRole(mfPlayer.id)
-                if (role == null || !role.hasPermission(faction, plugin.factionPermissions.setFlag(flag))) {
-                    sender.sendMessage("$RED${plugin.language["CommandFactionFlagSetNoFactionPermission"]}")
-                    return@Runnable
+                
+                // Check permissions - either faction role permission or force permission
+                if (targetFaction != null) {
+                    // Using force permission on another faction
+                    if (!sender.hasPermission("mf.force.flag")) {
+                        sender.sendMessage("$RED${plugin.language["CommandFactionFlagSetNoPermission"]}")
+                        return@Runnable
+                    }
+                } else {
+                    // Modifying own faction - check role permission
+                    val role = faction.getRole(mfPlayer.id)
+                    if (role == null || !role.hasPermission(faction, plugin.factionPermissions.setFlag(flag))) {
+                        sender.sendMessage("$RED${plugin.language["CommandFactionFlagSetNoFactionPermission"]}")
+                        return@Runnable
+                    }
                 }
+                
                 when (val coercionResult = flag.coerce(flagValue)) {
                     is MfFlagValueCoercionFailure -> sender.sendMessage(
                         "$RED${plugin.language[
@@ -178,9 +236,42 @@ class MfFactionFlagSetCommand(private val plugin: MedievalFactions) : CommandExe
         command: Command,
         label: String,
         args: Array<out String>
-    ) = when {
-        args.isEmpty() -> plugin.flags.map { it.name }
-        args.size == 1 -> plugin.flags.filter { it.name.lowercase().startsWith(args[0].lowercase()) }.map { it.name }
-        else -> emptyList()
+    ): List<String> {
+        val hasForcePermission = sender.hasPermission("mf.force.flag")
+        val factionService = plugin.services.factionService
+        
+        return when {
+            args.isEmpty() -> {
+                // First arg: could be faction name (if force) or flag name
+                if (hasForcePermission) {
+                    factionService.factions.map { it.name } + plugin.flags.map { it.name }
+                } else {
+                    plugin.flags.map { it.name }
+                }
+            }
+            args.size == 1 -> {
+                // Filter first argument suggestions
+                if (hasForcePermission) {
+                    val factionNames = factionService.factions.filter { it.name.lowercase().startsWith(args[0].lowercase()) }.map { it.name }
+                    val flagNames = plugin.flags.filter { it.name.lowercase().startsWith(args[0].lowercase()) }.map { it.name }
+                    factionNames + flagNames
+                } else {
+                    plugin.flags.filter { it.name.lowercase().startsWith(args[0].lowercase()) }.map { it.name }
+                }
+            }
+            args.size == 2 && hasForcePermission -> {
+                // Second arg: could be flag name if first arg is faction
+                val unquotedArgs = args.unquote()
+                val potentialFaction = factionService.getFaction(MfFactionId(unquotedArgs[0])) ?: factionService.getFaction(unquotedArgs[0])
+                if (potentialFaction != null) {
+                    // First arg is faction, suggest flag names
+                    plugin.flags.filter { it.name.lowercase().startsWith(args[1].lowercase()) }.map { it.name }
+                } else {
+                    // First arg is flag, no more suggestions
+                    emptyList()
+                }
+            }
+            else -> emptyList()
+        }
     }
 }
