@@ -12,6 +12,19 @@ import java.util.logging.Level.SEVERE
 
 class HighPriorityPlayerInteractListener(private val plugin: MedievalFactions) : Listener {
 
+    companion object {
+        private val PROJECTILE_WEAPONS = setOf(
+            org.bukkit.Material.BOW,
+            org.bukkit.Material.CROSSBOW,
+            org.bukkit.Material.TRIDENT,
+            org.bukkit.Material.SNOWBALL,
+            org.bukkit.Material.EGG,
+            org.bukkit.Material.ENDER_PEARL,
+            org.bukkit.Material.SPLASH_POTION,
+            org.bukkit.Material.LINGERING_POTION
+        )
+    }
+
     @EventHandler(priority = EventPriority.HIGHEST)
     fun onPlayerInteract(event: PlayerInteractEvent) {
         // Only check protection if event hasn't been cancelled by other protection systems
@@ -53,17 +66,7 @@ class HighPriorityPlayerInteractListener(private val plugin: MedievalFactions) :
         val item = event.item
         if (item != null) {
             // Allow projectile shooting when not interacting with an interactable block
-            val projectileWeapons = setOf(
-                org.bukkit.Material.BOW,
-                org.bukkit.Material.CROSSBOW,
-                org.bukkit.Material.TRIDENT,
-                org.bukkit.Material.SNOWBALL,
-                org.bukkit.Material.EGG,
-                org.bukkit.Material.ENDER_PEARL,
-                org.bukkit.Material.SPLASH_POTION,
-                org.bukkit.Material.LINGERING_POTION
-            )
-            if (item.type in projectileWeapons && !clickedBlock.type.isInteractable) return
+            if (item.type in PROJECTILE_WEAPONS && !clickedBlock.type.isInteractable) return
         }
 
         // Check if player is allowed to interact based on faction relationships
