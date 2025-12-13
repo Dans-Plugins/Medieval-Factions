@@ -133,6 +133,7 @@ class JooqMfFactionRepository(
             .set(MF_FACTION.HOME_PITCH, faction.home?.pitch)
             .set(MF_FACTION.BONUS_POWER, faction.bonusPower)
             .set(MF_FACTION.AUTOCLAIM, faction.autoclaim)
+            .set(MF_FACTION.AUTOUNCLAIM, faction.autounclaim)
             .set(
                 MF_FACTION.ROLES,
                 JSON.valueOf(
@@ -159,6 +160,7 @@ class JooqMfFactionRepository(
             .set(MF_FACTION.HOME_PITCH, faction.home?.pitch)
             .set(MF_FACTION.BONUS_POWER, faction.bonusPower)
             .set(MF_FACTION.AUTOCLAIM, faction.autoclaim)
+            .set(MF_FACTION.AUTOUNCLAIM, faction.autounclaim)
             .set(MF_FACTION.ROLES, JSON.valueOf(gson.toJson(faction.roles.map(MfFactionRole::serialize))))
             .set(MF_FACTION.DEFAULT_ROLE_ID, faction.roles.default.id.value)
             .set(
@@ -296,6 +298,7 @@ class JooqMfFactionRepository(
             },
             bonusPower = bonusPower,
             autoclaim = autoclaim,
+            autounclaim = autounclaim,
             roles = factionRoles,
             defaultPermissionsByName = gson.fromJson(
                 defaultPermissions.data(),

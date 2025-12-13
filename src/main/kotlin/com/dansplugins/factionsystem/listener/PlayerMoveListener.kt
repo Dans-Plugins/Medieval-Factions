@@ -88,6 +88,19 @@ class PlayerMoveListener(private val plugin: MedievalFactions) : Listener {
                         }
                     }
                 }
+                if (playerFaction != null) {
+                    if (newChunkClaim != null && newChunkClaim.factionId.value == playerFaction.id.value && playerFaction.autounclaim) {
+                        val playerRole = playerFaction.getRole(mfPlayer.id) ?: return@Runnable
+                        val unclaimPermissionValue = playerRole.getPermissionValue(plugin.factionPermissions.unclaim) ?: return@Runnable
+                        if (!unclaimPermissionValue || !event.player.hasPermission("mf.unclaim")) {
+                            return@Runnable
+                        }
+                        claimService.delete(newChunkClaim).onFailure {
+                            plugin.logger.log(SEVERE, "Failed to delete chunk claim: ${it.reason.message}", it.reason.cause)
+                            return@Runnable
+                        }
+                    }
+                }
                 if (newChunkClaim?.factionId?.value == oldChunkClaim?.factionId?.value) return@Runnable
                 plugin.server.scheduler.runTask(
                     plugin,
