@@ -34,6 +34,7 @@ class MfFactionPermissions(private val plugin: MedievalFactions) {
                 wrapSimplePermission("REQUEST_ALLIANCE", plugin.language["FactionPermissionRequestAlliance"], false),
                 wrapSimplePermission("BREAK_ALLIANCE", plugin.language["FactionPermissionBreakAlliance"], false),
                 wrapSimplePermission("TOGGLE_AUTOCLAIM", plugin.language["FactionPermissionToggleAutoclaim"], false),
+                wrapSimplePermission("TOGGLE_AUTOUNCLAIM", plugin.language["FactionPermissionToggleAutounclaim"], false),
                 Chat(plugin),
                 wrapSimplePermission("CHAT_HISTORY", plugin.language["FactionPermissionChatHistory"], true),
                 wrapSimplePermission("CLAIM", plugin.language["FactionPermissionClaim"], false),
@@ -86,6 +87,7 @@ class MfFactionPermissions(private val plugin: MedievalFactions) {
     val requestAlliance = parse("REQUEST_ALLIANCE")!!
     val breakAlliance = parse("BREAK_ALLIANCE")!!
     val toggleAutoclaim = parse("TOGGLE_AUTOCLAIM")!!
+    val toggleAutounclaim = parse("TOGGLE_AUTOUNCLAIM")!!
     fun chat(chatChannel: MfFactionChatChannel) = parse("CHAT(${chatChannel.name})")!!
     val chatHistory = parse("CHAT_HISTORY")!!
     val claim = parse("CLAIM")!!
