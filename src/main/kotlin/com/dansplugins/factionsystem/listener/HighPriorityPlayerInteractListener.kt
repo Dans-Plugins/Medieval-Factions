@@ -50,6 +50,22 @@ class HighPriorityPlayerInteractListener(private val plugin: MedievalFactions) :
         val factionService = plugin.services.factionService
         val claimFaction = factionService.getFaction(claim.factionId) ?: return
 
+        val item = event.item
+        if (item != null) {
+            // Allow projectile shooting when not interacting with an interactable block
+            val projectileWeapons = setOf(
+                org.bukkit.Material.BOW,
+                org.bukkit.Material.CROSSBOW,
+                org.bukkit.Material.TRIDENT,
+                org.bukkit.Material.SNOWBALL,
+                org.bukkit.Material.EGG,
+                org.bukkit.Material.ENDER_PEARL,
+                org.bukkit.Material.SPLASH_POTION,
+                org.bukkit.Material.LINGERING_POTION
+            )
+            if (item.type in projectileWeapons && !clickedBlock.type.isInteractable) return
+        }
+
         // Check if player is allowed to interact based on faction relationships
         if (!claimService.isInteractionAllowed(mfPlayer.id, claim)) {
             if (mfPlayer.isBypassEnabled && event.player.hasPermission("mf.bypass")) {
