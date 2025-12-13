@@ -136,12 +136,9 @@ fi
 # Check if build was successful
 JAR_FILE=$(find build/libs -name "*-all.jar" -type f 2>/dev/null | head -n 1)
 if [ -n "$JAR_FILE" ] && [ -f "$JAR_FILE" ]; then
-    # Get absolute path to the JAR file
-    ABS_JAR_PATH=$(cd "$(dirname "$JAR_FILE")" && pwd)/$(basename "$JAR_FILE")
-    
     # Copy JAR to parent directory for easy access
-    cp "$JAR_FILE" "../$(basename "$JAR_FILE")"
-    FINAL_JAR_PATH="../$(basename "$JAR_FILE")"
+    JAR_NAME=$(basename "$JAR_FILE")
+    cp "$JAR_FILE" "../$JAR_NAME"
     
     cd ..
     
@@ -151,7 +148,7 @@ if [ -n "$JAR_FILE" ] && [ -f "$JAR_FILE" ]; then
     echo "========================================="
     echo ""
     echo "The plugin JAR file has been created at:"
-    echo "  $(pwd)/$(basename "$JAR_FILE")"
+    echo "  $(pwd)/$JAR_NAME"
     echo ""
     echo "The source code is in: $(pwd)/$BUILD_DIR"
     echo ""
