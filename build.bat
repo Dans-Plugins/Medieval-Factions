@@ -116,12 +116,20 @@ if %JAVA_MAJOR_VERSION% LSS 21 (
             echo.
             winget install EclipseAdoptium.Temurin.21.JDK --silent --accept-package-agreements --accept-source-agreements
             
-            echo.
-            echo Java 21 has been installed.
-            echo.
-            echo IMPORTANT: Please close this command prompt and open a new one for the PATH changes to take effect.
-            echo Then run this build script again.
-            echo.
+            if %ERRORLEVEL% EQU 0 (
+                echo.
+                echo Java 21 has been installed successfully.
+                echo.
+                echo IMPORTANT: Please close this command prompt and open a new one for the PATH changes to take effect.
+                echo Then run this build script again.
+                echo.
+            ) else (
+                echo.
+                echo WARNING: Java installation may have failed.
+                echo Please try installing manually from:
+                echo   - https://adoptium.net/temurin/releases/?version=21
+                echo.
+            )
             pause
             exit /b 0
         ) else (
@@ -133,12 +141,20 @@ if %JAVA_MAJOR_VERSION% LSS 21 (
                 echo.
                 choco install temurin21 -y
                 
-                echo.
-                echo Java 21 has been installed.
-                echo.
-                echo IMPORTANT: Please close this command prompt and open a new one for the PATH changes to take effect.
-                echo Then run this build script again.
-                echo.
+                if %ERRORLEVEL% EQU 0 (
+                    echo.
+                    echo Java 21 has been installed successfully.
+                    echo.
+                    echo IMPORTANT: Please close this command prompt and open a new one for the PATH changes to take effect.
+                    echo Then run this build script again.
+                    echo.
+                ) else (
+                    echo.
+                    echo WARNING: Java installation may have failed.
+                    echo Please try installing manually from:
+                    echo   - https://adoptium.net/temurin/releases/?version=21
+                    echo.
+                )
                 pause
                 exit /b 0
             ) else (

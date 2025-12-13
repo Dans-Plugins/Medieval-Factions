@@ -120,8 +120,36 @@ if [ "$JAVA_VERSION" -lt 21 ] 2>/dev/null; then
                 brew install openjdk@21
                 echo ""
                 echo "Adding Java 21 to PATH..."
-                echo 'export PATH="/opt/homebrew/opt/openjdk@21/bin:$PATH"' >> ~/.zshrc
-                export PATH="/opt/homebrew/opt/openjdk@21/bin:$PATH"
+                
+                # Get the actual Homebrew prefix (handles both Intel and Apple Silicon)
+                BREW_PREFIX=$(brew --prefix openjdk@21)
+                
+                # Determine user's shell and update appropriate config file
+                USER_SHELL=$(basename "$SHELL")
+                case "$USER_SHELL" in
+                    zsh)
+                        echo "export PATH=\"$BREW_PREFIX/bin:\$PATH\"" >> ~/.zshrc
+                        echo "Updated ~/.zshrc"
+                        ;;
+                    bash)
+                        # macOS bash uses .bash_profile
+                        if [ -f ~/.bash_profile ]; then
+                            echo "export PATH=\"$BREW_PREFIX/bin:\$PATH\"" >> ~/.bash_profile
+                            echo "Updated ~/.bash_profile"
+                        else
+                            echo "export PATH=\"$BREW_PREFIX/bin:\$PATH\"" >> ~/.bashrc
+                            echo "Updated ~/.bashrc"
+                        fi
+                        ;;
+                    *)
+                        echo "Detected shell: $USER_SHELL"
+                        echo "Please manually add to your shell profile:"
+                        echo "  export PATH=\"$BREW_PREFIX/bin:\$PATH\""
+                        ;;
+                esac
+                
+                # Set PATH for current session
+                export PATH="$BREW_PREFIX/bin:$PATH"
             else
                 echo "Homebrew not found. Please install it first:"
                 echo "  /bin/bash -c \"\$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)\""
