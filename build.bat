@@ -21,11 +21,32 @@ if %ERRORLEVEL% NEQ 0 (
 )
 
 REM Check Java version
-for /f "tokens=3" %%g in ('java -version 2^>^&1 ^| findstr /i "version"') do (
+REM Extract version from various Java version formats
+for /f "usebackq tokens=*" %%i in (`java -version 2^>^&1`) do (
+    set JAVA_VERSION_LINE=%%i
+    goto :parse_version
+)
+
+:parse_version
+REM Extract the version string from the line
+for /f "tokens=3" %%g in ("%JAVA_VERSION_LINE%") do (
     set JAVA_VERSION_STRING=%%g
 )
+
+REM Remove quotes and extract major version
 set JAVA_VERSION_STRING=%JAVA_VERSION_STRING:"=%
-for /f "delims=. tokens=1" %%v in ("%JAVA_VERSION_STRING%") do (
+REM Handle both old format (1.8.0) and new format (17.0.1)
+for /f "tokens=1 delims=." %%v in ("%JAVA_VERSION_STRING%") do (
+    set JAVA_MAJOR_VERSION=%%v
+)
+REM If version starts with 1, take the second part (e.g., 1.8 -> 8)
+if "%JAVA_MAJOR_VERSION%"=="1" (
+    for /f "tokens=2 delims=." %%v in ("%JAVA_VERSION_STRING%") do (
+        set JAVA_MAJOR_VERSION=%%v
+    )
+)
+REM Remove any non-numeric suffixes
+for /f "tokens=1 delims=-+" %%v in ("%JAVA_MAJOR_VERSION%") do (
     set JAVA_MAJOR_VERSION=%%v
 )
 
@@ -73,7 +94,7 @@ if !BUILD_RESULT! NEQ 0 (
 
 REM Find the built JAR file
 set JAR_FILE=
-for %%f in (build\libs\*-all.jar) do (
+for /f "delims=" %%f in ('dir /b /s build\libs\*-all.jar 2^>nul') do (
     set JAR_FILE=%%f
     goto :found
 )

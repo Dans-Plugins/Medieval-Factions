@@ -19,15 +19,13 @@ if ! command -v java &> /dev/null; then
 fi
 
 # Check Java version
-JAVA_VERSION=$(java -version 2>&1 | awk -F '"' '/version/ {print $2}' | cut -d'.' -f1)
-if [ -z "$JAVA_VERSION" ]; then
-    # Try alternative version check for newer Java versions
-    JAVA_VERSION=$(java -version 2>&1 | grep -oP 'version "\K[0-9]+')
-fi
+# This extracts the major version number from various Java version formats
+JAVA_VERSION_OUTPUT=$(java -version 2>&1 | head -n 1)
+JAVA_VERSION=$(echo "$JAVA_VERSION_OUTPUT" | sed -n 's/.*version "\(.*\)".*/\1/p' | sed 's/^1\.//' | cut -d'.' -f1 | cut -d'-' -f1 | cut -d'+' -f1)
 
 echo "Detected Java version: $JAVA_VERSION"
 
-if [ "$JAVA_VERSION" -lt 17 ]; then
+if [ -z "$JAVA_VERSION" ] || [ "$JAVA_VERSION" -lt 17 ] 2>/dev/null; then
     echo "ERROR: Java 17 or higher is required"
     echo "Current version: $JAVA_VERSION"
     echo "Please install Java 17 or higher from:"
@@ -54,14 +52,15 @@ else
 fi
 
 # Check if build was successful
-if [ -f "build/libs/Medieval-Factions-"*"-all.jar" ]; then
+JAR_FILE=$(find build/libs -name "*-all.jar" -type f 2>/dev/null | head -n 1)
+if [ -n "$JAR_FILE" ] && [ -f "$JAR_FILE" ]; then
     echo ""
     echo "========================================="
     echo "✓ BUILD SUCCESSFUL!"
     echo "========================================="
     echo ""
     echo "The plugin JAR file has been created at:"
-    ls -1 build/libs/*-all.jar | head -1
+    echo "$JAR_FILE"
     echo ""
     echo "To use the plugin:"
     echo "1. Copy the JAR file to your server's 'plugins' folder"
