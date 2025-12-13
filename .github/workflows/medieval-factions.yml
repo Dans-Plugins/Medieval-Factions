@@ -29,16 +29,26 @@ jobs:
         java-version: '21'
         distribution: 'temurin'
     
+    - name: Set up Git
+      run: |
+        git config --global user.email "ci@github.com"
+        git config --global user.name "CI Bot"
+    
     - name: Download standalone build script
       run: |
-        # Simulate a user downloading just the build script
-        curl -O https://raw.githubusercontent.com/${{ github.repository }}/${{ github.head_ref || github.ref_name }}/build.sh
+        # Download the build script from the PR branch
+        BRANCH_NAME="${{ github.head_ref || github.ref_name }}"
+        echo "Downloading build script from branch: $BRANCH_NAME"
+        curl -O https://raw.githubusercontent.com/${{ github.repository }}/$BRANCH_NAME/build.sh
         chmod +x build.sh
     
     - name: Test standalone build script
       run: |
-        # Run the standalone build script (it will clone the repo itself)
-        ./build.sh ${{ github.head_ref || github.ref_name }}
+        # Run the standalone build script
+        # Pass the PR branch name so it builds the code being tested
+        BRANCH_NAME="${{ github.head_ref || github.ref_name }}"
+        echo "Testing build script with branch: $BRANCH_NAME"
+        ./build.sh "$BRANCH_NAME"
         
         # Verify the JAR was created
         if ls Medieval-Factions-*-all.jar 1> /dev/null 2>&1; then
@@ -58,15 +68,25 @@ jobs:
         java-version: '21'
         distribution: 'temurin'
     
+    - name: Set up Git
+      run: |
+        git config --global user.email "ci@github.com"
+        git config --global user.name "CI Bot"
+    
     - name: Download standalone build script
       run: |
-        # Simulate a user downloading just the build script
-        Invoke-WebRequest -Uri "https://raw.githubusercontent.com/${{ github.repository }}/${{ github.head_ref || github.ref_name }}/build.bat" -OutFile "build.bat"
+        # Download the build script from the PR branch
+        $BranchName = "${{ github.head_ref || github.ref_name }}"
+        Write-Host "Downloading build script from branch: $BranchName"
+        Invoke-WebRequest -Uri "https://raw.githubusercontent.com/${{ github.repository }}/$BranchName/build.bat" -OutFile "build.bat"
     
     - name: Test standalone build script
       run: |
-        # Run the standalone build script (it will clone the repo itself)
-        .\build.bat ${{ github.head_ref || github.ref_name }}
+        # Run the standalone build script
+        # Pass the PR branch name so it builds the code being tested
+        set BRANCH_NAME=${{ github.head_ref || github.ref_name }}
+        echo Testing build script with branch: %BRANCH_NAME%
+        call build.bat "%BRANCH_NAME%"
       shell: cmd
     
     - name: Verify JAR was created
