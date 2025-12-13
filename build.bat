@@ -17,7 +17,7 @@ echo Medieval Factions - Standalone Build Script
 echo =========================================
 echo.
 echo This script will:
-echo   1. Check for required dependencies (Java 17+, Git)
+echo   1. Check for required dependencies (Java 21+, Git)
 echo   2. Clone the Medieval Factions repository
 echo   3. Build the plugin JAR file
 echo.
@@ -39,7 +39,7 @@ REM Check if Java is installed
 where java >nul 2>&1
 if %ERRORLEVEL% NEQ 0 (
     echo ERROR: Java is not installed or not in PATH
-    echo Please install Java 17 or higher from:
+    echo Please install Java 21 or higher from:
     echo   - https://adoptium.net/ ^(recommended^)
     echo   - https://www.oracle.com/java/technologies/downloads/
     pause
@@ -64,7 +64,7 @@ for /f "tokens=3" %%g in ("%JAVA_VERSION_LINE%") do (
 REM Remove quotes
 set JAVA_VERSION_STRING=%JAVA_VERSION_STRING:"=%
 
-REM Handle both old format (1.8.0) and new format (17.0.1)
+REM Handle both old format (1.8.0) and new format (21.0.1)
 for /f "tokens=1 delims=." %%v in ("%JAVA_VERSION_STRING%") do (
     set JAVA_MAJOR_VERSION=%%v
 )
@@ -86,19 +86,25 @@ echo Detected Java version: %JAVA_MAJOR_VERSION%
 REM Check if version was extracted successfully
 if "%JAVA_MAJOR_VERSION%"=="" (
     echo ERROR: Could not determine Java version
-    echo Please install Java 17 or higher from:
+    echo Please install Java 21 or higher from:
     echo   - https://adoptium.net/ ^(recommended^)
     echo   - https://www.oracle.com/java/technologies/downloads/
     pause
     exit /b 1
 )
 
-if %JAVA_MAJOR_VERSION% LSS 17 (
-    echo ERROR: Java 17 or higher is required
-    echo Current version: %JAVA_MAJOR_VERSION%
-    echo Please install Java 17 or higher from:
-    echo   - https://adoptium.net/ ^(recommended^)
-    echo   - https://www.oracle.com/java/technologies/downloads/
+if %JAVA_MAJOR_VERSION% LSS 21 (
+    echo ERROR: Java 21 or higher is required to build Medieval Factions
+    echo Current version: Java %JAVA_MAJOR_VERSION%
+    echo.
+    echo This project requires Java 21 due to dependencies and build tooling.
+    echo Please install Java 21 or higher from:
+    echo   - https://adoptium.net/temurin/releases/?version=21 ^(recommended^)
+    echo   - https://www.oracle.com/java/technologies/downloads/#java21
+    echo.
+    echo After installation, ensure Java 21 is in your PATH:
+    echo   - Run: java -version
+    echo   - It should show version 21 or higher
     pause
     exit /b 1
 )

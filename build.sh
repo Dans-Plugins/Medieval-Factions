@@ -16,7 +16,7 @@ echo "Medieval Factions - Standalone Build Script"
 echo "========================================="
 echo ""
 echo "This script will:"
-echo "  1. Check for required dependencies (Java 17+, Git)"
+echo "  1. Check for required dependencies (Java 21+, Git)"
 echo "  2. Clone the Medieval Factions repository"
 echo "  3. Build the plugin JAR file"
 echo ""
@@ -38,7 +38,7 @@ echo "✓ Git is installed"
 # Check if Java is installed
 if ! command -v java &> /dev/null; then
     echo "ERROR: Java is not installed or not in PATH"
-    echo "Please install Java 17 or higher from:"
+    echo "Please install Java 21 or higher from:"
     echo "  - https://adoptium.net/ (recommended)"
     echo "  - https://www.oracle.com/java/technologies/downloads/"
     exit 1
@@ -65,18 +65,24 @@ JAVA_VERSION=$(echo "$JAVA_VERSION" | tr -cd '0-9')
 # Validate that we extracted a numeric version and check if it meets requirements
 if [ -z "$JAVA_VERSION" ]; then
     echo "ERROR: Could not determine Java version"
-    echo "Please install Java 17 or higher from:"
+    echo "Please install Java 21 or higher from:"
     echo "  - https://adoptium.net/ (recommended)"
     echo "  - https://www.oracle.com/java/technologies/downloads/"
     exit 1
 fi
 
-if [ "$JAVA_VERSION" -lt 17 ] 2>/dev/null; then
-    echo "ERROR: Java 17 or higher is required"
-    echo "Current version: $JAVA_VERSION"
-    echo "Please install Java 17 or higher from:"
-    echo "  - https://adoptium.net/ (recommended)"
-    echo "  - https://www.oracle.com/java/technologies/downloads/"
+if [ "$JAVA_VERSION" -lt 21 ] 2>/dev/null; then
+    echo "ERROR: Java 21 or higher is required to build Medieval Factions"
+    echo "Current version: Java $JAVA_VERSION"
+    echo ""
+    echo "This project requires Java 21 due to dependencies and build tooling."
+    echo "Please install Java 21 or higher from:"
+    echo "  - https://adoptium.net/temurin/releases/?version=21 (recommended)"
+    echo "  - https://www.oracle.com/java/technologies/downloads/#java21"
+    echo ""
+    echo "After installation, ensure Java 21 is in your PATH:"
+    echo "  - Run: java -version"
+    echo "  - It should show version 21 or higher"
     exit 1
 fi
 
