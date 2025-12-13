@@ -10,12 +10,61 @@ jobs:
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v3
-    - name: Set up JDK 17
+    - name: Set up JDK 21
       uses: actions/setup-java@v3
       with:
-        java-version: '17'
-        distribution: 'zulu'
+        java-version: '21'
+        distribution: 'temurin'
     - name: Build with Gradle
       uses: gradle/gradle-build-action@v2
       with:
         arguments: build
+  
+  test-standalone-build-script-linux:
+    runs-on: ubuntu-latest
+    steps:
+    - name: Download standalone build script
+      run: |
+        # Simulate a user downloading just the build script
+        curl -O https://raw.githubusercontent.com/${{ github.repository }}/${{ github.head_ref || github.ref_name }}/build.sh
+        chmod +x build.sh
+    
+    - name: Test standalone build script
+      run: |
+        # Run the standalone build script (it will clone the repo itself)
+        ./build.sh ${{ github.head_ref || github.ref_name }}
+        
+        # Verify the JAR was created
+        if ls Medieval-Factions-*-all.jar 1> /dev/null 2>&1; then
+          echo "✓ Standalone build script successfully created JAR"
+          ls -lh Medieval-Factions-*-all.jar
+        else
+          echo "✗ Standalone build script failed to create JAR"
+          exit 1
+        fi
+  
+  test-standalone-build-script-windows:
+    runs-on: windows-latest
+    steps:
+    - name: Download standalone build script
+      run: |
+        # Simulate a user downloading just the build script
+        Invoke-WebRequest -Uri "https://raw.githubusercontent.com/${{ github.repository }}/${{ github.head_ref || github.ref_name }}/build.bat" -OutFile "build.bat"
+    
+    - name: Test standalone build script
+      run: |
+        # Run the standalone build script (it will clone the repo itself)
+        .\build.bat ${{ github.head_ref || github.ref_name }}
+      shell: cmd
+    
+    - name: Verify JAR was created
+      run: |
+        $jarFiles = Get-ChildItem -Path . -Filter "Medieval-Factions-*-all.jar"
+        if ($jarFiles.Count -gt 0) {
+          Write-Host "✓ Standalone build script successfully created JAR"
+          Get-ChildItem Medieval-Factions-*-all.jar | Format-Table Name, Length
+        } else {
+          Write-Host "✗ Standalone build script failed to create JAR"
+          exit 1
+        }
+      shell: powershell
