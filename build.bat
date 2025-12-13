@@ -104,7 +104,7 @@ if %JAVA_MAJOR_VERSION% LSS 21 (
     echo NOTE: This will use your system's package manager to install Java 21.
     set /p INSTALL_JAVA="Would you like to download and install Java 21 automatically? (y/n): "
     
-    if /i "%INSTALL_JAVA%"=="y" (
+    if /i "!INSTALL_JAVA!"=="y" (
         echo.
         echo Installing Java 21...
         echo (This may take a few minutes)
@@ -112,18 +112,26 @@ if %JAVA_MAJOR_VERSION% LSS 21 (
         
         REM Check if winget is available (Windows 10 1809+ / Windows 11)
         where winget >nul 2>&1
-        if %ERRORLEVEL% EQU 0 (
+        if !ERRORLEVEL! EQU 0 (
             echo Detected winget package manager
             echo Installing Eclipse Temurin JDK 21 via winget...
             echo.
             winget install EclipseAdoptium.Temurin.21.JDK --silent --accept-package-agreements --accept-source-agreements
             
-            if %ERRORLEVEL% EQU 0 (
+            if !ERRORLEVEL! EQU 0 (
                 echo.
-                echo Java 21 has been installed successfully.
+                echo =========================================
+                echo Java 21 has been installed successfully!
+                echo =========================================
                 echo.
-                echo IMPORTANT: Please close this command prompt and open a new one for the PATH changes to take effect.
-                echo Then run this build script again.
+                echo IMPORTANT: You MUST close this command prompt and open a new one
+                echo for the PATH changes to take effect, then run this script again.
+                echo.
+                echo Steps:
+                echo   1. Close this window
+                echo   2. Open a new Command Prompt
+                echo   3. Navigate to the same directory
+                echo   4. Run: build.bat
                 echo.
             ) else (
                 echo.
@@ -137,18 +145,26 @@ if %JAVA_MAJOR_VERSION% LSS 21 (
         ) else (
             REM Check if choco is available
             where choco >nul 2>&1
-            if %ERRORLEVEL% EQU 0 (
+            if !ERRORLEVEL! EQU 0 (
                 echo Detected Chocolatey package manager
                 echo Installing Temurin JDK 21 via Chocolatey...
                 echo.
                 choco install temurin21 -y
                 
-                if %ERRORLEVEL% EQU 0 (
+                if !ERRORLEVEL! EQU 0 (
                     echo.
-                    echo Java 21 has been installed successfully.
+                    echo =========================================
+                    echo Java 21 has been installed successfully!
+                    echo =========================================
                     echo.
-                    echo IMPORTANT: Please close this command prompt and open a new one for the PATH changes to take effect.
-                    echo Then run this build script again.
+                    echo IMPORTANT: You MUST close this command prompt and open a new one
+                    echo for the PATH changes to take effect, then run this script again.
+                    echo.
+                    echo Steps:
+                    echo   1. Close this window
+                    echo   2. Open a new Command Prompt
+                    echo   3. Navigate to the same directory
+                    echo   4. Run: build.bat
                     echo.
                 ) else (
                     echo.
