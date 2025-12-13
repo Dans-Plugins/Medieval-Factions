@@ -141,15 +141,15 @@ class MfFactionAddMemberCommand(private val plugin: MedievalFactions) : CommandE
     }
 
     private fun confirmAddMember(
-        player: Player,
+        sender: Player,
         targetPlayer: MfPlayer,
         currentFaction: MfFaction,
         targetFaction: MfFaction,
         originalArgs: List<String>
     ) {
         val targetName = targetPlayer.name ?: plugin.language["CommandFactionAddMemberUnknownNewPlayerFaction"]
-        player.sendMessage("${ChatColor.RED}${plugin.language["CommandFactionAddMemberConfirmRemoval", targetName, currentFaction.name, targetFaction.name]}")
-        player.spigot().sendMessage(
+        sender.sendMessage("${ChatColor.RED}${plugin.language["CommandFactionAddMemberConfirmRemoval", targetName, currentFaction.name, targetFaction.name]}")
+        sender.spigot().sendMessage(
             TextComponent(plugin.language["CommandFactionAddMemberConfirmButton"]).apply {
                 color = SpigotChatColor.GREEN
                 isBold = true
