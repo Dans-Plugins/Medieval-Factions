@@ -4,5 +4,5 @@ data class MfLegacyLocation(
     val worldName: String,
     val x: String,
     val y: String,
-    val z: String
+    val z: String,
 )

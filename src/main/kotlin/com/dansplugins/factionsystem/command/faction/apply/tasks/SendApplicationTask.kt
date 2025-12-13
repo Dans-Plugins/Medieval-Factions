@@ -14,9 +14,8 @@ import java.util.logging.Level.SEVERE
 class SendApplicationTask(
     private val plugin: MedievalFactions,
     private val sender: Player,
-    private val targetFactionName: String
+    private val targetFactionName: String,
 ) : Runnable {
-
     override fun run() {
         val factionService = plugin.services.factionService
         val playerService = plugin.services.playerService
@@ -36,18 +35,27 @@ class SendApplicationTask(
         }
 
         saveFactionApplication(factionService, target, mfPlayer, sender)
-        target.sendMessage("${ChatColor.GREEN}${plugin.language["CommandFactionApplyNewApplicationTitle"]}", "${ChatColor.AQUA}${plugin.language["CommandFactionApplyNewApplicationMessage", mfPlayer.name.toString()]}")
+        target.sendMessage(
+            "${ChatColor.GREEN}${plugin.language["CommandFactionApplyNewApplicationTitle"]}",
+            "${ChatColor.AQUA}${plugin.language["CommandFactionApplyNewApplicationMessage", mfPlayer.name.toString()]}",
+        )
         sender.sendMessage("${ChatColor.GREEN}${plugin.language["CommandFactionApplySuccess"]}")
     }
 
-    private fun getOrSavePlayer(playerService: MfPlayerService, sender: Player): MfPlayer? {
-        return playerService.getPlayer(sender) ?: playerService.save(MfPlayer(plugin, sender)).onFailure {
+    private fun getOrSavePlayer(
+        playerService: MfPlayerService,
+        sender: Player,
+    ): MfPlayer? =
+        playerService.getPlayer(sender) ?: playerService.save(MfPlayer(plugin, sender)).onFailure {
             sender.sendMessage("${ChatColor.RED}${plugin.language["CommandFactionApplyFailedToSavePlayer"]}")
             plugin.logger.log(SEVERE, "Failed to save player: ${it.reason.message}", it.reason.cause) as Nothing
         }
-    }
 
-    private fun getTargetFaction(factionService: MfFactionService, targetFactionName: String, sender: Player): MfFaction? {
+    private fun getTargetFaction(
+        factionService: MfFactionService,
+        targetFactionName: String,
+        sender: Player,
+    ): MfFaction? {
         val target = factionService.getFaction(targetFactionName)
         if (target == null) {
             sender.sendMessage("${ChatColor.RED}${plugin.language["CommandFactionApplyInvalidTarget"]}")
@@ -55,7 +63,12 @@ class SendApplicationTask(
         return target
     }
 
-    private fun saveFactionApplication(factionService: MfFactionService, target: MfFaction, mfPlayer: MfPlayer, sender: Player) {
+    private fun saveFactionApplication(
+        factionService: MfFactionService,
+        target: MfFaction,
+        mfPlayer: MfPlayer,
+        sender: Player,
+    ) {
         factionService.save(target.copy(applications = target.applications + MfFactionApplication(target.id, mfPlayer.id))).onFailure {
             sender.sendMessage("${ChatColor.RED}${plugin.language["CommandFactionApplyFailedToSaveFaction"]}")
             plugin.logger.log(SEVERE, "Failed to save faction: ${it.reason.message}", it.reason.cause) as Nothing

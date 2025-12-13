@@ -5,7 +5,7 @@ import com.dansplugins.factionsystem.faction.MfFactionId
 import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
-import java.util.*
+import java.util.UUID
 import kotlin.system.measureTimeMillis
 
 class ClaimPathBuilderPerformanceTest {
@@ -39,10 +39,11 @@ class ClaimPathBuilderPerformanceTest {
                 }
             }
 
-            val time = measureTimeMillis {
-                val paths = uut.getPaths(claims)
-                assert(paths.isNotEmpty())
-            }
+            val time =
+                measureTimeMillis {
+                    val paths = uut.getPaths(claims)
+                    assert(paths.isNotEmpty())
+                }
             times.add(time)
             println("Size: $size claims, Time: ${time}ms")
         }
@@ -57,7 +58,7 @@ class ClaimPathBuilderPerformanceTest {
             assertTrue(
                 scalingFactor < 12.0,
                 "Scaling factor $scalingFactor suggests worse than O(n) performance. " +
-                    "Expected < 12x for 4x input increase (O(n²) would be ~16x)"
+                    "Expected < 12x for 4x input increase (O(n²) would be ~16x)",
             )
         }
     }
@@ -82,9 +83,10 @@ class ClaimPathBuilderPerformanceTest {
                 }
             }
 
-            val time = measureTimeMillis {
-                uut.getPaths(claims)
-            }
+            val time =
+                measureTimeMillis {
+                    uut.getPaths(claims)
+                }
             measurements.add(Pair(claims.size, time))
             println("${claims.size} claims: ${time}ms")
         }
@@ -107,7 +109,7 @@ class ClaimPathBuilderPerformanceTest {
         assertTrue(
             timePerClaim < 1.0,
             "Time per claim (${timePerClaim}ms) is too high for $lastSize claims. " +
-                "This suggests O(n²) complexity. Expected < 1.0ms per claim with O(n)."
+                "This suggests O(n²) complexity. Expected < 1.0ms per claim with O(n).",
         )
     }
 
@@ -128,10 +130,11 @@ class ClaimPathBuilderPerformanceTest {
             }
         }
 
-        val time = measureTimeMillis {
-            val paths = uut.getPaths(claims)
-            assert(paths.isNotEmpty())
-        }
+        val time =
+            measureTimeMillis {
+                val paths = uut.getPaths(claims)
+                assert(paths.isNotEmpty())
+            }
 
         println("Time for 1024 claims with HashSet: ${time}ms")
 
@@ -141,7 +144,7 @@ class ClaimPathBuilderPerformanceTest {
             time < 100,
             "Processing 1024 claims took ${time}ms. " +
                 "Expected < 100ms with HashSet optimization. " +
-                "Old O(n²) algorithm would take ~4000ms."
+                "Old O(n²) algorithm would take ~4000ms.",
         )
     }
 
@@ -158,10 +161,11 @@ class ClaimPathBuilderPerformanceTest {
             }
         }
 
-        val time = measureTimeMillis {
-            val paths = uut.getPaths(claims)
-            assert(paths.isNotEmpty())
-        }
+        val time =
+            measureTimeMillis {
+                val paths = uut.getPaths(claims)
+                assert(paths.isNotEmpty())
+            }
 
         println("Time to process 100 claims: ${time}ms")
         // With O(n) optimization, this should be very fast (< 100ms)
@@ -182,10 +186,11 @@ class ClaimPathBuilderPerformanceTest {
             }
         }
 
-        val time = measureTimeMillis {
-            val paths = uut.getPaths(claims)
-            assert(paths.isNotEmpty())
-        }
+        val time =
+            measureTimeMillis {
+                val paths = uut.getPaths(claims)
+                assert(paths.isNotEmpty())
+            }
 
         println("Time to process 1024 claims: ${time}ms")
         // With O(n) optimization, 1000 claims should complete in < 500ms
@@ -214,10 +219,11 @@ class ClaimPathBuilderPerformanceTest {
             }
         }
 
-        val time = measureTimeMillis {
-            val paths = uut.getPaths(claims)
-            assert(paths.size == 100) // 10x10 separate regions
-        }
+        val time =
+            measureTimeMillis {
+                val paths = uut.getPaths(claims)
+                assert(paths.size == 100) // 10x10 separate regions
+            }
 
         println("Time to process 1000 claims in 100 regions: ${time}ms")
         // This should still be relatively fast with O(n) algorithm
@@ -236,13 +242,14 @@ class ClaimPathBuilderPerformanceTest {
         }
 
         var pathCount = 0
-        val time = measureTimeMillis {
-            val paths = uut.getPaths(claims)
-            pathCount = paths.size
-            // With claims spaced 10 apart, each should be separate (no shared corners)
-            // Allow for slight variation in path count due to algorithm behavior
-            assert(paths.size >= 490) { "Expected at least 490 paths for 500 sparse claims, got ${paths.size}" }
-        }
+        val time =
+            measureTimeMillis {
+                val paths = uut.getPaths(claims)
+                pathCount = paths.size
+                // With claims spaced 10 apart, each should be separate (no shared corners)
+                // Allow for slight variation in path count due to algorithm behavior
+                assert(paths.size >= 490) { "Expected at least 490 paths for 500 sparse claims, got ${paths.size}" }
+            }
 
         println("Time to process 500 sparse claims: ${time}ms ($pathCount paths)")
         // Give more headroom for slower CI environments
@@ -260,10 +267,11 @@ class ClaimPathBuilderPerformanceTest {
             claims.add(MfClaimedChunk(uuid, x, 0, factionId))
         }
 
-        val time = measureTimeMillis {
-            val paths = uut.getPaths(claims)
-            assert(paths.size == 1)
-        }
+        val time =
+            measureTimeMillis {
+                val paths = uut.getPaths(claims)
+                assert(paths.size == 1)
+            }
 
         println("Time to process 1000 claims in a strip: ${time}ms")
         assert(time < 500) { "Processing 1000 claims in a strip took ${time}ms, expected < 500ms" }
@@ -282,10 +290,11 @@ class ClaimPathBuilderPerformanceTest {
             }
         }
 
-        val time = measureTimeMillis {
-            val paths = uut.getPaths(claims)
-            assert(paths.isNotEmpty())
-        }
+        val time =
+            measureTimeMillis {
+                val paths = uut.getPaths(claims)
+                assert(paths.isNotEmpty())
+            }
 
         println("Time to process 400 claims with negative coordinates: ${time}ms")
         assert(time < 200) { "Processing 400 claims with negative coords took ${time}ms, expected < 200ms" }
@@ -307,13 +316,14 @@ class ClaimPathBuilderPerformanceTest {
         }
 
         var pathCount = 0
-        val time = measureTimeMillis {
-            val paths = uut.getPaths(claims)
-            pathCount = paths.size
-            // Checkerboard creates many regions, some sharing corners get merged
-            // Note: Corner-sharing regions may be combined into single paths
-            assert(paths.size >= 180) { "Expected at least 180 paths, got ${paths.size}" }
-        }
+        val time =
+            measureTimeMillis {
+                val paths = uut.getPaths(claims)
+                pathCount = paths.size
+                // Checkerboard creates many regions, some sharing corners get merged
+                // Note: Corner-sharing regions may be combined into single paths
+                assert(paths.size >= 180) { "Expected at least 180 paths, got ${paths.size}" }
+            }
 
         println("Time to process 200 claims in checkerboard pattern: ${time}ms ($pathCount paths)")
         assert(time < 500) { "Processing 200 claims in checkerboard took ${time}ms, expected < 500ms" }

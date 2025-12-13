@@ -1,14 +1,26 @@
 package com.dansplugins.factionsystem.claim
 
 import com.dansplugins.factionsystem.faction.MfFactionId
-import java.util.*
+import java.util.UUID
 
 interface MfClaimedChunkRepository {
+    fun getClaim(
+        worldId: UUID,
+        x: Int,
+        z: Int,
+    ): MfClaimedChunk?
 
-    fun getClaim(worldId: UUID, x: Int, z: Int): MfClaimedChunk?
     fun getClaims(factionId: MfFactionId): List<MfClaimedChunk>
+
     fun getClaims(): List<MfClaimedChunk>
+
     fun upsert(claim: MfClaimedChunk): MfClaimedChunk
-    fun delete(worldId: UUID, x: Int, z: Int)
+
+    fun delete(
+        worldId: UUID,
+        x: Int,
+        z: Int,
+    )
+
     fun deleteAll(factionId: MfFactionId)
 }

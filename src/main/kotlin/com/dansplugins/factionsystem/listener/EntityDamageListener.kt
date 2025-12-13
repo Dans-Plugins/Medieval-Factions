@@ -14,8 +14,9 @@ import org.bukkit.inventory.ItemStack
 import org.bukkit.inventory.meta.SkullMeta
 import java.util.logging.Level
 
-class EntityDamageListener(private val plugin: MedievalFactions) : Listener {
-
+class EntityDamageListener(
+    private val plugin: MedievalFactions,
+) : Listener {
     @EventHandler
     fun onEntityDamage(event: EntityDamageEvent) {
         val entity = event.entity
@@ -41,8 +42,9 @@ class EntityDamageListener(private val plugin: MedievalFactions) : Listener {
                     challengerBukkitPlayer.fireTicks = 0
                     challengerBukkitPlayer.health = duel.challengerHealth
                     duel.challengerLocation?.toBukkitLocation()?.let(challengerBukkitPlayer::teleport)
-                    nearbyPlayers += challengerBukkitPlayer.world.players
-                        .filter { it.location.distanceSquared(challengerBukkitPlayer.location) <= notificationDistanceSquared }
+                    nearbyPlayers +=
+                        challengerBukkitPlayer.world.players
+                            .filter { it.location.distanceSquared(challengerBukkitPlayer.location) <= notificationDistanceSquared }
                 }
                 val challengedBukkitPlayer = duel.challengedId.toBukkitPlayer().player
                 if (challengedBukkitPlayer != null) {
@@ -50,8 +52,9 @@ class EntityDamageListener(private val plugin: MedievalFactions) : Listener {
                     challengedBukkitPlayer.fireTicks = 0
                     challengedBukkitPlayer.health = duel.challengedHealth
                     duel.challengedLocation?.toBukkitLocation()?.let(challengedBukkitPlayer::teleport)
-                    nearbyPlayers += challengedBukkitPlayer.world.players
-                        .filter { it.location.distanceSquared(challengedBukkitPlayer.location) <= notificationDistanceSquared }
+                    nearbyPlayers +=
+                        challengedBukkitPlayer.world.players
+                            .filter { it.location.distanceSquared(challengedBukkitPlayer.location) <= notificationDistanceSquared }
                 }
                 if (mfPlayer.id == duel.challengerId) {
                     if (challengedBukkitPlayer != null) {
@@ -67,8 +70,8 @@ class EntityDamageListener(private val plugin: MedievalFactions) : Listener {
                             plugin.language[
                                 "DuelWin",
                                 duel.challengedId.toBukkitPlayer().name ?: plugin.language["UnknownPlayer"],
-                                duel.challengerId.toBukkitPlayer().name ?: plugin.language["UnknownPlayer"]
-                            ]
+                                duel.challengerId.toBukkitPlayer().name ?: plugin.language["UnknownPlayer"],
+                            ],
                         )
                     }
                 } else {
@@ -85,8 +88,8 @@ class EntityDamageListener(private val plugin: MedievalFactions) : Listener {
                             plugin.language[
                                 "DuelWin",
                                 duel.challengerId.toBukkitPlayer().name ?: plugin.language["UnknownPlayer"],
-                                duel.challengedId.toBukkitPlayer().name ?: plugin.language["UnknownPlayer"]
-                            ]
+                                duel.challengedId.toBukkitPlayer().name ?: plugin.language["UnknownPlayer"],
+                            ],
                         )
                     }
                 }
@@ -97,21 +100,25 @@ class EntityDamageListener(private val plugin: MedievalFactions) : Listener {
                             plugin.logger.log(Level.SEVERE, "Failed to delete duel: ${it.reason.message}", it.reason.cause)
                             return@Runnable
                         }
-                    }
+                    },
                 )
             }
         }
     }
 
-    private fun getHead(bukkitPlayer: OfflinePlayer, claimant: OfflinePlayer): ItemStack {
+    private fun getHead(
+        bukkitPlayer: OfflinePlayer,
+        claimant: OfflinePlayer,
+    ): ItemStack {
         val item = ItemStack(PLAYER_HEAD)
         val meta = (item.itemMeta ?: plugin.server.itemFactory.getItemMeta(PLAYER_HEAD)) as? SkullMeta
         if (meta != null) {
             meta.setDisplayName("${bukkitPlayer.name ?: plugin.language["UnknownPlayer"]}'s head")
             meta.owningPlayer = bukkitPlayer
-            meta.lore = listOf(
-                "Lost in a duel against ${claimant.name ?: plugin.language["UnknownPlayer"]}"
-            )
+            meta.lore =
+                listOf(
+                    "Lost in a duel against ${claimant.name ?: plugin.language["UnknownPlayer"]}",
+                )
         }
         item.itemMeta = meta
         return item

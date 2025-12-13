@@ -5,8 +5,9 @@ import org.bukkit.event.EventHandler
 import org.bukkit.event.Listener
 import org.bukkit.event.player.PlayerTeleportEvent
 
-class PlayerTeleportListener(private val plugin: MedievalFactions) : Listener {
-
+class PlayerTeleportListener(
+    private val plugin: MedievalFactions,
+) : Listener {
     @EventHandler
     fun onPlayerTeleport(event: PlayerTeleportEvent) {
         val teleportService = plugin.services.teleportService

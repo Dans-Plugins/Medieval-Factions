@@ -1,7 +1,6 @@
 package com.dansplugins.factionsystem.exception
 
 class WorldClaimBlockedException : RuntimeException {
-
     constructor() : super()
     constructor(message: String?) : super(message)
     constructor(message: String?, cause: Throwable?) : super(message, cause)
@@ -10,6 +9,6 @@ class WorldClaimBlockedException : RuntimeException {
         message,
         cause,
         enableSuppression,
-        writableStackTrace
+        writableStackTrace,
     )
 }

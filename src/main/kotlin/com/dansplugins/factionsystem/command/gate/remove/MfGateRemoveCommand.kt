@@ -15,8 +15,16 @@ import java.util.logging.Level
 import java.util.logging.Level.INFO
 import java.util.logging.Level.SEVERE
 
-class MfGateRemoveCommand(private val plugin: MedievalFactions) : CommandExecutor, TabCompleter {
-    override fun onCommand(sender: CommandSender, command: Command, label: String, args: Array<out String>): Boolean {
+class MfGateRemoveCommand(
+    private val plugin: MedievalFactions,
+) : CommandExecutor,
+    TabCompleter {
+    override fun onCommand(
+        sender: CommandSender,
+        command: Command,
+        label: String,
+        args: Array<out String>,
+    ): Boolean {
         if (!sender.hasPermission("mf.gate")) {
             sender.sendMessage("$RED${plugin.language["CommandGateRemoveNoPermission"]}")
             return true
@@ -29,12 +37,13 @@ class MfGateRemoveCommand(private val plugin: MedievalFactions) : CommandExecuto
             plugin,
             Runnable {
                 val playerService = plugin.services.playerService
-                val mfPlayer = playerService.getPlayer(sender)
-                    ?: playerService.save(MfPlayer(plugin, sender)).onFailure {
-                        sender.sendMessage("$RED${plugin.language["CommandGateRemoveFailedToSavePlayer"]}")
-                        plugin.logger.log(Level.SEVERE, "Failed to save player: ${it.reason.message}", it.reason.cause)
-                        return@Runnable
-                    }
+                val mfPlayer =
+                    playerService.getPlayer(sender)
+                        ?: playerService.save(MfPlayer(plugin, sender)).onFailure {
+                            sender.sendMessage("$RED${plugin.language["CommandGateRemoveFailedToSavePlayer"]}")
+                            plugin.logger.log(Level.SEVERE, "Failed to save player: ${it.reason.message}", it.reason.cause)
+                            return@Runnable
+                        }
                 val factionService = plugin.services.factionService
                 val faction = factionService.getFaction(mfPlayer.id)
                 if (faction == null) {
@@ -49,13 +58,15 @@ class MfGateRemoveCommand(private val plugin: MedievalFactions) : CommandExecuto
                 val gateService = plugin.services.gateService
                 val existingGates = gateService.getGatesByFaction(faction.id)
                 // We work with squared distances since calculating square root is an expensive call and best avoided where possible.
-                val gateDistanceSquared = existingGates.associateWith { gate ->
-                    MfBlockPosition.fromBukkitLocation(sender.location)?.let { gate.area.distanceSquared(it) }
-                }
+                val gateDistanceSquared =
+                    existingGates.associateWith { gate ->
+                        MfBlockPosition.fromBukkitLocation(sender.location)?.let { gate.area.distanceSquared(it) }
+                    }
                 plugin.logger.log(INFO, gateDistanceSquared.map { (key, value) -> "${key.id.value}: $value" }.joinToString(", ", "{", "}"))
                 val closestGate = gateDistanceSquared.keys.minByOrNull { gateDistanceSquared[it] ?: Int.MAX_VALUE }
                 val distanceSquared = gateDistanceSquared[closestGate]
-                val minRemovalDistanceSquared = plugin.config.getInt("gates.maxRemoveDistance") * plugin.config.getInt("gates.maxRemoveDistance")
+                val minRemovalDistanceSquared =
+                    plugin.config.getInt("gates.maxRemoveDistance") * plugin.config.getInt("gates.maxRemoveDistance")
                 if (closestGate == null || distanceSquared == null || distanceSquared > minRemovalDistanceSquared) {
                     sender.sendMessage("$RED${plugin.language["CommandGateRemoveFailedToFindGate"]}")
                     return@Runnable
@@ -66,7 +77,7 @@ class MfGateRemoveCommand(private val plugin: MedievalFactions) : CommandExecuto
                     return@Runnable
                 }
                 sender.sendMessage("$GREEN${plugin.language["CommandGateRemoveSuccess"]}")
-            }
+            },
         )
         return true
     }
@@ -75,6 +86,6 @@ class MfGateRemoveCommand(private val plugin: MedievalFactions) : CommandExecuto
         sender: CommandSender,
         command: Command,
         label: String,
-        args: Array<out String>
+        args: Array<out String>,
     ) = emptyList<String>()
 }

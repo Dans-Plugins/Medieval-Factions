@@ -10,9 +10,10 @@ class FactionCreateEvent(
     @get:JvmName("getFactionId")
     override val factionId: MfFactionId,
     var faction: MfFaction,
-    isAsync: Boolean
-) : Event(isAsync), FactionEvent, Cancellable {
-
+    isAsync: Boolean,
+) : Event(isAsync),
+    FactionEvent,
+    Cancellable {
     companion object {
         @JvmStatic private val handlers: HandlerList = HandlerList()
 
@@ -23,9 +24,7 @@ class FactionCreateEvent(
 
     override fun getHandlers(): HandlerList = getHandlerList()
 
-    override fun isCancelled(): Boolean {
-        return cancel
-    }
+    override fun isCancelled(): Boolean = cancel
 
     override fun setCancelled(cancel: Boolean) {
         this.cancel = cancel

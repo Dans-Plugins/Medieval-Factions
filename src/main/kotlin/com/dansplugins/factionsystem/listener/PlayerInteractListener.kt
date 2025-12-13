@@ -38,8 +38,9 @@ import org.bukkit.event.player.PlayerInteractEvent
 import org.bukkit.inventory.EquipmentSlot.HAND
 import java.util.logging.Level.SEVERE
 
-class PlayerInteractListener(private val plugin: MedievalFactions) : Listener {
-
+class PlayerInteractListener(
+    private val plugin: MedievalFactions,
+) : Listener {
     @EventHandler
     fun onPlayerInteract(event: PlayerInteractEvent) {
         if (event.action == PHYSICAL) { // farmland, pressure plates, tripwire, etc...
@@ -100,26 +101,27 @@ class PlayerInteractListener(private val plugin: MedievalFactions) : Listener {
                         plugin.logger.log(SEVERE, "Failed to save player: ${it.reason.message}", it.reason.cause)
                         return@Runnable
                     }
-                }
+                },
             )
             return
         }
         val lockService = plugin.services.lockService
         val blockData = clickedBlock.blockData
         val holder = (clickedBlock.state as? Chest)?.inventory?.holder
-        val blocks = if (blockData is Bisected) {
-            if (blockData.half == BOTTOM) {
-                listOf(clickedBlock, clickedBlock.getRelative(UP))
+        val blocks =
+            if (blockData is Bisected) {
+                if (blockData.half == BOTTOM) {
+                    listOf(clickedBlock, clickedBlock.getRelative(UP))
+                } else {
+                    listOf(clickedBlock, clickedBlock.getRelative(DOWN))
+                }
+            } else if (holder is DoubleChest) {
+                val left = holder.leftSide as? Chest
+                val right = holder.rightSide as? Chest
+                listOfNotNull(left?.block, right?.block)
             } else {
-                listOf(clickedBlock, clickedBlock.getRelative(DOWN))
+                listOf(clickedBlock)
             }
-        } else if (holder is DoubleChest) {
-            val left = holder.leftSide as? Chest
-            val right = holder.rightSide as? Chest
-            listOfNotNull(left?.block, right?.block)
-        } else {
-            listOf(clickedBlock)
-        }
         val lockedBlocks = blocks.mapNotNull { lockService.getLockedBlock(MfBlockPosition.fromBukkitBlock(it)) }
         val lockedBlock = lockedBlocks.firstOrNull()
         if (lockedBlock != null) {
@@ -129,16 +131,20 @@ class PlayerInteractListener(private val plugin: MedievalFactions) : Listener {
                         plugin,
                         Runnable {
                             val owner = playerService.getPlayer(lockedBlock.playerId)
-                            event.player.sendMessage("$RED${plugin.language["LockProtectionBypassed", owner?.toBukkit()?.name ?: plugin.language["UnknownPlayer"]]}")
-                        }
+                            event.player.sendMessage(
+                                "$RED${plugin.language["LockProtectionBypassed", owner?.toBukkit()?.name ?: plugin.language["UnknownPlayer"]]}",
+                            )
+                        },
                     )
                 } else {
                     plugin.server.scheduler.runTaskAsynchronously(
                         plugin,
                         Runnable {
                             val owner = playerService.getPlayer(lockedBlock.playerId)
-                            event.player.sendMessage("$RED${plugin.language["BlockLocked", owner?.toBukkit()?.name ?: plugin.language["UnknownPlayer"]]}")
-                        }
+                            event.player.sendMessage(
+                                "$RED${plugin.language["BlockLocked", owner?.toBukkit()?.name ?: plugin.language["UnknownPlayer"]]}",
+                            )
+                        },
                     )
                     event.isCancelled = true
                 }
@@ -181,31 +187,36 @@ class PlayerInteractListener(private val plugin: MedievalFactions) : Listener {
         return
     }
 
-    private fun lock(player: Player, block: Block) {
+    private fun lock(
+        player: Player,
+        block: Block,
+    ) {
         val blockData = block.blockData
         val holder = (block.state as? Chest)?.inventory?.holder
-        val blocks = if (blockData is Bisected) {
-            if (blockData.half == BOTTOM) {
-                listOf(block, block.getRelative(UP))
+        val blocks =
+            if (blockData is Bisected) {
+                if (blockData.half == BOTTOM) {
+                    listOf(block, block.getRelative(UP))
+                } else {
+                    listOf(block, block.getRelative(DOWN))
+                }
+            } else if (holder is DoubleChest) {
+                val left = holder.leftSide as? Chest
+                val right = holder.rightSide as? Chest
+                listOfNotNull(left?.block, right?.block)
             } else {
-                listOf(block, block.getRelative(DOWN))
+                listOf(block)
             }
-        } else if (holder is DoubleChest) {
-            val left = holder.leftSide as? Chest
-            val right = holder.rightSide as? Chest
-            listOfNotNull(left?.block, right?.block)
-        } else {
-            listOf(block)
-        }
         plugin.server.scheduler.runTaskAsynchronously(
             plugin,
             Runnable {
                 val playerService = plugin.services.playerService
-                val mfPlayer = playerService.getPlayer(player) ?: playerService.save(MfPlayer(plugin, player)).onFailure {
-                    player.sendMessage("$RED${plugin.language["BlockLockFailedToSavePlayer"]}")
-                    plugin.logger.log(SEVERE, "Failed to save player: ${it.reason.message}", it.reason.cause)
-                    return@Runnable
-                }
+                val mfPlayer =
+                    playerService.getPlayer(player) ?: playerService.save(MfPlayer(plugin, player)).onFailure {
+                        player.sendMessage("$RED${plugin.language["BlockLockFailedToSavePlayer"]}")
+                        plugin.logger.log(SEVERE, "Failed to save player: ${it.reason.message}", it.reason.cause)
+                        return@Runnable
+                    }
                 val factionService = plugin.services.factionService
                 val playerFaction = factionService.getFaction(mfPlayer.id)
                 if (playerFaction == null) {
@@ -223,7 +234,9 @@ class PlayerInteractListener(private val plugin: MedievalFactions) : Listener {
                 val existingLock = lockedBlocks.firstOrNull()
                 if (existingLock != null) {
                     val existingLockOwner = playerService.getPlayer(existingLock.playerId)
-                    player.sendMessage("$RED${plugin.language["BlockLockAlreadyLocked", existingLockOwner?.toBukkit()?.name ?: plugin.language["UnknownPlayer"]]}")
+                    player.sendMessage(
+                        "$RED${plugin.language["BlockLockAlreadyLocked", existingLockOwner?.toBukkit()?.name ?: plugin.language["UnknownPlayer"]]}",
+                    )
                     return@Runnable
                 }
                 lockService.lock(MfBlockPosition.fromBukkitBlock(block), claim, mfPlayer).onFailure {
@@ -232,11 +245,14 @@ class PlayerInteractListener(private val plugin: MedievalFactions) : Listener {
                     return@Runnable
                 }
                 player.sendMessage("$GREEN${plugin.language["BlockLockSuccessful"]}")
-            }
+            },
         )
     }
 
-    private fun unlock(player: Player, block: Block) {
+    private fun unlock(
+        player: Player,
+        block: Block,
+    ) {
         val lockService = plugin.services.lockService
         val lockedBlock = lockService.getLockedBlock(MfBlockPosition.fromBukkitBlock(block))
         if (lockedBlock == null) {
@@ -247,11 +263,12 @@ class PlayerInteractListener(private val plugin: MedievalFactions) : Listener {
         val mfPlayer = playerService.getPlayer(player) ?: return
         if (lockedBlock.playerId.value != mfPlayer.id.value) {
             val lockOwner = playerService.getPlayer(lockedBlock.playerId)
-            val ownerName = if (lockOwner == null) {
-                plugin.language["UnknownPlayer"]
-            } else {
-                lockOwner.toBukkit().name ?: plugin.language["UnknownPlayer"]
-            }
+            val ownerName =
+                if (lockOwner == null) {
+                    plugin.language["UnknownPlayer"]
+                } else {
+                    lockOwner.toBukkit().name ?: plugin.language["UnknownPlayer"]
+                }
             if (!player.hasPermission("mf.force.unlock")) {
                 player.sendMessage("$RED${plugin.language["BlockUnlockOwnedByOtherPlayer", ownerName]}")
                 return
@@ -268,31 +285,36 @@ class PlayerInteractListener(private val plugin: MedievalFactions) : Listener {
         }
     }
 
-    private fun checkAccess(player: Player, block: Block) {
+    private fun checkAccess(
+        player: Player,
+        block: Block,
+    ) {
         val blockData = block.blockData
         val holder = (block.state as? Chest)?.inventory?.holder
-        val blocks = if (blockData is Bisected) {
-            if (blockData.half == BOTTOM) {
-                listOf(block, block.getRelative(UP))
+        val blocks =
+            if (blockData is Bisected) {
+                if (blockData.half == BOTTOM) {
+                    listOf(block, block.getRelative(UP))
+                } else {
+                    listOf(block, block.getRelative(DOWN))
+                }
+            } else if (holder is DoubleChest) {
+                val left = holder.leftSide as? Chest
+                val right = holder.rightSide as? Chest
+                listOfNotNull(left?.block, right?.block)
             } else {
-                listOf(block, block.getRelative(DOWN))
+                listOf(block)
             }
-        } else if (holder is DoubleChest) {
-            val left = holder.leftSide as? Chest
-            val right = holder.rightSide as? Chest
-            listOfNotNull(left?.block, right?.block)
-        } else {
-            listOf(block)
-        }
         plugin.server.scheduler.runTaskAsynchronously(
             plugin,
             Runnable {
                 val playerService = plugin.services.playerService
-                val mfPlayer = playerService.getPlayer(player) ?: playerService.save(MfPlayer(plugin, player)).onFailure {
-                    player.sendMessage("$RED${plugin.language["BlockCheckAccessFailedToSavePlayer"]}")
-                    plugin.logger.log(SEVERE, "Failed to save player: ${it.reason.message}", it.reason.cause)
-                    return@Runnable
-                }
+                val mfPlayer =
+                    playerService.getPlayer(player) ?: playerService.save(MfPlayer(plugin, player)).onFailure {
+                        player.sendMessage("$RED${plugin.language["BlockCheckAccessFailedToSavePlayer"]}")
+                        plugin.logger.log(SEVERE, "Failed to save player: ${it.reason.message}", it.reason.cause)
+                        return@Runnable
+                    }
                 val lockService = plugin.services.lockService
                 val lockedBlocks = blocks.mapNotNull { lockService.getLockedBlock(MfBlockPosition.fromBukkitBlock(it)) }
                 val lockedBlock = lockedBlocks.firstOrNull()
@@ -310,60 +332,71 @@ class PlayerInteractListener(private val plugin: MedievalFactions) : Listener {
                     plugin,
                     Runnable {
                         player.performCommand("accessors list ${lockedBlock.block.x} ${lockedBlock.block.y} ${lockedBlock.block.z}")
-                    }
+                    },
                 )
                 interactionService.setInteractionStatus(mfPlayer.id, null).onFailure {
                     player.sendMessage("$RED${plugin.language["BlockCheckAccessFailedToSetInteractionStatus"]}")
                     plugin.logger.log(SEVERE, "Failed to set interaction status: ${it.reason.message}", it.reason.cause)
                     return@Runnable
                 }
-            }
+            },
         )
     }
 
-    private fun addAccessor(player: Player, block: Block) {
+    private fun addAccessor(
+        player: Player,
+        block: Block,
+    ) {
         player.performCommand("accessors add ${block.x} ${block.y} ${block.z}")
         plugin.server.scheduler.runTaskAsynchronously(
             plugin,
             Runnable {
                 val playerService = plugin.services.playerService
-                val mfPlayer = playerService.getPlayer(player) ?: playerService.save(MfPlayer(plugin, player)).onFailure {
-                    player.sendMessage("$RED${plugin.language["BlockAddAccessorFailedToSavePlayer"]}")
-                    plugin.logger.log(SEVERE, "Failed to save player: ${it.reason.message}", it.reason.cause)
-                    return@Runnable
-                }
+                val mfPlayer =
+                    playerService.getPlayer(player) ?: playerService.save(MfPlayer(plugin, player)).onFailure {
+                        player.sendMessage("$RED${plugin.language["BlockAddAccessorFailedToSavePlayer"]}")
+                        plugin.logger.log(SEVERE, "Failed to save player: ${it.reason.message}", it.reason.cause)
+                        return@Runnable
+                    }
                 val interactionService = plugin.services.interactionService
                 interactionService.setInteractionStatus(mfPlayer.id, null).onFailure {
                     player.sendMessage("$RED${plugin.language["BlockAddAccessorFailedToSetInteractionStatus"]}")
                     plugin.logger.log(SEVERE, "Failed to set interaction status: ${it.reason.message}", it.reason.cause)
                     return@Runnable
                 }
-            }
+            },
         )
     }
 
-    private fun removeAccessor(player: Player, block: Block) {
+    private fun removeAccessor(
+        player: Player,
+        block: Block,
+    ) {
         player.performCommand("accessors remove ${block.x} ${block.y} ${block.z}")
         plugin.server.scheduler.runTaskAsynchronously(
             plugin,
             Runnable {
                 val playerService = plugin.services.playerService
-                val mfPlayer = playerService.getPlayer(player) ?: playerService.save(MfPlayer(plugin, player)).onFailure {
-                    player.sendMessage("$RED${plugin.language["BlockRemoveAccessorFailedToSavePlayer"]}")
-                    plugin.logger.log(SEVERE, "Failed to save player: ${it.reason.message}", it.reason.cause)
-                    return@Runnable
-                }
+                val mfPlayer =
+                    playerService.getPlayer(player) ?: playerService.save(MfPlayer(plugin, player)).onFailure {
+                        player.sendMessage("$RED${plugin.language["BlockRemoveAccessorFailedToSavePlayer"]}")
+                        plugin.logger.log(SEVERE, "Failed to save player: ${it.reason.message}", it.reason.cause)
+                        return@Runnable
+                    }
                 val interactionService = plugin.services.interactionService
                 interactionService.setInteractionStatus(mfPlayer.id, null).onFailure {
                     player.sendMessage("$RED${plugin.language["BlockRemoveAccessorFailedToSetInteractionStatus"]}")
                     plugin.logger.log(SEVERE, "Failed to set interaction status: ${it.reason.message}", it.reason.cause)
                     return@Runnable
                 }
-            }
+            },
         )
     }
 
-    private fun selectGatePosition1(player: Player, block: Block) {
+    private fun selectGatePosition1(
+        player: Player,
+        block: Block,
+    ) {
         plugin.server.scheduler.runTaskAsynchronously(
             plugin,
             Runnable {
@@ -372,17 +405,19 @@ class PlayerInteractListener(private val plugin: MedievalFactions) : Listener {
                     return@Runnable
                 }
                 val playerService = plugin.services.playerService
-                val mfPlayer = playerService.getPlayer(player) ?: playerService.save(MfPlayer(plugin, player)).onFailure {
-                    player.sendMessage("$RED${plugin.language["GateCreateSelectFirstPositionFailedToSavePlayer"]}")
-                    plugin.logger.log(SEVERE, "Failed to save player: ${it.reason.message}", it.reason.cause)
-                    return@Runnable
-                }
+                val mfPlayer =
+                    playerService.getPlayer(player) ?: playerService.save(MfPlayer(plugin, player)).onFailure {
+                        player.sendMessage("$RED${plugin.language["GateCreateSelectFirstPositionFailedToSavePlayer"]}")
+                        plugin.logger.log(SEVERE, "Failed to save player: ${it.reason.message}", it.reason.cause)
+                        return@Runnable
+                    }
                 val gateService = plugin.services.gateService
-                val ctx = gateService.getGateCreationContext(mfPlayer.id).onFailure {
-                    player.sendMessage("$RED${plugin.language["GateCreateSelectFirstPositionFailedToGetGateCreationContext"]}")
-                    plugin.logger.log(SEVERE, "Failed to get gate creation context: ${it.reason.message}", it.reason.cause)
-                    return@Runnable
-                } ?: MfGateCreationContext(mfPlayer.id)
+                val ctx =
+                    gateService.getGateCreationContext(mfPlayer.id).onFailure {
+                        player.sendMessage("$RED${plugin.language["GateCreateSelectFirstPositionFailedToGetGateCreationContext"]}")
+                        plugin.logger.log(SEVERE, "Failed to get gate creation context: ${it.reason.message}", it.reason.cause)
+                        return@Runnable
+                    } ?: MfGateCreationContext(mfPlayer.id)
                 gateService.save(ctx.copy(position1 = MfBlockPosition.fromBukkitBlock(block))).onFailure {
                     player.sendMessage("$RED${plugin.language["GateCreateSelectFirstPositionFailedToSaveGateCreationContext"]}")
                     plugin.logger.log(SEVERE, "Failed to save gate creation context: ${it.reason.message}", it.reason.cause)
@@ -395,11 +430,14 @@ class PlayerInteractListener(private val plugin: MedievalFactions) : Listener {
                     return@Runnable
                 }
                 player.sendMessage("$GREEN${plugin.language["GateCreateSelectSecondPosition"]}")
-            }
+            },
         )
     }
 
-    private fun selectGatePosition2(player: Player, block: Block) {
+    private fun selectGatePosition2(
+        player: Player,
+        block: Block,
+    ) {
         plugin.server.scheduler.runTaskAsynchronously(
             plugin,
             Runnable {
@@ -408,17 +446,19 @@ class PlayerInteractListener(private val plugin: MedievalFactions) : Listener {
                     return@Runnable
                 }
                 val playerService = plugin.services.playerService
-                val mfPlayer = playerService.getPlayer(player) ?: playerService.save(MfPlayer(plugin, player)).onFailure {
-                    player.sendMessage("$RED${plugin.language["GateCreateSelectSecondPositionFailedToSavePlayer"]}")
-                    plugin.logger.log(SEVERE, "Failed to save player: ${it.reason.message}", it.reason.cause)
-                    return@Runnable
-                }
+                val mfPlayer =
+                    playerService.getPlayer(player) ?: playerService.save(MfPlayer(plugin, player)).onFailure {
+                        player.sendMessage("$RED${plugin.language["GateCreateSelectSecondPositionFailedToSavePlayer"]}")
+                        plugin.logger.log(SEVERE, "Failed to save player: ${it.reason.message}", it.reason.cause)
+                        return@Runnable
+                    }
                 val gateService = plugin.services.gateService
-                val ctx = gateService.getGateCreationContext(mfPlayer.id).onFailure {
-                    player.sendMessage("$RED${plugin.language["GateCreateSelectSecondPositionFailedToGetGateCreationContext"]}")
-                    plugin.logger.log(SEVERE, "Failed to get gate creation context: ${it.reason.message}", it.reason.cause)
-                    return@Runnable
-                } ?: MfGateCreationContext(mfPlayer.id)
+                val ctx =
+                    gateService.getGateCreationContext(mfPlayer.id).onFailure {
+                        player.sendMessage("$RED${plugin.language["GateCreateSelectSecondPositionFailedToGetGateCreationContext"]}")
+                        plugin.logger.log(SEVERE, "Failed to get gate creation context: ${it.reason.message}", it.reason.cause)
+                        return@Runnable
+                    } ?: MfGateCreationContext(mfPlayer.id)
                 gateService.save(ctx.copy(position2 = MfBlockPosition.fromBukkitBlock(block))).onFailure {
                     player.sendMessage("$RED${plugin.language["GateCreateSelectSecondPositionFailedToSaveGateCreationContext"]}")
                     plugin.logger.log(SEVERE, "Failed to save gate creation context: ${it.reason.message}", it.reason.cause)
@@ -431,11 +471,14 @@ class PlayerInteractListener(private val plugin: MedievalFactions) : Listener {
                     return@Runnable
                 }
                 player.sendMessage("$GREEN${plugin.language["GateCreateSelectTrigger"]}")
-            }
+            },
         )
     }
 
-    private fun selectGateTrigger(player: Player, block: Block) {
+    private fun selectGateTrigger(
+        player: Player,
+        block: Block,
+    ) {
         plugin.server.scheduler.runTaskAsynchronously(
             plugin,
             Runnable {
@@ -444,28 +487,34 @@ class PlayerInteractListener(private val plugin: MedievalFactions) : Listener {
                     return@Runnable
                 }
                 val playerService = plugin.services.playerService
-                val mfPlayer = playerService.getPlayer(player) ?: playerService.save(MfPlayer(plugin, player)).onFailure {
-                    player.sendMessage("$RED${plugin.language["GateCreateSelectTriggerFailedToSavePlayer"]}")
-                    plugin.logger.log(SEVERE, "Failed to save player: ${it.reason.message}", it.reason.cause)
-                    return@Runnable
-                }
+                val mfPlayer =
+                    playerService.getPlayer(player) ?: playerService.save(MfPlayer(plugin, player)).onFailure {
+                        player.sendMessage("$RED${plugin.language["GateCreateSelectTriggerFailedToSavePlayer"]}")
+                        plugin.logger.log(SEVERE, "Failed to save player: ${it.reason.message}", it.reason.cause)
+                        return@Runnable
+                    }
                 val gateService = plugin.services.gateService
-                val ctx = gateService.getGateCreationContext(mfPlayer.id).onFailure {
-                    player.sendMessage("$RED${plugin.language["GateCreateSelectTriggerFailedToGetGateCreationContext"]}")
-                    plugin.logger.log(SEVERE, "Failed to get gate creation context: ${it.reason.message}", it.reason.cause)
-                    return@Runnable
-                } ?: MfGateCreationContext(mfPlayer.id)
-                val updatedCtx = gateService.save(ctx.copy(trigger = MfBlockPosition.fromBukkitBlock(block))).onFailure {
-                    player.sendMessage("$RED${plugin.language["GateCreateSelectTriggerFailedToSaveGateCreationContext"]}")
-                    plugin.logger.log(SEVERE, "Failed to save gate creation context: ${it.reason.message}", it.reason.cause)
-                    return@Runnable
-                }
+                val ctx =
+                    gateService.getGateCreationContext(mfPlayer.id).onFailure {
+                        player.sendMessage("$RED${plugin.language["GateCreateSelectTriggerFailedToGetGateCreationContext"]}")
+                        plugin.logger.log(SEVERE, "Failed to get gate creation context: ${it.reason.message}", it.reason.cause)
+                        return@Runnable
+                    } ?: MfGateCreationContext(mfPlayer.id)
+                val updatedCtx =
+                    gateService.save(ctx.copy(trigger = MfBlockPosition.fromBukkitBlock(block))).onFailure {
+                        player.sendMessage("$RED${plugin.language["GateCreateSelectTriggerFailedToSaveGateCreationContext"]}")
+                        plugin.logger.log(SEVERE, "Failed to save gate creation context: ${it.reason.message}", it.reason.cause)
+                        return@Runnable
+                    }
                 createGate(player, updatedCtx)
-            }
+            },
         )
     }
 
-    private fun createGate(player: Player, ctx: MfGateCreationContext) {
+    private fun createGate(
+        player: Player,
+        ctx: MfGateCreationContext,
+    ) {
         plugin.server.scheduler.runTask(
             plugin,
             Runnable syncValidations@{
@@ -505,7 +554,10 @@ class PlayerInteractListener(private val plugin: MedievalFactions) : Listener {
                 val blocks = area.blocks
 
                 // Validate restricted blocks within the area
-                val restrictedBlock = blocks.firstOrNull { it.toBukkitBlock()?.type in plugin.services.gateService.restrictedBlockMaterials }
+                val restrictedBlock =
+                    blocks.firstOrNull {
+                        it.toBukkitBlock()?.type in plugin.services.gateService.restrictedBlockMaterials
+                    }
                 if (restrictedBlock != null) {
                     player.sendMessage("$RED${plugin.language["GateCreateAreaRestrictedBlock"]}")
                     restartGateCreation(player, ctx)
@@ -529,12 +581,13 @@ class PlayerInteractListener(private val plugin: MedievalFactions) : Listener {
                         "$RED${plugin.language[
                             "GateCreateGateMustContainSingleBlockType",
                             materials.joinToString {
-                                it?.toString()
+                                it
+                                    ?.toString()
                                     ?.lowercase()
                                     ?.replace('_', ' ')
                                     ?: plugin.language["UnrecognisedBlock"]
-                            }
-                        ]}"
+                            },
+                        ]}",
                     )
                     restartGateCreation(player, ctx)
                     return@syncValidations
@@ -572,19 +625,20 @@ class PlayerInteractListener(private val plugin: MedievalFactions) : Listener {
                             cancelGateCreation(player, ctx)
                             return@updateInteractionStatus
                         }
-                        gateService.save(
-                            MfGate(
-                                plugin,
-                                factionId = faction.id,
-                                area = area,
-                                trigger = ctx.trigger,
-                                material = material
-                            )
-                        ).onFailure {
-                            player.sendMessage("$RED${plugin.language["GateCreateFailedToSaveGate"]}")
-                            plugin.logger.log(SEVERE, "Failed to save gate: ${it.reason.message}", it.reason.cause)
-                            return@updateInteractionStatus
-                        }
+                        gateService
+                            .save(
+                                MfGate(
+                                    plugin,
+                                    factionId = faction.id,
+                                    area = area,
+                                    trigger = ctx.trigger,
+                                    material = material,
+                                ),
+                            ).onFailure {
+                                player.sendMessage("$RED${plugin.language["GateCreateFailedToSaveGate"]}")
+                                plugin.logger.log(SEVERE, "Failed to save gate: ${it.reason.message}", it.reason.cause)
+                                return@updateInteractionStatus
+                            }
                         gateService.deleteGateCreationContext(ctx.playerId).onFailure {
                             player.sendMessage("$RED${plugin.language["GateCreateFailedToDeleteCreationContext"]}")
                             plugin.logger.log(SEVERE, "Failed to delete gate creation context: ${it.reason.message}", it.reason.cause)
@@ -596,13 +650,16 @@ class PlayerInteractListener(private val plugin: MedievalFactions) : Listener {
                             return@updateInteractionStatus
                         }
                         player.sendMessage("$GREEN${plugin.language["GateCreated"]}")
-                    }
+                    },
                 )
-            }
+            },
         )
     }
 
-    private fun restartGateCreation(player: Player, ctx: MfGateCreationContext) {
+    private fun restartGateCreation(
+        player: Player,
+        ctx: MfGateCreationContext,
+    ) {
         plugin.server.scheduler.runTaskAsynchronously(
             plugin,
             Runnable {
@@ -613,11 +670,14 @@ class PlayerInteractListener(private val plugin: MedievalFactions) : Listener {
                     return@Runnable
                 }
                 player.sendMessage("$GREEN${plugin.language["GateCreateSelectFirstPosition"]}")
-            }
+            },
         )
     }
 
-    private fun cancelGateCreation(player: Player, ctx: MfGateCreationContext) {
+    private fun cancelGateCreation(
+        player: Player,
+        ctx: MfGateCreationContext,
+    ) {
         plugin.server.scheduler.runTaskAsynchronously(
             plugin,
             Runnable {
@@ -627,7 +687,7 @@ class PlayerInteractListener(private val plugin: MedievalFactions) : Listener {
                     plugin.logger.log(SEVERE, "Failed to set interaction status: ${it.reason.message}", it.reason.cause)
                     return@Runnable
                 }
-            }
+            },
         )
     }
 }

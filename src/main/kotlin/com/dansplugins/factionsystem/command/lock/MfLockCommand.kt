@@ -13,8 +13,16 @@ import org.bukkit.command.TabCompleter
 import org.bukkit.entity.Player
 import java.util.logging.Level.SEVERE
 
-class MfLockCommand(private val plugin: MedievalFactions) : CommandExecutor, TabCompleter {
-    override fun onCommand(sender: CommandSender, command: Command, label: String, args: Array<out String>): Boolean {
+class MfLockCommand(
+    private val plugin: MedievalFactions,
+) : CommandExecutor,
+    TabCompleter {
+    override fun onCommand(
+        sender: CommandSender,
+        command: Command,
+        label: String,
+        args: Array<out String>,
+    ): Boolean {
         if (!sender.hasPermission("mf.lock")) {
             sender.sendMessage("$RED${plugin.language["CommandLockNoPermission"]}")
             return true
@@ -28,12 +36,13 @@ class MfLockCommand(private val plugin: MedievalFactions) : CommandExecutor, Tab
             plugin,
             Runnable {
                 val playerService = plugin.services.playerService
-                val mfPlayer = playerService.getPlayer(sender)
-                    ?: playerService.save(MfPlayer(plugin, sender)).onFailure {
-                        sender.sendMessage("$RED${plugin.language["CommandLockFailedToSavePlayer"]}")
-                        plugin.logger.log(SEVERE, "Failed to save player: ${it.reason.message}", it.reason.cause)
-                        return@Runnable
-                    }
+                val mfPlayer =
+                    playerService.getPlayer(sender)
+                        ?: playerService.save(MfPlayer(plugin, sender)).onFailure {
+                            sender.sendMessage("$RED${plugin.language["CommandLockFailedToSavePlayer"]}")
+                            plugin.logger.log(SEVERE, "Failed to save player: ${it.reason.message}", it.reason.cause)
+                            return@Runnable
+                        }
                 val interactionService = plugin.services.interactionService
                 val status = interactionService.getInteractionStatus(mfPlayer.id)
                 if (cancel) {
@@ -55,7 +64,7 @@ class MfLockCommand(private val plugin: MedievalFactions) : CommandExecutor, Tab
                     return@Runnable
                 }
                 sender.sendMessage("$GREEN${plugin.language["CommandLockSuccess"]}")
-            }
+            },
         )
         return true
     }
@@ -64,7 +73,7 @@ class MfLockCommand(private val plugin: MedievalFactions) : CommandExecutor, Tab
         sender: CommandSender,
         command: Command,
         label: String,
-        args: Array<out String>
+        args: Array<out String>,
     ) = when {
         args.isEmpty() -> listOf("cancel")
         args.size == 1 && "cancel".startsWith(args[0].lowercase()) -> listOf("cancel")

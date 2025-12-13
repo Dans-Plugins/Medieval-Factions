@@ -19,8 +19,16 @@ import java.util.logging.Level.SEVERE
 import net.md_5.bungee.api.ChatColor as SpigotChatColor
 import org.bukkit.ChatColor as BukkitChatColor
 
-class MfFactionFlagListCommand(private val plugin: MedievalFactions) : CommandExecutor, TabCompleter {
-    override fun onCommand(sender: CommandSender, command: Command, label: String, args: Array<out String>): Boolean {
+class MfFactionFlagListCommand(
+    private val plugin: MedievalFactions,
+) : CommandExecutor,
+    TabCompleter {
+    override fun onCommand(
+        sender: CommandSender,
+        command: Command,
+        label: String,
+        args: Array<out String>,
+    ): Boolean {
         if (!sender.hasPermission("mf.flag.list")) {
             sender.sendMessage("${BukkitChatColor.RED}${plugin.language["CommandFactionFlagListNoPermission"]}")
             return true
@@ -33,12 +41,13 @@ class MfFactionFlagListCommand(private val plugin: MedievalFactions) : CommandEx
             plugin,
             Runnable {
                 val playerService = plugin.services.playerService
-                val mfPlayer = playerService.getPlayer(sender)
-                    ?: playerService.save(MfPlayer(plugin, sender)).onFailure {
-                        sender.sendMessage("${BukkitChatColor.RED}${plugin.language["CommandFactionFlagListFailedToSavePlayer"]}")
-                        plugin.logger.log(SEVERE, "Failed to save player: ${it.reason.message}", it.reason.cause)
-                        return@Runnable
-                    }
+                val mfPlayer =
+                    playerService.getPlayer(sender)
+                        ?: playerService.save(MfPlayer(plugin, sender)).onFailure {
+                            sender.sendMessage("${BukkitChatColor.RED}${plugin.language["CommandFactionFlagListFailedToSavePlayer"]}")
+                            plugin.logger.log(SEVERE, "Failed to save player: ${it.reason.message}", it.reason.cause)
+                            return@Runnable
+                        }
                 val factionService = plugin.services.factionService
                 val faction = factionService.getFaction(mfPlayer.id)
                 if (faction == null) {
@@ -51,58 +60,62 @@ class MfFactionFlagListCommand(private val plugin: MedievalFactions) : CommandEx
                     return@Runnable
                 }
                 val pageNumber = args.lastOrNull()?.toIntOrNull()?.minus(1) ?: 0
-                val view = PaginatedView(
-                    plugin.language,
-                    lazy {
-                        arrayOf(
-                            TextComponent(plugin.language["CommandFactionFlagListTitle", faction.name]).apply {
-                                color = SpigotChatColor.AQUA
-                                isBold = true
-                            }
-                        )
-                    },
-                    plugin.flags.map { flag ->
+                val view =
+                    PaginatedView(
+                        plugin.language,
                         lazy {
-                            val flagValue = faction.flags[flag]
-                            buildList {
-                                add(
-                                    TextComponent(flag.name).apply {
-                                        color = SpigotChatColor.GRAY
-                                    }
-                                )
-                                add(
-                                    TextComponent(" (${flag.type.simpleName}): ").apply {
-                                        color = SpigotChatColor.GRAY
-                                    }
-                                )
-                                add(
-                                    TextComponent("$flagValue ").apply {
-                                        color = SpigotChatColor.WHITE
-                                    }
-                                )
-                                if (sender.hasPermission("mf.flag.set") && role.hasPermission(faction, plugin.factionPermissions.setFlag(flag))) {
+                            arrayOf(
+                                TextComponent(plugin.language["CommandFactionFlagListTitle", faction.name]).apply {
+                                    color = SpigotChatColor.AQUA
+                                    isBold = true
+                                },
+                            )
+                        },
+                        plugin.flags.map { flag ->
+                            lazy {
+                                val flagValue = faction.flags[flag]
+                                buildList {
                                     add(
-                                        TextComponent("(${plugin.language["CommandFactionFlagListSet"]})").apply {
-                                            color = SpigotChatColor.GREEN
-                                            hoverEvent = HoverEvent(
-                                                SHOW_TEXT,
-                                                Text(plugin.language["CommandFactionFlagListSetHover", flag.name])
-                                            )
-                                            clickEvent =
-                                                ClickEvent(RUN_COMMAND, "/faction flag set ${flag.name} p=${pageNumber + 1}")
-                                        }
+                                        TextComponent(flag.name).apply {
+                                            color = SpigotChatColor.GRAY
+                                        },
                                     )
-                                }
-                            }.toTypedArray()
-                        }
-                    }
-                ) { page -> "/faction flag list ${page + 1}" }
+                                    add(
+                                        TextComponent(" (${flag.type.simpleName}): ").apply {
+                                            color = SpigotChatColor.GRAY
+                                        },
+                                    )
+                                    add(
+                                        TextComponent("$flagValue ").apply {
+                                            color = SpigotChatColor.WHITE
+                                        },
+                                    )
+                                    if (sender.hasPermission("mf.flag.set") &&
+                                        role.hasPermission(faction, plugin.factionPermissions.setFlag(flag))
+                                    ) {
+                                        add(
+                                            TextComponent("(${plugin.language["CommandFactionFlagListSet"]})").apply {
+                                                color = SpigotChatColor.GREEN
+                                                hoverEvent =
+                                                    HoverEvent(
+                                                        SHOW_TEXT,
+                                                        Text(plugin.language["CommandFactionFlagListSetHover", flag.name]),
+                                                    )
+                                                clickEvent =
+                                                    ClickEvent(RUN_COMMAND, "/faction flag set ${flag.name} p=${pageNumber + 1}")
+                                            },
+                                        )
+                                    }
+                                }.toTypedArray()
+                            }
+                        },
+                    ) { page -> "/faction flag list ${page + 1}" }
                 if (pageNumber !in view.pages.indices) {
                     sender.sendMessage("${BukkitChatColor.RED}${plugin.language["CommandFactionFlagListInvalidPageNumber"]}")
                     return@Runnable
                 }
                 view.sendPage(sender, pageNumber)
-            }
+            },
         )
         return true
     }
@@ -111,6 +124,6 @@ class MfFactionFlagListCommand(private val plugin: MedievalFactions) : CommandEx
         sender: CommandSender,
         command: Command,
         label: String,
-        args: Array<out String>
+        args: Array<out String>,
     ) = emptyList<String>()
 }

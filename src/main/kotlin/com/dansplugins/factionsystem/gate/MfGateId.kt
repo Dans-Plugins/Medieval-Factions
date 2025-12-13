@@ -1,9 +1,11 @@
 package com.dansplugins.factionsystem.gate
 
-import java.util.*
+import java.util.UUID
 
 @JvmInline
-value class MfGateId(val value: String) {
+value class MfGateId(
+    val value: String,
+) {
     companion object {
         fun generate() = MfGateId(UUID.randomUUID().toString())
     }

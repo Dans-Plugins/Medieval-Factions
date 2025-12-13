@@ -34,8 +34,9 @@ import java.time.format.DateTimeFormatter.ISO_INSTANT
 import java.util.logging.Level.SEVERE
 import kotlin.math.roundToInt
 
-class MfLegacyDataMigrator(private val plugin: MedievalFactions) {
-
+class MfLegacyDataMigrator(
+    private val plugin: MedievalFactions,
+) {
     fun backup() {
         plugin.logger.info("Backing up Medieval Factions 4 data...")
         val startTime = System.currentTimeMillis()
@@ -66,7 +67,15 @@ class MfLegacyDataMigrator(private val plugin: MedievalFactions) {
         }
         backupFolder.mkdirs()
         files.forEach { file ->
-            file.renameTo(File(backupFolder, plugin.dataFolder.toURI().relativize(file.toURI()).path))
+            file.renameTo(
+                File(
+                    backupFolder,
+                    plugin.dataFolder
+                        .toURI()
+                        .relativize(file.toURI())
+                        .path,
+                ),
+            )
         }
         plugin.logger.info("Backup complete (${System.currentTimeMillis() - startTime}ms)")
     }
@@ -78,8 +87,20 @@ class MfLegacyDataMigrator(private val plugin: MedievalFactions) {
         plugin.config.set("players.maxPower", oldConfig.getDouble("initialMaxPowerLevel"))
         plugin.config.set("players.initialPower", oldConfig.getDouble("initialPowerLevel"))
         plugin.config.set("factions.mobsSpawnInFactionTerritory", oldConfig.getBoolean("mobsSpawnInFactionTerritory"))
-        plugin.config.set("players.hoursToReachMaxPower", ((oldConfig.getDouble("initialMaxPowerLevel") / oldConfig.getDouble("powerIncreaseAmount")) * (oldConfig.getDouble("minutesBetweenPowerIncreases") / 60.0)).roundToInt())
-        plugin.config.set("factions.laddersPlaceableInEnemyFactionTerritory", oldConfig.getBoolean("laddersPlaceableInEnemyFactionTerritory"))
+        plugin.config.set(
+            "players.hoursToReachMaxPower",
+            (
+                (
+                    oldConfig.getDouble("initialMaxPowerLevel") /
+                        oldConfig.getDouble("powerIncreaseAmount")
+                ) *
+                    (oldConfig.getDouble("minutesBetweenPowerIncreases") / 60.0)
+            ).roundToInt(),
+        )
+        plugin.config.set(
+            "factions.laddersPlaceableInEnemyFactionTerritory",
+            oldConfig.getBoolean("laddersPlaceableInEnemyFactionTerritory"),
+        )
         plugin.config.set("pvp.warRequiredForPlayersOfDifferentFactions", oldConfig.getBoolean("warsRequiredForPVP"))
         plugin.config.set("factions.maxNameLength", oldConfig.getString("factionMaxNameLength"))
         plugin.config.set("gates.maxPerFaction", oldConfig.getInt("factionMaxNumberGates"))
@@ -100,168 +121,218 @@ class MfLegacyDataMigrator(private val plugin: MedievalFactions) {
         plugin.logger.info("Config migration complete (${System.currentTimeMillis() - startTime}ms)")
     }
 
-    private fun migratePlayers(oldPlayerPowerRecordsFile: File, gson: Gson) {
+    private fun migratePlayers(
+        oldPlayerPowerRecordsFile: File,
+        gson: Gson,
+    ) {
         plugin.logger.info("Migrating player information...")
         val startTime = System.currentTimeMillis()
         val playerService = plugin.services.playerService
-        val playerPowerRecords = gson.fromJson<List<MfLegacyPowerRecord>>(
-            oldPlayerPowerRecordsFile.readText(),
-            TypeToken.getParameterized(List::class.java, MfLegacyPowerRecord::class.java).type
-        )
+        val playerPowerRecords =
+            gson.fromJson<List<MfLegacyPowerRecord>>(
+                oldPlayerPowerRecordsFile.readText(),
+                TypeToken.getParameterized(List::class.java, MfLegacyPowerRecord::class.java).type,
+            )
         plugin.server.offlinePlayers.map { bukkitPlayer ->
-            val powerRecord = playerPowerRecords.singleOrNull { gson.fromJson(it.playerUUID, String::class.java) == bukkitPlayer.uniqueId.toString() }
-            playerService.save(
-                MfPlayer(
-                    bukkitPlayer,
-                    0,
-                    powerRecord?.powerLevel?.toDoubleOrNull()
-                        ?: plugin.config.getDouble("players.initialPower"),
-                    powerRecord?.powerLevel?.toDoubleOrNull()
-                        ?: plugin.config.getDouble("players.initialPower"),
-                    false,
-                    null
-                )
-            ).onFailure {
-                plugin.logger.log(SEVERE, "Failed to save player \"${bukkitPlayer.uniqueId}\": ${it.reason.message}", it.reason.cause)
-                return@map
-            }
+            val powerRecord =
+                playerPowerRecords.singleOrNull {
+                    gson.fromJson(it.playerUUID, String::class.java) ==
+                        bukkitPlayer.uniqueId.toString()
+                }
+            playerService
+                .save(
+                    MfPlayer(
+                        bukkitPlayer,
+                        0,
+                        powerRecord?.powerLevel?.toDoubleOrNull()
+                            ?: plugin.config.getDouble("players.initialPower"),
+                        powerRecord?.powerLevel?.toDoubleOrNull()
+                            ?: plugin.config.getDouble("players.initialPower"),
+                        false,
+                        null,
+                    ),
+                ).onFailure {
+                    plugin.logger.log(SEVERE, "Failed to save player \"${bukkitPlayer.uniqueId}\": ${it.reason.message}", it.reason.cause)
+                    return@map
+                }
         }
         plugin.logger.info("Player information migrated (${System.currentTimeMillis() - startTime}ms)")
     }
 
-    private fun migrateFactions(oldFactionsFile: File, gson: Gson) {
+    private fun migrateFactions(
+        oldFactionsFile: File,
+        gson: Gson,
+    ) {
         plugin.logger.info("Migrating faction information...")
         val startTime = System.currentTimeMillis()
         val factionService = plugin.services.factionService
-        val legacyFactions = gson.fromJson<List<MfLegacyFaction>>(
-            oldFactionsFile.readText(),
-            TypeToken.getParameterized(List::class.java, MfLegacyFaction::class.java).type
-        )
-        val factions = legacyFactions.associateWith { legacyFaction ->
-            val name = gson.fromJson(legacyFaction.name, String::class.java)
-            val description = gson.fromJson(legacyFaction.description, String::class.java)
-            val memberUuids = gson.fromJson<List<String>>(legacyFaction.members, TypeToken.getParameterized(List::class.java, String::class.java).type)
-            val officerUuids = gson.fromJson<List<String>>(legacyFaction.officers, TypeToken.getParameterized(List::class.java, String::class.java).type)
-            val ownerUuid = gson.fromJson(legacyFaction.owner, String::class.java)
-            val booleanFlagValues = gson.fromJson<Map<String, Boolean>>(
-                legacyFaction.booleanFlagValues,
-                TypeToken.getParameterized(Map::class.java, String::class.java, Boolean::class.javaObjectType).type
+        val legacyFactions =
+            gson.fromJson<List<MfLegacyFaction>>(
+                oldFactionsFile.readText(),
+                TypeToken.getParameterized(List::class.java, MfLegacyFaction::class.java).type,
             )
-            val stringFlagValues = gson.fromJson<Map<String, String>>(
-                legacyFaction.stringFlagValues,
-                TypeToken.getParameterized(Map::class.java, String::class.java, String::class.java).type
-            )
-            val prefix = gson.fromJson(legacyFaction.prefix, String::class.java)
-            val location = gson.fromJson(legacyFaction.location, MfLegacyLocation::class.java)
-            val worldName = gson.fromJson(location.worldName, String::class.java)
-            val x = gson.fromJson(location.x, Double::class.javaObjectType)
-            val y = gson.fromJson(location.y, Double::class.javaObjectType)
-            val z = gson.fromJson(location.z, Double::class.javaObjectType)
-            val bonusPower = gson.fromJson(legacyFaction.bonusPower, String::class.java).toDoubleOrNull() ?: 0.0
+        val factions =
+            legacyFactions.associateWith { legacyFaction ->
+                val name = gson.fromJson(legacyFaction.name, String::class.java)
+                val description = gson.fromJson(legacyFaction.description, String::class.java)
+                val memberUuids =
+                    gson.fromJson<List<String>>(
+                        legacyFaction.members,
+                        TypeToken.getParameterized(List::class.java, String::class.java).type,
+                    )
+                val officerUuids =
+                    gson.fromJson<List<String>>(
+                        legacyFaction.officers,
+                        TypeToken.getParameterized(List::class.java, String::class.java).type,
+                    )
+                val ownerUuid = gson.fromJson(legacyFaction.owner, String::class.java)
+                val booleanFlagValues =
+                    gson.fromJson<Map<String, Boolean>>(
+                        legacyFaction.booleanFlagValues,
+                        TypeToken.getParameterized(Map::class.java, String::class.java, Boolean::class.javaObjectType).type,
+                    )
+                val stringFlagValues =
+                    gson.fromJson<Map<String, String>>(
+                        legacyFaction.stringFlagValues,
+                        TypeToken.getParameterized(Map::class.java, String::class.java, String::class.java).type,
+                    )
+                val prefix = gson.fromJson(legacyFaction.prefix, String::class.java)
+                val location = gson.fromJson(legacyFaction.location, MfLegacyLocation::class.java)
+                val worldName = gson.fromJson(location.worldName, String::class.java)
+                val x = gson.fromJson(location.x, Double::class.javaObjectType)
+                val y = gson.fromJson(location.y, Double::class.javaObjectType)
+                val z = gson.fromJson(location.z, Double::class.javaObjectType)
+                val bonusPower = gson.fromJson(legacyFaction.bonusPower, String::class.java).toDoubleOrNull() ?: 0.0
 
-            val factionId = MfFactionId.generate()
-            val roles = MfFactionRoles.defaults(plugin, factionId)
-            return@associateWith factionService.save(
-                MfFaction(
-                    plugin,
-                    factionId,
-                    0,
-                    name,
-                    description,
-                    memberUuids.map { uuid ->
-                        MfFactionMember(
-                            MfPlayerId(uuid),
-                            when (uuid) {
-                                ownerUuid -> roles.getRole("Owner")
-                                in officerUuids -> roles.getRole("Officer")
-                                else -> roles.getRole("Member")
-                            }!!
-                        )
-                    },
-                    emptyList(),
-                    plugin.flags.defaults() + mapOf(
-                        plugin.flags.alliesCanInteractWithLand to (booleanFlagValues["alliesCanInteractWithLand"] ?: plugin.flags.alliesCanInteractWithLand.defaultValue),
-                        plugin.flags.vassalageTreeCanInteractWithLand to (booleanFlagValues["vassalageTreeCanInteractWithLand"] ?: plugin.flags.vassalageTreeCanInteractWithLand.defaultValue),
-                        plugin.flags.isNeutral to (booleanFlagValues["neutral"] ?: plugin.flags.isNeutral.defaultValue),
-                        plugin.flags.color to (stringFlagValues["dynmapTerritoryColor"] ?: plugin.flags.color.defaultValue),
-                        plugin.flags.allowFriendlyFire to (booleanFlagValues["allowFriendlyFire"] ?: plugin.flags.allowFriendlyFire.defaultValue),
-                        plugin.flags.acceptBonusPower to (booleanFlagValues["acceptBonusPower"] ?: plugin.flags.acceptBonusPower.defaultValue),
-                        plugin.flags.enableMobProtection to (booleanFlagValues["enableMobProtection"] ?: plugin.flags.enableMobProtection.defaultValue)
-                    ),
-                    prefix,
-                    if (worldName == null || x == null || y == null || z == null) {
-                        null
-                    } else {
-                        plugin.server.getWorld(worldName)?.uid?.let { worldId ->
-                            MfPosition(
-                                worldId,
-                                x,
-                                y,
-                                z,
-                                0f,
-                                0f
-                            )
-                        }
-                    },
-                    bonusPower,
-                    false,
-                    roles
-                )
-            ).onFailure {
-                plugin.logger.log(SEVERE, "Failed to save faction \"${legacyFaction.name}\": ${it.reason.message}")
-                return@associateWith null
+                val factionId = MfFactionId.generate()
+                val roles = MfFactionRoles.defaults(plugin, factionId)
+                return@associateWith factionService
+                    .save(
+                        MfFaction(
+                            plugin,
+                            factionId,
+                            0,
+                            name,
+                            description,
+                            memberUuids.map { uuid ->
+                                MfFactionMember(
+                                    MfPlayerId(uuid),
+                                    when (uuid) {
+                                        ownerUuid -> roles.getRole("Owner")
+                                        in officerUuids -> roles.getRole("Officer")
+                                        else -> roles.getRole("Member")
+                                    }!!,
+                                )
+                            },
+                            emptyList(),
+                            plugin.flags.defaults() +
+                                mapOf(
+                                    plugin.flags.alliesCanInteractWithLand to
+                                        (
+                                            booleanFlagValues["alliesCanInteractWithLand"]
+                                                ?: plugin.flags.alliesCanInteractWithLand.defaultValue
+                                        ),
+                                    plugin.flags.vassalageTreeCanInteractWithLand to
+                                        (
+                                            booleanFlagValues["vassalageTreeCanInteractWithLand"]
+                                                ?: plugin.flags.vassalageTreeCanInteractWithLand.defaultValue
+                                        ),
+                                    plugin.flags.isNeutral to (booleanFlagValues["neutral"] ?: plugin.flags.isNeutral.defaultValue),
+                                    plugin.flags.color to (stringFlagValues["dynmapTerritoryColor"] ?: plugin.flags.color.defaultValue),
+                                    plugin.flags.allowFriendlyFire to
+                                        (booleanFlagValues["allowFriendlyFire"] ?: plugin.flags.allowFriendlyFire.defaultValue),
+                                    plugin.flags.acceptBonusPower to
+                                        (booleanFlagValues["acceptBonusPower"] ?: plugin.flags.acceptBonusPower.defaultValue),
+                                    plugin.flags.enableMobProtection to
+                                        (booleanFlagValues["enableMobProtection"] ?: plugin.flags.enableMobProtection.defaultValue),
+                                ),
+                            prefix,
+                            if (worldName == null || x == null || y == null || z == null) {
+                                null
+                            } else {
+                                plugin.server.getWorld(worldName)?.uid?.let { worldId ->
+                                    MfPosition(
+                                        worldId,
+                                        x,
+                                        y,
+                                        z,
+                                        0f,
+                                        0f,
+                                    )
+                                }
+                            },
+                            bonusPower,
+                            false,
+                            roles,
+                        ),
+                    ).onFailure {
+                        plugin.logger.log(SEVERE, "Failed to save faction \"${legacyFaction.name}\": ${it.reason.message}")
+                        return@associateWith null
+                    }
             }
-        }
         val factionRelationshipService = plugin.services.factionRelationshipService
         val gateService = plugin.services.gateService
         factions.forEach { (legacyFaction, faction) ->
             if (faction == null) return@forEach
-            val enemyFactionNames = gson.fromJson<List<String>>(
-                legacyFaction.enemyFactions,
-                TypeToken.getParameterized(List::class.java, String::class.java).type
-            )
+            val enemyFactionNames =
+                gson.fromJson<List<String>>(
+                    legacyFaction.enemyFactions,
+                    TypeToken.getParameterized(List::class.java, String::class.java).type,
+                )
             val enemyFactions = enemyFactionNames.mapNotNull(factionService::getFaction)
             enemyFactions.forEach createRelationships@{ enemyFaction ->
-                factionRelationshipService.save(
-                    MfFactionRelationship(
-                        factionId = faction.id,
-                        targetId = enemyFaction.id,
-                        type = AT_WAR
-                    )
-                ).onFailure {
-                    plugin.logger.log(SEVERE, "Failed to save faction relationship between \"${faction.name}\" and \"${enemyFaction.name}\": ${it.reason.message}", it.reason.cause)
-                    return@createRelationships
-                }
+                factionRelationshipService
+                    .save(
+                        MfFactionRelationship(
+                            factionId = faction.id,
+                            targetId = enemyFaction.id,
+                            type = AT_WAR,
+                        ),
+                    ).onFailure {
+                        plugin.logger.log(
+                            SEVERE,
+                            "Failed to save faction relationship between \"${faction.name}\" and \"${enemyFaction.name}\": ${it.reason.message}",
+                            it.reason.cause,
+                        )
+                        return@createRelationships
+                    }
             }
-            val allyFactionNames = gson.fromJson<List<String>>(
-                legacyFaction.allyFactions,
-                TypeToken.getParameterized(List::class.java, String::class.java).type
-            )
+            val allyFactionNames =
+                gson.fromJson<List<String>>(
+                    legacyFaction.allyFactions,
+                    TypeToken.getParameterized(List::class.java, String::class.java).type,
+                )
             val allyFactions = allyFactionNames.mapNotNull(factionService::getFaction)
             allyFactions.forEach createRelationships@{ allyFaction ->
-                factionRelationshipService.save(
-                    MfFactionRelationship(
-                        factionId = faction.id,
-                        targetId = allyFaction.id,
-                        type = ALLY
-                    )
-                ).onFailure {
-                    plugin.logger.log(SEVERE, "Failed to save faction relationship between \"${faction.name}\" and \"${allyFaction.name}\": ${it.reason.message}", it.reason.cause)
-                    return@createRelationships
-                }
+                factionRelationshipService
+                    .save(
+                        MfFactionRelationship(
+                            factionId = faction.id,
+                            targetId = allyFaction.id,
+                            type = ALLY,
+                        ),
+                    ).onFailure {
+                        plugin.logger.log(
+                            SEVERE,
+                            "Failed to save faction relationship between \"${faction.name}\" and \"${allyFaction.name}\": ${it.reason.message}",
+                            it.reason.cause,
+                        )
+                        return@createRelationships
+                    }
             }
-            val vassalFactionNames = gson.fromJson<List<String>>(
-                legacyFaction.vassals,
-                TypeToken.getParameterized(List::class.java, String::class.java).type
-            )
+            val vassalFactionNames =
+                gson.fromJson<List<String>>(
+                    legacyFaction.vassals,
+                    TypeToken.getParameterized(List::class.java, String::class.java).type,
+                )
             val vassalFactions = vassalFactionNames.mapNotNull(factionService::getFaction)
             vassalFactions.forEach createRelationships@{ vassalFaction ->
                 factionRelationshipService.save(
                     MfFactionRelationship(
                         factionId = faction.id,
                         targetId = vassalFaction.id,
-                        type = VASSAL
-                    )
+                        type = VASSAL,
+                    ),
                 )
             }
             val liegeFactionName = gson.fromJson(legacyFaction.liege, String::class.java)
@@ -271,11 +342,15 @@ class MfLegacyDataMigrator(private val plugin: MedievalFactions) {
                     MfFactionRelationship(
                         factionId = faction.id,
                         targetId = liegeFaction.id,
-                        type = LIEGE
-                    )
+                        type = LIEGE,
+                    ),
                 )
             }
-            val gateJson = gson.fromJson<List<String>>(legacyFaction.factionGates, TypeToken.getParameterized(List::class.java, String::class.java).type)
+            val gateJson =
+                gson.fromJson<List<String>>(
+                    legacyFaction.factionGates,
+                    TypeToken.getParameterized(List::class.java, String::class.java).type,
+                )
             val gates = gateJson.map { gson.fromJson(it, MfLegacyGate::class.java) }
             gates.forEach migrateGate@{ legacyGate ->
                 val position1 = parseGateCoord(legacyGate.coord1) ?: return@migrateGate
@@ -283,24 +358,25 @@ class MfLegacyDataMigrator(private val plugin: MedievalFactions) {
                 val triggerPosition = parseGateCoord(legacyGate.triggerCoord) ?: return@migrateGate
                 val material = Material.valueOf(legacyGate.material)
                 val isOpen = legacyGate.open.toBooleanStrict()
-                gateService.save(
-                    MfGate(
-                        plugin,
-                        MfGateId.generate(),
-                        0,
-                        faction.id,
-                        MfCuboidArea(
-                            position1,
-                            position2
+                gateService
+                    .save(
+                        MfGate(
+                            plugin,
+                            MfGateId.generate(),
+                            0,
+                            faction.id,
+                            MfCuboidArea(
+                                position1,
+                                position2,
+                            ),
+                            triggerPosition,
+                            material,
+                            if (isOpen) OPEN else CLOSED,
                         ),
-                        triggerPosition,
-                        material,
-                        if (isOpen) OPEN else CLOSED
-                    )
-                ).onFailure {
-                    plugin.logger.log(SEVERE, "Failed to save gate \"${legacyGate.name}\": ${it.reason.message}", it.reason.cause)
-                    return@migrateGate
-                }
+                    ).onFailure {
+                        plugin.logger.log(SEVERE, "Failed to save gate \"${legacyGate.name}\": ${it.reason.message}", it.reason.cause)
+                        return@migrateGate
+                    }
             }
         }
         plugin.logger.info("Faction information migrated (${System.currentTimeMillis() - startTime}ms)")
@@ -313,17 +389,21 @@ class MfLegacyDataMigrator(private val plugin: MedievalFactions) {
             world.uid,
             parts[0].toInt(),
             parts[1].toInt(),
-            parts[2].toInt()
+            parts[2].toInt(),
         )
     }
 
-    private fun migrateClaimedChunks(oldClaimedChunksFile: File, gson: Gson) {
+    private fun migrateClaimedChunks(
+        oldClaimedChunksFile: File,
+        gson: Gson,
+    ) {
         plugin.logger.info("Migrating claimed chunks...")
         val startTime = System.currentTimeMillis()
-        val legacyClaimedChunks = gson.fromJson<List<MfLegacyClaimedChunk>>(
-            oldClaimedChunksFile.readText(),
-            TypeToken.getParameterized(List::class.java, MfLegacyClaimedChunk::class.java).type
-        )
+        val legacyClaimedChunks =
+            gson.fromJson<List<MfLegacyClaimedChunk>>(
+                oldClaimedChunksFile.readText(),
+                TypeToken.getParameterized(List::class.java, MfLegacyClaimedChunk::class.java).type,
+            )
         val claimService = plugin.services.claimService
         val factionService = plugin.services.factionService
         legacyClaimedChunks.forEach { legacyClaimedChunk ->
@@ -341,26 +421,31 @@ class MfLegacyDataMigrator(private val plugin: MedievalFactions) {
                 plugin.logger.warning("Could not find faction \"${factionName}\", skipping claimed chunk")
                 return@forEach
             }
-            claimService.save(
-                MfClaimedChunk(
-                    MfChunkPosition(world.uid, x, z),
-                    faction.id
-                )
-            ).onFailure {
-                plugin.logger.log(SEVERE, "Failed to save claimed chunk $worldName, $x, $z: ${it.reason.message}", it.reason.cause)
-                return@forEach
-            }
+            claimService
+                .save(
+                    MfClaimedChunk(
+                        MfChunkPosition(world.uid, x, z),
+                        faction.id,
+                    ),
+                ).onFailure {
+                    plugin.logger.log(SEVERE, "Failed to save claimed chunk $worldName, $x, $z: ${it.reason.message}", it.reason.cause)
+                    return@forEach
+                }
         }
         plugin.logger.info("Claimed chunks migrated (${System.currentTimeMillis() - startTime}ms)")
     }
 
-    private fun migrateLockedBlocks(oldLockedBlocksFile: File, gson: Gson) {
+    private fun migrateLockedBlocks(
+        oldLockedBlocksFile: File,
+        gson: Gson,
+    ) {
         plugin.logger.info("Migrating locked blocks...")
         val startTime = System.currentTimeMillis()
-        val legacyLockedBlocks = gson.fromJson<List<MfLegacyLockedBlock>>(
-            oldLockedBlocksFile.readText(),
-            TypeToken.getParameterized(List::class.java, MfLegacyLockedBlock::class.java).type
-        )
+        val legacyLockedBlocks =
+            gson.fromJson<List<MfLegacyLockedBlock>>(
+                oldLockedBlocksFile.readText(),
+                TypeToken.getParameterized(List::class.java, MfLegacyLockedBlock::class.java).type,
+            )
         val lockService = plugin.services.lockService
         val claimService = plugin.services.claimService
         legacyLockedBlocks.forEach { legacyLockedBlock ->
@@ -373,15 +458,18 @@ class MfLegacyDataMigrator(private val plugin: MedievalFactions) {
                 plugin.logger.warning("Could not find world \"${worldName}\", skipping locked block")
                 return@forEach
             }
-            val blockPosition = MfBlockPosition(
-                world.uid,
-                x,
-                y,
-                z
-            )
+            val blockPosition =
+                MfBlockPosition(
+                    world.uid,
+                    x,
+                    y,
+                    z,
+                )
             val bukkitBlock = blockPosition.toBukkitBlock()
             if (bukkitBlock == null) {
-                plugin.logger.warning("Could not find block at ${blockPosition.worldId}, ${blockPosition.x}, ${blockPosition.y}, ${blockPosition.z}, skipping locked block")
+                plugin.logger.warning(
+                    "Could not find block at ${blockPosition.worldId}, ${blockPosition.x}, ${blockPosition.y}, ${blockPosition.z}, skipping locked block",
+                )
                 return@forEach
             }
             val chunk = bukkitBlock.chunk
@@ -393,21 +481,30 @@ class MfLegacyDataMigrator(private val plugin: MedievalFactions) {
                 return@forEach
             }
             val ownerId = gson.fromJson(legacyLockedBlock.owner, String::class.java)
-            val accessList = gson.fromJson<List<String?>>(legacyLockedBlock.accessList, TypeToken.getParameterized(List::class.java, String::class.java).type)
-            lockService.save(
-                MfLockedBlock(
-                    MfLockedBlockId.generate(),
-                    0,
-                    blockPosition,
-                    chunkX,
-                    chunkZ,
-                    MfPlayerId(ownerId),
-                    accessList.filterNotNull().map(::MfPlayerId)
+            val accessList =
+                gson.fromJson<List<String?>>(
+                    legacyLockedBlock.accessList,
+                    TypeToken.getParameterized(List::class.java, String::class.java).type,
                 )
-            ).onFailure {
-                plugin.logger.log(SEVERE, "Failed to save locked block ${world.name}, $x, $y, $z: ${it.reason.message}", it.reason.cause)
-                return@forEach
-            }
+            lockService
+                .save(
+                    MfLockedBlock(
+                        MfLockedBlockId.generate(),
+                        0,
+                        blockPosition,
+                        chunkX,
+                        chunkZ,
+                        MfPlayerId(ownerId),
+                        accessList.filterNotNull().map(::MfPlayerId),
+                    ),
+                ).onFailure {
+                    plugin.logger.log(
+                        SEVERE,
+                        "Failed to save locked block ${world.name}, $x, $y, $z: ${it.reason.message}",
+                        it.reason.cause,
+                    )
+                    return@forEach
+                }
         }
         plugin.logger.info("Locked blocks migrated (${System.currentTimeMillis() - startTime}ms)")
     }

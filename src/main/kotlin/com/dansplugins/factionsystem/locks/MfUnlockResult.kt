@@ -9,5 +9,5 @@ enum class MfUnlockResult {
     NOT_LOCKED,
 
     // The unlock operation failed.
-    FAILURE
+    FAILURE,
 }

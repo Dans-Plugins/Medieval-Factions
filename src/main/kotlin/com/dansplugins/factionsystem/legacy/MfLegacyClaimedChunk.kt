@@ -4,5 +4,5 @@ data class MfLegacyClaimedChunk(
     val world: String,
     val X: String,
     val Z: String,
-    val holder: String
+    val holder: String,
 )

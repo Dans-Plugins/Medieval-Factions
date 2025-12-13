@@ -8,5 +8,5 @@ data class MfGateCreationContext(
     val version: Int = 0,
     val position1: MfBlockPosition? = null,
     val position2: MfBlockPosition? = null,
-    val trigger: MfBlockPosition? = null
+    val trigger: MfBlockPosition? = null,
 )

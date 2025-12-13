@@ -18,5 +18,5 @@ data class MfLegacyFaction(
     val integerFlagValues: String,
     val booleanFlagValues: String,
     val doubleFlagValues: String,
-    val stringFlagValues: String
+    val stringFlagValues: String,
 )

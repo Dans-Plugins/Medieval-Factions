@@ -6,7 +6,6 @@ import java.util.concurrent.ConcurrentHashMap
 import java.util.logging.LogManager
 
 class MfLoggerFactory : ILoggerFactory {
-
     private val loggerMap = ConcurrentHashMap<String, Logger>()
 
     init {

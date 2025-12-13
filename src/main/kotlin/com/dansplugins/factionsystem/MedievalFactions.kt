@@ -117,7 +117,6 @@ import kotlin.math.floor
 import kotlin.math.roundToInt
 
 class MedievalFactions : JavaPlugin() {
-
     private lateinit var dataSource: DataSource
 
     lateinit var flags: MfFlags
@@ -162,14 +161,16 @@ class MedievalFactions : JavaPlugin() {
         dataSource = HikariDataSource(hikariConfig)
         val oldClassLoader = Thread.currentThread().contextClassLoader
         Thread.currentThread().contextClassLoader = classLoader
-        val flyway = Flyway.configure()
-            .dataSource(dataSource)
-            .locations("classpath:com/dansplugins/factionsystem/db/migration")
-            .table("mf_schema_history")
-            .baselineOnMigrate(true)
-            .baselineVersion("0")
-            .validateOnMigrate(false)
-            .load()
+        val flyway =
+            Flyway
+                .configure()
+                .dataSource(dataSource)
+                .locations("classpath:com/dansplugins/factionsystem/db/migration")
+                .table("mf_schema_history")
+                .baselineOnMigrate(true)
+                .baselineVersion("0")
+                .validateOnMigrate(false)
+                .load()
         flyway.migrate()
         Thread.currentThread().contextClassLoader = oldClassLoader
 
@@ -178,22 +179,24 @@ class MedievalFactions : JavaPlugin() {
 
         val dialect = config.getString("database.dialect")?.let(SQLDialect::valueOf)
         val jooqSettings = Settings().withRenderSchema(false)
-        val dsl = DSL.using(
-            dataSource,
-            dialect,
-            jooqSettings
-        )
+        val dsl =
+            DSL.using(
+                dataSource,
+                dialect,
+                jooqSettings,
+            )
 
         flags = MfFlags(this)
         factionPermissions = MfFactionPermissions(this)
 
         val gson = Gson()
         val playerRepository: MfPlayerRepository = JooqMfPlayerRepository(this, dsl)
-        val mapService = if (server.pluginManager.getPlugin("dynmap") != null && config.getBoolean("dynmap.enableDynmapIntegration")) {
-            DynmapService(this)
-        } else {
-            null
-        }
+        val mapService =
+            if (server.pluginManager.getPlugin("dynmap") != null && config.getBoolean("dynmap.enableDynmapIntegration")) {
+                DynmapService(this)
+            } else {
+                null
+            }
         val factionRepository: MfFactionRepository = JooqMfFactionRepository(this, dsl, gson)
         val lawRepository: MfLawRepository = JooqMfLawRepository(dsl)
         val factionRelationshipRepository: MfFactionRelationshipRepository = JooqMfFactionRelationshipRepository(dsl)
@@ -220,80 +223,83 @@ class MedievalFactions : JavaPlugin() {
         val potionService = MfPotionService(this)
         val teleportService = MfTeleportService(this)
 
-        services = Services(
-            playerService,
-            factionService,
-            lawService,
-            factionRelationshipService,
-            claimService,
-            lockService,
-            interactionService,
-            notificationService,
-            gateService,
-            chatService,
-            duelService,
-            potionService,
-            teleportService,
-            mapService
-        )
+        services =
+            Services(
+                playerService,
+                factionService,
+                lawService,
+                factionRelationshipService,
+                claimService,
+                lockService,
+                interactionService,
+                notificationService,
+                gateService,
+                chatService,
+                duelService,
+                potionService,
+                teleportService,
+                mapService,
+            )
         setupRpkLockService()
 
         val metrics = Metrics(this, 8929)
         metrics.addCustomChart(
             SimplePie("language_used") {
                 config.getString("language")
-            }
+            },
         )
         metrics.addCustomChart(
             SimplePie("database_dialect") {
                 config.getString("database.dialect")
-            }
+            },
         )
         metrics.addCustomChart(
             SimplePie("average_claims") {
                 factionService.factions
                     .map {
                         claimService.getClaims(it.id).size
-                    }
-                    .average().roundToInt().toString()
-            }
+                    }.average()
+                    .roundToInt()
+                    .toString()
+            },
         )
         metrics.addCustomChart(
             SimplePie("total_claims") {
-                factionService.factions.sumOf {
-                    claimService.getClaims(it.id).size
-                }.toString()
-            }
+                factionService.factions
+                    .sumOf {
+                        claimService.getClaims(it.id).size
+                    }.toString()
+            },
         )
         metrics.addCustomChart(
             SimplePie("initial_power") {
                 config.getDouble("players.initialPower").toString()
-            }
+            },
         )
         metrics.addCustomChart(
             SimplePie("max_power") {
                 config.getDouble("players.maxPower").toString()
-            }
+            },
         )
         metrics.addCustomChart(
             SimplePie("hours_to_reach_max_power") {
                 config.getDouble("players.hoursToReachMaxPower").toString()
-            }
+            },
         )
         metrics.addCustomChart(
             SimplePie("hours_to_reach_min_power") {
                 config.getDouble("players.hoursToReachMinPower").toString()
-            }
+            },
         )
         metrics.addCustomChart(
             SimplePie("limit_land") {
                 config.getBoolean("factions.limitLand").toString()
-            }
+            },
         )
         metrics.addCustomChart(
             SimplePie("allow_neutrality") {
                 config.getBoolean("factions.allowNeutrality").toString()
-            }
+            },
         )
 
         if (config.getBoolean("migrateMf4")) {
@@ -345,7 +351,7 @@ class MedievalFactions : JavaPlugin() {
             PlayerPickupItemListener(this),
             PlayerQuitListener(this),
             PlayerTeleportListener(this),
-            PotionSplashListener(this)
+            PotionSplashListener(this),
         )
 
         getCommand("faction")?.setExecutor(MfFactionCommand(this))
@@ -368,9 +374,9 @@ class MedievalFactions : JavaPlugin() {
                         onlineMfPlayerIds,
                         initialPower,
                         onlinePlayers,
-                        disbandZeroPowerFactions
+                        disbandZeroPowerFactions,
                     )
-                }
+                },
             )
         }, (15 - (LocalTime.now().minute % 15)) * 60 * 20L, 18000L)
         server.scheduler.scheduleSyncRepeatingTask(this, {
@@ -407,7 +413,9 @@ class MedievalFactions : JavaPlugin() {
             duelService.duels.forEach { duel ->
                 if (Instant.now().isBefore(duel.endTime)) {
                     val bar = server.getBossBar(NamespacedKey(this, "duel_${duel.id.value}"))
-                    bar?.progress = Duration.between(Instant.now(), duel.endTime).toMillis()
+                    bar?.progress = Duration
+                        .between(Instant.now(), duel.endTime)
+                        .toMillis()
                         .toDouble() / Duration.parse(config.getString("duels.duration")).toMillis().toDouble()
                 } else {
                     server.getBossBar(NamespacedKey(this, "duel_${duel.id.value}"))?.removeAll()
@@ -421,8 +429,9 @@ class MedievalFactions : JavaPlugin() {
                         challengerBukkitPlayer.fireTicks = 0
                         challengerBukkitPlayer.health = duel.challengerHealth
                         duel.challengerLocation?.toBukkitLocation()?.let(challengerBukkitPlayer::teleport)
-                        nearbyPlayers += challengerBukkitPlayer.world.players
-                            .filter { it.location.distanceSquared(challengerBukkitPlayer.location) <= notificationDistanceSquared }
+                        nearbyPlayers +=
+                            challengerBukkitPlayer.world.players
+                                .filter { it.location.distanceSquared(challengerBukkitPlayer.location) <= notificationDistanceSquared }
                     }
                     val challengedBukkitPlayer = duel.challengedId.toBukkitPlayer().player
                     if (challengedBukkitPlayer != null) {
@@ -430,16 +439,17 @@ class MedievalFactions : JavaPlugin() {
                         challengedBukkitPlayer.fireTicks = 0
                         challengedBukkitPlayer.health = duel.challengedHealth
                         duel.challengedLocation?.toBukkitLocation()?.let(challengedBukkitPlayer::teleport)
-                        nearbyPlayers += challengedBukkitPlayer.world.players
-                            .filter { it.location.distanceSquared(challengedBukkitPlayer.location) <= notificationDistanceSquared }
+                        nearbyPlayers +=
+                            challengedBukkitPlayer.world.players
+                                .filter { it.location.distanceSquared(challengedBukkitPlayer.location) <= notificationDistanceSquared }
                     }
                     nearbyPlayers.forEach { notifiedPlayer ->
                         notifiedPlayer.sendMessage(
                             language[
                                 "DuelTie",
                                 duel.challengerId.toBukkitPlayer().name ?: language["UnknownPlayer"],
-                                duel.challengedId.toBukkitPlayer().name ?: language["UnknownPlayer"]
-                            ]
+                                duel.challengedId.toBukkitPlayer().name ?: language["UnknownPlayer"],
+                            ],
                         )
                     }
                     server.scheduler.runTaskAsynchronously(
@@ -449,7 +459,7 @@ class MedievalFactions : JavaPlugin() {
                                 logger.log(SEVERE, "Failed to delete duel: ${it.reason.message}", it.reason.cause)
                                 return@Runnable
                             }
-                        }
+                        },
                     )
                 }
             }
@@ -465,13 +475,13 @@ class MedievalFactions : JavaPlugin() {
                         player.spigot().sendMessage(
                             ACTION_BAR,
                             *TextComponent.fromLegacyText(
-                                "${ChatColor.of(config.getString("wilderness.color"))}${language["Wilderness"]}"
-                            )
+                                "${ChatColor.of(config.getString("wilderness.color"))}${language["Wilderness"]}",
+                            ),
                         )
                     } else {
                         player.spigot().sendMessage(
                             ACTION_BAR,
-                            *TextComponent.fromLegacyText("${ChatColor.of(faction.flags[flags.color])}${faction.name}")
+                            *TextComponent.fromLegacyText("${ChatColor.of(faction.flags[flags.color])}${faction.name}"),
                         )
                     }
                 }
@@ -483,7 +493,7 @@ class MedievalFactions : JavaPlugin() {
         onlineMfPlayerIds: List<MfPlayerId>,
         initialPower: Double,
         onlinePlayers: Collection<Player>,
-        disbandZeroPowerFactions: Boolean
+        disbandZeroPowerFactions: Boolean,
     ) {
         val playerService = services.playerService
         val factionService = services.factionService
@@ -508,14 +518,14 @@ class MedievalFactions : JavaPlugin() {
                         onlinePlayer.sendMessage("$GREEN${language["PowerIncreased", powerIncrease.toString()]}")
                     }
                 }
-            }
+            },
         )
         if (disbandZeroPowerFactions) {
             factionService.factions.forEach { faction ->
                 if (faction.power <= 0.0) {
                     faction.sendMessage(
                         language["FactionDisbandedZeroPowerNotificationTitle"],
-                        language["FactionDisbandedZeroPowerNotificationBody"]
+                        language["FactionDisbandedZeroPowerNotificationBody"],
                     )
                     factionService.delete(faction.id).onFailure {
                         logger.log(SEVERE, "Failed to delete faction: ${it.reason.message}", it.reason.cause)
@@ -526,11 +536,12 @@ class MedievalFactions : JavaPlugin() {
         }
     }
 
-    private fun setupNotificationService(): MfNotificationService = when {
-        server.pluginManager.getPlugin("Mailboxes") != null -> MailboxesNotificationService(this)
-        server.pluginManager.getPlugin("rpk-notification-lib-bukkit") != null -> RpkNotificationService(this)
-        else -> NoOpNotificationService()
-    }
+    private fun setupNotificationService(): MfNotificationService =
+        when {
+            server.pluginManager.getPlugin("Mailboxes") != null -> MailboxesNotificationService(this)
+            server.pluginManager.getPlugin("rpk-notification-lib-bukkit") != null -> RpkNotificationService(this)
+            else -> NoOpNotificationService()
+        }
 
     private fun setupRpkLockService() {
         if (server.pluginManager.getPlugin("rpk-lock-lib-bukkit") != null) {

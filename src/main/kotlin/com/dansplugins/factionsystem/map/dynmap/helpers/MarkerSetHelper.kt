@@ -7,7 +7,6 @@ import org.dynmap.markers.MarkerSet
  * Helper class for managing MarkerSets in Dynmap.
  */
 class MarkerSetHelper {
-
     /**
      * Retrieves an existing MarkerSet by its ID or creates a new one if it does not exist.
      *
@@ -16,7 +15,9 @@ class MarkerSetHelper {
      * @param setName The name of the MarkerSet to create if it does not exist.
      * @return The existing or newly created MarkerSet.
      */
-    fun getOrCreateMarkerSet(markerApi: MarkerAPI, setId: String, setName: String): MarkerSet {
-        return markerApi.getMarkerSet(setId) ?: markerApi.createMarkerSet(setId, setName, null, false)
-    }
+    fun getOrCreateMarkerSet(
+        markerApi: MarkerAPI,
+        setId: String,
+        setName: String,
+    ): MarkerSet = markerApi.getMarkerSet(setId) ?: markerApi.createMarkerSet(setId, setName, null, false)
 }

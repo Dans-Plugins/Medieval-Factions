@@ -10,8 +10,9 @@ import org.bukkit.event.Listener
 import org.bukkit.event.player.PlayerInteractEntityEvent
 import java.util.logging.Level
 
-class PlayerInteractEntityListener(private val plugin: MedievalFactions) : Listener {
-
+class PlayerInteractEntityListener(
+    private val plugin: MedievalFactions,
+) : Listener {
     @EventHandler
     fun onPlayerInteractEntity(event: PlayerInteractEntityEvent) {
         val playerService = plugin.services.playerService
@@ -26,7 +27,7 @@ class PlayerInteractEntityListener(private val plugin: MedievalFactions) : Liste
                         plugin.logger.log(Level.SEVERE, "Failed to save player: ${it.reason.message}", it.reason.cause)
                         return@Runnable
                     }
-                }
+                },
             )
             return
         }
@@ -45,7 +46,9 @@ class PlayerInteractEntityListener(private val plugin: MedievalFactions) : Liste
                     event.player.sendMessage("${ChatColor.RED}${plugin.language["FactionTerritoryProtectionBypassed"]}")
                 } else {
                     event.isCancelled = true
-                    event.player.sendMessage("${ChatColor.RED}${plugin.language["PlayerInteractEntityCannotTradeWithVillager", claimFaction.name]}")
+                    event.player.sendMessage(
+                        "${ChatColor.RED}${plugin.language["PlayerInteractEntityCannotTradeWithVillager", claimFaction.name]}",
+                    )
                     return
                 }
             }

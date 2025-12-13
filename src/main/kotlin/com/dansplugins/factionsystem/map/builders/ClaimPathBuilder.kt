@@ -9,7 +9,6 @@ import com.dansplugins.factionsystem.map.aliases.Point
  * Responsible for building paths from claimed chunks.
  */
 class ClaimPathBuilder {
-
     /**
      * Generates a list of paths from the given list of claimed chunks.
      *
@@ -26,50 +25,51 @@ class ClaimPathBuilder {
         val lineSegments = mutableMapOf<Point, List<LineSegment>>()
 
         // Sort claims to ensure consistent path ordering (required for tests)
-        claims.sortedWith { a, b ->
-            val xComp = a.x.compareTo(b.x)
-            if (xComp != 0) return@sortedWith xComp
-            return@sortedWith a.z.compareTo(b.z)
-        }.forEach { claim ->
-            val x = claim.x
-            val z = claim.z
+        claims
+            .sortedWith { a, b ->
+                val xComp = a.x.compareTo(b.x)
+                if (xComp != 0) return@sortedWith xComp
+                return@sortedWith a.z.compareTo(b.z)
+            }.forEach { claim ->
+                val x = claim.x
+                val z = claim.z
 
-            // Check north
-            if ((x to z - 1) !in claimSet) {
-                val lineSegment = (x to z) to (x + 1 to z)
-                val lineSegmentsAtFirst = lineSegments[lineSegment.first] ?: emptyList()
-                val lineSegmentsAtSecond = lineSegments[lineSegment.second] ?: emptyList()
-                lineSegments[lineSegment.first] = lineSegmentsAtFirst + lineSegment
-                lineSegments[lineSegment.second] = lineSegmentsAtSecond + lineSegment
-            }
+                // Check north
+                if ((x to z - 1) !in claimSet) {
+                    val lineSegment = (x to z) to (x + 1 to z)
+                    val lineSegmentsAtFirst = lineSegments[lineSegment.first] ?: emptyList()
+                    val lineSegmentsAtSecond = lineSegments[lineSegment.second] ?: emptyList()
+                    lineSegments[lineSegment.first] = lineSegmentsAtFirst + lineSegment
+                    lineSegments[lineSegment.second] = lineSegmentsAtSecond + lineSegment
+                }
 
-            // Check east
-            if ((x + 1 to z) !in claimSet) {
-                val lineSegment = (x + 1 to z) to (x + 1 to z + 1)
-                val lineSegmentsAtFirst = lineSegments[lineSegment.first] ?: emptyList()
-                val lineSegmentsAtSecond = lineSegments[lineSegment.second] ?: emptyList()
-                lineSegments[lineSegment.first] = lineSegmentsAtFirst + lineSegment
-                lineSegments[lineSegment.second] = lineSegmentsAtSecond + lineSegment
-            }
+                // Check east
+                if ((x + 1 to z) !in claimSet) {
+                    val lineSegment = (x + 1 to z) to (x + 1 to z + 1)
+                    val lineSegmentsAtFirst = lineSegments[lineSegment.first] ?: emptyList()
+                    val lineSegmentsAtSecond = lineSegments[lineSegment.second] ?: emptyList()
+                    lineSegments[lineSegment.first] = lineSegmentsAtFirst + lineSegment
+                    lineSegments[lineSegment.second] = lineSegmentsAtSecond + lineSegment
+                }
 
-            // Check south
-            if ((x to z + 1) !in claimSet) {
-                val lineSegment = (x to z + 1) to (x + 1 to z + 1)
-                val lineSegmentsAtFirst = lineSegments[lineSegment.first] ?: emptyList()
-                val lineSegmentsAtSecond = lineSegments[lineSegment.second] ?: emptyList()
-                lineSegments[lineSegment.first] = lineSegmentsAtFirst + lineSegment
-                lineSegments[lineSegment.second] = lineSegmentsAtSecond + lineSegment
-            }
+                // Check south
+                if ((x to z + 1) !in claimSet) {
+                    val lineSegment = (x to z + 1) to (x + 1 to z + 1)
+                    val lineSegmentsAtFirst = lineSegments[lineSegment.first] ?: emptyList()
+                    val lineSegmentsAtSecond = lineSegments[lineSegment.second] ?: emptyList()
+                    lineSegments[lineSegment.first] = lineSegmentsAtFirst + lineSegment
+                    lineSegments[lineSegment.second] = lineSegmentsAtSecond + lineSegment
+                }
 
-            // Check west
-            if ((x - 1 to z) !in claimSet) {
-                val lineSegment = (x to z) to (x to z + 1)
-                val lineSegmentsAtFirst = lineSegments[lineSegment.first] ?: emptyList()
-                val lineSegmentsAtSecond = lineSegments[lineSegment.second] ?: emptyList()
-                lineSegments[lineSegment.first] = lineSegmentsAtFirst + lineSegment
-                lineSegments[lineSegment.second] = lineSegmentsAtSecond + lineSegment
+                // Check west
+                if ((x - 1 to z) !in claimSet) {
+                    val lineSegment = (x to z) to (x to z + 1)
+                    val lineSegmentsAtFirst = lineSegments[lineSegment.first] ?: emptyList()
+                    val lineSegmentsAtSecond = lineSegments[lineSegment.second] ?: emptyList()
+                    lineSegments[lineSegment.first] = lineSegmentsAtFirst + lineSegment
+                    lineSegments[lineSegment.second] = lineSegmentsAtSecond + lineSegment
+                }
             }
-        }
 
         if (lineSegments.isEmpty()) return emptyList()
 

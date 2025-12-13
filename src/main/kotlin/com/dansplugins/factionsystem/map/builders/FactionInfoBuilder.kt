@@ -12,8 +12,9 @@ import kotlin.math.roundToInt
  *
  * @param plugin The MedievalFactions plugin instance.
  */
-class FactionInfoBuilder(private val plugin: MedievalFactions) {
-
+class FactionInfoBuilder(
+    private val plugin: MedievalFactions,
+) {
     private val decimalFormat = DecimalFormat("0", DecimalFormatSymbols.getInstance(plugin.language.locale))
 
     /**
@@ -36,12 +37,16 @@ class FactionInfoBuilder(private val plugin: MedievalFactions) {
             if (plugin.config.getBoolean("dynmap.showMembers")) {
                 append("<h2>Members (${faction.members.size})</h2>")
                 append(
-                    faction.members.groupBy { it.role }.map { (role, members) ->
-                        """
-                <h3>${role.name} (${faction.members.count { it.role.id == role.id }})</h3>
-                ${members.joinToString { member -> playerService.getPlayer(member.playerId)?.name ?: plugin.language["UnknownPlayer"] }}
-                        """.trimIndent()
-                    }.joinToString("<br />")
+                    faction.members
+                        .groupBy { it.role }
+                        .map { (role, members) ->
+                            """
+                            <h3>${role.name} (${faction.members.count { it.role.id == role.id }})</h3>
+                            ${members.joinToString { member ->
+                                playerService.getPlayer(member.playerId)?.name ?: plugin.language["UnknownPlayer"]
+                            }}
+                            """.trimIndent()
+                        }.joinToString("<br />"),
                 )
             }
             if (plugin.config.getBoolean("dynmap.showLiege")) {

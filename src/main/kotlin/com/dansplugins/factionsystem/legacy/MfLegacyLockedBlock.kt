@@ -7,5 +7,5 @@ data class MfLegacyLockedBlock(
     val owner: String,
     val factionName: String,
     val world: String,
-    val accessList: String
+    val accessList: String,
 )
