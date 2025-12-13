@@ -35,8 +35,6 @@ if %ERRORLEVEL% NEQ 0 (
 
 echo [OK] Git is installed
 
-echo [OK] Git is installed
-
 REM Check if Java is installed
 where java >nul 2>&1
 if %ERRORLEVEL% NEQ 0 (
