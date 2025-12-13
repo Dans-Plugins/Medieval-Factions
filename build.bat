@@ -1,13 +1,41 @@
 @echo off
-REM Build script for Medieval Factions plugin
-REM This script builds the plugin JAR file with all dependencies included
+REM Standalone Build Script for Medieval Factions plugin
+REM This script handles everything: checking dependencies, cloning the repo, and building the JAR
+REM Usage: build.bat [version|branch]
+REM   - No argument: builds the latest main branch
+REM   - With argument: builds the specified version tag or branch (e.g., v5.7.0 or develop)
 
 setlocal enabledelayedexpansion
 
+set REPO_URL=https://github.com/Dans-Plugins/Medieval-Factions.git
+set BUILD_DIR=MedievalFactions-build
+set VERSION_OR_BRANCH=%1
+if "%VERSION_OR_BRANCH%"=="" set VERSION_OR_BRANCH=main
+
 echo =========================================
-echo Medieval Factions - Build Script
+echo Medieval Factions - Standalone Build Script
 echo =========================================
 echo.
+echo This script will:
+echo   1. Check for required dependencies (Java 17+, Git)
+echo   2. Clone the Medieval Factions repository
+echo   3. Build the plugin JAR file
+echo.
+
+REM Check if Git is installed
+where git >nul 2>&1
+if %ERRORLEVEL% NEQ 0 (
+    echo ERROR: Git is not installed
+    echo.
+    echo Please install Git from: https://git-scm.com/downloads
+    echo.
+    pause
+    exit /b 1
+)
+
+echo [OK] Git is installed
+
+echo [OK] Git is installed
 
 REM Check if Java is installed
 where java >nul 2>&1
@@ -19,6 +47,8 @@ if %ERRORLEVEL% NEQ 0 (
     pause
     exit /b 1
 )
+
+echo [OK] Java is installed
 
 REM Check Java version
 REM Extract version from various Java version formats
@@ -75,7 +105,46 @@ if %JAVA_MAJOR_VERSION% LSS 17 (
     exit /b 1
 )
 
-echo [OK] Java version is compatible
+echo [OK] Java version %JAVA_MAJOR_VERSION% is compatible
+echo.
+
+REM Clone or update the repository
+if exist "%BUILD_DIR%" (
+    echo Build directory already exists. Cleaning up...
+    rmdir /s /q "%BUILD_DIR%"
+)
+
+echo Cloning Medieval Factions repository...
+echo Repository: %REPO_URL%
+echo Version/Branch: %VERSION_OR_BRANCH%
+echo.
+
+git clone --depth 1 --branch "%VERSION_OR_BRANCH%" "%REPO_URL%" "%BUILD_DIR%" 2>&1
+if %ERRORLEVEL% NEQ 0 (
+    echo.
+    echo Failed to clone branch/tag '%VERSION_OR_BRANCH%'
+    echo Trying to clone and checkout instead...
+    git clone "%REPO_URL%" "%BUILD_DIR%"
+    cd "%BUILD_DIR%"
+    git checkout "%VERSION_OR_BRANCH%" 2>&1
+    if !ERRORLEVEL! NEQ 0 (
+        echo.
+        echo ERROR: Could not find version/branch '%VERSION_OR_BRANCH%'
+        echo.
+        echo Please specify a valid branch or tag, for example:
+        echo   build.bat main          # Latest development version
+        echo   build.bat develop       # Development branch
+        echo   build.bat v5.7.0        # Specific version tag
+        cd ..
+        rmdir /s /q "%BUILD_DIR%"
+        pause
+        exit /b 1
+    )
+    cd ..
+)
+
+cd "%BUILD_DIR%"
+echo [OK] Repository cloned successfully
 echo.
 
 REM Build the plugin
@@ -95,12 +164,15 @@ if exist "gradlew.bat" (
 
 REM Check if build was successful
 if !BUILD_RESULT! NEQ 0 (
+    cd ..
     echo.
     echo =========================================
     echo [X] BUILD FAILED
     echo =========================================
     echo.
     echo Please check the output above for errors.
+    echo.
+    echo Build directory: %CD%\%BUILD_DIR%
     pause
     exit /b 1
 )
@@ -114,19 +186,31 @@ for /f "delims=" %%f in ('dir /b /s build\libs\*-all.jar 2^>nul') do (
 
 :found
 if defined JAR_FILE (
+    REM Copy JAR to parent directory for easy access
+    for %%f in ("%JAR_FILE%") do set JAR_NAME=%%~nxf
+    copy "%JAR_FILE%" "..\!JAR_NAME!" >nul
+    
+    cd ..
+    
     echo.
     echo =========================================
     echo [OK] BUILD SUCCESSFUL!
     echo =========================================
     echo.
     echo The plugin JAR file has been created at:
-    echo %JAR_FILE%
+    echo   %CD%\!JAR_NAME!
+    echo.
+    echo The source code is in: %CD%\%BUILD_DIR%
     echo.
     echo To use the plugin:
-    echo 1. Copy the JAR file to your server's 'plugins' folder
-    echo 2. Restart your server
+    echo   1. Copy the JAR file to your server's 'plugins' folder
+    echo   2. Restart your server
+    echo.
+    echo To clean up the build directory:
+    echo   rmdir /s /q %BUILD_DIR%
     echo.
 ) else (
+    cd ..
     echo.
     echo =========================================
     echo [X] BUILD FAILED
@@ -134,6 +218,8 @@ if defined JAR_FILE (
     echo.
     echo The build completed but the JAR file was not found.
     echo Please check the output above for errors.
+    echo.
+    echo Build directory: %CD%\%BUILD_DIR%
 )
 
 pause

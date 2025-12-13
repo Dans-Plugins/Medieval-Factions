@@ -19,18 +19,6 @@ Thank you for being interested in contributing to the project! It wouldn't be wh
 - Open the project in your preferred text editor or IDE.
 - Try compiling the plugin using one of these methods:
   
-  **Using the build script (recommended):**
-  
-  Linux/Mac:
-  ```bash
-  ./build.sh
-  ```
-  
-  Windows:
-  ```cmd
-  build.bat
-  ```
-  
   **Using Gradle directly:**
   
   Linux/Mac:
@@ -42,6 +30,10 @@ Thank you for being interested in contributing to the project! It wouldn't be wh
   ```cmd
   gradlew.bat build
   ```
+  
+  **Using the build script (from within the cloned repository):**
+  
+  Note: The build scripts are designed to work standalone (they clone the repo themselves), but if you're already in a cloned repository, you can comment out the cloning section and run them directly.
   
   If you encounter any errors, please create an issue for it.
 

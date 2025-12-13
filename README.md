@@ -41,30 +41,61 @@ Please fill out a bug report [here](https://github.com/dmccoystephenson/Medieval
 - [Notes for Developers](https://github.com/dmccoystephenson/Medieval-Factions/wiki/Developer-Notes)
 
 ## Building from Source
-If you want to build the plugin JAR yourself (for example, to test experimental features), you can use the provided build scripts. These scripts handle all dependencies automatically - you just need Java 17 or higher installed.
+If you want to build the plugin JAR yourself (for example, to test experimental features), you can use the provided standalone build scripts. These scripts handle everything automatically - you just need Java 17+ and Git installed.
 
 ### Prerequisites
 - Java 17 or higher ([Download from Adoptium](https://adoptium.net/))
+- Git ([Download from git-scm.com](https://git-scm.com/downloads))
 
 ### Build Instructions
 
 **Linux/Mac:**
-```bash
-./build.sh
-```
+
+1. Download the build script:
+   ```bash
+   curl -O https://raw.githubusercontent.com/Dans-Plugins/Medieval-Factions/main/build.sh
+   chmod +x build.sh
+   ```
+
+2. Run the build script:
+   ```bash
+   # Build the latest version from main branch
+   ./build.sh
+   
+   # Or build a specific version/branch
+   ./build.sh v5.7.0
+   ./build.sh develop
+   ```
 
 **Windows:**
-```cmd
-build.bat
-```
 
-The build script will:
-1. Check if you have the required Java version installed
-2. Download all necessary dependencies automatically
-3. Build the plugin JAR with all dependencies included
-4. Show you where the built JAR file is located
+1. Download the build script:
+   - Right-click [build.bat](https://raw.githubusercontent.com/Dans-Plugins/Medieval-Factions/main/build.bat) and "Save link as..."
+   - Or use PowerShell:
+     ```powershell
+     Invoke-WebRequest -Uri "https://raw.githubusercontent.com/Dans-Plugins/Medieval-Factions/main/build.bat" -OutFile "build.bat"
+     ```
 
-The final JAR file will be created in the `build/libs/` directory with a name like `Medieval-Factions-X.X.X-alpha-X-all.jar`.
+2. Run the build script:
+   ```cmd
+   REM Build the latest version from main branch
+   build.bat
+   
+   REM Or build a specific version/branch
+   build.bat v5.7.0
+   build.bat develop
+   ```
+
+### What the build script does:
+
+1. Checks if you have Java 17+ and Git installed
+2. Clones the Medieval Factions repository to a temporary directory
+3. Downloads all necessary dependencies automatically
+4. Builds the plugin JAR with all dependencies included
+5. Copies the final JAR file to your current directory
+6. Shows you where the built JAR file is located
+
+The final JAR file will be named like `Medieval-Factions-X.X.X-alpha-X-all.jar` in the directory where you ran the script.
 
 Simply copy this JAR file to your server's `plugins` folder and restart the server to use it.
 
