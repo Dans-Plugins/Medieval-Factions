@@ -101,11 +101,13 @@ if %JAVA_MAJOR_VERSION% LSS 21 (
     echo.
     
     REM Offer to install Java 21 automatically
+    echo NOTE: This will use your system's package manager to install Java 21.
     set /p INSTALL_JAVA="Would you like to download and install Java 21 automatically? (y/n): "
     
     if /i "%INSTALL_JAVA%"=="y" (
         echo.
         echo Installing Java 21...
+        echo (This may take a few minutes)
         echo.
         
         REM Check if winget is available (Windows 10 1809+ / Windows 11)

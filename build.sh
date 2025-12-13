@@ -80,11 +80,13 @@ if [ "$JAVA_VERSION" -lt 21 ] 2>/dev/null; then
     
     # Offer to install Java 21 automatically
     echo "Would you like to install Java 21 automatically? (y/n)"
+    echo "(Note: This will use your system's package manager and may require sudo/administrator privileges)"
     read -r INSTALL_JAVA
     
     if [ "$INSTALL_JAVA" = "y" ] || [ "$INSTALL_JAVA" = "Y" ]; then
         echo ""
         echo "Installing Java 21..."
+        echo "(You may be prompted for your password)"
         echo ""
         
         # Detect OS and install accordingly
