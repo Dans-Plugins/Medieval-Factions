@@ -93,16 +93,23 @@ if "%JAVA_MAJOR_VERSION%"=="" (
     exit /b 1
 )
 
-if %JAVA_MAJOR_VERSION% LSS 21 (
-    echo ERROR: Java 21 or higher is required to build Medieval Factions
-    echo Current version: Java %JAVA_MAJOR_VERSION%
+REM Check if Java 21 or higher is installed
+if %JAVA_MAJOR_VERSION% GEQ 21 (
+    echo [OK] Java version %JAVA_MAJOR_VERSION% is compatible
     echo.
-    echo This project requires Java 21 due to dependencies and build tooling.
-    echo.
-    
-    REM Offer to install Java 21 automatically
-    echo NOTE: This will use your system's package manager to install Java 21.
-    set /p INSTALL_JAVA="Would you like to download and install Java 21 automatically? (y/n): "
+    goto :build_project
+)
+
+REM If we get here, Java version is less than 21
+echo ERROR: Java 21 or higher is required to build Medieval Factions
+echo Current version: Java %JAVA_MAJOR_VERSION%
+echo.
+echo This project requires Java 21 due to dependencies and build tooling.
+echo.
+
+REM Offer to install Java 21 automatically
+echo NOTE: This will use your system's package manager to install Java 21.
+set /p INSTALL_JAVA="Would you like to download and install Java 21 automatically? (y/n): "
     
     if /i "!INSTALL_JAVA!"=="y" (
         echo.
@@ -210,9 +217,7 @@ if %JAVA_MAJOR_VERSION% LSS 21 (
     )
 )
 
-echo [OK] Java version %JAVA_MAJOR_VERSION% is compatible
-echo.
-
+:build_project
 REM Clone or update the repository
 if exist "%BUILD_DIR%" (
     echo Build directory already exists. Cleaning up...

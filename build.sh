@@ -62,8 +62,8 @@ JAVA_VERSION=$(echo "$VERSION_STRING" | cut -d'.' -f1 | cut -d'-' -f1 | cut -d'+
 # Remove any non-numeric characters
 JAVA_VERSION=$(echo "$JAVA_VERSION" | tr -cd '0-9')
 
-# Validate that we extracted a numeric version and check if it meets requirements
-if [ -z "$JAVA_VERSION" ]; then
+# Validate that we extracted a numeric version
+if [ -z "$JAVA_VERSION" ] || ! [[ "$JAVA_VERSION" =~ ^[0-9]+$ ]]; then
     echo "ERROR: Could not determine Java version"
     echo "Please install Java 21 or higher from:"
     echo "  - https://adoptium.net/ (recommended)"
@@ -71,7 +71,13 @@ if [ -z "$JAVA_VERSION" ]; then
     exit 1
 fi
 
-if [ "$JAVA_VERSION" -lt 21 ] 2>/dev/null; then
+echo "Detected Java version: $JAVA_VERSION"
+
+# Check if Java 21 or higher is installed
+if [ "$JAVA_VERSION" -ge 21 ] 2>/dev/null; then
+    echo "✓ Java version $JAVA_VERSION is compatible"
+    echo ""
+else
     echo "ERROR: Java 21 or higher is required to build Medieval Factions"
     echo "Current version: Java $JAVA_VERSION"
     echo ""
@@ -204,9 +210,6 @@ if [ "$JAVA_VERSION" -lt 21 ] 2>/dev/null; then
         exit 1
     fi
 fi
-
-echo "✓ Java version $JAVA_VERSION is compatible"
-echo ""
 
 # Clone or update the repository
 if [ -d "$BUILD_DIR" ]; then
