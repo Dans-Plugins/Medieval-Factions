@@ -41,11 +41,12 @@ Please fill out a bug report [here](https://github.com/dmccoystephenson/Medieval
 - [Notes for Developers](https://github.com/dmccoystephenson/Medieval-Factions/wiki/Developer-Notes)
 
 ## Building from Source
-If you want to build the plugin JAR yourself (for example, to test experimental features), you can use the provided standalone build scripts. These scripts handle everything automatically - you just need Java 21+ and Git installed.
+If you want to build the plugin JAR yourself (for example, to test experimental features), you can use the provided standalone build scripts. These scripts handle everything automatically, including offering to install Java 21 if needed.
 
 ### Prerequisites
-- Java 21 or higher ([Download from Adoptium](https://adoptium.net/temurin/releases/?version=21))
-- Git ([Download from git-scm.com](https://git-scm.com/downloads))
+- **Git** ([Download from git-scm.com](https://git-scm.com/downloads))
+- **Java 21 or higher** - The script can install this automatically if you don't have it
+  - Manual download: [Adoptium Temurin 21](https://adoptium.net/temurin/releases/?version=21)
 
 ### Build Instructions
 
@@ -89,11 +90,15 @@ If you want to build the plugin JAR yourself (for example, to test experimental 
 ### What the build script does:
 
 1. Checks if you have Java 21+ and Git installed
-2. Clones the Medieval Factions repository to a temporary directory
-3. Downloads all necessary dependencies automatically
-4. Builds the plugin JAR with all dependencies included
-5. Copies the final JAR file to your current directory
-6. Shows you where the built JAR file is located
+2. **Offers to automatically install Java 21 if needed** (with your permission)
+   - Linux: Uses apt, yum, or dnf depending on your distribution
+   - macOS: Uses Homebrew
+   - Windows: Uses winget or Chocolatey
+3. Clones the Medieval Factions repository to a temporary directory
+4. Downloads all necessary dependencies automatically
+5. Builds the plugin JAR with all dependencies included
+6. Copies the final JAR file to your current directory
+7. Shows you where the built JAR file is located
 
 The final JAR file will be named like `Medieval-Factions-X.X.X-alpha-X-all.jar` in the directory where you ran the script.
 

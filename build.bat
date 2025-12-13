@@ -98,15 +98,82 @@ if %JAVA_MAJOR_VERSION% LSS 21 (
     echo Current version: Java %JAVA_MAJOR_VERSION%
     echo.
     echo This project requires Java 21 due to dependencies and build tooling.
-    echo Please install Java 21 or higher from:
-    echo   - https://adoptium.net/temurin/releases/?version=21 ^(recommended^)
-    echo   - https://www.oracle.com/java/technologies/downloads/#java21
     echo.
-    echo After installation, ensure Java 21 is in your PATH:
-    echo   - Run: java -version
-    echo   - It should show version 21 or higher
-    pause
-    exit /b 1
+    
+    REM Offer to install Java 21 automatically
+    set /p INSTALL_JAVA="Would you like to download and install Java 21 automatically? (y/n): "
+    
+    if /i "%INSTALL_JAVA%"=="y" (
+        echo.
+        echo Installing Java 21...
+        echo.
+        
+        REM Check if winget is available (Windows 10 1809+ / Windows 11)
+        where winget >nul 2>&1
+        if %ERRORLEVEL% EQU 0 (
+            echo Detected winget package manager
+            echo Installing Eclipse Temurin JDK 21 via winget...
+            echo.
+            winget install EclipseAdoptium.Temurin.21.JDK --silent --accept-package-agreements --accept-source-agreements
+            
+            echo.
+            echo Java 21 has been installed.
+            echo.
+            echo IMPORTANT: Please close this command prompt and open a new one for the PATH changes to take effect.
+            echo Then run this build script again.
+            echo.
+            pause
+            exit /b 0
+        ) else (
+            REM Check if choco is available
+            where choco >nul 2>&1
+            if %ERRORLEVEL% EQU 0 (
+                echo Detected Chocolatey package manager
+                echo Installing Temurin JDK 21 via Chocolatey...
+                echo.
+                choco install temurin21 -y
+                
+                echo.
+                echo Java 21 has been installed.
+                echo.
+                echo IMPORTANT: Please close this command prompt and open a new one for the PATH changes to take effect.
+                echo Then run this build script again.
+                echo.
+                pause
+                exit /b 0
+            ) else (
+                echo Neither winget nor Chocolatey package manager detected.
+                echo.
+                echo Please install Java 21 manually:
+                echo   1. Download from: https://adoptium.net/temurin/releases/?version=21
+                echo   2. Run the installer
+                echo   3. Ensure "Add to PATH" is checked during installation
+                echo   4. Restart your command prompt
+                echo   5. Run this script again
+                echo.
+                echo Alternatively, you can install a package manager:
+                echo   - winget: Included in Windows 10 1809+ and Windows 11
+                echo   - Chocolatey: https://chocolatey.org/install
+                echo.
+                pause
+                exit /b 1
+            )
+        )
+    ) else (
+        echo.
+        echo Java 21 installation declined.
+        echo.
+        echo Please install Java 21 manually from:
+        echo   - https://adoptium.net/temurin/releases/?version=21 ^(recommended^)
+        echo   - https://www.oracle.com/java/technologies/downloads/#java21
+        echo.
+        echo After installation, ensure Java 21 is in your PATH:
+        echo   - Run: java -version
+        echo   - It should show version 21 or higher
+        echo.
+        pause
+        exit /b 1
+    )
 )
 
 echo [OK] Java version %JAVA_MAJOR_VERSION% is compatible

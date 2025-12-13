@@ -76,14 +76,103 @@ if [ "$JAVA_VERSION" -lt 21 ] 2>/dev/null; then
     echo "Current version: Java $JAVA_VERSION"
     echo ""
     echo "This project requires Java 21 due to dependencies and build tooling."
-    echo "Please install Java 21 or higher from:"
-    echo "  - https://adoptium.net/temurin/releases/?version=21 (recommended)"
-    echo "  - https://www.oracle.com/java/technologies/downloads/#java21"
     echo ""
-    echo "After installation, ensure Java 21 is in your PATH:"
-    echo "  - Run: java -version"
-    echo "  - It should show version 21 or higher"
-    exit 1
+    
+    # Offer to install Java 21 automatically
+    echo "Would you like to install Java 21 automatically? (y/n)"
+    read -r INSTALL_JAVA
+    
+    if [ "$INSTALL_JAVA" = "y" ] || [ "$INSTALL_JAVA" = "Y" ]; then
+        echo ""
+        echo "Installing Java 21..."
+        echo ""
+        
+        # Detect OS and install accordingly
+        if [[ "$OSTYPE" == "linux-gnu"* ]]; then
+            # Linux
+            if command -v apt-get &> /dev/null; then
+                # Debian/Ubuntu
+                echo "Detected Debian/Ubuntu system"
+                echo "Installing OpenJDK 21 via apt..."
+                sudo apt-get update
+                sudo apt-get install -y openjdk-21-jdk
+            elif command -v yum &> /dev/null; then
+                # CentOS/RHEL
+                echo "Detected CentOS/RHEL system"
+                echo "Installing OpenJDK 21 via yum..."
+                sudo yum install -y java-21-openjdk-devel
+            elif command -v dnf &> /dev/null; then
+                # Fedora
+                echo "Detected Fedora system"
+                echo "Installing OpenJDK 21 via dnf..."
+                sudo dnf install -y java-21-openjdk-devel
+            else
+                echo "Could not detect package manager."
+                echo "Please install Java 21 manually from:"
+                echo "  - https://adoptium.net/temurin/releases/?version=21"
+                exit 1
+            fi
+        elif [[ "$OSTYPE" == "darwin"* ]]; then
+            # macOS
+            echo "Detected macOS system"
+            if command -v brew &> /dev/null; then
+                echo "Installing OpenJDK 21 via Homebrew..."
+                brew install openjdk@21
+                echo ""
+                echo "Adding Java 21 to PATH..."
+                echo 'export PATH="/opt/homebrew/opt/openjdk@21/bin:$PATH"' >> ~/.zshrc
+                export PATH="/opt/homebrew/opt/openjdk@21/bin:$PATH"
+            else
+                echo "Homebrew not found. Please install it first:"
+                echo "  /bin/bash -c \"\$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)\""
+                echo ""
+                echo "Or install Java 21 manually from:"
+                echo "  - https://adoptium.net/temurin/releases/?version=21"
+                exit 1
+            fi
+        else
+            echo "Unsupported operating system: $OSTYPE"
+            echo "Please install Java 21 manually from:"
+            echo "  - https://adoptium.net/temurin/releases/?version=21"
+            exit 1
+        fi
+        
+        # Verify installation
+        echo ""
+        echo "Verifying Java installation..."
+        if command -v java &> /dev/null; then
+            NEW_JAVA_VERSION_OUTPUT=$(java -version 2>&1 | head -n 1)
+            NEW_VERSION_STRING=$(echo "$NEW_JAVA_VERSION_OUTPUT" | sed -n 's/.*version "\(.*\)".*/\1/p')
+            NEW_VERSION_STRING=$(echo "$NEW_VERSION_STRING" | sed 's/^1\.//')
+            NEW_JAVA_VERSION=$(echo "$NEW_VERSION_STRING" | cut -d'.' -f1 | cut -d'-' -f1 | cut -d'+' -f1)
+            NEW_JAVA_VERSION=$(echo "$NEW_JAVA_VERSION" | tr -cd '0-9')
+            
+            if [ "$NEW_JAVA_VERSION" -ge 21 ] 2>/dev/null; then
+                echo "✓ Java $NEW_JAVA_VERSION installed successfully!"
+                echo ""
+            else
+                echo "✗ Java installation may have failed. Detected version: $NEW_JAVA_VERSION"
+                echo "Please install Java 21 manually and try again."
+                exit 1
+            fi
+        else
+            echo "✗ Java installation failed."
+            echo "Please install Java 21 manually from:"
+            echo "  - https://adoptium.net/temurin/releases/?version=21"
+            exit 1
+        fi
+    else
+        echo ""
+        echo "Java 21 installation declined."
+        echo "Please install Java 21 manually from:"
+        echo "  - https://adoptium.net/temurin/releases/?version=21 (recommended)"
+        echo "  - https://www.oracle.com/java/technologies/downloads/#java21"
+        echo ""
+        echo "After installation, ensure Java 21 is in your PATH:"
+        echo "  - Run: java -version"
+        echo "  - It should show version 21 or higher"
+        exit 1
+    fi
 fi
 
 echo "✓ Java version $JAVA_VERSION is compatible"
