@@ -40,6 +40,19 @@ import java.util.logging.Level.SEVERE
 
 class PlayerInteractListener(private val plugin: MedievalFactions) : Listener {
 
+    companion object {
+        private val PROJECTILE_WEAPONS = setOf(
+            org.bukkit.Material.BOW,
+            org.bukkit.Material.CROSSBOW,
+            org.bukkit.Material.TRIDENT,
+            org.bukkit.Material.SNOWBALL,
+            org.bukkit.Material.EGG,
+            org.bukkit.Material.ENDER_PEARL,
+            org.bukkit.Material.SPLASH_POTION,
+            org.bukkit.Material.LINGERING_POTION
+        )
+    }
+
     @EventHandler
     fun onPlayerInteract(event: PlayerInteractEvent) {
         if (event.action == PHYSICAL) { // farmland, pressure plates, tripwire, etc...
@@ -169,6 +182,8 @@ class PlayerInteractListener(private val plugin: MedievalFactions) : Listener {
         val item = event.item
         if (item != null) {
             if (item.type.isEdible && !clickedBlock.type.isInteractable) return
+            // Allow projectile shooting when not interacting with an interactable block
+            if (item.type in PROJECTILE_WEAPONS && !clickedBlock.type.isInteractable) return
         }
         if (!claimService.isInteractionAllowed(mfPlayer.id, claim)) {
             if (mfPlayer.isBypassEnabled && event.player.hasPermission("mf.bypass")) {
