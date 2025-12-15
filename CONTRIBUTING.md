@@ -17,9 +17,13 @@ Thank you for being interested in contributing to the project! It wouldn't be wh
 - Fork the repository on GitHub by clicking the "Fork" button on the top right of the repository page.
 - Clone your fork of the repository to your local machine using `git clone https://www.github.com/<your-username>/Medieval-Factions.git`
 - Open the project in your preferred text editor or IDE.
-- Try compiling the plugin using the following command:
+- Try compiling the plugin using one of the build scripts:
+  - **Linux/Mac**: `./build.sh`
+  - **Windows**: `build.bat`
+  
+  Alternatively, you can use Gradle directly:
   ```bash
-  gradlew build
+  ./gradlew build
   ```
   If you encounter any errors, please create an issue for it.
 
