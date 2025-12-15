@@ -1,6 +1,10 @@
 #!/bin/bash
 # Medieval Factions Build Script for Linux/Mac
 # This script builds the Medieval Factions plugin jar
+#
+# Usage:
+#   ./build.sh           - Build in current directory (requires repository)
+#   ./build.sh standalone - Clone repository and build
 
 set -e  # Exit on error (we'll handle errors explicitly where needed)
 
@@ -8,6 +12,59 @@ echo "================================================"
 echo "Medieval Factions Build Script"
 echo "================================================"
 echo ""
+
+# Check if running in standalone mode
+STANDALONE_MODE=false
+if [ "$1" == "standalone" ]; then
+    STANDALONE_MODE=true
+    echo "Running in STANDALONE mode"
+    echo ""
+fi
+
+# If standalone mode, check if we need to clone the repository
+if [ "$STANDALONE_MODE" = true ]; then
+    # Check if git is installed
+    if ! command -v git &> /dev/null; then
+        echo "ERROR: Git is not installed or not in PATH"
+        echo "Git is required for standalone mode to clone the repository."
+        echo ""
+        echo "On Ubuntu/Debian: sudo apt install git"
+        echo "On Fedora/RHEL:   sudo dnf install git"
+        echo "On macOS:         brew install git"
+        echo ""
+        echo "If you continue to experience issues, please report them at:"
+        echo "https://github.com/Dans-Plugins/Medieval-Factions/issues"
+        echo ""
+        exit 1
+    fi
+    
+    # Check if we're already in the repository
+    if [ ! -f "build.gradle" ] || [ ! -f "settings.gradle" ]; then
+        echo "Cloning Medieval-Factions repository..."
+        REPO_URL="https://github.com/Dans-Plugins/Medieval-Factions.git"
+        REPO_DIR="Medieval-Factions"
+        
+        if [ -d "$REPO_DIR" ]; then
+            echo "Directory $REPO_DIR already exists. Using existing directory."
+            cd "$REPO_DIR"
+        else
+            git clone "$REPO_URL" "$REPO_DIR"
+            if [ $? -ne 0 ]; then
+                echo ""
+                echo "ERROR: Failed to clone repository"
+                echo "Please check your internet connection and try again."
+                echo ""
+                echo "If the problem persists, please report it at:"
+                echo "https://github.com/Dans-Plugins/Medieval-Factions/issues"
+                echo ""
+                exit 1
+            fi
+            cd "$REPO_DIR"
+        fi
+        echo "Repository cloned successfully!"
+        echo ""
+    fi
+fi
 
 # Check if Java is installed
 if ! command -v java &> /dev/null; then

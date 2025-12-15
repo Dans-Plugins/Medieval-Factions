@@ -43,17 +43,43 @@ Please fill out a bug report [here](https://github.com/dmccoystephenson/Medieval
 ## Building from Source
 If you want to build the plugin from source (useful for testing experimental versions), you can use the provided build scripts:
 
-### Linux/Mac:
+### Option 1: Build from cloned repository
+
+Clone the repository first, then run the build script:
+
+**Linux/Mac:**
 ```bash
+git clone https://github.com/Dans-Plugins/Medieval-Factions.git
+cd Medieval-Factions
 ./build.sh
 ```
 
-### Windows:
+**Windows:**
 ```cmd
+git clone https://github.com/Dans-Plugins/Medieval-Factions.git
+cd Medieval-Factions
 build.bat
 ```
 
+### Option 2: Standalone mode (script clones repository automatically)
+
+Download just the build script and run it in standalone mode:
+
+**Linux/Mac:**
+```bash
+curl -O https://raw.githubusercontent.com/Dans-Plugins/Medieval-Factions/develop/build.sh
+chmod +x build.sh
+./build.sh standalone
+```
+
+**Windows:**
+```cmd
+curl -O https://raw.githubusercontent.com/Dans-Plugins/Medieval-Factions/develop/build.bat
+build.bat standalone
+```
+
 These scripts will:
+- **In standalone mode:** Clone the repository automatically
 - Check that Java 17 or later is installed
 - Clean previous builds
 - Build the plugin jar using Gradle
@@ -61,6 +87,7 @@ These scripts will:
 
 **Requirements:**
 - Java 17 or later (JDK) - [Download here](https://adoptium.net/)
+- Git (for standalone mode) - [Download here](https://git-scm.com/)
 - Internet connection (for downloading dependencies)
 
 **Note:** If the build fails due to network issues downloading dependencies, try running the script again as some dependencies may have been cached.
