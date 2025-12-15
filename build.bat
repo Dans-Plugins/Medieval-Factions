@@ -75,7 +75,7 @@ if %errorlevel% neq 0 (
 )
 
 REM Check if the jar was created
-dir build\libs\*-all.jar >nul 2>&1
+dir build\libs\medieval-factions-*-all.jar >nul 2>&1
 if %errorlevel% neq 0 (
     echo.
     echo ERROR: Build completed but jar file not found
@@ -93,7 +93,7 @@ echo.
 echo The plugin jar has been built successfully!
 echo.
 echo Location: build\libs\
-dir /b build\libs\*-all.jar
+dir /b build\libs\medieval-factions-*-all.jar
 echo.
 echo You can now copy this jar file to your server's plugins folder.
 echo.

@@ -104,7 +104,7 @@ echo ""
 echo "The plugin jar has been built successfully!"
 echo ""
 echo "Location: build/libs/"
-ls -lh build/libs/*-all.jar
+ls -lh build/libs/medieval-factions-*-all.jar
 echo ""
 echo "You can now copy this jar file to your server's plugins folder."
 echo ""
