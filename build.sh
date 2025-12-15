@@ -18,6 +18,9 @@ if ! command -v java &> /dev/null; then
     echo "On Fedora/RHEL:   sudo dnf install java-17-openjdk-devel"
     echo "On macOS:         brew install openjdk@17"
     echo ""
+    echo "If you continue to experience issues, please report them at:"
+    echo "https://github.com/Dans-Plugins/Medieval-Factions/issues"
+    echo ""
     exit 1
 fi
 
@@ -37,6 +40,9 @@ if [ "$java_major" -lt 17 ]; then
     echo "ERROR: Java 17 or later is required"
     echo "Current Java version: $java_version"
     echo "Please install Java 17 or later."
+    echo ""
+    echo "If you continue to experience issues, please report them at:"
+    echo "https://github.com/Dans-Plugins/Medieval-Factions/issues"
     echo ""
     exit 1
 fi
@@ -84,6 +90,9 @@ if [ $build_result -ne 0 ]; then
     echo "Try running the build again, as some dependencies"
     echo "may have been cached and could work on retry."
     echo ""
+    echo "If the problem persists, please report it at:"
+    echo "https://github.com/Dans-Plugins/Medieval-Factions/issues"
+    echo ""
     exit 1
 fi
 
@@ -92,6 +101,9 @@ if ! ls build/libs/medieval-factions-*-all.jar 1> /dev/null 2>&1; then
     echo ""
     echo "ERROR: Build completed but jar file not found"
     echo "Expected location: build/libs/medieval-factions-*-all.jar"
+    echo ""
+    echo "Please report this issue at:"
+    echo "https://github.com/Dans-Plugins/Medieval-Factions/issues"
     echo ""
     exit 1
 fi

@@ -13,6 +13,9 @@ if %errorlevel% neq 0 (
     echo ERROR: Java is not installed or not in PATH
     echo Please install Java 17 or later from: https://adoptium.net/
     echo.
+    echo If you continue to experience issues, please report them at:
+    echo https://github.com/Dans-Plugins/Medieval-Factions/issues
+    echo.
     pause
     exit /b 1
 )
@@ -35,6 +38,9 @@ if %jver% lss 17 (
     echo ERROR: Java 17 or later is required
     echo Current Java version: %jver%
     echo Please install Java 17 or later from: https://adoptium.net/
+    echo.
+    echo If you continue to experience issues, please report them at:
+    echo https://github.com/Dans-Plugins/Medieval-Factions/issues
     echo.
     pause
     exit /b 1
@@ -70,6 +76,9 @@ if %errorlevel% neq 0 (
     echo Try running the build again, as some dependencies
     echo may have been cached and could work on retry.
     echo.
+    echo If the problem persists, please report it at:
+    echo https://github.com/Dans-Plugins/Medieval-Factions/issues
+    echo.
     pause
     exit /b 1
 )
@@ -80,6 +89,9 @@ if %errorlevel% neq 0 (
     echo.
     echo ERROR: Build completed but jar file not found
     echo Expected location: build\libs\medieval-factions-*-all.jar
+    echo.
+    echo Please report this issue at:
+    echo https://github.com/Dans-Plugins/Medieval-Factions/issues
     echo.
     pause
     exit /b 1
