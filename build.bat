@@ -18,7 +18,19 @@ if %errorlevel% neq 0 (
 )
 
 echo Checking Java version...
-for /f tokens^=2-5^ delims^=.-_^" %%j in ('java -version 2^>^&1 ^| findstr /i "version"') do set "jver=%%j"
+REM Parse Java version - handle both old (1.8) and new (9+) formats
+for /f tokens^=2-5^ delims^=.-_^" %%j in ('java -version 2^>^&1 ^| findstr /i "version"') do (
+    set "jver1=%%j"
+    set "jver2=%%k"
+)
+REM For Java 8 and earlier, version is 1.8.0_xxx (jver1=1, jver2=8)
+REM For Java 9+, version is 11.0.x (jver1=11, jver2=0)
+if "%jver1%"=="1" (
+    set "jver=%jver2%"
+) else (
+    set "jver=%jver1%"
+)
+
 if %jver% lss 17 (
     echo ERROR: Java 17 or later is required
     echo Current Java version: %jver%
@@ -63,7 +75,8 @@ if %errorlevel% neq 0 (
 )
 
 REM Check if the jar was created
-if not exist "build\libs\medieval-factions-*-all.jar" (
+dir build\libs\*-all.jar >nul 2>&1
+if %errorlevel% neq 0 (
     echo.
     echo ERROR: Build completed but jar file not found
     echo Expected location: build\libs\medieval-factions-*-all.jar

@@ -22,9 +22,18 @@ if ! command -v java &> /dev/null; then
 fi
 
 echo "Checking Java version..."
-# Get Java version
-java_version=$(java -version 2>&1 | awk -F '"' '/version/ {print $2}' | cut -d. -f1)
-if [ "$java_version" -lt 17 ]; then
+# Get Java version - handle both old (1.8) and new (9+) version formats
+java_version=$(java -version 2>&1 | awk -F '"' '/version/ {print $2}')
+# Extract major version: for "1.8.0_xxx" get 8, for "11.0.x" get 11
+if [[ $java_version == 1.* ]]; then
+    # Old versioning scheme (Java 8 and earlier): 1.8.0_xxx -> 8
+    java_major=$(echo $java_version | cut -d. -f2)
+else
+    # New versioning scheme (Java 9+): 11.0.x -> 11
+    java_major=$(echo $java_version | cut -d. -f1)
+fi
+
+if [ "$java_major" -lt 17 ]; then
     echo "ERROR: Java 17 or later is required"
     echo "Current Java version: $java_version"
     echo "Please install Java 17 or later."
@@ -32,7 +41,7 @@ if [ "$java_version" -lt 17 ]; then
     exit 1
 fi
 
-echo "Java version check passed (Java $java_version)"
+echo "Java version check passed (Java $java_major)"
 echo ""
 
 # Make gradlew executable if it isn't already
