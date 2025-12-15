@@ -40,6 +40,31 @@ Please fill out a bug report [here](https://github.com/dmccoystephenson/Medieval
 - [Contributing.md](https://github.com/dmccoystephenson/Medieval-Factions/blob/master/CONTRIBUTING.md)
 - [Notes for Developers](https://github.com/dmccoystephenson/Medieval-Factions/wiki/Developer-Notes)
 
+## Building from Source
+If you want to build the plugin from source (useful for testing experimental versions), you can use the provided build scripts:
+
+### Linux/Mac:
+```bash
+./build.sh
+```
+
+### Windows:
+```cmd
+build.bat
+```
+
+These scripts will:
+- Check that Java 17 or later is installed
+- Clean previous builds
+- Build the plugin jar using Gradle
+- Show you where the built jar is located (`build/libs/`)
+
+**Requirements:**
+- Java 17 or later (JDK) - [Download here](https://adoptium.net/)
+- Internet connection (for downloading dependencies)
+
+**Note:** If the build fails due to network issues downloading dependencies, try running the script again as some dependencies may have been cached.
+
 ## Testing
 ### Unit Tests
 To run the unit tests, you can use the following command:
