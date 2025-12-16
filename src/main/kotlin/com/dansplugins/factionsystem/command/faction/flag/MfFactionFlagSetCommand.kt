@@ -95,16 +95,16 @@ class MfFactionFlagSetCommand(private val plugin: MedievalFactions) : CommandExe
             sender.sendMessage("$RED${plugin.language["CommandFactionFlagSetUsage"]}")
             return true
         }
-        
+
         val hasForcePermission = sender.hasPermission("mf.force.flag")
         val unquotedArgs = args.unquote()
-        
+
         // Parse arguments to determine if faction is specified
         var targetFaction: MfFaction? = null
         var flagName: String
         var flagValueArgs: List<String>
         var lastArgOffset = 0
-        
+
         // Check for page parameter at the end
         val returnPage = if (args.last().startsWith("p=")) {
             lastArgOffset = 1
@@ -112,12 +112,12 @@ class MfFactionFlagSetCommand(private val plugin: MedievalFactions) : CommandExe
         } else {
             null
         }
-        
+
         if (hasForcePermission && unquotedArgs.size >= 2) {
             // Try to parse first argument as faction name/ID
             val factionService = plugin.services.factionService
             val potentialFaction = factionService.getFaction(MfFactionId(unquotedArgs[0])) ?: factionService.getFaction(unquotedArgs[0])
-            
+
             if (potentialFaction != null && unquotedArgs.size >= 3) {
                 // First arg is a valid faction, second arg is flag name
                 targetFaction = potentialFaction
@@ -133,13 +133,13 @@ class MfFactionFlagSetCommand(private val plugin: MedievalFactions) : CommandExe
             flagName = unquotedArgs[0]
             flagValueArgs = unquotedArgs.drop(1).dropLast(lastArgOffset)
         }
-        
+
         val flag = plugin.flags.get<Any>(flagName)
         if (flag == null) {
             sender.sendMessage("$RED${plugin.language["CommandFactionFlagSetInvalidFlag"]}")
             return true
         }
-        
+
         if (flagValueArgs.isEmpty()) {
             val conversation = conversationFactory.buildConversation(sender)
             conversation.context.setSessionData("page", returnPage)
@@ -148,7 +148,7 @@ class MfFactionFlagSetCommand(private val plugin: MedievalFactions) : CommandExe
             conversation.begin()
             return true
         }
-        
+
         val flagValue = flagValueArgs.joinToString(" ")
         setFlagValue(sender, targetFaction, flag, flagValue, returnPage)
         return true
@@ -167,7 +167,7 @@ class MfFactionFlagSetCommand(private val plugin: MedievalFactions) : CommandExe
                         return@Runnable
                     }
                 val factionService = plugin.services.factionService
-                
+
                 // Determine which faction to modify
                 val faction = if (targetFaction != null) {
                     targetFaction
@@ -179,7 +179,7 @@ class MfFactionFlagSetCommand(private val plugin: MedievalFactions) : CommandExe
                     }
                     playerFaction
                 }
-                
+
                 // Check permissions - either faction role permission or force permission
                 if (targetFaction != null) {
                     // Using force permission on another faction
@@ -195,7 +195,7 @@ class MfFactionFlagSetCommand(private val plugin: MedievalFactions) : CommandExe
                         return@Runnable
                     }
                 }
-                
+
                 when (val coercionResult = flag.coerce(flagValue)) {
                     is MfFlagValueCoercionFailure -> sender.sendMessage(
                         "$RED${plugin.language[
@@ -239,7 +239,7 @@ class MfFactionFlagSetCommand(private val plugin: MedievalFactions) : CommandExe
     ): List<String> {
         val hasForcePermission = sender.hasPermission("mf.force.flag")
         val factionService = plugin.services.factionService
-        
+
         return when {
             args.isEmpty() -> {
                 // First arg: could be faction name (if force) or flag name
