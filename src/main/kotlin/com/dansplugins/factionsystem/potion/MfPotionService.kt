@@ -7,13 +7,13 @@ import org.bukkit.entity.Player
 import java.util.UUID
 
 class MfPotionService(
-    private val plugin: MedievalFactions,
+    private val plugin: MedievalFactions
 ) {
     private val lingeringEffectThrowers = mutableMapOf<Int, UUID>()
 
     fun addLingeringEffectThrower(
         effect: AreaEffectCloud,
-        thrower: Player,
+        thrower: Player
     ) {
         lingeringEffectThrowers[effect.entityId] = thrower.uniqueId
         plugin.server.scheduler.runTaskLater(
@@ -21,7 +21,7 @@ class MfPotionService(
             Runnable {
                 removeLingeringPotionEffectThrower(effect)
             },
-            effect.duration.toLong(),
+            effect.duration.toLong()
         )
     }
 

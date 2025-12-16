@@ -15,7 +15,7 @@ import org.bukkit.entity.Player
 import java.util.logging.Level
 
 class MfFactionChatCommand(
-    private val plugin: MedievalFactions,
+    private val plugin: MedievalFactions
 ) : CommandExecutor,
     TabCompleter {
     private val chatHistoryCommand = MfFactionChatHistoryCommand(plugin)
@@ -26,7 +26,7 @@ class MfFactionChatCommand(
         sender: CommandSender,
         command: Command,
         label: String,
-        args: Array<out String>,
+        args: Array<out String>
     ): Boolean {
         if (!sender.hasPermission("mf.chat")) {
             sender.sendMessage("$RED${plugin.language["CommandFactionChatNoPermission"]}")
@@ -57,7 +57,7 @@ class MfFactionChatCommand(
                             plugin,
                             Runnable {
                                 chatHistoryCommand.onCommand(sender, command, label, args.drop(1).toTypedArray())
-                            },
+                            }
                         )
                         return@Runnable
                     }
@@ -67,12 +67,12 @@ class MfFactionChatCommand(
                         .save(
                             mfPlayer.copy(
                                 chatChannel =
-                                    if (mfPlayer.chatChannel != chatChannel) {
-                                        chatChannel
-                                    } else {
-                                        null
-                                    },
-                            ),
+                                if (mfPlayer.chatChannel != chatChannel) {
+                                    chatChannel
+                                } else {
+                                    null
+                                }
+                            )
                         ).onFailure {
                             sender.sendMessage("$RED${plugin.language["CommandFactionChatFailedToSavePlayer"]}")
                             plugin.logger.log(Level.SEVERE, "Failed to save player: ${it.reason.message}", it.reason.cause)
@@ -81,17 +81,17 @@ class MfFactionChatCommand(
                 if (updatedMfPlayer.chatChannel != null) {
                     sender.sendMessage(
                         "$GREEN${
-                            plugin.language["CommandFactionChatFactionChatEnabled", chatChannel.toString().lowercase()]
-                        }",
+                        plugin.language["CommandFactionChatFactionChatEnabled", chatChannel.toString().lowercase()]
+                        }"
                     )
                 } else {
                     sender.sendMessage(
                         "$GREEN${
-                            plugin.language["CommandFactionChatFactionChatDisabled"]
-                        }",
+                        plugin.language["CommandFactionChatFactionChatDisabled"]
+                        }"
                     )
                 }
-            },
+            }
         )
         return true
     }
@@ -100,7 +100,7 @@ class MfFactionChatCommand(
         sender: CommandSender,
         command: Command,
         label: String,
-        args: Array<out String>,
+        args: Array<out String>
     ) = when {
         args.isEmpty() -> MfFactionChatChannel.values().map { it.name.lowercase() } + historyAliases
         args.size == 1 ->
@@ -111,7 +111,7 @@ class MfFactionChatCommand(
                 sender,
                 command,
                 label,
-                args.drop(1).toTypedArray(),
+                args.drop(1).toTypedArray()
             )
         else -> emptyList()
     }

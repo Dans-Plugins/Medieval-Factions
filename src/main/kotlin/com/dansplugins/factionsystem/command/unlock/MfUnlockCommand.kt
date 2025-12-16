@@ -14,14 +14,14 @@ import org.bukkit.entity.Player
 import java.util.logging.Level.SEVERE
 
 class MfUnlockCommand(
-    private val plugin: MedievalFactions,
+    private val plugin: MedievalFactions
 ) : CommandExecutor,
     TabCompleter {
     override fun onCommand(
         sender: CommandSender,
         command: Command,
         label: String,
-        args: Array<out String>,
+        args: Array<out String>
     ): Boolean {
         if (!sender.hasPermission("mf.unlock")) {
             sender.sendMessage("$RED${plugin.language["CommandUnlockNoPermission"]}")
@@ -64,7 +64,7 @@ class MfUnlockCommand(
                     return@Runnable
                 }
                 sender.sendMessage("$GREEN${plugin.language["CommandUnlockSuccess"]}")
-            },
+            }
         )
         return true
     }
@@ -73,7 +73,7 @@ class MfUnlockCommand(
         sender: CommandSender,
         command: Command,
         label: String,
-        args: Array<out String>,
+        args: Array<out String>
     ) = when {
         args.isEmpty() -> listOf("cancel")
         args.size == 1 && "cancel".startsWith(args[0].lowercase()) -> listOf("cancel")

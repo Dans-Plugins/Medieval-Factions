@@ -5,7 +5,7 @@ import com.dansplugins.factionsystem.faction.MfFaction
 data class MfFactionPermission(
     val name: String,
     val translate: (faction: MfFaction) -> String,
-    val default: Boolean,
+    val default: Boolean
 ) {
     constructor(name: String, translation: String, default: Boolean) : this(name, { translation }, default)
 

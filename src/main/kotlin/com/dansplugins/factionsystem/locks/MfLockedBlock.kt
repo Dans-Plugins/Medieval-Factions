@@ -13,5 +13,5 @@ data class MfLockedBlock(
     @get:JvmName("getPlayerId")
     val playerId: MfPlayerId,
     @get:JvmName("getAccessorPlayerIds")
-    val accessors: List<MfPlayerId>,
+    val accessors: List<MfPlayerId>
 )

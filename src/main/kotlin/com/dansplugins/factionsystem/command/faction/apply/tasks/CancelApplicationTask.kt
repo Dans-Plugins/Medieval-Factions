@@ -9,7 +9,7 @@ import java.util.logging.Level.SEVERE
 class CancelApplicationTask(
     private val plugin: MedievalFactions,
     private val sender: Player,
-    private val targetFactionName: String,
+    private val targetFactionName: String
 ) : Runnable {
     override fun run() {
         val factionService = plugin.services.factionService

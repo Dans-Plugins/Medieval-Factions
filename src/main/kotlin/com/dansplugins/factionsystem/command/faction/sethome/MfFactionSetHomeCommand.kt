@@ -14,14 +14,14 @@ import org.bukkit.entity.Player
 import java.util.logging.Level.SEVERE
 
 class MfFactionSetHomeCommand(
-    private val plugin: MedievalFactions,
+    private val plugin: MedievalFactions
 ) : CommandExecutor,
     TabCompleter {
     override fun onCommand(
         sender: CommandSender,
         command: Command,
         label: String,
-        args: Array<out String>,
+        args: Array<out String>
     ): Boolean {
         if (!sender.hasPermission("mf.sethome")) {
             sender.sendMessage("$RED${plugin.language["CommandFactionSetHomeNoPermission"]}")
@@ -66,7 +66,7 @@ class MfFactionSetHomeCommand(
                     return@Runnable
                 }
                 sender.sendMessage("$GREEN${plugin.language["CommandFactionSetHomeSuccessful"]}")
-            },
+            }
         )
         return true
     }
@@ -75,6 +75,6 @@ class MfFactionSetHomeCommand(
         sender: CommandSender,
         command: Command,
         label: String,
-        args: Array<out String>,
+        args: Array<out String>
     ) = emptyList<String>()
 }

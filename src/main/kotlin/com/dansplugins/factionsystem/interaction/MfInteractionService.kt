@@ -11,7 +11,7 @@ import dev.forkhandles.result4k.resultFrom
 import java.util.concurrent.ConcurrentHashMap
 
 class MfInteractionService(
-    private val repository: MfInteractionStatusRepository,
+    private val repository: MfInteractionStatusRepository
 ) {
     private val interactionStatus: MutableMap<String, MfInteractionStatus> = ConcurrentHashMap()
 
@@ -21,7 +21,7 @@ class MfInteractionService(
     @JvmName("setInteractionStatus")
     fun setInteractionStatus(
         playerId: MfPlayerId,
-        status: MfInteractionStatus?,
+        status: MfInteractionStatus?
     ): Result<Unit, ServiceFailure> {
         val result =
             resultFrom {

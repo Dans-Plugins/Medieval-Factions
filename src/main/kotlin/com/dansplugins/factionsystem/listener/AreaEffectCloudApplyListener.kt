@@ -10,7 +10,7 @@ import org.bukkit.event.entity.AreaEffectCloudApplyEvent
 import org.bukkit.potion.PotionEffectType
 
 class AreaEffectCloudApplyListener(
-    private val plugin: MedievalFactions,
+    private val plugin: MedievalFactions
 ) : Listener {
     private val harmfulPotionEffectTypes =
         listOf(
@@ -26,7 +26,7 @@ class AreaEffectCloudApplyListener(
             "SLOW_DIGGING",
             "UNLUCK",
             "WEAKNESS",
-            "WITHER",
+            "WITHER"
         ).mapNotNull {
             PotionEffectType.getByName(it)
         }

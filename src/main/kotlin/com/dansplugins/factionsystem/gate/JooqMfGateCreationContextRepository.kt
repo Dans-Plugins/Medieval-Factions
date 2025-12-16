@@ -9,7 +9,7 @@ import org.jooq.DSLContext
 import java.util.UUID
 
 class JooqMfGateCreationContextRepository(
-    private val dsl: DSLContext,
+    private val dsl: DSLContext
 ) : MfGateCreationContextRepository {
     override fun getContext(playerId: MfPlayerId): MfGateCreationContext? =
         dsl
@@ -79,6 +79,6 @@ class JooqMfGateCreationContextRepository(
                 null
             } else {
                 MfBlockPosition(worldId.let(UUID::fromString), triggerX, triggerY, triggerZ)
-            },
+            }
         )
 }

@@ -15,14 +15,14 @@ import org.bukkit.entity.Player
 import java.util.logging.Level.SEVERE
 
 class MfFactionRoleSetDefaultCommand(
-    private val plugin: MedievalFactions,
+    private val plugin: MedievalFactions
 ) : CommandExecutor,
     TabCompleter {
     override fun onCommand(
         sender: CommandSender,
         command: Command,
         label: String,
-        args: Array<out String>,
+        args: Array<out String>
     ): Boolean {
         if (!sender.hasPermission("mf.role.setdefault")) {
             sender.sendMessage("$RED${plugin.language["CommandFactionRoleSetDefaultNoPermission"]}")
@@ -79,8 +79,8 @@ class MfFactionRoleSetDefaultCommand(
                 factionService
                     .save(
                         faction.copy(
-                            roles = faction.roles.copy(defaultRoleId = targetRole.id),
-                        ),
+                            roles = faction.roles.copy(defaultRoleId = targetRole.id)
+                        )
                     ).onFailure {
                         sender.sendMessage("$RED${plugin.language["CommandFactionRoleSetDefaultFailedToSaveFaction"]}")
                         plugin.logger.log(SEVERE, "Failed to save faction: ${it.reason.message}", it.reason.cause)
@@ -92,10 +92,10 @@ class MfFactionRoleSetDefaultCommand(
                         plugin,
                         Runnable {
                             sender.performCommand("faction role list $returnPage")
-                        },
+                        }
                     )
                 }
-            },
+            }
         )
         return true
     }
@@ -104,7 +104,7 @@ class MfFactionRoleSetDefaultCommand(
         sender: CommandSender,
         command: Command,
         label: String,
-        args: Array<out String>,
+        args: Array<out String>
     ): List<String> {
         if (sender !is Player) return emptyList()
         val playerId = MfPlayerId.fromBukkitPlayer(sender)

@@ -4,5 +4,5 @@ enum class MfFactionRelationshipType {
     ALLY,
     AT_WAR,
     VASSAL,
-    LIEGE,
+    LIEGE
 }

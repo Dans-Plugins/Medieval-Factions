@@ -10,14 +10,14 @@ import org.bukkit.command.TabCompleter
 import org.bukkit.entity.Player
 
 class MfFactionDenyAppCommand(
-    private val plugin: MedievalFactions,
+    private val plugin: MedievalFactions
 ) : CommandExecutor,
     TabCompleter {
     override fun onCommand(
         sender: CommandSender,
         command: Command,
         label: String,
-        args: Array<out String>?,
+        args: Array<out String>?
     ): Boolean {
         if (!sender.hasPermission("mf.denyapp")) {
             sender.sendMessage("${ChatColor.RED}${plugin.language["CommandFactionDenyAppNoPermission"]}")
@@ -35,7 +35,7 @@ class MfFactionDenyAppCommand(
         plugin.logger.info("Player ${sender.name} is denying application for player $targetPlayerName")
         plugin.server.scheduler.runTaskAsynchronously(
             plugin,
-            DenyApplicationTask(plugin, sender, targetPlayerName),
+            DenyApplicationTask(plugin, sender, targetPlayerName)
         )
         return true
     }
@@ -44,7 +44,7 @@ class MfFactionDenyAppCommand(
         sender: CommandSender,
         command: Command,
         label: String,
-        args: Array<out String>?,
+        args: Array<out String>?
     ): MutableList<String>? {
         if (!sender.hasPermission("mf.denyapp")) {
             return mutableListOf()

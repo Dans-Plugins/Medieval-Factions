@@ -52,7 +52,7 @@ class TestUtils {
      */
     fun createBlockBreakEvent(
         block: Block,
-        player: Player,
+        player: Player
     ): BlockBreakEvent {
         val event = mock(BlockBreakEvent::class.java)
         `when`(event.block).thenReturn(block)
@@ -69,7 +69,7 @@ class TestUtils {
      */
     fun createBlockPlaceEvent(
         block: Block,
-        player: Player,
+        player: Player
     ): BlockPlaceEvent {
         val event = mock(BlockPlaceEvent::class.java)
         `when`(event.block).thenReturn(block)
@@ -99,6 +99,6 @@ class TestUtils {
     data class CommandTestFixture(
         val player: Player,
         val command: Command,
-        val sender: CommandSender,
+        val sender: CommandSender
     )
 }

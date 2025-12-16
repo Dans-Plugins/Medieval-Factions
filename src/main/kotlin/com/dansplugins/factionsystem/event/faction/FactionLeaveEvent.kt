@@ -12,7 +12,7 @@ class FactionLeaveEvent(
     override val factionId: MfFactionId,
     @get:JvmName("getPlayerId")
     override val playerId: MfPlayerId,
-    isAsync: Boolean,
+    isAsync: Boolean
 ) : Event(isAsync),
     FactionEvent,
     PlayerEvent,

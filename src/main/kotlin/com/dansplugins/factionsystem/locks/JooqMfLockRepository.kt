@@ -11,7 +11,7 @@ import org.jooq.DSLContext
 import java.util.UUID
 
 class JooqMfLockRepository(
-    private val dsl: DSLContext,
+    private val dsl: DSLContext
 ) : MfLockRepository {
     override fun getLockedBlock(id: MfLockedBlockId): MfLockedBlock? = getLockedBlock(MF_LOCKED_BLOCK.ID.eq(id.value))
 
@@ -19,14 +19,14 @@ class JooqMfLockRepository(
         worldId: UUID,
         x: Int,
         y: Int,
-        z: Int,
+        z: Int
     ): MfLockedBlock? =
         getLockedBlock(
             MF_LOCKED_BLOCK.WORLD_ID
                 .eq(worldId.toString())
                 .and(MF_LOCKED_BLOCK.X.eq(MF_LOCKED_BLOCK.X))
                 .and(MF_LOCKED_BLOCK.Y.eq(MF_LOCKED_BLOCK.Y))
-                .and(MF_LOCKED_BLOCK.Z.eq(MF_LOCKED_BLOCK.Z)),
+                .and(MF_LOCKED_BLOCK.Z.eq(MF_LOCKED_BLOCK.Z))
         )
 
     private fun getLockedBlock(condition: Condition): MfLockedBlock? {
@@ -35,7 +35,7 @@ class JooqMfLockRepository(
                 .selectFrom(
                     MF_LOCKED_BLOCK
                         .leftJoin(MF_LOCKED_BLOCK_ACCESSOR)
-                        .on(MF_LOCKED_BLOCK.ID.eq(MF_LOCKED_BLOCK_ACCESSOR.LOCKED_BLOCK_ID)),
+                        .on(MF_LOCKED_BLOCK.ID.eq(MF_LOCKED_BLOCK_ACCESSOR.LOCKED_BLOCK_ID))
                 ).where(condition)
                 .fetch()
         val lockedBlockRecord = results.into(MF_LOCKED_BLOCK).firstOrNull() ?: return null
@@ -49,7 +49,7 @@ class JooqMfLockRepository(
             .selectFrom(
                 MF_LOCKED_BLOCK
                     .leftJoin(MF_LOCKED_BLOCK_ACCESSOR)
-                    .on(MF_LOCKED_BLOCK.ID.eq(MF_LOCKED_BLOCK_ACCESSOR.LOCKED_BLOCK_ID)),
+                    .on(MF_LOCKED_BLOCK.ID.eq(MF_LOCKED_BLOCK_ACCESSOR.LOCKED_BLOCK_ID))
             ).fetch()
             .groupBy { it[MF_LOCKED_BLOCK.ID] }
             .map { (_, records) ->
@@ -69,14 +69,14 @@ class JooqMfLockRepository(
             val newAccessors = lockedBlock.accessors.map { upsertAccessor(transactionalDsl, lockedBlock.id, it) }
 
             return@transactionResult newState.copy(
-                accessors = newAccessors,
+                accessors = newAccessors
             )
         }
     }
 
     private fun upsertLockedBlock(
         dsl: DSLContext,
-        lockedBlock: MfLockedBlock,
+        lockedBlock: MfLockedBlock
     ): MfLockedBlock {
         val rowCount =
             dsl
@@ -124,7 +124,7 @@ class JooqMfLockRepository(
 
     private fun deleteAccessors(
         dsl: DSLContext,
-        lockedBlockId: MfLockedBlockId,
+        lockedBlockId: MfLockedBlockId
     ) {
         dsl
             .deleteFrom(MF_LOCKED_BLOCK_ACCESSOR)
@@ -135,7 +135,7 @@ class JooqMfLockRepository(
     private fun upsertAccessor(
         dsl: DSLContext,
         lockedBlockId: MfLockedBlockId,
-        playerId: MfPlayerId,
+        playerId: MfPlayerId
     ): MfPlayerId {
         dsl
             .insertInto(MF_LOCKED_BLOCK_ACCESSOR)
@@ -159,15 +159,15 @@ class JooqMfLockRepository(
             id = id.let(::MfLockedBlockId),
             version = version,
             block =
-                MfBlockPosition(
-                    worldId = UUID.fromString(worldId),
-                    x = x,
-                    y = y,
-                    z = z,
-                ),
+            MfBlockPosition(
+                worldId = UUID.fromString(worldId),
+                x = x,
+                y = y,
+                z = z
+            ),
             chunkX = chunkX,
             chunkZ = chunkZ,
             playerId = playerId.let(::MfPlayerId),
-            accessors = accessors,
+            accessors = accessors
         )
 }

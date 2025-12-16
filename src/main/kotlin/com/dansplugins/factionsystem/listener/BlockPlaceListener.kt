@@ -12,7 +12,7 @@ import org.bukkit.event.block.BlockPlaceEvent
 import java.util.logging.Level
 
 class BlockPlaceListener(
-    private val plugin: MedievalFactions,
+    private val plugin: MedievalFactions
 ) : Listener {
     @EventHandler
     fun onBlockPlace(event: BlockPlaceEvent) {
@@ -51,7 +51,7 @@ class BlockPlaceListener(
                         plugin.logger.log(Level.SEVERE, "Failed to save player: ${it.reason.message}", it.reason.cause)
                         return@Runnable
                     }
-                },
+                }
             )
             return
         }

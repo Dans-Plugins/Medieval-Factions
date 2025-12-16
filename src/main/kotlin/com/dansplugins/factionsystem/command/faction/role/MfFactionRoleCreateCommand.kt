@@ -19,7 +19,7 @@ import org.bukkit.entity.Player
 import java.util.logging.Level.SEVERE
 
 class MfFactionRoleCreateCommand(
-    private val plugin: MedievalFactions,
+    private val plugin: MedievalFactions
 ) : CommandExecutor,
     TabCompleter {
     private val conversationFactory =
@@ -44,7 +44,7 @@ class MfFactionRoleCreateCommand(
 
         override fun acceptInput(
             context: ConversationContext,
-            input: String?,
+            input: String?
         ): Prompt? {
             val conversable = context.forWhom
             if (conversable !is Player) return END_OF_CONVERSATION
@@ -58,7 +58,7 @@ class MfFactionRoleCreateCommand(
         sender: CommandSender,
         command: Command,
         label: String,
-        args: Array<out String>,
+        args: Array<out String>
     ): Boolean {
         if (!sender.hasPermission("mf.role.create")) {
             sender.sendMessage("$RED${plugin.language["CommandFactionRoleCreateNoPermission"]}")
@@ -89,7 +89,7 @@ class MfFactionRoleCreateCommand(
     private fun createRole(
         player: Player,
         name: String,
-        returnPage: Int?,
+        returnPage: Int?
     ) {
         plugin.server.scheduler.runTaskAsynchronously(
             plugin,
@@ -122,46 +122,46 @@ class MfFactionRoleCreateCommand(
                     .save(
                         faction.copy(
                             roles =
-                                MfFactionRoles(
-                                    faction.roles.defaultRoleId,
-                                    faction.roles.map { existingRole ->
-                                        existingRole.copy(
-                                            permissionsByName =
-                                                existingRole.permissionsByName +
-                                                    buildMap {
-                                                        if (existingRole.hasPermission(
-                                                                faction,
-                                                                plugin.factionPermissions.viewRole(role.id),
-                                                            )
-                                                        ) {
-                                                            put(plugin.factionPermissions.viewRole(newRole.id).name, true)
-                                                        }
-                                                        if (existingRole.hasPermission(
-                                                                faction,
-                                                                plugin.factionPermissions.modifyRole(role.id),
-                                                            )
-                                                        ) {
-                                                            put(plugin.factionPermissions.modifyRole(newRole.id).name, true)
-                                                        }
-                                                        if (existingRole.hasPermission(
-                                                                faction,
-                                                                plugin.factionPermissions.setMemberRole(role.id),
-                                                            )
-                                                        ) {
-                                                            put(plugin.factionPermissions.setMemberRole(newRole.id).name, true)
-                                                        }
-                                                        if (existingRole.hasPermission(
-                                                                faction,
-                                                                plugin.factionPermissions.modifyRole(role.id),
-                                                            )
-                                                        ) {
-                                                            put(plugin.factionPermissions.deleteRole(newRole.id).name, true)
-                                                        }
-                                                    },
-                                        )
-                                    } + newRole,
-                                ),
-                        ),
+                            MfFactionRoles(
+                                faction.roles.defaultRoleId,
+                                faction.roles.map { existingRole ->
+                                    existingRole.copy(
+                                        permissionsByName =
+                                        existingRole.permissionsByName +
+                                            buildMap {
+                                                if (existingRole.hasPermission(
+                                                        faction,
+                                                        plugin.factionPermissions.viewRole(role.id)
+                                                    )
+                                                ) {
+                                                    put(plugin.factionPermissions.viewRole(newRole.id).name, true)
+                                                }
+                                                if (existingRole.hasPermission(
+                                                        faction,
+                                                        plugin.factionPermissions.modifyRole(role.id)
+                                                    )
+                                                ) {
+                                                    put(plugin.factionPermissions.modifyRole(newRole.id).name, true)
+                                                }
+                                                if (existingRole.hasPermission(
+                                                        faction,
+                                                        plugin.factionPermissions.setMemberRole(role.id)
+                                                    )
+                                                ) {
+                                                    put(plugin.factionPermissions.setMemberRole(newRole.id).name, true)
+                                                }
+                                                if (existingRole.hasPermission(
+                                                        faction,
+                                                        plugin.factionPermissions.modifyRole(role.id)
+                                                    )
+                                                ) {
+                                                    put(plugin.factionPermissions.deleteRole(newRole.id).name, true)
+                                                }
+                                            }
+                                    )
+                                } + newRole
+                            )
+                        )
                     ).onFailure {
                         player.sendMessage("$RED${plugin.language["CommandFactionRoleCreateFailedToSaveFaction"]}")
                         plugin.logger.log(SEVERE, "Failed to save faction: ${it.reason.message}", it.reason.cause)
@@ -173,10 +173,10 @@ class MfFactionRoleCreateCommand(
                         plugin,
                         Runnable {
                             player.performCommand("faction role list $returnPage")
-                        },
+                        }
                     )
                 }
-            },
+            }
         )
     }
 
@@ -184,6 +184,6 @@ class MfFactionRoleCreateCommand(
         sender: CommandSender,
         command: Command,
         label: String,
-        args: Array<out String>,
+        args: Array<out String>
     ) = emptyList<String>()
 }

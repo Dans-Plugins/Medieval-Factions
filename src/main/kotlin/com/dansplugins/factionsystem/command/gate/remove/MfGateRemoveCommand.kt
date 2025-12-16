@@ -16,14 +16,14 @@ import java.util.logging.Level.INFO
 import java.util.logging.Level.SEVERE
 
 class MfGateRemoveCommand(
-    private val plugin: MedievalFactions,
+    private val plugin: MedievalFactions
 ) : CommandExecutor,
     TabCompleter {
     override fun onCommand(
         sender: CommandSender,
         command: Command,
         label: String,
-        args: Array<out String>,
+        args: Array<out String>
     ): Boolean {
         if (!sender.hasPermission("mf.gate")) {
             sender.sendMessage("$RED${plugin.language["CommandGateRemoveNoPermission"]}")
@@ -77,7 +77,7 @@ class MfGateRemoveCommand(
                     return@Runnable
                 }
                 sender.sendMessage("$GREEN${plugin.language["CommandGateRemoveSuccess"]}")
-            },
+            }
         )
         return true
     }
@@ -86,6 +86,6 @@ class MfGateRemoveCommand(
         sender: CommandSender,
         command: Command,
         label: String,
-        args: Array<out String>,
+        args: Array<out String>
     ) = emptyList<String>()
 }

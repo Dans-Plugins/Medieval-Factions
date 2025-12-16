@@ -31,7 +31,7 @@ data class MfFaction(
             it.name to
                 it.default
         },
-    val applications: List<MfFactionApplication> = emptyList(),
+    val applications: List<MfFactionApplication> = emptyList()
 ) {
     val memberPower
         get() =
@@ -63,7 +63,7 @@ data class MfFaction(
                 } else {
                     0.0
                 }
-            ) +
+                ) +
                 (if (flags[plugin.flags.acceptBonusPower]) bonusPower else 0.0)
 
     val maxPower: Double
@@ -88,7 +88,7 @@ data class MfFaction(
 
     fun sendMessage(
         title: String,
-        message: String,
+        message: String
     ) {
         members
             .map { it.playerId }
@@ -105,10 +105,10 @@ data class MfFaction(
                                 mfPlayer,
                                 MfNotification(
                                     title,
-                                    message,
-                                ),
+                                    message
+                                )
                             )
-                        },
+                        }
                     )
                 }
             }

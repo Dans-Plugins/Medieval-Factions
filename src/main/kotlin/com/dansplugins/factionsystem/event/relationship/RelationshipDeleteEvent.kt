@@ -8,7 +8,7 @@ import org.bukkit.event.HandlerList
 class RelationshipDeleteEvent(
     @get:JvmName("getRelationshipId")
     override val relationshipId: MfFactionRelationshipId,
-    isAsync: Boolean,
+    isAsync: Boolean
 ) : Event(isAsync),
     RelationshipEvent,
     Cancellable {

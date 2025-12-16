@@ -13,14 +13,14 @@ import org.bukkit.entity.Player
 import java.util.logging.Level.SEVERE
 
 class MfFactionClaimAutoCommand(
-    private val plugin: MedievalFactions,
+    private val plugin: MedievalFactions
 ) : CommandExecutor,
     TabCompleter {
     override fun onCommand(
         sender: CommandSender,
         command: Command,
         label: String,
-        args: Array<out String>,
+        args: Array<out String>
     ): Boolean {
         if (!sender.hasPermission("mf.claim.auto") || !sender.hasPermission("mf.autoclaim")) {
             sender.sendMessage("$RED${plugin.language["CommandFactionAutoclaimNoPermission"]}")
@@ -65,9 +65,9 @@ class MfFactionClaimAutoCommand(
                         Runnable {
                             updatedFaction.sendMessage(
                                 plugin.language["AutoclaimEnabledNotificationTitle"],
-                                plugin.language["AutoclaimEnabledNotificationBody"],
+                                plugin.language["AutoclaimEnabledNotificationBody"]
                             )
-                        },
+                        }
                     )
                 } else {
                     sender.sendMessage("$GREEN${plugin.language["CommandFactionAutoclaimDisabled"]}")
@@ -76,12 +76,12 @@ class MfFactionClaimAutoCommand(
                         Runnable {
                             updatedFaction.sendMessage(
                                 plugin.language["AutoclaimDisabledNotificationTitle"],
-                                plugin.language["AutoclaimDisabledNotificationBody"],
+                                plugin.language["AutoclaimDisabledNotificationBody"]
                             )
-                        },
+                        }
                     )
                 }
-            },
+            }
         )
         return true
     }
@@ -90,6 +90,6 @@ class MfFactionClaimAutoCommand(
         sender: CommandSender,
         command: Command,
         label: String,
-        args: Array<out String>,
+        args: Array<out String>
     ) = emptyList<String>()
 }

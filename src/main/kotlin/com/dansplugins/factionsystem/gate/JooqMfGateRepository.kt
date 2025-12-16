@@ -13,7 +13,7 @@ import java.util.UUID
 
 class JooqMfGateRepository(
     private val plugin: MedievalFactions,
-    private val dsl: DSLContext,
+    private val dsl: DSLContext
 ) : MfGateRepository {
     override fun getGate(id: MfGateId): MfGate? =
         dsl
@@ -38,7 +38,7 @@ class JooqMfGateRepository(
                 .set(
                     MF_GATE.WORLD_ID,
                     gate.area.minPosition.worldId
-                        .toString(),
+                        .toString()
                 ).set(MF_GATE.MIN_X, gate.area.minPosition.x)
                 .set(MF_GATE.MIN_Y, gate.area.minPosition.y)
                 .set(MF_GATE.MIN_Z, gate.area.minPosition.z)
@@ -56,7 +56,7 @@ class JooqMfGateRepository(
                 .set(
                     MF_GATE.WORLD_ID,
                     gate.area.minPosition.worldId
-                        .toString(),
+                        .toString()
                 ).set(MF_GATE.MIN_X, gate.area.minPosition.x)
                 .set(MF_GATE.MIN_Y, gate.area.minPosition.y)
                 .set(MF_GATE.MIN_Z, gate.area.minPosition.z)
@@ -98,10 +98,10 @@ class JooqMfGateRepository(
             factionId.let(::MfFactionId),
             MfCuboidArea(
                 MfBlockPosition(worldId.let(UUID::fromString), minX, minY, minZ),
-                MfBlockPosition(worldId.let(UUID::fromString), maxX, maxY, maxZ),
+                MfBlockPosition(worldId.let(UUID::fromString), maxX, maxY, maxZ)
             ),
             MfBlockPosition(worldId.let(UUID::fromString), triggerX, triggerY, triggerZ),
             material.let(Material::getMaterial).let(::requireNotNull),
-            status.let(MfGateStatus::valueOf),
+            status.let(MfGateStatus::valueOf)
         )
 }

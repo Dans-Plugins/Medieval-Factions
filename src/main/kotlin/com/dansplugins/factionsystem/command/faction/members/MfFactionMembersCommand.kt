@@ -13,14 +13,14 @@ import org.bukkit.entity.Player
 import java.util.logging.Level.SEVERE
 
 class MfFactionMembersCommand(
-    private val plugin: MedievalFactions,
+    private val plugin: MedievalFactions
 ) : CommandExecutor,
     TabCompleter {
     override fun onCommand(
         sender: CommandSender,
         command: Command,
         label: String,
-        args: Array<out String>,
+        args: Array<out String>
     ): Boolean {
         if (!sender.hasPermission("mf.members")) {
             sender.sendMessage("$RED${plugin.language["CommandFactionMembersNoPermission"]}")
@@ -57,7 +57,7 @@ class MfFactionMembersCommand(
                 // send player list of members
                 sender.sendMessage("$AQUA${plugin.language["CommandFactionMembersTitle", faction.name]}")
                 sender.sendMessage("$AQUA" + faction.members.joinToString { it.playerId.toBukkitPlayer().name ?: "(N/A)" })
-            },
+            }
         )
         return true
     }
@@ -66,6 +66,6 @@ class MfFactionMembersCommand(
         sender: CommandSender,
         command: Command,
         label: String,
-        args: Array<out String>,
+        args: Array<out String>
     ) = emptyList<String>()
 }

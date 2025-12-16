@@ -9,5 +9,5 @@ data class MfFactionRelationship(
     val factionId: MfFactionId,
     @get:JvmName("getTargetId")
     val targetId: MfFactionId,
-    val type: MfFactionRelationshipType,
+    val type: MfFactionRelationshipType
 )

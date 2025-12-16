@@ -8,14 +8,14 @@ import org.bukkit.command.CommandSender
 import org.bukkit.command.TabCompleter
 
 class MfFactionDevPowerCycleCommand(
-    private val plugin: MedievalFactions,
+    private val plugin: MedievalFactions
 ) : CommandExecutor,
     TabCompleter {
     override fun onCommand(
         sender: CommandSender,
         command: Command,
         label: String,
-        args: Array<out String>,
+        args: Array<out String>
     ): Boolean {
         val onlinePlayers = plugin.server.onlinePlayers
         val onlineMfPlayerIds = onlinePlayers.map(MfPlayerId.Companion::fromBukkitPlayer)
@@ -28,9 +28,9 @@ class MfFactionDevPowerCycleCommand(
                     onlineMfPlayerIds,
                     initialPower,
                     onlinePlayers,
-                    disbandZeroPowerFactions,
+                    disbandZeroPowerFactions
                 )
-            },
+            }
         )
         return true
     }
@@ -39,6 +39,6 @@ class MfFactionDevPowerCycleCommand(
         sender: CommandSender,
         command: Command,
         label: String,
-        args: Array<out String>,
+        args: Array<out String>
     ) = emptyList<String>()
 }

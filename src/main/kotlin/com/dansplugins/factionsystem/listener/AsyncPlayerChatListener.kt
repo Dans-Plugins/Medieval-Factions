@@ -11,7 +11,7 @@ import org.bukkit.event.player.AsyncPlayerChatEvent
 import java.util.logging.Level.SEVERE
 
 class AsyncPlayerChatListener(
-    private val plugin: MedievalFactions,
+    private val plugin: MedievalFactions
 ) : Listener {
     private val isDefaultChatFormattingEnabled = plugin.config.getBoolean("chat.enableDefaultChatFormatting")
 
@@ -39,12 +39,12 @@ class AsyncPlayerChatListener(
                 plugin,
                 Runnable {
                     chatService.sendMessage(mfPlayer, faction, mfPlayer.chatChannel, event.message)
-                },
+                }
             )
         } else if (isDefaultChatFormattingEnabled) {
             event.format =
                 "${ChatColor.WHITE}[${ChatColor.of(
-                    faction.flags[plugin.flags.color],
+                    faction.flags[plugin.flags.color]
                 )}${faction.prefix ?: faction.name}${ChatColor.WHITE}] %s: %s"
         }
     }

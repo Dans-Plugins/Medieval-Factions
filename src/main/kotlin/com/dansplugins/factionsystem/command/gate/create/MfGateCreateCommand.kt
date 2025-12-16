@@ -15,14 +15,14 @@ import org.bukkit.entity.Player
 import java.util.logging.Level.SEVERE
 
 class MfGateCreateCommand(
-    private val plugin: MedievalFactions,
+    private val plugin: MedievalFactions
 ) : CommandExecutor,
     TabCompleter {
     override fun onCommand(
         sender: CommandSender,
         command: Command,
         label: String,
-        args: Array<out String>,
+        args: Array<out String>
     ): Boolean {
         if (!sender.hasPermission("mf.gate")) {
             sender.sendMessage("$RED${plugin.language["CommandGateCreateNoPermission"]}")
@@ -83,7 +83,7 @@ class MfGateCreateCommand(
                     return@Runnable
                 }
                 sender.sendMessage("$GREEN${plugin.language["GateCreateSelectFirstPosition"]}")
-            },
+            }
         )
         return true
     }
@@ -92,6 +92,6 @@ class MfGateCreateCommand(
         sender: CommandSender,
         command: Command,
         label: String,
-        args: Array<out String>,
+        args: Array<out String>
     ) = emptyList<String>()
 }

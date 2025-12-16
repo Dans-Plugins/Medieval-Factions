@@ -9,7 +9,7 @@ import org.bukkit.event.player.PlayerQuitEvent
 import java.util.logging.Level.SEVERE
 
 class PlayerQuitListener(
-    private val plugin: MedievalFactions,
+    private val plugin: MedievalFactions
 ) : Listener {
     @EventHandler
     fun onPlayerQuit(event: PlayerQuitEvent) {

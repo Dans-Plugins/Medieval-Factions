@@ -10,19 +10,19 @@ import com.google.gson.JsonSerializer
 import java.lang.reflect.Type
 
 class MfFactionPermissionSerializer(
-    private val plugin: MedievalFactions,
+    private val plugin: MedievalFactions
 ) : JsonSerializer<MfFactionPermission?>,
     JsonDeserializer<MfFactionPermission?> {
     override fun serialize(
         src: MfFactionPermission?,
         typeOfSrc: Type?,
-        context: JsonSerializationContext?,
+        context: JsonSerializationContext?
     ): JsonElement = JsonPrimitive(src?.name)
 
     override fun deserialize(
         json: JsonElement?,
         typeOfT: Type?,
-        context: JsonDeserializationContext?,
+        context: JsonDeserializationContext?
     ): MfFactionPermission? {
         if (json !is JsonPrimitive) return null
         if (!json.isString) return null

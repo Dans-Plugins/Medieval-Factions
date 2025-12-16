@@ -7,7 +7,7 @@ import org.bukkit.event.Listener
 import org.bukkit.event.block.BlockPistonExtendEvent
 
 class BlockPistonExtendListener(
-    private val plugin: MedievalFactions,
+    private val plugin: MedievalFactions
 ) : Listener {
     @EventHandler
     fun onBlockPistonExtend(event: BlockPistonExtendEvent) {
@@ -17,10 +17,10 @@ class BlockPistonExtendListener(
             (
                 blockPositions.flatMap {
                     gateService.getGatesAt(
-                        it,
+                        it
                     )
                 } + blockPositions.flatMap { gateService.getGatesByTrigger(it) }
-            ).toSet()
+                ).toSet()
         if (gates.isNotEmpty()) {
             event.isCancelled = true
         }

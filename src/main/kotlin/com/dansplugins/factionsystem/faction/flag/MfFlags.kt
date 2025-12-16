@@ -11,17 +11,17 @@ class MfFlags(
             MfFlag.boolean(
                 plugin,
                 "alliesCanInteractWithLand",
-                plugin.config.getBoolean("factions.defaults.flags.alliesCanInteractWithLand"),
+                plugin.config.getBoolean("factions.defaults.flags.alliesCanInteractWithLand")
             ),
             MfFlag.boolean(
                 plugin,
                 "vassalageTreeCanInteractWithLand",
-                plugin.config.getBoolean("factions.defaults.flags.vassalageTreeCanInteractWithLand"),
+                plugin.config.getBoolean("factions.defaults.flags.vassalageTreeCanInteractWithLand")
             ),
             MfFlag.boolean(
                 plugin,
                 "neutral",
-                plugin.config.getBoolean("factions.defaults.flags.neutral"),
+                plugin.config.getBoolean("factions.defaults.flags.neutral")
             ),
             MfFlag.string(
                 "color",
@@ -32,7 +32,7 @@ class MfFlags(
                             Color.getHSBColor(
                                 Random.nextFloat(),
                                 0.7f + (Random.nextFloat() * 0.3f),
-                                0.3f + (Random.nextFloat() * 0.7f),
+                                0.3f + (Random.nextFloat() * 0.7f)
                             )
                         String.format("#%02x%02x%02x", color.red, color.green, color.blue)
                     } else {
@@ -44,34 +44,34 @@ class MfFlags(
                         return@string MfFlagValidationFailure(plugin.language["FactionFlagColorValidationFailure"])
                     }
                     return@string MfFlagValidationSuccess
-                },
+                }
             ),
             MfFlag.boolean(
                 plugin,
                 "allowFriendlyFire",
-                plugin.config.getBoolean("factions.defaults.flags.allowFriendlyFire"),
+                plugin.config.getBoolean("factions.defaults.flags.allowFriendlyFire")
             ),
             MfFlag.boolean(
                 plugin,
                 "acceptBonusPower",
-                plugin.config.getBoolean("factions.defaults.flags.acceptBonusPower"),
+                plugin.config.getBoolean("factions.defaults.flags.acceptBonusPower")
             ),
             MfFlag.boolean(
                 plugin,
                 "enableMobProtection",
-                plugin.config.getBoolean("factions.defaults.flags.enableMobProtection"),
+                plugin.config.getBoolean("factions.defaults.flags.enableMobProtection")
             ),
             MfFlag.boolean(
                 plugin,
                 "liegeChainCanInteractWithLand",
-                plugin.config.getBoolean("factions.defaults.flags.liegeChainCanInteractWithLand"),
+                plugin.config.getBoolean("factions.defaults.flags.liegeChainCanInteractWithLand")
             ),
             MfFlag.boolean(
                 plugin,
                 "protectVillagerTrade",
-                plugin.config.getBoolean("factions.defaults.flags.protectVillagerTrade"),
-            ),
-        ),
+                plugin.config.getBoolean("factions.defaults.flags.protectVillagerTrade")
+            )
+        )
 ) : MutableList<MfFlag<out Any>> by flags {
     operator fun <T : Any> get(name: String) = singleOrNull { it.name.equals(name, ignoreCase = true) } as? MfFlag<T>
 

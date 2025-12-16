@@ -9,7 +9,7 @@ class FactionDescriptionChangeEvent(
     @get:JvmName("getFactionId")
     override val factionId: MfFactionId,
     val description: String,
-    isAsync: Boolean,
+    isAsync: Boolean
 ) : Event(isAsync),
     FactionEvent,
     Cancellable {

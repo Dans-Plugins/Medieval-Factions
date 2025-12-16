@@ -14,14 +14,14 @@ import org.bukkit.command.TabCompleter
 import java.util.logging.Level.SEVERE
 
 class MfFactionAdminCreateCommand(
-    private val plugin: MedievalFactions,
+    private val plugin: MedievalFactions
 ) : CommandExecutor,
     TabCompleter {
     override fun onCommand(
         sender: CommandSender,
         command: Command,
         label: String,
-        args: Array<out String>,
+        args: Array<out String>
     ): Boolean {
         if (!sender.hasPermission("mf.admin.create")) {
             sender.sendMessage("$RED${plugin.language["CommandFactionAdminCreateNoPermission"]}")
@@ -64,7 +64,7 @@ class MfFactionAdminCreateCommand(
                         id = factionId,
                         name = factionName,
                         roles = roles,
-                        members = emptyList(),
+                        members = emptyList()
                     )
 
                 val createdFaction =
@@ -75,7 +75,7 @@ class MfFactionAdminCreateCommand(
                     }
 
                 sender.sendMessage("$GREEN${plugin.language["CommandFactionAdminCreateSuccess", createdFaction.name]}")
-            },
+            }
         )
         return true
     }
@@ -84,6 +84,6 @@ class MfFactionAdminCreateCommand(
         sender: CommandSender,
         command: Command,
         label: String,
-        args: Array<out String>,
+        args: Array<out String>
     ) = emptyList<String>()
 }

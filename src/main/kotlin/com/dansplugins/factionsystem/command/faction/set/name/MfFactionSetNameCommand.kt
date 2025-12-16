@@ -23,7 +23,7 @@ import preponderous.ponder.command.unquote
 import java.util.logging.Level
 
 class MfFactionSetNameCommand(
-    private val plugin: MedievalFactions,
+    private val plugin: MedievalFactions
 ) : CommandExecutor,
     TabCompleter {
     private val conversationFactory =
@@ -48,7 +48,7 @@ class MfFactionSetNameCommand(
 
         override fun acceptInput(
             context: ConversationContext,
-            input: String?,
+            input: String?
         ): Prompt? {
             val conversable = context.forWhom
             if (conversable !is Player) return END_OF_CONVERSATION
@@ -62,7 +62,7 @@ class MfFactionSetNameCommand(
         sender: CommandSender,
         command: Command,
         label: String,
-        args: Array<out String>,
+        args: Array<out String>
     ): Boolean {
         if (!sender.hasPermission("mf.rename")) {
             sender.sendMessage("$RED${plugin.language["CommandFactionSetNameNoPermission"]}")
@@ -82,7 +82,7 @@ class MfFactionSetNameCommand(
 
     private fun setFactionName(
         player: Player,
-        args: Array<out String>,
+        args: Array<out String>
     ) {
         val onlinePlayers = plugin.server.onlinePlayers.associateWith { it.location.chunk }
         val hasForcePermission = player.hasPermission("mf.force.rename")
@@ -140,7 +140,7 @@ class MfFactionSetNameCommand(
                     plugin,
                     Runnable {
                         player.performCommand("faction info")
-                    },
+                    }
                 )
                 val claimService = plugin.services.claimService
                 onlinePlayers
@@ -155,14 +155,14 @@ class MfFactionSetNameCommand(
                                 subtitle,
                                 plugin.config.getInt("factions.titleTerritoryFadeInLength"),
                                 plugin.config.getInt("factions.titleTerritoryDuration"),
-                                plugin.config.getInt("factions.titleTerritoryFadeOutLength"),
+                                plugin.config.getInt("factions.titleTerritoryFadeOutLength")
                             )
                         }
                         if (plugin.config.getBoolean("factions.actionBarTerritoryIndicator")) {
                             player.spigot().sendMessage(ACTION_BAR, *TextComponent.fromLegacyText(title))
                         }
                     }
-            },
+            }
         )
     }
 
@@ -170,6 +170,6 @@ class MfFactionSetNameCommand(
         sender: CommandSender,
         command: Command,
         label: String,
-        args: Array<out String>,
+        args: Array<out String>
     ) = emptyList<String>()
 }

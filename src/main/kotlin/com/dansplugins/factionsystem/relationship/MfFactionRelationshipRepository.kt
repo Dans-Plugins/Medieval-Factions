@@ -7,12 +7,12 @@ interface MfFactionRelationshipRepository {
 
     fun getFactionRelationships(
         factionId: MfFactionId,
-        targetId: MfFactionId,
+        targetId: MfFactionId
     ): List<MfFactionRelationship>
 
     fun getFactionRelationships(
         factionId: MfFactionId,
-        type: MfFactionRelationshipType,
+        type: MfFactionRelationshipType
     ): List<MfFactionRelationship>
 
     fun getFactionRelationships(factionId: MfFactionId): List<MfFactionRelationship>

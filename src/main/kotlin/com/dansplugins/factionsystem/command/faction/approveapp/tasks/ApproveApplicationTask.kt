@@ -11,7 +11,7 @@ import java.util.logging.Level
 class ApproveApplicationTask(
     private val plugin: MedievalFactions,
     private val sender: Player,
-    private val targetPlayerName: String,
+    private val targetPlayerName: String
 ) : Runnable {
     override fun run() {
         val factionService = plugin.services.factionService
@@ -53,11 +53,11 @@ class ApproveApplicationTask(
             factionService
                 .save(
                     currentFaction.copy(
-                        members = currentFaction.members.filter { it.playerId != targetMfPlayer.id },
-                    ),
+                        members = currentFaction.members.filter { it.playerId != targetMfPlayer.id }
+                    )
                 ).onFailure {
                     sender.sendMessage(
-                        "${org.bukkit.ChatColor.RED}${plugin.language["CommandFactionApproveAppFailedToRemoveFromCurrentFaction"]}",
+                        "${org.bukkit.ChatColor.RED}${plugin.language["CommandFactionApproveAppFailedToRemoveFromCurrentFaction"]}"
                     )
                     plugin.logger.log(Level.SEVERE, "Failed to remove player from current faction: ${it.reason.message}", it.reason.cause)
                     return
@@ -69,22 +69,22 @@ class ApproveApplicationTask(
                 .save(
                     faction.copy(
                         members = faction.members + MfFactionMember(targetMfPlayer.id, faction.roles.default),
-                        applications = faction.applications.filter { it.applicantId != targetMfPlayer.id },
-                    ),
+                        applications = faction.applications.filter { it.applicantId != targetMfPlayer.id }
+                    )
                 ).onFailure {
                     sender.sendMessage("${org.bukkit.ChatColor.RED}${plugin.language["CommandFactionApproveAppFailedToSaveFaction"]}")
                     plugin.logger.log(Level.SEVERE, "Failed to save faction: ${it.reason.message}", it.reason.cause)
                     return
                 }
         targetPlayer.player?.sendMessage(
-            "${org.bukkit.ChatColor.GREEN}${plugin.language["CommandFactionApproveAppAccepted", faction.name]}",
+            "${org.bukkit.ChatColor.GREEN}${plugin.language["CommandFactionApproveAppAccepted", faction.name]}"
         )
         sender.sendMessage(
-            "${org.bukkit.ChatColor.GREEN}${plugin.language["CommandFactionApproveAppAcceptedSender", targetMfPlayer.name.toString()]}",
+            "${org.bukkit.ChatColor.GREEN}${plugin.language["CommandFactionApproveAppAcceptedSender", targetMfPlayer.name.toString()]}"
         )
         updatedFaction.sendMessage(
             "${org.bukkit.ChatColor.GREEN}${plugin.language["CommandFactionApproveAppNewMember"]}",
-            "${org.bukkit.ChatColor.GREEN}${plugin.language["CommandFactionApproveAppNewMemberMessage", targetMfPlayer.name.toString()]}",
+            "${org.bukkit.ChatColor.GREEN}${plugin.language["CommandFactionApproveAppNewMemberMessage", targetMfPlayer.name.toString()]}"
         )
         try {
             factionService.cancelAllApplicationsForPlayer(MfPlayer(plugin, targetPlayer))

@@ -12,7 +12,7 @@ import java.util.Collections
  * @param plugin The MedievalFactions plugin instance.
  */
 class TaskScheduler(
-    private val plugin: MedievalFactions,
+    private val plugin: MedievalFactions
 ) {
     private val updateTasks: MutableMap<MfFactionId, MutableList<BukkitTask>> =
         Collections.synchronizedMap(mutableMapOf<MfFactionId, MutableList<BukkitTask>>())
@@ -27,7 +27,7 @@ class TaskScheduler(
     fun scheduleTask(
         factionId: MfFactionId,
         runnable: Runnable,
-        delay: Long = 0L,
+        delay: Long = 0L
     ) {
         val updateTask =
             object : BukkitRunnable() {
@@ -36,7 +36,7 @@ class TaskScheduler(
                     val factionUpdateTasks = updateTasks[factionId]
                     factionUpdateTasks?.removeAll(
                         plugin.server.scheduler.pendingTasks
-                            .filter { it.taskId == taskId },
+                            .filter { it.taskId == taskId }
                     )
                 }
             }.runTaskLater(plugin, delay)

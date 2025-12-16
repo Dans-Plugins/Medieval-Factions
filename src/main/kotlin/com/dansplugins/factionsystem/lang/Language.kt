@@ -10,7 +10,7 @@ import java.util.ResourceBundle
 
 class Language(
     plugin: MedievalFactions,
-    private val language: String,
+    private val language: String
 ) {
     private val resourceBundles: List<ResourceBundle>
     val locale: Locale = Locale.forLanguageTag(language)
@@ -37,7 +37,7 @@ class Language(
             ResourceBundle.getBundle(
                 "lang",
                 locale,
-                externalClassLoader,
+                externalClassLoader
             )
 
         resourceBundles =
@@ -45,7 +45,7 @@ class Language(
                 val internalResourceBundle =
                     ResourceBundle.getBundle(
                         "lang",
-                        locale,
+                        locale
                     )
                 listOf(externalResourceBundle, internalResourceBundle)
             } catch (e: MissingResourceException) {
@@ -55,7 +55,7 @@ class Language(
 
     operator fun get(
         key: String,
-        vararg params: String,
+        vararg params: String
     ) = resourceBundles.firstNotNullOfOrNull { resourceBundle ->
         try {
             MessageFormat.format(resourceBundle.getString(key), *params)

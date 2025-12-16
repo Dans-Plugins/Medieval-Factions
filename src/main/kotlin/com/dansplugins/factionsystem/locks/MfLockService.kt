@@ -27,7 +27,7 @@ import java.util.logging.Level.SEVERE
 
 class MfLockService(
     private val plugin: MedievalFactions,
-    private val repository: MfLockRepository,
+    private val repository: MfLockRepository
 ) {
     private val lockedBlocks: MutableMap<MfBlockPosition, MfLockedBlock> = ConcurrentHashMap()
 
@@ -41,24 +41,24 @@ class MfLockService(
     fun lock(
         block: MfBlockPosition,
         claim: MfClaimedChunk,
-        player: MfPlayer,
+        player: MfPlayer
     ): Result4k<MfLockedBlock, ServiceFailure> =
         resultFrom {
             val lockedBlock =
                 repository.upsert(
                     MfLockedBlock(
                         block =
-                            MfBlockPosition(
-                                worldId = block.worldId,
-                                x = block.x,
-                                y = block.y,
-                                z = block.z,
-                            ),
+                        MfBlockPosition(
+                            worldId = block.worldId,
+                            x = block.x,
+                            y = block.y,
+                            z = block.z
+                        ),
                         chunkX = claim.x,
                         chunkZ = claim.z,
                         playerId = player.id,
-                        accessors = emptyList(),
-                    ),
+                        accessors = emptyList()
+                    )
                 )
             lockedBlocks[block] = lockedBlock
             return@resultFrom lockedBlock
@@ -68,7 +68,7 @@ class MfLockService(
 
     fun unlock(
         block: Block,
-        callback: (result: MfUnlockResult) -> Unit,
+        callback: (result: MfUnlockResult) -> Unit
     ) {
         val blockData = block.blockData
         val holder = (block.state as? Chest)?.inventory?.holder
@@ -101,7 +101,7 @@ class MfLockService(
                     return@Runnable
                 }
                 callback(SUCCESS)
-            },
+            }
         )
     }
 

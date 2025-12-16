@@ -27,7 +27,7 @@ import java.util.UUID
 class JooqMfFactionRepository(
     private val plugin: MedievalFactions,
     private val dsl: DSLContext,
-    private val gson: Gson,
+    private val gson: Gson
 ) : MfFactionRepository {
     override fun getFaction(id: MfFactionId): MfFaction? = getFaction(MF_FACTION.ID.eq(id.value))
 
@@ -40,8 +40,8 @@ class JooqMfFactionRepository(
                     dsl
                         .select(MF_FACTION_MEMBER.PLAYER_ID)
                         .from(MF_FACTION_MEMBER)
-                        .where(MF_FACTION_MEMBER.FACTION_ID.eq(MF_FACTION.ID)),
-                ),
+                        .where(MF_FACTION_MEMBER.FACTION_ID.eq(MF_FACTION.ID))
+                )
         )
 
     override fun getFactions(): List<MfFaction> {
@@ -60,9 +60,9 @@ class JooqMfFactionRepository(
                                         .getParameterized(
                                             Map::class.java,
                                             String::class.java,
-                                            Any::class.java,
-                                        ).type,
-                                ).type,
+                                            Any::class.java
+                                        ).type
+                                ).type
                         ).map(MfFactionRole.Companion::deserialize)
                 val members =
                     dsl
@@ -86,7 +86,7 @@ class JooqMfFactionRepository(
                     members = members,
                     invites = invites,
                     roles = roles,
-                    applications = applications,
+                    applications = applications
                 )
             }
     }
@@ -104,9 +104,9 @@ class JooqMfFactionRepository(
                                 .getParameterized(
                                     Map::class.java,
                                     String::class.java,
-                                    Any::class.java,
-                                ).type,
-                        ).type,
+                                    Any::class.java
+                                ).type
+                        ).type
                 ).map(MfFactionRole.Companion::deserialize)
         val members =
             dsl
@@ -130,7 +130,7 @@ class JooqMfFactionRepository(
             members = members,
             invites = invites,
             roles = roles,
-            applications = applications,
+            applications = applications
         )
     }
 
@@ -149,14 +149,14 @@ class JooqMfFactionRepository(
             return@transactionResult newState.copy(
                 members = newMembers,
                 invites = newInvites,
-                applications = newApplications,
+                applications = newApplications
             )
         }
     }
 
     private fun upsertFaction(
         dsl: DSLContext,
-        faction: MfFaction,
+        faction: MfFaction
     ): MfFaction {
         val rowCount =
             dsl
@@ -178,14 +178,14 @@ class JooqMfFactionRepository(
                 .set(
                     MF_FACTION.ROLES,
                     JSON.valueOf(
-                        gson.toJson(faction.roles.map(MfFactionRole::serialize)),
-                    ),
+                        gson.toJson(faction.roles.map(MfFactionRole::serialize))
+                    )
                 ).set(MF_FACTION.DEFAULT_ROLE_ID, faction.roles.default.id.value)
                 .set(
                     MF_FACTION.DEFAULT_PERMISSIONS,
                     JSON.valueOf(
-                        gson.toJson(faction.defaultPermissions.mapKeys { it.key.name }),
-                    ),
+                        gson.toJson(faction.defaultPermissions.mapKeys { it.key.name })
+                    )
                 ).onConflict(MF_FACTION.ID)
                 .doUpdate()
                 .set(MF_FACTION.NAME, faction.name)
@@ -205,8 +205,8 @@ class JooqMfFactionRepository(
                 .set(
                     MF_FACTION.DEFAULT_PERMISSIONS,
                     JSON.valueOf(
-                        gson.toJson(faction.defaultPermissions.mapKeys { it.key.name }),
-                    ),
+                        gson.toJson(faction.defaultPermissions.mapKeys { it.key.name })
+                    )
                 ).set(MF_FACTION.VERSION, faction.version + 1)
                 .where(MF_FACTION.ID.eq(faction.id.value))
                 .and(MF_FACTION.VERSION.eq(faction.version))
@@ -222,7 +222,7 @@ class JooqMfFactionRepository(
 
     private fun deleteMembers(
         dsl: DSLContext,
-        factionId: MfFactionId,
+        factionId: MfFactionId
     ) {
         dsl
             .deleteFrom(MF_FACTION_MEMBER)
@@ -234,7 +234,7 @@ class JooqMfFactionRepository(
         dsl: DSLContext,
         factionId: MfFactionId,
         member: MfFactionMember,
-        roles: List<MfFactionRole>,
+        roles: List<MfFactionRole>
     ): MfFactionMember {
         dsl
             .insertInto(MF_FACTION_MEMBER)
@@ -258,7 +258,7 @@ class JooqMfFactionRepository(
 
     private fun deleteInvites(
         dsl: DSLContext,
-        factionId: MfFactionId,
+        factionId: MfFactionId
     ) {
         dsl
             .deleteFrom(MF_FACTION_INVITE)
@@ -269,7 +269,7 @@ class JooqMfFactionRepository(
     private fun upsertInvite(
         dsl: DSLContext,
         factionId: MfFactionId,
-        invite: MfFactionInvite,
+        invite: MfFactionInvite
     ): MfFactionInvite {
         dsl
             .insertInto(MF_FACTION_INVITE)
@@ -289,7 +289,7 @@ class JooqMfFactionRepository(
 
     private fun deleteApplications(
         dsl: DSLContext,
-        factionId: MfFactionId,
+        factionId: MfFactionId
     ) {
         dsl
             .deleteFrom(MF_FACTION_APPLICATION)
@@ -300,7 +300,7 @@ class JooqMfFactionRepository(
     private fun upsertApplication(
         dsl: DSLContext,
         factionId: MfFactionId,
-        application: MfFactionApplication,
+        application: MfFactionApplication
     ): MfFactionApplication {
         dsl
             .insertInto(MF_FACTION_APPLICATION)
@@ -329,26 +329,26 @@ class JooqMfFactionRepository(
         members: List<MfFactionMember> = emptyList(),
         invites: List<MfFactionInvite> = emptyList(),
         roles: List<MfFactionRole>? = null,
-        applications: List<MfFactionApplication> = emptyList(),
+        applications: List<MfFactionApplication> = emptyList()
     ): MfFaction {
         val factionRoles =
             MfFactionRoles(
                 defaultRoleId = defaultRoleId.let(::MfFactionRoleId),
                 roles =
-                    roles ?: gson
-                        .fromJson<List<Map<String, Any?>>>(
-                            this.roles.data(),
-                            TypeToken
-                                .getParameterized(
-                                    List::class.java,
-                                    TypeToken
-                                        .getParameterized(
-                                            Map::class.java,
-                                            String::class.java,
-                                            Any::class.java,
-                                        ).type,
-                                ).type,
-                        ).map(MfFactionRole.Companion::deserialize),
+                roles ?: gson
+                    .fromJson<List<Map<String, Any?>>>(
+                        this.roles.data(),
+                        TypeToken
+                            .getParameterized(
+                                List::class.java,
+                                TypeToken
+                                    .getParameterized(
+                                        Map::class.java,
+                                        String::class.java,
+                                        Any::class.java
+                                    ).type
+                            ).type
+                    ).map(MfFactionRole.Companion::deserialize)
             )
         return MfFaction(
             plugin = plugin,
@@ -359,61 +359,61 @@ class JooqMfFactionRepository(
             members = members,
             invites = invites,
             flags =
-                MfFlagValues(
-                    plugin,
-                    gson.fromJson(
-                        flags.data(),
-                        TypeToken
-                            .getParameterized(
-                                Map::class.java,
-                                String::class.java,
-                                Any::class.java,
-                            ).type,
-                    ),
-                ),
-            prefix = prefix,
-            home =
-                homeWorldId?.let {
-                    MfPosition(
-                        UUID.fromString(it),
-                        homeX,
-                        homeY,
-                        homeZ,
-                        homeYaw.toFloat(),
-                        homePitch.toFloat(),
-                    )
-                },
-            bonusPower = bonusPower,
-            autoclaim = autoclaim,
-            roles = factionRoles,
-            defaultPermissionsByName =
+            MfFlagValues(
+                plugin,
                 gson.fromJson(
-                    defaultPermissions.data(),
+                    flags.data(),
                     TypeToken
                         .getParameterized(
                             Map::class.java,
                             String::class.java,
-                            Boolean::class.javaObjectType,
-                        ).type,
-                ),
-            applications = applications,
+                            Any::class.java
+                        ).type
+                )
+            ),
+            prefix = prefix,
+            home =
+            homeWorldId?.let {
+                MfPosition(
+                    UUID.fromString(it),
+                    homeX,
+                    homeY,
+                    homeZ,
+                    homeYaw.toFloat(),
+                    homePitch.toFloat()
+                )
+            },
+            bonusPower = bonusPower,
+            autoclaim = autoclaim,
+            roles = factionRoles,
+            defaultPermissionsByName =
+            gson.fromJson(
+                defaultPermissions.data(),
+                TypeToken
+                    .getParameterized(
+                        Map::class.java,
+                        String::class.java,
+                        Boolean::class.javaObjectType
+                    ).type
+            ),
+            applications = applications
         )
     }
 
     private fun MfFactionMemberRecord.toDomain(roles: List<MfFactionRole>): MfFactionMember =
         MfFactionMember(
             playerId.let(::MfPlayerId),
-            roles.single { it.id.value == roleId },
+            roles.single { it.id.value == roleId }
         )
 
     private fun MfFactionInviteRecord.toDomain() =
         MfFactionInvite(
-            playerId.let(::MfPlayerId),
+            playerId.let(::MfPlayerId)
         )
 
     private fun MfFactionApplicationRecord.toDomain(): MfFactionApplication =
         MfFactionApplication(
             applicantId = MfPlayerId(this.playerId),
-            factionId = MfFactionId(this.factionId),
+            factionId = MfFactionId(this.factionId)
         )
 }

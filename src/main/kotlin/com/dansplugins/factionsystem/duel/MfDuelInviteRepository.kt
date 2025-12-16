@@ -5,7 +5,7 @@ import com.dansplugins.factionsystem.player.MfPlayerId
 interface MfDuelInviteRepository {
     fun getInvite(
         inviter: MfPlayerId,
-        invitee: MfPlayerId,
+        invitee: MfPlayerId
     ): MfDuelInvite?
 
     fun getInvites(): List<MfDuelInvite>
@@ -14,6 +14,6 @@ interface MfDuelInviteRepository {
 
     fun deleteInvite(
         inviter: MfPlayerId,
-        invitee: MfPlayerId,
+        invitee: MfPlayerId
     )
 }

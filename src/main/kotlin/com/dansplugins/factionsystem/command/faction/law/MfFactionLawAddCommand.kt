@@ -14,14 +14,14 @@ import org.bukkit.entity.Player
 import java.util.logging.Level
 
 class MfFactionLawAddCommand(
-    private val plugin: MedievalFactions,
+    private val plugin: MedievalFactions
 ) : CommandExecutor,
     TabCompleter {
     override fun onCommand(
         sender: CommandSender,
         command: Command,
         label: String,
-        args: Array<out String>,
+        args: Array<out String>
     ): Boolean {
         if (!sender.hasPermission("mf.law.add") || !sender.hasPermission("mf.addlaw")) {
             sender.sendMessage("$RED${plugin.language["CommandFactionLawAddNoPermission"]}")
@@ -66,7 +66,7 @@ class MfFactionLawAddCommand(
                         return@Runnable
                     }
                 sender.sendMessage("$GREEN${plugin.language["CommandFactionLawAddSuccess"]}")
-            },
+            }
         )
         return true
     }
@@ -75,6 +75,6 @@ class MfFactionLawAddCommand(
         sender: CommandSender,
         command: Command,
         label: String,
-        args: Array<out String>,
+        args: Array<out String>
     ) = emptyList<String>()
 }

@@ -12,7 +12,7 @@ import org.bukkit.event.Listener
 import org.bukkit.event.entity.EntityDamageByEntityEvent
 
 class EntityDamageByEntityListener(
-    private val plugin: MedievalFactions,
+    private val plugin: MedievalFactions
 ) : Listener {
     @EventHandler
     fun onEntityDamageByEntity(event: EntityDamageByEntityEvent) {

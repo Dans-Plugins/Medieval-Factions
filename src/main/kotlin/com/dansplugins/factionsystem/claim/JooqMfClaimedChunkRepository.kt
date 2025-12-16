@@ -7,12 +7,12 @@ import org.jooq.DSLContext
 import java.util.UUID
 
 class JooqMfClaimedChunkRepository(
-    private val dsl: DSLContext,
+    private val dsl: DSLContext
 ) : MfClaimedChunkRepository {
     override fun getClaim(
         worldId: UUID,
         x: Int,
-        z: Int,
+        z: Int
     ): MfClaimedChunk? =
         dsl
             .selectFrom(MF_CLAIMED_CHUNK)
@@ -62,7 +62,7 @@ class JooqMfClaimedChunkRepository(
     override fun delete(
         worldId: UUID,
         x: Int,
-        z: Int,
+        z: Int
     ) {
         dsl
             .deleteFrom(MF_CLAIMED_CHUNK)
@@ -84,6 +84,6 @@ class JooqMfClaimedChunkRepository(
             worldId.let(UUID::fromString),
             x,
             z,
-            factionId.let(::MfFactionId),
+            factionId.let(::MfFactionId)
         )
 }

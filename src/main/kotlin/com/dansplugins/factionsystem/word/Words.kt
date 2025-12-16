@@ -962,7 +962,7 @@ val adjectives =
         "worldwide",
         "worst-case",
         "worsted",
-        "worthless",
+        "worthless"
     )
 
 val nouns =
@@ -1959,5 +1959,5 @@ val nouns =
         "womanhood",
         "words",
         "workman",
-        "youngster",
+        "youngster"
     )

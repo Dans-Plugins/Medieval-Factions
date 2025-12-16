@@ -7,7 +7,7 @@ import org.bukkit.event.Listener
 import org.bukkit.event.entity.LingeringPotionSplashEvent
 
 class LingeringPotionSplashListener(
-    private val plugin: MedievalFactions,
+    private val plugin: MedievalFactions
 ) : Listener {
     @EventHandler
     fun onLingeringPotionSplash(event: LingeringPotionSplashEvent) {

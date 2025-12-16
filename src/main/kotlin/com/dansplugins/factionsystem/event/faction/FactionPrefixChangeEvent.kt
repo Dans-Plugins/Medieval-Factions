@@ -9,7 +9,7 @@ class FactionPrefixChangeEvent(
     @get:JvmName("getFactionId")
     override val factionId: MfFactionId,
     val prefix: String?,
-    isAsync: Boolean,
+    isAsync: Boolean
 ) : Event(isAsync),
     FactionEvent,
     Cancellable {

@@ -15,14 +15,14 @@ import org.bukkit.entity.Player
 import java.util.logging.Level
 
 class MfFactionMakePeaceCommand(
-    private val plugin: MedievalFactions,
+    private val plugin: MedievalFactions
 ) : CommandExecutor,
     TabCompleter {
     override fun onCommand(
         sender: CommandSender,
         command: Command,
         label: String,
-        args: Array<out String>,
+        args: Array<out String>
     ): Boolean {
         if (!sender.hasPermission("mf.makepeace")) {
             sender.sendMessage("$RED${plugin.language["CommandFactionMakePeaceNoPermission"]}")
@@ -92,13 +92,13 @@ class MfFactionMakePeaceCommand(
                         Runnable {
                             faction.sendMessage(
                                 plugin.language["FactionPeaceRequestSentNotificationTitle", sender.name, target.name],
-                                plugin.language["FactionPeaceRequestSentNotificationBody", sender.name, target.name],
+                                plugin.language["FactionPeaceRequestSentNotificationBody", sender.name, target.name]
                             )
                             target.sendMessage(
                                 plugin.language["FactionPeaceRequestReceivedNotificationTitle", sender.name, faction.name],
-                                plugin.language["FactionPeaceRequestReceivedNotificationBody", sender.name, faction.name],
+                                plugin.language["FactionPeaceRequestReceivedNotificationBody", sender.name, faction.name]
                             )
-                        },
+                        }
                     )
                 } else {
                     sender.sendMessage("$GREEN${plugin.language["CommandFactionMakePeaceNowAtPeace"]}")
@@ -107,16 +107,16 @@ class MfFactionMakePeaceCommand(
                         Runnable {
                             faction.sendMessage(
                                 plugin.language["FactionPeaceMadeNotificationTitle", target.name],
-                                plugin.language["FactionPeaceMadeNotificationBody", target.name],
+                                plugin.language["FactionPeaceMadeNotificationBody", target.name]
                             )
                             target.sendMessage(
                                 plugin.language["FactionPeaceMadeNotificationTitle", faction.name],
-                                plugin.language["FactionPeaceMadeNotificationBody", faction.name],
+                                plugin.language["FactionPeaceMadeNotificationBody", faction.name]
                             )
-                        },
+                        }
                     )
                 }
-            },
+            }
         )
         return true
     }
@@ -125,7 +125,7 @@ class MfFactionMakePeaceCommand(
         sender: CommandSender,
         command: Command,
         label: String,
-        args: Array<out String>,
+        args: Array<out String>
     ): List<String> {
         val factionService = plugin.services.factionService
         return when {

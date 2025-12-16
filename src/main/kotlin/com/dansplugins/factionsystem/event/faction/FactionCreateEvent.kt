@@ -10,7 +10,7 @@ class FactionCreateEvent(
     @get:JvmName("getFactionId")
     override val factionId: MfFactionId,
     var faction: MfFaction,
-    isAsync: Boolean,
+    isAsync: Boolean
 ) : Event(isAsync),
     FactionEvent,
     Cancellable {

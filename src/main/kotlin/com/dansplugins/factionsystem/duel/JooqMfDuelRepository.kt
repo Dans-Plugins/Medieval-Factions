@@ -11,7 +11,7 @@ import java.time.ZoneOffset.UTC
 import java.util.UUID
 
 class JooqMfDuelRepository(
-    private val dsl: DSLContext,
+    private val dsl: DSLContext
 ) : MfDuelRepository {
     override fun getDuels(): List<MfDuel> =
         dsl
@@ -99,7 +99,7 @@ class JooqMfDuelRepository(
                     challengerY,
                     challengerZ,
                     challengerYaw,
-                    challengerPitch,
+                    challengerPitch
                 )
             },
             challengedWorld?.let { worldId ->
@@ -109,8 +109,8 @@ class JooqMfDuelRepository(
                     challengedY,
                     challengedZ,
                     challengedYaw,
-                    challengedPitch,
+                    challengedPitch
                 )
-            },
+            }
         )
 }

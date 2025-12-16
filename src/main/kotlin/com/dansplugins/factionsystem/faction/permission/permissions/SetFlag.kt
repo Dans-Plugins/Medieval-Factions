@@ -8,7 +8,7 @@ import com.dansplugins.factionsystem.faction.permission.MfFactionPermissionType
 import com.dansplugins.factionsystem.faction.role.MfFactionRoleId
 
 class SetFlag(
-    private val plugin: MedievalFactions,
+    private val plugin: MedievalFactions
 ) : MfFactionPermissionType() {
     override fun parse(name: String): MfFactionPermission? =
         if (name.matches(Regex("SET_FLAG\\((.+)\\)"))) {
@@ -24,13 +24,13 @@ class SetFlag(
 
     override fun permissionsFor(
         factionId: MfFactionId,
-        roleIds: List<MfFactionRoleId>,
+        roleIds: List<MfFactionRoleId>
     ): List<MfFactionPermission> = plugin.flags.map(::permissionFor)
 
     private fun permissionFor(flag: MfFlag<out Any>) =
         MfFactionPermission(
             "SET_FLAG(${flag.name})",
             plugin.language["FactionPermissionSetFlag", flag.name],
-            false,
+            false
         )
 }

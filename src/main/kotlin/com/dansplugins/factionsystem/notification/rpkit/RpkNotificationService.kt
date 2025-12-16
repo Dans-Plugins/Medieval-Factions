@@ -10,11 +10,11 @@ import com.rpkit.players.bukkit.profile.RPKProfile
 import com.rpkit.players.bukkit.profile.minecraft.RPKMinecraftProfileService
 
 class RpkNotificationService(
-    private val plugin: MedievalFactions,
+    private val plugin: MedievalFactions
 ) : MfNotificationService {
     override fun sendNotification(
         playerId: MfPlayerId,
-        notification: MfNotification,
+        notification: MfNotification
     ) {
         val minecraftProfileService = Services.INSTANCE.get(RPKMinecraftProfileService::class.java) ?: return
         val bukkitPlayer = playerId.toBukkitPlayer()

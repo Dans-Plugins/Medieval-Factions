@@ -9,7 +9,7 @@ import org.bukkit.event.Listener
 import org.bukkit.event.entity.EntityExplodeEvent
 
 class EntityExplodeListener(
-    private val plugin: MedievalFactions,
+    private val plugin: MedievalFactions
 ) : Listener {
     @EventHandler
     fun onEntityExplode(event: EntityExplodeEvent) {

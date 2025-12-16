@@ -8,7 +8,7 @@ import com.dansplugins.factionsystem.faction.permission.MfFactionPermissionType
 import com.dansplugins.factionsystem.faction.role.MfFactionRoleId
 
 class Chat(
-    private val plugin: MedievalFactions,
+    private val plugin: MedievalFactions
 ) : MfFactionPermissionType() {
     private val permissions =
         MfFactionChatChannel
@@ -17,7 +17,7 @@ class Chat(
                 MfFactionPermission(
                     "CHAT(${chatChannel.name})",
                     plugin.language["FactionPermissionChat", chatChannel.toString().lowercase()],
-                    true,
+                    true
                 )
             }
 
@@ -35,6 +35,6 @@ class Chat(
 
     override fun permissionsFor(
         factionId: MfFactionId,
-        roleIds: List<MfFactionRoleId>,
+        roleIds: List<MfFactionRoleId>
     ): List<MfFactionPermission> = permissions.values.toList()
 }

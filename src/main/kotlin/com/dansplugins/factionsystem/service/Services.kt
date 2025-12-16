@@ -29,5 +29,5 @@ class Services(
     val duelService: MfDuelService,
     val potionService: MfPotionService,
     val teleportService: MfTeleportService,
-    val mapService: MapService?,
+    val mapService: MapService?
 )

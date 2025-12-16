@@ -19,7 +19,7 @@ import java.util.logging.Level
 import kotlin.math.floor
 
 class MfFactionClaimCircleCommand(
-    private val plugin: MedievalFactions,
+    private val plugin: MedievalFactions
 ) : CommandExecutor,
     TabCompleter {
     private val decimalFormat = DecimalFormat("0", DecimalFormatSymbols.getInstance(plugin.language.locale))
@@ -28,7 +28,7 @@ class MfFactionClaimCircleCommand(
         sender: CommandSender,
         command: Command,
         label: String,
-        args: Array<out String>,
+        args: Array<out String>
     ): Boolean {
         if (!sender.hasPermission("mf.claim.circle") && !sender.hasPermission("mf.claim")) {
             sender.sendMessage("${ChatColor.RED}${plugin.language["CommandFactionClaimNoPermission"]}")
@@ -126,9 +126,9 @@ class MfFactionClaimCircleCommand(
                                     sender.sendMessage(
                                         "${ChatColor.RED}${plugin.language[
                                             "CommandFactionClaimReachedDemesneLimit", decimalFormat.format(
-                                                floor(faction.power),
-                                            ),
-                                        ]}",
+                                                floor(faction.power)
+                                            )
+                                        ]}"
                                     )
                                     return@saveChunks
                                 }
@@ -147,17 +147,17 @@ class MfFactionClaimCircleCommand(
                                             when (it.reason.cause) {
                                                 is WorldClaimBlockedException -> {
                                                     sender.sendMessage(
-                                                        "${ChatColor.RED}${plugin.language["CommandFactionClaimWorldBlocked"]}",
+                                                        "${ChatColor.RED}${plugin.language["CommandFactionClaimWorldBlocked"]}"
                                                     )
                                                 }
                                                 else -> {
                                                     sender.sendMessage(
-                                                        "${ChatColor.RED}${plugin.language["CommandFactionClaimFailedToSaveClaim"]}",
+                                                        "${ChatColor.RED}${plugin.language["CommandFactionClaimFailedToSaveClaim"]}"
                                                     )
                                                     plugin.logger.log(
                                                         Level.SEVERE,
                                                         "Failed to save claimed chunk: ${it.reason.message}",
-                                                        it.reason.cause,
+                                                        it.reason.cause
                                                     )
                                                 }
                                             }
@@ -165,13 +165,13 @@ class MfFactionClaimCircleCommand(
                                         }
                                 }
                                 sender.sendMessage(
-                                    "${ChatColor.GREEN}${plugin.language["CommandFactionClaimSuccess", chunks.size.toString()]}",
+                                    "${ChatColor.GREEN}${plugin.language["CommandFactionClaimSuccess", chunks.size.toString()]}"
                                 )
-                            },
+                            }
                         )
-                    },
+                    }
                 )
-            },
+            }
         )
         return true
     }
@@ -180,6 +180,6 @@ class MfFactionClaimCircleCommand(
         sender: CommandSender,
         command: Command,
         label: String,
-        args: Array<out String>,
+        args: Array<out String>
     ) = emptyList<String>()
 }

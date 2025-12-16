@@ -16,7 +16,7 @@ class PaginatedView(
     val title: Lazy<Array<out BaseComponent>>,
     lines: List<Lazy<Array<out BaseComponent>>>,
     pageLength: Int = 10,
-    val viewPageCommand: (Int) -> String,
+    val viewPageCommand: (Int) -> String
 ) {
     val pages = lines.chunked(pageLength)
 
@@ -26,7 +26,7 @@ class PaginatedView(
             title: Lazy<String>,
             lines: List<Lazy<String>>,
             pageLength: Int = 10,
-            viewPageCommand: (Int) -> String,
+            viewPageCommand: (Int) -> String
         ) = PaginatedView(
             language,
             lazy { TextComponent.fromLegacyText(title.value) },
@@ -34,7 +34,7 @@ class PaginatedView(
                 lazy { TextComponent.fromLegacyText(it.value) }
             },
             pageLength,
-            viewPageCommand,
+            viewPageCommand
         )
 
         fun fromStrings(
@@ -42,7 +42,7 @@ class PaginatedView(
             title: String,
             lines: List<String>,
             pageLength: Int = 10,
-            viewPageCommand: (Int) -> String,
+            viewPageCommand: (Int) -> String
         ) = fromLazyStrings(language, lazy { title }, lines.map { lazy { it } }, pageLength, viewPageCommand)
 
         fun fromChatComponents(
@@ -50,13 +50,13 @@ class PaginatedView(
             title: Array<out BaseComponent>,
             lines: List<Array<out BaseComponent>>,
             pageLength: Int = 10,
-            viewPageCommand: (Int) -> String,
+            viewPageCommand: (Int) -> String
         ) = PaginatedView(language, lazy { title }, lines.map { lazy { it } }, pageLength, viewPageCommand)
     }
 
     fun sendPage(
         sender: CommandSender,
-        pageNumber: Int = 0,
+        pageNumber: Int = 0
     ) {
         sender.spigot().sendMessage(*title.value)
         if (pageNumber in pages.indices) {
@@ -73,12 +73,12 @@ class PaginatedView(
                         clickEvent =
                             ClickEvent(
                                 RUN_COMMAND,
-                                viewPageCommand(pageNumber - 1),
+                                viewPageCommand(pageNumber - 1)
                             )
                         hoverEvent =
                             HoverEvent(
                                 SHOW_TEXT,
-                                Text(language["PreviousPageHover"]),
+                                Text(language["PreviousPageHover"])
                             )
                     } else {
                         color = ChatColor.DARK_GREEN
@@ -99,17 +99,17 @@ class PaginatedView(
                         clickEvent =
                             ClickEvent(
                                 RUN_COMMAND,
-                                viewPageCommand(pageNumber + 1),
+                                viewPageCommand(pageNumber + 1)
                             )
                         hoverEvent =
                             HoverEvent(
                                 SHOW_TEXT,
-                                Text(language["NextPageHover"]),
+                                Text(language["NextPageHover"])
                             )
                     } else {
                         color = ChatColor.DARK_GREEN
                     }
-                },
+                }
             )
         sender.spigot().sendMessage(*pageControls)
     }

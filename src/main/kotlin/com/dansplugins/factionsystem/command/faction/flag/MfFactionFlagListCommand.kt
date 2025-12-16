@@ -20,14 +20,14 @@ import net.md_5.bungee.api.ChatColor as SpigotChatColor
 import org.bukkit.ChatColor as BukkitChatColor
 
 class MfFactionFlagListCommand(
-    private val plugin: MedievalFactions,
+    private val plugin: MedievalFactions
 ) : CommandExecutor,
     TabCompleter {
     override fun onCommand(
         sender: CommandSender,
         command: Command,
         label: String,
-        args: Array<out String>,
+        args: Array<out String>
     ): Boolean {
         if (!sender.hasPermission("mf.flag.list")) {
             sender.sendMessage("${BukkitChatColor.RED}${plugin.language["CommandFactionFlagListNoPermission"]}")
@@ -68,7 +68,7 @@ class MfFactionFlagListCommand(
                                 TextComponent(plugin.language["CommandFactionFlagListTitle", faction.name]).apply {
                                     color = SpigotChatColor.AQUA
                                     isBold = true
-                                },
+                                }
                             )
                         },
                         plugin.flags.map { flag ->
@@ -78,17 +78,17 @@ class MfFactionFlagListCommand(
                                     add(
                                         TextComponent(flag.name).apply {
                                             color = SpigotChatColor.GRAY
-                                        },
+                                        }
                                     )
                                     add(
                                         TextComponent(" (${flag.type.simpleName}): ").apply {
                                             color = SpigotChatColor.GRAY
-                                        },
+                                        }
                                     )
                                     add(
                                         TextComponent("$flagValue ").apply {
                                             color = SpigotChatColor.WHITE
-                                        },
+                                        }
                                     )
                                     if (sender.hasPermission("mf.flag.set") &&
                                         role.hasPermission(faction, plugin.factionPermissions.setFlag(flag))
@@ -99,23 +99,23 @@ class MfFactionFlagListCommand(
                                                 hoverEvent =
                                                     HoverEvent(
                                                         SHOW_TEXT,
-                                                        Text(plugin.language["CommandFactionFlagListSetHover", flag.name]),
+                                                        Text(plugin.language["CommandFactionFlagListSetHover", flag.name])
                                                     )
                                                 clickEvent =
                                                     ClickEvent(RUN_COMMAND, "/faction flag set ${flag.name} p=${pageNumber + 1}")
-                                            },
+                                            }
                                         )
                                     }
                                 }.toTypedArray()
                             }
-                        },
+                        }
                     ) { page -> "/faction flag list ${page + 1}" }
                 if (pageNumber !in view.pages.indices) {
                     sender.sendMessage("${BukkitChatColor.RED}${plugin.language["CommandFactionFlagListInvalidPageNumber"]}")
                     return@Runnable
                 }
                 view.sendPage(sender, pageNumber)
-            },
+            }
         )
         return true
     }
@@ -124,6 +124,6 @@ class MfFactionFlagListCommand(
         sender: CommandSender,
         command: Command,
         label: String,
-        args: Array<out String>,
+        args: Array<out String>
     ) = emptyList<String>()
 }

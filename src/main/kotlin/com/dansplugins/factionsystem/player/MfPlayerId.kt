@@ -6,7 +6,7 @@ import java.util.UUID
 
 @JvmInline
 value class MfPlayerId(
-    val value: String,
+    val value: String
 ) {
     companion object {
         fun fromBukkitPlayer(player: OfflinePlayer) = MfPlayerId(player.uniqueId.toString())

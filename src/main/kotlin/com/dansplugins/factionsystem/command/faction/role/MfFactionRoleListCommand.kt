@@ -20,14 +20,14 @@ import net.md_5.bungee.api.ChatColor as SpigotChatColor
 import org.bukkit.ChatColor as BukkitChatColor
 
 class MfFactionRoleListCommand(
-    private val plugin: MedievalFactions,
+    private val plugin: MedievalFactions
 ) : CommandExecutor,
     TabCompleter {
     override fun onCommand(
         sender: CommandSender,
         command: Command,
         label: String,
-        args: Array<out String>,
+        args: Array<out String>
     ): Boolean {
         if (!sender.hasPermission("mf.role.list")) {
             sender.sendMessage("${BukkitChatColor.RED}${plugin.language["CommandFactionRoleListNoPermission"]}")
@@ -68,7 +68,7 @@ class MfFactionRoleListCommand(
                                 TextComponent(plugin.language["CommandFactionRoleListTitle"]).apply {
                                     color = SpigotChatColor.AQUA
                                     isBold = true
-                                },
+                                }
                             )
                         },
                         faction.roles.map { role ->
@@ -76,32 +76,32 @@ class MfFactionRoleListCommand(
                                 buildList {
                                     add(
                                         TextComponent(
-                                            plugin.language["CommandFactionRoleListItem", role.name],
+                                            plugin.language["CommandFactionRoleListItem", role.name]
                                         ).apply {
                                             color = SpigotChatColor.GRAY
                                             clickEvent = ClickEvent(RUN_COMMAND, "/faction role view ${role.id.value}")
                                             hoverEvent =
                                                 HoverEvent(
                                                     SHOW_TEXT,
-                                                    Text(plugin.language["CommandFactionRoleListItemHover", role.name]),
+                                                    Text(plugin.language["CommandFactionRoleListItemHover", role.name])
                                                 )
-                                        },
+                                        }
                                     )
                                     if (faction.roles.defaultRoleId == role.id) {
                                         add(TextComponent(" "))
                                         add(
                                             TextComponent(
-                                                plugin.language["CommandFactionRoleListDefault"],
+                                                plugin.language["CommandFactionRoleListDefault"]
                                             ).apply {
                                                 color = SpigotChatColor.AQUA
-                                            },
+                                            }
                                         )
                                     }
                                     if (playerRole.hasPermission(faction, plugin.factionPermissions.modifyRole(role.id))) {
                                         add(TextComponent(" "))
                                         add(
                                             TextComponent(
-                                                plugin.language["CommandFactionRoleListRenameButton", role.name],
+                                                plugin.language["CommandFactionRoleListRenameButton", role.name]
                                             ).apply {
                                                 color = SpigotChatColor.GREEN
                                                 clickEvent =
@@ -109,16 +109,16 @@ class MfFactionRoleListCommand(
                                                 hoverEvent =
                                                     HoverEvent(
                                                         SHOW_TEXT,
-                                                        Text(plugin.language["CommandFactionRoleListRenameButtonHover", role.name]),
+                                                        Text(plugin.language["CommandFactionRoleListRenameButtonHover", role.name])
                                                     )
-                                            },
+                                            }
                                         )
                                     }
                                     if (playerRole.hasPermission(faction, plugin.factionPermissions.deleteRole(role.id))) {
                                         add(TextComponent(" "))
                                         add(
                                             TextComponent(
-                                                plugin.language["CommandFactionRoleListDeleteButton", role.name],
+                                                plugin.language["CommandFactionRoleListDeleteButton", role.name]
                                             ).apply {
                                                 color = SpigotChatColor.RED
                                                 clickEvent =
@@ -126,9 +126,9 @@ class MfFactionRoleListCommand(
                                                 hoverEvent =
                                                     HoverEvent(
                                                         SHOW_TEXT,
-                                                        Text(plugin.language["CommandFactionRoleListDeleteButtonHover", role.name]),
+                                                        Text(plugin.language["CommandFactionRoleListDeleteButtonHover", role.name])
                                                     )
-                                            },
+                                            }
                                         )
                                     }
                                     if (playerRole.hasPermission(faction, plugin.factionPermissions.setDefaultRole) &&
@@ -137,7 +137,7 @@ class MfFactionRoleListCommand(
                                         add(TextComponent(" "))
                                         add(
                                             TextComponent(
-                                                plugin.language["CommandFactionRoleListSetDefaultRoleButton"],
+                                                plugin.language["CommandFactionRoleListSetDefaultRoleButton"]
                                             ).apply {
                                                 color = SpigotChatColor.YELLOW
                                                 clickEvent =
@@ -145,14 +145,14 @@ class MfFactionRoleListCommand(
                                                 hoverEvent =
                                                     HoverEvent(
                                                         SHOW_TEXT,
-                                                        Text(plugin.language["CommandFactionRoleListSetDefaultRoleButtonHover", role.name]),
+                                                        Text(plugin.language["CommandFactionRoleListSetDefaultRoleButtonHover", role.name])
                                                     )
-                                            },
+                                            }
                                         )
                                     }
                                 }.toTypedArray()
                             }
-                        },
+                        }
                     ) { page -> "/faction role list ${page + 1}" }
                 if (pageNumber !in view.pages.indices) {
                     sender.sendMessage("${BukkitChatColor.RED}${plugin.language["CommandFactionRoleListInvalidPageNumber"]}")
@@ -163,16 +163,16 @@ class MfFactionRoleListCommand(
                     sender.spigot().sendMessage(
                         *arrayOf(
                             TextComponent(
-                                plugin.language["CommandFactionRoleListCreateButton"],
+                                plugin.language["CommandFactionRoleListCreateButton"]
                             ).apply {
                                 color = SpigotChatColor.GREEN
                                 clickEvent = ClickEvent(RUN_COMMAND, "/faction role create")
                                 hoverEvent = HoverEvent(SHOW_TEXT, Text(plugin.language["CommandFactionRoleListCreateButtonHover"]))
-                            },
-                        ),
+                            }
+                        )
                     )
                 }
-            },
+            }
         )
         return true
     }
@@ -181,6 +181,6 @@ class MfFactionRoleListCommand(
         sender: CommandSender,
         command: Command,
         label: String,
-        args: Array<out String>,
+        args: Array<out String>
     ) = emptyList<String>()
 }

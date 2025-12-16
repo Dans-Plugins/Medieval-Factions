@@ -10,7 +10,7 @@ import org.bukkit.event.player.PlayerInteractAtEntityEvent
 import java.util.logging.Level.SEVERE
 
 class PlayerInteractAtEntityListener(
-    private val plugin: MedievalFactions,
+    private val plugin: MedievalFactions
 ) : Listener {
     @EventHandler
     fun onPlayerInteractAtEntity(event: PlayerInteractAtEntityEvent) {
@@ -26,7 +26,7 @@ class PlayerInteractAtEntityListener(
                         plugin.logger.log(SEVERE, "Failed to save player: ${it.reason.message}", it.reason.cause)
                         return@Runnable
                     }
-                },
+                }
             )
             return
         }

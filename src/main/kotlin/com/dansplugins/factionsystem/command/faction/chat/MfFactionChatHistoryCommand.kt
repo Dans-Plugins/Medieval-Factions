@@ -19,14 +19,14 @@ import net.md_5.bungee.api.ChatColor as SpigotChatColor
 import org.bukkit.ChatColor as BukkitChatColor
 
 class MfFactionChatHistoryCommand(
-    private val plugin: MedievalFactions,
+    private val plugin: MedievalFactions
 ) : CommandExecutor,
     TabCompleter {
     override fun onCommand(
         sender: CommandSender,
         command: Command,
         label: String,
-        args: Array<out String>,
+        args: Array<out String>
     ): Boolean {
         if (!sender.hasPermission("mf.chat.history")) {
             sender.sendMessage("${BukkitChatColor.RED}${plugin.language["CommandFactionChatHistoryNoPermission"]}")
@@ -76,7 +76,7 @@ class MfFactionChatHistoryCommand(
                                 TextComponent(plugin.language["CommandFactionChatHistoryTitle"]).apply {
                                     color = SpigotChatColor.AQUA
                                     isBold = true
-                                },
+                                }
                             )
                         },
                         (0..messageCount).map { messageIndex ->
@@ -104,29 +104,29 @@ class MfFactionChatHistoryCommand(
                                                 "CommandFactionChatHistoryMessage",
                                                 DateTimeFormatter
                                                     .ofLocalizedDateTime(
-                                                        SHORT,
+                                                        SHORT
                                                     ).format(LocalDateTime.ofInstant(message.timestamp, ZoneOffset.systemDefault())),
                                                 messagePlayer?.toBukkit()?.name ?: plugin.language["UnknownPlayer"],
                                                 messageFaction?.name ?: plugin.language["UnknownFaction"],
                                                 message.chatChannel.toString().lowercase(),
-                                                message.message,
-                                            ],
+                                                message.message
+                                            ]
                                         ).apply {
                                             color = SpigotChatColor.WHITE
-                                        },
+                                        }
                                     )
                                 } else {
                                     return@lazy arrayOf()
                                 }
                             }
-                        },
+                        }
                     ) { page -> "/faction chat history ${page + 1}" }
                 if (pageNumber !in view.pages.indices) {
                     sender.sendMessage("${BukkitChatColor.RED}${plugin.language["CommandFactionChatHistoryInvalidPageNumber"]}")
                     return@Runnable
                 }
                 view.sendPage(sender, pageNumber)
-            },
+            }
         )
         return true
     }
@@ -135,6 +135,6 @@ class MfFactionChatHistoryCommand(
         sender: CommandSender,
         command: Command,
         label: String,
-        args: Array<out String>,
+        args: Array<out String>
     ) = emptyList<String>()
 }

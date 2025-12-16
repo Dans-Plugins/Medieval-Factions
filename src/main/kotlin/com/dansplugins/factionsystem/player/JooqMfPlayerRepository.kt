@@ -12,7 +12,7 @@ import org.jooq.impl.DSL.value
 
 class JooqMfPlayerRepository(
     private val plugin: MedievalFactions,
-    private val dsl: DSLContext,
+    private val dsl: DSLContext
 ) : MfPlayerRepository {
     override fun getPlayer(id: MfPlayerId) =
         dsl
@@ -74,15 +74,15 @@ class JooqMfPlayerRepository(
                                     .div(-1)
                                     .pow(0.25)
                                     .plus(1)
-                                    .times(hoursToReachMax),
+                                    .times(hoursToReachMax)
                             ).div(hoursToReachMax)
                             .minus(1)
                             .pow(4)
                             .times(-1)
                             .plus(1)
-                            .times(maxPower),
-                    ),
-                ),
+                            .times(maxPower)
+                    )
+                )
             ).set(MF_PLAYER.VERSION, MF_PLAYER.VERSION.plus(1))
             .where(MF_PLAYER.ID.`in`(onlinePlayerIds.map { it.value }))
             .and(MF_PLAYER.POWER.lt(maxPower))
@@ -118,9 +118,9 @@ class JooqMfPlayerRepository(
                             .times(-1) // flip the graph (exp4 is normally U-shaped)
                             .plus(1) // shift the graph up above the x axis (it will usually peak at the minimum value)
                             .times(MF_PLAYER.POWER_AT_LOGOUT.minus(minPower)) // scale the graph to the range of the power values
-                            .plus(minPower), // shift the graph back down to the minimum power value
-                    ),
-                ),
+                            .plus(minPower) // shift the graph back down to the minimum power value
+                    )
+                )
             ).set(MF_PLAYER.VERSION, MF_PLAYER.VERSION.plus(1))
             .where(MF_PLAYER.ID.notIn(onlinePlayerIds.map { it.value }))
             .and(MF_PLAYER.POWER_AT_LOGOUT.gt(minPower))
@@ -136,6 +136,6 @@ class JooqMfPlayerRepository(
             power,
             powerAtLogout,
             bypassEnabled,
-            chatChannel?.let(MfFactionChatChannel::valueOf),
+            chatChannel?.let(MfFactionChatChannel::valueOf)
         )
 }

@@ -13,14 +13,14 @@ import org.bukkit.entity.Player
 import java.util.logging.Level
 
 class MfFactionBypassCommand(
-    private val plugin: MedievalFactions,
+    private val plugin: MedievalFactions
 ) : CommandExecutor,
     TabCompleter {
     override fun onCommand(
         sender: CommandSender,
         command: Command,
         label: String,
-        args: Array<out String>,
+        args: Array<out String>
     ): Boolean {
         if (!sender.hasPermission("mf.bypass")) {
             sender.sendMessage("$RED${plugin.language["CommandFactionBypassNoPermission"]}")
@@ -46,7 +46,7 @@ class MfFactionBypassCommand(
                 } else {
                     sender.sendMessage("$GREEN${plugin.language["CommandFactionBypassDisabled"]}")
                 }
-            },
+            }
         )
         return true
     }
@@ -55,6 +55,6 @@ class MfFactionBypassCommand(
         sender: CommandSender,
         command: Command,
         label: String,
-        args: Array<out String>,
+        args: Array<out String>
     ) = emptyList<String>()
 }

@@ -13,7 +13,7 @@ import org.bukkit.inventory.BlockInventoryHolder
 import java.util.logging.Level.SEVERE
 
 class InventoryClickListener(
-    private val plugin: MedievalFactions,
+    private val plugin: MedievalFactions
 ) : Listener {
     @EventHandler
     fun onInventoryClick(event: InventoryClickEvent) {
@@ -45,7 +45,7 @@ class InventoryClickListener(
                         plugin.logger.log(SEVERE, "Failed to save player: ${it.reason.message}", it.reason.cause)
                         return@Runnable
                     }
-                },
+                }
             )
             return
         }

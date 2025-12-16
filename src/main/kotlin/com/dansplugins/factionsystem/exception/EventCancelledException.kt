@@ -9,6 +9,6 @@ class EventCancelledException : RuntimeException {
         message,
         cause,
         enableSuppression,
-        writableStackTrace,
+        writableStackTrace
     )
 }

@@ -9,7 +9,7 @@ import org.bukkit.event.Listener
 import org.bukkit.event.player.PlayerJoinEvent
 
 class PlayerJoinListener(
-    private val plugin: MedievalFactions,
+    private val plugin: MedievalFactions
 ) : Listener {
     @EventHandler
     fun onPlayerJoin(event: PlayerJoinEvent) {
@@ -44,15 +44,15 @@ class PlayerJoinListener(
                                 subtitle,
                                 plugin.config.getInt("factions.titleTerritoryFadeInLength"),
                                 plugin.config.getInt("factions.titleTerritoryDuration"),
-                                plugin.config.getInt("factions.titleTerritoryFadeOutLength"),
+                                plugin.config.getInt("factions.titleTerritoryFadeOutLength")
                             )
                         }
                         if (plugin.config.getBoolean("factions.actionBarTerritoryIndicator")) {
                             event.player.spigot().sendMessage(ACTION_BAR, *TextComponent.fromLegacyText(title))
                         }
-                    },
+                    }
                 )
-            },
+            }
         )
     }
 }

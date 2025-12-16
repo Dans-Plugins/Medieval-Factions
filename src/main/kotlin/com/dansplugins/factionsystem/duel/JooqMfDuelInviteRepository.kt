@@ -6,11 +6,11 @@ import com.dansplugins.factionsystem.player.MfPlayerId
 import org.jooq.DSLContext
 
 class JooqMfDuelInviteRepository(
-    private val dsl: DSLContext,
+    private val dsl: DSLContext
 ) : MfDuelInviteRepository {
     override fun getInvite(
         inviter: MfPlayerId,
-        invitee: MfPlayerId,
+        invitee: MfPlayerId
     ): MfDuelInvite? =
         dsl
             .selectFrom(MF_DUEL_INVITE)
@@ -38,7 +38,7 @@ class JooqMfDuelInviteRepository(
 
     override fun deleteInvite(
         inviter: MfPlayerId,
-        invitee: MfPlayerId,
+        invitee: MfPlayerId
     ) {
         dsl
             .deleteFrom(MF_DUEL_INVITE)
@@ -50,6 +50,6 @@ class JooqMfDuelInviteRepository(
     private fun MfDuelInviteRecord.toDomain() =
         MfDuelInvite(
             inviterId.let(::MfPlayerId),
-            inviteeId.let(::MfPlayerId),
+            inviteeId.let(::MfPlayerId)
         )
 }

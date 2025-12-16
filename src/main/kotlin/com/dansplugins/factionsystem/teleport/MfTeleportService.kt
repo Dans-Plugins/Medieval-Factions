@@ -9,14 +9,14 @@ import org.bukkit.scheduler.BukkitTask
 import java.util.UUID
 
 class MfTeleportService(
-    private val plugin: MedievalFactions,
+    private val plugin: MedievalFactions
 ) {
     private val tasks = mutableMapOf<UUID, BukkitTask>()
 
     fun teleport(
         player: Player,
         location: Location,
-        message: String? = null,
+        message: String? = null
     ) {
         val teleportDelay = plugin.config.getInt("factions.factionHomeTeleportDelay")
         if (teleportDelay <= 0) {
@@ -38,7 +38,7 @@ class MfTeleportService(
                         if (message != null) playerToTeleport.sendMessage(message)
                     }
                 },
-                teleportDelay * 20L,
+                teleportDelay * 20L
             )
         tasks[uuid] = task
     }

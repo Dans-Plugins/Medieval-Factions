@@ -17,14 +17,14 @@ import org.bukkit.entity.Player
 import java.util.logging.Level.SEVERE
 
 class MfFactionVassalizeCommand(
-    private val plugin: MedievalFactions,
+    private val plugin: MedievalFactions
 ) : CommandExecutor,
     TabCompleter {
     override fun onCommand(
         sender: CommandSender,
         command: Command,
         label: String,
-        args: Array<out String>,
+        args: Array<out String>
     ): Boolean {
         if (!sender.hasPermission("mf.vassalize")) {
             sender.sendMessage("$RED${plugin.language["CommandFactionVassalizeNoPermission"]}")
@@ -102,8 +102,8 @@ class MfFactionVassalizeCommand(
                         MfFactionRelationship(
                             factionId = faction.id,
                             targetId = target.id,
-                            type = VASSAL,
-                        ),
+                            type = VASSAL
+                        )
                     ).onFailure {
                         sender.sendMessage("$RED${plugin.language["CommandFactionVassalizeFailedToSaveRelationship"]}")
                         plugin.logger.log(SEVERE, "Failed to save faction relationship: ${it.reason.message}", it.reason.cause)
@@ -115,15 +115,15 @@ class MfFactionVassalizeCommand(
                     Runnable {
                         faction.sendMessage(
                             plugin.language["FactionVassalizationRequestSentNotificationTitle", target.name],
-                            plugin.language["FactionVassalizationRequestSentNotificationBody", target.name],
+                            plugin.language["FactionVassalizationRequestSentNotificationBody", target.name]
                         )
                         target.sendMessage(
                             plugin.language["FactionVassalizationRequestReceivedNotificationTitle", faction.name],
-                            plugin.language["FactionVassalizationRequestReceivedNotificationBody", faction.name],
+                            plugin.language["FactionVassalizationRequestReceivedNotificationBody", faction.name]
                         )
-                    },
+                    }
                 )
-            },
+            }
         )
         return true
     }
@@ -132,7 +132,7 @@ class MfFactionVassalizeCommand(
         sender: CommandSender,
         command: Command,
         label: String,
-        args: Array<out String>,
+        args: Array<out String>
     ): List<String> {
         val factionService = plugin.services.factionService
         return when {

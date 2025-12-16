@@ -18,14 +18,14 @@ import org.bukkit.entity.Player
 import java.util.logging.Level.SEVERE
 
 class MfFactionDeclareWarCommand(
-    private val plugin: MedievalFactions,
+    private val plugin: MedievalFactions
 ) : CommandExecutor,
     TabCompleter {
     override fun onCommand(
         sender: CommandSender,
         command: Command,
         label: String,
-        args: Array<out String>,
+        args: Array<out String>
     ): Boolean {
         if (!sender.hasPermission("mf.declarewar")) {
             sender.sendMessage("$RED${plugin.language["CommandFactionDeclareWarNoPermission"]}")
@@ -109,11 +109,11 @@ class MfFactionDeclareWarCommand(
                     Runnable {
                         faction.sendMessage(
                             plugin.language["FactionAtWarNotificationTitle", target.name],
-                            plugin.language["FactionAtWarNotificationBody", target.name],
+                            plugin.language["FactionAtWarNotificationBody", target.name]
                         )
                         target.sendMessage(
                             plugin.language["FactionAtWarNotificationTitle", faction.name],
-                            plugin.language["FactionAtWarNotificationBody", faction.name],
+                            plugin.language["FactionAtWarNotificationBody", faction.name]
                         )
                         plugin.server.onlinePlayers
                             .filter { onlinePlayer ->
@@ -124,9 +124,9 @@ class MfFactionDeclareWarCommand(
                             }.forEach { onlinePlayer ->
                                 onlinePlayer.sendMessage("$RED${plugin.language["FactionDeclaredWar", faction.name, target.name]}")
                             }
-                    },
+                    }
                 )
-            },
+            }
         )
         return true
     }
@@ -135,7 +135,7 @@ class MfFactionDeclareWarCommand(
         sender: CommandSender,
         command: Command,
         label: String,
-        args: Array<out String>,
+        args: Array<out String>
     ): List<String> {
         val factionService = plugin.services.factionService
         return when {

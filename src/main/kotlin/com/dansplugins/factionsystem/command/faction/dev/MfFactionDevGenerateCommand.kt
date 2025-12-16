@@ -21,14 +21,14 @@ import java.util.logging.Level.SEVERE
 import kotlin.random.Random
 
 class MfFactionDevGenerateCommand(
-    private val plugin: MedievalFactions,
+    private val plugin: MedievalFactions
 ) : CommandExecutor,
     TabCompleter {
     override fun onCommand(
         sender: CommandSender,
         command: Command,
         label: String,
-        args: Array<out String>,
+        args: Array<out String>
     ): Boolean {
         val players =
             listOf(
@@ -52,7 +52,7 @@ class MfFactionDevGenerateCommand(
                 UUID.fromString("be9ee451-7453-4887-9919-cf2db6c9862d"),
                 UUID.fromString("697b8978-a214-438e-b313-849a4bcdc743"),
                 UUID.fromString("7dab0167-4689-4bd6-9724-132b23e644fc"),
-                UUID.fromString("8c1ac1d3-be4d-45ec-8047-e008719a8296"),
+                UUID.fromString("8c1ac1d3-be4d-45ec-8047-e008719a8296")
             ).map { uuid -> plugin.server.getOfflinePlayer(uuid) }
         val spawnLocation =
             plugin.server.worlds
@@ -84,7 +84,7 @@ class MfFactionDevGenerateCommand(
                             id = factionId,
                             name = "${adjectives.random()} ${adjectives.random()} ${nouns.random()}",
                             roles = roles,
-                            members = listOf(mfPlayer.withRole(owner)),
+                            members = listOf(mfPlayer.withRole(owner))
                         )
                     val createdFaction =
                         factionService.save(faction).onFailure {
@@ -116,7 +116,7 @@ class MfFactionDevGenerateCommand(
                     sender.sendMessage("${GREEN}Claimed chunks for ${createdFaction.name}")
                 }
                 sender.sendMessage("${GREEN}Completed data generation.")
-            },
+            }
         )
         return true
     }
@@ -125,6 +125,6 @@ class MfFactionDevGenerateCommand(
         sender: CommandSender,
         command: Command,
         label: String,
-        args: Array<out String>,
+        args: Array<out String>
     ) = emptyList<String>()
 }

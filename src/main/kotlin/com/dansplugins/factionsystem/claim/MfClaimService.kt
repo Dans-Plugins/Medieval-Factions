@@ -24,12 +24,12 @@ import java.util.concurrent.ConcurrentHashMap
 
 class MfClaimService(
     private val plugin: MedievalFactions,
-    private val repository: MfClaimedChunkRepository,
+    private val repository: MfClaimedChunkRepository
 ) {
     private data class ClaimKey(
         val worldId: UUID,
         val x: Int,
-        val z: Int,
+        val z: Int
     ) {
         constructor(claimedChunk: MfClaimedChunk) : this(claimedChunk.worldId, claimedChunk.x, claimedChunk.z)
     }
@@ -48,13 +48,13 @@ class MfClaimService(
     fun getClaim(
         worldId: UUID,
         x: Int,
-        z: Int,
+        z: Int
     ): MfClaimedChunk? = claimsByKey[ClaimKey(worldId, x, z)]
 
     fun getClaim(
         world: World,
         x: Int,
-        z: Int,
+        z: Int
     ): MfClaimedChunk? = getClaim(world.uid, x, z)
 
     fun getClaim(chunk: Chunk): MfClaimedChunk? = getClaim(chunk.world, chunk.x, chunk.z)
@@ -74,7 +74,7 @@ class MfClaimService(
     @JvmName("isInteractionAllowedForPlayerInChunk")
     fun isInteractionAllowed(
         playerId: MfPlayerId,
-        claim: MfClaimedChunk,
+        claim: MfClaimedChunk
     ): Boolean {
         val factionService = plugin.services.factionService
         val playerFaction = factionService.getFaction(playerId) ?: return false
@@ -95,7 +95,7 @@ class MfClaimService(
     // Checks whether a set of chunks has at least one chunk that is adjacent to an existing claim. Works across multiple worlds.
     fun isClaimAdjacent(
         id: MfFactionId,
-        vararg chunks: MfChunkPosition,
+        vararg chunks: MfChunkPosition
     ): Boolean =
         chunks.any { chunk ->
             getClaim(chunk.worldId, chunk.x - 1, chunk.z)?.factionId == id ||
@@ -137,18 +137,18 @@ class MfClaimService(
                                                 subtitle,
                                                 plugin.config.getInt("factions.titleTerritoryFadeInLength"),
                                                 plugin.config.getInt("factions.titleTerritoryDuration"),
-                                                plugin.config.getInt("factions.titleTerritoryFadeOutLength"),
+                                                plugin.config.getInt("factions.titleTerritoryFadeOutLength")
                                             )
                                         }
                                         if (plugin.config.getBoolean("factions.actionBarTerritoryIndicator")) {
                                             player.spigot().sendMessage(ACTION_BAR, *TextComponent.fromLegacyText(title))
                                         }
                                     }
-                                },
+                                }
                             )
                         }
                     }
-                },
+                }
             )
             val mapService = plugin.services.mapService
             if (mapService != null && !plugin.config.getBoolean("dynmap.onlyRenderTerritoriesUponStartup")) {
@@ -156,7 +156,7 @@ class MfClaimService(
                     plugin,
                     Runnable {
                         mapService.scheduleUpdateClaims(faction)
-                    },
+                    }
                 )
             }
             return@resultFrom result
@@ -188,7 +188,7 @@ class MfClaimService(
                                         null,
                                         plugin.config.getInt("factions.titleTerritoryFadeInLength"),
                                         plugin.config.getInt("factions.titleTerritoryDuration"),
-                                        plugin.config.getInt("factions.titleTerritoryFadeOutLength"),
+                                        plugin.config.getInt("factions.titleTerritoryFadeOutLength")
                                     )
                                 }
                                 if (plugin.config.getBoolean("factions.actionBarTerritoryIndicator")) {
@@ -197,7 +197,7 @@ class MfClaimService(
                             }
                         }
                     }
-                },
+                }
             )
             val mapService = plugin.services.mapService
             if (mapService != null) {
@@ -208,7 +208,7 @@ class MfClaimService(
                         plugin,
                         Runnable {
                             mapService.scheduleUpdateClaims(faction)
-                        },
+                        }
                     )
                 }
             }

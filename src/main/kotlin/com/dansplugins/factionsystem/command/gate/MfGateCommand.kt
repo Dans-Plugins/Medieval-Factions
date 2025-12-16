@@ -11,7 +11,7 @@ import org.bukkit.command.CommandSender
 import org.bukkit.command.TabCompleter
 
 class MfGateCommand(
-    private val plugin: MedievalFactions,
+    private val plugin: MedievalFactions
 ) : CommandExecutor,
     TabCompleter {
     private val gateCreateCommand = MfGateCreateCommand(plugin)
@@ -28,7 +28,7 @@ class MfGateCommand(
         sender: CommandSender,
         command: Command,
         label: String,
-        args: Array<out String>,
+        args: Array<out String>
     ): Boolean =
         when (args.firstOrNull()?.lowercase()) {
             in createAliases -> gateCreateCommand.onCommand(sender, command, label, args.drop(1).toTypedArray())
@@ -44,7 +44,7 @@ class MfGateCommand(
         sender: CommandSender,
         command: Command,
         label: String,
-        args: Array<out String>,
+        args: Array<out String>
     ) = when {
         args.isEmpty() -> subcommands
         args.size == 1 -> subcommands.filter { it.startsWith(args[0].lowercase()) }

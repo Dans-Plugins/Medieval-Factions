@@ -10,7 +10,7 @@ import org.bukkit.event.entity.PotionSplashEvent
 import org.bukkit.potion.PotionEffectType
 
 class PotionSplashListener(
-    private val plugin: MedievalFactions,
+    private val plugin: MedievalFactions
 ) : Listener {
     private val harmfulPotionEffectTypes =
         listOf(
@@ -26,7 +26,7 @@ class PotionSplashListener(
             "SLOW_DIGGING",
             "UNLUCK",
             "WEAKNESS",
-            "WITHER",
+            "WITHER"
         ).mapNotNull {
             PotionEffectType.getByName(it)
         }

@@ -8,7 +8,7 @@ import org.bukkit.command.CommandSender
 import org.bukkit.command.TabCompleter
 
 class MfFactionDevCommand(
-    private val plugin: MedievalFactions,
+    private val plugin: MedievalFactions
 ) : CommandExecutor,
     TabCompleter {
     private val factionDevGenerateCommand = MfFactionDevGenerateCommand(plugin)
@@ -23,7 +23,7 @@ class MfFactionDevCommand(
         sender: CommandSender,
         command: Command,
         label: String,
-        args: Array<out String>,
+        args: Array<out String>
     ): Boolean =
         when (args.firstOrNull()?.lowercase()) {
             in generateAliases -> factionDevGenerateCommand.onCommand(sender, command, label, args.drop(1).toTypedArray())
@@ -38,7 +38,7 @@ class MfFactionDevCommand(
         sender: CommandSender,
         command: Command,
         label: String,
-        args: Array<out String>,
+        args: Array<out String>
     ) = when {
         args.isEmpty() -> subcommands
         args.size == 1 -> subcommands.filter { it.startsWith(args[0].lowercase()) }

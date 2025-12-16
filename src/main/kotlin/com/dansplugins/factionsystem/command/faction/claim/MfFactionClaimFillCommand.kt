@@ -22,7 +22,7 @@ import java.util.logging.Level.SEVERE
 import kotlin.math.floor
 
 class MfFactionClaimFillCommand(
-    private val plugin: MedievalFactions,
+    private val plugin: MedievalFactions
 ) : CommandExecutor,
     TabCompleter {
     private val decimalFormat = DecimalFormat("0", DecimalFormatSymbols.getInstance(plugin.language.locale))
@@ -33,7 +33,7 @@ class MfFactionClaimFillCommand(
         sender: CommandSender,
         command: Command,
         label: String,
-        args: Array<out String>,
+        args: Array<out String>
     ): Boolean {
         if (!sender.hasPermission("mf.claim.fill") && !sender.hasPermission("mf.claimfill")) {
             sender.sendMessage("$RED${plugin.language["CommandFactionClaimFillNoPermission"]}")
@@ -85,7 +85,7 @@ class MfFactionClaimFillCommand(
                             chunks = fill(senderWorldId, senderChunkX, senderChunkZ, faction, emptySet(), 0)
                         } catch (e: ClaimFillLimitReachedException) {
                             sender.sendMessage(
-                                "$RED${plugin.language["CommandFactionClaimFillTooManyChunks", claimFillMaxChunks.toString()]}",
+                                "$RED${plugin.language["CommandFactionClaimFillTooManyChunks", claimFillMaxChunks.toString()]}"
                             )
                             return@saveChunks
                         } catch (e: ClaimFillDepthLimitReachedException) {
@@ -122,9 +122,9 @@ class MfFactionClaimFillCommand(
                             sender.sendMessage(
                                 "$RED${plugin.language[
                                     "CommandFactionClaimFillReachedDemesneLimit", decimalFormat.format(
-                                        floor(faction.power),
-                                    ),
-                                ]}",
+                                        floor(faction.power)
+                                    )
+                                ]}"
                             )
                             return@saveChunks
                         }
@@ -145,9 +145,9 @@ class MfFactionClaimFillCommand(
                                 }
                         }
                         sender.sendMessage("$GREEN${plugin.language["CommandFactionClaimFillSuccess", chunks.size.toString()]}")
-                    },
+                    }
                 )
-            },
+            }
         )
         return true
     }
@@ -158,7 +158,7 @@ class MfFactionClaimFillCommand(
         startChunkZ: Int,
         faction: MfFaction,
         chunksToFill: Set<MfChunkPosition> = emptySet(),
-        depth: Int = 0,
+        depth: Int = 0
     ): Set<MfChunkPosition>? {
         // Check if we've exceeded the maximum recursion depth
         if (depth > claimFillMaxDepth) {
@@ -189,7 +189,7 @@ class MfFactionClaimFillCommand(
         sender: CommandSender,
         command: Command,
         label: String,
-        args: Array<out String>,
+        args: Array<out String>
     ) = emptyList<String>()
 
     class ClaimFillLimitReachedException : Exception()

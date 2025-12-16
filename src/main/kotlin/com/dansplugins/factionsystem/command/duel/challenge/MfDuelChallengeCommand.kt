@@ -22,14 +22,14 @@ import java.util.logging.Level.SEVERE
 import net.md_5.bungee.api.ChatColor as SpigotChatColor
 
 class MfDuelChallengeCommand(
-    private val plugin: MedievalFactions,
+    private val plugin: MedievalFactions
 ) : CommandExecutor,
     TabCompleter {
     override fun onCommand(
         sender: CommandSender,
         command: Command,
         label: String,
-        args: Array<out String>,
+        args: Array<out String>
     ): Boolean {
         if (!sender.hasPermission("mf.duel")) {
             sender.sendMessage("$RED${plugin.language["CommandDuelChallengeNoPermission"]}")
@@ -90,8 +90,8 @@ class MfDuelChallengeCommand(
                     .save(
                         MfDuelInvite(
                             mfPlayer.id,
-                            targetMfPlayer.id,
-                        ),
+                            targetMfPlayer.id
+                        )
                     ).onFailure {
                         sender.sendMessage("$RED${plugin.language["CommandDuelChallengeFailedToSaveInvite"]}")
                         plugin.logger.log(SEVERE, "Failed to save duel invite: ${it.reason.message}", it.reason.cause)
@@ -112,9 +112,9 @@ class MfDuelChallengeCommand(
                         isBold = true
                         hoverEvent = HoverEvent(SHOW_TEXT, Text(plugin.language["CommandDuelChallengeReceivedDeclineHover"]))
                         clickEvent = ClickEvent(RUN_COMMAND, "/duel cancel ${sender.name}")
-                    },
+                    }
                 )
-            },
+            }
         )
         return true
     }
@@ -123,7 +123,7 @@ class MfDuelChallengeCommand(
         sender: CommandSender,
         command: Command,
         label: String,
-        args: Array<out String>,
+        args: Array<out String>
     ) = when {
         args.isEmpty() -> plugin.server.onlinePlayers.map(Player::getName)
         args.size == 1 ->

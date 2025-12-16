@@ -14,7 +14,7 @@ import net.md_5.bungee.api.ChatColor as SpigotChatColor
 import org.bukkit.ChatColor as BukkitChatColor
 
 class MfFactionListCommand(
-    private val plugin: MedievalFactions,
+    private val plugin: MedievalFactions
 ) : CommandExecutor,
     TabCompleter {
     private val decimalFormat = DecimalFormat("0", DecimalFormatSymbols.getInstance(plugin.language.locale))
@@ -23,7 +23,7 @@ class MfFactionListCommand(
         sender: CommandSender,
         command: Command,
         label: String,
-        args: Array<out String>,
+        args: Array<out String>
     ): Boolean {
         if (!sender.hasPermission("mf.list")) {
             sender.sendMessage("${BukkitChatColor.RED}${plugin.language["CommandFactionListNoPermission"]}")
@@ -43,7 +43,7 @@ class MfFactionListCommand(
                                 TextComponent(plugin.language["CommandFactionListTitle"]).apply {
                                     color = SpigotChatColor.AQUA
                                     isBold = true
-                                },
+                                }
                             )
                         },
                         factionService.factions
@@ -55,11 +55,11 @@ class MfFactionListCommand(
                                             TextComponent(
                                                 plugin.language[
                                                     "CommandFactionListItem",
-                                                    faction.name,
-                                                ],
+                                                    faction.name
+                                                ]
                                             ).apply {
                                                 color = SpigotChatColor.AQUA
-                                            },
+                                            }
                                         )
                                     },
                                     lazy {
@@ -68,11 +68,11 @@ class MfFactionListCommand(
                                                 "  " +
                                                     plugin.language[
                                                         "CommandFactionListPower",
-                                                        decimalFormat.format(floor(faction.power)),
-                                                    ],
+                                                        decimalFormat.format(floor(faction.power))
+                                                    ]
                                             ).apply {
                                                 color = SpigotChatColor.GRAY
-                                            },
+                                            }
                                         )
                                     },
                                     lazy {
@@ -81,11 +81,11 @@ class MfFactionListCommand(
                                                 "  " +
                                                     plugin.language[
                                                         "CommandFactionListMembers",
-                                                        faction.members.size.toString(),
-                                                    ],
+                                                        faction.members.size.toString()
+                                                    ]
                                             ).apply {
                                                 color = SpigotChatColor.GRAY
-                                            },
+                                            }
                                         )
                                     },
                                     lazy {
@@ -94,18 +94,18 @@ class MfFactionListCommand(
                                                 "  " +
                                                     plugin.language[
                                                         "CommandFactionListLand",
-                                                        claimService.getClaims(faction.id).size.toString(),
-                                                    ],
+                                                        claimService.getClaims(faction.id).size.toString()
+                                                    ]
                                             ).apply {
                                                 color = SpigotChatColor.GRAY
-                                            },
+                                            }
                                         )
-                                    },
+                                    }
                                 )
                             },
                         // Each faction is currently 4 lines so this should be a multiple of 4.
                         // If we change the amount of lines then this should change.
-                        pageLength = 16,
+                        pageLength = 16
                     ) { page -> "/faction list ${page + 1}" }
                 if (view.pages.isEmpty()) {
                     sender.sendMessage("${BukkitChatColor.RED}${plugin.language["CommandFactionListNoFactions"]}")
@@ -116,7 +116,7 @@ class MfFactionListCommand(
                     return@Runnable
                 }
                 view.sendPage(sender, pageNumber)
-            },
+            }
         )
         return true
     }
@@ -125,6 +125,6 @@ class MfFactionListCommand(
         sender: CommandSender,
         command: Command,
         label: String,
-        args: Array<out String>,
+        args: Array<out String>
     ) = emptyList<String>()
 }

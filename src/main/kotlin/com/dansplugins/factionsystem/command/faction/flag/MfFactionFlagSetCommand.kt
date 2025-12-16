@@ -22,7 +22,7 @@ import org.bukkit.entity.Player
 import java.util.logging.Level.SEVERE
 
 class MfFactionFlagSetCommand(
-    private val plugin: MedievalFactions,
+    private val plugin: MedievalFactions
 ) : CommandExecutor,
     TabCompleter {
     private val conversationFactory =
@@ -47,13 +47,13 @@ class MfFactionFlagSetCommand(
             return plugin.language[
                 "CommandFactionFlagSetValuePrompt",
                 flag?.name ?: plugin.language["UnknownFlag"],
-                plugin.language["EscapeSequence"],
+                plugin.language["EscapeSequence"]
             ]
         }
 
         override fun acceptValidatedInput(
             context: ConversationContext,
-            input: String,
+            input: String
         ): Prompt? {
             val conversable = context.forWhom
             if (conversable !is Player) return END_OF_CONVERSATION
@@ -65,13 +65,13 @@ class MfFactionFlagSetCommand(
 
         override fun getFailedValidationText(
             context: ConversationContext,
-            invalidInput: String,
+            invalidInput: String
         ): String {
             val flag = context.getSessionData("flag") as MfFlag<Any>
             return when (val coercionResult = flag.coerce(invalidInput)) {
                 is MfFlagValueCoercionFailure -> "$RED${plugin.language[
                     "CommandFactionFlagSetValueCoercionFailed",
-                    flag.type.simpleName ?: plugin.language["UnknownFlagType"],
+                    flag.type.simpleName ?: plugin.language["UnknownFlagType"]
                 ]}: ${coercionResult.failureMessage}"
                 is MfFlagValueCoercionSuccess<*> -> {
                     when (val validationResult = flag.validate(coercionResult.value)) {
@@ -87,7 +87,7 @@ class MfFactionFlagSetCommand(
 
         override fun isInputValid(
             context: ConversationContext,
-            input: String,
+            input: String
         ): Boolean {
             val flag = context.getSessionData("flag") as MfFlag<Any>
             val coercionResult = flag.coerce(input)
@@ -101,7 +101,7 @@ class MfFactionFlagSetCommand(
         sender: CommandSender,
         command: Command,
         label: String,
-        args: Array<out String>,
+        args: Array<out String>
     ): Boolean {
         if (!sender.hasPermission("mf.flag.set")) {
             sender.sendMessage("$RED${plugin.language["CommandFactionFlagSetNoPermission"]}")
@@ -144,7 +144,7 @@ class MfFactionFlagSetCommand(
         sender: Player,
         flag: MfFlag<Any>,
         flagValue: String,
-        page: Int? = null,
+        page: Int? = null
     ) {
         val allowNeutrality = plugin.config.getBoolean("factions.allowNeutrality")
         plugin.server.scheduler.runTaskAsynchronously(
@@ -174,14 +174,14 @@ class MfFactionFlagSetCommand(
                         sender.sendMessage(
                             "$RED${plugin.language[
                                 "CommandFactionFlagSetValueCoercionFailed",
-                                flag.type.simpleName ?: plugin.language["UnknownFlagType"],
-                            ]}: ${coercionResult.failureMessage}",
+                                flag.type.simpleName ?: plugin.language["UnknownFlagType"]
+                            ]}: ${coercionResult.failureMessage}"
                         )
                     is MfFlagValueCoercionSuccess<*> -> {
                         when (val validationResult = flag.validate(coercionResult.value)) {
                             is MfFlagValidationFailure ->
                                 sender.sendMessage(
-                                    "$RED${plugin.language["CommandFactionFlagSetValueValidationFailed"]}: ${validationResult.failureMessage}",
+                                    "$RED${plugin.language["CommandFactionFlagSetValueValidationFailed"]}: ${validationResult.failureMessage}"
                                 )
                             is MfFlagValidationSuccess -> {
                                 if (flag == plugin.flags.isNeutral && coercionResult.value == true && !allowNeutrality) {
@@ -194,19 +194,19 @@ class MfFactionFlagSetCommand(
                                     return@Runnable
                                 }
                                 sender.sendMessage(
-                                    "$GREEN${plugin.language["CommandFactionFlagSetSuccess", flag.name, coercionResult.value.toString()]}",
+                                    "$GREEN${plugin.language["CommandFactionFlagSetSuccess", flag.name, coercionResult.value.toString()]}"
                                 )
                                 plugin.server.scheduler.runTask(
                                     plugin,
                                     Runnable {
                                         sender.performCommand("faction flag list" + if (page != null) " $page" else "")
-                                    },
+                                    }
                                 )
                             }
                         }
                     }
                 }
-            },
+            }
         )
     }
 
@@ -214,7 +214,7 @@ class MfFactionFlagSetCommand(
         sender: CommandSender,
         command: Command,
         label: String,
-        args: Array<out String>,
+        args: Array<out String>
     ) = when {
         args.isEmpty() -> plugin.flags.map { it.name }
         args.size == 1 -> plugin.flags.filter { it.name.lowercase().startsWith(args[0].lowercase()) }.map { it.name }

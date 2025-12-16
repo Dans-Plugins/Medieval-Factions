@@ -11,7 +11,7 @@ import org.bukkit.event.player.PlayerInteractEvent
 import java.util.logging.Level.SEVERE
 
 class HighPriorityPlayerInteractListener(
-    private val plugin: MedievalFactions,
+    private val plugin: MedievalFactions
 ) : Listener {
     @EventHandler(priority = EventPriority.HIGHEST)
     fun onPlayerInteract(event: PlayerInteractEvent) {
@@ -31,7 +31,7 @@ class HighPriorityPlayerInteractListener(
                         plugin.logger.log(SEVERE, "Failed to save player: ${it.reason.message}", it.reason.cause)
                         return@Runnable
                     }
-                },
+                }
             )
             return
         }

@@ -8,18 +8,18 @@ import dansplugins.mailboxes.Mailboxes
 import java.util.UUID
 
 class MailboxesNotificationService(
-    private val plugin: MedievalFactions,
+    private val plugin: MedievalFactions
 ) : MfNotificationService {
     override fun sendNotification(
         playerId: MfPlayerId,
-        notification: MfNotification,
+        notification: MfNotification
     ) {
         val mailboxesPlugin: Mailboxes = plugin.server.pluginManager.getPlugin("Mailboxes") as? Mailboxes ?: return
         val mailboxesApi = mailboxesPlugin.api
         mailboxesApi.sendPluginMessageToPlayer(
             plugin.name,
             playerId.value.let(UUID::fromString),
-            "${notification.title} - ${notification.body}",
+            "${notification.title} - ${notification.body}"
         )
     }
 }

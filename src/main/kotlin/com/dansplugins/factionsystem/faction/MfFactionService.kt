@@ -29,7 +29,7 @@ import java.util.concurrent.CopyOnWriteArrayList
 
 class MfFactionService(
     private val plugin: MedievalFactions,
-    private val repository: MfFactionRepository,
+    private val repository: MfFactionRepository
 ) {
     private val factionsById: MutableMap<MfFactionId, MfFaction> = ConcurrentHashMap()
     val factions: List<MfFaction>
@@ -56,7 +56,7 @@ class MfFactionService(
             if (updatedFactions.isNotEmpty()) {
                 factionsById.putAll(updatedFactions)
                 plugin.logger.info(
-                    "Updated neutrality setting for ${updatedFactions.size} factions (${System.currentTimeMillis() - startTime}ms)",
+                    "Updated neutrality setting for ${updatedFactions.size} factions (${System.currentTimeMillis() - startTime}ms)"
                 )
             } else {
                 plugin.logger.info("No factions required updating.")
@@ -139,7 +139,7 @@ class MfFactionService(
                     plugin,
                     Runnable {
                         mapService.scheduleUpdateClaims(result)
-                    },
+                    }
                 )
             }
             return@resultFrom result
@@ -182,7 +182,7 @@ class MfFactionService(
         home: MfPosition? = null,
         bonusPower: Double = 0.0,
         autoclaim: Boolean = false,
-        roles: MfFactionRoles = MfFactionRoles.defaults(plugin, MfFactionId(id)),
+        roles: MfFactionRoles = MfFactionRoles.defaults(plugin, MfFactionId(id))
     ): Result4k<MfFaction, ServiceFailure> =
         save(
             MfFaction(
@@ -197,8 +197,8 @@ class MfFactionService(
                 home = home,
                 bonusPower = bonusPower,
                 autoclaim = autoclaim,
-                roles = roles,
-            ),
+                roles = roles
+            )
         )
 
     fun addField(field: MfFactionField) {
@@ -217,11 +217,11 @@ class MfFactionService(
             plugin.logger.info("Checking faction ${faction.name}")
             save(
                 faction.copy(
-                    applications = faction.applications.filter { it.applicantId != player.id },
-                ),
+                    applications = faction.applications.filter { it.applicantId != player.id }
+                )
             ).onFailure {
                 plugin.logger.warning(
-                    "Failed to cancel applications for player ${player.name} in faction ${faction.name}: ${it.reason.message}",
+                    "Failed to cancel applications for player ${player.name} in faction ${faction.name}: ${it.reason.message}"
                 )
                 throw it.reason.cause
             }

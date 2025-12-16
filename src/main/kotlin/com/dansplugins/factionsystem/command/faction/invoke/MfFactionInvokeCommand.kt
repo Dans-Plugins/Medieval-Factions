@@ -20,14 +20,14 @@ import preponderous.ponder.command.unquote
 import java.util.logging.Level
 
 class MfFactionInvokeCommand(
-    private val plugin: MedievalFactions,
+    private val plugin: MedievalFactions
 ) : CommandExecutor,
     TabCompleter {
     override fun onCommand(
         sender: CommandSender,
         command: Command,
         label: String,
-        args: Array<out String>,
+        args: Array<out String>
     ): Boolean {
         if (!sender.hasPermission("mf.invoke")) {
             sender.sendMessage("$RED${plugin.language["CommandFactionInvokeNoPermission"]}")
@@ -131,15 +131,15 @@ class MfFactionInvokeCommand(
                     Runnable {
                         faction.sendMessage(
                             plugin.language["AllyInvokedNotificationTitle", ally.name, enemy.name],
-                            plugin.language["AllyInvokedNotificationBody", ally.name, enemy.name],
+                            plugin.language["AllyInvokedNotificationBody", ally.name, enemy.name]
                         )
                         ally.sendMessage(
                             plugin.language["InvokedByAllyNotificationTitle", faction.name, enemy.name],
-                            plugin.language["InvokedByAllyNotificationBody", faction.name, enemy.name],
+                            plugin.language["InvokedByAllyNotificationBody", faction.name, enemy.name]
                         )
                         enemy.sendMessage(
                             plugin.language["EnemyInvokedAllyNotificationTitle", faction.name, ally.name],
-                            plugin.language["EnemyInvokedAllyNotificationBody", faction.name, ally.name],
+                            plugin.language["EnemyInvokedAllyNotificationBody", faction.name, ally.name]
                         )
                         plugin.server.onlinePlayers
                             .filter { onlinePlayer ->
@@ -149,12 +149,12 @@ class MfFactionInvokeCommand(
                                 }
                             }.forEach { onlinePlayer ->
                                 onlinePlayer.sendMessage(
-                                    "$RED${plugin.language["FactionInvokedAlly", faction.name, ally.name, enemy.name]}",
+                                    "$RED${plugin.language["FactionInvokedAlly", faction.name, ally.name, enemy.name]}"
                                 )
                             }
-                    },
+                    }
                 )
-            },
+            }
         )
         return true
     }
@@ -163,7 +163,7 @@ class MfFactionInvokeCommand(
         sender: CommandSender,
         command: Command,
         label: String,
-        args: Array<out String>,
+        args: Array<out String>
     ): List<String> {
         val factionService = plugin.services.factionService
         return when {

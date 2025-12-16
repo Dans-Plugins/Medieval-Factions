@@ -10,7 +10,7 @@ import java.util.logging.Level
 class DenyApplicationTask(
     private val plugin: MedievalFactions,
     private val sender: Player,
-    private val targetPlayerName: String,
+    private val targetPlayerName: String
 ) : Runnable {
     override fun run() {
         val factionService = plugin.services.factionService
@@ -59,7 +59,7 @@ class DenyApplicationTask(
             targetPlayer.player?.sendMessage("${org.bukkit.ChatColor.RED}${plugin.language["CommandFactionDenyAppDenied", faction.name]}")
         }
         sender.sendMessage(
-            "${org.bukkit.ChatColor.GREEN}${plugin.language["CommandFactionDenyAppDeniedSender", targetMfPlayer.name.toString()]}",
+            "${org.bukkit.ChatColor.GREEN}${plugin.language["CommandFactionDenyAppDeniedSender", targetMfPlayer.name.toString()]}"
         )
     }
 }

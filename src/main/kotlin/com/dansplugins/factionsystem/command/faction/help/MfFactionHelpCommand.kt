@@ -11,14 +11,14 @@ import net.md_5.bungee.api.ChatColor as SpigotChatColor
 import org.bukkit.ChatColor as BukkitChatColor
 
 class MfFactionHelpCommand(
-    private val plugin: MedievalFactions,
+    private val plugin: MedievalFactions
 ) : CommandExecutor,
     TabCompleter {
     override fun onCommand(
         sender: CommandSender,
         command: Command,
         label: String,
-        args: Array<out String>,
+        args: Array<out String>
     ): Boolean {
         if (!sender.hasPermission("mf.help")) {
             sender.sendMessage("${BukkitChatColor.RED}${plugin.language["CommandFactionHelpNoPermission"]}")
@@ -45,7 +45,7 @@ class MfFactionHelpCommand(
                     arrayOf(TextComponent(plugin.language["CommandFactionHelpFactionAutoclaim"]).apply { color = SpigotChatColor.GRAY }),
                     arrayOf(TextComponent(plugin.language["CommandFactionHelpFactionBonusPower"]).apply { color = SpigotChatColor.GRAY }),
                     arrayOf(
-                        TextComponent(plugin.language["CommandFactionHelpFactionBreakAlliance"]).apply { color = SpigotChatColor.GRAY },
+                        TextComponent(plugin.language["CommandFactionHelpFactionBreakAlliance"]).apply { color = SpigotChatColor.GRAY }
                     ),
                     arrayOf(TextComponent(plugin.language["CommandFactionHelpFactionBypass"]).apply { color = SpigotChatColor.GRAY }),
                     arrayOf(TextComponent(plugin.language["CommandFactionHelpFactionChat"]).apply { color = SpigotChatColor.GRAY }),
@@ -56,8 +56,8 @@ class MfFactionHelpCommand(
                     arrayOf(TextComponent(plugin.language["CommandFactionHelpFactionCreate"]).apply { color = SpigotChatColor.GRAY }),
                     arrayOf(
                         TextComponent(
-                            plugin.language["CommandFactionHelpFactionDeclareIndependence"],
-                        ).apply { color = SpigotChatColor.GRAY },
+                            plugin.language["CommandFactionHelpFactionDeclareIndependence"]
+                        ).apply { color = SpigotChatColor.GRAY }
                     ),
                     arrayOf(TextComponent(plugin.language["CommandFactionHelpFactionDeclareWar"]).apply { color = SpigotChatColor.GRAY }),
                     arrayOf(TextComponent(plugin.language["CommandFactionHelpFactionDisband"]).apply { color = SpigotChatColor.GRAY }),
@@ -65,7 +65,7 @@ class MfFactionHelpCommand(
                     arrayOf(TextComponent(plugin.language["CommandFactionHelpFactionFlagList"]).apply { color = SpigotChatColor.GRAY }),
                     arrayOf(TextComponent(plugin.language["CommandFactionHelpFactionFlagSet"]).apply { color = SpigotChatColor.GRAY }),
                     arrayOf(
-                        TextComponent(plugin.language["CommandFactionHelpFactionGrantIndependence"]).apply { color = SpigotChatColor.GRAY },
+                        TextComponent(plugin.language["CommandFactionHelpFactionGrantIndependence"]).apply { color = SpigotChatColor.GRAY }
                     ),
                     arrayOf(TextComponent(plugin.language["CommandFactionHelpFactionHelp"]).apply { color = SpigotChatColor.GRAY }),
                     arrayOf(TextComponent(plugin.language["CommandFactionHelpFactionHome"]).apply { color = SpigotChatColor.GRAY }),
@@ -86,15 +86,15 @@ class MfFactionHelpCommand(
                     arrayOf(TextComponent(plugin.language["CommandFactionHelpFactionPower"]).apply { color = SpigotChatColor.GRAY }),
                     arrayOf(TextComponent(plugin.language["CommandFactionHelpFactionRelationship"]).apply { color = SpigotChatColor.GRAY }),
                     arrayOf(
-                        TextComponent(plugin.language["CommandFactionHelpFactionRelationshipAdd"]).apply { color = SpigotChatColor.GRAY },
+                        TextComponent(plugin.language["CommandFactionHelpFactionRelationshipAdd"]).apply { color = SpigotChatColor.GRAY }
                     ),
                     arrayOf(
                         TextComponent(
-                            plugin.language["CommandFactionHelpFactionRelationshipRemove"],
-                        ).apply { color = SpigotChatColor.GRAY },
+                            plugin.language["CommandFactionHelpFactionRelationshipRemove"]
+                        ).apply { color = SpigotChatColor.GRAY }
                     ),
                     arrayOf(
-                        TextComponent(plugin.language["CommandFactionHelpFactionRelationshipView"]).apply { color = SpigotChatColor.GRAY },
+                        TextComponent(plugin.language["CommandFactionHelpFactionRelationshipView"]).apply { color = SpigotChatColor.GRAY }
                     ),
                     arrayOf(TextComponent(plugin.language["CommandFactionHelpFactionRole"]).apply { color = SpigotChatColor.GRAY }),
                     arrayOf(TextComponent(plugin.language["CommandFactionHelpFactionRoleCreate"]).apply { color = SpigotChatColor.GRAY }),
@@ -103,15 +103,15 @@ class MfFactionHelpCommand(
                     arrayOf(TextComponent(plugin.language["CommandFactionHelpFactionRoleRename"]).apply { color = SpigotChatColor.GRAY }),
                     arrayOf(TextComponent(plugin.language["CommandFactionHelpFactionRoleSet"]).apply { color = SpigotChatColor.GRAY }),
                     arrayOf(
-                        TextComponent(plugin.language["CommandFactionHelpFactionRoleSetDefault"]).apply { color = SpigotChatColor.GRAY },
+                        TextComponent(plugin.language["CommandFactionHelpFactionRoleSetDefault"]).apply { color = SpigotChatColor.GRAY }
                     ),
                     arrayOf(
-                        TextComponent(plugin.language["CommandFactionHelpFactionRoleSetPermission"]).apply { color = SpigotChatColor.GRAY },
+                        TextComponent(plugin.language["CommandFactionHelpFactionRoleSetPermission"]).apply { color = SpigotChatColor.GRAY }
                     ),
                     arrayOf(TextComponent(plugin.language["CommandFactionHelpFactionRoleView"]).apply { color = SpigotChatColor.GRAY }),
                     arrayOf(TextComponent(plugin.language["CommandFactionHelpFactionSet"]).apply { color = SpigotChatColor.GRAY }),
                     arrayOf(
-                        TextComponent(plugin.language["CommandFactionHelpFactionSetDescription"]).apply { color = SpigotChatColor.GRAY },
+                        TextComponent(plugin.language["CommandFactionHelpFactionSetDescription"]).apply { color = SpigotChatColor.GRAY }
                     ),
                     arrayOf(TextComponent(plugin.language["CommandFactionHelpFactionSetName"]).apply { color = SpigotChatColor.GRAY }),
                     arrayOf(TextComponent(plugin.language["CommandFactionHelpFactionSetPrefix"]).apply { color = SpigotChatColor.GRAY }),
@@ -136,8 +136,8 @@ class MfFactionHelpCommand(
                     arrayOf(TextComponent(plugin.language["CommandFactionHelpDenyApp"]).apply { color = SpigotChatColor.GRAY }),
                     arrayOf(TextComponent(plugin.language["CommandFactionHelpAdmin"]).apply { color = SpigotChatColor.GRAY }),
                     arrayOf(TextComponent(plugin.language["CommandFactionHelpAdminCreate"]).apply { color = SpigotChatColor.GRAY }),
-                    arrayOf(TextComponent(plugin.language["CommandFactionHelpAdminSetLeader"]).apply { color = SpigotChatColor.GRAY }),
-                ),
+                    arrayOf(TextComponent(plugin.language["CommandFactionHelpAdminSetLeader"]).apply { color = SpigotChatColor.GRAY })
+                )
             ) { page -> "/faction help ${page + 1}" }
         if (pageNumber !in view.pages.indices) {
             sender.sendMessage("${BukkitChatColor.RED}${plugin.language["CommandFactionHelpInvalidPageNumber"]}")
@@ -151,6 +151,6 @@ class MfFactionHelpCommand(
         sender: CommandSender,
         command: Command,
         label: String,
-        args: Array<out String>,
+        args: Array<out String>
     ) = emptyList<String>()
 }

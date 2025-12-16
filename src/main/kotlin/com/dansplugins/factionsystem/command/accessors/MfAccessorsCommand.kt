@@ -11,7 +11,7 @@ import org.bukkit.command.CommandSender
 import org.bukkit.command.TabCompleter
 
 class MfAccessorsCommand(
-    private val plugin: MedievalFactions,
+    private val plugin: MedievalFactions
 ) : CommandExecutor,
     TabCompleter {
     private val accessorsAddCommand = MfAccessorsAddCommand(plugin)
@@ -22,7 +22,7 @@ class MfAccessorsCommand(
         listOf(
             plugin.language["CmdAccessorsAdd"],
             "add",
-            "a",
+            "a"
         )
 
     private val removeAliases =
@@ -30,7 +30,7 @@ class MfAccessorsCommand(
             plugin.language["CmdAccessorsRemove"],
             "remove",
             "rm",
-            "r",
+            "r"
         )
 
     private val listAliases =
@@ -38,7 +38,7 @@ class MfAccessorsCommand(
             plugin.language["CmdAccessorsList"],
             "list",
             "ls",
-            "l",
+            "l"
         )
 
     private val subcommands = addAliases + removeAliases + listAliases
@@ -47,7 +47,7 @@ class MfAccessorsCommand(
         sender: CommandSender,
         command: Command,
         label: String,
-        args: Array<out String>,
+        args: Array<out String>
     ): Boolean {
         if (args.isEmpty()) {
             sender.sendMessage("$RED${plugin.language["CommandAccessorsUsage"]}")
@@ -68,7 +68,7 @@ class MfAccessorsCommand(
         sender: CommandSender,
         command: Command,
         label: String,
-        args: Array<out String>,
+        args: Array<out String>
     ) = when {
         args.isEmpty() -> subcommands
         args.size == 1 -> subcommands.filter { it.startsWith(args[0].lowercase()) }

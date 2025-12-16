@@ -14,14 +14,14 @@ import org.bukkit.entity.Player
 import java.util.logging.Level.SEVERE
 
 class MfFactionRoleSetCommand(
-    private val plugin: MedievalFactions,
+    private val plugin: MedievalFactions
 ) : CommandExecutor,
     TabCompleter {
     override fun onCommand(
         sender: CommandSender,
         command: Command,
         label: String,
-        args: Array<out String>,
+        args: Array<out String>
     ): Boolean {
         if (!sender.hasPermission("mf.role.set")) {
             sender.sendMessage("$RED${plugin.language["CommandFactionRoleSetNoPermission"]}")
@@ -82,9 +82,9 @@ class MfFactionRoleSetCommand(
                 if (!mfPlayer.isBypassEnabled) {
                     if (role == null ||
                         !role.hasPermission(
-                            faction,
-                            plugin.factionPermissions.setMemberRole(targetRole.id),
-                        )
+                                faction,
+                                plugin.factionPermissions.setMemberRole(targetRole.id)
+                            )
                     ) {
                         sender.sendMessage("$RED${plugin.language["CommandFactionRoleSetNoFactionPermission"]}")
                         return@Runnable
@@ -94,21 +94,21 @@ class MfFactionRoleSetCommand(
                     .save(
                         faction.copy(
                             members =
-                                faction.members.map { member ->
-                                    if (member.playerId == targetMfPlayer.id) {
-                                        member.copy(role = targetRole)
-                                    } else {
-                                        member
-                                    }
-                                },
-                        ),
+                            faction.members.map { member ->
+                                if (member.playerId == targetMfPlayer.id) {
+                                    member.copy(role = targetRole)
+                                } else {
+                                    member
+                                }
+                            }
+                        )
                     ).onFailure {
                         sender.sendMessage("$RED${plugin.language["CommandFactionRoleSetFailedToSaveFaction"]}")
                         plugin.logger.log(SEVERE, "Failed to save faction: ${it.reason.message}", it.reason.cause)
                         return@Runnable
                     }
                 sender.sendMessage("$GREEN${plugin.language["CommandFactionRoleSetSuccess", target.name ?: "", targetRole.name]}")
-            },
+            }
         )
         return true
     }
@@ -117,7 +117,7 @@ class MfFactionRoleSetCommand(
         sender: CommandSender,
         command: Command,
         label: String,
-        args: Array<out String>,
+        args: Array<out String>
     ): List<String> {
         return when {
             args.isEmpty() ->

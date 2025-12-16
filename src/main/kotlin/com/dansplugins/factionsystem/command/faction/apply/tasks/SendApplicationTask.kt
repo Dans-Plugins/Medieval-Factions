@@ -14,7 +14,7 @@ import java.util.logging.Level.SEVERE
 class SendApplicationTask(
     private val plugin: MedievalFactions,
     private val sender: Player,
-    private val targetFactionName: String,
+    private val targetFactionName: String
 ) : Runnable {
     override fun run() {
         val factionService = plugin.services.factionService
@@ -37,14 +37,14 @@ class SendApplicationTask(
         saveFactionApplication(factionService, target, mfPlayer, sender)
         target.sendMessage(
             "${ChatColor.GREEN}${plugin.language["CommandFactionApplyNewApplicationTitle"]}",
-            "${ChatColor.AQUA}${plugin.language["CommandFactionApplyNewApplicationMessage", mfPlayer.name.toString()]}",
+            "${ChatColor.AQUA}${plugin.language["CommandFactionApplyNewApplicationMessage", mfPlayer.name.toString()]}"
         )
         sender.sendMessage("${ChatColor.GREEN}${plugin.language["CommandFactionApplySuccess"]}")
     }
 
     private fun getOrSavePlayer(
         playerService: MfPlayerService,
-        sender: Player,
+        sender: Player
     ): MfPlayer? =
         playerService.getPlayer(sender) ?: playerService.save(MfPlayer(plugin, sender)).onFailure {
             sender.sendMessage("${ChatColor.RED}${plugin.language["CommandFactionApplyFailedToSavePlayer"]}")
@@ -54,7 +54,7 @@ class SendApplicationTask(
     private fun getTargetFaction(
         factionService: MfFactionService,
         targetFactionName: String,
-        sender: Player,
+        sender: Player
     ): MfFaction? {
         val target = factionService.getFaction(targetFactionName)
         if (target == null) {
@@ -67,7 +67,7 @@ class SendApplicationTask(
         factionService: MfFactionService,
         target: MfFaction,
         mfPlayer: MfPlayer,
-        sender: Player,
+        sender: Player
     ) {
         factionService.save(target.copy(applications = target.applications + MfFactionApplication(target.id, mfPlayer.id))).onFailure {
             sender.sendMessage("${ChatColor.RED}${plugin.language["CommandFactionApplyFailedToSaveFaction"]}")

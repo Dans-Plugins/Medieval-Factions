@@ -123,14 +123,14 @@ class BlockBreakListenerTest {
             Runnable {
                 playerService.save(
                     com.dansplugins.factionsystem.player
-                        .MfPlayer(plugin, player),
+                        .MfPlayer(plugin, player)
                 )
             }
         `when`(
             plugin.server.scheduler.runTaskAsynchronously(
                 plugin,
-                runnable,
-            ),
+                runnable
+            )
         ).thenReturn(mock(org.bukkit.scheduler.BukkitTask::class.java))
 
         // Act
@@ -181,7 +181,7 @@ class BlockBreakListenerTest {
         val world: World,
         val block: Block,
         val player: Player,
-        val event: BlockBreakEvent,
+        val event: BlockBreakEvent
     )
 
     private fun mockServices() {

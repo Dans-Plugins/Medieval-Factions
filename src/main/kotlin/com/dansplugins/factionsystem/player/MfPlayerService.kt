@@ -17,7 +17,7 @@ import kotlin.collections.set
 
 class MfPlayerService(
     private val plugin: MedievalFactions,
-    private val playerRepository: MfPlayerRepository,
+    private val playerRepository: MfPlayerRepository
 ) {
     private val playersById: MutableMap<MfPlayerId, MfPlayer> = ConcurrentHashMap()
 
@@ -73,7 +73,7 @@ class MfPlayerService(
                         plugin,
                         Runnable {
                             mapService.scheduleUpdateClaims(faction)
-                        },
+                        }
                     )
                 }
             }
@@ -96,7 +96,7 @@ class MfPlayerService(
                         plugin,
                         Runnable {
                             mapService.scheduleUpdateClaims(faction)
-                        },
+                        }
                     )
                 }
             }

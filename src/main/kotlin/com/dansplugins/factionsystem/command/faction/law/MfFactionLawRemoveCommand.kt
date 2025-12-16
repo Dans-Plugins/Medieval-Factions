@@ -14,14 +14,14 @@ import org.bukkit.entity.Player
 import java.util.logging.Level
 
 class MfFactionLawRemoveCommand(
-    private val plugin: MedievalFactions,
+    private val plugin: MedievalFactions
 ) : CommandExecutor,
     TabCompleter {
     override fun onCommand(
         sender: CommandSender,
         command: Command,
         label: String,
-        args: Array<out String>,
+        args: Array<out String>
     ): Boolean {
         if (!sender.hasPermission("mf.law.remove") || !sender.hasPermission("mf.removelaw")) {
             sender.sendMessage("$RED${plugin.language["CommandFactionLawRemoveNoPermission"]}")
@@ -72,7 +72,7 @@ class MfFactionLawRemoveCommand(
                     return@Runnable
                 }
                 sender.sendMessage("$RED${plugin.language["CommandFactionLawRemoveSuccess"]}")
-            },
+            }
         )
         return true
     }
@@ -81,6 +81,6 @@ class MfFactionLawRemoveCommand(
         sender: CommandSender,
         command: Command,
         label: String,
-        args: Array<out String>,
+        args: Array<out String>
     ) = emptyList<String>()
 }

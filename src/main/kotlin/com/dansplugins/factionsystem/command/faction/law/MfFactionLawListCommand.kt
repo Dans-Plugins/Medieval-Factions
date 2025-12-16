@@ -20,14 +20,14 @@ import net.md_5.bungee.api.ChatColor as SpigotChatColor
 import org.bukkit.ChatColor as BukkitChatColor
 
 class MfFactionLawListCommand(
-    private val plugin: MedievalFactions,
+    private val plugin: MedievalFactions
 ) : CommandExecutor,
     TabCompleter {
     override fun onCommand(
         sender: CommandSender,
         command: Command,
         label: String,
-        args: Array<out String>,
+        args: Array<out String>
     ): Boolean {
         if (!sender.hasPermission("mf.law.list") || !sender.hasPermission("mf.laws")) {
             sender.sendMessage("${BukkitChatColor.RED}${plugin.language["CommandFactionLawListNoPermission"]}")
@@ -61,7 +61,7 @@ class MfFactionLawListCommand(
                         return@Runnable
                     } else {
                         sender.sendMessage(
-                            "${BukkitChatColor.RED}${plugin.language["CommandFactionLawListFactionNotFound", args.elementAt(0)]}",
+                            "${BukkitChatColor.RED}${plugin.language["CommandFactionLawListFactionNotFound", args.elementAt(0)]}"
                         )
                         return@Runnable
                     }
@@ -112,10 +112,10 @@ class MfFactionLawListCommand(
                     text.color = SpigotChatColor.AQUA
                     sender.spigot().sendMessage(
                         *buttonList.toTypedArray(),
-                        text,
+                        text
                     )
                 }
-            },
+            }
         )
         return true
     }
@@ -124,6 +124,6 @@ class MfFactionLawListCommand(
         sender: CommandSender,
         command: Command,
         label: String,
-        args: Array<out String>,
+        args: Array<out String>
     ) = emptyList<String>()
 }

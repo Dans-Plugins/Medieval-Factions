@@ -10,7 +10,7 @@ interface MfLockRepository {
         worldId: UUID,
         x: Int,
         y: Int,
-        z: Int,
+        z: Int
     ): MfLockedBlock?
 
     fun getLockedBlocks(): List<MfLockedBlock>

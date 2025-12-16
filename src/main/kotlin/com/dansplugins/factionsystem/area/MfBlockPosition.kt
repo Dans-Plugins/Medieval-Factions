@@ -9,7 +9,7 @@ data class MfBlockPosition(
     val worldId: UUID,
     val x: Int,
     val y: Int,
-    val z: Int,
+    val z: Int
 ) {
     fun toBukkitBlock() = Bukkit.getWorld(worldId)?.getBlockAt(x, y, z)
 
@@ -21,7 +21,7 @@ data class MfBlockPosition(
                 block.world.uid,
                 block.x,
                 block.y,
-                block.z,
+                block.z
             )
 
         fun fromBukkitLocation(location: Location) = location.world?.getBlockAt(location)?.let { fromBukkitBlock(it) }

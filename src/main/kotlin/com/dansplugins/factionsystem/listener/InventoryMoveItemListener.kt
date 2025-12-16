@@ -10,7 +10,7 @@ import org.bukkit.event.inventory.InventoryMoveItemEvent
 import org.bukkit.inventory.BlockInventoryHolder
 
 class InventoryMoveItemListener(
-    private val plugin: MedievalFactions,
+    private val plugin: MedievalFactions
 ) : Listener {
     @EventHandler
     fun onInventoryMoveItem(event: InventoryMoveItemEvent) {

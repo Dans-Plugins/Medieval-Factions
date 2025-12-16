@@ -10,7 +10,7 @@ class RelationshipCreateEvent(
     @get:JvmName("getRelationshipId")
     override val relationshipId: MfFactionRelationshipId,
     val relationship: MfFactionRelationship,
-    isAsync: Boolean,
+    isAsync: Boolean
 ) : Event(isAsync),
     RelationshipEvent,
     Cancellable {

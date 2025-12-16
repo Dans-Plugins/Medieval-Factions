@@ -5,7 +5,7 @@ import com.dansplugins.factionsystem.faction.MfFactionId
 data class MfVassalNode(
     @get:JvmName("getFactionId")
     val factionId: MfFactionId,
-    val vassals: List<MfVassalNode>,
+    val vassals: List<MfVassalNode>
 ) {
     @JvmName("contains")
     fun contains(factionId: MfFactionId): Boolean = vassals.any { it.factionId == factionId || it.contains(factionId) }

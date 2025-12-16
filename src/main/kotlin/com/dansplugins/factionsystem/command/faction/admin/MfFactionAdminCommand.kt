@@ -9,7 +9,7 @@ import org.bukkit.command.CommandSender
 import org.bukkit.command.TabCompleter
 
 class MfFactionAdminCommand(
-    private val plugin: MedievalFactions,
+    private val plugin: MedievalFactions
 ) : CommandExecutor,
     TabCompleter {
     private val adminCreateCommand = MfFactionAdminCreateCommand(plugin)
@@ -24,7 +24,7 @@ class MfFactionAdminCommand(
         sender: CommandSender,
         command: Command,
         label: String,
-        args: Array<out String>,
+        args: Array<out String>
     ): Boolean {
         if (!sender.hasPermission("mf.admin")) {
             sender.sendMessage("$RED${plugin.language["CommandFactionAdminNoPermission"]}")
@@ -45,7 +45,7 @@ class MfFactionAdminCommand(
         sender: CommandSender,
         command: Command,
         label: String,
-        args: Array<out String>,
+        args: Array<out String>
     ) = when {
         args.isEmpty() -> subcommands
         args.size == 1 -> subcommands.filter { it.startsWith(args[0].lowercase()) }

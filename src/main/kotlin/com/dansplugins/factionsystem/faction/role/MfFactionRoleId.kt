@@ -4,7 +4,7 @@ import java.util.UUID
 
 @JvmInline
 value class MfFactionRoleId(
-    val value: String,
+    val value: String
 ) {
     companion object {
         fun generate() = MfFactionRoleId(UUID.randomUUID().toString())

@@ -7,7 +7,7 @@ interface MfClaimedChunkRepository {
     fun getClaim(
         worldId: UUID,
         x: Int,
-        z: Int,
+        z: Int
     ): MfClaimedChunk?
 
     fun getClaims(factionId: MfFactionId): List<MfClaimedChunk>
@@ -19,7 +19,7 @@ interface MfClaimedChunkRepository {
     fun delete(
         worldId: UUID,
         x: Int,
-        z: Int,
+        z: Int
     )
 
     fun deleteAll(factionId: MfFactionId)

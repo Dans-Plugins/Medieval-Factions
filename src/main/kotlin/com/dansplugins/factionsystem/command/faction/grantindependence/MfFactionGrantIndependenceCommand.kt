@@ -16,14 +16,14 @@ import org.bukkit.entity.Player
 import java.util.logging.Level.SEVERE
 
 class MfFactionGrantIndependenceCommand(
-    private val plugin: MedievalFactions,
+    private val plugin: MedievalFactions
 ) : CommandExecutor,
     TabCompleter {
     override fun onCommand(
         sender: CommandSender,
         command: Command,
         label: String,
-        args: Array<out String>,
+        args: Array<out String>
     ): Boolean {
         if (!sender.hasPermission("mf.grantindependence")) {
             sender.sendMessage("$RED${plugin.language["CommandFactionGrantIndependenceNoPermission"]}")
@@ -85,15 +85,15 @@ class MfFactionGrantIndependenceCommand(
                     Runnable {
                         faction.sendMessage(
                             plugin.language["VassalGrantedIndependenceNotificationTitle", target.name],
-                            plugin.language["VassalGrantedIndependenceNotificationBody", target.name],
+                            plugin.language["VassalGrantedIndependenceNotificationBody", target.name]
                         )
                         target.sendMessage(
                             plugin.language["FactionGrantedIndependenceNotificationTitle", faction.name],
-                            plugin.language["FactionGrantedIndependenceNotificationBody", faction.name],
+                            plugin.language["FactionGrantedIndependenceNotificationBody", faction.name]
                         )
-                    },
+                    }
                 )
-            },
+            }
         )
         return true
     }
@@ -102,7 +102,7 @@ class MfFactionGrantIndependenceCommand(
         sender: CommandSender,
         command: Command,
         label: String,
-        args: Array<out String>,
+        args: Array<out String>
     ): List<String> {
         val factionService = plugin.services.factionService
         return when {

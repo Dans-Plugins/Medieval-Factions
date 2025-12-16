@@ -12,7 +12,7 @@ import org.bukkit.event.player.PlayerBucketFillEvent
 import java.util.logging.Level
 
 class PlayerBucketListener(
-    private val plugin: MedievalFactions,
+    private val plugin: MedievalFactions
 ) : Listener {
     fun handleProtection(event: PlayerBucketEvent) {
         val gateService = plugin.services.gateService
@@ -40,7 +40,7 @@ class PlayerBucketListener(
                         plugin.logger.log(Level.SEVERE, "Failed to save player: ${it.reason.message}", it.reason.cause)
                         return@Runnable
                     }
-                },
+                }
             )
             return
         }

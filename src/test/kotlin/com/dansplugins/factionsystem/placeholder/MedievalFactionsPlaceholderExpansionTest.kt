@@ -330,7 +330,7 @@ class MedievalFactionsPlaceholderExpansionTest {
     private data class PlaceholderExpansionTestFixture(
         val player: OfflinePlayer,
         val faction: MfFaction,
-        val mfPlayer: MfPlayer,
+        val mfPlayer: MfPlayer
     )
 
     private fun mockServices() {

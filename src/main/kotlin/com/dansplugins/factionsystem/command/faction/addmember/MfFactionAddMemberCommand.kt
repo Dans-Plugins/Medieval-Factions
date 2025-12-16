@@ -16,14 +16,14 @@ import java.util.logging.Level
 import java.util.logging.Level.SEVERE
 
 class MfFactionAddMemberCommand(
-    private val plugin: MedievalFactions,
+    private val plugin: MedievalFactions
 ) : CommandExecutor,
     TabCompleter {
     override fun onCommand(
         sender: CommandSender,
         command: Command,
         label: String,
-        args: Array<out String>,
+        args: Array<out String>
     ): Boolean {
         if (!sender.hasPermission("mf.force.addmember") && !sender.hasPermission("mf.force.join")) {
             sender.sendMessage("${ChatColor.RED}${plugin.language["CommandFactionAddMemberNoPermission"]}")
@@ -81,8 +81,8 @@ class MfFactionAddMemberCommand(
                 .save(
                     targetFaction.copy(
                         members = targetFaction.members + MfFactionMember(targetMfPlayer.id, targetFaction.roles.default),
-                        invites = targetFaction.invites.filter { it.playerId != targetMfPlayer.id },
-                    ),
+                        invites = targetFaction.invites.filter { it.playerId != targetMfPlayer.id }
+                    )
                 ).onFailure {
                     sender.sendMessage("${ChatColor.RED}${plugin.language["CommandFactionAddMemberFailedToSaveFaction"]}")
                     plugin.logger.log(Level.SEVERE, "Failed to save faction: ${it.reason.message}", it.reason.cause)
@@ -94,10 +94,10 @@ class MfFactionAddMemberCommand(
         }
         updatedFaction.sendMessage(
             plugin.language["FactionNewMemberNotificationTitle", targetName],
-            plugin.language["FactionNewMemberNotificationBody", targetName],
+            plugin.language["FactionNewMemberNotificationBody", targetName]
         )
         sender.sendMessage(
-            "${ChatColor.GREEN}${plugin.language["CommandFactionAddMemberSuccess", targetFaction.name]}",
+            "${ChatColor.GREEN}${plugin.language["CommandFactionAddMemberSuccess", targetFaction.name]}"
         )
         try {
             factionService.cancelAllApplicationsForPlayer(targetMfPlayer)
@@ -112,7 +112,7 @@ class MfFactionAddMemberCommand(
         sender: CommandSender,
         command: Command,
         label: String,
-        args: Array<out String>,
+        args: Array<out String>
     ): List<String> {
         val factionService = plugin.services.factionService
         return when {

@@ -11,7 +11,7 @@ import dev.forkhandles.result4k.mapFailure
 import dev.forkhandles.result4k.resultFrom
 
 class MfLawService(
-    private val repository: MfLawRepository,
+    private val repository: MfLawRepository
 ) {
     @JvmName("getLawByLawId")
     fun getLaw(id: MfLawId): MfLaw? = repository.getLaw(id)
@@ -19,7 +19,7 @@ class MfLawService(
     @JvmName("getLawByIndex")
     fun getLaw(
         factionId: MfFactionId,
-        index: Int?,
+        index: Int?
     ): MfLaw? = repository.getLaw(factionId, index)
 
     @JvmName("getLawsByFactionId")
@@ -50,7 +50,7 @@ class MfLawService(
 
     fun move(
         law: MfLaw,
-        number: Int,
+        number: Int
     ): Result4k<Unit, ServiceFailure> =
         resultFrom {
             repository.move(law, number)

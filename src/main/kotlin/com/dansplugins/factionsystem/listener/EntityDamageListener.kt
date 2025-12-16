@@ -15,7 +15,7 @@ import org.bukkit.inventory.meta.SkullMeta
 import java.util.logging.Level
 
 class EntityDamageListener(
-    private val plugin: MedievalFactions,
+    private val plugin: MedievalFactions
 ) : Listener {
     @EventHandler
     fun onEntityDamage(event: EntityDamageEvent) {
@@ -70,8 +70,8 @@ class EntityDamageListener(
                             plugin.language[
                                 "DuelWin",
                                 duel.challengedId.toBukkitPlayer().name ?: plugin.language["UnknownPlayer"],
-                                duel.challengerId.toBukkitPlayer().name ?: plugin.language["UnknownPlayer"],
-                            ],
+                                duel.challengerId.toBukkitPlayer().name ?: plugin.language["UnknownPlayer"]
+                            ]
                         )
                     }
                 } else {
@@ -88,8 +88,8 @@ class EntityDamageListener(
                             plugin.language[
                                 "DuelWin",
                                 duel.challengerId.toBukkitPlayer().name ?: plugin.language["UnknownPlayer"],
-                                duel.challengedId.toBukkitPlayer().name ?: plugin.language["UnknownPlayer"],
-                            ],
+                                duel.challengedId.toBukkitPlayer().name ?: plugin.language["UnknownPlayer"]
+                            ]
                         )
                     }
                 }
@@ -100,7 +100,7 @@ class EntityDamageListener(
                             plugin.logger.log(Level.SEVERE, "Failed to delete duel: ${it.reason.message}", it.reason.cause)
                             return@Runnable
                         }
-                    },
+                    }
                 )
             }
         }
@@ -108,7 +108,7 @@ class EntityDamageListener(
 
     private fun getHead(
         bukkitPlayer: OfflinePlayer,
-        claimant: OfflinePlayer,
+        claimant: OfflinePlayer
     ): ItemStack {
         val item = ItemStack(PLAYER_HEAD)
         val meta = (item.itemMeta ?: plugin.server.itemFactory.getItemMeta(PLAYER_HEAD)) as? SkullMeta
@@ -117,7 +117,7 @@ class EntityDamageListener(
             meta.owningPlayer = bukkitPlayer
             meta.lore =
                 listOf(
-                    "Lost in a duel against ${claimant.name ?: plugin.language["UnknownPlayer"]}",
+                    "Lost in a duel against ${claimant.name ?: plugin.language["UnknownPlayer"]}"
                 )
         }
         item.itemMeta = meta

@@ -13,13 +13,13 @@ import java.time.Instant
 
 class MfChatService(
     private val plugin: MedievalFactions,
-    private val repo: MfChatChannelMessageRepository,
+    private val repo: MfChatChannelMessageRepository
 ) {
     fun sendMessage(
         mfPlayer: MfPlayer,
         faction: MfFaction,
         channel: MfFactionChatChannel,
-        message: String,
+        message: String
     ) {
         val bukkitPlayer = mfPlayer.toBukkit()
         val name = bukkitPlayer.name ?: plugin.language["UnknownPlayer"]
@@ -34,7 +34,7 @@ class MfChatService(
                     ALLIES -> "&7[allies] [\${factionColor}\${faction}&7] [\${role}] &f\${displayName}: \${message}"
                     null -> ""
                 }
-            ).replace("\${factionColor}", ChatColor.of(faction.flags[plugin.flags.color]).toString())
+                ).replace("\${factionColor}", ChatColor.of(faction.flags[plugin.flags.color]).toString())
                 .replace("\${faction}", faction.name)
                 .replace("\${role}", faction.getRole(mfPlayer.id)?.name ?: plugin.language["NoRole"])
                 .replace("\${name}", name)
@@ -53,7 +53,7 @@ class MfChatService(
                                 .getVassalTree(topLiegeId)
                                 .mapNotNull { factionService.getFaction(it) }
                                 .flatMap { vassal -> vassal.members }
-                    ).mapNotNull { member -> member.playerId.toBukkitPlayer().player }
+                        ).mapNotNull { member -> member.playerId.toBukkitPlayer().player }
                 }
                 ALLIES ->
                     (
@@ -69,14 +69,14 @@ class MfChatService(
                                         factionService.getFaction(relationship.targetId)
                                     }
                                 }.flatMap { it.members }
-                    ).mapNotNull { it.playerId.toBukkitPlayer().player }
+                        ).mapNotNull { it.playerId.toBukkitPlayer().player }
             }
         recipients.forEach { it.sendMessage(formattedMessage) }
         plugin.server.scheduler.runTaskAsynchronously(
             plugin,
             Runnable {
                 repo.insert(MfChatChannelMessage(Instant.now(), mfPlayer.id, faction.id, channel, message))
-            },
+            }
         )
         // Using console sender means that colour codes will come through in console
         // It doesn't automatically give the [MedievalFactions] prefix like with the plugin's logger though
@@ -91,7 +91,7 @@ class MfChatService(
     fun getChatChannelMessages(
         factionId: MfFactionId,
         limit: Int,
-        offset: Int = 0,
+        offset: Int = 0
     ): List<MfChatChannelMessage> = repo.getChatChannelMessages(factionId, limit, offset)
 
     @JvmName("getChatChannelMessageCountByFactionId")

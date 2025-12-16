@@ -14,14 +14,14 @@ import org.bukkit.entity.Player
 import java.util.logging.Level.SEVERE
 
 class MfFactionRoleSetPermissionCommand(
-    private val plugin: MedievalFactions,
+    private val plugin: MedievalFactions
 ) : CommandExecutor,
     TabCompleter {
     override fun onCommand(
         sender: CommandSender,
         command: Command,
         label: String,
-        args: Array<out String>,
+        args: Array<out String>
     ): Boolean {
         if (!sender.hasPermission("mf.role.setpermission")) {
             sender.sendMessage("$RED${plugin.language["CommandFactionRoleSetPermissionNoPermission"]}")
@@ -80,9 +80,9 @@ class MfFactionRoleSetPermissionCommand(
                 val playerRole = faction.getRole(mfPlayer.id)
                 if (playerRole == null ||
                     !playerRole.hasPermission(
-                        faction,
-                        plugin.factionPermissions.setRolePermission(permission),
-                    ) || !playerRole.hasPermission(faction, plugin.factionPermissions.modifyRole(targetRole.id))
+                            faction,
+                            plugin.factionPermissions.setRolePermission(permission)
+                        ) || !playerRole.hasPermission(faction, plugin.factionPermissions.modifyRole(targetRole.id))
                 ) {
                     sender.sendMessage("$RED${plugin.language["CommandFactionRoleSetPermissionNoFactionPermission"]}")
                     return@Runnable
@@ -90,7 +90,7 @@ class MfFactionRoleSetPermissionCommand(
 
                 if (permission == plugin.factionPermissions.modifyRole(playerRole.id)) {
                     sender.sendMessage(
-                        "$RED${plugin.language["CommandFactionRoleSetPermissionCannotModifyRolePermissionToModifyOwnRolePermission"]}",
+                        "$RED${plugin.language["CommandFactionRoleSetPermissionCannotModifyRolePermissionToModifyOwnRolePermission"]}"
                     )
                     return@Runnable
                 }
@@ -99,20 +99,20 @@ class MfFactionRoleSetPermissionCommand(
                         .save(
                             faction.copy(
                                 roles =
-                                    faction.roles.copy(
-                                        roles =
-                                            faction.roles.map {
-                                                if (it.id.value == targetRole.id.value) {
-                                                    targetRole.copy(
-                                                        permissionsByName =
-                                                            targetRole.permissionsByName + (permission.name to permissionValue),
-                                                    )
-                                                } else {
-                                                    it
-                                                }
-                                            },
-                                    ),
-                            ),
+                                faction.roles.copy(
+                                    roles =
+                                    faction.roles.map {
+                                        if (it.id.value == targetRole.id.value) {
+                                            targetRole.copy(
+                                                permissionsByName =
+                                                targetRole.permissionsByName + (permission.name to permissionValue)
+                                            )
+                                        } else {
+                                            it
+                                        }
+                                    }
+                                )
+                            )
                         ).onFailure {
                             sender.sendMessage("$RED${plugin.language["CommandFactionRoleSetPermissionFailedToSaveFaction"]}")
                             plugin.logger.log(SEVERE, "Failed to save faction: ${it.reason.message}", it.reason.cause)
@@ -120,26 +120,26 @@ class MfFactionRoleSetPermissionCommand(
                         }
                 sender.sendMessage(
                     "$GREEN${
-                        plugin.language[
-                            "CommandFactionRoleSetPermissionSuccess", targetRole.name, permission.translate(
-                                updatedFaction,
-                            ), when (permissionValue) {
-                                true -> "allow"
-                                false -> "deny"
-                                null -> "default"
-                            },
-                        ]
-                    }",
+                    plugin.language[
+                        "CommandFactionRoleSetPermissionSuccess", targetRole.name, permission.translate(
+                            updatedFaction
+                        ), when (permissionValue) {
+                            true -> "allow"
+                            false -> "deny"
+                            null -> "default"
+                        }
+                    ]
+                    }"
                 )
                 if (returnPage != null) {
                     plugin.server.scheduler.runTask(
                         plugin,
                         Runnable {
                             sender.performCommand("faction role view ${targetRole.id.value} $returnPage")
-                        },
+                        }
                     )
                 }
-            },
+            }
         )
         return true
     }
@@ -148,7 +148,7 @@ class MfFactionRoleSetPermissionCommand(
         sender: CommandSender,
         command: Command,
         label: String,
-        args: Array<out String>,
+        args: Array<out String>
     ): List<String> {
         if (sender !is Player) return emptyList()
         val playerId = MfPlayerId.fromBukkitPlayer(sender)

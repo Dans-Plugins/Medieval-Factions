@@ -23,21 +23,21 @@ import net.md_5.bungee.api.ChatColor as SpigotChatColor
 import org.bukkit.ChatColor as BukkitChatColor
 
 class MfFactionMapCommand(
-    private val plugin: MedievalFactions,
+    private val plugin: MedievalFactions
 ) : CommandExecutor,
     TabCompleter {
     enum class MapType(
-        val supportsFactionless: Boolean,
+        val supportsFactionless: Boolean
     ) {
         NORMAL(true),
-        DIPLOMATIC(false),
+        DIPLOMATIC(false)
     }
 
     override fun onCommand(
         sender: CommandSender,
         command: Command,
         label: String,
-        args: Array<out String>,
+        args: Array<out String>
     ): Boolean {
         if (!sender.hasPermission("mf.map")) {
             sender.sendMessage("${BukkitChatColor.RED}${plugin.language["CommandFactionMapNoPermission"]}")
@@ -86,10 +86,10 @@ class MfFactionMapCommand(
                             "${BukkitChatColor.BLUE}■ ${plugin.language["FactionMapAlly"]} " +
                             "${BukkitChatColor.DARK_GREEN}■ ${plugin.language["FactionMapVassal"]} " +
                             "${BukkitChatColor.YELLOW}■ ${plugin.language["FactionMapLiege"]} " +
-                            "${BukkitChatColor.WHITE}■ ${plugin.language["FactionMapNeutral"]}",
+                            "${BukkitChatColor.WHITE}■ ${plugin.language["FactionMapNeutral"]}"
                     )
                 }
-            },
+            }
         )
         return true
     }
@@ -101,7 +101,7 @@ class MfFactionMapCommand(
         minX: Int,
         minZ: Int,
         maxX: Int,
-        maxZ: Int,
+        maxZ: Int
     ): List<Array<out BaseComponent>> {
         val claimService = plugin.services.claimService
         val factionService = plugin.services.factionService
@@ -126,9 +126,9 @@ class MfFactionMapCommand(
                                             TextComponent(plugin.language["Wilderness"]).apply {
                                                 this.color = SpigotChatColor.of(plugin.config.getString("wilderness.color"))
                                             }
-                                        },
-                                    ),
-                                ),
+                                        }
+                                    )
+                                )
                             )
                     }
                 }.toTypedArray()
@@ -138,7 +138,7 @@ class MfFactionMapCommand(
     private fun getColor(
         viewer: MfFaction?,
         faction: MfFaction?,
-        mapType: MapType,
+        mapType: MapType
     ): SpigotChatColor {
         val relationshipService = plugin.services.factionRelationshipService
         when (mapType) {
@@ -176,7 +176,7 @@ class MfFactionMapCommand(
         sender: CommandSender,
         command: Command,
         label: String,
-        args: Array<out String>,
+        args: Array<out String>
     ) = when {
         args.isEmpty() -> MapType.values().map { it.name.lowercase() }
         args.size == 1 -> MapType.values().map { it.name.lowercase() }.filter { it.startsWith(args[0].lowercase()) }

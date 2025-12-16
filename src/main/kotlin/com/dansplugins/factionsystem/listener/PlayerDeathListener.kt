@@ -18,7 +18,7 @@ import java.util.logging.Level.SEVERE
 import kotlin.math.abs
 
 class PlayerDeathListener(
-    private val plugin: MedievalFactions,
+    private val plugin: MedievalFactions
 ) : Listener {
     private val decimalFormat = DecimalFormat("0.##", DecimalFormatSymbols.getInstance(plugin.language.locale))
 
@@ -47,7 +47,7 @@ class PlayerDeathListener(
                         playerService,
                         victim,
                         victimMfPlayer,
-                        powerLostOnDeath,
+                        powerLostOnDeath
                     )
                     val victimFaction = factionService.getFaction(victimMfPlayer.id)
                     if (disbandZeroPowerFactions && victimFaction != null && victimFaction.power <= 0.0) {
@@ -62,24 +62,24 @@ class PlayerDeathListener(
                         playerService,
                         killer,
                         killerMfPlayer,
-                        powerGainedOnKill,
+                        powerGainedOnKill
                     )
                     val killerFaction = factionService.getFaction(killerMfPlayer.id)
                     if (disbandZeroPowerFactions && killerFaction != null && killerFaction.power <= 0.0) {
                         disband(killerFaction, factionService)
                     }
                 }
-            },
+            }
         )
     }
 
     private fun disband(
         killerFaction: MfFaction,
-        factionService: MfFactionService,
+        factionService: MfFactionService
     ) {
         killerFaction.sendMessage(
             plugin.language["FactionDisbandedZeroPowerNotificationTitle"],
-            plugin.language["FactionDisbandedZeroPowerNotificationBody"],
+            plugin.language["FactionDisbandedZeroPowerNotificationBody"]
         )
         factionService.delete(killerFaction.id).onFailure {
             plugin.logger.log(SEVERE, "Failed to delete faction: ${it.reason.message}", it.reason.cause)
@@ -91,7 +91,7 @@ class PlayerDeathListener(
         playerService: MfPlayerService,
         victim: Player,
         victimMfPlayer: MfPlayer,
-        powerLostOnDeath: Double,
+        powerLostOnDeath: Double
     ) {
         val newPower =
             (victimMfPlayer.power - powerLostOnDeath)
@@ -102,7 +102,7 @@ class PlayerDeathListener(
         }
         playerService
             .save(
-                victimMfPlayer.copy(power = newPower),
+                victimMfPlayer.copy(power = newPower)
             ).onFailure {
                 plugin.logger.log(SEVERE, "Failed to save player: ${it.reason.message}", it.reason.cause)
                 return
@@ -115,7 +115,7 @@ class PlayerDeathListener(
         playerService: MfPlayerService,
         killer: Player,
         killerMfPlayer: MfPlayer,
-        powerGainedOnKill: Double,
+        powerGainedOnKill: Double
     ) {
         val newPower =
             (killerMfPlayer.power + powerGainedOnKill)
@@ -126,7 +126,7 @@ class PlayerDeathListener(
         }
         playerService
             .save(
-                killerMfPlayer.copy(power = newPower),
+                killerMfPlayer.copy(power = newPower)
             ).onFailure {
                 plugin.logger.log(SEVERE, "Failed to save player: ${it.reason.message}", it.reason.cause)
                 return

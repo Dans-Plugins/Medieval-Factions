@@ -20,18 +20,17 @@ import org.bukkit.command.TabCompleter
 import org.bukkit.entity.Player
 import java.time.Duration
 import java.time.Instant
-import java.util.logging.Level
 import java.util.logging.Level.SEVERE
 
 class MfDuelAcceptCommand(
-    private val plugin: MedievalFactions,
+    private val plugin: MedievalFactions
 ) : CommandExecutor,
     TabCompleter {
     override fun onCommand(
         sender: CommandSender,
         command: Command,
         label: String,
-        args: Array<out String>,
+        args: Array<out String>
     ): Boolean {
         if (!sender.hasPermission("mf.duel")) {
             sender.sendMessage("$RED${plugin.language["CommandDuelAcceptNoPermission"]}")
@@ -103,8 +102,8 @@ class MfDuelAcceptCommand(
                                 challengedHealth = sender.health,
                                 endTime = Instant.now().plus(Duration.parse(plugin.config.getString("duels.duration"))),
                                 challengerLocation = MfPosition.fromBukkitLocation(target.location),
-                                challengedLocation = MfPosition.fromBukkitLocation(sender.location),
-                            ),
+                                challengedLocation = MfPosition.fromBukkitLocation(sender.location)
+                            )
                         ).onFailure {
                             sender.sendMessage("$RED${plugin.language["CommandDuelAcceptFailedToSaveDuel"]}")
                             plugin.logger.log(SEVERE, "Failed to save duel: ${it.reason.message}", it.reason.cause)
@@ -123,7 +122,7 @@ class MfDuelAcceptCommand(
                                 NamespacedKey(plugin, "duel_${duel.id.value}"),
                                 "${target.name} vs ${sender.name}",
                                 BarColor.WHITE,
-                                BarStyle.SEGMENTED_20,
+                                BarStyle.SEGMENTED_20
                             )
                         bar.progress = 1.0
                         bar.addPlayer(sender)
@@ -143,9 +142,9 @@ class MfDuelAcceptCommand(
                         nearbyPlayers.forEach { notifiedPlayer ->
                             notifiedPlayer.sendMessage("$GRAY${plugin.language["CommandDuelAcceptNotification", target.name, sender.name]}")
                         }
-                    },
+                    }
                 )
-            },
+            }
         )
         return true
     }
@@ -154,7 +153,7 @@ class MfDuelAcceptCommand(
         sender: CommandSender,
         command: Command,
         label: String,
-        args: Array<out String>,
+        args: Array<out String>
     ): List<String> {
         if (sender !is Player) return emptyList()
         val senderMfPlayerId = MfPlayerId.fromBukkitPlayer(sender)

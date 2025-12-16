@@ -10,11 +10,11 @@ data class MfClaimedChunk(
     val x: Int,
     val z: Int,
     @get:JvmName("getFactionId")
-    val factionId: MfFactionId,
+    val factionId: MfFactionId
 ) {
     constructor(chunk: Chunk, factionId: MfFactionId) : this(chunk.world.uid, chunk.x, chunk.z, factionId)
     constructor(
         chunkPosition: MfChunkPosition,
-        factionId: MfFactionId,
+        factionId: MfFactionId
     ) : this(chunkPosition.worldId, chunkPosition.x, chunkPosition.z, factionId)
 }

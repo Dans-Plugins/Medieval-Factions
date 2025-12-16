@@ -21,14 +21,14 @@ import net.md_5.bungee.api.ChatColor as SpigotChatColor
 import org.bukkit.ChatColor as BukkitChatColor
 
 class MfFactionRoleViewCommand(
-    private val plugin: MedievalFactions,
+    private val plugin: MedievalFactions
 ) : CommandExecutor,
     TabCompleter {
     override fun onCommand(
         sender: CommandSender,
         command: Command,
         label: String,
-        args: Array<out String>,
+        args: Array<out String>
     ): Boolean {
         if (!sender.hasPermission("mf.role.view")) {
             sender.sendMessage("${BukkitChatColor.RED}${plugin.language["CommandFactionRoleViewNoPermission"]}")
@@ -83,7 +83,7 @@ class MfFactionRoleViewCommand(
                                 TextComponent(plugin.language["CommandFactionRoleViewTitle", targetRole.name]).apply {
                                     color = SpigotChatColor.AQUA
                                     isBold = true
-                                },
+                                }
                             )
                         },
                         plugin.factionPermissions.permissionsFor(faction).map { permission ->
@@ -96,21 +96,21 @@ class MfFactionRoleViewCommand(
                                         TextComponent(
                                             plugin.language[
                                                 "CommandFactionRoleViewPermission",
-                                                permission.translate(faction),
-                                            ],
+                                                permission.translate(faction)
+                                            ]
                                         ).apply {
                                             color = SpigotChatColor.AQUA
                                         },
                                         TextComponent(" - ").apply { color = SpigotChatColor.GRAY },
                                         TextComponent(
-                                            plugin.language["CommandFactionRoleViewAllow"].bracketIf { permissionValue == true },
+                                            plugin.language["CommandFactionRoleViewAllow"].bracketIf { permissionValue == true }
                                         ).apply {
                                             color = if (permissionValue == true) SpigotChatColor.GREEN else SpigotChatColor.DARK_GREEN
                                             isBold = permissionValue == true
                                             clickEvent =
                                                 ClickEvent(
                                                     RUN_COMMAND,
-                                                    "/faction role setpermission ${targetRole.id.value} ${permission.name} allow p=${pageNumber + 1}",
+                                                    "/faction role setpermission ${targetRole.id.value} ${permission.name} allow p=${pageNumber + 1}"
                                                 )
                                             hoverEvent =
                                                 HoverEvent(
@@ -119,21 +119,21 @@ class MfFactionRoleViewCommand(
                                                         plugin.language[
                                                             "CommandFactionRoleViewAllowHover",
                                                             targetRole.name,
-                                                            permission.name,
-                                                        ],
-                                                    ),
+                                                            permission.name
+                                                        ]
+                                                    )
                                                 )
                                         },
                                         TextComponent(" / ").apply { color = SpigotChatColor.GRAY },
                                         TextComponent(
-                                            plugin.language["CommandFactionRoleViewDeny"].bracketIf { permissionValue == false },
+                                            plugin.language["CommandFactionRoleViewDeny"].bracketIf { permissionValue == false }
                                         ).apply {
                                             color = if (permissionValue == false) SpigotChatColor.RED else SpigotChatColor.DARK_RED
                                             isBold = permissionValue == false
                                             clickEvent =
                                                 ClickEvent(
                                                     RUN_COMMAND,
-                                                    "/faction role setpermission ${targetRole.id.value} ${permission.name} deny p=${pageNumber + 1}",
+                                                    "/faction role setpermission ${targetRole.id.value} ${permission.name} deny p=${pageNumber + 1}"
                                                 )
                                             hoverEvent =
                                                 HoverEvent(
@@ -142,21 +142,21 @@ class MfFactionRoleViewCommand(
                                                         plugin.language[
                                                             "CommandFactionRoleViewDenyHover",
                                                             targetRole.name,
-                                                            permission.name,
-                                                        ],
-                                                    ),
+                                                            permission.name
+                                                        ]
+                                                    )
                                                 )
                                         },
                                         TextComponent(" / ").apply { color = SpigotChatColor.GRAY },
                                         TextComponent(
-                                            plugin.language["CommandFactionRoleViewDefault"].bracketIf { permissionValue == null },
+                                            plugin.language["CommandFactionRoleViewDefault"].bracketIf { permissionValue == null }
                                         ).apply {
                                             color = if (permissionValue == null) SpigotChatColor.GRAY else SpigotChatColor.DARK_GRAY
                                             isBold = permissionValue == null
                                             clickEvent =
                                                 ClickEvent(
                                                     RUN_COMMAND,
-                                                    "/faction role setpermission ${targetRole.id.value} ${permission.name} default p=${pageNumber + 1}",
+                                                    "/faction role setpermission ${targetRole.id.value} ${permission.name} default p=${pageNumber + 1}"
                                                 )
                                             hoverEvent =
                                                 HoverEvent(
@@ -165,19 +165,19 @@ class MfFactionRoleViewCommand(
                                                         plugin.language[
                                                             "CommandFactionRoleViewDefaultHover",
                                                             targetRole.name,
-                                                            permission.name,
-                                                        ],
-                                                    ),
+                                                            permission.name
+                                                        ]
+                                                    )
                                                 )
-                                        },
+                                        }
                                     )
                                 } else {
                                     arrayOf(
                                         TextComponent(
                                             plugin.language[
                                                 "CommandFactionRoleViewPermission",
-                                                permission.translate(faction),
-                                            ],
+                                                permission.translate(faction)
+                                            ]
                                         ).apply {
                                             color = SpigotChatColor.AQUA
                                         },
@@ -189,7 +189,7 @@ class MfFactionRoleViewCommand(
                                                     hoverEvent =
                                                         HoverEvent(
                                                             SHOW_TEXT,
-                                                            Text(plugin.language["CommandFactionRoleViewAllowHoverNoPermission"]),
+                                                            Text(plugin.language["CommandFactionRoleViewAllowHoverNoPermission"])
                                                         )
                                                 }
                                             false ->
@@ -198,7 +198,7 @@ class MfFactionRoleViewCommand(
                                                     hoverEvent =
                                                         HoverEvent(
                                                             SHOW_TEXT,
-                                                            Text(plugin.language["CommandFactionRoleViewDenyHoverNoPermission"]),
+                                                            Text(plugin.language["CommandFactionRoleViewDenyHoverNoPermission"])
                                                         )
                                                 }
                                             null ->
@@ -207,41 +207,41 @@ class MfFactionRoleViewCommand(
                                                     hoverEvent =
                                                         HoverEvent(
                                                             SHOW_TEXT,
-                                                            Text(plugin.language["CommandFactionRoleViewDefaultHoverNoPermission"]),
+                                                            Text(plugin.language["CommandFactionRoleViewDefaultHoverNoPermission"])
                                                         )
                                                 }
-                                        },
+                                        }
                                     )
                                 }
                             }
-                        },
+                        }
                     ) { page -> "/faction role view ${targetRole.id.value} ${page + 1}" }
                 if (pageNumber !in view.pages.indices) {
                     sender.sendMessage("${BukkitChatColor.RED}${plugin.language["CommandFactionRoleViewInvalidPageNumber"]}")
                     return@Runnable
                 }
                 view.sendPage(sender, pageNumber)
-            },
+            }
         )
         return true
     }
 
     private fun String.bracket(
         openingBracket: String = "[",
-        closingBracket: String = "]",
+        closingBracket: String = "]"
     ) = "$openingBracket$this$closingBracket"
 
     private fun String.bracketIf(
         openingBracket: String = "[",
         closingBracket: String = "]",
-        condition: () -> Boolean,
+        condition: () -> Boolean
     ) = if (condition()) bracket(openingBracket, closingBracket) else this
 
     override fun onTabComplete(
         sender: CommandSender,
         command: Command,
         label: String,
-        args: Array<out String>,
+        args: Array<out String>
     ): List<String> {
         if (sender !is Player) return emptyList()
         val playerId = MfPlayerId.fromBukkitPlayer(sender)

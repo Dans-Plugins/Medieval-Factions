@@ -15,14 +15,14 @@ import preponderous.ponder.command.unquote
 import java.util.logging.Level.SEVERE
 
 class MfFactionRelationshipRemoveCommand(
-    private val plugin: MedievalFactions,
+    private val plugin: MedievalFactions
 ) : CommandExecutor,
     TabCompleter {
     override fun onCommand(
         sender: CommandSender,
         command: Command,
         label: String,
-        args: Array<out String>,
+        args: Array<out String>
     ): Boolean {
         if (!sender.hasPermission("mf.relationship.remove")) {
             sender.sendMessage("$RED${plugin.language["CommandFactionRelationshipRemoveNoPermission"]}")
@@ -73,9 +73,9 @@ class MfFactionRelationshipRemoveCommand(
                     plugin,
                     Runnable {
                         plugin.server.dispatchCommand(sender, "faction relationship view ${faction1.id.value} ${faction2.id.value}")
-                    },
+                    }
                 )
-            },
+            }
         )
         return true
     }
@@ -84,7 +84,7 @@ class MfFactionRelationshipRemoveCommand(
         sender: CommandSender,
         command: Command,
         label: String,
-        args: Array<out String>,
+        args: Array<out String>
     ): List<String> {
         val factionService = plugin.services.factionService
         return when {

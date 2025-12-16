@@ -25,7 +25,7 @@ import org.bukkit.entity.Player
 import java.util.logging.Level.SEVERE
 
 class MfAccessorsAddCommand(
-    private val plugin: MedievalFactions,
+    private val plugin: MedievalFactions
 ) : CommandExecutor,
     TabCompleter {
     private val conversationFactory =
@@ -50,7 +50,7 @@ class MfAccessorsAddCommand(
 
         override fun isInputValid(
             context: ConversationContext,
-            input: String,
+            input: String
         ): Boolean {
             val player = plugin.server.getOfflinePlayer(input)
             return player.isOnline || player.hasPlayedBefore()
@@ -58,12 +58,12 @@ class MfAccessorsAddCommand(
 
         override fun getFailedValidationText(
             context: ConversationContext,
-            invalidInput: String,
+            invalidInput: String
         ): String? = plugin.language["CommandAccessorsAddInvalidPlayer"]
 
         override fun acceptValidatedInput(
             context: ConversationContext,
-            input: String,
+            input: String
         ): Prompt? {
             val sender = context.forWhom as Player
             val player = plugin.server.getOfflinePlayer(input)
@@ -71,7 +71,7 @@ class MfAccessorsAddCommand(
                 sender.world.getBlockAt(
                     context.getSessionData("x") as Int,
                     context.getSessionData("y") as Int,
-                    context.getSessionData("z") as Int,
+                    context.getSessionData("z") as Int
                 )
             val blockData = block.blockData
             val holder = (block.state as? Chest)?.inventory?.holder
@@ -98,7 +98,7 @@ class MfAccessorsAddCommand(
         sender: CommandSender,
         command: Command,
         label: String,
-        args: Array<out String>,
+        args: Array<out String>
     ): Boolean {
         if (!sender.hasPermission("mf.accessors.add") && !sender.hasPermission("mf.grantaccess")) {
             sender.sendMessage("$RED${plugin.language["CommandAccessorsAddNoPermission"]}")
@@ -126,7 +126,7 @@ class MfAccessorsAddCommand(
                         return@Runnable
                     }
                     sender.sendMessage("$GREEN${plugin.language["CommandAccessorsAddSelectBlock"]}")
-                },
+                }
             )
             return true
         }
@@ -172,7 +172,7 @@ class MfAccessorsAddCommand(
     private fun addAccessor(
         sender: Player,
         blocks: List<Block>,
-        accessor: OfflinePlayer,
+        accessor: OfflinePlayer
     ) {
         plugin.server.scheduler.runTaskAsynchronously(
             plugin,
@@ -209,15 +209,15 @@ class MfAccessorsAddCommand(
                     return@Runnable
                 }
                 sender.sendMessage(
-                    "$GREEN${plugin.language["CommandAccessorsAddSuccess", accessor.name ?: plugin.language["UnknownPlayer"]]}",
+                    "$GREEN${plugin.language["CommandAccessorsAddSuccess", accessor.name ?: plugin.language["UnknownPlayer"]]}"
                 )
                 plugin.server.scheduler.runTask(
                     plugin,
                     Runnable {
                         sender.performCommand("accessors list ${lockedBlock.block.x} ${lockedBlock.block.y} ${lockedBlock.block.z}")
-                    },
+                    }
                 )
-            },
+            }
         )
     }
 
@@ -225,7 +225,7 @@ class MfAccessorsAddCommand(
         sender: CommandSender,
         command: Command,
         label: String,
-        args: Array<out String>,
+        args: Array<out String>
     ) = when {
         args.size <= 3 -> emptyList()
         args.size == 4 ->

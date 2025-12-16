@@ -21,14 +21,14 @@ import net.md_5.bungee.api.ChatColor as SpigotChatColor
 import org.bukkit.ChatColor as BukkitChatColor
 
 class MfFactionInfoCommand(
-    private val plugin: MedievalFactions,
+    private val plugin: MedievalFactions
 ) : CommandExecutor,
     TabCompleter {
     override fun onCommand(
         sender: CommandSender,
         command: Command,
         label: String,
-        args: Array<out String>,
+        args: Array<out String>
     ): Boolean {
         if (!sender.hasPermission("mf.info")) {
             sender.sendMessage("${BukkitChatColor.RED}${plugin.language["CommandFactionInfoNoPermission"]}")
@@ -118,7 +118,7 @@ class MfFactionInfoCommand(
                             color = SpigotChatColor.GREEN
                             hoverEvent = HoverEvent(SHOW_TEXT, Text(plugin.language["CommandFactionInfoSetNameHover"]))
                             clickEvent = ClickEvent(RUN_COMMAND, "/faction set name")
-                        },
+                        }
                     )
                 }
                 if (faction.prefix != null) {
@@ -134,7 +134,7 @@ class MfFactionInfoCommand(
                             color = SpigotChatColor.GREEN
                             hoverEvent = HoverEvent(SHOW_TEXT, Text(plugin.language["CommandFactionInfoSetPrefixHover"]))
                             clickEvent = ClickEvent(RUN_COMMAND, "/faction set prefix")
-                        },
+                        }
                     )
                 }
                 sender.sendMessage("${BukkitChatColor.GRAY}${plugin.language["CommandFactionInfoDescription", faction.description]}")
@@ -146,29 +146,29 @@ class MfFactionInfoCommand(
                             color = SpigotChatColor.GREEN
                             hoverEvent = HoverEvent(SHOW_TEXT, Text(plugin.language["CommandFactionInfoSetDescriptionHover"]))
                             clickEvent = ClickEvent(RUN_COMMAND, "/faction set description")
-                        },
+                        }
                     )
                 }
                 sender.sendMessage(
-                    "${BukkitChatColor.WHITE}${plugin.language["CommandFactionInfoMembersTitle", faction.members.size.toString()]}",
+                    "${BukkitChatColor.WHITE}${plugin.language["CommandFactionInfoMembersTitle", faction.members.size.toString()]}"
                 )
                 faction.members.groupBy { faction.getRole(it.playerId) }.forEach { (memberRole, members) ->
                     sender.sendMessage(
-                        "  ${BukkitChatColor.WHITE}${plugin.language["CommandFactionInfoMembersRoleTitle", memberRole?.name ?: plugin.language["NoRole"]]}",
+                        "  ${BukkitChatColor.WHITE}${plugin.language["CommandFactionInfoMembersRoleTitle", memberRole?.name ?: plugin.language["NoRole"]]}"
                     )
                     sender.sendMessage(
                         "    ${BukkitChatColor.GRAY}${members.joinToString {
                             it.playerId.toBukkitPlayer().name ?: plugin.language["UnknownPlayer"]
-                        }}",
+                        }}"
                     )
                 }
                 sender.sendMessage(
-                    "${BukkitChatColor.WHITE}${plugin.language["CommandFactionInfoInvitesTitle", faction.invites.size.toString()]}",
+                    "${BukkitChatColor.WHITE}${plugin.language["CommandFactionInfoInvitesTitle", faction.invites.size.toString()]}"
                 )
                 sender.sendMessage(
                     "  ${BukkitChatColor.GRAY}${faction.invites.joinToString {
                         it.playerId.toBukkitPlayer().name ?: plugin.language["UnknownPlayer"]
-                    }}",
+                    }}"
                 )
                 if (sender.hasPermission("mf.invite") && senderFaction?.id == faction.id &&
                     role?.hasPermission(faction, plugin.factionPermissions.invite) == true
@@ -178,7 +178,7 @@ class MfFactionInfoCommand(
                             color = SpigotChatColor.GREEN
                             hoverEvent = HoverEvent(SHOW_TEXT, Text(plugin.language["CommandFactionInfoInviteHover"]))
                             clickEvent = ClickEvent(RUN_COMMAND, "/faction invite")
-                        },
+                        }
                     )
                 }
 
@@ -206,7 +206,7 @@ class MfFactionInfoCommand(
                 val atWarWith =
                     plugin.services.factionRelationshipService
                         .getFactionsAtWarWith(
-                            faction.id,
+                            faction.id
                         ).mapNotNull(factionService::getFaction)
                 if (atWarWith.isNotEmpty()) {
                     sender.sendMessage("${BukkitChatColor.WHITE}${plugin.language["CommandFactionInfoEnemiesTitle"]}")
@@ -220,10 +220,10 @@ class MfFactionInfoCommand(
                             TextComponent("${field.name}: ").apply {
                                 color = SpigotChatColor.GRAY
                             },
-                            *field.get(faction.id.value),
+                            *field.get(faction.id.value)
                         )
                     }
-            },
+            }
         )
         return true
     }
@@ -232,7 +232,7 @@ class MfFactionInfoCommand(
         sender: CommandSender,
         command: Command,
         label: String,
-        args: Array<out String>,
+        args: Array<out String>
     ) = when {
         args.isEmpty() ->
             plugin.services.factionService.factions
@@ -243,7 +243,7 @@ class MfFactionInfoCommand(
                 plugin.services.factionService.factions
                     .map(MfFaction::name) +
                     plugin.server.offlinePlayers.mapNotNull(OfflinePlayer::getName)
-            ).filter { it.lowercase().startsWith(args[0].lowercase()) }
+                ).filter { it.lowercase().startsWith(args[0].lowercase()) }
         else -> emptyList()
     }
 }

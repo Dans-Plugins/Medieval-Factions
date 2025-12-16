@@ -13,7 +13,7 @@ import java.util.logging.Logger
 import java.util.logging.Level as JulLevel
 
 class MfLoggerAdapter(
-    name: String,
+    name: String
 ) : MarkerIgnoringBase(),
     LocationAwareLogger {
     init {
@@ -61,7 +61,7 @@ class MfLoggerAdapter(
      */
     override fun trace(
         format: String?,
-        arg: Any?,
+        arg: Any?
     ) {
         if (logger.isLoggable(JulLevel.FINEST)) {
             val ft = MessageFormatter.format(format, arg)
@@ -89,7 +89,7 @@ class MfLoggerAdapter(
     override fun trace(
         format: String?,
         arg1: Any?,
-        arg2: Any?,
+        arg2: Any?
     ) {
         if (logger.isLoggable(JulLevel.FINEST)) {
             val ft = MessageFormatter.format(format, arg1, arg2)
@@ -114,7 +114,7 @@ class MfLoggerAdapter(
      */
     override fun trace(
         format: String?,
-        vararg argArray: Any?,
+        vararg argArray: Any?
     ) {
         if (logger.isLoggable(JulLevel.FINEST)) {
             val ft = MessageFormatter.arrayFormat(format, argArray)
@@ -132,7 +132,7 @@ class MfLoggerAdapter(
      */
     override fun trace(
         msg: String,
-        t: Throwable?,
+        t: Throwable?
     ) {
         if (logger.isLoggable(JulLevel.FINEST)) {
             log(self, JulLevel.FINEST, msg, t)
@@ -174,7 +174,7 @@ class MfLoggerAdapter(
      */
     override fun debug(
         format: String?,
-        arg: Any?,
+        arg: Any?
     ) {
         if (logger.isLoggable(JulLevel.FINE)) {
             val ft = MessageFormatter.format(format, arg)
@@ -202,7 +202,7 @@ class MfLoggerAdapter(
     override fun debug(
         format: String?,
         arg1: Any?,
-        arg2: Any?,
+        arg2: Any?
     ) {
         if (logger.isLoggable(JulLevel.FINE)) {
             val ft = MessageFormatter.format(format, arg1, arg2)
@@ -227,7 +227,7 @@ class MfLoggerAdapter(
      */
     override fun debug(
         format: String?,
-        vararg argArray: Any?,
+        vararg argArray: Any?
     ) {
         if (logger.isLoggable(JulLevel.FINE)) {
             val ft = MessageFormatter.arrayFormat(format, argArray)
@@ -245,7 +245,7 @@ class MfLoggerAdapter(
      */
     override fun debug(
         msg: String,
-        t: Throwable?,
+        t: Throwable?
     ) {
         if (logger.isLoggable(JulLevel.FINE)) {
             log(self, JulLevel.FINE, msg, t)
@@ -287,7 +287,7 @@ class MfLoggerAdapter(
      */
     override fun info(
         format: String?,
-        arg: Any?,
+        arg: Any?
     ) {
         if (logger.isLoggable(JulLevel.INFO)) {
             val ft = MessageFormatter.format(format, arg)
@@ -315,7 +315,7 @@ class MfLoggerAdapter(
     override fun info(
         format: String?,
         arg1: Any?,
-        arg2: Any?,
+        arg2: Any?
     ) {
         if (logger.isLoggable(JulLevel.INFO)) {
             val ft = MessageFormatter.format(format, arg1, arg2)
@@ -340,7 +340,7 @@ class MfLoggerAdapter(
      */
     override fun info(
         format: String?,
-        vararg argArray: Any?,
+        vararg argArray: Any?
     ) {
         if (logger.isLoggable(JulLevel.INFO)) {
             val ft = MessageFormatter.arrayFormat(format, argArray)
@@ -359,7 +359,7 @@ class MfLoggerAdapter(
      */
     override fun info(
         msg: String,
-        t: Throwable?,
+        t: Throwable?
     ) {
         if (logger.isLoggable(JulLevel.INFO)) {
             log(self, JulLevel.INFO, msg, t)
@@ -403,7 +403,7 @@ class MfLoggerAdapter(
      */
     override fun warn(
         format: String?,
-        arg: Any?,
+        arg: Any?
     ) {
         if (logger.isLoggable(JulLevel.WARNING)) {
             val ft = MessageFormatter.format(format, arg)
@@ -431,7 +431,7 @@ class MfLoggerAdapter(
     override fun warn(
         format: String?,
         arg1: Any?,
-        arg2: Any?,
+        arg2: Any?
     ) {
         if (logger.isLoggable(JulLevel.WARNING)) {
             val ft = MessageFormatter.format(format, arg1, arg2)
@@ -456,7 +456,7 @@ class MfLoggerAdapter(
      */
     override fun warn(
         format: String?,
-        vararg argArray: Any?,
+        vararg argArray: Any?
     ) {
         if (logger.isLoggable(JulLevel.WARNING)) {
             val ft = MessageFormatter.arrayFormat(format, argArray)
@@ -475,7 +475,7 @@ class MfLoggerAdapter(
      */
     override fun warn(
         msg: String,
-        t: Throwable?,
+        t: Throwable?
     ) {
         if (logger.isLoggable(JulLevel.WARNING)) {
             log(self, JulLevel.WARNING, msg, t)
@@ -518,7 +518,7 @@ class MfLoggerAdapter(
      */
     override fun error(
         format: String?,
-        arg: Any?,
+        arg: Any?
     ) {
         if (logger.isLoggable(JulLevel.SEVERE)) {
             val ft = MessageFormatter.format(format, arg)
@@ -546,7 +546,7 @@ class MfLoggerAdapter(
     override fun error(
         format: String?,
         arg1: Any?,
-        arg2: Any?,
+        arg2: Any?
     ) {
         if (logger.isLoggable(JulLevel.SEVERE)) {
             val ft = MessageFormatter.format(format, arg1, arg2)
@@ -571,7 +571,7 @@ class MfLoggerAdapter(
      */
     override fun error(
         format: String?,
-        vararg arguments: Any?,
+        vararg arguments: Any?
     ) {
         if (logger.isLoggable(JulLevel.SEVERE)) {
             val ft = MessageFormatter.arrayFormat(format, arguments)
@@ -590,7 +590,7 @@ class MfLoggerAdapter(
      */
     override fun error(
         msg: String,
-        t: Throwable?,
+        t: Throwable?
     ) {
         if (logger.isLoggable(JulLevel.SEVERE)) {
             log(self, JulLevel.SEVERE, msg, t)
@@ -612,7 +612,7 @@ class MfLoggerAdapter(
         callerFQCN: String,
         level: JulLevel,
         msg: String,
-        t: Throwable?,
+        t: Throwable?
     ) {
         // millis and thread are filled by the constructor
         val record = LogRecord(level, msg)
@@ -635,7 +635,7 @@ class MfLoggerAdapter(
      */
     private fun fillCallerData(
         callerFQCN: String,
-        record: LogRecord,
+        record: LogRecord
     ) {
         val steArray = Throwable().stackTrace
         var selfIndex = -1
@@ -669,7 +669,7 @@ class MfLoggerAdapter(
         level: Int,
         message: String,
         argArray: Array<Any?>?,
-        t: Throwable?,
+        t: Throwable?
     ) {
         val julLevel: JulLevel = slf4jLevelIntToJULLevel(level)
         // the logger.isLoggable check avoids the unconditional
@@ -708,7 +708,7 @@ class MfLoggerAdapter(
 
     private fun eventToRecord(
         event: LoggingEvent,
-        julLevel: JulLevel,
+        julLevel: JulLevel
     ): LogRecord {
         val format = event.message
         val arguments = event.argumentArray

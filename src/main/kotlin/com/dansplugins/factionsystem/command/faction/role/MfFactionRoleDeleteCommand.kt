@@ -20,7 +20,7 @@ import org.bukkit.entity.Player
 import java.util.logging.Level.SEVERE
 
 class MfFactionRoleDeleteCommand(
-    private val plugin: MedievalFactions,
+    private val plugin: MedievalFactions
 ) : CommandExecutor,
     TabCompleter {
     private val conversationFactory =
@@ -45,7 +45,7 @@ class MfFactionRoleDeleteCommand(
 
         override fun acceptInput(
             context: ConversationContext,
-            input: String?,
+            input: String?
         ): Prompt? {
             val conversable = context.forWhom
             if (conversable !is Player) return END_OF_CONVERSATION
@@ -59,7 +59,7 @@ class MfFactionRoleDeleteCommand(
         sender: CommandSender,
         command: Command,
         label: String,
-        args: Array<out String>,
+        args: Array<out String>
     ): Boolean {
         if (!sender.hasPermission("mf.role.delete")) {
             sender.sendMessage("$RED${plugin.language["CommandFactionRoleDeleteNoPermission"]}")
@@ -90,7 +90,7 @@ class MfFactionRoleDeleteCommand(
     private fun deleteRole(
         player: Player,
         name: String,
-        returnPage: Int?,
+        returnPage: Int?
     ) {
         plugin.server.scheduler.runTaskAsynchronously(
             plugin,
@@ -131,11 +131,11 @@ class MfFactionRoleDeleteCommand(
                     .save(
                         faction.copy(
                             roles =
-                                MfFactionRoles(
-                                    faction.roles.defaultRoleId,
-                                    faction.roles.filter { it.id != roleToRemove.id },
-                                ),
-                        ),
+                            MfFactionRoles(
+                                faction.roles.defaultRoleId,
+                                faction.roles.filter { it.id != roleToRemove.id }
+                            )
+                        )
                     ).onFailure {
                         player.sendMessage("$RED${plugin.language["CommandFactionRoleDeleteFailedToSaveFaction"]}")
                         plugin.logger.log(SEVERE, "Failed to save faction: ${it.reason.message}", it.reason.cause)
@@ -147,10 +147,10 @@ class MfFactionRoleDeleteCommand(
                         plugin,
                         Runnable {
                             player.performCommand("faction role list $returnPage")
-                        },
+                        }
                     )
                 }
-            },
+            }
         )
     }
 
@@ -158,7 +158,7 @@ class MfFactionRoleDeleteCommand(
         sender: CommandSender,
         command: Command,
         label: String,
-        args: Array<out String>,
+        args: Array<out String>
     ): List<String> {
         if (sender !is Player) return emptyList()
         val playerId = MfPlayerId.fromBukkitPlayer(sender)

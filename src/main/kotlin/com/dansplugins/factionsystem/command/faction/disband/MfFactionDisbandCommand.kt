@@ -14,14 +14,14 @@ import org.bukkit.entity.Player
 import java.util.logging.Level.SEVERE
 
 class MfFactionDisbandCommand(
-    private val plugin: MedievalFactions,
+    private val plugin: MedievalFactions
 ) : CommandExecutor,
     TabCompleter {
     override fun onCommand(
         sender: CommandSender,
         command: Command,
         label: String,
-        args: Array<out String>,
+        args: Array<out String>
     ): Boolean {
         if (!sender.hasPermission("mf.disband")) {
             sender.sendMessage("$RED${plugin.language["CommandFactionDisbandNoPermission"]}")
@@ -94,10 +94,10 @@ class MfFactionDisbandCommand(
                         plugin,
                         Runnable {
                             mapService.scheduleUpdateClaims(faction)
-                        },
+                        }
                     )
                 }
-            },
+            }
         )
         return true
     }
@@ -106,7 +106,7 @@ class MfFactionDisbandCommand(
         sender: CommandSender,
         command: Command,
         label: String,
-        args: Array<out String>,
+        args: Array<out String>
     ): List<String> {
         val factionService = plugin.services.factionService
         return when {

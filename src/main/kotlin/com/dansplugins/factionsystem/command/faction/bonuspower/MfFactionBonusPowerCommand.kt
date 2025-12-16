@@ -15,7 +15,7 @@ import java.text.DecimalFormatSymbols
 import java.util.logging.Level.SEVERE
 
 class MfFactionBonusPowerCommand(
-    private val plugin: MedievalFactions,
+    private val plugin: MedievalFactions
 ) : CommandExecutor,
     TabCompleter {
     private val decimalFormat = DecimalFormat("0.##", DecimalFormatSymbols.getInstance(plugin.language.locale))
@@ -24,7 +24,7 @@ class MfFactionBonusPowerCommand(
         sender: CommandSender,
         command: Command,
         label: String,
-        args: Array<out String>,
+        args: Array<out String>
     ): Boolean {
         if (!sender.hasPermission("mf.force.bonuspower")) {
             sender.sendMessage("$RED${plugin.language["CommandFactionBonusPowerNoPermission"]}")
@@ -60,11 +60,11 @@ class MfFactionBonusPowerCommand(
                 sender.sendMessage(
                     "$GREEN${plugin.language[
                         "CommandFactionBonusPowerSuccess", updatedFaction.name, decimalFormat.format(
-                            updatedFaction.bonusPower,
-                        ),
-                    ]}",
+                            updatedFaction.bonusPower
+                        )
+                    ]}"
                 )
-            },
+            }
         )
         return true
     }
@@ -73,7 +73,7 @@ class MfFactionBonusPowerCommand(
         sender: CommandSender,
         command: Command,
         label: String,
-        args: Array<out String>,
+        args: Array<out String>
     ): List<String> {
         val factionService = plugin.services.factionService
         return when {

@@ -5,7 +5,7 @@ import com.dansplugins.factionsystem.player.MfPlayerId
 import org.jooq.DSLContext
 
 class JooqMfInteractionStatusRepository(
-    private val dsl: DSLContext,
+    private val dsl: DSLContext
 ) : MfInteractionStatusRepository {
     override fun getInteractionStatus(playerId: MfPlayerId) =
         dsl
@@ -16,7 +16,7 @@ class JooqMfInteractionStatusRepository(
 
     override fun setInteractionStatus(
         playerId: MfPlayerId,
-        status: MfInteractionStatus?,
+        status: MfInteractionStatus?
     ) {
         dsl
             .insertInto(MF_PLAYER_INTERACTION_STATUS)

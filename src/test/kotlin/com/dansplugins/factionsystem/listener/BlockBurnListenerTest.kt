@@ -86,7 +86,7 @@ class BlockBurnListenerTest {
     private data class BlockBurnListenerTestFixture(
         val block: Block,
         val player: Player,
-        val event: BlockBurnEvent,
+        val event: BlockBurnEvent
     )
 
     private fun mockServices() {

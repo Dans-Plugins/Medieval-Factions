@@ -12,13 +12,13 @@ import org.bukkit.entity.Player
  * Shows the applications for the sender's faction.
  */
 class MfShowAppsCommand(
-    private val plugin: MedievalFactions,
+    private val plugin: MedievalFactions
 ) : CommandExecutor {
     override fun onCommand(
         sender: CommandSender,
         command: Command,
         label: String,
-        args: Array<out String>,
+        args: Array<out String>
     ): Boolean {
         if (!sender.hasPermission("mf.showapps")) {
             sender.sendMessage("${ChatColor.RED}${plugin.language["CommandFactionShowAppsNoPermission"]}")
@@ -36,7 +36,7 @@ class MfShowAppsCommand(
         plugin.logger.info("Player " + sender.name + " is viewing applications for their faction")
         plugin.server.scheduler.runTaskAsynchronously(
             plugin,
-            ShowAppsForPlayersFactionTask(plugin, sender),
+            ShowAppsForPlayersFactionTask(plugin, sender)
         )
     }
 }

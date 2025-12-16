@@ -7,7 +7,7 @@ import com.dansplugins.factionsystem.faction.permission.MfFactionPermissionType
 import com.dansplugins.factionsystem.faction.role.MfFactionRoleId
 
 class DeleteRole(
-    private val plugin: MedievalFactions,
+    private val plugin: MedievalFactions
 ) : MfFactionPermissionType() {
     override fun parse(name: String): MfFactionPermission? =
         if (name.matches(Regex("DELETE_ROLE\\((.+)\\)"))) {
@@ -23,13 +23,13 @@ class DeleteRole(
 
     override fun permissionsFor(
         factionId: MfFactionId,
-        roleIds: List<MfFactionRoleId>,
+        roleIds: List<MfFactionRoleId>
     ): List<MfFactionPermission> = roleIds.map(::permissionFor)
 
     private fun permissionFor(roleId: MfFactionRoleId) =
         MfFactionPermission(
             "DELETE_ROLE(${roleId.value})",
             { faction -> plugin.language["FactionPermissionDeleteRole", faction.getRole(roleId)?.name ?: ""] },
-            true,
+            true
         )
 }

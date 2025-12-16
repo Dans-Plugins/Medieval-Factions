@@ -14,7 +14,7 @@ import org.bukkit.event.block.BlockBreakEvent
 import java.util.logging.Level.SEVERE
 
 class BlockBreakListener(
-    private val plugin: MedievalFactions,
+    private val plugin: MedievalFactions
 ) : Listener {
     @EventHandler
     fun onBlockBreak(event: BlockBreakEvent) {
@@ -52,7 +52,7 @@ class BlockBreakListener(
                         plugin.logger.log(SEVERE, "Failed to save player: ${it.reason.message}", it.reason.cause)
                         return@Runnable
                     }
-                },
+                }
             )
             return
         }

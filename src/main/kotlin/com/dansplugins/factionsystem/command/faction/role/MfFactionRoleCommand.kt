@@ -8,7 +8,7 @@ import org.bukkit.command.CommandSender
 import org.bukkit.command.TabCompleter
 
 class MfFactionRoleCommand(
-    private val plugin: MedievalFactions,
+    private val plugin: MedievalFactions
 ) : CommandExecutor,
     TabCompleter {
     private val factionRoleViewCommand = MfFactionRoleViewCommand(plugin)
@@ -43,7 +43,7 @@ class MfFactionRoleCommand(
         sender: CommandSender,
         command: Command,
         label: String,
-        args: Array<out String>,
+        args: Array<out String>
     ): Boolean =
         when (args.firstOrNull()?.lowercase()) {
             in viewAliases -> factionRoleViewCommand.onCommand(sender, command, label, args.drop(1).toTypedArray())
@@ -64,7 +64,7 @@ class MfFactionRoleCommand(
         sender: CommandSender,
         command: Command,
         label: String,
-        args: Array<out String>,
+        args: Array<out String>
     ) = when {
         args.isEmpty() -> subcommands
         args.size == 1 -> subcommands.filter { it.startsWith(args[0].lowercase()) }
@@ -76,7 +76,7 @@ class MfFactionRoleCommand(
                         sender,
                         command,
                         label,
-                        args.drop(1).toTypedArray(),
+                        args.drop(1).toTypedArray()
                     )
                 in listAliases -> factionRoleListCommand.onTabComplete(sender, command, label, args.drop(1).toTypedArray())
                 in setAliases -> factionRoleSetCommand.onTabComplete(sender, command, label, args.drop(1).toTypedArray())

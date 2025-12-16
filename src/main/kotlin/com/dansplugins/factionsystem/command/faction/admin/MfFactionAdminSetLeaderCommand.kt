@@ -15,14 +15,14 @@ import preponderous.ponder.command.dropFirst
 import java.util.logging.Level.SEVERE
 
 class MfFactionAdminSetLeaderCommand(
-    private val plugin: MedievalFactions,
+    private val plugin: MedievalFactions
 ) : CommandExecutor,
     TabCompleter {
     override fun onCommand(
         sender: CommandSender,
         command: Command,
         label: String,
-        args: Array<out String>,
+        args: Array<out String>
     ): Boolean {
         if (!sender.hasPermission("mf.admin.setleader")) {
             sender.sendMessage("$RED${plugin.language["CommandFactionAdminSetLeaderNoPermission"]}")
@@ -87,8 +87,8 @@ class MfFactionAdminSetLeaderCommand(
                         .save(
                             targetFaction.copy(
                                 members = targetFaction.members + MfFactionMember(targetMfPlayer.id, ownerRole),
-                                invites = targetFaction.invites.filter { it.playerId != targetMfPlayer.id },
-                            ),
+                                invites = targetFaction.invites.filter { it.playerId != targetMfPlayer.id }
+                            )
                         ).onFailure {
                             sender.sendMessage("$RED${plugin.language["CommandFactionAdminSetLeaderFailedToSaveFaction"]}")
                             plugin.logger.log(SEVERE, "Failed to save faction: ${it.reason.message}", it.reason.cause)
@@ -98,10 +98,10 @@ class MfFactionAdminSetLeaderCommand(
                 val targetName = targetMfPlayer.name ?: plugin.language["CommandFactionAdminSetLeaderUnknownPlayer"]
                 updatedFaction.sendMessage(
                     plugin.language["FactionNewLeaderNotificationTitle", targetName],
-                    plugin.language["FactionNewLeaderNotificationBody", targetName],
+                    plugin.language["FactionNewLeaderNotificationBody", targetName]
                 )
                 sender.sendMessage(
-                    "$GREEN${plugin.language["CommandFactionAdminSetLeaderSuccess", targetName, targetFaction.name]}",
+                    "$GREEN${plugin.language["CommandFactionAdminSetLeaderSuccess", targetName, targetFaction.name]}"
                 )
 
                 try {
@@ -110,7 +110,7 @@ class MfFactionAdminSetLeaderCommand(
                     sender.sendMessage("$RED${plugin.language["CommandFactionAdminSetLeaderFailedToCancelApplications"]}")
                     plugin.logger.log(SEVERE, "Failed to cancel applications: ${e.message}", e)
                 }
-            },
+            }
         )
         return true
     }
@@ -119,7 +119,7 @@ class MfFactionAdminSetLeaderCommand(
         sender: CommandSender,
         command: Command,
         label: String,
-        args: Array<out String>,
+        args: Array<out String>
     ): List<String> {
         val factionService = plugin.services.factionService
         return when {

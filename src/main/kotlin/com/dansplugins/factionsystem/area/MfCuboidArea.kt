@@ -5,7 +5,7 @@ import kotlin.math.min
 
 data class MfCuboidArea(
     val position1: MfBlockPosition,
-    val position2: MfBlockPosition,
+    val position2: MfBlockPosition
 ) {
     init {
         if (position1.worldId != position2.worldId) {
@@ -19,7 +19,7 @@ data class MfCuboidArea(
                 position1.worldId,
                 min(position1.x, position2.x),
                 min(position1.y, position2.y),
-                min(position1.z, position2.z),
+                min(position1.z, position2.z)
             )
 
     val maxPosition: MfBlockPosition
@@ -28,7 +28,7 @@ data class MfCuboidArea(
                 position1.worldId,
                 max(position1.x, position2.x),
                 max(position1.y, position2.y),
-                max(position1.z, position2.z),
+                max(position1.z, position2.z)
             )
 
     val height: Int
@@ -46,7 +46,7 @@ data class MfCuboidArea(
                 position1.worldId,
                 (position1.x + position2.x) / 2,
                 (position1.y + position2.y) / 2,
-                (position1.z + position2.z) / 2,
+                (position1.z + position2.z) / 2
             )
 
     val blocks: List<MfBlockPosition>

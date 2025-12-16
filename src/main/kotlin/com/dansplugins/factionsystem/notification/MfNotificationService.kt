@@ -5,6 +5,6 @@ import com.dansplugins.factionsystem.player.MfPlayerId
 interface MfNotificationService {
     fun sendNotification(
         playerId: MfPlayerId,
-        notification: MfNotification,
+        notification: MfNotification
     )
 }

@@ -23,14 +23,14 @@ import java.util.logging.Level
 import net.md_5.bungee.api.ChatColor as SpigotChatColor
 
 class MfFactionJoinCommand(
-    private val plugin: MedievalFactions,
+    private val plugin: MedievalFactions
 ) : CommandExecutor,
     TabCompleter {
     override fun onCommand(
         sender: CommandSender,
         command: Command,
         label: String,
-        args: Array<out String>,
+        args: Array<out String>
     ): Boolean {
         if (!sender.hasPermission("mf.join")) {
             sender.sendMessage("$RED${plugin.language["CommandFactionJoinNoPermission"]}")
@@ -96,8 +96,8 @@ class MfFactionJoinCommand(
                         .save(
                             faction.copy(
                                 members = faction.members + MfFactionMember(mfPlayer.id, faction.roles.default),
-                                invites = faction.invites.filter { it.playerId != mfPlayer.id },
-                            ),
+                                invites = faction.invites.filter { it.playerId != mfPlayer.id }
+                            )
                         ).onFailure {
                             sender.sendMessage("$RED${plugin.language["CommandFactionJoinFailedToSaveFaction"]}")
                             plugin.logger.log(Level.SEVERE, "Failed to save faction: ${it.reason.message}", it.reason.cause)
@@ -105,38 +105,38 @@ class MfFactionJoinCommand(
                         }
                 updatedFaction.sendMessage(
                     plugin.language["FactionNewMemberNotificationTitle", sender.name],
-                    plugin.language["FactionNewMemberNotificationBody", sender.name],
+                    plugin.language["FactionNewMemberNotificationBody", sender.name]
                 )
                 sender.sendMessage(
-                    "$GREEN${plugin.language["CommandFactionJoinSuccess", faction.name]}",
+                    "$GREEN${plugin.language["CommandFactionJoinSuccess", faction.name]}"
                 )
                 try {
                     factionService.cancelAllApplicationsForPlayer(mfPlayer)
                 } catch (e: Exception) {
                     sender.sendMessage(
-                        "${org.bukkit.ChatColor.RED}${plugin.language["CommandFactionApproveAppFailedToCancelApplications"]}",
+                        "${org.bukkit.ChatColor.RED}${plugin.language["CommandFactionApproveAppFailedToCancelApplications"]}"
                     )
                     plugin.logger.log(Level.SEVERE, "Failed to cancel applications: ${e.message}", e)
                 }
-            },
+            }
         )
         return true
     }
 
     private fun confirmJoin(
         player: Player,
-        faction: MfFaction,
+        faction: MfFaction
     ) {
         player.sendMessage("$RED${plugin.language["CommandFactionJoinConfirmNoInvitation", faction.name]}")
         player.spigot().sendMessage(
             TextComponent(
-                plugin.language["CommandFactionJoinConfirmNoInvitationConfirmButton"],
+                plugin.language["CommandFactionJoinConfirmNoInvitationConfirmButton"]
             ).apply {
                 color = SpigotChatColor.GREEN
                 hoverEvent =
                     HoverEvent(SHOW_TEXT, Text(plugin.language["CommandFactionJoinConfirmNoInvitationConfirmButtonHover", faction.name]))
                 clickEvent = ClickEvent(RUN_COMMAND, "/faction join ${faction.id.value} -f")
-            },
+            }
         )
     }
 
@@ -144,7 +144,7 @@ class MfFactionJoinCommand(
         sender: CommandSender,
         command: Command,
         label: String,
-        args: Array<out String>,
+        args: Array<out String>
     ): List<String> {
         val factionService = plugin.services.factionService
         return when {

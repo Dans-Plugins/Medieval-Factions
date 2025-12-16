@@ -8,6 +8,6 @@ abstract class MfFactionPermissionType {
 
     abstract fun permissionsFor(
         factionId: MfFactionId,
-        roleIds: List<MfFactionRoleId>,
+        roleIds: List<MfFactionRoleId>
     ): List<MfFactionPermission>
 }

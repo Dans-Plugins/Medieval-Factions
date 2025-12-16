@@ -15,14 +15,14 @@ import org.bukkit.entity.Player
 import java.util.logging.Level.SEVERE
 
 class MfFactionUnclaimCommand(
-    private val plugin: MedievalFactions,
+    private val plugin: MedievalFactions
 ) : CommandExecutor,
     TabCompleter {
     override fun onCommand(
         sender: CommandSender,
         command: Command,
         label: String,
-        args: Array<out String>,
+        args: Array<out String>
     ): Boolean {
         if (!sender.hasPermission("mf.unclaim")) {
             sender.sendMessage("$RED${plugin.language["CommandFactionUnclaimNoPermission"]}")
@@ -119,17 +119,17 @@ class MfFactionUnclaimCommand(
                                             plugin.logger.log(
                                                 SEVERE,
                                                 "Failed to delete claimed chunk: ${it.reason.message}",
-                                                it.reason.cause,
+                                                it.reason.cause
                                             )
                                             return@saveChunks
                                         }
                                 }
                                 sender.sendMessage("$GREEN${plugin.language["CommandFactionUnclaimSuccess", chunks.size.toString()]}")
-                            },
+                            }
                         )
-                    },
+                    }
                 )
-            },
+            }
         )
         return true
     }
@@ -138,6 +138,6 @@ class MfFactionUnclaimCommand(
         sender: CommandSender,
         command: Command,
         label: String,
-        args: Array<out String>,
+        args: Array<out String>
     ) = emptyList<String>()
 }

@@ -11,7 +11,7 @@ import java.util.logging.Level.SEVERE
 
 @Suppress("DEPRECATION") // PlayerPickupItemEvent is deprecated but still used by many plugins
 class PlayerPickupItemListener(
-    private val plugin: MedievalFactions,
+    private val plugin: MedievalFactions
 ) : Listener {
     @EventHandler
     fun onPlayerPickupItem(event: PlayerPickupItemEvent) {
@@ -27,7 +27,7 @@ class PlayerPickupItemListener(
                         plugin.logger.log(SEVERE, "Failed to save player: ${it.reason.message}", it.reason.cause)
                         return@Runnable
                     }
-                },
+                }
             )
             return
         }

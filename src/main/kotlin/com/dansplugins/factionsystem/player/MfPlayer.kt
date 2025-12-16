@@ -12,19 +12,19 @@ data class MfPlayer(
     val power: Double = 0.0,
     val powerAtLogout: Double = 0.0,
     val isBypassEnabled: Boolean = false,
-    val chatChannel: MfFactionChatChannel? = null,
+    val chatChannel: MfFactionChatChannel? = null
 ) {
     fun toBukkit() = id.toBukkitPlayer()
 
     constructor(
         plugin: MedievalFactions,
         id: MfPlayerId,
-        name: String?,
+        name: String?
     ) : this(
         id,
         name = name,
         power = plugin.config.getDouble("players.initialPower"),
-        powerAtLogout = plugin.config.getDouble("players.initialPower"),
+        powerAtLogout = plugin.config.getDouble("players.initialPower")
     )
 
     constructor(
@@ -33,7 +33,7 @@ data class MfPlayer(
         power: Double = 0.0,
         powerOnLogout: Double = power,
         isBypassEnabled: Boolean = false,
-        chatChannel: MfFactionChatChannel? = null,
+        chatChannel: MfFactionChatChannel? = null
     ) : this(
         MfPlayerId.fromBukkitPlayer(player),
         version,
@@ -41,16 +41,16 @@ data class MfPlayer(
         power,
         powerOnLogout,
         isBypassEnabled,
-        chatChannel,
+        chatChannel
     )
 
     constructor(
         plugin: MedievalFactions,
-        player: OfflinePlayer,
+        player: OfflinePlayer
     ) : this(
         MfPlayerId.fromBukkitPlayer(player),
         name = player.name,
         power = plugin.config.getDouble("players.initialPower"),
-        powerAtLogout = plugin.config.getDouble("players.initialPower"),
+        powerAtLogout = plugin.config.getDouble("players.initialPower")
     )
 }

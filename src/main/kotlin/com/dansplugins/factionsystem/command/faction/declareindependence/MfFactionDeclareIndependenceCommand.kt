@@ -16,14 +16,14 @@ import org.bukkit.entity.Player
 import java.util.logging.Level.SEVERE
 
 class MfFactionDeclareIndependenceCommand(
-    private val plugin: MedievalFactions,
+    private val plugin: MedievalFactions
 ) : CommandExecutor,
     TabCompleter {
     override fun onCommand(
         sender: CommandSender,
         command: Command,
         label: String,
-        args: Array<out String>,
+        args: Array<out String>
     ): Boolean {
         if (!sender.hasPermission("mf.declareindependence")) {
             sender.sendMessage("$RED${plugin.language["CommandFactionDeclareIndependenceNoPermission"]}")
@@ -74,7 +74,7 @@ class MfFactionDeclareIndependenceCommand(
                     for (relationship in relationshipsWithLiege + reverseRelationshipsWithLiege) {
                         factionRelationshipService.delete(relationship.id).onFailure {
                             sender.sendMessage(
-                                "$RED${plugin.language["CommandFactionDeclareIndependenceFailedToDeleteRelationshipWithLiege"]}",
+                                "$RED${plugin.language["CommandFactionDeclareIndependenceFailedToDeleteRelationshipWithLiege"]}"
                             )
                             plugin.logger.log(SEVERE, "Failed to delete relationship with liege: ${it.reason.message}", it.reason.cause)
                             return@Runnable
@@ -100,11 +100,11 @@ class MfFactionDeclareIndependenceCommand(
                         Runnable {
                             faction.sendMessage(
                                 plugin.language["FactionDeclaredIndependenceWarNotificationTitle", liege.name],
-                                plugin.language["FactionDeclaredIndependenceWarNotificationBody", liege.name],
+                                plugin.language["FactionDeclaredIndependenceWarNotificationBody", liege.name]
                             )
                             liege.sendMessage(
                                 plugin.language["VassalDeclaredIndependenceWarNotificationTitle", faction.name],
-                                plugin.language["VassalDeclaredIndependenceWarNotificationBody", faction.name],
+                                plugin.language["VassalDeclaredIndependenceWarNotificationBody", faction.name]
                             )
                             plugin.server.onlinePlayers
                                 .filter { onlinePlayer ->
@@ -114,10 +114,10 @@ class MfFactionDeclareIndependenceCommand(
                                     }
                                 }.forEach { onlinePlayer ->
                                     onlinePlayer.sendMessage(
-                                        "$RED${plugin.language["FactionDeclaredIndependenceWar", faction.name, liege.name]}",
+                                        "$RED${plugin.language["FactionDeclaredIndependenceWar", faction.name, liege.name]}"
                                     )
                                 }
-                        },
+                        }
                     )
                 } else {
                     plugin.server.scheduler.runTask(
@@ -125,11 +125,11 @@ class MfFactionDeclareIndependenceCommand(
                         Runnable {
                             faction.sendMessage(
                                 plugin.language["FactionDeclaredIndependenceNotificationTitle", liege.name],
-                                plugin.language["FactionDeclaredIndependenceNotificationBody", liege.name],
+                                plugin.language["FactionDeclaredIndependenceNotificationBody", liege.name]
                             )
                             liege.sendMessage(
                                 plugin.language["VassalDeclaredIndependenceNotificationTitle", faction.name],
-                                plugin.language["VassalDeclaredIndependenceNotificationBody", faction.name],
+                                plugin.language["VassalDeclaredIndependenceNotificationBody", faction.name]
                             )
                             plugin.server.onlinePlayers
                                 .filter { onlinePlayer ->
@@ -139,14 +139,14 @@ class MfFactionDeclareIndependenceCommand(
                                     }
                                 }.forEach { onlinePlayer ->
                                     onlinePlayer.sendMessage(
-                                        "$RED${plugin.language["FactionDeclaredIndependence", faction.name, liege.name]}",
+                                        "$RED${plugin.language["FactionDeclaredIndependence", faction.name, liege.name]}"
                                     )
                                 }
-                        },
+                        }
                     )
                 }
                 sender.sendMessage("${ChatColor.GREEN}${plugin.language["CommandFactionDeclareIndependenceSuccess", liege.name]}")
-            },
+            }
         )
         return true
     }
@@ -155,6 +155,6 @@ class MfFactionDeclareIndependenceCommand(
         sender: CommandSender,
         command: Command,
         label: String,
-        args: Array<out String>,
+        args: Array<out String>
     ) = emptyList<String>()
 }

@@ -8,7 +8,7 @@ import org.bukkit.command.CommandSender
 import org.bukkit.command.TabCompleter
 
 class MfFactionRelationshipCommand(
-    private val plugin: MedievalFactions,
+    private val plugin: MedievalFactions
 ) : CommandExecutor,
     TabCompleter {
     private val factionRelationshipViewCommand = MfFactionRelationshipViewCommand(plugin)
@@ -25,7 +25,7 @@ class MfFactionRelationshipCommand(
         sender: CommandSender,
         command: Command,
         label: String,
-        args: Array<out String>,
+        args: Array<out String>
     ): Boolean =
         when (args.firstOrNull()?.lowercase()) {
             in viewAliases -> factionRelationshipViewCommand.onCommand(sender, command, label, args.drop(1).toTypedArray())
@@ -41,7 +41,7 @@ class MfFactionRelationshipCommand(
         sender: CommandSender,
         command: Command,
         label: String,
-        args: Array<out String>,
+        args: Array<out String>
     ) = when {
         args.isEmpty() -> subcommands
         args.size == 1 -> subcommands.filter { it.startsWith(args[0].lowercase()) }

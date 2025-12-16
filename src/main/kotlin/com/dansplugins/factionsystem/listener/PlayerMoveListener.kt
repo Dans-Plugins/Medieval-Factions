@@ -16,7 +16,7 @@ import org.bukkit.event.player.PlayerMoveEvent
 import java.util.logging.Level.SEVERE
 
 class PlayerMoveListener(
-    private val plugin: MedievalFactions,
+    private val plugin: MedievalFactions
 ) : Listener {
     @EventHandler
     fun onPlayerMove(event: PlayerMoveEvent) {
@@ -60,19 +60,19 @@ class PlayerMoveListener(
                                 }
                             updatedFaction.sendMessage(
                                 plugin.language["AutoclaimDisabledNotificationTitle"],
-                                plugin.language["AutoclaimDisabledNotificationBody"],
+                                plugin.language["AutoclaimDisabledNotificationBody"]
                             )
                             return@Runnable
                         }
                         if (plugin.config.getBoolean("factions.contiguousClaims") &&
                             !claimService.isClaimAdjacent(
-                                playerFaction.id,
-                                *listOfNotNull(
-                                    to.world?.let {
-                                        MfChunkPosition(it.uid, to.chunk.x, to.chunk.z)
-                                    },
-                                ).toTypedArray(),
-                            ) &&
+                                    playerFaction.id,
+                                    *listOfNotNull(
+                                            to.world?.let {
+                                                MfChunkPosition(it.uid, to.chunk.x, to.chunk.z)
+                                            }
+                                        ).toTypedArray()
+                                ) &&
                             claimService.getClaims(playerFaction.id).isNotEmpty()
                         ) {
                             event.player.sendMessage("$RED${plugin.language["CommandFactionClaimNotContiguous"]}")
@@ -83,7 +83,7 @@ class PlayerMoveListener(
                                 }
                             updatedFaction.sendMessage(
                                 plugin.language["AutoclaimDisabledNotificationTitle"],
-                                plugin.language["AutoclaimDisabledNotificationBody"],
+                                plugin.language["AutoclaimDisabledNotificationBody"]
                             )
                             return@Runnable
                         }
@@ -125,15 +125,15 @@ class PlayerMoveListener(
                                 subtitle,
                                 plugin.config.getInt("factions.titleTerritoryFadeInLength"),
                                 plugin.config.getInt("factions.titleTerritoryDuration"),
-                                plugin.config.getInt("factions.titleTerritoryFadeOutLength"),
+                                plugin.config.getInt("factions.titleTerritoryFadeOutLength")
                             )
                         }
                         if (plugin.config.getBoolean("factions.actionBarTerritoryIndicator")) {
                             event.player.spigot().sendMessage(ACTION_BAR, *TextComponent.fromLegacyText(title))
                         }
-                    },
+                    }
                 )
-            },
+            }
         )
     }
 }

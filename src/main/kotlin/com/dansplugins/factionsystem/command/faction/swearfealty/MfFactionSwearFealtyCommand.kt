@@ -17,14 +17,14 @@ import org.bukkit.entity.Player
 import java.util.logging.Level.SEVERE
 
 class MfFactionSwearFealtyCommand(
-    private val plugin: MedievalFactions,
+    private val plugin: MedievalFactions
 ) : CommandExecutor,
     TabCompleter {
     override fun onCommand(
         sender: CommandSender,
         command: Command,
         label: String,
-        args: Array<out String>,
+        args: Array<out String>
     ): Boolean {
         if (!sender.hasPermission("mf.swearfealty")) {
             sender.sendMessage("$RED${plugin.language["CommandFactionSwearFealtyNoPermission"]}")
@@ -102,8 +102,8 @@ class MfFactionSwearFealtyCommand(
                         MfFactionRelationship(
                             factionId = faction.id,
                             targetId = target.id,
-                            type = LIEGE,
-                        ),
+                            type = LIEGE
+                        )
                     ).onFailure {
                         sender.sendMessage("$RED${plugin.language["CommandFactionSwearFealtyFailedToSaveRelationship"]}")
                         plugin.logger.log(SEVERE, "Failed to save faction relationship: ${it.reason.message}", it.reason.cause)
@@ -115,15 +115,15 @@ class MfFactionSwearFealtyCommand(
                     Runnable {
                         faction.sendMessage(
                             plugin.language["FactionFealtySwornNotificationTitle", target.name],
-                            plugin.language["FactionFealtySwornNotificationBody", target.name],
+                            plugin.language["FactionFealtySwornNotificationBody", target.name]
                         )
                         target.sendMessage(
                             plugin.language["FactionNewVassalNotificationTitle", faction.name],
-                            plugin.language["FactionNewVassalNotificationBody", faction.name],
+                            plugin.language["FactionNewVassalNotificationBody", faction.name]
                         )
-                    },
+                    }
                 )
-            },
+            }
         )
         return true
     }
@@ -132,7 +132,7 @@ class MfFactionSwearFealtyCommand(
         sender: CommandSender,
         command: Command,
         label: String,
-        args: Array<out String>,
+        args: Array<out String>
     ): List<String> {
         val factionService = plugin.services.factionService
         return when {

@@ -17,7 +17,7 @@ import java.util.logging.Level.SEVERE
 class MfGateService(
     private val plugin: MedievalFactions,
     private val gateRepo: MfGateRepository,
-    private val gateCreationContextRepo: MfGateCreationContextRepository,
+    private val gateCreationContextRepo: MfGateCreationContextRepository
 ) {
     private val gatesById: MutableMap<MfGateId, MfGate> = ConcurrentHashMap()
     val gates: List<MfGate>
@@ -43,7 +43,7 @@ class MfGateService(
                 } catch (e: Exception) {
                     plugin.logger.log(SEVERE, "Error during gate material review:", e)
                 }
-            },
+            }
         )
     }
 
@@ -70,7 +70,7 @@ class MfGateService(
      */
     fun save(
         gate: MfGate,
-        maxRetries: Int = 3,
+        maxRetries: Int = 3
     ) = resultFrom {
         var lastException: Exception? = null
         var currentGate = gate

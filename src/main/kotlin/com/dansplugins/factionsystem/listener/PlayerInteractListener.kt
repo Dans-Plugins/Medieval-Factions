@@ -39,7 +39,7 @@ import org.bukkit.inventory.EquipmentSlot.HAND
 import java.util.logging.Level.SEVERE
 
 class PlayerInteractListener(
-    private val plugin: MedievalFactions,
+    private val plugin: MedievalFactions
 ) : Listener {
     @EventHandler
     fun onPlayerInteract(event: PlayerInteractEvent) {
@@ -101,7 +101,7 @@ class PlayerInteractListener(
                         plugin.logger.log(SEVERE, "Failed to save player: ${it.reason.message}", it.reason.cause)
                         return@Runnable
                     }
-                },
+                }
             )
             return
         }
@@ -132,9 +132,9 @@ class PlayerInteractListener(
                         Runnable {
                             val owner = playerService.getPlayer(lockedBlock.playerId)
                             event.player.sendMessage(
-                                "$RED${plugin.language["LockProtectionBypassed", owner?.toBukkit()?.name ?: plugin.language["UnknownPlayer"]]}",
+                                "$RED${plugin.language["LockProtectionBypassed", owner?.toBukkit()?.name ?: plugin.language["UnknownPlayer"]]}"
                             )
-                        },
+                        }
                     )
                 } else {
                     plugin.server.scheduler.runTaskAsynchronously(
@@ -142,9 +142,9 @@ class PlayerInteractListener(
                         Runnable {
                             val owner = playerService.getPlayer(lockedBlock.playerId)
                             event.player.sendMessage(
-                                "$RED${plugin.language["BlockLocked", owner?.toBukkit()?.name ?: plugin.language["UnknownPlayer"]]}",
+                                "$RED${plugin.language["BlockLocked", owner?.toBukkit()?.name ?: plugin.language["UnknownPlayer"]]}"
                             )
-                        },
+                        }
                     )
                     event.isCancelled = true
                 }
@@ -189,7 +189,7 @@ class PlayerInteractListener(
 
     private fun lock(
         player: Player,
-        block: Block,
+        block: Block
     ) {
         val blockData = block.blockData
         val holder = (block.state as? Chest)?.inventory?.holder
@@ -235,7 +235,7 @@ class PlayerInteractListener(
                 if (existingLock != null) {
                     val existingLockOwner = playerService.getPlayer(existingLock.playerId)
                     player.sendMessage(
-                        "$RED${plugin.language["BlockLockAlreadyLocked", existingLockOwner?.toBukkit()?.name ?: plugin.language["UnknownPlayer"]]}",
+                        "$RED${plugin.language["BlockLockAlreadyLocked", existingLockOwner?.toBukkit()?.name ?: plugin.language["UnknownPlayer"]]}"
                     )
                     return@Runnable
                 }
@@ -245,13 +245,13 @@ class PlayerInteractListener(
                     return@Runnable
                 }
                 player.sendMessage("$GREEN${plugin.language["BlockLockSuccessful"]}")
-            },
+            }
         )
     }
 
     private fun unlock(
         player: Player,
-        block: Block,
+        block: Block
     ) {
         val lockService = plugin.services.lockService
         val lockedBlock = lockService.getLockedBlock(MfBlockPosition.fromBukkitBlock(block))
@@ -287,7 +287,7 @@ class PlayerInteractListener(
 
     private fun checkAccess(
         player: Player,
-        block: Block,
+        block: Block
     ) {
         val blockData = block.blockData
         val holder = (block.state as? Chest)?.inventory?.holder
@@ -332,20 +332,20 @@ class PlayerInteractListener(
                     plugin,
                     Runnable {
                         player.performCommand("accessors list ${lockedBlock.block.x} ${lockedBlock.block.y} ${lockedBlock.block.z}")
-                    },
+                    }
                 )
                 interactionService.setInteractionStatus(mfPlayer.id, null).onFailure {
                     player.sendMessage("$RED${plugin.language["BlockCheckAccessFailedToSetInteractionStatus"]}")
                     plugin.logger.log(SEVERE, "Failed to set interaction status: ${it.reason.message}", it.reason.cause)
                     return@Runnable
                 }
-            },
+            }
         )
     }
 
     private fun addAccessor(
         player: Player,
-        block: Block,
+        block: Block
     ) {
         player.performCommand("accessors add ${block.x} ${block.y} ${block.z}")
         plugin.server.scheduler.runTaskAsynchronously(
@@ -364,13 +364,13 @@ class PlayerInteractListener(
                     plugin.logger.log(SEVERE, "Failed to set interaction status: ${it.reason.message}", it.reason.cause)
                     return@Runnable
                 }
-            },
+            }
         )
     }
 
     private fun removeAccessor(
         player: Player,
-        block: Block,
+        block: Block
     ) {
         player.performCommand("accessors remove ${block.x} ${block.y} ${block.z}")
         plugin.server.scheduler.runTaskAsynchronously(
@@ -389,13 +389,13 @@ class PlayerInteractListener(
                     plugin.logger.log(SEVERE, "Failed to set interaction status: ${it.reason.message}", it.reason.cause)
                     return@Runnable
                 }
-            },
+            }
         )
     }
 
     private fun selectGatePosition1(
         player: Player,
-        block: Block,
+        block: Block
     ) {
         plugin.server.scheduler.runTaskAsynchronously(
             plugin,
@@ -430,13 +430,13 @@ class PlayerInteractListener(
                     return@Runnable
                 }
                 player.sendMessage("$GREEN${plugin.language["GateCreateSelectSecondPosition"]}")
-            },
+            }
         )
     }
 
     private fun selectGatePosition2(
         player: Player,
-        block: Block,
+        block: Block
     ) {
         plugin.server.scheduler.runTaskAsynchronously(
             plugin,
@@ -471,13 +471,13 @@ class PlayerInteractListener(
                     return@Runnable
                 }
                 player.sendMessage("$GREEN${plugin.language["GateCreateSelectTrigger"]}")
-            },
+            }
         )
     }
 
     private fun selectGateTrigger(
         player: Player,
-        block: Block,
+        block: Block
     ) {
         plugin.server.scheduler.runTaskAsynchronously(
             plugin,
@@ -507,13 +507,13 @@ class PlayerInteractListener(
                         return@Runnable
                     }
                 createGate(player, updatedCtx)
-            },
+            }
         )
     }
 
     private fun createGate(
         player: Player,
-        ctx: MfGateCreationContext,
+        ctx: MfGateCreationContext
     ) {
         plugin.server.scheduler.runTask(
             plugin,
@@ -586,8 +586,8 @@ class PlayerInteractListener(
                                     ?.lowercase()
                                     ?.replace('_', ' ')
                                     ?: plugin.language["UnrecognisedBlock"]
-                            },
-                        ]}",
+                            }
+                        ]}"
                     )
                     restartGateCreation(player, ctx)
                     return@syncValidations
@@ -632,8 +632,8 @@ class PlayerInteractListener(
                                     factionId = faction.id,
                                     area = area,
                                     trigger = ctx.trigger,
-                                    material = material,
-                                ),
+                                    material = material
+                                )
                             ).onFailure {
                                 player.sendMessage("$RED${plugin.language["GateCreateFailedToSaveGate"]}")
                                 plugin.logger.log(SEVERE, "Failed to save gate: ${it.reason.message}", it.reason.cause)
@@ -650,15 +650,15 @@ class PlayerInteractListener(
                             return@updateInteractionStatus
                         }
                         player.sendMessage("$GREEN${plugin.language["GateCreated"]}")
-                    },
+                    }
                 )
-            },
+            }
         )
     }
 
     private fun restartGateCreation(
         player: Player,
-        ctx: MfGateCreationContext,
+        ctx: MfGateCreationContext
     ) {
         plugin.server.scheduler.runTaskAsynchronously(
             plugin,
@@ -670,13 +670,13 @@ class PlayerInteractListener(
                     return@Runnable
                 }
                 player.sendMessage("$GREEN${plugin.language["GateCreateSelectFirstPosition"]}")
-            },
+            }
         )
     }
 
     private fun cancelGateCreation(
         player: Player,
-        ctx: MfGateCreationContext,
+        ctx: MfGateCreationContext
     ) {
         plugin.server.scheduler.runTaskAsynchronously(
             plugin,
@@ -687,7 +687,7 @@ class PlayerInteractListener(
                     plugin.logger.log(SEVERE, "Failed to set interaction status: ${it.reason.message}", it.reason.cause)
                     return@Runnable
                 }
-            },
+            }
         )
     }
 }

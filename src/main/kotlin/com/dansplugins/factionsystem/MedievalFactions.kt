@@ -183,7 +183,7 @@ class MedievalFactions : JavaPlugin() {
             DSL.using(
                 dataSource,
                 dialect,
-                jooqSettings,
+                jooqSettings
             )
 
         flags = MfFlags(this)
@@ -238,7 +238,7 @@ class MedievalFactions : JavaPlugin() {
                 duelService,
                 potionService,
                 teleportService,
-                mapService,
+                mapService
             )
         setupRpkLockService()
 
@@ -246,12 +246,12 @@ class MedievalFactions : JavaPlugin() {
         metrics.addCustomChart(
             SimplePie("language_used") {
                 config.getString("language")
-            },
+            }
         )
         metrics.addCustomChart(
             SimplePie("database_dialect") {
                 config.getString("database.dialect")
-            },
+            }
         )
         metrics.addCustomChart(
             SimplePie("average_claims") {
@@ -261,7 +261,7 @@ class MedievalFactions : JavaPlugin() {
                     }.average()
                     .roundToInt()
                     .toString()
-            },
+            }
         )
         metrics.addCustomChart(
             SimplePie("total_claims") {
@@ -269,37 +269,37 @@ class MedievalFactions : JavaPlugin() {
                     .sumOf {
                         claimService.getClaims(it.id).size
                     }.toString()
-            },
+            }
         )
         metrics.addCustomChart(
             SimplePie("initial_power") {
                 config.getDouble("players.initialPower").toString()
-            },
+            }
         )
         metrics.addCustomChart(
             SimplePie("max_power") {
                 config.getDouble("players.maxPower").toString()
-            },
+            }
         )
         metrics.addCustomChart(
             SimplePie("hours_to_reach_max_power") {
                 config.getDouble("players.hoursToReachMaxPower").toString()
-            },
+            }
         )
         metrics.addCustomChart(
             SimplePie("hours_to_reach_min_power") {
                 config.getDouble("players.hoursToReachMinPower").toString()
-            },
+            }
         )
         metrics.addCustomChart(
             SimplePie("limit_land") {
                 config.getBoolean("factions.limitLand").toString()
-            },
+            }
         )
         metrics.addCustomChart(
             SimplePie("allow_neutrality") {
                 config.getBoolean("factions.allowNeutrality").toString()
-            },
+            }
         )
 
         if (config.getBoolean("migrateMf4")) {
@@ -351,7 +351,7 @@ class MedievalFactions : JavaPlugin() {
             PlayerPickupItemListener(this),
             PlayerQuitListener(this),
             PlayerTeleportListener(this),
-            PotionSplashListener(this),
+            PotionSplashListener(this)
         )
 
         getCommand("faction")?.setExecutor(MfFactionCommand(this))
@@ -374,9 +374,9 @@ class MedievalFactions : JavaPlugin() {
                         onlineMfPlayerIds,
                         initialPower,
                         onlinePlayers,
-                        disbandZeroPowerFactions,
+                        disbandZeroPowerFactions
                     )
-                },
+                }
             )
         }, (15 - (LocalTime.now().minute % 15)) * 60 * 20L, 18000L)
         server.scheduler.scheduleSyncRepeatingTask(this, {
@@ -448,8 +448,8 @@ class MedievalFactions : JavaPlugin() {
                             language[
                                 "DuelTie",
                                 duel.challengerId.toBukkitPlayer().name ?: language["UnknownPlayer"],
-                                duel.challengedId.toBukkitPlayer().name ?: language["UnknownPlayer"],
-                            ],
+                                duel.challengedId.toBukkitPlayer().name ?: language["UnknownPlayer"]
+                            ]
                         )
                     }
                     server.scheduler.runTaskAsynchronously(
@@ -459,7 +459,7 @@ class MedievalFactions : JavaPlugin() {
                                 logger.log(SEVERE, "Failed to delete duel: ${it.reason.message}", it.reason.cause)
                                 return@Runnable
                             }
-                        },
+                        }
                     )
                 }
             }
@@ -475,13 +475,13 @@ class MedievalFactions : JavaPlugin() {
                         player.spigot().sendMessage(
                             ACTION_BAR,
                             *TextComponent.fromLegacyText(
-                                "${ChatColor.of(config.getString("wilderness.color"))}${language["Wilderness"]}",
-                            ),
+                                "${ChatColor.of(config.getString("wilderness.color"))}${language["Wilderness"]}"
+                            )
                         )
                     } else {
                         player.spigot().sendMessage(
                             ACTION_BAR,
-                            *TextComponent.fromLegacyText("${ChatColor.of(faction.flags[flags.color])}${faction.name}"),
+                            *TextComponent.fromLegacyText("${ChatColor.of(faction.flags[flags.color])}${faction.name}")
                         )
                     }
                 }
@@ -493,7 +493,7 @@ class MedievalFactions : JavaPlugin() {
         onlineMfPlayerIds: List<MfPlayerId>,
         initialPower: Double,
         onlinePlayers: Collection<Player>,
-        disbandZeroPowerFactions: Boolean,
+        disbandZeroPowerFactions: Boolean
     ) {
         val playerService = services.playerService
         val factionService = services.factionService
@@ -518,14 +518,14 @@ class MedievalFactions : JavaPlugin() {
                         onlinePlayer.sendMessage("$GREEN${language["PowerIncreased", powerIncrease.toString()]}")
                     }
                 }
-            },
+            }
         )
         if (disbandZeroPowerFactions) {
             factionService.factions.forEach { faction ->
                 if (faction.power <= 0.0) {
                     faction.sendMessage(
                         language["FactionDisbandedZeroPowerNotificationTitle"],
-                        language["FactionDisbandedZeroPowerNotificationBody"],
+                        language["FactionDisbandedZeroPowerNotificationBody"]
                     )
                     factionService.delete(faction.id).onFailure {
                         logger.log(SEVERE, "Failed to delete faction: ${it.reason.message}", it.reason.cause)

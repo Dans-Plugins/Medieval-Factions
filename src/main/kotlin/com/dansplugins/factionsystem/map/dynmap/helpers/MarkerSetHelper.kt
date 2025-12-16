@@ -18,6 +18,6 @@ class MarkerSetHelper {
     fun getOrCreateMarkerSet(
         markerApi: MarkerAPI,
         setId: String,
-        setName: String,
+        setName: String
     ): MarkerSet = markerApi.getMarkerSet(setId) ?: markerApi.createMarkerSet(setId, setName, null, false)
 }

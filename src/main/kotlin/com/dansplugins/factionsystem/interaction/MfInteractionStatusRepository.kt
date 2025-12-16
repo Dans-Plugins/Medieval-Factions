@@ -7,6 +7,6 @@ interface MfInteractionStatusRepository {
 
     fun setInteractionStatus(
         playerId: MfPlayerId,
-        status: MfInteractionStatus?,
+        status: MfInteractionStatus?
     )
 }

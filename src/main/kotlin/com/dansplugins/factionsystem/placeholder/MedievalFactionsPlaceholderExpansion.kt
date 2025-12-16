@@ -18,7 +18,7 @@ import java.text.DecimalFormatSymbols
 import kotlin.math.floor
 
 class MedievalFactionsPlaceholderExpansion(
-    private val plugin: MedievalFactions,
+    private val plugin: MedievalFactions
 ) : PlaceholderExpansion(),
     Relational {
     private val decimalFormat = DecimalFormat("0", DecimalFormatSymbols.getInstance(plugin.language.locale))
@@ -35,7 +35,7 @@ class MedievalFactionsPlaceholderExpansion(
 
     override fun onRequest(
         player: OfflinePlayer?,
-        params: String,
+        params: String
     ): String? {
         if (player == null) return null
         return when (val paramsLowercase = params.lowercase()) {
@@ -84,7 +84,7 @@ class MedievalFactionsPlaceholderExpansion(
     override fun onPlaceholderRequest(
         one: Player?,
         two: Player?,
-        identifier: String,
+        identifier: String
     ): String? {
         if (one == null || two == null) return null
         return when (identifier) {
@@ -270,7 +270,7 @@ class MedievalFactionsPlaceholderExpansion(
 
     private fun isPlayerFactionEnemy(
         player: OfflinePlayer,
-        faction: MfFaction,
+        faction: MfFaction
     ): String {
         val playerFaction =
             getPlayerFaction(player)
@@ -279,12 +279,12 @@ class MedievalFactionsPlaceholderExpansion(
         return (
             relationshipService.getRelationships(playerFaction.id, faction.id).any { it.type == AT_WAR } ||
                 relationshipService.getRelationships(faction.id, playerFaction.id).any { it.type == AT_WAR }
-        ).toString()
+            ).toString()
     }
 
     private fun isPlayerFactionAlly(
         player: OfflinePlayer,
-        faction: MfFaction,
+        faction: MfFaction
     ): String {
         val playerFaction =
             getPlayerFaction(player)
@@ -293,12 +293,12 @@ class MedievalFactionsPlaceholderExpansion(
         return (
             relationshipService.getRelationships(playerFaction.id, faction.id).any { it.type == ALLY } &&
                 relationshipService.getRelationships(faction.id, playerFaction.id).any { it.type == ALLY }
-        ).toString()
+            ).toString()
     }
 
     private fun getFactionFlagValue(
         player: OfflinePlayer,
-        flag: MfFlag<*>,
+        flag: MfFlag<*>
     ): String {
         val playerFaction =
             getPlayerFaction(player)
@@ -308,7 +308,7 @@ class MedievalFactionsPlaceholderExpansion(
 
     private fun getPlayerFactionEnemies(
         one: Player,
-        two: Player,
+        two: Player
     ): String {
         val factionOne =
             getPlayerFaction(one)
@@ -320,12 +320,12 @@ class MedievalFactionsPlaceholderExpansion(
         return (
             relationshipService.getRelationships(factionOne.id, factionTwo.id).any { it.type == AT_WAR } ||
                 relationshipService.getRelationships(factionTwo.id, factionOne.id).any { it.type == AT_WAR }
-        ).toString()
+            ).toString()
     }
 
     private fun getPlayerFactionAllies(
         one: Player,
-        two: Player,
+        two: Player
     ): String {
         val factionOne =
             getPlayerFaction(one)
@@ -337,12 +337,12 @@ class MedievalFactionsPlaceholderExpansion(
         return (
             relationshipService.getRelationships(factionOne.id, factionTwo.id).any { it.type == ALLY } &&
                 relationshipService.getRelationships(factionTwo.id, factionOne.id).any { it.type == ALLY }
-        ).toString()
+            ).toString()
     }
 
     private fun getPlayerFactionVassal(
         one: Player,
-        two: Player,
+        two: Player
     ): String {
         val factionOne =
             getPlayerFaction(one)
@@ -354,12 +354,12 @@ class MedievalFactionsPlaceholderExpansion(
         return (
             relationshipService.getRelationships(factionOne.id, factionTwo.id).any { it.type == VASSAL } &&
                 relationshipService.getRelationships(factionTwo.id, factionOne.id).any { it.type == LIEGE }
-        ).toString()
+            ).toString()
     }
 
     private fun getPlayerFactionLiege(
         one: Player,
-        two: Player,
+        two: Player
     ): String {
         val factionOne =
             getPlayerFaction(one)
@@ -371,6 +371,6 @@ class MedievalFactionsPlaceholderExpansion(
         return (
             relationshipService.getRelationships(factionOne.id, factionTwo.id).any { it.type == LIEGE } &&
                 relationshipService.getRelationships(factionTwo.id, factionOne.id).any { it.type == VASSAL }
-        ).toString()
+            ).toString()
     }
 }

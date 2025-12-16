@@ -13,14 +13,14 @@ import org.bukkit.entity.Player
 import java.util.logging.Level
 
 class MfFactionHomeCommand(
-    private val plugin: MedievalFactions,
+    private val plugin: MedievalFactions
 ) : CommandExecutor,
     TabCompleter {
     override fun onCommand(
         sender: CommandSender,
         command: Command,
         label: String,
-        args: Array<out String>,
+        args: Array<out String>
     ): Boolean {
         if (!sender.hasPermission("mf.home")) {
             sender.sendMessage("$RED${plugin.language["CommandFactionHomeNoPermission"]}")
@@ -61,9 +61,9 @@ class MfFactionHomeCommand(
                     plugin,
                     Runnable {
                         plugin.services.teleportService.teleport(sender, home, "$GREEN${plugin.language["CommandFactionHomeSuccess"]}")
-                    },
+                    }
                 )
-            },
+            }
         )
         return true
     }
@@ -72,6 +72,6 @@ class MfFactionHomeCommand(
         sender: CommandSender,
         command: Command,
         label: String,
-        args: Array<out String>,
+        args: Array<out String>
     ) = emptyList<String>()
 }

@@ -13,7 +13,7 @@ import java.util.concurrent.CopyOnWriteArrayList
 class MfDuelService(
     private val plugin: MedievalFactions,
     private val duelRepo: MfDuelRepository,
-    private val duelInviteRepo: MfDuelInviteRepository,
+    private val duelInviteRepo: MfDuelInviteRepository
 ) {
     private val duelsById = ConcurrentHashMap<MfDuelId, MfDuel>()
     val duels: List<MfDuel>
@@ -62,7 +62,7 @@ class MfDuelService(
     @JvmName("getInviteByInviterIdAndInviteeId")
     fun getInvite(
         inviter: MfPlayerId,
-        invitee: MfPlayerId,
+        invitee: MfPlayerId
     ) = duelInvites.singleOrNull { it.inviterId == inviter && it.inviteeId == invitee }
 
     @JvmName("getInvitesByInviteeId")
@@ -83,7 +83,7 @@ class MfDuelService(
     @JvmName("deleteInviteByInviterIdAndInviteeId")
     fun deleteInvite(
         inviter: MfPlayerId,
-        invitee: MfPlayerId,
+        invitee: MfPlayerId
     ) = resultFrom {
         val result = duelInviteRepo.deleteInvite(inviter, invitee)
         val duelInvitesToRemove = duelInvites.filter { it.inviterId == inviter && it.inviteeId == invitee }

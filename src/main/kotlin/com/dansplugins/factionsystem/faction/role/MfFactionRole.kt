@@ -11,7 +11,7 @@ data class MfFactionRole(
     @get:JvmName("getId")
     val id: MfFactionRoleId = MfFactionRoleId.generate(),
     val name: String,
-    val permissionsByName: Map<String, Boolean?> = emptyMap(),
+    val permissionsByName: Map<String, Boolean?> = emptyMap()
 ) : ConfigurationSerializable {
     val permissions: Map<MfFactionPermission, Boolean?>
         get() =
@@ -23,7 +23,7 @@ data class MfFactionRole(
 
     fun hasPermission(
         faction: MfFaction,
-        permission: MfFactionPermission,
+        permission: MfFactionPermission
     ) = permissions[permission]
         ?: faction.defaultPermissions[permission]
         ?: permission.default
@@ -34,7 +34,7 @@ data class MfFactionRole(
         mapOf(
             "id" to id.value,
             "name" to name,
-            "permissions" to permissionsByName,
+            "permissions" to permissionsByName
         )
 
     companion object {
@@ -47,7 +47,7 @@ data class MfFactionRole(
                 Bukkit.getPluginManager().getPlugin("MedievalFactions") as MedievalFactions,
                 id,
                 name,
-                permissionsByName,
+                permissionsByName
             )
         }
     }

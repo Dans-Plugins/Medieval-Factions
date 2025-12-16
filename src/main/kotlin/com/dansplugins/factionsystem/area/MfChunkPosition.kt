@@ -7,14 +7,14 @@ import java.util.UUID
 data class MfChunkPosition(
     val worldId: UUID,
     val x: Int,
-    val z: Int,
+    val z: Int
 ) {
     companion object {
         fun fromBukkit(chunk: Chunk) =
             MfChunkPosition(
                 chunk.world.uid,
                 chunk.x,
-                chunk.z,
+                chunk.z
             )
     }
 

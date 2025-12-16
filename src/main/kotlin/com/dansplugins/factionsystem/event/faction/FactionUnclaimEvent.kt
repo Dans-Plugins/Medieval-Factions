@@ -10,7 +10,7 @@ class FactionUnclaimEvent(
     @get:JvmName("getFactionId")
     override val factionId: MfFactionId,
     val claim: MfClaimedChunk,
-    isAsync: Boolean,
+    isAsync: Boolean
 ) : Event(isAsync),
     FactionEvent,
     Cancellable {

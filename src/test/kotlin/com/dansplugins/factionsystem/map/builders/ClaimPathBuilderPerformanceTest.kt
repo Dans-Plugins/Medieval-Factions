@@ -58,7 +58,7 @@ class ClaimPathBuilderPerformanceTest {
             assertTrue(
                 scalingFactor < 12.0,
                 "Scaling factor $scalingFactor suggests worse than O(n) performance. " +
-                    "Expected < 12x for 4x input increase (O(n²) would be ~16x)",
+                    "Expected < 12x for 4x input increase (O(n²) would be ~16x)"
             )
         }
     }
@@ -109,7 +109,7 @@ class ClaimPathBuilderPerformanceTest {
         assertTrue(
             timePerClaim < 1.0,
             "Time per claim (${timePerClaim}ms) is too high for $lastSize claims. " +
-                "This suggests O(n²) complexity. Expected < 1.0ms per claim with O(n).",
+                "This suggests O(n²) complexity. Expected < 1.0ms per claim with O(n)."
         )
     }
 
@@ -144,7 +144,7 @@ class ClaimPathBuilderPerformanceTest {
             time < 100,
             "Processing 1024 claims took ${time}ms. " +
                 "Expected < 100ms with HashSet optimization. " +
-                "Old O(n²) algorithm would take ~4000ms.",
+                "Old O(n²) algorithm would take ~4000ms."
         )
     }
 

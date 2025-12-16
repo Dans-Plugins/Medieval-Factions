@@ -17,14 +17,14 @@ import org.bukkit.entity.Player
 import java.util.logging.Level
 
 class MfFactionAllyCommand(
-    private val plugin: MedievalFactions,
+    private val plugin: MedievalFactions
 ) : CommandExecutor,
     TabCompleter {
     override fun onCommand(
         sender: CommandSender,
         command: Command,
         label: String,
-        args: Array<out String>,
+        args: Array<out String>
     ): Boolean {
         if (!sender.hasPermission("mf.ally")) {
             sender.sendMessage("$RED${plugin.language["CommandFactionAllyNoPermission"]}")
@@ -99,13 +99,13 @@ class MfFactionAllyCommand(
                         Runnable {
                             faction.sendMessage(
                                 plugin.language["FactionAllyNotificationTitle", target.name],
-                                plugin.language["FactionAllyNotificationBody", target.name],
+                                plugin.language["FactionAllyNotificationBody", target.name]
                             )
                             target.sendMessage(
                                 plugin.language["FactionAllyNotificationTitle", faction.name],
-                                plugin.language["FactionAllyNotificationBody", faction.name],
+                                plugin.language["FactionAllyNotificationBody", faction.name]
                             )
-                        },
+                        }
                     )
                 } else {
                     sender.sendMessage("$GREEN${plugin.language["CommandFactionAllyRequested", target.name]}")
@@ -114,16 +114,16 @@ class MfFactionAllyCommand(
                         Runnable {
                             faction.sendMessage(
                                 plugin.language["FactionAllyRequestSentNotificationTitle", sender.name, target.name],
-                                plugin.language["FactionAllyRequestSentNotificationBody", sender.name, target.name],
+                                plugin.language["FactionAllyRequestSentNotificationBody", sender.name, target.name]
                             )
                             target.sendMessage(
                                 plugin.language["FactionAllyRequestReceivedNotificationTitle", sender.name, faction.name],
-                                plugin.language["FactionAllyRequestReceivedNotificationBody", sender.name, faction.name],
+                                plugin.language["FactionAllyRequestReceivedNotificationBody", sender.name, faction.name]
                             )
-                        },
+                        }
                     )
                 }
-            },
+            }
         )
         return true
     }
@@ -132,7 +132,7 @@ class MfFactionAllyCommand(
         sender: CommandSender,
         command: Command,
         label: String,
-        args: Array<out String>,
+        args: Array<out String>
     ): List<String> {
         val factionService = plugin.services.factionService
         return when {

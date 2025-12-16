@@ -26,14 +26,14 @@ import net.md_5.bungee.api.ChatColor as SpigotChatColor
 import org.bukkit.ChatColor as BukkitChatColor
 
 class MfAccessorsListCommand(
-    private val plugin: MedievalFactions,
+    private val plugin: MedievalFactions
 ) : CommandExecutor,
     TabCompleter {
     override fun onCommand(
         sender: CommandSender,
         command: Command,
         label: String,
-        args: Array<out String>,
+        args: Array<out String>
     ): Boolean {
         if (!sender.hasPermission("mf.checkaccess") && !sender.hasPermission("mf.accessors.list")) {
             sender.sendMessage("${BukkitChatColor.RED}${plugin.language["CommandAccessorsListNoPermission"]}")
@@ -83,11 +83,11 @@ class MfAccessorsListCommand(
                         lazy {
                             arrayOf(
                                 TextComponent(
-                                    plugin.language["CommandAccessorsListTitle"],
+                                    plugin.language["CommandAccessorsListTitle"]
                                 ).apply {
                                     color = SpigotChatColor.AQUA
                                     isBold = true
-                                },
+                                }
                             )
                         },
                         lockedBlock.accessors.map { accessor ->
@@ -99,7 +99,7 @@ class MfAccessorsListCommand(
                                         clickEvent =
                                             ClickEvent(
                                                 RUN_COMMAND,
-                                                "/accessors remove ${lockedBlock.block.x} ${lockedBlock.block.y} ${lockedBlock.block.z} ${accessor.value}",
+                                                "/accessors remove ${lockedBlock.block.x} ${lockedBlock.block.y} ${lockedBlock.block.z} ${accessor.value}"
                                             )
                                         hoverEvent =
                                             HoverEvent(
@@ -107,24 +107,24 @@ class MfAccessorsListCommand(
                                                 Text(
                                                     plugin.language[
                                                         "CommandAccessorsListDeleteAccessorButtonHover", player?.toBukkit()?.name
-                                                            ?: plugin.language["UnknownPlayer"],
-                                                    ],
-                                                ),
+                                                            ?: plugin.language["UnknownPlayer"]
+                                                    ]
+                                                )
                                             )
                                     },
                                     if (player != null) {
                                         TextComponent(
-                                            player.toBukkit().name,
+                                            player.toBukkit().name
                                         ).apply {
                                             color = SpigotChatColor.GRAY
                                         }
                                     } else {
                                         TextComponent(
-                                            "Player not found",
+                                            "Player not found"
                                         ).apply {
                                             color = SpigotChatColor.RED
                                         }
-                                    },
+                                    }
                                 )
                             }
                         } +
@@ -133,19 +133,19 @@ class MfAccessorsListCommand(
                                 return@lazy arrayOf(
                                     if (player != null) {
                                         TextComponent(
-                                            player.toBukkit().name,
+                                            player.toBukkit().name
                                         ).apply {
                                             color = SpigotChatColor.GRAY
                                         }
                                     } else {
                                         TextComponent(
-                                            "Player not found",
+                                            "Player not found"
                                         ).apply {
                                             color = SpigotChatColor.RED
                                         }
-                                    },
+                                    }
                                 )
-                            },
+                            }
                     ) { page -> "/accessors list ${page + 1}" }
                 if (pageNumber !in view.pages.indices) {
                     sender.sendMessage("${BukkitChatColor.RED}${plugin.language["CommandAccessorsListInvalidPageNumber"]}")
@@ -159,11 +159,11 @@ class MfAccessorsListCommand(
                             clickEvent =
                                 ClickEvent(
                                     RUN_COMMAND,
-                                    "/accessors add ${lockedBlock.block.x} ${lockedBlock.block.y} ${lockedBlock.block.z}",
+                                    "/accessors add ${lockedBlock.block.x} ${lockedBlock.block.y} ${lockedBlock.block.z}"
                                 )
                             hoverEvent =
                                 HoverEvent(SHOW_TEXT, Text(plugin.language["CommandAccessorsListAddAccessorHover"]))
-                        },
+                        }
                     )
                 }
             }
@@ -186,7 +186,7 @@ class MfAccessorsListCommand(
                         return@Runnable
                     }
                     sender.sendMessage("${BukkitChatColor.GREEN}${plugin.language["CommandAccessorsListSelectBlock"]}")
-                },
+                }
             )
         }
         return true
@@ -196,6 +196,6 @@ class MfAccessorsListCommand(
         sender: CommandSender,
         command: Command,
         label: String,
-        args: Array<out String>,
+        args: Array<out String>
     ) = emptyList<String>()
 }

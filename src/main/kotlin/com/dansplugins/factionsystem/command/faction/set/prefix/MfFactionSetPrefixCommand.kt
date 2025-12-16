@@ -16,7 +16,7 @@ import org.bukkit.entity.Player
 import java.util.logging.Level
 
 class MfFactionSetPrefixCommand(
-    private val plugin: MedievalFactions,
+    private val plugin: MedievalFactions
 ) : CommandExecutor,
     TabCompleter {
     private val conversationFactory =
@@ -41,7 +41,7 @@ class MfFactionSetPrefixCommand(
 
         override fun acceptInput(
             context: ConversationContext,
-            input: String?,
+            input: String?
         ): Prompt? {
             val conversable = context.forWhom
             if (conversable !is Player) return END_OF_CONVERSATION
@@ -55,7 +55,7 @@ class MfFactionSetPrefixCommand(
         sender: CommandSender,
         command: Command,
         label: String,
-        args: Array<out String>,
+        args: Array<out String>
     ): Boolean {
         if (!sender.hasPermission("mf.prefix")) {
             sender.sendMessage("${ChatColor.RED}${plugin.language["CommandFactionSetPrefixNoPermission"]}")
@@ -75,7 +75,7 @@ class MfFactionSetPrefixCommand(
 
     private fun setFactionPrefix(
         player: Player,
-        prefix: String,
+        prefix: String
     ) {
         plugin.server.scheduler.runTaskAsynchronously(
             plugin,
@@ -109,9 +109,9 @@ class MfFactionSetPrefixCommand(
                     plugin,
                     Runnable {
                         player.performCommand("faction info")
-                    },
+                    }
                 )
-            },
+            }
         )
     }
 
@@ -119,6 +119,6 @@ class MfFactionSetPrefixCommand(
         sender: CommandSender,
         command: Command,
         label: String,
-        args: Array<out String>,
+        args: Array<out String>
     ) = emptyList<String>()
 }

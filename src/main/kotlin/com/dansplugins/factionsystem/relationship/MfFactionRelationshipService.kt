@@ -19,7 +19,7 @@ import java.util.concurrent.ConcurrentHashMap
 
 class MfFactionRelationshipService(
     private val plugin: MedievalFactions,
-    private val repository: MfFactionRelationshipRepository,
+    private val repository: MfFactionRelationshipRepository
 ) {
     private val relationshipsById: MutableMap<MfFactionRelationshipId, MfFactionRelationship> = ConcurrentHashMap()
     private val relationships: List<MfFactionRelationship>
@@ -38,7 +38,7 @@ class MfFactionRelationshipService(
     @JvmName("getRelationshipsByFactionIdAndTargetId")
     fun getRelationships(
         factionId: MfFactionId,
-        targetId: MfFactionId,
+        targetId: MfFactionId
     ): List<MfFactionRelationship> = relationships.filter { it.factionId == factionId && it.targetId == targetId }
 
     @JvmName("getRelationshipsByFactionId")
@@ -47,7 +47,7 @@ class MfFactionRelationshipService(
     @JvmName("getRelationshipsByFactionIdAndType")
     fun getRelationships(
         factionId: MfFactionId,
-        type: MfFactionRelationshipType,
+        type: MfFactionRelationshipType
     ): List<MfFactionRelationship> = relationships.filter { it.factionId == factionId && it.type == type }
 
     fun save(relationship: MfFactionRelationship): Result4k<MfFactionRelationship, ServiceFailure> =
@@ -86,7 +86,7 @@ class MfFactionRelationshipService(
     fun getVassalTree(factionId: MfFactionId): MfVassalNode =
         MfVassalNode(
             factionId,
-            getVassals(factionId).map(::getVassalTree),
+            getVassals(factionId).map(::getVassalTree)
         )
 
     @JvmName("getLiegeChainByFactionId")

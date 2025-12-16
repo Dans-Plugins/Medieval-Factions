@@ -6,7 +6,7 @@ import com.dansplugins.factionsystem.jooq.Tables.MF_LAW
 import org.jooq.DSLContext
 
 class JooqMfLawRepository(
-    private val dsl: DSLContext,
+    private val dsl: DSLContext
 ) : MfLawRepository {
     override fun getLaw(id: MfLawId): MfLaw? =
         dsl
@@ -17,7 +17,7 @@ class JooqMfLawRepository(
 
     override fun getLaw(
         factionId: MfFactionId,
-        index: Int?,
+        index: Int?
     ): MfLaw? =
         dsl
             .selectFrom(MF_LAW)
@@ -74,7 +74,7 @@ class JooqMfLawRepository(
 
     override fun move(
         law: MfLaw,
-        number: Int,
+        number: Int
     ) {
         if (law.number == null) return
         if (law.number > number) {
@@ -109,6 +109,6 @@ class JooqMfLawRepository(
             version,
             MfFactionId(factionId),
             text,
-            number,
+            number
         )
 }

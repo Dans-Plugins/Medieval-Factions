@@ -5,7 +5,7 @@ import com.dansplugins.factionsystem.faction.MfFactionId
 data class MfLiegeNode(
     @get:JvmName("getFactionId")
     val factionId: MfFactionId,
-    val liege: MfLiegeNode?,
+    val liege: MfLiegeNode?
 ) {
     @JvmName("contains")
     fun contains(factionId: MfFactionId): Boolean = liege != null && (liege.factionId == factionId || liege.contains(factionId))

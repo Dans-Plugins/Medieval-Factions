@@ -12,14 +12,14 @@ import org.bukkit.command.TabCompleter
 import java.util.logging.Level.SEVERE
 
 class MfFactionWhoCommand(
-    private val plugin: MedievalFactions,
+    private val plugin: MedievalFactions
 ) : CommandExecutor,
     TabCompleter {
     override fun onCommand(
         sender: CommandSender,
         command: Command,
         label: String,
-        args: Array<out String>,
+        args: Array<out String>
     ): Boolean {
         if (!sender.hasPermission("mf.who")) {
             sender.sendMessage("$RED${plugin.language["CommandFactionWhoNoPermission"]}")
@@ -49,14 +49,14 @@ class MfFactionWhoCommand(
                 val faction = factionService.getFaction(targetMfPlayer.id)
                 if (faction == null) {
                     sender.sendMessage(
-                        "$RED${plugin.language["CommandFactionWhoNotInAFaction", target.name ?: plugin.language["UnknownPlayer"]]}",
+                        "$RED${plugin.language["CommandFactionWhoNotInAFaction", target.name ?: plugin.language["UnknownPlayer"]]}"
                     )
                     return@Runnable
                 }
                 sender.sendMessage(
-                    "$GREEN${plugin.language["CommandFactionWhoSuccess", target.name ?: plugin.language["UnknownPlayer"], faction.name]}",
+                    "$GREEN${plugin.language["CommandFactionWhoSuccess", target.name ?: plugin.language["UnknownPlayer"], faction.name]}"
                 )
-            },
+            }
         )
         return true
     }
@@ -65,7 +65,7 @@ class MfFactionWhoCommand(
         sender: CommandSender,
         command: Command,
         label: String,
-        args: Array<out String>,
+        args: Array<out String>
     ) = when {
         args.isEmpty() ->
             plugin.server.offlinePlayers

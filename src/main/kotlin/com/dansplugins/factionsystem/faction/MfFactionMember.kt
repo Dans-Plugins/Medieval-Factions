@@ -7,7 +7,7 @@ import com.dansplugins.factionsystem.player.MfPlayerId
 data class MfFactionMember(
     @get:JvmName("getPlayerId")
     val playerId: MfPlayerId,
-    val role: MfFactionRole,
+    val role: MfFactionRole
 )
 
 fun MfPlayer.withRole(role: MfFactionRole) = MfFactionMember(this.id, role)

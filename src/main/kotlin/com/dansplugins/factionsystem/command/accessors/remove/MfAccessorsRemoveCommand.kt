@@ -26,7 +26,7 @@ import java.util.UUID
 import java.util.logging.Level
 
 class MfAccessorsRemoveCommand(
-    private val plugin: MedievalFactions,
+    private val plugin: MedievalFactions
 ) : CommandExecutor,
     TabCompleter {
     private val conversationFactory =
@@ -51,7 +51,7 @@ class MfAccessorsRemoveCommand(
 
         override fun isInputValid(
             context: ConversationContext,
-            input: String,
+            input: String
         ): Boolean {
             val player =
                 try {
@@ -64,12 +64,12 @@ class MfAccessorsRemoveCommand(
 
         override fun getFailedValidationText(
             context: ConversationContext,
-            invalidInput: String,
+            invalidInput: String
         ): String? = plugin.language["CommandAccessorsRemoveInvalidPlayer"]
 
         override fun acceptValidatedInput(
             context: ConversationContext,
-            input: String,
+            input: String
         ): Prompt? {
             val sender = context.forWhom as Player
             val player =
@@ -82,7 +82,7 @@ class MfAccessorsRemoveCommand(
                 sender.world.getBlockAt(
                     context.getSessionData("x") as Int,
                     context.getSessionData("y") as Int,
-                    context.getSessionData("z") as Int,
+                    context.getSessionData("z") as Int
                 )
             val blockData = block.blockData
             val holder = (block.state as? Chest)?.inventory?.holder
@@ -109,7 +109,7 @@ class MfAccessorsRemoveCommand(
         sender: CommandSender,
         command: Command,
         label: String,
-        args: Array<out String>,
+        args: Array<out String>
     ): Boolean {
         if (!sender.hasPermission("mf.accessors.remove") && !sender.hasPermission("mf.revokeaccess")) {
             sender.sendMessage("$RED${plugin.language["CommandAccessorsRemoveNoPermission"]}")
@@ -137,7 +137,7 @@ class MfAccessorsRemoveCommand(
                         return@Runnable
                     }
                     sender.sendMessage("${ChatColor.GREEN}${plugin.language["CommandAccessorsRemoveSelectBlock"]}")
-                },
+                }
             )
             return true
         }
@@ -188,7 +188,7 @@ class MfAccessorsRemoveCommand(
     private fun removeAccessor(
         sender: Player,
         blocks: List<Block>,
-        accessor: OfflinePlayer,
+        accessor: OfflinePlayer
     ) {
         plugin.server.scheduler.runTaskAsynchronously(
             plugin,
@@ -225,15 +225,15 @@ class MfAccessorsRemoveCommand(
                     return@Runnable
                 }
                 sender.sendMessage(
-                    "${ChatColor.GREEN}${plugin.language["CommandAccessorsRemoveSuccess", accessor.name ?: plugin.language["UnknownPlayer"]]}",
+                    "${ChatColor.GREEN}${plugin.language["CommandAccessorsRemoveSuccess", accessor.name ?: plugin.language["UnknownPlayer"]]}"
                 )
                 plugin.server.scheduler.runTask(
                     plugin,
                     Runnable {
                         sender.performCommand("accessors list ${lockedBlock.block.x} ${lockedBlock.block.y} ${lockedBlock.block.z}")
-                    },
+                    }
                 )
-            },
+            }
         )
     }
 
@@ -241,7 +241,7 @@ class MfAccessorsRemoveCommand(
         sender: CommandSender,
         command: Command,
         label: String,
-        args: Array<out String>,
+        args: Array<out String>
     ) = when {
         args.size <= 3 -> emptyList()
         args.size == 4 ->

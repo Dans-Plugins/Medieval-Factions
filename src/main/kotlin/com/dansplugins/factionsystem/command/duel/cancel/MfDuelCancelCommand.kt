@@ -14,14 +14,14 @@ import org.bukkit.entity.Player
 import java.util.logging.Level.SEVERE
 
 class MfDuelCancelCommand(
-    private val plugin: MedievalFactions,
+    private val plugin: MedievalFactions
 ) : CommandExecutor,
     TabCompleter {
     override fun onCommand(
         sender: CommandSender,
         command: Command,
         label: String,
-        args: Array<out String>,
+        args: Array<out String>
     ): Boolean {
         if (!sender.hasPermission("mf.duel")) {
             sender.sendMessage("$RED${plugin.language["CommandDuelCancelNoPermission"]}")
@@ -78,7 +78,7 @@ class MfDuelCancelCommand(
                     sender.sendMessage("$GREEN${plugin.language["CommandDuelCancelSuccessDeclined", target.name]}")
                     target.sendMessage("$RED${plugin.language["CommandDuelCancelChallengeDeclined", sender.name]}")
                 }
-            },
+            }
         )
         return true
     }
@@ -87,7 +87,7 @@ class MfDuelCancelCommand(
         sender: CommandSender,
         command: Command,
         label: String,
-        args: Array<out String>,
+        args: Array<out String>
     ): List<String> {
         if (sender !is Player) return emptyList()
         val senderMfPlayerId = MfPlayerId.fromBukkitPlayer(sender)

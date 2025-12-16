@@ -13,14 +13,14 @@ import org.bukkit.entity.Player
 import java.util.logging.Level.SEVERE
 
 class MfGateCancelCommand(
-    private val plugin: MedievalFactions,
+    private val plugin: MedievalFactions
 ) : CommandExecutor,
     TabCompleter {
     override fun onCommand(
         sender: CommandSender,
         command: Command,
         label: String,
-        args: Array<out String>,
+        args: Array<out String>
     ): Boolean {
         if (sender !is Player) {
             sender.sendMessage("$RED${plugin.language["CommandGateCancelMustBeAPlayer"]}")
@@ -60,7 +60,7 @@ class MfGateCancelCommand(
                     return@Runnable
                 }
                 sender.sendMessage("$GREEN${plugin.language["CommandGateCancelSuccess"]}")
-            },
+            }
         )
         return true
     }
@@ -69,6 +69,6 @@ class MfGateCancelCommand(
         sender: CommandSender,
         command: Command,
         label: String,
-        args: Array<out String>,
+        args: Array<out String>
     ) = emptyList<String>()
 }

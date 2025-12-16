@@ -7,7 +7,7 @@ import com.dansplugins.factionsystem.faction.permission.MfFactionPermissionType
 import com.dansplugins.factionsystem.faction.role.MfFactionRoleId
 
 class SetRolePermission(
-    private val plugin: MedievalFactions,
+    private val plugin: MedievalFactions
 ) : MfFactionPermissionType() {
     override fun parse(name: String): MfFactionPermission? =
         if (name.matches(Regex("SET_ROLE_PERMISSION\\((.+)\\)"))) {
@@ -23,7 +23,7 @@ class SetRolePermission(
 
     override fun permissionsFor(
         factionId: MfFactionId,
-        roleIds: List<MfFactionRoleId>,
+        roleIds: List<MfFactionRoleId>
     ): List<MfFactionPermission> =
         plugin.factionPermissions.permissionTypes
             .filter { it !is SetRolePermission }
@@ -34,6 +34,6 @@ class SetRolePermission(
         MfFactionPermission(
             "SET_ROLE_PERMISSION(${permission.name})",
             { faction -> plugin.language["FactionPermissionSetRolePermission", permission.translate(faction)] },
-            false,
+            false
         )
 }

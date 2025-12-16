@@ -7,7 +7,7 @@ interface MfLawRepository {
 
     fun getLaw(
         factionId: MfFactionId,
-        index: Int?,
+        index: Int?
     ): MfLaw?
 
     fun getLaws(factionId: MfFactionId): List<MfLaw>
@@ -20,6 +20,6 @@ interface MfLawRepository {
 
     fun move(
         law: MfLaw,
-        number: Int,
+        number: Int
     )
 }

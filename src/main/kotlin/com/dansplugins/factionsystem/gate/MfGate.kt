@@ -20,7 +20,7 @@ data class MfGate(
     val area: MfCuboidArea,
     val trigger: MfBlockPosition,
     val material: Material,
-    val status: MfGateStatus = CLOSED,
+    val status: MfGateStatus = CLOSED
 ) {
     fun shouldOpen(): Boolean {
         val world = plugin.server.getWorld(trigger.worldId) ?: return false
@@ -46,7 +46,7 @@ data class MfGate(
                     plugin.logger.log(Level.SEVERE, "Failed to save gate: ${it.reason.message}", it.reason.cause)
                     return@Runnable
                 }
-            },
+            }
         )
     }
 
@@ -71,7 +71,7 @@ data class MfGate(
                         plugin.logger.log(Level.SEVERE, "Failed to save gate: ${it.reason.message}", it.reason.cause)
                         return@Runnable
                     }
-                },
+                }
             )
         }
     }
@@ -86,7 +86,7 @@ data class MfGate(
                     plugin.logger.log(Level.SEVERE, "Failed to save gate: ${it.reason.message}", it.reason.cause)
                     return@Runnable
                 }
-            },
+            }
         )
         val centerBukkitBlock = area.centerPosition.toBukkitBlock()
         if (centerBukkitBlock != null) {
@@ -115,7 +115,7 @@ data class MfGate(
                         plugin.logger.log(Level.SEVERE, "Failed to save gate: ${it.reason.message}", it.reason.cause)
                         return@Runnable
                     }
-                },
+                }
             )
         }
     }

@@ -4,7 +4,7 @@ import com.dansplugins.factionsystem.MedievalFactions
 
 class MfFlagValues(
     private val plugin: MedievalFactions,
-    val valuesByName: Map<String, Any?> = mutableMapOf(),
+    val valuesByName: Map<String, Any?> = mutableMapOf()
 ) {
     val values: Map<MfFlag<out Any>, Any?>
         get() =
@@ -19,12 +19,12 @@ class MfFlagValues(
     operator fun <T : Any> plus(flagValue: Pair<MfFlag<T>, T>): MfFlagValues =
         MfFlagValues(
             plugin,
-            valuesByName + (flagValue.first.name to flagValue.second),
+            valuesByName + (flagValue.first.name to flagValue.second)
         )
 
     operator fun plus(flagValues: Map<MfFlag<out Any>, Any?>): MfFlagValues =
         MfFlagValues(
             plugin,
-            valuesByName + flagValues.mapKeys { (key, _) -> key.name },
+            valuesByName + flagValues.mapKeys { (key, _) -> key.name }
         )
 }

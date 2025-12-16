@@ -10,7 +10,7 @@ data class MfPosition(
     val y: Double,
     val z: Double,
     val yaw: Float,
-    val pitch: Float,
+    val pitch: Float
 ) {
     companion object {
         fun fromBukkitLocation(location: Location) =
@@ -20,7 +20,7 @@ data class MfPosition(
                 location.y,
                 location.z,
                 location.yaw,
-                location.pitch,
+                location.pitch
             )
     }
 

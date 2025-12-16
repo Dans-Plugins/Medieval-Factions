@@ -13,7 +13,7 @@ import kotlin.math.roundToInt
  * @param plugin The MedievalFactions plugin instance.
  */
 class FactionInfoBuilder(
-    private val plugin: MedievalFactions,
+    private val plugin: MedievalFactions
 ) {
     private val decimalFormat = DecimalFormat("0", DecimalFormatSymbols.getInstance(plugin.language.locale))
 
@@ -46,7 +46,7 @@ class FactionInfoBuilder(
                                 playerService.getPlayer(member.playerId)?.name ?: plugin.language["UnknownPlayer"]
                             }}
                             """.trimIndent()
-                        }.joinToString("<br />"),
+                        }.joinToString("<br />")
                 )
             }
             if (plugin.config.getBoolean("dynmap.showLiege")) {

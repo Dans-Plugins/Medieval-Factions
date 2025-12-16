@@ -53,7 +53,7 @@ import org.bukkit.command.CommandSender
 import org.bukkit.command.TabCompleter
 
 class MfFactionCommand(
-    private val plugin: MedievalFactions,
+    private val plugin: MedievalFactions
 ) : CommandExecutor,
     TabCompleter {
     private val factionHelpCommand = MfFactionHelpCommand(plugin)
@@ -193,7 +193,7 @@ class MfFactionCommand(
         sender: CommandSender,
         command: Command,
         label: String,
-        args: Array<out String>,
+        args: Array<out String>
     ): Boolean =
         when (args.firstOrNull()?.lowercase()) {
             in helpAliases -> factionHelpCommand.onCommand(sender, command, label, args.drop(1).toTypedArray())
@@ -227,7 +227,7 @@ class MfFactionCommand(
                     sender,
                     command,
                     label,
-                    args.drop(1).toTypedArray(),
+                    args.drop(1).toTypedArray()
                 )
             in kickAliases -> factionKickCommand.onCommand(sender, command, label, args.drop(1).toTypedArray())
             in mapAliases -> factionMapCommand.onCommand(sender, command, label, args.drop(1).toTypedArray())
@@ -259,7 +259,7 @@ class MfFactionCommand(
         sender: CommandSender,
         command: Command,
         label: String,
-        args: Array<out String>,
+        args: Array<out String>
     ) = when {
         args.isEmpty() -> subcommands
         args.size == 1 -> subcommands.filter { it.startsWith(args[0].lowercase()) }
@@ -295,14 +295,14 @@ class MfFactionCommand(
                         sender,
                         command,
                         label,
-                        args.drop(1).toTypedArray(),
+                        args.drop(1).toTypedArray()
                     )
                 in declareIndependenceAliases ->
                     factionDeclareIndependenceCommand.onTabComplete(
                         sender,
                         command,
                         label,
-                        args.drop(1).toTypedArray(),
+                        args.drop(1).toTypedArray()
                     )
                 in kickAliases -> factionKickCommand.onTabComplete(sender, command, label, args.drop(1).toTypedArray())
                 in mapAliases -> factionMapCommand.onTabComplete(sender, command, label, args.drop(1).toTypedArray())

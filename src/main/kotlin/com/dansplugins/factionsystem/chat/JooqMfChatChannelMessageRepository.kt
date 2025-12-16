@@ -9,7 +9,7 @@ import java.time.LocalDateTime
 import java.time.ZoneOffset.UTC
 
 class JooqMfChatChannelMessageRepository(
-    private val dsl: DSLContext,
+    private val dsl: DSLContext
 ) : MfChatChannelMessageRepository {
     override fun insert(message: MfChatChannelMessage) {
         dsl
@@ -33,7 +33,7 @@ class JooqMfChatChannelMessageRepository(
     override fun getChatChannelMessages(
         factionId: MfFactionId,
         limit: Int,
-        offset: Int,
+        offset: Int
     ): List<MfChatChannelMessage> =
         dsl
             .selectFrom(MF_CHAT_CHANNEL_MESSAGE)
@@ -59,6 +59,6 @@ class JooqMfChatChannelMessageRepository(
             playerId.let(::MfPlayerId),
             factionId.let(::MfFactionId),
             chatChannel.let(MfFactionChatChannel::valueOf),
-            message,
+            message
         )
 }

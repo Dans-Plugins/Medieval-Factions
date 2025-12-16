@@ -9,6 +9,6 @@ class WorldClaimBlockedException : RuntimeException {
         message,
         cause,
         enableSuppression,
-        writableStackTrace,
+        writableStackTrace
     )
 }

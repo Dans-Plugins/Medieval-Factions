@@ -21,7 +21,7 @@ import preponderous.ponder.command.unquote
 import java.util.logging.Level
 
 class MfFactionRoleRenameCommand(
-    private val plugin: MedievalFactions,
+    private val plugin: MedievalFactions
 ) : CommandExecutor,
     TabCompleter {
     private val conversationFactory =
@@ -46,7 +46,7 @@ class MfFactionRoleRenameCommand(
 
         override fun acceptInput(
             context: ConversationContext,
-            input: String?,
+            input: String?
         ): Prompt? {
             val conversable = context.forWhom
             if (conversable !is Player) return END_OF_CONVERSATION
@@ -61,7 +61,7 @@ class MfFactionRoleRenameCommand(
         sender: CommandSender,
         command: Command,
         label: String,
-        args: Array<out String>,
+        args: Array<out String>
     ): Boolean {
         if (!sender.hasPermission("mf.role.rename")) {
             sender.sendMessage("$RED${plugin.language["CommandFactionRoleRenameNoPermission"]}")
@@ -114,12 +114,12 @@ class MfFactionRoleRenameCommand(
                             conversation.context.setSessionData("role", targetRole)
                             conversation.context.setSessionData("page", returnPage)
                             conversation.begin()
-                        },
+                        }
                     )
                     return@Runnable
                 }
                 renameRole(sender, targetRole, unquotedArgs.drop(1).joinToString(" "), returnPage)
-            },
+            }
         )
         return true
     }
@@ -128,7 +128,7 @@ class MfFactionRoleRenameCommand(
         player: Player,
         targetRole: MfFactionRole,
         name: String,
-        returnPage: Int?,
+        returnPage: Int?
     ) {
         plugin.server.scheduler.runTaskAsynchronously(
             plugin,
@@ -160,17 +160,17 @@ class MfFactionRoleRenameCommand(
                     .save(
                         faction.copy(
                             roles =
-                                faction.roles.copy(
-                                    roles =
-                                        faction.roles.map { existingRole ->
-                                            if (existingRole.id == targetRole.id) {
-                                                existingRole.copy(name = name)
-                                            } else {
-                                                existingRole
-                                            }
-                                        },
-                                ),
-                        ),
+                            faction.roles.copy(
+                                roles =
+                                faction.roles.map { existingRole ->
+                                    if (existingRole.id == targetRole.id) {
+                                        existingRole.copy(name = name)
+                                    } else {
+                                        existingRole
+                                    }
+                                }
+                            )
+                        )
                     ).onFailure {
                         player.sendMessage("$RED${plugin.language["CommandFactionRoleRenameFailedToSaveFaction"]}")
                         plugin.logger.log(Level.SEVERE, "Failed to save faction: ${it.reason.message}", it.reason.cause)
@@ -182,10 +182,10 @@ class MfFactionRoleRenameCommand(
                         plugin,
                         Runnable {
                             player.performCommand("faction role list $returnPage")
-                        },
+                        }
                     )
                 }
-            },
+            }
         )
     }
 
@@ -193,7 +193,7 @@ class MfFactionRoleRenameCommand(
         sender: CommandSender,
         command: Command,
         label: String,
-        args: Array<out String>,
+        args: Array<out String>
     ): List<String> {
         if (sender !is Player) return emptyList()
         val playerId = MfPlayerId.fromBukkitPlayer(sender)

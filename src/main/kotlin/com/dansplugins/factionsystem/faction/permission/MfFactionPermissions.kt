@@ -18,7 +18,7 @@ import java.util.Collections
 import java.util.concurrent.CopyOnWriteArrayList
 
 class MfFactionPermissions(
-    private val plugin: MedievalFactions,
+    private val plugin: MedievalFactions
 ) {
     private val _permissionTypes = CopyOnWriteArrayList<MfFactionPermissionType>()
     val permissionTypes: List<MfFactionPermissionType>
@@ -70,8 +70,8 @@ class MfFactionPermissions(
                 wrapSimplePermission("SET_DEFAULT_ROLE", plugin.language["FactionPermissionSetDefaultRole"], false),
                 wrapSimplePermission("APPROVE_APP", plugin.language["FactionPermissionApproveApp"], false),
                 wrapSimplePermission("DENY_APP", plugin.language["FactionPermissionDenyApp"], false),
-                SetRolePermission(plugin),
-            ),
+                SetRolePermission(plugin)
+            )
         )
     }
 
@@ -136,20 +136,20 @@ class MfFactionPermissions(
 
     fun permissionsFor(
         factionId: MfFactionId,
-        roles: MfFactionRoles,
+        roles: MfFactionRoles
     ): List<MfFactionPermission> =
         permissionsFor(
             factionId,
             roles.map {
                 it.id
-            },
+            }
         )
 
     fun permissionsFor(faction: MfFaction) = permissionsFor(faction.id, faction.roles)
 
     fun permissionsFor(
         factionId: MfFactionId,
-        roleIds: List<MfFactionRoleId>,
+        roleIds: List<MfFactionRoleId>
     ) = permissionTypes.flatMap { type -> type.permissionsFor(factionId, roleIds) }
 
     fun parse(name: String) = permissionTypes.firstNotNullOfOrNull { type -> type.parse(name) }
@@ -157,13 +157,13 @@ class MfFactionPermissions(
     fun wrapSimplePermission(
         name: String,
         translation: String,
-        default: Boolean,
+        default: Boolean
     ) = wrapSimplePermission(name, { translation }, default)
 
     fun wrapSimplePermission(
         name: String,
         translate: (faction: MfFaction) -> String,
-        default: Boolean,
+        default: Boolean
     ) = object : MfFactionPermissionType() {
         val permission = MfFactionPermission(name, translate, default)
 
@@ -171,7 +171,7 @@ class MfFactionPermissions(
 
         override fun permissionsFor(
             factionId: MfFactionId,
-            roleIds: List<MfFactionRoleId>,
+            roleIds: List<MfFactionRoleId>
         ): List<MfFactionPermission> = listOf(permission)
     }
 }

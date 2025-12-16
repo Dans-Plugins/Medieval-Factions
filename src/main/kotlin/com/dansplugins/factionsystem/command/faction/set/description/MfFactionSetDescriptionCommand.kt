@@ -17,7 +17,7 @@ import org.bukkit.entity.Player
 import java.util.logging.Level
 
 class MfFactionSetDescriptionCommand(
-    private val plugin: MedievalFactions,
+    private val plugin: MedievalFactions
 ) : CommandExecutor,
     TabCompleter {
     private val conversationFactory =
@@ -38,7 +38,7 @@ class MfFactionSetDescriptionCommand(
 
     private fun setOrContinueDescription(
         context: ConversationContext,
-        input: String?,
+        input: String?
     ): Prompt? {
         val conversable = context.forWhom
         if (conversable !is Player) return StringPrompt.END_OF_CONVERSATION
@@ -57,7 +57,7 @@ class MfFactionSetDescriptionCommand(
 
         override fun acceptInput(
             context: ConversationContext,
-            input: String?,
+            input: String?
         ): Prompt? = setOrContinueDescription(context, input)
     }
 
@@ -67,7 +67,7 @@ class MfFactionSetDescriptionCommand(
 
         override fun acceptInput(
             context: ConversationContext,
-            input: String?,
+            input: String?
         ): Prompt? = setOrContinueDescription(context, input)
     }
 
@@ -75,7 +75,7 @@ class MfFactionSetDescriptionCommand(
         sender: CommandSender,
         command: Command,
         label: String,
-        args: Array<out String>,
+        args: Array<out String>
     ): Boolean {
         if (!sender.hasPermission("mf.desc")) {
             sender.sendMessage("$RED${plugin.language["CommandFactionSetDescriptionNoPermission"]}")
@@ -95,7 +95,7 @@ class MfFactionSetDescriptionCommand(
 
     private fun setFactionDescription(
         player: Player,
-        description: String,
+        description: String
     ) {
         plugin.server.scheduler.runTaskAsynchronously(
             plugin,
@@ -122,8 +122,8 @@ class MfFactionSetDescriptionCommand(
                 factionService
                     .save(
                         faction.copy(
-                            description = if (description.length <= 4096) description else description.substring(0, 4095) + "…",
-                        ),
+                            description = if (description.length <= 4096) description else description.substring(0, 4095) + "…"
+                        )
                     ).onFailure {
                         player.sendMessage("$RED${plugin.language["CommandFactionSetDescriptionFailedToSaveFaction"]}")
                         plugin.logger.log(Level.SEVERE, "Failed to save faction: ${it.reason.message}", it.reason.cause)
@@ -134,9 +134,9 @@ class MfFactionSetDescriptionCommand(
                     plugin,
                     Runnable {
                         player.performCommand("faction info")
-                    },
+                    }
                 )
-            },
+            }
         )
     }
 
@@ -144,6 +144,6 @@ class MfFactionSetDescriptionCommand(
         sender: CommandSender,
         command: Command,
         label: String,
-        args: Array<out String>,
+        args: Array<out String>
     ) = emptyList<String>()
 }

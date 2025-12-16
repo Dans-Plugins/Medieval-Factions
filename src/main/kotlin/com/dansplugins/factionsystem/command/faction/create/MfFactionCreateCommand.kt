@@ -17,14 +17,14 @@ import org.bukkit.entity.Player
 import java.util.logging.Level.SEVERE
 
 class MfFactionCreateCommand(
-    private val plugin: MedievalFactions,
+    private val plugin: MedievalFactions
 ) : CommandExecutor,
     TabCompleter {
     override fun onCommand(
         sender: CommandSender,
         command: Command,
         label: String,
-        args: Array<out String>,
+        args: Array<out String>
     ): Boolean {
         if (sender !is Player) {
             sender.sendMessage("$RED${plugin.language["CommandFactionCreateNotAPlayer"]}")
@@ -83,7 +83,7 @@ class MfFactionCreateCommand(
                     sender.sendMessage("${org.bukkit.ChatColor.RED}${plugin.language["CommandFactionCreateFailedToCancelApplications"]}")
                     plugin.logger.log(SEVERE, "Failed to cancel applications: ${e.message}", e)
                 }
-            },
+            }
         )
         return true
     }
@@ -92,6 +92,6 @@ class MfFactionCreateCommand(
         sender: CommandSender,
         command: Command,
         label: String,
-        args: Array<out String>,
+        args: Array<out String>
     ) = emptyList<String>()
 }

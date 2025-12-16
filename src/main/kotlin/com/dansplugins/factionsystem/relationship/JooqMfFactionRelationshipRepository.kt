@@ -6,7 +6,7 @@ import com.dansplugins.factionsystem.jooq.tables.records.MfFactionRelationshipRe
 import org.jooq.DSLContext
 
 class JooqMfFactionRelationshipRepository(
-    val dsl: DSLContext,
+    val dsl: DSLContext
 ) : MfFactionRelationshipRepository {
     override fun getFactionRelationship(relationshipId: MfFactionRelationshipId): MfFactionRelationship? =
         dsl
@@ -17,7 +17,7 @@ class JooqMfFactionRelationshipRepository(
 
     override fun getFactionRelationships(
         factionId: MfFactionId,
-        targetId: MfFactionId,
+        targetId: MfFactionId
     ): List<MfFactionRelationship> =
         dsl
             .selectFrom(MF_FACTION_RELATIONSHIP)
@@ -28,7 +28,7 @@ class JooqMfFactionRelationshipRepository(
 
     override fun getFactionRelationships(
         factionId: MfFactionId,
-        type: MfFactionRelationshipType,
+        type: MfFactionRelationshipType
     ): List<MfFactionRelationship> =
         dsl
             .selectFrom(MF_FACTION_RELATIONSHIP)
@@ -84,6 +84,6 @@ class JooqMfFactionRelationshipRepository(
             id.let(::MfFactionRelationshipId),
             factionId.let(::MfFactionId),
             targetId.let(::MfFactionId),
-            MfFactionRelationshipType.valueOf(type),
+            MfFactionRelationshipType.valueOf(type)
         )
 }

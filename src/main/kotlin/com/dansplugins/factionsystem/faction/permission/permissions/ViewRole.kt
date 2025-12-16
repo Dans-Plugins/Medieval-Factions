@@ -7,7 +7,7 @@ import com.dansplugins.factionsystem.faction.permission.MfFactionPermissionType
 import com.dansplugins.factionsystem.faction.role.MfFactionRoleId
 
 class ViewRole(
-    private val plugin: MedievalFactions,
+    private val plugin: MedievalFactions
 ) : MfFactionPermissionType() {
     override fun parse(name: String): MfFactionPermission? =
         if (name.matches(Regex("VIEW_ROLE\\((.+)\\)"))) {
@@ -23,13 +23,13 @@ class ViewRole(
 
     override fun permissionsFor(
         factionId: MfFactionId,
-        roleIds: List<MfFactionRoleId>,
+        roleIds: List<MfFactionRoleId>
     ): List<MfFactionPermission> = roleIds.map(::permissionFor)
 
     private fun permissionFor(roleId: MfFactionRoleId) =
         MfFactionPermission(
             "VIEW_ROLE(${roleId.value})",
             { faction -> plugin.language["FactionPermissionViewRole", faction.getRole(roleId)?.name ?: ""] },
-            true,
+            true
         )
 }

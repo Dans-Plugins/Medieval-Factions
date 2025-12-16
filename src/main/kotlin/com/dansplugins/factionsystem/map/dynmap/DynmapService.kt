@@ -24,7 +24,7 @@ import java.util.concurrent.ConcurrentHashMap
  * @param plugin The MedievalFactions plugin instance.
  */
 class DynmapService(
-    private val plugin: MedievalFactions,
+    private val plugin: MedievalFactions
 ) : MapService {
     private val dynmap = plugin.server.pluginManager.getPlugin("dynmap") as DynmapAPI
     private val factionMarkersByFactionId = ConcurrentHashMap<MfFactionId, List<AreaMarker>>()
@@ -78,7 +78,7 @@ class DynmapService(
     private fun updateFactionClaims(
         faction: MfFaction,
         claimsMarkerSet: MarkerSet,
-        claimService: MfClaimService,
+        claimService: MfClaimService
     ) {
         val claims = claimService.getClaims(faction.id)
         if (plugin.config.getBoolean("dynmap.debug")) {
@@ -109,7 +109,7 @@ class DynmapService(
         worldId: UUID,
         worldClaims: List<MfClaimedChunk>,
         claimsMarkerSet: MarkerSet,
-        factionInfo: String,
+        factionInfo: String
     ) {
         val world = plugin.server.getWorld(worldId)
         if (world != null) {
@@ -131,7 +131,7 @@ class DynmapService(
         world: World,
         worldClaims: List<MfClaimedChunk>,
         claimsMarkerSet: MarkerSet,
-        factionInfo: String,
+        factionInfo: String
     ) {
         val fillClaims = plugin.config.getBoolean("dynmap.fillClaims", true)
 
@@ -163,7 +163,7 @@ class DynmapService(
         claimsMarkerSet: MarkerSet,
         factionInfo: String,
         index: Int,
-        fillEnabled: Boolean = true,
+        fillEnabled: Boolean = true
     ) {
         val areaMarker =
             claimsMarkerSet.createAreaMarker(
@@ -173,7 +173,7 @@ class DynmapService(
                 world.name,
                 corners.map { (x, _) -> x * 16.0 }.toDoubleArray(),
                 corners.map { (_, z) -> z * 16.0 }.toDoubleArray(),
-                false,
+                false
             )
         if (areaMarker != null) {
             val color = Integer.decode(faction.flags[plugin.flags.color])
@@ -199,7 +199,7 @@ class DynmapService(
     private fun updateFactionRealm(
         faction: MfFaction,
         realmMarkerSet: MarkerSet,
-        claimService: MfClaimService,
+        claimService: MfClaimService
     ) {
         val relationshipService = plugin.services.factionRelationshipService
         val realm = claimService.getClaims(faction.id) + relationshipService.getVassalTree(faction.id).flatMap(claimService::getClaims)
@@ -225,7 +225,7 @@ class DynmapService(
         faction: MfFaction,
         worldId: UUID,
         worldClaims: List<MfClaimedChunk>,
-        realmMarkerSet: MarkerSet,
+        realmMarkerSet: MarkerSet
     ) {
         val world = plugin.server.getWorld(worldId)
         if (world != null) {
@@ -245,7 +245,7 @@ class DynmapService(
         faction: MfFaction,
         world: World,
         worldClaims: List<MfClaimedChunk>,
-        realmMarkerSet: MarkerSet,
+        realmMarkerSet: MarkerSet
     ) {
         val paths = claimPathBuilder.getPaths(worldClaims)
         if (plugin.config.getBoolean("dynmap.debug")) {
@@ -273,7 +273,7 @@ class DynmapService(
         world: World,
         corners: List<Point>,
         realmMarkerSet: MarkerSet,
-        index: Int,
+        index: Int
     ) {
         val areaMarker =
             realmMarkerSet.createAreaMarker(
@@ -283,7 +283,7 @@ class DynmapService(
                 world.name,
                 corners.map { (x, _) -> x * 16.0 }.toDoubleArray(),
                 corners.map { (_, z) -> z * 16.0 }.toDoubleArray(),
-                false,
+                false
             )
         areaMarker.label = faction.name
         val color = Integer.decode(faction.flags[plugin.flags.color])

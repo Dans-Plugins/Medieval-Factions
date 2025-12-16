@@ -15,14 +15,14 @@ import java.util.UUID
 import java.util.logging.Level.SEVERE
 
 class MfFactionKickCommand(
-    private val plugin: MedievalFactions,
+    private val plugin: MedievalFactions
 ) : CommandExecutor,
     TabCompleter {
     override fun onCommand(
         sender: CommandSender,
         command: Command,
         label: String,
-        args: Array<out String>,
+        args: Array<out String>
     ): Boolean {
         if (!sender.hasPermission("mf.kick")) {
             sender.sendMessage("$RED${plugin.language["CommandFactionKickNoPermission"]}")
@@ -77,8 +77,8 @@ class MfFactionKickCommand(
                         sender.sendMessage(
                             "$RED${plugin.language[
                                 "CommandFactionKickInvalidFaction",
-                                args.dropLast(1).joinToString(" "),
-                            ]}",
+                                args.dropLast(1).joinToString(" ")
+                            ]}"
                         )
                     } else {
                         sender.sendMessage("$RED${plugin.language["CommandFactionKickMustBeInAFaction"]}")
@@ -116,16 +116,16 @@ class MfFactionKickCommand(
                 }
                 factionService
                     .save(
-                        faction.copy(members = faction.members.filter { it.playerId != targetMfPlayer.id }),
+                        faction.copy(members = faction.members.filter { it.playerId != targetMfPlayer.id })
                     ).onFailure {
                         sender.sendMessage("$RED${plugin.language["CommandFactionKickFailedToSaveFaction"]}")
                         plugin.logger.log(SEVERE, "Failed to save faction: ${it.reason.message}", it.reason.cause)
                         return@Runnable
                     }
                 sender.sendMessage(
-                    "$GREEN${plugin.language["CommandFactionKickSuccess", target.name ?: plugin.language["UnknownPlayer"], faction.name]}",
+                    "$GREEN${plugin.language["CommandFactionKickSuccess", target.name ?: plugin.language["UnknownPlayer"], faction.name]}"
                 )
-            },
+            }
         )
         return true
     }
@@ -134,7 +134,7 @@ class MfFactionKickCommand(
         sender: CommandSender,
         command: Command,
         label: String,
-        args: Array<out String>,
+        args: Array<out String>
     ) = when {
         args.isEmpty() ->
             plugin.server.offlinePlayers

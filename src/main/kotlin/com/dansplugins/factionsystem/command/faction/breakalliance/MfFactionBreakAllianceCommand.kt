@@ -14,14 +14,14 @@ import org.bukkit.entity.Player
 import java.util.logging.Level
 
 class MfFactionBreakAllianceCommand(
-    private val plugin: MedievalFactions,
+    private val plugin: MedievalFactions
 ) : CommandExecutor,
     TabCompleter {
     override fun onCommand(
         sender: CommandSender,
         command: Command,
         label: String,
-        args: Array<out String>,
+        args: Array<out String>
     ): Boolean {
         if (!sender.hasPermission("mf.breakalliance")) {
             sender.sendMessage("$RED${plugin.language["CommandFactionBreakAllianceNoPermission"]}")
@@ -83,15 +83,15 @@ class MfFactionBreakAllianceCommand(
                     Runnable {
                         faction.sendMessage(
                             plugin.language["FactionAllianceBrokenNotificationTitle", target.name],
-                            plugin.language["FactionAllianceBrokenNotificationBody", target.name],
+                            plugin.language["FactionAllianceBrokenNotificationBody", target.name]
                         )
                         target.sendMessage(
                             plugin.language["FactionAllianceBrokenNotificationTitle", faction.name],
-                            plugin.language["FactionAllianceBrokenNotificationBody", faction.name],
+                            plugin.language["FactionAllianceBrokenNotificationBody", faction.name]
                         )
-                    },
+                    }
                 )
-            },
+            }
         )
         return true
     }
@@ -100,7 +100,7 @@ class MfFactionBreakAllianceCommand(
         sender: CommandSender,
         command: Command,
         label: String,
-        args: Array<out String>,
+        args: Array<out String>
     ): List<String> {
         val factionService = plugin.services.factionService
         return when {
