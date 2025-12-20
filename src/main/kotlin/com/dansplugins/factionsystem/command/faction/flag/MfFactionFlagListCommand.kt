@@ -1,6 +1,8 @@
 package com.dansplugins.factionsystem.command.faction.flag
 
 import com.dansplugins.factionsystem.MedievalFactions
+import com.dansplugins.factionsystem.faction.MfFaction
+import com.dansplugins.factionsystem.faction.MfFactionId
 import com.dansplugins.factionsystem.pagination.PaginatedView
 import com.dansplugins.factionsystem.player.MfPlayer
 import dev.forkhandles.result4k.onFailure
@@ -15,6 +17,7 @@ import org.bukkit.command.CommandExecutor
 import org.bukkit.command.CommandSender
 import org.bukkit.command.TabCompleter
 import org.bukkit.entity.Player
+import preponderous.ponder.command.unquote
 import java.util.logging.Level.SEVERE
 import net.md_5.bungee.api.ChatColor as SpigotChatColor
 import org.bukkit.ChatColor as BukkitChatColor
@@ -40,17 +43,59 @@ class MfFactionFlagListCommand(private val plugin: MedievalFactions) : CommandEx
                         return@Runnable
                     }
                 val factionService = plugin.services.factionService
-                val faction = factionService.getFaction(mfPlayer.id)
-                if (faction == null) {
-                    sender.sendMessage("${BukkitChatColor.RED}${plugin.language["CommandFactionFlagListMustBeInAFaction"]}")
-                    return@Runnable
+                
+                // Parse arguments to determine if faction is specified
+                val hasForcePermission = sender.hasPermission("mf.force.flag")
+                val unquotedArgs = args.unquote()
+                var targetFaction: MfFaction? = null
+                var pageNumber = 0
+                
+                if (hasForcePermission && unquotedArgs.isNotEmpty()) {
+                    // Try to parse first argument as faction name/ID
+                    val potentialFaction = factionService.getFaction(MfFactionId(unquotedArgs[0])) ?: factionService.getFaction(unquotedArgs[0])
+                    
+                    if (potentialFaction != null) {
+                        // First arg is a valid faction
+                        targetFaction = potentialFaction
+                        pageNumber = unquotedArgs.getOrNull(1)?.toIntOrNull()?.minus(1) ?: 0
+                    } else {
+                        // First arg is page number
+                        pageNumber = unquotedArgs[0].toIntOrNull()?.minus(1) ?: 0
+                    }
+                } else {
+                    // No force permission or no args, use standard parsing
+                    pageNumber = args.lastOrNull()?.toIntOrNull()?.minus(1) ?: 0
                 }
+                
+                val faction = if (targetFaction != null) {
+                    targetFaction
+                } else {
+                    val playerFaction = factionService.getFaction(mfPlayer.id)
+                    if (playerFaction == null) {
+                        sender.sendMessage("${BukkitChatColor.RED}${plugin.language["CommandFactionFlagListMustBeInAFaction"]}")
+                        return@Runnable
+                    }
+                    playerFaction
+                }
+                
+                // Check permissions - either force permission or faction role permission
+                if (targetFaction != null) {
+                    // Viewing another faction - requires force permission
+                    if (!sender.hasPermission("mf.force.flag")) {
+                        sender.sendMessage("${BukkitChatColor.RED}${plugin.language["CommandFactionFlagListNoPermission"]}")
+                        return@Runnable
+                    }
+                } else {
+                    // Viewing own faction - check role permission
+                    val role = faction.getRole(mfPlayer.id)
+                    if (role == null || !role.hasPermission(faction, plugin.factionPermissions.viewFlags)) {
+                        sender.sendMessage("${BukkitChatColor.RED}${plugin.language["CommandFactionFlagListNoFactionPermission"]}")
+                        return@Runnable
+                    }
+                }
+                
                 val role = faction.getRole(mfPlayer.id)
-                if (role == null || !role.hasPermission(faction, plugin.factionPermissions.viewFlags)) {
-                    sender.sendMessage("${BukkitChatColor.RED}${plugin.language["CommandFactionFlagListNoFactionPermission"]}")
-                    return@Runnable
-                }
-                val pageNumber = args.lastOrNull()?.toIntOrNull()?.minus(1) ?: 0
+                val factionNameParam = if (targetFaction != null) " \"${faction.name}\"" else ""
                 val view = PaginatedView(
                     plugin.language,
                     lazy {
@@ -80,7 +125,13 @@ class MfFactionFlagListCommand(private val plugin: MedievalFactions) : CommandEx
                                         color = SpigotChatColor.WHITE
                                     }
                                 )
-                                if (sender.hasPermission("mf.flag.set") && role.hasPermission(faction, plugin.factionPermissions.setFlag(flag))) {
+                                // Show set button if user has permission
+                                val canSetFlag = if (targetFaction != null) {
+                                    sender.hasPermission("mf.flag.set") && sender.hasPermission("mf.force.flag")
+                                } else {
+                                    sender.hasPermission("mf.flag.set") && role != null && role.hasPermission(faction, plugin.factionPermissions.setFlag(flag))
+                                }
+                                if (canSetFlag) {
                                     add(
                                         TextComponent("(${plugin.language["CommandFactionFlagListSet"]})").apply {
                                             color = SpigotChatColor.GREEN
@@ -89,14 +140,14 @@ class MfFactionFlagListCommand(private val plugin: MedievalFactions) : CommandEx
                                                 Text(plugin.language["CommandFactionFlagListSetHover", flag.name])
                                             )
                                             clickEvent =
-                                                ClickEvent(RUN_COMMAND, "/faction flag set ${flag.name} p=${pageNumber + 1}")
+                                                ClickEvent(RUN_COMMAND, "/faction flag set$factionNameParam ${flag.name} p=${pageNumber + 1}")
                                         }
                                     )
                                 }
                             }.toTypedArray()
                         }
                     }
-                ) { page -> "/faction flag list ${page + 1}" }
+                ) { page -> "/faction flag list$factionNameParam ${page + 1}" }
                 if (pageNumber !in view.pages.indices) {
                     sender.sendMessage("${BukkitChatColor.RED}${plugin.language["CommandFactionFlagListInvalidPageNumber"]}")
                     return@Runnable
@@ -112,5 +163,17 @@ class MfFactionFlagListCommand(private val plugin: MedievalFactions) : CommandEx
         command: Command,
         label: String,
         args: Array<out String>
-    ) = emptyList<String>()
+    ): List<String> {
+        val hasForcePermission = sender.hasPermission("mf.force.flag")
+        if (!hasForcePermission) {
+            return emptyList()
+        }
+        
+        val factionService = plugin.services.factionService
+        return when {
+            args.isEmpty() -> factionService.factions.map { it.name }
+            args.size == 1 -> factionService.factions.filter { it.name.lowercase().startsWith(args[0].lowercase()) }.map { it.name }
+            else -> emptyList()
+        }
+    }
 }

@@ -220,7 +220,8 @@ class MfFactionFlagSetCommand(private val plugin: MedievalFactions) : CommandExe
                                 plugin.server.scheduler.runTask(
                                     plugin,
                                     Runnable {
-                                        sender.performCommand("faction flag list" + if (page != null) " $page" else "")
+                                        val factionParam = if (targetFaction != null) " \"${faction.name}\"" else ""
+                                        sender.performCommand("faction flag list$factionParam" + if (page != null) " $page" else "")
                                     }
                                 )
                             }
