@@ -79,22 +79,23 @@ class MfFactionFlagListCommand(private val plugin: MedievalFactions) : CommandEx
                 }
                 
                 // Check permissions - either force permission or faction role permission
-                if (targetFaction != null) {
+                val role = if (targetFaction != null) {
                     // Viewing another faction - requires force permission
                     if (!sender.hasPermission("mf.force.flag")) {
                         sender.sendMessage("${BukkitChatColor.RED}${plugin.language["CommandFactionFlagListNoPermission"]}")
                         return@Runnable
                     }
+                    null // No role check needed for force permission
                 } else {
                     // Viewing own faction - check role permission
-                    val role = faction.getRole(mfPlayer.id)
-                    if (role == null || !role.hasPermission(faction, plugin.factionPermissions.viewFlags)) {
+                    val playerRole = faction.getRole(mfPlayer.id)
+                    if (playerRole == null || !playerRole.hasPermission(faction, plugin.factionPermissions.viewFlags)) {
                         sender.sendMessage("${BukkitChatColor.RED}${plugin.language["CommandFactionFlagListNoFactionPermission"]}")
                         return@Runnable
                     }
+                    playerRole
                 }
                 
-                val role = faction.getRole(mfPlayer.id)
                 val factionNameParam = if (targetFaction != null) " \"${faction.name}\"" else ""
                 val view = PaginatedView(
                     plugin.language,
