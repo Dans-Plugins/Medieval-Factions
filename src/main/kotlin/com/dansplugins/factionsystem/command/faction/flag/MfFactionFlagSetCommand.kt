@@ -122,8 +122,8 @@ class MfFactionFlagSetCommand(private val plugin: MedievalFactions) : CommandExe
 
     private fun parseCommandArguments(args: Array<out String>, hasForcePermission: Boolean): ParsedCommand {
         val unquotedArgs = args.unquote()
-        val lastArgOffset = if (args.last().startsWith("p=")) 1 else 0
-        val returnPage = if (args.last().startsWith("p=")) {
+        val lastArgOffset = if (args.isNotEmpty() && args.last().startsWith("p=")) 1 else 0
+        val returnPage = if (args.isNotEmpty() && args.last().startsWith("p=")) {
             args.last().substring("p=".length).toIntOrNull()
         } else {
             null
