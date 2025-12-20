@@ -43,7 +43,8 @@ class MfFactionFlagListCommand(private val plugin: MedievalFactions) : CommandEx
         
         val (targetFaction, pageNumber) = parseArguments(args, hasForcePermission, factionService)
         val faction = resolveFaction(sender, mfPlayer, targetFaction, factionService) ?: return
-        val role = checkPermissions(sender, mfPlayer, faction, targetFaction) ?: return
+        val role = checkPermissions(sender, mfPlayer, faction, targetFaction)
+        if (role == null && targetFaction == null) return
         
         displayFactionFlags(sender, faction, targetFaction, role, pageNumber)
     }
