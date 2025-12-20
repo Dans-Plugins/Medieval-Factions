@@ -74,6 +74,11 @@ class PlayerInteractListenerTest {
         `when`(claim.factionId).thenReturn(factionId)
         `when`(claimService.getClaim(block.chunk)).thenReturn(claim)
 
+        val factionService = medievalFactions.services.factionService
+        val mockFaction = mock(com.dansplugins.factionsystem.faction.MfFaction::class.java)
+        `when`(mockFaction.name).thenReturn("TestFaction")
+        `when`(factionService.getFaction(factionId)).thenReturn(mockFaction)
+
         // Act
         uut.onPlayerInteract(event)
 
@@ -104,6 +109,11 @@ class PlayerInteractListenerTest {
         val factionId = MfFactionId(UUID.randomUUID().toString())
         `when`(claim.factionId).thenReturn(factionId)
         `when`(claimService.getClaim(block.chunk)).thenReturn(claim)
+
+        val factionService = medievalFactions.services.factionService
+        val mockFaction = mock(com.dansplugins.factionsystem.faction.MfFaction::class.java)
+        `when`(mockFaction.name).thenReturn("TestFaction")
+        `when`(factionService.getFaction(factionId)).thenReturn(mockFaction)
 
         // Act
         uut.onPlayerInteract(event)
@@ -138,6 +148,11 @@ class PlayerInteractListenerTest {
         `when`(claimService.getClaim(block.chunk)).thenReturn(claim)
         `when`(claimService.isInteractionAllowed(playerId, claim)).thenReturn(false)
         `when`(player.hasPermission("mf.bypass")).thenReturn(false)
+
+        val factionService = medievalFactions.services.factionService
+        val mockFaction = mock(com.dansplugins.factionsystem.faction.MfFaction::class.java)
+        `when`(mockFaction.name).thenReturn("TestFaction")
+        `when`(factionService.getFaction(factionId)).thenReturn(mockFaction)
 
         // Act
         uut.onPlayerInteract(event)
