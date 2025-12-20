@@ -43,17 +43,17 @@ class MfFactionFlagListCommand(private val plugin: MedievalFactions) : CommandEx
                         return@Runnable
                     }
                 val factionService = plugin.services.factionService
-                
+
                 // Parse arguments to determine if faction is specified
                 val hasForcePermission = sender.hasPermission("mf.force.flag")
                 val unquotedArgs = args.unquote()
                 var targetFaction: MfFaction? = null
                 var pageNumber = 0
-                
+
                 if (hasForcePermission && unquotedArgs.isNotEmpty()) {
                     // Try to parse first argument as faction name/ID
                     val potentialFaction = factionService.getFaction(MfFactionId(unquotedArgs[0])) ?: factionService.getFaction(unquotedArgs[0])
-                    
+
                     if (potentialFaction != null) {
                         // First arg is a valid faction
                         targetFaction = potentialFaction
@@ -66,7 +66,7 @@ class MfFactionFlagListCommand(private val plugin: MedievalFactions) : CommandEx
                     // No force permission or no args, use standard parsing
                     pageNumber = args.lastOrNull()?.toIntOrNull()?.minus(1) ?: 0
                 }
-                
+
                 val faction = if (targetFaction != null) {
                     targetFaction
                 } else {
@@ -77,7 +77,7 @@ class MfFactionFlagListCommand(private val plugin: MedievalFactions) : CommandEx
                     }
                     playerFaction
                 }
-                
+
                 // Check permissions - either force permission or faction role permission
                 val role = if (targetFaction != null) {
                     // Viewing another faction - requires force permission
@@ -95,7 +95,7 @@ class MfFactionFlagListCommand(private val plugin: MedievalFactions) : CommandEx
                     }
                     playerRole
                 }
-                
+
                 val factionNameParam = if (targetFaction != null) " \"${faction.name}\"" else ""
                 val view = PaginatedView(
                     plugin.language,
@@ -169,7 +169,7 @@ class MfFactionFlagListCommand(private val plugin: MedievalFactions) : CommandEx
         if (!hasForcePermission) {
             return emptyList()
         }
-        
+
         val factionService = plugin.services.factionService
         return when {
             args.isEmpty() -> factionService.factions.map { it.name }
