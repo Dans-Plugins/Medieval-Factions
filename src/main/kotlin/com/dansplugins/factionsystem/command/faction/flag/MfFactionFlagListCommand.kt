@@ -32,131 +32,186 @@ class MfFactionFlagListCommand(private val plugin: MedievalFactions) : CommandEx
             sender.sendMessage("${BukkitChatColor.RED}${plugin.language["CommandFactionFlagListNotAPlayer"]}")
             return true
         }
-        plugin.server.scheduler.runTaskAsynchronously(
-            plugin,
-            Runnable {
-                val playerService = plugin.services.playerService
-                val mfPlayer = playerService.getPlayer(sender)
-                    ?: playerService.save(MfPlayer(plugin, sender)).onFailure {
-                        sender.sendMessage("${BukkitChatColor.RED}${plugin.language["CommandFactionFlagListFailedToSavePlayer"]}")
-                        plugin.logger.log(SEVERE, "Failed to save player: ${it.reason.message}", it.reason.cause)
-                        return@Runnable
-                    }
-                val factionService = plugin.services.factionService
-
-                // Parse arguments to determine if faction is specified
-                val hasForcePermission = sender.hasPermission("mf.force.flag")
-                val unquotedArgs = args.unquote()
-                var targetFaction: MfFaction? = null
-                var pageNumber = 0
-
-                if (hasForcePermission && unquotedArgs.isNotEmpty()) {
-                    // Try to parse first argument as faction name/ID
-                    val potentialFaction = factionService.getFaction(MfFactionId(unquotedArgs[0])) ?: factionService.getFaction(unquotedArgs[0])
-
-                    if (potentialFaction != null) {
-                        // First arg is a valid faction
-                        targetFaction = potentialFaction
-                        pageNumber = unquotedArgs.getOrNull(1)?.toIntOrNull()?.minus(1) ?: 0
-                    } else {
-                        // First arg is page number
-                        pageNumber = unquotedArgs[0].toIntOrNull()?.minus(1) ?: 0
-                    }
-                } else {
-                    // No force permission or no args, use standard parsing
-                    pageNumber = args.lastOrNull()?.toIntOrNull()?.minus(1) ?: 0
-                }
-
-                val faction = if (targetFaction != null) {
-                    targetFaction
-                } else {
-                    val playerFaction = factionService.getFaction(mfPlayer.id)
-                    if (playerFaction == null) {
-                        sender.sendMessage("${BukkitChatColor.RED}${plugin.language["CommandFactionFlagListMustBeInAFaction"]}")
-                        return@Runnable
-                    }
-                    playerFaction
-                }
-
-                // Check permissions - either force permission or faction role permission
-                val role = if (targetFaction != null) {
-                    // Viewing another faction - requires force permission
-                    if (!sender.hasPermission("mf.force.flag")) {
-                        sender.sendMessage("${BukkitChatColor.RED}${plugin.language["CommandFactionFlagListNoPermission"]}")
-                        return@Runnable
-                    }
-                    null // No role check needed for force permission
-                } else {
-                    // Viewing own faction - check role permission
-                    val playerRole = faction.getRole(mfPlayer.id)
-                    if (playerRole == null || !playerRole.hasPermission(faction, plugin.factionPermissions.viewFlags)) {
-                        sender.sendMessage("${BukkitChatColor.RED}${plugin.language["CommandFactionFlagListNoFactionPermission"]}")
-                        return@Runnable
-                    }
-                    playerRole
-                }
-
-                val factionNameParam = if (targetFaction != null) " \"${faction.name}\"" else ""
-                val view = PaginatedView(
-                    plugin.language,
-                    lazy {
-                        arrayOf(
-                            TextComponent(plugin.language["CommandFactionFlagListTitle", faction.name]).apply {
-                                color = SpigotChatColor.AQUA
-                                isBold = true
-                            }
-                        )
-                    },
-                    plugin.flags.map { flag ->
-                        lazy {
-                            val flagValue = faction.flags[flag]
-                            buildList {
-                                add(
-                                    TextComponent(flag.name).apply {
-                                        color = SpigotChatColor.GRAY
-                                    }
-                                )
-                                add(
-                                    TextComponent(" (${flag.type.simpleName}): ").apply {
-                                        color = SpigotChatColor.GRAY
-                                    }
-                                )
-                                add(
-                                    TextComponent("$flagValue ").apply {
-                                        color = SpigotChatColor.WHITE
-                                    }
-                                )
-                                // Show set button if user has permission
-                                val canSetFlag = if (targetFaction != null) {
-                                    sender.hasPermission("mf.flag.set") && sender.hasPermission("mf.force.flag")
-                                } else {
-                                    sender.hasPermission("mf.flag.set") && role != null && role.hasPermission(faction, plugin.factionPermissions.setFlag(flag))
-                                }
-                                if (canSetFlag) {
-                                    add(
-                                        TextComponent("(${plugin.language["CommandFactionFlagListSet"]})").apply {
-                                            color = SpigotChatColor.GREEN
-                                            hoverEvent = HoverEvent(
-                                                SHOW_TEXT,
-                                                Text(plugin.language["CommandFactionFlagListSetHover", flag.name])
-                                            )
-                                            clickEvent =
-                                                ClickEvent(RUN_COMMAND, "/faction flag set$factionNameParam ${flag.name} p=${pageNumber + 1}")
-                                        }
-                                    )
-                                }
-                            }.toTypedArray()
-                        }
-                    }
-                ) { page -> "/faction flag list$factionNameParam ${page + 1}" }
-                if (pageNumber !in view.pages.indices) {
-                    sender.sendMessage("${BukkitChatColor.RED}${plugin.language["CommandFactionFlagListInvalidPageNumber"]}")
-                    return@Runnable
-                }
-                view.sendPage(sender, pageNumber)
-            }
-        )
+        plugin.server.scheduler.runTaskAsynchronously(plugin, Runnable { executeCommand(sender, args) })
         return true
+    }
+
+    private fun executeCommand(sender: Player, args: Array<out String>) {
+        val mfPlayer = getOrSavePlayer(sender) ?: return
+        val factionService = plugin.services.factionService
+        val hasForcePermission = sender.hasPermission("mf.force.flag")
+        
+        val (targetFaction, pageNumber) = parseArguments(args, hasForcePermission, factionService)
+        val faction = resolveFaction(sender, mfPlayer, targetFaction, factionService) ?: return
+        val role = checkPermissions(sender, mfPlayer, faction, targetFaction)
+        if (role == null && targetFaction == null) return
+        
+        displayFactionFlags(sender, faction, targetFaction, role, pageNumber)
+    }
+
+    private fun getOrSavePlayer(sender: Player): MfPlayer? {
+        val playerService = plugin.services.playerService
+        val player = playerService.getPlayer(sender)
+        if (player != null) return player
+        
+        val saveResult = playerService.save(MfPlayer(plugin, sender))
+        return saveResult.onFailure {
+            sender.sendMessage("${BukkitChatColor.RED}${plugin.language["CommandFactionFlagListFailedToSavePlayer"]}")
+            plugin.logger.log(SEVERE, "Failed to save player: ${it.reason.message}", it.reason.cause)
+        }.getOrNull()
+    }
+
+    private data class ParsedArguments(val targetFaction: MfFaction?, val pageNumber: Int)
+
+    private fun parseArguments(
+        args: Array<out String>,
+        hasForcePermission: Boolean,
+        factionService: com.dansplugins.factionsystem.faction.MfFactionService
+    ): ParsedArguments {
+        val unquotedArgs = args.unquote()
+        var targetFaction: MfFaction? = null
+        var pageNumber = 0
+
+        if (hasForcePermission && unquotedArgs.isNotEmpty()) {
+            val potentialFaction = factionService.getFaction(MfFactionId(unquotedArgs[0])) 
+                ?: factionService.getFaction(unquotedArgs[0])
+
+            if (potentialFaction != null) {
+                targetFaction = potentialFaction
+                pageNumber = unquotedArgs.getOrNull(1)?.toIntOrNull()?.minus(1) ?: 0
+            } else {
+                pageNumber = unquotedArgs[0].toIntOrNull()?.minus(1) ?: 0
+            }
+        } else {
+            pageNumber = args.lastOrNull()?.toIntOrNull()?.minus(1) ?: 0
+        }
+
+        return ParsedArguments(targetFaction, pageNumber)
+    }
+
+    private fun resolveFaction(
+        sender: Player,
+        mfPlayer: MfPlayer,
+        targetFaction: MfFaction?,
+        factionService: com.dansplugins.factionsystem.faction.MfFactionService
+    ): MfFaction? {
+        return if (targetFaction != null) {
+            targetFaction
+        } else {
+            factionService.getFaction(mfPlayer.id) ?: run {
+                sender.sendMessage("${BukkitChatColor.RED}${plugin.language["CommandFactionFlagListMustBeInAFaction"]}")
+                null
+            }
+        }
+    }
+
+    private fun checkPermissions(
+        sender: Player,
+        mfPlayer: MfPlayer,
+        faction: MfFaction,
+        targetFaction: MfFaction?
+    ): com.dansplugins.factionsystem.faction.role.MfFactionRole? {
+        return if (targetFaction != null) {
+            if (!sender.hasPermission("mf.force.flag")) {
+                sender.sendMessage("${BukkitChatColor.RED}${plugin.language["CommandFactionFlagListNoPermission"]}")
+                return null
+            }
+            null
+        } else {
+            val playerRole = faction.getRole(mfPlayer.id)
+            if (playerRole == null || !playerRole.hasPermission(faction, plugin.factionPermissions.viewFlags)) {
+                sender.sendMessage("${BukkitChatColor.RED}${plugin.language["CommandFactionFlagListNoFactionPermission"]}")
+                return null
+            }
+            playerRole
+        }
+    }
+
+    private fun displayFactionFlags(
+        sender: Player,
+        faction: MfFaction,
+        targetFaction: MfFaction?,
+        role: com.dansplugins.factionsystem.faction.role.MfFactionRole?,
+        pageNumber: Int
+    ) {
+        val factionNameParam = if (targetFaction != null) " \"${faction.name}\"" else ""
+        val view = createPaginatedView(sender, faction, targetFaction, role, factionNameParam, pageNumber)
+        
+        if (pageNumber !in view.pages.indices) {
+            sender.sendMessage("${BukkitChatColor.RED}${plugin.language["CommandFactionFlagListInvalidPageNumber"]}")
+            return
+        }
+        view.sendPage(sender, pageNumber)
+    }
+
+    private fun createPaginatedView(
+        sender: Player,
+        faction: MfFaction,
+        targetFaction: MfFaction?,
+        role: com.dansplugins.factionsystem.faction.role.MfFactionRole?,
+        factionNameParam: String,
+        pageNumber: Int
+    ): PaginatedView {
+        return PaginatedView(
+            plugin.language,
+            lazy {
+                arrayOf(
+                    TextComponent(plugin.language["CommandFactionFlagListTitle", faction.name]).apply {
+                        color = SpigotChatColor.AQUA
+                        isBold = true
+                    }
+                )
+            },
+            plugin.flags.map { flag -> lazy { createFlagRow(sender, faction, targetFaction, role, flag, factionNameParam, pageNumber) } }
+        ) { page -> "/faction flag list$factionNameParam ${page + 1}" }
+    }
+
+    private fun createFlagRow(
+        sender: Player,
+        faction: MfFaction,
+        targetFaction: MfFaction?,
+        role: com.dansplugins.factionsystem.faction.role.MfFactionRole?,
+        flag: com.dansplugins.factionsystem.faction.flag.MfFlag<out Any>,
+        factionNameParam: String,
+        pageNumber: Int
+    ): Array<TextComponent> {
+        val flagValue = faction.flags[flag]
+        return buildList {
+            add(TextComponent(flag.name).apply { color = SpigotChatColor.GRAY })
+            add(TextComponent(" (${flag.type.simpleName}): ").apply { color = SpigotChatColor.GRAY })
+            add(TextComponent("$flagValue ").apply { color = SpigotChatColor.WHITE })
+            
+            val canSetFlag = canUserSetFlag(sender, faction, targetFaction, role, flag)
+            if (canSetFlag) {
+                add(createSetButton(flag, factionNameParam, pageNumber))
+            }
+        }.toTypedArray()
+    }
+
+    private fun canUserSetFlag(
+        sender: Player,
+        faction: MfFaction,
+        targetFaction: MfFaction?,
+        role: com.dansplugins.factionsystem.faction.role.MfFactionRole?,
+        flag: com.dansplugins.factionsystem.faction.flag.MfFlag<out Any>
+    ): Boolean {
+        return if (targetFaction != null) {
+            sender.hasPermission("mf.flag.set") && sender.hasPermission("mf.force.flag")
+        } else {
+            sender.hasPermission("mf.flag.set") && role != null && role.hasPermission(faction, plugin.factionPermissions.setFlag(flag))
+        }
+    }
+
+    private fun createSetButton(
+        flag: com.dansplugins.factionsystem.faction.flag.MfFlag<out Any>,
+        factionNameParam: String,
+        pageNumber: Int
+    ): TextComponent {
+        return TextComponent("(${plugin.language["CommandFactionFlagListSet"]})").apply {
+            color = SpigotChatColor.GREEN
+            hoverEvent = HoverEvent(SHOW_TEXT, Text(plugin.language["CommandFactionFlagListSetHover", flag.name]))
+            clickEvent = ClickEvent(RUN_COMMAND, "/faction flag set$factionNameParam ${flag.name} p=${pageNumber + 1}")
+        }
     }
 
     override fun onTabComplete(
