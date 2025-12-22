@@ -6,8 +6,8 @@ This directory contains tools to verify the encoding integrity of language files
 
 Language files use different character encodings depending on the language:
 - **German (de_DE)**: ISO-8859-1 (for umlauts: ü, ö, ä, ß)
-- **Portuguese (pt_BR)**: Mixed encoding (historically UTF-8 with some Latin-1)
 - **French (fr_FR)**: UTF-8 (for accents: é, è, à, ç)
+- **Portuguese (pt_BR)**: Mixed encoding (historically UTF-8 with some Latin-1)
 - **English (en_US, en_GB)**: UTF-8 / ASCII
 
 These tools help prevent character corruption when editing language files.
