@@ -55,10 +55,11 @@ class MfFactionFlagListCommand(private val plugin: MedievalFactions) : CommandEx
         if (player != null) return player
         
         val saveResult = playerService.save(MfPlayer(plugin, sender))
+
         return saveResult.onFailure {
             sender.sendMessage("${BukkitChatColor.RED}${plugin.language["CommandFactionFlagListFailedToSavePlayer"]}")
-            plugin.logger.log(SEVERE, "Failed to save player: ${it.reason.message}", it.reason.cause)
-        }.getOrNull()
+            plugin.logger.log(SEVERE, "Failed to save player: ${it.reason.message}", it.reason.cause) as Nothing
+        }
     }
 
     private data class ParsedArguments(val targetFaction: MfFaction?, val pageNumber: Int)
