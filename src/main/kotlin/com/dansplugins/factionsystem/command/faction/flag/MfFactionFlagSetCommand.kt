@@ -137,6 +137,10 @@ class MfFactionFlagSetCommand(private val plugin: MedievalFactions) : CommandExe
             val factionService = plugin.services.factionService
             val potentialFaction = factionService.getFaction(MfFactionId(unquotedArgs[0])) ?: factionService.getFaction(unquotedArgs[0])
 
+            // Disambiguation strategy:
+            // - If first arg is a valid faction AND we have at least 3 args total, treat it as: [faction] [flag] [value]
+            // - Otherwise, treat it as: [flag] [value] (operating on own faction)
+            // This prevents ambiguity when a faction name coincidentally matches a flag name
             if (potentialFaction != null && unquotedArgs.size >= 3) {
                 targetFaction = potentialFaction
                 flagName = unquotedArgs[1]
@@ -182,10 +186,14 @@ class MfFactionFlagSetCommand(private val plugin: MedievalFactions) : CommandExe
         if (player != null) return player
 
         val saveResult = playerService.save(MfPlayer(plugin, sender))
-        return saveResult.onFailure {
+        
+        saveResult.onFailure {
             sender.sendMessage("$RED${plugin.language["CommandFactionFlagSetFailedToSavePlayer"]}")
-            plugin.logger.log(SEVERE, "Failed to save player: ${it.reason.message}", it.reason.cause) as Nothing
+            plugin.logger.log(SEVERE, "Failed to save player: ${it.reason.message}", it.reason.cause)
+            return null
         }
+        
+        return saveResult.value
     }
 
     private fun resolveFactionToModify(

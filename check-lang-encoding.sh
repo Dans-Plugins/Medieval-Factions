@@ -3,8 +3,6 @@
 # This script can be run locally or as part of CI to ensure language files
 # maintain proper character encoding.
 
-set -e
-
 LANG_DIR="src/main/resources/lang"
 ERRORS=0
 

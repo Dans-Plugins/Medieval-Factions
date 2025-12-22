@@ -133,17 +133,19 @@ class LanguageFileEncodingTest {
      * Detects the encoding of a file by attempting to read with different charsets.
      */
     private fun detectEncoding(file: File): Charset {
-        // Try UTF-8 first (most common for properties files)
+        val content = file.readBytes()
+        
+        // Check if it's pure ASCII first (before attempting any conversion)
+        if (content.all { it in 0..127 }) {
+            return StandardCharsets.US_ASCII
+        }
+        
+        // Try UTF-8
         try {
-            val content = file.readBytes()
             val text = String(content, StandardCharsets.UTF_8)
             // Check for replacement characters which indicate invalid UTF-8
             if (text.contains('\uFFFD')) {
                 throw Exception("Invalid UTF-8 - contains replacement characters")
-            }
-            // Check if it's pure ASCII
-            if (content.all { it in 0..127 }) {
-                return StandardCharsets.US_ASCII
             }
             return StandardCharsets.UTF_8
         } catch (e: Exception) {
