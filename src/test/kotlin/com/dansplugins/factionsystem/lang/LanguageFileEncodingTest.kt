@@ -50,7 +50,7 @@ class LanguageFileEncodingTest {
         // and that the file can be read in general
         val lines = portugueseFile.readLines(Charset.forName("ISO-8859-1"))
         assertTrue(lines.isNotEmpty(), "Portuguese file should not be empty")
-        
+
         // Verify the file contains Portuguese content
         val content = lines.joinToString("\n")
         assertTrue(
@@ -91,7 +91,7 @@ class LanguageFileEncodingTest {
 
         for (file in englishFiles) {
             assertTrue(file.exists(), "${file.name} not found")
-            
+
             val encoding = detectEncoding(file)
             assertTrue(
                 encoding == StandardCharsets.UTF_8 || encoding == StandardCharsets.US_ASCII,
@@ -174,13 +174,13 @@ class LanguageFileEncodingTest {
         for (file in langFiles) {
             val encoding = detectEncoding(file)
             val content = file.readText(encoding)
-            
+
             // Check for UTF-8 replacement character (�)
             val hasReplacementChar = content.contains('\uFFFD')
-            
+
             // Check for HTML entity corruption patterns (e.g., <EA>, <E3>, <FC>)
             val hasHtmlEntityCorruption = htmlEntityPattern.containsMatchIn(content)
-            
+
             if (hasReplacementChar || hasHtmlEntityCorruption) {
                 fail("${file.name} contains corrupted characters. This indicates an encoding issue.")
             }
