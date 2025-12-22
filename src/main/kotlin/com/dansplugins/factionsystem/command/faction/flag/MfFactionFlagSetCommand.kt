@@ -187,13 +187,13 @@ class MfFactionFlagSetCommand(private val plugin: MedievalFactions) : CommandExe
         if (player != null) return player
 
         val saveResult = playerService.save(MfPlayer(plugin, sender))
-        
+
         saveResult.onFailure {
             sender.sendMessage("$RED${plugin.language["CommandFactionFlagSetFailedToSavePlayer"]}")
             plugin.logger.log(SEVERE, "Failed to save player: ${it.reason.message}", it.reason.cause)
             return null
         }
-        
+
         return saveResult.valueOrNull()
     }
 

@@ -134,12 +134,12 @@ class LanguageFileEncodingTest {
      */
     private fun detectEncoding(file: File): Charset {
         val content = file.readBytes()
-        
+
         // Check if it's pure ASCII first (before attempting any conversion)
         if (content.all { it in 0..127 }) {
             return StandardCharsets.US_ASCII
         }
-        
+
         // Try UTF-8
         try {
             val text = String(content, StandardCharsets.UTF_8)
