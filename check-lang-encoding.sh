@@ -80,7 +80,7 @@ check_corruption() {
     fi
     
     # Check for common HTML entity corruption patterns (but not valid HTML)
-    if echo "$content" | grep -E "<E[0-9A-F]>" >/dev/null 2>&1 || echo "$content" | grep -E "<F[0-9A-F]>" >/dev/null 2>&1; then
+    if echo "$content" | grep -E "<[EF][0-9A-F]{1,2}>" >/dev/null 2>&1; then
         echo "✗ FAILED (HTML entity corruption detected)"
         ERRORS=$((ERRORS + 1))
     else

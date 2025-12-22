@@ -136,9 +136,13 @@ class LanguageFileEncodingTest {
         // Try UTF-8 first (most common for properties files)
         try {
             val content = file.readBytes()
-            String(content, StandardCharsets.UTF_8)
+            val text = String(content, StandardCharsets.UTF_8)
+            // Check for replacement characters which indicate invalid UTF-8
+            if (text.contains('\uFFFD')) {
+                throw Exception("Invalid UTF-8 - contains replacement characters")
+            }
             // Check if it's pure ASCII
-            if (content.all { it >= 0 && it < 128 }) {
+            if (content.all { it in 0..127 }) {
                 return StandardCharsets.US_ASCII
             }
             return StandardCharsets.UTF_8
@@ -156,13 +160,16 @@ class LanguageFileEncodingTest {
 
     /**
      * Verifies that no language file contains corrupted character sequences.
-     * This checks for common corruption patterns like � (replacement character).
+     * This checks for common corruption patterns like � (replacement character)
+     * and HTML entity corruption patterns like <EA>, <E3>, <FC>.
      */
     @Test
     fun testNoCorruptedCharacters() {
         val langFiles = langDirectory.listFiles { file ->
             file.isFile && file.name.startsWith("lang_") && file.name.endsWith(".properties")
         } ?: fail("Language directory not found or empty")
+
+        val htmlEntityPattern = Regex("<[EF][0-9A-F]{1,2}>")
 
         for (file in langFiles) {
             val encoding = detectEncoding(file)
@@ -171,10 +178,10 @@ class LanguageFileEncodingTest {
             // Check for UTF-8 replacement character (�)
             val hasReplacementChar = content.contains('\uFFFD')
             
-            // Check for common HTML entities that indicate encoding issues
-            val hasHtmlEntities = content.contains("<E") || content.contains("<F")
+            // Check for HTML entity corruption patterns (e.g., <EA>, <E3>, <FC>)
+            val hasHtmlEntityCorruption = htmlEntityPattern.containsMatchIn(content)
             
-            if (hasReplacementChar || hasHtmlEntities) {
+            if (hasReplacementChar || hasHtmlEntityCorruption) {
                 fail("${file.name} contains corrupted characters. This indicates an encoding issue.")
             }
         }
