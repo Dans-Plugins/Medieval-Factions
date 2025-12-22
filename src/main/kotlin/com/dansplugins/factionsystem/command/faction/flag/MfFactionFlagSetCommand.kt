@@ -10,6 +10,7 @@ import com.dansplugins.factionsystem.faction.flag.MfFlagValueCoercionFailure
 import com.dansplugins.factionsystem.faction.flag.MfFlagValueCoercionSuccess
 import com.dansplugins.factionsystem.player.MfPlayer
 import dev.forkhandles.result4k.onFailure
+import dev.forkhandles.result4k.valueOrNull
 import org.bukkit.ChatColor.GREEN
 import org.bukkit.ChatColor.RED
 import org.bukkit.command.Command
@@ -193,7 +194,7 @@ class MfFactionFlagSetCommand(private val plugin: MedievalFactions) : CommandExe
             return null
         }
         
-        return saveResult.value
+        return saveResult.valueOrNull()
     }
 
     private fun resolveFactionToModify(

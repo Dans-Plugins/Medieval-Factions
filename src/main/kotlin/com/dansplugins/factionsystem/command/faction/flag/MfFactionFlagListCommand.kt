@@ -6,6 +6,7 @@ import com.dansplugins.factionsystem.faction.MfFactionId
 import com.dansplugins.factionsystem.pagination.PaginatedView
 import com.dansplugins.factionsystem.player.MfPlayer
 import dev.forkhandles.result4k.onFailure
+import dev.forkhandles.result4k.valueOrNull
 import net.md_5.bungee.api.chat.ClickEvent
 import net.md_5.bungee.api.chat.ClickEvent.Action.RUN_COMMAND
 import net.md_5.bungee.api.chat.HoverEvent
@@ -62,7 +63,7 @@ class MfFactionFlagListCommand(private val plugin: MedievalFactions) : CommandEx
             return null
         }
         
-        return saveResult.value
+        return saveResult.valueOrNull()
     }
 
     private data class ParsedArguments(val targetFaction: MfFaction?, val pageNumber: Int)
