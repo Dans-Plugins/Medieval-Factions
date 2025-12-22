@@ -40,12 +40,12 @@ class MfFactionFlagListCommand(private val plugin: MedievalFactions) : CommandEx
         val mfPlayer = getOrSavePlayer(sender) ?: return
         val factionService = plugin.services.factionService
         val hasForcePermission = sender.hasPermission("mf.force.flag")
-        
+
         val (targetFaction, pageNumber) = parseArguments(args, hasForcePermission, factionService)
         val faction = resolveFaction(sender, mfPlayer, targetFaction, factionService) ?: return
         val role = checkPermissions(sender, mfPlayer, faction, targetFaction)
         if (role == null && targetFaction == null) return
-        
+
         displayFactionFlags(sender, faction, targetFaction, role, pageNumber)
     }
 
@@ -53,7 +53,7 @@ class MfFactionFlagListCommand(private val plugin: MedievalFactions) : CommandEx
         val playerService = plugin.services.playerService
         val player = playerService.getPlayer(sender)
         if (player != null) return player
-        
+
         val saveResult = playerService.save(MfPlayer(plugin, sender))
 
         return saveResult.onFailure {
@@ -74,8 +74,7 @@ class MfFactionFlagListCommand(private val plugin: MedievalFactions) : CommandEx
         var pageNumber = 0
 
         if (hasForcePermission && unquotedArgs.isNotEmpty()) {
-            val potentialFaction = factionService.getFaction(MfFactionId(unquotedArgs[0])) 
-                ?: factionService.getFaction(unquotedArgs[0])
+            val potentialFaction = factionService.getFaction(MfFactionId(unquotedArgs[0])) ?: factionService.getFaction(unquotedArgs[0])
 
             if (potentialFaction != null) {
                 targetFaction = potentialFaction
@@ -137,7 +136,7 @@ class MfFactionFlagListCommand(private val plugin: MedievalFactions) : CommandEx
     ) {
         val factionNameParam = if (targetFaction != null) " \"${faction.name}\"" else ""
         val view = createPaginatedView(sender, faction, targetFaction, role, factionNameParam, pageNumber)
-        
+
         if (pageNumber !in view.pages.indices) {
             sender.sendMessage("${BukkitChatColor.RED}${plugin.language["CommandFactionFlagListInvalidPageNumber"]}")
             return
@@ -181,7 +180,7 @@ class MfFactionFlagListCommand(private val plugin: MedievalFactions) : CommandEx
             add(TextComponent(flag.name).apply { color = SpigotChatColor.GRAY })
             add(TextComponent(" (${flag.type.simpleName}): ").apply { color = SpigotChatColor.GRAY })
             add(TextComponent("$flagValue ").apply { color = SpigotChatColor.WHITE })
-            
+
             val canSetFlag = canUserSetFlag(sender, faction, targetFaction, role, flag)
             if (canSetFlag) {
                 add(createSetButton(flag, factionNameParam, pageNumber))

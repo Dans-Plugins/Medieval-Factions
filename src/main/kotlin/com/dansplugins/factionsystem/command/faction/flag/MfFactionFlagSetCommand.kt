@@ -98,7 +98,7 @@ class MfFactionFlagSetCommand(private val plugin: MedievalFactions) : CommandExe
 
         val hasForcePermission = sender.hasPermission("mf.force.flag")
         val parsedCommand = parseCommandArguments(args, hasForcePermission)
-        
+
         val flag = plugin.flags.get<Any>(parsedCommand.flagName)
         if (flag == null) {
             sender.sendMessage("$RED${plugin.language["CommandFactionFlagSetInvalidFlag"]}")
@@ -135,8 +135,7 @@ class MfFactionFlagSetCommand(private val plugin: MedievalFactions) : CommandExe
 
         if (hasForcePermission && unquotedArgs.size >= 2) {
             val factionService = plugin.services.factionService
-            val potentialFaction = factionService.getFaction(MfFactionId(unquotedArgs[0])) 
-                ?: factionService.getFaction(unquotedArgs[0])
+            val potentialFaction = factionService.getFaction(MfFactionId(unquotedArgs[0])) ?: factionService.getFaction(unquotedArgs[0])
 
             if (potentialFaction != null && unquotedArgs.size >= 3) {
                 targetFaction = potentialFaction
@@ -164,18 +163,16 @@ class MfFactionFlagSetCommand(private val plugin: MedievalFactions) : CommandExe
     }
 
     private fun setFlagValue(sender: Player, targetFaction: MfFaction?, flag: MfFlag<Any>, flagValue: String, page: Int? = null) {
-        plugin.server.scheduler.runTaskAsynchronously(plugin, Runnable { 
-            executeFlagUpdate(sender, targetFaction, flag, flagValue, page) 
-        })
+        plugin.server.scheduler.runTaskAsynchronously(plugin, Runnable { executeFlagUpdate(sender, targetFaction, flag, flagValue, page) })
     }
 
     private fun executeFlagUpdate(sender: Player, targetFaction: MfFaction?, flag: MfFlag<Any>, flagValue: String, page: Int?) {
         val mfPlayer = getOrSavePlayer(sender) ?: return
         val factionService = plugin.services.factionService
         val faction = resolveFactionToModify(sender, mfPlayer, targetFaction, factionService) ?: return
-        
+
         if (!checkSetPermissions(sender, mfPlayer, faction, targetFaction, flag)) return
-        
+
         processAndSaveFlagValue(sender, faction, flag, flagValue, targetFaction, page)
     }
 
@@ -183,7 +180,7 @@ class MfFactionFlagSetCommand(private val plugin: MedievalFactions) : CommandExe
         val playerService = plugin.services.playerService
         val player = playerService.getPlayer(sender)
         if (player != null) return player
-        
+
         val saveResult = playerService.save(MfPlayer(plugin, sender))
         return saveResult.onFailure {
             sender.sendMessage("$RED${plugin.language["CommandFactionFlagSetFailedToSavePlayer"]}")
@@ -296,10 +293,13 @@ class MfFactionFlagSetCommand(private val plugin: MedievalFactions) : CommandExe
     }
 
     private fun redirectToFlagList(sender: Player, faction: MfFaction, targetFaction: MfFaction?, page: Int?) {
-        plugin.server.scheduler.runTask(plugin, Runnable {
-            val factionParam = if (targetFaction != null) " \"${faction.name}\"" else ""
-            sender.performCommand("faction flag list$factionParam" + if (page != null) " $page" else "")
-        })
+        plugin.server.scheduler.runTask(
+            plugin,
+            Runnable {
+                val factionParam = if (targetFaction != null) " \"${faction.name}\"" else ""
+                sender.performCommand("faction flag list$factionParam" + if (page != null) " $page" else "")
+            }
+        )
     }
 
     override fun onTabComplete(
