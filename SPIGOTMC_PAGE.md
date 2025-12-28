@@ -103,10 +103,10 @@ For displaying faction information in other plugins, install [PlaceholderAPI](ht
 Medieval Factions has comprehensive documentation available on GitHub:
 
 ### Quick Start Guides
-- **[User Guide](https://github.com/Dans-Plugins/Medieval-Factions/blob/master/USER_GUIDE.md)** - Getting started, common scenarios, and step-by-step tutorials
-- **[Commands Reference](https://github.com/Dans-Plugins/Medieval-Factions/blob/master/COMMANDS.md)** - Complete list of all commands with descriptions and permissions
-- **[Configuration Guide](https://github.com/Dans-Plugins/Medieval-Factions/blob/master/CONFIG.md)** - Detailed server configuration options
-- **[Faction Flags Reference](https://github.com/Dans-Plugins/Medieval-Factions/blob/master/FACTION_FLAGS.md)** - Per-faction settings and customization
+- **[User Guide](https://github.com/Dans-Plugins/Medieval-Factions/blob/main/USER_GUIDE.md)** - Getting started, common scenarios, and step-by-step tutorials
+- **[Commands Reference](https://github.com/Dans-Plugins/Medieval-Factions/blob/main/COMMANDS.md)** - Complete list of all commands with descriptions and permissions
+- **[Configuration Guide](https://github.com/Dans-Plugins/Medieval-Factions/blob/main/CONFIG.md)** - Detailed server configuration options
+- **[Faction Flags Reference](https://github.com/Dans-Plugins/Medieval-Factions/blob/main/FACTION_FLAGS.md)** - Per-faction settings and customization
 
 ### Wiki Resources
 - **[Wiki Guide](https://github.com/Dans-Plugins/Medieval-Factions/wiki/Guide)** - Comprehensive wiki documentation
@@ -117,7 +117,7 @@ Medieval Factions has comprehensive documentation available on GitHub:
 ### Developer Resources
 - **[External API Documentation](https://github.com/Dans-Plugins/Medieval-Factions/wiki/External-API-Documentation)** - For creating add-ons
 - **[Developer Notes](https://github.com/Dans-Plugins/Medieval-Factions/wiki/Developer-Notes)** - Technical documentation
-- **[Contributing Guide](https://github.com/Dans-Plugins/Medieval-Factions/blob/master/CONTRIBUTING.md)** - How to contribute to the project
+- **[Contributing Guide](https://github.com/Dans-Plugins/Medieval-Factions/blob/main/CONTRIBUTING.md)** - How to contribute to the project
 
 ---
 
@@ -198,7 +198,7 @@ factions:
   zeroPowerFactionsGetDisbanded: true
 ```
 
-See the [Configuration Guide](https://github.com/Dans-Plugins/Medieval-Factions/blob/master/CONFIG.md) for complete configuration documentation.
+See the [Configuration Guide](https://github.com/Dans-Plugins/Medieval-Factions/blob/main/CONFIG.md) for complete configuration documentation.
 
 ---
 
@@ -224,7 +224,7 @@ Medieval Factions is perfect for:
 ### For Developers
 - **Creating Add-ons:** Use [FactionsBridge](https://www.spigotmc.org/resources/factionsbridge.89716/) for cross-plugin compatibility
 - **External API:** [API Documentation](https://github.com/Dans-Plugins/Medieval-Factions/wiki/External-API-Documentation)
-- **Contributing:** [Contribution Guidelines](https://github.com/Dans-Plugins/Medieval-Factions/blob/master/CONTRIBUTING.md)
+- **Contributing:** [Contribution Guidelines](https://github.com/Dans-Plugins/Medieval-Factions/blob/main/CONTRIBUTING.md)
 
 ---
 
@@ -270,13 +270,13 @@ Special thanks to all contributors including: Richardhyy, Mitras2, Kaonami, Good
 - **German:** graffity_X
 - **Dutch:** JustGllenn, TDL, n0virus
 
-See the [README](https://github.com/Dans-Plugins/Medieval-Factions/blob/master/README.md) for the complete credits list.
+See the [README](https://github.com/Dans-Plugins/Medieval-Factions/blob/main/README.md) for the complete credits list.
 
 ---
 
 ## 📜 License
 
-Medieval Factions is licensed under the [GNU General Public License v3.0](https://github.com/Dans-Plugins/Medieval-Factions/blob/master/LICENSE) (GPL-3.0).
+Medieval Factions is licensed under the [GNU General Public License v3.0](https://github.com/Dans-Plugins/Medieval-Factions/blob/main/LICENSE) (GPL-3.0).
 
 You are free to use, modify, and distribute this software, provided that:
 - Source code is made available under the same license when distributed

@@ -42,7 +42,7 @@ Please fill out a bug report [here](https://github.com/Dans-Plugins/Medieval-Fac
 - [Known Bugs](https://github.com/Dans-Plugins/Medieval-Factions/issues?q=is%3Aopen+is%3Aissue+label%3Abug)
 
 ## Contributing
-- [Contributing.md](https://github.com/Dans-Plugins/Medieval-Factions/blob/master/CONTRIBUTING.md)
+- [Contributing.md](https://github.com/Dans-Plugins/Medieval-Factions/blob/main/CONTRIBUTING.md)
 - [Notes for Developers](https://github.com/Dans-Plugins/Medieval-Factions/wiki/Developer-Notes)
 
 ## Testing
