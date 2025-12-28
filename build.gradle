@@ -204,7 +204,10 @@ publishing {
             artifactId = project.name
             version = project.version
 
-            artifact(shadowJar)
+            from components.java
+            artifact(shadowJar) {
+                classifier = 'all'
+            }
         }
     }
 }
