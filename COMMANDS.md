@@ -421,10 +421,12 @@ See [FACTION_FLAGS.md](FACTION_FLAGS.md) for a complete list of available flags.
 
 ## Applications
 
-### `/apply [faction]`
+### `/apply [faction] [cancel]`
 **Permission:** `mf.apply` (default: true)  
-**Description:** Sends an application to join a faction.  
-**Usage:** `/apply FactionName`
+**Description:** Sends an application to join a faction or cancels a pending application.  
+**Usage:**
+- `/apply FactionName` - Sends an application to join the faction
+- `/apply FactionName cancel` - Cancels your pending application to that faction
 
 ### `/showapps`
 **Permission:** `mf.showapps` (default: true)  

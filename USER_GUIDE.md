@@ -125,9 +125,15 @@ Medieval Factions allows you to:
    /apply TheKingdom
    ```
 
-3. **Wait for approval** - Faction officers will review your application.
+3. **To cancel your application** (if you change your mind):
+   ```
+   /apply [FactionName] cancel
+   /apply TheKingdom cancel
+   ```
 
-4. **If approved**, you'll be automatically added to the faction.
+4. **Wait for approval** - Faction officers will review your application.
+
+5. **If approved**, you'll be automatically added to the faction.
 
 #### Method 3: Force Join (Op/Admin Only)
 
@@ -848,7 +854,7 @@ Duels are time-limited and notify nearby players.
 
 **For Players:**
 - Apply to factions: `/apply [FactionName]`
-- Cancel application: `/apply cancel [FactionName]`
+- Cancel application: `/apply [FactionName] cancel`
 
 **For Faction Officers:**
 - View applications: `/showapps`

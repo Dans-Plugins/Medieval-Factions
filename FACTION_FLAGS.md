@@ -244,7 +244,7 @@ To set a flag value for your faction:
 
 ### enableMobProtection
 **Type:** Boolean (true/false)  
-**Default:** Value from `factions.defaults.flags.enableMobProtection` in config.yml  
+**Default:** `false` (not configurable in config.yml - uses hardcoded default)  
 **Description:** Controls whether hostile mobs are protected from damage by non-members in your faction territory.
 
 **Impact:**

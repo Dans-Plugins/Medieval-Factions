@@ -355,6 +355,12 @@ These settings define the default values for faction flags when a new faction is
 **Default:** `true`  
 **Description:** Default setting for whether villager trading is protected in faction territory (non-members cannot trade).
 
+### `factions.defaults.flags.enableMobProtection`
+**Type:** Boolean  
+**Default:** Not currently set in config.yml (uses hardcoded default of `false`)  
+**Description:** Default setting for whether hostile mobs are protected from damage by non-members in faction territory. While the flag is available for factions to set, this config option is not currently implemented in the default config file.  
+**Note:** Factions can still set this flag individually using `/f flag set enableMobProtection [true/false]`.
+
 ## Chat Settings
 
 ### `chat.enableDefaultChatFormatting`
