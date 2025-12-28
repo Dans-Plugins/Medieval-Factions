@@ -2,9 +2,9 @@ name: Publish Release
 
 on:
   release:
-    # Trigger on both 'created' and 'published' to support draft releases
-    # as specified in the requirements
-    types: [created, published]
+    # Trigger on 'published' to handle both draft and non-draft releases
+    # This fires when a release is published (including when a draft is published)
+    types: [published]
 
 permissions:
   contents: read
