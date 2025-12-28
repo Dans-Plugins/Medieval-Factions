@@ -25,7 +25,7 @@ repositories {
 }
 
 dependencies {
-    implementation 'com.dansplugins:medieval-factions:5.7.0-alpha-1:all'
+    implementation 'com.dansplugins:medieval-factions:VERSION:all'
 }
 ```
 
@@ -45,7 +45,7 @@ Add the GitHub Packages repository to your `pom.xml`:
     <dependency>
         <groupId>com.dansplugins</groupId>
         <artifactId>medieval-factions</artifactId>
-        <version>5.7.0-alpha-1</version>
+        <version>VERSION</version>
         <classifier>all</classifier>
     </dependency>
 </dependencies>
@@ -94,7 +94,7 @@ Add your GitHub credentials to `~/.m2/settings.xml`:
 
 ## Notes
 
-- Replace `5.7.0-alpha-1` with the specific version you want to use
+- Replace `VERSION` with the specific version you want to use (e.g., `5.7.0-alpha-1`)
 - The token must have at least `read:packages` permission
 - For CI/CD environments, use the `GITHUB_TOKEN` secret which is automatically provided
 - Two artifacts are published for each release:
