@@ -97,6 +97,4 @@ Add your GitHub credentials to `~/.m2/settings.xml`:
 - Replace `VERSION` with the specific version you want to use (e.g., `5.7.0-alpha-1`)
 - The token must have at least `read:packages` permission
 - For CI/CD environments, use the `GITHUB_TOKEN` secret which is automatically provided
-- Two artifacts are published for each release:
-  - `medieval-factions-{version}.jar` - The standard JAR (without dependencies)
-  - `medieval-factions-{version}-all.jar` - The shadowJar with all dependencies included (recommended for most use cases)
+- The published artifact is the shadowJar with all dependencies included: `medieval-factions-{version}-all.jar`
