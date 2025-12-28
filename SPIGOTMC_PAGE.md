@@ -170,19 +170,32 @@ Edit `plugins/MedievalFactions/config.yml` to customize:
 
 **Recommended Settings for Different Server Types:**
 
-*Peaceful RP Server:*
+*Peaceful RP Server (config.yml):*
 ```yaml
-pvp.warRequiredForPlayersOfDifferentFactions: true
-pvp.friendlyFire: false
-factions.allowNeutrality: true
+# PVP Settings
+pvp:
+  warRequiredForPlayersOfDifferentFactions: true
+  friendlyFire: false
+
+# Faction Settings
+factions:
+  allowNeutrality: true
 ```
 
-*Hardcore PVP Server:*
+*Hardcore PVP Server (config.yml):*
 ```yaml
-pvp.warRequiredForPlayersOfDifferentFactions: false
-pvp.enableWartimeBlockDestruction: true
-players.powerLostOnDeath: 2
-factions.zeroPowerFactionsGetDisbanded: true
+# PVP Settings
+pvp:
+  warRequiredForPlayersOfDifferentFactions: false
+  enableWartimeBlockDestruction: true
+
+# Player Power Settings
+players:
+  powerLostOnDeath: 2
+
+# Faction Settings
+factions:
+  zeroPowerFactionsGetDisbanded: true
 ```
 
 See the [Configuration Guide](https://github.com/dmccoystephenson/Medieval-Factions/blob/master/CONFIG.md) for complete configuration documentation.
