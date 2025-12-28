@@ -93,8 +93,8 @@ To view claimed land on a dynamic map, download and install [Dynmap](https://www
 For displaying faction information in other plugins, install [PlaceholderAPI](https://www.spigotmc.org/resources/placeholderapi.6245/). See the [Placeholders Wiki](https://github.com/Dans-Plugins/Medieval-Factions/wiki/Placeholders) for available placeholders.
 
 ### Expansions
-- **[Fiefs](https://github.com/dmccoystephenson/Fiefs)** - Additional faction features
-- **[Currencies](https://github.com/dmccoystephenson/Currencies)** - Economy system for factions
+- **[Fiefs](https://github.com/Dans-Plugins/Fiefs)** - Additional faction features
+- **[Currencies](https://github.com/Dans-Plugins/Currencies)** - Economy system for factions
 
 ---
 
