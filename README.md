@@ -21,11 +21,16 @@ Dynmap has been integrated with this plugin. In order to be able to view claimed
 2) [Currencies](https://github.com/dmccoystephenson/Currencies)
 
 ## Usage
-- [User Guide](https://github.com/dmccoystephenson/Medieval-Factions/wiki/Guide)
-- [List of Commands](https://github.com/dmccoystephenson/Medieval-Factions/wiki/Commands)
+
+### Documentation
+- [User Guide](USER_GUIDE.md) - Getting started and common scenarios
+- [Commands Reference](COMMANDS.md) - Complete list of all commands
+- [Configuration Guide](CONFIG.md) - Detailed config options
+- [Faction Flags](FACTION_FLAGS.md) - Faction flag reference
+
+### Wiki & Additional Resources
+- [Wiki Guide](https://github.com/dmccoystephenson/Medieval-Factions/wiki/Guide)
 - [FAQ](https://github.com/dmccoystephenson/Medieval-Factions/wiki/FAQ)
-- [Config Options](https://github.com/dmccoystephenson/Medieval-Factions/wiki/Config-Options)
-- [Faction Flags](https://github.com/dmccoystephenson/Medieval-Factions/wiki/Faction-Flags)
 - [List of Placeholders](https://github.com/dmccoystephenson/Medieval-Factions/wiki/Placeholders)
 
 ## Support
