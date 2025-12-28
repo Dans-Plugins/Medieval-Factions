@@ -189,6 +189,14 @@ publishing {
             def snapshotsRepoUrl = "https://repo.dansplugins.com/repository/maven-snapshots/"
             url = version.endsWith("SNAPSHOT") ? snapshotsRepoUrl : releasesRepoUrl
         }
+        maven {
+            name = "GitHubPackages"
+            url = uri("https://maven.pkg.github.com/Dans-Plugins/Medieval-Factions")
+            credentials {
+                username = System.getenv("GITHUB_ACTOR")
+                password = System.getenv("GITHUB_TOKEN")
+            }
+        }
     }
     publications {
         maven(MavenPublication) { publication ->
