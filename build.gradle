@@ -130,6 +130,7 @@ processResources {
 }
 
 shadowJar {
+    archiveClassifier.set('all')
     mergeServiceFiles()
     dependencies {
         include(dependency('org.jetbrains.kotlin:kotlin-stdlib-jdk8'))
@@ -204,10 +205,7 @@ publishing {
             artifactId = project.name
             version = project.version
 
-            from components.java
-            artifact(shadowJar) {
-                classifier = 'all'
-            }
+            artifact(shadowJar)
         }
     }
 }
