@@ -90,7 +90,7 @@ The development of the fifth major version of MF was led by [alyphen](https://gi
 To view claimed land on a dynamic map, download and install [Dynmap](https://www.spigotmc.org/resources/dynmap.274/). Medieval Factions will automatically detect and integrate with Dynmap.
 
 **PlaceholderAPI**
-For displaying faction information in other plugins, install [PlaceholderAPI](https://www.spigotmc.org/resources/placeholderapi.6245/). See the [Placeholders Wiki](https://github.com/dmccoystephenson/Medieval-Factions/wiki/Placeholders) for available placeholders.
+For displaying faction information in other plugins, install [PlaceholderAPI](https://www.spigotmc.org/resources/placeholderapi.6245/). See the [Placeholders Wiki](https://github.com/Dans-Plugins/Medieval-Factions/wiki/Placeholders) for available placeholders.
 
 ### Expansions
 - **[Fiefs](https://github.com/dmccoystephenson/Fiefs)** - Additional faction features
@@ -103,21 +103,21 @@ For displaying faction information in other plugins, install [PlaceholderAPI](ht
 Medieval Factions has comprehensive documentation available on GitHub:
 
 ### Quick Start Guides
-- **[User Guide](https://github.com/dmccoystephenson/Medieval-Factions/blob/master/USER_GUIDE.md)** - Getting started, common scenarios, and step-by-step tutorials
-- **[Commands Reference](https://github.com/dmccoystephenson/Medieval-Factions/blob/master/COMMANDS.md)** - Complete list of all commands with descriptions and permissions
-- **[Configuration Guide](https://github.com/dmccoystephenson/Medieval-Factions/blob/master/CONFIG.md)** - Detailed server configuration options
-- **[Faction Flags Reference](https://github.com/dmccoystephenson/Medieval-Factions/blob/master/FACTION_FLAGS.md)** - Per-faction settings and customization
+- **[User Guide](https://github.com/Dans-Plugins/Medieval-Factions/blob/master/USER_GUIDE.md)** - Getting started, common scenarios, and step-by-step tutorials
+- **[Commands Reference](https://github.com/Dans-Plugins/Medieval-Factions/blob/master/COMMANDS.md)** - Complete list of all commands with descriptions and permissions
+- **[Configuration Guide](https://github.com/Dans-Plugins/Medieval-Factions/blob/master/CONFIG.md)** - Detailed server configuration options
+- **[Faction Flags Reference](https://github.com/Dans-Plugins/Medieval-Factions/blob/master/FACTION_FLAGS.md)** - Per-faction settings and customization
 
 ### Wiki Resources
-- **[Wiki Guide](https://github.com/dmccoystephenson/Medieval-Factions/wiki/Guide)** - Comprehensive wiki documentation
-- **[FAQ](https://github.com/dmccoystephenson/Medieval-Factions/wiki/FAQ)** - Frequently asked questions
-- **[Features List](https://github.com/dmccoystephenson/Medieval-Factions/wiki/Features)** - Complete feature list
-- **[Placeholders](https://github.com/dmccoystephenson/Medieval-Factions/wiki/Placeholders)** - PlaceholderAPI integration
+- **[Wiki Guide](https://github.com/Dans-Plugins/Medieval-Factions/wiki/Guide)** - Comprehensive wiki documentation
+- **[FAQ](https://github.com/Dans-Plugins/Medieval-Factions/wiki/FAQ)** - Frequently asked questions
+- **[Features List](https://github.com/Dans-Plugins/Medieval-Factions/wiki/Features)** - Complete feature list
+- **[Placeholders](https://github.com/Dans-Plugins/Medieval-Factions/wiki/Placeholders)** - PlaceholderAPI integration
 
 ### Developer Resources
-- **[External API Documentation](https://github.com/dmccoystephenson/Medieval-Factions/wiki/External-API-Documentation)** - For creating add-ons
-- **[Developer Notes](https://github.com/dmccoystephenson/Medieval-Factions/wiki/Developer-Notes)** - Technical documentation
-- **[Contributing Guide](https://github.com/dmccoystephenson/Medieval-Factions/blob/master/CONTRIBUTING.md)** - How to contribute to the project
+- **[External API Documentation](https://github.com/Dans-Plugins/Medieval-Factions/wiki/External-API-Documentation)** - For creating add-ons
+- **[Developer Notes](https://github.com/Dans-Plugins/Medieval-Factions/wiki/Developer-Notes)** - Technical documentation
+- **[Contributing Guide](https://github.com/Dans-Plugins/Medieval-Factions/blob/master/CONTRIBUTING.md)** - How to contribute to the project
 
 ---
 
@@ -198,7 +198,7 @@ factions:
   zeroPowerFactionsGetDisbanded: true
 ```
 
-See the [Configuration Guide](https://github.com/dmccoystephenson/Medieval-Factions/blob/master/CONFIG.md) for complete configuration documentation.
+See the [Configuration Guide](https://github.com/Dans-Plugins/Medieval-Factions/blob/master/CONFIG.md) for complete configuration documentation.
 
 ---
 
@@ -218,13 +218,13 @@ Medieval Factions is perfect for:
 
 ### Need Help?
 - **Discord Server:** [Join our Discord](https://discord.gg/xXtuAQ2) for support and discussion
-- **Bug Reports:** [Submit issues on GitHub](https://github.com/dmccoystephenson/Medieval-Factions/issues/new/choose)
-- **Known Issues:** [View known bugs](https://github.com/dmccoystephenson/Medieval-Factions/issues?q=is%3Aopen+is%3Aissue+label%3Abug)
+- **Bug Reports:** [Submit issues on GitHub](https://github.com/Dans-Plugins/Medieval-Factions/issues/new/choose)
+- **Known Issues:** [View known bugs](https://github.com/Dans-Plugins/Medieval-Factions/issues?q=is%3Aopen+is%3Aissue+label%3Abug)
 
 ### For Developers
 - **Creating Add-ons:** Use [FactionsBridge](https://www.spigotmc.org/resources/factionsbridge.89716/) for cross-plugin compatibility
-- **External API:** [API Documentation](https://github.com/dmccoystephenson/Medieval-Factions/wiki/External-API-Documentation)
-- **Contributing:** [Contribution Guidelines](https://github.com/dmccoystephenson/Medieval-Factions/blob/master/CONTRIBUTING.md)
+- **External API:** [API Documentation](https://github.com/Dans-Plugins/Medieval-Factions/wiki/External-API-Documentation)
+- **Contributing:** [Contribution Guidelines](https://github.com/Dans-Plugins/Medieval-Factions/blob/master/CONTRIBUTING.md)
 
 ---
 
@@ -270,13 +270,13 @@ Special thanks to all contributors including: Richardhyy, Mitras2, Kaonami, Good
 - **German:** graffity_X
 - **Dutch:** JustGllenn, TDL, n0virus
 
-See the [README](https://github.com/dmccoystephenson/Medieval-Factions/blob/master/README.md) for the complete credits list.
+See the [README](https://github.com/Dans-Plugins/Medieval-Factions/blob/master/README.md) for the complete credits list.
 
 ---
 
 ## 📜 License
 
-Medieval Factions is licensed under the [GNU General Public License v3.0](https://github.com/dmccoystephenson/Medieval-Factions/blob/master/LICENSE) (GPL-3.0).
+Medieval Factions is licensed under the [GNU General Public License v3.0](https://github.com/Dans-Plugins/Medieval-Factions/blob/master/LICENSE) (GPL-3.0).
 
 You are free to use, modify, and distribute this software, provided that:
 - Source code is made available under the same license when distributed
@@ -287,7 +287,7 @@ You are free to use, modify, and distribute this software, provided that:
 
 ## 🔗 Links
 
-- **GitHub Repository:** [https://github.com/dmccoystephenson/Medieval-Factions](https://github.com/dmccoystephenson/Medieval-Factions)
+- **GitHub Repository:** [https://github.com/Dans-Plugins/Medieval-Factions](https://github.com/Dans-Plugins/Medieval-Factions)
 - **Discord Server:** [https://discord.gg/xXtuAQ2](https://discord.gg/xXtuAQ2)
 - **SpigotMC Resource:** [https://www.spigotmc.org/resources/medieval-factions.79941/](https://www.spigotmc.org/resources/medieval-factions.79941/)
 - **bStats:** [https://bstats.org/plugin/bukkit/Medieval%20Factions/8929](https://bstats.org/plugin/bukkit/Medieval%20Factions/8929)
