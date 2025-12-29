@@ -3,7 +3,7 @@
 ## Description 
 Medieval Factions is a system of mechanics that allows for the simulation of sovereign nations in Minecraft. Players can create nations, claim territory, engage in warfare or politics, write laws or hold dueling tournaments, and generally are able to attempt to recreate society somewhat.
 
-A list of features can be found [here](https://github.com/dmccoystephenson/Medieval-Factions/wiki/Features).
+A list of features can be found [here](https://github.com/Dans-Plugins/Medieval-Factions/wiki/Features).
 
 The development of the fifth major version of MF was led by [alyphen](https://github.com/alyphen) (creator of [RPKit](https://github.com/RP-Kit/RPKit/wiki)). Huge thanks to her!
 
@@ -17,8 +17,8 @@ The development of the fifth major version of MF was led by [alyphen](https://gi
 Dynmap has been integrated with this plugin. In order to be able to view claimed land on a dynamic map, download and install the plugin [here](https://www.spigotmc.org/resources/dynmap.274/).
 
 ### Expansions
-1) [Fiefs](https://github.com/dmccoystephenson/Fiefs)
-2) [Currencies](https://github.com/dmccoystephenson/Currencies)
+1) [Fiefs](https://github.com/Dans-Plugins/Fiefs)
+2) [Currencies](https://github.com/Dans-Plugins/Currencies)
 
 ## Usage
 
@@ -29,21 +29,21 @@ Dynmap has been integrated with this plugin. In order to be able to view claimed
 - [Faction Flags](FACTION_FLAGS.md) - Faction flag reference
 
 ### Wiki & Additional Resources
-- [Wiki Guide](https://github.com/dmccoystephenson/Medieval-Factions/wiki/Guide)
-- [FAQ](https://github.com/dmccoystephenson/Medieval-Factions/wiki/FAQ)
-- [List of Placeholders](https://github.com/dmccoystephenson/Medieval-Factions/wiki/Placeholders)
+- [Wiki Guide](https://github.com/Dans-Plugins/Medieval-Factions/wiki/Guide)
+- [FAQ](https://github.com/Dans-Plugins/Medieval-Factions/wiki/FAQ)
+- [List of Placeholders](https://github.com/Dans-Plugins/Medieval-Factions/wiki/Placeholders)
 
 ## Support
 You can find the support discord server [here](https://discord.gg/xXtuAQ2).
 
 ### Experiencing a bug?
-Please fill out a bug report [here](https://github.com/dmccoystephenson/Medieval-Factions/issues/new/choose).
+Please fill out a bug report [here](https://github.com/Dans-Plugins/Medieval-Factions/issues/new/choose).
 
-- [Known Bugs](https://github.com/dmccoystephenson/Medieval-Factions/issues?q=is%3Aopen+is%3Aissue+label%3Abug)
+- [Known Bugs](https://github.com/Dans-Plugins/Medieval-Factions/issues?q=is%3Aopen+is%3Aissue+label%3Abug)
 
 ## Contributing
-- [Contributing.md](https://github.com/dmccoystephenson/Medieval-Factions/blob/master/CONTRIBUTING.md)
-- [Notes for Developers](https://github.com/dmccoystephenson/Medieval-Factions/wiki/Developer-Notes)
+- [Contributing.md](https://github.com/Dans-Plugins/Medieval-Factions/blob/main/CONTRIBUTING.md)
+- [Notes for Developers](https://github.com/Dans-Plugins/Medieval-Factions/wiki/Developer-Notes)
 
 ## Testing
 ### Unit Tests
@@ -63,7 +63,7 @@ If you see BUILD SUCCESSFUL, then the tests have passed.
 ### Looking to create an add-on plugin?
 I recommend using [FactionsBridge](https://www.spigotmc.org/resources/factionsbridge.89716/) by [Retrix_Solutions](https://www.spigotmc.org/resources/authors/retrix_solutions.491191/). It would make your add-on plugin usable across a number of factions implementations.
 
-Alternatively, you can use the External API, the documentation for which can be found [here](https://github.com/dmccoystephenson/Medieval-Factions/wiki/External-API-Documentation).
+Alternatively, you can use the External API, the documentation for which can be found [here](https://github.com/Dans-Plugins/Medieval-Factions/wiki/External-API-Documentation).
 
 ## Development
 ### Test Server with Plugin Hot-Reloading
@@ -136,7 +136,7 @@ This significantly speeds up the development cycle by eliminating the need for f
 
 I created this plugin because I wanted to use the original [Factions](https://www.spigotmc.org/resources/factions.1900/) plugin for an upcoming server of mine, but it wasn't updated for the version of minecraft I was going to be using. I decided to take inspiration from the concept of factions - groups of players that can claim land - and create my own factions plugin.
 
-The first release version, [v1.7](https://github.com/dmccoystephenson/Medieval-Factions/releases/tag/v1.7), was released on SpigotMC in June 2020 and looked much different than the plugin does today.
+The first release version, [v1.7](https://github.com/Dans-Plugins/Medieval-Factions/releases/tag/v1.7), was released on SpigotMC in June 2020 and looked much different than the plugin does today.
 
 I am extremely grateful to those that have donated their time improving the project, one way or another. The plugin wouldn't be where it is today without the contributions of others.
 
