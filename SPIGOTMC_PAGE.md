@@ -20,7 +20,7 @@ Medieval Factions is a comprehensive system of mechanics that allows for the sim
 - PlaceholderAPI support for custom displays
 - Multi-language support (English, Spanish, Russian, Portuguese, German, Dutch)
 
-The development of the fifth major version of MF was led by [alyphen](https://github.com/alyphen) (creator of [RPKit](https://github.com/RP-Kit/RPKit/wiki)). Huge thanks to her!
+The development of the fifth major version of MF was led by [alyphen](https://github.com/renbinden) (creator of [RPKit](https://github.com/RP-Kit/RPKit/wiki)). Huge thanks to her!
 
 ---
 
@@ -255,7 +255,7 @@ View server statistics and usage on [bStats](https://bstats.org/plugin/bukkit/Me
 
 ### Lead Developers
 - **Daniel Stephenson** - Original creator
-- **[Ren Binden (alyphen)](https://github.com/alyphen)** - Created Medieval Factions 5
+- **[Ren Binden (alyphen)](https://github.com/renbinden)** - Created Medieval Factions 5
 - **[Pasarus](https://github.com/Pasarus)** - Storage system overhaul
 - **Caibinus** - Duels, gates, and Dynmap integration
 - **[Callum](https://www.spigotmc.org/resources/authors/retrix_solutions.491191/)** - Command system overhaul, events, PlaceholderAPI
