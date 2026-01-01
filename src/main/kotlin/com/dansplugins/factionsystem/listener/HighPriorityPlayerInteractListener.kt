@@ -4,9 +4,11 @@ import com.dansplugins.factionsystem.MedievalFactions
 import com.dansplugins.factionsystem.player.MfPlayer
 import dev.forkhandles.result4k.onFailure
 import org.bukkit.ChatColor.RED
+import org.bukkit.Material
 import org.bukkit.event.EventHandler
 import org.bukkit.event.EventPriority
 import org.bukkit.event.Listener
+import org.bukkit.event.block.Action
 import org.bukkit.event.player.PlayerInteractEvent
 import java.util.logging.Level.SEVERE
 
@@ -55,6 +57,17 @@ class HighPriorityPlayerInteractListener(private val plugin: MedievalFactions) :
             if (mfPlayer.isBypassEnabled && event.player.hasPermission("mf.bypass")) {
                 event.player.sendMessage("$RED${plugin.language["FactionTerritoryProtectionBypassed"]}")
             } else {
+                val playerFaction = factionService.getFaction(mfPlayer.id)
+                val relationshipService = plugin.services.factionRelationshipService
+                // Check if player is at war and trying to place a ladder
+                if (playerFaction != null && 
+                    relationshipService.getFactionsAtWarWith(playerFaction.id).contains(claimFaction.id) &&
+                    event.action == Action.RIGHT_CLICK_BLOCK &&
+                    event.item?.type == Material.LADDER &&
+                    plugin.config.getBoolean("factions.laddersPlaceableInEnemyFactionTerritory", true)) {
+                    // Allow ladder placement in enemy territory during wartime
+                    return
+                }
                 event.isCancelled = true
                 event.player.sendMessage("$RED${plugin.language["CannotInteractWithBlockInFactionTerritory", claimFaction.name]}")
             }
