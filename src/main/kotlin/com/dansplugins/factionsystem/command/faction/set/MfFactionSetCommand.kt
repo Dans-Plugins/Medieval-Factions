@@ -10,7 +10,10 @@ import org.bukkit.command.CommandExecutor
 import org.bukkit.command.CommandSender
 import org.bukkit.command.TabCompleter
 
-class MfFactionSetCommand(private val plugin: MedievalFactions) : CommandExecutor, TabCompleter {
+class MfFactionSetCommand(
+    private val plugin: MedievalFactions,
+) : CommandExecutor,
+    TabCompleter {
     private val factionSetNameCommand = MfFactionSetNameCommand(plugin)
     private val factionSetDescriptionCommand = MfFactionSetDescriptionCommand(plugin)
     private val factionSetPrefixCommand = MfFactionSetPrefixCommand(plugin)
@@ -21,8 +24,13 @@ class MfFactionSetCommand(private val plugin: MedievalFactions) : CommandExecuto
 
     private val subcommands = nameAliases + descriptionAliases + prefixAliases
 
-    override fun onCommand(sender: CommandSender, command: Command, label: String, args: Array<out String>): Boolean {
-        return when (args.firstOrNull()?.lowercase()) {
+    override fun onCommand(
+        sender: CommandSender,
+        command: Command,
+        label: String,
+        args: Array<out String>,
+    ): Boolean =
+        when (args.firstOrNull()?.lowercase()) {
             in nameAliases -> factionSetNameCommand.onCommand(sender, command, label, args.drop(1).toTypedArray())
             in descriptionAliases -> factionSetDescriptionCommand.onCommand(sender, command, label, args.drop(1).toTypedArray())
             in prefixAliases -> factionSetPrefixCommand.onCommand(sender, command, label, args.drop(1).toTypedArray())
@@ -31,21 +39,21 @@ class MfFactionSetCommand(private val plugin: MedievalFactions) : CommandExecuto
                 true
             }
         }
-    }
 
     override fun onTabComplete(
         sender: CommandSender,
         command: Command,
         label: String,
-        args: Array<out String>
+        args: Array<out String>,
     ) = when {
         args.isEmpty() -> subcommands
         args.size == 1 -> subcommands.filter { it.startsWith(args[0].lowercase()) }
-        else -> when (args.first().lowercase()) {
-            in nameAliases -> factionSetNameCommand.onTabComplete(sender, command, label, args.drop(1).toTypedArray())
-            in descriptionAliases -> factionSetDescriptionCommand.onTabComplete(sender, command, label, args.drop(1).toTypedArray())
-            in prefixAliases -> factionSetPrefixCommand.onTabComplete(sender, command, label, args.drop(1).toTypedArray())
-            else -> emptyList()
-        }
+        else ->
+            when (args.first().lowercase()) {
+                in nameAliases -> factionSetNameCommand.onTabComplete(sender, command, label, args.drop(1).toTypedArray())
+                in descriptionAliases -> factionSetDescriptionCommand.onTabComplete(sender, command, label, args.drop(1).toTypedArray())
+                in prefixAliases -> factionSetPrefixCommand.onTabComplete(sender, command, label, args.drop(1).toTypedArray())
+                else -> emptyList()
+            }
     }
 }

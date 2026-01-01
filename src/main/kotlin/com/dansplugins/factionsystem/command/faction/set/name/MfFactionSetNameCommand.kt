@@ -22,26 +22,34 @@ import org.bukkit.entity.Player
 import preponderous.ponder.command.unquote
 import java.util.logging.Level
 
-class MfFactionSetNameCommand(private val plugin: MedievalFactions) : CommandExecutor, TabCompleter {
-
-    private val conversationFactory = ConversationFactory(plugin)
-        .withModality(true)
-        .withFirstPrompt(NamePrompt())
-        .withEscapeSequence(plugin.language["EscapeSequence"])
-        .withLocalEcho(false)
-        .thatExcludesNonPlayersWithMessage(plugin.language["CommandFactionSetNameNotAPlayer"])
-        .addConversationAbandonedListener { event ->
-            if (!event.gracefulExit()) {
-                val conversable = event.context.forWhom
-                if (conversable is Player) {
-                    conversable.sendMessage(plugin.language["CommandFactionSetNameOperationCancelled"])
+class MfFactionSetNameCommand(
+    private val plugin: MedievalFactions,
+) : CommandExecutor,
+    TabCompleter {
+    private val conversationFactory =
+        ConversationFactory(plugin)
+            .withModality(true)
+            .withFirstPrompt(NamePrompt())
+            .withEscapeSequence(plugin.language["EscapeSequence"])
+            .withLocalEcho(false)
+            .thatExcludesNonPlayersWithMessage(plugin.language["CommandFactionSetNameNotAPlayer"])
+            .addConversationAbandonedListener { event ->
+                if (!event.gracefulExit()) {
+                    val conversable = event.context.forWhom
+                    if (conversable is Player) {
+                        conversable.sendMessage(plugin.language["CommandFactionSetNameOperationCancelled"])
+                    }
                 }
             }
-        }
 
     private inner class NamePrompt : StringPrompt() {
-        override fun getPromptText(context: ConversationContext): String = plugin.language["CommandFactionSetNameNamePrompt", plugin.language["EscapeSequence"]]
-        override fun acceptInput(context: ConversationContext, input: String?): Prompt? {
+        override fun getPromptText(context: ConversationContext): String =
+            plugin.language["CommandFactionSetNameNamePrompt", plugin.language["EscapeSequence"]]
+
+        override fun acceptInput(
+            context: ConversationContext,
+            input: String?,
+        ): Prompt? {
             val conversable = context.forWhom
             if (conversable !is Player) return END_OF_CONVERSATION
             if (input == null) return END_OF_CONVERSATION
@@ -50,7 +58,12 @@ class MfFactionSetNameCommand(private val plugin: MedievalFactions) : CommandExe
         }
     }
 
-    override fun onCommand(sender: CommandSender, command: Command, label: String, args: Array<out String>): Boolean {
+    override fun onCommand(
+        sender: CommandSender,
+        command: Command,
+        label: String,
+        args: Array<out String>,
+    ): Boolean {
         if (!sender.hasPermission("mf.rename")) {
             sender.sendMessage("$RED${plugin.language["CommandFactionSetNameNoPermission"]}")
             return true
@@ -67,7 +80,10 @@ class MfFactionSetNameCommand(private val plugin: MedievalFactions) : CommandExe
         return true
     }
 
-    private fun setFactionName(player: Player, args: Array<out String>) {
+    private fun setFactionName(
+        player: Player,
+        args: Array<out String>,
+    ) {
         val onlinePlayers = plugin.server.onlinePlayers.associateWith { it.location.chunk }
         val hasForcePermission = player.hasPermission("mf.force.rename")
         val maxFactionNameLength = plugin.config.getInt("factions.maxNameLength")
@@ -75,12 +91,13 @@ class MfFactionSetNameCommand(private val plugin: MedievalFactions) : CommandExe
             plugin,
             Runnable {
                 val playerService = plugin.services.playerService
-                val mfPlayer = playerService.getPlayer(player)
-                    ?: playerService.save(MfPlayer(plugin, player)).onFailure {
-                        player.sendMessage("$RED${plugin.language["CommandFactionSetNameFailedToSavePlayer"]}")
-                        plugin.logger.log(Level.SEVERE, "Failed to save player: ${it.reason.message}", it.reason.cause)
-                        return@Runnable
-                    }
+                val mfPlayer =
+                    playerService.getPlayer(player)
+                        ?: playerService.save(MfPlayer(plugin, player)).onFailure {
+                            player.sendMessage("$RED${plugin.language["CommandFactionSetNameFailedToSavePlayer"]}")
+                            plugin.logger.log(Level.SEVERE, "Failed to save player: ${it.reason.message}", it.reason.cause)
+                            return@Runnable
+                        }
                 val factionService = plugin.services.factionService
                 var faction: MfFaction? = null
                 var name = ""
@@ -112,20 +129,22 @@ class MfFactionSetNameCommand(private val plugin: MedievalFactions) : CommandExe
                     player.sendMessage("$RED${plugin.language["CommandFactionSetNameFactionAlreadyExists"]}")
                     return@Runnable
                 }
-                val updatedFaction = factionService.save(faction.copy(name = name)).onFailure {
-                    player.sendMessage("$RED${plugin.language["CommandFactionSetNameFailedToSaveFaction"]}")
-                    plugin.logger.log(Level.SEVERE, "Failed to save faction: ${it.reason.message}", it.reason.cause)
-                    return@Runnable
-                }
+                val updatedFaction =
+                    factionService.save(faction.copy(name = name)).onFailure {
+                        player.sendMessage("$RED${plugin.language["CommandFactionSetNameFailedToSaveFaction"]}")
+                        plugin.logger.log(Level.SEVERE, "Failed to save faction: ${it.reason.message}", it.reason.cause)
+                        return@Runnable
+                    }
                 player.sendMessage("$GREEN${plugin.language["CommandFactionSetNameSuccess", name]}")
                 plugin.server.scheduler.runTask(
                     plugin,
                     Runnable {
                         player.performCommand("faction info")
-                    }
+                    },
                 )
                 val claimService = plugin.services.claimService
-                onlinePlayers.filter { (_, chunk) -> claimService.getClaim(chunk)?.factionId == updatedFaction.id }
+                onlinePlayers
+                    .filter { (_, chunk) -> claimService.getClaim(chunk)?.factionId == updatedFaction.id }
                     .forEach { (player, _) ->
                         val title = "${ChatColor.of(updatedFaction.flags[plugin.flags.color])}${updatedFaction.name}"
                         val subtitle = "${ChatColor.of(updatedFaction.flags[plugin.flags.color])}${updatedFaction.description}"
@@ -136,14 +155,14 @@ class MfFactionSetNameCommand(private val plugin: MedievalFactions) : CommandExe
                                 subtitle,
                                 plugin.config.getInt("factions.titleTerritoryFadeInLength"),
                                 plugin.config.getInt("factions.titleTerritoryDuration"),
-                                plugin.config.getInt("factions.titleTerritoryFadeOutLength")
+                                plugin.config.getInt("factions.titleTerritoryFadeOutLength"),
                             )
                         }
                         if (plugin.config.getBoolean("factions.actionBarTerritoryIndicator")) {
                             player.spigot().sendMessage(ACTION_BAR, *TextComponent.fromLegacyText(title))
                         }
                     }
-            }
+            },
         )
     }
 
@@ -151,6 +170,6 @@ class MfFactionSetNameCommand(private val plugin: MedievalFactions) : CommandExe
         sender: CommandSender,
         command: Command,
         label: String,
-        args: Array<out String>
+        args: Array<out String>,
     ) = emptyList<String>()
 }

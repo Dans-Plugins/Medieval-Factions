@@ -107,7 +107,7 @@ class BlockPlaceListenerTest {
         val world: World,
         val block: Block,
         val player: Player,
-        val event: BlockPlaceEvent
+        val event: BlockPlaceEvent,
     )
 
     private fun mockServices() {

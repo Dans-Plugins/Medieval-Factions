@@ -24,11 +24,10 @@ import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.TestInstance
 import org.mockito.Mockito.mock
 import org.mockito.Mockito.`when`
-import java.util.*
+import java.util.Locale
 
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 class MedievalFactionsPlaceholderExpansionTest {
-
     private lateinit var fixture: PlaceholderExpansionTestFixture
     private lateinit var plugin: MedievalFactions
     private lateinit var factionService: MfFactionService
@@ -331,7 +330,7 @@ class MedievalFactionsPlaceholderExpansionTest {
     private data class PlaceholderExpansionTestFixture(
         val player: OfflinePlayer,
         val faction: MfFaction,
-        val mfPlayer: MfPlayer
+        val mfPlayer: MfPlayer,
     )
 
     private fun mockServices() {

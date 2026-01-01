@@ -10,9 +10,16 @@ import org.bukkit.command.CommandSender
 import org.bukkit.command.TabCompleter
 import org.bukkit.entity.Player
 
-class MfFactionApplyCommand(private val plugin: MedievalFactions) : CommandExecutor, TabCompleter {
-
-    override fun onCommand(sender: CommandSender, command: Command, label: String, args: Array<out String>): Boolean {
+class MfFactionApplyCommand(
+    private val plugin: MedievalFactions,
+) : CommandExecutor,
+    TabCompleter {
+    override fun onCommand(
+        sender: CommandSender,
+        command: Command,
+        label: String,
+        args: Array<out String>,
+    ): Boolean {
         if (!sender.hasPermission("mf.apply")) {
             sender.sendMessage("${ChatColor.RED}${plugin.language["CommandFactionApplyNoPermission"]}")
             return true
@@ -35,19 +42,25 @@ class MfFactionApplyCommand(private val plugin: MedievalFactions) : CommandExecu
         return true
     }
 
-    private fun sendApplication(sender: Player, targetFactionName: String) {
+    private fun sendApplication(
+        sender: Player,
+        targetFactionName: String,
+    ) {
         plugin.logger.info("Player " + sender.name + " is applying to faction " + targetFactionName)
         plugin.server.scheduler.runTaskAsynchronously(
             plugin,
-            SendApplicationTask(plugin, sender, targetFactionName)
+            SendApplicationTask(plugin, sender, targetFactionName),
         )
     }
 
-    private fun cancelApplication(sender: Player, targetFactionName: String) {
+    private fun cancelApplication(
+        sender: Player,
+        targetFactionName: String,
+    ) {
         plugin.logger.info("Player " + sender.name + " is cancelling application to faction " + targetFactionName)
         plugin.server.scheduler.runTaskAsynchronously(
             plugin,
-            CancelApplicationTask(plugin, sender, targetFactionName)
+            CancelApplicationTask(plugin, sender, targetFactionName),
         )
     }
 
@@ -55,7 +68,7 @@ class MfFactionApplyCommand(private val plugin: MedievalFactions) : CommandExecu
         sender: CommandSender,
         command: Command,
         label: String,
-        args: Array<out String>
+        args: Array<out String>,
     ): MutableList<String>? {
         if (args.size == 1) {
             val factionService = plugin.services.factionService

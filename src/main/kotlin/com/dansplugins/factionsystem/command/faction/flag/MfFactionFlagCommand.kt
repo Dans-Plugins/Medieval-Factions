@@ -7,7 +7,10 @@ import org.bukkit.command.CommandExecutor
 import org.bukkit.command.CommandSender
 import org.bukkit.command.TabCompleter
 
-class MfFactionFlagCommand(private val plugin: MedievalFactions) : CommandExecutor, TabCompleter {
+class MfFactionFlagCommand(
+    private val plugin: MedievalFactions,
+) : CommandExecutor,
+    TabCompleter {
     private val factionFlagListCommand = MfFactionFlagListCommand(plugin)
     private val factionFlagSetCommand = MfFactionFlagSetCommand(plugin)
 
@@ -16,8 +19,13 @@ class MfFactionFlagCommand(private val plugin: MedievalFactions) : CommandExecut
 
     private val subcommands = listAliases + setAliases
 
-    override fun onCommand(sender: CommandSender, command: Command, label: String, args: Array<out String>): Boolean {
-        return when (args.firstOrNull()?.lowercase()) {
+    override fun onCommand(
+        sender: CommandSender,
+        command: Command,
+        label: String,
+        args: Array<out String>,
+    ): Boolean =
+        when (args.firstOrNull()?.lowercase()) {
             in listAliases -> factionFlagListCommand.onCommand(sender, command, label, args.drop(1).toTypedArray())
             in setAliases -> factionFlagSetCommand.onCommand(sender, command, label, args.drop(1).toTypedArray())
             else -> {
@@ -25,20 +33,20 @@ class MfFactionFlagCommand(private val plugin: MedievalFactions) : CommandExecut
                 true
             }
         }
-    }
 
     override fun onTabComplete(
         sender: CommandSender,
         command: Command,
         label: String,
-        args: Array<out String>
+        args: Array<out String>,
     ) = when {
         args.isEmpty() -> subcommands
         args.size == 1 -> subcommands.filter { it.startsWith(args[0].lowercase()) }
-        else -> when (args.first().lowercase()) {
-            in listAliases -> factionFlagListCommand.onTabComplete(sender, command, label, args.drop(1).toTypedArray())
-            in setAliases -> factionFlagSetCommand.onTabComplete(sender, command, label, args.drop(1).toTypedArray())
-            else -> emptyList()
-        }
+        else ->
+            when (args.first().lowercase()) {
+                in listAliases -> factionFlagListCommand.onTabComplete(sender, command, label, args.drop(1).toTypedArray())
+                in setAliases -> factionFlagSetCommand.onTabComplete(sender, command, label, args.drop(1).toTypedArray())
+                else -> emptyList()
+            }
     }
 }

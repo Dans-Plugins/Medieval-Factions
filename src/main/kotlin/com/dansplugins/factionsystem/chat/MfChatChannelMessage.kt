@@ -11,5 +11,5 @@ data class MfChatChannelMessage(
     @get:JvmName("getFactionId")
     val factionId: MfFactionId,
     val chatChannel: MfFactionChatChannel,
-    val message: String
+    val message: String,
 )

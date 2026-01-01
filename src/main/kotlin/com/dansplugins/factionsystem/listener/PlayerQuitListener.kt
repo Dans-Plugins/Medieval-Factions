@@ -8,8 +8,9 @@ import org.bukkit.event.Listener
 import org.bukkit.event.player.PlayerQuitEvent
 import java.util.logging.Level.SEVERE
 
-class PlayerQuitListener(private val plugin: MedievalFactions) : Listener {
-
+class PlayerQuitListener(
+    private val plugin: MedievalFactions,
+) : Listener {
     @EventHandler
     fun onPlayerQuit(event: PlayerQuitEvent) {
         val teleportService = plugin.services.teleportService

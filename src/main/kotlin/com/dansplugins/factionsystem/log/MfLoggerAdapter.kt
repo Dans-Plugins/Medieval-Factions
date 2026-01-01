@@ -12,24 +12,25 @@ import java.util.logging.LogRecord
 import java.util.logging.Logger
 import java.util.logging.Level as JulLevel
 
-class MfLoggerAdapter(name: String) : MarkerIgnoringBase(), LocationAwareLogger {
-
+class MfLoggerAdapter(
+    name: String,
+) : MarkerIgnoringBase(),
+    LocationAwareLogger {
     init {
         this.name = name
     }
 
     private val logger: Logger
-        get() = Bukkit.getPluginManager().getPlugin("MedievalFactions")?.logger
-            ?: Bukkit.getLogger()
+        get() =
+            Bukkit.getPluginManager().getPlugin("MedievalFactions")?.logger
+                ?: Bukkit.getLogger()
 
     /**
      * Is this logger instance enabled for the FINEST level?
      *
      * @return True if this Logger is enabled for level FINEST, false otherwise.
      */
-    override fun isTraceEnabled(): Boolean {
-        return logger.isLoggable(JulLevel.FINEST)
-    }
+    override fun isTraceEnabled(): Boolean = logger.isLoggable(JulLevel.FINEST)
 
     /**
      * Log a message object at level FINEST.
@@ -39,7 +40,7 @@ class MfLoggerAdapter(name: String) : MarkerIgnoringBase(), LocationAwareLogger 
      */
     override fun trace(msg: String) {
         if (logger.isLoggable(JulLevel.FINEST)) {
-            log(SELF, JulLevel.FINEST, msg, null)
+            log(self, JulLevel.FINEST, msg, null)
         }
     }
 
@@ -58,10 +59,13 @@ class MfLoggerAdapter(name: String) : MarkerIgnoringBase(), LocationAwareLogger 
      * @param arg
      * the argument
      */
-    override fun trace(format: String?, arg: Any?) {
+    override fun trace(
+        format: String?,
+        arg: Any?,
+    ) {
         if (logger.isLoggable(JulLevel.FINEST)) {
             val ft = MessageFormatter.format(format, arg)
-            log(SELF, JulLevel.FINEST, ft.message, ft.throwable)
+            log(self, JulLevel.FINEST, ft.message, ft.throwable)
         }
     }
 
@@ -82,10 +86,14 @@ class MfLoggerAdapter(name: String) : MarkerIgnoringBase(), LocationAwareLogger 
      * @param arg2
      * the second argument
      */
-    override fun trace(format: String?, arg1: Any?, arg2: Any?) {
+    override fun trace(
+        format: String?,
+        arg1: Any?,
+        arg2: Any?,
+    ) {
         if (logger.isLoggable(JulLevel.FINEST)) {
             val ft = MessageFormatter.format(format, arg1, arg2)
-            log(SELF, JulLevel.FINEST, ft.message, ft.throwable)
+            log(self, JulLevel.FINEST, ft.message, ft.throwable)
         }
     }
 
@@ -104,10 +112,13 @@ class MfLoggerAdapter(name: String) : MarkerIgnoringBase(), LocationAwareLogger 
      * @param argArray
      * an array of arguments
      */
-    override fun trace(format: String?, vararg argArray: Any?) {
+    override fun trace(
+        format: String?,
+        vararg argArray: Any?,
+    ) {
         if (logger.isLoggable(JulLevel.FINEST)) {
             val ft = MessageFormatter.arrayFormat(format, argArray)
-            log(SELF, JulLevel.FINEST, ft.message, ft.throwable)
+            log(self, JulLevel.FINEST, ft.message, ft.throwable)
         }
     }
 
@@ -119,9 +130,12 @@ class MfLoggerAdapter(name: String) : MarkerIgnoringBase(), LocationAwareLogger 
      * @param t
      * the exception (throwable) to log
      */
-    override fun trace(msg: String, t: Throwable?) {
+    override fun trace(
+        msg: String,
+        t: Throwable?,
+    ) {
         if (logger.isLoggable(JulLevel.FINEST)) {
-            log(SELF, JulLevel.FINEST, msg, t)
+            log(self, JulLevel.FINEST, msg, t)
         }
     }
 
@@ -130,9 +144,7 @@ class MfLoggerAdapter(name: String) : MarkerIgnoringBase(), LocationAwareLogger 
      *
      * @return True if this Logger is enabled for level FINE, false otherwise.
      */
-    override fun isDebugEnabled(): Boolean {
-        return logger.isLoggable(JulLevel.FINE)
-    }
+    override fun isDebugEnabled(): Boolean = logger.isLoggable(JulLevel.FINE)
 
     /**
      * Log a message object at level FINE.
@@ -142,7 +154,7 @@ class MfLoggerAdapter(name: String) : MarkerIgnoringBase(), LocationAwareLogger 
      */
     override fun debug(msg: String) {
         if (logger.isLoggable(JulLevel.FINE)) {
-            log(SELF, JulLevel.FINE, msg, null)
+            log(self, JulLevel.FINE, msg, null)
         }
     }
 
@@ -160,10 +172,13 @@ class MfLoggerAdapter(name: String) : MarkerIgnoringBase(), LocationAwareLogger 
      * @param arg
      * the argument
      */
-    override fun debug(format: String?, arg: Any?) {
+    override fun debug(
+        format: String?,
+        arg: Any?,
+    ) {
         if (logger.isLoggable(JulLevel.FINE)) {
             val ft = MessageFormatter.format(format, arg)
-            log(SELF, JulLevel.FINE, ft.message, ft.throwable)
+            log(self, JulLevel.FINE, ft.message, ft.throwable)
         }
     }
 
@@ -184,10 +199,14 @@ class MfLoggerAdapter(name: String) : MarkerIgnoringBase(), LocationAwareLogger 
      * @param arg2
      * the second argument
      */
-    override fun debug(format: String?, arg1: Any?, arg2: Any?) {
+    override fun debug(
+        format: String?,
+        arg1: Any?,
+        arg2: Any?,
+    ) {
         if (logger.isLoggable(JulLevel.FINE)) {
             val ft = MessageFormatter.format(format, arg1, arg2)
-            log(SELF, JulLevel.FINE, ft.message, ft.throwable)
+            log(self, JulLevel.FINE, ft.message, ft.throwable)
         }
     }
 
@@ -206,10 +225,13 @@ class MfLoggerAdapter(name: String) : MarkerIgnoringBase(), LocationAwareLogger 
      * @param argArray
      * an array of arguments
      */
-    override fun debug(format: String?, vararg argArray: Any?) {
+    override fun debug(
+        format: String?,
+        vararg argArray: Any?,
+    ) {
         if (logger.isLoggable(JulLevel.FINE)) {
             val ft = MessageFormatter.arrayFormat(format, argArray)
-            log(SELF, JulLevel.FINE, ft.message, ft.throwable)
+            log(self, JulLevel.FINE, ft.message, ft.throwable)
         }
     }
 
@@ -221,9 +243,12 @@ class MfLoggerAdapter(name: String) : MarkerIgnoringBase(), LocationAwareLogger 
      * @param t
      * the exception (throwable) to log
      */
-    override fun debug(msg: String, t: Throwable?) {
+    override fun debug(
+        msg: String,
+        t: Throwable?,
+    ) {
         if (logger.isLoggable(JulLevel.FINE)) {
-            log(SELF, JulLevel.FINE, msg, t)
+            log(self, JulLevel.FINE, msg, t)
         }
     }
 
@@ -232,9 +257,7 @@ class MfLoggerAdapter(name: String) : MarkerIgnoringBase(), LocationAwareLogger 
      *
      * @return True if this Logger is enabled for the INFO level, false otherwise.
      */
-    override fun isInfoEnabled(): Boolean {
-        return logger.isLoggable(JulLevel.INFO)
-    }
+    override fun isInfoEnabled(): Boolean = logger.isLoggable(JulLevel.INFO)
 
     /**
      * Log a message object at the INFO level.
@@ -244,7 +267,7 @@ class MfLoggerAdapter(name: String) : MarkerIgnoringBase(), LocationAwareLogger 
      */
     override fun info(msg: String) {
         if (logger.isLoggable(JulLevel.INFO)) {
-            log(SELF, JulLevel.INFO, msg, null)
+            log(self, JulLevel.INFO, msg, null)
         }
     }
 
@@ -262,10 +285,13 @@ class MfLoggerAdapter(name: String) : MarkerIgnoringBase(), LocationAwareLogger 
      * @param arg
      * the argument
      */
-    override fun info(format: String?, arg: Any?) {
+    override fun info(
+        format: String?,
+        arg: Any?,
+    ) {
         if (logger.isLoggable(JulLevel.INFO)) {
             val ft = MessageFormatter.format(format, arg)
-            log(SELF, JulLevel.INFO, ft.message, ft.throwable)
+            log(self, JulLevel.INFO, ft.message, ft.throwable)
         }
     }
 
@@ -286,10 +312,14 @@ class MfLoggerAdapter(name: String) : MarkerIgnoringBase(), LocationAwareLogger 
      * @param arg2
      * the second argument
      */
-    override fun info(format: String?, arg1: Any?, arg2: Any?) {
+    override fun info(
+        format: String?,
+        arg1: Any?,
+        arg2: Any?,
+    ) {
         if (logger.isLoggable(JulLevel.INFO)) {
             val ft = MessageFormatter.format(format, arg1, arg2)
-            log(SELF, JulLevel.INFO, ft.message, ft.throwable)
+            log(self, JulLevel.INFO, ft.message, ft.throwable)
         }
     }
 
@@ -308,10 +338,13 @@ class MfLoggerAdapter(name: String) : MarkerIgnoringBase(), LocationAwareLogger 
      * @param argArray
      * an array of arguments
      */
-    override fun info(format: String?, vararg argArray: Any?) {
+    override fun info(
+        format: String?,
+        vararg argArray: Any?,
+    ) {
         if (logger.isLoggable(JulLevel.INFO)) {
             val ft = MessageFormatter.arrayFormat(format, argArray)
-            log(SELF, JulLevel.INFO, ft.message, ft.throwable)
+            log(self, JulLevel.INFO, ft.message, ft.throwable)
         }
     }
 
@@ -324,9 +357,12 @@ class MfLoggerAdapter(name: String) : MarkerIgnoringBase(), LocationAwareLogger 
      * @param t
      * the exception (throwable) to log
      */
-    override fun info(msg: String, t: Throwable?) {
+    override fun info(
+        msg: String,
+        t: Throwable?,
+    ) {
         if (logger.isLoggable(JulLevel.INFO)) {
-            log(SELF, JulLevel.INFO, msg, t)
+            log(self, JulLevel.INFO, msg, t)
         }
     }
 
@@ -336,9 +372,7 @@ class MfLoggerAdapter(name: String) : MarkerIgnoringBase(), LocationAwareLogger 
      * @return True if this Logger is enabled for the WARNING level, false
      * otherwise.
      */
-    override fun isWarnEnabled(): Boolean {
-        return logger.isLoggable(JulLevel.WARNING)
-    }
+    override fun isWarnEnabled(): Boolean = logger.isLoggable(JulLevel.WARNING)
 
     /**
      * Log a message object at the WARNING level.
@@ -348,7 +382,7 @@ class MfLoggerAdapter(name: String) : MarkerIgnoringBase(), LocationAwareLogger 
      */
     override fun warn(msg: String) {
         if (logger.isLoggable(JulLevel.WARNING)) {
-            log(SELF, JulLevel.WARNING, msg, null)
+            log(self, JulLevel.WARNING, msg, null)
         }
     }
 
@@ -367,10 +401,13 @@ class MfLoggerAdapter(name: String) : MarkerIgnoringBase(), LocationAwareLogger 
      * @param arg
      * the argument
      */
-    override fun warn(format: String?, arg: Any?) {
+    override fun warn(
+        format: String?,
+        arg: Any?,
+    ) {
         if (logger.isLoggable(JulLevel.WARNING)) {
             val ft = MessageFormatter.format(format, arg)
-            log(SELF, JulLevel.WARNING, ft.message, ft.throwable)
+            log(self, JulLevel.WARNING, ft.message, ft.throwable)
         }
     }
 
@@ -391,10 +428,14 @@ class MfLoggerAdapter(name: String) : MarkerIgnoringBase(), LocationAwareLogger 
      * @param arg2
      * the second argument
      */
-    override fun warn(format: String?, arg1: Any?, arg2: Any?) {
+    override fun warn(
+        format: String?,
+        arg1: Any?,
+        arg2: Any?,
+    ) {
         if (logger.isLoggable(JulLevel.WARNING)) {
             val ft = MessageFormatter.format(format, arg1, arg2)
-            log(SELF, JulLevel.WARNING, ft.message, ft.throwable)
+            log(self, JulLevel.WARNING, ft.message, ft.throwable)
         }
     }
 
@@ -413,10 +454,13 @@ class MfLoggerAdapter(name: String) : MarkerIgnoringBase(), LocationAwareLogger 
      * @param argArray
      * an array of arguments
      */
-    override fun warn(format: String?, vararg argArray: Any?) {
+    override fun warn(
+        format: String?,
+        vararg argArray: Any?,
+    ) {
         if (logger.isLoggable(JulLevel.WARNING)) {
             val ft = MessageFormatter.arrayFormat(format, argArray)
-            log(SELF, JulLevel.WARNING, ft.message, ft.throwable)
+            log(self, JulLevel.WARNING, ft.message, ft.throwable)
         }
     }
 
@@ -429,9 +473,12 @@ class MfLoggerAdapter(name: String) : MarkerIgnoringBase(), LocationAwareLogger 
      * @param t
      * the exception (throwable) to log
      */
-    override fun warn(msg: String, t: Throwable?) {
+    override fun warn(
+        msg: String,
+        t: Throwable?,
+    ) {
         if (logger.isLoggable(JulLevel.WARNING)) {
-            log(SELF, JulLevel.WARNING, msg, t)
+            log(self, JulLevel.WARNING, msg, t)
         }
     }
 
@@ -440,9 +487,7 @@ class MfLoggerAdapter(name: String) : MarkerIgnoringBase(), LocationAwareLogger 
      *
      * @return True if this Logger is enabled for level SEVERE, false otherwise.
      */
-    override fun isErrorEnabled(): Boolean {
-        return logger.isLoggable(JulLevel.SEVERE)
-    }
+    override fun isErrorEnabled(): Boolean = logger.isLoggable(JulLevel.SEVERE)
 
     /**
      * Log a message object at the SEVERE level.
@@ -452,7 +497,7 @@ class MfLoggerAdapter(name: String) : MarkerIgnoringBase(), LocationAwareLogger 
      */
     override fun error(msg: String) {
         if (logger.isLoggable(JulLevel.SEVERE)) {
-            log(SELF, JulLevel.SEVERE, msg, null)
+            log(self, JulLevel.SEVERE, msg, null)
         }
     }
 
@@ -471,10 +516,13 @@ class MfLoggerAdapter(name: String) : MarkerIgnoringBase(), LocationAwareLogger 
      * @param arg
      * the argument
      */
-    override fun error(format: String?, arg: Any?) {
+    override fun error(
+        format: String?,
+        arg: Any?,
+    ) {
         if (logger.isLoggable(JulLevel.SEVERE)) {
             val ft = MessageFormatter.format(format, arg)
-            log(SELF, JulLevel.SEVERE, ft.message, ft.throwable)
+            log(self, JulLevel.SEVERE, ft.message, ft.throwable)
         }
     }
 
@@ -495,10 +543,14 @@ class MfLoggerAdapter(name: String) : MarkerIgnoringBase(), LocationAwareLogger 
      * @param arg2
      * the second argument
      */
-    override fun error(format: String?, arg1: Any?, arg2: Any?) {
+    override fun error(
+        format: String?,
+        arg1: Any?,
+        arg2: Any?,
+    ) {
         if (logger.isLoggable(JulLevel.SEVERE)) {
             val ft = MessageFormatter.format(format, arg1, arg2)
-            log(SELF, JulLevel.SEVERE, ft.message, ft.throwable)
+            log(self, JulLevel.SEVERE, ft.message, ft.throwable)
         }
     }
 
@@ -517,10 +569,13 @@ class MfLoggerAdapter(name: String) : MarkerIgnoringBase(), LocationAwareLogger 
      * @param arguments
      * an array of arguments
      */
-    override fun error(format: String?, vararg arguments: Any?) {
+    override fun error(
+        format: String?,
+        vararg arguments: Any?,
+    ) {
         if (logger.isLoggable(JulLevel.SEVERE)) {
             val ft = MessageFormatter.arrayFormat(format, arguments)
-            log(SELF, JulLevel.SEVERE, ft.message, ft.throwable)
+            log(self, JulLevel.SEVERE, ft.message, ft.throwable)
         }
     }
 
@@ -533,9 +588,12 @@ class MfLoggerAdapter(name: String) : MarkerIgnoringBase(), LocationAwareLogger 
      * @param t
      * the exception (throwable) to log
      */
-    override fun error(msg: String, t: Throwable?) {
+    override fun error(
+        msg: String,
+        t: Throwable?,
+    ) {
         if (logger.isLoggable(JulLevel.SEVERE)) {
-            log(SELF, JulLevel.SEVERE, msg, t)
+            log(self, JulLevel.SEVERE, msg, t)
         }
     }
 
@@ -550,7 +608,12 @@ class MfLoggerAdapter(name: String) : MarkerIgnoringBase(), LocationAwareLogger 
      * @param msg
      * @param t
      */
-    private fun log(callerFQCN: String, level: JulLevel, msg: String, t: Throwable?) {
+    private fun log(
+        callerFQCN: String,
+        level: JulLevel,
+        msg: String,
+        t: Throwable?,
+    ) {
         // millis and thread are filled by the constructor
         val record = LogRecord(level, msg)
         record.loggerName = getName()
@@ -561,8 +624,8 @@ class MfLoggerAdapter(name: String) : MarkerIgnoringBase(), LocationAwareLogger 
         logger.log(record)
     }
 
-    var SELF: String = MfLoggerAdapter::class.java.name
-    var SUPER = MarkerIgnoringBase::class.java.name
+    var self: String = MfLoggerAdapter::class.java.name
+    var superclass: String = MarkerIgnoringBase::class.java.name
 
     /**
      * Fill in caller data if possible.
@@ -570,12 +633,15 @@ class MfLoggerAdapter(name: String) : MarkerIgnoringBase(), LocationAwareLogger 
      * @param record
      * The record to update
      */
-    private fun fillCallerData(callerFQCN: String, record: LogRecord) {
+    private fun fillCallerData(
+        callerFQCN: String,
+        record: LogRecord,
+    ) {
         val steArray = Throwable().stackTrace
         var selfIndex = -1
         for (i in steArray.indices) {
             val className = steArray[i].className
-            if (className.equals(callerFQCN) || className.equals(SUPER)) {
+            if (className.equals(callerFQCN) || className.equals(superclass)) {
                 selfIndex = i
                 break
             }
@@ -583,7 +649,7 @@ class MfLoggerAdapter(name: String) : MarkerIgnoringBase(), LocationAwareLogger 
         var found = -1
         for (i in selfIndex + 1 until steArray.size) {
             val className = steArray[i].className
-            if (!(className.equals(callerFQCN) || className.equals(SUPER))) {
+            if (!(className.equals(callerFQCN) || className.equals(superclass))) {
                 found = i
                 break
             }
@@ -603,7 +669,7 @@ class MfLoggerAdapter(name: String) : MarkerIgnoringBase(), LocationAwareLogger 
         level: Int,
         message: String,
         argArray: Array<Any?>?,
-        t: Throwable?
+        t: Throwable?,
     ) {
         val julLevel: JulLevel = slf4jLevelIntToJULLevel(level)
         // the logger.isLoggable check avoids the unconditional
@@ -617,14 +683,15 @@ class MfLoggerAdapter(name: String) : MarkerIgnoringBase(), LocationAwareLogger 
     }
 
     private fun slf4jLevelIntToJULLevel(slf4jLevelInt: Int): JulLevel {
-        val julLevel = when (slf4jLevelInt) {
-            LocationAwareLogger.TRACE_INT -> JulLevel.FINEST
-            LocationAwareLogger.DEBUG_INT -> JulLevel.FINE
-            LocationAwareLogger.INFO_INT -> JulLevel.INFO
-            LocationAwareLogger.WARN_INT -> JulLevel.WARNING
-            LocationAwareLogger.ERROR_INT -> JulLevel.SEVERE
-            else -> throw IllegalStateException("Level number $slf4jLevelInt is not recognized.")
-        }
+        val julLevel =
+            when (slf4jLevelInt) {
+                LocationAwareLogger.TRACE_INT -> JulLevel.FINEST
+                LocationAwareLogger.DEBUG_INT -> JulLevel.FINE
+                LocationAwareLogger.INFO_INT -> JulLevel.INFO
+                LocationAwareLogger.WARN_INT -> JulLevel.WARNING
+                LocationAwareLogger.ERROR_INT -> JulLevel.SEVERE
+                else -> throw IllegalStateException("Level number $slf4jLevelInt is not recognized.")
+            }
         return julLevel
     }
 
@@ -639,11 +706,16 @@ class MfLoggerAdapter(name: String) : MarkerIgnoringBase(), LocationAwareLogger 
         }
     }
 
-    private fun eventToRecord(event: LoggingEvent, julLevel: JulLevel): LogRecord {
+    private fun eventToRecord(
+        event: LoggingEvent,
+        julLevel: JulLevel,
+    ): LogRecord {
         val format = event.message
         val arguments = event.argumentArray
         val ft = MessageFormatter.arrayFormat(format, arguments)
-        require(!(ft.throwable != null && event.throwable != null)) { "both last element in argument array and last argument are of type Throwable" }
+        require(!(ft.throwable != null && event.throwable != null)) {
+            "both last element in argument array and last argument are of type Throwable"
+        }
         var t = event.throwable
         if (ft.throwable != null) {
             t = ft.throwable

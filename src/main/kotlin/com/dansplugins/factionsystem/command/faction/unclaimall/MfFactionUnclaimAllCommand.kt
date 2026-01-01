@@ -12,8 +12,16 @@ import org.bukkit.command.TabCompleter
 import org.bukkit.entity.Player
 import java.util.logging.Level.SEVERE
 
-class MfFactionUnclaimAllCommand(private val plugin: MedievalFactions) : CommandExecutor, TabCompleter {
-    override fun onCommand(sender: CommandSender, command: Command, label: String, args: Array<out String>): Boolean {
+class MfFactionUnclaimAllCommand(
+    private val plugin: MedievalFactions,
+) : CommandExecutor,
+    TabCompleter {
+    override fun onCommand(
+        sender: CommandSender,
+        command: Command,
+        label: String,
+        args: Array<out String>,
+    ): Boolean {
         if (!sender.hasPermission("mf.unclaimall")) {
             sender.sendMessage("$RED${plugin.language["CommandFactionUnclaimAllNoPermission"]}")
             return true
@@ -26,12 +34,13 @@ class MfFactionUnclaimAllCommand(private val plugin: MedievalFactions) : Command
             plugin,
             Runnable {
                 val playerService = plugin.services.playerService
-                val mfPlayer = playerService.getPlayer(sender)
-                    ?: playerService.save(MfPlayer(plugin, sender)).onFailure {
-                        sender.sendMessage("$RED${plugin.language["CommandFactionUnclaimAllFailedToSavePlayer"]}")
-                        plugin.logger.log(SEVERE, "Failed to save player: ${it.reason.message}", it.reason.cause)
-                        return@Runnable
-                    }
+                val mfPlayer =
+                    playerService.getPlayer(sender)
+                        ?: playerService.save(MfPlayer(plugin, sender)).onFailure {
+                            sender.sendMessage("$RED${plugin.language["CommandFactionUnclaimAllFailedToSavePlayer"]}")
+                            plugin.logger.log(SEVERE, "Failed to save player: ${it.reason.message}", it.reason.cause)
+                            return@Runnable
+                        }
                 val factionService = plugin.services.factionService
                 val faction = factionService.getFaction(mfPlayer.id)
                 if (faction == null) {
@@ -57,10 +66,10 @@ class MfFactionUnclaimAllCommand(private val plugin: MedievalFactions) : Command
                         plugin,
                         Runnable {
                             mapService.scheduleUpdateClaims(faction)
-                        }
+                        },
                     )
                 }
-            }
+            },
         )
         return true
     }
@@ -69,6 +78,6 @@ class MfFactionUnclaimAllCommand(private val plugin: MedievalFactions) : Command
         sender: CommandSender,
         command: Command,
         label: String,
-        args: Array<out String>
+        args: Array<out String>,
     ) = emptyList<String>()
 }

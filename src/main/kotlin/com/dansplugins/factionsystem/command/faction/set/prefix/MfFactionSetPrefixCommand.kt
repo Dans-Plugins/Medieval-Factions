@@ -15,25 +15,34 @@ import org.bukkit.conversations.StringPrompt
 import org.bukkit.entity.Player
 import java.util.logging.Level
 
-class MfFactionSetPrefixCommand(private val plugin: MedievalFactions) : CommandExecutor, TabCompleter {
-    private val conversationFactory = ConversationFactory(plugin)
-        .withModality(true)
-        .withFirstPrompt(PrefixPrompt())
-        .withEscapeSequence(plugin.language["EscapeSequence"])
-        .withLocalEcho(false)
-        .thatExcludesNonPlayersWithMessage(plugin.language["CommandFactionSetPrefixNotAPlayer"])
-        .addConversationAbandonedListener { event ->
-            if (!event.gracefulExit()) {
-                val conversable = event.context.forWhom
-                if (conversable is Player) {
-                    conversable.sendMessage(plugin.language["CommandFactionSetPrefixOperationCancelled"])
+class MfFactionSetPrefixCommand(
+    private val plugin: MedievalFactions,
+) : CommandExecutor,
+    TabCompleter {
+    private val conversationFactory =
+        ConversationFactory(plugin)
+            .withModality(true)
+            .withFirstPrompt(PrefixPrompt())
+            .withEscapeSequence(plugin.language["EscapeSequence"])
+            .withLocalEcho(false)
+            .thatExcludesNonPlayersWithMessage(plugin.language["CommandFactionSetPrefixNotAPlayer"])
+            .addConversationAbandonedListener { event ->
+                if (!event.gracefulExit()) {
+                    val conversable = event.context.forWhom
+                    if (conversable is Player) {
+                        conversable.sendMessage(plugin.language["CommandFactionSetPrefixOperationCancelled"])
+                    }
                 }
             }
-        }
 
     private inner class PrefixPrompt : StringPrompt() {
-        override fun getPromptText(context: ConversationContext): String = plugin.language["CommandFactionSetPrefixPrefixPrompt", plugin.language["EscapeSequence"]]
-        override fun acceptInput(context: ConversationContext, input: String?): Prompt? {
+        override fun getPromptText(context: ConversationContext): String =
+            plugin.language["CommandFactionSetPrefixPrefixPrompt", plugin.language["EscapeSequence"]]
+
+        override fun acceptInput(
+            context: ConversationContext,
+            input: String?,
+        ): Prompt? {
             val conversable = context.forWhom
             if (conversable !is Player) return END_OF_CONVERSATION
             if (input == null) return END_OF_CONVERSATION
@@ -42,7 +51,12 @@ class MfFactionSetPrefixCommand(private val plugin: MedievalFactions) : CommandE
         }
     }
 
-    override fun onCommand(sender: CommandSender, command: Command, label: String, args: Array<out String>): Boolean {
+    override fun onCommand(
+        sender: CommandSender,
+        command: Command,
+        label: String,
+        args: Array<out String>,
+    ): Boolean {
         if (!sender.hasPermission("mf.prefix")) {
             sender.sendMessage("${ChatColor.RED}${plugin.language["CommandFactionSetPrefixNoPermission"]}")
             return true
@@ -59,17 +73,21 @@ class MfFactionSetPrefixCommand(private val plugin: MedievalFactions) : CommandE
         return true
     }
 
-    private fun setFactionPrefix(player: Player, prefix: String) {
+    private fun setFactionPrefix(
+        player: Player,
+        prefix: String,
+    ) {
         plugin.server.scheduler.runTaskAsynchronously(
             plugin,
             Runnable {
                 val playerService = plugin.services.playerService
-                val mfPlayer = playerService.getPlayer(player)
-                    ?: playerService.save(MfPlayer(plugin, player)).onFailure {
-                        player.sendMessage("${ChatColor.RED}${plugin.language["CommandFactionSetPrefixFailedToSavePlayer"]}")
-                        plugin.logger.log(Level.SEVERE, "Failed to save player: ${it.reason.message}", it.reason.cause)
-                        return@Runnable
-                    }
+                val mfPlayer =
+                    playerService.getPlayer(player)
+                        ?: playerService.save(MfPlayer(plugin, player)).onFailure {
+                            player.sendMessage("${ChatColor.RED}${plugin.language["CommandFactionSetPrefixFailedToSavePlayer"]}")
+                            plugin.logger.log(Level.SEVERE, "Failed to save player: ${it.reason.message}", it.reason.cause)
+                            return@Runnable
+                        }
                 val factionService = plugin.services.factionService
                 val faction = factionService.getFaction(mfPlayer.id)
                 if (faction == null) {
@@ -91,9 +109,9 @@ class MfFactionSetPrefixCommand(private val plugin: MedievalFactions) : CommandE
                     plugin,
                     Runnable {
                         player.performCommand("faction info")
-                    }
+                    },
                 )
-            }
+            },
         )
     }
 
@@ -101,6 +119,6 @@ class MfFactionSetPrefixCommand(private val plugin: MedievalFactions) : CommandE
         sender: CommandSender,
         command: Command,
         label: String,
-        args: Array<out String>
+        args: Array<out String>,
     ) = emptyList<String>()
 }

@@ -4,10 +4,14 @@ import com.dansplugins.factionsystem.MedievalFactions
 import java.io.File
 import java.net.URLClassLoader
 import java.text.MessageFormat
-import java.util.*
+import java.util.Locale
+import java.util.MissingResourceException
+import java.util.ResourceBundle
 
-class Language(plugin: MedievalFactions, private val language: String) {
-
+class Language(
+    plugin: MedievalFactions,
+    private val language: String,
+) {
     private val resourceBundles: List<ResourceBundle>
     val locale: Locale = Locale.forLanguageTag(language)
 
@@ -29,29 +33,34 @@ class Language(plugin: MedievalFactions, private val language: String) {
 
         val externalUrls = arrayOf(languageFolder.toURI().toURL())
         val externalClassLoader = URLClassLoader(externalUrls)
-        val externalResourceBundle = ResourceBundle.getBundle(
-            "lang",
-            locale,
-            externalClassLoader
-        )
-
-        resourceBundles = try {
-            val internalResourceBundle = ResourceBundle.getBundle(
+        val externalResourceBundle =
+            ResourceBundle.getBundle(
                 "lang",
-                locale
+                locale,
+                externalClassLoader,
             )
-            listOf(externalResourceBundle, internalResourceBundle)
-        } catch (e: MissingResourceException) {
-            listOf(externalResourceBundle)
-        }
+
+        resourceBundles =
+            try {
+                val internalResourceBundle =
+                    ResourceBundle.getBundle(
+                        "lang",
+                        locale,
+                    )
+                listOf(externalResourceBundle, internalResourceBundle)
+            } catch (e: MissingResourceException) {
+                listOf(externalResourceBundle)
+            }
     }
 
-    operator fun get(key: String, vararg params: String) =
-        resourceBundles.firstNotNullOfOrNull { resourceBundle ->
-            try {
-                MessageFormat.format(resourceBundle.getString(key), *params)
-            } catch (exception: MissingResourceException) {
-                null
-            }
-        } ?: "Missing translation for $language: $key"
+    operator fun get(
+        key: String,
+        vararg params: String,
+    ) = resourceBundles.firstNotNullOfOrNull { resourceBundle ->
+        try {
+            MessageFormat.format(resourceBundle.getString(key), *params)
+        } catch (exception: MissingResourceException) {
+            null
+        }
+    } ?: "Missing translation for $language: $key"
 }

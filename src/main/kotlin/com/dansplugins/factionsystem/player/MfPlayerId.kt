@@ -2,10 +2,12 @@ package com.dansplugins.factionsystem.player
 
 import org.bukkit.Bukkit
 import org.bukkit.OfflinePlayer
-import java.util.*
+import java.util.UUID
 
 @JvmInline
-value class MfPlayerId(val value: String) {
+value class MfPlayerId(
+    val value: String,
+) {
     companion object {
         fun fromBukkitPlayer(player: OfflinePlayer) = MfPlayerId(player.uniqueId.toString())
     }

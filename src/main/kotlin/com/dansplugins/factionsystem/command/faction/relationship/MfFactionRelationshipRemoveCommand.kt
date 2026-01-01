@@ -14,8 +14,16 @@ import org.bukkit.command.TabCompleter
 import preponderous.ponder.command.unquote
 import java.util.logging.Level.SEVERE
 
-class MfFactionRelationshipRemoveCommand(private val plugin: MedievalFactions) : CommandExecutor, TabCompleter {
-    override fun onCommand(sender: CommandSender, command: Command, label: String, args: Array<out String>): Boolean {
+class MfFactionRelationshipRemoveCommand(
+    private val plugin: MedievalFactions,
+) : CommandExecutor,
+    TabCompleter {
+    override fun onCommand(
+        sender: CommandSender,
+        command: Command,
+        label: String,
+        args: Array<out String>,
+    ): Boolean {
         if (!sender.hasPermission("mf.relationship.remove")) {
             sender.sendMessage("$RED${plugin.language["CommandFactionRelationshipRemoveNoPermission"]}")
             return true
@@ -39,12 +47,13 @@ class MfFactionRelationshipRemoveCommand(private val plugin: MedievalFactions) :
                     sender.sendMessage("$RED${plugin.language["CommandFactionRelationshipRemoveInvalidFaction", unquotedArgs[1]]}")
                     return@Runnable
                 }
-                val relationshipType = try {
-                    MfFactionRelationshipType.valueOf(unquotedArgs[2].uppercase().replace(' ', '_'))
-                } catch (exception: IllegalArgumentException) {
-                    sender.sendMessage("$RED${plugin.language["CommandFactionRelationshipRemoveInvalidRelationshipType"]}")
-                    return@Runnable
-                }
+                val relationshipType =
+                    try {
+                        MfFactionRelationshipType.valueOf(unquotedArgs[2].uppercase().replace(' ', '_'))
+                    } catch (exception: IllegalArgumentException) {
+                        sender.sendMessage("$RED${plugin.language["CommandFactionRelationshipRemoveInvalidRelationshipType"]}")
+                        return@Runnable
+                    }
                 val relationshipService = plugin.services.factionRelationshipService
                 val relationships = relationshipService.getRelationships(faction1.id, faction2.id)
                 val relationshipsToRemove = relationships.filter { it.type == relationshipType }
@@ -64,9 +73,9 @@ class MfFactionRelationshipRemoveCommand(private val plugin: MedievalFactions) :
                     plugin,
                     Runnable {
                         plugin.server.dispatchCommand(sender, "faction relationship view ${faction1.id.value} ${faction2.id.value}")
-                    }
+                    },
                 )
-            }
+            },
         )
         return true
     }
@@ -75,7 +84,7 @@ class MfFactionRelationshipRemoveCommand(private val plugin: MedievalFactions) :
         sender: CommandSender,
         command: Command,
         label: String,
-        args: Array<out String>
+        args: Array<out String>,
     ): List<String> {
         val factionService = plugin.services.factionService
         return when {
@@ -88,9 +97,11 @@ class MfFactionRelationshipRemoveCommand(private val plugin: MedievalFactions) :
                 factionService.factions
                     .filter { it.name.lowercase().startsWith(args[1].lowercase()) }
                     .map(MfFaction::name)
-            args.size == 3 -> MfFactionRelationshipType.values()
-                .map { it.name.lowercase() }
-                .filter { it.startsWith(args[2].lowercase()) }
+            args.size == 3 ->
+                MfFactionRelationshipType
+                    .values()
+                    .map { it.name.lowercase() }
+                    .filter { it.startsWith(args[2].lowercase()) }
             else -> emptyList()
         }
     }

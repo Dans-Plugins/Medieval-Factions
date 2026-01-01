@@ -15,73 +15,76 @@ import java.util.concurrent.ConcurrentHashMap
 import java.util.logging.Level.SEVERE
 import kotlin.collections.set
 
-class MfPlayerService(private val plugin: MedievalFactions, private val playerRepository: MfPlayerRepository) {
-
+class MfPlayerService(
+    private val plugin: MedievalFactions,
+    private val playerRepository: MfPlayerRepository,
+) {
     private val playersById: MutableMap<MfPlayerId, MfPlayer> = ConcurrentHashMap()
 
     init {
         plugin.logger.info("Loading players...")
         val startTime = System.currentTimeMillis()
         playersById.putAll(playerRepository.getPlayers().associateBy(MfPlayer::id))
-        val playersToUpdate = playersById.values
-            .associateWith(MfPlayer::toBukkit)
-            .mapNotNull { (mfPlayer, bukkitPlayer) ->
-                try {
-                    val bukkitPlayerName = bukkitPlayer.name
-                    if (bukkitPlayerName != null && bukkitPlayerName != mfPlayer.name) {
-                        mfPlayer to bukkitPlayerName
-                    } else {
+        val playersToUpdate =
+            playersById.values
+                .associateWith(MfPlayer::toBukkit)
+                .mapNotNull { (mfPlayer, bukkitPlayer) ->
+                    try {
+                        val bukkitPlayerName = bukkitPlayer.name
+                        if (bukkitPlayerName != null && bukkitPlayerName != mfPlayer.name) {
+                            mfPlayer to bukkitPlayerName
+                        } else {
+                            null
+                        }
+                    } catch (e: NoSuchElementException) {
+                        plugin.logger.warning("Failed to get name for player ${mfPlayer.id.value}: ${e.message}")
                         null
                     }
-                } catch (e: NoSuchElementException) {
-                    plugin.logger.warning("Failed to get name for player ${mfPlayer.id.value}: ${e.message}")
-                    null
                 }
-            }
         playersToUpdate.forEach { (mfPlayer, bukkitPlayerName) ->
-            val updatedPlayer = resultFrom {
-                playerRepository.upsert(mfPlayer.copy(name = bukkitPlayerName))
-            }.onFailure {
-                plugin.logger.log(SEVERE, "Failed to update player: ${it.reason.message}", it.reason.cause)
-                return@forEach
-            }
+            val updatedPlayer =
+                resultFrom {
+                    playerRepository.upsert(mfPlayer.copy(name = bukkitPlayerName))
+                }.onFailure {
+                    plugin.logger.log(SEVERE, "Failed to update player: ${it.reason.message}", it.reason.cause)
+                    return@forEach
+                }
             playersById[updatedPlayer.id] = updatedPlayer
         }
         plugin.logger.info("${playersById.size} players loaded (${System.currentTimeMillis() - startTime}ms)")
     }
 
     @JvmName("getPlayerByPlayerId")
-    fun getPlayer(id: MfPlayerId): MfPlayer? {
-        return playersById[id]
-    }
+    fun getPlayer(id: MfPlayerId): MfPlayer? = playersById[id]
 
     @JvmName("getPlayerByBukkitPlayer")
     fun getPlayer(player: OfflinePlayer): MfPlayer? = getPlayer(MfPlayerId(player.uniqueId.toString()))
 
-    fun save(player: MfPlayer): Result4k<MfPlayer, ServiceFailure> = resultFrom {
-        val result = playerRepository.upsert(player)
-        playersById[result.id] = result
-        val mapService = plugin.services.mapService
-        if (mapService != null) {
-            val factionService = plugin.services.factionService
-            val faction = factionService.getFaction(result.id)
-            if (faction != null && !plugin.config.getBoolean("dynmap.onlyRenderTerritoriesUponStartup")) {
-                plugin.server.scheduler.runTask(
-                    plugin,
-                    Runnable {
-                        mapService.scheduleUpdateClaims(faction)
-                    }
-                )
+    fun save(player: MfPlayer): Result4k<MfPlayer, ServiceFailure> =
+        resultFrom {
+            val result = playerRepository.upsert(player)
+            playersById[result.id] = result
+            val mapService = plugin.services.mapService
+            if (mapService != null) {
+                val factionService = plugin.services.factionService
+                val faction = factionService.getFaction(result.id)
+                if (faction != null && !plugin.config.getBoolean("dynmap.onlyRenderTerritoriesUponStartup")) {
+                    plugin.server.scheduler.runTask(
+                        plugin,
+                        Runnable {
+                            mapService.scheduleUpdateClaims(faction)
+                        },
+                    )
+                }
             }
+            return@resultFrom result
+        }.mapFailure { exception ->
+            ServiceFailure(exception.toServiceFailureType(), "Service error: ${exception.message}", exception)
         }
-        return@resultFrom result
-    }.mapFailure { exception ->
-        ServiceFailure(exception.toServiceFailureType(), "Service error: ${exception.message}", exception)
-    }
 
     @JvmName("updatePlayerPower")
-    fun updatePlayerPower(onlinePlayerIds: List<MfPlayerId>): Result4k<Unit, ServiceFailure> {
-        return resultFrom {
+    fun updatePlayerPower(onlinePlayerIds: List<MfPlayerId>): Result4k<Unit, ServiceFailure> =
+        resultFrom {
             playerRepository.increaseOnlinePlayerPower(onlinePlayerIds)
             playerRepository.decreaseOfflinePlayerPower(onlinePlayerIds)
             playersById.putAll(playerRepository.getPlayers().associateBy(MfPlayer::id))
@@ -93,19 +96,17 @@ class MfPlayerService(private val plugin: MedievalFactions, private val playerRe
                         plugin,
                         Runnable {
                             mapService.scheduleUpdateClaims(faction)
-                        }
+                        },
                     )
                 }
             }
         }.mapFailure { exception ->
             ServiceFailure(exception.toServiceFailureType(), "Service error: ${exception.message}", exception)
         }
-    }
 
-    private fun Exception.toServiceFailureType(): ServiceFailureType {
-        return when (this) {
+    private fun Exception.toServiceFailureType(): ServiceFailureType =
+        when (this) {
             is OptimisticLockingFailureException -> CONFLICT
             else -> GENERAL
         }
-    }
 }

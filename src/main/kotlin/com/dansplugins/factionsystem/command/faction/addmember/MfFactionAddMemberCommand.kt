@@ -15,9 +15,16 @@ import preponderous.ponder.command.dropFirst
 import java.util.logging.Level
 import java.util.logging.Level.SEVERE
 
-class MfFactionAddMemberCommand(private val plugin: MedievalFactions) : CommandExecutor, TabCompleter {
-
-    override fun onCommand(sender: CommandSender, command: Command, label: String, args: Array<out String>): Boolean {
+class MfFactionAddMemberCommand(
+    private val plugin: MedievalFactions,
+) : CommandExecutor,
+    TabCompleter {
+    override fun onCommand(
+        sender: CommandSender,
+        command: Command,
+        label: String,
+        args: Array<out String>,
+    ): Boolean {
         if (!sender.hasPermission("mf.force.addmember") && !sender.hasPermission("mf.force.join")) {
             sender.sendMessage("${ChatColor.RED}${plugin.language["CommandFactionAddMemberNoPermission"]}")
             return true
@@ -38,12 +45,13 @@ class MfFactionAddMemberCommand(private val plugin: MedievalFactions) : CommandE
             return true
         }
         val playerService = plugin.services.playerService
-        val targetMfPlayer = playerService.getPlayer(targetPlayer)
-            ?: playerService.save(MfPlayer(plugin, sender)).onFailure {
-                sender.sendMessage("${ChatColor.RED}${plugin.language["CommandFactionAddMemberFailedToSavePlayer"]}")
-                plugin.logger.log(Level.SEVERE, "Failed to save player: ${it.reason.message}", it.reason.cause)
-                return true
-            }
+        val targetMfPlayer =
+            playerService.getPlayer(targetPlayer)
+                ?: playerService.save(MfPlayer(plugin, sender)).onFailure {
+                    sender.sendMessage("${ChatColor.RED}${plugin.language["CommandFactionAddMemberFailedToSavePlayer"]}")
+                    plugin.logger.log(Level.SEVERE, "Failed to save player: ${it.reason.message}", it.reason.cause)
+                    return true
+                }
 
         val factionService = plugin.services.factionService
 
@@ -68,26 +76,28 @@ class MfFactionAddMemberCommand(private val plugin: MedievalFactions) : CommandE
         }
 
         // add member to faction
-        val updatedFaction = factionService.save(
-            targetFaction.copy(
-                members = targetFaction.members + MfFactionMember(targetMfPlayer.id, targetFaction.roles.default),
-                invites = targetFaction.invites.filter { it.playerId != targetMfPlayer.id }
-            )
-        ).onFailure {
-            sender.sendMessage("${ChatColor.RED}${plugin.language["CommandFactionAddMemberFailedToSaveFaction"]}")
-            plugin.logger.log(Level.SEVERE, "Failed to save faction: ${it.reason.message}", it.reason.cause)
-            return true
-        }
+        val updatedFaction =
+            factionService
+                .save(
+                    targetFaction.copy(
+                        members = targetFaction.members + MfFactionMember(targetMfPlayer.id, targetFaction.roles.default),
+                        invites = targetFaction.invites.filter { it.playerId != targetMfPlayer.id },
+                    ),
+                ).onFailure {
+                    sender.sendMessage("${ChatColor.RED}${plugin.language["CommandFactionAddMemberFailedToSaveFaction"]}")
+                    plugin.logger.log(Level.SEVERE, "Failed to save faction: ${it.reason.message}", it.reason.cause)
+                    return true
+                }
         var targetName = targetMfPlayer.name
         if (targetName == null) {
             targetName = "${ChatColor.RED}${plugin.language["CommandFactionAddMemberUnknownNewPlayerFaction"]}"
         }
         updatedFaction.sendMessage(
             plugin.language["FactionNewMemberNotificationTitle", targetName],
-            plugin.language["FactionNewMemberNotificationBody", targetName]
+            plugin.language["FactionNewMemberNotificationBody", targetName],
         )
         sender.sendMessage(
-            "${ChatColor.GREEN}${plugin.language["CommandFactionAddMemberSuccess", targetFaction.name]}"
+            "${ChatColor.GREEN}${plugin.language["CommandFactionAddMemberSuccess", targetFaction.name]}",
         )
         try {
             factionService.cancelAllApplicationsForPlayer(targetMfPlayer)
@@ -102,7 +112,7 @@ class MfFactionAddMemberCommand(private val plugin: MedievalFactions) : CommandE
         sender: CommandSender,
         command: Command,
         label: String,
-        args: Array<out String>
+        args: Array<out String>,
     ): List<String> {
         val factionService = plugin.services.factionService
         return when {

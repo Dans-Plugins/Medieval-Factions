@@ -20,9 +20,8 @@ data class MfGate(
     val area: MfCuboidArea,
     val trigger: MfBlockPosition,
     val material: Material,
-    val status: MfGateStatus = CLOSED
+    val status: MfGateStatus = CLOSED,
 ) {
-
     fun shouldOpen(): Boolean {
         val world = plugin.server.getWorld(trigger.worldId) ?: return false
         if (!world.isChunkLoaded(trigger.x / 16, trigger.z / 16)) return false
@@ -47,7 +46,7 @@ data class MfGate(
                     plugin.logger.log(Level.SEVERE, "Failed to save gate: ${it.reason.message}", it.reason.cause)
                     return@Runnable
                 }
-            }
+            },
         )
     }
 
@@ -57,10 +56,12 @@ data class MfGate(
         if (centerBukkitBlock != null) {
             centerBukkitBlock.world.playSound(centerBukkitBlock.location, Sound.BLOCK_ANVIL_HIT, 1f, 0f)
         }
-        val lowestBlocks = area.blocks.filter { it.toBukkitBlock()?.type == material }
-            .groupBy { it.y }
-            .minByOrNull { it.key }
-            ?.value
+        val lowestBlocks =
+            area.blocks
+                .filter { it.toBukkitBlock()?.type == material }
+                .groupBy { it.y }
+                .minByOrNull { it.key }
+                ?.value
         lowestBlocks?.map { it.toBukkitBlock() }?.forEach { it?.type = Material.AIR }
         if (area.blocks.all { it.toBukkitBlock()?.type == Material.AIR }) {
             plugin.server.scheduler.runTaskAsynchronously(
@@ -70,7 +71,7 @@ data class MfGate(
                         plugin.logger.log(Level.SEVERE, "Failed to save gate: ${it.reason.message}", it.reason.cause)
                         return@Runnable
                     }
-                }
+                },
             )
         }
     }
@@ -85,7 +86,7 @@ data class MfGate(
                     plugin.logger.log(Level.SEVERE, "Failed to save gate: ${it.reason.message}", it.reason.cause)
                     return@Runnable
                 }
-            }
+            },
         )
         val centerBukkitBlock = area.centerPosition.toBukkitBlock()
         if (centerBukkitBlock != null) {
@@ -99,10 +100,12 @@ data class MfGate(
         if (centerBukkitBlock != null) {
             centerBukkitBlock.world.playSound(centerBukkitBlock.location, Sound.BLOCK_ANVIL_HIT, 1f, 0f)
         }
-        val highestEmptyBlocks = area.blocks.filter { it.toBukkitBlock()?.type != material }
-            .groupBy { it.y }
-            .maxByOrNull { it.key }
-            ?.value
+        val highestEmptyBlocks =
+            area.blocks
+                .filter { it.toBukkitBlock()?.type != material }
+                .groupBy { it.y }
+                .maxByOrNull { it.key }
+                ?.value
         highestEmptyBlocks?.map { it.toBukkitBlock() }?.forEach { it?.type = material }
         if (area.blocks.all { it.toBukkitBlock()?.type == material }) {
             plugin.server.scheduler.runTaskAsynchronously(
@@ -112,7 +115,7 @@ data class MfGate(
                         plugin.logger.log(Level.SEVERE, "Failed to save gate: ${it.reason.message}", it.reason.cause)
                         return@Runnable
                     }
-                }
+                },
             )
         }
     }

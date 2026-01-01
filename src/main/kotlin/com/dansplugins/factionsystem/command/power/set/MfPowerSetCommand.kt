@@ -13,11 +13,18 @@ import java.text.DecimalFormat
 import java.text.DecimalFormatSymbols
 import java.util.logging.Level
 
-class MfPowerSetCommand(private val plugin: MedievalFactions) : CommandExecutor, TabCompleter {
-
+class MfPowerSetCommand(
+    private val plugin: MedievalFactions,
+) : CommandExecutor,
+    TabCompleter {
     private val decimalFormat = DecimalFormat("0.##", DecimalFormatSymbols.getInstance(plugin.language.locale))
 
-    override fun onCommand(sender: CommandSender, command: Command, label: String, args: Array<out String>): Boolean {
+    override fun onCommand(
+        sender: CommandSender,
+        command: Command,
+        label: String,
+        args: Array<out String>,
+    ): Boolean {
         if (!sender.hasPermission("mf.power.set") && !sender.hasPermission("mf.force.power")) {
             sender.sendMessage("$RED${plugin.language["CommandPowerSetNoPermission"]}")
             return true
@@ -56,8 +63,15 @@ class MfPowerSetCommand(private val plugin: MedievalFactions) : CommandExecutor,
                     plugin.logger.log(Level.SEVERE, "Failed to save player: ${it.reason.message}", it.reason.cause)
                     return@Runnable
                 }
-                sender.sendMessage("$GREEN${plugin.language["CommandPowerSetSuccess", target.name ?: plugin.language["UnknownPlayer"], decimalFormat.format(power), decimalFormat.format(maxPower)]}")
-            }
+                sender.sendMessage(
+                    "$GREEN${plugin.language[
+                        "CommandPowerSetSuccess", target.name ?: plugin.language["UnknownPlayer"], decimalFormat
+                            .format(
+                                power,
+                            ), decimalFormat.format(maxPower),
+                    ]}",
+                )
+            },
         )
         return true
     }
@@ -66,7 +80,7 @@ class MfPowerSetCommand(private val plugin: MedievalFactions) : CommandExecutor,
         sender: CommandSender,
         command: Command,
         label: String,
-        args: Array<out String>
+        args: Array<out String>,
     ) = when {
         args.isEmpty() ->
             plugin.server.offlinePlayers

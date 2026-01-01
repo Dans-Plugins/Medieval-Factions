@@ -13,11 +13,18 @@ import kotlin.math.floor
 import net.md_5.bungee.api.ChatColor as SpigotChatColor
 import org.bukkit.ChatColor as BukkitChatColor
 
-class MfFactionListCommand(private val plugin: MedievalFactions) : CommandExecutor, TabCompleter {
-
+class MfFactionListCommand(
+    private val plugin: MedievalFactions,
+) : CommandExecutor,
+    TabCompleter {
     private val decimalFormat = DecimalFormat("0", DecimalFormatSymbols.getInstance(plugin.language.locale))
 
-    override fun onCommand(sender: CommandSender, command: Command, label: String, args: Array<out String>): Boolean {
+    override fun onCommand(
+        sender: CommandSender,
+        command: Command,
+        label: String,
+        args: Array<out String>,
+    ): Boolean {
         if (!sender.hasPermission("mf.list")) {
             sender.sendMessage("${BukkitChatColor.RED}${plugin.language["CommandFactionListNoPermission"]}")
             return true
@@ -28,74 +35,78 @@ class MfFactionListCommand(private val plugin: MedievalFactions) : CommandExecut
                 val factionService = plugin.services.factionService
                 val claimService = plugin.services.claimService
                 val pageNumber = args.lastOrNull()?.toIntOrNull()?.minus(1) ?: 0
-                val view = PaginatedView(
-                    plugin.language,
-                    lazy {
-                        arrayOf(
-                            TextComponent(plugin.language["CommandFactionListTitle"]).apply {
-                                color = SpigotChatColor.AQUA
-                                isBold = true
-                            }
-                        )
-                    },
-                    factionService.factions
-                        .sortedByDescending { it.power }
-                        .flatMap { faction ->
-                            listOf(
-                                lazy {
-                                    arrayOf(
-                                        TextComponent(
-                                            plugin.language[
-                                                "CommandFactionListItem",
-                                                faction.name
-                                            ]
-                                        ).apply {
-                                            color = SpigotChatColor.AQUA
-                                        }
-                                    )
+                val view =
+                    PaginatedView(
+                        plugin.language,
+                        lazy {
+                            arrayOf(
+                                TextComponent(plugin.language["CommandFactionListTitle"]).apply {
+                                    color = SpigotChatColor.AQUA
+                                    isBold = true
                                 },
-                                lazy {
-                                    arrayOf(
-                                        TextComponent(
-                                            "  " + plugin.language[
-                                                "CommandFactionListPower",
-                                                decimalFormat.format(floor(faction.power))
-                                            ]
-                                        ).apply {
-                                            color = SpigotChatColor.GRAY
-                                        }
-                                    )
-                                },
-                                lazy {
-                                    arrayOf(
-                                        TextComponent(
-                                            "  " + plugin.language[
-                                                "CommandFactionListMembers",
-                                                faction.members.size.toString()
-                                            ]
-                                        ).apply {
-                                            color = SpigotChatColor.GRAY
-                                        }
-                                    )
-                                },
-                                lazy {
-                                    arrayOf(
-                                        TextComponent(
-                                            "  " + plugin.language[
-                                                "CommandFactionListLand",
-                                                claimService.getClaims(faction.id).size.toString()
-                                            ]
-                                        ).apply {
-                                            color = SpigotChatColor.GRAY
-                                        }
-                                    )
-                                }
                             )
                         },
-                    // Each faction is currently 4 lines so this should be a multiple of 4.
-                    // If we change the amount of lines then this should change.
-                    pageLength = 16
-                ) { page -> "/faction list ${page + 1}" }
+                        factionService.factions
+                            .sortedByDescending { it.power }
+                            .flatMap { faction ->
+                                listOf(
+                                    lazy {
+                                        arrayOf(
+                                            TextComponent(
+                                                plugin.language[
+                                                    "CommandFactionListItem",
+                                                    faction.name,
+                                                ],
+                                            ).apply {
+                                                color = SpigotChatColor.AQUA
+                                            },
+                                        )
+                                    },
+                                    lazy {
+                                        arrayOf(
+                                            TextComponent(
+                                                "  " +
+                                                    plugin.language[
+                                                        "CommandFactionListPower",
+                                                        decimalFormat.format(floor(faction.power)),
+                                                    ],
+                                            ).apply {
+                                                color = SpigotChatColor.GRAY
+                                            },
+                                        )
+                                    },
+                                    lazy {
+                                        arrayOf(
+                                            TextComponent(
+                                                "  " +
+                                                    plugin.language[
+                                                        "CommandFactionListMembers",
+                                                        faction.members.size.toString(),
+                                                    ],
+                                            ).apply {
+                                                color = SpigotChatColor.GRAY
+                                            },
+                                        )
+                                    },
+                                    lazy {
+                                        arrayOf(
+                                            TextComponent(
+                                                "  " +
+                                                    plugin.language[
+                                                        "CommandFactionListLand",
+                                                        claimService.getClaims(faction.id).size.toString(),
+                                                    ],
+                                            ).apply {
+                                                color = SpigotChatColor.GRAY
+                                            },
+                                        )
+                                    },
+                                )
+                            },
+                        // Each faction is currently 4 lines so this should be a multiple of 4.
+                        // If we change the amount of lines then this should change.
+                        pageLength = 16,
+                    ) { page -> "/faction list ${page + 1}" }
                 if (view.pages.isEmpty()) {
                     sender.sendMessage("${BukkitChatColor.RED}${plugin.language["CommandFactionListNoFactions"]}")
                     return@Runnable
@@ -105,7 +116,7 @@ class MfFactionListCommand(private val plugin: MedievalFactions) : CommandExecut
                     return@Runnable
                 }
                 view.sendPage(sender, pageNumber)
-            }
+            },
         )
         return true
     }
@@ -114,6 +125,6 @@ class MfFactionListCommand(private val plugin: MedievalFactions) : CommandExecut
         sender: CommandSender,
         command: Command,
         label: String,
-        args: Array<out String>
+        args: Array<out String>,
     ) = emptyList<String>()
 }

@@ -9,5 +9,5 @@ data class MfLegacyGate(
     val world: String,
     val coord1: String,
     val coord2: String,
-    val triggerCoord: String
+    val triggerCoord: String,
 )

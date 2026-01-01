@@ -119,14 +119,18 @@ class BlockBreakListenerTest {
         val faction = mock(com.dansplugins.factionsystem.faction.MfFaction::class.java)
         `when`(factionService.getFaction(claim.factionId)).thenReturn(faction)
 
-        val runnable = Runnable {
-            playerService.save(com.dansplugins.factionsystem.player.MfPlayer(plugin, player))
-        }
+        val runnable =
+            Runnable {
+                playerService.save(
+                    com.dansplugins.factionsystem.player
+                        .MfPlayer(plugin, player),
+                )
+            }
         `when`(
             plugin.server.scheduler.runTaskAsynchronously(
                 plugin,
-                runnable
-            )
+                runnable,
+            ),
         ).thenReturn(mock(org.bukkit.scheduler.BukkitTask::class.java))
 
         // Act
@@ -177,7 +181,7 @@ class BlockBreakListenerTest {
         val world: World,
         val block: Block,
         val player: Player,
-        val event: BlockBreakEvent
+        val event: BlockBreakEvent,
     )
 
     private fun mockServices() {

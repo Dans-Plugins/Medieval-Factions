@@ -4,15 +4,16 @@ import com.dansplugins.factionsystem.MedievalFactions
 import com.dansplugins.factionsystem.faction.MfFactionId
 import org.bukkit.scheduler.BukkitRunnable
 import org.bukkit.scheduler.BukkitTask
-import java.util.*
+import java.util.Collections
 
 /**
  * A class responsible for scheduling and managing tasks related to faction updates.
  *
  * @param plugin The MedievalFactions plugin instance.
  */
-class TaskScheduler(private val plugin: MedievalFactions) {
-
+class TaskScheduler(
+    private val plugin: MedievalFactions,
+) {
     private val updateTasks: MutableMap<MfFactionId, MutableList<BukkitTask>> =
         Collections.synchronizedMap(mutableMapOf<MfFactionId, MutableList<BukkitTask>>())
 
@@ -23,14 +24,22 @@ class TaskScheduler(private val plugin: MedievalFactions) {
      * @param runnable The task to be executed.
      * @param delay The delay in ticks before the task is executed. Default is 0.
      */
-    fun scheduleTask(factionId: MfFactionId, runnable: Runnable, delay: Long = 0L) {
-        val updateTask = object : BukkitRunnable() {
-            override fun run() {
-                runnable.run()
-                val factionUpdateTasks = updateTasks[factionId]
-                factionUpdateTasks?.removeAll(plugin.server.scheduler.pendingTasks.filter { it.taskId == taskId })
-            }
-        }.runTaskLater(plugin, delay)
+    fun scheduleTask(
+        factionId: MfFactionId,
+        runnable: Runnable,
+        delay: Long = 0L,
+    ) {
+        val updateTask =
+            object : BukkitRunnable() {
+                override fun run() {
+                    runnable.run()
+                    val factionUpdateTasks = updateTasks[factionId]
+                    factionUpdateTasks?.removeAll(
+                        plugin.server.scheduler.pendingTasks
+                            .filter { it.taskId == taskId },
+                    )
+                }
+            }.runTaskLater(plugin, delay)
         val factionUpdateTasks = updateTasks[factionId]
         if (factionUpdateTasks == null) {
             updateTasks[factionId] = Collections.synchronizedList(mutableListOf(updateTask))

@@ -25,8 +25,16 @@ import java.util.logging.Level.SEVERE
 import net.md_5.bungee.api.ChatColor as SpigotChatColor
 import org.bukkit.ChatColor as BukkitChatColor
 
-class MfFactionRelationshipAddCommand(private val plugin: MedievalFactions) : CommandExecutor, TabCompleter {
-    override fun onCommand(sender: CommandSender, command: Command, label: String, args: Array<out String>): Boolean {
+class MfFactionRelationshipAddCommand(
+    private val plugin: MedievalFactions,
+) : CommandExecutor,
+    TabCompleter {
+    override fun onCommand(
+        sender: CommandSender,
+        command: Command,
+        label: String,
+        args: Array<out String>,
+    ): Boolean {
         if (!sender.hasPermission("mf.relationship.add")) {
             sender.sendMessage("${BukkitChatColor.RED}${plugin.language["CommandFactionRelationshipAddNoPermission"]}")
             return true
@@ -42,9 +50,13 @@ class MfFactionRelationshipAddCommand(private val plugin: MedievalFactions) : Co
                 sender.spigot().sendMessage(
                     TextComponent(relationshipType.toTranslation()).apply {
                         color = SpigotChatColor.GRAY
-                        hoverEvent = HoverEvent(SHOW_TEXT, Text(plugin.language["CommandFactionRelationshipAddTypeHover", relationshipType.toTranslation()]))
+                        hoverEvent =
+                            HoverEvent(
+                                SHOW_TEXT,
+                                Text(plugin.language["CommandFactionRelationshipAddTypeHover", relationshipType.toTranslation()]),
+                            )
                         clickEvent = ClickEvent(RUN_COMMAND, "/faction relationship add ${args.joinToString(" ")} ${relationshipType.name}")
-                    }
+                    },
                 )
             }
         } else {
@@ -52,30 +64,41 @@ class MfFactionRelationshipAddCommand(private val plugin: MedievalFactions) : Co
                 plugin,
                 Runnable {
                     val factionService = plugin.services.factionService
-                    val faction1 = factionService.getFaction(MfFactionId(unquotedArgs[0])) ?: factionService.getFaction(
-                        unquotedArgs[0]
-                    )
+                    val faction1 =
+                        factionService.getFaction(MfFactionId(unquotedArgs[0])) ?: factionService.getFaction(
+                            unquotedArgs[0],
+                        )
                     if (faction1 == null) {
-                        sender.sendMessage("${BukkitChatColor.RED}${plugin.language["CommandFactionRelationshipAddInvalidFaction", unquotedArgs[0]]}")
+                        sender.sendMessage(
+                            "${BukkitChatColor.RED}${plugin.language["CommandFactionRelationshipAddInvalidFaction", unquotedArgs[0]]}",
+                        )
                         return@Runnable
                     }
-                    val faction2 = factionService.getFaction(MfFactionId(unquotedArgs[1])) ?: factionService.getFaction(
-                        unquotedArgs[1]
-                    )
+                    val faction2 =
+                        factionService.getFaction(MfFactionId(unquotedArgs[1])) ?: factionService.getFaction(
+                            unquotedArgs[1],
+                        )
                     if (faction2 == null) {
-                        sender.sendMessage("${BukkitChatColor.RED}${plugin.language["CommandFactionRelationshipAddInvalidFaction", unquotedArgs[1]]}")
+                        sender.sendMessage(
+                            "${BukkitChatColor.RED}${plugin.language["CommandFactionRelationshipAddInvalidFaction", unquotedArgs[1]]}",
+                        )
                         return@Runnable
                     }
                     if (faction1.id == faction2.id) {
-                        sender.sendMessage("${BukkitChatColor.RED}${plugin.language["CommandFactionRelationshipAddCannotAddRelationshipToSelf"]}")
+                        sender.sendMessage(
+                            "${BukkitChatColor.RED}${plugin.language["CommandFactionRelationshipAddCannotAddRelationshipToSelf"]}",
+                        )
                         return@Runnable
                     }
-                    val relationshipType = try {
-                        MfFactionRelationshipType.valueOf(unquotedArgs[2].uppercase().replace(' ', '_'))
-                    } catch (exception: IllegalArgumentException) {
-                        sender.sendMessage("${BukkitChatColor.RED}${plugin.language["CommandFactionRelationshipAddInvalidRelationshipType"]}")
-                        return@Runnable
-                    }
+                    val relationshipType =
+                        try {
+                            MfFactionRelationshipType.valueOf(unquotedArgs[2].uppercase().replace(' ', '_'))
+                        } catch (exception: IllegalArgumentException) {
+                            sender.sendMessage(
+                                "${BukkitChatColor.RED}${plugin.language["CommandFactionRelationshipAddInvalidRelationshipType"]}",
+                            )
+                            return@Runnable
+                        }
                     val relationshipService = plugin.services.factionRelationshipService
                     val relationships = relationshipService.getRelationships(faction1.id, faction2.id)
                     val reverseRelationships = relationshipService.getRelationships(faction2.id, faction1.id)
@@ -85,7 +108,9 @@ class MfFactionRelationshipAddCommand(private val plugin: MedievalFactions) : Co
                     }
                     if (relationshipType == ALLY) {
                         if ((relationships + reverseRelationships).any { it.type == AT_WAR }) {
-                            sender.sendMessage("${BukkitChatColor.RED}${plugin.language["CommandFactionRelationshipAddCannotAllyWhileAtWar"]}")
+                            sender.sendMessage(
+                                "${BukkitChatColor.RED}${plugin.language["CommandFactionRelationshipAddCannotAllyWhileAtWar"]}",
+                            )
                             return@Runnable
                         }
                     }
@@ -103,46 +128,52 @@ class MfFactionRelationshipAddCommand(private val plugin: MedievalFactions) : Co
                     }
                     if (relationshipType == AT_WAR) {
                         if (relationships.any { it.type == ALLY } && reverseRelationships.any { it.type == ALLY }) {
-                            sender.sendMessage("${BukkitChatColor.RED}${plugin.language["CommandFactionRelationshipAddCannotAddWarWithAlly"]}")
+                            sender.sendMessage(
+                                "${BukkitChatColor.RED}${plugin.language["CommandFactionRelationshipAddCannotAddWarWithAlly"]}",
+                            )
                             return@Runnable
                         }
                     }
-                    relationshipService.save(
-                        MfFactionRelationship(
-                            factionId = faction1.id,
-                            targetId = faction2.id,
-                            type = relationshipType
-                        )
-                    ).onFailure {
-                        sender.sendMessage("${BukkitChatColor.RED}${plugin.language["CommandFactionRelationshipAddFailedToSaveRelationship"]}")
-                        plugin.logger.log(SEVERE, "Failed to save faction relationship: ${it.reason.message}", it.reason.cause)
-                        return@Runnable
-                    }
+                    relationshipService
+                        .save(
+                            MfFactionRelationship(
+                                factionId = faction1.id,
+                                targetId = faction2.id,
+                                type = relationshipType,
+                            ),
+                        ).onFailure {
+                            sender.sendMessage(
+                                "${BukkitChatColor.RED}${plugin.language["CommandFactionRelationshipAddFailedToSaveRelationship"]}",
+                            )
+                            plugin.logger.log(SEVERE, "Failed to save faction relationship: ${it.reason.message}", it.reason.cause)
+                            return@Runnable
+                        }
                     sender.sendMessage("${BukkitChatColor.GREEN}${plugin.language["CommandFactionRelationshipAddSuccess"]}")
                     plugin.server.scheduler.runTask(
                         plugin,
                         Runnable {
                             plugin.server.dispatchCommand(sender, "faction relationship view ${faction1.id.value} ${faction2.id.value}")
-                        }
+                        },
                     )
-                }
+                },
             )
         }
         return true
     }
 
-    private fun MfFactionRelationshipType.toTranslation() = when (this) {
-        ALLY -> plugin.language["Ally"]
-        AT_WAR -> plugin.language["AtWar"]
-        VASSAL -> plugin.language["Vassal"]
-        LIEGE -> plugin.language["Liege"]
-    }
+    private fun MfFactionRelationshipType.toTranslation() =
+        when (this) {
+            ALLY -> plugin.language["Ally"]
+            AT_WAR -> plugin.language["AtWar"]
+            VASSAL -> plugin.language["Vassal"]
+            LIEGE -> plugin.language["Liege"]
+        }
 
     override fun onTabComplete(
         sender: CommandSender,
         command: Command,
         label: String,
-        args: Array<out String>
+        args: Array<out String>,
     ): List<String> {
         val factionService = plugin.services.factionService
         return when {
@@ -155,9 +186,11 @@ class MfFactionRelationshipAddCommand(private val plugin: MedievalFactions) : Co
                 factionService.factions
                     .filter { it.name.lowercase().startsWith(args[1].lowercase()) }
                     .map(MfFaction::name)
-            args.size == 3 -> MfFactionRelationshipType.values()
-                .map { it.name.lowercase() }
-                .filter { it.startsWith(args[2].lowercase()) }
+            args.size == 3 ->
+                MfFactionRelationshipType
+                    .values()
+                    .map { it.name.lowercase() }
+                    .filter { it.startsWith(args[2].lowercase()) }
             else -> emptyList()
         }
     }

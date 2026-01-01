@@ -1,9 +1,11 @@
 package com.dansplugins.factionsystem.faction.role
 
-import java.util.*
+import java.util.UUID
 
 @JvmInline
-value class MfFactionRoleId(val value: String) {
+value class MfFactionRoleId(
+    val value: String,
+) {
     companion object {
         fun generate() = MfFactionRoleId(UUID.randomUUID().toString())
     }

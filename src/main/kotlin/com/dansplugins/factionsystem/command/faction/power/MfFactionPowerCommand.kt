@@ -19,10 +19,18 @@ import java.text.DecimalFormatSymbols
 import java.util.logging.Level.SEVERE
 import kotlin.math.floor
 
-class MfFactionPowerCommand(private val plugin: MedievalFactions) : CommandExecutor, TabCompleter {
+class MfFactionPowerCommand(
+    private val plugin: MedievalFactions,
+) : CommandExecutor,
+    TabCompleter {
     private val decimalFormat = DecimalFormat("0", DecimalFormatSymbols.getInstance(plugin.language.locale))
 
-    override fun onCommand(sender: CommandSender, command: Command, label: String, args: Array<out String>): Boolean {
+    override fun onCommand(
+        sender: CommandSender,
+        command: Command,
+        label: String,
+        args: Array<out String>,
+    ): Boolean {
         if (!sender.hasPermission("mf.power")) {
             sender.sendMessage("$RED${plugin.language["CommandFactionPowerNoPermission"]}")
             return true
@@ -86,47 +94,49 @@ class MfFactionPowerCommand(private val plugin: MedievalFactions) : CommandExecu
                         if (targetPlayer == sender) {
                             sender.sendMessage(
                                 "$GRAY${
-                                plugin.language[
-                                    "CommandFactionPowerPlayerPower",
-                                    decimalFormat.format(floor(mfPlayer.power)),
-                                    decimalFormat.format(floor(plugin.config.getDouble("players.maxPower")))
-                                ]
-                                }"
+                                    plugin.language[
+                                        "CommandFactionPowerPlayerPower",
+                                        decimalFormat.format(floor(mfPlayer.power)),
+                                        decimalFormat.format(floor(plugin.config.getDouble("players.maxPower"))),
+                                    ]
+                                }",
                             )
                         } else {
                             sender.sendMessage(
                                 "$GRAY${
-                                plugin.language[
-                                    "CommandFactionPowerOtherPlayerPower",
-                                    targetPlayer?.name ?: plugin.language["UnknownPlayer"],
-                                    decimalFormat.format(floor(mfPlayer.power)),
-                                    decimalFormat.format(floor(plugin.config.getDouble("players.maxPower")))
-                                ]
-                                }"
+                                    plugin.language[
+                                        "CommandFactionPowerOtherPlayerPower",
+                                        targetPlayer?.name ?: plugin.language["UnknownPlayer"],
+                                        decimalFormat.format(floor(mfPlayer.power)),
+                                        decimalFormat.format(floor(plugin.config.getDouble("players.maxPower"))),
+                                    ]
+                                }",
                             )
                         }
                     }
                     if (faction != null) {
                         sender.sendMessage(
                             "$GRAY${
-                            plugin.language[
-                                "CommandFactionPowerFactionPower",
-                                decimalFormat.format(floor(faction.power)),
-                                decimalFormat.format(floor(faction.maxPower)),
-                                decimalFormat.format(floor(faction.memberPower)),
-                                decimalFormat.format(floor(faction.maxMemberPower)),
-                                decimalFormat.format(floor(faction.vassalPower)),
-                                decimalFormat.format(floor(faction.maxVassalPower)),
-                                decimalFormat.format(if (faction.flags[plugin.flags.acceptBonusPower]) floor(faction.bonusPower) else 0)
-                            ]
-                            }"
+                                plugin.language[
+                                    "CommandFactionPowerFactionPower",
+                                    decimalFormat.format(floor(faction.power)),
+                                    decimalFormat.format(floor(faction.maxPower)),
+                                    decimalFormat.format(floor(faction.memberPower)),
+                                    decimalFormat.format(floor(faction.maxMemberPower)),
+                                    decimalFormat.format(floor(faction.vassalPower)),
+                                    decimalFormat.format(floor(faction.maxVassalPower)),
+                                    decimalFormat.format(
+                                        if (faction.flags[plugin.flags.acceptBonusPower]) floor(faction.bonusPower) else 0,
+                                    ),
+                                ]
+                            }",
                         )
                     }
                 } else {
                     sender.sendMessage("$RED${plugin.language["CommandFactionPowerNotAPlayer"]}")
                     return@Runnable
                 }
-            }
+            },
         )
         return true
     }
@@ -135,15 +145,18 @@ class MfFactionPowerCommand(private val plugin: MedievalFactions) : CommandExecu
         sender: CommandSender,
         command: Command,
         label: String,
-        args: Array<out String>
+        args: Array<out String>,
     ) = when {
-        args.isEmpty() -> plugin.services.factionService.factions.map(MfFaction::name) +
-            plugin.server.offlinePlayers.mapNotNull(OfflinePlayer::getName)
-        args.size == 1 -> (
-            plugin.services.factionService.factions.map(MfFaction::name) +
+        args.isEmpty() ->
+            plugin.services.factionService.factions
+                .map(MfFaction::name) +
                 plugin.server.offlinePlayers.mapNotNull(OfflinePlayer::getName)
-            )
-            .filter { it.lowercase().startsWith(args[0].lowercase()) }
+        args.size == 1 ->
+            (
+                plugin.services.factionService.factions
+                    .map(MfFaction::name) +
+                    plugin.server.offlinePlayers.mapNotNull(OfflinePlayer::getName)
+            ).filter { it.lowercase().startsWith(args[0].lowercase()) }
         else -> emptyList()
     }
 }
