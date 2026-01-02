@@ -137,7 +137,7 @@ class PlayerInteractListenerTest {
         
         // Create a locked block owned by a different player
         val ownerPlayerId = MfPlayerId(UUID.randomUUID().toString())
-        val lockedBlock = com.dansplugins.factionsystem.locks.MfLockedBlock(
+        val lockedBlock = MfLockedBlock(
             block = MfBlockPosition.fromBukkitBlock(fixture.block),
             chunkX = 0,
             chunkZ = 0,
@@ -165,7 +165,7 @@ class PlayerInteractListenerTest {
         
         // Create a locked block owned by a different player
         val ownerPlayerId = MfPlayerId(UUID.randomUUID().toString())
-        val lockedBlock = com.dansplugins.factionsystem.locks.MfLockedBlock(
+        val lockedBlock = MfLockedBlock(
             block = MfBlockPosition.fromBukkitBlock(fixture.block),
             chunkX = 0,
             chunkZ = 0,
@@ -193,7 +193,7 @@ class PlayerInteractListenerTest {
         
         // Create a locked block where player is an accessor
         val ownerPlayerId = MfPlayerId(UUID.randomUUID().toString())
-        val lockedBlock = com.dansplugins.factionsystem.locks.MfLockedBlock(
+        val lockedBlock = MfLockedBlock(
             block = MfBlockPosition.fromBukkitBlock(fixture.block),
             chunkX = 0,
             chunkZ = 0,
