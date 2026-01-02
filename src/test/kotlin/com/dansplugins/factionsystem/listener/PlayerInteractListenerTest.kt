@@ -60,7 +60,7 @@ class PlayerInteractListenerTest {
         `when`(block.blockData).thenReturn(doorBlockData)
         `when`(medievalFactions.config).thenReturn(mock(org.bukkit.configuration.file.FileConfiguration::class.java))
         `when`(medievalFactions.config.getBoolean("factions.nonMembersCanInteractWithDoors")).thenReturn(true)
-        
+
         val mfPlayer = mock(MfPlayer::class.java)
         val playerId = MfPlayerId(player.uniqueId.toString())
         `when`(mfPlayer.id).thenReturn(playerId)
@@ -96,7 +96,7 @@ class PlayerInteractListenerTest {
         `when`(block.blockData).thenReturn(trapDoorBlockData)
         `when`(medievalFactions.config).thenReturn(mock(org.bukkit.configuration.file.FileConfiguration::class.java))
         `when`(medievalFactions.config.getBoolean("factions.nonMembersCanInteractWithDoors")).thenReturn(true)
-        
+
         val mfPlayer = mock(MfPlayer::class.java)
         val playerId = MfPlayerId(player.uniqueId.toString())
         `when`(mfPlayer.id).thenReturn(playerId)
@@ -132,7 +132,7 @@ class PlayerInteractListenerTest {
         `when`(block.blockData).thenReturn(doorBlockData)
         `when`(medievalFactions.config).thenReturn(mock(org.bukkit.configuration.file.FileConfiguration::class.java))
         `when`(medievalFactions.config.getBoolean("factions.nonMembersCanInteractWithDoors")).thenReturn(false)
-        
+
         val mfPlayer = mock(MfPlayer::class.java)
         val playerId = MfPlayerId(player.uniqueId.toString())
         `when`(mfPlayer.id).thenReturn(playerId)
@@ -172,7 +172,7 @@ class PlayerInteractListenerTest {
         `when`(block.blockData).thenReturn(doorBlockData)
         `when`(medievalFactions.config).thenReturn(mock(org.bukkit.configuration.file.FileConfiguration::class.java))
         `when`(medievalFactions.config.getBoolean("factions.nonMembersCanInteractWithDoors")).thenReturn(false)
-        
+
         val mfPlayer = mock(MfPlayer::class.java)
         val playerId = MfPlayerId(player.uniqueId.toString())
         `when`(mfPlayer.id).thenReturn(playerId)
@@ -206,16 +206,16 @@ class PlayerInteractListenerTest {
         val player = mock(Player::class.java)
         val playerId = UUID.randomUUID()
         `when`(player.uniqueId).thenReturn(playerId)
-        
+
         val event = mock(PlayerInteractEvent::class.java)
         `when`(event.action).thenReturn(Action.RIGHT_CLICK_BLOCK)
         `when`(event.hand).thenReturn(EquipmentSlot.HAND)
         `when`(event.clickedBlock).thenReturn(block)
         `when`(event.player).thenReturn(player)
         `when`(event.item).thenReturn(null)
-        
+
         `when`(block.type).thenReturn(Material.OAK_DOOR)
-        
+
         return PlayerInteractListenerTestFixture(world, block, player, event)
     }
 
