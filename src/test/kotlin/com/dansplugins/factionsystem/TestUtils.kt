@@ -5,8 +5,12 @@ import org.bukkit.block.Block
 import org.bukkit.command.Command
 import org.bukkit.command.CommandSender
 import org.bukkit.entity.Player
+import org.bukkit.event.block.Action
 import org.bukkit.event.block.BlockBreakEvent
 import org.bukkit.event.block.BlockPlaceEvent
+import org.bukkit.event.player.PlayerInteractEvent
+import org.bukkit.inventory.EquipmentSlot
+import org.bukkit.inventory.ItemStack
 import org.mockito.Mockito.mock
 import org.mockito.Mockito.`when`
 
@@ -69,6 +73,32 @@ class TestUtils {
         val event = mock(BlockPlaceEvent::class.java)
         `when`(event.block).thenReturn(block)
         `when`(event.player).thenReturn(player)
+        return event
+    }
+
+    /**
+     * Creates a mocked instance of a PlayerInteractEvent with specified parameters.
+     *
+     * @param player The player who triggered the interact event.
+     * @param action The action type (e.g., RIGHT_CLICK_BLOCK).
+     * @param item The item stack in the player's hand (nullable).
+     * @param clickedBlock The block that was clicked (nullable).
+     * @param hand The equipment slot used for the interaction.
+     * @return A mocked PlayerInteractEvent with the provided parameters set.
+     */
+    fun createPlayerInteractEvent(
+        player: Player,
+        action: Action = Action.RIGHT_CLICK_BLOCK,
+        item: ItemStack? = null,
+        clickedBlock: Block? = null,
+        hand: EquipmentSlot = EquipmentSlot.HAND
+    ): PlayerInteractEvent {
+        val event = mock(PlayerInteractEvent::class.java)
+        `when`(event.player).thenReturn(player)
+        `when`(event.action).thenReturn(action)
+        `when`(event.item).thenReturn(item)
+        `when`(event.clickedBlock).thenReturn(clickedBlock)
+        `when`(event.hand).thenReturn(hand)
         return event
     }
 
