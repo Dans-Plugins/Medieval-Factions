@@ -13,6 +13,7 @@ import com.dansplugins.factionsystem.interaction.MfInteractionStatus.SELECTING_G
 import com.dansplugins.factionsystem.interaction.MfInteractionStatus.SELECTING_GATE_POSITION_2
 import com.dansplugins.factionsystem.interaction.MfInteractionStatus.SELECTING_GATE_TRIGGER
 import com.dansplugins.factionsystem.interaction.MfInteractionStatus.UNLOCKING
+import com.dansplugins.factionsystem.listener.ListenerConstants.PROJECTILE_WEAPONS
 import com.dansplugins.factionsystem.locks.MfUnlockResult.FAILURE
 import com.dansplugins.factionsystem.locks.MfUnlockResult.NOT_LOCKED
 import com.dansplugins.factionsystem.locks.MfUnlockResult.SUCCESS
@@ -39,19 +40,6 @@ import org.bukkit.inventory.EquipmentSlot.HAND
 import java.util.logging.Level.SEVERE
 
 class PlayerInteractListener(private val plugin: MedievalFactions) : Listener {
-
-    companion object {
-        private val PROJECTILE_WEAPONS = setOf(
-            org.bukkit.Material.BOW,
-            org.bukkit.Material.CROSSBOW,
-            org.bukkit.Material.TRIDENT,
-            org.bukkit.Material.SNOWBALL,
-            org.bukkit.Material.EGG,
-            org.bukkit.Material.ENDER_PEARL,
-            org.bukkit.Material.SPLASH_POTION,
-            org.bukkit.Material.LINGERING_POTION
-        )
-    }
 
     @EventHandler
     fun onPlayerInteract(event: PlayerInteractEvent) {
