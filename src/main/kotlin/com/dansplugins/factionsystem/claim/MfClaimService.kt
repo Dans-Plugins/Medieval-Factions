@@ -74,6 +74,27 @@ class MfClaimService(private val plugin: MedievalFactions, private val repositor
         return false
     }
 
+    /**
+     * Checks if ladder placement is allowed in enemy territory during wartime.
+     * This is used to allow players to place ladders for sieges when their faction is at war with the territory owner.
+     *
+     * @param playerId The ID of the player attempting to place a ladder
+     * @param claim The claimed chunk where the player is attempting the action
+     * @param isLadder Whether the item being placed is a ladder
+     * @return true if ladder placement should be allowed, false otherwise
+     */
+    fun isWartimeLadderPlacementAllowed(playerId: MfPlayerId, claim: MfClaimedChunk, isLadder: Boolean): Boolean {
+        if (!isLadder) return false
+        if (!plugin.config.getBoolean("factions.laddersPlaceableInEnemyFactionTerritory")) return false
+        
+        val factionService = plugin.services.factionService
+        val playerFaction = factionService.getFaction(playerId) ?: return false
+        val claimFactionId = claim.factionId
+        
+        val relationshipService = plugin.services.factionRelationshipService
+        return relationshipService.getFactionsAtWarWith(playerFaction.id).contains(claimFactionId)
+    }
+
     // Checks whether a set of chunks has at least one chunk that is adjacent to an existing claim. Works across multiple worlds.
     fun isClaimAdjacent(id: MfFactionId, vararg chunks: MfChunkPosition): Boolean {
         return chunks.any { chunk ->
