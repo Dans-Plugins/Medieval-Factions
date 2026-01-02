@@ -58,10 +58,11 @@ class HighPriorityPlayerInteractListener(private val plugin: MedievalFactions) :
             } else {
                 // Check if player is at war and trying to place a ladder
                 if (claimService.isWartimeLadderPlacementAllowed(
-                    mfPlayer.id,
-                    claim,
-                    event.item?.type == Material.LADDER
-                )) {
+                        mfPlayer.id,
+                        claim,
+                        event.item?.type == Material.LADDER
+                    )
+                ) {
                     // Allow ladder placement in enemy territory during wartime
                     return
                 }

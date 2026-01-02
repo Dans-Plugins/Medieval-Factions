@@ -34,7 +34,6 @@ import org.bukkit.block.data.type.TrapDoor
 import org.bukkit.entity.Player
 import org.bukkit.event.EventHandler
 import org.bukkit.event.Listener
-import org.bukkit.event.block.Action
 import org.bukkit.event.block.Action.PHYSICAL
 import org.bukkit.event.player.PlayerInteractEvent
 import org.bukkit.inventory.EquipmentSlot.HAND
@@ -178,10 +177,11 @@ class PlayerInteractListener(private val plugin: MedievalFactions) : Listener {
             } else {
                 // Check if player is at war and trying to place a ladder
                 if (claimService.isWartimeLadderPlacementAllowed(
-                    mfPlayer.id,
-                    claim,
-                    event.item?.type == Material.LADDER
-                )) {
+                        mfPlayer.id,
+                        claim,
+                        event.item?.type == Material.LADDER
+                    )
+                ) {
                     // Allow ladder placement in enemy territory during wartime
                     return
                 }
