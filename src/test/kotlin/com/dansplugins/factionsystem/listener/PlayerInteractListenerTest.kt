@@ -11,7 +11,6 @@ import com.dansplugins.factionsystem.locks.MfLockService
 import com.dansplugins.factionsystem.player.MfPlayer
 import com.dansplugins.factionsystem.player.MfPlayerId
 import com.dansplugins.factionsystem.player.MfPlayerService
-import org.bukkit.ChatColor
 import org.bukkit.Material
 import org.bukkit.World
 import org.bukkit.block.Block
@@ -160,6 +159,43 @@ class PlayerInteractListenerTest {
         // Assert - event should be cancelled because doors are NOT allowed and interaction is not allowed
         verify(event).isCancelled = true
         verify(player).sendMessage(any(String::class.java))
+    }
+
+    @Test
+    fun onPlayerInteract_DoorWithNonMembersCanInteractWithDoorsDisabled_MemberCanStillInteract() {
+        // Arrange
+        val player = fixture.player
+        val event = fixture.event
+        val block = fixture.block
+        val doorBlockData = mock(Door::class.java)
+
+        `when`(block.blockData).thenReturn(doorBlockData)
+        `when`(medievalFactions.config).thenReturn(mock(org.bukkit.configuration.file.FileConfiguration::class.java))
+        `when`(medievalFactions.config.getBoolean("factions.nonMembersCanInteractWithDoors")).thenReturn(false)
+        
+        val mfPlayer = mock(MfPlayer::class.java)
+        val playerId = MfPlayerId(player.uniqueId.toString())
+        `when`(mfPlayer.id).thenReturn(playerId)
+        `when`(playerService.getPlayer(player)).thenReturn(mfPlayer)
+        `when`(interactionService.getInteractionStatus(playerId)).thenReturn(null)
+        `when`(lockService.getLockedBlock(any())).thenReturn(null)
+
+        val claim = mock(MfClaim::class.java)
+        val factionId = MfFactionId(UUID.randomUUID().toString())
+        `when`(claim.factionId).thenReturn(factionId)
+        `when`(claimService.getClaim(block.chunk)).thenReturn(claim)
+        `when`(claimService.isInteractionAllowed(playerId, claim)).thenReturn(true)
+
+        val factionService = medievalFactions.services.factionService
+        val mockFaction = mock(com.dansplugins.factionsystem.faction.MfFaction::class.java)
+        `when`(mockFaction.name).thenReturn("TestFaction")
+        `when`(factionService.getFaction(factionId)).thenReturn(mockFaction)
+
+        // Act
+        uut.onPlayerInteract(event)
+
+        // Assert - event should NOT be cancelled because player is allowed to interact
+        verify(event, never()).isCancelled = true
     }
 
     // Helper functions
