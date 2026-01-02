@@ -7,7 +7,7 @@ plugins {
 }
 
 group = "com.dansplugins"
-version = "5.7.0-alpha-1"
+version = "5.7.1"
 
 def repoUsername = ""
 def repoPassword = ""
@@ -130,6 +130,7 @@ processResources {
 }
 
 shadowJar {
+    archiveClassifier.set('all')
     mergeServiceFiles()
     dependencies {
         include(dependency('org.jetbrains.kotlin:kotlin-stdlib-jdk8'))
@@ -189,6 +190,14 @@ publishing {
             def snapshotsRepoUrl = "https://repo.dansplugins.com/repository/maven-snapshots/"
             url = version.endsWith("SNAPSHOT") ? snapshotsRepoUrl : releasesRepoUrl
         }
+        maven {
+            name = "GitHubPackages"
+            url = uri("https://maven.pkg.github.com/Dans-Plugins/Medieval-Factions")
+            credentials {
+                username = System.getenv("GITHUB_ACTOR")
+                password = System.getenv("GITHUB_TOKEN")
+            }
+        }
     }
     publications {
         maven(MavenPublication) { publication ->
@@ -196,7 +205,7 @@ publishing {
             artifactId = project.name
             version = project.version
 
-            from components.java
+            artifact(shadowJar)
         }
     }
 }
