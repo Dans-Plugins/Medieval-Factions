@@ -2,7 +2,7 @@ package com.dansplugins.factionsystem.listener
 
 import com.dansplugins.factionsystem.MedievalFactions
 import com.dansplugins.factionsystem.TestUtils
-import com.dansplugins.factionsystem.claim.MfClaim
+import com.dansplugins.factionsystem.claim.MfClaimedChunk
 import com.dansplugins.factionsystem.claim.MfClaimService
 import com.dansplugins.factionsystem.faction.MfFactionId
 import com.dansplugins.factionsystem.interaction.MfInteractionService
@@ -23,6 +23,7 @@ import org.bukkit.inventory.EquipmentSlot
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.mockito.ArgumentMatchers.any
+import org.mockito.ArgumentMatchers.anyString
 import org.mockito.Mockito.mock
 import org.mockito.Mockito.never
 import org.mockito.Mockito.verify
@@ -66,11 +67,10 @@ class PlayerInteractListenerTest {
         `when`(mfPlayer.id).thenReturn(playerId)
         `when`(playerService.getPlayer(player)).thenReturn(mfPlayer)
         `when`(interactionService.getInteractionStatus(playerId)).thenReturn(null)
-        `when`(lockService.getLockedBlock(any())).thenReturn(null)
+        `when`(lockService.getLockedBlock(any(com.dansplugins.factionsystem.area.MfBlockPosition::class.java))).thenReturn(null)
 
-        val claim = mock(MfClaim::class.java)
         val factionId = MfFactionId(UUID.randomUUID().toString())
-        `when`(claim.factionId).thenReturn(factionId)
+        val claim = MfClaimedChunk(block.chunk, factionId)
         `when`(claimService.getClaim(block.chunk)).thenReturn(claim)
 
         val factionService = medievalFactions.services.factionService
@@ -102,11 +102,10 @@ class PlayerInteractListenerTest {
         `when`(mfPlayer.id).thenReturn(playerId)
         `when`(playerService.getPlayer(player)).thenReturn(mfPlayer)
         `when`(interactionService.getInteractionStatus(playerId)).thenReturn(null)
-        `when`(lockService.getLockedBlock(any())).thenReturn(null)
+        `when`(lockService.getLockedBlock(any(com.dansplugins.factionsystem.area.MfBlockPosition::class.java))).thenReturn(null)
 
-        val claim = mock(MfClaim::class.java)
         val factionId = MfFactionId(UUID.randomUUID().toString())
-        `when`(claim.factionId).thenReturn(factionId)
+        val claim = MfClaimedChunk(block.chunk, factionId)
         `when`(claimService.getClaim(block.chunk)).thenReturn(claim)
 
         val factionService = medievalFactions.services.factionService
@@ -139,11 +138,10 @@ class PlayerInteractListenerTest {
         `when`(mfPlayer.isBypassEnabled).thenReturn(false)
         `when`(playerService.getPlayer(player)).thenReturn(mfPlayer)
         `when`(interactionService.getInteractionStatus(playerId)).thenReturn(null)
-        `when`(lockService.getLockedBlock(any())).thenReturn(null)
+        `when`(lockService.getLockedBlock(any(com.dansplugins.factionsystem.area.MfBlockPosition::class.java))).thenReturn(null)
 
-        val claim = mock(MfClaim::class.java)
         val factionId = MfFactionId(UUID.randomUUID().toString())
-        `when`(claim.factionId).thenReturn(factionId)
+        val claim = MfClaimedChunk(block.chunk, factionId)
         `when`(claimService.getClaim(block.chunk)).thenReturn(claim)
         `when`(claimService.isInteractionAllowed(playerId, claim)).thenReturn(false)
         `when`(player.hasPermission("mf.bypass")).thenReturn(false)
@@ -178,11 +176,10 @@ class PlayerInteractListenerTest {
         `when`(mfPlayer.id).thenReturn(playerId)
         `when`(playerService.getPlayer(player)).thenReturn(mfPlayer)
         `when`(interactionService.getInteractionStatus(playerId)).thenReturn(null)
-        `when`(lockService.getLockedBlock(any())).thenReturn(null)
+        `when`(lockService.getLockedBlock(any(com.dansplugins.factionsystem.area.MfBlockPosition::class.java))).thenReturn(null)
 
-        val claim = mock(MfClaim::class.java)
         val factionId = MfFactionId(UUID.randomUUID().toString())
-        `when`(claim.factionId).thenReturn(factionId)
+        val claim = MfClaimedChunk(block.chunk, factionId)
         `when`(claimService.getClaim(block.chunk)).thenReturn(claim)
         `when`(claimService.isInteractionAllowed(playerId, claim)).thenReturn(true)
 
@@ -243,7 +240,7 @@ class PlayerInteractListenerTest {
 
     private fun mockLanguageSystem() {
         val language = mock(Language::class.java)
-        `when`(language["CannotInteractWithBlockInFactionTerritory", any(String::class.java)]).thenReturn("Cannot interact with block in faction territory")
+        `when`(language["CannotInteractWithBlockInFactionTerritory", anyString()]).thenReturn("Cannot interact with block in faction territory")
         `when`(medievalFactions.language).thenReturn(language)
     }
 }
