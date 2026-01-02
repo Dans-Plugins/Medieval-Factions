@@ -2,8 +2,8 @@ package com.dansplugins.factionsystem.listener
 
 import com.dansplugins.factionsystem.MedievalFactions
 import com.dansplugins.factionsystem.TestUtils
-import com.dansplugins.factionsystem.claim.MfClaim
 import com.dansplugins.factionsystem.claim.MfClaimService
+import com.dansplugins.factionsystem.claim.MfClaimedChunk
 import com.dansplugins.factionsystem.faction.MfFaction
 import com.dansplugins.factionsystem.faction.MfFactionId
 import com.dansplugins.factionsystem.faction.MfFactionService
@@ -16,6 +16,7 @@ import org.bukkit.ChatColor
 import org.bukkit.Material
 import org.bukkit.World
 import org.bukkit.block.Block
+import org.bukkit.configuration.file.FileConfiguration
 import org.bukkit.entity.Player
 import org.bukkit.event.block.Action
 import org.bukkit.event.player.PlayerInteractEvent
@@ -26,7 +27,7 @@ import org.mockito.Mockito.mock
 import org.mockito.Mockito.never
 import org.mockito.Mockito.verify
 import org.mockito.Mockito.`when`
-import java.util.UUID
+import java.util.*
 
 class HighPriorityPlayerInteractListenerTest {
     private val testUtils = TestUtils()
@@ -58,7 +59,7 @@ class HighPriorityPlayerInteractListenerTest {
         val playerId = MfPlayerId(player.uniqueId.toString())
         val playerFaction = mock(MfFaction::class.java)
         val playerFactionId = MfFactionId("player-faction-id")
-        val claim = mock(MfClaim::class.java)
+        val claim = mock(MfClaimedChunk::class.java)
         val claimFaction = mock(MfFaction::class.java)
         val claimFactionId = MfFactionId("claim-faction-id")
         val ladderItem = mock(ItemStack::class.java)
@@ -78,8 +79,10 @@ class HighPriorityPlayerInteractListenerTest {
         `when`(factionService.getFaction(playerId)).thenReturn(playerFaction)
         `when`(playerFaction.id).thenReturn(playerFactionId)
         `when`(relationshipService.getFactionsAtWarWith(playerFactionId)).thenReturn(listOf(claimFactionId))
-        `when`(medievalFactions.config).thenReturn(mock(org.bukkit.configuration.file.FileConfiguration::class.java))
+        `when`(medievalFactions.config).thenReturn(mock(FileConfiguration::class.java))
         `when`(medievalFactions.config.getBoolean("factions.laddersPlaceableInEnemyFactionTerritory")).thenReturn(true)
+        // Add this line to mock the wartime ladder placement check
+        `when`(claimService.isWartimeLadderPlacementAllowed(playerId, claim, true)).thenReturn(true)
 
         // Act
         uut.onPlayerInteract(event)
@@ -99,7 +102,7 @@ class HighPriorityPlayerInteractListenerTest {
         val playerId = MfPlayerId(player.uniqueId.toString())
         val playerFaction = mock(MfFaction::class.java)
         val playerFactionId = MfFactionId("player-faction-id")
-        val claim = mock(MfClaim::class.java)
+        val claim = mock(MfClaimedChunk::class.java)
         val claimFaction = mock(MfFaction::class.java)
         val claimFactionId = MfFactionId("claim-faction-id")
         val ladderItem = mock(ItemStack::class.java)
@@ -119,7 +122,7 @@ class HighPriorityPlayerInteractListenerTest {
         `when`(factionService.getFaction(playerId)).thenReturn(playerFaction)
         `when`(playerFaction.id).thenReturn(playerFactionId)
         `when`(relationshipService.getFactionsAtWarWith(playerFactionId)).thenReturn(listOf(claimFactionId))
-        `when`(medievalFactions.config).thenReturn(mock(org.bukkit.configuration.file.FileConfiguration::class.java))
+        `when`(medievalFactions.config).thenReturn(mock(FileConfiguration::class.java))
         `when`(medievalFactions.config.getBoolean("factions.laddersPlaceableInEnemyFactionTerritory")).thenReturn(false)
 
         // Act
@@ -140,7 +143,7 @@ class HighPriorityPlayerInteractListenerTest {
         val playerId = MfPlayerId(player.uniqueId.toString())
         val playerFaction = mock(MfFaction::class.java)
         val playerFactionId = MfFactionId("player-faction-id")
-        val claim = mock(MfClaim::class.java)
+        val claim = mock(MfClaimedChunk::class.java)
         val claimFaction = mock(MfFaction::class.java)
         val claimFactionId = MfFactionId("claim-faction-id")
         val stoneItem = mock(ItemStack::class.java)
@@ -160,7 +163,7 @@ class HighPriorityPlayerInteractListenerTest {
         `when`(factionService.getFaction(playerId)).thenReturn(playerFaction)
         `when`(playerFaction.id).thenReturn(playerFactionId)
         `when`(relationshipService.getFactionsAtWarWith(playerFactionId)).thenReturn(listOf(claimFactionId))
-        `when`(medievalFactions.config).thenReturn(mock(org.bukkit.configuration.file.FileConfiguration::class.java))
+        `when`(medievalFactions.config).thenReturn(mock(FileConfiguration::class.java))
         `when`(medievalFactions.config.getBoolean("factions.laddersPlaceableInEnemyFactionTerritory")).thenReturn(true)
 
         // Act
@@ -181,7 +184,7 @@ class HighPriorityPlayerInteractListenerTest {
         val playerId = MfPlayerId(player.uniqueId.toString())
         val playerFaction = mock(MfFaction::class.java)
         val playerFactionId = MfFactionId("player-faction-id")
-        val claim = mock(MfClaim::class.java)
+        val claim = mock(MfClaimedChunk::class.java)
         val claimFaction = mock(MfFaction::class.java)
         val claimFactionId = MfFactionId("claim-faction-id")
         val ladderItem = mock(ItemStack::class.java)
@@ -201,7 +204,7 @@ class HighPriorityPlayerInteractListenerTest {
         `when`(factionService.getFaction(playerId)).thenReturn(playerFaction)
         `when`(playerFaction.id).thenReturn(playerFactionId)
         `when`(relationshipService.getFactionsAtWarWith(playerFactionId)).thenReturn(emptyList()) // Not at war
-        `when`(medievalFactions.config).thenReturn(mock(org.bukkit.configuration.file.FileConfiguration::class.java))
+        `when`(medievalFactions.config).thenReturn(mock(FileConfiguration::class.java))
         `when`(medievalFactions.config.getBoolean("factions.laddersPlaceableInEnemyFactionTerritory")).thenReturn(true)
 
         // Act
@@ -223,7 +226,7 @@ class HighPriorityPlayerInteractListenerTest {
         `when`(event.clickedBlock).thenReturn(block)
         `when`(playerService.getPlayer(player)).thenReturn(mfPlayer)
         `when`(claimService.getClaim(block.chunk)).thenReturn(null)
-        `when`(medievalFactions.config).thenReturn(mock(org.bukkit.configuration.file.FileConfiguration::class.java))
+        `when`(medievalFactions.config).thenReturn(mock(FileConfiguration::class.java))
         `when`(medievalFactions.config.getBoolean("wilderness.interaction.prevent", false)).thenReturn(true)
         `when`(medievalFactions.config.getBoolean("wilderness.interaction.alert", true)).thenReturn(true)
 
