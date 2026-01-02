@@ -2,6 +2,7 @@ package com.dansplugins.factionsystem.listener
 
 import com.dansplugins.factionsystem.MedievalFactions
 import com.dansplugins.factionsystem.TestUtils
+import com.dansplugins.factionsystem.area.MfBlockPosition
 import com.dansplugins.factionsystem.claim.MfClaimedChunk
 import com.dansplugins.factionsystem.claim.MfClaimService
 import com.dansplugins.factionsystem.faction.MfFactionId
@@ -67,7 +68,7 @@ class PlayerInteractListenerTest {
         `when`(mfPlayer.id).thenReturn(playerId)
         `when`(playerService.getPlayer(player)).thenReturn(mfPlayer)
         `when`(interactionService.getInteractionStatus(playerId)).thenReturn(null)
-        `when`(lockService.getLockedBlock(any(com.dansplugins.factionsystem.area.MfBlockPosition::class.java))).thenReturn(null)
+        `when`(lockService.getLockedBlock(any(MfBlockPosition::class.java))).thenReturn(null)
 
         val factionId = MfFactionId(UUID.randomUUID().toString())
         val claim = MfClaimedChunk(block.chunk, factionId)
@@ -102,7 +103,7 @@ class PlayerInteractListenerTest {
         `when`(mfPlayer.id).thenReturn(playerId)
         `when`(playerService.getPlayer(player)).thenReturn(mfPlayer)
         `when`(interactionService.getInteractionStatus(playerId)).thenReturn(null)
-        `when`(lockService.getLockedBlock(any(com.dansplugins.factionsystem.area.MfBlockPosition::class.java))).thenReturn(null)
+        `when`(lockService.getLockedBlock(any(MfBlockPosition::class.java))).thenReturn(null)
 
         val factionId = MfFactionId(UUID.randomUUID().toString())
         val claim = MfClaimedChunk(block.chunk, factionId)
@@ -138,7 +139,7 @@ class PlayerInteractListenerTest {
         `when`(mfPlayer.isBypassEnabled).thenReturn(false)
         `when`(playerService.getPlayer(player)).thenReturn(mfPlayer)
         `when`(interactionService.getInteractionStatus(playerId)).thenReturn(null)
-        `when`(lockService.getLockedBlock(any(com.dansplugins.factionsystem.area.MfBlockPosition::class.java))).thenReturn(null)
+        `when`(lockService.getLockedBlock(any(MfBlockPosition::class.java))).thenReturn(null)
 
         val factionId = MfFactionId(UUID.randomUUID().toString())
         val claim = MfClaimedChunk(block.chunk, factionId)
@@ -176,7 +177,7 @@ class PlayerInteractListenerTest {
         `when`(mfPlayer.id).thenReturn(playerId)
         `when`(playerService.getPlayer(player)).thenReturn(mfPlayer)
         `when`(interactionService.getInteractionStatus(playerId)).thenReturn(null)
-        `when`(lockService.getLockedBlock(any(com.dansplugins.factionsystem.area.MfBlockPosition::class.java))).thenReturn(null)
+        `when`(lockService.getLockedBlock(any(MfBlockPosition::class.java))).thenReturn(null)
 
         val factionId = MfFactionId(UUID.randomUUID().toString())
         val claim = MfClaimedChunk(block.chunk, factionId)
