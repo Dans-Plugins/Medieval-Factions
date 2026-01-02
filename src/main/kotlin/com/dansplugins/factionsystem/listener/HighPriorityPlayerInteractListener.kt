@@ -60,11 +60,11 @@ class HighPriorityPlayerInteractListener(private val plugin: MedievalFactions) :
                 val playerFaction = factionService.getFaction(mfPlayer.id)
                 val relationshipService = plugin.services.factionRelationshipService
                 // Check if player is at war and trying to place a ladder
-                if (playerFaction != null && 
-                    relationshipService.getFactionsAtWarWith(playerFaction.id).contains(claimFaction.id) &&
+                if (playerFaction != null && relationshipService.getFactionsAtWarWith(playerFaction.id).contains(claimFaction.id) &&
                     event.action == Action.RIGHT_CLICK_BLOCK &&
                     event.item?.type == Material.LADDER &&
-                    plugin.config.getBoolean("factions.laddersPlaceableInEnemyFactionTerritory")) {
+                    plugin.config.getBoolean("factions.laddersPlaceableInEnemyFactionTerritory")
+                ) {
                     // Allow ladder placement in enemy territory during wartime
                     return
                 }
