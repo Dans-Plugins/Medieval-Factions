@@ -13,6 +13,7 @@ import com.dansplugins.factionsystem.interaction.MfInteractionStatus.SELECTING_G
 import com.dansplugins.factionsystem.interaction.MfInteractionStatus.SELECTING_GATE_POSITION_2
 import com.dansplugins.factionsystem.interaction.MfInteractionStatus.SELECTING_GATE_TRIGGER
 import com.dansplugins.factionsystem.interaction.MfInteractionStatus.UNLOCKING
+import com.dansplugins.factionsystem.listener.ListenerConstants.PROJECTILE_WEAPONS
 import com.dansplugins.factionsystem.locks.MfUnlockResult.FAILURE
 import com.dansplugins.factionsystem.locks.MfUnlockResult.NOT_LOCKED
 import com.dansplugins.factionsystem.locks.MfUnlockResult.SUCCESS
@@ -170,6 +171,8 @@ class PlayerInteractListener(private val plugin: MedievalFactions) : Listener {
         val item = event.item
         if (item != null) {
             if (item.type.isEdible && !clickedBlock.type.isInteractable) return
+            // Allow projectile shooting when not interacting with an interactable block
+            if (item.type in PROJECTILE_WEAPONS && !clickedBlock.type.isInteractable) return
         }
         if (!claimService.isInteractionAllowed(mfPlayer.id, claim)) {
             if (mfPlayer.isBypassEnabled && event.player.hasPermission("mf.bypass")) {

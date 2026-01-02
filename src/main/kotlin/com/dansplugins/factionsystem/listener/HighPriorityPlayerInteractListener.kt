@@ -1,6 +1,7 @@
 package com.dansplugins.factionsystem.listener
 
 import com.dansplugins.factionsystem.MedievalFactions
+import com.dansplugins.factionsystem.listener.ListenerConstants.PROJECTILE_WEAPONS
 import com.dansplugins.factionsystem.player.MfPlayer
 import dev.forkhandles.result4k.onFailure
 import org.bukkit.ChatColor.RED
@@ -50,6 +51,12 @@ class HighPriorityPlayerInteractListener(private val plugin: MedievalFactions) :
 
         val factionService = plugin.services.factionService
         val claimFaction = factionService.getFaction(claim.factionId) ?: return
+
+        val item = event.item
+        if (item != null) {
+            // Allow projectile shooting when not interacting with an interactable block
+            if (item.type in PROJECTILE_WEAPONS && !clickedBlock.type.isInteractable) return
+        }
 
         // Check if player is allowed to interact based on faction relationships
         if (!claimService.isInteractionAllowed(mfPlayer.id, claim)) {
