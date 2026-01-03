@@ -1,16 +1,21 @@
 package com.dansplugins.factionsystem.listener
 
 import com.dansplugins.factionsystem.MedievalFactions
-import com.dansplugins.factionsystem.player.MfPlayer
-import dev.forkhandles.result4k.onFailure
-import org.bukkit.ChatColor.RED
-import org.bukkit.Material
+import com.dansplugins.factionsystem.player.MfPlayerId
+import com.dansplugins.factionsystem.protection.MfProtectionHelper
 import org.bukkit.event.EventHandler
 import org.bukkit.event.EventPriority
 import org.bukkit.event.Listener
 import org.bukkit.event.player.PlayerInteractEvent
-import java.util.logging.Level.SEVERE
 
+/**
+ * A high-priority listener for PlayerInteractEvents.
+ * * This listener runs at HIGHEST priority and is designed to be the last line of defense
+ * for territory protection. It will only run if other plugins haven't cancelled the event,
+ * providing protection for faction territories even if lower priority handlers allow it.
+ * * The regular PlayerInteractListener handles interaction modes, locks, and special blocks,
+ * while this one focuses solely on territory protection at a higher priority.
+ */
 class HighPriorityPlayerInteractListener(private val plugin: MedievalFactions) : Listener {
 
     @EventHandler(priority = EventPriority.HIGHEST)
@@ -19,56 +24,15 @@ class HighPriorityPlayerInteractListener(private val plugin: MedievalFactions) :
         if (event.isCancelled) return
 
         val clickedBlock = event.clickedBlock ?: return
-        val playerService = plugin.services.playerService
-        val mfPlayer = playerService.getPlayer(event.player)
-        if (mfPlayer == null) {
-            event.isCancelled = true
-            plugin.server.scheduler.runTaskAsynchronously(
-                plugin,
-                Runnable {
-                    playerService.save(MfPlayer(plugin, event.player)).onFailure {
-                        event.player.sendMessage("$RED${plugin.language["BlockInteractFailedToSavePlayer"]}")
-                        plugin.logger.log(SEVERE, "Failed to save player: ${it.reason.message}", it.reason.cause)
-                        return@Runnable
-                    }
-                }
-            )
-            return
-        }
 
-        val claimService = plugin.services.claimService
-        val claim = claimService.getClaim(clickedBlock.chunk)
-        if (claim == null) {
-            if (plugin.config.getBoolean("wilderness.interaction.prevent", false)) {
-                event.isCancelled = true
-                if (plugin.config.getBoolean("wilderness.interaction.alert", true)) {
-                    event.player.sendMessage("$RED${plugin.language["CannotInteractBlockInWilderness"]}")
-                }
-            }
-            return
-        }
-
-        val factionService = plugin.services.factionService
-        val claimFaction = factionService.getFaction(claim.factionId) ?: return
-
-        // Check if player is allowed to interact based on faction relationships
-        if (!claimService.isInteractionAllowed(mfPlayer.id, claim)) {
-            if (mfPlayer.isBypassEnabled && event.player.hasPermission("mf.bypass")) {
-                event.player.sendMessage("$RED${plugin.language["FactionTerritoryProtectionBypassed"]}")
-            } else {
-                // Check if player is at war and trying to place a ladder
-                if (claimService.isWartimeLadderPlacementAllowed(
-                        mfPlayer.id,
-                        claim,
-                        event.item?.type == Material.LADDER
-                    )
-                ) {
-                    // Allow ladder placement in enemy territory during wartime
-                    return
-                }
-                event.isCancelled = true
-                event.player.sendMessage("$RED${plugin.language["CannotInteractWithBlockInFactionTerritory", claimFaction.name]}")
-            }
-        }
+        // Apply territory protection using shared helper
+        MfProtectionHelper.applyTerritoryProtection(
+            plugin = plugin,
+            player = event.player,
+            playerId = MfPlayerId(event.player.uniqueId.toString()),
+            block = clickedBlock,
+            item = event.item,
+            event = event
+        )
     }
 }

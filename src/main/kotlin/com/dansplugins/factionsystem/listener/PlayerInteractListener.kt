@@ -18,10 +18,10 @@ import com.dansplugins.factionsystem.locks.MfUnlockResult.NOT_LOCKED
 import com.dansplugins.factionsystem.locks.MfUnlockResult.SUCCESS
 import com.dansplugins.factionsystem.player.MfPlayer
 import com.dansplugins.factionsystem.player.MfPlayerId
+import com.dansplugins.factionsystem.protection.MfProtectionHelper
 import dev.forkhandles.result4k.onFailure
 import org.bukkit.ChatColor.GREEN
 import org.bukkit.ChatColor.RED
-import org.bukkit.Material
 import org.bukkit.block.Block
 import org.bukkit.block.BlockFace.DOWN
 import org.bukkit.block.BlockFace.UP
@@ -87,10 +87,14 @@ class PlayerInteractListener(private val plugin: MedievalFactions) : Listener {
         }
     }
 
+// Update this method in the PlayerInteractListener class
+
     private fun applyProtections(event: PlayerInteractEvent) {
         val clickedBlock = event.clickedBlock ?: return
         val playerService = plugin.services.playerService
         val mfPlayer = playerService.getPlayer(event.player)
+        val playerId = MfPlayerId(event.player.uniqueId.toString())
+
         if (mfPlayer == null) {
             event.isCancelled = true
             plugin.server.scheduler.runTaskAsynchronously(
@@ -105,6 +109,8 @@ class PlayerInteractListener(private val plugin: MedievalFactions) : Listener {
             )
             return
         }
+
+        // Handle locks first
         val lockService = plugin.services.lockService
         val blockData = clickedBlock.blockData
         val holder = (clickedBlock.state as? Chest)?.inventory?.holder
@@ -123,6 +129,7 @@ class PlayerInteractListener(private val plugin: MedievalFactions) : Listener {
         }
         val lockedBlocks = blocks.mapNotNull { lockService.getLockedBlock(MfBlockPosition.fromBukkitBlock(it)) }
         val lockedBlock = lockedBlocks.firstOrNull()
+
         if (lockedBlock != null) {
             if (event.player.uniqueId.toString() !in (lockedBlock.accessors + lockedBlock.playerId).map(MfPlayerId::value)) {
                 if (mfPlayer.isBypassEnabled && event.player.hasPermission("mf.bypass")) {
@@ -149,47 +156,22 @@ class PlayerInteractListener(private val plugin: MedievalFactions) : Listener {
             }
         }
 
+        // Handle door/trapdoor special case
         if (plugin.config.getBoolean("factions.nonMembersCanInteractWithDoors")) {
             if (clickedBlock.blockData is Door || clickedBlock.blockData is TrapDoor) {
                 return
             }
         }
-        val claimService = plugin.services.claimService
-        val claim = claimService.getClaim(clickedBlock.chunk)
-        if (claim == null) {
-            if (plugin.config.getBoolean("wilderness.interaction.prevent", false)) {
-                event.isCancelled = true
-                if (plugin.config.getBoolean("wilderness.interaction.alert", true)) {
-                    event.player.sendMessage("$RED${plugin.language["CannotInteractBlockInWilderness"]}")
-                }
-            }
-            return
-        }
-        val factionService = plugin.services.factionService
-        val claimFaction = factionService.getFaction(claim.factionId) ?: return
-        val item = event.item
-        if (item != null) {
-            if (item.type.isEdible && !clickedBlock.type.isInteractable) return
-        }
-        if (!claimService.isInteractionAllowed(mfPlayer.id, claim)) {
-            if (mfPlayer.isBypassEnabled && event.player.hasPermission("mf.bypass")) {
-                event.player.sendMessage("$RED${plugin.language["FactionTerritoryProtectionBypassed"]}")
-            } else {
-                // Check if player is at war and trying to place a ladder
-                if (claimService.isWartimeLadderPlacementAllowed(
-                        mfPlayer.id,
-                        claim,
-                        event.item?.type == Material.LADDER
-                    )
-                ) {
-                    // Allow ladder placement in enemy territory during wartime
-                    return
-                }
-                event.isCancelled = true
-                event.player.sendMessage("$RED${plugin.language["CannotInteractWithBlockInFactionTerritory", claimFaction.name]}")
-            }
-        }
-        return
+
+        // Apply territory protection using shared helper
+        MfProtectionHelper.applyTerritoryProtection(
+            plugin = plugin,
+            player = event.player,
+            playerId = playerId,
+            block = clickedBlock,
+            item = event.item,
+            event = event
+        )
     }
 
     private fun lock(player: Player, block: Block) {
