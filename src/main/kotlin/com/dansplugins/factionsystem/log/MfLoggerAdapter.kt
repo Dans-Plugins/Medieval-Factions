@@ -624,8 +624,8 @@ class MfLoggerAdapter(
         logger.log(record)
     }
 
-    var SELF: String = MfLoggerAdapter::class.java.name
-    var SUPER = MarkerIgnoringBase::class.java.name
+    val SELF: String = MfLoggerAdapter::class.java.name
+    val SUPER = MarkerIgnoringBase::class.java.name
 
     /**
      * Fill in caller data if possible.

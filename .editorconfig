@@ -1,0 +1,34 @@
+# EditorConfig for Medieval Factions
+# https://editorconfig.org
+
+root = true
+
+[*]
+charset = utf-8
+end_of_line = lf
+insert_final_newline = true
+trim_trailing_whitespace = true
+
+[*.{kt,kts}]
+indent_size = 4
+indent_style = space
+max_line_length = 140
+
+# Ktlint/Kotlinter rules
+# Disable rules that cause excessive formatting changes
+ktlint_function_signature_rule_force_multiline_when_parameter_count_greater_or_equal_than = off
+ktlint_parameter-list-wrapping = disabled
+ktlint_standard_parameter-list-wrapping = disabled
+
+[*.{xml,html}]
+indent_size = 2
+
+[*.{yml,yaml}]
+indent_size = 2
+
+[*.md]
+trim_trailing_whitespace = false
+max_line_length = off
+
+[*.{gradle,properties}]
+indent_size = 4
