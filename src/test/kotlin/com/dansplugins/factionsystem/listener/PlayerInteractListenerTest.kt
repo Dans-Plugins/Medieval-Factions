@@ -60,7 +60,7 @@ class PlayerInteractListenerTest {
         // Arrange
         val doorBlockData = mock(Door::class.java)
         `when`(fixture.block.blockData).thenReturn(doorBlockData)
-        
+
         setupConfigForDoorInteraction(enabled = true)
         setupPlayerMocks(fixture.player)
         setupClaimAndFaction(fixture.block)
@@ -77,7 +77,7 @@ class PlayerInteractListenerTest {
         // Arrange
         val trapDoorBlockData = mock(TrapDoor::class.java)
         `when`(fixture.block.blockData).thenReturn(trapDoorBlockData)
-        
+
         setupConfigForDoorInteraction(enabled = true)
         setupPlayerMocks(fixture.player)
         setupClaimAndFaction(fixture.block)
@@ -94,11 +94,11 @@ class PlayerInteractListenerTest {
         // Arrange
         val doorBlockData = mock(Door::class.java)
         `when`(fixture.block.blockData).thenReturn(doorBlockData)
-        
+
         setupConfigForDoorInteraction(enabled = false)
         val (_, playerId) = setupPlayerMocks(fixture.player, bypassEnabled = false)
         val (claim, _) = setupClaimAndFaction(fixture.block)
-        
+
         `when`(claimService.isInteractionAllowed(playerId, claim)).thenReturn(false)
         `when`(fixture.player.hasPermission("mf.bypass")).thenReturn(false)
 
@@ -115,11 +115,11 @@ class PlayerInteractListenerTest {
         // Arrange
         val doorBlockData = mock(Door::class.java)
         `when`(fixture.block.blockData).thenReturn(doorBlockData)
-        
+
         setupConfigForDoorInteraction(enabled = false)
         val (_, playerId) = setupPlayerMocks(fixture.player)
         val (claim, _) = setupClaimAndFaction(fixture.block)
-        
+
         `when`(claimService.isInteractionAllowed(playerId, claim)).thenReturn(true)
 
         // Act
@@ -128,7 +128,6 @@ class PlayerInteractListenerTest {
         // Assert - event should NOT be cancelled because player is allowed to interact
         verify(fixture.event, never()).isCancelled = true
     }
-
 
     @Test
     @Disabled
@@ -219,17 +218,16 @@ class PlayerInteractListenerTest {
         verify(fixture.event, never()).isCancelled = true
     }
 
-
     @Test
     fun onPlayerInteract_ClaimProtection_PlayerWithBypassEnabled_ShouldAllowInteraction() {
         // Arrange
         val doorBlockData = mock(Door::class.java)
         `when`(fixture.block.blockData).thenReturn(doorBlockData)
-        
+
         setupConfigForDoorInteraction(enabled = false)
         val (_, playerId) = setupPlayerMocks(fixture.player, bypassEnabled = true)
         val (claim, _) = setupClaimAndFaction(fixture.block)
-        
+
         `when`(claimService.isInteractionAllowed(playerId, claim)).thenReturn(false)
         `when`(fixture.player.hasPermission("mf.bypass")).thenReturn(true)
 
@@ -245,11 +243,11 @@ class PlayerInteractListenerTest {
         // Arrange
         val doorBlockData = mock(Door::class.java)
         `when`(fixture.block.blockData).thenReturn(doorBlockData)
-        
+
         setupConfigForDoorInteraction(enabled = true)
         val (_, playerId) = setupPlayerMocks(fixture.player)
         val (claim, _) = setupClaimAndFaction(fixture.block)
-        
+
         // Even though interaction is not allowed on the claim, door config should override
         `when`(claimService.isInteractionAllowed(playerId, claim)).thenReturn(false)
 
@@ -342,7 +340,6 @@ class PlayerInteractListenerTest {
 
         return PlayerInteractListenerTestFixture(world, block, player, event)
     }
-
 
     private data class PlayerInteractListenerTestFixture(
         val world: World,
