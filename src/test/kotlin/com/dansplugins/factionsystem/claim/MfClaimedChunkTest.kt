@@ -1,5 +1,6 @@
 package com.dansplugins.factionsystem.claim
 
+import com.dansplugins.factionsystem.TestUtils
 import com.dansplugins.factionsystem.area.MfChunkPosition
 import com.dansplugins.factionsystem.faction.MfFactionId
 import org.bukkit.Chunk
@@ -11,6 +12,7 @@ import kotlin.test.Test
 import kotlin.test.assertEquals
 
 class MfClaimedChunkTest {
+    private val testUtils = TestUtils()
 
     @Test
     fun testInitializationWithCoordinates() {
@@ -38,13 +40,8 @@ class MfClaimedChunkTest {
         val z = 25
         val factionId = MfFactionId.generate()
         
-        val world = mock(World::class.java)
-        `when`(world.uid).thenReturn(worldId)
-        
-        val chunk = mock(Chunk::class.java)
-        `when`(chunk.world).thenReturn(world)
-        `when`(chunk.x).thenReturn(x)
-        `when`(chunk.z).thenReturn(z)
+        val world = testUtils.createMockWorld(worldId)
+        val chunk = testUtils.createMockChunk(world, x, z)
 
         // execute
         val claimedChunk = MfClaimedChunk(chunk, factionId)

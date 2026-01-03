@@ -1,5 +1,6 @@
 package com.dansplugins.factionsystem.area
 
+import com.dansplugins.factionsystem.TestUtils
 import org.bukkit.Location
 import org.bukkit.World
 import org.mockito.Mockito.mock
@@ -9,6 +10,7 @@ import kotlin.test.Test
 import kotlin.test.assertEquals
 
 class MfPositionTest {
+    private val testUtils = TestUtils()
 
     @Test
     fun testInitialization() {
@@ -42,8 +44,7 @@ class MfPositionTest {
         val yaw = 180.0f
         val pitch = -45.0f
 
-        val world = mock(World::class.java)
-        `when`(world.uid).thenReturn(worldId)
+        val world = testUtils.createMockWorld(worldId)
 
         val location = mock(Location::class.java)
         `when`(location.world).thenReturn(world)

@@ -1,5 +1,6 @@
 package com.dansplugins.factionsystem.area
 
+import com.dansplugins.factionsystem.TestUtils
 import org.bukkit.Chunk
 import org.bukkit.World
 import org.mockito.Mockito.mock
@@ -9,6 +10,7 @@ import kotlin.test.Test
 import kotlin.test.assertEquals
 
 class MfChunkPositionTest {
+    private val testUtils = TestUtils()
 
     @Test
     fun testInitialization() {
@@ -33,13 +35,8 @@ class MfChunkPositionTest {
         val x = 5
         val z = 15
         
-        val world = mock(World::class.java)
-        `when`(world.uid).thenReturn(worldId)
-        
-        val chunk = mock(Chunk::class.java)
-        `when`(chunk.world).thenReturn(world)
-        `when`(chunk.x).thenReturn(x)
-        `when`(chunk.z).thenReturn(z)
+        val world = testUtils.createMockWorld(worldId)
+        val chunk = testUtils.createMockChunk(world, x, z)
 
         // execute
         val chunkPosition = MfChunkPosition.fromBukkit(chunk)
