@@ -37,7 +37,7 @@ class TestUtils {
 
     /**
      * Creates and returns a mocked instance of a `World` object.
-     * The returned `World` mock has its `uid` property set to a specified UUID.
+     * The returned `World` mock has its `uid` property set to the provided UUID or a random one if not specified.
      *
      * @param uid The UUID to use for the world. Defaults to a random UUID if not provided.
      * @return A mocked `World` instance with the specified `uid`.
