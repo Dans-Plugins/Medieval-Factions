@@ -311,10 +311,10 @@ class PlayerInteractListenerTest {
         `when`(claim.factionId).thenReturn(claimFactionId)
         `when`(factionService.getFaction(claimFactionId)).thenReturn(mock(MfFaction::class.java))
         `when`(claimService.isInteractionAllowed(playerId, claim)).thenReturn(false)
-        
+
         // isPlacingLadder should be false because block is interactable
         `when`(claimService.isWartimeLadderPlacementAllowed(playerId, claim, false)).thenReturn(false)
-        
+
         `when`(medievalFactions.config).thenReturn(mock(FileConfiguration::class.java))
 
         // Act
@@ -334,7 +334,7 @@ class PlayerInteractListenerTest {
             configEnabled = true,
             atWarWithClaimFaction = true
         )
-        
+
         // Override action to LEFT_CLICK_BLOCK
         `when`(fixture.event.action).thenReturn(Action.LEFT_CLICK_BLOCK)
 
@@ -355,7 +355,7 @@ class PlayerInteractListenerTest {
             configEnabled = true,
             atWarWithClaimFaction = true
         )
-        
+
         // Override action to PHYSICAL (like pressure plate)
         `when`(fixture.event.action).thenReturn(Action.PHYSICAL)
 
@@ -503,7 +503,7 @@ class PlayerInteractListenerTest {
 
         val blockData = mock(org.bukkit.block.data.BlockData::class.java)
         `when`(block.blockData).thenReturn(blockData)
-        
+
         // Mock a material that is explicitly solid and non-interactable for ladder placement logic
         val solidNonInteractableMaterial = mock(Material::class.java)
         `when`(solidNonInteractableMaterial.isSolid).thenReturn(true)
