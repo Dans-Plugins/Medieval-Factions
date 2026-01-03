@@ -1,5 +1,8 @@
 package com.dansplugins.factionsystem
 
+import com.dansplugins.factionsystem.faction.MfFactionId
+import com.dansplugins.factionsystem.player.MfPlayerId
+import org.bukkit.Chunk
 import org.bukkit.World
 import org.bukkit.block.Block
 import org.bukkit.command.Command
@@ -9,6 +12,7 @@ import org.bukkit.event.block.BlockBreakEvent
 import org.bukkit.event.block.BlockPlaceEvent
 import org.mockito.Mockito.mock
 import org.mockito.Mockito.`when`
+import java.util.*
 
 /**
  * A utility class for creating mock objects and events, commonly used in testing scenarios.
@@ -33,15 +37,50 @@ class TestUtils {
 
     /**
      * Creates and returns a mocked instance of a `World` object.
-     * The returned `World` mock has its `uid` property set to a mocked `UUID`.
+     * The returned `World` mock has its `uid` property set to a specified UUID.
      *
-     * @return A mocked `World` instance with a mocked `uid`.
+     * @param uid The UUID to use for the world. Defaults to a random UUID if not provided.
+     * @return A mocked `World` instance with the specified `uid`.
      */
-    fun createMockWorld(): World {
+    fun createMockWorld(uid: UUID = UUID.randomUUID()): World {
         val world = mock(World::class.java)
-        val worldUid = mock(java.util.UUID::class.java)
-        `when`(world.uid).thenReturn(worldUid)
+        `when`(world.uid).thenReturn(uid)
         return world
+    }
+
+    /**
+     * Creates a mocked Chunk with specified coordinates and world.
+     *
+     * @param world The World object for the chunk. Defaults to a mocked World instance if not provided.
+     * @param x The x-coordinate of the chunk. Defaults to 0 if not provided.
+     * @param z The z-coordinate of the chunk. Defaults to 0 if not provided.
+     * @return A mocked Chunk instance with the specified properties.
+     */
+    fun createMockChunk(world: World = createMockWorld(), x: Int = 0, z: Int = 0): Chunk {
+        val chunk = mock(Chunk::class.java)
+        `when`(chunk.world).thenReturn(world)
+        `when`(chunk.x).thenReturn(x)
+        `when`(chunk.z).thenReturn(z)
+        return chunk
+    }
+
+    /**
+     * Creates a MfPlayerId for testing.
+     *
+     * @param value The string value for the player ID. Defaults to a random UUID if not provided.
+     * @return A MfPlayerId instance.
+     */
+    fun createPlayerId(value: String = UUID.randomUUID().toString()): MfPlayerId {
+        return MfPlayerId(value)
+    }
+
+    /**
+     * Creates a MfFactionId for testing.
+     *
+     * @return A MfFactionId instance with a generated UUID.
+     */
+    fun createFactionId(): MfFactionId {
+        return MfFactionId.generate()
     }
 
     /**
