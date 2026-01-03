@@ -108,8 +108,6 @@ class PlayerInteractListener(private val plugin: MedievalFactions) : Listener {
             return
         }
 
-        val playerId = MfPlayerId(event.player.uniqueId.toString())
-
         // Handle locks first
         val lockService = plugin.services.lockService
         val blockData = clickedBlock.blockData
