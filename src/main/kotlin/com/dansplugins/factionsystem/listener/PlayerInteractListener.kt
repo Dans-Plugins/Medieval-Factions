@@ -89,6 +89,10 @@ class PlayerInteractListener(private val plugin: MedievalFactions) : Listener {
 
     private fun applyProtections(event: PlayerInteractEvent) {
         val clickedBlock = event.clickedBlock ?: return
+        
+        // Mark this event as being processed to prevent duplicate checks by HighPriorityListener
+        MfProtectionHelper.markEventProcessed(plugin, event)
+        
         val playerService = plugin.services.playerService
         val mfPlayer = playerService.getPlayer(event.player)
         val playerId = MfPlayerId(event.player.uniqueId.toString())
@@ -170,9 +174,6 @@ class PlayerInteractListener(private val plugin: MedievalFactions) : Listener {
             item = event.item,
             event = event
         )
-
-        // Mark this event as having been processed by the protection system
-        MfProtectionHelper.markEventProcessed(plugin, event)
     }
 
     private fun lock(player: Player, block: Block) {
