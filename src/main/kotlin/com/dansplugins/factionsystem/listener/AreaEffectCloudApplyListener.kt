@@ -34,10 +34,9 @@ class AreaEffectCloudApplyListener(
     @EventHandler
     fun onAreaEffectCloudApply(event: AreaEffectCloudApplyEvent) {
         val basePotionType = event.entity.basePotionType
-        val hasHarmfulEffect =
-            basePotionType?.potionEffects?.any { effect ->
-                harmfulPotionEffectTypes.contains(effect.type)
-            } ?: false
+        val hasHarmfulEffect = basePotionType?.potionEffects?.any { effect ->
+            harmfulPotionEffectTypes.contains(effect.type)
+        } ?: false
         if (!hasHarmfulEffect) return
         val potionService = plugin.services.potionService
         val damager = potionService.getLingeringPotionEffectThrower(event.entity) ?: return

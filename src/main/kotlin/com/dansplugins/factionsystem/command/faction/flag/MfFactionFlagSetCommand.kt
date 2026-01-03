@@ -44,11 +44,7 @@ class MfFactionFlagSetCommand(
     private inner class ValuePrompt : ValidatingPrompt() {
         override fun getPromptText(context: ConversationContext): String {
             val flag = context.getSessionData("flag") as? MfFlag<Any>
-            return plugin.language[
-                "CommandFactionFlagSetValuePrompt",
-                flag?.name ?: plugin.language["UnknownFlag"],
-                plugin.language["EscapeSequence"],
-            ]
+            return plugin.language["CommandFactionFlagSetValuePrompt", flag?.name ?: plugin.language["UnknownFlag"], plugin.language["EscapeSequence"]]
         }
 
         override fun acceptValidatedInput(
@@ -75,11 +71,8 @@ class MfFactionFlagSetCommand(
                 ]}: ${coercionResult.failureMessage}"
                 is MfFlagValueCoercionSuccess<*> -> {
                     when (val validationResult = flag.validate(coercionResult.value)) {
-                        is MfFlagValidationFailure ->
-                            "$RED${plugin.language["CommandFactionFlagSetValueValidationFailed"]}: " +
-                                validationResult.failureMessage
-                        is MfFlagValidationSuccess ->
-                            "$RED${plugin.language["CommandFactionFlagSetValueUnknownValidationFailure"]}"
+                        is MfFlagValidationFailure -> "$RED${plugin.language["CommandFactionFlagSetValueValidationFailed"]}: ${validationResult.failureMessage}"
+                        is MfFlagValidationSuccess -> "$RED${plugin.language["CommandFactionFlagSetValueUnknownValidationFailure"]}"
                     }
                 }
             }

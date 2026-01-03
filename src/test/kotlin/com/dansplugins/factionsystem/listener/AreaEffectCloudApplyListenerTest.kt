@@ -42,7 +42,7 @@ class AreaEffectCloudApplyListenerTest {
         val areaEffectCloud = mock(AreaEffectCloud::class.java)
         val event = mock(AreaEffectCloudApplyEvent::class.java)
         val potionType = mock(PotionType::class.java)
-
+        
         `when`(event.entity).thenReturn(areaEffectCloud)
         `when`(areaEffectCloud.basePotionType).thenReturn(potionType)
         // Return an empty list of potion effects (non-harmful)
