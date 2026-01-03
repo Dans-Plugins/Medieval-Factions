@@ -53,7 +53,6 @@ import com.dansplugins.factionsystem.listener.CreatureSpawnListener
 import com.dansplugins.factionsystem.listener.EntityDamageByEntityListener
 import com.dansplugins.factionsystem.listener.EntityDamageListener
 import com.dansplugins.factionsystem.listener.EntityExplodeListener
-import com.dansplugins.factionsystem.listener.HighPriorityPlayerInteractListener
 import com.dansplugins.factionsystem.listener.InventoryClickListener
 import com.dansplugins.factionsystem.listener.InventoryMoveItemListener
 import com.dansplugins.factionsystem.listener.LingeringPotionSplashListener
@@ -328,7 +327,6 @@ class MedievalFactions : JavaPlugin() {
             EntityDamageByEntityListener(this),
             EntityDamageListener(this),
             EntityExplodeListener(this),
-            HighPriorityPlayerInteractListener(this),
             InventoryClickListener(this),
             InventoryMoveItemListener(this),
             LingeringPotionSplashListener(this),
