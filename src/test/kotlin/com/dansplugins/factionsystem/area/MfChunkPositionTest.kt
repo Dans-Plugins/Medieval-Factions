@@ -1,0 +1,129 @@
+package com.dansplugins.factionsystem.area
+
+import org.bukkit.Chunk
+import org.bukkit.World
+import org.mockito.Mockito.mock
+import org.mockito.Mockito.`when`
+import java.util.*
+import kotlin.test.Test
+import kotlin.test.assertEquals
+
+class MfChunkPositionTest {
+
+    @Test
+    fun testInitialization() {
+        // prepare
+        val worldId = UUID.randomUUID()
+        val x = 10
+        val z = 20
+
+        // execute
+        val chunkPosition = MfChunkPosition(worldId, x, z)
+
+        // verify
+        assertEquals(worldId, chunkPosition.worldId)
+        assertEquals(x, chunkPosition.x)
+        assertEquals(z, chunkPosition.z)
+    }
+
+    @Test
+    fun testFromBukkit() {
+        // prepare
+        val worldId = UUID.randomUUID()
+        val x = 5
+        val z = 15
+        
+        val world = mock(World::class.java)
+        `when`(world.uid).thenReturn(worldId)
+        
+        val chunk = mock(Chunk::class.java)
+        `when`(chunk.world).thenReturn(world)
+        `when`(chunk.x).thenReturn(x)
+        `when`(chunk.z).thenReturn(z)
+
+        // execute
+        val chunkPosition = MfChunkPosition.fromBukkit(chunk)
+
+        // verify
+        assertEquals(worldId, chunkPosition.worldId)
+        assertEquals(x, chunkPosition.x)
+        assertEquals(z, chunkPosition.z)
+    }
+
+    @Test
+    fun testWithNegativeCoordinates() {
+        // prepare
+        val worldId = UUID.randomUUID()
+        val x = -10
+        val z = -20
+
+        // execute
+        val chunkPosition = MfChunkPosition(worldId, x, z)
+
+        // verify
+        assertEquals(x, chunkPosition.x)
+        assertEquals(z, chunkPosition.z)
+    }
+
+    @Test
+    fun testEquality() {
+        // prepare
+        val worldId = UUID.randomUUID()
+        val x = 10
+        val z = 20
+
+        // execute
+        val position1 = MfChunkPosition(worldId, x, z)
+        val position2 = MfChunkPosition(worldId, x, z)
+
+        // verify
+        assertEquals(position1, position2)
+    }
+
+    @Test
+    fun testDifferentWorldsSameCoordinates() {
+        // prepare
+        val worldId1 = UUID.randomUUID()
+        val worldId2 = UUID.randomUUID()
+        val x = 10
+        val z = 20
+
+        // execute
+        val position1 = MfChunkPosition(worldId1, x, z)
+        val position2 = MfChunkPosition(worldId2, x, z)
+
+        // verify - positions should be different because worlds are different
+        assertEquals(position1.x, position2.x)
+        assertEquals(position1.z, position2.z)
+        assertEquals(worldId1, position1.worldId)
+        assertEquals(worldId2, position2.worldId)
+    }
+
+    @Test
+    fun testZeroCoordinates() {
+        // prepare
+        val worldId = UUID.randomUUID()
+
+        // execute
+        val chunkPosition = MfChunkPosition(worldId, 0, 0)
+
+        // verify
+        assertEquals(0, chunkPosition.x)
+        assertEquals(0, chunkPosition.z)
+    }
+
+    @Test
+    fun testLargeCoordinates() {
+        // prepare
+        val worldId = UUID.randomUUID()
+        val x = 1000000
+        val z = 2000000
+
+        // execute
+        val chunkPosition = MfChunkPosition(worldId, x, z)
+
+        // verify
+        assertEquals(x, chunkPosition.x)
+        assertEquals(z, chunkPosition.z)
+    }
+}
