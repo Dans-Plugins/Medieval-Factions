@@ -92,7 +92,6 @@ class PlayerInteractListener(private val plugin: MedievalFactions) : Listener {
         val playerService = plugin.services.playerService
         val claimService = plugin.services.claimService
         val mfPlayer = playerService.getPlayer(event.player)
-        val playerId = MfPlayerId(event.player.uniqueId.toString())
 
         if (mfPlayer == null) {
             event.isCancelled = true
@@ -108,6 +107,8 @@ class PlayerInteractListener(private val plugin: MedievalFactions) : Listener {
             )
             return
         }
+
+        val playerId = MfPlayerId(event.player.uniqueId.toString())
 
         // Handle locks first
         val lockService = plugin.services.lockService

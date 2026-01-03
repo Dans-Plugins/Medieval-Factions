@@ -278,6 +278,96 @@ class PlayerInteractListenerTest {
     }
 
     @Test
+    fun onPlayerInteract_LadderInHand_ClickingChest_ShouldBlockInteraction() {
+        // Arrange
+        val block = fixture.block
+        val player = fixture.player
+        val event = fixture.event
+
+        // Set up an interactable block (chest)
+        val chestMaterial = mock(Material::class.java)
+        `when`(chestMaterial.isSolid).thenReturn(true)
+        `when`(chestMaterial.isInteractable).thenReturn(true) // Chest is interactable
+        `when`(block.type).thenReturn(chestMaterial)
+
+        val blockData = mock(org.bukkit.block.data.BlockData::class.java)
+        `when`(block.blockData).thenReturn(blockData)
+
+        val mfPlayer = mock(MfPlayer::class.java)
+        val playerId = MfPlayerId(player.uniqueId.toString())
+        val claim = mock(MfClaimedChunk::class.java)
+        val item = mock(ItemStack::class.java)
+
+        `when`(event.clickedBlock).thenReturn(block)
+        `when`(event.action).thenReturn(Action.RIGHT_CLICK_BLOCK)
+        `when`(event.item).thenReturn(item)
+        `when`(item.type).thenReturn(Material.LADDER)
+        `when`(event.hasItem()).thenReturn(true)
+        `when`(playerService.getPlayer(player)).thenReturn(mfPlayer)
+        `when`(mfPlayer.id).thenReturn(playerId)
+        `when`(mfPlayer.isBypassEnabled).thenReturn(false)
+        `when`(interactionService.getInteractionStatus(playerId)).thenReturn(null)
+        `when`(claimService.getClaim(block.chunk)).thenReturn(claim)
+        `when`(claim.factionId).thenReturn(claimFactionId)
+        `when`(factionService.getFaction(claimFactionId)).thenReturn(mock(MfFaction::class.java))
+        `when`(claimService.isInteractionAllowed(playerId, claim)).thenReturn(false)
+        
+        // isPlacingLadder should be false because block is interactable
+        `when`(claimService.isWartimeLadderPlacementAllowed(playerId, claim, false)).thenReturn(false)
+        
+        `when`(medievalFactions.config).thenReturn(mock(FileConfiguration::class.java))
+
+        // Act
+        uut.onPlayerInteract(event)
+
+        // Assert - event should be cancelled because clicking an interactable block with ladder shouldn't bypass
+        verifyEventCancelled()
+        verifyPlayerNotified()
+    }
+
+    @Test
+    fun onPlayerInteract_LadderInHand_LeftClickBlock_ShouldNotBypass() {
+        // Arrange
+        setupWartimeLadderTest(
+            ladderItem = true,
+            isWartimeLadderPlacementAllowed = false,
+            configEnabled = true,
+            atWarWithClaimFaction = true
+        )
+        
+        // Override action to LEFT_CLICK_BLOCK
+        `when`(fixture.event.action).thenReturn(Action.LEFT_CLICK_BLOCK)
+
+        // Act
+        uut.onPlayerInteract(fixture.event)
+
+        // Assert - left click with ladder should not bypass protection
+        verifyEventCancelled()
+        verifyPlayerNotified()
+    }
+
+    @Test
+    fun onPlayerInteract_LadderInHand_PhysicalAction_ShouldNotBypass() {
+        // Arrange
+        setupWartimeLadderTest(
+            ladderItem = true,
+            isWartimeLadderPlacementAllowed = false,
+            configEnabled = true,
+            atWarWithClaimFaction = true
+        )
+        
+        // Override action to PHYSICAL (like pressure plate)
+        `when`(fixture.event.action).thenReturn(Action.PHYSICAL)
+
+        // Act
+        uut.onPlayerInteract(fixture.event)
+
+        // Assert - physical action with ladder should not bypass protection
+        verifyEventCancelled()
+        verifyPlayerNotified()
+    }
+
+    @Test
     fun onPlayerInteract_BlockInWilderness_WildernessPreventInteractionSetToTrue_ShouldCancelAndInformPlayer() {
         // Arrange
         val block = fixture.block
@@ -288,9 +378,12 @@ class PlayerInteractListenerTest {
         `when`(block.blockData).thenReturn(blockData)
 
         val mfPlayer = mock(MfPlayer::class.java)
+        val playerId = MfPlayerId(player.uniqueId.toString())
+        `when`(mfPlayer.id).thenReturn(playerId)
 
         `when`(event.clickedBlock).thenReturn(block)
         `when`(playerService.getPlayer(player)).thenReturn(mfPlayer)
+        `when`(interactionService.getInteractionStatus(playerId)).thenReturn(null)
         `when`(claimService.getClaim(block.chunk)).thenReturn(null)
         `when`(medievalFactions.config).thenReturn(mock(FileConfiguration::class.java))
         `when`(medievalFactions.config.getBoolean("wilderness.interaction.prevent", false)).thenReturn(true)
@@ -323,8 +416,7 @@ class PlayerInteractListenerTest {
         `when`(mfPlayer.isBypassEnabled).thenReturn(bypassEnabled)
         `when`(playerService.getPlayer(player)).thenReturn(mfPlayer)
         `when`(interactionService.getInteractionStatus(playerId)).thenReturn(null)
-        val anyBlockPosition = mock(MfBlockPosition::class.java)
-        `when`(lockService.getLockedBlock(anyBlockPosition)).thenReturn(null)
+        `when`(lockService.getLockedBlock(any(MfBlockPosition::class.java))).thenReturn(null)
         return Pair(mfPlayer, playerId)
     }
 
@@ -411,7 +503,12 @@ class PlayerInteractListenerTest {
 
         val blockData = mock(org.bukkit.block.data.BlockData::class.java)
         `when`(block.blockData).thenReturn(blockData)
-        `when`(block.type).thenReturn(Material.STONE) // Set a solid block type for ladder placement
+        
+        // Mock a material that is explicitly solid and non-interactable for ladder placement logic
+        val solidNonInteractableMaterial = mock(Material::class.java)
+        `when`(solidNonInteractableMaterial.isSolid).thenReturn(true)
+        `when`(solidNonInteractableMaterial.isInteractable).thenReturn(false)
+        `when`(block.type).thenReturn(solidNonInteractableMaterial)
 
         val mfPlayer = mock(MfPlayer::class.java)
         val playerId = MfPlayerId(player.uniqueId.toString())
@@ -443,8 +540,8 @@ class PlayerInteractListenerTest {
         `when`(medievalFactions.config.getBoolean("factions.laddersPlaceableInEnemyFactionTerritory")).thenReturn(configEnabled)
 
         // Mock the isWartimeLadderPlacementAllowed with the actual parameter that will be used (isPlacingLadder)
-        // isPlacingLadder is calculated as: event.hasItem() && event.item?.type == Material.LADDER && clickedBlock.type.isSolid
-        val isPlacingLadder = ladderItem && block.type.isSolid
+        // isPlacingLadder is calculated as: event.action == RIGHT_CLICK_BLOCK && event.hasItem() && event.item?.type == Material.LADDER && clickedBlock.type.isSolid && !clickedBlock.type.isInteractable
+        val isPlacingLadder = event.action == Action.RIGHT_CLICK_BLOCK && ladderItem && block.type.isSolid && !block.type.isInteractable
         `when`(claimService.isWartimeLadderPlacementAllowed(playerId, claim, isPlacingLadder)).thenReturn(isWartimeLadderPlacementAllowed)
     }
 
