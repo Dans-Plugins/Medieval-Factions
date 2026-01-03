@@ -416,7 +416,6 @@ class PlayerInteractListenerTest {
         `when`(mfPlayer.isBypassEnabled).thenReturn(bypassEnabled)
         `when`(playerService.getPlayer(player)).thenReturn(mfPlayer)
         `when`(interactionService.getInteractionStatus(playerId)).thenReturn(null)
-        `when`(lockService.getLockedBlock(any(MfBlockPosition::class.java))).thenReturn(null)
         return Pair(mfPlayer, playerId)
     }
 
