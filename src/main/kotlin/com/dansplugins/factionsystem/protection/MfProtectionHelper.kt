@@ -10,6 +10,7 @@ import org.bukkit.block.Block
 import org.bukkit.entity.Player
 import org.bukkit.event.player.PlayerInteractEvent
 import org.bukkit.inventory.ItemStack
+import org.bukkit.metadata.FixedMetadataValue
 import java.util.logging.Level.SEVERE
 
 /**
@@ -17,6 +18,30 @@ import java.util.logging.Level.SEVERE
  * This centralizes the protection code to avoid duplication between listeners.
  */
 object MfProtectionHelper {
+
+    // Metadata key to mark events as already processed
+    private const val PROTECTION_PROCESSED_KEY = "mf_protection_processed"
+
+    /**
+     * Marks a player interact event as having been processed by the protection system.
+     * This prevents duplicate protection checks between different listener priorities.
+     *
+     * @param plugin The MedievalFactions plugin instance
+     * @param event The event to mark
+     */
+    fun markEventProcessed(plugin: MedievalFactions, event: PlayerInteractEvent) {
+        event.player.setMetadata(PROTECTION_PROCESSED_KEY, FixedMetadataValue(plugin, true))
+    }
+
+    /**
+     * Checks if an event has already been processed by the protection system.
+     *
+     * @param event The event to check
+     * @return True if the event has already been processed
+     */
+    fun isEventProcessed(event: PlayerInteractEvent): Boolean {
+        return event.player.hasMetadata(PROTECTION_PROCESSED_KEY)
+    }
 
     /**
      * Applies territory protection logic for player interactions with blocks

@@ -1,3 +1,4 @@
+
 package com.dansplugins.factionsystem.listener
 
 import com.dansplugins.factionsystem.MedievalFactions
@@ -10,10 +11,12 @@ import org.bukkit.event.player.PlayerInteractEvent
 
 /**
  * A high-priority listener for PlayerInteractEvents.
- * * This listener runs at HIGHEST priority and is designed to be the last line of defense
+ *
+ * This listener runs at HIGHEST priority and is designed to be the last line of defense
  * for territory protection. It will only run if other plugins haven't cancelled the event,
  * providing protection for faction territories even if lower priority handlers allow it.
- * * The regular PlayerInteractListener handles interaction modes, locks, and special blocks,
+ *
+ * The regular PlayerInteractListener handles interaction modes, locks, and special blocks,
  * while this one focuses solely on territory protection at a higher priority.
  */
 class HighPriorityPlayerInteractListener(private val plugin: MedievalFactions) : Listener {
@@ -22,6 +25,9 @@ class HighPriorityPlayerInteractListener(private val plugin: MedievalFactions) :
     fun onPlayerInteract(event: PlayerInteractEvent) {
         // Only check protection if event hasn't been cancelled by other protection systems
         if (event.isCancelled) return
+
+        // Skip if the event has already been processed by PlayerInteractListener
+        if (MfProtectionHelper.isEventProcessed(event)) return
 
         val clickedBlock = event.clickedBlock ?: return
 

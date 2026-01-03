@@ -87,8 +87,6 @@ class PlayerInteractListener(private val plugin: MedievalFactions) : Listener {
         }
     }
 
-// Update this method in the PlayerInteractListener class
-
     private fun applyProtections(event: PlayerInteractEvent) {
         val clickedBlock = event.clickedBlock ?: return
         val playerService = plugin.services.playerService
@@ -172,6 +170,9 @@ class PlayerInteractListener(private val plugin: MedievalFactions) : Listener {
             item = event.item,
             event = event
         )
+
+        // Mark this event as having been processed by the protection system
+        MfProtectionHelper.markEventProcessed(plugin, event)
     }
 
     private fun lock(player: Player, block: Block) {
