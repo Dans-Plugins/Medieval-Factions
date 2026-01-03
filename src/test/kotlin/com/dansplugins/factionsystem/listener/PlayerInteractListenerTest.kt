@@ -399,7 +399,6 @@ class PlayerInteractListenerTest {
         return Pair(claim, factionId)
     }
 
-
     private fun setupWartimeLadderTest(
         ladderItem: Boolean,
         isWartimeLadderPlacementAllowed: Boolean,
