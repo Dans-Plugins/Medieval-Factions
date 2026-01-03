@@ -26,21 +26,30 @@ object MfProtectionHelper {
      * Marks a player interact event as having been processed by the protection system.
      * This prevents duplicate protection checks between different listener priorities.
      *
+     * The processing state is scoped to the specific event instance, not the entire
+     * lifetime of the player, by storing an identifier derived from the event.
+     *
      * @param plugin The MedievalFactions plugin instance
      * @param event The event to mark
      */
     fun markEventProcessed(plugin: MedievalFactions, event: PlayerInteractEvent) {
-        event.player.setMetadata(PROTECTION_PROCESSED_KEY, FixedMetadataValue(plugin, true))
+        val eventId = System.identityHashCode(event)
+        event.player.setMetadata(PROTECTION_PROCESSED_KEY, FixedMetadataValue(plugin, eventId))
     }
 
     /**
      * Checks if an event has already been processed by the protection system.
      *
+     * The check is performed against an identifier derived from the current event,
+     * so metadata from previous events does not cause this method to return true.
+     *
      * @param event The event to check
      * @return True if the event has already been processed
      */
     fun isEventProcessed(event: PlayerInteractEvent): Boolean {
-        return event.player.hasMetadata(PROTECTION_PROCESSED_KEY)
+        val eventId = System.identityHashCode(event)
+        val metadataList = event.player.getMetadata(PROTECTION_PROCESSED_KEY)
+        return metadataList.any { it.value() == eventId }
     }
 
     /**
@@ -96,6 +105,11 @@ object MfProtectionHelper {
 
         val factionService = plugin.services.factionService
         val claimFaction = factionService.getFaction(claim.factionId) ?: return true
+
+        // Allow eating food in faction territory without triggering protection
+        if (item != null) {
+            if (item.type.isEdible && !block.type.isInteractable) return true
+        }
 
         // Check if player is allowed to interact based on faction relationships
         if (!claimService.isInteractionAllowed(mfPlayer.id, claim)) {

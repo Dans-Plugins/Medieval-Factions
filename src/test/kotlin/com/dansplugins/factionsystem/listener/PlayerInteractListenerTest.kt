@@ -24,7 +24,6 @@ import org.bukkit.event.block.Action
 import org.bukkit.event.player.PlayerInteractEvent
 import org.bukkit.inventory.EquipmentSlot
 import org.junit.jupiter.api.BeforeEach
-import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.Test
 import org.mockito.ArgumentMatchers.any
 import org.mockito.ArgumentMatchers.anyString
@@ -127,22 +126,6 @@ class PlayerInteractListenerTest {
 
         // Assert - event should NOT be cancelled because player is allowed to interact
         verify(fixture.event, never()).isCancelled = true
-    }
-
-    @Test
-    @Disabled
-    fun onPlayerInteract_LockedBlock_NonOwnerWithoutBypass_ShouldBlockInteraction() {
-        // TODO: Test that non-owner players without bypass cannot interact with locked blocks
-        //
-        // This test should verify:
-        // 1. When a player tries to interact with a locked block
-        // 2. And they are not the owner of the block
-        // 3. And they don't have bypass permissions
-        // 4. Then the interaction should be blocked (event.isCancelled = true)
-        // 5. And they should receive a message that the block is locked
-        //
-        // The test was failing due to Mockito matcher issues - needs proper setup of
-        // scheduler, language system, and mocking of async task execution
     }
 
     @Test
