@@ -190,8 +190,12 @@ class PlayerInteractListener(private val plugin: MedievalFactions) : Listener {
                 event.player.sendMessage("$RED${plugin.language["FactionTerritoryProtectionBypassed"]}")
             } else {
                 // Check if player is at war and trying to place a ladder
-                // Only allow if they're using an item (placing) and it's a ladder
-                val isPlacingLadder = event.hasItem() && event.item?.type == Material.LADDER && clickedBlock.type.isSolid
+                // Only allow if they're right-clicking with a ladder on a solid, non-interactable block
+                val isPlacingLadder = event.action == org.bukkit.event.block.Action.RIGHT_CLICK_BLOCK &&
+                    event.hasItem() && 
+                    event.item?.type == Material.LADDER && 
+                    clickedBlock.type.isSolid && 
+                    !clickedBlock.type.isInteractable
                 if (claimService.isWartimeLadderPlacementAllowed(
                         mfPlayer.id,
                         claim,
