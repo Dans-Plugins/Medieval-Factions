@@ -190,10 +190,12 @@ class PlayerInteractListener(private val plugin: MedievalFactions) : Listener {
                 event.player.sendMessage("$RED${plugin.language["FactionTerritoryProtectionBypassed"]}")
             } else {
                 // Check if player is at war and trying to place a ladder
+                // Only allow if they're using an item (placing) and it's a ladder
+                val isPlacingLadder = event.hasItem() && event.item?.type == Material.LADDER && clickedBlock.type.isSolid
                 if (claimService.isWartimeLadderPlacementAllowed(
                         mfPlayer.id,
                         claim,
-                        event.item?.type == Material.LADDER
+                        isPlacingLadder
                     )
                 ) {
                     // Allow ladder placement in enemy territory during wartime
