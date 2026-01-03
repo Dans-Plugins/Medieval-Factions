@@ -7,6 +7,8 @@ import dev.forkhandles.result4k.onFailure
 import org.bukkit.ChatColor.RED
 import org.bukkit.Material
 import org.bukkit.block.Block
+import org.bukkit.block.data.type.Door
+import org.bukkit.block.data.type.TrapDoor
 import org.bukkit.entity.Player
 import org.bukkit.event.player.PlayerInteractEvent
 import org.bukkit.inventory.ItemStack
@@ -109,6 +111,14 @@ object MfProtectionHelper {
         // Allow eating food in faction territory without triggering protection
         if (item != null) {
             if (item.type.isEdible && !block.type.isInteractable) return true
+        }
+
+        // Allow door/trapdoor interaction if configured
+        if (plugin.config.getBoolean("factions.nonMembersCanInteractWithDoors")) {
+            val blockData = block.blockData
+            if (blockData is Door || blockData is TrapDoor) {
+                return true
+            }
         }
 
         // Check if player is allowed to interact based on faction relationships
