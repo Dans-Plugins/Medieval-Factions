@@ -2,11 +2,13 @@ package com.dansplugins.factionsystem.listener
 
 import com.dansplugins.factionsystem.MedievalFactions
 import com.dansplugins.factionsystem.TestUtils
-import com.dansplugins.factionsystem.claim.MfClaim
+import com.dansplugins.factionsystem.area.MfBlockPosition
+import com.dansplugins.factionsystem.claim.MfClaimedChunk
 import com.dansplugins.factionsystem.claim.MfClaimService
 import com.dansplugins.factionsystem.faction.MfFactionId
 import com.dansplugins.factionsystem.interaction.MfInteractionService
 import com.dansplugins.factionsystem.lang.Language
+import com.dansplugins.factionsystem.locks.MfLockedBlock
 import com.dansplugins.factionsystem.locks.MfLockService
 import com.dansplugins.factionsystem.player.MfPlayer
 import com.dansplugins.factionsystem.player.MfPlayerId
@@ -23,6 +25,7 @@ import org.bukkit.inventory.EquipmentSlot
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.mockito.ArgumentMatchers.any
+import org.mockito.ArgumentMatchers.anyString
 import org.mockito.Mockito.mock
 import org.mockito.Mockito.never
 import org.mockito.Mockito.verify
@@ -52,153 +55,230 @@ class PlayerInteractListenerTest {
     @Test
     fun onPlayerInteract_DoorWithNonMembersCanInteractWithDoorsEnabled_ShouldAllowInteraction() {
         // Arrange
-        val player = fixture.player
-        val event = fixture.event
-        val block = fixture.block
         val doorBlockData = mock(Door::class.java)
-
-        `when`(block.blockData).thenReturn(doorBlockData)
-        `when`(medievalFactions.config).thenReturn(mock(org.bukkit.configuration.file.FileConfiguration::class.java))
-        `when`(medievalFactions.config.getBoolean("factions.nonMembersCanInteractWithDoors")).thenReturn(true)
-
-        val mfPlayer = mock(MfPlayer::class.java)
-        val playerId = MfPlayerId(player.uniqueId.toString())
-        `when`(mfPlayer.id).thenReturn(playerId)
-        `when`(playerService.getPlayer(player)).thenReturn(mfPlayer)
-        `when`(interactionService.getInteractionStatus(playerId)).thenReturn(null)
-        `when`(lockService.getLockedBlock(any())).thenReturn(null)
-
-        val claim = mock(MfClaim::class.java)
-        val factionId = MfFactionId(UUID.randomUUID().toString())
-        `when`(claim.factionId).thenReturn(factionId)
-        `when`(claimService.getClaim(block.chunk)).thenReturn(claim)
-
-        val factionService = medievalFactions.services.factionService
-        val mockFaction = mock(com.dansplugins.factionsystem.faction.MfFaction::class.java)
-        `when`(mockFaction.name).thenReturn("TestFaction")
-        `when`(factionService.getFaction(factionId)).thenReturn(mockFaction)
+        `when`(fixture.block.blockData).thenReturn(doorBlockData)
+        
+        setupConfigForDoorInteraction(enabled = true)
+        setupPlayerMocks(fixture.player)
+        setupClaimAndFaction(fixture.block)
 
         // Act
-        uut.onPlayerInteract(event)
+        uut.onPlayerInteract(fixture.event)
 
         // Assert - event should NOT be cancelled because doors are allowed
-        verify(event, never()).isCancelled = true
+        verify(fixture.event, never()).isCancelled = true
     }
 
     @Test
     fun onPlayerInteract_TrapDoorWithNonMembersCanInteractWithDoorsEnabled_ShouldAllowInteraction() {
         // Arrange
-        val player = fixture.player
-        val event = fixture.event
-        val block = fixture.block
         val trapDoorBlockData = mock(TrapDoor::class.java)
-
-        `when`(block.blockData).thenReturn(trapDoorBlockData)
-        `when`(medievalFactions.config).thenReturn(mock(org.bukkit.configuration.file.FileConfiguration::class.java))
-        `when`(medievalFactions.config.getBoolean("factions.nonMembersCanInteractWithDoors")).thenReturn(true)
-
-        val mfPlayer = mock(MfPlayer::class.java)
-        val playerId = MfPlayerId(player.uniqueId.toString())
-        `when`(mfPlayer.id).thenReturn(playerId)
-        `when`(playerService.getPlayer(player)).thenReturn(mfPlayer)
-        `when`(interactionService.getInteractionStatus(playerId)).thenReturn(null)
-        `when`(lockService.getLockedBlock(any())).thenReturn(null)
-
-        val claim = mock(MfClaim::class.java)
-        val factionId = MfFactionId(UUID.randomUUID().toString())
-        `when`(claim.factionId).thenReturn(factionId)
-        `when`(claimService.getClaim(block.chunk)).thenReturn(claim)
-
-        val factionService = medievalFactions.services.factionService
-        val mockFaction = mock(com.dansplugins.factionsystem.faction.MfFaction::class.java)
-        `when`(mockFaction.name).thenReturn("TestFaction")
-        `when`(factionService.getFaction(factionId)).thenReturn(mockFaction)
+        `when`(fixture.block.blockData).thenReturn(trapDoorBlockData)
+        
+        setupConfigForDoorInteraction(enabled = true)
+        setupPlayerMocks(fixture.player)
+        setupClaimAndFaction(fixture.block)
 
         // Act
-        uut.onPlayerInteract(event)
+        uut.onPlayerInteract(fixture.event)
 
         // Assert - event should NOT be cancelled because trapdoors are allowed
-        verify(event, never()).isCancelled = true
+        verify(fixture.event, never()).isCancelled = true
     }
 
     @Test
     fun onPlayerInteract_DoorWithNonMembersCanInteractWithDoorsDisabled_ShouldBlockInteraction() {
         // Arrange
-        val player = fixture.player
-        val event = fixture.event
-        val block = fixture.block
         val doorBlockData = mock(Door::class.java)
-
-        `when`(block.blockData).thenReturn(doorBlockData)
-        `when`(medievalFactions.config).thenReturn(mock(org.bukkit.configuration.file.FileConfiguration::class.java))
-        `when`(medievalFactions.config.getBoolean("factions.nonMembersCanInteractWithDoors")).thenReturn(false)
-
-        val mfPlayer = mock(MfPlayer::class.java)
-        val playerId = MfPlayerId(player.uniqueId.toString())
-        `when`(mfPlayer.id).thenReturn(playerId)
-        `when`(mfPlayer.isBypassEnabled).thenReturn(false)
-        `when`(playerService.getPlayer(player)).thenReturn(mfPlayer)
-        `when`(interactionService.getInteractionStatus(playerId)).thenReturn(null)
-        `when`(lockService.getLockedBlock(any())).thenReturn(null)
-
-        val claim = mock(MfClaim::class.java)
-        val factionId = MfFactionId(UUID.randomUUID().toString())
-        `when`(claim.factionId).thenReturn(factionId)
-        `when`(claimService.getClaim(block.chunk)).thenReturn(claim)
+        `when`(fixture.block.blockData).thenReturn(doorBlockData)
+        
+        setupConfigForDoorInteraction(enabled = false)
+        val (_, playerId) = setupPlayerMocks(fixture.player, bypassEnabled = false)
+        val (claim, _) = setupClaimAndFaction(fixture.block)
+        
         `when`(claimService.isInteractionAllowed(playerId, claim)).thenReturn(false)
-        `when`(player.hasPermission("mf.bypass")).thenReturn(false)
-
-        val factionService = medievalFactions.services.factionService
-        val mockFaction = mock(com.dansplugins.factionsystem.faction.MfFaction::class.java)
-        `when`(mockFaction.name).thenReturn("TestFaction")
-        `when`(factionService.getFaction(factionId)).thenReturn(mockFaction)
+        `when`(fixture.player.hasPermission("mf.bypass")).thenReturn(false)
 
         // Act
-        uut.onPlayerInteract(event)
+        uut.onPlayerInteract(fixture.event)
 
         // Assert - event should be cancelled because doors are NOT allowed and interaction is not allowed
-        verify(event).isCancelled = true
-        verify(player).sendMessage(any(String::class.java))
+        verify(fixture.event).isCancelled = true
+        verify(fixture.player).sendMessage(any(String::class.java))
     }
 
     @Test
     fun onPlayerInteract_DoorWithNonMembersCanInteractWithDoorsDisabled_MemberCanStillInteract() {
         // Arrange
-        val player = fixture.player
-        val event = fixture.event
-        val block = fixture.block
         val doorBlockData = mock(Door::class.java)
+        `when`(fixture.block.blockData).thenReturn(doorBlockData)
+        
+        setupConfigForDoorInteraction(enabled = false)
+        val (_, playerId) = setupPlayerMocks(fixture.player)
+        val (claim, _) = setupClaimAndFaction(fixture.block)
+        
+        `when`(claimService.isInteractionAllowed(playerId, claim)).thenReturn(true)
 
-        `when`(block.blockData).thenReturn(doorBlockData)
+        // Act
+        uut.onPlayerInteract(fixture.event)
+
+        // Assert - event should NOT be cancelled because player is allowed to interact
+        verify(fixture.event, never()).isCancelled = true
+    }
+
+    @Test
+    fun onPlayerInteract_LockedBlock_NonOwnerWithoutBypass_ShouldBlockInteraction() {
+        // Arrange
+        val doorBlockData = mock(Door::class.java)
+        `when`(fixture.block.blockData).thenReturn(doorBlockData)
+        
+        setupConfigForDoorInteraction(enabled = false)
+        val (_, playerId) = setupPlayerMocks(fixture.player, bypassEnabled = false)
+        
+        // Create a locked block owned by a different player
+        val ownerPlayerId = MfPlayerId(UUID.randomUUID().toString())
+        val lockedBlock = MfLockedBlock(
+            block = MfBlockPosition.fromBukkitBlock(fixture.block),
+            chunkX = 0,
+            chunkZ = 0,
+            playerId = ownerPlayerId,
+            accessors = emptyList()
+        )
+        `when`(lockService.getLockedBlock(any(MfBlockPosition::class.java))).thenReturn(lockedBlock)
+        `when`(fixture.player.hasPermission("mf.bypass")).thenReturn(false)
+
+        // Act
+        uut.onPlayerInteract(fixture.event)
+
+        // Assert - event should be cancelled because block is locked
+        verify(fixture.event).isCancelled = true
+    }
+
+    @Test
+    fun onPlayerInteract_LockedBlock_NonOwnerWithBypassEnabled_ShouldAllowInteraction() {
+        // Arrange
+        val doorBlockData = mock(Door::class.java)
+        `when`(fixture.block.blockData).thenReturn(doorBlockData)
+        
+        setupConfigForDoorInteraction(enabled = false)
+        val (_, playerId) = setupPlayerMocks(fixture.player, bypassEnabled = true)
+        
+        // Create a locked block owned by a different player
+        val ownerPlayerId = MfPlayerId(UUID.randomUUID().toString())
+        val lockedBlock = MfLockedBlock(
+            block = MfBlockPosition.fromBukkitBlock(fixture.block),
+            chunkX = 0,
+            chunkZ = 0,
+            playerId = ownerPlayerId,
+            accessors = emptyList()
+        )
+        `when`(lockService.getLockedBlock(any(MfBlockPosition::class.java))).thenReturn(lockedBlock)
+        `when`(fixture.player.hasPermission("mf.bypass")).thenReturn(true)
+
+        // Act
+        uut.onPlayerInteract(fixture.event)
+
+        // Assert - event should NOT be cancelled because player has bypass enabled
+        verify(fixture.event, never()).isCancelled = true
+    }
+
+    @Test
+    fun onPlayerInteract_LockedBlock_PlayerIsAccessor_ShouldAllowInteraction() {
+        // Arrange
+        val doorBlockData = mock(Door::class.java)
+        `when`(fixture.block.blockData).thenReturn(doorBlockData)
+        
+        setupConfigForDoorInteraction(enabled = false)
+        val (_, playerId) = setupPlayerMocks(fixture.player, bypassEnabled = false)
+        
+        // Create a locked block where player is an accessor
+        val ownerPlayerId = MfPlayerId(UUID.randomUUID().toString())
+        val lockedBlock = MfLockedBlock(
+            block = MfBlockPosition.fromBukkitBlock(fixture.block),
+            chunkX = 0,
+            chunkZ = 0,
+            playerId = ownerPlayerId,
+            accessors = listOf(playerId)
+        )
+        `when`(lockService.getLockedBlock(any(MfBlockPosition::class.java))).thenReturn(lockedBlock)
+
+        // Act
+        uut.onPlayerInteract(fixture.event)
+
+        // Assert - event should NOT be cancelled because player is an accessor
+        verify(fixture.event, never()).isCancelled = true
+    }
+
+    @Test
+    fun onPlayerInteract_ClaimProtection_PlayerWithBypassEnabled_ShouldAllowInteraction() {
+        // Arrange
+        val doorBlockData = mock(Door::class.java)
+        `when`(fixture.block.blockData).thenReturn(doorBlockData)
+        
+        setupConfigForDoorInteraction(enabled = false)
+        val (_, playerId) = setupPlayerMocks(fixture.player, bypassEnabled = true)
+        val (claim, _) = setupClaimAndFaction(fixture.block)
+        
+        `when`(claimService.isInteractionAllowed(playerId, claim)).thenReturn(false)
+        `when`(fixture.player.hasPermission("mf.bypass")).thenReturn(true)
+
+        // Act
+        uut.onPlayerInteract(fixture.event)
+
+        // Assert - event should NOT be cancelled because player has bypass enabled with permission
+        verify(fixture.event, never()).isCancelled = true
+    }
+
+    @Test
+    fun onPlayerInteract_DoorWithConfigEnabled_OverridesClaimProtection() {
+        // Arrange
+        val doorBlockData = mock(Door::class.java)
+        `when`(fixture.block.blockData).thenReturn(doorBlockData)
+        
+        setupConfigForDoorInteraction(enabled = true)
+        val (_, playerId) = setupPlayerMocks(fixture.player)
+        val (claim, _) = setupClaimAndFaction(fixture.block)
+        
+        // Even though interaction is not allowed on the claim, door config should override
+        `when`(claimService.isInteractionAllowed(playerId, claim)).thenReturn(false)
+
+        // Act
+        uut.onPlayerInteract(fixture.event)
+
+        // Assert - event should NOT be cancelled because door config overrides claim protection
+        verify(fixture.event, never()).isCancelled = true
+    }
+
+    // Helper functions
+
+    private fun setupConfigForDoorInteraction(enabled: Boolean) {
         `when`(medievalFactions.config).thenReturn(mock(org.bukkit.configuration.file.FileConfiguration::class.java))
-        `when`(medievalFactions.config.getBoolean("factions.nonMembersCanInteractWithDoors")).thenReturn(false)
+        `when`(medievalFactions.config.getBoolean("factions.nonMembersCanInteractWithDoors")).thenReturn(enabled)
+    }
 
+    private fun setupPlayerMocks(player: Player, bypassEnabled: Boolean = false): Pair<MfPlayer, MfPlayerId> {
         val mfPlayer = mock(MfPlayer::class.java)
         val playerId = MfPlayerId(player.uniqueId.toString())
         `when`(mfPlayer.id).thenReturn(playerId)
+        `when`(mfPlayer.isBypassEnabled).thenReturn(bypassEnabled)
         `when`(playerService.getPlayer(player)).thenReturn(mfPlayer)
         `when`(interactionService.getInteractionStatus(playerId)).thenReturn(null)
-        `when`(lockService.getLockedBlock(any())).thenReturn(null)
+        `when`(lockService.getLockedBlock(any(MfBlockPosition::class.java))).thenReturn(null)
+        return Pair(mfPlayer, playerId)
+    }
 
-        val claim = mock(MfClaim::class.java)
+    private fun setupClaimAndFaction(block: Block): Pair<MfClaimedChunk, MfFactionId> {
         val factionId = MfFactionId(UUID.randomUUID().toString())
-        `when`(claim.factionId).thenReturn(factionId)
+        val claim = MfClaimedChunk(block.chunk, factionId)
         `when`(claimService.getClaim(block.chunk)).thenReturn(claim)
-        `when`(claimService.isInteractionAllowed(playerId, claim)).thenReturn(true)
 
         val factionService = medievalFactions.services.factionService
         val mockFaction = mock(com.dansplugins.factionsystem.faction.MfFaction::class.java)
         `when`(mockFaction.name).thenReturn("TestFaction")
         `when`(factionService.getFaction(factionId)).thenReturn(mockFaction)
 
-        // Act
-        uut.onPlayerInteract(event)
-
-        // Assert - event should NOT be cancelled because player is allowed to interact
-        verify(event, never()).isCancelled = true
+        return Pair(claim, factionId)
     }
-
-    // Helper functions
 
     private fun createBasicFixture(): PlayerInteractListenerTestFixture {
         val world = testUtils.createMockWorld()
@@ -243,7 +323,7 @@ class PlayerInteractListenerTest {
 
     private fun mockLanguageSystem() {
         val language = mock(Language::class.java)
-        `when`(language["CannotInteractWithBlockInFactionTerritory", any(String::class.java)]).thenReturn("Cannot interact with block in faction territory")
+        `when`(language["CannotInteractWithBlockInFactionTerritory", anyString()]).thenReturn("Cannot interact with block in faction territory")
         `when`(medievalFactions.language).thenReturn(language)
     }
 }
