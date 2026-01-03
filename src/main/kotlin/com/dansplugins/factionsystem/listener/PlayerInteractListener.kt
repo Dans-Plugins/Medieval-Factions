@@ -18,10 +18,10 @@ import com.dansplugins.factionsystem.locks.MfUnlockResult.NOT_LOCKED
 import com.dansplugins.factionsystem.locks.MfUnlockResult.SUCCESS
 import com.dansplugins.factionsystem.player.MfPlayer
 import com.dansplugins.factionsystem.player.MfPlayerId
-import com.dansplugins.factionsystem.protection.MfProtectionHelper
 import dev.forkhandles.result4k.onFailure
 import org.bukkit.ChatColor.GREEN
 import org.bukkit.ChatColor.RED
+import org.bukkit.Material
 import org.bukkit.block.Block
 import org.bukkit.block.BlockFace.DOWN
 import org.bukkit.block.BlockFace.UP
@@ -90,6 +90,7 @@ class PlayerInteractListener(private val plugin: MedievalFactions) : Listener {
     private fun applyProtections(event: PlayerInteractEvent) {
         val clickedBlock = event.clickedBlock ?: return
         val playerService = plugin.services.playerService
+        val claimService = plugin.services.claimService
         val mfPlayer = playerService.getPlayer(event.player)
         val playerId = MfPlayerId(event.player.uniqueId.toString())
 
@@ -161,15 +162,46 @@ class PlayerInteractListener(private val plugin: MedievalFactions) : Listener {
             }
         }
 
-        // Apply territory protection using shared helper
-        MfProtectionHelper.applyTerritoryProtection(
-            plugin = plugin,
-            player = event.player,
-            playerId = playerId,
-            block = clickedBlock,
-            item = event.item,
-            event = event
-        )
+        // Apply territory protection
+        val claim = claimService.getClaim(clickedBlock.chunk)
+
+        if (claim == null) {
+            if (plugin.config.getBoolean("wilderness.interaction.prevent", false)) {
+                event.isCancelled = true
+                if (plugin.config.getBoolean("wilderness.interaction.alert", true)) {
+                    event.player.sendMessage("$RED${plugin.language["CannotInteractBlockInWilderness"]}")
+                }
+            }
+            return
+        }
+
+        val factionService = plugin.services.factionService
+        val claimFaction = factionService.getFaction(claim.factionId) ?: return
+
+        // Allow eating food in faction territory without triggering protection
+        if (event.item != null) {
+            if (event.item!!.type.isEdible && !clickedBlock.type.isInteractable) return
+        }
+
+        // Check if player is allowed to interact based on faction relationships
+        if (!claimService.isInteractionAllowed(mfPlayer.id, claim)) {
+            if (mfPlayer.isBypassEnabled && event.player.hasPermission("mf.bypass")) {
+                event.player.sendMessage("$RED${plugin.language["FactionTerritoryProtectionBypassed"]}")
+            } else {
+                // Check if player is at war and trying to place a ladder
+                if (claimService.isWartimeLadderPlacementAllowed(
+                        mfPlayer.id,
+                        claim,
+                        event.item?.type == Material.LADDER
+                    )
+                ) {
+                    // Allow ladder placement in enemy territory during wartime
+                    return
+                }
+                event.isCancelled = true
+                event.player.sendMessage("$RED${plugin.language["CannotInteractWithBlockInFactionTerritory", claimFaction.name]}")
+            }
+        }
     }
 
     private fun lock(player: Player, block: Block) {
