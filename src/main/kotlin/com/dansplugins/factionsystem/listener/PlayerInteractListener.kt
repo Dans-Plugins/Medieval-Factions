@@ -179,8 +179,9 @@ class PlayerInteractListener(private val plugin: MedievalFactions) : Listener {
         val claimFaction = factionService.getFaction(claim.factionId) ?: return
 
         // Allow eating food in faction territory without triggering protection
-        if (event.item != null) {
-            if (event.item!!.type.isEdible && !clickedBlock.type.isInteractable) return
+        val item = event.item
+        if (item != null && item.type.isEdible && !clickedBlock.type.isInteractable) {
+            return
         }
 
         // Check if player is allowed to interact based on faction relationships
