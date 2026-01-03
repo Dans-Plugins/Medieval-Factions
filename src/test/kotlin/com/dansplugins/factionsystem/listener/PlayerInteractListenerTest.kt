@@ -399,6 +399,7 @@ class PlayerInteractListenerTest {
         return Pair(claim, factionId)
     }
 
+
     private fun setupWartimeLadderTest(
         ladderItem: Boolean,
         isWartimeLadderPlacementAllowed: Boolean,
@@ -411,6 +412,7 @@ class PlayerInteractListenerTest {
 
         val blockData = mock(org.bukkit.block.data.BlockData::class.java)
         `when`(block.blockData).thenReturn(blockData)
+        `when`(block.type).thenReturn(Material.STONE) // Set a solid block type for ladder placement
 
         val mfPlayer = mock(MfPlayer::class.java)
         val playerId = MfPlayerId(player.uniqueId.toString())
@@ -423,6 +425,7 @@ class PlayerInteractListenerTest {
         `when`(event.action).thenReturn(Action.RIGHT_CLICK_BLOCK)
         `when`(event.item).thenReturn(item)
         `when`(item.type).thenReturn(if (ladderItem) Material.LADDER else Material.STONE)
+        `when`(event.hasItem()).thenReturn(true)
         `when`(playerService.getPlayer(player)).thenReturn(mfPlayer)
         `when`(mfPlayer.id).thenReturn(playerId)
         `when`(mfPlayer.isBypassEnabled).thenReturn(false)
@@ -440,9 +443,10 @@ class PlayerInteractListenerTest {
         `when`(medievalFactions.config).thenReturn(mock(FileConfiguration::class.java))
         `when`(medievalFactions.config.getBoolean("factions.laddersPlaceableInEnemyFactionTerritory")).thenReturn(configEnabled)
 
-        if (ladderItem && configEnabled && atWarWithClaimFaction) {
-            `when`(claimService.isWartimeLadderPlacementAllowed(playerId, claim, configEnabled)).thenReturn(isWartimeLadderPlacementAllowed)
-        }
+        // Mock the isWartimeLadderPlacementAllowed with the actual parameter that will be used (isPlacingLadder)
+        // isPlacingLadder is calculated as: event.hasItem() && event.item?.type == Material.LADDER && clickedBlock.type.isSolid
+        val isPlacingLadder = ladderItem && block.type.isSolid
+        `when`(claimService.isWartimeLadderPlacementAllowed(playerId, claim, isPlacingLadder)).thenReturn(isWartimeLadderPlacementAllowed)
     }
 
     private fun createBasicFixture(): PlayerInteractListenerTestFixture {
