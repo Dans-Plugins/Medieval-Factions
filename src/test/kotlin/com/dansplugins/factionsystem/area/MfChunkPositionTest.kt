@@ -8,6 +8,7 @@ import org.mockito.Mockito.`when`
 import java.util.*
 import kotlin.test.Test
 import kotlin.test.assertEquals
+import kotlin.test.assertNotEquals
 
 class MfChunkPositionTest {
     private val testUtils = TestUtils()
@@ -94,6 +95,7 @@ class MfChunkPositionTest {
         assertEquals(position1.z, position2.z)
         assertEquals(worldId1, position1.worldId)
         assertEquals(worldId2, position2.worldId)
+        assertNotEquals(position1, position2) // Different worlds means different positions
     }
 
     @Test
