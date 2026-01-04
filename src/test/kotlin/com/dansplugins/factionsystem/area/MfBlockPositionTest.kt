@@ -1,14 +1,9 @@
 package com.dansplugins.factionsystem.area
 
 import com.dansplugins.factionsystem.TestUtils
-import org.bukkit.Location
-import org.bukkit.block.Block
-import org.mockito.Mockito.mock
-import org.mockito.Mockito.`when`
 import java.util.*
 import kotlin.test.Test
 import kotlin.test.assertEquals
-import kotlin.test.assertNotNull
 
 class MfBlockPositionTest {
     private val testUtils = TestUtils()

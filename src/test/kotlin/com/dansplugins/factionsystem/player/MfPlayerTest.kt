@@ -194,7 +194,7 @@ class MfPlayerTest {
     fun testPlayerVersioning() {
         // prepare
         val id = MfPlayerId("test-player-id")
-        
+
         // execute
         val playerV0 = MfPlayer(id = id, version = 0)
         val playerV1 = MfPlayer(id = id, version = 1)

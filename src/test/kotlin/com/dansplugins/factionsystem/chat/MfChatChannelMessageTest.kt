@@ -1,9 +1,6 @@
 package com.dansplugins.factionsystem.chat
 
 import com.dansplugins.factionsystem.TestUtils
-import com.dansplugins.factionsystem.faction.MfFactionId
-import com.dansplugins.factionsystem.player.MfPlayerId
-import java.time.Instant
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertTrue

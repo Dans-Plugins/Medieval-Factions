@@ -1,7 +1,6 @@
 package com.dansplugins.factionsystem.faction
 
 import com.dansplugins.factionsystem.faction.role.MfFactionRole
-import com.dansplugins.factionsystem.faction.role.MfFactionRoleId
 import com.dansplugins.factionsystem.player.MfPlayerId
 import org.mockito.Mockito.mock
 import kotlin.test.Test

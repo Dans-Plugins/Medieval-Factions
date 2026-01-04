@@ -1,10 +1,6 @@
 package com.dansplugins.factionsystem.area
 
 import com.dansplugins.factionsystem.TestUtils
-import org.bukkit.Chunk
-import org.bukkit.World
-import org.mockito.Mockito.mock
-import org.mockito.Mockito.`when`
 import java.util.*
 import kotlin.test.Test
 import kotlin.test.assertEquals
@@ -35,7 +31,7 @@ class MfChunkPositionTest {
         val worldId = UUID.randomUUID()
         val x = 5
         val z = 15
-        
+
         val world = testUtils.createMockWorld(worldId)
         val chunk = testUtils.createMockChunk(world, x, z)
 

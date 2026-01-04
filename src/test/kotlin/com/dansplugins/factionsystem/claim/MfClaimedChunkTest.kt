@@ -3,10 +3,6 @@ package com.dansplugins.factionsystem.claim
 import com.dansplugins.factionsystem.TestUtils
 import com.dansplugins.factionsystem.area.MfChunkPosition
 import com.dansplugins.factionsystem.faction.MfFactionId
-import org.bukkit.Chunk
-import org.bukkit.World
-import org.mockito.Mockito.mock
-import org.mockito.Mockito.`when`
 import java.util.*
 import kotlin.test.Test
 import kotlin.test.assertEquals
@@ -39,7 +35,7 @@ class MfClaimedChunkTest {
         val x = 15
         val z = 25
         val factionId = MfFactionId.generate()
-        
+
         val world = testUtils.createMockWorld(worldId)
         val chunk = testUtils.createMockChunk(world, x, z)
 
@@ -60,7 +56,7 @@ class MfClaimedChunkTest {
         val x = 5
         val z = 35
         val factionId = MfFactionId.generate()
-        
+
         val chunkPosition = MfChunkPosition(worldId, x, z)
 
         // execute

@@ -2,7 +2,6 @@ package com.dansplugins.factionsystem.area
 
 import com.dansplugins.factionsystem.TestUtils
 import org.bukkit.Location
-import org.bukkit.World
 import org.mockito.Mockito.mock
 import org.mockito.Mockito.`when`
 import java.util.*

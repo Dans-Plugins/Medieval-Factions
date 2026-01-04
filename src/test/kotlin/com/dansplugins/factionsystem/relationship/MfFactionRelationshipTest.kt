@@ -1,7 +1,6 @@
 package com.dansplugins.factionsystem.relationship
 
 import com.dansplugins.factionsystem.TestUtils
-import com.dansplugins.factionsystem.faction.MfFactionId
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertNotEquals
