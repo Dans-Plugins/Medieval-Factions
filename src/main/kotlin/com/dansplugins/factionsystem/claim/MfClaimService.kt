@@ -56,6 +56,8 @@ class MfClaimService(private val plugin: MedievalFactions, private val repositor
     @JvmName("getClaimsByFactionId")
     fun getClaims(factionId: MfFactionId): List<MfClaimedChunk> = claims.filter { it.factionId == factionId }
 
+    fun getClaims(): List<MfClaimedChunk> = claims
+
     @JvmName("isInteractionAllowedForPlayerInChunk")
     fun isInteractionAllowed(playerId: MfPlayerId, claim: MfClaimedChunk): Boolean {
         val factionService = plugin.services.factionService
