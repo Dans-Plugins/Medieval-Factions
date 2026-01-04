@@ -262,5 +262,9 @@ gates:
     - *beds
     - *signs
     - *buttons
+api:
+  enabled: true
+  host: 127.0.0.1  # Bind to localhost only for security. Use 0.0.0.0 to allow external access.
+  port: 8080
 dev:
   enableDevCommands: false
