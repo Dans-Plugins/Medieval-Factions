@@ -1,5 +1,6 @@
 package com.dansplugins.factionsystem.chat
 
+import com.dansplugins.factionsystem.TestUtils
 import com.dansplugins.factionsystem.faction.MfFactionId
 import com.dansplugins.factionsystem.player.MfPlayerId
 import java.time.Instant
@@ -8,13 +9,14 @@ import kotlin.test.assertEquals
 import kotlin.test.assertTrue
 
 class MfChatChannelMessageTest {
+    private val testUtils = TestUtils()
 
     @Test
     fun testInitialization() {
         // prepare
-        val timestamp = Instant.now()
-        val playerId = MfPlayerId("test-player")
-        val factionId = MfFactionId.generate()
+        val timestamp = testUtils.createTimestamp()
+        val playerId = testUtils.createPlayerId("test-player")
+        val factionId = testUtils.createFactionId()
         val chatChannel = MfFactionChatChannel.FACTION
         val message = "Hello, faction!"
 
@@ -32,9 +34,9 @@ class MfChatChannelMessageTest {
     @Test
     fun testFactionChannelMessage() {
         // prepare
-        val timestamp = Instant.now()
-        val playerId = MfPlayerId("player1")
-        val factionId = MfFactionId.generate()
+        val timestamp = testUtils.createTimestamp()
+        val playerId = testUtils.createPlayerId("player1")
+        val factionId = testUtils.createFactionId()
         val message = "Testing faction chat"
 
         // execute
@@ -47,9 +49,9 @@ class MfChatChannelMessageTest {
     @Test
     fun testVassalsChannelMessage() {
         // prepare
-        val timestamp = Instant.now()
-        val playerId = MfPlayerId("player2")
-        val factionId = MfFactionId.generate()
+        val timestamp = testUtils.createTimestamp()
+        val playerId = testUtils.createPlayerId("player2")
+        val factionId = testUtils.createFactionId()
         val message = "Vassals message"
 
         // execute
@@ -62,9 +64,9 @@ class MfChatChannelMessageTest {
     @Test
     fun testAlliesChannelMessage() {
         // prepare
-        val timestamp = Instant.now()
-        val playerId = MfPlayerId("player3")
-        val factionId = MfFactionId.generate()
+        val timestamp = testUtils.createTimestamp()
+        val playerId = testUtils.createPlayerId("player3")
+        val factionId = testUtils.createFactionId()
         val message = "Allies message"
 
         // execute
@@ -77,9 +79,9 @@ class MfChatChannelMessageTest {
     @Test
     fun testEmptyMessage() {
         // prepare
-        val timestamp = Instant.now()
-        val playerId = MfPlayerId("player")
-        val factionId = MfFactionId.generate()
+        val timestamp = testUtils.createTimestamp()
+        val playerId = testUtils.createPlayerId("player")
+        val factionId = testUtils.createFactionId()
         val message = ""
 
         // execute
@@ -92,9 +94,9 @@ class MfChatChannelMessageTest {
     @Test
     fun testLongMessage() {
         // prepare
-        val timestamp = Instant.now()
-        val playerId = MfPlayerId("player")
-        val factionId = MfFactionId.generate()
+        val timestamp = testUtils.createTimestamp()
+        val playerId = testUtils.createPlayerId("player")
+        val factionId = testUtils.createFactionId()
         val longMessageLength = 1000 // Test with a long message to verify no length restrictions
         val message = "A".repeat(longMessageLength)
 
@@ -108,10 +110,10 @@ class MfChatChannelMessageTest {
     @Test
     fun testTimestampOrdering() {
         // prepare
-        val playerId = MfPlayerId("player")
-        val factionId = MfFactionId.generate()
-        val earlier = Instant.ofEpochSecond(1000)
-        val later = Instant.ofEpochSecond(2000)
+        val playerId = testUtils.createPlayerId("player")
+        val factionId = testUtils.createFactionId()
+        val earlier = testUtils.createTimestamp(1000)
+        val later = testUtils.createTimestamp(2000)
 
         // execute
         val message1 = MfChatChannelMessage(earlier, playerId, factionId, MfFactionChatChannel.FACTION, "First")
@@ -124,9 +126,9 @@ class MfChatChannelMessageTest {
     @Test
     fun testMultipleMessagesFromSamePlayer() {
         // prepare
-        val playerId = MfPlayerId("player")
-        val factionId = MfFactionId.generate()
-        val timestamp1 = Instant.now()
+        val playerId = testUtils.createPlayerId("player")
+        val factionId = testUtils.createFactionId()
+        val timestamp1 = testUtils.createTimestamp()
         val timestamp2 = timestamp1.plusSeconds(1)
 
         // execute
@@ -143,9 +145,9 @@ class MfChatChannelMessageTest {
     @Test
     fun testMessageWithSpecialCharacters() {
         // prepare
-        val timestamp = Instant.now()
-        val playerId = MfPlayerId("player")
-        val factionId = MfFactionId.generate()
+        val timestamp = testUtils.createTimestamp()
+        val playerId = testUtils.createPlayerId("player")
+        val factionId = testUtils.createFactionId()
         val message = "Hello! @#$%^&*() 你好 🎉"
 
         // execute

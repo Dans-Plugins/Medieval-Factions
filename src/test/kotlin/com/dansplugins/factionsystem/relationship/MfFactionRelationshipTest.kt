@@ -1,18 +1,20 @@
 package com.dansplugins.factionsystem.relationship
 
+import com.dansplugins.factionsystem.TestUtils
 import com.dansplugins.factionsystem.faction.MfFactionId
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertNotEquals
 
 class MfFactionRelationshipTest {
+    private val testUtils = TestUtils()
 
     @Test
     fun testInitialization() {
         // prepare
-        val id = MfFactionRelationshipId.generate()
-        val factionId = MfFactionId.generate()
-        val targetId = MfFactionId.generate()
+        val id = testUtils.createRelationshipId()
+        val factionId = testUtils.createFactionId()
+        val targetId = testUtils.createFactionId()
         val type = MfFactionRelationshipType.ALLY
 
         // execute
@@ -28,8 +30,8 @@ class MfFactionRelationshipTest {
     @Test
     fun testInitializationWithDefaultId() {
         // prepare
-        val factionId = MfFactionId.generate()
-        val targetId = MfFactionId.generate()
+        val factionId = testUtils.createFactionId()
+        val targetId = testUtils.createFactionId()
         val type = MfFactionRelationshipType.AT_WAR
 
         // execute
@@ -45,8 +47,8 @@ class MfFactionRelationshipTest {
     @Test
     fun testAllyRelationship() {
         // prepare
-        val factionId = MfFactionId.generate()
-        val targetId = MfFactionId.generate()
+        val factionId = testUtils.createFactionId()
+        val targetId = testUtils.createFactionId()
 
         // execute
         val relationship = MfFactionRelationship(factionId = factionId, targetId = targetId, type = MfFactionRelationshipType.ALLY)
@@ -58,8 +60,8 @@ class MfFactionRelationshipTest {
     @Test
     fun testWarRelationship() {
         // prepare
-        val factionId = MfFactionId.generate()
-        val targetId = MfFactionId.generate()
+        val factionId = testUtils.createFactionId()
+        val targetId = testUtils.createFactionId()
 
         // execute
         val relationship = MfFactionRelationship(factionId = factionId, targetId = targetId, type = MfFactionRelationshipType.AT_WAR)
@@ -71,8 +73,8 @@ class MfFactionRelationshipTest {
     @Test
     fun testVassalRelationship() {
         // prepare
-        val factionId = MfFactionId.generate()
-        val targetId = MfFactionId.generate()
+        val factionId = testUtils.createFactionId()
+        val targetId = testUtils.createFactionId()
 
         // execute
         val relationship = MfFactionRelationship(factionId = factionId, targetId = targetId, type = MfFactionRelationshipType.VASSAL)
@@ -84,8 +86,8 @@ class MfFactionRelationshipTest {
     @Test
     fun testLiegeRelationship() {
         // prepare
-        val factionId = MfFactionId.generate()
-        val targetId = MfFactionId.generate()
+        val factionId = testUtils.createFactionId()
+        val targetId = testUtils.createFactionId()
 
         // execute
         val relationship = MfFactionRelationship(factionId = factionId, targetId = targetId, type = MfFactionRelationshipType.LIEGE)
@@ -97,9 +99,9 @@ class MfFactionRelationshipTest {
     @Test
     fun testEqualityWithSameValues() {
         // prepare
-        val id = MfFactionRelationshipId.generate()
-        val factionId = MfFactionId.generate()
-        val targetId = MfFactionId.generate()
+        val id = testUtils.createRelationshipId()
+        val factionId = testUtils.createFactionId()
+        val targetId = testUtils.createFactionId()
         val type = MfFactionRelationshipType.ALLY
 
         // execute
@@ -113,13 +115,13 @@ class MfFactionRelationshipTest {
     @Test
     fun testInequalityWithDifferentIds() {
         // prepare
-        val factionId = MfFactionId.generate()
-        val targetId = MfFactionId.generate()
+        val factionId = testUtils.createFactionId()
+        val targetId = testUtils.createFactionId()
         val type = MfFactionRelationshipType.ALLY
 
         // execute
-        val relationship1 = MfFactionRelationship(MfFactionRelationshipId.generate(), factionId, targetId, type)
-        val relationship2 = MfFactionRelationship(MfFactionRelationshipId.generate(), factionId, targetId, type)
+        val relationship1 = MfFactionRelationship(testUtils.createRelationshipId(), factionId, targetId, type)
+        val relationship2 = MfFactionRelationship(testUtils.createRelationshipId(), factionId, targetId, type)
 
         // verify
         assertNotEquals(relationship1, relationship2)
@@ -128,9 +130,9 @@ class MfFactionRelationshipTest {
     @Test
     fun testInequalityWithDifferentTypes() {
         // prepare
-        val id = MfFactionRelationshipId.generate()
-        val factionId = MfFactionId.generate()
-        val targetId = MfFactionId.generate()
+        val id = testUtils.createRelationshipId()
+        val factionId = testUtils.createFactionId()
+        val targetId = testUtils.createFactionId()
 
         // execute
         val relationship1 = MfFactionRelationship(id, factionId, targetId, MfFactionRelationshipType.ALLY)
@@ -143,8 +145,8 @@ class MfFactionRelationshipTest {
     @Test
     fun testBidirectionalRelationship() {
         // prepare - faction A and faction B can have relationships in both directions
-        val factionA = MfFactionId.generate()
-        val factionB = MfFactionId.generate()
+        val factionA = testUtils.createFactionId()
+        val factionB = testUtils.createFactionId()
 
         // execute
         val aToB = MfFactionRelationship(factionId = factionA, targetId = factionB, type = MfFactionRelationshipType.ALLY)

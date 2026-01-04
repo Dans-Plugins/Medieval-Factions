@@ -34,17 +34,13 @@ class MfBlockPositionTest {
     @Test
     fun testFromBukkitBlock() {
         // prepare
-        val worldId = UUID.randomUUID()
+        val worldId = testUtils.createRandomUUID()
         val x = 10
         val y = 70
         val z = 20
 
         val world = testUtils.createMockWorld(worldId)
-        val block = mock(Block::class.java)
-        `when`(block.world).thenReturn(world)
-        `when`(block.x).thenReturn(x)
-        `when`(block.y).thenReturn(y)
-        `when`(block.z).thenReturn(z)
+        val block = testUtils.createMockBlock(world, x, y, z)
 
         // execute
         val blockPosition = MfBlockPosition.fromBukkitBlock(block)

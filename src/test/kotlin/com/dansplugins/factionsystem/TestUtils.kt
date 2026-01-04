@@ -2,6 +2,7 @@ package com.dansplugins.factionsystem
 
 import com.dansplugins.factionsystem.faction.MfFactionId
 import com.dansplugins.factionsystem.player.MfPlayerId
+import com.dansplugins.factionsystem.relationship.MfFactionRelationshipId
 import org.bukkit.Chunk
 import org.bukkit.World
 import org.bukkit.block.Block
@@ -12,6 +13,7 @@ import org.bukkit.event.block.BlockBreakEvent
 import org.bukkit.event.block.BlockPlaceEvent
 import org.mockito.Mockito.mock
 import org.mockito.Mockito.`when`
+import java.time.Instant
 import java.util.*
 
 /**
@@ -31,6 +33,25 @@ class TestUtils {
         `when`(block.x).thenReturn(0)
         `when`(block.y).thenReturn(0)
         `when`(block.z).thenReturn(0)
+        `when`(block.chunk).thenReturn(mock(org.bukkit.Chunk::class.java))
+        return block
+    }
+
+    /**
+     * Creates a mock Block with specified coordinates and world.
+     *
+     * @param world The World object for the block. Defaults to a mocked World instance if not provided.
+     * @param x The x-coordinate of the block. Defaults to 0 if not provided.
+     * @param y The y-coordinate of the block. Defaults to 0 if not provided.
+     * @param z The z-coordinate of the block. Defaults to 0 if not provided.
+     * @return A mocked Block instance with the specified properties.
+     */
+    fun createMockBlock(world: World = createMockWorld(), x: Int = 0, y: Int = 0, z: Int = 0): Block {
+        val block = mock(Block::class.java)
+        `when`(block.world).thenReturn(world)
+        `when`(block.x).thenReturn(x)
+        `when`(block.y).thenReturn(y)
+        `when`(block.z).thenReturn(z)
         `when`(block.chunk).thenReturn(mock(org.bukkit.Chunk::class.java))
         return block
     }
@@ -81,6 +102,45 @@ class TestUtils {
      */
     fun createFactionId(): MfFactionId {
         return MfFactionId.generate()
+    }
+
+    /**
+     * Creates a MfFactionRelationshipId for testing.
+     *
+     * @return A MfFactionRelationshipId instance with a generated UUID.
+     */
+    fun createRelationshipId(): MfFactionRelationshipId {
+        return MfFactionRelationshipId.generate()
+    }
+
+    /**
+     * Creates a random UUID for testing purposes.
+     *
+     * @return A randomly generated UUID.
+     */
+    fun createRandomUUID(): UUID {
+        return UUID.randomUUID()
+    }
+
+    /**
+     * Creates an Instant representing the current time for testing.
+     * Useful for timestamp-based tests to ensure consistency.
+     *
+     * @return An Instant representing the current time.
+     */
+    fun createTimestamp(): Instant {
+        return Instant.now()
+    }
+
+    /**
+     * Creates an Instant with a specified epoch second for testing.
+     * Useful for creating deterministic timestamps in tests.
+     *
+     * @param epochSecond The epoch second value.
+     * @return An Instant at the specified epoch second.
+     */
+    fun createTimestamp(epochSecond: Long): Instant {
+        return Instant.ofEpochSecond(epochSecond)
     }
 
     /**
