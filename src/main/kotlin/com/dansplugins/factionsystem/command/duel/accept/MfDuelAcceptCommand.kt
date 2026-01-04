@@ -20,7 +20,6 @@ import org.bukkit.command.TabCompleter
 import org.bukkit.entity.Player
 import java.time.Duration
 import java.time.Instant
-import java.util.logging.Level
 import java.util.logging.Level.SEVERE
 
 class MfDuelAcceptCommand(private val plugin: MedievalFactions) : CommandExecutor, TabCompleter {
