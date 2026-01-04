@@ -145,15 +145,19 @@ class MfBlockPositionTest {
     fun testYCoordinateRange() {
         // prepare
         val worldId = UUID.randomUUID()
+        // Minecraft Y-coordinate range boundaries (typically -64 to 320 in modern versions)
+        val minY = -64
+        val normalY = 64
+        val maxY = 320
 
-        // execute - test various Y coordinates (Minecraft range is typically -64 to 320)
-        val position1 = MfBlockPosition(worldId, 0, -64, 0)
-        val position2 = MfBlockPosition(worldId, 0, 64, 0)
-        val position3 = MfBlockPosition(worldId, 0, 320, 0)
+        // execute - test various Y coordinates
+        val position1 = MfBlockPosition(worldId, 0, minY, 0)
+        val position2 = MfBlockPosition(worldId, 0, normalY, 0)
+        val position3 = MfBlockPosition(worldId, 0, maxY, 0)
 
         // verify
-        assertEquals(-64, position1.y)
-        assertEquals(64, position2.y)
-        assertEquals(320, position3.y)
+        assertEquals(minY, position1.y)
+        assertEquals(normalY, position2.y)
+        assertEquals(maxY, position3.y)
     }
 }

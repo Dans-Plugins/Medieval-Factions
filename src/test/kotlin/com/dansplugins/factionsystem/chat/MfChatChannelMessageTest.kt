@@ -95,13 +95,14 @@ class MfChatChannelMessageTest {
         val timestamp = Instant.now()
         val playerId = MfPlayerId("player")
         val factionId = MfFactionId.generate()
-        val message = "A".repeat(1000) // Very long message
+        val longMessageLength = 1000 // Test with a long message to verify no length restrictions
+        val message = "A".repeat(longMessageLength)
 
         // execute
         val chatMessage = MfChatChannelMessage(timestamp, playerId, factionId, MfFactionChatChannel.FACTION, message)
 
         // verify
-        assertEquals(1000, chatMessage.message.length)
+        assertEquals(longMessageLength, chatMessage.message.length)
     }
 
     @Test
