@@ -106,15 +106,23 @@ When `storage.type` is set to `json`, the following options apply:
 
 ### Migrating Between Storage Types
 
-To migrate data between storage types, you'll need to manually change the `storage.type` configuration and ensure both storage backends are properly configured. It's recommended to:
+### Migrating Between Storage Types
+
+Medieval Factions provides a migration command to transfer data between storage types. It's recommended to:
 
 1. **Backup your data** before any migration
-2. Stop your server
-3. Change `storage.type` to the desired backend (`json` or `database`)
-4. Configure the target storage backend appropriately
-5. Start your server
+2. Run the migration command: `/mf migrate <type>`
+   - `/mf migrate toJson` - Migrate from database to JSON
+   - `/mf migrate toDatabase` - Migrate from JSON to database
+3. Wait for the migration to complete (progress shown in command output)
+4. Stop your server
+5. Change `storage.type` to the desired backend (`json` or `database`)
+6. Configure the target storage backend appropriately
+7. Start your server
 
-The plugin will automatically use the new storage backend. While internal migration classes exist in the codebase, there is currently no user-accessible command or automatic migration mechanism, so any data transfer between storage types must be handled manually. Check the [Migration Guide](MIGRATION_GUIDE.md) for detailed procedures.
+**Permission Required:** `mf.migrate` (for operators/admins)
+
+The migration command initializes both storage backends, copies all data, and reports success or failure. Check the [Migration Guide](MIGRATION_GUIDE.md) for detailed procedures and troubleshooting.
 
 ## Player Power System
 

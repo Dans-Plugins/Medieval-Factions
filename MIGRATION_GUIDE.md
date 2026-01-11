@@ -108,19 +108,56 @@ Currently, migration between storage backends requires manual steps. Follow thes
    - Your data will remain in JSON files but won't be accessible when using database storage
    - Contact support or check the Discord/GitHub for community tools or scripts
 
-### Automated Migration (Future)
+### Automated Migration (Available Now!)
 
-**Status: Not Yet Available**
+**Command:** `/mf migrate <type>`
 
-While internal migration components (DatabaseToJsonMigrator and JsonToDatabaseMigrator) exist in the codebase, they are **not exposed as stable, user-facing commands** and should not be used directly by server administrators.
+Medieval Factions now provides a migration command that allows operators to transfer data between storage backends without manual intervention:
 
-Future versions may include:
-- Admin commands to trigger migrations (`/mf migrate toJson` or `/mf migrate toDatabase`)
-- Automatic migration when storage type is changed
-- Validation of migrated data
-- Rollback capabilities
+#### Using the Migrate Command
 
-Until explicit migration commands are officially documented and released, **manual data transfer is required** using the procedures described in the [Manual Migration](#manual-migration) section above.
+**Permission Required:** `mf.migrate`
+
+**Syntax:**
+```
+/mf migrate toJson      - Migrate from database to JSON storage
+/mf migrate toDatabase  - Migrate from JSON to database storage
+```
+
+**Important Notes:**
+- **Always backup your data** before running any migration command
+- The migration runs asynchronously and may take several minutes for large datasets
+- The server does NOT need to be stopped to run the migration
+- After successful migration, you must:
+  1. Stop the server
+  2. Update `storage.type` in config.yml to match the new storage backend
+  3. Restart the server
+
+**Example Migration from Database to JSON:**
+1. Ensure you have a database backup
+2. Run command: `/mf migrate toJson`
+3. Wait for success message showing how many items were migrated
+4. Stop the server
+5. Edit config.yml: `storage.type: 'json'`
+6. Start the server
+
+**Example Migration from JSON to Database:**
+1. Ensure you have backed up your JSON files
+2. Run command: `/mf migrate toDatabase`
+3. Wait for success message showing how many items were migrated
+4. Stop the server
+5. Edit config.yml: `storage.type: 'database'`
+6. Start the server
+
+The migration command will:
+- Initialize both source and target storage systems
+- Copy all data including players, factions, claims, laws, relationships, etc.
+- Validate the migration was successful
+- Report the number of items migrated and time taken
+
+### Manual Migration (Legacy Method)
+
+While the `/mf migrate` command is now the recommended approach, manual migration is still possible if needed.
 
 Check the plugin's GitHub repository or Discord server for updates on automated migration availability.
 
