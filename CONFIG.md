@@ -122,7 +122,7 @@ Medieval Factions provides a migration command to transfer data between storage 
 
 **Permission Required:** `mf.migrate` (for operators/admins)
 
-The migration command initializes both storage backends, copies all data, and reports success or failure. Check the [Migration Guide](MIGRATION_GUIDE.md) for detailed procedures and troubleshooting.
+The migration command initializes both storage backends, copies all data, and reports success or failure. Check the [Migration Guide](docs/MIGRATION_GUIDE.md) for detailed procedures and troubleshooting.
 
 ## Player Power System
 

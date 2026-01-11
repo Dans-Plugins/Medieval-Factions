@@ -37,6 +37,7 @@ All repository interfaces now have JSON-based implementations:
 - **DatabaseToJsonMigrator**: Migrates data from database to JSON
 - **JsonToDatabaseMigrator**: Migrates data from JSON to database
 - **MigrationResult**: Shared data class for migration results
+- **Migration Command**: `/mf migrate` command for user-facing migrations
 - Both include comprehensive logging and error handling
 
 ### 5. Configuration
@@ -47,7 +48,8 @@ All repository interfaces now have JSON-based implementations:
 ### 6. Documentation
 - Updated CONFIG.md with storage configuration section
 - Updated README.md with storage options information
-- Created comprehensive MIGRATION_GUIDE.md
+- Created comprehensive docs/MIGRATION_GUIDE.md
+- Updated COMMANDS.md with `/mf migrate` command
 - Documented all configuration options
 
 ### 7. Data Validation
@@ -135,7 +137,6 @@ medieval_factions_data/
 ### Known Limitations
 - JSON storage may be slower for very large datasets
 - No built-in query optimization like SQL databases
-- Manual migration currently required between storage types
 - Single-server only (no multi-server support like MySQL provides)
 
 ## Testing Recommendations
@@ -160,8 +161,7 @@ Before deploying to production:
 ## Future Enhancements
 
 Potential improvements for future versions:
-- Admin commands for triggering migrations
-- Automatic data migration during storage type switch
+- Automatic data migration during storage type switch (config-based)
 - Performance optimizations for large JSON datasets
 - Additional JSON schema definitions for validation
 - Compression of JSON files to save disk space
