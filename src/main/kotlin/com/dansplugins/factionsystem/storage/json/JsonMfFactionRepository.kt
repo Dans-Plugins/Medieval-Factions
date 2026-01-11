@@ -22,7 +22,7 @@ class JsonMfFactionRepository(
     private val schema: Schema? = try {
         storageManager.loadSchemaFromResource("schemas/factions.json")
     } catch (e: Exception) {
-        plugin.logger.warning("Could not load faction schema, validation will be skipped: ${e.message}")
+        plugin.logger.severe("Could not load faction schema, validation will be skipped: ${e.message}")
         null
     }
 

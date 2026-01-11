@@ -50,10 +50,10 @@ class DatabaseToJsonMigrator(
         val startTime = System.currentTimeMillis()
 
         // IMPORTANT: Remind user to backup first
-        plugin.logger.warning("=" * 60)
+        plugin.logger.warning("=".repeat(60))
         plugin.logger.warning("IMPORTANT: Ensure you have a backup of your database!")
         plugin.logger.warning("This migration does not create automatic backups.")
-        plugin.logger.warning("=" * 60)
+        plugin.logger.warning("=".repeat(60))
 
         try {
             var totalMigrated = 0

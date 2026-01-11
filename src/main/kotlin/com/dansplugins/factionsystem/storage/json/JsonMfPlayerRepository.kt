@@ -24,7 +24,7 @@ class JsonMfPlayerRepository(
     private val schema: Schema? = try {
         storageManager.loadSchemaFromResource("schemas/players.json")
     } catch (e: Exception) {
-        plugin.logger.warning("Could not load player schema, validation will be skipped: ${e.message}")
+        plugin.logger.severe("Could not load player schema, validation will be skipped: ${e.message}")
         null
     }
 
@@ -123,19 +123,34 @@ class JsonMfPlayerRepository(
         val timeIncrementHours = 0.25
 
         data.players.forEachIndexed { index, player ->
-            if (player.id in offlinePlayerIds && player.power > minPower) {
-                val currentPower = player.power
+            if (player.id in offlinePlayerIds && player.powerAtLogout > minPower && player.power > minPower) {
                 // Replicate the power decrease formula from JooqMfPlayerRepository
-                val normalizedPower = currentPower / maxPower
-                val term1 = normalizedPower.pow(0.25) + 1
-                val term2 = term1 * hoursToReachMin
-                val term3 = (hoursToReachMin * 2) - timeIncrementHours - term2
-                val term4 = term3 / hoursToReachMin - 1
-                val term5 = term4.pow(4)
-                val term6 = -term5 + 1
-                val newPower = term6 * maxPower
-
-                val clampedPower = max(minPower, min(maxPower, newPower))
+                // This uses powerAtLogout to calculate the correct power decay over time
+                val currentPower = kotlin.math.min(player.power, kotlin.math.min(player.powerAtLogout, maxPower))
+                
+                // Determine the current time by running the inverse formula
+                val powerRange = player.powerAtLogout - minPower
+                val normalizedPower = if (powerRange > 0) {
+                    (currentPower - minPower) / powerRange
+                } else {
+                    0.0
+                }
+                
+                val currentTime = if (normalizedPower >= 0) {
+                    (-(normalizedPower - 1)).pow(0.25) * hoursToReachMin
+                } else {
+                    0.0
+                }
+                
+                // Add the time increment
+                val newTime = currentTime + timeIncrementHours
+                
+                // Run the formula normally on the new time to determine the new power value
+                val timeNormalized = newTime / hoursToReachMin
+                val newNormalizedPower = -(timeNormalized.pow(4)) + 1
+                val newPower = (newNormalizedPower * powerRange) + minPower
+                
+                val clampedPower = kotlin.math.max(minPower, kotlin.math.min(maxPower, newPower))
                 data.players[index] = player.copy(
                     power = clampedPower,
                     version = player.version + 1

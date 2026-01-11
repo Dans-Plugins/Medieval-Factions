@@ -70,12 +70,13 @@ Currently, migration between storage backends requires manual steps. Follow thes
 
 4. **Start your server**
    - The plugin will initialize with JSON storage
-   - **Note:** This will create empty JSON files - your database data is NOT automatically migrated yet
+   - **Note:** This will create empty JSON files - your database data is NOT automatically migrated
 
-5. **Data Loss Warning**
-   - Currently, automatic migration is not implemented
+5. **Manual Data Transfer Required**
+   - Internal migration classes exist in the codebase but are not exposed as user-facing commands
+   - You must manually transfer data between storage types or wait for future versions with migration commands
    - Your data will remain in the database but won't be accessible when using JSON storage
-   - Wait for automated migration tools or contact support
+   - Contact support or check the Discord/GitHub for community tools or scripts
 
 #### From JSON to Database
 
@@ -99,22 +100,27 @@ Currently, migration between storage backends requires manual steps. Follow thes
 
 4. **Start your server**
    - The plugin will initialize database storage
-   - **Note:** This will create empty database tables - your JSON data is NOT automatically migrated yet
+   - **Note:** This will create empty database tables - your JSON data is NOT automatically migrated
 
-5. **Data Loss Warning**
-   - Currently, automatic migration is not implemented
+5. **Manual Data Transfer Required**
+   - Internal migration classes exist in the codebase but are not exposed as user-facing commands
+   - You must manually transfer data between storage types or wait for future versions with migration commands
    - Your data will remain in JSON files but won't be accessible when using database storage
-   - Wait for automated migration tools or contact support
+   - Contact support or check the Discord/GitHub for community tools or scripts
 
 ### Automated Migration (Future)
 
-**Status: In Development**
+**Status: Not Yet Available**
 
-Automated migration tools are currently being developed. When available, they will support:
-- One-command migration from Database to JSON
-- One-command migration from JSON to Database
+While internal migration components (DatabaseToJsonMigrator and JsonToDatabaseMigrator) exist in the codebase, they are **not exposed as stable, user-facing commands** and should not be used directly by server administrators.
+
+Future versions may include:
+- Admin commands to trigger migrations (`/mf migrate toJson` or `/mf migrate toDatabase`)
+- Automatic migration when storage type is changed
 - Validation of migrated data
 - Rollback capabilities
+
+Until explicit migration commands are officially documented and released, **manual data transfer is required** using the procedures described in the [Manual Migration](#manual-migration) section above.
 
 Check the plugin's GitHub repository or Discord server for updates on automated migration availability.
 

@@ -114,7 +114,7 @@ To migrate data between storage types, you'll need to manually change the `stora
 4. Configure the target storage backend appropriately
 5. Start your server
 
-The plugin will automatically use the new storage backend. Note that migration tools may be available in future versions to automate data transfer between storage types.
+The plugin will automatically use the new storage backend. While internal migration classes exist in the codebase, there is currently no user-accessible command or automatic migration mechanism, so any data transfer between storage types must be handled manually. Check the [Migration Guide](MIGRATION_GUIDE.md) for detailed procedures.
 
 ## Player Power System
 
