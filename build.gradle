@@ -49,6 +49,7 @@ dependencies {
     implementation 'com.h2database:h2:2.1.214'
     implementation 'com.zaxxer:HikariCP:5.0.1'
     implementation 'com.google.code.gson:gson:2.9.0'
+    implementation 'com.github.everit-org.json-schema:org.everit.json.schema:1.14.2'
     implementation 'org.slf4j:slf4j-api:1.8.0-beta4'
     implementation 'com.github.Dans-Plugins:Mailboxes:v1.1'
     implementation 'com.rpkit:rpk-core-bukkit:2.3.2:all'
@@ -152,6 +153,8 @@ shadowJar {
         include(dependency('com.h2database:h2'))
         include(dependency('com.zaxxer:HikariCP'))
         include(dependency('com.google.code.gson:gson'))
+        include(dependency('com.github.everit-org.json-schema:org.everit.json.schema'))
+        include(dependency('org.json:json'))
         include(dependency('com.dansplugins:ponder-bukkit'))
         include(dependency('com.dansplugins:ponder-commands'))
     }
@@ -172,6 +175,8 @@ shadowJar {
     relocate 'org.jetbrains', 'com.dansplugins.factionsystem.shadow.org.jetbrains'
     relocate 'org.jooq', 'com.dansplugins.factionsystem.shadow.org.jooq'
     relocate 'org.reactivestreams', 'com.dansplugins.factionsystem.shadow.org.reactivestreams'
+    relocate 'org.everit', 'com.dansplugins.factionsystem.shadow.org.everit'
+    relocate 'org.json', 'com.dansplugins.factionsystem.shadow.org.json'
     relocate 'preponderous.ponder', 'com.dansplugins.factionsystem.shadow.preponderous.ponder'
 }
 
