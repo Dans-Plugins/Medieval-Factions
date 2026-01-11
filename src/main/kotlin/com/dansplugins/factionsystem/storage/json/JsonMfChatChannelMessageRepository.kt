@@ -10,14 +10,14 @@ class JsonMfChatChannelMessageRepository(
     private val plugin: MedievalFactions,
     private val storageManager: JsonStorageManager
 ) : MfChatChannelMessageRepository {
-    
+
     private val fileName = "chat_messages.json"
     private val gson: Gson = Gson()
-    
+
     data class ChatMessageData(
         val messages: MutableList<MfChatChannelMessage> = mutableListOf()
     )
-    
+
     private fun loadData(): ChatMessageData {
         val json = storageManager.readJsonFileAsString(fileName)
         return if (json != null) {
@@ -31,22 +31,22 @@ class JsonMfChatChannelMessageRepository(
             ChatMessageData()
         }
     }
-    
+
     private fun saveData(data: ChatMessageData) {
         storageManager.writeJsonFile(fileName, data, null)
     }
-    
+
     override fun insert(message: MfChatChannelMessage) {
         val data = loadData()
         data.messages.add(message)
         saveData(data)
     }
-    
+
     override fun getChatChannelMessages(factionId: MfFactionId): List<MfChatChannelMessage> {
         val data = loadData()
         return data.messages.filter { it.factionId == factionId }.sortedBy { it.timestamp }
     }
-    
+
     override fun getChatChannelMessages(factionId: MfFactionId, limit: Int, offset: Int): List<MfChatChannelMessage> {
         val data = loadData()
         return data.messages
@@ -55,7 +55,7 @@ class JsonMfChatChannelMessageRepository(
             .drop(offset)
             .take(limit)
     }
-    
+
     override fun getChatChannelMessageCount(factionId: MfFactionId): Int {
         val data = loadData()
         return data.messages.count { it.factionId == factionId }

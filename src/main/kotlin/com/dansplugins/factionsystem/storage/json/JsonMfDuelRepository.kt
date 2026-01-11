@@ -11,14 +11,14 @@ class JsonMfDuelRepository(
     private val plugin: MedievalFactions,
     private val storageManager: JsonStorageManager
 ) : MfDuelRepository {
-    
+
     private val fileName = "duels.json"
     private val gson: Gson = Gson()
-    
+
     data class DuelData(
         val duels: MutableList<MfDuel> = mutableListOf()
     )
-    
+
     private fun loadData(): DuelData {
         val json = storageManager.readJsonFileAsString(fileName)
         return if (json != null) {
@@ -32,20 +32,20 @@ class JsonMfDuelRepository(
             DuelData()
         }
     }
-    
+
     private fun saveData(data: DuelData) {
         storageManager.writeJsonFile(fileName, data, null)
     }
-    
+
     override fun getDuels(): List<MfDuel> {
         val data = loadData()
         return data.duels.toList()
     }
-    
+
     override fun upsert(duel: MfDuel): MfDuel {
         val data = loadData()
         val existingIndex = data.duels.indexOfFirst { it.id == duel.id }
-        
+
         if (existingIndex >= 0) {
             val existing = data.duels[existingIndex]
             if (existing.version != duel.version) {
@@ -62,7 +62,7 @@ class JsonMfDuelRepository(
             return newDuel
         }
     }
-    
+
     override fun delete(id: MfDuelId) {
         val data = loadData()
         data.duels.removeIf { it.id == id }

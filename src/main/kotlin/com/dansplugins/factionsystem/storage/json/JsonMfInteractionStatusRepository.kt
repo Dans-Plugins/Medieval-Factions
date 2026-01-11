@@ -10,14 +10,14 @@ class JsonMfInteractionStatusRepository(
     private val plugin: MedievalFactions,
     private val storageManager: JsonStorageManager
 ) : MfInteractionStatusRepository {
-    
+
     private val fileName = "interaction_statuses.json"
     private val gson: Gson = Gson()
-    
+
     data class InteractionStatusData(
         val statuses: MutableMap<String, MfInteractionStatus?> = mutableMapOf()
     )
-    
+
     private fun loadData(): InteractionStatusData {
         val json = storageManager.readJsonFileAsString(fileName)
         return if (json != null) {
@@ -31,16 +31,16 @@ class JsonMfInteractionStatusRepository(
             InteractionStatusData()
         }
     }
-    
+
     private fun saveData(data: InteractionStatusData) {
         storageManager.writeJsonFile(fileName, data, null)
     }
-    
+
     override fun getInteractionStatus(playerId: MfPlayerId): MfInteractionStatus? {
         val data = loadData()
         return data.statuses[playerId.value]
     }
-    
+
     override fun setInteractionStatus(playerId: MfPlayerId, status: MfInteractionStatus?) {
         val data = loadData()
         if (status == null) {

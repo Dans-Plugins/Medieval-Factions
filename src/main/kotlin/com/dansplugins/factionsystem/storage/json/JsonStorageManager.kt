@@ -3,14 +3,12 @@ package com.dansplugins.factionsystem.storage.json
 import com.dansplugins.factionsystem.MedievalFactions
 import com.google.gson.Gson
 import com.google.gson.GsonBuilder
-import com.google.gson.JsonParser
 import org.everit.json.schema.Schema
 import org.everit.json.schema.ValidationException
 import org.everit.json.schema.loader.SchemaLoader
 import org.json.JSONObject
 import org.json.JSONTokener
 import java.io.File
-import java.io.FileReader
 import java.io.FileWriter
 import java.util.concurrent.locks.ReentrantReadWriteLock
 import kotlin.concurrent.read
@@ -26,22 +24,22 @@ class JsonStorageManager(
     private val gson: Gson = GsonBuilder()
         .setPrettyPrinting()
         .create()
-    
+
     private val storageDir: File = File(storagePath).apply {
         if (!exists()) {
             mkdirs()
         }
     }
-    
+
     // Thread-safe file operations using locks
     private val fileLocks = mutableMapOf<String, ReentrantReadWriteLock>()
-    
+
     private fun getLock(fileName: String): ReentrantReadWriteLock {
         return synchronized(fileLocks) {
             fileLocks.getOrPut(fileName) { ReentrantReadWriteLock() }
         }
     }
-    
+
     /**
      * Reads and validates a JSON file
      */
@@ -52,15 +50,15 @@ class JsonStorageManager(
             if (!file.exists()) {
                 return@read null
             }
-            
+
             try {
                 val jsonContent = file.readText()
-                
+
                 // Validate against schema if provided
                 if (schema != null) {
                     validateJson(jsonContent, schema)
                 }
-                
+
                 return@read gson.fromJson(jsonContent, clazz)
             } catch (e: ValidationException) {
                 plugin.logger.severe("JSON validation failed for $fileName: ${e.message}")
@@ -75,7 +73,7 @@ class JsonStorageManager(
             }
         }
     }
-    
+
     /**
      * Reads a JSON file as a raw string
      */
@@ -89,7 +87,7 @@ class JsonStorageManager(
             return@read file.readText()
         }
     }
-    
+
     /**
      * Writes and validates a JSON file
      */
@@ -98,12 +96,12 @@ class JsonStorageManager(
         lock.write {
             try {
                 val jsonContent = gson.toJson(data)
-                
+
                 // Validate against schema if provided
                 if (schema != null) {
                     validateJson(jsonContent, schema)
                 }
-                
+
                 val file = File(storageDir, fileName)
                 file.parentFile?.mkdirs()
                 FileWriter(file).use { writer ->
@@ -122,7 +120,7 @@ class JsonStorageManager(
             }
         }
     }
-    
+
     /**
      * Validates JSON content against a schema
      */
@@ -130,7 +128,7 @@ class JsonStorageManager(
         val jsonObject = JSONObject(jsonContent)
         schema.validate(jsonObject)
     }
-    
+
     /**
      * Deletes a JSON file
      */
@@ -144,7 +142,7 @@ class JsonStorageManager(
             return@write false
         }
     }
-    
+
     /**
      * Lists all JSON files in a directory
      */
@@ -155,7 +153,7 @@ class JsonStorageManager(
         }
         return dir.listFiles()?.filter { it.extension == "json" }?.map { it.name } ?: emptyList()
     }
-    
+
     /**
      * Checks if a JSON file exists
      */
@@ -163,7 +161,7 @@ class JsonStorageManager(
         val file = File(storageDir, fileName)
         return file.exists()
     }
-    
+
     /**
      * Creates a backup of a JSON file
      */
@@ -174,13 +172,13 @@ class JsonStorageManager(
             if (!file.exists()) {
                 return@read false
             }
-            
+
             val backupDir = File(storageDir, "backups")
             backupDir.mkdirs()
-            
+
             val timestamp = System.currentTimeMillis()
-            val backupFile = File(backupDir, "${fileName}.${timestamp}.backup")
-            
+            val backupFile = File(backupDir, "$fileName.$timestamp.backup")
+
             return@read try {
                 file.copyTo(backupFile, overwrite = false)
                 true
@@ -190,19 +188,19 @@ class JsonStorageManager(
             }
         }
     }
-    
+
     /**
      * Gets the storage directory
      */
     fun getStorageDirectory(): File = storageDir
-    
+
     /**
      * Loads a schema from resources
      */
     fun loadSchemaFromResource(resourcePath: String): Schema {
         val schemaStream = plugin.getResource(resourcePath)
             ?: throw IllegalArgumentException("Schema resource not found: $resourcePath")
-        
+
         val schemaJson = JSONObject(JSONTokener(schemaStream))
         return SchemaLoader.load(schemaJson)
     }
