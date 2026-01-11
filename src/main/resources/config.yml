@@ -1,5 +1,9 @@
 version: @version@
 language: en-US
+storage:
+  type: 'database' # Options: 'database' or 'json'
+  json:
+    path: './medieval_factions_data' # Path where JSON files will be stored (only used when type is 'json')
 database:
   url: 'jdbc:h2:./medieval_factions_db;AUTO_SERVER=true;MODE=MYSQL;DATABASE_TO_UPPER=false'
   dialect: 'H2'

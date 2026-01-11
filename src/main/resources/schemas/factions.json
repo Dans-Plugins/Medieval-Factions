@@ -1,0 +1,157 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "MfFactions",
+  "description": "Schema for Medieval Factions faction data",
+  "type": "object",
+  "properties": {
+    "factions": {
+      "type": "array",
+      "items": {
+        "$ref": "#/definitions/faction"
+      }
+    }
+  },
+  "required": ["factions"],
+  "definitions": {
+    "faction": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string",
+          "format": "uuid",
+          "description": "Unique faction identifier"
+        },
+        "version": {
+          "type": "integer",
+          "minimum": 0,
+          "description": "Version for optimistic locking"
+        },
+        "name": {
+          "type": "string",
+          "minLength": 1,
+          "description": "Faction name"
+        },
+        "description": {
+          "type": "string",
+          "description": "Faction description"
+        },
+        "members": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/member"
+          }
+        },
+        "invites": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/invite"
+          }
+        },
+        "flags": {
+          "type": "object",
+          "description": "Faction flags and their values"
+        },
+        "prefix": {
+          "type": ["string", "null"],
+          "description": "Faction prefix"
+        },
+        "home": {
+          "type": ["object", "null"],
+          "$ref": "#/definitions/position"
+        },
+        "bonusPower": {
+          "type": "number",
+          "description": "Bonus power for the faction"
+        },
+        "autoclaim": {
+          "type": "boolean",
+          "description": "Whether autoclaim is enabled"
+        },
+        "roles": {
+          "type": "object",
+          "description": "Faction roles",
+          "properties": {
+            "roles": {
+              "type": "array"
+            },
+            "defaultRoleId": {
+              "type": "string"
+            }
+          },
+          "required": ["roles", "defaultRoleId"]
+        },
+        "defaultPermissionsByName": {
+          "type": "object",
+          "description": "Default permissions by permission name"
+        },
+        "applications": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/application"
+          }
+        }
+      },
+      "required": ["id", "version", "name", "description", "members", "invites", "flags", "bonusPower", "autoclaim", "roles", "defaultPermissionsByName", "applications"],
+      "additionalProperties": false
+    },
+    "member": {
+      "type": "object",
+      "properties": {
+        "playerId": {
+          "type": "string",
+          "format": "uuid"
+        },
+        "roleId": {
+          "type": "string",
+          "format": "uuid"
+        }
+      },
+      "required": ["playerId", "roleId"]
+    },
+    "invite": {
+      "type": "object",
+      "properties": {
+        "playerId": {
+          "type": "string",
+          "format": "uuid"
+        }
+      },
+      "required": ["playerId"]
+    },
+    "application": {
+      "type": "object",
+      "properties": {
+        "playerId": {
+          "type": "string",
+          "format": "uuid"
+        }
+      },
+      "required": ["playerId"]
+    },
+    "position": {
+      "type": "object",
+      "properties": {
+        "worldId": {
+          "type": "string",
+          "format": "uuid"
+        },
+        "x": {
+          "type": "number"
+        },
+        "y": {
+          "type": "number"
+        },
+        "z": {
+          "type": "number"
+        },
+        "yaw": {
+          "type": "number"
+        },
+        "pitch": {
+          "type": "number"
+        }
+      },
+      "required": ["worldId", "x", "y", "z", "yaw", "pitch"]
+    }
+  }
+}
