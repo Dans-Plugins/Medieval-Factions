@@ -4,7 +4,10 @@ This document provides detailed information about all configuration options avai
 
 ## Table of Contents
 - [General Settings](#general-settings)
-- [Database Configuration](#database-configuration)
+- [Storage Configuration](#storage-configuration)
+  - [Database Storage](#database-storage)
+  - [JSON Storage](#json-storage)
+  - [Migrating Between Storage Types](#migrating-between-storage-types)
 - [Player Power System](#player-power-system)
 - [Wilderness Settings](#wilderness-settings)
 - [PVP Settings](#pvp-settings)
@@ -29,9 +32,33 @@ This document provides detailed information about all configuration options avai
 **Description:** Sets the default language for the plugin. Available languages depend on installed language files.  
 **Available Values:** `en-US`, `es-ES`, `ru-RU`, `pt-BR`, `de-DE`, `nl-NL`, etc.
 
-## Database Configuration
+## Storage Configuration
 
-Medieval Factions uses a database to store faction data, claims, and player information.
+Medieval Factions supports two storage backends: **Database** (default) and **JSON**. You can choose which one to use based on your server's needs.
+
+### `storage.type`
+**Type:** String  
+**Default:** `database`  
+**Description:** Determines which storage backend to use for persisting faction data.  
+**Available Values:**
+- `database` - Uses a SQL database (H2, MySQL, MariaDB, PostgreSQL)
+- `json` - Uses JSON files stored on disk
+
+**When to use JSON:**
+- Simpler server setups without database requirements
+- Easier data inspection and manual editing (be careful!)
+- Better portability for backups
+- Smaller servers with fewer players
+
+**When to use Database:**
+- Larger servers with many players and factions
+- Better performance for complex queries
+- Concurrent access from multiple servers (with MySQL/PostgreSQL)
+- Professional production environments
+
+### Database Storage
+
+When `storage.type` is set to `database`, the following options apply:
 
 ### `database.url`
 **Type:** String  
@@ -58,6 +85,36 @@ Medieval Factions uses a database to store faction data, claims, and player info
 **Default:** `` (empty)  
 **Description:** Database password for authentication.  
 **Security Note:** Consider using environment variables or secure storage for production passwords.
+
+### JSON Storage
+
+When `storage.type` is set to `json`, the following options apply:
+
+### `storage.json.path`
+**Type:** String  
+**Default:** `./medieval_factions_data`  
+**Description:** Directory path where JSON files will be stored. Can be relative or absolute.  
+**Examples:**
+- Relative path: `./medieval_factions_data`
+- Absolute path: `/var/minecraft/data/medieval_factions`
+
+**Important Notes:**
+- Ensure the server has read/write permissions for this directory
+- Regular backups are recommended for JSON storage
+- Files are validated against JSON schemas on read/write operations
+- Individual entity types are stored in separate JSON files (players.json, factions.json, etc.)
+
+### Migrating Between Storage Types
+
+To migrate data between storage types, you'll need to manually change the `storage.type` configuration and ensure both storage backends are properly configured. It's recommended to:
+
+1. **Backup your data** before any migration
+2. Stop your server
+3. Change `storage.type` to the desired backend (`json` or `database`)
+4. Configure the target storage backend appropriately
+5. Start your server
+
+The plugin will automatically use the new storage backend. Note that migration tools may be available in future versions to automate data transfer between storage types.
 
 ## Player Power System
 
