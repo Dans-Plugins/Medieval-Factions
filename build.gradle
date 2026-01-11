@@ -49,7 +49,7 @@ dependencies {
     implementation 'com.h2database:h2:2.1.214'
     implementation 'com.zaxxer:HikariCP:5.0.1'
     implementation 'com.google.code.gson:gson:2.9.0'
-    implementation 'com.github.everit-org.json-schema:org.everit.json.schema:1.14.2'
+    implementation 'com.github.everit-org.json-schema:org.everit.json.schema:1.14.2' // JSON schema validation
     implementation 'org.slf4j:slf4j-api:1.8.0-beta4'
     implementation 'com.github.Dans-Plugins:Mailboxes:v1.1'
     implementation 'com.rpkit:rpk-core-bukkit:2.3.2:all'

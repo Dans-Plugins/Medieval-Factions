@@ -43,8 +43,15 @@
           "description": "Whether bypass mode is enabled"
         },
         "chatChannel": {
-          "type": ["string", "null"],
-          "enum": ["FACTION", "VASSALS", "ALLIES", null],
+          "oneOf": [
+            {
+              "type": "string",
+              "enum": ["FACTION", "VASSALS", "ALLIES"]
+            },
+            {
+              "type": "null"
+            }
+          ],
           "description": "Current chat channel"
         }
       },

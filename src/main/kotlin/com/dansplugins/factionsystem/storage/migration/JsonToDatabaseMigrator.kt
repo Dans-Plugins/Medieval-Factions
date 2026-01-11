@@ -44,14 +44,14 @@ class JsonToDatabaseMigrator(
     private val targetDuelRepo: MfDuelRepository,
     private val targetDuelInviteRepo: MfDuelInviteRepository
 ) {
-    
+
     fun migrate(): MigrationResult {
         plugin.logger.info("Starting migration from JSON to database...")
         val startTime = System.currentTimeMillis()
-        
+
         try {
             var totalMigrated = 0
-            
+
             // Migrate players
             plugin.logger.info("Migrating players...")
             val players = sourcePlayerRepo.getPlayers()
@@ -60,7 +60,7 @@ class JsonToDatabaseMigrator(
             }
             totalMigrated += players.size
             plugin.logger.info("Migrated ${players.size} players")
-            
+
             // Migrate factions
             plugin.logger.info("Migrating factions...")
             val factions = sourceFactionRepo.getFactions()
@@ -69,7 +69,7 @@ class JsonToDatabaseMigrator(
             }
             totalMigrated += factions.size
             plugin.logger.info("Migrated ${factions.size} factions")
-            
+
             // Migrate laws
             plugin.logger.info("Migrating laws...")
             var lawCount = 0
@@ -82,7 +82,7 @@ class JsonToDatabaseMigrator(
             }
             totalMigrated += lawCount
             plugin.logger.info("Migrated $lawCount laws")
-            
+
             // Migrate relationships
             plugin.logger.info("Migrating relationships...")
             val relationships = sourceRelationshipRepo.getFactionRelationships()
@@ -91,7 +91,7 @@ class JsonToDatabaseMigrator(
             }
             totalMigrated += relationships.size
             plugin.logger.info("Migrated ${relationships.size} relationships")
-            
+
             // Migrate claims
             plugin.logger.info("Migrating claims...")
             val claims = sourceClaimRepo.getClaims()
@@ -100,7 +100,7 @@ class JsonToDatabaseMigrator(
             }
             totalMigrated += claims.size
             plugin.logger.info("Migrated ${claims.size} claims")
-            
+
             // Migrate locks
             plugin.logger.info("Migrating locks...")
             val locks = sourceLockRepo.getLockedBlocks()
@@ -109,7 +109,7 @@ class JsonToDatabaseMigrator(
             }
             totalMigrated += locks.size
             plugin.logger.info("Migrated ${locks.size} locked blocks")
-            
+
             // Migrate interaction statuses
             plugin.logger.info("Migrating interaction statuses...")
             var interactionCount = 0
@@ -122,7 +122,7 @@ class JsonToDatabaseMigrator(
             }
             totalMigrated += interactionCount
             plugin.logger.info("Migrated $interactionCount interaction statuses")
-            
+
             // Migrate gates
             plugin.logger.info("Migrating gates...")
             val gates = sourceGateRepo.getGates()
@@ -131,7 +131,7 @@ class JsonToDatabaseMigrator(
             }
             totalMigrated += gates.size
             plugin.logger.info("Migrated ${gates.size} gates")
-            
+
             // Migrate gate creation contexts
             plugin.logger.info("Migrating gate creation contexts...")
             var contextCount = 0
@@ -144,7 +144,7 @@ class JsonToDatabaseMigrator(
             }
             totalMigrated += contextCount
             plugin.logger.info("Migrated $contextCount gate creation contexts")
-            
+
             // Migrate chat messages
             plugin.logger.info("Migrating chat messages...")
             var messageCount = 0
@@ -157,7 +157,7 @@ class JsonToDatabaseMigrator(
             }
             totalMigrated += messageCount
             plugin.logger.info("Migrated $messageCount chat messages")
-            
+
             // Migrate duels
             plugin.logger.info("Migrating duels...")
             val duels = sourceDuelRepo.getDuels()
@@ -166,7 +166,7 @@ class JsonToDatabaseMigrator(
             }
             totalMigrated += duels.size
             plugin.logger.info("Migrated ${duels.size} duels")
-            
+
             // Migrate duel invites
             plugin.logger.info("Migrating duel invites...")
             val duelInvites = sourceDuelInviteRepo.getInvites()
@@ -175,10 +175,10 @@ class JsonToDatabaseMigrator(
             }
             totalMigrated += duelInvites.size
             plugin.logger.info("Migrated ${duelInvites.size} duel invites")
-            
+
             val duration = System.currentTimeMillis() - startTime
             plugin.logger.info("Migration completed successfully! Migrated $totalMigrated items in ${duration}ms")
-            
+
             return MigrationResult(
                 success = true,
                 itemsMigrated = totalMigrated,

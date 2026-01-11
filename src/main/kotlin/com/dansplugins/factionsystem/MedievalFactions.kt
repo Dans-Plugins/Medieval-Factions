@@ -579,6 +579,17 @@ class MedievalFactions : JavaPlugin() {
         else -> NoOpNotificationService()
     }
 
+    override fun onDisable() {
+        // Close database connection if it was initialized
+        dataSource?.let { ds ->
+            if (ds is HikariDataSource) {
+                logger.info("Closing database connection...")
+                ds.close()
+                logger.info("Database connection closed")
+            }
+        }
+    }
+
     private fun setupRpkLockService() {
         if (server.pluginManager.getPlugin("rpk-lock-lib-bukkit") != null) {
             MfRpkLockService(this)

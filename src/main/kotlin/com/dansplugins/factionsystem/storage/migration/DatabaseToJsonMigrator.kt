@@ -13,9 +13,6 @@ import com.dansplugins.factionsystem.law.MfLawRepository
 import com.dansplugins.factionsystem.locks.MfLockRepository
 import com.dansplugins.factionsystem.player.MfPlayerRepository
 import com.dansplugins.factionsystem.relationship.MfFactionRelationshipRepository
-import java.io.File
-import java.time.Instant
-import java.time.format.DateTimeFormatter
 
 /**
  * Migrates data from database storage to JSON storage
@@ -47,17 +44,20 @@ class DatabaseToJsonMigrator(
     private val targetDuelRepo: MfDuelRepository,
     private val targetDuelInviteRepo: MfDuelInviteRepository
 ) {
-    
+
     fun migrate(): MigrationResult {
         plugin.logger.info("Starting migration from database to JSON...")
         val startTime = System.currentTimeMillis()
-        
+
+        // IMPORTANT: Remind user to backup first
+        plugin.logger.warning("=" * 60)
+        plugin.logger.warning("IMPORTANT: Ensure you have a backup of your database!")
+        plugin.logger.warning("This migration does not create automatic backups.")
+        plugin.logger.warning("=" * 60)
+
         try {
-            // Create backup before migration
-            createBackup()
-            
             var totalMigrated = 0
-            
+
             // Migrate players
             plugin.logger.info("Migrating players...")
             val players = sourcePlayerRepo.getPlayers()
@@ -66,7 +66,7 @@ class DatabaseToJsonMigrator(
             }
             totalMigrated += players.size
             plugin.logger.info("Migrated ${players.size} players")
-            
+
             // Migrate factions
             plugin.logger.info("Migrating factions...")
             val factions = sourceFactionRepo.getFactions()
@@ -75,7 +75,7 @@ class DatabaseToJsonMigrator(
             }
             totalMigrated += factions.size
             plugin.logger.info("Migrated ${factions.size} factions")
-            
+
             // Migrate laws
             plugin.logger.info("Migrating laws...")
             var lawCount = 0
@@ -88,7 +88,7 @@ class DatabaseToJsonMigrator(
             }
             totalMigrated += lawCount
             plugin.logger.info("Migrated $lawCount laws")
-            
+
             // Migrate relationships
             plugin.logger.info("Migrating relationships...")
             val relationships = sourceRelationshipRepo.getFactionRelationships()
@@ -97,7 +97,7 @@ class DatabaseToJsonMigrator(
             }
             totalMigrated += relationships.size
             plugin.logger.info("Migrated ${relationships.size} relationships")
-            
+
             // Migrate claims
             plugin.logger.info("Migrating claims...")
             val claims = sourceClaimRepo.getClaims()
@@ -106,7 +106,7 @@ class DatabaseToJsonMigrator(
             }
             totalMigrated += claims.size
             plugin.logger.info("Migrated ${claims.size} claims")
-            
+
             // Migrate locks
             plugin.logger.info("Migrating locks...")
             val locks = sourceLockRepo.getLockedBlocks()
@@ -115,7 +115,7 @@ class DatabaseToJsonMigrator(
             }
             totalMigrated += locks.size
             plugin.logger.info("Migrated ${locks.size} locked blocks")
-            
+
             // Migrate interaction statuses
             plugin.logger.info("Migrating interaction statuses...")
             var interactionCount = 0
@@ -128,7 +128,7 @@ class DatabaseToJsonMigrator(
             }
             totalMigrated += interactionCount
             plugin.logger.info("Migrated $interactionCount interaction statuses")
-            
+
             // Migrate gates
             plugin.logger.info("Migrating gates...")
             val gates = sourceGateRepo.getGates()
@@ -137,7 +137,7 @@ class DatabaseToJsonMigrator(
             }
             totalMigrated += gates.size
             plugin.logger.info("Migrated ${gates.size} gates")
-            
+
             // Migrate gate creation contexts
             plugin.logger.info("Migrating gate creation contexts...")
             var contextCount = 0
@@ -150,7 +150,7 @@ class DatabaseToJsonMigrator(
             }
             totalMigrated += contextCount
             plugin.logger.info("Migrated $contextCount gate creation contexts")
-            
+
             // Migrate chat messages
             plugin.logger.info("Migrating chat messages...")
             var messageCount = 0
@@ -163,7 +163,7 @@ class DatabaseToJsonMigrator(
             }
             totalMigrated += messageCount
             plugin.logger.info("Migrated $messageCount chat messages")
-            
+
             // Migrate duels
             plugin.logger.info("Migrating duels...")
             val duels = sourceDuelRepo.getDuels()
@@ -172,7 +172,7 @@ class DatabaseToJsonMigrator(
             }
             totalMigrated += duels.size
             plugin.logger.info("Migrated ${duels.size} duels")
-            
+
             // Migrate duel invites
             plugin.logger.info("Migrating duel invites...")
             val duelInvites = sourceDuelInviteRepo.getInvites()
@@ -181,10 +181,10 @@ class DatabaseToJsonMigrator(
             }
             totalMigrated += duelInvites.size
             plugin.logger.info("Migrated ${duelInvites.size} duel invites")
-            
+
             val duration = System.currentTimeMillis() - startTime
             plugin.logger.info("Migration completed successfully! Migrated $totalMigrated items in ${duration}ms")
-            
+
             return MigrationResult(
                 success = true,
                 itemsMigrated = totalMigrated,
@@ -204,19 +204,4 @@ class DatabaseToJsonMigrator(
             )
         }
     }
-    
-    private fun createBackup() {
-        plugin.logger.info("Creating database backup...")
-        // This is a placeholder - actual database backup would be more sophisticated
-        // For now, we just log that a backup should be created
-        plugin.logger.warning("Please ensure you have a backup of your database before proceeding!")
-    }
 }
-
-data class MigrationResult(
-    val success: Boolean,
-    val itemsMigrated: Int,
-    val durationMs: Long,
-    val message: String,
-    val error: Throwable? = null
-)

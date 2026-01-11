@@ -62,6 +62,8 @@ class JsonStorageManager(
                 return@read gson.fromJson(jsonContent, clazz)
             } catch (e: ValidationException) {
                 plugin.logger.severe("JSON validation failed for $fileName: ${e.message}")
+                plugin.logger.severe("Schema location: ${e.schemaLocation}")
+                plugin.logger.severe("Pointer to violation: ${e.pointerToViolation}")
                 e.causingExceptions.forEach { cause ->
                     plugin.logger.severe("  - ${cause.message}")
                 }
@@ -109,6 +111,8 @@ class JsonStorageManager(
                 }
             } catch (e: ValidationException) {
                 plugin.logger.severe("JSON validation failed for $fileName: ${e.message}")
+                plugin.logger.severe("Schema location: ${e.schemaLocation}")
+                plugin.logger.severe("Pointer to violation: ${e.pointerToViolation}")
                 e.causingExceptions.forEach { cause ->
                     plugin.logger.severe("  - ${cause.message}")
                 }
