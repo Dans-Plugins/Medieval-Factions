@@ -106,8 +106,6 @@ When `storage.type` is set to `json`, the following options apply:
 
 ### Migrating Between Storage Types
 
-### Migrating Between Storage Types
-
 Medieval Factions provides a migration command to transfer data between storage types. It's recommended to:
 
 1. **Backup your data** before any migration

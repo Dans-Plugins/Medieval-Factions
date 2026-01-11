@@ -76,11 +76,22 @@ class MfFactionMigrateCommand(private val plugin: MedievalFactions) : CommandExe
                 try {
                     val gson = Gson()
                     
+                    // Validate database configuration
+                    val databaseUrl = plugin.config.getString("database.url")
+                    if (databaseUrl == null || databaseUrl.isEmpty()) {
+                        plugin.server.scheduler.runTask(plugin, Runnable {
+                            sender.sendMessage("$RED=== Migration Failed ===")
+                            sender.sendMessage("$RED  Database configuration is missing!")
+                            sender.sendMessage("$YELLOW  Please configure 'database.url' in config.yml")
+                        })
+                        return@Runnable
+                    }
+                    
                     // Initialize database repositories
                     plugin.logger.info("Initializing database repositories...")
                     Class.forName("org.h2.Driver")
                     val hikariConfig = HikariConfig()
-                    hikariConfig.jdbcUrl = plugin.config.getString("database.url")
+                    hikariConfig.jdbcUrl = databaseUrl
                     val databaseUsername = plugin.config.getString("database.username")
                     if (databaseUsername != null) {
                         hikariConfig.username = databaseUsername
@@ -195,6 +206,17 @@ class MfFactionMigrateCommand(private val plugin: MedievalFactions) : CommandExe
                 try {
                     val gson = Gson()
                     
+                    // Validate database configuration
+                    val databaseUrl = plugin.config.getString("database.url")
+                    if (databaseUrl == null || databaseUrl.isEmpty()) {
+                        plugin.server.scheduler.runTask(plugin, Runnable {
+                            sender.sendMessage("$RED=== Migration Failed ===")
+                            sender.sendMessage("$RED  Database configuration is missing!")
+                            sender.sendMessage("$YELLOW  Please configure 'database.url' in config.yml")
+                        })
+                        return@Runnable
+                    }
+                    
                     // Initialize JSON repositories
                     plugin.logger.info("Initializing JSON repositories...")
                     val storagePath = plugin.config.getString("storage.json.path") ?: "./medieval_factions_data"
@@ -217,7 +239,7 @@ class MfFactionMigrateCommand(private val plugin: MedievalFactions) : CommandExe
                     plugin.logger.info("Initializing database repositories...")
                     Class.forName("org.h2.Driver")
                     val hikariConfig = HikariConfig()
-                    hikariConfig.jdbcUrl = plugin.config.getString("database.url")
+                    hikariConfig.jdbcUrl = databaseUrl
                     val databaseUsername = plugin.config.getString("database.username")
                     if (databaseUsername != null) {
                         hikariConfig.username = databaseUsername

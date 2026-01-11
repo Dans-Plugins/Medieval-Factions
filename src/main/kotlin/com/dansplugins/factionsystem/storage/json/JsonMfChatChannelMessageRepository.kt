@@ -13,6 +13,9 @@ class JsonMfChatChannelMessageRepository(
 
     private val fileName = "chat_messages.json"
     private val gson: Gson = Gson()
+    
+    // Maximum number of messages to keep per faction to prevent unbounded growth
+    private val maxMessagesPerFaction = 1000
 
     data class ChatMessageData(
         val messages: MutableList<MfChatChannelMessage> = mutableListOf()

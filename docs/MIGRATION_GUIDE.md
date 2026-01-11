@@ -40,9 +40,58 @@ You may want to migrate between these backends for various reasons:
 
 ## Migration Methods
 
-### Manual Migration
+### Automated Migration (Recommended)
 
-Currently, migration between storage backends requires manual steps. Follow these instructions carefully:
+**Command:** `/mf migrate <type>`
+
+Medieval Factions now provides a migration command that allows operators to transfer data between storage backends without manual intervention. **This is the recommended approach.**
+
+#### Using the Migrate Command
+
+**Permission Required:** `mf.migrate`
+
+**Syntax:**
+```
+/mf migrate toJson      - Migrate from database to JSON storage
+/mf migrate toDatabase  - Migrate from JSON to database storage
+```
+
+**Important Notes:**
+- **Always backup your data** before running any migration command
+- The migration runs asynchronously and may take several minutes for large datasets
+- The server does NOT need to be stopped to run the migration
+- After successful migration, you must:
+  1. Stop the server
+  2. Update `storage.type` in config.yml to match the new storage backend
+  3. Restart the server
+
+**Example Migration from Database to JSON:**
+1. Ensure you have a database backup
+2. Run command: `/mf migrate toJson`
+3. Wait for success message showing how many items were migrated
+4. Stop the server
+5. Edit config.yml: `storage.type: 'json'`
+6. Start the server
+
+**Example Migration from JSON to Database:**
+1. Ensure you have backed up your JSON files
+2. Run command: `/mf migrate toDatabase`
+3. Wait for success message showing how many items were migrated
+4. Stop the server
+5. Edit config.yml: `storage.type: 'database'`
+6. Start the server
+
+The migration command will:
+- Initialize both source and target storage systems
+- Copy all data including players, factions, claims, laws, relationships, etc.
+- Validate the migration was successful
+- Report the number of items migrated and time taken
+
+### Manual Migration (Alternative/Legacy Method)
+
+**Note:** The `/mf migrate` command (above) is the recommended approach. This manual method is provided as an alternative for advanced users or troubleshooting.
+
+If you prefer not to use the migration command or need to perform custom data manipulation, you can manually switch storage backends. **Warning:** This approach requires manual data transfer and may result in data loss if not done carefully.
 
 #### From Database to JSON
 
@@ -70,13 +119,13 @@ Currently, migration between storage backends requires manual steps. Follow thes
 
 4. **Start your server**
    - The plugin will initialize with JSON storage
-   - **Note:** This will create empty JSON files - your database data is NOT automatically migrated
+   - **Note:** This will create empty JSON files - your database data is NOT automatically migrated using this manual method
 
 5. **Manual Data Transfer Required**
-   - Internal migration classes exist in the codebase but are not exposed as user-facing commands
-   - You must manually transfer data between storage types or wait for future versions with migration commands
+   - This manual approach does NOT transfer your data automatically
+   - Use the `/mf migrate toJson` command (recommended) or write custom scripts to transfer data
    - Your data will remain in the database but won't be accessible when using JSON storage
-   - Contact support or check the Discord/GitHub for community tools or scripts
+   - See the "Automated Migration" section above for the recommended migration approach
 
 #### From JSON to Database
 
@@ -100,13 +149,13 @@ Currently, migration between storage backends requires manual steps. Follow thes
 
 4. **Start your server**
    - The plugin will initialize database storage
-   - **Note:** This will create empty database tables - your JSON data is NOT automatically migrated
+   - **Note:** This will create empty database tables - your JSON data is NOT automatically migrated using this manual method
 
 5. **Manual Data Transfer Required**
-   - Internal migration classes exist in the codebase but are not exposed as user-facing commands
-   - You must manually transfer data between storage types or wait for future versions with migration commands
+   - This manual approach does NOT transfer your data automatically
+   - Use the `/mf migrate toDatabase` command (recommended) or write custom scripts to transfer data
    - Your data will remain in JSON files but won't be accessible when using database storage
-   - Contact support or check the Discord/GitHub for community tools or scripts
+   - See the "Automated Migration" section above for the recommended migration approach
 
 ### Automated Migration (Available Now!)
 
@@ -154,12 +203,6 @@ The migration command will:
 - Copy all data including players, factions, claims, laws, relationships, etc.
 - Validate the migration was successful
 - Report the number of items migrated and time taken
-
-### Manual Migration (Legacy Method)
-
-While the `/mf migrate` command is now the recommended approach, manual migration is still possible if needed.
-
-Check the plugin's GitHub repository or Discord server for updates on automated migration availability.
 
 ## Troubleshooting
 
