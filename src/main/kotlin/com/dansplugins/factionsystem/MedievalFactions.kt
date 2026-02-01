@@ -452,9 +452,18 @@ class MedievalFactions : JavaPlugin() {
     )
 
     private fun initializeDatabaseRepositories(gson: Gson): Repositories {
-        Class.forName("org.h2.Driver")
+        // Load appropriate database driver based on JDBC URL
+        val jdbcUrl = config.getString("database.url") ?: ""
+        val lowerUrl = jdbcUrl.lowercase()
+        when {
+            lowerUrl.startsWith("jdbc:h2:") -> Class.forName("org.h2.Driver")
+            lowerUrl.startsWith("jdbc:mysql:") -> Class.forName("com.mysql.cj.jdbc.Driver")
+            lowerUrl.startsWith("jdbc:mariadb:") -> Class.forName("org.mariadb.jdbc.Driver")
+            lowerUrl.startsWith("jdbc:postgresql:") -> Class.forName("org.postgresql.Driver")
+            // For other JDBC URLs, rely on JDBC 4.0+ auto-loading via SPI
+        }
         val hikariConfig = HikariConfig()
-        hikariConfig.jdbcUrl = config.getString("database.url")
+        hikariConfig.jdbcUrl = jdbcUrl
         val databaseUsername = config.getString("database.username")
         if (databaseUsername != null) {
             hikariConfig.username = databaseUsername

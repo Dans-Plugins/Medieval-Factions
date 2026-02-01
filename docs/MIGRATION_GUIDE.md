@@ -6,8 +6,8 @@ This guide explains how to migrate data between storage backends in Medieval Fac
 - [Overview](#overview)
 - [Before You Begin](#before-you-begin)
 - [Migration Methods](#migration-methods)
-  - [Manual Migration](#manual-migration)
-  - [Automated Migration (Future)](#automated-migration-future)
+  - [Automated Migration (Recommended)](#automated-migration-recommended)
+  - [Manual Migration (Alternative/Legacy Method)](#manual-migration-alternativelegacy-method)
 - [Troubleshooting](#troubleshooting)
 
 ## Overview
@@ -33,7 +33,7 @@ You may want to migrate between these backends for various reasons:
 - [ ] Document your current plugin version
 
 ### System Requirements
-- Server must be stopped during migration
+- The migration command can run while server is online (but server restart required after migration to switch backends)
 - Sufficient disk space for both source and target storage
 - Read/write permissions for storage directories
 - Database credentials (if migrating to/from database)
@@ -60,6 +60,7 @@ Medieval Factions now provides a migration command that allows operators to tran
 - **Always backup your data** before running any migration command
 - The migration runs asynchronously and may take several minutes for large datasets
 - The server does NOT need to be stopped to run the migration
+- **Chat message limit**: When migrating to JSON, only the most recent 1000 messages per faction are retained to prevent file bloat. If you have more messages in your database, older messages will not be migrated.
 - After successful migration, you must:
   1. Stop the server
   2. Update `storage.type` in config.yml to match the new storage backend
@@ -156,53 +157,6 @@ If you prefer not to use the migration command or need to perform custom data ma
    - Use the `/mf migrate toDatabase` command (recommended) or write custom scripts to transfer data
    - Your data will remain in JSON files but won't be accessible when using database storage
    - See the "Automated Migration" section above for the recommended migration approach
-
-### Automated Migration (Available Now!)
-
-**Command:** `/mf migrate <type>`
-
-Medieval Factions now provides a migration command that allows operators to transfer data between storage backends without manual intervention:
-
-#### Using the Migrate Command
-
-**Permission Required:** `mf.migrate`
-
-**Syntax:**
-```
-/mf migrate toJson      - Migrate from database to JSON storage
-/mf migrate toDatabase  - Migrate from JSON to database storage
-```
-
-**Important Notes:**
-- **Always backup your data** before running any migration command
-- The migration runs asynchronously and may take several minutes for large datasets
-- The server does NOT need to be stopped to run the migration
-- After successful migration, you must:
-  1. Stop the server
-  2. Update `storage.type` in config.yml to match the new storage backend
-  3. Restart the server
-
-**Example Migration from Database to JSON:**
-1. Ensure you have a database backup
-2. Run command: `/mf migrate toJson`
-3. Wait for success message showing how many items were migrated
-4. Stop the server
-5. Edit config.yml: `storage.type: 'json'`
-6. Start the server
-
-**Example Migration from JSON to Database:**
-1. Ensure you have backed up your JSON files
-2. Run command: `/mf migrate toDatabase`
-3. Wait for success message showing how many items were migrated
-4. Stop the server
-5. Edit config.yml: `storage.type: 'database'`
-6. Start the server
-
-The migration command will:
-- Initialize both source and target storage systems
-- Copy all data including players, factions, claims, laws, relationships, etc.
-- Validate the migration was successful
-- Report the number of items migrated and time taken
 
 ## Troubleshooting
 

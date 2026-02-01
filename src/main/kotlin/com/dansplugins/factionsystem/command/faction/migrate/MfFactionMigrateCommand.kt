@@ -104,7 +104,15 @@ class MfFactionMigrateCommand(private val plugin: MedievalFactions) : CommandExe
 
                     // Initialize database repositories
                     plugin.logger.info("Initializing database repositories...")
-                    Class.forName("org.h2.Driver")
+                    // Load appropriate database driver based on JDBC URL
+                    val lowerUrl = databaseUrl.lowercase()
+                    when {
+                        lowerUrl.startsWith("jdbc:h2:") -> Class.forName("org.h2.Driver")
+                        lowerUrl.startsWith("jdbc:mysql:") -> Class.forName("com.mysql.cj.jdbc.Driver")
+                        lowerUrl.startsWith("jdbc:mariadb:") -> Class.forName("org.mariadb.jdbc.Driver")
+                        lowerUrl.startsWith("jdbc:postgresql:") -> Class.forName("org.postgresql.Driver")
+                        // For other JDBC URLs, rely on JDBC 4.0+ auto-loading via SPI
+                    }
                     val hikariConfig = HikariConfig()
                     hikariConfig.jdbcUrl = databaseUrl
                     val databaseUsername = plugin.config.getString("database.username")
@@ -261,7 +269,15 @@ class MfFactionMigrateCommand(private val plugin: MedievalFactions) : CommandExe
 
                     // Initialize database repositories
                     plugin.logger.info("Initializing database repositories...")
-                    Class.forName("org.h2.Driver")
+                    // Load appropriate database driver based on JDBC URL
+                    val lowerUrl = databaseUrl.lowercase()
+                    when {
+                        lowerUrl.startsWith("jdbc:h2:") -> Class.forName("org.h2.Driver")
+                        lowerUrl.startsWith("jdbc:mysql:") -> Class.forName("com.mysql.cj.jdbc.Driver")
+                        lowerUrl.startsWith("jdbc:mariadb:") -> Class.forName("org.mariadb.jdbc.Driver")
+                        lowerUrl.startsWith("jdbc:postgresql:") -> Class.forName("org.postgresql.Driver")
+                        // For other JDBC URLs, rely on JDBC 4.0+ auto-loading via SPI
+                    }
                     val hikariConfig = HikariConfig()
                     hikariConfig.jdbcUrl = databaseUrl
                     val databaseUsername = plugin.config.getString("database.username")

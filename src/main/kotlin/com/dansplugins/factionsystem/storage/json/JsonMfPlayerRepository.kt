@@ -40,7 +40,16 @@ class JsonMfPlayerRepository(
             try {
                 gson.fromJson(json, PlayerData::class.java)
             } catch (e: Exception) {
-                plugin.logger.severe("Failed to parse players JSON: ${e.message}")
+                plugin.logger.severe("CRITICAL: Failed to parse players JSON: ${e.message}")
+                plugin.logger.severe("The JSON file may be corrupted. Creating backup and returning empty data.")
+                plugin.logger.severe("Please investigate the file: $fileName")
+                // Create a backup of the corrupted file
+                try {
+                    storageManager.writeJsonStringToFile("$fileName.corrupted.backup", json)
+                    plugin.logger.warning("Corrupted file backed up to: $fileName.corrupted.backup")
+                } catch (backupError: Exception) {
+                    plugin.logger.severe("Failed to create backup: ${backupError.message}")
+                }
                 PlayerData()
             }
         } else {
