@@ -37,9 +37,10 @@ class MfFactionAddMemberCommand(private val plugin: MedievalFactions) : CommandE
             return true
         }
 
-        // Check for force flag
+        // Check for force flag - only allow if sender has permission
+        val hasForcePermission = sender.hasPermission("mf.force.addmember") || sender.hasPermission("mf.force.join")
         var lastArgOffset = 0
-        val force = if (args.lastOrNull() == "-f") {
+        val force = if (hasForcePermission && args.lastOrNull() == "-f") {
             lastArgOffset = 1
             true
         } else {
@@ -95,11 +96,18 @@ class MfFactionAddMemberCommand(private val plugin: MedievalFactions) : CommandE
                     return true
                 }
                 // Notify old faction
-                var targetName = targetMfPlayer.name ?: plugin.language["CommandFactionAddMemberUnknownNewPlayerFaction"]
+                val targetName = targetMfPlayer.name ?: plugin.language["CommandFactionAddMemberUnknownNewPlayerFaction"]
                 updatedCurrentFaction.sendMessage(
                     plugin.language["CommandFactionAddMemberRemovedFromFactionTitle", targetName],
                     plugin.language["CommandFactionAddMemberRemovedFromFactionBody", targetName]
                 )
+                // Notify target player (if online) about being moved from one faction to another
+                val onlineTargetPlayer = plugin.server.getPlayer(targetMfPlayer.id.value)
+                if (onlineTargetPlayer != null) {
+                    onlineTargetPlayer.sendMessage(
+                        "${ChatColor.YELLOW}${plugin.language["CommandFactionAddMemberPlayerNotification", currentFaction.name, targetFaction.name]}"
+                    )
+                }
             }
         }
 
