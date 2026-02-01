@@ -14,6 +14,7 @@ import com.dansplugins.factionsystem.command.faction.claim.MfFactionClaimCommand
 import com.dansplugins.factionsystem.command.faction.create.MfFactionCreateCommand
 import com.dansplugins.factionsystem.command.faction.declareindependence.MfFactionDeclareIndependenceCommand
 import com.dansplugins.factionsystem.command.faction.declarewar.MfFactionDeclareWarCommand
+import com.dansplugins.factionsystem.command.faction.declinevassalization.MfFactionDeclineVassalizationCommand
 import com.dansplugins.factionsystem.command.faction.denyapp.MfFactionDenyAppCommand
 import com.dansplugins.factionsystem.command.faction.dev.MfFactionDevCommand
 import com.dansplugins.factionsystem.command.faction.disband.MfFactionDisbandCommand
@@ -79,6 +80,7 @@ class MfFactionCommand(private val plugin: MedievalFactions) : CommandExecutor, 
     private val factionSetNameCommand = MfFactionSetNameCommand(plugin)
     private val factionVassalizeCommand = MfFactionVassalizeCommand(plugin)
     private val factionSwearFealtyCommand = MfFactionSwearFealtyCommand(plugin)
+    private val factionDeclineVassalizationCommand = MfFactionDeclineVassalizationCommand(plugin)
     private val factionGrantIndependenceCommand = MfFactionGrantIndependenceCommand(plugin)
     private val factionDeclareIndependenceCommand = MfFactionDeclareIndependenceCommand(plugin)
     private val factionKickCommand = MfFactionKickCommand(plugin)
@@ -123,6 +125,7 @@ class MfFactionCommand(private val plugin: MedievalFactions) : CommandExecutor, 
     private val renameAliases = listOf("rename")
     private val vassalizeAliases = listOf("vassalize", "vassalise", plugin.language["CmdFactionVassalize"])
     private val swearFealtyAliases = listOf("swearfealty", plugin.language["CmdFactionSwearFealty"])
+    private val declineVassalizationAliases = listOf("declinevassalization", "declinevassalisation", plugin.language["CmdFactionDeclineVassalization"])
     private val grantIndependenceAliases = listOf("grantindependence", plugin.language["CmdFactionGrantIndependence"])
     private val declareIndependenceAliases = listOf("declareindependence", plugin.language["CmdFactionDeclareIndependence"])
     private val kickAliases = listOf("kick", plugin.language["CmdFactionKick"])
@@ -167,6 +170,7 @@ class MfFactionCommand(private val plugin: MedievalFactions) : CommandExecutor, 
         renameAliases +
         vassalizeAliases +
         swearFealtyAliases +
+        declineVassalizationAliases +
         grantIndependenceAliases +
         declareIndependenceAliases +
         kickAliases +
@@ -213,6 +217,7 @@ class MfFactionCommand(private val plugin: MedievalFactions) : CommandExecutor, 
             in renameAliases -> factionSetNameCommand.onCommand(sender, command, label, args.drop(1).toTypedArray())
             in vassalizeAliases -> factionVassalizeCommand.onCommand(sender, command, label, args.drop(1).toTypedArray())
             in swearFealtyAliases -> factionSwearFealtyCommand.onCommand(sender, command, label, args.drop(1).toTypedArray())
+            in declineVassalizationAliases -> factionDeclineVassalizationCommand.onCommand(sender, command, label, args.drop(1).toTypedArray())
             in grantIndependenceAliases -> factionGrantIndependenceCommand.onCommand(sender, command, label, args.drop(1).toTypedArray())
             in declareIndependenceAliases -> factionDeclareIndependenceCommand.onCommand(sender, command, label, args.drop(1).toTypedArray())
             in kickAliases -> factionKickCommand.onCommand(sender, command, label, args.drop(1).toTypedArray())
@@ -276,6 +281,7 @@ class MfFactionCommand(private val plugin: MedievalFactions) : CommandExecutor, 
             in renameAliases -> factionSetNameCommand.onTabComplete(sender, command, label, args.drop(1).toTypedArray())
             in vassalizeAliases -> factionVassalizeCommand.onTabComplete(sender, command, label, args.drop(1).toTypedArray())
             in swearFealtyAliases -> factionSwearFealtyCommand.onTabComplete(sender, command, label, args.drop(1).toTypedArray())
+            in declineVassalizationAliases -> factionDeclineVassalizationCommand.onTabComplete(sender, command, label, args.drop(1).toTypedArray())
             in grantIndependenceAliases -> factionGrantIndependenceCommand.onTabComplete(sender, command, label, args.drop(1).toTypedArray())
             in declareIndependenceAliases -> factionDeclareIndependenceCommand.onTabComplete(sender, command, label, args.drop(1).toTypedArray())
             in kickAliases -> factionKickCommand.onTabComplete(sender, command, label, args.drop(1).toTypedArray())
