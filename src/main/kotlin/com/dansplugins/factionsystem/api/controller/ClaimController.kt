@@ -18,7 +18,8 @@ class ClaimController(private val claimService: MfClaimService) {
     fun getByFactionId(ctx: Context) {
         val id = ctx.pathParam("id")
         try {
-            val factionId = MfFactionId(UUID.fromString(id))
+            UUID.fromString(id) // Validate UUID format
+            val factionId = MfFactionId(id)
             val claims = claimService.getClaims(factionId).map { ClaimDto.fromClaim(it) }
             ctx.json(claims).status(HttpStatus.OK)
         } catch (e: IllegalArgumentException) {

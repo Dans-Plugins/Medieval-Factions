@@ -11,7 +11,7 @@ data class PositionDto(
     companion object {
         fun fromPosition(position: MfPosition): PositionDto {
             return PositionDto(
-                world = position.world,
+                world = position.worldId.toString(),
                 x = position.x,
                 y = position.y,
                 z = position.z

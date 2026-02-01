@@ -16,13 +16,14 @@ class PlayerController(
 
     fun getAll(ctx: Context) {
         // Build a map of player IDs to faction IDs to avoid N+1 lookups
-        val allPlayers = playerService.players
         val playerIdToFactionId = mutableMapOf<MfPlayerId, String>()
         
         // Get all factions and build the mapping
+        val allPlayers = mutableListOf<com.dansplugins.factionsystem.player.MfPlayer>()
         factionService.factions.forEach { faction ->
             faction.members.forEach { member ->
-                playerIdToFactionId[member.playerId] = faction.id.value.toString()
+                playerIdToFactionId[member.playerId] = faction.id.value
+                playerService.getPlayer(member.playerId)?.let { allPlayers.add(it) }
             }
         }
         
@@ -35,13 +36,14 @@ class PlayerController(
     fun getById(ctx: Context) {
         val id = ctx.pathParam("id")
         try {
-            val playerId = MfPlayerId(UUID.fromString(id))
+            UUID.fromString(id) // Validate UUID format
+            val playerId = MfPlayerId(id)
             val player = playerService.getPlayer(playerId)
             
             if (player != null) {
                 // Single player lookup - direct faction query is acceptable here
                 val faction = factionService.getFaction(player.id)
-                ctx.json(PlayerDto.fromPlayer(player, faction?.id?.value?.toString())).status(HttpStatus.OK)
+                ctx.json(PlayerDto.fromPlayer(player, faction?.id?.value)).status(HttpStatus.OK)
             } else {
                 ctx.json(ErrorResponse("NOT_FOUND", "Player not found")).status(HttpStatus.NOT_FOUND)
             }

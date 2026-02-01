@@ -10,9 +10,9 @@ data class RelationshipDto(
     companion object {
         fun fromRelationship(relationship: MfFactionRelationship): RelationshipDto {
             return RelationshipDto(
-                factionId = relationship.factionId.value.toString(),
-                targetFactionId = relationship.targetId.value.toString(),
-                type = relationship.relationshipType.name
+                factionId = relationship.factionId.value,
+                targetFactionId = relationship.targetId.value,
+                type = relationship.type.name
             )
         }
     }

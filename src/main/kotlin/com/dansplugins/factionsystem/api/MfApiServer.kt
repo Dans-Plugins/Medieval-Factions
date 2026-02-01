@@ -43,7 +43,7 @@ class MfApiServer(private val plugin: MedievalFactions) {
             // Initialize controllers
             factionController = FactionController(plugin.services.factionService)
             playerController = PlayerController(plugin.services.playerService, plugin.services.factionService)
-            relationshipController = RelationshipController(plugin.services.factionRelationshipService)
+            relationshipController = RelationshipController(plugin.services.factionRelationshipService, plugin.services.factionService)
             claimController = ClaimController(plugin.services.claimService)
             
             // Create Javalin app

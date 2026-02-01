@@ -18,7 +18,8 @@ class FactionController(private val factionService: MfFactionService) {
     fun getById(ctx: Context) {
         val id = ctx.pathParam("id")
         try {
-            val factionId = MfFactionId(UUID.fromString(id))
+            UUID.fromString(id) // Validate UUID format
+            val factionId = MfFactionId(id)
             val faction = factionService.getFaction(factionId)
             
             if (faction != null) {
